@@ -5,10 +5,10 @@
 #  Vulkan_LIBRARIES
 #  Vulkan_FOUND
 
-start_find_package(Vulkan)
+B3DStartFindPackage(Vulkan)
 
 set(Vulkan_INSTALL_DIR "$ENV{VULKAN_SDK}" CACHE PATH "")
-gen_default_lib_search_dirs(Vulkan)
+B3DPopulateDefaultPackageSearchPaths(Vulkan)
 
 if(WIN32)
 	set(Vulkan_LIBNAME vulkan-1)
@@ -25,8 +25,8 @@ else()
 	set(Vulkan_LIBNAME vulkan)
 endif()
 
-find_imported_includes(Vulkan vulkan/vulkan.h)
-find_imported_library_shared(Vulkan ${Vulkan_LIBNAME})
+B3DFindImportedIncludes(Vulkan vulkan/vulkan.h)
+B3DFindImportedLibrary(Vulkan ${Vulkan_LIBNAME} SHARED)
 
-end_find_package(Vulkan ${Vulkan_LIBNAME})
+B3DEndFindPackage(Vulkan ${Vulkan_LIBNAME})
 

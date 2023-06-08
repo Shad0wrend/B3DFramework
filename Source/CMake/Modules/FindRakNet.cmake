@@ -5,14 +5,14 @@
 #  RakNet_LIBRARIES
 #  RakNet_FOUND
 
-start_find_package(RakNet)
+B3DStartFindPackage(RakNet)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
 	set(RakNet_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/RakNet CACHE PATH "")
 endif()
 
-gen_default_lib_search_dirs(RakNet)
-find_imported_includes(RakNet RakNet/RakPeer.h)
-find_imported_library_shared(RakNet RakNetLibStatic)
+B3DPopulateDefaultPackageSearchPaths(RakNet)
+B3DFindImportedIncludes(RakNet RakNet/RakPeer.h)
+B3DFindImportedLibrary(RakNet RakNetLibStatic SHARED)
 
-end_find_package(RakNet RakNetLibStatic)
+B3DEndFindPackage(RakNet RakNetLibStatic)

@@ -11,7 +11,7 @@ endif()
 find_package(mono)
 
 # Target
-add_library(bsfMono OBJECT ${BS_MONO_SRC})
+add_library(bsfMono STATIC ${BS_MONO_SRC})
 
 # Common flags
 add_common_flags(bsfMono)
@@ -28,6 +28,7 @@ target_link_libraries(bsfMono PUBLIC ${mono_LIBRARIES})
 
 ## Local libs
 target_link_libraries(bsfMono PUBLIC bsf)
+B3DCopyImportedDependencyBinariesOnBuild(bsfMono)
 
 # Runtime executable
 if(B3D_IS_ENGINE)

@@ -5,12 +5,12 @@
 #  MoltenVK_LIBRARIES
 #  MoltenVK_FOUND
 
-start_find_package(MoltenVK)
+B3DStartFindPackage(MoltenVK)
 
 set(MoltenVK_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/MoltenVK CACHE PATH "")
-gen_default_lib_search_dirs(MoltenVK)
+B3DPopulateDefaultPackageSearchPaths(MoltenVK)
 
-find_imported_includes(MoltenVK MoltenVK/mvk_vulkan.h)
-find_imported_library(MoltenVK MoltenVK)
+B3DFindImportedIncludes(MoltenVK MoltenVK/mvk_vulkan.h)
+B3DFindImportedLibrary(MoltenVK MoltenVK STATIC)
 
-end_find_package(MoltenVK MoltenVK)
+B3DEndFindPackage(MoltenVK MoltenVK)

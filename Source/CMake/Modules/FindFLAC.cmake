@@ -5,12 +5,12 @@
 #  FLAC_LIBRARIES
 #  FLAC_FOUND
 
-start_find_package(FLAC)
+B3DStartFindPackage(FLAC)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
 	set(FLAC_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/libFLAC CACHE PATH "")
 endif()
-gen_default_lib_search_dirs(FLAC)
+B3DPopulateDefaultPackageSearchPaths(FLAC)
 
 if(WIN32)
 	set(FLAC_LIBNAME libFLAC)
@@ -18,12 +18,12 @@ else()
 	set(FLAC_LIBNAME FLAC)
 endif()
 
-find_imported_includes(FLAC FLAC/all.h)
+B3DFindImportedIncludes(FLAC FLAC/all.h)
 
 if(UNIX)
-	find_imported_library(FLAC ${FLAC_LIBNAME})
+	B3DFindImportedLibrary(FLAC ${FLAC_LIBNAME} STATIC)
 else()
-	find_imported_library_shared(FLAC ${FLAC_LIBNAME})
+	B3DFindImportedLibraryWithAlternateBinaryName(FLAC ${FLAC_LIBNAME} SHARED ${FLAC_LIBNAME} libFLAC_dynamic)
 endif()
 
 if(B3D_USE_BUNDLED_LIBRARIES)
@@ -35,4 +35,4 @@ if(B3D_USE_BUNDLED_LIBRARIES)
 	install_dependency_binaries(FLAC)
 endif()
 
-end_find_package(FLAC ${FLAC_LIBNAME})
+B3DEndFindPackage(FLAC ${FLAC_LIBNAME})

@@ -5,17 +5,17 @@
 #  SPIRVCross_LIBRARIES
 #  SPIRVCross_FOUND
 
-start_find_package(SPIRVCross)
+B3DStartFindPackage(SPIRVCross)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
 	set(SPIRVCross_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/SPIRVCross CACHE PATH "")
 endif()
 
-gen_default_lib_search_dirs(SPIRVCross)
+B3DPopulateDefaultPackageSearchPaths(SPIRVCross)
 
-find_imported_includes(SPIRVCross spirv_cross/spirv_cross.hpp)
-find_imported_library(SPIRVCross spirv-cross-msl)
-find_imported_library(SPIRVCross spirv-cross-glsl)
-find_imported_library(SPIRVCross spirv-cross-core)
+B3DFindImportedIncludes(SPIRVCross spirv_cross/spirv_cross.hpp)
+B3DFindImportedLibrary(SPIRVCross spirv-cross-msl STATIC)
+B3DFindImportedLibrary(SPIRVCross spirv-cross-glsl STATIC)
+B3DFindImportedLibrary(SPIRVCross spirv-cross-core STATIC)
 
-end_find_package(SPIRVCross spirv-cross-msl)
+B3DEndFindPackage(SPIRVCross spirv-cross-msl)

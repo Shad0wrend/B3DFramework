@@ -55,10 +55,7 @@ else()
 endif()
 
 if(WIN32)
-	message(STATUS "Status: ${BSF_DEPENDENCY_DIRECTORY}")
-
 	target_link_libraries(bsfVulkanRenderAPI PRIVATE ${RenderDoc_LIBRARIES})
-	install_dll_on_build(bsfVulkanRenderAPI ${BSF_DEPENDENCY_DIRECTORY}/RenderDoc)
 endif()
 
 ## OS libs
@@ -82,6 +79,7 @@ set_property(TARGET bsfVulkanRenderAPI PROPERTY FOLDER Plugins)
 # Install
 if(B3D_RENDER_BACKEND MATCHES "Vulkan" OR B3D_BUILD_ALL_RENDER_BACKENDS)
 	install_bsf_target(bsfVulkanRenderAPI)
+	B3DCopyImportedDependencyBinariesOnBuild(bsfVulkanRenderAPI)
 endif()
 
 conditional_cotire(bsfVulkanRenderAPI)

@@ -5,20 +5,20 @@
 #  nvtt_LIBRARIES
 #  nvtt_FOUND
 
-start_find_package(nvtt)
+B3DStartFindPackage(nvtt)
 
 # Use bundled library, as there is no common packaging for nvtt
 set(nvtt_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/nvtt CACHE PATH "")
-gen_default_lib_search_dirs(nvtt)
+B3DPopulateDefaultPackageSearchPaths(nvtt)
 
-find_imported_includes(nvtt nvtt.h)
-find_imported_library(nvtt nvtt)
-find_imported_library(nvtt nvimage)
-find_imported_library(nvtt bc6h)
-find_imported_library(nvtt bc7)
-find_imported_library(nvtt nvcore)
-find_imported_library(nvtt nvmath)
-find_imported_library(nvtt nvthread)
-find_imported_library(nvtt squish)
+B3DFindImportedIncludes(nvtt nvtt.h)
+B3DFindImportedLibrary(nvtt nvtt STATIC)
+B3DFindImportedLibrary(nvtt nvimage STATIC)
+B3DFindImportedLibrary(nvtt bc6h STATIC)
+B3DFindImportedLibrary(nvtt bc7 STATIC)
+B3DFindImportedLibrary(nvtt nvcore STATIC)
+B3DFindImportedLibrary(nvtt nvmath STATIC)
+B3DFindImportedLibrary(nvtt nvthread STATIC)
+B3DFindImportedLibrary(nvtt squish STATIC)
 
-end_find_package(nvtt nvtt)
+B3DEndFindPackage(nvtt nvtt)

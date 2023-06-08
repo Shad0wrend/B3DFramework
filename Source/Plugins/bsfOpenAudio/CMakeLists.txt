@@ -41,6 +41,7 @@ set_property(TARGET bsfOpenAudio PROPERTY FOLDER Plugins)
 # Install
 if(B3D_AUDIO_BACKEND MATCHES "OpenAudio")
 	install_bsf_target(bsfOpenAudio)
+	B3DCopyImportedDependencyBinariesOnBuild(bsfOpenAudio)
 endif()
 
 conditional_cotire(bsfOpenAudio)

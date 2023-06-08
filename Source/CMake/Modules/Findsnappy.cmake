@@ -5,14 +5,14 @@
 #  snappy_LIBRARIES
 #  snappy_FOUND
 
-start_find_package(snappy)
+B3DStartFindPackage(snappy)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
 	set(snappy_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/snappy CACHE PATH "")
 endif()
-gen_default_lib_search_dirs(snappy)
+B3DPopulateDefaultPackageSearchPaths(snappy)
 
-find_imported_includes(snappy snappy.h)
-find_imported_library(snappy snappy)
+B3DFindImportedIncludes(snappy snappy.h)
+B3DFindImportedLibrary(snappy snappy STATIC)
 
-end_find_package(snappy snappy)
+B3DEndFindPackage(snappy snappy)

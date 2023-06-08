@@ -5,12 +5,12 @@
 #  XShaderCompiler_LIBRARIES
 #  XShaderCompiler_FOUND
 
-start_find_package(XShaderCompiler)
+B3DStartFindPackage(XShaderCompiler)
 
 set(XShaderCompiler_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/XShaderCompiler CACHE PATH "")
-gen_default_lib_search_dirs(XShaderCompiler)
+B3DPopulateDefaultPackageSearchPaths(XShaderCompiler)
 
-find_imported_includes(XShaderCompiler Xsc/Xsc.h)
-find_imported_library(XShaderCompiler xsc_core)
+B3DFindImportedIncludes(XShaderCompiler Xsc/Xsc.h)
+B3DFindImportedLibrary(XShaderCompiler xsc_core STATIC)
 
-end_find_package(XShaderCompiler xsc_core)
+B3DEndFindPackage(XShaderCompiler xsc_core)

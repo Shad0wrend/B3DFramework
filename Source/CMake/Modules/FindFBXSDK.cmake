@@ -5,11 +5,11 @@
 #  FBXSDK_LIBRARIES
 #  FBXSDK_FOUND
 
-start_find_package(FBXSDK)
+B3DStartFindPackage(FBXSDK)
 
 # Always use bundled version as package is not easily available
 set(FBXSDK_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/FBXSDK CACHE PATH "")
-gen_default_lib_search_dirs(FBXSDK)
+B3DPopulateDefaultPackageSearchPaths(FBXSDK)
 
 if(WIN32)
     set(FBXSDK_LIBNAME libfbxsdk-md)
@@ -17,8 +17,8 @@ else()
     set(FBXSDK_LIBNAME fbxsdk)
 endif()
 
-find_imported_includes(FBXSDK fbxsdk.h)
-find_imported_library(FBXSDK ${FBXSDK_LIBNAME})
+B3DFindImportedIncludes(FBXSDK fbxsdk.h)
+B3DFindImportedLibrary(FBXSDK ${FBXSDK_LIBNAME} STATIC)
 
-end_find_package(FBXSDK ${FBXSDK_LIBNAME})
+B3DEndFindPackage(FBXSDK ${FBXSDK_LIBNAME})
 

@@ -56,7 +56,6 @@ target_include_directories(ThirdParty INTERFACE
 
 # Target
 add_library(bsf SHARED ${BS_UTILITY_SRC} ${BS_CORE_SRC} ${BS_ENGINE_SRC})
-install_dll_on_build(bsf ${PROJECT_SOURCE_DIR})
 
 add_common_flags(bsf)
 

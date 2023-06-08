@@ -5,15 +5,15 @@
 #  LibICU_LIBRARIES
 #  LibICU_FOUND
 
-start_find_package(LibICU)
+B3DStartFindPackage(LibICU)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
 	set(LibICU_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/libICU CACHE PATH "")
 endif()
-gen_default_lib_search_dirs(LibICU)
+B3DPopulateDefaultPackageSearchPaths(LibICU)
 
-find_imported_includes(LibICU unicode/utypes.h)
-find_imported_library(LibICU icudata)
-find_imported_library(LibICU icuuc)
+B3DFindImportedIncludes(LibICU unicode/utypes.h)
+B3DFindImportedLibrary(LibICU icudata STATIC)
+B3DFindImportedLibrary(LibICU icuuc STATIC)
 
-end_find_package(LibICU icudata)
+B3DEndFindPackage(LibICU icudata)

@@ -5,30 +5,30 @@
 #  vorbis_LIBRARIES
 #  vorbis_FOUND
 
-start_find_package(vorbis)
+B3DStartFindPackage(vorbis)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
 	set(vorbis_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/libvorbis CACHE PATH "")
 endif()
-gen_default_lib_search_dirs(vorbis)
+B3DPopulateDefaultPackageSearchPaths(vorbis)
 
 if(WIN32)
 	set(vorbis_LIB_PREFIX lib)
 endif()
 
-find_imported_includes(vorbis vorbis/vorbisenc.h)
+B3DFindImportedIncludes(vorbis vorbis/vorbisenc.h)
 
 if(UNIX)
-	find_imported_library(vorbis ${vorbis_LIB_PREFIX}vorbisfile)
-	find_imported_library(vorbis ${vorbis_LIB_PREFIX}vorbisenc)
-	find_imported_library(vorbis ${vorbis_LIB_PREFIX}vorbis)
+	B3DFindImportedLibrary(vorbis ${vorbis_LIB_PREFIX}vorbisfile STATIC)
+	B3DFindImportedLibrary(vorbis ${vorbis_LIB_PREFIX}vorbisenc STATIC)
+	B3DFindImportedLibrary(vorbis ${vorbis_LIB_PREFIX}vorbis STATIC)
 else()
-	find_imported_library_shared(vorbis ${vorbis_LIB_PREFIX}vorbis)
-	find_imported_library_shared(vorbis ${vorbis_LIB_PREFIX}vorbisfile)
+	B3DFindImportedLibrary(vorbis ${vorbis_LIB_PREFIX}vorbis SHARED)
+	B3DFindImportedLibrary(vorbis ${vorbis_LIB_PREFIX}vorbisfile SHARED)
 endif()
 
 if(B3D_USE_BUNDLED_LIBRARIES)
 	install_dependency_binaries(vorbis)
 endif()
 
-end_find_package(vorbis ${vorbis_LIB_PREFIX}vorbis)
+B3DEndFindPackage(vorbis ${vorbis_LIB_PREFIX}vorbis)

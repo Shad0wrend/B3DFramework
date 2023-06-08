@@ -5,15 +5,15 @@
 #  freeimg_LIBRARIES
 #  freeimg_FOUND
 
-start_find_package(freeimg)
+B3DStartFindPackage(freeimg)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
 	set(freeimg_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/freeimg CACHE PATH "")
 endif()
-gen_default_lib_search_dirs(freeimg)
+B3DPopulateDefaultPackageSearchPaths(freeimg)
 
-find_imported_includes(freeimg FreeImage.h)
-find_imported_library(freeimg freeimage)
+B3DFindImportedIncludes(freeimg FreeImage.h)
+B3DFindImportedLibrary(freeimg freeimage STATIC)
 
-end_find_package(freeimg freeimage)
+B3DEndFindPackage(freeimg freeimage)
 

@@ -5,7 +5,7 @@
 #  FMOD_LIBRARIES
 #  FMOD_FOUND
 
-start_find_package(FMOD)
+B3DStartFindPackage(FMOD)
 
 if(WIN32)
 	set(FMOD_INSTALL_DIR "C:/Program Files (x86)/FMOD SoundSystem/FMOD Studio API Windows" CACHE PATH "")
@@ -15,7 +15,7 @@ else()
 	endif()
 endif()
 
-gen_default_lib_search_dirs(FMOD)
+B3DPopulateDefaultPackageSearchPaths(FMOD)
 
 list(APPEND FMOD_INCLUDE_SEARCH_DIRS ${FMOD_INSTALL_DIR}/api/lowlevel/inc)
 
@@ -39,7 +39,7 @@ endif()
 list(APPEND FMOD_LIBRARY_RELEASE_SEARCH_DIRS ${FMOD_LIBRARY_SEARCH_PATH})
 list(APPEND FMOD_LIBRARY_DEBUG_SEARCH_DIRS ${FMOD_LIBRARY_SEARCH_PATH})
 
-find_imported_includes(FMOD fmod.h)
-find_imported_library(FMOD ${FMOD_LIBNAME})
+B3DFindImportedIncludes(FMOD fmod.h)
+B3DFindImportedLibrary(FMOD ${FMOD_LIBNAME} STATIC)
 
-end_find_package(FMOD ${FMOD_LIBNAME})
+B3DEndFindPackage(FMOD ${FMOD_LIBNAME})

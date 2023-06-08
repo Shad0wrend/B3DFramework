@@ -5,12 +5,12 @@
 #  glslang_LIBRARIES
 #  glslang_FOUND
 
-start_find_package(glslang)
+B3DStartFindPackage(glslang)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
 	set(glslang_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/glslang CACHE PATH "")
 endif()
-gen_default_lib_search_dirs(glslang)
+B3DPopulateDefaultPackageSearchPaths(glslang)
 
 if(WIN32)
 	set(glslang_DEBUG_SUFFIX "d")
@@ -18,11 +18,11 @@ else()
 	set(glslang_DEBUG_SUFFIX "")
 endif()
 
-find_imported_includes(glslang glslang/Public/ShaderLang.h)
-find_imported_library2(glslang glslang glslang${glslang_DEBUG_SUFFIX})
-find_imported_library2(glslang HLSL HLSL${glslang_DEBUG_SUFFIX})
-find_imported_library2(glslang OSDependent OSDependent${glslang_DEBUG_SUFFIX})
-find_imported_library2(glslang OGLCompiler OGLCompiler${glslang_DEBUG_SUFFIX})
-find_imported_library2(glslang SPIRV SPIRV${glslang_DEBUG_SUFFIX})
+B3DFindImportedIncludes(glslang glslang/Public/ShaderLang.h)
+B3DFindImportedLibraryWithConfigurationNames(glslang glslang STATIC glslang glslang${glslang_DEBUG_SUFFIX})
+B3DFindImportedLibraryWithConfigurationNames(glslang HLSL STATIC HLSL HLSL${glslang_DEBUG_SUFFIX})
+B3DFindImportedLibraryWithConfigurationNames(glslang OSDependent STATIC OSDependent OSDependent${glslang_DEBUG_SUFFIX})
+B3DFindImportedLibraryWithConfigurationNames(glslang OGLCompiler STATIC OGLCompiler OGLCompiler${glslang_DEBUG_SUFFIX})
+B3DFindImportedLibraryWithConfigurationNames(glslang SPIRV STATIC SPIRV SPIRV${glslang_DEBUG_SUFFIX})
 
-end_find_package(glslang glslang)
+B3DEndFindPackage(glslang glslang)
