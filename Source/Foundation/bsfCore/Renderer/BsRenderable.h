@@ -193,7 +193,7 @@ namespace bs
 		/** @} */
 	protected:
 		friend class ct::Renderable;
-		struct FullSyncData;
+		struct SyncData;
 		
 		SPtr<ct::CoreObject> CreateCore() const override;
 

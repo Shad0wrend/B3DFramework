@@ -146,6 +146,7 @@ BuiltinResources::BuiltinResources()
 	const HTexture blackTexture3D = GetTexture(BuiltinTexture::Black3D);
 
 	auto fnInitializeCoreBuiltinResources = [whiteTexture2D = whiteTexture2D->GetCore(), blackTexture2D = blackTexture2D->GetCore(), normalTexture = normalTexture->GetCore(), whiteTexture3D = whiteTexture3D->GetCore(), blackTexture3D = blackTexture3D->GetCore()]()
+
 	{
 		ct::BuiltinResources::StartUp();
 		ct::BuiltinResources& coreBuiltinResources = ct::BuiltinResources::Instance();

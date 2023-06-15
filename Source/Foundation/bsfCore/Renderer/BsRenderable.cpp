@@ -367,28 +367,51 @@ namespace bs
 	template <class T>
 	struct CoreSyncType
 	{
-		typedef T Type;
-		
+		typedef decltype(GetCoreObject(RemoveHandle(T()))) Type;
 	};
 
 	template <class T>
 	struct CoreSyncType<Vector<T>>
 	{
-		typedef SyncFrameVector<T> Type;
+		typedef SyncFrameVector<decltype(GetCoreObject(RemoveHandle(T())))> Type;
+	};
+
+	template<class T>
+	struct CoreSyncTypeInitializeWithAllocator
+	{
+		static std::decay_t<T> Initialize(FrameAlloc* allocator)
+		{
+			return std::decay_t<T>();
+		}
+	};
+
+	template<class T>
+	struct CoreSyncTypeInitializeWithAllocator<SyncFrameVector<T>>
+	{
+		static SyncFrameVector<std::decay_t<T>> Initialize(FrameAlloc* allocator)
+		{
+			return SyncFrameVector<std::decay_t<T>>(allocator);
+		}
 	};
 
 	#define B3D_SYNC_BLOCK_BEGIN(ClassType, Name)                                                                                                               \
-	struct Name \
+	struct ClassType::Name \
 	{                                                                                                                                             \
+Name(FrameAlloc* allocator) \
+ : mAllocator(allocator) {}\
 		typedef ClassType Type; \
-		void Sync() \
+template<bool Core> \
+		void Sync(CoreVariantType<Type, Core>& object) \
 		{                                                                                                                                         \
-			SyncEntries();                                                                                                                        \
+			SyncEntries<Core>(object);                                                                                                                        \
 		}                                                                                                                                         \
+                                                                                \
+FrameAlloc* mAllocator; \
                                                                                                                                                   \
 		struct META_FirstEntry                                                                                                                    \
 		{};                                                                                                                                       \
-		void META_SyncPrevEntry(META_FirstEntry id)                                   \
+template<bool Core> \
+		void META_SyncPrevEntry(CoreVariantType<Type, Core>& object, META_FirstEntry id)                                   \
 		{}                                                                                                                                        \
                                                                                                                                                   \
 		typedef META_FirstEntry
@@ -399,13 +422,35 @@ namespace bs
 	struct META_NextEntry_##EntryName                                                                                  \
 	{};                                                                                                            \
                                                                                                                    \
-	void META_SyncPrevEntry(META_NextEntry_##EntryName id) \
+template<bool Core>\
+	void META_SyncPrevEntry(CoreVariantType<Type, Core>& object, META_NextEntry_##EntryName id) \
 	{                                                                                                              \
-		META_SyncPrevEntry(META_Entry_##EntryName());                                                 \
+		META_SyncPrevEntry<Core>(object, META_Entry_##EntryName());                                                 \
+CoreSyncField<Core>(EntryName, object.EntryName);\
 	}                                                                                                              \
                                                                                                                    \
 public:                                                                                                            \
-	typename CoreSyncType<decltype(Type::EntryName)>::Type EntryName;                                                                     \
+	typename CoreSyncType<decltype(Type::EntryName)>::Type EntryName \
+	= CoreSyncTypeInitializeWithAllocator<typename CoreSyncType<decltype(Type::EntryName)>::Type>::Initialize(mAllocator);                                                                     \
+                                                                                                                   \
+private:                                                                                                           \
+	typedef META_NextEntry_##EntryName
+
+	#define B3D_SYNC_BLOCK_ENTRY_CUSTOM(EntryType, EntryName)                                                    \
+	META_Entry_##EntryName;                                                                                            \
+                                                                                                                   \
+	struct META_NextEntry_##EntryName                                                                                  \
+	{};                                                                                                            \
+                                                                                                                   \
+template<bool Core>\
+	void META_SyncPrevEntry(CoreVariantType<Type, Core>& object, META_NextEntry_##EntryName id) \
+	{                                                                                                              \
+		META_SyncPrevEntry<Core>(object, META_Entry_##EntryName());                                                 \
+	}                                                                                                              \
+                                                                                                                   \
+public:                                                                                                            \
+	typename CoreSyncType<EntryType>::Type EntryName \
+	= CoreSyncTypeInitializeWithAllocator<typename CoreSyncType<EntryType>::Type>::Initialize(mAllocator);                                                                     \
                                                                                                                    \
 private:                                                                                                           \
 	typedef META_NextEntry_##EntryName
@@ -413,76 +458,84 @@ private:                                                                        
 #define B3D_SYNC_BLOCK_END                                                     \
 	META_LastEntry;                                                             \
                                                                                 \
-	void SyncEntries()                                                          \
+template<bool Core> \
+	void SyncEntries(CoreVariantType<Type, Core>& object)                                                          \
 	{                                                                           \
-		META_SyncPrevEntry(META_LastEntry()); \
+		META_SyncPrevEntry<Core>(object, META_LastEntry()); \
 	}                                                                           \
-                                                                                \
 	}                                                                           \
 	;
 
-	B3D_SYNC_BLOCK_BEGIN(Renderable, RenderableSyncData)
+	B3D_SYNC_BLOCK_BEGIN(Renderable, SyncData)
 		B3D_SYNC_BLOCK_ENTRY(mLayer)
+		B3D_SYNC_BLOCK_ENTRY(mOverrideBounds)
+		B3D_SYNC_BLOCK_ENTRY(mUseOverrideBounds)
+		B3D_SYNC_BLOCK_ENTRY(mWriteVelocity)
+		B3D_SYNC_BLOCK_ENTRY(mAnimType)
+		B3D_SYNC_BLOCK_ENTRY(mCullDistanceFactor)
+		B3D_SYNC_BLOCK_ENTRY(mMesh)
+		B3D_SYNC_BLOCK_ENTRY(mMaterials)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(u64, mAnimationId)
 	B3D_SYNC_BLOCK_END
 
-	struct Renderable::FullSyncData
-	{
-		FullSyncData(const Renderable& source, FrameAlloc* allocator)
-			: Layer(source.mLayer)
-			, OverrideBounds(source.mOverrideBounds)
-			, UseOverrideBounds(source.mUseOverrideBounds)
-			, WriteVelocity(source.mWriteVelocity)
-			, AnimationType(source.mAnimType)
-			, AnimationId(source.mAnimation != nullptr ? source.mAnimation->GetIdInternal() : (u64)-1)
-			, CullDistanceFactor(source.mCullDistanceFactor)
-			, Mesh(B3DGetCoreObject(source.mMesh))
-			, Materials(allocator)
-		{
-			Materials.resize(source.mMaterials.size());
-			for(size_t materialIndex = 0; materialIndex < source.mMaterials.size(); ++materialIndex)
-				Materials[materialIndex] = B3DGetCoreObject(source.mMaterials[materialIndex]);
-		}
+	//struct Renderable::FullSyncData
+	//{
+	//	FullSyncData(const Renderable& source, FrameAlloc* allocator)
+	//		: Layer(source.mLayer)
+	//		, OverrideBounds(source.mOverrideBounds)
+	//		, UseOverrideBounds(source.mUseOverrideBounds)
+	//		, WriteVelocity(source.mWriteVelocity)
+	//		, AnimationType(source.mAnimType)
+	//		, AnimationId(source.mAnimation != nullptr ? source.mAnimation->GetIdInternal() : (u64)-1)
+	//		, CullDistanceFactor(source.mCullDistanceFactor)
+	//		, Mesh(B3DGetCoreObject(source.mMesh))
+	//		, Materials(allocator)
+	//	{
+	//		Materials.resize(source.mMaterials.size());
+	//		for(size_t materialIndex = 0; materialIndex < source.mMaterials.size(); ++materialIndex)
+	//			Materials[materialIndex] = B3DGetCoreObject(source.mMaterials[materialIndex]);
+	//	}
 
-		void Apply(ct::Renderable& destination)
-		{
-			destination.mLayer = Layer;
-			destination.mOverrideBounds = OverrideBounds;
-			destination.mUseOverrideBounds = UseOverrideBounds;
-			destination.mWriteVelocity = WriteVelocity;
-			destination.mAnimType = AnimationType;
-			destination.mAnimationId = AnimationId;
-			destination.mCullDistanceFactor = CullDistanceFactor;
-			destination.mMesh = std::move(Mesh);
+	//	void Apply(ct::Renderable& destination)
+	//	{
+	//		destination.mLayer = Layer;
+	//		destination.mOverrideBounds = OverrideBounds;
+	//		destination.mUseOverrideBounds = UseOverrideBounds;
+	//		destination.mWriteVelocity = WriteVelocity;
+	//		destination.mAnimType = AnimationType;
+	//		destination.mAnimationId = AnimationId;
+	//		destination.mCullDistanceFactor = CullDistanceFactor;
+	//		destination.mMesh = std::move(Mesh);
 
-			destination.mMaterials.resize(Materials.size());
-			for(size_t materialIndex = 0; materialIndex < Materials.size(); ++materialIndex)
-				destination.mMaterials[materialIndex] = std::move(Materials[materialIndex]);
-		}
+	//		destination.mMaterials.resize(Materials.size());
+	//		for(size_t materialIndex = 0; materialIndex < Materials.size(); ++materialIndex)
+	//			destination.mMaterials[materialIndex] = std::move(Materials[materialIndex]);
+	//	}
 
-		template<bool Core>
-		void Sync(CoreVariantType<Renderable, Core>& object)
-		{
-			CoreSyncField<Core>(Layer, object.mLayer);
-			CoreSyncField<Core>(OverrideBounds, object.mOverrideBounds);
-			CoreSyncField<Core>(Mesh, object.mMesh);
-			CoreSyncField<Core>(Materials, object.mMaterials);
+	//	template<bool Core>
+	//	void Sync(CoreVariantType<Renderable, Core>& object)
+	//	{
+	//		CoreSyncField<Core>(Layer, object.mLayer);
+	//		CoreSyncField<Core>(OverrideBounds, object.mOverrideBounds);
+	//		CoreSyncField<Core>(Mesh, object.mMesh);
+	//		CoreSyncField<Core>(Materials, object.mMaterials);
 
 
-			// SyncLast()
-			// SyncPrevious_1
-			// SyncPrevious_2 ... etc, similar to B3D_PARAMS
-		}
+	//		// SyncLast()
+	//		// SyncPrevious_1
+	//		// SyncPrevious_2 ... etc, similar to B3D_PARAMS
+	//	}
 
-		u64 Layer;
-		AABox OverrideBounds;
-		bool UseOverrideBounds;
-		bool WriteVelocity;
-		RenderableAnimType AnimationType;
-		u64 AnimationId;
-		float CullDistanceFactor;
-		SPtr<ct::Mesh> Mesh;
-		SyncFrameVector<SPtr<ct::Material>> Materials;
-	};
+	//	u64 Layer;
+	//	AABox OverrideBounds;
+	//	bool UseOverrideBounds;
+	//	bool WriteVelocity;
+	//	RenderableAnimType AnimationType;
+	//	u64 AnimationId;
+	//	float CullDistanceFactor;
+	//	SPtr<ct::Mesh> Mesh;
+	//	SyncFrameVector<SPtr<ct::Material>> Materials;
+	//};
 }
 
 CoreSyncData Renderable::SyncToCore(FrameAlloc* allocator)
@@ -500,10 +553,11 @@ CoreSyncData Renderable::SyncToCore(FrameAlloc* allocator)
 
 	if(dirtyFlags != (u32)ActorDirtyFlag::Transform)
 	{
-		FullSyncData* output = allocator->Construct<FullSyncData>(*this, allocator);
+		SyncData* output = allocator->Construct<SyncData>(allocator);
 		output->Sync<false>(*this);
+		output->mAnimationId = mAnimation != nullptr ? mAnimation->GetIdInternal() : (u64)-1;
 
-		FullSyncData* dataR = (FullSyncData*)(data + size);
+		SyncData* dataR = (SyncData*)(data + size + 4);
 		int a = 5;
 	}
 
@@ -810,10 +864,11 @@ void Renderable::SyncToCore(const CoreSyncData& data)
 
 	if(dirtyFlags != (u32)ActorDirtyFlag::Transform)
 	{
-		bs::Renderable::FullSyncData* fullSyncData = (bs::Renderable::FullSyncData*)(data.GetBuffer() + data.GetBufferSize());
-		fullSyncData->Apply(*this);
+		bs::Renderable::SyncData* fullSyncData = (bs::Renderable::SyncData*)(data.GetBuffer() + data.GetBufferSize() + 4);
+		fullSyncData->Sync<true>(*this);
+		mAnimationId = fullSyncData->mAnimationId;
 
-		fullSyncData->~FullSyncData(); // TODO - Destruct this properly through FrameAllocator it was constructed with
+		fullSyncData->~SyncData(); // TODO - Destruct this properly through FrameAllocator it was constructed with
 	}
 
 	u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active | (u32)ActorDirtyFlag::Dependency;
