@@ -23,7 +23,7 @@ B3DFindImportedIncludes(FLAC FLAC/all.h)
 if(UNIX)
 	B3DFindImportedLibrary(FLAC ${FLAC_LIBNAME} STATIC)
 else()
-	B3DFindImportedLibraryWithAlternateBinaryName(FLAC ${FLAC_LIBNAME} SHARED ${FLAC_LIBNAME} libFLAC_dynamic)
+	B3DFindImportedLibraryWithAlternateBinaryName(FLAC ${FLAC_LIBNAME} SHARED libFLAC_dynamic)
 endif()
 
 if(B3D_USE_BUNDLED_LIBRARIES)
