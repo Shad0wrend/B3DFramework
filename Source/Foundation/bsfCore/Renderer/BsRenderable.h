@@ -193,7 +193,7 @@ namespace bs
 		/** @} */
 	protected:
 		friend class ct::Renderable;
-		struct SyncData;
+		struct SyncPacket;
 		
 		SPtr<ct::CoreObject> CreateCore() const override;
 
@@ -203,7 +203,7 @@ namespace bs
 		void RefreshAnimation();
 
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 
 		void MarkDependenciesDirtyInternal() override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;

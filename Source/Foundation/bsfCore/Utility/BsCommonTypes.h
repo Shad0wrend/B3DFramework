@@ -4,6 +4,7 @@
 
 namespace bs
 {
+	struct CoreSyncPacket;
 	// Undefine defines from other libs, that conflict with enums below
 #undef None
 #undef Convex
@@ -739,6 +740,10 @@ namespace bs
 			: data(data), size(size)
 		{}
 
+		CoreSyncData(CoreSyncPacket* syncPacket)
+			: mSyncPacket(syncPacket)
+		{}
+
 		/** Gets the internal data and checks the data is of valid size. */
 		template <class T>
 		const T& GetData() const
@@ -748,6 +753,12 @@ namespace bs
 			return *(T*)data;
 		}
 
+		template<class T = CoreSyncPacket>
+		T* GetSyncPacket() const
+		{
+			return (T*)mSyncPacket;
+		}
+
 		/**	Returns a pointer to internal data buffer. */
 		u8* GetBuffer() const { return data; }
 
@@ -755,8 +766,9 @@ namespace bs
 		u32 GetBufferSize() const { return size; }
 
 	private:
-		u8* data;
-		u32 size;
+		u8* data = nullptr;
+		u32 size = 0;
+		CoreSyncPacket* mSyncPacket = nullptr;
 	};
 
 	/** @} */

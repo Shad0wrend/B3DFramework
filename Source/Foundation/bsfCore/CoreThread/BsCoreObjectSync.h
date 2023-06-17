@@ -318,8 +318,8 @@ namespace bs
 	/** Packet containing data for synchronizing a CoreObject with its render thread counter-part. */
 	struct CoreSyncPacket
 	{
-		CoreSyncPacket(FrameAlloc& allocator)
-			: mAllocator(allocator)
+		CoreSyncPacket(FrameAlloc& allocator, u32 flags)
+			: mAllocator(allocator), Flags(flags)
 		{ }
 
 		virtual ~CoreSyncPacket()
@@ -329,6 +329,12 @@ namespace bs
 				mAllocator.Destruct(NextPacket);
 			}
 		}
+
+		/** Transfers the data from this object into the provided render thread variant of the core object. */
+		virtual void SyncToCoreObject(void* coreObject) { }
+
+		/** Optional user-specified flags. */
+		u32 Flags = 0;
 
 		/** Next packet, in case multiple packets are created by a single core object. */
 		CoreSyncPacket* NextPacket = nullptr;
@@ -345,16 +351,16 @@ namespace bs
 
 		/** Copies a field from the non-core object into the field in the CoreSyncPacket. */
 		template <bool Core, class FieldTypeA, class FieldTypeB>
-		void CoreSyncField(FieldTypeA&& a, FieldTypeB&& b, std::enable_if_t<!Core>* = 0)
+		void CoreSyncField(FieldTypeA& a, FieldTypeB& b, std::enable_if_t<!Core>* = 0)
 		{
 			a = GetCoreObject(RemoveHandle(b));
 		}
 
 		/** Copies a field from the CoreSyncPacket to a core object. */
 		template <bool Core, class FieldTypeA, class FieldTypeB>
-		void CoreSyncField(FieldTypeA&& a, FieldTypeB&& b, std::enable_if_t<Core>* = 0)
+		void CoreSyncField(FieldTypeA& a, FieldTypeB& b, std::enable_if_t<Core>* = 0)
 		{
-			b = std::forward<FieldTypeA>(a);
+			b = a;
 		}
 
 		/** Copies an array from the non-core object into the field in the CoreSyncPacket. */
@@ -372,7 +378,7 @@ namespace bs
 		{
 			b.resize(a.size());
 			for(size_t index = 0; index < a.size(); ++index)
-				a[index] = std::move(b[index]);
+				b[index] = std::move(a[index]);
 		}
 
 		/** Defines an intermediate type used for storing data of type T in a CoreSyncPacket. */
@@ -393,9 +399,9 @@ namespace bs
 		template <class T>
 		struct CoreSyncPacketTypeInitializeWithAllocator
 		{
-			static std::decay_t<T> Initialize(FrameAlloc& allocator)
+			static T Initialize(FrameAlloc& allocator)
 			{
-				return std::decay_t<T>();
+				return T();
 			}
 		};
 
@@ -403,24 +409,56 @@ namespace bs
 		template <class T>
 		struct CoreSyncPacketTypeInitializeWithAllocator<CoreSyncVector<T>>
 		{
-			static CoreSyncVector<std::decay_t<T>> Initialize(FrameAlloc& allocator)
+			static CoreSyncVector<T> Initialize(FrameAlloc& allocator)
 			{
-				return CoreSyncVector<std::decay_t<T>>(&allocator);
+				return CoreSyncVector<T>(&allocator);
 			}
 		};
 	} // namespace implementation
 
+#define B3D_SYNC_BLOCK_BEGIN_WITH_BASE(ClassType, Name, BaseType)                                            \
+	struct ClassType::Name : CoreSyncPacket                                              \
+	{                                                                                    \
+		Name(ClassType& object, FrameAlloc& allocator, u32 flags = 0)                    \
+			: CoreSyncPacket(allocator, flags)                                           \
+		{                                                                                \
+			SyncEntries<false>(object);                                                  \
+		}                                                                                \
+                                                                                         \
+		typedef ClassType Type;                                                          \
+                                                                                         \
+		void SyncToCoreObject(void* object) \
+		{                                                                                \
+			CoreVariantType<Type, true>& coreObject = *static_cast<CoreVariantType<Type, true>*>(object); \
+			SyncEntries<true>(coreObject);\
+			if(NextPacket) NextPacket->SyncToCoreObject(&(static_cast<CoreVariantType<BaseType, true>&>(coreObject))); \
+		}                                                                                \
+                                                                                         \
+	private:                                                                             \
+		struct META_FirstEntry                                                           \
+		{};                                                                              \
+		template <bool Core>                                                             \
+		void META_SyncPrevEntry(CoreVariantType<Type, Core>& object, META_FirstEntry id) \
+		{}                                                                               \
+                                                                                         \
+		typedef META_FirstEntry
+
 #define B3D_SYNC_BLOCK_BEGIN(ClassType, Name)                                            \
 	struct ClassType::Name : CoreSyncPacket                                              \
 	{                                                                                    \
-		Name(FrameAlloc& allocator)                                                      \
-			: CoreSyncPacket(allocator)                                                  \
-		{}                                                                               \
-		typedef ClassType Type;                                                          \
-		template <bool Core>                                                             \
-		void Sync(CoreVariantType<Type, Core>& object)                                   \
+		Name(ClassType& object, FrameAlloc& allocator, u32 flags = 0)                    \
+			: CoreSyncPacket(allocator, flags)                                           \
 		{                                                                                \
-			SyncEntries<Core>(object);                                                   \
+			SyncEntries<false>(object);                                                  \
+		}                                                                                \
+                                                                                         \
+		typedef ClassType Type;                                                          \
+                                                                                         \
+		void SyncToCoreObject(void* object) \
+		{                                                                                \
+			CoreVariantType<Type, true>& coreObject = *static_cast<CoreVariantType<Type, true>*>(object); \
+			SyncEntries<true>(coreObject);\
+			if(NextPacket) NextPacket->SyncToCoreObject((static_cast<CoreVariantType<Type, true>*>(object))); \
 		}                                                                                \
                                                                                          \
 	private:                                                                             \
@@ -446,7 +484,7 @@ namespace bs
 	}                                                                                                                              \
                                                                                                                                    \
 public:                                                                                                                            \
-	using Type##EntryName = typename implementation::CoreSyncPacketType<decltype(Type::EntryName)>::Type;                          \
+	using Type##EntryName = std::decay_t<typename implementation::CoreSyncPacketType<decltype(Type::EntryName)>::Type>;                          \
 	Type##EntryName EntryName = implementation::CoreSyncPacketTypeInitializeWithAllocator<Type##EntryName>::Initialize(mAllocator); \
                                                                                                                                    \
 private:                                                                                                                           \
@@ -465,7 +503,7 @@ private:                                                                        
 	}                                                                                                                               \
                                                                                                                                     \
 public:                                                                                                                             \
-	using Type##EntryName = typename implementation::CoreSyncPacketType<EntryType>::Type;                                           \
+	using Type##EntryName = std::decay_t<typename implementation::CoreSyncPacketType<EntryType>::Type>;                                           \
 	Type##EntryName EntryName = implementation::CoreSyncPacketTypeInitializeWithAllocator<Type##EntryName>::Initialize(mAllocator); \
                                                                                                                                     \
 private:                                                                                                                            \

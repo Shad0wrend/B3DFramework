@@ -4,8 +4,8 @@
 #include "CoreThread/BsCoreObject.h"
 #include "CoreThread/BsCoreObjectCore.h"
 #include "Error/BsException.h"
-#include "Math/BsMath.h"
 #include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsCoreObjectSync.h"
 
 using namespace bs;
 
@@ -70,7 +70,14 @@ void CoreObjectManager::UnregisterObject(CoreObject* object)
 			SPtr<ct::CoreObject> coreObject = object->GetCore();
 			if(coreObject != nullptr)
 			{
-				CoreSyncData objSyncData = object->SyncToCore(mSyncAllocators[mActiveFrameAllocatorIndex]);
+				FrameAlloc* allocator = mSyncAllocators[mActiveFrameAllocatorIndex];
+				CoreSyncData objSyncData;
+
+				CoreSyncPacket* const syncPacket = object->CreateSyncPacket(*allocator, object->GetCoreDirtyFlags());
+				if(syncPacket != nullptr)
+					objSyncData = CoreSyncData(syncPacket);
+				else
+					objSyncData = object->SyncToCore(allocator);
 
 				mDestroyedSyncData.push_back(CoreStoredSyncObjData(coreObject, internalId, objSyncData));
 
@@ -277,7 +284,12 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 		IndividualCoreSyncData& data = syncData.back();
 		data.Allocator = allocator;
 		data.Destination = objectCore;
-		data.SyncData = curObj->SyncToCore(allocator);
+
+		CoreSyncPacket* const syncPacket = curObj->CreateSyncPacket(*allocator, curObj->GetCoreDirtyFlags());
+		if(syncPacket != nullptr)
+			data.SyncData = CoreSyncData(syncPacket);
+		else
+			data.SyncData = curObj->SyncToCore(allocator);
 
 		curObj->MarkCoreClean();
 		mDirtyObjects.erase(id);
@@ -298,6 +310,10 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 
 			if(dataPtr != nullptr)
 				entry.Allocator->Free(dataPtr);
+
+			CoreSyncPacket* const syncPacket = entry.SyncData.GetSyncPacket();
+			if(syncPacket != nullptr)
+				entry.Allocator->Destruct(syncPacket);
 		}
 	};
 
@@ -374,9 +390,15 @@ void CoreObjectManager::SyncDownload(FrameAlloc* allocator)
 				return;
 			}
 
-			CoreSyncData objSyncData = curObj->SyncToCore(allocator);
-			curObj->MarkCoreClean();
+			CoreSyncData objSyncData;
 
+			CoreSyncPacket* const syncPacket = curObj->CreateSyncPacket(*allocator, curObj->GetCoreDirtyFlags());
+			if(syncPacket != nullptr)
+				objSyncData = CoreSyncData(syncPacket);
+			else
+				objSyncData = curObj->SyncToCore(allocator);
+
+			curObj->MarkCoreClean();
 			syncData.Entries.push_back(CoreStoredSyncObjData(objectCore, curObj->GetInternalId(), objSyncData));
 		};
 
@@ -425,6 +447,10 @@ void CoreObjectManager::SyncUpload()
 
 		if(data != nullptr)
 			syncData.Alloc->Free(data);
+
+		CoreSyncPacket* const syncPacket = objSyncData.SyncData.GetSyncPacket();
+		if(syncPacket != nullptr)
+			syncData.Alloc->Destruct(syncPacket);
 	}
 
 	syncData.DestroyedObjects.clear();

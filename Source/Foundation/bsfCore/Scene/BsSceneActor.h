@@ -7,6 +7,8 @@
 
 namespace bs
 {
+	struct CoreSyncPacket;
+
 	/** @addtogroup Scene-Internal
 	 *  @{
 	 */
@@ -23,6 +25,13 @@ namespace bs
 
 	typedef Flags<ActorDirtyFlag> ActorDirtyFlags;
 	B3D_FLAGS_OPERATORS(ActorDirtyFlag)
+
+	// SceneActor is not a core object itself, but as it's used as a base for many, this is needed for common core sync functionality used by those.
+	template <>
+	struct CoreThreadType<SceneActor>
+	{
+		typedef SceneActor Type;
+	};
 
 	/**
 	 * A base class for objects that can be placed in the scene. It has a transform object that allows it to be positioned,
@@ -95,6 +104,16 @@ namespace bs
 				p(mMobility);
 		}
 
+		/**
+		 * Creates a data packet that will be used for syncing the core object with it's render thread counter-part.
+		 * Caller must free the retrieved packet using the provided allocator, when done using it.
+		 */
+		CoreSyncPacket* CreateCoreSyncPacket(FrameAlloc& allocator, u32 flags);
+
+		struct SyncEverythingPacket;
+		struct SyncTransformPacket;
+		struct SyncActiveStatePacket;
+
 		/** @} */
 	protected:
 		/**
@@ -111,6 +130,5 @@ namespace bs
 		bool mActive = true;
 		u32 mHash = 0;
 	};
-
 	/** @} */
 } // namespace bs

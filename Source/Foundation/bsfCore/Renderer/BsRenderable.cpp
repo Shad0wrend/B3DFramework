@@ -329,7 +329,7 @@ void Renderable::MarkResourcesDirtyInternal()
 
 namespace bs
 {
-	B3D_SYNC_BLOCK_BEGIN(Renderable, SyncData)
+	B3D_SYNC_BLOCK_BEGIN_WITH_BASE(Renderable, SyncPacket, SceneActor)
 		B3D_SYNC_BLOCK_ENTRY(mLayer)
 		B3D_SYNC_BLOCK_ENTRY(mOverrideBounds)
 		B3D_SYNC_BLOCK_ENTRY(mUseOverrideBounds)
@@ -342,27 +342,19 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncData Renderable::SyncToCore(FrameAlloc* allocator)
+CoreSyncPacket* Renderable::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
 {
-	const u32 dirtyFlags = GetCoreDirtyFlags();
-	u32 size = B3DRTTISize(dirtyFlags).Bytes;
-	SceneActor::RttiEnumFields(RttiB3DCoreSyncSize(size), (ActorDirtyFlags)dirtyFlags);
-
-	size = Math::DivideAndRoundUp(size, 4u) * 4u;
-	u8* data = allocator->Alloc(size);
-	Bitstream stream(data, size);
-
-	B3DRTTIWrite(dirtyFlags, stream);
-	SceneActor::RttiEnumFields(RttiCoreSyncWriter(stream), (ActorDirtyFlags)dirtyFlags);
-
-	if(dirtyFlags != (u32)ActorDirtyFlag::Transform)
+	CoreSyncPacket* const sceneActorSyncPacket = CreateCoreSyncPacket(allocator, flags);
+	if(flags != (u32)ActorDirtyFlag::Transform)
 	{
-		SyncData* output = allocator->Construct<SyncData>(*allocator);
-		output->Sync<false>(*this);
-		output->mAnimationId = mAnimation != nullptr ? mAnimation->GetIdInternal() : (u64)-1;
+		SyncPacket* renderableSyncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+		renderableSyncPacket->mAnimationId = mAnimation != nullptr ? mAnimation->GetIdInternal() : (u64)-1;
+		renderableSyncPacket->NextPacket = sceneActorSyncPacket;
+
+		return renderableSyncPacket;
 	}
 
-	return CoreSyncData(data, size);
+	return sceneActorSyncPacket;
 }
 
 void Renderable::GetCoreDependencies(Vector<CoreObject*>& dependencies)
@@ -649,32 +641,23 @@ void Renderable::UpdatePrevFrameAnimationBuffers()
 
 void Renderable::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
-	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
+	CoreSyncPacket* const syncPacket = data.GetSyncPacket();
+	if(syncPacket == nullptr)
+		return;
 
-	mMaterials.clear();
-
-	u32 numMaterials = 0;
-	u32 dirtyFlags = 0;
 	bool oldIsActive = mActive;
 
-	B3DRTTIRead(dirtyFlags, stream);
-	SceneActor::RttiEnumFields(RttiCoreSyncReader(stream), (ActorDirtyFlags)dirtyFlags);
+	syncPacket->SyncToCoreObject(this);
 
 	mTfrmMatrix = mTransform.GetMatrix();
 	mTfrmMatrixNoScale = Matrix4::TRS(mTransform.GetPosition(), mTransform.GetRotation(), Vector3::kOne);
 
-	if(dirtyFlags != (u32)ActorDirtyFlag::Transform)
-	{
-		bs::Renderable::SyncData* fullSyncData = (bs::Renderable::SyncData*)(data.GetBuffer() + data.GetBufferSize() + 4);
-		fullSyncData->Sync<true>(*this);
-		mAnimationId = fullSyncData->mAnimationId;
+	const u32 flags = syncPacket->Flags;
+	if(flags != (u32)ActorDirtyFlag::Transform)
+		mAnimationId = data.GetSyncPacket<bs::Renderable::SyncPacket>()->mAnimationId;
 
-		allocator.Destruct(fullSyncData);
-	}
-
-	u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active | (u32)ActorDirtyFlag::Dependency;
-
-	if((dirtyFlags & updateEverythingFlag) != 0)
+	const u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active | (u32)ActorDirtyFlag::Dependency;
+	if((syncPacket->Flags & updateEverythingFlag) != 0)
 	{
 		CreateAnimationBuffers();
 
@@ -703,12 +686,12 @@ void Renderable::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 			GetRenderer()->NotifyRenderableAdded(this);
 		}
 	}
-	else if((dirtyFlags & (u32)ActorDirtyFlag::Mobility) != 0)
+	else if((flags & (u32)ActorDirtyFlag::Mobility) != 0)
 	{
 		GetRenderer()->NotifyRenderableRemoved(this);
 		GetRenderer()->NotifyRenderableAdded(this);
 	}
-	else if((dirtyFlags & (u32)ActorDirtyFlag::Transform) != 0)
+	else if((flags & (u32)ActorDirtyFlag::Transform) != 0)
 	{
 		if(mActive)
 			GetRenderer()->NotifyRenderableUpdated(this);
