@@ -4,6 +4,7 @@
 
 #include "BsCoreApplication.h"
 #include "BsShaderCompiler.h"
+#include "CoreThread/BsCoreObjectSync.h"
 #include "Error/BsException.h"
 #include "Renderer/BsRendererManager.h"
 #include "Material/BsPass.h"
@@ -219,52 +220,26 @@ void Technique::SyncToCore()
 	CoreObject::SyncToCore();
 }
 
-CoreSyncData Technique::SyncToCore(FrameAlloc* allocator)
+namespace bs
 {
-	const ShaderVariationDirtyFlags dirtyFlags = (ShaderVariationDirtyFlags)GetCoreDirtyFlags();
-
-	u32 size = sizeof(u32);
-	if(dirtyFlags.IsSet(ShaderVariationDirtyFlag::Parent))
-		size += sizeof(SPtr<ct::Shader>);
-
-	const u32 passCount = (u32)mPasses.size();
-	if(dirtyFlags.IsSet(ShaderVariationDirtyFlag::Passes))
-		size += sizeof(SPtr<ct::Pass>) * passCount + sizeof(passCount) + sizeof(mHasPassData);
-
-	u8* buffer = allocator->Alloc(size);
-	Bitstream stream(buffer, size);
-
-	B3DRTTIWrite((u32)dirtyFlags, stream);
-
-	if(dirtyFlags.IsSet(ShaderVariationDirtyFlag::Parent))
-	{
-		SPtr<ct::Shader> *const coreOwner = new(stream.Cursor()) SPtr<ct::Shader>();
-		const SPtr<Shader> owner = mOwner.lock();
-		if(owner != nullptr)
-			*coreOwner = owner->GetCore();
-		else
-			*coreOwner = nullptr;
-
-		stream.SkipBytes(sizeof(SPtr<ct::Shader>));
-	}
-
-	if(dirtyFlags.IsSet(ShaderVariationDirtyFlag::Passes))
-	{
-		B3DRTTIWrite(mHasPassData, stream);
-		B3DRTTIWrite((u32)mPasses.size(), stream);
-
-		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
-		{
-			SPtr<ct::Pass> *const corePass = new(stream.Cursor()) SPtr<ct::Pass>();
-			*corePass = mPasses[passIndex] != nullptr ? mPasses[passIndex]->GetCore() : nullptr;
-
-			stream.SkipBytes(sizeof(SPtr<ct::Pass>));
-		}
-	}
-
-	return CoreSyncData(buffer, size);
+	B3D_SYNC_BLOCK_BEGIN(Technique, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mPasses)
+		B3D_SYNC_BLOCK_ENTRY(mHasPassData)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(SPtr<Shader>, Owner)
+	B3D_SYNC_BLOCK_END
 }
 
+CoreSyncPacket* Technique::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+{
+	const ShaderVariationDirtyFlags dirtyFlags = (ShaderVariationDirtyFlags)flags;
+
+	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+
+	if(dirtyFlags.IsSet(ShaderVariationDirtyFlag::Parent))
+		syncPacket->Owner = B3DGetCoreObject(mOwner.lock());
+
+	return syncPacket;
+}
 
 SPtr<Technique> Technique::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData)
 {
@@ -327,43 +302,16 @@ SPtr<Technique> Technique::CreateEmpty()
 
 void Technique::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
-	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
+	auto* const syncPacket = data.GetSyncPacket<bs::Technique::SyncPacket>();
+	if(!syncPacket)
+		return;
 
-	u32 dirtyFlagBits;
-	B3DRTTIRead(dirtyFlagBits, stream);
-
-	const ShaderVariationDirtyFlags dirtyFlags = (ShaderVariationDirtyFlags)dirtyFlagBits;
-
+	const ShaderVariationDirtyFlags dirtyFlags = (ShaderVariationDirtyFlags)syncPacket->Flags;
 	if(dirtyFlags.IsSet(ShaderVariationDirtyFlag::Parent))
-	{
-		SPtr<Shader>* const owner = (SPtr<Shader>*)stream.Cursor();
-		B3D_ASSERT(owner != nullptr);
-
-		mOwner = *owner;
-
-		owner->~SPtr<Shader>();
-		stream.SkipBytes(sizeof(SPtr<Shader>));
-	}
+		mOwner = syncPacket->Owner;
 
 	if(dirtyFlags.IsSet(ShaderVariationDirtyFlag::Passes))
-	{
-		B3DRTTIRead(mHasPassData, stream);
-
-		u32 passCount;
-		B3DRTTIRead(passCount, stream);
-
-		mPasses.resize(passCount);
-		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
-		{
-			SPtr<Pass>* const sourcePass = (SPtr<Pass>*)stream.Cursor();
-			B3D_ASSERT(sourcePass != nullptr);
-
-			mPasses[passIndex] = *sourcePass;
-
-			sourcePass->~SPtr<Pass>();
-			stream.SkipBytes(sizeof(SPtr<Pass>));
-		}
-	}
+		syncPacket->ApplySyncData(this);
 }
 
 RTTITypeBase* Technique::GetRttiStatic()

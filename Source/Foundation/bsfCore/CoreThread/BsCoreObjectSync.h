@@ -372,6 +372,24 @@ namespace bs
 				b[index] = std::move(a[index]);
 		}
 
+		/** Copies an array from the non-core object into the field in the CoreSyncPacket. */
+		template <bool Core, class FieldTypeA, class FieldTypeB, u64 N>
+		void CoreSyncField(CoreSyncVector<FieldTypeA>& a, SmallVector<FieldTypeB, N>& b, std::enable_if_t<!Core>* = 0)
+		{
+			a.resize(b.size());
+			for(size_t index = 0; index < b.size(); ++index)
+				a[index] = GetCoreObject(RemoveHandle(b[index]));
+		}
+
+		/** Copies an array from the CoreSyncPacket to a core object. */
+		template <bool Core, class FieldTypeA, class FieldTypeB, u64 N>
+		void CoreSyncField(CoreSyncVector<FieldTypeA>& a, SmallVector<FieldTypeB, N>& b, std::enable_if_t<Core>* = 0)
+		{
+			b.resize(a.size());
+			for(size_t index = 0; index < a.size(); ++index)
+				b[index] = std::move(a[index]);
+		}
+
 		/** Defines an intermediate type used for storing data of type T in a CoreSyncPacket. */
 		template <class T>
 		struct CoreSyncPacketType
@@ -382,6 +400,13 @@ namespace bs
 		/** Defines an intermediate type used for storing data of type T in a CoreSyncPacket. */
 		template <class T>
 		struct CoreSyncPacketType<Vector<T>>
+		{
+			typedef CoreSyncVector<decltype(GetCoreObject(RemoveHandle(T())))> Type;
+		};
+
+		/** Defines an intermediate type used for storing data of type T in a CoreSyncPacket. */
+		template <class T, u64 N>
+		struct CoreSyncPacketType<SmallVector<T, N>>
 		{
 			typedef CoreSyncVector<decltype(GetCoreObject(RemoveHandle(T())))> Type;
 		};
