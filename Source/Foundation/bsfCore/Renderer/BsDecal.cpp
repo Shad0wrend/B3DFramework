@@ -60,16 +60,17 @@ void DecalBase::UpdateBounds()
 	mBounds = Bounds(localAABB, Sphere(localAABB.GetCenter(), localAABB.GetRadius()));
 }
 
-template <bool Core>
-template <class P>
-void TDecal<Core>::RttiEnumFields(P p)
+namespace bs
 {
-	p(mSize);
-	p(mMaxDistance);
-	p(mMaterial);
-	p(mBounds);
-	p(mLayer);
-	p(mLayerMask);
+	B3D_SYNC_BLOCK_BEGIN(Decal, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mSize)
+		B3D_SYNC_BLOCK_ENTRY(mMaxDistance)
+		B3D_SYNC_BLOCK_ENTRY(mMaterial)
+		B3D_SYNC_BLOCK_ENTRY(mBounds)
+		B3D_SYNC_BLOCK_ENTRY(mLayer)
+		B3D_SYNC_BLOCK_ENTRY(mLayerMask)
+		B3D_SYNC_BLOCK_ENTRY_PACKET(SceneActor, SceneActorPacket)
+	B3D_SYNC_BLOCK_END
 }
 
 Decal::Decal(const HMaterial& material, const Vector2& size, float maxDistance)
@@ -122,21 +123,13 @@ void Decal::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 		dependencies.push_back(mMaterial.Get());
 }
 
-CoreSyncData Decal::SyncToCore(FrameAlloc* allocator)
+CoreSyncPacket* Decal::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
 {
-	u32 size = 0;
-	size += B3DRTTISize(GetCoreDirtyFlags()).Bytes;
-	size += CoreSyncGetSize((SceneActor&)*this);
-	size += CoreSyncGetSize(*this);
+	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	if(B3D_ENSURE(syncPacket))
+		syncPacket->SceneActorPacket = CreateSyncPacket(allocator, flags);
 
-	u8* buffer = allocator->Alloc(size);
-
-	Bitstream stream(buffer, size);
-	B3DRTTIWrite(GetCoreDirtyFlags(), stream);
-	B3DCoreSyncWrite((SceneActor&)*this, stream);
-	B3DCoreSyncWrite(*this, stream);
-
-	return CoreSyncData(buffer, size);
+	return syncPacket;
 }
 
 void Decal::MarkCoreDirtyInternal(ActorDirtyFlag flags)
@@ -178,21 +171,19 @@ void Decal::Initialize()
 
 void Decal::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
-	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
+	auto* const syncPacket = data.GetSyncPacket<bs::Decal::SyncPacket>();
+	if(!syncPacket)
+		return;
 
-	u32 dirtyFlags = 0;
 	bool oldIsActive = mActive;
-
-	B3DRTTIRead(dirtyFlags, stream);
-	B3DCoreSyncRead((SceneActor&)*this, stream);
-	B3DCoreSyncRead(*this, stream);
+	syncPacket->ApplySyncData(this);
 
 	mTfrmMatrix = mTransform.GetMatrix();
 	mTfrmMatrixNoScale = Matrix4::TRS(mTransform.GetPosition(), mTransform.GetRotation(), Vector3::kOne);
 
 	UpdateBounds();
 
-	if(dirtyFlags == (u32)ActorDirtyFlag::Transform)
+	if(syncPacket->Flags == (u32)ActorDirtyFlag::Transform)
 	{
 		if(mActive)
 			GetRenderer()->NotifyDecalUpdated(this);

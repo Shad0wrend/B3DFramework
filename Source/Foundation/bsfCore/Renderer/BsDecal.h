@@ -130,10 +130,6 @@ namespace bs
 		/** @copydoc SetMaterial */
 		const MaterialType& GetMaterial() const { return mMaterial; }
 
-		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template <class P>
-		void RttiEnumFields(P p);
-
 	protected:
 		MaterialType mMaterial;
 	};
@@ -170,12 +166,15 @@ namespace bs
 		static SPtr<Decal> Create(const HMaterial& material, const Vector2& size = Vector2::kOne, float maxDistance = 10.0f);
 
 	protected:
+		friend ct::Decal;
+		struct SyncPacket;
+
 		Decal(const HMaterial& material, const Vector2& size, float maxDistance);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 
 		/**	Creates the object with without initializing it. Used for serialization. */
 		static SPtr<Decal> CreateEmpty();

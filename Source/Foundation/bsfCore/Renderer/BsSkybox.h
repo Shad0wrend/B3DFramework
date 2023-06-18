@@ -64,10 +64,6 @@ namespace bs
 		 */
 		TextureType GetTexture() const { return mTexture; }
 
-		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template <class P>
-		void RttiEnumFields(P p);
-
 	protected:
 		TextureType mTexture;
 	};
@@ -98,6 +94,9 @@ namespace bs
 		static SPtr<Skybox> Create();
 
 	protected:
+		friend class ct::Skybox;
+		struct SyncPacket;
+
 		Skybox();
 
 		/**
@@ -108,7 +107,7 @@ namespace bs
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 
 		SPtr<Texture> mFilteredRadiance;
 		SPtr<Texture> mIrradiance;

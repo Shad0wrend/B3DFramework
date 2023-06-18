@@ -69,15 +69,15 @@ void SpriteTextureBase::GetAnimationFrame(float t, u32& row, u32& column) const
 	column = frame % mAnimation.NumColumns;
 }
 
-template <bool Core>
-template <class P>
-void TSpriteTexture<Core>::RttiEnumFields(P p)
+namespace bs
 {
-	p(mUVOffset);
-	p(mUVScale);
-	p(mAnimation);
-	p(mPlayback);
-	p(mAtlasTexture);
+	B3D_SYNC_BLOCK_BEGIN(SpriteTexture, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mUVOffset)
+		B3D_SYNC_BLOCK_ENTRY(mUVScale)
+		B3D_SYNC_BLOCK_ENTRY(mAnimation)
+		B3D_SYNC_BLOCK_ENTRY(mPlayback)
+		B3D_SYNC_BLOCK_ENTRY(mAtlasTexture)
+	B3D_SYNC_BLOCK_END
 }
 
 SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
@@ -149,15 +149,9 @@ SPtr<ct::CoreObject> SpriteTexture::CreateCore() const
 	return spriteTexPtr;
 }
 
-CoreSyncData SpriteTexture::SyncToCore(FrameAlloc* allocator)
+CoreSyncPacket* SpriteTexture::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
 {
-	u32 size = CoreSyncGetSize(*this);
-
-	u8* buffer = allocator->Alloc(size);
-	Bitstream stream(buffer, size);
-	B3DCoreSyncWrite(*this, stream);
-
-	return CoreSyncData(buffer, size);
+	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
 
 void SpriteTexture::GetCoreDependencies(Vector<CoreObject*>& dependencies)
@@ -235,7 +229,10 @@ SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SP
 
 void SpriteTexture::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
-	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-	B3DCoreSyncRead(*this, stream);
+	auto* const syncPacket = data.GetSyncPacket<bs::SpriteTexture::SyncPacket>();
+	if(!syncPacket)
+		return;
+
+	syncPacket->ApplySyncData(this);
 }
 }}

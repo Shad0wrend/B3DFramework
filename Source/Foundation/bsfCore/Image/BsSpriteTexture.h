@@ -80,7 +80,6 @@ namespace bs
 		 * in range [0, 1].
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(Offset), Property(Setter))
-
 		void SetOffset(const Vector2& offset)
 		{
 			mUVOffset = offset;
@@ -89,12 +88,10 @@ namespace bs
 
 		/** @copydoc SetOffset() */
 		B3D_SCRIPT_EXPORT(ExportName(Offset), Property(Getter))
-
 		Vector2 GetOffset() const { return mUVOffset; }
 
 		/** Determines the size of the sprite in the referenced texture. Size is in UV coordinates, range [0, 1]. */
 		B3D_SCRIPT_EXPORT(ExportName(Scale), Property(Setter))
-
 		void SetScale(const Vector2& scale)
 		{
 			mUVScale = scale;
@@ -103,7 +100,6 @@ namespace bs
 
 		/** @copydoc SetScale() */
 		B3D_SCRIPT_EXPORT(ExportName(Scale), Property(Getter))
-
 		Vector2 GetScale() const { return mUVScale; }
 
 		/** Transforms wanted UV coordinates into coordinates you can use for sampling the internal texture. */
@@ -125,7 +121,6 @@ namespace bs
 		 * setAnimationPlayback().
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(Animation), Property(Setter))
-
 		void SetAnimation(const SpriteSheetGridAnimation& anim)
 		{
 			mAnimation = anim;
@@ -134,12 +129,10 @@ namespace bs
 
 		/** @copydoc SetAnimation */
 		B3D_SCRIPT_EXPORT(ExportName(Animation), Property(Getter))
-
 		const SpriteSheetGridAnimation& GetAnimation() const { return mAnimation; }
 
 		/** Determines if and how should the sprite animation play. */
 		B3D_SCRIPT_EXPORT(ExportName(AnimationPlayback), Property(Setter))
-
 		void SetAnimationPlayback(SpriteAnimationPlayback playback)
 		{
 			mPlayback = playback;
@@ -148,7 +141,6 @@ namespace bs
 
 		/** @copydoc SetAnimationPlayback */
 		B3D_SCRIPT_EXPORT(ExportName(AnimationPlayback), Property(Getter))
-
 		SpriteAnimationPlayback GetAnimationPlayback() const { return mPlayback; };
 
 	protected:
@@ -174,10 +166,6 @@ namespace bs
 		{}
 
 		virtual ~TSpriteTexture() = default;
-
-		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template <class P>
-		void RttiEnumFields(P p);
 
 	protected:
 		TextureType mAtlasTexture;
@@ -260,13 +248,15 @@ namespace bs
 		/** @} */
 	private:
 		friend class SpriteTextureRTTI;
+		friend class ct::SpriteTexture;
+		struct SyncPacket;
 
 		/** @copydoc Create(const Vector2&, const Vector2&, const HTexture&) */
 		SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture);
 
 		void Initialize() override;
 		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		/************************************************************************/

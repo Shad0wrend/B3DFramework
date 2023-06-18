@@ -15,12 +15,13 @@
 
 using namespace bs;
 
-template <bool Core>
-template <class P>
-void TSkybox<Core>::RttiEnumFields(P p)
+namespace bs
 {
-	p(mBrightness);
-	p(mTexture);
+	B3D_SYNC_BLOCK_BEGIN(Skybox, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mBrightness)
+		B3D_SYNC_BLOCK_ENTRY(mTexture)
+		B3D_SYNC_BLOCK_ENTRY_PACKET(SceneActor, SceneActorPacket)
+	B3D_SYNC_BLOCK_END
 }
 
 Skybox::Skybox()
@@ -166,21 +167,13 @@ SPtr<ct::CoreObject> Skybox::CreateCore() const
 	return skyboxPtr;
 }
 
-CoreSyncData Skybox::SyncToCore(FrameAlloc* allocator)
+CoreSyncPacket* Skybox::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
 {
-	u32 size = 0;
-	size += B3DRTTISize(GetCoreDirtyFlags()).Bytes;
-	size += CoreSyncGetSize((SceneActor&)*this);
-	size += CoreSyncGetSize(*this);
+	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	if(B3D_ENSURE(syncPacket))
+		syncPacket->SceneActorPacket = CreateSyncPacket(allocator, flags);
 
-	u8* buffer = allocator->Alloc(size);
-
-	Bitstream stream(buffer, size);
-	B3DRTTIWrite(GetCoreDirtyFlags(), stream);
-	B3DCoreSyncWrite((SceneActor&)*this, stream);
-	B3DCoreSyncWrite(*this, stream);
-
-	return CoreSyncData(buffer, size);
+	return syncPacket;
 }
 
 void Skybox::MarkCoreDirtyInternal(ActorDirtyFlag flags)
@@ -220,14 +213,14 @@ void Skybox::Initialize()
 
 void Skybox::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
-	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
+	auto* const syncPacket = data.GetSyncPacket<bs::Skybox::SyncPacket>();
+	if(!syncPacket)
+		return;
 
-	SkyboxDirtyFlag dirtyFlags;
 	bool oldIsActive = mActive;
+	syncPacket->ApplySyncData(this);
 
-	B3DRTTIRead(dirtyFlags, stream);
-	B3DCoreSyncRead((SceneActor&)*this, stream);
-	B3DCoreSyncRead(*this, stream);
+	const SkyboxDirtyFlag dirtyFlags = (SkyboxDirtyFlag)syncPacket->Flags;
 
 	if(oldIsActive != mActive)
 	{
