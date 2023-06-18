@@ -74,16 +74,16 @@ void ViewportBase::SetClearStencilValue(u16 value)
 	MarkCoreDirtyInternal();
 }
 
-template <bool Core>
-template <class P>
-void TViewport<Core>::RttiEnumFields(P p)
+namespace bs
 {
-	p(mNormArea);
-	p(mClearFlags);
-	p(mClearColorValue);
-	p(mClearDepthValue);
-	p(mClearStencilValue);
-	p(mTarget);
+	B3D_SYNC_BLOCK_BEGIN(Viewport, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mNormArea)
+		B3D_SYNC_BLOCK_ENTRY(mClearFlags)
+		B3D_SYNC_BLOCK_ENTRY(mClearColorValue)
+		B3D_SYNC_BLOCK_ENTRY(mClearDepthValue)
+		B3D_SYNC_BLOCK_ENTRY(mClearStencilValue)
+		B3D_SYNC_BLOCK_ENTRY(mTarget)
+	B3D_SYNC_BLOCK_END
 }
 
 Viewport::Viewport(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
@@ -140,16 +140,9 @@ SPtr<ct::CoreObject> Viewport::CreateCore() const
 	return viewportPtr;
 }
 
-CoreSyncData Viewport::SyncToCore(FrameAlloc* allocator)
+CoreSyncPacket* Viewport::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
 {
-	u32 size = CoreSyncGetSize(*this);
-
-	u8* buffer = allocator->Alloc(size);
-	Bitstream stream(buffer, size);
-
-	B3DCoreSyncWrite(*this, stream);
-
-	return CoreSyncData(buffer, size);
+	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
 
 void Viewport::GetCoreDependencies(Vector<CoreObject*>& dependencies)
@@ -222,7 +215,10 @@ u32 Viewport::GetTargetHeight() const
 
 void Viewport::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
-	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-	B3DCoreSyncRead(*this, stream);
+	auto* const syncPacket = data.GetSyncPacket<bs::Viewport::SyncPacket>();
+	if(!syncPacket)
+		return;
+
+	syncPacket->ApplySyncData(this);
 }
 }}

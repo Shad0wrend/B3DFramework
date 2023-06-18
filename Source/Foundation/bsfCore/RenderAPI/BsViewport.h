@@ -120,10 +120,6 @@ namespace bs
 
 		virtual ~TViewport() = default;
 
-		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template <class P>
-		void RttiEnumFields(P p);
-
 	protected:
 		SPtr<RenderTargetType> mTarget;
 	};
@@ -162,13 +158,16 @@ namespace bs
 		static SPtr<Viewport> Create(const SPtr<RenderTarget>& target, float x = 0.0f, float y = 0.0f, float width = 1.0f, float height = 1.0f);
 
 	protected:
+		friend class ct::Viewport;
+		struct SyncPacket;
+
 		Viewport(const SPtr<RenderTarget>& target, float x = 0.0f, float y = 0.0f, float width = 1.0f, float height = 1.0f);
 
 		void MarkCoreDirtyInternal() override;
 		u32 GetTargetWidth() const override;
 		u32 GetTargetHeight() const override;
 
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		SPtr<ct::CoreObject> CreateCore() const override;

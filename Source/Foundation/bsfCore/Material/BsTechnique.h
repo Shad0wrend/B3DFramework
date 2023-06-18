@@ -141,7 +141,7 @@ namespace bs
 		 *
 		 * @param		owner				Shader that owns the variation.
 		 * @param		language			Shading language used by the variation. The engine will not use this variation unless this language is supported by the render backend.
-		 * @param		variation			Variation parameters used for compiling this variation.
+		 * @param		variationParameters	Variation parameters used for compiling this variation.
 		 * @param		precompiledData		Optional set of precompiled variation data. If not provided, you must manually call Compile() on the variation before use.
 		 * @return							Newly creted variation.
 		 */

@@ -67,17 +67,6 @@ namespace bs
 		 * Only valid after compile has been called.
 		 */
 		const SPtr<GpuComputePipelineState>& GetComputePipelineState() const { return mComputePipelineState; }
-
-		/**
-		 * @name Internal
-		 * @{
-		 */
-
-		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template <class P>
-		void RttiEnumFields(P p);
-
-		/** @} */
 	protected:
 		TPass();
 		TPass(const PassCreateInformation& createInformation);
@@ -123,11 +112,13 @@ namespace bs
 
 	protected:
 		friend class Technique;
+		friend class ct::Pass;
+		struct SyncPacket;
 
 		Pass() = default;
 		Pass(const PassCreateInformation& createInformation);
 
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/**	Creates a new empty pass but doesn't initialize it. */

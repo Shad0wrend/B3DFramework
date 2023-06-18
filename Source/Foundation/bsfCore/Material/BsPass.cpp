@@ -106,16 +106,16 @@ void TPass<Core>::CreatePipelineState()
 	}
 }
 
-template <bool Core>
-template <class P>
-void TPass<Core>::RttiEnumFields(P p)
-{
-	p(mGraphicsPipelineState);
-	p(mComputePipelineState);
-}
-
 template class TPass<false>;
 template class TPass<true>;
+
+namespace bs
+{
+	B3D_SYNC_BLOCK_BEGIN(Pass, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mGraphicsPipelineState)
+		B3D_SYNC_BLOCK_ENTRY(mComputePipelineState)
+	B3D_SYNC_BLOCK_END
+}
 
 Pass::Pass(const PassCreateInformation& createInformation)
 	: TPass(createInformation)
@@ -152,15 +152,9 @@ void Pass::Compile()
 	CoreObject::SyncToCore();
 }
 
-CoreSyncData Pass::SyncToCore(FrameAlloc* allocator)
+CoreSyncPacket* Pass::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
 {
-	u32 size = CoreSyncGetSize(*this);
-	u8* data = allocator->Alloc(size);
-
-	Bitstream stream(data, size);
-	B3DCoreSyncWrite(*this, stream);
-
-	return CoreSyncData(data, size);
+	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
 
 SPtr<Pass> Pass::Create(const PassCreateInformation& desc)
@@ -208,8 +202,11 @@ void Pass::Compile()
 
 void Pass::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
-	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-	B3DCoreSyncRead(*this, stream);
+	auto* const syncPacket = data.GetSyncPacket<CoreSyncPacket>();
+	if(!syncPacket)
+		return;
+
+	syncPacket->ApplySyncData(this);
 }
 
 SPtr<Pass> Pass::Create(const PassCreateInformation& createInformation)
