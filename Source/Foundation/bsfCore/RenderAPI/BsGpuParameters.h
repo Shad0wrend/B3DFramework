@@ -599,12 +599,14 @@ namespace bs
 
 		/** @} */
 	protected:
+		struct SyncPacket;
+		friend class ct::GpuParameters;
+
 		GpuParameters(const SPtr<GpuPipelineParameterLayout>& paramInfo);
 
 		SPtr<GpuParameters> GetThisPtrInternal() const override;
 		SPtr<ct::CoreObject> CreateCore() const override;
-
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 
 		void GetListenerResources(Vector<HResource>& resources) override;
 		void NotifyResourceLoaded(const HResource& resource) override { MarkCoreDirty(); }

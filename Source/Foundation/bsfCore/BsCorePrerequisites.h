@@ -237,7 +237,9 @@ namespace bs
 	// Core objects
 	template <class T>
 	struct CoreThreadType
-	{};
+	{
+		typedef T Type;
+	};
 
 #define CORE_OBJECT_FORWARD_DECLARE(TYPE) \
 	class TYPE;                           \

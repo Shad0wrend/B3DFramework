@@ -401,14 +401,14 @@ namespace bs
 		template <class T>
 		struct CoreSyncPacketType<Vector<T>>
 		{
-			typedef CoreSyncVector<decltype(GetCoreObject(RemoveHandle(T())))> Type;
+			typedef CoreSyncVector<std::decay_t<decltype(GetCoreObject(RemoveHandle(T())))>> Type;
 		};
 
 		/** Defines an intermediate type used for storing data of type T in a CoreSyncPacket. */
 		template <class T, u64 N>
 		struct CoreSyncPacketType<SmallVector<T, N>>
 		{
-			typedef CoreSyncVector<decltype(GetCoreObject(RemoveHandle(T())))> Type;
+			typedef CoreSyncVector<std::decay_t<decltype(GetCoreObject(RemoveHandle(T())))>> Type;
 		};
 
 		/** Initializes an intermediate type used for storing data of type T in a CoreSyncPacket with an allocator if needed. */

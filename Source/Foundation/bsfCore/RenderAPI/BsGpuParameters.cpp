@@ -15,6 +15,7 @@
 #include "Math/BsVector3I.h"
 #include "Math/BsVector4I.h"
 #include "Math/BsMatrixNxM.h"
+#include "CoreThread/BsCoreObjectSync.h"
 
 using namespace bs;
 
@@ -682,6 +683,20 @@ template B3D_CORE_EXPORT void TGpuParams<true>::GetParameter<Matrix4>(GpuProgram
 template B3D_CORE_EXPORT void TGpuParams<true>::GetParameter<Matrix4x2>(GpuProgramType type, const String&, TGpuParameterPrimitive<Matrix4x2, true>&) const;
 template B3D_CORE_EXPORT void TGpuParams<true>::GetParameter<Matrix4x3>(GpuProgramType type, const String&, TGpuParameterPrimitive<Matrix4x3, true>&) const;
 
+namespace bs
+{
+	B3D_SYNC_BLOCK_BEGIN(GpuParameters, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<HTexture>, SampledTextures)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<TextureSurface>, SampledTextureSurfaces)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<HTexture>, StorageTextures)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<TextureSurface>, StorageTextureSurfaces)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<SPtr<GpuBuffer>>, UniformBuffers)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<u32>, UniformBufferOffsets)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<SPtr<GpuBuffer>>, StorageBuffers)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<GpuStorageBufferViewInformation>, StorageBufferViews)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<SPtr<SamplerState>>, SamplerStates)
+	B3D_SYNC_BLOCK_END
+}
 const GpuDataParameterTypeInformationLookup GpuParameters::kParamSizes;
 
 GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
@@ -739,110 +754,57 @@ SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuPipelineParameterLayout>
 	return shared;
 }
 
-CoreSyncData GpuParameters::SyncToCore(FrameAlloc* allocator)
+CoreSyncPacket* GpuParameters::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
 {
+	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+
 	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::UniformBuffer);
-	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::SampledTexture);
-	const u32 storageTextureCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::StorageTexture);
-	const u32 storageBufferCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::StorageBuffer);
-	const u32 samplerCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::Sampler);
+	syncPacket->UniformBufferOffsets.reserve(uniformBufferCount);
+	syncPacket->UniformBufferOffsets.reserve(uniformBufferCount);
 
-	const u32 sampledTextureSurfacesArraySize = sampledTextureCount * sizeof(TextureSurface);
-	const u32 storageTextureSurfacesArraySize = storageTextureCount * sizeof(TextureSurface);
-	const u32 uniformBufferArraySize = uniformBufferCount * sizeof(SPtr<ct::GpuBuffer>);
-	const u32 uniformBufferOffsetsArraySize = uniformBufferCount * sizeof(u32);
-	const u32 sampledTextureArraySize = sampledTextureCount * sizeof(SPtr<ct::Texture>);
-	const u32 storageTextureArraySize = storageTextureCount * sizeof(SPtr<ct::Texture>);
-	const u32 storageBufferArraySize = storageBufferCount * sizeof(SPtr<ct::GpuBuffer>);
-	const u32 storageBufferOffsetArraySize = storageBufferCount * sizeof(u32);
-	const u32 storageBufferFormatArraySize = storageBufferCount * sizeof(GpuBufferFormat);
-	const u32 samplerArraySize = samplerCount * sizeof(SPtr<SamplerState>);
-
-	const u32 totalSize = sampledTextureSurfacesArraySize + storageTextureSurfacesArraySize + uniformBufferArraySize + uniformBufferOffsetsArraySize + sampledTextureArraySize + storageTextureArraySize + storageBufferArraySize + storageBufferOffsetArraySize + storageBufferFormatArraySize + samplerArraySize;
-
-	const u32 sampledTextureSurfaceArrayOffset = 0;
-	const u32 storageTextureSurfaceArrayOffset = sampledTextureSurfaceArrayOffset + sampledTextureSurfacesArraySize;
-	const u32 uniformBufferArrayOffset = storageTextureSurfaceArrayOffset + storageTextureSurfacesArraySize;
-	const u32 uniformBufferOffsetArrayOffset = uniformBufferArrayOffset + uniformBufferArraySize;
-	const u32 sampledTextureArrayOffset = uniformBufferOffsetArrayOffset + uniformBufferOffsetsArraySize;
-	const u32 storageTextureArrayOffset = sampledTextureArrayOffset + sampledTextureArraySize;
-	const u32 storageBufferArrayOffset = storageTextureArrayOffset + storageTextureArraySize;
-	const u32 storageBufferOffsetArrayOffset = storageBufferArrayOffset + storageBufferArraySize;
-	const u32 storageBufferFormatArrayOffset = storageBufferOffsetArrayOffset + storageBufferOffsetArraySize;
-	const u32 samplerArrayOffset = storageBufferFormatArrayOffset + storageBufferFormatArraySize;
-
-	u8* data = allocator->Alloc(totalSize);
-
-	TextureSurface* sampledTextureSurfaces = (TextureSurface*)(data + sampledTextureSurfaceArrayOffset);
-	TextureSurface* storageTextureSurfaces = (TextureSurface*)(data + storageTextureSurfaceArrayOffset);
-	SPtr<ct::GpuBuffer>* uniformBuffers = (SPtr<ct::GpuBuffer>*)(data + uniformBufferArrayOffset);
-	u32* uniformBufferOffsets = (u32*)(data + uniformBufferOffsetArrayOffset);
-	SPtr<ct::Texture>* sampledTextures = (SPtr<ct::Texture>*)(data + sampledTextureArrayOffset);
-	SPtr<ct::Texture>* storageTextures = (SPtr<ct::Texture>*)(data + storageTextureArrayOffset);
-	SPtr<ct::GpuBuffer>* storageBuffers = (SPtr<ct::GpuBuffer>*)(data + storageBufferArrayOffset);
-	u32* storageBufferOffsets = (u32*)(data + storageBufferOffsetArrayOffset);
-	GpuBufferFormat* storageBufferFormats = (GpuBufferFormat*)(data + storageBufferFormatArrayOffset);
-	SPtr<SamplerState>* samplers = (SPtr<SamplerState>*)(data + samplerArrayOffset);
-
-	// Construct & copy
 	for(u32 i = 0; i < uniformBufferCount; i++)
 	{
-		uniformBufferOffsets[i] = mUniformBufferData->Offset;
-
-		new(&uniformBuffers[i]) SPtr<ct::GpuBuffer>();
-
-		if(mUniformBufferData[i].Buffer != nullptr)
-			uniformBuffers[i] = mUniformBufferData[i].Buffer->GetCore();
-		else
-			uniformBuffers[i] = nullptr;
+		syncPacket->UniformBufferOffsets.push_back(mUniformBufferData->Offset);
+		syncPacket->UniformBuffers.push_back(B3DGetCoreObject(mUniformBufferData[i].Buffer));
 	}
+
+	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::SampledTexture);
+	syncPacket->SampledTextureSurfaces.reserve(sampledTextureCount);
+	syncPacket->SampledTextures.reserve(sampledTextureCount);
 
 	for(u32 i = 0; i < sampledTextureCount; i++)
 	{
-		new(&sampledTextureSurfaces[i]) TextureSurface();
-		sampledTextureSurfaces[i] = mSampledTextureData[i].Surface;
-
-		new(&sampledTextures[i]) SPtr<ct::Texture>();
-
-		if(mSampledTextureData[i].Texture.IsLoaded())
-			sampledTextures[i] = mSampledTextureData[i].Texture->GetCore();
-		else
-			sampledTextures[i] = nullptr;
+		syncPacket->SampledTextureSurfaces.push_back(mSampledTextureData[i].Surface);
+		syncPacket->SampledTextures.push_back(B3DGetCoreObject(mSampledTextureData[i].Texture));
 	}
+
+	const u32 storageTextureCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::StorageTexture);
+	syncPacket->StorageTextureSurfaces.reserve(storageTextureCount);
+	syncPacket->StorageTextures.reserve(storageTextureCount);
 
 	for(u32 i = 0; i < storageTextureCount; i++)
 	{
-		new(&storageTextureSurfaces[i]) TextureSurface();
-		storageTextureSurfaces[i] = mStorageTextureData[i].Surface;
-
-		new(&storageTextures[i]) SPtr<ct::Texture>();
-
-		if(mStorageTextureData[i].Texture.IsLoaded())
-			storageTextures[i] = mStorageTextureData[i].Texture->GetCore();
-		else
-			storageTextures[i] = nullptr;
+		syncPacket->StorageTextureSurfaces.push_back(mStorageTextureData[i].Surface);
+		syncPacket->StorageTextures.push_back(B3DGetCoreObject(mStorageTextureData[i].Texture));
 	}
+
+	const u32 storageBufferCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::StorageBuffer);
+	syncPacket->StorageBufferViews.reserve(storageBufferCount);
+	syncPacket->StorageBuffers.reserve(storageBufferCount);
 
 	for(u32 i = 0; i < storageBufferCount; i++)
 	{
-		storageBufferOffsets[i] = mStorageBufferData->View.Offset;
-		storageBufferFormats[i] = mStorageBufferData->View.Format;
-
-		new(&storageBuffers[i]) SPtr<ct::GpuBuffer>();
-
-		if(mStorageBufferData[i].Buffer != nullptr)
-			storageBuffers[i] = mStorageBufferData[i].Buffer->GetCore();
-		else
-			storageBuffers[i] = nullptr;
+		syncPacket->StorageBufferViews.push_back(mStorageBufferData[i].View);
+		syncPacket->StorageBuffers.push_back(B3DGetCoreObject(mStorageBufferData[i].Buffer));
 	}
+
+	const u32 samplerCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::Sampler);
+	syncPacket->SamplerStates.reserve(samplerCount);
 
 	for(u32 i = 0; i < samplerCount; i++)
-	{
-		new(&samplers[i]) SPtr<SamplerState>();
-		samplers[i] = mSamplerStates[i];
-	}
+		syncPacket->SamplerStates.push_back(mSamplerStates[i]);
 
-	return CoreSyncData(data, totalSize);
+	return syncPacket;
 }
 
 void GpuParameters::GetListenerResources(Vector<HResource>& resources)
@@ -877,91 +839,58 @@ SPtr<GpuParameters> GpuParameters::GetThisPtrInternal() const
 
 void GpuParameters::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
+	auto* const syncPacket = data.GetSyncPacket<bs::GpuParameters::SyncPacket>();
+	if(!syncPacket)
+		return;
+
 	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::UniformBuffer);
 	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::SampledTexture);
 	const u32 storageTextureCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::StorageTexture);
 	const u32 storageBufferCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::StorageBuffer);
 	const u32 samplerCount = mParameterLayout->GetResourceCount(GpuPipelineParameterLayout::GpuParameterType::Sampler);
 
-	const u32 sampledTextureSurfacesArraySize = sampledTextureCount * sizeof(TextureSurface);
-	const u32 storageTextureSurfacesArraySize = storageTextureCount * sizeof(TextureSurface);
-	const u32 uniformBufferArraySize = uniformBufferCount * sizeof(SPtr<GpuBuffer>);
-	const u32 uniformBufferOffsetsArraySize = uniformBufferCount * sizeof(u32);
-	const u32 sampledTextureArraySize = sampledTextureCount * sizeof(SPtr<Texture>);
-	const u32 storageTextureArraySize = storageTextureCount * sizeof(SPtr<Texture>);
-	const u32 storageBufferArraySize = storageBufferCount * sizeof(SPtr<GpuBuffer>);
-	const u32 storageBufferOffsetArraySize = storageBufferCount * sizeof(u32);
-	const u32 storageBufferFormatArraySize = storageBufferCount * sizeof(GpuBufferFormat);
-	const u32 samplerArraySize = samplerCount * sizeof(SPtr<SamplerState>);
-
-	const u32 totalSize = sampledTextureSurfacesArraySize + storageTextureSurfacesArraySize + uniformBufferArraySize + uniformBufferOffsetsArraySize + sampledTextureArraySize + storageTextureArraySize + storageBufferArraySize + storageBufferOffsetArraySize + storageBufferFormatArraySize + samplerArraySize;
-
-	const u32 sampledTextureSurfacesArrayOffset = 0;
-	const u32 storageTextureSurfacesArrayOffset = sampledTextureSurfacesArrayOffset + sampledTextureSurfacesArraySize;
-	const u32 uniformBufferArrayOffset = storageTextureSurfacesArrayOffset + storageTextureSurfacesArraySize;
-	const u32 uniformBufferOffsetArrayOffset = uniformBufferArrayOffset + uniformBufferArraySize;
-	const u32 sampledTextureArrayOffset = uniformBufferOffsetArrayOffset + uniformBufferOffsetsArraySize;
-	const u32 storageTextureArrayOffset = sampledTextureArrayOffset + sampledTextureArraySize;
-	const u32 storageBufferArrayOffset = storageTextureArrayOffset + storageTextureArraySize;
-	const u32 storageBufferOffsetArrayOffset = storageBufferArrayOffset + storageBufferArraySize;
-	const u32 storageBufferFormatArrayOffset = storageBufferOffsetArrayOffset + storageBufferOffsetArraySize;
-	const u32 samplerArrayOffset = storageBufferFormatArrayOffset + storageBufferFormatArraySize;
-
-	B3D_ASSERT(data.GetBufferSize() == totalSize);
-
-	u8* dataPtr = data.GetBuffer();
-
-	TextureSurface* sampledTextureSurfaces = (TextureSurface*)(dataPtr + sampledTextureSurfacesArrayOffset);
-	TextureSurface* storageSurfaces = (TextureSurface*)(dataPtr + storageTextureSurfacesArrayOffset);
-	SPtr<GpuBuffer>* uniformBuffers = (SPtr<GpuBuffer>*)(dataPtr + uniformBufferArrayOffset);
-	u32* uniformBufferOffsets = (u32*)(dataPtr + uniformBufferOffsetArrayOffset);
-	SPtr<Texture>* sampledTextures = (SPtr<Texture>*)(dataPtr + sampledTextureArrayOffset);
-	SPtr<Texture>* storageTextures = (SPtr<Texture>*)(dataPtr + storageTextureArrayOffset);
-	SPtr<GpuBuffer>* storageBuffers = (SPtr<GpuBuffer>*)(dataPtr + storageBufferArrayOffset);
-	u32* storageBufferOffsets = (u32*)(dataPtr + storageBufferOffsetArrayOffset);
-	GpuBufferFormat* storageBufferFormats = (GpuBufferFormat*)(dataPtr + storageBufferFormatArrayOffset);
-	SPtr<SamplerState>* samplers = (SPtr<SamplerState>*)(dataPtr + samplerArrayOffset);
-
-	// Copy & destruct
-	for(u32 i = 0; i < uniformBufferCount; i++)
+	if(B3D_ENSURE(syncPacket->UniformBuffers.size() == uniformBufferCount && syncPacket->UniformBufferOffsets.size() == uniformBufferCount))
 	{
-		mUniformBufferData[i].Buffer = uniformBuffers[i];
-		mUniformBufferData[i].Offset = uniformBufferOffsets[i];
-
-		uniformBuffers[i].~SPtr<GpuBuffer>();
+		for(u32 i = 0; i < uniformBufferCount; i++)
+		{
+			mUniformBufferData[i].Buffer = syncPacket->UniformBuffers[i];
+			mUniformBufferData[i].Offset = syncPacket->UniformBufferOffsets[i];
+		}
 	}
 
-	for(u32 i = 0; i < sampledTextureCount; i++)
+	if(B3D_ENSURE(syncPacket->SampledTextures.size() == sampledTextureCount && syncPacket->SampledTextureSurfaces.size() == sampledTextureCount))
 	{
-		mSampledTextureData[i].Surface = sampledTextureSurfaces[i];
-		storageSurfaces[i].~TextureSurface();
-
-		mSampledTextureData[i].Texture = sampledTextures[i];
-		sampledTextures[i].~SPtr<Texture>();
+		for(u32 i = 0; i < sampledTextureCount; i++)
+		{
+			mSampledTextureData[i].Texture = syncPacket->SampledTextures[i];
+			mSampledTextureData[i].Surface = syncPacket->SampledTextureSurfaces[i];
+		}
 	}
 
-	for(u32 i = 0; i < storageTextureCount; i++)
+	if(B3D_ENSURE(syncPacket->StorageTextures.size() == storageTextureCount && syncPacket->StorageTextureSurfaces.size() == storageTextureCount))
 	{
-		mStorageTextureData[i].Surface = storageSurfaces[i];
-		storageSurfaces[i].~TextureSurface();
-
-		mStorageTextureData[i].Texture = storageTextures[i];
-		storageTextures[i].~SPtr<Texture>();
+		for(u32 i = 0; i < storageTextureCount; i++)
+		{
+			mStorageTextureData[i].Texture = syncPacket->StorageTextures[i];
+			mStorageTextureData[i].Surface = syncPacket->StorageTextureSurfaces[i];
+		}
 	}
 
-	for(u32 i = 0; i < storageBufferCount; i++)
+	if(B3D_ENSURE(syncPacket->StorageBuffers.size() == storageBufferCount && syncPacket->StorageBufferViews.size() == storageBufferCount))
 	{
-		mStorageBufferData[i].Buffer = storageBuffers[i];
-		mStorageBufferData[i].View.Offset = storageBufferOffsets[i];
-		mStorageBufferData[i].View.Format = storageBufferFormats[i];
-
-		storageBuffers[i].~SPtr<GpuBuffer>();
+		for(u32 i = 0; i < storageBufferCount; i++)
+		{
+			mStorageBufferData[i].Buffer = syncPacket->StorageBuffers[i];
+			mStorageBufferData[i].View = syncPacket->StorageBufferViews[i];
+		}
 	}
 
-	for(u32 i = 0; i < samplerCount; i++)
+	if(B3D_ENSURE(syncPacket->SamplerStates.size() == samplerCount))
 	{
-		mSamplerStates[i] = samplers[i];
-		samplers[i].~SPtr<SamplerState>();
+		for(u32 i = 0; i < samplerCount; i++)
+		{
+			mSamplerStates[i] = syncPacket->SamplerStates[i];
+		}
 	}
 }
 }}
