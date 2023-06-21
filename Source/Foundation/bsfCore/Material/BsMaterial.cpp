@@ -672,51 +672,28 @@ SPtr<ct::CoreObject> Material::CreateCore() const
 	return materialPtr;
 }
 
-CoreSyncData Material::SyncToCore(FrameAlloc* allocator)
+namespace bs
 {
-	const u32 dirtyParam = (u32)MaterialDirtyFlags::Param;
-	const bool syncAllParams = (GetCoreDirtyFlags() & ~dirtyParam) != 0;
+	B3D_SYNC_BLOCK_BEGIN(Material, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mShader)
+		B3D_SYNC_BLOCK_ENTRY(mTechniques)
+		B3D_SYNC_BLOCK_ENTRY(mVariation)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(bool, IsSyncingAllParameters)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(MaterialParams::SyncPacket*, DirtyMaterialParametersPacket)
+	B3D_SYNC_BLOCK_END
+}
 
-	u32 paramsSize = 0;
+CoreSyncPacket* Material::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+{
+	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+
+	syncPacket->IsSyncingAllParameters = (GetCoreDirtyFlags() & ~((u32)MaterialDirtyFlags::Param)) != 0;
+	syncPacket->DirtyMaterialParametersPacket = nullptr;
+
 	if(mParams != nullptr)
-		mParams->GetSyncData(nullptr, paramsSize, syncAllParams);
-
-	u32 numTechniques = (u32)mTechniques.size();
-	u32 size = sizeof(bool) + sizeof(u32) * 2 + sizeof(SPtr<ct::Shader>) +
-		sizeof(SPtr<ct::Technique>) * numTechniques + paramsSize;
-
-	size += CoreSyncGetSize(mVariation);
-
-	u8* buffer = allocator->Alloc(size);
-	Bitstream stream(buffer, size);
-
-	B3DRTTIWrite(syncAllParams, stream);
-
-	SPtr<ct::Shader>* shader = new(stream.Cursor()) SPtr<ct::Shader>();
-	if(mShader.IsLoaded(false))
-		*shader = mShader->GetCore();
-	else
-		*shader = nullptr;
-
-	stream.SkipBytes(sizeof(SPtr<ct::Shader>));
-	B3DRTTIWrite(numTechniques, stream);
-
-	for(u32 i = 0; i < numTechniques; i++)
-	{
-		SPtr<ct::Technique>* technique = new(stream.Cursor()) SPtr<ct::Technique>();
-		*technique = mTechniques[i]->GetCore();
-
-		stream.SkipBytes(sizeof(SPtr<ct::Technique>));
-	}
-
-	B3DRTTIWrite(paramsSize, stream);
-	if(mParams != nullptr)
-		mParams->GetSyncData(stream.Cursor(), paramsSize, syncAllParams);
-
-	stream.SkipBytes(paramsSize);
-	B3DCoreSyncWrite(mVariation, stream);
-
-	return CoreSyncData(buffer, size);
+		syncPacket->DirtyMaterialParametersPacket = mParams->CreateSyncPacket(allocator, syncPacket->IsSyncingAllParameters);
+	
+	return syncPacket;
 }
 
 void Material::GetCoreDependencies(Vector<CoreObject*>& dependencies)
@@ -1064,45 +1041,24 @@ void Material::SetVariation(const ShaderVariationParameters& variation)
 
 void Material::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
-	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-
-	bool syncAllParams;
-	B3DRTTIRead(syncAllParams, stream);
+	auto* syncPacket = data.GetSyncPacket<bs::Material::SyncPacket>();
+	if(!syncPacket)
+		return;
 
 	u64 initialParamVersion = mParams != nullptr ? mParams->GetParamVersion() : 1;
-	if(syncAllParams)
+	if(syncPacket->IsSyncingAllParameters)
 		mParams = nullptr;
 
-	SPtr<Shader>* shader = (SPtr<Shader>*)stream.Cursor();
+	const u32 originalVariationIndex = mVariation.GetIdx();
+	syncPacket->ApplySyncData(this);
 
-	mShader = *shader;
-	shader->~SPtr<Shader>();
-	stream.SkipBytes(sizeof(SPtr<Shader>));
-
-	u32 numTechniques;
-	B3DRTTIRead(numTechniques, stream);
-
-	mTechniques.resize(numTechniques);
-	for(u32 i = 0; i < numTechniques; i++)
-	{
-		SPtr<Technique>* technique = (SPtr<Technique>*)stream.Cursor();
-		mTechniques[i] = *technique;
-		technique->~SPtr<Technique>();
-		stream.SkipBytes(sizeof(SPtr<Technique>));
-	}
-
-	u32 paramsSize = 0;
-	B3DRTTIRead(paramsSize, stream);
 	if(mParams == nullptr && mShader != nullptr)
 		mParams = B3DMakeShared<MaterialParams>(mShader, initialParamVersion);
 
-	if(mParams != nullptr && paramsSize > 0)
-		mParams->SetSyncData(stream.Cursor(), paramsSize);
+	if(mParams != nullptr && syncPacket->DirtyMaterialParametersPacket)
+		mParams->ApplyAndDestroySyncPacket(allocator, *syncPacket->DirtyMaterialParametersPacket);
 
-	stream.SkipBytes(paramsSize);
-
-	mVariation.ClearParams();
-	B3DCoreSyncRead(mVariation, stream);
+	mVariation.SetIdx(originalVariationIndex);
 }
 
 SPtr<Material> Material::Create(const SPtr<Shader>& shader)

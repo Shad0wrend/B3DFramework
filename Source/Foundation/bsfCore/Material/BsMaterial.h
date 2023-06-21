@@ -122,7 +122,6 @@ namespace bs
 
 		/** Returns the currently active shader. */
 		B3D_SCRIPT_EXPORT(ExportName(Shader), Property(Getter))
-
 		ShaderType GetShader() const { return mShader; }
 
 		/**
@@ -132,7 +131,6 @@ namespace bs
 		 * findTechnique().
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(Variation), Property(Getter))
-
 		const ShaderVariationParameters& GetVariation() const { return mVariation; }
 
 		/** Returns the total number of techniques supported by this material. */
@@ -202,7 +200,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		void SetFloat(const String& name, float value, u32 arrayIdx = 0) { return GetParamFloat(name).Set(value, arrayIdx); }
 
 		/*
@@ -212,7 +209,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		void SetFloatCurve(const String& name, TAnimationCurve<float> value, u32 arrayIdx = 0)
 		{
 			return GetParamFloatCurve(name).Set(std::move(value), arrayIdx);
@@ -224,7 +220,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		void SetColor(const String& name, const Color& value, u32 arrayIdx = 0) { return GetParamColor(name).Set(value, arrayIdx); }
 
 		/**
@@ -234,7 +229,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		void SetColorGradient(const String& name, const ColorGradientHDR& value, u32 arrayIdx = 0)
 		{
 			return GetParamColorGradient(name).Set(value, arrayIdx);
@@ -246,7 +240,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SetVector2))
-
 		void SetVec2(const String& name, const Vector2& value, u32 arrayIdx = 0) { return GetParamVec2(name).Set(value, arrayIdx); }
 
 		/**
@@ -255,7 +248,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SetVector3))
-
 		void SetVec3(const String& name, const Vector3& value, u32 arrayIdx = 0) { return GetParamVec3(name).Set(value, arrayIdx); }
 
 		/**
@@ -264,7 +256,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SetVector4))
-
 		void SetVec4(const String& name, const Vector4& value, u32 arrayIdx = 0) { return GetParamVec4(name).Set(value, arrayIdx); }
 
 		/**
@@ -273,7 +264,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SetMatrix3))
-
 		void SetMat3(const String& name, const Matrix3& value, u32 arrayIdx = 0) { return GetParamMat3(name).Set(value, arrayIdx); }
 
 		/**
@@ -282,7 +272,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SetMatrix4))
-
 		void SetMat4(const String& name, const Matrix4& value, u32 arrayIdx = 0) { return GetParamMat4(name).Set(value, arrayIdx); }
 
 		/**
@@ -335,7 +324,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		float GetFloat(const String& name, u32 arrayIdx = 0) const { return GetParamFloat(name).Get(arrayIdx); }
 
 		/**
@@ -346,7 +334,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		const TAnimationCurve<float>& GetFloatCurve(const String& name, u32 arrayIdx = 0) const
 		{
 			return GetParamFloatCurve(name).Get(arrayIdx);
@@ -360,7 +347,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		Color GetColor(const String& name, u32 arrayIdx = 0) const { return GetParamColor(name).Get(arrayIdx); }
 
 		/**
@@ -371,7 +357,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		const ColorGradientHDR& GetColorGradient(const String& name, u32 arrayIdx = 0) const
 		{
 			return GetParamColorGradient(name).Get(arrayIdx);
@@ -383,7 +368,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(GetVector2))
-
 		Vector2 GetVec2(const String& name, u32 arrayIdx = 0) const { return GetParamVec2(name).Get(arrayIdx); }
 
 		/**
@@ -392,7 +376,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(GetVector3))
-
 		Vector3 GetVec3(const String& name, u32 arrayIdx = 0) const { return GetParamVec3(name).Get(arrayIdx); }
 
 		/**
@@ -401,7 +384,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(GetVector4))
-
 		Vector4 GetVec4(const String& name, u32 arrayIdx = 0) const { return GetParamVec4(name).Get(arrayIdx); }
 
 		/**
@@ -410,7 +392,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(GetMatrix3))
-
 		Matrix3 GetMat3(const String& name, u32 arrayIdx = 0) const { return GetParamMat3(name).Get(arrayIdx); }
 
 		/**
@@ -419,7 +400,6 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(GetMatrix4))
-
 		Matrix4 GetMat4(const String& name, u32 arrayIdx = 0) const { return GetParamMat4(name).Get(arrayIdx); }
 
 		/**
@@ -804,11 +784,14 @@ namespace bs
 
 		/** @} */
 	private:
+		struct SyncPacket;
+		friend class ct::Material;
+
 		Material();
 		Material(const HShader& shader, const ShaderVariationParameters& variation);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void GetListenerResources(Vector<HResource>& resources) override;

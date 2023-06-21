@@ -10,6 +10,7 @@
 #include "Image/BsColorGradient.h"
 #include "Animation/BsAnimationCurve.h"
 #include "Allocators/BsPoolAlloc.h"
+#include "CoreThread/BsCoreObjectSync.h"
 
 using namespace bs;
 
@@ -794,135 +795,66 @@ void TMaterialParams<Core>::GetDefaultSamplerState(const ParamData& param, SPtr<
 template class TMaterialParams<true>;
 template class TMaterialParams<false>;
 
+namespace bs
+{
+	struct MaterialParametersDataParameter
+	{
+		u32 ParameterIndex = ~0u;
+		u32 DataOffset = ~0u;
+		u32 CurveMetaDataIndex = ~0u;
+		u32 DirtyCurveCount = 0;
+	};
+
+	struct MaterialParametersCurveMetaData
+	{
+		u32 ArrayIndex = ~0u;
+		u32 CurveIndex = ~0u;
+	};
+
+	struct MaterialParametersTextureParameter
+	{
+		u32 ParameterIndex = ~0u;
+		SPtr<ct::Texture> Texture;
+		SPtr<ct::SpriteTexture> SpriteTexture;
+		bool IsLoadStore;
+		TextureSurface Surface;
+	};
+
+	struct MaterialParametersBufferParameter
+	{
+		u32 ParameterIndex = ~0u;
+		SPtr<ct::GpuBuffer> Buffer;
+	};
+
+	struct MaterialParametersSamplerStateParameter
+	{
+		u32 ParameterIndex = ~0u;
+		SPtr<SamplerState> SamplerState;
+	};
+
+	B3D_SYNC_BLOCK_BEGIN(MaterialParams, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<MaterialParametersDataParameter>, DataParameters)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<u8>, DataParameterData)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<MaterialParametersCurveMetaData>, CurveMetaData)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<TAnimationCurve<float>>, FloatCurves)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<ColorGradientHDR>, ColorGradients)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<MaterialParametersTextureParameter>, TextureParameters)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<MaterialParametersBufferParameter>, BufferParameters)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<MaterialParametersSamplerStateParameter>, SamplerStateParameters)
+	B3D_SYNC_BLOCK_END
+}
+
 MaterialParams::MaterialParams(const HShader& shader, u64 initialParamVersion)
 	: TMaterialParams(shader, initialParamVersion), mLastSyncVersion(1)
 {}
 
-void MaterialParams::GetSyncData(u8* buffer, u32& size, bool forceAll)
+MaterialParams::SyncPacket* MaterialParams::CreateSyncPacket(FrameAlloc& allocator, bool forceAll)
 {
-	// Note: Not syncing struct data
+	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator);
 
-	u32 numDirtyDataParams = 0;
-	u32 numDirtyStructParams = 0;
-	u32 numDirtyTextureParams = 0;
-	u32 numDirtyBufferParams = 0;
-	u32 numDirtySamplerParams = 0;
-
-	u32 dataParamSize = 0;
-	u32 structParamSize = 0;
-	for(auto& param : mParams)
+	for(u32 parameterIndex = 0; parameterIndex < (u32)mParams.size(); parameterIndex++)
 	{
-		if(param.Version <= mLastSyncVersion && !forceAll)
-			continue;
-
-		switch(param.Type)
-		{
-		case ParamType::Data:
-			{
-				const u32 arraySize = param.ArraySize > 1 ? param.ArraySize : 1;
-
-				if(param.DataType == GPDT_STRUCT)
-				{
-					// Param index
-					structParamSize += sizeof(u32);
-
-					// Param data
-					structParamSize += arraySize * mStructParams[param.Index].DataSize;
-
-					numDirtyStructParams++;
-				}
-				else
-				{
-					const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[(int)param.DataType];
-					const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
-
-					// Param index
-					dataParamSize += sizeof(u32);
-
-					// Param data
-					dataParamSize += arraySize * paramSize;
-
-					// Param curves
-					dataParamSize += sizeof(u32);
-					for(u32 i = 0; i < arraySize; i++)
-					{
-						const DataParamInfo& paramInfo = mDataParams[param.Index + i];
-						if(paramInfo.FloatCurve && param.DataType == GPDT_FLOAT1)
-						{
-							// Array index
-							dataParamSize += sizeof(u32);
-
-							// Curve data
-							dataParamSize += B3DRTTISize(*paramInfo.FloatCurve).Bytes;
-						}
-						else if(paramInfo.ColorGradient && param.DataType == GPDT_COLOR)
-						{
-							// Array index
-							dataParamSize += sizeof(u32);
-
-							// Curve data
-							dataParamSize += B3DRTTISize(*paramInfo.ColorGradient).Bytes;
-						}
-					}
-
-					numDirtyDataParams++;
-				}
-			}
-			break;
-		case ParamType::Texture:
-			numDirtyTextureParams++;
-			break;
-		case ParamType::Buffer:
-			numDirtyBufferParams++;
-			break;
-		case ParamType::Sampler:
-			numDirtySamplerParams++;
-			break;
-		}
-	}
-
-	const u64 textureEntrySize = sizeof(MaterialParamTextureDataCore) + sizeof(u32);
-	const u64 bufferEntrySize = sizeof(MaterialParamBufferDataCore) + sizeof(u32);
-	const u64 samplerStateEntrySize = sizeof(MaterialParamSamplerStateDataCore) + sizeof(u32);
-
-	const u64 dataParamsOffset = sizeof(u32) * 5;
-	const u64 textureParamsOffset = dataParamsOffset + dataParamSize;
-	const u64 bufferParamsOffset = textureParamsOffset + textureEntrySize * numDirtyTextureParams;
-	const u64 samplerStateParamsOffset = bufferParamsOffset + bufferEntrySize * numDirtyBufferParams;
-	const u64 structParamsOffset = samplerStateParamsOffset + samplerStateEntrySize * numDirtySamplerParams;
-
-	const u32 totalSize = (u32)structParamsOffset + structParamSize;
-
-	if(buffer == nullptr)
-	{
-		size = totalSize;
-		return;
-	}
-
-	if(size != totalSize)
-	{
-		B3D_LOG(Error, Material, "Invalid buffer size provided, ignoring.");
-		return;
-	}
-
-	Bitstream stream((uint8_t*)buffer, size);
-
-	// Dirty counts for each parameter type
-	B3DRTTIWrite(numDirtyDataParams, stream);
-	B3DRTTIWrite(numDirtyTextureParams, stream);
-	B3DRTTIWrite(numDirtyBufferParams, stream);
-	B3DRTTIWrite(numDirtySamplerParams, stream);
-	B3DRTTIWrite(numDirtyStructParams, stream);
-
-	u64 dirtyDataParamOffset = 0;
-	u64 dirtyTextureParamIdx = 0;
-	u64 dirtyBufferParamIdx = 0;
-	u64 dirtySamplerParamIdx = 0;
-	u64 dirtyStructParamOffset = 0;
-
-	for(u32 i = 0; i < (u32)mParams.size(); i++)
-	{
-		ParamData& param = mParams[i];
+		const ParamData& param = mParams[parameterIndex];
 		if(param.Version <= mLastSyncVersion && !forceAll)
 			continue;
 
@@ -936,16 +868,18 @@ void MaterialParams::GetSyncData(u8* buffer, u32& size, bool forceAll)
 				{
 					const ParamStructDataType& paramData = mStructParams[param.Index];
 
-					// Param index
-					stream.Seek((structParamsOffset + dirtyStructParamOffset) * 8);
-					dirtyStructParamOffset += B3DRTTIWrite(i, stream).Bytes;
+					MaterialParametersDataParameter dirtyParameter;
+					dirtyParameter.ParameterIndex = parameterIndex;
+					dirtyParameter.DataOffset = (u32)syncPacket->DataParameterData.size();
 
 					// Param data
-					for(u32 j = 0; j < arraySize; j++)
+					for(u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
 					{
-						stream.WriteBytes(mStructParams[param.Index + j].Data, paramData.DataSize);
-						dirtyStructParamOffset += paramData.DataSize;
+						const u8* const parameterdata = mStructParams[param.Index + arrayIndex].Data;
+						syncPacket->DataParameterData.insert(syncPacket->DataParameterData.end(), parameterdata, parameterdata + paramData.DataSize);
 					}
+
+					syncPacket->DataParameters.push_back(dirtyParameter);
 				}
 				else
 				{
@@ -955,105 +889,86 @@ void MaterialParams::GetSyncData(u8* buffer, u32& size, bool forceAll)
 					const u32 dataSize = arraySize * paramSize;
 					const DataParamInfo& paramInfo = mDataParams[param.Index];
 
-					// Param index
-					stream.Seek((dataParamsOffset + dirtyDataParamOffset) * 8);
-					dirtyDataParamOffset += B3DRTTIWrite(i, stream).Bytes;
+					MaterialParametersDataParameter dirtyParameter;
+					dirtyParameter.ParameterIndex = parameterIndex;
+					dirtyParameter.DataOffset = (u32)syncPacket->DataParameterData.size();
+					dirtyParameter.CurveMetaDataIndex = (u32)syncPacket->CurveMetaData.size();
 
-					// Param data
 					// Note: This relies on the fact that all data params in the array are sequential
-					stream.WriteBytes((uint8_t*)&mDataParamsBuffer[paramInfo.Offset], dataSize);
-					dirtyDataParamOffset += dataSize;
+					const u8* const parameterData = &mDataParamsBuffer[paramInfo.Offset];
+					syncPacket->DataParameterData.insert(syncPacket->DataParameterData.end(), parameterData, parameterData + dataSize);
 
 					// Param curves
-					u64 numDirtyCurvesWriteDst = stream.Tell();
-					stream.WriteBytes(0);
-					dirtyDataParamOffset += sizeof(u32);
-
-					u32 numDirtyCurves = 0;
-					for(u32 j = 0; j < arraySize; j++)
+					for(u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
 					{
-						const DataParamInfo& arrParamInfo = mDataParams[param.Index + j];
-						if(arrParamInfo.FloatCurve && param.DataType == GPDT_FLOAT1)
+						const DataParamInfo& arrayEntryParameterInformation = mDataParams[param.Index + arrayIndex];
+						if(arrayEntryParameterInformation.FloatCurve && param.DataType == GPDT_FLOAT1)
 						{
-							// Array index
-							dirtyDataParamOffset += B3DRTTIWrite(j, stream).Bytes;
+							MaterialParametersCurveMetaData curveMetaData;
+							curveMetaData.ArrayIndex = arrayIndex;
+							curveMetaData.CurveIndex = (u32)syncPacket->FloatCurves.size();
 
-							// Curve data
-							dirtyDataParamOffset += B3DRTTIWrite(*arrParamInfo.FloatCurve, stream).Bytes;
-
-							numDirtyCurves++;
+							syncPacket->FloatCurves.push_back(*arrayEntryParameterInformation.FloatCurve);
+							syncPacket->CurveMetaData.push_back(curveMetaData);
+							dirtyParameter.DirtyCurveCount++;
 						}
-						else if(arrParamInfo.ColorGradient && param.DataType == GPDT_COLOR)
+						else if(arrayEntryParameterInformation.ColorGradient && param.DataType == GPDT_COLOR)
 						{
-							// Array index
-							dirtyDataParamOffset += B3DRTTIWrite(j, stream).Bytes;
+							MaterialParametersCurveMetaData curveMetaData;
+							curveMetaData.ArrayIndex = arrayIndex;
+							curveMetaData.CurveIndex = (u32)syncPacket->ColorGradients.size();
 
-							// Curve data
-							dirtyDataParamOffset += B3DRTTIWrite(*arrParamInfo.ColorGradient, stream).Bytes;
-
-							numDirtyCurves++;
+							syncPacket->ColorGradients.push_back(*arrayEntryParameterInformation.ColorGradient);
+							syncPacket->CurveMetaData.push_back(curveMetaData);
+							dirtyParameter.DirtyCurveCount++;
 						}
 					}
 
-					stream.Seek(numDirtyCurvesWriteDst);
-					stream.WriteBytes(numDirtyCurves);
+					syncPacket->DataParameters.push_back(dirtyParameter);
 				}
 			}
 			break;
 		case ParamType::Texture:
 			{
-				stream.Seek((textureParamsOffset + dirtyTextureParamIdx * textureEntrySize) * 8);
-				B3DRTTIWrite(i, stream);
+				const MaterialParamTextureData& textureParameterData = mTextureParams[param.Index];
 
-				const MaterialParamTextureData& textureData = mTextureParams[param.Index];
-				MaterialParamTextureDataCore* coreTexData = (MaterialParamTextureDataCore*)stream.Cursor();
-				new(coreTexData) MaterialParamTextureDataCore();
+				MaterialParametersTextureParameter dirtyParameter;
+				dirtyParameter.ParameterIndex = parameterIndex;
+				dirtyParameter.IsLoadStore = textureParameterData.IsLoadStore;
+				dirtyParameter.Surface = textureParameterData.Surface;
+				dirtyParameter.Texture = B3DGetCoreObject(textureParameterData.Texture);
+				dirtyParameter.SpriteTexture = B3DGetCoreObject(textureParameterData.SpriteTexture);
 
-				coreTexData->IsLoadStore = textureData.IsLoadStore;
-				coreTexData->Surface = textureData.Surface;
-
-				if(textureData.Texture.IsLoaded())
-					coreTexData->Texture = textureData.Texture->GetCore();
-
-				if(textureData.SpriteTexture.IsLoaded())
-					coreTexData->SpriteTexture = textureData.SpriteTexture->GetCore();
-
-				dirtyTextureParamIdx++;
+				syncPacket->TextureParameters.push_back(dirtyParameter);
 			}
 			break;
 		case ParamType::Buffer:
 			{
-				stream.Seek((bufferParamsOffset + dirtyBufferParamIdx * bufferEntrySize) * 8);
-				B3DRTTIWrite(i, stream);
+				const MaterialParamBufferData& bufferParameterData = mBufferParams[param.Index];
 
-				const MaterialParamBufferData& bufferData = mBufferParams[param.Index];
-				MaterialParamBufferDataCore* coreBufferData = (MaterialParamBufferDataCore*)stream.Cursor();
-				new(coreBufferData) MaterialParamBufferDataCore();
+				MaterialParametersBufferParameter dirtyParameter;
+				dirtyParameter.ParameterIndex = parameterIndex;
+				dirtyParameter.Buffer = B3DGetCoreObject(bufferParameterData.Value);
 
-				if(bufferData.Value != nullptr)
-					coreBufferData->Value = bufferData.Value->GetCore();
-
-				dirtyBufferParamIdx++;
+				syncPacket->BufferParameters.push_back(dirtyParameter);
 			}
 			break;
 		case ParamType::Sampler:
 			{
-				stream.Seek((samplerStateParamsOffset + dirtySamplerParamIdx * samplerStateEntrySize) * 8);
-				B3DRTTIWrite(i, stream);
+				const MaterialParamSamplerStateData& samplerStateParameterData = mSamplerStateParams[param.Index];
 
-				const MaterialParamSamplerStateData& samplerData = mSamplerStateParams[param.Index];
-				MaterialParamSamplerStateDataCore* coreSamplerData = (MaterialParamSamplerStateDataCore*)stream.Cursor();
-				new(coreSamplerData) MaterialParamSamplerStateDataCore();
+				MaterialParametersSamplerStateParameter dirtyParameter;
+				dirtyParameter.ParameterIndex = parameterIndex;
+				dirtyParameter.SamplerState = samplerStateParameterData.Value;
 
-				coreSamplerData->Value = samplerData.Value;
-
-				dirtySamplerParamIdx++;
+				syncPacket->SamplerStateParameters.push_back(dirtyParameter);
 			}
 			break;
 		}
 	}
 
 	mLastSyncVersion = mParamVersion;
+	return syncPacket;
 }
 
 void MaterialParams::GetResourceDependencies(Vector<HResource>& resources)
@@ -1203,133 +1118,98 @@ MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::Materi
 	}
 }
 
-void MaterialParams::SetSyncData(u8* buffer, u32 size)
+void MaterialParams::ApplyAndDestroySyncPacket(FrameAlloc& allocator, const bs::MaterialParams::SyncPacket& syncPacket)
 {
-	Bitstream stream((uint8_t*)buffer, size);
-
-	u32 numDirtyDataParams = 0;
-	u32 numDirtyTextureParams = 0;
-	u32 numDirtyBufferParams = 0;
-	u32 numDirtySamplerParams = 0;
-	u32 numDirtyStructParams = 0;
-
-	B3DRTTIRead(numDirtyDataParams, stream);
-	B3DRTTIRead(numDirtyTextureParams, stream);
-	B3DRTTIRead(numDirtyBufferParams, stream);
-	B3DRTTIRead(numDirtySamplerParams, stream);
-	B3DRTTIRead(numDirtyStructParams, stream);
-
 	mParamVersion++;
 
-	for(u32 i = 0; i < numDirtyDataParams; i++)
+	for(const auto& dirtyParameter : syncPacket.DataParameters)
 	{
-		// Param index
-		u32 paramIdx = 0;
-		B3DRTTIRead(paramIdx, stream);
+		ParamData& parameterData = mParams[dirtyParameter.ParameterIndex];
+		parameterData.Version = mParamVersion;
 
-		ParamData& param = mParams[paramIdx];
-		param.Version = mParamVersion;
+		const u32 arraySize = parameterData.ArraySize > 1 ? parameterData.ArraySize : 1;
 
-		const u32 arraySize = param.ArraySize > 1 ? param.ArraySize : 1;
-		const GpuDataParameterTypeInformation& typeInfo = bs::GpuParameters::kParamSizes.Lookup[(int)param.DataType];
-		const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
-
-		const DataParamInfo& paramInfo = mDataParams[param.Index];
-
-		const u32 dataParamSize = arraySize * paramSize;
-
-		// Param data
-		// Note: This relies on the fact that all data params in the array are sequential
-		stream.ReadBytes(&mDataParamsBuffer[paramInfo.Offset], dataParamSize);
-
-		// Param curves
-		u32 numDirtyCurves = 0;
-		B3DRTTIRead(numDirtyCurves, stream);
-		for(u32 j = 0; j < numDirtyCurves; j++)
+		if(parameterData.DataType == GPDT_STRUCT)
 		{
-			u32 localIdx = 0;
-			B3DRTTIRead(localIdx, stream);
+			const ParamStructDataType& structParameterData = mStructParams[parameterData.Index];
 
-			DataParamInfo& arrParamInfo = mDataParams[param.Index + localIdx];
-			if(param.DataType == GPDT_FLOAT1)
+			// Param data
+			for(u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
 			{
-				if(arrParamInfo.FloatCurve)
-					B3DPoolFree(arrParamInfo.FloatCurve);
-
-				arrParamInfo.FloatCurve = B3DPoolNew<TAnimationCurve<float>>();
-				B3DRTTIRead(*arrParamInfo.FloatCurve, stream);
+				if(B3D_ENSURE((dirtyParameter.DataOffset + structParameterData.DataSize) <= syncPacket.DataParameterData.size()))
+				{
+					memcpy(mStructParams[parameterData.Index + arrayIndex].Data, &syncPacket.DataParameterData[dirtyParameter.DataOffset], structParameterData.DataSize);
+				}
 			}
-			else if(param.DataType == GPDT_COLOR)
-			{
-				if(arrParamInfo.ColorGradient)
-					B3DPoolFree(arrParamInfo.ColorGradient);
+		}
+		else
+		{
+			const GpuDataParameterTypeInformation& typeInfo = bs::GpuParameters::kParamSizes.Lookup[(int)parameterData.DataType];
+			const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
-				arrParamInfo.ColorGradient = B3DPoolNew<ColorGradientHDR>();
-				B3DRTTIRead(*arrParamInfo.ColorGradient, stream);
+			const DataParamInfo& parameterInformation = mDataParams[parameterData.Index];
+			const u32 dataParamSize = arraySize * paramSize;
+
+			// Param data
+			// Note: This relies on the fact that all data params in the array are sequential
+			if(B3D_ENSURE((dirtyParameter.DataOffset + dataParamSize) <= syncPacket.DataParameterData.size()))
+			{
+				memcpy(&mDataParamsBuffer[parameterInformation.Offset], &syncPacket.DataParameterData[dirtyParameter.DataOffset], dataParamSize);
+			}
+
+			// Param curves
+			for(u32 dirtyCurveIndex = 0; dirtyCurveIndex < dirtyParameter.DirtyCurveCount; dirtyCurveIndex++)
+			{
+				const MaterialParametersCurveMetaData& dirtyCurveMetaData = syncPacket.CurveMetaData[dirtyParameter.CurveMetaDataIndex + dirtyCurveIndex];
+
+				DataParamInfo& arrayEntryParameterInformation = mDataParams[parameterData.Index + dirtyCurveMetaData.ArrayIndex];
+				if(parameterData.DataType == GPDT_FLOAT1)
+				{
+					if(arrayEntryParameterInformation.FloatCurve)
+						B3DPoolFree(arrayEntryParameterInformation.FloatCurve);
+
+					arrayEntryParameterInformation.FloatCurve = B3DPoolNew<TAnimationCurve<float>>();
+					*arrayEntryParameterInformation.FloatCurve = syncPacket.FloatCurves[dirtyCurveMetaData.CurveIndex];
+				}
+				else if(parameterData.DataType == GPDT_COLOR)
+				{
+					if(arrayEntryParameterInformation.ColorGradient)
+						B3DPoolFree(arrayEntryParameterInformation.ColorGradient);
+
+					arrayEntryParameterInformation.ColorGradient = B3DPoolNew<ColorGradientHDR>();
+					*arrayEntryParameterInformation.ColorGradient = syncPacket.ColorGradients[dirtyCurveMetaData.CurveIndex];
+				}
 			}
 		}
 	}
 
-	for(u32 i = 0; i < numDirtyTextureParams; i++)
+	for(const auto& dirtyParameter : syncPacket.TextureParameters)
 	{
-		u32 paramIdx = 0;
-		B3DRTTIRead(paramIdx, stream);
+		ParamData& parameterData = mParams[dirtyParameter.ParameterIndex];
+		parameterData.Version = mParamVersion;
 
-		ParamData& param = mParams[paramIdx];
-		param.Version = mParamVersion;
-
-		MaterialParamTextureDataCore* sourceTexData = (MaterialParamTextureDataCore*)stream.Cursor();
-		stream.SkipBytes(sizeof(MaterialParamTextureDataCore));
-
-		mTextureParams[param.Index] = *sourceTexData;
-		sourceTexData->~MaterialParamTextureDataCore();
+		mTextureParams[parameterData.Index].IsLoadStore = dirtyParameter.IsLoadStore;
+		mTextureParams[parameterData.Index].Surface = dirtyParameter.Surface;
+		mTextureParams[parameterData.Index].Texture = dirtyParameter.Texture;
+		mTextureParams[parameterData.Index].SpriteTexture = dirtyParameter.SpriteTexture;
 	}
 
-	for(u32 i = 0; i < numDirtyBufferParams; i++)
+	for(const auto& dirtyParameter : syncPacket.BufferParameters)
 	{
-		u32 paramIdx = 0;
-		B3DRTTIRead(paramIdx, stream);
+		ParamData& parameterData = mParams[dirtyParameter.ParameterIndex];
+		parameterData.Version = mParamVersion;
 
-		ParamData& param = mParams[paramIdx];
-		param.Version = mParamVersion;
-
-		MaterialParamBufferDataCore* sourceBufferData = (MaterialParamBufferDataCore*)stream.Cursor();
-		stream.SkipBytes(sizeof(MaterialParamBufferDataCore));
-
-		mBufferParams[param.Index] = *sourceBufferData;
-		sourceBufferData->~MaterialParamBufferDataCore();
+		mBufferParams[parameterData.Index].Value = dirtyParameter.Buffer;
 	}
 
-	for(u32 i = 0; i < numDirtySamplerParams; i++)
+	for(const auto& dirtyParameter : syncPacket.SamplerStateParameters)
 	{
-		u32 paramIdx = 0;
-		B3DRTTIRead(paramIdx, stream);
+		ParamData& parameterData = mParams[dirtyParameter.ParameterIndex];
+		parameterData.Version = mParamVersion;
 
-		ParamData& param = mParams[paramIdx];
-		param.Version = mParamVersion;
-
-		MaterialParamSamplerStateDataCore* sourceSamplerStateData = (MaterialParamSamplerStateDataCore*)stream.Cursor();
-		stream.SkipBytes(sizeof(MaterialParamSamplerStateDataCore));
-
-		mSamplerStateParams[param.Index] = *sourceSamplerStateData;
-		sourceSamplerStateData->~MaterialParamSamplerStateDataCore();
+		mSamplerStateParams[parameterData.Index].Value = dirtyParameter.SamplerState;
 	}
 
-	for(u32 i = 0; i < numDirtyStructParams; i++)
-	{
-		// Param index
-		u32 paramIdx = 0;
-		B3DRTTIRead(paramIdx, stream);
-
-		ParamData& param = mParams[paramIdx];
-		param.Version = mParamVersion;
-
-		const u32 arraySize = param.ArraySize > 1 ? param.ArraySize : 1;
-		const ParamStructDataType& paramData = mStructParams[param.Index];
-
-		// Param data
-		for(u32 j = 0; j < arraySize; j++)
-			stream.ReadBytes(mStructParams[param.Index + j].Data, paramData.DataSize);
-	}
+	allocator.Destruct(&syncPacket);
 }
 }}

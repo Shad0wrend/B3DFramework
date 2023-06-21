@@ -191,7 +191,6 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-
 Light::Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle)
 	: LightBase(type, color, intensity, attRadius, srcRadius, castsShadows, spotAngle, spotFalloffAngle)
 {

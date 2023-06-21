@@ -812,21 +812,20 @@ namespace bs
 	class B3D_CORE_EXPORT MaterialParams : public IReflectable, public TMaterialParams<false>
 	{
 	public:
+		struct SyncPacket;
+
 		/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, u64) */
 		MaterialParams(const HShader& shader, u64 initialParamVersion = 1);
 
 		/**
-		 * Populates the provided buffer with parameters that can be used for syncing this object with its core-thread
-		 * counterpart. Can be applied by calling ct::MaterialParams::setSyncData.
+		 * Creates sync packet that can be used for bringing the core version of this object up to date.
 		 *
-		 * @param[in]		buffer		Pre-allocated buffer to store the sync data in. Set to null to calculate the size
-		 *								of the required buffer.
-		 * @param[in, out]	size		Size of the provided allocated buffer. Or if the buffer is null, this parameter will
-		 *								contain the required buffer size when the method executes.
-		 * @param[in]		forceAll	If false, only the parameters that were changed since the last call will be synced.
-		 *								Otherwise all parameters will be synced.
+		 * @param allocator			Allocator with which to allocate the sync packet.
+		 * @param forceAll			By default only dirty parameter will be synced. If you wish to sync all parameters
+		 *							set this to true.
+		 * @return					Sync packet if there are any dirty parameters, null otherwise.
 		 */
-		void GetSyncData(u8* buffer, u32& size, bool forceAll);
+		SyncPacket* CreateSyncPacket(FrameAlloc& allocator, bool forceAll);
 
 		/** Appends any resources stored by this object to the provided vector. */
 		void GetResourceDependencies(Vector<HResource>& resources);
@@ -837,7 +836,7 @@ namespace bs
 	private:
 		friend class ct::MaterialParams;
 
-		u64 mLastSyncVersion;
+		mutable u64 mLastSyncVersion;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -863,13 +862,11 @@ namespace bs
 			MaterialParams(const SPtr<Shader>& shader, u64 initialParamVersion = 1);
 
 			/**
-			 * Updates the stored parameters from the provided buffer, allowing changes to be transfered between the sim and
-			 * core thread material param objects. Buffer must be retrieved from bs::MaterialParams::getSyncData.
-			 *
-			 * @param[in]		buffer		Buffer containing the dirty data.
-			 * @param[in, out]	size		Size of the provided buffer.
+			 * Updates the stored parameters from the provided sync packet, allowing changes to be transfered between the main and
+			 * core thread objects. Packet must be retrieved from bs::MaterialParams::CreateSyncPacket(). Sync packet is destroyed
+			 * using the provided allocator after it has been applied.
 			 */
-			void SetSyncData(u8* buffer, u32 size);
+			void ApplyAndDestroySyncPacket(FrameAlloc& allocator, const bs::MaterialParams::SyncPacket& syncPacket);
 		};
 	} // namespace ct
 

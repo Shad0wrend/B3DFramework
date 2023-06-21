@@ -127,7 +127,7 @@ CoreSyncPacket* Decal::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	if(B3D_ENSURE(syncPacket))
-		syncPacket->SceneActorPacket = CreateSyncPacket(allocator, flags);
+		syncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
 
 	return syncPacket;
 }
