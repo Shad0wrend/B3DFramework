@@ -102,7 +102,10 @@ namespace bs
 		SPtr<ct::MeshBase> GetCore() const;
 
 	protected:
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		friend class ct::MeshBase;
+		struct SyncPacket;
+
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 
 		MeshProperties mProperties;
 
@@ -170,6 +173,8 @@ namespace bs
 			const MeshProperties& GetProperties() const { return mProperties; }
 
 		protected:
+			friend class bs::MeshBase;
+
 			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
 
 			MeshProperties mProperties;

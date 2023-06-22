@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Mesh/BsMeshBase.h"
+
+#include "CoreThread/BsCoreObjectSync.h"
 #include "Private/RTTI/BsMeshBaseRTTI.h"
 #include "CoreThread/BsCoreThread.h"
 
@@ -35,13 +37,19 @@ MeshBase::MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMe
 MeshBase::~MeshBase()
 {}
 
-CoreSyncData MeshBase::SyncToCore(FrameAlloc* allocator)
+namespace bs
 {
-	u32 size = sizeof(Bounds);
-	u8* buffer = allocator->Alloc(size);
+	B3D_SYNC_BLOCK_BEGIN(MeshBase, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Bounds, Bounds)
+	B3D_SYNC_BLOCK_END
+}
 
-	memcpy(buffer, &mProperties.Bounds, size);
-	return CoreSyncData(buffer, size);
+CoreSyncPacket* MeshBase::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+{
+	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	syncPacket->Bounds = mProperties.Bounds;
+
+	return syncPacket;
 }
 
 SPtr<ct::MeshBase> MeshBase::GetCore() const
@@ -71,6 +79,10 @@ MeshBase::MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMe
 
 void MeshBase::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
-	mProperties.Bounds = data.GetData<Bounds>();
+	const auto* const syncPacket = data.GetSyncPacket<bs::MeshBase::SyncPacket>();
+	if(!syncPacket)
+		return;
+
+	mProperties.Bounds = syncPacket->Bounds;
 }
 }}

@@ -28,6 +28,7 @@ namespace bs
 	class B3D_CORE_EXPORT RenderTextureProperties : public RenderTargetProperties
 	{
 	public:
+		RenderTextureProperties() = default;
 		RenderTextureProperties(const RENDER_TEXTURE_DESC& desc, bool requiresFlipping);
 		RenderTextureProperties(const ct::RENDER_TEXTURE_DESC& desc, bool requiresFlipping);
 
@@ -83,11 +84,13 @@ namespace bs
 
 	protected:
 		friend class TextureManager;
+		friend class ct::RenderTexture;
+		struct SyncPacket;
 
 		RenderTexture(const RENDER_TEXTURE_DESC& desc);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 
 	protected:
 		HTexture mBindableColorTex[B3D_MAXIMUM_RENDER_TARGET_COUNT];

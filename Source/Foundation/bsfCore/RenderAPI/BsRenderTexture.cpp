@@ -8,6 +8,8 @@
 #include "CoreThread/BsCoreThread.h"
 #include <Private/RTTI/BsRenderTargetRTTI.h>
 
+#include "CoreThread/BsCoreObjectSync.h"
+
 using namespace bs;
 
 RenderTextureProperties::RenderTextureProperties(const RENDER_TEXTURE_DESC& desc, bool requiresFlipping)
@@ -150,15 +152,19 @@ SPtr<ct::CoreObject> RenderTexture::CreateCore() const
 	return ct::TextureManager::Instance().CreateRenderTextureInternal(coreDesc);
 }
 
-CoreSyncData RenderTexture::SyncToCore(FrameAlloc* allocator)
+namespace bs
 {
-	u32 size = sizeof(RenderTextureProperties);
-	u8* buffer = allocator->Alloc(size);
+	B3D_SYNC_BLOCK_BEGIN(RenderTexture, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(RenderTextureProperties, Properties)
+	B3D_SYNC_BLOCK_END
+}
 
-	RenderTextureProperties& props = const_cast<RenderTextureProperties&>(GetProperties());
+CoreSyncPacket* RenderTexture::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+{
+	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	syncPacket->Properties = GetProperties(); 
 
-	memcpy(buffer, (void*)&props, size);
-	return CoreSyncData(buffer, size);
+	return syncPacket;
 }
 
 const RenderTextureProperties& RenderTexture::GetProperties() const
@@ -225,8 +231,12 @@ SPtr<RenderTexture> RenderTexture::Create(const RENDER_TEXTURE_DESC& desc)
 
 void RenderTexture::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 {
+	const auto* const syncPacket = data.GetSyncPacket<bs::RenderTexture::SyncPacket>();
+	if(!syncPacket)
+		return;
+
 	RenderTextureProperties& props = const_cast<RenderTextureProperties&>(GetProperties());
-	props = data.GetData<RenderTextureProperties>();
+	props = syncPacket->Properties;
 }
 
 const RenderTextureProperties& RenderTexture::GetProperties() const
