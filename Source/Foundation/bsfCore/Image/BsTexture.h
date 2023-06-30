@@ -482,6 +482,9 @@ namespace bs
 			/** Returns a plain black texture. */
 			static SPtr<Texture> kBlack;
 
+			/** Returns a plain pink texture. */
+			static SPtr<Texture> kPink;
+
 			/** Returns a plain normal map texture with normal pointing up (in Y direction). */
 			static SPtr<Texture> kNormal;
 

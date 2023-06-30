@@ -348,6 +348,7 @@ namespace bs { namespace ct
 {
 SPtr<Texture> Texture::kWhite;
 SPtr<Texture> Texture::kBlack;
+SPtr<Texture> Texture::kPink;
 SPtr<Texture> Texture::kNormal;
 
 Texture::Texture(const TextureCreateInformation& createInformation)

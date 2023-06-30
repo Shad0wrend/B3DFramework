@@ -89,6 +89,20 @@ void TextureManager::OnStartUp()
 	blackTexture->WriteData(*blackPixelData);
 	Texture::kBlack = blackTexture;
 
+
+	// Pink built-in texture
+	createInformation.Name = "Builtin Pink";
+	SPtr<Texture> pinkTexture = mGpuDevice.CreateTexture(createInformation);
+
+	SPtr<PixelData> pinkPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
+	pinkPixelData->SetColorAt(Color::kPink, 0, 0);
+	pinkPixelData->SetColorAt(Color::kPink, 0, 1);
+	pinkPixelData->SetColorAt(Color::kPink, 1, 0);
+	pinkPixelData->SetColorAt(Color::kPink, 1, 1);
+
+	pinkTexture->WriteData(*pinkPixelData);
+	Texture::kPink = pinkTexture;
+
 	// Normal (Y = Up) built-in texture
 	createInformation.Name = "Builtin Normal";
 	SPtr<Texture> normalTexture = mGpuDevice.CreateTexture(createInformation);
@@ -109,6 +123,7 @@ void TextureManager::OnShutDown()
 	// Need to make sure these are freed while still on the core thread
 	Texture::kWhite = nullptr;
 	Texture::kBlack = nullptr;
+	Texture::kPink = nullptr;
 	Texture::kNormal = nullptr;
 }
 

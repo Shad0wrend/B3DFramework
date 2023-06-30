@@ -34,6 +34,7 @@ namespace bs
 		static const Color kBlue;
 		static const Color kLightGray;
 		static const Color kBansheeOrange;
+		static const Color kPink;
 
 		bool operator==(const Color& rhs) const;
 		bool operator!=(const Color& rhs) const;

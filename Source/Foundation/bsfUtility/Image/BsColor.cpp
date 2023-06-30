@@ -13,6 +13,7 @@ const Color Color::kGreen = Color(0.0f, 1.0f, 0.0f);
 const Color Color::kBlue = Color(0.0f, 0.0f, 1.0f);
 const Color Color::kLightGray = Color(200.0f / 255.0f, 200.0f / 255.0f, 200.0f / 255.0f);
 const Color Color::kBansheeOrange = Color(1.0f, (168.0f / 255.0f), 0.0f);
+const Color Color::kPink = Color(1.0f, (105.0f / 255.0f), (180.0f / 255.0f));
 
 Color Color::FromRgba(RGBA val)
 {
