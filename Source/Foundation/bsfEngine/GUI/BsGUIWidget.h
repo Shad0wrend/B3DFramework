@@ -72,10 +72,10 @@ namespace bs
 	};
 
 	/**
-	 * Organizes GUI elements within a single GUIWidget into groups that can be drawn together, and maintains a list of
-	 * dirty screen regions that need to be updated by the GUI renderer.
+	 * Maintains a set of meshes used for drawing GUI elements. GUI elements will be merged into the same mesh in order to reduce
+	 * render time when available. Additionally it maintains a list of dirty screen regions that need to be updated by the GUI renderer.
 	 **/
-	class B3D_EXPORT GUIDrawGroups
+	class B3D_EXPORT GUIMeshBatches
 	{
 		/** Flags signaling which part of a GUIElement is dirty. */
 		enum DirtyFlags
@@ -85,7 +85,7 @@ namespace bs
 		};
 
 	public:
-		GUIDrawGroups(GUIWidget* parentWidget);
+		GUIMeshBatches(GUIWidget* parentWidget);
 
 		/** Iterates over all the render elements in the GUI elements and adds them to suitable draw groups. */
 		void Add(GUIElement* element);
@@ -103,29 +103,8 @@ namespace bs
 		void NotifyMeshDirty(GUIElement* element);
 
 	private:
-		/** Single render element in a GUIDrawGroup */
-		struct GUIGroupRenderElement
-		{
-			GUIGroupRenderElement() = default;
-
-			GUIGroupRenderElement(GUIElement* element, u32 renderElementIdx)
-				: Element(element), RenderElementIdx(renderElementIdx)
-			{}
-
-			GUIElement* Element = nullptr;
-			u32 RenderElementIdx = 0;
-		};
-
-		/** Contains information about all draw groups a GUI element is part of. */
-		struct GUIGroupElement
-		{
-			GUIElement* Element = nullptr;
-			SmallVector<i32, 4> Groups;
-			Rect2I Bounds;
-		};
-
-		/** Data required for rendering a single GUI mesh. */
-		struct GUIMesh
+		/** Mesh required for rendering a set of GUI render elements. */
+		struct GUIBatchedMesh
 		{
 			u32 IndexOffset = 0;
 			u32 IndexCount = 0;
@@ -135,22 +114,43 @@ namespace bs
 			bool IsLine;
 		};
 
-		/** Holds information about a set of GUI elements that can be drawn together. */
-		struct GUIDrawGroup
+		/** Represents a single render element of a GUIElement. */
+		struct GUIBatchedRenderElement
+		{
+			GUIBatchedRenderElement() = default;
+
+			GUIBatchedRenderElement(GUIElement* element, u32 renderElementIndex)
+				: Element(element), RenderElementIdx(renderElementIndex)
+			{}
+
+			GUIElement* Element = nullptr;
+			u32 RenderElementIdx = 0;
+		};
+
+		/** Represents a single GUIElement. */
+		struct GUIBatchedElement
+		{
+			GUIElement* Element = nullptr;
+			SmallVector<i32, 4> Groups;
+			Rect2I Bounds;
+		};
+
+		/** Contains a set of GUI elements and their mesh batches, for a specific depth range. */
+		struct GUIBatchedElementsDepthSlice
 		{
 			i32 Id = 0;
 			u32 DepthRange = 0;
 			u32 MinDepth = 0;
 			bool DirtyBounds = true;
 			Rect2I Bounds;
-			Vector<GUIGroupRenderElement> CachedElements;
-			Vector<GUIGroupRenderElement> NonCachedElements;
-			Vector<GUIMesh> Meshes;
+			Vector<GUIBatchedRenderElement> CachedElements;
+			Vector<GUIBatchedRenderElement> NonCachedElements;
+			Vector<GUIBatchedMesh> Meshes;
 			Vector<Rect2I> DirtyRegions;
 		};
 
 		/** Splits the provided draw group at the specified depth. Returns the second half of the group. */
-		GUIDrawGroup& Split(u32 groupIdx, u32 depth);
+		GUIBatchedElementsDepthSlice& Split(u32 groupIdx, u32 depth);
 
 		/** Rebuilds the GUI element meshes. */
 		void RebuildMeshes();
@@ -159,46 +159,46 @@ namespace bs
 		 * Adds a specific render element of a GUI element to the specified draw group. Caller is responsible for
 		 * ensuring the element is a valid match for the group.
 		 */
-		void Add(GUIGroupElement& element, u32 renderElementIdx, u32 groupIdx);
+		void Add(GUIBatchedElement& element, u32 renderElementIdx, u32 groupIdx);
 
 		/** Adds a specific render element of a GUI element and adds it to a suitable draw group. */
-		void Add(GUIGroupElement& element, u32 renderElementIdx);
+		void Add(GUIBatchedElement& element, u32 renderElementIdx);
 
 		/**
 		 * Removes a specific render element in the provided GUI element from the provided draw group. Caller is
 		 * responsible for ensuring the provided draw group is the element's current draw group.
 		 */
-		void Remove(GUIGroupElement& element, u32 renderElementIdx, u32 groupIdx);
+		void Remove(GUIBatchedElement& element, u32 renderElementIdx, u32 groupIdx);
 
 		/** Removes a specific render element in the provided GUI element from their current draw group. */
-		void Remove(GUIGroupElement& element, u32 renderElementIdx);
+		void Remove(GUIBatchedElement& element, u32 renderElementIdx);
 
 		/**
 		 * Marks region covered by @p element of all the draw groups associated with the element as dirty, so they
 		 * will be redrawn on the next frame. If element is being resized or moved, this should be called on the old
 		 * position/size, as well as on the new position/size.
 		 */
-		void MarkBoundsDirty(const GUIGroupElement& element);
+		void MarkBoundsDirty(const GUIBatchedElement& element);
 
 		/**
 		 * Marks region covered by @p element of a particular draw group associated with the element as dirty, so it
 		 * will be redrawn on the next frame. If element is being resized or moved, this should be called on the old
 		 * position/size, as well as on the new position/size.
 		 */
-		void MarkBoundsDirty(const GUIGroupElement& element, u32 groupIndex);
+		void MarkBoundsDirty(const GUIBatchedElement& element, u32 groupIndex);
 
 
 		/** Builds a structure with information required for rendering the provided mesh. */
-		static GUIMeshRenderData GetRenderData(const GUIMesh& guiMesh);
+		static GUIMeshRenderData GetRenderData(const GUIBatchedMesh& guiMesh);
 
 		/** Builds a structure with information required for rendering the provided draw group. */
-		static GUIDrawGroupRenderData GetRenderData(const GUIDrawGroup& drawGroup);
+		static GUIDrawGroupRenderData GetRenderData(const GUIBatchedElementsDepthSlice& drawGroup);
 
 		/** Calculates the bounds of all visible elements in the draw group. */
-		static Rect2I CalculateBounds(GUIDrawGroup& group);
+		static Rect2I CalculateBounds(GUIBatchedElementsDepthSlice& group);
 
-		Vector<GUIDrawGroup> mDrawGroups;
-		UnorderedMap<GUIElement*, GUIGroupElement> mElements;
+		Vector<GUIBatchedElementsDepthSlice> mDrawGroups;
+		UnorderedMap<GUIElement*, GUIBatchedElement> mElements;
 		UnorderedMap<GUIElement*, u32> mDirtyElements;
 		bool mGroupsCoreDirty = true;
 		GUIWidget* mWidget;
@@ -402,7 +402,7 @@ namespace bs
 
 		SPtr<Camera> mCamera;
 		Vector<GUIElement*> mElements;
-		GUIDrawGroups mDrawGroups;
+		GUIMeshBatches mDrawGroups;
 		GUIPanel* mPanel = nullptr;
 		u8 mDepth = 128;
 		bool mIsActive = true;
