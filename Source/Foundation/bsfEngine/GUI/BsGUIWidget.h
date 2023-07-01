@@ -72,8 +72,8 @@ namespace bs
 	};
 
 	/**
-	 * Maintains a set of meshes used for drawing GUI elements. GUI elements will be merged into the same mesh in order to reduce
-	 * render time when available. Additionally it maintains a list of dirty screen regions that need to be updated by the GUI renderer.
+	 * Maintains a set of meshes used for drawing GUI elements. When possible GUI render elements will be merged into the same mesh (i.e. a batch)
+	 * in order to reduce render time. Additionally, each batch maintains a list of dirty regions that need to be updated by the GUI renderer.
 	 **/
 	class B3D_EXPORT GUIMeshBatches
 	{
@@ -104,53 +104,101 @@ namespace bs
 
 	private:
 		/** Mesh required for rendering a set of GUI render elements. */
-		struct GUIBatchedMesh
+		struct BatchedMesh
 		{
 			u32 IndexOffset = 0;
 			u32 IndexCount = 0;
-			SpriteMaterial* Material;
-			SpriteMaterialInfo MatInfo;
+			SpriteMaterial* SpriteMaterial;
+			SpriteMaterialInfo SpriteMaterialInformation;
 			Rect2I Bounds;
-			bool IsLine;
+			bool IsLine = false;
+		};
+
+		/** Information about a material used by a batch. */
+		struct BatchedMaterial
+		{
+			BatchedMaterial() = default;
+
+			bool CanBeMergedWith(const BatchedMaterial& other) const
+			{
+				return IsBatchingAllowed && other.IsBatchingAllowed && MaterialHash == other.MaterialHash && MeshType == other.MeshType;
+			}
+
+			void Merge(const BatchedMaterial& other)
+			{
+				B3D_ASSERT(SpriteMaterial != nullptr);
+				SpriteMaterial->Merge(SpriteMaterialInformation, other.SpriteMaterialInformation);
+			}
+
+			bool IsBatchingAllowed = true;
+			u64 MaterialHash = 0;
+			GUIMeshType MeshType = GUIMeshType::Triangle;
+			SpriteMaterial* SpriteMaterial = nullptr;
+			SpriteMaterialInfo SpriteMaterialInformation;
 		};
 
 		/** Represents a single render element of a GUIElement. */
-		struct GUIBatchedRenderElement
+		struct BatchedGUIRenderElement
 		{
-			GUIBatchedRenderElement() = default;
+			BatchedGUIRenderElement() = default;
 
-			GUIBatchedRenderElement(GUIElement* element, u32 renderElementIndex)
-				: Element(element), RenderElementIdx(renderElementIndex)
+			BatchedGUIRenderElement(GUIElement* element, u32 renderElementIndex)
+				: ParentGUIElement(element), RenderElementIndex(renderElementIndex)
 			{}
 
-			GUIElement* Element = nullptr;
-			u32 RenderElementIdx = 0;
+			GUIElement* ParentGUIElement = nullptr;
+			u32 RenderElementIndex = 0;
 		};
 
 		/** Represents a single GUIElement. */
-		struct GUIBatchedElement
+		struct BatchedGUIElement
 		{
-			GUIElement* Element = nullptr;
-			SmallVector<i32, 4> Groups;
+			GUIElement* GUIElement = nullptr;
+			SmallVector<i32, 4> RenderElementMaterialGroupIndices;
 			Rect2I Bounds;
+		};
+
+		/**
+		 * A set of GUI render elements that can be drawn together. All elements will be combined into a single mesh and rendered with a single material.
+		 * Additionally each batch maintains a list of dirty regions, so the renderer doesn't need to redraw the entire batch when a portion of it changes.
+		 */
+		struct Batch
+		{
+			BatchedMaterial Material;
+			Vector<BatchedGUIRenderElement> RenderElements;
+			Vector<Rect2I> DirtyRegions;
+
+			// Bounds
+			bool IsBoundsDirty = true;
+			Rect2I Bounds;
+
+			// Mesh
+			u32 IndexCount = 0;
+			u32 VertexCount = 0;
+			SPtr<Mesh> Mesh;
+			bool IsMeshDirty = true;
 		};
 
 		/** Contains a set of GUI elements and their mesh batches, for a specific depth range. */
-		struct GUIBatchedElementsDepthSlice
+		struct BatchesInDepthRange
 		{
 			i32 Id = 0;
+			bool DirtyBounds = true; // TODO - Remove
+			Rect2I Bounds; // TODO - Remove
+			Vector<BatchedGUIRenderElement> CachedElements; // TODO - Remove
+			Vector<BatchedGUIRenderElement> NonCachedElements; // TODO - Remove
+			Vector<BatchedMesh> Meshes; // TODO - Remove
+			Vector<Rect2I> DirtyRegions; // TODO - Remove
+
+			Vector<Batch> Batches;
+
+			// Depth
 			u32 DepthRange = 0;
 			u32 MinDepth = 0;
-			bool DirtyBounds = true;
-			Rect2I Bounds;
-			Vector<GUIBatchedRenderElement> CachedElements;
-			Vector<GUIBatchedRenderElement> NonCachedElements;
-			Vector<GUIBatchedMesh> Meshes;
-			Vector<Rect2I> DirtyRegions;
 		};
 
 		/** Splits the provided draw group at the specified depth. Returns the second half of the group. */
-		GUIBatchedElementsDepthSlice& Split(u32 groupIdx, u32 depth);
+		BatchesInDepthRange& Split(u32 groupIdx, u32 depth);
 
 		/** Rebuilds the GUI element meshes. */
 		void RebuildMeshes();
@@ -159,46 +207,46 @@ namespace bs
 		 * Adds a specific render element of a GUI element to the specified draw group. Caller is responsible for
 		 * ensuring the element is a valid match for the group.
 		 */
-		void Add(GUIBatchedElement& element, u32 renderElementIdx, u32 groupIdx);
+		void Add(BatchedGUIElement& element, u32 renderElementIdx, u32 groupIdx);
 
 		/** Adds a specific render element of a GUI element and adds it to a suitable draw group. */
-		void Add(GUIBatchedElement& element, u32 renderElementIdx);
+		void Add(BatchedGUIElement& element, u32 renderElementIdx);
 
 		/**
 		 * Removes a specific render element in the provided GUI element from the provided draw group. Caller is
 		 * responsible for ensuring the provided draw group is the element's current draw group.
 		 */
-		void Remove(GUIBatchedElement& element, u32 renderElementIdx, u32 groupIdx);
+		void Remove(BatchedGUIElement& element, u32 renderElementIdx, u32 groupIdx);
 
 		/** Removes a specific render element in the provided GUI element from their current draw group. */
-		void Remove(GUIBatchedElement& element, u32 renderElementIdx);
+		void Remove(BatchedGUIElement& element, u32 renderElementIdx);
 
 		/**
 		 * Marks region covered by @p element of all the draw groups associated with the element as dirty, so they
 		 * will be redrawn on the next frame. If element is being resized or moved, this should be called on the old
 		 * position/size, as well as on the new position/size.
 		 */
-		void MarkBoundsDirty(const GUIBatchedElement& element);
+		void MarkBoundsDirty(const BatchedGUIElement& element);
 
 		/**
 		 * Marks region covered by @p element of a particular draw group associated with the element as dirty, so it
 		 * will be redrawn on the next frame. If element is being resized or moved, this should be called on the old
 		 * position/size, as well as on the new position/size.
 		 */
-		void MarkBoundsDirty(const GUIBatchedElement& element, u32 groupIndex);
+		void MarkBoundsDirty(const BatchedGUIElement& element, u32 groupIndex);
 
 
 		/** Builds a structure with information required for rendering the provided mesh. */
-		static GUIMeshRenderData GetRenderData(const GUIBatchedMesh& guiMesh);
+		static GUIMeshRenderData GetRenderData(const BatchedMesh& guiMesh);
 
 		/** Builds a structure with information required for rendering the provided draw group. */
-		static GUIDrawGroupRenderData GetRenderData(const GUIBatchedElementsDepthSlice& drawGroup);
+		static GUIDrawGroupRenderData GetRenderData(const BatchesInDepthRange& drawGroup);
 
 		/** Calculates the bounds of all visible elements in the draw group. */
-		static Rect2I CalculateBounds(GUIBatchedElementsDepthSlice& group);
+		static Rect2I CalculateBounds(BatchesInDepthRange& group);
 
-		Vector<GUIBatchedElementsDepthSlice> mDrawGroups;
-		UnorderedMap<GUIElement*, GUIBatchedElement> mElements;
+		Vector<BatchesInDepthRange> mDrawGroups;
+		UnorderedMap<GUIElement*, BatchedGUIElement> mElements;
 		UnorderedMap<GUIElement*, u32> mDirtyElements;
 		bool mGroupsCoreDirty = true;
 		GUIWidget* mWidget;

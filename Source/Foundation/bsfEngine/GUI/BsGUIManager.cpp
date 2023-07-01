@@ -1598,8 +1598,6 @@ RendererExtensionRequest GUIRenderer::Check(const Camera& camera)
 	{
 		for(auto& widget : widgetRenderData)
 		{
-			// TODO - If a widget was removed completely, I need to force a redraw as well
-
 			for(auto& drawGroup : widget.DrawGroups)
 			{
 				if(!drawGroup.NonCachedElements.empty()) // TODO - Ensure non-cached elements register their dirty bounds every frame
