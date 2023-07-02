@@ -222,7 +222,7 @@ void GUIElementBase::MarkContentAsDirty()
 		return;
 
 	if(mParentWidget != nullptr)
-		mParentWidget->MarkContentDirtyInternal(this);
+		mParentWidget->MarkContentDirty(this);
 }
 
 void GUIElementBase::MarkMeshAsDirty()
@@ -231,7 +231,7 @@ void GUIElementBase::MarkMeshAsDirty()
 		return;
 
 	if(mParentWidget != nullptr)
-		mParentWidget->MarkMeshDirtyInternal(this);
+		mParentWidget->MarkMeshDirty(this);
 }
 
 void GUIElementBase::SetVisible(bool visible)
@@ -269,8 +269,8 @@ void GUIElementBase::SetVisibleRecursive(bool visible)
 	{
 		MarkMeshAsDirty();
 
-		//if(mParentWidget)
-		//	mParentWidget->NotifyVisibilityChanged(this, false);
+		if(mParentWidget)
+			mParentWidget->NotifyElementVisibilityChanged(this, false);
 
 		mFlags |= GUIElem_Hidden;
 
@@ -284,8 +284,8 @@ void GUIElementBase::SetVisibleRecursive(bool visible)
 		{
 			mFlags &= ~GUIElem_Hidden;
 
-			//if(mParentWidget)
-			//	mParentWidget->NotifyVisibilityChanged(this, true);
+			if(mParentWidget)
+				mParentWidget->NotifyElementVisibilityChanged(this, true);
 
 			MarkLayoutAsDirty();
 
@@ -540,10 +540,10 @@ void GUIElementBase::ChangeParentWidget(GUIWidget* widget)
 	if(mParentWidget != widget)
 	{
 		if(mParentWidget != nullptr)
-			mParentWidget->UnregisterElementInternal(this);
+			mParentWidget->UnregisterElement(this);
 
 		if(widget != nullptr)
-			widget->RegisterElementInternal(this);
+			widget->RegisterElement(this);
 	}
 
 	mParentWidget = widget;

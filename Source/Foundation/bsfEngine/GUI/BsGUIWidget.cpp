@@ -565,7 +565,6 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 			auto* element = const_cast<GUIElement*>(entry.first);
 			auto iterFind = mElements.find(element);
 
-			B3D_ASSERT(iterFind != mElements.end());
 			if(iterFind == mElements.end())
 				continue;
 
@@ -793,8 +792,7 @@ u32 GUIMeshBatches::SplitDepthRange(u32 depthRangeIndex, u32 depth)
 
 		auto itPartitionEdge = std::partition(batch.RenderElements.begin(), batch.RenderElements.end(), [depth](const BatchedGUIRenderElement& batchedGuiRenderElement)
 			 {
-				 const u32 renderElementDepth = batchedGuiRenderElement.ParentGUIElement->GetDepth() + batchedGuiRenderElement.ParentGUIElement->GetRenderElements()[batchedGuiRenderElement.RenderElementIndex].Depth;
-				 return renderElementDepth < depth;
+				 return batchedGuiRenderElement.Depth < depth;
 			 });
 
 		std::move(itPartitionEdge, batch.RenderElements.end(), std::back_inserter(newBatch.RenderElements));
@@ -1002,13 +1000,13 @@ GUIMeshBatches::BatchedMaterial GUIMeshBatches::CreateBatchedMaterial(const GUIE
 
 
 GUIWidget::GUIWidget(const SPtr<Camera>& camera)
-	: mCamera(camera), mDrawGroups(this)
+	: mCamera(camera), mBatches(this)
 {
 	Construct(camera);
 }
 
 GUIWidget::GUIWidget(const HCamera& camera)
-	: mCamera(camera->GetCameraInternal()), mDrawGroups(this)
+	: mCamera(camera->GetCameraInternal()), mBatches(this)
 {
 	Construct(mCamera);
 }
@@ -1232,7 +1230,7 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 			GUIElementBase* currentElem = todo.top();
 			todo.pop();
 
-			MarkContentDirtyInternal(currentElem);
+			MarkContentDirty(currentElem);
 			currentElem->MarkAsClean();
 
 			u32 numChildren = currentElem->GetChildCount();
@@ -1243,27 +1241,29 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 	B3DClearAllocatorFrame();
 }
 
-void GUIWidget::RegisterElementInternal(GUIElementBase* elem)
+void GUIWidget::RegisterElement(GUIElementBase* guiElementBase)
 {
-	B3D_ASSERT(elem != nullptr && !elem->IsDestroyed());
+	B3D_ASSERT(guiElementBase != nullptr && !guiElementBase->IsDestroyed());
 
-	if(elem->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElementBase->GetTypeInternal() == GUIElementBase::Type::Element)
 	{
-		mElements.push_back(static_cast<GUIElement*>(elem));
+		mElements.push_back(static_cast<GUIElement*>(guiElementBase));
 		mWidgetIsDirty = true;
 
-		// Find a draw group
-		auto guiElem = static_cast<GUIElement*>(elem);
-		mDrawGroups.Add(guiElem);
-		mDrawGroups.MarkContentDirty(guiElem);
+		if(guiElementBase->IsVisible())
+		{
+			auto guiElement = static_cast<GUIElement*>(guiElementBase);
+			mBatches.Add(guiElement);
+			mBatches.MarkContentDirty(guiElement);
+		}
 	}
 }
 
-void GUIWidget::UnregisterElementInternal(GUIElementBase* elem)
+void GUIWidget::UnregisterElement(GUIElementBase* guiElement)
 {
-	B3D_ASSERT(elem != nullptr);
+	B3D_ASSERT(guiElement != nullptr);
 
-	auto iterFind = std::find(begin(mElements), end(mElements), elem);
+	auto iterFind = std::find(begin(mElements), end(mElements), guiElement);
 
 	if(iterFind != mElements.end())
 	{
@@ -1271,31 +1271,43 @@ void GUIWidget::UnregisterElementInternal(GUIElementBase* elem)
 		mWidgetIsDirty = true;
 	}
 
-	if(elem->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElement->GetTypeInternal() == GUIElementBase::Type::Element)
 	{
-		mDirtyContents.erase(static_cast<GUIElement*>(elem));
+		mDirtyContents.erase(static_cast<GUIElement*>(guiElement));
 
-		auto guiElem = static_cast<GUIElement*>(elem);
-		mDrawGroups.Remove(guiElem);
+		const auto guiElem = static_cast<GUIElement*>(guiElement);
+		mBatches.Remove(guiElem);
 	}
 }
 
-void GUIWidget::MarkMeshDirtyInternal(GUIElementBase* elem)
+void GUIWidget::NotifyElementVisibilityChanged(GUIElementBase* guiElementBase, bool isVisible)
+{
+	if(guiElementBase->GetTypeInternal() != GUIElementBase::Type::Element)
+		return;
+
+	const auto guiElement = static_cast<GUIElement*>(guiElementBase);
+	if(isVisible)
+		mBatches.Add(guiElement);
+	else
+		mBatches.Remove(guiElement);
+}
+
+void GUIWidget::MarkMeshDirty(GUIElementBase* elem)
 {
 	mWidgetIsDirty = true;
 
 	if(elem->GetTypeInternal() == GUIElementBase::Type::Element)
-		mDrawGroups.MarkMeshDirty(static_cast<GUIElement*>(elem));
+		mBatches.MarkMeshDirty(static_cast<GUIElement*>(elem));
 }
 
-void GUIWidget::MarkContentDirtyInternal(GUIElementBase* elem)
+void GUIWidget::MarkContentDirty(GUIElementBase* elem)
 {
 	if(elem->GetTypeInternal() == GUIElementBase::Type::Element)
 	{
 		auto guiElement = static_cast<GUIElement*>(elem);
 
 		mDirtyContents.insert(guiElement);
-		mDrawGroups.MarkContentDirty(guiElement);
+		mBatches.MarkContentDirty(guiElement);
 	}
 }
 
@@ -1364,7 +1376,7 @@ GUIDrawGroupRenderDataUpdate GUIWidget::RebuildDirtyRenderData()
 		UpdateBounds();
 	}
 
-	return mDrawGroups.RebuildDirty(dirty);
+	return mBatches.RebuildDirty(dirty);
 }
 
 bool GUIWidget::InBounds(const Vector2I& position) const

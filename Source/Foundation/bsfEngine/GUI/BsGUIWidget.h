@@ -356,13 +356,16 @@ namespace bs
 		 */
 
 		/** Registers a new element as a child of the widget. */
-		void RegisterElementInternal(GUIElementBase* elem);
+		void RegisterElement(GUIElementBase* guiElementBase);
 
 		/**
 		 * Unregisters an element from the widget. Usually called when the element is destroyed, or reparented to another
 		 * widget.
 		 */
-		void UnregisterElementInternal(GUIElementBase* elem);
+		void UnregisterElement(GUIElementBase* guiElementBase);
+
+		/** Called when a registered GUI element is hidden or made visible. Only needs to be called if visibility changes after registration. */
+		void NotifyElementVisibilityChanged(GUIElementBase* guiElementBase, bool isVisible);
 
 		/**
 		 * Returns the default navigation group assigned to all elements of this widget that don't have an explicit nav-
@@ -373,13 +376,13 @@ namespace bs
 		/**
 		 * Marks the widget mesh dirty requiring a mesh rebuild. Provided element is the one that requested the mesh update.
 		 */
-		void MarkMeshDirtyInternal(GUIElementBase* elem);
+		void MarkMeshDirty(GUIElementBase* elem);
 
 		/**
 		 * Marks the elements content as dirty, meaning its internal mesh will need to be rebuilt (this implies the entire
 		 * widget mesh will be rebuilt as well).
 		 */
-		void MarkContentDirtyInternal(GUIElementBase* elem);
+		void MarkContentDirty(GUIElementBase* elem);
 
 		/**	Updates the layout of all child elements, repositioning and resizing them as needed. */
 		void UpdateLayoutInternal();
@@ -456,7 +459,7 @@ namespace bs
 
 		SPtr<Camera> mCamera;
 		Vector<GUIElement*> mElements;
-		GUIMeshBatches mDrawGroups;
+		GUIMeshBatches mBatches;
 		GUIPanel* mPanel = nullptr;
 		u8 mDepth = 128;
 		bool mIsActive = true;
