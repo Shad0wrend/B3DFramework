@@ -415,7 +415,7 @@ namespace bs
 	 *	 - Multi threaded - Scheduler will launch N threads as provided by the user
 	 *
 	 * All executing tasks are allowed to yield mid-execution, at which point a new task will start executing on the thread. The suspended
-	 * task can be resumed from the point it yielded as the scheduler will preserve it context in a fiber.
+	 * task can be resumed from the point it yielded as the scheduler will preserve its context in a fiber.
 	 */
 	class Scheduler final
 	{

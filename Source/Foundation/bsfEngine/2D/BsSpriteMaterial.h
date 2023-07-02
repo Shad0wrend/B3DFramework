@@ -13,6 +13,7 @@ namespace bs
 	namespace ct
 	{
 		class MeshBase;
+		struct SpriteMaterialInfo;
 	}
 
 	/** @addtogroup 2D-Internal
@@ -44,18 +45,22 @@ namespace bs
 		}
 	};
 
-	/** Contains information for initializing a sprite material. */
-	struct SpriteMaterialInfo
+	/** Common functionality for both main and render thread thread variants of SpriteMaterialInformation. */
+	template <bool Core>
+	struct TSpriteMaterialInfo
 	{
-		SpriteMaterialInfo() = default;
+		using TextureType = CoreVariantHandleType<Texture, Core>;
+		using SpriteTextureType = CoreVariantHandleType<SpriteTexture, Core>;
+
+		TSpriteMaterialInfo() = default;
 
 		/**
 		 * Creates a new deep copy of the object. This is different from standard copy constructor which will just reference
 		 * the original "additionalData" field, while this will copy it.
 		 */
-		SpriteMaterialInfo Clone() const
+		TSpriteMaterialInfo Clone() const
 		{
-			SpriteMaterialInfo info;
+			TSpriteMaterialInfo info;
 			info.GroupId = GroupId;
 			info.Texture = Texture;
 			info.SpriteTexture = SpriteTexture;
@@ -69,11 +74,20 @@ namespace bs
 		}
 
 		u64 GroupId = 0;
-		HTexture Texture;
-		HSpriteTexture SpriteTexture;
+		TextureType Texture;
+		SpriteTextureType SpriteTexture;
 		Color Tint;
 		float AnimationStartTime = 0.0f;
 		SPtr<SpriteMaterialExtraInfo> AdditionalData;
+	};
+
+	/** Contains information for initializing a sprite material. */
+	struct SpriteMaterialInfo : TSpriteMaterialInfo<false>
+	{
+		using TSpriteMaterialInfo::TSpriteMaterialInfo;
+
+		/** Creates a render thread variant of the object. */
+		ct::SpriteMaterialInfo GetCore() const;
 	};
 
 	/** Interfaced implemented by materials used for rendering sprites. This is expected to be used as a singleton. */
@@ -140,6 +154,18 @@ namespace bs
 		mutable ct::MaterialParameterSampledTexture mTextureParam;
 		mutable ct::MaterialParameterSampler mSamplerParam;
 	};
+
+	namespace ct
+	{
+		/** @copydoc bs::SpriteMaterialInfo */
+		struct SpriteMaterialInfo : TSpriteMaterialInfo<true>
+		{
+			SpriteMaterialInfo() = default;
+
+			/** Initializes the object from the main thread variant. */
+			SpriteMaterialInfo(const TSpriteMaterialInfo<false>& other);
+		};
+	} // namespace ct
 
 	/** @} */
 } // namespace bs

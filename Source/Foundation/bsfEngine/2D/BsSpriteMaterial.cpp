@@ -9,8 +9,14 @@
 #include "Renderer/BsRendererUtility.h"
 #include "Material/BsGpuParamsSet.h"
 #include "CoreThread/BsCoreThread.h"
+#include "Image/BsSpriteTexture.h"
 
 using namespace bs;
+
+ct::SpriteMaterialInfo SpriteMaterialInfo::GetCore() const
+{
+	return ct::SpriteMaterialInfo(*this);
+}
 
 SpriteMaterial::SpriteMaterial(u32 id, const HMaterial& material, ShaderVariationParameters variation, bool allowBatching)
 	: mId(id), mAllowBatching(allowBatching), mMaterialStored(false), mParamBufferIdx(-1)
@@ -112,3 +118,21 @@ void SpriteMaterial::Render(ct::GpuCommandBuffer& commandBuffer, const SPtr<ct::
 
 	ct::GetRendererUtility().Draw(commandBuffer, mesh, subMesh);
 }
+
+namespace bs
+{
+	namespace ct
+	{
+		SpriteMaterialInfo::SpriteMaterialInfo(const TSpriteMaterialInfo<false>& other)
+		{
+			GroupId = other.GroupId;
+			Texture = other.Texture != nullptr ? other.Texture->GetCore() : nullptr;
+			SpriteTexture = other.SpriteTexture != nullptr ? other.SpriteTexture->GetCore() : nullptr;
+			Tint = other.Tint;
+			AnimationStartTime = other.AnimationStartTime;
+			AdditionalData = other.AdditionalData;
+		}
+	} // namespace ct
+}
+
+

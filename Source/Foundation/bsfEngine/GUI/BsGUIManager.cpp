@@ -1714,7 +1714,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 
 				for(auto drawGroupIterator = widget.DrawGroups.rbegin(); drawGroupIterator != widget.DrawGroups.rend(); ++drawGroupIterator)
 				{
-					const GUIDrawGroupRenderData& drawGroup = *drawGroupIterator;
+					const GUIBatchRenderData& drawGroup = *drawGroupIterator;
 
 					for(const GUIMeshRenderData& meshRenderData : drawGroup.NonCachedElements)
 					{
@@ -1752,11 +1752,11 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 
 						if(!kEnableGUIRegionDebugDrawing || !useDebugMaterial)
 						{
-							material->Render(commandBuffer, meshRenderData->IsLine ? widget.LineMesh : widget.TriangleMesh, meshRenderData->SubMesh, meshRenderData->Texture, mSamplerState, uniformBuffer, meshRenderData->AdditionalData);
+							material->Render(commandBuffer, meshRenderData->IsLine ? widget.LineMesh : widget.TriangleMesh, meshRenderData->SubMesh, meshRenderData->MaterialInformation.Texture, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
 						}
 						else
 						{
-							material->Render(commandBuffer, meshRenderData->IsLine ? widget.LineMesh : widget.TriangleMesh, meshRenderData->SubMesh, Texture::kPink, mSamplerState, uniformBuffer, meshRenderData->AdditionalData);
+							material->Render(commandBuffer, meshRenderData->IsLine ? widget.LineMesh : widget.TriangleMesh, meshRenderData->SubMesh, Texture::kPink, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
 						}
 					}
 				}
@@ -1822,9 +1822,9 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 	else
 		widget = &(*iterFind2);
 
-	if(!data.NewDrawGroups.empty())
+	if(!data.NewBatches.empty())
 	{
-		widget->DrawGroups = data.NewDrawGroups;
+		widget->DrawGroups = data.NewBatches;
 
 		// Allocate GPU buffers containing the material parameters
 		u32 numBuffers = (u32)widget->DrawGroups.size();
@@ -1893,22 +1893,24 @@ void GUIRenderer::ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId)
 
 void GUIRenderer::UpdateParamBlockBuffer(const SPtr<GpuBuffer>& buffer, const Vector2I& viewportOffset, float invViewportWidth, float invViewportHeight, bool flipY, const Matrix4& transform, const GUIMeshRenderData& renderData) const
 {
-	gGUISpriteParamBlockDef.gTint.Set(buffer, renderData.Tint);
+	const SpriteMaterialInfo& materialInformation = renderData.MaterialInformation;
+
+	gGUISpriteParamBlockDef.gTint.Set(buffer, materialInformation.Tint);
 	gGUISpriteParamBlockDef.gWorldTransform.Set(buffer, transform);
 	gGUISpriteParamBlockDef.gInvViewportWidth.Set(buffer, invViewportWidth);
 	gGUISpriteParamBlockDef.gInvViewportHeight.Set(buffer, invViewportHeight);
 	gGUISpriteParamBlockDef.gViewportOffset.Set(buffer, viewportOffset);
 	gGUISpriteParamBlockDef.gViewportYFlip.Set(buffer, flipY ? -1.0f : 1.0f);
 
-	float t = std::max(0.0f, mTime - renderData.AnimationStartTime);
-	if(renderData.SpriteTexture)
+	float t = std::max(0.0f, mTime - materialInformation.AnimationStartTime);
+	if(materialInformation.SpriteTexture)
 	{
 		u32 row;
 		u32 column;
-		renderData.SpriteTexture->GetAnimationFrame(t, row, column);
+		materialInformation.SpriteTexture->GetAnimationFrame(t, row, column);
 
-		float invWidth = 1.0f / renderData.SpriteTexture->GetAnimation().NumColumns;
-		float invHeight = 1.0f / renderData.SpriteTexture->GetAnimation().NumRows;
+		float invWidth = 1.0f / materialInformation.SpriteTexture->GetAnimation().NumColumns;
+		float invHeight = 1.0f / materialInformation.SpriteTexture->GetAnimation().NumRows;
 
 		Vector4 sizeOffset(invWidth, invHeight, column * invWidth, row * invHeight);
 		gGUISpriteParamBlockDef.gUVSizeOffset.Set(buffer, sizeOffset);

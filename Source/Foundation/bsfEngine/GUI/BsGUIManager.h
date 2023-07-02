@@ -448,7 +448,7 @@ namespace bs
 			{
 				u64 WidgetId;
 				u32 WidgetDepth = 0;
-				Vector<GUIDrawGroupRenderData> DrawGroups;
+				Vector<GUIBatchRenderData> DrawGroups;
 				Vector<SPtr<GpuBuffer>> GUIMeshUniformBuffers;
 
 				SPtr<Mesh> TriangleMesh;

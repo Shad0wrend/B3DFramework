@@ -55,201 +55,318 @@ GUIMeshBatches::GUIMeshBatches(GUIWidget* parentWidget)
 	BatchesInDepthRange mainDrawGroup;
 	mainDrawGroup.MinDepth = 0;
 	mainDrawGroup.DepthRange = std::numeric_limits<u32>::max();
-	mainDrawGroup.Id = mNextDrawGroupId++;
+	mainDrawGroup.Id = mNextDepthRangeId++;
 
-	mDrawGroups.push_back(mainDrawGroup);
+	mDepthRanges.push_back(mainDrawGroup);
 }
 
-void GUIMeshBatches::Add(GUIElement* element)
+void GUIMeshBatches::Add(GUIElement* guiElement)
 {
-	const SmallVector<GUIRenderElement, 4>& renderElements = element->GetRenderElementsInternal();
+	const SmallVector<GUIRenderElement, 4>& guiRenderElements = guiElement->GetRenderElementsInternal();
 
-	BatchedGUIElement& groupElement = mElements[element];
-	groupElement.GUIElement = element;
-	groupElement.Bounds = element->GetClippedBoundsInternal();
-	groupElement.RenderElementMaterialGroupIndices.Resize(renderElements.Size());
+	BatchedGUIElement& batchedGuiElement = mElements[guiElement];
+	batchedGuiElement.GUIElement = guiElement;
+	batchedGuiElement.Bounds = guiElement->GetClippedBoundsInternal();
+	batchedGuiElement.BatchPerRenderElement.Resize(guiRenderElements.Size(), ~0u);
 
-	for(u32 i = 0; i < renderElements.Size(); i++)
-		Add(groupElement, i);
+	for(u32 renderElementIndex = 0; renderElementIndex < (u32)guiRenderElements.Size(); renderElementIndex++)
+		Add(batchedGuiElement, renderElementIndex);
 
-	mGroupsCoreDirty = true;
+	mBatchesOutOfDateInRenderer = true;
 }
 
-void GUIMeshBatches::Add(BatchedGUIElement& groupElement, u32 renderElementIdx)
+void GUIMeshBatches::Add(BatchedGUIElement& batchedGuiElement, u32 renderElementIndex)
 {
-	GUIElement* element = groupElement.GUIElement;
-	const SmallVector<GUIRenderElement, 4>& renderElements = element->GetRenderElementsInternal();
+	GUIElement* const guiElement = batchedGuiElement.GUIElement;
+	const SmallVector<GUIRenderElement, 4>& renderElements = guiElement->GetRenderElementsInternal();
 
-	const GUIRenderElement& renderElement = renderElements[renderElementIdx];
-	u32 elemDepth = element->GetDepthInternal() + renderElement.Depth;
+	const GUIRenderElement& guiRenderElement = renderElements[renderElementIndex];
+	const u32 renderElementDepth = guiElement->GetDepthInternal() + guiRenderElement.Depth;
 
-	// Groups are expected to be sorted by minDepth
-	for(u32 j = 0; j < (u32)mDrawGroups.size(); j++)
+	// Depth ranges are sorted by MinDepth
+	for(u32 depthRangeIndex = 0; depthRangeIndex < (u32)mDepthRanges.size(); depthRangeIndex++)
 	{
-		if(elemDepth < mDrawGroups[j].MinDepth || elemDepth >= (mDrawGroups[j].MinDepth + mDrawGroups[j].DepthRange))
+		if(renderElementDepth < mDepthRanges[depthRangeIndex].MinDepth || renderElementDepth >= (mDepthRanges[depthRangeIndex].MinDepth + mDepthRanges[depthRangeIndex].DepthRange))
 			continue;
 
-		Add(groupElement, renderElementIdx, j);
+		Add(batchedGuiElement, renderElementIndex, depthRangeIndex);
 		break;
 	}
 }
 
-void GUIMeshBatches::Add(BatchedGUIElement& groupElement, u32 renderElementIdx, u32 groupIdx)
+void GUIMeshBatches::Add(BatchedGUIElement& batchedGuiElement, u32 renderElementIndex, u32 depthRangeIndex)
 {
-	GUIElement* element = groupElement.GUIElement;
-	const SmallVector<GUIRenderElement, 4>& renderElements = element->GetRenderElementsInternal();
+	GUIElement* const guiElement = batchedGuiElement.GUIElement;
+	const SmallVector<GUIRenderElement, 4>& guiRenderElements = guiElement->GetRenderElementsInternal();
 
-	const GUIRenderElement& renderElement = renderElements[renderElementIdx];
-	u32 elemDepth = element->GetDepthInternal() + renderElement.Depth;
+	const GUIRenderElement& guiRenderElement = guiRenderElements[renderElementIndex];
+	const u32 renderElementDepth = guiElement->GetDepthInternal() + guiRenderElement.Depth;
 
-	SpriteMaterial* spriteMaterial = renderElement.Material;
+	SpriteMaterial* const spriteMaterial = guiRenderElement.Material;
 	B3D_ASSERT(spriteMaterial != nullptr);
 
-	BatchesInDepthRange& group = mDrawGroups[groupIdx];
-	if(spriteMaterial->AllowBatching())
+	const BatchedGUIRenderElement batchedGuiRenderElement(guiElement, renderElementIndex, renderElementDepth);
+	const BatchedMaterial batchedMaterial = CreateBatchedMaterial(batchedGuiRenderElement);
+
+	BatchesInDepthRange* depthRange = &mDepthRanges[depthRangeIndex];
+	if(depthRange->DepthRange == 1)
 	{
-		group.CachedElements.push_back(BatchedGUIRenderElement(element, renderElementIdx));
-
-		Rect2I bounds = element->GetClippedBoundsInternal();
-		group.Bounds.Encapsulate(bounds);
-
-		groupElement.RenderElementMaterialGroupIndices[renderElementIdx] = group.Id;
+		Add(batchedGuiElement, batchedGuiRenderElement, batchedMaterial, depthRangeIndex);
 	}
 	else
 	{
-		bool needsSplit = elemDepth != group.MinDepth;
-		if(needsSplit)
+		Batch* foundBatch = nullptr;
+		bool depthRangeHasAnotherBatch = (batchedMaterial.IsBatchingAllowed && depthRange->BatchIds.size() > 1) || (!batchedMaterial.IsBatchingAllowed && !depthRange->BatchIds.empty());
+		if(!depthRangeHasAnotherBatch && !depthRange->BatchIds.empty())
 		{
-			BatchesInDepthRange& newGroup = Split(groupIdx, elemDepth);
+			for(const auto& batchId : depthRange->BatchIds)
+			{
+				auto found = mBatches.find(batchId);
+				if(found == mBatches.end())
+				{
+					B3D_ASSERT(false);
+					return;
+				}
 
-			newGroup.NonCachedElements.push_back(BatchedGUIRenderElement(element, renderElementIdx));
+				const Batch& batch = found->second;
+				if(batch.Material.CanBeMergedWith(batchedMaterial))
+				{
+					foundBatch = &found->second;
+					break;
+				}
+			}
 
-			groupElement.RenderElementMaterialGroupIndices[renderElementIdx] = newGroup.Id;
+			if(foundBatch == nullptr)
+				depthRangeHasAnotherBatch = true;
+		}
+
+		if(depthRangeHasAnotherBatch)
+		{
+			u32 currentDepthRangeIndex = ~0u;
+			if(depthRange->MinDepth != renderElementDepth)
+			{
+				currentDepthRangeIndex = SplitDepthRange(depthRangeIndex, renderElementDepth);
+				depthRange = nullptr; // Clear as it's possible no longer valid as the vector resized
+			}
+			else
+			{
+				currentDepthRangeIndex = depthRangeIndex;
+			}
+
+			foundBatch = Add(batchedGuiElement, batchedGuiRenderElement, batchedMaterial, currentDepthRangeIndex);
+
+			B3D_ASSERT(currentDepthRangeIndex < (u32)mDepthRanges.size());
+			BatchesInDepthRange* const currentDepthRange = &mDepthRanges[currentDepthRangeIndex];
+
+			if(currentDepthRange->DepthRange != 1)
+			{
+				u32 minimumDepth = ~0u;
+				bool isNextElementFound = false;
+
+				for(const auto& batchId : currentDepthRange->BatchIds)
+				{
+					auto found = mBatches.find(batchId);
+					if(found == mBatches.end())
+					{
+						B3D_ASSERT(false);
+						return;
+					}
+
+					const Batch& batch = found->second;
+					if(batch.Id == foundBatch->Id)
+						continue;
+
+					for(const auto& entry : batch.RenderElements)
+					{
+						if(entry.Depth >= minimumDepth)
+							continue;
+
+						minimumDepth = entry.Depth;
+						isNextElementFound = true;
+
+						// Early out
+						if(minimumDepth == renderElementDepth)
+							break;
+					}
+				}
+
+				if(isNextElementFound)
+				{
+					if(minimumDepth == renderElementDepth)
+					{
+						B3D_ASSERT(renderElementDepth != ~0u);
+						SplitDepthRange(currentDepthRangeIndex, renderElementDepth + 1);
+
+						B3D_ASSERT(currentDepthRangeIndex < (u32)mDepthRanges.size());
+						B3D_ASSERT(mDepthRanges[currentDepthRangeIndex].DepthRange == 1);
+					}
+					else
+					{
+						SplitDepthRange(currentDepthRangeIndex, minimumDepth);
+					}
+				}
+			}
 		}
 		else
 		{
-			group.NonCachedElements.push_back(BatchedGUIRenderElement(element, renderElementIdx));
-
-			groupElement.RenderElementMaterialGroupIndices[renderElementIdx] = group.Id;
+			Add(batchedGuiElement, batchedGuiRenderElement, batchedMaterial, depthRangeIndex);
 		}
 	}
 
-	MarkBoundsDirty(groupElement, groupIdx);
+	B3D_ASSERT(batchedGuiElement.BatchPerRenderElement[renderElementIndex] != ~0u);
 }
 
-void GUIMeshBatches::Remove(GUIElement* element)
+GUIMeshBatches::Batch* GUIMeshBatches::Add(BatchedGUIElement& batchedGuiElement, const BatchedGUIRenderElement& batchedGuiRenderElement, const BatchedMaterial& batchedMaterial, u32 depthRangeIndex)
 {
-	auto iterFind = mElements.find(element);
-	if(iterFind == mElements.end())
-		return;
+	if(!B3D_ENSURE(depthRangeIndex < (u32)mDepthRanges.size()))
+		return nullptr;
 
-	for(u32 i = 0; i < iterFind->second.RenderElementMaterialGroupIndices.Size(); i++)
-		Remove(iterFind->second, i);
-
-	mElements.erase(element);
-	mGroupsCoreDirty = true;
-}
-
-void GUIMeshBatches::Remove(BatchedGUIElement& groupElement, u32 renderElementIdx)
-{
-	if(renderElementIdx >= (u32)groupElement.RenderElementMaterialGroupIndices.Size())
-		return;
-
-	GUIElement* element = groupElement.GUIElement;
-
-	auto iterFind = std::find_if(mDrawGroups.begin(), mDrawGroups.end(), [drawGroupId = groupElement.RenderElementMaterialGroupIndices[renderElementIdx]](const BatchesInDepthRange& group)
-								 { return group.Id == drawGroupId; });
-
-	B3D_ASSERT(iterFind != mDrawGroups.end());
-	if(iterFind != mDrawGroups.end())
+	BatchesInDepthRange& depthRange = mDepthRanges[depthRangeIndex];
+	Batch* foundBatch = nullptr;
+	if(batchedMaterial.IsBatchingAllowed)
 	{
-		u32 idx = (u32)(iterFind - mDrawGroups.begin());
-		Remove(groupElement, renderElementIdx, idx);
-	}
-}
-
-void GUIMeshBatches::Remove(BatchedGUIElement& groupElement, u32 renderElementIdx, u32 groupIdx)
-{
-	GUIElement* element = groupElement.GUIElement;
-	BatchesInDepthRange& group = mDrawGroups[groupIdx];
-
-	auto fnRemoveElement = [&group, &groupElement, element, renderElementIdx](Vector<BatchedGUIRenderElement>& elements, bool markBoundsAsDirty)
-	{
-		for(auto it = elements.begin(); it != elements.end();)
+		for(const auto& batchId : depthRange.BatchIds)
 		{
-			if(it->ParentGUIElement == element && it->RenderElementIndex == renderElementIdx)
-			{
-				if(markBoundsAsDirty)
-					group.DirtyBounds = true;
+			auto itFoundBatch = mBatches.find(batchId);
+			if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+				return nullptr;
 
-				Rect2I::AddUnique(groupElement.Bounds, group.DirtyRegions);
-				it = elements.erase(it);
+			const Batch& batch = itFoundBatch->second;
+			if(batch.Material.CanBeMergedWith(batchedMaterial))
+			{
+				foundBatch = &itFoundBatch->second;
+				break;
+			}
+		}
+	}
+
+	if(foundBatch == nullptr)
+	{
+		const u32 newBatchId = AllocateBatchId();
+
+		Batch& newBatch = mBatches[newBatchId];
+		newBatch.Id = newBatchId;
+		newBatch.DepthRangeId = depthRange.Id;
+		newBatch.Material = batchedMaterial;
+
+		depthRange.BatchIds.push_back(newBatch.Id);
+		foundBatch = &newBatch;
+	}
+	else
+	{
+		foundBatch->Material.Merge(batchedMaterial);
+	}
+
+	foundBatch->RenderElements.push_back(batchedGuiRenderElement);
+	batchedGuiElement.BatchPerRenderElement[batchedGuiRenderElement.RenderElementIndex] = foundBatch->Id;
+
+	B3D_ASSERT(batchedGuiRenderElement.ParentGUIElement != nullptr);
+
+	const Rect2I bounds = batchedGuiRenderElement.ParentGUIElement->GetClippedBoundsInternal();
+	foundBatch->Bounds.Encapsulate(bounds);
+
+	MarkBoundsDirty(batchedGuiElement, foundBatch->Id);
+
+	return foundBatch;
+}
+
+void GUIMeshBatches::Remove(GUIElement* guiElement)
+{
+	auto found = mElements.find(guiElement);
+	if(found == mElements.end())
+		return;
+
+	for(u32 renderElementIndex = 0; renderElementIndex < found->second.BatchPerRenderElement.Size(); renderElementIndex++)
+		Remove(found->second, renderElementIndex);
+
+	mElements.erase(guiElement);
+	mBatchesOutOfDateInRenderer = true;
+}
+
+void GUIMeshBatches::Remove(BatchedGUIElement& batchedGuiElement, u32 renderElementIndex)
+{
+	if(renderElementIndex >= (u32)batchedGuiElement.BatchPerRenderElement.Size())
+		return;
+
+	const u32 batchId = batchedGuiElement.BatchPerRenderElement[renderElementIndex];
+	auto foundBatch = mBatches.find(batchId);
+	if(!B3D_ENSURE(foundBatch != mBatches.end()))
+		return;
+
+	auto foundDepthRange = std::find_if(mDepthRanges.begin(), mDepthRanges.end(), [depthRangeId = foundBatch->second.DepthRangeId](const BatchesInDepthRange& depthRange)
+		{ return depthRange.Id == depthRangeId; });
+
+	if(!B3D_ENSURE(foundDepthRange != mDepthRanges.end()))
+		return;
+
+	const u32 depthRangeIndex = (u32)(foundDepthRange - mDepthRanges.begin());
+	Remove(batchedGuiElement, renderElementIndex, depthRangeIndex);
+}
+
+void GUIMeshBatches::Remove(BatchedGUIElement& batchedGuiElement, u32 renderElementIndex, u32 depthRangeIndex)
+{
+	if(!B3D_ENSURE(depthRangeIndex < (u32)mDepthRanges.size()))
+		return;
+
+	const u32 batchId = batchedGuiElement.BatchPerRenderElement[renderElementIndex];
+
+	const auto itFoundBatch = mBatches.find(batchId);
+	if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+		return;
+
+	GUIElement* const guiElement = batchedGuiElement.GUIElement;
+	BatchesInDepthRange& depthRange = mDepthRanges[depthRangeIndex];
+
+	bool hasFoundElementToRemove = false;
+	Batch& batch = itFoundBatch->second;
+	for(auto itRenderElement = batch.RenderElements.begin(); itRenderElement != batch.RenderElements.end();)
+	{
+		if(itRenderElement->ParentGUIElement == guiElement && itRenderElement->RenderElementIndex == renderElementIndex)
+		{
+			batch.IsBoundsDirty = true;
+
+			Rect2I::AddUnique(batchedGuiElement.Bounds, batch.DirtyRegions);
+
+			itRenderElement = batch.RenderElements.erase(itRenderElement);
+			hasFoundElementToRemove = true;
+			break;
+		}
+		else
+		{
+			++itRenderElement;
+		}
+	}
+
+	B3D_ASSERT(hasFoundElementToRemove);
+
+	if(batch.RenderElements.empty())
+	{
+		for(auto itBatchId = depthRange.BatchIds.begin(); itBatchId != depthRange.BatchIds.end();)
+		{
+			if(*itBatchId == batchId)
+			{
+				for(const auto& dirtyRegion : batch.DirtyRegions)
+					Rect2I::AddUnique(dirtyRegion, mDirtyRegionsForRemovedBatches);
+
+				FreeBatchId(batch.Id);
+
+				mBatches.erase(itFoundBatch);
+				itBatchId = depthRange.BatchIds.erase(itBatchId);
+
+				break;
 			}
 			else
-				++it;
+				++itBatchId;
 		}
-	};
-
-	fnRemoveElement(group.CachedElements, true);
-	fnRemoveElement(group.NonCachedElements, false);
-
-	// Purposely not clearing draw group on the GUIRenderElement, as its indices could have changed and it might not
-	// match the current index. It's up to external code to handle that.
-	groupElement.RenderElementMaterialGroupIndices[renderElementIdx] = -1;
-
-	// Attempt to merge with previous group
-	if(group.NonCachedElements.empty() && group.MinDepth > 0)
-	{
-		B3D_ASSERT(groupIdx > 0);
-
-		u32 prevGroupIdx = groupIdx - 1;
-		BatchesInDepthRange& prevGroup = mDrawGroups[prevGroupIdx];
-
-		prevGroup.DepthRange += group.DepthRange;
-
-		for(auto& entry : group.CachedElements)
-		{
-			auto iterFind = mElements.find(entry.ParentGUIElement);
-			B3D_ASSERT(iterFind != mElements.end());
-			if(iterFind != mElements.end())
-				iterFind->second.RenderElementMaterialGroupIndices[entry.RenderElementIndex] = prevGroup.Id;
-
-			Rect2I::AddUnique(iterFind->second.Bounds, group.DirtyRegions);
-			prevGroup.DirtyBounds = true;
-		}
-
-		std::move(group.CachedElements.begin(), group.CachedElements.end(), std::back_inserter(prevGroup.CachedElements));
-
-		mDrawGroups.erase(mDrawGroups.begin() + groupIdx);
 	}
-}
 
-void GUIMeshBatches::MarkBoundsDirty(const BatchedGUIElement& element)
-{
-	i32 previousDrawGroupIndex = -1;
-	for(const i32 drawGroupIndex : element.RenderElementMaterialGroupIndices)
-	{
-		if(!B3D_ENSURE(drawGroupIndex >= 0 && drawGroupIndex < (i32)mDrawGroups.size()))
-			continue;
+	batchedGuiElement.BatchPerRenderElement[renderElementIndex] = ~0u;
 
-		// Usually render elements will be part of the same draw group, so exit early as an optimization
-		if(previousDrawGroupIndex == drawGroupIndex)
-			continue;
+	const bool hasCollapsedWithPreviousDepthRange = CollapseDepthRange(depthRangeIndex);
 
-		BatchesInDepthRange& group = mDrawGroups[drawGroupIndex];
-
-		Rect2I::AddUnique(element.Bounds, group.DirtyRegions);
-		previousDrawGroupIndex = drawGroupIndex;
-	}
-}
-
-void GUIMeshBatches::MarkBoundsDirty(const BatchedGUIElement& element, u32 groupIndex)
-{
-	if(!B3D_ENSURE(groupIndex < (u32)mDrawGroups.size()))
-		return;
-
-	BatchesInDepthRange& group = mDrawGroups[groupIndex];
-	Rect2I::AddUnique(element.Bounds, group.DirtyRegions);
+	const u32 nextDepthRangeIndex = hasCollapsedWithPreviousDepthRange ? depthRangeIndex : depthRangeIndex + 1;
+	if(nextDepthRangeIndex < (u32)mDepthRanges.size())
+		CollapseDepthRange(nextDepthRangeIndex);
 }
 
 GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshes)
@@ -258,129 +375,136 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 	bool shouldRebuildMeshes = forceRebuildMeshes;
 	for(auto& entry : mDirtyElements)
 	{
-		GUIElement* element = entry.first;
+		GUIElement* const guiElement = entry.first;
 
-		auto iterFind = mElements.find(element);
-		if(iterFind == mElements.end())
+		auto itFoundElement = mElements.find(guiElement);
+		if(itFoundElement == mElements.end())
 			continue;
 
 		shouldRebuildMeshes = true;
 
-		const SmallVector<GUIRenderElement, 4>& renderElements = element->GetRenderElementsInternal();
-		BatchedGUIElement& groupElement = iterFind->second;
+		const SmallVector<GUIRenderElement, 4>& guiRenderElements = guiElement->GetRenderElementsInternal();
+		BatchedGUIElement& batchedGuiElement = itFoundElement->second;
 
 		bool dirtyBounds = false;
 		if((entry.second & DirtyContent) != 0)
 		{
-			bool renderElementsDirty = groupElement.RenderElementMaterialGroupIndices.Size() != renderElements.Size();
+			const bool renderElementsDirty = batchedGuiElement.BatchPerRenderElement.Size() != guiRenderElements.Size();
 
 			// If render element count changed, do a full rebuild of the draw group
 			if(renderElementsDirty)
 			{
-				Remove(element);
-				Add(element);
+				Remove(guiElement);
+				Add(guiElement);
 
 				continue;
 			}
 
 			// If bounds changed, rebuild the bounds of the draw groups
-			Rect2I bounds = element->GetClippedBoundsInternal();
-			if(groupElement.Bounds != bounds)
+			Rect2I bounds = guiElement->GetClippedBoundsInternal();
+			if(batchedGuiElement.Bounds != bounds)
 			{
-				MarkBoundsDirty(groupElement);
+				MarkBoundsDirty(batchedGuiElement);
 
 				dirtyBounds = true;
-				groupElement.Bounds = bounds;
+				batchedGuiElement.Bounds = bounds;
 
-				MarkBoundsDirty(groupElement);
+				MarkBoundsDirty(batchedGuiElement);
 			}
 		}
 
-		for(u32 i = 0; i < renderElements.Size(); i++)
+		for(u32 renderElementIndex = 0; renderElementIndex < (u32)guiRenderElements.size(); renderElementIndex++)
 		{
-			const GUIRenderElement& renderElement = renderElements[i];
-			i32 drawGroupId = groupElement.RenderElementMaterialGroupIndices[i];
+			const GUIRenderElement& guiRenderElement = guiRenderElements[renderElementIndex];
+			const u32 batchId = batchedGuiElement.BatchPerRenderElement[renderElementIndex];
 
-			// All render elements draw group IDs should be assigned at this point
-			B3D_ASSERT(drawGroupId != -1);
+			B3D_ASSERT(batchId != ~0u);
 
-			auto iterFind2 = std::find_if(mDrawGroups.begin(), mDrawGroups.end(), [drawGroupId](const BatchesInDepthRange& group)
-										  { return group.Id == drawGroupId; });
+			auto itFoundBatch = mBatches.find(batchId);
+			if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+				continue;
 
-			B3D_ASSERT(iterFind2 != mDrawGroups.end());
-			if(iterFind2 != mDrawGroups.end())
+			Batch& batch = itFoundBatch->second;
+
+			const auto itFoundDepthRange = std::find_if(mDepthRanges.begin(), mDepthRanges.end(), [depthRangeId = batch.DepthRangeId](const BatchesInDepthRange& depthRange)
+														{ return depthRange.Id == depthRangeId; });
+
+			if(!B3D_ENSURE(itFoundDepthRange != mDepthRanges.end()))
+				continue;
+
+			BatchesInDepthRange& depthRange = *itFoundDepthRange;
+			if(dirtyBounds)
+				batch.IsBoundsDirty = dirtyBounds;
+
+			bool isGroupChangeRequired = false;
+
+			if((entry.second & DirtyMesh) != 0)
 			{
-				BatchesInDepthRange& group = *iterFind2;
+				const u32 renderElementDepth = guiElement->GetDepthInternal() + guiRenderElement.Depth;
 
-				if(dirtyBounds)
-					group.DirtyBounds = dirtyBounds;
-
-				bool needsGroupChange = false;
-				if((entry.second & DirtyMesh) != 0)
+				if(renderElementDepth != depthRange.MinDepth)
 				{
-					u32 depth = element->GetDepthInternal() + renderElement.Depth;
-
-					// If same as min-depth, no group change is necessary in any case
-					if(depth != group.MinDepth)
+					if(renderElementDepth < depthRange.MinDepth || (renderElementDepth >= (depthRange.MinDepth + depthRange.DepthRange)) || !guiRenderElement.Material->AllowBatching())
 					{
-						// If less than min-depth, group change is always necessary
-						if(depth < group.MinDepth)
-							needsGroupChange = true;
-						// Non-batching elements must be at min-depth, so group change is necessary
-						else if(!renderElement.Material->AllowBatching())
-							needsGroupChange = true;
-						// Batching but outside of the group's depth range, group change is necessary
-						else if(depth >= (group.MinDepth + group.DepthRange))
-							needsGroupChange = true;
+						isGroupChangeRequired = true;
 					}
 				}
+			}
 
-				if(!needsGroupChange && (entry.second & DirtyContent) != 0)
+			if(!isGroupChangeRequired && (entry.second & DirtyContent) != 0)
+			{
+				auto itFoundRenderElement = std::find_if(batch.RenderElements.begin(), batch.RenderElements.end(), [guiElement, renderElementIndex](const BatchedGUIRenderElement& batchedRenderElement)
+														 { return batchedRenderElement.ParentGUIElement == guiElement && batchedRenderElement.RenderElementIndex == renderElementIndex; });
+
+				if(itFoundRenderElement == batch.RenderElements.end())
 				{
-					// Check if the material changed
-					if(renderElement.Material->AllowBatching())
-					{
-						auto iterFind3 = std::find_if(group.CachedElements.begin(), group.CachedElements.end(), [element, i](auto& x)
-													  { return x.ParentGUIElement == element && x.RenderElementIndex == i; });
-						if(iterFind3 == group.CachedElements.end())
-							needsGroupChange = true;
-					}
-					else
-					{
-						auto iterFind3 = std::find_if(group.NonCachedElements.begin(), group.NonCachedElements.end(), [element, i](auto& x)
-													  { return x.ParentGUIElement == element && x.RenderElementIndex == i; });
-						if(iterFind3 == group.NonCachedElements.end())
-							needsGroupChange = true;
-					}
+					// New element
+					isGroupChangeRequired = true;
+					continue;
 				}
 
-				const u32 groupIdx = (u32)(iterFind2 - mDrawGroups.begin());
-				if(needsGroupChange)
+				BatchedMaterial batchedMaterial = CreateBatchedMaterial(*guiElement, renderElementIndex);
+				if(!batch.Material.CanBeMergedWith(batchedMaterial))
 				{
-					Remove(groupElement, i, groupIdx);
-					Add(groupElement, i);
+					isGroupChangeRequired = true;
+				}
+			}
 
-					mGroupsCoreDirty = true;
-				}
-				else
-				{
-					MarkBoundsDirty(groupElement, groupIdx);
-				}
+			const u32 depthRangeIndex = (u32)(itFoundDepthRange - mDepthRanges.begin());
+			if(isGroupChangeRequired)
+			{
+				Remove(batchedGuiElement, renderElementIndex, depthRangeIndex);
+				Add(batchedGuiElement, renderElementIndex);
+
+				mBatchesOutOfDateInRenderer = true;
+			}
+			else
+			{
+				MarkBoundsDirty(batchedGuiElement, batchId);
 			}
 		}
 	}
+	
+		// TODO - Need to add handling for invisible GUI elements. Those should ideally not be part of the batches at all.
 
 	mDirtyElements.clear();
 
 	// Update dirty bounds
-	for(auto& entry : mDrawGroups)
+	for(const auto& depthRange : mDepthRanges)
 	{
-		if(!entry.DirtyBounds)
-			continue;
+		for(const auto& batchId : depthRange.BatchIds)
+		{
+			auto itFoundBatch = mBatches.find(batchId);
+			if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+				continue;
 
-		Rect2I newBounds = CalculateBounds(entry);
-		entry.DirtyBounds = false;
-		entry.Bounds = newBounds;
+			Batch& batch = itFoundBatch->second;
+			if(!batch.IsBoundsDirty)
+				continue;
+
+			batch.Bounds = CalculateBounds(batch);
+			batch.IsBoundsDirty = false;
+		}
 	}
 
 	// Rebuild draw group meshes if needed
@@ -393,22 +517,44 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 	output.TriangleMesh = mTriangleMesh ? mTriangleMesh->GetCore() : nullptr;
 	output.LineMesh = mLineMesh ? mLineMesh->GetCore() : nullptr;
 
-	for(auto& entry : mDrawGroups)
+	for(const auto& depthRange : mDepthRanges)
 	{
-		for(const auto& dirtyRegion : entry.DirtyRegions)
-			Rect2I::AddUnique(dirtyRegion, output.DirtyRegions);
+		for(const auto& batchId : depthRange.BatchIds)
+		{
+			auto itFoundBatch = mBatches.find(batchId);
+			if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+				continue;
 
-		entry.DirtyRegions.clear();
+			Batch& batch = itFoundBatch->second;
+			for(const auto& dirtyRegion : batch.DirtyRegions)
+				Rect2I::AddUnique(dirtyRegion, output.DirtyRegions);
+
+			batch.DirtyRegions.clear();
+		}
 	}
+
+	for(const auto& dirtyRegion : mDirtyRegionsForRemovedBatches)
+		Rect2I::AddUnique(dirtyRegion, output.DirtyRegions);
+
+	mDirtyRegionsForRemovedBatches.clear();
 
 	// Note: If only mesh rebuild happened, we should only update the specific render elements
 	// that changed. (Note that in this case the mesh rebuild flag also signals changes to the
 	// GUI element texture/tint/etc.)
-	if(mGroupsCoreDirty || shouldRebuildMeshes)
+	if(mBatchesOutOfDateInRenderer || shouldRebuildMeshes)
 	{
-		output.NewDrawGroups.reserve(mDrawGroups.size());
-		for(auto& entry : mDrawGroups)
-			output.NewDrawGroups.push_back(GetRenderData(entry));
+		for(const auto& depthRange : mDepthRanges)
+		{
+			for(const auto& batchId : depthRange.BatchIds)
+			{
+				auto itFoundBatch = mBatches.find(batchId);
+				if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+					continue;
+
+				Batch& batch = itFoundBatch->second;
+				output.NewBatches.push_back(GetRenderData(batch));
+			}
+		}
 
 		// Register elements that depend on render textures (currently these always correspond to input bridged elements)
 		SmallVector<std::pair<const GUIElement*, SPtr<const RenderTarget>>, 4> bridgedElements;
@@ -424,428 +570,396 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 				continue;
 
 			const SPtr<const RenderTarget>& target = entry.second;
-			for(auto& groupId : iterFind->second.RenderElementMaterialGroupIndices)
+			for(auto& batchId : iterFind->second.BatchPerRenderElement)
 			{
-				for(auto& group : output.NewDrawGroups)
+				for(auto& batchRenderData : output.NewBatches)
 				{
-					if(group.Id != groupId)
+					if(batchRenderData.Id != batchId)
 						continue;
 
-					group.RenderTargetElements.emplace_back(GUIRenderTargetRenderData(target->GetCore(), element->GetClippedBoundsInternal()));
+					batchRenderData.RenderTargetElements.emplace_back(GUIRenderTargetRenderData(target->GetCore(), element->GetClippedBoundsInternal()));
 				}
 			}
 		}
 	}
 
-	mGroupsCoreDirty = false;
+	mBatchesOutOfDateInRenderer = false;
 	return output;
 }
 
-void GUIMeshBatches::NotifyContentDirty(GUIElement* element)
+void GUIMeshBatches::MarkContentDirty(GUIElement* guiElement)
 {
-	mDirtyElements[element] |= DirtyContent;
+	mDirtyElements[guiElement] |= DirtyContent;
 }
 
-void GUIMeshBatches::NotifyMeshDirty(GUIElement* element)
+void GUIMeshBatches::MarkMeshDirty(GUIElement* guiElement)
 {
-	mDirtyElements[element] |= DirtyMesh;
+	mDirtyElements[guiElement] |= DirtyMesh;
+}
+
+void GUIMeshBatches::MarkBoundsDirty(const BatchedGUIElement& element)
+{
+	u32 previousBatchId = ~0u;
+	for(const u32 batchId : element.BatchPerRenderElement)
+	{
+		// Usually render elements will be part of the same draw group, so exit early as an optimization
+		if(previousBatchId == batchId)
+			continue;
+
+		auto itFoundBatch = mBatches.find(batchId);
+		if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+			continue;
+
+		Batch& batch = itFoundBatch->second;
+
+		Rect2I::AddUnique(element.Bounds, batch.DirtyRegions);
+		previousBatchId = batchId;
+	}
+}
+
+void GUIMeshBatches::MarkBoundsDirty(const BatchedGUIElement& element, u32 batchId)
+{
+	auto itFoundBatch = mBatches.find(batchId);
+	if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+		return;
+
+	Batch& batch = itFoundBatch->second;
+	Rect2I::AddUnique(element.Bounds, batch.DirtyRegions);
 }
 
 void GUIMeshBatches::RebuildMeshes()
 {
-	struct GUIMaterialGroup
+	FrameScope frameScope;
+
+	// Make a list of all GUI elements, sorted from farthest to nearest (highest depth to lowest)
+	auto fnCompareRenderElementDepth = [](const BatchedGUIRenderElement& a, const BatchedGUIRenderElement& b)
 	{
-		SpriteMaterial* Material;
-		SpriteMaterialInfo MatInfo;
-		GUIMeshType MeshType;
-		u32 NumVertices;
-		u32 NumIndices;
-		u32 Depth;
-		u32 MinDepth;
-		Rect2I Bounds;
-		BatchesInDepthRange* DrawGroup;
-		Vector<BatchedGUIRenderElement> Elements;
+		// Compare pointers just to differentiate between two elements with the same depth, their order doesn't really matter, but std::set requires all elements to be unique
+		return (a.Depth > b.Depth) ||
+			(a.Depth == b.Depth && a.ParentGUIElement > b.ParentGUIElement) ||
+			(a.Depth == b.Depth && a.ParentGUIElement == b.ParentGUIElement && a.RenderElementIndex > b.RenderElementIndex);
 	};
 
-	struct GUIMaterialGroupSet
+	for(const auto& depthRange : mDepthRanges)
 	{
-		using SortedGroupSet = FrameSet<GUIMaterialGroup, std::function<bool(const GUIMaterialGroup&, const GUIMaterialGroup&)>>;
-
-		u32 NumMeshes = 0;
-		u32 NumIndices[2] = { 0, 0 };
-		u32 NumVertices[2] = { 0, 0 };
-
-		SortedGroupSet SortedGroups;
-	};
-
-	B3DMarkAllocatorFrame();
-	{
-		// Make a list of all GUI elements, sorted from farthest to nearest (highest depth to lowest)
-		auto elemComp = [](const BatchedGUIRenderElement& a, const BatchedGUIRenderElement& b)
+		for(const auto& batchId : depthRange.BatchIds)
 		{
-			u32 aDepth = a.ParentGUIElement->GetDepthInternal() + a.ParentGUIElement->GetRenderElementsInternal()[a.RenderElementIndex].Depth;
-			u32 bDepth = b.ParentGUIElement->GetDepthInternal() + b.ParentGUIElement->GetRenderElementsInternal()[b.RenderElementIndex].Depth;
+			auto itFoundBatch = mBatches.find(batchId);
+			if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+				continue;
 
-			// Compare pointers just to differentiate between two elements with the same depth, their order doesn't really matter, but std::set
-			// requires all elements to be unique
-			return (aDepth > bDepth) ||
-				(aDepth == bDepth && a.ParentGUIElement > b.ParentGUIElement) ||
-				(aDepth == bDepth && a.ParentGUIElement == b.ParentGUIElement && a.RenderElementIndex > b.RenderElementIndex);
-		};
+			Batch& batch = itFoundBatch->second;
+			batch.IndexCount = 0;
+			batch.VertexCount = 0;
 
-		FrameVector<GUIMaterialGroupSet> groupSets;
-		groupSets.reserve(mDrawGroups.size());
+			// TODO - This should be done when I add the element to the batch
+			std::sort(batch.RenderElements.begin(), batch.RenderElements.end(), fnCompareRenderElementDepth);
 
-		for(auto& entry : mDrawGroups)
-		{
-			// Note: If we keep visible elements separate from invisible, plus provide sorting on insert, we could avoid this
-			// re-sorting and re-inserting step.
-			FrameSet<BatchedGUIRenderElement, std::function<bool(const BatchedGUIRenderElement&, const BatchedGUIRenderElement&)>> allElements(elemComp);
-			for(auto& element : entry.CachedElements)
+			for(const auto& batchedGuiRenderElement : batch.RenderElements)
 			{
-				if(!element.ParentGUIElement->IsVisibleInternal())
+				const GUIElement* const guiElement = batchedGuiRenderElement.ParentGUIElement;
+				B3D_ASSERT(guiElement != nullptr);
+
+				if(!guiElement->IsVisibleInternal())
 					continue;
 
-				allElements.insert(element);
+				const SmallVector<GUIRenderElement, 4>& guiRenderElements = guiElement->GetRenderElementsInternal();
+				const GUIRenderElement& guiRenderElement = guiRenderElements[batchedGuiRenderElement.RenderElementIndex];
+
+				batch.VertexCount += guiRenderElement.NumVertices;
+				batch.IndexCount += guiRenderElement.NumIndices;
 			}
-
-			for(auto& element : entry.NonCachedElements)
-			{
-				if(!element.ParentGUIElement->IsVisibleInternal())
-					continue;
-
-				allElements.insert(element);
-			}
-
-			// Group the elements in such a way so that we end up with a smallest amount of
-			// meshes, without breaking back to front rendering order
-			FrameUnorderedMap<u64, FrameVector<GUIMaterialGroup>> materialGroups;
-			for(auto& elem : allElements)
-			{
-				GUIElement* guiElem = elem.ParentGUIElement;
-				u32 renderElemIdx = elem.RenderElementIndex;
-				const GUIRenderElement& renderElem = elem.ParentGUIElement->GetRenderElementsInternal()[renderElemIdx];
-
-				u32 elemDepth = guiElem->GetDepthInternal() + renderElem.Depth;
-				Rect2I bounds = guiElem->GetClippedBoundsInternal();
-
-				SpriteMaterial* spriteMaterial = renderElem.Material;
-				const SpriteMaterialInfo& matInfo = *renderElem.MatInfo;
-				B3D_ASSERT(spriteMaterial != nullptr);
-
-				u64 hash = spriteMaterial->GetMergeHash(matInfo);
-				FrameVector<GUIMaterialGroup>& groupsPerMaterial = materialGroups[hash];
-
-				// Try to find a group this material will fit in:
-				//  - Group that has a depth value same or one below elements depth will always be a match
-				//  - Otherwise, we search higher depth values as well, but we only use them if no elements in between those depth values
-				//    overlap the current elements bounds.
-				GUIMaterialGroup* foundGroup = nullptr;
-
-				if(spriteMaterial->AllowBatching())
-				{
-					for(auto groupIter = groupsPerMaterial.rbegin(); groupIter != groupsPerMaterial.rend(); ++groupIter)
-					{
-						GUIMaterialGroup& group = *groupIter;
-						if(group.Depth == elemDepth)
-						{
-							foundGroup = &group;
-							break;
-						}
-						else
-						{
-							u32 startDepth = elemDepth;
-							u32 endDepth = group.Depth;
-
-							Rect2I potentialGroupBounds = group.Bounds;
-							potentialGroupBounds.Encapsulate(bounds);
-
-							bool foundOverlap = false;
-							for(auto& material : materialGroups)
-							{
-								for(auto& matGroup : material.second)
-								{
-									if(&matGroup == &group)
-										continue;
-
-									if((matGroup.MinDepth >= startDepth && matGroup.MinDepth <= endDepth) || (matGroup.Depth >= startDepth && matGroup.Depth <= endDepth))
-									{
-										if(matGroup.Bounds.Overlaps(potentialGroupBounds))
-										{
-											foundOverlap = true;
-											break;
-										}
-									}
-								}
-							}
-
-							if(!foundOverlap)
-							{
-								foundGroup = &group;
-								break;
-							}
-						}
-					}
-				}
-
-				if(foundGroup == nullptr)
-				{
-					groupsPerMaterial.push_back(GUIMaterialGroup());
-					foundGroup = &groupsPerMaterial[groupsPerMaterial.size() - 1];
-
-					foundGroup->Depth = elemDepth;
-					foundGroup->MinDepth = elemDepth;
-					foundGroup->Bounds = bounds;
-					foundGroup->Elements.push_back(BatchedGUIRenderElement(guiElem, renderElemIdx));
-					foundGroup->MatInfo = matInfo.Clone();
-					foundGroup->Material = spriteMaterial;
-					foundGroup->NumVertices = renderElem.NumVertices;
-					foundGroup->NumIndices = renderElem.NumIndices;
-					foundGroup->MeshType = renderElem.Type;
-					foundGroup->DrawGroup = &entry;
-				}
-				else
-				{
-					foundGroup->Bounds.Encapsulate(bounds);
-					foundGroup->Elements.push_back(BatchedGUIRenderElement(guiElem, renderElemIdx));
-					foundGroup->MinDepth = std::min(foundGroup->MinDepth, elemDepth);
-
-					// It's expected that GUI element doesn't use same material for different mesh types so this should always be true
-					B3D_ASSERT(renderElem.Type == foundGroup->MeshType);
-
-					// Draw groups are super-set of material groups, so a material group cannot cross a draw group boundary
-					B3D_ASSERT(foundGroup->DrawGroup == &entry);
-
-					foundGroup->NumVertices += renderElem.NumVertices;
-					foundGroup->NumIndices += renderElem.NumIndices;
-
-					spriteMaterial->Merge(foundGroup->MatInfo, matInfo);
-				}
-			}
-
-			// Make a list of all GUI elements, sorted from farthest to nearest (highest depth to lowest)
-			auto groupComp = [](const GUIMaterialGroup& a, const GUIMaterialGroup& b)
-			{
-				return (a.Depth > b.Depth) || (a.Depth == b.Depth && &a > &b);
-				// Compare pointers just to differentiate between two elements with the same depth, their order doesn't really matter, but std::set
-				// requires all elements to be unique
-			};
-
-			groupSets.push_back(GUIMaterialGroupSet());
-			GUIMaterialGroupSet& groupSet = groupSets.back();
-
-			groupSet.SortedGroups = GUIMaterialGroupSet::SortedGroupSet(groupComp);
-			for(auto& material : materialGroups)
-			{
-				for(auto& group : material.second)
-				{
-					groupSet.SortedGroups.insert(std::move(group));
-
-					u32 typeIdx = (u32)group.MeshType;
-					groupSet.NumIndices[typeIdx] += group.NumIndices;
-					groupSet.NumVertices[typeIdx] += group.NumVertices;
-
-					groupSet.NumMeshes++;
-				}
-			}
-		}
-
-		mTriangleMesh = nullptr;
-		mLineMesh = nullptr;
-
-		u32 totalNumIndices[2] = { 0, 0 };
-		u32 totalNumVertices[2] = { 0, 0 };
-
-		for(u32 i = 0; i < (u32)mDrawGroups.size(); i++)
-		{
-			GUIMaterialGroupSet& set = groupSets[i];
-			mDrawGroups[i].Meshes.resize(set.NumMeshes);
-
-			for(u32 j = 0; j < 2; j++)
-			{
-				totalNumIndices[j] += set.NumIndices[j];
-				totalNumVertices[j] += set.NumVertices[j];
-			}
-		}
-
-		SPtr<MeshData> meshData[2];
-		SPtr<VertexDescription> vertexDesc[2] = { GetGUITriangleMeshDesc(), GetGUILineMeshDesc() };
-
-		u8* vertices[2] = { nullptr, nullptr };
-		u32* indices[2] = { nullptr, nullptr };
-
-		for(u32 i = 0; i < 2; i++)
-		{
-			if(totalNumVertices[i] > 0 && totalNumIndices[i] > 0)
-			{
-				meshData[i] = MeshData::Create(totalNumVertices[i], totalNumIndices[i], vertexDesc[i]);
-
-				vertices[i] = meshData[i]->GetElementData(VES_POSITION);
-				indices[i] = meshData[i]->GetIndices32();
-			}
-		}
-
-		u32 vertexOffset[2] = { 0, 0 };
-		u32 indexOffset[2] = { 0, 0 };
-
-		for(u32 i = 0; i < (u32)mDrawGroups.size(); i++)
-		{
-			GUIMaterialGroupSet& set = groupSets[i];
-
-			// Fill buffers for each group and update their meshes
-			u32 meshIdx = 0;
-
-			for(auto& group : set.SortedGroups)
-			{
-				BatchedMesh& guiMesh = mDrawGroups[i].Meshes[meshIdx];
-				guiMesh.SpriteMaterialInformation = group.MatInfo;
-				guiMesh.SpriteMaterial = group.Material;
-				guiMesh.IsLine = group.MeshType == GUIMeshType::Line;
-				guiMesh.Bounds = group.Bounds;
-
-				auto typeIdx = (u32)group.MeshType;
-				guiMesh.IndexOffset = indexOffset[typeIdx];
-
-				Vector2I groupOffset(0, 0);
-
-				u32 groupNumIndices = 0;
-				for(auto& matElement : group.Elements)
-				{
-					matElement.ParentGUIElement->FillBuffer(
-						vertices[typeIdx], indices[typeIdx],
-						vertexOffset[typeIdx], indexOffset[typeIdx], groupOffset,
-						totalNumVertices[typeIdx], totalNumIndices[typeIdx],
-						matElement.RenderElementIndex);
-
-					const GUIRenderElement& renderElement = matElement.ParentGUIElement->GetRenderElementsInternal()[matElement.RenderElementIndex];
-
-					u32 indexStart = indexOffset[typeIdx];
-					u32 indexEnd = indexStart + renderElement.NumIndices;
-
-					for(u32 j = indexStart; j < indexEnd; j++)
-						indices[typeIdx][j] += vertexOffset[typeIdx];
-
-					indexOffset[typeIdx] += renderElement.NumIndices;
-					vertexOffset[typeIdx] += renderElement.NumVertices;
-
-					groupNumIndices += renderElement.NumIndices;
-				}
-
-				guiMesh.IndexCount = groupNumIndices;
-
-				meshIdx++;
-			}
-		}
-
-		if(meshData[0])
-			mTriangleMesh = Mesh::CreateShared(meshData[0], MU_STATIC, DOT_TRIANGLE_LIST);
-
-		if(meshData[1])
-			mLineMesh = Mesh::CreateShared(meshData[1], MU_STATIC, DOT_LINE_LIST);
-	}
-
-	B3DClearAllocatorFrame();
-}
-
-GUIMeshBatches::BatchesInDepthRange& GUIMeshBatches::Split(u32 groupIdx, u32 depth)
-{
-	BatchesInDepthRange& group = mDrawGroups[groupIdx];
-	B3D_ASSERT(depth > group.MinDepth);
-
-	u32 maxDepth = group.MinDepth + group.DepthRange;
-	group.DepthRange = depth - group.MinDepth;
-
-	BatchesInDepthRange newSplitGroup;
-	newSplitGroup.MinDepth = depth;
-	newSplitGroup.DepthRange = maxDepth - newSplitGroup.MinDepth;
-	newSplitGroup.Id = mNextDrawGroupId++;
-
-	auto it = std::partition(group.CachedElements.begin(), group.CachedElements.end(), [depth](const BatchedGUIRenderElement& x)
-							 {
-				u32 elemDepth = x.ParentGUIElement->GetDepthInternal() + x.ParentGUIElement->GetRenderElementsInternal()[x.RenderElementIndex].Depth;
-				return elemDepth < depth; });
-
-	std::move(it, group.CachedElements.end(), std::back_inserter(newSplitGroup.CachedElements));
-	group.CachedElements.erase(it, group.CachedElements.end());
-
-	for(auto& entry : newSplitGroup.CachedElements)
-	{
-		auto iterFind = mElements.find(entry.ParentGUIElement);
-		B3D_ASSERT(iterFind != mElements.end());
-		if(iterFind != mElements.end())
-		{
-			iterFind->second.RenderElementMaterialGroupIndices[entry.RenderElementIndex] = newSplitGroup.Id;
-			Rect2I::AddUnique(iterFind->second.Bounds, newSplitGroup.DirtyRegions);
 		}
 	}
 
-	group.DirtyBounds = true;
-	newSplitGroup.DirtyBounds = true;
+	mTriangleMesh = nullptr;
+	mLineMesh = nullptr;
 
-	mDrawGroups.insert(mDrawGroups.begin() + groupIdx + 1, std::move(newSplitGroup));
-	return mDrawGroups[groupIdx + 1];
-}
+	u32 totalNumIndices[2] = { 0, 0 };
+	u32 totalNumVertices[2] = { 0, 0 };
 
-GUIMeshRenderData GUIMeshBatches::GetRenderData(const BatchedMesh& guiMesh)
-{
-	SPtr<ct::Texture> textureCore;
-	if(guiMesh.SpriteMaterialInformation.Texture.IsLoaded())
-		textureCore = guiMesh.SpriteMaterialInformation.Texture->GetCore();
-	else
-		textureCore = nullptr;
-
-	SPtr<ct::SpriteTexture> spriteTextureCore;
-	if(guiMesh.SpriteMaterialInformation.SpriteTexture.IsLoaded())
-		spriteTextureCore = guiMesh.SpriteMaterialInformation.SpriteTexture->GetCore();
-	else
-		spriteTextureCore = nullptr;
-
-	GUIMeshRenderData output;
-	output.Material = guiMesh.SpriteMaterial;
-	output.Texture = textureCore;
-	output.SpriteTexture = spriteTextureCore;
-	output.Tint = guiMesh.SpriteMaterialInformation.Tint;
-	output.IsLine = guiMesh.IsLine;
-	output.AnimationStartTime = guiMesh.SpriteMaterialInformation.AnimationStartTime;
-	output.AdditionalData = guiMesh.SpriteMaterialInformation.AdditionalData;
-	output.UniformBufferIndex = 0;
-	output.Bounds = guiMesh.Bounds;
-
-	output.SubMesh.IndexOffset = guiMesh.IndexOffset;
-	output.SubMesh.IndexCount = guiMesh.IndexCount;
-	output.SubMesh.DrawOp = guiMesh.IsLine ? DOT_LINE_LIST : DOT_TRIANGLE_LIST;
-
-	return output;
-}
-
-GUIDrawGroupRenderData GUIMeshBatches::GetRenderData(const BatchesInDepthRange& drawGroup)
-{
-	GUIDrawGroupRenderData output;
-	output.Id = drawGroup.Id;
-	output.Bounds = drawGroup.Bounds;
-
-	auto numElements = (u32)drawGroup.Meshes.size();
-	for(u32 i = 0; i < numElements; i++)
+	for(const auto& depthRange : mDepthRanges)
 	{
-		GUIMeshRenderData meshData = GetRenderData(drawGroup.Meshes[i]);
-		if(meshData.SubMesh.IndexCount == 0)
+		for(const auto& batchId : depthRange.BatchIds)
+		{
+			auto itFoundBatch = mBatches.find(batchId);
+			if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+				continue;
+
+			Batch& batch = itFoundBatch->second;
+
+			const u32 meshTypeIndex = batch.Material.MeshType == GUIMeshType::Triangle ? 0 : 1;
+			totalNumIndices[meshTypeIndex] += batch.IndexCount;
+			totalNumVertices[meshTypeIndex] += batch.VertexCount;
+		}
+	}
+
+	SPtr<MeshData> meshData[2];
+	SPtr<VertexDescription> vertexDesc[2] = { GetGUITriangleMeshDesc(), GetGUILineMeshDesc() };
+
+	u8* vertices[2] = { nullptr, nullptr };
+	u32* indices[2] = { nullptr, nullptr };
+
+	for(u32 i = 0; i < 2; i++)
+	{
+		if(totalNumVertices[i] > 0 && totalNumIndices[i] > 0)
+		{
+			meshData[i] = MeshData::Create(totalNumVertices[i], totalNumIndices[i], vertexDesc[i]);
+
+			vertices[i] = meshData[i]->GetElementData(VES_POSITION);
+			indices[i] = meshData[i]->GetIndices32();
+		}
+	}
+
+	u32 vertexOffset[2] = { 0, 0 };
+	u32 indexOffset[2] = { 0, 0 };
+
+	for(const auto& depthRange : mDepthRanges)
+	{
+		for(const auto& batchId : depthRange.BatchIds)
+		{
+			auto itFoundBatch = mBatches.find(batchId);
+			if(!B3D_ENSURE(itFoundBatch != mBatches.end()))
+				continue;
+
+			Batch& batch = itFoundBatch->second;
+			const u32 meshTypeIndex = batch.Material.MeshType == GUIMeshType::Triangle ? 0 : 1;
+
+			batch.IndexOffset = indexOffset[meshTypeIndex];
+
+			const Vector2I groupOffset = Vector2I::kZero;
+			for(const auto& batchedGuiRenderElement : batch.RenderElements)
+			{
+				const GUIElement* const guiElement = batchedGuiRenderElement.ParentGUIElement;
+				B3D_ASSERT(guiElement != nullptr);
+
+				if(!guiElement->IsVisibleInternal())
+					continue;
+
+				const SmallVector<GUIRenderElement, 4>& guiRenderElements = guiElement->GetRenderElementsInternal();
+
+				guiElement->FillBuffer(
+					vertices[meshTypeIndex], indices[meshTypeIndex],
+					vertexOffset[meshTypeIndex], indexOffset[meshTypeIndex], groupOffset,
+					totalNumVertices[meshTypeIndex], totalNumIndices[meshTypeIndex],
+					batchedGuiRenderElement.RenderElementIndex);
+
+				const GUIRenderElement& guiRenderElement = guiRenderElements[batchedGuiRenderElement.RenderElementIndex];
+				const u32 indexStart = indexOffset[meshTypeIndex];
+				const u32 indexEnd = indexStart + guiRenderElement.NumIndices;
+
+				for(u32 j = indexStart; j < indexEnd; j++)
+					indices[meshTypeIndex][j] += vertexOffset[meshTypeIndex];
+
+				indexOffset[meshTypeIndex] += guiRenderElement.NumIndices;
+				vertexOffset[meshTypeIndex] += guiRenderElement.NumVertices;
+			}
+		}
+	}
+
+	if(meshData[0])
+		mTriangleMesh = Mesh::CreateShared(meshData[0], MU_STATIC, DOT_TRIANGLE_LIST);
+
+	if(meshData[1])
+		mLineMesh = Mesh::CreateShared(meshData[1], MU_STATIC, DOT_LINE_LIST);
+}
+
+u32 GUIMeshBatches::SplitDepthRange(u32 depthRangeIndex, u32 depth)
+{
+	BatchesInDepthRange& depthRange = mDepthRanges[depthRangeIndex];
+	B3D_ASSERT(depth > depthRange.MinDepth);
+
+	const u32 maximumDepth = depthRange.MinDepth + depthRange.DepthRange;
+	depthRange.DepthRange = depth - depthRange.MinDepth;
+
+	BatchesInDepthRange newDepthRange;
+	newDepthRange.MinDepth = depth;
+	newDepthRange.DepthRange = maximumDepth - newDepthRange.MinDepth;
+	newDepthRange.Id = mNextDepthRangeId++;
+
+	for(auto itBatchId = depthRange.BatchIds.begin(); itBatchId != depthRange.BatchIds.end();)
+	{
+		const u32 batchId = *itBatchId;
+
+		auto foundBatch = mBatches.find(batchId);
+		if(!B3D_ENSURE(foundBatch != mBatches.end()))
+		{
+			++itBatchId;
 			continue;
+		}
 
-		if(meshData.Material->AllowBatching())
-			output.CachedElements.push_back(std::move(meshData));
+		Batch& batch = foundBatch->second;
+		Batch newBatch;
+
+		auto itPartitionEdge = std::partition(batch.RenderElements.begin(), batch.RenderElements.end(), [depth](const BatchedGUIRenderElement& batchedGuiRenderElement)
+			 {
+				 const u32 renderElementDepth = batchedGuiRenderElement.ParentGUIElement->GetDepthInternal() + batchedGuiRenderElement.ParentGUIElement->GetRenderElementsInternal()[batchedGuiRenderElement.RenderElementIndex].Depth;
+				 return renderElementDepth < depth;
+			 });
+
+		std::move(itPartitionEdge, batch.RenderElements.end(), std::back_inserter(newBatch.RenderElements));
+		batch.RenderElements.erase(itPartitionEdge, batch.RenderElements.end());
+		batch.IsBoundsDirty = true;
+
+		if(!newBatch.RenderElements.empty())
+		{
+			newBatch.Id = AllocateBatchId();
+			newBatch.DepthRangeId = newDepthRange.Id;
+			newBatch.Material = batch.Material;
+			newBatch.IsBoundsDirty = true;
+
+			mBatches[newBatch.Id] = newBatch;
+			newDepthRange.BatchIds.push_back(newBatch.Id);
+
+			for(const auto& batchedGuiRenderElement : newBatch.RenderElements)
+			{
+				auto itFoundGuiElement =  mElements.find(batchedGuiRenderElement.ParentGUIElement);
+				if(!B3D_ENSURE(itFoundGuiElement != mElements.end()))
+					continue;
+
+				itFoundGuiElement->second.BatchPerRenderElement[batchedGuiRenderElement.RenderElementIndex] = newBatch.Id;
+				Rect2I::AddUnique(itFoundGuiElement->second.Bounds, newBatch.DirtyRegions);
+			}
+		}
+
+		if(batch.RenderElements.empty())
+		{
+			FreeBatchId(batch.Id);
+			mBatches.erase(batchId);
+			itBatchId = depthRange.BatchIds.erase(itBatchId);
+		}
 		else
-			output.NonCachedElements.push_back(std::move(meshData));
+			++itBatchId;
 	}
 
-	return output;
+	mDepthRanges.insert(mDepthRanges.begin() + depthRangeIndex + 1, std::move(newDepthRange));
+	return depthRangeIndex + 1;
 }
 
-Rect2I GUIMeshBatches::CalculateBounds(BatchesInDepthRange& group)
+bool GUIMeshBatches::CollapseDepthRange(u32 depthRangeIndex)
+{
+	if(depthRangeIndex < 1)
+		return false;
+
+	BatchesInDepthRange& depthRange = mDepthRanges[depthRangeIndex - 1];
+	BatchesInDepthRange& nextDepthRange = mDepthRanges[depthRangeIndex];
+
+	// We can only combine depth ranges with one or no batches, so we can ensure draw order
+	if(depthRange.BatchIds.size() > 1 || nextDepthRange.BatchIds.size() > 1)
+		return false;
+
+	Batch* batch = nullptr;
+	Batch* nextBatch = nullptr;
+
+	if(!depthRange.BatchIds.empty())
+	{
+		auto foundBatch = mBatches.find(depthRange.BatchIds.back());
+		if(!B3D_ENSURE(foundBatch != mBatches.end()))
+			return false;
+
+		batch = &foundBatch->second;
+	}
+
+	if(!nextDepthRange.BatchIds.empty())
+	{
+		auto foundBatch = mBatches.find(nextDepthRange.BatchIds.back());
+		if(!B3D_ENSURE(foundBatch != mBatches.end()))
+			return false;
+
+		nextBatch = &foundBatch->second;
+	}
+
+	if(batch != nullptr && nextBatch != nullptr)
+	{
+		if(!batch->Material.CanBeMergedWith(nextBatch->Material))
+			return false;
+
+		batch->Material.Merge(nextBatch->Material);
+
+		for(auto& entry : nextBatch->RenderElements)
+		{
+			auto foundGuiElement = mElements.find(entry.ParentGUIElement);
+			if(!B3D_ENSURE(foundGuiElement != mElements.end()))
+				continue;
+
+			if(foundGuiElement != mElements.end())
+				foundGuiElement->second.BatchPerRenderElement[entry.RenderElementIndex] = batch->Id;
+
+			Rect2I::AddUnique(foundGuiElement->second.Bounds, batch->DirtyRegions);
+			batch->IsBoundsDirty = true;
+		}
+
+		std::move(nextBatch->RenderElements.begin(), nextBatch->RenderElements.end(), std::back_inserter(batch->RenderElements));
+
+		for(const Rect2I& dirtyRegion : nextBatch->DirtyRegions)
+			Rect2I::AddUnique(dirtyRegion, batch->DirtyRegions);
+
+		mBatches.erase(nextBatch->Id);
+	}
+	else if(nextBatch != nullptr)
+	{
+		nextBatch->DepthRangeId = depthRange.Id;
+		depthRange.BatchIds.push_back(nextBatch->Id);
+	}
+
+	depthRange.DepthRange += nextDepthRange.DepthRange;
+	mDepthRanges.erase(mDepthRanges.begin() + depthRangeIndex);
+
+	return true;
+}
+
+u32 GUIMeshBatches::AllocateBatchId()
+{
+	if(mFreeBatchIds.empty())
+		return mNextBatchId++;
+
+	const u32 id = mFreeBatchIds.back();
+	mFreeBatchIds.pop_back();
+
+	return id;
+}
+
+void GUIMeshBatches::FreeBatchId(u32 id)
+{
+	mFreeBatchIds.push_back(id);
+}
+
+GUIBatchRenderData GUIMeshBatches::GetRenderData(const Batch& batch)
+{
+	const BatchedMaterial& material = batch.Material;
+
+	GUIBatchRenderData batchRenderData;
+	batchRenderData.Id = batch.Id;
+	batchRenderData.Bounds = batch.Bounds;
+
+	GUIMeshRenderData meshRenderData;
+	meshRenderData.Material = material.SpriteMaterial;
+	meshRenderData.MaterialInformation = material.SpriteMaterialInformation;
+	meshRenderData.IsLine = material.MeshType == GUIMeshType::Line;
+	meshRenderData.UniformBufferIndex = 0;
+	meshRenderData.Bounds = batch.Bounds;
+
+	meshRenderData.SubMesh.IndexOffset = batch.IndexOffset;
+	meshRenderData.SubMesh.IndexCount = batch.IndexCount;
+	meshRenderData.SubMesh.DrawOp = material.MeshType == GUIMeshType::Line ? DOT_LINE_LIST : DOT_TRIANGLE_LIST;
+
+	if(meshRenderData.SubMesh.IndexCount == 0)
+		return batchRenderData;
+
+	if(meshRenderData.Material->AllowBatching())
+		batchRenderData.CachedElements.push_back(std::move(meshRenderData));
+	else
+		batchRenderData.NonCachedElements.push_back(std::move(meshRenderData));
+
+	return batchRenderData;
+}
+
+Rect2I GUIMeshBatches::CalculateBounds(Batch& batch)
 {
 	Rect2I bounds = Rect2I();
 	bool boundsSet = false;
 
-	for(auto& entry : group.CachedElements)
+	for(auto& entry : batch.RenderElements)
 	{
 		if(!entry.ParentGUIElement->IsVisibleInternal())
 			continue;
@@ -862,6 +976,30 @@ Rect2I GUIMeshBatches::CalculateBounds(BatchesInDepthRange& group)
 
 	return bounds;
 }
+
+GUIMeshBatches::BatchedMaterial GUIMeshBatches::CreateBatchedMaterial(const BatchedGUIRenderElement& batchedGuiRenderElement)
+{
+	GUIElement* const guiElement = batchedGuiRenderElement.ParentGUIElement;
+	B3D_ASSERT(guiElement != nullptr);
+
+	return CreateBatchedMaterial(*guiElement, batchedGuiRenderElement.RenderElementIndex);
+}
+
+GUIMeshBatches::BatchedMaterial GUIMeshBatches::CreateBatchedMaterial(const GUIElement& guiElement, u32 renderElementIndex)
+{
+	const SmallVector<GUIRenderElement, 4>& guiRenderElements = guiElement.GetRenderElementsInternal();
+	const GUIRenderElement& guiRenderElement = guiRenderElements[renderElementIndex];
+
+	BatchedMaterial batchedMaterial;
+	batchedMaterial.SpriteMaterial = guiRenderElement.Material;
+	batchedMaterial.SpriteMaterialInformation = *guiRenderElement.MatInfo;
+	batchedMaterial.MaterialHash = batchedMaterial.SpriteMaterial->GetMergeHash(batchedMaterial.SpriteMaterialInformation);
+	batchedMaterial.IsBatchingAllowed = batchedMaterial.SpriteMaterial->AllowBatching();
+	batchedMaterial.MeshType = guiRenderElement.Type;
+
+	return batchedMaterial;
+}
+
 
 GUIWidget::GUIWidget(const SPtr<Camera>& camera)
 	: mCamera(camera), mDrawGroups(this)
@@ -1117,7 +1255,7 @@ void GUIWidget::RegisterElementInternal(GUIElementBase* elem)
 		// Find a draw group
 		auto guiElem = static_cast<GUIElement*>(elem);
 		mDrawGroups.Add(guiElem);
-		mDrawGroups.NotifyContentDirty(guiElem);
+		mDrawGroups.MarkContentDirty(guiElem);
 	}
 }
 
@@ -1147,7 +1285,7 @@ void GUIWidget::MarkMeshDirtyInternal(GUIElementBase* elem)
 	mWidgetIsDirty = true;
 
 	if(elem->GetTypeInternal() == GUIElementBase::Type::Element)
-		mDrawGroups.NotifyMeshDirty(static_cast<GUIElement*>(elem));
+		mDrawGroups.MarkMeshDirty(static_cast<GUIElement*>(elem));
 }
 
 void GUIWidget::MarkContentDirtyInternal(GUIElementBase* elem)
@@ -1157,7 +1295,7 @@ void GUIWidget::MarkContentDirtyInternal(GUIElementBase* elem)
 		auto guiElement = static_cast<GUIElement*>(elem);
 
 		mDirtyContents.insert(guiElement);
-		mDrawGroups.NotifyContentDirty(guiElement);
+		mDrawGroups.MarkContentDirty(guiElement);
 	}
 }
 
