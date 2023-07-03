@@ -1752,11 +1752,11 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 
 						if(!kEnableGUIRegionDebugDrawing || !useDebugMaterial)
 						{
-							material->Render(commandBuffer, meshRenderData->IsLine ? widget.LineMesh : widget.TriangleMesh, meshRenderData->SubMesh, meshRenderData->MaterialInformation.Texture, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
+							material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, meshRenderData->MaterialInformation.Texture, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
 						}
 						else
 						{
-							material->Render(commandBuffer, meshRenderData->IsLine ? widget.LineMesh : widget.TriangleMesh, meshRenderData->SubMesh, Texture::kPink, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
+							material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, Texture::kPink, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
 						}
 					}
 				}
@@ -1851,8 +1851,6 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 		}
 	}
 
-	widget->TriangleMesh = data.TriangleMesh;
-	widget->LineMesh = data.LineMesh;
 	widget->WorldTransform = worldTransform;
 
 	for(const Rect2I& dirtyRegion : data.DirtyRegions)

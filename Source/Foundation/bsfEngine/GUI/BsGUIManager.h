@@ -451,8 +451,6 @@ namespace bs
 				Vector<GUIBatchRenderData> DrawGroups;
 				Vector<SPtr<GpuBuffer>> GUIMeshUniformBuffers;
 
-				SPtr<Mesh> TriangleMesh;
-				SPtr<Mesh> LineMesh;
 				Matrix4 WorldTransform = Matrix4::kIdentity;
 			};
 

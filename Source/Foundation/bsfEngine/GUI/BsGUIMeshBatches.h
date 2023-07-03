@@ -17,12 +17,12 @@ namespace bs
 	/**	Data required for rendering a single batch of GUI elements.  */
 	struct GUIMeshRenderData
 	{
+		SPtr<ct::Mesh> Mesh;
 		SubMesh SubMesh;
 		SpriteMaterial* Material;
 		ct::SpriteMaterialInfo MaterialInformation;
-
-		bool IsLine;
 		Rect2I Bounds;
+
 		u32 UniformBufferIndex;
 	};
 
@@ -59,8 +59,6 @@ namespace bs
 	{
 		Vector<GUIBatchRenderData> NewBatches;
 		Vector<Rect2I> DirtyRegions;
-		SPtr<ct::Mesh> TriangleMesh;
-		SPtr<ct::Mesh> LineMesh;
 	};
 
 	/**
@@ -158,7 +156,6 @@ namespace bs
 			Rect2I Bounds;
 
 			// Mesh
-			u32 IndexOffset = 0;
 			u32 IndexCount = 0;
 			u32 VertexCount = 0;
 			SPtr<Mesh> Mesh;
@@ -187,6 +184,9 @@ namespace bs
 
 		/** Attempts to collapse the provided depth range and the previous depth range into a single depth range. Returns true if the merge was performed. */
 		bool CollapseDepthRange(u32 depthRangeIndex);
+
+		/** Builds a mesh used for rendering the provided batch. */
+		void RebuildMesh(Batch& batch);
 
 		/** Rebuilds the GUI element meshes. */
 		void RebuildMeshes();
@@ -250,8 +250,6 @@ namespace bs
 		bool mBatchesOutOfDateInRenderer = true;
 		GUIWidget* mWidget;
 
-		SPtr<Mesh> mTriangleMesh;
-		SPtr<Mesh> mLineMesh;
 		u32 mNextDepthRangeId = 0;
 		u32 mNextBatchId = 0;
 		Vector<u32> mFreeBatchIds;
