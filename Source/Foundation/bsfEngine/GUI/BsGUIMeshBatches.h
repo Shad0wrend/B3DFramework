@@ -46,8 +46,7 @@ namespace bs
 		u32 Id = 0;
 		Rect2I Bounds;
 
-		Vector<GUIMeshRenderData> CachedElements;
-		Vector<GUIMeshRenderData> NonCachedElements;
+		Vector<GUIMeshRenderData> Elements;
 		Vector<GUIRenderTargetRenderData> RenderTargetElements;
 	};
 

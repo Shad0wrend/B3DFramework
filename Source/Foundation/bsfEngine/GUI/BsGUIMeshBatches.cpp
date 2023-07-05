@@ -770,7 +770,6 @@ u32 GUIMeshBatches::SplitDepthRange(u32 depthRangeIndex, u32 depth)
 
 			batch = nullptr; // Not safe to access past this point, as we're modifying the map below
 
-			mBatches[newBatch.Id] = newBatch;
 			newDepthRange.BatchIds.push_back(newBatch.Id);
 
 			for(const auto& batchedGuiRenderElement : newBatch.RenderElements)
@@ -782,6 +781,8 @@ u32 GUIMeshBatches::SplitDepthRange(u32 depthRangeIndex, u32 depth)
 				itFoundGuiElement->second.BatchPerRenderElement[batchedGuiRenderElement.RenderElementIndex] = newBatch.Id;
 				Rect2I::AddUnique(itFoundGuiElement->second.Bounds, newBatch.DirtyRegions);
 			}
+
+			mBatches[newBatch.Id] = newBatch;
 		}
 
 		if(isBatchEmpty)
@@ -852,7 +853,7 @@ bool GUIMeshBatches::CollapseDepthRange(u32 depthRangeIndex)
 			batch->IsMeshDirty = true;
 		}
 
-		std::move(nextBatch->RenderElements.begin(), nextBatch->RenderElements.end(), std::back_inserter(batch->RenderElements));
+		batch->RenderElements.insert(batch->RenderElements.begin(), nextBatch->RenderElements.begin(), nextBatch->RenderElements.end());
 
 		for(const Rect2I& dirtyRegion : nextBatch->DirtyRegions)
 			Rect2I::AddUnique(dirtyRegion, batch->DirtyRegions);
@@ -909,11 +910,7 @@ GUIBatchRenderData GUIMeshBatches::GetRenderData(const Batch& batch)
 	if(meshRenderData.SubMesh.IndexCount == 0)
 		return batchRenderData;
 
-	if(meshRenderData.Material->AllowBatching())
-		batchRenderData.CachedElements.push_back(std::move(meshRenderData));
-	else
-		batchRenderData.NonCachedElements.push_back(std::move(meshRenderData));
-
+	batchRenderData.Elements.push_back(std::move(meshRenderData));
 	return batchRenderData;
 }
 

@@ -178,29 +178,6 @@ namespace bs
 		virtual void OwnerWindowFocusChanged();
 
 	private:
-		struct GUIGroupElement
-		{
-			GUIGroupElement() = default;
-
-			GUIGroupElement(GUIElement* element, u32 renderElement)
-				: Element(element), RenderElement(renderElement)
-			{}
-
-			GUIElement* Element = nullptr;
-			u32 RenderElement = 0;
-		};
-
-		/** Holds information about a set of GUI elements that can be drawn together. */
-		struct GUIDrawGroup
-		{
-			u32 Id = 0;
-			u32 DepthRange = 0;
-			u32 MinDepth = 0;
-			Rect2I Bounds;
-			Vector<GUIGroupElement> CachedElements;
-			Vector<GUIGroupElement> NonCachedElements;
-		};
-
 		/**	Calculates widget bounds using the bounds of all child elements. */
 		void UpdateBounds() const;
 

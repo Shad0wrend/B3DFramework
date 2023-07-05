@@ -1600,12 +1600,6 @@ RendererExtensionRequest GUIRenderer::Check(const Camera& camera)
 		{
 			for(auto& drawGroup : widget.DrawGroups)
 			{
-				if(!drawGroup.NonCachedElements.empty()) // TODO - Ensure non-cached elements register their dirty bounds every frame
-				{
-					needsRedraw = true;
-					break;
-				}
-
 				for(auto& renderTargetElem : drawGroup.RenderTargetElements)
 				{
 					if(renderTargetElem.LastUpdateCount != renderTargetElem.Target->GetUpdateCount())
@@ -1623,6 +1617,8 @@ RendererExtensionRequest GUIRenderer::Check(const Camera& camera)
 
 void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewContext)
 {
+	// TODO - Sprite animation might be broken. I need to continually mark the animated region as dirty.
+
 	FrameScope frameScope;
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	const GpuBackendConventions& gpuBackendConventions = gpuDevice->GetCapabilities().Conventions;
@@ -1716,22 +1712,10 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 				{
 					const GUIBatchRenderData& drawGroup = *drawGroupIterator;
 
-					for(const GUIMeshRenderData& meshRenderData : drawGroup.NonCachedElements)
-					{
-						if(!meshRenderData.Bounds.Overlaps(region))
-							continue;
-
-						// Note: We will unnecessarily do this update multiple times if the same mesh overlaps multiple dirty regions
-						const SPtr<GpuBuffer>& buffer = widget.GUIMeshUniformBuffers[meshRenderData.UniformBufferIndex];
-						UpdateParamBlockBuffer(buffer, viewportOffset, inverseRegionWidth, inverseRegionHeight, viewflipYFlip, widget.WorldTransform, meshRenderData);
-
-						meshesToRedraw.push_back(&meshRenderData);
-					}
-
 					if(!drawGroup.Bounds.Overlaps(region))
 						continue;
 
-					for(const GUIMeshRenderData& meshRenderData : drawGroup.CachedElements)
+					for(const GUIMeshRenderData& meshRenderData : drawGroup.Elements)
 					{
 						if(!meshRenderData.Bounds.Overlaps(region))
 							continue;
@@ -1742,22 +1726,22 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 
 						meshesToRedraw.push_back(&meshRenderData);
 					}
+				}
 
-					for(const GUIMeshRenderData* meshRenderData : meshesToRedraw)
+				for(const GUIMeshRenderData* meshRenderData : meshesToRedraw)
+				{
+					SpriteMaterial* const material = meshRenderData->Material;
+
+					// Note: Sprite material is being re-bound for each draw. We should ensure the material is bound only when it actually changes.
+					const SPtr<GpuBuffer>& uniformBuffer = widget.GUIMeshUniformBuffers[meshRenderData->UniformBufferIndex];
+
+					if(!kEnableGUIRegionDebugDrawing || !useDebugMaterial)
 					{
-						SpriteMaterial* const material = meshRenderData->Material;
-
-						// Note: Sprite material is being re-bound for each draw. We should ensure the material is bound only when it actually changes.
-						const SPtr<GpuBuffer>& uniformBuffer = widget.GUIMeshUniformBuffers[meshRenderData->UniformBufferIndex];
-
-						if(!kEnableGUIRegionDebugDrawing || !useDebugMaterial)
-						{
-							material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, meshRenderData->MaterialInformation.Texture, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
-						}
-						else
-						{
-							material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, Texture::kPink, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
-						}
+						material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, meshRenderData->MaterialInformation.Texture, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
+					}
+					else
+					{
+						material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, Texture::kPink, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
 					}
 				}
 			}
@@ -1827,9 +1811,9 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 		widget->DrawGroups = data.NewBatches;
 
 		// Allocate GPU buffers containing the material parameters
-		u32 numBuffers = (u32)widget->DrawGroups.size();
+		u32 numBuffers = 0;
 		for(auto& drawGroup : widget->DrawGroups)
-			numBuffers += (u32)drawGroup.NonCachedElements.size() + (u32)drawGroup.CachedElements.size();
+			numBuffers += (u32)drawGroup.Elements.size();
 
 		auto numAllocatedBuffers = (u32)widget->GUIMeshUniformBuffers.size();
 		if(numBuffers > numAllocatedBuffers)
@@ -1843,10 +1827,7 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 		u32 curBufferIdx = 0;
 		for(auto& drawGroup : widget->DrawGroups)
 		{
-			for(auto& entry : drawGroup.NonCachedElements)
-				entry.UniformBufferIndex = curBufferIdx++;
-
-			for(auto& entry : drawGroup.CachedElements)
+			for(auto& entry : drawGroup.Elements)
 				entry.UniformBufferIndex = curBufferIdx++;
 		}
 	}

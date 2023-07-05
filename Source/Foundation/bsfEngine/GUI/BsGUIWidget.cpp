@@ -321,6 +321,8 @@ void GUIWidget::MarkContentDirty(GUIElementBase* elem)
 	if(elem->GetTypeInternal() == GUIElementBase::Type::Element)
 	{
 		auto guiElement = static_cast<GUIElement*>(elem);
+		if(!guiElement->IsVisible())
+			return;
 
 		mDirtyContents.insert(guiElement);
 		mBatches.MarkContentDirty(guiElement);
@@ -376,8 +378,6 @@ GUIDrawGroupRenderDataUpdate GUIWidget::RebuildDirtyRenderData()
 
 	if(dirty)
 	{
-		mWidgetIsDirty = false;
-
 		// Update render contents recursively because updates can cause child GUI elements to become dirty
 		while(!mDirtyContents.empty())
 		{
@@ -392,6 +392,7 @@ GUIDrawGroupRenderDataUpdate GUIWidget::RebuildDirtyRenderData()
 		UpdateBounds();
 	}
 
+	mWidgetIsDirty = false;
 	return mBatches.RebuildDirty(dirty);
 }
 

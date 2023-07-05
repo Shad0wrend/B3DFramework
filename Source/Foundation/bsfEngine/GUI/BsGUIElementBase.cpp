@@ -267,12 +267,11 @@ void GUIElementBase::SetVisibleRecursive(bool visible)
 
 	if(!visible)
 	{
-		MarkMeshAsDirty();
-
 		if(mParentWidget)
 			mParentWidget->NotifyElementVisibilityChanged(this, false);
 
 		mFlags |= GUIElem_Hidden;
+		MarkMeshAsDirty();
 
 		for(auto& child : mChildren)
 			child->SetVisibleRecursive(false);
