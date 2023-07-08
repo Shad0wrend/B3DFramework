@@ -382,23 +382,6 @@ namespace bs
 			size += sizeof(size.Bytes);
 	}
 
-	/** Helper for checking for existance of rttiEnumFields method on a class. */
-	template <class T>
-	struct has_rttiEnumFields
-	{
-		struct dummy
-		{};
-
-		template <typename C, typename P>
-		static auto Test(P* p) -> decltype(std::declval<C>().RttiEnumFields(*p), std::true_type());
-
-		template <typename, typename>
-		static std::false_type Test(...);
-
-		typedef decltype(Test<T, dummy>(nullptr)) type;
-		static const bool kValue = std::is_same<std::true_type, decltype(Test<T, dummy>(nullptr))>::value;
-	};
-
 	/**
 	 * Notify the RTTI system that the specified type may be serialized just by using a memcpy.
 	 *

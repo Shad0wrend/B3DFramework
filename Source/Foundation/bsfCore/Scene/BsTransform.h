@@ -155,15 +155,6 @@ namespace bs
 		 */
 		void Pitch(const Radian& angle);
 
-		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template <class P>
-		void RttiEnumFields(P p)
-		{
-			p(mPosition);
-			p(mRotation);
-			p(mScale);
-		}
-
 		static Transform IDENTITY;
 
 	private:

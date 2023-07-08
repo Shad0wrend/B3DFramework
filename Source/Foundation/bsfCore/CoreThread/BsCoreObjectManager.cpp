@@ -76,8 +76,6 @@ void CoreObjectManager::UnregisterObject(CoreObject* object)
 				CoreSyncPacket* const syncPacket = object->CreateSyncPacket(*allocator, object->GetCoreDirtyFlags());
 				if(syncPacket != nullptr)
 					objSyncData = CoreSyncData(syncPacket);
-				else
-					objSyncData = object->SyncToCore(allocator);
 
 				mDestroyedSyncData.push_back(CoreStoredSyncObjData(coreObject, internalId, objSyncData));
 
@@ -288,8 +286,6 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 		CoreSyncPacket* const syncPacket = curObj->CreateSyncPacket(*allocator, curObj->GetCoreDirtyFlags());
 		if(syncPacket != nullptr)
 			data.SyncData = CoreSyncData(syncPacket);
-		else
-			data.SyncData = curObj->SyncToCore(allocator);
 
 		curObj->MarkCoreClean();
 		mDirtyObjects.erase(id);
@@ -305,11 +301,6 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 		{
 			const IndividualCoreSyncData& entry = *riter;
 			entry.Destination->SyncToCore(entry.SyncData, *entry.Allocator);
-
-			u8* dataPtr = entry.SyncData.GetBuffer();
-
-			if(dataPtr != nullptr)
-				entry.Allocator->Free(dataPtr);
 
 			CoreSyncPacket* const syncPacket = entry.SyncData.GetSyncPacket();
 			if(syncPacket != nullptr)
@@ -395,8 +386,6 @@ void CoreObjectManager::SyncDownload(FrameAlloc* allocator)
 			CoreSyncPacket* const syncPacket = curObj->CreateSyncPacket(*allocator, curObj->GetCoreDirtyFlags());
 			if(syncPacket != nullptr)
 				objSyncData = CoreSyncData(syncPacket);
-			else
-				objSyncData = curObj->SyncToCore(allocator);
 
 			curObj->MarkCoreClean();
 			syncData.Entries.push_back(CoreStoredSyncObjData(objectCore, curObj->GetInternalId(), objSyncData));
@@ -442,11 +431,6 @@ void CoreObjectManager::SyncUpload()
 		SPtr<ct::CoreObject> destinationObj = objSyncData.DestinationObj;
 		if(destinationObj != nullptr)
 			destinationObj->SyncToCore(objSyncData.SyncData, *syncData.Alloc);
-
-		u8* data = objSyncData.SyncData.GetBuffer();
-
-		if(data != nullptr)
-			syncData.Alloc->Free(data);
 
 		CoreSyncPacket* const syncPacket = objSyncData.SyncData.GetSyncPacket();
 		if(syncPacket != nullptr)

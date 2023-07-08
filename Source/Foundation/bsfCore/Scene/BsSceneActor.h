@@ -90,20 +90,6 @@ namespace bs
 		 */
 		virtual void UpdateStateInternal(const SceneObject& so, bool force = false);
 
-		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template <class P>
-		void RttiEnumFields(P p, ActorDirtyFlags flags = ActorDirtyFlag::Everything)
-		{
-			if(flags.IsSetAny(ActorDirtyFlag::Transform | ActorDirtyFlag::Everything))
-				p(mTransform);
-
-			if(flags.IsSetAny(ActorDirtyFlag::Active | ActorDirtyFlag::Everything))
-				p(mActive);
-
-			if(flags.IsSetAny(ActorDirtyFlag::Mobility | ActorDirtyFlag::Everything))
-				p(mMobility);
-		}
-
 		/**
 		 * Creates a data packet that will be used for syncing the core object with it's render thread counter-part.
 		 * Caller must free the retrieved packet using the provided allocator, when done using it.

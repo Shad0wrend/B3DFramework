@@ -207,13 +207,6 @@ namespace bs
 		/** Assigns a unique index to the variation that can later be used for quick lookup. */
 		void SetIdx(u32 idx) const { mIdx = idx; }
 
-		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template <class P>
-		void RttiEnumFields(P p)
-		{
-			p(mParams);
-		}
-
 		/** @} */
 	private:
 		friend class ShaderVariations;

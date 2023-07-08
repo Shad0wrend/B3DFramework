@@ -211,15 +211,6 @@ namespace bs
 		u32 GetCoreDirtyFlags() const { return mCoreDirtyFlags; }
 
 		/**
-		 * Copy internal dirty data to a memory buffer that will be used for updating core thread version of that data.
-		 *
-		 * @note
-		 * This generally happens at the end of every sim thread frame. Synced data becomes available to the core thread
-		 * the start of the next core thread frame.
-		 */
-		virtual CoreSyncData SyncToCore(FrameAlloc* allocator) { return CoreSyncData(); }
-
-		/**
 		 * Creates a data packet that will be used for syncing the core object with it's render thread counter-part.
 		 * Caller must free the retrieved packet using the provided allocator, when done using it.
 		 */

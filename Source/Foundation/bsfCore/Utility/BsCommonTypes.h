@@ -732,26 +732,9 @@ namespace bs
 	class CoreSyncData
 	{
 	public:
-		CoreSyncData()
-			: data(nullptr), size(0)
-		{}
-
-		CoreSyncData(u8* data, u32 size)
-			: data(data), size(size)
-		{}
-
-		CoreSyncData(CoreSyncPacket* syncPacket)
+		CoreSyncData(CoreSyncPacket* syncPacket = nullptr)
 			: mSyncPacket(syncPacket)
 		{}
-
-		/** Gets the internal data and checks the data is of valid size. */
-		template <class T>
-		const T& GetData() const
-		{
-			B3D_ASSERT(sizeof(T) == size);
-
-			return *(T*)data;
-		}
 
 		template<class T = CoreSyncPacket>
 		T* GetSyncPacket() const
@@ -759,15 +742,7 @@ namespace bs
 			return (T*)mSyncPacket;
 		}
 
-		/**	Returns a pointer to internal data buffer. */
-		u8* GetBuffer() const { return data; }
-
-		/**	Returns the size of the internal data buffer. */
-		u32 GetBufferSize() const { return size; }
-
 	private:
-		u8* data = nullptr;
-		u32 size = 0;
 		CoreSyncPacket* mSyncPacket = nullptr;
 	};
 
