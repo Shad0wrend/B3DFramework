@@ -3,6 +3,7 @@
 #include "RenderAPI/BsGpuBuffer.h"
 #include "BsCoreApplication.h"
 #include "BsGpuDevice.h"
+#include "CoreThread/BsCoreObjectSync.h"
 
 using namespace bs;
 
@@ -93,15 +94,25 @@ SPtr<ct::CoreObject> GpuBuffer::CreateCore() const
 	return gpuDevice->CreateGpuBuffer(createInformation, true);
 }
 
-CoreSyncData GpuBuffer::SyncToCore(FrameAlloc* allocator)
+namespace bs
+{
+	B3D_SYNC_BLOCK_BEGIN(GpuBuffer, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(u32, BufferSize)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(u8*, BufferData)
+	B3D_SYNC_BLOCK_END
+}
+
+CoreSyncPacket* GpuBuffer::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
 {
 	if(!mInformation.Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
-		return CoreSyncData(nullptr, 0);
+		return nullptr;
 
-	u8* buffer = allocator->Alloc(mSize);
-	ReadCached(0, mSize, buffer);
+	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	syncPacket->BufferSize = mSize;
+	syncPacket->BufferData = allocator.Alloc(mSize);
+	ReadCached(0, mSize, syncPacket->BufferData);
 
-	return CoreSyncData(buffer, mSize);
+	return syncPacket;
 }
 
 SPtr<GpuBuffer> GpuBuffer::Create(const GpuBufferCreateInformation& createInformation)
@@ -280,12 +291,18 @@ namespace bs::ct
 
 	void GpuBuffer::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
 	{
-		if(data.GetBuffer() == nullptr)
+		auto* const syncPacket = data.GetSyncPacket<bs::GpuBuffer::SyncPacket>();
+		if(!syncPacket)
 			return;
 
-		if(!B3D_ENSURE(mSize == data.GetBufferSize()))
+		if(syncPacket->BufferData == nullptr)
 			return;
 
-		WriteData(0, data.GetBufferSize(), data.GetBuffer());
+		if(B3D_ENSURE(mSize == syncPacket->BufferSize))
+		{
+			WriteData(0, syncPacket->BufferSize, syncPacket->BufferData);
+		}
+
+		allocator.Free(syncPacket->BufferData);
 	}
 }

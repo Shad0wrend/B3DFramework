@@ -235,12 +235,15 @@ namespace bs
 		static u32 CalculateBufferSize(const GpuBufferInformation& information);
 
 	protected:
+		struct SyncPacket;
+		friend class ct::GpuBuffer;
+
 		GpuBuffer(const GpuBufferCreateInformation& createInformation);
 
 		void Initialize() override;
 		void Destroy() override;
 		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
 
 		GpuBufferInformation mInformation;
 		u32 mSize = 0;
@@ -396,6 +399,7 @@ namespace bs::ct
 
 	protected:
 		friend class bs::GpuDevice;
+		friend class bs::GpuBuffer;
 
 		/** Constructs a new GPU buffer. */
 		GpuBuffer(const GpuBufferCreateInformation& createInformation);
