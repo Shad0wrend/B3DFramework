@@ -691,7 +691,8 @@ namespace bs
 		TID_CoreShaderInformation = 1224,
 		TID_CoreShader = 1225,
 		TID_VectorPathCommand = 1226,
-		TID_VectorPathPaint = 1227,
+		TID_VectorGraphicsPaint = 1227,
+		TID_VectorPathState = 1228,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,

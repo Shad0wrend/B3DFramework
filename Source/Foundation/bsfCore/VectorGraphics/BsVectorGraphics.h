@@ -85,18 +85,20 @@ namespace bs
 		VectorGraphicsPaint(const Color& color)
 		{
 			Type = VectorGraphicsPaintType::Solid;
-			Solid.SolidColor = color;
+			Solid.Color = color;
 		}
 
-		static VectorGraphicsPaint CreateSolid(const Color& solidColor);
+		static VectorGraphicsPaint CreateSolid(const Color& color);
 		static VectorGraphicsPaint CreateLinearGradient(const Color& startColor, const Color& endColor, const Vector2& startPoint, const Vector2& endPoint);
 		static VectorGraphicsPaint CreateBoxGradient(const Color& innerColor, const Color& outerColor, const Rect2& area, float cornerRadius, float feather);
 		static VectorGraphicsPaint CreateRadialGradient(const Color& innerColor, const Color& outerColor, const Vector2& center, float innerRadius, float outerRadius);
 
 	private:
+		friend struct RTTIPlainType<VectorGraphicsPaint>;
+
 		struct SolidPaint
 		{
-			Color SolidColor;
+			Color Color;
 		};
 
 		struct LinearGradientPaint
@@ -135,11 +137,11 @@ namespace bs
 		};
 	};
 
-	inline VectorGraphicsPaint VectorGraphicsPaint::CreateSolid(const Color& solidColor)
+	inline VectorGraphicsPaint VectorGraphicsPaint::CreateSolid(const Color& color)
 	{
 		VectorGraphicsPaint paint;
 		paint.Type = VectorGraphicsPaintType::Solid;
-		paint.Solid.SolidColor = solidColor;
+		paint.Solid.Color = color;
 
 		return paint;
 	}

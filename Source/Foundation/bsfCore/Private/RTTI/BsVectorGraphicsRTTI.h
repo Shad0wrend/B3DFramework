@@ -5,6 +5,7 @@
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
 #include "RTTI/BsMathRTTI.h"
+#include "RTTI/BsColorRTTI.h"
 #include "VectorGraphics/BsVectorGraphics.h"
 
 namespace bs
@@ -15,11 +16,102 @@ namespace bs
 	 */
 
 	template <>
+	struct RTTIPlainType<VectorGraphicsPaint>
+	{
+		enum
+		{
+			id = TID_VectorGraphicsPaint
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
+
+		template<class T, class Processor>
+		static void RTTIEnumerateFields(T&& object, Processor& processor)
+		{
+			processor(object.Type);
+			
+			switch(object.Type)
+			{
+			case VectorGraphicsPaintType::Solid:
+				processor(object.Solid.Color);
+				break;
+			case VectorGraphicsPaintType::LinearGradient:
+				processor(object.LinearGradient.StartColor);
+				processor(object.LinearGradient.EndColor);
+				processor(object.LinearGradient.StartPoint);
+				processor(object.LinearGradient.EndPoint);
+				break;
+			case VectorGraphicsPaintType::BoxGradient:
+				processor(object.BoxGradient.InnerColor);
+				processor(object.BoxGradient.OuterColor);
+				processor(object.BoxGradient.Area);
+				processor(object.BoxGradient.CornerRadius);
+				processor(object.BoxGradient.Feather);
+				break;
+			case VectorGraphicsPaintType::RadialGradient:
+				processor(object.RadialGradient.InnerColor);
+				processor(object.RadialGradient.OuterColor);
+				processor(object.RadialGradient.Center);
+				processor(object.RadialGradient.InnerRadius);
+				processor(object.RadialGradient.OuterRadius);
+				break;
+			}
+		}
+
+		static BitLength ToMemory(const VectorGraphicsPaint& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		{
+			static constexpr u8 kVersion = 0;
+
+			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
+											   {
+				BitLength size = 0;
+				size += B3DRTTIWrite(kVersion, stream);
+
+				RTTIWriteProcessor writeProcessor(stream);
+				RTTIEnumerateFields(data, writeProcessor);
+
+				size += writeProcessor.GetSize();
+				return size; });
+		}
+
+		static BitLength FromMemory(VectorGraphicsPaint& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		{
+			BitLength size;
+			B3DRTTIReadSizeHeader(stream, compress, size);
+
+			uint8_t version;
+			B3DRTTIRead(version, stream);
+			B3D_ASSERT(version == 0);
+
+			RTTIReadProcessor readProcessor(stream);
+			RTTIEnumerateFields(data, readProcessor);
+
+			return size;
+		}
+
+		static BitLength GetSize(const VectorGraphicsPaint& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		{
+			BitLength dataSize = sizeof(uint8_t);
+
+			RTTISizeProcessor sizeProcessor;
+			RTTIEnumerateFields(data, sizeProcessor);
+
+			dataSize += sizeProcessor.GetSize();
+
+			B3DRTTIAddHeaderSize(dataSize, compress);
+			return dataSize;
+		}
+	};
+
+	template <>
 	struct RTTIPlainType<VectorPathCommand>
 	{
 		enum
 		{
-			id = TID_VectorPathPaint
+			id = TID_VectorPathCommand
 		};
 
 		enum
@@ -131,6 +223,80 @@ namespace bs
 			return dataSize;
 		}
 	};
+
+	template <>
+	struct RTTIPlainType<VectorPathState>
+	{
+		enum
+		{
+			id = TID_VectorPathState
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
+
+		template<class T, class Processor>
+		static void RTTIEnumerateFields(T&& object, Processor& processor)
+		{
+			processor(object.StrokePaint);
+			processor(object.FillPaint);
+			processor(object.MiterLimit);
+			processor(object.StrokeWidth);
+			processor(object.LineCapType);
+			processor(object.LineJoinType);
+			processor(object.AntialiasShape);
+			processor(object.Alpha);
+			processor(object.BlendMode);
+			processor(object.ScissorArea);
+		}
+
+		static BitLength ToMemory(const VectorPathState& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		{
+			static constexpr u8 kVersion = 0;
+
+			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
+											   {
+				BitLength size = 0;
+				size += B3DRTTIWrite(kVersion, stream);
+
+				RTTIWriteProcessor writeProcessor(stream);
+				RTTIEnumerateFields(data, writeProcessor);
+
+				size += writeProcessor.GetSize();
+				return size; });
+		}
+
+		static BitLength FromMemory(VectorPathState& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		{
+			BitLength size;
+			B3DRTTIReadSizeHeader(stream, compress, size);
+
+			uint8_t version;
+			B3DRTTIRead(version, stream);
+			B3D_ASSERT(version == 0);
+
+			RTTIReadProcessor readProcessor(stream);
+			RTTIEnumerateFields(data, readProcessor);
+
+			return size;
+		}
+
+		static BitLength GetSize(const VectorPathState& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		{
+			BitLength dataSize = sizeof(uint8_t);
+
+			RTTISizeProcessor sizeProcessor;
+			RTTIEnumerateFields(data, sizeProcessor);
+
+			dataSize += sizeProcessor.GetSize();
+
+			B3DRTTIAddHeaderSize(dataSize, compress);
+			return dataSize;
+		}
+	};
+
 
 	/** @} */
 	/** @endcond */
