@@ -563,7 +563,9 @@ void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& paramet
 	}
 
 	if(mBoundParams != nullptr)
+	{
 		mBoundParamsDirty = true;
+	}
 	else
 	{
 		mBoundDescriptorSetCount = 0;
@@ -571,8 +573,26 @@ void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& paramet
 	}
 
 	mDescriptorSetsBindState = DescriptorSetBindFlag::Graphics | DescriptorSetBindFlag::Compute;
+	mDynamicDescriptorOffsetsOverrides.clear();
 
 	B3D_INCREMENT_RENDER_STATISTIC(NumGpuParamBinds);
+}
+
+void VulkanGpuCommandBuffer::SetDynamicBufferOffset(u32 bufferIndex, u32 offset)
+{
+	EnsureValidThread();
+
+	mDynamicDescriptorOffsetsOverrides[bufferIndex] = offset;
+	mDescriptorSetsBindState = DescriptorSetBindFlag::Graphics | DescriptorSetBindFlag::Compute;
+
+	// If GPU params were bound already, we retrieved the initial set of offsets, so just override it
+	if(!mBoundParamsDirty)
+	{
+		if(B3D_ENSURE(bufferIndex < (u32)mDynamicDescriptorOffsetsToBind.size()))
+			return;
+
+		mDynamicDescriptorOffsetsToBind[bufferIndex] = offset;
+	}
 }
 
 void VulkanGpuCommandBuffer::SetViewport(const Rect2& area)
@@ -1802,24 +1822,28 @@ void VulkanGpuCommandBuffer::BindVertexInputs()
 
 void VulkanGpuCommandBuffer::BindGpuParams()
 {
-	if(mBoundParamsDirty)
+	if(!mBoundParamsDirty)
+		return;
+
+	if(mBoundParams != nullptr)
 	{
-		if(mBoundParams != nullptr)
-		{
-			mBoundDescriptorSetCount = mBoundParams->GetSetCount();
+		mBoundDescriptorSetCount = mBoundParams->GetSetCount();
 
-			mDynamicDescriptorOffsetsToBind.clear();
-			mBoundParams->PrepareForBind(*this, mDescriptorSetsTemp, mDynamicDescriptorOffsetsToBind);
-		}
-		else
-			mBoundDescriptorSetCount = 0;
-
-		mBoundParamsDirty = false;
+		mDynamicDescriptorOffsetsToBind.clear();
+		mBoundParams->PrepareForBind(*this, mDescriptorSetsTemp, mDynamicDescriptorOffsetsToBind);
 	}
 	else
-	{
 		mBoundDescriptorSetCount = 0;
+
+	for(const auto& pair : mDynamicDescriptorOffsetsOverrides)
+	{
+		if(!B3D_ENSURE(pair.first < (u32)mDynamicDescriptorOffsetsToBind.size()))
+			continue;
+
+		mDynamicDescriptorOffsetsToBind[pair.first] = pair.second;
 	}
+
+	mBoundParamsDirty = false;
 }
 
 void VulkanGpuCommandBuffer::ExecuteLayoutTransitions()

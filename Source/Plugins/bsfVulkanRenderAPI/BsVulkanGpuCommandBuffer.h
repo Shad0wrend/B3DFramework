@@ -137,6 +137,7 @@ namespace bs
 			CommandBufferState GetState() const override;
 
 			void SetGpuParameters(const SPtr<GpuParameters>& parameters) override;
+			void SetDynamicBufferOffset(u32 bufferIndex, u32 offset) override;
 			void SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& pipelineState) override;
 			void SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& pipelineState) override;
 			void SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 bufferCount) override;
@@ -765,6 +766,7 @@ namespace bs
 			Vector<VulkanQuery*> mQueuedQueryResets;
 			Vector<SwapChainImageInformation> mAcquiredSwapChainImages;
 			Vector<u32> mDynamicDescriptorOffsetsToBind;
+			UnorderedMap<u32, u32> mDynamicDescriptorOffsetsOverrides;
 
 			SPtr<RenderTarget> mRenderTarget;
 			bool mRenderTargetModified = false;

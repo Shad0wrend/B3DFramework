@@ -168,6 +168,15 @@ namespace bs
 			 */
 			virtual void SetGpuParameters(const SPtr<GpuParameters>& parameters) = 0;
 
+			/**
+			 * Applies an offset from which reads in a buffer should start in a GPU program. This allows caller to quickly change
+			 * buffer contents as seen by the shader, without having to rebind GPU program parameters.
+			 *
+			 * @param bufferIndex		Dynamic buffer index, as retrieved from GpuPipelineParameterLayout of the currently bound GpuParameters.
+			 * @param offset			Offset to apply. Must be within the range of the currently bound buffer size and respect hardware alignment requirements.
+			 */
+			virtual void SetDynamicBufferOffset(u32 bufferIndex, u32 offset) = 0;
+
 			/** Sets a pipeline state that controls how will subsequent draw commands render primitives. */
 			virtual void SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& pipelineState) = 0;
 

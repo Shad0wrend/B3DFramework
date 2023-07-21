@@ -110,6 +110,24 @@ namespace bs
 		/** Returns the number of entries in the array at the specified binding index. */
 		u32 GetArraySize(GpuParameterType type, u32 sequentialBindingIndex);
 
+		/**
+		 * Returns an index that can be used for applying a dynamic offset for buffer lookup. The index can be provided
+		 * to the command buffer after GpuParameters using this layout have been bound on the command buffer.
+		 *
+		 * Returns ~0u if parameter at the specific set/slot combination doesn't support dynamic offsets (supported on uniform and storage buffers),
+		 * or if the parameter is not found.
+		 */
+		u32 GetDynamicOffsetIndex(u32 set, u32 slot, u32 arrayIndex = 0);
+
+		/**
+		 * Returns an index that can be used for applying a dynamic offset for buffer lookup. The index can be provided
+		 * to the command buffer after GpuParameters using this layout have been bound on the command buffer.
+		 *
+		 * Returns ~0u if parameter at the specific set/slot combination doesn't support dynamic offsets (supported on uniform and storage buffers),
+		 * or if the parameter is not found.
+		 */
+		u32 GetDynamicOffsetIndex(GpuProgramType gpuProgramType, const String& name, u32 arrayIndex = 0);
+
 		/** Returns descriptions of individual parameters for the specified GPU program type. */
 		const SPtr<GpuProgramParameterDescription>& GetParameterDescriptionForProgram(GpuProgramType type) const { return mPerProgramParameterDescriptions[(int)type]; }
 
@@ -134,6 +152,7 @@ namespace bs
 			u32 Set = 0;
 			u32 Slot = 0;
 			u32 ArraySize = 1;
+			u32 DynamicOffsetIndex = ~0u;
 		};
 
 		std::array<SPtr<GpuProgramParameterDescription>, 6> mPerProgramParameterDescriptions;

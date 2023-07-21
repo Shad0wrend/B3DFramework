@@ -129,6 +129,12 @@ namespace bs
 			/** Returns the internal parameter set containing GPU bindable parameters. */
 			SPtr<GpuParameters> GetParams() const { return mGPUParameters; }
 
+			/** Returns the material's graphics pipeline state. This will be null if the material is a compute material. */
+			SPtr<GpuGraphicsPipelineState> GetGraphicsPipeline() const { return mGraphicsPipeline; }
+
+			/** Returns the material's compute pipeline state. This will be null if the material is a graphics material. */
+			SPtr<GpuComputePipelineState> GetComputePipeline() const { return mComputePipeline; }
+
 			/**
 			 * Binds the materials and its parameters to the pipeline. This material will be used for rendering any subsequent
 			 * draw calls, or executing dispatch calls. If @p bindParameters is false you need to call BindParameters() separately

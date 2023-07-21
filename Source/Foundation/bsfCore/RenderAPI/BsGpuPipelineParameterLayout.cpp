@@ -157,7 +157,8 @@ GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParamete
 		mResourceCountPerType[parameterTypeIndex] = 0;
 	}
 
-	auto fnPopulateSetInfo = [this](auto& entry, GpuParameterType type)
+	u32 nextDynamicOffsetIndex = 0;
+	auto fnPopulateSetInfo = [this, &nextDynamicOffsetIndex](auto& entry, GpuParameterType type, bool supportsDynamicOffset)
 	{
 		const u32 typeIndex = (u32)type;
 		const u32 sequentialBindingIndex = mBindingSlotCountPerType[typeIndex];
@@ -173,11 +174,21 @@ GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParamete
 		mResourceInfos[typeIndex][sequentialBindingIndex].Slot = entry.Slot;
 		mResourceInfos[typeIndex][sequentialBindingIndex].ArraySize = 1;
 
+		if(supportsDynamicOffset)
+		{
+			mResourceInfos[typeIndex][sequentialBindingIndex].DynamicOffsetIndex = nextDynamicOffsetIndex;
+			nextDynamicOffsetIndex++;
+		}
+		else
+		{
+			mResourceInfos[typeIndex][sequentialBindingIndex].DynamicOffsetIndex = ~0u;
+		}
+
 		mBindingSlotCountPerType[typeIndex]++;
 		mResourceCountPerType[typeIndex]++;
 	};
 
-	auto fnPopulateSetInfoWithArraySupport = [this](auto& entry, GpuParameterType type)
+	auto fnPopulateSetInfoWithArraySupport = [this, &nextDynamicOffsetIndex](auto& entry, GpuParameterType type, bool supportsDynamicOffset)
 	{
 		const u32 typeIndex = (u32)type;
 		const u32 sequentialBindingIndex = mBindingSlotCountPerType[typeIndex];
@@ -194,6 +205,16 @@ GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParamete
 		mResourceInfos[typeIndex][sequentialBindingIndex].Slot = entry.Slot;
 		mResourceInfos[typeIndex][sequentialBindingIndex].ArraySize = arraySize;
 
+		if(supportsDynamicOffset)
+		{
+			mResourceInfos[typeIndex][sequentialBindingIndex].DynamicOffsetIndex = nextDynamicOffsetIndex;
+			nextDynamicOffsetIndex += arraySize;
+		}
+		else
+		{
+			mResourceInfos[typeIndex][sequentialBindingIndex].DynamicOffsetIndex = ~0u;
+		}
+
 		mBindingSlotCountPerType[typeIndex]++;
 		mResourceCountPerType[typeIndex] += arraySize;
 	};
@@ -205,16 +226,16 @@ GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParamete
 			continue;
 
 		for(auto& paramBlock : paramDesc->DataParameterBlocks)
-			fnPopulateSetInfo(paramBlock.second, GpuParameterType::UniformBuffer);
+			fnPopulateSetInfo(paramBlock.second, GpuParameterType::UniformBuffer, true);
 
 		for(auto& texture : paramDesc->Textures)
-			fnPopulateSetInfoWithArraySupport(texture.second, GpuParameterType::SampledTexture);
+			fnPopulateSetInfoWithArraySupport(texture.second, GpuParameterType::SampledTexture, false);
 
 		for(auto& texture : paramDesc->StorageTextures)
-			fnPopulateSetInfoWithArraySupport(texture.second, GpuParameterType::StorageTexture);
+			fnPopulateSetInfoWithArraySupport(texture.second, GpuParameterType::StorageTexture, false);
 
 		for(auto& buffer : paramDesc->Buffers)
-			fnPopulateSetInfoWithArraySupport(buffer.second, GpuParameterType::StorageBuffer);
+			fnPopulateSetInfoWithArraySupport(buffer.second, GpuParameterType::StorageBuffer, true);
 
 		// Samplers need to be handled specially because certain slots could be texture/buffer + sampler combinations
 		{
@@ -410,3 +431,47 @@ u32 GpuPipelineParameterLayout::GetArraySize(GpuParameterType type, u32 sequenti
 
 	return mResourceInfos[(u32)type][sequentialBindingIndex].ArraySize;
 }
+
+u32 GpuPipelineParameterLayout::GetDynamicOffsetIndex(u32 set, u32 slot, u32 arrayIndex)
+{
+#if B3D_BUILD_TYPE == B3D_BUILD_TYPE_DEVELOPMENT
+	if(set >= mSetCount)
+	{
+		B3D_LOG(Error, RenderBackend, "Cannot retrieve dynamic offset index. Set index out of range: Valid range: [0, {0}). Requested: {1}.", mSetCount, set);
+		return ~0u;
+	}
+
+	if(slot >= mSetInfos[set].SlotCount)
+	{
+		B3D_LOG(Error, RenderBackend, "Cannot retrieve dynamic offset index. Slot index out of range: Valid range: [0, {0}). Requested: {1}.", mSetInfos[set].SlotCount, slot);
+		return ~0u;
+	}
+
+	if(arrayIndex >= mSetInfos[set].SlotArraySizes[slot])
+	{
+		B3D_LOG(Error, RenderBackend, "Cannot retrieve dynamic offset index. Array index out of range: Valid range: [0, {0}). Requested: {1}.", mSetInfos[set].SlotArraySizes[slot], arrayIndex);
+		return ~0u;
+	}
+#endif
+
+	const u32 sequentialBindingIndex = mSetInfos[set].SlotToSequentialBindingIndex[slot] != ~0u ? mSetInfos[set].SlotToSequentialBindingIndex[slot] : ~0u;
+	const GpuParameterType slotType = mSetInfos[set].SlotTypes[slot];
+
+	return mResourceInfos[(u32)slotType][sequentialBindingIndex].DynamicOffsetIndex + arrayIndex;
+}
+
+u32 GpuPipelineParameterLayout::GetDynamicOffsetIndex(GpuProgramType gpuProgramType, const String& name, u32 arrayIndex)
+{
+	const SPtr<GpuProgramParameterDescription>& parameterDescriptions = mPerProgramParameterDescriptions[(u32)gpuProgramType];
+	if(parameterDescriptions == nullptr)
+		return ~0u;
+
+	if(auto found = parameterDescriptions->DataParameterBlocks.find(name); found != parameterDescriptions->DataParameterBlocks.end())
+		return GetDynamicOffsetIndex(found->second.Set, found->second.Slot, arrayIndex);
+	
+	if(auto found = parameterDescriptions->Buffers.find(name); found != parameterDescriptions->Buffers.end())
+		return GetDynamicOffsetIndex(found->second.Set, found->second.Slot, arrayIndex);
+
+	return ~0u;
+}
+
