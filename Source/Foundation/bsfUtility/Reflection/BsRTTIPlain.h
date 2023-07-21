@@ -382,6 +382,39 @@ namespace bs
 			size += sizeof(size.Bytes);
 	}
 
+	/** Helper that calls B3DRTTIWrite() using operator(), and accumulates written size. */
+	struct RTTIWriteProcessor
+	{
+		RTTIWriteProcessor(Bitstream& stream) : mStream(stream) {}
+		template <class T> void operator()(T&& value) { mSize += B3DRTTIWrite(value, mStream); }
+		BitLength GetSize() const { return mSize; }
+
+	private:
+		Bitstream& mStream;
+		BitLength mSize;
+	};
+
+	/** Helper that calls B3DRTTIRead() using operator(). */
+	struct RTTIReadProcessor
+	{
+		RTTIReadProcessor(Bitstream& stream) : mStream(stream) {} 
+		template <class T> void operator()(T&& value) { B3DRTTIRead(value, mStream); }
+
+	private:
+		Bitstream& mStream;
+	};
+
+	/** Helper that calls B3DRTTISize() using operator(). */
+	struct RTTISizeProcessor
+	{
+		RTTISizeProcessor() = default;
+		template <class T> void operator()(T&& value) { mSize += B3DRTTISize(value); }
+		BitLength GetSize() const { return mSize; }
+
+	private:
+		BitLength mSize;
+	};
+
 	/**
 	 * Notify the RTTI system that the specified type may be serialized just by using a memcpy.
 	 *
