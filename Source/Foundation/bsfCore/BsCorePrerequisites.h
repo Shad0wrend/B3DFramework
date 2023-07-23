@@ -693,6 +693,13 @@ namespace bs
 		TID_VectorPathCommand = 1226,
 		TID_VectorGraphicsPaint = 1227,
 		TID_VectorPathState = 1228,
+		TID_NVGRenderUniforms = 1229,
+		TID_NVGRenderCommand = 1230,
+		TID_VectorGraphicsSettings = 1231,
+		TID_VectorPath = 1232,
+		TID_VectorPathRenderable = 1233,
+		TID_NVGVectorPathRenderable = 1234,
+		TID_NVGPathRenderData = 1235,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,

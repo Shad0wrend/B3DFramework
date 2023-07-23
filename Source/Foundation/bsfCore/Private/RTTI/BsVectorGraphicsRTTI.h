@@ -6,6 +6,7 @@
 #include "Reflection/BsRTTIType.h"
 #include "RTTI/BsMathRTTI.h"
 #include "RTTI/BsColorRTTI.h"
+#include "RTTI/BsRectOffsetRTTI.h"
 #include "VectorGraphics/BsVectorGraphics.h"
 
 namespace bs
@@ -297,6 +298,74 @@ namespace bs
 		}
 	};
 
+	template<>
+	struct RTTIPlainType<VectorGraphicsSettings> : RTTIPlainTypeHelper<VectorGraphicsSettings, TID_NVGRenderCommand, 0>
+	{
+		template <class Processor>
+		static void RTTIEnumerateFields(VectorGraphicsSettings& object, Processor& processor, u8 version)
+		{
+			processor(object.Size);
+			processor(object.Scale);
+			processor(object.Transform);
+			processor(object.Scale9GridBorder);
+			processor(object.UseAntialiasing);
+			processor(object.StencilStrokes);
+			processor(object.DevicePixelRatio);
+		}
+	};
+
+	class B3D_CORE_EXPORT VectorPathRTTI : public RTTIType<VectorPath, IReflectable, VectorPathRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_PLAIN(mCurrentState, 0)
+			B3D_RTTI_MEMBER_PLAIN(mCommands, 1)
+			B3D_RTTI_MEMBER_PLAIN(mCommandStates, 2)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "VectorPath";
+			return name;
+		}
+
+		u32 GetRttiId() override
+		{
+			return TID_VectorPath;
+		}
+
+		SPtr<IReflectable> NewRttiObject()
+		{
+			return B3DMakeShared<VectorPath>();
+		}
+	};
+
+	class B3D_CORE_EXPORT VectorPathRenderableRTTI : public RTTIType<ct::VectorPathRenderable, IReflectable, VectorPathRenderableRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_PLAIN(mSettings, 0)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "VectorPathRenderable";
+			return name;
+		}
+
+		u32 GetRttiId() override
+		{
+			return TID_VectorPathRenderable;
+		}
+
+		SPtr<IReflectable> NewRttiObject()
+		{
+			B3D_ENSURE_LOG(false, "Attempting to construct an abstract type from RTTI.");
+			return nullptr;
+		}
+	};
 
 	/** @} */
 	/** @endcond */

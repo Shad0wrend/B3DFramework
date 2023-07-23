@@ -10,6 +10,13 @@
 
 namespace bs
 {
+	class VectorPathRenderableRTTI;
+
+	namespace ct
+	{
+		class VectorPathRenderable;
+	}
+
 	/** @addtogroup VectorGraphics
 	 *  @{
 	 */
@@ -17,7 +24,7 @@ namespace bs
 	// TODO - Doc
 	struct VectorGraphicsSettings
 	{
-		Size2 Size = Size2::kZero;
+		Size2UI Size = Size2UI::kZero;
 		float Scale = 1.0f;
 		Matrix4 Transform = Matrix4::kIdentity;
 		RectOffset Scale9GridBorder;
@@ -396,7 +403,7 @@ namespace bs
 	};
 
 	// TODO
-	class VectorPath
+	class VectorPath : public IReflectable
 	{
 	public:
 		VectorPath() = default;
@@ -433,18 +440,45 @@ namespace bs
 		VectorPath& DrawFill();
 		VectorPath& DrawStroke();
 
+		SPtr<ct::VectorPathRenderable> CreateRenderable(VectorGraphicsSettings& settings);
+
 	private:
 		VectorPathState mCurrentState;
 		Vector<VectorPathCommand> mCommands;
 		Vector<VectorPathState> mCommandStates;
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class VectorPathRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
-	// TODO - Doc
-	class VectorGraphics
+	namespace ct
 	{
-	public:
-		void Render(const VectorPath& path, const VectorGraphicsSettings& settings);
-	};
+		class VectorPathRenderable : public IReflectable
+		{
+		public:
+			VectorPathRenderable(const VectorPath& vectorPath, const VectorGraphicsSettings& settings): mSettings(settings) { }
+			~VectorPathRenderable() override = default;
+
+			virtual void Render(GpuCommandBuffer& commandBuffer) = 0;
+		protected:
+			VectorGraphicsSettings mSettings;
+
+			/************************************************************************/
+			/* 								RTTI		                     		*/
+			/************************************************************************/
+		public:
+			VectorPathRenderable() = default; // Deserialization only
+
+			friend class bs::VectorPathRenderableRTTI;
+			static RTTITypeBase* GetRttiStatic();
+			RTTITypeBase* GetRtti() const override;
+		};
+	} // namespace ct
 
 	/** @} */
 

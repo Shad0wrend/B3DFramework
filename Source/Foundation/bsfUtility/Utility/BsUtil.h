@@ -142,8 +142,11 @@ namespace bs
 
 	template<> const TSize3<u32> TSize3<u32>::kZero{BsZero};
 
-	using Size2 = TSize2<u32>;
-	using Size3 = TSize3<u32>;
+	using Size2UI = TSize2<u32>;
+	using Size3UI = TSize3<u32>;
+
+	using Size2 = TSize2<float>;
+	using Size3 = TSize3<float>;
 
 	/**
 	 * Represents a range of memory containing sequential elements. Elements may be optionally separated by a stride.
