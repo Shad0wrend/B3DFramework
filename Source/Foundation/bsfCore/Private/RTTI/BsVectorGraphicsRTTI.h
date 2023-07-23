@@ -17,20 +17,10 @@ namespace bs
 	 */
 
 	template <>
-	struct RTTIPlainType<VectorGraphicsPaint>
+	struct RTTIPlainType<VectorGraphicsPaint> : RTTIPlainTypeHelper<VectorGraphicsPaint, TID_VectorGraphicsPaint, 0>
 	{
-		enum
-		{
-			id = TID_VectorGraphicsPaint
-		};
-
-		enum
-		{
-			hasDynamicSize = 1
-		};
-
-		template<class T, class Processor>
-		static void RTTIEnumerateFields(T&& object, Processor& processor)
+		template<class Processor>
+		static void RTTIEnumerateFields(VectorGraphicsPaint& object, Processor& processor, u8 version)
 		{
 			processor(object.Type);
 			
@@ -61,67 +51,13 @@ namespace bs
 				break;
 			}
 		}
-
-		static BitLength ToMemory(const VectorGraphicsPaint& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			static constexpr u8 kVersion = 0;
-
-			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
-											   {
-				BitLength size = 0;
-				size += B3DRTTIWrite(kVersion, stream);
-
-				RTTIWriteProcessor writeProcessor(stream);
-				RTTIEnumerateFields(data, writeProcessor);
-
-				size += writeProcessor.GetSize();
-				return size; });
-		}
-
-		static BitLength FromMemory(VectorGraphicsPaint& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			BitLength size;
-			B3DRTTIReadSizeHeader(stream, compress, size);
-
-			uint8_t version;
-			B3DRTTIRead(version, stream);
-			B3D_ASSERT(version == 0);
-
-			RTTIReadProcessor readProcessor(stream);
-			RTTIEnumerateFields(data, readProcessor);
-
-			return size;
-		}
-
-		static BitLength GetSize(const VectorGraphicsPaint& data, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			BitLength dataSize = sizeof(uint8_t);
-
-			RTTISizeProcessor sizeProcessor;
-			RTTIEnumerateFields(data, sizeProcessor);
-
-			dataSize += sizeProcessor.GetSize();
-
-			B3DRTTIAddHeaderSize(dataSize, compress);
-			return dataSize;
-		}
 	};
 
 	template <>
-	struct RTTIPlainType<VectorPathCommand>
+	struct RTTIPlainType<VectorPathCommand> : RTTIPlainTypeHelper<VectorPathCommand, TID_VectorPathCommand, 0>
 	{
-		enum
-		{
-			id = TID_VectorPathCommand
-		};
-
-		enum
-		{
-			hasDynamicSize = 1
-		};
-
-		template<class T, class Processor>
-		static void RTTIEnumerateFields(T&& object, Processor& processor)
+		template<class Processor>
+		static void RTTIEnumerateFields(VectorPathCommand& object, Processor& processor, u8 version)
 		{
 			processor(object.Type);
 			
@@ -179,67 +115,13 @@ namespace bs
 				break;
 			}
 		}
-
-		static BitLength ToMemory(const VectorPathCommand& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			static constexpr u8 kVersion = 0;
-
-			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
-											   {
-				BitLength size = 0;
-				size += B3DRTTIWrite(kVersion, stream);
-
-				RTTIWriteProcessor writeProcessor(stream);
-				RTTIEnumerateFields(data, writeProcessor);
-
-				size += writeProcessor.GetSize();
-				return size; });
-		}
-
-		static BitLength FromMemory(VectorPathCommand& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			BitLength size;
-			B3DRTTIReadSizeHeader(stream, compress, size);
-
-			uint8_t version;
-			B3DRTTIRead(version, stream);
-			B3D_ASSERT(version == 0);
-
-			RTTIReadProcessor readProcessor(stream);
-			RTTIEnumerateFields(data, readProcessor);
-
-			return size;
-		}
-
-		static BitLength GetSize(const VectorPathCommand& data, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			BitLength dataSize = sizeof(uint8_t);
-
-			RTTISizeProcessor sizeProcessor;
-			RTTIEnumerateFields(data, sizeProcessor);
-
-			dataSize += sizeProcessor.GetSize();
-
-			B3DRTTIAddHeaderSize(dataSize, compress);
-			return dataSize;
-		}
 	};
 
 	template <>
-	struct RTTIPlainType<VectorPathState>
+	struct RTTIPlainType<VectorPathState> : RTTIPlainTypeHelper<VectorPathState, TID_VectorPathState, 0>
 	{
-		enum
-		{
-			id = TID_VectorPathState
-		};
-
-		enum
-		{
-			hasDynamicSize = 1
-		};
-
-		template<class T, class Processor>
-		static void RTTIEnumerateFields(T&& object, Processor& processor)
+		template<class Processor>
+		static void RTTIEnumerateFields(VectorPathState& object, Processor& processor, u8 version)
 		{
 			processor(object.StrokePaint);
 			processor(object.FillPaint);
@@ -251,50 +133,6 @@ namespace bs
 			processor(object.Alpha);
 			processor(object.BlendMode);
 			processor(object.ScissorArea);
-		}
-
-		static BitLength ToMemory(const VectorPathState& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			static constexpr u8 kVersion = 0;
-
-			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
-											   {
-				BitLength size = 0;
-				size += B3DRTTIWrite(kVersion, stream);
-
-				RTTIWriteProcessor writeProcessor(stream);
-				RTTIEnumerateFields(data, writeProcessor);
-
-				size += writeProcessor.GetSize();
-				return size; });
-		}
-
-		static BitLength FromMemory(VectorPathState& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			BitLength size;
-			B3DRTTIReadSizeHeader(stream, compress, size);
-
-			uint8_t version;
-			B3DRTTIRead(version, stream);
-			B3D_ASSERT(version == 0);
-
-			RTTIReadProcessor readProcessor(stream);
-			RTTIEnumerateFields(data, readProcessor);
-
-			return size;
-		}
-
-		static BitLength GetSize(const VectorPathState& data, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			BitLength dataSize = sizeof(uint8_t);
-
-			RTTISizeProcessor sizeProcessor;
-			RTTIEnumerateFields(data, sizeProcessor);
-
-			dataSize += sizeProcessor.GetSize();
-
-			B3DRTTIAddHeaderSize(dataSize, compress);
-			return dataSize;
 		}
 	};
 
