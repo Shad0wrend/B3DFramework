@@ -416,6 +416,79 @@ namespace bs
 	};
 
 	/**
+	 * Helper that allows you to construct a RTTIPlainType<T> specialization more easily. Your specialization needs to inherit this type, and
+	 * implement a RTTIEnumerateFields(T& data, Processor processor, u8 version) method. The method should then call
+	 * `processor(data.field);` for every field to be serialized. If your type supports versioning, you should check
+	 * the version field and serialize/deserialize the fields accordingly.
+	 */
+	template <class SerializedObjectType, u32 SerializedObjectTypeId, u8 Version = 255, u32 HasDynamicSize = 1>
+	struct RTTIPlainTypeHelper
+	{
+		enum { id = SerializedObjectTypeId };
+		enum { hasDynamicSize = HasDynamicSize };
+
+		using EnumerateFieldsType = RTTIPlainType<SerializedObjectType>;
+
+		static constexpr u8 kNoVersioning = 255;
+
+		static BitLength ToMemory(const SerializedObjectType& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		{
+			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
+			{
+				BitLength size = 0;
+				RTTIWriteProcessor writeProcessor(stream);
+				if constexpr(Version != kNoVersioning)
+				{
+					size += B3DRTTIWrite(Version, stream);
+					EnumerateFieldsType::RTTIEnumerateFields(const_cast<SerializedObjectType&>(data), writeProcessor, Version);
+				}
+				else
+					EnumerateFieldsType::RTTIEnumerateFields(const_cast<SerializedObjectType&>(data), writeProcessor);
+
+				size += writeProcessor.GetSize();
+				return size; });
+		}
+
+		static BitLength FromMemory(SerializedObjectType& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		{
+			BitLength size;
+			B3DRTTIReadSizeHeader(stream, compress, size);
+
+			RTTIReadProcessor readProcessor(stream);
+			if constexpr(Version != kNoVersioning)
+			{
+				u32 version;
+				B3DRTTIRead(version, stream);
+
+				B3D_ASSERT(version <= Version);
+				EnumerateFieldsType::RTTIEnumerateFields(data, readProcessor, version);
+			}
+			else
+				EnumerateFieldsType::RTTIEnumerateFields(data, readProcessor);
+
+			return size;
+		}
+
+		static BitLength GetSize(const SerializedObjectType& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		{
+			BitLength dataSize = sizeof(uint8_t);
+
+			RTTISizeProcessor sizeProcessor;
+			if constexpr(Version != kNoVersioning)
+			{
+				EnumerateFieldsType::RTTIEnumerateFields(const_cast<SerializedObjectType&>(data), sizeProcessor, Version);
+			}
+			else
+				EnumerateFieldsType::RTTIEnumerateFields(const_cast<SerializedObjectType&>(data), sizeProcessor);
+
+			dataSize += sizeProcessor.GetSize();
+
+			B3DRTTIAddHeaderSize(dataSize, compress);
+			return dataSize;
+		}
+	};
+
+	/**
 	 * Notify the RTTI system that the specified type may be serialized just by using a memcpy.
 	 *
 	 * @note	Internally this creates a basic RTTIPlainType<T> specialization for the type.
