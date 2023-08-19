@@ -7,7 +7,7 @@ shader VectorGraphics
         {
             0, // Draw fill shapes - IncrementWrap on pass front, DecrementWrap on pass back, no color write, no culling
 			1, // Draw fill AA pixels - Read only stencil
-			2, // Draw fill - Clear stencil to zero
+			2, // Draw fill - Only draw where stencil is non-zero & clear stencil to zero (Following DRAW_MODE 0)
 			3, // Draw stroke - Increment stencil on pass
 			4, // Draw stroke AA pixels - Read only stencil
 			5, // Clear stencil buffer - No color write
@@ -154,8 +154,8 @@ shader VectorGraphics
         front = { keep, keep, keep, eq };
         back  = { keep, keep, keep, eq };
 #elif DRAW_MODE == 2
-		front = { zero, zero, zero, always };
-		back  = { zero, zero, zero, always };
+		front = { zero, zero, zero, neq };
+		back  = { zero, zero, zero, neq };
 #elif DRAW_MODE == 3
 		front = { keep, keep, inc, eq };
 		back  = { keep, keep, inc, eq };
