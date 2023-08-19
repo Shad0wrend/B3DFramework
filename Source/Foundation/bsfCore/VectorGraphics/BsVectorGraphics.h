@@ -62,6 +62,12 @@ namespace bs
 		Clockwise
 	};
 
+	enum class VectorGraphicsPathSolidity
+	{
+		Solid,
+		Hole
+	};
+
 	enum class VectorGraphicsLineCapType
 	{
 		Butt,
@@ -230,7 +236,7 @@ namespace bs
 
 		SetDrawCursor,
 		ClosePath,
-		SetPathWinding,
+		SetPathSolidity,
 
 		DrawLineTo,
 		DrawArcTo,
@@ -285,9 +291,9 @@ namespace bs
 			}
 		};
 
-		struct SetPathWindingCommand
+		struct SetPathSolidityCommand
 		{
-			VectorGraphicsPathWinding Winding = VectorGraphicsPathWinding::Counterclockwise;
+			VectorGraphicsPathSolidity Solidity = VectorGraphicsPathSolidity::Solid;
 		};
 
 		struct DrawLineToCommand
@@ -418,7 +424,7 @@ namespace bs
 			StrokeCommand Stroke;
 
 			SetDrawCursorCommand SetDrawCursor;
-			SetPathWindingCommand SetPathWinding;
+			SetPathSolidityCommand SetPathSolidity;
 
 			DrawLineToCommand DrawLineTo;
 			DrawArcToCommand DrawArcTo;
@@ -439,7 +445,7 @@ namespace bs
 		VectorPath() = default;
 
 		VectorPath& SetDrawCursor(const Vector2& cursor);
-		VectorPath& SetWinding(VectorGraphicsPathWinding winding);
+		VectorPath& SetSolidity(VectorGraphicsPathSolidity solidity);
 		VectorPath& ClosePath();
 
 		VectorPath& DrawLineTo(const Vector2& target);

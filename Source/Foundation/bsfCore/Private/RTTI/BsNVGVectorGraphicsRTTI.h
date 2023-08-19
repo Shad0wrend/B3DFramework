@@ -45,7 +45,6 @@ namespace bs
 		static void RTTIEnumerateFields(NVGRenderCommand& object, Processor& processor, u8 version)
 		{
 			processor(object.Type);
-			processor(object.PathCount);
 			processor(object.BlendMode);
 			processor(object.PrimaryPassUniforms);
 			processor(object.SecondaryPassUniforms);

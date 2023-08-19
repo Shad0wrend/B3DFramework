@@ -72,8 +72,8 @@ namespace bs
 			case VectorPathCommandType::SetDrawCursor:
 				processor(object.SetDrawCursor.Position);
 				break;
-			case VectorPathCommandType::SetPathWinding:
-				processor(object.SetPathWinding.Winding);
+			case VectorPathCommandType::SetPathSolidity:
+				processor(object.SetPathSolidity.Solidity);
 				break;
 			case VectorPathCommandType::DrawLineTo:
 				processor(object.DrawLineTo.Target);

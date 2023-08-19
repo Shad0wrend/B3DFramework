@@ -18,11 +18,11 @@ namespace bs
 		return *this;
 	}
 
-	VectorPath& VectorPath::SetWinding(VectorGraphicsPathWinding winding)
+	VectorPath& VectorPath::SetSolidity(VectorGraphicsPathSolidity solidity)
 	{
 		VectorPathCommand command;
-		command.Type = VectorPathCommandType::SetPathWinding;
-		command.SetPathWinding.Winding = winding;
+		command.Type = VectorPathCommandType::SetPathSolidity;
+		command.SetPathSolidity.Solidity = solidity;
 
 		mCommands.push_back(command);
 		return *this;

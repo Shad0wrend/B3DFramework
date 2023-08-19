@@ -273,9 +273,9 @@ namespace bs::ct
 					break;
 				}
 
-			case VectorPathCommandType::SetPathWinding:
+			case VectorPathCommandType::SetPathSolidity:
 				{
-					switch(command.SetPathWinding.Winding)
+					switch(command.SetPathSolidity.Solidity)
 					{
 					case VectorGraphicsPathWinding::Clockwise:
 						nvgPathWinding(&context, NVG_CW);
@@ -468,88 +468,106 @@ namespace bs::ct
 
 		NVGRenderCommand renderCommand;
 		renderCommand.Type = isConvex ? NVGRenderCommandType::ConvexFill : NVGRenderCommandType::Fill;
-		renderCommand.PathCount = npaths;
 		renderCommand.BlendMode = NVGCompositeOperationToBlendMode(compositeOperation);
 
-		u32 fillIndexOffset = (u32)outputRenderData.Indices.size();
-		u32 fillTriangleCount = 0;
-		for(u32 pathIndex = 0; pathIndex < (u32)npaths; ++pathIndex)
+		auto fnAddFillVertices = [&outputRenderData](const NVGpath& path)
 		{
-			const NVGpath& path = paths[pathIndex];
-			if(path.nfill > 2)
+			if(path.nfill <= 2)
+				return 0u;
+
+			const u32 vertexCount = (u32)path.nfill;
+			const u32 vertexOffset = (u32)outputRenderData.Vertices.size();
+			for(u32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
 			{
-				const u32 vertexCount = (u32)path.nfill;
-				const u32 vertexOffset = (u32)outputRenderData.Vertices.size();
-				for(u32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
-				{
-					const Vector2 position = Vector2(path.fill[vertexIndex].x, path.fill[vertexIndex].y);
-					const Vector2 uv = Vector2(path.fill[vertexIndex].u, path.fill[vertexIndex].v);
+				const Vector2 position = Vector2(path.fill[vertexIndex].x, path.fill[vertexIndex].y);
+				const Vector2 uv = Vector2(path.fill[vertexIndex].u, path.fill[vertexIndex].v);
 
-					NVGVertex vertex(position, uv);
-					outputRenderData.Vertices.push_back(vertex);
-				}
+				NVGVertex vertex(position, uv);
+				outputRenderData.Vertices.push_back(vertex);
+			}
 
-				const u32 indexOffset = (u32)outputRenderData.Indices.size();
-				const u32 triangleCount = vertexCount - 2;
-				for(u32 triangleIndex = 0; triangleIndex < triangleCount; ++triangleIndex)
+			const u32 triangleCount = vertexCount - 2;
+			for(u32 triangleIndex = 0; triangleIndex < triangleCount; ++triangleIndex)
+			{
+				outputRenderData.Indices.push_back(vertexOffset);
+				outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 2);
+				outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 1);
+			}
+
+			return triangleCount;
+		};
+
+		auto fnAddStrokeVertices = [&outputRenderData](const NVGpath& path)
+		{
+			if(path.nstroke <= 2)
+				return 0u;
+
+			const u32 vertexCount = (u32)path.nstroke;
+			const u32 vertexOffset = (u32)outputRenderData.Vertices.size();
+			for(u32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
+			{
+				const Vector2 position = Vector2(path.stroke[vertexIndex].x, path.stroke[vertexIndex].y);
+				const Vector2 uv = Vector2(path.stroke[vertexIndex].u, path.stroke[vertexIndex].v);
+
+				const NVGVertex vertex(position, uv);
+				outputRenderData.Vertices.push_back(vertex);
+			}
+
+			const u32 triangleCount = vertexCount - 2;
+			for(u32 triangleIndex = 0; triangleIndex < triangleCount; ++triangleIndex)
+			{
+				if(triangleIndex % 2 == 0)
 				{
-					outputRenderData.Indices.push_back(vertexOffset);
+					outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 0);
 					outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 2);
 					outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 1);
 				}
-
-				fillTriangleCount += triangleCount;
-
-				if(isConvex)
-					outputRenderData.Submeshes.push_back(SubMesh(indexOffset, triangleCount * 3, DOT_TRIANGLE_LIST));
+				else
+				{
+					outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 1);
+					outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 2);
+					outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 0);
+				}
 			}
-		}
 
-		u32 strokeIndexOffset = (u32)outputRenderData.Indices.size();
-		u32 strokeTriangleCount = 0;
-		for(int pathIndex = 0; pathIndex < npaths; ++pathIndex)
+			return triangleCount;
+		};
+
+		if(isConvex)
 		{
-			const NVGpath& path = paths[pathIndex];
-			if(path.nstroke > 2)
+			const u32 indexOffset = (u32)outputRenderData.Indices.size();
+			u32 triangleCount = 0;
+			for(u32 pathIndex = 0; pathIndex < (u32)npaths; ++pathIndex)
 			{
-				const u32 vertexCount = (u32)path.nstroke;
-				const u32 vertexOffset = (u32)outputRenderData.Vertices.size();
-				for(u32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
-				{
-					const Vector2 position = Vector2(path.stroke[vertexIndex].x, path.stroke[vertexIndex].y);
-					const Vector2 uv = Vector2(path.stroke[vertexIndex].u, path.stroke[vertexIndex].v);
-
-					const NVGVertex vertex(position, uv);
-					outputRenderData.Vertices.push_back(vertex);
-				}
-
-				const u32 indexOffset = (u32)outputRenderData.Indices.size();
-				const u32 triangleCount = vertexCount - 2;
-				for(u32 triangleIndex = 0; triangleIndex < triangleCount; ++triangleIndex)
-				{
-					if(triangleIndex % 2 == 0)
-					{
-						outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 0);
-						outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 2);
-						outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 1);
-					}
-					else
-					{
-						outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 1);
-						outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 2);
-						outputRenderData.Indices.push_back(vertexOffset + triangleIndex + 0);
-					}
-				}
-
-				strokeTriangleCount += triangleCount;
-
-				if(isConvex)
-					outputRenderData.Submeshes.push_back(SubMesh(indexOffset, triangleCount * 3, DOT_TRIANGLE_LIST));
+				const NVGpath& path = paths[pathIndex];
+				triangleCount += fnAddFillVertices(path);
+				triangleCount += fnAddStrokeVertices(path);
 			}
-		}
 
-		if(!isConvex)
+			outputRenderData.Submeshes.push_back(SubMesh(indexOffset, triangleCount * 3, DOT_TRIANGLE_LIST));
+		}
+		else
 		{
+			const u32 fillIndexOffset = (u32)outputRenderData.Indices.size();
+			u32 fillTriangleCount = 0;
+			for(u32 pathIndex = 0; pathIndex < (u32)npaths; ++pathIndex)
+			{
+				const NVGpath& path = paths[pathIndex];
+				fillTriangleCount += fnAddFillVertices(path);
+			}
+
+			outputRenderData.Submeshes.push_back(SubMesh(fillIndexOffset, fillTriangleCount * 3, DOT_TRIANGLE_LIST));
+			
+			const u32 strokeIndexOffset = (u32)outputRenderData.Indices.size();
+			u32 strokeTriangleCount = 0;
+			for(u32 pathIndex = 0; pathIndex < (u32)npaths; ++pathIndex)
+			{
+				const NVGpath& path = paths[pathIndex];
+				strokeTriangleCount += fnAddStrokeVertices(path);
+			}
+
+			outputRenderData.Submeshes.push_back(SubMesh(strokeIndexOffset, strokeTriangleCount * 3, DOT_TRIANGLE_LIST));
+
 			const Vector2 quadVertexPositions[] = {
 				Vector2(bounds[2], bounds[3]),
 				Vector2(bounds[2], bounds[1]),
@@ -557,22 +575,20 @@ namespace bs::ct
 				Vector2(bounds[0], bounds[1])
 			};
 
-			const u32 indexOffset = (u32)outputRenderData.Indices.size();
-			const u32 vertexOffset = (u32)outputRenderData.Vertices.size();
+			const u32 quadIndexOffset = (u32)outputRenderData.Indices.size();
+			const u32 quadVertexOffset = (u32)outputRenderData.Vertices.size();
 			for(u32 vertexIndex = 0; vertexIndex < B3DSize(quadVertexPositions); vertexIndex++)
 				outputRenderData.Vertices.push_back(NVGVertex(quadVertexPositions[vertexIndex], Vector2(0.5f, 1.0f)));
 
-			outputRenderData.Indices.push_back(vertexOffset);
-			outputRenderData.Indices.push_back(vertexOffset + 2);
-			outputRenderData.Indices.push_back(vertexOffset + 1);
+			outputRenderData.Indices.push_back(quadVertexOffset);
+			outputRenderData.Indices.push_back(quadVertexOffset + 2);
+			outputRenderData.Indices.push_back(quadVertexOffset + 1);
 
-			outputRenderData.Indices.push_back(vertexOffset + 2);
-			outputRenderData.Indices.push_back(vertexOffset + 3);
-			outputRenderData.Indices.push_back(vertexOffset + 1);
+			outputRenderData.Indices.push_back(quadVertexOffset + 2);
+			outputRenderData.Indices.push_back(quadVertexOffset + 3);
+			outputRenderData.Indices.push_back(quadVertexOffset + 1);
 
-			outputRenderData.Submeshes.push_back(SubMesh(fillIndexOffset, fillTriangleCount * 3, DOT_TRIANGLE_LIST));
-			outputRenderData.Submeshes.push_back(SubMesh(strokeIndexOffset, strokeTriangleCount * 3, DOT_TRIANGLE_LIST));
-			outputRenderData.Submeshes.push_back(SubMesh(indexOffset, 6, DOT_TRIANGLE_LIST));
+			outputRenderData.Submeshes.push_back(SubMesh(quadIndexOffset, 6, DOT_TRIANGLE_LIST));
 		}
 
 		renderCommand.PrimaryPassUniforms = CreateNVGRenderUniformParameters(paint, scissor, fringe, fringe, -1.0f);
@@ -589,7 +605,6 @@ namespace bs::ct
 
 		NVGRenderCommand renderCommand;
 		renderCommand.Type = NVGRenderCommandType::Stroke;
-		renderCommand.PathCount = npaths;
 		renderCommand.BlendMode = NVGCompositeOperationToBlendMode(compositeOperation);
 
 		// Note: Duplicated code from NVGRenderFill
@@ -860,6 +875,7 @@ namespace bs::ct
 				break;
 			case NVGRenderCommandType::ConvexFill:
 			{
+				const SubMesh& fillAndStrokeSubmesh = mRawRenderData.Submeshes[submeshIndex++];
 				ct::VectorGraphicsMaterial* const simpleFillMaterial = ct::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillSimple, command.BlendMode, mSettings.UseAntialiasing);
 				if(B3D_ENSURE(simpleFillMaterial))
 				{
@@ -867,15 +883,7 @@ namespace bs::ct
 					uniformBlockIndex++;
 
 					commandBuffer.SetGpuGraphicsPipelineState(simpleFillMaterial->GetGraphicsPipeline());
-					for(u32 pathIndex = 0; pathIndex < command.PathCount; pathIndex++)
-					{
-						// TODO - No need for multiple draw calls here, I can just intertwine these in a single buffer
-						const SubMesh& fillSubmesh = mRawRenderData.Submeshes[submeshIndex++];
-						commandBuffer.DrawIndexed(fillSubmesh.IndexOffset, fillSubmesh.IndexCount, 0, vertexCount, 1);
-
-						const SubMesh& strokeSubmesh = mRawRenderData.Submeshes[submeshIndex++];
-						commandBuffer.DrawIndexed(strokeSubmesh.IndexOffset, strokeSubmesh.IndexCount, 0, vertexCount, 1);
-					}
+					commandBuffer.DrawIndexed(fillAndStrokeSubmesh.IndexOffset, fillAndStrokeSubmesh.IndexCount, 0, vertexCount, 1);
 				}
 			}
 				break;

@@ -53,7 +53,6 @@ namespace bs
 	struct NVGRenderCommand
 	{
 		NVGRenderCommandType Type;
-		u32 PathCount;
 		VectorGraphicsBlendMode BlendMode;
 		NVGRenderUniforms PrimaryPassUniforms;
 		Optional<NVGRenderUniforms> SecondaryPassUniforms;
