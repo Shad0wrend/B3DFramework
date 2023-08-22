@@ -13,10 +13,10 @@ namespace bs
 	 *  @{
 	 */
 
-	/**	Image sprite description structure used for initializing or updating an image sprite. */
-	struct IMAGE_SPRITE_DESC
+	/**	Information used for initializing or updating an image sprite. */
+	struct ImageSpriteInformation
 	{
-		IMAGE_SPRITE_DESC() = default;
+		ImageSpriteInformation() = default;
 
 		u32 Width = 0; /**< Width of the image in pixels. */
 		u32 Height = 0; /**< Height of the image in pixels. */
@@ -25,7 +25,7 @@ namespace bs
 		Vector2 UvOffset = Vector2(0.0f, 0.0f); /**< Offset applied to UV coordinates when rendering the sprite. */
 		bool Transparent = true; /**< Should the sprite be rendered with transparency. */
 
-		HSpriteTexture Texture; /**< Texture to overlay on the sprite. */
+		HSpriteTexture Image; /**< Image to overlay on the sprite. */
 		Color Color; /**< Color tint to apply to the sprite. */
 		/**
 		 * Time (since application start) at which the sprite texture's 0th frame is played. Used if the sprite texture
@@ -54,12 +54,12 @@ namespace bs
 		/**
 		 * Recreates internal sprite data according the specified description structure.
 		 *
-		 * @param[in]	desc	Describes the geometry and material of the sprite.
-		 * @param[in]	groupId	Group identifier that forces different materials to be used for different groups (for
-		 *						example you don't want the sprites to share the same material if they use different world
-		 *						transform matrices).
+		 * @param	information		Describes the geometry and material of the sprite.
+		 * @param	groupId			Group identifier that forces different materials to be used for different groups (for
+		 *							example you don't want the sprites to share the same material if they use different world
+		 *							transform matrices).
 		 */
-		void Update(const IMAGE_SPRITE_DESC& desc, u64 groupId);
+		void Update(const ImageSpriteInformation& information, u64 groupId);
 
 		/**
 		 * Calculates the required UV scale in order for a texture of size @p sourceSize to be placed on the surface

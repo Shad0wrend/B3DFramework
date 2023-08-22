@@ -31,10 +31,10 @@ namespace bs
 		static void InternalSetFont(ScriptGUIElementStyle* thisPtr, MonoObject* value);
 		static uint32_t InternalGetFontSize(ScriptGUIElementStyle* thisPtr);
 		static void InternalSetFontSize(ScriptGUIElementStyle* thisPtr, uint32_t value);
-		static TextHorzAlign InternalGetTextHorzAlign(ScriptGUIElementStyle* thisPtr);
-		static void InternalSetTextHorzAlign(ScriptGUIElementStyle* thisPtr, TextHorzAlign value);
-		static TextVertAlign InternalGetTextVertAlign(ScriptGUIElementStyle* thisPtr);
-		static void InternalSetTextVertAlign(ScriptGUIElementStyle* thisPtr, TextVertAlign value);
+		static TextHorizontalAlignment InternalGetTextHorzAlign(ScriptGUIElementStyle* thisPtr);
+		static void InternalSetTextHorzAlign(ScriptGUIElementStyle* thisPtr, TextHorizontalAlignment value);
+		static TextVerticalAlignment InternalGetTextVertAlign(ScriptGUIElementStyle* thisPtr);
+		static void InternalSetTextVertAlign(ScriptGUIElementStyle* thisPtr, TextVerticalAlignment value);
 		static GUIImagePosition InternalGetImagePosition(ScriptGUIElementStyle* thisPtr);
 		static void InternalSetImagePosition(ScriptGUIElementStyle* thisPtr, GUIImagePosition value);
 		static bool InternalGetWordWrap(ScriptGUIElementStyle* thisPtr);

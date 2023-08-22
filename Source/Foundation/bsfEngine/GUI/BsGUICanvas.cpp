@@ -233,12 +233,12 @@ void GUICanvas::UpdateRenderElements()
 		case CanvasElementType::Image:
 			BuildImageElement(element);
 
-			for(u32 i = 0; i < element.ImageSprite->GetNumRenderElements(); i++)
+			for(u32 i = 0; i < element.ImageSprite->GetRenderElementCount(); i++)
 			{
 				mRenderElements.Add(GUIRenderElement());
 				GUIRenderElement& renderElement = mRenderElements.Back();
 
-				element.ImageSprite->GetRenderElementInfo(i, renderElement);
+				element.ImageSprite->GetRenderElement(i, renderElement);
 
 				renderElement.Depth = element.Depth;
 				renderElement.Type = GUIMeshType::Triangle;
@@ -248,12 +248,12 @@ void GUICanvas::UpdateRenderElements()
 		case CanvasElementType::Text:
 			BuildTextElement(element);
 
-			for(u32 i = 0; i < element.TextSprite->GetNumRenderElements(); i++)
+			for(u32 i = 0; i < element.TextSprite->GetRenderElementCount(); i++)
 			{
 				mRenderElements.Add(GUIRenderElement());
 				GUIRenderElement& renderElement = mRenderElements.Back();
 
-				element.TextSprite->GetRenderElementInfo(i, renderElement);
+				element.TextSprite->GetRenderElement(i, renderElement);
 
 				renderElement.Depth = element.Depth;
 				renderElement.Type = GUIMeshType::Triangle;
@@ -264,11 +264,11 @@ void GUICanvas::UpdateRenderElements()
 				mRenderElements.Add(GUIRenderElement());
 				GUIRenderElement& renderElement = mRenderElements.Back();
 
-				renderElement.NumVertices = element.ClippedNumVertices;
-				renderElement.NumIndices = element.ClippedNumVertices;
+				renderElement.VertexCount = element.ClippedNumVertices;
+				renderElement.IndexCount = element.ClippedNumVertices;
 
 				renderElement.Material = SpriteManager::Instance().GetLineMaterial();
-				renderElement.MatInfo = &mTriangleElementData[element.DataId].MatInfo;
+				renderElement.MaterialInformation = &mTriangleElementData[element.DataId].MatInfo;
 
 				renderElement.Depth = element.Depth;
 				renderElement.Type = GUIMeshType::Line;
@@ -284,11 +284,11 @@ void GUICanvas::UpdateRenderElements()
 				mRenderElements.Add(GUIRenderElement());
 				GUIRenderElement& renderElement = mRenderElements.Back();
 
-				renderElement.NumVertices = element.ClippedNumVertices;
-				renderElement.NumIndices = element.ClippedNumVertices;
+				renderElement.VertexCount = element.ClippedNumVertices;
+				renderElement.IndexCount = element.ClippedNumVertices;
 
 				renderElement.Material = SpriteManager::Instance().GetImageMaterial(SpriteMaterialTransparency::Alpha);
-				renderElement.MatInfo = &mTriangleElementData[element.DataId].MatInfo;
+				renderElement.MaterialInformation = &mTriangleElementData[element.DataId].MatInfo;
 
 				renderElement.Depth = element.Depth;
 				renderElement.Type = GUIMeshType::Triangle;
@@ -430,7 +430,7 @@ void GUICanvas::BuildImageElement(const CanvasElement& element)
 
 	const ImageElementData& imageData = mImageData[element.DataId];
 
-	IMAGE_SPRITE_DESC desc;
+	ImageSpriteInformation desc;
 	desc.Width = imageData.Area.Width;
 	desc.Height = imageData.Area.Height;
 
@@ -440,9 +440,9 @@ void GUICanvas::BuildImageElement(const CanvasElement& element)
 	Vector2I textureSize;
 	if(SpriteTexture::CheckIsLoaded(imageData.Texture))
 	{
-		desc.Texture = imageData.Texture;
-		textureSize.X = desc.Texture->GetWidth();
-		textureSize.Y = desc.Texture->GetHeight();
+		desc.Image = imageData.Texture;
+		textureSize.X = desc.Image->GetWidth();
+		textureSize.Y = desc.Image->GetHeight();
 	}
 
 	Vector2I destSize(mLayoutData.Area.Width, mLayoutData.Area.Height);
@@ -457,7 +457,7 @@ void GUICanvas::BuildTextElement(const CanvasElement& element)
 
 	const TextElementData& textData = mTextData[element.DataId];
 
-	TEXT_SPRITE_DESC desc;
+	TextSpriteInformation desc;
 	desc.Font = textData.Font;
 	desc.FontSize = element.Size;
 	desc.Text = textData.String;

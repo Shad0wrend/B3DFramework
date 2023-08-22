@@ -44,12 +44,12 @@ SPtr<VertexDescription> GetGUILineMeshDesc()
 GUIMeshBatches::GUIMeshBatches(GUIWidget* parentWidget)
 	: mWidget(parentWidget)
 {
-	BatchesInDepthRange mainDrawGroup;
-	mainDrawGroup.MinDepth = 0;
-	mainDrawGroup.DepthRange = std::numeric_limits<u32>::max();
-	mainDrawGroup.Id = mNextDepthRangeId++;
+	BatchesInDepthRange rootDepthRange;
+	rootDepthRange.MinDepth = 0;
+	rootDepthRange.DepthRange = std::numeric_limits<u32>::max();
+	rootDepthRange.Id = mNextDepthRangeId++;
 
-	mDepthRanges.push_back(mainDrawGroup);
+	mDepthRanges.push_back(rootDepthRange);
 }
 
 void GUIMeshBatches::Add(GUIElement* guiElement)
@@ -661,8 +661,8 @@ void GUIMeshBatches::RebuildMesh(Batch& batch)
 		const SmallVector<GUIRenderElement, 4>& guiRenderElements = guiElement->GetRenderElements();
 		const GUIRenderElement& guiRenderElement = guiRenderElements[batchedGuiRenderElement.RenderElementIndex];
 
-		batch.VertexCount += guiRenderElement.NumVertices;
-		batch.IndexCount += guiRenderElement.NumIndices;
+		batch.VertexCount += guiRenderElement.VertexCount;
+		batch.IndexCount += guiRenderElement.IndexCount;
 	}
 
 	batch.Mesh = nullptr;
@@ -693,13 +693,13 @@ void GUIMeshBatches::RebuildMesh(Batch& batch)
 		guiElement->FillBuffer(vertices, indices, vertexOffset, indexOffset, groupOffset, batch.VertexCount, batch.IndexCount, batchedGuiRenderElement.RenderElementIndex);
 
 		const u32 indexStart = indexOffset;
-		const u32 indexEnd = indexStart + guiRenderElement.NumIndices;
+		const u32 indexEnd = indexStart + guiRenderElement.IndexCount;
 
 		for(u32 j = indexStart; j < indexEnd; j++)
 			indices[j] += vertexOffset;
 
-		indexOffset += guiRenderElement.NumIndices;
-		vertexOffset += guiRenderElement.NumVertices;
+		indexOffset += guiRenderElement.IndexCount;
+		vertexOffset += guiRenderElement.VertexCount;
 	}
 
 	batch.Mesh = Mesh::CreateShared(meshData, MU_STATIC, batch.Material.MeshType == GUIMeshType::Triangle ? DOT_TRIANGLE_LIST : DOT_LINE_LIST);
@@ -952,7 +952,7 @@ GUIMeshBatches::BatchedMaterial GUIMeshBatches::CreateBatchedMaterial(const GUIE
 
 	BatchedMaterial batchedMaterial;
 	batchedMaterial.SpriteMaterial = guiRenderElement.Material;
-	batchedMaterial.SpriteMaterialInformation = *guiRenderElement.MatInfo;
+	batchedMaterial.SpriteMaterialInformation = *guiRenderElement.MaterialInformation;
 	batchedMaterial.MaterialHash = batchedMaterial.SpriteMaterial->GetMergeHash(batchedMaterial.SpriteMaterialInformation);
 	batchedMaterial.IsBatchingAllowed = batchedMaterial.SpriteMaterial->AllowBatching();
 	batchedMaterial.MeshType = guiRenderElement.Type;

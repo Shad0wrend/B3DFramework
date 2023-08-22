@@ -33,21 +33,21 @@ namespace bs
 	{
 		SpriteRenderElementData() = default;
 
-		Vector2* Vertices = nullptr;
-		Vector2* Uvs = nullptr;
-		u32* Indexes = nullptr;
-		u32 NumQuads = 0;
-		SpriteMaterialInfo MatInfo;
+		Vector2* VertexPositions = nullptr;
+		Vector2* VertexUVs = nullptr;
+		u32* Indices = nullptr;
+		u32 QuadCount = 0;
+		SpriteMaterialInfo MaterialInformation;
 		SpriteMaterial* Material = nullptr;
 	};
 
 	/** Contains information about a single sprite render elements mesh and material */
 	struct SpriteRenderElement
 	{
-		u32 NumIndices = 0;
-		u32 NumVertices = 0;
+		u32 IndexCount = 0;
+		u32 VertexCount = 0;
 
-		SpriteMaterialInfo* MatInfo = nullptr;
+		SpriteMaterialInfo* MaterialInformation = nullptr;
 		SpriteMaterial* Material = nullptr;
 	};
 
@@ -75,7 +75,7 @@ namespace bs
 		 *
 		 * @return	The number render elements.
 		 */
-		u32 GetNumRenderElements() const { return (u32)mCachedRenderElements.size(); }
+		u32 GetRenderElementCount() const { return (u32)mCachedRenderElements.size(); }
 
 		/**
 		 * Returns information about the number of vertices and indices the required render element requires, as well
@@ -84,10 +84,10 @@ namespace bs
 		 *
 		 * Returned data is valid until the next call to update() or until the sprite is destroyed.
 		 *
-		 * @param[in]		idx			Index of the render element to return the information for.
+		 * @param[in]		index		Index of the render element to return the information for.
 		 * @param[out]		info		Information about the render element.
 		 */
-		void GetRenderElementInfo(u32 idx, SpriteRenderElement& info) const;
+		void GetRenderElement(u32 index, SpriteRenderElement& info) const;
 
 		/**
 		 * Fill the pre-allocated vertex, uv and index buffers with the mesh data for the specified render element.
@@ -154,13 +154,13 @@ namespace bs
 		mutable Vector<SpriteRenderElementData> mCachedRenderElements;
 	};
 
-	inline void Sprite::GetRenderElementInfo(u32 idx, SpriteRenderElement& info) const
+	inline void Sprite::GetRenderElement(u32 index, SpriteRenderElement& info) const
 	{
-		SpriteRenderElementData& renderElement = mCachedRenderElements[idx];
+		SpriteRenderElementData& renderElement = mCachedRenderElements[index];
 
-		info.NumVertices = renderElement.NumQuads * 4;
-		info.NumIndices = renderElement.NumQuads * 6;
-		info.MatInfo = &renderElement.MatInfo;
+		info.VertexCount = renderElement.QuadCount * 4;
+		info.IndexCount = renderElement.QuadCount * 6;
+		info.MaterialInformation = &renderElement.MaterialInformation;
 		info.Material = renderElement.Material;
 	}
 

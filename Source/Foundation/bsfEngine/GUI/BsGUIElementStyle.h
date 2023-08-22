@@ -45,10 +45,10 @@ namespace bs
 		u32 FontSize = 8; /**< Font size to use for all text within the GUI element. */
 
 		B3D_SCRIPT_EXPORT()
-		TextHorzAlign TextHorzAlign = THA_Left; /**< Horizontal alignment of text within the GUI element. */
+		TextHorizontalAlignment TextHorzAlign = THA_Left; /**< Horizontal alignment of text within the GUI element. */
 
 		B3D_SCRIPT_EXPORT()
-		TextVertAlign TextVertAlign = TVA_Top; /**< Vertical alignment of text within the GUI element. */
+		TextVerticalAlignment TextVertAlign = TVA_Top; /**< Vertical alignment of text within the GUI element. */
 
 		B3D_SCRIPT_EXPORT()
 		GUIImagePosition ImagePosition = GUIImagePosition::Left; /**< Position of content image relative to text. */

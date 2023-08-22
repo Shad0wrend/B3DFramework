@@ -188,7 +188,7 @@ namespace bs
 		Rect2I GetTextClipRect() const;
 
 		/**	Returns text sprite descriptor determining how is text sprite created. */
-		TEXT_SPRITE_DESC GetTextDesc() const;
+		TextSpriteInformation GetTextDesc() const;
 
 		/**	Returns currently active input box texture, depending on active state. */
 		const HSpriteTexture& GetActiveTexture() const;
@@ -221,7 +221,7 @@ namespace bs
 		bool mIsMouseOver = false;
 		State mState = State::Normal;
 
-		IMAGE_SPRITE_DESC mImageDesc;
+		ImageSpriteInformation mImageDesc;
 		String mText;
 		u32 mNumChars = 0;
 		std::function<bool(const String&)> mFilter;

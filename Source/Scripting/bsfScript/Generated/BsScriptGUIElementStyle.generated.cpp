@@ -147,34 +147,34 @@ namespace bs
 		thisPtr->GetInternal()->FontSize = value;
 	}
 
-	TextHorzAlign ScriptGUIElementStyle::InternalGetTextHorzAlign(ScriptGUIElementStyle* thisPtr)
+	TextHorizontalAlignment ScriptGUIElementStyle::InternalGetTextHorzAlign(ScriptGUIElementStyle* thisPtr)
 	{
-		TextHorzAlign tmp__output;
+		TextHorizontalAlignment tmp__output;
 		tmp__output = thisPtr->GetInternal()->TextHorzAlign;
 
-		TextHorzAlign __output;
+		TextHorizontalAlignment __output;
 		__output = tmp__output;
 
 		return __output;
 	}
 
-	void ScriptGUIElementStyle::InternalSetTextHorzAlign(ScriptGUIElementStyle* thisPtr, TextHorzAlign value)
+	void ScriptGUIElementStyle::InternalSetTextHorzAlign(ScriptGUIElementStyle* thisPtr, TextHorizontalAlignment value)
 	{
 		thisPtr->GetInternal()->TextHorzAlign = value;
 	}
 
-	TextVertAlign ScriptGUIElementStyle::InternalGetTextVertAlign(ScriptGUIElementStyle* thisPtr)
+	TextVerticalAlignment ScriptGUIElementStyle::InternalGetTextVertAlign(ScriptGUIElementStyle* thisPtr)
 	{
-		TextVertAlign tmp__output;
+		TextVerticalAlignment tmp__output;
 		tmp__output = thisPtr->GetInternal()->TextVertAlign;
 
-		TextVertAlign __output;
+		TextVerticalAlignment __output;
 		__output = tmp__output;
 
 		return __output;
 	}
 
-	void ScriptGUIElementStyle::InternalSetTextVertAlign(ScriptGUIElementStyle* thisPtr, TextVertAlign value)
+	void ScriptGUIElementStyle::InternalSetTextVertAlign(ScriptGUIElementStyle* thisPtr, TextVerticalAlignment value)
 	{
 		thisPtr->GetInternal()->TextVertAlign = value;
 	}

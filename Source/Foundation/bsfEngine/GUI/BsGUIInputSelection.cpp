@@ -43,10 +43,10 @@ void GUIInputSelection::UpdateSprite()
 	u32 idx = 0;
 	for(auto& sprite : mSprites)
 	{
-		IMAGE_SPRITE_DESC desc;
+		ImageSpriteInformation desc;
 		desc.Width = mSelectionRects[idx].Width;
 		desc.Height = mSelectionRects[idx].Height;
-		desc.Texture = GUIManager::Instance().GetTextSelectionTexture();
+		desc.Image = GUIManager::Instance().GetTextSelectionTexture();
 
 		sprite->Update(desc, (u64)widget);
 		idx++;

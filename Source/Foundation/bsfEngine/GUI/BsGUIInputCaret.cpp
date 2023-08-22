@@ -50,10 +50,10 @@ Rect2I GUIInputCaret::GetSpriteClipRect(const Rect2I& parentClipRect) const
 
 void GUIInputCaret::UpdateSprite()
 {
-	IMAGE_SPRITE_DESC mCaretDesc;
+	ImageSpriteInformation mCaretDesc;
 	mCaretDesc.Width = 1;
 	mCaretDesc.Height = GetCaretHeight();
-	mCaretDesc.Texture = GUIManager::Instance().GetCaretTexture();
+	mCaretDesc.Image = GUIManager::Instance().GetCaretTexture();
 
 	GUIWidget* widget = nullptr;
 	if(mElement != nullptr)

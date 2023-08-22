@@ -13,21 +13,21 @@ TextSprite::~TextSprite()
 	ClearMesh();
 }
 
-void TextSprite::Update(const TEXT_SPRITE_DESC& desc, u64 groupId)
+void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 {
 	B3DMarkAllocatorFrame();
 	{
-		const U32String utf32text = UTF8::ToUtF32(desc.Text);
-		TextData<FrameAlloc> textData(utf32text, desc.Font, desc.FontSize, desc.Width, desc.Height, desc.WordWrap, desc.WordBreak);
+		const U32String utf32text = UTF8::ToUtF32(information.Text);
+		TextData<FrameAlloc> textData(utf32text, information.Font, information.FontSize, information.Width, information.Height, information.WordWrap, information.WordBreak);
 
 		u32 numPages = textData.GetNumPages();
 
 		// Free all previous memory
 		for(auto& cachedElem : mCachedRenderElements)
 		{
-			if(cachedElem.Vertices != nullptr) mAlloc.Free(cachedElem.Vertices);
-			if(cachedElem.Uvs != nullptr) mAlloc.Free(cachedElem.Uvs);
-			if(cachedElem.Indexes != nullptr) mAlloc.Free(cachedElem.Indexes);
+			if(cachedElem.VertexPositions != nullptr) mAlloc.Free(cachedElem.VertexPositions);
+			if(cachedElem.VertexUVs != nullptr) mAlloc.Free(cachedElem.VertexUVs);
+			if(cachedElem.Indices != nullptr) mAlloc.Free(cachedElem.Indices);
 		}
 
 		mAlloc.Clear();
@@ -42,17 +42,17 @@ void TextSprite::Update(const TEXT_SPRITE_DESC& desc, u64 groupId)
 		{
 			u32 newNumQuads = textData.GetNumQuadsForPage(texPage);
 
-			cachedElem.Vertices = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
-			cachedElem.Uvs = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
-			cachedElem.Indexes = (u32*)mAlloc.Alloc(sizeof(u32) * newNumQuads * 6);
-			cachedElem.NumQuads = newNumQuads;
+			cachedElem.VertexPositions = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
+			cachedElem.VertexUVs = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
+			cachedElem.Indices = (u32*)mAlloc.Alloc(sizeof(u32) * newNumQuads * 6);
+			cachedElem.QuadCount = newNumQuads;
 
 			const HTexture& tex = textData.GetTextureForPage(texPage);
 
-			SpriteMaterialInfo& matInfo = cachedElem.MatInfo;
+			SpriteMaterialInfo& matInfo = cachedElem.MaterialInformation;
 			matInfo.GroupId = groupId;
 			matInfo.Texture = tex;
-			matInfo.Tint = desc.Color;
+			matInfo.Tint = information.Color;
 			matInfo.AnimationStartTime = 0.0f;
 
 			cachedElem.Material = SpriteManager::Instance().GetTextMaterial();
@@ -65,7 +65,7 @@ void TextSprite::Update(const TEXT_SPRITE_DESC& desc, u64 groupId)
 		{
 			SpriteRenderElementData& renderElem = mCachedRenderElements[j];
 
-			GenTextQuads(j, textData, desc.Width, desc.Height, desc.HorzAlign, desc.VertAlign, desc.Anchor, renderElem.Vertices, renderElem.Uvs, renderElem.Indexes, renderElem.NumQuads);
+			GenTextQuads(j, textData, information.Width, information.Height, information.HorzAlign, information.VertAlign, information.Anchor, renderElem.VertexPositions, renderElem.VertexUVs, renderElem.Indices, renderElem.QuadCount);
 		}
 	}
 
@@ -74,7 +74,7 @@ void TextSprite::Update(const TEXT_SPRITE_DESC& desc, u64 groupId)
 	UpdateBounds();
 }
 
-u32 TextSprite::GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
+u32 TextSprite::GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, TextHorizontalAlignment horzAlign, TextVerticalAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 {
 	u32 numLines = textData.GetNumLines();
 	u32 newNumQuads = textData.GetNumQuadsForPage(page);
@@ -104,7 +104,7 @@ u32 TextSprite::GenTextQuads(u32 page, const TextDataBase& textData, u32 width, 
 	return newNumQuads;
 }
 
-u32 TextSprite::GenTextQuads(const TextDataBase& textData, u32 width, u32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
+u32 TextSprite::GenTextQuads(const TextDataBase& textData, u32 width, u32 height, TextHorizontalAlignment horzAlign, TextVerticalAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 {
 	u32 numLines = textData.GetNumLines();
 	u32 numPages = textData.GetNumPages();
@@ -139,7 +139,7 @@ u32 TextSprite::GenTextQuads(const TextDataBase& textData, u32 width, u32 height
 	return quadOffset;
 }
 
-void TextSprite::GetAlignmentOffsets(const TextDataBase& textData, u32 width, u32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, Vector2I* output)
+void TextSprite::GetAlignmentOffsets(const TextDataBase& textData, u32 width, u32 height, TextHorizontalAlignment horzAlign, TextVerticalAlignment vertAlign, Vector2I* output)
 {
 	u32 numLines = textData.GetNumLines();
 	u32 curHeight = 0;
@@ -194,22 +194,22 @@ void TextSprite::ClearMesh()
 {
 	for(auto& renderElem : mCachedRenderElements)
 	{
-		if(renderElem.Vertices != nullptr)
+		if(renderElem.VertexPositions != nullptr)
 		{
-			mAlloc.Free(renderElem.Vertices);
-			renderElem.Vertices = nullptr;
+			mAlloc.Free(renderElem.VertexPositions);
+			renderElem.VertexPositions = nullptr;
 		}
 
-		if(renderElem.Uvs != nullptr)
+		if(renderElem.VertexUVs != nullptr)
 		{
-			mAlloc.Free(renderElem.Uvs);
-			renderElem.Uvs = nullptr;
+			mAlloc.Free(renderElem.VertexUVs);
+			renderElem.VertexUVs = nullptr;
 		}
 
-		if(renderElem.Indexes != nullptr)
+		if(renderElem.Indices != nullptr)
 		{
-			mAlloc.Free(renderElem.Indexes);
-			renderElem.Indexes = nullptr;
+			mAlloc.Free(renderElem.Indices);
+			renderElem.Indices = nullptr;
 		}
 	}
 

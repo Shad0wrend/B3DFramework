@@ -116,9 +116,9 @@ void GUITexture::UpdateRenderElements()
 	Vector2I textureSize;
 	if(SpriteTexture::CheckIsLoaded(mActiveTexture))
 	{
-		mDesc.Texture = mActiveTexture;
-		textureSize.X = mDesc.Texture->GetFrameWidth();
-		textureSize.Y = mDesc.Texture->GetFrameHeight();
+		mDesc.Image = mActiveTexture;
+		textureSize.X = mDesc.Image->GetFrameWidth();
+		textureSize.Y = mDesc.Image->GetFrameHeight();
 	}
 	Vector2I destSize(mLayoutData.Area.Width, mLayoutData.Area.Height);
 

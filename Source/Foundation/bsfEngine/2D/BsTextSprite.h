@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/**	Specifies how is text horizontally aligned within its bounds. */
-	enum B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) TextHorzAlign
+	enum B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) TextHorizontalAlignment
 	{
 		THA_Left B3D_SCRIPT_EXPORT(ExportName(Left)),
 		THA_Center B3D_SCRIPT_EXPORT(ExportName(Center)),
@@ -24,17 +24,17 @@ namespace bs
 	};
 
 	/**	Specifies how is text vertically aligned within its bounds. */
-	enum B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) TextVertAlign
+	enum B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) TextVerticalAlignment
 	{
 		TVA_Top B3D_SCRIPT_EXPORT(ExportName(Top)),
 		TVA_Center B3D_SCRIPT_EXPORT(ExportName(Center)),
 		TVA_Bottom B3D_SCRIPT_EXPORT(ExportName(Bottom))
 	};
 
-	/**	Text sprite description structure used for initializing or updating a text sprite. */
-	struct TEXT_SPRITE_DESC
+	/**	Information for initializing or updating a text sprite. */
+	struct TextSpriteInformation
 	{
-		TEXT_SPRITE_DESC() = default;
+		TextSpriteInformation() = default;
 
 		u32 Width = 0; /**< Width of the bounds to render the text within, in pixels. */
 		u32 Height = 0; /**< Height of the bounds to render the text within, in pixels. */
@@ -44,8 +44,8 @@ namespace bs
 		HFont Font; /**< Font containing the data about character glyphs. */
 		u32 FontSize = 0; /**< Size of the font to use when displaying the text. */
 		Color Color; /**< Color tint of the text. */
-		TextHorzAlign HorzAlign = THA_Left; /**< Specifies how is text horizontally aligned within its bounds. */
-		TextVertAlign VertAlign = TVA_Top; /**< Specifies how is text vertically aligned within its bounds. */
+		TextHorizontalAlignment HorzAlign = THA_Left; /**< Specifies how is text horizontally aligned within its bounds. */
+		TextVerticalAlignment VertAlign = TVA_Top; /**< Specifies how is text vertically aligned within its bounds. */
 		bool WordWrap = false; /**< If true the text will word wrap when it doesn't fit, otherwise it will overflow. */
 		bool WordBreak = true; /**< If enabled together with word wrap it will allow words to be broken if they don't fit. */
 	};
@@ -60,12 +60,12 @@ namespace bs
 		/**
 		 * Recreates internal sprite data according the specified description structure.
 		 *
-		 * @param[in]	desc	Describes the geometry and material of the sprite.
-		 * @param[in]	groupId	Group identifier that forces different materials to be used for different groups (for
-		 *						example you don't want the sprites to share the same group if they use different world
-		 *						transform matrices).
+		 * @param	information		Describes the geometry and material of the sprite.
+		 * @param	groupId			Group identifier that forces different materials to be used for different groups (for
+		 *							example you don't want the sprites to share the same group if they use different world
+		 *							transform matrices).
 		 */
-		void Update(const TEXT_SPRITE_DESC& desc, u64 groupId);
+		void Update(const TextSpriteInformation& information, u64 groupId);
 
 		/**
 		 * Calculates and returns offset for each individual text line. The offsets provide information on how much to
@@ -79,7 +79,7 @@ namespace bs
 		 * @param[out]	output		Pre-allocated buffer to output the results in. Buffer must have an element
 		 *							for every line in @p textData.
 		 */
-		static void GetAlignmentOffsets(const TextDataBase& textData, u32 width, u32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, Vector2I* output);
+		static void GetAlignmentOffsets(const TextDataBase& textData, u32 width, u32 height, TextHorizontalAlignment horzAlign, TextVerticalAlignment vertAlign, Vector2I* output);
 
 		/**
 		 * Calculates text quads you may use for text rendering, based on the specified text data. Only generates quads for
@@ -100,7 +100,7 @@ namespace bs
 		 * @param[in]	bufferSizeQuads	Size of the output buffers, in number of quads.
 		 * @return						Number of generated quads.
 		 */
-		static u32 GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads);
+		static u32 GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, TextHorizontalAlignment horzAlign, TextVerticalAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads);
 
 		/**
 		 * Calculates text quads you may use for text rendering, based on the specified text data. Generates quads for all
@@ -120,7 +120,7 @@ namespace bs
 		 * @param[in]	bufferSizeQuads	Size of the output buffers, in number of quads.
 		 * @return						Number of generated quads.
 		 */
-		static u32 GenTextQuads(const TextDataBase& textData, u32 width, u32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads);
+		static u32 GenTextQuads(const TextDataBase& textData, u32 width, u32 height, TextHorizontalAlignment horzAlign, TextVerticalAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads);
 
 	private:
 		static const int kStaticCharsToBuffer = 25;

@@ -73,7 +73,7 @@ namespace bs
 		void RefreshContentSprite();
 
 		/**	Gets the text sprite descriptor used for creating/updating the internal text sprite. */
-		TEXT_SPRITE_DESC GetTextDesc() const;
+		TextSpriteInformation GetTextDesc() const;
 
 		/**	Retrieves internal button state. */
 		GUIElementState GetState() const { return mActiveState; }
@@ -90,7 +90,7 @@ namespace bs
 		TextSprite* mTextSprite;
 		GUIElementState mActiveState = GUIElementState::Normal;
 
-		IMAGE_SPRITE_DESC mImageDesc;
+		ImageSpriteInformation mImageDesc;
 		GUIContent mContent;
 		bool mHasFocus = false;
 		float mContentAnimationStartTime = 0.0f;

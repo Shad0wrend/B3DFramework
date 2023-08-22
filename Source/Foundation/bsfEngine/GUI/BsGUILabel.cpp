@@ -33,14 +33,14 @@ void GUILabel::UpdateRenderElements()
 	const HSpriteTexture& activeTex = GetStyle()->Normal.Texture;
 	if(SpriteTexture::CheckIsLoaded(activeTex))
 	{
-		mImageDesc.Texture = activeTex;
+		mImageDesc.Image = activeTex;
 
 		if(mImageSprite == nullptr)
 			mImageSprite = B3DNew<ImageSprite>();
 	}
 	else
 	{
-		mImageDesc.Texture = nullptr;
+		mImageDesc.Image = nullptr;
 
 		if(mImageSprite != nullptr)
 		{
@@ -105,7 +105,7 @@ void GUILabel::FillBuffer(
 	u32 indexStride = sizeof(u32);
 	Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
 
-	u32 imageSpriteIdx = mTextSprite->GetNumRenderElements();
+	u32 imageSpriteIdx = mTextSprite->GetRenderElementCount();
 
 	if(renderElementIdx < imageSpriteIdx)
 	{

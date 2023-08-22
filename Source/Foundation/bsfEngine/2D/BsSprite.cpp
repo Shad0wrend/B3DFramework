@@ -30,8 +30,8 @@ u32 Sprite::FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32
 	u32 maxVertIdx = maxNumVerts;
 	u32 maxIndexIdx = maxNumIndices;
 
-	u32 numVertices = renderElem.NumQuads * 4;
-	u32 numIndices = renderElem.NumQuads * 6;
+	u32 numVertices = renderElem.QuadCount * 4;
+	u32 numIndices = renderElem.QuadCount * 6;
 
 	B3D_ASSERT((startVert + numVertices) <= maxVertIdx);
 	B3D_ASSERT((startIndex + numIndices) <= maxIndexIdx);
@@ -43,32 +43,32 @@ u32 Sprite::FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32
 	Vector2 vecOffset((float)offset.X, (float)offset.Y);
 	if(clip)
 	{
-		for(u32 i = 0; i < renderElem.NumQuads; i++)
+		for(u32 i = 0; i < renderElem.QuadCount; i++)
 		{
 			u8* vecStart = vertDst;
 			u8* uvStart = uvDst;
 			u32 vertIdx = i * 4;
 
-			memcpy(vertDst, &renderElem.Vertices[vertIdx + 0], sizeof(Vector2));
-			memcpy(uvDst, &renderElem.Uvs[vertIdx + 0], sizeof(Vector2));
+			memcpy(vertDst, &renderElem.VertexPositions[vertIdx + 0], sizeof(Vector2));
+			memcpy(uvDst, &renderElem.VertexUVs[vertIdx + 0], sizeof(Vector2));
 
 			vertDst += vertexStride;
 			uvDst += vertexStride;
 
-			memcpy(vertDst, &renderElem.Vertices[vertIdx + 1], sizeof(Vector2));
-			memcpy(uvDst, &renderElem.Uvs[vertIdx + 1], sizeof(Vector2));
+			memcpy(vertDst, &renderElem.VertexPositions[vertIdx + 1], sizeof(Vector2));
+			memcpy(uvDst, &renderElem.VertexUVs[vertIdx + 1], sizeof(Vector2));
 
 			vertDst += vertexStride;
 			uvDst += vertexStride;
 
-			memcpy(vertDst, &renderElem.Vertices[vertIdx + 2], sizeof(Vector2));
-			memcpy(uvDst, &renderElem.Uvs[vertIdx + 2], sizeof(Vector2));
+			memcpy(vertDst, &renderElem.VertexPositions[vertIdx + 2], sizeof(Vector2));
+			memcpy(uvDst, &renderElem.VertexUVs[vertIdx + 2], sizeof(Vector2));
 
 			vertDst += vertexStride;
 			uvDst += vertexStride;
 
-			memcpy(vertDst, &renderElem.Vertices[vertIdx + 3], sizeof(Vector2));
-			memcpy(uvDst, &renderElem.Uvs[vertIdx + 3], sizeof(Vector2));
+			memcpy(vertDst, &renderElem.VertexPositions[vertIdx + 3], sizeof(Vector2));
+			memcpy(uvDst, &renderElem.VertexUVs[vertIdx + 3], sizeof(Vector2));
 
 			ClipQuadsToRect(vecStart, uvStart, 1, vertexStride, clipRect);
 
@@ -94,31 +94,31 @@ u32 Sprite::FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32
 	}
 	else
 	{
-		for(u32 i = 0; i < renderElem.NumQuads; i++)
+		for(u32 i = 0; i < renderElem.QuadCount; i++)
 		{
 			u8* vecStart = vertDst;
 			u32 vertIdx = i * 4;
 
-			memcpy(vertDst, &renderElem.Vertices[vertIdx + 0], sizeof(Vector2));
-			memcpy(uvDst, &renderElem.Uvs[vertIdx + 0], sizeof(Vector2));
+			memcpy(vertDst, &renderElem.VertexPositions[vertIdx + 0], sizeof(Vector2));
+			memcpy(uvDst, &renderElem.VertexUVs[vertIdx + 0], sizeof(Vector2));
 
 			vertDst += vertexStride;
 			uvDst += vertexStride;
 
-			memcpy(vertDst, &renderElem.Vertices[vertIdx + 1], sizeof(Vector2));
-			memcpy(uvDst, &renderElem.Uvs[vertIdx + 1], sizeof(Vector2));
+			memcpy(vertDst, &renderElem.VertexPositions[vertIdx + 1], sizeof(Vector2));
+			memcpy(uvDst, &renderElem.VertexUVs[vertIdx + 1], sizeof(Vector2));
 
 			vertDst += vertexStride;
 			uvDst += vertexStride;
 
-			memcpy(vertDst, &renderElem.Vertices[vertIdx + 2], sizeof(Vector2));
-			memcpy(uvDst, &renderElem.Uvs[vertIdx + 2], sizeof(Vector2));
+			memcpy(vertDst, &renderElem.VertexPositions[vertIdx + 2], sizeof(Vector2));
+			memcpy(uvDst, &renderElem.VertexUVs[vertIdx + 2], sizeof(Vector2));
 
 			vertDst += vertexStride;
 			uvDst += vertexStride;
 
-			memcpy(vertDst, &renderElem.Vertices[vertIdx + 3], sizeof(Vector2));
-			memcpy(uvDst, &renderElem.Uvs[vertIdx + 3], sizeof(Vector2));
+			memcpy(vertDst, &renderElem.VertexPositions[vertIdx + 3], sizeof(Vector2));
+			memcpy(uvDst, &renderElem.VertexUVs[vertIdx + 3], sizeof(Vector2));
 
 			vertDst = vecStart;
 			Vector2* curVec = (Vector2*)vertDst;
@@ -142,9 +142,9 @@ u32 Sprite::FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32
 	}
 
 	if(indices != nullptr)
-		memcpy(&indices[startIndex], renderElem.Indexes, numIndices * sizeof(u32));
+		memcpy(&indices[startIndex], renderElem.Indices, numIndices * sizeof(u32));
 
-	return renderElem.NumQuads;
+	return renderElem.QuadCount;
 }
 
 Vector2I Sprite::GetAnchorOffset(SpriteAnchor anchor, u32 width, u32 height)
@@ -183,10 +183,10 @@ void Sprite::UpdateBounds() const
 	bool foundStartingPoint = false;
 	for(auto& renderElem : mCachedRenderElements)
 	{
-		if(renderElem.Vertices != nullptr && renderElem.NumQuads > 0)
+		if(renderElem.VertexPositions != nullptr && renderElem.QuadCount > 0)
 		{
-			min = renderElem.Vertices[0];
-			max = renderElem.Vertices[0];
+			min = renderElem.VertexPositions[0];
+			max = renderElem.VertexPositions[0];
 			foundStartingPoint = true;
 			break;
 		}
@@ -201,14 +201,14 @@ void Sprite::UpdateBounds() const
 	// Calculate bounds
 	for(auto& renderElem : mCachedRenderElements)
 	{
-		if(renderElem.Vertices != nullptr && renderElem.NumQuads > 0)
+		if(renderElem.VertexPositions != nullptr && renderElem.QuadCount > 0)
 		{
-			u32 vertexCount = renderElem.NumQuads * 4;
+			u32 vertexCount = renderElem.QuadCount * 4;
 
 			for(u32 i = 0; i < vertexCount; i++)
 			{
-				min = Vector2::Min(min, renderElem.Vertices[i]);
-				max = Vector2::Max(max, renderElem.Vertices[i]);
+				min = Vector2::Min(min, renderElem.VertexPositions[i]);
+				max = Vector2::Max(max, renderElem.VertexPositions[i]);
 			}
 		}
 	}

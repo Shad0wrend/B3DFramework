@@ -81,18 +81,18 @@ u32 GUISliderHandle::GetScrollableSize() const
 
 void GUISliderHandle::UpdateRenderElements()
 {
-	IMAGE_SPRITE_DESC desc;
+	ImageSpriteInformation desc;
 
 	HSpriteTexture activeTex = GetActiveTexture();
 	if(SpriteTexture::CheckIsLoaded(activeTex))
-		desc.Texture = activeTex;
+		desc.Image = activeTex;
 
 	u32 handleSize = GetHandleSize();
 	if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 	{
-		if(handleSize == 0 && desc.Texture != nullptr)
+		if(handleSize == 0 && desc.Image != nullptr)
 		{
-			handleSize = desc.Texture->GetWidth();
+			handleSize = desc.Image->GetWidth();
 			mPctHandleSize = handleSize / (float)GetMaxSize();
 		}
 
@@ -101,9 +101,9 @@ void GUISliderHandle::UpdateRenderElements()
 	}
 	else
 	{
-		if(handleSize == 0 && desc.Texture != nullptr)
+		if(handleSize == 0 && desc.Image != nullptr)
 		{
-			handleSize = desc.Texture->GetHeight();
+			handleSize = desc.Image->GetHeight();
 			mPctHandleSize = handleSize / (float)GetMaxSize();
 		}
 

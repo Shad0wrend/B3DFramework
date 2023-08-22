@@ -69,9 +69,9 @@ void GUIButtonBase::UpdateRenderElements()
 
 	const HSpriteTexture& activeTex = GetActiveTexture();
 	if(SpriteTexture::CheckIsLoaded(activeTex))
-		mImageDesc.Texture = activeTex;
+		mImageDesc.Image = activeTex;
 	else
-		mImageDesc.Texture = nullptr;
+		mImageDesc.Image = nullptr;
 
 	mImageDesc.BorderLeft = GetStyle()->Border.Left;
 	mImageDesc.BorderRight = GetStyle()->Border.Right;
@@ -107,8 +107,8 @@ void GUIButtonBase::UpdateRenderElements()
 			contentHeight = Math::RoundToI32(contentHeight * vertRatio);
 		}
 
-		IMAGE_SPRITE_DESC contentImgDesc;
-		contentImgDesc.Texture = image;
+		ImageSpriteInformation contentImgDesc;
+		contentImgDesc.Image = image;
 		contentImgDesc.Width = contentWidth;
 		contentImgDesc.Height = contentHeight;
 		contentImgDesc.Color = GetTint();
@@ -164,8 +164,8 @@ void GUIButtonBase::FillBuffer(
 	u32 vertexStride = sizeof(Vector2) * 2;
 	u32 indexStride = sizeof(u32);
 
-	u32 textSpriteIdx = mImageSprite->GetNumRenderElements();
-	u32 contentImgSpriteIdx = textSpriteIdx + mTextSprite->GetNumRenderElements();
+	u32 textSpriteIdx = mImageSprite->GetRenderElementCount();
+	u32 contentImgSpriteIdx = textSpriteIdx + mTextSprite->GetRenderElementCount();
 
 	if(renderElementIdx < textSpriteIdx)
 	{
@@ -364,9 +364,9 @@ void GUIButtonBase::RefreshContentSprite()
 	}
 }
 
-TEXT_SPRITE_DESC GUIButtonBase::GetTextDesc() const
+TextSpriteInformation GUIButtonBase::GetTextDesc() const
 {
-	TEXT_SPRITE_DESC textDesc;
+	TextSpriteInformation textDesc;
 	textDesc.Text = mContent.Text;
 	textDesc.Font = GetStyle()->Font;
 	textDesc.FontSize = GetStyle()->FontSize;

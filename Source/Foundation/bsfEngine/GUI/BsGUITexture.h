@@ -158,7 +158,7 @@ namespace bs
 		HSpriteTexture mActiveTexture;
 		u32 mActiveTextureWidth = 0;
 		u32 mActiveTextureHeight = 0;
-		IMAGE_SPRITE_DESC mDesc;
+		ImageSpriteInformation mDesc;
 		TextureScaleMode mScaleMode;
 		bool mTransparent;
 		bool mUsingStyleTexture;

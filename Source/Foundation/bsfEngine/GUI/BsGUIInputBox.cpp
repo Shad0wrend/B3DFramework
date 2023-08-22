@@ -79,7 +79,7 @@ void GUIInputBox::SetText(const String& text)
 
 		if(mHasFocus)
 		{
-			TEXT_SPRITE_DESC textDesc = GetTextDesc();
+			TextSpriteInformation textDesc = GetTextDesc();
 
 			GetGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
 			GetGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
@@ -115,11 +115,11 @@ void GUIInputBox::UpdateRenderElements()
 
 	const HSpriteTexture& activeTex = GetActiveTexture();
 	if(SpriteTexture::CheckIsLoaded(activeTex))
-		mImageDesc.Texture = activeTex;
+		mImageDesc.Image = activeTex;
 
 	mImageSprite->Update(mImageDesc, (u64)GetParentWidget());
 
-	TEXT_SPRITE_DESC textDesc = GetTextDesc();
+	TextSpriteInformation textDesc = GetTextDesc();
 	mTextSprite->Update(textDesc, (u64)GetParentWidget());
 
 	ImageSprite* caretSprite = nullptr;
@@ -152,12 +152,12 @@ void GUIInputBox::UpdateRenderElements()
 			const Vector<ImageSprite*>& sprites = GetGUIManager().GetInputSelectionTool()->GetSprites();
 			for(auto& entry : sprites)
 			{
-				for(u32 i = 0; i < entry->GetNumRenderElements(); i++)
+				for(u32 i = 0; i < entry->GetRenderElementCount(); i++)
 				{
 					mRenderElements.Add(GUIRenderElement());
 					GUIRenderElement& renderElement = mRenderElements.Back();
 
-					entry->GetRenderElementInfo(i, renderElement);
+					entry->GetRenderElement(i, renderElement);
 
 					renderElement.Depth = 2;
 					renderElement.Type = GUIMeshType::Triangle;
@@ -178,7 +178,7 @@ void GUIInputBox::UpdateClippedBounds()
 Sprite* GUIInputBox::RenderElemToSprite(u32 renderElemIdx, u32& localRenderElemIdx) const
 {
 	u32 oldNumElements = 0;
-	u32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
+	u32 newNumElements = oldNumElements + mTextSprite->GetRenderElementCount();
 	if(renderElemIdx < newNumElements)
 	{
 		localRenderElemIdx = renderElemIdx - oldNumElements;
@@ -186,7 +186,7 @@ Sprite* GUIInputBox::RenderElemToSprite(u32 renderElemIdx, u32& localRenderElemI
 	}
 
 	oldNumElements = newNumElements;
-	newNumElements += mImageSprite->GetNumRenderElements();
+	newNumElements += mImageSprite->GetRenderElementCount();
 
 	if(renderElemIdx < newNumElements)
 	{
@@ -197,7 +197,7 @@ Sprite* GUIInputBox::RenderElemToSprite(u32 renderElemIdx, u32& localRenderElemI
 	if(mCaretShown && GetGUIManager().GetCaretBlinkState())
 	{
 		oldNumElements = newNumElements;
-		newNumElements += GetGUIManager().GetInputCaretTool()->GetSprite()->GetNumRenderElements();
+		newNumElements += GetGUIManager().GetInputCaretTool()->GetSprite()->GetRenderElementCount();
 
 		if(renderElemIdx < newNumElements)
 		{
@@ -212,7 +212,7 @@ Sprite* GUIInputBox::RenderElemToSprite(u32 renderElemIdx, u32& localRenderElemI
 		for(auto& selectionSprite : sprites)
 		{
 			oldNumElements = newNumElements;
-			newNumElements += selectionSprite->GetNumRenderElements();
+			newNumElements += selectionSprite->GetRenderElementCount();
 
 			if(renderElemIdx < newNumElements)
 			{
@@ -229,12 +229,12 @@ Sprite* GUIInputBox::RenderElemToSprite(u32 renderElemIdx, u32& localRenderElemI
 Vector2I GUIInputBox::RenderElemToOffset(u32 renderElemIdx) const
 {
 	u32 oldNumElements = 0;
-	u32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
+	u32 newNumElements = oldNumElements + mTextSprite->GetRenderElementCount();
 	if(renderElemIdx < newNumElements)
 		return GetTextOffset();
 
 	oldNumElements = newNumElements;
-	newNumElements += mImageSprite->GetNumRenderElements();
+	newNumElements += mImageSprite->GetRenderElementCount();
 
 	if(renderElemIdx < newNumElements)
 		return Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y);
@@ -243,7 +243,7 @@ Vector2I GUIInputBox::RenderElemToOffset(u32 renderElemIdx) const
 	if(mCaretShown && GetGUIManager().GetCaretBlinkState())
 	{
 		oldNumElements = newNumElements;
-		newNumElements += GetGUIManager().GetInputCaretTool()->GetSprite()->GetNumRenderElements();
+		newNumElements += GetGUIManager().GetInputCaretTool()->GetSprite()->GetRenderElementCount();
 
 		if(renderElemIdx < newNumElements)
 			return GetGUIManager().GetInputCaretTool()->GetSpriteOffset();
@@ -256,7 +256,7 @@ Vector2I GUIInputBox::RenderElemToOffset(u32 renderElemIdx) const
 		for(auto& selectionSprite : sprites)
 		{
 			oldNumElements = newNumElements;
-			newNumElements += selectionSprite->GetNumRenderElements();
+			newNumElements += selectionSprite->GetRenderElementCount();
 
 			if(renderElemIdx < newNumElements)
 				return GetGUIManager().GetInputSelectionTool()->GetSelectionSpriteOffset(spriteIdx);
@@ -271,12 +271,12 @@ Vector2I GUIInputBox::RenderElemToOffset(u32 renderElemIdx) const
 Rect2I GUIInputBox::RenderElemToClipRect(u32 renderElemIdx) const
 {
 	u32 oldNumElements = 0;
-	u32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
+	u32 newNumElements = oldNumElements + mTextSprite->GetRenderElementCount();
 	if(renderElemIdx < newNumElements)
 		return GetTextClipRect();
 
 	oldNumElements = newNumElements;
-	newNumElements += mImageSprite->GetNumRenderElements();
+	newNumElements += mImageSprite->GetRenderElementCount();
 
 	if(renderElemIdx < newNumElements)
 		return mLayoutData.GetLocalClipRect();
@@ -284,7 +284,7 @@ Rect2I GUIInputBox::RenderElemToClipRect(u32 renderElemIdx) const
 	if(mCaretShown && GetGUIManager().GetCaretBlinkState())
 	{
 		oldNumElements = newNumElements;
-		newNumElements += GetGUIManager().GetInputCaretTool()->GetSprite()->GetNumRenderElements();
+		newNumElements += GetGUIManager().GetInputCaretTool()->GetSprite()->GetRenderElementCount();
 
 		if(renderElemIdx < newNumElements)
 		{
@@ -299,7 +299,7 @@ Rect2I GUIInputBox::RenderElemToClipRect(u32 renderElemIdx) const
 		for(auto& selectionSprite : sprites)
 		{
 			oldNumElements = newNumElements;
-			newNumElements += selectionSprite->GetNumRenderElements();
+			newNumElements += selectionSprite->GetRenderElementCount();
 
 			if(renderElemIdx < newNumElements)
 				return GetGUIManager().GetInputSelectionTool()->GetSelectionSpriteClipRect(spriteIdx, GetTextClipRect());
@@ -948,7 +948,7 @@ void GUIInputBox::ShowCaret()
 {
 	mCaretShown = true;
 
-	TEXT_SPRITE_DESC textDesc = GetTextDesc();
+	TextSpriteInformation textDesc = GetTextDesc();
 	GetGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
 }
 
@@ -959,7 +959,7 @@ void GUIInputBox::HideCaret()
 
 void GUIInputBox::ShowSelection(u32 anchorCaretPos)
 {
-	TEXT_SPRITE_DESC textDesc = GetTextDesc();
+	TextSpriteInformation textDesc = GetTextDesc();
 	GetGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 
 	GetGUIManager().GetInputSelectionTool()->ShowSelection(anchorCaretPos);
@@ -974,7 +974,7 @@ void GUIInputBox::ClearSelection()
 
 void GUIInputBox::ScrollTextToCaret()
 {
-	TEXT_SPRITE_DESC textDesc = GetTextDesc();
+	TextSpriteInformation textDesc = GetTextDesc();
 
 	Vector2I textOffset = GetTextOffset();
 	Vector2I caretPos = GetGUIManager().GetInputCaretTool()->GetCaretPosition(textOffset);
@@ -1020,7 +1020,7 @@ void GUIInputBox::ScrollTextToCaret()
 
 void GUIInputBox::ClampScrollToBounds(Rect2I unclippedTextBounds)
 {
-	TEXT_SPRITE_DESC textDesc = GetTextDesc();
+	TextSpriteInformation textDesc = GetTextDesc();
 
 	Vector2I newTextOffset;
 	i32 maxScrollableWidth = std::max(0, (i32)unclippedTextBounds.Width - (i32)textDesc.Width);
@@ -1044,7 +1044,7 @@ void GUIInputBox::InsertString(u32 charIdx, const String& string)
 	mText.insert(mText.begin() + byteIdx, string.begin(), string.end());
 	mNumChars = UTF8::Count(mText);
 
-	TEXT_SPRITE_DESC textDesc = GetTextDesc();
+	TextSpriteInformation textDesc = GetTextDesc();
 
 	GetGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
 	GetGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
@@ -1058,7 +1058,7 @@ void GUIInputBox::InsertChar(u32 charIdx, u32 charCode)
 	mText.insert(mText.begin() + byteIdx, utf8chars.begin(), utf8chars.end());
 	mNumChars = UTF8::Count(mText);
 
-	TEXT_SPRITE_DESC textDesc = GetTextDesc();
+	TextSpriteInformation textDesc = GetTextDesc();
 
 	GetGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
 	GetGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
@@ -1072,7 +1072,7 @@ void GUIInputBox::EraseChar(u32 charIdx)
 	mText.erase(byteIdx, byteCount);
 	mNumChars = UTF8::Count(mText);
 
-	TEXT_SPRITE_DESC textDesc = GetTextDesc();
+	TextSpriteInformation textDesc = GetTextDesc();
 
 	GetGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
 	GetGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
@@ -1103,7 +1103,7 @@ void GUIInputBox::DeleteSelectedText(bool internal)
 		mText.erase(mText.begin() + byteStart, mText.begin() + byteEnd);
 		mNumChars = UTF8::Count(mText);
 
-		TEXT_SPRITE_DESC textDesc = GetTextDesc();
+		TextSpriteInformation textDesc = GetTextDesc();
 		GetGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
 		GetGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 
@@ -1149,9 +1149,9 @@ Rect2I GUIInputBox::GetTextClipRect() const
 	return Rect2I(contentClipRect.X - mTextOffset.X, contentClipRect.Y - mTextOffset.Y, contentClipRect.Width, contentClipRect.Height);
 }
 
-TEXT_SPRITE_DESC GUIInputBox::GetTextDesc() const
+TextSpriteInformation GUIInputBox::GetTextDesc() const
 {
-	TEXT_SPRITE_DESC textDesc;
+	TextSpriteInformation textDesc;
 	textDesc.Text = mText;
 	textDesc.Font = GetStyle()->Font;
 	textDesc.FontSize = GetStyle()->FontSize;

@@ -9,7 +9,7 @@
 
 using namespace bs;
 
-void GUIInputTool::UpdateText(const GUIElement* element, const TEXT_SPRITE_DESC& textDesc)
+void GUIInputTool::UpdateText(const GUIElement* element, const TextSpriteInformation& textDesc)
 {
 	mElement = element;
 	mTextDesc = textDesc;

@@ -72,7 +72,7 @@ namespace bs
 		 * Updates the input tool with new text descriptor and parent GUI element. These values will be used for all
 		 * further calculations.
 		 */
-		void UpdateText(const GUIElement* element, const TEXT_SPRITE_DESC& textDesc);
+		void UpdateText(const GUIElement* element, const TextSpriteInformation& textDesc);
 
 	protected:
 		/**	Returns text offset relative to parent widget. */
@@ -137,7 +137,7 @@ namespace bs
 		Vector2* mQuads = nullptr;
 		u32 mNumQuads = 0;
 
-		TEXT_SPRITE_DESC mTextDesc;
+		TextSpriteInformation mTextDesc;
 		u32 mNumChars = 0;
 
 		Vector<GUIInputLineDesc> mLineDescs;

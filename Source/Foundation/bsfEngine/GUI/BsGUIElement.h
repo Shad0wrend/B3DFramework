@@ -361,7 +361,7 @@ namespace bs
 		{
 			u32 totalCount = 0;
 			for(u32 i = 0; i < N; i++)
-				totalCount += spriteInfos[i].Sprite ? spriteInfos[i].Sprite->GetNumRenderElements() : 0;
+				totalCount += spriteInfos[i].Sprite ? spriteInfos[i].Sprite->GetRenderElementCount() : 0;
 
 			output.Resize(totalCount);
 
@@ -370,11 +370,11 @@ namespace bs
 			{
 				const SpriteInfo& spriteInfo = spriteInfos[i];
 
-				u32 count = spriteInfo.Sprite ? spriteInfo.Sprite->GetNumRenderElements() : 0;
+				u32 count = spriteInfo.Sprite ? spriteInfo.Sprite->GetRenderElementCount() : 0;
 				for(u32 j = 0; j < count; j++)
 				{
 					GUIRenderElement& renderElem = output[globalIdx];
-					spriteInfo.Sprite->GetRenderElementInfo(j, renderElem);
+					spriteInfo.Sprite->GetRenderElement(j, renderElem);
 
 					renderElem.Depth = spriteInfo.Depth;
 					renderElem.Type = spriteInfo.MeshType;
