@@ -133,7 +133,7 @@ namespace bs
 		 *  @{
 		 */
 
-		ElementType GetElementTypeInternal() const override { return ElementType::Toggle; }
+		ElementType GetElementType() const override { return ElementType::Toggle; }
 
 		/** Sets a toggle group of the toggle button. Toggling one button in a group will automatically untoggle others. */
 		void SetToggleGroupInternal(SPtr<GUIToggleGroup> toggleGroup);

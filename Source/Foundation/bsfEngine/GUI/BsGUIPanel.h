@@ -77,10 +77,10 @@ namespace bs
 		 *  @{
 		 */
 
-		Type GetTypeInternal() const override { return GUIElementBase::Type::Panel; }
+		Type GetType() const override { return GUIElementBase::Type::Panel; }
 		void UpdateOptimalLayoutSizes() override;
 		LayoutSizeRange CalculateLayoutSizeRange() const override;
-		void GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
+		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
 
 		/** Calculates the size of the provided child within this layout with the provided dimensions. */
 		Rect2I GetElementAreaInternal(const Rect2I& layoutArea, const GUIElementBase* element, const LayoutSizeRange& sizeRange) const;

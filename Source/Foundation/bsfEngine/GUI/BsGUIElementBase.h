@@ -168,13 +168,13 @@ namespace bs
 		 *								elements array.
 		 * @param[in]	mySizeRange		Size range of this element.
 		 */
-		virtual void GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const;
+		virtual void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const;
 
 		/** Updates layout data that determines GUI elements final position & depth in the GUI widget. */
 		virtual void SetLayoutData(const GUILayoutData& data) { mLayoutData = data; }
 
 		/** Retrieves layout data that determines GUI elements final position & depth in the GUI widget. */
-		const GUILayoutData& GetLayoutDataInternal() const { return mLayoutData; }
+		const GUILayoutData& GetLayoutData() const { return mLayoutData; }
 
 		/**	Sets a new parent for this element. */
 		void SetParent(GUIElementBase* parent);
@@ -206,7 +206,7 @@ namespace bs
 		virtual const RectOffset& GetPadding() const = 0;
 
 		/**	Returns specific sub-type of this object. */
-		virtual Type GetTypeInternal() const = 0;
+		virtual Type GetType() const = 0;
 
 		/**	Returns parent GUI base element. */
 		GUIElementBase* GetParent() const { return mParentElement; }
@@ -220,7 +220,7 @@ namespace bs
 		 * updating. This parent usually has fixed bounds or some other property that allows its children to be updated
 		 * independently from the even higher-up elements.
 		 */
-		GUIElementBase* GetUpdateParentInternal() const { return mUpdateParent; }
+		GUIElementBase* GetUpdateParent() const { return mUpdateParent; }
 
 		/**	Returns parent GUI widget, can be null. */
 		GUIWidget* GetParentWidget() const { return mParentWidget; }
@@ -298,7 +298,7 @@ namespace bs
 
 	protected:
 		/**	Finds anchor and update parents and recursively assigns them to all children. */
-		void UpdateAUParentsInternal();
+		void UpdateAnchorAndUpdateParents();
 
 		/**	Refreshes update parents of all child elements. */
 		void RefreshChildUpdateParents();

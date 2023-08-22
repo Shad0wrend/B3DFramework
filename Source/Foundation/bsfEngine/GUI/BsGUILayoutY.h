@@ -36,7 +36,7 @@ namespace bs
 
 		void UpdateOptimalLayoutSizes() override;
 		LayoutSizeRange CalculateLayoutSizeRange() const override;
-		void GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
+		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
 
 		/** @} */
 

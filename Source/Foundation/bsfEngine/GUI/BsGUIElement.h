@@ -107,7 +107,7 @@ namespace bs
 		 * to switch between the elements. If you don't set a navigation group the elements will inherit the default
 		 * navigation group from their parent GUIWidget. Also see setNavGroupIndex().
 		 */
-		void SetNavGroup(const SPtr<GUINavGroup>& navGroup);
+		void SetNavigationGroup(const SPtr<GUINavGroup>& navGroup);
 
 		/**
 		 * Sets the index that determines in what order is the element visited compared to all the other elements in the
@@ -116,7 +116,7 @@ namespace bs
 		 * elements. The applied index is tied to the nav-group, so if the nav-group changes the index will need to be
 		 * re-applied.
 		 */
-		void SetNavGroupIndex(i32 index);
+		void SetNavigationGroupIndex(i32 index);
 
 		Rect2I GetVisibleBounds() override;
 
@@ -174,31 +174,31 @@ namespace bs
 		virtual void UpdateRenderElements();
 
 		/** Gets internal element style representing the exact type of GUI element in this object. */
-		virtual ElementType GetElementTypeInternal() const { return ElementType::Undefined; }
+		virtual ElementType GetElementType() const { return ElementType::Undefined; }
 
 		/**
 		 * Called when a mouse event is received on any GUI element the mouse is interacting with. Return true if you have
 		 * processed the event and don't want other elements to process it.
 		 */
-		virtual bool DoOnMouseEvent(const GUIMouseEvent& ev);
+		virtual bool DoOnMouseEvent(const GUIMouseEvent& event);
 
 		/**
 		 * Called when some text is input and the GUI element has input focus. Return true if you have processed the event
 		 * and don't want other elements to process it.
 		 */
-		virtual bool DoOnTextInputEvent(const GUITextInputEvent& ev);
+		virtual bool DoOnTextInputEvent(const GUITextInputEvent& event);
 
 		/**
 		 * Called when a command event is triggered. Return true if you have processed the event and don't want other
 		 * elements to process it.
 		 */
-		virtual bool DoOnCommandEvent(const GUICommandEvent& ev);
+		virtual bool DoOnCommandEvent(const GUICommandEvent& event);
 
 		/**
 		 * Called when a virtual button is pressed/released and the GUI element has input focus. Return true if you have
 		 * processed the event and don't want other elements to process it.
 		 */
-		virtual bool DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& ev);
+		virtual bool DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& event);
 
 		/** Set element part of element depth. Less significant than both widget and area depth. */
 		void SetElementDepth(u8 depth);
@@ -219,7 +219,7 @@ namespace bs
 		virtual u32 GetRenderElementDepthRange() const { return 1; }
 
 		/** Gets internal element style representing the exact type of GUI element in this object. */
-		Type GetTypeInternal() const override { return GUIElementBase::Type::Element; }
+		Type GetType() const override { return GUIElementBase::Type::Element; }
 
 		/** Checks if element has been destroyed and is queued for deletion. */
 		bool IsDestroyed() const override { return mIsDestroyed; }
@@ -246,7 +246,7 @@ namespace bs
 		u32 GetDepth() const { return mLayoutData.Depth; }
 
 		/** Returns the navigation group this element belongs to. See setNavGroup(). */
-		SPtr<GUINavGroup> GetNavGroup() const;
+		SPtr<GUINavGroup> GetNavigationGroup() const;
 
 		/** Checks is the specified position within GUI element bounds. Position is relative to parent GUI widget. */
 		virtual bool IsInBounds(const Vector2I position) const;
@@ -327,7 +327,7 @@ namespace bs
 		String mStyleName;
 
 		SPtr<GUIContextMenu> mContextMenu;
-		SPtr<GUINavGroup> mNavGroup;
+		SPtr<GUINavGroup> mNavigationGroup;
 		Color mColor;
 	};
 

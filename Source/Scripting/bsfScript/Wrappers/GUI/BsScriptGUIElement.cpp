@@ -25,7 +25,7 @@ void ScriptGUIElementBaseTBase::Initialize(GUIElementBase* element)
 {
 	mElement = element;
 
-	if(mElement != nullptr && mElement->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(mElement != nullptr && mElement->GetType() == GUIElementBase::Type::Element)
 	{
 		GUIElement* guiElem = static_cast<GUIElement*>(element);
 		guiElem->OnFocusChanged.Connect(std::bind(&ScriptGUIElementBaseTBase::OnFocusChanged, this, _1));
@@ -73,7 +73,7 @@ void ScriptGUIElementTBase::Destroy()
 		if(mParent != nullptr)
 			mParent->RemoveChild(this);
 
-		if(mElement->GetTypeInternal() == GUIElementBase::Type::Element)
+		if(mElement->GetType() == GUIElementBase::Type::Element)
 		{
 			GUIElement::Destroy((GUIElement*)mElement);
 			mElement = nullptr;
@@ -160,7 +160,7 @@ void ScriptGUIElement::InternalSetFocus(ScriptGUIElementBaseTBase* nativeInstanc
 		return;
 
 	GUIElementBase* guiElemBase = nativeInstance->GetGuiElement();
-	if(guiElemBase->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElemBase->GetType() == GUIElementBase::Type::Element)
 	{
 		GUIElement* guiElem = static_cast<GUIElement*>(guiElemBase);
 		guiElem->SetFocus(focus, true);
@@ -200,7 +200,7 @@ bool ScriptGUIElement::InternalGetBlocking(ScriptGUIElementBaseTBase* nativeInst
 		return false;
 
 	GUIElementBase* guiElemBase = nativeInstance->GetGuiElement();
-	if(guiElemBase->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElemBase->GetType() == GUIElementBase::Type::Element)
 	{
 		GUIElement* guiElem = static_cast<GUIElement*>(guiElemBase);
 		return !guiElem->GetOptionFlags().IsSet(GUIElementOption::ClickThrough);
@@ -215,7 +215,7 @@ void ScriptGUIElement::InternalSetBlocking(ScriptGUIElementBaseTBase* nativeInst
 		return;
 
 	GUIElementBase* guiElemBase = nativeInstance->GetGuiElement();
-	if(guiElemBase->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElemBase->GetType() == GUIElementBase::Type::Element)
 	{
 		GUIElement* guiElem = static_cast<GUIElement*>(guiElemBase);
 
@@ -235,7 +235,7 @@ bool ScriptGUIElement::InternalGetAcceptsKeyFocus(ScriptGUIElementBaseTBase* nat
 		return false;
 
 	GUIElementBase* guiElemBase = nativeInstance->GetGuiElement();
-	if(guiElemBase->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElemBase->GetType() == GUIElementBase::Type::Element)
 	{
 		GUIElement* guiElem = static_cast<GUIElement*>(guiElemBase);
 		return guiElem->GetOptionFlags().IsSet(GUIElementOption::AcceptsKeyFocus);
@@ -250,7 +250,7 @@ void ScriptGUIElement::InternalSetAcceptsKeyFocus(ScriptGUIElementBaseTBase* nat
 		return;
 
 	GUIElementBase* guiElemBase = nativeInstance->GetGuiElement();
-	if(guiElemBase->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElemBase->GetType() == GUIElementBase::Type::Element)
 	{
 		GUIElement* guiElem = static_cast<GUIElement*>(guiElemBase);
 
@@ -372,7 +372,7 @@ void ScriptGUIElement::InternalSetContextMenu(ScriptGUIElementBaseTBase* nativeI
 		return;
 
 	GUIElementBase* guiElemBase = nativeInstance->GetGuiElement();
-	if(guiElemBase->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElemBase->GetType() == GUIElementBase::Type::Element)
 	{
 		GUIElement* guiElem = static_cast<GUIElement*>(guiElemBase);
 
@@ -389,7 +389,7 @@ MonoString* ScriptGUIElement::InternalGetStyle(ScriptGUIElementBaseTBase* native
 	if(!nativeInstance->IsDestroyed())
 	{
 		GUIElementBase* guiElemBase = nativeInstance->GetGuiElement();
-		if(guiElemBase->GetTypeInternal() == GUIElementBase::Type::Element)
+		if(guiElemBase->GetType() == GUIElementBase::Type::Element)
 		{
 			GUIElement* guiElem = static_cast<GUIElement*>(guiElemBase);
 			return MonoUtil::StringToMono(guiElem->GetStyleName());
@@ -404,7 +404,7 @@ void ScriptGUIElement::InternalSetStyle(ScriptGUIElementBaseTBase* nativeInstanc
 	if(!nativeInstance->IsDestroyed())
 	{
 		GUIElementBase* guiElemBase = nativeInstance->GetGuiElement();
-		if(guiElemBase->GetTypeInternal() == GUIElementBase::Type::Element)
+		if(guiElemBase->GetType() == GUIElementBase::Type::Element)
 		{
 			GUIElement* guiElem = static_cast<GUIElement*>(guiElemBase);
 			guiElem->SetStyle(MonoUtil::MonoToString(style));

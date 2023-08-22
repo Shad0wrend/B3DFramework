@@ -31,7 +31,7 @@ Vector2I GUIUtility::CalcActualSizeInternal(u32 width, u32 height, GUILayout* la
 	parentArea.Width = width;
 	parentArea.Height = height;
 
-	layout->GetElementAreas(parentArea, elementAreas, numElements, layout->GetCachedChildSizeRangesInternal(), layout->GetCachedSizeRangeInternal());
+	layout->GetChildLayoutAreas(parentArea, elementAreas, numElements, layout->GetCachedChildSizeRangesInternal(), layout->GetCachedSizeRangeInternal());
 
 	Rect2I* actualAreas = elementAreas; // We re-use the same array
 	for(u32 i = 0; i < numElements; i++)
@@ -39,13 +39,13 @@ Vector2I GUIUtility::CalcActualSizeInternal(u32 width, u32 height, GUILayout* la
 		GUIElementBase* child = layout->GetChild(i);
 		Rect2I childArea = elementAreas[i];
 
-		if(child->GetTypeInternal() == GUIElementBase::Type::Layout || child->GetTypeInternal() == GUIElementBase::Type::Panel)
+		if(child->GetType() == GUIElementBase::Type::Layout || child->GetType() == GUIElementBase::Type::Panel)
 		{
 			Vector2I childActualSize = CalcActualSizeInternal(childArea.Width, childArea.Height, static_cast<GUILayout*>(child));
 			actualAreas[i].Width = (u32)childActualSize.X;
 			actualAreas[i].Height = (u32)childActualSize.Y;
 		}
-		else if(child->GetTypeInternal() == GUIElementBase::Type::Element)
+		else if(child->GetType() == GUIElementBase::Type::Element)
 		{
 			RectOffset padding = child->GetPadding();
 

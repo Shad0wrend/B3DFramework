@@ -88,7 +88,7 @@ namespace bs
 		 *  @{
 		 */
 
-		ElementType GetElementTypeInternal() const override { return ElementType::InputBox; }
+		ElementType GetElementType() const override { return ElementType::InputBox; }
 		Vector2I GetOptimalSize() const override;
 
 		/** @} */

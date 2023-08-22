@@ -81,14 +81,14 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 		if(mIsToggle)
 			mStates[idx] = !mStates[idx];
 
-		mParent->ElementActivated(idx, mVisibleElements[visIdx].Button->GetLayoutDataInternal().Area);
+		mParent->ElementActivated(idx, mVisibleElements[visIdx].Button->GetLayoutData().Area);
 	};
 
 	// Remove all elements
 	while(GetChildCount() > 0)
 	{
 		GUIElementBase* child = GetChild(GetChildCount() - 1);
-		B3D_ASSERT(child->GetTypeInternal() == GUIElementBase::Type::Element);
+		B3D_ASSERT(child->GetType() == GUIElementBase::Type::Element);
 
 		GUIElement::Destroy(static_cast<GUIElement*>(child));
 	}
@@ -219,7 +219,7 @@ bool GUIDropDownContent::DoOnCommandEvent(const GUICommandEvent& ev)
 			{
 				GUIDropDownDataEntry& entry = mDropDownData.Entries[mVisibleElements[mSelectedIdx].Idx];
 				if(entry.IsSubMenu())
-					mParent->ElementActivated(mVisibleElements[mSelectedIdx].Idx, mVisibleElements[mSelectedIdx].Button->GetLayoutDataInternal().Area);
+					mParent->ElementActivated(mVisibleElements[mSelectedIdx].Idx, mVisibleElements[mSelectedIdx].Button->GetLayoutData().Area);
 			}
 		}
 		return true;
@@ -231,7 +231,7 @@ bool GUIDropDownContent::DoOnCommandEvent(const GUICommandEvent& ev)
 			if(mIsToggle)
 				mVisibleElements[mSelectedIdx].Button->SetOnInternal(!mVisibleElements[mSelectedIdx].Button->IsOnInternal());
 
-			mParent->ElementActivated(mVisibleElements[mSelectedIdx].Idx, mVisibleElements[mSelectedIdx].Button->GetLayoutDataInternal().Area);
+			mParent->ElementActivated(mVisibleElements[mSelectedIdx].Idx, mVisibleElements[mSelectedIdx].Button->GetLayoutData().Area);
 		}
 		return true;
 	default:

@@ -55,7 +55,7 @@ void ScriptGUIScrollArea::Destroy()
 			mLayout = nullptr;
 		}
 
-		if(mElement->GetTypeInternal() == GUIElementBase::Type::Element)
+		if(mElement->GetType() == GUIElementBase::Type::Element)
 		{
 			GUIElement::Destroy((GUIElement*)mElement);
 			mElement = nullptr;

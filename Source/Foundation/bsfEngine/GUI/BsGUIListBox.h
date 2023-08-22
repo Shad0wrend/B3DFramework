@@ -86,7 +86,7 @@ namespace bs
 		 *  @{
 		 */
 
-		ElementType GetElementTypeInternal() const override { return ElementType::ListBox; }
+		ElementType GetElementType() const override { return ElementType::ListBox; }
 
 		/** @} */
 	protected:

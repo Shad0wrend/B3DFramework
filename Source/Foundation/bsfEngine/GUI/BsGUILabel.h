@@ -70,7 +70,7 @@ namespace bs
 		 */
 
 		Vector2I GetOptimalSize() const override;
-		ElementType GetElementTypeInternal() const override { return ElementType::Label; }
+		ElementType GetElementType() const override { return ElementType::Label; }
 
 		/** @} */
 	protected:

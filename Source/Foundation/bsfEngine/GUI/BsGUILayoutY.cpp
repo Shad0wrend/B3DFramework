@@ -24,7 +24,7 @@ LayoutSizeRange GUILayoutY::CalculateLayoutSizeRange() const
 
 		LayoutSizeRange sizeRange = child->CalculateLayoutSizeRange();
 
-		if(child->GetTypeInternal() == GUIElementBase::Type::FixedSpace)
+		if(child->GetType() == GUIElementBase::Type::FixedSpace)
 			sizeRange.Optimal.X = sizeRange.Min.X = 0;
 
 		u32 paddingX = child->GetPadding().Left + child->GetPadding().Right;
@@ -63,7 +63,7 @@ void GUILayoutY::UpdateOptimalLayoutSizes()
 		if(child->IsActive())
 		{
 			childSizeRange = child->GetLayoutSizeRange();
-			if(child->GetTypeInternal() == GUIElementBase::Type::FixedSpace)
+			if(child->GetType() == GUIElementBase::Type::FixedSpace)
 			{
 				childSizeRange.Optimal.X = 0;
 				childSizeRange.Min.X = 0;
@@ -89,7 +89,7 @@ void GUILayoutY::UpdateOptimalLayoutSizes()
 	mSizeRange.Min.Y = std::max(mSizeRange.Min.Y, minSize.Y);
 }
 
-void GUILayoutY::GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
+void GUILayoutY::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
 {
 	B3D_ASSERT(mChildren.size() == numElements);
 
@@ -116,11 +116,11 @@ void GUILayoutY::GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas,
 	{
 		elementAreas[childIdx].Height = sizeRanges[childIdx].Optimal.Y;
 
-		if(child->GetTypeInternal() == GUIElementBase::Type::FixedSpace)
+		if(child->GetType() == GUIElementBase::Type::FixedSpace)
 		{
 			processedElements[childIdx] = true;
 		}
-		else if(child->GetTypeInternal() == GUIElementBase::Type::FlexibleSpace)
+		else if(child->GetType() == GUIElementBase::Type::FlexibleSpace)
 		{
 			if(child->IsActive())
 			{
@@ -175,7 +175,7 @@ void GUILayoutY::GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas,
 				u32 elementHeight = elementAreas[childIdx].Height + extraHeight;
 
 				// Clamp if needed
-				if(child->GetTypeInternal() == GUIElementBase::Type::FlexibleSpace)
+				if(child->GetType() == GUIElementBase::Type::FlexibleSpace)
 				{
 					processedElements[childIdx] = true;
 					numNonClampedElements--;
@@ -236,7 +236,7 @@ void GUILayoutY::GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas,
 				u32 elementHeight = (u32)std::max(0, (i32)elementAreas[childIdx].Height - (i32)extraHeight);
 
 				// Clamp if needed
-				switch(child->GetTypeInternal())
+				switch(child->GetType())
 				{
 				case GUIElementBase::Type::FlexibleSpace:
 					elementAreas[childIdx].Height = 0;
@@ -300,7 +300,7 @@ void GUILayoutY::GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas,
 				u32 elementHeight = elementAreas[childIdx].Height + extraHeight;
 
 				// Clamp if needed
-				switch(child->GetTypeInternal())
+				switch(child->GetType())
 				{
 				case GUIElementBase::Type::FlexibleSpace:
 					processedElements[childIdx] = true;
@@ -369,7 +369,7 @@ void GUILayoutY::GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas,
 
 		elementAreas[childIdx].Width = elemWidth;
 
-		if(child->GetTypeInternal() == GUIElementBase::Type::Element)
+		if(child->GetType() == GUIElementBase::Type::Element)
 		{
 			GUIElement* element = static_cast<GUIElement*>(child);
 
@@ -399,7 +399,7 @@ void GUILayoutY::UpdateLayoutRecursive(const GUILayoutData& data)
 	if(numElements > 0)
 		elementAreas = B3DStackNew<Rect2I>(numElements);
 
-	GetElementAreas(data.Area, elementAreas, numElements, mChildSizeRanges, mSizeRange);
+	GetChildLayoutAreas(data.Area, elementAreas, numElements, mChildSizeRanges, mSizeRange);
 
 	// Now that we have all the areas, actually assign them
 	u32 childIdx = 0;

@@ -1366,7 +1366,7 @@ Vector2I GUIManager::WindowToBridgedCoords(const SPtr<RenderTarget>& target, con
 		const Matrix4& worldTfrm = parentWidget->GetWorldTfrm();
 
 		Vector4 vecLocalPos = worldTfrm.Inverse().MultiplyAffine(Vector4((float)windowPos.X, (float)windowPos.Y, 0.0f, 1.0f));
-		Rect2I bridgeBounds = bridgeElement->GetLayoutDataInternal().Area;
+		Rect2I bridgeBounds = bridgeElement->GetLayoutData().Area;
 
 		// Find coordinates relative to the bridge element
 		float x = vecLocalPos.X - (float)bridgeBounds.X;
@@ -1499,7 +1499,7 @@ void GUIManager::TabFocusFirst()
 		return;
 
 	// Don't use the element directly though, since its tab group could have explicit ordering
-	const SPtr<GUINavGroup>& navGroup = closestElement->GetNavGroup();
+	const SPtr<GUINavGroup>& navGroup = closestElement->GetNavigationGroup();
 	navGroup->FocusFirst();
 }
 
@@ -1507,7 +1507,7 @@ void GUIManager::TabFocusNext()
 {
 	for(auto& entry : mElementsInFocus)
 	{
-		const SPtr<GUINavGroup>& navGroup = entry.Element->GetNavGroup();
+		const SPtr<GUINavGroup>& navGroup = entry.Element->GetNavigationGroup();
 		GUIElementOptions elementOptions = entry.Element->GetOptionFlags();
 		if(elementOptions.IsSet(GUIElementOption::AcceptsKeyFocus) && navGroup != nullptr)
 		{

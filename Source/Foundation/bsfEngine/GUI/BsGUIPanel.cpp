@@ -34,7 +34,7 @@ LayoutSizeRange GUIPanel::CalculateLayoutSizeRange() const
 
 		LayoutSizeRange sizeRange = child->CalculateLayoutSizeRange();
 
-		if(child->GetTypeInternal() == GUIElementBase::Type::FixedSpace || child->GetTypeInternal() == GUIElementBase::Type::FlexibleSpace)
+		if(child->GetType() == GUIElementBase::Type::FixedSpace || child->GetType() == GUIElementBase::Type::FlexibleSpace)
 		{
 			sizeRange.Optimal.X = sizeRange.Optimal.Y = 0;
 			sizeRange.Min.X = sizeRange.Min.Y = 0;
@@ -66,7 +66,7 @@ LayoutSizeRange GUIPanel::CalculateLayoutSizeRange() const
 
 LayoutSizeRange GUIPanel::GetElementSizeRangeInternal(const GUIElementBase* element) const
 {
-	if(element->GetTypeInternal() == GUIElementBase::Type::FixedSpace || element->GetTypeInternal() == GUIElementBase::Type::FlexibleSpace)
+	if(element->GetType() == GUIElementBase::Type::FixedSpace || element->GetType() == GUIElementBase::Type::FlexibleSpace)
 	{
 		LayoutSizeRange sizeRange = element->GetLayoutSizeRange();
 		sizeRange.Optimal.X = 0;
@@ -127,7 +127,7 @@ void GUIPanel::UpdateOptimalLayoutSizes()
 	mSizeRange.Min.Y = std::max(mSizeRange.Min.Y, minSize.Y);
 }
 
-void GUIPanel::GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
+void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
 {
 	B3D_ASSERT(mChildren.size() == numElements);
 
@@ -230,7 +230,7 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 	if(numElements > 0)
 		elementAreas = B3DStackNew<Rect2I>(numElements);
 
-	GetElementAreas(data.Area, elementAreas, numElements, mChildSizeRanges, mSizeRange);
+	GetChildLayoutAreas(data.Area, elementAreas, numElements, mChildSizeRanges, mSizeRange);
 
 	u32 childIdx = 0;
 

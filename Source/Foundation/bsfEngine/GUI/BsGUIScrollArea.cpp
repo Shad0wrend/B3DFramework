@@ -89,7 +89,7 @@ void GUIScrollArea::UpdateOptimalLayoutSizes()
 	mSizeRange = mDimensions.CalculateSizeRange(GetOptimalSize());
 }
 
-void GUIScrollArea::GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
+void GUIScrollArea::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
 {
 	Vector2I visibleSize, contentSize;
 	GetElementAreasInternal(layoutArea, elementAreas, numElements, sizeRanges, visibleSize, contentSize);

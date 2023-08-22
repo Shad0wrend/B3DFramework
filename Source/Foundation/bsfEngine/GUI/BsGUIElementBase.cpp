@@ -436,7 +436,7 @@ LayoutSizeRange GUIElementBase::GetLayoutSizeRange() const
 	return CalculateLayoutSizeRange();
 }
 
-void GUIElementBase::GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
+void GUIElementBase::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
 {
 	B3D_ASSERT(mChildren.size() == 0);
 }
@@ -446,7 +446,7 @@ void GUIElementBase::SetParent(GUIElementBase* parent)
 	if(mParentElement != parent)
 	{
 		mParentElement = parent;
-		UpdateAUParentsInternal();
+		UpdateAnchorAndUpdateParents();
 
 		if(parent != nullptr)
 		{
@@ -507,22 +507,22 @@ void GUIElementBase::DestroyChildElements()
 	Vector<GUIElementBase*> childCopy = mChildren;
 	for(auto& child : childCopy)
 	{
-		if(child->GetTypeInternal() == Type::Element)
+		if(child->GetType() == Type::Element)
 		{
 			const auto element = static_cast<GUIElement*>(child);
 			GUIElement::Destroy(element);
 		}
-		else if(child->GetTypeInternal() == Type::Layout || child->GetTypeInternal() == GUIElementBase::Type::Panel)
+		else if(child->GetType() == Type::Layout || child->GetType() == GUIElementBase::Type::Panel)
 		{
 			const auto layout = static_cast<GUILayout*>(child);
 			GUILayout::Destroy(layout);
 		}
-		else if(child->GetTypeInternal() == Type::FixedSpace)
+		else if(child->GetType() == Type::FixedSpace)
 		{
 			const auto space = static_cast<GUIFixedSpace*>(child);
 			GUIFixedSpace::Destroy(space);
 		}
-		else if(child->GetTypeInternal() == Type::FlexibleSpace)
+		else if(child->GetType() == Type::FlexibleSpace)
 		{
 			const auto space = static_cast<GUIFlexibleSpace*>(child);
 			GUIFlexibleSpace::Destroy(space);
@@ -555,7 +555,7 @@ void GUIElementBase::ChangeParentWidget(GUIWidget* widget)
 	MarkLayoutAsDirty();
 }
 
-void GUIElementBase::UpdateAUParentsInternal()
+void GUIElementBase::UpdateAnchorAndUpdateParents()
 {
 	GUIElementBase* updateParent = nullptr;
 	if(mParentElement != nullptr)
@@ -564,7 +564,7 @@ void GUIElementBase::UpdateAUParentsInternal()
 
 		// If parent is a panel then we can do an optimization and only update
 		// one child instead of all of them, so change parent to that child.
-		if(updateParent != nullptr && updateParent->GetTypeInternal() == GUIElementBase::Type::Panel)
+		if(updateParent != nullptr && updateParent->GetType() == GUIElementBase::Type::Panel)
 		{
 			GUIElementBase* optimizedUpdateParent = this;
 			while(optimizedUpdateParent->GetParent() != updateParent)
@@ -578,7 +578,7 @@ void GUIElementBase::UpdateAUParentsInternal()
 	GUIElementBase* currentParent = mParentElement;
 	while(currentParent != nullptr)
 	{
-		if(currentParent->GetTypeInternal() == Type::Panel)
+		if(currentParent->GetType() == Type::Panel)
 		{
 			anchorParent = static_cast<GUIPanel*>(currentParent);
 			break;
@@ -618,7 +618,7 @@ void GUIElementBase::RefreshChildUpdateParents()
 
 		// If parent is a panel then we can do an optimization and only update
 		// one child instead of all of them, so change parent to that child.
-		if(childUpdateParent != nullptr && childUpdateParent->GetTypeInternal() == GUIElementBase::Type::Panel)
+		if(childUpdateParent != nullptr && childUpdateParent->GetType() == GUIElementBase::Type::Panel)
 		{
 			GUIElementBase* optimizedUpdateParent = child;
 			while(optimizedUpdateParent->GetParent() != childUpdateParent)
@@ -635,7 +635,7 @@ void GUIElementBase::SetAnchorParent(GUIPanel* anchorParent)
 {
 	mAnchorParent = anchorParent;
 
-	if(GetTypeInternal() == Type::Panel)
+	if(GetType() == Type::Panel)
 		return;
 
 	for(auto& child : mChildren)

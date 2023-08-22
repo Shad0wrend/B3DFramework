@@ -41,24 +41,24 @@ void GUIElement::SetStyle(const String& styleName)
 	RefreshStyle();
 }
 
-bool GUIElement::DoOnMouseEvent(const GUIMouseEvent& ev)
+bool GUIElement::DoOnMouseEvent(const GUIMouseEvent& event)
 {
 	return false;
 }
 
-bool GUIElement::DoOnTextInputEvent(const GUITextInputEvent& ev)
+bool GUIElement::DoOnTextInputEvent(const GUITextInputEvent& event)
 {
 	return false;
 }
 
-bool GUIElement::DoOnCommandEvent(const GUICommandEvent& ev)
+bool GUIElement::DoOnCommandEvent(const GUICommandEvent& event)
 {
-	if(ev.GetType() == GUICommandEventType::FocusGained)
+	if(event.GetType() == GUICommandEventType::FocusGained)
 	{
 		OnFocusChanged(true);
 		return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
 	}
-	else if(ev.GetType() == GUICommandEventType::FocusLost)
+	else if(event.GetType() == GUICommandEventType::FocusLost)
 	{
 		OnFocusChanged(false);
 		return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
@@ -67,7 +67,7 @@ bool GUIElement::DoOnCommandEvent(const GUICommandEvent& ev)
 	return false;
 }
 
-bool GUIElement::DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& ev)
+bool GUIElement::DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& event)
 {
 	return false;
 }
@@ -110,7 +110,7 @@ void GUIElement::ChangeParentWidget(GUIWidget* widget)
 	if(mParentWidget != widget)
 	{
 		// Unregister from current widget's nav-group
-		if(!mNavGroup && mParentWidget)
+		if(!mNavigationGroup && mParentWidget)
 			mParentWidget->GetDefaultNavGroupInternal()->UnregisterElement(this);
 
 		widgetChanged = true;
@@ -121,7 +121,7 @@ void GUIElement::ChangeParentWidget(GUIWidget* widget)
 	if(widgetChanged)
 	{
 		// Register with the new widget's nav-group
-		if(!mNavGroup && mParentWidget)
+		if(!mNavigationGroup && mParentWidget)
 			mParentWidget->GetDefaultNavGroupInternal()->RegisterElement(this);
 
 		RefreshStyle();
@@ -140,9 +140,9 @@ const RectOffset& GUIElement::GetPadding() const
 	}
 }
 
-void GUIElement::SetNavGroup(const SPtr<GUINavGroup>& navGroup)
+void GUIElement::SetNavigationGroup(const SPtr<GUINavGroup>& navGroup)
 {
-	SPtr<GUINavGroup> currentNavGroup = GetNavGroup();
+	SPtr<GUINavGroup> currentNavGroup = GetNavigationGroup();
 	if(currentNavGroup == navGroup)
 		return;
 
@@ -152,20 +152,20 @@ void GUIElement::SetNavGroup(const SPtr<GUINavGroup>& navGroup)
 	if(navGroup)
 		navGroup->RegisterElement(this);
 
-	mNavGroup = navGroup;
+	mNavigationGroup = navGroup;
 }
 
-void GUIElement::SetNavGroupIndex(i32 index)
+void GUIElement::SetNavigationGroupIndex(i32 index)
 {
-	SPtr<GUINavGroup> navGroup = GetNavGroup();
+	SPtr<GUINavGroup> navGroup = GetNavigationGroup();
 	if(navGroup != nullptr)
 		navGroup->SetIndex(this, index);
 }
 
-SPtr<GUINavGroup> GUIElement::GetNavGroup() const
+SPtr<GUINavGroup> GUIElement::GetNavigationGroup() const
 {
-	if(mNavGroup)
-		return mNavGroup;
+	if(mNavigationGroup)
+		return mNavigationGroup;
 
 	if(mParentWidget)
 		return mParentWidget->GetDefaultNavGroupInternal();
@@ -296,7 +296,7 @@ void GUIElement::Destroy(GUIElement* element)
 	if(element->mIsDestroyed)
 		return;
 
-	SPtr<GUINavGroup> currentNavGroup = element->GetNavGroup();
+	SPtr<GUINavGroup> currentNavGroup = element->GetNavigationGroup();
 	if(currentNavGroup)
 		currentNavGroup->UnregisterElement(element);
 

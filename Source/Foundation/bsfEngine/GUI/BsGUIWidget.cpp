@@ -159,7 +159,7 @@ void GUIWidget::UpdateLayoutInternal()
 		u32 width = area.Width;
 		u32 height = area.Height;
 
-		const Rect2I& panelArea = mPanel->GetLayoutDataInternal().Area;
+		const Rect2I& panelArea = mPanel->GetLayoutData().Area;
 		if(panelArea.Width != width || panelArea.Height != height)
 		{
 			UpdateRootPanel();
@@ -180,7 +180,7 @@ void GUIWidget::UpdateLayoutInternal()
 
 		if(currentElem->IsDirty())
 		{
-			GUIElementBase* updateParent = currentElem->GetUpdateParentInternal();
+			GUIElementBase* updateParent = currentElem->GetUpdateParent();
 			B3D_ASSERT(updateParent != nullptr || currentElem == mPanel);
 
 			if(updateParent != nullptr)
@@ -202,7 +202,7 @@ void GUIWidget::UpdateLayoutInternal()
 void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 {
 	GUIElementBase* parent = elem->GetParent();
-	bool isPanelOptimized = parent != nullptr && parent->GetTypeInternal() == GUIElementBase::Type::Panel;
+	bool isPanelOptimized = parent != nullptr && parent->GetType() == GUIElementBase::Type::Panel;
 
 	GUIElementBase* updateParent = nullptr;
 
@@ -221,9 +221,9 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 		dirtyElement->UpdateOptimalLayoutSizes();
 
 		LayoutSizeRange elementSizeRange = panel->GetElementSizeRangeInternal(dirtyElement);
-		Rect2I elementArea = panel->GetElementAreaInternal(panel->GetLayoutDataInternal().Area, dirtyElement, elementSizeRange);
+		Rect2I elementArea = panel->GetElementAreaInternal(panel->GetLayoutData().Area, dirtyElement, elementSizeRange);
 
-		GUILayoutData childLayoutData = panel->GetLayoutDataInternal();
+		GUILayoutData childLayoutData = panel->GetLayoutData();
 		panel->UpdateDepthRangeInternal(childLayoutData);
 		childLayoutData.Area = elementArea;
 
@@ -231,7 +231,7 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 	}
 	else
 	{
-		GUILayoutData childLayoutData = updateParent->GetLayoutDataInternal();
+		GUILayoutData childLayoutData = updateParent->GetLayoutData();
 		updateParent->UpdateLayout(childLayoutData);
 	}
 
@@ -261,7 +261,7 @@ void GUIWidget::RegisterElement(GUIElementBase* guiElementBase)
 {
 	B3D_ASSERT(guiElementBase != nullptr && !guiElementBase->IsDestroyed());
 
-	if(guiElementBase->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElementBase->GetType() == GUIElementBase::Type::Element)
 	{
 		mElements.push_back(static_cast<GUIElement*>(guiElementBase));
 		mWidgetIsDirty = true;
@@ -287,7 +287,7 @@ void GUIWidget::UnregisterElement(GUIElementBase* guiElement)
 		mWidgetIsDirty = true;
 	}
 
-	if(guiElement->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(guiElement->GetType() == GUIElementBase::Type::Element)
 	{
 		mDirtyContents.erase(static_cast<GUIElement*>(guiElement));
 
@@ -298,7 +298,7 @@ void GUIWidget::UnregisterElement(GUIElementBase* guiElement)
 
 void GUIWidget::NotifyElementVisibilityChanged(GUIElementBase* guiElementBase, bool isVisible)
 {
-	if(guiElementBase->GetTypeInternal() != GUIElementBase::Type::Element)
+	if(guiElementBase->GetType() != GUIElementBase::Type::Element)
 		return;
 
 	const auto guiElement = static_cast<GUIElement*>(guiElementBase);
@@ -312,13 +312,13 @@ void GUIWidget::MarkMeshDirty(GUIElementBase* elem)
 {
 	mWidgetIsDirty = true;
 
-	if(elem->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(elem->GetType() == GUIElementBase::Type::Element)
 		mBatches.MarkMeshDirty(static_cast<GUIElement*>(elem));
 }
 
 void GUIWidget::MarkContentDirty(GUIElementBase* elem)
 {
-	if(elem->GetTypeInternal() == GUIElementBase::Type::Element)
+	if(elem->GetType() == GUIElementBase::Type::Element)
 	{
 		auto guiElement = static_cast<GUIElement*>(elem);
 		if(!guiElement->IsVisible())

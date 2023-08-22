@@ -80,7 +80,7 @@ namespace bs
 
 		Vector2I GetOptimalSize() const override { return mSizeRange.Optimal; }
 		const RectOffset& GetPadding() const override;
-		Type GetTypeInternal() const override { return GUIElementBase::Type::Layout; }
+		Type GetType() const override { return GUIElementBase::Type::Layout; }
 
 		/** @} */
 

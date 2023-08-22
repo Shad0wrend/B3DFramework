@@ -86,7 +86,7 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DROP_DOWN_BOX
 	mFrontHitBox = GUIDropDownHitBox::Create(false, false);
 	mFrontHitBox->OnFocusLost.Connect(std::bind(&GUIDropDownMenu::DropDownFocusLost, this));
 	mFrontHitBox->SetFocus(true);
-	GUILayoutData hitboxLayoutData = mFrontHitBox->GetLayoutDataInternal();
+	GUILayoutData hitboxLayoutData = mFrontHitBox->GetLayoutData();
 	hitboxLayoutData.SetWidgetDepth(0);
 	hitboxLayoutData.SetPanelDepth(std::numeric_limits<i16>::min());
 	mFrontHitBox->SetLayoutData(hitboxLayoutData);
@@ -94,7 +94,7 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DROP_DOWN_BOX
 	mFrontHitBox->MarkLayoutAsDirty();
 
 	mBackHitBox = GUIDropDownHitBox::Create(false, true);
-	GUILayoutData backHitboxLayoutData = mBackHitBox->GetLayoutDataInternal();
+	GUILayoutData backHitboxLayoutData = mBackHitBox->GetLayoutData();
 	backHitboxLayoutData.SetWidgetDepth(0);
 	backHitboxLayoutData.SetPanelDepth(std::numeric_limits<i16>::max());
 	mBackHitBox->SetLayoutData(backHitboxLayoutData);
@@ -109,7 +109,7 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DROP_DOWN_BOX
 
 	mCaptureHitBox = GUIDropDownHitBox::Create(true, false);
 	mCaptureHitBox->SetBounds(captureBounds);
-	GUILayoutData captureHitboxLayoutData = mCaptureHitBox->GetLayoutDataInternal();
+	GUILayoutData captureHitboxLayoutData = mCaptureHitBox->GetLayoutData();
 	captureHitboxLayoutData.SetWidgetDepth(0);
 	captureHitboxLayoutData.SetPanelDepth(std::numeric_limits<i16>::max());
 	mCaptureHitBox->SetLayoutData(captureHitboxLayoutData);

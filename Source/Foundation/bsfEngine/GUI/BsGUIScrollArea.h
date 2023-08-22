@@ -133,7 +133,7 @@ namespace bs
 		 *  @{
 		 */
 
-		ElementType GetElementTypeInternal() const override { return ElementType::ScrollArea; }
+		ElementType GetElementType() const override { return ElementType::ScrollArea; }
 
 		/** @} */
 	protected:
@@ -166,7 +166,7 @@ namespace bs
 
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
 
-		void GetElementAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
+		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
 
 		/**
 		 * @copydoc	GUIElementContainer::GetElementAreasInternal:

@@ -69,7 +69,7 @@ void GUIInputTool::UpdateText(const GUIElement* element, const TextSpriteInforma
 
 Vector2I GUIInputTool::GetTextOffset() const
 {
-	Vector2I offset(mElement->GetLayoutDataInternal().Area.X, mElement->GetLayoutDataInternal().Area.Y);
+	Vector2I offset(mElement->GetLayoutData().Area.X, mElement->GetLayoutData().Area.Y);
 
 	return offset + mElement->GetTextInputOffset() + Vector2I(mElement->GetTextInputRect().X, mElement->GetTextInputRect().Y);
 }
