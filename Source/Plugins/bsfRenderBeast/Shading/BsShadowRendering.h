@@ -430,7 +430,7 @@ namespace bs
 		private:
 			SPtr<PooledRenderTexture> mAtlas;
 
-			TextureAtlasLayout mLayout;
+			StaticTextureAtlasLayout mLayout;
 			u32 mLastUsedCounter;
 		};
 

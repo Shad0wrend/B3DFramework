@@ -13,8 +13,8 @@ namespace bs
 	 *  @{
 	 */
 
-	/** Organizes a set of textures into a single larger texture (an atlas) by minimizing empty space. */
-	class B3D_UTILITY_EXPORT TextureAtlasLayout
+	/** Organizes a set of textures into a single larger texture (an atlas) by minimizing empty space. Does not allow modifications after initial construction. */
+	class B3D_UTILITY_EXPORT StaticTextureAtlasLayout
 	{
 		/** Represent a single node in the texture atlas binary tree. */
 		class TexAtlasNode
@@ -35,7 +35,7 @@ namespace bs
 		};
 
 	public:
-		TextureAtlasLayout() = default;
+		StaticTextureAtlasLayout() = default;
 
 		/**
 		 * Constructs a new texture atlas layout with the provided parameters.
@@ -46,7 +46,7 @@ namespace bs
 		 * @param[in]	maxHeight		Maximum height the atlas texture is allowed to grow to, when elements don't fit.
 		 * @param[in]	pow2			When true the resulting atlas size will always be a power of two.
 		 */
-		TextureAtlasLayout(u32 width, u32 height, u32 maxWidth, u32 maxHeight, bool pow2 = false)
+		StaticTextureAtlasLayout(u32 width, u32 height, u32 maxWidth, u32 maxHeight, bool pow2 = false)
 			: mInitialWidth(width), mInitialHeight(height), mWidth(width), mHeight(height), mPow2(pow2)
 		{
 			mNodes.push_back(TexAtlasNode(0, 0, maxWidth, maxHeight));
@@ -101,20 +101,21 @@ namespace bs
 		Vector<TexAtlasNode> mNodes;
 	};
 
-	/** Settings that control how a DynamicTextureAtlasLayout behaves. */
-	struct DynamicTextureAtlasLayoutSettings
+	/** Settings that control how a TreeTextureAtlasLayout behaves. */
+	struct TreeTextureAtlasLayoutSettings
 	{
 		Size2UI Size = Size2UI(2048, 2048); /**< Size of the atlas in pixels. */
 		Size2UI Alignment = Size2UI(1, 1); /**< If >1 all allocations will be in multiple of this value. Higher values help reduce fragmentation. */
 		u32 SmallSizeLimit = 32; /**< Free nodes with rectangles under this size are treated as small and will be placed in a separate bucket for faster lookup. */
 		u32 LargeSizeLimit = 256; /**< Free nodes with rectangles over this size are treated as large and will be placed in a separate bucket for faster lookup. */
+		u32 MaximumPageCount = 0; /**< Maximum number of pages to allocated. If 0 it will be unlimited. */
 	};
 
 	/**
-	 * Organizes a set of textures into a single larger texture (an atlas) by minimizing empty space. Unlike TextureAtlasLayout
-	 * this layout allows elements to be dynamically added and removed.
+	 * Organizes a set of textures into a single larger texture (an atlas) by minimizing empty space. Uses a tree structure to minimize wasted space. Elements
+	 * can be dynamically added and removed from the layout.
 	 */
-	class B3D_UTILITY_EXPORT DynamicTextureAtlasLayout
+	class B3D_UTILITY_EXPORT TreeTextureAtlasLayout
 	{
 		/** Determines how are child nodes laid out in a container node. */
 		enum class NodeOrientation
@@ -170,16 +171,22 @@ namespace bs
 			NodeOrientation LargerAreaOrientation = NodeOrientation::Vertical;
 		};
 
+		/** Single atlas page. */
+		struct Page
+		{
+			u32 RootNodeIndex = ~0u;
+			Array<FreeNodeBucket, (u32)FreeNodeBucketType::Count> FreeNodeBuckets;
+		};
+
 	public:
 		struct Allocation
 		{
 			u32 NodeId = ~0u;
+			u32 PageId = ~0u;
 			Vector2I Position;
 		};
 
-		DynamicTextureAtlasLayout(const DynamicTextureAtlasLayoutSettings& settings = DynamicTextureAtlasLayoutSettings());
-
-		// TODO - Automamtically add new pages as needed. Make this configurable?
+		TreeTextureAtlasLayout(const TreeTextureAtlasLayoutSettings& settings = TreeTextureAtlasLayoutSettings());
 
 		/**
 		 * Attempts to add a new element in the layout. 
@@ -190,20 +197,20 @@ namespace bs
 		Optional<Allocation> AddElement(const Size2UI& size);
 
 		/** Removes an element from the provided node. */
-		void RemoveElement(u32 nodeId);
+		void RemoveElement(u32 pageId, u32 nodeId);
 
 		/** Removes all entries from the layout. */
 		void Clear();
 
 		/** Checks have any elements been added to the layout. */
-		bool IsEmpty() const { return mNodes.size() == 1; }
+		bool IsEmpty() const { return mPages.size() == 0; }
 
 		/** Returns the size of the atlas texture, in pixels. */
 		const Size2UI& GetSize() const { return mSettings.Size; }
 
 	private:
 		/** Finds a bucket that stores nodes of the provided size. */
-		u32 GetFreeNodeBucketForSize(const Size2UI& size) const;
+		u32 GetFreeNodeBucketForSize(Page& page, const Size2UI& size) const;
 
 		/** Aligns the provided size to the alignment requested in layout settings. */
 		Size2UI AlignSize(const Size2UI& size) const;
@@ -212,10 +219,10 @@ namespace bs
 		NodeSplitResult Split(const Node& nodeToSplit, const Size2UI& requiredSize) const;
 
 		/** Finds the index of the best fitting node that can be the provided area. Returns ~0u if no such node can be found. */
-		u32 FindBestFreeNode(const Size2UI& size);
+		u32 FindBestFreeNode(Page& page, const Size2UI& size);
 
 		/** Registers the node in the appropriate free node bucket. */
-		void RegisterFreeNode(u32 nodeId, const Size2UI& size);
+		void RegisterFreeNode(Page& page, u32 nodeId, const Size2UI& size);
 
 		/** Allocates a new mode in the nodes array and returns the allocated index. This method will attempt to recycle unused nodes before allocating new nodes. */
 		u32 AllocateNode();
@@ -223,14 +230,19 @@ namespace bs
 		/** Marks the node as unused and frees it for re-allocation. */
 		void FreeNode(u32 nodeId);
 
+		/** Allocates a new atlas page. */
+		Page AllocatePage();
+
+		/** Frees a page. Assumes the page contains only the root node. */
+		void FreePage(u32 pageId);
+
 		/** Attempts to merge the next sibling of the provided node into the node, if the sibling exists and is free. */
 		void MergeWithNextSibling(u32 nodeId);
 
-		DynamicTextureAtlasLayoutSettings mSettings;
+		TreeTextureAtlasLayoutSettings mSettings;
 
-		u32 mRootNodeIndex = ~0u;
 		Vector<Node> mNodes;
-		Array<FreeNodeBucket, (u32)FreeNodeBucketType::Count> mFreeNodeBuckets;
+		SmallVector<Page, 2> mPages;
 		u32 mUnusedNodeListHead = ~0u; /**< Index into mNodex of the first unused node, stored as a linked list. ~0u if no unused nodes. */
 	};
 

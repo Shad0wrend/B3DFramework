@@ -6,7 +6,7 @@
 
 using namespace bs;
 
-bool TextureAtlasLayout::AddElement(u32 width, u32 height, u32& x, u32& y)
+bool StaticTextureAtlasLayout::AddElement(u32 width, u32 height, u32& x, u32& y)
 {
 	if(width == 0 || height == 0)
 	{
@@ -37,7 +37,7 @@ bool TextureAtlasLayout::AddElement(u32 width, u32 height, u32& x, u32& y)
 	return true;
 }
 
-void TextureAtlasLayout::Clear()
+void StaticTextureAtlasLayout::Clear()
 {
 	mNodes.clear();
 	mNodes.push_back(TexAtlasNode(0, 0, mWidth, mHeight));
@@ -46,7 +46,7 @@ void TextureAtlasLayout::Clear()
 	mHeight = mInitialHeight;
 }
 
-bool TextureAtlasLayout::AddToNode(u32 nodeIdx, u32 width, u32 height, u32& x, u32& y, bool allowGrowth)
+bool StaticTextureAtlasLayout::AddToNode(u32 nodeIdx, u32 width, u32 height, u32& x, u32& y, bool allowGrowth)
 {
 	TexAtlasNode* node = &mNodes[nodeIdx];
 	float aspect = node->Width / (float)node->Height;
@@ -116,12 +116,12 @@ Vector<TextureAtlasUtility::Page> TextureAtlasUtility::CreateAtlasLayout(Vector<
 	std::sort(elements.begin(), elements.end(), [](const Element& a, const Element& b)
 			  { return a.Input.Width * a.Input.Height > b.Input.Width * b.Input.Height; });
 
-	Vector<TextureAtlasLayout> layouts;
+	Vector<StaticTextureAtlasLayout> layouts;
 	u32 remainingCount = (u32)elements.size();
 	while(remainingCount > 0)
 	{
-		layouts.push_back(TextureAtlasLayout(width, height, maxWidth, maxHeight, pow2));
-		TextureAtlasLayout& curLayout = layouts.back();
+		layouts.push_back(StaticTextureAtlasLayout(width, height, maxWidth, maxHeight, pow2));
+		StaticTextureAtlasLayout& curLayout = layouts.back();
 
 		// Find largest unassigned element that fits
 		u32 sizeLimit = std::numeric_limits<u32>::max();
@@ -174,7 +174,7 @@ Vector<TextureAtlasUtility::Page> TextureAtlasUtility::CreateAtlasLayout(Vector<
 }
 
 // Based on: https://github.com/nical/guillotiere
-DynamicTextureAtlasLayout::DynamicTextureAtlasLayout(const DynamicTextureAtlasLayoutSettings& settings)
+TreeTextureAtlasLayout::TreeTextureAtlasLayout(const TreeTextureAtlasLayoutSettings& settings)
 	: mSettings(settings)
 {
 	B3D_ENSURE(settings.SmallSizeLimit < settings.LargeSizeLimit);
@@ -182,30 +182,41 @@ DynamicTextureAtlasLayout::DynamicTextureAtlasLayout(const DynamicTextureAtlasLa
 	B3D_ENSURE(settings.Alignment.Width > 0 && settings.Alignment.Height > 0);
 	B3D_ENSURE(settings.Alignment.Width <= settings.Size.Width);
 	B3D_ENSURE(settings.Alignment.Height <= settings.Size.Height);
-
-	Node rootNode;
-	rootNode.Area = Rect2I(0, 0, mSettings.Size.Width, mSettings.Size.Height);
-	rootNode.State = NodeState::Free;
-
-	mFreeNodeBuckets[0].Size = mSettings.SmallSizeLimit;
-	mFreeNodeBuckets[1].Size = mSettings.LargeSizeLimit;
-	mFreeNodeBuckets[2].Size = ~0u;
-
-	mNodes.push_back(rootNode);
-	mRootNodeIndex = 0;
-
-	FreeNodeBucket& rootNodeBucket = mFreeNodeBuckets[GetFreeNodeBucketForSize(mSettings.Size)];
-	rootNodeBucket.FreeNodes.push_back(0);
 }
 
-Optional<DynamicTextureAtlasLayout::Allocation> DynamicTextureAtlasLayout::AddElement(const Size2UI& size)
+Optional<TreeTextureAtlasLayout::Allocation> TreeTextureAtlasLayout::AddElement(const Size2UI& size)
 {
 	if(size.Width == 0 || size.Height == 0)
 		return {};
 
 	const Size2UI alignedSize = AlignSize(size);
+	if(alignedSize.Width > mSettings.Size.Width || alignedSize.Height > mSettings.Size.Height)
+		return {};
 
-	u32 bestFreeNodeId = FindBestFreeNode(alignedSize);
+	u32 bestFreeNodeId = ~0u;
+	Page* freePage = nullptr;
+
+	for(auto& page : mPages)
+	{
+		bestFreeNodeId = FindBestFreeNode(page, alignedSize);
+		if(bestFreeNodeId != ~0u)
+		{
+			freePage = &page;
+			break;
+		}
+	}
+
+	if(freePage == nullptr)
+	{
+		const u32 pageCount = (u32)mPages.size();
+		if(pageCount == mSettings.MaximumPageCount)
+			return {}; // No more room
+
+		mPages.Add(AllocatePage());
+		freePage = &mPages.back();
+		bestFreeNodeId = FindBestFreeNode(*freePage, alignedSize);
+	}
+
 	if(bestFreeNodeId == ~0u)
 		return {};
 
@@ -332,10 +343,10 @@ Optional<DynamicTextureAtlasLayout::Allocation> DynamicTextureAtlasLayout::AddEl
 	}
 
 	if(smallerLeftoverNodeId != ~0u)
-		RegisterFreeNode(smallerLeftoverNodeId, Size2UI(splitResult.SmallerLeftoverArea.Width, splitResult.SmallerLeftoverArea.Height));
+		RegisterFreeNode(*freePage, smallerLeftoverNodeId, Size2UI(splitResult.SmallerLeftoverArea.Width, splitResult.SmallerLeftoverArea.Height));
 
 	if(largerLeftoverNodeId != ~0u)
-		RegisterFreeNode(largerLeftoverNodeId, Size2UI(splitResult.LargerLeftoverArea.Width, splitResult.LargerLeftoverArea.Height));
+		RegisterFreeNode(*freePage, largerLeftoverNodeId, Size2UI(splitResult.LargerLeftoverArea.Width, splitResult.LargerLeftoverArea.Height));
 
 	Allocation output;
 	output.NodeId = allocatedNodeId;
@@ -344,11 +355,15 @@ Optional<DynamicTextureAtlasLayout::Allocation> DynamicTextureAtlasLayout::AddEl
 	return output;
 }
 
-void DynamicTextureAtlasLayout::RemoveElement(u32 nodeId)
+void TreeTextureAtlasLayout::RemoveElement(u32 pageId, u32 nodeId)
 {
+	if(!B3D_ENSURE(pageId < (u32)mPages.size()))
+		return;
+
 	if(!B3D_ENSURE(nodeId < (u32)mNodes.size()))
 		return;
 
+	Page& page = mPages[pageId];
 	Node& nodeToFree = mNodes[nodeId];
 	B3D_ENSURE(nodeToFree.State == NodeState::Allocated);
 
@@ -388,25 +403,42 @@ void DynamicTextureAtlasLayout::RemoveElement(u32 nodeId)
 			else
 			{
 				const Size2UI freedArea(currentNode.Area.Width, currentNode.Area.Height);
-				RegisterFreeNode(currentNodeId, freedArea);
+				RegisterFreeNode(page, currentNodeId, freedArea);
 				break;
 			}
 		}
 	}
+
+	// Free page if empty
+	u32 currentPageId = pageId;
+	while(currentPageId == (u32)(mPages.size() - 1)) // Due to page IDs being indices, we can only free pages from the back
+	{
+		Page& currentPage = mPages[currentPageId];
+		if(mNodes[currentPage.RootNodeIndex].State != NodeState::Free)
+			break;
+
+		FreePage(currentPageId);
+		mPages.Pop();
+
+		if(currentPageId == 0)
+			break;
+
+		--currentPageId;
+	}
 }
 
-u32 DynamicTextureAtlasLayout::FindBestFreeNode(const Size2UI& size)
+u32 TreeTextureAtlasLayout::FindBestFreeNode(Page& page, const Size2UI& size)
 {
-	const u32 bestBucketIndex = GetFreeNodeBucketForSize(size);
-	const bool useWorstFit = bestBucketIndex == (u32)(mFreeNodeBuckets.size() - 1); // Worst fit for bucket containing large objects
+	const u32 bestBucketIndex = GetFreeNodeBucketForSize(page, size);
+	const bool useWorstFit = bestBucketIndex == (u32)(page.FreeNodeBuckets.size() - 1); // Worst fit for bucket containing large objects
 
-	for(u32 bucketIndex = bestBucketIndex; bucketIndex < (u32)(mFreeNodeBuckets.size() - 1); ++bucketIndex)
+	for(u32 bucketIndex = bestBucketIndex; bucketIndex < (u32)(page.FreeNodeBuckets.size() - 1); ++bucketIndex)
 	{
 		u32 bestScore = useWorstFit ? 0 : std::numeric_limits<u32>::max();
 		u32 bestNodeIndex = ~0u;
 		u32 bestBucketEntryIndex = ~0u;
 
-		FreeNodeBucket& bucket = mFreeNodeBuckets[bucketIndex];
+		FreeNodeBucket& bucket = page.FreeNodeBuckets[bucketIndex];
 		for(u32 bucketEntryIndex = 0; bucketEntryIndex < (u32)bucket.FreeNodes.size(); ++bucketEntryIndex)
 		{
 			const u32 nodeIndex = bucket.FreeNodes[bucketEntryIndex];
@@ -451,15 +483,15 @@ u32 DynamicTextureAtlasLayout::FindBestFreeNode(const Size2UI& size)
 	return ~0u;
 }
 
-void DynamicTextureAtlasLayout::RegisterFreeNode(u32 nodeId, const Size2UI& size)
+void TreeTextureAtlasLayout::RegisterFreeNode(Page& page, u32 nodeId, const Size2UI& size)
 {
 	B3D_ENSURE(mNodes[nodeId].State == NodeState::Free);
 
-	const u32 bestBucketIndex = GetFreeNodeBucketForSize(size);
-	mFreeNodeBuckets[bestBucketIndex].FreeNodes.push_back(nodeId);
+	const u32 bestBucketIndex = GetFreeNodeBucketForSize(page, size);
+	page.FreeNodeBuckets[bestBucketIndex].FreeNodes.push_back(nodeId);
 }
 
-Size2UI DynamicTextureAtlasLayout::AlignSize(const Size2UI& size) const
+Size2UI TreeTextureAtlasLayout::AlignSize(const Size2UI& size) const
 {
 	Size2UI output;
 	output.Width = Math::CeilToMultiple(size.Width, mSettings.Alignment.Width);
@@ -468,19 +500,19 @@ Size2UI DynamicTextureAtlasLayout::AlignSize(const Size2UI& size) const
 	return output;
 }
 
-u32 DynamicTextureAtlasLayout::GetFreeNodeBucketForSize(const Size2UI& size) const
+u32 TreeTextureAtlasLayout::GetFreeNodeBucketForSize(Page& page, const Size2UI& size) const
 {
 	const u32 largestDimension = Math::Max(size.Width, size.Height);
-	for(u32 bucketIndex = 0; bucketIndex < (u32)mFreeNodeBuckets.size(); bucketIndex++)
+	for(u32 bucketIndex = 0; bucketIndex < (u32)page.FreeNodeBuckets.size(); bucketIndex++)
 	{
-		if(largestDimension <= mFreeNodeBuckets[bucketIndex].Size)
+		if(largestDimension <= page.FreeNodeBuckets[bucketIndex].Size)
 			return bucketIndex;
 	}
 
-	return (u32)mFreeNodeBuckets.size() - 1;
+	return (u32)page.FreeNodeBuckets.size() - 1;
 }
 
-DynamicTextureAtlasLayout::NodeSplitResult DynamicTextureAtlasLayout::Split(const Node& nodeToSplit, const Size2UI& requiredSize) const
+TreeTextureAtlasLayout::NodeSplitResult TreeTextureAtlasLayout::Split(const Node& nodeToSplit, const Size2UI& requiredSize) const
 {
 	NodeSplitResult result;
 
@@ -526,7 +558,7 @@ DynamicTextureAtlasLayout::NodeSplitResult DynamicTextureAtlasLayout::Split(cons
 	return result;
 }
 
-u32 DynamicTextureAtlasLayout::AllocateNode()
+u32 TreeTextureAtlasLayout::AllocateNode()
 {
 	if(mUnusedNodeListHead < (u32)mNodes.size())
 	{
@@ -541,14 +573,14 @@ u32 DynamicTextureAtlasLayout::AllocateNode()
 	return (u32)mNodes.size() - 1;
 }
 
-void DynamicTextureAtlasLayout::FreeNode(u32 nodeId)
+void TreeTextureAtlasLayout::FreeNode(u32 nodeId)
 {
 	mNodes[nodeId].State = NodeState::Unused;
 	mNodes[nodeId].NextSiblingId = mUnusedNodeListHead;
 	mUnusedNodeListHead = nodeId;
 }
 
-void DynamicTextureAtlasLayout::MergeWithNextSibling(u32 nodeId)
+void TreeTextureAtlasLayout::MergeWithNextSibling(u32 nodeId)
 {
 	Node& nodeToMerge = mNodes[nodeId];
 	B3D_ENSURE(nodeToMerge.State == NodeState::Free);
@@ -584,22 +616,42 @@ void DynamicTextureAtlasLayout::MergeWithNextSibling(u32 nodeId)
 	FreeNode(nextSiblingId);
 }
 
-void DynamicTextureAtlasLayout::Clear()
+void TreeTextureAtlasLayout::Clear()
 {
+	mPages.clear();
 	mNodes.clear();
 	mUnusedNodeListHead = ~0u;
+}
 
-	for(auto& bucket : mFreeNodeBuckets)
-		bucket.FreeNodes.clear();
+TreeTextureAtlasLayout::Page TreeTextureAtlasLayout::AllocatePage()
+{
+	Page page;
+	page.RootNodeIndex = AllocateNode();
 
-	Node rootNode;
+	page.FreeNodeBuckets[0].Size = mSettings.SmallSizeLimit;
+	page.FreeNodeBuckets[1].Size = mSettings.LargeSizeLimit;
+	page.FreeNodeBuckets[2].Size = ~0u;
+
+	page.FreeNodeBuckets[0].Size = mSettings.SmallSizeLimit;
+	page.FreeNodeBuckets[1].Size = mSettings.LargeSizeLimit;
+	page.FreeNodeBuckets[2].Size = ~0u;
+
+	Node& rootNode = mNodes[page.RootNodeIndex];
+	rootNode = Node();
 	rootNode.Area = Rect2I(0, 0, mSettings.Size.Width, mSettings.Size.Height);
 	rootNode.State = NodeState::Free;
 
-	mNodes.push_back(rootNode);
-	mRootNodeIndex = 0;
-
-	FreeNodeBucket& rootNodeBucket = mFreeNodeBuckets[GetFreeNodeBucketForSize(mSettings.Size)];
+	FreeNodeBucket& rootNodeBucket = page.FreeNodeBuckets[GetFreeNodeBucketForSize(page, mSettings.Size)];
 	rootNodeBucket.FreeNodes.push_back(0);
+
+	return page;
 }
 
+void TreeTextureAtlasLayout::FreePage(u32 pageId)
+{
+	Page& page = mPages[pageId];
+	Node& rootNode = mNodes[page.RootNodeIndex];
+	B3D_ENSURE(rootNode.State == NodeState::Free);
+
+	FreeNode(page.RootNodeIndex);
+}
