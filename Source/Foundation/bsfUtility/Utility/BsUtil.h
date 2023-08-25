@@ -92,7 +92,27 @@ namespace bs
 		bool swapped = false;
 		if(iter != iterLast)
 		{
-			std::swap(*iter, *iterLast);
+			std::iter_swap(iter, iterLast);
+			swapped = true;
+		}
+
+		container.pop_back();
+		return swapped;
+	}
+
+	/** @copydoc B3DSwapAndErase(Vector<T, A>&, const typename Vector<T, A>::iterator) */
+	template <class T, class A = StdAlloc<T>>
+	bool B3DSwapAndErase(Vector<T, A>& container, u32 index)
+	{
+		B3D_ASSERT(!container.empty());
+
+		auto it = container.begin() + index;
+		auto iterLast = container.end() - 1;
+
+		bool swapped = false;
+		if(it != iterLast)
+		{
+			std::iter_swap(it, iterLast);
 			swapped = true;
 		}
 

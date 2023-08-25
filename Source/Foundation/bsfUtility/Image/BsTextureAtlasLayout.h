@@ -2,8 +2,10 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "Math/BsRect2I.h"
 #include "Prerequisites/BsPrerequisitesUtil.h"
 #include "Math/BsVector2.h"
+#include "Math/BsVector2I.h"
 
 namespace bs
 {
@@ -97,6 +99,139 @@ namespace bs
 		bool mPow2 = false;
 
 		Vector<TexAtlasNode> mNodes;
+	};
+
+	/** Settings that control how a DynamicTextureAtlasLayout behaves. */
+	struct DynamicTextureAtlasLayoutSettings
+	{
+		Size2UI Size = Size2UI(2048, 2048); /**< Size of the atlas in pixels. */
+		Size2UI Alignment = Size2UI(1, 1); /**< If >1 all allocations will be in multiple of this value. Higher values help reduce fragmentation. */
+		u32 SmallSizeLimit = 32; /**< Free nodes with rectangles under this size are treated as small and will be placed in a separate bucket for faster lookup. */
+		u32 LargeSizeLimit = 256; /**< Free nodes with rectangles over this size are treated as large and will be placed in a separate bucket for faster lookup. */
+	};
+
+	/**
+	 * Organizes a set of textures into a single larger texture (an atlas) by minimizing empty space. Unlike TextureAtlasLayout
+	 * this layout allows elements to be dynamically added and removed.
+	 */
+	class B3D_UTILITY_EXPORT DynamicTextureAtlasLayout
+	{
+		/** Determines how are child nodes laid out in a container node. */
+		enum class NodeOrientation
+		{
+			Vertical, Horizontal
+		};
+
+		/** State a node in the tree can be in. */
+		enum class NodeState
+		{
+			Container, /**< Contains child nodes. */
+			Allocated, /**< Leaf node that contains data. */
+			Free, /**< Leaf node that is free. */
+			Unused /**< Node not part of the tree. */
+		};
+
+		/** Represent a single node in the texture atlas tree. */
+		struct Node
+		{
+			u32 ParentNodeId = ~0u;
+			u32 NextSiblingId = ~0u;
+			u32 PreviousSiblingId = ~0u;
+			NodeState State = NodeState::Unused;
+			NodeOrientation Orientation = NodeOrientation::Vertical;
+			Rect2I Area;
+		};
+
+		/** Contains a list of free nodes for a particular size. */
+		struct FreeNodeBucket
+		{
+			u32 Size = ~0u; /**< Any node that is lower than this size in all dimensions will be part of this bucket. ~0u if unconstrained. */
+			Vector<u32> FreeNodes;
+		};
+
+		/** Buckets in which to organize free nodes in. */
+		enum class FreeNodeBucketType
+		{
+			Small, Medium, Large, Count
+		};
+
+		/** Result of a node split operation. */
+		struct NodeSplitResult
+		{
+			Rect2I SmallerLeftoverArea;
+			Rect2I LargerLeftoverArea;
+
+			/**
+			 * If horizontal, larger rectangle is placed to the right of the requested area (which is always in the top right of the node), and smaller
+			 * rectangle is placed below the requested area.
+			 *
+			 * Similarly, if vertical, larger rectangle is placed below the requested area, and smaller to the right of the requested area.
+			 */
+			NodeOrientation LargerAreaOrientation = NodeOrientation::Vertical;
+		};
+
+	public:
+		struct Allocation
+		{
+			u32 NodeId = ~0u;
+			Vector2I Position;
+		};
+
+		DynamicTextureAtlasLayout(const DynamicTextureAtlasLayoutSettings& settings = DynamicTextureAtlasLayoutSettings());
+
+		// TODO - Automamtically add new pages as needed. Make this configurable?
+
+		/**
+		 * Attempts to add a new element in the layout. 
+		 *
+		 * @param size	Size of the element to add, in pixels.
+		 * @return		Location at which the element was stored, or null if no free space was located.
+		 */
+		Optional<Allocation> AddElement(const Size2UI& size);
+
+		/** Removes an element from the provided node. */
+		void RemoveElement(u32 nodeId);
+
+		/** Removes all entries from the layout. */
+		void Clear();
+
+		/** Checks have any elements been added to the layout. */
+		bool IsEmpty() const { return mNodes.size() == 1; }
+
+		/** Returns the size of the atlas texture, in pixels. */
+		const Size2UI& GetSize() const { return mSettings.Size; }
+
+	private:
+		/** Finds a bucket that stores nodes of the provided size. */
+		u32 GetFreeNodeBucketForSize(const Size2UI& size) const;
+
+		/** Aligns the provided size to the alignment requested in layout settings. */
+		Size2UI AlignSize(const Size2UI& size) const;
+
+		/** Splits a node and returns leftover rectangles, if there are any. */
+		NodeSplitResult Split(const Node& nodeToSplit, const Size2UI& requiredSize) const;
+
+		/** Finds the index of the best fitting node that can be the provided area. Returns ~0u if no such node can be found. */
+		u32 FindBestFreeNode(const Size2UI& size);
+
+		/** Registers the node in the appropriate free node bucket. */
+		void RegisterFreeNode(u32 nodeId, const Size2UI& size);
+
+		/** Allocates a new mode in the nodes array and returns the allocated index. This method will attempt to recycle unused nodes before allocating new nodes. */
+		u32 AllocateNode();
+
+		/** Marks the node as unused and frees it for re-allocation. */
+		void FreeNode(u32 nodeId);
+
+		/** Attempts to merge the next sibling of the provided node into the node, if the sibling exists and is free. */
+		void MergeWithNextSibling(u32 nodeId);
+
+		DynamicTextureAtlasLayoutSettings mSettings;
+
+		u32 mRootNodeIndex = ~0u;
+		Vector<Node> mNodes;
+		Array<FreeNodeBucket, (u32)FreeNodeBucketType::Count> mFreeNodeBuckets;
+		u32 mUnusedNodeListHead = ~0u; /**< Index into mNodex of the first unused node, stored as a linked list. ~0u if no unused nodes. */
 	};
 
 	/** Utility class used for texture atlas layouts. */
