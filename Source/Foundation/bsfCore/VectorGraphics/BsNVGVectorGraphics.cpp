@@ -10,6 +10,7 @@ using namespace bs;
 
 namespace bs::ct
 {
+	/** Converts a NanoVG composite operation into a B3D enum representing the operation. */
 	static VectorGraphicsBlendMode NVGCompositeOperationToBlendMode(const NVGcompositeOperationState& compositeOperationState)
 	{
 		B3D_ASSERT(compositeOperationState.srcRGB == compositeOperationState.srcAlpha);
@@ -42,6 +43,7 @@ namespace bs::ct
 		return VectorGraphicsBlendMode::SourceOver;
 	}
 
+	/** Converts a NanoVG matrix into a B3D matrix. */
 	static Matrix4 NVGTransformToB3DMatrix(float* transform)
 	{
 		return Matrix4(Matrix3(
@@ -50,11 +52,22 @@ namespace bs::ct
 			Vector3(0.0f, 0.0f, 1.0f)));
 	}
 
+	/** Converts a B3D color into a NanoVG color. */
 	static NVGcolor B3DColorToNVGColor(const Color& color)
 	{
 		return nvgRGBAf(color.R, color.G, color.B, color.A);
 	}
 
+	/**
+	 * Scales the provided input using optional scale-9-grid border.
+	 *
+	 * @param	input				Position to scale.
+	 * @param	shapeSize			Size of the vector path.
+	 * @param	scale9GridBorder	Border offset from the shape size, determining in which areas to apply the scale 9 grid approach. If border is zero, it
+	 *								will not be scaled using scale 9 grid.
+	 * @param	scale				Regular scale to apply to input.
+	 * @return						Scaled position.
+	 */
 	static Vector2 ApplyScale9GridTransform(const Vector2& input, const Size2& shapeSize, const RectOffset& scale9GridBorder, const Vector2& scale)
 	{
 		const float unscaledLeft = (float)scale9GridBorder.Left;
@@ -112,6 +125,7 @@ namespace bs::ct
 		return input * scale;
 	}
 
+	/** Applies scale from the vector graphics settings to the provided input point. */
 	static Vector2 ApplyScaleTransform(const Vector2& input, const VectorGraphicsSettings& settings)
 	{
 		const bool useScale9Grid =
@@ -126,6 +140,7 @@ namespace bs::ct
 		return input * settings.Scale;
 	}
 
+	/** Creates a NanoVG paint from a B3D paint. Gradients will have scaling applied as provided by vector graphics settings. */
 	static NVGpaint CreateNVGPaint(NVGcontext& context, const VectorGraphicsPaint& paint, const VectorGraphicsSettings& settings)
 	{
 		switch(paint.GetType())
@@ -173,6 +188,7 @@ namespace bs::ct
 		}
 	}
 
+	/** Sets the current NanoVG state from the provided B3D vector path state object. All following fill or stroke operations will use this state. */
 	static void ApplyNVGState(NVGcontext& context, const VectorPathState& state, const VectorGraphicsSettings& settings)
 	{
 		nvgFillPaint(&context, CreateNVGPaint(context, state.FillPaint, settings));
@@ -219,6 +235,7 @@ namespace bs::ct
 		}
 	}
 
+	/** Executes the NanoVG path commands in the provided path. Command output will be recorded to the provided context object. */
 	static void ApplyPathCommands(NVGcontext& context, const VectorPath& path, const VectorGraphicsSettings& settings)
 	{
 		nvgBeginPath(&context);
@@ -385,6 +402,7 @@ namespace bs::ct
 		}
 	}
 
+	/*** Populates the uniform buffer parameters required for rendering a path element. */
 	static NVGRenderUniforms CreateNVGRenderUniformParameters(NVGpaint* paint, NVGscissor* scissor, float fringe, float width, float strokeThreshold)
 	{
 		auto fnConvertAndPremultiplyColor = [](NVGcolor& color) { return Color(color.r * color.a, color.g * color.a, color.b * color.a, color.a); };
@@ -424,6 +442,7 @@ namespace bs::ct
 		return uniformParameters;
 	}
 
+	/** Populates the per-view uniform buffer that is shared by all path elements of a single VectorPath object. */
 	static void PopulateNVGViewUniformBuffer(const SPtr<ct::GpuBuffer>& uniformBuffer, const Rect2I& viewRegion)
 	{
 		ct::gVectorGraphicsViewUniforms.gViewportOffset.Set(uniformBuffer, Vector2(-(float)viewRegion.X, -(float)viewRegion.Y));

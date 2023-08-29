@@ -174,7 +174,7 @@ namespace bs
 		/** Single atlas page. */
 		struct Page
 		{
-			u32 RootNodeIndex = ~0u;
+			u32 RootNodeId = ~0u;
 			Array<FreeNodeBucket, (u32)FreeNodeBucketType::Count> FreeNodeBuckets;
 		};
 
