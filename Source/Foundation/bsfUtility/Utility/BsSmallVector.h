@@ -8,6 +8,159 @@ namespace bs
 	 *  @{
 	 */
 
+	class DefaultAllocator
+	{
+	public:
+		template<class ElementType>
+		class ForElementType
+		{
+		public:
+
+			~ForElementType()
+			{
+				if(mElements)
+					B3DFree(mElements);
+			}
+
+			ElementType* GetElements() const { return mElements; }
+			bool HasDynamicAllocations() const { return mElements != nullptr; }
+
+			void Move(u64 mySize, u64 otherSize, ForElementType&& other)
+			{
+				B3D_ASSERT(this != &other);
+
+				if(mElements)
+				{
+					for(u64 index = 0; index < mySize; ++index)
+						mElements[index].~ElementType();
+
+					B3DFree(mElements);
+				}
+
+				mElements = std::exchange(other.mElements, nullptr);
+			}
+
+			void Resize(u64 elementCount, u64 newCapacity)
+			{
+				ElementType* buffer = newCapacity > 0 ? B3DAllocateMultiple<ElementType>(newCapacity) : nullptr;
+
+				if(buffer)
+				{
+					std::uninitialized_move(
+						mElements,
+						mElements + std::min(elementCount, newCapacity),
+						buffer);
+				}
+
+				// Destoy existing elements in old memory
+				if(mElements)
+				{
+					for(u64 index = 0; index < elementCount; ++index)
+						mElements[index].~ElementType();
+
+					B3DFree(mElements);
+				}
+
+				mElements = buffer;
+			}
+
+			ElementType* mElements = nullptr;
+		};
+	};
+
+	template<u32 StackElementCount, class SecondaryAllocator = DefaultAllocator>
+	class TInlineAllocator
+	{
+	public:
+		template<class ElementType>
+		class ForElementType
+		{
+		public:
+			ElementType* GetElements() const { return mElements; }
+			bool HasDynamicAllocations() const { return mElements != (ElementType*)mStackStorage; }
+
+			void Move(u64 mySize, u64 otherSize, ForElementType&& other)
+			{
+				B3D_ASSERT(this != &other);
+
+				if(!other.HasDynamicAllocations())
+				{
+					// Use assignment copy if we have more elements than the other array, and destroy any excess elements
+					if(mySize > otherSize)
+					{
+						ElementType* newEnd = otherSize > 0 ? std::move(other.GetElements(), other.GetElements() + otherSize, GetElements()) : GetElements();
+
+						for(; newEnd != GetElements() + mySize; ++newEnd)
+							(*newEnd).~ElementType();
+					}
+					else
+					{
+						if(mySize > 0)
+							std::move(other.GetElements(), other.GetElements() + mySize, GetElements());
+
+						std::uninitialized_move(
+							other.GetElements() + mySize,
+							other.GetElements() + otherSize,
+							GetElements() + mySize);
+					}
+
+					mElements = (ElementType*)mStackStorage;
+				}
+				else
+				{
+					mSecondaryAllocator.Move(mySize, otherSize, std::move(other.mSecondaryAllocator));
+					mElements = std::exchange(other.mElements, nullptr);
+				}
+			}
+
+			void Resize(u64 currentSize, u64 newCapacity)
+			{
+				// New capacity fits on stack
+				if(newCapacity <= StackElementCount)
+				{
+					// If current allocations are dynamic, move them to stack and free dynamic allocation
+					if(HasDynamicAllocations())
+					{
+						std::uninitialized_move(
+							mSecondaryAllocator.GetElements(),
+							mSecondaryAllocator.GetElements() + currentSize,
+							(ElementType*)mStackStorage);
+
+						mSecondaryAllocator.Resize(currentSize, 0);
+						mElements = (ElementType*)mStackStorage;
+					}
+				}
+				// New capacity requires a dynamic allocation
+				else
+				{
+					// Already have a dynamic allocation, just resize
+					if(HasDynamicAllocations())
+					{
+						mSecondaryAllocator.Resize(currentSize, newCapacity);
+						mElements = mSecondaryAllocator.GetElements();
+					}
+					// Allocate dynamic and move from stack
+					else
+					{
+						mSecondaryAllocator.Resize(0, newCapacity);
+
+						std::uninitialized_move(
+							(ElementType*)mStackStorage,
+							((ElementType*)mStackStorage) + currentSize,
+							mSecondaryAllocator.GetElements());
+
+						mElements = mSecondaryAllocator.GetElements();
+					}
+				}
+			}
+
+			std::aligned_storage_t<sizeof(ElementType), alignof(ElementType)> mStackStorage[StackElementCount];
+			ElementType* mElements = (ElementType*)mStackStorage;
+			typename SecondaryAllocator::template ForElementType<ElementType> mSecondaryAllocator;
+		};
+	};
+
+
 	/**
 	 * Dynamically sized container that statically allocates enough room for @p N elements of type @p Type. If the element
 	 * count exceeds the statically allocated buffer size the vector falls back to general purpose dynamic allocator.
@@ -65,9 +218,6 @@ namespace bs
 		{
 			for(auto& entry : *this)
 				entry.~Type();
-
-			if(!IsSmall())
-				B3DFree(mElements);
 		}
 
 		SmallVector<ValueType, N>& operator=(const SmallVector<ValueType, N>& other)
@@ -116,56 +266,12 @@ namespace bs
 			if(this == &other)
 				return *this;
 
-			// If the other buffer isn't small, we can just steal its buffer
-			if(!other.IsSmall())
-			{
-				for(auto& entry : *this)
-					entry.~Type();
+			u64 mySize = Size();
+			const u64 otherSize = other.Size();
 
-				if(!IsSmall())
-					B3DFree(mElements);
-
-				mElements = other.mElements;
-				other.mElements = (Type*)other.mStorage;
-				mSize = std::exchange(other.mSize, 0);
-				mCapacity = std::exchange(other.mCapacity, N);
-			}
-			// Otherwise we do essentially the same thing as in non-move assigment, except for also clearing the other
-			// vector
-			else
-			{
-				u64 mySize = Size();
-				const u64 otherSize = other.Size();
-
-				// Use assignment copy if we have more elements than the other array, and destroy any excess elements
-				if(mySize > otherSize)
-				{
-					Iterator newEnd = otherSize > 0 ? Iterator(std::move(other.Begin(), other.End(), Begin())) : Begin();
-
-					for(; newEnd != End(); ++newEnd)
-						(*newEnd).~Type();
-				}
-				else
-				{
-					if(otherSize > mCapacity)
-					{
-						Clear();
-						mySize = 0;
-
-						Grow(otherSize);
-					}
-					else if(mySize > 0)
-						std::move(other.Begin(), other.Begin() + mySize, Begin());
-
-					std::uninitialized_copy(
-						std::make_move_iterator(other.Begin() + mySize),
-						std::make_move_iterator(other.End()),
-						Begin() + mySize);
-				}
-
-				mSize = otherSize;
-				other.Clear();
-			}
+			mAllocator.Move(mySize, otherSize, std::move(other.mAllocator));
+			mCapacity = std::exchange(other.mCapacity, N);
+			mSize = std::exchange(other.mSize, 0);
 
 			return *this;
 		}
@@ -206,7 +312,6 @@ namespace bs
 
 			mSize = otherSize;
 			return *this;
-			;
 		}
 
 		bool operator==(const SmallVector<ValueType, N>& other)
@@ -244,72 +349,64 @@ namespace bs
 		{
 			B3D_ASSERT(index < mSize && "Array index out-of-range.");
 
-			return mElements[index];
+			return mAllocator.GetElements()[index];
 		}
 
 		const Type& operator[](u64 index) const
 		{
 			B3D_ASSERT(index < mSize && "Array index out-of-range.");
 
-			return mElements[index];
+			return mAllocator.GetElements()[index];
 		}
 
 		bool Empty() const { return mSize == 0; }
 
-		Iterator Begin() { return mElements; }
+		Iterator Begin() { return mAllocator.GetElements(); }
+		Iterator End() { return mAllocator.GetElements() + mSize; }
 
-		Iterator End() { return mElements + mSize; }
+		ConstIterator Begin() const { return mAllocator.GetElements(); }
+		ConstIterator End() const { return mAllocator.GetElements() + mSize; }
 
-		ConstIterator Begin() const { return mElements; }
-
-		ConstIterator End() const { return mElements + mSize; }
-
-		ConstIterator Cbegin() const { return mElements; }
-
-		ConstIterator Cend() const { return mElements + mSize; }
+		ConstIterator Cbegin() const { return mAllocator.GetElements(); }
+		ConstIterator Cend() const { return mAllocator.GetElements() + mSize; }
 
 		ReverseIterator Rbegin() { return ReverseIterator(End()); }
-
 		ReverseIterator Rend() { return ReverseIterator(Begin()); }
 
 		ConstReverseIterator Rbegin() const { return ConstReverseIterator(End()); }
-
 		ConstReverseIterator Rend() const { return ConstReverseIterator(Begin()); }
 
 		ConstReverseIterator Crbegin() const { return ConstReverseIterator(End()); }
-
 		ConstReverseIterator Crend() const { return ConstReverseIterator(Begin()); }
 
 		u64 Size() const { return mSize; }
-
 		u64 Capacity() const { return mCapacity; }
 
-		Type* Data() { return mElements; }
-
-		const Type* Data() const { return mElements; }
+		Type* Data() { return mAllocator.GetElements(); }
+		const Type* Data() const { return mAllocator.GetElements(); }
 
 		Type& Front()
 		{
 			B3D_ASSERT(!Empty());
-			return mElements[0];
+			return mAllocator.GetElements()[0];
 		}
 
 		Type& Back()
 		{
 			B3D_ASSERT(!Empty());
-			return mElements[mSize - 1];
+			return mAllocator.GetElements()[mSize - 1];
 		}
 
 		const Type& Front() const
 		{
 			B3D_ASSERT(!Empty());
-			return mElements[0];
+			return mAllocator.GetElements()[0];
 		}
 
 		const Type& Back() const
 		{
 			B3D_ASSERT(!Empty());
-			return mElements[mSize - 1];
+			return mAllocator.GetElements()[mSize - 1];
 		}
 
 		void Add(const Type& element)
@@ -317,7 +414,7 @@ namespace bs
 			if(mSize == mCapacity)
 				Grow(mCapacity << 1);
 
-			new(&mElements[mSize++]) Type(element);
+			new(&mAllocator.GetElements()[mSize++]) Type(element);
 		}
 
 		void Add(Type&& element)
@@ -325,7 +422,7 @@ namespace bs
 			if(mSize == mCapacity)
 				Grow(mCapacity << 1);
 
-			new(&mElements[mSize++]) Type(std::move(element));
+			new(&mAllocator.GetElements()[mSize++]) Type(std::move(element));
 		}
 
 		template <
@@ -360,7 +457,7 @@ namespace bs
 		{
 			B3D_ASSERT(mSize > 0 && "Popping an empty array.");
 			mSize--;
-			mElements[mSize].~Type();
+			mAllocator.GetElements()[mSize].~Type();
 		}
 
 		Iterator Erase(ConstIterator iter)
@@ -406,7 +503,7 @@ namespace bs
 		{
 			for(u64 i = 0; i < mSize; i++)
 			{
-				if(mElements[i] == element)
+				if(mAllocator.GetElements()[i] == element)
 					return true;
 			}
 
@@ -417,7 +514,7 @@ namespace bs
 		{
 			for(u64 i = 0; i < mSize; i++)
 			{
-				if(mElements[i] == element)
+				if(mAllocator.GetElements()[i] == element)
 				{
 					Remove(i);
 					break;
@@ -428,7 +525,7 @@ namespace bs
 		void Clear()
 		{
 			for(u64 i = 0; i < mSize; ++i)
-				mElements[i].~Type();
+				mAllocator.GetElements()[i].~Type();
 
 			mSize = 0;
 		}
@@ -447,12 +544,12 @@ namespace bs
 			if(size > mSize)
 			{
 				for(u64 i = mSize; i < size; i++)
-					new(&mElements[i]) Type(value);
+					new(&mAllocator.GetElements()[i]) Type(value);
 			}
 			else
 			{
 				for(u64 i = size; i < mSize; i++)
-					mElements[i].~Type();
+					mAllocator.GetElements()[i].~Type();
 			}
 
 			mSize = size;
@@ -497,38 +594,13 @@ namespace bs
 		void resize(u64 size, const Type& value = Type()) { Resize(size, value); } // NOLINT
 
 	private:
-		/** Returns true if the vector is still using its static memory and hasn't made any dynamic allocations. */
-		bool IsSmall() const { return mElements == (Type*)mStorage; }
-
 		void Grow(u64 capacity)
 		{
-			B3D_ASSERT(capacity > N);
-
-			// Allocate memory with the new capacity (caller guarantees never to call this with capacity <= N, so we don't
-			// need to worry about the static buffer)
-			Type* buffer = B3DAllocateMultiple<Type>(capacity);
-
-			// Move any existing elements
-			std::uninitialized_copy(
-				std::make_move_iterator(Begin()),
-				std::make_move_iterator(End()),
-				buffer);
-
-			// Destoy existing elements in old memory
-			for(auto& entry : *this)
-				entry.~Type();
-
-			// If the current buffer is dynamically allocated, free it
-			if(!IsSmall())
-				B3DFree(mElements);
-
-			mElements = buffer;
-			mCapacity = capacity;
+			mAllocator.Resize(mSize, capacity);
+			mCapacity = std::max(capacity, N);
 		}
 
-		std::aligned_storage_t<sizeof(Type), alignof(Type)> mStorage[N];
-		Type* mElements = (Type*)mStorage;
-
+		typename TInlineAllocator<N>::template ForElementType<Type> mAllocator;
 		u64 mSize = 0;
 		u64 mCapacity = N;
 	};
