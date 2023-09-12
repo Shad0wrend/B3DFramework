@@ -480,3 +480,4 @@ namespace bs
 #include "Allocators/BsFrameAllocator.h"
 #include "Allocators/BsStaticAlloc.h"
 #include "Allocators/BsMemAllocProfiler.h"
+#include "Allocators/BsContainerAllocators.h"

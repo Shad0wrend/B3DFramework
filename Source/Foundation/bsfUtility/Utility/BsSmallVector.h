@@ -8,159 +8,6 @@ namespace bs
 	 *  @{
 	 */
 
-	class DefaultAllocator
-	{
-	public:
-		template<class ElementType>
-		class ForElementType
-		{
-		public:
-
-			~ForElementType()
-			{
-				if(mElements)
-					B3DFree(mElements);
-			}
-
-			ElementType* GetElements() const { return mElements; }
-			bool HasDynamicAllocations() const { return mElements != nullptr; }
-
-			void Move(u64 mySize, u64 otherSize, ForElementType&& other)
-			{
-				B3D_ASSERT(this != &other);
-
-				if(mElements)
-				{
-					for(u64 index = 0; index < mySize; ++index)
-						mElements[index].~ElementType();
-
-					B3DFree(mElements);
-				}
-
-				mElements = std::exchange(other.mElements, nullptr);
-			}
-
-			void Resize(u64 elementCount, u64 newCapacity)
-			{
-				ElementType* buffer = newCapacity > 0 ? B3DAllocateMultiple<ElementType>(newCapacity) : nullptr;
-
-				if(buffer)
-				{
-					std::uninitialized_move(
-						mElements,
-						mElements + std::min(elementCount, newCapacity),
-						buffer);
-				}
-
-				// Destoy existing elements in old memory
-				if(mElements)
-				{
-					for(u64 index = 0; index < elementCount; ++index)
-						mElements[index].~ElementType();
-
-					B3DFree(mElements);
-				}
-
-				mElements = buffer;
-			}
-
-			ElementType* mElements = nullptr;
-		};
-	};
-
-	template<u32 StackElementCount, class SecondaryAllocator = DefaultAllocator>
-	class TInlineAllocator
-	{
-	public:
-		template<class ElementType>
-		class ForElementType
-		{
-		public:
-			ElementType* GetElements() const { return mElements; }
-			bool HasDynamicAllocations() const { return mElements != (ElementType*)mStackStorage; }
-
-			void Move(u64 mySize, u64 otherSize, ForElementType&& other)
-			{
-				B3D_ASSERT(this != &other);
-
-				if(!other.HasDynamicAllocations())
-				{
-					// Use assignment copy if we have more elements than the other array, and destroy any excess elements
-					if(mySize > otherSize)
-					{
-						ElementType* newEnd = otherSize > 0 ? std::move(other.GetElements(), other.GetElements() + otherSize, GetElements()) : GetElements();
-
-						for(; newEnd != GetElements() + mySize; ++newEnd)
-							(*newEnd).~ElementType();
-					}
-					else
-					{
-						if(mySize > 0)
-							std::move(other.GetElements(), other.GetElements() + mySize, GetElements());
-
-						std::uninitialized_move(
-							other.GetElements() + mySize,
-							other.GetElements() + otherSize,
-							GetElements() + mySize);
-					}
-
-					mElements = (ElementType*)mStackStorage;
-				}
-				else
-				{
-					mSecondaryAllocator.Move(mySize, otherSize, std::move(other.mSecondaryAllocator));
-					mElements = std::exchange(other.mElements, nullptr);
-				}
-			}
-
-			void Resize(u64 currentSize, u64 newCapacity)
-			{
-				// New capacity fits on stack
-				if(newCapacity <= StackElementCount)
-				{
-					// If current allocations are dynamic, move them to stack and free dynamic allocation
-					if(HasDynamicAllocations())
-					{
-						std::uninitialized_move(
-							mSecondaryAllocator.GetElements(),
-							mSecondaryAllocator.GetElements() + currentSize,
-							(ElementType*)mStackStorage);
-
-						mSecondaryAllocator.Resize(currentSize, 0);
-						mElements = (ElementType*)mStackStorage;
-					}
-				}
-				// New capacity requires a dynamic allocation
-				else
-				{
-					// Already have a dynamic allocation, just resize
-					if(HasDynamicAllocations())
-					{
-						mSecondaryAllocator.Resize(currentSize, newCapacity);
-						mElements = mSecondaryAllocator.GetElements();
-					}
-					// Allocate dynamic and move from stack
-					else
-					{
-						mSecondaryAllocator.Resize(0, newCapacity);
-
-						std::uninitialized_move(
-							(ElementType*)mStackStorage,
-							((ElementType*)mStackStorage) + currentSize,
-							mSecondaryAllocator.GetElements());
-
-						mElements = mSecondaryAllocator.GetElements();
-					}
-				}
-			}
-
-			std::aligned_storage_t<sizeof(ElementType), alignof(ElementType)> mStackStorage[StackElementCount];
-			ElementType* mElements = (ElementType*)mStackStorage;
-			typename SecondaryAllocator::template ForElementType<ElementType> mSecondaryAllocator;
-		};
-	};
-
-
 	/**
 	 * Dynamically sized container that statically allocates enough room for @p N elements of type @p Type. If the element
 	 * count exceeds the statically allocated buffer size the vector falls back to general purpose dynamic allocator.
@@ -174,6 +21,7 @@ namespace bs
 		typedef const Type* ConstIterator;
 		typedef std::reverse_iterator<Type*> ReverseIterator;
 		typedef std::reverse_iterator<const Type*> ConstReverseIterator;
+		typedef ptrdiff_t DifferenceType;
 
 		// For std compatibility
 		typedef Type value_type;
@@ -412,7 +260,7 @@ namespace bs
 		void Add(const Type& element)
 		{
 			if(mSize == mCapacity)
-				Grow(mCapacity << 1);
+				Grow(std::max((u64)1u, mCapacity << 1));
 
 			new(&mAllocator.GetElements()[mSize++]) Type(element);
 		}
@@ -420,7 +268,7 @@ namespace bs
 		void Add(Type&& element)
 		{
 			if(mSize == mCapacity)
-				Grow(mCapacity << 1);
+				Grow(std::max((u64)1u, mCapacity << 1));
 
 			new(&mAllocator.GetElements()[mSize++]) Type(std::move(element));
 		}
@@ -555,6 +403,129 @@ namespace bs
 			mSize = size;
 		}
 
+		bool SwapAndErase(Iterator iter)
+		{
+			B3D_ASSERT(!Empty());
+
+			auto iterLast = end() - 1;
+
+			bool swapped = false;
+			if(iter != iterLast)
+			{
+				std::swap(*iter, *iterLast);
+				swapped = true;
+			}
+
+			Pop();
+			return swapped;
+		}
+
+		template <typename... Args>
+		void EmplaceBack(Args&&... args)
+		{
+			if(mSize == mCapacity)
+				Grow(std::max((u64)1u, mCapacity << 1));
+
+			new(&mAllocator.GetElements()[mSize++]) Type(std::forward<Args>(args)...);
+		}
+
+		template <typename... Args>
+		Iterator Emplace(ConstIterator it, Args&&... args)
+		{
+			Iterator mutableIterator = const_cast<Iterator>(it);
+			DifferenceType offset = mutableIterator - Begin();
+
+			if(mSize == mCapacity)
+				Grow(std::max((u64)1u, mCapacity << 1));
+
+			new(&mAllocator.GetElements()[mSize++]) Type(std::forward<Args>(args)...);
+			std::rotate(Begin() + offset, End() - 1, End());
+
+			return Begin() + offset;
+		}
+
+		Iterator Insert(ConstIterator it, const Type& element)
+		{
+			Iterator mutableIterator = const_cast<Iterator>(it);
+			DifferenceType offset = mutableIterator - Begin();
+
+			if(mSize == mCapacity)
+				Grow(std::max((u64)1u, mCapacity << 1));
+
+			new(&mAllocator.GetElements()[mSize++]) Type(element);
+			std::rotate(Begin() + offset, End() - 1, End());
+
+			return Begin() + offset;
+		}
+
+		Iterator Insert(ConstIterator it, Type&& element)
+		{
+			Iterator mutableIterator = const_cast<Iterator>(it);
+			DifferenceType offset = mutableIterator - Begin();
+
+			if(mSize == mCapacity)
+				Grow(std::max((u64)1u, mCapacity << 1));
+
+			new(&mAllocator.GetElements()[mSize++]) Type(std::move(element));
+			std::rotate(Begin() + offset, End() - 1, End());
+
+			return Begin() + offset;
+		}
+
+		Iterator Insert(ConstIterator it, u32 count, const Type& element)
+		{
+			Iterator mutableIterator = const_cast<Iterator>(it);
+			DifferenceType offset = mutableIterator - Begin();
+
+			if(!count)
+				return Begin() + offset;
+
+			if(Size() + count > Capacity())
+				Grow((Size() + count) * 2);
+
+			u32 remainingCount = count;
+			while(remainingCount--)
+				new(&mAllocator.GetElements()[mSize++]) Type(element);
+
+			std::rotate(Begin() + offset, End() - count, End());
+			return Begin() + offset;
+		}
+
+		template <typename InputIt>
+		typename std::enable_if_t<!std::is_integral_v<InputIt>, void> Insert(ConstIterator it, InputIt first, InputIt last)
+		{
+			Iterator mutableIt = const_cast<Iterator>(it);
+			DifferenceType offset = mutableIt - Begin();
+			const u64 elementCountToInsert = (u64)(last - first);
+
+			if(Size() + elementCountToInsert > Capacity())
+				Grow((Size() + elementCountToInsert) * 2);
+
+			while(first != last)
+				new(&mAllocator.GetElements()[mSize++]) Type(*first++);
+
+			std::rotate(Begin() + offset, End() - elementCountToInsert, End());
+		}
+
+		Iterator Insert(ConstIterator it, std::initializer_list<Type> list)
+		{
+			Iterator mutableIt = const_cast<Iterator>(it);
+			DifferenceType offset = mutableIt - Begin();
+			const u64 elementCountToInsert = (u64)list.size();
+
+			if(elementCountToInsert == 0)
+				return Begin() + offset;
+
+			if(Size() + elementCountToInsert > Capacity())
+				Grow((Size() + elementCountToInsert) * 2);
+
+			for(auto& entry : list)
+				new(&mAllocator.GetElements()[mSize++]) Type(entry);
+
+			std::rotate(Begin() + offset, end() - elementCountToInsert, end());
+			return Begin() + offset;
+		}
+
 		// STD compatible API
 		Iterator begin() { return Begin(); } // NOLINT
 		Iterator end() { return End(); } // NOLINT
@@ -600,7 +571,7 @@ namespace bs
 			mCapacity = std::max(capacity, N);
 		}
 
-		typename TInlineAllocator<N>::template ForElementType<Type> mAllocator;
+		typename InlineContainerAllocator<N>::template ForElementType<Type> mAllocator;
 		u64 mSize = 0;
 		u64 mCapacity = N;
 	};
