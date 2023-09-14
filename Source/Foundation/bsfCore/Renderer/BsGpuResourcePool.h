@@ -6,7 +6,6 @@
 #include "Utility/BsModule.h"
 #include "Image/BsPixelUtil.h"
 #include "Image/BsTexture.h"
-#include "Utility/BsDynArray.h"
 
 namespace bs
 {
@@ -131,8 +130,8 @@ namespace bs
 			static bool Matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
 
 			SPtr<GpuDevice> mDevice;
-			DynArray<SPtr<PooledRenderTexture>> mTextures;
-			DynArray<SPtr<PooledStorageBuffer>> mBuffers;
+			TArray<SPtr<PooledRenderTexture>> mTextures;
+			TArray<SPtr<PooledStorageBuffer>> mBuffers;
 
 			u32 mCurrentFrame = 0;
 		};
