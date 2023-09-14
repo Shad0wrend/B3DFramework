@@ -236,7 +236,7 @@ namespace bs
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**	Creates a light with without initializing it. Used for serialization. */
 		static SPtr<Light> CreateEmpty();
@@ -276,7 +276,7 @@ namespace bs
 			Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId;
 		};

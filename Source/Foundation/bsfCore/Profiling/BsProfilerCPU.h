@@ -108,7 +108,7 @@ namespace bs
 		/**	Contains basic (time based) profiling data contained in a profiling block. */
 		struct ProfileData
 		{
-			ProfileData(FrameAlloc* alloc);
+			ProfileData(FrameAllocator* alloc);
 
 			/** Begins a new sample and records current sample state. Previous sample must not be active. */
 			void BeginSample();
@@ -135,7 +135,7 @@ namespace bs
 		/**	Contains precise (CPU cycle based) profiling data contained in a profiling block. */
 		struct PreciseProfileData
 		{
-			PreciseProfileData(FrameAlloc* alloc);
+			PreciseProfileData(FrameAllocator* alloc);
 
 			/** Begins a new sample and records current sample state. Previous sample must not be active. */
 			void BeginSample();
@@ -165,7 +165,7 @@ namespace bs
 		 */
 		struct ProfiledBlock
 		{
-			ProfiledBlock(FrameAlloc* alloc);
+			ProfiledBlock(FrameAllocator* alloc);
 			~ProfiledBlock();
 
 			/**	Attempts to find a child block with the specified name. Returns null if not found. */
@@ -234,7 +234,7 @@ namespace bs
 
 			ProfiledBlock* RootBlock = nullptr;
 
-			FrameAlloc FrameAlloc;
+			FrameAllocator FrameAllocator;
 			ActiveBlock ActiveBlock;
 			Stack<ProfilerCPU::ActiveBlock, StdFrameAlloc<ProfilerCPU::ActiveBlock>>* ActiveBlocks = nullptr;
 		};

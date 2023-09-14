@@ -159,7 +159,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* RenderTexture::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* RenderTexture::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	syncPacket->Properties = GetProperties(); 
@@ -229,7 +229,7 @@ SPtr<RenderTexture> RenderTexture::Create(const RenderTextureCreateInformation& 
 	return TextureManager::Instance().CreateRenderTexture(createInformation);
 }
 
-void RenderTexture::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void RenderTexture::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	const auto* const syncPacket = data.GetSyncPacket<bs::RenderTexture::SyncPacket>();
 	if(!syncPacket)

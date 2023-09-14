@@ -13,7 +13,7 @@ CoreObjectManager::CoreObjectManager()
 	: mNextAvailableID(1)
 {
 	for(u32 allocatorIndex = 0; allocatorIndex < B3DSize(mSyncAllocators); allocatorIndex++)
-		mSyncAllocators[allocatorIndex] = B3DNew<FrameAlloc>();
+		mSyncAllocators[allocatorIndex] = B3DNew<FrameAllocator>();
 }
 
 CoreObjectManager::~CoreObjectManager()
@@ -70,7 +70,7 @@ void CoreObjectManager::UnregisterObject(CoreObject* object)
 			SPtr<ct::CoreObject> coreObject = object->GetCore();
 			if(coreObject != nullptr)
 			{
-				FrameAlloc* allocator = mSyncAllocators[mActiveFrameAllocatorIndex];
+				FrameAllocator* allocator = mSyncAllocators[mActiveFrameAllocatorIndex];
 				CoreSyncData objSyncData;
 
 				CoreSyncPacket* const syncPacket = object->CreateSyncPacket(*allocator, object->GetCoreDirtyFlags());
@@ -243,12 +243,12 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 	{
 		SPtr<ct::CoreObject> Destination;
 		CoreSyncData SyncData;
-		FrameAlloc* Allocator;
+		FrameAllocator* Allocator;
 	};
 
 	Lock lock(mObjectsMutex);
 
-	FrameAlloc* allocator = mSyncAllocators[mActiveFrameAllocatorIndex];
+	FrameAllocator* allocator = mSyncAllocators[mActiveFrameAllocatorIndex];
 	Vector<IndividualCoreSyncData> syncData;
 
 	std::function<void(CoreObject*)> syncObject = [&](CoreObject* curObj)
@@ -312,7 +312,7 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 		GetCoreThread().PostCommand(std::bind(callback, syncData));
 }
 
-void CoreObjectManager::SyncDownload(FrameAlloc* allocator)
+void CoreObjectManager::SyncDownload(FrameAllocator* allocator)
 {
 	CoreStoredSyncData syncData;
 	syncData.Alloc = allocator;

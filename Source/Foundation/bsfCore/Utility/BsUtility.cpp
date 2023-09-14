@@ -35,7 +35,7 @@ bool HasReflectableChildren(RTTITypeBase* type)
 	return false;
 }
 
-void FindResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool recursive, Map<UUID, ResourceDependency>& dependencies)
+void FindResourceDependenciesInternal(IReflectable& obj, FrameAllocator& alloc, bool recursive, Map<UUID, ResourceDependency>& dependencies)
 {
 	RTTITypeBase* rtti = obj.GetRtti();
 	do

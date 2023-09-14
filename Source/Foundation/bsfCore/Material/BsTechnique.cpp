@@ -231,7 +231,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* Technique::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* Technique::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	const ShaderVariationDirtyFlags dirtyFlags = (ShaderVariationDirtyFlags)flags;
 
@@ -302,7 +302,7 @@ SPtr<Technique> Technique::CreateEmpty()
 	return techniqueShared;
 }
 
-void Technique::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void Technique::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Technique::SyncPacket>();
 	if(!syncPacket)

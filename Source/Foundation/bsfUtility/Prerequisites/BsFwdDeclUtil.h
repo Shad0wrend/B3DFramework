@@ -194,7 +194,7 @@ namespace bs
 	struct RTTIReflectablePtrFieldBase;
 	struct SerializedObject;
 	struct SerializedInstance;
-	class FrameAlloc;
+	class FrameAllocator;
 	class LogEntry;
 	// Reflection
 	class IReflectable;

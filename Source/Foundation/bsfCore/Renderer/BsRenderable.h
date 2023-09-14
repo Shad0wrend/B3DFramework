@@ -203,7 +203,7 @@ namespace bs
 		void RefreshAnimation();
 
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void MarkDependenciesDirtyInternal() override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
@@ -284,7 +284,7 @@ namespace bs
 			void Initialize() override;
 
 			/** @copydoc CoreObject::syncToCore */
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			/** Creates any buffers required for renderable animation. Should be called whenever animation properties change. */
 			void CreateAnimationBuffers();

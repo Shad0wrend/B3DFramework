@@ -217,7 +217,7 @@ namespace bs
 		u32 mLastUsedObjectId = 1;
 		u32 mTotalBytesToRead = 0;
 		u32 mNextProgressReport = kReportAfterBytes;
-		FrameAlloc* mAlloc = nullptr;
+		FrameAllocator* mAlloc = nullptr;
 		Bitstream mBuffer;
 
 		SerializationContext* mContext = nullptr;

@@ -133,7 +133,7 @@ namespace bs
 	/** Packet containing data for synchronizing a CoreObject with its render thread counter-part. */
 	struct CoreSyncPacket
 	{
-		CoreSyncPacket(FrameAlloc& allocator, u32 flags)
+		CoreSyncPacket(FrameAllocator& allocator, u32 flags)
 			: mAllocator(allocator), Flags(flags)
 		{ }
 
@@ -146,7 +146,7 @@ namespace bs
 		u32 Flags = 0;
 		
 	protected:
-		FrameAlloc& mAllocator;
+		FrameAllocator& mAllocator;
 	};
 
 	namespace implementation
@@ -230,7 +230,7 @@ namespace bs
 		template <class T>
 		struct CoreSyncPacketTypeInitializeWithAllocator
 		{
-			static T Initialize(FrameAlloc& allocator)
+			static T Initialize(FrameAllocator& allocator)
 			{
 				return T();
 			}
@@ -240,7 +240,7 @@ namespace bs
 		template <class T>
 		struct CoreSyncPacketTypeInitializeWithAllocator<CoreSyncVector<T>>
 		{
-			static CoreSyncVector<T> Initialize(FrameAlloc& allocator)
+			static CoreSyncVector<T> Initialize(FrameAllocator& allocator)
 			{
 				return CoreSyncVector<T>(&allocator);
 			}
@@ -260,7 +260,7 @@ namespace bs
 #define B3D_SYNC_BLOCK_BEGIN(ClassType, Name)                                                         \
 	struct ClassType::Name : CoreSyncPacket                                                           \
 	{                                                                                                 \
-		Name(ClassType& object, FrameAlloc& allocator, u32 flags = 0)                                 \
+		Name(ClassType& object, FrameAllocator& allocator, u32 flags = 0)                                 \
 			: CoreSyncPacket(allocator, flags)                                                        \
 		{                                                                                             \
 			PopulateSyncData(object);                                                                 \

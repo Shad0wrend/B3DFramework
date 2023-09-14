@@ -16,12 +16,12 @@ namespace bs
 	 * Specialized allocator for profiler so we can avoid tracking internal profiler memory allocations which would skew
 	 * profiler results.
 	 */
-	class ProfilerAlloc
+	class ProfilerAllocatorTag
 	{};
 
 	/** Memory allocator providing a generic implementation. Specialize for specific categories as needed. */
 	template <>
-	class MemoryAllocator<ProfilerAlloc> : public MemoryAllocatorBase
+	class MemoryAllocator<ProfilerAllocatorTag> : public MemoryAllocatorBase
 	{
 	public:
 		/** Allocates the given number of bytes. */

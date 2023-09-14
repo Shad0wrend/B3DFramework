@@ -118,7 +118,7 @@ namespace bs
 		Pass() = default;
 		Pass(const PassCreateInformation& createInformation);
 
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/**	Creates a new empty pass but doesn't initialize it. */
@@ -169,7 +169,7 @@ namespace bs
 			Pass() = default;
 			Pass(const PassCreateInformation& desc);
 
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/

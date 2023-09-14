@@ -47,7 +47,7 @@ namespace bs
 
 		UnorderedSet<IReflectable*> mObjectMap;
 		SerializationContext* mContext = nullptr;
-		FrameAlloc* mAlloc = nullptr;
+		FrameAllocator* mAlloc = nullptr;
 	};
 
 	/** @} */

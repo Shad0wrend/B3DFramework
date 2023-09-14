@@ -343,7 +343,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* Renderable::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* Renderable::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	CoreSyncPacket* const sceneActorSyncPacket = CreateCoreSyncPacket(allocator, flags);
 	if(flags != (u32)ActorDirtyFlag::Transform)
@@ -640,7 +640,7 @@ void Renderable::UpdatePrevFrameAnimationBuffers()
 		std::swap(mBoneMatrixBuffer, mBonePrevMatrixBuffer);
 }
 
-void Renderable::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void Renderable::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	CoreSyncPacket* const syncPacket = data.GetSyncPacket();
 	if(syncPacket == nullptr)

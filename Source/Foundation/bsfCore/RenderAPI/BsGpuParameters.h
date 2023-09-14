@@ -572,7 +572,7 @@ namespace bs
 
 		SPtr<GpuParameters> GetThisPtrInternal() const override;
 		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void GetListenerResources(Vector<HResource>& resources) override;
 		void NotifyResourceLoaded(const HResource& resource) override { MarkCoreDirty(); }
@@ -603,7 +603,7 @@ namespace bs
 			GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout);
 
 			SPtr<GpuParameters> GetThisPtrInternal() const override;
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/** @} */

@@ -21,7 +21,7 @@ SPtr<IReflectable> BinaryCloner::Clone(IReflectable* object, bool shallow)
 	ObjectReferenceData referenceData;
 	if(shallow)
 	{
-		FrameAlloc& alloc = GetFrameAllocator();
+		FrameAllocator& alloc = GetFrameAllocator();
 
 		alloc.MarkFrame();
 		GatherReferences(object, alloc, referenceData);
@@ -37,7 +37,7 @@ SPtr<IReflectable> BinaryCloner::Clone(IReflectable* object, bool shallow)
 
 	if(shallow)
 	{
-		FrameAlloc& alloc = GetFrameAllocator();
+		FrameAllocator& alloc = GetFrameAllocator();
 
 		alloc.MarkFrame();
 		RestoreReferences(clonedObj.get(), alloc, referenceData);
@@ -47,7 +47,7 @@ SPtr<IReflectable> BinaryCloner::Clone(IReflectable* object, bool shallow)
 	return clonedObj;
 }
 
-void BinaryCloner::GatherReferences(IReflectable* object, FrameAlloc& alloc, ObjectReferenceData& referenceData)
+void BinaryCloner::GatherReferences(IReflectable* object, FrameAllocator& alloc, ObjectReferenceData& referenceData)
 {
 	if(object == nullptr)
 		return;
@@ -174,7 +174,7 @@ void BinaryCloner::GatherReferences(IReflectable* object, FrameAlloc& alloc, Obj
 	}
 }
 
-void BinaryCloner::RestoreReferences(IReflectable* object, FrameAlloc& alloc, const ObjectReferenceData& referenceData)
+void BinaryCloner::RestoreReferences(IReflectable* object, FrameAllocator& alloc, const ObjectReferenceData& referenceData)
 {
 	for(auto iter = referenceData.SubObjectData.rbegin(); iter != referenceData.SubObjectData.rend(); ++iter)
 	{

@@ -553,7 +553,7 @@ namespace bs
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
@@ -595,7 +595,7 @@ namespace bs
 
 			void Initialize() override;
 			Rect2I GetViewportRect() const override;
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId;
 		};

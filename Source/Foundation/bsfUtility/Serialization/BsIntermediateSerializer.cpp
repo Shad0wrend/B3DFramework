@@ -300,7 +300,7 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 	}
 }
 
-SPtr<SerializedObject> IntermediateSerializer::EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc)
+SPtr<SerializedObject> IntermediateSerializer::EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc)
 {
 	FrameStack<RTTITypeBase*> rttiInstances;
 	RTTITypeBase* rtti = object->GetRtti();
@@ -361,7 +361,7 @@ SPtr<SerializedObject> IntermediateSerializer::EncodeEntry(IReflectable* object,
 	return output;
 }
 
-SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc)
+SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc)
 {
 	bool shallow = flags.IsSet(SerializedObjectEncodeFlag::Shallow);
 

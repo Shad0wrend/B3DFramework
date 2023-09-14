@@ -127,7 +127,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* GpuBuffer::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* GpuBuffer::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	if(!mInformation.Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
 		return nullptr;
@@ -326,7 +326,7 @@ namespace bs::ct
 		memcpy(destination, mCache + offset, length);
 	}
 
-	void GpuBuffer::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+	void GpuBuffer::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 	{
 		auto* const syncPacket = data.GetSyncPacket<bs::GpuBuffer::SyncPacket>();
 		if(!syncPacket)

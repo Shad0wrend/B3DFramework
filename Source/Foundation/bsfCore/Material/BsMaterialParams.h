@@ -825,7 +825,7 @@ namespace bs
 		 *							set this to true.
 		 * @return					Sync packet if there are any dirty parameters, null otherwise.
 		 */
-		SyncPacket* CreateSyncPacket(FrameAlloc& allocator, bool forceAll);
+		SyncPacket* CreateSyncPacket(FrameAllocator& allocator, bool forceAll);
 
 		/** Appends any resources stored by this object to the provided vector. */
 		void GetResourceDependencies(Vector<HResource>& resources);
@@ -866,7 +866,7 @@ namespace bs
 			 * core thread objects. Packet must be retrieved from bs::MaterialParams::CreateSyncPacket(). Sync packet is destroyed
 			 * using the provided allocator after it has been applied.
 			 */
-			void ApplyAndDestroySyncPacket(FrameAlloc& allocator, const bs::MaterialParams::SyncPacket& syncPacket);
+			void ApplyAndDestroySyncPacket(FrameAllocator& allocator, const bs::MaterialParams::SyncPacket& syncPacket);
 		};
 	} // namespace ct
 

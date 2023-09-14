@@ -123,7 +123,7 @@ void Decal::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 		dependencies.push_back(mMaterial.Get());
 }
 
-CoreSyncPacket* Decal::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* Decal::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	if(B3D_ENSURE(syncPacket))
@@ -169,7 +169,7 @@ void Decal::Initialize()
 	CoreObject::Initialize();
 }
 
-void Decal::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void Decal::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Decal::SyncPacket>();
 	if(!syncPacket)

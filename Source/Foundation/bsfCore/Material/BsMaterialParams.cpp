@@ -848,7 +848,7 @@ MaterialParams::MaterialParams(const HShader& shader, u64 initialParamVersion)
 	: TMaterialParams(shader, initialParamVersion), mLastSyncVersion(1)
 {}
 
-MaterialParams::SyncPacket* MaterialParams::CreateSyncPacket(FrameAlloc& allocator, bool forceAll)
+MaterialParams::SyncPacket* MaterialParams::CreateSyncPacket(FrameAllocator& allocator, bool forceAll)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator);
 
@@ -1118,7 +1118,7 @@ MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::Materi
 	}
 }
 
-void MaterialParams::ApplyAndDestroySyncPacket(FrameAlloc& allocator, const bs::MaterialParams::SyncPacket& syncPacket)
+void MaterialParams::ApplyAndDestroySyncPacket(FrameAllocator& allocator, const bs::MaterialParams::SyncPacket& syncPacket)
 {
 	mParamVersion++;
 

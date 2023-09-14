@@ -256,7 +256,7 @@ namespace bs
 
 		void Initialize() override;
 		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		/************************************************************************/
@@ -299,7 +299,7 @@ namespace bs
 
 			SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SPtr<Texture> texture, const SpriteSheetGridAnimation& anim, SpriteAnimationPlayback playback);
 
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/** @} */

@@ -64,13 +64,13 @@ namespace bs
 		 * Iterates over the provided object hierarchy and retrieves all object references which are returned in
 		 * @p referenceData output parameter, also in a hierarchical format for easier parsing.
 		 */
-		static void GatherReferences(IReflectable* object, FrameAlloc& alloc, ObjectReferenceData& referenceData);
+		static void GatherReferences(IReflectable* object, FrameAllocator& alloc, ObjectReferenceData& referenceData);
 
 		/**
 		 * Restores a set of references retrieved by gatherReferences() and applies them to a specific object. Type of the
 		 * object must be the same as the type that was used when calling gatherReferences().
 		 */
-		static void RestoreReferences(IReflectable* object, FrameAlloc& alloc, const ObjectReferenceData& referenceData);
+		static void RestoreReferences(IReflectable* object, FrameAllocator& alloc, const ObjectReferenceData& referenceData);
 	};
 
 	/**

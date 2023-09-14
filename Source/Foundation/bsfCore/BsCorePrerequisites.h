@@ -391,7 +391,7 @@ namespace bs
 	class RenderQueue;
 	struct ProfilerReport;
 	class VertexDescription;
-	class FrameAlloc;
+	class FrameAllocator;
 	class FolderMonitor;
 	class VideoMode;
 	class VideoOutputInfo;
@@ -808,12 +808,12 @@ namespace bs
 	void B3D_CORE_EXPORT DeferredCall(std::function<void()> callback);
 
 	// Special types for use by profilers
-	typedef std::basic_string<char, std::char_traits<char>, StdAlloc<char, ProfilerAlloc>> ProfilerString;
+	typedef std::basic_string<char, std::char_traits<char>, StdAlloc<char, ProfilerAllocatorTag>> ProfilerString;
 
-	template <typename T, typename A = StdAlloc<T, ProfilerAlloc>>
+	template <typename T, typename A = StdAlloc<T, ProfilerAllocatorTag>>
 	using ProfilerVector = std::vector<T, A>;
 
-	template <typename T, typename A = StdAlloc<T, ProfilerAlloc>>
+	template <typename T, typename A = StdAlloc<T, ProfilerAllocatorTag>>
 	using ProfilerStack = std::stack<T, std::deque<T, A>>;
 
 	/** Default thread policy for the framework. Performs special startup/shutdown on threads managed by thread pool. */

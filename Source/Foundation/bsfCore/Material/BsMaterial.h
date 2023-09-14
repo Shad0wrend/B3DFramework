@@ -791,7 +791,7 @@ namespace bs
 		Material(const HShader& shader, const ShaderVariationParameters& variation);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void GetListenerResources(Vector<HResource>& resources) override;
@@ -858,7 +858,7 @@ namespace bs
 			Material(const SPtr<Shader>& shader, const ShaderVariationParameters& variation);
 			Material(const SPtr<Shader>& shader, const Vector<SPtr<Technique>>& techniques, const SPtr<MaterialParams>& materialParams, const ShaderVariationParameters& variation);
 
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/** @} */

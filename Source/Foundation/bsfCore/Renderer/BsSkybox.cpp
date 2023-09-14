@@ -167,7 +167,7 @@ SPtr<ct::CoreObject> Skybox::CreateCore() const
 	return skyboxPtr;
 }
 
-CoreSyncPacket* Skybox::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* Skybox::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	if(B3D_ENSURE(syncPacket))
@@ -211,7 +211,7 @@ void Skybox::Initialize()
 	CoreObject::Initialize();
 }
 
-void Skybox::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void Skybox::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Skybox::SyncPacket>();
 	if(!syncPacket)

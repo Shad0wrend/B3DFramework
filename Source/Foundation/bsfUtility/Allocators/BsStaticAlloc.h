@@ -25,7 +25,7 @@ namespace bs
 	 *								allocated memory.
 	 * @tparam	DynamicAllocator	Allocator to fall-back to when static buffer is full.
 	 */
-	template <int BlockSize = 512, class DynamicAllocator = TFrameAlloc<BlockSize>>
+	template <int BlockSize = 512, class DynamicAllocator = TFrameAllocator<BlockSize>>
 	class StaticAlloc
 	{
 	private:

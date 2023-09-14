@@ -478,7 +478,7 @@ namespace bs
 	 *
 	 * @see	MemStack
 	 */
-	class StackAlloc
+	class StackAllocatorTag
 	{};
 
 	/**
@@ -488,7 +488,7 @@ namespace bs
 	 * @see MemStack
 	 */
 	template <>
-	class MemoryAllocator<StackAlloc> : public MemoryAllocatorBase
+	class MemoryAllocator<StackAllocatorTag> : public MemoryAllocatorBase
 	{
 	public:
 		static void* Allocate(size_t bytes)

@@ -105,7 +105,7 @@ namespace bs
 		friend class ct::MeshBase;
 		struct SyncPacket;
 
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		MeshProperties mProperties;
 
@@ -175,7 +175,7 @@ namespace bs
 		protected:
 			friend class bs::MeshBase;
 
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			MeshProperties mProperties;
 		};

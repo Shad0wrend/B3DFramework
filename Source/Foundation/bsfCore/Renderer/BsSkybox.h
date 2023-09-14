@@ -107,7 +107,7 @@ namespace bs
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		SPtr<Texture> mFilteredRadiance;
 		SPtr<Texture> mIrradiance;
@@ -150,7 +150,7 @@ namespace bs
 			Skybox(const SPtr<Texture>& radiance, const SPtr<Texture>& filteredRadiance, const SPtr<Texture>& irradiance);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			SPtr<Texture> mFilteredRadiance;
 			SPtr<Texture> mIrradiance;

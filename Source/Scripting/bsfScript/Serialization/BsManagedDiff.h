@@ -19,7 +19,7 @@ namespace bs
 	{
 	protected:
 		SPtr<SerializedObject> GenerateDiffInternal(IReflectable* orgObj, IReflectable* newObj, ObjectMap& objectMap, bool replicableOnly) override;
-		void ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& serzDiff, FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context) override;
+		void ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& serzDiff, FrameAllocator& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context) override;
 	};
 
 	/** @} */

@@ -49,7 +49,7 @@ namespace bs
 		 */
 		struct CoreStoredSyncData
 		{
-			FrameAlloc* Alloc = nullptr;
+			FrameAllocator* Alloc = nullptr;
 			Vector<CoreStoredSyncObjData> Entries;
 			Vector<SPtr<ct::CoreObject>> DestroyedObjects;
 		};
@@ -114,7 +114,7 @@ namespace bs
 		 * @note	Sim thread only.
 		 * @note	Must be followed by a call to syncUpload() with the same type.
 		 */
-		void SyncDownload(FrameAlloc* allocator);
+		void SyncDownload(FrameAllocator* allocator);
 
 		/**
 		 * Copies all the data stored by previous call to syncDownload() into core thread versions of CoreObjects.
@@ -147,7 +147,7 @@ namespace bs
 		 * we use a ring-buffer of allocators. We use one extra buffer as one buffer could currently be in progress of
 		 * being passed from main to core thread.
 		 */
-		FrameAlloc* mSyncAllocators[CoreThread::kSyncBufferCount + 1];
+		FrameAllocator* mSyncAllocators[CoreThread::kSyncBufferCount + 1];
 		u32 mActiveFrameAllocatorIndex = 0;
 
 		Mutex mObjectsMutex;

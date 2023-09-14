@@ -212,7 +212,7 @@ SPtr<ct::CoreObject> ReflectionProbe::CreateCore() const
 	return probePtr;
 }
 
-CoreSyncPacket* ReflectionProbe::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* ReflectionProbe::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	if(B3D_ENSURE(syncPacket))
@@ -260,7 +260,7 @@ void ReflectionProbe::Initialize()
 	CoreObject::Initialize();
 }
 
-void ReflectionProbe::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void ReflectionProbe::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::ReflectionProbe::SyncPacket>();
 	if(!syncPacket)

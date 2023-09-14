@@ -619,7 +619,7 @@ namespace bs
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		/**	Creates a new ParticleSystem instance without initializing it. */
@@ -701,7 +701,7 @@ namespace bs
 				: mId(id)
 			{}
 
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId = 0;
 			u32 mId;

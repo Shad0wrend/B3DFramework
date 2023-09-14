@@ -447,7 +447,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* ParticleSystem::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* ParticleSystem::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	syncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
@@ -518,7 +518,7 @@ void ParticleSystem::SetLayer(u64 layer)
 	MarkCoreDirtyInternal();
 }
 
-void ParticleSystem::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void ParticleSystem::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::ParticleSystem::SyncPacket>();
 	if(!syncPacket)

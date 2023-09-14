@@ -140,7 +140,7 @@ SPtr<ct::CoreObject> Viewport::CreateCore() const
 	return viewportPtr;
 }
 
-CoreSyncPacket* Viewport::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* Viewport::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
@@ -213,7 +213,7 @@ u32 Viewport::GetTargetHeight() const
 	return 0;
 }
 
-void Viewport::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void Viewport::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Viewport::SyncPacket>();
 	if(!syncPacket)

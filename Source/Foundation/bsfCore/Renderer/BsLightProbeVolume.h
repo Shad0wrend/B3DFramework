@@ -205,7 +205,7 @@ namespace bs
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag dirtFlags = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**	Creates a light volume with without initializing it. Used for serialization. */
 		static SPtr<LightProbeVolume> CreateEmpty();
@@ -281,7 +281,7 @@ namespace bs
 			LightProbeVolume(const UnorderedMap<u32, bs::LightProbeVolume::ProbeInfo>& probes);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			/**
 			 * Renders dirty probes and updates their SH coefficients in the local GPU buffer.

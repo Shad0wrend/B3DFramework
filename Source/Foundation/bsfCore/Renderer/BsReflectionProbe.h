@@ -198,7 +198,7 @@ namespace bs
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**
 		 * Captures the scene color at current probe location and generates a filtered map. If a custom texture is set then
@@ -244,7 +244,7 @@ namespace bs
 			ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents, const SPtr<Texture>& filteredTexture);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId;
 		};

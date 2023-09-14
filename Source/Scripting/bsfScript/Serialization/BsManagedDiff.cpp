@@ -65,7 +65,7 @@ SPtr<SerializedObject> ManagedDiff::GenerateDiffInternal(IReflectable* orgObj, I
 	return output;
 }
 
-void ManagedDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& serzDiff, FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
+void ManagedDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& serzDiff, FrameAllocator& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
 {
 	SPtr<SerializedObject> diffObj = std::static_pointer_cast<SerializedObject>(serzDiff->SubObjects[0].Entries[0].Serialized);
 

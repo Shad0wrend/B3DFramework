@@ -167,7 +167,7 @@ namespace bs
 		u32 GetTargetWidth() const override;
 		u32 GetTargetHeight() const override;
 
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		SPtr<ct::CoreObject> CreateCore() const override;
@@ -215,7 +215,7 @@ namespace bs
 			u32 GetTargetWidth() const override;
 			u32 GetTargetHeight() const override;
 
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/** @} */

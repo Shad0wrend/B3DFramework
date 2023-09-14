@@ -44,7 +44,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* MeshBase::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* MeshBase::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	syncPacket->Bounds = mProperties.Bounds;
@@ -77,7 +77,7 @@ MeshBase::MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMe
 	: mProperties(vertexCount, indexCount, subMeshes)
 {}
 
-void MeshBase::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void MeshBase::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	const auto* const syncPacket = data.GetSyncPacket<bs::MeshBase::SyncPacket>();
 	if(!syncPacket)

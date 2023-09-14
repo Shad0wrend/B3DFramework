@@ -682,7 +682,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* Material::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* Material::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 
@@ -1038,7 +1038,7 @@ void Material::SetVariation(const ShaderVariationParameters& variation)
 	mVariation = variation;
 }
 
-void Material::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void Material::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* syncPacket = data.GetSyncPacket<bs::Material::SyncPacket>();
 	if(!syncPacket)

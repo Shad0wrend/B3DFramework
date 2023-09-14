@@ -6,7 +6,7 @@
 
 using namespace bs;
 
-u8* FrameAlloc::MemBlock::Alloc(u32 amount)
+u8* FrameAllocator::MemBlock::Alloc(u32 amount)
 {
 	u8* freePtr = &MData[MFreePtr];
 	MFreePtr += amount;
@@ -14,23 +14,23 @@ u8* FrameAlloc::MemBlock::Alloc(u32 amount)
 	return freePtr;
 }
 
-void FrameAlloc::MemBlock::Clear()
+void FrameAllocator::MemBlock::Clear()
 {
 	MFreePtr = 0;
 }
 
-FrameAlloc::FrameAlloc(u32 blockSize)
+FrameAllocator::FrameAllocator(u32 blockSize)
 	: mBlockSize(blockSize), mFreeBlock(nullptr), mNextBlockIdx(0), mTotalAllocBytes(0), mLastFrame(nullptr)
 {
 }
 
-FrameAlloc::~FrameAlloc()
+FrameAllocator::~FrameAllocator()
 {
 	for(auto& block : mBlocks)
 		DeallocBlock(block);
 }
 
-u8* FrameAlloc::Alloc(u32 amount)
+u8* FrameAllocator::Alloc(u32 amount)
 {
 #if B3D_DEBUG
 	amount += sizeof(u32);
@@ -56,7 +56,7 @@ u8* FrameAlloc::Alloc(u32 amount)
 #endif
 }
 
-u8* FrameAlloc::AllocAligned(u32 amount, u32 alignment)
+u8* FrameAllocator::AllocAligned(u32 amount, u32 alignment)
 {
 #if B3D_DEBUG
 	amount += sizeof(u32);
@@ -108,7 +108,7 @@ u8* FrameAlloc::AllocAligned(u32 amount, u32 alignment)
 #endif
 }
 
-void FrameAlloc::Free(u8* data)
+void FrameAllocator::Free(u8* data)
 {
 	// Dealloc is only used for debug and can be removed if needed. All the actual deallocation
 	// happens in clear()
@@ -123,14 +123,14 @@ void FrameAlloc::Free(u8* data)
 #endif
 }
 
-void FrameAlloc::MarkFrame()
+void FrameAllocator::MarkFrame()
 {
 	void** framePtr = (void**)Alloc(sizeof(void*));
 	*framePtr = mLastFrame;
 	mLastFrame = framePtr;
 }
 
-void FrameAlloc::Clear()
+void FrameAllocator::Clear()
 {
 	if(mLastFrame != nullptr)
 	{
@@ -228,7 +228,7 @@ void FrameAlloc::Clear()
 	}
 }
 
-FrameAlloc::MemBlock* FrameAlloc::AllocBlock(u32 wantedSize)
+FrameAllocator::MemBlock* FrameAllocator::AllocBlock(u32 wantedSize)
 {
 	u32 blockSize = mBlockSize;
 	if(wantedSize > blockSize)
@@ -270,7 +270,7 @@ FrameAlloc::MemBlock* FrameAlloc::AllocBlock(u32 wantedSize)
 	return newBlock;
 }
 
-void FrameAlloc::DeallocBlock(MemBlock* block)
+void FrameAllocator::DeallocBlock(MemBlock* block)
 {
 	block->~MemBlock();
 	B3DFreeAligned16(block);
@@ -278,15 +278,15 @@ void FrameAlloc::DeallocBlock(MemBlock* block)
 
 namespace bs
 {
-B3D_THREADLOCAL FrameAlloc* _GlobalFrameAlloc = nullptr;
+B3D_THREADLOCAL FrameAllocator* _GlobalFrameAlloc = nullptr;
 
-B3D_UTILITY_EXPORT FrameAlloc& GetFrameAllocator()
+B3D_UTILITY_EXPORT FrameAllocator& GetFrameAllocator()
 {
 	if(_GlobalFrameAlloc == nullptr)
 	{
 		// Note: This will leak memory but since it should exist throughout the entirety
 		// of runtime it should only leak on shutdown when the OS will free it anyway.
-		_GlobalFrameAlloc = new FrameAlloc();
+		_GlobalFrameAlloc = new FrameAllocator();
 	}
 
 	return *_GlobalFrameAlloc;

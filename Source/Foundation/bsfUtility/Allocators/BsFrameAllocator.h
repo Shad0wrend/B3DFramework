@@ -29,7 +29,7 @@ namespace bs
 	 * @note	Not thread safe with an exception. alloc() and clear() methods need to be called from the same thread.
 	 * 			dealloc() is thread safe and can be called from any thread.
 	 */
-	class B3D_UTILITY_EXPORT FrameAlloc
+	class B3D_UTILITY_EXPORT FrameAllocator
 	{
 	private:
 		/** A single block of memory within a frame allocator. */
@@ -53,8 +53,8 @@ namespace bs
 		};
 
 	public:
-		FrameAlloc(u32 blockSize = 1024 * 1024);
-		~FrameAlloc();
+		FrameAllocator(u32 blockSize = 1024 * 1024);
+		~FrameAllocator();
 
 		/**
 		 * Allocates a new block of memory of the specified size.
@@ -162,14 +162,14 @@ namespace bs
 	};
 
 	/**
-	 * Version of FrameAlloc that allows blocks size to be provided through the template argument instead of the
+	 * Version of FrameAllocator that allows blocks size to be provided through the template argument instead of the
 	 * constructor. */
 	template <int BlockSize>
-	class TFrameAlloc : public FrameAlloc
+	class TFrameAllocator : public FrameAllocator
 	{
 	public:
-		TFrameAlloc()
-			: FrameAlloc(BlockSize)
+		TFrameAllocator()
+			: FrameAllocator(BlockSize)
 		{}
 	};
 
@@ -189,7 +189,7 @@ namespace bs
 
 		StdFrameAlloc() noexcept = default;
 
-		StdFrameAlloc(FrameAlloc* alloc) noexcept
+		StdFrameAlloc(FrameAllocator* alloc) noexcept
 			: mFrameAlloc(alloc)
 		{}
 
@@ -239,7 +239,7 @@ namespace bs
 			mFrameAlloc->Free((u8*)p);
 		}
 
-		FrameAlloc* mFrameAlloc = nullptr;
+		FrameAllocator* mFrameAlloc = nullptr;
 
 		size_t max_size() const { return std::numeric_limits<size_type>::max() / sizeof(T); }
 
@@ -278,11 +278,11 @@ namespace bs
 	 */
 
 	/**
-	 * Returns a global, application wide FrameAlloc. Each thread gets its own frame allocator.
+	 * Returns a global, application wide FrameAllocator. Each thread gets its own frame allocator.
 	 *
 	 * @note	Thread safe.
 	 */
-	B3D_UTILITY_EXPORT FrameAlloc& GetFrameAllocator();
+	B3D_UTILITY_EXPORT FrameAllocator& GetFrameAllocator();
 
 	/**
 	 * Allocates some memory using the global frame allocator.
@@ -387,10 +387,10 @@ namespace bs
 		B3DFrameFree((u8*)data);
 	}
 
-	/** @copydoc FrameAlloc::MarkFrame */
+	/** @copydoc FrameAllocator::MarkFrame */
 	B3D_UTILITY_EXPORT void B3DMarkAllocatorFrame();
 
-	/** @copydoc FrameAlloc::Clear */
+	/** @copydoc FrameAllocator::Clear */
 	B3D_UTILITY_EXPORT void B3DClearAllocatorFrame();
 
 	/** Opens a frame scope on construction and closes it on destruction. See B3DMarkAllocatorFrame(). */
@@ -443,7 +443,7 @@ namespace bs
 	 *  @{
 	 */
 
-	extern B3D_THREADLOCAL FrameAlloc* _GlobalFrameAlloc;
+	extern B3D_THREADLOCAL FrameAllocator* _GlobalFrameAlloc;
 
 	/**
 	 * Specialized memory allocator implementations that allows use of a global frame allocator in normal

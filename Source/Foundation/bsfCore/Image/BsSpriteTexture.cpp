@@ -149,7 +149,7 @@ SPtr<ct::CoreObject> SpriteTexture::CreateCore() const
 	return spriteTexPtr;
 }
 
-CoreSyncPacket* SpriteTexture::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* SpriteTexture::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
@@ -227,7 +227,7 @@ SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SP
 	mPlayback = playback;
 }
 
-void SpriteTexture::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void SpriteTexture::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::SpriteTexture::SyncPacket>();
 	if(!syncPacket)

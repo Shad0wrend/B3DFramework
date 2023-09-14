@@ -307,7 +307,7 @@ namespace bs
 		void Initialize() override;
 		void Destroy() override;
 		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		GpuBufferInformation mInformation;
 		u32 mSuballocationSize = 0;
@@ -477,7 +477,7 @@ namespace bs::ct
 		/** Constructs a new GPU buffer. */
 		GpuBuffer(const GpuBufferCreateInformation& createInformation, u32 suballocationSize);
 
-		void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+		void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 		/** @copydoc Lock */
 		virtual void* Map(u32 offset, u32 length, GpuLockOptions options) { return nullptr; }

@@ -152,7 +152,7 @@ void Pass::Compile()
 	CoreObject::SyncToCore();
 }
 
-CoreSyncPacket* Pass::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* Pass::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
@@ -200,7 +200,7 @@ void Pass::Compile()
 	CreatePipelineState();
 }
 
-void Pass::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void Pass::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<CoreSyncPacket>();
 	if(!syncPacket)

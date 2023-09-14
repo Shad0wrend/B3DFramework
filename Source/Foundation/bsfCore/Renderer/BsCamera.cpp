@@ -771,7 +771,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* Camera::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* Camera::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	if(flags == 0)
 		return nullptr;
@@ -848,7 +848,7 @@ Rect2I Camera::GetViewportRect() const
 	return mViewport->GetPixelArea();
 }
 
-void Camera::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void Camera::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<CoreSyncPacket>();
 	if(!syncPacket)

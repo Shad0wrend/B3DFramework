@@ -174,7 +174,7 @@ namespace bs
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**	Creates the object with without initializing it. Used for serialization. */
 		static SPtr<Decal> CreateEmpty();
@@ -211,7 +211,7 @@ namespace bs
 			Decal(const SPtr<Material>& material, const Vector2& size, float maxDistance);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId = 0;
 		};

@@ -94,7 +94,7 @@ namespace bs
 		 * Creates a data packet that will be used for syncing the core object with it's render thread counter-part.
 		 * Caller must free the retrieved packet using the provided allocator, when done using it.
 		 */
-		CoreSyncPacket* CreateCoreSyncPacket(FrameAlloc& allocator, u32 flags);
+		CoreSyncPacket* CreateCoreSyncPacket(FrameAllocator& allocator, u32 flags);
 
 		struct SyncEverythingPacket;
 		struct SyncTransformPacket;

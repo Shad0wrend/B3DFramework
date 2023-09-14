@@ -519,7 +519,7 @@ namespace bs
 		 * should instead be used for passing to various RTTIField methods during serialization/deserialization. This
 		 * allows each object instance to have a unique places to store temporary instance-specific data.
 		 */
-		virtual RTTITypeBase* CloneInternal(FrameAlloc& alloc) = 0;
+		virtual RTTITypeBase* CloneInternal(FrameAllocator& alloc) = 0;
 
 		/** Initializes the type schema. Should be called once after construction. */
 		void InitSchemaInternal();
@@ -674,7 +674,7 @@ namespace bs
 			GetDerivedClasses().push_back(derivedClass);
 		}
 
-		RTTITypeBase* CloneInternal(FrameAlloc& alloc) override
+		RTTITypeBase* CloneInternal(FrameAllocator& alloc) override
 		{
 			return alloc.Construct<MyRTTIType>();
 		}

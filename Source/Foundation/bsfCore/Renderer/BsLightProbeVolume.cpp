@@ -316,7 +316,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* LightProbeVolume::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* LightProbeVolume::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	auto* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	
@@ -484,7 +484,7 @@ bool LightProbeVolume::RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProb
 	return mFirstDirtyProbe == (u32)mProbeInfos.size();
 }
 
-void LightProbeVolume::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void LightProbeVolume::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::LightProbeVolume::SyncPacket>();
 	if(!syncPacket)

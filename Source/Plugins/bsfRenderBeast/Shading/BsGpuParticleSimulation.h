@@ -247,7 +247,7 @@ namespace bs
 				TextureRowAllocation Allocation;
 			};
 
-			FrameAlloc mPendingAllocator;
+			FrameAllocator mPendingAllocator;
 			Vector<PendingAllocation> mPendingAllocations;
 
 			SPtr<Texture> mCurveTexture;

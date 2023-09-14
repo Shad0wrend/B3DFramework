@@ -213,7 +213,7 @@ public:
 	bool ComparePlain(const RTTIFieldWrapper<true>& other) const;
 
 	/** Clones the contents of this field and returns them as intermediate serialized data. */
-	SPtr<SerializedInstance> Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const;
+	SPtr<SerializedInstance> Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc) const;
 
 private:
 	friend struct RTTIFieldWrapper<true>;
@@ -268,7 +268,7 @@ public:
 	bool ComparePlain(const RTTIFieldWrapper<true>& other) const;
 
 	/** Clones the contents of this field and returns them as intermediate serialized data. */
-	SPtr<SerializedInstance> Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const;
+	SPtr<SerializedInstance> Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc) const;
 
 private:
 	friend struct RTTIFieldWrapper<false>;
@@ -511,7 +511,7 @@ bool RTTIFieldWrapper<false>::ComparePlain(const RTTIFieldWrapper<true>& other) 
 	return isModified;
 }
 
-SPtr<SerializedInstance> RTTIFieldWrapper<false>::Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const
+SPtr<SerializedInstance> RTTIFieldWrapper<false>::Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc) const
 {
 	return mObj->Clone();
 }
@@ -641,7 +641,7 @@ void RTTIFieldWrapper<true>::GetPlainData(u8* buffer, u32 bufferSize) const
 		field->ToStream(mRTTIType, mObj, tempStream);
 }
 
-SPtr<SerializedInstance> RTTIFieldWrapper<true>::Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const
+SPtr<SerializedInstance> RTTIFieldWrapper<true>::Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc) const
 {
 	return IntermediateSerializer::EncodeFieldInternal(mObj, mRTTIType, mField, mArrayIdx, flags, context, alloc);
 }
@@ -712,7 +712,7 @@ SPtr<SerializedInstance> GenerateFieldDiff(RTTITypeBase* rtti, u32 fieldType, co
 {
 	SerializedObjectEncodeFlags flags = replicableOnly ? SerializedObjectEncodeFlag::ReplicableOnly : SerializedObjectEncodeFlags();
 	SerializationContext* context = nullptr;
-	FrameAlloc* alloc = &GetFrameAllocator();
+	FrameAllocator* alloc = &GetFrameAllocator();
 
 	SPtr<SerializedInstance> modification;
 	switch(fieldType)
@@ -814,7 +814,7 @@ SPtr<SerializedObject> GenerateDiff(RTTIObjectWrapper<REFL_ORG> orgObj, RTTIObje
 {
 	SerializedObjectEncodeFlags flags = replicableOnly ? SerializedObjectEncodeFlag::ReplicableOnly : SerializedObjectEncodeFlags();
 	SerializationContext* context = nullptr;
-	FrameAlloc* alloc = &GetFrameAllocator();
+	FrameAllocator* alloc = &GetFrameAllocator();
 
 	RTTISubObjectWrapperIterator<REFL_NEW> newObjTypeIter = newObj.GetSubObjectIterator();
 
@@ -1011,7 +1011,7 @@ SPtr<SerializedObject> IDiff::GenerateDiff(const SPtr<IReflectable>& orgObj, con
 
 void IDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, SerializationContext* context)
 {
-	FrameAlloc& alloc = GetFrameAllocator();
+	FrameAllocator& alloc = GetFrameAllocator();
 	alloc.MarkFrame();
 
 	FrameVector<DiffCommand> commands;
@@ -1171,7 +1171,7 @@ void IDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObj
 	alloc.Clear();
 }
 
-void IDiff::ApplyDiff(RTTITypeBase* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
+void IDiff::ApplyDiff(RTTITypeBase* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAllocator& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
 {
 	IDiff& diffHandler = rtti->GetDiffHandler();
 	diffHandler.ApplyDiff(object, diff, alloc, objectMap, diffCommands, context);
@@ -1207,7 +1207,7 @@ SPtr<SerializedObject> BinaryDiff::GenerateDiffInternal(IReflectable* orgObj, IR
 	}
 }
 
-void BinaryDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
+void BinaryDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAllocator& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
 {
 	if(object == nullptr || diff == nullptr || object->GetTypeId() != diff->GetRootTypeId())
 		return;

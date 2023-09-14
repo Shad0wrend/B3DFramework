@@ -36,7 +36,7 @@ namespace bs
 		 * @p arrayIdx is -1 then the entire array will be encoded, otherwise just a single array field will. If the
 		 * field is not array the value of @p arrayIdx is not relevant.
 		 */
-		static SPtr<SerializedInstance> EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc);
+		static SPtr<SerializedInstance> EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc);
 
 		/** @} */
 	private:
@@ -58,11 +58,11 @@ namespace bs
 		void DecodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject);
 
 		/** Encodes a single IReflectable object. */
-		static SPtr<SerializedObject> EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc);
+		static SPtr<SerializedObject> EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc);
 
 		UnorderedMap<const SerializedObject*, ObjectToDecode> mObjectMap;
 		SerializationContext* mContext = nullptr;
-		FrameAlloc* mAlloc = nullptr;
+		FrameAllocator* mAlloc = nullptr;
 	};
 
 	/** @} */

@@ -61,7 +61,7 @@ void SceneActor::UpdateStateInternal(const SceneObject& so, bool force)
 		SetMobility(so.GetMobility());
 }
 
-CoreSyncPacket* SceneActor::CreateCoreSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* SceneActor::CreateCoreSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	if(flags == 0)
 		return nullptr;

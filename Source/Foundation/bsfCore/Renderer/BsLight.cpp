@@ -233,7 +233,7 @@ SPtr<ct::CoreObject> Light::CreateCore() const
 	return handlerPtr;
 }
 
-CoreSyncPacket* Light::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* Light::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	if(B3D_ENSURE(syncPacket))
@@ -280,7 +280,7 @@ void Light::Initialize()
 	CoreObject::Initialize();
 }
 
-void Light::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void Light::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Light::SyncPacket>();
 	if(!syncPacket)

@@ -214,7 +214,7 @@ namespace bs
 		 * Creates a data packet that will be used for syncing the core object with it's render thread counter-part.
 		 * Caller must free the retrieved packet using the provided allocator, when done using it.
 		 */
-		virtual CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) { return nullptr; }
+		virtual CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) { return nullptr; }
 
 		/**
 		 * Populates the provided array with all core objects that this core object depends upon. Dependencies are required

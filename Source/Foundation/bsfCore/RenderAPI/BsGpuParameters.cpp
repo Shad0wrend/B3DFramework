@@ -574,7 +574,7 @@ SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuPipelineParameterLayout>
 	return shared;
 }
 
-CoreSyncPacket* GpuParameters::CreateSyncPacket(FrameAlloc& allocator, u32 flags)
+CoreSyncPacket* GpuParameters::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 
@@ -657,7 +657,7 @@ SPtr<GpuParameters> GpuParameters::GetThisPtrInternal() const
 	return std::static_pointer_cast<GpuParameters>(GetShared());
 }
 
-void GpuParameters::SyncToCore(const CoreSyncData& data, FrameAlloc& allocator)
+void GpuParameters::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::GpuParameters::SyncPacket>();
 	if(!syncPacket)

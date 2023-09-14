@@ -65,7 +65,7 @@ namespace bs
 			 * This generally happens at the start of a core thread frame. Data used was recorded on the previous sim thread
 			 * frame.
 			 */
-			virtual void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) {}
+			virtual void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) {}
 
 			/**
 			 * Blocks the current thread until the resource is fully initialized.

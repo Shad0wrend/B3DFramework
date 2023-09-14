@@ -101,7 +101,7 @@ inline u64 ProfilerCPU::TimerPrecise::GetNumCycles()
 #endif
 }
 
-ProfilerCPU::ProfileData::ProfileData(FrameAlloc* alloc)
+ProfilerCPU::ProfileData::ProfileData(FrameAllocator* alloc)
 	: Samples(alloc)
 {}
 
@@ -130,7 +130,7 @@ void ProfilerCPU::ProfileData::ResumeLastSample()
 	Samples.erase(Samples.end() - 1);
 }
 
-ProfilerCPU::PreciseProfileData::PreciseProfileData(FrameAlloc* alloc)
+ProfilerCPU::PreciseProfileData::PreciseProfileData(FrameAllocator* alloc)
 	: Samples(alloc)
 {}
 
@@ -162,7 +162,7 @@ void ProfilerCPU::PreciseProfileData::ResumeLastSample()
 B3D_THREADLOCAL ProfilerCPU::ThreadInfo* ProfilerCPU::ThreadInfo::activeThread = nullptr;
 
 ProfilerCPU::ThreadInfo::ThreadInfo()
-	: FrameAlloc(1024 * 512)
+	: FrameAllocator(1024 * 512)
 {
 }
 
@@ -179,7 +179,7 @@ void ProfilerCPU::ThreadInfo::Begin(const char* _name)
 
 	ActiveBlock = ProfilerCPU::ActiveBlock(ActiveSamplingType::Basic, RootBlock);
 	if(ActiveBlocks == nullptr)
-		ActiveBlocks = FrameAlloc.Construct<Stack<ProfilerCPU::ActiveBlock, StdFrameAlloc<ProfilerCPU::ActiveBlock>>>(StdFrameAlloc<ProfilerCPU::ActiveBlock>(&FrameAlloc));
+		ActiveBlocks = FrameAllocator.Construct<Stack<ProfilerCPU::ActiveBlock, StdFrameAlloc<ProfilerCPU::ActiveBlock>>>(StdFrameAlloc<ProfilerCPU::ActiveBlock>(&FrameAllocator));
 
 	ActiveBlocks->push(ActiveBlock);
 
@@ -219,7 +219,7 @@ void ProfilerCPU::ThreadInfo::End()
 	IsActive = false;
 	ActiveBlock = ProfilerCPU::ActiveBlock();
 
-	FrameAlloc.Free(ActiveBlocks);
+	FrameAllocator.Free(ActiveBlocks);
 	ActiveBlocks = nullptr;
 }
 
@@ -232,13 +232,13 @@ void ProfilerCPU::ThreadInfo::Reset()
 		ReleaseBlock(RootBlock);
 
 	RootBlock = nullptr;
-	FrameAlloc.Clear(); // Note: This never actually frees memory
+	FrameAllocator.Clear(); // Note: This never actually frees memory
 }
 
 ProfilerCPU::ProfiledBlock* ProfilerCPU::ThreadInfo::GetBlock(const char* name)
 {
-	ProfiledBlock* block = FrameAlloc.Construct<ProfiledBlock>(&FrameAlloc);
-	block->Name = (char*)FrameAlloc.Alloc(((u32)strlen(name) + 1) * sizeof(char));
+	ProfiledBlock* block = FrameAllocator.Construct<ProfiledBlock>(&FrameAllocator);
+	block->Name = (char*)FrameAllocator.Alloc(((u32)strlen(name) + 1) * sizeof(char));
 	strcpy(block->Name, name);
 
 	return block;
@@ -246,11 +246,11 @@ ProfilerCPU::ProfiledBlock* ProfilerCPU::ThreadInfo::GetBlock(const char* name)
 
 void ProfilerCPU::ThreadInfo::ReleaseBlock(ProfiledBlock* block)
 {
-	FrameAlloc.Free((u8*)block->Name);
-	FrameAlloc.Free(block);
+	FrameAllocator.Free((u8*)block->Name);
+	FrameAllocator.Free(block);
 }
 
-ProfilerCPU::ProfiledBlock::ProfiledBlock(FrameAlloc* alloc)
+ProfilerCPU::ProfiledBlock::ProfiledBlock(FrameAllocator* alloc)
 	: Basic(alloc), Precise(alloc), Children(alloc)
 {}
 
@@ -289,7 +289,7 @@ ProfilerCPU::~ProfilerCPU()
 	Lock lock(mThreadSync);
 
 	for(auto& threadInfo : mActiveThreads)
-		B3DDelete<ThreadInfo, ProfilerAlloc>(threadInfo);
+		B3DDelete<ThreadInfo, ProfilerAllocatorTag>(threadInfo);
 }
 
 void ProfilerCPU::BeginThread(const char* name)
@@ -297,7 +297,7 @@ void ProfilerCPU::BeginThread(const char* name)
 	ThreadInfo* thread = ThreadInfo::activeThread;
 	if(thread == nullptr)
 	{
-		ThreadInfo::activeThread = B3DNew<ThreadInfo, ProfilerAlloc>();
+		ThreadInfo::activeThread = B3DNew<ThreadInfo, ProfilerAllocatorTag>();
 		thread = ThreadInfo::activeThread;
 
 		{

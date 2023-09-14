@@ -151,7 +151,7 @@ namespace bs
 		SPtr<ct::CoreObject> CreateCore() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void MarkCoreDirty(ShaderVariationDirtyFlags flag) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAlloc& allocator, u32 flags) override;
+		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void SyncToCore() override;
 
 		SPtr<Technique> GetSelf() override { return std::static_pointer_cast<Technique>(GetShared()); }
@@ -201,7 +201,7 @@ namespace bs
 		protected:
 			friend class bs::Technique;
 
-			void SyncToCore(const CoreSyncData& data, FrameAlloc& allocator) override;
+			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
 			SPtr<Technique> GetSelf() override { return std::static_pointer_cast<Technique>(GetShared()); }
 
 		private:
