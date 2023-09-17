@@ -316,9 +316,35 @@ String GUIStyleSheetToken::TypeToString(const GUIStyleSheetTokenTypes type)
 {
 	switch(type)
 	{
-	case GUIStyleSheetTokenTypes::ElementSelector: return "Identifier";
-		// TODO
-	default: return "";
+	case GUIStyleSheetTokenTypes::ElementSelector: return "Element selector";
+	case GUIStyleSheetTokenTypes::PixelsLiteral: return "Pixel literal";
+	case GUIStyleSheetTokenTypes::Undefined: return "Undefined";
+	case GUIStyleSheetTokenTypes::IdSelector: return "ID selector";
+	case GUIStyleSheetTokenTypes::VariableIdentifier: return "Variable identifier";
+	case GUIStyleSheetTokenTypes::StringLiteral: return "String literal";
+	case GUIStyleSheetTokenTypes::DecimalLiteral: return "Decimal literal";
+	case GUIStyleSheetTokenTypes::IntegerLiteral: return "Integer literal";
+	case GUIStyleSheetTokenTypes::PercentLiteral: return "Percent literal";
+	case GUIStyleSheetTokenTypes::Comma: return ",";
+	case GUIStyleSheetTokenTypes::Colon: return ":";
+	case GUIStyleSheetTokenTypes::Semicolon: return ";";
+	case GUIStyleSheetTokenTypes::Slash: return "/";
+	case GUIStyleSheetTokenTypes::LeftParenthesis: return "(";
+	case GUIStyleSheetTokenTypes::RightParenthesis: return ")";
+	case GUIStyleSheetTokenTypes::LeftCurly: return "{";
+	case GUIStyleSheetTokenTypes::RightCurly: return "}";
+	case GUIStyleSheetTokenTypes::Variable: return "var";
+	case GUIStyleSheetTokenTypes::ColorRGB: return "rgb";
+	case GUIStyleSheetTokenTypes::ColorHSL: return "hsl";
+	case GUIStyleSheetTokenTypes::ColorRGBA: return "rgba";
+	case GUIStyleSheetTokenTypes::ColorHSLA: return "hlsa";
+	case GUIStyleSheetTokenTypes::Property: return "Property name";
+	case GUIStyleSheetTokenTypes::BorderStyle: return "Border style";
+	case GUIStyleSheetTokenTypes::TextAlign: return "Text align mode";
+	case GUIStyleSheetTokenTypes::VerticalAlign: return "Vertical alignment mode";
+	case GUIStyleSheetTokenTypes::PseudoClassSelector: return "Pseudo class selector";
+	case GUIStyleSheetTokenTypes::EndOfStream: return "End of stream";
+	default: return "Unknown";
 	}
 }
 
@@ -736,6 +762,56 @@ public:
 	const String& GetErrors() const { return mErrors; }
 	
 private:
+	enum class VariableType
+	{
+		Undefined,
+		Integer,
+		Pixel,
+		Decimal,
+		Percent,
+		Color,
+		String
+	};
+
+	struct VariableValue
+	{
+		union
+		{
+			u32 UnsignedInteger;
+			i32 SignedInteger;
+			float Float;
+			Color Color;
+		};
+
+		VariableType Type = VariableType::Undefined;
+
+		VariableValue()
+			: UnsignedInteger(0)
+		{ }
+
+		VariableValue(u32 value, VariableType type)
+			: UnsignedInteger(value), Type(type)
+		{ }
+
+		VariableValue(i32 value, VariableType type)
+			: SignedInteger(value), Type(type)
+		{ }
+
+		VariableValue(float value, VariableType type)
+			: Float(value), Type(type)
+		{ }
+
+		VariableValue(const class Color& value, VariableType type)
+			: Color(value), Type(type)
+		{ }
+	};
+
+	struct VariableContext
+	{
+		UnorderedMap<String, VariableValue> Variables;
+		Vector<String> StringLiterals;
+	};
+
 	bool IsCurrentToken(TokenType type) const;
 	bool IsCurrentToken(TokenType type, const String& spelling) const;
 
@@ -749,14 +825,23 @@ private:
 	bool TryParseColor(Color& outValue);
 	bool TryParseRectOffset(RectOffset& outValue);
 	bool TryParseBorderStyle(GUIBorderElementStyle& outValue);
+	bool TryParseBorderStyle(GUIBorderElementStyle& outTop, GUIBorderElementStyle& outRight, GUIBorderElementStyle& outBottom, GUIBorderElementStyle& outLeft);
+	bool TryParseBorderWidth(u32& outTop, u32& outRight, u32& outBottom, u32& outLeft);
+	bool TryParseBorderColor(Color& outTop, Color& outRight, Color& outBottom, Color& outLeft);
 	bool TryParseTextAlign(GUIHorizontalTextAlignment& outValue);
 	bool TryParseVerticalAlign(GUIVerticalTextAlignment& outValue);
-	bool TryParseProperty(GUIStyleSheetStateStyle& inOutValue);
-	bool TryParseSelector();
+	bool TryParseBorderElement(GUIBorderElement& outValue);
+	bool TryParseBorderRadius(u32& outTopLeft, u32& outTopRight, u32& outBottomLeft, u32& outBottomRight);
+	bool TryParseProperty(const VariableContext& globalVariableContext, const VariableContext& localVariableContext, GUIStyleSheetStateStyle& inOutValue);
+	bool TryParseVariable(VariableContext& inOutVariableContext);
+	bool TryParseSelector(VariableContext& inOutGlobalVariableContext);
 
 	bool TryParseInteger(const StringView& toParse, i32& outValue) const;
 	bool TryParseFloat(const StringView& toParse, float& outValue) const;
 	bool TryParseHexColor(const StringView& toParse, Color& outValue) const;
+
+	template<class T>
+	bool TryParseFourSides(T& outTop, T& outRight, T& outBottom, T& outLeft, bool(GUIStyleSheetParser::*fnParsePredicate)(T&));
 
 	TokenType GetCurrentTokenType() const { return mCurrentToken.has_value() ? mCurrentToken->GetType() : GUIStyleSheetTokenTypes::Undefined; }
 	Optional<Token> GetCurrentToken() const { return mCurrentToken; }
@@ -848,26 +933,17 @@ bool GUIStyleSheetParser::Parse(const SPtr<SourceCode>& sourceCode)
 	// Grabs the first token
 	GetCurrentTokenAndAdvance();
 
-	// TODO well defined:
-	// - Add parse for 9 border shorthands
-	// - Add parse for margin & padding shorthands
-	// - Add parse for text properties
-	// - Add token to string mapping
-	// - Implement style lookup
-	// - Implement variable parse
-
-	// TODO: Proof of concept for reading variable values
-
+	VariableContext globalVariableContext;
 	while(!IsCurrentToken(GUIStyleSheetTokenTypes::EndOfStream))
 	{
-		if(!TryParseSelector())
+		if(!TryParseSelector(globalVariableContext))
 			return false;
 	}
 
 	return true;
 }
 
-bool GUIStyleSheetParser::TryParseSelector()
+bool GUIStyleSheetParser::TryParseSelector(VariableContext& inOutGlobalVariableContext)
 {
 	GUIStyleSheetStateStyle stateStyle; // TODO - Should probably do a lookup if an element with the same name is already specified, and just overwrite/append to it
 
@@ -915,6 +991,9 @@ bool GUIStyleSheetParser::TryParseSelector()
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::LeftCurly).has_value())
 		return false;
 
+	const bool isInGlobalVariableContext = foundSelectorName && stateStyle.Selector == "root";
+	VariableContext localVariableContext;
+
 	while(!IsCurrentToken(GUIStyleSheetTokenTypes::RightCurly))
 	{
 		if(IsCurrentToken(GUIStyleSheetTokenTypes::EndOfStream))
@@ -925,16 +1004,12 @@ bool GUIStyleSheetParser::TryParseSelector()
 
 		if(IsCurrentToken(GUIStyleSheetTokenTypes::VariableIdentifier))
 		{
-			// TODO - Parse variables
-			// - If this is a global selector, register all variables in a global lookup table in some context struct we pass around
-			// - Otherwise, register variables in local context
-
-			if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Semicolon))
+			if(!TryParseVariable(isInGlobalVariableContext ? inOutGlobalVariableContext : localVariableContext))
 				return false;
 		}
 		else if(IsCurrentToken(GUIStyleSheetTokenTypes::Property))
 		{
-			if(!TryParseProperty(stateStyle))
+			if(!TryParseProperty(inOutGlobalVariableContext, localVariableContext, stateStyle))
 				return false;
 		}
 	}
@@ -942,14 +1017,31 @@ bool GUIStyleSheetParser::TryParseSelector()
 	return true;
 }
 
-bool GUIStyleSheetParser::TryParseProperty(GUIStyleSheetStateStyle& inOutValue)
+bool GUIStyleSheetParser::TryParseProperty(const VariableContext& globalVariableContext, const VariableContext& localVariableContext, GUIStyleSheetStateStyle& inOutValue)
 {
+	// TODO - Do variable lookup
+
 	Optional<Token> propertyToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Property);
 	if(!propertyToken)
 		return false;
 
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon))
 		return false;
+
+	//VariableType propertyType;
+	//switch(propertyType)
+	//{
+	//case VariableType::Integer:
+	//	if(TryParseInteger())
+
+	//	break;
+	//case VariableType::Pixel: break;
+	//case VariableType::Decimal: break;
+	//case VariableType::Percent: break;
+	//case VariableType::Color: break;
+	//case VariableType::String: break;
+	//default: ;
+	//}
 
 	if(auto foundProperty = mPropertyKeywords.find(propertyToken->GetSpelling()); foundProperty != mPropertyKeywords.end())
 	{
@@ -1043,7 +1135,128 @@ bool GUIStyleSheetParser::TryParseProperty(GUIStyleSheetStateStyle& inOutValue)
 				break;
 			}
 
-			// TODO - Other shorthands
+		case GUIStyleSheetPropertyType::Border:
+			{
+				GUIBorderElement borderElement;
+				if(!TryParseBorderElement(borderElement))
+					return false;
+
+				inOutValue.BorderLeft = borderElement;
+				inOutValue.BorderRight = borderElement;
+				inOutValue.BorderTop = borderElement;
+				inOutValue.BorderBottom = borderElement;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderLeftWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderLeftColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderLeftStyle] = true;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightStyle] = true;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopStyle] = true;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightStyle] = true;
+				
+				break;
+			}
+
+		case GUIStyleSheetPropertyType::BorderLeft:
+			{
+				if(!TryParseBorderElement(inOutValue.BorderLeft))
+					return false;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderLeftWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderLeftColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderLeftStyle] = true;
+				break;
+			}
+
+		case GUIStyleSheetPropertyType::BorderRight:
+			{
+				if(!TryParseBorderElement(inOutValue.BorderRight))
+					return false;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightStyle] = true;
+				break;
+			}
+
+		case GUIStyleSheetPropertyType::BorderTop:
+			{
+				if(!TryParseBorderElement(inOutValue.BorderTop))
+					return false;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopStyle] = true;
+				break;
+			}
+
+		case GUIStyleSheetPropertyType::BorderBottom:
+			{
+				if(!TryParseBorderElement(inOutValue.BorderBottom))
+					return false;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderBottomWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderBottomColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderBottomStyle] = true;
+				break;
+			}
+
+		case GUIStyleSheetPropertyType::BorderRadius:
+			{
+				if(!TryParseBorderRadius(inOutValue.BorderTopLeftRadius, inOutValue.BorderTopRightRadius, inOutValue.BorderBottomLeftRadius, inOutValue.BorderBottomRightRadius))
+					return false;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopLeftRadius] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopRightRadius] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderBottomLeftRadius] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderBottomRightRadius] = true;
+				break;
+			}
+
+		case GUIStyleSheetPropertyType::BorderWidth:
+			{
+				if(!TryParseBorderWidth(inOutValue.BorderTop.Width, inOutValue.BorderRight.Width, inOutValue.BorderBottom.Width, inOutValue.BorderLeft.Width))
+					return false;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderBottomWidth] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderLeftWidth] = true;
+				break;
+			}
+
+		case GUIStyleSheetPropertyType::BorderColor:
+			{
+				if(!TryParseBorderColor(inOutValue.BorderTop.Color, inOutValue.BorderRight.Color, inOutValue.BorderBottom.Color, inOutValue.BorderLeft.Color))
+					return false;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderBottomColor] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderLeftColor] = true;
+				break;
+			}
+
+		case GUIStyleSheetPropertyType::BorderStyle:
+			{
+				if(!TryParseBorderStyle(inOutValue.BorderTop.Style, inOutValue.BorderRight.Style, inOutValue.BorderBottom.Style, inOutValue.BorderLeft.Style))
+					return false;
+
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderTopStyle] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderRightStyle] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderBottomStyle] = true;
+				inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::BorderLeftStyle] = true;
+				break;
+			}
+
 		default:
 			Error(StringFormat::Format("Unrecognized property '{0}'.", propertyToken->GetSpelling()));
 			return false;
@@ -1056,6 +1269,113 @@ bool GUIStyleSheetParser::TryParseProperty(GUIStyleSheetStateStyle& inOutValue)
 	}
 
 #undef CASE_PARSE 
+
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Semicolon))
+		return false;
+
+	return true;
+}
+
+bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext)
+{
+	Optional<Token> variableIdentifierToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VariableIdentifier);
+	if(!variableIdentifierToken)
+		return false;
+
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon))
+		return false;
+
+	const String& identifier = variableIdentifierToken->GetSpelling();
+
+	VariableValue value;
+	switch(GetCurrentTokenType())
+	{
+	case GUIStyleSheetTokenTypes::IdSelector:
+	case GUIStyleSheetTokenTypes::ColorRGB:
+	case GUIStyleSheetTokenTypes::ColorHSL:
+	case GUIStyleSheetTokenTypes::ColorRGBA:
+	case GUIStyleSheetTokenTypes::ColorHSLA:
+	{
+		if(!TryParseColor(value.Color))
+			return false;
+
+		value.Type = VariableType::Color;
+		break;
+	}
+	case GUIStyleSheetTokenTypes::StringLiteral:
+	{
+		String parsedValue;
+		if(!TryParseStringLiteral(parsedValue))
+			return false;
+
+		value.UnsignedInteger = (u32)inOutVariableContext.StringLiterals.size();
+		value.Type = VariableType::String;
+
+		inOutVariableContext.StringLiterals.push_back(parsedValue);
+		break;
+	}
+	case GUIStyleSheetTokenTypes::DecimalLiteral:
+	{
+		if(!TryParseDecimalLiteral(value.Float))
+			return false;
+
+		value.Type = VariableType::Decimal;
+		break;
+	}
+	case GUIStyleSheetTokenTypes::IntegerLiteral:
+	{
+		if(!TryParseIntegerLiteral(value.SignedInteger))
+			return false;
+
+		value.Type = VariableType::Integer;
+		break;
+	}
+	case GUIStyleSheetTokenTypes::PixelsLiteral:
+	{
+		if(!TryParsePixelLiteral(value.SignedInteger))
+			return false;
+
+		value.Type = VariableType::Pixel;
+		break;
+	}
+	case GUIStyleSheetTokenTypes::PercentLiteral:
+	{
+		if(!TryParsePercentLiteral(value.Float))
+			return false;
+
+		value.Type = VariableType::Percent;
+		break;
+	}
+	default:
+		ErrorUnexpected();
+		return false;
+	}
+
+	auto fnGetVariableTypeName = [](VariableType type) -> const char*
+	{
+		switch(type)
+		{
+		default:
+		case VariableType::Undefined: return "Undefined";
+		case VariableType::Integer: return "Integer";
+		case VariableType::Pixel: return "Pixel";
+		case VariableType::Decimal: return "Decimal";
+		case VariableType::Percent: return "Percent";
+		case VariableType::Color: return "Color";
+		case VariableType::String: return "String";
+		}
+	};
+
+	if(auto found = inOutVariableContext.Variables.find(identifier); found != inOutVariableContext.Variables.end())
+	{
+		if(found->second.Type != value.Type)
+		{
+			Error(StringUtil::Format("Variable '{0}' previously defined as '{1}', but now defined as '{2}'.", identifier, fnGetVariableTypeName(found->second.Type), fnGetVariableTypeName(value.Type)));
+			return false;
+		}
+	}
+
+	inOutVariableContext.Variables[identifier] = value;
 
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Semicolon))
 		return false;
@@ -1139,22 +1459,6 @@ bool GUIStyleSheetParser::TryParseStringLiteral(String& outValue)
 	return true;
 }
 
-
-//bool GUIStyleSheetParser::TryParsePercentOrDecimalLiteral(float& outValue)
-//{
-//	if(!IsCurrentToken(GUIStyleSheetTokenTypes::DecimalLiteral) && !IsCurrentToken(GUIStyleSheetTokenTypes::PercentLiteral))
-//	{
-//		Error(StringUtil::Format("Unexpected token '{0}', expected '{1}' or '{2}'", Token::TypeToString(mCurrentToken->GetType()), Token::TypeToString(GUIStyleSheetTokenTypes::DecimalLiteral), Token::TypeToString(GUIStyleSheetTokenTypes::PercentLiteral)));
-//		return false;
-//	}
-//
-//	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance();
-//	if(!token)
-//		return false;
-//
-//	return TryParseFloat(token->GetSpelling(), outValue);
-//}
-//
 bool GUIStyleSheetParser::TryParseColor(Color& outValue)
 {
 	TokenType currentTokenType = GetCurrentTokenType();
@@ -1265,40 +1569,7 @@ bool GUIStyleSheetParser::TryParseColor(Color& outValue)
 
 bool GUIStyleSheetParser::TryParseRectOffset(RectOffset& outValue)
 {
-	i32 parsedValue;
-	if(!TryParsePixelLiteral(parsedValue))
-		return false;
-
-	outValue.Left = parsedValue;
-	outValue.Right = parsedValue;
-	outValue.Top = parsedValue;
-	outValue.Bottom = parsedValue;
-
-	if(IsCurrentToken(GUIStyleSheetTokenTypes::Semicolon))
-		return true;
-
-	if(!TryParsePixelLiteral(parsedValue))
-		return false;
-
-	outValue.Left = parsedValue;
-	outValue.Right = parsedValue;
-
-	if(IsCurrentToken(GUIStyleSheetTokenTypes::Semicolon))
-		return true;
-
-	if(!TryParsePixelLiteral(parsedValue))
-		return false;
-
-	outValue.Bottom = parsedValue;
-
-	if(IsCurrentToken(GUIStyleSheetTokenTypes::Semicolon))
-		return true;
-
-	if(!TryParsePixelLiteral(parsedValue))
-		return false;
-
-	outValue.Left = parsedValue;
-	return true;
+	return TryParseFourSides(outValue.Top, outValue.Right, outValue.Bottom, outValue.Left, &TryParsePixelLiteral);
 }
 
 bool GUIStyleSheetParser::TryParseBorderStyle(GUIBorderElementStyle& outValue)
@@ -1371,6 +1642,81 @@ bool GUIStyleSheetParser::TryParseVerticalAlign(GUIVerticalTextAlignment& outVal
 	return false;
 }
 
+bool GUIStyleSheetParser::TryParseBorderElement(GUIBorderElement& outValue)
+{
+	bool hasWidth = false;
+	bool hasStyle = false;
+	bool hasColor = false;
+
+	for(u32 propertyIndex = 0; propertyIndex < 3; ++propertyIndex)
+	{
+		if(IsCurrentToken(GUIStyleSheetTokenTypes::PixelsLiteral))
+		{
+			if(hasWidth)
+			{
+				ErrorUnexpected();
+				return false;
+			}
+
+			if(!TryParsePixelLiteral(outValue.Width))
+				return false;
+
+			hasWidth = true;
+		}
+		
+		const bool isColor = IsCurrentToken(GUIStyleSheetTokenTypes::IdSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorHSL) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorHSLA) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorRGB) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorRGBA);
+		if(isColor)
+		{
+			if(hasColor)
+			{
+				ErrorUnexpected();
+				return false;
+			}
+
+			if(!TryParseColor(outValue.Color))
+				return false;
+
+			hasColor = true;
+		}
+
+		if(IsCurrentToken(GUIStyleSheetTokenTypes::BorderStyle))
+		{
+			if(hasStyle)
+			{
+				ErrorUnexpected();
+				return false;
+			}
+
+			if(!TryParseBorderStyle(outValue.Style))
+				return false;
+
+			hasStyle = true;
+		}
+	}
+
+	return hasWidth || hasColor || hasStyle;
+}
+
+bool GUIStyleSheetParser::TryParseBorderRadius(u32& outTopLeft, u32& outTopRight, u32& outBottomLeft, u32& outBottomRight)
+{
+	return TryParseFourSides(outTopLeft, outTopRight, outBottomRight, outBottomLeft, &TryParsePixelLiteral);
+}
+
+bool GUIStyleSheetParser::TryParseBorderStyle(GUIBorderElementStyle& outTop, GUIBorderElementStyle& outRight, GUIBorderElementStyle& outBottom, GUIBorderElementStyle& outLeft)
+{
+	return TryParseFourSides(outTop, outRight, outBottom, outLeft, &GUIStyleSheetParser::TryParseBorderStyle);
+}
+
+bool GUIStyleSheetParser::TryParseBorderWidth(u32& outTop, u32& outRight, u32& outBottom, u32& outLeft)
+{
+	return TryParseFourSides(outTop, outRight, outBottom, outLeft, &GUIStyleSheetParser::TryParsePixelLiteral);
+}
+
+bool GUIStyleSheetParser::TryParseBorderColor(Color& outTop, Color& outRight, Color& outBottom, Color& outLeft)
+{
+	return TryParseFourSides(outTop, outRight, outBottom, outLeft, &GUIStyleSheetParser::TryParseColor);
+}
+
 bool GUIStyleSheetParser::TryParseInteger(const StringView& toParse, i32& outValue) const
 {
 	const char* const stringStart = toParse.data();
@@ -1417,6 +1763,46 @@ bool GUIStyleSheetParser::TryParseHexColor(const StringView& toParse, Color& out
 		if(!fnParseColorChannel(channelIndex, outValue[channelIndex]))
 		return false;
 	}
+
+	return true;
+}
+
+template<class T>
+bool GUIStyleSheetParser::TryParseFourSides(T& outTop, T& outRight, T& outBottom, T& outLeft, bool(GUIStyleSheetParser::*fnParsePredicate)(T&))
+{
+	u32 count = 0;
+	do
+	{
+		T parsedValue;
+		if(!(this->*fnParsePredicate)(parsedValue))
+			return false;
+
+		if(count == 0)
+		{
+			outLeft = parsedValue;
+			outRight = parsedValue;
+			outTop = parsedValue;
+			outBottom = parsedValue;
+		}
+		else if(count == 1)
+		{
+			outLeft = parsedValue;
+			outRight = parsedValue;
+		}
+		else if(count == 2)
+		{
+			outBottom = parsedValue;
+		}
+		else if(count == 3)
+		{
+			outLeft = parsedValue;
+		}
+
+		if(IsCurrentToken(GUIStyleSheetTokenTypes::Semicolon))
+			return true;
+
+		count++;
+	} while(count < 4); 
 
 	return true;
 }
@@ -1549,7 +1935,7 @@ Optional<GUIStyleSheet> GUIStyleSheet::Parse(const Path& file)
 	GUIStyleSheetParser parser;
 	parser.Parse(B3DMakeShared<SourceCode>(fileStream->GetAsString()));
 	
-	// TODO
+	// TODO - Returne parsed style
 	return {};
 }
 

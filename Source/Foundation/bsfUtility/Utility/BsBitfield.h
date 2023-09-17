@@ -20,7 +20,7 @@ namespace bs
 	class BitReferenceConst
 	{
 	public:
-		BitReferenceConst(const uint32_t& data, uint32_t bitMask)
+		BitReferenceConst(const u32& data, u32 bitMask)
 			: mData(data), mBitMask(bitMask)
 		{}
 
@@ -30,15 +30,15 @@ namespace bs
 		}
 
 	protected:
-		const uint32_t& mData;
-		uint32_t mBitMask;
+		const u32& mData;
+		u32 mBitMask;
 	};
 
 	/** References a single bit in a TBitfield and allows it to be modified. */
 	class BitReference
 	{
 	public:
-		BitReference(uint32_t& data, uint32_t bitMask)
+		BitReference(u32& data, u32 bitMask)
 			: mData(data), mBitMask(bitMask)
 		{}
 
@@ -64,8 +64,8 @@ namespace bs
 		}
 
 	protected:
-		uint32_t& mData;
-		uint32_t mBitMask;
+		u32& mData;
+		u32 mBitMask;
 	};
 
 	/** Helper template used for specifying types for const and non-const iterator variants for Bitfield. */
@@ -95,7 +95,7 @@ namespace bs
 		typedef typename TBitfieldIteratorTypes<CONST, Allocator>::ArrayType ArrayType;
 		typedef typename TBitfieldIteratorTypes<CONST, Allocator>::ReferenceType ReferenceType;
 
-		TBitfieldIterator(ArrayType owner, uint32_t bitIndex, uint32_t dwordIndex, uint32_t mask)
+		TBitfieldIterator(ArrayType owner, u64 bitIndex, u64 dwordIndex, u32 mask)
 			: mOwner(owner), mBitIndex(bitIndex), mDwordIndex(dwordIndex), mMask(mask)
 		{}
 
@@ -137,9 +137,9 @@ namespace bs
 
 	private:
 		ArrayType mOwner;
-		uint32_t mBitIndex;
-		uint32_t mDwordIndex;
-		uint32_t mMask;
+		u64 mBitIndex;
+		u64 mDwordIndex;
+		u32 mMask;
 	};
 
 	/** @} */
