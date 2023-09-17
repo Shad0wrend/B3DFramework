@@ -13,9 +13,10 @@ namespace bs
 	 *  @{
 	 */
 
-	class Bitfield;
+	template<class Allocator>
+	class TBitfield;
 
-	/** References a single bit in a Bitfield. */
+	/** References a single bit in a TBitfield. */
 	class BitReferenceConst
 	{
 	public:
@@ -33,7 +34,7 @@ namespace bs
 		uint32_t mBitMask;
 	};
 
-	/** References a single bit in a Bitfield and allows it to be modified. */
+	/** References a single bit in a TBitfield and allows it to be modified. */
 	class BitReference
 	{
 	public:
@@ -68,31 +69,31 @@ namespace bs
 	};
 
 	/** Helper template used for specifying types for const and non-const iterator variants for Bitfield. */
-	template <bool CONST>
+	template <bool CONST, class Allocator>
 	struct TBitfieldIteratorTypes
 	{};
 
-	template <>
-	struct TBitfieldIteratorTypes<true>
+	template <class Allocator>
+	struct TBitfieldIteratorTypes<true, Allocator>
 	{
-		typedef const Bitfield& ArrayType;
+		typedef const TBitfield<Allocator>& ArrayType;
 		typedef BitReferenceConst ReferenceType;
 	};
 
-	template <>
-	struct TBitfieldIteratorTypes<false>
+	template <class Allocator>
+	struct TBitfieldIteratorTypes<false, Allocator>
 	{
-		typedef Bitfield& ArrayType;
+		typedef TBitfield<Allocator>& ArrayType;
 		typedef BitReference ReferenceType;
 	};
 
 	/** Iterator for iterating over individual bits in a Bitfield. */
-	template <bool CONST>
+	template <bool CONST, class Allocator>
 	class TBitfieldIterator
 	{
 	public:
-		typedef typename TBitfieldIteratorTypes<CONST>::ArrayType ArrayType;
-		typedef typename TBitfieldIteratorTypes<CONST>::ReferenceType ReferenceType;
+		typedef typename TBitfieldIteratorTypes<CONST, Allocator>::ArrayType ArrayType;
+		typedef typename TBitfieldIteratorTypes<CONST, Allocator>::ReferenceType ReferenceType;
 
 		TBitfieldIterator(ArrayType owner, uint32_t bitIndex, uint32_t dwordIndex, uint32_t mask)
 			: mOwner(owner), mBitIndex(bitIndex), mDwordIndex(dwordIndex), mMask(mask)
@@ -151,19 +152,20 @@ namespace bs
 	 * Dynamically sized field that contains a sequential list of bits. The bits are compactly stored and allow for
 	 * quick sequential searches (compared to single or multi-byte type sequential searches).
 	 */
-	class Bitfield
+	template<class Allocator = DefaultContainerAllocator>
+	class TBitfield
 	{
-		static constexpr uint32_t kBitsPerDword = sizeof(uint32_t) * 8;
-		static constexpr uint32_t kBitsPerDwordLoG2 = 5;
+		static constexpr u64 kBitsPerDword = sizeof(u32) * 8;
+		static constexpr u64 kBitsPerDwordLoG2 = 5;
 
 	public:
-		using Iterator = TBitfieldIterator<false>;
-		using ConstIterator = TBitfieldIterator<true>;
+		using Iterator = TBitfieldIterator<false, Allocator>;
+		using ConstIterator = TBitfieldIterator<true, Allocator>;
 
 		/**
 		 * Initializes the bitfield with enough storage for @p count bits and sets them to the initial value of @p value.
 		 */
-		Bitfield(bool value = false, uint32_t count = 0)
+		TBitfield(bool value = false, u64 count = 0)
 			: mNumBits(count)
 		{
 			if(count > 0)
@@ -173,31 +175,20 @@ namespace bs
 			}
 		}
 
-		~Bitfield()
-		{
-			if(mData)
-				B3DFree(mData);
-		}
+		~TBitfield() = default;
 
-		Bitfield(const Bitfield& other)
+		TBitfield(const TBitfield& other)
 			: mNumBits(other.mNumBits)
 		{
-			if(other.mMaxBits)
-			{
-				Realloc(other.mMaxBits);
-
-				const uint32_t numBytes = Math::DivideAndRoundUp(other.mNumBits, kBitsPerDword) * sizeof(uint32_t);
-				memcpy(mData, other.mData, numBytes);
-			}
+			*this = other;
 		}
 
-		Bitfield(Bitfield&& other)
-			: mData(std::exchange(other.mData, nullptr))
-			, mMaxBits(std::exchange(other.mMaxBits, 0))
-			, mNumBits(std::exchange(other.mNumBits, 0))
-		{}
+		TBitfield(TBitfield&& other)
+		{
+			*this = std::move(other);
+		}
 
-		Bitfield& operator=(const Bitfield& rhs)
+		TBitfield& operator=(const TBitfield& rhs)
 		{
 			if(this != &rhs)
 			{
@@ -208,60 +199,61 @@ namespace bs
 				{
 					Realloc(rhs.mMaxBits);
 
-					const uint32_t numBytes = Math::DivideAndRoundUp(rhs.mNumBits, kBitsPerDword) * sizeof(uint32_t);
-					memcpy(mData, rhs.mData, numBytes);
+					const u64 numBytes = Math::DivideAndRoundUp(rhs.mNumBits, kBitsPerDword) * sizeof(u32);
+					memcpy(mAllocator.GetElements(), rhs.mAllocator.GetElements(), numBytes);
 				}
 			}
 
 			return *this;
 		}
 
-		Bitfield& operator=(Bitfield&& rhs)
+		TBitfield& operator=(TBitfield&& rhs)
 		{
+
 			if(this != &rhs)
 			{
-				if(mData)
-					B3DFree(mData);
+				const u64 myDwordCount = Math::DivideAndRoundUp(mNumBits, kBitsPerDword);
+				const u64 otherDwordCount = Math::DivideAndRoundUp(rhs.mNumBits, kBitsPerDword);
 
-				mData = std::exchange(rhs.mData, nullptr);
+				mAllocator.Move(myDwordCount, otherDwordCount, std::move(rhs.mAllocator));
 				mNumBits = std::exchange(rhs.mNumBits, 0);
-				mMaxBits = std::exchange(rhs.mMaxBits, 0);
+				mMaxBits = std::exchange(rhs.mMaxBits, rhs.mAllocator.GetMinimumCapacity() * kBitsPerDword);
 			}
 
 			return *this;
 		}
 
-		BitReference operator[](uint32_t idx)
+		BitReference operator[](u64 idx)
 		{
 			B3D_ASSERT(idx < mNumBits);
 
-			const uint32_t bitMask = 1 << (idx & (kBitsPerDword - 1));
-			uint32_t& data = mData[idx >> kBitsPerDwordLoG2];
+			const u32 bitMask = 1 << (idx & (kBitsPerDword - 1));
+			u32& data = mAllocator.GetElements()[idx >> kBitsPerDwordLoG2];
 
 			return BitReference(data, bitMask);
 		}
 
-		BitReferenceConst operator[](uint32_t idx) const
+		BitReferenceConst operator[](u64 idx) const
 		{
 			B3D_ASSERT(idx < mNumBits);
 
-			const uint32_t bitMask = 1 << (idx & (kBitsPerDword - 1));
-			uint32_t& data = mData[idx >> kBitsPerDwordLoG2];
+			const u32 bitMask = 1 << (idx & (kBitsPerDword - 1));
+			u32& data = mAllocator.GetElements()[idx >> kBitsPerDwordLoG2];
 
 			return BitReferenceConst(data, bitMask);
 		}
 
 		/** Adds a new bit value to the end of the bitfield and returns the index of the added bit. */
-		uint32_t Add(bool value)
+		u64 Add(bool value)
 		{
 			if(mNumBits >= mMaxBits)
 			{
 				// Grow
-				const uint32_t newMaxBits = mMaxBits + 4 * kBitsPerDword + mMaxBits / 2;
+				const u64 newMaxBits = mMaxBits + 4 * kBitsPerDword + mMaxBits / 2;
 				Realloc(newMaxBits);
 			}
 
-			const uint32_t index = mNumBits;
+			const u64 index = mNumBits;
 			mNumBits++;
 
 			(*this)[index] = value;
@@ -269,63 +261,63 @@ namespace bs
 		}
 
 		/** Removes a bit at the specified index. */
-		void Remove(uint32_t index)
+		void Remove(u64 index)
 		{
 			B3D_ASSERT(index < mNumBits);
 
-			const uint32_t dwordIndex = index >> kBitsPerDwordLoG2;
-			const uint32_t mask = 1 << (index & (kBitsPerDword - 1));
+			const u64 dwordIndex = index >> kBitsPerDwordLoG2;
+			const u32 mask = 1 << (index & (kBitsPerDword - 1));
 
-			const uint32_t curDwordBits = mData[dwordIndex];
+			const u32 curDwordBits = mAllocator.GetElements()[dwordIndex];
 
 			// Mask the dword we want to remove the bit from
-			const uint32_t firstHalfMask = mask - 1; // These stay the same
-			const uint32_t secondHalfMask = ~firstHalfMask; // These get shifted so the removed bit gets moved outside the mask
+			const u32 firstHalfMask = mask - 1; // These stay the same
+			const u32 secondHalfMask = ~firstHalfMask; // These get shifted so the removed bit gets moved outside the mask
 
-			mData[dwordIndex] = (curDwordBits & firstHalfMask) | (((curDwordBits >> 1) & secondHalfMask));
+			mAllocator.GetElements()[dwordIndex] = (curDwordBits & firstHalfMask) | (((curDwordBits >> 1) & secondHalfMask));
 
 			// Grab the last bit from the next dword and put it as the last bit in the current dword. Then shift the
 			// next dword and repeat until all following dwords are processed.
-			const uint32_t lastDwordIndex = (mNumBits - 1) >> kBitsPerDwordLoG2;
-			for(uint32_t i = dwordIndex; i < lastDwordIndex; i++)
+			const u64 lastDwordIndex = (mNumBits - 1) >> kBitsPerDwordLoG2;
+			for(u64 i = dwordIndex; i < lastDwordIndex; i++)
 			{
 				// First bit from next dword goes at the end of the current dword
-				mData[i] |= (mData[i + 1] & 0x1) << 31;
+				mAllocator.GetElements()[i] |= (mAllocator.GetElements()[i + 1] & 0x1) << 31;
 
 				// Following dword gets shifted, removing the bit we just mvoed
-				mData[i + 1] >>= 1;
+				mAllocator.GetElements()[i + 1] >>= 1;
 			}
 
 			mNumBits--;
 		}
 
 		/** Attempts to find the first non-zero bit in the field. Returns -1 if all bits are zero or the field is empty. */
-		uint32_t Find(bool value) const
+		u64 Find(bool value) const
 		{
-			const uint32_t mask = value ? 0 : (uint32_t)-1;
-			const uint32_t numDWords = Math::DivideAndRoundUp(mNumBits, kBitsPerDword);
+			const u32 mask = value ? 0 : ~0u;
+			const u64 numDWords = Math::DivideAndRoundUp(mNumBits, kBitsPerDword);
 
-			for(uint32_t i = 0; i < numDWords; i++)
+			for(u64 i = 0; i < numDWords; i++)
 			{
-				if(mData[i] == mask)
+				if(mAllocator.GetElements()[i] == mask)
 					continue;
 
-				const uint32_t bits = value ? mData[i] : ~mData[i];
-				const uint32_t bitIndex = i * kBitsPerDword + Bitwise::LeastSignificantBit(bits);
+				const u32 bits = value ? mAllocator.GetElements()[i] : ~mAllocator.GetElements()[i];
+				const u64 bitIndex = i * kBitsPerDword + Bitwise::LeastSignificantBit(bits);
 
 				if(bitIndex < mNumBits)
 					return bitIndex;
 			}
 
-			return (uint32_t)-1;
+			return ~0ULL;
 		}
 
 		/** Counts the number of values in the bit field. */
-		uint32_t Count(bool value) const
+		u64 Count(bool value) const
 		{
 			// Note: Implement this faster via popcnt and similar instructions
 
-			uint32_t counter = 0;
+			u64 counter = 0;
 			for(const auto& entry : *this)
 			{
 				if(entry == value)
@@ -341,9 +333,9 @@ namespace bs
 			if(mNumBits == 0)
 				return;
 
-			const int32_t mask = value ? 0xFF : 0;
-			const uint32_t numBytes = Math::DivideAndRoundUp(mNumBits, kBitsPerDword) * sizeof(uint32_t);
-			memset(mData, mask, numBytes);
+			const u32 mask = value ? 0xFF : 0;
+			const u64 numBytes = Math::DivideAndRoundUp(mNumBits, kBitsPerDword) * sizeof(u32);
+			memset(mAllocator.GetElements(), mask, numBytes);
 		}
 
 		/**
@@ -356,18 +348,14 @@ namespace bs
 
 			if(free)
 			{
-				if(mData)
-				{
-					B3DFree(mData);
-					mData = nullptr;
-				}
-
-				mMaxBits = 0;
+				const u64 currentDwordCount = Math::DivideAndRoundUp(mNumBits, kBitsPerDword);
+				mAllocator.Resize(currentDwordCount, 0);
+				mMaxBits = mAllocator.GetMinimumCapacity() * kBitsPerDword;
 			}
 		}
 
 		/** Returns the number of bits in the bitfield */
-		uint32_t Size() const
+		u64 Size() const
 		{
 			return mNumBits;
 		}
@@ -381,9 +369,9 @@ namespace bs
 		/** Returns a non-const interator pointing past the last bit in the bitfield. */
 		Iterator End()
 		{
-			uint32_t bitIndex = mNumBits;
-			uint32_t dwordIndex = bitIndex >> kBitsPerDwordLoG2;
-			uint32_t mask = 1 << (bitIndex & (kBitsPerDword - 1));
+			u64 bitIndex = mNumBits;
+			u64 dwordIndex = bitIndex >> kBitsPerDwordLoG2;
+			u32 mask = 1 << (bitIndex & (kBitsPerDword - 1));
 
 			return Iterator(*this, bitIndex, dwordIndex, mask);
 		}
@@ -397,9 +385,9 @@ namespace bs
 		/** Returns a const interator pointing past the last bit in the bitfield. */
 		ConstIterator End() const
 		{
-			uint32_t bitIndex = mNumBits;
-			uint32_t dwordIndex = bitIndex >> kBitsPerDwordLoG2;
-			uint32_t mask = 1 << (bitIndex & (kBitsPerDword - 1));
+			u64 bitIndex = mNumBits;
+			u64 dwordIndex = bitIndex >> kBitsPerDwordLoG2;
+			u32 mask = 1 << (bitIndex & (kBitsPerDword - 1));
 
 			return ConstIterator(*this, bitIndex, dwordIndex, mask);
 		}
@@ -419,37 +407,29 @@ namespace bs
 		// NOLINTEND
 
 	private:
-		template <bool CONST>
+		template <bool CONST, class Allocator2>
 		friend class TBitfieldIterator;
 
-		/** Reallocates the internal buffer making enough room for @p numBits (rounded to a multiple of DWORD). */
-		void Realloc(uint32_t numBits)
+		/** Reallocates the internal buffer making enough room for @p bitCapacity (rounded to a multiple of 32-bits). */
+		void Realloc(u64 bitCapacity)
 		{
-			numBits = Math::DivideAndRoundUp(numBits, kBitsPerDword) * kBitsPerDword;
+			bitCapacity = Math::DivideAndRoundUp(bitCapacity, kBitsPerDword) * kBitsPerDword;
 
-			if(numBits != mMaxBits)
+			if(bitCapacity != mMaxBits)
 			{
-				B3D_ASSERT(numBits > mMaxBits);
+				B3D_ASSERT(bitCapacity > mMaxBits);
 
-				const uint32_t numDwords = Math::DivideAndRoundUp(numBits, kBitsPerDword);
+				const u64 currentDwordCount = Math::DivideAndRoundUp(mNumBits, kBitsPerDword);
+				const u64 newDwordCount = Math::DivideAndRoundUp(bitCapacity, kBitsPerDword);
 
-				// Note: Eventually add support for custom allocators
-				auto buffer = B3DAllocateMultiple<uint32_t>(numDwords);
-				if(mData)
-				{
-					const uint32_t numBytes = Math::DivideAndRoundUp(mMaxBits, kBitsPerDword) * sizeof(uint32_t);
-					memcpy(buffer, mData, numBytes);
-					B3DFree(mData);
-				}
-
-				mData = buffer;
-				mMaxBits = numBits;
+				mAllocator.Resize(currentDwordCount, newDwordCount);
+				mMaxBits = bitCapacity;
 			}
 		}
 
-		uint32_t* mData = nullptr;
-		uint32_t mMaxBits = 0;
-		uint32_t mNumBits;
+		typename Allocator::template ForElementType<u32> mAllocator;
+		u64 mMaxBits = mAllocator.GetMinimumCapacity() * kBitsPerDword;
+		u64 mNumBits = 0;
 	};
 
 } // namespace bs

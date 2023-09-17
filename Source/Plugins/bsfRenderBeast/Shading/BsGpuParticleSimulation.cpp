@@ -545,7 +545,7 @@ bool GpuParticleSystem::AllocateTiles(GpuParticleResources& resources, Vector<Gp
 			// Otherwise try to find an inactive tile
 			if(mNumActiveTiles < (u32)mTiles.size())
 			{
-				tileIdx = mActiveTiles.Find(false);
+				tileIdx = (u32)mActiveTiles.Find(false);
 				mActiveTiles[tileIdx] = true;
 			}
 			// And finally just allocate a new tile if no room elsewhere
@@ -613,7 +613,7 @@ bool GpuParticleSystem::FreeInactiveTiles(GpuParticleResources& resources)
 	const u32 numFreeTiles = (u32)mTiles.size() - mNumActiveTiles;
 	for(u32 i = 0; i < numFreeTiles; i++)
 	{
-		const u32 freeIdx = mActiveTiles.Find(false);
+		const u32 freeIdx = (u32)mActiveTiles.Find(false);
 		B3D_ASSERT(freeIdx != (u32)-1);
 
 		const u32 lastIdx = (u32)mTiles.size() - 1;

@@ -120,7 +120,7 @@ namespace bs
 		private:
 			ParticleSystem* mParent = nullptr;
 			Vector<GpuParticleTile> mTiles;
-			Bitfield mActiveTiles;
+			TBitfield<> mActiveTiles;
 			u32 mNumActiveTiles = 0;
 			u32 mLastAllocatedTile = (u32)-1;
 			float mTime = 0.0f;
