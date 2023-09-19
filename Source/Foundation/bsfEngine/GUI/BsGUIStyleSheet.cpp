@@ -762,7 +762,7 @@ public:
 	const String& GetErrors() const { return mErrors; }
 	
 private:
-	enum class VariableType
+	enum class ValueType
 	{
 		Undefined,
 		Integer,
@@ -770,7 +770,11 @@ private:
 		Decimal,
 		Percent,
 		Color,
-		String
+		String,
+		BorderStyle,
+		TextAlign,
+		VerticalAlign,
+		Multiple
 	};
 
 	struct VariableValue
@@ -783,38 +787,86 @@ private:
 			Color Color;
 		};
 
-		VariableType Type = VariableType::Undefined;
+		ValueType Type = ValueType::Undefined;
 
 		VariableValue()
 			: UnsignedInteger(0)
 		{ }
 
-		VariableValue(u32 value, VariableType type)
+		VariableValue(u32 value, ValueType type)
 			: UnsignedInteger(value), Type(type)
 		{ }
 
-		VariableValue(i32 value, VariableType type)
+		VariableValue(i32 value, ValueType type)
 			: SignedInteger(value), Type(type)
 		{ }
 
-		VariableValue(float value, VariableType type)
+		VariableValue(float value, ValueType type)
 			: Float(value), Type(type)
 		{ }
 
-		VariableValue(const class Color& value, VariableType type)
+		VariableValue(const class Color& value, ValueType type)
 			: Color(value), Type(type)
 		{ }
+
+		void GetValue(u32& outValue) const
+		{
+			B3D_ASSERT(Type == ValueType::Integer || Type == ValueType::Pixel || Type == ValueType::String);
+			outValue = UnsignedInteger;
+		}
+
+		void GetValue(i32& outValue) const
+		{
+			B3D_ASSERT(Type == ValueType::Integer || Type == ValueType::Pixel || Type == ValueType::String);
+			outValue = SignedInteger;
+		}
+
+		void GetValue(float& outValue) const
+		{
+			B3D_ASSERT(Type == ValueType::Decimal || Type == ValueType::Percent);
+			outValue = Float;
+		}
+
+		void GetValue(class Color& outValue) const
+		{
+			B3D_ASSERT(Type == ValueType::Color);
+			outValue = Color;
+		}
+
+		void GetValue(GUIBorderElementStyle& outValue)
+		{
+			B3D_ASSERT(Type == ValueType::BorderStyle);
+			outValue = (GUIBorderElementStyle)UnsignedInteger;
+		}
+
+		void GetValue(GUIHorizontalTextAlignment& outValue)
+		{
+			B3D_ASSERT(Type == ValueType::TextAlign);
+			outValue = (GUIHorizontalTextAlignment)UnsignedInteger;
+		}
+
+		void GetValue(GUIVerticalTextAlignment& outValue)
+		{
+			B3D_ASSERT(Type == ValueType::VerticalAlign);
+			outValue = (GUIVerticalTextAlignment)UnsignedInteger;
+		}
 	};
 
 	struct VariableContext
 	{
 		UnorderedMap<String, VariableValue> Variables;
-		Vector<String> StringLiterals;
 	};
 
-	bool IsCurrentToken(TokenType type) const;
-	bool IsCurrentToken(TokenType type, const String& spelling) const;
+	struct PropertyInformation
+	{
+		PropertyInformation(GUIStyleSheetPropertyType propertyType = GUIStyleSheetPropertyType::Undefined, ValueType valueType = ValueType::Undefined)
+			: PropertyType(propertyType), ValueType(valueType) {}
 
+		GUIStyleSheetPropertyType PropertyType = GUIStyleSheetPropertyType::Undefined;
+		ValueType ValueType = ValueType::Undefined;
+	};
+
+	// Property value (Literals)
 	bool TryParseIntegerLiteral(i32& outValue);
 	bool TryParseIntegerLiteral(u32& outValue);
 	bool TryParsePixelLiteral(i32& outValue);
@@ -822,6 +874,8 @@ private:
 	bool TryParseDecimalLiteral(float& outValue);
 	bool TryParsePercentLiteral(float& outValue);
 	bool TryParseStringLiteral(String& outValue);
+
+	// Property value (Complex)
 	bool TryParseColor(Color& outValue);
 	bool TryParseRectOffset(RectOffset& outValue);
 	bool TryParseBorderStyle(GUIBorderElementStyle& outValue);
@@ -832,16 +886,31 @@ private:
 	bool TryParseVerticalAlign(GUIVerticalTextAlignment& outValue);
 	bool TryParseBorderElement(GUIBorderElement& outValue);
 	bool TryParseBorderRadius(u32& outTopLeft, u32& outTopRight, u32& outBottomLeft, u32& outBottomRight);
-	bool TryParseProperty(const VariableContext& globalVariableContext, const VariableContext& localVariableContext, GUIStyleSheetStateStyle& inOutValue);
+	bool TryParseAndLookupVariableValue(ValueType expectedType, VariableValue& outValue);
+
+	// Higher level constructs
+	bool TryParseProperty(GUIStyleSheetStateStyle& inOutValue);
 	bool TryParseVariable(VariableContext& inOutVariableContext);
-	bool TryParseSelector(VariableContext& inOutGlobalVariableContext);
+	bool TryParseSelector();
+
+	// Parse helpers
+	template<class T>
+	bool TryParsePropertyValueSides(ValueType valueType, T& outTop, T& outRight, T& outBottom, T& outLeft);
+
+	template<class T>
+	bool TryParsePropertyValue(ValueType valueType, T& outValue);
+
+	template<class T>
+	bool TryParseAndLookupVariableValue(ValueType expectedType, T& outValue);
+	bool TryParseAndLookupVariableValue(ValueType expectedType, String& outValue);
 
 	bool TryParseInteger(const StringView& toParse, i32& outValue) const;
 	bool TryParseFloat(const StringView& toParse, float& outValue) const;
 	bool TryParseHexColor(const StringView& toParse, Color& outValue) const;
 
-	template<class T>
-	bool TryParseFourSides(T& outTop, T& outRight, T& outBottom, T& outLeft, bool(GUIStyleSheetParser::*fnParsePredicate)(T&));
+	// Token iteration and lookup
+	bool IsCurrentToken(TokenType type) const;
+	bool IsCurrentToken(TokenType type, const String& spelling) const;
 
 	TokenType GetCurrentTokenType() const { return mCurrentToken.has_value() ? mCurrentToken->GetType() : GUIStyleSheetTokenTypes::Undefined; }
 	Optional<Token> GetCurrentToken() const { return mCurrentToken; }
@@ -850,80 +919,86 @@ private:
 	Optional<Token> GetCurrentTokenAndAdvance(TokenType expectedType, const String& spelling);
 	void SkipToken(TokenType type);
 
+	// Error handling
 	Optional<Token> Error(const String& message);
 	Optional<Token> ErrorUnexpected();
 	Optional<Token> ErrorUnexpected(TokenType expectedTokenType);
 	Optional<Token> ErrorUnexpected(const String& expectedTokenSpelling);
 
+	static const char* ValueTypeToString(ValueType type);
+
 	SPtr<SourceCode> mSourceCode;
 	GUIStyleSheetLexer mLexer;
 	Optional<Token> mCurrentToken;
+	VariableContext mGlobalVariableContext;
+	VariableContext mLocalVariableContext;
+	Vector<String> mStringLiterals;
 
 	String mErrors;
 
-	UnorderedMap<String, GUIStyleSheetPropertyType> mPropertyKeywords;
+	UnorderedMap<String, PropertyInformation> mPropertyKeywords;
 };
 
 GUIStyleSheetParser::GUIStyleSheetParser()
 {
-	mPropertyKeywords["width"] = GUIStyleSheetPropertyType::Width;
-	mPropertyKeywords["height"] = GUIStyleSheetPropertyType::Height;
-	mPropertyKeywords["min-width"] = GUIStyleSheetPropertyType::MinWidth;
-	mPropertyKeywords["min-height"] = GUIStyleSheetPropertyType::MinHeight;
-	mPropertyKeywords["max-width"] = GUIStyleSheetPropertyType::MaxWidth;
-	mPropertyKeywords["max-height"] = GUIStyleSheetPropertyType::MaxHeight;
+	mPropertyKeywords["width"] = { GUIStyleSheetPropertyType::Width, ValueType::Pixel };
+	mPropertyKeywords["height"] = { GUIStyleSheetPropertyType::Height, ValueType::Pixel };
+	mPropertyKeywords["min-width"] = { GUIStyleSheetPropertyType::MinWidth, ValueType::Pixel };
+	mPropertyKeywords["min-height"] = { GUIStyleSheetPropertyType::MinHeight, ValueType::Pixel };
+	mPropertyKeywords["max-width"] = { GUIStyleSheetPropertyType::MaxWidth, ValueType::Pixel };
+	mPropertyKeywords["max-height"] = { GUIStyleSheetPropertyType::MaxHeight, ValueType::Pixel };
 
 	// Margin
-	mPropertyKeywords["margin"] = GUIStyleSheetPropertyType::Margin;
-	mPropertyKeywords["margin-top"] = GUIStyleSheetPropertyType::MarginTop;
-	mPropertyKeywords["margin-bottom"] = GUIStyleSheetPropertyType::MarginBottom;
-	mPropertyKeywords["margin-left"] = GUIStyleSheetPropertyType::MarginLeft;
-	mPropertyKeywords["margin-right"] = GUIStyleSheetPropertyType::MarginRight;
+	mPropertyKeywords["margin"] = { GUIStyleSheetPropertyType::Margin, ValueType::Multiple };
+	mPropertyKeywords["margin-top"] = { GUIStyleSheetPropertyType::MarginTop, ValueType::Pixel };
+	mPropertyKeywords["margin-bottom"] = { GUIStyleSheetPropertyType::MarginBottom, ValueType::Pixel };
+	mPropertyKeywords["margin-left"] = { GUIStyleSheetPropertyType::MarginLeft, ValueType::Pixel };
+	mPropertyKeywords["margin-right"] = { GUIStyleSheetPropertyType::MarginRight, ValueType::Pixel };
 
 	// Padding
-	mPropertyKeywords["padding"] = GUIStyleSheetPropertyType::Padding;
-	mPropertyKeywords["padding-top"] = GUIStyleSheetPropertyType::PaddingTop;
-	mPropertyKeywords["padding-bottom"] = GUIStyleSheetPropertyType::PaddingBottom;
-	mPropertyKeywords["padding-left"] = GUIStyleSheetPropertyType::PaddingLeft;
-	mPropertyKeywords["padding-right"] = GUIStyleSheetPropertyType::PaddingRight;
+	mPropertyKeywords["padding"] = { GUIStyleSheetPropertyType::Padding, ValueType::Multiple };
+	mPropertyKeywords["padding-top"] = { GUIStyleSheetPropertyType::PaddingTop, ValueType::Pixel };
+	mPropertyKeywords["padding-bottom"] = { GUIStyleSheetPropertyType::PaddingBottom, ValueType::Pixel };
+	mPropertyKeywords["padding-left"] = { GUIStyleSheetPropertyType::PaddingLeft, ValueType::Pixel };
+	mPropertyKeywords["padding-right"] = { GUIStyleSheetPropertyType::PaddingRight, ValueType::Pixel };
 
 	// Color properties
-	mPropertyKeywords["color"] = GUIStyleSheetPropertyType::Color;
-	mPropertyKeywords["opacity"] = GUIStyleSheetPropertyType::Opacity;
-	mPropertyKeywords["background-color"] = GUIStyleSheetPropertyType::BackgroundColor;
+	mPropertyKeywords["color"] = { GUIStyleSheetPropertyType::Color, ValueType::Color };
+	mPropertyKeywords["opacity"] = { GUIStyleSheetPropertyType::Opacity, ValueType::Decimal };
+	mPropertyKeywords["background-color"] = { GUIStyleSheetPropertyType::BackgroundColor, ValueType::Color };
 
 	// Text properties
-	mPropertyKeywords["text-align"] = GUIStyleSheetPropertyType::TextAlign;
-	mPropertyKeywords["vertical-align"] = GUIStyleSheetPropertyType::VerticalAlign;
-	mPropertyKeywords["font-family"] = GUIStyleSheetPropertyType::FontFamily;
-	mPropertyKeywords["font-size"] = GUIStyleSheetPropertyType::FontSize;
+	mPropertyKeywords["text-align"] = { GUIStyleSheetPropertyType::TextAlign, ValueType::TextAlign };
+	mPropertyKeywords["vertical-align"] = { GUIStyleSheetPropertyType::VerticalAlign, ValueType::VerticalAlign };
+	mPropertyKeywords["font-family"] = { GUIStyleSheetPropertyType::FontFamily, ValueType::String };
+	mPropertyKeywords["font-size"] = { GUIStyleSheetPropertyType::FontSize, ValueType::Integer };
 
 	// Border properties
-	mPropertyKeywords["border"] = GUIStyleSheetPropertyType::Border;
-	mPropertyKeywords["border-style"] = GUIStyleSheetPropertyType::BorderStyle;
-	mPropertyKeywords["border-width"] = GUIStyleSheetPropertyType::BorderWidth;
-	mPropertyKeywords["border-color"] = GUIStyleSheetPropertyType::BorderColor;
-	mPropertyKeywords["border-top"] = GUIStyleSheetPropertyType::BorderTop;
-	mPropertyKeywords["border-top-style"] = GUIStyleSheetPropertyType::BorderTopStyle;
-	mPropertyKeywords["border-top-width"] = GUIStyleSheetPropertyType::BorderTopWidth;
-	mPropertyKeywords["border-top-color"] = GUIStyleSheetPropertyType::BorderTopColor;
-	mPropertyKeywords["border-bottom"] = GUIStyleSheetPropertyType::BorderBottom;
-	mPropertyKeywords["border-bottom-style"] = GUIStyleSheetPropertyType::BorderBottomStyle;
-	mPropertyKeywords["border-bottom-width"] = GUIStyleSheetPropertyType::BorderBottomWidth;
-	mPropertyKeywords["border-bottom-color"] = GUIStyleSheetPropertyType::BorderBottomColor;
-	mPropertyKeywords["border-left"] = GUIStyleSheetPropertyType::BorderLeft;
-	mPropertyKeywords["border-left-style"] = GUIStyleSheetPropertyType::BorderLeftStyle;
-	mPropertyKeywords["border-left-width"] = GUIStyleSheetPropertyType::BorderLeftWidth;
-	mPropertyKeywords["border-left-color"] = GUIStyleSheetPropertyType::BorderLeftColor;
-	mPropertyKeywords["border-right"] = GUIStyleSheetPropertyType::BorderRight;
-	mPropertyKeywords["border-right-style"] = GUIStyleSheetPropertyType::BorderRightStyle;
-	mPropertyKeywords["border-right-width"] = GUIStyleSheetPropertyType::BorderRightWidth;
-	mPropertyKeywords["border-right-color"] = GUIStyleSheetPropertyType::BorderRightColor;
-	mPropertyKeywords["border-radius"] = GUIStyleSheetPropertyType::BorderRadius;
-	mPropertyKeywords["border-top-left-radius"] = GUIStyleSheetPropertyType::BorderTopLeftRadius;
-	mPropertyKeywords["border-top-right-radius"] = GUIStyleSheetPropertyType::BorderTopRightRadius;
-	mPropertyKeywords["border-bottom-left-radius"] = GUIStyleSheetPropertyType::BorderBottomLeftRadius;
-	mPropertyKeywords["border-bottom-right-radius"] = GUIStyleSheetPropertyType::BorderBottomRightRadius;
+	mPropertyKeywords["border"] = { GUIStyleSheetPropertyType::Border, ValueType::Multiple };
+	mPropertyKeywords["border-style"] = { GUIStyleSheetPropertyType::BorderStyle, ValueType::Multiple };
+	mPropertyKeywords["border-width"] = { GUIStyleSheetPropertyType::BorderWidth, ValueType::Multiple };
+	mPropertyKeywords["border-color"] = { GUIStyleSheetPropertyType::BorderColor, ValueType::Multiple };
+	mPropertyKeywords["border-top"] = { GUIStyleSheetPropertyType::BorderTop, ValueType::Multiple };
+	mPropertyKeywords["border-top-style"] = { GUIStyleSheetPropertyType::BorderTopStyle, ValueType::BorderStyle };
+	mPropertyKeywords["border-top-width"] = { GUIStyleSheetPropertyType::BorderTopWidth, ValueType::Pixel };
+	mPropertyKeywords["border-top-color"] = { GUIStyleSheetPropertyType::BorderTopColor, ValueType::Color };
+	mPropertyKeywords["border-bottom"] = { GUIStyleSheetPropertyType::BorderBottom, ValueType::Multiple };
+	mPropertyKeywords["border-bottom-style"] = { GUIStyleSheetPropertyType::BorderBottomStyle, ValueType::BorderStyle };
+	mPropertyKeywords["border-bottom-width"] = { GUIStyleSheetPropertyType::BorderBottomWidth, ValueType::Pixel };
+	mPropertyKeywords["border-bottom-color"] = { GUIStyleSheetPropertyType::BorderBottomColor, ValueType::Color };
+	mPropertyKeywords["border-left"] = { GUIStyleSheetPropertyType::BorderLeft, ValueType::Multiple };
+	mPropertyKeywords["border-left-style"] = { GUIStyleSheetPropertyType::BorderLeftStyle, ValueType::BorderStyle };
+	mPropertyKeywords["border-left-width"] = { GUIStyleSheetPropertyType::BorderLeftWidth, ValueType::Pixel };
+	mPropertyKeywords["border-left-color"] = { GUIStyleSheetPropertyType::BorderLeftColor, ValueType::Color };
+	mPropertyKeywords["border-right"] = { GUIStyleSheetPropertyType::BorderRight, ValueType::Multiple };
+	mPropertyKeywords["border-right-style"] = { GUIStyleSheetPropertyType::BorderRightStyle, ValueType::BorderStyle };
+	mPropertyKeywords["border-right-width"] = { GUIStyleSheetPropertyType::BorderRightWidth, ValueType::Pixel };
+	mPropertyKeywords["border-right-color"] = { GUIStyleSheetPropertyType::BorderRightColor, ValueType::Color };
+	mPropertyKeywords["border-radius"] = { GUIStyleSheetPropertyType::BorderRadius, ValueType::Multiple };
+	mPropertyKeywords["border-top-left-radius"] = { GUIStyleSheetPropertyType::BorderTopLeftRadius, ValueType::Pixel };
+	mPropertyKeywords["border-top-right-radius"] = { GUIStyleSheetPropertyType::BorderTopRightRadius, ValueType::Pixel };
+	mPropertyKeywords["border-bottom-left-radius"] = { GUIStyleSheetPropertyType::BorderBottomLeftRadius, ValueType::Pixel };
+	mPropertyKeywords["border-bottom-right-radius"] = { GUIStyleSheetPropertyType::BorderBottomRightRadius, ValueType::Pixel };
 }
 
 bool GUIStyleSheetParser::Parse(const SPtr<SourceCode>& sourceCode)
@@ -933,17 +1008,17 @@ bool GUIStyleSheetParser::Parse(const SPtr<SourceCode>& sourceCode)
 	// Grabs the first token
 	GetCurrentTokenAndAdvance();
 
-	VariableContext globalVariableContext;
+	mGlobalVariableContext = VariableContext();
 	while(!IsCurrentToken(GUIStyleSheetTokenTypes::EndOfStream))
 	{
-		if(!TryParseSelector(globalVariableContext))
+		if(!TryParseSelector())
 			return false;
 	}
 
 	return true;
 }
 
-bool GUIStyleSheetParser::TryParseSelector(VariableContext& inOutGlobalVariableContext)
+bool GUIStyleSheetParser::TryParseSelector()
 {
 	GUIStyleSheetStateStyle stateStyle; // TODO - Should probably do a lookup if an element with the same name is already specified, and just overwrite/append to it
 
@@ -992,8 +1067,8 @@ bool GUIStyleSheetParser::TryParseSelector(VariableContext& inOutGlobalVariableC
 		return false;
 
 	const bool isInGlobalVariableContext = foundSelectorName && stateStyle.Selector == "root";
-	VariableContext localVariableContext;
 
+	mLocalVariableContext = VariableContext();
 	while(!IsCurrentToken(GUIStyleSheetTokenTypes::RightCurly))
 	{
 		if(IsCurrentToken(GUIStyleSheetTokenTypes::EndOfStream))
@@ -1004,12 +1079,12 @@ bool GUIStyleSheetParser::TryParseSelector(VariableContext& inOutGlobalVariableC
 
 		if(IsCurrentToken(GUIStyleSheetTokenTypes::VariableIdentifier))
 		{
-			if(!TryParseVariable(isInGlobalVariableContext ? inOutGlobalVariableContext : localVariableContext))
+			if(!TryParseVariable(isInGlobalVariableContext ? mGlobalVariableContext : mLocalVariableContext))
 				return false;
 		}
 		else if(IsCurrentToken(GUIStyleSheetTokenTypes::Property))
 		{
-			if(!TryParseProperty(inOutGlobalVariableContext, localVariableContext, stateStyle))
+			if(!TryParseProperty(stateStyle))
 				return false;
 		}
 	}
@@ -1017,10 +1092,8 @@ bool GUIStyleSheetParser::TryParseSelector(VariableContext& inOutGlobalVariableC
 	return true;
 }
 
-bool GUIStyleSheetParser::TryParseProperty(const VariableContext& globalVariableContext, const VariableContext& localVariableContext, GUIStyleSheetStateStyle& inOutValue)
+bool GUIStyleSheetParser::TryParseProperty(GUIStyleSheetStateStyle& inOutValue)
 {
-	// TODO - Do variable lookup
-
 	Optional<Token> propertyToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Property);
 	if(!propertyToken)
 		return false;
@@ -1028,87 +1101,72 @@ bool GUIStyleSheetParser::TryParseProperty(const VariableContext& globalVariable
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon))
 		return false;
 
-	//VariableType propertyType;
-	//switch(propertyType)
-	//{
-	//case VariableType::Integer:
-	//	if(TryParseInteger())
-
-	//	break;
-	//case VariableType::Pixel: break;
-	//case VariableType::Decimal: break;
-	//case VariableType::Percent: break;
-	//case VariableType::Color: break;
-	//case VariableType::String: break;
-	//default: ;
-	//}
-
 	if(auto foundProperty = mPropertyKeywords.find(propertyToken->GetSpelling()); foundProperty != mPropertyKeywords.end())
 	{
-#define CASE_PARSE(Type, PropertyName, FieldName)                                                \
+#define CASE_PARSE(PropertyName, FieldName)                                                      \
 	case GUIStyleSheetPropertyType::PropertyName:                                                \
 		{                                                                                        \
-			if(!TryParse##Type(inOutValue.FieldName))                                            \
+			if(!TryParsePropertyValue(foundProperty->second.ValueType, inOutValue.FieldName))    \
 				return false;                                                                    \
                                                                                                  \
 			inOutValue.OverridenProperties[(u32)GUIStyleSheetPropertyType::PropertyName] = true; \
 			break;                                                                               \
 		}
 
-		switch(foundProperty->second)
+		switch(foundProperty->second.PropertyType)
 		{
 			// Size
-			CASE_PARSE(PixelLiteral, Width, Size.Width)
-			CASE_PARSE(PixelLiteral, Height, Size.Height)
-			CASE_PARSE(PixelLiteral, MinWidth, MinimumSize.Width)
-			CASE_PARSE(PixelLiteral, MinHeight, MinimumSize.Height)
-			CASE_PARSE(PixelLiteral, MaxWidth, MaximumSize.Width)
-			CASE_PARSE(PixelLiteral, MaxHeight, MaximumSize.Height)
+			CASE_PARSE(Width, Size.Width)
+			CASE_PARSE(Height, Size.Height)
+			CASE_PARSE(MinWidth, MinimumSize.Width)
+			CASE_PARSE(MinHeight, MinimumSize.Height)
+			CASE_PARSE(MaxWidth, MaximumSize.Width)
+			CASE_PARSE(MaxHeight, MaximumSize.Height)
 
 			// Margin
-			CASE_PARSE(PixelLiteral, MarginLeft, Margins.Left)
-			CASE_PARSE(PixelLiteral, MarginRight, Margins.Right)
-			CASE_PARSE(PixelLiteral, MarginTop, Margins.Top)
-			CASE_PARSE(PixelLiteral, MarginBottom, Margins.Bottom)
+			CASE_PARSE(MarginLeft, Margins.Left)
+			CASE_PARSE(MarginRight, Margins.Right)
+			CASE_PARSE(MarginTop, Margins.Top)
+			CASE_PARSE(MarginBottom, Margins.Bottom)
 
 			// Padding
-			CASE_PARSE(PixelLiteral, PaddingLeft, Padding.Left)
-			CASE_PARSE(PixelLiteral, PaddingRight, Padding.Right)
-			CASE_PARSE(PixelLiteral, PaddingTop, Padding.Top)
-			CASE_PARSE(PixelLiteral, PaddingBottom, Padding.Bottom)
+			CASE_PARSE(PaddingLeft, Padding.Left)
+			CASE_PARSE(PaddingRight, Padding.Right)
+			CASE_PARSE(PaddingTop, Padding.Top)
+			CASE_PARSE(PaddingBottom, Padding.Bottom)
 
 			// Color
-			CASE_PARSE(Color, Color, Color)
-			CASE_PARSE(DecimalLiteral, Opacity, Opacity)
-			CASE_PARSE(Color, BackgroundColor, BackgroundColor)
+			CASE_PARSE(Color, Color)
+			CASE_PARSE(Opacity, Opacity)
+			CASE_PARSE(BackgroundColor, BackgroundColor)
 
 			// Text
-			CASE_PARSE(StringLiteral, FontFamily, FontFamily)
-			CASE_PARSE(IntegerLiteral, FontSize, FontSize)
-			CASE_PARSE(TextAlign, TextAlign, HorizontalTextAlignment)
-			CASE_PARSE(VerticalAlign, VerticalAlign, VerticalTextAlignment)
+			CASE_PARSE(FontFamily, FontFamily)
+			CASE_PARSE(FontSize, FontSize)
+			CASE_PARSE(TextAlign, HorizontalTextAlignment)
+			CASE_PARSE(VerticalAlign, VerticalTextAlignment)
 
 			// Border
-			CASE_PARSE(PixelLiteral, BorderLeftWidth, BorderLeft.Width)
-			CASE_PARSE(Color, BorderLeftColor, BorderLeft.Color)
-			CASE_PARSE(BorderStyle, BorderLeftStyle, BorderLeft.Style)
+			CASE_PARSE(BorderLeftWidth, BorderLeft.Width)
+			CASE_PARSE(BorderLeftColor, BorderLeft.Color)
+			CASE_PARSE(BorderLeftStyle, BorderLeft.Style)
 
-			CASE_PARSE(PixelLiteral, BorderRightWidth, BorderRight.Width)
-			CASE_PARSE(Color, BorderRightColor, BorderRight.Color)
-			CASE_PARSE(BorderStyle, BorderRightStyle, BorderRight.Style)
+			CASE_PARSE(BorderRightWidth, BorderRight.Width)
+			CASE_PARSE(BorderRightColor, BorderRight.Color)
+			CASE_PARSE(BorderRightStyle, BorderRight.Style)
 
-			CASE_PARSE(PixelLiteral, BorderTopWidth, BorderTop.Width)
-			CASE_PARSE(Color, BorderTopColor, BorderTop.Color)
-			CASE_PARSE(BorderStyle, BorderTopStyle, BorderTop.Style)
+			CASE_PARSE(BorderTopWidth, BorderTop.Width)
+			CASE_PARSE(BorderTopColor, BorderTop.Color)
+			CASE_PARSE(BorderTopStyle, BorderTop.Style)
 
-			CASE_PARSE(PixelLiteral, BorderBottomWidth, BorderBottom.Width)
-			CASE_PARSE(Color, BorderBottomColor, BorderBottom.Color)
-			CASE_PARSE(BorderStyle, BorderBottomStyle, BorderBottom.Style)
+			CASE_PARSE(BorderBottomWidth, BorderBottom.Width)
+			CASE_PARSE(BorderBottomColor, BorderBottom.Color)
+			CASE_PARSE(BorderBottomStyle, BorderBottom.Style)
 
-			CASE_PARSE(PixelLiteral, BorderTopLeftRadius, BorderTopLeftRadius)
-			CASE_PARSE(PixelLiteral, BorderTopRightRadius, BorderTopRightRadius)
-			CASE_PARSE(PixelLiteral, BorderBottomLeftRadius, BorderBottomLeftRadius)
-			CASE_PARSE(PixelLiteral, BorderBottomRightRadius, BorderBottomRightRadius)
+			CASE_PARSE(BorderTopLeftRadius, BorderTopLeftRadius)
+			CASE_PARSE(BorderTopRightRadius, BorderTopRightRadius)
+			CASE_PARSE(BorderBottomLeftRadius, BorderBottomLeftRadius)
+			CASE_PARSE(BorderBottomRightRadius, BorderBottomRightRadius)
 
 			// Shorthands
 		case GUIStyleSheetPropertyType::Margin:
@@ -1138,7 +1196,7 @@ bool GUIStyleSheetParser::TryParseProperty(const VariableContext& globalVariable
 		case GUIStyleSheetPropertyType::Border:
 			{
 				GUIBorderElement borderElement;
-				if(!TryParseBorderElement(borderElement))
+				if(!TryParseBorderElement(borderElement)) // TODO - Not handling variable lookup
 					return false;
 
 				inOutValue.BorderLeft = borderElement;
@@ -1299,7 +1357,7 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 		if(!TryParseColor(value.Color))
 			return false;
 
-		value.Type = VariableType::Color;
+		value.Type = ValueType::Color;
 		break;
 	}
 	case GUIStyleSheetTokenTypes::StringLiteral:
@@ -1308,10 +1366,10 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 		if(!TryParseStringLiteral(parsedValue))
 			return false;
 
-		value.UnsignedInteger = (u32)inOutVariableContext.StringLiterals.size();
-		value.Type = VariableType::String;
+		value.UnsignedInteger = (u32)mStringLiterals.size();
+		value.Type = ValueType::String;
 
-		inOutVariableContext.StringLiterals.push_back(parsedValue);
+		mStringLiterals.push_back(parsedValue);
 		break;
 	}
 	case GUIStyleSheetTokenTypes::DecimalLiteral:
@@ -1319,7 +1377,7 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 		if(!TryParseDecimalLiteral(value.Float))
 			return false;
 
-		value.Type = VariableType::Decimal;
+		value.Type = ValueType::Decimal;
 		break;
 	}
 	case GUIStyleSheetTokenTypes::IntegerLiteral:
@@ -1327,7 +1385,7 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 		if(!TryParseIntegerLiteral(value.SignedInteger))
 			return false;
 
-		value.Type = VariableType::Integer;
+		value.Type = ValueType::Integer;
 		break;
 	}
 	case GUIStyleSheetTokenTypes::PixelsLiteral:
@@ -1335,7 +1393,7 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 		if(!TryParsePixelLiteral(value.SignedInteger))
 			return false;
 
-		value.Type = VariableType::Pixel;
+		value.Type = ValueType::Pixel;
 		break;
 	}
 	case GUIStyleSheetTokenTypes::PercentLiteral:
@@ -1343,7 +1401,37 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 		if(!TryParsePercentLiteral(value.Float))
 			return false;
 
-		value.Type = VariableType::Percent;
+		value.Type = ValueType::Percent;
+		break;
+	}
+	case GUIStyleSheetTokenTypes::BorderStyle:
+	{
+		GUIBorderElementStyle parsedValue;
+		if(!TryParseBorderStyle(parsedValue))
+			return false;
+
+		value.UnsignedInteger = (u32)parsedValue;
+		value.Type = ValueType::BorderStyle;
+		break;
+	}
+	case GUIStyleSheetTokenTypes::TextAlign:
+	{
+		GUIHorizontalTextAlignment parsedValue;
+		if(!TryParseTextAlign(parsedValue))
+			return false;
+
+		value.UnsignedInteger = (u32)parsedValue;
+		value.Type = ValueType::TextAlign;
+		break;
+	}
+	case GUIStyleSheetTokenTypes::VerticalAlign:
+	{
+		GUIVerticalTextAlignment parsedValue;
+		if(!TryParseVerticalAlign(parsedValue))
+			return false;
+
+		value.UnsignedInteger = (u32)parsedValue;
+		value.Type = ValueType::VerticalAlign;
 		break;
 	}
 	default:
@@ -1351,26 +1439,11 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 		return false;
 	}
 
-	auto fnGetVariableTypeName = [](VariableType type) -> const char*
-	{
-		switch(type)
-		{
-		default:
-		case VariableType::Undefined: return "Undefined";
-		case VariableType::Integer: return "Integer";
-		case VariableType::Pixel: return "Pixel";
-		case VariableType::Decimal: return "Decimal";
-		case VariableType::Percent: return "Percent";
-		case VariableType::Color: return "Color";
-		case VariableType::String: return "String";
-		}
-	};
-
 	if(auto found = inOutVariableContext.Variables.find(identifier); found != inOutVariableContext.Variables.end())
 	{
 		if(found->second.Type != value.Type)
 		{
-			Error(StringUtil::Format("Variable '{0}' previously defined as '{1}', but now defined as '{2}'.", identifier, fnGetVariableTypeName(found->second.Type), fnGetVariableTypeName(value.Type)));
+			Error(StringUtil::Format("Variable '{0}' previously defined as '{1}', but now defined as '{2}'.", identifier, ValueTypeToString(found->second.Type), ValueTypeToString(value.Type)));
 			return false;
 		}
 	}
@@ -1567,11 +1640,6 @@ bool GUIStyleSheetParser::TryParseColor(Color& outValue)
 	}
 }
 
-bool GUIStyleSheetParser::TryParseRectOffset(RectOffset& outValue)
-{
-	return TryParseFourSides(outValue.Top, outValue.Right, outValue.Bottom, outValue.Left, &TryParsePixelLiteral);
-}
-
 bool GUIStyleSheetParser::TryParseBorderStyle(GUIBorderElementStyle& outValue)
 {
 	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::BorderStyle);
@@ -1697,24 +1765,181 @@ bool GUIStyleSheetParser::TryParseBorderElement(GUIBorderElement& outValue)
 	return hasWidth || hasColor || hasStyle;
 }
 
+bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType, VariableValue& outValue)
+{
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Variable))
+		return false;
+
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::LeftParenthesis))
+		return false;
+
+	Optional<Token> variableIdentifierToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VariableIdentifier);
+	if(!variableIdentifierToken)
+		return false;
+
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::RightParenthesis))
+		return false;
+
+	const String& variableIdentifier = variableIdentifierToken->GetSpelling();
+	auto fnEnsureType = [this, expectedType, &variableIdentifier](const VariableValue& value) -> bool
+	{
+		if(value.Type != expectedType)
+		{
+			Error(StringFormat::Format("Provided variable '{0}' is of incorrect type. Expected '{1}' but variable is '{2}'.", variableIdentifier, ValueTypeToString(expectedType), ValueTypeToString(value.Type)));
+			return false;
+		}
+
+		return true;
+	};
+
+	if(auto found = mLocalVariableContext.Variables.find(variableIdentifier); found != mLocalVariableContext.Variables.end())
+	{
+		if(!fnEnsureType(found->second))
+			return false;
+
+		outValue = found->second;
+		return true;
+	}
+
+	if(auto found = mGlobalVariableContext.Variables.find(variableIdentifier); found != mGlobalVariableContext.Variables.end())
+	{
+		if(!fnEnsureType(found->second))
+			return false;
+
+		outValue = found->second;
+		return true;
+	}
+
+	Error(StringFormat::Format("Variable '{0}' not previously defined.", variableIdentifier));
+	return false;
+}
+
+bool GUIStyleSheetParser::TryParseRectOffset(RectOffset& outValue)
+{
+	return TryParsePropertyValueSides(ValueType::Pixel, outValue.Top, outValue.Right, outValue.Bottom, outValue.Left);
+}
+
 bool GUIStyleSheetParser::TryParseBorderRadius(u32& outTopLeft, u32& outTopRight, u32& outBottomLeft, u32& outBottomRight)
 {
-	return TryParseFourSides(outTopLeft, outTopRight, outBottomRight, outBottomLeft, &TryParsePixelLiteral);
+	return TryParsePropertyValueSides(ValueType::Pixel, outTopLeft, outTopRight, outBottomRight, outBottomLeft);
 }
 
 bool GUIStyleSheetParser::TryParseBorderStyle(GUIBorderElementStyle& outTop, GUIBorderElementStyle& outRight, GUIBorderElementStyle& outBottom, GUIBorderElementStyle& outLeft)
 {
-	return TryParseFourSides(outTop, outRight, outBottom, outLeft, &GUIStyleSheetParser::TryParseBorderStyle);
+	return TryParsePropertyValueSides(ValueType::BorderStyle, outTop, outRight, outBottom, outLeft);
 }
 
 bool GUIStyleSheetParser::TryParseBorderWidth(u32& outTop, u32& outRight, u32& outBottom, u32& outLeft)
 {
-	return TryParseFourSides(outTop, outRight, outBottom, outLeft, &GUIStyleSheetParser::TryParsePixelLiteral);
+	return TryParsePropertyValueSides(ValueType::Pixel, outTop, outRight, outBottom, outLeft);
 }
 
 bool GUIStyleSheetParser::TryParseBorderColor(Color& outTop, Color& outRight, Color& outBottom, Color& outLeft)
 {
-	return TryParseFourSides(outTop, outRight, outBottom, outLeft, &GUIStyleSheetParser::TryParseColor);
+	return TryParsePropertyValueSides(ValueType::Color, outTop, outRight, outBottom, outLeft);
+}
+
+template<class T>
+bool GUIStyleSheetParser::TryParsePropertyValue(ValueType valueType, T& outValue)
+{
+	B3D_ASSERT(valueType != ValueType::Undefined && valueType != ValueType::Multiple);
+
+	if(IsCurrentToken(GUIStyleSheetTokenTypes::Variable))
+	{
+		if(!TryParseAndLookupVariableValue(valueType, outValue))
+			return false;
+
+		return true;
+	}
+
+	switch(valueType)
+	{
+	case ValueType::Integer:
+		return TryParseIntegerLiteral(outValue);
+	case ValueType::Pixel:
+		return TryParsePixelLiteral(outValue);
+	case ValueType::Decimal:
+		return TryParseDecimalLiteral(outValue);
+	case ValueType::Percent:
+		return TryParsePercentLiteral(outValue);
+	case ValueType::Color:
+		return TryParseColor(outValue);
+	case ValueType::String:
+		return TryParseStringLiteral(outValue);
+	case ValueType::BorderStyle:
+		return TryParseBorderStyle(outValue);
+	case ValueType::TextAlign:
+		return TryParseTextAlign(outValue);
+	case ValueType::VerticalAlign:
+		return TryParseVerticalAlign(outValue);
+	}
+
+	Error("Internal error.");
+	return false;
+}
+
+template<class T>
+bool GUIStyleSheetParser::TryParsePropertyValueSides(ValueType valueType, T& outTop, T& outRight, T& outBottom, T& outLeft)
+{
+	u32 count = 0;
+	do
+	{
+		T parsedValue;
+		if(!TryParsePropertyValue(valueType, parsedValue))
+			return false;
+
+		if(count == 0)
+		{
+			outLeft = parsedValue;
+			outRight = parsedValue;
+			outTop = parsedValue;
+			outBottom = parsedValue;
+		}
+		else if(count == 1)
+		{
+			outLeft = parsedValue;
+			outRight = parsedValue;
+		}
+		else if(count == 2)
+		{
+			outBottom = parsedValue;
+		}
+		else if(count == 3)
+		{
+			outLeft = parsedValue;
+		}
+
+		if(IsCurrentToken(GUIStyleSheetTokenTypes::Semicolon))
+			return true;
+
+		count++;
+	} while(count < 4); 
+
+	return true;
+}
+
+template <class T>
+bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType, T& outValue)
+{
+	VariableValue value;
+	if(!TryParseAndLookupVariableValue(expectedType, value))
+		return false;
+
+	value.GetValue(outValue);
+	return true;
+}
+
+bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType, String& outValue)
+{
+	VariableValue value;
+	if(!TryParseAndLookupVariableValue(expectedType, value))
+		return false;
+
+	u32 stringLiteralIndex;
+	value.GetValue(stringLiteralIndex);
+
+	outValue = mStringLiterals[stringLiteralIndex];
+	return true;
 }
 
 bool GUIStyleSheetParser::TryParseInteger(const StringView& toParse, i32& outValue) const
@@ -1763,46 +1988,6 @@ bool GUIStyleSheetParser::TryParseHexColor(const StringView& toParse, Color& out
 		if(!fnParseColorChannel(channelIndex, outValue[channelIndex]))
 		return false;
 	}
-
-	return true;
-}
-
-template<class T>
-bool GUIStyleSheetParser::TryParseFourSides(T& outTop, T& outRight, T& outBottom, T& outLeft, bool(GUIStyleSheetParser::*fnParsePredicate)(T&))
-{
-	u32 count = 0;
-	do
-	{
-		T parsedValue;
-		if(!(this->*fnParsePredicate)(parsedValue))
-			return false;
-
-		if(count == 0)
-		{
-			outLeft = parsedValue;
-			outRight = parsedValue;
-			outTop = parsedValue;
-			outBottom = parsedValue;
-		}
-		else if(count == 1)
-		{
-			outLeft = parsedValue;
-			outRight = parsedValue;
-		}
-		else if(count == 2)
-		{
-			outBottom = parsedValue;
-		}
-		else if(count == 3)
-		{
-			outLeft = parsedValue;
-		}
-
-		if(IsCurrentToken(GUIStyleSheetTokenTypes::Semicolon))
-			return true;
-
-		count++;
-	} while(count < 4); 
 
 	return true;
 }
@@ -1867,6 +2052,24 @@ Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected(const 
 {
 	mErrors = StringUtil::Format("Parser error ({0}): Unexpected spelling for token '{1}' ({2}), expected '{3}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()), mCurrentToken->GetSpelling(), expectedTokenSpelling);
 	return {};
+}
+
+const char* GUIStyleSheetParser::ValueTypeToString(ValueType type)
+{
+	switch(type)
+	{
+	default:
+	case ValueType::Undefined: return "Undefined";
+	case ValueType::Integer: return "Integer";
+	case ValueType::Pixel: return "Pixel";
+	case ValueType::Decimal: return "Decimal";
+	case ValueType::Percent: return "Percent";
+	case ValueType::Color: return "Color";
+	case ValueType::String: return "String";
+	case ValueType::BorderStyle: return "BorderStyle";
+	case ValueType::TextAlign: return "TextAlign";
+	case ValueType::VerticalAlign: return "VerticalAlign";
+	}
 }
 
 void GUIStyleSheetStateStyle::Override(const GUIStyleSheetStateStyle& other)
