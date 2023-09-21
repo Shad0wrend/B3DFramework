@@ -1196,7 +1196,7 @@ bool GUIStyleSheetParser::TryParseProperty(GUIStyleSheetStateStyle& inOutValue)
 		case GUIStyleSheetPropertyType::Border:
 			{
 				GUIBorderElement borderElement;
-				if(!TryParseBorderElement(borderElement)) // TODO - Not handling variable lookup
+				if(!TryParseBorderElement(borderElement))
 					return false;
 
 				inOutValue.BorderLeft = borderElement;
@@ -1456,14 +1456,53 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 	return true;
 }
 
-bool GUIStyleSheetParser::IsCurrentToken(TokenType type) const
+bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType, VariableValue& outValue)
 {
-	return mCurrentToken && mCurrentToken->GetType() == type;
-}
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Variable))
+		return false;
 
-bool GUIStyleSheetParser::IsCurrentToken(TokenType type, const String& spelling) const
-{
-	return mCurrentToken && mCurrentToken->GetType() == type && mCurrentToken->GetSpelling() == spelling;
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::LeftParenthesis))
+		return false;
+
+	Optional<Token> variableIdentifierToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VariableIdentifier);
+	if(!variableIdentifierToken)
+		return false;
+
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::RightParenthesis))
+		return false;
+
+	const String& variableIdentifier = variableIdentifierToken->GetSpelling();
+	auto fnEnsureType = [this, expectedType, &variableIdentifier](const VariableValue& value) -> bool
+	{
+		if(value.Type != expectedType)
+		{
+			Error(StringFormat::Format("Provided variable '{0}' is of incorrect type. Expected '{1}' but variable is '{2}'.", variableIdentifier, ValueTypeToString(expectedType), ValueTypeToString(value.Type)));
+			return false;
+		}
+
+		return true;
+	};
+
+	if(auto found = mLocalVariableContext.Variables.find(variableIdentifier); found != mLocalVariableContext.Variables.end())
+	{
+		if(!fnEnsureType(found->second))
+			return false;
+
+		outValue = found->second;
+		return true;
+	}
+
+	if(auto found = mGlobalVariableContext.Variables.find(variableIdentifier); found != mGlobalVariableContext.Variables.end())
+	{
+		if(!fnEnsureType(found->second))
+			return false;
+
+		outValue = found->second;
+		return true;
+	}
+
+	Error(StringFormat::Format("Variable '{0}' not previously defined.", variableIdentifier));
+	return false;
 }
 
 bool GUIStyleSheetParser::TryParseIntegerLiteral(i32& outValue)
@@ -1726,7 +1765,7 @@ bool GUIStyleSheetParser::TryParseBorderElement(GUIBorderElement& outValue)
 				return false;
 			}
 
-			if(!TryParsePixelLiteral(outValue.Width))
+			if(!TryParsePropertyValue(ValueType::Pixel, outValue.Width))
 				return false;
 
 			hasWidth = true;
@@ -1741,7 +1780,7 @@ bool GUIStyleSheetParser::TryParseBorderElement(GUIBorderElement& outValue)
 				return false;
 			}
 
-			if(!TryParseColor(outValue.Color))
+			if(!TryParsePropertyValue(ValueType::Color, outValue.Color))
 				return false;
 
 			hasColor = true;
@@ -1755,7 +1794,7 @@ bool GUIStyleSheetParser::TryParseBorderElement(GUIBorderElement& outValue)
 				return false;
 			}
 
-			if(!TryParseBorderStyle(outValue.Style))
+			if(!TryParsePropertyValue(ValueType::BorderStyle, outValue.Style))
 				return false;
 
 			hasStyle = true;
@@ -1763,55 +1802,6 @@ bool GUIStyleSheetParser::TryParseBorderElement(GUIBorderElement& outValue)
 	}
 
 	return hasWidth || hasColor || hasStyle;
-}
-
-bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType, VariableValue& outValue)
-{
-	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Variable))
-		return false;
-
-	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::LeftParenthesis))
-		return false;
-
-	Optional<Token> variableIdentifierToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VariableIdentifier);
-	if(!variableIdentifierToken)
-		return false;
-
-	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::RightParenthesis))
-		return false;
-
-	const String& variableIdentifier = variableIdentifierToken->GetSpelling();
-	auto fnEnsureType = [this, expectedType, &variableIdentifier](const VariableValue& value) -> bool
-	{
-		if(value.Type != expectedType)
-		{
-			Error(StringFormat::Format("Provided variable '{0}' is of incorrect type. Expected '{1}' but variable is '{2}'.", variableIdentifier, ValueTypeToString(expectedType), ValueTypeToString(value.Type)));
-			return false;
-		}
-
-		return true;
-	};
-
-	if(auto found = mLocalVariableContext.Variables.find(variableIdentifier); found != mLocalVariableContext.Variables.end())
-	{
-		if(!fnEnsureType(found->second))
-			return false;
-
-		outValue = found->second;
-		return true;
-	}
-
-	if(auto found = mGlobalVariableContext.Variables.find(variableIdentifier); found != mGlobalVariableContext.Variables.end())
-	{
-		if(!fnEnsureType(found->second))
-			return false;
-
-		outValue = found->second;
-		return true;
-	}
-
-	Error(StringFormat::Format("Variable '{0}' not previously defined.", variableIdentifier));
-	return false;
 }
 
 bool GUIStyleSheetParser::TryParseRectOffset(RectOffset& outValue)
@@ -1852,27 +1842,30 @@ bool GUIStyleSheetParser::TryParsePropertyValue(ValueType valueType, T& outValue
 		return true;
 	}
 
-	switch(valueType)
+	if constexpr(std::is_same_v<T, u32> || std::is_same_v<T, i32>)
 	{
-	case ValueType::Integer:
-		return TryParseIntegerLiteral(outValue);
-	case ValueType::Pixel:
-		return TryParsePixelLiteral(outValue);
-	case ValueType::Decimal:
-		return TryParseDecimalLiteral(outValue);
-	case ValueType::Percent:
-		return TryParsePercentLiteral(outValue);
-	case ValueType::Color:
-		return TryParseColor(outValue);
-	case ValueType::String:
-		return TryParseStringLiteral(outValue);
-	case ValueType::BorderStyle:
-		return TryParseBorderStyle(outValue);
-	case ValueType::TextAlign:
-		return TryParseTextAlign(outValue);
-	case ValueType::VerticalAlign:
-		return TryParseVerticalAlign(outValue);
+		if(valueType == ValueType::Integer)
+			return TryParseIntegerLiteral(outValue);
+		if(valueType == ValueType::Pixel)
+			return TryParsePixelLiteral(outValue);
 	}
+	else if constexpr(std::is_same_v<T, float>)
+	{
+		if(valueType == ValueType::Decimal)
+			return TryParseDecimalLiteral(outValue);
+		if(valueType == ValueType::Percent)
+			return TryParsePercentLiteral(outValue);
+	}
+	else if constexpr(std::is_same_v<T, String>)
+		return TryParseStringLiteral(outValue);
+	else if constexpr(std::is_same_v<T, Color>)
+		return TryParseColor(outValue);
+	else if constexpr(std::is_same_v<T, GUIBorderElementStyle>)
+		return TryParseBorderStyle(outValue);
+	else if constexpr(std::is_same_v<T, GUIHorizontalTextAlignment>)
+		return TryParseTextAlign(outValue);
+	else if constexpr(std::is_same_v<T, GUIVerticalTextAlignment>)
+		return TryParseVerticalAlign(outValue);
 
 	Error("Internal error.");
 	return false;
@@ -1990,6 +1983,16 @@ bool GUIStyleSheetParser::TryParseHexColor(const StringView& toParse, Color& out
 	}
 
 	return true;
+}
+
+bool GUIStyleSheetParser::IsCurrentToken(TokenType type) const
+{
+	return mCurrentToken && mCurrentToken->GetType() == type;
+}
+
+bool GUIStyleSheetParser::IsCurrentToken(TokenType type, const String& spelling) const
+{
+	return mCurrentToken && mCurrentToken->GetType() == type && mCurrentToken->GetSpelling() == spelling;
 }
 
 Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdvance()
