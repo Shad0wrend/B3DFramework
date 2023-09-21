@@ -2,8 +2,8 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-#include "BsGUIContent.h"
 #include "BsPrerequisites.h"
+#include "GUI/BsGUIContent.h"
 #include "Image/BsColor.h"
 #include "Utility/BsBitfield.h"
 #include "Utility/BsRectOffset.h"
