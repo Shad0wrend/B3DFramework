@@ -315,7 +315,7 @@ namespace bs
 		/** Counts the number of values in the bit field. */
 		u64 Count(bool value) const
 		{
-			// Note: Implement this faster via popcnt and similar instructions
+			// TODO: Implement this faster via popcnt and similar instructions
 
 			u64 counter = 0;
 			for(const auto& entry : *this)
@@ -325,6 +325,20 @@ namespace bs
 			}
 
 			return counter;
+		}
+
+		/** Resizes the bitfield to the specified number of elements, initializing any new elements with @p value. */
+		void Resize(u64 size, bool value = false)
+		{
+			if(size > mMaxBits)
+				Realloc(size);
+
+			const u64 oldSize = mNumBits;
+			mNumBits = size;
+
+			// TODO: Assign the values more efficiently
+			for(u64 index = oldSize; index < size; ++index)
+				(*this)[index] = value;
 		}
 
 		/** Resets all the bits in the field to the specified value. */

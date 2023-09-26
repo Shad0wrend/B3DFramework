@@ -543,6 +543,20 @@ namespace bs
 		}
 
 		/**
+		 * Compares two strings. Returns true if the two compare equal.
+		 *
+		 * @param[in]	lhs				Left string to compare.
+		 * @param[in]	rhs				Right string to compare.
+		 * @param[in]	caseSensitive	If true the comparison will consider uppercase and lowercase characters different.
+		 *								Note that case conversion does not handle UTF8 strings.
+		 */
+		template <class T1>
+		static bool Compare(const T1& lhs, const char* rhs, bool caseSensitive = true)
+		{
+			return Compare(lhs, StringView(rhs), caseSensitive);
+		}
+
+		/**
 		 * Compares two strings. Returns 0 if the two compare equal, <0 if the value of the left string is lower than of
 		 * the right string, or >0 if the value of the left string is higher than the right string.
 		 *

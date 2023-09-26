@@ -7,6 +7,12 @@
 
 using namespace bs;
 
+
+GUIStyleSheetStateStyle::GUIStyleSheetStateStyle()
+{
+	OverridenProperties.Resize((u32)GUIStyleSheetPropertyType::Count);
+}
+
 void GUIStyleSheetStateStyle::Override(const GUIStyleSheetStateStyle& other)
 {
 #define OVERRIDE_PROPERTY(PropertyName, FieldName)                              \
@@ -74,8 +80,8 @@ const GUIStyleSheetStateStyle* GUIStyleSheetStyle::FindStateStyle(const StringVi
 	if(StringUtil::Compare(name, "active", false))
 		return Active.has_value() ? &Active.value() : nullptr;
 
-	if(StringUtil::Compare(name, "focused", false))
-		return Focused.has_value() ? &Focused.value() : nullptr;
+	if(StringUtil::Compare(name, "focus", false))
+		return Focus.has_value() ? &Focus.value() : nullptr;
 
 	if(StringUtil::Compare(name, "disabled", false))
 		return Disabled.has_value() ? &Disabled.value() : nullptr;
@@ -106,9 +112,9 @@ bool GUIStyleSheetStyle::FindAndSetStateStyle(const StringView& name, const GUIS
 		return true;
 	}
 
-	if(StringUtil::Compare(name, "focused", false))
+	if(StringUtil::Compare(name, "focus", false))
 	{
-		Focused = stateStyle;
+		Focus = stateStyle;
 		return true;
 	}
 
@@ -127,11 +133,11 @@ bool GUIStyleSheetStyle::FindAndSetStateStyle(const StringView& name, const GUIS
 	return false;
 }
 
-Optional<GUIStyleSheet> GUIStyleSheet::Parse(const Path& file)
+SPtr<GUIStyleSheet> GUIStyleSheet::Parse(const Path& file)
 {
 	const SPtr<DataStream> fileStream = FileSystem::OpenFile(file);
 	if(!fileStream)
-		return {};
+		return nullptr;
 
 	GUIStyleSheetParser parser;
 	return parser.Parse(B3DMakeShared<SourceCode>(fileStream->GetAsString()));
@@ -170,13 +176,13 @@ GUIStyleSheetStateStyle GUIStyleSheetStyle::FindStateStyle(GUIElementState state
 		break;
 	case GUIElementState::Focused:
 	case GUIElementState::FocusedOn:
-		if(Focused.has_value())
-			stateStyle.Override(*Focused);
+		if(Focus.has_value())
+			stateStyle.Override(*Focus);
 		break;
 	case GUIElementState::FocusedHover:
 	case GUIElementState::FocusedHoverOn:
-		if(Focused.has_value())
-			stateStyle.Override(*Focused);
+		if(Focus.has_value())
+			stateStyle.Override(*Focus);
 
 		if(Hover.has_value())
 			stateStyle.Override(*Hover);

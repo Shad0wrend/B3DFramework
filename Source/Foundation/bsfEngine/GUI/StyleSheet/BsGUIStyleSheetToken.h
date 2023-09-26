@@ -41,6 +41,7 @@ namespace bs
 		ColorHSL, // hsl
 		ColorRGBA, // rgba
 		ColorHSLA, // hsla
+		ColorHex, // #212121, note colors starting with a letter are identified as IdSelector
 
 		Property, // width, height, color, border-radius, font-size, etc.
 		BorderStyle, // none, solid

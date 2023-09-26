@@ -69,20 +69,20 @@ GUIStyleSheetParser::GUIStyleSheetParser()
 	mPropertyKeywords["border-bottom-right-radius"] = { GUIStyleSheetPropertyType::BorderBottomRightRadius, ValueType::Pixel };
 }
 
-Optional<GUIStyleSheet> GUIStyleSheetParser::Parse(const SPtr<SourceCode>& sourceCode)
+SPtr<GUIStyleSheet> GUIStyleSheetParser::Parse(const SPtr<SourceCode>& sourceCode)
 {
 	mLexer.StartScanning(sourceCode);
 
 	// Grabs the first token
 	GetCurrentTokenAndAdvance();
 
-	GUIStyleSheet styleSheet;
+	SPtr<GUIStyleSheet> styleSheet = B3DMakeShared<GUIStyleSheet>();
 	mGlobalVariableContext = VariableContext();
 
 	while(!IsCurrentToken(GUIStyleSheetTokenTypes::EndOfStream))
 	{
-		if(!TryParseSelector(styleSheet))
-			return {};
+		if(!TryParseSelector(*styleSheet))
+			return nullptr;
 	}
 
 	return styleSheet;
@@ -135,28 +135,28 @@ bool GUIStyleSheetParser::TryParseSelector(GUIStyleSheet& inOutStyleSheet)
 	}
 
 	GUIStyleSheetStateStyle stateStyle; // TODO - Should probably do a lookup if an element with the same name is already specified, and just overwrite/append to it
+	GUIStyleSheetStyle* existingStyle = nullptr;
 
 	if(foundSelectorName)
 	{
-		GUIStyleSheetStyle* style = nullptr;
 		if(selectorType == GUIStyleSheetSelectorType::Element)
 		{
 			if(auto found = inOutStyleSheet.mElementStyles.find(selectorName); found != inOutStyleSheet.mElementStyles.end())
-				style = &found->second;
+				existingStyle = &found->second;
 		}
 		else if(selectorType == GUIStyleSheetSelectorType::Id)
 		{
 			if(auto found = inOutStyleSheet.mIdStyles.find(selectorName); found != inOutStyleSheet.mIdStyles.end())
-				style = &found->second;
+				existingStyle = &found->second;
 		}
 
-		if(style != nullptr)
+		if(existingStyle != nullptr)
 		{
 			if(!foundPseudoClass)
-				stateStyle = style->Normal;
+				stateStyle = existingStyle->Normal;
 			else
 			{
-				if(auto found = style->FindStateStyle(pseudoClass))
+				if(auto found = existingStyle->FindStateStyle(pseudoClass))
 				{
 					stateStyle = *found;
 				}
@@ -171,7 +171,7 @@ bool GUIStyleSheetParser::TryParseSelector(GUIStyleSheet& inOutStyleSheet)
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::LeftCurly).has_value())
 		return false;
 
-	const bool isInGlobalVariableContext = foundSelectorName && stateStyle.Selector == "root";
+	const bool isInGlobalVariableContext = foundPseudoClass && stateStyle.PseudoClass == "root";
 
 	mLocalVariableContext = VariableContext();
 	while(!IsCurrentToken(GUIStyleSheetTokenTypes::RightCurly))
@@ -193,7 +193,36 @@ bool GUIStyleSheetParser::TryParseSelector(GUIStyleSheet& inOutStyleSheet)
 				return false;
 		}
 	}
-		
+
+	if(!GetCurrentTokenAndAdvance(TokenType::RightCurly).has_value())
+		return false;
+
+	// Note: Not storing root state anywhere
+	if(foundSelectorName)
+	{
+		if(existingStyle != nullptr)
+		{
+			if(foundPseudoClass)
+				existingStyle->FindAndSetStateStyle(pseudoClass, stateStyle);
+			else
+				existingStyle->Normal = stateStyle;
+		}
+		else
+		{
+			GUIStyleSheetStyle newStyle;
+
+			if(foundPseudoClass)
+				newStyle.FindAndSetStateStyle(pseudoClass, stateStyle);
+			else
+				newStyle.Normal = stateStyle;
+
+			if(selectorType == GUIStyleSheetSelectorType::Element)
+				inOutStyleSheet.mElementStyles[selectorName] = newStyle;
+			else if(selectorType == GUIStyleSheetSelectorType::Id)
+				inOutStyleSheet.mIdStyles[selectorName] = newStyle;
+		}
+	}
+
 	return true;
 }
 
@@ -458,7 +487,9 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 	case GUIStyleSheetTokenTypes::ColorHSL:
 	case GUIStyleSheetTokenTypes::ColorRGBA:
 	case GUIStyleSheetTokenTypes::ColorHSLA:
+	case GUIStyleSheetTokenTypes::ColorHex:
 	{
+		value.Color = Color();
 		if(!TryParseColor(value.Color))
 			return false;
 
@@ -668,7 +699,7 @@ bool GUIStyleSheetParser::TryParsePercentLiteral(float& outValue)
 
 bool GUIStyleSheetParser::TryParseStringLiteral(String& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PercentLiteral);
+	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::StringLiteral);
 	if(!token)
 		return false;
 
@@ -688,6 +719,7 @@ bool GUIStyleSheetParser::TryParseColor(Color& outValue)
 	{
 		// Hex literals are recognized as selectors due to # prefix
 	case TokenType::IdSelector:
+	case TokenType::ColorHex:
 	{
 		if(!TryParseHexColor(token->GetSpelling(), outValue))
 			return false;
@@ -876,7 +908,7 @@ bool GUIStyleSheetParser::TryParseBorderElement(GUIBorderElement& outValue)
 			hasWidth = true;
 		}
 		
-		const bool isColor = IsCurrentToken(GUIStyleSheetTokenTypes::IdSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorHSL) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorHSLA) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorRGB) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorRGBA);
+		const bool isColor = IsCurrentToken(GUIStyleSheetTokenTypes::IdSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorHSL) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorHSLA) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorRGB) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorRGBA) || IsCurrentToken(GUIStyleSheetTokenTypes::ColorHex);
 		if(isColor)
 		{
 			if(hasColor)
@@ -1060,7 +1092,7 @@ bool GUIStyleSheetParser::TryParseFloat(const StringView& toParse, float& outVal
 
 bool GUIStyleSheetParser::TryParseHexColor(const StringView& toParse, Color& outValue) const
 {
-	if(toParse.size() != 6 || toParse.size() != 8)
+	if(toParse.size() != 6 && toParse.size() != 8)
 		return false;
 
 	const u32 channelCount = (u32)toParse.size() / 2;
@@ -1108,7 +1140,11 @@ Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdva
 	Optional<Token> previousToken = mCurrentToken;
 	mCurrentToken = mLexer.ScanNextToken();
 
-	// TODO - Check for lexer error if it returned null
+	if(!mCurrentToken)
+	{
+		Error(mLexer.GetErrors());
+		return {};
+	}
 
 	return previousToken;
 }

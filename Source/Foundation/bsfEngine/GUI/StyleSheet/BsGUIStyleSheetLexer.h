@@ -98,6 +98,9 @@ namespace bs
 		/** Tries to scan the next token and returns the token if scanning is successful. Token type will be automatically determined based on the current character. */
 		Optional<Token> ScanToken();
 
+		/** Tries to scan the next token as an element selector identifier or a hex color (both starting with #). Returns null if the scanning failed. */
+		Optional<Token> ScanElementSelectorOrHexColor();
+
 		/** Tries to scan the next token as an identifier. Returns null if the scanning failed. */
 		Optional<Token> ScanIdentifier();
 

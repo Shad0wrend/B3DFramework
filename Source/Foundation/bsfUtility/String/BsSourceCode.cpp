@@ -4,6 +4,8 @@
 
 using namespace bs;
 
+const SourceCodePosition SourceCodePosition::kInvalid{};
+
 SourceCodePosition::SourceCodePosition(u32 row, u32 column, const String& filename)
 	: mRow(row), mColumn(column), mFilename(filename)
 { }
@@ -36,9 +38,9 @@ String SourceCodePosition::ToString(bool printFilename) const
 	StringStream stringStream;
 
 	if(printFilename && !mFilename.empty())
-		stringStream << mFilename << ":";
+		stringStream << "File:" << mFilename << " | ";
 
-	stringStream << mRow << ":" << mColumn;
+	stringStream << "Line: " << (mRow + 1) << " | Column: " << (mColumn + 1);
 	return stringStream.str();
 }
 

@@ -14,6 +14,7 @@
 #include "Reflection/BsRTTIType.h"
 #include "FileSystem/BsFileSystem.h"
 #include "CoreThread/BsCoreThread.h"
+#include "GUI/StyleSheet/BsGUIStyleSheet.h"
 #include "Material/BsShaderCompiler.h"
 #include "Utility/BsShapeMeshes3D.h"
 #include "Mesh/BsMesh.h"
@@ -137,6 +138,7 @@ BuiltinResources::BuiltinResources()
 
 	mFont = GetResources().Load<Font>(mBuiltinDataFolder + (String(kDefaultFontName) + u8".asset"));
 	mSkin = GetResources().Load<GUISkin>(mBuiltinDataFolder + (String(kGuiSkinFile) + u8".json.asset"));
+	mDefaultGUIStyleSheet = GUIStyleSheet::Parse(mBuiltinRawDataFolder + "GUI.css");
 	mEmptySkin = GUISkin::Create();
 
 	const HTexture whiteTexture2D = GetTexture(BuiltinTexture::White);

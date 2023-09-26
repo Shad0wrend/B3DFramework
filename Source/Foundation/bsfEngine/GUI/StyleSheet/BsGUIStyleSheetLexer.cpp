@@ -193,8 +193,11 @@ void GUIStyleSheetLexer::SkipWhiteSpaces(bool includeNewLines)
 
 Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanToken()
 {
-	if(std::isalpha(GetCurrentCharacter()) || IsCurrentCharacter('_') || IsCurrentCharacter('-') || IsCurrentCharacter('#'))
+	if(std::isalpha(GetCurrentCharacter()) || IsCurrentCharacter('_') || IsCurrentCharacter('-'))
 		return ScanIdentifier();
+
+	if(IsCurrentCharacter('#'))
+		return ScanElementSelectorOrHexColor();
 
 	if(IsCurrentCharacter('.') || std::isdigit(GetCurrentCharacter()))
 		return ScanNumber();
@@ -219,8 +222,7 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanToken()
 
 Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier()
 {
-	// Special handling if first characters are '#' or "--"
-	const bool isNameIdentifier = IsCurrentCharacter('#');
+	// Special handling if first characters are  "--"
 	const bool isFirstCharacterHyphen = IsCurrentCharacter('-');
 
 	const char firstCharacter = GetCurrentCharacterAndAdvance();
@@ -233,11 +235,11 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier()
 		if(!GetCurrentCharacterAndAdvance('-', unused))
 			return {};
 	}
-	else if(!isNameIdentifier)
+	else
 		spelling += firstCharacter;
 
-	// First character of the name can be a letter, '_' or '-'. Special case for '-' as we already parsed it above in case this is not a variable or a name identifier.
-	if(std::isalpha(GetCurrentCharacter()) || IsCurrentCharacter('_') || ((isVariable || isNameIdentifier) && IsCurrentCharacter('-')))
+	// First character of the name can be a letter, '_' or '-'. Special case for '-' as we already parsed it above in case this is not a variable
+	if(std::isalpha(GetCurrentCharacter()) || IsCurrentCharacter('_') || (isVariable && IsCurrentCharacter('-')))
 	{
 		spelling += GetCurrentCharacterAndAdvance();
 
@@ -251,13 +253,55 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier()
 	if(auto it = mPropertyKeywords.find(lowerCaseSpelling); it != mPropertyKeywords.end())
 		return CreateToken(it->second, spelling);
 
-	if(isNameIdentifier)
-		return CreateToken(TokenType::IdSelector, spelling);
-
 	if(isVariable)
 		return CreateToken(TokenType::VariableIdentifier, spelling);
 
 	return CreateToken(TokenType::ElementSelector, spelling);
+}
+
+Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanElementSelectorOrHexColor()
+{
+	String spelling;
+
+	char character;
+	if(!GetCurrentCharacterAndAdvance('#', character))
+		return {};
+
+	// First character of the name can be a letter, '_' or '-' for ID selector case
+	if(std::isalpha(GetCurrentCharacter()) || IsCurrentCharacter('_') || IsCurrentCharacter('-'))
+	{
+		spelling += GetCurrentCharacterAndAdvance();
+
+		while(std::isalnum(GetCurrentCharacter()) || IsCurrentCharacter('_') || IsCurrentCharacter('-'))
+			spelling += GetCurrentCharacterAndAdvance();
+
+		return CreateToken(TokenType::IdSelector, spelling);
+	}
+
+	if(std::isdigit(GetCurrentCharacter()))
+	{
+		auto fnIsHexCharacter = [](char character)
+		{
+			character = (char)std::tolower(character);
+			return std::isdigit(character) || character == 'a' || character == 'b' || character == 'c' || character == 'd' || character == 'e' || character == 'f';
+		};
+
+		spelling += GetCurrentCharacterAndAdvance();
+		u32 count = 1;
+
+		while(fnIsHexCharacter(GetCurrentCharacter()))
+		{
+			if(count >= 8)
+				return ErrorUnexpected();
+
+			spelling += GetCurrentCharacterAndAdvance();
+			count++;
+		}
+
+		return CreateToken(TokenType::ColorHex, spelling);
+	}
+
+	return Error("# must be followed by selector name or hex color.");
 }
 
 Optional<GUIStyleSheetToken> GUIStyleSheetLexer::ScanStringLiteral()
@@ -328,7 +372,7 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumber()
 			if(IsCurrentCharacter('x') || IsCurrentCharacter('X'))
 			{
 				GetCurrentCharacterAndAdvance();
-				type = GUIStyleSheetTokenTypes::PercentLiteral;
+				type = GUIStyleSheetTokenTypes::PixelsLiteral;
 			}
 			else
 				return ErrorUnexpected();

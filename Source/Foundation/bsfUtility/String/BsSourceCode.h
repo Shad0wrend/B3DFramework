@@ -50,8 +50,6 @@ namespace bs
 		String mFilename;
 	};
 
-	const SourceCodePosition SourceCodePosition::kInvalid{};
-
 	/** Wraps a source code represented as a text string, and provides helpers for movement through the code characters and lines. */
 	class B3D_UTILITY_EXPORT SourceCode
 	{

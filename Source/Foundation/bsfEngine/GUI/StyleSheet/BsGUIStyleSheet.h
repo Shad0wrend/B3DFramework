@@ -125,9 +125,9 @@ namespace bs
 		RectOffset Margins; /**< Empty space around the GUI element outside of the border. In pixels.*/
 		RectOffset Padding; /**< Empty space within the GUI element inside the border. In pixels. */
 
-		Size2UI Size; /**< Size of the GUI element in pixels. This is the size at which border will be rendered. Contents will be rendered at this size, minus the padding. */
-		Size2UI MinimumSize; /**< If non-zero, GUI element size will expand to fill the available area, respecting the minimum and (optionally) maximum size. In pixels. */
-		Size2UI MaximumSize; /**< If non-zero, GUI element size will expand to fill the available area, respecting the maximum and (optionally) minimum size. In pixels. */
+		Size2UI Size = Size2UI::kZero; /**< Size of the GUI element in pixels. This is the size at which border will be rendered. Contents will be rendered at this size, minus the padding. */
+		Size2UI MinimumSize = Size2UI::kZero; /**< If non-zero, GUI element size will expand to fill the available area, respecting the minimum and (optionally) maximum size. In pixels. */
+		Size2UI MaximumSize = Size2UI::kZero; /**< If non-zero, GUI element size will expand to fill the available area, respecting the maximum and (optionally) minimum size. In pixels. */
 
 		Color BackgroundColor; /**< Color of the GUI element background. */
 		Color Color; /**< Color of the GUI element contents (usually text or icon). */
@@ -148,8 +148,10 @@ namespace bs
 		GUIHorizontalTextAlignment HorizontalTextAlignment = GUIHorizontalTextAlignment::Left; /**< Determines horizontal alignment of text within the GUI element. */
 		GUIVerticalTextAlignment VerticalTextAlignment = GUIVerticalTextAlignment::Middle; /**< Determines vertical alignment of text within the GUI element. */
 
-		static constexpr u32 kPropertyDWordCount = Math::DivideAndRoundUp((u32)GUIStyleSheetPropertyType::Count, (u32)sizeof(u32));
+		static constexpr u32 kPropertyDWordCount = Math::DivideAndRoundUp((u32)GUIStyleSheetPropertyType::Count, (u32)sizeof(u32) * 8);
 		TBitfield<InlineContainerAllocator<kPropertyDWordCount>> OverridenProperties; /**< Bit for each property that is different than the default will be set. Used for determining which properties to override from parent style. */
+
+		GUIStyleSheetStateStyle();
 
 		void Override(const GUIStyleSheetStateStyle& other);
 	};
@@ -160,7 +162,7 @@ namespace bs
 		GUIStyleSheetStateStyle Normal; /**< Normal style of the GUI element that is interactable, but isn't currently being interacted with. */
 		Optional<GUIStyleSheetStateStyle> Hover; /**< Style of GUI element that is interable and the mouse pointer is hovering over the GUI element. Inherits from Normal state and optionally from Focused, or Checked state, if those are active. */
 		Optional<GUIStyleSheetStateStyle> Active; /**< Style of GUI element that is interactable and the user is currently clicking on the element. Inherits from Normal state and optionally from Focused, Hover or Checked state, if those are active. */
-		Optional<GUIStyleSheetStateStyle> Focused; /**< Style of GUI element that is interactable and currently has input focus. Inherits from Normal state. */
+		Optional<GUIStyleSheetStateStyle> Focus; /**< Style of GUI element that is interactable and currently has input focus. Inherits from Normal state. */
 		Optional<GUIStyleSheetStateStyle> Disabled; /**< Style of GUI element that is interactable and currently has input focus. Inherits from Normal state. */
 		Optional<GUIStyleSheetStateStyle> Checked; /**< Style of GUI element that is interactable, can be toggled on/off and is currently toggled on. Inherits from Normal state. */
 
@@ -182,7 +184,9 @@ namespace bs
 	{
 	public:
 		/** Attempts to parse the provided style sheet file and outputs the parsed style sheet, if successful. */
-		static Optional<GUIStyleSheet> Parse(const Path& file);
+		static SPtr<GUIStyleSheet> Parse(const Path& file);
+
+		// TODO - Add LoadOrParse() method that attempts to lookup an existing style sheet from PersistentCache first
 
 		/**
 		 * Find the appropriate style to use for a particular GUI element in a particular state.

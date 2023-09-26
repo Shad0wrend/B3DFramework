@@ -23,7 +23,9 @@ namespace bs
 		using Lexer = GUIStyleSheetLexer;
 	public:
 		GUIStyleSheetParser();
-		Optional<GUIStyleSheet> Parse(const SPtr<SourceCode>& sourceCode);
+
+		/** Attempts to parse the provided style sheet file and outputs the parsed style sheet, if successful. */
+		SPtr<GUIStyleSheet> Parse(const SPtr<SourceCode>& sourceCode);
 
 		/** Returns errors in case parsing failed. */
 		const String& GetErrors() const { return mErrors; }

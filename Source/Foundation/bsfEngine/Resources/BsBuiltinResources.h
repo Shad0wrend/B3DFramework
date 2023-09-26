@@ -12,6 +12,7 @@
 
 namespace bs
 {
+	class GUIStyleSheet;
 	/** @addtogroup Resources-Engine
 	 *  @{
 	 */
@@ -74,6 +75,9 @@ namespace bs
 
 		/**	Returns an empty skin used to be used when no other is available. */
 		const HGUISkin& GetEmptyGuiSkin() const { return mEmptySkin; }
+
+		/** Returns the default style sheet for GUI elements. */
+		SPtr<GUIStyleSheet> GetDefaultGUIStyleSheet() const { return mDefaultGUIStyleSheet; };
 
 		/**	Returns a small entirely white texture. */
 		const HSpriteTexture& GetWhiteSpriteTexture() const { return mWhiteSpriteTexture; }
@@ -215,6 +219,7 @@ namespace bs
 
 		HGUISkin mEmptySkin;
 		HGUISkin mSkin;
+		SPtr<GUIStyleSheet> mDefaultGUIStyleSheet;
 		HFont mFont;
 
 		SPtr<PixelData> mCursorArrow;
