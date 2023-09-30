@@ -5,6 +5,7 @@
 #include "GUI/BsGUISkin.h"
 #include "GUI/BsGUIManager.h"
 #include "BsGUINavGroup.h"
+#include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
 
@@ -258,26 +259,64 @@ SPtr<GUIContextMenu> GUIElement::GetContextMenu() const
 
 void GUIElement::NotifyStyleSheetChanged()
 {
-	const GUIElementStyle* newStyle = nullptr;
-	if(GetParentWidget() != nullptr && !mStyleName.empty())
-		newStyle = GetParentWidget()->GetSkin().GetStyle(mStyleName);
-	else
-		newStyle = &GUISkin::DefaultStyle;
+	const char* styleSheetElement = GetStyleSheetElement();
+	const bool isUsingStyleSheets = styleSheetElement != nullptr;
 
-	if(newStyle != mStyle)
+	if(isUsingStyleSheets)
 	{
-		mStyle = newStyle;
+		HGUIStyleSheet styleSheet;
+		if(GetParentWidget())
+			styleSheet = GetParentWidget()->GetStyleSheet();
 
-		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+		SPtr<GUIStyleSheetStyle> newStyle;
+		if(styleSheet.IsLoaded(false))
+			newStyle = styleSheet->FindStyle(styleSheetElement, GetStyleSheetId());
 
-		mDimensions.UpdateWithStyle(mStyle);
+		if(!newStyle)
+			newStyle = GUIStyleSheetStyle::kDefault;
 
-		bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
-		if(isFixedBefore != isFixedAfter)
-			RefreshLayoutUpdateParentsForChildren();
+		if(newStyle != mStyleSheetStyle)
+		{
+			mStyleSheetStyle = newStyle;
 
-		NotifyStyleChanged();
-		MarkLayoutAsDirty();
+			bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+
+			// TODO - Need to store current state flags, so I can look up the state style here
+
+
+			//mDimensions.UpdateWithStyle(mStyleSheetStyle);
+
+			bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+			if(isFixedBefore != isFixedAfter)
+				RefreshLayoutUpdateParentsForChildren();
+
+			NotifyStyleChanged();
+			MarkLayoutAsDirty();
+		}
+	}
+	else
+	{
+		const GUIElementStyle* newStyle = nullptr;
+		if(GetParentWidget() != nullptr && !mStyleName.empty())
+			newStyle = GetParentWidget()->GetSkin().GetStyle(mStyleName);
+		else
+			newStyle = &GUISkin::DefaultStyle;
+
+		if(newStyle != mStyle)
+		{
+			mStyle = newStyle;
+
+			bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+
+			mDimensions.UpdateWithStyle(mStyle);
+
+			bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+			if(isFixedBefore != isFixedAfter)
+				RefreshLayoutUpdateParentsForChildren();
+
+			NotifyStyleChanged();
+			MarkLayoutAsDirty();
+		}
 	}
 }
 

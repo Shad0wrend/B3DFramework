@@ -134,7 +134,7 @@ bool GUIStyleSheetParser::TryParseSelector(GUIStyleSheet& inOutStyleSheet)
 		return false;
 	}
 
-	GUIStyleSheetStateStyle stateStyle; // TODO - Should probably do a lookup if an element with the same name is already specified, and just overwrite/append to it
+	GUIStyleSheetStateStyle stateStyle;
 	GUIStyleSheetStyle* existingStyle = nullptr;
 
 	if(foundSelectorName)

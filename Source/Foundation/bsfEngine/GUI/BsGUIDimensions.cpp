@@ -3,6 +3,7 @@
 #include "GUI/BsGUIDimensions.h"
 #include "GUI/BsGUIElementStyle.h"
 #include "GUI/BsGUIOptions.h"
+#include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
 
@@ -24,21 +25,21 @@ GUIDimensions GUIDimensions::Create(const GUIOptions& options)
 			dimensions.Y = (i32)option.max;
 			break;
 		case GUIOption::Type::FixedWidth:
-			dimensions.Flags |= GUIDF_FixedWidth | GUIDF_OverWidth;
+			dimensions.Flags |= GUIDF_FixedWidth | GUIDF_WidthOverridenAtRuntime;
 			dimensions.MinWidth = dimensions.MaxWidth = option.min;
 			break;
 		case GUIOption::Type::FixedHeight:
-			dimensions.Flags |= GUIDF_FixedHeight | GUIDF_OverHeight;
+			dimensions.Flags |= GUIDF_FixedHeight | GUIDF_HeightOverridenAtRuntime;
 			dimensions.MinHeight = dimensions.MaxHeight = option.min;
 			break;
 		case GUIOption::Type::FlexibleWidth:
-			dimensions.Flags |= GUIDF_OverWidth;
+			dimensions.Flags |= GUIDF_WidthOverridenAtRuntime;
 			dimensions.Flags &= ~GUIDF_FixedWidth;
 			dimensions.MinWidth = option.min;
 			dimensions.MaxWidth = option.max;
 			break;
 		case GUIOption::Type::FlexibleHeight:
-			dimensions.Flags |= GUIDF_OverHeight;
+			dimensions.Flags |= GUIDF_HeightOverridenAtRuntime;
 			dimensions.Flags &= ~GUIDF_FixedHeight;
 			dimensions.MinHeight = option.min;
 			dimensions.MaxHeight = option.max;
@@ -51,7 +52,7 @@ GUIDimensions GUIDimensions::Create(const GUIOptions& options)
 
 void GUIDimensions::UpdateWithStyle(const GUIElementStyle* style)
 {
-	if(!OverridenWidth())
+	if(!IsWidthOverridenAtRuntime())
 	{
 		if(style->FixedWidth)
 		{
@@ -66,7 +67,7 @@ void GUIDimensions::UpdateWithStyle(const GUIElementStyle* style)
 		}
 	}
 
-	if(!OverridenHeight())
+	if(!IsHeightOverridenAtRuntime())
 	{
 		if(style->FixedHeight)
 		{
@@ -78,6 +79,39 @@ void GUIDimensions::UpdateWithStyle(const GUIElementStyle* style)
 			Flags &= ~GUIDF_FixedHeight;
 			MinHeight = style->MinHeight;
 			MaxHeight = style->MaxHeight;
+		}
+	}
+}
+
+void GUIDimensions::UpdateWithStyle(const GUIStyleSheetStateStyle& style)
+{
+	if(!IsWidthOverridenAtRuntime())
+	{
+		if(style.IsPropertySet(GUIStyleSheetPropertyType::Width))
+		{
+			Flags |= GUIDF_FixedWidth;
+			MinWidth = MaxWidth = style.Size.Width;
+		}
+		else
+		{
+			Flags &= ~GUIDF_FixedWidth;
+			MinWidth = style.MinimumSize.Width;
+			MaxWidth = style.MaximumSize.Width;
+		}
+	}
+
+	if(!IsHeightOverridenAtRuntime())
+	{
+		if(style.IsPropertySet(GUIStyleSheetPropertyType::Height))
+		{
+			Flags |= GUIDF_FixedHeight;
+			MinHeight = MaxHeight = style.Size.Height;
+		}
+		else
+		{
+			Flags &= ~GUIDF_FixedHeight;
+			MinHeight = style.MinimumSize.Height;
+			MaxHeight = style.MaximumSize.Height;
 		}
 	}
 }

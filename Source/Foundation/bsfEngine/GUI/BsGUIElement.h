@@ -12,6 +12,7 @@
 
 namespace bs
 {
+	struct GUIStyleSheetStyle;
 	class GUINavGroup;
 
 	/** @addtogroup Implementation
@@ -83,6 +84,12 @@ namespace bs
 		virtual void SetTint(const Color& color);
 
 		void ResetDimensions() override;
+
+		/** Returns the name of the GUI element type to be used for style lookup in the style sheet. */
+		virtual const char* GetStyleSheetElement() const { return nullptr; } // Note: Null style sheet name currently means element doesn't support style-sheets
+
+		/** Returns an ID will be used for style lookup in the style sheet. If specified, this allows the style sheet to further specialize the look of the element. */
+		virtual const String& GetStyleSheetId() const { return mStyleName; }
 
 		/**	Sets new style to be used by the element. */
 		void SetStyle(const String& styleName);
@@ -324,6 +331,7 @@ namespace bs
 		static const Color kDisabledColor;
 
 		const GUIElementStyle* mStyle;
+		SPtr<const GUIStyleSheetStyle> mStyleSheetStyle;
 		String mStyleName;
 
 		SPtr<GUIContextMenu> mContextMenu;

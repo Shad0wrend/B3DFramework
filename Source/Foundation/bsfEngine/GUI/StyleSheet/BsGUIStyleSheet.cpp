@@ -94,6 +94,8 @@ const GUIStyleSheetStateStyle* GUIStyleSheetStyle::FindStateStyle(const StringVi
 	return nullptr;
 }
 
+SPtr<GUIStyleSheetStyle> GUIStyleSheetStyle::kDefault = B3DMakeShared<GUIStyleSheetStyle>();
+
 bool GUIStyleSheetStyle::FindAndSetStateStyle(const StringView& name, const GUIStyleSheetStateStyle& stateStyle)
 {
 	if(StringUtil::Compare(name, "normal", false))
@@ -147,75 +149,114 @@ HGUIStyleSheet GUIStyleSheet::Parse(const Path& file)
 	return B3DStaticResourceCast<GUIStyleSheet>(GetResources().CreateResourceHandle(styleSheet));
 }
 
-GUIStyleSheetStateStyle GUIStyleSheetStyle::FindStateStyle(GUIElementState state) const
+SPtr<GUIStyleSheetStateStyle> GUIStyleSheetStyle::FindStateStyle(GUIElementStateFlags stateFlags)
 {
-	// TODO - Replace the current set of states with a new set of flags where each state is a bitmask
-	GUIStyleSheetStateStyle stateStyle = Normal;
+	if(auto found = mCachedStateStyles.find(stateFlags); found != mCachedStateStyles.end())
+		return found->second;
 
-	const bool isChecked = ((u32)state & (u32)GUIElementState::OnFlag) != 0;
-	if(isChecked)
+	SPtr<GUIStyleSheetStateStyle> stateStyle = B3DMakeShared<GUIStyleSheetStateStyle>();
+	*stateStyle = Normal;
+
+	if(stateFlags.IsSet(GUIElementStateFlag::Checked))
 	{
 		if(Checked.has_value())
-			stateStyle.Override(*Checked);
+			stateStyle->Override(*Checked);
 	}
 
-	switch(state)
+	if(stateFlags.IsSet(GUIElementStateFlag::Disabled))
 	{
-	default:
-	case GUIElementState::Normal: 
-	case GUIElementState::NormalOn:
-		break;
-	case GUIElementState::Hover:
-	case GUIElementState::HoverOn:
-		if(Hover.has_value())
-			stateStyle.Override(*Hover);
-		break;
-	case GUIElementState::Active:
-	case GUIElementState::ActiveOn:
-		if(Hover.has_value())
-			stateStyle.Override(*Hover);
+		if(Checked.has_value())
+			stateStyle->Override(*Checked);
+	}
+	else
+	{
+		if(stateFlags.IsSet(GUIElementStateFlag::Focused))
+		{
+			if(Focus.has_value())
+				stateStyle->Override(*Focus);
+		}
 
-		if(Active.has_value())
-			stateStyle.Override(*Active);
-		break;
-	case GUIElementState::Focused:
-	case GUIElementState::FocusedOn:
-		if(Focus.has_value())
-			stateStyle.Override(*Focus);
-		break;
-	case GUIElementState::FocusedHover:
-	case GUIElementState::FocusedHoverOn:
-		if(Focus.has_value())
-			stateStyle.Override(*Focus);
-
-		if(Hover.has_value())
-			stateStyle.Override(*Hover);
-		break;
+		if(stateFlags.IsSet(GUIElementStateFlag::Hover))
+		{
+			if(Hover.has_value())
+				stateStyle->Override(*Hover);
+		}
+		
+		if(stateFlags.IsSet(GUIElementStateFlag::Active))
+		{
+			if(Active.has_value())
+				stateStyle->Override(*Active);
+		}
 	}
 
-	return stateStyle;
+	return mCachedStateStyles.insert(std::make_pair(stateFlags, stateStyle)).first->second;
+}
+
+void GUIStyleSheetStyle::Override(const GUIStyleSheetStyle& other)
+{
+	Normal.Override(other.Normal);
+
+	if(Hover.has_value())
+	{
+		if(other.Hover.has_value())
+			Hover->Override(*other.Hover);
+	}
+	else
+		Hover = other.Hover;
+	
+	if(Active.has_value())
+	{
+		if(other.Active.has_value())
+			Active->Override(*other.Active);
+	}
+	else
+		Active = other.Active;
+
+	if(Focus.has_value())
+	{
+		if(other.Focus.has_value())
+			Focus->Override(*other.Focus);
+	}
+	else
+		Focus = other.Focus;
+
+	if(Checked.has_value())
+	{
+		if(other.Checked.has_value())
+			Checked->Override(*other.Checked);
+	}
+	else
+		Checked = other.Checked;
+
+	if(Disabled.has_value())
+	{
+		if(other.Disabled.has_value())
+			Disabled->Override(*other.Disabled);
+	}
+	else
+		Disabled = other.Disabled;
 }
 
 GUIStyleSheet::GUIStyleSheet()
 	: Resource(false, "StyleSheet")
 { }
  
-const GUIStyleSheetStateStyle& GUIStyleSheet::FindStyle(const String& elementType, const String& elementId, GUIElementState state)
+SPtr<GUIStyleSheetStyle> GUIStyleSheet::FindStyle(const String& elementType, const String& elementId)
 {
-	CachedStateStyleKey key(elementType, elementId, state);
+	CachedStateStyleKey key(elementType, elementId);
 
-	if(auto found = mCachedStateStyles.find(key); found != mCachedStateStyles.end())
+	if(auto found = mCachedStyles.find(key); found != mCachedStyles.end())
 		return found->second;
 
-	GUIStyleSheetStateStyle style;
+	SPtr<GUIStyleSheetStyle> style = B3DMakeShared<GUIStyleSheetStyle>();
 
 	if(auto it = mElementStyles.find(elementType); it != mElementStyles.end())
-		style = it->second.FindStateStyle(state);
+		*style = it->second;
 
 	if(auto it = mIdStyles.find(elementId); it != mElementStyles.end())
-		style.Override(it->second.FindStateStyle(state));
+		style->Override(it->second);
 
-	return mCachedStateStyles.insert(std::make_pair(std::move(key),  style)).first->second;
+	return mCachedStyles.insert(std::make_pair(std::move(key),  style)).first->second;
 }
 
 HGUIStyleSheet GUIStyleSheet::Create()

@@ -34,7 +34,7 @@ void GUIElementBase::SetSize(u32 width, u32 height)
 {
 	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-	mDimensions.Flags |= GUIDF_FixedWidth | GUIDF_OverWidth | GUIDF_FixedHeight | GUIDF_OverHeight;
+	mDimensions.Flags |= GUIDF_FixedWidth | GUIDF_WidthOverridenAtRuntime | GUIDF_FixedHeight | GUIDF_HeightOverridenAtRuntime;
 	mDimensions.MinWidth = mDimensions.MaxWidth = width;
 	mDimensions.MinHeight = mDimensions.MaxHeight = height;
 
@@ -50,7 +50,7 @@ void GUIElementBase::SetWidth(u32 width)
 {
 	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-	mDimensions.Flags |= GUIDF_FixedWidth | GUIDF_OverWidth;
+	mDimensions.Flags |= GUIDF_FixedWidth | GUIDF_WidthOverridenAtRuntime;
 	mDimensions.MinWidth = mDimensions.MaxWidth = width;
 
 	bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
@@ -68,7 +68,7 @@ void GUIElementBase::SetFlexibleWidth(u32 minWidth, u32 maxWidth)
 
 	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-	mDimensions.Flags |= GUIDF_OverWidth;
+	mDimensions.Flags |= GUIDF_WidthOverridenAtRuntime;
 	mDimensions.Flags &= ~GUIDF_FixedWidth;
 	mDimensions.MinWidth = minWidth;
 	mDimensions.MaxWidth = maxWidth;
@@ -85,7 +85,7 @@ void GUIElementBase::SetHeight(u32 height)
 {
 	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-	mDimensions.Flags |= GUIDF_FixedHeight | GUIDF_OverHeight;
+	mDimensions.Flags |= GUIDF_FixedHeight | GUIDF_HeightOverridenAtRuntime;
 	mDimensions.MinHeight = mDimensions.MaxHeight = height;
 
 	bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
@@ -103,7 +103,7 @@ void GUIElementBase::SetFlexibleHeight(u32 minHeight, u32 maxHeight)
 
 	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-	mDimensions.Flags |= GUIDF_OverHeight;
+	mDimensions.Flags |= GUIDF_HeightOverridenAtRuntime;
 	mDimensions.Flags &= ~GUIDF_FixedHeight;
 	mDimensions.MinHeight = minHeight;
 	mDimensions.MaxHeight = maxHeight;

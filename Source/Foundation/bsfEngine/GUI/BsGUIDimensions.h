@@ -7,6 +7,7 @@
 
 namespace bs
 {
+	struct GUIStyleSheetStateStyle;
 	/** @addtogroup GUI-Internal
 	 *  @{
 	 */
@@ -24,8 +25,8 @@ namespace bs
 	{
 		GUIDF_FixedWidth = 0x01,
 		GUIDF_FixedHeight = 0x02,
-		GUIDF_OverWidth = 0x04,
-		GUIDF_OverHeight = 0x08
+		GUIDF_WidthOverridenAtRuntime = 0x04,
+		GUIDF_HeightOverridenAtRuntime = 0x08
 	};
 
 	/**	Options that control how an element is positioned and sized. */
@@ -46,6 +47,12 @@ namespace bs
 		void UpdateWithStyle(const GUIElementStyle* style);
 
 		/**
+		 * Updates layout options from the provided style. If user has not manually set a specific layout property, that
+		 * property will be inherited from style.
+		 */
+		void UpdateWithStyle(const GUIStyleSheetStateStyle& style);
+
+		/**
 		 * Calculates size range for a GUI element using this layout.
 		 *
 		 * @param[in]	optimal	Preferred size of the GUI element.
@@ -53,10 +60,10 @@ namespace bs
 		LayoutSizeRange CalculateSizeRange(const Vector2I& optimal) const;
 
 		/**	Checks do the dimensions override the style height. */
-		bool OverridenHeight() const { return (Flags & GUIDF_OverHeight) != 0; }
+		bool IsHeightOverridenAtRuntime() const { return (Flags & GUIDF_HeightOverridenAtRuntime) != 0; }
 
 		/**	Checks do the dimensions override the style width. */
-		bool OverridenWidth() const { return (Flags & GUIDF_OverWidth) != 0; }
+		bool IsWidthOverridenAtRuntime() const { return (Flags & GUIDF_WidthOverridenAtRuntime) != 0; }
 
 		/**	Checks do the dimensions contain fixed width. */
 		bool FixedWidth() const { return (Flags & GUIDF_FixedWidth) != 0; }
