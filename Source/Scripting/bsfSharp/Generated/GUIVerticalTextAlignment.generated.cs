@@ -10,11 +10,11 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>Specifies how is text vertically aligned within its bounds.</summary>
-	public enum TextVertAlign
+	/// <summary>Determines how is text vertically aligned in a GUI element.</summary>
+	public enum GUIVerticalTextAlignment
 	{
 		Top = 0,
-		Center = 1,
+		Middle = 1,
 		Bottom = 2
 	}
 

@@ -9,6 +9,7 @@
 #include "Resources/BsResource.h"
 #include "Utility/BsBitfield.h"
 #include "Utility/BsRectOffset.h"
+#include "2D/BsTextSprite.h"
 
 namespace bs
 {
@@ -28,18 +29,6 @@ namespace bs
 	{
 		Element, /**< Selector applies to entire type of GUI elements (e.g. button, input box, etc.) */
 		Id /**< Selector applies only to a particular GUI element with a specific ID. */
-	};
-
-	/** Determines how is text horizontally aligned in a GUI element. */
-	enum class GUIHorizontalTextAlignment
-	{
-		Left, Center, Right
-	};
-
-	/** Determines how is text vertically aligned in a GUI element. */
-	enum class GUIVerticalTextAlignment
-	{
-		Top, Middle, Bottom
 	};
 
 	/** Determines if and how text wraps to a new line if it doesn't fit on a single line. */

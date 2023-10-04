@@ -4130,6 +4130,15 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		<property name="LayerMask" type="int" getter="GetLayerMask" setter="SetLayerMask" static="false">
 		</property>
 	</class>
+	<enum native="GUIHorizontalTextAlignment" script="GUIHorizontalTextAlignment">
+		<doc>Determines how is text horizontally aligned in a GUI element.</doc>
+		<enumentry native="Left" script="Left">
+		</enumentry>
+		<enumentry native="Center" script="Center">
+		</enumentry>
+		<enumentry native="Right" script="Right">
+		</enumentry>
+	</enum>
 	<enum native="DistanceJointFlag" script="DistanceJointFlag">
 		<doc>Controls distance joint options.</doc>
 		<enumentry native="MinDistance" script="MinDistance">
@@ -5999,7 +6008,7 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		<field name="IsInternal" type="bool">
 			<doc>True if the parameter is for internal use by the renderer, and false if its intended to be set by the user.</doc>
 		</field>
-		<field name="Values" type="ShaderVariationParameterValue">
+		<field name="Values" type="TArray&lt;ShaderVariationParameterValue, InlineContainerAllocator&lt;unknown, DefaultContainerAllocator&gt;&gt;">
 			<doc>A list of potential values this parameter can take on.</doc>
 		</field>
 	</struct>
@@ -7647,22 +7656,13 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			<doc>Determines whether the italic font style should be used when rendering.</doc>
 		</property>
 	</class>
-	<enum native="TextHorzAlign" script="TextHorzAlign">
-		<doc>Specifies how is text horizontally aligned within its bounds.</doc>
-		<enumentry native="THA_Left" script="Left">
+	<enum native="GUIVerticalTextAlignment" script="GUIVerticalTextAlignment">
+		<doc>Determines how is text vertically aligned in a GUI element.</doc>
+		<enumentry native="Top" script="Top">
 		</enumentry>
-		<enumentry native="THA_Center" script="Center">
+		<enumentry native="Middle" script="Middle">
 		</enumentry>
-		<enumentry native="THA_Right" script="Right">
-		</enumentry>
-	</enum>
-	<enum native="TextVertAlign" script="TextVertAlign">
-		<doc>Specifies how is text vertically aligned within its bounds.</doc>
-		<enumentry native="TVA_Top" script="Top">
-		</enumentry>
-		<enumentry native="TVA_Center" script="Center">
-		</enumentry>
-		<enumentry native="TVA_Bottom" script="Bottom">
+		<enumentry native="Bottom" script="Bottom">
 		</enumentry>
 	</enum>
 	<enum native="GUIImagePosition" script="GUIImagePosition">
@@ -7691,10 +7691,10 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 		<property name="FontSize" type="int" getter="GetFontSize" setter="SetFontSize" static="false">
 			<doc>Font size to use for all text within the GUI element.</doc>
 		</property>
-		<property name="TextHorzAlign" type="TextHorzAlign" getter="GetTextHorzAlign" setter="SetTextHorzAlign" static="false">
+		<property name="TextHorzAlign" type="GUIHorizontalTextAlignment" getter="GetTextHorzAlign" setter="SetTextHorzAlign" static="false">
 			<doc>Horizontal alignment of text within the GUI element.</doc>
 		</property>
-		<property name="TextVertAlign" type="TextVertAlign" getter="GetTextVertAlign" setter="SetTextVertAlign" static="false">
+		<property name="TextVertAlign" type="GUIVerticalTextAlignment" getter="GetTextVertAlign" setter="SetTextVertAlign" static="false">
 			<doc>Vertical alignment of text within the GUI element.</doc>
 		</property>
 		<property name="ImagePosition" type="GUIImagePosition" getter="GetImagePosition" setter="SetImagePosition" static="false">

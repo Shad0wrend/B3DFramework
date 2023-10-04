@@ -6,8 +6,8 @@
 #include "BsMonoUtil.h"
 #include "BsScriptResourceManager.h"
 #include "BsScriptFont.generated.h"
-#include "BsScriptRectOffset.generated.h"
 #include "BsScriptGUIElementStateStyle.generated.h"
+#include "BsScriptRectOffset.generated.h"
 
 namespace bs
 {
@@ -147,34 +147,34 @@ namespace bs
 		thisPtr->GetInternal()->FontSize = value;
 	}
 
-	TextHorizontalAlignment ScriptGUIElementStyle::InternalGetTextHorzAlign(ScriptGUIElementStyle* thisPtr)
+	GUIHorizontalTextAlignment ScriptGUIElementStyle::InternalGetTextHorzAlign(ScriptGUIElementStyle* thisPtr)
 	{
-		TextHorizontalAlignment tmp__output;
+		GUIHorizontalTextAlignment tmp__output;
 		tmp__output = thisPtr->GetInternal()->TextHorzAlign;
 
-		TextHorizontalAlignment __output;
+		GUIHorizontalTextAlignment __output;
 		__output = tmp__output;
 
 		return __output;
 	}
 
-	void ScriptGUIElementStyle::InternalSetTextHorzAlign(ScriptGUIElementStyle* thisPtr, TextHorizontalAlignment value)
+	void ScriptGUIElementStyle::InternalSetTextHorzAlign(ScriptGUIElementStyle* thisPtr, GUIHorizontalTextAlignment value)
 	{
 		thisPtr->GetInternal()->TextHorzAlign = value;
 	}
 
-	TextVerticalAlignment ScriptGUIElementStyle::InternalGetTextVertAlign(ScriptGUIElementStyle* thisPtr)
+	GUIVerticalTextAlignment ScriptGUIElementStyle::InternalGetTextVertAlign(ScriptGUIElementStyle* thisPtr)
 	{
-		TextVerticalAlignment tmp__output;
+		GUIVerticalTextAlignment tmp__output;
 		tmp__output = thisPtr->GetInternal()->TextVertAlign;
 
-		TextVerticalAlignment __output;
+		GUIVerticalTextAlignment __output;
 		__output = tmp__output;
 
 		return __output;
 	}
 
-	void ScriptGUIElementStyle::InternalSetTextVertAlign(ScriptGUIElementStyle* thisPtr, TextVerticalAlignment value)
+	void ScriptGUIElementStyle::InternalSetTextVertAlign(ScriptGUIElementStyle* thisPtr, GUIVerticalTextAlignment value)
 	{
 		thisPtr->GetInternal()->TextVertAlign = value;
 	}

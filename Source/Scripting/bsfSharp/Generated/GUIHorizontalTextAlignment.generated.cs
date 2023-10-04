@@ -10,8 +10,8 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>Specifies how is text horizontally aligned within its bounds.</summary>
-	public enum TextHorzAlign
+	/// <summary>Determines how is text horizontally aligned in a GUI element.</summary>
+	public enum GUIHorizontalTextAlignment
 	{
 		Left = 0,
 		Center = 1,

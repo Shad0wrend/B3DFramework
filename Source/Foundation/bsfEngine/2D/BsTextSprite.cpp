@@ -74,7 +74,7 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 	UpdateBounds();
 }
 
-u32 TextSprite::GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, TextHorizontalAlignment horzAlign, TextVerticalAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
+u32 TextSprite::GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 {
 	u32 numLines = textData.GetNumLines();
 	u32 newNumQuads = textData.GetNumQuadsForPage(page);
@@ -104,7 +104,7 @@ u32 TextSprite::GenTextQuads(u32 page, const TextDataBase& textData, u32 width, 
 	return newNumQuads;
 }
 
-u32 TextSprite::GenTextQuads(const TextDataBase& textData, u32 width, u32 height, TextHorizontalAlignment horzAlign, TextVerticalAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
+u32 TextSprite::GenTextQuads(const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 {
 	u32 numLines = textData.GetNumLines();
 	u32 numPages = textData.GetNumPages();
@@ -139,7 +139,7 @@ u32 TextSprite::GenTextQuads(const TextDataBase& textData, u32 width, u32 height
 	return quadOffset;
 }
 
-void TextSprite::GetAlignmentOffsets(const TextDataBase& textData, u32 width, u32 height, TextHorizontalAlignment horzAlign, TextVerticalAlignment vertAlign, Vector2I* output)
+void TextSprite::GetAlignmentOffsets(const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, Vector2I* output)
 {
 	u32 numLines = textData.GetNumLines();
 	u32 curHeight = 0;
@@ -154,13 +154,13 @@ void TextSprite::GetAlignmentOffsets(const TextDataBase& textData, u32 width, u3
 	u32 vertOffset = 0;
 	switch(vertAlign)
 	{
-	case TVA_Top:
+	case GUIVerticalTextAlignment::Top:
 		vertOffset = 0;
 		break;
-	case TVA_Bottom:
+	case GUIVerticalTextAlignment::Bottom:
 		vertOffset = (u32)std::max(0, (i32)vertDiff);
 		break;
-	case TVA_Center:
+	case GUIVerticalTextAlignment::Middle:
 		vertOffset = (u32)std::max(0, (i32)vertDiff) / 2;
 		break;
 	}
@@ -174,13 +174,13 @@ void TextSprite::GetAlignmentOffsets(const TextDataBase& textData, u32 width, u3
 		u32 horzOffset = 0;
 		switch(horzAlign)
 		{
-		case THA_Left:
+		case GUIHorizontalTextAlignment::Left:
 			horzOffset = 0;
 			break;
-		case THA_Right:
+		case GUIHorizontalTextAlignment::Right:
 			horzOffset = (u32)std::max(0, (i32)(width - line.GetWidth()));
 			break;
-		case THA_Center:
+		case GUIHorizontalTextAlignment::Center:
 			horzOffset = (u32)std::max(0, (i32)(width - line.GetWidth())) / 2;
 			break;
 		}

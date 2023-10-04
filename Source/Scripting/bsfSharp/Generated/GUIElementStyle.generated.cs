@@ -45,7 +45,7 @@ namespace bs
 		/// <summary>Horizontal alignment of text within the GUI element.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public TextHorzAlign TextHorzAlign
+		public GUIHorizontalTextAlignment TextHorzAlign
 		{
 			get { return Internal_GetTextHorzAlign(mCachedPtr); }
 			set { Internal_SetTextHorzAlign(mCachedPtr, value); }
@@ -54,7 +54,7 @@ namespace bs
 		/// <summary>Vertical alignment of text within the GUI element.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public TextVertAlign TextVertAlign
+		public GUIVerticalTextAlignment TextVertAlign
 		{
 			get { return Internal_GetTextVertAlign(mCachedPtr); }
 			set { Internal_SetTextVertAlign(mCachedPtr, value); }
@@ -402,13 +402,13 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetFontSize(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern TextHorzAlign Internal_GetTextHorzAlign(IntPtr thisPtr);
+		private static extern GUIHorizontalTextAlignment Internal_GetTextHorzAlign(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetTextHorzAlign(IntPtr thisPtr, TextHorzAlign value);
+		private static extern void Internal_SetTextHorzAlign(IntPtr thisPtr, GUIHorizontalTextAlignment value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern TextVertAlign Internal_GetTextVertAlign(IntPtr thisPtr);
+		private static extern GUIVerticalTextAlignment Internal_GetTextVertAlign(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetTextVertAlign(IntPtr thisPtr, TextVertAlign value);
+		private static extern void Internal_SetTextVertAlign(IntPtr thisPtr, GUIVerticalTextAlignment value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern GUIImagePosition Internal_GetImagePosition(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]

@@ -121,7 +121,7 @@ namespace bs
 #	define ASSERT_IF_RENDER_THREAD AssertIfRenderThread();
 #else
 #	define ASSERT_IF_NOT_RENDER_THREAD 
-#	defineASSERT_IF_RENDER_THREAD 
+#	define ASSERT_IF_RENDER_THREAD 
 #endif
 
 	/** @} */

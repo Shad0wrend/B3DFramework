@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-#include "Utility/BsDynArray.h"
+#include "Utility/BsTArray.h"
 
 namespace bs
 {
@@ -241,8 +241,8 @@ namespace bs
 
 	private:
 		u32 mSize;
-		DynArray<HeapNode<K, V>> mNode;
-		DynArray<HeapNode<K, V>*> mPtr;
+		TArray<HeapNode<K, V>> mNode;
+		TArray<HeapNode<K, V>*> mPtr;
 	};
 
 	/** @} */

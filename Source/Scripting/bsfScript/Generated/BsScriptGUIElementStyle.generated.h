@@ -5,11 +5,11 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptReflectable.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIElementStyle.h"
+#include "../../../Foundation/bsfEngine/2D/BsTextSprite.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElementStyle.h"
+#include "../../../Foundation/bsfEngine/2D/BsTextSprite.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElementStyle.h"
 #include "../../../Foundation/bsfEngine/Utility/BsRectOffset.h"
-#include "../../../Foundation/bsfEngine/2D/BsTextSprite.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIElementStyle.h"
-#include "../../../Foundation/bsfEngine/2D/BsTextSprite.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIElementStyle.h"
 
 namespace bs { struct GUIElementStyle; }
 namespace bs { struct __GUIElementStateStyleInterop; }
@@ -31,10 +31,10 @@ namespace bs
 		static void InternalSetFont(ScriptGUIElementStyle* thisPtr, MonoObject* value);
 		static uint32_t InternalGetFontSize(ScriptGUIElementStyle* thisPtr);
 		static void InternalSetFontSize(ScriptGUIElementStyle* thisPtr, uint32_t value);
-		static TextHorizontalAlignment InternalGetTextHorzAlign(ScriptGUIElementStyle* thisPtr);
-		static void InternalSetTextHorzAlign(ScriptGUIElementStyle* thisPtr, TextHorizontalAlignment value);
-		static TextVerticalAlignment InternalGetTextVertAlign(ScriptGUIElementStyle* thisPtr);
-		static void InternalSetTextVertAlign(ScriptGUIElementStyle* thisPtr, TextVerticalAlignment value);
+		static GUIHorizontalTextAlignment InternalGetTextHorzAlign(ScriptGUIElementStyle* thisPtr);
+		static void InternalSetTextHorzAlign(ScriptGUIElementStyle* thisPtr, GUIHorizontalTextAlignment value);
+		static GUIVerticalTextAlignment InternalGetTextVertAlign(ScriptGUIElementStyle* thisPtr);
+		static void InternalSetTextVertAlign(ScriptGUIElementStyle* thisPtr, GUIVerticalTextAlignment value);
 		static GUIImagePosition InternalGetImagePosition(ScriptGUIElementStyle* thisPtr);
 		static void InternalSetImagePosition(ScriptGUIElementStyle* thisPtr, GUIImagePosition value);
 		static bool InternalGetWordWrap(ScriptGUIElementStyle* thisPtr);

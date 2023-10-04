@@ -237,7 +237,7 @@ namespace bs
 		 * A list of addresses and ports the peer should be listening on. For clients this can usually be a single
 		 * null network address. For servers this can usually be a single network address with a port to listen on.
 		 */
-		SmallVector<NetworkAddress, 4> listenAddresses;
+		TInlineArray<NetworkAddress, 4> listenAddresses;
 
 		/**
 		 * Maximum number of connections (both incoming and outgoing) allowed to be established by the peer. In a regular
@@ -479,7 +479,7 @@ namespace bs
 		bool isClient() const { return mState == NetworkState::Connected || mState == NetworkState::Connecting; }
 
 		// TODO - Handle cases when network is already in host or client state when one of these is called again
-		void host(const SmallVector<NetworkAddress, 4>& listenAddresses, u32 tickRate = 30, u32 maxConnections = 64);
+		void host(const TInlineArray<NetworkAddress, 4>& listenAddresses, u32 tickRate = 30, u32 maxConnections = 64);
 		void connect(const char* host, u16 port);
 		void disconnect();
 
