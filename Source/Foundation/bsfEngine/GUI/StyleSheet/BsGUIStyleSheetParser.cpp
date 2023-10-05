@@ -95,13 +95,16 @@ bool GUIStyleSheetParser::TryParseSelector(GUIStyleSheet& inOutStyleSheet)
 	bool foundSelectorName = false;
 	GUIStyleSheetSelectorType selectorType = GUIStyleSheetSelectorType::Element;
 	String selectorName;
-	if(IsCurrentToken(TokenType::ElementSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::IdSelector))
+	if(IsCurrentToken(TokenType::ElementSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::ClassSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::IdSelector))
 	{
 		Token selectorNameToken = *GetCurrentTokenAndAdvance();
 		switch(selectorNameToken.GetType())
 		{
 		case TokenType::ElementSelector:
 			selectorType = GUIStyleSheetSelectorType::Element;
+			break;
+		case TokenType::ClassSelector:
+			selectorType = GUIStyleSheetSelectorType::Class;
 			break;
 		case TokenType::IdSelector:
 			selectorType = GUIStyleSheetSelectorType::Id;
@@ -121,7 +124,7 @@ bool GUIStyleSheetParser::TryParseSelector(GUIStyleSheet& inOutStyleSheet)
 	{
 		GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon);
 
-		Optional<Token> pseudoClassToken = *GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PseudoClassSelector);
+		Optional<Token> pseudoClassToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PseudoClassSelector);
 		if(!pseudoClassToken)
 			return {};
 

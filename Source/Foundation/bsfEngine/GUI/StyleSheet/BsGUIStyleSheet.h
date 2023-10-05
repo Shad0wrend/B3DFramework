@@ -27,8 +27,9 @@ namespace bs
 	/** Type of selector in a style sheet. Selectors determine to which GUI elements does a style apply to. */
 	enum class GUIStyleSheetSelectorType
 	{
-		Element, /**< Selector applies to entire type of GUI elements (e.g. button, input box, etc.) */
-		Id /**< Selector applies only to a particular GUI element with a specific ID. */
+		Element, /**< Selector applies to entire type of GUI elements (e.g. button, input box, etc.), */
+		Class, /**< Selector applies to a set of GUI elements given a particular class name. */
+		Id /**< Selector applies only to a particular GUI element with the specific ID. */
 	};
 
 	/** Determines if and how text wraps to a new line if it doesn't fit on a single line. */
@@ -113,6 +114,11 @@ namespace bs
 		u32 Width = 0; /**< Size of the border in pixels. Zero means no border. */
 		Color Color; /**< Color of the border. */
 		GUIBorderElementStyle Style = GUIBorderElementStyle::Solid; /**< Style how to render the border. */
+	};
+
+	struct GUIStyleSheetSelector
+	{
+		String Name;
 	};
 
 	/** Style for a particular state of a GUI element (e.g. normal, hover, focused, disabled, etc. */

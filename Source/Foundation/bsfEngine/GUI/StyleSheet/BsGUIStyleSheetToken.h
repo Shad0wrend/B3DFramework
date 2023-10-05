@@ -17,6 +17,7 @@ namespace bs
 		Undefined,
 		ElementSelector, // -?[_a-zA-Z]+[_a-zA-Z0-9-]*
 		IdSelector, // #-?[_a-zA-Z]+[_a-zA-Z0-9-]*
+		ClassSelector, // .-?[_a-zA-Z]+[_a-zA-Z0-9-]*
 		VariableIdentifier, // ---?[_a-zA-Z]+[_a-zA-Z0-9-]*
 
 		StringLiteral, // "anything"

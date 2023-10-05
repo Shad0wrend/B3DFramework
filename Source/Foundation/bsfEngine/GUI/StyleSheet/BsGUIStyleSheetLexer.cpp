@@ -199,13 +199,16 @@ void GUIStyleSheetLexer::SkipWhiteSpaces(bool includeNewLines)
 Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanToken()
 {
 	if(std::isalpha(GetCurrentCharacter()) || IsCurrentCharacter('_') || IsCurrentCharacter('-'))
-		return ScanIdentifier();
+		return ScanIdentifier(false);
 
 	if(IsCurrentCharacter('#'))
 		return ScanElementSelectorOrHexColor();
 
-	if(IsCurrentCharacter('.') || std::isdigit(GetCurrentCharacter()))
-		return ScanNumber();
+	if(IsCurrentCharacter('.'))
+		return ScanNumberOrClassSelector();
+
+	if(std::isdigit(GetCurrentCharacter()))
+		return ScanNumber(false);
 
 	if(IsCurrentCharacter('\"'))
 		return ScanStringLiteral();
@@ -225,13 +228,13 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanToken()
 	return ErrorUnexpected();
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier()
+Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier(bool isStartingWithDot)
 {
 	// Special handling if first characters are  "--"
 	const bool isFirstCharacterHyphen = IsCurrentCharacter('-');
 
 	const char firstCharacter = GetCurrentCharacterAndAdvance();
-	const bool isVariable = isFirstCharacterHyphen && IsCurrentCharacter('-'); // If starting with --, it's a variable definition
+	const bool isVariable = !isStartingWithDot && isFirstCharacterHyphen && IsCurrentCharacter('-'); // If starting with --, it's a variable definition
 
 	String spelling;
 	if(isVariable)
@@ -255,11 +258,16 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier()
 	String lowerCaseSpelling = spelling;
 	StringUtil::ToLowerCase(lowerCaseSpelling);
 
-	if(auto it = mPropertyKeywords.find(lowerCaseSpelling); it != mPropertyKeywords.end())
-		return CreateToken(it->second, spelling);
+	if(!isStartingWithDot)
+	{
+		if(auto it = mPropertyKeywords.find(lowerCaseSpelling); it != mPropertyKeywords.end())
+			return CreateToken(it->second, spelling);
 
-	if(isVariable)
-		return CreateToken(TokenType::VariableIdentifier, spelling);
+		if(isVariable)
+			return CreateToken(TokenType::VariableIdentifier, spelling);
+	}
+	else
+		return CreateToken(TokenType::ClassSelector, spelling);
 
 	return CreateToken(TokenType::ElementSelector, spelling);
 }
@@ -335,7 +343,20 @@ Optional<GUIStyleSheetToken> GUIStyleSheetLexer::ScanStringLiteral()
 	return CreateToken(TokenType::StringLiteral, spelling);
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumber()
+Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumberOrClassSelector()
+{
+	char character;
+	if(!GetCurrentCharacterAndAdvance('.', character))
+		return {};
+
+	character = GetCurrentCharacter();
+	if(isdigit(character))
+		return ScanNumber(true);
+
+	return ScanIdentifier(true);
+}
+
+Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumber(bool isStartingWithDot)
 {
 	String spelling;
 
@@ -349,12 +370,12 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumber()
 		return result;
 	};
 
-	const bool hasDigitsBeforeDot = fnScanDigitSequence(spelling);
+	const bool hasDigitsBeforeDot = !isStartingWithDot && fnScanDigitSequence(spelling);
 
 	TokenType type = GUIStyleSheetTokenTypes::Undefined;
-	if(IsCurrentCharacter('.'))
+	if(isStartingWithDot)
 	{
-		spelling += GetCurrentCharacterAndAdvance();
+		spelling += '.';
 
 		const bool hasDigitsAfterDot = fnScanDigitSequence(spelling);
 		if(!hasDigitsBeforeDot && !hasDigitsAfterDot)

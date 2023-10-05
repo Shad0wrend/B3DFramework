@@ -52,6 +52,7 @@ String GUIStyleSheetToken::TypeToString(const GUIStyleSheetTokenTypes type)
 	case GUIStyleSheetTokenTypes::PixelsLiteral: return "Pixel literal";
 	case GUIStyleSheetTokenTypes::Undefined: return "Undefined";
 	case GUIStyleSheetTokenTypes::IdSelector: return "ID selector";
+	case GUIStyleSheetTokenTypes::ClassSelector: return "Class selector";
 	case GUIStyleSheetTokenTypes::VariableIdentifier: return "Variable identifier";
 	case GUIStyleSheetTokenTypes::StringLiteral: return "String literal";
 	case GUIStyleSheetTokenTypes::DecimalLiteral: return "Decimal literal";

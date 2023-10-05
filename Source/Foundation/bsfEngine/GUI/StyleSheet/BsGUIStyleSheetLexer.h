@@ -102,13 +102,16 @@ namespace bs
 		Optional<Token> ScanElementSelectorOrHexColor();
 
 		/** Tries to scan the next token as an identifier. Returns null if the scanning failed. */
-		Optional<Token> ScanIdentifier();
+		Optional<Token> ScanIdentifier(bool isStartingWithDot);
 
 		/** Tries to scan the next token as a string literal (text surrounded by ""). Returns null if the scanning failed. */
 		Optional<Token> ScanStringLiteral();
 
+		/** Tries to scan the next token as a number or a class selector. Assumes the current token is a '.'. Returns null if the scanning failed. */
+		Optional<Token> ScanNumberOrClassSelector();
+
 		/** Tries to scan the next token as a number. Returns null if the scanning failed. */
-		Optional<Token> ScanNumber();
+		Optional<Token> ScanNumber(bool isStartingWithDot);
 
 		/** Records an error message and returns null. */
 		Optional<Token> Error(const String& message);
