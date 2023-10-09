@@ -396,7 +396,7 @@ void GUIStyleSheet::RebuildCache()
 	fnSortEntries(mCachedRulesById);
 }
  
-SPtr<GUIStyleSheetRule> GUIStyleSheet::BuildRule(const GUIElement& guiElement) const
+SPtr<GUIStyleSheetRule> GUIStyleSheet::BuildRule(const GUIElement& guiElement, const String& pseudoElement) const
 {
 	SPtr<GUIStyleSheetRule> outputRule = B3DMakeShared<GUIStyleSheetRule>();
 
@@ -404,40 +404,30 @@ SPtr<GUIStyleSheetRule> GUIStyleSheet::BuildRule(const GUIElement& guiElement) c
 	// Rules within each category are already sorted from least to most specific.
 	// More specific rules keep overriding the properties from less specific rules, until we build our output rule.
 
-	if(auto it = mCachedRulesByElement.find(guiElement.GetStyleSheetElement()); it != mCachedRulesByElement.end())
-	{
-		for(const auto& ruleIndex : it->second.RuleIndices)
+	auto fnLookupAndAppendRule = [this, &outputRule](UnorderedMap<String, GUIStyleSheetRuleList>& lookupMap, const GUIElement& guiElement, const String& lookupValue) {
+		if(auto it = lookupMap.find(lookupValue); it != lookupMap.end())
 		{
-			const GUIStyleSheetRule& rule = mRules[ruleIndex];
-			if(!rule.SelectorList.IsMatching(guiElement))
-				continue;
+			for(const auto& ruleIndex : it->second.RuleIndices)
+			{
+				const GUIStyleSheetRule& rule = mRules[ruleIndex];
+				if(!rule.SelectorList.IsMatching(guiElement))
+					continue;
 
-			outputRule->Override(rule);
+				outputRule->Override(rule);
+			}
 		}
-	}
+	};
 
-	if(auto it = mCachedRulesByClass.find(guiElement.GetStyleSheetClass()); it != mCachedRulesByClass.end())
+	fnLookupAndAppendRule(mCachedRulesByElement, guiElement, guiElement.GetStyleSheetElement());
+	fnLookupAndAppendRule(mCachedRulesByClass, guiElement, guiElement.GetStyleSheetClass());
+	fnLookupAndAppendRule(mCachedRulesById, guiElement, guiElement.GetStyleSheetId());
+
+	// If pseudo-element is provided, look for more specific styles for that element
+	if(!pseudoElement.empty())
 	{
-		for(const auto& ruleIndex : it->second.RuleIndices)
-		{
-			const GUIStyleSheetRule& rule = mRules[ruleIndex];
-			if(!rule.SelectorList.IsMatching(guiElement))
-				continue;
-
-			outputRule->Override(rule);
-		}
-	}
-
-	if(auto it = mCachedRulesById.find(guiElement.GetStyleSheetId()); it != mCachedRulesById.end())
-	{
-		for(const auto& ruleIndex : it->second.RuleIndices)
-		{
-			const GUIStyleSheetRule& rule = mRules[ruleIndex];
-			if(!rule.SelectorList.IsMatching(guiElement))
-				continue;
-
-			outputRule->Override(rule);
-		}
+		fnLookupAndAppendRule(mCachedRulesByElement, guiElement, String(guiElement.GetStyleSheetElement()) + "::" + pseudoElement);
+		fnLookupAndAppendRule(mCachedRulesByClass, guiElement, guiElement.GetStyleSheetClass() + "::" + pseudoElement);
+		fnLookupAndAppendRule(mCachedRulesById, guiElement, guiElement.GetStyleSheetId() + "::" + pseudoElement);
 	}
 
 	return outputRule;

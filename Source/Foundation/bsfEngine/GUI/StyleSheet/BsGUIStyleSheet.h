@@ -209,6 +209,7 @@ namespace bs
 	struct B3D_EXPORT GUIStyleSheetRule
 	{
 		GUIStyleSheetSelectorList SelectorList; /**< List of selectors that determines which GUI elements this style applies to. */
+		String PseudoElement; /**< Name of the pseudo-element, if the rule is specified for one. */
 
 		GUIStyleSheetStateRule Normal; /**< Normal style of the GUI element that is interactable, but isn't currently being interacted with. */
 		Optional<GUIStyleSheetStateRule> Hover; /**< Style of GUI element that is interactable and the mouse pointer is hovering over the GUI element. Inherits from Normal state and optionally from Focused, or Checked state, if those are active. */
@@ -246,7 +247,7 @@ namespace bs
 		~GUIStyleSheet() override = default;
 
 		/** Builds the appropriate rule to use for a particular GUI element.  */
-		SPtr<GUIStyleSheetRule> BuildRule(const GUIElement& guiElement) const;
+		SPtr<GUIStyleSheetRule> BuildRule(const GUIElement& guiElement, const String& pseudoElement = StringUtil::kBlank) const;
 
 		/** Attempts to parse the provided style sheet file and outputs the parsed style sheet, if successful. */
 		static HGUIStyleSheet Parse(const Path& file);

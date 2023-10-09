@@ -98,6 +98,7 @@ namespace bs
 		static void RTTIEnumerateFields(GUIStyleSheetRule& object, Processor& processor, u8 version)
 		{
 			processor(object.SelectorList);
+			processor(object.PseudoElement);
 			processor(object.Normal);
 			processor(object.Focus);
 			processor(object.Hover);

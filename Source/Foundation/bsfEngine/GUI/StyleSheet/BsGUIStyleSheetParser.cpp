@@ -99,16 +99,30 @@ bool GUIStyleSheetParser::TryParseRule()
 
 	bool foundPseudoClass = false;
 	String pseudoClass;
+	String pseudoElement;
 	if(IsCurrentToken(GUIStyleSheetTokenTypes::Colon))
 	{
 		GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon);
 
-		Optional<Token> pseudoClassToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PseudoClassSelector);
-		if(!pseudoClassToken)
-			return {};
+		if(IsCurrentToken(GUIStyleSheetTokenTypes::Colon))
+		{
+			GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon);
+			
+			Optional<Token> pseudoElementToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::ElementSelector);
+			if(!pseudoElementToken)
+				return {};
 
-		pseudoClass = pseudoClassToken->GetSpelling();
-		foundPseudoClass = true;
+			pseudoElement = pseudoElementToken->GetSpelling();
+		}
+		else
+		{
+			Optional<Token> pseudoClassToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PseudoClassSelector);
+			if(!pseudoClassToken)
+				return {};
+
+			pseudoClass = pseudoClassToken->GetSpelling();
+			foundPseudoClass = true;
+		}
 	}
 
 	if(!selectorList && !foundPseudoClass)
@@ -120,9 +134,13 @@ bool GUIStyleSheetParser::TryParseRule()
 	GUIStyleSheetStateRule stateStyle;
 	GUIStyleSheetRule* existingStyle = nullptr;
 
+	String selectorListUniqueName;
 	if(selectorList)
 	{
-		const String& selectorListUniqueName = selectorList->GetUniqueName();
+		selectorListUniqueName = selectorList->GetUniqueName();
+		if(!pseudoElement.empty())
+			selectorListUniqueName += "::" + pseudoElement;
+
 		if(auto found = mParsedRules.find(selectorListUniqueName); found != mParsedRules.end())
 			existingStyle = &found->second;
 
@@ -181,13 +199,14 @@ bool GUIStyleSheetParser::TryParseRule()
 		{
 			GUIStyleSheetRule newStyle;
 			newStyle.SelectorList = std::move(*selectorList);
+			newStyle.PseudoElement = std::move(pseudoElement);
 
 			if(foundPseudoClass)
 				newStyle.FindAndSetStateStyle(pseudoClass, stateStyle);
 			else
 				newStyle.Normal = stateStyle;
 
-			mParsedRules[newStyle.SelectorList.GetUniqueName()] = std::move(newStyle);
+			mParsedRules[selectorListUniqueName] = std::move(newStyle);
 		}
 	}
 
