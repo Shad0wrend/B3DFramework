@@ -426,11 +426,11 @@ bool GUIWidget::InBounds(const Vector2I& position) const
 void GUIWidget::UpdateBounds() const
 {
 	if(!mElements.empty())
-		mBounds = mElements[0]->GetClippedBounds();
+		mBounds = mElements[0]->GetCachedClippedVisibleBounds();
 
 	for(auto& elem : mElements)
 	{
-		Rect2I elemBounds = elem->GetClippedBounds();
+		Rect2I elemBounds = elem->GetCachedClippedVisibleBounds();
 		mBounds.Encapsulate(elemBounds);
 	}
 }

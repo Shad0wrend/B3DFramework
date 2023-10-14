@@ -208,22 +208,6 @@ void GUIElement::ResetDimensions()
 	MarkLayoutAsDirty();
 }
 
-Rect2I GUIElement::GetCachedVisibleBounds() const
-{
-	const RectOffset& padding = GetPadding();
-	Rect2I bounds = GetClippedBounds();
-
-	if(mStyleSheetStateStyle == nullptr) // Style sheet bounds already include the padding
-	{
-		bounds.X += padding.Left;
-		bounds.Y += padding.Top;
-		bounds.Width = (u32)std::max(0, (i32)bounds.Width - (i32)(padding.Left + padding.Right));
-		bounds.Height = (u32)std::max(0, (i32)bounds.Height - (i32)(padding.Top + padding.Bottom));
-	}
-
-	return bounds;
-}
-
 Rect2I GUIElement::GetCachedContentBounds() const
 {
 	const RectOffset& padding = GetPadding();
@@ -298,9 +282,7 @@ void GUIElement::RemoveStateFlags(GUIElementStateFlags flags)
 
 bool GUIElement::IsInBounds(const Vector2I position) const
 {
-	Rect2I contentBounds = GetCachedVisibleBounds();
-
-	return contentBounds.Contains(position);
+	return GetCachedClippedVisibleBounds().Contains(position);
 }
 
 SPtr<GUIContextMenu> GUIElement::GetContextMenu() const
@@ -397,17 +379,4 @@ void GUIElement::Destroy(GUIElement* element)
 	element->mIsDestroyed = true;
 
 	GUIManager::Instance().QueueForDestroy(element);
-}
-
-Rect2I GUIElement::GetVisibleBounds()
-{
-	const RectOffset& margins = GetPadding();
-	Rect2I bounds = GetBounds();
-
-	bounds.X += margins.Left;
-	bounds.Y += margins.Top;
-	bounds.Width = (u32)std::max(0, (i32)bounds.Width - (i32)(margins.Left + margins.Right));
-	bounds.Height = (u32)std::max(0, (i32)bounds.Height - (i32)(margins.Top + margins.Bottom));
-
-	return bounds;
 }

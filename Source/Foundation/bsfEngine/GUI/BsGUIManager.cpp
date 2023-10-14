@@ -1480,9 +1480,9 @@ void GUIManager::TabFocusFirst()
 			if(!acceptsKeyFocus || element->IsDisabled() || !element->IsVisible())
 				continue;
 
-			const Rect2I elemBounds = element->GetClippedBounds();
-			const bool isFullyClipped = element->GetClippedBounds().Width == 0 ||
-				element->GetClippedBounds().Height == 0;
+			const Rect2I elemBounds = element->GetCachedClippedVisibleBounds();
+			const bool isFullyClipped = element->GetCachedClippedVisibleBounds().Width == 0 ||
+				element->GetCachedClippedVisibleBounds().Height == 0;
 
 			if(isFullyClipped)
 				continue;

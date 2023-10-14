@@ -27,14 +27,14 @@ GUIConstrainedSize GUILayoutX::CalculateConstrainedSize() const
 		if(child->GetType() == GUIElementBase::Type::FixedSpace)
 			sizeRange.Optimal.Y = sizeRange.Min.Y = 0;
 
-		u32 paddingX = child->GetMargins().Left + child->GetMargins().Right;
-		u32 paddingY = child->GetMargins().Top + child->GetMargins().Bottom;
+		u32 marginsX = child->GetMargins().Left + child->GetMargins().Right;
+		u32 marginsY = child->GetMargins().Top + child->GetMargins().Bottom;
 
-		optimalSize.X += sizeRange.Optimal.X + paddingX;
-		optimalSize.Y = std::max((u32)optimalSize.Y, sizeRange.Optimal.Y + paddingY);
+		optimalSize.X += sizeRange.Optimal.X + marginsX;
+		optimalSize.Y = std::max((u32)optimalSize.Y, sizeRange.Optimal.Y + marginsY);
 
-		minSize.X += sizeRange.Min.X + paddingX;
-		minSize.Y = std::max((u32)minSize.Y, sizeRange.Min.Y + paddingY);
+		minSize.X += sizeRange.Min.X + marginsX;
+		minSize.Y = std::max((u32)minSize.Y, sizeRange.Min.Y + marginsY);
 	}
 
 	GUIConstrainedSize sizeRange = GetSizeConstraints().CalculateConstrainedSize(optimalSize);
@@ -49,8 +49,8 @@ void GUILayoutX::UpdateOptimalLayoutSizes()
 	// Update all children first, otherwise we can't determine our own optimal size
 	GUIElementBase::UpdateOptimalLayoutSizes();
 
-	if(mChildren.size() != mChildSizeRanges.size())
-		mChildSizeRanges.resize(mChildren.size());
+	if(mChildren.size() != mChildrenConstrainedSizes.size())
+		mChildrenConstrainedSizes.resize(mChildren.size());
 
 	Vector2I optimalSize;
 	Vector2I minSize;
@@ -58,7 +58,7 @@ void GUILayoutX::UpdateOptimalLayoutSizes()
 	u32 childIdx = 0;
 	for(auto& child : mChildren)
 	{
-		GUIConstrainedSize& childSizeRange = mChildSizeRanges[childIdx];
+		GUIConstrainedSize& childSizeRange = mChildrenConstrainedSizes[childIdx];
 
 		if(child->IsActive())
 		{
@@ -84,9 +84,9 @@ void GUILayoutX::UpdateOptimalLayoutSizes()
 		childIdx++;
 	}
 
-	mSizeRange = GetSizeConstraints().CalculateConstrainedSize(optimalSize);
-	mSizeRange.Min.X = std::max(mSizeRange.Min.X, minSize.X);
-	mSizeRange.Min.Y = std::max(mSizeRange.Min.Y, minSize.Y);
+	mConstrainedSize = GetSizeConstraints().CalculateConstrainedSize(optimalSize);
+	mConstrainedSize.Min.X = std::max(mConstrainedSize.Min.X, minSize.X);
+	mConstrainedSize.Min.Y = std::max(mConstrainedSize.Min.Y, minSize.Y);
 }
 
 void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
@@ -398,7 +398,7 @@ void GUILayoutX::UpdateLayoutRecursive(const GUILayoutData& data)
 	if(numElements > 0)
 		elementAreas = B3DStackNew<Rect2I>(numElements);
 
-	GetChildLayoutAreas(data.Area, elementAreas, numElements, mChildSizeRanges, mSizeRange);
+	GetChildLayoutAreas(data.Area, elementAreas, numElements, mChildrenConstrainedSizes, mConstrainedSize);
 
 	// Now that we have all the areas, actually assign them
 	u32 childIdx = 0;

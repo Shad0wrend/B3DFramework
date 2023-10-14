@@ -136,8 +136,6 @@ namespace bs
 		 */
 		void SetNavigationGroupIndex(i32 index);
 
-		Rect2I GetVisibleBounds() override;
-
 		/**
 		 * Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be
 		 * released delayed, next frame.
@@ -248,8 +246,11 @@ namespace bs
 		/**	Gets the currently active element style. */
 		const GUIElementStyle* GetStyle() const { return mStyle; }
 
-		/**	Gets GUI element bounds relative to parent widget, clipped by specified clip rect. */
-		const Rect2I& GetClippedBounds() const { return mClippedBounds; }
+		/**
+		 * Similar to GetVisibleBounds(), except the bounds are clipped against the current clip rectangle, and the
+		 * return bounds are cached from the last layout pass (rather than being recalculated).
+		 */
+		const Rect2I& GetCachedClippedVisibleBounds() const { return mClippedBounds; }
 
 		const RectOffset& GetMargins() const override;
 		const RectOffset& GetPadding() const override;
@@ -315,10 +316,10 @@ namespace bs
 		/**	Method that gets triggered whenever element style changes. */
 		virtual void NotifyStyleChanged() {}
 
-		/**	Returns clipped bounds excluding the margins. Relative to parent widget. */
-		Rect2I GetCachedVisibleBounds() const;
-
-		/**	Returns bounds of the content contained within the GUI element. Relative to parent widget. */
+		/**
+		 * Returns bounds of the content contained within the GUI element. This will be the bounds returned by
+		 *
+		 * Relative to parent widget. */
 		Rect2I GetCachedContentBounds() const;
 
 		/**

@@ -45,7 +45,7 @@ void ScriptGUILayoutUtility::InternalCalculateBounds(ScriptGUIElementBaseTBase* 
 	if(relativeTo != nullptr && !relativeTo->IsDestroyed())
 		relativeToPanel = static_cast<GUIPanel*>(relativeTo->GetGuiElement());
 
-	*output = guiElement->GetGuiElement()->GetBounds(relativeToPanel);
+	*output = guiElement->GetGuiElement()->GetBoundsRelativeTo(relativeToPanel);
 }
 
 void ScriptGUILayoutUtility::InternalCalculateTextBounds(MonoString* text, ScriptFont* fontPtr, int fontSize, Vector2I* output)

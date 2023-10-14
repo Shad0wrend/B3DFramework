@@ -31,7 +31,7 @@ Vector2I GUIUtility::CalcActualSizeInternal(u32 width, u32 height, GUILayout* la
 	parentArea.Width = width;
 	parentArea.Height = height;
 
-	layout->GetChildLayoutAreas(parentArea, elementAreas, numElements, layout->GetCachedChildSizeRangesInternal(), layout->GetCachedSizeRangeInternal());
+	layout->GetChildLayoutAreas(parentArea, elementAreas, numElements, layout->GetChildrenConstrainedSizes(), layout->GetCachedConstrainedSize());
 
 	Rect2I* actualAreas = elementAreas; // We re-use the same array
 	for(u32 i = 0; i < numElements; i++)

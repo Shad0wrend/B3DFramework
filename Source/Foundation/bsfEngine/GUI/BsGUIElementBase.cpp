@@ -130,14 +130,14 @@ void GUIElementBase::ResetDimensions()
 	MarkLayoutAsDirty();
 }
 
-Rect2I GUIElementBase::GetBounds(GUIPanel* relativeTo)
+Rect2I GUIElementBase::GetBoundsRelativeTo(GUIPanel* relativeTo)
 {
 	if(relativeTo == nullptr)
 		relativeTo = mPanelParent;
 
 	Rect2I anchorBounds;
 	if(relativeTo != nullptr)
-		anchorBounds = relativeTo->GetGlobalBounds();
+		anchorBounds = relativeTo->GetBounds();
 
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayoutInternal(mLayoutUpdateParent);
@@ -156,7 +156,7 @@ void GUIElementBase::SetBounds(const Rect2I& bounds)
 	SetHeight(bounds.Height);
 }
 
-Rect2I GUIElementBase::GetGlobalBounds()
+const Rect2I& GUIElementBase::GetBounds() const
 {
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayoutInternal(mLayoutUpdateParent);
@@ -166,10 +166,7 @@ Rect2I GUIElementBase::GetGlobalBounds()
 
 Rect2I GUIElementBase::GetScreenBounds() const
 {
-	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsDirty() && mParentWidget != nullptr)
-		mParentWidget->UpdateLayoutInternal(mLayoutUpdateParent);
-
-	Rect2I area = mLayoutData.Area;
+	Rect2I area = GetBounds();
 	if(mParentWidget)
 	{
 		const Matrix4& widgetTfrm = mParentWidget->GetWorldTfrm();
@@ -193,11 +190,6 @@ Rect2I GUIElementBase::GetScreenBounds() const
 	}
 
 	return area;
-}
-
-Rect2I GUIElementBase::GetVisibleBounds()
-{
-	return GetBounds();
 }
 
 void GUIElementBase::MarkAsClean()

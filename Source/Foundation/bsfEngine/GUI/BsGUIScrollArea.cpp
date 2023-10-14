@@ -396,7 +396,7 @@ float GUIScrollArea::GetHorizontalScroll() const
 
 Rect2I GUIScrollArea::GetContentBounds()
 {
-	Rect2I bounds = GetBounds();
+	Rect2I bounds = GetBoundsRelativeTo();
 
 	if(mHorzScroll)
 		bounds.Height -= kScrollBarWidth;

@@ -283,7 +283,7 @@ void ScriptGUIElement::InternalGetBounds(ScriptGUIElementBaseTBase* nativeInstan
 		return;
 	}
 
-	*bounds = nativeInstance->GetGuiElement()->GetBounds();
+	*bounds = nativeInstance->GetGuiElement()->GetBoundsRelativeTo();
 }
 
 void ScriptGUIElement::InternalSetBounds(ScriptGUIElementBaseTBase* nativeInstance, Rect2I* bounds)
@@ -304,7 +304,7 @@ void ScriptGUIElement::InternalGetVisibleBounds(ScriptGUIElementBaseTBase* nativ
 		return;
 	}
 
-	*bounds = nativeInstance->GetGuiElement()->GetVisibleBounds();
+	*bounds = nativeInstance->GetGuiElement()->GetBoundsRelativeTo();
 }
 
 void ScriptGUIElement::InternalGetScreenBounds(ScriptGUIElementBaseTBase* nativeInstance, Rect2I* bounds)

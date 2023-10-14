@@ -108,43 +108,42 @@ namespace bs
 		void SetDisabled(bool disabled);
 
 		/**
-		 * Returns non-clipped bounds of the GUI element. Relative to a parent GUI panel.
+		 * Returns non-clipped bounds of the GUI element. Relative to a parent GUI panel or the provided parent element.
+		 * The bounds includes the content area, element padding and element border, but excludes element margins.
+
 		 *
-		 * @param[in]	relativeTo	Parent panel of the provided element relative to which to return the bounds. If null
-		 *							the bounds relative to the first parent panel are returned. Behavior is undefined if
-		 *							provided panel is not a parent of the element.
+		 * @param	relativeTo	Parent panel of the provided element relative to which to return the bounds. If null
+		 *						the bounds relative to the first parent panel are returned. Behavior is undefined if
+		 *						provided panel is not a parent of the element.
 		 *
-		 * @note	This call can be potentially expensive if the GUI state is dirty.
+		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a re-layouting operation.
 		 */
-		Rect2I GetBounds(GUIPanel* relativeTo = nullptr);
+		Rect2I GetBoundsRelativeTo(GUIPanel* relativeTo = nullptr);
+
+		/**
+		 * Returns non-clipped bounds of the GUI element. Relative to a parent GUI widget. The bounds includes the content area,
+		 * element padding and element border, but excludes element margins.
+		 *
+		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a re-layouting operation.
+		 */
+		const Rect2I& GetBounds() const;
+
+		/**
+		 * Returns non-clipped bounds of the GUI element in screenspace. The bounds includes the content area,
+		 * element padding and element border, but excludes element margins.
+		 *
+		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a re-layouting operation.
+		 */
+		Rect2I GetScreenBounds() const;
+
+		/** Same as GetBounds(), but never triggers a re-layouting pass, and instead always returns values from last layouting pass. */
+		const Rect2I& GetCachedBounds() const { return mLayoutData.Area; }
 
 		/**
 		 * Sets the bounds of the GUI element. Relative to a parent GUI panel. Equivalent to calling SetPosition(),
 		 * setWidth() and setHeight().
 		 */
 		void SetBounds(const Rect2I& bounds);
-
-		/**
-		 * Returns non-clipped bounds of the GUI element. Relative to a parent GUI widget.
-		 *
-		 * @note	This call can be potentially expensive if the GUI state is dirty.
-		 */
-		Rect2I GetGlobalBounds();
-
-		/**
-		 * Returns non-clipped bounds of the GUI element in screenspace.
-		 *
-		 * @note	This call can be potentially expensive if the GUI state is dirty.
-		 */
-		Rect2I GetScreenBounds() const;
-
-		/**
-		 * Returns non-clipped visible bounds of the GUI element (bounds exclude the margins). Relative to the parent GUI
-		 * panel.
-		 *
-		 * @note	This call can be potentially expensive as the bounds need to be calculated based on current GUI state.
-		 */
-		virtual Rect2I GetVisibleBounds();
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

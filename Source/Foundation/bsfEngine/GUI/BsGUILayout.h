@@ -67,25 +67,25 @@ namespace bs
 		 *  @{
 		 */
 
-		GUIConstrainedSize GetConstrainedSize() const override { return GetCachedSizeRangeInternal(); }
+		GUIConstrainedSize GetConstrainedSize() const override { return GetCachedConstrainedSize(); }
 
 		/** Returns a size range that was cached during the last GUIElementBase::_updateOptimalLayoutSizes call. */
-		GUIConstrainedSize GetCachedSizeRangeInternal() const { return mSizeRange; }
+		GUIConstrainedSize GetCachedConstrainedSize() const { return mConstrainedSize; }
 
 		/**
 		 * Returns a size ranges for all children that was cached during the last GUIElementBase::_updateOptimalLayoutSizes
 		 * call.
 		 */
-		const Vector<GUIConstrainedSize>& GetCachedChildSizeRangesInternal() const { return mChildSizeRanges; }
+		const Vector<GUIConstrainedSize>& GetChildrenConstrainedSizes() const { return mChildrenConstrainedSizes; }
 
-		Vector2I GetOptimalSize() const override { return mSizeRange.Optimal; }
+		Vector2I GetOptimalSize() const override { return mConstrainedSize.Optimal; }
 		Type GetType() const override { return GUIElementBase::Type::Layout; }
 
 		/** @} */
 
 	protected:
-		Vector<GUIConstrainedSize> mChildSizeRanges;
-		GUIConstrainedSize mSizeRange;
+		Vector<GUIConstrainedSize> mChildrenConstrainedSizes;
+		GUIConstrainedSize mConstrainedSize;
 	};
 
 	/** @} */
