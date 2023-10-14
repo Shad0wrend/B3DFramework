@@ -6,7 +6,7 @@
 #include "GUI/BsGUISkin.h"
 #include "Image/BsSpriteTexture.h"
 #include "2D/BsTextSprite.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUITextInputEvent.h"
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUICommandEvent.h"
@@ -31,7 +31,7 @@ const String& GUIInputBox::GetGuiTypeName()
 	return name;
 }
 
-GUIInputBox::GUIInputBox(const String& styleName, const GUIDimensions& dimensions, bool multiline)
+GUIInputBox::GUIInputBox(const String& styleName, const GUISizeConstraints& dimensions, bool multiline)
 	: GUIElement(styleName, dimensions, GUIElementOption::AcceptsKeyFocus), mIsMultiline(multiline)
 {
 	mImageSprite = B3DNew<ImageSprite>();
@@ -46,17 +46,17 @@ GUIInputBox::~GUIInputBox()
 
 GUIInputBox* GUIInputBox::Create(bool multiline, const String& styleName)
 {
-	return new(B3DAllocate<GUIInputBox>()) GUIInputBox(GetStyleName<GUIInputBox>(styleName), GUIDimensions::Create(), multiline);
+	return new(B3DAllocate<GUIInputBox>()) GUIInputBox(GetStyleName<GUIInputBox>(styleName), GUISizeConstraints::Create(), multiline);
 }
 
 GUIInputBox* GUIInputBox::Create(bool multiline, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUIInputBox>()) GUIInputBox(GetStyleName<GUIInputBox>(styleName), GUIDimensions::Create(options), multiline);
+	return new(B3DAllocate<GUIInputBox>()) GUIInputBox(GetStyleName<GUIInputBox>(styleName), GUISizeConstraints::Create(options), multiline);
 }
 
 GUIInputBox* GUIInputBox::Create(const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUIInputBox>()) GUIInputBox(GetStyleName<GUIInputBox>(styleName), GUIDimensions::Create(options), false);
+	return new(B3DAllocate<GUIInputBox>()) GUIInputBox(GetStyleName<GUIInputBox>(styleName), GUISizeConstraints::Create(options), false);
 }
 
 void GUIInputBox::SetText(const String& text)
@@ -72,7 +72,7 @@ void GUIInputBox::SetText(const String& text)
 
 	if(filterOkay)
 	{
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+		Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 		mText = text;
 		mNumChars = UTF8::Count(mText);
@@ -95,7 +95,7 @@ void GUIInputBox::SetText(const String& text)
 			ScrollTextToCaret();
 		}
 
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+		Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 		if(origSize != newSize)
 			MarkLayoutAsDirty();
 		else
@@ -323,7 +323,7 @@ Vector2I GUIInputBox::GetOptimalSize() const
 		imageHeight = activeTex->GetHeight();
 	}
 
-	Vector2I contentSize = GUIHelper::CalculateOptimalContentSize(mText, *GetStyle(), GetDimensions());
+	Vector2I contentSize = GUIHelper::CalculateOptimalContentSize(mText, *GetStyle(), GetSizeConstraints());
 	u32 contentWidth = std::max(imageWidth, (u32)contentSize.X);
 	u32 contentHeight = std::max(imageHeight, (u32)contentSize.Y);
 
@@ -390,9 +390,9 @@ bool GUIInputBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 		{
 			if(!mHasFocus)
 			{
-				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+				Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 				mState = State::Hover;
-				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+				Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 				if(origSize != newSize)
 					MarkLayoutAsDirty();
@@ -411,9 +411,9 @@ bool GUIInputBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 		{
 			if(!mHasFocus)
 			{
-				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+				Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 				mState = State::Normal;
-				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+				Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 				if(origSize != newSize)
 					MarkLayoutAsDirty();
@@ -531,7 +531,7 @@ bool GUIInputBox::DoOnTextInputEvent(const GUITextInputEvent& ev)
 	if(IsDisabled())
 		return false;
 
-	Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 	if(mSelectionShown)
 		DeleteSelectedText(true);
@@ -560,7 +560,7 @@ bool GUIInputBox::DoOnTextInputEvent(const GUITextInputEvent& ev)
 			OnValueChanged(mText);
 	}
 
-	Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 	if(origSize != newSize)
 		MarkLayoutAsDirty();
 	else
@@ -584,7 +584,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 
 	if(ev.GetType() == GUICommandEventType::FocusGained)
 	{
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+		Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 		mState = State::Focused;
 
 		ShowSelection(0);
@@ -593,7 +593,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 		mHasFocus = true;
 		mFocusGainedFrame = GetTime().GetCurrentFrameIndex();
 
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+		Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 		if(origSize != newSize)
 			MarkLayoutAsDirty();
 		else
@@ -604,7 +604,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 
 	if(ev.GetType() == GUICommandEventType::FocusLost)
 	{
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+		Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 		mState = State::Normal;
 
 		HideCaret();
@@ -612,7 +612,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 
 		mHasFocus = false;
 
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+		Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 		if(origSize != newSize)
 			MarkLayoutAsDirty();
 		else
@@ -625,7 +625,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	{
 		if(mNumChars > 0)
 		{
-			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+			Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 			if(mSelectionShown)
 			{
 				DeleteSelectedText();
@@ -668,7 +668,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 				}
 			}
 
-			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+			Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 			if(origSize != newSize)
 				MarkLayoutAsDirty();
 			else
@@ -682,7 +682,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	{
 		if(mNumChars > 0)
 		{
-			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+			Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 			if(mSelectionShown)
 			{
 				DeleteSelectedText();
@@ -720,7 +720,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 				}
 			}
 
-			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+			Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 			if(origSize != newSize)
 				MarkLayoutAsDirty();
 			else
@@ -863,7 +863,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	{
 		if(mIsMultiline)
 		{
-			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+			Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 			if(mSelectionShown)
 				DeleteSelectedText();
@@ -891,7 +891,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 					OnValueChanged(mText);
 			}
 
-			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+			Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 			if(origSize != newSize)
 				MarkLayoutAsDirty();
 			else
@@ -1222,12 +1222,12 @@ SPtr<GUIContextMenu> GUIInputBox::GetContextMenu() const
 
 void GUIInputBox::CutText()
 {
-	Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 	CopyText();
 	DeleteSelectedText();
 
-	Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 	if(origSize != newSize)
 		MarkLayoutAsDirty();
 	else
@@ -1259,7 +1259,7 @@ void GUIInputBox::PasteText()
 
 	if(filterOkay)
 	{
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+		Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 		InsertString(charIdx, textInClipboard);
 
 		u32 numChars = UTF8::Count(textInClipboard);
@@ -1268,7 +1268,7 @@ void GUIInputBox::PasteText()
 
 		ScrollTextToCaret();
 
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+		Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 		if(origSize != newSize)
 			MarkLayoutAsDirty();
 		else

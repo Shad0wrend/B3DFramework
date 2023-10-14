@@ -43,7 +43,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	Vector2I size(kTooltipWidth, 25);
 	if(multiLineLabelStyle != nullptr)
 	{
-		GUIDimensions dimensions = GUIDimensions::Create(GUIOptions(GUIOption::FixedWidth(kTooltipWidth)));
+		GUISizeConstraints dimensions = GUISizeConstraints::Create(GUIOptions(GUIOption::FixedWidth(kTooltipWidth)));
 		size = GUIHelper::CalculateOptimalContentSize(text, *multiLineLabelStyle, dimensions);
 	}
 

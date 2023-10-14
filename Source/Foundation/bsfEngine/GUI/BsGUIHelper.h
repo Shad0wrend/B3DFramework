@@ -24,7 +24,7 @@ namespace bs
 		 * @param	style			Style to use for determining size constraints.
 		 * @param	dimensions		Dimension constraints of a GUI element.
 		 */
-		static Vector2I CalculateOptimalContentSize(const Vector2I& contentSize, const GUIElementStyle& style, const GUIDimensions& dimensions);
+		static Vector2I CalculateOptimalContentSize(const Vector2I& contentSize, const GUIElementStyle& style, const GUISizeConstraints& dimensions); // TODO: DEPRECATED
 
 		/**
 		 * Calculates optimal content size for the provided content using the provided style and layout options for
@@ -35,7 +35,7 @@ namespace bs
 		 * @param	dimensions		Dimension constraints of a GUI element.
 		 * @param	state			State of the GUI element in case the content changes according to state.
 		 */
-		static Vector2I CalculateOptimalContentSize(const GUIContent& content, const GUIElementStyle& style, const GUIDimensions& dimensions, GUIElementState state = GUIElementState::Normal);
+		static Vector2I CalculateOptimalContentSize(const GUIContent& content, const GUIElementStyle& style, const GUISizeConstraints& dimensions, GUIElementState state = GUIElementState::Normal); // TODO: DEPRECATED
 
 		/**
 		 * Calculates optimal content size for the provided text using the provided style and layout options for
@@ -45,7 +45,7 @@ namespace bs
 		 * @param	style			Style to use for determining size constraints.
 		 * @param	dimensions		Dimension constraints of a GUI element.
 		 */
-		static Vector2I CalculateOptimalContentSize(const String& text, const GUIElementStyle& style, const GUIDimensions& dimensions);
+		static Vector2I CalculateOptimalContentSize(const String& text, const GUIElementStyle& style, const GUISizeConstraints& dimensions); // TODO: DEPRECATED
 
 		/**
 		 * Calculates size of the GUI element area based on the GUI content size. This is just the content area expanded by padding and border provided by the style.

@@ -11,14 +11,14 @@ using namespace bs;
 
 const Color GUIElement::kDisabledColor = Color(0.5f, 0.5f, 0.5f, 1.0f);
 
-GUIElement::GUIElement(String styleName, const GUIDimensions& dimensions, GUIElementOptions options)
+GUIElement::GUIElement(String styleName, const GUISizeConstraints& dimensions, GUIElementOptions options)
 	: GUIElementBase(dimensions), mOptionFlags(options), mStyle(&GUISkin::DefaultStyle), mStyleName(std::move(styleName))
 {
 	// Style is set to default here, and the proper one is assigned once GUI element
 	// is assigned to a parent (that's when the active GUI skin becomes known)
 }
 
-GUIElement::GUIElement(const char* styleName, const GUIDimensions& dimensions, GUIElementOptions options)
+GUIElement::GUIElement(const char* styleName, const GUISizeConstraints& dimensions, GUIElementOptions options)
 	: GUIElementBase(dimensions), mOptionFlags(options), mStyle(&GUISkin::DefaultStyle), mStyleName(styleName ? styleName : StringUtil::kBlank)
 {
 	// Style is set to default here, and the proper one is assigned once GUI element
@@ -195,12 +195,12 @@ void GUIElement::SetFocus(bool enabled, bool clear)
 
 void GUIElement::ResetDimensions()
 {
-	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
-	mDimensions = GUIDimensions::Create();
-	mDimensions.UpdateWithStyle(mStyle);
+	mSizeConstraints = GUISizeConstraints::Create();
+	mSizeConstraints.UpdateWithStyle(mStyle);
 
-	bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
 	if(isFixedBefore != isFixedAfter)
 		RefreshLayoutUpdateParentsForChildren();
@@ -213,10 +213,13 @@ Rect2I GUIElement::GetCachedVisibleBounds() const
 	const RectOffset& padding = GetPadding();
 	Rect2I bounds = GetClippedBounds();
 
-	bounds.X += padding.Left;
-	bounds.Y += padding.Top;
-	bounds.Width = (u32)std::max(0, (i32)bounds.Width - (i32)(padding.Left + padding.Right));
-	bounds.Height = (u32)std::max(0, (i32)bounds.Height - (i32)(padding.Top + padding.Bottom));
+	if(mStyleSheetStateStyle == nullptr) // Style sheet bounds already include the padding
+	{
+		bounds.X += padding.Left;
+		bounds.Y += padding.Top;
+		bounds.Width = (u32)std::max(0, (i32)bounds.Width - (i32)(padding.Left + padding.Right));
+		bounds.Height = (u32)std::max(0, (i32)bounds.Height - (i32)(padding.Top + padding.Bottom));
+	}
 
 	return bounds;
 }
@@ -330,12 +333,12 @@ void GUIElement::NotifyStyleSheetChanged()
 		{
 			mStyleSheetStyle = newStyle;
 
-			bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+			const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
 			mStyleSheetStateStyle = mStyleSheetStyle->FindStateStyle(mStateFlags);
-			mDimensions.UpdateWithStyle(*mStyleSheetStateStyle);
+			mSizeConstraints.UpdateWithStyle(*mStyleSheetStateStyle);
 
-			bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+			const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 			if(isFixedBefore != isFixedAfter)
 				RefreshLayoutUpdateParentsForChildren();
 
@@ -355,11 +358,11 @@ void GUIElement::NotifyStyleSheetChanged()
 		{
 			mStyle = newStyle;
 
-			bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+			const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
-			mDimensions.UpdateWithStyle(mStyle);
+			mSizeConstraints.UpdateWithStyle(mStyle);
 
-			bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+			const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 			if(isFixedBefore != isFixedAfter)
 				RefreshLayoutUpdateParentsForChildren();
 

@@ -93,7 +93,7 @@ namespace bs
 		~GUIListBox();
 
 	private:
-		GUIListBox(const String& styleName, const Vector<HString>& elements, bool isMultiselect, const GUIDimensions& dimensions);
+		GUIListBox(const String& styleName, const Vector<HString>& elements, bool isMultiselect, const GUISizeConstraints& dimensions);
 
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;

@@ -82,8 +82,8 @@ namespace bs
 		};
 
 	public:
-		GUIElement(String styleName, const GUIDimensions& dimensions, GUIElementOptions options = GUIElementOptions(0));
-		GUIElement(const char* styleName, const GUIDimensions& dimensions, GUIElementOptions options = GUIElementOptions(0));
+		GUIElement(String styleName, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOptions(0));
+		GUIElement(const char* styleName, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOptions(0));
 		~GUIElement() override = default;
 
 		const String& GetStyleSheetClass() const override { return mStyleName; }

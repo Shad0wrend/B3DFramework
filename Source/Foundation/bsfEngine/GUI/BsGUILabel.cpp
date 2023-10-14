@@ -4,12 +4,12 @@
 #include "GUI/BsGUIElementStyle.h"
 #include "2D/BsTextSprite.h"
 #include "Image/BsSpriteTexture.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUIHelper.h"
 
 using namespace bs;
 
-GUILabel::GUILabel(const String& styleName, const GUIContent& content, const GUIDimensions& dimensions)
+GUILabel::GUILabel(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions), mContent(content), mImageSprite(nullptr)
 {
 	mTextSprite = B3DNew<TextSprite>();
@@ -87,7 +87,7 @@ void GUILabel::UpdateRenderElements()
 
 Vector2I GUILabel::GetOptimalSize() const
 {
-	return GUIHelper::CalculateOptimalContentSize(mContent, *GetStyle(), GetDimensions());
+	return GUIHelper::CalculateOptimalContentSize(mContent, *GetStyle(), GetSizeConstraints());
 }
 
 void GUILabel::FillBuffer(
@@ -119,9 +119,9 @@ void GUILabel::FillBuffer(
 
 void GUILabel::SetContent(const GUIContent& content)
 {
-	Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 	mContent = content;
-	Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 	if(origSize != newSize)
 		MarkLayoutAsDirty();
@@ -141,12 +141,12 @@ GUILabel* GUILabel::Create(const HString& text, const GUIOptions& options, const
 
 GUILabel* GUILabel::Create(const GUIContent& content, const String& styleName)
 {
-	return new(B3DAllocate<GUILabel>()) GUILabel(GetStyleName<GUILabel>(styleName), content, GUIDimensions::Create());
+	return new(B3DAllocate<GUILabel>()) GUILabel(GetStyleName<GUILabel>(styleName), content, GUISizeConstraints::Create());
 }
 
 GUILabel* GUILabel::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUILabel>()) GUILabel(GetStyleName<GUILabel>(styleName), content, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUILabel>()) GUILabel(GetStyleName<GUILabel>(styleName), content, GUISizeConstraints::Create(options));
 }
 
 const String& GUILabel::GetGuiTypeName()

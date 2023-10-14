@@ -11,8 +11,8 @@
 
 using namespace bs;
 
-GUIElementBase::GUIElementBase(const GUIDimensions& dimensions)
-	: mDimensions(dimensions)
+GUIElementBase::GUIElementBase(const GUISizeConstraints& dimensions)
+	: mSizeConstraints(dimensions)
 {}
 
 GUIElementBase::~GUIElementBase()
@@ -22,8 +22,8 @@ GUIElementBase::~GUIElementBase()
 
 void GUIElementBase::SetPosition(i32 x, i32 y)
 {
-	mDimensions.X = x;
-	mDimensions.Y = y;
+	mSizeConstraints.X = x;
+	mSizeConstraints.Y = y;
 
 	// Note: I could call _markMeshAsDirty with a little more work. If parent is layout then this call can be ignored
 	// and if it's a panel, we can immediately change the position without a full layout rebuild.
@@ -32,13 +32,13 @@ void GUIElementBase::SetPosition(i32 x, i32 y)
 
 void GUIElementBase::SetSize(u32 width, u32 height)
 {
-	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
-	mDimensions.Flags |= GUIDF_FixedWidth | GUIDF_WidthOverridenAtRuntime | GUIDF_FixedHeight | GUIDF_HeightOverridenAtRuntime;
-	mDimensions.MinWidth = mDimensions.MaxWidth = width;
-	mDimensions.MinHeight = mDimensions.MaxHeight = height;
+	mSizeConstraints.Flags |= GUISizeConstraintFlag::FixedWidth | GUISizeConstraintFlag::WidthOverridenAtRuntime | GUISizeConstraintFlag::FixedHeight | GUISizeConstraintFlag::HeightOverridenAtRuntime;
+	mSizeConstraints.MinWidth = mSizeConstraints.MaxWidth = width;
+	mSizeConstraints.MinHeight = mSizeConstraints.MaxHeight = height;
 
-	bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
 	if(isFixedBefore != isFixedAfter)
 		RefreshLayoutUpdateParentsForChildren();
@@ -48,12 +48,12 @@ void GUIElementBase::SetSize(u32 width, u32 height)
 
 void GUIElementBase::SetWidth(u32 width)
 {
-	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
-	mDimensions.Flags |= GUIDF_FixedWidth | GUIDF_WidthOverridenAtRuntime;
-	mDimensions.MinWidth = mDimensions.MaxWidth = width;
+	mSizeConstraints.Flags |= GUISizeConstraintFlag::FixedWidth | GUISizeConstraintFlag::WidthOverridenAtRuntime;
+	mSizeConstraints.MinWidth = mSizeConstraints.MaxWidth = width;
 
-	bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
 	if(isFixedBefore != isFixedAfter)
 		RefreshLayoutUpdateParentsForChildren();
@@ -66,14 +66,14 @@ void GUIElementBase::SetFlexibleWidth(u32 minWidth, u32 maxWidth)
 	if(maxWidth < minWidth)
 		std::swap(minWidth, maxWidth);
 
-	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
-	mDimensions.Flags |= GUIDF_WidthOverridenAtRuntime;
-	mDimensions.Flags &= ~GUIDF_FixedWidth;
-	mDimensions.MinWidth = minWidth;
-	mDimensions.MaxWidth = maxWidth;
+	mSizeConstraints.Flags |= GUISizeConstraintFlag::WidthOverridenAtRuntime;
+	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::FixedWidth);
+	mSizeConstraints.MinWidth = minWidth;
+	mSizeConstraints.MaxWidth = maxWidth;
 
-	bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
 	if(isFixedBefore != isFixedAfter)
 		RefreshLayoutUpdateParentsForChildren();
@@ -83,12 +83,12 @@ void GUIElementBase::SetFlexibleWidth(u32 minWidth, u32 maxWidth)
 
 void GUIElementBase::SetHeight(u32 height)
 {
-	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
-	mDimensions.Flags |= GUIDF_FixedHeight | GUIDF_HeightOverridenAtRuntime;
-	mDimensions.MinHeight = mDimensions.MaxHeight = height;
+	mSizeConstraints.Flags |= GUISizeConstraintFlag::FixedHeight | GUISizeConstraintFlag::HeightOverridenAtRuntime;
+	mSizeConstraints.MinHeight = mSizeConstraints.MaxHeight = height;
 
-	bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
 	if(isFixedBefore != isFixedAfter)
 		RefreshLayoutUpdateParentsForChildren();
@@ -101,14 +101,14 @@ void GUIElementBase::SetFlexibleHeight(u32 minHeight, u32 maxHeight)
 	if(maxHeight < minHeight)
 		std::swap(minHeight, maxHeight);
 
-	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
-	mDimensions.Flags |= GUIDF_HeightOverridenAtRuntime;
-	mDimensions.Flags &= ~GUIDF_FixedHeight;
-	mDimensions.MinHeight = minHeight;
-	mDimensions.MaxHeight = maxHeight;
+	mSizeConstraints.Flags |= GUISizeConstraintFlag::HeightOverridenAtRuntime;
+	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::FixedHeight);
+	mSizeConstraints.MinHeight = minHeight;
+	mSizeConstraints.MaxHeight = maxHeight;
 
-	bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
 	if(isFixedBefore != isFixedAfter)
 		RefreshLayoutUpdateParentsForChildren();
@@ -118,11 +118,11 @@ void GUIElementBase::SetFlexibleHeight(u32 minHeight, u32 maxHeight)
 
 void GUIElementBase::ResetDimensions()
 {
-	bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
-	mDimensions = GUIDimensions::Create();
+	mSizeConstraints = GUISizeConstraints::Create();
 
-	bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
+	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
 	if(isFixedBefore != isFixedAfter)
 		RefreshLayoutUpdateParentsForChildren();
@@ -425,15 +425,15 @@ void GUIElementBase::UpdateLayoutRecursive(const GUILayoutData& data)
 	}
 }
 
-LayoutSizeRange GUIElementBase::CalculateLayoutSizeRange() const
+GUIConstrainedSize GUIElementBase::CalculateConstrainedSize() const
 {
-	const GUIDimensions& dimensions = GetDimensions();
-	return dimensions.CalculateSizeRange(GetOptimalSize());
+	const GUISizeConstraints& dimensions = GetSizeConstraints();
+	return dimensions.CalculateConstrainedSize(GetOptimalSize());
 }
 
-LayoutSizeRange GUIElementBase::GetLayoutSizeRange() const
+GUIConstrainedSize GUIElementBase::GetConstrainedSize() const
 {
-	return CalculateLayoutSizeRange();
+	return CalculateConstrainedSize();
 }
 
 const RectOffset& GUIElementBase::GetMargins() const
@@ -448,7 +448,7 @@ const RectOffset& GUIElementBase::GetPadding() const
 	return padding;
 }
 
-void GUIElementBase::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
+void GUIElementBase::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
 {
 	B3D_ASSERT(mChildren.size() == 0);
 }
@@ -608,8 +608,8 @@ GUIElementBase* GUIElementBase::FindLayoutUpdateParent()
 	GUIElementBase* currentElement = this;
 	while(currentElement != nullptr)
 	{
-		const GUIDimensions& parentDimensions = currentElement->GetDimensions();
-		bool boundsDependOnChildren = !parentDimensions.FixedHeight() || !parentDimensions.FixedWidth();
+		const GUISizeConstraints& parentDimensions = currentElement->GetSizeConstraints();
+		bool boundsDependOnChildren = !parentDimensions.IsHeightFixed() || !parentDimensions.IsWidthFixed();
 
 		if(!boundsDependOnChildren)
 			return currentElement;
@@ -658,8 +658,8 @@ void GUIElementBase::SetLayoutUpdateParent(GUIElementBase* layoutUpdateParent)
 {
 	mLayoutUpdateParent = layoutUpdateParent;
 
-	const GUIDimensions& dimensions = GetDimensions();
-	bool boundsDependOnChildren = !dimensions.FixedHeight() || !dimensions.FixedWidth();
+	const GUISizeConstraints& dimensions = GetSizeConstraints();
+	bool boundsDependOnChildren = !dimensions.IsHeightFixed() || !dimensions.IsWidthFixed();
 
 	if(!boundsDependOnChildren)
 		return;

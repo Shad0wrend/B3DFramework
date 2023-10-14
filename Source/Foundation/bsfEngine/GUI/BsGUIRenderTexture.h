@@ -67,7 +67,7 @@ namespace bs
 		void SetRenderTexture(const SPtr<RenderTexture>& texture);
 
 	protected:
-		GUIRenderTexture(const String& styleName, const SPtr<RenderTexture>& texture, bool transparent, const GUIDimensions& dimensions);
+		GUIRenderTexture(const String& styleName, const SPtr<RenderTexture>& texture, bool transparent, const GUISizeConstraints& dimensions);
 		virtual ~GUIRenderTexture();
 
 		void UpdateRenderElements() override;

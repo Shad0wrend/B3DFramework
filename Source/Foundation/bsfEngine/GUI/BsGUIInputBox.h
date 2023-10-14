@@ -93,7 +93,7 @@ namespace bs
 
 		/** @} */
 	protected:
-		GUIInputBox(const String& styleName, const GUIDimensions& dimensions, bool multiline);
+		GUIInputBox(const String& styleName, const GUISizeConstraints& dimensions, bool multiline);
 		virtual ~GUIInputBox();
 
 		void FillBuffer(u8* vertices, u32* indices, u32 vertexOffset, u32 indexOffset, const Vector2I& offset, u32 maxNumVerts, u32 maxNumIndices, u32 renderElementIdx) const override;

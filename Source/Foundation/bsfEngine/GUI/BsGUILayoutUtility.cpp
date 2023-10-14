@@ -8,7 +8,7 @@ using namespace bs;
 
 Vector2I GUIUtility::CalcOptimalSize(const GUIElementBase* elem)
 {
-	return elem->CalculateLayoutSizeRange().Optimal;
+	return elem->CalculateConstrainedSize().Optimal;
 }
 
 Vector2I GUIUtility::CalcActualSize(u32 width, u32 height, GUILayout* layout, bool updateOptimalSizes)

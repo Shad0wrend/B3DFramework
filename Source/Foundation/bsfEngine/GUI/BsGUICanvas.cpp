@@ -3,7 +3,7 @@
 #include "GUI/BsGUICanvas.h"
 #include "GUI/BsGUISkin.h"
 #include "Image/BsSpriteTexture.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUITexture.h"
 #include "Utility/BsShapeMeshes2D.h"
 #include "2D/BsSpriteManager.h"
@@ -21,7 +21,7 @@ const String& GUICanvas::GetGuiTypeName()
 	return name;
 }
 
-GUICanvas::GUICanvas(const String& styleName, const GUIDimensions& dimensions)
+GUICanvas::GUICanvas(const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions)
 {}
 
@@ -32,12 +32,12 @@ GUICanvas::~GUICanvas()
 
 GUICanvas* GUICanvas::Create(const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUICanvas>()) GUICanvas(GetStyleName<GUICanvas>(styleName), GUIDimensions::Create(options));
+	return new(B3DAllocate<GUICanvas>()) GUICanvas(GetStyleName<GUICanvas>(styleName), GUISizeConstraints::Create(options));
 }
 
 GUICanvas* GUICanvas::Create(const String& styleName)
 {
-	return new(B3DAllocate<GUICanvas>()) GUICanvas(GetStyleName<GUICanvas>(styleName), GUIDimensions::Create());
+	return new(B3DAllocate<GUICanvas>()) GUICanvas(GetStyleName<GUICanvas>(styleName), GUISizeConstraints::Create());
 }
 
 void GUICanvas::DrawLine(const Vector2I& a, const Vector2I& b, const Color& color, u8 depth)

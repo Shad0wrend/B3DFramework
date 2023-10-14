@@ -140,7 +140,7 @@ namespace bs
 		void UpdateClippedBounds() override;
 
 	private:
-		GUISliderHandle(GUISliderHandleFlags flags, const String& styleName, const GUIDimensions& dimensions);
+		GUISliderHandle(GUISliderHandleFlags flags, const String& styleName, const GUISizeConstraints& dimensions);
 
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 

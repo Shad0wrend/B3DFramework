@@ -1,20 +1,20 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUIElementStyle.h"
 #include "GUI/BsGUIOptions.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
 
-GUIDimensions GUIDimensions::Create()
+GUISizeConstraints GUISizeConstraints::Create()
 {
-	return GUIDimensions();
+	return GUISizeConstraints();
 }
 
-GUIDimensions GUIDimensions::Create(const GUIOptions& options)
+GUISizeConstraints GUISizeConstraints::Create(const GUIOptions& options)
 {
-	GUIDimensions dimensions;
+	GUISizeConstraints dimensions;
 
 	for(auto& option : options.mOptions)
 	{
@@ -25,22 +25,22 @@ GUIDimensions GUIDimensions::Create(const GUIOptions& options)
 			dimensions.Y = (i32)option.max;
 			break;
 		case GUIOption::Type::FixedWidth:
-			dimensions.Flags |= GUIDF_FixedWidth | GUIDF_WidthOverridenAtRuntime;
+			dimensions.Flags |= GUISizeConstraintFlag::FixedWidth | GUISizeConstraintFlag::WidthOverridenAtRuntime;
 			dimensions.MinWidth = dimensions.MaxWidth = option.min;
 			break;
 		case GUIOption::Type::FixedHeight:
-			dimensions.Flags |= GUIDF_FixedHeight | GUIDF_HeightOverridenAtRuntime;
+			dimensions.Flags |= GUISizeConstraintFlag::FixedHeight | GUISizeConstraintFlag::HeightOverridenAtRuntime;
 			dimensions.MinHeight = dimensions.MaxHeight = option.min;
 			break;
 		case GUIOption::Type::FlexibleWidth:
-			dimensions.Flags |= GUIDF_WidthOverridenAtRuntime;
-			dimensions.Flags &= ~GUIDF_FixedWidth;
+			dimensions.Flags |= GUISizeConstraintFlag::WidthOverridenAtRuntime;
+			dimensions.Flags.Unset(GUISizeConstraintFlag::FixedWidth);
 			dimensions.MinWidth = option.min;
 			dimensions.MaxWidth = option.max;
 			break;
 		case GUIOption::Type::FlexibleHeight:
-			dimensions.Flags |= GUIDF_HeightOverridenAtRuntime;
-			dimensions.Flags &= ~GUIDF_FixedHeight;
+			dimensions.Flags |= GUISizeConstraintFlag::HeightOverridenAtRuntime;
+			dimensions.Flags.Unset(GUISizeConstraintFlag::FixedHeight);
 			dimensions.MinHeight = option.min;
 			dimensions.MaxHeight = option.max;
 			break;
@@ -50,18 +50,18 @@ GUIDimensions GUIDimensions::Create(const GUIOptions& options)
 	return dimensions;
 }
 
-void GUIDimensions::UpdateWithStyle(const GUIElementStyle* style)
+void GUISizeConstraints::UpdateWithStyle(const GUIElementStyle* style)
 {
 	if(!IsWidthOverridenAtRuntime())
 	{
 		if(style->FixedWidth)
 		{
-			Flags |= GUIDF_FixedWidth;
+			Flags |= GUISizeConstraintFlag::FixedWidth;
 			MinWidth = MaxWidth = style->Width;
 		}
 		else
 		{
-			Flags &= ~GUIDF_FixedWidth;
+			Flags.Unset(GUISizeConstraintFlag::FixedWidth);
 			MinWidth = style->MinWidth;
 			MaxWidth = style->MaxWidth;
 		}
@@ -71,30 +71,30 @@ void GUIDimensions::UpdateWithStyle(const GUIElementStyle* style)
 	{
 		if(style->FixedHeight)
 		{
-			Flags |= GUIDF_FixedHeight;
+			Flags |= GUISizeConstraintFlag::FixedHeight;
 			MinHeight = MaxHeight = style->Height;
 		}
 		else
 		{
-			Flags &= ~GUIDF_FixedHeight;
+			Flags.Unset(GUISizeConstraintFlag::FixedHeight);
 			MinHeight = style->MinHeight;
 			MaxHeight = style->MaxHeight;
 		}
 	}
 }
 
-void GUIDimensions::UpdateWithStyle(const GUIStyleSheetStateRule& style)
+void GUISizeConstraints::UpdateWithStyle(const GUIStyleSheetStateRule& style)
 {
 	if(!IsWidthOverridenAtRuntime())
 	{
 		if(style.IsPropertySet(GUIStyleSheetPropertyType::Width))
 		{
-			Flags |= GUIDF_FixedWidth;
+			Flags |= GUISizeConstraintFlag::FixedWidth;
 			MinWidth = MaxWidth = style.Size.Width;
 		}
 		else
 		{
-			Flags &= ~GUIDF_FixedWidth;
+			Flags.Unset(GUISizeConstraintFlag::FixedWidth);
 			MinWidth = style.MinimumSize.Width;
 			MaxWidth = style.MaximumSize.Width;
 		}
@@ -104,23 +104,23 @@ void GUIDimensions::UpdateWithStyle(const GUIStyleSheetStateRule& style)
 	{
 		if(style.IsPropertySet(GUIStyleSheetPropertyType::Height))
 		{
-			Flags |= GUIDF_FixedHeight;
+			Flags |= GUISizeConstraintFlag::FixedHeight;
 			MinHeight = MaxHeight = style.Size.Height;
 		}
 		else
 		{
-			Flags &= ~GUIDF_FixedHeight;
+			Flags.Unset(GUISizeConstraintFlag::FixedHeight);
 			MinHeight = style.MinimumSize.Height;
 			MaxHeight = style.MaximumSize.Height;
 		}
 	}
 }
 
-LayoutSizeRange GUIDimensions::CalculateSizeRange(const Vector2I& optimal) const
+GUIConstrainedSize GUISizeConstraints::CalculateConstrainedSize(const Vector2I& optimalSize) const
 {
-	LayoutSizeRange sizeRange;
+	GUIConstrainedSize sizeRange;
 
-	if(FixedHeight())
+	if(IsHeightFixed())
 	{
 		sizeRange.Optimal.Y = std::max(0, (i32)MinHeight);
 		sizeRange.Min.Y = sizeRange.Optimal.Y;
@@ -128,7 +128,7 @@ LayoutSizeRange GUIDimensions::CalculateSizeRange(const Vector2I& optimal) const
 	}
 	else
 	{
-		sizeRange.Optimal.Y = optimal.Y;
+		sizeRange.Optimal.Y = optimalSize.Y;
 
 		if(MinHeight > 0)
 		{
@@ -143,7 +143,7 @@ LayoutSizeRange GUIDimensions::CalculateSizeRange(const Vector2I& optimal) const
 		}
 	}
 
-	if(FixedWidth())
+	if(IsWidthFixed())
 	{
 		sizeRange.Optimal.X = std::max(0, (i32)MinWidth);
 		sizeRange.Min.X = sizeRange.Optimal.X;
@@ -151,7 +151,7 @@ LayoutSizeRange GUIDimensions::CalculateSizeRange(const Vector2I& optimal) const
 	}
 	else
 	{
-		sizeRange.Optimal.X = optimal.X;
+		sizeRange.Optimal.X = optimalSize.X;
 
 		if(MinWidth > 0)
 		{

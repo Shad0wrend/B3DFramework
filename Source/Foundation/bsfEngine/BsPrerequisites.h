@@ -161,7 +161,7 @@ namespace bs
 	class GUIFlexibleSpace;
 	class GUIInputCaret;
 	class GUIInputSelection;
-	struct GUIDimensions;
+	struct GUISizeConstraints;
 	class GUIOptions;
 	class GUIToggleGroup;
 	class GUIListBox;

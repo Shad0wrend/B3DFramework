@@ -19,7 +19,7 @@ namespace bs
 	class B3D_EXPORT GUILayout : public GUIElementBase
 	{
 	public:
-		GUILayout(const GUIDimensions& dimensions);
+		GUILayout(const GUISizeConstraints& dimensions);
 		GUILayout();
 		virtual ~GUILayout();
 
@@ -67,16 +67,16 @@ namespace bs
 		 *  @{
 		 */
 
-		LayoutSizeRange GetLayoutSizeRange() const override { return GetCachedSizeRangeInternal(); }
+		GUIConstrainedSize GetConstrainedSize() const override { return GetCachedSizeRangeInternal(); }
 
 		/** Returns a size range that was cached during the last GUIElementBase::_updateOptimalLayoutSizes call. */
-		LayoutSizeRange GetCachedSizeRangeInternal() const { return mSizeRange; }
+		GUIConstrainedSize GetCachedSizeRangeInternal() const { return mSizeRange; }
 
 		/**
 		 * Returns a size ranges for all children that was cached during the last GUIElementBase::_updateOptimalLayoutSizes
 		 * call.
 		 */
-		const Vector<LayoutSizeRange>& GetCachedChildSizeRangesInternal() const { return mChildSizeRanges; }
+		const Vector<GUIConstrainedSize>& GetCachedChildSizeRangesInternal() const { return mChildSizeRanges; }
 
 		Vector2I GetOptimalSize() const override { return mSizeRange.Optimal; }
 		Type GetType() const override { return GUIElementBase::Type::Layout; }
@@ -84,8 +84,8 @@ namespace bs
 		/** @} */
 
 	protected:
-		Vector<LayoutSizeRange> mChildSizeRanges;
-		LayoutSizeRange mSizeRange;
+		Vector<GUIConstrainedSize> mChildSizeRanges;
+		GUIConstrainedSize mSizeRange;
 	};
 
 	/** @} */

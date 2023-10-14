@@ -66,7 +66,7 @@ namespace bs
 		void UpdateRenderElements() override;
 
 	private:
-		GUIViewport(const String& styleName, const HCamera& camera, float aspectRatio, Degree fieldOfView, const GUIDimensions& dimensions);
+		GUIViewport(const String& styleName, const HCamera& camera, float aspectRatio, Degree fieldOfView, const GUISizeConstraints& dimensions);
 
 		void ChangeParentWidget(GUIWidget* widget) override;
 

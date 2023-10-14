@@ -10,9 +10,9 @@ GUIFixedSpace::~GUIFixedSpace()
 		mParent->UnregisterChildElement(this);
 }
 
-LayoutSizeRange GUIFixedSpace::CalculateLayoutSizeRange() const
+GUIConstrainedSize GUIFixedSpace::CalculateConstrainedSize() const
 {
-	LayoutSizeRange range;
+	GUIConstrainedSize range;
 	range.Optimal = GetOptimalSize();
 	range.Min = range.Optimal;
 	range.Max = range.Optimal;
@@ -36,9 +36,9 @@ GUIFlexibleSpace::~GUIFlexibleSpace()
 		mParent->UnregisterChildElement(this);
 }
 
-LayoutSizeRange GUIFlexibleSpace::CalculateLayoutSizeRange() const
+GUIConstrainedSize GUIFlexibleSpace::CalculateConstrainedSize() const
 {
-	LayoutSizeRange range;
+	GUIConstrainedSize range;
 	range.Optimal = GetOptimalSize();
 	range.Min = range.Optimal;
 	range.Max = range.Optimal;

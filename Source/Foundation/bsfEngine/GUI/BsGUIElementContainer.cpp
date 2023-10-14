@@ -6,13 +6,13 @@
 
 using namespace bs;
 
-GUIElementContainer::GUIElementContainer(const GUIDimensions& dimensions, const char* style, GUIElementOptions options)
+GUIElementContainer::GUIElementContainer(const GUISizeConstraints& dimensions, const char* style, GUIElementOptions options)
 	: GUIElement(style, dimensions, options)
 {
 	mOptionFlags.Set(GUIElementOption::ClickThrough);
 }
 
-GUIElementContainer::GUIElementContainer(const GUIDimensions& dimensions, const String& style, GUIElementOptions options)
+GUIElementContainer::GUIElementContainer(const GUISizeConstraints& dimensions, const String& style, GUIElementOptions options)
 	: GUIElement(style, dimensions, options)
 {
 	mOptionFlags.Set(GUIElementOption::ClickThrough);

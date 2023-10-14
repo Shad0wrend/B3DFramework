@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIScrollArea.h"
 #include "GUI/BsGUIElementStyle.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUILayoutY.h"
 #include "GUI/BsGUIScrollBarVert.h"
 #include "GUI/BsGUIScrollBarHorz.h"
@@ -16,7 +16,7 @@ using namespace bs;
 const u32 GUIScrollArea::kScrollBarWidth = 16;
 const u32 GUIScrollArea::kWheelScrollAmount = 50;
 
-GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType, const String& scrollBarStyle, const String& scrollAreaStyle, const GUIDimensions& dimensions)
+GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType, const String& scrollBarStyle, const String& scrollAreaStyle, const GUISizeConstraints& dimensions)
 	: GUIElementContainer(dimensions), mVertBarType(vertBarType), mHorzBarType(horzBarType), mScrollBarStyle(scrollBarStyle), mVertScroll(nullptr), mHorzScroll(nullptr), mVertOffset(0), mHorzOffset(0), mRecalculateVertOffset(false), mRecalculateHorzOffset(false)
 {
 	mContentLayout = GUILayoutY::Create();
@@ -50,19 +50,19 @@ Vector2I GUIScrollArea::GetOptimalSize() const
 	return optimalSize;
 }
 
-LayoutSizeRange GUIScrollArea::CalculateLayoutSizeRange() const
+GUIConstrainedSize GUIScrollArea::CalculateConstrainedSize() const
 {
 	// I'm ignoring scroll bars here since if the content layout fits
 	// then they're not needed and the range is valid. And if it doesn't
 	// fit the area will get clipped anyway and including the scroll bars
 	// won't change the size much, but it would complicate this method significantly.
 	if(mContentLayout->IsActive())
-		return mDimensions.CalculateSizeRange(GetOptimalSize());
+		return mSizeConstraints.CalculateConstrainedSize(GetOptimalSize());
 
-	return mDimensions.CalculateSizeRange(Vector2I());
+	return mSizeConstraints.CalculateConstrainedSize(Vector2I());
 }
 
-LayoutSizeRange GUIScrollArea::GetLayoutSizeRange() const
+GUIConstrainedSize GUIScrollArea::GetConstrainedSize() const
 {
 	return mSizeRange;
 }
@@ -79,23 +79,23 @@ void GUIScrollArea::UpdateOptimalLayoutSizes()
 	for(auto& child : mChildren)
 	{
 		if(child->IsActive())
-			mChildSizeRanges[childIdx] = child->GetLayoutSizeRange();
+			mChildSizeRanges[childIdx] = child->GetConstrainedSize();
 		else
-			mChildSizeRanges[childIdx] = LayoutSizeRange();
+			mChildSizeRanges[childIdx] = GUIConstrainedSize();
 
 		childIdx++;
 	}
 
-	mSizeRange = mDimensions.CalculateSizeRange(GetOptimalSize());
+	mSizeRange = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize());
 }
 
-void GUIScrollArea::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
+void GUIScrollArea::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
 {
 	Vector2I visibleSize, contentSize;
 	GetElementAreasInternal(layoutArea, elementAreas, numElements, sizeRanges, visibleSize, contentSize);
 }
 
-void GUIScrollArea::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const
+void GUIScrollArea::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const
 {
 	B3D_ASSERT(mChildren.size() == numElements && numElements == 3);
 
@@ -507,22 +507,22 @@ bool GUIScrollArea::DoOnMouseEvent(const GUIMouseEvent& ev)
 
 GUIScrollArea* GUIScrollArea::Create(ScrollBarType vertBarType, ScrollBarType horzBarType, const String& scrollBarStyle, const String& scrollAreaStyle)
 {
-	return new(B3DAllocate<GUIScrollArea>()) GUIScrollArea(vertBarType, horzBarType, scrollBarStyle, GetStyleName<GUIScrollArea>(scrollAreaStyle), GUIDimensions::Create());
+	return new(B3DAllocate<GUIScrollArea>()) GUIScrollArea(vertBarType, horzBarType, scrollBarStyle, GetStyleName<GUIScrollArea>(scrollAreaStyle), GUISizeConstraints::Create());
 }
 
 GUIScrollArea* GUIScrollArea::Create(const GUIOptions& options, const String& scrollBarStyle, const String& scrollAreaStyle)
 {
-	return new(B3DAllocate<GUIScrollArea>()) GUIScrollArea(ScrollBarType::ShowIfDoesntFit, ScrollBarType::ShowIfDoesntFit, scrollBarStyle, GetStyleName<GUIScrollArea>(scrollAreaStyle), GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIScrollArea>()) GUIScrollArea(ScrollBarType::ShowIfDoesntFit, ScrollBarType::ShowIfDoesntFit, scrollBarStyle, GetStyleName<GUIScrollArea>(scrollAreaStyle), GUISizeConstraints::Create(options));
 }
 
 GUIScrollArea* GUIScrollArea::Create(const String& scrollBarStyle, const String& scrollAreaStyle)
 {
-	return new(B3DAllocate<GUIScrollArea>()) GUIScrollArea(ScrollBarType::ShowIfDoesntFit, ScrollBarType::ShowIfDoesntFit, scrollBarStyle, GetStyleName<GUIScrollArea>(scrollAreaStyle), GUIDimensions::Create());
+	return new(B3DAllocate<GUIScrollArea>()) GUIScrollArea(ScrollBarType::ShowIfDoesntFit, ScrollBarType::ShowIfDoesntFit, scrollBarStyle, GetStyleName<GUIScrollArea>(scrollAreaStyle), GUISizeConstraints::Create());
 }
 
 GUIScrollArea* GUIScrollArea::Create(ScrollBarType vertBarType, ScrollBarType horzBarType, const GUIOptions& options, const String& scrollBarStyle, const String& scrollAreaStyle)
 {
-	return new(B3DAllocate<GUIScrollArea>()) GUIScrollArea(vertBarType, horzBarType, scrollBarStyle, GetStyleName<GUIScrollArea>(scrollAreaStyle), GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIScrollArea>()) GUIScrollArea(vertBarType, horzBarType, scrollBarStyle, GetStyleName<GUIScrollArea>(scrollAreaStyle), GUISizeConstraints::Create(options));
 }
 
 const String& GUIScrollArea::GetGuiTypeName()

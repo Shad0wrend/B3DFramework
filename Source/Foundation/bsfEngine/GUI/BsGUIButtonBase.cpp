@@ -5,7 +5,7 @@
 #include "GUI/BsGUISkin.h"
 #include "Image/BsSpriteTexture.h"
 #include "2D/BsTextSprite.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUICommandEvent.h"
 #include "GUI/BsGUIHelper.h"
@@ -14,7 +14,7 @@
 
 using namespace bs;
 
-GUIButtonBase::GUIButtonBase(const String& styleName, const GUIContent& content, const GUIDimensions& dimensions, GUIElementOptions options)
+GUIButtonBase::GUIButtonBase(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions, GUIElementOptions options)
 	: GUIElement(styleName, dimensions, options), mContent(content)
 {
 	mImageSprite = B3DNew<ImageSprite>();
@@ -39,13 +39,13 @@ GUIButtonBase::~GUIButtonBase()
 
 void GUIButtonBase::SetContent(const GUIContent& content)
 {
-	Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 	mContent = content;
 	mContentAnimationStartTime = GetTime().GetTime();
 
 	RefreshContentSprite();
 
-	Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 	if(origSize != newSize)
 		MarkLayoutAsDirty();
@@ -163,7 +163,7 @@ Vector2I GUIButtonBase::GetOptimalSize() const
 	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
 	if(isUsingStyleSheets)
 	{
-		const Size2UI contentSize = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, *mStyleSheetStateStyle, GetDimensions().MaxWidth);
+		const Size2UI contentSize = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, *mStyleSheetStateStyle, GetSizeConstraints().MaxWidth);
 		
 		const u32 contentWidth = std::max(imageWidth, contentSize.Width);
 		const u32 contentHeight = std::max(imageHeight, contentSize.Height);
@@ -179,7 +179,7 @@ Vector2I GUIButtonBase::GetOptimalSize() const
 			imageHeight = activeTex->GetHeight();
 		}
 
-		Vector2I contentSize = GUIHelper::CalculateOptimalContentSize(mContent, *GetStyle(), GetDimensions(), mActiveState);
+		Vector2I contentSize = GUIHelper::CalculateOptimalContentSize(mContent, *GetStyle(), GetSizeConstraints(), mActiveState);
 		u32 contentWidth = std::max(imageWidth, (u32)contentSize.X);
 		u32 contentHeight = std::max(imageHeight, (u32)contentSize.Y);
 
@@ -469,14 +469,14 @@ void GUIButtonBase::NotifyStyleChanged()
 
 void GUIButtonBase::SetStateInternal(GUIElementState state)
 {
-	Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 	if(mActiveState != state)
 		mImageDesc.AnimationStartTime = GetTime().GetTime();
 
 	mActiveState = state;
 	RefreshContentSprite();
-	Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 	if(origSize != newSize)
 		MarkLayoutAsDirty();

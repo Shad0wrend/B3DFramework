@@ -3,7 +3,7 @@
 #include "GUI/BsGUISlider.h"
 #include "GUI/BsGUISliderHandle.h"
 #include "GUI/BsGUITexture.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUICommandEvent.h"
 #include "GUI/BsGUIElementStyle.h"
 
@@ -11,7 +11,7 @@ using namespace std::placeholders;
 
 using namespace bs;
 
-GUISlider::GUISlider(bool horizontal, const String& styleName, const GUIDimensions& dimensions)
+GUISlider::GUISlider(bool horizontal, const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElementContainer(dimensions, styleName, GUIElementOption::AcceptsKeyFocus), mHorizontal(horizontal)
 {
 	GUISliderHandleFlags flags = horizontal ? GUISliderHandleFlag::Horizontal : GUISliderHandleFlag::Vertical;
@@ -252,19 +252,19 @@ bool GUISlider::DoOnCommandEvent(const GUICommandEvent& ev)
 	return baseReturnValue;
 }
 
-GUISliderHorz::GUISliderHorz(const String& styleName, const GUIDimensions& dimensions)
+GUISliderHorz::GUISliderHorz(const String& styleName, const GUISizeConstraints& dimensions)
 	: GUISlider(true, styleName, dimensions)
 {
 }
 
 GUISliderHorz* GUISliderHorz::Create(const String& styleName)
 {
-	return new(B3DAllocate<GUISliderHorz>()) GUISliderHorz(GetStyleName<GUISliderHorz>(styleName), GUIDimensions::Create());
+	return new(B3DAllocate<GUISliderHorz>()) GUISliderHorz(GetStyleName<GUISliderHorz>(styleName), GUISizeConstraints::Create());
 }
 
 GUISliderHorz* GUISliderHorz::Create(const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUISliderHorz>()) GUISliderHorz(GetStyleName<GUISliderHorz>(styleName), GUIDimensions::Create(options));
+	return new(B3DAllocate<GUISliderHorz>()) GUISliderHorz(GetStyleName<GUISliderHorz>(styleName), GUISizeConstraints::Create(options));
 }
 
 const String& GUISliderHorz::GetGuiTypeName()
@@ -273,19 +273,19 @@ const String& GUISliderHorz::GetGuiTypeName()
 	return typeName;
 }
 
-GUISliderVert::GUISliderVert(const String& styleName, const GUIDimensions& dimensions)
+GUISliderVert::GUISliderVert(const String& styleName, const GUISizeConstraints& dimensions)
 	: GUISlider(false, styleName, dimensions)
 {
 }
 
 GUISliderVert* GUISliderVert::Create(const String& styleName)
 {
-	return new(B3DAllocate<GUISliderVert>()) GUISliderVert(GetStyleName<GUISliderVert>(styleName), GUIDimensions::Create());
+	return new(B3DAllocate<GUISliderVert>()) GUISliderVert(GetStyleName<GUISliderVert>(styleName), GUISizeConstraints::Create());
 }
 
 GUISliderVert* GUISliderVert::Create(const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUISliderVert>()) GUISliderVert(GetStyleName<GUISliderVert>(styleName), GUIDimensions::Create(options));
+	return new(B3DAllocate<GUISliderVert>()) GUISliderVert(GetStyleName<GUISliderVert>(styleName), GUISizeConstraints::Create(options));
 }
 
 const String& GUISliderVert::GetGuiTypeName()

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUILayoutData.h"
 #include "Math/BsRect2I.h"
 #include "Math/BsVector2I.h"
@@ -44,7 +44,7 @@ namespace bs
 
 	public:
 		GUIElementBase() = default;
-		GUIElementBase(const GUIDimensions& dimensions);
+		GUIElementBase(const GUISizeConstraints& dimensions);
 		virtual ~GUIElementBase();
 
 		/** Returns the name of the GUI element type to be used for style lookup in the style sheet. */
@@ -177,7 +177,7 @@ namespace bs
 		 *								elements array.
 		 * @param[in]	mySizeRange		Size range of this element.
 		 */
-		virtual void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const;
+		virtual void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const;
 
 		/** Updates layout data that determines GUI elements final position & depth in the GUI widget. */
 		virtual void SetLayoutData(const GUILayoutData& data) { mLayoutData = data; }
@@ -197,17 +197,14 @@ namespace bs
 		/**	Returns previously calculated optimal size for this element. */
 		virtual Vector2I GetOptimalSize() const = 0;
 
-		/**	Returns layout options that determine how is the element positioned and sized. */
-		const GUIDimensions& GetDimensions() const { return mDimensions; }
+		/**	Returns size constraints that determine how is the GUI element allowed to be resized by the layout. */
+		const GUISizeConstraints& GetSizeConstraints() const { return mSizeConstraints; }
 
-		/**	Calculates element size range constrained by its layout options. */
-		virtual LayoutSizeRange CalculateLayoutSizeRange() const;
+		/**	Calculates element size based on its optimal size constrained by its size constraint options. */
+		virtual GUIConstrainedSize CalculateConstrainedSize() const;
 
-		/**
-		 * Returns element size range constrained by its layout options. This is different from CalculateLayoutSizeRangeInternal()
-		 * because this method may return cached size range.
-		 */
-		virtual LayoutSizeRange GetLayoutSizeRange() const;
+		/** Returns element size constrained by its size constraints. This is different from CalculateConstrainedSize() because this method may return cached size. */
+		virtual GUIConstrainedSize GetConstrainedSize() const;
 
 		/**
 		 * Returns GUI element margins. Margins are modified by changing element style and determines minimum distance
@@ -352,7 +349,7 @@ namespace bs
 
 		u8 mFlags = GUIElem_Dirty;
 
-		GUIDimensions mDimensions; /**< Wanted position and size, as requested by the style, or set explicitly at runtime. */
+		GUISizeConstraints mSizeConstraints; /**< Constraints on the element size as set by the style, or set explicitly at runtime. */
 		GUILayoutData mLayoutData; /**< Calculated position, size, depth and other information, valid after a layout update. */
 	};
 

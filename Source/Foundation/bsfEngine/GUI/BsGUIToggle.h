@@ -149,7 +149,7 @@ namespace bs
 		virtual ~GUIToggle();
 
 	protected:
-		GUIToggle(const String& styleName, const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const GUIDimensions& dimensions);
+		GUIToggle(const String& styleName, const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const GUISizeConstraints& dimensions);
 
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;

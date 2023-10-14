@@ -59,7 +59,7 @@ namespace bs
 		static GUIScrollBarHorz* Create(bool resizeable, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
 
 	protected:
-		GUIScrollBarHorz(bool resizeable, const String& styleName, const GUIDimensions& dimensions);
+		GUIScrollBarHorz(bool resizeable, const String& styleName, const GUISizeConstraints& dimensions);
 		~GUIScrollBarHorz() = default;
 	};
 

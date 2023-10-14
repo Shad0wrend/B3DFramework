@@ -81,7 +81,7 @@ namespace bs
 		void UpdateRenderElements() override;
 
 	private:
-		GUILabel(const String& styleName, const GUIContent& content, const GUIDimensions& dimensions);
+		GUILabel(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions);
 
 		GUIContent mContent;
 

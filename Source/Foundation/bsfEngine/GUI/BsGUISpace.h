@@ -47,7 +47,7 @@ namespace bs
 
 		Type GetType() const override { return GUIElementBase::Type::FixedSpace; }
 		Vector2I GetOptimalSize() const override { return Vector2I(GetSize(), GetSize()); }
-		LayoutSizeRange CalculateLayoutSizeRange() const override;
+		GUIConstrainedSize CalculateConstrainedSize() const override;
 
 		/** @} */
 	protected:
@@ -83,7 +83,7 @@ namespace bs
 
 		Type GetType() const override { return GUIElementBase::Type::FlexibleSpace; }
 		Vector2I GetOptimalSize() const override { return Vector2I(0, 0); }
-		LayoutSizeRange CalculateLayoutSizeRange() const override;
+		GUIConstrainedSize CalculateConstrainedSize() const override;
 
 		/** @} */
 	};

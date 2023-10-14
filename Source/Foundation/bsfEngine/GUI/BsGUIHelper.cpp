@@ -3,14 +3,14 @@
 #include "GUI/BsGUIHelper.h"
 #include "Image/BsSpriteTexture.h"
 #include "GUI/BsGUIElementStyle.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "Image/BsTexture.h"
 #include "String/BsUnicode.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
 
-Vector2I GUIHelper::CalculateOptimalContentSize(const Vector2I& contentSize, const GUIElementStyle& style, const GUIDimensions& dimensions)
+Vector2I GUIHelper::CalculateOptimalContentSize(const Vector2I& contentSize, const GUIElementStyle& style, const GUISizeConstraints& dimensions)
 {
 	u32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
 	u32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
@@ -18,7 +18,7 @@ Vector2I GUIHelper::CalculateOptimalContentSize(const Vector2I& contentSize, con
 	return Vector2I(std::max((u32)contentSize.X, contentWidth), std::max((u32)contentSize.Y, contentHeight));
 }
 
-Vector2I GUIHelper::CalculateOptimalContentSize(const GUIContent& content, const GUIElementStyle& style, const GUIDimensions& dimensions, GUIElementState state)
+Vector2I GUIHelper::CalculateOptimalContentSize(const GUIContent& content, const GUIElementStyle& style, const GUISizeConstraints& dimensions, GUIElementState state)
 {
 	Vector2I contentBounds = CalculateOptimalContentSize((const String&)content.Text, style, dimensions);
 
@@ -32,7 +32,7 @@ Vector2I GUIHelper::CalculateOptimalContentSize(const GUIContent& content, const
 	return contentBounds;
 }
 
-Vector2I GUIHelper::CalculateOptimalContentSize(const String& text, const GUIElementStyle& style, const GUIDimensions& dimensions)
+Vector2I GUIHelper::CalculateOptimalContentSize(const String& text, const GUIElementStyle& style, const GUISizeConstraints& dimensions)
 {
 	u32 wordWrapWidth = 0;
 

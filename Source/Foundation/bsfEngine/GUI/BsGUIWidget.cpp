@@ -222,7 +222,7 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 		GUIElementBase* dirtyElement = elem;
 		dirtyElement->UpdateOptimalLayoutSizes();
 
-		LayoutSizeRange elementSizeRange = panel->GetElementSizeRangeInternal(dirtyElement);
+		GUIConstrainedSize elementSizeRange = panel->GetElementSizeRangeInternal(dirtyElement);
 		Rect2I elementArea = panel->GetElementAreaInternal(panel->GetLayoutData().Area, dirtyElement, elementSizeRange);
 
 		GUILayoutData childLayoutData = panel->GetLayoutData();

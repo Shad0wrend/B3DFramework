@@ -67,7 +67,7 @@ namespace bs
 
 		/** @} */
 	protected:
-		GUIProgressBar(const String& styleName, const GUIDimensions& dimensions);
+		GUIProgressBar(const String& styleName, const GUISizeConstraints& dimensions);
 
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
 		void NotifyStyleChanged() override;

@@ -1,7 +1,7 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIToggle.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUIToggleGroup.h"
 #include "BsGUICommandEvent.h"
@@ -14,7 +14,7 @@ const String& GUIToggle::GetGuiTypeName()
 	return name;
 }
 
-GUIToggle::GUIToggle(const String& styleName, const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const GUIDimensions& dimensions)
+GUIToggle::GUIToggle(const String& styleName, const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const GUISizeConstraints& dimensions)
 	: GUIButtonBase(styleName, content, dimensions), mToggleGroup(nullptr), mIsToggled(false)
 {
 	if(toggleGroup != nullptr)
@@ -51,22 +51,22 @@ GUIToggle* GUIToggle::Create(const HString& text, SPtr<GUIToggleGroup> toggleGro
 
 GUIToggle* GUIToggle::Create(const GUIContent& content, const String& styleName)
 {
-	return new(B3DAllocate<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::Create());
+	return new(B3DAllocate<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, nullptr, GUISizeConstraints::Create());
 }
 
 GUIToggle* GUIToggle::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, nullptr, GUISizeConstraints::Create(options));
 }
 
 GUIToggle* GUIToggle::Create(const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const String& styleName)
 {
-	return new(B3DAllocate<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::Create());
+	return new(B3DAllocate<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, toggleGroup, GUISizeConstraints::Create());
 }
 
 GUIToggle* GUIToggle::Create(const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, toggleGroup, GUISizeConstraints::Create(options));
 }
 
 SPtr<GUIToggleGroup> GUIToggle::CreateToggleGroup(bool allowAllOff)

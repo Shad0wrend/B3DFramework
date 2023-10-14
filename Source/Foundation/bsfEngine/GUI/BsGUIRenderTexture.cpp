@@ -13,7 +13,7 @@ const String& GUIRenderTexture::GetGuiTypeName()
 	return name;
 }
 
-GUIRenderTexture::GUIRenderTexture(const String& styleName, const SPtr<RenderTexture>& texture, bool transparent, const GUIDimensions& dimensions)
+GUIRenderTexture::GUIRenderTexture(const String& styleName, const SPtr<RenderTexture>& texture, bool transparent, const GUISizeConstraints& dimensions)
 	: GUITexture(styleName, HSpriteTexture(), TextureScaleMode::StretchToFit, false, dimensions), mTransparent(transparent)
 {
 	SetRenderTexture(texture);
@@ -27,22 +27,22 @@ GUIRenderTexture::~GUIRenderTexture()
 
 GUIRenderTexture* GUIRenderTexture::Create(const SPtr<RenderTexture>& texture, bool transparent, const String& styleName)
 {
-	return new(B3DAllocate<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, transparent, GUIDimensions::Create());
+	return new(B3DAllocate<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, transparent, GUISizeConstraints::Create());
 }
 
 GUIRenderTexture* GUIRenderTexture::Create(const SPtr<RenderTexture>& texture, bool transparent, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, transparent, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, transparent, GUISizeConstraints::Create(options));
 }
 
 GUIRenderTexture* GUIRenderTexture::Create(const SPtr<RenderTexture>& texture, const String& styleName)
 {
-	return new(B3DAllocate<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, false, GUIDimensions::Create());
+	return new(B3DAllocate<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, false, GUISizeConstraints::Create());
 }
 
 GUIRenderTexture* GUIRenderTexture::Create(const SPtr<RenderTexture>& texture, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, false, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, false, GUISizeConstraints::Create(options));
 }
 
 void GUIRenderTexture::SetRenderTexture(const SPtr<RenderTexture>& texture)

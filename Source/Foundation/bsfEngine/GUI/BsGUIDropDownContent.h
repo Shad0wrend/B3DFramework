@@ -71,7 +71,7 @@ namespace bs
 		static constexpr const char* kSeparatorStyleType = "DropDownSeparator";
 
 	protected:
-		GUIDropDownContent(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData, const String& style, const GUIDimensions& dimensions);
+		GUIDropDownContent(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData, const String& style, const GUISizeConstraints& dimensions);
 
 		/**	Get localized name of a menu item element with the specified index. */
 		HString GetElementLocalizedName(u32 idx) const;

@@ -76,7 +76,7 @@ namespace bs
 
 		/** @} */
 	private:
-		GUIButton(const String& styleName, const GUIContent& content, const GUIDimensions& dimensions);
+		GUIButton(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions);
 
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
 	};

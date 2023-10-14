@@ -3,7 +3,7 @@
 #include "GUI/BsGUIScrollBar.h"
 #include "Image/BsSpriteTexture.h"
 #include "GUI/BsGUIElementStyle.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUILayoutX.h"
 #include "GUI/BsGUILayoutY.h"
 #include "GUI/BsGUIButton.h"
@@ -28,7 +28,7 @@ const String& GUIScrollBar::GetVScrollHandleType()
 	return typeName;
 }
 
-GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleName, const GUIDimensions& dimensions)
+GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions), mHorizontal(horizontal)
 {
 	mImageSprite = B3DNew<ImageSprite>();

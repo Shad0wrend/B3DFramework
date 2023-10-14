@@ -9,7 +9,7 @@
 
 using namespace bs;
 
-GUIPanel::GUIPanel(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUIDimensions& dimensions)
+GUIPanel::GUIPanel(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUISizeConstraints& dimensions)
 	: GUILayout(dimensions), mDepthOffset(depth), mDepthRangeMin(depthRangeMin), mDepthRangeMax(depthRangeMax)
 {}
 
@@ -22,7 +22,7 @@ void GUIPanel::SetDepthRange(i16 depth, u16 depthRangeMin, u16 depthRangeMax)
 	MarkLayoutAsDirty();
 }
 
-LayoutSizeRange GUIPanel::CalculateLayoutSizeRange() const
+GUIConstrainedSize GUIPanel::CalculateConstrainedSize() const
 {
 	Vector2I optimalSize;
 	Vector2I minSize;
@@ -32,7 +32,7 @@ LayoutSizeRange GUIPanel::CalculateLayoutSizeRange() const
 		if(!child->IsActive())
 			continue;
 
-		LayoutSizeRange sizeRange = child->CalculateLayoutSizeRange();
+		GUIConstrainedSize sizeRange = child->CalculateConstrainedSize();
 
 		if(child->GetType() == GUIElementBase::Type::FixedSpace || child->GetType() == GUIElementBase::Type::FlexibleSpace)
 		{
@@ -44,31 +44,31 @@ LayoutSizeRange GUIPanel::CalculateLayoutSizeRange() const
 		u32 paddingY = child->GetMargins().Top + child->GetMargins().Bottom;
 
 		Vector2I childMax;
-		childMax.X = child->GetDimensions().X + sizeRange.Optimal.X + paddingX;
-		childMax.Y = child->GetDimensions().Y + sizeRange.Optimal.Y + paddingY;
+		childMax.X = child->GetSizeConstraints().X + sizeRange.Optimal.X + paddingX;
+		childMax.Y = child->GetSizeConstraints().Y + sizeRange.Optimal.Y + paddingY;
 
 		optimalSize.X = std::max(optimalSize.X, childMax.X);
 		optimalSize.Y = std::max(optimalSize.Y, childMax.Y);
 
-		childMax.X = child->GetDimensions().X + sizeRange.Min.X + paddingX;
-		childMax.Y = child->GetDimensions().Y + sizeRange.Min.Y + paddingY;
+		childMax.X = child->GetSizeConstraints().X + sizeRange.Min.X + paddingX;
+		childMax.Y = child->GetSizeConstraints().Y + sizeRange.Min.Y + paddingY;
 
 		minSize.X = std::max(minSize.X, childMax.X);
 		minSize.Y = std::max(minSize.Y, childMax.Y);
 	}
 
-	LayoutSizeRange sizeRange = GetDimensions().CalculateSizeRange(optimalSize);
+	GUIConstrainedSize sizeRange = GetSizeConstraints().CalculateConstrainedSize(optimalSize);
 	sizeRange.Min.X = std::max(sizeRange.Min.X, minSize.X);
 	sizeRange.Min.Y = std::max(sizeRange.Min.Y, minSize.Y);
 
 	return sizeRange;
 }
 
-LayoutSizeRange GUIPanel::GetElementSizeRangeInternal(const GUIElementBase* element) const
+GUIConstrainedSize GUIPanel::GetElementSizeRangeInternal(const GUIElementBase* element) const
 {
 	if(element->GetType() == GUIElementBase::Type::FixedSpace || element->GetType() == GUIElementBase::Type::FlexibleSpace)
 	{
-		LayoutSizeRange sizeRange = element->GetLayoutSizeRange();
+		GUIConstrainedSize sizeRange = element->GetConstrainedSize();
 		sizeRange.Optimal.X = 0;
 		sizeRange.Optimal.Y = 0;
 		sizeRange.Min.X = 0;
@@ -77,7 +77,7 @@ LayoutSizeRange GUIPanel::GetElementSizeRangeInternal(const GUIElementBase* elem
 		return sizeRange;
 	}
 
-	return element->GetLayoutSizeRange();
+	return element->GetConstrainedSize();
 }
 
 void GUIPanel::UpdateOptimalLayoutSizes()
@@ -94,7 +94,7 @@ void GUIPanel::UpdateOptimalLayoutSizes()
 	u32 childIdx = 0;
 	for(auto& child : mChildren)
 	{
-		LayoutSizeRange& childSizeRange = mChildSizeRanges[childIdx];
+		GUIConstrainedSize& childSizeRange = mChildSizeRanges[childIdx];
 
 		if(child->IsActive())
 		{
@@ -104,30 +104,30 @@ void GUIPanel::UpdateOptimalLayoutSizes()
 			u32 paddingY = child->GetMargins().Top + child->GetMargins().Bottom;
 
 			Vector2I childMax;
-			childMax.X = child->GetDimensions().X + childSizeRange.Optimal.X + paddingX;
-			childMax.Y = child->GetDimensions().Y + childSizeRange.Optimal.Y + paddingY;
+			childMax.X = child->GetSizeConstraints().X + childSizeRange.Optimal.X + paddingX;
+			childMax.Y = child->GetSizeConstraints().Y + childSizeRange.Optimal.Y + paddingY;
 
 			optimalSize.X = std::max(optimalSize.X, childMax.X);
 			optimalSize.Y = std::max(optimalSize.Y, childMax.Y);
 
-			childMax.X = child->GetDimensions().X + childSizeRange.Min.X + paddingX;
-			childMax.Y = child->GetDimensions().Y + childSizeRange.Min.Y + paddingY;
+			childMax.X = child->GetSizeConstraints().X + childSizeRange.Min.X + paddingX;
+			childMax.Y = child->GetSizeConstraints().Y + childSizeRange.Min.Y + paddingY;
 
 			minSize.X = std::max(minSize.X, childMax.X);
 			minSize.Y = std::max(minSize.Y, childMax.Y);
 		}
 		else
-			childSizeRange = LayoutSizeRange();
+			childSizeRange = GUIConstrainedSize();
 
 		childIdx++;
 	}
 
-	mSizeRange = GetDimensions().CalculateSizeRange(optimalSize);
+	mSizeRange = GetSizeConstraints().CalculateConstrainedSize(optimalSize);
 	mSizeRange.Min.X = std::max(mSizeRange.Min.X, minSize.X);
 	mSizeRange.Min.Y = std::max(mSizeRange.Min.Y, minSize.Y);
 }
 
-void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
+void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
 {
 	B3D_ASSERT(mChildren.size() == numElements);
 
@@ -141,16 +141,16 @@ void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementArea
 	}
 }
 
-Rect2I GUIPanel::GetElementAreaInternal(const Rect2I& layoutArea, const GUIElementBase* element, const LayoutSizeRange& sizeRange) const
+Rect2I GUIPanel::GetElementAreaInternal(const Rect2I& layoutArea, const GUIElementBase* element, const GUIConstrainedSize& sizeRange) const
 {
-	const GUIDimensions& dimensions = element->GetDimensions();
+	const GUISizeConstraints& dimensions = element->GetSizeConstraints();
 
 	Rect2I area;
 
 	area.X = layoutArea.X + dimensions.X;
 	area.Y = layoutArea.Y + dimensions.Y;
 
-	if(dimensions.FixedWidth())
+	if(dimensions.IsWidthFixed())
 		area.Width = (u32)sizeRange.Optimal.X;
 	else
 	{
@@ -170,7 +170,7 @@ Rect2I GUIPanel::GetElementAreaInternal(const Rect2I& layoutArea, const GUIEleme
 		area.Width = modifiedWidth;
 	}
 
-	if(dimensions.FixedHeight())
+	if(dimensions.IsHeightFixed())
 		area.Height = (u32)sizeRange.Optimal.Y;
 	else
 	{
@@ -263,15 +263,15 @@ void GUIPanel::UpdateChildLayoutInternal(GUIElementBase* element, const GUILayou
 
 GUIPanel* GUIPanel::Create(i16 depth, u16 depthRangeMin, u16 depthRangeMax)
 {
-	return B3DNew<GUIPanel>(depth, depthRangeMin, depthRangeMax, GUIDimensions::Create());
+	return B3DNew<GUIPanel>(depth, depthRangeMin, depthRangeMax, GUISizeConstraints::Create());
 }
 
 GUIPanel* GUIPanel::Create(const GUIOptions& options)
 {
-	return B3DNew<GUIPanel>(0, -1, -1, GUIDimensions::Create(options));
+	return B3DNew<GUIPanel>(0, -1, -1, GUISizeConstraints::Create(options));
 }
 
 GUIPanel* GUIPanel::Create(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUIOptions& options)
 {
-	return B3DNew<GUIPanel>(depth, depthRangeMin, depthRangeMax, GUIDimensions::Create(options));
+	return B3DNew<GUIPanel>(depth, depthRangeMin, depthRangeMax, GUISizeConstraints::Create(options));
 }

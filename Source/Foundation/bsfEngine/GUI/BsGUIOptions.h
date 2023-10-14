@@ -60,7 +60,7 @@ namespace bs
 		static GUIOption FlexibleHeight(u32 min = 0, u32 max = 0);
 
 	private:
-		friend struct GUIDimensions;
+		friend struct GUISizeConstraints;
 
 		u32 min = 0;
 		u32 max = 0;
@@ -115,7 +115,7 @@ namespace bs
 		}
 
 	private:
-		friend struct GUIDimensions;
+		friend struct GUISizeConstraints;
 
 		Vector<GUIOption> mOptions;
 	};

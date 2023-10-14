@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIListBox.h"
 #include "GUI/BsGUIWidget.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUIManager.h"
 #include "GUI/BsGUIDropDownBoxManager.h"
@@ -15,7 +15,7 @@ const String& GUIListBox::GetGuiTypeName()
 	return name;
 }
 
-GUIListBox::GUIListBox(const String& styleName, const Vector<HString>& elements, bool isMultiselect, const GUIDimensions& dimensions)
+GUIListBox::GUIListBox(const String& styleName, const Vector<HString>& elements, bool isMultiselect, const GUISizeConstraints& dimensions)
 	: GUIButtonBase(styleName, GUIContent(HString("")), dimensions), mElements(elements), mIsMultiselect(isMultiselect)
 {
 	mElementStates.resize(elements.size(), false);
@@ -32,17 +32,17 @@ GUIListBox::~GUIListBox()
 
 GUIListBox* GUIListBox::Create(const Vector<HString>& elements, bool isMultiselect, const String& styleName)
 {
-	return new(B3DAllocate<GUIListBox>()) GUIListBox(GetStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::Create());
+	return new(B3DAllocate<GUIListBox>()) GUIListBox(GetStyleName<GUIListBox>(styleName), elements, isMultiselect, GUISizeConstraints::Create());
 }
 
 GUIListBox* GUIListBox::Create(const Vector<HString>& elements, bool isMultiselect, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUIListBox>()) GUIListBox(GetStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIListBox>()) GUIListBox(GetStyleName<GUIListBox>(styleName), elements, isMultiselect, GUISizeConstraints::Create(options));
 }
 
 GUIListBox* GUIListBox::Create(const Vector<HString>& elements, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUIListBox>()) GUIListBox(GetStyleName<GUIListBox>(styleName), elements, false, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIListBox>()) GUIListBox(GetStyleName<GUIListBox>(styleName), elements, false, GUISizeConstraints::Create(options));
 }
 
 void GUIListBox::SetElements(const Vector<HString>& elements)

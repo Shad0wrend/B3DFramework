@@ -4,13 +4,13 @@
 #include "GUI/BsGUIWidget.h"
 #include "GUI/BsGUISkin.h"
 #include "GUI/BsGUITexture.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 
 using namespace std::placeholders;
 
 using namespace bs;
 
-GUIProgressBar::GUIProgressBar(const String& styleName, const GUIDimensions& dimensions)
+GUIProgressBar::GUIProgressBar(const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElementContainer(dimensions, styleName), mPercent(0)
 {
 	mBar = GUITexture::Create(GetSubStyleName(GetBarStyleType()));
@@ -85,12 +85,12 @@ void GUIProgressBar::SetTint(const Color& color)
 
 GUIProgressBar* GUIProgressBar::Create(const String& styleName)
 {
-	return new(B3DAllocate<GUIProgressBar>()) GUIProgressBar(GetStyleName<GUIProgressBar>(styleName), GUIDimensions::Create());
+	return new(B3DAllocate<GUIProgressBar>()) GUIProgressBar(GetStyleName<GUIProgressBar>(styleName), GUISizeConstraints::Create());
 }
 
 GUIProgressBar* GUIProgressBar::Create(const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUIProgressBar>()) GUIProgressBar(GetStyleName<GUIProgressBar>(styleName), GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIProgressBar>()) GUIProgressBar(GetStyleName<GUIProgressBar>(styleName), GUISizeConstraints::Create(options));
 }
 
 const String& GUIProgressBar::GetGuiTypeName()

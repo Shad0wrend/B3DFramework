@@ -4,7 +4,7 @@
 #include "2D/BsImageSprite.h"
 #include "GUI/BsGUISkin.h"
 #include "Image/BsSpriteTexture.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUIMouseEvent.h"
 
 using namespace bs;
@@ -17,7 +17,7 @@ const String& GUISliderHandle::GetGuiTypeName()
 	return name;
 }
 
-GUISliderHandle::GUISliderHandle(GUISliderHandleFlags flags, const String& styleName, const GUIDimensions& dimensions)
+GUISliderHandle::GUISliderHandle(GUISliderHandleFlags flags, const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions), mFlags(flags)
 {
 	mImageSprite = B3DNew<ImageSprite>();
@@ -33,12 +33,12 @@ GUISliderHandle::~GUISliderHandle()
 
 GUISliderHandle* GUISliderHandle::Create(GUISliderHandleFlags flags, const String& styleName)
 {
-	return new(B3DAllocate<GUISliderHandle>()) GUISliderHandle(flags, GetStyleName<GUISliderHandle>(styleName), GUIDimensions::Create());
+	return new(B3DAllocate<GUISliderHandle>()) GUISliderHandle(flags, GetStyleName<GUISliderHandle>(styleName), GUISizeConstraints::Create());
 }
 
 GUISliderHandle* GUISliderHandle::Create(GUISliderHandleFlags flags, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUISliderHandle>()) GUISliderHandle(flags, GetStyleName<GUISliderHandle>(styleName), GUIDimensions::Create(options));
+	return new(B3DAllocate<GUISliderHandle>()) GUISliderHandle(flags, GetStyleName<GUISliderHandle>(styleName), GUISizeConstraints::Create(options));
 }
 
 void GUISliderHandle::SetHandleSizeInternal(float pct)

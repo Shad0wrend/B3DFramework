@@ -21,7 +21,7 @@ constexpr const char* GUIDropDownContent::kEntryStyleType;
 constexpr const char* GUIDropDownContent::kEntryExpStyleType;
 constexpr const char* GUIDropDownContent::kSeparatorStyleType;
 
-GUIDropDownContent::GUIDropDownContent(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData, const String& style, const GUIDimensions& dimensions)
+GUIDropDownContent::GUIDropDownContent(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData, const String& style, const GUISizeConstraints& dimensions)
 	: GUIElementContainer(dimensions, style), mDropDownData(dropDownData), mStates(dropDownData.States), mSelectedIdx(UINT_MAX), mRangeStart(0), mRangeEnd(0), mParent(parent), mKeyboardFocus(true), mIsToggle(parent->GetType() == GUIDropDownType::MultiListBox)
 {
 }
@@ -32,7 +32,7 @@ GUIDropDownContent* GUIDropDownContent::Create(GUIDropDownMenu::DropDownSubMenu*
 	if(*curStyle == StringUtil::kBlank)
 		curStyle = &GUIDropDownContent::GetGuiTypeName();
 
-	return new(B3DAllocate<GUIDropDownContent>()) GUIDropDownContent(parent, dropDownData, *curStyle, GUIDimensions::Create());
+	return new(B3DAllocate<GUIDropDownContent>()) GUIDropDownContent(parent, dropDownData, *curStyle, GUISizeConstraints::Create());
 }
 
 GUIDropDownContent* GUIDropDownContent::Create(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData, const GUIOptions& options, const String& style)
@@ -41,7 +41,7 @@ GUIDropDownContent* GUIDropDownContent::Create(GUIDropDownMenu::DropDownSubMenu*
 	if(*curStyle == StringUtil::kBlank)
 		curStyle = &GUIDropDownContent::GetGuiTypeName();
 
-	return new(B3DAllocate<GUIDropDownContent>()) GUIDropDownContent(parent, dropDownData, *curStyle, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUIDropDownContent>()) GUIDropDownContent(parent, dropDownData, *curStyle, GUISizeConstraints::Create(options));
 }
 
 void GUIDropDownContent::NotifyStyleChanged()

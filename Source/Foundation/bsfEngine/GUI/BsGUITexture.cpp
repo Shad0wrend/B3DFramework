@@ -4,7 +4,7 @@
 #include "2D/BsImageSprite.h"
 #include "GUI/BsGUISkin.h"
 #include "Image/BsSpriteTexture.h"
-#include "GUI/BsGUIDimensions.h"
+#include "GUI/BsGUISizeConstraints.h"
 
 using namespace bs;
 
@@ -14,7 +14,7 @@ const String& GUITexture::GetGuiTypeName()
 	return name;
 }
 
-GUITexture::GUITexture(const String& styleName, const HSpriteTexture& texture, TextureScaleMode scale, bool transparent, const GUIDimensions& dimensions)
+GUITexture::GUITexture(const String& styleName, const HSpriteTexture& texture, TextureScaleMode scale, bool transparent, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions), mScaleMode(scale), mTransparent(transparent), mUsingStyleTexture(false)
 {
 	mImageSprite = B3DNew<ImageSprite>();
@@ -43,57 +43,57 @@ GUITexture::~GUITexture()
 
 GUITexture* GUITexture::Create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, scale, transparent, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, scale, transparent, GUISizeConstraints::Create(options));
 }
 
 GUITexture* GUITexture::Create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent, const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, scale, transparent, GUIDimensions::Create());
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, scale, transparent, GUISizeConstraints::Create());
 }
 
 GUITexture* GUITexture::Create(const HSpriteTexture& texture, TextureScaleMode scale, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, scale, true, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, scale, true, GUISizeConstraints::Create(options));
 }
 
 GUITexture* GUITexture::Create(const HSpriteTexture& texture, TextureScaleMode scale, const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, scale, true, GUIDimensions::Create());
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, scale, true, GUISizeConstraints::Create());
 }
 
 GUITexture* GUITexture::Create(const HSpriteTexture& texture, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, TextureScaleMode::StretchToFit, true, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, TextureScaleMode::StretchToFit, true, GUISizeConstraints::Create(options));
 }
 
 GUITexture* GUITexture::Create(const HSpriteTexture& texture, const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, TextureScaleMode::StretchToFit, true, GUIDimensions::Create());
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), texture, TextureScaleMode::StretchToFit, true, GUISizeConstraints::Create());
 }
 
 GUITexture* GUITexture::Create(TextureScaleMode scale, const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), HSpriteTexture(), scale, true, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), HSpriteTexture(), scale, true, GUISizeConstraints::Create(options));
 }
 
 GUITexture* GUITexture::Create(TextureScaleMode scale, const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), HSpriteTexture(), scale, true, GUIDimensions::Create());
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), HSpriteTexture(), scale, true, GUISizeConstraints::Create());
 }
 
 GUITexture* GUITexture::Create(const GUIOptions& options, const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), HSpriteTexture(), TextureScaleMode::StretchToFit, true, GUIDimensions::Create(options));
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), HSpriteTexture(), TextureScaleMode::StretchToFit, true, GUISizeConstraints::Create(options));
 }
 
 GUITexture* GUITexture::Create(const String& styleName)
 {
-	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), HSpriteTexture(), TextureScaleMode::StretchToFit, true, GUIDimensions::Create());
+	return new(B3DAllocate<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName), HSpriteTexture(), TextureScaleMode::StretchToFit, true, GUISizeConstraints::Create());
 }
 
 void GUITexture::SetTexture(const HSpriteTexture& texture)
 {
-	Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
 	mActiveTexture = texture;
 
@@ -104,7 +104,7 @@ void GUITexture::SetTexture(const HSpriteTexture& texture)
 	mUsingStyleTexture = false;
 	mDesc.AnimationStartTime = GetTime().GetTime();
 
-	Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 	if(origSize != newSize)
 		MarkLayoutAsDirty();
 	else
@@ -198,24 +198,24 @@ Vector2I GUITexture::GetOptimalSize() const
 	// needed (size change is detected). Sprite texture could change without us knowing and by storing the size we can
 	// safely detect this. (In short, don't do mActiveTexture->getFrameWidth/Height() here)
 
-	if(GetDimensions().FixedWidth())
-		optimalSize.X = GetDimensions().MinWidth;
+	if(GetSizeConstraints().IsWidthFixed())
+		optimalSize.X = GetSizeConstraints().MinWidth;
 	else
 	{
 		if(SpriteTexture::CheckIsLoaded(mActiveTexture))
 			optimalSize.X = mActiveTextureWidth;
 		else
-			optimalSize.X = GetDimensions().MaxWidth;
+			optimalSize.X = GetSizeConstraints().MaxWidth;
 	}
 
-	if(GetDimensions().FixedHeight())
-		optimalSize.Y = GetDimensions().MinHeight;
+	if(GetSizeConstraints().IsHeightFixed())
+		optimalSize.Y = GetSizeConstraints().MinHeight;
 	else
 	{
 		if(SpriteTexture::CheckIsLoaded(mActiveTexture))
 			optimalSize.Y = mActiveTextureHeight;
 		else
-			optimalSize.Y = GetDimensions().MaxHeight;
+			optimalSize.Y = GetSizeConstraints().MaxHeight;
 	}
 
 	return optimalSize;

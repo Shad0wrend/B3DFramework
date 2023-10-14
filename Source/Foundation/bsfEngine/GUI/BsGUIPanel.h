@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		GUIPanel() = default;
-		GUIPanel(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUIDimensions& dimensions);
+		GUIPanel(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUISizeConstraints& dimensions);
 		~GUIPanel() = default;
 
 		/**
@@ -79,17 +79,17 @@ namespace bs
 
 		Type GetType() const override { return GUIElementBase::Type::Panel; }
 		void UpdateOptimalLayoutSizes() override;
-		LayoutSizeRange CalculateLayoutSizeRange() const override;
-		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
+		GUIConstrainedSize CalculateConstrainedSize() const override;
+		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
 
 		/** Calculates the size of the provided child within this layout with the provided dimensions. */
-		Rect2I GetElementAreaInternal(const Rect2I& layoutArea, const GUIElementBase* element, const LayoutSizeRange& sizeRange) const;
+		Rect2I GetElementAreaInternal(const Rect2I& layoutArea, const GUIElementBase* element, const GUIConstrainedSize& sizeRange) const;
 
 		/**
 		 * Calculates an element size range for the provided child of the GUI panel. Will return cached bounds so make sure
 		 * to update optimal size ranges before calling.
 		 */
-		LayoutSizeRange GetElementSizeRangeInternal(const GUIElementBase* element) const;
+		GUIConstrainedSize GetElementSizeRangeInternal(const GUIElementBase* element) const;
 
 		/** Assigns the specified layout information to a child element of a GUI panel. */
 		void UpdateChildLayoutInternal(GUIElementBase* element, const GUILayoutData& data);

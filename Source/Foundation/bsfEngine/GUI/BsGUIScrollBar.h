@@ -85,7 +85,7 @@ namespace bs
 		 *							GUIWidget the element is used on. If not specified default style is used.
 		 * @param[in]	dimensions	Determines valid dimensions (size) of the element.
 		 */
-		GUIScrollBar(bool horizontal, bool resizable, const String& styleName, const GUIDimensions& dimensions);
+		GUIScrollBar(bool horizontal, bool resizable, const String& styleName, const GUISizeConstraints& dimensions);
 		virtual ~GUIScrollBar();
 
 		void FillBuffer(u8* vertices, u32* indices, u32 vertexOffset, u32 indexOffset, const Vector2I& offset, u32 maxNumVerts, u32 maxNumIndices, u32 renderElementIdx) const override;

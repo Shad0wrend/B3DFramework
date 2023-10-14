@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		GUILayoutX() = default;
-		GUILayoutX(const GUIDimensions& dimensions);
+		GUILayoutX(const GUISizeConstraints& dimensions);
 		~GUILayoutX() = default;
 
 		/**	Creates a new horizontal layout. */
@@ -35,8 +35,8 @@ namespace bs
 		 */
 
 		void UpdateOptimalLayoutSizes() override;
-		LayoutSizeRange CalculateLayoutSizeRange() const override;
-		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
+		GUIConstrainedSize CalculateConstrainedSize() const override;
+		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
 
 		/** @} */
 

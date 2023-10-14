@@ -139,14 +139,14 @@ namespace bs
 	protected:
 		~GUIScrollArea() = default;
 
-		LayoutSizeRange GetLayoutSizeRange() const override;
+		GUIConstrainedSize GetConstrainedSize() const override;
 		void UpdateClippedBounds() override;
-		LayoutSizeRange CalculateLayoutSizeRange() const override;
+		GUIConstrainedSize CalculateConstrainedSize() const override;
 		void UpdateOptimalLayoutSizes() override;
 		Vector2I GetOptimalSize() const override;
 
 	private:
-		GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType, const String& scrollBarStyle, const String& scrollAreaStyle, const GUIDimensions& dimensions);
+		GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType, const String& scrollBarStyle, const String& scrollAreaStyle, const GUISizeConstraints& dimensions);
 
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 
@@ -166,14 +166,14 @@ namespace bs
 
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
 
-		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
+		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
 
 		/**
 		 * @copydoc	GUIElementContainer::GetElementAreasInternal:
 		 *
 		 * @note	Also calculates some scroll area specific values.
 		 */
-		void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const;
+		void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const;
 
 		ScrollBarType mVertBarType;
 		ScrollBarType mHorzBarType;
@@ -191,8 +191,8 @@ namespace bs
 		Vector2I mVisibleSize;
 		Vector2I mContentSize;
 
-		Vector<LayoutSizeRange> mChildSizeRanges;
-		LayoutSizeRange mSizeRange;
+		Vector<GUIConstrainedSize> mChildSizeRanges;
+		GUIConstrainedSize mSizeRange;
 
 		static const u32 kMinHandleSize;
 		static const u32 kWheelScrollAmount;

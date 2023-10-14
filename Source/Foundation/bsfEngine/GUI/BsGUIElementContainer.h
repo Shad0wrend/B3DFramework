@@ -19,8 +19,8 @@ namespace bs
 		void SetFocus(bool enabled, bool clear = false);
 
 	protected:
-		GUIElementContainer(const GUIDimensions& dimensions, const char* style, GUIElementOptions options = GUIElementOptions(0));
-		GUIElementContainer(const GUIDimensions& dimensions, const String& style = StringUtil::kBlank, GUIElementOptions options = GUIElementOptions(0));
+		GUIElementContainer(const GUISizeConstraints& dimensions, const char* style, GUIElementOptions options = GUIElementOptions(0));
+		GUIElementContainer(const GUISizeConstraints& dimensions, const String& style = StringUtil::kBlank, GUIElementOptions options = GUIElementOptions(0));
 		virtual ~GUIElementContainer() = default;
 
 		void FillBuffer(u8* vertices, u32* indices, u32 vertexOffset, u32 indexOffset, const Vector2I& offset, u32 maxNumVerts, u32 maxNumIndices, u32 renderElementIdx) const override;

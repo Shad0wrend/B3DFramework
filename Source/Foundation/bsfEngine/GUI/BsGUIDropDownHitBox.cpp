@@ -15,16 +15,16 @@ const String& GUIDropDownHitBox::GetGuiTypeName()
 GUIDropDownHitBox* GUIDropDownHitBox::Create(bool captureMouseOver, bool captureMousePresses)
 {
 	return new(B3DAllocate<GUIDropDownHitBox>())
-		GUIDropDownHitBox(captureMouseOver, captureMousePresses, GUIDimensions::Create());
+		GUIDropDownHitBox(captureMouseOver, captureMousePresses, GUISizeConstraints::Create());
 }
 
 GUIDropDownHitBox* GUIDropDownHitBox::Create(bool captureMouseOver, bool captureMousePresses, const GUIOptions& options)
 {
 	return new(B3DAllocate<GUIDropDownHitBox>())
-		GUIDropDownHitBox(captureMouseOver, captureMousePresses, GUIDimensions::Create(options));
+		GUIDropDownHitBox(captureMouseOver, captureMousePresses, GUISizeConstraints::Create(options));
 }
 
-GUIDropDownHitBox::GUIDropDownHitBox(bool captureMouseOver, bool captureMousePresses, const GUIDimensions& dimensions)
+GUIDropDownHitBox::GUIDropDownHitBox(bool captureMouseOver, bool captureMousePresses, const GUISizeConstraints& dimensions)
 	: GUIElementContainer(dimensions), mCaptureMouseOver(captureMouseOver), mCaptureMousePresses(captureMousePresses)
 {
 	mOptionFlags.Set(GUIElementOption::ClickThrough);

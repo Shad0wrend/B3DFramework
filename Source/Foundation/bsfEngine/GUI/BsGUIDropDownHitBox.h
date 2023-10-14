@@ -55,7 +55,7 @@ namespace bs
 		Event<void()> OnFocusGained;
 
 	private:
-		GUIDropDownHitBox(bool captureMouseOver, bool captureMousePresses, const GUIDimensions& dimensions);
+		GUIDropDownHitBox(bool captureMouseOver, bool captureMousePresses, const GUISizeConstraints& dimensions);
 
 		void UpdateClippedBounds() override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;

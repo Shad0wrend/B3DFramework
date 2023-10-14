@@ -9,7 +9,7 @@
 
 using namespace bs;
 
-GUILayout::GUILayout(const GUIDimensions& dimensions)
+GUILayout::GUILayout(const GUISizeConstraints& dimensions)
 	: GUIElementBase(dimensions)
 {}
 

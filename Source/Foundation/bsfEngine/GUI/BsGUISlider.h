@@ -79,7 +79,7 @@ namespace bs
 
 		/** @} */
 	protected:
-		GUISlider(bool horizontal, const String& styleName, const GUIDimensions& dimensions);
+		GUISlider(bool horizontal, const String& styleName, const GUISizeConstraints& dimensions);
 		virtual ~GUISlider();
 
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
@@ -134,7 +134,7 @@ namespace bs
 		static GUISliderHorz* Create(const GUIOptions& options, const String& styleName = StringUtil::kBlank);
 
 	private:
-		GUISliderHorz(const String& styleName, const GUIDimensions& dimensions);
+		GUISliderHorz(const String& styleName, const GUISizeConstraints& dimensions);
 	};
 
 	/**	A vertical slider with a draggable handle. */
@@ -163,7 +163,7 @@ namespace bs
 		static GUISliderVert* Create(const GUIOptions& options, const String& styleName = StringUtil::kBlank);
 
 	private:
-		GUISliderVert(const String& styleName, const GUIDimensions& dimensions);
+		GUISliderVert(const String& styleName, const GUISizeConstraints& dimensions);
 	};
 
 	/** @} */
