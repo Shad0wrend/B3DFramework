@@ -66,7 +66,7 @@ void GUINavGroup::FocusNext(GUIElement* anchor)
 
 	// Find next element to focus on
 	{
-		const Rect2I focusedElemBounds = anchor->GetCachedClippedVisibleBounds();
+		const Rect2I focusedElemBounds = anchor->GetCachedClippedBounds();
 
 		// We look for the element to the right of the current element, within some Y range (a 'row').
 		//// We search by rows in order to make the navigation perceptually nicer. Sometimes elements appear to be
@@ -81,8 +81,8 @@ void GUINavGroup::FocusNext(GUIElement* anchor)
 			{
 				bool operator()(const GUIElement* lhs, const GUIElement* rhs) const
 				{
-					const Rect2I boundsLHS = lhs->GetCachedClippedVisibleBounds();
-					const Rect2I boundsRHS = rhs->GetCachedClippedVisibleBounds();
+					const Rect2I boundsLHS = lhs->GetCachedClippedBounds();
+					const Rect2I boundsRHS = rhs->GetCachedClippedBounds();
 
 					if(boundsLHS.Y != boundsRHS.Y)
 						return boundsLHS.Y < boundsRHS.Y;
@@ -100,7 +100,7 @@ void GUINavGroup::FocusNext(GUIElement* anchor)
 				if(!acceptsKeyFocus || !element->IsVisible() || element->IsDisabled())
 					continue;
 
-				const Rect2I elemBounds = element->GetCachedClippedVisibleBounds();
+				const Rect2I elemBounds = element->GetCachedClippedBounds();
 				const bool isFullyClipped = elemBounds.Width == 0 || elemBounds.Height == 0;
 
 				if(isFullyClipped)
@@ -119,7 +119,7 @@ void GUINavGroup::FocusNext(GUIElement* anchor)
 			{
 				GUIElement* element = *iterElem;
 
-				const Rect2I elemBounds = element->GetCachedClippedVisibleBounds();
+				const Rect2I elemBounds = element->GetCachedClippedBounds();
 				if(iterElem == elements.begin())
 				{
 					firstRowY = elemBounds.Y;
@@ -155,7 +155,7 @@ void GUINavGroup::FocusNext(GUIElement* anchor)
 				if(element == anchor)
 					continue;
 
-				const Rect2I elemBounds = element->GetCachedClippedVisibleBounds();
+				const Rect2I elemBounds = element->GetCachedClippedBounds();
 				const i32 yDiff = elemBounds.Y - rowY;
 
 				// New row
@@ -187,7 +187,7 @@ void GUINavGroup::FocusNext(GUIElement* anchor)
 				{
 					GUIElement* element = *iterElem;
 
-					const Rect2I elemBounds = element->GetCachedClippedVisibleBounds();
+					const Rect2I elemBounds = element->GetCachedClippedBounds();
 					const i32 yDiff = elemBounds.Y - rowY;
 
 					// New row
@@ -240,7 +240,7 @@ void GUINavGroup::FocusTopLeft()
 			continue;
 
 		// Ignore elements that have been fully clipped
-		const Rect2I elemBounds = element->GetCachedClippedVisibleBounds();
+		const Rect2I elemBounds = element->GetCachedClippedBounds();
 		if(elemBounds.Width == 0 || elemBounds.Height == 0)
 			continue;
 

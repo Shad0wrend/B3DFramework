@@ -223,7 +223,7 @@ void GUIButtonBase::FillBuffer(
 	}
 
 	Rect2I contentBounds = GetCachedContentBounds();
-	Rect2I contentClipRect = GetCachedContentClipRect();
+	Rect2I contentClipRect = GetCachedClippedLocalContentBounds();
 	Rect2I textBounds = mTextSprite->GetBounds(Vector2I(), Rect2I());
 
 	Vector2I textOffset;

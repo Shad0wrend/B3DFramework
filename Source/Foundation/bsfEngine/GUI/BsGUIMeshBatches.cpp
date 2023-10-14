@@ -58,7 +58,7 @@ void GUIMeshBatches::Add(GUIElement* guiElement)
 
 	BatchedGUIElement& batchedGuiElement = mElements[guiElement];
 	batchedGuiElement.GUIElement = guiElement;
-	batchedGuiElement.Bounds = guiElement->GetCachedClippedVisibleBounds();
+	batchedGuiElement.Bounds = guiElement->GetCachedClippedBounds();
 	batchedGuiElement.BatchPerRenderElement.Resize(guiRenderElements.Size(), ~0u);
 
 	for(u32 renderElementIndex = 0; renderElementIndex < (u32)guiRenderElements.Size(); renderElementIndex++)
@@ -279,7 +279,7 @@ GUIMeshBatches::Batch* GUIMeshBatches::Add(BatchedGUIElement& batchedGuiElement,
 
 	B3D_ASSERT(batchedGuiRenderElement.ParentGUIElement != nullptr);
 
-	const Rect2I bounds = batchedGuiRenderElement.ParentGUIElement->GetCachedClippedVisibleBounds();
+	const Rect2I bounds = batchedGuiRenderElement.ParentGUIElement->GetCachedClippedBounds();
 	foundBatch->Bounds.Encapsulate(bounds);
 
 	MarkBoundsDirty(batchedGuiElement, foundBatch->Id);
@@ -419,7 +419,7 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 			}
 
 			// If bounds changed, rebuild the bounds of the draw groups
-			Rect2I bounds = guiElement->GetCachedClippedVisibleBounds();
+			Rect2I bounds = guiElement->GetCachedClippedBounds();
 			if(batchedGuiElement.Bounds != bounds)
 			{
 				MarkBoundsDirty(batchedGuiElement);
@@ -593,7 +593,7 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 					if(batchRenderData.Id != batchId)
 						continue;
 
-					batchRenderData.RenderTargetElements.emplace_back(GUIRenderTargetRenderData(target->GetCore(), element->GetCachedClippedVisibleBounds()));
+					batchRenderData.RenderTargetElements.emplace_back(GUIRenderTargetRenderData(target->GetCore(), element->GetCachedClippedBounds()));
 				}
 			}
 		}
@@ -924,7 +924,7 @@ Rect2I GUIMeshBatches::CalculateBounds(Batch& batch)
 		if(!entry.ParentGUIElement->IsVisible())
 			continue;
 
-		Rect2I elementBounds = entry.ParentGUIElement->GetCachedClippedVisibleBounds();
+		Rect2I elementBounds = entry.ParentGUIElement->GetCachedClippedBounds();
 		if(!boundsSet)
 		{
 			bounds = elementBounds;

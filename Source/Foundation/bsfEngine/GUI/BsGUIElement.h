@@ -246,11 +246,8 @@ namespace bs
 		/**	Gets the currently active element style. */
 		const GUIElementStyle* GetStyle() const { return mStyle; }
 
-		/**
-		 * Similar to GetVisibleBounds(), except the bounds are clipped against the current clip rectangle, and the
-		 * return bounds are cached from the last layout pass (rather than being recalculated).
-		 */
-		const Rect2I& GetCachedClippedVisibleBounds() const { return mClippedBounds; }
+		/** Similar to GetCachedBounds(), except the bounds are clipped against the current clip rectangle. */
+		const Rect2I& GetCachedClippedBounds() const { return mClippedBounds; }
 
 		const RectOffset& GetMargins() const override;
 		const RectOffset& GetPadding() const override;
@@ -317,16 +314,16 @@ namespace bs
 		virtual void NotifyStyleChanged() {}
 
 		/**
-		 * Returns bounds of the content contained within the GUI element. This will be the bounds returned by
-		 *
-		 * Relative to parent widget. */
+		 * Returns bounds of the content contained within the GUI element. This will be the bounds returned by GetCachedBounds(),
+		 * minus the border and the padding. Relative to parent widget.
+		 */
 		Rect2I GetCachedContentBounds() const;
 
 		/**
-		 * Returns a clip rectangle that can be used for clipping the contents of this GUI element. Clip rect is relative
-		 * to GUI element origin.
+		 * Similar to GetCachedContentBounds(), except the bounds will be clipped by the current clip rectangle, and the
+		 * bounds will be relative to GetCachedBounds() rather than relative to the parent widget.
 		 */
-		Rect2I GetCachedContentClipRect() const;
+		Rect2I GetCachedClippedLocalContentBounds() const;
 
 		/**	Returns the tint that is applied to the GUI element. */
 		Color GetTint() const;

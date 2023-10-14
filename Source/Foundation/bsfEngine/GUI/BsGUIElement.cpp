@@ -210,18 +210,41 @@ void GUIElement::ResetDimensions()
 
 Rect2I GUIElement::GetCachedContentBounds() const
 {
-	const RectOffset& padding = GetPadding();
-	Rect2I bounds;
+	if(mStyleSheetStateStyle != nullptr)
+	{
+		const RectOffset& padding = GetPadding();
+		const u32 paddingWidth = padding.Left + padding.Right;
+		const u32 paddingHeight = padding.Top + padding.Bottom;
 
-	bounds.X = mLayoutData.Area.X + padding.Left + mStyle->ContentOffset.Left;
-	bounds.Y = mLayoutData.Area.Y + padding.Top + mStyle->ContentOffset.Top;
-	bounds.Width = (u32)std::max(0, (i32)mLayoutData.Area.Width - (i32)(padding.Left + padding.Right + mStyle->ContentOffset.Left + mStyle->ContentOffset.Right));
-	bounds.Height = (u32)std::max(0, (i32)mLayoutData.Area.Height - (i32)(padding.Top + padding.Bottom + mStyle->ContentOffset.Top + mStyle->ContentOffset.Bottom));
+		const u32 borderWidth = mStyleSheetStateStyle->BorderLeft.GetVisibleWidth() + mStyleSheetStateStyle->BorderRight.GetVisibleWidth();
+		const u32 borderHeight = mStyleSheetStateStyle->BorderTop.GetVisibleWidth() + mStyleSheetStateStyle->BorderBottom.GetVisibleWidth();
 
-	return bounds;
+		Rect2I bounds = GetCachedBounds();
+		const u32 nonContentWidth = Math::Min(bounds.Width, paddingWidth + borderWidth);
+		const u32 nonContentHeight = Math::Min(bounds.Height, paddingHeight + borderHeight);
+
+		bounds.X += (i32)Math::Min(bounds.Width, padding.Left + mStyleSheetStateStyle->BorderLeft.GetVisibleWidth());
+		bounds.Y += (i32)Math::Min(bounds.Height, padding.Top + mStyleSheetStateStyle->BorderTop.GetVisibleWidth());
+		bounds.Width -= nonContentWidth;
+		bounds.Height -= nonContentHeight;
+
+		return bounds;
+	}
+	else
+	{
+		const RectOffset& padding = GetPadding();
+		Rect2I bounds;
+
+		bounds.X = mLayoutData.Area.X + padding.Left + mStyle->ContentOffset.Left;
+		bounds.Y = mLayoutData.Area.Y + padding.Top + mStyle->ContentOffset.Top;
+		bounds.Width = (u32)std::max(0, (i32)mLayoutData.Area.Width - (i32)(padding.Left + padding.Right + mStyle->ContentOffset.Left + mStyle->ContentOffset.Right));
+		bounds.Height = (u32)std::max(0, (i32)mLayoutData.Area.Height - (i32)(padding.Top + padding.Bottom + mStyle->ContentOffset.Top + mStyle->ContentOffset.Bottom));
+
+		return bounds;
+	}
 }
 
-Rect2I GUIElement::GetCachedContentClipRect() const
+Rect2I GUIElement::GetCachedClippedLocalContentBounds() const
 {
 	Rect2I contentBounds = GetCachedContentBounds();
 
@@ -282,7 +305,7 @@ void GUIElement::RemoveStateFlags(GUIElementStateFlags flags)
 
 bool GUIElement::IsInBounds(const Vector2I position) const
 {
-	return GetCachedClippedVisibleBounds().Contains(position);
+	return GetCachedClippedBounds().Contains(position);
 }
 
 SPtr<GUIContextMenu> GUIElement::GetContextMenu() const
