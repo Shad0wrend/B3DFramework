@@ -79,6 +79,9 @@ namespace bs
 		/** Returns the default style sheet for GUI elements. */
 		HGUIStyleSheet GetDefaultGUIStyleSheet() const { return mDefaultGUIStyleSheet; };
 
+		/** Returns the empty style sheet for GUI elements. */
+		const GUIStyleSheet& GetEmptyGUIStyleSheet() const { return *mEmptyGUIStyleSheet; };
+
 		/**	Returns a small entirely white texture. */
 		const HSpriteTexture& GetWhiteSpriteTexture() const { return mWhiteSpriteTexture; }
 
@@ -225,6 +228,7 @@ namespace bs
 		HGUISkin mEmptySkin;
 		HGUISkin mSkin;
 		HGUIStyleSheet mDefaultGUIStyleSheet;
+		HGUIStyleSheet mEmptyGUIStyleSheet;
 		HFont mFont;
 
 		SPtr<PixelData> mCursorArrow;

@@ -76,6 +76,82 @@ bool GUIButtonBase::IsOnInternal() const
 
 void GUIButtonBase::UpdateRenderElements()
 {
+	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
+	if(isUsingStyleSheets)
+	{
+		const GUIStyleSheetStateRule& stateRule = *mStyleSheetRuleInformation.StateRule;
+
+		mBackgroundSpriteInformation.Width = mLayoutData.Area.Width;
+		mBackgroundSpriteInformation.Height = mLayoutData.Area.Height;
+
+		if(mBackgroundPathBuilder)
+			mBackgroundSpriteInformation.VectorPath = mBackgroundPathBuilder->BuildPath(Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height), stateRule);
+		else
+			mBackgroundSpriteInformation.VectorPath = nullptr;
+
+		mBackgroundSpriteInformation.Color = GetTint();
+		mBackgroundSpriteInformation.Color.A *= stateRule.Opacity;
+
+		mBackgroundSprite->Update(mBackgroundSpriteInformation, (u64)GetParentWidget());
+	}
+	else
+	{
+		mImageDesc.Width = mLayoutData.Area.Width;
+		mImageDesc.Height = mLayoutData.Area.Height;
+
+		const HSpriteTexture& activeTex = GetActiveTexture();
+		if(SpriteTexture::CheckIsLoaded(activeTex))
+			mImageDesc.Image = activeTex;
+		else
+			mImageDesc.Image = nullptr;
+
+		mImageDesc.BorderLeft = GetStyle()->Border.Left;
+		mImageDesc.BorderRight = GetStyle()->Border.Right;
+		mImageDesc.BorderTop = GetStyle()->Border.Top;
+		mImageDesc.BorderBottom = GetStyle()->Border.Bottom;
+		mImageDesc.Color = GetTint();
+
+		mImageSprite->Update(mImageDesc, (u64)GetParentWidget());
+	}
+
+	mTextSprite->Update(GetTextDesc(), (u64)GetParentWidget());
+
+	if(mContentImageSprite != nullptr)
+	{
+		Rect2I contentBounds = GetCachedContentBounds();
+
+		HSpriteTexture image = mContent.GetImage(mActiveState);
+		u32 contentWidth = image->GetWidth();
+		u32 contentHeight = image->GetHeight();
+
+		u32 contentMaxWidth = std::min((u32)contentBounds.Width, contentWidth);
+		u32 contentMaxHeight = std::min((u32)contentBounds.Height, contentHeight);
+
+		float horzRatio = contentMaxWidth / (float)contentWidth;
+		float vertRatio = contentMaxHeight / (float)contentHeight;
+
+		if(horzRatio < vertRatio)
+		{
+			contentWidth = Math::RoundToI32(contentWidth * horzRatio);
+			contentHeight = Math::RoundToI32(contentHeight * horzRatio);
+		}
+		else
+		{
+			contentWidth = Math::RoundToI32(contentWidth * vertRatio);
+			contentHeight = Math::RoundToI32(contentHeight * vertRatio);
+		}
+
+		ImageSpriteInformation contentImgDesc;
+		contentImgDesc.Image = image;
+		contentImgDesc.Width = contentWidth;
+		contentImgDesc.Height = contentHeight;
+		contentImgDesc.Color = GetTint();
+		contentImgDesc.AnimationStartTime = mContentAnimationStartTime;
+
+		mContentImageSprite->Update(contentImgDesc, (u64)GetParentWidget());
+	}
+
+	// Calculate content bounds
 	const Rect2 backgroundImageBounds(
 		0.0f, 0.0f,
 		(float)mLayoutData.Area.Width, (float)mLayoutData.Area.Height);
@@ -137,79 +213,6 @@ void GUIButtonBase::UpdateRenderElements()
 		textBounds.Height = (float)contentBounds.Height;
 	}
 
-	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
-	if(isUsingStyleSheets)
-	{
-		mBackgroundSpriteInformation.Width = mLayoutData.Area.Width;
-		mBackgroundSpriteInformation.Height = mLayoutData.Area.Height;
-
-		if(mBackgroundPathBuilder)
-			mBackgroundSpriteInformation.VectorPath = mBackgroundPathBuilder->BuildPath(Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height), *mStyleSheetStateStyle);
-		else
-			mBackgroundSpriteInformation.VectorPath = nullptr;
-
-		mBackgroundSpriteInformation.Color = GetTint();
-		mBackgroundSpriteInformation.Color.A *= mStyleSheetStateStyle->Opacity;
-
-		mBackgroundSprite->Update(mBackgroundSpriteInformation, (u64)GetParentWidget());
-	}
-	else
-	{
-		mImageDesc.Width = mLayoutData.Area.Width;
-		mImageDesc.Height = mLayoutData.Area.Height;
-
-		const HSpriteTexture& activeTex = GetActiveTexture();
-		if(SpriteTexture::CheckIsLoaded(activeTex))
-			mImageDesc.Image = activeTex;
-		else
-			mImageDesc.Image = nullptr;
-
-		mImageDesc.BorderLeft = GetStyle()->Border.Left;
-		mImageDesc.BorderRight = GetStyle()->Border.Right;
-		mImageDesc.BorderTop = GetStyle()->Border.Top;
-		mImageDesc.BorderBottom = GetStyle()->Border.Bottom;
-		mImageDesc.Color = GetTint();
-
-		mImageSprite->Update(mImageDesc, (u64)GetParentWidget());
-	}
-
-	mTextSprite->Update(GetTextDesc(), (u64)GetParentWidget());
-
-	if(mContentImageSprite != nullptr)
-	{
-		Rect2I contentBounds = GetCachedContentBounds();
-
-		HSpriteTexture image = mContent.GetImage(mActiveState);
-		u32 contentWidth = image->GetWidth();
-		u32 contentHeight = image->GetHeight();
-
-		u32 contentMaxWidth = std::min((u32)contentBounds.Width, contentWidth);
-		u32 contentMaxHeight = std::min((u32)contentBounds.Height, contentHeight);
-
-		float horzRatio = contentMaxWidth / (float)contentWidth;
-		float vertRatio = contentMaxHeight / (float)contentHeight;
-
-		if(horzRatio < vertRatio)
-		{
-			contentWidth = Math::RoundToI32(contentWidth * horzRatio);
-			contentHeight = Math::RoundToI32(contentHeight * horzRatio);
-		}
-		else
-		{
-			contentWidth = Math::RoundToI32(contentWidth * vertRatio);
-			contentHeight = Math::RoundToI32(contentHeight * vertRatio);
-		}
-
-		ImageSpriteInformation contentImgDesc;
-		contentImgDesc.Image = image;
-		contentImgDesc.Width = contentWidth;
-		contentImgDesc.Height = contentHeight;
-		contentImgDesc.Color = GetTint();
-		contentImgDesc.AnimationStartTime = mContentAnimationStartTime;
-
-		mContentImageSprite->Update(contentImgDesc, (u64)GetParentWidget());
-	}
-
 	// Populate GUI render elements from the sprites
 	{
 		using T = GUIRenderElementHelper;
@@ -223,7 +226,13 @@ void GUIButtonBase::UpdateRenderElements()
 				mRenderElements);
 		}
 		else
-			T::Populate({ T::SpriteInfo(mImageSprite, 1), T::SpriteInfo(mTextSprite), T::SpriteInfo(mContentImageSprite) }, mRenderElements);
+		{
+			T::Populate({
+				T::SpriteInfo(mImageSprite, 1, backgroundImageBounds),
+				T::SpriteInfo(mTextSprite, 0, textBounds),
+				T::SpriteInfo(mContentImageSprite, 0, contentImageBounds) },
+				mRenderElements);
+		}
 	}
 
 	GUIElement::UpdateRenderElements();
@@ -237,7 +246,7 @@ Vector2I GUIButtonBase::GetOptimalSize() const
 	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
 	if(isUsingStyleSheets)
 	{
-		const Size2UI contentSize = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, *mStyleSheetStateStyle, GetSizeConstraints().MaxWidth);
+		const Size2UI contentSize = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, *mStyleSheetRuleInformation.StateRule, GetSizeConstraints().MaxWidth);
 		
 		const u32 contentWidth = std::max(imageWidth, contentSize.Width);
 		const u32 contentHeight = std::max(imageHeight, contentSize.Height);
@@ -264,105 +273,6 @@ Vector2I GUIButtonBase::GetOptimalSize() const
 u32 GUIButtonBase::GetRenderElementDepthRange() const
 {
 	return 2;
-}
-
-void GUIButtonBase::FillBuffer(
-	u8* vertices,
-	u32* indices,
-	u32 vertexOffset,
-	u32 indexOffset,
-	const Vector2I& offset,
-	u32 maxNumVerts,
-	u32 maxNumIndices,
-	u32 renderElementIdx) const
-{
-	u8* uvs = vertices + sizeof(Vector2);
-	u32 vertexStride = sizeof(Vector2) * 2;
-	u32 indexStride = sizeof(u32);
-
-	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
-	u32 textSpriteIdx = isUsingStyleSheets ? mBackgroundSprite->GetRenderElementCount() : mImageSprite->GetRenderElementCount();
-	u32 contentImgSpriteIdx = textSpriteIdx + mTextSprite->GetRenderElementCount();
-
-	if(renderElementIdx < textSpriteIdx)
-	{
-		Vector2I imageOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
-
-		if(isUsingStyleSheets)
-			mBackgroundSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, renderElementIdx, imageOffset, mLayoutData.GetLocalClipRect());
-		else
-			mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, renderElementIdx, imageOffset, mLayoutData.GetLocalClipRect());
-
-		return;
-	}
-
-	Rect2I contentBounds = GetCachedContentBounds();
-	Rect2I contentClipRect = GetCachedClippedContentBoundsInContentSpace();
-	Rect2I textBounds = mTextSprite->GetBounds(Vector2I(), Rect2I());
-
-	Vector2I textOffset;
-	Rect2I textClipRect;
-
-	Vector2I contentOffset;
-	Rect2I imageClipRect;
-	if(mContentImageSprite != nullptr)
-	{
-		Rect2I imageBounds = mContentImageSprite->GetBounds(Vector2I(), Rect2I());
-		i32 imageXOffset = 0;
-		i32 textImageSpacing = 0;
-
-		if(textBounds.Width == 0)
-		{
-			u32 freeWidth = (u32)std::max(0, (i32)contentBounds.Width - (i32)textBounds.Width - (i32)imageBounds.Width);
-			imageXOffset = (i32)(freeWidth / 2);
-		}
-		else
-			textImageSpacing = GUIContent::kImageTextSpacing;
-
-		if(GetStyle()->ImagePosition == GUIImagePosition::Right)
-		{
-			i32 imageReservedWidth = std::max(0, (i32)contentBounds.Width - (i32)textBounds.Width);
-
-			textOffset = Vector2I(contentBounds.X, contentBounds.Y);
-			textClipRect = contentClipRect;
-			textClipRect.Width = std::min(contentBounds.Width - imageReservedWidth, textClipRect.Width);
-
-			contentOffset = Vector2I(contentBounds.X + textBounds.Width + imageXOffset + textImageSpacing, contentBounds.Y) + offset;
-			imageClipRect = contentClipRect;
-			imageClipRect.X -= textBounds.Width + imageXOffset;
-		}
-		else
-		{
-			i32 imageReservedWidth = imageBounds.Width + imageXOffset;
-
-			contentOffset = Vector2I(contentBounds.X + imageXOffset, contentBounds.Y) + offset;
-			imageClipRect = contentClipRect;
-			imageClipRect.X -= imageXOffset;
-			imageClipRect.Width = std::min(imageReservedWidth, (i32)imageClipRect.Width);
-
-			textOffset = Vector2I(contentBounds.X + imageReservedWidth + textImageSpacing, contentBounds.Y);
-			textClipRect = contentClipRect;
-			textClipRect.X -= imageReservedWidth;
-		}
-
-		i32 imageYOffset = (contentBounds.Height - imageBounds.Height) / 2;
-		imageClipRect.Y -= imageYOffset;
-		contentOffset.Y += imageYOffset;
-	}
-	else
-	{
-		textOffset = Vector2I(contentBounds.X, contentBounds.Y) + offset;
-		textClipRect = contentClipRect;
-	}
-
-	if(renderElementIdx >= contentImgSpriteIdx)
-	{
-		mContentImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, contentImgSpriteIdx - renderElementIdx, contentOffset, imageClipRect);
-	}
-	else
-	{
-		mTextSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, textSpriteIdx - renderElementIdx, textOffset, textClipRect);
-	}
 }
 
 bool GUIButtonBase::DoOnMouseEvent(const GUIMouseEvent& ev)
@@ -501,19 +411,21 @@ TextSpriteInformation GUIButtonBase::GetTextDesc() const
 	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
 	if(isUsingStyleSheets)
 	{
+		const GUIStyleSheetStateRule& stateRule = *mStyleSheetRuleInformation.StateRule;
+
 		TextSpriteInformation textSpriteInformation;
 		textSpriteInformation.Text = mContent.Text;
-		textSpriteInformation.Font = mStyleSheetStateStyle->Font;
-		textSpriteInformation.FontSize = mStyleSheetStateStyle->FontSize;
-		textSpriteInformation.Color = GetTint() * mStyleSheetStateStyle->Color;
-		textSpriteInformation.Color.A *= mStyleSheetStateStyle->Opacity;
+		textSpriteInformation.Font = stateRule.Font;
+		textSpriteInformation.FontSize = stateRule.FontSize;
+		textSpriteInformation.Color = GetTint() * stateRule.Color;
+		textSpriteInformation.Color.A *= stateRule.Opacity;
 
 		Rect2I textBounds = GetCachedContentBounds();
 
 		textSpriteInformation.Width = textBounds.Width;
 		textSpriteInformation.Height = textBounds.Height;
-		textSpriteInformation.HorzAlign = mStyleSheetStateStyle->HorizontalTextAlignment;
-		textSpriteInformation.VertAlign = mStyleSheetStateStyle->VerticalTextAlignment;
+		textSpriteInformation.HorzAlign = stateRule.HorizontalTextAlignment;
+		textSpriteInformation.VertAlign = stateRule.VerticalTextAlignment;
 
 		return textSpriteInformation;
 	}

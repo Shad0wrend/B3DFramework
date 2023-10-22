@@ -5,6 +5,8 @@
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUIToggleGroup.h"
 #include "BsGUICommandEvent.h"
+#include "BsGUIVectorPaths.h"
+#include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
 
@@ -19,10 +21,16 @@ GUIToggle::GUIToggle(const String& styleName, const GUIContent& content, SPtr<GU
 {
 	if(toggleGroup != nullptr)
 		toggleGroup->AddInternal(this);
+
+	mCheckmarkSprite = B3DNew<VectorSprite>();
+	mCheckmarkPathBuilder = GUICheckmarkVectorPathBuilder::Get();
+	mCheckmarkPseudoElementIndex = RegisterPseudoElement("checkmark");
 }
 
 GUIToggle::~GUIToggle()
 {
+	B3DDelete(mCheckmarkSprite);
+
 	if(mToggleGroup != nullptr)
 	{
 		mToggleGroup->RemoveInternal(this);
@@ -165,11 +173,50 @@ void GUIToggle::ToggleOffInternal(bool triggerEvent)
 	}
 }
 
-bool GUIToggle::DoOnMouseEvent(const GUIMouseEvent& ev)
+void GUIToggle::UpdateRenderElements()
 {
-	bool processed = GUIButtonBase::DoOnMouseEvent(ev);
+	Super::UpdateRenderElements();
 
-	if(ev.GetType() == GUIMouseEventType::MouseUp)
+	// No checkmark when not toggled
+	if(!mIsToggled)
+		return;
+
+	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
+	if(!isUsingStyleSheets)
+		return;
+
+	const GUIStyleSheetRuleInformation& ruleInformation = GetPseudoElementStyleSheetRuleInformation(mCheckmarkPseudoElementIndex);
+	if(ruleInformation.StateRule == nullptr)
+		return;
+
+	const Rect2I checkmarkBounds = GetCachedContentBoundsInElementSpace();
+
+	mCheckmarkSpriteInformation.Width = checkmarkBounds.Width;
+	mCheckmarkSpriteInformation.Height = checkmarkBounds.Height;
+
+	if(mCheckmarkPathBuilder)
+		mCheckmarkSpriteInformation.VectorPath = mCheckmarkPathBuilder->BuildPath(Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height), *ruleInformation.StateRule);
+	else
+		mCheckmarkSpriteInformation.VectorPath = nullptr;
+
+	mCheckmarkSpriteInformation.Color = GetTint();
+	mCheckmarkSpriteInformation.Color.A *= ruleInformation.StateRule->Opacity;
+
+	mCheckmarkSprite->Update(mCheckmarkSpriteInformation, (u64)GetParentWidget());
+
+	// Populate GUI render elements from the sprites
+	{
+		using T = GUIRenderElementHelper;
+
+		T::Append({ T::SpriteInfo(mCheckmarkSprite, 0, (Rect2)checkmarkBounds) }, mRenderElements);
+	}
+}
+
+bool GUIToggle::DoOnMouseEvent(const GUIMouseEvent& event)
+{
+	bool processed = GUIButtonBase::DoOnMouseEvent(event);
+
+	if(event.GetType() == GUIMouseEventType::MouseUp)
 	{
 		if(!IsDisabled())
 		{
@@ -185,11 +232,11 @@ bool GUIToggle::DoOnMouseEvent(const GUIMouseEvent& ev)
 	return processed;
 }
 
-bool GUIToggle::DoOnCommandEvent(const GUICommandEvent& ev)
+bool GUIToggle::DoOnCommandEvent(const GUICommandEvent& event)
 {
-	const bool processed = GUIButtonBase::DoOnCommandEvent(ev);
+	const bool processed = GUIButtonBase::DoOnCommandEvent(event);
 
-	if(ev.GetType() == GUICommandEventType::Confirm)
+	if(event.GetType() == GUICommandEventType::Confirm)
 	{
 		if(!IsDisabled())
 		{

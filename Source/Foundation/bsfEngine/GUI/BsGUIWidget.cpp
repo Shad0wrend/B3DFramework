@@ -12,6 +12,7 @@
 #include "Scene/BsSceneObject.h"
 #include "Resources/BsBuiltinResources.h"
 #include "RenderAPI/BsRenderTexture.h"
+#include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
 
@@ -336,7 +337,7 @@ void GUIWidget::SetSkin(const HGUISkin& skin)
 	mSkin = skin;
 
 	for(auto& element : mElements)
-		element->NotifyStyleSheetChanged();
+		element->RefreshStyle();
 }
 
 const GUISkin& GUIWidget::GetSkin() const
@@ -352,7 +353,7 @@ void GUIWidget::SetStyleSheet(const HGUIStyleSheet& styleSheet)
 	mStyleSheet = styleSheet;
 
 	for(auto& element : mElements)
-		element->NotifyStyleSheetChanged();
+		element->RefreshStyle();
 }
 
 void GUIWidget::SetCamera(const SPtr<Camera>& camera)

@@ -32,9 +32,9 @@ namespace bs
 		HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetStateRule& style) const override;
 
 		/** Returns a singleton instance of this builder. */
-		static const GUIBackgroundVectorPathBuilder* Get()
+		static const GUICheckmarkVectorPathBuilder* Get()
 		{
-			static const GUIBackgroundVectorPathBuilder instance;
+			static const GUICheckmarkVectorPathBuilder instance;
 			return &instance;
 		}
 	};

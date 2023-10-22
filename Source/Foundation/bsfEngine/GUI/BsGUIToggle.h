@@ -19,6 +19,7 @@ namespace bs
 	/**	GUI element representing a toggle (on/off) button. */
 	class B3D_EXPORT GUIToggle : public GUIButtonBase
 	{
+		using Super = GUIButtonBase;
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
 		static const String& GetGuiTypeName();
@@ -131,6 +132,9 @@ namespace bs
 		/**	Checks is the toggle currently on. */
 		bool IsToggled() const { return mIsToggled; }
 
+		/** Sets an interface that constructs the vector path used for drawing the GUI element checkmark. */
+		void SetCheckmarkPathBuilder(const IGUIVectorPathBuilder* pathBuilder) { mCheckmarkPathBuilder = pathBuilder; }
+
 		/**	Triggered whenever the button is toggled on or off. */
 		Event<void(bool)> OnToggled;
 
@@ -157,10 +161,16 @@ namespace bs
 	protected:
 		GUIToggle(const String& styleName, const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const GUISizeConstraints& dimensions);
 
-		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
-		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
+		void UpdateRenderElements() override;
+		bool DoOnMouseEvent(const GUIMouseEvent& event) override;
+		bool DoOnCommandEvent(const GUICommandEvent& event) override;
 
 	protected:
+		VectorSprite* mCheckmarkSprite = nullptr;
+		VectorSpriteInformation mCheckmarkSpriteInformation;
+		const IGUIVectorPathBuilder* mCheckmarkPathBuilder = nullptr;
+		u32 mCheckmarkPseudoElementIndex = ~0u;
+
 		SPtr<GUIToggleGroup> mToggleGroup;
 		bool mIsToggled;
 	};

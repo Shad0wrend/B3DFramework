@@ -63,7 +63,6 @@ namespace bs
 		GUIButtonBase(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOption::AcceptsKeyFocus);
 		virtual ~GUIButtonBase();
 
-		void FillBuffer(u8* vertices, u32* indices, u32 vertexOffset, u32 indexOffset, const Vector2I& offset, u32 maxNumVerts, u32 maxNumIndices, u32 renderElementIdx) const override;
 		void UpdateRenderElements() override;
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;

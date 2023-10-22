@@ -64,6 +64,23 @@ namespace bs
 	};
 
 	/**
+	 * Contains style sheet rule for a GUI element, along with state rule for the particular state the GUI element is currently in.
+	 * If used for pseudo-elements, also contains the name of the pseudo element the rule is for.
+	 */
+	struct GUIStyleSheetRuleInformation
+	{
+		GUIStyleSheetRuleInformation(const char* pseudoElementName = nullptr):
+			PseudoElementName(pseudoElementName)
+		{ }
+
+		const char* PseudoElementName = nullptr; /**< Name of the pseudo-element, if the rule is for a pseudo-element. */
+		SPtr<const GUIStyleSheetRule> Rule; /**< Rule for a particular pseudo-element, containing all the states. */
+		SPtr<const GUIStyleSheetStateRule> StateRule; /**< Rule for the currently active state. */
+
+		static const GUIStyleSheetRuleInformation kInvalid;
+	};
+
+	/**
 	 * Represents parent class for all visible GUI elements. Contains methods needed for positioning, rendering and
 	 * handling input.
 	 */
@@ -184,7 +201,7 @@ namespace bs
 			const Vector2I& offset,
 			u32 maxNumVerts,
 			u32 maxNumIndices,
-			u32 renderElementIdx) const = 0;
+			u32 renderElementIdx) const { }
 
 		/**
 		 * Retrieves vertex and index data from GUI render element and outputs them to the provided buffers. GUI render
@@ -269,8 +286,11 @@ namespace bs
 		/** Checks if element has been destroyed and is queued for deletion. */
 		bool IsDestroyed() const override { return mIsDestroyed; }
 
-		/** Update element style based on active GUI skin and style name. */
-		void NotifyStyleSheetChanged();
+		/** Updates element style based on active GUI style sheet. Call this after active style sheet changes, or element class/id changes. */
+		void RefreshStyle();
+
+		/** Notifies the system the state flag was added or removed. */
+		virtual void NotifyStateFlagsChanged();
 
 		/**	Gets the currently active element style. */
 		const GUIElementStyle* GetStyle() const { return mStyle; }
@@ -349,6 +369,12 @@ namespace bs
 		Rect2I GetCachedContentBounds() const;
 
 		/**
+		 * Similar to GetCachedContentBounds(), except the bounds are relative to the parent GUI element rather than the
+		 * parent widget.
+		 */
+		Rect2I GetCachedContentBoundsInElementSpace() const;
+
+		/**
 		 * Similar to GetCachedContentBounds(), except the bounds will be clipped by the current clip rectangle, and the
 		 * bounds will be relative to the content area of the GUI element rather than relative to the parent widget.
 		 */
@@ -366,14 +392,29 @@ namespace bs
 		/** Transitions the GUI element into a new state by removing state flags. */
 		void RemoveStateFlags(GUIElementStateFlags flags);
 
+		/**
+		 * Registers a new pseudo-element for the GUI element. Pseudo-element can be used for providing additional style sheet rules for a GUI element.
+		 *
+		 * @param	name		Name of the pseudo-element. This will correspond to the pseudo-element in the style sheet (e.g. `toggle::checkmark` will
+		 *						provide a `checkmark` pseudo-element for the `toggle` GUI element).
+		 * @return				Index you can use to retrieve pseudo-element style information from GetPseudoElementStyleSheetRuleInformation().
+		 *
+		 * @note	Pseudo-elements cannot be removed. They are intended to be registered once on GUI element construction.
+		 */
+		u32 RegisterPseudoElement(const char* name);
+
+		/** Returns style information for a pseudo-element at the specified index. */
+		const GUIStyleSheetRuleInformation& GetPseudoElementStyleSheetRuleInformation(u32 pseudoElementIndex) const;
+
 		bool mIsDestroyed = false;
 		GUIElementOptions mOptionFlags;
 		GUIElementStateFlags mStateFlags = GUIElementStateFlag::Normal;
 		Rect2I mClippedBounds;
 		TInlineArray<GUIRenderElement, 4> mRenderElements;
 
-		SPtr<const GUIStyleSheetRule> mStyleSheetStyle;
-		SPtr<const GUIStyleSheetStateRule> mStyleSheetStateStyle;
+		// Style sheet
+		TInlineArray<GUIStyleSheetRuleInformation, 2> mPseudoElementStyleSheetRules;
+		GUIStyleSheetRuleInformation mStyleSheetRuleInformation;
 	private:
 		static const Color kDisabledColor;
 
@@ -420,30 +461,39 @@ namespace bs
 		template <u32 N>
 		static void Populate(const SpriteInfo (&spriteInfos)[N], TInlineArray<GUIRenderElement, 4>& output)
 		{
+			output.Clear();
+
+			Append(spriteInfos, output);
+		}
+
+		/** Appends render elements from one or multiple sprites into @p output. */
+		template <u32 N>
+		static void Append(const SpriteInfo (&spriteInfos)[N], TInlineArray<GUIRenderElement, 4>& output)
+		{
 			u32 totalCount = 0;
 			for(u32 i = 0; i < N; i++)
 				totalCount += spriteInfos[i].Sprite ? spriteInfos[i].Sprite->GetRenderElementCount() : 0;
 
-			output.Resize(totalCount);
+			u32 outputIndex = output.Size();
+			output.Resize(output.Size() + totalCount);
 
-			u32 globalIdx = 0;
-			for(u32 i = 0; i < N; i++)
+			for(u32 spriteInfoIndex = 0; spriteInfoIndex < N; spriteInfoIndex++)
 			{
-				const SpriteInfo& spriteInfo = spriteInfos[i];
+				const SpriteInfo& spriteInfo = spriteInfos[spriteInfoIndex];
 
-				u32 count = spriteInfo.Sprite ? spriteInfo.Sprite->GetRenderElementCount() : 0;
-				for(u32 j = 0; j < count; j++)
+				const u32 renderElementCount = spriteInfo.Sprite ? spriteInfo.Sprite->GetRenderElementCount() : 0;
+				for(u32 renderElementIndex = 0; renderElementIndex < renderElementCount; renderElementIndex++)
 				{
-					GUIRenderElement& renderElem = output[globalIdx];
-					spriteInfo.Sprite->GetRenderElement(j, renderElem);
+					GUIRenderElement& renderElement = output[outputIndex];
+					spriteInfo.Sprite->GetRenderElement(renderElementIndex, renderElement);
 
-					renderElem.Depth = spriteInfo.Depth;
-					renderElem.Type = spriteInfo.MeshType;
-					renderElem.Offset = Vector2(spriteInfo.Bounds.X, spriteInfo.Bounds.Y);
-					renderElem.ClipSize = Size2(spriteInfo.Bounds.Width, spriteInfo.Bounds.Height);
-					renderElem.UseNewFillBuffer = spriteInfo.UseNewFillBuffer;
+					renderElement.Depth = spriteInfo.Depth;
+					renderElement.Type = spriteInfo.MeshType;
+					renderElement.Offset = Vector2(spriteInfo.Bounds.X, spriteInfo.Bounds.Y);
+					renderElement.ClipSize = Size2(spriteInfo.Bounds.Width, spriteInfo.Bounds.Height);
+					renderElement.UseNewFillBuffer = spriteInfo.UseNewFillBuffer;
 
-					globalIdx++;
+					outputIndex++;
 				}
 			}
 		}

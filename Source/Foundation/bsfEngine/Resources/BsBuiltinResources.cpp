@@ -140,6 +140,7 @@ void BuiltinResources::OnStartUp()
 	mSkin = GetResources().Load<GUISkin>(mBuiltinDataFolder + (String(kGuiSkinFile) + u8".json.asset"));
 	mDefaultGUIStyleSheet = GUIStyleSheet::Parse(mBuiltinRawDataFolder + "GUI.css");
 	mEmptySkin = GUISkin::Create();
+	mEmptyGUIStyleSheet = GUIStyleSheet::Create();
 
 	const HTexture whiteTexture2D = GetTexture(BuiltinTexture::White);
 	const HTexture blackTexture2D = GetTexture(BuiltinTexture::Black);
