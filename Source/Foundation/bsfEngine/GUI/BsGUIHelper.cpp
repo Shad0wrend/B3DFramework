@@ -58,26 +58,26 @@ Vector2I GUIHelper::CalculateOptimalContentSize(const String& text, const GUIEle
 	return Vector2I(contentWidth, contentHeight);
 }
 
-Size2UI GUIHelper::CalculateSizeWithPaddingAndBorder(const Size2UI& contentSize, const GUIStyleSheetStateRule& style)
+Size2UI GUIHelper::CalculateSizeWithPaddingAndBorder(const Size2UI& contentSize, const GUIStyleSheetRules& styleSheetRule)
 {
-	const u32 paddingWidth = style.Padding.Left + style.Padding.Right;
-	const u32 paddingHeight = style.Padding.Top + style.Padding.Bottom;
+	const u32 paddingWidth = styleSheetRule.Padding.Left + styleSheetRule.Padding.Right;
+	const u32 paddingHeight = styleSheetRule.Padding.Top + styleSheetRule.Padding.Bottom;
 
-	const u32 borderWidth = style.BorderLeft.GetVisibleWidth() + style.BorderRight.GetVisibleWidth();
-	const u32 borderHeight = style.BorderTop.GetVisibleWidth() + style.BorderBottom.GetVisibleWidth();
+	const u32 borderWidth = styleSheetRule.BorderLeft.GetVisibleWidth() + styleSheetRule.BorderRight.GetVisibleWidth();
+	const u32 borderHeight = styleSheetRule.BorderTop.GetVisibleWidth() + styleSheetRule.BorderBottom.GetVisibleWidth();
 
 	return Size2UI(contentSize.Width + paddingWidth + borderWidth, contentSize.Height + paddingHeight + borderHeight);
 }
 
-Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const GUIContent& content, const GUIStyleSheetStateRule& style, u32 wordWrapWidth)
+Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const GUIContent& content, const GUIStyleSheetRules& styleSheetRule, u32 wordWrapWidth)
 {
-	Size2UI contentBounds = CalculateOptimalContentSizeWithPaddingAndBorder((const String&)content.Text, style, wordWrapWidth);
+	Size2UI contentBounds = CalculateOptimalContentSizeWithPaddingAndBorder((const String&)content.Text, styleSheetRule, wordWrapWidth);
 
 	const HSpriteTexture& image = content.GetImage(GUIElementState::Normal);
 	if(SpriteTexture::CheckIsLoaded(image))
 	{
-		const u32 paddingHeight = style.Padding.Top + style.Padding.Bottom;
-		const u32 borderHeight = style.BorderTop.GetVisibleWidth() + style.BorderBottom.GetVisibleWidth();
+		const u32 paddingHeight = styleSheetRule.Padding.Top + styleSheetRule.Padding.Bottom;
+		const u32 borderHeight = styleSheetRule.BorderTop.GetVisibleWidth() + styleSheetRule.BorderBottom.GetVisibleWidth();
 
 		contentBounds.Width += image->GetWidth() + GUIContent::kImageTextSpacing;
 		contentBounds.Height = std::max(image->GetHeight() + paddingHeight + borderHeight, contentBounds.Height);
@@ -86,20 +86,20 @@ Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const GUICont
 	return contentBounds;
 }
 
-Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const String& text, const GUIStyleSheetStateRule& style, u32 wordWrapWidth)
+Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const String& text, const GUIStyleSheetRules& styleSheetRule, u32 wordWrapWidth)
 {
 	Size2UI contentSize(BsZero);
 
-	if(style.WordWrap != GUIWordWrapMode::WrapWord)
+	if(styleSheetRule.WordWrap != GUIWordWrapMode::WrapWord)
 		wordWrapWidth = 0;
 
-	const HFont font = style.Font;
+	const HFont font = styleSheetRule.Font;
 	if(font != nullptr && !text.empty())
 	{
 		B3DMarkAllocatorFrame();
 
 		const U32String utf32text = UTF8::ToUtF32(text);
-		TextData<FrameAllocatorTag> textData(utf32text, font, style.FontSize, wordWrapWidth, 0, style.WordWrap == GUIWordWrapMode::WrapWord);
+		TextData<FrameAllocatorTag> textData(utf32text, font, styleSheetRule.FontSize, wordWrapWidth, 0, styleSheetRule.WordWrap == GUIWordWrapMode::WrapWord);
 
 		contentSize.Width += textData.GetWidth();
 		contentSize.Height += textData.GetNumLines() * textData.GetLineHeight();
@@ -107,7 +107,7 @@ Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const String&
 		B3DClearAllocatorFrame();
 	}
 
-	return CalculateSizeWithPaddingAndBorder(contentSize, style);
+	return CalculateSizeWithPaddingAndBorder(contentSize, styleSheetRule);
 }
 
 Vector2I GUIHelper::CalculateTextBounds(const String& text, const HFont& font, u32 fontSize)

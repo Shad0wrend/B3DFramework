@@ -15,7 +15,7 @@ namespace bs
 	class B3D_EXPORT GUIBackgroundVectorPathBuilder : public IGUIVectorPathBuilder
 	{
 	public:
-		HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetStateRule& style) const override;
+		HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const override;
 
 		/** Returns a singleton instance of this builder. */
 		static const GUIBackgroundVectorPathBuilder* Get()
@@ -29,7 +29,7 @@ namespace bs
 	class B3D_EXPORT GUICheckmarkVectorPathBuilder : public IGUIVectorPathBuilder
 	{
 	public:
-		HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetStateRule& style) const override;
+		HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const override;
 
 		/** Returns a singleton instance of this builder. */
 		static const GUICheckmarkVectorPathBuilder* Get()

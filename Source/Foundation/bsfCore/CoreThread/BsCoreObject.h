@@ -160,7 +160,7 @@ namespace bs
 		 *
 		 * @note	It is up to the caller to ensure no other threads attempt to use this object.
 		 */
-		static void QueueDestroyGpuCommand(const SPtr<ct::CoreObject>& obj);
+		static void QueueDestroyGpuCommand(SPtr<ct::CoreObject>&& object);
 
 		/** Helper wrapper method used for queuing commands with no return value on the core thread. */
 		static void ExecuteGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void()> func);

@@ -63,8 +63,8 @@ namespace bs
 
 		const char* GetStyleSheetElement() const override
 		{
-			return nullptr;
-			//return "button";
+			//return nullptr;
+			return "button";
 		}
 
 	public: // ***** INTERNAL ******

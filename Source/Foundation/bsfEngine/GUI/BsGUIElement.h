@@ -12,7 +12,8 @@
 
 namespace bs
 {
-	struct GUIStyleSheetRule;
+	struct GUIStyleSheetStateRulesets;
+	struct GUIStyleSheetRuleset;
 	class GUINavGroup;
 
 	/** @addtogroup Implementation
@@ -44,7 +45,7 @@ namespace bs
 		Normal = 0,
 		Hover = 1 << 0,
 		Active = 1 << 1,
-		Focused = 1 << 2,
+		Focus = 1 << 2,
 		Disabled = 1 << 3,
 		Checked = 1 << 4,
 		Count = 5
@@ -74,8 +75,8 @@ namespace bs
 		{ }
 
 		const char* PseudoElementName = nullptr; /**< Name of the pseudo-element, if the rule is for a pseudo-element. */
-		SPtr<const GUIStyleSheetRule> Rule; /**< Rule for a particular pseudo-element, containing all the states. */
-		SPtr<const GUIStyleSheetStateRule> StateRule; /**< Rule for the currently active state. */
+		SPtr<const GUIStyleSheetStateRulesets> StateRulesets; /**< Rulesets for all states for a particular pseudo-element. */
+		SPtr<const GUIStyleSheetRuleset> CurrentStateRuleset; /**< Ruleset for the currently active state. */
 
 		static const GUIStyleSheetRuleInformation kInvalid;
 	};
@@ -474,7 +475,7 @@ namespace bs
 			for(u32 i = 0; i < N; i++)
 				totalCount += spriteInfos[i].Sprite ? spriteInfos[i].Sprite->GetRenderElementCount() : 0;
 
-			u32 outputIndex = output.Size();
+			u32 outputIndex = (u32)output.Size();
 			output.Resize(output.Size() + totalCount);
 
 			for(u32 spriteInfoIndex = 0; spriteInfoIndex < N; spriteInfoIndex++)

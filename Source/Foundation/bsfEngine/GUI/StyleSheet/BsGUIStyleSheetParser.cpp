@@ -84,89 +84,36 @@ SPtr<GUIStyleSheet> GUIStyleSheetParser::Parse(const SPtr<SourceCode>& sourceCod
 	GetCurrentTokenAndAdvance();
 
 	mGlobalVariableContext = VariableContext();
-	mParsedRules.clear();
+	mParsedRulesets.clear();
 
 	while(!IsCurrentToken(GUIStyleSheetTokenTypes::EndOfStream))
 	{
-		if(!TryParseRule())
+		if(!TryParseRuleset())
 			return nullptr;
 	}
 
-	TArray<GUIStyleSheetRule> rules;
-	for(auto& pair : mParsedRules)
-		rules.Add(pair.second);
+	SPtr<GUIStyleSheet> stylesheet = GUIStyleSheet::CreateShared(std::move(mParsedRulesets));
+	mParsedRulesets.Clear();
 
-	return GUIStyleSheet::CreateShared(std::move(rules));
+	return stylesheet;
 }
 
-bool GUIStyleSheetParser::TryParseRule()
+bool GUIStyleSheetParser::TryParseRuleset()
 {
 	Optional<GUIStyleSheetSelectorList> selectorList = TryParseSelectorList();
 
-	bool foundPseudoClass = false;
-	String pseudoClass;
-	String pseudoElement;
-	if(IsCurrentToken(GUIStyleSheetTokenTypes::Colon))
+	if(!selectorList)
 	{
-		GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon);
-
-		if(IsCurrentToken(GUIStyleSheetTokenTypes::Colon))
-		{
-			GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon);
-			
-			Optional<Token> pseudoElementToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::ElementSelector);
-			if(!pseudoElementToken)
-				return {};
-
-			pseudoElement = pseudoElementToken->GetSpelling();
-		}
-		else
-		{
-			Optional<Token> pseudoClassToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PseudoClassSelector);
-			if(!pseudoClassToken)
-				return {};
-
-			pseudoClass = pseudoClassToken->GetSpelling();
-			foundPseudoClass = true;
-		}
-	}
-
-	if(!selectorList && !foundPseudoClass)
-	{
-		Error("No selector name or pseudo-class provided.");
+		Error("No selector provided.");
 		return false;
-	}
-
-	GUIStyleSheetStateRule stateStyle;
-	GUIStyleSheetRule* existingStyle = nullptr;
-
-	String selectorListUniqueName;
-	if(selectorList)
-	{
-		selectorListUniqueName = selectorList->GetUniqueName();
-		if(!pseudoElement.empty())
-			selectorListUniqueName += "::" + pseudoElement;
-
-		if(auto found = mParsedRules.find(selectorListUniqueName); found != mParsedRules.end())
-			existingStyle = &found->second;
-
-		if(existingStyle != nullptr)
-		{
-			if(!foundPseudoClass)
-				stateStyle = existingStyle->Normal;
-			else
-			{
-				if(auto found = existingStyle->FindStateStyle(pseudoClass))
-					stateStyle = *found;
-			}
-		}
 	}
 
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::LeftCurly).has_value())
 		return false;
 
-	const bool isInGlobalVariableContext = foundPseudoClass && pseudoClass == "root";
+	const bool isInGlobalVariableContext = selectorList->Selectors.Size() == 1 && selectorList->Selectors.back().SelectorType == GUIStyleSheetSelectorType::PseudoClass && selectorList->Selectors.back().Name == "root";
 
+	GUIStyleSheetRuleset ruleset;
 	mLocalVariableContext = VariableContext();
 	while(!IsCurrentToken(GUIStyleSheetTokenTypes::RightCurly))
 	{
@@ -183,7 +130,7 @@ bool GUIStyleSheetParser::TryParseRule()
 		}
 		else if(IsCurrentToken(GUIStyleSheetTokenTypes::Property))
 		{
-			if(!TryParseProperty(stateStyle))
+			if(!TryParseProperty(ruleset.Rules))
 				return false;
 		}
 	}
@@ -191,30 +138,8 @@ bool GUIStyleSheetParser::TryParseRule()
 	if(!GetCurrentTokenAndAdvance(TokenType::RightCurly).has_value())
 		return false;
 
-	// Note: Not storing root state anywhere
-	if(selectorList)
-	{
-		if(existingStyle != nullptr)
-		{
-			if(foundPseudoClass)
-				existingStyle->FindAndSetStateStyle(pseudoClass, stateStyle);
-			else
-				existingStyle->Normal = stateStyle;
-		}
-		else
-		{
-			GUIStyleSheetRule newStyle;
-			newStyle.SelectorList = std::move(*selectorList);
-			newStyle.PseudoElement = std::move(pseudoElement);
-
-			if(foundPseudoClass)
-				newStyle.FindAndSetStateStyle(pseudoClass, stateStyle);
-			else
-				newStyle.Normal = stateStyle;
-
-			mParsedRules[selectorListUniqueName] = std::move(newStyle);
-		}
-	}
+	ruleset.SelectorList = selectorList.value();
+	mParsedRulesets.Add(ruleset);
 
 	return true;
 }
@@ -223,36 +148,71 @@ Optional<GUIStyleSheetSelectorList> GUIStyleSheetParser::TryParseSelectorList()
 {
 	Optional<GUIStyleSheetSelectorList> optionalSelectorList;
 
-	// Parse selector name, which can be element or #id, or empty (if empty, pseudo-class must be specified)
-	while(IsCurrentToken(TokenType::ElementSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::ClassSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::IdSelector))
+	// Parse selector name, which can be element, #id, .class, :pseudo-class or ::pseudo-element
+	u32 lastElementSelectorIndex = ~0u;
+	while(IsCurrentToken(TokenType::ElementSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::ClassSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::IdSelector) || IsCurrentToken(GUIStyleSheetTokenTypes::Colon))
 	{
 		GUIStyleSheetSelector selector;
 
-		Token selectorNameToken = *GetCurrentTokenAndAdvance();
-		switch(selectorNameToken.GetType())
+		Token token = *GetCurrentTokenAndAdvance();
+		switch(token.GetType())
 		{
 		case TokenType::ElementSelector:
 			selector.SelectorType = GUIStyleSheetSelectorType::Element;
+			selector.Name = token.GetSpelling();
+
+			// If there is any previous element selector, it is considered to be an ancestor of the current selector
+			if(lastElementSelectorIndex != ~0u)
+			{
+				B3D_ASSERT(optionalSelectorList.has_value());
+				optionalSelectorList->Selectors[lastElementSelectorIndex].CombinatorType = GUIStyleSheetCombinatorType::AncestorOf;
+			}
+
+			if(optionalSelectorList.has_value())
+				lastElementSelectorIndex = (u32)optionalSelectorList->Selectors.size();
+			else
+				lastElementSelectorIndex = 0;
 			break;
 		case TokenType::ClassSelector:
 			selector.SelectorType = GUIStyleSheetSelectorType::Class;
+			selector.Name = token.GetSpelling();
 			break;
 		case TokenType::IdSelector:
 			selector.SelectorType = GUIStyleSheetSelectorType::Id;
+			selector.Name = token.GetSpelling();
 			break;
+		case GUIStyleSheetTokenTypes::Colon:
+		{
+			if(IsCurrentToken(GUIStyleSheetTokenTypes::Colon))
+			{
+				GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon);
+				
+				Optional<Token> pseudoElementToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::ElementSelector);
+				if(!pseudoElementToken)
+					return {};
+
+				selector.SelectorType = GUIStyleSheetSelectorType::PseudoElement;
+				selector.Name = pseudoElementToken->GetSpelling();
+			}
+			else
+			{
+				Optional<Token> pseudoClassToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PseudoClassSelector);
+				if(!pseudoClassToken)
+					return {};
+
+				selector.SelectorType = GUIStyleSheetSelectorType::PseudoClass;
+				selector.Name = pseudoClassToken->GetSpelling();
+			}
+
+			break;
+		}
 		default:
 			B3D_ASSERT(false);
 			break;
 		}
 
-		selector.Name = selectorNameToken.GetSpelling();
-
 		if(!optionalSelectorList.has_value())
 			optionalSelectorList = GUIStyleSheetSelectorList();
-
-		// If there is any previous selector, it is considered to be an ancestor of the current selector
-		if(!optionalSelectorList->Selectors.Empty())
-			optionalSelectorList->Selectors.back().CombinatorType = GUIStyleSheetCombinatorType::AncestorOf;
 
 		optionalSelectorList->Selectors.Add(selector);
 	}
@@ -260,7 +220,7 @@ Optional<GUIStyleSheetSelectorList> GUIStyleSheetParser::TryParseSelectorList()
 	return optionalSelectorList;
 }
 
-bool GUIStyleSheetParser::TryParseProperty(GUIStyleSheetStateRule& inOutValue)
+bool GUIStyleSheetParser::TryParseProperty(GUIStyleSheetRules& inOutValue)
 {
 	Optional<Token> propertyToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Property);
 	if(!propertyToken)

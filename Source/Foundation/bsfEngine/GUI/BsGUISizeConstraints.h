@@ -7,7 +7,7 @@
 
 namespace bs
 {
-	struct GUIStyleSheetStateRule;
+	struct GUIStyleSheetRules;
 	/** @addtogroup GUI-Internal
 	 *  @{
 	 */
@@ -47,8 +47,8 @@ namespace bs
 		/** Updates constraints from the provided style. If user has not manually set a specific constraint, that property will be inherited from style. */
 		void UpdateWithStyle(const GUIElementStyle* style); // TODO: Deprecated
 
-		/** Updates constraints from the provided style. If user has not manually set a specific constraint, that property will be inherited from style. */
-		void UpdateWithStyle(const GUIStyleSheetStateRule& style);
+		/** Updates constraints from the provided style sheet rule. If user has not manually set a specific constraint, that property will be inherited from the rule. */
+		void UpdateWithStyleSheetRule(const GUIStyleSheetRules& rule);
 
 		/** Constrains the provided optimal element size based on active constraints. */
 		GUIConstrainedSize CalculateConstrainedSize(const Vector2I& optimalSize) const;

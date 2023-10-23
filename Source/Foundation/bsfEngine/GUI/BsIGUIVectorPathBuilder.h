@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	struct GUIStyleSheetStateRule;
+	struct GUIStyleSheetRules;
 
 	/** @addtogroup GUI
 	 *  @{
@@ -22,10 +22,10 @@ namespace bs
 		 * Constructs a vector path for a GUI element.
 		 *
 		 * @param		size		Size of the path to be displayed on the screen, in pixels.
-		 * @param		style		Current style sheet rule used by the GUI element.
+		 * @param		rule		Current style sheet rule used by the GUI element.
 		 * @return					New vector path.
 		 */
-		virtual HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetStateRule& style) const = 0;
+		virtual HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetRules& rule) const = 0;
 	};
 
 	/** @} */

@@ -6,30 +6,30 @@
 
 using namespace bs;
 
-HVectorPath GUIBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetStateRule& style) const
+HVectorPath GUIBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	HVectorPath path = VectorPath::Create(Size2((float)size.Width, (float)size.Height));
 
 	const Rect2 fillArea = Rect2(0.0f, 0.0f, (float)size.Width, (float)size.Height);
 
-	path->DrawRoundedRectangle(fillArea, (float)style.BorderTopLeftRadius, (float)style.BorderTopRightRadius, (float)style. BorderBottomLeftRadius, (float)style.BorderTopRightRadius)
+	path->DrawRoundedRectangle(fillArea, (float)styleSheetRule.BorderTopLeftRadius, (float)styleSheetRule.BorderTopRightRadius, (float)styleSheetRule. BorderBottomLeftRadius, (float)styleSheetRule.BorderTopRightRadius)
 		.ClosePath()
-		.SetFillPaint(style.BackgroundColor)
+		.SetFillPaint(styleSheetRule.BackgroundColor)
 		.DrawFill();
 
 	// TODO - Not supporting separate border styles at the moment. See nvgRoundedRectVarying for implementation. Also ideally support elliptical corners
-	const bool drawBorder = style.BorderLeft.Width > 0 && style.BorderLeft.Style != GUIBorderElementStyle::None;
+	const bool drawBorder = styleSheetRule.BorderLeft.Width > 0 && styleSheetRule.BorderLeft.Style != GUIBorderElementStyle::None;
 	if(drawBorder)
 	{
-		path->SetStrokePaint(style.BorderLeft.Color)
-			.SetStrokeWidth((float)style.BorderLeft.Width)
+		path->SetStrokePaint(styleSheetRule.BorderLeft.Color)
+			.SetStrokeWidth((float)styleSheetRule.BorderLeft.Width)
 			.DrawStroke();
 	}
 
 	return path;
 }
 
-HVectorPath GUICheckmarkVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetStateRule& style) const
+HVectorPath GUICheckmarkVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	HVectorPath path = VectorPath::Create(Size2(512.0f, 512.0f));
 
@@ -41,7 +41,7 @@ HVectorPath GUICheckmarkVectorPathBuilder::BuildPath(const Size2UI& size, const 
 		.DrawCubicBezierTo(Vector2(356.9f, 135.4f), Vector2(276.8f, 238.9f), Vector2(207.2f, 361.9f))
 		.DrawCubicBezierTo(Vector2(158.8f, 318.3f), Vector2(80.58f, 256.6f), Vector2(32.82f, 224.9f))
 		.ClosePath()
-		.SetFillPaint(style.Color)
+		.SetFillPaint(styleSheetRule.Color)
 		.DrawFill();
 
 	return path;

@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	struct GUIStyleSheetStateRule;
+	struct GUIStyleSheetRules;
 	/** @addtogroup GUI-Internal
 	 *  @{
 	 */
@@ -51,31 +51,31 @@ namespace bs
 		 * Calculates size of the GUI element area based on the GUI content size. This is just the content area expanded by padding and border provided by the style.
 		 *
 		 * @param	contentSize		Size of the GUI element's content area.
-		 * @param	style			Style to use when rendering the GUI element.
+		 * @param	styleSheetRule			Style to use when rendering the GUI element.
 		 * @return					Size of the GUI element (including the border).
 		 */
-		static Size2UI CalculateSizeWithPaddingAndBorder(const Size2UI& contentSize, const GUIStyleSheetStateRule& style);
+		static Size2UI CalculateSizeWithPaddingAndBorder(const Size2UI& contentSize, const GUIStyleSheetRules& styleSheetRule);
 
 		/**
 		 * Calculates optimal size for displaying particular GUI contents.
 		 *
 		 * @param	content			Content to calculate size for.
-		 * @param	style			Style that the content will be displayed with.
+		 * @param	styleSheetRule	Style that the content will be displayed with.
 		 * @param	wordWrapWidth	If non-zero, the width at which to perform word wrap. If not provided, all the text will be placed in a single line. Only relevant
 		 *							if the contents contain text.
 		 * @return					Optimal size of the GUI element, including content size, style padding and border width.
 		 */
-		static Size2UI CalculateOptimalContentSizeWithPaddingAndBorder(const GUIContent& content, const GUIStyleSheetStateRule& style, u32 wordWrapWidth = 0);
+		static Size2UI CalculateOptimalContentSizeWithPaddingAndBorder(const GUIContent& content, const GUIStyleSheetRules& styleSheetRule, u32 wordWrapWidth = 0);
 
 		/**
 		 * Calculates optimal size for displaying text.
 		 *
 		 * @param	text			Text to calculate size for.
-		 * @param	style			Style that the content will be displayed with.
+		 * @param	styleSheetRule	Style that the content will be displayed with.
 		 * @param	wordWrapWidth	If non-zero, the width at which to perform word wrap. If not provided, all the text will be placed in a single line.
 		 * @return					Optimal size of the GUI element, including content size and the style padding (area within GUI elements border).
 		 */
-		static Size2UI CalculateOptimalContentSizeWithPaddingAndBorder(const String& text, const GUIStyleSheetStateRule& style, u32 wordWrapWidth = 0);
+		static Size2UI CalculateOptimalContentSizeWithPaddingAndBorder(const String& text, const GUIStyleSheetRules& styleSheetRule, u32 wordWrapWidth = 0);
 
 		/**
 		 * Calculates optimal content size for the provided text using the provided font and size. Size is calculated

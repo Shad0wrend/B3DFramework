@@ -44,7 +44,7 @@ void CoreObject::Destroy()
 		B3D_ASSERT(B3D_CURRENT_THREAD_ID != CoreThread::Instance().GetCoreThreadId() && "Cannot destroy sim thead object from core thread.");
 
 		// This will only destroy the ct::CoreObject if this was the last reference
-		QueueDestroyGpuCommand(mCoreSpecific); // TODO - Need an explicit Destroy method here, otherwise clearing mCoreSpecific pointer below can still be the last reference if this code runs fast enough. Which means it gets destroyed on the wrong thread.
+		QueueDestroyGpuCommand(std::move(mCoreSpecific)); // TODO - Need an explicit Destroy method here, otherwise clearing mCoreSpecific pointer below can still be the last reference if this code runs fast enough. Which means it gets destroyed on the wrong thread.
 	}
 
 	mCoreSpecific = nullptr;
@@ -122,11 +122,9 @@ void CoreObject::QueueInitializeGpuCommand(const SPtr<ct::CoreObject>& obj)
 	CoreThread::Instance().PostCommand(std::bind(&CoreObject::ExecuteGpuCommand, obj, func));
 }
 
-void CoreObject::QueueDestroyGpuCommand(const SPtr<ct::CoreObject>& obj)
+void CoreObject::QueueDestroyGpuCommand(SPtr<ct::CoreObject>&& object)
 {
-	std::function<void()> func = [&]() {}; // Do nothing function. We just need the shared pointer to stay alive until it reaches the core thread
-
-	GetCoreThread().PostCommand(std::bind(&CoreObject::ExecuteGpuCommand, obj, func));
+	GetCoreThread().PostCommand([objectToDestroy = object]() mutable { objectToDestroy = nullptr; });
 }
 
 void CoreObject::ExecuteGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void()> func)

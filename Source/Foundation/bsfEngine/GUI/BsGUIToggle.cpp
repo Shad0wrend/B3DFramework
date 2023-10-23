@@ -186,21 +186,22 @@ void GUIToggle::UpdateRenderElements()
 		return;
 
 	const GUIStyleSheetRuleInformation& ruleInformation = GetPseudoElementStyleSheetRuleInformation(mCheckmarkPseudoElementIndex);
-	if(ruleInformation.StateRule == nullptr)
+	if(ruleInformation.CurrentStateRuleset == nullptr)
 		return;
 
+	const GUIStyleSheetRules& checkmarkStyleSheetRules = ruleInformation.CurrentStateRuleset->Rules;
 	const Rect2I checkmarkBounds = GetCachedContentBoundsInElementSpace();
 
 	mCheckmarkSpriteInformation.Width = checkmarkBounds.Width;
 	mCheckmarkSpriteInformation.Height = checkmarkBounds.Height;
 
 	if(mCheckmarkPathBuilder)
-		mCheckmarkSpriteInformation.VectorPath = mCheckmarkPathBuilder->BuildPath(Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height), *ruleInformation.StateRule);
+		mCheckmarkSpriteInformation.VectorPath = mCheckmarkPathBuilder->BuildPath(Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height), checkmarkStyleSheetRules);
 	else
 		mCheckmarkSpriteInformation.VectorPath = nullptr;
 
 	mCheckmarkSpriteInformation.Color = GetTint();
-	mCheckmarkSpriteInformation.Color.A *= ruleInformation.StateRule->Opacity;
+	mCheckmarkSpriteInformation.Color.A *= checkmarkStyleSheetRules.Opacity;
 
 	mCheckmarkSprite->Update(mCheckmarkSpriteInformation, (u64)GetParentWidget());
 

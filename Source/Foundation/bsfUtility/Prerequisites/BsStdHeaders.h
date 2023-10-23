@@ -112,100 +112,6 @@ namespace bs
 	template <typename F>
 	using Function = std::function<F>;
 
-	/** @addtogroup Containers
-	 *  @{
-	 */
-
-	/** Hasher that handles custom enums automatically. */
-	template <typename Key>
-	using HashType = typename std::conditional<std::is_enum<Key>::value, EnumClassHash, std::hash<Key>>::type;
-
-	/** Double ended queue. Allows for fast insertion and removal at both its beginning and end. */
-	template <typename T, typename A = StdAlloc<T>>
-	using Deque = std::deque<T, A>;
-
-	/** Dynamically sized array that stores elements contiguously. */
-	template <typename T, typename A = StdAlloc<T>>
-	using Vector = std::vector<T, A>;
-
-	/** Constant array that stores elements contiguously. */
-	template <typename ElementType, size_t Size>
-	using Array = std::array<ElementType, Size>;
-
-	/**
-	 * Container that supports constant time insertion and removal for elements with known locations, but without fast
-	 * random access to elements. Internally implemented as a doubly linked list. Use ForwardList if you do not need
-	 * reverse iteration.
-	 */
-	template <typename T, typename A = StdAlloc<T>>
-	using List = std::list<T, A>;
-
-	/**
-	 * Container that supports constant time insertion and removal for elements with known locations, but without fast
-	 * random access to elements. Internally implemented as a singly linked list that doesn't support reverse iteration.
-	 */
-	template <typename T, typename A = StdAlloc<T>>
-	using ForwardList = std::forward_list<T, A>;
-
-	/** First-in, last-out data structure. */
-	template <typename T, typename A = StdAlloc<T>>
-	using Stack = std::stack<T, std::deque<T, A>>;
-
-	/** First-in, first-out data structure. */
-	template <typename T, typename A = StdAlloc<T>>
-	using Queue = std::queue<T, std::deque<T, A>>;
-
-	/** An associative container containing an ordered set of elements. */
-	template <typename T, typename P = std::less<T>, typename A = StdAlloc<T>>
-	using Set = std::set<T, P, A>;
-
-	/** An associative container containing an ordered set of key-value pairs. */
-	template <typename K, typename V, typename P = std::less<K>, typename A = StdAlloc<std::pair<const K, V>>>
-	using Map = std::map<K, V, P, A>;
-
-	/** An associative container containing an ordered set of elements where multiple elements can have the same key. */
-	template <typename T, typename P = std::less<T>, typename A = StdAlloc<T>>
-	using MultiSet = std::multiset<T, P, A>;
-
-	/** An associative container containing an ordered set of key-value pairs where multiple elements can have the same key. */
-	template <typename K, typename V, typename P = std::less<K>, typename A = StdAlloc<std::pair<const K, V>>>
-	using MultiMap = std::multimap<K, V, P, A>;
-
-	/** An associative container containing an unordered set of elements. Usually faster than Set for larger data sets. */
-	template <typename T, typename H = HashType<T>, typename C = std::equal_to<T>, typename A = StdAlloc<T>>
-	using UnorderedSet = std::unordered_set<T, H, C, A>;
-
-	/** An associative container containing an ordered set of key-value pairs. Usually faster than Map for larger data sets. */
-	template <typename K, typename V, typename H = HashType<K>, typename C = std::equal_to<K>, typename A = StdAlloc<std::pair<const K, V>>>
-	using UnorderedMap = std::unordered_map<K, V, H, C, A>;
-
-	/**
-	 * An associative container containing an ordered set of key-value pairs where multiple elements can have the same key.
-	 * Usually faster than MultiMap for larger data sets.
-	 */
-	template <typename K, typename V, typename H = HashType<K>, typename C = std::equal_to<K>, typename A = StdAlloc<std::pair<const K, V>>>
-	using UnorderedMultimap = std::unordered_multimap<K, V, H, C, A>;
-
-	/** @} */
-
-	/** @addtogroup Time
-	 *  @{
-	 */
-
-	using namespace std::chrono_literals;
-
-	using Nanoseconds = std::chrono::nanoseconds;
-	using Microseconds = std::chrono::microseconds;
-	using Milliseconds = std::chrono::milliseconds;
-	using Seconds = std::chrono::seconds;
-	using Minutes = std::chrono::minutes;
-	using Hours = std::chrono::hours;
-
-	using Clock = std::chrono::high_resolution_clock;
-	using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
-
-	/** @} */
-
 	/** @addtogroup Memory
 	 *  @{
 	 */
@@ -329,4 +235,149 @@ namespace bs
 	}
 
 	/** @} */
+
+	/** @addtogroup Containers
+	 *  @{
+	 */
+
+	/** Hasher that handles custom enums automatically. */
+	template <typename Key>
+	using HashType = typename std::conditional<std::is_enum<Key>::value, EnumClassHash, std::hash<Key>>::type;
+
+	/** Double ended queue. Allows for fast insertion and removal at both its beginning and end. */
+	template <typename T, typename A = StdAlloc<T>>
+	using Deque = std::deque<T, A>;
+
+	/** Dynamically sized array that stores elements contiguously. */
+	template <typename T, typename A = StdAlloc<T>>
+	using Vector = std::vector<T, A>;
+
+	/** Constant array that stores elements contiguously. */
+	template <typename ElementType, size_t Size>
+	using Array = std::array<ElementType, Size>;
+
+	/**
+	 * Container that supports constant time insertion and removal for elements with known locations, but without fast
+	 * random access to elements. Internally implemented as a doubly linked list. Use ForwardList if you do not need
+	 * reverse iteration.
+	 */
+	template <typename T, typename A = StdAlloc<T>>
+	using List = std::list<T, A>;
+
+	/**
+	 * Container that supports constant time insertion and removal for elements with known locations, but without fast
+	 * random access to elements. Internally implemented as a singly linked list that doesn't support reverse iteration.
+	 */
+	template <typename T, typename A = StdAlloc<T>>
+	using ForwardList = std::forward_list<T, A>;
+
+	/** First-in, last-out data structure. */
+	template <typename T, typename A = StdAlloc<T>>
+	using Stack = std::stack<T, std::deque<T, A>>;
+
+	/** First-in, first-out data structure. */
+	template <typename T, typename A = StdAlloc<T>>
+	using Queue = std::queue<T, std::deque<T, A>>;
+
+	/** An associative container containing an ordered set of elements. */
+	template <typename T, typename P = std::less<T>, typename A = StdAlloc<T>>
+	using Set = std::set<T, P, A>;
+
+	/** An associative container containing an ordered set of key-value pairs. */
+	template <typename K, typename V, typename P = std::less<K>, typename A = StdAlloc<std::pair<const K, V>>>
+	using Map = std::map<K, V, P, A>;
+
+	/** An associative container containing an ordered set of elements where multiple elements can have the same key. */
+	template <typename T, typename P = std::less<T>, typename A = StdAlloc<T>>
+	using MultiSet = std::multiset<T, P, A>;
+
+	/** An associative container containing an ordered set of key-value pairs where multiple elements can have the same key. */
+	template <typename K, typename V, typename P = std::less<K>, typename A = StdAlloc<std::pair<const K, V>>>
+	using MultiMap = std::multimap<K, V, P, A>;
+
+	/** An associative container containing an unordered set of elements. Usually faster than Set for larger data sets. */
+	template <typename T, typename H = HashType<T>, typename C = std::equal_to<T>, typename A = StdAlloc<T>>
+	using UnorderedSet = std::unordered_set<T, H, C, A>;
+
+	/** An associative container containing an ordered set of key-value pairs. Usually faster than Map for larger data sets. */
+	template <typename K, typename V, typename H = HashType<K>, typename C = std::equal_to<K>, typename A = StdAlloc<std::pair<const K, V>>>
+	using UnorderedMap = std::unordered_map<K, V, H, C, A>;
+
+	/**
+	 * An associative container containing an ordered set of key-value pairs where multiple elements can have the same key.
+	 * Usually faster than MultiMap for larger data sets.
+	 */
+	template <typename K, typename V, typename H = HashType<K>, typename C = std::equal_to<K>, typename A = StdAlloc<std::pair<const K, V>>>
+	using UnorderedMultimap = std::unordered_multimap<K, V, H, C, A>;
+
+	/** Helper that provides hash and equality types for UnorderedSet and UnorderedMap containing shared pointer as a key. Key class must provide a `u64 GenerateHash()` method and an equality operator. */
+	template<class T>
+	struct TSharedUnorderedTypeHelper
+	{
+		struct Hash
+		{
+			u64 operator()(const SPtr<T>& value) const { return value ? value->GenerateHash() : 0; }
+		};
+
+		struct Equals
+		{
+			u64 operator()(const SPtr<T>& lhs, const SPtr<T>& rhs) const
+			{
+				if(lhs == nullptr && rhs == nullptr)
+					return true;
+
+				if(lhs == nullptr || rhs == nullptr)
+					return false;
+
+				return *lhs == *rhs;
+			}
+		};
+	};
+
+	/** Unordered set containing @p SPtr<T> as the key. @p T must provide `u64 GenerateHash()` method and an equality operator. */
+	template<class T>
+	using TSharedUnorderedSet = UnorderedSet<SPtr<T>, typename TSharedUnorderedTypeHelper<T>::Hash, typename TSharedUnorderedTypeHelper<T>::Equals>;
+
+	/** Unordered map containing @p SPtr<K> as the key and @p V as value. @p K must provide `u64 GenerateHash()` method and an equality operator. */
+	template<class K, class V>
+	using TSharedUnorderedMap = UnorderedMap<SPtr<K>, V, typename TSharedUnorderedTypeHelper<K>::Hash, typename TSharedUnorderedTypeHelper<K>::Equals>;
+
+	/** Helper that provides hash type for UnorderedSet and UnorderedMap. Key class must provide a `u64 GenerateHash()` method and an equality operator. */
+	template<class T>
+	struct TUnorderedTypeHelper
+	{
+		struct Hash
+		{
+			u64 operator()(const T& value) const { return value.GenerateHash(); }
+		};
+	};
+
+	/** Unordered set containing @p T as the key. @p T must provide `u64 GenerateHash()` method and an equality operator. */
+	template<class T>
+	using TUnorderedSet = UnorderedSet<T, typename TUnorderedTypeHelper<T>::Hash>;
+
+	/** Unordered map containing @p K as the key and @p V as value. @p K must provide `u64 GenerateHash()` method and an equality operator. */
+	template<class K, class V>
+	using TUnorderedMap = UnorderedMap<K, V, typename TUnorderedTypeHelper<K>::Hash>;
+
+	/** @} */
+
+	/** @addtogroup Time
+	 *  @{
+	 */
+
+	using namespace std::chrono_literals;
+
+	using Nanoseconds = std::chrono::nanoseconds;
+	using Microseconds = std::chrono::microseconds;
+	using Milliseconds = std::chrono::milliseconds;
+	using Seconds = std::chrono::seconds;
+	using Minutes = std::chrono::minutes;
+	using Hours = std::chrono::hours;
+
+	using Clock = std::chrono::high_resolution_clock;
+	using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
+
+	/** @} */
+
 } // namespace bs

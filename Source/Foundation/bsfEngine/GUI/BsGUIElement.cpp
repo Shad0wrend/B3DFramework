@@ -162,8 +162,8 @@ void GUIElement::ChangeParentWidget(GUIWidget* widget)
 
 const RectOffset& GUIElement::GetMargins() const
 {
-	if(mStyleSheetRuleInformation.StateRule)
-		return mStyleSheetRuleInformation.StateRule->Margins;
+	if(mStyleSheetRuleInformation.CurrentStateRuleset)
+		return mStyleSheetRuleInformation.CurrentStateRuleset->Rules.Margins;
 	else if(mStyle != nullptr)
 		return mStyle->Padding; // Note: Old GUI style has the meaning of padding/margins swapped
 	else
@@ -175,8 +175,8 @@ const RectOffset& GUIElement::GetMargins() const
 
 const RectOffset& GUIElement::GetPadding() const
 {
-	if(mStyleSheetRuleInformation.StateRule)
-		return mStyleSheetRuleInformation.StateRule->Padding;
+	if(mStyleSheetRuleInformation.CurrentStateRuleset)
+		return mStyleSheetRuleInformation.CurrentStateRuleset->Rules.Padding;
 	else if(mStyle != nullptr)
 		return mStyle->Margins; // Note: Old GUI style has the meaning of padding/margins swapped
 	else
@@ -241,21 +241,23 @@ void GUIElement::ResetDimensions()
 
 Rect2I GUIElement::GetCachedContentBounds() const
 {
-	if(mStyleSheetRuleInformation.StateRule != nullptr)
+	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
+		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+
 		const RectOffset& padding = GetPadding();
 		const u32 paddingWidth = padding.Left + padding.Right;
 		const u32 paddingHeight = padding.Top + padding.Bottom;
 
-		const u32 borderWidth = mStyleSheetRuleInformation.StateRule->BorderLeft.GetVisibleWidth() + mStyleSheetRuleInformation.StateRule->BorderRight.GetVisibleWidth();
-		const u32 borderHeight = mStyleSheetRuleInformation.StateRule->BorderTop.GetVisibleWidth() + mStyleSheetRuleInformation.StateRule->BorderBottom.GetVisibleWidth();
+		const u32 borderWidth = styleSheetRules.BorderLeft.GetVisibleWidth() + styleSheetRules.BorderRight.GetVisibleWidth();
+		const u32 borderHeight = styleSheetRules.BorderTop.GetVisibleWidth() + styleSheetRules.BorderBottom.GetVisibleWidth();
 
 		Rect2I bounds = GetCachedBounds();
 		const u32 nonContentWidth = Math::Min(bounds.Width, paddingWidth + borderWidth);
 		const u32 nonContentHeight = Math::Min(bounds.Height, paddingHeight + borderHeight);
 
-		bounds.X += (i32)Math::Min(bounds.Width, padding.Left + mStyleSheetRuleInformation.StateRule->BorderLeft.GetVisibleWidth());
-		bounds.Y += (i32)Math::Min(bounds.Height, padding.Top + mStyleSheetRuleInformation.StateRule->BorderTop.GetVisibleWidth());
+		bounds.X += (i32)Math::Min(bounds.Width, padding.Left + styleSheetRules.BorderLeft.GetVisibleWidth());
+		bounds.Y += (i32)Math::Min(bounds.Height, padding.Top + styleSheetRules.BorderTop.GetVisibleWidth());
 		bounds.Width -= nonContentWidth;
 		bounds.Height -= nonContentHeight;
 
@@ -302,11 +304,13 @@ Rect2I GUIElement::GetCachedClippedContentBoundsInContentSpace() const
 Vector2I GUIElement::GetContentOffsetInElementSpace() const
 {
 	const RectOffset& padding = GetPadding();
-	if(mStyleSheetRuleInformation.StateRule != nullptr)
+	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
+		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+
 		return Vector2I(
-			padding.Left + mStyleSheetRuleInformation.StateRule->BorderLeft.GetVisibleWidth(),
-			padding.Top + mStyleSheetRuleInformation.StateRule->BorderTop.GetVisibleWidth());
+			padding.Left + styleSheetRules.BorderLeft.GetVisibleWidth(),
+			padding.Top + styleSheetRules.BorderTop.GetVisibleWidth());
 	}
 	else
 	{
@@ -318,7 +322,7 @@ Vector2I GUIElement::GetContentOffsetInElementSpace() const
 
 Color GUIElement::GetTint() const
 {
-	if(mStyleSheetRuleInformation.StateRule != nullptr) // With style sheets, disabled color is controlled via a separate rule, rather than being hardcoded
+	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr) // With style sheets, disabled color is controlled via a separate rule, rather than being hardcoded
 		return mColor;
 	else
 	{
@@ -392,20 +396,20 @@ void GUIElement::RefreshStyle()
 		const GUIWidget* parentWidget = GetParentWidget();
 		const GUIStyleSheet& styleSheet = (parentWidget && parentWidget->GetStyleSheet().IsLoaded(false)) ? *parentWidget->GetStyleSheet() : GetBuiltinResources().GetEmptyGUIStyleSheet();
 
-		SPtr<GUIStyleSheetRule> newRule = styleSheet.BuildRule(*this);
+		SPtr<const GUIStyleSheetStateRulesets> newStateRulesets = styleSheet.BuildStateRulesets(*this);
 
-		if(!newRule)
-			newRule = GUIStyleSheetRule::kDefault;
+		if(!newStateRulesets)
+			newStateRulesets = GUIStyleSheetStateRulesets::kDefault;
 
 		bool anyRuleChanged = false;
-		if(newRule != mStyleSheetRuleInformation.Rule)
+		if(newStateRulesets != mStyleSheetRuleInformation.StateRulesets)
 		{
-			mStyleSheetRuleInformation.Rule = newRule;
+			mStyleSheetRuleInformation.StateRulesets = newStateRulesets;
 
 			const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
-			mStyleSheetRuleInformation.StateRule = mStyleSheetRuleInformation.Rule->FindStateStyle(mStateFlags);
-			mSizeConstraints.UpdateWithStyle(*mStyleSheetRuleInformation.StateRule);
+			mStyleSheetRuleInformation.CurrentStateRuleset = mStyleSheetRuleInformation.StateRulesets->BuildStateRuleset(mStateFlags);
+			mSizeConstraints.UpdateWithStyleSheetRule(mStyleSheetRuleInformation.CurrentStateRuleset->Rules);
 
 			const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 			if(isFixedBefore != isFixedAfter)
@@ -414,15 +418,16 @@ void GUIElement::RefreshStyle()
 			anyRuleChanged = true;
 		}
 
+		const GUIStyleSheetRules* inheritedRules = mStyleSheetRuleInformation.CurrentStateRuleset != nullptr ? &mStyleSheetRuleInformation.CurrentStateRuleset->Rules : nullptr;
 		for(auto& pseudoElementRuleInformation : mPseudoElementStyleSheetRules)
 		{
-			SPtr<GUIStyleSheetRule> newPseudoElementRule = styleSheet.BuildRule(*this, pseudoElementRuleInformation.PseudoElementName);
+			SPtr<const GUIStyleSheetStateRulesets> newPseudoElementStateRulesets = styleSheet.BuildStateRulesets(*this, pseudoElementRuleInformation.PseudoElementName);
 
-			if(!newPseudoElementRule)
-				newPseudoElementRule = GUIStyleSheetRule::kDefault;
+			if(!newPseudoElementStateRulesets)
+				newPseudoElementStateRulesets = GUIStyleSheetStateRulesets::kDefault;
 
-			pseudoElementRuleInformation.Rule = newPseudoElementRule;
-			pseudoElementRuleInformation.StateRule = pseudoElementRuleInformation.Rule->FindStateStyle(mStateFlags);
+			pseudoElementRuleInformation.StateRulesets = newPseudoElementStateRulesets;
+			pseudoElementRuleInformation.CurrentStateRuleset = pseudoElementRuleInformation.StateRulesets->BuildStateRuleset(mStateFlags, inheritedRules);
 		}
 
 		if(anyRuleChanged)
@@ -459,17 +464,18 @@ void GUIElement::RefreshStyle()
 
 void GUIElement::NotifyStateFlagsChanged()
 {
-	if(mStyleSheetRuleInformation.Rule != nullptr)
-		mStyleSheetRuleInformation.StateRule = mStyleSheetRuleInformation.Rule->FindStateStyle(mStateFlags);
+	if(mStyleSheetRuleInformation.StateRulesets != nullptr)
+		mStyleSheetRuleInformation.CurrentStateRuleset = mStyleSheetRuleInformation.StateRulesets->BuildStateRuleset(mStateFlags);
 	else
-		mStyleSheetRuleInformation.StateRule = GUIStyleSheetStateRule::kDefault;
+		mStyleSheetRuleInformation.CurrentStateRuleset = GUIStyleSheetRuleset::kDefault;
 
+	const GUIStyleSheetRules* inheritedRules = mStyleSheetRuleInformation.CurrentStateRuleset != nullptr ? &mStyleSheetRuleInformation.CurrentStateRuleset->Rules : nullptr;
 	for(auto& psudoElementRuleInformation : mPseudoElementStyleSheetRules)
 	{
-		if(psudoElementRuleInformation.Rule != nullptr)
-			psudoElementRuleInformation.StateRule = psudoElementRuleInformation.Rule->FindStateStyle(mStateFlags);
+		if(psudoElementRuleInformation.StateRulesets != nullptr)
+			psudoElementRuleInformation.CurrentStateRuleset = psudoElementRuleInformation.StateRulesets->BuildStateRuleset(mStateFlags, inheritedRules);
 		else
-			psudoElementRuleInformation.StateRule = GUIStyleSheetStateRule::kDefault;
+			psudoElementRuleInformation.CurrentStateRuleset = GUIStyleSheetRuleset::kDefault;
 	}
 }
 

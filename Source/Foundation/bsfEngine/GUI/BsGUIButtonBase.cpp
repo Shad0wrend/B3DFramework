@@ -79,18 +79,18 @@ void GUIButtonBase::UpdateRenderElements()
 	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
 	if(isUsingStyleSheets)
 	{
-		const GUIStyleSheetStateRule& stateRule = *mStyleSheetRuleInformation.StateRule;
+		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 
 		mBackgroundSpriteInformation.Width = mLayoutData.Area.Width;
 		mBackgroundSpriteInformation.Height = mLayoutData.Area.Height;
 
 		if(mBackgroundPathBuilder)
-			mBackgroundSpriteInformation.VectorPath = mBackgroundPathBuilder->BuildPath(Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height), stateRule);
+			mBackgroundSpriteInformation.VectorPath = mBackgroundPathBuilder->BuildPath(Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height), styleSheetRules);
 		else
 			mBackgroundSpriteInformation.VectorPath = nullptr;
 
 		mBackgroundSpriteInformation.Color = GetTint();
-		mBackgroundSpriteInformation.Color.A *= stateRule.Opacity;
+		mBackgroundSpriteInformation.Color.A *= styleSheetRules.Opacity;
 
 		mBackgroundSprite->Update(mBackgroundSpriteInformation, (u64)GetParentWidget());
 	}
@@ -246,7 +246,8 @@ Vector2I GUIButtonBase::GetOptimalSize() const
 	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
 	if(isUsingStyleSheets)
 	{
-		const Size2UI contentSize = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, *mStyleSheetRuleInformation.StateRule, GetSizeConstraints().MaxWidth);
+		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+		const Size2UI contentSize = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, styleSheetRules, GetSizeConstraints().MaxWidth);
 		
 		const u32 contentWidth = std::max(imageWidth, contentSize.Width);
 		const u32 contentHeight = std::max(imageHeight, contentSize.Height);
@@ -357,7 +358,7 @@ bool GUIButtonBase::DoOnCommandEvent(const GUICommandEvent& ev)
 
 		if(!IsDisabled())
 		{
-			AddStateFlags(GUIElementStateFlag::Focused);
+			AddStateFlags(GUIElementStateFlag::Focus);
 
 			if(state == GUIElementState::Normal)
 				SetStateInternal(IsOnInternal() ? GUIElementState::FocusedOn : GUIElementState::Focused);
@@ -370,7 +371,7 @@ bool GUIButtonBase::DoOnCommandEvent(const GUICommandEvent& ev)
 	else if(ev.GetType() == GUICommandEventType::FocusLost)
 	{
 		mHasFocus = false;
-		RemoveStateFlags(GUIElementStateFlag::Focused);
+		RemoveStateFlags(GUIElementStateFlag::Focus);
 
 		if(state == GUIElementState::Focused)
 			SetStateInternal(IsOnInternal() ? GUIElementState::NormalOn : GUIElementState::Normal);
@@ -411,21 +412,21 @@ TextSpriteInformation GUIButtonBase::GetTextDesc() const
 	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
 	if(isUsingStyleSheets)
 	{
-		const GUIStyleSheetStateRule& stateRule = *mStyleSheetRuleInformation.StateRule;
+		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 
 		TextSpriteInformation textSpriteInformation;
 		textSpriteInformation.Text = mContent.Text;
-		textSpriteInformation.Font = stateRule.Font;
-		textSpriteInformation.FontSize = stateRule.FontSize;
-		textSpriteInformation.Color = GetTint() * stateRule.Color;
-		textSpriteInformation.Color.A *= stateRule.Opacity;
+		textSpriteInformation.Font = styleSheetRules.Font;
+		textSpriteInformation.FontSize = styleSheetRules.FontSize;
+		textSpriteInformation.Color = GetTint() * styleSheetRules.Color;
+		textSpriteInformation.Color.A *= styleSheetRules.Opacity;
 
 		Rect2I textBounds = GetCachedContentBounds();
 
 		textSpriteInformation.Width = textBounds.Width;
 		textSpriteInformation.Height = textBounds.Height;
-		textSpriteInformation.HorzAlign = stateRule.HorizontalTextAlignment;
-		textSpriteInformation.VertAlign = stateRule.VerticalTextAlignment;
+		textSpriteInformation.HorzAlign = styleSheetRules.HorizontalTextAlignment;
+		textSpriteInformation.VertAlign = styleSheetRules.VerticalTextAlignment;
 
 		return textSpriteInformation;
 	}

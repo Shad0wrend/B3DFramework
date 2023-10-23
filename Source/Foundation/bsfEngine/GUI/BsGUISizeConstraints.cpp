@@ -83,35 +83,35 @@ void GUISizeConstraints::UpdateWithStyle(const GUIElementStyle* style)
 	}
 }
 
-void GUISizeConstraints::UpdateWithStyle(const GUIStyleSheetStateRule& style)
+void GUISizeConstraints::UpdateWithStyleSheetRule(const GUIStyleSheetRules& rule)
 {
 	if(!IsWidthOverridenAtRuntime())
 	{
-		if(style.IsPropertySet(GUIStyleSheetPropertyType::Width))
+		if(rule.IsPropertySet(GUIStyleSheetPropertyType::Width))
 		{
 			Flags |= GUISizeConstraintFlag::FixedWidth;
-			MinWidth = MaxWidth = style.Size.Width;
+			MinWidth = MaxWidth = rule.Size.Width;
 		}
 		else
 		{
 			Flags.Unset(GUISizeConstraintFlag::FixedWidth);
-			MinWidth = style.MinimumSize.Width;
-			MaxWidth = style.MaximumSize.Width;
+			MinWidth = rule.MinimumSize.Width;
+			MaxWidth = rule.MaximumSize.Width;
 		}
 	}
 
 	if(!IsHeightOverridenAtRuntime())
 	{
-		if(style.IsPropertySet(GUIStyleSheetPropertyType::Height))
+		if(rule.IsPropertySet(GUIStyleSheetPropertyType::Height))
 		{
 			Flags |= GUISizeConstraintFlag::FixedHeight;
-			MinHeight = MaxHeight = style.Size.Height;
+			MinHeight = MaxHeight = rule.Size.Height;
 		}
 		else
 		{
 			Flags.Unset(GUISizeConstraintFlag::FixedHeight);
-			MinHeight = style.MinimumSize.Height;
-			MaxHeight = style.MaximumSize.Height;
+			MinHeight = rule.MinimumSize.Height;
+			MaxHeight = rule.MaximumSize.Height;
 		}
 	}
 }

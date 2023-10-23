@@ -280,16 +280,16 @@ namespace bs
 		 */
 
 		/** Attempts to parse a property and its value. If successful, returns true and writes the property data in the provided data structure. */
-		bool TryParseProperty(GUIStyleSheetStateRule& inOutValue);
+		bool TryParseProperty(GUIStyleSheetRules& inOutValue);
 
 		/** Attempts to parse a variable declaration and its value. If successful, returns true and appends (or overwrites) the variable in the provided context. */
 		bool TryParseVariable(VariableContext& inOutVariableContext);
 
 		/**
-		 * Attempts to parse all properties and/or variable declarations in a particular rule. If successful returns true and the rule state information is added
-		 * to the local rule map (or appended to existing state with the same selector and pseudo class).
+		 * Attempts to parse all properties and/or variable declarations in a particular ruleset. If successful returns true and the rule information is added
+		 * to the local ruleset array.
 		 */
-		bool TryParseRule();
+		bool TryParseRuleset();
 
 		/** Parses all selectors and generates a selector list, if any are provided.  */
 		Optional<GUIStyleSheetSelectorList> TryParseSelectorList();
@@ -406,7 +406,7 @@ namespace bs
 		SPtr<SourceCode> mSourceCode;
 		GUIStyleSheetLexer mLexer;
 		Optional<Token> mCurrentToken;
-		UnorderedMap<String, GUIStyleSheetRule> mParsedRules;
+		TArray<GUIStyleSheetRuleset> mParsedRulesets;
 
 		VariableContext mGlobalVariableContext;
 		VariableContext mLocalVariableContext;

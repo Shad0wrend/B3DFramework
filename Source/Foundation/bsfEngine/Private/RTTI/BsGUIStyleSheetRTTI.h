@@ -56,7 +56,7 @@ namespace bs
 		}
 	};
 
-	class B3D_EXPORT GUIStyleSheetStateRuleRTTI : public RTTIType<GUIStyleSheetStateRule, IReflectable, GUIStyleSheetStateRuleRTTI>
+	class B3D_EXPORT GUIStyleSheetRuleRTTI : public RTTIType<GUIStyleSheetRules, IReflectable, GUIStyleSheetRuleRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -90,38 +90,8 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN(WordWrap, 21)
 
 			B3D_RTTI_MEMBER_PLAIN(OverridenProperties, 22)
-		B3D_RTTI_END_MEMBERS
-	public:
-		const String& GetRttiName() override
-		{
-			static String name = "GUIStyleSheetStateRule";
-			return name;
-		}
 
-		u32 GetRttiId() override 
-		{
-			return TID_GUIStyleSheetStateRule;
-		}
-
-		SPtr<IReflectable> NewRttiObject() override
-		{
-			return B3DMakeShared<GUIStyleSheetStateRule>();
-		}
-	};
-
-	class B3D_EXPORT GUIStyleSheetRuleRTTI : public RTTIType<GUIStyleSheetRule, IReflectable, GUIStyleSheetRuleRTTI>
-	{
-	private:
-		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(SelectorList, 0)
-			B3D_RTTI_MEMBER_PLAIN(PseudoElement, 1)
-			B3D_RTTI_MEMBER_REFL(Normal, 2)
-			B3D_RTTI_MEMBER_REFL(Focus, 3)
-			B3D_RTTI_MEMBER_REFL(Hover, 4)
-			B3D_RTTI_MEMBER_REFL(Active, 5)
-			B3D_RTTI_MEMBER_REFL(Disabled, 6)
-			B3D_RTTI_MEMBER_REFL(Checked, 7)
-			B3D_RTTI_MEMBER_PLAIN(OverridenStates, 8)
+			B3D_RTTI_MEMBER_PLAIN(PseudoClass, 23)
 		B3D_RTTI_END_MEMBERS
 	public:
 		const String& GetRttiName() override
@@ -137,7 +107,32 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return B3DMakeShared<GUIStyleSheetRule>();
+			return B3DMakeShared<GUIStyleSheetRules>();
+		}
+	};
+
+	class B3D_EXPORT GUIStyleSheetRulesetRTTI : public RTTIType<GUIStyleSheetRuleset, IReflectable, GUIStyleSheetRulesetRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_PLAIN(SelectorList, 0)
+			B3D_RTTI_MEMBER_REFL(Rules, 1)
+		B3D_RTTI_END_MEMBERS
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "GUIStyleSheetRuleset";
+			return name;
+		}
+
+		u32 GetRttiId() override 
+		{
+			return TID_GUIStyleSheetRuleset;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return B3DMakeShared<GUIStyleSheetRuleset>();
 		}
 	};
 
@@ -145,13 +140,13 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFL_ARRAY(mRules, 0)
+			B3D_RTTI_MEMBER_REFL_ARRAY(mRulesets, 0)
 		B3D_RTTI_END_MEMBERS
 	public:
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			GUIStyleSheet* const styleSheet = static_cast<GUIStyleSheet*>(obj);
-			styleSheet->RebuildCache();
+			styleSheet->Initialize();
 		}
 
 		const String& GetRttiName() override
@@ -167,7 +162,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return GUIStyleSheet::CreateShared();
+			return GUIStyleSheet::CreateUninitialized();
 		}
 	};
 
