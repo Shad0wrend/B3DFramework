@@ -790,8 +790,8 @@ namespace bs
 		Material();
 		Material(const HShader& shader, const ShaderVariationParameters& variation);
 
-		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void GetListenerResources(Vector<HResource>& resources) override;
@@ -832,7 +832,7 @@ namespace bs
 		 */
 
 		/** @copydoc MaterialBase */
-		class B3D_CORE_EXPORT Material : public CoreObject, public TMaterial<true>
+		class B3D_CORE_EXPORT Material : public RenderProxy, public TMaterial<true>
 		{
 		public:
 			~Material() = default;
@@ -858,7 +858,7 @@ namespace bs
 			Material(const SPtr<Shader>& shader, const ShaderVariationParameters& variation);
 			Material(const SPtr<Shader>& shader, const Vector<SPtr<Technique>>& techniques, const SPtr<MaterialParams>& materialParams, const ShaderVariationParameters& variation);
 
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/** @} */

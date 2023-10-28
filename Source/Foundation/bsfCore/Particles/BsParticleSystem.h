@@ -617,9 +617,9 @@ namespace bs
 		 */
 		void PostSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset);
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		/**	Creates a new ParticleSystem instance without initializing it. */
@@ -660,7 +660,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread counterpart of bs::ParticleSystem. */
-		class B3D_CORE_EXPORT ParticleSystem final : public CoreObject, public SceneActor, public INonCopyable
+		class B3D_CORE_EXPORT ParticleSystem final : public RenderProxy, public SceneActor, public INonCopyable
 		{
 		public:
 			~ParticleSystem();
@@ -701,7 +701,7 @@ namespace bs
 				: mId(id)
 			{}
 
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId = 0;
 			u32 mId;

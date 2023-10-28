@@ -92,7 +92,7 @@ namespace bs
 
 		/** Creates a new skybox. */
 		static SPtr<Skybox> Create();
-
+	
 	protected:
 		friend class ct::Skybox;
 		struct SyncPacket;
@@ -105,9 +105,9 @@ namespace bs
 		 */
 		void FilterTexture();
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		SPtr<Texture> mFilteredRadiance;
 		SPtr<Texture> mIrradiance;
@@ -128,7 +128,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread usable version of a bs::Skybox */
-		class B3D_CORE_EXPORT Skybox : public CoreObject, public TSkybox<true>
+		class B3D_CORE_EXPORT Skybox : public RenderProxy, public TSkybox<true>
 		{
 		public:
 			~Skybox();
@@ -150,7 +150,7 @@ namespace bs
 			Skybox(const SPtr<Texture>& radiance, const SPtr<Texture>& filteredRadiance, const SPtr<Texture>& irradiance);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			SPtr<Texture> mFilteredRadiance;
 			SPtr<Texture> mIrradiance;

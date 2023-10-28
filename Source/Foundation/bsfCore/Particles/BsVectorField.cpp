@@ -64,7 +64,7 @@ VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& v
 	mTexture = Texture::CreateShared(pixelData);
 }
 
-SPtr<ct::CoreObject> VectorField::CreateCore() const
+SPtr<ct::RenderProxy> VectorField::CreateRenderProxy() const
 {
 	ct::VectorField* vectorField = new(B3DAllocate<ct::VectorField>()) ct::VectorField(mDesc, mTexture->GetCore());
 
@@ -76,7 +76,7 @@ SPtr<ct::CoreObject> VectorField::CreateCore() const
 
 SPtr<ct::VectorField> VectorField::GetCore() const
 {
-	return std::static_pointer_cast<ct::VectorField>(mCoreSpecific);
+	return std::static_pointer_cast<ct::VectorField>(mRenderProxy);
 }
 
 /************************************************************************/

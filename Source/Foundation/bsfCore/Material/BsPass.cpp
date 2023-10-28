@@ -123,10 +123,10 @@ Pass::Pass(const PassCreateInformation& createInformation)
 
 SPtr<ct::Pass> Pass::GetCore() const
 {
-	return std::static_pointer_cast<ct::Pass>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Pass>(mRenderProxy);
 }
 
-SPtr<ct::CoreObject> Pass::CreateCore() const
+SPtr<ct::RenderProxy> Pass::CreateRenderProxy() const
 {
 	ct::Pass* pass = new(B3DAllocate<ct::Pass>()) ct::Pass(mData);
 
@@ -148,11 +148,11 @@ void Pass::Compile()
 
 	// TODO - Non-core Pass possibly shouldn't even hold onto the pipeline states. The sync can just include a request to compile.
 
-	MarkCoreDirty();
-	CoreObject::SyncToCore();
+	MarkRenderProxyDataDirty();
+	CoreObject::SyncToRenderProxy();
 }
 
-CoreSyncPacket* Pass::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Pass::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
@@ -200,9 +200,9 @@ void Pass::Compile()
 	CreatePipelineState();
 }
 
-void Pass::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void Pass::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<CoreSyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<RenderProxySyncPacket>();
 	if(!syncPacket)
 		return;
 

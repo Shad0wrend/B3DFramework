@@ -203,9 +203,9 @@ namespace bs
 		 */
 		void UpdateCoefficients();
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag dirtFlags = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**	Creates a light volume with without initializing it. Used for serialization. */
 		static SPtr<LightProbeVolume> CreateEmpty();
@@ -246,7 +246,7 @@ namespace bs
 		};
 
 		/** Core thread usable version of bs::LightProbeVolume. */
-		class B3D_CORE_EXPORT LightProbeVolume : public CoreObject, public SceneActor
+		class B3D_CORE_EXPORT LightProbeVolume : public RenderProxy, public SceneActor
 		{
 		public:
 			~LightProbeVolume();
@@ -281,7 +281,7 @@ namespace bs
 			LightProbeVolume(const UnorderedMap<u32, bs::LightProbeVolume::ProbeInfo>& probes);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			/**
 			 * Renders dirty probes and updates their SH coefficients in the local GPU buffer.

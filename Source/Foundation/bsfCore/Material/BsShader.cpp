@@ -529,18 +529,13 @@ Shader::Shader(u32 id)
 	: TShader(id)
 {}
 
-SPtr<ct::Shader> Shader::GetCore() const
-{
-	return std::static_pointer_cast<ct::Shader>(mCoreSpecific);
-}
-
 void Shader::SetIncludeFiles(const Vector<String>& includes)
 {
 	SPtr<ShaderMetaData> meta = std::static_pointer_cast<ShaderMetaData>(GetMetaData());
 	meta->Includes = includes;
 }
 
-SPtr<ct::CoreObject> Shader::CreateCore() const
+SPtr<ct::RenderProxy> Shader::CreateRenderProxy() const
 {
 	Vector<SPtr<ct::Technique>> techniques;
 	for(auto& technique : mInformation.Techniques)

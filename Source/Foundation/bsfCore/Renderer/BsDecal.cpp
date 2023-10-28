@@ -82,7 +82,7 @@ Decal::Decal(const HMaterial& material, const Vector2& size, float maxDistance)
 
 SPtr<ct::Decal> Decal::GetCore() const
 {
-	return std::static_pointer_cast<ct::Decal>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Decal>(mRenderProxy);
 }
 
 SPtr<Decal> Decal::Create(const HMaterial& material, const Vector2& size, float maxDistance)
@@ -104,7 +104,7 @@ SPtr<Decal> Decal::CreateEmpty()
 	return decalPtr;
 }
 
-SPtr<ct::CoreObject> Decal::CreateCore() const
+SPtr<ct::RenderProxy> Decal::CreateRenderProxy() const
 {
 	SPtr<ct::Material> material;
 	if(mMaterial.IsLoaded(false))
@@ -123,18 +123,18 @@ void Decal::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 		dependencies.push_back(mMaterial.Get());
 }
 
-CoreSyncPacket* Decal::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Decal::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	if(B3D_ENSURE(syncPacket))
-		syncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
+		syncPacket->SceneActorPacket = CreateSceneActorRenderProxySyncPacket(allocator, flags);
 
 	return syncPacket;
 }
 
 void Decal::MarkCoreDirtyInternal(ActorDirtyFlag flags)
 {
-	MarkCoreDirty((u32)flags);
+	MarkRenderProxyDataDirty((u32)flags);
 }
 
 RTTITypeBase* Decal::GetRttiStatic()
@@ -166,10 +166,10 @@ void Decal::Initialize()
 	UpdateBounds();
 	GetRenderer()->NotifyDecalAdded(this);
 
-	CoreObject::Initialize();
+	RenderProxy::Initialize();
 }
 
-void Decal::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void Decal::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Decal::SyncPacket>();
 	if(!syncPacket)

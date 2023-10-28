@@ -200,7 +200,7 @@ Light::Light(LightType type, Color color, float intensity, float attRadius, floa
 
 SPtr<ct::Light> Light::GetCore() const
 {
-	return std::static_pointer_cast<ct::Light>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Light>(mRenderProxy);
 }
 
 SPtr<Light> Light::Create(LightType type, Color color, float intensity, float attRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle)
@@ -223,7 +223,7 @@ SPtr<Light> Light::CreateEmpty()
 	return handlerPtr;
 }
 
-SPtr<ct::CoreObject> Light::CreateCore() const
+SPtr<ct::RenderProxy> Light::CreateRenderProxy() const
 {
 	ct::Light* handler = new(B3DAllocate<ct::Light>())
 		ct::Light(mType, mColor, mIntensity, mAttRadius, mSourceRadius, mCastsShadows, mSpotAngle, mSpotFalloffAngle);
@@ -233,18 +233,18 @@ SPtr<ct::CoreObject> Light::CreateCore() const
 	return handlerPtr;
 }
 
-CoreSyncPacket* Light::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Light::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	if(B3D_ENSURE(syncPacket))
-		syncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
+		syncPacket->SceneActorPacket = CreateSceneActorRenderProxySyncPacket(allocator, flags);
 
 	return syncPacket;
 }
 
 void Light::MarkCoreDirtyInternal(ActorDirtyFlag flag)
 {
-	MarkCoreDirty((u32)flag);
+	MarkRenderProxyDataDirty((u32)flag);
 }
 
 RTTITypeBase* Light::GetRttiStatic()
@@ -277,10 +277,10 @@ void Light::Initialize()
 	UpdateBounds();
 	GetRenderer()->NotifyLightAdded(this);
 
-	CoreObject::Initialize();
+	RenderProxy::Initialize();
 }
 
-void Light::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void Light::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Light::SyncPacket>();
 	if(!syncPacket)

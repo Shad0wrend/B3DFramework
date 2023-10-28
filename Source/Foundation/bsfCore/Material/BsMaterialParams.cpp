@@ -936,8 +936,8 @@ MaterialParams::SyncPacket* MaterialParams::CreateSyncPacket(FrameAllocator& all
 				dirtyParameter.ParameterIndex = parameterIndex;
 				dirtyParameter.IsLoadStore = textureParameterData.IsLoadStore;
 				dirtyParameter.Surface = textureParameterData.Surface;
-				dirtyParameter.Texture = B3DGetCoreObject(textureParameterData.Texture);
-				dirtyParameter.SpriteTexture = B3DGetCoreObject(textureParameterData.SpriteTexture);
+				dirtyParameter.Texture = B3DGetRenderProxy(textureParameterData.Texture);
+				dirtyParameter.SpriteTexture = B3DGetRenderProxy(textureParameterData.SpriteTexture);
 
 				syncPacket->TextureParameters.push_back(dirtyParameter);
 			}
@@ -948,7 +948,7 @@ MaterialParams::SyncPacket* MaterialParams::CreateSyncPacket(FrameAllocator& all
 
 				MaterialParametersBufferParameter dirtyParameter;
 				dirtyParameter.ParameterIndex = parameterIndex;
-				dirtyParameter.Buffer = B3DGetCoreObject(bufferParameterData.Value);
+				dirtyParameter.Buffer = B3DGetRenderProxy(bufferParameterData.Value);
 
 				syncPacket->BufferParameters.push_back(dirtyParameter);
 			}

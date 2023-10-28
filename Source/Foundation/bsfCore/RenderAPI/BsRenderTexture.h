@@ -98,8 +98,8 @@ namespace bs
 
 		RenderTexture(const RenderTextureCreateInformation& createInformation);
 
-		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 	protected:
 		HTexture mBindableColorTex[B3D_MAXIMUM_RENDER_TARGET_COUNT];
@@ -174,7 +174,7 @@ namespace bs
 			const RenderTextureProperties& GetProperties() const;
 
 		protected:
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 		private:
 			/**	Throws an exception of the color and depth/stencil buffers aren't compatible. */

@@ -9,7 +9,8 @@
 
 namespace bs
 {
-	struct CoreSyncPacket;
+	struct RenderProxySyncPacket;
+
 	/** @addtogroup CoreThread
 	 *  @{
 	 */
@@ -56,12 +57,12 @@ namespace bs
 		bool IsDestroyed() const { return mFlags.IsSet(CoreObjectFlag::Destroyed); }
 
 		/**
-		 * Blocks the current thread until the resource is fully initialized.
+		 * Blocks the current thread until the render proxy is fully initialized on the render thread.
 		 *
 		 * @note
-		 * If you call this without calling initialize first a deadlock will occur. You should not call this from core thread.
+		 * If you call this without calling Initialize() first a deadlock will occur. You should not call this from the render thread.
 		 */
-		void BlockUntilCoreInitialized() const;
+		void BlockUntilRenderProxyInitialized() const;
 
 		/** Returns an unique identifier for this object. */
 		u64 GetInternalId() const { return mInternalID; }
@@ -70,21 +71,21 @@ namespace bs
 		SPtr<CoreObject> GetShared() const { return mThis.lock(); }
 
 		/**
-		 * Returns an object that contains a core thread specific implementation of this CoreObject. Null is a valid return
-		 * value in case object requires no core thread implementation.
+		 * Returns an object that contains render thread specific implementation of this CoreObject. Null is a valid return
+		 * value in case object requires no render thread implementation.
 		 *
 		 * @note	Thread safe to retrieve, but its data is only valid on the core thread.
 		 */
-		SPtr<ct::CoreObject> GetCore() const { return mCoreSpecific; }
+		SPtr<ct::RenderProxy> GetRenderProxy() const { return mRenderProxy; }
 
 		/**
-		 * Ensures all dirty syncable data is send to the core thread counterpart of this object (if any).
+		 * Ensures all dirty syncable data is send to the render proxy (if any).
 		 *
-		 * @note	Call this if you have modified the object and need to make sure core thread has an up to date version.
-		 *			Normally this is done automatically at the end of a frame.
+		 * @note	Call this if you have modified the object and need to make sure render thread has an up to date version.
+		 *			Normally this is done automatically every frame.
 		 * @note	This is an @ref asyncMethod "asynchronous method".
 		 */
-		void SyncToCore();
+		void SyncToRenderProxy();
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -100,13 +101,13 @@ namespace bs
 		void SetShared(SPtr<CoreObject> ptrThis);
 
 		/** Called when the last reference in the shared pointer owning this object goes out of scope. */
-		template <class T, class MemAlloc>
+		template <class T, class AllocatorTag>
 		static void SharedDeleter(CoreObject* object)
 		{
 			if(!object->IsDestroyed())
 				object->Destroy();
 
-			B3DDelete<T, MemAlloc>((T*)object);
+			B3DDelete<T, AllocatorTag>((T*)object);
 		}
 
 		/** @} */
@@ -114,79 +115,77 @@ namespace bs
 		/**
 		 * Constructs a new core object.
 		 *
-		 * @param[in]	requiresCoreInit	(optional) Determines if the ct::CoreObject counterpart of this object
-		 *									(if it has any, see createCore()) requires initialization and destruction on the
-		 *									core thread.
+		 * @param	createRenderProxy	Set to true if the object requires a RenderProxy counter-part. Render proxies allow the object
+		 *								to be used from the render thread, using data syncing from the main thread object to keep up to date.
+		 *								If true, you class should override CreateRenderProxy() to create the proxy, and CreateRenderProxySyncPacket()
+		 *								to provide the data for synchronization between the objects. MarkRenderProxyDataDirty() should be used to notify
+		 *								the system data is dirty and render proxy needs updating.
 		 */
-		CoreObject(bool requiresCoreInit = true);
+		CoreObject(bool createRenderProxy = true);
 		virtual ~CoreObject();
 
 	private:
 		friend class CoreObjectManager;
 
 		CoreObjectFlags mFlags;
-		u32 mCoreDirtyFlags;
+		u32 mRenderProxyDirtyFlags;
 		u64 mInternalID; // ID == 0 is not a valid ID
 		std::weak_ptr<CoreObject> mThis;
 
 	protected:
-		/************************************************************************/
-		/* 							CORE OBJECT SYNC                      		*/
-		/************************************************************************/
+		/**
+		 * @note Render proxy
+		 * @{
+		 */
 
 		/**
-		 * Creates an object that contains core thread specific data and methods for this CoreObject. Can be null if such
+		 * Creates an object that contains render thread specific data and methods for this object. Can be null if such
 		 * object is not required.
 		 */
-		virtual SPtr<ct::CoreObject> CreateCore() const { return nullptr; }
+		virtual SPtr<ct::RenderProxy> CreateRenderProxy() const { return nullptr; }
 
 		/**
-		 * Marks the core data as dirty. This causes the syncToCore() method to trigger the next time objects are synced
-		 * between core and sim threads.
+		 * Marks the render proxy data as dirty. This causes the SyncToRenderProxy() method to trigger the next time objects are synced
+		 * to the render thread.
 		 *
-		 * @param[in]	flags	(optional)	Flags in case you want to signal that only part of the internal data is dirty.
-		 *									syncToCore() will be called regardless and it's up to the implementation to read
-		 *									the flags value if needed.
+		 * @param	flags	(optional)	Flags in case you want to signal that only part of the internal data is dirty.
+		 *								SyncToRenderProxy() will be called regardless and it's up to the implementation to read
+		 *								the flags value if needed.
 		 */
-		void MarkCoreDirty(u32 flags = 0xFFFFFFFF);
+		void MarkRenderProxyDataDirty(u32 flags = 0xFFFFFFFF);
 
-		/** Marks the core data as clean. Normally called right after syncToCore() has been called. */
-		void MarkCoreClean() { mCoreDirtyFlags = 0; }
+		/** Marks the render proxy data as up to date. Normally called right after new data has been synced to the render thread. */
+		void MarkRenderProxyDataUpToDate() { mRenderProxyDirtyFlags = 0; }
 
 		/**
 		 * Notifies the core object manager that this object is dependant on some other CoreObject(s), and the dependencies
-		 * changed since the last call to this method. This will trigger a call to getCoreDependencies() to collect the
+		 * changed since the last call to this method. This will trigger a call to GetCoreDependencies() to collect the
 		 * new dependencies.
 		 */
 		void MarkDependenciesDirty();
 
-		/**
-		 * Checks is the core dirty flag set. This is used by external systems to know when internal data has changed and
-		 * core thread potentially needs to be notified.
-		 */
-		bool IsCoreDirty() const { return mCoreDirtyFlags != 0; }
+		/** Returns true if the render proxy has out of date data and required a new data sync to be up to date. */
+		bool IsRenderProxyDataOutOfDate() const { return mRenderProxyDirtyFlags != 0; }
+
+		/** Returns flags that specify which portion of the render proxy is out of date with this object. */
+		u32 GetRenderProxyDirtyFlags() const { return mRenderProxyDirtyFlags; }
 
 		/**
-		 * Returns the exact value of the internal flag that signals whether an object needs to be synced with the core thread.
+		 * Creates a data packet that will be used for syncing the core object with it's render proxy.
+		 * Caller must free the retrieved packet using the provided allocator when done using it.
 		 */
-		u32 GetCoreDirtyFlags() const { return mCoreDirtyFlags; }
-
-		/**
-		 * Creates a data packet that will be used for syncing the core object with it's render thread counter-part.
-		 * Caller must free the retrieved packet using the provided allocator, when done using it.
-		 */
-		virtual CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) { return nullptr; }
+		virtual RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) { return nullptr; }
 
 		/**
 		 * Populates the provided array with all core objects that this core object depends upon. Dependencies are required
-		 * for syncing to the core thread, so the system can be aware to update the dependant objects if a dependency is
+		 * for syncing to the render thread, so the system can be aware to update the dependant objects if a dependency is
 		 * marked as dirty (for example updating a camera's viewport should also trigger an update on camera so it has
 		 * a chance to potentially update its data).
 		 */
 		virtual void GetCoreDependencies(Vector<CoreObject*>& dependencies) {}
 
 		/**
-		 * Gets called on an object when one of the dependencies (as returned from getCoreDependencies()) is marked as
+		 * Gets called on an object when one of the dependencies (as returned from GetCoreDependencies()) is marked as
 		 * dirty. It gives the dependant object a chance to determine should it mark itself as dirty due to the dependency
 		 * change. Dirty flags of the dependency object can be examined for more information on what part of the dependency
 		 * was modified.
@@ -194,25 +193,27 @@ namespace bs
 		virtual void OnDependencyDirty(CoreObject* dependency, u32 dirtyFlags)
 		{
 			// By default any changes on a dependency mark the parent dirty as well
-			mCoreDirtyFlags |= kDirtyDependencyMask;
+			mRenderProxyDirtyFlags |= kDirtyDependencyMask;
 		}
 
 	protected:
-		SPtr<ct::CoreObject> mCoreSpecific;
+		SPtr<ct::RenderProxy> mRenderProxy;
+
+		/** @} */
 	};
 
-	/** Returns associated core object, or null if the object is null. */
+	/** Returns associated render proxy object, or null if the object is null or has no render proxy. */
 	template<class Type>
-	auto B3DGetCoreObject(const SPtr<Type>& object)
+	SPtr<CoreVariantType<Type, true>> B3DGetRenderProxy(const SPtr<Type>& object)
 	{
-		return object == nullptr ? nullptr : object->GetCore();
+		return object == nullptr ? nullptr : std::static_pointer_cast<CoreVariantType<Type, true>>(object->GetRenderProxy());
 	}
 
-	/** Returns associated core object, or null if the object is null. */
+	/** Returns associated render proxy object, or null if the object is null or has no render proxy. */
 	template<class Type>
-	auto B3DGetCoreObject(const ResourceHandle<Type>& object)
+	SPtr<CoreVariantType<Type, true>> B3DGetRenderProxy(const ResourceHandle<Type>& object)
 	{
-		return !object.IsLoaded() ? nullptr : object->GetCore();
+		return !object.IsLoaded() ? nullptr : std::static_pointer_cast<CoreVariantType<Type, true>>(object->GetRenderProxy());
 	}
 
 

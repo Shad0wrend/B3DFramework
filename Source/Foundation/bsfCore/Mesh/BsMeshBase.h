@@ -105,7 +105,7 @@ namespace bs
 		friend class ct::MeshBase;
 		struct SyncPacket;
 
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		MeshProperties mProperties;
 
@@ -130,7 +130,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class B3D_CORE_EXPORT MeshBase : public CoreObject
+		class B3D_CORE_EXPORT MeshBase : public RenderProxy
 		{
 		public:
 			MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMeshes);
@@ -175,7 +175,7 @@ namespace bs
 		protected:
 			friend class bs::MeshBase;
 
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			MeshProperties mProperties;
 		};

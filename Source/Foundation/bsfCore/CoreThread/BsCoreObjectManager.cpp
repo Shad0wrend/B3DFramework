@@ -63,17 +63,17 @@ void CoreObjectManager::UnregisterObject(CoreObject* object)
 	// If dirty, we generate sync data before it is destroyed
 	{
 		Lock lock(mObjectsMutex);
-		bool isDirty = object->IsCoreDirty() || (mDirtyObjects.find(internalId) != mDirtyObjects.end());
+		bool isDirty = object->IsRenderProxyDataOutOfDate() || (mDirtyObjects.find(internalId) != mDirtyObjects.end());
 
 		if(isDirty)
 		{
-			SPtr<ct::CoreObject> coreObject = object->GetCore();
+			SPtr<ct::RenderProxy> coreObject = object->GetRenderProxy();
 			if(coreObject != nullptr)
 			{
 				FrameAllocator* allocator = mSyncAllocators[mActiveFrameAllocatorIndex];
 				CoreSyncData objSyncData;
 
-				CoreSyncPacket* const syncPacket = object->CreateSyncPacket(*allocator, object->GetCoreDirtyFlags());
+				RenderProxySyncPacket* const syncPacket = object->CreateRenderProxySyncPacket(*allocator, object->GetRenderProxyDirtyFlags());
 				if(syncPacket != nullptr)
 					objSyncData = CoreSyncData(syncPacket);
 
@@ -241,7 +241,7 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 {
 	struct IndividualCoreSyncData
 	{
-		SPtr<ct::CoreObject> Destination;
+		SPtr<ct::RenderProxy> Destination;
 		CoreSyncData SyncData;
 		FrameAllocator* Allocator;
 	};
@@ -253,7 +253,7 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 
 	std::function<void(CoreObject*)> syncObject = [&](CoreObject* curObj)
 	{
-		if(!curObj->IsCoreDirty())
+		if(!curObj->IsRenderProxyDataOutOfDate())
 			return; // We already processed it as some other object's dependency
 
 		// Sync dependencies before dependants
@@ -270,10 +270,10 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 				syncObject(dependency);
 		}
 
-		SPtr<ct::CoreObject> objectCore = curObj->GetCore();
+		SPtr<ct::RenderProxy> objectCore = curObj->GetRenderProxy();
 		if(objectCore == nullptr)
 		{
-			curObj->MarkCoreClean();
+			curObj->MarkRenderProxyDataUpToDate();
 			mDirtyObjects.erase(id);
 			return;
 		}
@@ -283,11 +283,11 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 		data.Allocator = allocator;
 		data.Destination = objectCore;
 
-		CoreSyncPacket* const syncPacket = curObj->CreateSyncPacket(*allocator, curObj->GetCoreDirtyFlags());
+		RenderProxySyncPacket* const syncPacket = curObj->CreateRenderProxySyncPacket(*allocator, curObj->GetRenderProxyDirtyFlags());
 		if(syncPacket != nullptr)
 			data.SyncData = CoreSyncData(syncPacket);
 
-		curObj->MarkCoreClean();
+		curObj->MarkRenderProxyDataUpToDate();
 		mDirtyObjects.erase(id);
 	};
 
@@ -300,9 +300,9 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 		for(auto riter = data.rbegin(); riter != data.rend(); ++riter)
 		{
 			const IndividualCoreSyncData& entry = *riter;
-			entry.Destination->SyncToCore(entry.SyncData, *entry.Allocator);
+			entry.Destination->SyncFromCoreObject(entry.SyncData, *entry.Allocator);
 
-			CoreSyncPacket* const syncPacket = entry.SyncData.GetSyncPacket();
+			RenderProxySyncPacket* const syncPacket = entry.SyncData.GetSyncPacket();
 			if(syncPacket != nullptr)
 				entry.Allocator->Destruct(syncPacket);
 		}
@@ -329,13 +329,13 @@ void CoreObjectManager::SyncDownload(FrameAllocator* allocator)
 				const Vector<CoreObject*>& dependants = iterFind->second;
 				for(auto& dependant : dependants)
 				{
-					const bool wasDirty = dependant->IsCoreDirty();
+					const bool wasDirty = dependant->IsRenderProxyDataOutOfDate();
 
 					// Let the dependant objects know their dependency changed
 					CoreObject* dependency = objectData.second.Object;
-					dependant->OnDependencyDirty(dependency, dependency->GetCoreDirtyFlags());
+					dependant->OnDependencyDirty(dependency, dependency->GetRenderProxyDirtyFlags());
 
-					if(!wasDirty && dependant->IsCoreDirty())
+					if(!wasDirty && dependant->IsRenderProxyDataOutOfDate())
 						dirtyDependants.insert(dependant);
 				}
 			}
@@ -357,7 +357,7 @@ void CoreObjectManager::SyncDownload(FrameAllocator* allocator)
 	{
 		std::function<void(CoreObject*)> syncObject = [&](CoreObject* curObj)
 		{
-			if(!curObj->IsCoreDirty())
+			if(!curObj->IsRenderProxyDataOutOfDate())
 				return; // We already processed it as some other object's dependency
 
 			// Sync dependencies before dependants
@@ -374,20 +374,20 @@ void CoreObjectManager::SyncDownload(FrameAllocator* allocator)
 					syncObject(dependency);
 			}
 
-			SPtr<ct::CoreObject> objectCore = curObj->GetCore();
+			SPtr<ct::RenderProxy> objectCore = curObj->GetRenderProxy();
 			if(objectCore == nullptr)
 			{
-				curObj->MarkCoreClean();
+				curObj->MarkRenderProxyDataUpToDate();
 				return;
 			}
 
 			CoreSyncData objSyncData;
 
-			CoreSyncPacket* const syncPacket = curObj->CreateSyncPacket(*allocator, curObj->GetCoreDirtyFlags());
+			RenderProxySyncPacket* const syncPacket = curObj->CreateRenderProxySyncPacket(*allocator, curObj->GetRenderProxyDirtyFlags());
 			if(syncPacket != nullptr)
 				objSyncData = CoreSyncData(syncPacket);
 
-			curObj->MarkCoreClean();
+			curObj->MarkRenderProxyDataUpToDate();
 			syncData.Entries.push_back(CoreStoredSyncObjData(objectCore, curObj->GetInternalId(), objSyncData));
 		};
 
@@ -428,11 +428,11 @@ void CoreObjectManager::SyncUpload()
 
 	for(auto& objSyncData : syncData.Entries)
 	{
-		SPtr<ct::CoreObject> destinationObj = objSyncData.DestinationObj;
+		SPtr<ct::RenderProxy> destinationObj = objSyncData.DestinationObj;
 		if(destinationObj != nullptr)
-			destinationObj->SyncToCore(objSyncData.SyncData, *syncData.Alloc);
+			destinationObj->SyncFromCoreObject(objSyncData.SyncData, *syncData.Alloc);
 
-		CoreSyncPacket* const syncPacket = objSyncData.SyncData.GetSyncPacket();
+		RenderProxySyncPacket* const syncPacket = objSyncData.SyncData.GetSyncPacket();
 		if(syncPacket != nullptr)
 			syncData.Alloc->Destruct(syncPacket);
 	}

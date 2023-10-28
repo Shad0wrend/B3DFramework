@@ -55,12 +55,12 @@ Vector2I Win32RenderWindow::WindowToScreenPos(const Vector2I& windowPos) const
 
 SPtr<ct::Win32RenderWindow> Win32RenderWindow::GetCore() const
 {
-	return std::static_pointer_cast<ct::Win32RenderWindow>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Win32RenderWindow>(mRenderProxy);
 }
 
 HWND Win32RenderWindow::GetHWnd() const
 {
-	BlockUntilCoreInitialized();
+	BlockUntilRenderProxyInitialized();
 	return GetCore()->GetWindowHandleInternal();
 }
 
@@ -70,10 +70,10 @@ void Win32RenderWindow::SyncProperties()
 	mProperties = GetCore()->mSyncedProperties;
 }
 
-SPtr<ct::CoreObject> Win32RenderWindow::CreateCore() const
+SPtr<ct::RenderProxy> Win32RenderWindow::CreateRenderProxy() const
 {
 	RENDER_WINDOW_DESC desc = mDesc;
-	SPtr<ct::CoreObject> coreObj = B3DMakeShared<ct::Win32RenderWindow>(desc, mWindowId);
+	SPtr<ct::RenderProxy> coreObj = B3DMakeShared<ct::Win32RenderWindow>(desc, mWindowId);
 	coreObj->SetShared(coreObj);
 
 	return coreObj;

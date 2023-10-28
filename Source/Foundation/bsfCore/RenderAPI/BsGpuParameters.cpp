@@ -531,10 +531,10 @@ SPtr<GpuParameters> GpuParameters::GetThisPtrInternal() const
 
 SPtr<ct::GpuParameters> GpuParameters::GetCore() const
 {
-	return std::static_pointer_cast<ct::GpuParameters>(mCoreSpecific);
+	return std::static_pointer_cast<ct::GpuParameters>(mRenderProxy);
 }
 
-SPtr<ct::CoreObject> GpuParameters::CreateCore() const
+SPtr<ct::RenderProxy> GpuParameters::CreateRenderProxy() const
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if(!gpuDevice)
@@ -546,7 +546,7 @@ SPtr<ct::CoreObject> GpuParameters::CreateCore() const
 
 void GpuParameters::MarkCoreDirtyInternal()
 {
-	MarkCoreDirty();
+	MarkRenderProxyDataDirty();
 }
 
 void GpuParameters::MarkResourcesDirtyInternal()
@@ -574,7 +574,7 @@ SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuPipelineParameterLayout>
 	return shared;
 }
 
-CoreSyncPacket* GpuParameters::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* GpuParameters::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 
@@ -585,7 +585,7 @@ CoreSyncPacket* GpuParameters::CreateSyncPacket(FrameAllocator& allocator, u32 f
 	for(u32 i = 0; i < uniformBufferCount; i++)
 	{
 		syncPacket->UniformBufferOffsets.push_back(mUniformBufferData->Offset);
-		syncPacket->UniformBuffers.push_back(B3DGetCoreObject(mUniformBufferData[i].Buffer));
+		syncPacket->UniformBuffers.push_back(B3DGetRenderProxy(mUniformBufferData[i].Buffer));
 	}
 
 	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::SampledTexture);
@@ -595,7 +595,7 @@ CoreSyncPacket* GpuParameters::CreateSyncPacket(FrameAllocator& allocator, u32 f
 	for(u32 i = 0; i < sampledTextureCount; i++)
 	{
 		syncPacket->SampledTextureSurfaces.push_back(mSampledTextureData[i].Surface);
-		syncPacket->SampledTextures.push_back(B3DGetCoreObject(mSampledTextureData[i].Texture));
+		syncPacket->SampledTextures.push_back(B3DGetRenderProxy(mSampledTextureData[i].Texture));
 	}
 
 	const u32 storageTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageTexture);
@@ -605,7 +605,7 @@ CoreSyncPacket* GpuParameters::CreateSyncPacket(FrameAllocator& allocator, u32 f
 	for(u32 i = 0; i < storageTextureCount; i++)
 	{
 		syncPacket->StorageTextureSurfaces.push_back(mStorageTextureData[i].Surface);
-		syncPacket->StorageTextures.push_back(B3DGetCoreObject(mStorageTextureData[i].Texture));
+		syncPacket->StorageTextures.push_back(B3DGetRenderProxy(mStorageTextureData[i].Texture));
 	}
 
 	const u32 storageBufferCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageBuffer);
@@ -615,7 +615,7 @@ CoreSyncPacket* GpuParameters::CreateSyncPacket(FrameAllocator& allocator, u32 f
 	for(u32 i = 0; i < storageBufferCount; i++)
 	{
 		syncPacket->StorageBufferViews.push_back(mStorageBufferData[i].View);
-		syncPacket->StorageBuffers.push_back(B3DGetCoreObject(mStorageBufferData[i].Buffer));
+		syncPacket->StorageBuffers.push_back(B3DGetRenderProxy(mStorageBufferData[i].Buffer));
 	}
 
 	const u32 samplerCount = mParameterLayout->GetResourceCount(GpuParameterType::Sampler);
@@ -657,7 +657,7 @@ SPtr<GpuParameters> GpuParameters::GetThisPtrInternal() const
 	return std::static_pointer_cast<GpuParameters>(GetShared());
 }
 
-void GpuParameters::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void GpuParameters::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::GpuParameters::SyncPacket>();
 	if(!syncPacket)

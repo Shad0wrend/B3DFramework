@@ -186,13 +186,13 @@ Technique::Technique()
 
 SPtr<ct::Technique> Technique::GetCore() const
 {
-	return std::static_pointer_cast<ct::Technique>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Technique>(mRenderProxy);
 }
 
-SPtr<ct::CoreObject> Technique::CreateCore() const
+SPtr<ct::RenderProxy> Technique::CreateRenderProxy() const
 {
 	const SPtr<Shader> owner = mOwner.lock();
-	const WeakSPtr<ct::Shader> coreOwner = owner != nullptr ? owner->GetCore() : nullptr;
+	const WeakSPtr<ct::Shader> coreOwner = B3DGetRenderProxy(owner);
 
 	TInlineArray<SPtr<ct::Pass>, 1> corePasses;
 	for(auto& pass : mPasses)
@@ -214,12 +214,12 @@ void Technique::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 
 void Technique::MarkCoreDirty(ShaderVariationDirtyFlags flags)
 {
-	CoreObject::MarkCoreDirty(flags);
+	CoreObject::MarkRenderProxyDataDirty(flags);
 }
 
 void Technique::SyncToCore()
 {
-	CoreObject::SyncToCore();
+	CoreObject::SyncToRenderProxy();
 }
 
 namespace bs
@@ -231,14 +231,14 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* Technique::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Technique::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	const ShaderVariationDirtyFlags dirtyFlags = (ShaderVariationDirtyFlags)flags;
 
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 
 	if(dirtyFlags.IsSet(ShaderVariationDirtyFlag::Parent))
-		syncPacket->Owner = B3DGetCoreObject(mOwner.lock());
+		syncPacket->Owner = B3DGetRenderProxy(mOwner.lock());
 
 	return syncPacket;
 }
@@ -302,7 +302,7 @@ SPtr<Technique> Technique::CreateEmpty()
 	return techniqueShared;
 }
 
-void Technique::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void Technique::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Technique::SyncPacket>();
 	if(!syncPacket)

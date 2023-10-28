@@ -171,10 +171,10 @@ namespace bs
 
 		Decal(const HMaterial& material, const Vector2& size, float maxDistance);
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**	Creates the object with without initializing it. Used for serialization. */
 		static SPtr<Decal> CreateEmpty();
@@ -194,7 +194,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread version of a bs::Decal */
-		class B3D_CORE_EXPORT Decal : public CoreObject, public TDecal<true>
+		class B3D_CORE_EXPORT Decal : public RenderProxy, public TDecal<true>
 		{
 		public:
 			~Decal();
@@ -211,7 +211,7 @@ namespace bs
 			Decal(const SPtr<Material>& material, const Vector2& size, float maxDistance);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId = 0;
 		};

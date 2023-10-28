@@ -6,8 +6,8 @@
 
 using namespace bs;
 
-Resource::Resource(bool initializeOnRenderThread, const String& name)
-	: CoreObject(initializeOnRenderThread), mSize(0), mKeepSourceData(true)
+Resource::Resource(bool createRenderProxy, const String& name)
+	: CoreObject(createRenderProxy), mSize(0), mKeepSourceData(true)
 {
 	mMetaData = B3DMakeShared<ResourceMetaData>();
 	mMetaData->DisplayName = name;

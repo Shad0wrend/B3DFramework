@@ -167,10 +167,10 @@ namespace bs
 		u32 GetTargetWidth() const override;
 		u32 GetTargetHeight() const override;
 
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -195,7 +195,7 @@ namespace bs
 		 */
 
 		/** @copydoc bs::Viewport */
-		class B3D_CORE_EXPORT Viewport : public CoreObject, public TViewport<true>
+		class B3D_CORE_EXPORT Viewport : public RenderProxy, public TViewport<true>
 		{
 		public:
 			/**	Returns the render target the viewport is associated with. */
@@ -215,7 +215,7 @@ namespace bs
 			u32 GetTargetWidth() const override;
 			u32 GetTargetHeight() const override;
 
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/** @} */

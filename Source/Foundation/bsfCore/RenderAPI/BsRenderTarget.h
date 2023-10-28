@@ -171,7 +171,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class B3D_CORE_EXPORT RenderTarget : public CoreObject
+		class B3D_CORE_EXPORT RenderTarget : public RenderProxy
 		{
 		public:
 			/** Frame buffer type when double-buffering is used. */

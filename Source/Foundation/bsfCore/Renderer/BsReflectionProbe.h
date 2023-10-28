@@ -196,9 +196,9 @@ namespace bs
 
 		ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents);
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**
 		 * Captures the scene color at current probe location and generates a filtered map. If a custom texture is set then
@@ -227,7 +227,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread usable version of a bs::ReflectionProbe */
-		class B3D_CORE_EXPORT ReflectionProbe : public CoreObject, public TReflectionProbe<true>
+		class B3D_CORE_EXPORT ReflectionProbe : public RenderProxy, public TReflectionProbe<true>
 		{
 		public:
 			~ReflectionProbe();
@@ -244,7 +244,7 @@ namespace bs
 			ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents, const SPtr<Texture>& filteredTexture);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId;
 		};

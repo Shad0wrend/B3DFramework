@@ -94,15 +94,15 @@ void Mesh::Initialize()
 void Mesh::UpdateBounds(const MeshData& meshData)
 {
 	mProperties.Bounds = meshData.CalculateBounds();
-	MarkCoreDirty();
+	MarkRenderProxyDataDirty();
 }
 
 SPtr<ct::Mesh> Mesh::GetCore() const
 {
-	return std::static_pointer_cast<ct::Mesh>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Mesh>(mRenderProxy);
 }
 
-SPtr<ct::CoreObject> Mesh::CreateCore() const
+SPtr<ct::RenderProxy> Mesh::CreateRenderProxy() const
 {
 	MeshCreateInformation meshCreateInformation;
 	meshCreateInformation.VertexCount = mProperties.VertexCount;
@@ -116,7 +116,7 @@ SPtr<ct::CoreObject> Mesh::CreateCore() const
 
 	ct::Mesh* obj = new(B3DAllocate<ct::Mesh>()) ct::Mesh(mCPUData, meshCreateInformation);
 
-	SPtr<ct::CoreObject> meshCore = B3DMakeSharedFromExisting<ct::Mesh>(obj);
+	SPtr<ct::RenderProxy> meshCore = B3DMakeSharedFromExisting<ct::Mesh>(obj);
 	meshCore->SetShared(meshCore);
 
 	if((mUsage & MU_CPUCACHED) == 0)

@@ -551,9 +551,9 @@ namespace bs
 		/** @copydoc CameraBase */
 		Rect2I GetViewportRect() const override;
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
@@ -572,7 +572,7 @@ namespace bs
 	namespace ct
 	{
 		/** @copydoc bs::Camera */
-		class B3D_CORE_EXPORT Camera : public CoreObject, public TCamera<true>
+		class B3D_CORE_EXPORT Camera : public RenderProxy, public TCamera<true>
 		{
 		public:
 			~Camera();
@@ -595,7 +595,7 @@ namespace bs
 
 			void Initialize() override;
 			Rect2I GetViewportRect() const override;
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId;
 		};

@@ -7,14 +7,14 @@ using namespace bs;
 
 namespace bs { namespace ct
 {
-Signal CoreObject::mCoreGpuObjectLoadedCondition;
-Mutex CoreObject::mCoreGpuObjectLoadedMutex;
+Signal RenderProxy::mRenderProxyInitializedCondition;
+Mutex RenderProxy::mRenderProxyInitializedMutex;
 
-CoreObject::CoreObject()
+RenderProxy::RenderProxy()
 	: mFlags(RenderProxyFlag::None)
 {}
 
-CoreObject::~CoreObject()
+RenderProxy::~RenderProxy()
 {
 	EnsureRenderThread();
 
@@ -22,18 +22,18 @@ CoreObject::~CoreObject()
 	B3D_ENSURE(mThis.expired());
 }
 
-void CoreObject::Initialize()
+void RenderProxy::Initialize()
 {
 	{
-		Lock lock(mCoreGpuObjectLoadedMutex);
+		Lock lock(mRenderProxyInitializedMutex);
 		mFlags.Set(RenderProxyFlag::Initialized);
 	}
 
 	mFlags.Unset(RenderProxyFlag::ScheduledForInitialization);
-	mCoreGpuObjectLoadedCondition.NotifyAll();
+	mRenderProxyInitializedCondition.NotifyAll();
 }
 
-void CoreObject::Destroy()
+void RenderProxy::Destroy()
 {
 	if(!B3D_ENSURE(!IsDestroyed()))
 		return;
@@ -41,7 +41,7 @@ void CoreObject::Destroy()
 	mFlags.Set(RenderProxyFlag::Destroyed);
 }
 
-void CoreObject::Synchronize()
+void RenderProxy::BlockUntilInitialized()
 {
 	if(!IsInitialized())
 	{
@@ -52,15 +52,15 @@ void CoreObject::Synchronize()
 
 		GetCoreThread().PostCommand([] {}, true);
 
-		Lock lock(mCoreGpuObjectLoadedMutex);
+		Lock lock(mRenderProxyInitializedMutex);
 		if(!IsInitialized() && !mFlags.IsSet(RenderProxyFlag::ScheduledForInitialization))
 			B3D_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
 
-		mCoreGpuObjectLoadedCondition.Wait(lock, [this] { return IsInitialized(); });
+		mRenderProxyInitializedCondition.Wait(lock, [this] { return IsInitialized(); });
 	}
 }
 
-void CoreObject::SetShared(SPtr<CoreObject> sharedToThis)
+void RenderProxy::SetShared(SPtr<RenderProxy> sharedToThis)
 {
 	mThis = sharedToThis;
 }

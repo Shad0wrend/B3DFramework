@@ -309,7 +309,7 @@ namespace bs
 		Texture(const TextureCreateInformation& createInformation);
 
 		void Initialize() override;
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 
 		/** Calculates the size of the texture, in bytes. */
 		u32 CalculateSize() const;
@@ -353,7 +353,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class B3D_CORE_EXPORT Texture : public CoreObject
+		class B3D_CORE_EXPORT Texture : public RenderProxy
 		{
 		public:
 			Texture(const TextureCreateInformation& createInformation);

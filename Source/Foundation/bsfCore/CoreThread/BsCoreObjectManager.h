@@ -34,11 +34,11 @@ namespace bs
 				: InternalId(0)
 			{}
 
-			CoreStoredSyncObjData(const SPtr<ct::CoreObject> destObj, u64 internalId, const CoreSyncData& syncData)
+			CoreStoredSyncObjData(const SPtr<ct::RenderProxy> destObj, u64 internalId, const CoreSyncData& syncData)
 				: DestinationObj(destObj), SyncData(syncData), InternalId(internalId)
 			{}
 
-			SPtr<ct::CoreObject> DestinationObj;
+			SPtr<ct::RenderProxy> DestinationObj;
 			CoreSyncData SyncData;
 			u64 InternalId;
 		};
@@ -51,7 +51,7 @@ namespace bs
 		{
 			FrameAllocator* Alloc = nullptr;
 			Vector<CoreStoredSyncObjData> Entries;
-			Vector<SPtr<ct::CoreObject>> DestroyedObjects;
+			Vector<SPtr<ct::RenderProxy>> DestroyedObjects;
 		};
 
 		/** Contains information about a dirty CoreObject that requires syncing to the core thread. */

@@ -11,7 +11,7 @@ using namespace bs;
 RenderTarget::RenderTarget()
 {
 	// We never sync from sim to core, so mark it clean to avoid overwriting core thread changes
-	MarkCoreClean();
+	MarkRenderProxyDataUpToDate();
 }
 
 void RenderTarget::SetPriority(i32 priority)
@@ -27,7 +27,7 @@ void RenderTarget::SetPriority(i32 priority)
 
 SPtr<ct::RenderTarget> RenderTarget::GetCore() const
 {
-	return std::static_pointer_cast<ct::RenderTarget>(mCoreSpecific);
+	return std::static_pointer_cast<ct::RenderTarget>(mRenderProxy);
 }
 
 const RenderTargetProperties& RenderTarget::GetProperties() const

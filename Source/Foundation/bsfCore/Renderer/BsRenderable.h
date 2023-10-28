@@ -195,7 +195,7 @@ namespace bs
 		friend class ct::Renderable;
 		struct SyncPacket;
 		
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 
 		void OnMeshChanged() override;
 
@@ -203,7 +203,7 @@ namespace bs
 		void RefreshAnimation();
 
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void MarkDependenciesDirtyInternal() override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
@@ -231,7 +231,7 @@ namespace bs
 	namespace ct
 	{
 		/** @copydoc TRenderable */
-		class B3D_CORE_EXPORT Renderable : public CoreObject, public TRenderable<true>
+		class B3D_CORE_EXPORT Renderable : public RenderProxy, public TRenderable<true>
 		{
 		public:
 			~Renderable();
@@ -284,7 +284,7 @@ namespace bs
 			void Initialize() override;
 
 			/** @copydoc CoreObject::syncToCore */
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			/** Creates any buffers required for renderable animation. Should be called whenever animation properties change. */
 			void CreateAnimationBuffers();

@@ -255,8 +255,8 @@ namespace bs
 		SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture);
 
 		void Initialize() override;
-		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		/************************************************************************/
@@ -285,7 +285,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class B3D_CORE_EXPORT SpriteTexture : public CoreObject, public TSpriteTexture<true>
+		class B3D_CORE_EXPORT SpriteTexture : public RenderProxy, public TSpriteTexture<true>
 		{
 		public:
 			/**	Determines the internal texture that the sprite texture references. */
@@ -299,7 +299,7 @@ namespace bs
 
 			SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SPtr<Texture> texture, const SpriteSheetGridAnimation& anim, SpriteAnimationPlayback playback);
 
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/** @} */

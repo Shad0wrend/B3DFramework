@@ -904,7 +904,7 @@ GUIBatchRenderData GUIMeshBatches::GetRenderData(const Batch& batch)
 	batchRenderData.Bounds = batch.Bounds;
 
 	GUIMeshRenderData meshRenderData;
-	meshRenderData.Mesh = B3DGetCoreObject(batch.Mesh);
+	meshRenderData.Mesh = B3DGetRenderProxy(batch.Mesh);
 	meshRenderData.Material = material.SpriteMaterial;
 	meshRenderData.MaterialInformation = material.SpriteMaterialInformation;
 	meshRenderData.UniformBufferIndex = 0;

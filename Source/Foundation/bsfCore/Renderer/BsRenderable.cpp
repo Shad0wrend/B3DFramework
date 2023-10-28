@@ -229,10 +229,10 @@ Bounds Renderable::GetBounds() const
 
 SPtr<ct::Renderable> Renderable::GetCore() const
 {
-	return std::static_pointer_cast<ct::Renderable>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Renderable>(mRenderProxy);
 }
 
-SPtr<ct::CoreObject> Renderable::CreateCore() const
+SPtr<ct::RenderProxy> Renderable::CreateRenderProxy() const
 {
 	ct::Renderable* handler = new(B3DAllocate<ct::Renderable>()) ct::Renderable();
 	SPtr<ct::Renderable> handlerPtr = B3DMakeSharedFromExisting<ct::Renderable>(handler);
@@ -314,7 +314,7 @@ void Renderable::UpdateStateInternal(const SceneObject& so, bool force)
 
 void Renderable::MarkCoreDirtyInternal(ActorDirtyFlag flag)
 {
-	MarkCoreDirty((u32)flag);
+	MarkRenderProxyDataDirty((u32)flag);
 }
 
 void Renderable::MarkDependenciesDirtyInternal()
@@ -343,9 +343,9 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* Renderable::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Renderable::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
-	CoreSyncPacket* const sceneActorSyncPacket = CreateCoreSyncPacket(allocator, flags);
+	RenderProxySyncPacket* const sceneActorSyncPacket = CreateSceneActorRenderProxySyncPacket(allocator, flags);
 	if(flags != (u32)ActorDirtyFlag::Transform)
 	{
 		SyncPacket* renderableSyncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
@@ -400,7 +400,7 @@ void Renderable::NotifyResourceLoaded(const HResource& resource)
 		OnMeshChanged();
 
 	MarkDependenciesDirty();
-	MarkCoreDirty();
+	MarkRenderProxyDataDirty();
 }
 
 void Renderable::NotifyResourceChanged(const HResource& resource)
@@ -409,7 +409,7 @@ void Renderable::NotifyResourceChanged(const HResource& resource)
 		OnMeshChanged();
 
 	MarkDependenciesDirty();
-	MarkCoreDirty();
+	MarkRenderProxyDataDirty();
 }
 
 SPtr<Renderable> Renderable::Create()
@@ -456,7 +456,7 @@ void Renderable::Initialize()
 {
 	GetRenderer()->NotifyRenderableAdded(this);
 
-	CoreObject::Initialize();
+	RenderProxy::Initialize();
 }
 
 Bounds Renderable::GetBounds() const
@@ -640,9 +640,9 @@ void Renderable::UpdatePrevFrameAnimationBuffers()
 		std::swap(mBoneMatrixBuffer, mBonePrevMatrixBuffer);
 }
 
-void Renderable::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void Renderable::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	CoreSyncPacket* const syncPacket = data.GetSyncPacket();
+	RenderProxySyncPacket* const syncPacket = data.GetSyncPacket();
 	if(syncPacket == nullptr)
 		return;
 

@@ -234,9 +234,9 @@ namespace bs
 
 		Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**	Creates a light with without initializing it. Used for serialization. */
 		static SPtr<Light> CreateEmpty();
@@ -256,7 +256,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread usable version of bs::Light. */
-		class B3D_CORE_EXPORT Light : public CoreObject, public LightBase
+		class B3D_CORE_EXPORT Light : public RenderProxy, public LightBase
 		{
 		public:
 			~Light();
@@ -276,7 +276,7 @@ namespace bs
 			Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
 			void Initialize() override;
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId;
 		};

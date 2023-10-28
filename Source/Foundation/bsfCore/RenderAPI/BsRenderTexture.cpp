@@ -109,7 +109,7 @@ SPtr<RenderTexture> RenderTexture::Create(const RenderTextureCreateInformation& 
 
 SPtr<ct::RenderTexture> RenderTexture::GetCore() const
 {
-	return std::static_pointer_cast<ct::RenderTexture>(mCoreSpecific);
+	return std::static_pointer_cast<ct::RenderTexture>(mRenderProxy);
 }
 
 RenderTexture::RenderTexture(const RenderTextureCreateInformation& createInformation)
@@ -125,7 +125,7 @@ RenderTexture::RenderTexture(const RenderTextureCreateInformation& createInforma
 		mBindableDepthStencilTex = createInformation.DepthStencilSurface.Texture;
 }
 
-SPtr<ct::CoreObject> RenderTexture::CreateCore() const
+SPtr<ct::RenderProxy> RenderTexture::CreateRenderProxy() const
 {
 	ct::RenderTextureCreateInformation coreDesc;
 
@@ -159,7 +159,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* RenderTexture::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* RenderTexture::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	syncPacket->Properties = GetProperties(); 
@@ -229,7 +229,7 @@ SPtr<RenderTexture> RenderTexture::Create(const RenderTextureCreateInformation& 
 	return TextureManager::Instance().CreateRenderTexture(createInformation);
 }
 
-void RenderTexture::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void RenderTexture::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	const auto* const syncPacket = data.GetSyncPacket<bs::RenderTexture::SyncPacket>();
 	if(!syncPacket)

@@ -39,7 +39,7 @@ namespace bs
 
 		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 		void SyncProperties() override;
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 
 	private:
 		RenderWindowProperties mProperties;

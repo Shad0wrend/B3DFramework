@@ -118,8 +118,8 @@ namespace bs
 		Pass() = default;
 		Pass(const PassCreateInformation& createInformation);
 
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
-		SPtr<ct::CoreObject> CreateCore() const override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 
 		/**	Creates a new empty pass but doesn't initialize it. */
 		static SPtr<Pass> CreateEmpty();
@@ -148,7 +148,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class B3D_CORE_EXPORT Pass : public IReflectable, public CoreObject, public TPass<true>
+		class B3D_CORE_EXPORT Pass : public IReflectable, public RenderProxy, public TPass<true>
 		{
 		public:
 			virtual ~Pass() = default;
@@ -169,7 +169,7 @@ namespace bs
 			Pass() = default;
 			Pass(const PassCreateInformation& desc);
 
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/

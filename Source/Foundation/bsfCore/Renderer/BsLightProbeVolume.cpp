@@ -276,7 +276,7 @@ void LightProbeVolume::UpdateCoefficients()
 
 SPtr<ct::LightProbeVolume> LightProbeVolume::GetCore() const
 {
-	return std::static_pointer_cast<ct::LightProbeVolume>(mCoreSpecific);
+	return std::static_pointer_cast<ct::LightProbeVolume>(mRenderProxy);
 }
 
 SPtr<LightProbeVolume> LightProbeVolume::Create(const AABox& volume, const Vector3I& cellCount)
@@ -298,7 +298,7 @@ SPtr<LightProbeVolume> LightProbeVolume::CreateEmpty()
 	return probleVolumePtr;
 }
 
-SPtr<ct::CoreObject> LightProbeVolume::CreateCore() const
+SPtr<ct::RenderProxy> LightProbeVolume::CreateRenderProxy() const
 {
 	ct::LightProbeVolume* handler = new(B3DAllocate<ct::LightProbeVolume>()) ct::LightProbeVolume(mProbes);
 	SPtr<ct::LightProbeVolume> handlerPtr = B3DMakeSharedFromExisting<ct::LightProbeVolume>(handler);
@@ -316,7 +316,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* LightProbeVolume::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* LightProbeVolume::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	auto* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	
@@ -337,13 +337,13 @@ CoreSyncPacket* LightProbeVolume::CreateSyncPacket(FrameAllocator& allocator, u3
 	for(auto& probe : syncPacket->RemovedProbes)
 		mProbes.erase(probe);
 
-	syncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
+	syncPacket->SceneActorPacket = CreateSceneActorRenderProxySyncPacket(allocator, flags);
 	return syncPacket;
 }
 
 void LightProbeVolume::MarkCoreDirtyInternal(ActorDirtyFlag dirtyFlag)
 {
-	MarkCoreDirty((u32)dirtyFlag);
+	MarkRenderProxyDataDirty((u32)dirtyFlag);
 }
 
 RTTITypeBase* LightProbeVolume::GetRttiStatic()
@@ -425,7 +425,7 @@ void LightProbeVolume::Initialize()
 	mInitCoefficients.clear();
 
 	GetRenderer()->NotifyLightProbeVolumeAdded(this);
-	CoreObject::Initialize();
+	RenderProxy::Initialize();
 }
 
 bool LightProbeVolume::RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProbes)
@@ -484,7 +484,7 @@ bool LightProbeVolume::RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProb
 	return mFirstDirtyProbe == (u32)mProbeInfos.size();
 }
 
-void LightProbeVolume::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void LightProbeVolume::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::LightProbeVolume::SyncPacket>();
 	if(!syncPacket)

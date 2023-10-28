@@ -223,7 +223,7 @@ void RenderWindow::SetWindowed(u32 width, u32 height)
 
 SPtr<ct::RenderWindow> RenderWindow::GetCore() const
 {
-	return std::static_pointer_cast<ct::RenderWindow>(mCoreSpecific);
+	return std::static_pointer_cast<ct::RenderWindow>(mRenderProxy);
 }
 
 SPtr<RenderWindow> RenderWindow::Create(RENDER_WINDOW_DESC& desc, SPtr<RenderWindow> parentWindow)

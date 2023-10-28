@@ -621,12 +621,12 @@ void Material::SetShader(const HShader& shader)
 void Material::SetVariation(const ShaderVariationParameters& variation)
 {
 	mVariation = variation;
-	MarkCoreDirty();
+	MarkRenderProxyDataDirty();
 }
 
 void Material::MarkCoreDirtyInternal(MaterialDirtyFlags flags)
 {
-	MarkCoreDirty((u32)flags);
+	MarkRenderProxyDataDirty((u32)flags);
 }
 
 void Material::MarkDependenciesDirtyInternal()
@@ -641,17 +641,17 @@ void Material::MarkResourcesDirtyInternal()
 
 SPtr<ct::Material> Material::GetCore() const
 {
-	return std::static_pointer_cast<ct::Material>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Material>(mRenderProxy);
 }
 
-SPtr<ct::CoreObject> Material::CreateCore() const
+SPtr<ct::RenderProxy> Material::CreateRenderProxy() const
 {
 	ct::Material* material = nullptr;
 
 	SPtr<ct::Shader> shader;
 	if(mShader.IsLoaded())
 	{
-		shader = mShader->GetCore();
+		shader = B3DGetRenderProxy(mShader);
 
 		Vector<SPtr<ct::Technique>> techniques(mTechniques.size());
 		for(u32 i = 0; i < (u32)mTechniques.size(); i++)
@@ -682,11 +682,11 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* Material::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Material::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 
-	syncPacket->IsSyncingAllParameters = (GetCoreDirtyFlags() & ~((u32)MaterialDirtyFlags::Param)) != 0;
+	syncPacket->IsSyncingAllParameters = (GetRenderProxyDirtyFlags() & ~((u32)MaterialDirtyFlags::Param)) != 0;
 	syncPacket->DirtyMaterialParametersPacket = nullptr;
 
 	if(mParams != nullptr)
@@ -725,7 +725,7 @@ void Material::InitializeIfLoaded()
 			SPtr<MaterialParams> oldParams = mParams;
 
 			InitializeTechniques();
-			MarkCoreDirty();
+			MarkRenderProxyDataDirty();
 
 			if(mTechniques.empty()) // Wasn't initialized
 				return;
@@ -1038,7 +1038,7 @@ void Material::SetVariation(const ShaderVariationParameters& variation)
 	mVariation = variation;
 }
 
-void Material::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void Material::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* syncPacket = data.GetSyncPacket<bs::Material::SyncPacket>();
 	if(!syncPacket)

@@ -112,7 +112,7 @@ namespace bs
 	protected:
 		VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values);
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -134,7 +134,7 @@ namespace bs
 		 */
 
 		/** Core thread version of a bs::VectorField. */
-		class B3D_CORE_EXPORT VectorField : public CoreObject, public TVectorField<true>
+		class B3D_CORE_EXPORT VectorField : public RenderProxy, public TVectorField<true>
 		{
 		public:
 			VectorField(const VECTOR_FIELD_DESC& desc, const SPtr<Texture>& texture);

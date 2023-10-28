@@ -306,8 +306,8 @@ namespace bs
 
 		void Initialize() override;
 		void Destroy() override;
-		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		GpuBufferInformation mInformation;
 		u32 mSuballocationSize = 0;
@@ -319,7 +319,7 @@ namespace bs
 namespace bs::ct
 {
 	/** Defines a buffer that can be used for operations on the GPU. */
-	class B3D_CORE_EXPORT GpuBuffer : public CoreObject
+	class B3D_CORE_EXPORT GpuBuffer : public RenderProxy
 	{
 	public:
 		virtual ~GpuBuffer();
@@ -477,7 +477,7 @@ namespace bs::ct
 		/** Constructs a new GPU buffer. */
 		GpuBuffer(const GpuBufferCreateInformation& createInformation, u32 suballocationSize);
 
-		void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+		void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 		/** @copydoc Lock */
 		virtual void* Map(u32 offset, u32 length, GpuLockOptions options) { return nullptr; }

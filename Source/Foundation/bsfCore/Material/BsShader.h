@@ -600,9 +600,6 @@ namespace bs
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Shader : public Resource, public TShader<false>
 	{
 	public:
-		/** Retrieves an implementation of a shader usable only from the core thread. */
-		SPtr<ct::Shader> GetCore() const;
-
 		/**
 		 * Sets a list include file paths that are referenced by this shader.
 		 *
@@ -666,7 +663,7 @@ namespace bs
 		Shader(const String& name, const ShaderCreateInformation& createInformation, u32 id);
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 
 	private:
 		/************************************************************************/
@@ -711,7 +708,7 @@ namespace bs
 		 */
 
 		/** Core thread version of Shader. */
-		class B3D_CORE_EXPORT Shader : public IReflectable, public CoreObject, public TShader<true>
+		class B3D_CORE_EXPORT Shader : public IReflectable, public RenderProxy, public TShader<true>
 		{
 		public:
 			/** @copydoc bs::Shader::Create */

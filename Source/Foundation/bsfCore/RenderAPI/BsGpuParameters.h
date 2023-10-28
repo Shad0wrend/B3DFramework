@@ -571,12 +571,12 @@ namespace bs
 		GpuParameters(const SPtr<GpuPipelineParameterLayout>& paramInfo);
 
 		SPtr<GpuParameters> GetThisPtrInternal() const override;
-		SPtr<ct::CoreObject> CreateCore() const override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void GetListenerResources(Vector<HResource>& resources) override;
-		void NotifyResourceLoaded(const HResource& resource) override { MarkCoreDirty(); }
-		void NotifyResourceChanged(const HResource& resource) override { MarkCoreDirty(); }
+		void NotifyResourceLoaded(const HResource& resource) override { MarkRenderProxyDataDirty(); }
+		void NotifyResourceChanged(const HResource& resource) override { MarkRenderProxyDataDirty(); }
 	};
 
 	/** @} */
@@ -592,7 +592,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class B3D_CORE_EXPORT GpuParameters : public CoreObject, public TGpuParams<true>
+		class B3D_CORE_EXPORT GpuParameters : public RenderProxy, public TGpuParams<true>
 		{
 		public:
 			virtual ~GpuParameters() = default;
@@ -603,7 +603,7 @@ namespace bs
 			GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout);
 
 			SPtr<GpuParameters> GetThisPtrInternal() const override;
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/** @} */

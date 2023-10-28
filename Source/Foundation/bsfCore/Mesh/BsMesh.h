@@ -135,7 +135,7 @@ namespace bs
 		/**	Updates bounds by calculating them from the vertices in the provided mesh data object. */
 		void UpdateBounds(const MeshData& meshData);
 
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 
 		/**
 		 * Creates buffers used for caching of CPU mesh data.

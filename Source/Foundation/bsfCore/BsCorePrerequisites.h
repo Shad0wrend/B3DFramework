@@ -489,7 +489,7 @@ namespace bs
 	{
 		class Renderer;
 		class VertexData;
-		class CoreObject;
+		class RenderProxy;
 		class GpuCommandBuffer;
 		class EventQuery;
 		class TimerQuery;

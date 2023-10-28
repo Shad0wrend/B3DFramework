@@ -9,9 +9,9 @@ using namespace std::placeholders;
 
 using namespace bs;
 
-CoreObject::CoreObject(bool initializeOnCoreThread)
-	: mFlags(initializeOnCoreThread ? CoreObjectFlag::RequiresRenderProxy : CoreObjectFlag::None)
-	, mCoreDirtyFlags(0)
+CoreObject::CoreObject(bool createRenderProxy)
+	: mFlags(createRenderProxy ? CoreObjectFlag::RequiresRenderProxy : CoreObjectFlag::None)
+	, mRenderProxyDirtyFlags(0)
 	, mInternalID(CoreObjectManager::Instance().GenerateId())
 {
 }
@@ -39,27 +39,28 @@ void CoreObject::Destroy()
 	CoreObjectManager::Instance().UnregisterObject(this);
 	mFlags.Set(CoreObjectFlag::Destroyed);
 
-	mCoreSpecific = nullptr;
+	mRenderProxy = nullptr;
 }
 
 void CoreObject::Initialize()
 {
 	CoreObjectManager::Instance().RegisterObject(this);
-	mCoreSpecific = CreateCore();
+	mRenderProxy = CreateRenderProxy();
 
-	if(mCoreSpecific != nullptr && !mCoreSpecific->IsInitialized())
+	if(mRenderProxy != nullptr && !mRenderProxy->IsInitialized())
 	{
 		if(mFlags.IsSet(CoreObjectFlag::RequiresRenderProxy))
 		{
-			mCoreSpecific->mFlags.Set(ct::RenderProxyFlag::ScheduledForInitialization);
+			mRenderProxy->mFlags.Set(ct::RenderProxyFlag::ScheduledForInitialization);
 
-			B3D_ASSERT(B3D_CURRENT_THREAD_ID != CoreThread::Instance().GetCoreThreadId() && "Cannot initialize sim thread object from core thread.");
+			B3D_ENSURE_LOG(B3D_CURRENT_THREAD_ID != GetCoreThread().GetCoreThreadId(), "Cannot initialize CoreObject object from the render thread.");
 
-			CoreThread::Instance().PostCommand([object = mCoreSpecific] { object->Initialize(); });
+			GetCoreThread().PostCommand([object = mRenderProxy]
+										{ object->Initialize(); });
 		}
 		else
 		{
-			mCoreSpecific->Initialize();
+			mRenderProxy->Initialize();
 		}
 	}
 
@@ -67,24 +68,24 @@ void CoreObject::Initialize()
 	MarkDependenciesDirty();
 }
 
-void CoreObject::BlockUntilCoreInitialized() const
+void CoreObject::BlockUntilRenderProxyInitialized() const
 {
-	if(mCoreSpecific != nullptr)
-		mCoreSpecific->Synchronize();
+	if(mRenderProxy != nullptr)
+		mRenderProxy->BlockUntilInitialized();
 }
 
-void CoreObject::SyncToCore()
+void CoreObject::SyncToRenderProxy()
 {
 	CoreObjectManager::Instance().SyncToCore(this);
 }
 
-void CoreObject::MarkCoreDirty(u32 flags)
+void CoreObject::MarkRenderProxyDataDirty(u32 flags)
 {
-	bool wasDirty = IsCoreDirty();
+	bool wasDirty = IsRenderProxyDataOutOfDate();
 
-	mCoreDirtyFlags |= flags;
+	mRenderProxyDirtyFlags |= flags;
 
-	if(!wasDirty && IsCoreDirty())
+	if(!wasDirty && IsRenderProxyDataOutOfDate())
 		CoreObjectManager::Instance().NotifyCoreDirty(this);
 }
 

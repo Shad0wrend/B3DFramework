@@ -44,7 +44,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* MeshBase::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* MeshBase::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	syncPacket->Bounds = mProperties.Bounds;
@@ -54,7 +54,7 @@ CoreSyncPacket* MeshBase::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 
 SPtr<ct::MeshBase> MeshBase::GetCore() const
 {
-	return std::static_pointer_cast<ct::MeshBase>(mCoreSpecific);
+	return std::static_pointer_cast<ct::MeshBase>(mRenderProxy);
 }
 
 /************************************************************************/
@@ -77,7 +77,7 @@ MeshBase::MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMe
 	: mProperties(vertexCount, indexCount, subMeshes)
 {}
 
-void MeshBase::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void MeshBase::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	const auto* const syncPacket = data.GetSyncPacket<bs::MeshBase::SyncPacket>();
 	if(!syncPacket)

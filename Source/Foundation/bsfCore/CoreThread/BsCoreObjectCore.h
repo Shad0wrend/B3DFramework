@@ -27,20 +27,20 @@ namespace bs
 		B3D_FLAGS_OPERATORS(RenderProxyFlag)
 
 		/**
-		 * Represents a version of a CoreObject that is meant to be used specifically on the render thread.
+		 * Represents a partial copy of a CoreObject,  meant to be used specifically on the render thread.
 		 *
 		 * @note	Render thread only.
 		 */
-		class B3D_CORE_EXPORT CoreObject
+		class B3D_CORE_EXPORT RenderProxy
 		{
 		public:
-			CoreObject();
-			virtual ~CoreObject();
+			RenderProxy();
+			virtual ~RenderProxy();
 
-			/**	Called on the core thread when the object is first created. */
+			/**	Called on the render thread when the object is first created. */
 			virtual void Initialize();
 
-			/**	Called on the core thread before the object is destroyed. */
+			/**	Called on the render thread before the object is destroyed. */
 			virtual void Destroy();
 
 			/** Returns true if the object has been initialized. Non-initialized object should not be used. */
@@ -50,7 +50,7 @@ namespace bs
 			bool IsDestroyed() const { return mFlags.IsSet(RenderProxyFlag::Destroyed); }
 
 			/** Returns a shared pointer version of "this" pointer. */
-			SPtr<CoreObject> GetShared() const { return mThis.lock(); }
+			SPtr<RenderProxy> GetShared() const { return mThis.lock(); }
 
 		public: // ***** INTERNAL ******
 			/** @name Internal
@@ -62,18 +62,18 @@ namespace bs
 			 *
 			 * @note	Called automatically by the factory creation methods so user should not call this manually.
 			 */
-			void SetShared(SPtr<CoreObject> sharedToThis);
+			void SetShared(SPtr<RenderProxy> sharedToThis);
 
 			/** Called when the last reference in the shared pointer owning this object goes out of scope. */
-			template <class T, class MemAlloc>
-			static void SharedDeleter(CoreObject* object)
+			template <class T, class AllocatorTag>
+			static void SharedDeleter(RenderProxy* object)
 			{
 				auto fnDestroy = [object]
 				{
 					if(!object->IsDestroyed())
 						object->Destroy();
 
-					B3DDelete<T, MemAlloc>((T*)object);
+					B3DDelete<T, AllocatorTag>((T*)object);
 				};
 
 				if(B3D_CURRENT_THREAD_ID != GetCoreThread().GetCoreThreadId())
@@ -90,27 +90,26 @@ namespace bs
 			friend class bs::CoreObject;
 
 			/**
-			 * Update internal data from provided memory buffer that was populated with data from the sim thread.
+			 * Update internal data from provided memory buffer that was populated with data from the owning CoreObject.
 			 *
 			 * @note
-			 * This generally happens at the start of a core thread frame. Data used was recorded on the previous sim thread
-			 * frame.
+			 * This generally happens at the start of a render thread frame. Data used was recorded on the previous main thread frame.
 			 */
-			virtual void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) {}
+			virtual void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) {}
 
 			/**
 			 * Blocks the current thread until the resource is fully initialized.
 			 *
 			 * @note
-			 * If you call this without calling initialize first a deadlock will occur. You should not call this from core thread.
+			 * If you call this without calling initialize first a deadlock will occur. You should not call this from the render thread.
 			 */
-			void Synchronize();
+			void BlockUntilInitialized();
 
 			RenderProxyFlags mFlags;
-			std::weak_ptr<CoreObject> mThis;
+			std::weak_ptr<RenderProxy> mThis;
 
-			static Signal mCoreGpuObjectLoadedCondition;
-			static Mutex mCoreGpuObjectLoadedMutex;
+			static Signal mRenderProxyInitializedCondition;
+			static Mutex mRenderProxyInitializedMutex;
 		};
 
 		/** @} */

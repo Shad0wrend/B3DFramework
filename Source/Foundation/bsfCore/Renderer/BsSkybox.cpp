@@ -126,7 +126,7 @@ void Skybox::SetTexture(const HTexture& texture)
 
 SPtr<ct::Skybox> Skybox::GetCore() const
 {
-	return std::static_pointer_cast<ct::Skybox>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Skybox>(mRenderProxy);
 }
 
 SPtr<Skybox> Skybox::CreateEmpty()
@@ -146,7 +146,7 @@ SPtr<Skybox> Skybox::Create()
 	return skyboxPtr;
 }
 
-SPtr<ct::CoreObject> Skybox::CreateCore() const
+SPtr<ct::RenderProxy> Skybox::CreateRenderProxy() const
 {
 	SPtr<ct::Texture> radiance;
 	if(mTexture.IsLoaded(false))
@@ -167,18 +167,18 @@ SPtr<ct::CoreObject> Skybox::CreateCore() const
 	return skyboxPtr;
 }
 
-CoreSyncPacket* Skybox::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Skybox::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	if(B3D_ENSURE(syncPacket))
-		syncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
+		syncPacket->SceneActorPacket = CreateSceneActorRenderProxySyncPacket(allocator, flags);
 
 	return syncPacket;
 }
 
 void Skybox::MarkCoreDirtyInternal(ActorDirtyFlag flags)
 {
-	MarkCoreDirty((u32)flags);
+	MarkRenderProxyDataDirty((u32)flags);
 }
 
 RTTITypeBase* Skybox::GetRttiStatic()
@@ -208,10 +208,10 @@ void Skybox::Initialize()
 {
 	GetRenderer()->NotifySkyboxAdded(this);
 
-	CoreObject::Initialize();
+	RenderProxy::Initialize();
 }
 
-void Skybox::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void Skybox::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Skybox::SyncPacket>();
 	if(!syncPacket)

@@ -167,7 +167,7 @@ void ReflectionProbe::CaptureAndFilter()
 
 SPtr<ct::ReflectionProbe> ReflectionProbe::GetCore() const
 {
-	return std::static_pointer_cast<ct::ReflectionProbe>(mCoreSpecific);
+	return std::static_pointer_cast<ct::ReflectionProbe>(mRenderProxy);
 }
 
 SPtr<ReflectionProbe> ReflectionProbe::CreateSphere(float radius)
@@ -199,7 +199,7 @@ SPtr<ReflectionProbe> ReflectionProbe::CreateEmpty()
 	return probePtr;
 }
 
-SPtr<ct::CoreObject> ReflectionProbe::CreateCore() const
+SPtr<ct::RenderProxy> ReflectionProbe::CreateRenderProxy() const
 {
 	SPtr<ct::Texture> filteredTexture;
 	if(mFilteredTexture != nullptr)
@@ -212,18 +212,18 @@ SPtr<ct::CoreObject> ReflectionProbe::CreateCore() const
 	return probePtr;
 }
 
-CoreSyncPacket* ReflectionProbe::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* ReflectionProbe::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	if(B3D_ENSURE(syncPacket))
-		syncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
+		syncPacket->SceneActorPacket = CreateSceneActorRenderProxySyncPacket(allocator, flags);
 
 	return syncPacket;
 }
 
 void ReflectionProbe::MarkCoreDirtyInternal(ActorDirtyFlag flags)
 {
-	MarkCoreDirty((u32)flags);
+	MarkRenderProxyDataDirty((u32)flags);
 }
 
 RTTITypeBase* ReflectionProbe::GetRttiStatic()
@@ -257,10 +257,10 @@ void ReflectionProbe::Initialize()
 	UpdateBounds();
 	GetRenderer()->NotifyReflectionProbeAdded(this);
 
-	CoreObject::Initialize();
+	RenderProxy::Initialize();
 }
 
-void ReflectionProbe::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void ReflectionProbe::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::ReflectionProbe::SyncPacket>();
 	if(!syncPacket)

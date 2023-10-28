@@ -125,7 +125,7 @@ u32 SpriteTexture::GetFrameHeight() const
 
 void SpriteTexture::MarkCoreDirtyInternal()
 {
-	MarkCoreDirty();
+	MarkRenderProxyDataDirty();
 }
 
 void SpriteTexture::Initialize()
@@ -135,7 +135,7 @@ void SpriteTexture::Initialize()
 	Resource::Initialize();
 }
 
-SPtr<ct::CoreObject> SpriteTexture::CreateCore() const
+SPtr<ct::RenderProxy> SpriteTexture::CreateRenderProxy() const
 {
 	SPtr<ct::Texture> texturePtr;
 	if(mAtlasTexture.IsLoaded())
@@ -149,7 +149,7 @@ SPtr<ct::CoreObject> SpriteTexture::CreateCore() const
 	return spriteTexPtr;
 }
 
-CoreSyncPacket* SpriteTexture::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* SpriteTexture::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
@@ -162,7 +162,7 @@ void SpriteTexture::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 
 SPtr<ct::SpriteTexture> SpriteTexture::GetCore() const
 {
-	return std::static_pointer_cast<ct::SpriteTexture>(mCoreSpecific);
+	return std::static_pointer_cast<ct::SpriteTexture>(mRenderProxy);
 }
 
 HSpriteTexture SpriteTexture::Create(const HTexture& texture)
@@ -227,7 +227,7 @@ SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SP
 	mPlayback = playback;
 }
 
-void SpriteTexture::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void SpriteTexture::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::SpriteTexture::SyncPacket>();
 	if(!syncPacket)

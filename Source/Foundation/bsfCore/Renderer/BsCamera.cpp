@@ -683,7 +683,7 @@ template class TCamera<true>;
 
 SPtr<ct::Camera> Camera::GetCore() const
 {
-	return std::static_pointer_cast<ct::Camera>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Camera>(mRenderProxy);
 }
 
 SPtr<Camera> Camera::Create()
@@ -705,7 +705,7 @@ SPtr<Camera> Camera::CreateEmpty()
 	return handlerPtr;
 }
 
-SPtr<ct::CoreObject> Camera::CreateCore() const
+SPtr<ct::RenderProxy> Camera::CreateRenderProxy() const
 {
 	ct::Camera* handler = new(B3DAllocate<ct::Camera>()) ct::Camera(mViewport->GetCore());
 	SPtr<ct::Camera> handlerPtr = B3DMakeSharedFromExisting<ct::Camera>(handler);
@@ -759,7 +759,7 @@ namespace bs
 		B3D_SYNC_BLOCK_ENTRY(mMSAA)
 		B3D_SYNC_BLOCK_ENTRY(mMain)
 		B3D_SYNC_BLOCK_ENTRY(mCameraFlags)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(CoreSyncPacket*, RenderSettingsPacket)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(RenderProxySyncPacket*, RenderSettingsPacket)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SceneActor, SceneActorPacket)
 	B3D_SYNC_BLOCK_END
 
@@ -771,7 +771,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* Camera::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Camera::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	if(flags == 0)
 		return nullptr;
@@ -781,14 +781,14 @@ CoreSyncPacket* Camera::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
 		if(flags != (u32)ActorDirtyFlag::Transform)
 		{
 			FullSyncPacket* const syncPacket = allocator.Construct<FullSyncPacket>(*this, allocator, flags);
-			syncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
+			syncPacket->SceneActorPacket = CreateSceneActorRenderProxySyncPacket(allocator, flags);
 			syncPacket->RenderSettingsPacket = allocator.Construct<RenderSettings::SyncPacket>(*mRenderSettings, allocator, flags);
 
 			return syncPacket;
 		}
 
 		TransformSyncPacket* const transformSyncPacket = allocator.Construct<TransformSyncPacket>(*this, allocator, flags);
-		transformSyncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
+		transformSyncPacket->SceneActorPacket = CreateSceneActorRenderProxySyncPacket(allocator, flags);
 
 		return transformSyncPacket;
 	}
@@ -804,7 +804,7 @@ void Camera::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 
 void Camera::MarkCoreDirtyInternal(ActorDirtyFlag flag)
 {
-	MarkCoreDirty((u32)flag);
+	MarkRenderProxyDataDirty((u32)flag);
 }
 
 RTTITypeBase* Camera::GetRttiStatic()
@@ -840,7 +840,7 @@ void Camera::Initialize()
 {
 	RendererManager::Instance().GetActive()->NotifyCameraAdded(this);
 
-	CoreObject::Initialize();
+	RenderProxy::Initialize();
 }
 
 Rect2I Camera::GetViewportRect() const
@@ -848,9 +848,9 @@ Rect2I Camera::GetViewportRect() const
 	return mViewport->GetPixelArea();
 }
 
-void Camera::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void Camera::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<CoreSyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<RenderProxySyncPacket>();
 	if(!syncPacket)
 		return;
 

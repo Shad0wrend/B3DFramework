@@ -101,12 +101,12 @@ void Viewport::SetTarget(const SPtr<RenderTarget>& target)
 
 SPtr<ct::Viewport> Viewport::GetCore() const
 {
-	return std::static_pointer_cast<ct::Viewport>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Viewport>(mRenderProxy);
 }
 
 void Viewport::MarkCoreDirtyInternal()
 {
-	MarkCoreDirty();
+	MarkRenderProxyDataDirty();
 }
 
 u32 Viewport::GetTargetWidth() const
@@ -125,7 +125,7 @@ u32 Viewport::GetTargetHeight() const
 	return 0;
 }
 
-SPtr<ct::CoreObject> Viewport::CreateCore() const
+SPtr<ct::RenderProxy> Viewport::CreateRenderProxy() const
 {
 	SPtr<ct::RenderTarget> targetCore;
 	if(mTarget != nullptr)
@@ -140,7 +140,7 @@ SPtr<ct::CoreObject> Viewport::CreateCore() const
 	return viewportPtr;
 }
 
-CoreSyncPacket* Viewport::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Viewport::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
@@ -213,7 +213,7 @@ u32 Viewport::GetTargetHeight() const
 	return 0;
 }
 
-void Viewport::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void Viewport::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::Viewport::SyncPacket>();
 	if(!syncPacket)

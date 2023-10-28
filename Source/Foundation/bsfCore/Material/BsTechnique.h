@@ -148,10 +148,10 @@ namespace bs
 		static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData = {});
 
 	protected:
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void MarkCoreDirty(ShaderVariationDirtyFlags flag) override;
-		CoreSyncPacket* CreateSyncPacket(FrameAllocator& allocator, u32 flags) override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void SyncToCore() override;
 
 		SPtr<Technique> GetSelf() override { return std::static_pointer_cast<Technique>(GetShared()); }
@@ -187,7 +187,7 @@ namespace bs
 		 */
 
 		/** Core thread version of bs::Technique. */
-		class B3D_CORE_EXPORT Technique : public IReflectable, public CoreObject, public TTechnique<true>
+		class B3D_CORE_EXPORT Technique : public IReflectable, public RenderProxy, public TTechnique<true>
 		{
 		public:
 			Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData);
@@ -201,7 +201,7 @@ namespace bs
 		protected:
 			friend class bs::Technique;
 
-			void SyncToCore(const CoreSyncData& data, FrameAllocator& allocator) override;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 			SPtr<Technique> GetSelf() override { return std::static_pointer_cast<Technique>(GetShared()); }
 
 		private:

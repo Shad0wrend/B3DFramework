@@ -4,7 +4,7 @@
 
 namespace bs
 {
-	struct CoreSyncPacket;
+	struct RenderProxySyncPacket;
 	// Undefine defines from other libs, that conflict with enums below
 #undef None
 #undef Convex
@@ -749,18 +749,18 @@ namespace bs
 	class CoreSyncData
 	{
 	public:
-		CoreSyncData(CoreSyncPacket* syncPacket = nullptr)
+		CoreSyncData(RenderProxySyncPacket* syncPacket = nullptr)
 			: mSyncPacket(syncPacket)
 		{}
 
-		template<class T = CoreSyncPacket>
+		template<class T = RenderProxySyncPacket>
 		T* GetSyncPacket() const
 		{
 			return (T*)mSyncPacket;
 		}
 
 	private:
-		CoreSyncPacket* mSyncPacket = nullptr;
+		RenderProxySyncPacket* mSyncPacket = nullptr;
 	};
 
 	/** @} */

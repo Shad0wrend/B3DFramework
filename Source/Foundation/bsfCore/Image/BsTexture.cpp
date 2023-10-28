@@ -109,7 +109,7 @@ void Texture::Initialize()
 	Resource::Initialize();
 }
 
-SPtr<ct::CoreObject> Texture::CreateCore() const
+SPtr<ct::RenderProxy> Texture::CreateRenderProxy() const
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if(!gpuDevice)
@@ -297,7 +297,7 @@ void Texture::CreateCpuBuffers()
 
 SPtr<ct::Texture> Texture::GetCore() const
 {
-	return std::static_pointer_cast<ct::Texture>(mCoreSpecific);
+	return std::static_pointer_cast<ct::Texture>(mRenderProxy);
 }
 
 /************************************************************************/
@@ -364,7 +364,7 @@ void Texture::Initialize()
 		mInitData = nullptr;
 	}
 
-	CoreObject::Initialize();
+	RenderProxy::Initialize();
 }
 
 void Texture::WriteData(const PixelData& source, u32 mipLevel, u32 face, bool discardEntireBuffer, const SPtr<GpuCommandBuffer>& commandBuffer)

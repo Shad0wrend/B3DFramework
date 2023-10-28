@@ -61,7 +61,7 @@ void GpuBuffer::WriteCached(u32 offset, u32 length, const void* source)
 		return;
 
 	memcpy(mCache + offset, source, length);
-	MarkCoreDirty();
+	MarkRenderProxyDataDirty();
 }
 
 u32 GpuBuffer::WriteCachedType(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source)
@@ -90,7 +90,7 @@ void GpuBuffer::ZeroOutCached(u32 offset, u32 length)
 		return;
 
 	memset(mCache + offset, 0, length);
-	MarkCoreDirty();
+	MarkRenderProxyDataDirty();
 }
 
 void GpuBuffer::ReadCached(u32 offset, u32 length, void* destination)
@@ -106,10 +106,10 @@ void GpuBuffer::ReadCached(u32 offset, u32 length, void* destination)
 
 SPtr<ct::GpuBuffer> GpuBuffer::GetCore() const
 {
-	return std::static_pointer_cast<ct::GpuBuffer>(mCoreSpecific);
+	return std::static_pointer_cast<ct::GpuBuffer>(mRenderProxy);
 }
 
-SPtr<ct::CoreObject> GpuBuffer::CreateCore() const
+SPtr<ct::RenderProxy> GpuBuffer::CreateRenderProxy() const
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if(!gpuDevice)
@@ -127,7 +127,7 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* GpuBuffer::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* GpuBuffer::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	if(!mInformation.Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
 		return nullptr;
@@ -326,7 +326,7 @@ namespace bs::ct
 		memcpy(destination, mCache + offset, length);
 	}
 
-	void GpuBuffer::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+	void GpuBuffer::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 	{
 		auto* const syncPacket = data.GetSyncPacket<bs::GpuBuffer::SyncPacket>();
 		if(!syncPacket)

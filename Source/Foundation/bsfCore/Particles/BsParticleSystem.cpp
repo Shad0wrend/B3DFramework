@@ -420,10 +420,10 @@ float ParticleSystem::AdvanceTimeInternal(float time, float timeDelta, float dur
 
 SPtr<ct::ParticleSystem> ParticleSystem::GetCore() const
 {
-	return std::static_pointer_cast<ct::ParticleSystem>(mCoreSpecific);
+	return std::static_pointer_cast<ct::ParticleSystem>(mRenderProxy);
 }
 
-SPtr<ct::CoreObject> ParticleSystem::CreateCore() const
+SPtr<ct::RenderProxy> ParticleSystem::CreateRenderProxy() const
 {
 	ct::ParticleSystem* rawPtr = new(B3DAllocate<ct::ParticleSystem>()) ct::ParticleSystem(mId);
 	SPtr<ct::ParticleSystem> ptr = B3DMakeSharedFromExisting<ct::ParticleSystem>(rawPtr);
@@ -434,7 +434,7 @@ SPtr<ct::CoreObject> ParticleSystem::CreateCore() const
 
 void ParticleSystem::MarkCoreDirtyInternal(ActorDirtyFlag flag)
 {
-	MarkCoreDirty((u32)flag);
+	MarkRenderProxyDataDirty((u32)flag);
 }
 
 namespace bs
@@ -447,10 +447,10 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-CoreSyncPacket* ParticleSystem::CreateSyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* ParticleSystem::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
-	syncPacket->SceneActorPacket = CreateCoreSyncPacket(allocator, flags);
+	syncPacket->SceneActorPacket = CreateSceneActorRenderProxySyncPacket(allocator, flags);
 
 	return syncPacket;
 }
@@ -518,7 +518,7 @@ void ParticleSystem::SetLayer(u64 layer)
 	MarkCoreDirtyInternal();
 }
 
-void ParticleSystem::SyncToCore(const CoreSyncData& data, FrameAllocator& allocator)
+void ParticleSystem::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::ParticleSystem::SyncPacket>();
 	if(!syncPacket)
