@@ -5,7 +5,7 @@
 #include "Image/BsTexture.h"
 #include "Managers/BsTextureManager.h"
 #include "Resources/BsResources.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 #include <Private/RTTI/BsRenderTargetRTTI.h>
 
 #include "CoreThread/BsCoreObjectSync.h"

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 #include "Material/BsMaterial.h"
 #include "Renderer/BsRendererMaterialManager.h"
 #include "Material/BsShaderVariation.h"

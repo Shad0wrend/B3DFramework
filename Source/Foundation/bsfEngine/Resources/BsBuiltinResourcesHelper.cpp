@@ -15,7 +15,7 @@
 #include "FileSystem/BsDataStream.h"
 #include "Resources/BsResourceManifest.h"
 #include "FileSystem/BsFileSystem.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 #include "Utility/BsUUID.h"
 #include "Material/BsShader.h"
 #include "Material/BsPass.h"

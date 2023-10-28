@@ -4,7 +4,7 @@
 
 #include "CoreThread/BsCoreObjectSync.h"
 #include "Private/RTTI/BsMeshBaseRTTI.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 
 using namespace bs;
 

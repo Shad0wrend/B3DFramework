@@ -10,7 +10,7 @@
 #include "Scene/BsSceneManager.h"
 #include "Scene/BsSceneObject.h"
 #include "Platform/BsCursor.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 #include "FileSystem/BsFileSystem.h"
 #include "Resources/BsPlainTextImporter.h"
 #include "Importer/BsImporter.h"

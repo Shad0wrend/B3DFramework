@@ -8,7 +8,7 @@
 #include "BsVulkanGpuBuffer.h"
 #include "BsVulkanGpuCommandBuffer.h"
 #include "BsVulkanSubmitThread.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 #include "Profiling/BsRenderStats.h"
 #include "Math/BsMath.h"
 

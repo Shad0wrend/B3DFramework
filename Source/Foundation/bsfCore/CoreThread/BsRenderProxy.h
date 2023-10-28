@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "BsCoreThread.h"
+#include "BsRenderThread.h"
 #include "Threading/BsAsyncOp.h"
 
 namespace bs

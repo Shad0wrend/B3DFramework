@@ -3,7 +3,7 @@
 #include "Managers/BsResourceListenerManager.h"
 #include "Resources/BsResources.h"
 #include "Resources/BsIResourceListener.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 #include "BsCoreApplication.h"
 
 using namespace std::placeholders;

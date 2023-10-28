@@ -4,7 +4,7 @@
 #include "RenderAPI/BsViewport.h"
 #include "Private/RTTI/BsRenderTargetRTTI.h"
 #include "Error/BsException.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 
 using namespace bs;
 

@@ -5,7 +5,7 @@
 #include "RenderAPI/BsVertexDescription.h"
 #include "Utility/BsShapeMeshes3D.h"
 #include "Image/BsSpriteTexture.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 #include "Material/BsMaterial.h"
 #include "RenderAPI/BsGpuParameters.h"
 #include "Material/BsGpuParamsSet.h"

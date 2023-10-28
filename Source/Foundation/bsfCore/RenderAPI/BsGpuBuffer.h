@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "CoreThread/BsCoreObject.h"
-#include "CoreThread/BsCoreObjectCore.h"
+#include "CoreThread/BsRenderProxy.h"
 
 namespace bs
 {

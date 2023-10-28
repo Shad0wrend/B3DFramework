@@ -8,7 +8,7 @@
 #include "Material/BsShader.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Material/BsGpuParamsSet.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 #include "Image/BsSpriteTexture.h"
 
 using namespace bs;

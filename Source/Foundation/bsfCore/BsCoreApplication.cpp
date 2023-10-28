@@ -20,7 +20,7 @@
 #include "Managers/BsRenderWindowManager.h"
 #include "Renderer/BsRenderer.h"
 #include "Utility/BsDeferredCallManager.h"
-#include "CoreThread/BsCoreThread.h"
+#include "CoreThread/BsRenderThread.h"
 #include "Localization/BsStringTableManager.h"
 #include "Profiling/BsProfilingManager.h"
 #include "Profiling/BsProfilerCPU.h"
