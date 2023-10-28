@@ -46,11 +46,11 @@ void RenderProxy::BlockUntilInitialized()
 	if(!IsInitialized())
 	{
 #if B3D_DEBUG
-		if(B3D_CURRENT_THREAD_ID == CoreThread::Instance().GetCoreThreadId())
+		if(B3D_CURRENT_THREAD_ID == RenderThread::Instance().GetThreadId())
 			B3D_EXCEPT(InternalErrorException, "You cannot call this method on the core thread. It will cause a deadlock!");
 #endif
 
-		GetCoreThread().PostCommand([] {}, true);
+		GetRenderThread().PostCommand([] {}, true);
 
 		Lock lock(mRenderProxyInitializedMutex);
 		if(!IsInitialized() && !mFlags.IsSet(RenderProxyFlag::ScheduledForInitialization))

@@ -113,7 +113,7 @@ CoreApplication::~CoreApplication()
 	// All CoreObject related modules should be shut down now. They have likely queued CoreObjects for destruction, so
 	// we need to wait for those objects to get destroyed before continuing.
 	CoreObjectManager::Instance().SyncToCore(true);
-	GetCoreThread().PostCommand([] {}, true);
+	GetRenderThread().PostCommand([] {}, true);
 
 	UnloadPlugin(mStartUpDesc.Renderer);
 
@@ -127,7 +127,7 @@ CoreApplication::~CoreApplication()
 
 	Time::ShutDown();
 	DeferredCallManager::ShutDown();
-	CoreThread::ShutDown();
+	RenderThread::ShutDown();
 	RenderStats::ShutDown();
 	ProfilingManager::ShutDown();
 	ProfilerCPU::ShutDown();
@@ -168,7 +168,7 @@ void CoreApplication::OnStartUp()
 	ProfilerCPU::StartUp();
 	ProfilingManager::StartUp();
 	RenderStats::StartUp();
-	CoreThread::StartUp();
+	RenderThread::StartUp();
 	StringTableManager::StartUp();
 	DeferredCallManager::StartUp();
 	Time::StartUp();
@@ -334,14 +334,14 @@ void CoreApplication::RunMainLoopFrame()
 	// difference between sim/core thread and start the sim thread a bit later so they finish at nearly the same time.
 	WaitUntilFrameFinished();
 
-	GetCoreThread().PostCommand([this] { BeginCoreProfiling(); });
-	GetCoreThread().PostCommand([] { Platform::CoreUpdateInternal(); });
-	GetCoreThread().PostCommand([] { ct::RenderWindowManager::Instance().UpdateInternal(); });
+	GetRenderThread().PostCommand([this] { BeginCoreProfiling(); });
+	GetRenderThread().PostCommand([] { Platform::CoreUpdateInternal(); });
+	GetRenderThread().PostCommand([] { ct::RenderWindowManager::Instance().UpdateInternal(); });
 
 	PROFILE_CALL(RendererManager::Instance().GetActive()->RenderAll(perFrameData), "Render");
 
-	GetCoreThread().PostCommand([this] { FrameRenderingFinishedCallback(); });
-	GetCoreThread().PostCommand([this] { EndCoreProfiling(); });
+	GetRenderThread().PostCommand([this] { FrameRenderingFinishedCallback(); });
+	GetRenderThread().PostCommand([this] { EndCoreProfiling(); });
 
 	GetProfilerCPU().EndThread();
 	GetProfiler().UpdateInternal();

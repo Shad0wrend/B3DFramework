@@ -9,39 +9,28 @@
 
 namespace bs
 {
-	/** @addtogroup CoreThread-Internal
+	/** @addtogroup RenderThread
 	 *  @{
 	 */
 
 	/**
-	 * Manager for the core thread. Takes care of starting, running, queuing commands and shutting down the core thread.
+	 * Manager for the render thread. Takes care of starting, running, queuing commands and shutting down the render thread.
 	 *
-	 * How threading works:
-	 *  - Commands from various threads can be queued for execution on the core thread by calling QueueCommand() or
-	 *    queueReturnCommand().
-	 *   - Internally each thread maintains its own separate queue of commands, so you cannot interleave commands from
-	 *     different threads.
-	 *   - There is also the internal command queue, which is the only queue directly visible from the core thread.
-	 *    - Core thread continually polls the internal command queue for new commands, and executes them in order they were
-	 *      submitted.
-	 *    - Commands queued on the per-thread queues are submitted to the internal command queue by calling submit(), at
-	 *      which point they are made visible to the core thread, and will begin executing.
-	 * 	  - Commands can also be submitted directly to the internal command queue (via a special flag), but with a
-	 * 	    performance cost due to extra synchronization required.
+	 * Commands from various threads can be queued for execution on the core thread by calling PostCommand()
 	 */
-	class B3D_CORE_EXPORT CoreThread : public Module<CoreThread>
+	class B3D_CORE_EXPORT RenderThread : public Module<RenderThread>
 	{
 	public:
-		CoreThread();
-		~CoreThread();
+		RenderThread();
+		~RenderThread();
 
 		void OnStartUp() override;
 
-		/** Returns the id of the core thread.  */
-		ThreadId GetCoreThreadId() const { return mCoreThreadId; }
+		/** Returns the id of the render thread.  */
+		ThreadId GetThreadId() const { return mRenderThreadId; }
 
 		/**
-		 * Queues a new command that will be added to the core thread command queue.
+		 * Queues a new command that will be added to the render thread command queue.
 		 *
 		 * @param	commandCallback		Command to queue.
 		 * @param	waitUntilComplete	If true, the caller will block until the command finishes executing.
@@ -55,54 +44,53 @@ namespace bs
 		 * @{
 		 */
 
-#if BS_CORE_THREAD_IS_MAIN
-		/** Runs the core thread loop as soon as CoreThread module is started. */
+#if B3D_SWAP_RENDER_AND_MAIN_THREAD
+		/** Runs the render thread loop as soon as RenderThread module is started. */
 		static void RunInternal();
 #endif
 
 		/** @} */
 
 		/**
-		 * Returns number of buffers needed to sync data between core and sim thread. Currently the sim thread can be one frame
-		 * ahead of the core thread, meaning we need two buffers. If this situation changes increase this number.
+		 * Returns number of buffers needed to sync data between render and main thread. Currently the main thread can be one frame
+		 * ahead of the render thread, meaning we need two buffers. If this situation changes increase this number.
 		 *
 		 * For example:
-		 *  - Sim thread frame starts, it writes some data to buffer 0.
-		 *  - Core thread frame starts, it reads some data from buffer 0.
-		 *  - Sim thread frame finishes
-		 *  - New sim thread frame starts, it writes some data to buffer 1.
-		 *  - Core thread still working, reading from buffer 0. (If we were using just one buffer at this point core thread
-		 *	  would be reading wrong data).
-		 *  - Sim thread waiting for core thread (application defined that it cannot go ahead more than one frame)
-		 *  - Core thread frame finishes.
-		 *  - New core thread frame starts, it reads some data from buffer 1.
+		 *  - Main thread frame starts, it writes some data to buffer 0.
+		 *  - Render thread frame starts, it reads some data from buffer 0.
+		 *  - Main thread frame finishes
+		 *  - New main thread frame starts, it writes some data to buffer 1.
+		 *  - Render thread still working, reading from buffer 0. (If we were using just one buffer at this point render thread would be reading wrong data).
+		 *  - Main thread waiting for render thread (application defined that it cannot go ahead more than one frame)
+		 *  - Render thread frame finishes.
+		 *  - New render thread frame starts, it reads some data from buffer 1.
 		 *  - ...
 		 */
 		static constexpr int kSyncBufferCount = 2;
 
 	private:
-		bool mCoreThreadStarted = false;
+		bool mRenderThreadStarted = false;
 		Scheduler mScheduler;
-		ThreadId mCoreThreadId;
+		ThreadId mRenderThreadId;
 		Mutex mThreadStartedMutex;
-		ConditionVariable mCoreThreadStartedCondition;
-#if BS_CORE_THREAD_IS_MAIN
+		ConditionVariable mThreadStartedCondition;
+#if B3D_SWAP_RENDER_AND_MAIN_THREAD
 		static bool sAppStarted;
 		static Mutex sAppStartedMutex;
 		static Signal sAppStartedCondition;
 #else
-		SPtr<PooledThread> mCoreThread;
+		SPtr<PooledThread> mRenderThread;
 #endif
 
 		SingleConsumerQueue mCommandQueue;
 	};
 
 	/**
-	 * Returns the core thread manager used for dealing with the core thread from external threads.
+	 * Returns the render thread manager used for dealing with the render thread from external threads.
 	 *
-	 * @see		CoreThread
+	 * @see		RenderThread
 	 */
-	B3D_CORE_EXPORT CoreThread& GetCoreThread();
+	B3D_CORE_EXPORT RenderThread& GetRenderThread();
 
 	/**	Throws an exception if current thread isn't the render thread. */
 	B3D_CORE_EXPORT void AssertIfNotRenderThread();
@@ -113,7 +101,7 @@ namespace bs
 	/** Returns false if currently not at the render thread, and triggers an ensure. */
 	B3D_CORE_EXPORT inline bool EnsureRenderThread()
 	{
-		return B3D_ENSURE(B3D_CURRENT_THREAD_ID == CoreThread::Instance().GetCoreThreadId());
+		return B3D_ENSURE(B3D_CURRENT_THREAD_ID == RenderThread::Instance().GetThreadId());
 	}
 
 #if B3D_DEBUG
@@ -123,12 +111,6 @@ namespace bs
 #	define ASSERT_IF_NOT_RENDER_THREAD 
 #	define ASSERT_IF_RENDER_THREAD 
 #endif
-
-	/** @} */
-
-	/** @addtogroup CoreThread
-	 *  @{
-	 */
 
 	/** @} */
 } // namespace bs

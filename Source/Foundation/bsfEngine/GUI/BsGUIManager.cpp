@@ -171,7 +171,7 @@ void GUIManager::UnregisterWidget(GUIWidget* widget)
 	if(camera != nullptr)
 	{
 		auto widgetId = (u64)widget;
-		GetCoreThread().PostCommand([renderer = mRenderer.get(),
+		GetRenderThread().PostCommand([renderer = mRenderer.get(),
 									camera = camera->GetCore(),
 									widgetId]()
 								   { renderer->ClearDrawGroups(camera, widgetId); });
@@ -355,7 +355,7 @@ void GUIManager::Update()
 			continue;
 
 		auto widgetId = (u64)widget;
-		GetCoreThread().PostCommand([renderer = mRenderer.get(),
+		GetRenderThread().PostCommand([renderer = mRenderer.get(),
 									updateData = std::move(updateData),
 									camera = camera->GetCore(),
 									widgetId,
@@ -364,7 +364,7 @@ void GUIManager::Update()
 								   { renderer->UpdateDrawGroups(camera, widgetId, widgetDepth, worldTransform, updateData); });
 	}
 
-	GetCoreThread().PostCommand([renderer = mRenderer.get(), time = GetTime().GetTime()]()
+	GetRenderThread().PostCommand([renderer = mRenderer.get(), time = GetTime().GetTime()]()
 							   { renderer->Update(time); });
 }
 

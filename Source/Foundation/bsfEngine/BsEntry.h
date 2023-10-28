@@ -21,7 +21,7 @@ int main(int __argc, char* __argv[])
 #endif
 {
 	using namespace bs;
-#if BS_CORE_THREAD_IS_MAIN
+#if B3D_SWAP_RENDER_AND_MAIN_THREAD
 	Thread thread([argc = __argc, argv = __argv]()
 				  { bs_main(argc, argv); });
 	CoreThread::RunInternal();

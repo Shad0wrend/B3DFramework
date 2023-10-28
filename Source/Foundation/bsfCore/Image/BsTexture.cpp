@@ -139,7 +139,7 @@ AsyncOp Texture::WriteData(const SPtr<PixelData>& data, u32 face, u32 mipLevel, 
 	};
 
 	AsyncOp asyncOp;
-	GetCoreThread().PostCommand([func = std::move(func), core = GetCore(), face, mipLevel, data, discardEntireBuffer, asyncOp]() mutable { func(core, face, mipLevel, data, discardEntireBuffer, asyncOp); });
+	GetRenderThread().PostCommand([func = std::move(func), core = GetCore(), face, mipLevel, data, discardEntireBuffer, asyncOp]() mutable { func(core, face, mipLevel, data, discardEntireBuffer, asyncOp); });
 
 	return asyncOp;
 }
@@ -163,7 +163,7 @@ AsyncOp Texture::ReadData(const SPtr<PixelData>& data, u32 face, u32 mipLevel)
 	};
 
 	AsyncOp asyncOp;
-	GetCoreThread().PostCommand([func = std::move(func), core = GetCore(), face, mipLevel, data, asyncOp]() mutable { func(core, face, mipLevel, data, asyncOp); });
+	GetRenderThread().PostCommand([func = std::move(func), core = GetCore(), face, mipLevel, data, asyncOp]() mutable { func(core, face, mipLevel, data, asyncOp); });
 
 	return asyncOp;
 }
@@ -185,7 +185,7 @@ TAsyncOp<SPtr<PixelData>> Texture::ReadData(u32 face, u32 mipLevel)
 		op.CompleteOperation(output);
 	};
 
-	GetCoreThread().PostCommand(func);
+	GetRenderThread().PostCommand(func);
 	return op;
 }
 

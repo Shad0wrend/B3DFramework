@@ -15,7 +15,7 @@ void VulkanGpuBackendFactory::Create()
 		GpuBackend::StartUp<VulkanGpuBackend>();
 	};
 
-	CoreThread::Instance().PostCommand(fnStartUp, true);
+	RenderThread::Instance().PostCommand(fnStartUp, true);
 }
 
 VulkanGpuBackendFactory::InitOnStart VulkanGpuBackendFactory::initOnStart;

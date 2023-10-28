@@ -87,7 +87,7 @@ BuiltinResources::~BuiltinResources()
 	mCursorSizeWE = nullptr;
 	mFrameworkIcon = nullptr;
 
-	GetCoreThread().PostCommand([]() { ct::BuiltinResources::ShutDown(); });
+	GetRenderThread().PostCommand([]() { ct::BuiltinResources::ShutDown(); });
 }
 
 void BuiltinResources::OnStartUp()
@@ -160,7 +160,7 @@ void BuiltinResources::OnStartUp()
 		coreBuiltinResources.BlackTexture3D = blackTexture3D;
 	};
 
-	GetCoreThread().PostCommand(fnInitializeCoreBuiltinResources);
+	GetRenderThread().PostCommand(fnInitializeCoreBuiltinResources);
 
 	/************************************************************************/
 	/* 								CURSOR		                     		*/
@@ -219,7 +219,7 @@ void BuiltinResources::OnStartUp()
 	mFrameworkIcon = iconTex->GetProperties().AllocBuffer(0, 0);
 	iconTex->ReadData(mFrameworkIcon);
 
-	GetCoreThread().PostCommand([] {}, true);
+	GetRenderThread().PostCommand([] {}, true);
 }
 
 HSpriteTexture BuiltinResources::GetSkinTexture(const String& name) const

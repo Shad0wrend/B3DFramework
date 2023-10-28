@@ -76,8 +76,8 @@ namespace bs
 					B3DDelete<T, AllocatorTag>((T*)object);
 				};
 
-				if(B3D_CURRENT_THREAD_ID != GetCoreThread().GetCoreThreadId())
-					GetCoreThread().PostCommand(fnDestroy);
+				if(B3D_CURRENT_THREAD_ID != GetRenderThread().GetThreadId())
+					GetRenderThread().PostCommand(fnDestroy);
 				else
 					fnDestroy();
 			}

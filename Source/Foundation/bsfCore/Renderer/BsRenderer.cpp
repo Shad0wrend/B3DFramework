@@ -217,7 +217,7 @@ void RendererTask::Wait()
 		GetRenderer()->ProcessTask(*this, true);
 	};
 
-	GetCoreThread().PostCommand(worker, true);
+	GetRenderThread().PostCommand(worker, true);
 
 	// Note: Tigger on complete callback and clear it from Renderer?
 }

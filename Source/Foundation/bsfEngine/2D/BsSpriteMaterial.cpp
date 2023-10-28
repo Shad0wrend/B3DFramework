@@ -30,12 +30,12 @@ SpriteMaterial::SpriteMaterial(u32 id, const HMaterial& material, ShaderVariatio
 
 	mMaterialStored.store(true, std::memory_order_release);
 
-	GetCoreThread().PostCommand(std::bind(&SpriteMaterial::Initialize, this));
+	GetRenderThread().PostCommand(std::bind(&SpriteMaterial::Initialize, this));
 }
 
 SpriteMaterial::~SpriteMaterial()
 {
-	GetCoreThread().PostCommand(std::bind(&SpriteMaterial::Destroy, mMaterial, mParams));
+	GetRenderThread().PostCommand(std::bind(&SpriteMaterial::Destroy, mMaterial, mParams));
 }
 
 void SpriteMaterial::Initialize()

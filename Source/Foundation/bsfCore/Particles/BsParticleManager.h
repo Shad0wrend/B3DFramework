@@ -158,7 +158,7 @@ namespace bs
 		bool mPaused = false;
 
 		// Worker threads
-		ParticlePerFrameData mSimulationData[CoreThread::kSyncBufferCount];
+		ParticlePerFrameData mSimulationData[RenderThread::kSyncBufferCount];
 
 		u32 mReadBufferIdx = 1;
 		u32 mWriteBufferIdx = 0;

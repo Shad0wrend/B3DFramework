@@ -147,7 +147,7 @@ namespace bs
 		 * we use a ring-buffer of allocators. We use one extra buffer as one buffer could currently be in progress of
 		 * being passed from main to core thread.
 		 */
-		FrameAllocator* mSyncAllocators[CoreThread::kSyncBufferCount + 1];
+		FrameAllocator* mSyncAllocators[RenderThread::kSyncBufferCount + 1];
 		u32 mActiveFrameAllocatorIndex = 0;
 
 		Mutex mObjectsMutex;

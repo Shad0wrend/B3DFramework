@@ -321,7 +321,7 @@ private:
 struct ParticleManager::Members
 {
 	// TODO - Perhaps sharing one pool is better
-	ParticleSimulationDataPool SimDataPool[CoreThread::kSyncBufferCount];
+	ParticleSimulationDataPool SimDataPool[RenderThread::kSyncBufferCount];
 };
 
 ParticleManager::ParticleManager()
@@ -341,8 +341,8 @@ ParticlePerFrameData* ParticleManager::Update(const EvaluatedAnimationData& anim
 	// Advance the buffers (last write buffer becomes read buffer)
 	if(mSwapBuffers)
 	{
-		mReadBufferIdx = (mReadBufferIdx + 1) % CoreThread::kSyncBufferCount;
-		mWriteBufferIdx = (mWriteBufferIdx + 1) % CoreThread::kSyncBufferCount;
+		mReadBufferIdx = (mReadBufferIdx + 1) % RenderThread::kSyncBufferCount;
+		mWriteBufferIdx = (mWriteBufferIdx + 1) % RenderThread::kSyncBufferCount;
 
 		mSwapBuffers = false;
 	}

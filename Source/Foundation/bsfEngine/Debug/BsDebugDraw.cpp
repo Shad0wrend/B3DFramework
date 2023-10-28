@@ -136,7 +136,7 @@ void DebugDraw::UpdateInternal()
 	Vector<MeshRenderData> proxyData = CreateMeshProxyData(mActiveMeshes);
 
 	ct::DebugDrawRenderer* renderer = mRenderer.get();
-	GetCoreThread().PostCommand(std::bind(&ct::DebugDrawRenderer::UpdateData, renderer, proxyData));
+	GetRenderThread().PostCommand(std::bind(&ct::DebugDrawRenderer::UpdateData, renderer, proxyData));
 }
 
 namespace bs { namespace ct

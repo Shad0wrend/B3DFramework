@@ -279,7 +279,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 		data.Source->ReadData(data.SrcData);
 	}
 
-	GetCoreThread().PostCommand([] {}, true);
+	GetRenderThread().PostCommand([] {}, true);
 
 	auto saveTexture = [&](auto& pixelData, auto& path, std::string& uuid)
 	{

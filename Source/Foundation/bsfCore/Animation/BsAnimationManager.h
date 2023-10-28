@@ -133,7 +133,7 @@ namespace bs
 		// Animation thread
 		Vector<SPtr<AnimationProxy>> mProxies;
 		Vector<ConvexVolume> mCullFrustums;
-		EvaluatedAnimationData mAnimData[CoreThread::kSyncBufferCount + 1];
+		EvaluatedAnimationData mAnimData[RenderThread::kSyncBufferCount + 1];
 
 		u32 mPoseReadBufferIdx = 2;
 		u32 mPoseWriteBufferIdx = 0;

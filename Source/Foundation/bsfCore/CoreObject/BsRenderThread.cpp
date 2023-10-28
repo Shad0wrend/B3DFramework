@@ -8,47 +8,47 @@ using namespace std::placeholders;
 
 using namespace bs;
 
-#if BS_CORE_THREAD_IS_MAIN
-bool CoreThread::sAppStarted = false;
-Mutex CoreThread::sAppStartedMutex;
-Signal CoreThread::sAppStartedCondition;
+#if B3D_SWAP_RENDER_AND_MAIN_THREAD
+bool RenderThread::sAppStarted = false;
+Mutex RenderThread::sAppStartedMutex;
+Signal RenderThread::sAppStartedCondition;
 #endif
 
-CoreThread::CoreThread()
+RenderThread::RenderThread()
 	:mScheduler(SchedulerCreateInformation())
 {
 	
 }
 
-void CoreThread::OnStartUp()
+void RenderThread::OnStartUp()
 {
-	mCoreThreadId = B3D_CURRENT_THREAD_ID;
+	mRenderThreadId = B3D_CURRENT_THREAD_ID;
 
-#if !BS_CORE_THREAD_IS_MAIN
+#if !B3D_SWAP_RENDER_AND_MAIN_THREAD
 	auto fnRunThread = [this]()
 	{
 		{
 			Lock lock(mThreadStartedMutex);
 
-			mCoreThreadStarted = true;
-			mCoreThreadId = B3D_CURRENT_THREAD_ID;
+			mRenderThreadStarted = true;
+			mRenderThreadId = B3D_CURRENT_THREAD_ID;
 		}
 
 		Thread::SetName("Render Thread");
-		mCoreThreadStartedCondition.notify_one();
+		mThreadStartedCondition.notify_one();
 
 		mScheduler.BindToCurrentThread();
 		mCommandQueue.ScheduleRunUntilShutdown(mScheduler, true, 10ms, true);
 		Scheduler::UnbindFromCurrentThread();
 	};
 
-	mCoreThread = ThreadPool::Instance().Run("Core", fnRunThread);
+	mRenderThread = ThreadPool::Instance().Run("Core", fnRunThread);
 
 	// Need to wait to unsure thread ID is correctly set before continuing
 	Lock lock(mThreadStartedMutex);
 
-	while(!mCoreThreadStarted)
-		mCoreThreadStartedCondition.wait(lock);
+	while(!mRenderThreadStarted)
+		mThreadStartedCondition.wait(lock);
 #else
 	{
 		Lock lock(sAppStartedMutex);
@@ -59,15 +59,15 @@ void CoreThread::OnStartUp()
 #endif
 }
 
-CoreThread::~CoreThread()
+RenderThread::~RenderThread()
 {
 	mCommandQueue.PostRequestShutdownCommand(true);
 }
 
-#if BS_CORE_THREAD_IS_MAIN
-void CoreThread::RunInternal()
+#if B3D_SWAP_RENDER_AND_MAIN_THREAD
+void RenderThread::RunInternal()
 {
-	// Wait for the application to reach a point where core thread can be safely started
+	// Wait for the application to reach a point where render thread can be safely started
 	{
 		Lock lock(sAppStartedMutex);
 
@@ -81,27 +81,27 @@ void CoreThread::RunInternal()
 }
 #endif
 
-void CoreThread::PostCommand(std::function<void()>&& commandCallback, bool waitUntilComplete)
+void RenderThread::PostCommand(std::function<void()>&& commandCallback, bool waitUntilComplete)
 {
-	mCommandQueue.PostCommand(std::move(commandCallback), "CoreThread Command", waitUntilComplete);
+	mCommandQueue.PostCommand(std::move(commandCallback), "RenderThread Command", waitUntilComplete);
 }
 
 namespace bs
 {
-CoreThread& GetCoreThread()
+RenderThread& GetRenderThread()
 {
-	return CoreThread::Instance();
+	return RenderThread::Instance();
 }
 
 void AssertIfNotRenderThread()
 {
-	if(B3D_CURRENT_THREAD_ID != CoreThread::Instance().GetCoreThreadId())
-		B3D_EXCEPT(InternalErrorException, "This method can only be accessed from the core thread.");
+	if(B3D_CURRENT_THREAD_ID != RenderThread::Instance().GetThreadId())
+		B3D_EXCEPT(InternalErrorException, "This method can only be accessed from the render thread.");
 }
 
 void AssertIfRenderThread()
 {
-	if(B3D_CURRENT_THREAD_ID == CoreThread::Instance().GetCoreThreadId())
-		B3D_EXCEPT(InternalErrorException, "This method cannot be accessed from the core thread.");
+	if(B3D_CURRENT_THREAD_ID == RenderThread::Instance().GetThreadId())
+		B3D_EXCEPT(InternalErrorException, "This method cannot be accessed from the render thread.");
 }
 } // namespace bs

@@ -45,7 +45,7 @@ AsyncOp Mesh::WriteData(const SPtr<MeshData>& data, bool discardEntireBuffer)
 	};
 
 	AsyncOp asyncOp;
-	GetCoreThread().PostCommand([func = std::move(func), core = GetCore(), data, discardEntireBuffer, asyncOp]() mutable { func(core, data, discardEntireBuffer, asyncOp); });
+	GetRenderThread().PostCommand([func = std::move(func), core = GetCore(), data, discardEntireBuffer, asyncOp]() mutable { func(core, data, discardEntireBuffer, asyncOp); });
 
 	return asyncOp;
 }
@@ -68,7 +68,7 @@ AsyncOp Mesh::ReadData(const SPtr<MeshData>& data)
 	};
 
 	AsyncOp asyncOp;
-	GetCoreThread().PostCommand([func = std::move(func), core = GetCore(), data, asyncOp]() mutable { func(core, data, asyncOp); });
+	GetRenderThread().PostCommand([func = std::move(func), core = GetCore(), data, asyncOp]() mutable { func(core, data, asyncOp); });
 
 	return asyncOp;
 }
