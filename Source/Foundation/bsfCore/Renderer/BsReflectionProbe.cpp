@@ -106,27 +106,27 @@ void ReflectionProbe::CaptureAndFilter()
 		mRendererTask = nullptr;
 	};
 
-	SPtr<ct::ReflectionProbe> coreProbe = B3DGetRenderProxy(this);
-	SPtr<ct::Texture> coreTexture = B3DGetRenderProxy(mFilteredTexture);
+	SPtr<ct::ReflectionProbe> probeRenderProxy = B3DGetRenderProxy(this);
+	SPtr<ct::Texture> textureRenderProxy = B3DGetRenderProxy(mFilteredTexture);
 
 	if(mCustomTexture == nullptr)
 	{
-		auto renderReflProbe = [coreTexture, coreProbe](ct::GpuCommandBufferPool& commandBufferPool)
+		auto renderReflProbe = [textureRenderProxy, probeRenderProxy](ct::GpuCommandBufferPool& commandBufferPool)
 		{
 			const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("RenderAndFilterReflectionProbe"));
 			GetProfilerGPU().BeginSample(*commandBuffer, "RenderAndFilterReflectionProbe");
-			float radius = coreProbe->mType == ReflectionProbeType::Sphere ? coreProbe->mRadius : coreProbe->mExtents.Length();
+			float radius = probeRenderProxy->mType == ReflectionProbeType::Sphere ? probeRenderProxy->mRadius : probeRenderProxy->mExtents.Length();
 
 			ct::CaptureSettings settings;
 			settings.EncodeDepth = true;
 			settings.DepthEncodeNear = radius;
 			settings.DepthEncodeFar = radius + 1; // + 1 arbitrary, make it a customizable value?
 
-			ct::GetRenderer()->CaptureSceneCubeMap(*commandBuffer, coreTexture, coreProbe->GetTransform().GetPosition(), settings);
-			ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, coreTexture, nullptr);
+			ct::GetRenderer()->CaptureSceneCubeMap(*commandBuffer, textureRenderProxy, probeRenderProxy->GetTransform().GetPosition(), settings);
+			ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, textureRenderProxy, nullptr);
 
-			coreProbe->mFilteredTexture = coreTexture;
-			ct::GetRenderer()->NotifyReflectionProbeUpdated(coreProbe.get(), true);
+			probeRenderProxy->mFilteredTexture = textureRenderProxy;
+			ct::GetRenderer()->NotifyReflectionProbeUpdated(probeRenderProxy.get(), true);
 			GetProfilerGPU().EndSample(*commandBuffer, "RenderAndFilterReflectionProbe");
 
 			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
@@ -139,17 +139,17 @@ void ReflectionProbe::CaptureAndFilter()
 	}
 	else
 	{
-		SPtr<ct::Texture> coreCustomTex = B3DGetRenderProxy(mCustomTexture);
-		auto filterReflProbe = [coreCustomTex, coreTexture, coreProbe](ct::GpuCommandBufferPool& commandBufferPool)
+		SPtr<ct::Texture> customTextureRenderProxy = B3DGetRenderProxy(mCustomTexture);
+		auto filterReflProbe = [customTextureRenderProxy, textureRenderProxy, probeRenderProxy](ct::GpuCommandBufferPool& commandBufferPool)
 		{
 			const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("FilterReflectionProbe"));
 			GetProfilerGPU().BeginSample(*commandBuffer, "FilterReflectionProbe");
 
-			ct::GetIBLUtility().ScaleCubemap(*commandBuffer, coreCustomTex, 0, coreTexture, 0);
-			ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, coreTexture, nullptr);
+			ct::GetIBLUtility().ScaleCubemap(*commandBuffer, customTextureRenderProxy, 0, textureRenderProxy, 0);
+			ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, textureRenderProxy, nullptr);
 
-			coreProbe->mFilteredTexture = coreTexture;
-			ct::GetRenderer()->NotifyReflectionProbeUpdated(coreProbe.get(), true);
+			probeRenderProxy->mFilteredTexture = textureRenderProxy;
+			ct::GetRenderer()->NotifyReflectionProbeUpdated(probeRenderProxy.get(), true);
 			GetProfilerGPU().EndSample(*commandBuffer, "FilterReflectionProbe");
 
 			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
@@ -198,11 +198,11 @@ SPtr<ct::RenderProxy> ReflectionProbe::CreateRenderProxy() const
 {
 	SPtr<ct::Texture> filteredTexture = B3DGetRenderProxy(mFilteredTexture);
 
-	ct::ReflectionProbe* probe = new(B3DAllocate<ct::ReflectionProbe>()) ct::ReflectionProbe(mType, mRadius, mExtents, filteredTexture);
-	SPtr<ct::ReflectionProbe> probePtr = B3DMakeSharedFromExisting<ct::ReflectionProbe>(probe);
-	probePtr->SetShared(probePtr);
+	ct::ReflectionProbe* renderProxy = new(B3DAllocate<ct::ReflectionProbe>()) ct::ReflectionProbe(mType, mRadius, mExtents, filteredTexture);
+	SPtr<ct::ReflectionProbe> renderProxyShared = B3DMakeSharedFromExisting<ct::ReflectionProbe>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return probePtr;
+	return renderProxyShared;
 }
 
 RenderProxySyncPacket* ReflectionProbe::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)

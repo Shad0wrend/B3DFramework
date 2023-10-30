@@ -641,29 +641,29 @@ void Material::MarkResourcesDirtyInternal()
 
 SPtr<ct::RenderProxy> Material::CreateRenderProxy() const
 {
-	ct::Material* material = nullptr;
+	ct::Material* renderProxy = nullptr;
 
 	SPtr<ct::Shader> shader;
 	if(mShader.IsLoaded())
 	{
 		shader = B3DGetRenderProxy(mShader);
 
-		Vector<SPtr<ct::Technique>> techniques(mTechniques.size());
+		Vector<SPtr<ct::Technique>> variations(mTechniques.size());
 		for(u32 i = 0; i < (u32)mTechniques.size(); i++)
-			techniques[i] = B3DGetRenderProxy(mTechniques[i]);
+			variations[i] = B3DGetRenderProxy(mTechniques[i]);
 
 		SPtr<ct::MaterialParams> materialParams = B3DMakeShared<ct::MaterialParams>(shader, mParams);
 
-		material = new(B3DAllocate<ct::Material>()) ct::Material(shader, techniques, materialParams, mVariation);
+		renderProxy = new(B3DAllocate<ct::Material>()) ct::Material(shader, variations, materialParams, mVariation);
 	}
 
-	if(material == nullptr)
-		material = new(B3DAllocate<ct::Material>()) ct::Material(shader, mVariation);
+	if(renderProxy == nullptr)
+		renderProxy = new(B3DAllocate<ct::Material>()) ct::Material(shader, mVariation);
 
-	SPtr<ct::Material> materialPtr = B3DMakeSharedFromExisting<ct::Material>(material);
-	materialPtr->SetShared(materialPtr);
+	SPtr<ct::Material> renderProxyShared = B3DMakeSharedFromExisting<ct::Material>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return materialPtr;
+	return renderProxyShared;
 }
 
 namespace bs

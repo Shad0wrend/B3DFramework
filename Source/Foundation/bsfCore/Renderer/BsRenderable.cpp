@@ -229,11 +229,11 @@ Bounds Renderable::GetBounds() const
 
 SPtr<ct::RenderProxy> Renderable::CreateRenderProxy() const
 {
-	ct::Renderable* handler = new(B3DAllocate<ct::Renderable>()) ct::Renderable();
-	SPtr<ct::Renderable> handlerPtr = B3DMakeSharedFromExisting<ct::Renderable>(handler);
-	handlerPtr->SetShared(handlerPtr);
+	ct::Renderable* renderProxy = new(B3DAllocate<ct::Renderable>()) ct::Renderable();
+	SPtr<ct::Renderable> renderProxyShared = B3DMakeSharedFromExisting<ct::Renderable>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return handlerPtr;
+	return renderProxyShared;
 }
 
 void Renderable::OnMeshChanged()

@@ -73,10 +73,10 @@ void Win32RenderWindow::SyncProperties()
 SPtr<ct::RenderProxy> Win32RenderWindow::CreateRenderProxy() const
 {
 	RENDER_WINDOW_DESC desc = mDesc;
-	SPtr<ct::RenderProxy> coreObj = B3DMakeShared<ct::Win32RenderWindow>(desc, mWindowId);
-	coreObj->SetShared(coreObj);
+	SPtr<ct::RenderProxy> renderProxy = B3DMakeShared<ct::Win32RenderWindow>(desc, mWindowId);
+	renderProxy->SetShared(renderProxy);
 
-	return coreObj;
+	return renderProxy;
 }
 
 namespace bs {

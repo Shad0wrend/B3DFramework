@@ -122,17 +122,15 @@ u32 Viewport::GetTargetHeight() const
 
 SPtr<ct::RenderProxy> Viewport::CreateRenderProxy() const
 {
-	SPtr<ct::RenderTarget> targetCore;
-	if(mTarget != nullptr)
-		targetCore = B3DGetRenderProxy(mTarget);
+	SPtr<ct::RenderTarget> targetRenderProxy = B3DGetRenderProxy(mTarget);
 
-	ct::Viewport* viewport = new(B3DAllocate<ct::Viewport>())
-		ct::Viewport(targetCore, mNormArea.X, mNormArea.Y, mNormArea.Width, mNormArea.Height);
+	ct::Viewport* renderProxy = new(B3DAllocate<ct::Viewport>())
+		ct::Viewport(targetRenderProxy, mNormArea.X, mNormArea.Y, mNormArea.Width, mNormArea.Height);
 
-	SPtr<ct::Viewport> viewportPtr = B3DMakeSharedFromExisting<ct::Viewport>(viewport);
-	viewportPtr->SetShared(viewportPtr);
+	SPtr<ct::Viewport> renderProxyShared = B3DMakeSharedFromExisting<ct::Viewport>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return viewportPtr;
+	return renderProxyShared;
 }
 
 RenderProxySyncPacket* Viewport::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)

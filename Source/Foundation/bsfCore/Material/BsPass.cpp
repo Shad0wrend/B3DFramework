@@ -123,12 +123,12 @@ Pass::Pass(const PassCreateInformation& createInformation)
 
 SPtr<ct::RenderProxy> Pass::CreateRenderProxy() const
 {
-	ct::Pass* pass = new(B3DAllocate<ct::Pass>()) ct::Pass(mData);
+	ct::Pass* renderProxy = new(B3DAllocate<ct::Pass>()) ct::Pass(mData);
 
-	SPtr<ct::Pass> passPtr = B3DMakeSharedFromExisting(pass);
-	passPtr->SetShared(passPtr);
+	SPtr<ct::Pass> renderProxyShared = B3DMakeSharedFromExisting(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return passPtr;
+	return renderProxyShared;
 }
 
 void Pass::Compile()

@@ -1079,12 +1079,9 @@ MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::Materi
 		case ParamType::Texture:
 			{
 				HTexture texture = params->mTextureParams[param.Index].Texture;
-				SPtr<Texture> textureCore = B3DGetRenderProxy(texture);
-
-				mTextureParams[param.Index].Texture = textureCore;
-
 				HSpriteTexture spriteTexture = params->mTextureParams[param.Index].SpriteTexture;
 
+				mTextureParams[param.Index].Texture = B3DGetRenderProxy(texture);
 				mTextureParams[param.Index].SpriteTexture = B3DGetRenderProxy(spriteTexture);
 				mTextureParams[param.Index].IsLoadStore = params->mTextureParams[param.Index].IsLoadStore;
 				mTextureParams[param.Index].Surface = params->mTextureParams[param.Index].Surface;
@@ -1093,11 +1090,7 @@ MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::Materi
 		case ParamType::Buffer:
 			{
 				SPtr<bs::GpuBuffer> buffer = params->mBufferParams[param.Index].Value;
-				SPtr<GpuBuffer> bufferCore;
-				if(buffer != nullptr)
-					bufferCore = B3DGetRenderProxy(buffer);
-
-				mBufferParams[param.Index].Value = bufferCore;
+				mBufferParams[param.Index].Value = B3DGetRenderProxy(buffer);
 			}
 			break;
 		case ParamType::Sampler:

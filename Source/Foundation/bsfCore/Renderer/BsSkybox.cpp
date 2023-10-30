@@ -78,25 +78,25 @@ void Skybox::FilterTexture()
 		mRendererTask = nullptr;
 	};
 
-	SPtr<ct::Skybox> coreSkybox = B3DGetRenderProxy(this);
-	SPtr<ct::Texture> coreFilteredRadiance = B3DGetRenderProxy(mFilteredRadiance);
-	SPtr<ct::Texture> coreIrradiance = B3DGetRenderProxy(mIrradiance);
+	SPtr<ct::Skybox> skyboxRenderProxy = B3DGetRenderProxy(this);
+	SPtr<ct::Texture> filteredRadianceRenderProxy = B3DGetRenderProxy(mFilteredRadiance);
+	SPtr<ct::Texture> irradianceRenderProxy = B3DGetRenderProxy(mIrradiance);
 
-	auto filterSkybox = [coreFilteredRadiance, coreIrradiance, coreSkybox](ct::GpuCommandBufferPool& commandBufferPool)
+	auto filterSkybox = [filteredRadianceRenderProxy, irradianceRenderProxy, skyboxRenderProxy](ct::GpuCommandBufferPool& commandBufferPool)
 	{
 		const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("FilterSkybox"));
 
 		GetProfilerGPU().BeginSample(*commandBuffer, "FilterSkybox");
 
 		// Filter radiance
-		ct::GetIBLUtility().ScaleCubemap(*commandBuffer, coreSkybox->GetTexture(), 0, coreFilteredRadiance, 0);
-		ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, coreFilteredRadiance, nullptr);
+		ct::GetIBLUtility().ScaleCubemap(*commandBuffer, skyboxRenderProxy->GetTexture(), 0, filteredRadianceRenderProxy, 0);
+		ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, filteredRadianceRenderProxy, nullptr);
 
-		coreSkybox->mFilteredRadiance = coreFilteredRadiance;
+		skyboxRenderProxy->mFilteredRadiance = filteredRadianceRenderProxy;
 
 		// Generate irradiance
-		ct::GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, coreSkybox->GetTexture(), coreIrradiance);
-		coreSkybox->mIrradiance = coreIrradiance;
+		ct::GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyboxRenderProxy->GetTexture(), irradianceRenderProxy);
+		skyboxRenderProxy->mIrradiance = irradianceRenderProxy;
 
 		GetProfilerGPU().EndSample(*commandBuffer, "FilterSkybox");
 		const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
@@ -127,18 +127,18 @@ void Skybox::SetTexture(const HTexture& texture)
 SPtr<Skybox> Skybox::CreateEmpty()
 {
 	Skybox* skybox = new(B3DAllocate<Skybox>()) Skybox();
-	SPtr<Skybox> skyboxPtr = B3DMakeSharedFromExisting<Skybox>(skybox);
-	skyboxPtr->SetShared(skyboxPtr);
+	SPtr<Skybox> skyboxShared = B3DMakeSharedFromExisting<Skybox>(skybox);
+	skyboxShared->SetShared(skyboxShared);
 
-	return skyboxPtr;
+	return skyboxShared;
 }
 
 SPtr<Skybox> Skybox::Create()
 {
-	SPtr<Skybox> skyboxPtr = CreateEmpty();
-	skyboxPtr->Initialize();
+	SPtr<Skybox> skybox = CreateEmpty();
+	skybox->Initialize();
 
-	return skyboxPtr;
+	return skybox;
 }
 
 SPtr<ct::RenderProxy> Skybox::CreateRenderProxy() const
@@ -147,11 +147,11 @@ SPtr<ct::RenderProxy> Skybox::CreateRenderProxy() const
 	SPtr<ct::Texture> filteredRadiance = B3DGetRenderProxy(mFilteredRadiance);
 	SPtr<ct::Texture> irradiance = B3DGetRenderProxy(mIrradiance);
 
-	ct::Skybox* skybox = new(B3DAllocate<ct::Skybox>()) ct::Skybox(radiance, filteredRadiance, irradiance);
-	SPtr<ct::Skybox> skyboxPtr = B3DMakeSharedFromExisting<ct::Skybox>(skybox);
-	skyboxPtr->SetShared(skyboxPtr);
+	ct::Skybox* renderProxy = new(B3DAllocate<ct::Skybox>()) ct::Skybox(radiance, filteredRadiance, irradiance);
+	SPtr<ct::Skybox> renderProxyShared = B3DMakeSharedFromExisting<ct::Skybox>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return skyboxPtr;
+	return renderProxyShared;
 }
 
 RenderProxySyncPacket* Skybox::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)

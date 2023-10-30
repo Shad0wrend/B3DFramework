@@ -200,32 +200,32 @@ Light::Light(LightType type, Color color, float intensity, float attRadius, floa
 
 SPtr<Light> Light::Create(LightType type, Color color, float intensity, float attRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle)
 {
-	Light* handler = new(B3DAllocate<Light>())
+	Light* light = new(B3DAllocate<Light>())
 		Light(type, color, intensity, attRadius, 0.0f, castsShadows, spotAngle, spotFalloffAngle);
-	SPtr<Light> handlerPtr = B3DMakeSharedFromExisting<Light>(handler);
-	handlerPtr->SetShared(handlerPtr);
-	handlerPtr->Initialize();
+	SPtr<Light> lightShared = B3DMakeSharedFromExisting<Light>(light);
+	lightShared->SetShared(lightShared);
+	lightShared->Initialize();
 
-	return handlerPtr;
+	return lightShared;
 }
 
 SPtr<Light> Light::CreateEmpty()
 {
-	Light* handler = new(B3DAllocate<Light>()) Light();
-	SPtr<Light> handlerPtr = B3DMakeSharedFromExisting<Light>(handler);
-	handlerPtr->SetShared(handlerPtr);
+	Light* light = new(B3DAllocate<Light>()) Light();
+	SPtr<Light> lightShared = B3DMakeSharedFromExisting<Light>(light);
+	lightShared->SetShared(lightShared);
 
-	return handlerPtr;
+	return lightShared;
 }
 
 SPtr<ct::RenderProxy> Light::CreateRenderProxy() const
 {
-	ct::Light* handler = new(B3DAllocate<ct::Light>())
+	ct::Light* renderProxy = new(B3DAllocate<ct::Light>())
 		ct::Light(mType, mColor, mIntensity, mAttRadius, mSourceRadius, mCastsShadows, mSpotAngle, mSpotFalloffAngle);
-	SPtr<ct::Light> handlerPtr = B3DMakeSharedFromExisting<ct::Light>(handler);
-	handlerPtr->SetShared(handlerPtr);
+	SPtr<ct::Light> renderProxyShared = B3DMakeSharedFromExisting<ct::Light>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return handlerPtr;
+	return renderProxyShared;
 }
 
 RenderProxySyncPacket* Light::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)

@@ -137,13 +137,13 @@ void SpriteTexture::Initialize()
 
 SPtr<ct::RenderProxy> SpriteTexture::CreateRenderProxy() const
 {
-	SPtr<ct::Texture> texturePtr = B3DGetRenderProxy(mAtlasTexture);
-	ct::SpriteTexture* spriteTexture = new(B3DAllocate<ct::SpriteTexture>()) ct::SpriteTexture(mUVOffset, mUVScale, std::move(texturePtr), mAnimation, mPlayback);
+	SPtr<ct::Texture> atlasRenderProxy = B3DGetRenderProxy(mAtlasTexture);
+	ct::SpriteTexture* const renderProxy = new(B3DAllocate<ct::SpriteTexture>()) ct::SpriteTexture(mUVOffset, mUVScale, std::move(atlasRenderProxy), mAnimation, mPlayback);
 
-	SPtr<ct::SpriteTexture> spriteTexPtr = B3DMakeSharedFromExisting<ct::SpriteTexture>(spriteTexture);
-	spriteTexPtr->SetShared(spriteTexPtr);
+	SPtr<ct::SpriteTexture> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteTexture>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return spriteTexPtr;
+	return renderProxyShared;
 }
 
 RenderProxySyncPacket* SpriteTexture::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)

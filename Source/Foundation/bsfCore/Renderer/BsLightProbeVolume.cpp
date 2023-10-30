@@ -228,12 +228,12 @@ void LightProbeVolume::RunRenderProbeTask()
 		mRendererTask = nullptr;
 	};
 
-	SPtr<ct::LightProbeVolume> coreProbeVolume = B3DGetRenderProxy(this);
-	auto renderProbes = [coreProbeVolume](ct::GpuCommandBufferPool& commandBufferPool)
+	SPtr<ct::LightProbeVolume> renderProxy = B3DGetRenderProxy(this);
+	auto renderProbes = [renderProxy](ct::GpuCommandBufferPool& commandBufferPool)
 	{
 		SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("LightProbeRendering"));
 		GetProfilerGPU().BeginSample(*commandBuffer, "LightProbeRendering");
-		const bool isDone = coreProbeVolume->RenderProbes(*commandBuffer, 3);
+		const bool isDone = renderProxy->RenderProbes(*commandBuffer, 3);
 		GetProfilerGPU().EndSample(*commandBuffer, "LightProbeRendering");
 
 		const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
@@ -254,12 +254,12 @@ void LightProbeVolume::UpdateCoefficients()
 	if(mRendererTask)
 		mRendererTask->Wait();
 
-	ct::LightProbeVolume* coreVolume = B3DGetRenderProxy(this).get();
+	ct::LightProbeVolume* renderProxy = B3DGetRenderProxy(this).get();
 
 	Vector<LightProbeCoefficientInfo> coeffInfo;
-	auto getSaveData = [coreVolume, &coeffInfo]()
+	auto getSaveData = [renderProxy, &coeffInfo]()
 	{
-		coreVolume->GetProbeCoefficients(coeffInfo);
+		renderProxy->GetProbeCoefficients(coeffInfo);
 	};
 
 	GetRenderThread().PostCommand(getSaveData, true);
@@ -295,11 +295,11 @@ SPtr<LightProbeVolume> LightProbeVolume::CreateEmpty()
 
 SPtr<ct::RenderProxy> LightProbeVolume::CreateRenderProxy() const
 {
-	ct::LightProbeVolume* handler = new(B3DAllocate<ct::LightProbeVolume>()) ct::LightProbeVolume(mProbes);
-	SPtr<ct::LightProbeVolume> handlerPtr = B3DMakeSharedFromExisting<ct::LightProbeVolume>(handler);
-	handlerPtr->SetShared(handlerPtr);
+	ct::LightProbeVolume* renderProxy = new(B3DAllocate<ct::LightProbeVolume>()) ct::LightProbeVolume(mProbes);
+	SPtr<ct::LightProbeVolume> renderProxyShared = B3DMakeSharedFromExisting<ct::LightProbeVolume>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return handlerPtr;
+	return renderProxyShared;
 }
 
 namespace bs

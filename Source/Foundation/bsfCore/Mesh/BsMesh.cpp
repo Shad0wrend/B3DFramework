@@ -45,7 +45,7 @@ AsyncOp Mesh::WriteData(const SPtr<MeshData>& data, bool discardEntireBuffer)
 	};
 
 	AsyncOp asyncOp;
-	GetRenderThread().PostCommand([func = std::move(func), core = B3DGetRenderProxy(this), data, discardEntireBuffer, asyncOp]() mutable { func(core, data, discardEntireBuffer, asyncOp); });
+	GetRenderThread().PostCommand([func = std::move(func), renderProxy = B3DGetRenderProxy(this), data, discardEntireBuffer, asyncOp]() mutable { func(renderProxy, data, discardEntireBuffer, asyncOp); });
 
 	return asyncOp;
 }
@@ -68,7 +68,7 @@ AsyncOp Mesh::ReadData(const SPtr<MeshData>& data)
 	};
 
 	AsyncOp asyncOp;
-	GetRenderThread().PostCommand([func = std::move(func), core = B3DGetRenderProxy(this), data, asyncOp]() mutable { func(core, data, asyncOp); });
+	GetRenderThread().PostCommand([func = std::move(func), renderProxy = B3DGetRenderProxy(this), data, asyncOp]() mutable { func(renderProxy, data, asyncOp); });
 
 	return asyncOp;
 }
@@ -109,15 +109,15 @@ SPtr<ct::RenderProxy> Mesh::CreateRenderProxy() const
 	meshCreateInformation.Skeleton = mSkeleton;
 	meshCreateInformation.MorphShapes = mMorphShapes;
 
-	ct::Mesh* obj = new(B3DAllocate<ct::Mesh>()) ct::Mesh(mCPUData, meshCreateInformation);
+	ct::Mesh* renderProxy = new(B3DAllocate<ct::Mesh>()) ct::Mesh(mCPUData, meshCreateInformation);
 
-	SPtr<ct::RenderProxy> meshCore = B3DMakeSharedFromExisting<ct::Mesh>(obj);
-	meshCore->SetShared(meshCore);
+	SPtr<ct::RenderProxy> renderProxyShared = B3DMakeSharedFromExisting<ct::Mesh>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
 	if((mUsage & MU_CPUCACHED) == 0)
 		mCPUData = nullptr;
 
-	return meshCore;
+	return renderProxyShared;
 }
 
 void Mesh::UpdateCpuBuffer(u32 subresourceIndex, const MeshData& pixelData)

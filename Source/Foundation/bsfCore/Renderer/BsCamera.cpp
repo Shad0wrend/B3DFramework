@@ -683,30 +683,30 @@ template class TCamera<true>;
 
 SPtr<Camera> Camera::Create()
 {
-	Camera* handler = new(B3DAllocate<Camera>()) Camera();
-	SPtr<Camera> handlerPtr = B3DMakeSharedFromExisting<Camera>(handler);
-	handlerPtr->SetShared(handlerPtr);
-	handlerPtr->Initialize();
+	Camera* camera = new(B3DAllocate<Camera>()) Camera();
+	SPtr<Camera> cameraShared = B3DMakeSharedFromExisting<Camera>(camera);
+	cameraShared->SetShared(cameraShared);
+	cameraShared->Initialize();
 
-	return handlerPtr;
+	return cameraShared;
 }
 
 SPtr<Camera> Camera::CreateEmpty()
 {
-	Camera* handler = new(B3DAllocate<Camera>()) Camera();
-	SPtr<Camera> handlerPtr = B3DMakeSharedFromExisting<Camera>(handler);
-	handlerPtr->SetShared(handlerPtr);
+	Camera* camera = new(B3DAllocate<Camera>()) Camera();
+	SPtr<Camera> cameraShared = B3DMakeSharedFromExisting<Camera>(camera);
+	cameraShared->SetShared(cameraShared);
 
-	return handlerPtr;
+	return cameraShared;
 }
 
 SPtr<ct::RenderProxy> Camera::CreateRenderProxy() const
 {
-	ct::Camera* handler = new(B3DAllocate<ct::Camera>()) ct::Camera(B3DGetRenderProxy(mViewport));
-	SPtr<ct::Camera> handlerPtr = B3DMakeSharedFromExisting<ct::Camera>(handler);
-	handlerPtr->SetShared(handlerPtr);
+	ct::Camera* renderProxy = new(B3DAllocate<ct::Camera>()) ct::Camera(B3DGetRenderProxy(mViewport));
+	SPtr<ct::Camera> renderProxyShared = B3DMakeSharedFromExisting<ct::Camera>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return handlerPtr;
+	return renderProxyShared;
 }
 
 void Camera::Initialize()

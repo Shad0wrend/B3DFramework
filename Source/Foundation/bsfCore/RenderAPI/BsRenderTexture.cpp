@@ -122,25 +122,25 @@ RenderTexture::RenderTexture(const RenderTextureCreateInformation& createInforma
 
 SPtr<ct::RenderProxy> RenderTexture::CreateRenderProxy() const
 {
-	ct::RenderTextureCreateInformation coreDesc;
+	ct::RenderTextureCreateInformation renderProxyCreateInformation;
 
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 	{
-		ct::RenderSurfaceInformation surfaceDesc;
-		surfaceDesc.Texture = B3DGetRenderProxy(mInformation.ColorSurfaces[i].Texture);
-		surfaceDesc.Face = mInformation.ColorSurfaces[i].Face;
-		surfaceDesc.FaceCount = mInformation.ColorSurfaces[i].FaceCount;
-		surfaceDesc.MipLevel = mInformation.ColorSurfaces[i].MipLevel;
+		ct::RenderSurfaceInformation surfaceInformation;
+		surfaceInformation.Texture = B3DGetRenderProxy(mInformation.ColorSurfaces[i].Texture);
+		surfaceInformation.Face = mInformation.ColorSurfaces[i].Face;
+		surfaceInformation.FaceCount = mInformation.ColorSurfaces[i].FaceCount;
+		surfaceInformation.MipLevel = mInformation.ColorSurfaces[i].MipLevel;
 
-		coreDesc.ColorSurfaces[i] = surfaceDesc;
+		renderProxyCreateInformation.ColorSurfaces[i] = surfaceInformation;
 	}
 
-	coreDesc.DepthStencilSurface.Texture = B3DGetRenderProxy(mInformation.DepthStencilSurface.Texture);
-	coreDesc.DepthStencilSurface.Face = mInformation.DepthStencilSurface.Face;
-	coreDesc.DepthStencilSurface.FaceCount = mInformation.DepthStencilSurface.FaceCount;
-	coreDesc.DepthStencilSurface.MipLevel = mInformation.DepthStencilSurface.MipLevel;
+	renderProxyCreateInformation.DepthStencilSurface.Texture = B3DGetRenderProxy(mInformation.DepthStencilSurface.Texture);
+	renderProxyCreateInformation.DepthStencilSurface.Face = mInformation.DepthStencilSurface.Face;
+	renderProxyCreateInformation.DepthStencilSurface.FaceCount = mInformation.DepthStencilSurface.FaceCount;
+	renderProxyCreateInformation.DepthStencilSurface.MipLevel = mInformation.DepthStencilSurface.MipLevel;
 
-	return ct::TextureManager::Instance().CreateRenderTextureInternal(coreDesc);
+	return ct::TextureManager::Instance().CreateRenderTextureInternal(renderProxyCreateInformation);
 }
 
 namespace bs

@@ -187,18 +187,19 @@ Technique::Technique()
 SPtr<ct::RenderProxy> Technique::CreateRenderProxy() const
 {
 	const SPtr<Shader> owner = mOwner.lock();
-	const WeakSPtr<ct::Shader> coreOwner = B3DGetRenderProxy(owner);
+	const WeakSPtr<ct::Shader> ownerRenderProxy = B3DGetRenderProxy(owner);
 
-	TInlineArray<SPtr<ct::Pass>, 1> corePasses;
+	TInlineArray<SPtr<ct::Pass>, 1> passRenderProxies;
 	for(auto& pass : mPasses)
-		corePasses.Add(B3DGetRenderProxy(pass));
+		passRenderProxies.Add(B3DGetRenderProxy(pass));
 
-	Optional<ct::PrecompiledVariationData> corePrecompileData = mHasPassData ? ct::PrecompiledVariationData(corePasses) : Optional<ct::PrecompiledVariationData>{};
-	ct::Technique* const coreVariation = new(B3DAllocate<ct::Technique>()) ct::Technique(coreOwner, mLanguage, mVariationParameters, corePrecompileData);
-	const SPtr<ct::Technique> coreVariationShared = B3DMakeSharedFromExisting<ct::Technique>(coreVariation);
-	coreVariationShared->SetShared(coreVariationShared);
+	Optional<ct::PrecompiledVariationData> precompiledDataRenderProxy = mHasPassData ? ct::PrecompiledVariationData(passRenderProxies) : Optional<ct::PrecompiledVariationData>{};
 
-	return coreVariationShared;
+	ct::Technique* const renderProxy = new(B3DAllocate<ct::Technique>()) ct::Technique(ownerRenderProxy, mLanguage, mVariationParameters, precompiledDataRenderProxy);
+	const SPtr<ct::Technique> renderProxyShared = B3DMakeSharedFromExisting<ct::Technique>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
+
+	return renderProxyShared;
 }
 
 void Technique::GetCoreDependencies(Vector<CoreObject*>& dependencies)

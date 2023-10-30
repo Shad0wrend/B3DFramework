@@ -103,11 +103,11 @@ SPtr<ct::RenderProxy> Decal::CreateRenderProxy() const
 {
 	SPtr<ct::Material> material = B3DGetRenderProxy(mMaterial);
 
-	ct::Decal* decal = new(B3DAllocate<ct::Decal>()) ct::Decal(material, mSize, mMaxDistance);
-	SPtr<ct::Decal> decalPtr = B3DMakeSharedFromExisting<ct::Decal>(decal);
-	decalPtr->SetShared(decalPtr);
+	ct::Decal* renderProxy = new(B3DAllocate<ct::Decal>()) ct::Decal(material, mSize, mMaxDistance);
+	SPtr<ct::Decal> renderProxyShared = B3DMakeSharedFromExisting<ct::Decal>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
 
-	return decalPtr;
+	return renderProxyShared;
 }
 
 void Decal::GetCoreDependencies(Vector<CoreObject*>& dependencies)
