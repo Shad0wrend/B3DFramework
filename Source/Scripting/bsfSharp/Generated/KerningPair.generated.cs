@@ -15,7 +15,7 @@ namespace bs
 	public partial struct KerningPair
 	{
 		public int OtherCharId;
-		public int Amount;
+		public float Amount;
 	}
 
 	/** @} */

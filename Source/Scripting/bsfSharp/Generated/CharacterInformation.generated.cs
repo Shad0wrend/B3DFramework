@@ -12,7 +12,7 @@ namespace bs
 
 	/// <summary>Describes a single character in a font of a specific size.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct CharDesc
+	public partial struct CharacterInformation
 	{
 		/// <summary>Character ID, corresponding to a Unicode key.</summary>
 		public int CharId;
@@ -27,17 +27,17 @@ namespace bs
 		/// <summary>Width/height of the character in texture coordinates.</summary>
 		public float UvHeight;
 		/// <summary>Width/height of the character in pixels.</summary>
-		public int Width;
+		public float Width;
 		/// <summary>Width/height of the character in pixels.</summary>
-		public int Height;
+		public float Height;
 		/// <summary>Offset for the visible portion of the character in pixels.</summary>
-		public int XOffset;
+		public float XOffset;
 		/// <summary>Offset for the visible portion of the character in pixels.</summary>
-		public int YOffset;
+		public float YOffset;
 		/// <summary>Determines how much to advance the pen after writing this character, in pixels.</summary>
-		public int XAdvance;
+		public float XAdvance;
 		/// <summary>Determines how much to advance the pen after writing this character, in pixels.</summary>
-		public int YAdvance;
+		public float YAdvance;
 		/// <summary>
 		/// Pairs that determine if certain character pairs should be closer or father together. for example &quot;AV&quot; 
 		/// combination.

@@ -39,8 +39,8 @@ Vector2I GUIHelper::CalculateOptimalContentSize(const String& text, const GUIEle
 	if(style.WordWrap)
 		wordWrapWidth = dimensions.MaxWidth;
 
-	u32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
-	u32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
+	i32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
+	i32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
 
 	if(style.Font != nullptr && !text.empty())
 	{
@@ -49,8 +49,8 @@ Vector2I GUIHelper::CalculateOptimalContentSize(const String& text, const GUIEle
 		const U32String utf32text = UTF8::ToUtF32(text);
 		TextData<FrameAllocatorTag> textData(utf32text, style.Font, style.FontSize, wordWrapWidth, 0, style.WordWrap);
 
-		contentWidth += textData.GetWidth();
-		contentHeight += textData.GetNumLines() * textData.GetLineHeight();
+		contentWidth += Math::RoundToI32(textData.GetWidth());
+		contentHeight += Math::RoundToI32((float)textData.GetLineCount() * textData.GetLineHeight());
 
 		B3DClearAllocatorFrame();
 	}
@@ -101,8 +101,8 @@ Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const String&
 		const U32String utf32text = UTF8::ToUtF32(text);
 		TextData<FrameAllocatorTag> textData(utf32text, font, styleSheetRule.FontSize, wordWrapWidth, 0, styleSheetRule.WordWrap == GUIWordWrapMode::WrapWord);
 
-		contentSize.Width += textData.GetWidth();
-		contentSize.Height += textData.GetNumLines() * textData.GetLineHeight();
+		contentSize.Width += Math::RoundToU32(textData.GetWidth());
+		contentSize.Height += Math::RoundToU32((float)textData.GetLineCount() * textData.GetLineHeight());
 
 		B3DClearAllocatorFrame();
 	}
@@ -120,8 +120,8 @@ Vector2I GUIHelper::CalculateTextBounds(const String& text, const HFont& font, u
 		const U32String utf32text = UTF8::ToUtF32(text);
 		TextData<FrameAllocatorTag> textData(utf32text, font, fontSize, 0, 0, false);
 
-		size.X = textData.GetWidth();
-		size.Y = textData.GetNumLines() * textData.GetLineHeight();
+		size.X = Math::RoundToI32(textData.GetWidth());
+		size.Y = Math::RoundToI32((float)textData.GetLineCount() * textData.GetLineHeight());
 
 		B3DClearAllocatorFrame();
 	}

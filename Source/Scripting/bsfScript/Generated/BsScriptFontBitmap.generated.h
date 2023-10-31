@@ -5,10 +5,10 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptReflectable.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
-#include "../../../Foundation/bsfCore/Text/BsFontDesc.h"
+#include "../../../Foundation/bsfCore/Text/BsFont.h"
 
 namespace bs { struct FontBitmap; }
-namespace bs { struct __CharDescInterop; }
+namespace bs { struct __CharacterInformationInterop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontBitmap : public TScriptReflectable<ScriptFontBitmap, FontBitmap>
@@ -21,17 +21,17 @@ namespace bs
 		static MonoObject* Create(const SPtr<FontBitmap>& value);
 
 	private:
-		static void InternalGetCharDesc(ScriptFontBitmap* thisPtr, uint32_t charId, __CharDescInterop* __output);
+		static void InternalGetCharacterInformation(ScriptFontBitmap* thisPtr, uint32_t characterId, __CharacterInformationInterop* __output);
 		static uint32_t InternalGetSize(ScriptFontBitmap* thisPtr);
 		static void InternalSetSize(ScriptFontBitmap* thisPtr, uint32_t value);
-		static int32_t InternalGetBaselineOffset(ScriptFontBitmap* thisPtr);
-		static void InternalSetBaselineOffset(ScriptFontBitmap* thisPtr, int32_t value);
-		static uint32_t InternalGetLineHeight(ScriptFontBitmap* thisPtr);
-		static void InternalSetLineHeight(ScriptFontBitmap* thisPtr, uint32_t value);
-		static void InternalGetMissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* __output);
-		static void InternalSetMissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* value);
-		static uint32_t InternalGetSpaceWidth(ScriptFontBitmap* thisPtr);
-		static void InternalSetSpaceWidth(ScriptFontBitmap* thisPtr, uint32_t value);
+		static float InternalGetBaselineOffset(ScriptFontBitmap* thisPtr);
+		static void InternalSetBaselineOffset(ScriptFontBitmap* thisPtr, float value);
+		static float InternalGetLineHeight(ScriptFontBitmap* thisPtr);
+		static void InternalSetLineHeight(ScriptFontBitmap* thisPtr, float value);
+		static void InternalGetMissingGlyph(ScriptFontBitmap* thisPtr, __CharacterInformationInterop* __output);
+		static void InternalSetMissingGlyph(ScriptFontBitmap* thisPtr, __CharacterInformationInterop* value);
+		static float InternalGetSpaceWidth(ScriptFontBitmap* thisPtr);
+		static void InternalSetSpaceWidth(ScriptFontBitmap* thisPtr, float value);
 		static MonoArray* InternalGetTexturePages(ScriptFontBitmap* thisPtr);
 		static void InternalSetTexturePages(ScriptFontBitmap* thisPtr, MonoArray* value);
 	};

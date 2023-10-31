@@ -4,6 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
+#include "RTTI/BsStdRTTI.h"
 #include "Text/BsFontImportOptions.h"
 
 namespace bs

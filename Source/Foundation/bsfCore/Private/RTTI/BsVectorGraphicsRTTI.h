@@ -7,6 +7,7 @@
 #include "RTTI/BsMathRTTI.h"
 #include "RTTI/BsColorRTTI.h"
 #include "RTTI/BsRectOffsetRTTI.h"
+#include "RTTI/BsStdRTTI.h"
 #include "Private/RTTI/BsResourceRTTI.h"
 #include "VectorGraphics/BsVectorGraphics.h"
 

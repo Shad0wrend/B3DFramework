@@ -750,10 +750,10 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 		U32String utf32text = UTF8::ToUtF32(shapeData.Text);
 		SPtr<TextData<>> textData = B3DMakeShared<TextData<>>(utf32text, shapeData.Font, shapeData.Size);
 
-		u32 numPages = textData->GetNumPages();
+		u32 numPages = textData->GetPageCount();
 		for(u32 j = 0; j < numPages; j++)
 		{
-			u32 numQuads = textData->GetNumQuadsForPage(j);
+			u32 numQuads = textData->GetQuadCount(j);
 
 			allShapes.push_back(RawData());
 			RawData& rawData = allShapes.back();
@@ -1201,7 +1201,7 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 				Text2DData& text2DData = mText2DData[shapeData.Idx];
 
 				TextRenderData& renderData = textRenderData[shapeData.TextIdx];
-				u32 numQuads = renderData.TextData->GetNumQuadsForPage(renderData.Page);
+				u32 numQuads = renderData.TextData->GetQuadCount(renderData.Page);
 
 				u32* indices = meshData[typeIdx]->GetIndices32() + indexOffset[typeIdx];
 
@@ -1210,7 +1210,7 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 				Vector2* tempVertices = B3DStackAllocate<Vector2>(shapeData.NumVertices);
 				Vector2* tempUVs = B3DStackAllocate<Vector2>(shapeData.NumVertices);
 
-				u32 numLines = renderData.TextData->GetNumLines();
+				u32 numLines = renderData.TextData->GetLineCount();
 				u32 quadOffset = 0;
 				for(u32 j = 0; j < numLines; j++)
 				{
@@ -1225,8 +1225,8 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 
 				Vector3 worldSpacePos = text2DData.Transform.MultiplyAffine(text2DData.Position);
 				Vector2I screenPos = camera->WorldToScreenPoint(worldSpacePos);
-				screenPos.X -= renderData.TextData->GetWidth() / 2;
-				screenPos.Y -= renderData.TextData->GetHeight() / 2;
+				screenPos.X -= Math::RoundToI32(renderData.TextData->GetWidth() / 2.0f);
+				screenPos.Y -= Math::RoundToI32(renderData.TextData->GetHeight() / 2.0f);
 
 				float z = camera->ProjectPoint(camera->WorldToViewPoint(worldSpacePos)).Z;
 

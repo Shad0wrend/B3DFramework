@@ -20,7 +20,7 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 		const U32String utf32text = UTF8::ToUtF32(information.Text);
 		TextData<FrameAllocatorTag> textData(utf32text, information.Font, information.FontSize, information.Width, information.Height, information.WordWrap, information.WordBreak);
 
-		const u32 pageCount = textData.GetNumPages();
+		const u32 pageCount = textData.GetPageCount();
 
 		// Free all previous memory
 		for(auto& entry : mCachedRenderElements)
@@ -42,7 +42,7 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 		u32 pageIndex = 0;
 		for(auto& renderElementData : mCachedRenderElements)
 		{
-			const u32 newQuadCount = textData.GetNumQuadsForPage(pageIndex);
+			const u32 newQuadCount = textData.GetQuadCount(pageIndex);
 
 			SpriteRenderElement& renderElement = renderElementData.RenderElement;
 			renderElement.VertexCount = newQuadCount * 4;
@@ -72,7 +72,7 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 			SpriteRenderElement& renderElement = mCachedRenderElements[pageIndex].RenderElement;
 
 			const u32 quadCount = renderElement.VertexCount / 4;
-			GenTextQuads(pageIndex, textData, information.Width, information.Height, information.HorzAlign, information.VertAlign, information.Anchor, renderElement.VertexPositions, renderElement.VertexUVs, renderElement.Indices, quadCount);
+			BuildTextQuads(pageIndex, textData, information.Width, information.Height, information.HorzAlign, information.VertAlign, information.Anchor, renderElement.VertexPositions, renderElement.VertexUVs, renderElement.Indices, quadCount);
 		}
 	}
 
@@ -81,119 +81,118 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 	UpdateBounds();
 }
 
-u32 TextSprite::GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
+u32 TextSprite::BuildTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 {
-	u32 numLines = textData.GetNumLines();
-	u32 newNumQuads = textData.GetNumQuadsForPage(page);
+	const u32 lineCount = textData.GetLineCount();
+	const u32 quadCount = textData.GetQuadCount(page);
 
-	Vector2I* alignmentOffsets = B3DStackNew<Vector2I>(numLines);
+	Vector2I* const alignmentOffsets = B3DStackNew<Vector2I>(lineCount);
 	GetAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
-	Vector2I offset = GetAnchorOffset(anchor, width, height);
+	const Vector2I offset = GetAnchorOffset(anchor, width, height);
 
 	u32 quadOffset = 0;
-	for(u32 i = 0; i < numLines; i++)
+	for(u32 lineIndex = 0; lineIndex < lineCount; lineIndex++)
 	{
-		const TextDataBase::TextLine& line = textData.GetLine(i);
-		u32 writtenQuads = line.FillBuffer(page, vertices, uv, indices, quadOffset, bufferSizeQuads);
+		const TextDataBase::TextLine& line = textData.GetLine(lineIndex);
+		const u32 writtenQuadCount = line.FillBuffer(page, vertices, uv, indices, quadOffset, bufferSizeQuads);
 
-		Vector2I position = offset + alignmentOffsets[i];
-		u32 numVertices = writtenQuads * 4;
-		for(u32 j = 0; j < numVertices; j++)
+		const Vector2I position = offset + alignmentOffsets[lineIndex];
+		const u32 vertexCount = writtenQuadCount * 4;
+		for(u32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 		{
-			vertices[quadOffset * 4 + j].X += (float)position.X;
-			vertices[quadOffset * 4 + j].Y += (float)position.Y;
+			vertices[quadOffset * 4 + vertexIndex].X += (float)position.X;
+			vertices[quadOffset * 4 + vertexIndex].Y += (float)position.Y;
 		}
 
-		quadOffset += writtenQuads;
+		quadOffset += writtenQuadCount;
 	}
 
-	B3DStackDelete(alignmentOffsets, numLines);
-	return newNumQuads;
+	B3DStackDelete(alignmentOffsets, lineCount);
+	return quadCount;
 }
 
-u32 TextSprite::GenTextQuads(const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
+u32 TextSprite::BuildTextQuads(const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 {
-	u32 numLines = textData.GetNumLines();
-	u32 numPages = textData.GetNumPages();
+	const u32 lineCount = textData.GetLineCount();
+	const u32 pageCount = textData.GetPageCount();
 
-	Vector2I* alignmentOffsets = B3DStackNew<Vector2I>(numLines);
+	Vector2I* const alignmentOffsets = B3DStackNew<Vector2I>(lineCount);
 	GetAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
-	Vector2I offset = GetAnchorOffset(anchor, width, height);
+	const Vector2I offset = GetAnchorOffset(anchor, width, height);
 
 	u32 quadOffset = 0;
 
-	for(u32 i = 0; i < numLines; i++)
+	for(u32 lineIndex = 0; lineIndex < lineCount; lineIndex++)
 	{
-		const TextDataBase::TextLine& line = textData.GetLine(i);
-		for(u32 j = 0; j < numPages; j++)
+		const TextDataBase::TextLine& line = textData.GetLine(lineIndex);
+		for(u32 pageIndex = 0; pageIndex < pageCount; pageIndex++)
 		{
-			u32 writtenQuads = line.FillBuffer(j, vertices, uv, indices, quadOffset, bufferSizeQuads);
+			const u32 writtenQuadCount = line.FillBuffer(pageIndex, vertices, uv, indices, quadOffset, bufferSizeQuads);
+			const Vector2I position = offset + alignmentOffsets[lineIndex];
 
-			Vector2I position = offset + alignmentOffsets[i];
-
-			u32 numVertices = writtenQuads * 4;
-			for(u32 k = 0; k < numVertices; k++)
+			const u32 vertexCount = writtenQuadCount * 4;
+			for(u32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 			{
-				vertices[quadOffset * 4 + k].X += (float)position.X;
-				vertices[quadOffset * 4 + k].Y += (float)position.Y;
+				vertices[quadOffset * 4 + vertexIndex].X += (float)position.X;
+				vertices[quadOffset * 4 + vertexIndex].Y += (float)position.Y;
 			}
 
-			quadOffset += writtenQuads;
+			quadOffset += writtenQuadCount;
 		}
 	}
 
-	B3DStackDelete(alignmentOffsets, numLines);
+	B3DStackDelete(alignmentOffsets, lineCount);
 	return quadOffset;
 }
 
 void TextSprite::GetAlignmentOffsets(const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, Vector2I* output)
 {
-	u32 numLines = textData.GetNumLines();
-	u32 curHeight = 0;
-	for(u32 i = 0; i < numLines; i++)
+	u32 lineCount = textData.GetLineCount();
+	float currentHeight = 0.0f;
+	for(u32 lineIndex = 0; lineIndex < lineCount; lineIndex++)
 	{
-		const TextDataBase::TextLine& line = textData.GetLine(i);
-		curHeight += line.GetYOffset();
+		const TextDataBase::TextLine& line = textData.GetLine(lineIndex);
+		currentHeight += line.GetYOffset();
 	}
 
 	// Calc vertical alignment offset
-	u32 vertDiff = (u32)std::max(0, (i32)height - (i32)curHeight);
-	u32 vertOffset = 0;
+	const float verticalFreeSpace = Math::Max(0.0f, (float)height - currentHeight);
+	float verticalOffset = 0.0f;
 	switch(vertAlign)
 	{
 	case GUIVerticalTextAlignment::Top:
-		vertOffset = 0;
+		verticalOffset = 0;
 		break;
 	case GUIVerticalTextAlignment::Bottom:
-		vertOffset = (u32)std::max(0, (i32)vertDiff);
+		verticalOffset = Math::Max(0.0f, verticalFreeSpace);
 		break;
 	case GUIVerticalTextAlignment::Middle:
-		vertOffset = (u32)std::max(0, (i32)vertDiff) / 2;
+		verticalOffset = Math::Max(0.0f, verticalFreeSpace) / 2.0f;
 		break;
 	}
 
 	// Calc horizontal alignment offset
-	u32 curY = 0;
-	for(u32 i = 0; i < numLines; i++)
+	float currentY = 0.0f;
+	for(u32 lineIndex = 0; lineIndex < lineCount; lineIndex++)
 	{
-		const TextDataBase::TextLine& line = textData.GetLine(i);
+		const TextDataBase::TextLine& line = textData.GetLine(lineIndex);
 
-		u32 horzOffset = 0;
+		float horizontalOffset = 0.0f;
 		switch(horzAlign)
 		{
 		case GUIHorizontalTextAlignment::Left:
-			horzOffset = 0;
+			horizontalOffset = 0;
 			break;
 		case GUIHorizontalTextAlignment::Right:
-			horzOffset = (u32)std::max(0, (i32)(width - line.GetWidth()));
+			horizontalOffset = Math::Max(0.0f, (float)width - line.GetWidth());
 			break;
 		case GUIHorizontalTextAlignment::Center:
-			horzOffset = (u32)std::max(0, (i32)(width - line.GetWidth())) / 2;
+			horizontalOffset = Math::Max(0.0f, (float)width - line.GetWidth()) / 2.0f;
 			break;
 		}
 
-		output[i] = Vector2I(horzOffset, vertOffset + curY);
-		curY += line.GetYOffset();
+		output[lineIndex] = Vector2I(Math::RoundToI32(horizontalOffset), Math::RoundToI32(verticalOffset + currentY));
+		currentY += line.GetYOffset();
 	}
 }
 

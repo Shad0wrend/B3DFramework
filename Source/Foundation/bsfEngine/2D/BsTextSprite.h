@@ -93,7 +93,7 @@ namespace bs
 		 * @param[in]	bufferSizeQuads	Size of the output buffers, in number of quads.
 		 * @return						Number of generated quads.
 		 */
-		static u32 GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads);
+		static u32 BuildTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads);
 
 		/**
 		 * Calculates text quads you may use for text rendering, based on the specified text data. Generates quads for all
@@ -113,7 +113,7 @@ namespace bs
 		 * @param[in]	bufferSizeQuads	Size of the output buffers, in number of quads.
 		 * @return						Number of generated quads.
 		 */
-		static u32 GenTextQuads(const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads);
+		static u32 BuildTextQuads(const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads);
 
 	private:
 		static const int kStaticCharsToBuffer = 25;

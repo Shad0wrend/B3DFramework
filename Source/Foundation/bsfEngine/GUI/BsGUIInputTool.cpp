@@ -22,19 +22,19 @@ void GUIInputTool::UpdateText(const GUIElement* element, const TextSpriteInforma
 		const U32String utf32text = UTF8::ToUtF32(mTextDesc.Text);
 		TextData<FrameAllocatorTag> textData(utf32text, mTextDesc.Font, mTextDesc.FontSize, mTextDesc.Width, mTextDesc.Height, mTextDesc.WordWrap, mTextDesc.WordBreak);
 
-		u32 numLines = textData.GetNumLines();
-		u32 numPages = textData.GetNumPages();
+		u32 numLines = textData.GetLineCount();
+		u32 numPages = textData.GetPageCount();
 
 		mNumQuads = 0;
 		for(u32 i = 0; i < numPages; i++)
-			mNumQuads += textData.GetNumQuadsForPage(i);
+			mNumQuads += textData.GetQuadCount(i);
 
 		if(mQuads != nullptr)
 			B3DDelete(mQuads);
 
 		mQuads = B3DNewMultiple<Vector2>(mNumQuads * 4);
 
-		TextSprite::GenTextQuads(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, mTextDesc.Anchor, mQuads, nullptr, nullptr, mNumQuads);
+		TextSprite::BuildTextQuads(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, mTextDesc.Anchor, mQuads, nullptr, nullptr, mNumQuads);
 
 		// Store cached line data
 		u32 curCharIdx = 0;
@@ -51,8 +51,8 @@ void GUIInputTool::UpdateText(const GUIElement* element, const TextSpriteInforma
 			bool hasNewline = line.HasNewlineChar() && (curLineIdx != (numLines - 1));
 
 			u32 startChar = curCharIdx;
-			u32 endChar = curCharIdx + line.GetNumChars() + (hasNewline ? 1 : 0);
-			u32 lineHeight = line.GetYOffset();
+			u32 endChar = curCharIdx + line.GetCharacterCount() + (hasNewline ? 1 : 0);
+			u32 lineHeight = Math::RoundToU32(line.GetYOffset());
 			i32 lineYStart = alignmentOffsets[curLineIdx].Y;
 
 			GUIInputLineDesc lineDesc(startChar, endChar, lineHeight, lineYStart, hasNewline);

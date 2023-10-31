@@ -528,7 +528,7 @@ namespace bs
 		TID_ImportOptions = 1048,
 		TID_Font = 1051,
 		TID_FONT_DESC = 1052,
-		TID_CHAR_DESC = 1053,
+		TID_CharacterInformation = 1053,
 		TID_FontImportOptions = 1056,
 		TID_FontBitmap = 1057,
 		TID_SceneObject = 1059,

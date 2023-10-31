@@ -29,7 +29,7 @@ namespace bs
 		/// <summary>Y offset to the baseline on which the characters are placed, in pixels.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public int BaselineOffset
+		public float BaselineOffset
 		{
 			get { return Internal_GetBaselineOffset(mCachedPtr); }
 			set { Internal_SetBaselineOffset(mCachedPtr, value); }
@@ -38,7 +38,7 @@ namespace bs
 		/// <summary>Height of a single line of the font, in pixels.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public int LineHeight
+		public float LineHeight
 		{
 			get { return Internal_GetLineHeight(mCachedPtr); }
 			set { Internal_SetLineHeight(mCachedPtr, value); }
@@ -47,11 +47,11 @@ namespace bs
 		/// <summary>Character to use when data for a character is missing.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public CharDesc MissingGlyph
+		public CharacterInformation MissingGlyph
 		{
 			get
 			{
-				CharDesc temp;
+				CharacterInformation temp;
 				Internal_GetMissingGlyph(mCachedPtr, out temp);
 				return temp;
 			}
@@ -61,7 +61,7 @@ namespace bs
 		/// <summary>Width of a space in pixels.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public int SpaceWidth
+		public float SpaceWidth
 		{
 			get { return Internal_GetSpaceWidth(mCachedPtr); }
 			set { Internal_SetSpaceWidth(mCachedPtr, value); }
@@ -77,35 +77,35 @@ namespace bs
 		}
 
 		/// <summary>Returns a character description for the character with the specified Unicode key.</summary>
-		public CharDesc GetCharDesc(int charId)
+		public CharacterInformation GetCharacterInformation(int characterId)
 		{
-			CharDesc temp;
-			Internal_GetCharDesc(mCachedPtr, charId, out temp);
+			CharacterInformation temp;
+			Internal_GetCharacterInformation(mCachedPtr, characterId, out temp);
 			return temp;
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetCharDesc(IntPtr thisPtr, int charId, out CharDesc __output);
+		private static extern void Internal_GetCharacterInformation(IntPtr thisPtr, int characterId, out CharacterInformation __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern int Internal_GetSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetSize(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetBaselineOffset(IntPtr thisPtr);
+		private static extern float Internal_GetBaselineOffset(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetBaselineOffset(IntPtr thisPtr, int value);
+		private static extern void Internal_SetBaselineOffset(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetLineHeight(IntPtr thisPtr);
+		private static extern float Internal_GetLineHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetLineHeight(IntPtr thisPtr, int value);
+		private static extern void Internal_SetLineHeight(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetMissingGlyph(IntPtr thisPtr, out CharDesc __output);
+		private static extern void Internal_GetMissingGlyph(IntPtr thisPtr, out CharacterInformation __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetMissingGlyph(IntPtr thisPtr, ref CharDesc value);
+		private static extern void Internal_SetMissingGlyph(IntPtr thisPtr, ref CharacterInformation value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetSpaceWidth(IntPtr thisPtr);
+		private static extern float Internal_GetSpaceWidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetSpaceWidth(IntPtr thisPtr, int value);
+		private static extern void Internal_SetSpaceWidth(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Texture>[] Internal_GetTexturePages(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]

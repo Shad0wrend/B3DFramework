@@ -1,34 +1,34 @@
 //********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "BsScriptCharDesc.generated.h"
+#include "BsScriptCharacterInformation.generated.h"
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "../../../Foundation/bsfCore/Text/BsFontDesc.h"
+#include "../../../Foundation/bsfCore/Text/BsFont.h"
 #include "BsScriptKerningPair.generated.h"
 
 namespace bs
 {
-	ScriptCharDesc::ScriptCharDesc(MonoObject* managedInstance)
+	ScriptCharacterInformation::ScriptCharacterInformation(MonoObject* managedInstance)
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptCharDesc::InitRuntimeData()
+	void ScriptCharacterInformation::InitRuntimeData()
 	{ }
 
-	MonoObject*ScriptCharDesc::Box(const __CharDescInterop& value)
+	MonoObject*ScriptCharacterInformation::Box(const __CharacterInformationInterop& value)
 	{
 		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__CharDescInterop ScriptCharDesc::Unbox(MonoObject* value)
+	__CharacterInformationInterop ScriptCharacterInformation::Unbox(MonoObject* value)
 	{
-		return *(__CharDescInterop*)MonoUtil::Unbox(value);
+		return *(__CharacterInformationInterop*)MonoUtil::Unbox(value);
 	}
 
-	CharDesc ScriptCharDesc::FromInterop(const __CharDescInterop& value)
+	CharacterInformation ScriptCharacterInformation::FromInterop(const __CharacterInformationInterop& value)
 	{
-		CharDesc output;
+		CharacterInformation output;
 		output.CharId = value.CharId;
 		output.Page = value.Page;
 		output.UvX = value.UvX;
@@ -56,9 +56,9 @@ namespace bs
 		return output;
 	}
 
-	__CharDescInterop ScriptCharDesc::ToInterop(const CharDesc& value)
+	__CharacterInformationInterop ScriptCharacterInformation::ToInterop(const CharacterInformation& value)
 	{
-		__CharDescInterop output;
+		__CharacterInformationInterop output;
 		output.CharId = value.CharId;
 		output.Page = value.Page;
 		output.UvX = value.UvX;

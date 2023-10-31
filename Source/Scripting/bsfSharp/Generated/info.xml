@@ -1638,26 +1638,26 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	</struct>
 	<class native="FontBitmap" script="FontBitmap">
 		<doc>Contains textures and data about every character for a bitmap font of a specific size.</doc>
-		<method native="GetCharDesc" script="GetCharDesc" static="false">
+		<method native="GetCharacterInformation" script="GetCharacterInformation" static="false">
 			<doc>Returns a character description for the character with the specified Unicode key.</doc>
-			<param name="charId" type="int">
+			<param name="characterId" type="int">
 			</param>
-			<returns type="CharDesc">
+			<returns type="CharacterInformation">
 			</returns>
 		</method>
 		<property name="Size" type="int" getter="GetSize" setter="SetSize" static="false">
 			<doc>Font size for which the data is contained.</doc>
 		</property>
-		<property name="BaselineOffset" type="int" getter="GetBaselineOffset" setter="SetBaselineOffset" static="false">
+		<property name="BaselineOffset" type="float" getter="GetBaselineOffset" setter="SetBaselineOffset" static="false">
 			<doc>Y offset to the baseline on which the characters are placed, in pixels.</doc>
 		</property>
-		<property name="LineHeight" type="int" getter="GetLineHeight" setter="SetLineHeight" static="false">
+		<property name="LineHeight" type="float" getter="GetLineHeight" setter="SetLineHeight" static="false">
 			<doc>Height of a single line of the font, in pixels.</doc>
 		</property>
-		<property name="MissingGlyph" type="CharDesc" getter="GetMissingGlyph" setter="SetMissingGlyph" static="false">
+		<property name="MissingGlyph" type="CharacterInformation" getter="GetMissingGlyph" setter="SetMissingGlyph" static="false">
 			<doc>Character to use when data for a character is missing.</doc>
 		</property>
-		<property name="SpaceWidth" type="int" getter="GetSpaceWidth" setter="SetSpaceWidth" static="false">
+		<property name="SpaceWidth" type="float" getter="GetSpaceWidth" setter="SetSpaceWidth" static="false">
 			<doc>Width of a space in pixels.</doc>
 		</property>
 		<property name="TexturePages" type="RRef&lt;Texture&gt;" getter="GetTexturePages" setter="SetTexturePages" static="false">
@@ -7551,10 +7551,10 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 		<doc>Kerning pair representing larger or smaller offset between a specific pair of characters.</doc>
 		<field name="OtherCharId" type="int">
 		</field>
-		<field name="Amount" type="int">
+		<field name="Amount" type="float">
 		</field>
 	</struct>
-	<struct native="CharDesc" script="CharDesc">
+	<struct native="CharacterInformation" script="CharacterInformation">
 		<doc>Describes a single character in a font of a specific size.</doc>
 		<field name="CharId" type="int">
 			<doc>Character ID, corresponding to a Unicode key.</doc>
@@ -7574,22 +7574,22 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 		<field name="UvHeight" type="float">
 			<doc>Width/height of the character in texture coordinates.</doc>
 		</field>
-		<field name="Width" type="int">
+		<field name="Width" type="float">
 			<doc>Width/height of the character in pixels.</doc>
 		</field>
-		<field name="Height" type="int">
+		<field name="Height" type="float">
 			<doc>Width/height of the character in pixels.</doc>
 		</field>
-		<field name="XOffset" type="int">
+		<field name="XOffset" type="float">
 			<doc>Offset for the visible portion of the character in pixels.</doc>
 		</field>
-		<field name="YOffset" type="int">
+		<field name="YOffset" type="float">
 			<doc>Offset for the visible portion of the character in pixels.</doc>
 		</field>
-		<field name="XAdvance" type="int">
+		<field name="XAdvance" type="float">
 			<doc>Determines how much to advance the pen after writing this character, in pixels.</doc>
 		</field>
-		<field name="YAdvance" type="int">
+		<field name="YAdvance" type="float">
 			<doc>Determines how much to advance the pen after writing this character, in pixels.</doc>
 		</field>
 		<field name="KerningPairs" type="KerningPair">

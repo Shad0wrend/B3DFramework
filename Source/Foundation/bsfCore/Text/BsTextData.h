@@ -3,11 +3,12 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "Text/BsFontDesc.h"
 #include "Math/BsVector2I.h"
 
 namespace bs
 {
+	struct CharacterInformation;
+
 	/** @addtogroup Implementation
 	 *  @{
 	 */
@@ -30,66 +31,67 @@ namespace bs
 			/**
 			 * Initializes the word and signals if it just a space (or multiple spaces), or an actual word with letters.
 			 */
-			void Init(bool spacer);
+			void Initialize(bool isSpacer);
 
 			/**
 			 * Appends a new character to the word.
 			 *
-			 * @param[in]	charIdx		Sequential index of the character in the original string.
-			 * @param[in]	desc		Character description from the font.
-			 * @return					How many pixels did the added character expand the word by.
+			 * @param	characterIndex			Sequential index of the character in the original string.
+			 * @param	characterInformation	Character description from the font.
+			 * @return							How many pixels did the added character expand the word by.
 			 */
-			u32 AddChar(u32 charIdx, const CharDesc& desc);
+			float AddCharacter(u32 characterIndex, const CharacterInformation& characterInformation);
 
 			/** Adds a space to the word. Word must have previously have been declared as a "spacer". */
-			void AddSpace(u32 spaceWidth);
+			void AddSpace(float spaceWidth);
 
 			/**	Returns the width of the word in pixels. */
-			u32 GetWidth() const { return mWidth; }
+			float GetWidth() const { return mWidth; }
 
 			/**	Returns height of the word in pixels. */
-			u32 GetHeight() const { return mHeight; }
+			float GetHeight() const { return mHeight; }
 
 			/**
 			 * Calculates new width of the word if we were to add the provided character, without actually adding it.
 			 *
-			 * @param[in]	desc	Character description from the font.
-			 * @return				Width of the word in pixels with the character appended to it.
+			 * @param	characterInformation	Character description from the font.
+			 * @return							Width of the word in pixels with the character appended to it.
 			 */
-			u32 CalcWidthWithChar(const CharDesc& desc);
+			float CalculateWidthWithCharacter(const CharacterInformation& characterInformation) const;
 
 			/**
 			 * Returns true if word is a spacer. Spacers contain just a space of a certain length with no actual characters.
 			 */
-			bool IsSpacer() const { return mSpacer; }
+			bool IsSpacer() const { return mIsSpacer; }
 
 			/**	Returns the number of characters in the word. */
-			u32 GetNumChars() const { return mLastChar == nullptr ? 0 : (mCharsEnd - mCharsStart + 1); }
+			u32 GetCharacterCount() const { return mLastCharacter == nullptr ? 0 : (mCharacterEndIndex - mCharacterStartIndex + 1); }
 
 			/**	Returns the index of the starting character in the word. */
-			u32 GetCharsStart() const { return mCharsStart; }
+			u32 GetStartCharacterIndex() const { return mCharacterStartIndex; }
 
 			/**	Returns the index of the last character in the word. */
-			u32 GetCharsEnd() const { return mCharsEnd; }
+			u32 GetEndCharacterIndex() const { return mCharacterEndIndex; }
 
 			/**
 			 * Calculates width of the character by which it would expand the width of the word if it was added to it.
 			 *
-			 * @param[in]	prevDesc	Descriptor of the character preceding the one we need the width for. Can be null.
-			 * @param[in]	desc		Character description from the font.
-			 * @return 					How many pixels would the added character expand the word by.
+			 * @param	previousCharacter	Descriptor of the character preceding the one we need the width for. Can be null.
+			 * @param	currentCharacter	Character description from the font.
+			 * @return 						How many pixels would the added character expand the word by.
 			 */
-			static u32 CalcCharWidth(const CharDesc* prevDesc, const CharDesc& desc);
+			static float CalculateCharacterWidth(const CharacterInformation* previousCharacter, const CharacterInformation& currentCharacter);
 
 		private:
-			u32 mCharsStart, mCharsEnd;
-			u32 mWidth;
-			u32 mHeight;
+			u32 mCharacterStartIndex = 0;
+			u32 mCharacterEndIndex = 0;
+			float mWidth = 0.0f;
+			float mHeight = 0.0f;
 
-			const CharDesc* mLastChar;
+			const CharacterInformation* mLastCharacter = nullptr;
 
-			bool mSpacer;
-			u32 mSpaceWidth;
+			bool mIsSpacer = false;
+			float mSpaceWidth = 0.0f;
 		};
 
 		/**
@@ -99,7 +101,7 @@ namespace bs
 		 */
 		struct PageInfo
 		{
-			u32 NumQuads;
+			u32 QuadCount = 0;
 			HTexture Texture;
 		};
 
@@ -113,21 +115,21 @@ namespace bs
 		{
 		public:
 			/**	Returns width of the line in pixels. */
-			u32 GetWidth() const { return mWidth; }
+			float GetWidth() const { return mWidth; }
 
 			/**	Returns height of the line in pixels. */
-			u32 GetHeight() const { return mHeight; }
+			float GetHeight() const { return mHeight; }
 
 			/**	Returns an offset used to separate two lines. */
-			u32 GetYOffset() const { return mTextData->GetLineHeight(); }
+			float GetYOffset() const { return mTextData->GetLineHeight(); }
 
 			/**
 			 * Calculates new width of the line if we were to add the provided character, without actually adding it.
 			 *
-			 * @param[in]	desc	Character description from the font.
-			 * @return				Width of the line in pixels with the character appended to it.
+			 * @param	characterInformation	Character description from the font.
+			 * @return							Width of the line in pixels with the character appended to it.
 			 */
-			u32 CalcWidthWithChar(const CharDesc& desc);
+			float CalculateWidthWithChararacter(const CharacterInformation& characterInformation) const;
 
 			/**
 			 * Fills the vertex/uv/index buffers for the specified page, with all the character data needed for rendering.
@@ -147,7 +149,7 @@ namespace bs
 			bool IsAtWordBoundary() const;
 
 			/**	Returns the total number of characters on this line. */
-			u32 GetNumChars() const;
+			u32 GetCharacterCount() const;
 
 			/**
 			 * Query if this line was created explicitly due to a newline character. As opposed to a line that was created
@@ -161,31 +163,30 @@ namespace bs
 			/**
 			 * Appends a new character to the line.
 			 *
-			 * @param[in]	charIdx		Sequential index of the character in the original string.
-			 * @param[in]	charDesc	Character description from the font.
+			 * @param	characterIndex			Sequential index of the character in the original string.
+			 * @param	characterInformation	Character description from the font.
 			 */
-			void Add(u32 charIdx, const CharDesc& charDesc);
+			void Add(u32 characterIndex, const CharacterInformation& characterInformation);
 
 			/**	Appends a space to the line. */
-			void AddSpace(u32 spaceWidth);
+			void AddSpace(float spaceWidth);
 
 			/**
 			 * Adds a new word to the line.
 			 *
-			 * @param[in]	wordIdx		Sequential index of the word in the original string. Spaces are counted as words as
-			 *							well.
-			 * @param[in]	word		Description of the word.
+			 * @param	wordIndex		Sequential index of the word in the original string. Spaces are counted as words as well.
+			 * @param	word		Description of the word.
 			 */
-			void AddWord(u32 wordIdx, const TextWord& word);
+			void AddWord(u32 wordIndex, const TextWord& word);
 
 			/** Initializes the line. Must be called after construction. */
-			void Init(TextDataBase* textData);
+			void Initialize(TextDataBase* textData);
 
 			/**
 			 * Finalizes the line. Do not add new characters/words after a line has been finalized.
 			 *
-			 * @param[in]	hasNewlineChar	Set to true if line was create due to an explicit newline char. As opposed to a
-			 *								line that was created because a word couldn't fit on the previous line.
+			 * @param	hasNewlineChar	Set to true if line was create due to an explicit newline char. As opposed to a
+			 *							line that was created because a word couldn't fit on the previous line.
 			 */
 			void Finalize(bool hasNewlineChar);
 
@@ -199,14 +200,15 @@ namespace bs
 			void CalculateBounds();
 
 		private:
-			TextDataBase* mTextData;
-			u32 mWordsStart, mWordsEnd;
+			TextDataBase* mTextData = nullptr;
+			u32 mWordStartIndex = 0;
+			u32 mWordEndIndex = 0;
 
-			u32 mWidth;
-			u32 mHeight;
+			float mWidth = 0.0f;
+			float mHeight = 0.0f;
 
-			bool mIsEmpty;
-			bool mHasNewline;
+			bool mIsEmpty = true;
+			bool mHasNewline = false;
 		};
 
 	public:
@@ -222,13 +224,13 @@ namespace bs
 		B3D_CORE_EXPORT virtual ~TextDataBase() = default;
 
 		/**	Returns the number of lines that were generated. */
-		B3D_CORE_EXPORT u32 GetNumLines() const { return mNumLines; }
+		B3D_CORE_EXPORT u32 GetLineCount() const { return mLineCount; }
 
 		/**	Returns the number of font pages references by the used characters. */
-		B3D_CORE_EXPORT u32 GetNumPages() const { return mNumPageInfos; }
+		B3D_CORE_EXPORT u32 GetPageCount() const { return mPageCount; }
 
 		/**	Returns the height of a line in pixels. */
-		B3D_CORE_EXPORT u32 GetLineHeight() const;
+		B3D_CORE_EXPORT float GetLineHeight() const;
 
 		/**	Gets information describing a single line at the specified index. */
 		B3D_CORE_EXPORT const TextLine& GetLine(u32 idx) const { return mLines[idx]; }
@@ -237,13 +239,13 @@ namespace bs
 		B3D_CORE_EXPORT const HTexture& GetTextureForPage(u32 page) const;
 
 		/**	Returns the number of quads used by all the characters in the provided page. */
-		B3D_CORE_EXPORT u32 GetNumQuadsForPage(u32 page) const { return mPageInfos[page].NumQuads; }
+		B3D_CORE_EXPORT u32 GetQuadCount(u32 page) const { return mPageInfos[page].QuadCount; }
 
 		/**	Returns the width of the actual text in pixels. */
-		B3D_CORE_EXPORT u32 GetWidth() const;
+		B3D_CORE_EXPORT float GetWidth() const;
 
 		/**	Returns the height of the actual text in pixels. */
-		B3D_CORE_EXPORT u32 GetHeight() const;
+		B3D_CORE_EXPORT float GetHeight() const;
 
 	protected:
 		/**
@@ -264,29 +266,29 @@ namespace bs
 		friend class TextLine;
 
 		/**	Returns Y offset that determines the line on which the characters are placed. In pixels. */
-		i32 GetBaselineOffset() const;
+		float GetBaselineOffset() const;
 
 		/**	Returns the width of a single space in pixels. */
-		u32 GetSpaceWidth() const;
+		float GetSpaceWidth() const;
 
 		/** Gets a description of a single character referenced by its sequential index based on the original string. */
-		const CharDesc& GetChar(u32 idx) const { return *mChars[idx]; }
+		const CharacterInformation& GetCharacter(u32 index) const { return *mChars[index]; }
 
 		/** Gets a description of a single word referenced by its sequential index based on the original string. */
-		const TextWord& GetWord(u32 idx) const { return mWords[idx]; }
+		const TextWord& GetWord(u32 index) const { return mWords[index]; }
 
 	protected:
-		const CharDesc** mChars;
+		const CharacterInformation** mChars;
 		u32 mNumChars;
 
 		TextWord* mWords;
 		u32 mNumWords;
 
 		TextLine* mLines;
-		u32 mNumLines;
+		u32 mLineCount;
 
 		PageInfo* mPageInfos;
-		u32 mNumPageInfos;
+		u32 mPageCount;
 
 		HFont mFont;
 		SPtr<const FontBitmap> mFontData;

@@ -6,12 +6,12 @@
 
 using namespace bs;
 
-const CharDesc& FontBitmap::GetCharDesc(u32 charId) const
+const CharacterInformation& FontBitmap::GetCharacterInformation(u32 characterId) const
 {
-	auto iterFind = Characters.find(charId);
+	auto iterFind = Characters.find(characterId);
 	if(iterFind != Characters.end())
 	{
-		return Characters.at(charId);
+		return Characters.at(characterId);
 	}
 
 	return MissingGlyph;

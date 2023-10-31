@@ -6,7 +6,7 @@
 #include "BsMonoUtil.h"
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
-#include "BsScriptCharDesc.generated.h"
+#include "BsScriptCharacterInformation.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
 
 namespace bs
@@ -18,7 +18,7 @@ namespace bs
 
 	void ScriptFontBitmap::InitRuntimeData()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetCharDesc", (void*)&ScriptFontBitmap::InternalGetCharDesc);
+		metaData.ScriptClass->AddInternalCall("Internal_GetCharacterInformation", (void*)&ScriptFontBitmap::InternalGetCharacterInformation);
 		metaData.ScriptClass->AddInternalCall("Internal_GetSize", (void*)&ScriptFontBitmap::InternalGetSize);
 		metaData.ScriptClass->AddInternalCall("Internal_SetSize", (void*)&ScriptFontBitmap::InternalSetSize);
 		metaData.ScriptClass->AddInternalCall("Internal_GetBaselineOffset", (void*)&ScriptFontBitmap::InternalGetBaselineOffset);
@@ -45,14 +45,14 @@ namespace bs
 		new (B3DAllocate<ScriptFontBitmap>()) ScriptFontBitmap(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptFontBitmap::InternalGetCharDesc(ScriptFontBitmap* thisPtr, uint32_t charId, __CharDescInterop* __output)
+	void ScriptFontBitmap::InternalGetCharacterInformation(ScriptFontBitmap* thisPtr, uint32_t characterId, __CharacterInformationInterop* __output)
 	{
-		CharDesc tmp__output;
-		tmp__output = thisPtr->GetInternal()->GetCharDesc(charId);
+		CharacterInformation tmp__output;
+		tmp__output = thisPtr->GetInternal()->GetCharacterInformation(characterId);
 
-		__CharDescInterop interop__output;
-		interop__output = ScriptCharDesc::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharDesc::GetMetaData()->ScriptClass->GetInternalClassInternal());
+		__CharacterInformationInterop interop__output;
+		interop__output = ScriptCharacterInformation::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharacterInformation::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 
 	uint32_t ScriptFontBitmap::InternalGetSize(ScriptFontBitmap* thisPtr)
@@ -71,69 +71,69 @@ namespace bs
 		thisPtr->GetInternal()->Size = value;
 	}
 
-	int32_t ScriptFontBitmap::InternalGetBaselineOffset(ScriptFontBitmap* thisPtr)
+	float ScriptFontBitmap::InternalGetBaselineOffset(ScriptFontBitmap* thisPtr)
 	{
-		int32_t tmp__output;
+		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->BaselineOffset;
 
-		int32_t __output;
+		float __output;
 		__output = tmp__output;
 
 		return __output;
 	}
 
-	void ScriptFontBitmap::InternalSetBaselineOffset(ScriptFontBitmap* thisPtr, int32_t value)
+	void ScriptFontBitmap::InternalSetBaselineOffset(ScriptFontBitmap* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->BaselineOffset = value;
 	}
 
-	uint32_t ScriptFontBitmap::InternalGetLineHeight(ScriptFontBitmap* thisPtr)
+	float ScriptFontBitmap::InternalGetLineHeight(ScriptFontBitmap* thisPtr)
 	{
-		uint32_t tmp__output;
+		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->LineHeight;
 
-		uint32_t __output;
+		float __output;
 		__output = tmp__output;
 
 		return __output;
 	}
 
-	void ScriptFontBitmap::InternalSetLineHeight(ScriptFontBitmap* thisPtr, uint32_t value)
+	void ScriptFontBitmap::InternalSetLineHeight(ScriptFontBitmap* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->LineHeight = value;
 	}
 
-	void ScriptFontBitmap::InternalGetMissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* __output)
+	void ScriptFontBitmap::InternalGetMissingGlyph(ScriptFontBitmap* thisPtr, __CharacterInformationInterop* __output)
 	{
-		CharDesc tmp__output;
+		CharacterInformation tmp__output;
 		tmp__output = thisPtr->GetInternal()->MissingGlyph;
 
-		__CharDescInterop interop__output;
-		interop__output = ScriptCharDesc::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharDesc::GetMetaData()->ScriptClass->GetInternalClassInternal());
+		__CharacterInformationInterop interop__output;
+		interop__output = ScriptCharacterInformation::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharacterInformation::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
 
-	void ScriptFontBitmap::InternalSetMissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* value)
+	void ScriptFontBitmap::InternalSetMissingGlyph(ScriptFontBitmap* thisPtr, __CharacterInformationInterop* value)
 	{
-		CharDesc tmpvalue;
-		tmpvalue = ScriptCharDesc::FromInterop(*value);
+		CharacterInformation tmpvalue;
+		tmpvalue = ScriptCharacterInformation::FromInterop(*value);
 		thisPtr->GetInternal()->MissingGlyph = tmpvalue;
 	}
 
-	uint32_t ScriptFontBitmap::InternalGetSpaceWidth(ScriptFontBitmap* thisPtr)
+	float ScriptFontBitmap::InternalGetSpaceWidth(ScriptFontBitmap* thisPtr)
 	{
-		uint32_t tmp__output;
+		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->SpaceWidth;
 
-		uint32_t __output;
+		float __output;
 		__output = tmp__output;
 
 		return __output;
 	}
 
-	void ScriptFontBitmap::InternalSetSpaceWidth(ScriptFontBitmap* thisPtr, uint32_t value)
+	void ScriptFontBitmap::InternalSetSpaceWidth(ScriptFontBitmap* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->SpaceWidth = value;
 	}

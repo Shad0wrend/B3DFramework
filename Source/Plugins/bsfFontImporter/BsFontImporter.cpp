@@ -17,6 +17,12 @@ using namespace std::placeholders;
 
 using namespace bs;
 
+/** Converts a 26.6 fixed point format to float. */
+static float ConvertFixed26Dot6ToFloat(i32 value)
+{
+	return (float)value / 64.0f;
+};
+
 FontImporter::FontImporter()
 	: SpecificImporter()
 {
@@ -174,11 +180,11 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 		// Create an optimal layout for character bitmaps
 		Vector<TextureAtlasUtility::Page> pages = TextureAtlasUtility::CreateAtlasLayout(atlasElements, 64, 64, kMaximumTextureSize, kMaximumTextureSize, true);
 
-		i32 baselineOffset = 0;
-		u32 lineHeight = 0;
+		float baselineOffset = 0.0f;
+		float lineHeight = 0.0f;
 
 		// Create char bitmap atlas textures and load character information
-		u32 pageIdx = 0;
+		u32 pageIndex = 0;
 		for(auto pageIter = pages.begin(); pageIter != pages.end(); ++pageIter)
 		{
 			u32 bufferSize = pageIter->Width * pageIter->Height * 2;
@@ -193,7 +199,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 			for(size_t i = 0; i < atlasElements.size(); i++)
 			{
 				// Copy character bitmap
-				if(atlasElements[i].Output.Page != (i32)pageIdx)
+				if(atlasElements[i].Output.Page != (i32)pageIndex)
 					continue;
 
 				TextureAtlasUtility::Element curElement = atlasElements[i];
@@ -265,25 +271,25 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 					B3D_EXCEPT(InternalErrorException, "Unsupported pixel mode for a FreeType bitmap.");
 
 				// Store character information
-				CharDesc charDesc;
+				CharacterInformation charDesc;
 
-				float invTexWidth = 1.0f / pageIter->Width;
-				float invTexHeight = 1.0f / pageIter->Height;
+				float invTexWidth = 1.0f / (float)pageIter->Width;
+				float invTexHeight = 1.0f / (float)pageIter->Height;
 
 				charDesc.CharId = charIdx;
-				charDesc.Width = curElement.Input.Width;
-				charDesc.Height = curElement.Input.Height;
+				charDesc.Width = ConvertFixed26Dot6ToFloat(slot->metrics.width);
+				charDesc.Height = ConvertFixed26Dot6ToFloat(slot->metrics.height);
 				charDesc.Page = curElement.Output.Page;
-				charDesc.UvWidth = invTexWidth * curElement.Input.Width;
-				charDesc.UvHeight = invTexHeight * curElement.Input.Height;
-				charDesc.UvX = invTexWidth * curElement.Output.X;
-				charDesc.UvY = invTexHeight * curElement.Output.Y;
-				charDesc.XOffset = slot->bitmap_left;
-				charDesc.YOffset = slot->bitmap_top;
-				charDesc.XAdvance = slot->advance.x >> 6;
-				charDesc.YAdvance = slot->advance.y >> 6;
+				charDesc.UvX = invTexWidth * (float)curElement.Output.X;
+				charDesc.UvY = invTexHeight * (float)curElement.Output.Y;
+				charDesc.UvWidth = invTexWidth * (float)curElement.Input.Width;
+				charDesc.UvHeight = invTexHeight * (float)curElement.Input.Height;
+				charDesc.XOffset = ConvertFixed26Dot6ToFloat(slot->metrics.horiBearingX);
+				charDesc.YOffset = ConvertFixed26Dot6ToFloat(slot->metrics.horiBearingY);
+				charDesc.XAdvance = ConvertFixed26Dot6ToFloat(slot->metrics.horiAdvance);
+				charDesc.YAdvance = ConvertFixed26Dot6ToFloat(slot->advance.y);
 
-				baselineOffset = std::max(baselineOffset, (i32)(slot->metrics.horiBearingY >> 6));
+				baselineOffset = std::max(baselineOffset, charDesc.YOffset);
 				lineHeight = std::max(lineHeight, charDesc.Height);
 
 				// Load kerning and store char
@@ -297,13 +303,13 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 							if(kerningCharIdx == charIdx)
 								continue;
 
-							error = FT_Get_Kerning(face, charIdx, kerningCharIdx, FT_KERNING_DEFAULT, &resultKerning);
+							error = FT_Get_Kerning(face, charIdx, kerningCharIdx, FT_KERNING_UNFITTED, &resultKerning);
 
 							if(error)
 								B3D_EXCEPT(InternalErrorException, "Failed to get kerning information for character: " + ToString(charIdx));
 
-							i32 kerningX = (i32)(resultKerning.x >> 6); // Y kerning is ignored because it is so rare
-							if(kerningX == 0) // We don't store 0 kerning, this is assumed default
+							const float kerningX = ConvertFixed26Dot6ToFloat(resultKerning.x); // Y kerning is ignored because it is so rare
+							if(kerningX == 0.0f) // We don't store 0 kerning, this is assumed default
 								continue;
 
 							KerningPair pair;
@@ -322,7 +328,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 				}
 			}
 
-			const String textureName = StringUtil::Format("Font {0} Page:{1} Size:{2}", fileName, pageIdx, fontSizes[sizeIndex]);
+			const String textureName = StringUtil::Format("Font {0} Page:{1} Size:{2}", fileName, pageIndex, fontSizes[sizeIndex]);
 
 			TextureCreateInformation textureCreateInformation;
 			textureCreateInformation.Name = textureName;
@@ -348,7 +354,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 			newTex->SetName(textureName);
 
 			fontData->TexturePages.push_back(newTex);
-			pageIdx++;
+			pageIndex++;
 		}
 
 		fontData->Size = fontSizes[sizeIndex];
@@ -361,7 +367,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 		if(error)
 			B3D_EXCEPT(InternalErrorException, "Failed to load a character");
 
-		fontData->SpaceWidth = face->glyph->advance.x >> 6;
+		fontData->SpaceWidth = ConvertFixed26Dot6ToFloat(face->glyph->advance.x);
 
 		dataPerSize.push_back(fontData);
 	}

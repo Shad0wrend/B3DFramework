@@ -6,6 +6,7 @@
 #include "Reflection/BsRTTIType.h"
 #include "RTTI/BsMathRTTI.h"
 #include "RTTI/BsColorRTTI.h"
+#include "RTTI/BsStdRTTI.h"
 #include "Private/RTTI/BsSubmeshRTTI.h"
 #include "VectorGraphics/BsNVGVectorGraphics.h"
 
