@@ -7,7 +7,7 @@
 #include "BsScriptImportOptions.generated.h"
 #include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"
 #include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"
-#include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"
+#include "../../../Foundation/bsfCore/Text/BsFont.h"
 
 namespace bs { class FontImportOptions; }
 namespace bs

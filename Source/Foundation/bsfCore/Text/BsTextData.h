@@ -291,7 +291,7 @@ namespace bs
 		u32 mPageCount;
 
 		HFont mFont;
-		SPtr<const FontBitmap> mFontData;
+		SPtr<const FontBitmapInformation> mFontBitmapInformation;
 
 		// Static buffers used to reduce runtime memory allocation
 	protected:
@@ -317,7 +317,7 @@ namespace bs
 			 * Increments the count of characters for the referenced page, and optionally creates page info if it doesn't
 			 * already exist.
 			 */
-			void AddCharToPage(u32 page, const FontBitmap& fontData);
+			void AddCharToPage(u32 page, const FontBitmapInformation& fontData);
 
 			/**	Resets all allocation counters, but doesn't actually release memory. */
 			void DeallocAll();

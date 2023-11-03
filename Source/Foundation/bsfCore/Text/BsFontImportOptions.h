@@ -12,15 +12,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/**	Determines how is a font rendered into the bitmap texture. */
-	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Text), API(Framework), API(Editor)) FontRenderMode
-	{
-		Smooth, /*< Render antialiased fonts without hinting (slightly more blurry). */
-		Raster, /*< Render non-antialiased fonts without hinting (slightly more blurry). */
-		HintedSmooth, /*< Render antialiased fonts with hinting. */
-		HintedRaster /*< Render non-antialiased fonts with hinting. */
-	};
-
 	/** Represents a range of character code. */
 	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Text), ExportAsStruct(true), API(Framework), API(Editor)) CharRange
 	{

@@ -7,6 +7,7 @@
 #include "RTTI/BsStdRTTI.h"
 #include "Text/BsFont.h"
 #include "Image/BsTexture.h"
+#include "FileSystem/BsDataStream.h"
 
 namespace bs
 {
@@ -80,7 +81,33 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT FontBitmapRTTI : public RTTIType<FontBitmap, IReflectable, FontBitmapRTTI>
+	class B3D_CORE_EXPORT FontBitmapPageRTTI : public RTTIType<FontBitmapPage, IReflectable, FontBitmapPageRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_REFL(Texture, 0)
+			B3D_RTTI_MEMBER_PLAIN(IsDynamic, 1)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName()
+		{
+			static String name = "FontBitmapPage";
+			return name;
+		}
+
+		u32 GetRttiId()
+		{
+			return TID_FontBitmapPage;
+		}
+
+		SPtr<IReflectable> NewRttiObject()
+		{
+			return B3DMakeShared<FontBitmapPage>();
+		}
+	};
+
+	class B3D_CORE_EXPORT FontBitmapInformationRTTI : public RTTIType<FontBitmapInformation, IReflectable, FontBitmapInformationRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -89,63 +116,130 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN(LineHeight, 2)
 			B3D_RTTI_MEMBER_PLAIN(MissingGlyph, 3)
 			B3D_RTTI_MEMBER_PLAIN(SpaceWidth, 4)
-			B3D_RTTI_MEMBER_REFL_ARRAY(TexturePages, 5)
 			B3D_RTTI_MEMBER_PLAIN(Characters, 6)
 		B3D_RTTI_END_MEMBERS
 
+		FontBitmapPage& GetPage(FontBitmapInformation* object, u32 index)
+		{
+			return object->TexturePages[index];
+		}
+
+		void SetPage(FontBitmapInformation* object, u32 index, FontBitmapPage& value)
+		{
+			object->TexturePages[index] = value;
+		}
+
+		u32 GetPageCount(FontBitmapInformation* object)
+		{
+			return mBakedPageCount;
+		}
+
+		void SetPageCount(FontBitmapInformation* object, u32 size)
+		{
+			object->TexturePages.resize(size);
+		}
+
 	public:
+		FontBitmapInformationRTTI()
+		{
+			AddReflectableArrayField("TexturePages", 5, &FontBitmapInformationRTTI::GetPage, &FontBitmapInformationRTTI::GetPageCount, &FontBitmapInformationRTTI::SetPage, &FontBitmapInformationRTTI::SetPageCount);
+		}
+
 		const String& GetRttiName()
 		{
-			static String name = "FontData";
+			static String name = "FontBitmapInformation";
 			return name;
 		}
 
 		u32 GetRttiId()
 		{
-			return TID_FontBitmap;
+			return TID_FontBitmapInformation;
 		}
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return B3DMakeShared<FontBitmap>();
+			return B3DMakeShared<FontBitmapInformation>();
 		}
+
+	protected:
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		{
+			FontBitmapInformation* bitmapInformation = static_cast<FontBitmapInformation*>(obj);
+
+			mBakedPageCount = 0;
+			for(const auto& entry : bitmapInformation->TexturePages)
+			{
+				if(entry.IsDynamic)
+					break;
+
+				mBakedPageCount++;
+			}
+		}
+
+		u32 mBakedPageCount = 0;
+
 	};
 
 	class B3D_CORE_EXPORT FontRTTI : public RTTIType<Font, Resource, FontRTTI>
 	{
 	private:
-		FontBitmap& GetBitmap(Font* obj, u32 idx)
-		{
-			if(idx >= obj->mFontDataPerSize.size())
-				B3D_EXCEPT(InternalErrorException, "Index out of range: " + ToString(idx) + ". Valid range: 0 .. " + ToString((int)obj->mFontDataPerSize.size()));
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_PLAIN_NAMED(RenderMode, mInformation.RenderMode, 2)
+			B3D_RTTI_MEMBER_PLAIN_NAMED(DPI, mInformation.DPI, 3)
+		B3D_RTTI_END_MEMBERS
 
-			auto iter = obj->mFontDataPerSize.begin();
+		FontBitmapInformation& GetBitmap(Font* obj, u32 idx)
+		{
+			if(idx >= obj->mFontBitmaps.size())
+				B3D_EXCEPT(InternalErrorException, "Index out of range: " + ToString(idx) + ". Valid range: 0 .. " + ToString((int)obj->mFontBitmaps.size()));
+
+			auto iter = obj->mFontBitmaps.begin();
 			for(u32 i = 0; i < idx; i++, ++iter)
 			{}
 
 			return *iter->second;
 		}
 
-		void SetBitmap(Font* obj, u32 idx, FontBitmap& value)
+		void SetBitmap(Font* obj, u32 idx, FontBitmapInformation& value)
 		{
-			mFontDataPerSize[idx] = B3DMakeShared<FontBitmap>();
-			*mFontDataPerSize[idx] = value;
+			obj->mFontBitmaps[value.Size] = B3DMakeShared<FontBitmapInformation>();
+			*obj->mFontBitmaps[value.Size] = value;
 		}
 
-		u32 GetNumBitmaps(Font* obj)
+		u32 GetBitmapCount(Font* obj)
 		{
-			return (u32)obj->mFontDataPerSize.size();
+			return (u32)obj->mFontBitmaps.size();
 		}
 
-		void SetNumBitmaps(Font* obj, u32 size)
+		void SetBitmapCount(Font* obj, u32 size)
 		{
-			mFontDataPerSize.resize(size);
+		}
+
+		SPtr<DataStream> GetFontData(Font* obj, u32& outSize)
+		{
+			outSize = obj->mInformation.FontData != nullptr ? (u32)obj->mInformation.FontData->Size() : 0;
+			return obj->mInformation.FontData;
+		}
+
+		void SetFontData(Font* obj, const SPtr<DataStream>& value, u32 size)
+		{
+			if(value == nullptr)
+				obj->mInformation.FontData = nullptr;
+			else if(value->IsFile())
+			{
+				obj->mInformation.FontData = B3DMakeShared<MemoryDataStream>(size);
+				obj->mInformation.FontData->Seek(size); // Note: Forces the size to be set to this value. TODO: We need a better way to do this.
+				value->Read(obj->mInformation.FontData->Data(), size);
+			}
+			else
+				obj->mInformation.FontData = std::static_pointer_cast<MemoryDataStream>(value);
 		}
 
 	public:
 		FontRTTI()
 		{
-			AddReflectableArrayField("mBitmaps", 0, &FontRTTI::GetBitmap, &FontRTTI::GetNumBitmaps, &FontRTTI::SetBitmap, &FontRTTI::SetNumBitmaps);
+			AddReflectableArrayField("mBitmaps", 0, &FontRTTI::GetBitmap, &FontRTTI::GetBitmapCount, &FontRTTI::SetBitmap, &FontRTTI::SetBitmapCount);
+			AddDataBlockField("mFontData", 1, &FontRTTI::GetFontData, &FontRTTI::SetFontData);
 		}
 
 		const String& GetRttiName() override
@@ -161,17 +255,15 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return Font::CreateEmptyInternal();
+			return Font::CreateEmpty();
 		}
 
 	protected:
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Font* font = static_cast<Font*>(obj);
-			font->Initialize(mFontDataPerSize);
+			font->Initialize();
 		}
-
-		Vector<SPtr<FontBitmap>> mFontDataPerSize;
 	};
 
 	/** @} */

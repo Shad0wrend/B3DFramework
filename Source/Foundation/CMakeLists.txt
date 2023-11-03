@@ -23,6 +23,7 @@ endif()
 # Packages
 find_package(snappy REQUIRED)
 find_package(nvtt REQUIRED)
+find_package(freetype REQUIRED)
 
 if(B3D_EXPERIMENTAL_ENABLE_NETWORKING)
 	find_package(RakNet REQUIRED)
@@ -113,6 +114,9 @@ target_link_libraries(bsf PRIVATE ${nvtt_LIBRARIES})
 
 ## External lib: Snappy
 target_link_libraries(bsf PRIVATE ${snappy_LIBRARIES})
+
+## External lib: Freetype
+target_link_libraries(bsf PRIVATE ${freetype_LIBRARIES})
 
 ## External lib: RakNet
 if(B3D_EXPERIMENTAL_ENABLE_NETWORKING)

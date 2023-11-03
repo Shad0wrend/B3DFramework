@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 
 namespace bs
 {
-#if !IS_B3D
 	/** @addtogroup Text
 	 *  @{
 	 */
@@ -21,5 +20,4 @@ namespace bs
 	}
 
 	/** @} */
-#endif
 }

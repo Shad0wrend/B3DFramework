@@ -6,18 +6,20 @@ using System.Runtime.InteropServices;
 
 namespace bs
 {
-	/** @addtogroup GUI_Engine
+	/** @addtogroup Text
 	 *  @{
 	 */
 
-	/// <summary>Contains textures and data about every character for a bitmap font of a specific size.</summary>
+	/// <summary>
+	/// Contains information about font characters rendered into one or multiple bitmaps, for specific font size.
+	/// </summary>
 	[ShowInInspector]
-	public partial class FontBitmap : ScriptObject
+	public partial class FontBitmapInformation : ScriptObject
 	{
-		private FontBitmap(bool __dummy0) { }
-		protected FontBitmap() { }
+		private FontBitmapInformation(bool __dummy0) { }
+		protected FontBitmapInformation() { }
 
-		/// <summary>Font size for which the data is contained.</summary>
+		/// <summary>Font size for which the bitmaps are rendered.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public int Size
@@ -70,7 +72,7 @@ namespace bs
 		/// <summary>Textures in which the character&apos;s pixels are stored.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public RRef<Texture>[] TexturePages
+		public FontBitmapPage[] TexturePages
 		{
 			get { return Internal_GetTexturePages(mCachedPtr); }
 			set { Internal_SetTexturePages(mCachedPtr, value); }
@@ -107,9 +109,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetSpaceWidth(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Texture>[] Internal_GetTexturePages(IntPtr thisPtr);
+		private static extern FontBitmapPage[] Internal_GetTexturePages(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetTexturePages(IntPtr thisPtr, RRef<Texture>[] value);
+		private static extern void Internal_SetTexturePages(IntPtr thisPtr, FontBitmapPage[] value);
 	}
 
 	/** @} */

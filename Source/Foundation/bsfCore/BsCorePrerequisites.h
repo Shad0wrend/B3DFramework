@@ -395,7 +395,7 @@ namespace bs
 	class GpuGraphicsPipelineState;
 	class GpuComputePipelineState;
 	class GpuPipelineParameterLayout;
-	struct FontBitmap;
+	struct FontBitmapInformation;
 	class GameObject;
 	class GpuResourceData;
 	struct RenderOperation;
@@ -530,7 +530,7 @@ namespace bs
 		TID_FONT_DESC = 1052,
 		TID_CharacterInformation = 1053,
 		TID_FontImportOptions = 1056,
-		TID_FontBitmap = 1057,
+		TID_FontBitmapInformation = 1057,
 		TID_SceneObject = 1059,
 		TID_GameObject = 1060,
 		TID_PixelData = 1062,
@@ -707,6 +707,7 @@ namespace bs
 		TID_VectorPathRenderable = 1233,
 		TID_NVGVectorPathRenderable = 1234,
 		TID_NVGPathRenderData = 1235,
+		TID_FontBitmapPage = 1236,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,

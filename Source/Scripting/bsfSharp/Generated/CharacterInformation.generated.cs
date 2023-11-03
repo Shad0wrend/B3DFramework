@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace bs
 {
-	/** @addtogroup GUI_Engine
+	/** @addtogroup Text
 	 *  @{
 	 */
 

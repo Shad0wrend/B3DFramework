@@ -22,8 +22,6 @@
 #include "BsScriptBloomSettings.generated.h"
 #include "../../../Foundation/bsfCore/Animation/BsMorphShapes.h"
 #include "BsScriptMorphShapes.generated.h"
-#include "../../../Foundation/bsfCore/Text/BsFont.h"
-#include "BsScriptFontBitmap.generated.h"
 #include "../../../Foundation/bsfCore/Animation/BsMorphShapes.h"
 #include "BsScriptMorphShape.generated.h"
 #include "../../../Foundation/bsfCore/Animation/BsMorphShapes.h"
@@ -140,6 +138,8 @@
 #include "../../../Foundation/bsfCore/Importer/BsTextureImportOptions.h"
 #endif
 #include "BsScriptTextureImportOptions.generated.h"
+#include "../../../Foundation/bsfCore/Text/BsFont.h"
+#include "BsScriptFontBitmapInformation.generated.h"
 #if !B3D_IS_ENGINE
 #include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"
 #endif
@@ -160,7 +160,6 @@ namespace bs
 		ADD_ENTRY(ParticleEmitterStaticMeshShape, ScriptParticleEmitterStaticMeshShape)
 		ADD_ENTRY(BloomSettings, ScriptBloomSettings)
 		ADD_ENTRY(MorphShapes, ScriptMorphShapes)
-		ADD_ENTRY(FontBitmap, ScriptFontBitmap)
 		ADD_ENTRY(MorphShape, ScriptMorphShape)
 		ADD_ENTRY(MorphChannel, ScriptMorphChannel)
 		ADD_ENTRY(TemporalAASettings, ScriptTemporalAASettings)
@@ -227,6 +226,7 @@ namespace bs
 #if !B3D_IS_ENGINE
 		ADD_ENTRY(TextureImportOptions, ScriptTextureImportOptions)
 #endif
+		ADD_ENTRY(FontBitmapInformation, ScriptFontBitmapInformation)
 #if !B3D_IS_ENGINE
 		ADD_ENTRY(FontImportOptions, ScriptFontImportOptions)
 #endif

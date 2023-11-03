@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace bs
 {
-	/** @addtogroup GUI_Engine
+	/** @addtogroup Text
 	 *  @{
 	 */
 
@@ -35,10 +35,10 @@ namespace bs
 				return null;
 		}
 
-		/// <summary>Returns font bitmap for a specific font size.</summary>
-		/// <param name="size">Size of the bitmap in points.</param>
+		/// <summary>Returns font bitmap information for a specific font size.</summary>
+		/// <param name="size">Size of the font in points.</param>
 		/// <returns>Bitmap object if it exists, false otherwise.</returns>
-		public FontBitmap GetBitmap(int size)
+		public FontBitmapInformation GetBitmap(int size)
 		{
 			return Internal_GetBitmap(mCachedPtr, size);
 		}
@@ -54,7 +54,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Font> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern FontBitmap Internal_GetBitmap(IntPtr thisPtr, int size);
+		private static extern FontBitmapInformation Internal_GetBitmap(IntPtr thisPtr, int size);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern int Internal_GetClosestSize(IntPtr thisPtr, int size);
 	}

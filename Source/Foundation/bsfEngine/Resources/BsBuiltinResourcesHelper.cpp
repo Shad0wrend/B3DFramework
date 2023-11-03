@@ -347,17 +347,17 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 	// Save font texture pages as well. TODO - Later maybe figure out a more automatic way to do this
 	for(auto& size : fontSizes)
 	{
-		SPtr<const FontBitmap> fontData = font->GetBitmap(size);
+		SPtr<const FontBitmapInformation> fontData = font->GetBitmap(size);
 
 		Path texPageOutputPath = outputPath;
 
 		u32 pageIdx = 0;
-		for(auto tex : fontData->TexturePages)
+		for(auto& page : fontData->TexturePages)
 		{
 			texPageOutputPath.SetFilename(fontName + u8"_" + ToString(size) + u8"_texpage_" + ToString(pageIdx) + u8".asset");
 
-			Resources::Instance().Save(tex, texPageOutputPath, true);
-			manifest->RegisterResource(tex.GetId(), texPageOutputPath);
+			Resources::Instance().Save(page.Texture, texPageOutputPath, true);
+			manifest->RegisterResource(page.Texture.GetId(), texPageOutputPath);
 
 			pageIdx++;
 		}

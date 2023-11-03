@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "Image/BsTextureAtlasLayout.h"
 #include "Resources/BsResource.h"
 
 namespace bs
@@ -12,14 +13,14 @@ namespace bs
 	 */
 
 	/**	Kerning pair representing larger or smaller offset between a specific pair of characters. */
-	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI_Engine)) KerningPair
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Text)) KerningPair
 	{
 		u32 OtherCharId;
 		float Amount;
 	};
 
 	/**	Describes a single character in a font of a specific size. */
-	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI_Engine)) CharacterInformation
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Text)) CharacterInformation
 	{
 		u32 CharId; /**< Character ID, corresponding to a Unicode key. */
 		u32 Page; /**< Index of the texture the character is located on. */
@@ -36,14 +37,32 @@ namespace bs
 		Vector<KerningPair> KerningPairs;
 	};
 
-	/**	Contains textures and data about every character for a bitmap font of a specific size. */
-	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI_Engine)) FontBitmap : public IReflectable
+	/** Information about a single page containing font bitmaps. */
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Text)) FontBitmapPage : public IReflectable
+	{
+		HTexture Texture;
+		bool IsDynamic = false;
+
+		B3D_SCRIPT_EXPORT(Exclude(true))
+		TreeTextureAtlasLayout Layout; /**< Layout that can be used for finding free space in the page texture. Only relevant for dynamic texture maps. */
+
+		/************************************************************************/
+		/* 								SERIALIZATION                      		*/
+		/************************************************************************/
+	public:
+		friend class FontBitmapPageRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
+	/**	Contains information about font characters rendered into one or multiple bitmaps, for specific font size. */
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Text)) FontBitmapInformation : public IReflectable
 	{
 		/**	Returns a character description for the character with the specified Unicode key. */
 		B3D_SCRIPT_EXPORT()
 		const CharacterInformation& GetCharacterInformation(u32 characterId) const;
 
-		/** Font size for which the data is contained. */
+		/** Font size for which the bitmaps are rendered. */
 		B3D_SCRIPT_EXPORT()
 		u32 Size;
 
@@ -65,7 +84,7 @@ namespace bs
 
 		/** Textures in which the character's pixels are stored. */
 		B3D_SCRIPT_EXPORT()
-		Vector<HTexture> TexturePages;
+		Vector<FontBitmapPage> TexturePages;
 
 		/** All characters in the font referenced by character ID. */
 		Map<u32, CharacterInformation> Characters;
@@ -74,28 +93,65 @@ namespace bs
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	public:
-		friend class FontBitmapRTTI;
+		friend class FontBitmapInformationRTTI;
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const override;
+	};
+
+	/**	Determines how is a font rendered into the bitmap texture. */
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Text)) FontRenderMode
+	{
+		Smooth, /*< Render antialiased fonts without hinting (slightly more blurry). */
+		Raster, /*< Render non-antialiased fonts without hinting (slightly more blurry). */
+		HintedSmooth, /*< Render antialiased fonts with hinting. */
+		HintedRaster /*< Render non-antialiased fonts with hinting. */
+	};
+
+	/** Information about a Font. */
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Text)) FontInformation
+	{
+		/** Optional name of the font. Used primarily for easier debugging. */
+		String Name;
+
+		/**	Determines dots per inch scale that will be used when rendering the characters. */
+		B3D_SCRIPT_EXPORT()
+		u32 DPI = 96;
+
+		/**	Determines the render mode used for rendering the characters into a bitmap. */
+		B3D_SCRIPT_EXPORT()
+		FontRenderMode RenderMode = FontRenderMode::HintedSmooth;
+
+		/** Data stream containing the .ttf/.otf font data. */
+		B3D_SCRIPT_EXPORT(Exclude(true))
+		SPtr<MemoryDataStream> FontData;
+	};
+
+	/** Descriptor structure used for initialization of a Font. */
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Text)) FontCreateInformation : FontInformation 
+	{
+		FontCreateInformation() = default;
+		FontCreateInformation(const FontInformation& other)
+			:FontInformation(other)
+		{ }
 	};
 
 	/**
 	 * Font resource containing data about textual characters and how to render text. Contains one or multiple font
 	 * bitmaps, each for a specific size.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI_Engine)) Font : public Resource
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Text)) Font : public Resource
 	{
 	public:
-		virtual ~Font() = default;
+		virtual ~Font();
 
 		/**
-		 * Returns font bitmap for a specific font size.
+		 * Returns font bitmap information for a specific font size.
 		 *
-		 * @param[in]	size	Size of the bitmap in points.
-		 * @return				Bitmap object if it exists, false otherwise.
+		 * @param	size	Size of the font in points.
+		 * @return			Bitmap object if it exists, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT()
-		SPtr<FontBitmap> GetBitmap(u32 size) const;
+		SPtr<FontBitmapInformation> GetBitmap(u32 size) const;
 
 		/**
 		 * Finds the available font bitmap size closest to the provided size.
@@ -106,40 +162,66 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		i32 GetClosestSize(u32 size) const;
 
-		/**	Creates a new font from the provided per-size font data. */
-		static HFont Create(const Vector<SPtr<FontBitmap>>& fontInitData);
+		/**
+		 * Renders glyphs for particular characters as a particular size (in points). The rendered glyphs will be added to the first
+		 * free texture page, or new texture page(s) will be allocated. Returns true if successful.
+		 */
+		bool RenderGlyphs(u32 size, const TArrayView<u32>& characterIds);
+
+		/**
+		 * Bakes all the currently rasterized glyphs. This ensures that texture pages containing those glyphs
+		 * will be serialized when the font is saved.
+		 *
+		 * @param	clearFontData		Clears the internal font data. This will prevent further glyphs to be rendered
+		 *								in the font.
+		 */
+		void Bake(bool clearFontData);
+
+		/** Creates a new font. */
+		static HFont Create(const FontCreateInformation& createInformation);
 
 	public: // ***** INTERNAL ******
-		using Resource::Initialize;
-
 		/** @name Internal
 		 *  @{
 		 */
 
-		/**
-		 * Initializes the font with specified per-size font data.
-		 *
-		 * @note	Internal method. Factory methods will call this automatically for you.
-		 */
-		void Initialize(const Vector<SPtr<FontBitmap>>& fontData);
+		void Initialize() override;
+		void Destroy() override;
 
 		/** Creates a new font as a pointer instead of a resource handle. */
-		static SPtr<Font> CreatePtrInternal(const Vector<SPtr<FontBitmap>>& fontInitData);
+		static SPtr<Font> CreateShared(const FontCreateInformation& createInformation);
 
 		/** Creates a Font without initializing it. */
-		static SPtr<Font> CreateEmptyInternal();
+		static SPtr<Font> CreateEmpty();
 
 		/** @} */
 
 	protected:
 		friend class FontManager;
 
-		Font();
+		Font(const FontCreateInformation& createInformation);
+
+		/**
+		 * Creates the font renderer for the currently assigned font data. This must be called before RenderGlyph() is called.
+		 * Returns false if the renderer cannot be initialized (usually means the font data is missing, or the renderer is already initialized).
+		 */ 
+		bool InitializeFontRenderer();
+
+		/** Destroys the font renderer created in InitializeFontRenderer(). */
+		void DestroyFontRenderer();
+
+		/** Attempts to retrieve existing bitmap information for particular font size, or creates new bitmap information if one doesn't exist. */
+		SPtr<FontBitmapInformation> GetOrCreateBitmapInformationForSize(u32 size);
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
+		static constexpr u32 kFontPageSize = 1024;
 	private:
-		Map<u32, SPtr<FontBitmap>> mFontDataPerSize;
+		FontInformation mInformation;
+		Map<u32, SPtr<FontBitmapInformation>> mFontBitmaps;
+
+		struct Implementation;
+		Implementation* mImplementation = nullptr;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

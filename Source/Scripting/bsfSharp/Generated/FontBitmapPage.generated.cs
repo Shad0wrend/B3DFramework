@@ -10,12 +10,22 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>Kerning pair representing larger or smaller offset between a specific pair of characters.</summary>
+	/// <summary>Information about a single page containing font bitmaps.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct KerningPair
+	public partial struct FontBitmapPage
 	{
-		public int OtherCharId;
-		public float Amount;
+		/// <summary>Initializes the struct with default values.</summary>
+		public static FontBitmapPage Default()
+		{
+			FontBitmapPage value = new FontBitmapPage();
+			value.Texture = null;
+			value.IsDynamic = false;
+
+			return value;
+		}
+
+		public RRef<Texture> Texture;
+		public bool IsDynamic;
 	}
 
 	/** @} */

@@ -1636,34 +1636,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<field name="BotRightClip" type="RRef&lt;AnimationClip&gt;">
 		</field>
 	</struct>
-	<class native="FontBitmap" script="FontBitmap">
-		<doc>Contains textures and data about every character for a bitmap font of a specific size.</doc>
-		<method native="GetCharacterInformation" script="GetCharacterInformation" static="false">
-			<doc>Returns a character description for the character with the specified Unicode key.</doc>
-			<param name="characterId" type="int">
-			</param>
-			<returns type="CharacterInformation">
-			</returns>
-		</method>
-		<property name="Size" type="int" getter="GetSize" setter="SetSize" static="false">
-			<doc>Font size for which the data is contained.</doc>
-		</property>
-		<property name="BaselineOffset" type="float" getter="GetBaselineOffset" setter="SetBaselineOffset" static="false">
-			<doc>Y offset to the baseline on which the characters are placed, in pixels.</doc>
-		</property>
-		<property name="LineHeight" type="float" getter="GetLineHeight" setter="SetLineHeight" static="false">
-			<doc>Height of a single line of the font, in pixels.</doc>
-		</property>
-		<property name="MissingGlyph" type="CharacterInformation" getter="GetMissingGlyph" setter="SetMissingGlyph" static="false">
-			<doc>Character to use when data for a character is missing.</doc>
-		</property>
-		<property name="SpaceWidth" type="float" getter="GetSpaceWidth" setter="SetSpaceWidth" static="false">
-			<doc>Width of a space in pixels.</doc>
-		</property>
-		<property name="TexturePages" type="RRef&lt;Texture&gt;" getter="GetTexturePages" setter="SetTexturePages" static="false">
-			<doc>Textures in which the character&apos;s pixels are stored.</doc>
-		</property>
-	</class>
 	<struct native="TKeyframe&lt;int32_t&gt;" script="KeyFrameInt">
 		<doc>Animation keyframe, represented as an endpoint of a cubic hermite spline.</doc>
 		<field name="Value" type="int">
@@ -2227,6 +2199,15 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Size of a single sample in bits. The clip will be converted to this bit depth on import.</doc>
 		</property>
 	</class>
+	<struct native="FontBitmapPage" script="FontBitmapPage">
+		<doc>Information about a single page containing font bitmaps.</doc>
+		<ctor>
+		</ctor>
+		<field name="Texture" type="RRef&lt;Texture&gt;">
+		</field>
+		<field name="IsDynamic" type="bool">
+		</field>
+	</struct>
 	<enum native="PixelFormat" script="PixelFormat">
 		<doc>Pixel formats usable by images, textures and render surfaces.</doc>
 		<enumentry native="PF_R8" script="R8">
@@ -5169,6 +5150,24 @@ If this is disabled, then color grading and white balancing will not be enabled 
 			<doc>Options describing the shape.</doc>
 		</property>
 	</class>
+	<struct native="FontCreateInformation" script="FontCreateInformation">
+		<doc>Descriptor structure used for initialization of a Font.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="other" type="FontInformation">
+			</param>
+		</ctor>
+		<field name="Name" type="string">
+			<doc>Optional name of the font. Used primarily for easier debugging.</doc>
+		</field>
+		<field name="DPI" type="int">
+			<doc>Determines dots per inch scale that will be used when rendering the characters.</doc>
+		</field>
+		<field name="RenderMode" type="FontRenderMode">
+			<doc>Determines the render mode used for rendering the characters into a bitmap.</doc>
+		</field>
+	</struct>
 	<enum native="ParticleEmitterMeshType" script="ParticleEmitterMeshType">
 		<doc>Determines the emission type for the mesh particle emitter shape.</doc>
 		<enumentry native="Vertex" script="Vertex">
@@ -7596,14 +7595,56 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			<doc>Pairs that determine if certain character pairs should be closer or father together. for example &quot;AV&quot; combination.</doc>
 		</field>
 	</struct>
+	<class native="FontBitmapInformation" script="FontBitmapInformation">
+		<doc>Contains information about font characters rendered into one or multiple bitmaps, for specific font size.</doc>
+		<method native="GetCharacterInformation" script="GetCharacterInformation" static="false">
+			<doc>Returns a character description for the character with the specified Unicode key.</doc>
+			<param name="characterId" type="int">
+			</param>
+			<returns type="CharacterInformation">
+			</returns>
+		</method>
+		<property name="Size" type="int" getter="GetSize" setter="SetSize" static="false">
+			<doc>Font size for which the bitmaps are rendered.</doc>
+		</property>
+		<property name="BaselineOffset" type="float" getter="GetBaselineOffset" setter="SetBaselineOffset" static="false">
+			<doc>Y offset to the baseline on which the characters are placed, in pixels.</doc>
+		</property>
+		<property name="LineHeight" type="float" getter="GetLineHeight" setter="SetLineHeight" static="false">
+			<doc>Height of a single line of the font, in pixels.</doc>
+		</property>
+		<property name="MissingGlyph" type="CharacterInformation" getter="GetMissingGlyph" setter="SetMissingGlyph" static="false">
+			<doc>Character to use when data for a character is missing.</doc>
+		</property>
+		<property name="SpaceWidth" type="float" getter="GetSpaceWidth" setter="SetSpaceWidth" static="false">
+			<doc>Width of a space in pixels.</doc>
+		</property>
+		<property name="TexturePages" type="FontBitmapPage" getter="GetTexturePages" setter="SetTexturePages" static="false">
+			<doc>Textures in which the character&apos;s pixels are stored.</doc>
+		</property>
+	</class>
+	<struct native="FontInformation" script="FontInformation">
+		<doc>Information about a Font.</doc>
+		<ctor>
+		</ctor>
+		<field name="Name" type="string">
+			<doc>Optional name of the font. Used primarily for easier debugging.</doc>
+		</field>
+		<field name="DPI" type="int">
+			<doc>Determines dots per inch scale that will be used when rendering the characters.</doc>
+		</field>
+		<field name="RenderMode" type="FontRenderMode">
+			<doc>Determines the render mode used for rendering the characters into a bitmap.</doc>
+		</field>
+	</struct>
 	<class native="Font" script="Font">
 		<doc>Font resource containing data about textual characters and how to render text. Contains one or multiple font bitmaps, each for a specific size.</doc>
 		<method native="GetBitmap" script="GetBitmap" static="false">
-			<doc>Returns font bitmap for a specific font size.</doc>
+			<doc>Returns font bitmap information for a specific font size.</doc>
 			<param name="size" type="int">
-				<doc>Size of the bitmap in points.</doc>
+				<doc>Size of the font in points.</doc>
 			</param>
-			<returns type="FontBitmap">
+			<returns type="FontBitmapInformation">
 				<doc>Bitmap object if it exists, false otherwise.</doc>
 			</returns>
 		</method>

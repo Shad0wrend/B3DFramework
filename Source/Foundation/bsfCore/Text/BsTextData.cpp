@@ -346,30 +346,25 @@ void TextDataBase::TextLine::CalculateBounds()
 }
 
 TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSize, u32 width, u32 height, bool wordWrap, bool wordBreak)
-	: mChars(nullptr), mNumChars(0), mWords(nullptr), mNumWords(0), mLines(nullptr), mLineCount(0), mPageInfos(nullptr), mPageCount(0), mFont(font), mFontData(nullptr)
+	: mChars(nullptr), mNumChars(0), mWords(nullptr), mNumWords(0), mLines(nullptr), mLineCount(0), mPageInfos(nullptr), mPageCount(0), mFont(font), mFontBitmapInformation(nullptr)
 {
 	// In order to reduce number of memory allocations algorithm first calculates data into temporary buffers and then copies the results
 	InitAlloc();
 
 	if(font != nullptr)
 	{
-		u32 nearestSize = font->GetClosestSize(fontSize);
-		mFontData = font->GetBitmap(nearestSize);
+		font->RenderGlyphs(fontSize, TArrayView((u32*)text.data(), text.size()));
+		mFontBitmapInformation = font->GetBitmap(fontSize);
 	}
 
-	if(mFontData == nullptr || mFontData->TexturePages.size() == 0)
+	if(mFontBitmapInformation == nullptr)
 		return;
-
-	if(mFontData->Size != fontSize)
-	{
-		B3D_LOG(Warning, GUI, "Unable to find font with specified size ({0}). Using nearest available size: {1}", fontSize, mFontData->Size);
-	}
 
 	bool widthIsLimited = width > 0;
 	mFont = font;
 
 	u32 curLineIdx = MemBuffer->AllocLine(this);
-	float curHeight = mFontData->LineHeight;
+	float curHeight = mFontBitmapInformation->LineHeight;
 	u32 charIdx = 0;
 
 	while(true)
@@ -378,7 +373,7 @@ TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSiz
 			break;
 
 		u32 charId = text[charIdx];
-		const CharacterInformation& charDesc = mFontData->GetCharacterInformation(charId);
+		const CharacterInformation& charDesc = mFontBitmapInformation->GetCharacterInformation(charId);
 
 		TextLine* curLine = &MemBuffer->LineBuffer[curLineIdx];
 
@@ -389,7 +384,7 @@ TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSiz
 			curLineIdx = MemBuffer->AllocLine(this);
 			curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-			curHeight += mFontData->LineHeight;
+			curHeight += mFontBitmapInformation->LineHeight;
 
 			charIdx++;
 
@@ -430,7 +425,7 @@ TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSiz
 						curLineIdx = MemBuffer->AllocLine(this);
 						curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-						curHeight += mFontData->LineHeight;
+						curHeight += mFontBitmapInformation->LineHeight;
 
 						curLine->AddWord(lastWordIdx, lastWord);
 					}
@@ -444,7 +439,7 @@ TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSiz
 							curLineIdx = MemBuffer->AllocLine(this);
 							curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-							curHeight += mFontData->LineHeight;
+							curHeight += mFontBitmapInformation->LineHeight;
 						}
 						else
 						{
@@ -455,7 +450,7 @@ TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSiz
 								curLineIdx = MemBuffer->AllocLine(this);
 								curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-								curHeight += mFontData->LineHeight;
+								curHeight += mFontBitmapInformation->LineHeight;
 							}
 
 							curLine->AddWord(lastWordIdx, lastWord);
@@ -469,7 +464,7 @@ TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSiz
 					curLineIdx = MemBuffer->AllocLine(this);
 					curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-					curHeight += mFontData->LineHeight;
+					curHeight += mFontBitmapInformation->LineHeight;
 				}
 			}
 		}
@@ -477,17 +472,17 @@ TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSiz
 		if(charId == kSpaceChar)
 		{
 			curLine->AddSpace(GetSpaceWidth());
-			MemBuffer->AddCharToPage(0, *mFontData);
+			MemBuffer->AddCharToPage(0, *mFontBitmapInformation);
 		}
 		else if(charId == kTabChar)
 		{
 			curLine->AddSpace(GetSpaceWidth() * 4);
-			MemBuffer->AddCharToPage(0, *mFontData);
+			MemBuffer->AddCharToPage(0, *mFontBitmapInformation);
 		}
 		else
 		{
 			curLine->Add(charIdx, charDesc);
-			MemBuffer->AddCharToPage(charDesc.Page, *mFontData);
+			MemBuffer->AddCharToPage(charDesc.Page, *mFontBitmapInformation);
 		}
 
 		charIdx++;
@@ -522,7 +517,7 @@ void TextDataBase::GeneratePersistentData(const U32String& text, u8* buffer, u32
 	for(u32 i = 0; i < mNumChars; i++)
 	{
 		u32 charId = text[i];
-		const CharacterInformation& charDesc = mFontData->GetCharacterInformation(charId);
+		const CharacterInformation& charDesc = mFontBitmapInformation->GetCharacterInformation(charId);
 
 		mChars[i] = &charDesc;
 	}
@@ -545,22 +540,22 @@ void TextDataBase::GeneratePersistentData(const U32String& text, u8* buffer, u32
 
 const HTexture& TextDataBase::GetTextureForPage(u32 page) const
 {
-	return mFontData->TexturePages[page];
+	return mFontBitmapInformation->TexturePages[page].Texture;
 }
 
 float TextDataBase::GetBaselineOffset() const
 {
-	return mFontData->BaselineOffset;
+	return mFontBitmapInformation->BaselineOffset;
 }
 
 float TextDataBase::GetLineHeight() const
 {
-	return mFontData->LineHeight;
+	return mFontBitmapInformation->LineHeight;
 }
 
 float TextDataBase::GetSpaceWidth() const
 {
-	return mFontData->SpaceWidth;
+	return mFontBitmapInformation->SpaceWidth;
 }
 
 void TextDataBase::InitAlloc()
@@ -636,7 +631,7 @@ void TextDataBase::BufferData::DeallocAll()
 	NextFreePageInfo = 0;
 }
 
-void TextDataBase::BufferData::AddCharToPage(u32 page, const FontBitmap& fontData)
+void TextDataBase::BufferData::AddCharToPage(u32 page, const FontBitmapInformation& fontData)
 {
 	if(NextFreePageInfo >= PageBufferSize)
 	{

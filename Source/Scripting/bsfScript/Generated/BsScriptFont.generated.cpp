@@ -5,7 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
-#include "BsScriptFontBitmap.generated.h"
+#include "BsScriptFontBitmapInformation.generated.h"
 
 namespace bs
 {
@@ -36,11 +36,11 @@ namespace bs
 
 	MonoObject* ScriptFont::InternalGetBitmap(ScriptFont* thisPtr, uint32_t size)
 	{
-		SPtr<FontBitmap> tmp__output;
+		SPtr<FontBitmapInformation> tmp__output;
 		tmp__output = thisPtr->GetHandle()->GetBitmap(size);
 
 		MonoObject* __output;
-		__output = ScriptFontBitmap::Create(tmp__output);
+		__output = ScriptFontBitmapInformation::Create(tmp__output);
 
 		return __output;
 	}

@@ -282,7 +282,7 @@ u32 GUIInputCaret::GetCaretHeight() const
 		if(mTextDesc.Font != nullptr)
 		{
 			u32 nearestSize = mTextDesc.Font->GetClosestSize(mTextDesc.FontSize);
-			SPtr<const FontBitmap> fontData = mTextDesc.Font->GetBitmap(nearestSize);
+			SPtr<const FontBitmapInformation> fontData = mTextDesc.Font->GetBitmap(nearestSize);
 
 			if(fontData != nullptr)
 				return Math::RoundToU32(fontData->LineHeight);
