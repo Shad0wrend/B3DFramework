@@ -204,14 +204,14 @@ namespace bs
 
 		/**
 		 * Returns width of a single animation frame sprite texture in pixels. If the texture has no animation this
-		 * is the same as getWidth().
+		 * is the same as GetWidth().
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(FrameWidth), Property(Getter))
 		u32 GetFrameWidth() const;
 
 		/**
 		 * Returns height of a single animation frame sprite texture in pixels. If the texture has no animation this
-		 * is the same as getHeight().
+		 * is the same as GetHeight().
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(FrameHeight), Property(Getter))
 		u32 GetFrameHeight() const;

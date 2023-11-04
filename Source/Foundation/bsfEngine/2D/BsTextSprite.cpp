@@ -18,9 +18,9 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 	B3DMarkAllocatorFrame();
 	{
 		const U32String utf32text = UTF8::ToUtF32(information.Text);
-		TextData<FrameAllocatorTag> textData(utf32text, information.Font, information.FontSize, information.Width, information.Height, information.WordWrap, information.WordBreak);
+		TTextGeometry<FrameAllocatorTag> textGeometry(utf32text, information.Font, information.FontSize, information.Width, information.Height, information.WordWrap, information.WordBreak);
 
-		const u32 pageCount = textData.GetPageCount();
+		const u32 pageCount = textGeometry.GetPageCount();
 
 		// Free all previous memory
 		for(auto& entry : mCachedRenderElements)
@@ -42,7 +42,7 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 		u32 pageIndex = 0;
 		for(auto& renderElementData : mCachedRenderElements)
 		{
-			const u32 newQuadCount = textData.GetQuadCount(pageIndex);
+			const u32 newQuadCount = textGeometry.GetQuadCount(pageIndex);
 
 			SpriteRenderElement& renderElement = renderElementData.RenderElement;
 			renderElement.VertexCount = newQuadCount * 4;
@@ -51,7 +51,7 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 			renderElement.VertexUVs = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * renderElement.VertexCount);
 			renderElement.Indices = (u32*)mAlloc.Alloc(sizeof(u32) * renderElement.IndexCount);
 
-			const HTexture& tex = textData.GetTextureForPage(pageIndex);
+			const HTexture& tex = textGeometry.GetTextureForPage(pageIndex);
 
 			SpriteMaterialInfo& materialInformation = renderElementData.MaterialInformation;
 			materialInformation.GroupId = groupId;
@@ -72,7 +72,7 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 			SpriteRenderElement& renderElement = mCachedRenderElements[pageIndex].RenderElement;
 
 			const u32 quadCount = renderElement.VertexCount / 4;
-			BuildTextQuads(pageIndex, textData, information.Width, information.Height, information.HorzAlign, information.VertAlign, information.Anchor, renderElement.VertexPositions, renderElement.VertexUVs, renderElement.Indices, quadCount);
+			BuildTextQuads(pageIndex, textGeometry, information.Width, information.Height, information.HorzAlign, information.VertAlign, information.Anchor, renderElement.VertexPositions, renderElement.VertexUVs, renderElement.Indices, quadCount);
 		}
 	}
 
@@ -81,19 +81,19 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 	UpdateBounds();
 }
 
-u32 TextSprite::BuildTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
+u32 TextSprite::BuildTextQuads(u32 page, const TextGeometry& textGeometry, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 {
-	const u32 lineCount = textData.GetLineCount();
-	const u32 quadCount = textData.GetQuadCount(page);
+	const u32 lineCount = textGeometry.GetLineCount();
+	const u32 quadCount = textGeometry.GetQuadCount(page);
 
 	Vector2I* const alignmentOffsets = B3DStackNew<Vector2I>(lineCount);
-	GetAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
+	GetAlignmentOffsets(textGeometry, width, height, horzAlign, vertAlign, alignmentOffsets);
 	const Vector2I offset = GetAnchorOffset(anchor, width, height);
 
 	u32 quadOffset = 0;
 	for(u32 lineIndex = 0; lineIndex < lineCount; lineIndex++)
 	{
-		const TextDataBase::TextLine& line = textData.GetLine(lineIndex);
+		const TextGeometry::Line& line = textGeometry.GetLine(lineIndex);
 		const u32 writtenQuadCount = line.FillBuffer(page, vertices, uv, indices, quadOffset, bufferSizeQuads);
 
 		const Vector2I position = offset + alignmentOffsets[lineIndex];
@@ -111,20 +111,20 @@ u32 TextSprite::BuildTextQuads(u32 page, const TextDataBase& textData, u32 width
 	return quadCount;
 }
 
-u32 TextSprite::BuildTextQuads(const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
+u32 TextSprite::BuildTextQuads(const TextGeometry& textGeometry, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 {
-	const u32 lineCount = textData.GetLineCount();
-	const u32 pageCount = textData.GetPageCount();
+	const u32 lineCount = textGeometry.GetLineCount();
+	const u32 pageCount = textGeometry.GetPageCount();
 
 	Vector2I* const alignmentOffsets = B3DStackNew<Vector2I>(lineCount);
-	GetAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
+	GetAlignmentOffsets(textGeometry, width, height, horzAlign, vertAlign, alignmentOffsets);
 	const Vector2I offset = GetAnchorOffset(anchor, width, height);
 
 	u32 quadOffset = 0;
 
 	for(u32 lineIndex = 0; lineIndex < lineCount; lineIndex++)
 	{
-		const TextDataBase::TextLine& line = textData.GetLine(lineIndex);
+		const TextGeometry::Line& line = textGeometry.GetLine(lineIndex);
 		for(u32 pageIndex = 0; pageIndex < pageCount; pageIndex++)
 		{
 			const u32 writtenQuadCount = line.FillBuffer(pageIndex, vertices, uv, indices, quadOffset, bufferSizeQuads);
@@ -145,13 +145,13 @@ u32 TextSprite::BuildTextQuads(const TextDataBase& textData, u32 width, u32 heig
 	return quadOffset;
 }
 
-void TextSprite::GetAlignmentOffsets(const TextDataBase& textData, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, Vector2I* output)
+void TextSprite::GetAlignmentOffsets(const TextGeometry& textGeometry, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, Vector2I* output)
 {
-	u32 lineCount = textData.GetLineCount();
+	u32 lineCount = textGeometry.GetLineCount();
 	float currentHeight = 0.0f;
 	for(u32 lineIndex = 0; lineIndex < lineCount; lineIndex++)
 	{
-		const TextDataBase::TextLine& line = textData.GetLine(lineIndex);
+		const TextGeometry::Line& line = textGeometry.GetLine(lineIndex);
 		currentHeight += line.GetYOffset();
 	}
 
@@ -175,7 +175,7 @@ void TextSprite::GetAlignmentOffsets(const TextDataBase& textData, u32 width, u3
 	float currentY = 0.0f;
 	for(u32 lineIndex = 0; lineIndex < lineCount; lineIndex++)
 	{
-		const TextDataBase::TextLine& line = textData.GetLine(lineIndex);
+		const TextGeometry::Line& line = textGeometry.GetLine(lineIndex);
 
 		float horizontalOffset = 0.0f;
 		switch(horzAlign)

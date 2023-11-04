@@ -20,32 +20,32 @@ void GUIInputTool::UpdateText(const GUIElement* element, const TextSpriteInforma
 	B3DMarkAllocatorFrame();
 	{
 		const U32String utf32text = UTF8::ToUtF32(mTextDesc.Text);
-		TextData<FrameAllocatorTag> textData(utf32text, mTextDesc.Font, mTextDesc.FontSize, mTextDesc.Width, mTextDesc.Height, mTextDesc.WordWrap, mTextDesc.WordBreak);
+		TTextGeometry<FrameAllocatorTag> textGeometry(utf32text, mTextDesc.Font, mTextDesc.FontSize, mTextDesc.Width, mTextDesc.Height, mTextDesc.WordWrap, mTextDesc.WordBreak);
 
-		u32 numLines = textData.GetLineCount();
-		u32 numPages = textData.GetPageCount();
+		u32 numLines = textGeometry.GetLineCount();
+		u32 numPages = textGeometry.GetPageCount();
 
 		mNumQuads = 0;
 		for(u32 i = 0; i < numPages; i++)
-			mNumQuads += textData.GetQuadCount(i);
+			mNumQuads += textGeometry.GetQuadCount(i);
 
 		if(mQuads != nullptr)
 			B3DDelete(mQuads);
 
 		mQuads = B3DNewMultiple<Vector2>(mNumQuads * 4);
 
-		TextSprite::BuildTextQuads(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, mTextDesc.Anchor, mQuads, nullptr, nullptr, mNumQuads);
+		TextSprite::BuildTextQuads(textGeometry, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, mTextDesc.Anchor, mQuads, nullptr, nullptr, mNumQuads);
 
 		// Store cached line data
 		u32 curCharIdx = 0;
 		u32 curLineIdx = 0;
 
 		Vector2I* alignmentOffsets = B3DFrameNew<Vector2I>(numLines);
-		TextSprite::GetAlignmentOffsets(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, alignmentOffsets);
+		TextSprite::GetAlignmentOffsets(textGeometry, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, alignmentOffsets);
 
 		for(u32 i = 0; i < numLines; i++)
 		{
-			const TextDataBase::TextLine& line = textData.GetLine(i);
+			const TextGeometry::Line& line = textGeometry.GetLine(i);
 
 			// Line has a newline char only if it wasn't created by word wrap and it isn't the last line
 			bool hasNewline = line.HasNewlineChar() && (curLineIdx != (numLines - 1));

@@ -15,22 +15,31 @@ namespace bs
 
 	/**
 	 * This object takes as input a string, a font and optionally some constraints (like word wrap) and outputs a set of
-	 * character data you may use for rendering or metrics.
+	 * character data you may use for rendering or calculating dimensions.
 	 */
-	class TextDataBase
+	class TextGeometry
 	{
+		/**
+		 * Contains information about a single texture page that contains rendered character data.
+		 *
+		 * @note	Due to the way allocation is handled, this class is not allowed to have a destructor.
+		 */
+		struct PageInfo
+		{
+			u32 QuadCount = 0;
+			HTexture Texture;
+		};
+
 	protected:
 		/**
 		 * Represents a single word as a set of characters, or optionally just a blank space of a certain length.
 		 *
 		 * @note	Due to the way allocation is handled, this class is not allowed to have a destructor.
 		 */
-		class TextWord
+		class Word
 		{
 		public:
-			/**
-			 * Initializes the word and signals if it just a space (or multiple spaces), or an actual word with letters.
-			 */
+			/** Initializes the word and signals if it just a space (or multiple spaces), or an actual word with letters. */
 			void Initialize(bool isSpacer);
 
 			/**
@@ -94,24 +103,13 @@ namespace bs
 			float mSpaceWidth = 0.0f;
 		};
 
-		/**
-		 * Contains information about a single texture page that contains rendered character data.
-		 *
-		 * @note	Due to the way allocation is handled, this class is not allowed to have a destructor.
-		 */
-		struct PageInfo
-		{
-			u32 QuadCount = 0;
-			HTexture Texture;
-		};
-
 	public:
 		/**
 		 * Represents a single line as a set of words.
 		 *
 		 * @note	Due to the way allocation is handled, this class is not allowed to have a destructor.
 		 */
-		class B3D_CORE_EXPORT TextLine
+		class B3D_CORE_EXPORT Line
 		{
 		public:
 			/**	Returns width of the line in pixels. */
@@ -134,16 +132,16 @@ namespace bs
 			/**
 			 * Fills the vertex/uv/index buffers for the specified page, with all the character data needed for rendering.
 			 *
-			 * @param[in]	page		The page.
-			 * @param[out]	vertices	Pre-allocated array where character vertices will be written.
-			 * @param[out]	uvs			Pre-allocated array where character uv coordinates will be written.
-			 * @param[out]	indexes 	Pre-allocated array where character indices will be written.
-			 * @param[in]	offset		Offsets the location at which the method writes to the buffers. Counted as number
-			 *							of quads.
-			 * @param[in]	size		Total number of quads that can fit into the specified buffers.
+			 * @param	page		The page.
+			 * @param	outVertices	Pre-allocated array where character vertices will be written.
+			 * @param	outUVs		Pre-allocated array where character uv coordinates will be written.
+			 * @param	outIndices 	Pre-allocated array where character indices will be written.
+			 * @param	offset		Offsets the location at which the method writes to the buffers. Counted as number
+			 *						of quads.
+			 * @param	size		Total number of quads that can fit into the specified buffers.
 			 * @return					Number of quads that were written.
 			 */
-			u32 FillBuffer(u32 page, Vector2* vertices, Vector2* uvs, u32* indexes, u32 offset, u32 size) const;
+			u32 FillBuffer(u32 page, Vector2* outVertices, Vector2* outUVs, u32* outIndices, u32 offset, u32 size) const;
 
 			/**	Checks are we at a word boundary (meaning the next added character will start a new word). */
 			bool IsAtWordBoundary() const;
@@ -158,7 +156,7 @@ namespace bs
 			bool HasNewlineChar() const { return mHasNewline; }
 
 		private:
-			friend class TextDataBase;
+			friend class TextGeometry;
 
 			/**
 			 * Appends a new character to the line.
@@ -177,10 +175,10 @@ namespace bs
 			 * @param	wordIndex		Sequential index of the word in the original string. Spaces are counted as words as well.
 			 * @param	word		Description of the word.
 			 */
-			void AddWord(u32 wordIndex, const TextWord& word);
+			void AddWord(u32 wordIndex, const Word& word);
 
 			/** Initializes the line. Must be called after construction. */
-			void Initialize(TextDataBase* textData);
+			void Initialize(TextGeometry* textData);
 
 			/**
 			 * Finalizes the line. Do not add new characters/words after a line has been finalized.
@@ -200,7 +198,7 @@ namespace bs
 			void CalculateBounds();
 
 		private:
-			TextDataBase* mTextData = nullptr;
+			TextGeometry* mTextData = nullptr;
 			u32 mWordStartIndex = 0;
 			u32 mWordEndIndex = 0;
 
@@ -213,15 +211,15 @@ namespace bs
 
 	public:
 		/**
-		 * Initializes a new text data using the specified string and font. Text will attempt to fit into the provided area.
+		 * Initializes a new text geometry object using the specified string and font. Text will attempt to fit into the provided area.
 		 * If enabled it will wrap words to new line when they don't fit. Individual words will be broken into multiple
 		 * pieces if they don't fit on a single line when word break is enabled, otherwise they will be clipped. If the
 		 * specified area is zero size then the text will not be clipped or word wrapped in any way.
 		 *
 		 * After this object is constructed you may call various getter methods to get needed information.
 		 */
-		B3D_CORE_EXPORT TextDataBase(const U32String& text, const HFont& font, u32 fontSize, u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true);
-		B3D_CORE_EXPORT virtual ~TextDataBase() = default;
+		B3D_CORE_EXPORT TextGeometry(const U32String& text, const HFont& font, u32 fontSize, u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true);
+		B3D_CORE_EXPORT virtual ~TextGeometry() = default;
 
 		/**	Returns the number of lines that were generated. */
 		B3D_CORE_EXPORT u32 GetLineCount() const { return mLineCount; }
@@ -233,7 +231,7 @@ namespace bs
 		B3D_CORE_EXPORT float GetLineHeight() const;
 
 		/**	Gets information describing a single line at the specified index. */
-		B3D_CORE_EXPORT const TextLine& GetLine(u32 idx) const { return mLines[idx]; }
+		B3D_CORE_EXPORT const Line& GetLine(u32 idx) const { return mLines[idx]; }
 
 		/**	Returns font texture for the provided page index.  */
 		B3D_CORE_EXPORT const HTexture& GetTextureForPage(u32 page) const;
@@ -251,19 +249,19 @@ namespace bs
 		/**
 		 * Copies internally stored data in temporary buffers to a persistent buffer.
 		 *
-		 * @param[in]	text			Text originally used for creating the internal temporary buffer data.
-		 * @param[in]	buffer			Memory location to copy the data to. If null then no data will be copied and the
-		 *								parameter @p size will contain the required buffer size.
-		 * @param[in]	size			Size of the provided memory buffer, or if the buffer is null, this will contain the
-		 *								required buffer size after method exists.
-		 * @param[in]	freeTemporary	If true the internal temporary data will be freed after copying.
+		 * @param	text			Text originally used for creating the internal temporary buffer data.
+		 * @param	buffer			Memory location to copy the data to. If null then no data will be copied and the
+		 *							parameter @p size will contain the required buffer size.
+		 * @param	size			Size of the provided memory buffer, or if the buffer is null, this will contain the
+		 *							required buffer size after method exists.
+		 * @param	freeTemporary	If true the internal temporary data will be freed after copying.
 		 *
 		 * @note	Must be called after text data has been constructed and is in the temporary buffers.
 		 */
 		B3D_CORE_EXPORT void GeneratePersistentData(const U32String& text, u8* buffer, u32& size, bool freeTemporary = true);
 
 	private:
-		friend class TextLine;
+		friend class Line;
 
 		/**	Returns Y offset that determines the line on which the characters are placed. In pixels. */
 		float GetBaselineOffset() const;
@@ -272,19 +270,19 @@ namespace bs
 		float GetSpaceWidth() const;
 
 		/** Gets a description of a single character referenced by its sequential index based on the original string. */
-		const CharacterInformation& GetCharacter(u32 index) const { return *mChars[index]; }
+		const CharacterInformation& GetCharacter(u32 index) const { return *mCharacters[index]; }
 
 		/** Gets a description of a single word referenced by its sequential index based on the original string. */
-		const TextWord& GetWord(u32 index) const { return mWords[index]; }
+		const Word& GetWord(u32 index) const { return mWords[index]; }
 
 	protected:
-		const CharacterInformation** mChars;
-		u32 mNumChars;
+		const CharacterInformation** mCharacters;
+		u32 mCharacterCount;
 
-		TextWord* mWords;
-		u32 mNumWords;
+		Word* mWords;
+		u32 mWordCount;
 
-		TextLine* mLines;
+		Line* mLines;
 		u32 mLineCount;
 
 		PageInfo* mPageInfos;
@@ -297,10 +295,10 @@ namespace bs
 	protected:
 		/** Stores per-thread memory buffers used to reduce memory allocation. */
 		// Note: I could replace this with the global frame allocator to avoid the extra logic
-		struct BufferData
+		struct TemporaryBuffer
 		{
-			BufferData();
-			~BufferData();
+			TemporaryBuffer();
+			~TemporaryBuffer();
 
 			/**
 			 * Allocates a new word and adds it to the buffer. Returns index of the word in the word buffer.
@@ -311,7 +309,7 @@ namespace bs
 			u32 AllocWord(bool spacer);
 
 			/** Allocates a new line and adds it to the buffer. Returns index of the line in the line buffer. */
-			u32 AllocLine(TextDataBase* textData);
+			u32 AllocLine(TextGeometry* textData);
 
 			/**
 			 * Increments the count of characters for the referenced page, and optionally creates page info if it doesn't
@@ -322,11 +320,11 @@ namespace bs
 			/**	Resets all allocation counters, but doesn't actually release memory. */
 			void DeallocAll();
 
-			TextWord* WordBuffer;
+			Word* WordBuffer;
 			u32 WordBufferSize;
 			u32 NextFreeWord;
 
-			TextLine* LineBuffer;
+			Line* LineBuffer;
 			u32 LineBufferSize;
 			u32 NextFreeLine;
 
@@ -335,10 +333,10 @@ namespace bs
 			u32 NextFreePageInfo;
 		};
 
-		static B3D_THREADLOCAL BufferData* MemBuffer;
+		static B3D_THREADLOCAL TemporaryBuffer* PerThreadTemporaryBuffer;
 
 		/**	Allocates an initial set of buffers that will be reused while parsing text data. */
-		static void InitAlloc();
+		static void EnsurePerThreadTemporaryBufferIsInitialized();
 	};
 
 	/** @} */
@@ -347,14 +345,13 @@ namespace bs
 	 *  @{
 	 */
 
-	/** @copydoc TextDataBase */
+	/** @copydoc TextGeometry */
 	template <class AllocatorTag = DefaultAllocatorTag>
-	class TextData : public TextDataBase
+	class TTextGeometry : public TextGeometry
 	{
 	public:
-		/** @copydoc TextDataBase::TextDataBase */
-		TextData(const U32String& text, const HFont& font, u32 fontSize, u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true)
-			: TextDataBase(text, font, fontSize, width, height, wordWrap, wordBreak), mData(nullptr)
+		TTextGeometry(const U32String& text, const HFont& font, u32 fontSize, u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true)
+			: TextGeometry(text, font, fontSize, width, height, wordWrap, wordBreak), mData(nullptr)
 		{
 			u32 totalBufferSize = 0;
 			GeneratePersistentData(text, nullptr, totalBufferSize);
@@ -363,7 +360,7 @@ namespace bs
 			GeneratePersistentData(text, (u8*)mData, totalBufferSize);
 		}
 
-		~TextData()
+		~TTextGeometry()
 		{
 			if(mData != nullptr)
 				B3DFree<AllocatorTag>(mData);

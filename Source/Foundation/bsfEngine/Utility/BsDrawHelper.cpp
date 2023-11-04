@@ -732,7 +732,7 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 	struct TextRenderData
 	{
 		u32 Page;
-		SPtr<TextData<>> TextData;
+		SPtr<TTextGeometry<>> TextGeometry;
 	};
 
 	UnorderedMap<u32, TextRenderData> textRenderData;
@@ -748,7 +748,7 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 		}
 
 		U32String utf32text = UTF8::ToUtF32(shapeData.Text);
-		SPtr<TextData<>> textData = B3DMakeShared<TextData<>>(utf32text, shapeData.Font, shapeData.Size);
+		SPtr<TTextGeometry<>> textData = B3DMakeShared<TTextGeometry<>>(utf32text, shapeData.Font, shapeData.Size);
 
 		u32 numPages = textData->GetPageCount();
 		for(u32 j = 0; j < numPages; j++)
@@ -768,7 +768,7 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 
 			TextRenderData& renderData = textRenderData[textIdx];
 			renderData.Page = j;
-			renderData.TextData = textData;
+			renderData.TextGeometry = textData;
 
 			textIdx++;
 			idx++;
@@ -818,7 +818,7 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 			if(allShapes[0].MeshType == MeshType::Text)
 			{
 				TextRenderData& renderData = textRenderData[allShapes[0].TextIdx];
-				currentBatch.Texture = renderData.TextData->GetTextureForPage(renderData.Page);
+				currentBatch.Texture = renderData.TextGeometry->GetTextureForPage(renderData.Page);
 			}
 		}
 
@@ -830,7 +830,7 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 			if(allShapes[i].MeshType == MeshType::Text)
 			{
 				TextRenderData& renderData = textRenderData[allShapes[i].TextIdx];
-				texture = renderData.TextData->GetTextureForPage(renderData.Page);
+				texture = renderData.TextGeometry->GetTextureForPage(renderData.Page);
 			}
 
 			bool startNewBatch = allShapes[i].MeshType != currentBatch.Type || texture != currentBatch.Texture;
@@ -1201,7 +1201,7 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 				Text2DData& text2DData = mText2DData[shapeData.Idx];
 
 				TextRenderData& renderData = textRenderData[shapeData.TextIdx];
-				u32 numQuads = renderData.TextData->GetQuadCount(renderData.Page);
+				u32 numQuads = renderData.TextGeometry->GetQuadCount(renderData.Page);
 
 				u32* indices = meshData[typeIdx]->GetIndices32() + indexOffset[typeIdx];
 
@@ -1210,11 +1210,11 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 				Vector2* tempVertices = B3DStackAllocate<Vector2>(shapeData.NumVertices);
 				Vector2* tempUVs = B3DStackAllocate<Vector2>(shapeData.NumVertices);
 
-				u32 numLines = renderData.TextData->GetLineCount();
+				u32 numLines = renderData.TextGeometry->GetLineCount();
 				u32 quadOffset = 0;
 				for(u32 j = 0; j < numLines; j++)
 				{
-					const TextDataBase::TextLine& line = renderData.TextData->GetLine(j);
+					const TextGeometry::Line& line = renderData.TextGeometry->GetLine(j);
 					u32 writtenQuads = line.FillBuffer(renderData.Page, tempVertices, tempUVs, indices, quadOffset, numQuads);
 
 					quadOffset += writtenQuads;
@@ -1225,8 +1225,8 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 
 				Vector3 worldSpacePos = text2DData.Transform.MultiplyAffine(text2DData.Position);
 				Vector2I screenPos = camera->WorldToScreenPoint(worldSpacePos);
-				screenPos.X -= Math::RoundToI32(renderData.TextData->GetWidth() / 2.0f);
-				screenPos.Y -= Math::RoundToI32(renderData.TextData->GetHeight() / 2.0f);
+				screenPos.X -= Math::RoundToI32(renderData.TextGeometry->GetWidth() / 2.0f);
+				screenPos.Y -= Math::RoundToI32(renderData.TextGeometry->GetHeight() / 2.0f);
 
 				float z = camera->ProjectPoint(camera->WorldToViewPoint(worldSpacePos)).Z;
 
