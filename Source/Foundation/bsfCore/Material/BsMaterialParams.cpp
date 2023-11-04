@@ -14,18 +14,18 @@
 
 using namespace bs;
 
-SPtr<ct::Texture> GetSpriteTextureAtlas(const SPtr<ct::SpriteTexture>& spriteTexture)
+SPtr<ct::Texture> GetSpriteImageAtlas(const SPtr<ct::SpriteTexture>& spriteImage)
 {
-	if(spriteTexture)
-		return spriteTexture->GetTexture();
+	if(spriteImage)
+		return spriteImage->GetAtlasTexture();
 
 	return nullptr;
 }
 
-HTexture GetSpriteTextureAtlas(const HSpriteTexture& spriteTexture)
+HTexture GetSpriteImageAtlas(const HSpriteTexture& spriteImage)
 {
-	if(spriteTexture.IsLoaded())
-		return spriteTexture->GetTexture();
+	if(spriteImage.IsLoaded())
+		return spriteImage->GetAtlasTexture();
 
 	return HTexture();
 }
@@ -660,7 +660,7 @@ void TMaterialParams<IsRenderProxz>::GetTexture(const ParamData& param, TextureT
 	if(textureParam.Texture)
 		value = textureParam.Texture;
 	else if(textureParam.SpriteTexture)
-		value = GetSpriteTextureAtlas(textureParam.SpriteTexture);
+		value = GetSpriteImageAtlas(textureParam.SpriteTexture);
 
 	surface = textureParam.Surface;
 }

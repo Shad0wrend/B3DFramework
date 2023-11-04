@@ -92,7 +92,7 @@ void GUISliderHandle::UpdateRenderElements()
 	{
 		if(handleSize == 0 && desc.Image != nullptr)
 		{
-			handleSize = desc.Image->GetWidth();
+			handleSize = desc.Image->GetSize().Width;
 			mPctHandleSize = handleSize / (float)GetMaxSize();
 		}
 
@@ -103,7 +103,7 @@ void GUISliderHandle::UpdateRenderElements()
 	{
 		if(handleSize == 0 && desc.Image != nullptr)
 		{
-			handleSize = desc.Image->GetHeight();
+			handleSize = desc.Image->GetSize().Height;
 			mPctHandleSize = handleSize / (float)GetMaxSize();
 		}
 
@@ -135,10 +135,14 @@ void GUISliderHandle::UpdateClippedBounds()
 
 Vector2I GUISliderHandle::GetOptimalSize() const
 {
-	HSpriteTexture activeTex = GetActiveTexture();
+	HSpriteTexture activeImage = GetActiveTexture();
 
-	if(SpriteTexture::CheckIsLoaded(activeTex))
-		return Vector2I(activeTex->GetWidth(), activeTex->GetHeight());
+	if(SpriteTexture::CheckIsLoaded(activeImage))
+	{
+		const Size2UI& imageSize = activeImage->GetSize();
+
+		return Vector2I((i32)imageSize.Width, (i32)imageSize.Height);
+	}
 
 	return Vector2I();
 }

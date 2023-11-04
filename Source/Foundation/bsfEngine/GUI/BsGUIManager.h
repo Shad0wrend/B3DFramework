@@ -154,10 +154,10 @@ namespace bs
 		}
 
 		/**	Returns the default caret texture used for rendering the input caret sprite. */
-		const HSpriteTexture& GetCaretTexture() const { return mCaretTexture; }
+		const HSpriteTexture& GetCaretTexture() const { return mCaretImage; }
 
 		/**	Returns the default selection highlight texture used for rendering the selection highlight sprites. */
-		const HSpriteTexture& GetTextSelectionTexture() const { return mTextSelectionTexture; }
+		const HSpriteTexture& GetTextSelectionTexture() const { return mTextSelectionImage; }
 
 		/**	Checks is the input caret visible this frame. */
 		bool GetCaretBlinkState() const { return mIsCaretOn; }
@@ -384,14 +384,14 @@ namespace bs
 		GUICommandEvent mCommandEvent;
 		GUIVirtualButtonEvent mVirtualButtonEvent;
 
-		HSpriteTexture mCaretTexture;
+		HSpriteTexture mCaretImage;
 		Color mCaretColor{ 1.0f, 0.6588f, 0.0f };
 		float mCaretBlinkInterval = 0.5f;
 		float mCaretLastBlinkTime = 0.0f;
 		bool mIsCaretOn = false;
 		CursorType mActiveCursor = CursorType::Arrow;
 
-		HSpriteTexture mTextSelectionTexture;
+		HSpriteTexture mTextSelectionImage;
 		Color mTextSelectionColor{ 0.0f, 114 / 255.0f, 188 / 255.0f };
 
 		Map<SPtr<const RenderTexture>, const GUIElement*> mInputBridge;

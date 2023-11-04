@@ -2734,29 +2734,29 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		</event>
 	</class>
 	<struct native="SpriteSheetGridAnimation" script="SpriteSheetGridAnimation">
-		<doc>Descriptor that describes a simple sprite sheet animation. The parent texture is split into a grid of <see cref="numRows"/> x <see cref="numColumns"/>, each representing one frame of the animation. Every frame is of equal size. Frames are sequentially evaluated starting from the top-most row, iterating over all columns in a row and then moving to next row, up to <see cref="count"/> frames. Frames in rows/colums past <see cref="count"/>. <see cref="fps"/> frames are evaluated every second, allowing you to control animation speed.</doc>
+		<doc>Descriptor that describes a simple sprite sheet animation. The parent area is split into a grid of <see cref="RowCount"/> x <see cref="ColumnCount"/>, each representing one frame of the animation. Every frame is of equal size. Frames are sequentially evaluated starting from the top-most row, iterating over all columns in a row and then moving to next row, up to <see cref="FrameCount"/> frames. <see cref="FramesPerSecond"/> frames are evaluated every second, allowing you to control animation speed.</doc>
 		<ctor>
 		</ctor>
 		<ctor>
-			<param name="numRows" type="int">
+			<param name="rowCount" type="int">
 			</param>
-			<param name="numColumns" type="int">
+			<param name="columnCount" type="int">
 			</param>
-			<param name="count" type="int">
+			<param name="frameCount" type="int">
 			</param>
-			<param name="fps" type="int">
+			<param name="framesPerSecond" type="int">
 			</param>
 		</ctor>
-		<field name="NumRows" type="int">
-			<doc>Number of rows to divide the parent&apos;s texture area. Determines height of the individual frame (depends on parent texture size).</doc>
+		<field name="RowCount" type="int">
+			<doc>Number of rows to divide the parent area in. Determines height of the individual frame (depends on parent area size).</doc>
 		</field>
-		<field name="NumColumns" type="int">
-			<doc>Number of columns to divide the parent&apos;s texture area. Determines column of the individual frame (depends on parent texture size).</doc>
+		<field name="ColumnCount" type="int">
+			<doc>Number of columns to divide the parent area in. Determines column of the individual frame (depends on parent area size).</doc>
 		</field>
-		<field name="Count" type="int">
-			<doc>Number of frames in the animation. Must be less or equal than <see cref="numRows"/> * <see cref="numColumns"/>.</doc>
+		<field name="FrameCount" type="int">
+			<doc>Number of frames in the animation. Must be less or equal than <see cref="RowCount"/> * <see cref="ColumnCount"/>.</doc>
 		</field>
-		<field name="Fps" type="int">
+		<field name="FramesPerSecond" type="int">
 			<doc>How many frames to evaluate each second. Determines the animation speed.</doc>
 		</field>
 	</struct>
@@ -3509,6 +3509,28 @@ If this is disabled, then color grading and white balancing will not be enabled 
 			<doc>The system will attempt to limit auto-step to the provided step offset and no higher.</doc>
 		</enumentry>
 	</enum>
+	<class native="SpriteImage" script="SpriteImage">
+		<doc>Image that references a part of a texture by specifying an UV range. When the sprite image is rendered only the portion of the texture specified by the UV range will be rendered.
+Sprite images also allow you to specify sprite sheet animation by varying which portion of the UV is selected over time.</doc>
+		<property name="Size" type="Size2UI" getter="GetSize" setter="" static="false">
+			<doc>Returns the pixel size of the UV subrange covered in the texture atlas. If the image includes animation, this will return the size of the entire animation grid.</doc>
+		</property>
+		<property name="AnimationFrameSize" type="Size2UI" getter="GetAnimationFrameSize" setter="" static="false">
+			<doc>Returns the size of a single animation frame in pixels. If the texture has no animation this is the same as GetWidth().</doc>
+		</property>
+		<property name="Texture" type="RRef&lt;Texture&gt;" getter="GetAtlasTexture" setter="" static="false">
+			<doc>Retrieves the atlas texture where the image is stored.</doc>
+		</property>
+		<property name="UVRange" type="Rect2" getter="GetUVRange" setter="SetUVRange" static="false">
+			<doc>Determines the UV range that the image is referencing.</doc>
+		</property>
+		<property name="Animation" type="SpriteSheetGridAnimation" getter="GetAnimation" setter="SetAnimation" static="false">
+			<doc>Sets properties describing sprite animation. The animation splits the sprite area into a grid of sub-images which can be evaluated over time. In order to view the animation you must also enable playback through setAnimationPlayback().</doc>
+		</property>
+		<property name="AnimationPlayback" type="SpriteAnimationPlayback" getter="GetAnimationPlayback" setter="SetAnimationPlayback" static="false">
+			<doc>Determines if and how should the sprite animation play.</doc>
+		</property>
+	</class>
 	<enum native="CharacterNonWalkableMode" script="CharacterNonWalkableMode">
 		<doc>Controls behaviour when a character controller reaches a slope thats larger than its slope offset.</doc>
 		<enumentry native="Prevent" script="Prevent">
@@ -4902,6 +4924,23 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		<enumentry native="HintedRaster" script="HintedRaster">
 		</enumentry>
 	</enum>
+	<struct native="SpriteTextureCreateInformation" script="SpriteTextureCreateInformation">
+		<doc>Descriptor structure used for initialization of a SpriteTexture.</doc>
+		<ctor>
+		</ctor>
+		<field name="AtlasTexture" type="RRef&lt;Texture&gt;">
+			<doc>Texture used as the atlas.</doc>
+		</field>
+		<field name="UVRange" type="Rect2">
+			<doc>Range in the atlas texture that the image maps to.</doc>
+		</field>
+		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
+			<doc>Determines if animation is enabled and how should it play.</doc>
+		</field>
+		<field name="Animation" type="SpriteSheetGridAnimation">
+			<doc>Describes the sprite sheet grid used for animation, if animation is used.</doc>
+		</field>
+	</struct>
 	<struct native="PARTICLE_CONE_SHAPE_DESC" script="ParticleConeShapeOptions">
 		<doc>Information describing a ParticleEmitterConeShape.</doc>
 		<ctor>
@@ -5667,8 +5706,45 @@ If this is disabled, then color grading and white balancing will not be enabled 
 			<doc>Determines position of the sphere shape, relative to the component&apos;s scene object.</doc>
 		</property>
 	</class>
+	<struct native="SpriteImageInformation" script="SpriteImageInformation">
+		<doc>Information about a SpriteImage.</doc>
+		<ctor>
+		</ctor>
+		<field name="UVRange" type="Rect2">
+			<doc>Range in the atlas texture that the image maps to.</doc>
+		</field>
+		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
+			<doc>Determines if animation is enabled and how should it play.</doc>
+		</field>
+		<field name="Animation" type="SpriteSheetGridAnimation">
+			<doc>Describes the sprite sheet grid used for animation, if animation is used.</doc>
+		</field>
+	</struct>
+	<struct native="SpriteImageCreateInformation" script="SpriteImageCreateInformation">
+		<doc>Descriptor structure used for initialization of a SpriteImage.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="other" type="SpriteImageInformation">
+			</param>
+		</ctor>
+		<field name="UVRange" type="Rect2">
+			<doc>Range in the atlas texture that the image maps to.</doc>
+		</field>
+		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
+			<doc>Determines if animation is enabled and how should it play.</doc>
+		</field>
+		<field name="Animation" type="SpriteSheetGridAnimation">
+			<doc>Describes the sprite sheet grid used for animation, if animation is used.</doc>
+		</field>
+	</struct>
 	<class native="SpriteTexture" script="SpriteTexture">
-		<doc>Texture that references a part of a larger texture by specifying an UV subset. When the sprite texture is rendererd only the portion of the texture specified by the UV subset will be rendered. This allows you to use the same texture for multiple sprites (texture atlasing). Sprite textures also allow you to specify sprite sheet animation by varying which portion of the UV is selected over time.</doc>
+		<doc>Implementation of SpriteImage that uses a user-provided texture as the atlas texture.</doc>
+		<method native="SetAtlasTexture" script="SetAtlasTexture" static="false">
+			<doc>Sets the atlas texture to utilize.</doc>
+			<param name="texture" type="RRef&lt;Texture&gt;">
+			</param>
+		</method>
 		<ctor>
 			<doc>Creates a new sprite texture that references the entire area of the provided texture.</doc>
 			<param name="texture" type="RRef&lt;Texture&gt;">
@@ -5676,40 +5752,9 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		</ctor>
 		<ctor>
 			<doc>Creates a new sprite texture that references a sub-area of the provided texture.</doc>
-			<param name="uvOffset" type="Vector2">
-			</param>
-			<param name="uvScale" type="Vector2">
-			</param>
-			<param name="texture" type="RRef&lt;Texture&gt;">
+			<param name="createInformation" type="SpriteTextureCreateInformation">
 			</param>
 		</ctor>
-		<property name="Texture" type="RRef&lt;Texture&gt;" getter="GetTexture" setter="SetTexture" static="false">
-			<doc>Determines the internal texture that the sprite texture references.</doc>
-		</property>
-		<property name="Width" type="int" getter="GetWidth" setter="" static="false">
-			<doc>Returns width of the sprite texture in pixels.</doc>
-		</property>
-		<property name="Height" type="int" getter="GetHeight" setter="" static="false">
-			<doc>Returns height of the sprite texture in pixels.</doc>
-		</property>
-		<property name="FrameWidth" type="int" getter="GetFrameWidth" setter="" static="false">
-			<doc>Returns width of a single animation frame sprite texture in pixels. If the texture has no animation this is the same as getWidth().</doc>
-		</property>
-		<property name="FrameHeight" type="int" getter="GetFrameHeight" setter="" static="false">
-			<doc>Returns height of a single animation frame sprite texture in pixels. If the texture has no animation this is the same as getHeight().</doc>
-		</property>
-		<property name="Offset" type="Vector2" getter="GetOffset" setter="SetOffset" static="false">
-			<doc>Determines the offset into the referenced texture where the sprite starts. The offset is in UV coordinates, in range [0, 1].</doc>
-		</property>
-		<property name="Scale" type="Vector2" getter="GetScale" setter="SetScale" static="false">
-			<doc>Determines the size of the sprite in the referenced texture. Size is in UV coordinates, range [0, 1].</doc>
-		</property>
-		<property name="Animation" type="SpriteSheetGridAnimation" getter="GetAnimation" setter="SetAnimation" static="false">
-			<doc>Sets properties describing sprite animation. The animation splits the sprite area into a grid of sub-images which can be evaluated over time. In order to view the animation you must also enable playback through setAnimationPlayback().</doc>
-		</property>
-		<property name="AnimationPlayback" type="SpriteAnimationPlayback" getter="GetAnimationPlayback" setter="SetAnimationPlayback" static="false">
-			<doc>Determines if and how should the sprite animation play.</doc>
-		</property>
 	</class>
 	<struct native="SubResource" script="SubResource">
 		<doc>Contains a resource that was imported from a file that contains multiple resources (for example an animation from an FBX file).</doc>

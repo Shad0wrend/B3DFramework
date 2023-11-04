@@ -750,8 +750,9 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 
 	if(spriteTexture)
 	{
-		gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, spriteTexture->GetOffset());
-		gParticlesParamDef.gUVScale.Set(particlesParamBuffer, spriteTexture->GetScale());
+		const Rect2 UVRange = spriteTexture->GetUVRange();
+		gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, UVRange.GetOffset());
+		gParticlesParamDef.gUVScale.Set(particlesParamBuffer, Vector2(UVRange.Width, UVRange.Height));
 
 		const SpriteSheetGridAnimation& anim = spriteTexture->GetAnimation();
 		gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer, Vector4((float)anim.ColumnCount, (float)anim.RowCount, 1.0f / anim.ColumnCount, 1.0f / anim.RowCount));
@@ -916,8 +917,9 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 		// Write sprite animation curve
 		if(spriteTexture)
 		{
-			gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, spriteTexture->GetOffset());
-			gParticlesParamDef.gUVScale.Set(particlesParamBuffer, spriteTexture->GetScale());
+			const Rect2 UVRange = spriteTexture->GetUVRange();
+			gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, UVRange.GetOffset());
+			gParticlesParamDef.gUVScale.Set(particlesParamBuffer, Vector2(UVRange.Width, UVRange.Height));
 
 			const SpriteSheetGridAnimation& anim = spriteTexture->GetAnimation();
 			gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer, Vector4((float)anim.ColumnCount, (float)anim.RowCount, 1.0f / anim.ColumnCount, 1.0f / anim.RowCount));

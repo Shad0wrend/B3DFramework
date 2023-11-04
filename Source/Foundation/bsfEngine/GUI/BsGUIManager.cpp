@@ -377,38 +377,38 @@ void GUIManager::ProcessDestroyQueue()
 
 void GUIManager::UpdateCaretTexture()
 {
-	if(mCaretTexture == nullptr)
+	if(mCaretImage == nullptr)
 	{
 		TextureCreateInformation textureCreateInformation; // Default
 		textureCreateInformation.Name = "Input Caret";
 
 		HTexture newTex = Texture::Create(textureCreateInformation);
-		mCaretTexture = SpriteTexture::Create(newTex);
+		mCaretImage = SpriteTexture::Create(newTex);
 	}
 
-	const HTexture& tex = mCaretTexture->GetTexture();
-	SPtr<PixelData> data = tex->GetProperties().AllocBuffer(0, 0);
+	const HTexture& texture = mCaretImage->GetAtlasTexture();
+	SPtr<PixelData> data = texture->GetProperties().AllocBuffer(0, 0);
 
 	data->SetColorAt(mCaretColor, 0, 0);
-	tex->WriteData(data);
+	texture->WriteData(data);
 }
 
 void GUIManager::UpdateTextSelectionTexture()
 {
-	if(mTextSelectionTexture == nullptr)
+	if(mTextSelectionImage == nullptr)
 	{
 		TextureCreateInformation textureCreateInformation; // Default
 		textureCreateInformation.Name = "Input Caret";
 
 		HTexture newTex = Texture::Create(textureCreateInformation);
-		mTextSelectionTexture = SpriteTexture::Create(newTex);
+		mTextSelectionImage = SpriteTexture::Create(newTex);
 	}
 
-	const HTexture& tex = mTextSelectionTexture->GetTexture();
-	SPtr<PixelData> data = tex->GetProperties().AllocBuffer(0, 0);
+	const HTexture& texture = mTextSelectionImage->GetAtlasTexture();
+	SPtr<PixelData> data = texture->GetProperties().AllocBuffer(0, 0);
 
 	data->SetColorAt(mTextSelectionColor, 0, 0);
-	tex->WriteData(data);
+	texture->WriteData(data);
 }
 
 void GUIManager::OnMouseDragEnded(const PointerEvent& event, DragCallbackInfo& dragInfo)

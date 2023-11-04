@@ -56,7 +56,7 @@ void VectorSprite::Update(const VectorSpriteInformation& information, u64 groupI
 
 	SpriteMaterialInfo& materialInformation = renderElementData.MaterialInformation;
 	materialInformation.GroupId = groupId;
-	materialInformation.Texture = image->GetTexture();
+	materialInformation.Texture = image->GetAtlasTexture();
 	materialInformation.Tint = information.Color;
 
 	renderElement.Material = SpriteManager::Instance().GetImageMaterial(SpriteMaterialTransparency::Premultiplied);
@@ -74,10 +74,10 @@ void VectorSprite::Update(const VectorSpriteInformation& information, u64 groupI
 	renderElement.VertexPositions[2] = Vector2(0.0f, (float)information.Height);
 	renderElement.VertexPositions[3] = Vector2((float)information.Width, (float)information.Height);
 
-	renderElement.VertexUVs[0] = image->TransformUv(Vector2(0.0f, 0.0f));
-	renderElement.VertexUVs[1] = image->TransformUv(Vector2(1.0f, 0.0f));
-	renderElement.VertexUVs[2] = image->TransformUv(Vector2(0.0f, 1.0f));
-	renderElement.VertexUVs[3] = image->TransformUv(Vector2(1.0f, 1.0f));
+	renderElement.VertexUVs[0] = image->TransformUV(Vector2(0.0f, 0.0f));
+	renderElement.VertexUVs[1] = image->TransformUV(Vector2(1.0f, 0.0f));
+	renderElement.VertexUVs[2] = image->TransformUV(Vector2(0.0f, 1.0f));
+	renderElement.VertexUVs[3] = image->TransformUV(Vector2(1.0f, 1.0f));
 
 	UpdateBounds();
 }
@@ -138,7 +138,7 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 		textureId = GetNextUniqueTextureId();
 		mUniqueTextures[textureId] = texture;
 
-		image = SpriteTexture::Create(Vector2::kZero, Vector2::kOne, texture);
+		image = SpriteTexture::Create(texture);
 	}
 	else
 	{
@@ -167,7 +167,14 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 			(float)requestedSize.Width / (float)atlasPageSize.Width,
 			(float)requestedSize.Height / (float)atlasPageSize.Height);
 
-		image = SpriteTexture::Create(uvOffset, uvSize, texture);
+		SpriteTextureCreateInformation spriteTextureCreateInformation;
+		spriteTextureCreateInformation.UVRange.X = uvOffset.X;
+		spriteTextureCreateInformation.UVRange.Y = uvOffset.Y;
+		spriteTextureCreateInformation.UVRange.Width = uvSize.X;
+		spriteTextureCreateInformation.UVRange.Height = uvSize.Y;
+		spriteTextureCreateInformation.AtlasTexture = texture;
+
+		image = SpriteTexture::Create(spriteTextureCreateInformation);
 	}
 
 	GUIVectorSpriteAtlasAllocation* const allocation = B3DNew<GUIVectorSpriteAtlasAllocation>(this, key.VectorPathId, image, layoutAllocation, textureId, renderable);
@@ -184,12 +191,12 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 	}
 
 	DirtySpriteInformation dirtySpriteInformation;
-	dirtySpriteInformation.Texture = B3DGetRenderProxy(image->GetTexture());
+	dirtySpriteInformation.Texture = B3DGetRenderProxy(image->GetAtlasTexture());
 	dirtySpriteInformation.Renderable = renderable;
-	dirtySpriteInformation.UVRegion = Rect2(image->GetOffset().X, image->GetOffset().Y, image->GetScale().X, image->GetScale().Y);
-	dirtySpriteInformation.Size = Size2UI(image->GetWidth(), image->GetHeight());
+	dirtySpriteInformation.UVRegion = image->GetUVRange();
+	dirtySpriteInformation.Size = image->GetSize();
 
-	B3D_ASSERT(image->GetWidth() > 0 && image->GetHeight() > 0);
+	B3D_ASSERT(dirtySpriteInformation.Size.Width > 0 && dirtySpriteInformation.Size.Height > 0);
 
 	mDirtySpriteBuffers[mDirtySpriteWriteBufferIndex].push_back(dirtySpriteInformation);
 	return allocationShared;
@@ -251,12 +258,12 @@ void GUIVectorSpriteAtlas::DestroyPendingReleasedAllocations()
 				if(mAtlasLayout.IsPageEmpty(layoutAllocation.PageId))
 				{
 					mAtlasLayoutTextures.erase(layoutAllocation.PageId);
-					ReleaseTexture(entry->Image->GetTexture());
+					ReleaseTexture(entry->Image->GetAtlasTexture());
 				}
 			}
 			else
 			{
-				ReleaseTexture(entry->Image->GetTexture());
+				ReleaseTexture(entry->Image->GetAtlasTexture());
 				ReleaseTextureId(entry->mTextureId);
 
 				mUniqueTextures.erase(entry->mTextureId);

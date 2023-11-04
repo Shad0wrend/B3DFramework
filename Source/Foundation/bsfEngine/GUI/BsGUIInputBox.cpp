@@ -316,11 +316,12 @@ Vector2I GUIInputBox::GetOptimalSize() const
 	u32 imageWidth = 0;
 	u32 imageHeight = 0;
 
-	const HSpriteTexture& activeTex = GetActiveTexture();
-	if(SpriteTexture::CheckIsLoaded(activeTex))
+	const HSpriteTexture& activeImage = GetActiveTexture();
+	if(SpriteTexture::CheckIsLoaded(activeImage))
 	{
-		imageWidth = activeTex->GetWidth();
-		imageHeight = activeTex->GetHeight();
+		const Size2UI& imageSize = activeImage->GetSize();
+		imageWidth = imageSize.Width;
+		imageHeight = imageSize.Height;
 	}
 
 	Vector2I contentSize = GUIHelper::CalculateOptimalContentSize(mText, *GetStyle(), GetSizeConstraints());

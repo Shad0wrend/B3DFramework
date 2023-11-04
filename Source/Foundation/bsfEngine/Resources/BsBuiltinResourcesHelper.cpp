@@ -105,7 +105,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 
 		outputPath.SetFilename("sprite_" + fileName + ".asset");
 
-		SPtr<SpriteTexture> spriteTexPtr = SpriteTexture::CreatePtrInternal(texture);
+		SPtr<SpriteTexture> spriteTexPtr = SpriteTexture::CreateShared(texture);
 		HResource spriteTex = GetResources().CreateResourceHandle(spriteTexPtr, UUID);
 
 		Resources::Instance().Save(spriteTex, outputPath, true, compress);
@@ -120,7 +120,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 
 		outputPath.SetFilename("sprite_" + fileName + ".asset");
 
-		SPtr<SpriteTexture> spriteTexPtr = SpriteTexture::CreatePtrInternal(texture);
+		SPtr<SpriteTexture> spriteTexPtr = SpriteTexture::CreateShared(texture);
 		spriteTexPtr->SetAnimation(animation);
 		spriteTexPtr->SetAnimationPlayback(playback);
 

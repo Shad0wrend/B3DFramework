@@ -22,18 +22,26 @@ GUITexture::GUITexture(const String& styleName, const HSpriteTexture& texture, T
 
 	if(texture != nullptr)
 	{
-		mActiveTexture = texture;
+		mActiveImage = texture;
 		mUsingStyleTexture = false;
 	}
 	else
 	{
-		mActiveTexture = GetStyle()->Normal.Texture;
+		mActiveImage = GetStyle()->Normal.Texture;
 		mUsingStyleTexture = true;
 	}
 
-	bool isTexLoaded = SpriteTexture::CheckIsLoaded(mActiveTexture);
-	mActiveTextureWidth = isTexLoaded ? mActiveTexture->GetFrameWidth() : 0;
-	mActiveTextureHeight = isTexLoaded ? mActiveTexture->GetFrameHeight() : 0;
+	if(SpriteTexture::CheckIsLoaded(mActiveImage))
+	{
+		const Size2UI& animationFrameSize = mActiveImage->GetAnimationFrameSize();
+		mActiveImageWidth = animationFrameSize.Width;
+		mActiveImageHeight = animationFrameSize.Height;
+	}
+	else
+	{
+		mActiveImageWidth = 0;
+		mActiveImageHeight = 0;
+	}
 }
 
 GUITexture::~GUITexture()
@@ -95,11 +103,19 @@ void GUITexture::SetTexture(const HSpriteTexture& texture)
 {
 	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
 
-	mActiveTexture = texture;
+	mActiveImage = texture;
 
-	bool isTexLoaded = SpriteTexture::CheckIsLoaded(mActiveTexture);
-	mActiveTextureWidth = isTexLoaded ? mActiveTexture->GetFrameWidth() : 0;
-	mActiveTextureHeight = isTexLoaded ? mActiveTexture->GetFrameHeight() : 0;
+	if(SpriteTexture::CheckIsLoaded(mActiveImage))
+	{
+		const Size2UI& animationFrameSize = mActiveImage->GetAnimationFrameSize();
+		mActiveImageWidth = animationFrameSize.Width;
+		mActiveImageHeight = animationFrameSize.Height;
+	}
+	else
+	{
+		mActiveImageWidth = 0;
+		mActiveImageHeight = 0;
+	}
 
 	mUsingStyleTexture = false;
 	mDesc.AnimationStartTime = GetTime().GetTime();
@@ -113,12 +129,11 @@ void GUITexture::SetTexture(const HSpriteTexture& texture)
 
 void GUITexture::UpdateRenderElements()
 {
-	Vector2I textureSize;
-	if(SpriteTexture::CheckIsLoaded(mActiveTexture))
+	Size2UI textureSize(BsZero);
+	if(SpriteTexture::CheckIsLoaded(mActiveImage))
 	{
-		mDesc.Image = mActiveTexture;
-		textureSize.X = mDesc.Image->GetFrameWidth();
-		textureSize.Y = mDesc.Image->GetFrameHeight();
+		mDesc.Image = mActiveImage;
+		textureSize = mDesc.Image->GetAnimationFrameSize();
 	}
 	Vector2I destSize(mLayoutData.Area.Width, mLayoutData.Area.Height);
 
@@ -128,18 +143,18 @@ void GUITexture::UpdateRenderElements()
 	{
 		if(destSize.X != 0 && destSize.Y != 0)
 		{
-			float aspectX = textureSize.X / (float)destSize.X;
-			float aspectY = textureSize.Y / (float)destSize.Y;
+			float aspectX = textureSize.Width / (float)destSize.X;
+			float aspectY = textureSize.Height / (float)destSize.Y;
 
 			if(aspectY > aspectX)
 			{
-				destSize.X = Math::RoundToU32(textureSize.X / aspectY);
-				destSize.Y = Math::RoundToU32(textureSize.Y / aspectY);
+				destSize.X = Math::RoundToU32(textureSize.Width / aspectY);
+				destSize.Y = Math::RoundToU32(textureSize.Height / aspectY);
 			}
 			else
 			{
-				destSize.X = Math::RoundToU32(textureSize.X / aspectX);
-				destSize.Y = Math::RoundToU32(textureSize.Y / aspectX);
+				destSize.X = Math::RoundToU32(textureSize.Width / aspectX);
+				destSize.Y = Math::RoundToU32(textureSize.Height / aspectX);
 			}
 		}
 
@@ -180,12 +195,20 @@ void GUITexture::NotifyStyleChanged()
 {
 	if(mUsingStyleTexture)
 	{
-		mActiveTexture = GetStyle()->Normal.Texture;
+		mActiveImage = GetStyle()->Normal.Texture;
 		mDesc.AnimationStartTime = GetTime().GetTime();
 
-		bool isTexLoaded = SpriteTexture::CheckIsLoaded(mActiveTexture);
-		mActiveTextureWidth = isTexLoaded ? mActiveTexture->GetFrameWidth() : 0;
-		mActiveTextureHeight = isTexLoaded ? mActiveTexture->GetFrameHeight() : 0;
+		if(SpriteTexture::CheckIsLoaded(mActiveImage))
+		{
+			const Size2UI& animationFrameSize = mActiveImage->GetAnimationFrameSize();
+			mActiveImageWidth = animationFrameSize.Width;
+			mActiveImageHeight = animationFrameSize.Height;
+		}
+		else
+		{
+			mActiveImageWidth = 0;
+			mActiveImageHeight = 0;
+		}
 	}
 }
 
@@ -202,8 +225,8 @@ Vector2I GUITexture::GetOptimalSize() const
 		optimalSize.X = GetSizeConstraints().MinWidth;
 	else
 	{
-		if(SpriteTexture::CheckIsLoaded(mActiveTexture))
-			optimalSize.X = mActiveTextureWidth;
+		if(SpriteTexture::CheckIsLoaded(mActiveImage))
+			optimalSize.X = mActiveImageWidth;
 		else
 			optimalSize.X = GetSizeConstraints().MaxWidth;
 	}
@@ -212,8 +235,8 @@ Vector2I GUITexture::GetOptimalSize() const
 		optimalSize.Y = GetSizeConstraints().MinHeight;
 	else
 	{
-		if(SpriteTexture::CheckIsLoaded(mActiveTexture))
-			optimalSize.Y = mActiveTextureHeight;
+		if(SpriteTexture::CheckIsLoaded(mActiveImage))
+			optimalSize.Y = mActiveImageHeight;
 		else
 			optimalSize.Y = GetSizeConstraints().MaxHeight;
 	}

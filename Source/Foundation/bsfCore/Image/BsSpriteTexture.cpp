@@ -90,6 +90,9 @@ Size2UI TSpriteImage<IsRenderProxy>::GetAnimationFrameSize() const
 		size.Height / Math::Max(1U, mInformation.Animation.RowCount));
 }
 
+template class TSpriteImage<true>;
+template class TSpriteImage<false>;
+
 namespace bs
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteImage, SyncPacket)
@@ -144,123 +147,33 @@ void SpriteImage::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& a
 }
 }}
 
-Rect2 SpriteTextureBase::Evaluate(float t) const
-{
-	if(mPlayback == SpriteAnimationPlayback::None)
-		return Rect2(mUVOffset.X, mUVOffset.Y, mUVScale.X, mUVScale.Y);
-
-	u32 row;
-	u32 column;
-	GetAnimationFrame(t, row, column);
-
-	Rect2 output;
-
-	// Note: These could be pre-calculated
-	output.Width = mUVScale.X / mAnimation.ColumnCount;
-	output.Height = mUVScale.Y / mAnimation.RowCount;
-
-	output.X = mUVOffset.X + column * output.Width;
-	output.Y = mUVOffset.Y + row * output.Height;
-
-	return output;
-}
-
-void SpriteTextureBase::GetAnimationFrame(float t, u32& row, u32& column) const
-{
-	if(mPlayback == SpriteAnimationPlayback::None)
-	{
-		row = 0;
-		column = 0;
-
-		return;
-	}
-
-	// Note: Duration could be pre-calculated
-	float duration = 0.0f;
-	if(mAnimation.FramesPerSecond > 0)
-		duration = mAnimation.FrameCount / (float)mAnimation.FramesPerSecond;
-
-	switch(mPlayback)
-	{
-	default:
-	case SpriteAnimationPlayback::Normal:
-		t = Math::Clamp(t, 0.0f, duration);
-		break;
-	case SpriteAnimationPlayback::Loop:
-		t = Math::Repeat(t, duration);
-		break;
-	case SpriteAnimationPlayback::PingPong:
-		t = Math::PingPong(t, duration);
-		break;
-	}
-
-	const float pct = t / duration;
-	u32 frame = 0;
-
-	if(mAnimation.FrameCount > 0)
-		frame = Math::Clamp(Math::FloorToPosInt(pct * mAnimation.FrameCount), 0U, mAnimation.FrameCount - 1);
-
-	row = frame / mAnimation.ColumnCount;
-	column = frame % mAnimation.ColumnCount;
-}
-
 namespace bs
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteTexture, SyncPacket)
-		B3D_SYNC_BLOCK_ENTRY(mUVOffset)
-		B3D_SYNC_BLOCK_ENTRY(mUVScale)
-		B3D_SYNC_BLOCK_ENTRY(mAnimation)
-		B3D_SYNC_BLOCK_ENTRY(mPlayback)
 		B3D_SYNC_BLOCK_ENTRY(mAtlasTexture)
+		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImage, SpriteImageSyncPacket)
 	B3D_SYNC_BLOCK_END
 }
 
-SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
-	: TSpriteTexture(uvOffset, uvScale, texture)
-{}
-
-const HSpriteTexture& SpriteTexture::Dummy()
+SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInformation)
+	: SpriteImage(createInformation)
 {
-	return BuiltinResources::Instance().GetDummySpriteTexture();
+	mAtlasTexture = createInformation.AtlasTexture;
 }
 
-bool SpriteTexture::CheckIsLoaded(const HSpriteTexture& tex)
+bool SpriteTexture::CheckIsLoaded(const HSpriteTexture& texture)
 {
-	return tex != nullptr && tex.IsLoaded(false) && tex->GetTexture() != nullptr && tex->GetTexture().IsLoaded(false);
+	return texture != nullptr && texture.IsLoaded(false) && texture->GetAtlasTexture() != nullptr && texture->GetAtlasTexture().IsLoaded(false);
 }
 
-void SpriteTexture::SetTexture(const HTexture& texture)
+void SpriteTexture::SetAtlasTexture(const HTexture& texture)
 {
 	RemoveResourceDependency(mAtlasTexture);
 	mAtlasTexture = texture;
 	AddResourceDependency(mAtlasTexture);
 
 	MarkDependenciesDirty();
-}
-
-u32 SpriteTexture::GetWidth() const
-{
-	return Math::RoundToI32(mAtlasTexture->GetProperties().Width * mUVScale.X);
-}
-
-u32 SpriteTexture::GetHeight() const
-{
-	return Math::RoundToI32(mAtlasTexture->GetProperties().Height * mUVScale.Y);
-}
-
-u32 SpriteTexture::GetFrameWidth() const
-{
-	return GetWidth() / std::max(1U, mAnimation.ColumnCount);
-}
-
-u32 SpriteTexture::GetFrameHeight() const
-{
-	return GetHeight() / std::max(1U, mAnimation.RowCount);
-}
-
-void SpriteTexture::MarkRenderProxyDataDirtyInternal()
-{
-	MarkRenderProxyDataDirty();
+	MarkRenderProxyDataDirtyInternal();
 }
 
 void SpriteTexture::Initialize()
@@ -273,7 +186,9 @@ void SpriteTexture::Initialize()
 SPtr<ct::RenderProxy> SpriteTexture::CreateRenderProxy() const
 {
 	SPtr<ct::Texture> atlasRenderProxy = B3DGetRenderProxy(mAtlasTexture);
-	ct::SpriteTexture* const renderProxy = new(B3DAllocate<ct::SpriteTexture>()) ct::SpriteTexture(mUVOffset, mUVScale, std::move(atlasRenderProxy), mAnimation, mPlayback);
+
+	ct::SpriteTextureCreateInformation createInformation(mInformation, std::move(atlasRenderProxy));
+	ct::SpriteTexture* const renderProxy = new(B3DAllocate<ct::SpriteTexture>()) ct::SpriteTexture(createInformation);
 
 	SPtr<ct::SpriteTexture> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteTexture>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
@@ -283,7 +198,11 @@ SPtr<ct::RenderProxy> SpriteTexture::CreateRenderProxy() const
 
 RenderProxySyncPacket* SpriteTexture::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
-	return allocator.Construct<SyncPacket>(*this, allocator, flags);
+	auto syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	if(B3D_ENSURE(syncPacket))
+		syncPacket->SpriteImageSyncPacket = allocator.Construct<SpriteImage::SyncPacket>(*this, allocator, flags);
+
+	return syncPacket;
 }
 
 void SpriteTexture::GetCoreDependencies(Vector<CoreObject*>& dependencies)
@@ -294,45 +213,42 @@ void SpriteTexture::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 
 HSpriteTexture SpriteTexture::Create(const HTexture& texture)
 {
-	SPtr<SpriteTexture> texturePtr = CreatePtrInternal(texture);
+	SPtr<SpriteTexture> texturePtr = CreateShared(texture);
 
 	return B3DStaticResourceCast<SpriteTexture>(GetResources().CreateResourceHandle(texturePtr));
 }
 
-HSpriteTexture SpriteTexture::Create(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
+HSpriteTexture SpriteTexture::Create(const SpriteTextureCreateInformation& createInformation)
 {
-	SPtr<SpriteTexture> texturePtr = CreatePtrInternal(uvOffset, uvScale, texture);
+	SPtr<SpriteTexture> texture = CreateShared(createInformation);
 
-	return B3DStaticResourceCast<SpriteTexture>(GetResources().CreateResourceHandle(texturePtr));
+	return B3DStaticResourceCast<SpriteTexture>(GetResources().CreateResourceHandle(texture));
 }
 
-SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const HTexture& texture)
+SPtr<SpriteTexture> SpriteTexture::CreateShared(const HTexture& texture)
 {
-	SPtr<SpriteTexture> texturePtr = B3DMakeSharedFromExisting<SpriteTexture>(new(B3DAllocate<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), texture));
+	SpriteTextureCreateInformation createInformation;
+	createInformation.AtlasTexture = texture;
 
-	texturePtr->SetShared(texturePtr);
-	texturePtr->Initialize();
-
-	return texturePtr;
+	return CreateShared(createInformation);
 }
 
-SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
+SPtr<SpriteTexture> SpriteTexture::CreateShared(const SpriteTextureCreateInformation& createInformation)
 {
-	SPtr<SpriteTexture> texturePtr = B3DMakeSharedFromExisting<SpriteTexture>(new(B3DAllocate<SpriteTexture>()) SpriteTexture(uvOffset, uvScale, texture));
+	SPtr<SpriteTexture> texture = B3DMakeSharedFromExisting<SpriteTexture>(new(B3DAllocate<SpriteTexture>()) SpriteTexture(createInformation));
 
-	texturePtr->SetShared(texturePtr);
-	texturePtr->Initialize();
+	texture->SetShared(texture);
+	texture->Initialize();
 
-	return texturePtr;
+	return texture;
 }
 
 SPtr<SpriteTexture> SpriteTexture::CreateEmpty()
 {
-	SPtr<SpriteTexture> texturePtr = B3DMakeSharedFromExisting<SpriteTexture>(new(B3DAllocate<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), HTexture()));
+	SPtr<SpriteTexture> texture = B3DMakeSharedFromExisting<SpriteTexture>(new(B3DAllocate<SpriteTexture>()) SpriteTexture(SpriteTextureCreateInformation()));
+	texture->SetShared(texture);
 
-	texturePtr->SetShared(texturePtr);
-
-	return texturePtr;
+	return texture;
 }
 
 RTTITypeBase* SpriteTexture::GetRttiStatic()
@@ -342,16 +258,15 @@ RTTITypeBase* SpriteTexture::GetRttiStatic()
 
 RTTITypeBase* SpriteTexture::GetRtti() const
 {
-	return SpriteTexture::GetRttiStatic();
+	return GetRttiStatic();
 }
 
 namespace bs { namespace ct
 {
-SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SPtr<Texture> texture, const SpriteSheetGridAnimation& anim, SpriteAnimationPlayback playback)
-	: TSpriteTexture(uvOffset, uvScale, texture)
+SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInformation)
+	: SpriteImage(createInformation)
 {
-	mAnimation = anim;
-	mPlayback = playback;
+	mAtlasTexture = createInformation.AtlasTexture;
 }
 
 void SpriteTexture::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)

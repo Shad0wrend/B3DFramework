@@ -437,12 +437,12 @@ void GUICanvas::BuildImageElement(const CanvasElement& element)
 	desc.Transparent = true;
 	desc.Color = element.Color;
 
-	Vector2I textureSize;
+	Size2UI textureSize;
 	if(SpriteTexture::CheckIsLoaded(imageData.Texture))
 	{
 		desc.Image = imageData.Texture;
-		textureSize.X = desc.Image->GetWidth();
-		textureSize.Y = desc.Image->GetHeight();
+
+		textureSize = desc.Image->GetSize();
 	}
 
 	Vector2I destSize(mLayoutData.Area.Width, mLayoutData.Area.Height);

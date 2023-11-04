@@ -11,11 +11,11 @@ namespace bs
 	 */
 
 	/// <summary>
-	/// Descriptor that describes a simple sprite sheet animation. The parent texture is split into a grid of <see 
-	/// cref="numRows"/> x <see cref="numColumns"/>, each representing one frame of the animation. Every frame is of equal 
+	/// Descriptor that describes a simple sprite sheet animation. The parent area is split into a grid of <see 
+	/// cref="RowCount"/> x <see cref="ColumnCount"/>, each representing one frame of the animation. Every frame is of equal 
 	/// size. Frames are sequentially evaluated starting from the top-most row, iterating over all columns in a row and then 
-	/// moving to next row, up to <see cref="count"/> frames. Frames in rows/colums past <see cref="count"/>. <see 
-	/// cref="fps"/> frames are evaluated every second, allowing you to control animation speed.
+	/// moving to next row, up to <see cref="FrameCount"/> frames. <see cref="FramesPerSecond"/> frames are evaluated every 
+	/// second, allowing you to control animation speed.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
 	public partial struct SpriteSheetGridAnimation
@@ -24,38 +24,37 @@ namespace bs
 		public static SpriteSheetGridAnimation Default()
 		{
 			SpriteSheetGridAnimation value = new SpriteSheetGridAnimation();
-			value.NumRows = 1;
-			value.NumColumns = 1;
-			value.Count = 1;
-			value.Fps = 8;
+			value.RowCount = 1;
+			value.ColumnCount = 1;
+			value.FrameCount = 1;
+			value.FramesPerSecond = 8;
 
 			return value;
 		}
 
-		public SpriteSheetGridAnimation(int numRows, int numColumns, int count, int fps)
+		public SpriteSheetGridAnimation(int rowCount, int columnCount, int frameCount, int framesPerSecond)
 		{
-			this.NumRows = numRows;
-			this.NumColumns = numColumns;
-			this.Count = count;
-			this.Fps = fps;
+			this.RowCount = rowCount;
+			this.ColumnCount = columnCount;
+			this.FrameCount = frameCount;
+			this.FramesPerSecond = framesPerSecond;
 		}
 
 		/// <summary>
-		/// Number of rows to divide the parent&apos;s texture area. Determines height of the individual frame (depends on parent 
-		/// texture size).
+		/// Number of rows to divide the parent area in. Determines height of the individual frame (depends on parent area size).
 		/// </summary>
-		public int NumRows;
+		public int RowCount;
 		/// <summary>
-		/// Number of columns to divide the parent&apos;s texture area. Determines column of the individual frame (depends on 
-		/// parent texture size).
+		/// Number of columns to divide the parent area in. Determines column of the individual frame (depends on parent area 
+		/// size).
 		/// </summary>
-		public int NumColumns;
+		public int ColumnCount;
 		/// <summary>
-		/// Number of frames in the animation. Must be less or equal than <see cref="numRows"/> * <see cref="numColumns"/>.
+		/// Number of frames in the animation. Must be less or equal than <see cref="RowCount"/> * <see cref="ColumnCount"/>.
 		/// </summary>
-		public int Count;
+		public int FrameCount;
 		/// <summary>How many frames to evaluate each second. Determines the animation speed.</summary>
-		public int Fps;
+		public int FramesPerSecond;
 	}
 
 	/** @} */

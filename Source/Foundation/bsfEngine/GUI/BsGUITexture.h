@@ -155,9 +155,9 @@ namespace bs
 
 		ImageSprite* mImageSprite;
 		Vector2I mImageSpriteOffset;
-		HSpriteTexture mActiveTexture;
-		u32 mActiveTextureWidth = 0;
-		u32 mActiveTextureHeight = 0;
+		HSpriteTexture mActiveImage;
+		u32 mActiveImageWidth = 0;
+		u32 mActiveImageHeight = 0;
 		ImageSpriteInformation mDesc;
 		TextureScaleMode mScaleMode;
 		bool mTransparent;

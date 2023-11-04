@@ -129,6 +129,7 @@ namespace bs
 	ADD_ENTRY(AudioClip, ScriptAudioClip, ScriptResourceType::AudioClip)
 	ADD_ENTRY(AnimationClip, ScriptAnimationClip, ScriptResourceType::AnimationClip)
 	ADD_ENTRY(VectorField, ScriptVectorField, ScriptResourceType::VectorField)
+	ADD_ENTRY(SpriteImage, ScriptSpriteImage, ScriptResourceType::SpriteImage)
 	LOOKUP_END
 
 #	undef LOOKUP_BEGIN

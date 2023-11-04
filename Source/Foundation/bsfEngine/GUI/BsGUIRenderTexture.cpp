@@ -74,8 +74,8 @@ void GUIRenderTexture::SetRenderTexture(const SPtr<RenderTexture>& texture)
 
 void GUIRenderTexture::UpdateRenderElements()
 {
-	if(mActiveTexture != nullptr && mActiveTexture.IsLoaded())
-		mDesc.Image = mActiveTexture;
+	if(mActiveImage != nullptr && mActiveImage.IsLoaded())
+		mDesc.Image = mActiveImage;
 
 	mDesc.Width = mLayoutData.Area.Width;
 	mDesc.Height = mLayoutData.Area.Height;

@@ -96,7 +96,7 @@ namespace bs
 		virtual ~SpriteImageBase() = default;
 
 		/** Determines the UV range that the image is referencing. */
-		B3D_SCRIPT_EXPORT(ExportName(UVRange), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(UVRange), Property(Setter))
 		void SetUVRange(const Rect2& uvRange)
 		{
 			mInformation.UVRange = uvRange;
@@ -178,7 +178,7 @@ namespace bs
 		B3D_SCRIPT_EXPORT(ExportName(Texture), Property(Getter))
 		const TextureType& GetAtlasTexture() const { return mAtlasTexture; }
 
-	private:
+	protected:
 		TextureType mAtlasTexture;
 	};
 
@@ -191,6 +191,8 @@ namespace bs
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteImage : public Resource, public TSpriteImage<false>
 	{
 	public:
+		struct SyncPacket;
+
 		/**	Checks if the sprite image and its atlas texture have been loaded. */
 		static bool CheckIsLoaded(const HSpriteImage& image); // TODO - Can we get rid of this?
 
@@ -201,9 +203,8 @@ namespace bs
 		void MarkRenderProxyDataDirtyInternal() override;
 
 		/** @} */
-	private:
+	protected:
 		friend class ct::SpriteImage;
-		struct SyncPacket;
 
 		SpriteImage(const SpriteImageCreateInformation& createInformation)
 			: TSpriteImage(createInformation)
@@ -236,7 +237,7 @@ namespace bs
 		 */
 		class B3D_CORE_EXPORT SpriteImage : public RenderProxy, public TSpriteImage<true>
 		{
-		private:
+		protected:
 			friend class bs::SpriteImage;
 
 			SpriteImage(const SpriteImageCreateInformation& createInformation)
@@ -249,159 +250,63 @@ namespace bs
 		/** @} */
 	} // namespace ct
 
-	/** @addtogroup Implementation
-	 *  @{
-	 */
-
-	/** Base class used for both main and render thread counterparts of SpriteTexture. */
-	class B3D_CORE_EXPORT SpriteTextureBase
-	{
-	public:
-		SpriteTextureBase(const Vector2& uvOffset, const Vector2& uvScale)
-			: mUVOffset(uvOffset), mUVScale(uvScale)
-		{}
-
-		virtual ~SpriteTextureBase() = default;
-
-		/**
-		 * Determines the offset into the referenced texture where the sprite starts. The offset is in UV coordinates,
-		 * in range [0, 1].
-		 */
-		B3D_SCRIPT_EXPORT(ExportName(Offset), Property(Setter))
-		void SetOffset(const Vector2& offset)
-		{
-			mUVOffset = offset;
-			MarkRenderProxyDataDirtyInternal();
-		}
-
-		/** @copydoc SetOffset() */
-		B3D_SCRIPT_EXPORT(ExportName(Offset), Property(Getter))
-		Vector2 GetOffset() const { return mUVOffset; }
-
-		/** Determines the size of the sprite in the referenced texture. Size is in UV coordinates, range [0, 1]. */
-		B3D_SCRIPT_EXPORT(ExportName(Scale), Property(Setter))
-		void SetScale(const Vector2& scale)
-		{
-			mUVScale = scale;
-			MarkRenderProxyDataDirtyInternal();
-		}
-
-		/** @copydoc SetScale() */
-		B3D_SCRIPT_EXPORT(ExportName(Scale), Property(Getter))
-		Vector2 GetScale() const { return mUVScale; }
-
-		/** Transforms wanted UV coordinates into coordinates you can use for sampling the internal texture. */
-		Vector2 TransformUv(const Vector2& uv) const { return mUVOffset + uv * mUVScale; }
-
-		/**
-		 * Evaluates the UV coordinate offset and size to use at the specified time. If the sprite texture doesn't
-		 * have animation playback enabled then just the default offset and size will be provided, otherwise the
-		 * animation will be evaluated and appropriate UV returned.
-		 */
-		Rect2 Evaluate(float t) const;
-
-		/** Returns the row and column of the current animation frame for time @p t. */
-		void GetAnimationFrame(float t, u32& row, u32& column) const;
-
-		/**
-		 * Sets properties describing sprite animation. The animation splits the sprite area into a grid of sub-images
-		 * which can be evaluated over time. In order to view the animation you must also enable playback through
-		 * setAnimationPlayback().
-		 */
-		B3D_SCRIPT_EXPORT(ExportName(Animation), Property(Setter))
-		void SetAnimation(const SpriteSheetGridAnimation& anim)
-		{
-			mAnimation = anim;
-			MarkRenderProxyDataDirtyInternal();
-		}
-
-		/** @copydoc SetAnimation */
-		B3D_SCRIPT_EXPORT(ExportName(Animation), Property(Getter))
-		const SpriteSheetGridAnimation& GetAnimation() const { return mAnimation; }
-
-		/** Determines if and how should the sprite animation play. */
-		B3D_SCRIPT_EXPORT(ExportName(AnimationPlayback), Property(Setter))
-		void SetAnimationPlayback(SpriteAnimationPlayback playback)
-		{
-			mPlayback = playback;
-			MarkRenderProxyDataDirtyInternal();
-		}
-
-		/** @copydoc SetAnimationPlayback */
-		B3D_SCRIPT_EXPORT(ExportName(AnimationPlayback), Property(Getter))
-		SpriteAnimationPlayback GetAnimationPlayback() const { return mPlayback; };
-
-	protected:
-		/** Marks the contents of the main thread object as dirty, causing it to sync with its render thread counterpart. */
-		virtual void MarkRenderProxyDataDirtyInternal() {}
-
-		Vector2 mUVOffset;
-		Vector2 mUVScale;
-
-		SpriteAnimationPlayback mPlayback = SpriteAnimationPlayback::None;
-		SpriteSheetGridAnimation mAnimation;
-	};
-
-	/** Templated base class used for both main and render thread SpriteTexture counterparts. */
-	template <bool IsRenderProxy>
-	class B3D_CORE_EXPORT TSpriteTexture : public SpriteTextureBase
-	{
-	public:
-		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
-
-		TSpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, TextureType atlasTexture)
-			: SpriteTextureBase(uvOffset, uvScale), mAtlasTexture(std::move(atlasTexture))
-		{}
-
-		virtual ~TSpriteTexture() = default;
-
-	protected:
-		TextureType mAtlasTexture;
-	};
-
-	/** @} */
 	/** @addtogroup Resources
 	 *  @{
 	 */
 
-	/**
-	 * Texture that references a part of a larger texture by specifying an UV subset. When the sprite texture is rendererd
-	 * only the portion of the texture specified by the UV subset will be rendered. This allows you to use the same texture
-	 * for multiple sprites (texture atlasing). Sprite textures also allow you to specify sprite sheet animation by varying
-	 * which portion of the UV is selected over time.
+	/** Templated base class used for both main and render thread SpriteTextureCreateInformation counterparts. */
+	template <bool IsRenderProxy>
+	struct TSpriteTextureCreateInformation : SpriteImageInformation
+	{
+		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
+
+		TSpriteTextureCreateInformation() = default;
+		TSpriteTextureCreateInformation(const SpriteImageInformation& spriteImageInformation, const TextureType& atlasTexture)
+			: SpriteImageInformation(spriteImageInformation), AtlasTexture(atlasTexture)
+		{ }
+
+		/** Texture used as the atlas. */
+		TextureType AtlasTexture;
+	};
+
+	/** Descriptor structure used for initialization of a SpriteTexture. */
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Rendering)) SpriteTextureCreateInformation : TSpriteTextureCreateInformation<false> 
+	{
+		using TSpriteTextureCreateInformation::TSpriteTextureCreateInformation;
+	};
+
+	namespace ct
+	{
+		/** @addtogroup Resources-Internal
+		 *  @{
+		 */
+
+		/**
+		 * Render proxy counterpart of a bs::SpriteTextureCreateInformation.
+		 *
+		 * @note	Render thread.
+		 */
+		struct SpriteTextureCreateInformation : TSpriteTextureCreateInformation<true>
+		{
+			using TSpriteTextureCreateInformation::TSpriteTextureCreateInformation;
+		};
+
+		/** @} */
+	} // namespace ct
+
+	/** @} */
+
+	/** @addtogroup Resources
+	 *  @{
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteTexture : public Resource, public TSpriteTexture<false>
+
+	/** Implementation of SpriteImage that uses a user-provided texture as the atlas texture. */
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteTexture : public CoreVariantType<SpriteImage, false>
 	{
 	public:
-		/**	Determines the internal texture that the sprite texture references. */
-		B3D_SCRIPT_EXPORT(ExportName(Texture), Property(Setter))
-		void SetTexture(const HTexture& texture);
-
-		/**	@copydoc SetTexture() */
-		B3D_SCRIPT_EXPORT(ExportName(Texture), Property(Getter))
-		const HTexture& GetTexture() const { return mAtlasTexture; }
-
-		/**	Returns width of the sprite texture in pixels. */
-		B3D_SCRIPT_EXPORT(ExportName(Width), Property(Getter))
-		u32 GetWidth() const;
-
-		/**	Returns height of the sprite texture in pixels. */
-		B3D_SCRIPT_EXPORT(ExportName(Height), Property(Getter))
-		u32 GetHeight() const;
-
-		/**
-		 * Returns width of a single animation frame sprite texture in pixels. If the texture has no animation this
-		 * is the same as GetWidth().
-		 */
-		B3D_SCRIPT_EXPORT(ExportName(FrameWidth), Property(Getter))
-		u32 GetFrameWidth() const;
-
-		/**
-		 * Returns height of a single animation frame sprite texture in pixels. If the texture has no animation this
-		 * is the same as GetHeight().
-		 */
-		B3D_SCRIPT_EXPORT(ExportName(FrameHeight), Property(Getter))
-		u32 GetFrameHeight() const;
+		/**	Sets the atlas texture to utilize. */
+		B3D_SCRIPT_EXPORT()
+		void SetAtlasTexture(const TextureType& texture);
 
 		/**	Creates a new sprite texture that references the entire area of the provided texture. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteTexture))
@@ -409,34 +314,23 @@ namespace bs
 
 		/**	Creates a new sprite texture that references a sub-area of the provided	texture. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteTexture))
-		static HSpriteTexture Create(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture);
+		static HSpriteTexture Create(const SpriteTextureCreateInformation& createInformation);
+
+		/** Creates a new SpriteTexture without a resource handle. Use Create() for normal use. */
+		static SPtr<SpriteTexture> CreateShared(const HTexture& texture);
+
+		/** Creates a new SpriteTexture without a resource handle. Use Create() for normal use. */
+		static SPtr<SpriteTexture> CreateShared(const SpriteTextureCreateInformation& createInformation);
 
 		/**	Checks if the sprite texture and its internal texture have been loaded. */
-		static bool CheckIsLoaded(const HSpriteTexture& tex);
+		static bool CheckIsLoaded(const HSpriteTexture& texture); // TODO - Can this be removed?
 
-		/**	Returns a dummy sprite texture. */
-		static const HSpriteTexture& Dummy();
-
-		/** @name Internal
-		 *  @{
-		 */
-
-		/** Creates a new SpriteTexture without a resource handle. Use create() for normal use. */
-		static SPtr<SpriteTexture> CreatePtrInternal(const HTexture& texture);
-
-		/** Creates a new SpriteTexture without a resource handle. Use create() for normal use. */
-		static SPtr<SpriteTexture> CreatePtrInternal(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture);
-
-		void MarkRenderProxyDataDirtyInternal() override;
-
-		/** @} */
 	private:
 		friend class SpriteTextureRTTI;
 		friend class ct::SpriteTexture;
 		struct SyncPacket;
 
-		/** @copydoc Create(const Vector2&, const Vector2&, const HTexture&) */
-		SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture);
+		SpriteTexture(const SpriteTextureCreateInformation& createInformation);
 
 		void Initialize() override;
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
@@ -469,19 +363,16 @@ namespace bs
 		 *
 		 * @note	Render thread.
 		 */
-		class B3D_CORE_EXPORT SpriteTexture : public RenderProxy, public TSpriteTexture<true>
+		class B3D_CORE_EXPORT SpriteTexture : public CoreVariantType<SpriteImage, true>
 		{
 		public:
-			/**	Determines the internal texture that the sprite texture references. */
-			void SetTexture(const SPtr<ct::Texture>& texture) { mAtlasTexture = texture; }
-
-			/**	@copydoc SetTexture() */
-			const SPtr<ct::Texture>& GetTexture() const { return mAtlasTexture; }
+			/**	Sets the atlas texture to utilize. */
+			void SetAtlasTexture(const SPtr<Texture>& texture) { mAtlasTexture = texture; }
 
 		private:
 			friend class bs::SpriteTexture;
 
-			SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SPtr<Texture> texture, const SpriteSheetGridAnimation& anim, SpriteAnimationPlayback playback);
+			SpriteTexture(const SpriteTextureCreateInformation& createInformation);
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};

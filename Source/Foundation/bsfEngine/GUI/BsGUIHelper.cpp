@@ -25,8 +25,10 @@ Vector2I GUIHelper::CalculateOptimalContentSize(const GUIContent& content, const
 	const HSpriteTexture& image = content.GetImage(state);
 	if(SpriteTexture::CheckIsLoaded(image))
 	{
-		contentBounds.X += image->GetWidth() + GUIContent::kImageTextSpacing;
-		contentBounds.Y = std::max(image->GetHeight(), (u32)contentBounds.Y);
+		const Size2UI& imageSize = image->GetSize();
+
+		contentBounds.X += (i32)(imageSize.Width + GUIContent::kImageTextSpacing);
+		contentBounds.Y = (i32)std::max(imageSize.Height, (u32)contentBounds.Y);
 	}
 
 	return contentBounds;
@@ -79,8 +81,9 @@ Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const GUICont
 		const u32 paddingHeight = styleSheetRule.Padding.Top + styleSheetRule.Padding.Bottom;
 		const u32 borderHeight = styleSheetRule.BorderTop.GetVisibleWidth() + styleSheetRule.BorderBottom.GetVisibleWidth();
 
-		contentBounds.Width += image->GetWidth() + GUIContent::kImageTextSpacing;
-		contentBounds.Height = std::max(image->GetHeight() + paddingHeight + borderHeight, contentBounds.Height);
+		const Size2UI& imageSize = image->GetSize();
+		contentBounds.Width += imageSize.Width + GUIContent::kImageTextSpacing;
+		contentBounds.Height = std::max(imageSize.Height + paddingHeight + borderHeight, contentBounds.Height);
 	}
 
 	return contentBounds;

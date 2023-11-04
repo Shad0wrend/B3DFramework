@@ -66,6 +66,12 @@ namespace bs
 		/** Extents of the rectangle (distance from center to one of the corners) */
 		Vector2 GetHalfSize() const;
 
+		/** Returns the top-left position of the rectangle. */
+		Vector2 GetOffset() const { return Vector2(X, Y); }
+
+		/** Returns the width/height of the rectangle. */
+		Size2 GetSize() const { return Size2(Width, Height); }
+
 		bool operator==(const Rect2& rhs) const
 		{
 			return X == rhs.X && Y == rhs.Y && Width == rhs.Width && Height == rhs.Height;

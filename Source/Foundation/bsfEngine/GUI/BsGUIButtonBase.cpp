@@ -121,8 +121,10 @@ void GUIButtonBase::UpdateRenderElements()
 		Rect2I contentBounds = GetCachedContentBounds();
 
 		HSpriteTexture image = mContent.GetImage(mActiveState);
-		u32 contentWidth = image->GetWidth();
-		u32 contentHeight = image->GetHeight();
+
+		const Size2UI& imageSize = image->GetSize();
+		u32 contentWidth = imageSize.Width;
+		u32 contentHeight = imageSize.Height;
 
 		u32 contentMaxWidth = std::min((u32)contentBounds.Width, contentWidth);
 		u32 contentMaxHeight = std::min((u32)contentBounds.Height, contentHeight);
@@ -259,8 +261,8 @@ Vector2I GUIButtonBase::GetOptimalSize() const
 		const HSpriteTexture& activeTex = GetActiveTexture();
 		if(SpriteTexture::CheckIsLoaded(activeTex))
 		{
-			imageWidth = activeTex->GetWidth();
-			imageHeight = activeTex->GetHeight();
+			imageWidth = activeTex->GetSize().Width;
+			imageHeight = activeTex->GetSize().Height;
 		}
 
 		Vector2I contentSize = GUIHelper::CalculateOptimalContentSize(mContent, *GetStyle(), GetSizeConstraints(), mActiveState);

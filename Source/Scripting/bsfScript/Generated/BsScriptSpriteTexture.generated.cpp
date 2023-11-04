@@ -8,9 +8,8 @@
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
-#include "Wrappers/BsScriptVector.h"
-#include "BsScriptSpriteSheetGridAnimation.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
+#include "BsScriptSpriteTextureCreateInformation.generated.h"
 
 namespace bs
 {
@@ -22,20 +21,7 @@ namespace bs
 	void ScriptSpriteTexture::InitRuntimeData()
 	{
 		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteTexture::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptSpriteTexture::InternalSetTexture);
-		metaData.ScriptClass->AddInternalCall("Internal_GetTexture", (void*)&ScriptSpriteTexture::InternalGetTexture);
-		metaData.ScriptClass->AddInternalCall("Internal_GetWidth", (void*)&ScriptSpriteTexture::InternalGetWidth);
-		metaData.ScriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptSpriteTexture::InternalGetHeight);
-		metaData.ScriptClass->AddInternalCall("Internal_GetFrameWidth", (void*)&ScriptSpriteTexture::InternalGetFrameWidth);
-		metaData.ScriptClass->AddInternalCall("Internal_GetFrameHeight", (void*)&ScriptSpriteTexture::InternalGetFrameHeight);
-		metaData.ScriptClass->AddInternalCall("Internal_SetOffset", (void*)&ScriptSpriteTexture::InternalSetOffset);
-		metaData.ScriptClass->AddInternalCall("Internal_GetOffset", (void*)&ScriptSpriteTexture::InternalGetOffset);
-		metaData.ScriptClass->AddInternalCall("Internal_SetScale", (void*)&ScriptSpriteTexture::InternalSetScale);
-		metaData.ScriptClass->AddInternalCall("Internal_GetScale", (void*)&ScriptSpriteTexture::InternalGetScale);
-		metaData.ScriptClass->AddInternalCall("Internal_SetAnimation", (void*)&ScriptSpriteTexture::InternalSetAnimation);
-		metaData.ScriptClass->AddInternalCall("Internal_GetAnimation", (void*)&ScriptSpriteTexture::InternalGetAnimation);
-		metaData.ScriptClass->AddInternalCall("Internal_SetAnimationPlayback", (void*)&ScriptSpriteTexture::InternalSetAnimationPlayback);
-		metaData.ScriptClass->AddInternalCall("Internal_GetAnimationPlayback", (void*)&ScriptSpriteTexture::InternalGetAnimationPlayback);
+		metaData.ScriptClass->AddInternalCall("Internal_SetAtlasTexture", (void*)&ScriptSpriteTexture::InternalSetAtlasTexture);
 		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteTexture::InternalCreate);
 		metaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteTexture::InternalCreate0);
 
@@ -53,129 +39,14 @@ namespace bs
 		return thisPtr->GetRRef();
 	}
 
-	void ScriptSpriteTexture::InternalSetTexture(ScriptSpriteTexture* thisPtr, MonoObject* texture)
+	void ScriptSpriteTexture::InternalSetAtlasTexture(ScriptSpriteTexture* thisPtr, MonoObject* texture)
 	{
 		ResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scripttexture;
 		scripttexture = ScriptRRefBase::ToNative(texture);
 		if(scripttexture != nullptr)
 			tmptexture = B3DStaticResourceCast<Texture>(scripttexture->GetHandle());
-		thisPtr->GetHandle()->SetTexture(tmptexture);
-	}
-
-	MonoObject* ScriptSpriteTexture::InternalGetTexture(ScriptSpriteTexture* thisPtr)
-	{
-		ResourceHandle<Texture> tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetTexture();
-
-		MonoObject* __output;
-		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
-		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
-		else
-			__output = nullptr;
-
-		return __output;
-	}
-
-	uint32_t ScriptSpriteTexture::InternalGetWidth(ScriptSpriteTexture* thisPtr)
-	{
-		uint32_t tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetWidth();
-
-		uint32_t __output;
-		__output = tmp__output;
-
-		return __output;
-	}
-
-	uint32_t ScriptSpriteTexture::InternalGetHeight(ScriptSpriteTexture* thisPtr)
-	{
-		uint32_t tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetHeight();
-
-		uint32_t __output;
-		__output = tmp__output;
-
-		return __output;
-	}
-
-	uint32_t ScriptSpriteTexture::InternalGetFrameWidth(ScriptSpriteTexture* thisPtr)
-	{
-		uint32_t tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetFrameWidth();
-
-		uint32_t __output;
-		__output = tmp__output;
-
-		return __output;
-	}
-
-	uint32_t ScriptSpriteTexture::InternalGetFrameHeight(ScriptSpriteTexture* thisPtr)
-	{
-		uint32_t tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetFrameHeight();
-
-		uint32_t __output;
-		__output = tmp__output;
-
-		return __output;
-	}
-
-	void ScriptSpriteTexture::InternalSetOffset(ScriptSpriteTexture* thisPtr, TVector2<float>* offset)
-	{
-		thisPtr->GetHandle()->SetOffset(*offset);
-	}
-
-	void ScriptSpriteTexture::InternalGetOffset(ScriptSpriteTexture* thisPtr, TVector2<float>* __output)
-	{
-		TVector2<float> tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetOffset();
-
-		*__output = tmp__output;
-	}
-
-	void ScriptSpriteTexture::InternalSetScale(ScriptSpriteTexture* thisPtr, TVector2<float>* scale)
-	{
-		thisPtr->GetHandle()->SetScale(*scale);
-	}
-
-	void ScriptSpriteTexture::InternalGetScale(ScriptSpriteTexture* thisPtr, TVector2<float>* __output)
-	{
-		TVector2<float> tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetScale();
-
-		*__output = tmp__output;
-	}
-
-	void ScriptSpriteTexture::InternalSetAnimation(ScriptSpriteTexture* thisPtr, SpriteSheetGridAnimation* anim)
-	{
-		thisPtr->GetHandle()->SetAnimation(*anim);
-	}
-
-	void ScriptSpriteTexture::InternalGetAnimation(ScriptSpriteTexture* thisPtr, SpriteSheetGridAnimation* __output)
-	{
-		SpriteSheetGridAnimation tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetAnimation();
-
-		*__output = tmp__output;
-	}
-
-	void ScriptSpriteTexture::InternalSetAnimationPlayback(ScriptSpriteTexture* thisPtr, SpriteAnimationPlayback playback)
-	{
-		thisPtr->GetHandle()->SetAnimationPlayback(playback);
-	}
-
-	SpriteAnimationPlayback ScriptSpriteTexture::InternalGetAnimationPlayback(ScriptSpriteTexture* thisPtr)
-	{
-		SpriteAnimationPlayback tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetAnimationPlayback();
-
-		SpriteAnimationPlayback __output;
-		__output = tmp__output;
-
-		return __output;
+		thisPtr->GetHandle()->SetAtlasTexture(tmptexture);
 	}
 
 	void ScriptSpriteTexture::InternalCreate(MonoObject* managedInstance, MonoObject* texture)
@@ -189,14 +60,11 @@ namespace bs
 		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 
-	void ScriptSpriteTexture::InternalCreate0(MonoObject* managedInstance, TVector2<float>* uvOffset, TVector2<float>* uvScale, MonoObject* texture)
+	void ScriptSpriteTexture::InternalCreate0(MonoObject* managedInstance, __SpriteTextureCreateInformationInterop* createInformation)
 	{
-		ResourceHandle<Texture> tmptexture;
-		ScriptRRefBase* scripttexture;
-		scripttexture = ScriptRRefBase::ToNative(texture);
-		if(scripttexture != nullptr)
-			tmptexture = B3DStaticResourceCast<Texture>(scripttexture->GetHandle());
-		ResourceHandle<SpriteTexture> instance = SpriteTexture::Create(*uvOffset, *uvScale, tmptexture);
+		SpriteTextureCreateInformation tmpcreateInformation;
+		tmpcreateInformation = ScriptSpriteTextureCreateInformation::FromInterop(*createInformation);
+		ResourceHandle<SpriteTexture> instance = SpriteTexture::Create(tmpcreateInformation);
 		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 }

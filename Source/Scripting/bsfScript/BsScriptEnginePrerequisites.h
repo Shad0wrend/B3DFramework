@@ -219,6 +219,7 @@ namespace bs
 		AudioClip,
 		AnimationClip,
 		VectorField,
+		SpriteImage,
 		Undefined
 	};
 
