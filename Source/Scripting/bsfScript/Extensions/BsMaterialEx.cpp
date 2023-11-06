@@ -14,12 +14,12 @@ HTexture MaterialEx::GetTexture(const HMaterial& thisPtr, const String& name)
 	return thisPtr->GetTexture(name);
 }
 
-void MaterialEx::SetSpriteTexture(const HMaterial& thisPtr, const String& name, const HSpriteTexture& value)
+void MaterialEx::SetSpriteImage(const HMaterial& thisPtr, const String& name, const HSpriteImage& value)
 {
-	thisPtr->SetSpriteTexture(name, value);
+	thisPtr->SetSpriteImage(name, value);
 }
 
-HSpriteTexture MaterialEx::GetSpriteTexture(const HMaterial& thisPtr, const String& name)
+HSpriteImage MaterialEx::GetSpriteImage(const HMaterial& thisPtr, const String& name)
 {
-	return thisPtr->GetSpriteTexture(name);
+	return thisPtr->GetSpriteImage(name);
 }

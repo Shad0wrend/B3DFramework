@@ -141,9 +141,9 @@ void GUISlider::NotifyStyleChanged()
 
 	const GUIElementStyle* bgStyle = mBackground->GetStyle();
 	if(mHasFocus)
-		mBackground->SetTexture(bgStyle->Focused.Texture);
+		mBackground->SetImage(bgStyle->Focused.Image);
 	else
-		mBackground->SetTexture(bgStyle->Normal.Texture);
+		mBackground->SetImage(bgStyle->Normal.Image);
 }
 
 void GUISlider::SetPercent(float pct)
@@ -227,14 +227,14 @@ bool GUISlider::DoOnCommandEvent(const GUICommandEvent& ev)
 		mHasFocus = true;
 
 		if(!IsDisabled())
-			mBackground->SetTexture(bgStyle->Focused.Texture);
+			mBackground->SetImage(bgStyle->Focused.Image);
 
 		return true;
 	}
 	else if(ev.GetType() == GUICommandEventType::FocusLost)
 	{
 		mHasFocus = false;
-		mBackground->SetTexture(bgStyle->Normal.Texture);
+		mBackground->SetImage(bgStyle->Normal.Image);
 
 		return true;
 	}

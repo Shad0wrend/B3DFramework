@@ -15,7 +15,7 @@ ImageSprite::~ImageSprite()
 
 void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 {
-	if(!SpriteTexture::CheckIsLoaded(information.Image))
+	if(!SpriteImage::CheckIsLoaded(information.Image))
 	{
 		ClearMesh();
 		return;
@@ -60,7 +60,7 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 
 		bool animated = information.Image->GetAnimation().FrameCount > 1;
 		if(animated)
-			materialInformation.SpriteTexture = information.Image;
+			materialInformation.SpriteImage = information.Image;
 
 		renderElement.Material = SpriteManager::Instance().GetImageMaterial(
 			information.Transparent ? SpriteMaterialTransparency::Alpha : SpriteMaterialTransparency::Opaque, animated);

@@ -750,7 +750,7 @@ GUIElementStyle BuiltinResourcesHelper::LoadGuiStyleFromJson(const nlohmann::jso
 		if(subEntry.count("texture") > 0)
 		{
 			std::string texture = subEntry["texture"];
-			state.Texture = loader.LoadTexture(texture.c_str());
+			state.Image = loader.LoadTexture(texture.c_str());
 		}
 
 		if(subEntry.count("textColor") > 0)

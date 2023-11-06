@@ -30,10 +30,10 @@ u32 GUILabel::GetRenderElementDepthRange() const
 
 void GUILabel::UpdateRenderElements()
 {
-	const HSpriteTexture& activeTex = GetStyle()->Normal.Texture;
-	if(SpriteTexture::CheckIsLoaded(activeTex))
+	const HSpriteImage& activeImage = GetStyle()->Normal.Image;
+	if(SpriteImage::CheckIsLoaded(activeImage))
 	{
-		mImageDesc.Image = activeTex;
+		mImageDesc.Image = activeImage;
 
 		if(mImageSprite == nullptr)
 			mImageSprite = B3DNew<ImageSprite>();

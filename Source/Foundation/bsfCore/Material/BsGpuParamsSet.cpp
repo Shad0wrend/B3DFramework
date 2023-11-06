@@ -1050,13 +1050,13 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 				{
 					B3D_ASSERT(paramSize == sizeof(Rect2));
 
-					CoreVariantHandleType<SpriteTexture, IsRenderProxy> spriteTexture =
-						params->GetOwningSpriteTexture(*materialParamInfo);
+					CoreVariantHandleType<SpriteImage, IsRenderProxy> spriteImage =
+						params->GetOwningSpriteImage(*materialParamInfo);
 
 					u32 writeOffset = paramInfo.Offset * sizeof(u32);
 					Rect2 uv = Rect2(0.0f, 0.0f, 1.0f, 1.0f);
-					if(spriteTexture != nullptr)
-						uv = spriteTexture->EvaluateAnimation(t);
+					if(spriteImage != nullptr)
+						uv = spriteImage->EvaluateAnimation(t);
 
 					paramBlock->WriteCached(writeOffset, paramSize, &uv);
 

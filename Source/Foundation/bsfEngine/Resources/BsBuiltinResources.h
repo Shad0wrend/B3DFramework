@@ -85,9 +85,6 @@ namespace bs
 		/**	Returns a small entirely white texture. */
 		const HSpriteTexture& GetWhiteSpriteTexture() const { return mWhiteSpriteTexture; }
 
-		/**	Returns a 2x2 sprite texture that can be used when no other is available. */
-		const HSpriteTexture& GetDummySpriteTexture() const { return mDummySpriteTexture; }
-
 		/**	Returns a dummy 2x2 texture that may be used when no other is available. Don't modify the returned texture. */
 		const HTexture& GetDummyTexture() const { return mDummyTexture; }
 
@@ -244,7 +241,6 @@ namespace bs
 		SPtr<PixelData> mFrameworkIcon;
 
 		HSpriteTexture mWhiteSpriteTexture;
-		HSpriteTexture mDummySpriteTexture;
 
 		HTexture mDummyTexture;
 

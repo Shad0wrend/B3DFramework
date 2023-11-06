@@ -153,8 +153,8 @@ namespace bs
 		/** Returns the size of the handle button, in pixels. */
 		u32 GetHandleSize() const;
 
-		/**	Gets the currently active texture, depending on handle state. */
-		const HSpriteTexture& GetActiveTexture() const;
+		/**	Gets the currently active image, depending on handle state. */
+		const HSpriteImage& GetActiveImage() const;
 
 		void NotifyStyleChanged() override;
 

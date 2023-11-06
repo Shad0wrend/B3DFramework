@@ -33,18 +33,18 @@ namespace bs
 	{
 		GUIContentImages() = default;
 
-		GUIContentImages(const HSpriteTexture& image)
+		GUIContentImages(const HSpriteImage& image)
 			: Normal(image), Hover(image), Active(image), Focused(image), NormalOn(image), HoverOn(image), ActiveOn(image), FocusedOn(image)
 		{}
 
-		B3D_NO_RREF HSpriteTexture Normal;
-		B3D_NO_RREF HSpriteTexture Hover;
-		B3D_NO_RREF HSpriteTexture Active;
-		B3D_NO_RREF HSpriteTexture Focused;
-		B3D_NO_RREF HSpriteTexture NormalOn;
-		B3D_NO_RREF HSpriteTexture HoverOn;
-		B3D_NO_RREF HSpriteTexture ActiveOn;
-		B3D_NO_RREF HSpriteTexture FocusedOn;
+		B3D_NO_RREF HSpriteImage Normal;
+		B3D_NO_RREF HSpriteImage Hover;
+		B3D_NO_RREF HSpriteImage Active;
+		B3D_NO_RREF HSpriteImage Focused;
+		B3D_NO_RREF HSpriteImage NormalOn;
+		B3D_NO_RREF HSpriteImage HoverOn;
+		B3D_NO_RREF HSpriteImage ActiveOn;
+		B3D_NO_RREF HSpriteImage FocusedOn;
 	};
 
 	/**
@@ -88,7 +88,7 @@ namespace bs
 		{}
 
 		/**	Returns image content (if any). */
-		const HSpriteTexture& GetImage(GUIElementState state = GUIElementState::Normal) const;
+		const HSpriteImage& GetImage(GUIElementState state = GUIElementState::Normal) const;
 
 		/**	Determines the spacing between text and image content in pixels. */
 		static const u32 kImageTextSpacing;

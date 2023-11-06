@@ -741,20 +741,20 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 
 	const SPtr<Shader> shader = renElement.Material->GetShader();
 
-	SpriteTexture* spriteTexture = nullptr;
+	SpriteImage* spriteImage = nullptr;
 	if(shader->HasTextureParam("gTexture"))
-		spriteTexture = renElement.Material->GetSpriteTexture("gTexture").get();
+		spriteImage = renElement.Material->GetSpriteImage("gTexture").get();
 
-	if(!spriteTexture && shader->HasTextureParam("gAlbedoTex"))
-		spriteTexture = renElement.Material->GetSpriteTexture("gAlbedoTex").get();
+	if(!spriteImage && shader->HasTextureParam("gAlbedoTex"))
+		spriteImage = renElement.Material->GetSpriteImage("gAlbedoTex").get();
 
-	if(spriteTexture)
+	if(spriteImage)
 	{
-		const Rect2 UVRange = spriteTexture->GetUVRange();
+		const Rect2 UVRange = spriteImage->GetUVRange();
 		gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, UVRange.GetOffset());
 		gParticlesParamDef.gUVScale.Set(particlesParamBuffer, Vector2(UVRange.Width, UVRange.Height));
 
-		const SpriteSheetGridAnimation& anim = spriteTexture->GetAnimation();
+		const SpriteSheetGridAnimation& anim = spriteImage->GetAnimation();
 		gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer, Vector4((float)anim.ColumnCount, (float)anim.RowCount, 1.0f / anim.ColumnCount, 1.0f / anim.RowCount));
 	}
 	else
@@ -880,9 +880,9 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 		LookupTable sizeLookup = gpuSimSettings.SizeScaleOverLifetime.ToLookupTable(kNumCurveSamples, true);
 
 		float frameSamples[kNumCurveSamples];
-		if(spriteTexture && spriteTexture->GetAnimationPlayback() != SpriteAnimationPlayback::None)
+		if(spriteImage && spriteImage->GetAnimationPlayback() != SpriteAnimationPlayback::None)
 		{
-			const SpriteSheetGridAnimation& anim = spriteTexture->GetAnimation();
+			const SpriteSheetGridAnimation& anim = spriteImage->GetAnimation();
 			for(u32 i = 0; i < kNumCurveSamples; i++)
 			{
 				const float t = i / (float)(kNumCurveSamples - 1);
@@ -915,13 +915,13 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 		gGpuParticlesParamDef.gSizeScaleFrameIdxCurveScale.Set(gpuParticlesParamBuffer, Vector2(sizeScaleFrameIdxUVScale, 0.0f));
 
 		// Write sprite animation curve
-		if(spriteTexture)
+		if(spriteImage)
 		{
-			const Rect2 UVRange = spriteTexture->GetUVRange();
+			const Rect2 UVRange = spriteImage->GetUVRange();
 			gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, UVRange.GetOffset());
 			gParticlesParamDef.gUVScale.Set(particlesParamBuffer, Vector2(UVRange.Width, UVRange.Height));
 
-			const SpriteSheetGridAnimation& anim = spriteTexture->GetAnimation();
+			const SpriteSheetGridAnimation& anim = spriteImage->GetAnimation();
 			gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer, Vector4((float)anim.ColumnCount, (float)anim.RowCount, 1.0f / anim.ColumnCount, 1.0f / anim.RowCount));
 		}
 	}

@@ -41,7 +41,7 @@ void VectorSprite::Update(const VectorSpriteInformation& information, u64 groupI
 	if(!B3D_ENSURE(mSpriteAtlasAllocation))
 		return;
 
-	HSpriteTexture image = mSpriteAtlasAllocation->Image;
+	HSpriteImage image = mSpriteAtlasAllocation->Image;
 
 	RenderElementData& renderElementData = mCachedRenderElements[0];
 	SpriteRenderElement& renderElement = renderElementData.RenderElement;
@@ -128,7 +128,7 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 
 	const SPtr<ct::VectorPathRenderable> renderable = vectorPath.CreateRenderable(settings);
 
-	HSpriteTexture image;
+	HSpriteImage image;
 	u32 textureId = ~0u;
 	Optional<TreeTextureAtlasLayout::Allocation> layoutAllocation;
 	if(useUniqueTexture)

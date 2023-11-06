@@ -24,10 +24,10 @@ namespace bs
 		static HTexture GetTexture(const HMaterial& thisPtr, const String& name);
 
 		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Material), InteropOnly(true))
-		static void SetSpriteTexture(const HMaterial& thisPtr, const String& name, const HSpriteTexture& value);
+		static void SetSpriteImage(const HMaterial& thisPtr, const String& name, const HSpriteImage& value);
 
 		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Material), InteropOnly(true))
-		static HSpriteTexture GetSpriteTexture(const HMaterial& thisPtr, const String& name);
+		static HSpriteImage GetSpriteImage(const HMaterial& thisPtr, const String& name);
 	};
 
 	/** @endcond */

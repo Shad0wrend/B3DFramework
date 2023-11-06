@@ -337,9 +337,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Texture> Internal_GetTexture(IntPtr thisPtr, string name);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetSpriteTexture(IntPtr thisPtr, string name, RRef<SpriteTexture> value);
+		private static extern void Internal_SetSpriteImage(IntPtr thisPtr, string name, RRef<SpriteImage> value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<SpriteTexture> Internal_GetSpriteTexture(IntPtr thisPtr, string name);
+		private static extern RRef<SpriteImage> Internal_GetSpriteImage(IntPtr thisPtr, string name);
 	}
 
 	/** @} */

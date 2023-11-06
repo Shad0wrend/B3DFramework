@@ -1892,14 +1892,14 @@ void GUIRenderer::UpdateParamBlockBuffer(const SPtr<GpuBuffer>& buffer, const Ve
 	gGUISpriteParamBlockDef.gViewportYFlip.Set(buffer, flipY ? -1.0f : 1.0f);
 
 	float t = std::max(0.0f, mTime - materialInformation.AnimationStartTime);
-	if(materialInformation.SpriteTexture)
+	if(materialInformation.SpriteImage)
 	{
 		u32 row;
 		u32 column;
-		materialInformation.SpriteTexture->GetAnimationFrame(t, row, column);
+		materialInformation.SpriteImage->GetAnimationFrame(t, row, column);
 
-		float invWidth = 1.0f / materialInformation.SpriteTexture->GetAnimation().ColumnCount;
-		float invHeight = 1.0f / materialInformation.SpriteTexture->GetAnimation().RowCount;
+		float invWidth = 1.0f / materialInformation.SpriteImage->GetAnimation().ColumnCount;
+		float invHeight = 1.0f / materialInformation.SpriteImage->GetAnimation().RowCount;
 
 		Vector4 sizeOffset(invWidth, invHeight, column * invWidth, row * invHeight);
 		gGUISpriteParamBlockDef.gUVSizeOffset.Set(buffer, sizeOffset);

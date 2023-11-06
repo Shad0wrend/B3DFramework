@@ -113,9 +113,9 @@ void GUIInputBox::UpdateRenderElements()
 	mImageDesc.BorderBottom = GetStyle()->Border.Bottom;
 	mImageDesc.Color = GetTint();
 
-	const HSpriteTexture& activeTex = GetActiveTexture();
-	if(SpriteTexture::CheckIsLoaded(activeTex))
-		mImageDesc.Image = activeTex;
+	const HSpriteImage& activeImage = GetActiveImage();
+	if(SpriteImage::CheckIsLoaded(activeImage))
+		mImageDesc.Image = activeImage;
 
 	mImageSprite->Update(mImageDesc, (u64)GetParentWidget());
 
@@ -316,8 +316,8 @@ Vector2I GUIInputBox::GetOptimalSize() const
 	u32 imageWidth = 0;
 	u32 imageHeight = 0;
 
-	const HSpriteTexture& activeImage = GetActiveTexture();
-	if(SpriteTexture::CheckIsLoaded(activeImage))
+	const HSpriteImage& activeImage = GetActiveImage();
+	if(SpriteImage::CheckIsLoaded(activeImage))
 	{
 		const Size2UI& imageSize = activeImage->GetSize();
 		imageWidth = imageSize.Width;
@@ -1168,19 +1168,19 @@ TextSpriteInformation GUIInputBox::GetTextDesc() const
 	return textDesc;
 }
 
-const HSpriteTexture& GUIInputBox::GetActiveTexture() const
+const HSpriteImage& GUIInputBox::GetActiveImage() const
 {
 	switch(mState)
 	{
 	case State::Focused:
-		return GetStyle()->Focused.Texture;
+		return GetStyle()->Focused.Image;
 	case State::Hover:
-		return GetStyle()->Hover.Texture;
+		return GetStyle()->Hover.Image;
 	case State::Normal:
-		return GetStyle()->Normal.Texture;
+		return GetStyle()->Normal.Image;
 	}
 
-	return GetStyle()->Normal.Texture;
+	return GetStyle()->Normal.Image;
 }
 
 Color GUIInputBox::GetActiveTextColor() const

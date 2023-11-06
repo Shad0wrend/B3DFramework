@@ -134,7 +134,6 @@ void BuiltinResources::OnStartUp()
 	mDummyTexture = Texture::Create(dummyPixelData);
 
 	mWhiteSpriteTexture = GetSkinTexture(kWhiteTex);
-	mDummySpriteTexture = SpriteTexture::Create(mDummyTexture);
 
 	mFont = GetResources().Load<Font>(mBuiltinDataFolder + (String(kDefaultFontName) + u8".asset"));
 	mSkin = GetResources().Load<GUISkin>(mBuiltinDataFolder + (String(kGuiSkinFile) + u8".json.asset"));

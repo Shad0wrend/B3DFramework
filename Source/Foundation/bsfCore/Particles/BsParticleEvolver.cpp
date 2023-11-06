@@ -70,30 +70,30 @@ void ParticleTextureAnimation::Evolve(Random& random, const ParticleSystemState&
 	const u32 endIdx = startIdx + count;
 	ParticleSetData& particles = set.GetParticles();
 
-	SpriteTexture* texture = nullptr;
+	SpriteImage* image = nullptr;
 	const HMaterial& material = state.System->GetSettings().Material;
 	if(material.IsLoaded(false))
 	{
 		const HShader& shader = material->GetShader();
 		if(shader->HasTextureParam("gTexture"))
 		{
-			const HSpriteTexture& spriteTex = material->GetSpriteTexture("gTexture");
-			if(spriteTex.IsLoaded(true))
-				texture = spriteTex.Get();
+			const HSpriteImage& spriteImage = material->GetSpriteImage("gTexture");
+			if(spriteImage.IsLoaded(true))
+				image = spriteImage.Get();
 		}
 
 		if(shader->HasTextureParam("gAlbedoTex"))
 		{
-			const HSpriteTexture& spriteTex = material->GetSpriteTexture("gAlbedoTex");
-			if(spriteTex.IsLoaded(true))
-				texture = spriteTex.Get();
+			const HSpriteImage& spriteImage = material->GetSpriteImage("gAlbedoTex");
+			if(spriteImage.IsLoaded(true))
+				image = spriteImage.Get();
 		}
 	}
 
-	bool hasValidAnimation = texture != nullptr;
+	bool hasValidAnimation = image != nullptr;
 	if(hasValidAnimation)
 	{
-		const SpriteSheetGridAnimation& gridAnim = texture->GetAnimation();
+		const SpriteSheetGridAnimation& gridAnim = image->GetAnimation();
 		hasValidAnimation = gridAnim.RowCount > 0 && gridAnim.ColumnCount > 0 && gridAnim.FrameCount > 0;
 	}
 
@@ -105,7 +105,7 @@ void ParticleTextureAnimation::Evolve(Random& random, const ParticleSystemState&
 		return;
 	}
 
-	const SpriteSheetGridAnimation& gridAnim = texture->GetAnimation();
+	const SpriteSheetGridAnimation& gridAnim = image->GetAnimation();
 
 	for(u32 i = startIdx; i < endIdx; i++)
 	{

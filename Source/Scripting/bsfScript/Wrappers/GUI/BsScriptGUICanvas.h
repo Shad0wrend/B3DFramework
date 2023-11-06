@@ -7,6 +7,7 @@
 
 namespace bs
 {
+	class ScriptSpriteImage;
 	/** @addtogroup ScriptInteropEngine
 	 *  @{
 	 */
@@ -26,7 +27,7 @@ namespace bs
 		static void InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
 		static void InternalDrawLine(ScriptGUICanvas* nativeInstance, Vector2I* a, Vector2I* b, Color* color, u8 depth);
 		static void InternalDrawPolyLine(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, u8 depth);
-		static void InternalDrawTexture(ScriptGUICanvas* nativeInstance, ScriptSpriteTexture* texture, Rect2I* area, TextureScaleMode scaleMode, Color* color, u8 depth);
+		static void InternalDrawImage(ScriptGUICanvas* nativeInstance, ScriptSpriteImage* texture, Rect2I* area, TextureScaleMode scaleMode, Color* color, u8 depth);
 		static void InternalDrawTriangleStrip(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, u8 depth);
 		static void InternalDrawTriangleList(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, u8 depth);
 		static void InternalDrawText(ScriptGUICanvas* nativeInstance, MonoString* text, Vector2I* position, ScriptFont* font, u32 size, Color* color, u8 depth);

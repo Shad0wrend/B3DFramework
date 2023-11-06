@@ -22,8 +22,8 @@ Vector2I GUIHelper::CalculateOptimalContentSize(const GUIContent& content, const
 {
 	Vector2I contentBounds = CalculateOptimalContentSize((const String&)content.Text, style, dimensions);
 
-	const HSpriteTexture& image = content.GetImage(state);
-	if(SpriteTexture::CheckIsLoaded(image))
+	const HSpriteImage& image = content.GetImage(state);
+	if(SpriteImage::CheckIsLoaded(image))
 	{
 		const Size2UI& imageSize = image->GetSize();
 
@@ -75,8 +75,8 @@ Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const GUICont
 {
 	Size2UI contentBounds = CalculateOptimalContentSizeWithPaddingAndBorder((const String&)content.Text, styleSheetRule, wordWrapWidth);
 
-	const HSpriteTexture& image = content.GetImage(GUIElementState::Normal);
-	if(SpriteTexture::CheckIsLoaded(image))
+	const HSpriteImage& image = content.GetImage(GUIElementState::Normal);
+	if(SpriteImage::CheckIsLoaded(image))
 	{
 		const u32 paddingHeight = styleSheetRule.Padding.Top + styleSheetRule.Padding.Bottom;
 		const u32 borderHeight = styleSheetRule.BorderTop.GetVisibleWidth() + styleSheetRule.BorderBottom.GetVisibleWidth();

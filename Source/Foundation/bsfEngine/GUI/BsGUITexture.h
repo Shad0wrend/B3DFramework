@@ -22,8 +22,7 @@ namespace bs
 		/**
 		 * Creates a new GUI texture element.
 		 *
-		 * @param[in]	texture			Texture element to display. If this is null then the texture specified by the style
-		 *								will be used.
+		 * @param[in]	image			Image to display. If this is null then the image specified by the style will be used.
 		 * @param[in]	scale			Scale mode to use when sizing the texture.
 		 * @param[in]	transparent		Determines should the texture be rendered with transparency active.
 		 * @param[in]	options			Options that allow you to control how is the element positioned and sized. This will
@@ -31,65 +30,60 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* Create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
+		static GUITexture* Create(const HSpriteImage& image, TextureScaleMode scale, bool transparent, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
 
 		/**
 		 * Creates a new GUI texture element.
 		 *
-		 * @param[in]	texture			Texture element to display. If this is null then the texture specified by the style
-		 *								will be used.
+		 * @param[in]	image			Image to display. If this is null then the image specified by the style will be used.
 		 * @param[in]	scale			Scale mode to use when sizing the texture.
 		 * @param[in]	transparent		Determines should the texture be rendered with transparency active.
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* Create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent, const String& styleName = StringUtil::kBlank);
+		static GUITexture* Create(const HSpriteImage& image, TextureScaleMode scale, bool transparent, const String& styleName = StringUtil::kBlank);
 
 		/**
 		 * Creates a new GUI texture element.
 		 *
-		 * @param[in]	texture			Texture element to display. If this is null then the texture specified by the style
-		 *								will be used.
+		 * @param[in]	image			Image to display. If this is null then the image specified by the style will be used.
 		 * @param[in]	scale			Scale mode to use when sizing the texture.
 		 * @param[in]	options			Options that allow you to control how is the element positioned and sized. This will
 		 *								override any similar options set by style.
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* Create(const HSpriteTexture& texture, TextureScaleMode scale, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
+		static GUITexture* Create(const HSpriteImage& image, TextureScaleMode scale, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
 
 		/**
 		 * Creates a new GUI texture element.
 		 *
-		 * @param[in]	texture			Texture element to display. If this is null then the texture specified by the style
-		 *								will be used.
+		 * @param[in]	image			Image to display. If this is null then the image specified by the style will be used.
 		 * @param[in]	scale			Scale mode to use when sizing the texture.
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* Create(const HSpriteTexture& texture, TextureScaleMode scale, const String& styleName = StringUtil::kBlank);
+		static GUITexture* Create(const HSpriteImage& image, TextureScaleMode scale, const String& styleName = StringUtil::kBlank);
 
 		/**
 		 * Creates a new GUI texture element. Uses the default StretchToFit scale mode.
 		 *
-		 * @param[in]	texture			Texture element to display. If this is null then the texture specified by the style
-		 *								will be used.
+		 * @param[in]	image			Image to display. If this is null then the texture specified by the style will be used.
 		 * @param[in]	options			Options that allow you to control how is the element positioned and sized. This will
 		 *								override any similar options set by style.
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* Create(const HSpriteTexture& texture, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
+		static GUITexture* Create(const HSpriteImage& image, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
 
 		/**
 		 * Creates a new GUI texture element. Uses the default StretchToFit scale mode.
 		 *
-		 * @param[in]	texture			Texture element to display. If this is null then the texture specified by the style
-		 *								will be used.
+		 * @param[in]	image			Image to display. If this is null then the image specified by the style will be used.
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* Create(const HSpriteTexture& texture, const String& styleName = StringUtil::kBlank);
+		static GUITexture* Create(const HSpriteImage& image, const String& styleName = StringUtil::kBlank);
 
 		/**
 		 * Creates a new GUI texture element. Uses the "normal" texture from the active GUI element style.
@@ -132,9 +126,9 @@ namespace bs
 		static GUITexture* Create(const String& styleName = StringUtil::kBlank);
 
 		/**
-		 * Changes the active texture. If the provided texture is null then the texture specified by the style will be used.
+		 * Changes the active image. If the provided image is null then the image specified by the style will be used.
 		 */
-		void SetTexture(const HSpriteTexture& texture);
+		void SetImage(const HSpriteImage& image);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -146,7 +140,7 @@ namespace bs
 
 		/** @} */
 	protected:
-		GUITexture(const String& styleName, const HSpriteTexture& texture, TextureScaleMode scale, bool transparent, const GUISizeConstraints& dimensions);
+		GUITexture(const String& styleName, const HSpriteImage& image, TextureScaleMode scale, bool transparent, const GUISizeConstraints& dimensions);
 		virtual ~GUITexture();
 
 		void FillBuffer(u8* vertices, u32* indices, u32 vertexOffset, u32 indexOffset, const Vector2I& offset, u32 maxNumVerts, u32 maxNumIndices, u32 renderElementIdx) const override;
@@ -155,7 +149,7 @@ namespace bs
 
 		ImageSprite* mImageSprite;
 		Vector2I mImageSpriteOffset;
-		HSpriteTexture mActiveImage;
+		HSpriteImage mActiveImage;
 		u32 mActiveImageWidth = 0;
 		u32 mActiveImageHeight = 0;
 		ImageSpriteInformation mDesc;

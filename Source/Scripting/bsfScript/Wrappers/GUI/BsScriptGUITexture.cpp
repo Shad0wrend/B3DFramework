@@ -26,7 +26,7 @@ ScriptGUITexture::ScriptGUITexture(MonoObject* instance, GUITexture* texture)
 void ScriptGUITexture::InitRuntimeData()
 {
 	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUITexture::InternalCreateInstance);
-	metaData.ScriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptGUITexture::InternalSetTexture);
+	metaData.ScriptClass->AddInternalCall("Internal_SetImage", (void*)&ScriptGUITexture::InternalSetImage);
 	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUITexture::InternalSetTint);
 }
 
@@ -39,23 +39,23 @@ void ScriptGUITexture::InternalCreateInstance(MonoObject* instance, MonoObject* 
 	for(u32 i = 0; i < arrayLen; i++)
 		options.AddOption(scriptArray.Get<GUIOption>(i));
 
-	HSpriteTexture nativeTexture;
+	HSpriteImage nativeImage;
 	if(texture != nullptr)
-		nativeTexture = ScriptSpriteTexture::ToNative(texture)->GetHandle();
+		nativeImage = ScriptSpriteImage::ToNative(texture)->GetHandle();
 
-	GUITexture* guiTexture = GUITexture::Create(nativeTexture, scale, transparent, options, MonoUtil::MonoToString(style));
+	GUITexture* guiTexture = GUITexture::Create(nativeImage, scale, transparent, options, MonoUtil::MonoToString(style));
 
 	new(B3DAllocate<ScriptGUITexture>()) ScriptGUITexture(instance, guiTexture);
 }
 
-void ScriptGUITexture::InternalSetTexture(ScriptGUITexture* nativeInstance, MonoObject* texture)
+void ScriptGUITexture::InternalSetImage(ScriptGUITexture* nativeInstance, MonoObject* texture)
 {
-	HSpriteTexture nativeTexture;
+	HSpriteImage nativeTexture;
 	if(texture != nullptr)
-		nativeTexture = ScriptSpriteTexture::ToNative(texture)->GetHandle();
+		nativeTexture = ScriptSpriteImage::ToNative(texture)->GetHandle();
 
 	GUITexture* guiTexture = (GUITexture*)nativeInstance->GetGuiElement();
-	guiTexture->SetTexture(nativeTexture);
+	guiTexture->SetImage(nativeTexture);
 }
 
 void ScriptGUITexture::InternalSetTint(ScriptGUITexture* nativeInstance, Color* color)

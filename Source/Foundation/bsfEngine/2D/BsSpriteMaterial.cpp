@@ -122,7 +122,7 @@ namespace bs
 		{
 			GroupId = other.GroupId;
 			Texture = B3DGetRenderProxy(other.Texture);
-			SpriteTexture = B3DGetRenderProxy(other.SpriteTexture);
+			SpriteImage = B3DGetRenderProxy(other.SpriteImage);
 			Tint = other.Tint;
 			AnimationStartTime = other.AnimationStartTime;
 			AdditionalData = other.AdditionalData;

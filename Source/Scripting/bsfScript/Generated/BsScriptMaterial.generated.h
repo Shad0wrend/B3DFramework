@@ -58,7 +58,7 @@ namespace bs
 		static void InternalCreate0(MonoObject* managedInstance, MonoObject* shader);
 		static void InternalSetTexture(ScriptMaterial* thisPtr, MonoString* name, MonoObject* value, uint32_t mipLevel, uint32_t numMipLevels, uint32_t arraySlice, uint32_t numArraySlices);
 		static MonoObject* InternalGetTexture(ScriptMaterial* thisPtr, MonoString* name);
-		static void InternalSetSpriteTexture(ScriptMaterial* thisPtr, MonoString* name, MonoObject* value);
-		static MonoObject* InternalGetSpriteTexture(ScriptMaterial* thisPtr, MonoString* name);
+		static void InternalSetSpriteImage(ScriptMaterial* thisPtr, MonoString* name, MonoObject* value);
+		static MonoObject* InternalGetSpriteImage(ScriptMaterial* thisPtr, MonoString* name);
 	};
 }

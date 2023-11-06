@@ -437,7 +437,7 @@ namespace bs
 	{
 	public:
 		SPtr<ct::Texture> Texture;
-		SPtr<ct::SpriteTexture> SpriteTexture;
+		SPtr<ct::SpriteImage> SpriteImage;
 		bool IsLoadStore;
 		TextureSurface Surface;
 	};
@@ -447,7 +447,7 @@ namespace bs
 	{
 	public:
 		HTexture Texture;
-		HSpriteTexture SpriteTexture;
+		HSpriteImage SpriteImage;
 		bool IsLoadStore;
 		TextureSurface Surface;
 
@@ -515,7 +515,7 @@ namespace bs
 		using GpuParamsType = CoreVariantType<GpuParameters, IsRenderProxy>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 		using ShaderType = CoreVariantHandleType<Shader, IsRenderProxy>;
-		using SpriteTextureType = CoreVariantHandleType<SpriteTexture, IsRenderProxy>;
+		using SpriteImageType = CoreVariantHandleType<SpriteImage, IsRenderProxy>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
 
 		using ParamStructDataType = typename TMaterialParamsTypes<IsRenderProxy>::StructParamDataType;
@@ -581,24 +581,24 @@ namespace bs
 		void SetTexture(const String& name, const TextureType& value, const TextureSurface& surface = TextureSurface::kComplete);
 
 		/**
-		 * Returns the value of a shader texture parameter with the specified name as a sprite texture. If the parameter
+		 * Returns the value of a shader texture parameter with the specified name as a sprite image. If the parameter
 		 * name or type is not valid a warning will be logged and output value will not be retrieved. If the assigned
-		 * texture is not a sprite texture then this returns null and you should use one of the getTexture() overloads
+		 * texture is not a sprite texture then this returns null and you should use one of the GetTexture() overloads
 		 * instead.
 		 *
 		 * @param[in]	name		Name of the shader parameter.
 		 * @param[out]	value		Output value of the parameter.
 		 */
-		void GetSpriteTexture(const String& name, SpriteTextureType& value) const;
+		void GetSpriteImage(const String& name, SpriteImageType& value) const;
 
 		/**
-		 * Assigns a sprite texture to a shader texture parameter with the specified name. If the parameter name or type
+		 * Assigns a sprite image to a shader texture parameter with the specified name. If the parameter name or type
 		 * is not valid a warning will be logged and output value will not be set.
 		 *
-		 * @param[in]	name		Name of the shader parameter.
-		 * @param[in]	value		New value of the parameter.
+		 * @param	name		Name of the shader parameter.
+		 * @param	value		New value of the parameter.
 		 */
-		void SetSpriteTexture(const String& name, const SpriteTextureType& value);
+		void SetSpriteImage(const String& name, const SpriteImageType& value);
 		/**
 		 * Returns the value of a shader load/store texture parameter with the specified name. If the parameter name or
 		 * type is not valid a warning will be logged and output value will not be retrieved.
@@ -696,18 +696,18 @@ namespace bs
 		void SetTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface = TextureSurface::kComplete);
 
 		/**
-		 * Equivalent to getSpriteTexture(const String&, HSpriteTexture&) except it uses the internal parameter reference
+		 * Equivalent to GetSpriteImage(const String&, HSpriteImage&) except it uses the internal parameter reference
 		 * directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs to this
 		 * object.
 		 */
-		void GetSpriteTexture(const ParamData& param, SpriteTextureType& value) const;
+		void GetSpriteImage(const ParamData& param, SpriteImageType& value) const;
 
 		/**
-		 * Equivalent to setSpriteTexture(const String&, const HSpriteTexture&) except it uses the internal parameter
+		 * Equivalent to SetSpriteImage(const String&, const HSpriteImage&) except it uses the internal parameter
 		 * reference directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs
 		 * to this object.
 		 */
-		void SetSpriteTexture(const ParamData& param, const SpriteTextureType& value);
+		void SetSpriteImage(const ParamData& param, const SpriteImageType& value);
 
 		/**
 		 * Equivalent to getBuffer(const String&, SPtr<GpuBuffer>&) except it uses the internal parameter reference
@@ -755,7 +755,7 @@ namespace bs
 		 * Returns a sprite texture that is used for populating the specified data parameter. This is only relevant
 		 * for data parameters marked with the ShaderParamAttributeType::SpriteUV attribute.
 		 */
-		SpriteTextureType GetOwningSpriteTexture(const ParamData& param) const;
+		SpriteImageType GetOwningSpriteImage(const ParamData& param) const;
 
 		/**
 		 * Equivalent to getSamplerState(const String&, SPtr<SamplerState>&) except it uses the internal parameter reference

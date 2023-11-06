@@ -1620,7 +1620,7 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	</struct>
 	<struct native="GUIElementStateStyle" script="GUIElementStateStyle">
 		<doc>Specific texture and text color used in a particular GUI element style.</doc>
-		<field name="Texture" type="SpriteTexture">
+		<field name="Image" type="SpriteImage">
 		</field>
 		<field name="TextColor" type="Color">
 		</field>
@@ -3571,24 +3571,24 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<ctor>
 		</ctor>
 		<ctor>
-			<param name="image" type="SpriteTexture">
+			<param name="image" type="SpriteImage">
 			</param>
 		</ctor>
-		<field name="Normal" type="SpriteTexture">
+		<field name="Normal" type="SpriteImage">
 		</field>
-		<field name="Hover" type="SpriteTexture">
+		<field name="Hover" type="SpriteImage">
 		</field>
-		<field name="Active" type="SpriteTexture">
+		<field name="Active" type="SpriteImage">
 		</field>
-		<field name="Focused" type="SpriteTexture">
+		<field name="Focused" type="SpriteImage">
 		</field>
-		<field name="NormalOn" type="SpriteTexture">
+		<field name="NormalOn" type="SpriteImage">
 		</field>
-		<field name="HoverOn" type="SpriteTexture">
+		<field name="HoverOn" type="SpriteImage">
 		</field>
-		<field name="ActiveOn" type="SpriteTexture">
+		<field name="ActiveOn" type="SpriteImage">
 		</field>
-		<field name="FocusedOn" type="SpriteTexture">
+		<field name="FocusedOn" type="SpriteImage">
 		</field>
 	</struct>
 	<struct native="ControllerCollision" script="ControllerCollision">

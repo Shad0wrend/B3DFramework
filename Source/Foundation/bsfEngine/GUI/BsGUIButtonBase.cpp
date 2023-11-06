@@ -99,9 +99,9 @@ void GUIButtonBase::UpdateRenderElements()
 		mImageDesc.Width = mLayoutData.Area.Width;
 		mImageDesc.Height = mLayoutData.Area.Height;
 
-		const HSpriteTexture& activeTex = GetActiveTexture();
-		if(SpriteTexture::CheckIsLoaded(activeTex))
-			mImageDesc.Image = activeTex;
+		const HSpriteImage& activeImage = GetActiveImage();
+		if(SpriteImage::CheckIsLoaded(activeImage))
+			mImageDesc.Image = activeImage;
 		else
 			mImageDesc.Image = nullptr;
 
@@ -120,7 +120,7 @@ void GUIButtonBase::UpdateRenderElements()
 	{
 		Rect2I contentBounds = GetCachedContentBounds();
 
-		HSpriteTexture image = mContent.GetImage(mActiveState);
+		HSpriteImage image = mContent.GetImage(mActiveState);
 
 		const Size2UI& imageSize = image->GetSize();
 		u32 contentWidth = imageSize.Width;
@@ -258,11 +258,11 @@ Vector2I GUIButtonBase::GetOptimalSize() const
 	}
 	else
 	{
-		const HSpriteTexture& activeTex = GetActiveTexture();
-		if(SpriteTexture::CheckIsLoaded(activeTex))
+		const HSpriteImage& activeImage = GetActiveImage();
+		if(SpriteImage::CheckIsLoaded(activeImage))
 		{
-			imageWidth = activeTex->GetSize().Width;
-			imageHeight = activeTex->GetSize().Height;
+			imageWidth = activeImage->GetSize().Width;
+			imageHeight = activeImage->GetSize().Height;
 		}
 
 		Vector2I contentSize = GUIHelper::CalculateOptimalContentSize(mContent, *GetStyle(), GetSizeConstraints(), mActiveState);
@@ -393,8 +393,8 @@ String GUIButtonBase::GetTooltip() const
 
 void GUIButtonBase::RefreshContentSprite()
 {
-	HSpriteTexture contentTex = mContent.GetImage(mActiveState);
-	if(SpriteTexture::CheckIsLoaded(contentTex))
+	HSpriteImage contentImage = mContent.GetImage(mActiveState);
+	if(SpriteImage::CheckIsLoaded(contentImage))
 	{
 		if(mContentImageSprite == nullptr)
 			mContentImageSprite = B3DNew<ImageSprite>();
@@ -473,35 +473,35 @@ void GUIButtonBase::SetStateInternal(GUIElementState state)
 		MarkContentAsDirty();
 }
 
-const HSpriteTexture& GUIButtonBase::GetActiveTexture() const
+const HSpriteImage& GUIButtonBase::GetActiveImage() const
 {
 	switch(mActiveState)
 	{
 	case GUIElementState::Normal:
-		return GetStyle()->Normal.Texture;
+		return GetStyle()->Normal.Image;
 	case GUIElementState::Hover:
-		return GetStyle()->Hover.Texture;
+		return GetStyle()->Hover.Image;
 	case GUIElementState::Active:
-		return GetStyle()->Active.Texture;
+		return GetStyle()->Active.Image;
 	case GUIElementState::Focused:
-		return GetStyle()->Focused.Texture;
+		return GetStyle()->Focused.Image;
 	case GUIElementState::FocusedHover:
-		return GetStyle()->FocusedHover.Texture;
+		return GetStyle()->FocusedHover.Image;
 	case GUIElementState::NormalOn:
-		return GetStyle()->NormalOn.Texture;
+		return GetStyle()->NormalOn.Image;
 	case GUIElementState::HoverOn:
-		return GetStyle()->HoverOn.Texture;
+		return GetStyle()->HoverOn.Image;
 	case GUIElementState::ActiveOn:
-		return GetStyle()->ActiveOn.Texture;
+		return GetStyle()->ActiveOn.Image;
 	case GUIElementState::FocusedOn:
-		return GetStyle()->FocusedOn.Texture;
+		return GetStyle()->FocusedOn.Image;
 	case GUIElementState::FocusedHoverOn:
-		return GetStyle()->FocusedHoverOn.Texture;
+		return GetStyle()->FocusedHoverOn.Image;
 	default:
 		break;
 	}
 
-	return GetStyle()->Normal.Texture;
+	return GetStyle()->Normal.Image;
 }
 
 Color GUIButtonBase::GetActiveTextColor() const

@@ -78,8 +78,8 @@ namespace bs
 		/**	Retrieves internal button state. */
 		GUIElementState GetState() const { return mActiveState; }
 
-		/**	Returns the active sprite texture, depending on the current state. */
-		const HSpriteTexture& GetActiveTexture() const;
+		/**	Returns the active sprite image, depending on the current state. */
+		const HSpriteImage& GetActiveImage() const;
 
 		/**	Returns the active text color, depending on the current state. */
 		Color GetActiveTextColor() const;

@@ -93,8 +93,8 @@ void GUIScrollBar::UpdateRenderElements()
 {
 	ImageSpriteInformation desc;
 
-	if(GetStyle()->Normal.Texture != nullptr && GetStyle()->Normal.Texture.IsLoaded())
-		desc.Image = GetStyle()->Normal.Texture;
+	if(GetStyle()->Normal.Image != nullptr && GetStyle()->Normal.Image.IsLoaded())
+		desc.Image = GetStyle()->Normal.Image;
 
 	desc.Width = mLayoutData.Area.Width;
 	desc.Height = mLayoutData.Area.Height;

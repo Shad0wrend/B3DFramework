@@ -13,7 +13,7 @@ namespace bs
         /// <summary>
         /// Returns image content (if any).
         /// </summary>
-        public SpriteTexture GetImage(GUIElementState state = GUIElementState.Normal)
+        public SpriteImage GetImage(GUIElementState state = GUIElementState.Normal)
         {
             switch (state)
             {
@@ -66,7 +66,7 @@ namespace bs
         /// </summary>
         /// <param name="imageOff">Image to assign to all off states.</param>
         /// <param name="imageOn">Image to assign to all on states.</param>
-        public GUIContentImages(SpriteTexture imageOff, SpriteTexture imageOn)
+        public GUIContentImages(SpriteImage imageOff, SpriteImage imageOn)
         {
             Normal = imageOff;
             Hover = imageOff;
@@ -83,7 +83,7 @@ namespace bs
         /// </summary>
         /// <param name="image">Image to instantiate the GUI content images with.</param>
         /// <returns>GUI content images with all states set to the provided image.</returns>
-        public static implicit operator GUIContentImages(SpriteTexture image)
+        public static implicit operator GUIContentImages(SpriteImage image)
         {
             return new GUIContentImages(image);
         }

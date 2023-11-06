@@ -155,23 +155,23 @@ namespace bs
 
 	/** @copydoc TMaterialParameterPrimitive */
 	template <bool IsRenderProxy>
-	class B3D_CORE_EXPORT TMaterialParamSpriteTexture
+	class B3D_CORE_EXPORT TMaterialParamSpriteImage
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, IsRenderProxy>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, IsRenderProxy>;
-		using SpriteTextureType = CoreVariantHandleType<SpriteTexture, IsRenderProxy>;
+		using SpriteImageType = CoreVariantHandleType<SpriteImage, IsRenderProxy>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 
 	public:
-		TMaterialParamSpriteTexture(const String& name, const MaterialPtrType& material);
+		TMaterialParamSpriteImage(const String& name, const MaterialPtrType& material);
 
-		TMaterialParamSpriteTexture() {}
+		TMaterialParamSpriteImage() {}
 
 		/** @copydoc GpuParamTexture::Set */
-		void Set(const SpriteTextureType& texture) const;
+		void Set(const SpriteImageType& image) const;
 
 		/** @copydoc GpuParamTexture::Get */
-		SpriteTextureType Get() const;
+		SpriteImageType Get() const;
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -304,7 +304,7 @@ namespace bs
 
 	typedef TMaterialParameterCurve<float, false> MaterialParameterFloatCurve;
 	typedef TMaterialParameterColorGradient<false> MaterialParameterColorGradient;
-	typedef TMaterialParamSpriteTexture<false> MaterialParameterSpriteTexture;
+	typedef TMaterialParamSpriteImage<false> MaterialParameterSpriteTexture;
 
 	namespace ct
 	{
@@ -333,7 +333,7 @@ namespace bs
 
 		typedef TMaterialParameterCurve<float, true> MaterialParameterFloatCurve;
 		typedef TMaterialParameterColorGradient<true> MaterialParameterColorGradient;
-		typedef TMaterialParamSpriteTexture<true> MaterialParameterSpriteTexture;
+		typedef TMaterialParamSpriteImage<true> MaterialParameterSpriteTexture;
 	} // namespace ct
 
 	/** @} */

@@ -209,6 +209,16 @@ namespace bs
 			return handle;
 		}
 
+		/**	Converts a specific handle to Resource handle of the resource's base class. */
+		template<class U, std::enable_if_t<std::is_base_of_v<U, T>, int> = 0>
+		operator TResourceHandle<U, WeakHandle>() const
+		{
+			TResourceHandle<U, WeakHandle> handle;
+			handle.SetHandleData(this->GetHandleData());
+
+			return handle;
+		}
+
 		/**
 		 * Returns internal resource pointer.
 		 *

@@ -79,7 +79,7 @@ void GUICanvas::DrawPolyLine(const Vector<Vector2I>& vertices, const Color& colo
 	MarkContentAsDirty();
 }
 
-void GUICanvas::DrawTexture(const HSpriteTexture& texture, const Rect2I& area, TextureScaleMode scaleMode, const Color& color, u8 depth)
+void GUICanvas::DrawImage(const HSpriteImage& image, const Rect2I& area, TextureScaleMode scaleMode, const Color& color, u8 depth)
 {
 	mElements.push_back(CanvasElement());
 	CanvasElement& element = mElements.back();
@@ -93,7 +93,7 @@ void GUICanvas::DrawTexture(const HSpriteTexture& texture, const Rect2I& area, T
 
 	mDepthRange = std::max(mDepthRange, (u8)(depth + 1));
 
-	mImageData.push_back({ texture, area });
+	mImageData.push_back({ image, area });
 	MarkContentAsDirty();
 }
 
@@ -438,9 +438,9 @@ void GUICanvas::BuildImageElement(const CanvasElement& element)
 	desc.Color = element.Color;
 
 	Size2UI textureSize;
-	if(SpriteTexture::CheckIsLoaded(imageData.Texture))
+	if(SpriteImage::CheckIsLoaded(imageData.Image))
 	{
-		desc.Image = imageData.Texture;
+		desc.Image = imageData.Image;
 
 		textureSize = desc.Image->GetSize();
 	}

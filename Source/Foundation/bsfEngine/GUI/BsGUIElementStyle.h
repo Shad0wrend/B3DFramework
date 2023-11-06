@@ -25,7 +25,7 @@ namespace bs
 	/**	Specific texture and text color used in a particular GUI element style. */
 	struct B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) GUIElementStateStyle
 	{
-		B3D_NO_RREF HSpriteTexture Texture;
+		B3D_NO_RREF HSpriteImage Image;
 		Color TextColor;
 	};
 

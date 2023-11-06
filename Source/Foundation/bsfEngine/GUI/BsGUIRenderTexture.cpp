@@ -14,7 +14,7 @@ const String& GUIRenderTexture::GetGuiTypeName()
 }
 
 GUIRenderTexture::GUIRenderTexture(const String& styleName, const SPtr<RenderTexture>& texture, bool transparent, const GUISizeConstraints& dimensions)
-	: GUITexture(styleName, HSpriteTexture(), TextureScaleMode::StretchToFit, false, dimensions), mTransparent(transparent)
+	: GUITexture(styleName, HSpriteImage(), TextureScaleMode::StretchToFit, false, dimensions), mTransparent(transparent)
 {
 	SetRenderTexture(texture);
 }
@@ -60,13 +60,13 @@ void GUIRenderTexture::SetRenderTexture(const SPtr<RenderTexture>& texture)
 			mDesc.UvScale = Vector2(1.0f, -1.0f);
 		}
 
-		SetTexture(SpriteTexture::Create(texture->GetColorTexture(0)));
+		SetImage(SpriteTexture::Create(texture->GetColorTexture(0)));
 
 		GUIManager::Instance().SetInputBridge(mSourceTexture, this);
 	}
 	else
 	{
-		SetTexture(SpriteTexture::Create(HTexture()));
+		SetImage(SpriteTexture::Create(HTexture()));
 	}
 
 	MarkLayoutAsDirty();

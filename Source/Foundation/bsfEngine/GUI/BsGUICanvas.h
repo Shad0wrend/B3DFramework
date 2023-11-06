@@ -67,9 +67,9 @@ namespace bs
 		void DrawPolyLine(const Vector<Vector2I>& vertices, const Color& color = Color::kWhite, u8 depth = 128);
 
 		/**
-		 * Draws a quad with a the provided texture displayed.
+		 * Draws a quad with a the provided image displayed.
 		 *
-		 * @param[in]	texture		Texture to draw.
+		 * @param[in]	image		Image to draw.
 		 * @param[in]	area		Position and size of the texture to draw. Position is relative to the canvas origin
 		 *							(top-left). If size is zero, the default texture size will be used.
 		 * @param[in]	scaleMode	Scale mode to use when sizing the texture. Only relevant if the provided quad size
@@ -79,7 +79,7 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawTexture(const HSpriteTexture& texture, const Rect2I& area, TextureScaleMode scaleMode = TextureScaleMode::StretchToFit, const Color& color = Color::kWhite, u8 depth = 128);
+		void DrawImage(const HSpriteImage& image, const Rect2I& area, TextureScaleMode scaleMode = TextureScaleMode::StretchToFit, const Color& color = Color::kWhite, u8 depth = 128);
 
 		/**
 		 * Draws a triangle strip. First three vertices are used to form the initial triangle, and every next vertex will
@@ -189,7 +189,7 @@ namespace bs
 		/** Information required for drawing an image canvas element. */
 		struct ImageElementData
 		{
-			HSpriteTexture Texture;
+			HSpriteImage Image;
 			Rect2I Area;
 		};
 

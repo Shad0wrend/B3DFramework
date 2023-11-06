@@ -30,7 +30,7 @@ namespace bs
 			return value;
 		}
 
-		public GUIContentImages(SpriteTexture image)
+		public GUIContentImages(SpriteImage image)
 		{
 			this.Normal = image;
 			this.Hover = image;
@@ -42,14 +42,14 @@ namespace bs
 			this.FocusedOn = image;
 		}
 
-		public SpriteTexture Normal;
-		public SpriteTexture Hover;
-		public SpriteTexture Active;
-		public SpriteTexture Focused;
-		public SpriteTexture NormalOn;
-		public SpriteTexture HoverOn;
-		public SpriteTexture ActiveOn;
-		public SpriteTexture FocusedOn;
+		public SpriteImage Normal;
+		public SpriteImage Hover;
+		public SpriteImage Active;
+		public SpriteImage Focused;
+		public SpriteImage NormalOn;
+		public SpriteImage HoverOn;
+		public SpriteImage ActiveOn;
+		public SpriteImage FocusedOn;
 	}
 
 	/** @} */

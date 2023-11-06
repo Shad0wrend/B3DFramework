@@ -109,7 +109,7 @@ namespace bs
 	{
 	public:
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
-		using SpriteTextureType = CoreVariantHandleType<SpriteTexture, IsRenderProxy>;
+		using SpriteImageType = CoreVariantHandleType<SpriteImage, IsRenderProxy>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
 		using PassType = CoreVariantType<Pass, IsRenderProxy>;
 		using TechniqueType = CoreVariantType<Technique, IsRenderProxy>;
@@ -290,7 +290,7 @@ namespace bs
 		}
 
 		/**
-		 * Assigns a sprite texture to the shader parameter with the specified name. If the sprite texture contains
+		 * Assigns a sprite image to the shader parameter with the specified name. If the sprite image contains
 		 * animation it will be automatically evaluated every frame.
 		 *
 		 * @note
@@ -299,9 +299,9 @@ namespace bs
 		 * and size which should be utilized by the shader code to render a subset of the texture as defined in the sprite
 		 * texture.
 		 */
-		void SetSpriteTexture(const String& name, const SpriteTextureType& value)
+		void SetSpriteImage(const String& name, const SpriteImageType& value)
 		{
-			return GetParamSpriteTexture(name).Set(value);
+			return GetParamSpriteImage(name).Set(value);
 		}
 
 		/** Assigns a texture to be used for random load/store operations to the shader parameter with the specified name. */
@@ -413,11 +413,11 @@ namespace bs
 		TextureType GetTexture(const String& name) const { return GetParamTexture(name).Get(); }
 
 		/**
-		 * Returns a sprite texture assigned to the parameter with the specified name. If the parameter has a regular
-		 * texture attached instead of a sprite texture, null will be returned. Use getBoundParamType() to determine
+		 * Returns a sprite image assigned to the parameter with the specified name. If the parameter has a regular
+		 * texture attached instead of a sprite image, null will be returned. Use getBoundParamType() to determine
 		 * the type of the parameter.
 		 */
-		SpriteTextureType GetSpriteTexture(const String& name) const { return GetParamSpriteTexture(name).Get(); }
+		SpriteImageType GetSpriteImage(const String& name) const { return GetParamSpriteImage(name).Get(); }
 
 		/** Returns a sampler state assigned with the parameter with the specified name. */
 		SPtr<SamplerState> GetSamplerState(const String& name) const { return GetParamSamplerState(name).Get(); }
@@ -630,7 +630,7 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialParamSpriteTexture<IsRenderProxy> GetParamSpriteTexture(const String& name) const;
+		TMaterialParamSpriteImage<IsRenderProxy> GetParamSpriteImage(const String& name) const;
 
 		/**
 		 * Returns a handle that allows you to assign a load-store texture GPU parameter. This handle may be used for more

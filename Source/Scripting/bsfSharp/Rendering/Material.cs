@@ -42,24 +42,24 @@ namespace bs
         }
 
         /// <summary>
-        /// Returns a sprite texture assigned to the material.
+        /// Returns a sprite image assigned to the material.
         /// </summary>
-        /// <param name="name">Name of the texture parameter.</param>
-        /// <returns>Texture assigned to the specified material</returns>
-        public RRef<SpriteTexture> GetSpriteTexture(string name)
+        /// <param name="name">Name of the image parameter.</param>
+        /// <returns>Image assigned to the specified material</returns>
+        public RRef<SpriteImage> GetSpriteImage(string name)
         {
-            return Internal_GetSpriteTexture(mCachedPtr, name);
+            return Internal_GetSpriteImage(mCachedPtr, name);
         }
 
         /// <summary>
-        /// Assigns a sprite texture to the specified material parameter. Sprite texture is allowed to be animated, or just
+        /// Assigns a sprite image to the specified material parameter. Sprite image is allowed to be animated, or just
         /// used for referencing a subset of a texture atlas.
         /// </summary>
-        /// <param name="name">Name of the texture parameter.</param>
-        /// <param name="texture">Texture resource to assign.</param>
-        public void SetSpriteTexture(string name, RRef<SpriteTexture> texture)
+        /// <param name="name">Name of the image parameter.</param>
+        /// <param name="texture">Image resource to assign.</param>
+        public void SetSpriteImage(string name, RRef<SpriteImage> image)
         {
-            Internal_SetSpriteTexture(mCachedPtr, name, texture);
+            Internal_SetSpriteImage(mCachedPtr, name, image);
         }
     }
 

@@ -58,8 +58,8 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptMaterial::InternalCreate0);
 		metaData.ScriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptMaterial::InternalSetTexture);
 		metaData.ScriptClass->AddInternalCall("Internal_GetTexture", (void*)&ScriptMaterial::InternalGetTexture);
-		metaData.ScriptClass->AddInternalCall("Internal_SetSpriteTexture", (void*)&ScriptMaterial::InternalSetSpriteTexture);
-		metaData.ScriptClass->AddInternalCall("Internal_GetSpriteTexture", (void*)&ScriptMaterial::InternalGetSpriteTexture);
+		metaData.ScriptClass->AddInternalCall("Internal_SetSpriteImage", (void*)&ScriptMaterial::InternalSetSpriteImage);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSpriteImage", (void*)&ScriptMaterial::InternalGetSpriteImage);
 
 	}
 
@@ -370,24 +370,24 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptMaterial::InternalSetSpriteTexture(ScriptMaterial* thisPtr, MonoString* name, MonoObject* value)
+	void ScriptMaterial::InternalSetSpriteImage(ScriptMaterial* thisPtr, MonoString* name, MonoObject* value)
 	{
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		ResourceHandle<SpriteTexture> tmpvalue;
+		ResourceHandle<SpriteImage> tmpvalue;
 		ScriptRRefBase* scriptvalue;
 		scriptvalue = ScriptRRefBase::ToNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = B3DStaticResourceCast<SpriteTexture>(scriptvalue->GetHandle());
-		MaterialEx::SetSpriteTexture(thisPtr->GetHandle(), tmpname, tmpvalue);
+			tmpvalue = B3DStaticResourceCast<SpriteImage>(scriptvalue->GetHandle());
+		MaterialEx::SetSpriteImage(thisPtr->GetHandle(), tmpname, tmpvalue);
 	}
 
-	MonoObject* ScriptMaterial::InternalGetSpriteTexture(ScriptMaterial* thisPtr, MonoString* name)
+	MonoObject* ScriptMaterial::InternalGetSpriteImage(ScriptMaterial* thisPtr, MonoString* name)
 	{
-		ResourceHandle<SpriteTexture> tmp__output;
+		ResourceHandle<SpriteImage> tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		tmp__output = MaterialEx::GetSpriteTexture(thisPtr->GetHandle(), tmpname);
+		tmp__output = MaterialEx::GetSpriteImage(thisPtr->GetHandle(), tmpname);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;

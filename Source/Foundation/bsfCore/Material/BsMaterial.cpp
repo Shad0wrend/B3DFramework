@@ -324,11 +324,11 @@ TMaterialParameterSampledTexture<IsRenderProxy> TMaterial<IsRenderProxy>::GetPar
 }
 
 template <bool IsRenderProxy>
-TMaterialParamSpriteTexture<IsRenderProxy> TMaterial<IsRenderProxy>::GetParamSpriteTexture(const String& name) const
+TMaterialParamSpriteImage<IsRenderProxy> TMaterial<IsRenderProxy>::GetParamSpriteImage(const String& name) const
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamSpriteTexture<IsRenderProxy>(name, GetMaterialPtr(this));
+	return TMaterialParamSpriteImage<IsRenderProxy>(name, GetMaterialPtr(this));
 }
 
 template <bool IsRenderProxy>
@@ -922,11 +922,11 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 			break;
 		case MateralParamTextureType::Sprite:
 			{
-				TMaterialParamSpriteTexture<false> curParam = GetParamSpriteTexture(param.first);
+				TMaterialParamSpriteImage<false> curParam = GetParamSpriteImage(param.first);
 
-				HSpriteTexture texture;
-				params->GetSpriteTexture(*paramData, texture);
-				curParam.Set(texture);
+				HSpriteImage image;
+				params->GetSpriteImage(*paramData, image);
+				curParam.Set(image);
 			}
 			break;
 		}

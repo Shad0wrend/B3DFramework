@@ -232,7 +232,7 @@ typename TMaterialParameterSampledTexture<IsRenderProxy>::TextureType TMaterialP
 }
 
 template <bool IsRenderProxy>
-TMaterialParamSpriteTexture<IsRenderProxy>::TMaterialParamSpriteTexture(const String& name, const MaterialPtrType& material)
+TMaterialParamSpriteImage<IsRenderProxy>::TMaterialParamSpriteImage(const String& name, const MaterialPtrType& material)
 	: mParamIndex(0), mMaterial(nullptr)
 {
 	if(material != nullptr)
@@ -253,7 +253,7 @@ TMaterialParamSpriteTexture<IsRenderProxy>::TMaterialParamSpriteTexture(const St
 }
 
 template <bool IsRenderProxy>
-void TMaterialParamSpriteTexture<IsRenderProxy>::Set(const SpriteTextureType& texture) const
+void TMaterialParamSpriteImage<IsRenderProxy>::Set(const SpriteImageType& image) const
 {
 	if(mMaterial == nullptr)
 		return;
@@ -261,7 +261,7 @@ void TMaterialParamSpriteTexture<IsRenderProxy>::Set(const SpriteTextureType& te
 	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
 	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
 
-	if(texture == nullptr)
+	if(image == nullptr)
 	{
 		// If there is a default value, assign that instead of null
 		TextureType newValue;
@@ -269,7 +269,7 @@ void TMaterialParamSpriteTexture<IsRenderProxy>::Set(const SpriteTextureType& te
 		params->SetTexture(*data, newValue, TextureSurface::kComplete);
 	}
 	else
-		params->SetSpriteTexture(*data, texture);
+		params->SetSpriteImage(*data, image);
 
 	mMaterial->MarkRenderProxyDataDirtyInternal();
 	mMaterial->MarkDependenciesDirtyInternal();
@@ -277,16 +277,16 @@ void TMaterialParamSpriteTexture<IsRenderProxy>::Set(const SpriteTextureType& te
 }
 
 template <bool IsRenderProxy>
-typename TMaterialParamSpriteTexture<IsRenderProxy>::SpriteTextureType TMaterialParamSpriteTexture<IsRenderProxy>::Get() const
+typename TMaterialParamSpriteImage<IsRenderProxy>::SpriteImageType TMaterialParamSpriteImage<IsRenderProxy>::Get() const
 {
-	SpriteTextureType texture;
+	SpriteImageType texture;
 	if(mMaterial == nullptr)
 		return texture;
 
 	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
 	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
 
-	params->GetSpriteTexture(*data, texture);
+	params->GetSpriteImage(*data, texture);
 	return texture;
 }
 
@@ -492,8 +492,8 @@ template class TMaterialParameterColorGradient<true>;
 template class TMaterialParameterSampledTexture<false>;
 template class TMaterialParameterSampledTexture<true>;
 
-template class TMaterialParamSpriteTexture<false>;
-template class TMaterialParamSpriteTexture<true>;
+template class TMaterialParamSpriteImage<false>;
+template class TMaterialParamSpriteImage<true>;
 
 template class TMaterialParameterStorageTexture<false>;
 template class TMaterialParameterStorageTexture<true>;

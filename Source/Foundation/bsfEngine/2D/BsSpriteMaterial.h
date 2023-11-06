@@ -50,7 +50,7 @@ namespace bs
 	struct TSpriteMaterialInfo
 	{
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
-		using SpriteTextureType = CoreVariantHandleType<SpriteTexture, IsRenderProxy>;
+		using SpriteImageType = CoreVariantHandleType<SpriteImage, IsRenderProxy>;
 
 		TSpriteMaterialInfo() = default;
 
@@ -63,7 +63,7 @@ namespace bs
 			TSpriteMaterialInfo info;
 			info.GroupId = GroupId;
 			info.Texture = Texture;
-			info.SpriteTexture = SpriteTexture;
+			info.SpriteImage = SpriteImage;
 			info.Tint = Tint;
 			info.AnimationStartTime = AnimationStartTime;
 
@@ -75,7 +75,7 @@ namespace bs
 
 		u64 GroupId = 0;
 		TextureType Texture;
-		SpriteTextureType SpriteTexture;
+		SpriteImageType SpriteImage;
 		Color Tint;
 		float AnimationStartTime = 0.0f;
 		SPtr<SpriteMaterialExtraInfo> AdditionalData;

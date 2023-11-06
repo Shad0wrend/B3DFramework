@@ -28,22 +28,22 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN(ImagePosition, 4)
 			B3D_RTTI_MEMBER_PLAIN(WordWrap, 5)
 
-			B3D_RTTI_MEMBER_REFL_NAMED(normalTex, Normal.Texture, 6)
+			B3D_RTTI_MEMBER_REFL_NAMED(normalTex, Normal.Image, 6)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(normalTextColor, Normal.TextColor, 7)
-			B3D_RTTI_MEMBER_REFL_NAMED(hoverTex, Hover.Texture, 8)
+			B3D_RTTI_MEMBER_REFL_NAMED(hoverTex, Hover.Image, 8)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(hoverTextColor, Hover.TextColor, 9)
-			B3D_RTTI_MEMBER_REFL_NAMED(activeTex, Active.Texture, 10)
+			B3D_RTTI_MEMBER_REFL_NAMED(activeTex, Active.Image, 10)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(activeTextColor, Active.TextColor, 11)
-			B3D_RTTI_MEMBER_REFL_NAMED(focusedTex, Focused.Texture, 12)
+			B3D_RTTI_MEMBER_REFL_NAMED(focusedTex, Focused.Image, 12)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(focusedTextColor, Focused.TextColor, 13)
 
-			B3D_RTTI_MEMBER_REFL_NAMED(normalOnTex, NormalOn.Texture, 14)
+			B3D_RTTI_MEMBER_REFL_NAMED(normalOnTex, NormalOn.Image, 14)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(normalOnTextColor, NormalOn.TextColor, 15)
-			B3D_RTTI_MEMBER_REFL_NAMED(hoverOnTex, HoverOn.Texture, 16)
+			B3D_RTTI_MEMBER_REFL_NAMED(hoverOnTex, HoverOn.Image, 16)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(hoverOnTextColor, HoverOn.TextColor, 17)
-			B3D_RTTI_MEMBER_REFL_NAMED(activeOnTex, ActiveOn.Texture, 18)
+			B3D_RTTI_MEMBER_REFL_NAMED(activeOnTex, ActiveOn.Image, 18)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(activeOnTextColor, ActiveOn.TextColor, 19)
-			B3D_RTTI_MEMBER_REFL_NAMED(focusedOnTex, FocusedOn.Texture, 20)
+			B3D_RTTI_MEMBER_REFL_NAMED(focusedOnTex, FocusedOn.Image, 20)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(focusedOnTextColor, FocusedOn.TextColor, 21)
 
 			B3D_RTTI_MEMBER_PLAIN(Border, 22)
@@ -62,9 +62,9 @@ namespace bs
 
 			B3D_RTTI_MEMBER_PLAIN(SubStyles, 34)
 
-			B3D_RTTI_MEMBER_REFL_NAMED(focusedHoverTex, FocusedHover.Texture, 35)
+			B3D_RTTI_MEMBER_REFL_NAMED(focusedHoverTex, FocusedHover.Image, 35)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(focusedHoverTextColor, FocusedHover.TextColor, 36)
-			B3D_RTTI_MEMBER_REFL_NAMED(focusedHoverOnTex, FocusedHoverOn.Texture, 37)
+			B3D_RTTI_MEMBER_REFL_NAMED(focusedHoverOnTex, FocusedHoverOn.Image, 37)
 			B3D_RTTI_MEMBER_PLAIN_NAMED(focusedHoverOnTextColor, FocusedHoverOn.TextColor, 38)
 		B3D_RTTI_END_MEMBERS
 

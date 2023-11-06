@@ -108,9 +108,9 @@ namespace bs
         }
 
         /// <summary>
-        /// Draws a quad with a the provided texture displayed.
+        /// Draws a quad with a the provided image displayed.
         /// </summary>
-        /// <param name="texture">Texture to draw.</param>
+        /// <param name="image">Image to draw.</param>
         /// <param name="area">Position and size of the texture to draw. Position is relative to the canvas origin
         ///                    (top-left). If size is zero, the default texture size will be used.</param>
         /// <param name="scaleMode">Scale mode to use when sizing the texture. Only relevant if the provided quad size
@@ -118,21 +118,21 @@ namespace bs
         /// <param name="depth">Depth at which to draw the element. Elements with higher depth will be drawn before others.
         ///                     Additionally elements of the same type (triangle or line) will be drawn in order they are
         ///                     submitted if they share the same depth.</param>
-        public void DrawTexture(SpriteTexture texture, Rect2I area,
+        public void DrawImage(SpriteImage image, Rect2I area,
             GUITextureScaleMode scaleMode = GUITextureScaleMode.StretchToFit, byte depth = 128)
         {
-            IntPtr texturePtr = IntPtr.Zero;
-            if (texture != null)
-                texturePtr = texture.GetCachedPtr();
+            IntPtr imagePtr = IntPtr.Zero;
+            if (image != null)
+                imagePtr = image.GetCachedPtr();
 
             Color color = Color.White;
-            Internal_DrawTexture(mCachedPtr, texturePtr, ref area, scaleMode, ref color, depth);
+            Internal_DrawImage(mCachedPtr, imagePtr, ref area, scaleMode, ref color, depth);
         }
 
         /// <summary>
-        /// Draws a quad with a the provided texture displayed.
+        /// Draws a quad with a the provided image displayed.
         /// </summary>
-        /// <param name="texture">Texture to draw.</param>
+        /// <param name="image">Image to draw.</param>
         /// <param name="area">Position and size of the texture to draw. Position is relative to the canvas origin
         ///                    (top-left). If size is zero, the default texture size will be used.</param>
         /// <param name="color">Color to tint the drawn texture with.</param>
@@ -141,14 +141,14 @@ namespace bs
         /// <param name="depth">Depth at which to draw the element. Elements with higher depth will be drawn before others.
         ///                     Additionally elements of the same type (triangle or line) will be drawn in order they are
         ///                     submitted if they share the same depth.</param>
-        public void DrawTexture(SpriteTexture texture, Rect2I area, Color color,
+        public void DrawImage(SpriteImage image, Rect2I area, Color color,
             GUITextureScaleMode scaleMode = GUITextureScaleMode.StretchToFit, byte depth = 128)
         {
-            IntPtr texturePtr = IntPtr.Zero;
-            if (texture != null)
-                texturePtr = texture.GetCachedPtr();
+            IntPtr imagePtr = IntPtr.Zero;
+            if (image != null)
+                imagePtr = image.GetCachedPtr();
 
-            Internal_DrawTexture(mCachedPtr, texturePtr, ref area, scaleMode, ref color, depth);
+            Internal_DrawImage(mCachedPtr, imagePtr, ref area, scaleMode, ref color, depth);
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace bs
             ref Color color, byte depth);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_DrawTexture(IntPtr nativeInstance, IntPtr texture, ref Rect2I area,
+        private static extern void Internal_DrawImage(IntPtr nativeInstance, IntPtr image, ref Rect2I area,
             GUITextureScaleMode scaleMode, ref Color color, byte depth);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

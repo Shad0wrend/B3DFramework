@@ -190,8 +190,8 @@ namespace bs
 		/**	Returns text sprite descriptor determining how is text sprite created. */
 		TextSpriteInformation GetTextDesc() const;
 
-		/**	Returns currently active input box texture, depending on active state. */
-		const HSpriteTexture& GetActiveTexture() const;
+		/**	Returns currently active input box image, depending on active state. */
+		const HSpriteImage& GetActiveImage() const;
 
 		/**	Returns currently active input box text color, depending on active state. */
 		Color GetActiveTextColor() const;

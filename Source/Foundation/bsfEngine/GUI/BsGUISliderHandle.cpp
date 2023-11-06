@@ -83,9 +83,9 @@ void GUISliderHandle::UpdateRenderElements()
 {
 	ImageSpriteInformation desc;
 
-	HSpriteTexture activeTex = GetActiveTexture();
-	if(SpriteTexture::CheckIsLoaded(activeTex))
-		desc.Image = activeTex;
+	HSpriteImage activeImage = GetActiveImage();
+	if(SpriteImage::CheckIsLoaded(activeImage))
+		desc.Image = activeImage;
 
 	u32 handleSize = GetHandleSize();
 	if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
@@ -135,9 +135,9 @@ void GUISliderHandle::UpdateClippedBounds()
 
 Vector2I GUISliderHandle::GetOptimalSize() const
 {
-	HSpriteTexture activeImage = GetActiveTexture();
+	HSpriteImage activeImage = GetActiveImage();
 
-	if(SpriteTexture::CheckIsLoaded(activeImage))
+	if(SpriteImage::CheckIsLoaded(activeImage))
 	{
 		const Size2UI& imageSize = activeImage->GetSize();
 
@@ -519,17 +519,17 @@ u32 GUISliderHandle::GetMaxSize() const
 	return maxSize;
 }
 
-const HSpriteTexture& GUISliderHandle::GetActiveTexture() const
+const HSpriteImage& GUISliderHandle::GetActiveImage() const
 {
 	switch(mState)
 	{
 	case State::Active:
-		return GetStyle()->Active.Texture;
+		return GetStyle()->Active.Image;
 	case State::Hover:
-		return GetStyle()->Hover.Texture;
+		return GetStyle()->Hover.Image;
 	case State::Normal:
-		return GetStyle()->Normal.Texture;
+		return GetStyle()->Normal.Image;
 	}
 
-	return GetStyle()->Normal.Texture;
+	return GetStyle()->Normal.Image;
 }

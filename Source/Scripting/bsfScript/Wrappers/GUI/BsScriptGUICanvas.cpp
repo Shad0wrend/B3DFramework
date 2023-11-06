@@ -21,7 +21,7 @@ void ScriptGUICanvas::InitRuntimeData()
 	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUICanvas::InternalCreateInstance);
 	metaData.ScriptClass->AddInternalCall("Internal_DrawLine", (void*)&ScriptGUICanvas::InternalDrawLine);
 	metaData.ScriptClass->AddInternalCall("Internal_DrawPolyLine", (void*)&ScriptGUICanvas::InternalDrawPolyLine);
-	metaData.ScriptClass->AddInternalCall("Internal_DrawTexture", (void*)&ScriptGUICanvas::InternalDrawTexture);
+	metaData.ScriptClass->AddInternalCall("Internal_DrawImage", (void*)&ScriptGUICanvas::InternalDrawImage);
 	metaData.ScriptClass->AddInternalCall("Internal_DrawTriangleStrip", (void*)&ScriptGUICanvas::InternalDrawTriangleStrip);
 	metaData.ScriptClass->AddInternalCall("Internal_DrawTriangleList", (void*)&ScriptGUICanvas::InternalDrawTriangleList);
 	metaData.ScriptClass->AddInternalCall("Internal_DrawText", (void*)&ScriptGUICanvas::InternalDrawText);
@@ -61,15 +61,15 @@ void ScriptGUICanvas::InternalDrawPolyLine(ScriptGUICanvas* nativeInstance, Mono
 	canvas->DrawPolyLine(nativeVertices, *color, depth);
 }
 
-void ScriptGUICanvas::InternalDrawTexture(ScriptGUICanvas* nativeInstance, ScriptSpriteTexture* texture, Rect2I* area, TextureScaleMode scaleMode, Color* color, u8 depth)
+void ScriptGUICanvas::InternalDrawImage(ScriptGUICanvas* nativeInstance, ScriptSpriteImage* texture, Rect2I* area, TextureScaleMode scaleMode, Color* color, u8 depth)
 {
 	GUICanvas* canvas = (GUICanvas*)nativeInstance->GetGuiElement();
 
-	HSpriteTexture nativeTexture;
+	HSpriteImage nativeTexture;
 	if(texture != nullptr)
 		nativeTexture = texture->GetHandle();
 
-	canvas->DrawTexture(nativeTexture, *area, scaleMode, *color, depth);
+	canvas->DrawImage(nativeTexture, *area, scaleMode, *color, depth);
 }
 
 void ScriptGUICanvas::InternalDrawTriangleStrip(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, u8 depth)

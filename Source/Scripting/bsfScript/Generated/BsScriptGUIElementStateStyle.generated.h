@@ -11,7 +11,7 @@ namespace bs
 {
 	struct __GUIElementStateStyleInterop
 	{
-		MonoObject* Texture;
+		MonoObject* Image;
 		Color TextColor;
 	};
 

@@ -6,7 +6,7 @@
 #include "BsMonoUtil.h"
 #include "BsScriptResourceManager.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
-#include "BsScriptSpriteTexture.generated.h"
+#include "BsScriptSpriteImage.generated.h"
 #include "Image/BsColor.h"
 #include "Wrappers/BsScriptColor.h"
 
@@ -32,12 +32,12 @@ namespace bs
 	GUIElementStateStyle ScriptGUIElementStateStyle::FromInterop(const __GUIElementStateStyleInterop& value)
 	{
 		GUIElementStateStyle output;
-		ResourceHandle<SpriteTexture> tmpTexture;
-		ScriptSpriteTexture* scriptTexture;
-		scriptTexture = ScriptSpriteTexture::ToNative(value.Texture);
-		if(scriptTexture != nullptr)
-			tmpTexture = scriptTexture->GetHandle();
-		output.Texture = tmpTexture;
+		ResourceHandle<SpriteImage> tmpImage;
+		ScriptSpriteImageBase* scriptImage;
+		scriptImage = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.Image);
+		if(scriptImage != nullptr)
+			tmpImage = B3DStaticResourceCast<SpriteImage>(scriptImage->GetGenericHandle());
+		output.Image = tmpImage;
 		output.TextColor = value.TextColor;
 
 		return output;
@@ -46,14 +46,14 @@ namespace bs
 	__GUIElementStateStyleInterop ScriptGUIElementStateStyle::ToInterop(const GUIElementStateStyle& value)
 	{
 		__GUIElementStateStyleInterop output;
-		MonoObject* tmpTexture;
-		ScriptResourceBase* scriptTexture;
-		scriptTexture = ScriptResourceManager::Instance().GetScriptResource(value.Texture, true);
-		if(scriptTexture != nullptr)
-			tmpTexture = scriptTexture->GetManagedInstance();
+		MonoObject* tmpImage;
+		ScriptResourceBase* scriptImage;
+		scriptImage = ScriptResourceManager::Instance().GetScriptResource(value.Image, true);
+		if(scriptImage != nullptr)
+			tmpImage = scriptImage->GetManagedInstance();
 		else
-			tmpTexture = nullptr;
-		output.Texture = tmpTexture;
+			tmpImage = nullptr;
+		output.Image = tmpImage;
 		output.TextColor = value.TextColor;
 
 		return output;

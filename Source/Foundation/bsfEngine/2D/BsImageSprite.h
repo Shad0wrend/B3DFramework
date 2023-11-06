@@ -22,7 +22,7 @@ namespace bs
 		Vector2 UvScale = Vector2(1.0f, 1.0f); /**< Scale applied to UV width/height used for rendering the sprite. */
 		Vector2 UvOffset = Vector2(0.0f, 0.0f); /**< Offset applied to UV coordinates when rendering the sprite. */
 
-		HSpriteTexture Image; /**< Image to overlay on the sprite. */
+		HSpriteImage Image; /**< Image to overlay on the sprite. */
 		/**
 		 * Time (since application start) at which the sprite texture's 0th frame is played. Used if the sprite texture
 		 * has sprite sheet animation defined.

@@ -40,8 +40,7 @@ namespace bs
         /// <summary>
         /// Creates a new texture element.
         /// </summary>
-        /// <param name="texture">Texture to display. If this is null then the texture specified by the style will
-        ///                       be used.</param>
+        /// <param name="image">Image to display. If this is null then the image specified by the style will be used.</param>
         /// <param name="scale">Scale mode to use when sizing the texture.</param>
         /// <param name="transparent">Determines should the texture be rendered with transparency active.</param>
         /// <param name="style">Optional style to use for the element. Style controls the look of the element, as well as
@@ -49,118 +48,110 @@ namespace bs
         ///                     default element style is used.</param>
         /// <param name="options">Options that allow you to control how is the element  positioned and sized. This will
         ///                       override any similar options set by style.</param>
-        public GUITexture(SpriteTexture texture, GUITextureScaleMode scale, bool transparent, string style, params GUIOption[] options)
+        public GUITexture(SpriteImage image, GUITextureScaleMode scale, bool transparent, string style, params GUIOption[] options)
         {
-            Internal_CreateInstance(this, texture, scale, transparent, style, options);
+            Internal_CreateInstance(this, image, scale, transparent, style, options);
         }
 
         /// <summary>
         /// Creates a new texture element.
         /// </summary>
-        /// <param name="texture">Texture to display. If this is null then the texture specified by the style will
-        ///                       be used.</param>
+        /// <param name="image">Image to display. If this is null then the image specified by the style will be used.</param>
         /// <param name="scale">Scale mode to use when sizing the texture.</param>
         /// <param name="transparent">Determines should the texture be rendered with transparency active.</param>
         /// <param name="options">Options that allow you to control how is the element  positioned and sized. This will
         ///                       override any similar options set by style.</param>
-        public GUITexture(SpriteTexture texture, GUITextureScaleMode scale, bool transparent, params GUIOption[] options)
+        public GUITexture(SpriteImage image, GUITextureScaleMode scale, bool transparent, params GUIOption[] options)
         {
-            Internal_CreateInstance(this, texture, scale, transparent, "", options);
+            Internal_CreateInstance(this, image, scale, transparent, "", options);
         }
 
         /// <summary>
         /// Creates a new texture element. Texture will use the default StretchToFit scaling.
         /// </summary>
-        /// <param name="texture">Texture to display. If this is null then the texture specified by the style will
-        ///                       be used.</param>
+        /// <param name="image">Image to display. If this is null then the image specified by the style will be used.</param>
         /// <param name="transparent">Determines should the texture be rendered with transparency active.</param>
         /// <param name="style">Optional style to use for the element. Style controls the look of the element, as well as
         ///                     default layout options. Style will be retrieved from the active GUISkin. If not specified
         ///                     default element style is used.</param>
         /// <param name="options">Options that allow you to control how is the element  positioned and sized. This will
         ///                       override any similar options set by style.</param>
-        public GUITexture(SpriteTexture texture, bool transparent, string style, params GUIOption[] options)
+        public GUITexture(SpriteImage image, bool transparent, string style, params GUIOption[] options)
         {
-            Internal_CreateInstance(this, texture, GUITextureScaleMode.StretchToFit, transparent, style, options);
+            Internal_CreateInstance(this, image, GUITextureScaleMode.StretchToFit, transparent, style, options);
         }
 
         /// <summary>
         /// Creates a new texture element. Texture will use the default StretchToFit scaling.
         /// </summary>
-        /// <param name="texture">Texture to display. If this is null then the texture specified by the style will
-        ///                       be used.</param>
+        /// <param name="image">Image to display. If this is null then the image specified by the style will be used.</param>
         /// <param name="transparent">Determines should the texture be rendered with transparency active.</param>
         /// <param name="options">Options that allow you to control how is the element  positioned and sized. This will
         ///                       override any similar options set by style.</param>
-        public GUITexture(SpriteTexture texture, bool transparent, params GUIOption[] options)
+        public GUITexture(SpriteImage image, bool transparent, params GUIOption[] options)
         {
-            Internal_CreateInstance(this, texture, GUITextureScaleMode.StretchToFit, transparent, "", options);
+            Internal_CreateInstance(this, image, GUITextureScaleMode.StretchToFit, transparent, "", options);
         }
 
         /// <summary>
         /// Creates a new texture element with transparency active.
         /// </summary>
-        /// <param name="texture">Texture to display. If this is null then the texture specified by the style will
-        ///                       be used.</param>
+        /// <param name="image">Image to display. If this is null then the image specified by the style will be used.</param>
         /// <param name="scale">Scale mode to use when sizing the texture.</param>
         /// <param name="style">Optional style to use for the element. Style controls the look of the element, as well as
         ///                     default layout options. Style will be retrieved from the active GUISkin. If not specified
         ///                     default element style is used.</param>
         /// <param name="options">Options that allow you to control how is the element  positioned and sized. This will
         ///                       override any similar options set by style.</param>
-        public GUITexture(SpriteTexture texture, GUITextureScaleMode scale, string style, params GUIOption[] options)
+        public GUITexture(SpriteImage image, GUITextureScaleMode scale, string style, params GUIOption[] options)
         {
-            Internal_CreateInstance(this, texture, scale, true, style, options);
+            Internal_CreateInstance(this, image, scale, true, style, options);
         }
 
         /// <summary>
         /// Creates a new texture element with transparency active.
         /// </summary>
-        /// <param name="texture">Texture to display. If this is null then the texture specified by the style will
-        ///                       be used.</param>
+        /// <param name="image">Image to display. If this is null then the image specified by the style will be used.</param>
         /// <param name="scale">Scale mode to use when sizing the texture.</param>
         /// <param name="options">Options that allow you to control how is the element  positioned and sized. This will
         ///                       override any similar options set by style.</param>
-        public GUITexture(SpriteTexture texture, GUITextureScaleMode scale, params GUIOption[] options)
+        public GUITexture(SpriteImage image, GUITextureScaleMode scale, params GUIOption[] options)
         {
-            Internal_CreateInstance(this, texture, scale, true, "", options);
+            Internal_CreateInstance(this, image, scale, true, "", options);
         }
 
         /// <summary>
         /// Creates a new texture element with transparency active. Texture will use the default StretchToFit scaling.
         /// </summary>
-        /// <param name="texture">Texture to display. If this is null then the texture specified by the style will
-        ///                       be used.</param>
+        /// <param name="image">Image to display. If this is null then the image specified by the style will be used.</param>
         /// <param name="style">Optional style to use for the element. Style controls the look of the element, as well as
         ///                     default layout options. Style will be retrieved from the active GUISkin. If not specified
         ///                     default element style is used.</param>
         /// <param name="options">Options that allow you to control how is the element  positioned and sized. This will
         ///                       override any similar options set by style.</param>
-        public GUITexture(SpriteTexture texture, string style, params GUIOption[] options)
+        public GUITexture(SpriteImage image, string style, params GUIOption[] options)
         {
-            Internal_CreateInstance(this, texture, GUITextureScaleMode.StretchToFit, true, style, options);
+            Internal_CreateInstance(this, image, GUITextureScaleMode.StretchToFit, true, style, options);
         }
 
         /// <summary>
         /// Creates a new texture element with transparency active. Texture will use the default StretchToFit scaling.
         /// </summary>
-        /// <param name="texture">Texture to display. If this is null then the texture specified by the style will
-        ///                       be used.</param>
+        /// <param name="image">Image to display. If this is null then the image specified by the style will be used.</param>
         /// <param name="options">Options that allow you to control how is the element  positioned and sized. This will
         ///                       override any similar options set by style.</param>
-        public GUITexture(SpriteTexture texture, params GUIOption[] options)
+        public GUITexture(SpriteImage image, params GUIOption[] options)
         {
-            Internal_CreateInstance(this, texture, GUITextureScaleMode.StretchToFit, true, "", options);
+            Internal_CreateInstance(this, image, GUITextureScaleMode.StretchToFit, true, "", options);
         }
 
         /// <summary>
         /// Sets the texture to display.
         /// </summary>
-        /// <param name="texture">Texture to display. If this is null then the texture specified by the style will
-        ///                       be used.</param>
-        public void SetTexture(SpriteTexture texture)
+        /// <param name="image">Image to display. If this is null then the image specified by the style will be used.</param>
+        public void SetImage(SpriteImage image)
         {
-            Internal_SetTexture(mCachedPtr, texture);
+            Internal_SetImage(mCachedPtr, image);
         }
 
         /// <summary>
@@ -173,11 +164,11 @@ namespace bs
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_CreateInstance(GUITexture instance, SpriteTexture texture,
+        private static extern void Internal_CreateInstance(GUITexture instance, SpriteImage image,
             GUITextureScaleMode scale, bool transparent, string style, GUIOption[] options);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetTexture(IntPtr nativeInstance, SpriteTexture texture);
+        private static extern void Internal_SetImage(IntPtr nativeInstance, SpriteImage image);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetTint(IntPtr nativeInstance, ref Color color);

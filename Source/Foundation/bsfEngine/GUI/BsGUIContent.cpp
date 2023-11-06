@@ -6,7 +6,7 @@ using namespace bs;
 
 const u32 GUIContent::kImageTextSpacing = 3;
 
-const HSpriteTexture& GUIContent::GetImage(GUIElementState state) const
+const HSpriteImage& GUIContent::GetImage(GUIElementState state) const
 {
 	switch(state)
 	{
