@@ -100,6 +100,7 @@ void BuiltinResources::OnStartUp()
 	mEngineShaderFolder = mBuiltinDataFolder + kShaderFolder;
 	mEngineMeshFolder = mBuiltinDataFolder + kMeshFolder;
 	mEngineCursorFolder = mBuiltinDataFolder + kCursorFolder;
+	mEngineFontsFolder = mBuiltinDataFolder + kFontsFolder;
 
 	ResourceManifestPath = mBuiltinDataFolder + "ResourceManifest.asset";
 
@@ -135,7 +136,7 @@ void BuiltinResources::OnStartUp()
 
 	mWhiteSpriteTexture = GetSkinTexture(kWhiteTex);
 
-	mFont = GetResources().Load<Font>(mBuiltinDataFolder + (String(kDefaultFontName) + u8".asset"));
+	mFont = GetResources().Load<Font>(mEngineFontsFolder + (String(kDefaultFontName) + u8".asset"));
 	mSkin = GetResources().Load<GUISkin>(mBuiltinDataFolder + (String(kGuiSkinFile) + u8".json.asset"));
 	mDefaultGUIStyleSheet = GUIStyleSheet::Parse(mBuiltinRawDataFolder + "GUI.css");
 	mEmptySkin = GUISkin::Create();
@@ -235,16 +236,28 @@ HShader BuiltinResources::GetShader(const Path& path) const
 	return GetOrCompileShader(fullShaderPath);
 }
 
-HFont BuiltinResources::GetFont(const String& fontFamily) const
+HFont BuiltinResources::GetFont(const String& font) const
 {
+	Path fontFilePath = mEngineFontsFolder + String(font + ".asset");
+	if(!FileSystem::Exists(fontFilePath))
+	{
+		fontFilePath.SetFilename(String(font + ".ttf.asset"));
+
+		if(!FileSystem::Exists(fontFilePath))
+			fontFilePath.SetFilename(String(font + ".otf.asset"));
+
+		if(!FileSystem::Exists(fontFilePath))
+		{
+			B3D_LOG(Warning, GUI, "Cannot find font of the requested font : {0}. Using default font instead.", font);
+			return GetDefaultFont();
+		}
+	}
+
 	// TODO: This needs to perform a lookup in the project library. Likely need to enumerate all fonts from data packages on start-up, and register them in FontManager for lookup.
 	// - Other alternative is to integrate ProjectLibrary into the framework, but in my mind that should remain editor only functionality. We can perhaps pull some generic
 	// package manipulation in a helper library, for use in the framework.
-	if(fontFamily == "Arial")
-		return GetDefaultFont();
 
-	B3D_LOG(Warning, GUI, "Cannot find font of the requested font family: {0}. Using default font instead.", fontFamily);
-	return GetDefaultFont();
+	return GetResources().Load<Font>(fontFilePath);
 }
 
 HShader BuiltinResources::GetOrCompileShader(const Path& path) const

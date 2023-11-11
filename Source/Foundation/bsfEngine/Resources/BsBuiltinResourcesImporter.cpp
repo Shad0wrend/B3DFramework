@@ -301,7 +301,8 @@ SPtr<GUISkin> GenerateGuiSkin()
 	using nlohmann::json;
 
 	const Path skinFolder = sOutputFolder + BuiltinResources::kSkinFolder + BuiltinResources::kSpriteFolder;
-	BuiltinResourceGUIElementStyleLoader loader(sOutputFolder, skinFolder);
+	const Path fontsFolder = sOutputFolder + BuiltinResources::kFontsFolder;
+	BuiltinResourceGUIElementStyleLoader loader(fontsFolder, skinFolder);
 
 	Path guiSkinPath = sInputFolder + kGuiSkinJson;
 	SPtr<DataStream> guiSkinStream = FileSystem::OpenFile(guiSkinPath);
@@ -356,6 +357,7 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 	const Path rawShaderFolder = sInputFolder + BuiltinResources::kShaderFolder;
 	const Path rawShaderIncludeFolder = sInputFolder + BuiltinResources::kShaderIncludeFolder;
 	const Path rawTexturesFolder = sInputFolder + BuiltinResources::kTextureFolder;
+	const Path rawFontsFolder = sInputFolder + BuiltinResources::kFontsFolder;
 
 	// Update DataList.json if needed
 	bool updatedDataLists = false;
@@ -424,6 +426,14 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 			texturesJSON);
 	}
 
+	if(!fontsJSON.is_null())
+	{
+		updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
+			rawFontsFolder,
+			BuiltinResourcesHelper::AssetType::Normal,
+			fontsJSON);
+	}
+
 	dataListStream->Close();
 
 	if(updatedDataLists)
@@ -480,6 +490,7 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 	const Path shaderFolder = sOutputFolder + BuiltinResources::kShaderFolder;
 	const Path shaderIncludeFolder = sOutputFolder + BuiltinResources::kShaderIncludeFolder;
 	const Path texturesFolder = sOutputFolder + BuiltinResources::kTextureFolder;
+	const Path fontsFolder = sOutputFolder + BuiltinResources::kFontsFolder;
 	const Path shaderDependenciesFile = sInputFolder + kDependenciesJsonName;
 
 	// If forcing import, clear all data folders since everything will be recreated anyway
@@ -505,6 +516,9 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 
 		if(FileSystem::Exists(animatedSpriteFolder))
 			FileSystem::Remove(animatedSpriteFolder);
+
+		if(FileSystem::Exists(fontsFolder))
+			FileSystem::Remove(fontsFolder);
 
 		FileSystem::Remove(shaderDependenciesFile);
 	}
@@ -700,25 +714,35 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 	// Import fonts
 	if(!fontsJSON.is_null())
 	{
-		for(auto& entry : fontsJSON)
+		if(FileSystem::Exists(rawFontsFolder))
 		{
-			std::string path = entry["Path"];
-			std::string name = entry["Name"];
-			std::string uuidStr = entry["UUID"];
-			const bool antialiasing = entry["Antialiasing"];
+			bool outputExists = FileSystem::Exists(fontsFolder);
+			if(!outputExists)
+				FileSystem::CreateDir(fontsFolder);
 
-			json fontSizesJSON = entry["Sizes"];
-			Vector<u32> fontSizes;
-			for(auto& sizeEntry : fontSizesJSON)
-				fontSizes.push_back(sizeEntry);
+			for(auto& entry : fontsJSON)
+			{
+				std::string path = entry["Path"];
+				std::string uuidStr = entry["UUID"];
 
-			String inputName(path.data(), path.size());
-			String outputName(name.data(), name.size());
-			bs::UUID UUID(String(uuidStr.data(), uuidStr.size()));
+				const bool antialiasing = entry.count("Antialiasing") > 0 ? entry["Antialiasing"] : true;
 
-			const Path fontSourcePath = sInputFolder + inputName;
+				json fontSizesJSON = entry["Sizes"];
+				Vector<u32> fontSizes;
 
-			BuiltinResourcesHelper::ImportFont(fontSourcePath, outputName, sOutputFolder, fontSizes, antialiasing, UUID, sManifest);
+				if(fontSizesJSON.is_array())
+				{
+					for(auto& sizeEntry : fontSizesJSON)
+						fontSizes.push_back(sizeEntry);
+				}
+
+				String inputName(path.data(), path.size());
+				bs::UUID UUID(String(uuidStr.data(), uuidStr.size()));
+
+				const Path fontSourcePath = rawFontsFolder + inputName;
+
+				BuiltinResourcesHelper::ImportFont(fontSourcePath, fontSourcePath.GetFilename(), fontsFolder, fontSizes, antialiasing, UUID, sManifest);
+			}
 		}
 	}
 

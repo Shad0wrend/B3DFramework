@@ -326,8 +326,6 @@ Optional<GUIStyleSheetToken> GUIStyleSheetLexer::ScanStringLiteral()
 	if(!GetCurrentCharacterAndAdvance('\"', character))
 		return {};
 
-	spelling += character;
-
 	while(!IsCurrentCharacter('\"'))
 	{
 		if(IsCurrentCharacter(0))
@@ -338,8 +336,6 @@ Optional<GUIStyleSheetToken> GUIStyleSheetLexer::ScanStringLiteral()
 
 	if(!GetCurrentCharacterAndAdvance('\"', character))
 		return {};
-
-	spelling += character;
 
 	return CreateToken(TokenType::StringLiteral, spelling);
 }

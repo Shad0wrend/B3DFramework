@@ -51,6 +51,18 @@
                 8
             ],
             "UUID": "c9f08cab-f9c9-47c4-96e0-1066a8d4455b"
+        },
+        {
+            "Path": "fa-brands.otf",
+            "UUID": "3dfe0e8f-4e79-c794-28ad-4e794399d0ae"
+        },
+        {
+            "Path": "fa-regular.otf",
+            "UUID": "29138e1d-4d80-ad4c-33b5-4d80b9496357"
+        },
+        {
+            "Path": "fa-solid.otf",
+            "UUID": "1ae45a0b-482f-01ff-2d8d-482f3c7fe807"
         }
     ],
     "GUISkin": {
