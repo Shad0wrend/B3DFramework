@@ -24,6 +24,7 @@
 #include "Resources/BsResources.h"
 #include "BsEngineConfig.h"
 #include "GUI/BsProfilerOverlay.h"
+#include "Text/BsStockIcons.h"
 
 using namespace bs;
 
@@ -41,6 +42,7 @@ Application::~Application()
 
 	GUIManager::ShutDown();
 	SpriteManager::ShutDown();
+	StockIcons::ShutDown();
 	BuiltinResources::ShutDown();
 	RendererMaterialManager::ShutDown();
 	VirtualInput::ShutDown();
@@ -55,6 +57,7 @@ void Application::OnStartUp()
 
 	VirtualInput::StartUp();
 	BuiltinResources::StartUp();
+	StockIcons::StartUp();
 	RendererMaterialManager::StartUp();
 	RendererManager::Instance().Initialize(GetPrimaryGpuDevice());
 	SpriteManager::StartUp();
