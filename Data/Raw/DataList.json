@@ -44,7 +44,7 @@
     ],
     "Fonts": [
         {
-            "Antialiasing": false,
+            "Antialiasing": true,
             "Name": "arial.ttf",
             "Path": "arial.ttf",
             "Sizes": [

@@ -108,7 +108,7 @@ namespace bs
 		const Rect2& GetUVRange() const { return mInformation.UVRange; }
 
 		/** Transforms local UV coordinates into atlas UV coordinates. */
-		Vector2 TransformUV(const Vector2& uv) const { return Vector2(mInformation.UVRange.X + uv.X * mInformation.UVRange.Width, mInformation.UVRange.Y + uv.Y + mInformation.UVRange.Height); }
+		Vector2 TransformUV(const Vector2& uv) const { return Vector2(mInformation.UVRange.X + uv.X * mInformation.UVRange.Width, mInformation.UVRange.Y + uv.Y * mInformation.UVRange.Height); }
 
 		/**
 		 * Evaluates the UV coordinate offset and size to use at the specified animation time. If the sprite texture doesn't

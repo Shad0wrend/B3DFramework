@@ -5,6 +5,8 @@
 #include "GUI/BsGUIElement.h"
 #include "Image/BsTexture.h"
 #include "Image/BsSpriteTexture.h"
+#include "Image/BsSpriteGlyph.h"
+#include "Reflection/BsRTTIType.h"
 
 using namespace bs;
 
@@ -62,8 +64,16 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		if(animated)
 			materialInformation.SpriteImage = information.Image;
 
-		renderElement.Material = SpriteManager::Instance().GetImageMaterial(
-			information.Transparent ? SpriteMaterialTransparency::Alpha : SpriteMaterialTransparency::Opaque, animated);
+		if(B3DRTTIIsOfType<SpriteGlyph>(information.Image.Get()))
+		{
+			renderElement.Material = SpriteManager::Instance().GetTextMaterial();
+		}
+		else
+		{
+			renderElement.Material = SpriteManager::Instance().GetImageMaterial(
+				information.Transparent ? SpriteMaterialTransparency::Alpha : SpriteMaterialTransparency::Opaque, animated);
+		}
+
 		renderElement.MaterialInformation = &renderElementData.MaterialInformation;
 	}
 
