@@ -31,7 +31,7 @@ namespace bs
 		 * @param	size		Size of the icon in points.
 		 */
 		B3D_SCRIPT_EXPORT()
-		HSpriteImage GetIcon(StockIcon icon, float size = 8.0f) const;
+		B3D_NO_RREF HSpriteImage GetIcon(StockIcon icon, float size = 8.0f) const;
 
 		/** Returns the unicode character corresponding to an icon. */
 		B3D_SCRIPT_EXPORT()
@@ -39,7 +39,7 @@ namespace bs
 
 		/** Returns the font in which the provided icon is stored in. */
 		B3D_SCRIPT_EXPORT()
-		HFont GetFont(StockIcon icon) const;
+		B3D_NO_RREF HFont GetFont(StockIcon icon) const;
 
 		/** Parses an icon name and returns the corresponding enum entry if found. */
 		B3D_SCRIPT_EXPORT()
