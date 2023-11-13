@@ -7,6 +7,7 @@
 
 #include "Resources/BsBuiltinResources.h"
 #include "Resources/BsResources.h"
+#include "Text/BsStockIcons.h"
 
 using namespace bs;
 
@@ -39,7 +40,7 @@ GUIStyleSheetParser::GUIStyleSheetParser()
 	mPropertyKeywords["background-color"] = { GUIStyleSheetPropertyType::BackgroundColor, ValueType::Color };
 
 	// Image properties
-	mPropertyKeywords["background-image"] = { GUIStyleSheetPropertyType::BackgroundImage, ValueType::URL };
+	mPropertyKeywords["background-image"] = { GUIStyleSheetPropertyType::BackgroundImage, ValueType::Multiple };
 
 	// Text properties
 	mPropertyKeywords["text-align"] = { GUIStyleSheetPropertyType::TextAlign, ValueType::TextAlign };
@@ -497,13 +498,27 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 	case GUIStyleSheetTokenTypes::URL:
 	{
 		String parsedValue;
-		if(!TryParseStringLiteral(parsedValue))
+		if(!TryParseURL(parsedValue))
 			return false;
 
 		value.UnsignedInteger = (u32)mStringLiterals.size();
 		value.Type = ValueType::URL;
 
 		mStringLiterals.push_back(parsedValue);
+		break;
+	}
+	case GUIStyleSheetTokenTypes::Icon:
+	{
+		String parsedIconName;
+		float parsedIconSize;
+		if(!TryParseIcon(parsedIconName, parsedIconSize))
+			return false;
+
+		value.Icon.NameStringId = (u32)mStringLiterals.size();
+		value.Icon.IconSize = parsedIconSize;
+		value.Type = ValueType::Icon;
+
+		mStringLiterals.push_back(parsedIconName);
 		break;
 	}
 	case GUIStyleSheetTokenTypes::StringLiteral:
@@ -639,7 +654,8 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 	const String& variableIdentifier = variableIdentifierToken->GetSpelling();
 	auto fnEnsureType = [this, expectedType, &variableIdentifier](const VariableValue& value) -> bool
 	{
-		if(!CanCastValue(expectedType, value.Type))
+		// For properties accepting multiple different variable types, we let the higher level code do the type checking
+		if(expectedType != ValueType::Multiple && !CanCastValue(expectedType, value.Type))
 		{
 			Error(StringFormat::Format("Provided variable '{0}' is of incorrect type. Expected '{1}' but variable is '{2}'.", variableIdentifier, ValueTypeToString(expectedType), ValueTypeToString(value.Type)));
 			return false;
@@ -729,6 +745,16 @@ bool GUIStyleSheetParser::TryParsePercentLiteral(float& outValue)
 bool GUIStyleSheetParser::TryParseStringLiteral(String& outValue)
 {
 	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::StringLiteral);
+	if(!token)
+		return false;
+
+	outValue = token->GetSpelling();
+	return true;
+}
+
+bool GUIStyleSheetParser::TryParseElementSelector(String& outValue)
+{
+	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::ElementSelector);
 	if(!token)
 		return false;
 
@@ -851,7 +877,7 @@ bool GUIStyleSheetParser::TryParseColor(Color& outValue)
 	}
 }
 
-bool GUIStyleSheetParser::TryParseImage(HTexture& outValue)
+bool GUIStyleSheetParser::TryParseURL(String& outValue)
 {
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::URL))
 		return false;
@@ -859,17 +885,82 @@ bool GUIStyleSheetParser::TryParseImage(HTexture& outValue)
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::LeftParenthesis))
 		return false;
 
-	String pathString;
-	if(!TryParseStringLiteral(pathString))
+	// TODO: CSS also supports URLs without the quotes (""), but we don't support that yet
+	if(!TryParseStringLiteral(outValue))
 		return false;
 
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::RightParenthesis))
 		return false;
 
-	outValue = GetResources().Load<Texture>(pathString);
+	return true;
+}
 
-	if(!outValue.IsLoaded(false))
-		Warning(StringUtil::Format("Unable to load image at path \"{0}\".", pathString));
+bool GUIStyleSheetParser::TryParseIcon(String& outIconName, float& outIconSize)
+{
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Icon))
+		return false;
+
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::LeftParenthesis))
+		return false;
+
+	if(!TryParseElementSelector(outIconName))
+		return false;
+
+	outIconSize = 12.0f;
+	if(IsCurrentToken(GUIStyleSheetTokenTypes::Comma))
+	{
+		B3D_ENSURE(GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Comma));
+
+		if(!TryParseDecimalLiteral(outIconSize))
+			return false;
+	}
+
+	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::RightParenthesis))
+		return false;
+
+	return true;
+}
+
+bool GUIStyleSheetParser::TryParseImage(HSpriteImage& outValue)
+{
+	const bool isURL = IsCurrentToken(GUIStyleSheetTokenTypes::URL);
+	const bool isIcon = IsCurrentToken(GUIStyleSheetTokenTypes::Icon);
+
+	if(!isURL && !isIcon)
+		return false;
+
+	String urlOrIconName;
+	float iconSize = 12.0f;
+	if(isURL)
+	{
+		if(!TryParseURL(urlOrIconName))
+			return false;
+	}
+	else
+	{
+		B3D_ENSURE(isIcon);
+
+		if(!TryParseIcon(urlOrIconName, iconSize))
+			return false;
+	}
+
+	if(isURL)
+	{
+		outValue = GetResources().Load<SpriteImage>(urlOrIconName);
+
+		if(!outValue.IsLoaded(false))
+			Warning(StringUtil::Format("Unable to load image at path \"{0}\".", urlOrIconName));
+	}
+	else
+	{
+		B3D_ENSURE(isIcon);
+
+		const StockIcon icon = StockIcons::Instance().ParseIconName(urlOrIconName);
+		outValue = StockIcons::Instance().GetIcon(icon, iconSize);
+
+		if(!outValue.IsLoaded(false))
+			Warning(StringUtil::Format("Unable to find icon \"{0}\".", urlOrIconName));
+	}
 
 	return true;
 }
@@ -1081,8 +1172,9 @@ bool GUIStyleSheetParser::TryParseBorderColor(Color& outTop, Color& outRight, Co
 template<class T>
 bool GUIStyleSheetParser::TryParsePropertyValue(ValueType valueType, T& outValue)
 {
-	B3D_ASSERT(valueType != ValueType::Undefined && valueType != ValueType::Multiple);
+	B3D_ASSERT(valueType != ValueType::Undefined);
 
+	// If the property value is a variable name, look up the contents of that variable
 	if(IsCurrentToken(GUIStyleSheetTokenTypes::Variable))
 	{
 		if(!TryParseAndLookupVariableValue(valueType, outValue))
@@ -1117,7 +1209,7 @@ bool GUIStyleSheetParser::TryParsePropertyValue(ValueType valueType, T& outValue
 		return TryParseVerticalAlign(outValue);
 	else if constexpr(std::is_same_v<T, GUIWordWrapMode>)
 		return TryParseWordWrapMode(outValue);
-	else if constexpr(std::is_same_v<T, HTexture>)
+	else if constexpr(std::is_same_v<T, HSpriteImage>)
 		return TryParseImage(outValue);
 	else if constexpr(std::is_same_v<T, HFont>)
 		return TryParseFont(outValue);
@@ -1190,20 +1282,40 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 	return true;
 }
 
-bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType, HTexture& outValue)
+bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType, HSpriteImage& outValue)
 {
 	VariableValue value;
 	if(!TryParseAndLookupVariableValue(expectedType, value))
 		return false;
 
-	u32 stringLiteralIndex;
-	value.GetValue(stringLiteralIndex);
+	if(value.Type == ValueType::URL)
+	{
+		u32 stringLiteralIndex;
+		value.GetValue(stringLiteralIndex);
 
-	const Path filePath = mStringLiterals[stringLiteralIndex];
-	outValue = GetResources().Load<Texture>(filePath);
+		const Path filePath = mStringLiterals[stringLiteralIndex];
+		outValue = GetResources().Load<SpriteImage>(filePath);
 
-	if(!outValue.IsLoaded(false))
-		Warning(StringUtil::Format("Unable to load image at path \"{0}\".", filePath));
+		if(!outValue.IsLoaded(false))
+			Warning(StringUtil::Format("Unable to load image at path \"{0}\".", filePath));
+	}
+	else if(value.Type == ValueType::Icon)
+	{
+		IconValue iconValue;
+		value.GetValue(iconValue);
+
+		const String iconName = mStringLiterals[iconValue.NameStringId];
+		const StockIcon icon = StockIcons::Instance().ParseIconName(iconName);
+		outValue = StockIcons::Instance().GetIcon(icon, iconValue.IconSize);
+
+		if(!outValue.IsLoaded(false))
+			Warning(StringUtil::Format("Unable to find icon \"{0}\".", iconName));
+	}
+	else
+	{
+		Error(StringFormat::Format("Provided variable is of incorrect type. Expected 'url' or 'icon' but variable is '{0}'.", ValueTypeToString(value.Type)));
+		return false;
+	}
 
 	return true;
 }
@@ -1372,6 +1484,7 @@ const char* GUIStyleSheetParser::ValueTypeToString(ValueType type)
 	case ValueType::Color: return "Color";
 	case ValueType::String: return "String";
 	case ValueType::URL: return "URL";
+	case ValueType::Icon: return "Icon";
 	case ValueType::BorderStyle: return "BorderStyle";
 	case ValueType::TextAlign: return "TextAlign";
 	case ValueType::VerticalAlign: return "VerticalAlign";

@@ -45,12 +45,20 @@ namespace bs
 			Color,
 			String,
 			URL,
+			Icon,
 			BorderStyle,
 			TextAlign,
 			VerticalAlign,
 			WordWrap,
 			None,
 			Multiple
+		};
+
+		/** Information about an icon. */
+		struct IconValue
+		{
+			u32 NameStringId;
+			float IconSize;
 		};
 
 		/** Contains a union storing all possible types of property values. */
@@ -62,6 +70,7 @@ namespace bs
 				i32 SignedInteger;
 				float Float;
 				Color Color;
+				IconValue Icon;
 			};
 
 			ValueType Type = ValueType::Undefined;
@@ -86,6 +95,11 @@ namespace bs
 				: Color(value), Type(type)
 			{ }
 
+			VariableValue(const IconValue& value, ValueType type)
+				: Icon(value), Type(type)
+			{ }
+
+
 			void GetValue(u32& outValue) const
 			{
 				B3D_ASSERT(Type == ValueType::Integer || Type == ValueType::Pixel || Type == ValueType::String || Type == ValueType::URL);
@@ -108,6 +122,12 @@ namespace bs
 			{
 				B3D_ASSERT(Type == ValueType::Color);
 				outValue = Color;
+			}
+
+			void GetValue(IconValue& outValue) const
+			{
+				B3D_ASSERT(Type == ValueType::Icon);
+				outValue = Icon;
 			}
 
 			void GetValue(GUIBorderElementStyle& outValue)
@@ -185,6 +205,9 @@ namespace bs
 		/** Attempts to parse the next token as a string literal. String literal is detected as a pair of '"', with an optional text in-between. If successful, returns true and outputs the parsed value. */
 		bool TryParseStringLiteral(String& outValue);
 
+		/** Attempts to parse the next token as an element selector. If successful, returns true and outputs the parsed value. */
+		bool TryParseElementSelector(String& outValue);
+
 		/** Attempts to parse the next token as 'none' token and returns true if successful. */
 		bool TryParseNone();
 
@@ -207,8 +230,14 @@ namespace bs
 		/** Attempts to parse the next token (or set of tokens) as a color. Can be a hex color (#FFFFFF, rgb(), hsl(), rgba() or hsla() construct). If successful, returns true and outputs the parsed value. */
 		bool TryParseColor(Color& outValue);
 
-		/** Attempts to parse the next token as an image loaded from the resource system based on provided path. If successful, returns true and outputs the parsed value. */
-		bool TryParseImage(HTexture& outValue);
+		/** Attempts to parse the next tokens as url("some-url"). If successful, returns true and outputs the parsed value. */
+		bool TryParseURL(String& outValue);
+
+		/** Attempts to parse the next tokens as icon(icon-name, icon-size). If successful, returns true and outputs the parsed value. */
+		bool TryParseIcon(String& outIconName, float& outIconSize);
+
+		/** Attempts to parse the next token as an image based on provided path or icon name. If successful, returns true and outputs the parsed value. */
+		bool TryParseImage(HSpriteImage& outValue);
 
 		/** Attempts to parse the next token as an image loaded from the resource system based on provided font name. If successful, returns true and outputs the parsed value. */
 		bool TryParseFont(HFont& outValue);
@@ -330,7 +359,7 @@ namespace bs
 		bool TryParseAndLookupVariableValue(ValueType expectedType, String& outValue);
 
 		/** @copydoc TryParseAndLookupVariableValue(ValueType, T&) */
-		bool TryParseAndLookupVariableValue(ValueType expectedType, HTexture& outValue);
+		bool TryParseAndLookupVariableValue(ValueType expectedType, HSpriteImage& outValue);
 
 		/** @copydoc TryParseAndLookupVariableValue(ValueType, T&) */
 		bool TryParseAndLookupVariableValue(ValueType expectedType, HFont& outValue);

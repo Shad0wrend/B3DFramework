@@ -102,6 +102,7 @@ GUIStyleSheetLexer::GUIStyleSheetLexer()
 	mPropertyKeywords["rgba"] = GUIStyleSheetTokenTypes::ColorRGBA;
 	mPropertyKeywords["hsla"] = GUIStyleSheetTokenTypes::ColorHSLA;
 	mPropertyKeywords["url"] = GUIStyleSheetTokenTypes::URL;
+	mPropertyKeywords["icon"] = GUIStyleSheetTokenTypes::Icon;
 }
 
 bool GUIStyleSheetLexer::StartScanning(const SPtr<SourceCode>& sourceCode)

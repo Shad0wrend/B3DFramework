@@ -180,7 +180,7 @@ namespace bs
 		Color Color; /**< Color of the GUI element contents (usually text or icon). */
 		float Opacity = 1.0f; /**< Opacity of the GUI element. This value will affect all aspects of the GUI element (border, background and contents). In range [0, 1]. */
 
-		HTexture BackgroundImage; /**< Image to render as the background. */
+		HSpriteImage BackgroundImage; /**< Image to render as the background. */
 
 		GUIStyleSheetBorderElement BorderLeft; /**< Style information for the left border. */
 		GUIStyleSheetBorderElement BorderRight; /**< Style information for the right border. */
