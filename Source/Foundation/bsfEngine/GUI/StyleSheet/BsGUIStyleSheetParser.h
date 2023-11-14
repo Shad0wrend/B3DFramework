@@ -102,20 +102,32 @@ namespace bs
 
 			void GetValue(u32& outValue) const
 			{
-				B3D_ASSERT(Type == ValueType::Integer || Type == ValueType::Pixel || Type == ValueType::String || Type == ValueType::URL);
-				outValue = UnsignedInteger;
+				B3D_ASSERT(Type == ValueType::Integer || Type == ValueType::Pixel || Type == ValueType::String || Type == ValueType::URL || Type == ValueType::Decimal);
+
+				if(Type == ValueType::Decimal)
+					outValue = (u32)Float;
+				else
+					outValue = UnsignedInteger;
 			}
 
 			void GetValue(i32& outValue) const
 			{
-				B3D_ASSERT(Type == ValueType::Integer || Type == ValueType::Pixel || Type == ValueType::String || Type == ValueType::URL);
-				outValue = SignedInteger;
+				B3D_ASSERT(Type == ValueType::Integer || Type == ValueType::Pixel || Type == ValueType::String || Type == ValueType::URL || Type == ValueType::Decimal);
+
+				if(Type == ValueType::Decimal)
+					outValue = (i32)Float;
+				else
+					outValue = SignedInteger;
 			}
 
 			void GetValue(float& outValue) const
 			{
-				B3D_ASSERT(Type == ValueType::Decimal || Type == ValueType::Percent);
-				outValue = Float;
+				B3D_ASSERT(Type == ValueType::Decimal || Type == ValueType::Percent || Type == ValueType::Integer);
+
+				if(Type == ValueType::Integer)
+					outValue = (float)SignedInteger;
+				else
+					outValue = Float;
 			}
 
 			void GetValue(class Color& outValue) const

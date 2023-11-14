@@ -1504,6 +1504,10 @@ bool GUIStyleSheetParser::CanCastValue(ValueType expectedType, ValueType receive
 		return receivedType == ValueType::None;
 	case ValueType::WordWrap:
 		return receivedType == ValueType::None;
+	case ValueType::Decimal:
+		return receivedType == ValueType::Integer;
+	case ValueType::Integer:
+		return receivedType == ValueType::Decimal;
 	default:
 		return false;
 	}
