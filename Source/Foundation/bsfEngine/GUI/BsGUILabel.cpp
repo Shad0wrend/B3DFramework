@@ -6,11 +6,12 @@
 #include "Image/BsSpriteTexture.h"
 #include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUIHelper.h"
+#include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
 
 GUILabel::GUILabel(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions)
-	: GUIElement(styleName, dimensions), mContent(content), mImageSprite(nullptr)
+	: GUIElement(styleName, dimensions), mContent(content), mBackgroundImageSprite(nullptr)
 {
 	mTextSprite = B3DNew<TextSprite>();
 }
@@ -19,8 +20,8 @@ GUILabel::~GUILabel()
 {
 	B3DDelete(mTextSprite);
 
-	if(mImageSprite != nullptr)
-		B3DDelete(mImageSprite);
+	if(mBackgroundImageSprite != nullptr)
+		B3DDelete(mBackgroundImageSprite);
 }
 
 u32 GUILabel::GetRenderElementDepthRange() const
@@ -33,53 +34,85 @@ void GUILabel::UpdateRenderElements()
 	const HSpriteImage& activeImage = GetStyle()->Normal.Image;
 	if(SpriteImage::CheckIsLoaded(activeImage))
 	{
-		mImageDesc.Image = activeImage;
+		mImageSpriteInformation.Image = activeImage;
 
-		if(mImageSprite == nullptr)
-			mImageSprite = B3DNew<ImageSprite>();
+		if(mBackgroundImageSprite == nullptr)
+			mBackgroundImageSprite = B3DNew<ImageSprite>();
 	}
 	else
 	{
-		mImageDesc.Image = nullptr;
+		mImageSpriteInformation.Image = nullptr;
 
-		if(mImageSprite != nullptr)
+		if(mBackgroundImageSprite != nullptr)
 		{
-			B3DDelete(mImageSprite);
-			mImageSprite = nullptr;
+			B3DDelete(mBackgroundImageSprite);
+			mBackgroundImageSprite = nullptr;
 		}
 	}
 
-	if(mImageSprite != nullptr)
+	if(mBackgroundImageSprite != nullptr)
 	{
-		mImageDesc.Width = mLayoutData.Area.Width;
-		mImageDesc.Height = mLayoutData.Area.Height;
-
-		mImageDesc.BorderLeft = GetStyle()->Border.Left;
-		mImageDesc.BorderRight = GetStyle()->Border.Right;
-		mImageDesc.BorderTop = GetStyle()->Border.Top;
-		mImageDesc.BorderBottom = GetStyle()->Border.Bottom;
-		mImageDesc.Color = GetTint();
-
-		mImageSprite->Update(mImageDesc, (u64)GetParentWidget());
+		mImageSpriteInformation.Width = mLayoutData.Area.Width;
+		mImageSpriteInformation.Height = mLayoutData.Area.Height;
 	}
 
-	mDesc.Font = GetStyle()->Font;
-	mDesc.FontSize = GetStyle()->FontSize;
-	mDesc.WordWrap = GetStyle()->WordWrap;
-	mDesc.HorzAlign = GetStyle()->TextHorzAlign;
-	mDesc.VertAlign = GetStyle()->TextVertAlign;
-	mDesc.Width = mLayoutData.Area.Width;
-	mDesc.Height = mLayoutData.Area.Height;
-	mDesc.Text = mContent.Text;
-	mDesc.Color = GetTint() * GetStyle()->Normal.TextColor;
-	;
+	mTextSpriteInformation.Width = mLayoutData.Area.Width;
+	mTextSpriteInformation.Height = mLayoutData.Area.Height;
+	mTextSpriteInformation.Text = mContent.Text;
 
-	mTextSprite->Update(mDesc, (u64)GetParentWidget());
+	const bool isUsingStyleSheets = IsUsingStyleSheets();
+	if(isUsingStyleSheets)
+	{
+		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+
+		if(mBackgroundImageSprite != nullptr)
+		{
+			mImageSpriteInformation.Color = GetTint() * styleSheetRules.BackgroundColor;
+			mImageSpriteInformation.Color.A *= styleSheetRules.Opacity;
+		}
+
+		mTextSpriteInformation.InitializeFromStyleSheetRules(styleSheetRules);
+		mTextSpriteInformation.Color *= GetTint();
+	}
+	else
+	{
+		if(mBackgroundImageSprite != nullptr)
+		{
+			mImageSpriteInformation.BorderLeft = GetStyle()->Border.Left;
+			mImageSpriteInformation.BorderRight = GetStyle()->Border.Right;
+			mImageSpriteInformation.BorderTop = GetStyle()->Border.Top;
+			mImageSpriteInformation.BorderBottom = GetStyle()->Border.Bottom;
+			mImageSpriteInformation.Color = GetTint();
+		}
+
+		mTextSpriteInformation.Font = GetStyle()->Font;
+		mTextSpriteInformation.FontSize = GetStyle()->FontSize;
+		mTextSpriteInformation.WordWrap = GetStyle()->WordWrap;
+		mTextSpriteInformation.HorzAlign = GetStyle()->TextHorzAlign;
+		mTextSpriteInformation.VertAlign = GetStyle()->TextVertAlign;
+		mTextSpriteInformation.Color = GetTint() * GetStyle()->Normal.TextColor;
+	}
+
+	if(mBackgroundImageSprite != nullptr)
+		mBackgroundImageSprite->Update(mImageSpriteInformation, (u64)GetParentWidget());
+
+	mTextSprite->Update(mTextSpriteInformation, (u64)GetParentWidget());
+
+	const Rect2 backgroundBounds(
+		0.0f, 0.0f,
+		(float)mLayoutData.Area.Width, (float)mLayoutData.Area.Height);
+
+	const Vector2I contentOffset = GetContentOffsetInElementSpace();
+	Rect2I contentBounds = GetCachedContentBounds();
+
+	const Rect2 textBounds(
+		(float)contentOffset.X, (float)contentOffset.Y,
+		(float)contentBounds.Width, (float)contentBounds.Height);
 
 	// Populate GUI render elements from the sprites
 	{
 		using T = GUIRenderElementHelper;
-		T::Populate({ T::SpriteInfo(mTextSprite), T::SpriteInfo(mImageSprite, 1) }, mRenderElements);
+		T::Populate({ T::SpriteInfo(mTextSprite, 0, textBounds), T::SpriteInfo(mBackgroundImageSprite, 1, backgroundBounds) }, mRenderElements);
 	}
 
 	GUIElement::UpdateRenderElements();
@@ -87,34 +120,16 @@ void GUILabel::UpdateRenderElements()
 
 Vector2I GUILabel::GetOptimalSize() const
 {
-	return GUIHelper::CalculateOptimalContentSize(mContent, *GetStyle(), GetSizeConstraints());
-}
-
-void GUILabel::FillBuffer(
-	u8* vertices,
-	u32* indices,
-	u32 vertexOffset,
-	u32 indexOffset,
-	const Vector2I& offset,
-	u32 maxNumVerts,
-	u32 maxNumIndices,
-	u32 renderElementIdx) const
-{
-	u8* uvs = vertices + sizeof(Vector2);
-	u32 vertexStride = sizeof(Vector2) * 2;
-	u32 indexStride = sizeof(u32);
-	Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
-
-	u32 imageSpriteIdx = mTextSprite->GetRenderElementCount();
-
-	if(renderElementIdx < imageSpriteIdx)
+	const bool isUsingStyleSheets = IsUsingStyleSheets();
+	if(isUsingStyleSheets)
 	{
-		mTextSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, renderElementIdx, layoutOffset, mLayoutData.GetLocalClipRect());
+		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+		const Size2UI contentSize = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, styleSheetRules, GetSizeConstraints().MaxWidth);
 
-		return;
+		return Vector2I(contentSize.Width, contentSize.Height);
 	}
-
-	mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, imageSpriteIdx - renderElementIdx, layoutOffset, mLayoutData.GetLocalClipRect());
+	else
+		return GUIHelper::CalculateOptimalContentSize(mContent, *GetStyle(), GetSizeConstraints());
 }
 
 void GUILabel::SetContent(const GUIContent& content)

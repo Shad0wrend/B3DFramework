@@ -418,17 +418,14 @@ TextSpriteInformation GUIButtonBase::GetTextDesc() const
 
 		TextSpriteInformation textSpriteInformation;
 		textSpriteInformation.Text = mContent.Text;
-		textSpriteInformation.Font = styleSheetRules.Font;
-		textSpriteInformation.FontSize = styleSheetRules.FontSize;
-		textSpriteInformation.Color = GetTint() * styleSheetRules.Color;
-		textSpriteInformation.Color.A *= styleSheetRules.Opacity;
 
 		Rect2I textBounds = GetCachedContentBounds();
 
 		textSpriteInformation.Width = textBounds.Width;
 		textSpriteInformation.Height = textBounds.Height;
-		textSpriteInformation.HorzAlign = styleSheetRules.HorizontalTextAlignment;
-		textSpriteInformation.VertAlign = styleSheetRules.VerticalTextAlignment;
+
+		textSpriteInformation.InitializeFromStyleSheetRules(styleSheetRules);
+		textSpriteInformation.Color *= GetTint();
 
 		return textSpriteInformation;
 	}

@@ -3,9 +3,21 @@
 #include "2D/BsTextSprite.h"
 #include "Math/BsVector2.h"
 #include "2D/BsSpriteManager.h"
+#include "GUI/StyleSheet/BsGUIStyleSheet.h"
 #include "String/BsUnicode.h"
 
 using namespace bs;
+
+void TextSpriteInformation::InitializeFromStyleSheetRules(const GUIStyleSheetRules& rules)
+{
+	Font = rules.Font;
+	FontSize = rules.FontSize;
+	WordWrap = rules.WordWrap == GUIWordWrapMode::WrapWord;
+	HorzAlign = rules.HorizontalTextAlignment;
+	VertAlign = rules.VerticalTextAlignment;
+	Color = rules.Color;
+	Color.A *= rules.Opacity;
+}
 
 TextSprite::~TextSprite()
 {

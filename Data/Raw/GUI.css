@@ -44,6 +44,25 @@ button:active
     color: #000000;
 }
 
+button.Button
+{
+
+}
+
+label
+{
+    height: 14px;
+    min-width: 10px;
+    color: var(--PrimaryTextColor);
+    font-family: var(--PrimaryFontFamily);
+    font-size: var(--PrimaryFontSize);
+}
+
+label.Label
+{
+
+}
+
 toggle
 {
     width: 13px;

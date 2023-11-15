@@ -71,13 +71,13 @@ namespace bs
 
 		Vector2I GetOptimalSize() const override;
 		ElementType GetElementType() const override { return ElementType::Label; }
+		const char* GetStyleSheetElement() const override { return "label"; }
 
 		/** @} */
 	protected:
 		~GUILabel();
 
 		u32 GetRenderElementDepthRange() const override;
-		void FillBuffer(u8* vertices, u32* indices, u32 vertexOffset, u32 indexOffset, const Vector2I& offset, u32 maxNumVerts, u32 maxNumIndices, u32 renderElementIdx) const override;
 		void UpdateRenderElements() override;
 
 	private:
@@ -86,10 +86,10 @@ namespace bs
 		GUIContent mContent;
 
 		TextSprite* mTextSprite;
-		ImageSprite* mImageSprite;
+		ImageSprite* mBackgroundImageSprite;
 
-		TextSpriteInformation mDesc;
-		ImageSpriteInformation mImageDesc;
+		TextSpriteInformation mTextSpriteInformation;
+		ImageSpriteInformation mImageSpriteInformation;
 	};
 
 	/** @} */

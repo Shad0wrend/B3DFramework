@@ -182,6 +182,16 @@ namespace bs
 			return *this;
 		}
 
+		Color& operator*=(const Color& rhs)
+		{
+			R *= rhs.R;
+			G *= rhs.G;
+			B *= rhs.B;
+			A *= rhs.A;
+
+			return *this;
+		}
+
 		Color& operator*=(float rhs)
 		{
 			R *= rhs;

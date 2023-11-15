@@ -11,6 +11,7 @@
 
 namespace bs
 {
+	struct GUIStyleSheetRules;
 	/** @addtogroup 2D
 	 *  @{
 	 */
@@ -31,6 +32,9 @@ namespace bs
 	struct TextSpriteInformation : SpriteInformation
 	{
 		TextSpriteInformation() = default;
+
+		/** Initializes the sprite information from data provided by the style sheet. */
+		void InitializeFromStyleSheetRules(const GUIStyleSheetRules& rules);
 
 		SpriteAnchor Anchor = SA_TopLeft; /**< Determines how to anchor the text within the bounds. */
 
