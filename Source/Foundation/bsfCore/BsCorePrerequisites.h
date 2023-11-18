@@ -286,6 +286,7 @@ namespace bs
 	B3D_CORE_OBJECT_FORWARD_DECLARE(SpriteTexture)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(SpriteImage)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(SpriteGlyph)
+	B3D_CORE_OBJECT_FORWARD_DECLARE(SpriteVectorPath)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Mesh)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(VectorField)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Skybox)
@@ -712,6 +713,7 @@ namespace bs
 		TID_FontBitmapPage = 1236,
 		TID_SpriteImage = 1237,
 		TID_SpriteGlyph = 1238,
+		TID_SpriteVectorPath = 1239,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,
@@ -751,6 +753,7 @@ namespace bs
 	typedef ResourceHandle<AnimationClip> HAnimationClip;
 	typedef ResourceHandle<SpriteTexture> HSpriteTexture;
 	typedef ResourceHandle<SpriteGlyph> HSpriteGlyph;
+	typedef ResourceHandle<SpriteVectorPath> HSpriteVectorPath;
 	typedef ResourceHandle<SpriteImage> HSpriteImage;
 	typedef ResourceHandle<VectorField> HVectorField;
 	typedef ResourceHandle<VectorPath> HVectorPath;

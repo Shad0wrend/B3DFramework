@@ -41,7 +41,11 @@ void VectorSprite::Update(const VectorSpriteInformation& information, u64 groupI
 	if(!B3D_ENSURE(mSpriteAtlasAllocation))
 		return;
 
-	HSpriteImage image = mSpriteAtlasAllocation->Image;
+	SpriteTextureCreateInformation spriteTextureCreateInformation;
+	spriteTextureCreateInformation.AtlasTexture = mSpriteAtlasAllocation->AtlasTexture;
+	spriteTextureCreateInformation.UVRange = mSpriteAtlasAllocation->UVRange;
+
+	HSpriteImage image = SpriteTexture::Create(spriteTextureCreateInformation);
 
 	RenderElementData& renderElementData = mCachedRenderElements[0];
 	SpriteRenderElement& renderElement = renderElementData.RenderElement;
@@ -128,35 +132,35 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 
 	const SPtr<ct::VectorPathRenderable> renderable = vectorPath.CreateRenderable(settings);
 
-	HSpriteImage image;
+	HTexture atlasTexture;
+	Rect2 uvRange;
+
 	u32 textureId = ~0u;
 	Optional<TreeTextureAtlasLayout::Allocation> layoutAllocation;
 	if(useUniqueTexture)
 	{
-		const HTexture texture = CreateOrFindTexture(requestedSize);
+		atlasTexture = CreateOrFindTexture(requestedSize);
+		uvRange = Rect2(0.0f, 0.0f, 1.0f, 1.0f);
 
 		textureId = GetNextUniqueTextureId();
-		mUniqueTextures[textureId] = texture;
-
-		image = SpriteTexture::Create(texture);
+		mUniqueTextures[textureId] = atlasTexture;
 	}
 	else
 	{
-		layoutAllocation = mAtlasLayout.AddElement(Size2UI((u32)settings.Size.Width, (u32)settings.Size.Height));
+		layoutAllocation = mAtlasLayout.AddElement(requestedSize);
 		if(!layoutAllocation)
 			return nullptr;
 
 		const Size2UI& atlasPageSize = mAtlasLayout.GetSize();
 
-		HTexture texture;
 		if(auto found = mAtlasLayoutTextures.find(layoutAllocation->PageId); found == mAtlasLayoutTextures.end())
 		{
-			texture = CreateOrFindTexture(mAtlasLayout.GetSize());
-			mAtlasLayoutTextures[layoutAllocation->PageId] = texture;
+			atlasTexture = CreateOrFindTexture(mAtlasLayout.GetSize());
+			mAtlasLayoutTextures[layoutAllocation->PageId] = atlasTexture;
 		}
 		else
 		{
-			texture = found->second;
+			atlasTexture = found->second;
 		}
 
 		const Vector2 uvOffset(
@@ -167,17 +171,10 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 			(float)requestedSize.Width / (float)atlasPageSize.Width,
 			(float)requestedSize.Height / (float)atlasPageSize.Height);
 
-		SpriteTextureCreateInformation spriteTextureCreateInformation;
-		spriteTextureCreateInformation.UVRange.X = uvOffset.X;
-		spriteTextureCreateInformation.UVRange.Y = uvOffset.Y;
-		spriteTextureCreateInformation.UVRange.Width = uvSize.X;
-		spriteTextureCreateInformation.UVRange.Height = uvSize.Y;
-		spriteTextureCreateInformation.AtlasTexture = texture;
-
-		image = SpriteTexture::Create(spriteTextureCreateInformation);
+		uvRange = Rect2(uvOffset, uvSize);
 	}
 
-	GUIVectorSpriteAtlasAllocation* const allocation = B3DNew<GUIVectorSpriteAtlasAllocation>(this, key.VectorPathId, image, layoutAllocation, textureId, renderable);
+	GUIVectorSpriteAtlasAllocation* const allocation = B3DNew<GUIVectorSpriteAtlasAllocation>(this, key.VectorPathId, atlasTexture, uvRange, layoutAllocation, textureId, renderable);
 	SPtr<GUIVectorSpriteAtlasAllocation> allocationShared = B3DMakeSharedFromExisting<GUIVectorSpriteAtlasAllocation>(allocation,
 		[](GUIVectorSpriteAtlasAllocation* allocation)
 		{
@@ -191,10 +188,10 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 	}
 
 	DirtySpriteInformation dirtySpriteInformation;
-	dirtySpriteInformation.Texture = B3DGetRenderProxy(image->GetAtlasTexture());
+	dirtySpriteInformation.Texture = B3DGetRenderProxy(atlasTexture);
 	dirtySpriteInformation.Renderable = renderable;
-	dirtySpriteInformation.UVRegion = image->GetUVRange();
-	dirtySpriteInformation.Size = image->GetSize();
+	dirtySpriteInformation.UVRegion = uvRange;
+	dirtySpriteInformation.Size = requestedSize;
 
 	B3D_ASSERT(dirtySpriteInformation.Size.Width > 0 && dirtySpriteInformation.Size.Height > 0);
 
@@ -257,12 +254,12 @@ void GUIVectorSpriteAtlas::DestroyPendingReleasedAllocations()
 				if(mAtlasLayout.IsPageEmpty(layoutAllocation.PageId))
 				{
 					mAtlasLayoutTextures.erase(layoutAllocation.PageId);
-					ReleaseTexture(entry->Image->GetAtlasTexture());
+					ReleaseTexture(entry->AtlasTexture);
 				}
 			}
 			else
 			{
-				ReleaseTexture(entry->Image->GetAtlasTexture());
+				ReleaseTexture(entry->AtlasTexture);
 				ReleaseTextureId(entry->mTextureId);
 
 				mUniqueTextures.erase(entry->mTextureId);
