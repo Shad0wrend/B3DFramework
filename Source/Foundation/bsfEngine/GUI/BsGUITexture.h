@@ -136,7 +136,7 @@ namespace bs
 		 */
 
 		ElementType GetElementType() const override { return ElementType::Texture; }
-		Vector2I GetOptimalSize() const override;
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:

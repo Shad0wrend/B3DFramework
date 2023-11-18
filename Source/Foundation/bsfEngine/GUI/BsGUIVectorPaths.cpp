@@ -51,11 +51,11 @@ HVectorPath GUITabBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, co
 {
 	HVectorPath path = VectorPath::Create(Size2(135.0f, 27.0f));
 
-	path->SetDrawCursor(Vector2(42.075512f, 56.356697f))
-		.DrawCubicBezierTo(Vector2(34.958691f, 56.362197f), Vector2(26.990934f, 83.272579f), Vector2(20.075512f, 83.356697f))
-		.DrawCubicBezierTo(Vector2(13.16009f, 83.440797f), Vector2(163.36359f, 83.446497f), Vector2(155.07551f, 83.356697f))
-		.DrawCubicBezierTo(Vector2(146.78742f, 83.266907f), Vector2(140.507f, 56.314452f), Vector2(133.07551f, 56.356697f))
-		.DrawCubicBezierTo(Vector2(125.64402f, 56.398947f), Vector2(49.192332f, 56.351197f), Vector2(42.075512f, 56.356697f))
+	path->SetDrawCursor(Vector2(22.231762f, 4.4818461e-4f))
+		.DrawCubicBezierTo(Vector2(15.114941f, 0.00594818f), Vector2(7.1471837f, 26.91633f), Vector2(0.23176174f, 27.000448f))
+		.DrawCubicBezierTo(Vector2(-6.6836603f, 27.084548f), Vector2(143.51984f, 27.090248f), Vector2(135.23176f, 27.000448f))
+		.DrawCubicBezierTo(Vector2(126.94367f, 26.910658f), Vector2(120.66325f, -0.04179682f), Vector2(113.23176f, 4.4818461e-4f))
+		.DrawCubicBezierTo(Vector2(105.80027f, 0.04269818f), Vector2(29.348582f, -0.00505182f), Vector2(22.231762f, 4.4818461e-4f))
 		.ClosePath()
 		.SetFillPaint(styleSheetRule.BackgroundColor)
 		.DrawFill();

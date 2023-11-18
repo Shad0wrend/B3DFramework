@@ -4,6 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Image/BsSpriteImage.h"
+#include "VectorGraphics/BsVectorGraphics.h"
 
 namespace bs
 {
@@ -22,6 +23,7 @@ namespace bs
 
 		HVectorPath VectorPath; /**< Vector path to render on the sprite. */
 		Size2UI Size; /**< Size of the rasterized path, in pixels. */
+		VectorGraphicsRasterizationScaling ScalingMode = VectorGraphicsRasterizationScaling::StretchToFit; /**< How to scale the path canvas onto the rasterized destination. */
 	};
 
 	/** @} */
@@ -94,6 +96,7 @@ namespace bs
 
 		HVectorPath mVectorPath;
 		Size2UI mSize;
+		VectorGraphicsRasterizationScaling mScalingMode = VectorGraphicsRasterizationScaling::StretchToFit;
 		SPtr<GUIVectorSpriteAtlasAllocation> mSpriteAtlasAllocation;
 
 		/************************************************************************/

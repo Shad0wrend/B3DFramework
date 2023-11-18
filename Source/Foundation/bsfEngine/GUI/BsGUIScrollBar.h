@@ -70,7 +70,7 @@ namespace bs
 		 */
 		void SetScrollPosInternal(float pct);
 
-		Vector2I GetOptimalSize() const override;
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:

@@ -13,7 +13,7 @@ GUIFixedSpace::~GUIFixedSpace()
 GUIConstrainedSize GUIFixedSpace::CalculateConstrainedSize() const
 {
 	GUIConstrainedSize range;
-	range.Optimal = GetOptimalSize();
+	range.Optimal = CalculateUnconstrainedOptimalSize();
 	range.Min = range.Optimal;
 	range.Max = range.Optimal;
 
@@ -39,7 +39,7 @@ GUIFlexibleSpace::~GUIFlexibleSpace()
 GUIConstrainedSize GUIFlexibleSpace::CalculateConstrainedSize() const
 {
 	GUIConstrainedSize range;
-	range.Optimal = GetOptimalSize();
+	range.Optimal = CalculateUnconstrainedOptimalSize();
 	range.Min = range.Optimal;
 	range.Max = range.Optimal;
 

@@ -41,13 +41,13 @@ GUIButtonBase::~GUIButtonBase()
 
 void GUIButtonBase::SetContent(const GUIContent& content)
 {
-	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 	mContent = content;
 	mContentAnimationStartTime = GetTime().GetTime();
 
 	RefreshContentSprite();
 
-	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 	if(origSize != newSize)
 		MarkLayoutAsDirty();
@@ -228,7 +228,7 @@ void GUIButtonBase::UpdateRenderElements()
 	GUIElement::UpdateRenderElements();
 }
 
-Vector2I GUIButtonBase::GetOptimalSize() const
+Vector2I GUIButtonBase::CalculateUnconstrainedOptimalSize() const
 {
 	u32 imageWidth = 0;
 	u32 imageHeight = 0;
@@ -443,14 +443,14 @@ void GUIButtonBase::NotifyStyleChanged()
 
 void GUIButtonBase::SetStateInternal(GUIElementState state)
 {
-	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 	if(mActiveState != state)
 		mImageDesc.AnimationStartTime = GetTime().GetTime();
 
 	mActiveState = state;
 	RefreshContentSprite();
-	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 	if(origSize != newSize)
 		MarkLayoutAsDirty();

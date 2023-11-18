@@ -29,7 +29,7 @@ void GUIElementContainer::FillBuffer(
 	u32 renderElementIdx) const
 {}
 
-Vector2I GUIElementContainer::GetOptimalSize() const
+Vector2I GUIElementContainer::CalculateUnconstrainedOptimalSize() const
 {
 	return Vector2I();
 }

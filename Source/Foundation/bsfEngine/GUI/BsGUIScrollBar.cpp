@@ -116,9 +116,9 @@ void GUIScrollBar::UpdateClippedBounds()
 	mClippedBounds = Rect2I(0, 0, 0, 0); // We don't want any mouse input for this element. This is just a container.
 }
 
-Vector2I GUIScrollBar::GetOptimalSize() const
+Vector2I GUIScrollBar::CalculateUnconstrainedOptimalSize() const
 {
-	return mLayout->GetOptimalSize();
+	return mLayout->CalculateUnconstrainedOptimalSize();
 }
 
 u32 GUIScrollBar::GetRenderElementDepthRange() const

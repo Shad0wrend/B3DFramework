@@ -54,11 +54,11 @@ const String& GUISlider::GetFillStyleType()
 	return FILL_STYLE_TYPE;
 }
 
-Vector2I GUISlider::GetOptimalSize() const
+Vector2I GUISlider::CalculateUnconstrainedOptimalSize() const
 {
-	Vector2I optimalSize = mSliderHandle->GetOptimalSize();
+	Vector2I optimalSize = mSliderHandle->CalculateUnconstrainedOptimalSize();
 
-	Vector2I backgroundSize = mBackground->GetOptimalSize();
+	Vector2I backgroundSize = mBackground->CalculateUnconstrainedOptimalSize();
 	optimalSize.X = std::max(optimalSize.X, backgroundSize.X);
 	optimalSize.Y = std::max(optimalSize.Y, backgroundSize.Y);
 
@@ -71,7 +71,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 
 	if(mHorizontal)
 	{
-		Vector2I optimalSize = mBackground->GetOptimalSize();
+		Vector2I optimalSize = mBackground->CalculateUnconstrainedOptimalSize();
 		childData.Area.Height = optimalSize.Y;
 		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
 
@@ -80,7 +80,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 
 		mBackground->SetLayoutData(childData);
 
-		optimalSize = mSliderHandle->GetOptimalSize();
+		optimalSize = mSliderHandle->CalculateUnconstrainedOptimalSize();
 		childData.Area.Height = optimalSize.Y;
 		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
 
@@ -90,7 +90,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 		mSliderHandle->SetLayoutData(childData);
 		u32 handleWidth = optimalSize.X;
 
-		optimalSize = mFillBackground->GetOptimalSize();
+		optimalSize = mFillBackground->CalculateUnconstrainedOptimalSize();
 		childData.Area.Height = optimalSize.Y;
 		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
 		childData.Area.Width = mSliderHandle->GetHandlePosPx() + handleWidth / 2;
@@ -102,7 +102,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 	}
 	else
 	{
-		Vector2I optimalSize = mBackground->GetOptimalSize();
+		Vector2I optimalSize = mBackground->CalculateUnconstrainedOptimalSize();
 		childData.Area.Width = optimalSize.X;
 		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
 
@@ -111,7 +111,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 
 		mBackground->SetLayoutData(childData);
 
-		optimalSize = mSliderHandle->GetOptimalSize();
+		optimalSize = mSliderHandle->CalculateUnconstrainedOptimalSize();
 		childData.Area.Width = optimalSize.X;
 		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
 
@@ -121,7 +121,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 		mSliderHandle->SetLayoutData(childData);
 		u32 handleHeight = optimalSize.Y;
 
-		optimalSize = mFillBackground->GetOptimalSize();
+		optimalSize = mFillBackground->CalculateUnconstrainedOptimalSize();
 		childData.Area.Width = optimalSize.X;
 		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
 		childData.Area.Height = mSliderHandle->GetHandlePosPx() + handleHeight / 2;

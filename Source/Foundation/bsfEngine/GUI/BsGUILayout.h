@@ -78,7 +78,7 @@ namespace bs
 		 */
 		const Vector<GUIConstrainedSize>& GetChildrenConstrainedSizes() const { return mChildrenConstrainedSizes; }
 
-		Vector2I GetOptimalSize() const override { return mConstrainedSize.Optimal; }
+		Vector2I CalculateUnconstrainedOptimalSize() const override { return mConstrainedSize.Optimal; }
 		Type GetType() const override { return GUIElementBase::Type::Layout; }
 
 		/** @} */

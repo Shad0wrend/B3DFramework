@@ -34,11 +34,11 @@ const String& GUIProgressBar::GetBackgroundStyleType()
 	return BACKGROUND_STYLE_TYPE;
 }
 
-Vector2I GUIProgressBar::GetOptimalSize() const
+Vector2I GUIProgressBar::CalculateUnconstrainedOptimalSize() const
 {
-	Vector2I optimalSize = mBar->GetOptimalSize();
+	Vector2I optimalSize = mBar->CalculateUnconstrainedOptimalSize();
 
-	Vector2I backgroundSize = mBackground->GetOptimalSize();
+	Vector2I backgroundSize = mBackground->CalculateUnconstrainedOptimalSize();
 	optimalSize.X = std::max(optimalSize.X, backgroundSize.X);
 	optimalSize.Y = std::max(optimalSize.Y, backgroundSize.Y);
 

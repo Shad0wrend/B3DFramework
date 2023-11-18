@@ -38,9 +38,9 @@ void GUIScrollArea::UpdateClippedBounds()
 	mClippedBounds.Clip(mLayoutData.ClipRect);
 }
 
-Vector2I GUIScrollArea::GetOptimalSize() const
+Vector2I GUIScrollArea::CalculateUnconstrainedOptimalSize() const
 {
-	Vector2I optimalSize = mContentLayout->GetOptimalSize();
+	Vector2I optimalSize = mContentLayout->CalculateUnconstrainedOptimalSize();
 
 	// Provide 10x10 in case underlying layout is empty because
 	// 0 doesn't work well with the layout system
@@ -57,7 +57,7 @@ GUIConstrainedSize GUIScrollArea::CalculateConstrainedSize() const
 	// fit the area will get clipped anyway and including the scroll bars
 	// won't change the size much, but it would complicate this method significantly.
 	if(mContentLayout->IsActive())
-		return mSizeConstraints.CalculateConstrainedSize(GetOptimalSize());
+		return mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize());
 
 	return mSizeConstraints.CalculateConstrainedSize(Vector2I());
 }
@@ -86,7 +86,7 @@ void GUIScrollArea::UpdateOptimalLayoutSizes()
 		childIdx++;
 	}
 
-	mSizeRange = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize());
+	mSizeRange = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize());
 }
 
 void GUIScrollArea::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const

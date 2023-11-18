@@ -133,7 +133,7 @@ void GUISliderHandle::UpdateClippedBounds()
 	mClippedBounds.Clip(mLayoutData.ClipRect);
 }
 
-Vector2I GUISliderHandle::GetOptimalSize() const
+Vector2I GUISliderHandle::CalculateUnconstrainedOptimalSize() const
 {
 	HSpriteImage activeImage = GetActiveImage();
 

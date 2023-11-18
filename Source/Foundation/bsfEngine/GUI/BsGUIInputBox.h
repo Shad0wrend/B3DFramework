@@ -89,7 +89,7 @@ namespace bs
 		 */
 
 		ElementType GetElementType() const override { return ElementType::InputBox; }
-		Vector2I GetOptimalSize() const override;
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:

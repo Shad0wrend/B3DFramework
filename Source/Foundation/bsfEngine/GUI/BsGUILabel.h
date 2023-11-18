@@ -69,7 +69,7 @@ namespace bs
 		 *  @{
 		 */
 
-		Vector2I GetOptimalSize() const override;
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
 		ElementType GetElementType() const override { return ElementType::Label; }
 		const char* GetStyleSheetElement() const override { return "label"; }
 

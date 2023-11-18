@@ -22,7 +22,7 @@ namespace bs
 }
 
 SpriteVectorPath::SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation)
-	: SpriteImage(createInformation), mVectorPath(createInformation.VectorPath), mSize(createInformation.Size)
+	: SpriteImage(createInformation), mVectorPath(createInformation.VectorPath), mSize(createInformation.Size), mScalingMode(createInformation.ScalingMode)
 {
 }
 
@@ -48,6 +48,7 @@ void SpriteVectorPath::RenderVectorPath()
 
 	VectorGraphicsSettings vectorGraphicsSettings;
 	vectorGraphicsSettings.Size = Size2((float)mSize.Width, (float)mSize.Height);
+	vectorGraphicsSettings.ScalingMode = mScalingMode;
 
 	GUIVectorSpriteAtlas& vectorSpriteAtlas = GetGUIManager().GetVectorSpriteAtlas();
 

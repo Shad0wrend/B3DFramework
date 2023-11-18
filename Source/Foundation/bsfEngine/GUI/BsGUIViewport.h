@@ -54,7 +54,7 @@ namespace bs
 		 *  @{
 		 */
 
-		Vector2I GetOptimalSize() const override;
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 

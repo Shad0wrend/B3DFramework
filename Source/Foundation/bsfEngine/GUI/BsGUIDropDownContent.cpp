@@ -356,7 +356,7 @@ void GUIDropDownContent::SelectPrevious(u32 startIdx)
 	}
 }
 
-Vector2I GUIDropDownContent::GetOptimalSize() const
+Vector2I GUIDropDownContent::CalculateUnconstrainedOptimalSize() const
 {
 	Vector2I optimalSize;
 	for(auto& visElem : mVisibleElements)
@@ -366,9 +366,9 @@ Vector2I GUIDropDownContent::GetOptimalSize() const
 		optimalSize.Y += (i32)GetElementHeight(visElem.Idx);
 
 		if(element.IsSeparator())
-			optimalSize.X = std::max(optimalSize.X, visElem.Separator->GetOptimalSize().X);
+			optimalSize.X = std::max(optimalSize.X, visElem.Separator->CalculateUnconstrainedOptimalSize().X);
 		else
-			optimalSize.X = std::max(optimalSize.X, visElem.Button->GetOptimalSize().X);
+			optimalSize.X = std::max(optimalSize.X, visElem.Button->CalculateUnconstrainedOptimalSize().X);
 	}
 
 	return optimalSize;

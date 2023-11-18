@@ -129,7 +129,7 @@ namespace bs
 		/** Returns the size of the slider handle, in percent of the total area. */
 		float GetHandleSizePctInternal() const;
 
-		Vector2I GetOptimalSize() const override;
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:

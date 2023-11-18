@@ -101,9 +101,13 @@ button.Toggle::checkmark
     color: var(--FocusColor);
 }
 
-button.TabbedBarBtn_DISABLED
+button.TabbedBarBtn
 {
     height: 15px;
     min-width: 24px;
     max-width: 110px;
+    margin-bottom: 0px;
+    border-width: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
 }

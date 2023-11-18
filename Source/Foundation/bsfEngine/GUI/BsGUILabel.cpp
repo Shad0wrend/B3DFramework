@@ -118,7 +118,7 @@ void GUILabel::UpdateRenderElements()
 	GUIElement::UpdateRenderElements();
 }
 
-Vector2I GUILabel::GetOptimalSize() const
+Vector2I GUILabel::CalculateUnconstrainedOptimalSize() const
 {
 	const bool isUsingStyleSheets = IsUsingStyleSheets();
 	if(isUsingStyleSheets)
@@ -134,9 +134,9 @@ Vector2I GUILabel::GetOptimalSize() const
 
 void GUILabel::SetContent(const GUIContent& content)
 {
-	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 	mContent = content;
-	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 	if(origSize != newSize)
 		MarkLayoutAsDirty();

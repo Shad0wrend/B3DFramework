@@ -76,7 +76,7 @@ namespace bs
 		/**	Get localized name of a menu item element with the specified index. */
 		HString GetElementLocalizedName(u32 idx) const;
 
-		Vector2I GetOptimalSize() const override;
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
 		void NotifyStyleChanged() override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;

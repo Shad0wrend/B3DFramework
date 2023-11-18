@@ -101,7 +101,7 @@ GUITexture* GUITexture::Create(const String& styleName)
 
 void GUITexture::SetImage(const HSpriteImage& image)
 {
-	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
+	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 	mActiveImage = image;
 
@@ -120,7 +120,7 @@ void GUITexture::SetImage(const HSpriteImage& image)
 	mUsingStyleTexture = false;
 	mDesc.AnimationStartTime = GetTime().GetTime();
 
-	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(GetOptimalSize()).Optimal;
+	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 	if(origSize != newSize)
 		MarkLayoutAsDirty();
 	else
@@ -212,7 +212,7 @@ void GUITexture::NotifyStyleChanged()
 	}
 }
 
-Vector2I GUITexture::GetOptimalSize() const
+Vector2I GUITexture::CalculateUnconstrainedOptimalSize() const
 {
 	// TODO - Accounting for style dimensions might be redundant here, I'm pretty sure we do that on higher level anyway
 	Vector2I optimalSize;

@@ -426,7 +426,7 @@ void GUIElementBase::UpdateLayoutRecursive(const GUILayoutData& data)
 GUIConstrainedSize GUIElementBase::CalculateConstrainedSize() const
 {
 	const GUISizeConstraints& dimensions = GetSizeConstraints();
-	return dimensions.CalculateConstrainedSize(GetOptimalSize());
+	return dimensions.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize());
 }
 
 GUIConstrainedSize GUIElementBase::GetConstrainedSize() const

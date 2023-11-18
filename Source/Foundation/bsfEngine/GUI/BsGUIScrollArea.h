@@ -143,7 +143,7 @@ namespace bs
 		void UpdateClippedBounds() override;
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 		void UpdateOptimalLayoutSizes() override;
-		Vector2I GetOptimalSize() const override;
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
 
 	private:
 		GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType, const String& scrollBarStyle, const String& scrollAreaStyle, const GUISizeConstraints& dimensions);

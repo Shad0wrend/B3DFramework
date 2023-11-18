@@ -218,8 +218,8 @@ namespace bs
 		/**	Return the child element at the specified index.*/
 		GUIElementBase* GetChild(u32 idx) const { return mChildren[idx]; }
 
-		/**	Returns previously calculated optimal size for this element. */
-		virtual Vector2I GetOptimalSize() const = 0;
+		/**	Calculates the optimal size for the GUI element, ignoring size constraints. */
+		virtual Vector2I CalculateUnconstrainedOptimalSize() const = 0;
 
 		/**	Returns size constraints that determine how is the GUI element allowed to be resized by the layout. */
 		const GUISizeConstraints& GetSizeConstraints() const { return mSizeConstraints; }

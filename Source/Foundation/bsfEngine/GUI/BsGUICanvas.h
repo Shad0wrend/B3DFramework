@@ -130,7 +130,7 @@ namespace bs
 		 *  @{
 		 */
 
-		Vector2I GetOptimalSize() const override;
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
 		u32 GetRenderElementDepthRange() const override { return mDepthRange; }
 
 		/** @} */

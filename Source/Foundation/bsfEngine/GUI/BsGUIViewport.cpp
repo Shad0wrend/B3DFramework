@@ -39,7 +39,7 @@ void GUIViewport::UpdateClippedBounds()
 	mClippedBounds.Clip(mLayoutData.ClipRect);
 }
 
-Vector2I GUIViewport::GetOptimalSize() const
+Vector2I GUIViewport::CalculateUnconstrainedOptimalSize() const
 {
 	return Vector2I(0, 0);
 }
