@@ -23,7 +23,7 @@ namespace bs
 }
 
 SpriteVectorPath::SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation)
-	: SpriteImage(createInformation), mVectorPath(createInformation.VectorPath)
+	: SpriteImage(createInformation), mVectorPath(createInformation.VectorPath), mSize(createInformation.Size)
 {
 }
 

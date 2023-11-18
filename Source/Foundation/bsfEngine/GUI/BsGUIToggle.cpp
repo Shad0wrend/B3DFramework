@@ -6,6 +6,7 @@
 #include "GUI/BsGUIToggleGroup.h"
 #include "BsGUICommandEvent.h"
 #include "BsGUIVectorPaths.h"
+#include "Image/BsSpriteVectorPath.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
@@ -22,7 +23,7 @@ GUIToggle::GUIToggle(const String& styleName, const GUIContent& content, SPtr<GU
 	if(toggleGroup != nullptr)
 		toggleGroup->AddInternal(this);
 
-	mCheckmarkSprite = B3DNew<VectorSprite>();
+	mCheckmarkSprite = B3DNew<ImageSprite>();
 	mCheckmarkPathBuilder = GUICheckmarkVectorPathBuilder::Get();
 	mCheckmarkPseudoElementIndex = RegisterPseudoElement("checkmark");
 }
@@ -199,9 +200,15 @@ void GUIToggle::UpdateRenderElements()
 	mCheckmarkSpriteInformation.Height = checkmarkBounds.Height;
 
 	if(mCheckmarkPathBuilder)
-		mCheckmarkSpriteInformation.VectorPath = mCheckmarkPathBuilder->BuildPath(Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height), checkmarkStyleSheetRules);
+	{
+		SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
+		spriteVectorPathCreateInformation.Size = Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height);
+		spriteVectorPathCreateInformation.VectorPath = mCheckmarkPathBuilder->BuildPath(spriteVectorPathCreateInformation.Size, checkmarkStyleSheetRules);
+
+		mCheckmarkSpriteInformation.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
+	}
 	else
-		mCheckmarkSpriteInformation.VectorPath = nullptr;
+		mCheckmarkSpriteInformation.Image = nullptr;
 
 	mCheckmarkSpriteInformation.Color = GetTint();
 	mCheckmarkSpriteInformation.Color.A *= checkmarkStyleSheetRules.Opacity;

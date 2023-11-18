@@ -11,6 +11,7 @@
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUICommandEvent.h"
 #include "GUI/BsGUIHelper.h"
+#include "Image/BsSpriteVectorPath.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 #include "VectorGraphics/BsVectorGraphics.h"
 
@@ -20,7 +21,6 @@ GUIButtonBase::GUIButtonBase(const String& styleName, const GUIContent& content,
 	: GUIElement(styleName, dimensions, options), mContent(content)
 {
 	mImageSprite = B3DNew<ImageSprite>();
-	mBackgroundSprite = B3DNew<VectorSprite>();
 	mTextSprite = B3DNew<TextSprite>();
 
 	mImageDesc.AnimationStartTime = GetTime().GetTime();
@@ -34,7 +34,6 @@ GUIButtonBase::~GUIButtonBase()
 {
 	B3DDelete(mTextSprite);
 	B3DDelete(mImageSprite);
-	B3DDelete(mBackgroundSprite);
 
 	if(mContentImageSprite != nullptr)
 		B3DDelete(mContentImageSprite);
@@ -76,29 +75,30 @@ bool GUIButtonBase::IsOnInternal() const
 
 void GUIButtonBase::UpdateRenderElements()
 {
+	mImageDesc.Width = mLayoutData.Area.Width;
+	mImageDesc.Height = mLayoutData.Area.Height;
+
 	const bool isUsingStyleSheets = IsUsingStyleSheets();
 	if(isUsingStyleSheets)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 
-		mBackgroundSpriteInformation.Width = mLayoutData.Area.Width;
-		mBackgroundSpriteInformation.Height = mLayoutData.Area.Height;
-
 		if(mBackgroundPathBuilder)
-			mBackgroundSpriteInformation.VectorPath = mBackgroundPathBuilder->BuildPath(Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height), styleSheetRules);
+		{
+			SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
+			spriteVectorPathCreateInformation.Size = Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height);
+			spriteVectorPathCreateInformation.VectorPath = mBackgroundPathBuilder->BuildPath(spriteVectorPathCreateInformation.Size, styleSheetRules);
+
+			mImageDesc.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
+		}
 		else
-			mBackgroundSpriteInformation.VectorPath = nullptr;
+			mImageDesc.Image = nullptr;
 
-		mBackgroundSpriteInformation.Color = GetTint();
-		mBackgroundSpriteInformation.Color.A *= styleSheetRules.Opacity;
-
-		mBackgroundSprite->Update(mBackgroundSpriteInformation, (u64)GetParentWidget());
+		mImageDesc.Color = GetTint();
+		mImageDesc.Color.A *= styleSheetRules.Opacity;
 	}
 	else
 	{
-		mImageDesc.Width = mLayoutData.Area.Width;
-		mImageDesc.Height = mLayoutData.Area.Height;
-
 		const HSpriteImage& activeImage = GetActiveImage();
 		if(SpriteImage::CheckIsLoaded(activeImage))
 			mImageDesc.Image = activeImage;
@@ -110,10 +110,9 @@ void GUIButtonBase::UpdateRenderElements()
 		mImageDesc.BorderTop = GetStyle()->Border.Top;
 		mImageDesc.BorderBottom = GetStyle()->Border.Bottom;
 		mImageDesc.Color = GetTint();
-
-		mImageSprite->Update(mImageDesc, (u64)GetParentWidget());
 	}
 
+	mImageSprite->Update(mImageDesc, (u64)GetParentWidget());
 	mTextSprite->Update(GetTextDesc(), (u64)GetParentWidget());
 
 	if(mContentImageSprite != nullptr)
@@ -219,22 +218,11 @@ void GUIButtonBase::UpdateRenderElements()
 	{
 		using T = GUIRenderElementHelper;
 
-		if(isUsingStyleSheets)
-		{
-			T::Populate({
-				T::SpriteInfo(mBackgroundSprite, 1, backgroundImageBounds),
-				T::SpriteInfo(mTextSprite, 0, textBounds),
-				T::SpriteInfo(mContentImageSprite, 0, contentImageBounds) },
-				mRenderElements);
-		}
-		else
-		{
-			T::Populate({
-				T::SpriteInfo(mImageSprite, 1, backgroundImageBounds),
-				T::SpriteInfo(mTextSprite, 0, textBounds),
-				T::SpriteInfo(mContentImageSprite, 0, contentImageBounds) },
-				mRenderElements);
-		}
+		T::Populate({
+			T::SpriteInfo(mImageSprite, 1, backgroundImageBounds),
+			T::SpriteInfo(mTextSprite, 0, textBounds),
+			T::SpriteInfo(mContentImageSprite, 0, contentImageBounds) },
+			mRenderElements);
 	}
 
 	GUIElement::UpdateRenderElements();

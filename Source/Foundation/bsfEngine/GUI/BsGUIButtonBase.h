@@ -87,13 +87,11 @@ namespace bs
 
 	protected:
 		ImageSprite* mImageSprite;
-		VectorSprite* mBackgroundSprite;
 		ImageSprite* mContentImageSprite = nullptr;
 		TextSprite* mTextSprite;
 		GUIElementState mActiveState = GUIElementState::Normal;
 
 		ImageSpriteInformation mImageDesc;
-		VectorSpriteInformation mBackgroundSpriteInformation;
 		GUIContent mContent;
 		bool mHasFocus = false;
 		float mContentAnimationStartTime = 0.0f;

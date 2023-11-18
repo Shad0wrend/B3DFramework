@@ -160,8 +160,8 @@ namespace bs
 		bool DoOnCommandEvent(const GUICommandEvent& event) override;
 
 	protected:
-		VectorSprite* mCheckmarkSprite = nullptr;
-		VectorSpriteInformation mCheckmarkSpriteInformation;
+		ImageSprite* mCheckmarkSprite = nullptr;
+		ImageSpriteInformation mCheckmarkSpriteInformation;
 		const IGUIVectorPathBuilder* mCheckmarkPathBuilder = nullptr;
 		u32 mCheckmarkPseudoElementIndex = ~0u;
 
