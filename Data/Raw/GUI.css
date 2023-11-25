@@ -158,7 +158,7 @@ container.GUIResourceField
     min-width: 30px;
 }
 
-container.GUITextureFieldX
+container.GUITextureField
 {
     min-height: 15px;
     min-width: 15px;
@@ -195,8 +195,8 @@ button.ObjectDropButton
 
 button.TextureClearButton
 {
-    width: 10px;
-    height: 10px;
+    width: 16px;
+    height: 16px;
     border-width: 0px;
     background-color: #00000000;
 }
