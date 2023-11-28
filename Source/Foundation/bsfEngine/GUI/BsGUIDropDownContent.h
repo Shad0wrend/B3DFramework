@@ -18,8 +18,11 @@ namespace bs
 		/**	Contains various GUI elements used for displaying a single menu entry. */
 		struct VisibleElement
 		{
-			u32 Idx = 0;
+			u32 SequentialIndex = 0;
+			GUILayout* Layout = nullptr;
+			GUIButtonBase* UnderlayButton = nullptr;
 			GUIButtonBase* Button = nullptr;
+			GUILabel* Label = nullptr;
 			GUITexture* Separator = nullptr;
 			GUILabel* ShortcutLabel = nullptr;
 		};
@@ -65,10 +68,11 @@ namespace bs
 		 */
 		void SetKeyboardFocus(bool focus);
 
-		static constexpr const char* kEntryToggleStyleType = "DropDownEntryToggleBtn";
-		static constexpr const char* kEntryStyleType = "DropDownEntryBtn";
-		static constexpr const char* kEntryExpStyleType = "DropDownEntryExpBtn";
-		static constexpr const char* kSeparatorStyleType = "DropDownSeparator";
+		static constexpr const char* kToggleStyleClass = "Toggle";
+		static constexpr const char* kButtonStyleClass = "DropDownEntryButton";
+		static constexpr const char* kExpandStyleClass = "DropDownEntryExpBtn";
+		static constexpr const char* kSeparatorStyleClass = "DropDownSeparator";
+		static constexpr const char* kUnderlayStyleClass = "DropDownEntryUnderlay";
 
 	protected:
 		GUIDropDownContent(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData, const String& style, const GUISizeConstraints& dimensions);

@@ -25,13 +25,16 @@ namespace bs
 		 * Enable this option if you want pointer events to pass through this element by default. This will allow elements
 		 * underneath this element to receive pointer events.
 		 */
-		ClickThrough = 0x01,
+		ClickThrough = 1 << 0,
 
 		/**
 		 * Enable this option if the element accepts keyboard/gamepad input focus. This will allow the element to be
 		 * navigated to using keys/buttons.
 		 */
-		AcceptsKeyFocus = 0x02
+		AcceptsKeyFocus = 1 << 1,
+
+		/** Pointer events on the GUI element will be ignored. */
+		IgnorePointerEvents = 1 << 2,
 	};
 
 	typedef Flags<GUIElementOption> GUIElementOptions;
@@ -292,6 +295,12 @@ namespace bs
 		/** Returns the navigation group this element belongs to. See setNavGroup(). */
 		SPtr<GUINavGroup> GetNavigationGroup() const;
 
+		/** Transitions the GUI element into a new state by adding state flags. */
+		void AddStateFlags(GUIElementStateFlags flags);
+
+		/** Transitions the GUI element into a new state by removing state flags. */
+		void RemoveStateFlags(GUIElementStateFlags flags);
+
 		/** Checks is the specified position within GUI element bounds. Position is relative to parent GUI widget. */
 		virtual bool IsInBounds(const Vector2I position) const;
 
@@ -367,12 +376,6 @@ namespace bs
 
 		/**	Returns the tint that is applied to the GUI element. */
 		Color GetTint() const;
-
-		/** Transitions the GUI element into a new state by adding state flags. */
-		void AddStateFlags(GUIElementStateFlags flags);
-
-		/** Transitions the GUI element into a new state by removing state flags. */
-		void RemoveStateFlags(GUIElementStateFlags flags);
 
 		/**
 		 * Registers a new pseudo-element for the GUI element. Pseudo-element can be used for providing additional style sheet rules for a GUI element.

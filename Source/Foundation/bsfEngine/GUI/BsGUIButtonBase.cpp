@@ -275,6 +275,9 @@ u32 GUIButtonBase::GetRenderElementDepthRange() const
 
 bool GUIButtonBase::DoOnMouseEvent(const GUIMouseEvent& ev)
 {
+	if(mOptionFlags.IsSet(GUIElementOption::IgnorePointerEvents))
+		return false;
+
 	if(ev.GetType() == GUIMouseEventType::MouseOver)
 	{
 		if(!IsDisabled())

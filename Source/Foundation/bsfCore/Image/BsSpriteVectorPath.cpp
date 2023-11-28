@@ -46,6 +46,9 @@ void SpriteVectorPath::RenderVectorPath()
 	if(!mVectorPath.IsLoaded(false))
 		return;
 
+	if(mSize.Width == 0 || mSize.Height == 0)
+		return;
+
 	VectorGraphicsSettings vectorGraphicsSettings;
 	vectorGraphicsSettings.Size = Size2((float)mSize.Width, (float)mSize.Height);
 	vectorGraphicsSettings.ScalingMode = mScalingMode;

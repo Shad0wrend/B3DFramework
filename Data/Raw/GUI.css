@@ -217,7 +217,7 @@ button.TextureDropButton
     width: 82px;
 }
 
-button.DropDownEntryBtn
+button.DropDownEntryButton
 {
     height: 16px;
     min-width: 30px;
@@ -225,8 +225,19 @@ button.DropDownEntryBtn
     text-align: left;
 }
 
-button.DropDownEntryBtn:active
+button.DropDownEntryButton:active
 {
     color: var(--PrimaryContentColor);
+    background-color: var(--HoverBackgroundColor);
+}
+
+button.DropDownEntryUnderlay
+{
+    border-width: 0px;
+    padding: 0px;
+}
+
+button.DropDownEntryUnderlay:active
+{
     background-color: var(--HoverBackgroundColor);
 }

@@ -202,7 +202,7 @@ void GUIToggle::UpdateRenderElements()
 	if(mCheckmarkPathBuilder)
 	{
 		SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
-		spriteVectorPathCreateInformation.Size = Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height);
+		spriteVectorPathCreateInformation.Size = Size2UI(mCheckmarkSpriteInformation.Width, mCheckmarkSpriteInformation.Height);
 		spriteVectorPathCreateInformation.VectorPath = mCheckmarkPathBuilder->BuildPath(spriteVectorPathCreateInformation.Size, checkmarkStyleSheetRules);
 
 		mCheckmarkSpriteInformation.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
