@@ -22,9 +22,7 @@ namespace bs
 			GUILayout* Layout = nullptr;
 			GUIButtonBase* UnderlayButton = nullptr;
 			GUIButtonBase* Button = nullptr;
-			GUILabel* Label = nullptr;
 			GUITexture* Separator = nullptr;
-			GUILabel* ShortcutLabel = nullptr;
 		};
 
 	public:
@@ -70,7 +68,7 @@ namespace bs
 
 		static constexpr const char* kToggleStyleClass = "Toggle";
 		static constexpr const char* kButtonStyleClass = "DropDownEntryButton";
-		static constexpr const char* kExpandStyleClass = "DropDownEntryExpBtn";
+		static constexpr const char* kExpandArrowStyleClass = "DropDownEntryExpandButtonArrow";
 		static constexpr const char* kSeparatorStyleClass = "DropDownSeparator";
 		static constexpr const char* kUnderlayStyleClass = "DropDownEntryUnderlay";
 

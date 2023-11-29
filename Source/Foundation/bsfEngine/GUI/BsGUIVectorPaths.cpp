@@ -305,3 +305,25 @@ HVectorPath GUIScrollHandleVectorPathBuilder::BuildPath(const Size2UI& size, con
 
 	return path;
 }
+
+HVectorPath GUISeparatorVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+{
+	HVectorPath path = VectorPath::Create(Size2((float)size.Width, (float)size.Height));
+
+	if(size.Height == 1)
+	{
+		path->SetDrawCursor(Vector2(0.0f, 0.0f))
+			.DrawLineTo(Vector2((float)size.Width, 0.0f))
+			.SetStrokePaint(styleSheetRule.BackgroundColor)
+			.SetStrokeWidth(1.0f)
+			.DrawFill();
+	}
+	else if(size.Height > 1)
+	{
+		path->DrawRectangle(Rect2(0.0f, 0.0f, (float)size.Width, (float)size.Height))
+			.SetFillPaint(styleSheetRule.BackgroundColor)
+			.DrawFill();
+	}
+
+	return path;
+}

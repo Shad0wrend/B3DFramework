@@ -13,7 +13,9 @@
 #include <climits>
 
 #include "BsGUILayoutX.h"
+#include "BsGUIVectorPaths.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
+#include "Text/BsStockIcons.h"
 
 using namespace std::placeholders;
 
@@ -50,8 +52,6 @@ void GUIDropDownContent::NotifyStyleChanged()
 
 		if(element.IsSeparator())
 			visElem.Separator->SetStyle(GetSubStyleName(kSeparatorStyleClass));
-		else if(element.IsSubMenu())
-			visElem.Button->SetStyle(GetSubStyleName(kExpandStyleClass));
 	}
 }
 
@@ -72,7 +72,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 		if(mIsToggle)
 			mStates[idx] = !mStates[idx];
 
-		mParent->ElementActivated(idx, mVisibleElements[visIdx].Button->GetLayoutData().Area);
+		mParent->ElementActivated(idx, mVisibleElements[visIdx].UnderlayButton->GetLayoutData().Area);
 	};
 
 	// Remove all elements
@@ -107,25 +107,32 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 			visibleElement.Separator = GUITexture::Create(TextureScaleMode::StretchToFit, GetSubStyleName(kSeparatorStyleClass));
 			RegisterChildElement(visibleElement.Separator);
 		}
-		else if(element.IsSubMenu())
-		{
-			visibleElement.Layout = GUILayoutX::Create();
-			RegisterChildElement(visibleElement.Layout);
-
-			visibleElement.Button = GUIButton::Create(GetElementLocalizedName(i), GetSubStyleName(kExpandStyleClass));
-			visibleElement.Button->OnHover.Connect(std::bind(onClick, i, curVisIdx));
-
-			visibleElement.Layout->AddElement(visibleElement.Button);
-
-		}
 		else
 		{
 			visibleElement.Layout = GUILayoutX::Create();
 			RegisterChildElement(visibleElement.Layout);
 
-			if(mIsToggle)
+			visibleElement.UnderlayButton = GUIButton::Create(GUIContent(), kUnderlayStyleClass);
+			visibleElement.UnderlayButton->SetElementDepth(1);
+			RegisterChildElement(visibleElement.UnderlayButton);
+
+			if(element.IsSubMenu())
 			{
 				GUILabel* const label = GUILabel::Create(GetElementLocalizedName(i));
+				label->SetOptionFlags(GUIElementOption::IgnorePointerEvents);
+
+				GUIButton* const arrow = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeRightLong, 12.0f)), kExpandArrowStyleClass);
+				arrow->SetOptionFlags(GUIElementOption::IgnorePointerEvents);
+
+				visibleElement.Layout->AddElement(label);
+				visibleElement.Layout->AddElement(arrow);
+
+				visibleElement.UnderlayButton->OnHover.Connect(std::bind(onClick, i, curVisIdx));
+			}
+			else if(mIsToggle)
+			{
+				GUILabel* const label = GUILabel::Create(GetElementLocalizedName(i));
+				label->SetOptionFlags(GUIElementOption::IgnorePointerEvents);
 
 				GUIToggle* const toggle = GUIToggle::Create(GUIContent(), kToggleStyleClass);
 				toggle->SetOptionFlags(GUIElementOption::IgnorePointerEvents);
@@ -134,10 +141,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 					toggle->ToggleOn();
 
 				visibleElement.Button = toggle;
-				visibleElement.Label = label;
 
-				visibleElement.UnderlayButton = GUIButton::Create(GUIContent(), kUnderlayStyleClass);
-				visibleElement.UnderlayButton->SetElementDepth(1);
 				visibleElement.UnderlayButton->OnHover.Connect([toggle]() {
 					toggle->AddStateFlags(GUIElementStateFlag::Hover);
 				});
@@ -153,30 +157,25 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 						toggle->ToggleOn();
 				});
 
-				RegisterChildElement(visibleElement.UnderlayButton);
+				visibleElement.Layout->AddElement(visibleElement.Button);
+				visibleElement.Layout->AddElement(label);
 			}
 			else
 			{
 				visibleElement.Button = GUIButton::Create(GetElementLocalizedName(i), kButtonStyleClass);
+				visibleElement.Button->OnHover.Connect(std::bind(onHover, i, curVisIdx));
+				visibleElement.Button->OnClick.Connect(std::bind(onClick, i, curVisIdx));
+				visibleElement.Layout->AddElement(visibleElement.Button);
 			}
 
-			visibleElement.Button->OnHover.Connect(std::bind(onHover, i, curVisIdx));
-			visibleElement.Button->OnClick.Connect(std::bind(onClick, i, curVisIdx));
-			visibleElement.Button->SetOptionFlags(GUIElementOption::ClickThrough);
-
-			visibleElement.Layout->AddElement(visibleElement.Button);
-
-			if(visibleElement.Label != nullptr)
+			if(!element.IsSubMenu())
 			{
-				visibleElement.Label->SetOptionFlags(GUIElementOption::ClickThrough);
-				visibleElement.Layout->AddElement(visibleElement.Label);
-			}
-
-			const String& shortcutTag = element.GetShortcutTag();
-			if(!shortcutTag.empty())
-			{
-				visibleElement.ShortcutLabel = GUILabel::Create(HString(shortcutTag), "RightAlignedLabel");
-				visibleElement.Layout->AddElement(visibleElement.ShortcutLabel);
+				const String& shortcutTag = element.GetShortcutTag();
+				if(!shortcutTag.empty())
+				{
+					GUILabel* const shortcutLabel = GUILabel::Create(HString(shortcutTag), "RightAlignedLabel");
+					visibleElement.Layout->AddElement(shortcutLabel);
+				}
 			}
 		}
 
@@ -199,8 +198,6 @@ u32 GUIDropDownContent::GetElementHeight(u32 idx) const
 
 	if(mDropDownData.Entries[idx].IsSeparator())
 		return skin.GetStyle(GetSubStyleName(kSeparatorStyleClass))->Height;
-	else if(mDropDownData.Entries[idx].IsSubMenu())
-		return skin.GetStyle(GetSubStyleName(kExpandStyleClass))->Height;
 	else
 	{
 		const char* elementClass = mIsToggle ? kToggleStyleClass : kButtonStyleClass;
@@ -266,7 +263,7 @@ bool GUIDropDownContent::DoOnCommandEvent(const GUICommandEvent& ev)
 			{
 				GUIDropDownDataEntry& entry = mDropDownData.Entries[mVisibleElements[mSelectedIdx].SequentialIndex];
 				if(entry.IsSubMenu())
-					mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].Button->GetLayoutData().Area);
+					mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetLayoutData().Area);
 			}
 		}
 		return true;
@@ -278,7 +275,7 @@ bool GUIDropDownContent::DoOnCommandEvent(const GUICommandEvent& ev)
 			if(mIsToggle)
 				mVisibleElements[mSelectedIdx].Button->SetOnInternal(!mVisibleElements[mSelectedIdx].Button->IsOnInternal());
 
-			mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].Button->GetLayoutData().Area);
+			mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetLayoutData().Area);
 		}
 		return true;
 	default:
@@ -307,17 +304,20 @@ void GUIDropDownContent::SetSelected(u32 idx)
 {
 	if(mSelectedIdx != UINT_MAX)
 	{
-		if(mVisibleElements[mSelectedIdx].Button->IsOnInternal())
-			mVisibleElements[mSelectedIdx].Button->SetStateInternal(GUIElementState::NormalOn);
-		else
-			mVisibleElements[mSelectedIdx].Button->SetStateInternal(GUIElementState::Normal);
+		VisibleElement& previouslySelectedElement = mVisibleElements[mSelectedIdx];
+
+		previouslySelectedElement.UnderlayButton->RemoveStateFlags(GUIElementStateFlag::Hover);
+		if(previouslySelectedElement.Button != nullptr)
+			previouslySelectedElement.Button->RemoveStateFlags(GUIElementStateFlag::Hover);
 	}
 
 	mSelectedIdx = idx;
-	if(mVisibleElements[mSelectedIdx].Button->IsOnInternal())
-		mVisibleElements[mSelectedIdx].Button->SetStateInternal(GUIElementState::HoverOn);
-	else
-		mVisibleElements[mSelectedIdx].Button->SetStateInternal(GUIElementState::Hover);
+
+	VisibleElement& newlySelectedElement = mVisibleElements[mSelectedIdx];
+
+	newlySelectedElement.UnderlayButton->AddStateFlags(GUIElementStateFlag::Hover);
+	if(newlySelectedElement.Button != nullptr)
+		newlySelectedElement.Button->AddStateFlags(GUIElementStateFlag::Hover);
 
 	mParent->ElementSelected(mVisibleElements[mSelectedIdx].SequentialIndex);
 }

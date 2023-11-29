@@ -95,6 +95,20 @@ namespace bs
 		}
 	};
 
+	/** Builds a vector path that draws a separator. */
+	class B3D_EXPORT GUISeparatorVectorPathBuilder : public IGUIVectorPathBuilder
+	{
+	public:
+		HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const override;
+
+		/** Returns a singleton instance of this builder. */
+		static const GUISeparatorVectorPathBuilder* Get()
+		{
+			static const GUISeparatorVectorPathBuilder instance;
+			return &instance;
+		}
+	};
+
 
 	/** @} */
 } // namespace bs

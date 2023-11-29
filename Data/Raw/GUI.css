@@ -241,3 +241,17 @@ button.DropDownEntryUnderlay:active
 {
     background-color: var(--HoverBackgroundColor);
 }
+
+.DropDownEntryExpandButtonArrow
+{
+    width: 15px;
+    height: 15px;
+    background-color: #00000000;
+    border-width: 0px;
+    padding: 0px;
+}
+
+.DropDownEntryExpandButtonArrow:hover
+{
+    background-color: #00000000;
+}
