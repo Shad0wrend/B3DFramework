@@ -11,6 +11,8 @@
 
 namespace bs
 {
+	enum class GUIElementState;
+
 	/** @addtogroup GUI
 	 *  @{
 	 */
@@ -153,11 +155,16 @@ namespace bs
 		 * @param[in]	styleName	Name of the style in GUI skin to use for the sub-element.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		void AddSubStyle(const String& guiType, const String& styleName)
 		{
 			SubStyles[guiType] = styleName;
 		}
+
+		/** Returns an image associated with a particular state. */
+		const HSpriteImage& GetImageForState(GUIElementState state) const;
+
+		/** Returns a text color associated with a particular state. */
+		const Color& GetTextColorForState(GUIElementState state) const;
 
 		Map<String, String> SubStyles; /**< Sub-styles used by certain more complex elements. */
 

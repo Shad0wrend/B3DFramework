@@ -105,6 +105,9 @@ namespace bs
 		/**	Sets the tint of the GUI element. */
 		virtual void SetTint(const Color& color);
 
+		/**	Returns the tint that is applied to the GUI element. */
+		Color GetTint() const;
+
 		void ResetDimensions() override;
 
 		/**	Sets new style to be used by the element. */
@@ -325,6 +328,8 @@ namespace bs
 		/** @} */
 
 	protected:
+		friend class GUISpriteHelper;
+
 		/**
 		 * Called whenever element clipped bounds need to be recalculated. (for example when width, height or clip
 		 * rectangles changes).
@@ -373,9 +378,6 @@ namespace bs
 
 		/** Calculates the offset from the origin of the GUI element to the area containing content (combined border + padding offsets). */
 		Vector2I GetContentOffsetInElementSpace() const;
-
-		/**	Returns the tint that is applied to the GUI element. */
-		Color GetTint() const;
 
 		/**
 		 * Registers a new pseudo-element for the GUI element. Pseudo-element can be used for providing additional style sheet rules for a GUI element.

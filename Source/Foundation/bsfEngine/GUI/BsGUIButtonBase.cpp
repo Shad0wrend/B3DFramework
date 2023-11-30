@@ -1,8 +1,6 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIButtonBase.h"
-
-#include "BsGUIVectorPaths.h"
 #include "2D/BsImageSprite.h"
 #include "GUI/BsGUISkin.h"
 #include "Image/BsSpriteTexture.h"
@@ -13,27 +11,23 @@
 #include "GUI/BsGUIHelper.h"
 #include "Image/BsSpriteVectorPath.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
-#include "VectorGraphics/BsVectorGraphics.h"
 
 using namespace bs;
 
 GUIButtonBase::GUIButtonBase(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions, GUIElementOptions options)
 	: GUIElement(styleName, dimensions, options), mContent(content)
 {
-	mImageSprite = B3DNew<ImageSprite>();
 	mTextSprite = B3DNew<TextSprite>();
 
-	mImageDesc.AnimationStartTime = GetTime().GetTime();
-	mContentAnimationStartTime = mImageDesc.AnimationStartTime;
+	mBackgroundSprite.SetAnimationStartTime(GetTime().GetTime());
+	mContentAnimationStartTime = GetTime().GetTime();
 
-	SetBackgroundPathBuilder(GUIBackgroundVectorPathBuilder::Get());
 	RefreshContentSprite();
 }
 
 GUIButtonBase::~GUIButtonBase()
 {
 	B3DDelete(mTextSprite);
-	B3DDelete(mImageSprite);
 
 	if(mContentImageSprite != nullptr)
 		B3DDelete(mContentImageSprite);
@@ -75,44 +69,10 @@ bool GUIButtonBase::IsOnInternal() const
 
 void GUIButtonBase::UpdateRenderElements()
 {
-	mImageDesc.Width = mLayoutData.Area.Width;
-	mImageDesc.Height = mLayoutData.Area.Height;
+	mRenderElements.clear();
+	GUISpriteHelper::BuildSpriteRenderElements(*this, mActiveState, mBackgroundSprite);
 
 	const bool isUsingStyleSheets = IsUsingStyleSheets();
-	if(isUsingStyleSheets)
-	{
-		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-
-		if(mBackgroundPathBuilder)
-		{
-			SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
-			spriteVectorPathCreateInformation.Size = Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height);
-			spriteVectorPathCreateInformation.VectorPath = mBackgroundPathBuilder->BuildPath(spriteVectorPathCreateInformation.Size, styleSheetRules);
-
-			mImageDesc.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
-		}
-		else
-			mImageDesc.Image = nullptr;
-
-		mImageDesc.Color = GetTint();
-		mImageDesc.Color.A *= styleSheetRules.Opacity;
-	}
-	else
-	{
-		const HSpriteImage& activeImage = GetActiveImage();
-		if(SpriteImage::CheckIsLoaded(activeImage))
-			mImageDesc.Image = activeImage;
-		else
-			mImageDesc.Image = nullptr;
-
-		mImageDesc.BorderLeft = GetStyle()->Border.Left;
-		mImageDesc.BorderRight = GetStyle()->Border.Right;
-		mImageDesc.BorderTop = GetStyle()->Border.Top;
-		mImageDesc.BorderBottom = GetStyle()->Border.Bottom;
-		mImageDesc.Color = GetTint();
-	}
-
-	mImageSprite->Update(mImageDesc, (u64)GetParentWidget());
 	mTextSprite->Update(GetTextDesc(), (u64)GetParentWidget());
 
 	if(mContentImageSprite != nullptr)
@@ -160,10 +120,6 @@ void GUIButtonBase::UpdateRenderElements()
 	}
 
 	// Calculate content bounds
-	const Rect2 backgroundImageBounds(
-		0.0f, 0.0f,
-		(float)mLayoutData.Area.Width, (float)mLayoutData.Area.Height);
-
 	Rect2 textBounds;
 	Rect2 contentImageBounds;
 
@@ -225,8 +181,7 @@ void GUIButtonBase::UpdateRenderElements()
 	{
 		using T = GUIRenderElementHelper;
 
-		T::Populate({
-			T::SpriteInfo(mImageSprite, 1, backgroundImageBounds),
+		T::Append({
 			T::SpriteInfo(mTextSprite, 0, textBounds),
 			T::SpriteInfo(mContentImageSprite, 0, contentImageBounds) },
 			mRenderElements);
@@ -253,7 +208,7 @@ Vector2I GUIButtonBase::CalculateUnconstrainedOptimalSize() const
 	}
 	else
 	{
-		const HSpriteImage& activeImage = GetActiveImage();
+		const HSpriteImage& activeImage = GetStyle()->GetImageForState(mActiveState);
 		if(SpriteImage::CheckIsLoaded(activeImage))
 		{
 			imageWidth = activeImage->GetSize().Width;
@@ -433,7 +388,7 @@ TextSpriteInformation GUIButtonBase::GetTextDesc() const
 		textDesc.Text = mContent.Text;
 		textDesc.Font = GetStyle()->Font;
 		textDesc.FontSize = GetStyle()->FontSize;
-		textDesc.Color = GetTint() * GetActiveTextColor();
+		textDesc.Color = GetTint() * GetStyle()->GetTextColorForState(mActiveState);
 
 		Rect2I textBounds = GetCachedContentBounds();
 
@@ -448,7 +403,7 @@ TextSpriteInformation GUIButtonBase::GetTextDesc() const
 
 void GUIButtonBase::NotifyStyleChanged()
 {
-	mImageDesc.AnimationStartTime = GetTime().GetTime();
+	mBackgroundSprite.SetAnimationStartTime(GetTime().GetTime());
 }
 
 void GUIButtonBase::SetStateInternal(GUIElementState state)
@@ -456,7 +411,7 @@ void GUIButtonBase::SetStateInternal(GUIElementState state)
 	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 	if(mActiveState != state)
-		mImageDesc.AnimationStartTime = GetTime().GetTime();
+		mBackgroundSprite.SetAnimationStartTime(GetTime().GetTime());
 
 	mActiveState = state;
 	RefreshContentSprite();
@@ -466,66 +421,4 @@ void GUIButtonBase::SetStateInternal(GUIElementState state)
 		MarkLayoutAsDirty();
 	else
 		MarkContentAsDirty();
-}
-
-const HSpriteImage& GUIButtonBase::GetActiveImage() const
-{
-	switch(mActiveState)
-	{
-	case GUIElementState::Normal:
-		return GetStyle()->Normal.Image;
-	case GUIElementState::Hover:
-		return GetStyle()->Hover.Image;
-	case GUIElementState::Active:
-		return GetStyle()->Active.Image;
-	case GUIElementState::Focused:
-		return GetStyle()->Focused.Image;
-	case GUIElementState::FocusedHover:
-		return GetStyle()->FocusedHover.Image;
-	case GUIElementState::NormalOn:
-		return GetStyle()->NormalOn.Image;
-	case GUIElementState::HoverOn:
-		return GetStyle()->HoverOn.Image;
-	case GUIElementState::ActiveOn:
-		return GetStyle()->ActiveOn.Image;
-	case GUIElementState::FocusedOn:
-		return GetStyle()->FocusedOn.Image;
-	case GUIElementState::FocusedHoverOn:
-		return GetStyle()->FocusedHoverOn.Image;
-	default:
-		break;
-	}
-
-	return GetStyle()->Normal.Image;
-}
-
-Color GUIButtonBase::GetActiveTextColor() const
-{
-	switch(mActiveState)
-	{
-	case GUIElementState::Normal:
-		return GetStyle()->Normal.TextColor;
-	case GUIElementState::Hover:
-		return GetStyle()->Hover.TextColor;
-	case GUIElementState::Active:
-		return GetStyle()->Active.TextColor;
-	case GUIElementState::Focused:
-		return GetStyle()->Focused.TextColor;
-	case GUIElementState::FocusedHover:
-		return GetStyle()->FocusedHover.TextColor;
-	case GUIElementState::NormalOn:
-		return GetStyle()->NormalOn.TextColor;
-	case GUIElementState::HoverOn:
-		return GetStyle()->HoverOn.TextColor;
-	case GUIElementState::ActiveOn:
-		return GetStyle()->ActiveOn.TextColor;
-	case GUIElementState::FocusedOn:
-		return GetStyle()->FocusedOn.TextColor;
-	case GUIElementState::FocusedHoverOn:
-		return GetStyle()->FocusedHoverOn.TextColor;
-	default:
-		break;
-	}
-
-	return GetStyle()->Normal.TextColor;
 }

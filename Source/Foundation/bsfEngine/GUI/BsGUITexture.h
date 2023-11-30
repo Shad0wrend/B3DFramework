@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "BsGUISpriteHelper.h"
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIElement.h"
 #include "2D/BsImageSprite.h"
@@ -147,13 +148,12 @@ namespace bs
 		void UpdateRenderElements() override;
 		void NotifyStyleChanged() override;
 
+		GUIBackgroundSprite mBackgroundSprite;
 		ImageSprite* mImageSprite;
-		ImageSprite* mBackgroundImageSprite = nullptr;
 		HSpriteImage mActiveImage;
 		u32 mActiveImageWidth = 0;
 		u32 mActiveImageHeight = 0;
 		ImageSpriteInformation mDesc;
-		ImageSpriteInformation mBackgroundSpriteInformation;
 		TextureScaleMode mScaleMode;
 		bool mTransparent;
 		bool mUsingStyleTexture;

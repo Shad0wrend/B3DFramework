@@ -38,16 +38,11 @@ GUITexture::GUITexture(const String& styleName, const HSpriteImage& image, Textu
 		mActiveImageWidth = 0;
 		mActiveImageHeight = 0;
 	}
-
-	SetBackgroundPathBuilder(GUIBackgroundVectorPathBuilder::Get());
 }
 
 GUITexture::~GUITexture()
 {
 	B3DDelete(mImageSprite);
-
-	if(mBackgroundImageSprite != nullptr)
-		B3DDelete(mBackgroundImageSprite);
 }
 
 GUITexture* GUITexture::Create(const HSpriteImage& image, TextureScaleMode scale, bool transparent, const GUIOptions& options, const String& styleName)
@@ -130,6 +125,9 @@ void GUITexture::SetImage(const HSpriteImage& image)
 
 void GUITexture::UpdateRenderElements()
 {
+	mRenderElements.clear();
+	GUISpriteHelper::BuildSpriteRenderElements(*this, GUIElementState::Normal, mBackgroundSprite);
+
 	Size2UI textureSize(BsZero);
 	if(SpriteImage::CheckIsLoaded(mActiveImage))
 	{
@@ -177,39 +175,6 @@ void GUITexture::UpdateRenderElements()
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 
-		if(styleSheetRules.BackgroundColor.A > 0.0f)
-		{
-			if(mBackgroundImageSprite == nullptr)
-				mBackgroundImageSprite = B3DNew<ImageSprite>();
-		}
-		else
-		{
-			if(mBackgroundImageSprite != nullptr)
-			{
-				B3DDelete(mBackgroundImageSprite);
-				mBackgroundImageSprite = nullptr;
-			}
-		}
-
-		mBackgroundSpriteInformation.Width = mLayoutData.Area.Width;
-		mBackgroundSpriteInformation.Height = mLayoutData.Area.Height;
-
-		if(mBackgroundPathBuilder)
-		{
-			SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
-			spriteVectorPathCreateInformation.Size = Size2UI(mLayoutData.Area.Width, mLayoutData.Area.Height);
-			spriteVectorPathCreateInformation.VectorPath = mBackgroundPathBuilder->BuildPath(spriteVectorPathCreateInformation.Size, styleSheetRules);
-
-			mBackgroundSpriteInformation.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
-		}
-		else
-			mBackgroundSpriteInformation.Image = nullptr;
-
-		mBackgroundSpriteInformation.Color = GetTint();
-		mBackgroundSpriteInformation.Color.A *= styleSheetRules.Opacity;
-
-		mBackgroundImageSprite->Update(mBackgroundSpriteInformation, (u64)GetParentWidget());
-
 		mDesc.Color.A *= styleSheetRules.Opacity;
 	}
 	else
@@ -218,12 +183,6 @@ void GUITexture::UpdateRenderElements()
 		mDesc.BorderRight = GetStyle()->Border.Right;
 		mDesc.BorderTop = GetStyle()->Border.Top;
 		mDesc.BorderBottom = GetStyle()->Border.Bottom;
-
-		if(mBackgroundImageSprite != nullptr)
-		{
-			B3DDelete(mBackgroundImageSprite);
-			mBackgroundImageSprite = nullptr;
-		}
 	}
 
 	if(mScaleMode != TextureScaleMode::ScaleToFit)
@@ -240,16 +199,7 @@ void GUITexture::UpdateRenderElements()
 	// Populate GUI render elements from the sprites
 	{
 		using T = GUIRenderElementHelper;
-		T::Populate({ T::SpriteInfo(mImageSprite, 0, imageSpriteBounds) }, mRenderElements);
-
-		if(mBackgroundImageSprite != nullptr)
-		{
-			const Rect2 backgroundImageBounds(
-				0.0f, 0.0f,
-				(float)mLayoutData.Area.Width, (float)mLayoutData.Area.Height);
-
-			T::Populate({ T::SpriteInfo(mBackgroundImageSprite, 1, backgroundImageBounds) }, mRenderElements);
-		}
+		T::Append({ T::SpriteInfo(mImageSprite, 0, imageSpriteBounds) }, mRenderElements);
 	}
 
 	GUIElement::UpdateRenderElements();

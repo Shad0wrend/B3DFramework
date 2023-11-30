@@ -7,6 +7,7 @@
 #include "2D/BsImageSprite.h"
 #include "2D/BsTextSprite.h"
 #include "GUI/BsGUIContent.h"
+#include "GUI/BsGUISpriteHelper.h"
 #include "Utility/BsEvent.h"
 
 namespace bs
@@ -78,19 +79,12 @@ namespace bs
 		/**	Retrieves internal button state. */
 		GUIElementState GetState() const { return mActiveState; }
 
-		/**	Returns the active sprite image, depending on the current state. */
-		const HSpriteImage& GetActiveImage() const;
-
-		/**	Returns the active text color, depending on the current state. */
-		Color GetActiveTextColor() const;
-
 	protected:
-		ImageSprite* mImageSprite;
+		GUIBackgroundSprite mBackgroundSprite;
 		ImageSprite* mContentImageSprite = nullptr;
 		TextSprite* mTextSprite;
 		GUIElementState mActiveState = GUIElementState::Normal;
 
-		ImageSpriteInformation mImageDesc;
 		GUIContent mContent;
 		bool mHasFocus = false;
 		float mContentAnimationStartTime = 0.0f;
