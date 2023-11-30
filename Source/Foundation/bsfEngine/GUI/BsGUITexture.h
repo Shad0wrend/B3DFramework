@@ -148,10 +148,12 @@ namespace bs
 		void NotifyStyleChanged() override;
 
 		ImageSprite* mImageSprite;
+		ImageSprite* mBackgroundImageSprite = nullptr;
 		HSpriteImage mActiveImage;
 		u32 mActiveImageWidth = 0;
 		u32 mActiveImageHeight = 0;
 		ImageSpriteInformation mDesc;
+		ImageSpriteInformation mBackgroundSpriteInformation;
 		TextureScaleMode mScaleMode;
 		bool mTransparent;
 		bool mUsingStyleTexture;

@@ -69,7 +69,7 @@ namespace bs
 		static constexpr const char* kToggleStyleClass = "Toggle";
 		static constexpr const char* kButtonStyleClass = "DropDownEntryButton";
 		static constexpr const char* kExpandArrowStyleClass = "DropDownEntryExpandButtonArrow";
-		static constexpr const char* kSeparatorStyleClass = "DropDownSeparator";
+		static constexpr const char* kSeparatorStyleClass = "DropDownEntrySeparator";
 		static constexpr const char* kUnderlayStyleClass = "DropDownEntryUnderlay";
 
 	protected:
@@ -80,7 +80,6 @@ namespace bs
 
 		Vector2I CalculateUnconstrainedOptimalSize() const override;
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
-		void NotifyStyleChanged() override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 

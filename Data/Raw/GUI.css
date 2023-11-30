@@ -255,3 +255,15 @@ button.DropDownEntryUnderlay:active
 {
     background-color: #00000000;
 }
+
+texture
+{
+    background-color: #00000000;
+}
+
+texture.DropDownEntrySeparator
+{
+    height: 2px;
+    min-width: 30px;
+    background-color: var(--PrimaryBorderColor);
+}

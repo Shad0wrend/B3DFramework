@@ -9,16 +9,13 @@
 #include "GUI/BsGUISkin.h"
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUICommandEvent.h"
-
-#include <climits>
-
 #include "BsGUILayoutX.h"
 #include "BsGUIVectorPaths.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 #include "Text/BsStockIcons.h"
+#include <climits>
 
 using namespace std::placeholders;
-
 using namespace bs;
 
 GUIDropDownContent::GUIDropDownContent(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData, const String& style, const GUISizeConstraints& dimensions)
@@ -28,31 +25,12 @@ GUIDropDownContent::GUIDropDownContent(GUIDropDownMenu::DropDownSubMenu* parent,
 
 GUIDropDownContent* GUIDropDownContent::Create(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData, const String& style)
 {
-	const String* curStyle = &style;
-	if(*curStyle == StringUtil::kBlank)
-		curStyle = &GUIDropDownContent::GetGuiTypeName();
-
-	return new(B3DAllocate<GUIDropDownContent>()) GUIDropDownContent(parent, dropDownData, *curStyle, GUISizeConstraints::Create());
+	return new(B3DAllocate<GUIDropDownContent>()) GUIDropDownContent(parent, dropDownData, GetStyleName<GUIDropDownContent>(style), GUISizeConstraints::Create());
 }
 
 GUIDropDownContent* GUIDropDownContent::Create(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData, const GUIOptions& options, const String& style)
 {
-	const String* curStyle = &style;
-	if(*curStyle == StringUtil::kBlank)
-		curStyle = &GUIDropDownContent::GetGuiTypeName();
-
-	return new(B3DAllocate<GUIDropDownContent>()) GUIDropDownContent(parent, dropDownData, *curStyle, GUISizeConstraints::Create(options));
-}
-
-void GUIDropDownContent::NotifyStyleChanged()
-{
-	for(auto& visElem : mVisibleElements)
-	{
-		GUIDropDownDataEntry& element = mDropDownData.Entries[visElem.SequentialIndex];
-
-		if(element.IsSeparator())
-			visElem.Separator->SetStyle(GetSubStyleName(kSeparatorStyleClass));
-	}
+	return new(B3DAllocate<GUIDropDownContent>()) GUIDropDownContent(parent, dropDownData, GetStyleName<GUIDropDownContent>(style), GUISizeConstraints::Create(options));
 }
 
 void GUIDropDownContent::SetRange(u32 start, u32 end)
@@ -104,7 +82,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 
 		if(element.IsSeparator())
 		{
-			visibleElement.Separator = GUITexture::Create(TextureScaleMode::StretchToFit, GetSubStyleName(kSeparatorStyleClass));
+			visibleElement.Separator = GUITexture::Create(TextureScaleMode::StretchToFit, kSeparatorStyleClass);
 			RegisterChildElement(visibleElement.Separator);
 		}
 		else
@@ -193,22 +171,22 @@ u32 GUIDropDownContent::GetElementHeight(u32 idx) const
 	if(widget == nullptr)
 		return kDefaultHeight;
 
-	const GUISkin& skin = widget->GetSkin();
 	const HGUIStyleSheet styleSheet = widget->GetStyleSheet();
 
-	if(mDropDownData.Entries[idx].IsSeparator())
-		return skin.GetStyle(GetSubStyleName(kSeparatorStyleClass))->Height;
-	else
+	SPtr<const GUIStyleSheetRuleset> ruleset;
+	if(styleSheet.IsLoaded(false))
 	{
-		const char* elementClass = mIsToggle ? kToggleStyleClass : kButtonStyleClass;
-
-		SPtr<const GUIStyleSheetRuleset> ruleset;
-		if(styleSheet.IsLoaded(false))
+		if(mDropDownData.Entries[idx].IsSeparator())
+			ruleset = styleSheet->BuildRuleset("texture", kSeparatorStyleClass);
+		else
+		{
+			const char* elementClass = mIsToggle ? kToggleStyleClass : kButtonStyleClass;
 			ruleset = styleSheet->BuildRuleset("button", elementClass);
-
-		if(ruleset)
-			return ruleset->Rules.Size.Height;
+		}
 	}
+
+	if(ruleset)
+		return ruleset->Rules.Size.Height;
 
 	return kDefaultHeight;
 }
