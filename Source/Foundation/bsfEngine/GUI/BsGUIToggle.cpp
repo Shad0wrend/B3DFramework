@@ -190,7 +190,8 @@ void GUIToggle::UpdateRenderElements()
 	if(ruleInformation.CurrentStateRuleset == nullptr)
 		return;
 
-	if(mContentImageSprite != nullptr || !mContent.Text.GetValue().empty())
+	HSpriteImage contentImage = mContent.GetImage(mActiveState);
+	if(contentImage.IsLoaded(false) || !mContent.Text.GetValue().empty())
 		return;
 
 	const GUIStyleSheetRules& checkmarkStyleSheetRules = ruleInformation.CurrentStateRuleset->Rules;

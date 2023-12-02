@@ -62,7 +62,7 @@ namespace bs
 		/** @} */
 	protected:
 		GUIButtonBase(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOption::AcceptsKeyFocus);
-		virtual ~GUIButtonBase();
+		~GUIButtonBase() override = default;
 
 		void UpdateRenderElements() override;
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
@@ -70,24 +70,16 @@ namespace bs
 		String GetTooltip() const override;
 		void NotifyStyleChanged() override;
 
-		/** Creates or destroys the content image sprite depending if there is a content image for the active state. */
-		void RefreshContentSprite();
-
-		/**	Gets the text sprite descriptor used for creating/updating the internal text sprite. */
-		TextSpriteInformation GetTextDesc() const;
-
 		/**	Retrieves internal button state. */
 		GUIElementState GetState() const { return mActiveState; }
 
 	protected:
 		GUIBackgroundSprite mBackgroundSprite;
-		ImageSprite* mContentImageSprite = nullptr;
-		TextSprite* mTextSprite;
+		GUIContentSprites mContentSprites;
 		GUIElementState mActiveState = GUIElementState::Normal;
 
 		GUIContent mContent;
 		bool mHasFocus = false;
-		float mContentAnimationStartTime = 0.0f;
 	};
 
 	/** @} */

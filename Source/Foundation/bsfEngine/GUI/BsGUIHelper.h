@@ -48,6 +48,12 @@ namespace bs
 		static Vector2I CalculateOptimalContentSize(const String& text, const GUIElementStyle& style, const GUISizeConstraints& dimensions); // TODO: DEPRECATED
 
 		/**
+		 * Calculates the content area based on the total element size (i.e. size as calculated by the layout). This is the layout area potentially
+		 * offset/reduced by padding/content offset as specified in the GUI element style.
+		 */
+		static Rect2I CalculateContentArea(const Size2UI& layoutSize, const GUIElementStyle& style);
+
+		/**
 		 * Calculates size of the GUI element area based on the GUI content size. This is just the content area expanded by padding and border provided by the style.
 		 *
 		 * @param	contentSize		Size of the GUI element's content area.
@@ -76,6 +82,12 @@ namespace bs
 		 * @return					Optimal size of the GUI element, including content size and the style padding (area within GUI elements border).
 		 */
 		static Size2UI CalculateOptimalContentSizeWithPaddingAndBorder(const String& text, const GUIStyleSheetRules& styleSheetRule, u32 wordWrapWidth = 0);
+
+		/**
+		 * Calculates the content area based on the total element size (i.e. size as calculated by the layout). This is the layout area potentially
+		 * offset/reduced by border/padding as specified in the style sheet rules.
+		 */
+		static Rect2I CalculateContentArea(const Size2UI& layoutSize, const GUIStyleSheetRules& styleSheetRules);
 
 		/**
 		 * Calculates optimal content size for the provided text using the provided font and size. Size is calculated

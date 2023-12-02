@@ -60,6 +60,19 @@ Vector2I GUIHelper::CalculateOptimalContentSize(const String& text, const GUIEle
 	return Vector2I(contentWidth, contentHeight);
 }
 
+Rect2I GUIHelper::CalculateContentArea(const Size2UI& layoutSize, const GUIElementStyle& style)
+{
+	const RectOffset& padding = style.Margins; // Note: The naming is incorrect in GUIElementStyle, but we're keeping it for backwards compatibility
+	Rect2I bounds;
+
+	bounds.X = padding.Left + style.ContentOffset.Left;
+	bounds.Y = padding.Top + style.ContentOffset.Top;
+	bounds.Width = (u32)std::max(0, (i32)layoutSize.Width - (i32)(padding.Left + padding.Right + style.ContentOffset.Left + style.ContentOffset.Right));
+	bounds.Height = (u32)std::max(0, (i32)layoutSize.Height - (i32)(padding.Top + padding.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom));
+
+	return bounds;
+}
+
 Size2UI GUIHelper::CalculateSizeWithPaddingAndBorder(const Size2UI& contentSize, const GUIStyleSheetRules& styleSheetRule)
 {
 	const u32 paddingWidth = styleSheetRule.Padding.Left + styleSheetRule.Padding.Right;
@@ -111,6 +124,27 @@ Size2UI GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(const String&
 	}
 
 	return CalculateSizeWithPaddingAndBorder(contentSize, styleSheetRule);
+}
+
+Rect2I GUIHelper::CalculateContentArea(const Size2UI& layoutSize, const GUIStyleSheetRules& styleSheetRules)
+{
+	const RectOffset& padding = styleSheetRules.Padding;
+	const u32 paddingWidth = padding.Left + padding.Right;
+	const u32 paddingHeight = padding.Top + padding.Bottom;
+
+	const u32 borderWidth = styleSheetRules.BorderLeft.GetVisibleWidth() + styleSheetRules.BorderRight.GetVisibleWidth();
+	const u32 borderHeight = styleSheetRules.BorderTop.GetVisibleWidth() + styleSheetRules.BorderBottom.GetVisibleWidth();
+
+	Rect2I bounds(0, 0, layoutSize.Width, layoutSize.Height);
+	const u32 nonContentWidth = Math::Min(bounds.Width, paddingWidth + borderWidth);
+	const u32 nonContentHeight = Math::Min(bounds.Height, paddingHeight + borderHeight);
+
+	bounds.X += (i32)Math::Min(bounds.Width, padding.Left + styleSheetRules.BorderLeft.GetVisibleWidth());
+	bounds.Y += (i32)Math::Min(bounds.Height, padding.Top + styleSheetRules.BorderTop.GetVisibleWidth());
+	bounds.Width -= nonContentWidth;
+	bounds.Height -= nonContentHeight;
+
+	return bounds;
 }
 
 Vector2I GUIHelper::CalculateTextBounds(const String& text, const HFont& font, float fontSize)

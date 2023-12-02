@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIElement.h"
+
+#include "BsGUIHelper.h"
 #include "GUI/BsGUIWidget.h"
 #include "GUI/BsGUISkin.h"
 #include "GUI/BsGUIManager.h"
@@ -241,48 +243,27 @@ void GUIElement::ResetDimensions()
 
 Rect2I GUIElement::GetCachedContentBounds() const
 {
-	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
-	{
-		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+	Rect2I contentArea = GetCachedContentBoundsInElementSpace();
 
-		const RectOffset& padding = GetPadding();
-		const u32 paddingWidth = padding.Left + padding.Right;
-		const u32 paddingHeight = padding.Top + padding.Bottom;
+	const Rect2I& cachedBounds = GetCachedBounds();
+	contentArea.X += cachedBounds.X;
+	contentArea.Y += cachedBounds.Y;
 
-		const u32 borderWidth = styleSheetRules.BorderLeft.GetVisibleWidth() + styleSheetRules.BorderRight.GetVisibleWidth();
-		const u32 borderHeight = styleSheetRules.BorderTop.GetVisibleWidth() + styleSheetRules.BorderBottom.GetVisibleWidth();
-
-		Rect2I bounds = GetCachedBounds();
-		const u32 nonContentWidth = Math::Min(bounds.Width, paddingWidth + borderWidth);
-		const u32 nonContentHeight = Math::Min(bounds.Height, paddingHeight + borderHeight);
-
-		bounds.X += (i32)Math::Min(bounds.Width, padding.Left + styleSheetRules.BorderLeft.GetVisibleWidth());
-		bounds.Y += (i32)Math::Min(bounds.Height, padding.Top + styleSheetRules.BorderTop.GetVisibleWidth());
-		bounds.Width -= nonContentWidth;
-		bounds.Height -= nonContentHeight;
-
-		return bounds;
-	}
-	else
-	{
-		const RectOffset& padding = GetPadding();
-		Rect2I bounds;
-
-		bounds.X = mLayoutData.Area.X + padding.Left + mStyle->ContentOffset.Left;
-		bounds.Y = mLayoutData.Area.Y + padding.Top + mStyle->ContentOffset.Top;
-		bounds.Width = (u32)std::max(0, (i32)mLayoutData.Area.Width - (i32)(padding.Left + padding.Right + mStyle->ContentOffset.Left + mStyle->ContentOffset.Right));
-		bounds.Height = (u32)std::max(0, (i32)mLayoutData.Area.Height - (i32)(padding.Top + padding.Bottom + mStyle->ContentOffset.Top + mStyle->ContentOffset.Bottom));
-
-		return bounds;
-	}
+	return contentArea;
 }
 
 Rect2I GUIElement::GetCachedContentBoundsInElementSpace() const
 {
-	const Vector2I contentOffset = GetContentOffsetInElementSpace();
-	const Rect2I contentBounds = GetCachedContentBounds();
+	const Rect2I& cachedBounds = GetCachedBounds();
+	const Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
 
-	return Rect2I(contentOffset.X, contentOffset.Y, contentBounds.Width, contentBounds.Height);
+	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
+	{
+		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+		return GUIHelper::CalculateContentArea(layoutSize, styleSheetRules);
+	}
+
+	return GUIHelper::CalculateContentArea(layoutSize, *mStyle);
 }
 
 Rect2I GUIElement::GetCachedClippedContentBoundsInContentSpace() const

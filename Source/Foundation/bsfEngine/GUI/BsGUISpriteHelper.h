@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "BsGUIElementStyle.h"
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIElement.h"
 #include "2D/BsImageSprite.h"
@@ -48,18 +49,46 @@ namespace bs
 
 	/** Wrapper around Sprite that helps construct a sprite for drawing a GUI element with text and/or image contents. */
 	// TODO - Not implemented
-	// TODO - Remove mBackgroundPathBuilder from GUIElementBase
 	class GUIContentSprites
 	{
 	public:
-		void Update(GUIStyleSheetRules& rules, const Size2UI& size);
+		/**
+		 * Builds the background render elements and appends them to the render elements array.
+		 *
+		 * @param	size				Size of the GUI element as determined by the layouting pass.
+		 * @param	content				Content (text and/or image) to display.
+		 * @param	rules				Active style-sheet rules for the GUI element.
+		 * @param	tint				Runtime color tint to apply to the sprite.
+		 * @param	batchId				ID that specifies if the sprite is allowed to be batched with other sprites. Only sprites with the same batch ID can be batched.
+		 * @param	outRenderElements	Array to which the generated render element will be appended to.
+		 */
+		void BuildRenderElements(const Size2UI& size, const GUIContent& content, const GUIStyleSheetRules& rules, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements);
+
+		/** Same as the other overload, but for the old deprecated GUIElementStyle type, instead of style-sheets. */
+		void BuildRenderElements(const Size2UI& size, const GUIContent& content, const GUIElementStyle& style, GUIElementState state, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements);
+
+		/** Updates the animation start time (in seconds since application start), in case the content image contains an animated sprite. */
+		void SetAnimationStartTime(float time);
 
 	private:
-		ImageSprite mBackgroundSprite;
+		/** Calculates the size of the provided image so it fits in the provided @p size, while preserving aspect ratio of the image. */
+		static Size2UI CalculateScaledImageSize(const HSpriteImage& image, const Size2UI& size);
+
+		/**
+		 * Calculates the bounds at which to place text and/or image sprites.
+		 *
+		 * @param	contentArea		Content area of the GUI element. Both text and image must fit in this area.
+		 * @param	imageSize		Size of the image sprite.
+		 * @param	textSize		Size of the text sprite.
+		 * @param	imagePosition	Position of the image relative to the text.
+		 * @param	outTextBounds	Position of the text sprite, relative to the GUI element.
+		 * @param	outImageBounds	Position of the image sprite, relative to the GUI element.
+		 */
+		static void CalculateContentBounds(const Rect2I& contentArea, const Size2UI& imageSize, const Size2UI& textSize, GUIImagePosition imagePosition, Rect2& outTextBounds, Rect2& outImageBounds);
+
 		ImageSprite mContentImageSprite;
 		TextSprite mContentTextSprite;
 
-		ImageSpriteInformation mBackgroundSpriteInformation;
 		ImageSpriteInformation mContentImageSpriteInformation;
 		TextSpriteInformation mContentTextSpriteInformation;
 	};
@@ -70,6 +99,9 @@ namespace bs
 	public:
 		/** Builds sprite elements for GUIBackgroundSprites. */
 		static void BuildSpriteRenderElements(GUIElement& element, GUIElementState state, GUIBackgroundSprite& sprite);
+
+		/** Builds sprite elements for GUIContentSprites. */
+		static void BuildSpriteRenderElements(GUIElement& element, GUIElementState state, const GUIContent& content, GUIContentSprites& sprites);
 	};
 
 	/** @} */
