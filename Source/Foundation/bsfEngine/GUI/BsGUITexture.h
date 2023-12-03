@@ -131,6 +131,7 @@ namespace bs
 		 */
 		void SetImage(const HSpriteImage& image);
 
+		static constexpr const char* kElementType = "texture";
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
@@ -138,7 +139,7 @@ namespace bs
 
 		ElementType GetElementType() const override { return ElementType::Texture; }
 		Vector2I CalculateUnconstrainedOptimalSize() const override;
-		const char* GetStyleSheetElement() const override { return "texture"; }
+		const char* GetStyleSheetElement() const override { return kElementType; }
 
 		/** @} */
 	protected:

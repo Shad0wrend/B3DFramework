@@ -44,6 +44,11 @@ const HGUISkin& CGUIWidget::GetSkinResource() const
 	return mInternal->GetSkinResource();
 }
 
+const HGUIStyleSheet& CGUIWidget::GetStyleSheet() const
+{
+	return mInternal->GetStyleSheet();
+}
+
 GUIPanel* CGUIWidget::GetPanel() const
 {
 	return mInternal->GetPanel();

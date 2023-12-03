@@ -267,3 +267,17 @@ texture.DropDownEntrySeparator
     min-width: 30px;
     background-color: var(--PrimaryBorderColor);
 }
+
+container.GUIDropDownContent
+{
+    min-height: 20px;
+    min-width: 50px;
+}
+
+texture.GUIDropDownBackgroundFrame
+{
+    background-color: var(--PrimaryBackgroundColor);
+    border-color: var(--PrimaryBackgroundColor);
+    border-width: 1px;
+    padding: 4px;
+}

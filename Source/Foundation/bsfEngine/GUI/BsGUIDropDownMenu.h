@@ -6,6 +6,7 @@
 #include "GUI/BsCGUIWidget.h"
 #include "Math/BsRect2I.h"
 #include "GUI/BsDropDownAreaPlacement.h"
+#include "Utility/BsRectOffset.h"
 
 namespace bs
 {
@@ -174,40 +175,39 @@ namespace bs
 			void Close();
 
 			/**	Returns the type of the displayed drop down menu. */
-			GUIDropDownType GetType() const { return MType; }
+			GUIDropDownType GetType() const { return Type; }
 
 			/**	Returns actual visible bounds of the sub-menu. */
 			Rect2I GetVisibleBounds() const { return MVisibleBounds; }
 
 			/**	Returns the drop box object that owns this sub-menu. */
-			GUIDropDownMenu* GetOwner() const { return MOwner; }
-
+			GUIDropDownMenu* GetOwner() const { return Owner; }
 		public:
-			GUIDropDownMenu* MOwner;
+			GUIDropDownMenu* Owner;
 
-			GUIDropDownType MType;
-			GUIDropDownData MData;
-			u32 MPage;
+			GUIDropDownType Type;
+			GUIDropDownData Data;
+			u32 Page;
 			i32 X, Y;
 			u32 Width, Height;
 			Rect2I MVisibleBounds;
 			Rect2I MAvailableBounds;
-			u32 MDepthOffset;
-			bool MOpenedUpward;
+			u32 DepthOffset;
+			bool IsOpenedUpward;
 
-			GUIDropDownContent* MContent;
-			GUITexture* MBackgroundFrame;
+			GUIDropDownContent* Content;
+			GUITexture* BackgroundFrame;
 			GUIButton* MScrollUpBtn;
 			GUIButton* MScrollDownBtn;
 			GUITexture* MHandle;
 
-			GUIPanel* MBackgroundPanel;
-			GUIPanel* MContentPanel;
-			GUILayout* MContentLayout;
-			GUIPanel* MSidebarPanel;
+			GUIPanel* BackgroundPanel;
+			GUIPanel* ContentPanel;
+			GUILayout* ContentLayout;
+			GUIPanel* SidebarPanel;
 
-			DropDownSubMenu* MParent;
-			DropDownSubMenu* MSubMenu;
+			DropDownSubMenu* ParentSubMenu;
+			DropDownSubMenu* ActiveChildSubMenu;
 		};
 
 	private:
@@ -226,14 +226,14 @@ namespace bs
 
 	private:
 		static const u32 kDropDownBoxWidth;
+		static constexpr const char* kBackgroundFrameStyleClass = "GUIDropDownBackgroundFrame";
 
 		String mScrollUpStyle;
 		String mScrollDownStyle;
-		String mBackgroundStyle;
-		String mContentStyle;
 		String mSideBackgroundStyle;
 		String mHandleStyle;
 
+		RectOffset mBackgroundFramePadding;
 		DropDownSubMenu* mRootMenu;
 		GUIDropDownHitBox* mFrontHitBox;
 		GUIDropDownHitBox* mBackHitBox;

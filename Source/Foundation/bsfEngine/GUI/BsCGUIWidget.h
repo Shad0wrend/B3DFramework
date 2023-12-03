@@ -28,6 +28,9 @@ namespace bs
 		/** @copydoc GUIWidget::GetSkinResource */
 		const HGUISkin& GetSkinResource() const;
 
+		/** @copydoc GUIWidget::GetStyleSheet */
+		const HGUIStyleSheet& GetStyleSheet() const;
+
 		/** @copydoc GUIWidget::GetPanel */
 		GUIPanel* GetPanel() const;
 
