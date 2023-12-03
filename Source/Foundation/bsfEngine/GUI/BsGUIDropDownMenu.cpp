@@ -76,7 +76,6 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DROP_DOWN_BOX
 
 	mScrollUpStyle = stylePrefix + "ScrollUpBtn";
 	mScrollDownStyle = stylePrefix + "ScrollDownBtn";
-	mSideBackgroundStyle = stylePrefix + "SidebarBg";
 	mHandleStyle = stylePrefix + "Handle";
 
 	SetDepth(0); // Needs to be in front of everything
@@ -85,6 +84,10 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DROP_DOWN_BOX
 	const SPtr<const GUIStyleSheetRuleset> frameStyleSheetRuleset = GetStyleSheet()->BuildRuleset(GUITexture::kElementType, kBackgroundFrameStyleClass);
 	if(frameStyleSheetRuleset != nullptr)
 		mBackgroundFramePadding = frameStyleSheetRuleset->Rules.Padding;
+
+	const SPtr<const GUIStyleSheetRuleset> scrollbarBackgroundStyleSheetRuleset = GetStyleSheet()->BuildRuleset(GUITexture::kElementType, kScrollbarBackgroundStyleClass);
+	if(scrollbarBackgroundStyleSheetRuleset != nullptr)
+		mScrollbarWidth = scrollbarBackgroundStyleSheetRuleset->Rules.Size.Width;
 
 	mFrontHitBox = GUIDropDownHitBox::Create(false, false);
 	mFrontHitBox->OnFocusLost.Connect(std::bind(&GUIDropDownMenu::DropDownFocusLost, this));
@@ -188,7 +191,7 @@ GUIDropDownMenu::DropDownSubMenu::DropDownSubMenu(GUIDropDownMenu* owner, DropDo
 	MAvailableBounds = availableBounds;
 
 	const RectOffset& backgroundFramePadding = owner->mBackgroundFramePadding;
-	const GUIElementStyle* sideBarStyle = Owner->GetSkin().GetStyle(Owner->mSideBackgroundStyle);
+	const u32 scrollbarWidth = owner->mScrollbarWidth;
 
 	// Create content GUI element
 	Content = GUIDropDownContent::Create(this, dropDownData);
@@ -215,7 +218,7 @@ GUIDropDownMenu::DropDownSubMenu::DropDownSubMenu(GUIDropDownMenu* owner, DropDo
 	ContentLayout->AddElement(Content); // Note: It's important this is added to the layout before we
 	// use it for size calculations, in order for its skin to be assigned
 
-	u32 dropDownBoxWidth = kDropDownBoxWidth + sideBarStyle->Width;
+	u32 dropDownBoxWidth = kDropDownBoxWidth + scrollbarWidth;
 
 	u32 maxNeededHeight = backgroundFramePadding.Top + backgroundFramePadding.Bottom;
 	u32 numElements = (u32)dropDownData.Entries.size();
@@ -320,7 +323,7 @@ void GUIDropDownMenu::DropDownSubMenu::UpdateGuiElements()
 	ContentLayout->AddElement(Content); // Note: Needs to be added first so that size calculations have proper skin to work with
 
 	const RectOffset& backgroundFramePadding = Owner->mBackgroundFramePadding;
-	const GUIElementStyle* sideBarStyle = Owner->GetSkin().GetStyle(Owner->mSideBackgroundStyle);
+	const u32 scrollbarWidth = Owner->mScrollbarWidth;
 	const GUIElementStyle* scrollUpStyle = Owner->GetSkin().GetStyle(Owner->mScrollUpStyle);
 	const GUIElementStyle* scrollDownStyle = Owner->GetSkin().GetStyle(Owner->mScrollDownStyle);
 
@@ -346,7 +349,7 @@ void GUIDropDownMenu::DropDownSubMenu::UpdateGuiElements()
 	if(pageInfos.size() > 1)
 	{
 		u32 sidebarHeight = pageHeight - 2;
-		contentOffset = sideBarStyle->Width;
+		contentOffset = scrollbarWidth;
 
 		if(SidebarPanel == nullptr)
 		{
@@ -369,7 +372,7 @@ void GUIDropDownMenu::DropDownSubMenu::UpdateGuiElements()
 			MScrollDownBtn->SetOptionFlags(scrollDownBtnOptions);
 
 			MHandle = GUITexture::Create(Owner->mHandleStyle);
-			GUITexture* background = GUITexture::Create(Owner->mSideBackgroundStyle);
+			GUITexture* background = GUITexture::Create(kScrollbarBackgroundStyleClass);
 			background->SetElementDepth(2);
 
 			SidebarPanel->AddElement(background);
@@ -390,7 +393,7 @@ void GUIDropDownMenu::DropDownSubMenu::UpdateGuiElements()
 		MHandle->SetHeight(handleSize);
 
 		SidebarPanel->SetPosition(X, actualY);
-		SidebarPanel->SetWidth(sideBarStyle->Width);
+		SidebarPanel->SetWidth(scrollbarWidth);
 		SidebarPanel->SetHeight(sidebarHeight);
 	}
 	else

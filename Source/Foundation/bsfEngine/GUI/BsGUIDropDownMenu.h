@@ -227,13 +227,14 @@ namespace bs
 	private:
 		static const u32 kDropDownBoxWidth;
 		static constexpr const char* kBackgroundFrameStyleClass = "GUIDropDownBackgroundFrame";
+		static constexpr const char* kScrollbarBackgroundStyleClass = "GUIDropDownScrollbarBackground";
 
 		String mScrollUpStyle;
 		String mScrollDownStyle;
-		String mSideBackgroundStyle;
 		String mHandleStyle;
 
 		RectOffset mBackgroundFramePadding;
+		u32 mScrollbarWidth = 0;
 		DropDownSubMenu* mRootMenu;
 		GUIDropDownHitBox* mFrontHitBox;
 		GUIDropDownHitBox* mBackHitBox;

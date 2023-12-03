@@ -277,7 +277,16 @@ container.GUIDropDownContent
 texture.GUIDropDownBackgroundFrame
 {
     background-color: var(--PrimaryBackgroundColor);
-    border-color: var(--PrimaryBackgroundColor);
+    border-color: #000000;
     border-width: 1px;
     padding: 4px;
+}
+
+texture.GUIDropDownScrollbarBackground
+{
+    background-color: var(--PrimaryBorderColor);
+    border-color: #000000;
+    border-width: 1px 0px 1px 1px;
+    width: 9px;
+    min-height: 8px;
 }
