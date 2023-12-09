@@ -69,6 +69,8 @@ namespace bs
 		 */
 		static GUISliderHandle* Create(GUISliderHandleFlags flags, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
 
+		const char* GetStyleSheetElement() const override { return "slider-handle"; }
+
 		/**	Gets the current position of the handle, in percent ranging [0.0f, 1.0f]. */
 		float GetHandlePositionInPercent() const { return mHandlePositionInPercent; }
 

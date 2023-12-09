@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUISliderHandle.h"
+
+#include "BsGUIVectorPaths.h"
 #include "Image/BsSpriteTexture.h"
 #include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUIMouseEvent.h"
@@ -18,8 +20,7 @@ const String& GUISliderHandle::GetGuiTypeName()
 
 GUISliderHandle::GUISliderHandle(GUISliderHandleFlags flags, const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions), mFlags(flags)
-{
-}
+{ }
 
 GUISliderHandle* GUISliderHandle::Create(GUISliderHandleFlags flags, const String& styleName)
 {

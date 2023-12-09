@@ -16,12 +16,6 @@ namespace bs
 	class B3D_EXPORT GUIScrollBar : public GUIElement
 	{
 	public:
-		/** Style type name for the horizontal scroll handle. */
-		static const String& GetHScrollHandleType();
-
-		/** Style type name for the vertical scroll handle. */
-		static const String& GetVScrollHandleType();
-
 		/**	Returns the position of the scroll handle in percent (ranging [0, 1]). */
 		float GetScrollPos() const;
 
@@ -93,6 +87,10 @@ namespace bs
 		void UpdateClippedBounds() override;
 		u32 GetRenderElementDepthRange() const override;
 		void NotifyStyleChanged() override;
+
+		static constexpr const char* kHorizontalHandleStyleClass = "ScrollBarHorizontalHandle";
+		static constexpr const char* kVerticalHandleStyleClass = "ScrollBarVerticalHandle";
+		static constexpr const char* kScrollButtonStyleClass = "ScrollButton";
 
 		/**
 		 * Helper method that returns style name used by a specific scrollbar type. If override style is empty, default

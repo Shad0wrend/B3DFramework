@@ -9,24 +9,13 @@
 #include "GUI/BsGUIButton.h"
 #include "GUI/BsGUISliderHandle.h"
 #include "GUI/BsGUISpace.h"
+#include "Text/BsStockIcons.h"
 
 using namespace std::placeholders;
 
 using namespace bs;
 
 const u32 GUIScrollBar::kButtonScrollAmount = 10;
-
-const String& GUIScrollBar::GetHScrollHandleType()
-{
-	static String typeName = "UIScrollBarHHandle";
-	return typeName;
-}
-
-const String& GUIScrollBar::GetVScrollHandleType()
-{
-	static String typeName = "UIScrollBarVHandle";
-	return typeName;
-}
 
 GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions), mHorizontal(horizontal)
@@ -42,20 +31,20 @@ GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleN
 		mLayout = GUILayoutX::Create();
 		RegisterChildElement(mLayout);
 
-		mUpBtn = GUIButton::Create(HString(""), "ScrollLeftBtn");
-		mDownBtn = GUIButton::Create(HString(""), "ScrollRightBtn");
+		mUpBtn = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeCaretLeft)), kScrollButtonStyleClass);
+		mDownBtn = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeCaretRight)), kScrollButtonStyleClass);
 
-		mHandleBtn = GUISliderHandle::Create(flags | GUISliderHandleFlag::Horizontal, GetSubStyleName(GetHScrollHandleType()));
+		mHandleBtn = GUISliderHandle::Create(flags | GUISliderHandleFlag::Horizontal, kHorizontalHandleStyleClass);
 	}
 	else
 	{
 		mLayout = GUILayoutY::Create();
 		RegisterChildElement(mLayout);
 
-		mUpBtn = GUIButton::Create(HString(""), "ScrollUpBtn");
-		mDownBtn = GUIButton::Create(HString(""), "ScrollDownBtn");
+		mUpBtn = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeCaretUp)), kScrollButtonStyleClass);
+		mDownBtn = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeCaretDown)), kScrollButtonStyleClass);
 
-		mHandleBtn = GUISliderHandle::Create(flags | GUISliderHandleFlag::Vertical, GetSubStyleName(GetVScrollHandleType()));
+		mHandleBtn = GUISliderHandle::Create(flags | GUISliderHandleFlag::Vertical, kVerticalHandleStyleClass);
 	}
 
 	GUIElementOptions scrollUpBtnOptions = mUpBtn->GetOptionFlags();
@@ -147,9 +136,9 @@ void GUIScrollBar::FillBuffer(
 void GUIScrollBar::NotifyStyleChanged()
 {
 	if(mHorizontal)
-		mHandleBtn->SetStyle(GetSubStyleName(GetHScrollHandleType()));
+		mHandleBtn->SetStyle(kHorizontalHandleStyleClass);
 	else
-		mHandleBtn->SetStyle(GetSubStyleName(GetVScrollHandleType()));
+		mHandleBtn->SetStyle(kVerticalHandleStyleClass);
 }
 
 void GUIScrollBar::HandleMoved(float handlePct, float sizePct)
