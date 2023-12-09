@@ -161,7 +161,7 @@ void GUIScrollBar::HandleMoved(float handlePct, float sizePct)
 void GUIScrollBar::UpButtonClicked()
 {
 	float handleOffset = 0.0f;
-	float scrollableSize = (float)mHandleBtn->GetScrollableSize();
+	float scrollableSize = (float)mHandleBtn->GetScrollableLength();
 
 	if(scrollableSize > 0.0f)
 		handleOffset = kButtonScrollAmount / scrollableSize;
@@ -172,7 +172,7 @@ void GUIScrollBar::UpButtonClicked()
 void GUIScrollBar::DownButtonClicked()
 {
 	float handleOffset = 0.0f;
-	float scrollableSize = (float)mHandleBtn->GetScrollableSize();
+	float scrollableSize = (float)mHandleBtn->GetScrollableLength();
 
 	if(scrollableSize > 0.0f)
 		handleOffset = kButtonScrollAmount / scrollableSize;
@@ -182,58 +182,58 @@ void GUIScrollBar::DownButtonClicked()
 
 void GUIScrollBar::Scroll(float amount)
 {
-	float newHandlePos = Math::Clamp01(mHandleBtn->GetHandlePos() - amount);
+	float newHandlePos = Math::Clamp01(mHandleBtn->GetHandlePositionInPercent() - amount);
 
-	float oldHandlePos = mHandleBtn->GetHandlePos();
-	mHandleBtn->SetHandlePosInternal(newHandlePos);
+	float oldHandlePos = mHandleBtn->GetHandlePositionInPercent();
+	mHandleBtn->SetHandlePositionInPercent(newHandlePos);
 
-	if(oldHandlePos != mHandleBtn->GetHandlePos())
+	if(oldHandlePos != mHandleBtn->GetHandlePositionInPercent())
 	{
 		mHandleBtn->MarkLayoutAsDirty();
 
 		if(!OnScrollOrResize.Empty())
-			OnScrollOrResize(newHandlePos, mHandleBtn->GetHandleSizePctInternal());
+			OnScrollOrResize(newHandlePos, mHandleBtn->GetHandleSizeInPercent());
 	}
 }
 
 void GUIScrollBar::SetHandleSizeInternal(float pct)
 {
-	mHandleBtn->SetHandleSizeInternal(pct);
+	mHandleBtn->SetHandleSizeInPercent(pct);
 }
 
 void GUIScrollBar::SetScrollPosInternal(float pct)
 {
-	mHandleBtn->SetHandlePosInternal(pct);
+	mHandleBtn->SetHandlePositionInPercent(pct);
 }
 
 float GUIScrollBar::GetScrollPos() const
 {
-	return mHandleBtn->GetHandlePos();
+	return mHandleBtn->GetHandlePositionInPercent();
 }
 
 void GUIScrollBar::SetScrollPos(float pct)
 {
-	float oldHandlePos = mHandleBtn->GetHandlePos();
-	mHandleBtn->SetHandlePosInternal(pct);
+	float oldHandlePos = mHandleBtn->GetHandlePositionInPercent();
+	mHandleBtn->SetHandlePositionInPercent(pct);
 
-	if(oldHandlePos != mHandleBtn->GetHandlePos())
+	if(oldHandlePos != mHandleBtn->GetHandlePositionInPercent())
 		mHandleBtn->MarkLayoutAsDirty();
 }
 
 float GUIScrollBar::GetHandleSize() const
 {
-	return mHandleBtn->GetHandleSizePctInternal();
+	return mHandleBtn->GetHandleSizeInPercent();
 }
 
 void GUIScrollBar::SetHandleSize(float pct)
 {
-	mHandleBtn->SetHandleSizeInternal(pct);
+	mHandleBtn->SetHandleSizeInPercent(pct);
 	mHandleBtn->MarkLayoutAsDirty();
 }
 
 u32 GUIScrollBar::GetScrollableSize() const
 {
-	return mHandleBtn->GetScrollableSize();
+	return mHandleBtn->GetScrollableLength();
 }
 
 void GUIScrollBar::SetTint(const Color& color)

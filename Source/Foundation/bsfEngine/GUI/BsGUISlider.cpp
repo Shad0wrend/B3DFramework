@@ -93,7 +93,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 		optimalSize = mFillBackground->CalculateUnconstrainedOptimalSize();
 		childData.Area.Height = optimalSize.Y;
 		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
-		childData.Area.Width = mSliderHandle->GetHandlePosPx() + handleWidth / 2;
+		childData.Area.Width = mSliderHandle->GetHandlePositionInPixels() + handleWidth / 2;
 
 		childData.ClipRect = data.Area;
 		childData.ClipRect.Clip(data.ClipRect);
@@ -124,7 +124,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 		optimalSize = mFillBackground->CalculateUnconstrainedOptimalSize();
 		childData.Area.Width = optimalSize.X;
 		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
-		childData.Area.Height = mSliderHandle->GetHandlePosPx() + handleHeight / 2;
+		childData.Area.Height = mSliderHandle->GetHandlePositionInPixels() + handleHeight / 2;
 
 		childData.ClipRect = data.Area;
 		childData.ClipRect.Clip(data.ClipRect);
@@ -148,22 +148,22 @@ void GUISlider::NotifyStyleChanged()
 
 void GUISlider::SetPercent(float pct)
 {
-	float oldHandlePos = mSliderHandle->GetHandlePos();
-	mSliderHandle->SetHandlePosInternal(pct);
+	float oldHandlePos = mSliderHandle->GetHandlePositionInPercent();
+	mSliderHandle->SetHandlePositionInPercent(pct);
 
-	if(oldHandlePos != mSliderHandle->GetHandlePos())
+	if(oldHandlePos != mSliderHandle->GetHandlePositionInPercent())
 		mSliderHandle->MarkLayoutAsDirty();
 }
 
 float GUISlider::GetPercent() const
 {
-	return mSliderHandle->GetHandlePos();
+	return mSliderHandle->GetHandlePositionInPercent();
 }
 
 float GUISlider::GetValue() const
 {
 	float diff = mMaxRange - mMinRange;
-	return mMinRange + diff * mSliderHandle->GetHandlePos();
+	return mMinRange + diff * mSliderHandle->GetHandlePositionInPercent();
 }
 
 void GUISlider::SetValue(float value)
@@ -198,12 +198,12 @@ void GUISlider::SetStep(float step)
 	else
 		step = 0.0f;
 
-	mSliderHandle->SetStep(step);
+	mSliderHandle->SetMinimumStepIncrement(step);
 }
 
 float GUISlider::GetStep() const
 {
-	return mSliderHandle->GetStep();
+	return mSliderHandle->GetMinimumStepIncrement();
 }
 
 void GUISlider::SetTint(const Color& color)

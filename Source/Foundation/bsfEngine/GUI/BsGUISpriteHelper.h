@@ -30,11 +30,12 @@ namespace bs
 		 * @param	batchId				ID that specifies if the sprite is allowed to be batched with other sprites. Only sprites with the same batch ID can be batched.
 		 * @param	outRenderElements	Array to which the generated render element will be appended to.
 		 * @param	offset				Optional offset at which to place the sprite.
+		 * @param	depth				Depth at which to render the element.
 		 */
-		void BuildRenderElements(const Size2UI& size, const GUIStyleSheetRules& rules, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset = Vector2I::kZero);
+		void BuildRenderElements(const Size2UI& size, const GUIStyleSheetRules& rules, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset = Vector2I::kZero, u32 depth = 1);
 
 		/** Same as the other overload, but for the old deprecated GUIElementStyle type, instead of style-sheets. */
-		void BuildRenderElements(const Size2UI& size, const GUIElementStyle& style, GUIElementState state, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset = Vector2I::kZero);
+		void BuildRenderElements(const Size2UI& size, const GUIElementStyle& style, GUIElementState state, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset = Vector2I::kZero, u32 depth = 1);
 
 		/** Updates the animation start time (in seconds since application start), in case the background contains an animated sprite. */
 		void SetAnimationStartTime(float time);

@@ -18,7 +18,7 @@ GUIBackgroundSprite::GUIBackgroundSprite()
 	
 }
 
-void GUIBackgroundSprite::BuildRenderElements(const Size2UI& size, const GUIStyleSheetRules& rules, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset)
+void GUIBackgroundSprite::BuildRenderElements(const Size2UI& size, const GUIStyleSheetRules& rules, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset, u32 depth)
 {
 	// Skip building the sprite if invisible
 	if((tint.A * rules.BackgroundColor.A * rules.Opacity) <= 0.0f)
@@ -51,11 +51,11 @@ void GUIBackgroundSprite::BuildRenderElements(const Size2UI& size, const GUIStyl
 	// Populate GUI render elements from the sprites
 	{
 		using T = GUIRenderElementHelper;
-		T::Append({ T::SpriteInfo(&mBackgroundSprite, 1, backgroundImageBounds) }, outRenderElements );
+		T::Append({ T::SpriteInfo(&mBackgroundSprite, depth, backgroundImageBounds) }, outRenderElements );
 	}
 }
 
-void GUIBackgroundSprite::BuildRenderElements(const Size2UI& size, const GUIElementStyle& style, GUIElementState state, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset)
+void GUIBackgroundSprite::BuildRenderElements(const Size2UI& size, const GUIElementStyle& style, GUIElementState state, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset, u32 depth)
 {
 	mBackgroundSpriteInformation.Width = size.Width;
 	mBackgroundSpriteInformation.Height = size.Height;
@@ -82,7 +82,7 @@ void GUIBackgroundSprite::BuildRenderElements(const Size2UI& size, const GUIElem
 	// Populate GUI render elements from the sprite
 	{
 		using T = GUIRenderElementHelper;
-		T::Append({ T::SpriteInfo(&mBackgroundSprite, 1, backgroundImageBounds) }, outRenderElements );
+		T::Append({ T::SpriteInfo(&mBackgroundSprite, depth, backgroundImageBounds) }, outRenderElements );
 	}
 }
 
