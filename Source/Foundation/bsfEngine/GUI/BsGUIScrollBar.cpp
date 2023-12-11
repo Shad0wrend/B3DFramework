@@ -34,7 +34,8 @@ GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleN
 		mUpBtn = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeCaretLeft)), kScrollButtonStyleClass);
 		mDownBtn = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeCaretRight)), kScrollButtonStyleClass);
 
-		mHandleBtn = GUISliderHandle::Create(flags | GUISliderHandleFlag::Horizontal, kHorizontalHandleStyleClass);
+		const char* handleStyleClass = resizable ? kResizableHorizontalHandleStyleClass : kHorizontalHandleStyleClass;
+		mHandleBtn = GUISliderHandle::Create(flags | GUISliderHandleFlag::Horizontal, handleStyleClass);
 	}
 	else
 	{
@@ -44,7 +45,8 @@ GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleN
 		mUpBtn = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeCaretUp)), kScrollButtonStyleClass);
 		mDownBtn = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeCaretDown)), kScrollButtonStyleClass);
 
-		mHandleBtn = GUISliderHandle::Create(flags | GUISliderHandleFlag::Vertical, kVerticalHandleStyleClass);
+		const char* handleStyleClass = resizable ? kResizableVerticalHandleStyleClass : kVerticalHandleStyleClass;
+		mHandleBtn = GUISliderHandle::Create(flags | GUISliderHandleFlag::Vertical, handleStyleClass);
 	}
 
 	GUIElementOptions scrollUpBtnOptions = mUpBtn->GetOptionFlags();

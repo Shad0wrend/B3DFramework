@@ -148,8 +148,6 @@ namespace bs
 		/** Checks are the specified over the scroll handle. Coordinates are relative to the parent widget. */
 		bool IsOnHandle(const Vector2I& position) const;
 
-		static const u32 kResizeHandleSize;
-
 		GUIBackgroundSprite mBackgroundSprite;
 
 		GUISliderHandleFlags mFlags;

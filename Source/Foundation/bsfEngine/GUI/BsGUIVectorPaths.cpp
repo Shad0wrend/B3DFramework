@@ -305,6 +305,42 @@ HVectorPath GUIScrollHandleVectorPathBuilder::BuildPath(const Size2UI& size, con
 	return path;
 }
 
+HVectorPath GUIResizableVerticalScrollHandleVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+{
+	const Size2 constrainedSize(
+		Math::Max(1.0f, (float)size.Width),
+		Math::Max(kResizableHandlePadding * 2.0f + kResizableHandleSize * 3.0f, (float)size.Height));
+
+	HVectorPath path = VectorPath::Create(constrainedSize);
+
+	path->DrawRectangle(Rect2(0.0f, 0.0f, constrainedSize.Width, kResizableHandleSize))
+		.DrawRectangle(Rect2(0.0f, kResizableHandleSize + kResizableHandlePadding, constrainedSize.Width, (float)size.Height - kResizableHandleSize * 2.0f - kResizableHandlePadding * 2.0f))
+		.DrawRectangle(Rect2(0.0f, (float)size.Height - kResizableHandleSize, constrainedSize.Width, kResizableHandleSize))
+		.ClosePath()
+		.SetFillPaint(styleSheetRule.BackgroundColor)
+		.DrawFill();
+
+	return path;
+}
+
+HVectorPath GUIResizableHorizontalScrollHandleVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+{
+	const Size2 constrainedSize(
+		Math::Max(kResizableHandlePadding * 2.0f + kResizableHandleSize * 3.0f, (float)size.Width),
+		Math::Max(1.0f, (float)size.Height));
+
+	HVectorPath path = VectorPath::Create(constrainedSize);
+
+	path->DrawRectangle(Rect2(0.0f, 0.0f, kResizableHandleSize, constrainedSize.Height))
+		.DrawRectangle(Rect2(kResizableHandleSize + kResizableHandlePadding, 0.0f, (float)size.Width - kResizableHandleSize * 2.0f - kResizableHandlePadding * 2.0f, constrainedSize.Height))
+		.DrawRectangle(Rect2((float)size.Width - kResizableHandleSize, 0.0f, kResizableHandleSize, constrainedSize.Height))
+		.ClosePath()
+		.SetFillPaint(styleSheetRule.BackgroundColor)
+		.DrawFill();
+
+	return path;
+}
+
 HVectorPath GUISeparatorVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	HVectorPath path = VectorPath::Create(Size2((float)size.Width, (float)size.Height));

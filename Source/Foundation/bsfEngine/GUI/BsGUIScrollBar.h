@@ -90,6 +90,8 @@ namespace bs
 
 		static constexpr const char* kHorizontalHandleStyleClass = "ScrollBarHorizontalHandle";
 		static constexpr const char* kVerticalHandleStyleClass = "ScrollBarVerticalHandle";
+		static constexpr const char* kResizableHorizontalHandleStyleClass = "ResizableScrollBarHorizontalHandle";
+		static constexpr const char* kResizableVerticalHandleStyleClass = "ResizableScrollBarVerticalHandle";
 		static constexpr const char* kScrollButtonStyleClass = "ScrollButton";
 
 		/**

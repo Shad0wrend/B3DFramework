@@ -95,6 +95,40 @@ namespace bs
 		}
 	};
 
+	/** Builds a vector path that draws a resizable vertical scroll handle. */
+	class B3D_EXPORT GUIResizableVerticalScrollHandleVectorPathBuilder : public IGUIVectorPathBuilder
+	{
+	public:
+		HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const override;
+
+		/** Returns a singleton instance of this builder. */
+		static const GUIResizableVerticalScrollHandleVectorPathBuilder* Get()
+		{
+			static const GUIResizableVerticalScrollHandleVectorPathBuilder instance;
+			return &instance;
+		}
+
+		static constexpr float kResizableHandleSize = 6;
+		static constexpr float kResizableHandlePadding = 2;
+	};
+
+	/** Builds a vector path that draws a resizable horizontal scroll handle. */
+	class B3D_EXPORT GUIResizableHorizontalScrollHandleVectorPathBuilder : public IGUIVectorPathBuilder
+	{
+	public:
+		HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const override;
+
+		/** Returns a singleton instance of this builder. */
+		static const GUIResizableHorizontalScrollHandleVectorPathBuilder* Get()
+		{
+			static const GUIResizableHorizontalScrollHandleVectorPathBuilder instance;
+			return &instance;
+		}
+
+		static constexpr float kResizableHandleSize = 6;
+		static constexpr float kResizableHandlePadding = 2;
+	};
+
 	/** Builds a vector path that draws a separator. */
 	class B3D_EXPORT GUISeparatorVectorPathBuilder : public IGUIVectorPathBuilder
 	{

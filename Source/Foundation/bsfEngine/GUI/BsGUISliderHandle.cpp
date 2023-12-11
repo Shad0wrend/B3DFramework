@@ -10,8 +10,6 @@
 
 using namespace bs;
 
-const u32 GUISliderHandle::kResizeHandleSize = 7;
-
 const String& GUISliderHandle::GetGuiTypeName()
 {
 	static String name = "SliderHandle";
@@ -20,7 +18,15 @@ const String& GUISliderHandle::GetGuiTypeName()
 
 GUISliderHandle::GUISliderHandle(GUISliderHandleFlags flags, const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions), mFlags(flags)
-{ }
+{
+	if(flags.IsSet(GUISliderHandleFlag::Resizeable))
+	{
+		if(flags.IsSet(GUISliderHandleFlag::Horizontal))
+			mBackgroundSprite.SetBackgroundPathBuilder(GUIResizableHorizontalScrollHandleVectorPathBuilder::Get());
+		else
+			mBackgroundSprite.SetBackgroundPathBuilder(GUIResizableVerticalScrollHandleVectorPathBuilder::Get());
+	}
+}
 
 GUISliderHandle* GUISliderHandle::Create(GUISliderHandleFlags flags, const String& styleName)
 {
@@ -150,15 +156,16 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 			if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 			{
 				i32 left = (i32)mLayoutData.Area.X + GetHandlePositionInPixels();
+				const i32 resizableHandleSize = (i32)GUIResizableHorizontalScrollHandleVectorPathBuilder::kResizableHandleSize;
 
 				if(isResizeable)
 				{
 					i32 right = left + handleSize;
 
 					i32 clickPos = ev.GetPosition().X;
-					if(clickPos >= left && clickPos < (left + (i32)kResizeHandleSize))
+					if(clickPos >= left && clickPos < (left + resizableHandleSize))
 						mDragState = DragState::LeftResize;
-					else if(clickPos >= (right - (i32)kResizeHandleSize) && clickPos < right)
+					else if(clickPos >= (right - resizableHandleSize) && clickPos < right)
 						mDragState = DragState::RightResize;
 					else
 						mDragState = DragState::Normal;
@@ -175,11 +182,12 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 				if(isResizeable)
 				{
 					i32 bottom = top + handleSize;
+					const i32 resizableHandleSize = (i32)GUIResizableVerticalScrollHandleVectorPathBuilder::kResizableHandleSize;
 
 					i32 clickPos = ev.GetPosition().Y;
-					if(clickPos >= top && clickPos < (top + (i32)kResizeHandleSize))
+					if(clickPos >= top && clickPos < (top + resizableHandleSize))
 						mDragState = DragState::LeftResize;
-					else if(clickPos >= (bottom - (i32)kResizeHandleSize) && clickPos < bottom)
+					else if(clickPos >= (bottom - resizableHandleSize) && clickPos < bottom)
 						mDragState = DragState::RightResize;
 					else
 						mDragState = DragState::Normal;

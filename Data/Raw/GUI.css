@@ -190,6 +190,18 @@ slider-handle.ScrollBarHorizontalHandle
     min-width: 5px;
 }
 
+slider-handle.ResizableScrollBarVerticalHandle
+{
+    width: 13px;
+    min-height: 22px;
+}
+
+slider-handle.ResizableScrollBarHorizontalHandle
+{
+    height: 13px;
+    min-width: 22px;
+}
+
 button.ScrollButton
 {
     width: 13px;
