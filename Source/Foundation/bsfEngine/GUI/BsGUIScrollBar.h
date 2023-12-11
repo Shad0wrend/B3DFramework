@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "BsGUISpriteHelper.h"
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIElement.h"
 #include "Utility/BsEvent.h"
@@ -50,6 +51,8 @@ namespace bs
 		 *  @{
 		 */
 
+		const char* GetStyleSheetElement() const override { return "scrollbar"; }
+
 		/**
 		 * Sets the size of the handle in percent (ranging [0, 1]) of the total scroll bar area.
 		 *
@@ -82,11 +85,9 @@ namespace bs
 		GUIScrollBar(bool horizontal, bool resizable, const String& styleName, const GUISizeConstraints& dimensions);
 		virtual ~GUIScrollBar();
 
-		void FillBuffer(u8* vertices, u32* indices, u32 vertexOffset, u32 indexOffset, const Vector2I& offset, u32 maxNumVerts, u32 maxNumIndices, u32 renderElementIdx) const override;
 		void UpdateRenderElements() override;
 		void UpdateClippedBounds() override;
 		u32 GetRenderElementDepthRange() const override;
-		void NotifyStyleChanged() override;
 
 		static constexpr const char* kHorizontalHandleStyleClass = "ScrollBarHorizontalHandle";
 		static constexpr const char* kVerticalHandleStyleClass = "ScrollBarVerticalHandle";
@@ -121,7 +122,7 @@ namespace bs
 		void DownButtonClicked();
 
 		GUILayout* mLayout;
-		ImageSprite* mImageSprite;
+		GUIBackgroundSprite mBackgroundSprite;
 
 		GUIButton* mUpBtn;
 		GUIButton* mDownBtn;

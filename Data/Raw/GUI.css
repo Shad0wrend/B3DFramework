@@ -202,6 +202,35 @@ slider-handle.ResizableScrollBarHorizontalHandle
     min-width: 22px;
 }
 
+scrollbar
+{
+    background-color: var(--PrimaryBorderColor);
+}
+
+scrollbar.HorizontalScrollBar
+{
+    min-width: 30px;
+    height: 13px;
+}
+
+scrollbar.VerticalScrollBar
+{
+    width: 13px;
+    min-height: 30px;
+}
+
+scrollbar.ResizableHorizontalScrollBar
+{
+    min-width: 48px;
+    height: 13px;
+}
+
+scrollbar.ResizableVerticalScrollBar
+{
+    width: 13px;
+    min-height: 48px;
+}
+
 button.ScrollButton
 {
     width: 13px;

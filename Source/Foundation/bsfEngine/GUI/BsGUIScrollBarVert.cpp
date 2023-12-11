@@ -32,11 +32,8 @@ GUIScrollBarVert* GUIScrollBarVert::Create(bool resizeable, const GUIOptions& op
 
 const String& GUIScrollBarVert::GetGuiTypeName(bool resizable)
 {
-	static String typeName = "ScrollBarVert";
-	static String resizableTypeName = "ResizeableScrollBarVert";
+	static const String styleClass = "VerticalScrollBar";
+	static const String resizableStyleClass = "ResizableVerticalScrollBar";
 
-	if(resizable)
-		return resizableTypeName;
-	else
-		return typeName;
+	return resizable ? resizableStyleClass : styleClass;
 }

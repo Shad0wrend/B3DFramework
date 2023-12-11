@@ -32,11 +32,8 @@ GUIScrollBarHorz* GUIScrollBarHorz::Create(bool resizeable, const GUIOptions& op
 
 const String& GUIScrollBarHorz::GetGuiTypeName(bool resizable)
 {
-	static String typeName = "ScrollBarHorz";
-	static String resizableTypeName = "ResizeableScrollBarHorz";
+	static const String styleClass = "HorizontalScrollBar";
+	static const String resizableStyleClass = "ResizableHorizontalScrollBar";
 
-	if(resizable)
-		return resizableTypeName;
-	else
-		return typeName;
+	return resizable ? resizableStyleClass : styleClass;
 }

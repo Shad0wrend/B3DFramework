@@ -20,8 +20,6 @@ const u32 GUIScrollBar::kButtonScrollAmount = 10;
 GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions), mHorizontal(horizontal)
 {
-	mImageSprite = B3DNew<ImageSprite>();
-
 	GUISliderHandleFlags flags;
 	if(resizable)
 		flags |= GUISliderHandleFlag::Resizeable;
@@ -73,8 +71,6 @@ GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleN
 
 GUIScrollBar::~GUIScrollBar()
 {
-	B3DDelete(mImageSprite);
-
 	GUIElement::Destroy(mUpBtn);
 	GUIElement::Destroy(mDownBtn);
 	GUIElement::Destroy(mHandleBtn);
@@ -82,22 +78,8 @@ GUIScrollBar::~GUIScrollBar()
 
 void GUIScrollBar::UpdateRenderElements()
 {
-	ImageSpriteInformation desc;
-
-	if(GetStyle()->Normal.Image != nullptr && GetStyle()->Normal.Image.IsLoaded())
-		desc.Image = GetStyle()->Normal.Image;
-
-	desc.Width = mLayoutData.Area.Width;
-	desc.Height = mLayoutData.Area.Height;
-	desc.Color = GetTint();
-
-	mImageSprite->Update(desc, (u64)GetParentWidget());
-
-	// Populate GUI render elements from the sprites
-	{
-		using T = GUIRenderElementHelper;
-		T::Populate({ T::SpriteInfo(mImageSprite, 2) }, mRenderElements); // +2 depth because child buttons use +1
-	}
+	mRenderElements.Clear();
+	GUISpriteHelper::BuildSpriteRenderElements(*this, GUIElementState::Normal, mBackgroundSprite);
 
 	GUIElement::UpdateRenderElements();
 }
@@ -115,32 +97,6 @@ Vector2I GUIScrollBar::CalculateUnconstrainedOptimalSize() const
 u32 GUIScrollBar::GetRenderElementDepthRange() const
 {
 	return 3;
-}
-
-void GUIScrollBar::FillBuffer(
-	u8* vertices,
-	u32* indices,
-	u32 vertexOffset,
-	u32 indexOffset,
-	const Vector2I& offset,
-	u32 maxNumVerts,
-	u32 maxNumIndices,
-	u32 renderElementIdx) const
-{
-	u8* uvs = vertices + sizeof(Vector2);
-	u32 vertexStride = sizeof(Vector2) * 2;
-	u32 indexStride = sizeof(u32);
-
-	Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
-	mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, renderElementIdx, layoutOffset, mLayoutData.GetLocalClipRect());
-}
-
-void GUIScrollBar::NotifyStyleChanged()
-{
-	if(mHorizontal)
-		mHandleBtn->SetStyle(kHorizontalHandleStyleClass);
-	else
-		mHandleBtn->SetStyle(kVerticalHandleStyleClass);
 }
 
 void GUIScrollBar::HandleMoved(float handlePct, float sizePct)

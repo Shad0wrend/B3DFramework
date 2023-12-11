@@ -276,11 +276,11 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 		if(!IsDisabled())
 		{
 			mMouseOverHandle = false;
+			RemoveStateFlags(GUIElementStateFlag::Hover | GUIElementStateFlag::Active);
 
 			if(!mHandleDragged)
 			{
 				mState = GUIElementState::Normal;
-				RemoveStateFlags(GUIElementStateFlag::Hover | GUIElementStateFlag::Active);
 				MarkLayoutAsDirty();
 			}
 		}
