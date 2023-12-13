@@ -18,40 +18,71 @@ GUIBackgroundSprite::GUIBackgroundSprite()
 	
 }
 
-void GUIBackgroundSprite::BuildRenderElements(const Size2UI& size, const GUIStyleSheetRules& rules, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset, u32 depth)
+void GUIBackgroundSprite::BuildRenderElements(const GUIBackgroundSpriteCreateInformation& createInformation, TInlineArray<GUIRenderElement, 4>& outRenderElements)
 {
 	// Skip building the sprite if invisible
-	if((tint.A * rules.BackgroundColor.A * rules.Opacity) <= 0.0f)
+	if((createInformation.Tint.A * createInformation.Rules.Opacity) <= 0.0f)
 		return;
 
-	mBackgroundSpriteInformation.Width = size.Width;
-	mBackgroundSpriteInformation.Height = size.Height;
+	// If possible, create a smaller vector shape and then use scale-9-grid scaling to scale it up to size. This prevents needing to have large
+	// rasterized vector shapes often used for widget or window backgrounds.
+	const float width = (float)createInformation.Size.Width;
+	const float height = (float)createInformation.Size.Height;
+	const float minimumExtent = Math::Min(width, height) * 0.5f;
+
+	const float borderTopLeftRadius = Math::Min(minimumExtent, (float)createInformation.Rules.BorderTopLeftRadius);
+	const float borderTopRightRadius = Math::Min(minimumExtent, (float)createInformation.Rules.BorderTopRightRadius);
+	const float borderBottomLeftRadius = Math::Min(minimumExtent, (float)createInformation.Rules.BorderBottomLeftRadius);
+	const float borderBottomRightRadius = Math::Min(minimumExtent, (float)createInformation.Rules.BorderBottomRightRadius);
+
+	const u32 scale9GridBorderLeft = (u32)Math::Max(borderTopLeftRadius, borderBottomLeftRadius) + createInformation.Rules.BorderLeft.GetVisibleWidth();
+	const u32 scale9GridBorderRight = (u32)Math::Max(borderTopRightRadius, borderBottomRightRadius) + createInformation.Rules.BorderLeft.GetVisibleWidth();
+	const u32 scale9GridBorderTop = (u32)Math::Max(borderTopLeftRadius, borderTopRightRadius) + createInformation.Rules.BorderLeft.GetVisibleWidth();
+	const u32 scale9GridBorderBottom = (u32)Math::Max(borderBottomLeftRadius, borderBottomRightRadius) + createInformation.Rules.BorderLeft.GetVisibleWidth();
+
+	Size2UI vectorShapeSize = createInformation.Size;
+
+	// Note: If I support gradients, this also needs to check if using gradients for the center, as we cannot use the approach in that case.
+	const bool canUseScale9Grid = (scale9GridBorderLeft + scale9GridBorderRight) < createInformation.Size.Width && (scale9GridBorderBottom + scale9GridBorderTop) < createInformation.Size.Height && mBackgroundPathBuilder == GUIBackgroundVectorPathBuilder::Get();
+	if(canUseScale9Grid)
+	{
+		mBackgroundSpriteInformation.BorderLeft = scale9GridBorderLeft;
+		mBackgroundSpriteInformation.BorderRight = scale9GridBorderRight;
+		mBackgroundSpriteInformation.BorderTop = scale9GridBorderTop;
+		mBackgroundSpriteInformation.BorderBottom = scale9GridBorderBottom;
+
+		vectorShapeSize.Width = scale9GridBorderLeft + scale9GridBorderRight + 1;
+		vectorShapeSize.Height = scale9GridBorderTop + scale9GridBorderBottom + 1;
+	}
+
+	mBackgroundSpriteInformation.Width = createInformation.Size.Width;
+	mBackgroundSpriteInformation.Height = createInformation.Size.Height;
 
 	if(mBackgroundPathBuilder)
 	{
 		SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
-		spriteVectorPathCreateInformation.Size = size;
-		spriteVectorPathCreateInformation.VectorPath = mBackgroundPathBuilder->BuildPath(spriteVectorPathCreateInformation.Size, rules);
+		spriteVectorPathCreateInformation.Size = vectorShapeSize;
+		spriteVectorPathCreateInformation.VectorPath = mBackgroundPathBuilder->BuildPath(vectorShapeSize, createInformation.Rules);
 
 		mBackgroundSpriteInformation.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
 	}
 	else
 		mBackgroundSpriteInformation.Image = nullptr;
 
-	mBackgroundSpriteInformation.Color = tint;
-	mBackgroundSpriteInformation.Color.A *= rules.Opacity;
+	mBackgroundSpriteInformation.Color = createInformation.Tint;
+	mBackgroundSpriteInformation.Color.A *= createInformation.Rules.Opacity;
 
-	mBackgroundSprite.Update(mBackgroundSpriteInformation, batchId);
+	mBackgroundSprite.Update(mBackgroundSpriteInformation, createInformation.BatchId);
 
 	// Calculate content bounds
 	const Rect2 backgroundImageBounds(
-		(float)offset.X, (float)offset.Y,
-		(float)size.Width, (float)size.Height);
+		(float)createInformation.Offset.X, (float)createInformation.Offset.Y,
+		(float)createInformation.Size.Width, (float)createInformation.Size.Height);
 
 	// Populate GUI render elements from the sprites
 	{
 		using T = GUIRenderElementHelper;
-		T::Append({ T::SpriteInfo(&mBackgroundSprite, depth, backgroundImageBounds) }, outRenderElements );
+		T::Append({ T::SpriteInfo(&mBackgroundSprite, createInformation.Depth, backgroundImageBounds) }, outRenderElements );
 	}
 }
 
@@ -287,7 +318,7 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIElement& element, GUIElementS
 	if(isUsingStyleSheets)
 	{
 		const GUIStyleSheetRules& styleSheetRules = element.mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		sprite.BuildRenderElements(size, styleSheetRules, tint, batchId, element.mRenderElements);
+		sprite.BuildRenderElements(GUIBackgroundSpriteCreateInformation(size, styleSheetRules, tint, batchId), element.mRenderElements);
 	}
 	else
 	{

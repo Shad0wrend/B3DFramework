@@ -78,7 +78,11 @@ void GUISliderHandle::UpdateRenderElements()
 	if(isUsingStyleSheets)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		mBackgroundSprite.BuildRenderElements(size, styleSheetRules, tint, batchId, mRenderElements, offset);
+
+		GUIBackgroundSpriteCreateInformation createInformation(size, styleSheetRules, tint, batchId);
+		createInformation.Offset = offset;
+
+		mBackgroundSprite.BuildRenderElements(createInformation, mRenderElements);
 	}
 	else
 	{

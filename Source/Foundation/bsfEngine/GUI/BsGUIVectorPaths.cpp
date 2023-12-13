@@ -20,6 +20,16 @@ HVectorPath GUIBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, const
 		|| (styleSheetRule.BorderTop.Width > 0 && styleSheetRule.BorderTop.Style != GUIBorderElementStyle::None)
 		|| (styleSheetRule.BorderBottom.Width > 0 && styleSheetRule.BorderBottom.Style != GUIBorderElementStyle::None));
 
+	const float width = (float)size.Width;
+	const float height = (float)size.Height;
+
+	const float minimumExtent = Math::Min(width, height) * 0.5f;
+
+	const float borderTopLeftRadius = Math::Min(minimumExtent, (float)styleSheetRule.BorderTopLeftRadius);
+	const float borderTopRightRadius = Math::Min(minimumExtent, (float)styleSheetRule.BorderTopRightRadius);
+	const float borderBottomLeftRadius = Math::Min(minimumExtent, (float)styleSheetRule.BorderBottomLeftRadius);
+	const float borderBottomRightRadius = Math::Min(minimumExtent, (float)styleSheetRule.BorderBottomRightRadius);
+
 	// If no border, or border with all equal sides, draw border using a stroke
 	if(!drawBorder || allBordersEqual)
 	{
@@ -29,7 +39,7 @@ HVectorPath GUIBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, const
 		const float strokeWidth = drawBorder ? (float)styleSheetRule.BorderLeft.Width : 0.0f;
 		const Rect2 fillArea = Rect2(strokeWidth * 0.5f, strokeWidth * 0.5f, (float)size.Width - strokeWidth, (float)size.Height - strokeWidth);
 
-		path->DrawRoundedRectangle(fillArea, (float)styleSheetRule.BorderTopLeftRadius, (float)styleSheetRule.BorderTopRightRadius, (float)styleSheetRule. BorderBottomLeftRadius, (float)styleSheetRule.BorderTopRightRadius)
+		path->DrawRoundedRectangle(fillArea, borderTopLeftRadius, borderTopRightRadius, borderBottomLeftRadius, borderBottomRightRadius)
 			.ClosePath()
 			.SetFillPaint(styleSheetRule.BackgroundColor)
 			.DrawFill();
@@ -47,9 +57,6 @@ HVectorPath GUIBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, const
 	{
 		const float x = 0.0f;
 		const float y = 0.0f;
-
-		const float width = (float)size.Width;
-		const float height = (float)size.Height;
 
 		const float leftBorderWidth = styleSheetRule.BorderLeft.Style != GUIBorderElementStyle::None ? (float)styleSheetRule.BorderLeft.Width : 0.0f;
 		const float rightBorderWidth = styleSheetRule.BorderRight.Style != GUIBorderElementStyle::None ? (float)styleSheetRule.BorderRight.Width : 0.0f;
@@ -87,10 +94,10 @@ HVectorPath GUIBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, const
 		};
 
 		float cornerRadii[4];
-		cornerRadii[BC_TopRight] = (float)styleSheetRule.BorderTopRightRadius;
-		cornerRadii[BC_TopLeft] = (float)styleSheetRule.BorderTopLeftRadius;
-		cornerRadii[BC_BottomLeft] = (float)styleSheetRule.BorderBottomLeftRadius;
-		cornerRadii[BC_BottomRight] = (float)styleSheetRule.BorderBottomRightRadius;
+		cornerRadii[BC_TopRight] = borderTopRightRadius;
+		cornerRadii[BC_TopLeft] = borderTopLeftRadius;
+		cornerRadii[BC_BottomLeft] = borderBottomLeftRadius;
+		cornerRadii[BC_BottomRight] = borderBottomRightRadius;
 
 		GUIStyleSheetBorderElement borderStylePerSide[4];
 		borderStylePerSide[BS_Top] = styleSheetRule.BorderTop;

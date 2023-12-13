@@ -14,7 +14,6 @@ namespace bs
 	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Math)) RectOffset
 	{
 		RectOffset() = default;
-
 		RectOffset(i32 left, i32 right, i32 top, i32 bottom)
 			: Left(left), Right(right), Top(top), Bottom(bottom)
 		{}

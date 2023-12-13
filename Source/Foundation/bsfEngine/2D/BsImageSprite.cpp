@@ -161,8 +161,8 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		renderElement.VertexPositions[34] = Vector2(topRightStart, bottomStart + bottomBorder);
 		renderElement.VertexPositions[35] = Vector2(topRightStart + rightBorder, bottomStart + bottomBorder);
 
-		float invWidth = 1.0f / (float)information.Image->GetAtlasTexture()->GetProperties().Width;
-		float invHeight = 1.0f / (float)information.Image->GetAtlasTexture()->GetProperties().Height;
+		float invWidth = 1.0f / (float)information.Image->GetSize().Width;
+		float invHeight = 1.0f / (float)information.Image->GetSize().Height;
 
 		float uvLeftBorder = information.BorderLeft * invWidth;
 		float uvRightBorder = information.BorderRight * invWidth;

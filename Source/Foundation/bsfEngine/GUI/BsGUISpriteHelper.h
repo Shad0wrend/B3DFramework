@@ -15,6 +15,23 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Structure used for initializing GUIBackgroundSprite. */
+	struct GUIBackgroundSpriteCreateInformation
+	{
+		GUIBackgroundSpriteCreateInformation(const Size2UI& size, const GUIStyleSheetRules& rules, const Color& tint, u64 batchId)
+			: Size(size), Rules(rules), Tint(tint), BatchId(batchId)
+		{ }
+
+		Vector2I Offset = Vector2I::kZero;
+		RectOffset Border;
+		Size2UI Size;
+		u32 Depth = 1;
+		Color Tint;
+		u64 BatchId = 0;
+
+		const GUIStyleSheetRules& Rules;
+	};
+
 	/** Wrapper around Sprite that helps construct a sprite for drawing a GUI element background controlled by style sheet rules. */
 	class GUIBackgroundSprite
 	{
@@ -24,15 +41,10 @@ namespace bs
 		/**
 		 * Builds the background render elements and appends them to the render elements array.
 		 *
-		 * @param	size				Size of the GUI element as determined by the layouting pass.
-		 * @param	rules				Active style-sheet rules for the GUI element.
-		 * @param	tint				Runtime color tint to apply to the sprite.
-		 * @param	batchId				ID that specifies if the sprite is allowed to be batched with other sprites. Only sprites with the same batch ID can be batched.
+		 * @param	createInformation	Information about the sprite to build render elements for.
 		 * @param	outRenderElements	Array to which the generated render element will be appended to.
-		 * @param	offset				Optional offset at which to place the sprite.
-		 * @param	depth				Depth at which to render the element.
 		 */
-		void BuildRenderElements(const Size2UI& size, const GUIStyleSheetRules& rules, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset = Vector2I::kZero, u32 depth = 1);
+		void BuildRenderElements(const GUIBackgroundSpriteCreateInformation& createInformation, TInlineArray<GUIRenderElement, 4>& outRenderElements);
 
 		/** Same as the other overload, but for the old deprecated GUIElementStyle type, instead of style-sheets. */
 		void BuildRenderElements(const Size2UI& size, const GUIElementStyle& style, GUIElementState state, const Color& tint, u64 batchId, TInlineArray<GUIRenderElement, 4>& outRenderElements, const Vector2I& offset = Vector2I::kZero, u32 depth = 1);
