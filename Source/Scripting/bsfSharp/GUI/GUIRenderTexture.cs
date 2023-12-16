@@ -106,24 +106,12 @@ namespace bs
             Internal_CreateInstance(this, texturePtr, false, "", options);
         }
 
-        /// <summary>
-        /// Colors the element with a specific tint.
-        /// </summary>
-        /// <param name="color">Tint to apply to the element.</param>
-        public void SetTint(Color color)
-        {
-            Internal_SetTint(mCachedPtr, ref color);
-        }
-
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_CreateInstance(GUIRenderTexture instance, IntPtr texture, bool transparency,
             string style, GUIOption[] options);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetTexture(IntPtr nativeInstance, IntPtr texture);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetTint(IntPtr nativeInstance, ref Color color);
     }
 
     /** @} */

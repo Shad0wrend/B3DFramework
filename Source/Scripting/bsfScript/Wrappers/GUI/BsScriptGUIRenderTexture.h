@@ -25,7 +25,6 @@ namespace bs
 		/************************************************************************/
 		static void InternalCreateInstance(MonoObject* instance, ScriptRenderTexture* texture, bool transparent, MonoString* style, MonoArray* guiOptions);
 		static void InternalSetTexture(ScriptGUIRenderTexture* nativeInstance, ScriptRenderTexture* texture);
-		static void InternalSetTint(ScriptGUIRenderTexture* nativeInstance, Color* color);
 	};
 
 	/** @} */

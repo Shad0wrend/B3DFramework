@@ -27,7 +27,6 @@ void ScriptGUIRenderTexture::InitRuntimeData()
 {
 	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIRenderTexture::InternalCreateInstance);
 	metaData.ScriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptGUIRenderTexture::InternalSetTexture);
-	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIRenderTexture::InternalSetTint);
 }
 
 void ScriptGUIRenderTexture::InternalCreateInstance(MonoObject* instance, ScriptRenderTexture* texture, bool transparent, MonoString* style, MonoArray* guiOptions)
@@ -56,10 +55,4 @@ void ScriptGUIRenderTexture::InternalSetTexture(ScriptGUIRenderTexture* nativeIn
 
 	GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->GetGuiElement();
 	guiTexture->SetRenderTexture(renderTexture);
-}
-
-void ScriptGUIRenderTexture::InternalSetTint(ScriptGUIRenderTexture* nativeInstance, Color* color)
-{
-	GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->GetGuiElement();
-	guiTexture->SetTint(*color);
 }

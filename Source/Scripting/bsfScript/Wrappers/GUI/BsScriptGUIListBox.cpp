@@ -30,7 +30,6 @@ void ScriptGUIListBox::InitRuntimeData()
 {
 	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIListBox::InternalCreateInstance);
 	metaData.ScriptClass->AddInternalCall("Internal_SetElements", (void*)&ScriptGUIListBox::InternalSetElements);
-	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIListBox::InternalSetTint);
 	metaData.ScriptClass->AddInternalCall("Internal_SelectElement", (void*)&ScriptGUIListBox::InternalSelectElement);
 	metaData.ScriptClass->AddInternalCall("Internal_DeselectElement", (void*)&ScriptGUIListBox::InternalDeselectElement);
 	metaData.ScriptClass->AddInternalCall("Internal_GetElementStates", (void*)&ScriptGUIListBox::InternalGetElementStates);
@@ -91,12 +90,6 @@ void ScriptGUIListBox::InternalSetElements(ScriptGUIListBox* nativeInstance, Mon
 
 	GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
 	listBox->SetElements(nativeElements);
-}
-
-void ScriptGUIListBox::InternalSetTint(ScriptGUIListBox* nativeInstance, Color* color)
-{
-	GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
-	listBox->SetTint(*color);
 }
 
 void ScriptGUIListBox::InternalSelectElement(ScriptGUIListBox* nativeInstance, int idx)

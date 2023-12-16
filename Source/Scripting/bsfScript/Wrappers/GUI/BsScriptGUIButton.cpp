@@ -32,7 +32,6 @@ void ScriptGUIButton::InitRuntimeData()
 {
 	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIButton::InternalCreateInstance);
 	metaData.ScriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUIButton::InternalSetContent);
-	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIButton::InternalSetTint);
 
 	onClickThunk = (OnClickThunkDef)metaData.ScriptClass->GetMethod("DoOnClick")->GetThunk();
 	onDoubleClickThunk = (OnDoubleClickThunkDef)metaData.ScriptClass->GetMethod("DoOnDoubleClick")->GetThunk();
@@ -66,12 +65,6 @@ void ScriptGUIButton::InternalSetContent(ScriptGUIButton* nativeInstance, __GUIC
 
 	GUIButton* button = (GUIButton*)nativeInstance->GetGuiElement();
 	button->SetContent(nativeContent);
-}
-
-void ScriptGUIButton::InternalSetTint(ScriptGUIButton* nativeInstance, Color* color)
-{
-	GUIButton* button = (GUIButton*)nativeInstance->GetGuiElement();
-	button->SetTint(*color);
 }
 
 void ScriptGUIButton::OnClick()

@@ -27,7 +27,6 @@ namespace bs
 		/************************************************************************/
 		static void InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content, MonoString* style, MonoArray* guiOptions);
 		static void InternalSetContent(ScriptGUILabel* nativeInstance, __GUIContentInterop* content);
-		static void InternalSetTint(ScriptGUILabel* nativeInstance, Color* color);
 	};
 
 	/** @} */

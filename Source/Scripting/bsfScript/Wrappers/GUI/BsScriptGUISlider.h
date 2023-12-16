@@ -36,7 +36,6 @@ namespace bs
 		static float InternalGetRangeMinimum(ScriptGUISliderH* nativeInstance);
 		static void InternalSetStep(ScriptGUISliderH* nativeInstance, float step);
 		static float InternalGetStep(ScriptGUISliderH* nativeInstance);
-		static void InternalSetTint(ScriptGUISliderH* nativeInstance, Color* color);
 
 		typedef void(B3D_THUNKCALL* OnChangedThunkDef)(MonoObject*, float, MonoException**);
 		static OnChangedThunkDef onChangedThunk;
@@ -67,7 +66,6 @@ namespace bs
 		static float InternalGetRangeMinimum(ScriptGUISliderV* nativeInstance);
 		static void InternalSetStep(ScriptGUISliderV* nativeInstance, float step);
 		static float InternalGetStep(ScriptGUISliderV* nativeInstance);
-		static void InternalSetTint(ScriptGUISliderV* nativeInstance, Color* color);
 
 		typedef void(B3D_THUNKCALL* OnChangedThunkDef)(MonoObject*, float, MonoException**);
 		static OnChangedThunkDef onChangedThunk;

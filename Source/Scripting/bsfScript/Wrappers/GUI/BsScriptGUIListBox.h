@@ -29,7 +29,6 @@ namespace bs
 		/************************************************************************/
 		static void InternalCreateInstance(MonoObject* instance, MonoArray* elements, bool multiselect, MonoString* style, MonoArray* guiOptions);
 		static void InternalSetElements(ScriptGUIListBox* nativeInstance, MonoArray* elements);
-		static void InternalSetTint(ScriptGUIListBox* nativeInstance, Color* color);
 		static void InternalSelectElement(ScriptGUIListBox* nativeInstance, int idx);
 		static void InternalDeselectElement(ScriptGUIListBox* nativeInstance, int idx);
 		static MonoArray* InternalGetElementStates(ScriptGUIListBox* nativeInstance);

@@ -104,15 +104,6 @@ namespace bs
         }
 
         /// <summary>
-        /// Colors the element with a specific tint.
-        /// </summary>
-        /// <param name="color">Tint to apply to the element.</param>
-        public void SetTint(Color color)
-        {
-            Internal_SetTint(mCachedPtr, ref color);
-        }
-
-        /// <summary>
         /// Triggered by the native interop object when the slider handle is moved.
         /// </summary>
         /// <param name="percent">New position of the slider handle, in percent ranging [0, 1].</param>
@@ -151,9 +142,6 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern float Internal_GetStep(IntPtr nativeInstance);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetTint(IntPtr nativeInstance, ref Color color);
     }
 
     /// <summary>
@@ -251,15 +239,6 @@ namespace bs
         }
 
         /// <summary>
-        /// Colors the element with a specific tint.
-        /// </summary>
-        /// <param name="color">Tint to apply to the element.</param>
-        public void SetTint(Color color)
-        {
-            Internal_SetTint(mCachedPtr, ref color);
-        }
-
-        /// <summary>
         /// Triggered by the native interop object when the slider handle is moved.
         /// </summary>
         /// <param name="percent">New position of the slider handle, in percent ranging [0, 1].</param>
@@ -298,9 +277,6 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern float Internal_GetStep(IntPtr nativeInstance);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetTint(IntPtr nativeInstance, ref Color color);
     }
 
     /** @} */

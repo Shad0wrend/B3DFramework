@@ -26,7 +26,6 @@ namespace bs
 		static void InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
 		static void InternalSetPercent(ScriptGUIProgressBar* nativeInstance, float percent);
 		static float InternalGetPercent(ScriptGUIProgressBar* nativeInstance);
-		static void InternalSetTint(ScriptGUIProgressBar* nativeInstance, Color* color);
 	};
 
 	/** @} */

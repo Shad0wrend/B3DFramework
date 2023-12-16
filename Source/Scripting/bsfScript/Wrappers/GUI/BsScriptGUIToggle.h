@@ -44,7 +44,6 @@ namespace bs
 		static void InternalSetContent(ScriptGUIToggle* nativeInstance, __GUIContentInterop* content);
 		static bool InternalGetValue(ScriptGUIToggle* nativeInstance);
 		static void InternalSetValue(ScriptGUIToggle* nativeInstance, bool value);
-		static void InternalSetTint(ScriptGUIToggle* nativeInstance, Color* color);
 
 		typedef void(B3D_THUNKCALL* OnClickThunkDef)(MonoObject*, MonoException**);
 		typedef void(B3D_THUNKCALL* OnHoverThunkDef)(MonoObject*, MonoException**);

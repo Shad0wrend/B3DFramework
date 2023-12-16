@@ -32,15 +32,6 @@ namespace bs
             set { Internal_SetHandleSize(mCachedPtr, value); }
         }
 
-        /// <summary>
-        /// Colors the element with a specific tint.
-        /// </summary>
-        /// <param name="color">Tint to apply to the element.</param>
-        public void SetTint(Color color)
-        {
-            Internal_SetTint(mCachedPtr, ref color);
-        }
-
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern float Internal_GetPosition(IntPtr nativeInstance);
 
@@ -52,9 +43,6 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetHandleSize(IntPtr nativeInstance, float percent);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetTint(IntPtr nativeInstance, ref Color color);
     }
 
     /// <summary>

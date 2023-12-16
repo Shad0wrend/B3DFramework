@@ -40,7 +40,6 @@ namespace bs
 		/************************************************************************/
 		static void InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content, MonoString* style, MonoArray* guiOptions);
 		static void InternalSetContent(ScriptGUIButton* nativeInstance, __GUIContentInterop* content);
-		static void InternalSetTint(ScriptGUIButton* nativeInstance, Color* color);
 
 		typedef void(B3D_THUNKCALL* OnClickThunkDef)(MonoObject*, MonoException**);
 		typedef void(B3D_THUNKCALL* OnDoubleClickThunkDef)(MonoObject*, MonoException**);

@@ -83,15 +83,6 @@ namespace bs
         }
 
         /// <summary>
-        /// Colors the element with a specific tint.
-        /// </summary>
-        /// <param name="color">Tint to apply to the element.</param>
-        public void SetTint(Color color)
-        {
-            Internal_SetTint(mCachedPtr, ref color);
-        }
-
-        /// <summary>
         /// Triggered by the native interop object when the text box value is changed.
         /// </summary>
         /// <param name="newValue">New value in the text box.</param>
@@ -118,9 +109,6 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_GetText(IntPtr nativeInstance, out string text);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetTint(IntPtr nativeInstance, ref Color color);
     }
 
     /** @} */

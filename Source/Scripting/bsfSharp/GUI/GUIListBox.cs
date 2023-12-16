@@ -91,15 +91,6 @@ namespace bs
         }
 
         /// <summary>
-        /// Colors the element with a specific tint.
-        /// </summary>
-        /// <param name="color">Tint to apply to the element.</param>
-        public void SetTint(Color color)
-        {
-            Internal_SetTint(mCachedPtr, ref color);
-        }
-
-        /// <summary>
         /// Triggered by the native interop object when a user selects an object in the list.
         /// </summary>
         private void DoOnSelectionChanged(int index)
@@ -127,8 +118,6 @@ namespace bs
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetElementStates(IntPtr nativeInstance, bool[] states);
 
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetTint(IntPtr nativeInstance, ref Color color);
     }
 
     /** @} */

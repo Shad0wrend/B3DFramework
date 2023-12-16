@@ -29,7 +29,6 @@ namespace bs
 		static void InternalSetPosition(ScriptGUIElementBaseTBase* nativeInstance, float percent);
 		static float InternalGetHandleSize(ScriptGUIElementBaseTBase* nativeInstance);
 		static void InternalSetHandleSize(ScriptGUIElementBaseTBase* nativeInstance, float percent);
-		static void InternalSetTint(ScriptGUIElementBaseTBase* nativeInstance, Color* color);
 	};
 
 	/**	Interop class between C++ & CLR for GUIScrollBarH.  */

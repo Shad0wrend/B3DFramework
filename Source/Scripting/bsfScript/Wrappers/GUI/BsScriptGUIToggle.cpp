@@ -39,7 +39,6 @@ void ScriptGUIToggle::InitRuntimeData()
 	metaData.ScriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUIToggle::InternalSetContent);
 	metaData.ScriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptGUIToggle::InternalGetValue);
 	metaData.ScriptClass->AddInternalCall("Internal_SetValue", (void*)&ScriptGUIToggle::InternalSetValue);
-	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIToggle::InternalSetTint);
 
 	onClickThunk = (OnClickThunkDef)metaData.ScriptClass->GetMethod("DoOnClick")->GetThunk();
 	onHoverThunk = (OnHoverThunkDef)metaData.ScriptClass->GetMethod("DoOnHover")->GetThunk();
@@ -99,12 +98,6 @@ void ScriptGUIToggle::InternalSetValue(ScriptGUIToggle* nativeInstance, bool val
 		toggle->ToggleOn();
 	else
 		toggle->ToggleOff();
-}
-
-void ScriptGUIToggle::InternalSetTint(ScriptGUIToggle* nativeInstance, Color* color)
-{
-	GUIToggle* toggle = (GUIToggle*)nativeInstance->GetGuiElement();
-	toggle->SetTint(*color);
 }
 
 void ScriptGUIToggle::OnClick()

@@ -25,7 +25,6 @@ void ScriptGUIInputBox::InitRuntimeData()
 	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIInputBox::InternalCreateInstance);
 	metaData.ScriptClass->AddInternalCall("Internal_GetText", (void*)&ScriptGUIInputBox::InternalGetText);
 	metaData.ScriptClass->AddInternalCall("Internal_SetText", (void*)&ScriptGUIInputBox::InternalSetText);
-	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIInputBox::InternalSetTint);
 
 	onChangedThunk = (OnChangedThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnChanged", 1)->GetThunk();
 	onConfirmedThunk = (OnConfirmedThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnConfirmed", 0)->GetThunk();
@@ -57,12 +56,6 @@ void ScriptGUIInputBox::InternalSetText(ScriptGUIInputBox* nativeInstance, MonoS
 {
 	GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGuiElement();
 	inputBox->SetText(MonoUtil::MonoToString(text));
-}
-
-void ScriptGUIInputBox::InternalSetTint(ScriptGUIInputBox* nativeInstance, Color* color)
-{
-	GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGuiElement();
-	inputBox->SetTint(*color);
 }
 
 void ScriptGUIInputBox::OnChanged(const String& newValue)

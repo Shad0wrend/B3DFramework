@@ -26,7 +26,6 @@ void ScriptGUILabel::InitRuntimeData()
 {
 	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUILabel::InternalCreateInstance);
 	metaData.ScriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUILabel::InternalSetContent);
-	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUILabel::InternalSetTint);
 }
 
 void ScriptGUILabel::InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content, MonoString* style, MonoArray* guiOptions)
@@ -50,10 +49,4 @@ void ScriptGUILabel::InternalSetContent(ScriptGUILabel* nativeInstance, __GUICon
 
 	GUILabel* label = (GUILabel*)nativeInstance->GetGuiElement();
 	label->SetContent(nativeContent);
-}
-
-void ScriptGUILabel::InternalSetTint(ScriptGUILabel* nativeInstance, Color* color)
-{
-	GUILabel* label = (GUILabel*)nativeInstance->GetGuiElement();
-	label->SetTint(*color);
 }

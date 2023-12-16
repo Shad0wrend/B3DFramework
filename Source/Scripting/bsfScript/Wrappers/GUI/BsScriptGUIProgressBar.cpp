@@ -30,7 +30,6 @@ void ScriptGUIProgressBar::InitRuntimeData()
 	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIProgressBar::InternalCreateInstance);
 	metaData.ScriptClass->AddInternalCall("Internal_SetPercent", (void*)&ScriptGUIProgressBar::InternalSetPercent);
 	metaData.ScriptClass->AddInternalCall("Internal_GetPercent", (void*)&ScriptGUIProgressBar::InternalGetPercent);
-	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIProgressBar::InternalSetTint);
 }
 
 void ScriptGUIProgressBar::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
@@ -56,10 +55,4 @@ float ScriptGUIProgressBar::InternalGetPercent(ScriptGUIProgressBar* nativeInsta
 {
 	GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGuiElement();
 	return progressBar->GetPercent();
-}
-
-void ScriptGUIProgressBar::InternalSetTint(ScriptGUIProgressBar* nativeInstance, Color* color)
-{
-	GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGuiElement();
-	progressBar->SetTint(*color);
 }

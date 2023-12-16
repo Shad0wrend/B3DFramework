@@ -20,7 +20,6 @@ ScriptGUIScrollBar::ScriptGUIScrollBar(MonoObject* instance)
 
 void ScriptGUIScrollBar::InitRuntimeData()
 {
-	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIScrollBar::InternalSetTint);
 	metaData.ScriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptGUIScrollBar::InternalGetPosition);
 	metaData.ScriptClass->AddInternalCall("Internal_SetPosition", (void*)&ScriptGUIScrollBar::InternalSetPosition);
 	metaData.ScriptClass->AddInternalCall("Internal_GetHandleSize", (void*)&ScriptGUIScrollBar::InternalGetHandleSize);
@@ -49,12 +48,6 @@ void ScriptGUIScrollBar::InternalSetHandleSize(ScriptGUIElementBaseTBase* native
 {
 	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
 	scrollBar->SetHandleSize(percent);
-}
-
-void ScriptGUIScrollBar::InternalSetTint(ScriptGUIElementBaseTBase* nativeInstance, Color* color)
-{
-	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
-	scrollBar->SetTint(*color);
 }
 
 ScriptGUIScrollBarH::OnScrolledThunkDef ScriptGUIScrollBarH::onScrolledThunk;

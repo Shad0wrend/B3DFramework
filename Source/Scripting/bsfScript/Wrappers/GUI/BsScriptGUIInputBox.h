@@ -33,7 +33,6 @@ namespace bs
 		static void InternalCreateInstance(MonoObject* instance, bool multiline, MonoString* style, MonoArray* guiOptions);
 		static void InternalSetText(ScriptGUIInputBox* nativeInstance, MonoString* text);
 		static void InternalGetText(ScriptGUIInputBox* nativeInstance, MonoString** text);
-		static void InternalSetTint(ScriptGUIInputBox* nativeInstance, Color* color);
 
 		typedef void(B3D_THUNKCALL* OnChangedThunkDef)(MonoObject*, MonoString*, MonoException**);
 		typedef void(B3D_THUNKCALL* OnConfirmedThunkDef)(MonoObject*, MonoException**);
