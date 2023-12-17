@@ -12287,6 +12287,50 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 		<field name="Tooltip" type="LocString">
 		</field>
 	</struct>
+	<class native="GUILabel" script="GUILabel">
+		<doc>GUI element that displays text and optionally a content image.</doc>
+		<method native="SetContent" script="SetContent" static="false">
+			<doc>Changes the active content of the label.</doc>
+			<param name="content" type="GUIContent">
+			</param>
+		</method>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+	</class>
 	<class native="GUITexture" script="GUITexture">
 		<doc>A GUI element that displays a texture.</doc>
 		<method native="SetImage" script="SetImage" static="false">

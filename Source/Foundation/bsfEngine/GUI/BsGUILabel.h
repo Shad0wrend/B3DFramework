@@ -16,13 +16,14 @@ namespace bs
 	 */
 
 	/**	GUI element that displays text and optionally a content image. */
-	class B3D_EXPORT GUILabel : public GUIElement, public TGUIConstructionMethods<GUILabel, GUIContent>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUILabel : public GUIElement, public TGUIConstructionMethods<GUILabel, GUIContent>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
 		static const String& GetGuiTypeName();
 
 		/** Changes the active content of the label. */
+		B3D_SCRIPT_EXPORT()
 		void SetContent(const GUIContent& content);
 
 	public: // ***** INTERNAL ******
