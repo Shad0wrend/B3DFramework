@@ -12,29 +12,9 @@ const String& GUIButton::GetGuiTypeName()
 	return name;
 }
 
-GUIButton::GUIButton(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions)
-	: GUIButtonBase(styleName, content, dimensions)
+GUIButton::GUIButton(PrivatelyConstruct, const GUIContent& content, const String& styleClass, const GUISizeConstraints& dimensions)
+	: GUIButtonBase(styleClass, content, dimensions)
 {}
-
-GUIButton* GUIButton::Create(const HString& text, const String& styleName)
-{
-	return Create(GUIContent(text), styleName);
-}
-
-GUIButton* GUIButton::Create(const HString& text, const GUIOptions& options, const String& styleName)
-{
-	return Create(GUIContent(text), options, styleName);
-}
-
-GUIButton* GUIButton::Create(const GUIContent& content, const String& styleName)
-{
-	return new(B3DAllocate<GUIButton>()) GUIButton(GetStyleName<GUIButton>(styleName), content, GUISizeConstraints::Create());
-}
-
-GUIButton* GUIButton::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
-{
-	return new(B3DAllocate<GUIButton>()) GUIButton(GetStyleName<GUIButton>(styleName), content, GUISizeConstraints::Create(options));
-}
 
 bool GUIButton::DoOnCommandEvent(const GUICommandEvent& ev)
 {

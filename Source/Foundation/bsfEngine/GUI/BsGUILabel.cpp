@@ -10,8 +10,8 @@
 
 using namespace bs;
 
-GUILabel::GUILabel(PrivatelyConstruct, const GUIContent& content, const String& styleName, const GUISizeConstraints& dimensions)
-	: GUIElement(styleName, dimensions), mContent(content), mBackgroundImageSprite(nullptr)
+GUILabel::GUILabel(PrivatelyConstruct, const GUIContent& content, const String& styleClass, const GUISizeConstraints& dimensions)
+	: GUIElement(styleClass, dimensions), mContent(content), mBackgroundImageSprite(nullptr)
 {
 	mTextSprite = B3DNew<TextSprite>();
 }

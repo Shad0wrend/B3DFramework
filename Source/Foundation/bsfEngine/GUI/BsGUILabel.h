@@ -32,7 +32,7 @@ namespace bs
 		 */
 
 		struct PrivatelyConstruct {};
-		GUILabel(PrivatelyConstruct, const GUIContent& content, const String& styleName, const GUISizeConstraints& dimensions);
+		GUILabel(PrivatelyConstruct, const GUIContent& content, const String& styleClass, const GUISizeConstraints& dimensions);
 
 		Vector2I CalculateUnconstrainedOptimalSize() const override;
 		ElementType GetElementType() const override { return ElementType::Label; }

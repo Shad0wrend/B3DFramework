@@ -5,6 +5,7 @@
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIButtonBase.h"
 #include "GUI/BsGUIContent.h"
+#include "BsGUIConstructionMethods.h"
 
 namespace bs
 {
@@ -13,7 +14,7 @@ namespace bs
 	 */
 
 	/** GUI button that can be clicked. Has normal, hover and active states with an optional label. */
-	class B3D_EXPORT GUIButton : public GUIButtonBase
+	class B3D_EXPORT GUIButton : public GUIButtonBase, public TGUIConstructionMethods<GUIButton, GUIContent>
 	{
 	public:
 		/**
@@ -21,57 +22,18 @@ namespace bs
 		 */
 		static const String& GetGuiTypeName();
 
-		/**
-		 * Creates a new button with the specified label.
-		 *
-		 * @param[in]	text		Label to display on the button.
-		 * @param[in]	styleName	Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *							GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUIButton* Create(const HString& text, const String& styleName = StringUtil::kBlank);
-
-		/**
-		 * Creates a new button with the specified label.
-		 *
-		 * @param[in]	text			Label to display on the button.
-		 * @param[in]	options			Options that allow you to control how is the element positioned and sized.
-		 *								This will override any similar options set by style.
-		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *								GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUIButton* Create(const HString& text, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
-
-		/**
-		 * Creates a new button with the specified label.
-		 *
-		 * @param[in]	content		Content to display on a button. May include a label, image and a tooltip.
-		 * @param[in]	styleName	Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *							GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUIButton* Create(const GUIContent& content, const String& styleName = StringUtil::kBlank);
-
-		/**
-		 * Creates a new button with the specified label.
-		 *
-		 * @param[in]	content		Content to display on a button. May include a label, image and a tooltip.
-		 * @param[in]	options		Options that allow you to control how is the element positioned and sized. This will
-		 *							override any similar options set by style.
-		 * @param[in]	styleName	Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *							GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUIButton* Create(const GUIContent& content, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
-
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
 		 */
 
+		struct PrivatelyConstruct { };
+		GUIButton(PrivatelyConstruct, const GUIContent& content, const String& styleClass, const GUISizeConstraints& dimensions);
+
 		ElementType GetElementType() const override { return ElementType::Button; }
 
 		/** @} */
 	private:
-		GUIButton(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions);
-
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
 	};
 

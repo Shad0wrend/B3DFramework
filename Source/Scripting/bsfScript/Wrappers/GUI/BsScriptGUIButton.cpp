@@ -49,7 +49,7 @@ void ScriptGUIButton::InternalCreateInstance(MonoObject* instance, __GUIContentI
 		options.AddOption(scriptArray.Get<GUIOption>(i));
 
 	GUIContent nativeContent = ScriptGUIContent::FromInterop(*content);
-	GUIButton* guiButton = GUIButton::Create(nativeContent, options, MonoUtil::MonoToString(style));
+	GUIButton* guiButton = GUIButton::Create(nativeContent, MonoUtil::MonoToString(style), options);
 
 	auto nativeInstance = new(B3DAllocate<ScriptGUIButton>()) ScriptGUIButton(instance, guiButton);
 
