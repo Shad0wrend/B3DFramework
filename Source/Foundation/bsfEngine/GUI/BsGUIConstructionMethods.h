@@ -10,7 +10,11 @@ namespace bs
 	 *  @{
 	 */
 
-	/** Provides all needed permutations of Create methods used for creating a GUI element. */
+	/**
+	 * Provides all needed permutations of static Create methods used for creating a GUI element.
+	 *
+	 * Note @p GUIElementType must have a constructor of signature(PrivatelyConstruct, const ContentType&, const String&, const GUISizeConstraints&).
+	 */
 	template <class GUIElementType, class ContentType>
 	class TGUIConstructionMethods
 	{

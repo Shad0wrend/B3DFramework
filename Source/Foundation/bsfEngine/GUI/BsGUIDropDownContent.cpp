@@ -96,7 +96,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 
 			if(element.IsSubMenu())
 			{
-				GUILabel* const label = GUILabel::Create(GetElementLocalizedName(i));
+				GUILabel* const label = GUILabel::Create(GUIContent(GetElementLocalizedName(i)));
 				label->SetOptionFlags(GUIElementOption::IgnorePointerEvents);
 
 				GUIButton* const arrow = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeRightLong, 12.0f)), kExpandArrowStyleClass);
@@ -109,7 +109,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 			}
 			else if(mIsToggle)
 			{
-				GUILabel* const label = GUILabel::Create(GetElementLocalizedName(i));
+				GUILabel* const label = GUILabel::Create(GUIContent(GetElementLocalizedName(i)));
 				label->SetOptionFlags(GUIElementOption::IgnorePointerEvents);
 
 				GUIToggle* const toggle = GUIToggle::Create(GUIContent(), kToggleStyleClass);

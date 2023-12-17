@@ -7,6 +7,7 @@
 #include "2D/BsTextSprite.h"
 #include "2D/BsImageSprite.h"
 #include "GUI/BsGUIContent.h"
+#include "BsGUIConstructionMethods.h"
 
 namespace bs
 {
@@ -15,51 +16,11 @@ namespace bs
 	 */
 
 	/**	GUI element that displays text and optionally a content image. */
-	class B3D_EXPORT GUILabel : public GUIElement
+	class B3D_EXPORT GUILabel : public GUIElement, public TGUIConstructionMethods<GUILabel, GUIContent>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
 		static const String& GetGuiTypeName();
-
-		/**
-		 * Creates a new label with the specified text.
-		 *
-		 * @param[in]	text		Text to display.
-		 * @param[in]	styleName	Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *							GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUILabel* Create(const HString& text, const String& styleName = StringUtil::kBlank);
-
-		/**
-		 * Creates a new label with the specified text.
-		 *
-		 * @param[in]	text			Text to display.
-		 * @param[in]	options			Options that allow you to control how is the element positioned and sized.
-		 *								This will override any similar options set by style.
-		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *								GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUILabel* Create(const HString& text, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
-
-		/**
-		 * Creates a new label with the specified content (text + optional image).
-		 *
-		 * @param[in]	content			Content to display.
-		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *								GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUILabel* Create(const GUIContent& content, const String& styleName = StringUtil::kBlank);
-
-		/**
-		 * Creates a new label with the specified content (text + optional image).
-		 *
-		 * @param[in]	content			Content to display.
-		 * @param[in]	options			Options that allow you to control how is the element positioned and sized. This will
-		 *								override any similar options set by style.
-		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *								GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUILabel* Create(const GUIContent& content, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
 
 		/** Changes the active content of the label. */
 		void SetContent(const GUIContent& content);
@@ -68,6 +29,9 @@ namespace bs
 		/** @name Internal
 		 *  @{
 		 */
+
+		struct PrivatelyConstruct {};
+		GUILabel(PrivatelyConstruct, const GUIContent& content, const String& styleName, const GUISizeConstraints& dimensions);
 
 		Vector2I CalculateUnconstrainedOptimalSize() const override;
 		ElementType GetElementType() const override { return ElementType::Label; }
@@ -81,7 +45,6 @@ namespace bs
 		void UpdateRenderElements() override;
 
 	private:
-		GUILabel(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions);
 
 		GUIContent mContent;
 

@@ -335,25 +335,25 @@ void ProfilerOverlay::SetTarget(const SPtr<Camera>& camera)
 	mPreciseLayoutContents = mWidget->GetPanel()->AddNewElement<GUILayoutY>();
 
 	// Set up CPU sample title bars
-	mTitleBasicName = GUILabel::Create(HEString(u8"Name"), GUIOptions(GUIOption::FixedWidth(200)));
-	mTitleBasicPctOfParent = GUILabel::Create(HEString(u8"% parent"), GUIOptions(GUIOption::FixedWidth(50)));
-	mTitleBasicNumCalls = GUILabel::Create(HEString(u8"# calls"), GUIOptions(GUIOption::FixedWidth(50)));
-	mTitleBasicNumAllocs = GUILabel::Create(HEString(u8"# allocs"), GUIOptions(GUIOption::FixedWidth(50)));
-	mTitleBasicNumFrees = GUILabel::Create(HEString(u8"# frees"), GUIOptions(GUIOption::FixedWidth(50)));
-	mTitleBasicAvgTime = GUILabel::Create(HEString(u8"Avg. time"), GUIOptions(GUIOption::FixedWidth(60)));
-	mTitleBasicTotalTime = GUILabel::Create(HEString(u8"Total time"), GUIOptions(GUIOption::FixedWidth(60)));
-	mTitleBasicAvgTitleSelf = GUILabel::Create(HEString(u8"Avg. self time"), GUIOptions(GUIOption::FixedWidth(100)));
-	mTitleBasicTotalTimeSelf = GUILabel::Create(HEString(u8"Total self time"), GUIOptions(GUIOption::FixedWidth(100)));
+	mTitleBasicName = GUILabel::Create(GUIContent(HEString(u8"Name")), GUIOptions(GUIOption::FixedWidth(200)));
+	mTitleBasicPctOfParent = GUILabel::Create(GUIContent(HEString(u8"% parent")), GUIOptions(GUIOption::FixedWidth(50)));
+	mTitleBasicNumCalls = GUILabel::Create(GUIContent(HEString(u8"# calls")), GUIOptions(GUIOption::FixedWidth(50)));
+	mTitleBasicNumAllocs = GUILabel::Create(GUIContent(HEString(u8"# allocs")), GUIOptions(GUIOption::FixedWidth(50)));
+	mTitleBasicNumFrees = GUILabel::Create(GUIContent(HEString(u8"# frees")), GUIOptions(GUIOption::FixedWidth(50)));
+	mTitleBasicAvgTime = GUILabel::Create(GUIContent(HEString(u8"Avg. time")), GUIOptions(GUIOption::FixedWidth(60)));
+	mTitleBasicTotalTime = GUILabel::Create(GUIContent(HEString(u8"Total time")), GUIOptions(GUIOption::FixedWidth(60)));
+	mTitleBasicAvgTitleSelf = GUILabel::Create(GUIContent(HEString(u8"Avg. self time")), GUIOptions(GUIOption::FixedWidth(100)));
+	mTitleBasicTotalTimeSelf = GUILabel::Create(GUIContent(HEString(u8"Total self time")), GUIOptions(GUIOption::FixedWidth(100)));
 
-	mTitlePreciseName = GUILabel::Create(HEString(u8"Name"), GUIOptions(GUIOption::FixedWidth(200)));
-	mTitlePrecisePctOfParent = GUILabel::Create(HEString(u8"% parent"), GUIOptions(GUIOption::FixedWidth(50)));
-	mTitlePreciseNumCalls = GUILabel::Create(HEString(u8"# calls"), GUIOptions(GUIOption::FixedWidth(50)));
-	mTitlePreciseNumAllocs = GUILabel::Create(HEString(u8"# allocs"), GUIOptions(GUIOption::FixedWidth(50)));
-	mTitlePreciseNumFrees = GUILabel::Create(HEString(u8"# frees"), GUIOptions(GUIOption::FixedWidth(50)));
-	mTitlePreciseAvgCycles = GUILabel::Create(HEString(u8"Avg. cycles"), GUIOptions(GUIOption::FixedWidth(60)));
-	mTitlePreciseTotalCycles = GUILabel::Create(HEString(u8"Total cycles"), GUIOptions(GUIOption::FixedWidth(60)));
-	mTitlePreciseAvgCyclesSelf = GUILabel::Create(HEString(u8"Avg. self cycles"), GUIOptions(GUIOption::FixedWidth(100)));
-	mTitlePreciseTotalCyclesSelf = GUILabel::Create(HEString(u8"Total self cycles"), GUIOptions(GUIOption::FixedWidth(100)));
+	mTitlePreciseName = GUILabel::Create(GUIContent(HEString(u8"Name")), GUIOptions(GUIOption::FixedWidth(200)));
+	mTitlePrecisePctOfParent = GUILabel::Create(GUIContent(HEString(u8"% parent")), GUIOptions(GUIOption::FixedWidth(50)));
+	mTitlePreciseNumCalls = GUILabel::Create(GUIContent(HEString(u8"# calls")), GUIOptions(GUIOption::FixedWidth(50)));
+	mTitlePreciseNumAllocs = GUILabel::Create(GUIContent(HEString(u8"# allocs")), GUIOptions(GUIOption::FixedWidth(50)));
+	mTitlePreciseNumFrees = GUILabel::Create(GUIContent(HEString(u8"# frees")), GUIOptions(GUIOption::FixedWidth(50)));
+	mTitlePreciseAvgCycles = GUILabel::Create(GUIContent(HEString(u8"Avg. cycles")), GUIOptions(GUIOption::FixedWidth(60)));
+	mTitlePreciseTotalCycles = GUILabel::Create(GUIContent(HEString(u8"Total cycles")), GUIOptions(GUIOption::FixedWidth(60)));
+	mTitlePreciseAvgCyclesSelf = GUILabel::Create(GUIContent(HEString(u8"Avg. self cycles")), GUIOptions(GUIOption::FixedWidth(100)));
+	mTitlePreciseTotalCyclesSelf = GUILabel::Create(GUIContent(HEString(u8"Total self cycles")), GUIOptions(GUIOption::FixedWidth(100)));
 
 	GUILayout* basicTitleLabelLayout = mBasicLayoutLabels->AddNewElement<GUILayoutX>();
 	GUILayout* preciseTitleLabelLayout = mPreciseLayoutLabels->AddNewElement<GUILayoutX>();

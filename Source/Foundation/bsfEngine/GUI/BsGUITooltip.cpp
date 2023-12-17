@@ -76,7 +76,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	backgroundLayout->AddElement(backgroundFrame);
 
 	GUILayout* contentLayout = contentPanel->AddNewElement<GUILayoutY>();
-	contentLayout->AddNewElement<GUILabel>(HString(text), GUIOptions(GUIOption::FixedWidth(kTooltipWidth), GUIOption::FlexibleHeight()), BuiltinResources::kMultiLineLabelStyle);
+	contentLayout->AddNewElement<GUILabel>(HString(text), BuiltinResources::kMultiLineLabelStyle, GUIOptions(GUIOption::FixedWidth(kTooltipWidth), GUIOption::FlexibleHeight()));
 
 	Rect2I positionBounds;
 	positionBounds.X = position.X;

@@ -58,7 +58,7 @@ namespace bs
 
 		HString& operator=(const HString& rhs);
 
-		operator const String&() const;
+		explicit operator const String&() const;
 
 		B3D_SCRIPT_EXPORT(InteropOnly(true))
 		const String& GetValue() const;

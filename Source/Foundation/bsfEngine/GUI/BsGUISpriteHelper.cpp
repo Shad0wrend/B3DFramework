@@ -129,7 +129,7 @@ void GUIContentSprites::BuildRenderElements(const Size2UI& size, const GUIConten
 	const bool isContentTextAvailable = !content.Text.GetValue().empty();
 	if(isContentTextAvailable)
 	{
-		mContentTextSpriteInformation.Text = content.Text;
+		mContentTextSpriteInformation.Text = (String)content.Text;
 
 		mContentTextSpriteInformation.Width = contentArea.Width;
 		mContentTextSpriteInformation.Height = contentArea.Height;
@@ -180,7 +180,7 @@ void GUIContentSprites::BuildRenderElements(const Size2UI& size, const GUIConten
 	const bool isContentTextAvailable = !content.Text.GetValue().empty();
 	if(isContentTextAvailable)
 	{
-		mContentTextSpriteInformation.Text = content.Text;
+		mContentTextSpriteInformation.Text = (String)content.Text;
 		mContentTextSpriteInformation.Font = style.Font;
 		mContentTextSpriteInformation.FontSize = style.FontSize;
 		mContentTextSpriteInformation.Color = tint * style.GetTextColorForState(state);

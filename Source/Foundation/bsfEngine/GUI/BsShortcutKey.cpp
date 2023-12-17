@@ -75,7 +75,7 @@ String ShortcutKey::GetName() const
 	auto iterFind = kFunctionKeyToName.find(Button);
 	if(iterFind != kFunctionKeyToName.end())
 	{
-		charStr = ((HString)iterFind->second);
+		charStr = ((String)(HString)iterFind->second);
 	}
 	else
 	{

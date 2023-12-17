@@ -10,7 +10,7 @@
 
 using namespace bs;
 
-GUILabel::GUILabel(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions)
+GUILabel::GUILabel(PrivatelyConstruct, const GUIContent& content, const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIElement(styleName, dimensions), mContent(content), mBackgroundImageSprite(nullptr)
 {
 	mTextSprite = B3DNew<TextSprite>();
@@ -58,7 +58,7 @@ void GUILabel::UpdateRenderElements()
 
 	mTextSpriteInformation.Width = mLayoutData.Area.Width;
 	mTextSpriteInformation.Height = mLayoutData.Area.Height;
-	mTextSpriteInformation.Text = mContent.Text;
+	mTextSpriteInformation.Text = (String)mContent.Text;
 
 	const bool isUsingStyleSheets = IsUsingStyleSheets();
 	if(isUsingStyleSheets)
@@ -142,26 +142,6 @@ void GUILabel::SetContent(const GUIContent& content)
 		MarkLayoutAsDirty();
 	else
 		MarkContentAsDirty();
-}
-
-GUILabel* GUILabel::Create(const HString& text, const String& styleName)
-{
-	return Create(GUIContent(text), styleName);
-}
-
-GUILabel* GUILabel::Create(const HString& text, const GUIOptions& options, const String& styleName)
-{
-	return Create(GUIContent(text), options, styleName);
-}
-
-GUILabel* GUILabel::Create(const GUIContent& content, const String& styleName)
-{
-	return new(B3DAllocate<GUILabel>()) GUILabel(GetStyleName<GUILabel>(styleName), content, GUISizeConstraints::Create());
-}
-
-GUILabel* GUILabel::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
-{
-	return new(B3DAllocate<GUILabel>()) GUILabel(GetStyleName<GUILabel>(styleName), content, GUISizeConstraints::Create(options));
 }
 
 const String& GUILabel::GetGuiTypeName()

@@ -214,7 +214,7 @@ bool GUIButtonBase::DoOnCommandEvent(const GUICommandEvent& ev)
 
 String GUIButtonBase::GetTooltip() const
 {
-	return mContent.Tooltip;
+	return (String)mContent.Tooltip;
 }
 
 void GUIButtonBase::NotifyStyleChanged()

@@ -115,6 +115,8 @@ namespace bs
 			mOptions.Add(option);
 		}
 
+		operator const TInlineArray<GUIOption, 4>&() const { return mOptions; }
+
 	private:
 		friend struct GUISizeConstraints;
 
