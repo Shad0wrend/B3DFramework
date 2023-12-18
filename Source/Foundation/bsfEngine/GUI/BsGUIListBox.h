@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
-#include "GUI/BsGUIButtonBase.h"
+#include "GUI/BsGUIClickable.h"
 #include "2D/BsImageSprite.h"
 #include "2D/BsTextSprite.h"
 #include "Utility/BsEvent.h"
@@ -15,7 +15,7 @@ namespace bs
 	 */
 
 	/** List box GUI element which when active opens a drop down selection with provided elements. */
-	class B3D_EXPORT GUIListBox : public GUIButtonBase
+	class B3D_EXPORT GUIListBox : public GUIClickable
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles. */

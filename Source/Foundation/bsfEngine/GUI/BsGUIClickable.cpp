@@ -1,6 +1,6 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "GUI/BsGUIButtonBase.h"
+#include "GUI/BsGUIClickable.h"
 #include "2D/BsImageSprite.h"
 #include "GUI/BsGUISkin.h"
 #include "Image/BsSpriteTexture.h"
@@ -14,14 +14,14 @@
 
 using namespace bs;
 
-GUIButtonBase::GUIButtonBase(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions, GUIElementOptions options)
+GUIClickable::GUIClickable(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions, GUIElementOptions options)
 	: GUIElement(styleName, dimensions, options), mContent(content)
 {
 	mBackgroundSprite.SetAnimationStartTime(GetTime().GetTime());
 	mContentSprites.SetAnimationStartTime(GetTime().GetTime());
 }
 
-void GUIButtonBase::SetContent(const GUIContent& content)
+void GUIClickable::SetContent(const GUIContent& content)
 {
 	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 	mContent = content;
@@ -36,7 +36,7 @@ void GUIButtonBase::SetContent(const GUIContent& content)
 		MarkContentAsDirty();
 }
 
-void GUIButtonBase::SetOnInternal(bool on)
+void GUIClickable::SetOnInternal(bool on)
 {
 	if(on)
 		AddStateFlags(GUIElementStateFlag::Checked);
@@ -49,12 +49,12 @@ void GUIButtonBase::SetOnInternal(bool on)
 		SetStateInternal((GUIElementState)((i32)mActiveState & ~(i32)GUIElementState::OnFlag));
 }
 
-bool GUIButtonBase::IsOnInternal() const
+bool GUIClickable::IsOnInternal() const
 {
 	return ((i32)mActiveState & (i32)GUIElementState::OnFlag) != 0;
 }
 
-void GUIButtonBase::UpdateRenderElements()
+void GUIClickable::UpdateRenderElements()
 {
 	mRenderElements.clear();
 	GUISpriteHelper::BuildSpriteRenderElements(*this, mActiveState, mBackgroundSprite);
@@ -63,7 +63,7 @@ void GUIButtonBase::UpdateRenderElements()
 	GUIElement::UpdateRenderElements();
 }
 
-Vector2I GUIButtonBase::CalculateUnconstrainedOptimalSize() const
+Vector2I GUIClickable::CalculateUnconstrainedOptimalSize() const
 {
 	u32 imageWidth = 0;
 	u32 imageHeight = 0;
@@ -96,12 +96,12 @@ Vector2I GUIButtonBase::CalculateUnconstrainedOptimalSize() const
 	}
 }
 
-u32 GUIButtonBase::GetRenderElementDepthRange() const
+u32 GUIClickable::GetRenderElementDepthRange() const
 {
 	return 2;
 }
 
-bool GUIButtonBase::DoOnMouseEvent(const GUIMouseEvent& ev)
+bool GUIClickable::DoOnMouseEvent(const GUIMouseEvent& ev)
 {
 	if(mOptionFlags.IsSet(GUIElementOption::IgnorePointerEvents))
 		return false;
@@ -175,7 +175,7 @@ bool GUIButtonBase::DoOnMouseEvent(const GUIMouseEvent& ev)
 	return false;
 }
 
-bool GUIButtonBase::DoOnCommandEvent(const GUICommandEvent& ev)
+bool GUIClickable::DoOnCommandEvent(const GUICommandEvent& ev)
 {
 	const bool baseReturnValue = GUIElement::DoOnCommandEvent(ev);
 
@@ -212,17 +212,17 @@ bool GUIButtonBase::DoOnCommandEvent(const GUICommandEvent& ev)
 	return baseReturnValue;
 }
 
-String GUIButtonBase::GetTooltip() const
+String GUIClickable::GetTooltip() const
 {
 	return (String)mContent.Tooltip;
 }
 
-void GUIButtonBase::NotifyStyleChanged()
+void GUIClickable::NotifyStyleChanged()
 {
 	mBackgroundSprite.SetAnimationStartTime(GetTime().GetTime());
 }
 
-void GUIButtonBase::SetStateInternal(GUIElementState state)
+void GUIClickable::SetStateInternal(GUIElementState state)
 {
 	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 

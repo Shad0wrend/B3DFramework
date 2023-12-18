@@ -17,7 +17,7 @@ namespace bs
 	 */
 
 	/**	Base class for a clickable GUI button element. */
-	class B3D_EXPORT GUIButtonBase : public GUIElement
+	class B3D_EXPORT GUIClickable : public GUIElement
 	{
 	public:
 		/**	Change content displayed by the button. */
@@ -62,8 +62,8 @@ namespace bs
 
 		/** @} */
 	protected:
-		GUIButtonBase(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOption::AcceptsKeyFocus);
-		~GUIButtonBase() override = default;
+		GUIClickable(const String& styleName, const GUIContent& content, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOption::AcceptsKeyFocus);
+		~GUIClickable() override = default;
 
 		void UpdateRenderElements() override;
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;

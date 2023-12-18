@@ -18,7 +18,7 @@ const String& GUIToggle::GetGuiTypeName()
 }
 
 GUIToggle::GUIToggle(const String& styleName, const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const GUISizeConstraints& dimensions)
-	: GUIButtonBase(styleName, content, dimensions), mToggleGroup(nullptr), mIsToggled(false)
+	: GUIClickable(styleName, content, dimensions), mToggleGroup(nullptr), mIsToggled(false)
 {
 	if(toggleGroup != nullptr)
 		toggleGroup->AddInternal(this);
@@ -226,7 +226,7 @@ void GUIToggle::UpdateRenderElements()
 
 bool GUIToggle::DoOnMouseEvent(const GUIMouseEvent& event)
 {
-	bool processed = GUIButtonBase::DoOnMouseEvent(event);
+	bool processed = GUIClickable::DoOnMouseEvent(event);
 
 	if(event.GetType() == GUIMouseEventType::MouseUp)
 	{
@@ -246,7 +246,7 @@ bool GUIToggle::DoOnMouseEvent(const GUIMouseEvent& event)
 
 bool GUIToggle::DoOnCommandEvent(const GUICommandEvent& event)
 {
-	const bool processed = GUIButtonBase::DoOnCommandEvent(event);
+	const bool processed = GUIClickable::DoOnCommandEvent(event);
 
 	if(event.GetType() == GUICommandEventType::Confirm)
 	{

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
-#include "GUI/BsGUIButtonBase.h"
+#include "GUI/BsGUIClickable.h"
 #include "GUI/BsGUIToggleGroup.h"
 #include "2D/BsImageSprite.h"
 #include "2D/BsTextSprite.h"
@@ -17,9 +17,9 @@ namespace bs
 	 */
 
 	/**	GUI element representing a toggle (on/off) button. */
-	class B3D_EXPORT GUIToggle : public GUIButtonBase
+	class B3D_EXPORT GUIToggle : public GUIClickable
 	{
-		using Super = GUIButtonBase;
+		using Super = GUIClickable;
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
 		static const String& GetGuiTypeName();

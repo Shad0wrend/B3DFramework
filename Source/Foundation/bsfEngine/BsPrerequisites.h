@@ -137,7 +137,7 @@ namespace bs
 	class GUIElementBase;
 	class GUIElement;
 	class GUILabel;
-	class GUIButtonBase;
+	class GUIClickable;
 	class GUIButton;
 	class GUITexture;
 	class GUIToggle;

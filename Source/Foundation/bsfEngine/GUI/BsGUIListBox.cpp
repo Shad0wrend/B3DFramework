@@ -21,7 +21,7 @@ const String& GUIListBox::GetGuiTypeName()
 }
 
 GUIListBox::GUIListBox(const String& styleName, const Vector<HString>& elements, bool isMultiselect, const GUISizeConstraints& dimensions)
-	: GUIButtonBase(styleName, GUIContent(HString("")), dimensions), mElements(elements), mIsMultiselect(isMultiselect)
+	: GUIClickable(styleName, GUIContent(HString("")), dimensions), mElements(elements), mIsMultiselect(isMultiselect)
 {
 	mElementStates.resize(elements.size(), false);
 	if(!mIsMultiselect && mElementStates.size() > 0)
@@ -209,7 +209,7 @@ Size2UI GUIListBox::GetArrowCachedContentSize() const
 
 void GUIListBox::UpdateRenderElements()
 {
-	GUIButtonBase::UpdateRenderElements();
+	GUIClickable::UpdateRenderElements();
 
 	const bool isUsingStyleSheets = IsUsingStyleSheets();
 	if(!isUsingStyleSheets)
@@ -251,7 +251,7 @@ void GUIListBox::UpdateRenderElements()
 
 bool GUIListBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 {
-	bool processed = GUIButtonBase::DoOnMouseEvent(ev);
+	bool processed = GUIClickable::DoOnMouseEvent(ev);
 
 	if(ev.GetType() == GUIMouseEventType::MouseDown)
 	{
@@ -271,7 +271,7 @@ bool GUIListBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 
 bool GUIListBox::DoOnCommandEvent(const GUICommandEvent& ev)
 {
-	const bool processed = GUIButtonBase::DoOnCommandEvent(ev);
+	const bool processed = GUIClickable::DoOnCommandEvent(ev);
 
 	if(ev.GetType() == GUICommandEventType::Confirm)
 	{

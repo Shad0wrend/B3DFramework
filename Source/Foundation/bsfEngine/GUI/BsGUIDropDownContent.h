@@ -20,8 +20,8 @@ namespace bs
 		{
 			u32 SequentialIndex = 0;
 			GUILayout* Layout = nullptr;
-			GUIButtonBase* UnderlayButton = nullptr;
-			GUIButtonBase* Button = nullptr;
+			GUIClickable* UnderlayButton = nullptr;
+			GUIClickable* Button = nullptr;
 			GUITexture* Separator = nullptr;
 		};
 

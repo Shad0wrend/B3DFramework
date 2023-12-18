@@ -13,12 +13,12 @@ const String& GUIButton::GetGuiTypeName()
 }
 
 GUIButton::GUIButton(PrivatelyConstruct, const GUIContent& content, const String& styleClass, const GUISizeConstraints& dimensions)
-	: GUIButtonBase(styleClass, content, dimensions)
+	: GUIClickable(styleClass, content, dimensions)
 {}
 
 bool GUIButton::DoOnCommandEvent(const GUICommandEvent& ev)
 {
-	const bool processed = GUIButtonBase::DoOnCommandEvent(ev);
+	const bool processed = GUIClickable::DoOnCommandEvent(ev);
 
 	if(ev.GetType() == GUICommandEventType::Confirm)
 	{

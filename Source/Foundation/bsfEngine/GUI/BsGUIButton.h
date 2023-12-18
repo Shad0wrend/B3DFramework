@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
-#include "GUI/BsGUIButtonBase.h"
+#include "GUI/BsGUIClickable.h"
 #include "GUI/BsGUIContent.h"
 #include "BsGUIConstructionMethods.h"
 
@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/** GUI button that can be clicked. Has normal, hover and active states with an optional label. */
-	class B3D_EXPORT GUIButton : public GUIButtonBase, public TGUIConstructionMethods<GUIButton, GUIContent>
+	class B3D_EXPORT GUIButton : public GUIClickable, public TGUIConstructionMethods<GUIButton, GUIContent>
 	{
 	public:
 		/**
