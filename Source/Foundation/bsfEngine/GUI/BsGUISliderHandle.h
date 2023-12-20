@@ -5,7 +5,7 @@
 #include "BsGUIContent.h"
 #include "BsGUISpriteHelper.h"
 #include "BsPrerequisites.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 #include "2D/BsImageSprite.h"
 #include "Utility/BsEvent.h"
 

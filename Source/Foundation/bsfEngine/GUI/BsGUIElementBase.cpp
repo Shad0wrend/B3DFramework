@@ -4,7 +4,7 @@
 #include "GUI/BsGUILayout.h"
 #include "GUI/BsGUIPanel.h"
 #include "GUI/BsGUISpace.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 #include "Error/BsException.h"
 #include "GUI/BsGUIWidget.h"
 #include "BsGUIManager.h"

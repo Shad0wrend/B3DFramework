@@ -7,10 +7,10 @@
 #include "BsMonoManager.h"
 #include "BsMonoMethod.h"
 #include "BsMonoUtil.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 #include "Wrappers/GUI/BsScriptGUILayout.h"
 #include "Wrappers/BsScriptContextMenu.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 
 using namespace std::placeholders;
 

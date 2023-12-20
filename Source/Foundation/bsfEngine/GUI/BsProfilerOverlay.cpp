@@ -7,7 +7,7 @@
 #include "GUI/BsGUILayoutX.h"
 #include "GUI/BsGUILayoutY.h"
 #include "GUI/BsGUIPanel.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 #include "GUI/BsGUILabel.h"
 #include "GUI/BsGUISpace.h"
 #include "RenderAPI/BsViewport.h"

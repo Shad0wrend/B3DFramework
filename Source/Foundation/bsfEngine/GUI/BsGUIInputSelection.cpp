@@ -3,7 +3,7 @@
 #include "GUI/BsGUIInputSelection.h"
 #include "Image/BsSpriteTexture.h"
 #include "2D/BsImageSprite.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 #include "GUI/BsGUIManager.h"
 
 using namespace bs;

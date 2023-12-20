@@ -4,7 +4,7 @@
 #include "Image/BsSpriteTexture.h"
 #include "GUI/BsGUIManager.h"
 #include "2D/BsImageSprite.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 #include "Text/BsFont.h"
 
 using namespace bs;

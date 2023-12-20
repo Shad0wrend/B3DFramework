@@ -1,6 +1,6 @@
 //************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "BsGUIElement.h"
+#include "BsGUIInteractable.h"
 #include "BsGUIManager.h"
 #include "GUI/BsGUIMeshbatches.h"
 #include "Math/BsVector2I.h"

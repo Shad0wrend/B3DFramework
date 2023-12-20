@@ -4,7 +4,7 @@
 
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIContent.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 #include "Image/BsColor.h"
 #include "Resources/BsResource.h"
 #include "Utility/BsBitfield.h"

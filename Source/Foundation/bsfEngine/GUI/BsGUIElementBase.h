@@ -36,8 +36,11 @@ namespace bs
 		static const GUIStyleSheetRuleInformation kInvalid;
 	};
 
+	/**
+	 * Base class for all GUI elements. Provides general functionality such as element size/position, as well as handling child/parent relationships.
 
-	/**	Base class for all GUI elements (visible or layout). */
+	 * @note: Does not provide ability to render and interact with GUI elements - those are implemented by derived classes (i.e. GUIRenderable and GUIInteractable).
+	 */
 	class B3D_EXPORT GUIElementBase : public IReflectable
 	{
 	public:

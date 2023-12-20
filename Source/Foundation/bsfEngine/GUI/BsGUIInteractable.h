@@ -41,10 +41,7 @@ namespace bs
 	typedef Flags<GUIElementOption> GUIElementOptions;
 	B3D_FLAGS_OPERATORS(GUIElementOption)
 
-	/**
-	 * Represents parent class for all visible GUI elements. Contains methods needed for positioning, rendering and
-	 * handling input.
-	 */
+	/** Represents a GUI element that can be interacted with. All interactable elements are also renderable (i.e. have a visual component). */
 	class B3D_EXPORT GUIElement : public GUIRenderable
 	{
 	public:

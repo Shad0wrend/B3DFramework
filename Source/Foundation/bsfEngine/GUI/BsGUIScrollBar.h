@@ -4,7 +4,7 @@
 
 #include "BsGUISpriteHelper.h"
 #include "BsPrerequisites.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 #include "Utility/BsEvent.h"
 
 namespace bs

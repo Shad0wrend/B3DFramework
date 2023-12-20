@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIManager.h"
 #include "GUI/BsGUIWidget.h"
-#include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 #include "Image/BsSpriteTexture.h"
 #include "Utility/BsTime.h"
 #include "Scene/BsSceneObject.h"
