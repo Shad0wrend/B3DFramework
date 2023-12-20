@@ -12,30 +12,29 @@
 
 using namespace bs;
 
-const Color GUIElement::kDisabledColor = Color(0.5f, 0.5f, 0.5f, 1.0f);
-
 const GUIStyleSheetRuleInformation GUIStyleSheetRuleInformation::kInvalid("Invalid");
+const Color GUIRenderable::kDisabledColor = Color(0.5f, 0.5f, 0.5f, 1.0f);
 
-GUIElement::GUIElement(String styleName, const GUISizeConstraints& dimensions, GUIElementOptions options)
-	: GUIElementBase(dimensions), mOptionFlags(options), mStyle(&GUISkin::DefaultStyle), mStyleName(std::move(styleName))
+GUIRenderable::GUIRenderable(String styleClass, const GUISizeConstraints& sizeConstraints)
+	: GUIElementBase(sizeConstraints), mStyle(&GUISkin::DefaultStyle), mStyleClass(std::move(styleClass))
 {
 	// Style is set to default here, and the proper one is assigned once GUI element
 	// is assigned to a parent (that's when the active GUI skin becomes known)
 }
 
-GUIElement::GUIElement(const char* styleName, const GUISizeConstraints& dimensions, GUIElementOptions options)
-	: GUIElementBase(dimensions), mOptionFlags(options), mStyle(&GUISkin::DefaultStyle), mStyleName(styleName ? styleName : StringUtil::kBlank)
+GUIRenderable::GUIRenderable(const char* styleClass, const GUISizeConstraints& sizeConstraints)
+	: GUIElementBase(sizeConstraints), mStyle(&GUISkin::DefaultStyle), mStyleClass(styleClass ? styleClass : StringUtil::kBlank)
 {
 	// Style is set to default here, and the proper one is assigned once GUI element
 	// is assigned to a parent (that's when the active GUI skin becomes known)
 }
 
-void GUIElement::UpdateRenderElements()
+void GUIRenderable::UpdateRenderElements()
 {
 	UpdateClippedBounds();
 }
 
-void GUIElement::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u32 vertexOffset, u32 indexOffset, DataRange& outPositions, DataRange& outUVs, DataRange& outIndices) const
+void GUIRenderable::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u32 vertexOffset, u32 indexOffset, DataRange& outPositions, DataRange& outUVs, DataRange& outIndices) const
 {
 	const GUIRenderElement& renderElement = mRenderElements[renderElementIndex];
 
@@ -63,68 +62,37 @@ void GUIElement::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u32 
 	renderElement.GetVertexAndIndexData(vertexOffset, indexOffset, renderElementOffset, renderElementBounds, true, outPositions, outUVs, outIndices);
 }
 
-void GUIElement::UpdateClippedBounds()
+void GUIRenderable::UpdateClippedBounds()
 {
 	mClippedBounds = mLayoutData.Area;
 	mClippedBounds.Clip(mLayoutData.ClipRect);
 }
 
-void GUIElement::SetStyle(const String& styleName)
+void GUIRenderable::SetStyle(const String& styleClass)
 {
-	mStyleName = styleName;
+	mStyleClass = styleClass;
 	RefreshStyle();
 }
 
-bool GUIElement::DoOnMouseEvent(const GUIMouseEvent& event)
-{
-	return false;
-}
-
-bool GUIElement::DoOnTextInputEvent(const GUITextInputEvent& event)
-{
-	return false;
-}
-
-bool GUIElement::DoOnCommandEvent(const GUICommandEvent& event)
-{
-	if(event.GetType() == GUICommandEventType::FocusGained)
-	{
-		OnFocusChanged(true);
-		return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
-	}
-	else if(event.GetType() == GUICommandEventType::FocusLost)
-	{
-		OnFocusChanged(false);
-		return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
-	}
-
-	return false;
-}
-
-bool GUIElement::DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& event)
-{
-	return false;
-}
-
-void GUIElement::SetTint(const Color& color)
+void GUIRenderable::SetTint(const Color& color)
 {
 	mColor = color;
 
 	MarkContentAsDirty();
 }
 
-void GUIElement::SetElementDepth(u8 depth)
+void GUIRenderable::SetElementDepth(u8 depth)
 {
 	mLayoutData.Depth = depth | (mLayoutData.Depth & 0xFFFFFF00);
 	MarkMeshAsDirty();
 }
 
-u8 GUIElement::GetElementDepth() const
+u8 GUIRenderable::GetElementDepth() const
 {
 	return mLayoutData.Depth & 0xFF;
 }
 
-void GUIElement::SetLayoutData(const GUILayoutData& data)
+void GUIRenderable::SetLayoutData(const GUILayoutData& data)
 {
 	// Preserve element depth as that is not controlled by layout but is stored
 	// there only for convenience
@@ -135,34 +103,19 @@ void GUIElement::SetLayoutData(const GUILayoutData& data)
 	UpdateClippedBounds();
 }
 
-void GUIElement::ChangeParentWidget(GUIWidget* widget)
+void GUIRenderable::ChangeParentWidget(GUIWidget* widget)
 {
 	if(IsDestroyed())
 		return;
 
-	bool widgetChanged = false;
-	if(mParentWidget != widget)
-	{
-		// Unregister from current widget's nav-group
-		if(!mNavigationGroup && mParentWidget)
-			mParentWidget->GetDefaultNavGroupInternal()->UnregisterElement(this);
-
-		widgetChanged = true;
-	}
-
+	const bool widgetChanged = mParentWidget != widget;
 	GUIElementBase::ChangeParentWidget(widget);
 
 	if(widgetChanged)
-	{
-		// Register with the new widget's nav-group
-		if(!mNavigationGroup && mParentWidget)
-			mParentWidget->GetDefaultNavGroupInternal()->RegisterElement(this);
-
 		RefreshStyle();
-	}
 }
 
-const RectOffset& GUIElement::GetMargins() const
+const RectOffset& GUIRenderable::GetMargins() const
 {
 	if(mStyleSheetRuleInformation.CurrentStateRuleset)
 		return mStyleSheetRuleInformation.CurrentStateRuleset->Rules.Margins;
@@ -175,7 +128,7 @@ const RectOffset& GUIElement::GetMargins() const
 	}
 }
 
-const RectOffset& GUIElement::GetPadding() const
+const RectOffset& GUIRenderable::GetPadding() const
 {
 	if(mStyleSheetRuleInformation.CurrentStateRuleset)
 		return mStyleSheetRuleInformation.CurrentStateRuleset->Rules.Padding;
@@ -188,45 +141,7 @@ const RectOffset& GUIElement::GetPadding() const
 	}
 }
 
-void GUIElement::SetNavigationGroup(const SPtr<GUINavGroup>& navGroup)
-{
-	SPtr<GUINavGroup> currentNavGroup = GetNavigationGroup();
-	if(currentNavGroup == navGroup)
-		return;
-
-	if(currentNavGroup)
-		currentNavGroup->UnregisterElement(this);
-
-	if(navGroup)
-		navGroup->RegisterElement(this);
-
-	mNavigationGroup = navGroup;
-}
-
-void GUIElement::SetNavigationGroupIndex(i32 index)
-{
-	SPtr<GUINavGroup> navGroup = GetNavigationGroup();
-	if(navGroup != nullptr)
-		navGroup->SetIndex(this, index);
-}
-
-SPtr<GUINavGroup> GUIElement::GetNavigationGroup() const
-{
-	if(mNavigationGroup)
-		return mNavigationGroup;
-
-	if(mParentWidget)
-		return mParentWidget->GetDefaultNavGroupInternal();
-
-	return nullptr;
-}
-
-void GUIElement::SetFocus(bool enabled, bool clear)
-{
-	GUIManager::Instance().SetFocus(this, enabled, clear);
-}
-
-void GUIElement::ResetDimensions()
+void GUIRenderable::ResetDimensions()
 {
 	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
@@ -241,7 +156,7 @@ void GUIElement::ResetDimensions()
 	MarkLayoutAsDirty();
 }
 
-Rect2I GUIElement::GetCachedContentBounds() const
+Rect2I GUIRenderable::GetCachedContentBounds() const
 {
 	Rect2I contentArea = GetCachedContentBoundsInElementSpace();
 
@@ -252,7 +167,7 @@ Rect2I GUIElement::GetCachedContentBounds() const
 	return contentArea;
 }
 
-Rect2I GUIElement::GetCachedContentBoundsInElementSpace() const
+Rect2I GUIRenderable::GetCachedContentBoundsInElementSpace() const
 {
 	const Rect2I& cachedBounds = GetCachedBounds();
 	const Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
@@ -266,7 +181,7 @@ Rect2I GUIElement::GetCachedContentBoundsInElementSpace() const
 	return GUIHelper::CalculateContentArea(layoutSize, *mStyle);
 }
 
-Rect2I GUIElement::GetCachedClippedContentBoundsInContentSpace() const
+Rect2I GUIRenderable::GetCachedClippedContentBoundsInContentSpace() const
 {
 	const Rect2I localContentBounds = GetCachedContentBoundsInElementSpace();
 
@@ -281,7 +196,7 @@ Rect2I GUIElement::GetCachedClippedContentBoundsInContentSpace() const
 	return contentClipRect;
 }
 
-Vector2I GUIElement::GetContentOffsetInElementSpace() const
+Vector2I GUIRenderable::GetContentOffsetInElementSpace() const
 {
 	const RectOffset& padding = GetPadding();
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
@@ -300,7 +215,7 @@ Vector2I GUIElement::GetContentOffsetInElementSpace() const
 	}
 }
 
-Color GUIElement::GetTint() const
+Color GUIRenderable::GetTint() const
 {
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr) // With style sheets, disabled color is controlled via a separate rule, rather than being hardcoded
 		return mColor;
@@ -313,42 +228,7 @@ Color GUIElement::GetTint() const
 	}
 }
 
-void GUIElement::AddStateFlags(GUIElementStateFlags flags)
-{
-	if(mStateFlags.IsSetAll(flags))
-		return;
-
-	mStateFlags |= flags;
-
-	NotifyStateFlagsChanged();
-	MarkContentAsDirty();
-}
-
-void GUIElement::RemoveStateFlags(GUIElementStateFlags flags)
-{
-	if(!mStateFlags.IsSetAny(flags))
-		return;
-
-	mStateFlags &= ~flags;
-
-	NotifyStateFlagsChanged();
-	MarkContentAsDirty();
-}
-
-bool GUIElement::IsInBounds(const Vector2I position) const
-{
-	return GetCachedClippedBounds().Contains(position);
-}
-
-SPtr<GUIContextMenu> GUIElement::GetContextMenu() const
-{
-	if(!IsDisabled())
-		return mContextMenu;
-
-	return nullptr;
-}
-
-u32 GUIElement::RegisterPseudoElement(const char* name)
+u32 GUIRenderable::RegisterPseudoElement(const char* name)
 {
 	if(!B3D_ENSURE(name != nullptr))
 		return ~0u;
@@ -360,7 +240,7 @@ u32 GUIElement::RegisterPseudoElement(const char* name)
 	return pseudoElementIndex;
 }
 
-const GUIStyleSheetRuleInformation& GUIElement::GetPseudoElementStyleSheetRuleInformation(u32 pseudoElementIndex) const
+const GUIStyleSheetRuleInformation& GUIRenderable::GetPseudoElementStyleSheetRuleInformation(u32 pseudoElementIndex) const
 {
 	if(!B3D_ENSURE(pseudoElementIndex < (u32)mPseudoElementStyleSheetRules.Size()))
 		return GUIStyleSheetRuleInformation::kInvalid;
@@ -368,7 +248,7 @@ const GUIStyleSheetRuleInformation& GUIElement::GetPseudoElementStyleSheetRuleIn
 	return mPseudoElementStyleSheetRules[pseudoElementIndex];
 }
 
-void GUIElement::RefreshStyle()
+void GUIRenderable::RefreshStyle()
 {
 	const bool isUsingStyleSheets = GetStyleSheetElement() != nullptr;
 	if(isUsingStyleSheets)
@@ -442,8 +322,8 @@ void GUIElement::RefreshStyle()
 	if(!IsUsingStyleSheets())
 	{
 		const GUIElementStyle* newStyle = nullptr;
-		if(GetParentWidget() != nullptr && !mStyleName.empty())
-			newStyle = GetParentWidget()->GetSkin().GetStyle(mStyleName);
+		if(GetParentWidget() != nullptr && !mStyleClass.empty())
+			newStyle = GetParentWidget()->GetSkin().GetStyle(mStyleClass);
 		else
 			newStyle = &GUISkin::DefaultStyle;
 
@@ -482,7 +362,7 @@ void GUIElement::NotifyStateFlagsChanged()
 	}
 }
 
-const String& GUIElement::GetSubStyleName(const String& subStyleTypeName) const
+const String& GUIRenderable::GetSubStyleName(const String& subStyleTypeName) const
 {
 	auto iterFind = mStyle->SubStyles.find(subStyleTypeName);
 
@@ -490,6 +370,145 @@ const String& GUIElement::GetSubStyleName(const String& subStyleTypeName) const
 		return iterFind->second;
 	else
 		return StringUtil::kBlank;
+}
+
+GUIElement::GUIElement(String styleClass, const GUISizeConstraints& dimensions, GUIElementOptions options)
+	: GUIRenderable(std::move(styleClass), dimensions), mOptionFlags(options)
+{
+}
+
+GUIElement::GUIElement(const char* styleClass, const GUISizeConstraints& dimensions, GUIElementOptions options)
+	: GUIRenderable(styleClass, dimensions), mOptionFlags(options)
+{
+}
+
+bool GUIElement::DoOnMouseEvent(const GUIMouseEvent& event)
+{
+	return false;
+}
+
+bool GUIElement::DoOnTextInputEvent(const GUITextInputEvent& event)
+{
+	return false;
+}
+
+bool GUIElement::DoOnCommandEvent(const GUICommandEvent& event)
+{
+	if(event.GetType() == GUICommandEventType::FocusGained)
+	{
+		OnFocusChanged(true);
+		return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
+	}
+	else if(event.GetType() == GUICommandEventType::FocusLost)
+	{
+		OnFocusChanged(false);
+		return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
+	}
+
+	return false;
+}
+
+bool GUIElement::DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& event)
+{
+	return false;
+}
+
+void GUIElement::ChangeParentWidget(GUIWidget* widget)
+{
+	if(IsDestroyed())
+		return;
+
+	bool widgetChanged = false;
+	if(mParentWidget != widget)
+	{
+		// Unregister from current widget's nav-group
+		if(!mNavigationGroup && mParentWidget)
+			mParentWidget->GetDefaultNavGroupInternal()->UnregisterElement(this);
+
+		widgetChanged = true;
+	}
+
+	GUIRenderable::ChangeParentWidget(widget);
+
+	if(widgetChanged)
+	{
+		// Register with the new widget's nav-group
+		if(!mNavigationGroup && mParentWidget)
+			mParentWidget->GetDefaultNavGroupInternal()->RegisterElement(this);
+	}
+}
+
+void GUIElement::SetNavigationGroup(const SPtr<GUINavGroup>& navGroup)
+{
+	SPtr<GUINavGroup> currentNavGroup = GetNavigationGroup();
+	if(currentNavGroup == navGroup)
+		return;
+
+	if(currentNavGroup)
+		currentNavGroup->UnregisterElement(this);
+
+	if(navGroup)
+		navGroup->RegisterElement(this);
+
+	mNavigationGroup = navGroup;
+}
+
+void GUIElement::SetNavigationGroupIndex(i32 index)
+{
+	SPtr<GUINavGroup> navGroup = GetNavigationGroup();
+	if(navGroup != nullptr)
+		navGroup->SetIndex(this, index);
+}
+
+SPtr<GUINavGroup> GUIElement::GetNavigationGroup() const
+{
+	if(mNavigationGroup)
+		return mNavigationGroup;
+
+	if(mParentWidget)
+		return mParentWidget->GetDefaultNavGroupInternal();
+
+	return nullptr;
+}
+
+void GUIElement::SetFocus(bool enabled, bool clear)
+{
+	GUIManager::Instance().SetFocus(this, enabled, clear);
+}
+
+void GUIElement::AddStateFlags(GUIElementStateFlags flags)
+{
+	if(mStateFlags.IsSetAll(flags))
+		return;
+
+	mStateFlags |= flags;
+
+	NotifyStateFlagsChanged();
+	MarkContentAsDirty();
+}
+
+void GUIElement::RemoveStateFlags(GUIElementStateFlags flags)
+{
+	if(!mStateFlags.IsSetAny(flags))
+		return;
+
+	mStateFlags &= ~flags;
+
+	NotifyStateFlagsChanged();
+	MarkContentAsDirty();
+}
+
+bool GUIElement::IsInBounds(const Vector2I& position) const
+{
+	return GetCachedClippedBounds().Contains(position);
+}
+
+SPtr<GUIContextMenu> GUIElement::GetContextMenu() const
+{
+	if(!IsDisabled())
+		return mContextMenu;
+
+	return nullptr;
 }
 
 void GUIElement::Destroy(GUIElement* element)

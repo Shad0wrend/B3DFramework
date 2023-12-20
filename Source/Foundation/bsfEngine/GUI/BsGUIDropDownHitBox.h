@@ -60,7 +60,7 @@ namespace bs
 		void UpdateClippedBounds() override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
-		bool IsInBounds(const Vector2I position) const override;
+		bool IsInBounds(const Vector2I& position) const override;
 
 		Vector<Rect2I> mBounds;
 		bool mCaptureMouseOver;

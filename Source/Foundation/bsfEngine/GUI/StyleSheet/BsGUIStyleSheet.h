@@ -307,7 +307,7 @@ namespace bs
 		 * Builds the appropriate ruleset to use for a particular GUI element. This looks up relevant rulesets
 		 * based on GUI elements type and optionally its class, id, parent elements and provided pseudo-element name.
 		 */
-		SPtr<const GUIStyleSheetRuleset> BuildRuleset(const GUIElement& guiElement, StringView pseudoElement = "", StringView pseudoClass = "", const GUIStyleSheetRules* inheritedRules = nullptr) const;
+		SPtr<const GUIStyleSheetRuleset> BuildRuleset(const GUIRenderable& guiElement, StringView pseudoElement = "", StringView pseudoClass = "", const GUIStyleSheetRules* inheritedRules = nullptr) const;
 
 		/**
 		 * Builds the appropriate ruleset that matches a GUI element with the provided type/class/id/pseud-class/pseudo-element. Any of the provided
@@ -320,7 +320,7 @@ namespace bs
 		 * Rulesets specific for a particular state can then be retrieved from GUIStyleSheetStateRulesets in a separate step. This allows you to
 		 * skip calling expensive BuildRuleset() whenever GUI element state changes.
 		 */
-		SPtr<const GUIStyleSheetStateRulesets> BuildStateRulesets(const GUIElement& guiElement, StringView pseudoElement = "") const;
+		SPtr<const GUIStyleSheetStateRulesets> BuildStateRulesets(const GUIRenderable& guiElement, StringView pseudoElement = "") const;
 
 		/** Returns all rulesets stored in the stylesheet. */
 		const TArray<GUIStyleSheetRuleset>& GetRulesets() const { return mRulesets; }
@@ -356,7 +356,7 @@ namespace bs
 		 * Note it's guaranteed that rulesets not in the set will not be a match for the provided GUI element, but
 		 * rulesets in the set don't necessarily need to match - the caller needs to check for a match explicitly.
 		 */
-		void PopulatePotentialRulesetIndices(const GUIElement& guiElement, FrameSet<u32>& outOrderedRulesetIndices) const;
+		void PopulatePotentialRulesetIndices(const GUIRenderable& guiElement, FrameSet<u32>& outOrderedRulesetIndices) const;
 
 		/**
 		 * Builds a list of all potential ruleset indices for a GUI element with specified type, class and/or id selectors,

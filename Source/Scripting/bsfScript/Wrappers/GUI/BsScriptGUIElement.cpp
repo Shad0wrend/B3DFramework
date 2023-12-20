@@ -406,7 +406,7 @@ MonoString* ScriptGUIElement::InternalGetStyle(ScriptGUIElementBaseTBase* native
 		if(guiElemBase->GetType() == GUIElementBase::Type::Element)
 		{
 			GUIElement* guiElem = static_cast<GUIElement*>(guiElemBase);
-			return MonoUtil::StringToMono(guiElem->GetStyleName());
+			return MonoUtil::StringToMono(guiElem->GetStyleSheetClass());
 		}
 	}
 

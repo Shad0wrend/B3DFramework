@@ -450,7 +450,7 @@ String GUIStyleSheet::BuildCacheLookupName(StringView idSelector, StringView cla
 	return cacheLookupName;
 }
  
-SPtr<const GUIStyleSheetRuleset> GUIStyleSheet::BuildRuleset(const GUIElement& guiElement, StringView pseudoElement, StringView pseudoClass, const GUIStyleSheetRules* inheritedRules) const
+SPtr<const GUIStyleSheetRuleset> GUIStyleSheet::BuildRuleset(const GUIRenderable& guiElement, StringView pseudoElement, StringView pseudoClass, const GUIStyleSheetRules* inheritedRules) const
 {
 	// Note: Not supporting multiple pseudo classes at the moment
 
@@ -496,7 +496,7 @@ SPtr<const GUIStyleSheetRuleset> GUIStyleSheet::BuildRuleset(StringView elementT
 	return outputRuleset;
 }
 
-SPtr<const GUIStyleSheetStateRulesets> GUIStyleSheet::BuildStateRulesets(const GUIElement& guiElement, StringView pseudoElement) const
+SPtr<const GUIStyleSheetStateRulesets> GUIStyleSheet::BuildStateRulesets(const GUIRenderable& guiElement, StringView pseudoElement) const
 {
 	thread_local SPtr<GUIStyleSheetStateRulesets> tlLookupValue = B3DMakeShared<GUIStyleSheetStateRulesets>();
 	const static SPtr<GUIStyleSheetStateRulesets> kEmpty = B3DMakeShared<GUIStyleSheetStateRulesets>();
@@ -547,7 +547,7 @@ bool GUIStyleSheet::HasRulesetForClass(StringView elementClass, StringView eleme
 	return foundElement && foundClass;
 }
 
-void GUIStyleSheet::PopulatePotentialRulesetIndices(const GUIElement& guiElement, FrameSet<u32>& outOrderedRulesetIndices) const
+void GUIStyleSheet::PopulatePotentialRulesetIndices(const GUIRenderable& guiElement, FrameSet<u32>& outOrderedRulesetIndices) const
 {
 	StringView idSelector = guiElement.GetStyleSheetId();
 	StringView classSelector = guiElement.GetStyleSheetClass();

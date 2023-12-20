@@ -148,7 +148,7 @@ Rect2I GUIListBox::GetCachedContentBoundsInElementSpace() const
 		Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
 
 		const u32 arrowAreaWidth = GetArrowCachedContentSize().Width;
-		layoutSize.Width = Math::Max(0, (i32)layoutSize.Width - arrowAreaWidth);
+		layoutSize.Width = (u32)Math::Max(0, (i32)layoutSize.Width - (i32)arrowAreaWidth);
 
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 		return GUIHelper::CalculateContentArea(layoutSize, styleSheetRules);

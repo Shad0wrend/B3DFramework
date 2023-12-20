@@ -119,7 +119,7 @@ bool GUIDropDownHitBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 	return processed;
 }
 
-bool GUIDropDownHitBox::IsInBounds(const Vector2I position) const
+bool GUIDropDownHitBox::IsInBounds(const Vector2I& position) const
 {
 	for(auto& bound : mBounds)
 	{

@@ -66,42 +66,22 @@ namespace bs
 	};
 
 	/**
-	 * Represents parent class for all visible GUI elements. Contains methods needed for positioning, rendering and
-	 * handling input.
+	 * Represents a GUI element that can be rendered (i.e. has a visual representation). Renderable element can have a particular style, and provides
+	 * one or multiple render elements to be drawn.
 	 */
-	class B3D_EXPORT GUIElement : public GUIElementBase
+	class B3D_EXPORT GUIRenderable : public GUIElementBase // TODO - Move to its own file
 	{
 	public:
-		/**	Different sub-types of GUI elements. */
-		enum class ElementType
-		{
-			Label,
-			Button,
-			Toggle,
-			Texture,
-			InputBox,
-			ListBox,
-			ScrollArea,
-			Layout,
-			Undefined
-		};
+		GUIRenderable(String styleClass, const GUISizeConstraints& sizeConstraints);
+		GUIRenderable(const char* styleClass, const GUISizeConstraints& sizeConstraints);
+		~GUIRenderable() override = default;
 
-	public:
-		GUIElement(String styleName, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOptions(0));
-		GUIElement(const char* styleName, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOptions(0));
-		~GUIElement() override = default;
+		/**	Sets new style class to be used by the element. */
+		void SetStyle(const String& styleClass); // TODO - Rename to SetStyleSheetClass
 
-		const String& GetStyleSheetClass() const override { return mStyleName; }
-
-		/**
-		 * Change the GUI element focus state.
-		 *
-		 * @param[in]	enabled		Give the element focus or take it away.
-		 * @param[in]	clear		If true the focus will be cleared from any elements currently in focus. Otherwise
-		 *							the element will just be appended to the in-focus list (if enabling focus).
-		 */
-		virtual void SetFocus(bool enabled, bool clear = false);
-
+		// TODO - Move this from base class to GUIRenderable (together with style sheet data)
+		const String& GetStyleSheetClass() const override { return mStyleClass; }
+		
 		/**	Sets the tint of the GUI element. */
 		virtual void SetTint(const Color& color);
 
@@ -109,49 +89,6 @@ namespace bs
 		Color GetTint() const;
 
 		void ResetDimensions() override;
-
-		/**	Sets new style to be used by the element. */
-		void SetStyle(const String& styleName);
-
-		/**	Returns the name of the style used by this element. */
-		const String& GetStyleName() const { return mStyleName; }
-
-		/** A set of flags controlling various aspects of the GUIElement. See GUIElementOptions.  */
-		void SetOptionFlags(GUIElementOptions options) { mOptionFlags = options; }
-
-		/** @copydoc SetOptionFlags */
-		GUIElementOptions GetOptionFlags() const { return mOptionFlags; }
-
-		/**
-		 * Assigns a new context menu that will be opened when the element is right clicked. Null is allowed in case no
-		 * context menu is wanted.
-		 */
-		void SetContextMenu(const SPtr<GUIContextMenu>& menu) { mContextMenu = menu; }
-
-		/**
-		 * Sets a navigation group that determines in what order are GUI elements visited when using a keyboard or gamepad
-		 * to switch between the elements. If you don't set a navigation group the elements will inherit the default
-		 * navigation group from their parent GUIWidget. Also see setNavGroupIndex().
-		 */
-		void SetNavigationGroup(const SPtr<GUINavGroup>& navGroup);
-
-		/**
-		 * Sets the index that determines in what order is the element visited compared to all the other elements in the
-		 * nav-group. Elements with lower index will be visited before elements with a higher index. Elements with index
-		 * 0 (the default) are special and will have their visit order determines by their position compared to other
-		 * elements. The applied index is tied to the nav-group, so if the nav-group changes the index will need to be
-		 * re-applied.
-		 */
-		void SetNavigationGroupIndex(i32 index);
-
-		/**
-		 * Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be
-		 * released delayed, next frame.
-		 */
-		static void Destroy(GUIElement* element);
-
-		/**	Triggered when the element loses or gains focus. */
-		Event<void(bool)> OnFocusChanged;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -236,41 +173,11 @@ namespace bs
 		 */
 		virtual void UpdateRenderElements();
 
-		/** Gets internal element style representing the exact type of GUI element in this object. */
-		virtual ElementType GetElementType() const { return ElementType::Undefined; }
-
-		/**
-		 * Called when a mouse event is received on any GUI element the mouse is interacting with. Return true if you have
-		 * processed the event and don't want other elements to process it.
-		 */
-		virtual bool DoOnMouseEvent(const GUIMouseEvent& event);
-
-		/**
-		 * Called when some text is input and the GUI element has input focus. Return true if you have processed the event
-		 * and don't want other elements to process it.
-		 */
-		virtual bool DoOnTextInputEvent(const GUITextInputEvent& event);
-
-		/**
-		 * Called when a command event is triggered. Return true if you have processed the event and don't want other
-		 * elements to process it.
-		 */
-		virtual bool DoOnCommandEvent(const GUICommandEvent& event);
-
-		/**
-		 * Called when a virtual button is pressed/released and the GUI element has input focus. Return true if you have
-		 * processed the event and don't want other elements to process it.
-		 */
-		virtual bool DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& event);
-
 		/** Set element part of element depth. Less significant than both widget and area depth. */
 		void SetElementDepth(u8 depth);
 
 		/** Retrieve element part of element depth. Less significant than both widget and area depth. */
 		u8 GetElementDepth() const;
-
-		void SetLayoutData(const GUILayoutData& data) override;
-		void ChangeParentWidget(GUIWidget* widget) override;
 
 		/**
 		 * Returns the range of depths that the child elements can be rendered it.
@@ -281,26 +188,14 @@ namespace bs
 		 */
 		virtual u32 GetRenderElementDepthRange() const { return 1; }
 
-		/** Gets internal element style representing the exact type of GUI element in this object. */
-		Type GetType() const override { return GUIElementBase::Type::Element; }
-
-		/** Checks if element has been destroyed and is queued for deletion. */
-		bool IsDestroyed() const override { return mIsDestroyed; }
-
 		/** Updates element style based on active GUI style sheet. Call this after active style sheet changes, or element class/id changes. */
 		void RefreshStyle();
 
-		/** Notifies the system the state flag was added or removed. */
-		virtual void NotifyStateFlagsChanged();
-
 		/**	Gets the currently active element style. */
-		const GUIElementStyle* GetStyle() const { return mStyle; }
+		const GUIElementStyle* GetStyle() const { return mStyle; } // TODO - Deprecated
 
 		/** Similar to GetCachedBounds(), except the bounds are clipped against the current clip rectangle. */
 		const Rect2I& GetCachedClippedBounds() const { return mClippedBounds; }
-
-		const RectOffset& GetMargins() const override;
-		const RectOffset& GetPadding() const override;
 
 		/**
 		 * Returns GUI element depth. This includes widget and area depth, but does not include specific per-render-element
@@ -308,38 +203,19 @@ namespace bs
 		 */
 		u32 GetDepth() const { return mLayoutData.Depth; }
 
-		/** Returns the navigation group this element belongs to. See setNavGroup(). */
-		SPtr<GUINavGroup> GetNavigationGroup() const;
-
-		/** Transitions the GUI element into a new state by adding state flags. */
-		void AddStateFlags(GUIElementStateFlags flags);
-
-		/** Transitions the GUI element into a new state by removing state flags. */
-		void RemoveStateFlags(GUIElementStateFlags flags);
-
-		/** Checks is the specified position within GUI element bounds. Position is relative to parent GUI widget. */
-		virtual bool IsInBounds(const Vector2I position) const;
-
-		/**	Checks if the GUI element has a custom cursor and outputs the cursor type if it does. */
-		virtual bool HasCustomCursor(const Vector2I position, CursorType& type) const { return false; }
-
-		/**	Checks if the GUI element accepts a drag and drop operation of the specified type. */
-		virtual bool AcceptDragAndDrop(const Vector2I position, u32 typeId) const { return false; }
-
-		/**	Returns a context menu if a GUI element has one. Otherwise returns nullptr. */
-		virtual SPtr<GUIContextMenu> GetContextMenu() const;
-
-		/**	Returns text to display when hovering over the element. Returns empty string if no tooltip. */
-		virtual String GetTooltip() const { return StringUtil::kBlank; }
-
 		/**	Returns a clip rectangle relative to the element, used for offsetting the input text. */
 		virtual Vector2I GetTextInputOffset() const { return Vector2I(); }
 
 		/**	Returns a clip rectangle relative to the element, used for clipping	the input text. */
 		virtual Rect2I GetTextInputRect() const { return Rect2I(); }
 
-		/** @} */
+		const RectOffset& GetMargins() const override;
+		const RectOffset& GetPadding() const override;
 
+		void SetLayoutData(const GUILayoutData& data) override;
+		void ChangeParentWidget(GUIWidget* widget) override;
+
+		/** @} */
 	protected:
 		friend class GUISpriteHelper;
 
@@ -353,7 +229,7 @@ namespace bs
 		 * Attempts to find a sub-style for the specified type in the currently set GUI element style. If one cannot be
 		 * found empty string is returned.
 		 */
-		const String& GetSubStyleName(const String& subStyleTypeName) const;
+		const String& GetSubStyleName(const String& subStyleTypeName) const; // TODO - Deprecated
 
 		/**	Method that gets triggered whenever element style changes. */
 		virtual void NotifyStyleChanged() {}
@@ -393,21 +269,167 @@ namespace bs
 		/** Returns style information for a pseudo-element at the specified index. */
 		const GUIStyleSheetRuleInformation& GetPseudoElementStyleSheetRuleInformation(u32 pseudoElementIndex) const;
 
-		bool mIsDestroyed = false;
-		GUIElementOptions mOptionFlags;
-		GUIElementStateFlags mStateFlags = GUIElementStateFlag::Normal;
-		Rect2I mClippedBounds;
-		TInlineArray<GUIRenderElement, 4> mRenderElements;
-	private:
+	protected:
 		static const Color kDisabledColor;
 
-		const GUIElementStyle* mStyle;
+		Rect2I mClippedBounds; // TODO - Move to base class
+		TInlineArray<GUIRenderElement, 4> mRenderElements;
+		GUIElementStateFlags mStateFlags = GUIElementStateFlag::Normal;
 
-		String mStyleName;
+		const GUIElementStyle* mStyle = nullptr; // TODO - Deprecated
+		String mStyleClass;
 
+		Color mColor;
+	};
+
+	/**
+	 * Represents parent class for all visible GUI elements. Contains methods needed for positioning, rendering and
+	 * handling input.
+	 */
+	class B3D_EXPORT GUIElement : public GUIRenderable
+	{
+	public:
+		/**	Different sub-types of GUI elements. */
+		enum class ElementType
+		{
+			Label,
+			Button,
+			Toggle,
+			Texture,
+			InputBox,
+			ListBox,
+			ScrollArea,
+			Layout,
+			Undefined
+		};
+
+	public:
+		GUIElement(String styleClass, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOptions(0));
+		GUIElement(const char* styleClass, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOptions(0));
+		~GUIElement() override = default;
+
+		/**
+		 * Change the GUI element focus state.
+		 *
+		 * @param[in]	enabled		Give the element focus or take it away.
+		 * @param[in]	clear		If true the focus will be cleared from any elements currently in focus. Otherwise
+		 *							the element will just be appended to the in-focus list (if enabling focus).
+		 */
+		virtual void SetFocus(bool enabled, bool clear = false);
+
+		/** A set of flags controlling various aspects of the GUIElement. See GUIElementOptions.  */
+		void SetOptionFlags(GUIElementOptions options) { mOptionFlags = options; }
+
+		/** @copydoc SetOptionFlags */
+		GUIElementOptions GetOptionFlags() const { return mOptionFlags; }
+
+		/**
+		 * Assigns a new context menu that will be opened when the element is right clicked. Null is allowed in case no
+		 * context menu is wanted.
+		 */
+		void SetContextMenu(const SPtr<GUIContextMenu>& menu) { mContextMenu = menu; }
+
+		/**
+		 * Sets a navigation group that determines in what order are GUI elements visited when using a keyboard or gamepad
+		 * to switch between the elements. If you don't set a navigation group the elements will inherit the default
+		 * navigation group from their parent GUIWidget. Also see setNavGroupIndex().
+		 */
+		void SetNavigationGroup(const SPtr<GUINavGroup>& navGroup);
+
+		/**
+		 * Sets the index that determines in what order is the element visited compared to all the other elements in the
+		 * nav-group. Elements with lower index will be visited before elements with a higher index. Elements with index
+		 * 0 (the default) are special and will have their visit order determines by their position compared to other
+		 * elements. The applied index is tied to the nav-group, so if the nav-group changes the index will need to be
+		 * re-applied.
+		 */
+		void SetNavigationGroupIndex(i32 index);
+
+		/**
+		 * Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be
+		 * released delayed, next frame.
+		 */
+		static void Destroy(GUIElement* element);
+
+		/**	Triggered when the element loses or gains focus. */
+		Event<void(bool)> OnFocusChanged;
+
+	public: // ***** INTERNAL ******
+		/** @name Internal
+		 *  @{
+		 */
+
+		/** Gets internal element style representing the exact type of GUI element in this object. */
+		virtual ElementType GetElementType() const { return ElementType::Undefined; } // TODO - Deprecated
+
+		/**
+		 * Called when a mouse event is received on any GUI element the mouse is interacting with. Return true if you have
+		 * processed the event and don't want other elements to process it.
+		 */
+		virtual bool DoOnMouseEvent(const GUIMouseEvent& event);
+
+		/**
+		 * Called when some text is input and the GUI element has input focus. Return true if you have processed the event
+		 * and don't want other elements to process it.
+		 */
+		virtual bool DoOnTextInputEvent(const GUITextInputEvent& event);
+
+		/**
+		 * Called when a command event is triggered. Return true if you have processed the event and don't want other
+		 * elements to process it.
+		 */
+		virtual bool DoOnCommandEvent(const GUICommandEvent& event);
+
+		/**
+		 * Called when a virtual button is pressed/released and the GUI element has input focus. Return true if you have
+		 * processed the event and don't want other elements to process it.
+		 */
+		virtual bool DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& event);
+
+		void ChangeParentWidget(GUIWidget* widget) override;
+
+		/** Gets internal element style representing the exact type of GUI element in this object. */
+		Type GetType() const override { return GUIElementBase::Type::Element; } // TODO - Deprecated
+
+		/** Checks if element has been destroyed and is queued for deletion. */
+		bool IsDestroyed() const override { return mIsDestroyed; } // TODO - Move to base class
+
+		/** Notifies the system the state flag was added or removed. */
+		virtual void NotifyStateFlagsChanged();
+
+		/** Returns the navigation group this element belongs to. See setNavGroup(). */
+		SPtr<GUINavGroup> GetNavigationGroup() const;
+
+		/** Transitions the GUI element into a new state by adding state flags. */
+		void AddStateFlags(GUIElementStateFlags flags);
+
+		/** Transitions the GUI element into a new state by removing state flags. */
+		void RemoveStateFlags(GUIElementStateFlags flags);
+
+		/** Checks is the specified position within GUI element bounds. Position is relative to parent GUI widget. */
+		virtual bool IsInBounds(const Vector2I& position) const;
+
+		/**	Checks if the GUI element has a custom cursor and outputs the cursor type if it does. */
+		virtual bool HasCustomCursor(const Vector2I position, CursorType& type) const { return false; }
+
+		/**	Checks if the GUI element accepts a drag and drop operation of the specified type. */
+		virtual bool AcceptDragAndDrop(const Vector2I position, u32 typeId) const { return false; }
+
+		/**	Returns a context menu if a GUI element has one. Otherwise returns nullptr. */
+		virtual SPtr<GUIContextMenu> GetContextMenu() const;
+
+		/**	Returns text to display when hovering over the element. Returns empty string if no tooltip. */
+		virtual String GetTooltip() const { return StringUtil::kBlank; }
+
+		/** @} */
+
+	protected:
+		bool mIsDestroyed = false; // TODO - Move to base class
+		GUIElementOptions mOptionFlags;
+
+	private:
 		SPtr<GUIContextMenu> mContextMenu;
 		SPtr<GUINavGroup> mNavigationGroup;
-		Color mColor;
 	};
 
 	/** @} */
