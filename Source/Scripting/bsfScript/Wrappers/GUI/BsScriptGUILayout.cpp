@@ -45,7 +45,7 @@ void ScriptGUILayout::Destroy()
 		}
 
 		if(mOwnsNative)
-			GUILayout::Destroy(mLayout);
+			mLayout->Destroy();
 
 		mLayout = nullptr;
 		mIsDestroyed = true;

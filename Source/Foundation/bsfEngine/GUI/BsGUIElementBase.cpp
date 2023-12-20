@@ -42,11 +42,6 @@ GUIElementBase::GUIElementBase(const GUISizeConstraints& dimensions)
 	: mSizeConstraints(dimensions)
 {}
 
-GUIElementBase::~GUIElementBase()
-{
-	DestroyChildElements();
-}
-
 void GUIElementBase::SetPosition(i32 x, i32 y)
 {
 	mSizeConstraints.X = x;
@@ -491,7 +486,7 @@ void GUIElementBase::SetParent(GUIElementBase* parent)
 
 void GUIElementBase::RegisterChildElement(GUIElementBase* element)
 {
-	B3D_ASSERT(!element->IsDestroyed());
+	B3D_ASSERT(!element->IsPendingDestroy());
 
 	GUIElementBase* parentElement = element->GetParent();
 	if(parentElement != nullptr)
@@ -533,39 +528,33 @@ void GUIElementBase::UnregisterChildElement(GUIElementBase* element)
 		B3D_EXCEPT(InvalidParametersException, "Provided element is not a part of this element.");
 }
 
+void GUIElementBase::Destroy()
+{
+	if(mIsPendingDestroy)
+		return;
+
+	if(mParent != nullptr)
+		mParent->UnregisterChildElement(this);
+
+	DestroyChildElements();
+
+	mIsPendingDestroy = true;
+
+	GUIManager::Instance().QueueForDestroy(this);
+}
+
 void GUIElementBase::DestroyChildElements()
 {
 	TInlineArray<GUIElementBase*, 4> childCopy = mChildren;
 	for(auto& child : childCopy)
-	{
-		if(child->GetType() == Type::Element)
-		{
-			const auto element = static_cast<GUIInteractable*>(child);
-			GUIInteractable::Destroy(element);
-		}
-		else if(child->GetType() == Type::Layout || child->GetType() == GUIElementBase::Type::Panel)
-		{
-			const auto layout = static_cast<GUILayout*>(child);
-			GUILayout::Destroy(layout);
-		}
-		else if(child->GetType() == Type::FixedSpace)
-		{
-			const auto space = static_cast<GUIFixedSpace*>(child);
-			GUIFixedSpace::Destroy(space);
-		}
-		else if(child->GetType() == Type::FlexibleSpace)
-		{
-			const auto space = static_cast<GUIFlexibleSpace*>(child);
-			GUIFlexibleSpace::Destroy(space);
-		}
-	}
+		child->Destroy();
 
 	B3D_ASSERT(mChildren.Empty());
 }
 
 void GUIElementBase::ChangeParentWidget(GUIWidget* widget)
 {
-	B3D_ASSERT(!IsDestroyed());
+	B3D_ASSERT(!IsPendingDestroy());
 
 	if(mParentWidget != widget)
 	{

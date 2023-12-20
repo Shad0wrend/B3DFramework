@@ -225,7 +225,7 @@ void GUIManager::Update()
 		mNewElementsUnderPointer.clear();
 		for(auto& elementInfo : mElementsUnderPointer)
 		{
-			if(!elementInfo.Element->IsDestroyed())
+			if(!elementInfo.Element->IsPendingDestroy())
 				mNewElementsUnderPointer.push_back(elementInfo);
 		}
 
@@ -234,7 +234,7 @@ void GUIManager::Update()
 		mNewActiveElements.clear();
 		for(auto& elementInfo : mActiveElements)
 		{
-			if(!elementInfo.Element->IsDestroyed())
+			if(!elementInfo.Element->IsPendingDestroy())
 				mNewActiveElements.push_back(elementInfo);
 		}
 
@@ -244,7 +244,7 @@ void GUIManager::Update()
 
 		for(auto& elementInfo : mElementsInFocus)
 		{
-			if(!elementInfo.Element->IsDestroyed())
+			if(!elementInfo.Element->IsPendingDestroy())
 				mNewElementsInFocus.push_back(elementInfo);
 		}
 
@@ -255,7 +255,7 @@ void GUIManager::Update()
 			mNewElementsInFocus.clear();
 			for(auto& entry : elementsPerWindow.second)
 			{
-				if(!entry.Element->IsDestroyed())
+				if(!entry.Element->IsPendingDestroy())
 					mNewElementsInFocus.push_back(entry);
 			}
 
@@ -288,7 +288,7 @@ void GUIManager::Update()
 
 		for(auto& focusElementInfo : mForcedFocusElements)
 		{
-			if(focusElementInfo.Element->IsDestroyed())
+			if(focusElementInfo.Element->IsPendingDestroy())
 				continue;
 
 			const auto iterFind = std::find_if(mElementsInFocus.begin(), mElementsInFocus.end(), [&](const ElementFocusInfo& x)
@@ -1154,7 +1154,7 @@ void GUIManager::OnWindowFocusGained(RenderWindow& win)
 		mNewElementsInFocus.clear();
 		for(auto& focusedElement : mElementsInFocus)
 		{
-			if(focusedElement.Element->IsDestroyed())
+			if(focusedElement.Element->IsPendingDestroy())
 				continue;
 
 			auto iterFind2 = std::find_if(savedFocusedElements.begin(), savedFocusedElements.end(), [&focusedElement](const ElementFocusInfo& x)
@@ -1176,7 +1176,7 @@ void GUIManager::OnWindowFocusGained(RenderWindow& win)
 
 		for(auto& entry : savedFocusedElements)
 		{
-			if(entry.Element->IsDestroyed())
+			if(entry.Element->IsPendingDestroy())
 				continue;
 
 			auto iterFind2 = std::find_if(mElementsInFocus.begin(), mElementsInFocus.end(), [&entry](const ElementFocusInfo& x)
@@ -1211,7 +1211,7 @@ void GUIManager::OnWindowFocusLost(RenderWindow& win)
 	mNewElementsInFocus.clear();
 	for(auto& focusedElement : mElementsInFocus)
 	{
-		if(focusedElement.Element->IsDestroyed())
+		if(focusedElement.Element->IsPendingDestroy())
 			continue;
 
 		if(focusedElement.Widget != nullptr && GetWidgetWindow(*focusedElement.Widget) == &win)
@@ -1278,7 +1278,7 @@ void GUIManager::HideTooltip()
 	mShowTooltip = false;
 }
 
-void GUIManager::QueueForDestroy(GUIInteractable* element)
+void GUIManager::QueueForDestroy(GUIElementBase* element)
 {
 	mScheduledForDestruction.push(element);
 }
@@ -1300,8 +1300,8 @@ void GUIManager::SetFocus(GUIInteractable* element, bool focus, bool clear)
 
 bool GUIManager::ProcessDestroyQueueIteration()
 {
-	Stack<GUIInteractable*> toDestroy = mScheduledForDestruction;
-	mScheduledForDestruction = Stack<GUIInteractable*>();
+	Stack<GUIElementBase*> toDestroy = mScheduledForDestruction;
+	mScheduledForDestruction = Stack<GUIElementBase*>();
 
 	while(!toDestroy.empty())
 	{
@@ -1528,7 +1528,7 @@ void GUIManager::TabFocusNext()
 
 bool GUIManager::SendMouseEvent(GUIInteractable* element, const GUIMouseEvent& event)
 {
-	if(element->IsDestroyed())
+	if(element->IsPendingDestroy())
 		return false;
 
 	return element->DoOnMouseEvent(event);
@@ -1536,7 +1536,7 @@ bool GUIManager::SendMouseEvent(GUIInteractable* element, const GUIMouseEvent& e
 
 bool GUIManager::SendTextInputEvent(GUIInteractable* element, const GUITextInputEvent& event)
 {
-	if(element->IsDestroyed())
+	if(element->IsPendingDestroy())
 		return false;
 
 	return element->DoOnTextInputEvent(event);
@@ -1544,7 +1544,7 @@ bool GUIManager::SendTextInputEvent(GUIInteractable* element, const GUITextInput
 
 bool GUIManager::SendCommandEvent(GUIInteractable* element, const GUICommandEvent& event)
 {
-	if(element->IsDestroyed())
+	if(element->IsPendingDestroy())
 		return false;
 
 	return element->DoOnCommandEvent(event);
@@ -1552,7 +1552,7 @@ bool GUIManager::SendCommandEvent(GUIInteractable* element, const GUICommandEven
 
 bool GUIManager::SendVirtualButtonEvent(GUIInteractable* element, const GUIVirtualButtonEvent& event)
 {
-	if(element->IsDestroyed())
+	if(element->IsPendingDestroy())
 		return false;
 
 	return element->DoOnVirtualButtonEvent(event);

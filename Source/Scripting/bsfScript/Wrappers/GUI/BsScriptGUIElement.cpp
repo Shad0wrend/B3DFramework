@@ -73,13 +73,10 @@ void ScriptGUIElementTBase::Destroy()
 		if(mParent != nullptr)
 			mParent->RemoveChild(this);
 
-		if(mElement->GetType() == GUIElementBase::Type::Element)
-		{
-			GUIInteractable::Destroy((GUIInteractable*)mElement);
-			mElement = nullptr;
+		mElement->Destroy();
+		mElement = nullptr;
 
-			mIsDestroyed = true;
-		}
+		mIsDestroyed = true;
 	}
 }
 

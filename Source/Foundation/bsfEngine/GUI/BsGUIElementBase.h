@@ -70,7 +70,7 @@ namespace bs
 	public:
 		GUIElementBase() = default;
 		GUIElementBase(const GUISizeConstraints& dimensions);
-		virtual ~GUIElementBase();
+		virtual ~GUIElementBase() = default;
 
 		/**
 		 * Sets element position relative to parent GUI panel.
@@ -160,6 +160,15 @@ namespace bs
 		 * setWidth() and setHeight().
 		 */
 		void SetBounds(const Rect2I& bounds);
+
+		/**
+		 * Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be
+		 * released delayed, next frame.
+		 */
+		virtual void Destroy();
+
+		/** Checks if element is queued for deletion. */
+		bool IsPendingDestroy() const { return mIsPendingDestroy; }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -300,9 +309,6 @@ namespace bs
 		/**	Unregisters an existing child element. */
 		void UnregisterChildElement(GUIElementBase* element);
 
-		/**	Checks if element has been destroyed and is queued for deletion. */
-		virtual bool IsDestroyed() const { return false; }
-
 		/**	Marks the element's dimensions as dirty, triggering a layout rebuild. */
 		void MarkLayoutAsDirty();
 
@@ -365,6 +371,7 @@ namespace bs
 		TInlineArray<GUIElementBase*, 4> mChildren;
 
 		u8 mFlags = GUIElem_Dirty;
+		bool mIsPendingDestroy = false;
 
 		GUISizeConstraints mSizeConstraints; /**< Constraints on the element size as set by the style, or set explicitly at runtime. */
 		GUILayoutData mLayoutData; /**< Calculated position, size, depth and other information, valid after a layout update. */

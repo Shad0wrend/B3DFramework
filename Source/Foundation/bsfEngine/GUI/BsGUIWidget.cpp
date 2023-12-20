@@ -68,7 +68,7 @@ void GUIWidget::DestroyInternal()
 {
 	if(mPanel != nullptr)
 	{
-		GUILayout::Destroy(mPanel);
+		mPanel->Destroy();
 		mPanel = nullptr;
 	}
 
@@ -262,7 +262,7 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 
 void GUIWidget::RegisterElement(GUIElementBase* guiElementBase)
 {
-	B3D_ASSERT(guiElementBase != nullptr && !guiElementBase->IsDestroyed());
+	B3D_ASSERT(guiElementBase != nullptr && !guiElementBase->IsPendingDestroy());
 
 	if(guiElementBase->GetType() == GUIElementBase::Type::Element)
 	{

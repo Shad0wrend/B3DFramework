@@ -4,12 +4,6 @@
 
 using namespace bs;
 
-GUIFixedSpace::~GUIFixedSpace()
-{
-	if(mParent != nullptr)
-		mParent->UnregisterChildElement(this);
-}
-
 GUIConstrainedSize GUIFixedSpace::CalculateConstrainedSize() const
 {
 	GUIConstrainedSize range;
@@ -25,17 +19,6 @@ GUIFixedSpace* GUIFixedSpace::Create(u32 size)
 	return B3DNew<GUIFixedSpace>(size);
 }
 
-void GUIFixedSpace::Destroy(GUIFixedSpace* space)
-{
-	B3DDelete(space);
-}
-
-GUIFlexibleSpace::~GUIFlexibleSpace()
-{
-	if(mParent != nullptr)
-		mParent->UnregisterChildElement(this);
-}
-
 GUIConstrainedSize GUIFlexibleSpace::CalculateConstrainedSize() const
 {
 	GUIConstrainedSize range;
@@ -49,9 +32,4 @@ GUIConstrainedSize GUIFlexibleSpace::CalculateConstrainedSize() const
 GUIFlexibleSpace* GUIFlexibleSpace::Create()
 {
 	return B3DNew<GUIFlexibleSpace>();
-}
-
-void GUIFlexibleSpace::Destroy(GUIFlexibleSpace* space)
-{
-	B3DDelete(space);
 }

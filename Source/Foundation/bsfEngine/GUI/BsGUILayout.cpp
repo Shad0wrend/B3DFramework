@@ -13,18 +13,9 @@ GUILayout::GUILayout(const GUISizeConstraints& dimensions)
 	: GUIElementBase(dimensions)
 {}
 
-GUILayout::GUILayout()
-{}
-
-GUILayout::~GUILayout()
-{
-	if(mParent != nullptr)
-		mParent->UnregisterChildElement(this);
-}
-
 void GUILayout::AddElement(GUIElementBase* element)
 {
-	if(!element->IsDestroyed())
+	if(!element->IsPendingDestroy())
 		RegisterChildElement(element);
 }
 
@@ -38,7 +29,7 @@ void GUILayout::InsertElement(u32 idx, GUIElementBase* element)
 	if(idx > (u32)mChildren.size())
 		B3D_EXCEPT(InvalidParametersException, "Index out of range: " + ToString(idx) + ". Valid range: 0 .. " + ToString((u32)mChildren.size()));
 
-	if(element->IsDestroyed())
+	if(element->IsPendingDestroy())
 		return;
 
 	GUIElementBase* parentElement = element->GetParent();
@@ -73,9 +64,4 @@ void GUILayout::RemoveElementAt(u32 idx)
 	child->SetParent(nullptr);
 
 	MarkLayoutAsDirty();
-}
-
-void GUILayout::Destroy(GUILayout* layout)
-{
-	B3DDelete(layout);
 }

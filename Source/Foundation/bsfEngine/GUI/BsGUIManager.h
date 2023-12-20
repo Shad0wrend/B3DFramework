@@ -124,7 +124,7 @@ namespace bs
 		void Update();
 
 		/** Queues the GUI element for destruction. Element will be destroyed during the next call to update(). */
-		void QueueForDestroy(GUIInteractable* element);
+		void QueueForDestroy(GUIElementBase* element);
 
 		/** Forces all GUI elements that are queued for destruction to be destroyed immediately. */
 		void ProcessDestroyQueue();
@@ -347,7 +347,7 @@ namespace bs
 		Vector<WidgetInfo> mWidgets;
 		SPtr<ct::GUIRenderer> mRenderer;
 
-		Stack<GUIInteractable*> mScheduledForDestruction;
+		Stack<GUIElementBase*> mScheduledForDestruction;
 
 		// Element and widget pointer is currently over
 		Vector<ElementInfoUnderPointer> mElementsUnderPointer;

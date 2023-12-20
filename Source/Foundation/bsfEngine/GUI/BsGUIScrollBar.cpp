@@ -71,9 +71,9 @@ GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleN
 
 GUIScrollBar::~GUIScrollBar()
 {
-	GUIInteractable::Destroy(mUpBtn);
-	GUIInteractable::Destroy(mDownBtn);
-	GUIInteractable::Destroy(mHandleBtn);
+	mUpBtn->Destroy();
+	mDownBtn->Destroy();
+	mHandleBtn->Destroy();
 }
 
 void GUIScrollBar::UpdateRenderElements()

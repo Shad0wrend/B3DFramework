@@ -133,7 +133,7 @@ void GUIRenderable::SetLayoutData(const GUILayoutData& data)
 
 void GUIRenderable::ChangeParentWidget(GUIWidget* widget)
 {
-	if(IsDestroyed())
+	if(IsPendingDestroy())
 		return;
 
 	const bool widgetChanged = mParentWidget != widget;

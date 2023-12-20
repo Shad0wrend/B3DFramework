@@ -94,7 +94,7 @@ bool GUIInteractable::DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& event)
 
 void GUIInteractable::ChangeParentWidget(GUIWidget* widget)
 {
-	if(IsDestroyed())
+	if(IsPendingDestroy())
 		return;
 
 	bool widgetChanged = false;
@@ -190,23 +190,17 @@ SPtr<GUIContextMenu> GUIInteractable::GetContextMenu() const
 	return nullptr;
 }
 
-void GUIInteractable::Destroy(GUIInteractable* element)
+void GUIInteractable::Destroy()
 {
-	if(element->mIsDestroyed)
+	if(mIsPendingDestroy)
 		return;
 
-	SPtr<GUINavGroup> currentNavGroup = element->GetNavigationGroup();
-	if(currentNavGroup)
-		currentNavGroup->UnregisterElement(element);
+	const SPtr<GUINavGroup> currentNavigationGroup = GetNavigationGroup();
+	if(currentNavigationGroup != nullptr)
+		currentNavigationGroup->UnregisterElement(this);
 
-	if(element->mParent != nullptr)
-		element->mParent->UnregisterChildElement(element);
-
-	element->mIsDestroyed = true;
-
-	GUIManager::Instance().QueueForDestroy(element);
+	GUIRenderable::Destroy();
 }
-
 
 RTTITypeBase* GUIInteractable::GetRttiStatic()
 {

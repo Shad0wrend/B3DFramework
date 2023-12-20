@@ -20,8 +20,8 @@ namespace bs
 	{
 	public:
 		GUILayout(const GUISizeConstraints& dimensions);
-		GUILayout();
-		virtual ~GUILayout();
+		GUILayout() = default;
+		virtual ~GUILayout() = default;
 
 		/**	Creates a new element and adds it to the layout after all existing elements. */
 		template <class Type, class... Args>
@@ -58,9 +58,6 @@ namespace bs
 
 		/**	Returns number of child elements in the layout. */
 		u32 GetNumChildren() const { return (u32)mChildren.size(); }
-
-		/**	Destroy the layout. Removes it from parent and widget, and deletes it. */
-		static void Destroy(GUILayout* layout);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

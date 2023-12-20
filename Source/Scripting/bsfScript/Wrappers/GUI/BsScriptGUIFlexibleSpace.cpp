@@ -29,7 +29,7 @@ void ScriptGUIFlexibleSpace::Destroy()
 		if(mParent != nullptr)
 			mParent->RemoveChild(this);
 
-		GUIFlexibleSpace::Destroy(mFlexibleSpace);
+		mFlexibleSpace->Destroy();
 
 		mIsDestroyed = true;
 	}

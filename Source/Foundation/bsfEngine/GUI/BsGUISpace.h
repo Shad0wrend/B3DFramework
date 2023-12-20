@@ -19,7 +19,7 @@ namespace bs
 			: mSize(size)
 		{}
 
-		~GUIFixedSpace();
+		~GUIFixedSpace() override = default;
 
 		/**	Returns the size of the space in pixels. */
 		u32 GetSize() const { return mSize; }
@@ -36,9 +36,6 @@ namespace bs
 
 		/**	Creates a new fixed space GUI element. */
 		static GUIFixedSpace* Create(u32 size);
-
-		/**	Destroys the space and removes it from its parent. */
-		static void Destroy(GUIFixedSpace* space);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -66,15 +63,11 @@ namespace bs
 	class B3D_EXPORT GUIFlexibleSpace : public GUIElementBase
 	{
 	public:
-		GUIFlexibleSpace() {}
-
-		~GUIFlexibleSpace();
+		GUIFlexibleSpace() = default;
+		~GUIFlexibleSpace() override = default;
 
 		/**	Creates a new flexible space GUI element. */
 		static GUIFlexibleSpace* Create();
-
-		/**	Destroys the space and removes it from its parent. */
-		static void Destroy(GUIFlexibleSpace* space);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

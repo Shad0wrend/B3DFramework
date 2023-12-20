@@ -57,10 +57,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 	while(GetChildCount() > 0)
 	{
 		GUIElementBase* child = GetChild(GetChildCount() - 1);
-		if(child->GetType() == Type::Element)
-			GUIInteractable::Destroy(static_cast<GUIInteractable*>(child));
-		else if(child->GetType() == Type::Layout || child->GetType() == Type::Panel)
-			GUILayout::Destroy(static_cast<GUILayout*>(child));
+		child->Destroy();
 	}
 
 	mRangeStart = start;

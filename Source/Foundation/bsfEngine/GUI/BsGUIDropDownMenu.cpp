@@ -120,9 +120,9 @@ GUIDropDownMenu::~GUIDropDownMenu()
 
 void GUIDropDownMenu::OnDestroyed()
 {
-	GUIInteractable::Destroy(mFrontHitBox);
-	GUIInteractable::Destroy(mBackHitBox);
-	GUIInteractable::Destroy(mCaptureHitBox);
+	mFrontHitBox->Destroy();
+	mBackHitBox->Destroy();
+	mCaptureHitBox->Destroy();
 	B3DDelete(mRootMenu);
 	mRootMenu = nullptr;
 
@@ -241,15 +241,13 @@ GUIDropDownMenu::DropDownSubMenu::~DropDownSubMenu()
 
 	Owner->NotifySubMenuClosed(this);
 
-	GUIInteractable::Destroy(Content);
-
-	GUIInteractable::Destroy(BackgroundFrame);
-
-	GUILayout::Destroy(BackgroundPanel);
-	GUILayout::Destroy(ContentPanel);
+	Content->Destroy();
+	BackgroundFrame->Destroy();
+	BackgroundPanel->Destroy();
+	ContentPanel->Destroy();
 
 	if(SidebarPanel != nullptr)
-		GUIPanel::Destroy(SidebarPanel);
+		SidebarPanel->Destroy();
 }
 
 Vector<GUIDropDownMenu::DropDownSubMenu::PageInfo> GUIDropDownMenu::DropDownSubMenu::GetPageInfos() const
@@ -385,7 +383,7 @@ void GUIDropDownMenu::DropDownSubMenu::UpdateGuiElements()
 	{
 		if(SidebarPanel != nullptr)
 		{
-			GUIPanel::Destroy(SidebarPanel);
+			SidebarPanel->Destroy();
 			SidebarPanel = nullptr;
 		}
 	}

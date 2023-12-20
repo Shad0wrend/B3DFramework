@@ -30,7 +30,7 @@ void ScriptGUIFixedSpace::Destroy()
 		if(mParent != nullptr)
 			mParent->RemoveChild(this);
 
-		GUIFixedSpace::Destroy(mFixedSpace);
+		mFixedSpace->Destroy();
 
 		mIsDestroyed = true;
 	}

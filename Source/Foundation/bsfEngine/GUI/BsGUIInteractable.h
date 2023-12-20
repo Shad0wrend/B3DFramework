@@ -101,11 +101,7 @@ namespace bs
 		 */
 		void SetNavigationGroupIndex(i32 index);
 
-		/**
-		 * Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be
-		 * released delayed, next frame.
-		 */
-		static void Destroy(GUIInteractable* element);
+		void Destroy() override;
 
 		/**	Triggered when the element loses or gains focus. */
 		Event<void(bool)> OnFocusChanged;
@@ -147,9 +143,6 @@ namespace bs
 		/** Gets internal element style representing the exact type of GUI element in this object. */
 		Type GetType() const override { return GUIElementBase::Type::Element; } // TODO - Deprecated
 
-		/** Checks if element has been destroyed and is queued for deletion. */
-		bool IsDestroyed() const override { return mIsDestroyed; } // TODO - Move to base class
-
 		/** Notifies the system the state flag was added or removed. */
 		virtual void NotifyStateFlagsChanged();
 
@@ -180,7 +173,6 @@ namespace bs
 		/** @} */
 
 	protected:
-		bool mIsDestroyed = false; // TODO - Move to base class
 		GUIElementOptions mOptionFlags;
 
 	private:
