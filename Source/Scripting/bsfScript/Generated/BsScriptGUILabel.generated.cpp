@@ -12,7 +12,7 @@
 namespace bs
 {
 	ScriptGUILabel::ScriptGUILabel(MonoObject* managedInstance, GUILabel* value)
-		:TScriptGUIElement(managedInstance, value)
+		:TScriptGUIInteractable(managedInstance, value)
 	{
 	}
 

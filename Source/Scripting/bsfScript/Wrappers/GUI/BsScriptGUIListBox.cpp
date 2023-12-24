@@ -22,7 +22,7 @@ using namespace bs;
 ScriptGUIListBox::OnSelectionChangedThunkDef ScriptGUIListBox::onSelectionChangedThunk;
 
 ScriptGUIListBox::ScriptGUIListBox(MonoObject* instance, GUIListBox* listBox)
-	: TScriptGUIElement(instance, listBox)
+	: TScriptGUIInteractable(instance, listBox)
 {
 }
 

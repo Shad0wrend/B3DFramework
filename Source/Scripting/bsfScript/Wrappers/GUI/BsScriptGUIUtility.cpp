@@ -27,13 +27,13 @@ void ScriptGUILayoutUtility::InitRuntimeData()
 	metaData.ScriptClass->AddInternalCall("Internal_CalculateTextBounds", (void*)&ScriptGUILayoutUtility::InternalCalculateTextBounds);
 }
 
-void ScriptGUILayoutUtility::InternalCalculateOptimalSize(ScriptGUIElementBaseTBase* guiElement, Vector2I* output)
+void ScriptGUILayoutUtility::InternalCalculateOptimalSize(ScriptGUIElementBase* guiElement, Vector2I* output)
 {
 	*output = GUIUtility::CalcOptimalSize(guiElement->GetGuiElement());
 	;
 }
 
-void ScriptGUILayoutUtility::InternalCalculateBounds(ScriptGUIElementBaseTBase* guiElement, ScriptGUILayout* relativeTo, Rect2I* output)
+void ScriptGUILayoutUtility::InternalCalculateBounds(ScriptGUIElementBase* guiElement, ScriptGUILayout* relativeTo, Rect2I* output)
 {
 	if(guiElement->IsDestroyed())
 	{

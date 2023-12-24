@@ -21,7 +21,7 @@ using namespace std::placeholders;
 
 using namespace bs;
 ScriptGUIProgressBar::ScriptGUIProgressBar(MonoObject* instance, GUIProgressBar* progressBar)
-	: TScriptGUIElement(instance, progressBar)
+	: TScriptGUIInteractable(instance, progressBar)
 {
 }
 

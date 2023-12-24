@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUIListBox. */
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIListBox : public TScriptGUIElement<ScriptGUIListBox>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIListBox : public TScriptGUIInteractable<ScriptGUIListBox>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIListBox")

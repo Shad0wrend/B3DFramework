@@ -11,7 +11,7 @@ namespace bs { class GUITexture; }
 namespace bs { struct __GUITextureContentsInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUITexture : public TScriptGUIElement<ScriptGUITexture>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUITexture : public TScriptGUIInteractable<ScriptGUITexture>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUITexture")

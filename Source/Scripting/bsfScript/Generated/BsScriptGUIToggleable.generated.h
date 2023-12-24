@@ -9,7 +9,7 @@
 namespace bs { class GUIToggleable; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggleable : public TScriptGUIElement<ScriptGUIToggleable>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggleable : public TScriptGUIInteractable<ScriptGUIToggleable>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIToggleable")
@@ -22,7 +22,7 @@ namespace bs
 		typedef void(B3D_THUNKCALL *OnToggledThunkDef) (MonoObject*, bool p0, MonoException**);
 		static OnToggledThunkDef OnToggledThunk;
 
-		static void InternalSetIsToggled(ScriptGUIElementBaseTBase* thisPtr, bool isToggled);
-		static bool InternalIsToggled(ScriptGUIElementBaseTBase* thisPtr);
+		static void InternalSetIsToggled(ScriptGUIElementBase* thisPtr, bool isToggled);
+		static bool InternalIsToggled(ScriptGUIElementBase* thisPtr);
 	};
 }

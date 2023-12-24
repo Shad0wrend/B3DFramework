@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUISliderH.  */
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISliderH : public TScriptGUIElement<ScriptGUISliderH>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISliderH : public TScriptGUIInteractable<ScriptGUISliderH>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUISliderH")
@@ -42,7 +42,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for GUISliderV. */
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISliderV : public TScriptGUIElement<ScriptGUISliderV>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISliderV : public TScriptGUIInteractable<ScriptGUISliderV>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUISliderV")

@@ -15,7 +15,7 @@ namespace bs
 	ScriptGUIClickable::OnDoubleClickThunkDef ScriptGUIClickable::OnDoubleClickThunk; 
 
 	ScriptGUIClickable::ScriptGUIClickable(MonoObject* managedInstance, GUIClickable* value)
-		:TScriptGUIElement(managedInstance, value)
+		:TScriptGUIInteractable(managedInstance, value)
 	{
 		value->OnClick.Connect(std::bind(&ScriptGUIClickable::OnClick, this));
 		value->OnHover.Connect(std::bind(&ScriptGUIClickable::OnHover, this));
@@ -52,7 +52,7 @@ namespace bs
 	{
 		MonoUtil::InvokeThunk(OnDoubleClickThunk, GetManagedInstance());
 	}
-	void ScriptGUIClickable::InternalSetContent(ScriptGUIElementBaseTBase* thisPtr, __GUIContentInterop* content)
+	void ScriptGUIClickable::InternalSetContent(ScriptGUIElementBase* thisPtr, __GUIContentInterop* content)
 	{
 		GUIContent tmpcontent;
 		tmpcontent = ScriptGUIContent::FromInterop(*content);

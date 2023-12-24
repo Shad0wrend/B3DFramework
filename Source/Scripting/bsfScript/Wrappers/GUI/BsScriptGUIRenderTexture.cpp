@@ -19,7 +19,7 @@
 
 using namespace bs;
 ScriptGUIRenderTexture::ScriptGUIRenderTexture(MonoObject* instance, GUIRenderTexture* texture)
-	: TScriptGUIElement(instance, texture)
+	: TScriptGUIInteractable(instance, texture)
 {
 }
 

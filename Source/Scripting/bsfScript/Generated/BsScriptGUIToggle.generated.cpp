@@ -12,7 +12,7 @@
 namespace bs
 {
 	ScriptGUIToggle::ScriptGUIToggle(MonoObject* managedInstance, GUIToggle* value)
-		:TScriptGUIElement(managedInstance, value)
+		:TScriptGUIInteractable(managedInstance, value)
 	{
 	}
 

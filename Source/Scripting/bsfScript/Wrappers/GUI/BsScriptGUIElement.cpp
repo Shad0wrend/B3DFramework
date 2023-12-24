@@ -15,58 +15,58 @@
 using namespace std::placeholders;
 
 using namespace bs;
-ScriptGUIElementBaseTBase::ScriptGUIElementBaseTBase(MonoObject* instance)
+ScriptGUIElementBase::ScriptGUIElementBase(MonoObject* instance)
 	: ScriptObjectBase(instance), mIsDestroyed(false), mElement(nullptr), mParent(nullptr)
 {
 	mGCHandle = MonoUtil::NewWeakGcHandle(instance);
 }
 
-void ScriptGUIElementBaseTBase::Initialize(GUIElementBase* element)
+void ScriptGUIElementBase::Initialize(GUIElementBase* element)
 {
 	mElement = element;
 
 	if(mElement != nullptr && mElement->GetType() == GUIElementBase::Type::Interactable)
 	{
 		GUIInteractable* guiElem = static_cast<GUIInteractable*>(element);
-		guiElem->OnFocusChanged.Connect(std::bind(&ScriptGUIElementBaseTBase::OnFocusChanged, this, _1));
+		guiElem->OnFocusChanged.Connect(std::bind(&ScriptGUIElementBase::OnFocusChanged, this, _1));
 	}
 }
 
-void ScriptGUIElementBaseTBase::OnFocusChanged(ScriptGUIElementBaseTBase* thisPtr, bool focus)
+void ScriptGUIElementBase::OnFocusChanged(ScriptGUIElementBase* thisPtr, bool focus)
 {
 	MonoObject* instance = MonoUtil::GetObjectFromGcHandle(thisPtr->mGCHandle);
 
 	if(focus)
-		MonoUtil::InvokeThunk(ScriptGUIElement::onFocusGainedThunk, instance);
+		MonoUtil::InvokeThunk(ScriptGUIInteractable::onFocusGainedThunk, instance);
 	else
-		MonoUtil::InvokeThunk(ScriptGUIElement::onFocusLostThunk, instance);
+		MonoUtil::InvokeThunk(ScriptGUIInteractable::onFocusLostThunk, instance);
 }
 
-MonoObject* ScriptGUIElementBaseTBase::GetManagedInstance() const
+MonoObject* ScriptGUIElementBase::GetManagedInstance() const
 {
 	return MonoUtil::GetObjectFromGcHandle(mGCHandle);
 }
 
-void ScriptGUIElementBaseTBase::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
+void ScriptGUIElementBase::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
 {
 	Destroy();
 
 	ScriptObjectBase::OnManagedInstanceDeletedInternal(assemblyRefresh);
 }
 
-void ScriptGUIElementBaseTBase::ClearManagedInstanceInternal()
+void ScriptGUIElementBase::ClearManagedInstanceInternal()
 {
 	// Need to call destroy here because we need to release any GC handles before the domain is unloaded
 
 	Destroy();
 }
 
-ScriptGUIElementTBase::ScriptGUIElementTBase(MonoObject* instance)
-	: ScriptGUIElementBaseTBase(instance)
+ScriptGUIInteractableBase::ScriptGUIInteractableBase(MonoObject* instance)
+	: ScriptGUIElementBase(instance)
 {
 }
 
-void ScriptGUIElementTBase::Destroy()
+void ScriptGUIInteractableBase::Destroy()
 {
 	if(!mIsDestroyed)
 	{
@@ -80,55 +80,55 @@ void ScriptGUIElementTBase::Destroy()
 	}
 }
 
-ScriptGUIElement::OnFocusChangedThunkDef ScriptGUIElement::onFocusGainedThunk;
-ScriptGUIElement::OnFocusChangedThunkDef ScriptGUIElement::onFocusLostThunk;
+ScriptGUIInteractable::OnFocusChangedThunkDef ScriptGUIInteractable::onFocusGainedThunk;
+ScriptGUIInteractable::OnFocusChangedThunkDef ScriptGUIInteractable::onFocusLostThunk;
 
-ScriptGUIElement::ScriptGUIElement(MonoObject* instance)
+ScriptGUIInteractable::ScriptGUIInteractable(MonoObject* instance)
 	: ScriptObject(instance)
 {
 }
 
-void ScriptGUIElement::InitRuntimeData()
+void ScriptGUIInteractable::InitRuntimeData()
 {
-	metaData.ScriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptGUIElement::InternalDestroy);
-	metaData.ScriptClass->AddInternalCall("Internal_SetVisible", (void*)&ScriptGUIElement::InternalSetVisible);
-	metaData.ScriptClass->AddInternalCall("Internal_SetActive", (void*)&ScriptGUIElement::InternalSetActive);
-	metaData.ScriptClass->AddInternalCall("Internal_SetDisabled", (void*)&ScriptGUIElement::InternalSetDisabled);
-	metaData.ScriptClass->AddInternalCall("Internal_GetVisible", (void*)&ScriptGUIElement::InternalGetVisible);
-	metaData.ScriptClass->AddInternalCall("Internal_GetActive", (void*)&ScriptGUIElement::InternalGetActive);
-	metaData.ScriptClass->AddInternalCall("Internal_GetDisabled", (void*)&ScriptGUIElement::InternalGetDisabled);
-	metaData.ScriptClass->AddInternalCall("Internal_SetFocus", (void*)&ScriptGUIElement::InternalSetFocus);
-	metaData.ScriptClass->AddInternalCall("Internal_SetFocus", (void*)&ScriptGUIElement::InternalSetFocus);
-	metaData.ScriptClass->AddInternalCall("Internal_GetBlocking", (void*)&ScriptGUIElement::InternalGetBlocking);
-	metaData.ScriptClass->AddInternalCall("Internal_SetBlocking", (void*)&ScriptGUIElement::InternalSetBlocking);
-	metaData.ScriptClass->AddInternalCall("Internal_GetAcceptsKeyFocus", (void*)&ScriptGUIElement::InternalGetAcceptsKeyFocus);
-	metaData.ScriptClass->AddInternalCall("Internal_SetAcceptsKeyFocus", (void*)&ScriptGUIElement::InternalSetAcceptsKeyFocus);
-	metaData.ScriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptGUIElement::InternalGetBounds);
-	metaData.ScriptClass->AddInternalCall("Internal_SetBounds", (void*)&ScriptGUIElement::InternalSetBounds);
-	metaData.ScriptClass->AddInternalCall("Internal_GetVisibleBounds", (void*)&ScriptGUIElement::InternalGetVisibleBounds);
-	metaData.ScriptClass->AddInternalCall("Internal_GetScreenBounds", (void*)&ScriptGUIElement::InternalGetScreenBounds);
-	metaData.ScriptClass->AddInternalCall("Internal_SetPosition", (void*)&ScriptGUIElement::InternalSetPosition);
-	metaData.ScriptClass->AddInternalCall("Internal_SetWidth", (void*)&ScriptGUIElement::InternalSetWidth);
-	metaData.ScriptClass->AddInternalCall("Internal_SetFlexibleWidth", (void*)&ScriptGUIElement::InternalSetFlexibleWidth);
-	metaData.ScriptClass->AddInternalCall("Internal_SetHeight", (void*)&ScriptGUIElement::InternalSetHeight);
-	metaData.ScriptClass->AddInternalCall("Internal_SetFlexibleHeight", (void*)&ScriptGUIElement::InternalSetFlexibleHeight);
-	metaData.ScriptClass->AddInternalCall("Internal_ResetDimensions", (void*)&ScriptGUIElement::InternalResetDimensions);
-	metaData.ScriptClass->AddInternalCall("Internal_SetContextMenu", (void*)&ScriptGUIElement::InternalSetContextMenu);
-	metaData.ScriptClass->AddInternalCall("Internal_GetStyle", (void*)&ScriptGUIElement::InternalGetStyle);
-	metaData.ScriptClass->AddInternalCall("Internal_SetStyle", (void*)&ScriptGUIElement::InternalSetStyle);
-	metaData.ScriptClass->AddInternalCall("Internal_GetParent", (void*)&ScriptGUIElement::InternalGetParent);
-	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIElement::InternalSetTint);
+	metaData.ScriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptGUIInteractable::InternalDestroy);
+	metaData.ScriptClass->AddInternalCall("Internal_SetVisible", (void*)&ScriptGUIInteractable::InternalSetVisible);
+	metaData.ScriptClass->AddInternalCall("Internal_SetActive", (void*)&ScriptGUIInteractable::InternalSetActive);
+	metaData.ScriptClass->AddInternalCall("Internal_SetDisabled", (void*)&ScriptGUIInteractable::InternalSetDisabled);
+	metaData.ScriptClass->AddInternalCall("Internal_GetVisible", (void*)&ScriptGUIInteractable::InternalGetVisible);
+	metaData.ScriptClass->AddInternalCall("Internal_GetActive", (void*)&ScriptGUIInteractable::InternalGetActive);
+	metaData.ScriptClass->AddInternalCall("Internal_GetDisabled", (void*)&ScriptGUIInteractable::InternalGetDisabled);
+	metaData.ScriptClass->AddInternalCall("Internal_SetFocus", (void*)&ScriptGUIInteractable::InternalSetFocus);
+	metaData.ScriptClass->AddInternalCall("Internal_SetFocus", (void*)&ScriptGUIInteractable::InternalSetFocus);
+	metaData.ScriptClass->AddInternalCall("Internal_GetBlocking", (void*)&ScriptGUIInteractable::InternalGetBlocking);
+	metaData.ScriptClass->AddInternalCall("Internal_SetBlocking", (void*)&ScriptGUIInteractable::InternalSetBlocking);
+	metaData.ScriptClass->AddInternalCall("Internal_GetAcceptsKeyFocus", (void*)&ScriptGUIInteractable::InternalGetAcceptsKeyFocus);
+	metaData.ScriptClass->AddInternalCall("Internal_SetAcceptsKeyFocus", (void*)&ScriptGUIInteractable::InternalSetAcceptsKeyFocus);
+	metaData.ScriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptGUIInteractable::InternalGetBounds);
+	metaData.ScriptClass->AddInternalCall("Internal_SetBounds", (void*)&ScriptGUIInteractable::InternalSetBounds);
+	metaData.ScriptClass->AddInternalCall("Internal_GetVisibleBounds", (void*)&ScriptGUIInteractable::InternalGetVisibleBounds);
+	metaData.ScriptClass->AddInternalCall("Internal_GetScreenBounds", (void*)&ScriptGUIInteractable::InternalGetScreenBounds);
+	metaData.ScriptClass->AddInternalCall("Internal_SetPosition", (void*)&ScriptGUIInteractable::InternalSetPosition);
+	metaData.ScriptClass->AddInternalCall("Internal_SetWidth", (void*)&ScriptGUIInteractable::InternalSetWidth);
+	metaData.ScriptClass->AddInternalCall("Internal_SetFlexibleWidth", (void*)&ScriptGUIInteractable::InternalSetFlexibleWidth);
+	metaData.ScriptClass->AddInternalCall("Internal_SetHeight", (void*)&ScriptGUIInteractable::InternalSetHeight);
+	metaData.ScriptClass->AddInternalCall("Internal_SetFlexibleHeight", (void*)&ScriptGUIInteractable::InternalSetFlexibleHeight);
+	metaData.ScriptClass->AddInternalCall("Internal_ResetDimensions", (void*)&ScriptGUIInteractable::InternalResetDimensions);
+	metaData.ScriptClass->AddInternalCall("Internal_SetContextMenu", (void*)&ScriptGUIInteractable::InternalSetContextMenu);
+	metaData.ScriptClass->AddInternalCall("Internal_GetStyle", (void*)&ScriptGUIInteractable::InternalGetStyle);
+	metaData.ScriptClass->AddInternalCall("Internal_SetStyle", (void*)&ScriptGUIInteractable::InternalSetStyle);
+	metaData.ScriptClass->AddInternalCall("Internal_GetParent", (void*)&ScriptGUIInteractable::InternalGetParent);
+	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIInteractable::InternalSetTint);
 
 	onFocusGainedThunk = (OnFocusChangedThunkDef)metaData.ScriptClass->GetMethod("Internal_OnFocusGained", 0)->GetThunk();
 	onFocusLostThunk = (OnFocusChangedThunkDef)metaData.ScriptClass->GetMethod("Internal_OnFocusLost", 0)->GetThunk();
 }
 
-void ScriptGUIElement::InternalDestroy(ScriptGUIElementBaseTBase* nativeInstance)
+void ScriptGUIInteractable::InternalDestroy(ScriptGUIElementBase* nativeInstance)
 {
 	nativeInstance->Destroy();
 }
 
-void ScriptGUIElement::InternalSetVisible(ScriptGUIElementBaseTBase* nativeInstance, bool visible)
+void ScriptGUIInteractable::InternalSetVisible(ScriptGUIElementBase* nativeInstance, bool visible)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -136,7 +136,7 @@ void ScriptGUIElement::InternalSetVisible(ScriptGUIElementBaseTBase* nativeInsta
 	nativeInstance->GetGuiElement()->SetVisible(visible);
 }
 
-void ScriptGUIElement::InternalSetActive(ScriptGUIElementBaseTBase* nativeInstance, bool enabled)
+void ScriptGUIInteractable::InternalSetActive(ScriptGUIElementBase* nativeInstance, bool enabled)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -144,7 +144,7 @@ void ScriptGUIElement::InternalSetActive(ScriptGUIElementBaseTBase* nativeInstan
 	nativeInstance->GetGuiElement()->SetActive(enabled);
 }
 
-void ScriptGUIElement::InternalSetDisabled(ScriptGUIElementBaseTBase* nativeInstance, bool disabled)
+void ScriptGUIInteractable::InternalSetDisabled(ScriptGUIElementBase* nativeInstance, bool disabled)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -152,7 +152,7 @@ void ScriptGUIElement::InternalSetDisabled(ScriptGUIElementBaseTBase* nativeInst
 	nativeInstance->GetGuiElement()->SetDisabled(disabled);
 }
 
-void ScriptGUIElement::InternalSetFocus(ScriptGUIElementBaseTBase* nativeInstance, bool focus)
+void ScriptGUIInteractable::InternalSetFocus(ScriptGUIElementBase* nativeInstance, bool focus)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -165,7 +165,7 @@ void ScriptGUIElement::InternalSetFocus(ScriptGUIElementBaseTBase* nativeInstanc
 	}
 }
 
-bool ScriptGUIElement::InternalGetVisible(ScriptGUIElementBaseTBase* nativeInstance)
+bool ScriptGUIInteractable::InternalGetVisible(ScriptGUIElementBase* nativeInstance)
 {
 	if(nativeInstance->IsDestroyed())
 		return false;
@@ -174,7 +174,7 @@ bool ScriptGUIElement::InternalGetVisible(ScriptGUIElementBaseTBase* nativeInsta
 	return guiElemBase->IsVisible();
 }
 
-bool ScriptGUIElement::InternalGetActive(ScriptGUIElementBaseTBase* nativeInstance)
+bool ScriptGUIInteractable::InternalGetActive(ScriptGUIElementBase* nativeInstance)
 {
 	if(nativeInstance->IsDestroyed())
 		return false;
@@ -183,7 +183,7 @@ bool ScriptGUIElement::InternalGetActive(ScriptGUIElementBaseTBase* nativeInstan
 	return guiElemBase->IsActive();
 }
 
-bool ScriptGUIElement::InternalGetDisabled(ScriptGUIElementBaseTBase* nativeInstance)
+bool ScriptGUIInteractable::InternalGetDisabled(ScriptGUIElementBase* nativeInstance)
 {
 	if(nativeInstance->IsDestroyed())
 		return false;
@@ -192,7 +192,7 @@ bool ScriptGUIElement::InternalGetDisabled(ScriptGUIElementBaseTBase* nativeInst
 	return guiElemBase->IsDisabled();
 }
 
-bool ScriptGUIElement::InternalGetBlocking(ScriptGUIElementBaseTBase* nativeInstance)
+bool ScriptGUIInteractable::InternalGetBlocking(ScriptGUIElementBase* nativeInstance)
 {
 	if(nativeInstance->IsDestroyed())
 		return false;
@@ -207,7 +207,7 @@ bool ScriptGUIElement::InternalGetBlocking(ScriptGUIElementBaseTBase* nativeInst
 	return false;
 }
 
-void ScriptGUIElement::InternalSetBlocking(ScriptGUIElementBaseTBase* nativeInstance, bool blocking)
+void ScriptGUIInteractable::InternalSetBlocking(ScriptGUIElementBase* nativeInstance, bool blocking)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -227,7 +227,7 @@ void ScriptGUIElement::InternalSetBlocking(ScriptGUIElementBaseTBase* nativeInst
 	}
 }
 
-bool ScriptGUIElement::InternalGetAcceptsKeyFocus(ScriptGUIElementBaseTBase* nativeInstance)
+bool ScriptGUIInteractable::InternalGetAcceptsKeyFocus(ScriptGUIElementBase* nativeInstance)
 {
 	if(nativeInstance->IsDestroyed())
 		return false;
@@ -242,7 +242,7 @@ bool ScriptGUIElement::InternalGetAcceptsKeyFocus(ScriptGUIElementBaseTBase* nat
 	return false;
 }
 
-void ScriptGUIElement::InternalSetAcceptsKeyFocus(ScriptGUIElementBaseTBase* nativeInstance, bool accepts)
+void ScriptGUIInteractable::InternalSetAcceptsKeyFocus(ScriptGUIElementBase* nativeInstance, bool accepts)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -262,7 +262,7 @@ void ScriptGUIElement::InternalSetAcceptsKeyFocus(ScriptGUIElementBaseTBase* nat
 	}
 }
 
-MonoObject* ScriptGUIElement::InternalGetParent(ScriptGUIElementBaseTBase* nativeInstance)
+MonoObject* ScriptGUIInteractable::InternalGetParent(ScriptGUIElementBase* nativeInstance)
 {
 	if(nativeInstance->IsDestroyed())
 		return nullptr;
@@ -273,7 +273,7 @@ MonoObject* ScriptGUIElement::InternalGetParent(ScriptGUIElementBaseTBase* nativ
 	return nullptr;
 }
 
-void ScriptGUIElement::InternalGetBounds(ScriptGUIElementBaseTBase* nativeInstance, Rect2I* bounds)
+void ScriptGUIInteractable::InternalGetBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds)
 {
 	if(nativeInstance->IsDestroyed())
 	{
@@ -284,7 +284,7 @@ void ScriptGUIElement::InternalGetBounds(ScriptGUIElementBaseTBase* nativeInstan
 	*bounds = nativeInstance->GetGuiElement()->GetBoundsRelativeTo();
 }
 
-void ScriptGUIElement::InternalSetBounds(ScriptGUIElementBaseTBase* nativeInstance, Rect2I* bounds)
+void ScriptGUIInteractable::InternalSetBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -294,7 +294,7 @@ void ScriptGUIElement::InternalSetBounds(ScriptGUIElementBaseTBase* nativeInstan
 	nativeInstance->GetGuiElement()->SetHeight(bounds->Height);
 }
 
-void ScriptGUIElement::InternalGetVisibleBounds(ScriptGUIElementBaseTBase* nativeInstance, Rect2I* bounds)
+void ScriptGUIInteractable::InternalGetVisibleBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds)
 {
 	if(nativeInstance->IsDestroyed())
 	{
@@ -305,7 +305,7 @@ void ScriptGUIElement::InternalGetVisibleBounds(ScriptGUIElementBaseTBase* nativ
 	*bounds = nativeInstance->GetGuiElement()->GetBoundsRelativeTo();
 }
 
-void ScriptGUIElement::InternalGetScreenBounds(ScriptGUIElementBaseTBase* nativeInstance, Rect2I* bounds)
+void ScriptGUIInteractable::InternalGetScreenBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds)
 {
 	if(nativeInstance->IsDestroyed())
 	{
@@ -316,7 +316,7 @@ void ScriptGUIElement::InternalGetScreenBounds(ScriptGUIElementBaseTBase* native
 	*bounds = nativeInstance->GetGuiElement()->GetScreenBounds();
 }
 
-void ScriptGUIElement::InternalSetPosition(ScriptGUIElementBaseTBase* nativeInstance, i32 x, i32 y)
+void ScriptGUIInteractable::InternalSetPosition(ScriptGUIElementBase* nativeInstance, i32 x, i32 y)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -324,7 +324,7 @@ void ScriptGUIElement::InternalSetPosition(ScriptGUIElementBaseTBase* nativeInst
 	nativeInstance->GetGuiElement()->SetPosition(x, y);
 }
 
-void ScriptGUIElement::InternalSetWidth(ScriptGUIElementBaseTBase* nativeInstance, u32 width)
+void ScriptGUIInteractable::InternalSetWidth(ScriptGUIElementBase* nativeInstance, u32 width)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -332,7 +332,7 @@ void ScriptGUIElement::InternalSetWidth(ScriptGUIElementBaseTBase* nativeInstanc
 	nativeInstance->GetGuiElement()->SetWidth(width);
 }
 
-void ScriptGUIElement::InternalSetFlexibleWidth(ScriptGUIElementBaseTBase* nativeInstance, u32 minWidth, u32 maxWidth)
+void ScriptGUIInteractable::InternalSetFlexibleWidth(ScriptGUIElementBase* nativeInstance, u32 minWidth, u32 maxWidth)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -340,7 +340,7 @@ void ScriptGUIElement::InternalSetFlexibleWidth(ScriptGUIElementBaseTBase* nativ
 	nativeInstance->GetGuiElement()->SetFlexibleWidth(minWidth, maxWidth);
 }
 
-void ScriptGUIElement::InternalSetHeight(ScriptGUIElementBaseTBase* nativeInstance, u32 height)
+void ScriptGUIInteractable::InternalSetHeight(ScriptGUIElementBase* nativeInstance, u32 height)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -348,7 +348,7 @@ void ScriptGUIElement::InternalSetHeight(ScriptGUIElementBaseTBase* nativeInstan
 	nativeInstance->GetGuiElement()->SetHeight(height);
 }
 
-void ScriptGUIElement::InternalSetFlexibleHeight(ScriptGUIElementBaseTBase* nativeInstance, u32 minHeight, u32 maxHeight)
+void ScriptGUIInteractable::InternalSetFlexibleHeight(ScriptGUIElementBase* nativeInstance, u32 minHeight, u32 maxHeight)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -356,7 +356,7 @@ void ScriptGUIElement::InternalSetFlexibleHeight(ScriptGUIElementBaseTBase* nati
 	nativeInstance->GetGuiElement()->SetFlexibleHeight(minHeight, maxHeight);
 }
 
-void ScriptGUIElement::InternalSetTint(ScriptGUIElementBaseTBase* nativeInstance, Color* tint)
+void ScriptGUIInteractable::InternalSetTint(ScriptGUIElementBase* nativeInstance, Color* tint)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -369,7 +369,7 @@ void ScriptGUIElement::InternalSetTint(ScriptGUIElementBaseTBase* nativeInstance
 	guiElement->SetTint(*tint);
 }
 
-void ScriptGUIElement::InternalResetDimensions(ScriptGUIElementBaseTBase* nativeInstance)
+void ScriptGUIInteractable::InternalResetDimensions(ScriptGUIElementBase* nativeInstance)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -377,7 +377,7 @@ void ScriptGUIElement::InternalResetDimensions(ScriptGUIElementBaseTBase* native
 	nativeInstance->GetGuiElement()->ResetDimensions();
 }
 
-void ScriptGUIElement::InternalSetContextMenu(ScriptGUIElementBaseTBase* nativeInstance, ScriptContextMenu* contextMenu)
+void ScriptGUIInteractable::InternalSetContextMenu(ScriptGUIElementBase* nativeInstance, ScriptContextMenu* contextMenu)
 {
 	if(nativeInstance->IsDestroyed())
 		return;
@@ -395,7 +395,7 @@ void ScriptGUIElement::InternalSetContextMenu(ScriptGUIElementBaseTBase* nativeI
 	}
 }
 
-MonoString* ScriptGUIElement::InternalGetStyle(ScriptGUIElementBaseTBase* nativeInstance)
+MonoString* ScriptGUIInteractable::InternalGetStyle(ScriptGUIElementBase* nativeInstance)
 {
 	if(!nativeInstance->IsDestroyed())
 	{
@@ -410,7 +410,7 @@ MonoString* ScriptGUIElement::InternalGetStyle(ScriptGUIElementBaseTBase* native
 	return MonoUtil::StringToMono(StringUtil::kBlank);
 }
 
-void ScriptGUIElement::InternalSetStyle(ScriptGUIElementBaseTBase* nativeInstance, MonoString* style)
+void ScriptGUIInteractable::InternalSetStyle(ScriptGUIElementBase* nativeInstance, MonoString* style)
 {
 	if(!nativeInstance->IsDestroyed())
 	{

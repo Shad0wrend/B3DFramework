@@ -16,7 +16,7 @@ ScriptGUIInputBox::OnChangedThunkDef ScriptGUIInputBox::onChangedThunk;
 ScriptGUIInputBox::OnConfirmedThunkDef ScriptGUIInputBox::onConfirmedThunk;
 
 ScriptGUIInputBox::ScriptGUIInputBox(MonoObject* instance, GUIInputBox* inputBox)
-	: TScriptGUIElement(instance, inputBox)
+	: TScriptGUIInteractable(instance, inputBox)
 {
 }
 

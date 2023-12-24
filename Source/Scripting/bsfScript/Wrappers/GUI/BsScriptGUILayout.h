@@ -18,7 +18,7 @@ namespace bs
 		/**	Contains information about an interop object that represents a child of the layout. */
 		struct ChildInfo
 		{
-			ScriptGUIElementBaseTBase* Element;
+			ScriptGUIElementBase* Element;
 			uint32_t GcHandle;
 		};
 
@@ -31,13 +31,13 @@ namespace bs
 		GUILayout* GetInternalValue() const { return mLayout; }
 
 		/**	Registers a new managed child GUI element and inserts it at the end of the layout. */
-		void AddChild(ScriptGUIElementBaseTBase* element);
+		void AddChild(ScriptGUIElementBase* element);
 
 		/**	Registers a new managed child GUI element and inserts it at a specific location in the layout. */
-		void InsertChild(u32 index, ScriptGUIElementBaseTBase* element);
+		void InsertChild(u32 index, ScriptGUIElementBase* element);
 
 		/**	Removes a managed GUI element from the layout. */
-		void RemoveChild(ScriptGUIElementBaseTBase* element);
+		void RemoveChild(ScriptGUIElementBase* element);
 
 		/**
 		 * @copydoc	ScriptGUIElementBaseTBase::Destroy
@@ -71,8 +71,8 @@ namespace bs
 		static void InternalCreateInstanceX(MonoObject* instance, MonoArray* guiOptions);
 		static void InternalCreateInstanceY(MonoObject* instance, MonoArray* guiOptions);
 		static void InternalCreateInstancePanel(MonoObject* instance, i16 depth, u16 depthRangeMin, u32 depthRangeMax, MonoArray* guiOptions);
-		static void InternalAddElement(ScriptGUILayout* instance, ScriptGUIElementBaseTBase* element);
-		static void InternalInsertElement(ScriptGUILayout* instance, u32 index, ScriptGUIElementBaseTBase* element);
+		static void InternalAddElement(ScriptGUILayout* instance, ScriptGUIElementBase* element);
+		static void InternalInsertElement(ScriptGUILayout* instance, u32 index, ScriptGUIElementBase* element);
 		static u32 InternalGetChildCount(ScriptGUILayout* instance);
 		static MonoObject* InternalGetChild(ScriptGUILayout* instance, u32 index);
 		static void InternalClear(ScriptGUILayout* instance);

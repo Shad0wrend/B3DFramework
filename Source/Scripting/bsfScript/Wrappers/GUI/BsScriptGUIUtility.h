@@ -26,8 +26,8 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void InternalCalculateOptimalSize(ScriptGUIElementBaseTBase* guiElement, Vector2I* output);
-		static void InternalCalculateBounds(ScriptGUIElementBaseTBase* guiElement, ScriptGUILayout* relativeTo, Rect2I* output);
+		static void InternalCalculateOptimalSize(ScriptGUIElementBase* guiElement, Vector2I* output);
+		static void InternalCalculateBounds(ScriptGUIElementBase* guiElement, ScriptGUILayout* relativeTo, Rect2I* output);
 		static void InternalCalculateTextBounds(MonoString* text, ScriptFont* fontPtr, float fontSize, Vector2I* output);
 	};
 

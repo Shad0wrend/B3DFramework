@@ -12,7 +12,7 @@
 namespace bs
 {
 	ScriptGUIButton::ScriptGUIButton(MonoObject* managedInstance, GUIButton* value)
-		:TScriptGUIElement(managedInstance, value)
+		:TScriptGUIInteractable(managedInstance, value)
 	{
 	}
 

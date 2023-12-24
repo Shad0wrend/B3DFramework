@@ -10,7 +10,7 @@ namespace bs { class GUIClickable; }
 namespace bs { struct __GUIContentInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIClickable : public TScriptGUIElement<ScriptGUIClickable>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIClickable : public TScriptGUIInteractable<ScriptGUIClickable>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIClickable")
@@ -32,6 +32,6 @@ namespace bs
 		typedef void(B3D_THUNKCALL *OnDoubleClickThunkDef) (MonoObject*, MonoException**);
 		static OnDoubleClickThunkDef OnDoubleClickThunk;
 
-		static void InternalSetContent(ScriptGUIElementBaseTBase* thisPtr, __GUIContentInterop* content);
+		static void InternalSetContent(ScriptGUIElementBase* thisPtr, __GUIContentInterop* content);
 	};
 }

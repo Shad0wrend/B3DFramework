@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUIInputBox. */
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIInputBox : public TScriptGUIElement<ScriptGUIInputBox>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIInputBox : public TScriptGUIInteractable<ScriptGUIInputBox>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUITextBox")

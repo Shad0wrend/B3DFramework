@@ -11,7 +11,7 @@ namespace bs { class GUILabel; }
 namespace bs { struct __GUIContentInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUILabel : public TScriptGUIElement<ScriptGUILabel>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUILabel : public TScriptGUIInteractable<ScriptGUILabel>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUILabel")

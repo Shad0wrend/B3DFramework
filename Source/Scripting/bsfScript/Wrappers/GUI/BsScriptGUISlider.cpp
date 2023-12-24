@@ -23,7 +23,7 @@ using namespace bs;
 ScriptGUISliderH::OnChangedThunkDef ScriptGUISliderH::onChangedThunk;
 
 ScriptGUISliderH::ScriptGUISliderH(MonoObject* instance, GUISliderHorz* slider)
-	: TScriptGUIElement(instance, slider)
+	: TScriptGUIInteractable(instance, slider)
 {
 }
 
@@ -120,7 +120,7 @@ void ScriptGUISliderH::OnChanged(float percent)
 ScriptGUISliderV::OnChangedThunkDef ScriptGUISliderV::onChangedThunk;
 
 ScriptGUISliderV::ScriptGUISliderV(MonoObject* instance, GUISliderVert* slider)
-	: TScriptGUIElement(instance, slider)
+	: TScriptGUIInteractable(instance, slider)
 {
 }
 

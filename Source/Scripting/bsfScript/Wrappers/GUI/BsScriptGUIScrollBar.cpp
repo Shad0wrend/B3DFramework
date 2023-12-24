@@ -14,7 +14,7 @@ using namespace std::placeholders;
 
 using namespace bs;
 ScriptGUIScrollBar::ScriptGUIScrollBar(MonoObject* instance)
-	: TScriptGUIElement(instance, nullptr)
+	: TScriptGUIInteractable(instance, nullptr)
 {
 }
 
@@ -26,25 +26,25 @@ void ScriptGUIScrollBar::InitRuntimeData()
 	metaData.ScriptClass->AddInternalCall("Internal_SetHandleSize", (void*)&ScriptGUIScrollBar::InternalSetHandleSize);
 }
 
-float ScriptGUIScrollBar::InternalGetPosition(ScriptGUIElementBaseTBase* nativeInstance)
+float ScriptGUIScrollBar::InternalGetPosition(ScriptGUIElementBase* nativeInstance)
 {
 	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
 	return scrollBar->GetScrollPos();
 }
 
-void ScriptGUIScrollBar::InternalSetPosition(ScriptGUIElementBaseTBase* nativeInstance, float percent)
+void ScriptGUIScrollBar::InternalSetPosition(ScriptGUIElementBase* nativeInstance, float percent)
 {
 	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
 	scrollBar->SetScrollPosInternal(percent);
 }
 
-float ScriptGUIScrollBar::InternalGetHandleSize(ScriptGUIElementBaseTBase* nativeInstance)
+float ScriptGUIScrollBar::InternalGetHandleSize(ScriptGUIElementBase* nativeInstance)
 {
 	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
 	return scrollBar->GetHandleSize();
 }
 
-void ScriptGUIScrollBar::InternalSetHandleSize(ScriptGUIElementBaseTBase* nativeInstance, float percent)
+void ScriptGUIScrollBar::InternalSetHandleSize(ScriptGUIElementBase* nativeInstance, float percent)
 {
 	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
 	scrollBar->SetHandleSize(percent);
@@ -53,7 +53,7 @@ void ScriptGUIScrollBar::InternalSetHandleSize(ScriptGUIElementBaseTBase* native
 ScriptGUIScrollBarH::OnScrolledThunkDef ScriptGUIScrollBarH::onScrolledThunk;
 
 ScriptGUIScrollBarH::ScriptGUIScrollBarH(MonoObject* instance, GUIScrollBarHorz* scrollBar)
-	: TScriptGUIElement(instance, scrollBar)
+	: TScriptGUIInteractable(instance, scrollBar)
 {
 }
 
@@ -87,7 +87,7 @@ void ScriptGUIScrollBarH::OnScroll(float position, float size)
 ScriptGUIScrollBarV::OnScrolledThunkDef ScriptGUIScrollBarV::onScrolledThunk;
 
 ScriptGUIScrollBarV::ScriptGUIScrollBarV(MonoObject* instance, GUIScrollBarVert* scrollBar)
-	: TScriptGUIElement(instance, scrollBar)
+	: TScriptGUIInteractable(instance, scrollBar)
 {
 }
 
@@ -121,7 +121,7 @@ void ScriptGUIScrollBarV::OnScroll(float position, float size)
 ScriptGUIResizeableScrollBarH::OnScrollOrResizeThunkDef ScriptGUIResizeableScrollBarH::onScrollOrResizeThunk;
 
 ScriptGUIResizeableScrollBarH::ScriptGUIResizeableScrollBarH(MonoObject* instance, GUIScrollBarHorz* scrollBar)
-	: TScriptGUIElement(instance, scrollBar)
+	: TScriptGUIInteractable(instance, scrollBar)
 {
 }
 
@@ -155,7 +155,7 @@ void ScriptGUIResizeableScrollBarH::OnScroll(float position, float size)
 ScriptGUIResizeableScrollBarV::OnScrollOrResizeThunkDef ScriptGUIResizeableScrollBarV::onScrollOrResizeThunk;
 
 ScriptGUIResizeableScrollBarV::ScriptGUIResizeableScrollBarV(MonoObject* instance, GUIScrollBarVert* scrollBar)
-	: TScriptGUIElement(instance, scrollBar)
+	: TScriptGUIInteractable(instance, scrollBar)
 {
 }
 

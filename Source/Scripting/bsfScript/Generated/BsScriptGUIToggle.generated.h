@@ -12,7 +12,7 @@ namespace bs { class GUIToggle; }
 namespace bs { struct __GUIToggleContentInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggle : public TScriptGUIElement<ScriptGUIToggle>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggle : public TScriptGUIInteractable<ScriptGUIToggle>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIToggle")

@@ -16,7 +16,7 @@
 
 using namespace bs;
 ScriptGUIScrollArea::ScriptGUIScrollArea(MonoObject* instance, GUIScrollArea* scrollArea)
-	: TScriptGUIElement(instance, scrollArea), mLayout(nullptr)
+	: TScriptGUIInteractable(instance, scrollArea), mLayout(nullptr)
 {
 }
 

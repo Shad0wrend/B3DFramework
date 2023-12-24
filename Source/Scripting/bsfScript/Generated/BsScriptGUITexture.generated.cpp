@@ -15,7 +15,7 @@
 namespace bs
 {
 	ScriptGUITexture::ScriptGUITexture(MonoObject* managedInstance, GUITexture* value)
-		:TScriptGUIElement(managedInstance, value)
+		:TScriptGUIInteractable(managedInstance, value)
 	{
 	}
 

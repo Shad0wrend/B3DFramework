@@ -12,7 +12,7 @@
 
 using namespace bs;
 ScriptGUICanvas::ScriptGUICanvas(MonoObject* instance, GUICanvas* canvas)
-	: TScriptGUIElement(instance, canvas)
+	: TScriptGUIInteractable(instance, canvas)
 {
 }
 

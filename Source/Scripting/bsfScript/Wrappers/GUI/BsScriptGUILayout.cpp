@@ -52,7 +52,7 @@ void ScriptGUILayout::Destroy()
 	}
 }
 
-void ScriptGUILayout::AddChild(ScriptGUIElementBaseTBase* element)
+void ScriptGUILayout::AddChild(ScriptGUIElementBase* element)
 {
 	ChildInfo childInfo;
 
@@ -62,7 +62,7 @@ void ScriptGUILayout::AddChild(ScriptGUIElementBaseTBase* element)
 	mChildren.push_back(childInfo);
 }
 
-void ScriptGUILayout::InsertChild(u32 idx, ScriptGUIElementBaseTBase* element)
+void ScriptGUILayout::InsertChild(u32 idx, ScriptGUIElementBase* element)
 {
 	ChildInfo childInfo;
 
@@ -72,7 +72,7 @@ void ScriptGUILayout::InsertChild(u32 idx, ScriptGUIElementBaseTBase* element)
 	mChildren.insert(mChildren.begin() + idx, childInfo);
 }
 
-void ScriptGUILayout::RemoveChild(ScriptGUIElementBaseTBase* element)
+void ScriptGUILayout::RemoveChild(ScriptGUIElementBase* element)
 {
 	auto iterFind = std::find_if(mChildren.begin(), mChildren.end(), [&](const ChildInfo& x)
 								 { return x.Element == element; });
@@ -144,7 +144,7 @@ void ScriptGUILayout::InternalCreateInstanceYFromScrollArea(MonoObject* instance
 	scriptScrollArea->Initialize(nativeInstance);
 }
 
-void ScriptGUILayout::InternalAddElement(ScriptGUILayout* instance, ScriptGUIElementBaseTBase* element)
+void ScriptGUILayout::InternalAddElement(ScriptGUILayout* instance, ScriptGUIElementBase* element)
 {
 	if(instance->IsDestroyed() || element->IsDestroyed())
 		return;
@@ -158,7 +158,7 @@ void ScriptGUILayout::InternalAddElement(ScriptGUILayout* instance, ScriptGUIEle
 	instance->AddChild(element);
 }
 
-void ScriptGUILayout::InternalInsertElement(ScriptGUILayout* instance, u32 index, ScriptGUIElementBaseTBase* element)
+void ScriptGUILayout::InternalInsertElement(ScriptGUILayout* instance, u32 index, ScriptGUIElementBase* element)
 {
 	if(instance->IsDestroyed() || element->IsDestroyed())
 		return;
