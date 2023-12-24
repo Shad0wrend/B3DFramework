@@ -46,7 +46,7 @@ namespace bs
 	 * Represents a GUI element that can be rendered (i.e. has a visual representation). Renderable element can have a particular style, and provides
 	 * one or multiple render elements to be drawn.
 	 */
-	class B3D_EXPORT GUIRenderable : public GUIElementBase
+	class B3D_EXPORT GUIRenderable : public GUIElement
 	{
 	public:
 		GUIRenderable(String styleClass, const GUISizeConstraints& sizeConstraints);

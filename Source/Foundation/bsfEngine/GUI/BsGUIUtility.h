@@ -20,7 +20,7 @@ namespace bs
 		 * Calculates optimal size of a GUI element. This is the size that allows the GUI element to properly display all of
 		 * its content.
 		 */
-		static Vector2I CalcOptimalSize(const GUIElementBase* elem);
+		static Vector2I CalcOptimalSize(const GUIElement* elem);
 
 		/**
 		 * Calculates the size of elements in a layout of the specified size.

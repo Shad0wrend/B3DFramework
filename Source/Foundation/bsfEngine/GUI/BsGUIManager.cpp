@@ -1280,7 +1280,7 @@ void GUIManager::HideTooltip()
 	mShowTooltip = false;
 }
 
-void GUIManager::QueueForDestroy(GUIElementBase* element)
+void GUIManager::QueueForDestroy(GUIElement* element)
 {
 	mScheduledForDestruction.push(element);
 }
@@ -1302,8 +1302,8 @@ void GUIManager::SetFocus(GUIInteractable* element, bool focus, bool clear)
 
 bool GUIManager::ProcessDestroyQueueIteration()
 {
-	Stack<GUIElementBase*> toDestroy = mScheduledForDestruction;
-	mScheduledForDestruction = Stack<GUIElementBase*>();
+	Stack<GUIElement*> toDestroy = mScheduledForDestruction;
+	mScheduledForDestruction = Stack<GUIElement*>();
 
 	while(!toDestroy.empty())
 	{

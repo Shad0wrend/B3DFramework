@@ -43,7 +43,7 @@ void ScriptContextMenu::InternalCreateInstance(MonoObject* instance)
 
 void ScriptContextMenu::InternalOpen(ScriptContextMenu* instance, Vector2I* position, ScriptGUILayout* layoutPtr)
 {
-	GUIElementBase* layout = layoutPtr->GetGuiElement();
+	GUIElement* layout = layoutPtr->GetGuiElement();
 
 	GUIWidget* widget = layout->GetParentWidget();
 	if(widget == nullptr)

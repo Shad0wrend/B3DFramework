@@ -16,7 +16,7 @@ namespace bs
 	 * Base class for layout GUI element. Layout element positions and sizes any child elements according to element styles
 	 * and layout options.
 	 */
-	class B3D_EXPORT GUILayout : public GUIElementBase
+	class B3D_EXPORT GUILayout : public GUIElement
 	{
 	public:
 		GUILayout(const GUISizeConstraints& dimensions);
@@ -42,16 +42,16 @@ namespace bs
 		}
 
 		/**	Adds a new element to the layout after all existing elements. */
-		void AddElement(GUIElementBase* element);
+		void AddElement(GUIElement* element);
 
 		/**	Removes the specified element from the layout. */
-		void RemoveElement(GUIElementBase* element);
+		void RemoveElement(GUIElement* element);
 
 		/**	Removes a child element at the specified index. */
 		void RemoveElementAt(u32 idx);
 
 		/**	Inserts a GUI element before the element at the specified index. */
-		void InsertElement(u32 idx, GUIElementBase* element);
+		void InsertElement(u32 idx, GUIElement* element);
 
 		/** Removes all child elements and destroys them. */
 		void Clear();
@@ -76,7 +76,7 @@ namespace bs
 		const Vector<GUIConstrainedSize>& GetChildrenConstrainedSizes() const { return mChildrenConstrainedSizes; }
 
 		Vector2I CalculateUnconstrainedOptimalSize() const override { return mConstrainedSize.Optimal; }
-		Type GetType() const override { return GUIElementBase::Type::Layout; }
+		Type GetType() const override { return GUIElement::Type::Layout; }
 
 		/** @} */
 

@@ -70,7 +70,7 @@ GUIConstrainedSize GUIScrollArea::GetConstrainedSize() const
 void GUIScrollArea::UpdateOptimalLayoutSizes()
 {
 	// Update all children first, otherwise we can't determine our own optimal size
-	GUIElementBase::UpdateOptimalLayoutSizes();
+	GUIElement::UpdateOptimalLayoutSizes();
 
 	if(mChildren.size() != mChildSizeRanges.size())
 		mChildSizeRanges.resize(mChildren.size());
@@ -239,7 +239,7 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 	u32 vertScrollIdx = 0;
 	for(u32 i = 0; i < numElements; i++)
 	{
-		GUIElementBase* child = GetChild(i);
+		GUIElement* child = GetChild(i);
 
 		if(child == mContentLayout)
 			layoutIdx = i;

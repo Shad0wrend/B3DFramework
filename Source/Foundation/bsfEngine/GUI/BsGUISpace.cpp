@@ -13,7 +13,7 @@ using namespace bs;
 
 namespace bs
 {
-	class B3D_EXPORT GUIFixedSpaceRTTI : public RTTIType<GUIFixedSpace, GUIElementBase, GUIFixedSpaceRTTI>
+	class B3D_EXPORT GUIFixedSpaceRTTI : public RTTIType<GUIFixedSpace, GUIElement, GUIFixedSpaceRTTI>
 	{
 	public:
 		const String& GetRttiName()
@@ -27,7 +27,7 @@ namespace bs
 		SPtr<IReflectable> NewRttiObject() { return nullptr; }
 	};
 
-	class B3D_EXPORT GUIFlexibleSpaceRTTI : public RTTIType<GUIFlexibleSpace, GUIElementBase, GUIFlexibleSpaceRTTI>
+	class B3D_EXPORT GUIFlexibleSpaceRTTI : public RTTIType<GUIFlexibleSpace, GUIElement, GUIFlexibleSpaceRTTI>
 	{
 	public:
 		const String& GetRttiName()

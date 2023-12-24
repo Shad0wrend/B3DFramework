@@ -24,7 +24,7 @@ GUIConstrainedSize GUILayoutX::CalculateConstrainedSize() const
 
 		GUIConstrainedSize sizeRange = child->CalculateConstrainedSize();
 
-		if(child->GetType() == GUIElementBase::Type::FixedSpace)
+		if(child->GetType() == GUIElement::Type::FixedSpace)
 			sizeRange.Optimal.Y = sizeRange.Min.Y = 0;
 
 		u32 marginsX = child->GetMargins().Left + child->GetMargins().Right;
@@ -47,7 +47,7 @@ GUIConstrainedSize GUILayoutX::CalculateConstrainedSize() const
 void GUILayoutX::UpdateOptimalLayoutSizes()
 {
 	// Update all children first, otherwise we can't determine our own optimal size
-	GUIElementBase::UpdateOptimalLayoutSizes();
+	GUIElement::UpdateOptimalLayoutSizes();
 
 	if(mChildren.size() != mChildrenConstrainedSizes.size())
 		mChildrenConstrainedSizes.resize(mChildren.size());
@@ -63,7 +63,7 @@ void GUILayoutX::UpdateOptimalLayoutSizes()
 		if(child->IsActive())
 		{
 			childSizeRange = child->GetConstrainedSize();
-			if(child->GetType() == GUIElementBase::Type::FixedSpace)
+			if(child->GetType() == GUIElement::Type::FixedSpace)
 			{
 				childSizeRange.Optimal.Y = 0;
 				childSizeRange.Min.Y = 0;
@@ -116,11 +116,11 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 	{
 		elementAreas[childIdx].Width = sizeRanges[childIdx].Optimal.X;
 
-		if(child->GetType() == GUIElementBase::Type::FixedSpace)
+		if(child->GetType() == GUIElement::Type::FixedSpace)
 		{
 			processedElements[childIdx] = true;
 		}
-		else if(child->GetType() == GUIElementBase::Type::FlexibleSpace)
+		else if(child->GetType() == GUIElement::Type::FlexibleSpace)
 		{
 			if(child->IsActive())
 			{
@@ -175,7 +175,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 				u32 elementWidth = elementAreas[childIdx].Width + extraWidth;
 
 				// Clamp if needed
-				if(child->GetType() == GUIElementBase::Type::FlexibleSpace)
+				if(child->GetType() == GUIElement::Type::FlexibleSpace)
 				{
 					processedElements[childIdx] = true;
 					numNonClampedElements--;
@@ -238,14 +238,14 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 				// Clamp if needed
 				switch(child->GetType())
 				{
-				case GUIElementBase::Type::FlexibleSpace:
+				case GUIElement::Type::FlexibleSpace:
 					elementAreas[childIdx].Width = 0;
 					processedElements[childIdx] = true;
 					numNonClampedElements--;
 					break;
-				case GUIElementBase::Type::Interactable:
-				case GUIElementBase::Type::Layout:
-				case GUIElementBase::Type::Panel:
+				case GUIElement::Type::Interactable:
+				case GUIElement::Type::Layout:
+				case GUIElement::Type::Panel:
 					{
 						const GUIConstrainedSize& childSizeRange = sizeRanges[childIdx];
 
@@ -267,7 +267,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 						remainingSize = (u32)std::max(0, (i32)remainingSize - (i32)extraWidth);
 					}
 					break;
-				case GUIElementBase::Type::FixedSpace:
+				case GUIElement::Type::FixedSpace:
 					break;
 				}
 
@@ -302,13 +302,13 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 				// Clamp if needed
 				switch(child->GetType())
 				{
-				case GUIElementBase::Type::FlexibleSpace:
+				case GUIElement::Type::FlexibleSpace:
 					processedElements[childIdx] = true;
 					numNonClampedElements--;
 					break;
-				case GUIElementBase::Type::Interactable:
-				case GUIElementBase::Type::Layout:
-				case GUIElementBase::Type::Panel:
+				case GUIElement::Type::Interactable:
+				case GUIElement::Type::Layout:
+				case GUIElement::Type::Panel:
 					{
 						const GUIConstrainedSize& childSizeRange = sizeRanges[childIdx];
 
@@ -330,7 +330,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 						remainingSize = (u32)std::max(0, (i32)remainingSize - (i32)extraWidth);
 					}
 					break;
-				case GUIElementBase::Type::FixedSpace:
+				case GUIElement::Type::FixedSpace:
 					break;
 				}
 
@@ -362,7 +362,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 		}
 		elementAreas[childIdx].Height = elemHeight;
 
-		if(child->GetType() == GUIElementBase::Type::Interactable)
+		if(child->GetType() == GUIElement::Type::Interactable)
 		{
 			GUIInteractable* element = static_cast<GUIInteractable*>(child);
 

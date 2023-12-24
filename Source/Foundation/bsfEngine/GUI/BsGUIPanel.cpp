@@ -60,7 +60,7 @@ GUIConstrainedSize GUIPanel::CalculateConstrainedSize() const
 
 		GUIConstrainedSize sizeRange = child->CalculateConstrainedSize();
 
-		if(child->GetType() == GUIElementBase::Type::FixedSpace || child->GetType() == GUIElementBase::Type::FlexibleSpace)
+		if(child->GetType() == GUIElement::Type::FixedSpace || child->GetType() == GUIElement::Type::FlexibleSpace)
 		{
 			sizeRange.Optimal.X = sizeRange.Optimal.Y = 0;
 			sizeRange.Min.X = sizeRange.Min.Y = 0;
@@ -90,9 +90,9 @@ GUIConstrainedSize GUIPanel::CalculateConstrainedSize() const
 	return sizeRange;
 }
 
-GUIConstrainedSize GUIPanel::GetElementSizeRangeInternal(const GUIElementBase* element) const
+GUIConstrainedSize GUIPanel::GetElementSizeRangeInternal(const GUIElement* element) const
 {
-	if(element->GetType() == GUIElementBase::Type::FixedSpace || element->GetType() == GUIElementBase::Type::FlexibleSpace)
+	if(element->GetType() == GUIElement::Type::FixedSpace || element->GetType() == GUIElement::Type::FlexibleSpace)
 	{
 		GUIConstrainedSize sizeRange = element->GetConstrainedSize();
 		sizeRange.Optimal.X = 0;
@@ -109,7 +109,7 @@ GUIConstrainedSize GUIPanel::GetElementSizeRangeInternal(const GUIElementBase* e
 void GUIPanel::UpdateOptimalLayoutSizes()
 {
 	// Update all children first, otherwise we can't determine our own optimal size
-	GUIElementBase::UpdateOptimalLayoutSizes();
+	GUIElement::UpdateOptimalLayoutSizes();
 
 	if(mChildren.size() != mChildrenConstrainedSizes.size())
 		mChildrenConstrainedSizes.resize(mChildren.size());
@@ -167,7 +167,7 @@ void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementArea
 	}
 }
 
-Rect2I GUIPanel::GetElementAreaInternal(const Rect2I& layoutArea, const GUIElementBase* element, const GUIConstrainedSize& sizeRange) const
+Rect2I GUIPanel::GetElementAreaInternal(const Rect2I& layoutArea, const GUIElement* element, const GUIConstrainedSize& sizeRange) const
 {
 	const GUISizeConstraints& dimensions = element->GetSizeConstraints();
 
@@ -276,7 +276,7 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 		B3DStackFree(elementAreas);
 }
 
-void GUIPanel::UpdateChildLayoutInternal(GUIElementBase* element, const GUILayoutData& data)
+void GUIPanel::UpdateChildLayoutInternal(GUIElement* element, const GUILayoutData& data)
 {
 	GUILayoutData childData = data;
 

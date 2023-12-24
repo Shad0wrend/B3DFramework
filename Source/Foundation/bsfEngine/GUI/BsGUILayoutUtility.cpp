@@ -6,7 +6,7 @@
 
 using namespace bs;
 
-Vector2I GUIUtility::CalcOptimalSize(const GUIElementBase* elem)
+Vector2I GUIUtility::CalcOptimalSize(const GUIElement* elem)
 {
 	return elem->CalculateConstrainedSize().Optimal;
 }
@@ -36,16 +36,16 @@ Vector2I GUIUtility::CalcActualSizeInternal(u32 width, u32 height, GUILayout* la
 	Rect2I* actualAreas = elementAreas; // We re-use the same array
 	for(u32 i = 0; i < numElements; i++)
 	{
-		GUIElementBase* child = layout->GetChild(i);
+		GUIElement* child = layout->GetChild(i);
 		Rect2I childArea = elementAreas[i];
 
-		if(child->GetType() == GUIElementBase::Type::Layout || child->GetType() == GUIElementBase::Type::Panel)
+		if(child->GetType() == GUIElement::Type::Layout || child->GetType() == GUIElement::Type::Panel)
 		{
 			Vector2I childActualSize = CalcActualSizeInternal(childArea.Width, childArea.Height, static_cast<GUILayout*>(child));
 			actualAreas[i].Width = (u32)childActualSize.X;
 			actualAreas[i].Height = (u32)childActualSize.Y;
 		}
-		else if(child->GetType() == GUIElementBase::Type::Interactable)
+		else if(child->GetType() == GUIElement::Type::Interactable)
 		{
 			RectOffset padding = child->GetMargins();
 

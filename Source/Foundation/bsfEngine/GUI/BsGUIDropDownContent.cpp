@@ -56,7 +56,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 	// Remove all elements
 	while(GetChildCount() > 0)
 	{
-		GUIElementBase* child = GetChild(GetChildCount() - 1);
+		GUIElement* child = GetChild(GetChildCount() - 1);
 		child->Destroy();
 	}
 

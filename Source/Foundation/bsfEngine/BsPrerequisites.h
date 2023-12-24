@@ -134,7 +134,7 @@ namespace bs
 	class CGUIWidget;
 	class GUIManager;
 	class GUIWidget;
-	class GUIElementBase;
+	class GUIElement;
 	class GUIInteractable;
 	class GUILabel;
 	class GUIClickable;

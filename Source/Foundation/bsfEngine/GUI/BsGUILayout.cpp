@@ -13,7 +13,7 @@ using namespace bs;
 
 namespace bs
 {
-	class B3D_EXPORT GUILayoutRTTI : public RTTIType<GUILayout, GUIElementBase, GUILayoutRTTI>
+	class B3D_EXPORT GUILayoutRTTI : public RTTIType<GUILayout, GUIElement, GUILayoutRTTI>
 	{
 	public:
 		const String& GetRttiName()
@@ -32,21 +32,21 @@ namespace bs
 /** @endcond */
 
 GUILayout::GUILayout(const GUISizeConstraints& dimensions)
-	: GUIElementBase(dimensions)
+	: GUIElement(dimensions)
 {}
 
-void GUILayout::AddElement(GUIElementBase* element)
+void GUILayout::AddElement(GUIElement* element)
 {
 	if(!element->IsPendingDestroy())
 		RegisterChildElement(element);
 }
 
-void GUILayout::RemoveElement(GUIElementBase* element)
+void GUILayout::RemoveElement(GUIElement* element)
 {
 	UnregisterChildElement(element);
 }
 
-void GUILayout::InsertElement(u32 idx, GUIElementBase* element)
+void GUILayout::InsertElement(u32 idx, GUIElement* element)
 {
 	if(idx > (u32)mChildren.size())
 		B3D_EXCEPT(InvalidParametersException, "Index out of range: " + ToString(idx) + ". Valid range: 0 .. " + ToString((u32)mChildren.size()));
@@ -54,7 +54,7 @@ void GUILayout::InsertElement(u32 idx, GUIElementBase* element)
 	if(element->IsPendingDestroy())
 		return;
 
-	GUIElementBase* parentElement = element->GetParent();
+	GUIElement* parentElement = element->GetParent();
 	if(parentElement != nullptr)
 	{
 		parentElement->UnregisterChildElement(element);
@@ -80,7 +80,7 @@ void GUILayout::RemoveElementAt(u32 idx)
 	if(idx >= (u32)mChildren.size())
 		B3D_EXCEPT(InvalidParametersException, "Index out of range: " + ToString(idx) + ". Valid range: 0 .. " + ToString((u32)mChildren.size()));
 
-	GUIElementBase* child = mChildren[idx];
+	GUIElement* child = mChildren[idx];
 	mChildren.erase(mChildren.begin() + idx);
 
 	child->SetParent(nullptr);

@@ -173,17 +173,17 @@ void GUIWidget::UpdateLayoutInternal()
 	B3DMarkAllocatorFrame();
 
 	// Determine dirty contents and layouts
-	FrameStack<GUIElementBase*> todo;
+	FrameStack<GUIElement*> todo;
 	todo.push(mPanel);
 
 	while(!todo.empty())
 	{
-		GUIElementBase* currentElem = todo.top();
+		GUIElement* currentElem = todo.top();
 		todo.pop();
 
 		if(currentElem->IsDirty())
 		{
-			GUIElementBase* updateParent = currentElem->GetUpdateParent();
+			GUIElement* updateParent = currentElem->GetUpdateParent();
 			B3D_ASSERT(updateParent != nullptr || currentElem == mPanel);
 
 			if(updateParent != nullptr)
@@ -202,12 +202,12 @@ void GUIWidget::UpdateLayoutInternal()
 	B3DClearAllocatorFrame();
 }
 
-void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
+void GUIWidget::UpdateLayoutInternal(GUIElement* elem)
 {
-	GUIElementBase* parent = elem->GetParent();
-	bool isPanelOptimized = parent != nullptr && parent->GetType() == GUIElementBase::Type::Panel;
+	GUIElement* parent = elem->GetParent();
+	bool isPanelOptimized = parent != nullptr && parent->GetType() == GUIElement::Type::Panel;
 
-	GUIElementBase* updateParent = nullptr;
+	GUIElement* updateParent = nullptr;
 
 	if(isPanelOptimized)
 		updateParent = parent;
@@ -220,7 +220,7 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 	{
 		GUIPanel* panel = static_cast<GUIPanel*>(updateParent);
 
-		GUIElementBase* dirtyElement = elem;
+		GUIElement* dirtyElement = elem;
 		dirtyElement->UpdateOptimalLayoutSizes();
 
 		GUIConstrainedSize elementSizeRange = panel->GetElementSizeRangeInternal(dirtyElement);
@@ -241,12 +241,12 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 	// Mark dirty contents
 	B3DMarkAllocatorFrame();
 	{
-		FrameStack<GUIElementBase*> todo;
+		FrameStack<GUIElement*> todo;
 		todo.push(elem);
 
 		while(!todo.empty())
 		{
-			GUIElementBase* currentElem = todo.top();
+			GUIElement* currentElem = todo.top();
 			todo.pop();
 
 			MarkContentDirty(currentElem);
@@ -260,7 +260,7 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 	B3DClearAllocatorFrame();
 }
 
-void GUIWidget::RegisterElement(GUIElementBase* guiElement)
+void GUIWidget::RegisterElement(GUIElement* guiElement)
 {
 	B3D_ASSERT(guiElement != nullptr && !guiElement->IsPendingDestroy());
 
@@ -277,7 +277,7 @@ void GUIWidget::RegisterElement(GUIElementBase* guiElement)
 	}
 }
 
-void GUIWidget::UnregisterElement(GUIElementBase* guiElement)
+void GUIWidget::UnregisterElement(GUIElement* guiElement)
 {
 	B3D_ASSERT(guiElement != nullptr);
 
@@ -296,7 +296,7 @@ void GUIWidget::UnregisterElement(GUIElementBase* guiElement)
 	}
 }
 
-void GUIWidget::NotifyElementVisibilityChanged(GUIElementBase* guiElement, bool isVisible)
+void GUIWidget::NotifyElementVisibilityChanged(GUIElement* guiElement, bool isVisible)
 {
 	if(GUIRenderable* const renderable = B3DRTTICast<GUIRenderable>(guiElement))
 	{
@@ -307,7 +307,7 @@ void GUIWidget::NotifyElementVisibilityChanged(GUIElementBase* guiElement, bool 
 	}
 }
 
-void GUIWidget::MarkMeshDirty(GUIElementBase* elem)
+void GUIWidget::MarkMeshDirty(GUIElement* elem)
 {
 	mWidgetIsDirty = true;
 
@@ -315,7 +315,7 @@ void GUIWidget::MarkMeshDirty(GUIElementBase* elem)
 		mBatches.MarkMeshDirty(renderable);
 }
 
-void GUIWidget::MarkContentDirty(GUIElementBase* elem)
+void GUIWidget::MarkContentDirty(GUIElement* elem)
 {
 	if(GUIRenderable *const renderable = B3DRTTICast<GUIRenderable>(elem))
 	{

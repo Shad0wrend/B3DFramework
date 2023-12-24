@@ -67,7 +67,7 @@ namespace bs
 
 	protected:
 		friend class SceneObject;
-		friend class GUIElementBase;
+		friend class GUIElement;
 		friend class GUIManager;
 
 		/**

@@ -113,16 +113,16 @@ namespace bs
 		 */
 
 		/** Registers a new element as a child of the widget. */
-		void RegisterElement(GUIElementBase* guiElement);
+		void RegisterElement(GUIElement* guiElement);
 
 		/**
 		 * Unregisters an element from the widget. Usually called when the element is destroyed, or reparented to another
 		 * widget.
 		 */
-		void UnregisterElement(GUIElementBase* guiElementBase);
+		void UnregisterElement(GUIElement* guiElementBase);
 
 		/** Called when a registered GUI element is hidden or made visible. Only needs to be called if visibility changes after registration. */
-		void NotifyElementVisibilityChanged(GUIElementBase* guiElement, bool isVisible);
+		void NotifyElementVisibilityChanged(GUIElement* guiElement, bool isVisible);
 
 		/**
 		 * Returns the default navigation group assigned to all elements of this widget that don't have an explicit nav-
@@ -133,19 +133,19 @@ namespace bs
 		/**
 		 * Marks the widget mesh dirty requiring a mesh rebuild. Provided element is the one that requested the mesh update.
 		 */
-		void MarkMeshDirty(GUIElementBase* elem);
+		void MarkMeshDirty(GUIElement* elem);
 
 		/**
 		 * Marks the elements content as dirty, meaning its internal mesh will need to be rebuilt (this implies the entire
 		 * widget mesh will be rebuilt as well).
 		 */
-		void MarkContentDirty(GUIElementBase* elem);
+		void MarkContentDirty(GUIElement* elem);
 
 		/**	Updates the layout of all child elements, repositioning and resizing them as needed. */
 		void UpdateLayoutInternal();
 
 		/**	Updates the layout of the provided element, and queues content updates. */
-		void UpdateLayoutInternal(GUIElementBase* elem);
+		void UpdateLayoutInternal(GUIElement* elem);
 
 		/**
 		 * Updates internal transform values from the specified scene object, in case that scene object's transform changed
@@ -168,7 +168,7 @@ namespace bs
 
 	protected:
 		friend class SceneObject;
-		friend class GUIElementBase;
+		friend class GUIElement;
 		friend class GUIManager;
 		friend class CGUIWidget;
 

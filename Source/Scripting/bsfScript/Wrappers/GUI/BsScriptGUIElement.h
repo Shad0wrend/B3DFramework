@@ -25,7 +25,7 @@ namespace bs
 		MonoObject* GetManagedInstance() const;
 
 		/**	Returns the underlying GUIElementBase wrapped by this object. */
-		GUIElementBase* GetGuiElement() const { return (GUIElementBase*)mElement; }
+		GUIElement* GetGuiElement() const { return (GUIElement*)mElement; }
 
 		/**	Destroys the underlying GUIElementBase. */
 		virtual void Destroy() = 0;
@@ -44,7 +44,7 @@ namespace bs
 		 * Initializes the interop object with a previously initialized GUI element. You must call this before using this
 		 * object.
 		 */
-		void Initialize(GUIElementBase* element);
+		void Initialize(GUIElement* element);
 
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
 		void ClearManagedInstanceInternal() override;
@@ -53,7 +53,7 @@ namespace bs
 		static void OnFocusChanged(ScriptGUIElementBase* thisPtr, bool focus);
 
 		bool mIsDestroyed = false;
-		GUIElementBase* mElement = nullptr;
+		GUIElement* mElement = nullptr;
 		ScriptGUILayout* mParent = nullptr;
 		u32 mGCHandle = 0;
 	};
@@ -69,7 +69,7 @@ namespace bs
 		virtual ~TScriptGUIElementBase() {}
 
 	protected:
-		TScriptGUIElementBase(MonoObject* instance, GUIElementBase* element)
+		TScriptGUIElementBase(MonoObject* instance, GUIElement* element)
 			: ScriptObject<Type, ScriptGUIElementBase>(instance)
 		{
 			this->Initialize(element);
@@ -98,7 +98,7 @@ namespace bs
 		virtual ~TScriptGUIInteractable() {}
 
 	protected:
-		TScriptGUIInteractable(MonoObject* instance, GUIElementBase* element)
+		TScriptGUIInteractable(MonoObject* instance, GUIElement* element)
 			: ScriptObject<Type, ScriptGUIInteractableBase>(instance)
 		{
 			this->Initialize(element);

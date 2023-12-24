@@ -17,7 +17,7 @@ using namespace bs;
 
 namespace bs
 {
-	class B3D_EXPORT GUIRenderableRTTI : public RTTIType<GUIRenderable, GUIElementBase, GUIRenderableRTTI>
+	class B3D_EXPORT GUIRenderableRTTI : public RTTIType<GUIRenderable, GUIElement, GUIRenderableRTTI>
 	{
 	public:
 		const String& GetRttiName()
@@ -39,14 +39,14 @@ const GUIStyleSheetRuleInformation GUIStyleSheetRuleInformation::kInvalid("Inval
 const Color GUIRenderable::kDisabledColor = Color(0.5f, 0.5f, 0.5f, 1.0f);
 
 GUIRenderable::GUIRenderable(String styleClass, const GUISizeConstraints& sizeConstraints)
-	: GUIElementBase(sizeConstraints), mStyle(&GUISkin::DefaultStyle), mStyleClass(std::move(styleClass))
+	: GUIElement(sizeConstraints), mStyle(&GUISkin::DefaultStyle), mStyleClass(std::move(styleClass))
 {
 	// Style is set to default here, and the proper one is assigned once GUI element
 	// is assigned to a parent (that's when the active GUI skin becomes known)
 }
 
 GUIRenderable::GUIRenderable(const char* styleClass, const GUISizeConstraints& sizeConstraints)
-	: GUIElementBase(sizeConstraints), mStyle(&GUISkin::DefaultStyle), mStyleClass(styleClass ? styleClass : StringUtil::kBlank)
+	: GUIElement(sizeConstraints), mStyle(&GUISkin::DefaultStyle), mStyleClass(styleClass ? styleClass : StringUtil::kBlank)
 {
 	// Style is set to default here, and the proper one is assigned once GUI element
 	// is assigned to a parent (that's when the active GUI skin becomes known)
@@ -125,7 +125,7 @@ void GUIRenderable::SetLayoutData(const GUILayoutData& data)
 	// Preserve element depth as that is not controlled by layout but is stored
 	// there only for convenience
 	u8 elemDepth = GetElementDepth();
-	GUIElementBase::SetLayoutData(data);
+	GUIElement::SetLayoutData(data);
 	SetElementDepth(elemDepth);
 
 	UpdateClippedBounds();
@@ -137,7 +137,7 @@ void GUIRenderable::ChangeParentWidget(GUIWidget* widget)
 		return;
 
 	const bool widgetChanged = mParentWidget != widget;
-	GUIElementBase::ChangeParentWidget(widget);
+	GUIElement::ChangeParentWidget(widget);
 
 	if(widgetChanged)
 		RefreshStyle();

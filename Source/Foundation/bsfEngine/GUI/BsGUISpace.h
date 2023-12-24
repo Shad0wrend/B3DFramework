@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** GUI element that may be inserted into layouts in order to make a space of a fixed size. */
-	class B3D_EXPORT GUIFixedSpace : public GUIElementBase
+	class B3D_EXPORT GUIFixedSpace : public GUIElement
 	{
 	public:
 		GUIFixedSpace(u32 size)
@@ -42,7 +42,7 @@ namespace bs
 		 *  @{
 		 */
 
-		Type GetType() const override { return GUIElementBase::Type::FixedSpace; }
+		Type GetType() const override { return GUIElement::Type::FixedSpace; }
 		Vector2I CalculateUnconstrainedOptimalSize() const override { return Vector2I(GetSize(), GetSize()); }
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 
@@ -68,7 +68,7 @@ namespace bs
 	 * For example if you had a horizontal layout with a button, and you wanted to align that button to the right of the
 	 * layout, you would insert a flexible space before the button in the layout.
 	 */
-	class B3D_EXPORT GUIFlexibleSpace : public GUIElementBase
+	class B3D_EXPORT GUIFlexibleSpace : public GUIElement
 	{
 	public:
 		GUIFlexibleSpace() = default;
@@ -82,7 +82,7 @@ namespace bs
 		 *  @{
 		 */
 
-		Type GetType() const override { return GUIElementBase::Type::FlexibleSpace; }
+		Type GetType() const override { return GUIElement::Type::FlexibleSpace; }
 		Vector2I CalculateUnconstrainedOptimalSize() const override { return Vector2I(0, 0); }
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 

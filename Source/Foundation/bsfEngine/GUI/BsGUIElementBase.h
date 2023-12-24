@@ -41,7 +41,7 @@ namespace bs
 
 	 * @note: Does not provide ability to render and interact with GUI elements - those are implemented by derived classes (i.e. GUIRenderable and GUIInteractable).
 	 */
-	class B3D_EXPORT GUIElementBase : public IReflectable
+	class B3D_EXPORT GUIElement : public IReflectable
 	{
 	public:
 		/**	Valid types of GUI base elements. */
@@ -68,9 +68,9 @@ namespace bs
 		};
 
 	public:
-		GUIElementBase() = default;
-		GUIElementBase(const GUISizeConstraints& dimensions);
-		virtual ~GUIElementBase() = default;
+		GUIElement() = default;
+		GUIElement(const GUISizeConstraints& dimensions);
+		virtual ~GUIElement() = default;
 
 		/**
 		 * Sets element position relative to parent GUI panel.
@@ -210,13 +210,13 @@ namespace bs
 		const GUILayoutData& GetLayoutData() const { return mLayoutData; }
 
 		/**	Sets a new parent for this element. */
-		void SetParent(GUIElementBase* parent);
+		void SetParent(GUIElement* parent);
 
 		/**	Returns number of child elements. */
 		u32 GetChildCount() const { return (u32)mChildren.size(); }
 
 		/**	Return the child element at the specified index.*/
-		GUIElementBase* GetChild(u32 idx) const { return mChildren[idx]; }
+		GUIElement* GetChild(u32 idx) const { return mChildren[idx]; }
 
 		/**	Calculates the optimal size for the GUI element, ignoring size constraints. */
 		virtual Vector2I CalculateUnconstrainedOptimalSize() const = 0;
@@ -246,7 +246,7 @@ namespace bs
 		virtual Type GetType() const = 0;
 
 		/**	Returns parent GUI base element. */
-		GUIElementBase* GetParent() const { return mParent; }
+		GUIElement* GetParent() const { return mParent; }
 
 		/**
 		 * Returns the parent element whose layout needs to be updated when this elements contents change.
@@ -257,7 +257,7 @@ namespace bs
 		 * updating. This parent usually has fixed bounds or some other property that allows its children to be updated
 		 * independently from the even higher-up elements.
 		 */
-		GUIElementBase* GetUpdateParent() const { return mLayoutUpdateParent; }
+		GUIElement* GetUpdateParent() const { return mLayoutUpdateParent; }
 
 		/**	Returns parent GUI widget, can be null. */
 		GUIWidget* GetParentWidget() const { return mParentWidget; }
@@ -304,10 +304,10 @@ namespace bs
 		virtual void ChangeParentWidget(GUIWidget* widget);
 
 		/**Registers a new child element. */
-		void RegisterChildElement(GUIElementBase* element);
+		void RegisterChildElement(GUIElement* element);
 
 		/**	Unregisters an existing child element. */
-		void UnregisterChildElement(GUIElementBase* element);
+		void UnregisterChildElement(GUIElement* element);
 
 		/**	Marks the element's dimensions as dirty, triggering a layout rebuild. */
 		void MarkLayoutAsDirty();
@@ -346,7 +346,7 @@ namespace bs
 		 * This allows us to optimize layout updates and trigger them only on such parents when their child elements
 		 * contents change, compared to doing them on the entire GUI hierarchy.
 		 */
-		GUIElementBase* FindLayoutUpdateParent();
+		GUIElement* FindLayoutUpdateParent();
 
 		/**
 		 * Helper method for recursion in UpdateAUParentsInternal(). Sets the provided anchor parent for all children recursively.
@@ -358,17 +358,17 @@ namespace bs
 		 * Helper method for recursion in UpdateAUParentsInternal(). Sets the provided update parent for all children recursively.
 		 * Recursion stops when a child update parent is detected.
 		 */
-		void SetLayoutUpdateParent(GUIElementBase* layoutUpdateParent);
+		void SetLayoutUpdateParent(GUIElement* layoutUpdateParent);
 
 		/** Unregisters and destroys all child elements. */
 		void DestroyChildElements();
 
 		GUIWidget* mParentWidget = nullptr;
 		GUIPanel* mPanelParent = nullptr; /**< First panel in the parent hierarchy, if any. */
-		GUIElementBase* mLayoutUpdateParent = nullptr; /**< Parent on which we need to call layout update if this element's size changes. This will be the first parent GUI element that doesn't have fixed bounds. */
+		GUIElement* mLayoutUpdateParent = nullptr; /**< Parent on which we need to call layout update if this element's size changes. This will be the first parent GUI element that doesn't have fixed bounds. */
 
-		GUIElementBase* mParent = nullptr; /**< Direct parent of this element. */
-		TInlineArray<GUIElementBase*, 4> mChildren;
+		GUIElement* mParent = nullptr; /**< Direct parent of this element. */
+		TInlineArray<GUIElement*, 4> mChildren;
 
 		u8 mFlags = GUIElem_Dirty;
 		bool mIsPendingDestroy = false;

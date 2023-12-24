@@ -77,22 +77,22 @@ namespace bs
 		 *  @{
 		 */
 
-		Type GetType() const override { return GUIElementBase::Type::Panel; }
+		Type GetType() const override { return GUIElement::Type::Panel; }
 		void UpdateOptimalLayoutSizes() override;
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
 
 		/** Calculates the size of the provided child within this layout with the provided dimensions. */
-		Rect2I GetElementAreaInternal(const Rect2I& layoutArea, const GUIElementBase* element, const GUIConstrainedSize& sizeRange) const;
+		Rect2I GetElementAreaInternal(const Rect2I& layoutArea, const GUIElement* element, const GUIConstrainedSize& sizeRange) const;
 
 		/**
 		 * Calculates an element size range for the provided child of the GUI panel. Will return cached bounds so make sure
 		 * to update optimal size ranges before calling.
 		 */
-		GUIConstrainedSize GetElementSizeRangeInternal(const GUIElementBase* element) const;
+		GUIConstrainedSize GetElementSizeRangeInternal(const GUIElement* element) const;
 
 		/** Assigns the specified layout information to a child element of a GUI panel. */
-		void UpdateChildLayoutInternal(GUIElementBase* element, const GUILayoutData& data);
+		void UpdateChildLayoutInternal(GUIElement* element, const GUILayoutData& data);
 
 		/** @copydoc GUIElementBase::_updateLayoutInternal */
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
