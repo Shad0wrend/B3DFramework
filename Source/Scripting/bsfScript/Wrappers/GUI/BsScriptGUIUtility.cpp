@@ -8,7 +8,7 @@
 #include "BsMonoUtil.h"
 #include "Wrappers/GUI/BsScriptGUIElement.h"
 #include "GUI/BsGUIPanel.h"
-#include "GUI/BsGUIElementBase.h"
+#include "GUI/BsGUIElement.h"
 #include "Wrappers/GUI/BsScriptGUILayout.h"
 #include "GUI/BsGUIUtility.h"
 #include "GUI/BsGUIHelper.h"

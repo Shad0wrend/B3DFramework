@@ -4,7 +4,7 @@
 
 #include "BsGUIRenderable.h"
 #include "BsPrerequisites.h"
-#include "GUI/BsGUIElementBase.h"
+#include "GUI/BsGUIElement.h"
 #include "GUI/BsGUIOptions.h"
 #include "2D/BsSprite.h"
 #include "Math/BsRect2I.h"

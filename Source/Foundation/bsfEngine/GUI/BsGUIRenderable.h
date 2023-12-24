@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
-#include "GUI/BsGUIElementBase.h"
+#include "GUI/BsGUIElement.h"
 #include "2D/BsSprite.h"
 #include "Math/BsRect2I.h"
 #include "Math/BsVector2I.h"

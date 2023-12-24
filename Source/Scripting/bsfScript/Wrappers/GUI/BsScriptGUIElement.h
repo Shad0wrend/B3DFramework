@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObject.h"
 #include "GUI/BsGUIOptions.h"
-#include "GUI/BsGUIElementBase.h"
+#include "GUI/BsGUIElement.h"
 
 namespace bs
 {
