@@ -39,6 +39,18 @@ ScriptGameObjectManager::~ScriptGameObjectManager()
 	onGameObjectDestroyedConn.Disconnect();
 }
 
+ScriptGameObjectBase* ScriptGameObjectManager::GetOrCreateScriptGameObject(const HGameObject& gameObject)
+{
+	if(B3DRTTIIsOfType<SceneObject>(gameObject.Get()))
+		return GetOrCreateScriptSceneObject(B3DStaticGameObjectCast<SceneObject>(gameObject));
+
+	const HComponent component = B3DStaticGameObjectCast<Component>(gameObject);
+	if(B3DRTTIIsOfType<ManagedComponent>(component.Get()))
+		return GetManagedScriptComponent(B3DStaticGameObjectCast<ManagedComponent>(component));
+
+	return GetBuiltinScriptComponent(component);
+}
+
 ScriptSceneObject* ScriptGameObjectManager::GetOrCreateScriptSceneObject(const HSceneObject& sceneObject)
 {
 	ScriptSceneObject* so = GetScriptSceneObject(sceneObject);

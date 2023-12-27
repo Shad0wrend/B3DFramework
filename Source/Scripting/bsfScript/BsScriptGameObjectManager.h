@@ -34,6 +34,12 @@ namespace bs
 		~ScriptGameObjectManager();
 
 		/**
+		 * Attempts to find the interop object for the specified GameObject. If one cannot be found new one is created and
+		 * returned.
+		 */
+		ScriptGameObjectBase* GetOrCreateScriptGameObject(const HGameObject& gameObject);
+
+		/**
 		 * Attempts to find the interop object for the specified SceneObject. If one cannot be found new one is created and
 		 * returned.
 		 */
