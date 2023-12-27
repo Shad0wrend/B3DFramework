@@ -23,8 +23,8 @@ namespace bs
 			: Elements(elements), AllowMultiselect(allowMultiselect)
 		{ }
 
-		Vector<HString> Elements;
-		bool AllowMultiselect = false;
+		Vector<HString> Elements; /**< Elements to display in the list box. */
+		bool AllowMultiselect = false; /**< Determines should the listbox allow multiple elements to be selected or just one. */
 	};
 
 	/** List box GUI element which when active opens a drop down selection with provided elements. */
