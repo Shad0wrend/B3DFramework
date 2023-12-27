@@ -584,7 +584,7 @@ void GUIElement::UpdatePanelAndLayoutUpdateParents()
 
 		// If parent is a panel then we can do an optimization and only update
 		// one child instead of all of them, so change parent to that child.
-		if(layoutUpdateParent != nullptr && layoutUpdateParent->GetType() == GUIElement::Type::Panel)
+		if(layoutUpdateParent != nullptr && B3DRTTIIsOfType<GUIPanel>(layoutUpdateParent))
 		{
 			GUIElement* optimizedUpdateParent = this;
 			while(optimizedUpdateParent->GetParent() != layoutUpdateParent)
@@ -598,7 +598,7 @@ void GUIElement::UpdatePanelAndLayoutUpdateParents()
 	GUIElement* currentParent = mParent;
 	while(currentParent != nullptr)
 	{
-		if(currentParent->GetType() == Type::Panel)
+		if(B3DRTTIIsOfType<GUIPanel>(currentParent))
 		{
 			panelParent = static_cast<GUIPanel*>(currentParent);
 			break;
@@ -638,7 +638,7 @@ void GUIElement::RefreshLayoutUpdateParentsForChildren()
 
 		// If parent is a panel then we can do an optimization and only update
 		// one child instead of all of them, so change parent to that child.
-		if(childUpdateParent != nullptr && childUpdateParent->GetType() == GUIElement::Type::Panel)
+		if(childUpdateParent != nullptr && B3DRTTIIsOfType<GUIPanel>(childUpdateParent))
 		{
 			GUIElement* optimizedUpdateParent = child;
 			while(optimizedUpdateParent->GetParent() != childUpdateParent)
@@ -655,7 +655,7 @@ void GUIElement::SetPanelParent(GUIPanel* panelParent)
 {
 	mPanelParent = panelParent;
 
-	if(GetType() == Type::Panel)
+	if(B3DRTTIIsOfType<GUIPanel>(this))
 		return;
 
 	for(auto& child : mChildren)

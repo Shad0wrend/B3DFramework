@@ -6,6 +6,7 @@
 #include "Math/BsMath.h"
 #include "Math/BsVector2I.h"
 #include "Profiling/BsProfilerCPU.h"
+#include "Reflection/BsRTTIType.h"
 
 using namespace bs;
 
@@ -24,7 +25,7 @@ GUIConstrainedSize GUILayoutX::CalculateConstrainedSize() const
 
 		GUIConstrainedSize sizeRange = child->CalculateConstrainedSize();
 
-		if(child->GetType() == GUIElement::Type::FixedSpace)
+		if(B3DRTTIIsOfType<GUIFixedSpace>(child))
 			sizeRange.Optimal.Y = sizeRange.Min.Y = 0;
 
 		u32 marginsX = child->GetMargins().Left + child->GetMargins().Right;
@@ -63,7 +64,7 @@ void GUILayoutX::UpdateOptimalLayoutSizes()
 		if(child->IsActive())
 		{
 			childSizeRange = child->GetConstrainedSize();
-			if(child->GetType() == GUIElement::Type::FixedSpace)
+			if(B3DRTTIIsOfType<GUIFixedSpace>(child))
 			{
 				childSizeRange.Optimal.Y = 0;
 				childSizeRange.Min.Y = 0;
@@ -116,11 +117,11 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 	{
 		elementAreas[childIdx].Width = sizeRanges[childIdx].Optimal.X;
 
-		if(child->GetType() == GUIElement::Type::FixedSpace)
+		if(B3DRTTIIsOfType<GUIFixedSpace>(child))
 		{
 			processedElements[childIdx] = true;
 		}
-		else if(child->GetType() == GUIElement::Type::FlexibleSpace)
+		else if(B3DRTTIIsOfType<GUIFlexibleSpace>(child))
 		{
 			if(child->IsActive())
 			{
@@ -175,7 +176,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 				u32 elementWidth = elementAreas[childIdx].Width + extraWidth;
 
 				// Clamp if needed
-				if(child->GetType() == GUIElement::Type::FlexibleSpace)
+				if(B3DRTTIIsOfType<GUIFlexibleSpace>(child))
 				{
 					processedElements[childIdx] = true;
 					numNonClampedElements--;
@@ -236,16 +237,16 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 				u32 elementWidth = (u32)std::max(0, (i32)elementAreas[childIdx].Width - (i32)extraWidth);
 
 				// Clamp if needed
-				switch(child->GetType())
+				switch(child->GetRtti()->GetRttiId())
 				{
-				case GUIElement::Type::FlexibleSpace:
+				case TID_GUIFlexibleSpace:
 					elementAreas[childIdx].Width = 0;
 					processedElements[childIdx] = true;
 					numNonClampedElements--;
 					break;
-				case GUIElement::Type::Interactable:
-				case GUIElement::Type::Layout:
-				case GUIElement::Type::Panel:
+				case TID_GUIFixedSpace:
+					break;
+				default:
 					{
 						const GUIConstrainedSize& childSizeRange = sizeRanges[childIdx];
 
@@ -266,8 +267,6 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 						elementAreas[childIdx].Width = elementWidth;
 						remainingSize = (u32)std::max(0, (i32)remainingSize - (i32)extraWidth);
 					}
-					break;
-				case GUIElement::Type::FixedSpace:
 					break;
 				}
 
@@ -300,15 +299,15 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 				u32 elementWidth = elementAreas[childIdx].Width + extraWidth;
 
 				// Clamp if needed
-				switch(child->GetType())
+				switch(child->GetRtti()->GetRttiId())
 				{
-				case GUIElement::Type::FlexibleSpace:
+				case TID_GUIFlexibleSpace:
 					processedElements[childIdx] = true;
 					numNonClampedElements--;
 					break;
-				case GUIElement::Type::Interactable:
-				case GUIElement::Type::Layout:
-				case GUIElement::Type::Panel:
+				case TID_GUIFixedSpace:
+					break;
+				default:
 					{
 						const GUIConstrainedSize& childSizeRange = sizeRanges[childIdx];
 
@@ -329,8 +328,6 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 						elementAreas[childIdx].Width = elementWidth;
 						remainingSize = (u32)std::max(0, (i32)remainingSize - (i32)extraWidth);
 					}
-					break;
-				case GUIElement::Type::FixedSpace:
 					break;
 				}
 
@@ -362,10 +359,8 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 		}
 		elementAreas[childIdx].Height = elemHeight;
 
-		if(child->GetType() == GUIElement::Type::Interactable)
+		if(GUIInteractable* const element = B3DRTTICast<GUIInteractable>(child))
 		{
-			GUIInteractable* element = static_cast<GUIInteractable*>(child);
-
 			u32 yPadding = element->GetMargins().Top + element->GetMargins().Bottom;
 			i32 yOffset = Math::CeilToInt(((i32)layoutArea.Height - (i32)(elemHeight + yPadding)) * 0.5f);
 			yOffset = std::max(0, yOffset);
