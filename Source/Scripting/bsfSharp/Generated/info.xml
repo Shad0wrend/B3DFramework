@@ -12440,8 +12440,10 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			</param>
 		</ctor>
 		<field name="Elements" type="LocString">
+			<doc>Elements to display in the list box.</doc>
 		</field>
 		<field name="AllowMultiselect" type="bool">
+			<doc>Determines should the listbox allow multiple elements to be selected or just one.</doc>
 		</field>
 	</struct>
 	<class native="GUIListBox" script="GUIListBox">

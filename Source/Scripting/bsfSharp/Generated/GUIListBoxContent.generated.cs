@@ -30,7 +30,9 @@ namespace bs
 			this.AllowMultiselect = allowMultiselect;
 		}
 
+		/// <summary>Elements to display in the list box.</summary>
 		public LocString[] Elements;
+		/// <summary>Determines should the listbox allow multiple elements to be selected or just one.</summary>
 		public bool AllowMultiselect;
 	}
 
