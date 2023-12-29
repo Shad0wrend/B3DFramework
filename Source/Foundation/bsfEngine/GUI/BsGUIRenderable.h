@@ -300,18 +300,18 @@ namespace bs
 			{}
 
 			SpriteInfo(Sprite* sprite, u32 depth, const Rect2& bounds, GUIMeshType meshType = GUIMeshType::Triangle)
-				: Sprite(sprite), Depth(depth), MeshType(meshType), Bounds(bounds), UseNewFillBuffer(true)
+				: Sprite(sprite), Depth(depth), MeshType(meshType), Offset(bounds.X, bounds.Y), ClipRectangle(bounds), UseNewFillBuffer(true)
 			{}
 
 			SpriteInfo(Sprite* sprite, u32 depth, const Vector2& offset, const Rect2& clipRectangle, GUIMeshType meshType = GUIMeshType::Triangle)
-				: Sprite(sprite), Depth(depth), MeshType(meshType), Bounds(offset.X, offset.Y, clipRectangle.Width, clipRectangle.Height), ClipRectangle(clipRectangle), UseNewFillBuffer(true)
+				: Sprite(sprite), Depth(depth), MeshType(meshType), Offset(offset.X, offset.Y), ClipRectangle(clipRectangle), UseNewFillBuffer(true)
 			{}
 
 			Sprite* Sprite;
 			u32 Depth = 0;
 			GUIMeshType MeshType = GUIMeshType::Triangle;
-			Rect2 Bounds = Rect2::kEmpty;
-			Optional<Rect2> ClipRectangle; /**< Explicit clip rectangle to use. If not provided, @p Bounds is used instead. */
+			Vector2 Offset = Vector2::kZero;
+			Rect2 ClipRectangle;
 			bool UseNewFillBuffer = false;
 		};
 
@@ -350,13 +350,8 @@ namespace bs
 
 					renderElement.Depth = spriteInfo.Depth;
 					renderElement.Type = spriteInfo.MeshType;
-					renderElement.Offset = Vector2(spriteInfo.Bounds.X, spriteInfo.Bounds.Y);
-
-					if(spriteInfo.ClipRectangle.has_value())
-						renderElement.ClipRectangle = *spriteInfo.ClipRectangle;
-					else
-						renderElement.ClipRectangle = Rect2(spriteInfo.Bounds.X, spriteInfo.Bounds.Y, spriteInfo.Bounds.Width, spriteInfo.Bounds.Height);
-
+					renderElement.Offset = spriteInfo.Offset;
+					renderElement.ClipRectangle = spriteInfo.ClipRectangle;
 					renderElement.UseNewFillBuffer = spriteInfo.UseNewFillBuffer;
 
 					outputIndex++;
