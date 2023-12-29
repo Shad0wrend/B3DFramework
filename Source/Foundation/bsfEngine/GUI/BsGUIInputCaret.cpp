@@ -24,6 +24,12 @@ Vector2I GUIInputCaret::GetSpriteOffset() const
 	return GetCaretPosition(GetTextOffset());
 }
 
+Rect2I GUIInputCaret::GetBounds() const
+{
+	const Vector2I caretPosition = GetCaretPosition(Vector2I()) - GetTextOffset();
+	return Rect2I(caretPosition.X, caretPosition.Y, 1, GetCaretHeight());
+}
+
 Rect2I GUIInputCaret::GetSpriteClipRect(const Rect2I& parentClipRect) const
 {
 	Vector2I offset(mElement->GetLayoutData().Area.X, mElement->GetLayoutData().Area.Y);

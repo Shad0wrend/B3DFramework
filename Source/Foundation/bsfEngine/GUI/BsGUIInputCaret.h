@@ -32,6 +32,9 @@ namespace bs
 		/** Returns offset relative to parent widget that determines placement of the caret sprite. */
 		Vector2I GetSpriteOffset() const;
 
+		/** Returns the bounds of the caret, relative to the current parent GUI element. */
+		Rect2I GetBounds() const;
+
 		/**
 		 * Returns clip rectangle relative to parent GUI element that determines how is caret sprite clipped.
 		 *

@@ -34,6 +34,9 @@ namespace bs
 		 */
 		Rect2I GetSelectionSpriteClipRect(u32 spriteIdx, const Rect2I& parentClipRect) const;
 
+		/** Returns the bounds of the particular selection sprite, relative to the current parent GUI element. */
+		Rect2I GetBounds(u32 spriteIndex) const;
+
 		/**	Recreates the selection clip sprites. */
 		void UpdateSprite();
 

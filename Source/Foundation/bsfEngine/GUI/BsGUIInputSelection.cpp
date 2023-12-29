@@ -170,6 +170,11 @@ Vector<Rect2I> GUIInputSelection::GetSelectionRects() const
 	return selectionRects;
 }
 
+Rect2I GUIInputSelection::GetBounds(u32 selectionIndex) const
+{
+	return mSelectionRects[selectionIndex];
+}
+
 void GUIInputSelection::ShowSelection(u32 anchorCaretPos)
 {
 	u32 charIdx = GetCharIdxAtInputIdx(anchorCaretPos);

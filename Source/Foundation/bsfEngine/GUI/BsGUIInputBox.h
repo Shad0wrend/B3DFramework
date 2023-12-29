@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "BsGUIContent.h"
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIInteractable.h"
 #include "2D/BsImageSprite.h"
@@ -20,14 +21,6 @@ namespace bs
 	 */
 	class B3D_EXPORT GUIInputBox : public GUIInteractable
 	{
-		/**	Possible visual states the input box can be in. */
-		enum class State
-		{
-			Normal,
-			Hover,
-			Focused
-		};
-
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
 		static const String& GetGuiTypeName();
@@ -96,7 +89,6 @@ namespace bs
 		GUIInputBox(const String& styleName, const GUISizeConstraints& dimensions, bool multiline);
 		virtual ~GUIInputBox();
 
-		void FillBuffer(u8* vertices, u32* indices, u32 vertexOffset, u32 indexOffset, const Vector2I& offset, u32 maxNumVerts, u32 maxNumIndices, u32 renderElementIdx) const override;
 		void UpdateRenderElements() override;
 		void UpdateClippedBounds() override;
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
@@ -121,24 +113,6 @@ namespace bs
 		SPtr<GUIContextMenu> GetContextMenu() const override;
 
 	private:
-		/**
-		 * Retrieves a sprite from a render element index, and a local render element index that represents render element
-		 * within the returned sprite.
-		 */
-		Sprite* RenderElemToSprite(u32 renderElemIdx, u32& localRenderElemIdx) const;
-
-		/**
-		 * Returns offset at which is the element with the provided render element index. Offset is relative to parent
-		 * widget.
-		 */
-		Vector2I RenderElemToOffset(u32 renderElemIdx) const;
-
-		/**
-		 * Returns a clip rectangle that can be used for clipping the render element with the provided index. Rectangle is
-		 * in local coordiantes relative to element origin.
-		 */
-		Rect2I RenderElemToClipRect(u32 renderElemIdx) const;
-
 		/** Inserts a new string into the current text at the specified index. */
 		void InsertString(u32 charIdx, const String& string);
 
@@ -190,12 +164,6 @@ namespace bs
 		/**	Returns text sprite descriptor determining how is text sprite created. */
 		TextSpriteInformation GetTextDesc() const;
 
-		/**	Returns currently active input box image, depending on active state. */
-		const HSpriteImage& GetActiveImage() const;
-
-		/**	Returns currently active input box text color, depending on active state. */
-		Color GetActiveTextColor() const;
-
 		/**	Cuts currently selected text to clipboard. */
 		void CutText();
 
@@ -219,7 +187,7 @@ namespace bs
 		bool mHasFocus = false;
 		u64 mFocusGainedFrame = (u64)-1;
 		bool mIsMouseOver = false;
-		State mState = State::Normal;
+		GUIElementState mState = GUIElementState::Normal;
 
 		ImageSpriteInformation mImageDesc;
 		String mText;

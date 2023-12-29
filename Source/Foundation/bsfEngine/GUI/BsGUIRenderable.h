@@ -38,7 +38,7 @@ namespace bs
 		GUIMeshType Type = GUIMeshType::Triangle;
 		u32 Depth = 0;
 		Vector2 Offset = Vector2::kZero; /**< Offset to apply to every vertex in the render element, relative to parent GUI element. */
-		Size2 ClipSize = Size2::kZero; /**< Size of the clip rectangle, relative to the offset. Any vertices outside of this area will be clipped. */
+		Rect2 ClipRectangle = Rect2::kEmpty; /**< Area of the clip rectangle, relative to the parent GUI element. Any vertices outside of this area will be clipped. Clipping is done before @p Offset is applied. */
 		bool UseNewFillBuffer = false;
 	};
 
@@ -303,10 +303,15 @@ namespace bs
 				: Sprite(sprite), Depth(depth), MeshType(meshType), Bounds(bounds), UseNewFillBuffer(true)
 			{}
 
+			SpriteInfo(Sprite* sprite, u32 depth, const Vector2& offset, const Rect2& clipRectangle, GUIMeshType meshType = GUIMeshType::Triangle)
+				: Sprite(sprite), Depth(depth), MeshType(meshType), Bounds(offset.X, offset.Y, clipRectangle.Width, clipRectangle.Height), ClipRectangle(clipRectangle), UseNewFillBuffer(true)
+			{}
+
 			Sprite* Sprite;
 			u32 Depth = 0;
 			GUIMeshType MeshType = GUIMeshType::Triangle;
 			Rect2 Bounds = Rect2::kEmpty;
+			Optional<Rect2> ClipRectangle; /**< Explicit clip rectangle to use. If not provided, @p Bounds is used instead. */
 			bool UseNewFillBuffer = false;
 		};
 
@@ -346,7 +351,12 @@ namespace bs
 					renderElement.Depth = spriteInfo.Depth;
 					renderElement.Type = spriteInfo.MeshType;
 					renderElement.Offset = Vector2(spriteInfo.Bounds.X, spriteInfo.Bounds.Y);
-					renderElement.ClipSize = Size2(spriteInfo.Bounds.Width, spriteInfo.Bounds.Height);
+
+					if(spriteInfo.ClipRectangle.has_value())
+						renderElement.ClipRectangle = *spriteInfo.ClipRectangle;
+					else
+						renderElement.ClipRectangle = Rect2(spriteInfo.Bounds.X, spriteInfo.Bounds.Y, spriteInfo.Bounds.Width, spriteInfo.Bounds.Height);
+
 					renderElement.UseNewFillBuffer = spriteInfo.UseNewFillBuffer;
 
 					outputIndex++;

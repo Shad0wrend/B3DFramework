@@ -70,24 +70,20 @@ void GUIRenderable::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u
 	const Rect2 guiElementClipRectangle = (Rect2)mLayoutData.GetLocalClipRect();
 
 	// Build the render element bounds to use for clipping
-	Rect2 renderElementBounds( // In space relative to parent GUI element
-		renderElement.Offset.X,
-		renderElement.Offset.Y,
-		renderElement.ClipSize.Width,
-		renderElement.ClipSize.Height);
+	Rect2 renderElementClipRectangle = renderElement.ClipRectangle; // In space relative to parent GUI element
 
 	// Clip by the elements clip rectangle
-	renderElementBounds.Clip(guiElementClipRectangle);
+	renderElementClipRectangle.Clip(guiElementClipRectangle);
 
 	// Move the bounds into space relative to the content bounds
-	renderElementBounds.X -= renderElement.Offset.X;
-	renderElementBounds.Y -= renderElement.Offset.Y;
+	renderElementClipRectangle.X -= renderElement.Offset.X;
+	renderElementClipRectangle.Y -= renderElement.Offset.Y;
 
 	const Vector2 renderElementOffset =
 		Vector2((float)guiElementOffset.X, (float)guiElementOffset.Y) +
 		renderElement.Offset;
 
-	renderElement.GetVertexAndIndexData(vertexOffset, indexOffset, renderElementOffset, renderElementBounds, true, outPositions, outUVs, outIndices);
+	renderElement.GetVertexAndIndexData(vertexOffset, indexOffset, renderElementOffset, renderElementClipRectangle, true, outPositions, outUVs, outIndices);
 }
 
 void GUIRenderable::UpdateClippedBounds()

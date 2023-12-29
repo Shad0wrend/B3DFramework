@@ -17,6 +17,7 @@
 #include "Utility/BsTime.h"
 #include "Platform/BsPlatform.h"
 #include "String/BsUnicode.h"
+#include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
 
@@ -113,7 +114,7 @@ void GUIInputBox::UpdateRenderElements()
 	mImageDesc.BorderBottom = GetStyle()->Border.Bottom;
 	mImageDesc.Color = GetTint();
 
-	const HSpriteImage& activeImage = GetActiveImage();
+	const HSpriteImage& activeImage = GetStyle()->GetImageForState(mState);
 	if(SpriteImage::CheckIsLoaded(activeImage))
 		mImageDesc.Image = activeImage;
 
@@ -122,19 +123,24 @@ void GUIInputBox::UpdateRenderElements()
 	TextSpriteInformation textDesc = GetTextDesc();
 	mTextSprite->Update(textDesc, (u64)GetParentWidget());
 
+	GUIInputCaret* const caret = GetGUIManager().GetInputCaretTool();
+	GUIInputSelection* const selection = GetGUIManager().GetInputSelectionTool();
+
 	ImageSprite* caretSprite = nullptr;
+	Rect2 caretBounds;
 	if(mCaretShown && GetGUIManager().GetCaretBlinkState())
 	{
-		GetGUIManager().GetInputCaretTool()->UpdateText(this, textDesc); // TODO - These shouldn't be here. Only call this when one of these parameters changes.
-		GetGUIManager().GetInputCaretTool()->UpdateSprite();
+		caret->UpdateText(this, textDesc); // TODO - These shouldn't be here. Only call this when one of these parameters changes.
+		caret->UpdateSprite();
 
-		caretSprite = GetGUIManager().GetInputCaretTool()->GetSprite();
+		caretSprite = caret->GetSprite();
+		caretBounds = (Rect2)caret->GetBounds();
 	}
 
 	if(mSelectionShown)
 	{
-		GetGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc); // TODO - These shouldn't be here. Only call this when one of these parameters changes.
-		GetGUIManager().GetInputSelectionTool()->UpdateSprite();
+		selection->UpdateText(this, textDesc); // TODO - These shouldn't be here. Only call this when one of these parameters changes.
+		selection->UpdateSprite();
 	}
 
 	// When text bounds are reduced the scroll needs to be adjusted so that
@@ -142,25 +148,37 @@ void GUIInputBox::UpdateRenderElements()
 	Vector2I offset(mLayoutData.Area.X, mLayoutData.Area.Y);
 	ClampScrollToBounds(mTextSprite->GetBounds(offset, Rect2I()));
 
+	const Rect2I contentBounds = GetCachedContentBoundsInElementSpace();
+	const Rect2 imageBounds(0.0f, 0.0f, (float)mLayoutData.Area.Width, (float)mLayoutData.Area.Height);
+
+	const Vector2 textOffset = Vector2I(mTextOffset.X + contentBounds.X, mTextOffset.Y + contentBounds.Y).ToFloat();
+	const Vector2 caretOffset = Vector2(caretBounds.X, caretBounds.Y) + textOffset;
+
 	// Populate GUI render elements from the sprites
 	{
 		using T = GUIRenderElementHelper;
-		T::Populate({ T::SpriteInfo(mTextSprite, 1), T::SpriteInfo(mImageSprite, 3), T::SpriteInfo(caretSprite) }, mRenderElements);
+		T::Populate({ T::SpriteInfo(mTextSprite, 1, textOffset, (Rect2)contentBounds), T::SpriteInfo(mImageSprite, 3, imageBounds), T::SpriteInfo(caretSprite, 0, caretOffset, (Rect2)contentBounds) }, mRenderElements);
 
 		if(mSelectionShown)
 		{
-			const Vector<ImageSprite*>& sprites = GetGUIManager().GetInputSelectionTool()->GetSprites();
-			for(auto& entry : sprites)
+			const Vector<ImageSprite*>& sprites = selection->GetSprites();
+			for(u32 selectionSpriteIndex = 0; selectionSpriteIndex < (u32)sprites.size(); ++selectionSpriteIndex)
 			{
-				for(u32 i = 0; i < entry->GetRenderElementCount(); i++)
+				ImageSprite* const sprite = sprites[selectionSpriteIndex];
+				const Rect2 selectionBounds = (Rect2)selection->GetBounds(selectionSpriteIndex);
+
+				for(u32 renderElementIndex = 0; renderElementIndex < sprite->GetRenderElementCount(); renderElementIndex++)
 				{
 					mRenderElements.Add(GUIRenderElement());
 					GUIRenderElement& renderElement = mRenderElements.Back();
 
-					entry->GetRenderElement(i, renderElement);
+					sprite->GetRenderElement(renderElementIndex, renderElement);
 
 					renderElement.Depth = 2;
 					renderElement.Type = GUIMeshType::Triangle;
+					renderElement.Offset = Vector2(selectionBounds.X, selectionBounds.Y) + textOffset;
+					renderElement.ClipRectangle = (Rect2)contentBounds;
+					renderElement.UseNewFillBuffer = true;
 				}
 			}
 		}
@@ -175,148 +193,12 @@ void GUIInputBox::UpdateClippedBounds()
 	mClippedBounds = mImageSprite->GetBounds(offset, mLayoutData.GetLocalClipRect());
 }
 
-Sprite* GUIInputBox::RenderElemToSprite(u32 renderElemIdx, u32& localRenderElemIdx) const
-{
-	u32 oldNumElements = 0;
-	u32 newNumElements = oldNumElements + mTextSprite->GetRenderElementCount();
-	if(renderElemIdx < newNumElements)
-	{
-		localRenderElemIdx = renderElemIdx - oldNumElements;
-		return mTextSprite;
-	}
-
-	oldNumElements = newNumElements;
-	newNumElements += mImageSprite->GetRenderElementCount();
-
-	if(renderElemIdx < newNumElements)
-	{
-		localRenderElemIdx = renderElemIdx - oldNumElements;
-		return mImageSprite;
-	}
-
-	if(mCaretShown && GetGUIManager().GetCaretBlinkState())
-	{
-		oldNumElements = newNumElements;
-		newNumElements += GetGUIManager().GetInputCaretTool()->GetSprite()->GetRenderElementCount();
-
-		if(renderElemIdx < newNumElements)
-		{
-			localRenderElemIdx = renderElemIdx - oldNumElements;
-			return GetGUIManager().GetInputCaretTool()->GetSprite();
-		}
-	}
-
-	if(mSelectionShown)
-	{
-		const Vector<ImageSprite*>& sprites = GetGUIManager().GetInputSelectionTool()->GetSprites();
-		for(auto& selectionSprite : sprites)
-		{
-			oldNumElements = newNumElements;
-			newNumElements += selectionSprite->GetRenderElementCount();
-
-			if(renderElemIdx < newNumElements)
-			{
-				localRenderElemIdx = renderElemIdx - oldNumElements;
-				return selectionSprite;
-			}
-		}
-	}
-
-	localRenderElemIdx = renderElemIdx;
-	return nullptr;
-}
-
-Vector2I GUIInputBox::RenderElemToOffset(u32 renderElemIdx) const
-{
-	u32 oldNumElements = 0;
-	u32 newNumElements = oldNumElements + mTextSprite->GetRenderElementCount();
-	if(renderElemIdx < newNumElements)
-		return GetTextOffset();
-
-	oldNumElements = newNumElements;
-	newNumElements += mImageSprite->GetRenderElementCount();
-
-	if(renderElemIdx < newNumElements)
-		return Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y);
-	;
-
-	if(mCaretShown && GetGUIManager().GetCaretBlinkState())
-	{
-		oldNumElements = newNumElements;
-		newNumElements += GetGUIManager().GetInputCaretTool()->GetSprite()->GetRenderElementCount();
-
-		if(renderElemIdx < newNumElements)
-			return GetGUIManager().GetInputCaretTool()->GetSpriteOffset();
-	}
-
-	if(mSelectionShown)
-	{
-		u32 spriteIdx = 0;
-		const Vector<ImageSprite*>& sprites = GetGUIManager().GetInputSelectionTool()->GetSprites();
-		for(auto& selectionSprite : sprites)
-		{
-			oldNumElements = newNumElements;
-			newNumElements += selectionSprite->GetRenderElementCount();
-
-			if(renderElemIdx < newNumElements)
-				return GetGUIManager().GetInputSelectionTool()->GetSelectionSpriteOffset(spriteIdx);
-
-			spriteIdx++;
-		}
-	}
-
-	return Vector2I();
-}
-
-Rect2I GUIInputBox::RenderElemToClipRect(u32 renderElemIdx) const
-{
-	u32 oldNumElements = 0;
-	u32 newNumElements = oldNumElements + mTextSprite->GetRenderElementCount();
-	if(renderElemIdx < newNumElements)
-		return GetTextClipRect();
-
-	oldNumElements = newNumElements;
-	newNumElements += mImageSprite->GetRenderElementCount();
-
-	if(renderElemIdx < newNumElements)
-		return mLayoutData.GetLocalClipRect();
-
-	if(mCaretShown && GetGUIManager().GetCaretBlinkState())
-	{
-		oldNumElements = newNumElements;
-		newNumElements += GetGUIManager().GetInputCaretTool()->GetSprite()->GetRenderElementCount();
-
-		if(renderElemIdx < newNumElements)
-		{
-			return GetGUIManager().GetInputCaretTool()->GetSpriteClipRect(GetTextClipRect());
-		}
-	}
-
-	if(mSelectionShown)
-	{
-		u32 spriteIdx = 0;
-		const Vector<ImageSprite*>& sprites = GetGUIManager().GetInputSelectionTool()->GetSprites();
-		for(auto& selectionSprite : sprites)
-		{
-			oldNumElements = newNumElements;
-			newNumElements += selectionSprite->GetRenderElementCount();
-
-			if(renderElemIdx < newNumElements)
-				return GetGUIManager().GetInputSelectionTool()->GetSelectionSpriteClipRect(spriteIdx, GetTextClipRect());
-
-			spriteIdx++;
-		}
-	}
-
-	return Rect2I();
-}
-
 Vector2I GUIInputBox::CalculateUnconstrainedOptimalSize() const
 {
 	u32 imageWidth = 0;
 	u32 imageHeight = 0;
 
-	const HSpriteImage& activeImage = GetActiveImage();
+	const HSpriteImage& activeImage = GetStyle()->GetImageForState(mState);
 	if(SpriteImage::CheckIsLoaded(activeImage))
 	{
 		const Size2UI& imageSize = activeImage->GetSize();
@@ -361,28 +243,6 @@ bool GUIInputBox::HasCustomCursor(const Vector2I position, CursorType& type) con
 	return false;
 }
 
-void GUIInputBox::FillBuffer(
-	u8* vertices,
-	u32* indices,
-	u32 vertexOffset,
-	u32 indexOffset,
-	const Vector2I& offset,
-	u32 maxNumVerts,
-	u32 maxNumIndices,
-	u32 renderElementIdx) const
-{
-	u8* uvs = vertices + sizeof(Vector2);
-	u32 vertexStride = sizeof(Vector2) * 2;
-	u32 indexStride = sizeof(u32);
-
-	u32 localRenderElementIdx;
-	Sprite* sprite = RenderElemToSprite(renderElementIdx, localRenderElementIdx);
-	Vector2I layoutOffset = RenderElemToOffset(renderElementIdx) + offset;
-	Rect2I clipRect = RenderElemToClipRect(renderElementIdx);
-
-	sprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, localRenderElementIdx, layoutOffset, clipRect);
-}
-
 bool GUIInputBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 {
 	if(ev.GetType() == GUIMouseEventType::MouseOver)
@@ -392,7 +252,7 @@ bool GUIInputBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 			if(!mHasFocus)
 			{
 				Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
-				mState = State::Hover;
+				mState = GUIElementState::Hover;
 				Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 				if(origSize != newSize)
@@ -413,7 +273,7 @@ bool GUIInputBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 			if(!mHasFocus)
 			{
 				Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
-				mState = State::Normal;
+				mState = GUIElementState::Normal;
 				Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 				if(origSize != newSize)
@@ -586,7 +446,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	if(ev.GetType() == GUICommandEventType::FocusGained)
 	{
 		Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
-		mState = State::Focused;
+		mState = GUIElementState::Focused;
 
 		ShowSelection(0);
 		GetGUIManager().GetInputSelectionTool()->SelectAll();
@@ -606,7 +466,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	if(ev.GetType() == GUICommandEventType::FocusLost)
 	{
 		Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
-		mState = State::Normal;
+		mState = GUIElementState::Normal;
 
 		HideCaret();
 		ClearSelection();
@@ -1156,7 +1016,7 @@ TextSpriteInformation GUIInputBox::GetTextDesc() const
 	textDesc.Text = mText;
 	textDesc.Font = GetStyle()->Font;
 	textDesc.FontSize = GetStyle()->FontSize;
-	textDesc.Color = GetTint() * GetActiveTextColor();
+	textDesc.Color = GetTint() * GetStyle()->GetTextColorForState(mState);
 
 	Rect2I textBounds = GetCachedContentBounds();
 	textDesc.Width = textBounds.Width;
@@ -1166,36 +1026,6 @@ TextSpriteInformation GUIInputBox::GetTextDesc() const
 	textDesc.WordWrap = mIsMultiline;
 
 	return textDesc;
-}
-
-const HSpriteImage& GUIInputBox::GetActiveImage() const
-{
-	switch(mState)
-	{
-	case State::Focused:
-		return GetStyle()->Focused.Image;
-	case State::Hover:
-		return GetStyle()->Hover.Image;
-	case State::Normal:
-		return GetStyle()->Normal.Image;
-	}
-
-	return GetStyle()->Normal.Image;
-}
-
-Color GUIInputBox::GetActiveTextColor() const
-{
-	switch(mState)
-	{
-	case State::Focused:
-		return GetStyle()->Focused.TextColor;
-	case State::Hover:
-		return GetStyle()->Hover.TextColor;
-	case State::Normal:
-		return GetStyle()->Normal.TextColor;
-	}
-
-	return GetStyle()->Normal.TextColor;
 }
 
 SPtr<GUIContextMenu> GUIInputBox::GetContextMenu() const
