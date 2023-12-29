@@ -62,7 +62,6 @@ namespace bs
 	};
 
 	/** Wrapper around Sprite that helps construct a sprite for drawing a GUI element with text and/or image contents. */
-	// TODO - Not implemented
 	class GUIContentSprites
 	{
 	public:

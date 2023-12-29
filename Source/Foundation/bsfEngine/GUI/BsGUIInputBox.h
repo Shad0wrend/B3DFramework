@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "BsGUIConstructionMethods.h"
 #include "BsGUIContent.h"
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIInteractable.h"
@@ -15,48 +16,26 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Structure describing contents of a GUIInputBox element. */
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIInputBoxContent
+	{
+		GUIInputBoxContent() = default;
+		GUIInputBoxContent(bool allowMultiline)
+			: AllowMultiline(allowMultiline)
+		{ }
+
+		bool AllowMultiline = false; /**< If true, allows multiline input. */
+	};
+
 	/**
 	 * Input box is a GUI element that accepts Unicode textual input. It can be single or multi-line and handles various
 	 * types of text manipulation.
 	 */
-	class B3D_EXPORT GUIInputBox : public GUIInteractable
+	class B3D_EXPORT GUIInputBox : public GUIInteractable, public TGUIConstructionMethods<GUIInputBox, GUIInputBoxContent>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
 		static const String& GetGuiTypeName();
-
-		/**
-		 * Creates a new input box.
-		 *
-		 * @param[in]	multiline		If true the input box can be of arbitrary height and will accept multiple lines of
-		 *								text.
-		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *								GUIWidget the element is used on. If not specified default style for this element
-		 *								is used.
-		 */
-		static GUIInputBox* Create(bool multiline = false, const String& styleName = StringUtil::kBlank);
-
-		/**
-		 * Creates a new input box.
-		 *
-		 * @param[in]	multiline		If true the input box can be of arbitrary height and will accept multiple lines of
-		 *								text.
-		 * @param[in]	options			Options that allow you to control how is the element positioned and sized. This will
-		 *								override any similar options set by style.
-		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *								GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUIInputBox* Create(bool multiline, const GUIOptions& options, const String& styleName = StringUtil::kBlank);
-
-		/**
-		 * Creates a new single-line input box.
-		 *
-		 * @param[in]	options			Options that allow you to control how is the element positioned and sized. This will
-		 *								override any similar options set by style.
-		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *								GUIWidget the element is used on. If not specified default button style is used.
-		 */
-		static GUIInputBox* Create(const GUIOptions& options, const String& styleName = StringUtil::kBlank);
 
 		/**	Returns the text currently entered in the input box. */
 		const String& GetText() const { return mText; }
@@ -81,12 +60,14 @@ namespace bs
 		 *  @{
 		 */
 
+		struct PrivatelyConstruct { };
+		GUIInputBox(PrivatelyConstruct, const GUIInputBoxContent& content, const String& styleName, const GUISizeConstraints& sizeConstraints);
+
 		ElementType GetElementType() const override { return ElementType::InputBox; }
 		Vector2I CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:
-		GUIInputBox(const String& styleName, const GUISizeConstraints& dimensions, bool multiline);
 		virtual ~GUIInputBox();
 
 		void UpdateRenderElements() override;

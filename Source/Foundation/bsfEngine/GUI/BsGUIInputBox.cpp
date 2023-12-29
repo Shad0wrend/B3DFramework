@@ -32,8 +32,8 @@ const String& GUIInputBox::GetGuiTypeName()
 	return name;
 }
 
-GUIInputBox::GUIInputBox(const String& styleName, const GUISizeConstraints& dimensions, bool multiline)
-	: GUIInteractable(styleName, dimensions, GUIElementOption::AcceptsKeyFocus), mIsMultiline(multiline)
+GUIInputBox::GUIInputBox(PrivatelyConstruct, const GUIInputBoxContent& content, const String& styleName, const GUISizeConstraints& sizeConstraints)
+	: GUIInteractable(styleName, sizeConstraints, GUIElementOption::AcceptsKeyFocus), mIsMultiline(content.AllowMultiline)
 {
 	mImageSprite = B3DNew<ImageSprite>();
 	mTextSprite = B3DNew<TextSprite>();
@@ -43,21 +43,6 @@ GUIInputBox::~GUIInputBox()
 {
 	B3DDelete(mTextSprite);
 	B3DDelete(mImageSprite);
-}
-
-GUIInputBox* GUIInputBox::Create(bool multiline, const String& styleName)
-{
-	return new(B3DAllocate<GUIInputBox>()) GUIInputBox(GetStyleClass<GUIInputBox>(styleName), GUISizeConstraints::Create(), multiline);
-}
-
-GUIInputBox* GUIInputBox::Create(bool multiline, const GUIOptions& options, const String& styleName)
-{
-	return new(B3DAllocate<GUIInputBox>()) GUIInputBox(GetStyleClass<GUIInputBox>(styleName), GUISizeConstraints::Create(options), multiline);
-}
-
-GUIInputBox* GUIInputBox::Create(const GUIOptions& options, const String& styleName)
-{
-	return new(B3DAllocate<GUIInputBox>()) GUIInputBox(GetStyleClass<GUIInputBox>(styleName), GUISizeConstraints::Create(options), false);
 }
 
 void GUIInputBox::SetText(const String& text)

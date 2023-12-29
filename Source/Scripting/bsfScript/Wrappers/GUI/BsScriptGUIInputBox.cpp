@@ -39,7 +39,7 @@ void ScriptGUIInputBox::InternalCreateInstance(MonoObject* instance, bool multil
 	for(u32 i = 0; i < arrayLen; i++)
 		options.AddOption(scriptArray.Get<GUIOption>(i));
 
-	GUIInputBox* guiInputBox = GUIInputBox::Create(multiline, options, MonoUtil::MonoToString(style));
+	GUIInputBox* guiInputBox = GUIInputBox::Create(multiline, MonoUtil::MonoToString(style), options);
 
 	auto nativeInstance = new(B3DAllocate<ScriptGUIInputBox>()) ScriptGUIInputBox(instance, guiInputBox);
 
