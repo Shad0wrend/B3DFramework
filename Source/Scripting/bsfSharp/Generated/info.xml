@@ -12385,6 +12385,68 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			</param>
 		</ctor>
 	</class>
+	<struct native="GUIInputBoxContent" script="GUIInputBoxContent">
+		<doc>Structure describing contents of a GUIInputBox element.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="allowMultiline" type="bool">
+			</param>
+		</ctor>
+		<field name="AllowMultiline" type="bool">
+			<doc>If true, allows multiline input.</doc>
+		</field>
+	</struct>
+	<class native="GUIInputBox" script="GUIInputBox">
+		<doc>Input box is a GUI element that accepts Unicode textual input. It can be single or multi-line and handles various types of text manipulation.</doc>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIInputBoxContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIInputBoxContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<property name="Text" type="string" getter="GetText" setter="SetText" static="false">
+			<doc>Determines the text inside the input box.</doc>
+		</property>
+		<event native="OnValueChanged" script="OnValueChanged" static="false">
+			<doc>Triggered whenever input text has changed.</doc>
+			<param name="p0" type="string">
+			</param>
+		</event>
+		<event native="OnConfirm" script="OnConfirm" static="false">
+			<doc>Triggered when the user hits the Enter key with the input box in focus.</doc>
+		</event>
+	</class>
 	<class native="GUILabel" script="GUILabel">
 		<doc>GUI element that displays text and optionally a content image.</doc>
 		<method native="SetContent" script="SetContent" static="false">

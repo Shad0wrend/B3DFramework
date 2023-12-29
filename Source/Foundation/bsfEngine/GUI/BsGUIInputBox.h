@@ -31,17 +31,19 @@ namespace bs
 	 * Input box is a GUI element that accepts Unicode textual input. It can be single or multi-line and handles various
 	 * types of text manipulation.
 	 */
-	class B3D_EXPORT GUIInputBox : public GUIInteractable, public TGUIConstructionMethods<GUIInputBox, GUIInputBoxContent>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIInputBox : public GUIInteractable, public TGUIConstructionMethods<GUIInputBox, GUIInputBoxContent>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
 		static const String& GetGuiTypeName();
 
-		/**	Returns the text currently entered in the input box. */
-		const String& GetText() const { return mText; }
-
-		/**	Sets the text inside the input box. This will replace any current text. */
+		/**	Determines the text inside the input box. */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Text))
 		void SetText(const String& text);
+
+		/** @copydoc SetText */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Text))
+		const String& GetText() const { return mText; }
 
 		/**
 		 * Sets an optional filter that can control what is allowed to be entered into the input box. Filter should return
@@ -50,9 +52,11 @@ namespace bs
 		void SetFilter(std::function<bool(const String&)> filter) { mFilter = filter; }
 
 		/**	Triggered whenever input text has changed. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const String&)> OnValueChanged;
 
 		/**	Triggered when the user hits the Enter key with the input box in focus. */
+		B3D_SCRIPT_EXPORT()
 		Event<void()> OnConfirm;
 
 	public: // ***** INTERNAL ******
