@@ -3824,6 +3824,24 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Damping strength. Force propertional to the velocity error.</doc>
 		</field>
 	</struct>
+	<class native="GUIResizableHorizontalScrollBar" script="GUIResizableHorizontalScrollBar">
+		<doc>Specialization of a GUIScrollBar for horizontal scrolling, with the ability to resize the scroll bar.</doc>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+	</class>
 	<struct native="PARTICLE_FORCE_DESC" script="ParticleForceOptions">
 		<doc>Structure used for initializing a ParticleForce object.</doc>
 		<ctor>
@@ -6821,6 +6839,24 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<enumentry native="Count" script="Count">
 		</enumentry>
 	</enum>
+	<class native="GUIVerticalScrollBar" script="GUIVerticalScrollBar">
+		<doc>Specialization of a GUIScrollBar for vertical scrolling.</doc>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+	</class>
 	<class native="StringTable" script="StringTable">
 		<doc>Used for string localization. Stores strings and their translations in various languages.</doc>
 		<method native="Contains" script="Contains" static="false">
@@ -12385,6 +12421,40 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			</param>
 		</ctor>
 	</class>
+	<class native="GUIScrollBar" script="GUIScrollBar">
+		<doc>GUI element representing an element with a draggable handle of a variable size.</doc>
+		<property name="ScrollHandlePosition" type="float" getter="GetScrollHandlePosition" setter="SetScrollHandlePosition" static="false">
+			<doc>Position of the scroll handle in percent (ranging [0, 1]).</doc>
+		</property>
+		<property name="ScrollHandleSize" type="float" getter="GetScrollHandleSize" setter="SetScrollHandleSize" static="false">
+			<doc>Size of the scroll handle in percent (ranging [0, 1]) of the total scroll bar area.</doc>
+		</property>
+		<event native="OnScrollOrResize" script="OnScrollOrResize" static="false">
+			<doc>Triggered whenever the scrollbar handle is moved or resized. Values provided are the handle position and size in percent (ranging [0, 1]).</doc>
+			<param name="p0" type="float">
+			</param>
+			<param name="p1" type="float">
+			</param>
+		</event>
+	</class>
+	<class native="GUIHorizontalScrollBar" script="GUIHorizontalScrollBar">
+		<doc>Specialization of a GUIScrollBar for horizontal scrolling.</doc>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+	</class>
 	<struct native="GUIInputBoxContent" script="GUIInputBoxContent">
 		<doc>Structure describing contents of a GUIInputBox element.</doc>
 		<ctor>
@@ -12619,6 +12689,33 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			</param>
 		</ctor>
 	</class>
+	<enum native="GUISliderHandleFlag" script="GUISliderHandleFlag">
+		<doc>Flags that control how does a slider handle behave.</doc>
+		<enumentry native="Horizontal" script="Horizontal">
+			<doc>Slider handle will move horizontally. Cannot be used with the Vertical option.</doc>
+		</enumentry>
+		<enumentry native="Vertical" script="Vertical">
+			<doc>Slider handle will move vertically. Cannot be used with the Horizontal option.</doc>
+		</enumentry>
+		<enumentry native="JumpOnClick" script="JumpOnClick">
+			<doc>If enabled, clicking on a specific slider position will cause the handle to jump to that position. If false the handle will only slightly move in that direction.</doc>
+		</enumentry>
+		<enumentry native="Resizeable" script="Resizeable">
+			<doc>Determines should the slider handle provide additional side-handles that allow it to be resized.</doc>
+		</enumentry>
+	</enum>
+	<struct native="GUISliderHandleContent" script="GUISliderHandleContent">
+		<doc>Structure describing contents of a GUISliderHandle element.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="flags" type="GUISliderHandleFlag">
+			</param>
+		</ctor>
+		<field name="Flags" type="GUISliderHandleFlag">
+			<doc>Flags that control how does the slider handle behave.</doc>
+		</field>
+	</struct>
 	<class native="GUIToggleGroup" script="GUIToggleGroup">
 		<doc>Object that allows you to group multiple GUI toggle buttons. Only one button among the grouped ones can be active.</doc>
 		<ctor>
@@ -12653,6 +12750,24 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			<param name="p0" type="bool">
 			</param>
 		</event>
+	</class>
+	<class native="GUIResizableVerticalScrollBar" script="GUIResizableVerticalScrollBar">
+		<doc>Specialization of a GUIScrollBar for vertical scrolling, with the ability to resize the scroll bar.</doc>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
 	</class>
 	<struct native="ShaderParameter" script="ShaderParameter">
 		<doc>Contains information about a single shader parameter.</doc>

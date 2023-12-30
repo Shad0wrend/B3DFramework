@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Specialization of a GUIScrollBar for vertical scrolling. */
-	class B3D_EXPORT GUIVerticalScrollBar : public GUIScrollBar, public TGUIConstructionMethodsWithoutContent<GUIVerticalScrollBar>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIVerticalScrollBar : public GUIScrollBar, public TGUIConstructionMethodsWithoutContent<GUIVerticalScrollBar>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
@@ -34,7 +34,7 @@ namespace bs
 	};
 
 	/**	Specialization of a GUIScrollBar for vertical scrolling, with the ability to resize the scroll bar. */
-	class B3D_EXPORT GUIResizableVerticalScrollBar : public GUIScrollBar, public TGUIConstructionMethodsWithoutContent<GUIResizableVerticalScrollBar>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIResizableVerticalScrollBar : public GUIScrollBar, public TGUIConstructionMethodsWithoutContent<GUIResizableVerticalScrollBar>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */

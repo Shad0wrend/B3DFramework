@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/** GUI element representing an element with a draggable handle of a variable size. */
-	class B3D_EXPORT GUIScrollBar : public GUIInteractable
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIScrollBar : public GUIInteractable
 	{
 	public:
 		/**	Position of the scroll handle in percent (ranging [0, 1]). */
@@ -48,7 +48,8 @@ namespace bs
 		 * Triggered whenever the scrollbar handle is moved or resized. Values provided are the handle position and size
 		 * in percent (ranging [0, 1]).
 		 */
-		Event<void(float posPct, float sizePct)> OnScrollOrResize;
+		B3D_SCRIPT_EXPORT()
+		Event<void(float scrollHandlePositionInPercent, float scrollHandleSizeInPercent)> OnScrollOrResize;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

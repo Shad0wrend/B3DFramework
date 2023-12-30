@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Specialization of a GUIScrollBar for horizontal scrolling. */
-	class B3D_EXPORT GUIHorizontalScrollBar : public GUIScrollBar, public TGUIConstructionMethodsWithoutContent<GUIHorizontalScrollBar>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIHorizontalScrollBar : public GUIScrollBar, public TGUIConstructionMethodsWithoutContent<GUIHorizontalScrollBar>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
@@ -34,7 +34,7 @@ namespace bs
 	};
 
 	/**	Specialization of a GUIScrollBar for horizontal scrolling, with the ability to resize the scroll bar. */
-	class B3D_EXPORT GUIResizableHorizontalScrollBar : public GUIScrollBar, public TGUIConstructionMethodsWithoutContent<GUIResizableHorizontalScrollBar>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIResizableHorizontalScrollBar : public GUIScrollBar, public TGUIConstructionMethodsWithoutContent<GUIResizableHorizontalScrollBar>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */

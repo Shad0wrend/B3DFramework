@@ -17,7 +17,7 @@ namespace bs
 	 */
 
 	/** Flags that control how does a slider handle behave. */
-	enum class GUISliderHandleFlag
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUISliderHandleFlag
 	{
 		/** Slider handle will move horizontally. Cannot be used with the Vertical option. */
 		Horizontal = 1 << 0,
