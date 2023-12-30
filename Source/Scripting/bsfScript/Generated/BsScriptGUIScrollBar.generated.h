@@ -1,0 +1,29 @@
+//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+
+#include "BsScriptEnginePrerequisites.h"
+#include "Wrappers/GUI/BsScriptGUIElement.h"
+
+namespace bs { class GUIScrollBar; }
+namespace bs
+{
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollBar : public TScriptGUIInteractable<ScriptGUIScrollBar>
+	{
+	public:
+		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIScrollBar")
+
+		ScriptGUIScrollBar(MonoObject* managedInstance, GUIScrollBar* value);
+
+	private:
+		void OnScrollOrResize(float p0, float p1);
+
+		typedef void(B3D_THUNKCALL *OnScrollOrResizeThunkDef) (MonoObject*, float p0, float p1, MonoException**);
+		static OnScrollOrResizeThunkDef OnScrollOrResizeThunk;
+
+		static void InternalSetScrollHandlePosition(ScriptGUIElementBase* thisPtr, float pct);
+		static float InternalGetScrollHandlePosition(ScriptGUIElementBase* thisPtr);
+		static void InternalSetScrollHandleSize(ScriptGUIElementBase* thisPtr, float pct);
+		static float InternalGetScrollHandleSize(ScriptGUIElementBase* thisPtr);
+	};
+}
