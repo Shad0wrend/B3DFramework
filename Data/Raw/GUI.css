@@ -8,7 +8,8 @@
     --HoverBackgroundColor: #2D2D2D;
     --HoverColor: #D3D3D3;
     --FocusColor: #FFA800;
-    --DarkerContentcolor: #1A1A1A;
+    --DarkerContentColor: #828282;
+    --DarkContentColor: #1A1A1A;
     --PrimaryFontFamily: "Arial";
     --PrimaryFontSize: 8;
 }
@@ -118,7 +119,7 @@ button.Toggle::checkmark
 
 inputbox
 {
-    height: 21px;
+    height: 22px;
     min-width: 10px;
     margin-bottom: 4px;
     text-align: left;
@@ -146,6 +147,68 @@ inputbox:focus
 inputbox.InputBox
 {
 
+}
+
+slider .SliderHandle
+{
+    background-color: var(--PrimaryContentColor);
+    border-radius: 6px;
+    width: 12px;
+    height: 12px;
+}
+
+slider .SliderHandle:hover
+{
+    background-color: var(--DarkerContentColor);
+}
+
+slider .SliderHandle:active
+{
+    background-color: var(--FocusColor);
+}
+
+slider.HorizontalSlider
+{ }
+
+slider.VerticalSlider
+{ }
+
+slider .SliderBackground
+{
+    background-color: var(--PrimaryBackgroundColor);
+    border-color: var(--PrimaryBorderColor);
+    border-width: 2px;
+}
+
+slider .SliderFill
+{
+    background-color: var(--PrimaryBorderColor);
+    border-width: 2px;
+    border-color: #00000000;
+}
+
+slider.HorizontalSlider .SliderBackground
+{
+    height: 10px;
+    min-width: 10px;
+}
+
+slider.HorizontalSlider .SliderFill
+{
+    height: 10px;
+    min-width: 10px;
+}
+
+slider.VerticalSlider .SliderBackground
+{
+    width: 10px;
+    min-height: 10px;
+}
+
+slider.VerticalSlider .SliderFill
+{
+    width: 10px;
+    min-height: 10px;
 }
 
 listbox
@@ -176,7 +239,7 @@ listbox:focus
 listbox::arrow
 {
     background-color: var(--BrighterBackgroundColor);
-    color: var(--DarkerContentcolor);
+    color: var(--DarkContentColor);
     width: 20px;
 }
 
@@ -511,7 +574,7 @@ button.WindowChromeButton:hover
 button.WindowChromeButton:active
 {
     background-color: var(--FocusColor);
-    color: var(--DarkerContentcolor);
+    color: var(--DarkContentColor);
 }
 
 button.GUIDropDownScrollbarButton

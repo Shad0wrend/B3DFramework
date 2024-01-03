@@ -5,7 +5,6 @@
 #include "GUI/BsGUITexture.h"
 #include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUICommandEvent.h"
-#include "GUI/BsGUIElementStyle.h"
 
 using namespace std::placeholders;
 
@@ -17,9 +16,9 @@ GUISlider::GUISlider(bool horizontal, const String& styleName, const GUISizeCons
 	GUISliderHandleFlags flags = horizontal ? GUISliderHandleFlag::Horizontal : GUISliderHandleFlag::Vertical;
 	flags |= GUISliderHandleFlag::JumpOnClick;
 
-	mSliderHandle = GUISliderHandle::Create(flags, GetSubStyleName(GetHandleStyleType()));
-	mBackground = GUITexture::Create(GetSubStyleName(GetBackgroundStyleType()));
-	mFillBackground = GUITexture::Create(GetSubStyleName(GetFillStyleType()));
+	mSliderHandle = GUISliderHandle::Create(flags, kHandleClassStyle);
+	mBackground = GUITexture::Create(kBackgroundClassStyle);
+	mFillBackground = GUITexture::Create(kFillClassStyle);
 
 	mBackground->SetElementDepth(mSliderHandle->GetRenderElementDepthRange() + mFillBackground->GetRenderElementDepthRange());
 	mFillBackground->SetElementDepth(mSliderHandle->GetRenderElementDepthRange());
@@ -36,29 +35,11 @@ GUISlider::~GUISlider()
 	mHandleMovedConn.Disconnect();
 }
 
-const String& GUISlider::GetHandleStyleType()
-{
-	static String HANDLE_STYLE_TYPE = "SliderHandle";
-	return HANDLE_STYLE_TYPE;
-}
-
-const String& GUISlider::GetBackgroundStyleType()
-{
-	static String BACKGROUND_STYLE_TYPE = "SliderBackground";
-	return BACKGROUND_STYLE_TYPE;
-}
-
-const String& GUISlider::GetFillStyleType()
-{
-	static String FILL_STYLE_TYPE = "SliderFill";
-	return FILL_STYLE_TYPE;
-}
-
 Vector2I GUISlider::CalculateUnconstrainedOptimalSize() const
 {
-	Vector2I optimalSize = mSliderHandle->CalculateUnconstrainedOptimalSize();
+	Vector2I optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
 
-	Vector2I backgroundSize = mBackground->CalculateUnconstrainedOptimalSize();
+	Vector2I backgroundSize = mBackground->CalculateConstrainedSize().Optimal;
 	optimalSize.X = std::max(optimalSize.X, backgroundSize.X);
 	optimalSize.Y = std::max(optimalSize.Y, backgroundSize.Y);
 
@@ -71,7 +52,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 
 	if(mHorizontal)
 	{
-		Vector2I optimalSize = mBackground->CalculateUnconstrainedOptimalSize();
+		Vector2I optimalSize = mBackground->CalculateConstrainedSize().Optimal;
 		childData.Area.Height = optimalSize.Y;
 		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
 
@@ -80,7 +61,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 
 		mBackground->SetLayoutData(childData);
 
-		optimalSize = mSliderHandle->CalculateUnconstrainedOptimalSize();
+		optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
 		childData.Area.Height = optimalSize.Y;
 		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
 
@@ -90,7 +71,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 		mSliderHandle->SetLayoutData(childData);
 		u32 handleWidth = optimalSize.X;
 
-		optimalSize = mFillBackground->CalculateUnconstrainedOptimalSize();
+		optimalSize = mFillBackground->CalculateConstrainedSize().Optimal;
 		childData.Area.Height = optimalSize.Y;
 		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
 		childData.Area.Width = mSliderHandle->GetHandlePositionInPixels() + handleWidth / 2;
@@ -102,7 +83,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 	}
 	else
 	{
-		Vector2I optimalSize = mBackground->CalculateUnconstrainedOptimalSize();
+		Vector2I optimalSize = mBackground->CalculateConstrainedSize().Optimal;
 		childData.Area.Width = optimalSize.X;
 		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
 
@@ -111,7 +92,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 
 		mBackground->SetLayoutData(childData);
 
-		optimalSize = mSliderHandle->CalculateUnconstrainedOptimalSize();
+		optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
 		childData.Area.Width = optimalSize.X;
 		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
 
@@ -121,7 +102,7 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 		mSliderHandle->SetLayoutData(childData);
 		u32 handleHeight = optimalSize.Y;
 
-		optimalSize = mFillBackground->CalculateUnconstrainedOptimalSize();
+		optimalSize = mFillBackground->CalculateConstrainedSize().Optimal;
 		childData.Area.Width = optimalSize.X;
 		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
 		childData.Area.Height = mSliderHandle->GetHandlePositionInPixels() + handleHeight / 2;
@@ -131,19 +112,6 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 
 		mFillBackground->SetLayoutData(childData);
 	}
-}
-
-void GUISlider::NotifyStyleChanged()
-{
-	mBackground->SetStyleSheetClass(GetSubStyleName(GetBackgroundStyleType()));
-	mFillBackground->SetStyleSheetClass(GetSubStyleName(GetFillStyleType()));
-	mSliderHandle->SetStyleSheetClass(GetSubStyleName(GetHandleStyleType()));
-
-	const GUIElementStyle* bgStyle = mBackground->GetStyle();
-	if(mHasFocus)
-		mBackground->SetImage(bgStyle->Focused.Image);
-	else
-		mBackground->SetImage(bgStyle->Normal.Image);
 }
 
 void GUISlider::SetPercent(float pct)
@@ -221,20 +189,17 @@ bool GUISlider::DoOnCommandEvent(const GUICommandEvent& ev)
 {
 	const bool baseReturnValue = GUIInteractable::DoOnCommandEvent(ev);
 
-	const GUIElementStyle* bgStyle = mBackground->GetStyle();
 	if(ev.GetType() == GUICommandEventType::FocusGained)
 	{
+		AddStateFlags(GUIElementStateFlag::Focus);
 		mHasFocus = true;
-
-		if(!IsDisabled())
-			mBackground->SetImage(bgStyle->Focused.Image);
 
 		return true;
 	}
 	else if(ev.GetType() == GUICommandEventType::FocusLost)
 	{
+		RemoveStateFlags(GUIElementStateFlag::Focus);
 		mHasFocus = false;
-		mBackground->SetImage(bgStyle->Normal.Image);
 
 		return true;
 	}
@@ -269,7 +234,7 @@ GUISliderHorz* GUISliderHorz::Create(const GUIOptions& options, const String& st
 
 const String& GUISliderHorz::GetGuiTypeName()
 {
-	static String typeName = "SliderHorz";
+	static String typeName = "HorizontalSlider";
 	return typeName;
 }
 
@@ -290,6 +255,6 @@ GUISliderVert* GUISliderVert::Create(const GUIOptions& options, const String& st
 
 const String& GUISliderVert::GetGuiTypeName()
 {
-	static String typeName = "SliderVert";
+	static String typeName = "VerticalSlider";
 	return typeName;
 }

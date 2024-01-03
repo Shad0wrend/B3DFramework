@@ -16,15 +16,6 @@ namespace bs
 	class B3D_EXPORT GUISlider : public GUIElementContainer
 	{
 	public:
-		/**	Name of the style for the handle button used by the slider. */
-		static const String& GetHandleStyleType();
-
-		/**	Name of the style for the background image used by the slider. */
-		static const String& GetBackgroundStyleType();
-
-		/**	Name of the style for the background fill image used by the slider. */
-		static const String& GetFillStyleType();
-
 		/**
 		 * Moves the slider handle the the specified position in the handle area.
 		 *
@@ -70,11 +61,16 @@ namespace bs
 		/** Triggered when the user changes the value of the slider. */
 		Event<void(float percent)> OnChanged;
 
+		static constexpr const char* kHandleClassStyle = "SliderHandle";
+		static constexpr const char* kBackgroundClassStyle = "SliderBackground";
+		static constexpr const char* kFillClassStyle = "SliderFill";
+
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
 		 */
 
+		const char* GetStyleSheetElement() const override { return "slider"; }
 		Vector2I CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
@@ -83,7 +79,6 @@ namespace bs
 		virtual ~GUISlider();
 
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
-		void NotifyStyleChanged();
 
 		/**	Triggered when the slider handles moves. */
 		void OnHandleMoved(float newPosition, float newSize);
