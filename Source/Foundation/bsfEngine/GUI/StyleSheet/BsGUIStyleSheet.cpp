@@ -363,6 +363,14 @@ GUIStyleSheet::GUIStyleSheet(TArray<GUIStyleSheetRuleset> rulesets)
 
 void GUIStyleSheet::Initialize()
 {
+	// Sort from least specific to more specific (so more specific properties override the less specific ones)
+	std::sort(mRulesets.begin(), mRulesets.end(), [this](const GUIStyleSheetRuleset& lhs, const GUIStyleSheetRuleset& rhs) {
+		const u32 specifityLHS = lhs.SelectorList.CalculateSpecificity();
+		const u32 specifityRHS = rhs.SelectorList.CalculateSpecificity();
+
+		return specifityLHS < specifityRHS;
+	});
+
 	// Generate ruleset lookup based on the right-most element, class and id, to avoid iterating over all the rulesets
 	for(u32 rulesetIndex = 0; rulesetIndex < (u32)mRulesets.size(); ++rulesetIndex)
 	{
@@ -398,17 +406,6 @@ void GUIStyleSheet::Initialize()
 
 		const String cacheLookupName = BuildCacheLookupName(idSelector, classSelector, elementSelector);
 		mRulesetLookupMap[cacheLookupName].RulesetIndices.Add(rulesetIndex);
-	}
-
-	// Sort from least specific to more specific (so more specific properties override the less specific ones)
-	for(auto& pair : mRulesetLookupMap)
-	{
-		std::sort(pair.second.RulesetIndices.begin(), pair.second.RulesetIndices.end(), [this](u32 indexLHS, u32 indexRHS) {
-			const u32 specifityLHS = mRulesets[indexLHS].SelectorList.CalculateSpecificity();
-			const u32 specifityRHS = mRulesets[indexRHS].SelectorList.CalculateSpecificity();
-
-			return specifityRHS < specifityLHS;
-		});
 	}
 }
 
