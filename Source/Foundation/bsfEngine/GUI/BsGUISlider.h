@@ -14,52 +14,52 @@ namespace bs
 	 */
 
 	/**	A slider with a draggable handle that can be vertical or horizontal. */
-	class B3D_EXPORT GUISlider : public GUIElementContainer
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUISlider : public GUIElementContainer
 	{
 	public:
-		/**
-		 * Moves the slider handle the the specified position in the handle area.
-		 *
-		 * @param[in]	pct	Position to move the handle to, in percent ranging [0.0f, 1.0f]
-		 */
-		void SetPercent(float pct);
+		/**	Current position of the slider handle, in percent ranging [0.0f, 1.0f]. */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(HandlePositionInPercent))
+		void SetHandlePositionInPercent(float percent);
 
-		/**	Gets the current position of the slider handle, in percent ranging [0.0f, 1.0f]. */
-		float GetPercent() const;
+		/** @copydoc SetHandlePositionInPercent */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(HandlePositionInPercent))
+		float GetHandlePositionInPercent() const;
 
 		/**
-		 * Gets the current value of the slider. This is the slider handle position percentage scaled within the current
-		 * minimum and maximum range, rounded up to nearest step increment.
+		 * Current position of the slider handle, scaled within the current minimum and maximum range, rounded up to nearest step increment. If no range
+		 * is provided, the range is [0, 1].
 		 */
-		float GetValue() const;
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(HandlePositionInRange))
+		void SetHandlePositionInRange(float value);
 
-		/**	Sets a new value of the slider. This value should be within minimum and maximum range values. */
-		void SetValue(float value);
+		/** @copydoc SetHandlePositionInRange */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(HandlePositionInRange))
+		float GetHandlePositionInRange() const;
 
-		/**
-		 * Sets a minimum and maximum allow values in the input field. Set to large negative/positive values if you don't
-		 * require clamping.
-		 */
+		/** Sets a minimum and maximum allow values in the input field. Set to large negative/positive values if you don't require clamping. */
+		B3D_SCRIPT_EXPORT()
 		void SetRange(float min, float max);
 
 		/** Returns the minimum value of the slider */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(RangeMinimum))
 		float GetRangeMinimum() const;
 
 		/** Returns the maximum value of the slider */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(RangeMaximum))
 		float GetRangeMaximum() const;
 
-		/**
-		 * Sets a step that defines the minimal increment the value can be increased/decreased by. Set to zero to have no
-		 * step.
-		 */
+		/** Step that defines the minimal increment the value can be increased/decreased by. Set to zero to have no step. */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Step))
 		void SetStep(float step);
 
-		/** Gets the minimum percentual variation of the handle position */
+		/** @copydoc SetStep. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Step))
 		float GetStep() const;
 
 		void SetTint(const Color& color) override;
 
 		/** Triggered when the user changes the value of the slider. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(float percent)> OnChanged;
 
 		static constexpr const char* kHandleClassStyle = "SliderHandle";
@@ -105,7 +105,7 @@ namespace bs
 	 */
 
 	/**	A horizontal slider with a draggable handle. */
-	class B3D_EXPORT GUIHorizontalSlider : public GUISlider, public TGUIConstructionMethodsWithoutContent<GUIHorizontalSlider>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIHorizontalSlider : public GUISlider, public TGUIConstructionMethodsWithoutContent<GUIHorizontalSlider>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
@@ -123,7 +123,7 @@ namespace bs
 	};
 
 	/**	A vertical slider with a draggable handle. */
-	class B3D_EXPORT GUIVerticalSlider : public GUISlider, public TGUIConstructionMethodsWithoutContent<GUIVerticalSlider>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIVerticalSlider : public GUISlider, public TGUIConstructionMethodsWithoutContent<GUIVerticalSlider>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */

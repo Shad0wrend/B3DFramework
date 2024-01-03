@@ -61,25 +61,25 @@ void ScriptGUISliderH::InternalCreateInstance(MonoObject* instance, MonoString* 
 void ScriptGUISliderH::InternalSetPercent(ScriptGUISliderH* nativeInstance, float percent)
 {
 	GUIHorizontalSlider* slider = (GUIHorizontalSlider*)nativeInstance->GetGuiElement();
-	slider->SetPercent(percent);
+	slider->SetHandlePositionInPercent(percent);
 }
 
 float ScriptGUISliderH::InternalGetPercent(ScriptGUISliderH* nativeInstance)
 {
 	GUIHorizontalSlider* slider = (GUIHorizontalSlider*)nativeInstance->GetGuiElement();
-	return slider->GetPercent();
+	return slider->GetHandlePositionInPercent();
 }
 
 float ScriptGUISliderH::InternalGetValue(ScriptGUISliderH* nativeInstance)
 {
 	GUIHorizontalSlider* slider = (GUIHorizontalSlider*)nativeInstance->GetGuiElement();
-	return slider->GetValue();
+	return slider->GetHandlePositionInRange();
 }
 
 void ScriptGUISliderH::InternalSetValue(ScriptGUISliderH* nativeInstance, float percent)
 {
 	GUIHorizontalSlider* slider = (GUIHorizontalSlider*)nativeInstance->GetGuiElement();
-	return slider->SetValue(percent);
+	return slider->SetHandlePositionInRange(percent);
 }
 
 void ScriptGUISliderH::InternalSetRange(ScriptGUISliderH* nativeInstance, float min, float max)
@@ -158,25 +158,25 @@ void ScriptGUISliderV::InternalCreateInstance(MonoObject* instance, MonoString* 
 void ScriptGUISliderV::InternalSetPercent(ScriptGUISliderV* nativeInstance, float percent)
 {
 	GUIVerticalSlider* slider = (GUIVerticalSlider*)nativeInstance->GetGuiElement();
-	slider->SetPercent(percent);
+	slider->SetHandlePositionInPercent(percent);
 }
 
 float ScriptGUISliderV::InternalGetPercent(ScriptGUISliderV* nativeInstance)
 {
 	GUIVerticalSlider* slider = (GUIVerticalSlider*)nativeInstance->GetGuiElement();
-	return slider->GetPercent();
+	return slider->GetHandlePositionInPercent();
 }
 
 float ScriptGUISliderV::InternalGetValue(ScriptGUISliderV* nativeInstance)
 {
 	GUIVerticalSlider* slider = (GUIVerticalSlider*)nativeInstance->GetGuiElement();
-	return slider->GetValue();
+	return slider->GetHandlePositionInRange();
 }
 
 void ScriptGUISliderV::InternalSetValue(ScriptGUISliderV* nativeInstance, float percent)
 {
 	GUIVerticalSlider* slider = (GUIVerticalSlider*)nativeInstance->GetGuiElement();
-	return slider->SetValue(percent);
+	return slider->SetHandlePositionInRange(percent);
 }
 
 void ScriptGUISliderV::InternalSetRange(ScriptGUISliderV* nativeInstance, float min, float max)

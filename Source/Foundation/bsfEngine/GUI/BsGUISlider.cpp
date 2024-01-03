@@ -114,32 +114,32 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 	}
 }
 
-void GUISlider::SetPercent(float pct)
+void GUISlider::SetHandlePositionInPercent(float percent)
 {
 	float oldHandlePos = mSliderHandle->GetHandlePositionInPercent();
-	mSliderHandle->SetHandlePositionInPercent(pct);
+	mSliderHandle->SetHandlePositionInPercent(percent);
 
 	if(oldHandlePos != mSliderHandle->GetHandlePositionInPercent())
 		mSliderHandle->MarkLayoutAsDirty();
 }
 
-float GUISlider::GetPercent() const
+float GUISlider::GetHandlePositionInPercent() const
 {
 	return mSliderHandle->GetHandlePositionInPercent();
 }
 
-float GUISlider::GetValue() const
+float GUISlider::GetHandlePositionInRange() const
 {
 	float diff = mMaxRange - mMinRange;
 	return mMinRange + diff * mSliderHandle->GetHandlePositionInPercent();
 }
 
-void GUISlider::SetValue(float value)
+void GUISlider::SetHandlePositionInRange(float value)
 {
 	float diff = mMaxRange - mMinRange;
 	float pct = (value - mMinRange) / diff;
 
-	SetPercent(pct);
+	SetHandlePositionInPercent(pct);
 }
 
 void GUISlider::SetRange(float min, float max)
@@ -182,7 +182,7 @@ void GUISlider::SetTint(const Color& color)
 
 void GUISlider::OnHandleMoved(float newPosition, float newSize)
 {
-	OnChanged(GetValue());
+	OnChanged(GetHandlePositionInRange());
 }
 
 bool GUISlider::DoOnCommandEvent(const GUICommandEvent& ev)
