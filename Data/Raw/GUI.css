@@ -555,6 +555,15 @@ texture.WindowFrame:checked
     background-color: var(--HoverBackgroundColor);
 }
 
+texture.TitleBarBackground
+{
+    height: 17px;
+    min-width: 10px;
+    background-color: var(--PrimaryBackgroundColor);
+    border-bottom-width: 1px;
+    border-color: #000000;
+}
+
 button.WindowChromeButton
 {
 	width: 14px;
