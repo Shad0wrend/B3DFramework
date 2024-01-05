@@ -613,3 +613,20 @@ texture.GUIDropDownScrollbarHandle
     min-height: 8px;
     background-color: var(--PrimaryBackgroundColor);
 }
+
+button.MenuBarButton
+{
+    height: 14px;
+    border-width: 0px;
+    text-align: left;
+    margin: 0px;
+}
+
+texture.MenuBarBackground
+{
+    background-color: var(--PrimaryBackgroundColor);
+    min-width: 1px;
+    min-height: 1px;
+    border-bottom-width: 1px;
+    border-color: #000000;
+}
