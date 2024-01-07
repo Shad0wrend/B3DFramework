@@ -10,7 +10,12 @@
     --FocusColor: #FFA800;
     --DarkerContentColor: #828282;
     --DarkContentColor: #1A1A1A;
+    --BlueBackgroundColor: #0E82FF;
+    --GreenBackgroundColor: #07C931;
+    --RedBackgroundColor: #C40000;
+    --GreyBackgroundColor: #3A3A3A;
     --PrimaryFontFamily: "Arial";
+    --BoldFontFamily: "Arial";
     --PrimaryFontSize: 8;
 }
 
@@ -83,6 +88,7 @@ label
     color: var(--PrimaryContentColor);
     font-family: var(--PrimaryFontFamily);
     font-size: var(--PrimaryFontSize);
+    background-color: #00000000;
 }
 
 label.Label
@@ -647,4 +653,60 @@ texture.MenuBarBackground
     min-height: 1px;
     border-bottom-width: 1px;
     border-color: #000000;
+}
+
+label.ButtonAddOnRed
+{
+    border-width: 2px 0px 2px 2px;
+    border-color: var(--PrimaryBorderColor);
+    background-color: var(--RedBackgroundColor);
+    text-align: center;
+    vertical-align: middle;
+    font-family: var(--BoldFontFamily);
+    font-size: var(--PrimaryFontSize);
+    width: 15px;
+    height: 22px;
+    color: var(--DarkContentColor);
+}
+
+label.ButtonAddOnGreen
+{
+    border-width: 2px 0px 2px 2px;
+    border-color: var(--PrimaryBorderColor);
+    background-color: var(--GreenBackgroundColor);
+    text-align: center;
+    vertical-align: middle;
+    font-family: var(--BoldFontFamily);
+    font-size: var(--PrimaryFontSize);
+    width: 15px;
+    height: 22px;
+    color: var(--DarkContentColor);
+}
+
+label.ButtonAddOnBlue
+{
+    border-width: 2px 0px 2px 2px;
+    border-color: var(--PrimaryBorderColor);
+    background-color: var(--BlueBackgroundColor);
+    text-align: center;
+    vertical-align: middle;
+    font-family: var(--BoldFontFamily);
+    font-size: var(--PrimaryFontSize);
+    width: 15px;
+    height: 22px;
+    color: var(--DarkContentColor);
+}
+
+label.ButtonAddOnGrey
+{
+    border-width: 2px 0px 2px 2px;
+    border-color: var(--PrimaryBorderColor);
+    background-color: var(--GreyBackgroundColor);
+    text-align: center;
+    vertical-align: middle;
+    font-family: var(--BoldFontFamily);
+    font-size: var(--PrimaryFontSize);
+    width: 15px;
+    height: 22px;
+    color: var(--DarkContentColor);
 }
