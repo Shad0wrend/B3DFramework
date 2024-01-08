@@ -660,7 +660,7 @@ texture.MenuBarBackground
 .FloatFieldZ {}
 .FloatFieldW {}
 
-.FloatFieldX label.Label
+.FloatFieldX label
 {
     background-color: var(--RedBackgroundColor);
     border-width: 2px 0px 2px 2px;
