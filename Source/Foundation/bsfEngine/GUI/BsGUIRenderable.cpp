@@ -26,7 +26,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() { return TID_GUIRenderable; }
+		u32 GetRttiId() const override { return TID_GUIRenderable; }
 
 		SPtr<IReflectable> NewRttiObject() { return nullptr; }
 	};

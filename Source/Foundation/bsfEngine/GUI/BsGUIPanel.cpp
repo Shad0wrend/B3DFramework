@@ -26,7 +26,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() { return TID_GUIPanel; }
+		u32 GetRttiId() const override { return TID_GUIPanel; }
 
 		SPtr<IReflectable> NewRttiObject() { return nullptr; }
 	};

@@ -61,7 +61,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableAssemblyInfo;
 		}
@@ -131,7 +131,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableObjectInfo;
 		}
@@ -164,7 +164,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableMemberInfo;
 		}
@@ -190,7 +190,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldInfo;
 		}
@@ -214,7 +214,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializablePropertyInfo;
 		}
@@ -238,7 +238,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableTypeInfo;
 		}
@@ -268,7 +268,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableTypeInfoPrimitive;
 		}
@@ -299,7 +299,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableTypeInfoEnum;
 		}
@@ -331,7 +331,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableTypeInfoRef;
 		}
@@ -360,7 +360,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableTypeInfoRRef;
 		}
@@ -394,7 +394,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableTypeInfoObject;
 		}
@@ -424,7 +424,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableTypeInfoArray;
 		}
@@ -453,7 +453,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableTypeInfoList;
 		}
@@ -483,7 +483,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableTypeInfoDictionary;
 		}

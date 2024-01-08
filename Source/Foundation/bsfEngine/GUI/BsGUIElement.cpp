@@ -29,7 +29,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() { return TID_GUIElement; }
+		u32 GetRttiId() const override { return TID_GUIElement; }
 
 		SPtr<IReflectable> NewRttiObject() { return nullptr; }
 	};

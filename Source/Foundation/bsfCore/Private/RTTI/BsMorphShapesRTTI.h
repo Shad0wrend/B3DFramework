@@ -30,7 +30,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_MorphShape;
 		}
@@ -56,7 +56,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_MorphChannel;
 		}
@@ -82,7 +82,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_MorphShapes;
 		}

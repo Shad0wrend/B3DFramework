@@ -424,7 +424,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ShaderInformationBase;
 		}
@@ -449,7 +449,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ShaderInformation;
 		}
@@ -474,7 +474,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ShaderInformationRenderProxy;
 		}
@@ -510,7 +510,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_Shader;
 		}
@@ -546,7 +546,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ShaderRenderProxy;
 		}
@@ -576,7 +576,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ShaderMetaData;
 		}

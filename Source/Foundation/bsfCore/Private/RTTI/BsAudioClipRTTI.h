@@ -68,7 +68,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_AudioClip;
 		}

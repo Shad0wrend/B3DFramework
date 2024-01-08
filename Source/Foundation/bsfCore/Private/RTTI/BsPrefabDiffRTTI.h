@@ -32,7 +32,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_PrefabComponentDiff;
 		}
@@ -71,7 +71,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_PrefabObjectDiff;
 		}
@@ -233,7 +233,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_PrefabDiff;
 		}

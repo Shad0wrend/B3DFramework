@@ -35,7 +35,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_AutoExposureSettings;
 		}
@@ -66,7 +66,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_TonemappingSettings;
 		}
@@ -92,7 +92,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_WhiteBalanceSettings;
 		}
@@ -120,7 +120,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ColorGradingSettings;
 		}
@@ -161,7 +161,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_DepthOfFieldSettings;
 		}
@@ -193,7 +193,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_AmbientOcclusionSettings;
 		}
@@ -222,7 +222,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_MotionBlurSettings;
 		}
@@ -249,7 +249,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_TemporalAASettings;
 		}
@@ -277,7 +277,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScreenSpaceReflectionsSettings;
 		}
@@ -307,7 +307,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_BloomSettings;
 		}
@@ -346,7 +346,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScreenSpaceLensFlareSettings;
 		}
@@ -374,7 +374,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ChromaticAberrationSettings;
 		}
@@ -401,7 +401,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_FilmGrainSettings;
 		}
@@ -429,7 +429,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ShadowSettings;
 		}
@@ -479,7 +479,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_RenderSettings;
 		}

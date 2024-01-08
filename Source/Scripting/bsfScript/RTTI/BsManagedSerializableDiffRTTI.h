@@ -61,7 +61,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_ScriptModifiedField;
 		}
@@ -108,7 +108,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScriptModifiedArrayEntry;
 		}
@@ -155,7 +155,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScriptModifiedDictionaryEntry;
 		}
@@ -178,7 +178,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScriptModification;
 		}
@@ -224,7 +224,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScriptModifiedObject;
 		}
@@ -292,7 +292,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScriptModifiedArray;
 		}
@@ -359,7 +359,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScriptModifiedDictionary;
 		}
@@ -395,7 +395,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScriptModifiedEntry;
 		}
@@ -431,7 +431,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_ScriptSerializableDiff;
 		}

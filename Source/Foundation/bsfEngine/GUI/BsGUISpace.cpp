@@ -22,7 +22,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() { return TID_GUIFixedSpace; }
+		u32 GetRttiId() const override { return TID_GUIFixedSpace; }
 
 		SPtr<IReflectable> NewRttiObject() { return nullptr; }
 	};
@@ -36,7 +36,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() { return TID_GUIFlexibleSpace; }
+		u32 GetRttiId() const override { return TID_GUIFlexibleSpace; }
 
 		SPtr<IReflectable> NewRttiObject() { return nullptr; }
 	};

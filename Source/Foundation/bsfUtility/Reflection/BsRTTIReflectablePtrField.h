@@ -60,7 +60,7 @@ namespace bs
 		virtual SPtr<IReflectable> NewObject() = 0;
 
 		/** Returns the RTTI identifier of the class owning the field. */
-		virtual u32 GetRttiId() = 0;
+		virtual u32 GetRttiId() const = 0;
 
 		/** Returns the name of the class owning the field. */
 		virtual const String& GetRttiName() = 0;
@@ -216,7 +216,7 @@ namespace bs
 			return SPtr<IReflectable>(DataType::GetRttiStatic()->NewRttiObject());
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return DataType::GetRttiStatic()->GetRttiId();
 		}

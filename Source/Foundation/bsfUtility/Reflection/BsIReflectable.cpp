@@ -45,7 +45,7 @@ bool IReflectable::IsTypeIdDuplicateInternal(u32 typeId)
 	return IReflectable::GetRttifromTypeIdInternal(typeId) != nullptr;
 }
 
-bool IReflectable::IsDerivedFrom(RTTITypeBase* base)
+bool IReflectable::IsDerivedFrom(const RTTITypeBase* base) const
 {
 	return GetRtti()->IsDerivedFrom(base);
 }

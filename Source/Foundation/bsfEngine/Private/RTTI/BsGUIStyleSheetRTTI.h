@@ -101,7 +101,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override 
+		u32 GetRttiId() const override 
 		{
 			return TID_GUIStyleSheetRule;
 		}
@@ -126,7 +126,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override 
+		u32 GetRttiId() const override 
 		{
 			return TID_GUIStyleSheetRuleset;
 		}
@@ -156,7 +156,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override 
+		u32 GetRttiId() const override 
 		{
 			return TID_GUIStyleSheet;
 		}

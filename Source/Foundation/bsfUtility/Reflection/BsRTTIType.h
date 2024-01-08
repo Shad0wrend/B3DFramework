@@ -416,16 +416,16 @@ namespace bs
 		virtual ~RTTITypeBase();
 
 		/** Returns RTTI type information for all classes that derive from the class that owns this RTTI type. */
-		virtual Vector<RTTITypeBase*>& GetDerivedClasses() = 0;
+		virtual Vector<RTTITypeBase*>& GetDerivedClasses() const = 0;
 
 		/**
 		 * Returns RTTI type information for the class that owns this RTTI type. If the class has not base type, null is
 		 * returned instead.
 		 */
-		virtual RTTITypeBase* GetBaseClass() = 0;
+		virtual RTTITypeBase* GetBaseClass() const = 0;
 
 		/** Returns true if current RTTI class is derived from @p base. (Or if it is the same type as base) */
-		virtual bool IsDerivedFrom(RTTITypeBase* base) = 0;
+		virtual bool IsDerivedFrom(const RTTITypeBase* base) const = 0;
 
 		/** Creates a new instance of the class owning this RTTI type. */
 		virtual SPtr<IReflectable> NewRttiObject() = 0;
@@ -434,7 +434,7 @@ namespace bs
 		virtual const String& GetRttiName() = 0;
 
 		/** Returns an RTTI id that uniquely represents each class in the RTTI system. */
-		virtual u32 GetRttiId() = 0;
+		virtual u32 GetRttiId() const = 0;
 
 		/**
 		 * Called by the serializers when serialization for this object has started. Use this to do any preprocessing on
@@ -636,34 +636,34 @@ namespace bs
 			return &inst;
 		}
 
-		Vector<RTTITypeBase*>& GetDerivedClasses() override
+		Vector<RTTITypeBase*>& GetDerivedClasses() const override
 		{
 			static Vector<RTTITypeBase*> mRTTIDerivedClasses;
 			return mRTTIDerivedClasses;
 		}
 
-		RTTITypeBase* GetBaseClass() override
+		RTTITypeBase* GetBaseClass() const override
 		{
 			return GetRttiType<BaseType>()();
 		}
 
-		bool IsDerivedFrom(RTTITypeBase* base) override
+		bool IsDerivedFrom(const RTTITypeBase* base) const override
 		{
 			B3D_ASSERT(base != nullptr);
 
-			Stack<RTTITypeBase*> todo;
-			todo.push(base);
+			TInlineArray<const RTTITypeBase*, 6> todo;
+			todo.Add(base);
 
-			while(!todo.empty())
+			while(!todo.Empty())
 			{
-				RTTITypeBase* currentType = todo.top();
-				todo.pop();
+				const RTTITypeBase* currentType = todo.Back();
+				todo.Pop();
 
 				if(currentType->GetRttiId() == GetRttiId())
 					return true;
 
 				for(const auto& item : currentType->GetDerivedClasses())
-					todo.push(item);
+					todo.Add(item);
 			}
 
 			return false;
@@ -798,7 +798,7 @@ namespace bs
 
 	/** Checks is the current object a subclass of some type. */
 	template <class T>
-	bool B3DRTTIIsSubclass(IReflectable* object)
+	bool B3DRTTIIsSubclass(const IReflectable* object)
 	{
 		static_assert((std::is_base_of<bs::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
@@ -816,7 +816,7 @@ namespace bs
 
 	/** Attempts to cast the object to the provided type, or returns null if cast is not valid. */
 	template <class T>
-	T* B3DRTTICast(IReflectable* object)
+	T* B3DRTTICast(const IReflectable* object)
 	{
 		if(B3DRTTIIsSubclass<T>(object))
 			return (T*)object;

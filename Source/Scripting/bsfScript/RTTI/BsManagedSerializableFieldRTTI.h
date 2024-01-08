@@ -39,7 +39,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldKey;
 		}
@@ -64,7 +64,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldData;
 		}
@@ -100,7 +100,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataEntry;
 		}
@@ -130,7 +130,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataBool;
 		}
@@ -160,7 +160,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataChar;
 		}
@@ -190,7 +190,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataI8;
 		}
@@ -220,7 +220,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataU8;
 		}
@@ -250,7 +250,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataI16;
 		}
@@ -280,7 +280,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataU16;
 		}
@@ -310,7 +310,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataI32;
 		}
@@ -340,7 +340,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataU32;
 		}
@@ -370,7 +370,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataI64;
 		}
@@ -400,7 +400,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataU64;
 		}
@@ -430,7 +430,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataFloat;
 		}
@@ -460,7 +460,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataDouble;
 		}
@@ -490,7 +490,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataString;
 		}
@@ -520,7 +520,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataResourceRef;
 		}
@@ -550,7 +550,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataGameObjectRef;
 		}
@@ -580,7 +580,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataReflectableRef;
 		}
@@ -610,7 +610,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataObject;
 		}
@@ -640,7 +640,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataArray;
 		}
@@ -670,7 +670,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataList;
 		}
@@ -700,7 +700,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() override
+		u32 GetRttiId() const override
 		{
 			return TID_SerializableFieldDataDictionary;
 		}

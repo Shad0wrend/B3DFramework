@@ -40,7 +40,7 @@ namespace bs
 		}
 
 		/** Returns true if current RTTI class is derived from @p base (Or if it is the same type as base). */
-		bool IsDerivedFrom(RTTITypeBase* base);
+		bool IsDerivedFrom(const RTTITypeBase* base) const;
 
 		/** Returns an unique type identifier of the class. */
 		u32 GetTypeId() const;

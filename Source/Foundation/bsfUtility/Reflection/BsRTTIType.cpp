@@ -92,7 +92,7 @@ class SerializationContextRTTI : public RTTIType<SerializationContext, IReflecta
 		return name;
 	}
 
-	u32 GetRttiId() override
+	u32 GetRttiId() const override
 	{
 		return TID_SerializationContext;
 	}

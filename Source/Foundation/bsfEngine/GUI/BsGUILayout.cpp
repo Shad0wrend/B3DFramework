@@ -22,7 +22,7 @@ namespace bs
 			return name;
 		}
 
-		u32 GetRttiId() { return TID_GUILayout; }
+		u32 GetRttiId() const override { return TID_GUILayout; }
 
 		SPtr<IReflectable> NewRttiObject() { return nullptr; }
 	};

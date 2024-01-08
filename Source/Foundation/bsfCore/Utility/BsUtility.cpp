@@ -212,7 +212,7 @@ class CoreSerializationContextRTTI : public RTTIType<CoreSerializationContext, S
 		return name;
 	}
 
-	u32 GetRttiId() override
+	u32 GetRttiId() const override
 	{
 		return TID_CoreSerializationContext;
 	}
