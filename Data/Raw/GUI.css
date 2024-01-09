@@ -655,16 +655,7 @@ texture.MenuBarBackground
     border-color: #000000;
 }
 
-label.EditorFieldLabel
-{
-    height: 14px;
-    min-width: 10px;
-    color: var(--PrimaryContentColor);
-    font-family: var(--PrimaryFontFamily);
-    font-size: var(--PrimaryFontSize);
-    background-color: #00000000;
-}
-
+.GUIFloatField {}
 .FloatFieldX {}
 .FloatFieldY {}
 .FloatFieldZ {}
