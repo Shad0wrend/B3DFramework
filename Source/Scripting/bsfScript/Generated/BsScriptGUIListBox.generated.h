@@ -13,7 +13,7 @@ namespace bs { class GUIListBox; }
 namespace bs { struct __GUIListBoxContentInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIListBox : public TScriptGUIInteractable<ScriptGUIListBox>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIListBox : public TScriptGUIInteractable<ScriptGUIListBox, ScriptGUIClickableBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIListBox")

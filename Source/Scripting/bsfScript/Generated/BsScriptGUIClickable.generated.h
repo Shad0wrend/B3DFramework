@@ -10,7 +10,14 @@ namespace bs { class GUIClickable; }
 namespace bs { struct __GUIContentInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIClickable : public TScriptGUIInteractable<ScriptGUIClickable>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIClickableBase : public ScriptGUIInteractableBase
+	{
+	public:
+		ScriptGUIClickableBase(MonoObject* instance);
+		virtual ~ScriptGUIClickableBase() {}
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIClickable : public TScriptGUIInteractable<ScriptGUIClickable, ScriptGUIClickableBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIClickable")

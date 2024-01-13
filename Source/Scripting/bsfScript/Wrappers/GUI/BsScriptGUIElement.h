@@ -91,15 +91,15 @@ namespace bs
 	 * A more specialized implementation of ScriptGUIElementTBase that references a specific GUI element type instead of
 	 * the generic GUIElement.
 	 */
-	template <class Type>
-	class TScriptGUIInteractable : public ScriptObject<Type, ScriptGUIInteractableBase>
+	template <class Type, class BaseType = ScriptGUIInteractableBase>
+	class TScriptGUIInteractable : public ScriptObject<Type, BaseType>
 	{
 	public:
 		virtual ~TScriptGUIInteractable() {}
 
 	protected:
 		TScriptGUIInteractable(MonoObject* instance, GUIElement* element)
-			: ScriptObject<Type, ScriptGUIInteractableBase>(instance)
+			: ScriptObject<Type, BaseType>(instance)
 		{
 			this->Initialize(element);
 		}

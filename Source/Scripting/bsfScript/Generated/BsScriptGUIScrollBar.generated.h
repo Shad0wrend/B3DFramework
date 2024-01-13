@@ -8,7 +8,14 @@
 namespace bs { class GUIScrollBar; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollBar : public TScriptGUIInteractable<ScriptGUIScrollBar>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollBarBase : public ScriptGUIInteractableBase
+	{
+	public:
+		ScriptGUIScrollBarBase(MonoObject* instance);
+		virtual ~ScriptGUIScrollBarBase() {}
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollBar : public TScriptGUIInteractable<ScriptGUIScrollBar, ScriptGUIScrollBarBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIScrollBar")

@@ -8,6 +8,10 @@
 
 namespace bs
 {
+	ScriptGUIToggleableBase::ScriptGUIToggleableBase(MonoObject* managedInstance)
+		:ScriptGUIClickableBase(managedInstance)
+	 { }
+
 	ScriptGUIToggleable::OnToggledThunkDef ScriptGUIToggleable::OnToggledThunk; 
 
 	ScriptGUIToggleable::ScriptGUIToggleable(MonoObject* managedInstance, GUIToggleable* value)

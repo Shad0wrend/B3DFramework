@@ -12,7 +12,7 @@ namespace bs { class GUIButton; }
 namespace bs { struct __GUIContentInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIButton : public TScriptGUIInteractable<ScriptGUIButton>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIButton : public TScriptGUIInteractable<ScriptGUIButton, ScriptGUIClickableBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIButton")

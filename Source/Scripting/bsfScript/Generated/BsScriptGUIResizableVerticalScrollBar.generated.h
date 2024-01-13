@@ -10,7 +10,7 @@
 namespace bs { class GUIResizableVerticalScrollBar; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIResizableVerticalScrollBar : public TScriptGUIInteractable<ScriptGUIResizableVerticalScrollBar>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIResizableVerticalScrollBar : public TScriptGUIInteractable<ScriptGUIResizableVerticalScrollBar, ScriptGUIScrollBarBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIResizableVerticalScrollBar")

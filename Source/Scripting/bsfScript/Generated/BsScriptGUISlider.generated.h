@@ -8,7 +8,14 @@
 namespace bs { class GUISlider; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISlider : public TScriptGUIInteractable<ScriptGUISlider>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISliderBase : public ScriptGUIInteractableBase
+	{
+	public:
+		ScriptGUISliderBase(MonoObject* instance);
+		virtual ~ScriptGUISliderBase() {}
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISlider : public TScriptGUIInteractable<ScriptGUISlider, ScriptGUISliderBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUISlider")

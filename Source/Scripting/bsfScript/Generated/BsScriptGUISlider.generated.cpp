@@ -8,6 +8,10 @@
 
 namespace bs
 {
+	ScriptGUISliderBase::ScriptGUISliderBase(MonoObject* managedInstance)
+		:ScriptGUIInteractableBase(managedInstance)
+	 { }
+
 	ScriptGUISlider::OnChangedThunkDef ScriptGUISlider::OnChangedThunk; 
 
 	ScriptGUISlider::ScriptGUISlider(MonoObject* managedInstance, GUISlider* value)

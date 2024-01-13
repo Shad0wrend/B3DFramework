@@ -9,7 +9,14 @@
 namespace bs { class GUIToggleable; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggleable : public TScriptGUIInteractable<ScriptGUIToggleable>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggleableBase : public ScriptGUIClickableBase
+	{
+	public:
+		ScriptGUIToggleableBase(MonoObject* instance);
+		virtual ~ScriptGUIToggleableBase() {}
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggleable : public TScriptGUIInteractable<ScriptGUIToggleable, ScriptGUIToggleableBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIToggleable")

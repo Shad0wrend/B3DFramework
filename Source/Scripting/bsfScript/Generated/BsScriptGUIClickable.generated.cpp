@@ -9,6 +9,10 @@
 
 namespace bs
 {
+	ScriptGUIClickableBase::ScriptGUIClickableBase(MonoObject* managedInstance)
+		:ScriptGUIInteractableBase(managedInstance)
+	 { }
+
 	ScriptGUIClickable::OnClickThunkDef ScriptGUIClickable::OnClickThunk; 
 	ScriptGUIClickable::OnHoverThunkDef ScriptGUIClickable::OnHoverThunk; 
 	ScriptGUIClickable::OnOutThunkDef ScriptGUIClickable::OnOutThunk; 

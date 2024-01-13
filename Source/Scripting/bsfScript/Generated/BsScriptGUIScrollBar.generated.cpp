@@ -8,6 +8,10 @@
 
 namespace bs
 {
+	ScriptGUIScrollBarBase::ScriptGUIScrollBarBase(MonoObject* managedInstance)
+		:ScriptGUIInteractableBase(managedInstance)
+	 { }
+
 	ScriptGUIScrollBar::OnScrollOrResizeThunkDef ScriptGUIScrollBar::OnScrollOrResizeThunk; 
 
 	ScriptGUIScrollBar::ScriptGUIScrollBar(MonoObject* managedInstance, GUIScrollBar* value)

@@ -10,7 +10,7 @@
 namespace bs { class GUIVerticalSlider; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIVerticalSlider : public TScriptGUIInteractable<ScriptGUIVerticalSlider>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIVerticalSlider : public TScriptGUIInteractable<ScriptGUIVerticalSlider, ScriptGUISliderBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIVerticalSlider")
