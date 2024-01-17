@@ -782,3 +782,57 @@ label.HeaderLight
     min-height: 30px;
     padding: 2px;
 }
+
+.GUICurvesField {}
+.GUICurvesFieldX {}
+.GUICurvesFieldY {}
+.GUICurvesFieldZ {}
+.GUICurvesFieldW {}
+
+.GUICurvesFieldX label
+{
+    background-color: var(--RedBackgroundColor);
+    text-align: center;
+    vertical-align: middle;
+    font-family: var(--BoldFontFamily);
+    font-size: var(--PrimaryFontSize);
+    width: 15px;
+    height: 30px;
+    color: var(--DarkContentColor);
+}
+
+.GUICurvesFieldY label
+{
+    background-color: var(--GreenBackgroundColor);
+    text-align: center;
+    vertical-align: middle;
+    font-family: var(--BoldFontFamily);
+    font-size: var(--PrimaryFontSize);
+    width: 15px;
+    height: 30px;
+    color: var(--DarkContentColor);
+}
+
+.GUICurvesFieldZ label
+{
+    background-color: var(--BlueBackgroundColor);
+    text-align: center;
+    vertical-align: middle;
+    font-family: var(--BoldFontFamily);
+    font-size: var(--PrimaryFontSize);
+    width: 15px;
+    height: 30px;
+    color: var(--DarkContentColor);
+}
+
+.GUICurvesFieldW label
+{
+    background-color: var(--GreyBackgroundColor);
+    text-align: center;
+    vertical-align: middle;
+    font-family: var(--BoldFontFamily);
+    font-size: var(--PrimaryFontSize);
+    width: 15px;
+    min-height: 30px;
+    color: var(--DarkContentColor);
+}
