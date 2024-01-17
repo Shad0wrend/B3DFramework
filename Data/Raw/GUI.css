@@ -3,6 +3,7 @@
     --PrimaryContentColor: #B2B2B2;
     --PrimaryBackgroundColor: #212121;
     --BrighterBackgroundColor: #343434;
+    --BrightBackgroundColor: #444444;
     --PrimaryBorderColor: #1B1B1B;
     --HoverBorderColor: #1B1B1B;
     --HoverBackgroundColor: #2D2D2D;
@@ -755,3 +756,13 @@ button.DropDownArrowButton:active
 .GUIFloatDistributionField {}
 .GUIVector2DistributionField {}
 .GUIVector3DistributionField {}
+
+label.HeaderLight
+{
+    height: 18px;
+    color: var(--PrimaryContentColor);
+    background-color: var(--BrightBackgroundColor);
+    font-family: var(--BoldFontFamily);
+    text-align: center;
+    padding: 2px;
+}
