@@ -770,3 +770,15 @@ label.HeaderLight
     text-align: center;
     padding: 2px;
 }
+
+.CurveBackground
+{
+    background-color: var(--GreyBackgroundColor);
+}
+
+.GUICurves
+{
+    min-width: 30px;
+    min-height: 30px;
+    padding: 2px;
+}
