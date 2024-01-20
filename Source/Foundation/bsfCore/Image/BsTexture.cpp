@@ -89,7 +89,7 @@ Texture::Texture(const TextureCreateInformation& createInformation, const SPtr<P
 }
 
 Texture::Texture(const TextureCreateInformation& createInformation)
-	: Texture(createInformation, nullptr)
+	: Texture(createInformation, createInformation.InitialData)
 {
 }
 
@@ -116,8 +116,8 @@ SPtr<ct::RenderProxy> Texture::CreateRenderProxy() const
 		return nullptr;
 
 	TextureCreateInformation createInformation = mProperties;
-	if((mProperties.Usage & TU_CPUCACHED) != 0)
-		createInformation.InitialData = mInitData;
+	createInformation.InitialData = mInitData;
+	mInitData = nullptr;
 
 	return gpuDevice->CreateTexture(createInformation, true);
 }
