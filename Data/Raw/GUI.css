@@ -357,6 +357,15 @@ button.ScrollButton:active
     background-color: var(--FocusColor);
 }
 
+color-display
+{
+    height: 15px;
+    min-width: 10px;
+}
+
+color-display.Color
+{}
+
 button.TabBarButton
 {
     height: 15px;
