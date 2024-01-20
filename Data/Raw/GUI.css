@@ -366,6 +366,15 @@ color-display
 color-display.Color
 {}
 
+color-gradient-display
+{
+    height: 15px;
+    min-width: 10px;
+}
+
+color-gradient-display.ColorGradient
+{}
+
 button.TabBarButton
 {
     height: 15px;
