@@ -5,6 +5,7 @@
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUIToggleGroup.h"
 #include "BsGUICommandEvent.h"
+#include "BsGUIHelper.h"
 #include "BsGUIVectorPaths.h"
 #include "Image/BsSpriteVectorPath.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
@@ -116,61 +117,151 @@ void GUIToggleable::SetIsToggled(bool isToggled, bool triggerEvent)
 	SetOnInternal(mIsToggled);
 }
 
-void GUIToggleable::UpdateRenderElements()
+Size2UI GUIToggleable::CalculateCheckmarkSize() const
 {
-	Super::UpdateRenderElements();
-
 	const bool isUsingStyleSheets = IsUsingStyleSheets();
 	if(!isUsingStyleSheets)
-		return;
+		return Size2UI::kZero;
 
-	// Draw checkmark if needed
 	const GUIStyleSheetRuleInformation& ruleInformation = GetPseudoElementStyleSheetRuleInformation(mCheckmarkPseudoElementIndex);
-	if(ruleInformation.CurrentStateRuleset == nullptr)
-		return;
 
 	const GUIStyleSheetRules& checkmarkStyleSheetRules = ruleInformation.CurrentStateRuleset->Rules;
 	if(checkmarkStyleSheetRules.Visibility == GUIElementVisibility::Hidden)
+		return Size2UI::kZero;
+
+	const GUISizeConstraints& sizeConstraints = GetSizeConstraints();
+	const Vector2I optimalSize = sizeConstraints.CalculateConstrainedSize(GUIClickable::CalculateUnconstrainedOptimalSize()).Optimal;
+
+	// If no content and no fixed size set, then default to some value
+	Size2UI actualOptimalSize;
+	if(optimalSize.X == 0 || optimalSize.Y == 0)
+		actualOptimalSize = kDefaultCheckmarkSize;
+	else
+		actualOptimalSize = Size2UI((u32)optimalSize.X, (u32)optimalSize.Y);
+
+	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+	const Rect2I contentArea = GUIHelper::CalculateContentArea(actualOptimalSize, styleSheetRules);
+
+	if(checkmarkStyleSheetRules.BackgroundImage.IsLoaded(false))
+	{
+		const Size2UI imageSize = checkmarkStyleSheetRules.BackgroundImage->GetSize();
+		const float backgroundImageAspectRatio = (float)imageSize.Width / (float)imageSize.Height;
+
+		// Background image, scaled to fit the content area height, while respecting aspect ratio
+		return Size2UI(Math::RoundToU32((float)contentArea.Height * backgroundImageAspectRatio), contentArea.Height);
+	}
+	else if(mCheckmarkPathBuilder)
+	{
+		return Size2UI(contentArea.Height, contentArea.Height);
+	}
+
+	return Size2UI::kZero;
+}
+
+Vector2I GUIToggleable::CalculateUnconstrainedOptimalSize() const
+{
+	const Vector2I optimalSize = GUIClickable::CalculateUnconstrainedOptimalSize();
+
+	const bool isUsingStyleSheets = IsUsingStyleSheets();
+	if(!isUsingStyleSheets)
+		return optimalSize;
+
+	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+	const Rect2I contentArea = GUIHelper::CalculateContentArea(Size2UI(optimalSize.X, optimalSize.Y), styleSheetRules);
+
+	const Size2UI checkmarkSize = CalculateCheckmarkSize();
+	Size2UI contentSizeWithCheckMark(contentArea.Width, contentArea.Height);
+
+	if(checkmarkSize.Width > 0)
+	{
+		contentSizeWithCheckMark.Width += kCheckmarkContentSpacing + checkmarkSize.Width;
+		contentSizeWithCheckMark.Height = Math::Max(contentSizeWithCheckMark.Height, checkmarkSize.Height);
+	}
+
+	const Size2UI optimalSizeWithCheckmark = GUIHelper::CalculateSizeWithPaddingAndBorder(contentSizeWithCheckMark, styleSheetRules);
+	return Vector2I((i32)optimalSizeWithCheckmark.Width, (i32)optimalSizeWithCheckmark.Height);
+}
+
+void GUIToggleable::UpdateRenderElements()
+{
+	// If not drawing a checkmark using style-sheets, fall back to parent implementation
+	const bool isUsingStyleSheets = IsUsingStyleSheets();
+	if(!isUsingStyleSheets)
+	{
+		GUIClickable::UpdateRenderElements();
 		return;
+	}
 
-	const Rect2I checkmarkBounds = GetCachedContentBoundsInElementSpace();
+	const GUIStyleSheetRuleInformation& ruleInformation = GetPseudoElementStyleSheetRuleInformation(mCheckmarkPseudoElementIndex);
+	if(ruleInformation.CurrentStateRuleset == nullptr)
+	{
+		GUIClickable::UpdateRenderElements();
+		return;
+	}
 
-	mCheckmarkSpriteInformation.Width = checkmarkBounds.Width;
-	mCheckmarkSpriteInformation.Height = checkmarkBounds.Height;
+	const GUIStyleSheetRules& checkmarkStyleSheetRules = ruleInformation.CurrentStateRuleset->Rules;
+	if(checkmarkStyleSheetRules.Visibility == GUIElementVisibility::Hidden)
+	{
+		GUIClickable::UpdateRenderElements();
+		return;
+	}
+
+	// Otherwise, create the checkmark sprite and offset the parent's contents to make room
+	const Size2UI checkmarkSize = CalculateCheckmarkSize();
+
+	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
+	const Rect2I checkmarkContentArea = GUIHelper::CalculateContentArea(GUIHelper::CalculateSizeWithPaddingAndBorder(checkmarkSize, styleSheetRules), styleSheetRules);
+
+	mCheckmarkSpriteInformation.Width = checkmarkSize.Width;
+	mCheckmarkSpriteInformation.Height = checkmarkSize.Height;
 
 	// Use user-provided image, if one is provided
+	bool showCheckmarkSprite = false;
 	if(checkmarkStyleSheetRules.BackgroundImage.IsLoaded(false))
 	{
 		mCheckmarkSpriteInformation.Image = checkmarkStyleSheetRules.BackgroundImage;
 		mCheckmarkSpriteInformation.Color = checkmarkStyleSheetRules.Color;
+
+		showCheckmarkSprite = true;
 	}
 	// Otherwise, use the default checkmark builder
 	else if(mCheckmarkPathBuilder)
 	{
 		// No checkmark when not toggled
-		if(!mIsToggled)
-			return;
+		if(mIsToggled)
+		{
+			SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
+			spriteVectorPathCreateInformation.Size = Size2UI(mCheckmarkSpriteInformation.Width, mCheckmarkSpriteInformation.Height);
+			spriteVectorPathCreateInformation.VectorPath = mCheckmarkPathBuilder->BuildPath(spriteVectorPathCreateInformation.Size, checkmarkStyleSheetRules);
 
-		SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
-		spriteVectorPathCreateInformation.Size = Size2UI(mCheckmarkSpriteInformation.Width, mCheckmarkSpriteInformation.Height);
-		spriteVectorPathCreateInformation.VectorPath = mCheckmarkPathBuilder->BuildPath(spriteVectorPathCreateInformation.Size, checkmarkStyleSheetRules);
+			mCheckmarkSpriteInformation.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
+			mCheckmarkSpriteInformation.Color = Color::kWhite;
 
-		mCheckmarkSpriteInformation.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
-		mCheckmarkSpriteInformation.Color = Color::kWhite;
+			showCheckmarkSprite = true;
+		}
 	}
-	else
-		return;
 
-	mCheckmarkSpriteInformation.Color *= GetTint();
-	mCheckmarkSpriteInformation.Color.A *= checkmarkStyleSheetRules.Opacity;
+	const Vector2I contentOffset((i32)kCheckmarkContentSpacing + checkmarkSize.Width, 0);
 
-	mCheckmarkSprite->Update(mCheckmarkSpriteInformation, (u64)GetParentWidget());
+	mRenderElements.clear();
+	GUISpriteHelper::BuildSpriteRenderElements(*this, mActiveState, mBackgroundSprite);
+	GUISpriteHelper::BuildSpriteRenderElements(*this, mActiveState, mContent, mContentSprites, contentOffset);
 
-	// Populate GUI render elements from the sprites
+	// Note: Purposefully skipping the parent's implementation, as we add its sprites above
+	GUIInteractable::UpdateRenderElements();
+
+	if(showCheckmarkSprite)
 	{
-		using T = GUIRenderElementHelper;
+		mCheckmarkSpriteInformation.Color *= GetTint();
+		mCheckmarkSpriteInformation.Color.A *= checkmarkStyleSheetRules.Opacity;
+		mCheckmarkSprite->Update(mCheckmarkSpriteInformation, (u64)GetParentWidget());
 
-		T::Append({ T::SpriteInfo(mCheckmarkSprite, 0, (Rect2)checkmarkBounds) }, mRenderElements);
+		// Populate GUI render elements from the sprites
+		{
+			using T = GUIRenderElementHelper;
+
+			T::Append({ T::SpriteInfo(mCheckmarkSprite, 0, (Rect2)checkmarkContentArea) }, mRenderElements);
+		}
 	}
 }
 

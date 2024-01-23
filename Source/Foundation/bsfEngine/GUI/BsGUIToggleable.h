@@ -58,6 +58,8 @@ namespace bs
 		/** Checks or unchecks the toggle, and optionally triggers the OnToggled event. */
 		virtual void SetIsToggled(bool isToggled, bool triggerEvent);
 
+		Vector2I CalculateUnconstrainedOptimalSize() const override;
+
 		/** @} */
 	protected:
 		GUIToggleable(const GUIToggleContent& contents, const String& styleName, const GUISizeConstraints& dimensions);
@@ -67,6 +69,11 @@ namespace bs
 		bool DoOnMouseEvent(const GUIMouseEvent& event) override;
 		bool DoOnCommandEvent(const GUICommandEvent& event) override;
 
+		/** Calculates the bounds of the checkmark sprite, based on the current optimal size. */
+		Size2UI CalculateCheckmarkSize() const;
+
+		static constexpr i32 kCheckmarkContentSpacing = 3; /**< Spacing between the checkmark and contents, in pixels. */
+		static constexpr Size2UI kDefaultCheckmarkSize = Size2UI(12, 12);
 	protected:
 		ImageSprite* mCheckmarkSprite = nullptr;
 		ImageSpriteInformation mCheckmarkSpriteInformation;
