@@ -127,6 +127,8 @@ button.Toggle:active
 button.Toggle::checkmark
 {
     color: var(--FocusColor);
+    width: 9px;
+    height: 11px;
 }
 
 inputbox
@@ -867,7 +869,7 @@ texture.ContainerBackground
 button.Expand
 {
     height: 10px;
-    width: 11px;
+    width: 10px;
     border-width: 0px;
     background-color: #00000000;
 }
@@ -891,4 +893,56 @@ button.Expand::checkmark:active
 button.Expand::checkmark:checked
 {
     background-image: icon(fa-caret-down, 10.0);
+}
+
+button.Foldout
+{
+    height: 22px;
+    min-width: 20px;
+    text-align: left;
+    color: var(--PrimaryContentColor);
+}
+
+button.Foldout:focus
+{
+    border-color: var(--PrimaryBorderColor);
+}
+
+button.Foldout:active
+{
+    background-color: var(--PrimaryBackgroundColor);
+}
+
+button.Foldout:checked
+{
+    background-color: var(--PrimaryBackgroundColor);
+    border-color: var(--PrimaryBorderColor);
+}
+
+button.Foldout:hover
+{
+    background-color: var(--HoverBackgroundColor);
+}
+
+button.Foldout::checkmark
+{
+    background-image: icon(fa-caret-right, 15.0);
+    color: var(--PrimaryContentColor);
+    width: 18px;
+    height: 18px;
+}
+
+button.Foldout::checkmark:hover
+{
+    color: var(--HoverColor);
+}
+
+button.Foldout::checkmark:active
+{
+    color: var(--FocusColor);
+}
+
+button.Foldout::checkmark:checked
+{
+    background-image: icon(fa-caret-down, 15.0);
 }
