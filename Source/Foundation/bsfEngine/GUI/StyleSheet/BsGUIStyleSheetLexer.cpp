@@ -43,6 +43,7 @@ GUIStyleSheetLexer::GUIStyleSheetLexer()
 	mPropertyKeywords["vertical-align"] = GUIStyleSheetTokenTypes::Property;
 	mPropertyKeywords["font-family"] = GUIStyleSheetTokenTypes::Property;
 	mPropertyKeywords["font-size"] = GUIStyleSheetTokenTypes::Property;
+	mPropertyKeywords["b3d-word-wrap"] = GUIStyleSheetTokenTypes::Property;
 
 	// Border properties
 	mPropertyKeywords["border"] = GUIStyleSheetTokenTypes::Property;
@@ -250,7 +251,7 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier(bool isSt
 	// Special handling if first characters are  "--"
 	const bool isFirstCharacterHyphen = IsCurrentCharacter('-');
 
-	const char firstCharacter = GetCurrentCharacterAndAdvance();
+	char firstCharacter = GetCurrentCharacterAndAdvance();
 	const bool isVariable = !isStartingWithDot && isFirstCharacterHyphen && IsCurrentCharacter('-'); // If starting with --, it's a variable definition
 
 	String spelling;
@@ -259,18 +260,24 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier(bool isSt
 		char unused;
 		if(!GetCurrentCharacterAndAdvance('-', unused))
 			return {};
+
+		// First character of the name can be a letter, '_' or '-'.
+		if(std::isalpha(GetCurrentCharacter()) || IsCurrentCharacter('_') || IsCurrentCharacter('-'))
+			spelling += GetCurrentCharacterAndAdvance();
+		else
+			return {};
 	}
 	else
-		spelling += firstCharacter;
-
-	// First character of the name can be a letter, '_' or '-'. Special case for '-' as we already parsed it above in case this is not a variable
-	if(std::isalpha(GetCurrentCharacter()) || IsCurrentCharacter('_') || (isVariable && IsCurrentCharacter('-')))
 	{
-		spelling += GetCurrentCharacterAndAdvance();
-
-		while(std::isalnum(GetCurrentCharacter()) || IsCurrentCharacter('_') || IsCurrentCharacter('-'))
-			spelling += GetCurrentCharacterAndAdvance();
+		// First character of the name can be a letter, '_' or '-'. 
+		if(std::isalpha(firstCharacter) || firstCharacter == '_' || firstCharacter == '-')
+			spelling += firstCharacter;
+		else
+			return {};
 	}
+
+	while(std::isalnum(GetCurrentCharacter()) || IsCurrentCharacter('_') || IsCurrentCharacter('-'))
+		spelling += GetCurrentCharacterAndAdvance();
 
 	String lowerCaseSpelling = spelling;
 	StringUtil::ToLowerCase(lowerCaseSpelling);
