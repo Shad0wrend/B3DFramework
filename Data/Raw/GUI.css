@@ -946,3 +946,21 @@ button.Foldout::checkmark:checked
 {
     background-image: icon(fa-caret-down, 15.0);
 }
+
+.Header
+{
+    height: 21px;
+    color: var(--PrimaryContentColor);
+    background-color: var(--PrimaryBackgroundColor);
+    font-family: var(--BoldFontFamily);
+    text-align: center;
+    border-width: 0px 0px 2px 0px;
+    border-color: var(--PrimaryBorderColor);
+    padding-bottom: 2px;
+}
+
+.HeaderBackground
+{
+    height: 21px;
+    background-color: var(--PrimaryBackgroundColor);
+}
