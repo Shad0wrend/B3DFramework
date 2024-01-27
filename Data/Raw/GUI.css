@@ -998,3 +998,15 @@ label.LabelBold
 {
     font-family: var(--BoldFontFamily);
 }
+
+.MenuBarLine
+{
+    height: 1px;
+    background-color: var(--HoverBackgroundColor);
+}
+
+.ToolbarSeparator
+{
+    width: 3px;
+    background-color: var(--HoverBackgroundColor);
+}
