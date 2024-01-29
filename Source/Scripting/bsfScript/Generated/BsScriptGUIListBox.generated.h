@@ -31,6 +31,7 @@ namespace bs
 		static void InternalSetElements(ScriptGUIListBox* thisPtr, MonoArray* elements);
 		static void InternalSelectElement(ScriptGUIListBox* thisPtr, uint32_t index);
 		static void InternalDeselectElement(ScriptGUIListBox* thisPtr, uint32_t index);
+		static uint32_t InternalGetSelectedElementIndex(ScriptGUIListBox* thisPtr);
 		static MonoArray* InternalGetElementStates(ScriptGUIListBox* thisPtr);
 		static void InternalSetElementStates(ScriptGUIListBox* thisPtr, MonoArray* states);
 		static void InternalCreate(MonoObject* managedInstance, __GUIListBoxContentInterop* contents, MonoString* styleClass, MonoArray* options);

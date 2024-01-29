@@ -71,6 +71,16 @@ namespace bs
 		}
 
 		/// <summary>
+		/// Returns the index of the currently selected element. If the list box allows multi-select, returns the index of the 
+		/// first selected element, or ~0u if none is selected.
+		/// </summary>
+		[NativeWrapper]
+		public int SelectedElementIndex
+		{
+			get { return Internal_GetSelectedElementIndex(mCachedPtr); }
+		}
+
+		/// <summary>
 		/// Sets states for all list box elements. Only valid for multi-select list boxes. Number of states must match number of 
 		/// list box elements.
 		/// </summary>
@@ -114,6 +124,8 @@ namespace bs
 		private static extern void Internal_SelectElement(IntPtr thisPtr, int index);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_DeselectElement(IntPtr thisPtr, int index);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern int Internal_GetSelectedElementIndex(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern bool[] Internal_GetElementStates(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]

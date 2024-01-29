@@ -79,6 +79,17 @@ void GUIListBox::DeselectElement(u32 index)
 		ElementSelected(index);
 }
 
+u32 GUIListBox::GetSelectedElementIndex() const
+{
+	for(u32 elementIndex = 0; elementIndex < mElementStates.size(); ++elementIndex)
+	{
+		if(mElementStates[elementIndex])
+			return elementIndex;
+	}
+
+	return ~0u;
+}
+
 void GUIListBox::SetElementStates(const Vector<bool>& states)
 {
 	u32 numElements = (u32)mElementStates.size();

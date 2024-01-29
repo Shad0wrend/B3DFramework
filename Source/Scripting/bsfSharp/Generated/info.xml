@@ -12682,6 +12682,9 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 		<property name="IsMultiselect" type="bool" getter="IsMultiselect" setter="" static="false">
 			<doc>Checks whether the listbox supports multiple selected elements at once.</doc>
 		</property>
+		<property name="SelectedElementIndex" type="int" getter="GetSelectedElementIndex" setter="" static="false">
+			<doc>Returns the index of the currently selected element. If the list box allows multi-select, returns the index of the first selected element, or ~0u if none is selected.</doc>
+		</property>
 		<property name="ElementStates" type="bool" getter="GetElementStates" setter="SetElementStates" static="false">
 			<doc>Sets states for all list box elements. Only valid for multi-select list boxes. Number of states must match number of list box elements.</doc>
 		</property>

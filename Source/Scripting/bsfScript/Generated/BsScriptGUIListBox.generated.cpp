@@ -26,6 +26,7 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_SetElements", (void*)&ScriptGUIListBox::InternalSetElements);
 		metaData.ScriptClass->AddInternalCall("Internal_SelectElement", (void*)&ScriptGUIListBox::InternalSelectElement);
 		metaData.ScriptClass->AddInternalCall("Internal_DeselectElement", (void*)&ScriptGUIListBox::InternalDeselectElement);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSelectedElementIndex", (void*)&ScriptGUIListBox::InternalGetSelectedElementIndex);
 		metaData.ScriptClass->AddInternalCall("Internal_GetElementStates", (void*)&ScriptGUIListBox::InternalGetElementStates);
 		metaData.ScriptClass->AddInternalCall("Internal_SetElementStates", (void*)&ScriptGUIListBox::InternalSetElementStates);
 		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptGUIListBox::InternalCreate);
@@ -87,6 +88,17 @@ namespace bs
 	void ScriptGUIListBox::InternalDeselectElement(ScriptGUIListBox* thisPtr, uint32_t index)
 	{
 		static_cast<GUIListBox*>(thisPtr->GetGuiElement())->DeselectElement(index);
+	}
+
+	uint32_t ScriptGUIListBox::InternalGetSelectedElementIndex(ScriptGUIListBox* thisPtr)
+	{
+		uint32_t tmp__output;
+		tmp__output = static_cast<GUIListBox*>(thisPtr->GetGuiElement())->GetSelectedElementIndex();
+
+		uint32_t __output;
+		__output = tmp__output;
+
+		return __output;
 	}
 
 	MonoArray* ScriptGUIListBox::InternalGetElementStates(ScriptGUIListBox* thisPtr)

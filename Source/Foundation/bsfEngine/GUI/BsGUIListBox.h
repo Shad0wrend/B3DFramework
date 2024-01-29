@@ -50,6 +50,13 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		void DeselectElement(u32 index);
 
+		/**
+		 * Returns the index of the currently selected element. If the list box allows multi-select, returns the index of the first
+		 * selected element, or ~0u if none is selected.
+		 */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(SelectedElementIndex))
+		u32 GetSelectedElementIndex() const;
+
 		/**	Returns states of all element in the list box (enabled or disabled). */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(ElementStates))
 		const Vector<bool>& GetElementStates() const { return mElementStates; }
