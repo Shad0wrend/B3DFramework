@@ -681,6 +681,7 @@ texture.MenuBarBackground
 .GUITextField {}
 .GUIToggleField {}
 .GUIListBoxField {}
+.GUISliderField {}
 .GUIColorField {}
 .GUIColorGradientField {}
 .FloatFieldX {}
