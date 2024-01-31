@@ -1046,3 +1046,34 @@ container.ProgressBarSmall texture.ProgressBarFill
 {
     background-color: var(--FocusColor);
 }
+
+container.GUIStatusBar
+{
+    height: 20px;
+}
+
+texture.GUIStatusBarBackground
+{
+    height: 20px;
+    border-width: 3px 0px 0px 0px;
+    border-color: var(--PrimaryBackgroundColor);
+}
+
+button.GUIStatusBarMessage
+{
+    height: 20px;
+    text-align: left;
+    background-color: #00000000;
+    border-width: 0px;
+    color: #FFFFFF;
+}
+
+button.GUIStatusBarMessage:active
+{
+    color: #FFFFFF;
+}
+
+label.GUIStatusBarLabel
+{
+    height: 16px;
+}
