@@ -16,6 +16,7 @@
     --RedBackgroundColor: #C40000;
     --GreyBackgroundColor: #3A3A3A;
     --SelectionColor: #0072BC;
+    --TransparentSelectionColor: #0072BC88;
     --PrimaryFontFamily: "Arial";
     --BoldFontFamily: "Arial";
     --PrimaryFontSize: 8;
@@ -1132,4 +1133,39 @@ inputbox.TreeViewEditBox
 {
     background-color: var(--SelectionColor);
     color: var(--PrimaryContentColor);
+}
+
+.ScrollAreaBackground
+{
+    background-color: var(--PrimaryBackgroundColor);
+    border-color: var(--PrimaryBorderColor);
+    border-width: 2px;
+}
+
+.InspectorTitleBackground
+{
+    background-color: var(--HoverBackgroundColor);
+    border-color: var(--HoverBorderColor);
+    border-width: 0px 0px 2px 0px;
+}
+
+.InspectorContentBackground
+{
+    background-color: var(--HoverBackgroundColor);
+    border-color: var(--HoverBorderColor);
+    border-width: 2px;
+}
+
+.InspectorContentBackgroundAlternate
+{
+    background-color: var(--BrighterBackgroundColor);
+    border-color: var(--HoverBorderColor);
+    border-width: 2px;
+}
+
+.SelectionArea
+{
+    background-color: var(--TransparentSelectionColor);
+    border-color: var(--PrimaryBorderColor);
+    border-width: 2px;
 }
