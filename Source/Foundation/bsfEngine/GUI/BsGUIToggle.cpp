@@ -11,5 +11,5 @@ const String& GUIToggle::GetGuiTypeName()
 }
 
 GUIToggle::GUIToggle(PrivatelyConstruct, const GUIToggleContent& contents, const String& styleName, const GUISizeConstraints& sizeConstraints)
-	: GUIToggleable(contents.GeneralContent, styleName, sizeConstraints)
+	: GUIToggleable(contents, styleName, sizeConstraints)
 { }
