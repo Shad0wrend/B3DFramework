@@ -1112,3 +1112,24 @@ inputbox.TreeViewEditBox
 {
     background-color: #00000000;
 }
+
+.SelectableLabel
+{
+    background-color: #00000000;
+    color: var(--PrimaryContentColor);
+    border-width: 0px;
+    padding: 0px;
+    text-align: left;
+    height: 11px;
+}
+
+.SelectableLabel::checkmark
+{
+    visibility: hidden;
+}
+
+.SelectableLabel:checked
+{
+    background-color: var(--SelectionColor);
+    color: var(--PrimaryContentColor);
+}
