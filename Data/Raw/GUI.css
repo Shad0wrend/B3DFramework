@@ -1217,3 +1217,49 @@ inputbox.TreeViewEditBox
     border-color: var(--PrimaryBorderColor);
     background-color: var(--BrighterBackgroundColor);
 }
+
+slider.ColorPickerHorizontalSlider { }
+
+slider.ColorPickerHorizontalSlider .SliderHandle
+{
+    background-color: #FFFFFF;
+    border-radius: 0px;
+    border-width: 0px;
+    width: 1px;
+    height: 20px;
+}
+
+slider.ColorPickerHorizontalSlider .SliderBackground
+{
+    background-color: #00000000;
+    border-width: 0px;
+}
+
+slider.ColorPickerHorizontalSlider .SliderFill
+{
+    background-color: #00000000;
+    border-width: 0px;
+}
+
+slider.ColorPickerVerticalSlider { }
+
+slider.ColorPickerVerticalSlider .SliderHandle
+{
+    background-color: #FFFFFF;
+    border-radius: 0px;
+    border-width: 0px;
+    width: 45px;
+    height: 1px;
+}
+
+slider.ColorPickerVerticalSlider .SliderBackground
+{
+    background-color: #00000000;
+    border-width: 0px;
+}
+
+slider.ColorPickerVerticalSlider .SliderFill
+{
+    background-color: #00000000;
+    border-width: 0px;
+}

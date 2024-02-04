@@ -134,7 +134,7 @@ namespace bs
 	protected:
 		void UpdateRenderElements() override;
 
-		static constexpr u32 kMinimumHandleSize = 5;
+		static constexpr u32 kMinimumHandleSize = 1;
 	private:
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 
