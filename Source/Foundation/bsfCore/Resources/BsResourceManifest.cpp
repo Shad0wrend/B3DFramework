@@ -53,22 +53,24 @@ void ResourceManifest::RegisterResource(const UUID& uuid, const Path& filePath)
 
 void ResourceManifest::UnregisterResource(const UUID& uuid)
 {
-	auto iterFind = mUUIDToFilePath.find(uuid);
-
-	if(iterFind != mUUIDToFilePath.end())
+	if(auto foundPath = mUUIDToFilePath.find(uuid); foundPath != mUUIDToFilePath.end())
 	{
-		mFilePathToUUID.erase(iterFind->second);
+		mFilePathToUUID.erase(foundPath->second);
 		mUUIDToFilePath.erase(uuid);
+	}
+
+	if(auto foundVirtualPath = mUUIDToVirtualFilePath.find(uuid); foundVirtualPath != mUUIDToVirtualFilePath.end())
+	{
+		mVirtualFilePathToUUID.erase(foundVirtualPath->second);
+		mUUIDToVirtualFilePath.erase(uuid);
 	}
 }
 
-bool ResourceManifest::UuidToFilePath(const UUID& uuid, Path& filePath) const
+bool ResourceManifest::UUIDToPhysicalFilePath(const UUID& uuid, Path& filePath) const
 {
-	auto iterFind = mUUIDToFilePath.find(uuid);
-
-	if(iterFind != mUUIDToFilePath.end())
+	if(auto foundPath = mUUIDToFilePath.find(uuid); foundPath != mUUIDToFilePath.end())
 	{
-		filePath = iterFind->second;
+		filePath = foundPath->second;
 		return true;
 	}
 	else
@@ -78,20 +80,28 @@ bool ResourceManifest::UuidToFilePath(const UUID& uuid, Path& filePath) const
 	}
 }
 
-bool ResourceManifest::FilePathToUuid(const Path& filePath, UUID& outUUID) const
+bool ResourceManifest::PhysicalFilePathToUUID(const Path& filePath, UUID& outUUID) const
 {
-	auto iterFind = mFilePathToUUID.find(filePath);
-
-	if(iterFind != mFilePathToUUID.end())
+	if(auto foundPath = mFilePathToUUID.find(filePath); foundPath != mFilePathToUUID.end())
 	{
-		outUUID = iterFind->second;
+		outUUID = foundPath->second;
 		return true;
 	}
-	else
+
+	outUUID = UUID::kEmpty;
+	return false;
+}
+
+bool ResourceManifest::VirtualFilePathToUUID(const Path& filePath, UUID& outUUID) const
+{
+	if(auto foundVirtualPath = mVirtualFilePathToUUID.find(filePath); foundVirtualPath != mVirtualFilePathToUUID.end())
 	{
-		outUUID = UUID::kEmpty;
-		return false;
+		outUUID = foundVirtualPath->second;
+		return true;
 	}
+
+	outUUID = UUID::kEmpty;
+	return false;
 }
 
 bool ResourceManifest::UuidExists(const UUID& uuid) const
@@ -103,9 +113,10 @@ bool ResourceManifest::UuidExists(const UUID& uuid) const
 
 bool ResourceManifest::FilePathExists(const Path& filePath) const
 {
-	auto iterFind = mFilePathToUUID.find(filePath);
+	if(mFilePathToUUID.find(filePath) != mFilePathToUUID.end())
+		return true;
 
-	return iterFind != mFilePathToUUID.end();
+	return mVirtualFilePathToUUID.find(filePath) != mVirtualFilePathToUUID.end();
 }
 
 void ResourceManifest::Save(const SPtr<ResourceManifest>& manifest, const Path& path, const Path& relativePath)
@@ -148,26 +159,44 @@ void ResourceManifest::Save(const SPtr<ResourceManifest>& manifest, const Path& 
 	}
 }
 
-SPtr<ResourceManifest> ResourceManifest::Load(const Path& path, const Path& relativePath)
+SPtr<ResourceManifest> ResourceManifest::Load(const Path& path, const Path& relativePath, const Path& virtualRelativePath)
 {
 	FileDecoder fs(path);
 	SPtr<ResourceManifest> manifest = std::static_pointer_cast<ResourceManifest>(fs.Decode());
 
-	if(relativePath.IsEmpty())
+	if(relativePath.IsEmpty() && virtualRelativePath.IsEmpty())
 		return manifest;
 
 	SPtr<ResourceManifest> copy = Create(manifest->mName);
 
-	for(auto& elem : manifest->mFilePathToUUID)
+	if(!relativePath.IsEmpty())
 	{
-		Path absPath = elem.first.GetAbsolute(relativePath);
-		copy->mFilePathToUUID[absPath] = elem.second;
+		for(auto& elem : manifest->mFilePathToUUID)
+		{
+			Path absPath = elem.first.GetAbsolute(relativePath);
+			copy->mFilePathToUUID[absPath] = elem.second;
+		}
+
+		for(auto& elem : manifest->mUUIDToFilePath)
+		{
+			Path absPath = elem.second.GetAbsolute(relativePath);
+			copy->mUUIDToFilePath[elem.first] = absPath;
+		}
 	}
 
-	for(auto& elem : manifest->mUUIDToFilePath)
+	if(!virtualRelativePath.IsEmpty())
 	{
-		Path absPath = elem.second.GetAbsolute(relativePath);
-		copy->mUUIDToFilePath[elem.first] = absPath;
+		for(const auto& pair : manifest->mFilePathToUUID)
+		{
+			const Path absoluteVirtualPath = pair.first.GetAbsolute(virtualRelativePath);
+			copy->mVirtualFilePathToUUID[absoluteVirtualPath] = pair.second;
+		}
+
+		for(const auto& pair : manifest->mUUIDToFilePath)
+		{
+			const Path absoluteVirtualPath = pair.second.GetAbsolute(virtualRelativePath);
+			copy->mUUIDToVirtualFilePath[pair.first] = absoluteVirtualPath;
+		}
 	}
 
 	return copy;

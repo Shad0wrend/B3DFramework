@@ -44,18 +44,25 @@ namespace bs
 		void UnregisterResource(const UUID& uuid);
 
 		/**
-		 * Attempts to find a resource with the provided UUID and outputs the path to the resource if found. Returns true
+		 * Attempts to find a resource with the provided UUID and outputs the absolute physical path to the resource if found. Returns true
 		 * if UUID was found, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT()
-		bool UuidToFilePath(const UUID& uuid, Path& filePath) const;
+		bool UUIDToPhysicalFilePath(const UUID& uuid, Path& filePath) const;
 
 		/**
-		 * Attempts to find a resource with the provided path and outputs the UUID to the resource if found. Returns true
+		 * Attempts to find a resource with the provided physical path and outputs the UUID to the resource if found. Returns true
 		 * if path was found, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT()
-		bool FilePathToUuid(const Path& filePath, UUID& outUUID) const;
+		bool PhysicalFilePathToUUID(const Path& filePath, UUID& outUUID) const;
+
+		/**
+		 * Attempts to find a resource with the provided virtual path and outputs the UUID to the resource if found. Returns true
+		 * if path was found, false otherwise.
+		 */
+		B3D_SCRIPT_EXPORT()
+		bool VirtualFilePathToUUID(const Path& filePath, UUID& outUUID) const;
 
 		/**	Checks if provided UUID exists in the manifest. */
 		B3D_SCRIPT_EXPORT()
@@ -79,11 +86,12 @@ namespace bs
 		/**
 		 * Loads the resource manifest from the specified location.
 		 *
-		 * @param[in]	path			Full pathname of the file to load the manifest from.
-		 * @param[in]	relativePath	If not empty, all loaded pathnames will have this path prepended.
+		 * @param	path					Full pathname of the file to load the manifest from.
+		 * @param	relativePath			If not empty, all loaded pathnames will have this path prepended.
+		 * @param	virtualRelativePath		If not empty, adds an additional set of paths that the resource can be referenced from. 
 		 */
 		B3D_SCRIPT_EXPORT()
-		static SPtr<ResourceManifest> Load(const Path& path, const Path& relativePath);
+		static SPtr<ResourceManifest> Load(const Path& path, const Path& relativePath, const Path& virtualRelativePath = Path::kBlank);
 
 		/** Creates a new empty resource manifest. Provided name should be unique among manifests. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(ResourceManifest))
@@ -93,6 +101,9 @@ namespace bs
 		String mName;
 		UnorderedMap<UUID, Path> mUUIDToFilePath;
 		UnorderedMap<Path, UUID> mFilePathToUUID;
+
+		UnorderedMap<UUID, Path> mUUIDToVirtualFilePath;
+		UnorderedMap<Path, UUID> mVirtualFilePathToUUID;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

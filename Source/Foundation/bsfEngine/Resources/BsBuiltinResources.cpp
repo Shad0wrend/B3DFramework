@@ -106,7 +106,7 @@ void BuiltinResources::OnStartUp()
 
 	// Load manifest
 	if(FileSystem::Exists(ResourceManifestPath))
-		mResourceManifest = ResourceManifest::Load(ResourceManifestPath, mBuiltinDataFolder);
+		mResourceManifest = ResourceManifest::Load(ResourceManifestPath, mBuiltinDataFolder, "/B3D/EngineData/");
 
 	if(mResourceManifest == nullptr)
 		mResourceManifest = ResourceManifest::Create("BuiltinResources");

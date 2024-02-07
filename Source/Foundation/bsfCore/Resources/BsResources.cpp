@@ -38,19 +38,14 @@ Resources::~Resources()
 
 HResource Resources::Load(const Path& filePath, ResourceLoadFlags loadFlags)
 {
-	if(!FileSystem::IsFile(filePath))
-	{
-		B3D_LOG(Warning, Resources, "Cannot load resource. Specified file: {0} doesn't exist.", filePath);
-		return HResource();
-	}
-
 	UUID uuid;
-	bool foundUUID = GetUuidFromFilePath(filePath, uuid);
+	Path physicalFilePath;
+	bool foundUUID = GetUUUIDAndPhysicalPathFromFilePath(filePath, uuid, physicalFilePath);
 
 	if(!foundUUID)
 		uuid = UUIDGenerator::GenerateRandom();
 
-	return LoadInternal(uuid, filePath, true, loadFlags).Resource;
+	return LoadInternal(uuid, physicalFilePath, true, loadFlags).Resource;
 }
 
 HResource Resources::Load(const WeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags)
@@ -64,19 +59,14 @@ HResource Resources::Load(const WeakResourceHandle<Resource>& handle, ResourceLo
 
 HResource Resources::LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags)
 {
-	if(!FileSystem::IsFile(filePath))
-	{
-		B3D_LOG(Warning, Resources, "Cannot load resource. Specified file: '{0}' doesn't exist.", filePath);
-		return HResource();
-	}
-
 	UUID uuid;
-	bool foundUUID = GetUuidFromFilePath(filePath, uuid);
+	Path physicalFilePath;
+	bool foundUUID = GetUUUIDAndPhysicalPathFromFilePath(filePath, uuid, physicalFilePath);
 
 	if(!foundUUID)
 		uuid = UUIDGenerator::GenerateRandom();
 
-	return LoadInternal(uuid, filePath, false, loadFlags).Resource;
+	return LoadInternal(uuid, physicalFilePath, false, loadFlags).Resource;
 }
 
 HResource Resources::LoadFromUuid(const UUID& uuid, bool async, ResourceLoadFlags loadFlags)
@@ -974,23 +964,43 @@ bool Resources::GetFilePathFromUuid(const UUID& uuid, Path& filePath) const
 	// contain obsolete data.
 	for(auto iter = mResourceManifests.rbegin(); iter != mResourceManifests.rend(); ++iter)
 	{
-		if((*iter)->UuidToFilePath(uuid, filePath))
+		if((*iter)->UUIDToPhysicalFilePath(uuid, filePath))
 			return true;
 	}
 
 	return false;
 }
 
-bool Resources::GetUuidFromFilePath(const Path& path, UUID& uuid) const
+bool Resources::GetUUUIDAndPhysicalPathFromFilePath(const Path& path, UUID& outUUID, Path& outPhysicalFilePath) const
 {
-	Path manifestPath = path;
-	if(!manifestPath.IsAbsolute())
-		manifestPath.MakeAbsolute(FileSystem::GetWorkingDirectoryPath());
+	// Check if a virtual file path first
+	for(auto iter = mResourceManifests.rbegin(); iter != mResourceManifests.rend(); ++iter)
+	{
+		const ResourceManifest& manifest = *iter->get();
+
+		if(manifest.VirtualFilePathToUUID(path, outUUID))
+		{
+			if(!B3D_ENSURE(manifest.UUIDToPhysicalFilePath(outUUID, outPhysicalFilePath)))
+				return false;
+
+			return true;
+		}
+	}
+
+	// Now check physical paths
+	Path absolutePhysicalPath = path;
+	if(!absolutePhysicalPath.IsAbsolute())
+		absolutePhysicalPath.MakeAbsolute(FileSystem::GetWorkingDirectoryPath());
 
 	for(auto iter = mResourceManifests.rbegin(); iter != mResourceManifests.rend(); ++iter)
 	{
-		if((*iter)->FilePathToUuid(manifestPath, uuid))
+		const ResourceManifest& manifest = *iter->get();
+
+		if(manifest.PhysicalFilePathToUUID(path, outUUID))
+		{
+			outPhysicalFilePath = absolutePhysicalPath;
 			return true;
+		}
 	}
 
 	return false;
