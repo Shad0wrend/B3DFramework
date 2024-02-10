@@ -31,6 +31,9 @@ namespace bs
 		/** @copydoc GUIWidget::GetStyleSheetCascade */
 		const GUIStyleSheetCascade& GetStyleSheetCascade() const;
 
+		/** @copydoc GUIWidget::SetStyleSheetCascade */
+		void SetStyleSheetCascade(const SPtr<const GUIStyleSheetCascade>& styleSheetCascade);
+
 		/** @copydoc GUIWidget::GetPanel */
 		GUIPanel* GetPanel() const;
 
@@ -61,7 +64,7 @@ namespace bs
 		 */
 
 		/** Returns the internal GUIWidget that is wrapped by this component. */
-		GUIWidget* GetInternalInternal() const { return mInternal.get(); };
+		GUIWidget* GetInternalInternal() const { return mInternal.get(); }
 
 		/** @} */
 

@@ -77,8 +77,11 @@ namespace bs
 		/**	Returns an empty skin used to be used when no other is available. */
 		const HGUISkin& GetEmptyGuiSkin() const { return mEmptySkin; }
 
+		/** Returns the default style sheet used by the GUI, if no other style sheet is provided. */
+		const HGUIStyleSheet& GetDefaultGUIStyleSheet() const { return mDefaultGUIStyleSheet; }
+
 		/** Returns the default style sheet for GUI elements. */
-		const SPtr<const GUIStyleSheetCascade> GetDefaultGUIStyleSheetCascade() const { return mDefaultGUIStyleSheetCascade; };
+		SPtr<const GUIStyleSheetCascade> GetDefaultGUIStyleSheetCascade() const { return mDefaultGUIStyleSheetCascade; }
 
 		/**	Returns a small entirely white texture. */
 		const HSpriteTexture& GetWhiteSpriteTexture() const { return mWhiteSpriteTexture; }
@@ -223,6 +226,7 @@ namespace bs
 
 		HGUISkin mEmptySkin;
 		HGUISkin mSkin;
+		HGUIStyleSheet mDefaultGUIStyleSheet;
 		SPtr<GUIStyleSheetCascade> mDefaultGUIStyleSheetCascade;
 		HFont mFont;
 

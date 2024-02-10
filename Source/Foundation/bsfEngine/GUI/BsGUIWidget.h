@@ -41,7 +41,7 @@ namespace bs
 		const HGUISkin& GetSkinResource() const { return mSkin; }
 
 		/** Determines the style sheets that all GUI elements part of this widget will lookup styles in. */
-		void SetStyleSheetCascade(const SPtr<GUIStyleSheetCascade>& styleSheetCascade);
+		void SetStyleSheetCascade(const SPtr<const GUIStyleSheetCascade>& styleSheetCascade);
 
 		/** @copydoc SetStyleSheetCascade */
 		const GUIStyleSheetCascade& GetStyleSheetCascade() const;

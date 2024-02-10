@@ -140,9 +140,9 @@ void BuiltinResources::OnStartUp()
 	mSkin = GetResources().Load<GUISkin>(mBuiltinDataFolder + (String(kGuiSkinFile) + u8".json.asset"));
 	mEmptySkin = GUISkin::Create();
 
-	HGUIStyleSheet defaultGUIStyleSheet = GUIStyleSheet::Parse(mBuiltinRawDataFolder + "GUI.css");
+	mDefaultGUIStyleSheet = GUIStyleSheet::Parse(mBuiltinRawDataFolder + "GUI.css");
 	mDefaultGUIStyleSheetCascade = B3DMakeShared<GUIStyleSheetCascade>();
-	mDefaultGUIStyleSheetCascade->RegisterStyleSheet(defaultGUIStyleSheet, GUIStyleSheet::kBuiltinImportance);
+	mDefaultGUIStyleSheetCascade->RegisterStyleSheet(mDefaultGUIStyleSheet, GUIStyleSheet::kBuiltinImportance);
 
 	const HTexture whiteTexture2D = GetTexture(BuiltinTexture::White);
 	const HTexture blackTexture2D = GetTexture(BuiltinTexture::Black);

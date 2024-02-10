@@ -343,8 +343,11 @@ const GUISkin& GUIWidget::GetSkin() const
 		return *BuiltinResources::Instance().GetGuiSkin();
 }
 
-void GUIWidget::SetStyleSheetCascade(const SPtr<GUIStyleSheetCascade>& styleSheetCascade)
+void GUIWidget::SetStyleSheetCascade(const SPtr<const GUIStyleSheetCascade>& styleSheetCascade)
 {
+	if(!B3D_ENSURE(styleSheetCascade != nullptr))
+		return;
+
 	mStyleSheetCascade = styleSheetCascade;
 
 	for(auto& element : mElements)

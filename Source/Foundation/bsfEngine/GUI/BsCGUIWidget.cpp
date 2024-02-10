@@ -49,6 +49,11 @@ const GUIStyleSheetCascade& CGUIWidget::GetStyleSheetCascade() const
 	return mInternal->GetStyleSheetCascade();
 }
 
+void CGUIWidget::SetStyleSheetCascade(const SPtr<const GUIStyleSheetCascade>& styleSheetCascade)
+{
+	mInternal->SetStyleSheetCascade(styleSheetCascade);
+}
+
 GUIPanel* CGUIWidget::GetPanel() const
 {
 	return mInternal->GetPanel();
