@@ -87,19 +87,4 @@ void ScriptGUI::ShutDown()
 void ScriptGUI::InitRuntimeData()
 {
 	sGUIPanelMethod = metaData.ScriptClass->GetMethod("SetPanel", 1);
-
-	metaData.ScriptClass->AddInternalCall("Internal_SetSkin", (void*)&ScriptGUI::InternalSetSkin);
-}
-
-void ScriptGUI::InternalSetSkin(ScriptGUISkin* skin)
-{
-	HGUISkin guiSkin;
-	if(skin != nullptr)
-		guiSkin = skin->GetHandle();
-
-	if(!guiSkin.IsLoaded())
-		guiSkin = BuiltinResources::Instance().GetGuiSkin();
-
-	if(sGUIWidget != nullptr)
-		sGUIWidget->SetSkin(guiSkin);
 }

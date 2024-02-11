@@ -18,20 +18,6 @@ namespace bs
         private SerializableData serializableData = new SerializableData();
 
         /// <summary>
-        /// Skin used for rendering all the GUI elements belonging to this widget.
-        /// </summary>
-        [ShowInInspector]
-        public GUISkin Skin
-        {
-            get { return serializableData.skin; }
-            set
-            {
-                serializableData.skin = value;
-                nativeGUIWidget.Skin = value;
-            }
-        }
-
-        /// <summary>
         /// Determines to which camera are the GUI elements belonong to this widget rendered. If null then they will be
         /// rendered on the main camera.
         /// </summary>
@@ -72,7 +58,6 @@ namespace bs
             nativeGUIWidget = new NativeGUIWidget();
 
             // Restore saved values after reset
-            nativeGUIWidget.Skin = serializableData.skin;
             nativeGUIWidget.Camera = serializableData.camera;
         }
 
@@ -95,7 +80,6 @@ namespace bs
         [SerializeObject]
         private class SerializableData
         {
-            public GUISkin skin;
             public Camera camera;
         }
     }

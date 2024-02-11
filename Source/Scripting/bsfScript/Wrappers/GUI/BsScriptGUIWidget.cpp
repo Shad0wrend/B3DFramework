@@ -39,7 +39,6 @@ void ScriptGUIWidget::InitRuntimeData()
 	metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptGUIWidget::InternalCreate);
 	metaData.ScriptClass->AddInternalCall("Internal_UpdateTransform", (void*)&ScriptGUIWidget::InternalUpdateTransform);
 	metaData.ScriptClass->AddInternalCall("Internal_UpdateMainCamera", (void*)&ScriptGUIWidget::InternalUpdateMainCamera);
-	metaData.ScriptClass->AddInternalCall("Internal_SetSkin", (void*)&ScriptGUIWidget::InternalSetSkin);
 	metaData.ScriptClass->AddInternalCall("Internal_SetCamera", (void*)&ScriptGUIWidget::InternalSetCamera);
 	metaData.ScriptClass->AddInternalCall("Internal_SetDepth", (void*)&ScriptGUIWidget::InternalSetDepth);
 	metaData.ScriptClass->AddInternalCall("Internal_GetDepth", (void*)&ScriptGUIWidget::InternalGetDepth);
@@ -78,20 +77,6 @@ void ScriptGUIWidget::InternalUpdateMainCamera(ScriptGUIWidget* instance, Script
 
 		widget->SetCamera(nativeCamera);
 	}
-}
-
-void ScriptGUIWidget::InternalSetSkin(ScriptGUIWidget* instance, ScriptGUISkin* skin)
-{
-	HGUISkin guiSkin;
-	if(skin != nullptr)
-		guiSkin = skin->GetHandle();
-
-	if(!guiSkin.IsLoaded())
-		guiSkin = BuiltinResources::Instance().GetGuiSkin();
-
-	SPtr<GUIWidget> widget = instance->GetInternal();
-	if(widget != nullptr)
-		widget->SetSkin(guiSkin);
 }
 
 void ScriptGUIWidget::InternalSetCamera(ScriptGUIWidget* instance, ScriptCamera* camera)

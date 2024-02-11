@@ -16,7 +16,7 @@ namespace bs
 	 * Holds a set of styles that control how are GUI element types positioned and displayed in the GUI. Each element type
 	 * can be assigned a specific style.
 	 */
-	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUISkin : public Resource
+	class B3D_EXPORT GUISkin : public Resource
 	{
 	public:
 		/**	Checks if the style with the specified name exists. */

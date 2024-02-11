@@ -34,16 +34,6 @@ void CGUIWidget::SetSkin(const HGUISkin& skin)
 	mInternal->SetSkin(skin);
 }
 
-const GUISkin& CGUIWidget::GetSkin() const
-{
-	return mInternal->GetSkin();
-}
-
-const HGUISkin& CGUIWidget::GetSkinResource() const
-{
-	return mInternal->GetSkinResource();
-}
-
 const GUIStyleSheetCascade& CGUIWidget::GetStyleSheetCascade() const
 {
 	return mInternal->GetStyleSheetCascade();

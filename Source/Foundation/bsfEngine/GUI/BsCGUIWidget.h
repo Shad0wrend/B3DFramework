@@ -22,12 +22,6 @@ namespace bs
 		/** @copydoc GUIWidget::SetSkin */
 		void SetSkin(const HGUISkin& skin);
 
-		/** @copydoc GUIWidget::GetSkin */
-		const GUISkin& GetSkin() const;
-
-		/** @copydoc GUIWidget::GetSkinResource */
-		const HGUISkin& GetSkinResource() const;
-
 		/** @copydoc GUIWidget::GetStyleSheetCascade */
 		const GUIStyleSheetCascade& GetStyleSheetCascade() const;
 

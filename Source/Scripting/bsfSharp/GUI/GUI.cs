@@ -16,26 +16,7 @@ namespace bs
     /// </summary>
     public static class GUI
     {
-        private static GUISkin skin;
         private static GUIPanel panel; // Populated by runtime
-
-        /// <summary>
-        /// Skin used for rendering all the GUI elements.
-        /// </summary>
-        public static GUISkin Skin
-        {
-            get { return skin; }
-            set
-            {
-                skin = value;
-
-                IntPtr skinPtr = IntPtr.Zero;
-                if (value != null)
-                    skinPtr = value.GetCachedPtr();
-
-                Internal_SetSkin(skinPtr);
-            }
-        }
 
         /// <summary>
         /// Container into which all GUI elements should be placed.
@@ -54,9 +35,6 @@ namespace bs
             // We can't set this directly through the field because there is an issue with Mono and static fields
             GUI.panel = panel;
         }
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetSkin(IntPtr skin);
     }
 
     /** @} */

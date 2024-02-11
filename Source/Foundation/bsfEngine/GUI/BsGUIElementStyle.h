@@ -25,7 +25,7 @@ namespace bs
 	};
 
 	/**	Specific texture and text color used in a particular GUI element style. */
-	struct B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) GUIElementStateStyle
+	struct B3D_EXPORT GUIElementStateStyle
 	{
 		B3D_NO_RREF HSpriteImage Image;
 		Color TextColor;
@@ -35,7 +35,7 @@ namespace bs
 	 * GUI element style that determines the look of a GUI element, as well as the element's default layout options.
 	 * Different looks can be provided for different element states.
 	 */
-	struct B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIElementStyle : public IReflectable
+	struct B3D_EXPORT GUIElementStyle : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		GUIElementStyle() = default;
@@ -159,12 +159,6 @@ namespace bs
 		{
 			SubStyles[guiType] = styleName;
 		}
-
-		/** Returns an image associated with a particular state. */
-		const HSpriteImage& GetImageForState(GUIElementState state) const;
-
-		/** Returns a text color associated with a particular state. */
-		const Color& GetTextColorForState(GUIElementState state) const;
 
 		Map<String, String> SubStyles; /**< Sub-styles used by certain more complex elements. */
 

@@ -41,7 +41,6 @@ class ScriptCamera;
 		static void InternalCreate(MonoObject* instance);
 		static void InternalUpdateTransform(ScriptGUIWidget* instance, ScriptSceneObject* parentSO);
 		static void InternalUpdateMainCamera(ScriptGUIWidget* instance, ScriptCamera* camera);
-		static void InternalSetSkin(ScriptGUIWidget* instance, ScriptGUISkin* skin);
 		static void InternalSetCamera(ScriptGUIWidget* instance, ScriptCamera* camera);
 		static void InternalSetDepth(ScriptGUIWidget* instance, i8 value);
 		static i8 InternalGetDepth(ScriptGUIWidget* instance);

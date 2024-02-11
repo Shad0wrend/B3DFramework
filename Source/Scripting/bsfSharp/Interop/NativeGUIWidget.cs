@@ -18,21 +18,6 @@ namespace bs
 #pragma warning restore 649
 
         /// <summary>
-        /// Skin used for rendering all the GUI elements belonging to this widget.
-        /// </summary>
-        internal GUISkin Skin
-        {
-            set
-            {
-                IntPtr skinPtr = IntPtr.Zero;
-                if (value != null)
-                    skinPtr = value.GetCachedPtr();
-
-                Internal_SetSkin(mCachedPtr, skinPtr);
-            }
-        }
-
-        /// <summary>
         /// Determines to which camera are the GUI elements belonong to this widget rendered. If null then they will be
         /// rendered on the main camera.
         /// </summary>
@@ -114,9 +99,6 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_UpdateMainCamera(IntPtr instance, IntPtr camera);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetSkin(IntPtr instance, IntPtr skin);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetCamera(IntPtr instance, IntPtr camera);

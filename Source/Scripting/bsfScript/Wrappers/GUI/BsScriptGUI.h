@@ -35,11 +35,6 @@ namespace bs
 		static MonoMethod* sGUIPanelMethod;
 		static HEvent sDomainUnloadConn;
 		static HEvent sDomainLoadConn;
-
-		/************************************************************************/
-		/* 								CLR HOOKS						   		*/
-		/************************************************************************/
-		static void InternalSetSkin(ScriptGUISkin* skin);
 	};
 
 	/** @} */
