@@ -20,34 +20,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT ComponentDeltaRTTI : public RTTIType<ComponentDelta, IReflectable, ComponentDeltaRTTI>
-	{
-	private:
-		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Id, 0)
-			B3D_RTTI_MEMBER_REFLPTR(Data, 1)
-			B3D_RTTI_MEMBER_PLAIN(ParentId, 2)
-			B3D_RTTI_MEMBER_PLAIN(PrefabObjectId, 3)
-		B3D_RTTI_END_MEMBERS
-	public:
-		const String& GetRttiName()
-		{
-			static String name = "ComponentDelta";
-			return name;
-		}
-
-		u32 GetRttiId() const override
-		{
-			return TID_ComponentDelta;
-		}
-
-		SPtr<IReflectable> NewRttiObject()
-		{
-			return B3DMakeShared<ComponentDelta>();
-		}
-	};
-
-	class B3D_CORE_EXPORT SceneObjectDeltaRTTI : public RTTIType<SceneObjectDelta, IReflectable, SceneObjectDeltaRTTI>
+	class B3D_CORE_EXPORT SceneObjectHierarchyDeltaObjectRTTI : public RTTIType<SceneObjectHierarchyDeltaObject, IReflectable, SceneObjectHierarchyDeltaObjectRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -75,18 +48,18 @@ namespace bs
 	public:
 		const String& GetRttiName()
 		{
-			static String name = "SceneObjectDelta";
+			static String name = "SceneObjectHierarchyDeltaObject";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_SceneObjectDelta;
+			return TID_SceneObjectHierarchyDeltaObject;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return B3DMakeShared<SceneObjectDelta>();
+			return B3DMakeShared<SceneObjectHierarchyDeltaObject>();
 		}
 	};
 
