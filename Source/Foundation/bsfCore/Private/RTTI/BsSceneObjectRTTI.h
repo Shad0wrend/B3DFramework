@@ -71,13 +71,9 @@ namespace bs
 		{ /* DO NOTHING */
 		}
 
-		UUID& GetPrefabLink(SceneObject* obj) { return obj->mPrefabLinkUUID; }
+		SPtr<PrefabDiff> GetPrefabDelta(SceneObject* obj) { return obj->mPrefabDelta; }
 
-		void SetPrefabLink(SceneObject* obj, UUID& value) { obj->mPrefabLinkUUID = value; }
-
-		SPtr<PrefabDiff> GetPrefabDiff(SceneObject* obj) { return obj->mPrefabDiff; }
-
-		void SetPrefabDiff(SceneObject* obj, SPtr<PrefabDiff> value) { obj->mPrefabDiff = value; }
+		void SetPrefabDelta(SceneObject* obj, SPtr<PrefabDiff> value) { obj->mPrefabDelta = value; }
 
 		u32& GetFlags(SceneObject* obj) { return obj->mFlags; }
 
@@ -91,14 +87,18 @@ namespace bs
 
 		void SetMobility(SceneObject* obj, ObjectMobility& value) { obj->mMobility = value; }
 
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_PLAIN(mPrefabResourceId, 13)
+		B3D_RTTI_END_MEMBERS
+
 	public:
 		SceneObjectRTTI()
 		{
 			AddReflectablePtrArrayField("mChildren", 0, &SceneObjectRTTI::GetChild, &SceneObjectRTTI::GetNumChildren, &SceneObjectRTTI::SetChild, &SceneObjectRTTI::SetNumChildren);
 			AddReflectablePtrArrayField("mComponents", 1, &SceneObjectRTTI::GetComponent, &SceneObjectRTTI::GetNumComponents, &SceneObjectRTTI::SetComponent, &SceneObjectRTTI::SetNumComponents);
-			AddPlainField("mPrefabLink", 2, &SceneObjectRTTI::GetPrefabLink, &SceneObjectRTTI::SetPrefabLink);
+			//AddPlainField("mPrefabLink", 2, &SceneObjectRTTI::GetPrefabLink, &SceneObjectRTTI::SetPrefabLink);
 			AddPlainField("mFlags", 3, &SceneObjectRTTI::GetFlags, &SceneObjectRTTI::SetFlags);
-			AddReflectablePtrField("mPrefabDiff", 4, &SceneObjectRTTI::GetPrefabDiff, &SceneObjectRTTI::SetPrefabDiff);
+			AddReflectablePtrField("mPrefabDelta", 4, &SceneObjectRTTI::GetPrefabDelta, &SceneObjectRTTI::SetPrefabDelta);
 			AddPlainField("mPrefabHash", 5, &SceneObjectRTTI::GetPrefabHash, &SceneObjectRTTI::SetPrefabHash);
 			AddPlainField("mActiveSelf", 9, &SceneObjectRTTI::GetActive, &SceneObjectRTTI::SetActive);
 			AddPlainField("mMobility", 10, &SceneObjectRTTI::GetMobility, &SceneObjectRTTI::SetMobility);
@@ -164,8 +164,8 @@ namespace bs
 					child->SetParentInternal(so->mThisHandle, false);
 			}
 
-			if(so->mUUID.Empty() || coreContext->GoState->GetUseNewUuiDs())
-				so->mUUID = UUIDGenerator::GenerateRandom();
+			if(so->mId.Empty() || coreContext->GoState->GetUseNewUuiDs())
+				so->mId = UUIDGenerator::GenerateRandom();
 
 			// If this is the deserialization parent, end deserialization (which resolves all game object handles, if we
 			// provided valid IDs), and instantiate (i.e. activate) the deserialized hierarchy.

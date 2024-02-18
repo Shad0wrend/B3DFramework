@@ -307,7 +307,7 @@ void CRigidbody::UpdateColliders()
 			}
 		}
 
-		u32 childCount = currentSO->GetNumChildren();
+		u32 childCount = currentSO->GetChildCount();
 		for(u32 i = 0; i < childCount; i++)
 		{
 			HSceneObject child = currentSO->GetChild(i);

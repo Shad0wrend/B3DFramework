@@ -5,6 +5,7 @@
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
 #include "RTTI/BsStringRTTI.h"
+#include "RTTI/BsUUIDRTTI.h"
 #include "Scene/BsPrefabDiff.h"
 #include "Serialization/BsSerializedObject.h"
 #include "Scene/BsGameObjectManager.h"
@@ -50,10 +51,10 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN(Id, 0)
 			B3D_RTTI_MEMBER_PLAIN(Name, 1)
 
-			B3D_RTTI_MEMBER_REFLPTR_ARRAY(ComponentDiffs, 2)
+			B3D_RTTI_MEMBER_REFLPTR_ARRAY(ComponentDeltas, 2)
 			B3D_RTTI_MEMBER_PLAIN_ARRAY(RemovedComponents, 3)
 			B3D_RTTI_MEMBER_REFLPTR_ARRAY(AddedComponents, 4)
-			B3D_RTTI_MEMBER_REFLPTR_ARRAY(ChildDiffs, 5)
+			B3D_RTTI_MEMBER_REFLPTR_ARRAY(ChildDeltas, 5)
 
 			B3D_RTTI_MEMBER_PLAIN_ARRAY(RemovedChildren, 6)
 			B3D_RTTI_MEMBER_REFLPTR_ARRAY(AddedChildren, 7)
@@ -139,10 +140,10 @@ namespace bs
 				for(auto& child : current->AddedChildren)
 					FindGameObjectHandles(child, handleObjects);
 
-				for(auto& component : current->ComponentDiffs)
+				for(auto& component : current->ComponentDeltas)
 					FindGameObjectHandles(component->Data, handleObjects);
 
-				for(auto& child : current->ChildDiffs)
+				for(auto& child : current->ChildDeltas)
 					todo.push(child);
 			}
 

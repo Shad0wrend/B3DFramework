@@ -2,10 +2,10 @@
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
 	<Type Name="bs::GameObjectHandle&lt;*&gt;">
-		<DisplayString Condition="mData._Ptr->MPtr._Ptr == 0 || mData._Ptr->MPtr._Ptr->Object._Ptr == 0">Empty</DisplayString>
-		<DisplayString>Name = {mData._Ptr->MPtr._Ptr->Object._Ptr->mName}, InstanceId = {mData._Ptr->MPtr._Ptr->MInstanceId}</DisplayString>
+		<DisplayString Condition="mSharedHandleData._Ptr->InstanceData._Ptr == 0 || mSharedHandleData._Ptr->InstanceData._Ptr->Object._Ptr == 0">Empty</DisplayString>
+		<DisplayString>Name = {mSharedHandleData._Ptr->InstanceData._Ptr->Object._Ptr->mName}, Id = {mSharedHandleData._Ptr->Id}</DisplayString>
 		<Expand>
-			<ExpandedItem Condition="mData._Ptr->MPtr._Ptr != 0 &amp;&amp; mData._Ptr->MPtr._Ptr->Object._Ptr != 0">($T1*)mData._Ptr->MPtr._Ptr->Object._Ptr</ExpandedItem>
+			<ExpandedItem Condition="mSharedHandleData._Ptr->InstanceData._Ptr != 0 &amp;&amp; mSharedHandleData._Ptr->InstanceData._Ptr->Object._Ptr != 0">($T1*)mSharedHandleData._Ptr->InstanceData._Ptr->Object._Ptr</ExpandedItem>
 		</Expand>
 	</Type>
 

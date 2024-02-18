@@ -9,6 +9,11 @@
 
 using namespace bs;
 
+namespace bs
+{
+	B3D_LOG_CATEGORY(Prefab)
+}
+
 Prefab::Prefab()
 	: Resource(false)
 {
@@ -24,16 +29,12 @@ HPrefab Prefab::Create(const HSceneObject& sceneObject, bool isScene)
 {
 	SPtr<Prefab> newPrefab = CreateEmpty();
 	newPrefab->mIsScene = isScene;
+	newPrefab->mUUID = UUIDGenerator::GenerateRandom(); // TODO - This should be done automatically on resource creation
 
-	PrefabUtility::ClearPrefabIds(sceneObject, true, false);
+	PrefabUtility::ClearPrefabIds(sceneObject);
 	newPrefab->Initialize(sceneObject);
 
-	HPrefab handle = B3DStaticResourceCast<Prefab>(GetResources().CreateResourceHandle(newPrefab));
-	newPrefab->mUUID = handle.GetId();
-	sceneObject->mPrefabLinkUUID = newPrefab->mUUID;
-	newPrefab->GetRootInternal()->mPrefabLinkUUID = newPrefab->mUUID;
-
-	return handle;
+	return B3DStaticResourceCast<Prefab>(GetResources().CreateResourceHandle(newPrefab, newPrefab->mUUID));
 }
 
 SPtr<Prefab> Prefab::CreateEmpty()
@@ -46,87 +47,154 @@ SPtr<Prefab> Prefab::CreateEmpty()
 
 void Prefab::Initialize(const HSceneObject& sceneObject)
 {
-	sceneObject->mPrefabDiff = nullptr;
-	PrefabUtility::GeneratePrefabIds(sceneObject);
+	sceneObject->mPrefabDelta = nullptr;
 
-	// If there are any child prefab instances, make sure to update their diffs so they are saved with this prefab
-	Stack<HSceneObject> todo;
-	todo.push(sceneObject);
-
-	while(!todo.empty())
-	{
-		HSceneObject current = todo.top();
-		todo.pop();
-
-		u32 childCount = current->GetNumChildren();
-		for(u32 i = 0; i < childCount; i++)
-		{
-			HSceneObject child = current->GetChild(i);
-
-			if(!child->mPrefabLinkUUID.Empty())
-				PrefabUtility::RecordPrefabDiff(child);
-			else
-				todo.push(child);
-		}
-	}
-
-	// Clone the hierarchy for internal storage
-	if(mRoot != nullptr)
+	// Record original prefab object ids so we know to restore them, then destroy the internal hierarchy
+	if(mRoot.IsValid())
 		mRoot->Destroy(true);
 
 	mRoot = sceneObject->Clone(false, true);
 	mRoot->mParent = nullptr;
-	mRoot->mLinkId = -1;
 
 	// Remove objects with "dont save" flag
-	todo.push(mRoot);
-
-	while(!todo.empty())
-	{
-		HSceneObject current = todo.top();
-		todo.pop();
-
-		if(current->HasFlag(SOF_DontSave))
-			current->Destroy();
-		else
+	FrameScope frameScope;
+	FrameVector<HSceneObject> sceneObjectsToDestroy;
+	mRoot->IterateHierarchy([&sceneObjectsToDestroy](const HSceneObject& sceneObject) {
+		if(sceneObject->HasFlag(SOF_DontSave))
 		{
-			u32 numChildren = current->GetNumChildren();
-			for(u32 i = 0; i < numChildren; i++)
-				todo.push(current->GetChild(i));
+			sceneObjectsToDestroy.push_back(sceneObject);
+			return false;
 		}
+
+		return true;
+	}, nullptr);
+
+	for(const auto& entry : sceneObjectsToDestroy)
+		entry->Destroy();
+
+	if(!mIsScene)
+	{
+		// Ensure the prefab hierarchy keeps the original ids
+		UnorderedMap<UUID, PrefabLinkInformation> instanceHierarchyIds = PrefabUtility::GetInstanceToPrefabLinkInformationMap(sceneObject, true);
+
+		// TODO - What happens with objects with no prefab link, yet part of nested prefabs? Keep them with empty prefab object/resource id?
+		// TODO - What happens when creating a template from another templates instance? Just clear the prefab object ids until the first nested prefab instance?
+		mRoot->IterateHierarchy([this, &instanceHierarchyIds](const HSceneObject& sceneObject) {
+			UUID idInPrefab;
+			if(auto found = instanceHierarchyIds.find(sceneObject.GetId()); found != instanceHierarchyIds.end())
+				idInPrefab = found->second.PrefabObjectId;
+			else
+			{
+				idInPrefab = UUIDGenerator::GenerateRandom();
+
+				// Record this here, as we'll re-use this map when assigning prefab object IDs to the instance hierarchy
+				instanceHierarchyIds.insert(std::make_pair(sceneObject.GetId(), idInPrefab));
+			}
+
+			sceneObject->SetId(idInPrefab);
+			sceneObject.GetSharedHandleData()->Id = idInPrefab;
+
+			const bool isPartOfRootPrefab = sceneObject->GetPrefabResourceId() == mUUID;
+			if(isPartOfRootPrefab)
+			{
+				// Only nested prefabs should have prefab links within the prefab
+				sceneObject->SetPrefabObjectId(UUID::kEmpty);
+				sceneObject->SetPrefabResourceId(UUID::kEmpty);
+			}
+			else
+			{
+				// Objects not part of the root prefab keep their prefab object and resource ids, as those will point to nested prefabs
+			}
+
+			return true;
+		},
+		[this, &instanceHierarchyIds](const HComponent& component) {
+			UUID idInPrefab;
+			if(auto found = instanceHierarchyIds.find(component.GetId()); found != instanceHierarchyIds.end())
+				idInPrefab = found->second.PrefabObjectId;
+			else
+			{
+				idInPrefab = UUIDGenerator::GenerateRandom();
+
+				// Record this here, as we'll re-use this map when assigning prefab object IDs to the instance hierarchy
+				instanceHierarchyIds.insert(std::make_pair(component.GetId(), idInPrefab));
+			}
+
+			component->SetId(idInPrefab);
+			component.GetSharedHandleData()->Id = idInPrefab;
+
+			const bool isPartOfRootPrefab = component->SceneObject()->GetPrefabResourceId() == mUUID;
+			if(isPartOfRootPrefab)
+			{
+				// Only nested prefabs should have prefab links within the prefab
+				component->SetPrefabObjectId(UUID::kEmpty);
+			}
+			else
+			{
+				// Objects not part of the original prefab keep their prefab object id, as this will point to nested prefabs
+			}
+		});
+
+		// Ensure the instance hierarchy links to this prefab
+		B3D_ASSERT(mUUID != UUID::kEmpty);
+		sceneObject->IterateHierarchy([this, &instanceHierarchyIds](const HSceneObject& sceneObject)
+		{
+			if(sceneObject->HasFlag(SOF_DontSave))
+				return false;
+
+			if(auto found = instanceHierarchyIds.find(sceneObject.GetId()); B3D_ENSURE(found != instanceHierarchyIds.end()))
+			{
+				sceneObject->SetPrefabObjectId(found->second.PrefabObjectId);
+				sceneObject->SetPrefabResourceId(mUUID);
+			}
+
+			return true;
+		},
+		[this, &instanceHierarchyIds](const HComponent& component)
+		{
+			if(auto found = instanceHierarchyIds.find(component.GetId()); B3D_ENSURE(found != instanceHierarchyIds.end()))
+			{
+				component->SetPrefabObjectId(found->second.PrefabObjectId);
+			}
+		});
+
+		// Generate deltas for nested prefabs
+		mRoot->IterateHierarchy([this](const HSceneObject& sceneObject) {
+			if(sceneObject->IsPrefabInstanceRoot())
+				PrefabUtility::RecordPrefabDelta(sceneObject);
+
+			return true;
+		}, nullptr);
 	}
+
+	// TODO - Write some unit tests to ensure this works correctly
+	// - Create a non-nested prefab from a scene object hierarchy, instantiate it, make changes, instantiate again, ensure all links are still valid
+	// - Create a nested prefab, make changes to it and the root (add new objects), ensure all links are still valid
+	// - But probably just try to get the simple case working correctly
+
+
+	// TODO - Don't forget to re-visit UpdateFromPrefab (see comment there)
 }
 
 void Prefab::Update(const HSceneObject& sceneObject)
 {
 	Initialize(sceneObject);
-	sceneObject->mPrefabLinkUUID = mUUID;
-	mRoot->mPrefabLinkUUID = mUUID;
 
 	mHash++;
 }
 
 void Prefab::UpdateChildInstancesInternal() const
 {
-	Stack<HSceneObject> todo;
-	todo.push(mRoot);
+	if(!mRoot.IsValid())
+		return;
 
-	while(!todo.empty())
+	mRoot->IterateHierarchy([this](const HSceneObject& sceneObject)
 	{
-		HSceneObject current = todo.top();
-		todo.pop();
+		if(sceneObject->IsPrefabInstanceRoot())
+			PrefabUtility::UpdateFromPrefab(sceneObject);
 
-		u32 childCount = current->GetNumChildren();
-		for(u32 i = 0; i < childCount; i++)
-		{
-			HSceneObject child = current->GetChild(i);
-
-			if(!child->mPrefabLinkUUID.Empty())
-				PrefabUtility::UpdateFromPrefab(child);
-			else
-				todo.push(child);
-		}
-	}
+		return true;
+	}, nullptr);
 }
 
 HSceneObject Prefab::InstantiateInternal(bool preserveUUIDs) const
@@ -154,8 +222,6 @@ HSceneObject Prefab::CloneInternal(bool preserveUUIDs) const
 		return HSceneObject();
 
 	mRoot->mPrefabHash = mHash;
-	mRoot->mLinkId = -1;
-
 	return mRoot->Clone(false, preserveUUIDs);
 }
 

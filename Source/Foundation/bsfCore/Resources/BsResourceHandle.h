@@ -391,7 +391,7 @@ namespace bs
 	template <class _Ty1, bool _Weak1, class _Ty2, bool _Weak2>
 	bool operator==(const TResourceHandle<_Ty1, _Weak1>& _Left, std::nullptr_t _Right)
 	{
-		return _Left.GetHandleData() == nullptr || _Left.GetHandleData()->mUUID.empty();
+		return _Left.GetHandleData() == nullptr || _Left.GetHandleData()->mId.empty();
 	}
 
 	template <class _Ty1, bool _Weak1, class _Ty2, bool _Weak2>

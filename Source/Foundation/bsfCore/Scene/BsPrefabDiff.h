@@ -23,7 +23,7 @@ namespace bs
 	 */
 	struct B3D_CORE_EXPORT PrefabComponentDiff : public IReflectable
 	{
-		i32 Id;
+		UUID Id = UUID::kEmpty;
 		SPtr<SerializedObject> Data;
 
 		/************************************************************************/
@@ -55,7 +55,7 @@ namespace bs
 	{
 		PrefabObjectDiff() {}
 
-		u32 Id = 0;
+		UUID Id = UUID::kEmpty;
 
 		String Name;
 		Vector3 Position = Vector3::kZero;
@@ -64,12 +64,12 @@ namespace bs
 		bool IsActive = false;
 		u32 SoFlags = 0;
 
-		Vector<SPtr<PrefabComponentDiff>> ComponentDiffs;
-		Vector<u32> RemovedComponents;
+		Vector<SPtr<PrefabComponentDiff>> ComponentDeltas;
+		Vector<UUID> RemovedComponents;
 		Vector<SPtr<SerializedObject>> AddedComponents;
 
-		Vector<SPtr<PrefabObjectDiff>> ChildDiffs;
-		Vector<u32> RemovedChildren;
+		Vector<SPtr<PrefabObjectDiff>> ChildDeltas;
+		Vector<UUID> RemovedChildren;
 		Vector<SPtr<SerializedObject>> AddedChildren;
 
 		/************************************************************************/
@@ -106,19 +106,12 @@ namespace bs
 		void Apply(const HSceneObject& object);
 
 	private:
-		/** A reference to a renamed game object instance data, and its original ID so it may be restored later. */
-		struct RenamedGameObject
-		{
-			GameObjectInstanceDataPtr InstanceData;
-			u64 OriginalId;
-		};
-
 		/**
 		 * Recurses over every scene object in the prefab a generates differences between itself and the instanced version.
 		 *
-		 * @see		create
+		 * @see		Create
 		 */
-		static SPtr<PrefabObjectDiff> GenerateDiff(const HSceneObject& prefab, const HSceneObject& instance);
+		static SPtr<PrefabObjectDiff> GenerateDelta(const HSceneObject& prefab, const HSceneObject& instance);
 
 		/**
 		 * Recursively applies a per-object set of prefab differences to a specific object.
@@ -126,27 +119,6 @@ namespace bs
 		 * @see		apply
 		 */
 		static void ApplyDiff(const SPtr<PrefabObjectDiff>& diff, const HSceneObject& object, SerializationContext* context);
-
-		/**
-		 * Renames all game objects in the provided instance so that IDs of the objects will match the IDs of their
-		 * counterparts in the prefab.
-		 *
-		 * @note
-		 * This is a temporary action and should be undone by calling restoreInstanceIds() and providing  it with the
-		 * output of this method.
-		 * @note
-		 * By doing this before calling generateDiff() we ensure that any game object handles pointing to objects within
-		 * the prefab instance hierarchy aren't recorded by the diff system, since we want those to remain as they are
-		 * after applying the diff.
-		 */
-		static void RenameInstanceIds(const HSceneObject& prefab, const HSceneObject& instance, Vector<RenamedGameObject>& output);
-
-		/**
-		 * Restores any instance IDs that were modified by the renameInstanceIds() method.
-		 *
-		 * @see		renameInstanceIds
-		 */
-		static void RestoreInstanceIds(const Vector<RenamedGameObject>& renamedObjects);
 
 		SPtr<PrefabObjectDiff> mRoot;
 

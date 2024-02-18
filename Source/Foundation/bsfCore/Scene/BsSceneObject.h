@@ -76,23 +76,25 @@ namespace bs
 		/**	Returns a handle to this object. */
 		HSceneObject GetHandle() const { return mThisHandle; }
 
+		/** Identifies the prefab resource this object is linked to. Will return an empty ID if the object is not linked to a prefab. */
+		const UUID& GetPrefabResourceId() const { return mPrefabResourceId; }
+
 		/**
-		 * Returns the UUID of the prefab this object is linked to, if any.
-		 *
-		 * @param[in]	onlyDirect	If true, this method will return prefab link only for the root object of the prefab
-		 *							instance. If false the parent objects will be searched for the prefab ID.
+		 * Returns true if this object is linked to a prefab (See IsPrefabInstance()), and is the root of the prefab instance hierarchy (i.e. its parent is
+		 * either not linked to a prefab, or linked to a different prefab). 
 		 */
-		UUID GetPrefabLink(bool onlyDirect = false) const;
+		bool IsPrefabInstanceRoot() const;
 
 		/**
 		 * Returns the root object of the prefab instance that this object belongs to, if any. Returns null if the object
-		 * is not part of a prefab instance.
+		 * is not a prefab instance.
 		 */
-		HSceneObject GetPrefabParent() const;
+		HSceneObject GetPrefabInstanceRoot() const;
 
 		/**
 		 * Breaks the link between this prefab instance and its prefab. Object will retain all current values but will no
-		 * longer be influenced by modifications to its parent prefab.
+		 * longer be influenced by modifications to its parent prefab, nor will you be able to apply changes from this object
+		 * to the prefab resource.
 		 */
 		void BreakPrefabLink();
 
@@ -104,7 +106,7 @@ namespace bs
 		 *  @{
 		 */
 
-		void SetInstanceDataInternal(GameObjectInstanceDataPtr& other) override;
+		void SetInstanceData(const SPtr<GameObjectInstanceData>& other) override;
 
 		/**
 		 * Register the scene object with the scene and activate all of its components.
@@ -114,32 +116,17 @@ namespace bs
 		 */
 		void InstantiateInternal(bool prefabOnly = false);
 
-		/**
-		 * Clears the internally stored prefab diff. If this object is updated from prefab its instance specific changes
-		 * will be lost.
-		 */
-		void ClearPrefabDiffInternal() { mPrefabDiff = nullptr; }
+		/** @copydoc GetPrefabResourceId */
+		void SetPrefabResourceId(const UUID& id) { mPrefabResourceId = id; }
 
-		/**
-		 * Returns the UUID of the prefab this object is linked to, if any. Unlike getPrefabLink() method this will not
-		 * search parents, but instead return only the value assigned to this object.
-		 */
-		const UUID& GetPrefabLinkUUIDInternal() const { return mPrefabLinkUUID; }
+		/** Clears the internally stored prefab delta. If this object is updated from prefab its instance specific changes will be lost. */
+		void ClearPrefabDelta() { mPrefabDelta = nullptr; }
 
-		/**
-		 * Allows you to change the prefab link UUID of this object. Normally this should be accompanied by reassigning the
-		 * link IDs.
-		 */
-		void SetPrefabLinkUUIDInternal(const UUID& UUID) { mPrefabLinkUUID = UUID; }
+		/** Returns a prefab delta object containing instance specific modifications of this object compared to its prefab reference, if any. */
+		const SPtr<PrefabDiff>& GetPrefabDelta() const { return mPrefabDelta; }
 
-		/**
-		 * Returns a prefab diff object containing instance specific modifications of this object compared to its prefab
-		 * reference, if any.
-		 */
-		const SPtr<PrefabDiff>& GetPrefabDiffInternal() const { return mPrefabDiff; }
-
-		/** Assigns a new prefab diff object. Caller must ensure the prefab diff was generated for this object. */
-		void SetPrefabDiffInternal(const SPtr<PrefabDiff>& diff) { mPrefabDiff = diff; }
+		/** Assigns a new prefab delta. Caller must ensure the prefab delta was generated for this object. */
+		void SetPrefabDelta(const SPtr<PrefabDiff>& delta) { mPrefabDelta = delta; }
 
 		/** Recursively enables the provided set of flags on this object and all children. */
 		void SetFlagsInternal(u32 flags);
@@ -186,8 +173,8 @@ namespace bs
 
 	private:
 		HSceneObject mThisHandle;
-		UUID mPrefabLinkUUID;
-		SPtr<PrefabDiff> mPrefabDiff;
+		UUID mPrefabResourceId; /**< Identifier of the prefab resource that this object is linked to, if any. */
+		SPtr<PrefabDiff> mPrefabDelta; // TODO - It would probably be better if each scene object/component holds an instance of this
 		u32 mPrefabHash = 0;
 		u32 mFlags;
 
@@ -373,8 +360,19 @@ namespace bs
 		 */
 		int IndexOfChild(const HSceneObject& child) const;
 
-		/**	Gets the number of all child GameObjects. */
-		u32 GetNumChildren() const { return (u32)mChildren.size(); }
+		/**	Gets the number of all child scene objects. */
+		u32 GetChildCount() const { return (u32)mChildren.size(); }
+
+		/**
+		 * Iterates over all the components on this object, and then does the same on all child scene objects recursively. Calls a callback
+		 * for each component and scene object.
+		 *
+		 * @param	onSceneObjectFound		Called for every child object. If the callback returns false, iteration will stop.
+		 *									If @p visitSelf is true, it's also called on the root object itself. May be null.
+		 * @param	onComponentFound		Called for every component. May be null.
+		 * @param	visitSelf				If true, @p onSceneObjectFound will be called for the root object.
+		 */
+		void IterateHierarchy(const Function<bool(const HSceneObject&)>& onSceneObjectFound, const Function<void(const HComponent&)>& onComponentFound, bool visitSelf = true) const;
 
 		/** Returns the scene this object is part of. Can be null if scene object hasn't been instantiated. */
 		const SPtr<SceneInstance>& GetScene() const;
@@ -494,7 +492,7 @@ namespace bs
 			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
 
 			SPtr<T> gameObject(new(B3DAllocate<T>()) T(mThisHandle, std::forward<Args>(args)...), &B3DDelete<T>, StdAlloc<T>());
-			gameObject->SetUUIDInternal(UUIDGenerator::GenerateRandom());
+			gameObject->SetId(UUIDGenerator::GenerateRandom());
 
 			const HComponent newComponent =
 				B3DStaticGameObjectCast<Component>(GameObjectManager::Instance().RegisterObject(gameObject));

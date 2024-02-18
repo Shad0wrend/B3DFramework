@@ -170,7 +170,7 @@ MonoObject* ScriptSceneObject::InternalGetScene(ScriptSceneObject* nativeInstanc
 void ScriptSceneObject::InternalGetNumChildren(ScriptSceneObject* nativeInstance, u32* value)
 {
 	if(!CheckIfDestroyed(nativeInstance))
-		*value = nativeInstance->mSceneObject->GetNumChildren();
+		*value = nativeInstance->mSceneObject->GetChildCount();
 	else
 		*value = 0;
 }
@@ -180,7 +180,7 @@ MonoObject* ScriptSceneObject::InternalGetChild(ScriptSceneObject* nativeInstanc
 	if(CheckIfDestroyed(nativeInstance))
 		return nullptr;
 
-	u32 numChildren = nativeInstance->mSceneObject->GetNumChildren();
+	u32 numChildren = nativeInstance->mSceneObject->GetChildCount();
 	if(idx >= numChildren)
 	{
 		B3D_LOG(Warning, Scene, "Attempting to access an out of range SceneObject child. Provided index: \"{0}\". "

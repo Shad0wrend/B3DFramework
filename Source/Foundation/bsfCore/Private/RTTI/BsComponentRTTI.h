@@ -44,8 +44,8 @@ namespace bs
 				coreContext->GoState->RegisterObject(deserializationData.OriginalId, handle);
 			}
 
-			if(comp->mUUID.Empty() || coreContext->GoState->GetUseNewUuiDs())
-				comp->mUUID = UUIDGenerator::GenerateRandom();
+			if(comp->mId.Empty() || coreContext->GoState->GetUseNewUuiDs())
+				comp->mId = UUIDGenerator::GenerateRandom();
 
 			comp->mRTTIData = nullptr;
 		}

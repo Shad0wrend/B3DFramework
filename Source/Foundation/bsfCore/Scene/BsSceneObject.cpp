@@ -43,7 +43,7 @@ HSceneObject SceneObject::Create(const String& name, u32 flags)
 HSceneObject SceneObject::CreateInternal(const String& name, u32 flags)
 {
 	SPtr<SceneObject> sceneObjectPtr = SPtr<SceneObject>(new(B3DAllocate<SceneObject>()) SceneObject(name, flags), &B3DDelete<SceneObject>, StdAlloc<SceneObject>());
-	sceneObjectPtr->mUUID = UUIDGenerator::GenerateRandom();
+	sceneObjectPtr->mId = UUIDGenerator::GenerateRandom();
 
 	HSceneObject sceneObject = B3DStaticGameObjectCast<SceneObject>(
 		GameObjectManager::Instance().RegisterObject(sceneObjectPtr));
@@ -90,7 +90,7 @@ void SceneObject::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
 		while(!mComponents.empty())
 		{
 			HComponent component = mComponents.back();
-			component->SetIsDestroyedInternal();
+			component->SetIsDestroyed();
 
 			if(IsInstantiated())
 				GetSceneManager().NotifyComponentDestroyedInternal(component, immediate);
@@ -105,71 +105,62 @@ void SceneObject::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
 		GameObjectManager::Instance().QueueForDestroy(handle);
 }
 
-void SceneObject::SetInstanceDataInternal(GameObjectInstanceDataPtr& other)
+void SceneObject::SetInstanceData(const SPtr<GameObjectInstanceData>& other)
 {
-	GameObject::SetInstanceDataInternal(other);
+	GameObject::SetInstanceData(other);
 
 	// Instance data changed, so make sure to refresh the handles to reflect that
 	SPtr<SceneObject> thisPtr = mThisHandle.GetShared();
 	mThisHandle.SetSharedHandleData(thisPtr);
 }
 
-UUID SceneObject::GetPrefabLink(bool onlyDirect) const
+bool SceneObject::IsPrefabInstanceRoot() const
 {
-	const SceneObject* curObj = this;
+	if(!IsPrefabInstance())
+		return false;
 
-	while(curObj != nullptr)
-	{
-		if(!curObj->mPrefabLinkUUID.Empty())
-			return curObj->mPrefabLinkUUID;
+	const HSceneObject& parent = GetParent();
 
-		if(curObj->mParent != nullptr && !onlyDirect)
-			curObj = curObj->mParent.Get();
-		else
-			curObj = nullptr;
-	}
+	if(parent == nullptr)
+		return true;
 
-	return UUID::kEmpty;
+	if(GetPrefabResourceId() != parent->GetPrefabResourceId())
+		return true;
+	
+	return false;
 }
 
-HSceneObject SceneObject::GetPrefabParent() const
+HSceneObject SceneObject::GetPrefabInstanceRoot() const
 {
-	HSceneObject curObj = mThisHandle;
+	if(mPrefabResourceId.Empty())
+		return HSceneObject();
 
-	while(curObj != nullptr)
+	HSceneObject currentObject = mThisHandle;
+	while(currentObject != nullptr)
 	{
-		if(!curObj->mPrefabLinkUUID.Empty())
-			return curObj;
+		if(currentObject->IsPrefabInstanceRoot())
+			return currentObject;
 
-		if(curObj->mParent != nullptr)
-			curObj = curObj->mParent;
-		else
-			curObj = nullptr;
+		currentObject = currentObject->GetParent();
 	}
 
-	return curObj;
+	return currentObject;
 }
 
 void SceneObject::BreakPrefabLink()
 {
-	SceneObject* rootObj = this;
+	HSceneObject prefabInstanceRoot = GetPrefabInstanceRoot();
+	if(prefabInstanceRoot == nullptr)
+		return;
 
-	while(rootObj != nullptr)
+	prefabInstanceRoot->ClearPrefabDelta();
+	PrefabUtility::ClearPrefabIds(prefabInstanceRoot);
+
+	// If the parent is a prefab instance, we should become part of that prefab now
+	const HSceneObject& parent = GetParent();
+	if(parent && parent->IsPrefabInstance())
 	{
-		if(!rootObj->mPrefabLinkUUID.Empty())
-			break;
-
-		if(rootObj->mParent != nullptr)
-			rootObj = rootObj->mParent.Get();
-		else
-			rootObj = nullptr;
-	}
-
-	if(rootObj != nullptr)
-	{
-		rootObj->mPrefabLinkUUID = UUID::kEmpty;
-		rootObj->mPrefabDiff = nullptr;
-		PrefabUtility::ClearPrefabIds(rootObj->GetHandle(), true, false);
+		PrefabUtility::AssignPrefabResourceId(prefabInstanceRoot, parent->GetPrefabResourceId());
 	}
 }
 
@@ -208,7 +199,7 @@ void SceneObject::InstantiateInternal(bool prefabOnly)
 
 		for(auto& child : obj->mChildren)
 		{
-			if(!prefabOnly || child->mPrefabLinkUUID.Empty())
+			if(!prefabOnly || (child->GetPrefabResourceId().Empty() || child->GetPrefabResourceId() == obj->GetPrefabResourceId()))
 				instantiateRecursive(child.Get());
 		}
 	};
@@ -220,7 +211,7 @@ void SceneObject::InstantiateInternal(bool prefabOnly)
 
 		for(auto& child : obj->mChildren)
 		{
-			if(!prefabOnly || child->mPrefabLinkUUID.Empty())
+			if(!prefabOnly || (child->GetPrefabResourceId().Empty() || child->GetPrefabResourceId() == obj->GetPrefabResourceId()))
 				triggerEventsRecursive(child.Get());
 		}
 	};
@@ -494,7 +485,7 @@ void SceneObject::SetParent(const HSceneObject& parent, bool keepWorldTransform)
 		return;
 
 #if B3D_IS_ENGINE
-	UUID originalPrefab = GetPrefabLink();
+	UUID originalPrefabResourceId = GetPrefabResourceId();
 #endif
 
 	if(mMobility != ObjectMobility::Movable)
@@ -505,9 +496,12 @@ void SceneObject::SetParent(const HSceneObject& parent, bool keepWorldTransform)
 #if B3D_IS_ENGINE
 	if(GetCoreApplication().IsEditor())
 	{
-		UUID newPrefab = GetPrefabLink();
-		if(originalPrefab != newPrefab)
+		UUID newPrefabResourceId = GetPrefabResourceId();
+		if(originalPrefabResourceId != newPrefabResourceId)
+		{
 			PrefabUtility::ClearPrefabIds(mThisHandle);
+			PrefabUtility::AssignPrefabResourceId(mThisHandle, newPrefabResourceId);
+		}
 	}
 #endif
 }
@@ -591,6 +585,43 @@ int SceneObject::IndexOfChild(const HSceneObject& child) const
 	}
 
 	return -1;
+}
+
+void SceneObject::IterateHierarchy(const Function<bool(const HSceneObject&)>& onSceneObjectFound, const Function<void(const HComponent&)>& onComponentFound, bool visitSelf) const
+{
+	const Function<void(const HSceneObject&)> fnVisitComponentsAndChildren = [&onSceneObjectFound, &onComponentFound, &fnVisitComponentsAndChildren](const HSceneObject& sceneObject)
+	{
+		if(onSceneObjectFound != nullptr)
+		{
+			if(!onSceneObjectFound(sceneObject))
+				return;
+		}
+
+		if(onComponentFound != nullptr)
+		{
+			for(auto& component : sceneObject->GetComponents())
+				onComponentFound(component);
+		}
+
+		for(const HSceneObject& child : sceneObject->mChildren)
+			fnVisitComponentsAndChildren(child);
+	};
+
+	if(visitSelf)
+	{
+		fnVisitComponentsAndChildren(mThisHandle);
+	}
+	else
+	{
+		if(onComponentFound != nullptr)
+		{
+			for(auto& component : mComponents)
+				onComponentFound(component);
+		}
+
+		for(const HSceneObject& child : mChildren)
+			fnVisitComponentsAndChildren(child);
+	}
 }
 
 void SceneObject::AddChild(const HSceneObject& object)
@@ -808,7 +839,7 @@ void SceneObject::DestroyComponent(const HComponent component, bool immediate)
 
 	if(iter != mComponents.end())
 	{
-		(*iter)->SetIsDestroyedInternal();
+		(*iter)->SetIsDestroyed();
 
 		if(IsInstantiated())
 			GetSceneManager().NotifyComponentDestroyedInternal(*iter, immediate);
@@ -846,7 +877,7 @@ HComponent SceneObject::AddComponent(u32 typeId)
 	}
 
 	SPtr<Component> componentPtr = std::static_pointer_cast<Component>(newObj);
-	componentPtr->SetUUIDInternal(UUIDGenerator::GenerateRandom());
+	componentPtr->SetId(UUIDGenerator::GenerateRandom());
 
 	// Clean up the self-reference assigned by the RTTI system
 	componentPtr->mRTTIData = nullptr;
@@ -872,8 +903,8 @@ void SceneObject::AddAndInitializeComponent(const HComponent& component)
 {
 	component->mThisHandle = component;
 
-	if(component->mUUID.Empty())
-		component->mUUID = UUIDGenerator::GenerateRandom();
+	if(component->mId.Empty())
+		component->mId = UUIDGenerator::GenerateRandom();
 
 	mComponents.push_back(component);
 

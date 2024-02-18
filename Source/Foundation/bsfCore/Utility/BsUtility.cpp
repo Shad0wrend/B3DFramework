@@ -196,7 +196,7 @@ Vector<HComponent> Utility::FindComponents(const HSceneObject& object, u32 typeI
 				output.push_back(entry);
 		}
 
-		u32 numChildren = curSO->GetNumChildren();
+		u32 numChildren = curSO->GetChildCount();
 		for(u32 i = 0; i < numChildren; i++)
 			todo.push(curSO->GetChild(i));
 	}

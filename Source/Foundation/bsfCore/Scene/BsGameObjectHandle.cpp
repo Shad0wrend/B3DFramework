@@ -23,7 +23,7 @@ GameObjectHandleBase::GameObjectHandleBase(const SPtr<GameObject>& object)
 
 bool GameObjectHandleBase::IsDestroyed(bool checkQueued) const
 {
-	return mSharedHandleData->InstanceData == nullptr || mSharedHandleData->InstanceData->Object == nullptr || (checkQueued && mSharedHandleData->InstanceData->Object->GetIsDestroyedInternal());
+	return mSharedHandleData->InstanceData == nullptr || mSharedHandleData->InstanceData->Object == nullptr || (checkQueued && mSharedHandleData->InstanceData->Object->GetIsDestroyed());
 }
 
 void GameObjectHandleBase::SetSharedHandleData(const SPtr<GameObject>& object)

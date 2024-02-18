@@ -13,7 +13,7 @@ void GameObject::Initialize(const SPtr<GameObject>& object, u64 instanceId)
 	mInstanceData->MInstanceId = instanceId;
 }
 
-void GameObject::SetInstanceDataInternal(GameObjectInstanceDataPtr& other)
+void GameObject::SetInstanceData(const SPtr<GameObjectInstanceData>& other)
 {
 	SPtr<GameObject> myPtr = mInstanceData->Object;
 	u64 oldId = mInstanceData->MInstanceId;

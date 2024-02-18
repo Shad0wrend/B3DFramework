@@ -24,8 +24,6 @@ namespace bs
 		u64 MInstanceId;
 	};
 
-	typedef SPtr<GameObjectInstanceData> GameObjectInstanceDataPtr;
-
 	/**	Internal data shared between GameObject handles. */
 	struct B3D_CORE_EXPORT GameObjectHandleData
 	{
@@ -65,8 +63,14 @@ namespace bs
 		 */
 		bool IsDestroyed(bool checkQueued = false) const;
 
+		/** Returns true if the handle points to a non-null object and the object is not queued for destruction. */
+		bool IsValid() const { return !IsDestroyed(true);}
+
 		/**	Returns the instance ID of the object the handle is referencing. */
 		u64 GetInstanceId() const { return mSharedHandleData->InstanceData != nullptr ? mSharedHandleData->InstanceData->MInstanceId : 0; }
+
+		/** Returns the globally unique ID of the object the handle is referencing. */
+		const UUID& GetId() const { return mSharedHandleData->Id; }
 
 		/**
 		 * Returns pointer to the referenced GameObject.

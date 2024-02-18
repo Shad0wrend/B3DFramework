@@ -608,7 +608,7 @@ Vector<HBone> CAnimation::FindChildBones()
 			bones.push_back(bone);
 		}
 
-		int childCount = currentSO->GetNumChildren();
+		int childCount = currentSO->GetChildCount();
 		for(int i = 0; i < childCount; i++)
 		{
 			HSceneObject child = currentSO->GetChild(i);

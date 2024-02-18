@@ -56,7 +56,7 @@ SceneManager::~SceneManager()
 
 void SceneManager::ClearScene(bool forceAll)
 {
-	u32 numChildren = mMainScene->mRoot->GetNumChildren();
+	u32 numChildren = mMainScene->mRoot->GetChildCount();
 
 	u32 curIdx = 0;
 	for(u32 i = 0; i < numChildren; i++)
@@ -94,7 +94,7 @@ void SceneManager::SetRootNodeInternal(const HSceneObject& root)
 
 	HSceneObject oldRoot = mMainScene->mRoot;
 
-	u32 numChildren = oldRoot->GetNumChildren();
+	u32 numChildren = oldRoot->GetChildCount();
 	// Make sure to keep persistent objects
 
 	B3DMarkAllocatorFrame();

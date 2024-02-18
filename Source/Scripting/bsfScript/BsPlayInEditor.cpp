@@ -149,7 +149,7 @@ void PlayInEditor::SaveSceneInMemory()
 			current->Destroy();
 		else
 		{
-			u32 numChildren = current->GetNumChildren();
+			u32 numChildren = current->GetChildCount();
 			for(u32 i = 0; i < numChildren; i++)
 				todo.push(current->GetChild(i));
 		}

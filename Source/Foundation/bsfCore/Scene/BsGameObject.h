@@ -38,20 +38,23 @@ namespace bs
 		/**	Returns the unique instance ID of the GameObject. */
 		u64 GetInstanceId() const { return mInstanceData->MInstanceId; }
 
-		/**
-		 * Returns an ID that identifies a link between this object and its equivalent in the linked prefab. This will be
-		 * -1 if the object has no prefab link, or if the object is specific to the instance and has no prefab equivalent.
-		 */
-		u32 GetLinkId() const { return mLinkId; }
-
 		/**	Globally unique identifier of the game object that persists scene save/load. */
-		const UUID& GetId() const { return mUUID; }
+		const UUID& GetId() const { return mId; }
 
 		/**	Gets the name of the object. */
 		const String& GetName() const { return mName; }
 
 		/**	Sets the name of the object. */
 		void SetName(const String& name) { mName = name; }
+
+		/** Identifies the equivalent object in the linked prefab. This will be an empty ID if the object is not linked to a prefab. */
+		const UUID& GetPrefabObjectId() const { return mPrefabObjectId; }
+
+		/**
+		 * Returns true if this object is linked to a prefab. This generally means the object was created as a copy of some prefab, or the prefab
+		 * was created from this object.
+		 */
+		bool IsPrefabInstance() const { return !mPrefabObjectId.Empty(); }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -62,16 +65,16 @@ namespace bs
 		 * Marks the object as destroyed. Generally this means the object has been queued for destruction but it hasn't
 		 * occurred yet.
 		 */
-		void SetIsDestroyedInternal() { mIsDestroyed = true; }
+		void SetIsDestroyed() { mIsDestroyed = true; }
 
 		/**	Checks if the object has been destroyed. */
-		bool GetIsDestroyedInternal() const { return mIsDestroyed; }
-
-		/** Changes the prefab link ID for this object. See getLinkId(). */
-		void SetLinkIdInternal(u32 id) { mLinkId = id; }
+		bool GetIsDestroyed() const { return mIsDestroyed; }
 
 		/** @copydoc GetId */
-		void SetUUIDInternal(const UUID& uuid) { mUUID = uuid; }
+		void SetId(const UUID& id) { mId = id; }
+
+		/** @copydoc GetPrefabObjectId */
+		void SetPrefabObjectId(const UUID& id) { mPrefabObjectId = id; }
 
 		/**
 		 * Replaces the instance data with another objects instance data. This object will basically become the original
@@ -80,10 +83,10 @@ namespace bs
 		 * @note
 		 * No alive objects should ever be sharing the same instance data. This can be used for restoring dead handles.
 		 */
-		virtual void SetInstanceDataInternal(GameObjectInstanceDataPtr& other);
+		virtual void SetInstanceData(const SPtr<GameObjectInstanceData>& other);
 
 		/** Returns instance data that identifies this GameObject and is used for referencing by game object handles. */
-		virtual GameObjectInstanceDataPtr GetInstanceData() const { return mInstanceData; }
+		virtual const SPtr<GameObjectInstanceData>& GetInstanceData() const { return mInstanceData; }
 
 		/** @} */
 
@@ -107,13 +110,13 @@ namespace bs
 
 	protected:
 		String mName;
-		UUID mUUID;
-		u32 mLinkId = (u32)-1;
+		UUID mId; /**< Unique identifier for this object. */
+		UUID mPrefabObjectId; /**< Identifier of the object in the prefab that this object is linked to, if any. */
 
 		Any mRTTIData; // RTTI only
 	private:
 		friend class Prefab;
-		GameObjectInstanceDataPtr mInstanceData;
+		SPtr<GameObjectInstanceData> mInstanceData;
 		bool mIsDestroyed = false;
 
 		/************************************************************************/

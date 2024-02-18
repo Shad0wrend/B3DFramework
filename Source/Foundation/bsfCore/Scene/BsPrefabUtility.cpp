@@ -8,337 +8,163 @@
 
 using namespace bs;
 
-/**	Contains saved Component instance data. */
-struct ComponentProxy
+/** Contains game-object instance data and UUID. */
+struct PrefabInstanceData
 {
-	GameObjectInstanceDataPtr InstanceData;
-	u32 LinkId;
-	UUID Uuid;
-};
+	PrefabInstanceData(const SPtr<GameObjectInstanceData>& instanceData = nullptr, const UUID& id = UUID::kEmpty)
+		: InstanceData(instanceData), Id(id)
+	{ }
 
-/** Contains saved SceneObject instance data, as well as saved instance data for all its children and components. */
-struct SceneObjectProxy
-{
-	GameObjectInstanceDataPtr InstanceData;
-	u32 LinkId;
-	UUID Uuid;
-
-	Vector<ComponentProxy> Components;
-	Vector<SceneObjectProxy> Children;
-};
-
-/** Contains linked game-object instance data and UUID. */
-struct LinkedInstanceData
-{
-	GameObjectInstanceDataPtr InstanceData;
-	UUID Uuid;
+	SPtr<GameObjectInstanceData> InstanceData;
+	UUID Id;
 };
 
 /**
- * Traverses the object hierarchy, finds all child objects and components and records their instance data, as well
- * as their original place in the hierarchy. Instance data essentially holds the object's "identity" and by
- * restoring it we ensure any handles pointing to the object earlier will still point to the new version.
+ * Traverses the object hierarchy, finds all child objects and components and records their instance data. Instance data essentially holds the object's "identity"
+ * and by restoring it we ensure any handles pointing to the object earlier will still point to the new version.
  *
- * @param[in]	so					Object to traverse and record.
- * @param[out]	output				Contains the output hierarchy of instance data.
- * @param[out]	linkedInstanceData	A map of link IDs to instance data. Objects without link IDs will not be
- *									included here.
+ * @param	sceneObject			Root object to traverse and record.
+ * @param	outInstanceData		A map of object IDs to instance data. 
  *
  * @note	Does not recurse into child prefab instances.
  */
-void RecordInstanceData(const HSceneObject& so, SceneObjectProxy& output, UnorderedMap<u32, LinkedInstanceData>& linkedInstanceData)
+void RecordInstanceData(const HSceneObject& sceneObject, UnorderedMap<UUID, PrefabInstanceData>& outInstanceData)
 {
-	struct StackData
-	{
-		HSceneObject So;
-		SceneObjectProxy* Proxy;
-	};
+	const UUID originalResourceId = sceneObject->GetPrefabResourceId();
 
-	Stack<StackData> todo;
-	todo.push({ so, &output });
-
-	output.InstanceData = so->GetInstanceData();
-	output.Uuid = so->GetId();
-	output.LinkId = (u32)-1;
-
-	while(!todo.empty())
-	{
-		StackData curData = todo.top();
-		todo.pop();
-
-		const Vector<HComponent>& components = curData.So->GetComponents();
-		for(auto& component : components)
+	sceneObject->IterateHierarchy(
+		[&originalResourceId, &outInstanceData](const HSceneObject& sceneObject)
 		{
-			curData.Proxy->Components.push_back(ComponentProxy());
+			if(sceneObject->GetPrefabResourceId() != originalResourceId)
+				return false;
 
-			ComponentProxy& componentProxy = curData.Proxy->Components.back();
-			componentProxy.InstanceData = component->GetInstanceData();
-			componentProxy.Uuid = component->GetId();
-			componentProxy.LinkId = component->GetLinkId();
+			const UUID& prefabObjectId = sceneObject->GetPrefabObjectId();
+			if(!prefabObjectId.Empty())
+				outInstanceData[prefabObjectId] = PrefabInstanceData(sceneObject->GetInstanceData(), sceneObject->GetId());
 
-			linkedInstanceData[componentProxy.LinkId] = { componentProxy.InstanceData, componentProxy.Uuid };
-		}
-
-		u32 numChildren = curData.So->GetNumChildren();
-		curData.Proxy->Children.resize(numChildren);
-
-		for(u32 i = 0; i < numChildren; i++)
+			return true;
+		},
+		[&outInstanceData](const HComponent& component)
 		{
-			HSceneObject child = curData.So->GetChild(i);
-
-			SceneObjectProxy& childProxy = curData.Proxy->Children[i];
-
-			childProxy.InstanceData = child->GetInstanceData();
-			childProxy.Uuid = child->GetId();
-			childProxy.LinkId = child->GetLinkId();
-
-			linkedInstanceData[childProxy.LinkId] = { childProxy.InstanceData, childProxy.Uuid };
-
-			if(child->GetPrefabLinkUUIDInternal().Empty())
-				todo.push({ child, &curData.Proxy->Children[i] });
-		}
-	}
+			const UUID& prefabObjectId = component->GetPrefabObjectId();
+			if(!prefabObjectId.Empty())
+				outInstanceData[prefabObjectId] = PrefabInstanceData(component->GetInstanceData(), component->GetId());
+		});
 }
 
 /**
- * Restores instance data in the provided hierarchy, using link ids to determine what data maps to which objects.
+ * Restores instance data in the provided hierarchy, using prefab ids to determine what data maps to which objects.
  *
- * @param[in]	so					Object to traverse and restore the instance data.
- * @param[in]	proxy				Hierarchy containing instance data for all objects and components, returned by
- *									recordInstanceData() method.
- * @param[in]	linkedInstanceData	A map of link IDs to instance data, returned by recordInstanceData() method.
+ * @param	sceneObject		Root object to traverse and restore.
+ * @param	instanceData	A map of prefab IDs to instance data, as output by RecordInstanceData() method.
  *
  * @note	Does not recurse into child prefab instances.
  */
-void RestoreLinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy, UnorderedMap<u32, LinkedInstanceData>& linkedInstanceData)
+void RestoreInstanceData(const HSceneObject& sceneObject, const UnorderedMap<UUID, PrefabInstanceData>& instanceData)
 {
-	Stack<HSceneObject> todo;
-	todo.push(so);
+	const UUID originalResourceId = sceneObject->GetPrefabResourceId();
 
-	while(!todo.empty())
-	{
-		HSceneObject current = todo.top();
-		todo.pop();
-
-		Vector<HComponent>& components = current->GetComponentsInternal();
-		for(auto& component : components)
+	sceneObject->IterateHierarchy(
+		[&originalResourceId, &instanceData](const HSceneObject& sceneObject)
 		{
-			if(component->GetLinkId() != (u32)-1)
+			const UUID& prefabObjectId = sceneObject->GetPrefabObjectId();
+			if(!prefabObjectId.Empty())
 			{
-				auto iterFind = linkedInstanceData.find(component->GetLinkId());
-				if(iterFind != linkedInstanceData.end())
+				if(auto found = instanceData.find(prefabObjectId); found != instanceData.end())
 				{
-					component->SetInstanceDataInternal(iterFind->second.InstanceData);
-					component->SetUUIDInternal(iterFind->second.Uuid);
-					component.SetSharedHandleData(component.GetShared());
-				}
-			}
-		}
-
-		u32 numChildren = current->GetNumChildren();
-		for(u32 i = 0; i < numChildren; i++)
-		{
-			HSceneObject child = current->GetChild(i);
-
-			if(child->GetLinkId() != (u32)-1)
-			{
-				auto iterFind = linkedInstanceData.find(child->GetLinkId());
-				if(iterFind != linkedInstanceData.end())
-				{
-					child->SetInstanceDataInternal(iterFind->second.InstanceData);
-					child->SetUUIDInternal(iterFind->second.Uuid);
+					sceneObject->SetInstanceData(found->second.InstanceData);
+					sceneObject->SetId(found->second.Id);
 				}
 			}
 
-			if(child->GetPrefabLinkUUIDInternal().Empty())
-				todo.push(child);
-		}
-	}
+			if(sceneObject->GetPrefabResourceId() != originalResourceId)
+				return false;
+
+			return true;
+		},
+		[&instanceData](const HComponent& component)
+		{
+			const UUID& prefabObjectId = component->GetPrefabObjectId();
+			if(!prefabObjectId.Empty())
+			{
+				if(auto found = instanceData.find(prefabObjectId); found != instanceData.end())
+				{
+					component->SetInstanceData(found->second.InstanceData);
+					component->SetId(found->second.Id);
+
+					HComponent mutableComponentHandle = component; // TODO - Unify this so it's the same as the SceneObject case above
+					mutableComponentHandle.SetSharedHandleData(component.GetShared());
+				}
+			}
+		});
 }
 
-/**
- * Restores instance data in the provided hierarchy, but only for objects without a link id. Since the objects do
- * not have a link ID we rely on their sequential order to find out which instance data belongs to which object.
- *
- * @param[in]	so		Object to traverse and restore the instance data.
- * @param[in]	proxy	Hierarchy containing instance data for all objects and components, returned by
- *						recordInstanceData() method.
- *
- * @note	Does not recurse into child prefab instances.
- */
-void RestoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy)
+void PrefabUtility::RevertToPrefab(const HSceneObject& sceneObject)
 {
-	struct StackEntry
-	{
-		HSceneObject So;
-		SceneObjectProxy* Proxy;
-	};
-
-	Stack<StackEntry> todo;
-	todo.push(StackEntry());
-
-	StackEntry& topEntry = todo.top();
-	topEntry.So = so;
-	topEntry.Proxy = &proxy;
-
-	while(!todo.empty())
-	{
-		StackEntry current = todo.top();
-		todo.pop();
-
-		if(current.Proxy->LinkId == (u32)-1)
-		{
-			current.So->SetInstanceDataInternal(current.Proxy->InstanceData);
-			current.So->SetUUIDInternal(current.Proxy->Uuid);
-		}
-
-		Vector<HComponent>& components = current.So->GetComponentsInternal();
-		u32 componentProxyIdx = 0;
-		u32 numComponentProxies = (u32)current.Proxy->Components.size();
-		for(auto& component : components)
-		{
-			if(component->GetLinkId() == (u32)-1)
-			{
-				bool foundInstanceData = false;
-				(void)foundInstanceData;
-				for(; componentProxyIdx < numComponentProxies; componentProxyIdx++)
-				{
-					if(current.Proxy->Components[componentProxyIdx].LinkId != (u32)-1)
-						continue;
-
-					component->SetInstanceDataInternal(current.Proxy->Components[componentProxyIdx].InstanceData);
-					component->SetUUIDInternal(current.Proxy->Components[componentProxyIdx].Uuid);
-					component.SetSharedHandleData(component.GetShared());
-
-					foundInstanceData = true;
-					break;
-				}
-
-				B3D_ASSERT(foundInstanceData);
-			}
-		}
-
-		u32 numChildren = current.So->GetNumChildren();
-		u32 childProxyIdx = 0;
-		u32 numChildProxies = (u32)current.Proxy->Children.size();
-		for(u32 i = 0; i < numChildren; i++)
-		{
-			HSceneObject child = current.So->GetChild(i);
-
-			if(child->GetLinkId() == (u32)-1)
-			{
-				bool foundInstanceData = false;
-				(void)foundInstanceData;
-				for(; childProxyIdx < numChildProxies; childProxyIdx++)
-				{
-					if(current.Proxy->Children[childProxyIdx].LinkId != (u32)-1)
-						continue;
-
-					B3D_ASSERT(current.Proxy->Children[childProxyIdx].LinkId == (u32)-1);
-					child->SetInstanceDataInternal(current.Proxy->Children[childProxyIdx].InstanceData);
-					child->SetUUIDInternal(current.Proxy->Children[childProxyIdx].Uuid);
-
-					if(child->GetPrefabLinkUUIDInternal().Empty())
-					{
-						todo.push(StackEntry());
-
-						StackEntry& newEntry = todo.top();
-						newEntry.So = child;
-						newEntry.Proxy = &current.Proxy->Children[childProxyIdx];
-					}
-
-					foundInstanceData = true;
-					break;
-				}
-
-				B3D_ASSERT(foundInstanceData);
-			}
-			else
-			{
-				if(!child->GetPrefabLinkUUIDInternal().Empty())
-					continue;
-
-				for(u32 j = 0; j < numChildProxies; j++)
-				{
-					if(child->GetLinkId() == current.Proxy->Children[j].LinkId)
-					{
-						todo.push(StackEntry());
-
-						StackEntry& newEntry = todo.top();
-						newEntry.So = child;
-						newEntry.Proxy = &current.Proxy->Children[j];
-						break;
-					}
-				}
-			}
-		}
-	}
-}
-
-void PrefabUtility::RevertToPrefab(const HSceneObject& so)
-{
-	UUID prefabLinkUUID = so->GetPrefabLink();
-	HPrefab prefabLink = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabLinkUUID, false, ResourceLoadFlag::None));
-
-	if(!prefabLink.IsLoaded(false))
+	if(!B3D_ENSURE(sceneObject.IsValid()))
 		return;
 
-	// Save IDs, destroy original, create new, restore IDs
-	SceneObjectProxy soProxy;
-	UnorderedMap<u32, LinkedInstanceData> linkedInstanceData;
-	RecordInstanceData(so, soProxy, linkedInstanceData);
+	HSceneObject prefabInstanceRoot = sceneObject->GetPrefabInstanceRoot();
+	if(!prefabInstanceRoot.IsValid())
+		return;
 
-	HSceneObject parent = so->GetParent();
+	const UUID& prefabResourceId = sceneObject->GetPrefabResourceId();
+	if(!B3D_ENSURE(!prefabResourceId.Empty()))
+		return;
+
+	HPrefab linkedPrefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
+	if(!linkedPrefab.IsLoaded(false))
+	{
+		B3D_LOG(Warning, Prefab, "Cannot revert scene object '{0}' to prefab. Failed to load prefab with ID: '{1}'.", sceneObject.GetId(), prefabResourceId);
+		return;
+	}
+
+	// Save IDs, destroy original, create new, restore IDs
+	UnorderedMap<UUID, PrefabInstanceData> instanceData;
+	RecordInstanceData(sceneObject, instanceData);
+
+	HSceneObject parent = sceneObject->GetParent();
 
 	// This will destroy the object but keep it in the parent's child list
-	HSceneObject currentSO = so;
-	so->DestroyInternal(currentSO, true);
+	HSceneObject currentSceneObject = sceneObject;
+	sceneObject->DestroyInternal(currentSceneObject, true);
 
-	HSceneObject newInstance = prefabLink->Instantiate();
+	HSceneObject newInstance = linkedPrefab->Instantiate();
 
 	// Remove default parent, and replace with original one
 	newInstance->mParent->RemoveChild(newInstance);
 	newInstance->mParent = parent;
 
-	RestoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
+	RestoreInstanceData(newInstance, instanceData);
 }
 
-void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
+void PrefabUtility::UpdateFromPrefab(const HSceneObject& sceneObject)
 {
-	HSceneObject topLevelObject = so;
+	if(!B3D_ENSURE(sceneObject.IsValid()))
+		return;
 
-	while(topLevelObject != nullptr)
-	{
-		if(!topLevelObject->mPrefabLinkUUID.Empty())
-			break;
-
-		if(topLevelObject->mParent != nullptr)
-			topLevelObject = topLevelObject->mParent;
-		else
-			topLevelObject = nullptr;
-	}
-
-	if(topLevelObject == nullptr)
-		topLevelObject = so;
+	HSceneObject prefabInstanceRoot = sceneObject->GetPrefabInstanceRoot();
+	if(!prefabInstanceRoot.IsValid())
+		return;
 
 	Stack<HSceneObject> todo;
-	todo.push(topLevelObject);
+	todo.push(prefabInstanceRoot);
 
 	// Find any prefab instances
-	Vector<HSceneObject> prefabInstanceRoots;
+	Vector<HSceneObject> prefabInstanceRoots; // TODO - This should probably just perform an update from a single prefab, and we handle the complexity of nested prefabs elsewhere (e.g. in a prefab editor) - or just allow this method to work on prefab hierarchy itself, then call it recursively
 
 	while(!todo.empty())
 	{
 		HSceneObject current = todo.top();
 		todo.pop();
 
-		if(!current->mPrefabLinkUUID.Empty())
+		if(!current->IsPrefabInstanceRoot())
 			prefabInstanceRoots.push_back(current);
 
-		u32 childCount = current->GetNumChildren();
-		for(u32 i = 0; i < childCount; i++)
+		u32 childCount = current->GetChildCount();
+		for(u32 childIndex = 0; childIndex < childCount; childIndex++)
 		{
-			HSceneObject child = current->GetChild(i);
+			HSceneObject child = current->GetChild(childIndex);
 			todo.push(child);
 		}
 	}
@@ -349,8 +175,7 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 	{
 		HSceneObject NewInstance;
 		HSceneObject OriginalParent;
-		SPtr<PrefabDiff> Diff;
-		u32 OriginalLinkId;
+		SPtr<PrefabDiff> Delta;
 	};
 
 	Vector<RestoredPrefabInstance> newPrefabInstanceData;
@@ -360,23 +185,22 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 	// prefab diff, if any, as well as restore the original parent and link id (link id of the root prefab instance
 	// belongs to the parent prefab if any). Finally fix any handles pointing to the old objects so that they now point
 	// to the newly instantiated objects. To the outside world it should be transparent that we just destroyed and then
-	// re-created from scratch the entire hierarchy.
+	// re-created the entire hierarchy from scratch.
 
 	// Need to do this bottom up to ensure I don't destroy the parents before children
 	for(auto iter = prefabInstanceRoots.rbegin(); iter != prefabInstanceRoots.rend(); ++iter)
 	{
 		HSceneObject current = *iter;
-		HPrefab prefabLink = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(current->mPrefabLinkUUID, false, ResourceLoadFlag::None));
+		HPrefab prefabLink = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(current->GetPrefabResourceId(), false, ResourceLoadFlag::None));
 
 		if(prefabLink.IsLoaded(false) && prefabLink->GetHash() != current->mPrefabHash)
 		{
 			// Save IDs, destroy original, create new, restore IDs
-			SceneObjectProxy soProxy;
-			UnorderedMap<u32, LinkedInstanceData> linkedInstanceData;
-			RecordInstanceData(current, soProxy, linkedInstanceData);
+			UnorderedMap<UUID, PrefabInstanceData> instanceData;
+			RecordInstanceData(current, instanceData);
 
 			HSceneObject parent = current->GetParent();
-			SPtr<PrefabDiff> prefabDiff = current->mPrefabDiff;
+			SPtr<PrefabDiff> prefabDiff = current->mPrefabDelta;
 
 			current->Destroy(true);
 			HSceneObject newInstance = prefabLink->CloneInternal();
@@ -387,10 +211,9 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 			// at once (i.e. during the ::CloneInternal() call above) will share GameObjectHandleData so we can simply replace
 			// to what they point to, affecting all of the handles to that object. (In another words, we can modify the
 			// new handles at this point, but old ones must keep referencing what they already were.)
-			RestoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
-			RestoreUnlinkedInstanceData(newInstance, soProxy);
+			RestoreInstanceData(newInstance, instanceData);
 
-			newPrefabInstanceData.push_back({ newInstance, parent, prefabDiff, newInstance->GetLinkId() });
+			newPrefabInstanceData.push_back({ newInstance, parent, prefabDiff });
 		}
 	}
 
@@ -399,17 +222,16 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 	{
 		// Diffs must be applied after everything is instantiated and instance data restored since it may contain
 		// game object handles within or external to its prefab instance.
-		if(entry.Diff != nullptr)
-			entry.Diff->Apply(entry.NewInstance);
+		if(entry.Delta != nullptr)
+			entry.Delta->Apply(entry.NewInstance);
 
-		entry.NewInstance->mPrefabDiff = entry.Diff;
+		entry.NewInstance->mPrefabDelta = entry.Delta;
 
 		entry.NewInstance->SetParent(entry.OriginalParent, false);
-		entry.NewInstance->mLinkId = entry.OriginalLinkId;
 	}
 
 	// Finally, instantiate everything if the top scene object is live (instantiated)
-	if(topLevelObject->IsInstantiated())
+	if(prefabInstanceRoot->IsInstantiated())
 	{
 		for(auto& entry : newPrefabInstanceData)
 			entry.NewInstance->InstantiateInternal(true);
@@ -418,150 +240,128 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 	GetResources().UnloadAllUnused();
 }
 
-void PrefabUtility::GeneratePrefabIds(const HSceneObject& sceneObject)
+void PrefabUtility::AssignPrefabResourceId(const HSceneObject& sceneObject, const UUID& newPrefabResourceId)
 {
-	u32 startingId = 0;
+	const UUID originalResourceId = sceneObject->GetPrefabResourceId();
 
-	Stack<HSceneObject> todo;
-	todo.push(sceneObject);
-
-	while(!todo.empty())
-	{
-		HSceneObject currentSO = todo.top();
-		todo.pop();
-
-		for(auto& component : currentSO->mComponents)
+	sceneObject->IterateHierarchy(
+		[&originalResourceId, &newPrefabResourceId](const HSceneObject& sceneObject)
 		{
-			if(component->GetLinkId() != (u32)-1)
-				startingId = std::max(component->mLinkId + 1, startingId);
-		}
+			if(sceneObject->HasFlag(SOF_DontSave))
+				return false;
 
-		u32 numChildren = (u32)currentSO->GetNumChildren();
-		for(u32 i = 0; i < numChildren; i++)
+			const UUID& currentResourceId = sceneObject->GetPrefabResourceId();
+
+			// Assign IDs while the resource ID matches, or if the object is not associated with a prefab (i.e. has an empty ID)
+			if(!currentResourceId.Empty() && (currentResourceId != originalResourceId))
+				return false;
+
+			sceneObject->SetPrefabResourceId(newPrefabResourceId);
+			sceneObject->SetPrefabObjectId(sceneObject->GetId());
+
+			return true;
+		},
+		[](const HComponent& component)
 		{
-			HSceneObject child = currentSO->GetChild(i);
-
-			if(!child->HasFlag(SOF_DontSave))
-			{
-				if(child->GetLinkId() != (u32)-1)
-					startingId = std::max(child->mLinkId + 1, startingId);
-
-				if(child->mPrefabLinkUUID.Empty())
-					todo.push(currentSO->GetChild(i));
-			}
-		}
-	}
-
-	u32 currentId = startingId;
-	todo.push(sceneObject);
-
-	while(!todo.empty())
-	{
-		HSceneObject currentSO = todo.top();
-		todo.pop();
-
-		for(auto& component : currentSO->mComponents)
-		{
-			if(component->GetLinkId() == (u32)-1)
-				component->mLinkId = currentId++;
-		}
-
-		u32 numChildren = (u32)currentSO->GetNumChildren();
-		for(u32 i = 0; i < numChildren; i++)
-		{
-			HSceneObject child = currentSO->GetChild(i);
-
-			if(!child->HasFlag(SOF_DontSave))
-			{
-				if(child->GetLinkId() == (u32)-1)
-					child->mLinkId = currentId++;
-
-				if(child->mPrefabLinkUUID.Empty())
-					todo.push(currentSO->GetChild(i));
-			}
-		}
-	}
-
-	if(currentId < startingId)
-	{
-		B3D_EXCEPT(InternalErrorException, "Prefab ran out of IDs to assign. "
-										  "Consider increasing the size of the prefab ID data type.");
-	}
+			component->SetPrefabObjectId(component->GetId());
+		});
 }
 
-void PrefabUtility::ClearPrefabIds(const HSceneObject& sceneObject, bool recursive, bool clearRoot)
+void PrefabUtility::ClearPrefabIds(const HSceneObject& sceneObject)
 {
-	Stack<HSceneObject> todo;
-	todo.push(sceneObject);
+	const UUID originalResourceId = sceneObject->GetPrefabResourceId();
 
-	if(clearRoot)
-		sceneObject->mLinkId = (u32)-1;
+	sceneObject->SetPrefabObjectId(UUID::kEmpty);
+	sceneObject->SetPrefabResourceId(UUID::kEmpty);
 
-	while(!todo.empty())
-	{
-		HSceneObject currentSO = todo.top();
-		todo.pop();
-
-		for(auto& component : currentSO->mComponents)
-			component->mLinkId = (u32)-1;
-
-		if(recursive)
+	sceneObject->IterateHierarchy(
+		[&originalResourceId](const HSceneObject& sceneObject)
 		{
-			u32 numChildren = (u32)currentSO->GetNumChildren();
-			for(u32 i = 0; i < numChildren; i++)
-			{
-				HSceneObject child = currentSO->GetChild(i);
-				child->mLinkId = (u32)-1;
+			if(sceneObject->GetPrefabResourceId() != originalResourceId)
+				return false;
 
-				if(child->mPrefabLinkUUID.Empty())
-					todo.push(child);
-			}
-		}
-	}
+			sceneObject->SetPrefabObjectId(UUID::kEmpty);
+			sceneObject->SetPrefabResourceId(UUID::kEmpty);
+			return true;
+		},
+		[](const HComponent& component)
+		{
+			component->SetPrefabObjectId(UUID::kEmpty);
+		});
 }
 
-void PrefabUtility::RecordPrefabDiff(const HSceneObject& sceneObject)
+void PrefabUtility::RecordPrefabDelta(const HSceneObject& sceneObject)
 {
-	HSceneObject topLevelObject = sceneObject;
+	if(!B3D_ENSURE(sceneObject.IsValid()))
+		return;
 
-	while(topLevelObject != nullptr)
-	{
-		if(!topLevelObject->mPrefabLinkUUID.Empty())
-			break;
+	HSceneObject prefabInstanceRoot = sceneObject->GetPrefabInstanceRoot();
+	if(!prefabInstanceRoot.IsValid())
+		return;
 
-		if(topLevelObject->mParent != nullptr)
-			topLevelObject = topLevelObject->mParent;
-		else
-			topLevelObject = nullptr;
-	}
-
-	if(topLevelObject == nullptr)
-		topLevelObject = sceneObject;
-
-	Stack<HSceneObject> todo;
-	todo.push(topLevelObject);
-
-	while(!todo.empty())
-	{
-		HSceneObject current = todo.top();
-		todo.pop();
-
-		if(!current->mPrefabLinkUUID.Empty())
+	prefabInstanceRoot->IterateHierarchy(
+		[](const HSceneObject& sceneObject)
 		{
-			current->mPrefabDiff = nullptr;
+			sceneObject->SetPrefabDelta(nullptr);
 
-			HPrefab prefabLink = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(current->mPrefabLinkUUID, false, ResourceLoadFlag::None));
-			if(prefabLink.IsLoaded(false))
-				current->mPrefabDiff = PrefabDiff::Create(prefabLink->GetRootInternal(), current->GetHandle());
-		}
+			const UUID& prefabResourceId = sceneObject->GetPrefabResourceId();
+			if(!prefabResourceId.Empty())
+			{
+				HPrefab linkedPrefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
+				if(linkedPrefab.IsLoaded(false))
+					sceneObject->SetPrefabDelta(PrefabDiff::Create(linkedPrefab->GetRootInternal(), sceneObject));
+				else
+				{
+					B3D_LOG(Warning, Prefab, "Cannot record prefab delta for scene object '{0}'. Failed to load prefab with ID: '{1}'.", sceneObject.GetId(), prefabResourceId);
+				}
+			}
 
-		u32 childCount = current->GetNumChildren();
-		for(u32 i = 0; i < childCount; i++)
-		{
-			HSceneObject child = current->GetChild(i);
-			todo.push(child);
-		}
-	}
+			return true;
+		},
+		nullptr);
 
 	GetResources().UnloadAllUnused();
 }
+
+UnorderedMap<UUID, PrefabLinkInformation> PrefabUtility::GetInstanceToPrefabLinkInformationMap(const HSceneObject& sceneObject, bool visitChildPrefabs)
+{
+	UnorderedMap<UUID, PrefabLinkInformation> output;
+	if(!B3D_ENSURE(sceneObject.IsValid()))
+		return output;
+
+	const UUID rootPrefabResourceId = sceneObject->GetPrefabResourceId();
+
+	sceneObject->IterateHierarchy([&output, &rootPrefabResourceId, visitChildPrefabs](const HSceneObject& sceneObject)
+	{
+		if(sceneObject->GetPrefabResourceId() != rootPrefabResourceId && !visitChildPrefabs)
+			return false;
+
+		if(!sceneObject->IsPrefabInstance())
+			return true;
+
+		const UUID& prefabObjectId = sceneObject->GetPrefabObjectId();
+		const UUID& prefabResourceId = sceneObject->GetPrefabResourceId();
+
+		B3D_ENSURE(!prefabObjectId.Empty());
+		B3D_ENSURE(!prefabResourceId.Empty());
+
+		output[sceneObject.GetId()] = PrefabLinkInformation(prefabObjectId, prefabResourceId);
+		return true;
+	},
+	[&output](const HComponent& component) {
+		if(!component->IsPrefabInstance())
+			return;
+
+		const UUID& prefabObjectId = component->GetPrefabObjectId();
+		const UUID& prefabResourceId = component->SceneObject()->GetPrefabResourceId();
+
+		B3D_ENSURE(!prefabObjectId.Empty());
+		B3D_ENSURE(!prefabResourceId.Empty());
+
+		output[component.GetId()] = PrefabLinkInformation(prefabObjectId, prefabResourceId);
+
+	});
+
+	return output;
+}
+
