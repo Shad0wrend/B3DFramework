@@ -23,5 +23,6 @@ namespace bs
 		void TestQuadtree();
 		void TestVarInt();
 		void TestBitStream();
+		void TestRTTIIterator();
 	};
 } // namespace bs

@@ -6,6 +6,7 @@
 #include "Utility/BsBitfield.h"
 #include "Utility/BsDynArray.h"
 #include "Math/BsComplex.h"
+#include "Reflection/BsRTTIIterator.h"
 #include "Utility/BsMinHeap.h"
 #include "Utility/BsQuadtree.h"
 #include "Utility/BsBitstream.h"
@@ -866,4 +867,50 @@ void UtilityTestSuite::TestBitStream()
 	bs.Align();
 	bs.Read(ulv);
 	B3D_TEST_ASSERT(ulv == v11);
+}
+
+void UtilityTestSuite::TestRTITIterator()
+{
+	Vector<int> values = { 5, 10, 33, 24, 16 };
+
+	RTTIIterator vectorIterator(values);
+	for(auto iterator = vectorIterator; iterator.IsValid(); ++iterator)
+	{
+		B3D_LOG(Warning, GUI, "Value is {0}", *iterator);
+	}
+
+	vectorIterator.ResetToEnd();
+	vectorIterator = 100;
+	vectorIterator = 200;
+	vectorIterator = 500;
+
+	vectorIterator.ResetToBeginning();
+	for(auto iterator = vectorIterator; iterator.IsValid(); ++iterator)
+	{
+		B3D_LOG(Warning, GUI, "Value is {0}", *iterator);
+	}
+
+	UnorderedMap<int, int> mapValues;
+	mapValues[5] = 500;
+	mapValues[10] = 1000;
+	mapValues[33] = 3300;
+	mapValues[24] = 2400;
+	mapValues[16] = 1600;
+
+	RTTIIterator mapIterator(mapValues);
+	for(auto iterator = mapIterator; iterator.IsValid(); ++iterator)
+	{
+		B3D_LOG(Warning, GUI, "Value is {0}:{1}", (*iterator).first, (*iterator).second);
+	}
+
+	mapIterator.ResetToEnd();
+	mapIterator = std::make_pair(100, 10000);
+	mapIterator = std::make_pair(200, 20000);
+	mapIterator = std::make_pair(500, 50000);
+
+	mapIterator.ResetToBeginning();
+	for(auto iterator = mapIterator; iterator.IsValid(); ++iterator)
+	{
+		B3D_LOG(Warning, GUI, "Value is {0}:{1}", (*iterator).first, (*iterator).second);
+	}
 }
