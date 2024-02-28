@@ -7,8 +7,6 @@
 
 namespace bs
 {
-	class GameObjectDeserializationState;
-
 	/** @addtogroup Utility-Core-Internal
 	 *  @{
 	 */
@@ -52,8 +50,14 @@ namespace bs
 	/** Provides extra information and maintains state during serialization of various RTTI types in the core. */
 	struct B3D_CORE_EXPORT CoreSerializationContext : SerializationContext
 	{
-		SPtr<GameObjectDeserializationState> GoState;
-		bool GoDeserializationActive = false;
+		/**
+		 * By default deserialization will persist existing IDs for game objects. Setting this to false will generate brand new IDs on deserialization.
+		 *
+		 * e.g. When loading a scene or a prefab resource, we wish to persist the original IDs in its internal game object collection.
+		 * But when instantiating a copy of a prefab in the scene, we want to to have new unique IDs.
+		 */
+		bool PreserveGameObjectIds = true; 
+		bool IsGameObjectDeserializationActive = false;
 		SPtr<GameObjectCollection> GameObjectCollection; /**< If deserializing game objects, collection to place them in. */
 
 		static RTTITypeBase* GetRttiStatic();

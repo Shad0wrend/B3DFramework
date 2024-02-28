@@ -8,9 +8,7 @@
 #include "Private/RTTI/BsSceneObjectRTTI.h"
 #include "Serialization/BsBinarySerializer.h"
 #include "FileSystem/BsDataStream.h"
-#include "Scene/BsGameObjectManager.h"
 #include "Scene/BsPrefabUtility.h"
-#include "Math/BsMatrix3.h"
 #include "BsCoreApplication.h"
 #include "BsGameObjectCollection.h"
 
@@ -55,10 +53,11 @@ HSceneObject SceneObject::CreateInternal(const SPtr<GameObjectCollection>& owner
 
 HSceneObject SceneObject::CreateInternal(const SPtr<GameObjectCollection>& ownerCollection, const SPtr<SceneObject>& sceneObject)
 {
+	if(!B3D_ENSURE(ownerCollection != nullptr))
+		return HSceneObject();
+
 	HSceneObject sceneObjectHandle =
-		B3DStaticGameObjectCast<SceneObject>(B3D_ENSURE(ownerCollection != nullptr)
-			? ownerCollection->RegisterAndInitializeObject(sceneObject)
-			: GameObjectManager::Instance().RegisterObject(sceneObject));
+		B3DStaticGameObjectCast<SceneObject>(ownerCollection->RegisterAndInitializeObject(sceneObject));
 	sceneObjectHandle->mThisHandle = sceneObjectHandle;
 
 	return sceneObjectHandle;
@@ -104,17 +103,13 @@ void SceneObject::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
 			mComponents.erase(mComponents.end() - 1);
 		}
 
-		if(B3D_ENSURE(ownerCollection != nullptr))
+		if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
 			ownerCollection->UnregisterObject(handle, IsInstantiated());
-		else
-			GameObjectManager::Instance().UnregisterObject(handle);
 	}
 	else
 	{
-		if(B3D_ENSURE(ownerCollection != nullptr))
+		if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
 			ownerCollection->QueueForDestroy(handle);
-		else
-			GameObjectManager::Instance().QueueForDestroy(handle);
 	}
 }
 
@@ -578,10 +573,10 @@ const SPtr<SceneInstance>& SceneObject::GetScene() const
 
 void SceneObject::SetScene(const SPtr<SceneInstance>& scene, bool recursive)
 {
-	if(!B3D_ENSURE(scene != nullptr))
+	if(mParentScene == scene)
 		return;
 
-	if(mParentScene == scene)
+	if(!B3D_ENSURE(scene != nullptr))
 		return;
 
 	mParentScene = scene;
@@ -827,14 +822,10 @@ HSceneObject SceneObject::Clone(const SPtr<GameObjectCollection>& cloneOwnerColl
 	BinarySerializer serializer;
 	serializer.Encode(this, stream);
 
-	int flags = GODM_RestoreExternal | GODM_UseNewIds;
-	if(!preserveIds)
-		flags |= GODM_UseNewUUID;
-
 	B3D_ENSURE(!preserveIds || cloneOwnerCollection != mOwnerCollection.lock());
 
 	CoreSerializationContext serializationContext;
-	serializationContext.GoState = B3DMakeShared<GameObjectDeserializationState>(flags);
+	serializationContext.PreserveGameObjectIds = preserveIds;
 	serializationContext.GameObjectCollection = cloneOwnerCollection;
 
 	stream->Seek(0);
@@ -928,7 +919,7 @@ HComponent SceneObject::RegisterComponentWithOwnerCollection(const SPtr<Componen
 
 	const SPtr<GameObjectCollection>& ownerCollection = mOwnerCollection.lock();
 	if(!B3D_ENSURE(ownerCollection != nullptr))
-		return B3DStaticGameObjectCast<Component>(GameObjectManager::Instance().RegisterObject(component));
+		return HComponent();
 
 	return B3DStaticGameObjectCast<Component>(ownerCollection->RegisterAndInitializeObject(component));
 }
@@ -937,10 +928,7 @@ void SceneObject::InternalAddComponent(const SPtr<Component>& component, bool in
 {
 	const SPtr<GameObjectCollection>& ownerCollection = mOwnerCollection.lock();
 	if(!B3D_ENSURE(ownerCollection != nullptr))
-	{
-		InternalAddComponent(B3DStaticGameObjectCast<Component>(GameObjectManager::Instance().GetObject(component->GetInstanceId())), instantiate);
 		return;
-	}
 
 	const HComponent& componentHandle = B3DStaticGameObjectCast<Component>(ownerCollection->GetObject(component->GetId()));
 	InternalAddComponent(componentHandle, instantiate);

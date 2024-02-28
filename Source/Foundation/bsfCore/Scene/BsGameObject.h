@@ -35,9 +35,6 @@ namespace bs
 		GameObject() = default;
 		virtual ~GameObject() = default;
 
-		/**	Returns the unique instance ID of the GameObject. */
-		u64 GetInstanceId() const { return mInstanceData->MInstanceId; }
-
 		/**	Globally unique identifier of the game object that persists scene save/load. */
 		const UUID& GetId() const { return mId; }
 
@@ -107,7 +104,7 @@ namespace bs
 		friend class PrefabUtility;
 
 		/**	Initializes the GameObject after construction. */
-		void Initialize(const SPtr<GameObject>& object, u64 instanceId);
+		void Initialize(const SPtr<GameObject>& object);
 
 		/**
 		 * Destroys this object.

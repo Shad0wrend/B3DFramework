@@ -21,7 +21,6 @@ namespace bs
 	struct GODeserializationData
 	{
 		SPtr<GameObject> Ptr;
-		u64 OriginalId = 0;
 	};
 
 	class B3D_CORE_EXPORT GameObjectRTTI : public RTTIType<GameObject, IReflectable, GameObjectRTTI>
@@ -34,23 +33,10 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN(mPrefabObjectId, 4)
 		B3D_RTTI_END_MEMBERS
 
-		u64& GetInstanceId(GameObject* obj) { return obj->mInstanceData->MInstanceId; }
-
-		void SetInstanceId(GameObject* obj, u64& instanceId)
-		{
-			// We record the ID for later use. Any child RTTI of GameObject must call GameObjectManager::registerObject
-			// with this ID, so we know how to map deserialized GO handles to live objects, otherwise the handle
-			// references will get broken.
-			GameObject* go = static_cast<GameObject*>(obj);
-			GODeserializationData& deserializationData = AnyCastRef<GODeserializationData>(go->mRTTIData);
-
-			deserializationData.OriginalId = instanceId;
-		}
-
 	public:
 		GameObjectRTTI()
 		{
-			AddPlainField("mInstanceID", 0, &GameObjectRTTI::GetInstanceId, &GameObjectRTTI::SetInstanceId);
+			//AddPlainField("mInstanceID", 0, &GameObjectRTTI::GetInstanceId, &GameObjectRTTI::SetInstanceId);
 		}
 
 		void OnDeserializationStarted(IReflectable* obj, SerializationContext* context)

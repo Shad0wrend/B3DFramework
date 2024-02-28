@@ -36,17 +36,13 @@ void Component::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
 
 	if(immediate)
 	{
-		if(B3D_ENSURE(ownerCollection != nullptr))
+		if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
 			ownerCollection->UnregisterObject(handle, SO()->IsInstantiated());
-		else
-			GameObjectManager::Instance().UnregisterObject(handle);
 	}
 	else
 	{
-		if(B3D_ENSURE(ownerCollection != nullptr))
+		if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
 			ownerCollection->QueueForDestroy(handle);
-		else
-			GameObjectManager::Instance().QueueForDestroy(handle);
 	}
 }
 

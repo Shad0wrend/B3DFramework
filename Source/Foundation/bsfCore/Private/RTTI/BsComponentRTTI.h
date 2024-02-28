@@ -31,14 +31,14 @@ namespace bs
 			CoreSerializationContext* const serializationContext = B3DRTTICast<CoreSerializationContext>(context);
 			B3D_ASSERT(serializationContext != nullptr);
 
-			if(component->mId.Empty() || serializationContext->GoState->GetUseNewUuiDs())
+			if(component->mId.Empty() || !serializationContext->PreserveGameObjectIds)
 			{
 				const UUID oldId = component->GetId();
 				component->mId = UUIDGenerator::GenerateRandom();
 
 				if(!oldId.Empty())
 				{
-					if(serializationContext->GameObjectCollection != nullptr)
+					if(B3D_ENSURE(serializationContext->GameObjectCollection != nullptr))
 						serializationContext->GameObjectCollection->RegisterUnresolvedHandleIdRemapping(oldId, component->GetId());
 				}
 			}
@@ -53,14 +53,8 @@ namespace bs
 				// deserialized handles pointing to this object can be resolved.
 				SPtr<Component> componentShared = std::static_pointer_cast<Component>(deserializationData.Ptr);
 
-				GameObjectHandleBase handle;
-
-				if(serializationContext->GameObjectCollection != nullptr)
-					handle = serializationContext->GameObjectCollection->RegisterAndInitializeObject(componentShared);
-				else
-					handle = GameObjectManager::Instance().RegisterObject(componentShared);
-
-				serializationContext->GoState->RegisterObject(deserializationData.OriginalId, handle);
+				if(B3D_ENSURE(serializationContext->GameObjectCollection != nullptr))
+					GameObjectHandleBase handle = serializationContext->GameObjectCollection->RegisterAndInitializeObject(componentShared);
 			}
 
 			component->mRTTIData = nullptr;

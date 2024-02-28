@@ -21,18 +21,6 @@ namespace bs
 	class B3D_CORE_EXPORT GameObjectHandleRTTI : public RTTIType<GameObjectHandleBase, IReflectable, GameObjectHandleRTTI>
 	{
 	private:
-		u64& GetInstanceId(GameObjectHandleBase* object)
-		{
-			static u64 invalidId = 0;
-
-			if(object->mSharedHandleData->InstanceData != nullptr)
-				return object->mSharedHandleData->InstanceData->MInstanceId;
-
-			return invalidId;
-		}
-
-		void SetInstanceId(GameObjectHandleBase* obj, u64& value) { mOriginalInstanceId = value; }
-
 		UUID& GetId(GameObjectHandleBase* object)
 		{
 			if(object->mSharedHandleData == nullptr)
@@ -52,7 +40,7 @@ namespace bs
 	public:
 		GameObjectHandleRTTI()
 		{
-			AddPlainField("mInstanceID", 0, &GameObjectHandleRTTI::GetInstanceId, &GameObjectHandleRTTI::SetInstanceId);
+			//AddPlainField("mInstanceID", 0, &GameObjectHandleRTTI::GetInstanceId, &GameObjectHandleRTTI::SetInstanceId);
 			AddPlainField("mId", 1, &GameObjectHandleRTTI::GetId, &GameObjectHandleRTTI::SetId);
 		}
 
@@ -63,9 +51,6 @@ namespace bs
 				return;
 
 			GameObjectHandleBase* gameObjectHandle = static_cast<GameObjectHandleBase*>(object);
-			if(serializationContext->GoState)
-				serializationContext->GoState->RegisterUnresolvedHandle(mOriginalInstanceId, *gameObjectHandle);
-
 			if(serializationContext->GameObjectCollection != nullptr)
 				serializationContext->GameObjectCollection->RegisterUnresolvedHandle(*gameObjectHandle);
 		}
@@ -85,9 +70,6 @@ namespace bs
 		{
 			return B3DMakeSharedFromExisting<GameObjectHandleBase>(new(B3DAllocate<GameObjectHandleBase>()) GameObjectHandleBase());
 		}
-
-	private:
-		u64 mOriginalInstanceId;
 	};
 
 	/** @} */

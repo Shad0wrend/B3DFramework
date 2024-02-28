@@ -15,6 +15,7 @@
 #include "Utility/BsUtility.h"
 #include "Serialization/BsBinarySerializer.h"
 #include "FileSystem/BsDataStream.h"
+#include "Scene/BsGameObjectCollection.h"
 
 using namespace bs;
 ManagedComponent::ManagedComponent(const HSceneObject& parent, MonoReflectionType* runtimeType)
@@ -105,13 +106,13 @@ void ManagedComponent::Restore(const RawBackupData& data, bool missingType)
 		BinarySerializer bs;
 
 		CoreSerializationContext serzContext;
-		serzContext.GoState = B3DMakeShared<GameObjectDeserializationState>();
 		serzContext.GameObjectCollection = SO()->GetOwnerCollection().lock();
+		serzContext.GameObjectCollection->BeginHandleResolve();
 
 		auto serializableObject = std::static_pointer_cast<ManagedSerializableObject>(
 			bs.Decode(B3DMakeShared<MemoryDataStream>(data.Data, data.Size), data.Size, BinarySerializerFlag::None, &serzContext));
 
-		serzContext.GoState->Resolve();
+		serzContext.GameObjectCollection->EndHandleResolve();
 
 		if(!missingType)
 		{

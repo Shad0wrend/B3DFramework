@@ -17,12 +17,7 @@ namespace bs
 	/**	Contains instance data that is held by all GameObject handles. */
 	struct GameObjectInstanceData
 	{
-		GameObjectInstanceData()
-			: Object(nullptr), MInstanceId(0)
-		{}
-
 		SPtr<GameObject> Object;
-		u64 MInstanceId;
 	};
 
 	/**	Internal data shared between GameObject handles. */
@@ -66,9 +61,6 @@ namespace bs
 
 		/** Returns true if the handle points to a non-null object and the object is not queued for destruction. */
 		bool IsValid() const { return !IsDestroyed(true);}
-
-		/**	Returns the instance ID of the object the handle is referencing. */
-		u64 GetInstanceId() const { return mSharedHandleData->InstanceData != nullptr ? mSharedHandleData->InstanceData->MInstanceId : 0; }
 
 		/** Returns the globally unique ID of the object the handle is referencing. */
 		const UUID& GetId() const { return mSharedHandleData->Id; }
@@ -145,7 +137,6 @@ namespace bs
 
 	protected:
 		friend class GameObjectManager;
-		friend class GameObjectDeserializationState;
 		friend class GameObjectCollection;
 
 		template <class _Ty1, class _Ty2>
@@ -327,8 +318,19 @@ namespace bs
 	template <class _Ty1, class _Ty2>
 	bool operator==(const GameObjectHandle<_Ty1>& lhs, const GameObjectHandle<_Ty2>& rhs)
 	{
-		return (lhs.mSharedHandleData == nullptr && rhs.mSharedHandleData == nullptr) ||
-			(lhs.mSharedHandleData != nullptr && rhs.mSharedHandleData != nullptr && lhs.GetInstanceId() == rhs.GetInstanceId());
+		if(lhs.GetId() != rhs.GetId())
+			return false;
+
+		if(lhs == nullptr && rhs == nullptr)
+			return true;
+
+		if((lhs != nullptr && rhs == nullptr) || (lhs == nullptr && rhs != nullptr))
+			return false;
+
+		const SPtr<GameObjectCollection>& lhsCollection = lhs->GetOwnerCollection().lock();
+		const SPtr<GameObjectCollection>& rhsCollection = rhs->GetOwnerCollection().lock();
+
+		return lhsCollection == rhsCollection;
 	}
 
 	/**	Compares if two handles point to different GameObject%s. */

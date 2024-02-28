@@ -7,7 +7,6 @@
 #include "Math/BsVector3.h"
 #include "Math/BsQuaternion.h"
 #include "Reflection/BsRTTIType.h"
-#include "Scene/BsGameObjectManager.h"
 #include "Scene/BsGameObject.h"
 #include "Scene/BsComponent.h"
 #include "Scene/BsTransform.h"

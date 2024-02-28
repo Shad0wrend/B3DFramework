@@ -123,13 +123,10 @@ namespace bs
 			if(serializationContext == nullptr)
 				return;
 
-			if(!serializationContext->GoDeserializationActive)
+			if(!serializationContext->IsGameObjectDeserializationActive)
 			{
-				if(!serializationContext->GoState)
-					serializationContext->GoState = B3DMakeShared<GameObjectDeserializationState>();
-
 				mIsDeserializationParent = true;
-				serializationContext->GoDeserializationActive = true;
+				serializationContext->IsGameObjectDeserializationActive = true;
 
 				if(serializationContext->GameObjectCollection != nullptr)
 					serializationContext->GameObjectCollection->BeginHandleResolve();
@@ -154,7 +151,7 @@ namespace bs
 			// deserialized handles pointing to this object can be resolved.
 			SPtr<SceneObject> sceneObjectShared = std::static_pointer_cast<SceneObject>(goDeserializationData.Ptr);
 
-			if(sceneObject->mId.Empty() || serializationContext->GoState->GetUseNewUuiDs())
+			if(sceneObject->mId.Empty() || !serializationContext->PreserveGameObjectIds)
 			{
 				const UUID oldId = sceneObject->mId;
 				sceneObject->mId = UUIDGenerator::GenerateRandom();
@@ -167,7 +164,6 @@ namespace bs
 			}
 
 			HSceneObject sceneObjectHandle = SceneObject::CreateInternal(serializationContext->GameObjectCollection, sceneObjectShared);
-			serializationContext->GoState->RegisterObject(goDeserializationData.OriginalId, sceneObjectHandle);
 
 			// We stored all components and children in a temporary structure because they rely on the SceneObject being
 			// initialized with the GameObjectManager. Now that it is, we add them.
@@ -187,8 +183,7 @@ namespace bs
 				if(serializationContext->GameObjectCollection != nullptr)
 					serializationContext->GameObjectCollection->EndHandleResolve();
 
-				serializationContext->GoState->Resolve();
-				serializationContext->GoDeserializationActive = false;
+				serializationContext->IsGameObjectDeserializationActive = false;
 
 				bool parentActive = true;
 				if(sceneObject->GetParent() != nullptr)

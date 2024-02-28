@@ -21,7 +21,7 @@ GameObjectHandleBase GameObjectCollection::RegisterAndInitializeObject(const SPt
 	if(!B3D_ENSURE(object != nullptr))
 		return nullptr;
 
-	object->Initialize(object, 0);
+	object->Initialize(object);
 
 	const UUID& id = object->GetId();
 	B3D_ASSERT(!id.Empty());
@@ -71,7 +71,7 @@ void GameObjectCollection::RegisterInitializedObject(const GameObjectHandleBase&
 
 void GameObjectCollection::UnregisterObject(GameObjectHandleBase& object, bool triggerDestroyEvent)
 {
-	if(!B3D_ENSURE(object.IsValid()))
+	if(!B3D_ENSURE(!object.IsDestroyed(false)))
 		return;
 
 	if(!B3D_ENSURE((object->mOwnerCollection.lock().get() == this)))
@@ -182,6 +182,9 @@ void GameObjectCollection::RegisterUnresolvedHandleIdRemapping(const UUID& origi
 	if(!B3D_ENSURE(mHandleResolveActive))
 		return;
 
+	if(originalId == newId)
+		return;
+
 	mUUIDRemapping[originalId] = newId;
 
 	// It's possible handle data was registered with the old id (in case the handle was deserialized before the game object). In that
@@ -207,16 +210,16 @@ void GameObjectCollection::BeginHandleResolve()
 
 void GameObjectCollection::EndHandleResolve()
 {
-	if(!B3D_ENSURE(!mHandleResolveActive))
+	if(!B3D_ENSURE(mHandleResolveActive))
 		return;
 
 	for(auto& unresolvedHandle : mUnresolvedHandles)
 	{
 		UUID remappedUUID;
-		if(auto found = mUUIDRemapping.find(unresolvedHandle.GetId()); B3D_ENSURE(found != mUUIDRemapping.end()))
+		if(auto found = mUUIDRemapping.find(unresolvedHandle.GetId()); found != mUUIDRemapping.end())
 			remappedUUID = found->second;
 		else
-			continue;
+			remappedUUID = unresolvedHandle.GetId();
 
 		const auto foundObject = mObjects.find(remappedUUID);
 		if(foundObject == mObjects.end())

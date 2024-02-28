@@ -36,16 +36,13 @@ namespace bs
 			AddReflectablePtrField("mRoot", 0, &PrefabRTTI::GetSceneObject, &PrefabRTTI::SetSceneObject);
 		}
 
-		void OnDeserializationStarted(IReflectable* ptr, SerializationContext* context)
+		void OnDeserializationStarted(IReflectable* object, SerializationContext* context) override
 		{
-			B3D_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
-			auto coreContext = static_cast<CoreSerializationContext*>(context);
+			Prefab* const prefab = static_cast<Prefab*>(object);
 
-			// Make sure external IDs are broken because we do some ID matching when dealing with prefabs and keeping
-			// the invalid external references could cause it to match invalid objects in case they end up having the
-			// same ID.
-			B3D_ASSERT(!coreContext->GoState);
-			coreContext->GoState = B3DMakeShared<GameObjectDeserializationState>(GODM_BreakExternal | GODM_UseNewIds);
+			CoreSerializationContext* const serializationContext = B3DRTTICast<CoreSerializationContext>(context);
+			if(B3D_ENSURE(serializationContext != nullptr))
+				serializationContext->GameObjectCollection = prefab->mGameObjectCollection;
 		}
 
 		const String& GetRttiName()

@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Scene/BsSceneObjectHierarchyDelta.h"
+
+#include "BsGameObjectCollection.h"
 #include "Private/RTTI/BsSceneObjectHierarchyDeltaRTTI.h"
 #include "Scene/BsSceneObject.h"
 #include "Serialization/BsBinarySerializer.h"
@@ -51,13 +53,15 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original)
 		return;
 
 	CoreSerializationContext serzContext;
-	serzContext.GoState = B3DMakeShared<GameObjectDeserializationState>(GODM_UseNewIds | GODM_RestoreExternal);
-	serzContext.GoDeserializationActive = true;
+	serzContext.IsGameObjectDeserializationActive = true;
+	serzContext.PreserveGameObjectIds = false;
 	serzContext.GameObjectCollection = original->GetOwnerCollection().lock();
+
+	serzContext.GameObjectCollection->BeginHandleResolve();
 
 	ApplyDiff(mRoot, original, &serzContext);
 
-	serzContext.GoState->Resolve();
+	serzContext.GameObjectCollection->EndHandleResolve();
 }
 
 void SceneObjectHierarchyDelta::ApplyDiff(const SPtr<SceneObjectDelta>& delta, const HSceneObject& original, SerializationContext* context)

@@ -12,7 +12,6 @@ using namespace bs;
 SPtr<SerializedObject> ManagedDiff::GenerateDiffInternal(IReflectable* orgObj, IReflectable* newObj, ObjectMap& objectMap, bool reflectableOnly)
 {
 	CoreSerializationContext context;
-	context.GoState = B3DMakeShared<GameObjectDeserializationState>(GODM_UseOriginalIds | GODM_RestoreExternal);
 
 	ManagedSerializableObject* orgManSerzObj;
 	SPtr<ManagedSerializableObject> orgDecodedObject;
@@ -43,8 +42,6 @@ SPtr<SerializedObject> ManagedDiff::GenerateDiffInternal(IReflectable* orgObj, I
 		B3D_ASSERT(newObj->GetTypeId() == TID_ScriptSerializableObject);
 		newManSerzObj = static_cast<ManagedSerializableObject*>(newObj);
 	}
-
-	context.GoState->Resolve();
 
 	SPtr<ManagedSerializableDiff> diff = ManagedSerializableDiff::Create(orgManSerzObj, newManSerzObj);
 	if(diff == nullptr)
