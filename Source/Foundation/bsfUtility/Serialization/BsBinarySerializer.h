@@ -168,11 +168,11 @@ namespace bs
 		 */
 		static u32 ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, u32& objId, u32& objTypeId, bool& isBaseType);
 
-		/** Encodes data required for representing a serialized field, into 4 bytes. */
-		static u32 EncodeFieldMetaData(const RTTIFieldSchema& fieldSchema, bool terminator);
+		/** Encodes and writes data required for representing a serialized field, into the provided stream. */
+		static void WriteFieldMetaData(const RTTIFieldSchema& fieldSchema, bool isLastFieldInType, BufferedBitstreamWriter& stream);
 
 		/** Decode meta field that was encoded using encodeFieldMetaData().*/
-		static RTTIFieldSchema DecodeFieldMetaData(u32 encodedData, bool& terminator);
+		static RTTIFieldSchema ReadFieldMetaData(BufferedBitstreamReader& stream, bool& terminator);
 
 		/** Encodes data representing a field terminator into 1 byte. */
 		static u8 EncodeFieldTerminator();

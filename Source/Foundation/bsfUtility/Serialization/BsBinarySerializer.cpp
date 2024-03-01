@@ -21,6 +21,99 @@ constexpr u32 BinarySerializer::kWriteBufferSize;
 constexpr u32 BinarySerializer::kFlushAfterBytes;
 constexpr u32 BinarySerializer::kPreloadChunkBytes;
 
+/** Encoding used for storing either fixed field size, or additional field information. */
+union FieldTypeSizeOrExtendedMetaData
+{
+	u8 FixedSize;
+
+	struct
+	{
+		u8 Unused : 4;
+		u8 BuiltinTypeId : 4;
+	};
+};
+
+/** Encoding used for storing information about a type in a RTTI field. */
+union FieldTypeMetaData
+{
+	/** Creates the field meta-data from the type schema. */
+	static FieldTypeMetaData Create(const RTTIFieldSchema& fieldSchema, const RTTIFieldTypeSchema& fieldTypeSchema, bool isLastFieldInType, bool isAnotherFieldTypeFollowing);
+
+	/** Converts the internal data to RTTIFieldTypeSchema. */
+	RTTIFieldTypeSchema ToFieldTypeSchema(bool& hasMoreTypesFollowing) const;
+
+	u16 PackedData;
+	struct
+	{
+		u8 IsObjectDescriptor : 1; /**< If 1, meta-data represents an object rather than the field. Rest of the data is invalid in such case. */
+		u8 IsArray : 1; /**< Field contains multiple entries that are individually serialized. */
+		u8 IsDataBlockOrTypeFollowing : 1; /**< If IsArray = 0, this signifies the field holds the DataBlock type. If IsArray = 1, the signifies that another field type meta-data structure follows this one. */
+		u8 IsReflectable : 1; /**< Field contains a Reflectable type. */
+		u8 IsReflectablePointer : 1; /**< Field contains a Reflectable pointer type. */
+		u8 HasDynamicSize : 1; /**< Field has size encoded right after the field entry, rather as part of the field meta-data. */
+		u8 IsLastFieldInType : 1; /**< Field is the last field in the type. Only set for the first provided field type, unused in rest. */
+		u8 IsExtended : 1; /**< Fields with this flag contain additional information rather than fixed size, in the AdditionalData field. */
+		FieldTypeSizeOrExtendedMetaData FixedSizeOrAdditionalData; /** Contains fixed field size if IsExtended = 0 && HasDynamicSize == 0. Otherwise contains additional information about the field. */
+	};
+};
+
+
+FieldTypeMetaData FieldTypeMetaData::Create(const RTTIFieldSchema& fieldSchema, const RTTIFieldTypeSchema& fieldTypeSchema, bool isLastFieldInType, bool isAnotherFieldTypeFollowing)
+{
+	FieldTypeMetaData output;
+	output.IsObjectDescriptor = 0;
+
+	B3D_ASSERT(fieldTypeSchema.Type != SerializableFT_DataBlock || !fieldSchema.IsArray);
+	output.IsArray = fieldSchema.IsArray;
+	output.IsReflectable = fieldTypeSchema.Type == SerializableFT_Reflectable;
+
+	B3D_ASSERT(fieldTypeSchema.Type != SerializableFT_DataBlock || !isAnotherFieldTypeFollowing);
+	output.IsDataBlockOrTypeFollowing = fieldTypeSchema.Type == SerializableFT_DataBlock || isAnotherFieldTypeFollowing;
+	output.IsReflectablePointer = fieldTypeSchema.Type == SerializableFT_ReflectablePtr;
+	output.HasDynamicSize = fieldTypeSchema.HasDynamicSize;
+	output.IsLastFieldInType = isLastFieldInType;
+
+	const u32 fieldTypeId = fieldTypeSchema.FieldTypeId;
+	const bool isBuiltin = false; // Not supported at the moment. This was never properly implemented. fieldTypeId < 16;
+	if(isBuiltin)
+	{
+		output.IsExtended = 1;
+		output.FixedSizeOrAdditionalData.Unused = 0;
+		output.FixedSizeOrAdditionalData.BuiltinTypeId = fieldTypeId & 0xF;
+	}
+	else
+	{
+		output.IsExtended = 0;
+		output.FixedSizeOrAdditionalData.FixedSize = fieldTypeSchema.HasDynamicSize ? 0 : fieldTypeSchema.FixedSize.Bytes;
+	}
+
+	return output;
+}
+
+RTTIFieldTypeSchema FieldTypeMetaData::ToFieldTypeSchema(bool& hasMoreTypesFollowing) const
+{
+	RTTIFieldTypeSchema schema;
+	schema.HasDynamicSize = HasDynamicSize;
+
+	if(IsReflectablePointer)
+		schema.Type = SerializableFT_ReflectablePtr;
+	else if(IsReflectable)
+		schema.Type = SerializableFT_Reflectable;
+	else if(IsDataBlockOrTypeFollowing && !IsArray)
+		schema.Type = SerializableFT_DataBlock;
+	else
+		schema.Type = SerializableFT_Plain;
+
+	hasMoreTypesFollowing = IsDataBlockOrTypeFollowing && IsArray;
+
+	if(!IsExtended)
+		schema.FixedSize = FixedSizeOrAdditionalData.FixedSize;
+	else
+		schema.FieldTypeId = FixedSizeOrAdditionalData.BuiltinTypeId;
+
+	return schema;
+}
+
 BinarySerializer::BinarySerializer()
 	: mAlloc(&GetFrameAllocator())
 {}
@@ -62,7 +155,7 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 			SPtr<IReflectable> curObject = iter->Object;
 			u32 curObjectid = iter->ObjectId;
 			serializedObjects.insert(curObjectid);
-			mObjectsToEncode.erase(iter);
+			mObjectsToEncode.erase(iter); // TODO - Should update iter to returned value from erase()
 
 			if(!EncodeEntry(curObject.get(), curObjectid, bufferedStream, flags))
 			{
@@ -269,9 +362,7 @@ bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedB
 			if(writeMeta)
 			{
 				// Copy field ID & other meta-data like field size and type
-				int metaData = EncodeFieldMetaData(curGenericField->Schema, false);
-
-				stream.WriteBytes(metaData);
+				WriteFieldMetaData(curGenericField->Schema, false, stream);
 			}
 
 			if(curGenericField->Schema.IsArray)
@@ -515,12 +606,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 					terminator = IsFieldTerminator(metaDataHeader);
 
 				if(!terminator)
-				{
-					u32 fieldMetaData;
-					stream.ReadBytes(fieldMetaData);
-
-					fieldSchema = DecodeFieldMetaData(fieldMetaData, terminator);
-				}
+					fieldSchema = ReadFieldMetaData(stream, terminator);
 			}
 		}
 		else
@@ -973,21 +1059,18 @@ bool BinarySerializer::ComplexTypeToStream(IReflectable* object, BufferedBitstre
 				stream.WriteBytes(metaData);
 			}
 			else
-			{
-				int metaData = EncodeFieldMetaData(RTTIFieldSchema(), true);
-				stream.WriteBytes(metaData);
-			}
+				WriteFieldMetaData(RTTIFieldSchema(), true, stream);
 		}
 	}
 
 	return true;
 }
 
-u32 BinarySerializer::EncodeFieldMetaData(const RTTIFieldSchema& schema, bool terminator)
+void BinarySerializer::WriteFieldMetaData(const RTTIFieldSchema& fieldSchema, bool isLastFieldInType, BufferedBitstreamWriter& stream)
 {
 	// If O == 0 - Meta contains field information (Encoded using this method)
-	//// Encoding if E = 0: IIII IIII IIII IIII SSSS SSSS ETYP DCAO
-	//// Encoding if E = 1: IIII IIII IIII IIII BBBB xxxx ETYP DCAO
+	//// Encoding if E = 0: IIII IIII IIII IIII SSSS SSSS ETYP CDAO
+	//// Encoding if E = 1: IIII IIII IIII IIII BBBB xxxx ETYP CDAO
 	//// I - Id
 	//// S - Size
 	//// C - Complex
@@ -999,59 +1082,80 @@ u32 BinarySerializer::EncodeFieldMetaData(const RTTIFieldSchema& schema, bool te
 	//// T - Terminator (last field in an object)
 	//// E - Extended (size is replaced with additional meta-data)
 	//// B - Built-in type ID
+    //// If both D & A bits are set, signifies that additional field types follow in encoding using the last two bytes from the encoding above
 
-	bool isBuiltin = schema.GetTypeId() < 16;
-	u32 sizeBytes = schema.HasDynamicSize ? 0 : schema.Size.Bytes;
-
-	if(!isBuiltin)
-		return (schema.Id << 16 | sizeBytes << 8 | (schema.IsArray ? 0x02 : 0) | ((schema.Type == SerializableFT_DataBlock) ? 0x04 : 0) | ((schema.Type == SerializableFT_Reflectable) ? 0x08 : 0) | ((schema.Type == SerializableFT_ReflectablePtr) ? 0x10 : 0) | (schema.HasDynamicSize ? 0x20 : 0) | (terminator ? 0x40 : 0));
+	FieldTypeMetaData firstFieldTypeMetaData;
+	if(fieldSchema.FieldTypes.Empty()) // Old approach, single field type
+	{
+		const RTTIFieldTypeSchema fieldTypeSchema(fieldSchema.HasDynamicSize, fieldSchema.Size, fieldSchema.Type, fieldSchema.FieldTypeId, fieldSchema.FieldTypeSchema);
+		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldTypeSchema, isLastFieldInType, false);
+	}
 	else
-		return (schema.Id << 16 | (schema.GetTypeId() & 0xF) << 12 |
-				(schema.IsArray ? 0x02 : 0) |
-				((schema.Type == SerializableFT_DataBlock) ? 0x04 : 0) |
-				((schema.Type == SerializableFT_Reflectable) ? 0x08 : 0) |
-				((schema.Type == SerializableFT_ReflectablePtr) ? 0x10 : 0) |
-				(schema.HasDynamicSize ? 0x20 : 0) |
-				(terminator ? 0x40 : 0)) |
-			0x80;
+	{
+		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldTypes[0], isLastFieldInType, fieldSchema.FieldTypes.Size() > 1);
+	}
+
+	// Encodes field ID and meta-data for the first type
+	const u32 fieldMetaData = fieldSchema.Id << 16 | (u32)firstFieldTypeMetaData.PackedData;
+	stream.WriteBytes(fieldMetaData);
+
+	const u32 fieldTypeCount = (u32)fieldSchema.FieldTypes.Size();
+	for(u32 fieldTypeIndex = 1; fieldTypeIndex < fieldTypeCount; fieldTypeIndex++)
+	{
+		const bool isLastFieldType = (fieldTypeIndex + 1) == fieldTypeCount;
+		FieldTypeMetaData additionalFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldTypes[fieldTypeIndex], false, isLastFieldType);
+
+		stream.WriteBytes(additionalFieldTypeMetaData.PackedData);
+	}
 }
 
-RTTIFieldSchema BinarySerializer::DecodeFieldMetaData(u32 encodedData, bool& terminator)
+RTTIFieldSchema BinarySerializer::ReadFieldMetaData(BufferedBitstreamReader& stream, bool& terminator)
 {
-	if(IsObjectMetaData(encodedData))
+	u32 fieldMetaData;
+	stream.ReadBytes(fieldMetaData);
+
+	if(IsObjectMetaData(fieldMetaData))
 	{
 		B3D_EXCEPT(InternalErrorException, "Meta data represents an object description but is trying to be decoded as a field descriptor.");
 	}
 
-	terminator = (encodedData & 0x40) != 0;
+	RTTIFieldSchema fieldSchema;
+	fieldSchema.Id = (u16)((fieldMetaData >> 16) & 0xFFFF);
 
-	RTTIFieldSchema schema;
-	schema.HasDynamicSize = (encodedData & 0x20) != 0;
+	FieldTypeMetaData firstFieldTypeMetaData;
+	firstFieldTypeMetaData.PackedData = (u16)(fieldMetaData & 0xFFFF);
 
-	if((encodedData & 0x10) != 0)
-		schema.Type = SerializableFT_ReflectablePtr;
-	else if((encodedData & 0x08) != 0)
-		schema.Type = SerializableFT_Reflectable;
-	else if((encodedData & 0x04) != 0)
-		schema.Type = SerializableFT_DataBlock;
-	else
-		schema.Type = SerializableFT_Plain;
+	bool hasMoreFieldTypes;
+	const RTTIFieldTypeSchema firstFieldTypeSchema = firstFieldTypeMetaData.ToFieldTypeSchema(hasMoreFieldTypes);
 
-	schema.IsArray = (encodedData & 0x02) != 0;
-	schema.Id = (u16)((encodedData >> 16) & 0xFFFF);
+	terminator = firstFieldTypeMetaData.IsLastFieldInType;
+	fieldSchema.IsArray = firstFieldTypeMetaData.IsArray;
+	fieldSchema.FieldTypes.Add(firstFieldTypeSchema);
 
-	bool extended = (encodedData & 0x80) != 0;
-	if(!extended)
-		schema.Size = (u8)((encodedData >> 8) & 0xFF);
-	else
-		schema.FieldTypeId = (u8)((encodedData >> 12) & 0xF);
+	// For now, duplicate these fields. But ultimately we'll remove them in favor data stored of FieldTypes
+	fieldSchema.HasDynamicSize = firstFieldTypeSchema.HasDynamicSize;
+	fieldSchema.Type = firstFieldTypeSchema.Type;
+	fieldSchema.Size = firstFieldTypeSchema.FixedSize;
+	fieldSchema.FieldTypeId = firstFieldTypeSchema.FieldTypeId;
 
-	return schema;
+	while(hasMoreFieldTypes)
+	{
+		u16 fieldTypeMetaData;
+		stream.ReadBytes(fieldTypeMetaData);
+
+		FieldTypeMetaData additionalFieldTypeMetaData;
+		additionalFieldTypeMetaData.PackedData = fieldTypeMetaData;
+
+		const RTTIFieldTypeSchema additionalFieldTypeSchema = additionalFieldTypeMetaData.ToFieldTypeSchema(hasMoreFieldTypes);
+		fieldSchema.FieldTypes.Add(firstFieldTypeSchema);
+	}
+
+	return fieldSchema;
 }
 
 u8 BinarySerializer::EncodeFieldTerminator()
 {
-	// See the documentation for encodeFieldMetaData() on why we're using this format
+	// See the documentation for WriteFieldMetaData() on why we're using this format
 	return 0x40;
 }
 

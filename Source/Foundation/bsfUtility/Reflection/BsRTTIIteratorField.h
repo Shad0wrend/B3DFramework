@@ -40,7 +40,7 @@ namespace bs
 	 * @tparam ObjectType		Type of the object that the field is a member of.
 	 */
 	template <class RTTIType, class ContainerType, class ObjectType>
-	struct TRTTIIteratorField : public RTTIIteratorField
+	struct TRTTIIteratorField : public RTTIIteratorField // TODO - This type should be re-used for non-container types as well (treat the iterator as a single entry array)
 	{
 		using ElementType = typename ContainerType::value_type;
 
@@ -119,13 +119,6 @@ namespace bs
 			return mGetIteratorCallback();
 		}
 
-		// TODO - Also supply tuple index
-		void DecodeFromStream(RTTITypeBase* objectType, void* object, IRTTIIterator& iterator, Bitstream& stream, bool compress) override
-		{
-			// TODO - Extend IRTTIIterator with SetTupleElement(index, element), then AssignTuple to actually assign it to the container
-			// - Internally this just creates std::pair
-		}
-
 		/*
 		 * API as seen from the binary serializer:
 		 *
@@ -136,20 +129,21 @@ namespace bs
 					auto iterator = field.GetIterator();
 					for(; iterator.isValid(); iterator.advance())
 					{
+						const void* tuple = field.GetValue(iterator);
+
 						for(tupleIndex in field.tupleCount)
 						{
 							switch(field.tupleType[tupleIndex])
 							{
 								case plain:
-								void* tupleValue = iterator.getPlainTupleValue(tupleIndex);
-								field.EncodeToStream(tupleIndex, tupleValue, stream)
+								field.EncodeToStream(tuple, tupleIndex, tupleValue, stream)
 
 								case reflectable:
-								IReflectable& tupleValue = iterator.getReflectableTupleValue(tupleIndex);
+								IReflectable& tupleValue = field.GetReflectableTupleValue(tuple, tupleIndex);
 								EncodeComplex(tupleValue);
 
 								case reflectableptr:
-								SPtr<IReflectable> tupleValue = iterator.getReflectablePtrTupleValue(tupleIndex);
+								SPtr<IReflectable> tupleValue = field.GetReflectablePtrTupleValue(tuple, tupleIndex);
 								EncodeEntry(tupleValue);
 								write object id to stream
 							} 
@@ -175,7 +169,7 @@ namespace bs
 					auto iterator = field.GetIterator();
 					for(; iterator.isValid(); iterator.advance())
 					{
-						void* tuple = iterator.AllocateEmptyObject();
+						void* tuple = field.AllocateEmptyObject(frameAllocator); // Allocate dynamically using the provided frame allocator
 						
 						for(tupleIndex in field.tupleCount)
 						{
@@ -195,7 +189,7 @@ namespace bs
 							} 
 						}
 
-						field.SetValue(iterator, tuple); // Internally this std::moves the data into the field
+						field.SetValue(iterator, tuple); // Internally this COPIES the data into the field (original also must be explicitly destructed, as it's frame allocated, and could be a SPtr)
 					}
 		 *		}
 		 *		else
