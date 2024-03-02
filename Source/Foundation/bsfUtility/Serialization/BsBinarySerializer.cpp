@@ -12,6 +12,7 @@
 #include "Reflection/BsRTTIReflectablePtrField.h"
 #include "Reflection/BsRTTIManagedDataBlockField.h"
 #include "FileSystem/BsDataStream.h"
+#include "Reflection/BsRTTIIteratorField.h"
 #include "Utility/BsBufferedBitstream.h"
 
 using namespace bs;
@@ -120,8 +121,8 @@ BinarySerializer::BinarySerializer()
 
 void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags, SerializationContext* context)
 {
-	mObjectsToEncode.clear();
-	mObjectAddrToId.clear();
+	mReflectableObjectsToSerialize.clear();
+	mReflectableObjectToID.clear();
 	mLastUsedObjectId = 1;
 	mContext = context;
 	mBuffer.Seek(0);
@@ -131,10 +132,10 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 	BufferedBitstreamWriter bufferedStream(&mBuffer, stream, kWriteBufferSize, kFlushAfterBytes);
 
 	Vector<SPtr<IReflectable>> encodedObjects;
-	u32 objectId = FindOrCreatePersistentId(object);
+	u32 objectId = FindOrCreateReflectableObjectId(object);
 
 	// Encode primary object and its value types
-	if(!EncodeEntry(object, objectId, bufferedStream, flags))
+	if(!SerializeReflectableObject(object, objectId, bufferedStream, flags))
 	{
 		B3D_LOG(Error, Serialization, "Destination buffer is null or not large enough.");
 		return;
@@ -144,9 +145,9 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 	UnorderedSet<u32> serializedObjects;
 	while(true)
 	{
-		auto iter = mObjectsToEncode.begin();
+		auto iter = mReflectableObjectsToSerialize.begin();
 		bool foundObjectToProcess = false;
-		for(; iter != mObjectsToEncode.end(); ++iter)
+		for(; iter != mReflectableObjectsToSerialize.end(); ++iter)
 		{
 			auto foundExisting = serializedObjects.find(iter->ObjectId);
 			if(foundExisting != serializedObjects.end())
@@ -155,9 +156,9 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 			SPtr<IReflectable> curObject = iter->Object;
 			u32 curObjectid = iter->ObjectId;
 			serializedObjects.insert(curObjectid);
-			mObjectsToEncode.erase(iter); // TODO - Should update iter to returned value from erase()
+			mReflectableObjectsToSerialize.erase(iter); // TODO - Should update iter to returned value from erase()
 
-			if(!EncodeEntry(curObject.get(), curObjectid, bufferedStream, flags))
+			if(!SerializeReflectableObject(curObject.get(), curObjectid, bufferedStream, flags))
 			{
 				B3D_LOG(Error, Serialization, "Destination buffer is null or not large enough.");
 				return;
@@ -181,8 +182,8 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 	bufferedStream.Flush(true);
 
 	encodedObjects.clear();
-	mObjectsToEncode.clear();
-	mObjectAddrToId.clear();
+	mReflectableObjectsToSerialize.clear();
+	mReflectableObjectToID.clear();
 
 	mAlloc->Clear();
 }
@@ -307,7 +308,7 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 	return rootObject;
 }
 
-bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags)
+bool BinarySerializer::SerializeReflectableObject(IReflectable* object, u32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags)
 {
 	const bool writeMeta = !flags.IsSet(BinarySerializerFlag::NoMeta);
 	const bool compress = flags.IsSet(BinarySerializerFlag::Compress);
@@ -317,7 +318,7 @@ bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedB
 
 	FrameStack<RTTITypeBase*> rttiInstances;
 
-	const auto cleanup = [&]()
+	const auto cleanup = [&]() // TODO - Use scope guard
 	{
 		while(!rttiInstances.empty())
 		{
@@ -365,7 +366,72 @@ bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedB
 				WriteFieldMetaData(curGenericField->Schema, false, stream);
 			}
 
-			if(curGenericField->Schema.IsArray)
+			const bool isIteratorField = false; // TODO - Debug only, this should be grabbed from the schema
+			if(isIteratorField)
+			{
+				FrameAllocator frameAllocator; // TODO - Provide one as a parameter
+				RTTIIteratorField* const field = static_cast<RTTIIteratorField*>(curGenericField);
+				UPtr<IRTTIIterator> iterator = field->GetIterator(rttiInstance, object, frameAllocator);
+
+				if(field->Schema.IsArray)
+				{
+					u32 elementCount = 0;
+					if(iterator != nullptr)
+						elementCount = (u32)iterator->GetElementCount();
+
+					// Copy num vector elements
+					if(compress)
+						stream.WriteVarInt(elementCount);
+					else
+						stream.WriteBytes(elementCount);
+				}
+
+				for(; iterator->IsValid(); iterator->Increment())
+				{
+					const void* fieldValue = iterator->GetValue();
+					for(u32 typeIndex = 0; typeIndex < (u32)field->Schema.FieldTypes.Size(); ++typeIndex)
+					{
+						const RTTIFieldTypeSchema& typeSchema = field->Schema.FieldTypes[typeIndex];
+						switch(typeSchema.Type)
+						{
+						case SerializableFT_ReflectablePtr:
+						{
+							SPtr<IReflectable> childObject;
+
+							if(!flags.IsSet(BinarySerializerFlag::Shallow))
+								childObject = field->GetReflectablePointer(fieldValue, typeIndex);
+
+							const u32 objectId = RegisterReflectableObjectForSerialization(childObject);
+							if(compress)
+								stream.WriteVarInt(objectId);
+							else
+								stream.WriteBytes(objectId);
+
+							break;
+						}
+						case SerializableFT_Reflectable:
+						{
+							const IReflectable& childObject = field->GetReflectable(fieldValue, typeIndex);
+							if(!SerializeReflectableObjectInline(const_cast<IReflectable*>(&childObject), stream, flags)) // TODO - Get rid of const cast
+							{
+								cleanup();
+								return false;
+							}
+							
+							break;
+						}
+						case SerializableFT_Plain:
+						{
+							field->WritePlainTypeTupleToStream(fieldValue, typeIndex, stream.GetBitstream(), compress);
+							break;
+						}
+						default:
+						B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, field->Schema.IsArray);
+						}
+					}
+				}
+			}
+			else if(curGenericField->Schema.IsArray)
 			{
 				u32 arrayNumElems = curGenericField->GetArraySize(rttiInstance, object);
 
@@ -388,7 +454,7 @@ bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedB
 							if(!flags.IsSet(BinarySerializerFlag::Shallow))
 								childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
 
-							u32 objId = RegisterObjectPtr(childObject);
+							u32 objId = RegisterReflectableObjectForSerialization(childObject);
 							if(compress)
 								stream.WriteVarInt(objId);
 							else
@@ -405,7 +471,7 @@ bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedB
 						{
 							IReflectable& childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
 
-							if(!ComplexTypeToStream(&childObject, stream, flags))
+							if(!SerializeReflectableObjectInline(&childObject, stream, flags))
 							{
 								cleanup();
 								return false;
@@ -439,7 +505,7 @@ bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedB
 						if(!flags.IsSet(BinarySerializerFlag::Shallow))
 							childObject = curField->GetValue(rttiInstance, object);
 
-						u32 objId = RegisterObjectPtr(childObject);
+						u32 objId = RegisterReflectableObjectForSerialization(childObject);
 						if(compress)
 							stream.WriteVarInt(objId);
 						else
@@ -452,7 +518,7 @@ bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedB
 						auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
 						IReflectable& childObject = curField->GetValue(rttiInstance, object);
 
-						if(!ComplexTypeToStream(&childObject, stream, flags))
+						if(!SerializeReflectableObjectInline(&childObject, stream, flags))
 						{
 							cleanup();
 							return false;
@@ -1041,11 +1107,11 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 	return false;
 }
 
-bool BinarySerializer::ComplexTypeToStream(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags)
+bool BinarySerializer::SerializeReflectableObjectInline(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags)
 {
 	if(object != nullptr)
 	{
-		if(!EncodeEntry(object, 0, stream, flags))
+		if(!SerializeReflectableObject(object, 0, stream, flags))
 			return false;
 
 		if(!flags.IsSet(BinarySerializerFlag::NoMeta))
@@ -1298,39 +1364,39 @@ u32 BinarySerializer::ReadObjectMetaData(BufferedBitstreamReader& stream, Binary
 	}
 }
 
-u32 BinarySerializer::FindOrCreatePersistentId(IReflectable* object)
+u32 BinarySerializer::FindOrCreateReflectableObjectId(IReflectable* object)
 {
-	void* ptrAddress = (void*)object;
+	void* const objectMemoryAddress = object;
 
-	auto findIter = mObjectAddrToId.find(ptrAddress);
-	if(findIter != mObjectAddrToId.end())
-		return findIter->second;
+	auto found = mReflectableObjectToID.find(objectMemoryAddress);
+	if(found != mReflectableObjectToID.end())
+		return found->second;
 
 	u32 objId = mLastUsedObjectId++;
-	mObjectAddrToId.insert(std::make_pair(ptrAddress, objId));
+	mReflectableObjectToID.insert(std::make_pair(objectMemoryAddress, objId));
 
 	return objId;
 }
 
-u32 BinarySerializer::RegisterObjectPtr(SPtr<IReflectable> object)
+u32 BinarySerializer::RegisterReflectableObjectForSerialization(SPtr<IReflectable> object)
 {
 	if(object == nullptr)
 		return 0;
 
-	void* ptrAddress = (void*)object.get();
+	void* const objectMemoryAddress = object.get();
 
-	auto iterFind = mObjectAddrToId.find(ptrAddress);
-	if(iterFind == mObjectAddrToId.end())
+	auto found = mReflectableObjectToID.find(objectMemoryAddress);
+	if(found == mReflectableObjectToID.end())
 	{
-		u32 objId = FindOrCreatePersistentId(object.get());
+		const u32 objectId = FindOrCreateReflectableObjectId(object.get());
 
-		mObjectsToEncode.push_back(ObjectToEncode(objId, object));
-		mObjectAddrToId.insert(std::make_pair(ptrAddress, objId));
+		mReflectableObjectsToSerialize.push_back(ObjectToSerialize(objectId, object));
+		mReflectableObjectToID.insert(std::make_pair(objectMemoryAddress, objectId));
 
-		return objId;
+		return objectId;
 	}
 
-	return iterFind->second;
+	return found->second;
 }
 
 #undef COPY_TO_BUFFER

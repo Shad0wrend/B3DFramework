@@ -363,46 +363,6 @@ namespace bs
 		}
 
 		/*
-		 * API as seen from the binary serializer:
-		 *
-		 * foreach(field in fields)
-		 * {
-		 *		if(field.Iterator)
-		 *		{
-					auto iterator = field.GetIterator();
-					for(; iterator.isValid(); iterator.advance())
-					{
-						const void* tuple = field.GetValue(iterator);
-
-						for(tupleIndex in field.tupleCount)
-						{
-							switch(field.tupleType[tupleIndex])
-							{
-								case plain:
-								field.EncodeToStream(tuple, tupleIndex, tupleValue, stream)
-
-								case reflectable:
-								IReflectable& tupleValue = field.GetReflectableTupleValue(tuple, tupleIndex);
-								EncodeComplex(tupleValue);
-
-								case reflectableptr:
-								SPtr<IReflectable> tupleValue = field.GetReflectablePtrTupleValue(tuple, tupleIndex);
-								EncodeEntry(tupleValue);
-								write object id to stream
-							} 
-						}
-
-					}
-		 *		}
-		 *		else
-				{
-				 // Old handling
-				}
-		 * }
-		 *
-		 */
-
-		/*
 		 * API as seen from the binary deserializer:
 		 *
 		 * foreach(field in fields)

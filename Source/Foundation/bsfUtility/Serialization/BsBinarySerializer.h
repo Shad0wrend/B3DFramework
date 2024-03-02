@@ -121,9 +121,9 @@ namespace bs
 			u32 TypeId;
 		};
 
-		struct ObjectToEncode
+		struct ObjectToSerialize
 		{
-			ObjectToEncode(u32 objectId, SPtr<IReflectable> object)
+			ObjectToSerialize(u32 objectId, SPtr<IReflectable> object)
 				: ObjectId(objectId), Object(std::move(object))
 			{}
 
@@ -144,23 +144,36 @@ namespace bs
 			SPtr<RTTISchema> Schema;
 		};
 
-		/** Encodes a single IReflectable object. */
-		bool EncodeEntry(IReflectable* object, u32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
+		/**
+		 * Serializes a single IReflectable object. Any pointers referencing other reflectable types will be registered in mObjectsToSerialize, and
+		 * this method should also be called over all objects registered in that array.
+		 *
+		 * @param	object		Object to serialize.
+		 * @param	objectId	Persistent ID of the object in the serialized data. See FindOrCreateReflectableObjectId().
+		 * @param	stream		Stream into which to serialize the object.
+		 * @param	flags		Flags used to control serialization.
+		 * @return				True if successful, false otherwise.
+		 */
+		bool SerializeReflectableObject(IReflectable* object, u32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
 
 		/**	Decodes a single IReflectable object. */
 		bool DecodeEntry(BufferedBitstreamReader& stream, size_t dataLength, BinarySerializerFlags flags, const SPtr<IReflectable>& output, SPtr<RTTISchema> schema);
 
-		/**	Helper method for encoding a complex object and writing its data to a stream. */
-		bool ComplexTypeToStream(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
+		/**
+		 * Serializes an IReflectable inline as a field value. This is opposed to serializing a reflectable by pointer, which
+		 * are stored later in the serialized data, and the field value only stores the object ID.
+		 */
+		bool SerializeReflectableObjectInline(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
 
-		/**	Finds an existing, or creates a unique unique identifier for the specified object. */
-		u32 FindOrCreatePersistentId(IReflectable* object);
+		/**	Finds an existing, or creates a unique unique ID for the specified object. See RegisterChildObjectForSerialization. */
+		u32 FindOrCreateReflectableObjectId(IReflectable* object);
 
 		/**
-		 * Finds or creates an id for the provided object and returns it. And it adds the object to a list of objects that
-		 * need to be encoded, if it's not already there.
+		 * Adds the object to the list of objects that need to be serialized in a later stage. Assigns the object a unique ID
+		 * or returns a previously assigned one, if the object was already registered. This ID will be stored when the object
+		 * is serialized, and may be used for referencing the object in the serialized data.
 		 */
-		u32 RegisterObjectPtr(SPtr<IReflectable> object);
+		u32 RegisterReflectableObjectForSerialization(SPtr<IReflectable> object);
 
 		/**
 		 * Decodes object meta-data from the current location in the stream. Decoding accounts for the serializer flags to decode
@@ -212,8 +225,8 @@ namespace bs
 		static void DecodeObjectMetaData(u32 encodedData, u32& objId, bool& isBaseClass);
 
 		Map<u32, ObjectToDecode> mDecodeObjectMap;
-		Vector<ObjectToEncode> mObjectsToEncode;
-		UnorderedMap<void*, u32> mObjectAddrToId;
+		Vector<ObjectToSerialize> mReflectableObjectsToSerialize;
+		UnorderedMap<void*, u32> mReflectableObjectToID;
 		u32 mLastUsedObjectId = 1;
 		u32 mTotalBytesToRead = 0;
 		u32 mNextProgressReport = kReportAfterBytes;
