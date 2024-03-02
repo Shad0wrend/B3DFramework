@@ -22,6 +22,196 @@ constexpr u32 BinarySerializer::kWriteBufferSize;
 constexpr u32 BinarySerializer::kFlushAfterBytes;
 constexpr u32 BinarySerializer::kPreloadChunkBytes;
 
+/**
+ * Contains used combinations of 00xx xxx0 bits in the field type encoding.
+ *
+ * Note: This should be refactored so type is stored in the first 2 bits, with iterator/array/dynamic size bits in the rest.
+ * For legacy sake we're keeping this convoluted way until we're ready to break serialization.
+ */
+enum FieldTypeBits : u8
+{
+	FT_PlainTypeWithFixedSize							= 0b00'000,
+	FT_ArrayOfPlainTypesWithFixedSize					= 0b00'001,
+	FT_IteratorPlainTypeWithDynamicSize					= 0b00'010,
+	//Unused											= 0b00'011,
+	//Unused											= 0b00'100,
+	//Unused											= 0b00'101,
+	//Unused											= 0b00'110,
+	//Unused											= 0b00'111,
+	//Unused											= 0b01'000,
+	//Unused											= 0b01'001,
+	FT_IteratorPlainTypeWithFixedSize					= 0b01'010,
+	FT_IteratorReflectable								= 0b01'011,
+	FT_IteratorReflectablePointer						= 0b01'100,
+	FT_IteratorPlainTypeWithFixedSizeWithAnotherType	= 0b01'101,
+	FT_IteratorReflectableWithAnotherType				= 0b01'110,
+	FT_IteratorReflectablePointerWithAnotherType		= 0b01'111,
+	FT_PlainTypeWithDynamicSize							= 0b10'000,
+	FT_ArrayOfPlainTypesWithDynamicSize					= 0b10'001,
+	FT_DataBlock										= 0b10'010,
+	FT_IteratorPlainTypeWithDynamicSizeWithAnotherType	= 0b10'011,
+	FT_Reflectable										= 0b10'100,
+	FT_ReflectableArray									= 0b10'101,
+	//Unused											= 0b10'110
+	//Unused											= 0b10'111
+	FT_ReflectablePointer								= 0b11'000,
+	FT_ReflectablePointerArray							= 0b11'001,
+	//Unused											= 0b11'010
+	//Unused											= 0b11'011
+	//Unused											= 0b11'100
+	//Unused											= 0b11'101
+	//Unused											= 0b11'110
+	//Unused											= 0b11'111
+};
+
+/** Decodes the FieldTypeBits enum into individual parts. */
+static void DecodeFieldTypeBits(FieldTypeBits bits, SerializableFieldType& outType, bool& outIsArray, bool& outIsIterator, bool& hasDynamicSize, bool& hasAnotherTypeFollowing)
+{
+	outIsArray = false;
+	outIsIterator = false;
+	hasDynamicSize = false;
+	hasAnotherTypeFollowing = false;
+
+	switch(bits)
+	{
+	case FT_PlainTypeWithDynamicSize:
+		hasDynamicSize = true;
+		[[fallthrough]];
+	case FT_PlainTypeWithFixedSize:
+		outType = SerializableFT_Plain;
+		break;
+	case FT_ArrayOfPlainTypesWithDynamicSize:
+		hasDynamicSize = true;
+		[[fallthrough]];
+	case FT_ArrayOfPlainTypesWithFixedSize:
+		outType = SerializableFT_Plain;
+		outIsArray = true;
+		break;
+	case FT_DataBlock:
+		outType = SerializableFT_DataBlock;
+		break;
+	case FT_Reflectable:
+		outType = SerializableFT_Reflectable;
+		break;
+	case FT_ReflectableArray:
+		outType = SerializableFT_Reflectable;
+		outIsArray = true;
+		break;
+	case FT_ReflectablePointer:
+		outType = SerializableFT_ReflectablePtr;
+		break;
+	case FT_ReflectablePointerArray:
+		outType = SerializableFT_ReflectablePtr;
+		outIsArray = true;
+		break;
+	case FT_IteratorPlainTypeWithFixedSizeWithAnotherType:
+		hasAnotherTypeFollowing = true;
+		[[fallthrough]];
+	case FT_IteratorPlainTypeWithFixedSize:
+		outType = SerializableFT_Plain;
+		outIsArray = true;
+		outIsIterator = true;
+		break;
+	case FT_IteratorPlainTypeWithDynamicSizeWithAnotherType:
+		hasAnotherTypeFollowing = true;
+		[[fallthrough]];
+	case FT_IteratorPlainTypeWithDynamicSize:
+		outType = SerializableFT_Plain;
+		outIsArray = true;
+		outIsIterator = true;
+		hasDynamicSize = true;
+		break;
+	case FT_IteratorReflectableWithAnotherType:
+		hasAnotherTypeFollowing = true;
+		[[fallthrough]];
+	case FT_IteratorReflectable:
+		outType = SerializableFT_Reflectable;
+		outIsArray = true;
+		outIsIterator = true;
+		break;
+	case FT_IteratorReflectablePointerWithAnotherType:
+		hasAnotherTypeFollowing = true;
+		[[fallthrough]];
+	case FT_IteratorReflectablePointer:
+		outType = SerializableFT_ReflectablePtr;
+		outIsArray = true;
+		outIsIterator = true;
+		break;
+	default:
+		B3D_ENSURE(false);
+		break;
+	}
+}
+/** Encodes a set of individual flags into the FieldTypeBits enum. */
+static FieldTypeBits EncodeFieldTypeBits(SerializableFieldType type, bool isArray, bool isIterator, bool hasDynamicSize, bool hasAnotherTypeFollowing)
+{
+	if(isIterator)
+	{
+		B3D_ASSERT(isArray); // For now, all iterators are also considered array types
+
+		switch(type)
+		{
+		case SerializableFT_Plain:
+			if(hasDynamicSize)
+			{
+				if(hasAnotherTypeFollowing)
+					return FT_IteratorPlainTypeWithDynamicSizeWithAnotherType;
+
+				return FT_IteratorPlainTypeWithDynamicSize;
+			}
+
+			if(hasAnotherTypeFollowing)
+				return FT_IteratorPlainTypeWithFixedSizeWithAnotherType;
+
+			return FT_IteratorPlainTypeWithFixedSize;
+		case SerializableFT_Reflectable:
+			if(hasAnotherTypeFollowing)
+				return FT_IteratorReflectableWithAnotherType;
+
+			return FT_IteratorReflectable;
+		case SerializableFT_ReflectablePtr:
+			if(hasAnotherTypeFollowing)
+				return FT_IteratorReflectablePointerWithAnotherType;
+
+			return FT_IteratorReflectablePointer;
+		}
+	}
+	else
+	{
+		switch(type)
+		{
+		case SerializableFT_Plain:
+			if(hasDynamicSize)
+			{
+				if(isArray)
+					return FT_ArrayOfPlainTypesWithDynamicSize;
+
+				return FT_PlainTypeWithDynamicSize;
+			}
+
+			if(isArray)
+				return FT_ArrayOfPlainTypesWithFixedSize;
+
+			return FT_PlainTypeWithFixedSize;
+		case SerializableFT_DataBlock:
+			return FT_DataBlock;
+		case SerializableFT_Reflectable:
+			if(isArray)
+				return FT_ReflectableArray;
+
+			return FT_Reflectable;
+		case SerializableFT_ReflectablePtr:
+			if(isArray)
+				return FT_ReflectablePointerArray;
+
+			return FT_ReflectablePointer;
+		}
+	}
+
+	B3D_ENSURE(false);
+	return FT_PlainTypeWithFixedSize;
+}
+
 /** Encoding used for storing either fixed field size, or additional field information. */
 union FieldTypeSizeOrExtendedMetaData
 {
@@ -41,17 +231,13 @@ union FieldTypeMetaData
 	static FieldTypeMetaData Create(const RTTIFieldSchema& fieldSchema, const RTTIFieldTypeSchema& fieldTypeSchema, bool isLastFieldInType, bool isAnotherFieldTypeFollowing);
 
 	/** Converts the internal data to RTTIFieldTypeSchema. */
-	RTTIFieldTypeSchema ToFieldTypeSchema(bool& hasMoreTypesFollowing) const;
+	RTTIFieldTypeSchema ToFieldTypeSchema(bool& outIsArray, bool& outIsIterator, bool& outHasMoreTypesFollowing) const;
 
 	u16 PackedData;
 	struct
 	{
 		u8 IsObjectDescriptor : 1; /**< If 1, meta-data represents an object rather than the field. Rest of the data is invalid in such case. */
-		u8 IsArray : 1; /**< Field contains multiple entries that are individually serialized. */
-		u8 IsDataBlockOrTypeFollowing : 1; /**< If IsArray = 0, this signifies the field holds the DataBlock type. If IsArray = 1, the signifies that another field type meta-data structure follows this one. */
-		u8 IsReflectable : 1; /**< Field contains a Reflectable type. */
-		u8 IsReflectablePointer : 1; /**< Field contains a Reflectable pointer type. */
-		u8 HasDynamicSize : 1; /**< Field has size encoded right after the field entry, rather as part of the field meta-data. */
+		FieldTypeBits FieldType : 5;
 		u8 IsLastFieldInType : 1; /**< Field is the last field in the type. Only set for the first provided field type, unused in rest. */
 		u8 IsExtended : 1; /**< Fields with this flag contain additional information rather than fixed size, in the AdditionalData field. */
 		FieldTypeSizeOrExtendedMetaData FixedSizeOrAdditionalData; /** Contains fixed field size if IsExtended = 0 && HasDynamicSize == 0. Otherwise contains additional information about the field. */
@@ -65,13 +251,7 @@ FieldTypeMetaData FieldTypeMetaData::Create(const RTTIFieldSchema& fieldSchema, 
 	output.IsObjectDescriptor = 0;
 
 	B3D_ASSERT(fieldTypeSchema.Type != SerializableFT_DataBlock || !fieldSchema.IsArray);
-	output.IsArray = fieldSchema.IsArray;
-	output.IsReflectable = fieldTypeSchema.Type == SerializableFT_Reflectable;
-
-	B3D_ASSERT(fieldTypeSchema.Type != SerializableFT_DataBlock || !isAnotherFieldTypeFollowing);
-	output.IsDataBlockOrTypeFollowing = fieldTypeSchema.Type == SerializableFT_DataBlock || isAnotherFieldTypeFollowing;
-	output.IsReflectablePointer = fieldTypeSchema.Type == SerializableFT_ReflectablePtr;
-	output.HasDynamicSize = fieldTypeSchema.HasDynamicSize;
+	output.FieldType = EncodeFieldTypeBits(fieldTypeSchema.Type, fieldSchema.IsArray, fieldSchema.IsIterator, fieldTypeSchema.HasDynamicSize, isAnotherFieldTypeFollowing);
 	output.IsLastFieldInType = isLastFieldInType;
 
 	const u32 fieldTypeId = fieldTypeSchema.FieldTypeId;
@@ -91,21 +271,11 @@ FieldTypeMetaData FieldTypeMetaData::Create(const RTTIFieldSchema& fieldSchema, 
 	return output;
 }
 
-RTTIFieldTypeSchema FieldTypeMetaData::ToFieldTypeSchema(bool& hasMoreTypesFollowing) const
+RTTIFieldTypeSchema FieldTypeMetaData::ToFieldTypeSchema(bool& outIsArray, bool& outIsIterator, bool& outHasMoreTypesFollowing) const
 {
 	RTTIFieldTypeSchema schema;
-	schema.HasDynamicSize = HasDynamicSize;
 
-	if(IsReflectablePointer)
-		schema.Type = SerializableFT_ReflectablePtr;
-	else if(IsReflectable)
-		schema.Type = SerializableFT_Reflectable;
-	else if(IsDataBlockOrTypeFollowing && !IsArray)
-		schema.Type = SerializableFT_DataBlock;
-	else
-		schema.Type = SerializableFT_Plain;
-
-	hasMoreTypesFollowing = IsDataBlockOrTypeFollowing && IsArray;
+	DecodeFieldTypeBits(FieldType, schema.Type, outIsArray, outIsIterator, schema.HasDynamicSize, outHasMoreTypesFollowing);
 
 	if(!IsExtended)
 		schema.FixedSize = FixedSizeOrAdditionalData.FixedSize;
@@ -1135,20 +1305,15 @@ bool BinarySerializer::SerializeReflectableObjectInline(IReflectable* object, Bu
 void BinarySerializer::WriteFieldMetaData(const RTTIFieldSchema& fieldSchema, bool isLastFieldInType, BufferedBitstreamWriter& stream)
 {
 	// If O == 0 - Meta contains field information (Encoded using this method)
-	//// Encoding if E = 0: IIII IIII IIII IIII SSSS SSSS ETYP CDAO
-	//// Encoding if E = 1: IIII IIII IIII IIII BBBB xxxx ETYP CDAO
+	//// Encoding if E = 0: IIII IIII IIII IIII SSSS SSSS ETFF FFFO
+	//// Encoding if E = 1: IIII IIII IIII IIII BBBB xxxx ETFF FFFO
 	//// I - Id
 	//// S - Size
-	//// C - Complex
-	//// A - Array
-	//// D - Data block
-	//// P - Complex ptr
+	//// F - Field type enum bits
 	//// O - Object descriptor
-	//// Y - Plain field has dynamic size
-	//// T - Terminator (last field in an object)
+	//// T - Terminator (last field in an inline object)
 	//// E - Extended (size is replaced with additional meta-data)
 	//// B - Built-in type ID
-    //// If both D & A bits are set, signifies that additional field types follow in encoding using the last two bytes from the encoding above
 
 	FieldTypeMetaData firstFieldTypeMetaData;
 	if(fieldSchema.FieldTypes.Empty()) // Old approach, single field type
@@ -1192,10 +1357,9 @@ RTTIFieldSchema BinarySerializer::ReadFieldMetaData(BufferedBitstreamReader& str
 	firstFieldTypeMetaData.PackedData = (u16)(fieldMetaData & 0xFFFF);
 
 	bool hasMoreFieldTypes;
-	const RTTIFieldTypeSchema firstFieldTypeSchema = firstFieldTypeMetaData.ToFieldTypeSchema(hasMoreFieldTypes);
+	const RTTIFieldTypeSchema firstFieldTypeSchema = firstFieldTypeMetaData.ToFieldTypeSchema(fieldSchema.IsArray, fieldSchema.IsIterator, hasMoreFieldTypes);
 
 	terminator = firstFieldTypeMetaData.IsLastFieldInType;
-	fieldSchema.IsArray = firstFieldTypeMetaData.IsArray;
 	fieldSchema.FieldTypes.Add(firstFieldTypeSchema);
 
 	// For now, duplicate these fields. But ultimately we'll remove them in favor data stored of FieldTypes
@@ -1212,7 +1376,8 @@ RTTIFieldSchema BinarySerializer::ReadFieldMetaData(BufferedBitstreamReader& str
 		FieldTypeMetaData additionalFieldTypeMetaData;
 		additionalFieldTypeMetaData.PackedData = fieldTypeMetaData;
 
-		const RTTIFieldTypeSchema additionalFieldTypeSchema = additionalFieldTypeMetaData.ToFieldTypeSchema(hasMoreFieldTypes);
+		bool isArray, isIterator;
+		const RTTIFieldTypeSchema additionalFieldTypeSchema = additionalFieldTypeMetaData.ToFieldTypeSchema(isArray, isIterator, hasMoreFieldTypes);
 		fieldSchema.FieldTypes.Add(firstFieldTypeSchema);
 	}
 

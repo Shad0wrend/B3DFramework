@@ -135,7 +135,7 @@ namespace bs
 			this->mSetValueCallback = setValueCallback;
 
 			this->Name = std::move(name);
-			this->Schema = RTTIFieldSchema(uniqueId, false, false, 0, SerializableFT_Plain, 0, nullptr, fieldInfo);
+			this->Schema = RTTIFieldSchema(uniqueId, true, true, fieldInfo);
 		}
 
 		void InitSchema() override

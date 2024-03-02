@@ -91,6 +91,7 @@ namespace bs
 			B3D_RTTI_MEMBER_REFLPTR(FieldTypeSchema, 6)
 			B3D_RTTI_MEMBER_PLAIN(Info, 7)
 			B3D_RTTI_MEMBER_REFL_ARRAY(FieldTypes, 8)
+			B3D_RTTI_MEMBER_PLAIN(IsIterator, 9)
 		B3D_RTTI_END_MEMBERS
 
 	public:

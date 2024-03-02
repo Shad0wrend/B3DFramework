@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <unordered_map>
 
+#include "BsRTTIIteratorField.h"
 #include "Prerequisites/BsPrerequisitesUtil.h"
 #include "Reflection/BsRTTIField.h"
 #include "Reflection/BsRTTIPlainField.h"
@@ -760,6 +761,18 @@ namespace bs
 			auto newField = B3DNew<RTTIManagedDataBlockField<InterfaceType, u8*, ObjectType>>();
 			newField->InitSingle(name, uniqueId, getter, setter, info);
 			AddNewField(newField);
+		}
+
+		/** Registers a field referencing an iterable container (such as an array or a map). */
+		template <class InterfaceType, class ObjectType, class DataType>
+		void AddIteratorField(const String& name, u32 uniqueId,
+			typename TRTTIIteratorField<InterfaceType, DataType, ObjectType>::GetIteratorDelegate getIteratorCallback,
+			typename TRTTIIteratorField<InterfaceType, DataType, ObjectType>::GetValueDelegate getValueCallback,
+			typename TRTTIIteratorField<InterfaceType, DataType, ObjectType>::SetValueDelegate setValueCallback,
+			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
+		{
+			auto field = B3DNew<TRTTIIteratorField<InterfaceType, DataType, ObjectType>>(name, uniqueId, getIteratorCallback, getValueCallback, setValueCallback, info);
+			AddNewField(field);
 		}
 	};
 

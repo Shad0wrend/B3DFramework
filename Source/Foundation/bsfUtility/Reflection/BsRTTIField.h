@@ -70,12 +70,16 @@ namespace bs
 	struct B3D_UTILITY_EXPORT RTTIFieldSchema : IReflectable
 	{
 		RTTIFieldSchema() = default;
+		RTTIFieldSchema(i16 id, bool isArray, bool isIterator, const RTTIFieldInfo& info)
+			: Id(id), IsArray(isArray), IsIterator(isIterator), Info(info)
+		{}
 		RTTIFieldSchema(i16 id, bool isArray, bool hasDynamicSize, BitLength size, SerializableFieldType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
 			: Id(id), IsArray(isArray), HasDynamicSize(hasDynamicSize), Size(size), Type(type), FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema)), Info(info)
 		{}
 
 		u16 Id = 0;
 		bool IsArray = false;
+		bool IsIterator = false;
 		bool HasDynamicSize = false; // DEPRECATED - Stored in FieldTypes now
 		BitLength Size = 0; // DEPRECATED - Stored in FieldTypes now
 		SerializableFieldType Type = SerializableFT_Plain; // DEPRECATED - Stored in FieldTypes now
