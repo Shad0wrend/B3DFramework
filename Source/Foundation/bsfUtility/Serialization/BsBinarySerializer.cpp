@@ -285,8 +285,14 @@ RTTIFieldTypeSchema FieldTypeMetaData::ToFieldTypeSchema(bool& outIsArray, bool&
 	return schema;
 }
 
-/** Handles the deserialization portion of BinarySerialized. */
-class DeserializationContext
+struct ObjectMetaData
+{
+	u32 ObjectMeta;
+	u32 TypeId;
+};
+
+/** Handles the deserialization portion of BinarySerializer. */
+class BinaryDeserializationContext
 {
 public:
 	/** Information about an object that is being deserialized. */
@@ -303,7 +309,7 @@ public:
 		SPtr<RTTISchema> Schema; /**< Schema that describes the object. */
 	};
 
-	DeserializationContext(FrameAllocator& allocator, BufferedBitstreamReader& stream, size_t dataEnd, BinarySerializerFlags flags, SerializationContext* rttiContext);
+	BinaryDeserializationContext(FrameAllocator& allocator, BufferedBitstreamReader& stream, size_t dataEnd, BinarySerializerFlags flags, SerializationContext* rttiContext);
 
 	/**
 	 * Deserializes a single IReflectable object. 
@@ -334,12 +340,6 @@ public:
 	static u32 ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, u32& objId, u32& objTypeId, bool& isBaseType);
 
 private:
-	struct ObjectMetaData // TODO - Move outside of the class
-	{
-		u32 ObjectMeta;
-		u32 TypeId;
-	};
-
 	/** Reads the current location of the stream and returns the object ID of an object referenced by a reflectable pointer field. */
 	u32 ReadReferencedReflectableObjectId() const;
 
@@ -389,11 +389,11 @@ private:
 	Map<u32, ObjectDeserializationData> mReflectableObjectsToDeserialize;
 };
 
-DeserializationContext::DeserializationContext(FrameAllocator& allocator, BufferedBitstreamReader& stream, size_t dataEnd, BinarySerializerFlags flags, SerializationContext* rttiContext)
+BinaryDeserializationContext::BinaryDeserializationContext(FrameAllocator& allocator, BufferedBitstreamReader& stream, size_t dataEnd, BinarySerializerFlags flags, SerializationContext* rttiContext)
 	: mAllocator(allocator), mStream(stream), mDataEnd(dataEnd), mFlags(flags), mRTTIContext(rttiContext)
 { }
 
-bool DeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema> outputObjectSchema, const SPtr<IReflectable>& output)
+bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema> outputObjectSchema, const SPtr<IReflectable>& output)
 {
 	const bool hasMeta = !mFlags.IsSet(BinarySerializerFlag::NoMeta);
 	const bool compressed = mFlags.IsSet(BinarySerializerFlag::Compress);
@@ -936,7 +936,7 @@ bool DeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema> outpu
 	return false;
 }
 
-u32 DeserializationContext::ReadReferencedReflectableObjectId() const
+u32 BinaryDeserializationContext::ReadReferencedReflectableObjectId() const
 {
 	const bool isCompressed = mFlags.IsSet(BinarySerializerFlag::Compress);
 
@@ -949,7 +949,7 @@ u32 DeserializationContext::ReadReferencedReflectableObjectId() const
 	return childObjectId;
 }
 
-void DeserializationContext::EnsureReflectableObjectExists(u32 reflectableObjectId, const SPtr<RTTISchema>& objectSchema)
+void BinaryDeserializationContext::EnsureReflectableObjectExists(u32 reflectableObjectId, const SPtr<RTTISchema>& objectSchema)
 {
 	auto foundExisting = mReflectableObjectsToDeserialize.find(reflectableObjectId);
 
@@ -960,7 +960,7 @@ void DeserializationContext::EnsureReflectableObjectExists(u32 reflectableObject
 	mReflectableObjectsToDeserialize.insert(std::make_pair(reflectableObjectId, ObjectDeserializationData(object, ~0u, objectSchema)));
 }
 
-SPtr<IReflectable> DeserializationContext::GetOrDeserializeReflectableObject(u32 reflectableObjectId, const SPtr<RTTISchema>& objectSchema)
+SPtr<IReflectable> BinaryDeserializationContext::GetOrDeserializeReflectableObject(u32 reflectableObjectId, const SPtr<RTTISchema>& objectSchema)
 {
 	auto foundExisting = mReflectableObjectsToDeserialize.find(reflectableObjectId);
 	if(foundExisting == mReflectableObjectsToDeserialize.end())
@@ -999,7 +999,7 @@ SPtr<IReflectable> DeserializationContext::GetOrDeserializeReflectableObject(u32
 	return objectToDeserialize.Object;
 }
 
-DeserializationContext::ObjectDeserializationData* DeserializationContext::GetObjectDeserializationData(u32 reflectableObjectId)
+BinaryDeserializationContext::ObjectDeserializationData* BinaryDeserializationContext::GetObjectDeserializationData(u32 reflectableObjectId)
 {
 	auto found = mReflectableObjectsToDeserialize.find(reflectableObjectId);
 	if(found == mReflectableObjectsToDeserialize.end())
@@ -1008,7 +1008,7 @@ DeserializationContext::ObjectDeserializationData* DeserializationContext::GetOb
 	return &found->second;
 }
 
-SPtr<IReflectable> DeserializationContext::GetReflectableObject(u32 reflectableObjectId) const
+SPtr<IReflectable> BinaryDeserializationContext::GetReflectableObject(u32 reflectableObjectId) const
 {
 	auto foundExisting = mReflectableObjectsToDeserialize.find(reflectableObjectId);
 	if(foundExisting == mReflectableObjectsToDeserialize.end())
@@ -1022,13 +1022,13 @@ SPtr<IReflectable> DeserializationContext::GetReflectableObject(u32 reflectableO
 	return foundExisting->second.Object;
 }
 
-void DeserializationContext::CreateReflectableObject(u32 reflectableObjectId, u32 reflectableObjectTypeId, u64 locationInStream, const SPtr<RTTISchema>& objectSchema)
+void BinaryDeserializationContext::CreateReflectableObject(u32 reflectableObjectId, u32 reflectableObjectTypeId, u64 locationInStream, const SPtr<RTTISchema>& objectSchema)
 {
 	const SPtr<IReflectable>& object = IReflectable::CreateInstanceFromTypeId(reflectableObjectTypeId);
 	mReflectableObjectsToDeserialize.insert(std::make_pair(reflectableObjectId, ObjectDeserializationData(object, locationInStream, objectSchema)));
 }
 
-RTTIFieldSchema DeserializationContext::ReadFieldMetaData(BufferedBitstreamReader& stream, bool& terminator)
+RTTIFieldSchema BinaryDeserializationContext::ReadFieldMetaData(BufferedBitstreamReader& stream, bool& terminator)
 {
 	u32 fieldMetaData;
 	stream.ReadBytes(fieldMetaData);
@@ -1072,7 +1072,7 @@ RTTIFieldSchema DeserializationContext::ReadFieldMetaData(BufferedBitstreamReade
 	return fieldSchema;
 }
 
-void DeserializationContext::SkipBuiltinType(u32 fieldType, BufferedBitstreamReader& stream, bool compressed)
+void BinaryDeserializationContext::SkipBuiltinType(u32 fieldType, BufferedBitstreamReader& stream, bool compressed)
 {
 	switch(fieldType)
 	{
@@ -1103,7 +1103,7 @@ void DeserializationContext::SkipBuiltinType(u32 fieldType, BufferedBitstreamRea
 	}
 }
 
-bool DeserializationContext::IsFieldTerminator(u8 data)
+bool BinaryDeserializationContext::IsFieldTerminator(u8 data)
 {
 	if(IsObjectMetaData(data))
 	{
@@ -1113,7 +1113,7 @@ bool DeserializationContext::IsFieldTerminator(u8 data)
 	return (data & 0x40) != 0;
 }
 
-void DeserializationContext::DecodeObjectMetaData(ObjectMetaData encodedData, u32& objId, u32& objTypeId, bool& isBaseClass)
+void BinaryDeserializationContext::DecodeObjectMetaData(ObjectMetaData encodedData, u32& objId, u32& objTypeId, bool& isBaseClass)
 {
 	if(!IsObjectMetaData(encodedData.ObjectMeta))
 	{
@@ -1124,7 +1124,7 @@ void DeserializationContext::DecodeObjectMetaData(ObjectMetaData encodedData, u3
 	objTypeId = encodedData.TypeId;
 }
 
-void DeserializationContext::DecodeObjectMetaData(u32 encodedData, u32& objId, bool& isBaseClass)
+void BinaryDeserializationContext::DecodeObjectMetaData(u32 encodedData, u32& objId, bool& isBaseClass)
 {
 	if(!IsObjectMetaData(encodedData))
 	{
@@ -1135,12 +1135,12 @@ void DeserializationContext::DecodeObjectMetaData(u32 encodedData, u32& objId, b
 	isBaseClass = (encodedData & 0x02) != 0;
 }
 
-bool DeserializationContext::IsObjectMetaData(u32 encodedData)
+bool BinaryDeserializationContext::IsObjectMetaData(u32 encodedData)
 {
 	return ((encodedData & 0x01) != 0);
 }
 
-u32 DeserializationContext::ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, uint32_t& objId, uint32_t& objTypeId, bool& isBaseType)
+u32 BinaryDeserializationContext::ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, uint32_t& objId, uint32_t& objTypeId, bool& isBaseType)
 {
 	if(!flags.IsSet(BinarySerializerFlag::NoMeta))
 	{
@@ -1176,27 +1176,516 @@ u32 DeserializationContext::ReadObjectMetaData(BufferedBitstreamReader& stream, 
 	}
 }
 
+/** Handles the serialization portion of BinarySerializer. */
+class BinarySerializationContext
+{
+public:
+	/** Information about an object that is being serialized. */
+	struct ObjectToSerialize
+	{
+		ObjectToSerialize(u32 objectId, SPtr<IReflectable> object)
+			: ObjectId(objectId), Object(std::move(object))
+		{}
+
+		u32 ObjectId;
+		SPtr<IReflectable> Object;
+	};
+
+	BinarySerializationContext(FrameAllocator& allocator, BufferedBitstreamWriter& stream, BinarySerializerFlags flags, SerializationContext* rttiContext);
+
+	/**
+	 * Serializes a single IReflectable object. Any pointers referencing other reflectable types will be registered in mObjectsToSerialize, and
+	 * this method should also be called over all objects registered in that array.
+	 *
+	 * @param	object								Object to serialize.
+	 * @param	objectId							Persistent ID of the object in the serialized data. See FindOrCreateReflectableObjectId().
+	 * @param	outReferencedObjectsToSerialize		A list of all reflectable object pointers in the provided object, that haven't yet been serialized. You should call this method on them as well, so
+	 *												references may be restored.
+	 * @return										True if successful, false otherwise.
+	 */
+	bool SerializeReflectableObject(IReflectable* object, u32 objectId, Vector<ObjectToSerialize>& outReferencedObjectsToSerialize);
+
+	/**	Finds an existing, or creates a unique unique ID for the specified object. See RegisterChildObjectForSerialization. */
+	u32 FindOrCreateReflectableObjectId(IReflectable* object);
+private:
+	/**
+	 * Serializes an IReflectable inline as a field value. This is opposed to serializing a reflectable by pointer, which
+	 * are stored later in the serialized data, and the field value only stores the object ID.
+	 */
+	bool SerializeReflectableObjectInline(IReflectable* object, Vector<ObjectToSerialize>& outReferencedObjectsToSerialize);
+
+	/**
+	 * Adds the object to the list of objects that still need to be serialized. Assigns the object a unique ID
+	 * or returns a previously assigned one, if the object was already registered. This ID will be stored when the object
+	 * is serialized, and may be used for referencing the object in the serialized data.
+	 */
+	u32 RegisterReflectableObjectForSerialization(SPtr<IReflectable> object, Vector<ObjectToSerialize>& outReferencedObjectsToSerialize);
+
+	/** Encodes and writes data required for representing a serialized field, into the provided stream. */
+	static void WriteFieldMetaData(const RTTIFieldSchema& fieldSchema, bool isLastFieldInType, BufferedBitstreamWriter& stream);
+
+	/** Encodes data representing a field terminator into 1 byte. */
+	static u8 EncodeFieldTerminator();
+
+	/**
+	 * Encodes an object identifier, its type and other meta-data into 8 bytes.
+	 *
+	 * @param[in]	objId	   	Unique ID of the object instance. This can be a maximum of 30 bits, as two bits are reserved.
+	 * @param[in]	objTypeId  	Unique ID of the object type.
+	 * @param[in]	isBaseClass	True if this object is base class (that is, just a part of a larger object).
+	 * @return		Encoded object id, type ID and other meta-data.
+	 */
+	static ObjectMetaData EncodeObjectMetaData(u32 objId, u32 objTypeId, bool isBaseClass);
+
+	/**
+	 * Encodes an object identifier and meta-data into 4 bytes.
+	 *
+	 * @param[in]	objId	   	Unique ID of the object instance. This can be a maximum of 30 bits, as two bits are reserved.
+	 * @param[in]	isBaseClass	true if this object is base class (that is, just a part of a larger object).
+	 * @return		Encoded object id and other meta-data.
+	 */
+	static u32 EncodeObjectMetaData(u32 objId, bool isBaseClass);
+
+	FrameAllocator& mAllocator;
+	BufferedBitstreamWriter mStream;
+	BinarySerializerFlags mFlags;
+	SerializationContext* mRTTIContext = nullptr;
+	UnorderedMap<void*, u32> mReflectableObjectToID;
+	u32 mLastUsedObjectId = 1;
+};
+
+bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object, u32 objectId, Vector<ObjectToSerialize>& outReferencedObjectsToSerialize)
+{
+	const bool writeMeta = !mFlags.IsSet(BinarySerializerFlag::NoMeta);
+	const bool compress = mFlags.IsSet(BinarySerializerFlag::Compress);
+
+	RTTITypeBase* rtti = object->GetRtti();
+	bool isBaseClass = false;
+
+	FrameStack<RTTITypeBase*> rttiInstances;
+
+	const auto cleanup = [&]() // TODO - Use scope guard
+	{
+		while(!rttiInstances.empty())
+		{
+			RTTITypeBase* rttiInstance = rttiInstances.top();
+			rttiInstance->OnSerializationEnded(object, mRTTIContext);
+			mAllocator.Destruct(rttiInstance);
+
+			rttiInstances.pop();
+		}
+	};
+
+	// If an object has base classes, we need to iterate through all of them
+	do
+	{
+		RTTITypeBase* rttiInstance = rtti->CloneInternal(mAllocator);
+		rttiInstances.push(rttiInstance);
+
+		rttiInstance->OnSerializationStarted(object, mRTTIContext);
+
+		if(writeMeta)
+		{
+			// Encode object ID & type
+			ObjectMetaData objectMetaData = EncodeObjectMetaData(objectId, rtti->GetRttiId(), isBaseClass);
+			mStream.WriteBytes(objectMetaData);
+		}
+		else
+		{
+			// Encode object ID
+			u32 objectMetaData = EncodeObjectMetaData(objectId, isBaseClass);
+
+			if(compress)
+				mStream.WriteVarInt(objectMetaData);
+			else
+				mStream.WriteBytes(objectMetaData);
+		}
+
+		const u32 numFields = rtti->GetNumFields();
+		for(u32 i = 0; i < numFields; i++)
+		{
+			RTTIField* curGenericField = rtti->GetField(i);
+
+			if(writeMeta)
+			{
+				// Copy field ID & other meta-data like field size and type
+				WriteFieldMetaData(curGenericField->Schema, false, mStream);
+			}
+
+			if(curGenericField->Schema.IsIterator)
+			{
+				RTTIIteratorField* const field = static_cast<RTTIIteratorField*>(curGenericField);
+				UPtr<IRTTIIterator> iterator = field->GetIterator(rttiInstance, object, mAllocator);
+
+				if(field->Schema.IsArray)
+				{
+					u32 elementCount = 0;
+					if(iterator != nullptr)
+						elementCount = (u32)iterator->GetElementCount();
+
+					// Copy num vector elements
+					if(compress)
+						mStream.WriteVarInt(elementCount);
+					else
+						mStream.WriteBytes(elementCount);
+				}
+
+				if(iterator != nullptr)
+				{
+					for(; iterator->IsValid(); iterator->Increment())
+					{
+						const void* fieldValue = iterator->GetValue();
+						for(u32 typeIndex = 0; typeIndex < (u32)field->Schema.FieldTypes.Size(); ++typeIndex)
+						{
+							const RTTIFieldTypeSchema& typeSchema = field->Schema.FieldTypes[typeIndex];
+							switch(typeSchema.Type)
+							{
+							case SerializableFT_ReflectablePtr:
+								{
+									SPtr<IReflectable> childObject;
+
+									if(!mFlags.IsSet(BinarySerializerFlag::Shallow))
+										childObject = field->GetReflectablePointer(fieldValue, typeIndex);
+
+									const u32 objectId = RegisterReflectableObjectForSerialization(childObject, outReferencedObjectsToSerialize);
+									if(compress)
+										mStream.WriteVarInt(objectId);
+									else
+										mStream.WriteBytes(objectId);
+
+									break;
+								}
+							case SerializableFT_Reflectable:
+								{
+									const IReflectable& childObject = field->GetReflectable(fieldValue, typeIndex);
+									if(!SerializeReflectableObjectInline(const_cast<IReflectable*>(&childObject), outReferencedObjectsToSerialize)) // TODO - Get rid of const cast
+									{
+										cleanup();
+										return false;
+									}
+
+									break;
+								}
+							case SerializableFT_Plain:
+								{
+									field->WritePlainTypeTupleToStream(fieldValue, typeIndex, mStream.GetBitstream(), compress);
+									break;
+								}
+							default:
+								B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, field->Schema.IsArray);
+							}
+						}
+					}
+				}
+			}
+			else if(curGenericField->Schema.IsArray)
+			{
+				u32 arrayNumElems = curGenericField->GetArraySize(rttiInstance, object);
+
+				// Copy num vector elements
+				if(compress)
+					mStream.WriteVarInt(arrayNumElems);
+				else
+					mStream.WriteBytes(arrayNumElems);
+
+				switch(curGenericField->Schema.Type)
+				{
+				case SerializableFT_ReflectablePtr:
+					{
+						auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
+
+						for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
+						{
+							SPtr<IReflectable> childObject;
+
+							if(!mFlags.IsSet(BinarySerializerFlag::Shallow))
+								childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
+
+							u32 objId = RegisterReflectableObjectForSerialization(childObject, outReferencedObjectsToSerialize);
+							if(compress)
+								mStream.WriteVarInt(objId);
+							else
+								mStream.WriteBytes(objId);
+						}
+
+						break;
+					}
+				case SerializableFT_Reflectable:
+					{
+						auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
+
+						for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
+						{
+							IReflectable& childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
+
+							if(!SerializeReflectableObjectInline(&childObject, outReferencedObjectsToSerialize))
+							{
+								cleanup();
+								return false;
+							}
+						}
+
+						break;
+					}
+				case SerializableFT_Plain:
+					{
+						auto* curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
+
+						for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
+							curField->ArrayElemToStream(rttiInstance, object, arrIdx, mStream.GetBitstream(), compress);
+
+						break;
+					}
+				default:
+					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", curGenericField->Schema.Type, curGenericField->Schema.IsArray);
+				}
+			}
+			else
+			{
+				switch(curGenericField->Schema.Type)
+				{
+				case SerializableFT_ReflectablePtr:
+					{
+						auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
+						SPtr<IReflectable> childObject;
+
+						if(!mFlags.IsSet(BinarySerializerFlag::Shallow))
+							childObject = curField->GetValue(rttiInstance, object);
+
+						u32 objId = RegisterReflectableObjectForSerialization(childObject, outReferencedObjectsToSerialize);
+						if(compress)
+							mStream.WriteVarInt(objId);
+						else
+							mStream.WriteBytes(objId);
+
+						break;
+					}
+				case SerializableFT_Reflectable:
+					{
+						auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
+						IReflectable& childObject = curField->GetValue(rttiInstance, object);
+
+						if(!SerializeReflectableObjectInline(&childObject, outReferencedObjectsToSerialize))
+						{
+							cleanup();
+							return false;
+						}
+
+						break;
+					}
+				case SerializableFT_Plain:
+					{
+						auto* curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
+						curField->ToStream(rttiInstance, object, mStream.GetBitstream(), compress);
+
+						break;
+					}
+				case SerializableFT_DataBlock:
+					{
+						auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(curGenericField);
+
+						u32 dataBlockSize = 0;
+						SPtr<DataStream> blockStream = curField->GetValue(rttiInstance, object, dataBlockSize);
+
+						// Data block size
+						if(compress)
+							mStream.WriteVarInt(dataBlockSize);
+						else
+							mStream.WriteBytes(dataBlockSize);
+
+						// Data block data
+						auto dataToStore = (u8*)B3DStackAllocate(dataBlockSize);
+						blockStream->Read(dataToStore, dataBlockSize);
+
+						mStream.Align();
+						mStream.WriteBytes(dataToStore, dataBlockSize);
+						B3DStackFree(dataToStore);
+
+						break;
+					}
+				default:
+					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", curGenericField->Schema.Type, curGenericField->Schema.IsArray);
+				}
+			}
+
+			mStream.Flush(false);
+		}
+
+		rtti = rtti->GetBaseClass();
+		isBaseClass = true;
+	}
+	while(rtti != nullptr); // Repeat until we reach the top of the inheritance hierarchy
+
+	cleanup();
+
+	return true;
+}
+
+u8 BinarySerializationContext::EncodeFieldTerminator()
+{
+	// See the documentation for WriteFieldMetaData() on why we're using this format
+	return 0x40;
+}
+
+bool BinarySerializationContext::SerializeReflectableObjectInline(IReflectable* object, Vector<ObjectToSerialize>& outReferencedObjectsToSerialize)
+{
+	if(object != nullptr)
+	{
+		if(!SerializeReflectableObject(object, 0, outReferencedObjectsToSerialize))
+			return false;
+
+		if(!mFlags.IsSet(BinarySerializerFlag::NoMeta))
+		{
+			// Encode terminator field
+			// Complex types require terminator fields because they can be embedded within other complex types and we need
+			// to know when their fields end and parent's resume
+			if(mFlags.IsSet(BinarySerializerFlag::Compress))
+			{
+				u8 metaData = EncodeFieldTerminator();
+				mStream.WriteBytes(metaData);
+			}
+			else
+				WriteFieldMetaData(RTTIFieldSchema(), true, mStream);
+		}
+	}
+
+	return true;
+}
+
+void BinarySerializationContext::WriteFieldMetaData(const RTTIFieldSchema& fieldSchema, bool isLastFieldInType, BufferedBitstreamWriter& stream)
+{
+	// If O == 0 - Meta contains field information (Encoded using this method)
+	//// Encoding if E = 0: IIII IIII IIII IIII SSSS SSSS ETFF FFFO
+	//// Encoding if E = 1: IIII IIII IIII IIII BBBB xxxx ETFF FFFO
+	//// I - Id
+	//// S - Size
+	//// F - Field type enum bits
+	//// O - Object descriptor
+	//// T - Terminator (last field in an inline object)
+	//// E - Extended (size is replaced with additional meta-data)
+	//// B - Built-in type ID
+
+	FieldTypeMetaData firstFieldTypeMetaData;
+	if(fieldSchema.FieldTypes.Empty()) // Old approach, single field type
+	{
+		const RTTIFieldTypeSchema fieldTypeSchema(fieldSchema.HasDynamicSize, fieldSchema.Size, fieldSchema.Type, fieldSchema.FieldTypeId, fieldSchema.FieldTypeSchema);
+		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldTypeSchema, isLastFieldInType, false);
+	}
+	else
+	{
+		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldTypes[0], isLastFieldInType, fieldSchema.FieldTypes.Size() > 1);
+	}
+
+	// Encodes field ID and meta-data for the first type
+	const u32 fieldMetaData = fieldSchema.Id << 16 | (u32)firstFieldTypeMetaData.PackedData;
+	stream.WriteBytes(fieldMetaData);
+
+	const u32 fieldTypeCount = (u32)fieldSchema.FieldTypes.Size();
+	for(u32 fieldTypeIndex = 1; fieldTypeIndex < fieldTypeCount; fieldTypeIndex++)
+	{
+		const bool isLastFieldType = (fieldTypeIndex + 1) == fieldTypeCount;
+		FieldTypeMetaData additionalFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldTypes[fieldTypeIndex], false, isLastFieldType);
+
+		stream.WriteBytes(additionalFieldTypeMetaData.PackedData);
+	}
+}
+
+ObjectMetaData BinarySerializationContext::EncodeObjectMetaData(u32 objId, u32 objTypeId, bool isBaseClass)
+{
+	// If O == 1 - Meta contains object instance information (Encoded using encodeObjectMetaData)
+	//// Encoding: SSSS SSSS SSSS SSSS xxxx xxxx xxxx xxBO
+	//// S - Size of the object identifier
+	//// O - Object descriptor
+	//// B - Base class indicator
+
+	if(objId > 1073741823)
+	{
+		B3D_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
+	}
+
+	ObjectMetaData metaData;
+	metaData.ObjectMeta = EncodeObjectMetaData(objId, isBaseClass);
+	metaData.TypeId = objTypeId;
+	return metaData;
+}
+
+u32 BinarySerializationContext::EncodeObjectMetaData(u32 objId, bool isBaseClass)
+{
+	// If O == 1 - Meta contains object instance information (Encoded using encodeObjectMetaData)
+	//// Encoding: SSSS SSSS SSSS SSSS xxxx xxxx xxxx xxBO
+	//// S - Size of the object identifier
+	//// O - Object descriptor
+	//// B - Base class indicator
+
+	if(objId > 1073741823)
+	{
+		B3D_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
+	}
+
+	return (objId << 2) | (isBaseClass ? 0x02 : 0) | 0x01;
+}
+
+u32 BinarySerializationContext::FindOrCreateReflectableObjectId(IReflectable* object)
+{
+	void* const objectMemoryAddress = object;
+
+	auto found = mReflectableObjectToID.find(objectMemoryAddress);
+	if(found != mReflectableObjectToID.end())
+		return found->second;
+
+	u32 objId = mLastUsedObjectId++;
+	mReflectableObjectToID.insert(std::make_pair(objectMemoryAddress, objId));
+
+	return objId;
+}
+
+u32 BinarySerializationContext::RegisterReflectableObjectForSerialization(SPtr<IReflectable> object, Vector<ObjectToSerialize>& outReferencedObjectsToSerialize)
+{
+	if(object == nullptr)
+		return 0;
+
+	void* const objectMemoryAddress = object.get();
+
+	auto found = mReflectableObjectToID.find(objectMemoryAddress);
+	if(found == mReflectableObjectToID.end())
+	{
+		const u32 objectId = FindOrCreateReflectableObjectId(object.get());
+
+		outReferencedObjectsToSerialize.push_back(ObjectToSerialize(objectId, object));
+		mReflectableObjectToID.insert(std::make_pair(objectMemoryAddress, objectId));
+
+		return objectId;
+	}
+
+	return found->second;
+}
+
+
+BinarySerializationContext::BinarySerializationContext(FrameAllocator& allocator, BufferedBitstreamWriter& stream, BinarySerializerFlags flags, SerializationContext* rttiContext)
+	: mAllocator(allocator), mStream(stream), mFlags(flags), mRTTIContext(rttiContext)
+{ }
+
 BinarySerializer::BinarySerializer()
 	: mAlloc(&GetFrameAllocator())
 {}
 
-void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags, SerializationContext* context)
+void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags, SerializationContext* rttiContext)
 {
-	mReflectableObjectsToSerialize.clear();
-	mReflectableObjectToID.clear();
-	mLastUsedObjectId = 1;
-	mContext = context;
+	mContext = rttiContext;
 	mBuffer.Seek(0);
 
 	mAlloc->MarkFrame();
 
 	BufferedBitstreamWriter bufferedStream(&mBuffer, stream, kWriteBufferSize, kFlushAfterBytes);
+	BinarySerializationContext serializationContext(*mAlloc, bufferedStream, flags, rttiContext);
 
 	Vector<SPtr<IReflectable>> encodedObjects;
-	u32 objectId = FindOrCreateReflectableObjectId(object);
+	u32 objectId = serializationContext.FindOrCreateReflectableObjectId(object);
+
+	Vector<BinarySerializationContext::ObjectToSerialize> referencedObjectsToSerialize;
 
 	// Encode primary object and its value types
-	if(!SerializeReflectableObject(object, objectId, bufferedStream, flags))
+	if(!serializationContext.SerializeReflectableObject(object, objectId, referencedObjectsToSerialize))
 	{
 		B3D_LOG(Error, Serialization, "Destination buffer is null or not large enough.");
 		return;
@@ -1206,9 +1695,9 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 	UnorderedSet<u32> serializedObjects;
 	while(true)
 	{
-		auto iter = mReflectableObjectsToSerialize.begin();
+		auto iter = referencedObjectsToSerialize.begin();
 		bool foundObjectToProcess = false;
-		for(; iter != mReflectableObjectsToSerialize.end(); ++iter)
+		for(; iter != referencedObjectsToSerialize.end(); ++iter)
 		{
 			auto foundExisting = serializedObjects.find(iter->ObjectId);
 			if(foundExisting != serializedObjects.end())
@@ -1217,9 +1706,9 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 			SPtr<IReflectable> curObject = iter->Object;
 			u32 curObjectid = iter->ObjectId;
 			serializedObjects.insert(curObjectid);
-			mReflectableObjectsToSerialize.erase(iter); // TODO - Should update iter to returned value from erase()
+			referencedObjectsToSerialize.erase(iter); // TODO - Should update iter to returned value from erase()
 
-			if(!SerializeReflectableObject(curObject.get(), curObjectid, bufferedStream, flags))
+			if(!serializationContext.SerializeReflectableObject(curObject.get(), curObjectid, referencedObjectsToSerialize))
 			{
 				B3D_LOG(Error, Serialization, "Destination buffer is null or not large enough.");
 				return;
@@ -1243,8 +1732,6 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 	bufferedStream.Flush(true);
 
 	encodedObjects.clear();
-	mReflectableObjectsToSerialize.clear();
-	mReflectableObjectToID.clear();
 
 	mAlloc->Clear();
 }
@@ -1284,7 +1771,7 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 	}
 
 	BufferedBitstreamReader bufferedStream(&mBuffer, stream, kPreloadChunkBytes, kFlushAfterBytes);
-	DeserializationContext deserializationContext(*mAlloc, bufferedStream, endBits, flags, context);
+	BinaryDeserializationContext deserializationContext(*mAlloc, bufferedStream, endBits, flags, context);
 
 	auto fnReportProgress = [this, &bufferedStream]()
 	{
@@ -1333,7 +1820,7 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 			else
 			{
 				// If no meta, it's expected the pass over the root object has populated mDecodeObjectMap with object instances as well as references to the schema
-				DeserializationContext::ObjectDeserializationData* const objectToDeserialize = deserializationContext.GetObjectDeserializationData(objectId);
+				BinaryDeserializationContext::ObjectDeserializationData* const objectToDeserialize = deserializationContext.GetObjectDeserializationData(objectId);
 				B3D_ASSERT(objectToDeserialize != nullptr);
 
 				objectToDeserialize->Offset = bufferedStream.Tell();
@@ -1355,7 +1842,7 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 	bufferedStream.Seek((uint64_t)start * 8);
 
 	// Now actually decode the objects
-	DeserializationContext::ObjectDeserializationData* const rootObjectToDeserialize = deserializationContext.GetObjectDeserializationData(rootObjectId);
+	BinaryDeserializationContext::ObjectDeserializationData* const rootObjectToDeserialize = deserializationContext.GetObjectDeserializationData(rootObjectId);
 	B3D_ASSERT(rootObjectToDeserialize != nullptr);
 
 	SPtr<IReflectable> rootObject = rootObjectToDeserialize->Object;
@@ -1374,412 +1861,6 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 		mReportProgress(1.0f);
 
 	return rootObject;
-}
-
-bool BinarySerializer::SerializeReflectableObject(IReflectable* object, u32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags)
-{
-	const bool writeMeta = !flags.IsSet(BinarySerializerFlag::NoMeta);
-	const bool compress = flags.IsSet(BinarySerializerFlag::Compress);
-
-	RTTITypeBase* rtti = object->GetRtti();
-	bool isBaseClass = false;
-
-	FrameStack<RTTITypeBase*> rttiInstances;
-
-	const auto cleanup = [&]() // TODO - Use scope guard
-	{
-		while(!rttiInstances.empty())
-		{
-			RTTITypeBase* rttiInstance = rttiInstances.top();
-			rttiInstance->OnSerializationEnded(object, mContext);
-			mAlloc->Destruct(rttiInstance);
-
-			rttiInstances.pop();
-		}
-	};
-
-	// If an object has base classes, we need to iterate through all of them
-	do
-	{
-		RTTITypeBase* rttiInstance = rtti->CloneInternal(*mAlloc);
-		rttiInstances.push(rttiInstance);
-
-		rttiInstance->OnSerializationStarted(object, mContext);
-
-		if(writeMeta)
-		{
-			// Encode object ID & type
-			ObjectMetaData objectMetaData = EncodeObjectMetaData(objectId, rtti->GetRttiId(), isBaseClass);
-			stream.WriteBytes(objectMetaData);
-		}
-		else
-		{
-			// Encode object ID
-			u32 objectMetaData = EncodeObjectMetaData(objectId, isBaseClass);
-
-			if(compress)
-				stream.WriteVarInt(objectMetaData);
-			else
-				stream.WriteBytes(objectMetaData);
-		}
-
-		const u32 numFields = rtti->GetNumFields();
-		for(u32 i = 0; i < numFields; i++)
-		{
-			RTTIField* curGenericField = rtti->GetField(i);
-
-			if(writeMeta)
-			{
-				// Copy field ID & other meta-data like field size and type
-				WriteFieldMetaData(curGenericField->Schema, false, stream);
-			}
-
-			if(curGenericField->Schema.IsIterator)
-			{
-				RTTIIteratorField* const field = static_cast<RTTIIteratorField*>(curGenericField);
-				UPtr<IRTTIIterator> iterator = field->GetIterator(rttiInstance, object, *mAlloc);
-
-				if(field->Schema.IsArray)
-				{
-					u32 elementCount = 0;
-					if(iterator != nullptr)
-						elementCount = (u32)iterator->GetElementCount();
-
-					// Copy num vector elements
-					if(compress)
-						stream.WriteVarInt(elementCount);
-					else
-						stream.WriteBytes(elementCount);
-				}
-
-				if(iterator != nullptr)
-				{
-					for(; iterator->IsValid(); iterator->Increment())
-					{
-						const void* fieldValue = iterator->GetValue();
-						for(u32 typeIndex = 0; typeIndex < (u32)field->Schema.FieldTypes.Size(); ++typeIndex)
-						{
-							const RTTIFieldTypeSchema& typeSchema = field->Schema.FieldTypes[typeIndex];
-							switch(typeSchema.Type)
-							{
-							case SerializableFT_ReflectablePtr:
-								{
-									SPtr<IReflectable> childObject;
-
-									if(!flags.IsSet(BinarySerializerFlag::Shallow))
-										childObject = field->GetReflectablePointer(fieldValue, typeIndex);
-
-									const u32 objectId = RegisterReflectableObjectForSerialization(childObject);
-									if(compress)
-										stream.WriteVarInt(objectId);
-									else
-										stream.WriteBytes(objectId);
-
-									break;
-								}
-							case SerializableFT_Reflectable:
-								{
-									const IReflectable& childObject = field->GetReflectable(fieldValue, typeIndex);
-									if(!SerializeReflectableObjectInline(const_cast<IReflectable*>(&childObject), stream, flags)) // TODO - Get rid of const cast
-									{
-										cleanup();
-										return false;
-									}
-
-									break;
-								}
-							case SerializableFT_Plain:
-								{
-									field->WritePlainTypeTupleToStream(fieldValue, typeIndex, stream.GetBitstream(), compress);
-									break;
-								}
-							default:
-								B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, field->Schema.IsArray);
-							}
-						}
-					}
-				}
-			}
-			else if(curGenericField->Schema.IsArray)
-			{
-				u32 arrayNumElems = curGenericField->GetArraySize(rttiInstance, object);
-
-				// Copy num vector elements
-				if(compress)
-					stream.WriteVarInt(arrayNumElems);
-				else
-					stream.WriteBytes(arrayNumElems);
-
-				switch(curGenericField->Schema.Type)
-				{
-				case SerializableFT_ReflectablePtr:
-					{
-						auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
-
-						for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
-						{
-							SPtr<IReflectable> childObject;
-
-							if(!flags.IsSet(BinarySerializerFlag::Shallow))
-								childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
-
-							u32 objId = RegisterReflectableObjectForSerialization(childObject);
-							if(compress)
-								stream.WriteVarInt(objId);
-							else
-								stream.WriteBytes(objId);
-						}
-
-						break;
-					}
-				case SerializableFT_Reflectable:
-					{
-						auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
-
-						for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
-						{
-							IReflectable& childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
-
-							if(!SerializeReflectableObjectInline(&childObject, stream, flags))
-							{
-								cleanup();
-								return false;
-							}
-						}
-
-						break;
-					}
-				case SerializableFT_Plain:
-					{
-						auto* curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
-
-						for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
-							curField->ArrayElemToStream(rttiInstance, object, arrIdx, stream.GetBitstream(), compress);
-
-						break;
-					}
-				default:
-					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", curGenericField->Schema.Type, curGenericField->Schema.IsArray);
-				}
-			}
-			else
-			{
-				switch(curGenericField->Schema.Type)
-				{
-				case SerializableFT_ReflectablePtr:
-					{
-						auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
-						SPtr<IReflectable> childObject;
-
-						if(!flags.IsSet(BinarySerializerFlag::Shallow))
-							childObject = curField->GetValue(rttiInstance, object);
-
-						u32 objId = RegisterReflectableObjectForSerialization(childObject);
-						if(compress)
-							stream.WriteVarInt(objId);
-						else
-							stream.WriteBytes(objId);
-
-						break;
-					}
-				case SerializableFT_Reflectable:
-					{
-						auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
-						IReflectable& childObject = curField->GetValue(rttiInstance, object);
-
-						if(!SerializeReflectableObjectInline(&childObject, stream, flags))
-						{
-							cleanup();
-							return false;
-						}
-
-						break;
-					}
-				case SerializableFT_Plain:
-					{
-						auto* curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
-						curField->ToStream(rttiInstance, object, stream.GetBitstream(), compress);
-
-						break;
-					}
-				case SerializableFT_DataBlock:
-					{
-						auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(curGenericField);
-
-						u32 dataBlockSize = 0;
-						SPtr<DataStream> blockStream = curField->GetValue(rttiInstance, object, dataBlockSize);
-
-						// Data block size
-						if(compress)
-							stream.WriteVarInt(dataBlockSize);
-						else
-							stream.WriteBytes(dataBlockSize);
-
-						// Data block data
-						auto dataToStore = (u8*)B3DStackAllocate(dataBlockSize);
-						blockStream->Read(dataToStore, dataBlockSize);
-
-						stream.Align();
-						stream.WriteBytes(dataToStore, dataBlockSize);
-						B3DStackFree(dataToStore);
-
-						break;
-					}
-				default:
-					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", curGenericField->Schema.Type, curGenericField->Schema.IsArray);
-				}
-			}
-
-			stream.Flush(false);
-		}
-
-		rtti = rtti->GetBaseClass();
-		isBaseClass = true;
-	}
-	while(rtti != nullptr); // Repeat until we reach the top of the inheritance hierarchy
-
-	cleanup();
-
-	return true;
-}
-
-u8 BinarySerializer::EncodeFieldTerminator()
-{
-	// See the documentation for WriteFieldMetaData() on why we're using this format
-	return 0x40;
-}
-
-bool BinarySerializer::SerializeReflectableObjectInline(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags)
-{
-	if(object != nullptr)
-	{
-		if(!SerializeReflectableObject(object, 0, stream, flags))
-			return false;
-
-		if(!flags.IsSet(BinarySerializerFlag::NoMeta))
-		{
-			// Encode terminator field
-			// Complex types require terminator fields because they can be embedded within other complex types and we need
-			// to know when their fields end and parent's resume
-			if(flags.IsSet(BinarySerializerFlag::Compress))
-			{
-				u8 metaData = EncodeFieldTerminator();
-				stream.WriteBytes(metaData);
-			}
-			else
-				WriteFieldMetaData(RTTIFieldSchema(), true, stream);
-		}
-	}
-
-	return true;
-}
-
-void BinarySerializer::WriteFieldMetaData(const RTTIFieldSchema& fieldSchema, bool isLastFieldInType, BufferedBitstreamWriter& stream)
-{
-	// If O == 0 - Meta contains field information (Encoded using this method)
-	//// Encoding if E = 0: IIII IIII IIII IIII SSSS SSSS ETFF FFFO
-	//// Encoding if E = 1: IIII IIII IIII IIII BBBB xxxx ETFF FFFO
-	//// I - Id
-	//// S - Size
-	//// F - Field type enum bits
-	//// O - Object descriptor
-	//// T - Terminator (last field in an inline object)
-	//// E - Extended (size is replaced with additional meta-data)
-	//// B - Built-in type ID
-
-	FieldTypeMetaData firstFieldTypeMetaData;
-	if(fieldSchema.FieldTypes.Empty()) // Old approach, single field type
-	{
-		const RTTIFieldTypeSchema fieldTypeSchema(fieldSchema.HasDynamicSize, fieldSchema.Size, fieldSchema.Type, fieldSchema.FieldTypeId, fieldSchema.FieldTypeSchema);
-		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldTypeSchema, isLastFieldInType, false);
-	}
-	else
-	{
-		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldTypes[0], isLastFieldInType, fieldSchema.FieldTypes.Size() > 1);
-	}
-
-	// Encodes field ID and meta-data for the first type
-	const u32 fieldMetaData = fieldSchema.Id << 16 | (u32)firstFieldTypeMetaData.PackedData;
-	stream.WriteBytes(fieldMetaData);
-
-	const u32 fieldTypeCount = (u32)fieldSchema.FieldTypes.Size();
-	for(u32 fieldTypeIndex = 1; fieldTypeIndex < fieldTypeCount; fieldTypeIndex++)
-	{
-		const bool isLastFieldType = (fieldTypeIndex + 1) == fieldTypeCount;
-		FieldTypeMetaData additionalFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldTypes[fieldTypeIndex], false, isLastFieldType);
-
-		stream.WriteBytes(additionalFieldTypeMetaData.PackedData);
-	}
-}
-
-BinarySerializer::ObjectMetaData BinarySerializer::EncodeObjectMetaData(u32 objId, u32 objTypeId, bool isBaseClass)
-{
-	// If O == 1 - Meta contains object instance information (Encoded using encodeObjectMetaData)
-	//// Encoding: SSSS SSSS SSSS SSSS xxxx xxxx xxxx xxBO
-	//// S - Size of the object identifier
-	//// O - Object descriptor
-	//// B - Base class indicator
-
-	if(objId > 1073741823)
-	{
-		B3D_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
-	}
-
-	ObjectMetaData metaData;
-	metaData.ObjectMeta = EncodeObjectMetaData(objId, isBaseClass);
-	metaData.TypeId = objTypeId;
-	return metaData;
-}
-
-u32 BinarySerializer::EncodeObjectMetaData(u32 objId, bool isBaseClass)
-{
-	// If O == 1 - Meta contains object instance information (Encoded using encodeObjectMetaData)
-	//// Encoding: SSSS SSSS SSSS SSSS xxxx xxxx xxxx xxBO
-	//// S - Size of the object identifier
-	//// O - Object descriptor
-	//// B - Base class indicator
-
-	if(objId > 1073741823)
-	{
-		B3D_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
-	}
-
-	return (objId << 2) | (isBaseClass ? 0x02 : 0) | 0x01;
-}
-
-u32 BinarySerializer::FindOrCreateReflectableObjectId(IReflectable* object)
-{
-	void* const objectMemoryAddress = object;
-
-	auto found = mReflectableObjectToID.find(objectMemoryAddress);
-	if(found != mReflectableObjectToID.end())
-		return found->second;
-
-	u32 objId = mLastUsedObjectId++;
-	mReflectableObjectToID.insert(std::make_pair(objectMemoryAddress, objId));
-
-	return objId;
-}
-
-u32 BinarySerializer::RegisterReflectableObjectForSerialization(SPtr<IReflectable> object)
-{
-	if(object == nullptr)
-		return 0;
-
-	void* const objectMemoryAddress = object.get();
-
-	auto found = mReflectableObjectToID.find(objectMemoryAddress);
-	if(found == mReflectableObjectToID.end())
-	{
-		const u32 objectId = FindOrCreateReflectableObjectId(object.get());
-
-		mReflectableObjectsToSerialize.push_back(ObjectToSerialize(objectId, object));
-		mReflectableObjectToID.insert(std::make_pair(objectMemoryAddress, objectId));
-
-		return objectId;
-	}
-
-	return found->second;
 }
 
 #undef COPY_TO_BUFFER

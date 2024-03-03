@@ -76,12 +76,12 @@ namespace bs
 		 *										buffer so it may grow as required during encoding, or your must guarantee
 		 *										the stream is of adequate size otherwise.
 		 * @param[in]	flags					Flags used for controlling serialization.
-		 * @param[in]	context					Optional object that will be passed along to all serialized objects through
+		 * @param[in]	rttiContext					Optional object that will be passed along to all serialized objects through
 		 *										their serialization callbacks. Can be used for controlling serialization,
 		 *										maintaining state or sharing information between objects during
 		 *										serialization.
 		 */
-		void Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags = BinarySerializerFlag::None, SerializationContext* context = nullptr);
+		void Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags = BinarySerializerFlag::None, SerializationContext* rttiContext = nullptr);
 
 		/**
 		 * Decodes an object from binary data.
@@ -115,78 +115,6 @@ namespace bs
 		/** Determines the minimum amount of bytes to preload into the temporary buffer. */
 		static constexpr u32 kPreloadChunkBytes = (u32)(kWriteBufferSize * 0.25f);
 
-		struct ObjectMetaData
-		{
-			u32 ObjectMeta;
-			u32 TypeId;
-		};
-
-		struct ObjectToSerialize
-		{
-			ObjectToSerialize(u32 objectId, SPtr<IReflectable> object)
-				: ObjectId(objectId), Object(std::move(object))
-			{}
-
-			u32 ObjectId;
-			SPtr<IReflectable> Object;
-		};
-
-		/**
-		 * Serializes a single IReflectable object. Any pointers referencing other reflectable types will be registered in mObjectsToSerialize, and
-		 * this method should also be called over all objects registered in that array.
-		 *
-		 * @param	object		Object to serialize.
-		 * @param	objectId	Persistent ID of the object in the serialized data. See FindOrCreateReflectableObjectId().
-		 * @param	stream		Stream into which to serialize the object.
-		 * @param	flags		Flags used to control serialization.
-		 * @return				True if successful, false otherwise.
-		 */
-		bool SerializeReflectableObject(IReflectable* object, u32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
-
-		/**
-		 * Serializes an IReflectable inline as a field value. This is opposed to serializing a reflectable by pointer, which
-		 * are stored later in the serialized data, and the field value only stores the object ID.
-		 */
-		bool SerializeReflectableObjectInline(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
-
-		/**	Finds an existing, or creates a unique unique ID for the specified object. See RegisterChildObjectForSerialization. */
-		u32 FindOrCreateReflectableObjectId(IReflectable* object);
-
-		/**
-		 * Adds the object to the list of objects that need to be serialized in a later stage. Assigns the object a unique ID
-		 * or returns a previously assigned one, if the object was already registered. This ID will be stored when the object
-		 * is serialized, and may be used for referencing the object in the serialized data.
-		 */
-		u32 RegisterReflectableObjectForSerialization(SPtr<IReflectable> object);
-
-		/** Encodes and writes data required for representing a serialized field, into the provided stream. */
-		static void WriteFieldMetaData(const RTTIFieldSchema& fieldSchema, bool isLastFieldInType, BufferedBitstreamWriter& stream);
-
-		/** Encodes data representing a field terminator into 1 byte. */
-		static u8 EncodeFieldTerminator();
-
-		/**
-		 * Encodes an object identifier, its type and other meta-data into 8 bytes.
-		 *
-		 * @param[in]	objId	   	Unique ID of the object instance. This can be a maximum of 30 bits, as two bits are reserved.
-		 * @param[in]	objTypeId  	Unique ID of the object type.
-		 * @param[in]	isBaseClass	True if this object is base class (that is, just a part of a larger object).
-		 * @return		Encoded object id, type ID and other meta-data.
-		 */
-		static ObjectMetaData EncodeObjectMetaData(u32 objId, u32 objTypeId, bool isBaseClass);
-
-		/**
-		 * Encodes an object identifier and meta-data into 4 bytes.
-		 *
-		 * @param[in]	objId	   	Unique ID of the object instance. This can be a maximum of 30 bits, as two bits are reserved.
-		 * @param[in]	isBaseClass	true if this object is base class (that is, just a part of a larger object).
-		 * @return		Encoded object id and other meta-data.
-		 */
-		static u32 EncodeObjectMetaData(u32 objId, bool isBaseClass);
-
-		Vector<ObjectToSerialize> mReflectableObjectsToSerialize;
-		UnorderedMap<void*, u32> mReflectableObjectToID;
-		u32 mLastUsedObjectId = 1;
 		u32 mTotalBytesToRead = 0;
 		u32 mNextProgressReport = kReportAfterBytes;
 		FrameAllocator* mAlloc = nullptr;
