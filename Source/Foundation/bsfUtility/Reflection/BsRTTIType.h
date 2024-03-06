@@ -684,6 +684,9 @@ namespace bs
 		typedef Type OwnerType;
 		typedef MyRTTIType MyType;
 
+		template<typename DataType>
+		using UPtrRTTIIterator = UPtr<TRTTIIterator<DataType>, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType>>;
+
 		/** Registers a field referencing a plain type. */
 		template <class InterfaceType, class ObjectType, class DataType>
 		void AddPlainField(const String& name, u32 uniqueId, DataType& (InterfaceType::*getter)(ObjectType*), void (InterfaceType::*setter)(ObjectType*, DataType&), const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
@@ -766,13 +769,23 @@ namespace bs
 		/** Registers a field referencing an iterable container (such as an array or a map). */
 		template <class InterfaceType, class ObjectType, class DataType>
 		void AddIteratorField(const String& name, u32 uniqueId,
-			typename TRTTIIteratorField<InterfaceType, DataType, ObjectType>::GetIteratorDelegate getIteratorCallback,
-			typename TRTTIIteratorField<InterfaceType, DataType, ObjectType>::GetValueDelegate getValueCallback,
-			typename TRTTIIteratorField<InterfaceType, DataType, ObjectType>::SetValueDelegate setValueCallback,
+			UPtr<TRTTIIterator<DataType>, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType>> (InterfaceType::*getIteratorCallback)(ObjectType*, FrameAllocator&),
+			const typename DataType::value_type& (InterfaceType::*getValueCallback)(ObjectType*, FrameAllocator&, TRTTIIterator<DataType>&),
+			void (InterfaceType::*setValueCallback)(ObjectType*, FrameAllocator&, TRTTIIterator<DataType>&, const typename DataType::value_type&),
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
 			auto field = B3DNew<TRTTIIteratorField<InterfaceType, DataType, ObjectType>>(name, uniqueId, getIteratorCallback, getValueCallback, setValueCallback, info);
 			AddNewField(field);
+		}
+
+		/**
+		 * Helper function to create a RTTI iterator that may be used for reading or writing to the provided data type. Iterator will be allocated
+		 * using the provided frame allocator. Caller must ensure that allocator lives longer than the iterator.
+		 */
+		template<class DataType>
+		static UPtrRTTIIterator<DataType> CreateRTTIIterator(FrameAllocator& allocator, DataType& container)
+		{
+			return UPtrRTTIIterator<DataType>(allocator.Construct<TRTTIIterator<DataType>>(container), TRTTIIteratorDeleter<DataType>(&allocator));
 		}
 	};
 

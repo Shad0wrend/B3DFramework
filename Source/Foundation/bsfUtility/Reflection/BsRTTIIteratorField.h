@@ -21,10 +21,10 @@ namespace bs
 		virtual ~RTTIIteratorField() = default;
 
 		/** Returns the iterator that can be used for iterating all entries in the field. */
-		virtual UPtr<IRTTIIterator> GetIterator(RTTITypeBase* rttiType, void* object, FrameAllocator& frameAllocator) const = 0;
+		virtual SPtr<IRTTIIterator> GetIterator(RTTITypeBase* rttiType, void* object, FrameAllocator& frameAllocator) const = 0;
 
 		/** Returns the current value of the iterator. */
-		virtual const void* GetIteratorValue(RTTITypeBase* rttiType, void* object, FrameAllocator& frameAllocator, const IRTTIIterator& iterator) const = 0;
+		virtual const void* GetIteratorValue(RTTITypeBase* rttiType, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const = 0;
 
 		/**
 		 * Appends a new value at the end of the iterator, and increments the iterator. @p value must have been created by a call to CreateEmptyFieldValue(),
@@ -36,7 +36,7 @@ namespace bs
 		 * Creates a new empty field value. This should be populated by calls to WritePlainTypeTupleToStream, SetReflectablePointer or SetReflectable, and then
 		 * passed to SetIteratorValue().
 		 */
-		virtual void* CreateEmptyFieldValue(FrameAllocator& frameAllocator);
+		virtual void* CreateEmptyFieldValue(FrameAllocator& frameAllocator) = 0;
 		
 		/**
 		 * Reads into the provided field value from the stream. If the field value represents a tuple (i.e. contains multiple sub-types, such as std::pair<K, V>),
@@ -68,7 +68,7 @@ namespace bs
 		 * @param tupleElementIndex Index of the tuple element in @p fieldValue in which to store the reflectable pointer. If @p fieldValue doesn't represent a tuple, this should be 0.
 		 * @param reflectable		Reflectable pointer to assign to the field value.
 		 */
-		virtual void SetReflectablePointer(const void* fieldValue, u32 tupleElementIndex, const SPtr<IReflectable>& reflectable) = 0;
+		virtual void SetReflectablePointer(void* fieldValue, u32 tupleElementIndex, const SPtr<IReflectable>& reflectable) = 0;
 
 		/**
 		 * Reads the reflectable pointer from the provided field value. If the field value represents a tuple (i.e. contains multiple sub-types, such as std::pair<K, V>),
@@ -88,7 +88,7 @@ namespace bs
 		 * @param tupleElementIndex Index of the tuple element in @p fieldValue in which to store the reflectable. If @p fieldValue doesn't represent a tuple, this should be 0.
 		 * @param reflectable		Reflectable to assign to the field value.
 		 */
-		virtual void SetReflectable(const void* fieldValue, u32 tupleElementIndex, const IReflectable& reflectable) = 0;
+		virtual void SetReflectable(void* fieldValue, u32 tupleElementIndex, const IReflectable& reflectable) = 0;
 
 		/**
 		 * Reads the reflectable value from the provided field value. If the field value represents a tuple (i.e. contains multiple sub-types, such as std::pair<K, V>),
@@ -120,7 +120,7 @@ namespace bs
 	{
 		using ElementType = typename ContainerType::value_type;
 
-		typedef UPtr<TRTTIIterator<ContainerType>> (RTTIType::*GetIteratorDelegate)(ObjectType*, FrameAllocator&);
+		typedef UPtr<TRTTIIterator<ContainerType>, DefaultAllocatorTag, TRTTIIteratorDeleter<ContainerType>> (RTTIType::*GetIteratorDelegate)(ObjectType*, FrameAllocator&);
 		typedef const ElementType& (RTTIType::*GetValueDelegate)(ObjectType*, FrameAllocator&, TRTTIIterator<ContainerType>&);
 		typedef void (RTTIType::*SetValueDelegate)(ObjectType*, FrameAllocator&, TRTTIIterator<ContainerType>&, const ElementType&);
 
@@ -141,40 +141,42 @@ namespace bs
 		void InitSchema() override
 		{
 			// Special case for pairs so we natively support reflectable types in maps (This could technically be extended to support std::tuple as well if needed)
-			if constexpr(B3DIsStdPair<ElementType>::value_type)
+			if constexpr(B3DIsStdPair<ElementType>::value)
 			{
-				this->Schema.FieldTypes.Add(CreateFieldTypeSchema<typename ElementType::first_type>(this->Schema.Info));
-				this->Schema.FieldTypes.Add(CreateFieldTypeSchema<typename ElementType::second_type>(this->Schema.Info));
+				this->Schema.FieldTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::first_type>>(this->Schema.Info));
+				this->Schema.FieldTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::second_type>>(this->Schema.Info));
 			}
 			else
 			{
-				this->Schema.FieldTypes.Add(CreateFieldTypeSchema<ElementType>(this->Schema.Info));
+				this->Schema.FieldTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<ElementType>>(this->Schema.Info));
 			}
 		}
 
-		UPtr<IRTTIIterator> GetIterator(RTTITypeBase* rttiType, void* object, FrameAllocator& frameAllocator) const override
+		SPtr<IRTTIIterator> GetIterator(RTTITypeBase* rttiType, void* object, FrameAllocator& frameAllocator) const override
 		{
 			RTTIType* const exactRttiType = static_cast<RTTIType*>(rttiType);
 			ObjectType* const exactObject = static_cast<ObjectType*>(object);
 
-			return (exactRttiType->*mGetIteratorCallback)(exactObject, frameAllocator);
+			return std::move((exactRttiType->*mGetIteratorCallback)(exactObject, frameAllocator));
 		}
 
-		const void* GetIteratorValue(RTTITypeBase* rttiType, void* object, FrameAllocator& frameAllocator, const IRTTIIterator& iterator) const override
+		const void* GetIteratorValue(RTTITypeBase* rttiType, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const override
 		{
 			RTTIType* const exactRttiType = static_cast<RTTIType*>(rttiType);
 			ObjectType* const exactObject = static_cast<ObjectType*>(object);
+			TRTTIIterator<ContainerType>& exactIterator = static_cast<TRTTIIterator<ContainerType>&>(iterator);
 
-			return &(exactRttiType->*mGetValueCallback)(exactObject, frameAllocator, iterator);
+			return &(exactRttiType->*mGetValueCallback)(exactObject, frameAllocator, exactIterator);
 		}
 
 		void SetIteratorValue(RTTITypeBase* rttiType, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator, void* value) override
 		{
 			RTTIType* const exactRttiType = static_cast<RTTIType*>(rttiType);
 			ObjectType* const exactObject = static_cast<ObjectType*>(object);
+			TRTTIIterator<ContainerType>& exactIterator = static_cast<TRTTIIterator<ContainerType>&>(iterator);
 
 			ElementType& exactValue = *static_cast<ElementType*>(value);
-			(exactRttiType->*mSetValueCallback)(exactObject, frameAllocator, iterator, exactValue);
+			(exactRttiType->*mSetValueCallback)(exactObject, frameAllocator, exactIterator, exactValue);
 
 			frameAllocator.Destruct(&exactValue);
 		}
@@ -187,7 +189,7 @@ namespace bs
 		void ReadPlainTypeTupleFromStream(void* fieldValue, u32 tupleElementIndex, Bitstream& stream, bool useCompression) override
 		{
 			ElementType& value = *static_cast<ElementType*>(fieldValue);
-			if constexpr(B3DIsStdPair<ElementType>::value_type) // Note: Currently supporting just std::pair, but can support other types eventually
+			if constexpr(B3DIsStdPair<ElementType>::value) // Note: Currently supporting just std::pair, but can support other types eventually
 			{
 				if(!B3D_ENSURE(tupleElementIndex <= 1))
 					return;
@@ -207,7 +209,7 @@ namespace bs
 		void WritePlainTypeTupleToStream(const void* fieldValue, u32 tupleElementIndex, Bitstream& stream, bool useCompression) override
 		{
 			const ElementType& value = *static_cast<const ElementType*>(fieldValue);
-			if constexpr(B3DIsStdPair<ElementType>::value_type)
+			if constexpr(B3DIsStdPair<ElementType>::value)
 			{
 				B3D_ENSURE(tupleElementIndex <= 1);
 
@@ -223,80 +225,114 @@ namespace bs
 			}
 		}
 
-		void SetReflectablePointer(const void* fieldValue, u32 tupleElementIndex, const SPtr<IReflectable>& reflectable) override
+		void SetReflectablePointer(void* fieldValue, u32 tupleElementIndex, const SPtr<IReflectable>& reflectable) override
 		{
 			ElementType& value = *static_cast<ElementType*>(fieldValue);
-			if constexpr(B3DIsStdPair<ElementType>::value_type)
+			if constexpr(typename B3DIsStdPair<ElementType>::value)
 			{
 				B3D_ENSURE(tupleElementIndex <= 1);
 
 				if(tupleElementIndex == 0)
-					value.first = reflectable;
+				{
+					if constexpr(IsReflectableShared<decltype(value.first)>())
+						value.first = std::static_pointer_cast<typename B3DDecaySharedPointer<decltype(value.first)>::value>(reflectable);
+				}
 				else
-					value.second = reflectable;
+				{
+					if constexpr(IsReflectableShared<decltype(value.second)>())
+						value.second = std::static_pointer_cast<typename B3DDecaySharedPointer<decltype(value.second)>::value>(reflectable);
+				}
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
-				value = reflectable;
+
+				if constexpr(IsReflectableShared<decltype(value)>())
+					value = std::static_pointer_cast<typename B3DDecaySharedPointer<decltype(value)>::value>(reflectable);
 			}
 		}
 
 		SPtr<IReflectable> GetReflectablePointer(const void* fieldValue, u32 tupleElementIndex) override
 		{
 			const ElementType& value = *static_cast<const ElementType*>(fieldValue);
-			if constexpr(B3DIsStdPair<ElementType>::value_type)
+			if constexpr(typename B3DIsStdPair<ElementType>::value)
 			{
 				B3D_ENSURE(tupleElementIndex <= 1);
 
 				if(tupleElementIndex == 0)
-					return value.first;
+				{
+					if constexpr(IsReflectableShared<decltype(value.first)>())
+						return value.first;
+				}
 
-				return value.second;
+				if constexpr(IsReflectableShared<decltype(value.second)>())
+					return value.second;
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
-				return value;
+
+				if constexpr(IsReflectableShared<decltype(value)>())
+					return value;
 			}
+
+			return nullptr;
 		}
 
-		void SetReflectable(const void* fieldValue, u32 tupleElementIndex, const IReflectable& reflectable) override
+		void SetReflectable(void* fieldValue, u32 tupleElementIndex, const IReflectable& reflectable) override
 		{
 			ElementType& value = *static_cast<ElementType*>(fieldValue);
-			if constexpr(B3DIsStdPair<ElementType>::value_type)
+			if constexpr(B3DIsStdPair<ElementType>::value)
 			{
 				B3D_ENSURE(tupleElementIndex <= 1);
 
 				if(tupleElementIndex == 0)
-					value.first = reflectable;
+				{
+					if constexpr(IsReflectable<decltype(value.first)>())
+						value.first = static_cast<const typename ElementType::first_type&>(reflectable);
+				}
 				else
-					value.second = reflectable;
+				{
+					if constexpr(IsReflectable<decltype(value.second)>())
+						value.second = static_cast<const typename ElementType::second_type&>(reflectable);
+				}
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
-				value = reflectable;
+
+				if constexpr(IsReflectable<decltype(value)>())
+					value = static_cast<const ElementType&>(reflectable);
 			}
 		}
 
 		const IReflectable& GetReflectable(const void* fieldValue, u32 tupleElementIndex) override
 		{
 			const ElementType& value = *static_cast<const ElementType*>(fieldValue);
-			if constexpr(B3DIsStdPair<ElementType>::value_type)
+			if constexpr(typename B3DIsStdPair<ElementType>::value)
 			{
 				B3D_ENSURE(tupleElementIndex <= 1);
 
 				if(tupleElementIndex == 0)
-					return value.first;
+				{
+					if constexpr(IsReflectable<decltype(value.first)>())
+						return value.first;
+				}
 
-				return value.second;
+				if constexpr(IsReflectable<decltype(value.second)>())
+					return value.second;
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
-				return value;
+
+				if constexpr(IsReflectable<decltype(value)>())
+					return value;
 			}
+
+			B3D_ASSERT(false);
+			static IReflectable* kNull = nullptr;
+			return *kNull;
 		}
 
 	private:
@@ -306,7 +342,7 @@ namespace bs
 		{
 			if constexpr(IsReflectableShared<FieldType>())
 			{
-				using UnderlyingType = B3DDecaySharedPointer<FieldType>;
+				using UnderlyingType = typename B3DDecaySharedPointer<FieldType>::value;
 				static_assert(std::is_base_of_v<IReflectable, UnderlyingType>, "RTTI fields holding shared pointers must ensure the pointed-to data types implement the IReflectable interface.");
 
 				return RTTIFieldTypeSchema(true, 0, SerializableFT_ReflectablePtr, UnderlyingType::GetRttiStatic()->GetRttiId(), UnderlyingType::GetRttiStatic()->GetSchema());
@@ -346,82 +382,37 @@ namespace bs
 		template<typename T>
 		void WritePlainTypeToStream(const T& value, Bitstream& stream, bool useCompression)
 		{
-			if(!B3D_ENSURE(IsPlain<T>))
-				return;
-
-			RTTIPlainType<T>::ToMemory(value, stream, Schema.Info, useCompression);
+			if constexpr(IsPlain<T>())
+				RTTIPlainType<T>::ToMemory(value, stream, Schema.Info, useCompression);
 		}
 
 		/** Reads the provided plain object from the stream. */
 		template<typename T>
 		void ReadPlainTypeFromStream(T& value, Bitstream& stream, bool useCompression)
 		{
-			if(!B3D_ENSURE(IsPlain<T>))
-				return;
-
-			RTTIPlainType<T>::FromMemory(value, stream, Schema.Info, useCompression);
+			if constexpr(IsPlain<T>())
+				RTTIPlainType<T>::FromMemory(value, stream, Schema.Info, useCompression);
 		}
-
-		/*
-		 * API as seen from the binary deserializer:
-		 *
-		 * foreach(field in fields)
-		 * {
-		 *		if(field.Iterator)
-		 *		{
-					auto iterator = field.GetIterator();
-					for(; iterator.isValid(); iterator.advance())
-					{
-						void* tuple = field.AllocateEmptyObject(frameAllocator); // Allocate dynamically using the provided frame allocator
-						
-						for(tupleIndex in field.tupleCount)
-						{
-							switch(field.tupleType[tupleIndex])
-							{
-								case plain:
-								field.DecodeFromStream(tupleIndex, tuple, stream)
-
-								case reflectable:
-								SPtr<Reflectable> value = DecodeEntry();
-								field.SetTupleValue(tupleIndex, tuple, *value);
-
-								case reflectableptr:
-								read object id
-								SPtr<Reflectable> value = FindOrDecodeEntry(object id);
-								field.SetTupleValue(tupleIndex, tuple, value);
-							} 
-						}
-
-						field.SetValue(iterator, tuple); // Internally this COPIES the data into the field (original also must be explicitly destructed, as it's frame allocated, and could be a SPtr)
-					}
-		 *		}
-		 *		else
-				{
-				 // Old handling
-				}
-		 * }
-		 *
-		 */
 
 		/** Checks is the provided type a value type deriving from IReflectable. */
 		template<class T>
-		constexpr bool IsReflectable() const
+		static constexpr bool IsReflectable()
 		{
-			return std::is_base_of_v<IReflectable, B3DDecaySharedPointer<T>>;
+			return std::is_base_of_v<IReflectable, T>;
 		}
 
 		/** Checks is the provided type a shared pointer referencing a type deriving from IReflectable. */
 		template<class T>
-		constexpr bool IsReflectableShared() const
+		static constexpr bool IsReflectableShared()
 		{
-			return B3DIsSharedPointer<T>() && IsReflectable<B3DDecaySharedPointer<T>>;
+			return B3DIsSharedPointer<T>::value && IsReflectable<B3DDecaySharedPointer<T>::value>();
 		}
 
 		/** Checks is the provided type a plain type (implements the RTTIPlainType<T> specialization). */
 		template<class T>
-		constexpr bool IsPlain() const
+		static constexpr bool IsPlain()
 		{
-			return B3DIsComplete<RTTIPlainType<T>>::value;
+			return B3DHasRTTIPlainTypeSpecialization<T>::value;
 		}
 		
 		GetIteratorDelegate mGetIteratorCallback;

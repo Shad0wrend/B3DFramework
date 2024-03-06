@@ -98,8 +98,7 @@ namespace bs
 	template <class T>
 	struct RTTIPlainType
 	{
-		static_assert(std::is_pod<T>::value, "Provided type isn't plain-old-data. You need to specialize RTTIPlainType template in order to serialize this type. "
-											 " (Or call B3D_ALLOW_MEMCPY_SERIALIZATION(type) macro if you are sure the type can be properly serialized using just memcpy.)");
+		RTTIPlainType(int){} // Disallow default construction of the non-specialized variant
 
 		enum
 		{
@@ -136,7 +135,17 @@ namespace bs
 		{
 			return sizeof(T);
 		}
+
+		/** Signal to meta-programming code that this RTTIPlainType was not specialized. */
+		static void IsDefaultImplementation() { }
 	};
+
+	/** Checks has the user specialized RTTIPlainType<T> for T. */
+	template <typename T, typename = void>
+	struct B3DHasRTTIPlainTypeSpecialization : std::true_type {};
+
+	template <typename T>
+	struct B3DHasRTTIPlainTypeSpecialization<T, std::enable_if_t<std::is_same_v<decltype(RTTIPlainType<T>::IsDefaultImplementation()), void>>> : std::false_type {};
 
 	template <>
 	struct RTTIPlainType<bool>

@@ -582,7 +582,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 			}
 
 			RTTIIteratorField* const field = static_cast<RTTIIteratorField*>(curGenericField);
-			UPtr<IRTTIIterator> iterator;
+			SPtr<IRTTIIterator> iterator;
 
 			if(field != nullptr)
 				iterator = field->GetIterator(rttiInstance, output.get(), mAllocator);
@@ -1315,7 +1315,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 			if(curGenericField->Schema.IsIterator)
 			{
 				RTTIIteratorField* const field = static_cast<RTTIIteratorField*>(curGenericField);
-				UPtr<IRTTIIterator> iterator = field->GetIterator(rttiInstance, object, mAllocator);
+				SPtr<IRTTIIterator> iterator = field->GetIterator(rttiInstance, object, mAllocator);
 
 				if(field->Schema.IsArray)
 				{

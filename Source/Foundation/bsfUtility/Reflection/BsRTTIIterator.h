@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "Debug/BsDebug.h"
 #include "Prerequisites/BsPrerequisitesUtil.h"
 
 namespace bs
@@ -96,6 +97,24 @@ namespace bs
 	protected:
 		ContainerType* mContainer = nullptr;
 		IteratorType mIterator;
+	};
+
+	/** Deleter that can be passed to unique pointer referencing TRTTIIterator<ContainerType>. */
+	template<typename ContainerType>
+	struct TRTTIIteratorDeleter
+	{
+		TRTTIIteratorDeleter(FrameAllocator* allocator = nullptr)
+			: mAllocator(allocator)
+		{ }
+
+		void operator()(TRTTIIterator<ContainerType>* iterator)
+		{
+			if(B3D_ENSURE(mAllocator != nullptr))
+				mAllocator->Destruct(iterator);
+		}
+
+	private:
+		FrameAllocator* mAllocator;
 	};
 
 	/** @} */

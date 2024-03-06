@@ -114,13 +114,13 @@ namespace bs
 		 * Gets the size of an array contained by the field, if the field represents an array. Throws exception if field
 		 * is not an array.
 		 */
-		virtual u32 GetArraySize(RTTITypeBase* rtti, void* object) = 0;
+		virtual u32 GetArraySize(RTTITypeBase* rtti, void* object) { return 0; };
 
 		/**
 		 * Changes the size of an array contained by the field, if the field represents an array. Throws exception if field
 		 * is not an array.
 		 */
-		virtual void SetArraySize(RTTITypeBase* rtti, void* object, u32 size) = 0;
+		virtual void SetArraySize(RTTITypeBase* rtti, void* object, u32 size) { };
 
 		/** Initializes the field's RTTI schema. Should be called once after construction. */
 		virtual void InitSchema() {}
