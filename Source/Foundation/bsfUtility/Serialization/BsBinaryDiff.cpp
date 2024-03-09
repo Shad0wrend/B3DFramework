@@ -454,7 +454,7 @@ u32 RTTIFieldWrapper<false>::GetId() const
 u32 RTTIFieldWrapper<false>::GetArraySize() const
 {
 	auto* field = static_cast<SerializedArray*>(mObj.get());
-	return field->NumElements;
+	return field->ElementCount;
 }
 
 RTTIFieldWrapper<false> RTTIFieldWrapper<false>::GetArrayElement(int index) const
@@ -528,7 +528,7 @@ u32 RTTIFieldWrapper<true>::GetId() const
 u32 RTTIFieldWrapper<true>::GetArraySize() const
 {
 	auto* field = static_cast<SerializedArray*>(mObj);
-	return field->NumElements;
+	return field->ElementCount;
 }
 
 RTTIFieldWrapper<true> RTTIFieldWrapper<true>::GetArrayElement(int index) const
@@ -643,11 +643,11 @@ void RTTIFieldWrapper<true>::GetPlainData(u8* buffer, u32 bufferSize) const
 
 SPtr<SerializedInstance> RTTIFieldWrapper<true>::Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc) const
 {
-	return IntermediateSerializer::EncodeFieldInternal(mObj, mRTTIType, mField, mArrayIdx, flags, context, alloc);
+	return IntermediateSerializer::SerializeField(mObj, mRTTIType, mField, mArrayIdx, flags, context, alloc);
 }
 
 RTTIFieldWrapperIterator<false>::RTTIFieldWrapperIterator(SerializedObject* obj, u32 subObjectIdx)
-	: mObj(obj), mSubObjectIdx(subObjectIdx), mRTTIType(IReflectable::GetRttifromTypeIdInternal(obj->SubObjects[subObjectIdx].TypeId))
+	: mObj(obj), mSubObjectIdx(subObjectIdx), mRTTIType(IReflectable::GetRTTITypeFromTypeId(obj->SubObjects[subObjectIdx].TypeId))
 {}
 
 bool RTTIFieldWrapperIterator<false>::MoveNext()
@@ -730,7 +730,7 @@ SPtr<SerializedInstance> GenerateFieldDiff(RTTITypeBase* rtti, u32 fieldType, co
 			{
 				RTTITypeBase* childRtti = nullptr;
 				if(orgObjData.GetTypeId() == newObjData.GetTypeId())
-					childRtti = IReflectable::GetRttifromTypeIdInternal(newObjData.GetTypeId());
+					childRtti = IReflectable::GetRTTITypeFromTypeId(newObjData.GetTypeId());
 
 				SPtr<SerializedObject> objectDiff;
 				if(childRtti != nullptr)
@@ -823,7 +823,7 @@ SPtr<SerializedObject> GenerateDiff(RTTIObjectWrapper<REFL_ORG> orgObj, RTTIObje
 	{
 		RTTISubObjectWrapper<REFL_NEW> newSubObject = newSubObjectIterator.Value();
 
-		RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(newSubObject.GetTypeId());
+		RTTITypeBase* rtti = IReflectable::GetRTTITypeFromTypeId(newSubObject.GetTypeId());
 		if(rtti == nullptr)
 			continue;
 
@@ -939,7 +939,7 @@ SPtr<SerializedObject> GenerateDiff(RTTIObjectWrapper<REFL_ORG> orgObj, RTTIObje
 							if(serializedArray == nullptr)
 							{
 								serializedArray = B3DMakeShared<SerializedArray>();
-								serializedArray->NumElements = newFieldEntry.GetArraySize();
+								serializedArray->ElementCount = newFieldEntry.GetArraySize();
 							}
 
 							SerializedArrayEntry arrayEntry;
@@ -954,7 +954,7 @@ SPtr<SerializedObject> GenerateDiff(RTTIObjectWrapper<REFL_ORG> orgObj, RTTIObje
 						if(serializedArray == nullptr)
 						{
 							serializedArray = B3DMakeShared<SerializedArray>();
-							serializedArray->NumElements = newFieldEntry.GetArraySize();
+							serializedArray->ElementCount = newFieldEntry.GetArraySize();
 						}
 					}
 				}
@@ -1249,7 +1249,7 @@ void BinaryDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<Serializ
 	Stack<RTTITypeBase*> rttiInstances;
 	for(auto& subObject : diff->SubObjects)
 	{
-		RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(subObject.TypeId);
+		RTTITypeBase* rtti = IReflectable::GetRTTITypeFromTypeId(subObject.TypeId);
 		if(rtti == nullptr)
 			continue;
 
@@ -1281,7 +1281,7 @@ void BinaryDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<Serializ
 			{
 				SPtr<SerializedArray> diffArray = std::static_pointer_cast<SerializedArray>(diffData);
 
-				u32 numArrayElements = diffArray->NumElements;
+				u32 numArrayElements = diffArray->ElementCount;
 
 				DiffCommand arraySizeCommand;
 				arraySizeCommand.Field = genericField;
@@ -1329,7 +1329,7 @@ void BinaryDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<Serializ
 
 								if(needsNewObject)
 								{
-									RTTITypeBase* childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
+									RTTITypeBase* childRtti = IReflectable::GetRTTITypeFromTypeId(arrayElemData->GetRootTypeId());
 									if(childRtti != nullptr)
 									{
 										auto findObj = objectMap.find(arrayElemData);
@@ -1378,7 +1378,7 @@ void BinaryDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<Serializ
 							}
 							else
 							{
-								RTTITypeBase* childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
+								RTTITypeBase* childRtti = IReflectable::GetRTTITypeFromTypeId(arrayElemData->GetRootTypeId());
 								if(childRtti != nullptr)
 								{
 									SPtr<IReflectable> newObject = childRtti->NewRttiObject();
@@ -1444,7 +1444,7 @@ void BinaryDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<Serializ
 							SPtr<IReflectable> childObj = field->GetValue(rttiInstance, object.get());
 							if(childObj == nullptr)
 							{
-								RTTITypeBase* childRtti = IReflectable::GetRttifromTypeIdInternal(fieldObjectData->GetRootTypeId());
+								RTTITypeBase* childRtti = IReflectable::GetRTTITypeFromTypeId(fieldObjectData->GetRootTypeId());
 								if(childRtti != nullptr)
 								{
 									auto findObj = objectMap.find(fieldObjectData);

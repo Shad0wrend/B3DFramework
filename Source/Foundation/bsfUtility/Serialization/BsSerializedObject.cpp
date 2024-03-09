@@ -94,7 +94,7 @@ SPtr<SerializedInstance> SerializedDataBlock::Clone(bool cloneData)
 SPtr<SerializedInstance> SerializedArray::Clone(bool cloneData)
 {
 	SPtr<SerializedArray> copy = B3DMakeShared<SerializedArray>();
-	copy->NumElements = NumElements;
+	copy->ElementCount = ElementCount;
 
 	for(auto& entryPair : Entries)
 	{

@@ -8,6 +8,8 @@
 
 namespace bs
 {
+	class IRTTIIterator;
+	struct RTTIIteratorField;
 	struct SerializationContext;
 
 	/** @addtogroup Serialization
@@ -32,35 +34,47 @@ namespace bs
 		 */
 
 		/**
-		 * Encodes a single field from a reflectable object into a SerializedInstance. If a field is an array and
+		 * Serializes a single field entry from a reflectable object into a SerializedInstance. If a field is an array and
 		 * @p arrayIdx is -1 then the entire array will be encoded, otherwise just a single array field will. If the
 		 * field is not array the value of @p arrayIdx is not relevant.
 		 */
-		static SPtr<SerializedInstance> EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc);
+		static SPtr<SerializedInstance> SerializeField(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc);
+
+		/**
+		 * Serializes a single field from the provided reflectable object into a SerializedInstance.
+		 *
+		 * @param	object		Reflectable object that stores the data to serialize.
+		 * @param	rttiType	Type information for the provided reflectable object.
+		 * @param	field		Field from which to retrieve the data.
+		 *
+		 * TODO - DOc
+		 *
+		 */
+		static SPtr<SerializedInstance> SerializeField(IReflectable& object, RTTITypeBase& rttiType, RTTIIteratorField& field, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator& allocator);
 
 		/** @} */
 	private:
 		friend class BinaryDiff;
 
-		struct ObjectToDecode
+		struct ObjectDeserializationData
 		{
-			ObjectToDecode(const SPtr<IReflectable>& _object, const SerializedObject* serializedObject)
-				: Object(_object), SerializedObject(serializedObject)
+			ObjectDeserializationData(const SPtr<IReflectable>& object, const SerializedObject* serializedObject)
+				: Object(object), SerializedObject(serializedObject)
 			{}
 
 			SPtr<IReflectable> Object;
 			const SerializedObject* SerializedObject;
-			bool IsDecoded = false;
-			bool DecodeInProgress = false; // Used for error reporting circular references
+			bool IsDeserialized = false;
+			bool DeserializationInProgress = false; // Used for error reporting circular references
 		};
 
-		/**	Decodes a single IReflectable object. */
-		void DecodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject);
+		/**	Deserializes a single IReflectable object. */
+		void DeserializeReflectableObject(const SPtr<IReflectable>& object, const SerializedObject* serializableObject);
 
-		/** Encodes a single IReflectable object. */
-		static SPtr<SerializedObject> EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc);
+		/** Serializes a single IReflectable object. */
+		static SPtr<SerializedObject> SerializeReflectableObject(const IReflectable& object, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator& allocator);
 
-		UnorderedMap<const SerializedObject*, ObjectToDecode> mObjectMap;
+		UnorderedMap<const SerializedObject*, ObjectDeserializationData> mObjectMap;
 		SerializationContext* mContext = nullptr;
 		FrameAllocator* mAlloc = nullptr;
 	};

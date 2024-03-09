@@ -19,7 +19,7 @@ void IReflectable::RegisterRTTITypeInternal(RTTITypeBase* rttiType)
 
 SPtr<IReflectable> IReflectable::CreateInstanceFromTypeId(u32 rttiTypeId)
 {
-	RTTITypeBase* type = GetRttifromTypeIdInternal(rttiTypeId);
+	RTTITypeBase* type = GetRTTITypeFromTypeId(rttiTypeId);
 
 	SPtr<IReflectable> output;
 	if(type != nullptr)
@@ -28,7 +28,7 @@ SPtr<IReflectable> IReflectable::CreateInstanceFromTypeId(u32 rttiTypeId)
 	return output;
 }
 
-RTTITypeBase* IReflectable::GetRttifromTypeIdInternal(u32 rttiTypeId)
+RTTITypeBase* IReflectable::GetRTTITypeFromTypeId(u32 rttiTypeId)
 {
 	const auto iterFind = GetAllRttiTypes().find(rttiTypeId);
 	if(iterFind != GetAllRttiTypes().end())
@@ -42,7 +42,7 @@ bool IReflectable::IsTypeIdDuplicateInternal(u32 typeId)
 	if(typeId == TID_Abstract)
 		return false;
 
-	return IReflectable::GetRttifromTypeIdInternal(typeId) != nullptr;
+	return IReflectable::GetRTTITypeFromTypeId(typeId) != nullptr;
 }
 
 bool IReflectable::IsDerivedFrom(const RTTITypeBase* base) const

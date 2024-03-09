@@ -32,13 +32,6 @@ namespace bs
 		 */
 		virtual RTTITypeBase* GetRtti() const = 0;
 
-		/** Returns all available RTTI types. */
-		static UnorderedMap<u32, RTTITypeBase*>& GetAllRttiTypes()
-		{
-			static UnorderedMap<u32, RTTITypeBase*> mAllRTTITypes;
-			return mAllRTTITypes;
-		}
-
 		/** Returns true if current RTTI class is derived from @p base (Or if it is the same type as base). */
 		bool IsDerivedFrom(const RTTITypeBase* base) const;
 
@@ -55,15 +48,22 @@ namespace bs
 		/** Creates an empty instance of a class from a type identifier. */
 		static SPtr<IReflectable> CreateInstanceFromTypeId(u32 rttiTypeId);
 
+		/** Returns all available RTTI types. */
+		static UnorderedMap<u32, RTTITypeBase*>& GetAllRttiTypes()
+		{
+			static UnorderedMap<u32, RTTITypeBase*> mAllRTTITypes;
+			return mAllRTTITypes;
+		}
+
+		/** Returns class' RTTI type from type id. */
+		static RTTITypeBase* GetRTTITypeFromTypeId(u32 rttiTypeId);
+
 		/** @name Internal
 		 *  @{
 		 */
 
 		/** Called by each type implementing RTTITypeBase, on program load. */
 		static void RegisterRTTITypeInternal(RTTITypeBase* rttiType);
-
-		/** Returns class' RTTI type from type id. */
-		static RTTITypeBase* GetRttifromTypeIdInternal(u32 rttiTypeId);
 
 		/** Checks if the provided type id is unique. */
 		static bool IsTypeIdDuplicateInternal(u32 typeId);

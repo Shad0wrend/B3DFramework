@@ -172,12 +172,12 @@ namespace bs
 	private:
 		u32& GetNumElements(SerializedArray* obj)
 		{
-			return obj->NumElements;
+			return obj->ElementCount;
 		}
 
 		void SetNumElements(SerializedArray* obj, u32& val)
 		{
-			obj->NumElements = val;
+			obj->ElementCount = val;
 		}
 
 		SerializedArrayEntry& GetEntry(SerializedArray* obj, u32 arrayIdx)

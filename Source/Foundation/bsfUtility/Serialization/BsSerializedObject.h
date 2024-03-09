@@ -201,7 +201,7 @@ namespace bs
 		SPtr<SerializedInstance> Clone(bool cloneData = true) override;
 
 		UnorderedMap<u32, SerializedArrayEntry> Entries;
-		u32 NumElements = 0;
+		u32 ElementCount = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

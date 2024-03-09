@@ -19,30 +19,30 @@ SPtr<IReflectable> IntermediateSerializer::Decode(const SerializedObject* serial
 	mObjectMap.clear();
 
 	SPtr<IReflectable> output;
-	RTTITypeBase* type = IReflectable::GetRttifromTypeIdInternal(serializedObject->GetRootTypeId());
+	RTTITypeBase* type = IReflectable::GetRTTITypeFromTypeId(serializedObject->GetRootTypeId());
 	if(type != nullptr)
 	{
 		output = type->NewRttiObject();
-		auto iterNewObj = mObjectMap.insert(std::make_pair(serializedObject, ObjectToDecode(output, serializedObject)));
+		auto iterNewObj = mObjectMap.insert(std::make_pair(serializedObject, ObjectDeserializationData(output, serializedObject)));
 
-		iterNewObj.first->second.DecodeInProgress = true;
-		DecodeEntry(output, serializedObject);
-		iterNewObj.first->second.DecodeInProgress = false;
-		iterNewObj.first->second.IsDecoded = true;
+		iterNewObj.first->second.DeserializationInProgress = true;
+		DeserializeReflectableObject(output, serializedObject);
+		iterNewObj.first->second.DeserializationInProgress = false;
+		iterNewObj.first->second.IsDeserialized = true;
 	}
 
 	// Go through the remaining objects (should be only ones with weak refs)
 	for(auto iter = mObjectMap.begin(); iter != mObjectMap.end(); ++iter)
 	{
-		ObjectToDecode& objToDecode = iter->second;
+		ObjectDeserializationData& objToDecode = iter->second;
 
-		if(objToDecode.IsDecoded)
+		if(objToDecode.IsDeserialized)
 			continue;
 
-		objToDecode.DecodeInProgress = true;
-		DecodeEntry(objToDecode.Object, objToDecode.SerializedObject);
-		objToDecode.DecodeInProgress = false;
-		objToDecode.IsDecoded = true;
+		objToDecode.DeserializationInProgress = true;
+		DeserializeReflectableObject(objToDecode.Object, objToDecode.SerializedObject);
+		objToDecode.DeserializationInProgress = false;
+		objToDecode.IsDeserialized = true;
 	}
 
 	mObjectMap.clear();
@@ -55,10 +55,10 @@ SPtr<SerializedObject> IntermediateSerializer::Encode(IReflectable* object, Seri
 {
 	mContext = context;
 
-	return EncodeEntry(object, flags, context, mAlloc);
+	return SerializeReflectableObject(object, flags, context, mAlloc);
 }
 
-void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject)
+void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectable>& object, const SerializedObject* serializableObject)
 {
 	u32 numSubObjects = (u32)serializableObject->SubObjects.size();
 	if(numSubObjects == 0)
@@ -69,7 +69,7 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 	{
 		const SerializedSubObject& subObject = serializableObject->SubObjects[subObjectIdx];
 
-		RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(subObject.TypeId);
+		RTTITypeBase* rtti = IReflectable::GetRTTITypeFromTypeId(subObject.TypeId);
 		if(rtti == nullptr)
 			continue;
 
@@ -91,7 +91,7 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 			{
 				SPtr<SerializedArray> arrayData = std::static_pointer_cast<SerializedArray>(entryData);
 
-				u32 arrayNumElems = (u32)arrayData->NumElements;
+				u32 arrayNumElems = (u32)arrayData->ElementCount;
 				curGenericField->SetArraySize(rttiInstance, object.get(), arrayNumElems);
 
 				switch(curGenericField->Schema.Type)
@@ -106,7 +106,7 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 							RTTITypeBase* childRtti = nullptr;
 
 							if(arrayElemData != nullptr)
-								childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
+								childRtti = IReflectable::GetRTTITypeFromTypeId(arrayElemData->GetRootTypeId());
 
 							if(childRtti != nullptr)
 							{
@@ -114,15 +114,15 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 								if(findObj == mObjectMap.end())
 								{
 									SPtr<IReflectable> newObject = childRtti->NewRttiObject();
-									findObj = mObjectMap.insert(std::make_pair(arrayElemData.get(), ObjectToDecode(newObject, arrayElemData.get()))).first;
+									findObj = mObjectMap.insert(std::make_pair(arrayElemData.get(), ObjectDeserializationData(newObject, arrayElemData.get()))).first;
 								}
 
-								ObjectToDecode& objToDecode = findObj->second;
+								ObjectDeserializationData& objToDecode = findObj->second;
 
-								bool needsDecoding = !curField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.IsDecoded;
+								bool needsDecoding = !curField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.IsDeserialized;
 								if(needsDecoding)
 								{
-									if(objToDecode.DecodeInProgress)
+									if(objToDecode.DeserializationInProgress)
 									{
 										B3D_LOG(Warning, Generic, "Detected a circular reference when decoding. "
 																 "Referenced object's fields will be resolved in an undefined order "
@@ -133,10 +133,10 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 									}
 									else
 									{
-										objToDecode.DecodeInProgress = true;
-										DecodeEntry(objToDecode.Object, objToDecode.SerializedObject);
-										objToDecode.DecodeInProgress = false;
-										objToDecode.IsDecoded = true;
+										objToDecode.DeserializationInProgress = true;
+										DeserializeReflectableObject(objToDecode.Object, objToDecode.SerializedObject);
+										objToDecode.DeserializationInProgress = false;
+										objToDecode.IsDeserialized = true;
 									}
 								}
 
@@ -159,12 +159,12 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 							RTTITypeBase* childRtti = nullptr;
 
 							if(arrayElemData != nullptr)
-								childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
+								childRtti = IReflectable::GetRTTITypeFromTypeId(arrayElemData->GetRootTypeId());
 
 							if(childRtti != nullptr)
 							{
 								SPtr<IReflectable> newObject = childRtti->NewRttiObject();
-								DecodeEntry(newObject, arrayElemData.get());
+								DeserializeReflectableObject(newObject, arrayElemData.get());
 								curField->SetArrayValue(rttiInstance, object.get(), arrayElem.first, *newObject);
 							}
 						}
@@ -201,7 +201,7 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 						RTTITypeBase* childRtti = nullptr;
 
 						if(fieldObjectData != nullptr)
-							childRtti = IReflectable::GetRttifromTypeIdInternal(fieldObjectData->GetRootTypeId());
+							childRtti = IReflectable::GetRTTITypeFromTypeId(fieldObjectData->GetRootTypeId());
 
 						if(childRtti != nullptr)
 						{
@@ -209,15 +209,15 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 							if(findObj == mObjectMap.end())
 							{
 								SPtr<IReflectable> newObject = childRtti->NewRttiObject();
-								findObj = mObjectMap.insert(std::make_pair(fieldObjectData.get(), ObjectToDecode(newObject, fieldObjectData.get()))).first;
+								findObj = mObjectMap.insert(std::make_pair(fieldObjectData.get(), ObjectDeserializationData(newObject, fieldObjectData.get()))).first;
 							}
 
-							ObjectToDecode& objToDecode = findObj->second;
+							ObjectDeserializationData& objToDecode = findObj->second;
 
-							bool needsDecoding = !curField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.IsDecoded;
+							bool needsDecoding = !curField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.IsDeserialized;
 							if(needsDecoding)
 							{
-								if(objToDecode.DecodeInProgress)
+								if(objToDecode.DeserializationInProgress)
 								{
 									B3D_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
 															 "object's fields will be resolved in an undefined order (i.e. one of the "
@@ -227,10 +227,10 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 								}
 								else
 								{
-									objToDecode.DecodeInProgress = true;
-									DecodeEntry(objToDecode.Object, objToDecode.SerializedObject);
-									objToDecode.DecodeInProgress = false;
-									objToDecode.IsDecoded = true;
+									objToDecode.DeserializationInProgress = true;
+									DeserializeReflectableObject(objToDecode.Object, objToDecode.SerializedObject);
+									objToDecode.DeserializationInProgress = false;
+									objToDecode.IsDeserialized = true;
 								}
 							}
 
@@ -250,12 +250,12 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 						RTTITypeBase* childRtti = nullptr;
 
 						if(fieldObjectData != nullptr)
-							childRtti = IReflectable::GetRttifromTypeIdInternal(fieldObjectData->GetRootTypeId());
+							childRtti = IReflectable::GetRTTITypeFromTypeId(fieldObjectData->GetRootTypeId());
 
 						if(childRtti != nullptr)
 						{
 							SPtr<IReflectable> newObject = childRtti->NewRttiObject();
-							DecodeEntry(newObject, fieldObjectData.get());
+							DeserializeReflectableObject(newObject, fieldObjectData.get());
 							curField->SetValue(rttiInstance, object.get(), *newObject);
 						}
 						break;
@@ -300,18 +300,18 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 	}
 }
 
-SPtr<SerializedObject> IntermediateSerializer::EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc)
+SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const IReflectable& object, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator& allocator)
 {
 	FrameStack<RTTITypeBase*> rttiInstances;
-	RTTITypeBase* rtti = object->GetRtti();
+	RTTITypeBase* rtti = object.GetRtti();
 
 	const auto cleanup = [&]()
 	{
 		while(!rttiInstances.empty())
 		{
 			RTTITypeBase* rttiInstance = rttiInstances.top();
-			rttiInstance->OnSerializationEnded(object, context);
-			alloc->Destruct(rttiInstance);
+			rttiInstance->OnSerializationEnded(const_cast<IReflectable*>(&object), context);
+			allocator.Destruct(rttiInstance);
 
 			rttiInstances.pop();
 		}
@@ -323,10 +323,10 @@ SPtr<SerializedObject> IntermediateSerializer::EncodeEntry(IReflectable* object,
 	// If an object has base classes, we need to iterate through all of them
 	do
 	{
-		RTTITypeBase* rttiInstance = rtti->CloneInternal(*alloc);
+		RTTITypeBase* rttiInstance = rtti->CloneInternal(allocator);
 		rttiInstances.push(rttiInstance);
 
-		rttiInstance->OnSerializationStarted(object, context);
+		rttiInstance->OnSerializationStarted(const_cast<IReflectable*>(&object), context);
 
 		output->SubObjects.push_back(SerializedSubObject());
 		SerializedSubObject& subObject = output->SubObjects.back();
@@ -343,7 +343,7 @@ SPtr<SerializedObject> IntermediateSerializer::EncodeEntry(IReflectable* object,
 					continue;
 			}
 
-			SPtr<SerializedInstance> serializedEntry = EncodeFieldInternal(object, rttiInstance, curGenericField, (u32)-1, flags, context, alloc);
+			SPtr<SerializedInstance> serializedEntry = SerializeField(const_cast<IReflectable*>(&object), rttiInstance, curGenericField, (u32)-1, flags, context, &allocator);
 
 			SerializedEntry entry;
 			entry.FieldId = curGenericField->Schema.Id;
@@ -361,7 +361,7 @@ SPtr<SerializedObject> IntermediateSerializer::EncodeEntry(IReflectable* object,
 	return output;
 }
 
-SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc)
+SPtr<SerializedInstance> IntermediateSerializer::SerializeField(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator* alloc)
 {
 	bool shallow = flags.IsSet(SerializedObjectEncodeFlag::Shallow);
 
@@ -384,7 +384,7 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 		if(wholeArray)
 		{
 			serializedArray = B3DMakeShared<SerializedArray>();
-			serializedArray->NumElements = arrayNumElems;
+			serializedArray->ElementCount = arrayNumElems;
 
 			output = serializedArray;
 		}
@@ -404,7 +404,7 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 						SPtr<IReflectable> childObject = curField->GetArrayValue(rtti, object, arrIdx);
 
 						if(childObject)
-							serializedChildObj = EncodeEntry(childObject.get(), flags, context, alloc);
+							serializedChildObj = SerializeReflectableObject(*childObject, flags, context, *alloc);
 					}
 
 					if(wholeArray)
@@ -429,7 +429,7 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 				{
 					IReflectable& childObject = curField->GetArrayValue(rtti, object, arrIdx);
 
-					const SPtr<SerializedObject> serializedChildObj = EncodeEntry(&childObject, flags, context, alloc);
+					const SPtr<SerializedObject> serializedChildObj = SerializeReflectableObject(childObject, flags, context, *alloc);
 
 					if(wholeArray)
 					{
@@ -496,7 +496,7 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 					SPtr<IReflectable> childObject = curField->GetValue(rtti, object);
 
 					if(childObject)
-						output = EncodeEntry(childObject.get(), flags, context, alloc);
+						output = SerializeReflectableObject(*childObject, flags, context, *alloc);
 				}
 
 				break;
@@ -506,7 +506,7 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 				auto curField = static_cast<RTTIReflectableFieldBase*>(field);
 				IReflectable& childObject = curField->GetValue(rtti, object);
 
-				output = EncodeEntry(&childObject, flags, context, alloc);
+				output = SerializeReflectableObject(childObject, flags, context, *alloc);
 
 				break;
 			}
@@ -554,6 +554,131 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 		default:
 			B3D_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsArray));
 		}
+	}
+
+	return output;
+}
+
+SPtr<SerializedInstance> IntermediateSerializer::SerializeField(IReflectable& object, RTTITypeBase& rttiType, RTTIIteratorField& field, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAllocator& allocator)
+{
+	const bool shallow = flags.IsSet(SerializedObjectEncodeFlag::Shallow);
+	const bool wholeArray = true;
+
+	SPtr<SerializedInstance> output;
+	if(field.Schema.IsArray)
+	{
+		if(!B3D_ENSURE(field.Schema.IsIterator))
+			return nullptr;
+
+		const SPtr<IRTTIIterator> iterator = field.GetIterator(&rttiType, &object, allocator);
+
+		SPtr<SerializedArray> serializedArray;
+		if(wholeArray && iterator != nullptr)
+		{
+			serializedArray = B3DMakeShared<SerializedArray>();
+			serializedArray->ElementCount = (u32)iterator->GetElementCount();
+
+			output = serializedArray;
+		}
+
+		if(iterator != nullptr)
+		{
+			for(u32 arrayIndex = 0; iterator->IsValid(); iterator->Increment(), arrayIndex++)
+			{
+				const void* fieldValue = iterator->GetValue();
+				for(u32 typeIndex = 0; typeIndex < (u32)field.Schema.FieldTypes.Size(); ++typeIndex)
+				{
+					// TODO - Ignoring type index
+
+
+					const RTTIFieldTypeSchema& typeSchema = field.Schema.FieldTypes[typeIndex];
+					switch(typeSchema.Type)
+					{
+					case SerializableFT_ReflectablePtr:
+						{
+							SPtr<SerializedObject> serializedReferencedObject = nullptr;
+
+							if(!shallow)
+							{
+								const SPtr<IReflectable> referencedObject = field.GetReflectablePointer(fieldValue, typeIndex);
+
+								if(referencedObject)
+									serializedReferencedObject = SerializeReflectableObject(*referencedObject, flags, context, allocator);
+							}
+
+							if(wholeArray)
+							{
+								SerializedArrayEntry arrayEntry;
+								arrayEntry.Serialized = serializedReferencedObject;
+								arrayEntry.Index = arrayIndex;
+
+								serializedArray->Entries[arrayIndex] = arrayEntry;
+							}
+							else
+								output = serializedReferencedObject;
+
+							break;
+						}
+					case SerializableFT_Reflectable:
+						{
+							const IReflectable& inlineObject = field.GetReflectable(fieldValue, typeIndex);
+							const SPtr<SerializedObject> serializedInlineObject = SerializeReflectableObject(inlineObject, flags, context, allocator);
+
+							if(wholeArray)
+							{
+								SerializedArrayEntry arrayEntry;
+								arrayEntry.Serialized = serializedInlineObject;
+								arrayEntry.Index = arrayIndex;
+
+								serializedArray->Entries[arrayIndex] = arrayEntry;
+							}
+							else
+								output = serializedInlineObject;
+
+							break;
+						}
+					case SerializableFT_Plain:
+						{
+							u32 typeSize = 0;
+							if(typeSchema.HasDynamicSize)
+								typeSize = curField->GetArrayElemDynamicSize(rtti, object, arrIdx, false).Bytes;
+							else
+								typeSize = typeSchema.FixedSize.Bytes;
+
+							const auto serializedField = B3DMakeShared<SerializedField>();
+							serializedField->Value = (u8*)B3DAllocate(typeSize);
+							serializedField->OwnsMemory = true;
+							serializedField->Size = typeSize;
+
+							Bitstream tempStream(serializedField->Value, typeSize);
+							field.WritePlainTypeTupleToStream(fieldValue, typeIndex, tempStream, false);
+
+							if(wholeArray)
+							{
+								SerializedArrayEntry arrayEntry;
+								arrayEntry.Serialized = serializedField;
+								arrayEntry.Index = arrayIndex;
+
+								serializedArray->Entries[arrayIndex] = arrayEntry;
+							}
+							else
+								output = serializedField;
+
+							break;
+						}
+					default:
+						B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, field.Schema.IsArray);
+					}
+				}
+
+				if(!wholeArray)
+					break;
+			}
+		}
+	}
+	else
+	{
+		B3D_ENSURE(false); // Non-container fields not supported yet. Use the other SerializeField overload.
 	}
 
 	return output;
