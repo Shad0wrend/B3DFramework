@@ -119,9 +119,21 @@ bool ResourceManifest::FilePathExists(const Path& filePath) const
 	return mVirtualFilePathToUUID.find(filePath) != mVirtualFilePathToUUID.end();
 }
 
-void ResourceManifest::Save(const SPtr<ResourceManifest>& manifest, const Path& path, const Path& relativePath)
+bool ResourceManifest::VirtualToPhysicalPath(const Path& virtualPath, Path& outPhysicalPath) const
 {
-	if(relativePath.IsEmpty())
+	if(!mVirtualPathPrefix.Includes(virtualPath))
+		return false;
+
+	outPhysicalPath = virtualPath;
+	outPhysicalPath.MakeRelative(mVirtualPathPrefix);
+	outPhysicalPath.MakeAbsolute(mPhysicalPathPrefix);
+	
+	return true;
+}
+
+void ResourceManifest::Save(const SPtr<ResourceManifest>& manifest, const Path& path, const Path& physicalPathPrefix)
+{
+	if(physicalPathPrefix.IsEmpty())
 	{
 		FileEncoder fs(path);
 		fs.Encode(manifest.get());
@@ -132,24 +144,24 @@ void ResourceManifest::Save(const SPtr<ResourceManifest>& manifest, const Path& 
 
 		for(auto& elem : manifest->mFilePathToUUID)
 		{
-			if(!relativePath.Includes(elem.first))
+			if(!physicalPathPrefix.Includes(elem.first))
 			{
-				B3D_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + relativePath.ToString() + "\". Path: \"" + elem.first.ToString() + "\"");
+				B3D_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + physicalPathPrefix.ToString() + "\". Path: \"" + elem.first.ToString() + "\"");
 			}
 
-			Path elementRelativePath = elem.first.GetRelative(relativePath);
+			Path elementRelativePath = elem.first.GetRelative(physicalPathPrefix);
 
 			copy->mFilePathToUUID[elementRelativePath] = elem.second;
 		}
 
 		for(auto& elem : manifest->mUUIDToFilePath)
 		{
-			if(!relativePath.Includes(elem.second))
+			if(!physicalPathPrefix.Includes(elem.second))
 			{
-				B3D_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + relativePath.ToString() + "\". Path: \"" + elem.second.ToString() + "\"");
+				B3D_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + physicalPathPrefix.ToString() + "\". Path: \"" + elem.second.ToString() + "\"");
 			}
 
-			Path elementRelativePath = elem.second.GetRelative(relativePath);
+			Path elementRelativePath = elem.second.GetRelative(physicalPathPrefix);
 
 			copy->mUUIDToFilePath[elem.first] = elementRelativePath;
 		}
@@ -159,42 +171,44 @@ void ResourceManifest::Save(const SPtr<ResourceManifest>& manifest, const Path& 
 	}
 }
 
-SPtr<ResourceManifest> ResourceManifest::Load(const Path& path, const Path& relativePath, const Path& virtualRelativePath)
+SPtr<ResourceManifest> ResourceManifest::Load(const Path& path, const Path& physicalPathPrefix, const Path& virtualPathPrefix)
 {
 	FileDecoder fs(path);
 	SPtr<ResourceManifest> manifest = std::static_pointer_cast<ResourceManifest>(fs.Decode());
 
-	if(relativePath.IsEmpty() && virtualRelativePath.IsEmpty())
+	if(physicalPathPrefix.IsEmpty() && virtualPathPrefix.IsEmpty())
 		return manifest;
 
 	SPtr<ResourceManifest> copy = Create(manifest->mName);
+	copy->mPhysicalPathPrefix = physicalPathPrefix;
+	copy->mVirtualPathPrefix = virtualPathPrefix;
 
-	if(!relativePath.IsEmpty())
+	if(!physicalPathPrefix.IsEmpty())
 	{
 		for(auto& elem : manifest->mFilePathToUUID)
 		{
-			Path absPath = elem.first.GetAbsolute(relativePath);
+			Path absPath = elem.first.GetAbsolute(physicalPathPrefix);
 			copy->mFilePathToUUID[absPath] = elem.second;
 		}
 
 		for(auto& elem : manifest->mUUIDToFilePath)
 		{
-			Path absPath = elem.second.GetAbsolute(relativePath);
+			Path absPath = elem.second.GetAbsolute(physicalPathPrefix);
 			copy->mUUIDToFilePath[elem.first] = absPath;
 		}
 	}
 
-	if(!virtualRelativePath.IsEmpty())
+	if(!virtualPathPrefix.IsEmpty())
 	{
 		for(const auto& pair : manifest->mFilePathToUUID)
 		{
-			const Path absoluteVirtualPath = pair.first.GetAbsolute(virtualRelativePath);
+			const Path absoluteVirtualPath = pair.first.GetAbsolute(virtualPathPrefix);
 			copy->mVirtualFilePathToUUID[absoluteVirtualPath] = pair.second;
 		}
 
 		for(const auto& pair : manifest->mUUIDToFilePath)
 		{
-			const Path absoluteVirtualPath = pair.second.GetAbsolute(virtualRelativePath);
+			const Path absoluteVirtualPath = pair.second.GetAbsolute(virtualPathPrefix);
 			copy->mUUIDToVirtualFilePath[pair.first] = absoluteVirtualPath;
 		}
 	}

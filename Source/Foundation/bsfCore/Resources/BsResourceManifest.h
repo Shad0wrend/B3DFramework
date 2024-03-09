@@ -73,25 +73,33 @@ namespace bs
 		bool FilePathExists(const Path& filePath) const;
 
 		/**
-		 * Saves the resource manifest to the specified location.
-		 *
-		 * @param[in]	manifest		Manifest to save.
-		 * @param[in]	path			Full pathname of the file to save the manifest in.
-		 * @param[in]	relativePath	If not empty, all pathnames in the manifest will be stored as if relative to this
-		 *								path.
+		 * Converts a virtual path to a physical one. Note the existance of the path in the manifest will not be checked,
+		 * the only requirement is that the virtual path begins with virtual path prefix. This means you can use this method
+		 * for translating virtual -> physical paths before they are added to the manifest. Returns false if
+		 * @p virtualPath doesn't start with the manifest's virtual path prefix.
 		 */
 		B3D_SCRIPT_EXPORT()
-		static void Save(const SPtr<ResourceManifest>& manifest, const Path& path, const Path& relativePath);
+		bool VirtualToPhysicalPath(const Path& virtualPath, Path& outPhysicalPath) const;
+
+		/**
+		 * Saves the resource manifest to the specified location.
+		 *
+		 * @param	manifest			Manifest to save.
+		 * @param	path				Full pathname of the file to save the manifest in.
+		 * @param	physicalPathPrefix	If not empty, all pathnames in the manifest will be stored as if relative to this path.
+		 */
+		B3D_SCRIPT_EXPORT()
+		static void Save(const SPtr<ResourceManifest>& manifest, const Path& path, const Path& physicalPathPrefix);
 
 		/**
 		 * Loads the resource manifest from the specified location.
 		 *
 		 * @param	path					Full pathname of the file to load the manifest from.
-		 * @param	relativePath			If not empty, all loaded pathnames will have this path prepended.
-		 * @param	virtualRelativePath		If not empty, adds an additional set of paths that the resource can be referenced from. 
+		 * @param	physicalPathPrefix		If not empty, all loaded path names will have this path prepended.
+		 * @param	virtualPathPrefix		If not empty, adds an additional set of paths that the resource can be referenced from. 
 		 */
 		B3D_SCRIPT_EXPORT()
-		static SPtr<ResourceManifest> Load(const Path& path, const Path& relativePath, const Path& virtualRelativePath = Path::kBlank);
+		static SPtr<ResourceManifest> Load(const Path& path, const Path& physicalPathPrefix, const Path& virtualPathPrefix = Path::kBlank);
 
 		/** Creates a new empty resource manifest. Provided name should be unique among manifests. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(ResourceManifest))
@@ -99,6 +107,9 @@ namespace bs
 
 	private:
 		String mName;
+		Path mPhysicalPathPrefix;
+		Path mVirtualPathPrefix;
+
 		UnorderedMap<UUID, Path> mUUIDToFilePath;
 		UnorderedMap<Path, UUID> mFilePathToUUID;
 

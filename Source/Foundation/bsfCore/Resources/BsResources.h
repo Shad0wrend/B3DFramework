@@ -311,12 +311,13 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		bool GetFilePathFromUuid(const UUID& uuid, Path& filePath) const;
 
-		/**
-		 * Attempts to retrieve UUID and physical file path from the provided file path. Provided path can be physical or virtual.
-		 * Returns true if successful, false otherwise.
-		 */
+		/** Attempts to retrieve UUID from the provided physical file path. Returns true if successful, false otherwise. */
 		B3D_SCRIPT_EXPORT()
-		bool GetUUUIDAndPhysicalPathFromFilePath(const Path& path, UUID& outUUID, Path& outPhysicalFilePath) const;
+		bool GetUUIDFromFilePath(const Path& path, UUID& outUUID) const;
+
+		/** Converts a potentially virtual path into a physical one. If the path is not virtual, returns the path as-is. */
+		B3D_SCRIPT_EXPORT()
+		Path EnsurePhysicalPath(const Path& path) const;
 
 		/**
 		 * Called when the resource has been successfully loaded.
