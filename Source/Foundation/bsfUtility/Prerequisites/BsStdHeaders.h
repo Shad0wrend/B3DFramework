@@ -154,6 +154,20 @@ namespace bs
 	template <typename T>
 	struct B3DIsSharedPointer<SPtr<T>> : std::true_type {};
 
+	/** Checks does the provided type define iterator type. */
+	template <typename T, typename = void>
+	struct B3DHasIterator : std::false_type { };
+
+	template <typename T>
+	struct B3DHasIterator<T, std::void_t<typename T::iterator>> : std::true_type { };
+
+	/** Checks does the provided type define const_iterator type. */
+	template <typename T, typename = void>
+	struct B3DHasConstIterator : std::false_type { };
+
+	template <typename T>
+	struct B3DHasConstIterator<T, std::void_t<typename T::const_iterator>> : std::true_type { };
+
 	// Returns the underlying type if the provided type is a shared pointer, or itself otherwise
 	template <typename T>
 	struct B3DDecaySharedPointer

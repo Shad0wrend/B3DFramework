@@ -122,14 +122,13 @@ namespace bs
 	 * rather than requiring a separate field type for each.
 	 *
 	 * @tparam RTTIType			RTTIType of the object that contains the field we're accessing.
-	 * @tparam ContainerType	Type of the container being iterated over.
+	 * @tparam ContainerType	Type of the container being iterated over. If using a faux iterator that is only accessing a single non-container field, this will be the same as @p ElementType.
+	 * @tparam ElementType		Type of the element within the container.
 	 * @tparam ObjectType		Type of the object that the field is a member of.
 	 */
-	template <class RTTIType, class ContainerType, class ObjectType>
+	template <class RTTIType, class ContainerType, class ElementType, class ObjectType>
 	struct TRTTIIteratorField : public RTTIIteratorField // TODO - This type should be re-used for non-container types as well (treat the iterator as a single entry array)
 	{
-		using ElementType = typename ContainerType::value_type;
-
 		typedef UPtr<TRTTIIterator<ContainerType>, DefaultAllocatorTag, TRTTIIteratorDeleter<ContainerType>> (RTTIType::*GetIteratorDelegate)(ObjectType&, FrameAllocator&);
 		typedef const ElementType& (RTTIType::*GetValueDelegate)(ObjectType&, FrameAllocator&, TRTTIIterator<ContainerType>&);
 		typedef void (RTTIType::*SetValueDelegate)(ObjectType&, FrameAllocator&, TRTTIIterator<ContainerType>&, const ElementType&);

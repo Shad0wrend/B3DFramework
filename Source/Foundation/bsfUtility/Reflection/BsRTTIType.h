@@ -817,7 +817,7 @@ namespace bs
 			void (InterfaceType::*setValueCallback)(ObjectType&, FrameAllocator&, TRTTIIterator<DataType>&, const typename DataType::value_type&),
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
-			auto field = B3DNew<TRTTIIteratorField<InterfaceType, DataType, ObjectType>>(name, uniqueId, getIteratorCallback, getValueCallback, setValueCallback, info);
+			auto field = B3DNew<TRTTIIteratorField<InterfaceType, DataType, typename DataType::value_type, ObjectType>>(name, uniqueId, getIteratorCallback, getValueCallback, setValueCallback, info);
 			AddNewField(field);
 		}
 
