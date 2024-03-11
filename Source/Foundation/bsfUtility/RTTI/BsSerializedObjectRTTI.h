@@ -125,7 +125,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_ITERATOR(SubObjects, 0)
+			B3D_RTTI_MEMBER_CONTAINER(SubObjects, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -151,7 +151,7 @@ namespace bs
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_PLAIN(ElementCount, 0)
-			B3D_RTTI_MEMBER_ITERATOR(Entries, 1)
+			B3D_RTTI_MEMBER_CONTAINER(Entries, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -177,7 +177,7 @@ namespace bs
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_PLAIN(TypeId, 0)
-			B3D_RTTI_MEMBER_ITERATOR(FieldEntries, 1)
+			B3D_RTTI_MEMBER_CONTAINER(FieldEntries, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -202,7 +202,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_ITERATOR(Values, 0)
+			B3D_RTTI_MEMBER_CONTAINER(Values, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
