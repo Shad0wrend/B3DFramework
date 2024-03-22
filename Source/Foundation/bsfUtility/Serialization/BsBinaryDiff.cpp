@@ -294,7 +294,7 @@ namespace RTTIWrapper
 	template <>
 	struct ValueIterator<false>
 	{
-		ValueIterator(ISerialized* value, FrameAllocator* allocator);
+		ValueIterator(const SPtr<ISerialized>& value, FrameAllocator* allocator);
 
 		/**
 		 * Moves to the next value and return false if no value was available (end was reached).
@@ -326,9 +326,9 @@ namespace RTTIWrapper
 		UnorderedMap<u32, SerializedArrayEntry>::iterator mArrayIterator;
 		UnorderedMap<SPtr<ISerialized>, SPtr<ISerialized>>::iterator mMapIterator;
 		bool mIsIteratorSet = false;
-		SerializedArray* mArrayContainerValue = nullptr;
-		SerializedMap* mMapContainerValue = nullptr;
-		SerializedField* mValue = nullptr;
+		SPtr<SerializedArray> mArrayContainerValue;
+		SPtr<SerializedMap> mMapContainerValue;
+		SPtr<ISerialized> mValue;
 
 		FrameAllocator* mFrameAllocator = nullptr;
 	};
@@ -629,7 +629,6 @@ namespace RTTIWrapper
 	Field<false>::Field(u32 fieldId, const SPtr<ISerialized>& value, FrameAllocator* frameAllocator)
 		: mId(fieldId), mValue(value), mFrameAllocator(frameAllocator)
 	{
-		B3D_ASSERT(value != nullptr);
 		B3D_ASSERT(frameAllocator != nullptr);
 	}
 
@@ -640,12 +639,12 @@ namespace RTTIWrapper
 
 	ValueIterator<false> Field<false>::GetValueIterator() const
 	{
-		return ValueIterator<false>(mValue.get(), mFrameAllocator);
+		return ValueIterator<false>(mValue, mFrameAllocator);
 	}
 
 	SPtr<ISerialized> Field<false>::Clone(SerializedObjectEncodeFlags flags, SerializationContext* context) const
 	{
-		return mValue->Clone();
+		return mValue != nullptr ? mValue->Clone() : nullptr;
 	}
 
 	Field<true>::Field(RTTITypeBase* rttiType, RTTIField* field, IReflectable* object, FrameAllocator* frameAllocator)
@@ -694,18 +693,17 @@ namespace RTTIWrapper
 		return IntermediateSerializer::SerializeField(mObject, mRTTIType, mField, ~0u, flags, context, mFrameAllocator);
 	}
 
-	ValueIterator<false>::ValueIterator(ISerialized* value, FrameAllocator* frameAllocator)
+	ValueIterator<false>::ValueIterator(const SPtr<ISerialized>& value, FrameAllocator* frameAllocator)
 		:mFrameAllocator(frameAllocator)
 	{
-		B3D_ASSERT(value != nullptr);
 		B3D_ASSERT(frameAllocator != nullptr);
 
-		if(auto* array = B3DRTTICast<SerializedArray>(value))
+		if(const auto& array = B3DRTTICast<SerializedArray>(value))
 			mArrayContainerValue = array;
-		else if(auto* map = B3DRTTICast<SerializedMap>(value))
+		else if(const auto& map = B3DRTTICast<SerializedMap>(value))
 			mMapContainerValue = map;
 		else
-			mValue = B3DRTTICast<SerializedField>(value);
+			mValue = value;
 	}
 
 	bool ValueIterator<false>::MoveNext()
@@ -754,7 +752,7 @@ namespace RTTIWrapper
 		else if(mMapContainerValue != nullptr)
 			value = mMapIterator->second;
 		else
-			value = mValue->Value;
+			value = mValue;
 
 		return Value<false>(~0u, value, mFrameAllocator);
 	}
@@ -1809,7 +1807,7 @@ void IDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObj
 			break;
 		}
 
-		if(command.Field->Schema.IsIterator)
+		if(command.Field != nullptr && command.Field->Schema.IsIterator)
 		{
 			auto& field = *static_cast<RTTIIteratorField*>(command.Field);
 
@@ -2251,7 +2249,7 @@ void BinaryDiff::GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance, const 
 	const bool isArrayElement = arrayIndex != ~0u;
 	const u32 arraySize = isArrayElement ? field.GetArraySize(rttiInstance, object.get()) : 1;
 
-	for(u32 tupleElementIndex = 0; tupleElementIndex << field.Schema.FieldTypes.Size(); ++tupleElementIndex)
+	for(u32 tupleElementIndex = 0; tupleElementIndex < field.Schema.FieldTypes.Size(); ++tupleElementIndex)
 	{
 		SPtr<ISerialized> serializedEntry = serializedTuple != nullptr ? serializedTuple->Values[tupleElementIndex] : entryDelta;
 
