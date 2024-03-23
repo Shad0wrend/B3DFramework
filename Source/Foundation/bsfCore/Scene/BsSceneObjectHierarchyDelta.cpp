@@ -6,7 +6,7 @@
 #include "Private/RTTI/BsSceneObjectHierarchyDeltaRTTI.h"
 #include "Scene/BsSceneObject.h"
 #include "Serialization/BsBinarySerializer.h"
-#include "Serialization/BsBinaryDiff.h"
+#include "Serialization/BsBinaryDelta.h"
 #include "Scene/BsSceneManager.h"
 #include "Utility/BsUtility.h"
 #include "BsPrefab.h"

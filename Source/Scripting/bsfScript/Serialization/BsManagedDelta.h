@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Serialization/BsBinaryDiff.h"
+#include "Serialization/BsBinaryDelta.h"
 
 namespace bs
 {

@@ -14,7 +14,7 @@
 #include "Reflection/BsRTTIReflectablePtrField.h"
 #include "Reflection/BsRTTIManagedDataBlockField.h"
 #include "Reflection/BsIReflectable.h"
-#include "Serialization/BsBinaryDiff.h"
+#include "Serialization/BsBinaryDelta.h"
 
 namespace bs
 {

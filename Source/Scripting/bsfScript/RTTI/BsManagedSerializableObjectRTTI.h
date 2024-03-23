@@ -7,7 +7,7 @@
 #include "Serialization/BsScriptAssemblyManager.h"
 #include "Serialization/BsManagedSerializableObject.h"
 #include "Serialization/BsManagedSerializableField.h"
-#include "Serialization/BsManagedDiff.h"
+#include "Serialization/BsManagedDelta.h"
 
 namespace bs
 {
