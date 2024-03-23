@@ -1,7 +1,7 @@
 //********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Serialization/BsManagedDelta.h"
-#include "Serialization/BsManagedSerializableDiff.h"
+#include "Serialization/BsManagedSerializableDelta.h"
 #include "Serialization/BsBinarySerializer.h"
 #include "Serialization/BsManagedSerializableObject.h"
 #include "Reflection/BsRTTIType.h"

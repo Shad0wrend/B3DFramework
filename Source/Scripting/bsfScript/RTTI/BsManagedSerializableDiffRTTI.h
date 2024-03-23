@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
 #include "RTTI/BsStdRTTI.h"
-#include "Serialization/BsManagedSerializableDiff.h"
+#include "Serialization/BsManagedSerializableDelta.h"
 
 namespace bs
 {
