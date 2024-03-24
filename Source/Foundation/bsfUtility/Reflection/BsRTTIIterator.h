@@ -67,6 +67,8 @@ namespace bs
 		static bool IsValid(T& container, IteratorType iterator) { return iterator != nullptr; }
 		static IteratorType Insert(T& container, IteratorType location, const ElementType& element) { *location = element; return location; }
 		static IteratorType Insert(T& container, IteratorType location, ElementType&& element) { *location = std::move(element); return location; }
+		static IteratorType InsertAtEnd(T& container, const ElementType& element) { container = element; return &container; }
+		static IteratorType InsertAtEnd(T& container, ElementType&& element) { container = std::move(element); return &container; }
 		static IteratorType SetValue(T& container, IteratorType location, const ElementType& element) { *location = element; return location; }
 		static IteratorType SetValue(T& container, IteratorType location, ElementType&& element) { *location = std::move(element); return location; }
 		static IteratorType Increment(IteratorType iterator) { iterator = nullptr; return iterator; }
@@ -88,6 +90,8 @@ namespace bs
 		static bool IsValid(T& container, IteratorType iterator) { return iterator != container.end(); }
 		static IteratorType Insert(T& container, IteratorType location, const ElementType& element) { return container.insert(location, element); }
 		static IteratorType Insert(T& container, IteratorType location, ElementType&& element) { return container.insert(location, std::move(element)); }
+		static IteratorType InsertAtEnd(T& container, const ElementType& element) { return container.insert(container.end(), element); }
+		static IteratorType InsertAtEnd(T& container, ElementType&& element) { return container.insert(container.end(), std::move(element)); }
 		static IteratorType SetValue(T& container, IteratorType location, const ElementType& element)
 		{
 			typename std::iterator_traits<IteratorType>::difference_type arrayIndex = std::distance(container.begin(), location);
@@ -183,7 +187,7 @@ namespace bs
 					mIterator = IteratorAdapter::SetValue(*mValue, mIterator, value);
 			}
 			else
-				mIterator = IteratorAdapter::Insert(*mValue, IteratorAdapter::End(*mValue), value);
+				mIterator = IteratorAdapter::InsertAtEnd(*mValue, value);
 
 			return *this;
 		}
@@ -202,7 +206,7 @@ namespace bs
 					mIterator = IteratorAdapter::SetValue(*mValue, mIterator, std::move(value));
 			}
 			else
-				mIterator = IteratorAdapter::Insert(*mValue, IteratorAdapter::End(*mValue), std::move(value));
+				mIterator = IteratorAdapter::InsertAtEnd(*mValue, std::move(value));
 
 			return *this;
 		}

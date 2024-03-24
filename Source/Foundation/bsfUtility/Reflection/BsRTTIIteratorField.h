@@ -277,21 +277,21 @@ namespace bs
 
 				if(tupleElementIndex == 0)
 				{
-					if constexpr(IsReflectableShared<decltype(value.first)>())
-						value.first = std::static_pointer_cast<typename B3DDecaySharedPointer<decltype(value.first)>::value>(reflectable);
+					if constexpr(IsReflectableShared<typename ElementType::first_type>())
+						value.first = std::static_pointer_cast<typename B3DDecaySharedPointer<typename ElementType::first_type>::value>(reflectable);
 				}
 				else
 				{
-					if constexpr(IsReflectableShared<decltype(value.second)>())
-						value.second = std::static_pointer_cast<typename B3DDecaySharedPointer<decltype(value.second)>::value>(reflectable);
+					if constexpr(IsReflectableShared<typename ElementType::second_type>())
+						value.second = std::static_pointer_cast<typename B3DDecaySharedPointer<typename ElementType::second_type>::value>(reflectable);
 				}
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
 
-				if constexpr(IsReflectableShared<decltype(value)>())
-					value = std::static_pointer_cast<typename B3DDecaySharedPointer<decltype(value)>::value>(reflectable);
+				if constexpr(IsReflectableShared<ElementType>())
+					value = std::static_pointer_cast<typename B3DDecaySharedPointer<ElementType>::value>(reflectable);
 			}
 		}
 
@@ -304,18 +304,18 @@ namespace bs
 
 				if(tupleElementIndex == 0)
 				{
-					if constexpr(IsReflectableShared<decltype(value.first)>())
+					if constexpr(IsReflectableShared<typename ElementType::first_type>())
 						return value.first;
 				}
 
-				if constexpr(IsReflectableShared<decltype(value.second)>())
+				if constexpr(IsReflectableShared<typename ElementType::second_type>())
 					return value.second;
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
 
-				if constexpr(IsReflectableShared<decltype(value)>())
+				if constexpr(IsReflectableShared<ElementType>())
 					return value;
 			}
 
@@ -331,12 +331,12 @@ namespace bs
 
 				if(tupleElementIndex == 0)
 				{
-					if constexpr(IsReflectable<decltype(value.first)>())
+					if constexpr(IsReflectable<typename ElementType::first_type>())
 						value.first = static_cast<const typename ElementType::first_type&>(reflectable);
 				}
 				else
 				{
-					if constexpr(IsReflectable<decltype(value.second)>())
+					if constexpr(IsReflectable<typename ElementType::second_type>())
 						value.second = static_cast<const typename ElementType::second_type&>(reflectable);
 				}
 			}
@@ -344,7 +344,7 @@ namespace bs
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
 
-				if constexpr(IsReflectable<decltype(value)>())
+				if constexpr(IsReflectable<ElementType>())
 					value = static_cast<const ElementType&>(reflectable);
 			}
 		}
@@ -358,18 +358,18 @@ namespace bs
 
 				if(tupleElementIndex == 0)
 				{
-					if constexpr(IsReflectable<decltype(value.first)>())
+					if constexpr(IsReflectable<typename ElementType::first_type>())
 						return value.first;
 				}
 
-				if constexpr(IsReflectable<decltype(value.second)>())
+				if constexpr(IsReflectable<typename ElementType::second_type>())
 					return value.second;
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
 
-				if constexpr(IsReflectable<decltype(value)>())
+				if constexpr(IsReflectable<ElementType>())
 					return value;
 			}
 

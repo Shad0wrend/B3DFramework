@@ -260,5 +260,7 @@ namespace bs
 		TID_Size2 = 86,
 		TID_Size2UI = 87,
 		TID_Array = 88,
+		TID_SerializedTupleDelta = 89,
+		TID_SerializedTupleDeltaEntry = 90,
 	};
 } // namespace bs

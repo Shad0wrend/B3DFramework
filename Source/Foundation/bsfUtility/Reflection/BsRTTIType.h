@@ -397,13 +397,13 @@ namespace bs
  * The type of the member must be a valid container type (e.g. vector or map). The container is allowed to contain
  * plain, reflectable and reflectable pointer types alike. Each field must specify a unique ID for @p id.
  */
-#define B3D_RTTI_MEMBER_CONTAINER(name, id) B3D_RTTI_MEMBER_CONTAINER_FULL(name, name, id, bs::RTTIFieldInfo::DEFAULT)
+#define B3D_RTTI_MEMBER(name, id) B3D_RTTI_MEMBER_FULL(name, name, id, bs::RTTIFieldInfo::DEFAULT)
 
 /** Same as B3D_RTTI_MEMBER_CONTAINER, but allows you to specify separate names for the field name and the member variable. */
-#define B3D_RTTI_MEMBER_CONTAINER_NAMED(name, field, id) B3D_RTTI_MEMBER_CONTAINER_FULL(name, field, id, RTTIFieldInfo::DEFAULT)
+#define B3D_RTTI_MEMBER_NAMED(name, field, id) B3D_RTTI_MEMBER_FULL(name, field, id, RTTIFieldInfo::DEFAULT)
 
 /** Same as B3D_RTTI_MEMBER_ITERATOR, but allows you to specify an info structure that further describes the field. */
-#define B3D_RTTI_MEMBER_CONTAINER_INFO(name, id, info) B3D_RTTI_MEMBER_CONTAINER_FULL(name, name, id, info)
+#define B3D_RTTI_MEMBER_INFO(name, id, info) B3D_RTTI_MEMBER_FULL(name, name, id, info)
 /**
  * Same as B3D_RTTI_MEMBER_CONTAINER, but allows you to specify separate names for the field name and the member variable,
  * as well as an optional info structure further describing the field.
