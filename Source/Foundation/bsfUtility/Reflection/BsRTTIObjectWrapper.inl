@@ -259,7 +259,7 @@ namespace bs::RTTIObjectWrapper
 	{
 		SPtr<ISerialized> value;
 		if(mArrayContainerValue != nullptr)
-			value = mArrayContainerValue[mArrayIndex];
+			value = mArrayContainerValue->Entries[mArrayIndex];
 		else if(mMapContainerValue != nullptr)
 			value = mMapIterator->second;
 		else

@@ -225,7 +225,6 @@ namespace bs
 		}
 	};
 
-
 	class B3D_UTILITY_EXPORT SerializedSubObjectRTTI : public RTTIType<SerializedSubObject, IReflectable, SerializedSubObjectRTTI>
 	{
 	private:

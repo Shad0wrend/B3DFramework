@@ -59,7 +59,11 @@ bool SerializedTupleDelta::Equals(const SPtr<ISerialized>& other) const
 
 		for(auto myEntryIterator = Values.begin(); myEntryIterator != Values.end(); ++myEntryIterator)
 		{
-			auto foundOtherEntry = std::find(otherTuple->Values.begin(), otherTuple->Values.end(), myEntryIterator->Index);
+			auto foundOtherEntry = std::find_if(otherTuple->Values.begin(), otherTuple->Values.end(), [index = myEntryIterator->Index](const SerializedTupleEntryDelta& entry)
+			{
+				return entry.Index == index;
+			});
+
 			if(foundOtherEntry == otherTuple->Values.end())
 				return false;
 
@@ -168,6 +172,89 @@ RTTITypeBase* SerializedArrayEntryDelta::GetRttiStatic()
 }
 
 RTTITypeBase* SerializedArrayEntryDelta::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+SPtr<ISerialized> SerializedMapDelta::Clone(bool cloneData)
+{
+	SPtr<SerializedMapDelta> copy = B3DMakeShared<SerializedMapDelta>();
+
+	for(auto& entryPair : Entries)
+	{
+		std::pair<SPtr<ISerialized>, SerializedMapEntryDelta> copiedEntry;
+		if(entryPair.first != nullptr)
+			copiedEntry.first = entryPair.first->Clone(cloneData);
+
+		copiedEntry.second.IsRemoved = entryPair.second.IsRemoved;
+		if(entryPair.second.Value != nullptr)
+			copiedEntry.second.Value = entryPair.second.Value->Clone(cloneData);
+
+		copy->Entries.insert(copiedEntry);
+	}
+
+	return copy;
+}
+
+u64 SerializedMapDelta::CalculateHash() const
+{
+	u64 hash = B3DHash(Entries.size());
+
+	for(auto& entryPair : Entries)
+	{
+		if(entryPair.first != nullptr)
+			B3DCombineHash(hash, entryPair.first->CalculateHash());
+
+		B3DCombineHash(hash, entryPair.second.IsRemoved);
+		if(entryPair.second.Value != nullptr)
+			B3DCombineHash(hash, entryPair.second.Value->CalculateHash());
+	}
+
+	return hash;
+}
+
+bool SerializedMapDelta::Equals(const SPtr<ISerialized>& other) const
+{
+	if(SPtr<SerializedMapDelta> otherMap = B3DRTTICast<SerializedMapDelta>(other))
+	{
+		if(Entries.size() != otherMap->Entries.size())
+			return false;
+
+		for(auto myEntryIterator = Entries.begin(); myEntryIterator != Entries.end(); ++myEntryIterator)
+		{
+			auto foundOtherEntry = otherMap->Entries.find(myEntryIterator->first);
+			if(foundOtherEntry == otherMap->Entries.end())
+				return false;
+
+			if(myEntryIterator->second.IsRemoved != foundOtherEntry->second.IsRemoved)
+				return false;
+
+			if(!::Equals(myEntryIterator->second.Value, foundOtherEntry->second.Value))
+				return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+RTTITypeBase* SerializedMapDelta::GetRttiStatic()
+{
+	return SerializedMapDeltaRTTI::Instance();
+}
+
+RTTITypeBase* SerializedMapDelta::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+RTTITypeBase* SerializedMapEntryDelta::GetRttiStatic()
+{
+	return SerializedMapEntryDeltaRTTI::Instance();
+}
+
+RTTITypeBase* SerializedMapEntryDelta::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -398,7 +485,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Object<IsLHSIReflectable> lhs, Object
 			}
 
 			SPtr<SerializedArrayDelta> serializedArrayDelta;
-			SPtr<SerializedMap> serializedMap;
+			SPtr<SerializedMapDelta> serializedMapDelta;
 			SPtr<ISerialized> modification;
 			bool hasModification = false;
 
@@ -430,11 +517,10 @@ SPtr<SerializedObject> GenerateObjectDelta(Object<IsLHSIReflectable> lhs, Object
 
 						if(isMap)
 						{
-							if(serializedMap == nullptr)
-								serializedMap = B3DMakeShared<SerializedMap>();
+							if(serializedMapDelta == nullptr)
+								serializedMapDelta = B3DMakeShared<SerializedMapDelta>();
 
 							// TODO - I'm not storing map entries that are present in LHS but missing in RHS
-							//  - Add SerializedMapDelta to handle this case
 
 							SPtr<ISerialized> entryKey;
 							if(const auto& tuple = B3DRTTICast<SerializedTupleDelta>(*valueModification))
@@ -442,8 +528,12 @@ SPtr<SerializedObject> GenerateObjectDelta(Object<IsLHSIReflectable> lhs, Object
 							else
 								entryKey = *valueModification;
 
-							serializedMap->Entries[entryKey] = *valueModification;
-							modification = serializedMap;
+							SerializedMapEntryDelta mapEntry;
+							mapEntry.IsRemoved = false;
+							mapEntry.Value = *valueModification;
+
+							serializedMapDelta->Entries[entryKey] = std::move(mapEntry);
+							modification = serializedMapDelta;
 							
 						}
 						else if(isArray)
@@ -458,7 +548,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Object<IsLHSIReflectable> lhs, Object
 							arrayEntry.Index = elementIndex;
 							arrayEntry.Value = *valueModification;
 
-							serializedArrayDelta->Entries[elementIndex] = arrayEntry;
+							serializedArrayDelta->Entries[elementIndex] = std::move(arrayEntry);
 							modification = serializedArrayDelta;
 						}
 						else
@@ -880,7 +970,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 						GenerateDeltaCommandForEntry(rttiInstance, object, *field, arrayDeltaElement.second.Value, arrayDeltaElement.second.Index, nullptr, objectMap, subObjectCommands, context, allocator);
 					}
 				}
-				else if(const auto& serializedMapDelta = B3DRTTICast<SerializedMap>(fieldDelta))
+				else if(const auto& serializedMapDelta = B3DRTTICast<SerializedMapDelta>(fieldDelta))
 				{
 					for(auto& mapDeltaElement : serializedMapDelta->Entries)
 					{
@@ -889,7 +979,14 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 						IntermediateSerializer intermediateSerializer(&allocator);
 						intermediateSerializer.DeserializeTupleElement(*field, deserializedMapKey, 0, mapDeltaElement.first);
 
-						GenerateDeltaCommandForEntry(rttiInstance, object, *field, mapDeltaElement.second, ~0u, deserializedMapKey, objectMap, subObjectCommands, context, allocator);
+						if(!mapDeltaElement.second.IsRemoved)
+						{
+							GenerateDeltaCommandForEntry(rttiInstance, object, *field, mapDeltaElement.second.Value, ~0u, deserializedMapKey, objectMap, subObjectCommands, context, allocator);
+						}
+						else
+						{
+							// TODO - Handle removed map elements
+						}
 					}
 				}
 				else
@@ -999,7 +1096,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance
 		SPtr<ISerialized> serializedEntryDelta;
 		if(serializedTupleDelta != nullptr)
 		{
-			auto foundTupleEntry = std::find(serializedTupleDelta->Values.begin(), serializedTupleDelta->Values.end(),
+			auto foundTupleEntry = std::find_if(serializedTupleDelta->Values.begin(), serializedTupleDelta->Values.end(),
 				[tupleElementIndex](const SerializedTupleEntryDelta& entry)
 				{
 					return entry.Index == tupleElementIndex;
@@ -1140,7 +1237,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance
 
 		if(serializedTupleDelta != nullptr)
 		{
-			auto foundTupleEntry = std::find(serializedTupleDelta->Values.begin(), serializedTupleDelta->Values.end(),
+			auto foundTupleEntry = std::find_if(serializedTupleDelta->Values.begin(), serializedTupleDelta->Values.end(),
 				[tupleElementIndex](const SerializedTupleEntryDelta& entry)
 				{
 					return entry.Index == tupleElementIndex;

@@ -210,7 +210,7 @@ namespace bs
 		RTTITypeBase* GetRtti() const override;
 	};
 
-	/** Contains a delta between two arrays. Only different array element are stored in the delta. */
+	/** Contains a delta between two arrays. Only different array elements are stored in the delta. */
 	struct B3D_UTILITY_EXPORT SerializedArrayDelta : ISerialized
 	{
 		SerializedArrayDelta() = default;
@@ -227,6 +227,43 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedArrayDeltaRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
+	/** Holds a single array element entry in SerializedMapDelta. */
+	struct B3D_UTILITY_EXPORT SerializedMapEntryDelta : IReflectable
+	{
+		SerializedMapEntryDelta() = default;
+
+		SPtr<ISerialized> Value;
+		bool IsRemoved = false; /**< Will be set if the entry doesn't exist in the modified object. */
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class SerializedMapEntryDeltaRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
+	/** Contains a delta between two maps. Only different and removed array elements are stored in the delta. */
+	struct B3D_UTILITY_EXPORT SerializedMapDelta : ISerialized
+	{
+		SerializedMapDelta() = default;
+
+		SPtr<ISerialized> Clone(bool cloneData = true) override;
+		u64 CalculateHash() const override;
+		bool Equals(const SPtr<ISerialized>& other) const override;
+
+		UnorderedMap<SPtr<ISerialized>, SerializedMapEntryDelta> Entries;
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class SerializedMapDeltaRTTI;
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const override;
 	};

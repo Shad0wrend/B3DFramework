@@ -4,6 +4,7 @@
 #include "Prerequisites/BsPrerequisitesUtil.h"
 #include "Reflection/BsRTTIType.h"
 #include "Serialization/BsBinaryDelta.h"
+#include "RTTI/BsSerializedObjectRTTI.h"
 
 namespace bs
 {
@@ -16,7 +17,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Key, 0)
+			B3D_RTTI_MEMBER(Key, 0)
 			B3D_RTTI_MEMBER_CONTAINER(Values, 1)
 		B3D_RTTI_END_MEMBERS
 
@@ -42,8 +43,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Index, 0)
-			B3D_RTTI_MEMBER_REFLPTR(Value, 1)
+			B3D_RTTI_MEMBER(Index, 0)
+			B3D_RTTI_MEMBER(Value, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -68,7 +69,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(ElementCount, 0)
+			B3D_RTTI_MEMBER(ElementCount, 0)
 			B3D_RTTI_MEMBER_CONTAINER(Entries, 1)
 		B3D_RTTI_END_MEMBERS
 
@@ -94,8 +95,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Index, 0)
-			B3D_RTTI_MEMBER_REFLPTR(Value, 1)
+			B3D_RTTI_MEMBER(Index, 0)
+			B3D_RTTI_MEMBER(Value, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -116,6 +117,56 @@ namespace bs
 		}
 	};
 
+	class B3D_UTILITY_EXPORT SerializedMapDeltaRTTI : public RTTIType<SerializedMapDelta, ISerialized, SerializedMapDeltaRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_CONTAINER(Entries, 0)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "SerializedMapDelta";
+			return name;
+		}
+
+		u32 GetRttiId() const override
+		{
+			return TID_SerializedMapDelta;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return B3DMakeShared<SerializedMapDelta>();
+		}
+	};
+
+	class B3D_UTILITY_EXPORT SerializedMapEntryDeltaRTTI : public RTTIType<SerializedMapEntryDelta, IReflectable, SerializedMapEntryDeltaRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(Value, 0)
+			B3D_RTTI_MEMBER(IsRemoved, 1)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "SerializedMapEntryDelta";
+			return name;
+		}
+
+		u32 GetRttiId() const override
+		{
+			return TID_SerializedMapEntryDelta;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return B3DMakeShared<SerializedMapEntryDelta>();
+		}
+	};
 	/** @} */
 	/** @endcond */
 } // namespace bs

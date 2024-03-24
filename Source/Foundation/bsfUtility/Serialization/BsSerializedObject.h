@@ -284,6 +284,5 @@ namespace bs
 		RTTITypeBase* GetRtti() const override;
 	};
 
-
 	/** @} */
 } // namespace bs

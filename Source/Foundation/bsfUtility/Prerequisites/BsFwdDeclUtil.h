@@ -263,5 +263,7 @@ namespace bs
 		TID_SerializedTupleDelta = 89,
 		TID_SerializedTupleEntryDelta = 90,
 		TID_SerializedArrayDelta = 91,
+		TID_SerializedMapDelta = 92,
+		TID_SerializedMapEntryDelta = 93,
 	};
 } // namespace bs
