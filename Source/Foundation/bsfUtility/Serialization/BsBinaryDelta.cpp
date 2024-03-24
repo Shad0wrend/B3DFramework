@@ -83,12 +83,91 @@ RTTITypeBase* SerializedTupleDelta::GetRtti() const
 	return GetRttiStatic();
 }
 
-RTTITypeBase* SerializedTupleDeltaEntry::GetRttiStatic()
+RTTITypeBase* SerializedTupleEntryDelta::GetRttiStatic()
 {
-	return SerializedTupleDeltaEntryRTTI::Instance();
+	return SerializedTupleEntryDeltaRTTI::Instance();
 }
 
-RTTITypeBase* SerializedTupleDeltaEntry::GetRtti() const
+RTTITypeBase* SerializedTupleEntryDelta::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+SPtr<ISerialized> SerializedArrayDelta::Clone(bool cloneData)
+{
+	SPtr<SerializedArrayDelta> copy = B3DMakeShared<SerializedArrayDelta>();
+	copy->ElementCount = ElementCount;
+
+	for(auto& entryPair : Entries)
+	{
+		SerializedArrayEntryDelta arrayEntry = entryPair.second;
+
+		if(arrayEntry.Value != nullptr)
+			arrayEntry.Value = arrayEntry.Value->Clone(cloneData);
+
+		copy->Entries[entryPair.first] = arrayEntry;
+	}
+
+	return copy;
+}
+
+u64 SerializedArrayDelta::CalculateHash() const
+{
+	u64 hash = B3DHash(ElementCount);
+
+	for(auto& entryPair : Entries)
+	{
+		SerializedArrayEntryDelta arrayEntry = entryPair.second;
+
+		if(arrayEntry.Value != nullptr)
+			B3DCombineHash(hash, arrayEntry.Value->CalculateHash());
+	}
+
+	return hash;
+}
+
+bool SerializedArrayDelta::Equals(const SPtr<ISerialized>& other) const
+{
+	if(SPtr<SerializedArrayDelta> otherArray = B3DRTTICast<SerializedArrayDelta>(other))
+	{
+		if(ElementCount != otherArray->ElementCount)
+			return false;
+
+		if(Entries.size() != otherArray->Entries.size())
+			return false;
+
+		for(auto myEntryIterator = Entries.begin(); myEntryIterator != Entries.end(); ++myEntryIterator)
+		{
+			auto foundOtherEntry = otherArray->Entries.find(myEntryIterator->first);
+			if(foundOtherEntry == otherArray->Entries.end())
+				return false;
+
+			if(!::Equals(myEntryIterator->second.Value, foundOtherEntry->second.Value))
+				return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+RTTITypeBase* SerializedArrayDelta::GetRttiStatic()
+{
+	return SerializedArrayDeltaRTTI::Instance();
+}
+
+RTTITypeBase* SerializedArrayDelta::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+RTTITypeBase* SerializedArrayEntryDelta::GetRttiStatic()
+{
+	return SerializedArrayEntryDeltaRTTI::Instance();
+}
+
+RTTITypeBase* SerializedArrayEntryDelta::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -242,7 +321,7 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 					modification = serializedTupleDelta;
 				}
 
-				SerializedTupleDeltaEntry tupleDeltaEntry;
+				SerializedTupleEntryDelta tupleDeltaEntry;
 				tupleDeltaEntry.Index = tupleElementIndex;
 				tupleDeltaEntry.Value = *tupleElementModification;
 
@@ -318,7 +397,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Object<IsLHSIReflectable> lhs, Object
 				}
 			}
 
-			SPtr<SerializedArray> serializedArray;
+			SPtr<SerializedArrayDelta> serializedArrayDelta;
 			SPtr<SerializedMap> serializedMap;
 			SPtr<ISerialized> modification;
 			bool hasModification = false;
@@ -369,18 +448,18 @@ SPtr<SerializedObject> GenerateObjectDelta(Object<IsLHSIReflectable> lhs, Object
 						}
 						else if(isArray)
 						{
-							if(serializedArray == nullptr)
+							if(serializedArrayDelta == nullptr)
 							{
-								serializedArray = B3DMakeShared<SerializedArray>();
-								serializedArray->ElementCount = rhsValueIterator.GetElementCount();
+								serializedArrayDelta = B3DMakeShared<SerializedArrayDelta>();
+								serializedArrayDelta->ElementCount = rhsValueIterator.GetElementCount();
 							}
 
-							SerializedArrayEntry arrayEntry;
+							SerializedArrayEntryDelta arrayEntry;
 							arrayEntry.Index = elementIndex;
 							arrayEntry.Value = *valueModification;
 
-							serializedArray->Entries[elementIndex] = arrayEntry;
-							modification = serializedArray;
+							serializedArrayDelta->Entries[elementIndex] = arrayEntry;
+							modification = serializedArrayDelta;
 						}
 						else
 						{
@@ -785,7 +864,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 			{
 				auto* field = static_cast<RTTIIteratorField*>(genericField);
 
-				if(const auto& serializedArrayDelta = B3DRTTICast<SerializedArray>(fieldDelta))
+				if(const auto& serializedArrayDelta = B3DRTTICast<SerializedArrayDelta>(fieldDelta))
 				{
 					const u32 arrayDeltaElementCount = serializedArrayDelta->ElementCount;
 
@@ -820,7 +899,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 			}
 			else if(genericField->Schema.IsArray) // DEPRECATED
 			{
-				SPtr<SerializedArray> arrayDelta = std::static_pointer_cast<SerializedArray>(fieldDelta);
+				SPtr<SerializedArrayDelta> arrayDelta = std::static_pointer_cast<SerializedArrayDelta>(fieldDelta);
 
 				const u32 arrayDeltaElementCount = arrayDelta->ElementCount;
 
@@ -921,7 +1000,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance
 		if(serializedTupleDelta != nullptr)
 		{
 			auto foundTupleEntry = std::find(serializedTupleDelta->Values.begin(), serializedTupleDelta->Values.end(),
-				[tupleElementIndex](const SerializedTupleDeltaEntry& entry)
+				[tupleElementIndex](const SerializedTupleEntryDelta& entry)
 				{
 					return entry.Index == tupleElementIndex;
 				});
@@ -1062,7 +1141,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance
 		if(serializedTupleDelta != nullptr)
 		{
 			auto foundTupleEntry = std::find(serializedTupleDelta->Values.begin(), serializedTupleDelta->Values.end(),
-				[tupleElementIndex](const SerializedTupleDeltaEntry& entry)
+				[tupleElementIndex](const SerializedTupleEntryDelta& entry)
 				{
 					return entry.Index == tupleElementIndex;
 				});

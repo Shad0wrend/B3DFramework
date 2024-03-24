@@ -98,16 +98,12 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 				if(encodedAsArray)
 				{
 					SPtr<SerializedArray> serializedArray = std::static_pointer_cast<SerializedArray>(serializedFieldValue);
-					const u32 elementCount = serializedArray != nullptr ? serializedArray->ElementCount : 0;
+					const u64 elementCount = serializedArray != nullptr ? serializedArray->Entries.Size() : 0;
 
-					for(u32 arrayIndex = 0; arrayIndex < elementCount; ++arrayIndex)
+					for(u64 arrayIndex = 0; arrayIndex < elementCount; ++arrayIndex)
 					{
-						SPtr<ISerialized> serializedValue;
-						auto foundEntry = serializedArray->Entries.find(arrayIndex);
-						if(foundEntry != serializedArray->Entries.end())
-							serializedValue = foundEntry->second.Value;
-
-						DeserializeElement(*rttiInstance, object, *iteratorField, iterator, serializedValue);
+						const SPtr<ISerialized>& serializedEntry = serializedArray->Entries[arrayIndex];
+						DeserializeElement(*rttiInstance, object, *iteratorField, iterator, serializedEntry);
 					}
 				}
 				else if(encodedAsMap)
@@ -130,16 +126,17 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 			{
 				SPtr<SerializedArray> serializedArray = std::static_pointer_cast<SerializedArray>(serializedFieldValue);
 
-				curGenericField->SetArraySize(rttiInstance, object.get(), serializedArray->ElementCount);
+				const u32 elementCount = (u32)serializedArray->Entries.Size();
+				curGenericField->SetArraySize(rttiInstance, object.get(), elementCount);
 
-				for(const auto& serializedArrayEntryPair : serializedArray->Entries)
+				for(u32 elementIndex = 0; elementIndex < elementCount; ++elementIndex)
 				{
-					SPtr<ISerialized> serializedArrayEntryValue = serializedArrayEntryPair.second.Value;
+					SPtr<ISerialized> serializedArrayEntry = serializedArray->Entries[elementIndex];
 					SPtr<SerializedTuple> serializedTuple;
 
 					const bool isTuple = curGenericField->Schema.FieldTypes.Size() > 1;
 					if(isTuple)
-						serializedTuple = std::static_pointer_cast<SerializedTuple>(serializedArrayEntryValue);
+						serializedTuple = std::static_pointer_cast<SerializedTuple>(serializedArrayEntry);
 
 					for(u32 fieldTypeIndex = 0; fieldTypeIndex < (u32)curGenericField->Schema.FieldTypes.Size(); ++fieldTypeIndex)
 					{
@@ -153,7 +150,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 						}
 						else
 						{
-							serializedTupleValue = serializedArrayEntryValue;
+							serializedTupleValue = serializedArrayEntry;
 						}
 
 						switch(tupleSchema.Type)
@@ -169,7 +166,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 									referencedObject = GetOrDeserializeReflectableObject(referencedSerializedObject);
 
 								auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
-								curField->SetArrayValue(rttiInstance, object.get(), serializedArrayEntryPair.first, referencedObject);
+								curField->SetArrayValue(rttiInstance, object.get(), elementIndex, referencedObject);
 							}
 							break;
 						case SerializableFT_Reflectable:
@@ -186,7 +183,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 									DeserializeReflectableObject(newObject, referencedSerializedObject.get());
 
 									auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
-									curField->SetArrayValue(rttiInstance, object.get(), serializedArrayEntryPair.first, *newObject);
+									curField->SetArrayValue(rttiInstance, object.get(), elementIndex, *newObject);
 								}
 								break;
 							}
@@ -198,7 +195,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 									Bitstream tempStream(serializedPlainData->Value, serializedPlainData->Size);
 
 									auto* curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
-									curField->ArrayElemFromBuffer(rttiInstance, object.get(), serializedArrayEntryPair.first, tempStream);
+									curField->ArrayElemFromBuffer(rttiInstance, object.get(), elementIndex, tempStream);
 								}
 							}
 							break;
@@ -472,7 +469,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable* object, R
 	if(field->Schema.IsArray)
 	{
 		const u32 arrayElementCount = field->GetArraySize(rtti, object);
-		bool wholeArray = arrayIdx == (u32)-1;
+		bool wholeArray = arrayIdx == ~0u;
 
 		u32 arrayEndIdx;
 		if(wholeArray)
@@ -487,7 +484,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable* object, R
 		if(wholeArray)
 		{
 			serializedArray = B3DMakeShared<SerializedArray>();
-			serializedArray->ElementCount = arrayElementCount;
+			serializedArray->Entries.Reserve(arrayElementCount);
 
 			output = serializedArray;
 		}
@@ -511,13 +508,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable* object, R
 					}
 
 					if(wholeArray)
-					{
-						SerializedArrayEntry arrayEntry;
-						arrayEntry.Value = serializedChildObject;
-						arrayEntry.Index = arrIdx;
-
-						serializedArray->Entries[arrIdx] = arrayEntry;
-					}
+						serializedArray->Entries.Add(serializedChildObject);
 					else
 						output = serializedChildObject;
 				}
@@ -528,20 +519,14 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable* object, R
 			{
 				auto curField = static_cast<RTTIReflectableFieldBase*>(field);
 
-				for(u32 arrIdx = 0; arrIdx < arrayElementCount; arrIdx++)
+				for(u32 arrIdx = arrayIdx; arrIdx < arrayEndIdx; arrIdx++)
 				{
 					IReflectable& childObject = curField->GetArrayValue(rtti, object, arrIdx);
 
 					const SPtr<SerializedObject> serializedChildObject = SerializeReflectableObject(childObject, flags, context, *alloc);
 
 					if(wholeArray)
-					{
-						SerializedArrayEntry arrayEntry;
-						arrayEntry.Value = serializedChildObject;
-						arrayEntry.Index = arrIdx;
-
-						serializedArray->Entries[arrIdx] = arrayEntry;
-					}
+						serializedArray->Entries.Add(serializedChildObject);
 					else
 						output = serializedChildObject;
 				}
@@ -552,7 +537,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable* object, R
 			{
 				auto curField = static_cast<RTTIPlainFieldBase*>(field);
 
-				for(u32 arrIdx = 0; arrIdx < arrayElementCount; arrIdx++)
+				for(u32 arrIdx = arrayIdx; arrIdx < arrayEndIdx; arrIdx++)
 				{
 					u32 typeSize = 0;
 					if(curField->Schema.HasDynamicSize)
@@ -569,13 +554,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable* object, R
 					curField->ArrayElemToStream(rtti, object, arrIdx, tempStream);
 
 					if(wholeArray)
-					{
-						SerializedArrayEntry arrayEntry;
-						arrayEntry.Value = serializedPlainData;
-						arrayEntry.Index = arrIdx;
-
-						serializedArray->Entries[arrIdx] = arrayEntry;
-					}
+						serializedArray->Entries.Add(serializedPlainData);
 					else
 						output = serializedPlainData;
 				}
@@ -680,7 +659,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable& object, R
 		if(encodeAsArray)
 		{
 			serializedArray = B3DMakeShared<SerializedArray>();
-			serializedArray->ElementCount = (u32)iterator->GetElementCount();
+			serializedArray->Entries.Reserve(iterator->GetElementCount());
 
 			output = serializedArray;
 		}
@@ -692,15 +671,11 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable& object, R
 
 		for(u32 arrayIndex = 0; iterator->IsValid(); iterator->Increment(), arrayIndex++)
 		{
-			const SPtr<ISerialized> serializedEntry = SerializeElement(object, rttiInstance, field, *iterator, flags, context, allocator);
+			SPtr<ISerialized> serializedEntry = SerializeElement(object, rttiInstance, field, *iterator, flags, context, allocator);
 
 			if(encodeAsArray)
 			{
-				SerializedArrayEntry serializedArrayEntry;
-				serializedArrayEntry.Index = arrayIndex;
-				serializedArrayEntry.Value = serializedEntry;
-
-				serializedArray->Entries[arrayIndex] = std::move(serializedArrayEntry);
+				serializedArray->Entries.Add(std::move(serializedEntry));
 			}
 			else if(encodeAsMap)
 			{

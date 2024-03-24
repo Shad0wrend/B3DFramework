@@ -179,8 +179,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(ElementCount, 0)
-			B3D_RTTI_MEMBER_CONTAINER(Entries, 1)
+			B3D_RTTI_MEMBER_CONTAINER(Entries, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -301,32 +300,6 @@ namespace bs
 		SPtr<IReflectable> NewRttiObject() override
 		{
 			return B3DMakeShared<SerializedField>();
-		}
-	};
-
-	class B3D_UTILITY_EXPORT SerializedArrayEntryRTTI : public RTTIType<SerializedArrayEntry, IReflectable, SerializedArrayEntryRTTI>
-	{
-	private:
-		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Index, 0)
-			B3D_RTTI_MEMBER_REFLPTR(Value, 1)
-		B3D_RTTI_END_MEMBERS
-
-	public:
-		const String& GetRttiName() override
-		{
-			static String name = "SerializedArrayEntry";
-			return name;
-		}
-
-		u32 GetRttiId() const override
-		{
-			return TID_SerializedArrayEntry;
-		}
-
-		SPtr<IReflectable> NewRttiObject() override
-		{
-			return B3DMakeShared<SerializedArrayEntry>();
 		}
 	};
 

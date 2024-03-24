@@ -223,13 +223,13 @@ namespace bs::RTTIObjectWrapper
 		{
 			if(!mIsIteratorSet)
 			{
-				mArrayIterator = mArrayContainerValue->Entries.begin();
+				mArrayIndex = 0;
 				mIsIteratorSet = true;
 			}
 			else
-				++mArrayIterator;
+				++mArrayIndex;
 
-			return mArrayIterator != mArrayContainerValue->Entries.end();
+			return mArrayIndex < mArrayContainerValue->Entries.Size();
 		}
 		else if(mMapContainerValue != nullptr)
 		{
@@ -259,7 +259,7 @@ namespace bs::RTTIObjectWrapper
 	{
 		SPtr<ISerialized> value;
 		if(mArrayContainerValue != nullptr)
-			value = mArrayIterator->second.Value;
+			value = mArrayContainerValue[mArrayIndex];
 		else if(mMapContainerValue != nullptr)
 			value = mMapIterator->second;
 		else
@@ -271,7 +271,7 @@ namespace bs::RTTIObjectWrapper
 	inline u32 ValueIterator<false>::GetElementCount() const
 	{
 		if(mArrayContainerValue != nullptr)
-			return mArrayContainerValue->ElementCount;
+			return (u32)mArrayContainerValue->Entries.Size();
 		else if(mMapContainerValue != nullptr)
 			return (u32)mMapContainerValue->Entries.size();
 
@@ -288,10 +288,8 @@ namespace bs::RTTIObjectWrapper
 			if(!B3D_ENSURE(otherIterator.mArrayContainerValue != nullptr))
 				return {};
 
-			auto found = mArrayContainerValue->Entries.find(otherIterator.mArrayIterator->first);
-			if(found != mArrayContainerValue->Entries.end())
-				return Value<false>(~0u, found->second.Value, mFrameAllocator);
-
+			if(otherIterator.mArrayIndex < mArrayContainerValue->Entries.Size())
+				return Value<false>(~0u, mArrayContainerValue->Entries[otherIterator.mArrayIndex], mFrameAllocator);
 		}
 		else if(mMapContainerValue != nullptr)
 		{

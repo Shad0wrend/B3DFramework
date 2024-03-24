@@ -244,23 +244,6 @@ namespace bs
 		RTTITypeBase* GetRtti() const override;
 	};
 
-	/** A serialized value representing a single entry in an array. */
-	struct B3D_UTILITY_EXPORT SerializedArrayEntry : IReflectable
-	{
-		SerializedArrayEntry() = default;
-
-		u32 Index = 0;
-		SPtr<ISerialized> Value;
-
-		/************************************************************************/
-		/* 								RTTI		                     		*/
-		/************************************************************************/
-	public:
-		friend class SerializedArrayEntryRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
-	};
-
 	/** A serialized array containing a list of all its entries. */
 	struct B3D_UTILITY_EXPORT SerializedArray : ISerialized
 	{
@@ -270,8 +253,7 @@ namespace bs
 		u64 CalculateHash() const override;
 		bool Equals(const SPtr<ISerialized>& other) const override;
 
-		UnorderedMap<u32, SerializedArrayEntry> Entries;
-		u32 ElementCount = 0;
+		TArray<SPtr<ISerialized>> Entries;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

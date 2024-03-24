@@ -320,16 +320,13 @@ bool SerializedDataBlock::Equals(const SPtr<ISerialized>& other) const
 SPtr<ISerialized> SerializedArray::Clone(bool cloneData)
 {
 	SPtr<SerializedArray> copy = B3DMakeShared<SerializedArray>();
-	copy->ElementCount = ElementCount;
 
-	for(auto& entryPair : Entries)
+	for(const auto& entry : Entries)
 	{
-		SerializedArrayEntry arrayEntry = entryPair.second;
-
-		if(arrayEntry.Value != nullptr)
-			arrayEntry.Value = arrayEntry.Value->Clone(cloneData);
-
-		copy->Entries[entryPair.first] = arrayEntry;
+		if(entry != nullptr)
+			copy->Entries.Add(entry->Clone(cloneData));
+		else
+			copy->Entries.Add(nullptr);
 	}
 
 	return copy;
@@ -337,14 +334,13 @@ SPtr<ISerialized> SerializedArray::Clone(bool cloneData)
 
 u64 SerializedArray::CalculateHash() const
 {
-	u64 hash = B3DHash(ElementCount);
+	u64 hash = 0;
+	B3DCombineHash(hash, Entries.Size());
 
-	for(auto& entryPair : Entries)
+	for(const auto& entry : Entries)
 	{
-		SerializedArrayEntry arrayEntry = entryPair.second;
-
-		if(arrayEntry.Value != nullptr)
-			B3DCombineHash(hash, arrayEntry.Value->CalculateHash());
+		if(entry != nullptr)
+			B3DCombineHash(hash, entry->CalculateHash());
 	}
 
 	return hash;
@@ -354,19 +350,13 @@ bool SerializedArray::Equals(const SPtr<ISerialized>& other) const
 {
 	if(SPtr<SerializedArray> otherArray = B3DRTTICast<SerializedArray>(other))
 	{
-		if(ElementCount != otherArray->ElementCount)
-			return false;
-
 		if(Entries.size() != otherArray->Entries.size())
 			return false;
 
-		for(auto myEntryIterator = Entries.begin(); myEntryIterator != Entries.end(); ++myEntryIterator)
+		const u64 entryCount = Entries.size();
+		for(u64 entryIndex = 0; entryIndex < entryCount; ++entryIndex)
 		{
-			auto foundOtherEntry = otherArray->Entries.find(myEntryIterator->first);
-			if(foundOtherEntry == otherArray->Entries.end())
-				return false;
-
-			if(!::Equals(myEntryIterator->second.Value, foundOtherEntry->second.Value))
+			if(!::Equals(Entries[entryIndex], otherArray->Entries[entryIndex]))
 				return false;
 		}
 
@@ -522,14 +512,4 @@ RTTITypeBase* SerializedTuple::GetRttiStatic()
 RTTITypeBase* SerializedTuple::GetRtti() const
 {
 	return GetRttiStatic();
-}
-
-RTTITypeBase* SerializedArrayEntry::GetRttiStatic()
-{
-	return SerializedArrayEntryRTTI::Instance();
-}
-
-RTTITypeBase* SerializedArrayEntry::GetRtti() const
-{
-	return SerializedArrayEntry::GetRttiStatic();
 }

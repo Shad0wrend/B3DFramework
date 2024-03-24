@@ -312,7 +312,7 @@ namespace bs::RTTIObjectWrapper
 	private:
 		friend struct ValueIterator<true>;
 
-		UnorderedMap<u32, SerializedArrayEntry>::iterator mArrayIterator;
+		u64 mArrayIndex = 0;
 		UnorderedMap<SPtr<ISerialized>, SPtr<ISerialized>>::iterator mMapIterator;
 		bool mIsIteratorSet = false;
 		SPtr<SerializedArray> mArrayContainerValue;

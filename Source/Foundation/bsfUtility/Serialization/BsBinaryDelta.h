@@ -156,9 +156,9 @@ namespace bs
 	};
 
 	/** Holds a single tuple element entry in SerializedTupleDelta. */
-	struct B3D_UTILITY_EXPORT SerializedTupleDeltaEntry : IReflectable
+	struct B3D_UTILITY_EXPORT SerializedTupleEntryDelta : IReflectable
 	{
-		SerializedTupleDeltaEntry() = default;
+		SerializedTupleEntryDelta() = default;
 
 		u32 Index = 0; /**< Index of the tuple element. */
 		SPtr<ISerialized> Value; /**< Delta of the tuple element. */
@@ -167,7 +167,7 @@ namespace bs
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class SerializedTupleDeltaEntryRTTI;
+		friend class SerializedTupleEntryDeltaRTTI;
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const override;
 	};
@@ -182,13 +182,51 @@ namespace bs
 		bool Equals(const SPtr<ISerialized>& other) const override;
 
 		SPtr<ISerialized> Key;
-		TInlineArray<SerializedTupleDeltaEntry, 2> Values;
+		TInlineArray<SerializedTupleEntryDelta, 2> Values;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
 		friend class SerializedTupleDeltaRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
+	/** Holds a single array element entry in SerializedArrayDelta. */
+	struct B3D_UTILITY_EXPORT SerializedArrayEntryDelta : IReflectable
+	{
+		SerializedArrayEntryDelta() = default;
+
+		u32 Index = 0;
+		SPtr<ISerialized> Value;
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class SerializedArrayEntryDeltaRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
+	/** Contains a delta between two arrays. Only different array element are stored in the delta. */
+	struct B3D_UTILITY_EXPORT SerializedArrayDelta : ISerialized
+	{
+		SerializedArrayDelta() = default;
+
+		SPtr<ISerialized> Clone(bool cloneData = true) override;
+		u64 CalculateHash() const override;
+		bool Equals(const SPtr<ISerialized>& other) const override;
+
+		UnorderedMap<u32, SerializedArrayEntryDelta> Entries;
+		u32 ElementCount = 0;
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class SerializedArrayDeltaRTTI;
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const override;
 	};

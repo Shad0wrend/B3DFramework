@@ -235,7 +235,7 @@ namespace bs
 		TID_SerializedObject = 61,
 		TID_SerializedArray = 62,
 		TID_SerializedField = 63,
-		TID_SerializedArrayEntry = 64,
+		TID_SerializedArrayEntryDelta = 64,
 		TID_SerializedSubObject = 65,
 		TID_UnorderedSet = 66,
 		TID_SerializedDataBlock = 67,
@@ -261,6 +261,7 @@ namespace bs
 		TID_Size2UI = 87,
 		TID_Array = 88,
 		TID_SerializedTupleDelta = 89,
-		TID_SerializedTupleDeltaEntry = 90,
+		TID_SerializedTupleEntryDelta = 90,
+		TID_SerializedArrayDelta = 91,
 	};
 } // namespace bs
