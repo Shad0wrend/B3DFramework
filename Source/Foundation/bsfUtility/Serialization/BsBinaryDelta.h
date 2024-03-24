@@ -155,6 +155,44 @@ namespace bs
 		void GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance, const SPtr<IReflectable>& object, RTTIField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, SerializationContext* context, FrameAllocator& allocator); // DEPRECATED - Except the DataBlock case
 	};
 
+	/** Holds a single tuple element entry in SerializedTupleDelta. */
+	struct B3D_UTILITY_EXPORT SerializedTupleDeltaEntry : IReflectable
+	{
+		SerializedTupleDeltaEntry() = default;
+
+		u32 Index = 0; /**< Index of the tuple element. */
+		SPtr<ISerialized> Value; /**< Delta of the tuple element. */
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class SerializedTupleDeltaEntryRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
+	/** Contains a delta between two tuples. Only different tuple elements are stored in the delta. */
+	struct B3D_UTILITY_EXPORT SerializedTupleDelta : ISerialized
+	{
+		SerializedTupleDelta() = default;
+
+		SPtr<ISerialized> Clone(bool cloneData = true) override;
+		u64 CalculateHash() const override;
+		bool Equals(const SPtr<ISerialized>& other) const override;
+
+		SPtr<ISerialized> Key;
+		TInlineArray<SerializedTupleDeltaEntry, 2> Values;
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class SerializedTupleDeltaRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
 	/** @} */
 	/** @} */
 } // namespace bs
