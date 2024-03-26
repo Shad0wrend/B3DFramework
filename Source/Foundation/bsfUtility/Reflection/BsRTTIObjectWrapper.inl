@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 #include "FileSystem/BsDataStream.h"
+#include "Serialization/BsIntermediateSerializer.h"
 
 namespace bs::RTTIObjectWrapper
 {
@@ -21,6 +22,16 @@ namespace bs::RTTIObjectWrapper
 		return SubObjectIterator<false>(mObject, mFrameAllocator);
 	}
 
+	inline void Object<false>::NotifyBeginOperation(SubObject<false>& subObject, SerializationContext* context)
+	{
+		// Do nothing
+	}
+
+	inline void Object<false>::NotifyEndOperation(SerializationContext* context)
+	{
+		// Do nothing
+	}
+
 	inline Object<true>::Object(IReflectable* object, RTTITypeBase* type, FrameAllocator* frameAllocator)
 		: mObject(object), mRTTIType(type), mFrameAllocator(frameAllocator)
 	{
@@ -32,6 +43,33 @@ namespace bs::RTTIObjectWrapper
 	inline u32 Object<true>::GetTypeId() const
 	{
 		return mObject->GetTypeId();
+	}
+
+	inline void Object<true>::NotifyBeginOperation(SubObject<true>& subObject, SerializationContext* context)
+	{
+		B3D_ASSERT(subObject.mRTTIType != nullptr);
+		B3D_ASSERT(subObject.mRTTITypeInstance == nullptr);
+
+		RTTITypeBase* rttiTypeInstance = subObject.mRTTIType->CloneInternal(*mFrameAllocator);
+		rttiTypeInstance->OnSerializationStarted(mObject, context);
+
+		mRTTITypeInstances.push_back(rttiTypeInstance);
+		subObject.mRTTITypeInstance = rttiTypeInstance;
+	}
+
+	inline void Object<true>::NotifyEndOperation(SerializationContext* context)
+	{
+		// Note: It would make sense to finish deserializing derived classes before base classes, but some code
+		// depends on the old functionality, so we'll keep it this way
+		for(auto it = mRTTITypeInstances.rbegin(); it != mRTTITypeInstances.rend(); ++it)
+		{
+			RTTITypeBase* const currentRTTIInstance = *it;
+
+			currentRTTIInstance->OnSerializationEnded(mObject, context);
+			mFrameAllocator->Destruct(currentRTTIInstance);
+		}
+
+		mRTTITypeInstances.clear();
 	}
 
 	inline SubObjectIterator<true> Object<true>::GetSubObjectIterator() const
@@ -66,12 +104,13 @@ namespace bs::RTTIObjectWrapper
 
 	inline u32 SubObject<true>::GetTypeId() const
 	{
-		return mRTTIType->GetRttiId();
+		return mRTTITypeInstance->GetRttiId();
 	}
 
 	inline FieldIterator<true> SubObject<true>::GetFieldIterator() const
 	{
-		return FieldIterator<true>(mRTTIType, mObject, mFrameAllocator);
+		B3D_ASSERT(mRTTITypeInstance != nullptr);
+		return FieldIterator<true>(mRTTITypeInstance, mObject, mFrameAllocator);
 	}
 
 	inline SubObjectIterator<false>::SubObjectIterator(SerializedObject* object, FrameAllocator* frameAllocator)
@@ -805,5 +844,70 @@ namespace bs::RTTIObjectWrapper
 		RTTIField* field = mRTTIType->GetField(mFieldIndex);
 
 		return Field<true>(mRTTIType, field, mValue, mFrameAllocator);
+	}
+
+	template<bool IsIReflectable, typename Predicate>
+	void IterateFields(Object<IsIReflectable> object, Predicate&& fnPredicate)
+	{
+		SubObjectIterator<IsIReflectable> subObjectIterator = object.GetSubObjectIterator();
+
+		while(subObjectIterator.MoveNext())
+		{
+			SubObject<IsIReflectable> subObject = subObjectIterator.GetValue();
+
+			RTTITypeBase* rtti = IReflectable::GetRTTITypeFromTypeId(subObject.GetTypeId());
+			if(!B3D_ENSURE(rtti != nullptr))
+				continue;
+
+			object.NotifyBeginOperation(subObject, nullptr);
+
+			FieldIterator<IsIReflectable> fieldIterator = subObject.GetFieldIterator();
+			while(fieldIterator.MoveNext())
+			{
+				Field<IsIReflectable> field = fieldIterator.GetValue();
+
+				RTTIField* const rttiField = rtti->FindField(field.GetId());
+				if(!B3D_ENSURE(rttiField != nullptr))
+					continue;
+
+				if(!fnPredicate(rttiField->Schema, field))
+					break;
+			}
+		}
+
+		object.NotifyEndOperation(nullptr);
+	}
+
+	template<bool IsIReflectable, typename Predicate, typename FieldFilterPredicate>
+	void IterateFieldValues(Object<IsIReflectable> object, Predicate&& fnPredicate, FieldFilterPredicate&& fnFieldFilterPredicate)
+	{
+		IterateFields(object, [&fnPredicate, &fnFieldFilterPredicate](const RTTIFieldSchema& rttiFieldSchema, const Field<IsIReflectable>& field) {
+			if(fnFieldFilterPredicate != nullptr && !fnFieldFilterPredicate(rttiFieldSchema))
+				return false;
+
+			ValueIterator<IsIReflectable> valueIterator = field.GetValueIterator();
+			for(u32 elementIndex = 0; valueIterator.MoveNext(); ++elementIndex)
+			{
+				Value<IsIReflectable> value = valueIterator.GetValue();
+				fnPredicate(rttiFieldSchema, value);
+			}
+
+			return true;;
+		});
+	}
+
+	template<bool IsIReflectable, typename Predicate, typename FieldFilterPredicate>
+	void IterateFieldTupleValues(Object<IsIReflectable> object, Predicate&& fnPredicate, FieldFilterPredicate&& fnFieldFilterPredicate)
+	{
+		IterateFieldValues(object, [&fnPredicate](const RTTIFieldSchema& rttiFieldSchema, const Value<IsIReflectable>& value) {
+			const bool isTuple = rttiFieldSchema.FieldTypes.Size() > 1;
+			for(u32 tupleElementIndex = 0; tupleElementIndex < (u32)rttiFieldSchema.FieldTypes.Size(); ++tupleElementIndex)
+			{
+				const RTTIFieldTypeSchema& fieldTypeSchema = rttiFieldSchema.FieldTypes[tupleElementIndex];
+				Value<IsIReflectable> tupleElement = isTuple ? value.GetTupleElement(tupleElementIndex) : value;
+
+				fnPredicate(fieldTypeSchema, tupleElement);
+			}
+		}, std::forward<FieldFilterPredicate>(fnFieldFilterPredicate));
 	}
 } // namespace RTTIWrapper

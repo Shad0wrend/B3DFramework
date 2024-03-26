@@ -59,6 +59,8 @@ namespace bs::RTTIObjectWrapper
 		FieldIterator<false> GetFieldIterator() const;
 
 	private:
+		friend class Object<false>;
+
 		SerializedObject* mObject = nullptr;
 		u32 mSubObjectIndex = 0;
 
@@ -80,8 +82,11 @@ namespace bs::RTTIObjectWrapper
 		FieldIterator<true> GetFieldIterator() const;
 
 	private:
+		friend class Object<true>;
+
 		IReflectable* mObject = nullptr;
 		RTTITypeBase* mRTTIType = nullptr;
+		RTTITypeBase* mRTTITypeInstance = nullptr;
 
 		FrameAllocator* mFrameAllocator = nullptr;
 	};
@@ -102,6 +107,19 @@ namespace bs::RTTIObjectWrapper
 
 		/** Returns the raw pointer to the underlying wrapped object. */
 		IReflectable* GetWrappedObject() const { return mObject; }
+
+		/**
+		 * Notifies the RTTI object that we're about to begin an operation on the sub-object fields. Should be called
+		 * before writing or reading any field values from the sub-object. Must be called once for each sub-object.
+		 */
+		void NotifyBeginOperation(SubObject<false>& subObject, SerializationContext* context);
+
+		/**
+		 * Notifies the RTTI object that we have completed an operation on its fields. Must be called after
+		 * NotifyBeginOperation(), after we have finished reading or writing field values from the object.
+		 * Should be called just once, after all field operations for all sub-objects end.
+		 */
+		void NotifyEndOperation(SerializationContext* context);
 
 	private:
 		SerializedObject* mObject = nullptr;
@@ -126,9 +144,23 @@ namespace bs::RTTIObjectWrapper
 		/** Returns the raw pointer to the underlying wrapped object. */
 		IReflectable* GetWrappedObject() const { return mObject; }
 
+		/**
+		 * Notifies the RTTI object that we're about to begin an operation on the sub-object fields. Should be called
+		 * before writing or reading any field values from the sub-object. Must be called once for each sub-object.
+		 */
+		void NotifyBeginOperation(SubObject<true>& subObject, SerializationContext* context);
+
+		/**
+		 * Notifies the RTTI object that we have completed an operation on its fields. Must be called after
+		 * NotifyBeginOperation(), after we have finished reading or writing field values from the object.
+		 * Should be called just once, after all field operations for all sub-objects end.
+		 */
+		void NotifyEndOperation(SerializationContext* context);
+
 	private:
 		IReflectable* mObject = nullptr;
 		RTTITypeBase* mRTTIType = nullptr;
+		FrameVector<RTTITypeBase*> mRTTITypeInstances;
 
 		FrameAllocator* mFrameAllocator = nullptr;
 	};
@@ -481,6 +513,33 @@ namespace bs::RTTIObjectWrapper
 
 		FrameAllocator* mFrameAllocator = nullptr;
 	};
+
+	/**
+	 * Iterates over all fields in the provided object and triggers @p fnPredicate. This includes fields from all base classes.
+	 *
+	 * Predicate signature must be void(const RTTIField& rttiField, Field<IsIReflectable>& field).
+	 */
+	template<bool IsIReflectable, typename Predicate>
+	void IterateFields(Object<IsIReflectable> object, Predicate&& fnPredicate);
+
+	/**
+	 * Iterates over all field values in the provided object and triggers @p fnPredicate. This will trigger
+	 * once for each non-container field, and once for each entry in container (e.g. array, map) fields.
+	 *
+	 * Predicate signature must be void(const RTTIFieldSchema& fieldSchema, Value<IsIReflectable>& value).
+	 */
+	template<bool IsIReflectable, typename Predicate, typename FieldFilterPredicate>
+	void IterateFieldValues(Object<IsIReflectable> object, Predicate&& fnPredicate, FieldFilterPredicate&& fnFieldFilterPredicate = nullptr);
+
+	/**
+	 * Iterates over all field value tuple entries in the provided object and triggers @p fnPredicate. This is similar
+	 * to IterateFieldValues(), but in case the value is tuple (e.g. std::pair<K,  V>), this will trigger once for each
+	 * tuple element. If not a tuple, behaviour is identical to IterateFieldValues().
+	 *
+	 * Predicate signature must be void(const RTTIFieldTypeSchema& fieldTypeSchema, Value<IsIReflectable>& value).
+	 */
+	template<bool IsIReflectable, typename Predicate, typename FieldFilterPredicate>
+	void IterateFieldTupleValues(Object<IsIReflectable> object, Predicate&& fnPredicate, FieldFilterPredicate&& fnFieldFilterPredicate = nullptr);
 }
 
 #include "BsRTTIObjectWrapper.inl"

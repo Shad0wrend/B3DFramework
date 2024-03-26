@@ -451,6 +451,9 @@ SPtr<SerializedObject> GenerateObjectDelta(Object<IsLHSIReflectable> lhs, Object
 			}
 		}
 
+		rhs.NotifyBeginOperation(rhsSubObject, context);
+		lhs.NotifyBeginOperation(lhsSubObject, context);
+
 		FieldIterator<IsRHSIReflectable> rhsFieldIterator = rhsSubObject.GetFieldIterator();
 
 		SerializedSubObject* subObjectDelta = nullptr;
@@ -586,6 +589,9 @@ SPtr<SerializedObject> GenerateObjectDelta(Object<IsLHSIReflectable> lhs, Object
 				subObjectDelta->FieldEntries[field->Schema.Id] = modificationEntry;
 			}
 		}
+
+		lhs.NotifyEndOperation(context);
+		rhs.NotifyEndOperation(context);
 	}
 
 	return output;
