@@ -61,6 +61,12 @@ struct UnitTestSerializationObjectA : IReflectable
 	Vector<SPtr<UnitTestSerializationObjectB>> ArrObjPtrA;
 	Vector<SPtr<UnitTestSerializationObjectB>> ArrObjPtrB;
 
+	UnorderedMap<u32, String> PlainMapA = { { 5, "value5" }, { 10, "value10" }, { 15, "value15" } };
+	UnorderedMap<u32, String> PlainMapB = { { 5, "value5" }, { 10, "value10" }, { 15, "value15" } };
+	UnorderedMap<u32, String> PlainMapC = { { 5, "value5" }, { 10, "value10" }, { 15, "value15" } };
+	UnorderedMap<u32, String> PlainMapD = { { 5, "value5" }, { 10, "value10" }, { 15, "value15" } };
+	UnorderedMap<u32, String> PlainMapE = { { 5, "value5" }, { 10, "value10" }, { 15, "value15" } };
+
 	/************************************************************************/
 	/* 								RTTI		                     		*/
 	/************************************************************************/
@@ -74,27 +80,35 @@ class UnitTestSerializationObjectARTTI : public RTTIType<UnitTestSerializationOb
 {
 private:
 	B3D_RTTI_BEGIN_MEMBERS
-		B3D_RTTI_MEMBER_PLAIN(IntA, 0)
-		B3D_RTTI_MEMBER_PLAIN(StrA, 1)
-		B3D_RTTI_MEMBER_PLAIN(StrB, 2)
+		B3D_RTTI_MEMBER(IntA, 0)
+		B3D_RTTI_MEMBER(StrA, 1)
+		B3D_RTTI_MEMBER(StrB, 2)
 
-		B3D_RTTI_MEMBER_REFL(ObjA, 3)
-		B3D_RTTI_MEMBER_REFL(ObjB, 4)
+		B3D_RTTI_MEMBER(ObjA, 3)
+		B3D_RTTI_MEMBER(ObjB, 4)
 
-		B3D_RTTI_MEMBER_REFLPTR(ObjPtrA, 5)
-		B3D_RTTI_MEMBER_REFLPTR(ObjPtrB, 6)
-		B3D_RTTI_MEMBER_REFLPTR(ObjPtrC, 7)
-		B3D_RTTI_MEMBER_REFLPTR(ObjPtrD, 8)
+		B3D_RTTI_MEMBER(ObjPtrA, 5)
+		B3D_RTTI_MEMBER(ObjPtrB, 6)
+		B3D_RTTI_MEMBER(ObjPtrC, 7)
+		B3D_RTTI_MEMBER(ObjPtrD, 8)
 
-		B3D_RTTI_MEMBER_PLAIN_ARRAY(ArrStrA, 9)
-		B3D_RTTI_MEMBER_PLAIN_ARRAY(ArrStrB, 10)
-		B3D_RTTI_MEMBER_PLAIN_ARRAY(ArrStrC, 11)
+		B3D_RTTI_MEMBER_CONTAINER(ArrStrA, 9)
+		B3D_RTTI_MEMBER_CONTAINER(ArrStrB, 10)
+		B3D_RTTI_MEMBER_CONTAINER(ArrStrC, 11)
 
-		B3D_RTTI_MEMBER_REFL_ARRAY(ArrObjA, 12)
-		B3D_RTTI_MEMBER_REFL_ARRAY(ArrObjB, 13)
+		B3D_RTTI_MEMBER_CONTAINER(ArrObjA, 12)
+		B3D_RTTI_MEMBER_CONTAINER(ArrObjB, 13)
 
-		B3D_RTTI_MEMBER_REFLPTR_ARRAY(ArrObjPtrA, 14)
-		B3D_RTTI_MEMBER_REFLPTR_ARRAY(ArrObjPtrB, 15)
+		B3D_RTTI_MEMBER_CONTAINER(ArrObjPtrA, 14)
+		B3D_RTTI_MEMBER_CONTAINER(ArrObjPtrB, 15)
+
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapA, 16)
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapB, 17)
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapC, 18)
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapD, 19)
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapE, 20)
+
+	// TODO - Add test case for maps
 	B3D_RTTI_END_MEMBERS
 
 public:
@@ -119,8 +133,8 @@ class UnitTestSerializationObjectBRTTI : public RTTIType<UnitTestSerializationOb
 {
 private:
 	B3D_RTTI_BEGIN_MEMBERS
-		B3D_RTTI_MEMBER_PLAIN(IntA, 0)
-		B3D_RTTI_MEMBER_PLAIN(StrA, 1)
+		B3D_RTTI_MEMBER(IntA, 0)
+		B3D_RTTI_MEMBER(StrA, 1)
 	B3D_RTTI_END_MEMBERS
 
 public:
@@ -187,7 +201,6 @@ private:
 
 	static SPtr<UnitTestSerializationObjectA> CreateSerializationTestObjectVariantA();
 	static SPtr<UnitTestSerializationObjectA> CreateSerializationTestObjectVariantB();
-
 };
 
 CoreTestSuite::CoreTestSuite()
@@ -199,6 +212,7 @@ CoreTestSuite::CoreTestSuite()
 	B3D_ADD_TEST(CoreTestSuite::TestBinaryDelta)
 
 	// TODO - Add unit tests for:
+	// - Binary cloner test that restores external references
 	// - SceneObject/Component serialization/deserialization
 	// - Various Prefab operations
 }
@@ -222,6 +236,10 @@ SPtr<UnitTestSerializationObjectA> CoreTestSuite::CreateSerializationTestObjectV
 	object->ObjPtrD = B3DMakeShared<UnitTestSerializationObjectB>();
 	object->ArrObjB[1].StrA = "strawberry";
 	object->ArrObjPtrB[0]->IntA = 99100;
+	object->PlainMapB =  { { 25, "newValue25" }, { 210, "newValue210" }, { 215, "newValue215" } };
+	object->PlainMapC[5] = "newValue5";
+	object->PlainMapD[225] = "newValue225";
+	object->PlainMapE.erase(object->PlainMapE.find(10));
 
 	return object;
 }
@@ -267,6 +285,48 @@ void CoreTestSuite::AssertObjectsMatch(const SPtr<UnitTestSerializationObjectA>&
 	B3D_TEST_ASSERT(lhs->ArrObjPtrB.size() == rhs->ArrObjPtrB.size())
 	for(u32 i = 0; i < (u32)lhs->ArrObjPtrB.size(); i++)
 		B3D_TEST_ASSERT(lhs->ArrObjPtrB[i]->IntA == rhs->ArrObjPtrB[i]->IntA)
+
+	B3D_TEST_ASSERT(lhs->PlainMapA.size() == rhs->PlainMapA.size())
+	for(const auto& pair : lhs->PlainMapA)
+	{
+		auto found = rhs->PlainMapA.find(pair.first);
+		B3D_TEST_ASSERT(found != rhs->PlainMapA.end())
+		B3D_TEST_ASSERT(found->second == pair.second)
+	}
+
+	B3D_TEST_ASSERT(lhs->PlainMapB.size() == rhs->PlainMapB.size())
+	for(const auto& pair : lhs->PlainMapB)
+	{
+		auto found = rhs->PlainMapB.find(pair.first);
+		B3D_TEST_ASSERT(found != rhs->PlainMapB.end())
+		B3D_TEST_ASSERT(found->second == pair.second)
+	}
+
+	B3D_TEST_ASSERT(lhs->PlainMapC.size() == rhs->PlainMapC.size())
+	for(const auto& pair : lhs->PlainMapC)
+	{
+		auto found = rhs->PlainMapC.find(pair.first);
+		B3D_TEST_ASSERT(found != rhs->PlainMapC.end())
+		B3D_TEST_ASSERT(found->second == pair.second)
+	}
+
+	B3D_TEST_ASSERT(lhs->PlainMapD.size() == rhs->PlainMapD.size())
+	for(const auto& pair : lhs->PlainMapD)
+	{
+		auto found = rhs->PlainMapD.find(pair.first);
+		B3D_TEST_ASSERT(found != rhs->PlainMapD.end())
+		B3D_TEST_ASSERT(found->second == pair.second)
+	}
+
+	B3D_TEST_ASSERT(lhs->PlainMapE.size() == rhs->PlainMapE.size())
+	for(const auto& pair : lhs->PlainMapE)
+	{
+		auto found = rhs->PlainMapE.find(pair.first);
+		B3D_TEST_ASSERT(found != rhs->PlainMapE.end())
+		B3D_TEST_ASSERT(found->second == pair.second)
+	}
+
+	// TODO - Add test case for maps
 }
 
 void CoreTestSuite::TestAnimCurveIntegration()

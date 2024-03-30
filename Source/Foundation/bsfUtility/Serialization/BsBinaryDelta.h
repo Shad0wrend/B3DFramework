@@ -74,6 +74,7 @@ namespace bs
 			Diff_SubObjectStart = 0x08,
 			Diff_IterableEntryStart = 0x09,
 			Diff_IterableEntryEnd = 0x0A,
+			Diff_RemoveMapEntry = 0x0B,
 			Diff_ArrayFlag = 0x10,
 			Diff_MapFlag = 0x20
 		};

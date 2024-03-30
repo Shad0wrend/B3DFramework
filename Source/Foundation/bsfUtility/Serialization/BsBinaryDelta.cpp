@@ -521,6 +521,9 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 			SPtr<ISerialized> modification;
 			bool hasModification = false;
 
+			const bool isMap = field->Schema.IsIterator && field->Schema.IsArray && static_cast<RTTIIteratorField*>(field)->IteratorSupportsSeekToKey();
+			const bool isArray = field->Schema.IsArray;
+
 			ValueIterator<IsRHSIReflectable> rhsValueIterator = rhsField.GetValueIterator();
 			for(u32 elementIndex = 0; rhsValueIterator.MoveNext(); ++elementIndex)
 			{
@@ -538,15 +541,10 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 				// If container, the modification above is just a single entry
 				if(valueModification.has_value())
 				{
-					const bool isMap = field->Schema.IsIterator && field->Schema.IsArray && static_cast<RTTIIteratorField*>(field)->IteratorSupportsSeekToKey();
-					const bool isArray = field->Schema.IsArray;
-
 					if(isMap)
 					{
 						if(serializedMapDelta == nullptr)
 							serializedMapDelta = B3DMakeShared<SerializedMapDelta>();
-
-						// TODO - I'm not storing map entries that are present in LHS but missing in RHS
 
 						SPtr<ISerialized> entryKey;
 						if(const auto& tuple = B3DRTTICast<SerializedTupleDelta>(*valueModification))
@@ -585,6 +583,38 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 					hasModification = true;
 				}
 			} 
+
+			// For maps we also need to iterate over LHS container, to find remove entries
+			if(isMap && maybeLhsField.has_value())
+			{
+				ValueIterator<IsLHSIReflectable> lhsValueIterator = maybeLhsField->GetValueIterator();
+				for(u32 elementIndex = 0; lhsValueIterator.MoveNext(); ++elementIndex)
+				{
+					Value<IsLHSIReflectable> lhsValue = lhsValueIterator.GetValue();
+
+					if(!rhsValueIterator.FindMatchingValue(lhsValueIterator).has_value())
+					{
+						if(serializedMapDelta == nullptr)
+							serializedMapDelta = B3DMakeShared<SerializedMapDelta>();
+
+						// We use the delta generation function to generate the serialized key as a convenience
+						Optional<SPtr<ISerialized>> serializedLhsValue = GenerateValueDelta(field->Schema, Optional<Value<IsLHSIReflectable>>(), lhsValue, inOutObjectMap, false);
+						SPtr<ISerialized> entryKey;
+						if(const auto& tuple = B3DRTTICast<SerializedTupleDelta>(*serializedLhsValue))
+							entryKey = tuple->Key;
+						else
+							entryKey = *serializedLhsValue;
+
+						SerializedMapEntryDelta mapEntry;
+						mapEntry.IsRemoved = true;
+
+						serializedMapDelta->Entries[entryKey] = std::move(mapEntry);
+						modification = serializedMapDelta;
+
+						hasModification = true;
+					}
+				} 
+			}
 
 			if(hasModification)
 			{
@@ -834,6 +864,25 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 				}
 			}
 			break;
+		case Diff_RemoveMapEntry:
+			{
+				B3D_ASSERT(command.Field != nullptr);
+				B3D_ASSERT(command.Field->Schema.IsIterator);
+				B3D_ASSERT(command.MapKey != nullptr);
+				B3D_ASSERT(rttiInstance != nullptr);
+				B3D_ASSERT(destinationObject != nullptr);
+				B3D_ASSERT(isMap);
+
+				auto& field = *static_cast<RTTIIteratorField*>(command.Field);
+				const SPtr<IRTTIIterator> iterator = field.GetIterator(rttiInstance, destinationObject, allocator);
+
+				if(B3D_ENSURE(iterator->SeekToKey(command.MapKey)))
+					iterator->Erase();
+
+				field.FreeFieldValue(command.MapKey, allocator);
+				command.MapKey = nullptr;
+			}
+			break;
 		default:
 			break;
 		}
@@ -1056,7 +1105,12 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 						}
 						else
 						{
-							// TODO - Handle removed map elements
+							DeltaCommand removeMapEntryCommand;
+							removeMapEntryCommand.Field = genericField;
+							removeMapEntryCommand.Type = Diff_RemoveMapEntry | Diff_MapFlag;
+							removeMapEntryCommand.MapKey = deserializedMapKey;
+
+							subObjectCommands.push_back(removeMapEntryCommand);
 						}
 					}
 				}
