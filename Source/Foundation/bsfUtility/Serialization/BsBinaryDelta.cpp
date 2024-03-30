@@ -263,8 +263,21 @@ using namespace RTTIObjectWrapper;
 
 typedef UnorderedMap<IReflectable*, SPtr<SerializedObject>> ObjectMap;
 
+/**
+ * Compares two values and creates an object that contains differences between them (if any).
+ *
+ * @param fieldSchema			Schema describing the field whose values are we comparing.
+ * @param maybeLhs				Optional value of the field on the left hand side. This is considered the original state of the field we're comparing against.
+ *								Can be empty in which case we always generate a delta containing the right hand side value.
+ * @param rhs					Value of the field on the right hand side. This is considered the new state of the field, and will be encoded in the delta
+ *								if it differs from the left hand side value.
+ * @param objectMap				Map that stores deltas for reflectable objects. As those objects may be references in multiple locations this map ensures we only
+ *								generate one delta per object.
+ * @param replicableOnly		If true, we will generate a delta only for fields with the replicable flag.
+ * @return						Object containing changes present in RHS compared to LHS. Will be empty if RHS and LHS are identical.
+ */
 template <bool IsLHSIReflectable, bool IsRHSIReflectable>
-Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchema, const Value<IsLHSIReflectable>& lhs, const Value<IsRHSIReflectable> rhs, ObjectMap& objectMap, bool replicableOnly)
+Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchema, const Optional<Value<IsLHSIReflectable>>& maybeLhs, const Value<IsRHSIReflectable> rhs, ObjectMap& objectMap, bool replicableOnly)
 {
 	SerializedObjectEncodeFlags flags = replicableOnly ? SerializedObjectEncodeFlag::ReplicableOnly : SerializedObjectEncodeFlags();
 	SerializationContext* context = nullptr;
@@ -273,11 +286,15 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 	Optional<SPtr<ISerialized>> modification;
 
 	const bool isTuple = fieldSchema.FieldTypes.Size() > 1;
+	const bool isLhsMissing = !maybeLhs.has_value(); // Will be true if e.g. comparing an array or map entry that doesn't exist in LHS object
 	for(u32 tupleElementIndex = 0; tupleElementIndex < (u32)fieldSchema.FieldTypes.Size(); ++tupleElementIndex)
 	{
 		const RTTIFieldTypeSchema& fieldTypeSchema = fieldSchema.FieldTypes[tupleElementIndex];
-		const Value<IsLHSIReflectable>& lhsTupleElement = isTuple ? lhs.GetTupleElement(tupleElementIndex) : lhs;
+
 		const Value<IsRHSIReflectable>& rhsTupleElement = isTuple ? rhs.GetTupleElement(tupleElementIndex) : rhs;
+		Optional<Value<IsLHSIReflectable>> maybeLhsTupleElement = maybeLhs;
+		if(isTuple && !isLhsMissing)
+			maybeLhsTupleElement = maybeLhs->GetTupleElement(tupleElementIndex);
 
 		Optional<SPtr<ISerialized>> tupleElementModification;
 
@@ -286,14 +303,14 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 		case SerializableFT_ReflectablePtr:
 		case SerializableFT_Reflectable:
 			{
-				Object<IsLHSIReflectable> lhsObject = lhsTupleElement.GetObject();
+				Optional<Object<IsLHSIReflectable>> maybeLhsObject = isLhsMissing ? std::nullopt : std::make_optional(maybeLhsTupleElement->GetObject());
 				Object<IsRHSIReflectable> rhsObject = rhsTupleElement.GetObject();
 
-				bool isLHSEntryNull = false;
+				bool isLHSEntryNull = isLhsMissing;
 				bool isRHSEntryNull = false;
 				if(fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
 				{
-					isLHSEntryNull = lhsObject.GetWrappedObject() == nullptr;
+					isLHSEntryNull = isLHSEntryNull || maybeLhsObject->GetWrappedObject() == nullptr;
 					isRHSEntryNull = rhsObject.GetWrappedObject() == nullptr;
 				}
 
@@ -307,14 +324,14 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 						else
 						{
 							RTTITypeBase* rttiType = nullptr;
-							if(lhsObject.GetTypeId() == rhsObject.GetTypeId())
+							if(maybeLhsObject->GetTypeId() == rhsObject.GetTypeId())
 								rttiType = IReflectable::GetRTTITypeFromTypeId(rhsObject.GetTypeId());
 
 							SPtr<SerializedObject> objectDelta;
 							if(rttiType != nullptr)
 							{
 								IDeltaHandler& handler = rttiType->GetDeltaHandler();
-								objectDelta = handler.GenerateDeltaRecursive(lhsObject.GetWrappedObject(), rhsObject.GetWrappedObject(), objectMap, replicableOnly);
+								objectDelta = handler.GenerateDeltaRecursive(maybeLhsObject->GetWrappedObject(), rhsObject.GetWrappedObject(), objectMap, replicableOnly);
 							}
 
 							if(objectDelta != nullptr)
@@ -330,62 +347,66 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 				else
 				{
 					if(!isRHSEntryNull)
-						tupleElementModification = rhsTupleElement.Clone(flags, context);
+						tupleElementModification = rhsTupleElement.Clone(flags, context); // TODO - Should recursively call GenerateObjectDelta
 				}
 			}
 			break;
 		case SerializableFT_Plain:
 			{
-				if(lhsTupleElement.ComparePlain(rhsTupleElement))
+				if(isLhsMissing || maybeLhsTupleElement->ComparePlain(rhsTupleElement))
 					tupleElementModification = rhsTupleElement.Clone(flags, context);
 			}
 			break;
 		case SerializableFT_DataBlock:
 			{
-				u32 lhsFieldDataSize;
-				u32 lhsFieldDataOffset;
-				SPtr<DataStream> lhsFieldStream = lhs.GetDataStream(lhsFieldDataSize, lhsFieldDataOffset);
-
-				u32 rhsFieldDataSize;
-				u32 rhsFieldDataOffset;
-				SPtr<DataStream> rhsFieldStream = rhs.GetDataStream(rhsFieldDataSize, rhsFieldDataOffset);
-
-				bool isDataBlockModified = lhsFieldDataSize != rhsFieldDataSize;
-				if(!isDataBlockModified)
+				bool isDataBlockModified = isLhsMissing;
+				if(!isLhsMissing)
 				{
-					u8* lhsStreamData = nullptr;
-					if(lhsFieldStream->IsFile())
-					{
-						lhsStreamData = (u8*)B3DStackAllocate(lhsFieldDataSize);
-						lhsFieldStream->Seek(lhsFieldDataOffset);
-						lhsFieldStream->Read(lhsStreamData, lhsFieldDataSize);
-					}
-					else
-					{
-						SPtr<MemoryDataStream> lhsMemoryStream = std::static_pointer_cast<MemoryDataStream>(lhsFieldStream);
-						lhsStreamData = lhsMemoryStream->Cursor();
-					}
+					u32 lhsFieldDataSize;
+					u32 lhsFieldDataOffset;
+					SPtr<DataStream> lhsFieldStream = maybeLhs->GetDataStream(lhsFieldDataSize, lhsFieldDataOffset);
 
-					u8* rhsStreamData = nullptr;
-					if(rhsFieldStream->IsFile())
+					u32 rhsFieldDataSize;
+					u32 rhsFieldDataOffset;
+					SPtr<DataStream> rhsFieldStream = rhs.GetDataStream(rhsFieldDataSize, rhsFieldDataOffset);
+
+					isDataBlockModified = lhsFieldDataSize != rhsFieldDataSize;
+					if(!isDataBlockModified)
 					{
-						rhsStreamData = (u8*)B3DStackAllocate(rhsFieldDataSize);
-						rhsFieldStream->Seek(rhsFieldDataOffset);
-						rhsFieldStream->Read(rhsStreamData, rhsFieldDataSize);
+						u8* lhsStreamData = nullptr;
+						if(lhsFieldStream->IsFile())
+						{
+							lhsStreamData = (u8*)B3DStackAllocate(lhsFieldDataSize);
+							lhsFieldStream->Seek(lhsFieldDataOffset);
+							lhsFieldStream->Read(lhsStreamData, lhsFieldDataSize);
+						}
+						else
+						{
+							SPtr<MemoryDataStream> lhsMemoryStream = std::static_pointer_cast<MemoryDataStream>(lhsFieldStream);
+							lhsStreamData = lhsMemoryStream->Cursor();
+						}
+
+						u8* rhsStreamData = nullptr;
+						if(rhsFieldStream->IsFile())
+						{
+							rhsStreamData = (u8*)B3DStackAllocate(rhsFieldDataSize);
+							rhsFieldStream->Seek(rhsFieldDataOffset);
+							rhsFieldStream->Read(rhsStreamData, rhsFieldDataSize);
+						}
+						else
+						{
+							SPtr<MemoryDataStream> rhsMemoryStream = std::static_pointer_cast<MemoryDataStream>(rhsFieldStream);
+							rhsStreamData = rhsMemoryStream->Cursor();
+						}
+
+						isDataBlockModified = memcmp(lhsStreamData, rhsStreamData, rhsFieldDataSize) != 0;
+
+						if(rhsFieldStream->IsFile())
+							B3DStackFree(rhsStreamData);
+
+						if(lhsFieldStream->IsFile())
+							B3DStackFree(lhsStreamData);
 					}
-					else
-					{
-						SPtr<MemoryDataStream> rhsMemoryStream = std::static_pointer_cast<MemoryDataStream>(rhsFieldStream);
-						rhsStreamData = rhsMemoryStream->Cursor();
-					}
-
-					isDataBlockModified = memcmp(lhsStreamData, rhsStreamData, rhsFieldDataSize) != 0;
-
-					if(rhsFieldStream->IsFile())
-						B3DStackFree(rhsStreamData);
-
-					if(lhsFieldStream->IsFile())
-						B3DStackFree(lhsStreamData);
 				}
 
 				if(isDataBlockModified)
@@ -492,84 +513,70 @@ SPtr<SerializedObject> GenerateObjectDelta(Object<IsLHSIReflectable> lhs, Object
 			SPtr<ISerialized> modification;
 			bool hasModification = false;
 
-			if(foundMatchingField)
+			ValueIterator<IsRHSIReflectable> rhsValueIterator = rhsField.GetValueIterator();
+			for(u32 elementIndex = 0; rhsValueIterator.MoveNext(); ++elementIndex)
 			{
-				ValueIterator<IsRHSIReflectable> rhsValueIterator = rhsField.GetValueIterator();
-				for(u32 elementIndex = 0; rhsValueIterator.MoveNext(); ++elementIndex)
+				Value<IsRHSIReflectable> rhsValue = rhsValueIterator.GetValue();
+				Optional<Value<IsLHSIReflectable>> maybeLHSValue;
+
+				if(foundMatchingField)
 				{
-					Optional<SPtr<ISerialized>> valueModification;
-
-					Value<IsRHSIReflectable> rhsValue = rhsValueIterator.GetValue();
-
 					ValueIterator<IsLHSIReflectable> lhsValueIterator = lhsField.GetValueIterator();
-					Optional<Value<IsLHSIReflectable>> maybeLHSValue = lhsValueIterator.FindMatchingValue(rhsValueIterator);
+					maybeLHSValue = lhsValueIterator.FindMatchingValue(rhsValueIterator);
+				}
 
-					if(maybeLHSValue.has_value())
+				Optional<SPtr<ISerialized>> valueModification = GenerateValueDelta(field->Schema, maybeLHSValue, rhsValue, inOutObjectMap, replicableOnly);
+
+				// If container, the modification above is just a single entry
+				if(valueModification.has_value())
+				{
+					const bool isMap = field->Schema.IsIterator && field->Schema.IsArray && static_cast<RTTIIteratorField*>(field)->IteratorSupportsSeekToKey();
+					const bool isArray = field->Schema.IsArray;
+
+					if(isMap)
 					{
-						Value<IsLHSIReflectable>& lhsValue = *maybeLHSValue;
-						valueModification = GenerateValueDelta(field->Schema, lhsValue, rhsValue, inOutObjectMap, replicableOnly);
+						if(serializedMapDelta == nullptr)
+							serializedMapDelta = B3DMakeShared<SerializedMapDelta>();
+
+						// TODO - I'm not storing map entries that are present in LHS but missing in RHS
+
+						SPtr<ISerialized> entryKey;
+						if(const auto& tuple = B3DRTTICast<SerializedTupleDelta>(*valueModification))
+							entryKey = tuple->Key;
+						else
+							entryKey = *valueModification;
+
+						SerializedMapEntryDelta mapEntry;
+						mapEntry.IsRemoved = false;
+						mapEntry.Value = *valueModification;
+
+						serializedMapDelta->Entries[entryKey] = std::move(mapEntry);
+						modification = serializedMapDelta;
+						
+					}
+					else if(isArray)
+					{
+						if(serializedArrayDelta == nullptr)
+						{
+							serializedArrayDelta = B3DMakeShared<SerializedArrayDelta>();
+							serializedArrayDelta->ElementCount = rhsValueIterator.GetElementCount();
+						}
+
+						SerializedArrayEntryDelta arrayEntry;
+						arrayEntry.Index = elementIndex;
+						arrayEntry.Value = *valueModification;
+
+						serializedArrayDelta->Entries[elementIndex] = std::move(arrayEntry);
+						modification = serializedArrayDelta;
 					}
 					else
-						valueModification = rhsValue.Clone(flags, context);
-
-					// If container, the modification above is just a single entry
-					if(valueModification.has_value())
 					{
-						const bool isMap = field->Schema.IsIterator && field->Schema.IsArray && static_cast<RTTIIteratorField*>(field)->IteratorSupportsSeekToKey();
-						const bool isArray = field->Schema.IsArray;
-
-						if(isMap)
-						{
-							if(serializedMapDelta == nullptr)
-								serializedMapDelta = B3DMakeShared<SerializedMapDelta>();
-
-							// TODO - I'm not storing map entries that are present in LHS but missing in RHS
-
-							SPtr<ISerialized> entryKey;
-							if(const auto& tuple = B3DRTTICast<SerializedTupleDelta>(*valueModification))
-								entryKey = tuple->Key;
-							else
-								entryKey = *valueModification;
-
-							SerializedMapEntryDelta mapEntry;
-							mapEntry.IsRemoved = false;
-							mapEntry.Value = *valueModification;
-
-							serializedMapDelta->Entries[entryKey] = std::move(mapEntry);
-							modification = serializedMapDelta;
-							
-						}
-						else if(isArray)
-						{
-							if(serializedArrayDelta == nullptr)
-							{
-								serializedArrayDelta = B3DMakeShared<SerializedArrayDelta>();
-								serializedArrayDelta->ElementCount = rhsValueIterator.GetElementCount();
-							}
-
-							SerializedArrayEntryDelta arrayEntry;
-							arrayEntry.Index = elementIndex;
-							arrayEntry.Value = *valueModification;
-
-							serializedArrayDelta->Entries[elementIndex] = std::move(arrayEntry);
-							modification = serializedArrayDelta;
-						}
-						else
-						{
-							modification = *valueModification;
-						}
-
-						hasModification = true;
+						modification = *valueModification;
 					}
-				} 
 
-				// Note: I'm ignoring the case if a field is prevent in LHS, but removed in RHS. I can't imagine a case where this might be relevant.
-			}
-			else
-			{
-				modification = rhsField.Clone(flags, context);
-				hasModification = true;
-			}
+					hasModification = true;
+				}
+			} 
 
 			if(hasModification)
 			{

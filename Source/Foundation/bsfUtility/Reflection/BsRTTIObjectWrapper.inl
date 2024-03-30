@@ -339,8 +339,9 @@ namespace bs::RTTIObjectWrapper
 			if(found != mMapContainerValue->Entries.end())
 				return Value<false>(~0u, found->second, mFrameAllocator);
 		}
+		else // Just a regular field
+			return Value<false>(~0u, mValue, mFrameAllocator);
 
-		// Not a container iterator
 		return {};
 	}
 
@@ -451,11 +452,13 @@ namespace bs::RTTIObjectWrapper
 				
 				return Value<true>(mField, ~0u, iteratorCopy, mRTTIType, mObject, mFrameAllocator);
 			}
+			else // Just a regular field
+				return Value<true>(mField, ~0u, mIterator, mRTTIType, mObject, mFrameAllocator);
 		}
 		else // DEPRECATED
 		{
-			if(mElementCount == ~0u)
-				return {};
+			if(mElementCount == ~0u) // Just a regular field
+				return Value<true>(mField, ~0u, ~0u, mRTTIType, mObject, mFrameAllocator);
 
 			if(otherIterator.mElementIndex >= mElementCount)
 				return {};
