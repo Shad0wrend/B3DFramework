@@ -15,6 +15,11 @@ struct UnitTestSerializationObjectB : IReflectable
 	u32 IntA = 100;
 	String StrA = "100";
 
+	bool operator==(const UnitTestSerializationObjectB& other) const
+	{
+		return IntA == other.IntA && StrA == other.StrA;
+	}
+
 	/************************************************************************/
 	/* 								RTTI		                     		*/
 	/************************************************************************/
@@ -50,6 +55,7 @@ struct UnitTestSerializationObjectA : IReflectable
 	SPtr<UnitTestSerializationObjectB> ObjPtrB = B3DMakeShared<UnitTestSerializationObjectB>();
 	SPtr<UnitTestSerializationObjectB> ObjPtrC = B3DMakeShared<UnitTestSerializationObjectB>();
 	SPtr<UnitTestSerializationObjectB> ObjPtrD = nullptr;
+	SPtr<UnitTestSerializationObjectB> ObjPtrE = nullptr;
 
 	Vector<String> ArrStrA;
 	Vector<String> ArrStrB;
@@ -66,6 +72,16 @@ struct UnitTestSerializationObjectA : IReflectable
 	UnorderedMap<u32, String> PlainMapC = { { 5, "value5" }, { 10, "value10" }, { 15, "value15" } };
 	UnorderedMap<u32, String> PlainMapD = { { 5, "value5" }, { 10, "value10" }, { 15, "value15" } };
 	UnorderedMap<u32, String> PlainMapE = { { 5, "value5" }, { 10, "value10" }, { 15, "value15" } };
+
+	UnorderedMap<String, UnitTestSerializationObjectB> ObjectMapA = {{ "a", UnitTestSerializationObjectB() }, { "b", UnitTestSerializationObjectB() }};
+	UnorderedMap<String, UnitTestSerializationObjectB> ObjectMapB = {{ "a", UnitTestSerializationObjectB() }, { "b", UnitTestSerializationObjectB() }};
+	UnorderedMap<String, UnitTestSerializationObjectB> ObjectMapC = { { "a", UnitTestSerializationObjectB() }, { "b", UnitTestSerializationObjectB() }};
+
+	UnorderedMap<String, SPtr<UnitTestSerializationObjectB>> ObjectPointerMap = { { "a", B3DMakeShared<UnitTestSerializationObjectB>() },
+																				  { "b", B3DMakeShared<UnitTestSerializationObjectB>() },
+																				  { "c", B3DMakeShared<UnitTestSerializationObjectB>() },
+																				  { "d", B3DMakeShared<UnitTestSerializationObjectB>() },
+																				  { "e", nullptr } };
 
 	/************************************************************************/
 	/* 								RTTI		                     		*/
@@ -91,24 +107,30 @@ private:
 		B3D_RTTI_MEMBER(ObjPtrB, 6)
 		B3D_RTTI_MEMBER(ObjPtrC, 7)
 		B3D_RTTI_MEMBER(ObjPtrD, 8)
+		B3D_RTTI_MEMBER(ObjPtrE, 9)
 
-		B3D_RTTI_MEMBER_CONTAINER(ArrStrA, 9)
-		B3D_RTTI_MEMBER_CONTAINER(ArrStrB, 10)
-		B3D_RTTI_MEMBER_CONTAINER(ArrStrC, 11)
+		B3D_RTTI_MEMBER_CONTAINER(ArrStrA, 10)
+		B3D_RTTI_MEMBER_CONTAINER(ArrStrB, 11)
+		B3D_RTTI_MEMBER_CONTAINER(ArrStrC, 12)
 
-		B3D_RTTI_MEMBER_CONTAINER(ArrObjA, 12)
-		B3D_RTTI_MEMBER_CONTAINER(ArrObjB, 13)
+		B3D_RTTI_MEMBER_CONTAINER(ArrObjA, 13)
+		B3D_RTTI_MEMBER_CONTAINER(ArrObjB, 14)
 
-		B3D_RTTI_MEMBER_CONTAINER(ArrObjPtrA, 14)
-		B3D_RTTI_MEMBER_CONTAINER(ArrObjPtrB, 15)
+		B3D_RTTI_MEMBER_CONTAINER(ArrObjPtrA, 15)
+		B3D_RTTI_MEMBER_CONTAINER(ArrObjPtrB, 16)
 
-		B3D_RTTI_MEMBER_CONTAINER(PlainMapA, 16)
-		B3D_RTTI_MEMBER_CONTAINER(PlainMapB, 17)
-		B3D_RTTI_MEMBER_CONTAINER(PlainMapC, 18)
-		B3D_RTTI_MEMBER_CONTAINER(PlainMapD, 19)
-		B3D_RTTI_MEMBER_CONTAINER(PlainMapE, 20)
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapA, 17)
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapB, 18)
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapC, 19)
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapD, 20)
+		B3D_RTTI_MEMBER_CONTAINER(PlainMapE, 21)
 
-	// TODO - Add test case for maps
+		B3D_RTTI_MEMBER_CONTAINER(ObjectMapA, 22)
+		B3D_RTTI_MEMBER_CONTAINER(ObjectMapB, 23)
+		B3D_RTTI_MEMBER_CONTAINER(ObjectMapC, 24)
+
+		B3D_RTTI_MEMBER_CONTAINER(ObjectPointerMap, 25)
+
 	B3D_RTTI_END_MEMBERS
 
 public:
@@ -197,7 +219,16 @@ private:
 	void TestSerializedObject();
 	void TestBinaryDelta();
 
-	void AssertObjectsMatch(const SPtr<UnitTestSerializationObjectA>& lhs, const SPtr<UnitTestSerializationObjectA>& rhs);
+	template<typename T>
+	void TestAssertArraysMatch(const T& lhs, const T& rhs);
+
+	template<typename T>
+	void TestAssertArrayContentsMatch(const T& lhs, const T& rhs);
+
+	template<typename T>
+	void TestAssertMapsMatch(const T& lhs, const T& rhs);
+
+	void TestAssertObjectsMatch(const SPtr<UnitTestSerializationObjectA>& lhs, const SPtr<UnitTestSerializationObjectA>& rhs, bool isDelta);
 
 	static SPtr<UnitTestSerializationObjectA> CreateSerializationTestObjectVariantA();
 	static SPtr<UnitTestSerializationObjectA> CreateSerializationTestObjectVariantB();
@@ -234,17 +265,64 @@ SPtr<UnitTestSerializationObjectA> CoreTestSuite::CreateSerializationTestObjectV
 	object->ObjPtrB->StrA = "kiwi";
 	object->ObjPtrC = nullptr;
 	object->ObjPtrD = B3DMakeShared<UnitTestSerializationObjectB>();
+	object->ObjPtrE = object->ObjPtrA;
 	object->ArrObjB[1].StrA = "strawberry";
 	object->ArrObjPtrB[0]->IntA = 99100;
 	object->PlainMapB =  { { 25, "newValue25" }, { 210, "newValue210" }, { 215, "newValue215" } };
 	object->PlainMapC[5] = "newValue5";
 	object->PlainMapD[225] = "newValue225";
 	object->PlainMapE.erase(object->PlainMapE.find(10));
+	object->ObjectMapB["a"].IntA = 9940;
+	object->ObjectMapB["c"] = UnitTestSerializationObjectB();
+	object->ObjectMapC["b"].StrA = "strawberry";
+	object->ObjectMapC.erase("a");
+	object->ObjectPointerMap["b"] = nullptr;
+	object->ObjectPointerMap["f"] = object->ObjectPointerMap["a"];
+	object->ObjectPointerMap.erase("c");
+	object->ObjectPointerMap["d"]->IntA = 9940;
 
 	return object;
 }
 
-void CoreTestSuite::AssertObjectsMatch(const SPtr<UnitTestSerializationObjectA>& lhs, const SPtr<UnitTestSerializationObjectA>& rhs)
+template<typename T>
+void CoreTestSuite::TestAssertArraysMatch(const T& lhs, const T& rhs)
+{
+	B3D_TEST_ASSERT(lhs.size() == rhs.size())
+	for(u32 i = 0; i < (u32)lhs.size(); i++)
+		B3D_TEST_ASSERT(lhs[i] == rhs[i])
+}
+
+template<typename T>
+void CoreTestSuite::TestAssertArrayContentsMatch(const T& lhs, const T& rhs)
+{
+	B3D_TEST_ASSERT(lhs.size() == rhs.size())
+	for(u32 i = 0; i < (u32)lhs.size(); i++)
+	{
+		if(lhs[i] != nullptr)
+		{
+			B3D_TEST_ASSERT(rhs[i] != nullptr)
+			B3D_TEST_ASSERT(*(lhs[i]) == *(rhs[i]))
+		}
+		else
+		{
+			B3D_TEST_ASSERT(rhs[i] == nullptr)
+		}
+	}
+}
+
+template<typename T>
+void CoreTestSuite::TestAssertMapsMatch(const T& lhs, const T& rhs)
+{
+	B3D_TEST_ASSERT(lhs.size() == rhs.size())
+	for(const auto& pair : lhs)
+	{
+		auto found = rhs.find(pair.first);
+		B3D_TEST_ASSERT(found != rhs.end())
+		B3D_TEST_ASSERT(found->second == pair.second)
+	}
+}
+
+void CoreTestSuite::TestAssertObjectsMatch(const SPtr<UnitTestSerializationObjectA>& lhs, const SPtr<UnitTestSerializationObjectA>& rhs, bool isDelta = false)
 {
 	B3D_TEST_ASSERT(lhs->IntA == rhs->IntA)
 	B3D_TEST_ASSERT(lhs->StrA == rhs->StrA)
@@ -253,80 +331,63 @@ void CoreTestSuite::AssertObjectsMatch(const SPtr<UnitTestSerializationObjectA>&
 	B3D_TEST_ASSERT(lhs->ObjA.IntA == rhs->ObjA.IntA)
 	B3D_TEST_ASSERT(lhs->ObjB.IntA == rhs->ObjB.IntA)
 
-	B3D_TEST_ASSERT(lhs->ObjPtrA->StrA == rhs->ObjPtrA->StrA)
-	B3D_TEST_ASSERT(lhs->ObjPtrB->StrA == rhs->ObjPtrB->StrA)
-	B3D_TEST_ASSERT(lhs->ObjPtrD->StrA == rhs->ObjPtrD->StrA)
-	B3D_TEST_ASSERT(lhs->ObjPtrC == rhs->ObjPtrC);
+	B3D_TEST_ASSERT(*lhs->ObjPtrA == *rhs->ObjPtrA)
+	B3D_TEST_ASSERT(*lhs->ObjPtrB == *rhs->ObjPtrB)
+	B3D_TEST_ASSERT(lhs->ObjPtrC == rhs->ObjPtrC)
+	B3D_TEST_ASSERT(*lhs->ObjPtrD == *rhs->ObjPtrD)
+	B3D_TEST_ASSERT(*lhs->ObjPtrE == *rhs->ObjPtrE)
 
-	B3D_TEST_ASSERT(lhs->ArrStrA.size() == rhs->ArrStrA.size())
-	for(u32 i = 0; i < (u32)lhs->ArrStrA.size(); i++)
-		B3D_TEST_ASSERT(lhs->ArrStrA[i] == rhs->ArrStrA[i])
-
-	B3D_TEST_ASSERT(lhs->ArrStrB.size() == rhs->ArrStrB.size())
-	for(u32 i = 0; i < (u32)lhs->ArrStrB.size(); i++)
-		B3D_TEST_ASSERT(lhs->ArrStrB[i] == rhs->ArrStrB[i])
-
-	B3D_TEST_ASSERT(lhs->ArrStrC.size() == rhs->ArrStrC.size())
-	for(u32 i = 0; i < (u32)lhs->ArrStrC.size(); i++)
-		B3D_TEST_ASSERT(lhs->ArrStrC[i] == rhs->ArrStrC[i])
-
-	B3D_TEST_ASSERT(lhs->ArrObjA.size() == rhs->ArrObjA.size())
-	for(u32 i = 0; i < (u32)lhs->ArrObjA.size(); i++)
-		B3D_TEST_ASSERT(lhs->ArrObjA[i].StrA == rhs->ArrObjA[i].StrA)
-
-	B3D_TEST_ASSERT(lhs->ArrObjB.size() == rhs->ArrObjB.size())
-	for(u32 i = 0; i < (u32)lhs->ArrObjB.size(); i++)
-		B3D_TEST_ASSERT(lhs->ArrObjB[i].StrA == rhs->ArrObjB[i].StrA)
-
-	B3D_TEST_ASSERT(lhs->ArrObjPtrA.size() == rhs->ArrObjPtrA.size())
-	for(u32 i = 0; i < (u32)lhs->ArrObjPtrA.size(); i++)
-		B3D_TEST_ASSERT(lhs->ArrObjPtrA[i]->IntA == rhs->ArrObjPtrA[i]->IntA)
-
-	B3D_TEST_ASSERT(lhs->ArrObjPtrB.size() == rhs->ArrObjPtrB.size())
-	for(u32 i = 0; i < (u32)lhs->ArrObjPtrB.size(); i++)
-		B3D_TEST_ASSERT(lhs->ArrObjPtrB[i]->IntA == rhs->ArrObjPtrB[i]->IntA)
-
-	B3D_TEST_ASSERT(lhs->PlainMapA.size() == rhs->PlainMapA.size())
-	for(const auto& pair : lhs->PlainMapA)
+	if(!isDelta) // TODO Skipping these tests for deltas, as it's not a case it handled yet.
 	{
-		auto found = rhs->PlainMapA.find(pair.first);
-		B3D_TEST_ASSERT(found != rhs->PlainMapA.end())
-		B3D_TEST_ASSERT(found->second == pair.second)
+		B3D_TEST_ASSERT(lhs->ObjPtrA == lhs->ObjPtrE)
+		B3D_TEST_ASSERT(rhs->ObjPtrA == rhs->ObjPtrE)
 	}
 
-	B3D_TEST_ASSERT(lhs->PlainMapB.size() == rhs->PlainMapB.size())
-	for(const auto& pair : lhs->PlainMapB)
+	TestAssertArraysMatch(lhs->ArrStrA, rhs->ArrStrA);
+	TestAssertArraysMatch(lhs->ArrStrB, rhs->ArrStrB);
+	TestAssertArraysMatch(lhs->ArrStrC, rhs->ArrStrC);
+	TestAssertArraysMatch(lhs->ArrObjA, rhs->ArrObjA);
+	TestAssertArraysMatch(lhs->ArrObjB, rhs->ArrObjB);
+	TestAssertArrayContentsMatch(lhs->ArrObjPtrA, rhs->ArrObjPtrA);
+	TestAssertArrayContentsMatch(lhs->ArrObjPtrB, rhs->ArrObjPtrB);
+
+	TestAssertMapsMatch(lhs->PlainMapA, rhs->PlainMapA);
+	TestAssertMapsMatch(lhs->PlainMapB, rhs->PlainMapB);
+	TestAssertMapsMatch(lhs->PlainMapC, rhs->PlainMapC);
+	TestAssertMapsMatch(lhs->PlainMapD, rhs->PlainMapD);
+	TestAssertMapsMatch(lhs->PlainMapE, rhs->PlainMapE);
+
+	TestAssertMapsMatch(lhs->ObjectMapA, rhs->ObjectMapA);
+	TestAssertMapsMatch(lhs->ObjectMapB, rhs->ObjectMapB);
+	TestAssertMapsMatch(lhs->ObjectMapC, rhs->ObjectMapC);
+
+	B3D_TEST_ASSERT(lhs->ObjectPointerMap.size() == rhs->ObjectPointerMap.size())
+	for(const auto& pair : lhs->ObjectPointerMap)
 	{
-		auto found = rhs->PlainMapB.find(pair.first);
-		B3D_TEST_ASSERT(found != rhs->PlainMapB.end())
-		B3D_TEST_ASSERT(found->second == pair.second)
+		auto found = rhs->ObjectPointerMap.find(pair.first);
+		B3D_TEST_ASSERT(found != rhs->ObjectPointerMap.end())
+
+		if(pair.second != nullptr)
+		{
+			B3D_TEST_ASSERT(found->second != nullptr)
+			B3D_TEST_ASSERT(*(pair.second) == *(found->second))
+		}
+		else
+		{
+			B3D_TEST_ASSERT(found->second == nullptr)
+		}
 	}
 
-	B3D_TEST_ASSERT(lhs->PlainMapC.size() == rhs->PlainMapC.size())
-	for(const auto& pair : lhs->PlainMapC)
+	if(!isDelta) // TODO Skipping these tests for deltas, as it's not a case it handled yet.
 	{
-		auto found = rhs->PlainMapC.find(pair.first);
-		B3D_TEST_ASSERT(found != rhs->PlainMapC.end())
-		B3D_TEST_ASSERT(found->second == pair.second)
-	}
+		B3D_TEST_ASSERT(lhs->ObjectPointerMap.find("a") != lhs->ObjectPointerMap.end())
+		B3D_TEST_ASSERT(lhs->ObjectPointerMap.find("f") != lhs->ObjectPointerMap.end())
+		B3D_TEST_ASSERT(lhs->ObjectPointerMap["a"] == lhs->ObjectPointerMap["f"])
 
-	B3D_TEST_ASSERT(lhs->PlainMapD.size() == rhs->PlainMapD.size())
-	for(const auto& pair : lhs->PlainMapD)
-	{
-		auto found = rhs->PlainMapD.find(pair.first);
-		B3D_TEST_ASSERT(found != rhs->PlainMapD.end())
-		B3D_TEST_ASSERT(found->second == pair.second)
+		B3D_TEST_ASSERT(rhs->ObjectPointerMap.find("a") != rhs->ObjectPointerMap.end())
+		B3D_TEST_ASSERT(rhs->ObjectPointerMap.find("f") != rhs->ObjectPointerMap.end())
+		B3D_TEST_ASSERT(rhs->ObjectPointerMap["a"] == rhs->ObjectPointerMap["f"])
 	}
-
-	B3D_TEST_ASSERT(lhs->PlainMapE.size() == rhs->PlainMapE.size())
-	for(const auto& pair : lhs->PlainMapE)
-	{
-		auto found = rhs->PlainMapE.find(pair.first);
-		B3D_TEST_ASSERT(found != rhs->PlainMapE.end())
-		B3D_TEST_ASSERT(found->second == pair.second)
-	}
-
-	// TODO - Add test case for maps
 }
 
 void CoreTestSuite::TestAnimCurveIntegration()
@@ -443,7 +504,7 @@ void CoreTestSuite::TestBinarySerialization()
 	stream->Seek(0);
 
 	const SPtr<UnitTestSerializationObjectA> deserializedObject = B3DRTTICast<UnitTestSerializationObjectA>(serializer.Decode(stream, (u32)stream->Size()));
-	AssertObjectsMatch(object, deserializedObject);
+	TestAssertObjectsMatch(object, deserializedObject);
 }
 
 void CoreTestSuite::TestSerializedObject()
@@ -453,7 +514,7 @@ void CoreTestSuite::TestSerializedObject()
 	const SPtr<SerializedObject> serializedObject = SerializedObject::Create(*object);
 	const SPtr<UnitTestSerializationObjectA> deserializedObject = B3DRTTICast<UnitTestSerializationObjectA>(serializedObject->Decode());
 
-	AssertObjectsMatch(object, deserializedObject);
+	TestAssertObjectsMatch(object, deserializedObject);
 }
 
 void CoreTestSuite::TestBinaryDelta()
@@ -468,7 +529,7 @@ void CoreTestSuite::TestBinaryDelta()
 	SPtr<SerializedObject> delta = deltaHandler.GenerateDelta(serializedObjectA, serializedObjectB);
 	deltaHandler.ApplyDelta(objectA, delta, nullptr);
 
-	AssertObjectsMatch(objectA, objectB);
+	TestAssertObjectsMatch(objectA, objectB, true);
 }
 
 using namespace bs;
