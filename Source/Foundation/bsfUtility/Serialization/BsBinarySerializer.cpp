@@ -523,10 +523,10 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 		if(field == nullptr) // DEPRECATED: This code is only needed until we fully move to iterators, as information if the field is an iterator is not stored in the decoded field data.
 		{
 			RTTITypeBase* const rttiType = IReflectable::GetRTTITypeFromTypeId(objectTypeId);
-			if(B3D_ENSURE(rttiType != nullptr))
+			if(rttiType != nullptr)
 			{
 				RTTIField* const rttiField = rttiType->FindField(decodedFieldSchema.Id);
-				if(B3D_ENSURE(rttiField != nullptr))
+				if(rttiField != nullptr)
 				{
 					isIteratorField = rttiField->Schema.IsIterator;
 				}

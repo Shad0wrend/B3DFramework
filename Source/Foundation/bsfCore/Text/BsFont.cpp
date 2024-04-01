@@ -567,16 +567,26 @@ void FontAtlasRenderer::OnStartUp()
 	if (!gpuDevice)
 		return;
 
-	ct::GpuCommandBufferPoolCreateInformation poolCreateInformation;
-	poolCreateInformation.Thread = GetRenderThread().GetThreadId();
-	poolCreateInformation.Usage = GQT_GRAPHICS;
+	auto fnCreateCommandBufferPool = [this, gpuDevice]()
+	{
+		ct::GpuCommandBufferPoolCreateInformation poolCreateInformation;
+		poolCreateInformation.Thread = B3D_CURRENT_THREAD_ID;
+		poolCreateInformation.Usage = GQT_GRAPHICS;
 
-	mCommandBufferPool = gpuDevice->CreateGpuCommandBufferPool(poolCreateInformation);
+		mCommandBufferPool = gpuDevice->CreateGpuCommandBufferPool(poolCreateInformation);
+	};
+
+	GetRenderThread().PostCommand(fnCreateCommandBufferPool, "FontAtlasRenderer::CreateCommandBufferPool");
 }
 
 void FontAtlasRenderer::OnShutDown()
 {
-	mCommandBufferPool = nullptr;
+	auto fnDestroyCommandBufferPool = [this]()
+	{
+		mCommandBufferPool = nullptr;
+	};
+
+	GetRenderThread().PostCommand(fnDestroyCommandBufferPool, "FontAtlasRenderer::DestroyCommandBufferPool", true);
 }
 
 void FontAtlasRenderer::BlitGlyphs(Vector<GlyphBitmap> glyphBitmaps)

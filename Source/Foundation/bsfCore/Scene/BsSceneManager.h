@@ -67,6 +67,10 @@ namespace bs
 		/** Returns the game object collection storing all the scene's game objects. */
 		const SPtr<GameObjectCollection>& GetGameObjectCollection() const { return mGameObjectCollection; }
 
+		/** Creates a new scene object in the scene instance. */
+		B3D_SCRIPT_EXPORT()
+		HSceneObject CreateSceneObject(const String& name);
+
 		/** Creates a new empty scene instance. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SceneInstance))
 		static SPtr<SceneInstance> Create(const String& name);
@@ -92,7 +96,7 @@ namespace bs
 		~SceneManager();
 
 		/** Returns the object that represents the main scene. */
-		const SPtr<SceneInstance>& GetMainScene() const { return mMainScene; }
+		const SPtr<SceneInstance>& GetMainScene() const { return mMainScene; } // TODO - Concept of main scene should be removed
 
 		/**
 		 * Destroys all scene objects in the scene.

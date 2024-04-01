@@ -14,6 +14,8 @@ GameObjectCollection::GameObjectCollection(PrivatelyConstruct)
 GameObjectCollection::~GameObjectCollection()
 {
 	DestroyQueuedObjects();
+
+	GameObjectManager::Instance().UnregisterGameObjectCollection(*this);
 }
 
 GameObjectHandleBase GameObjectCollection::RegisterAndInitializeObject(const SPtr<GameObject>& object)

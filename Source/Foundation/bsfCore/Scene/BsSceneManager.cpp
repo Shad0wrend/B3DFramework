@@ -41,6 +41,14 @@ SceneInstance::SceneInstance(ConstructPrivately dummy, const String& name, const
 	: mName(name), mRoot(root), mPhysicsScene(physicsScene), mGameObjectCollection(root->GetOwnerCollection())
 {}
 
+HSceneObject SceneInstance::CreateSceneObject(const String& name)
+{
+	HSceneObject newSceneObject = SceneObject::CreateInternal(mGameObjectCollection, name);
+	newSceneObject->SetParent(mRoot, false);
+
+	return newSceneObject;
+}
+
 SPtr<SceneInstance> SceneInstance::Create(const String& name)
 {
 	const SPtr<GameObjectCollection>& gameObjectCollection = GameObjectCollection::Create();
@@ -91,7 +99,7 @@ void SceneManager::ClearScene(bool forceAll)
 
 void SceneManager::LoadScene(const HPrefab& scene)
 {
-	HSceneObject root = scene->InstantiateInternal(true);
+	HSceneObject root = scene->Instantiate(nullptr, true);
 	SetRootNodeInternal(root);
 }
 

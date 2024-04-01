@@ -7,6 +7,13 @@
 #include "RTTI/BsStringRTTI.h"
 #include "Serialization/BsBinarySerializer.h"
 #include "FileSystem/BsDataStream.h"
+#include "Scene/BsComponent.h"
+#include "Scene/BsGameObjectManager.h"
+#include "Scene/BsPrefab.h"
+#include "Scene/BsSceneManager.h"
+#include "Scene/BsSceneObject.h"
+#include "BsApplication.h"
+#include "Utility/BsUtility.h"
 
 using namespace bs;
 
@@ -90,6 +97,114 @@ public:
 	friend class UnitTestSerializationObjectARTTI;
 	static RTTITypeBase* GetRttiStatic();
 	RTTITypeBase* GetRtti() const override;
+};
+
+class UnitTestComponentA : public Component
+{
+public:
+	HSceneObject SceneObjectReference;
+	HComponent ComponentReference;
+	String StringValue;
+
+	/************************************************************************/
+	/* 							COMPONENT OVERRIDES                    		*/
+	/************************************************************************/
+
+protected:
+	friend class SceneObject;
+
+	UnitTestComponentA(const HSceneObject& parent);
+
+	/************************************************************************/
+	/* 								RTTI		                     		*/
+	/************************************************************************/
+public:
+	friend class UnitTestComponentARTTI;
+	static RTTITypeBase* GetRttiStatic();
+	RTTITypeBase* GetRtti() const;
+
+protected:
+	UnitTestComponentA() {} // Serialization only
+};
+
+class UnitTestComponentB : public Component
+{
+public:
+	HSceneObject SceneObjectReference;
+	String StringValue;
+
+	/************************************************************************/
+	/* 							COMPONENT OVERRIDES                    		*/
+	/************************************************************************/
+
+protected:
+	friend class SceneObject;
+
+	UnitTestComponentB(const HSceneObject& parent);
+
+	/************************************************************************/
+	/* 								RTTI		                     		*/
+	/************************************************************************/
+public:
+	friend class UnitTestComponentBRTTI;
+	static RTTITypeBase* GetRttiStatic();
+	RTTITypeBase* GetRtti() const;
+
+protected:
+	UnitTestComponentB() {} // Serialization only
+};
+
+class UnitTestComponentARTTI : public RTTIType<UnitTestComponentA, Component, UnitTestComponentARTTI>
+{
+private:
+	B3D_RTTI_BEGIN_MEMBERS
+		B3D_RTTI_MEMBER(SceneObjectReference, 0)
+		B3D_RTTI_MEMBER(ComponentReference, 1)
+		B3D_RTTI_MEMBER(StringValue, 2)
+	B3D_RTTI_END_MEMBERS
+
+public:
+	const String& GetRttiName() override
+	{
+		static String name = "UnitTestComponentA";
+		return name;
+	}
+
+	u32 GetRttiId() const override
+	{
+		return TID_UnitTestComponentA;
+	}
+
+	SPtr<IReflectable> NewRttiObject() override
+	{
+		return SceneObject::CreateEmptyComponent<UnitTestComponentA>();
+	}
+};
+
+class UnitTestComponentBRTTI : public RTTIType<UnitTestComponentB, Component, UnitTestComponentBRTTI>
+{
+private:
+	B3D_RTTI_BEGIN_MEMBERS
+		B3D_RTTI_MEMBER(SceneObjectReference, 0)
+		B3D_RTTI_MEMBER(StringValue, 1)
+	B3D_RTTI_END_MEMBERS
+
+public:
+	const String& GetRttiName() override
+	{
+		static String name = "UnitTestComponentB";
+		return name;
+	}
+
+	u32 GetRttiId() const override
+	{
+		return TID_UnitTestComponentB;
+	}
+
+	SPtr<IReflectable> NewRttiObject() override
+	{
+		return SceneObject::CreateEmptyComponent<UnitTestComponentB>();
+	}
 };
 
 class UnitTestSerializationObjectARTTI : public RTTIType<UnitTestSerializationObjectA, IReflectable, UnitTestSerializationObjectARTTI>
@@ -197,6 +312,37 @@ RTTITypeBase* UnitTestSerializationObjectA::GetRtti() const
 	return GetRttiStatic();
 }
 
+UnitTestComponentA::UnitTestComponentA(const HSceneObject& parent)
+	: Component(parent)
+{}
+
+RTTITypeBase* UnitTestComponentA::GetRttiStatic()
+{
+	return UnitTestComponentARTTI::Instance();
+}
+
+RTTITypeBase* UnitTestComponentA::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+UnitTestComponentB::UnitTestComponentB(const HSceneObject& parent)
+	: Component(parent)
+{}
+
+RTTITypeBase* UnitTestComponentB::GetRttiStatic()
+{
+	return UnitTestComponentBRTTI::Instance();
+}
+
+RTTITypeBase* UnitTestComponentB::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+using HUnitTestComponentA = GameObjectHandle<UnitTestComponentA>;
+using HUnitTestComponentB = GameObjectHandle<UnitTestComponentB>;
+
 static float EvaluatePosition(float acceleration, float velocity, float time)
 {
 	return acceleration * time * time * 0.5f + velocity * time;
@@ -218,6 +364,7 @@ private:
 	void TestBinarySerialization();
 	void TestSerializedObject();
 	void TestBinaryDelta();
+	void TestSceneSaveLoad();
 
 	template<typename T>
 	void TestAssertArraysMatch(const T& lhs, const T& rhs);
@@ -241,6 +388,7 @@ CoreTestSuite::CoreTestSuite()
 	B3D_ADD_TEST(CoreTestSuite::TestBinarySerialization)
 	B3D_ADD_TEST(CoreTestSuite::TestSerializedObject)
 	B3D_ADD_TEST(CoreTestSuite::TestBinaryDelta)
+	B3D_ADD_TEST(CoreTestSuite::TestSceneSaveLoad)
 
 	// TODO - Add unit tests for:
 	// - Binary cloner test that restores external references
@@ -532,17 +680,509 @@ void CoreTestSuite::TestBinaryDelta()
 	TestAssertObjectsMatch(objectA, objectB, true);
 }
 
+void CoreTestSuite::TestSceneSaveLoad()
+{
+	// Simple scene save & load
+	{
+		SPtr<MemoryDataStream> serializedSceneStream = B3DMakeShared<MemoryDataStream>();
+		{
+			SPtr<SceneInstance> sceneInstance = SceneInstance::Create("UnitTestSceneInstance");
+
+			HSceneObject sceneObject_0 = sceneInstance->CreateSceneObject("sceneObject_0");
+				HSceneObject sceneObject_0_0 = sceneInstance->CreateSceneObject("sceneObject_0_0");
+				HSceneObject sceneObject_0_1 = sceneInstance->CreateSceneObject("sceneObject_0_1");
+					HSceneObject sceneObject_0_1_0 = sceneInstance->CreateSceneObject("sceneObject_0_1_0");
+			HSceneObject sceneObject_1 = sceneInstance->CreateSceneObject("sceneObject_1");
+				HSceneObject sceneObject_1_0 = sceneInstance->CreateSceneObject("sceneObject_1_0");
+
+			sceneObject_0_0->SetParent(sceneObject_0);
+			sceneObject_0_1->SetParent(sceneObject_0);
+			sceneObject_1_0->SetParent(sceneObject_1);
+			sceneObject_0_1_0->SetParent(sceneObject_0_1);
+
+			sceneObject_0_1_0->SetPosition(Vector3(10.0f, 15.0f, 20.0f));
+			sceneObject_0_1->SetPosition(Vector3(1.0f, 2.0f, 3.0f));
+			sceneObject_1_0->SetPosition(Vector3(0, 123.0f, 0.0f));
+
+			HUnitTestComponentA component_0 = sceneObject_0->AddComponent<UnitTestComponentA>();
+			HUnitTestComponentB component_1 = sceneObject_1->AddComponent<UnitTestComponentB>();
+			HUnitTestComponentA component_0_1 = sceneObject_0_1->AddComponent<UnitTestComponentA>();
+			HUnitTestComponentA component_0_1_0 = sceneObject_0_1_0->AddComponent<UnitTestComponentA>();
+
+			component_0->SceneObjectReference = sceneObject_0_1_0;
+			component_0->ComponentReference = component_1;
+
+			component_0_1->StringValue = "originalValue2";
+
+			component_0_1_0->StringValue = "testValue";
+			component_0_1_0->SceneObjectReference = sceneObject_0;
+			component_0_1_0->ComponentReference = component_0;
+
+			HPrefab scene = Prefab::Create(sceneInstance->GetRoot());
+
+			BinarySerializer serializer;
+			serializer.Encode(scene.Get(), serializedSceneStream, BinarySerializerFlag::None);
+		}
+		{
+			serializedSceneStream->Seek(0);
+
+			BinarySerializer serializer;
+			CoreSerializationContext serializationContext;
+			const SPtr<Prefab> prefab = B3DRTTICast<Prefab>(serializer.Decode(serializedSceneStream, (u32)serializedSceneStream->Size(), BinarySerializerFlag::None, &serializationContext));
+
+			HSceneObject sceneRoot = prefab->GetRoot();
+			HSceneObject sceneObject_0 = sceneRoot->FindChild("sceneObject_0", false);
+			HSceneObject sceneObject_1 = sceneRoot->FindChild("sceneObject_1", false);
+			HSceneObject sceneObject_0_0 = sceneObject_0->FindChild("sceneObject_0_0", false);
+			HSceneObject sceneObject_0_1 = sceneObject_0->FindChild("sceneObject_0_1", false);
+			HSceneObject sceneObject_0_1_0 = sceneObject_0_1->FindChild("sceneObject_0_1_0", false);
+
+			B3D_TEST_ASSERT(sceneObject_0_0 != nullptr);
+			B3D_TEST_ASSERT(sceneObject_0_1 != nullptr);
+			B3D_TEST_ASSERT(sceneObject_0_1_0 != nullptr);
+
+			HUnitTestComponentA comp0 = sceneObject_0->GetComponent<UnitTestComponentA>();
+			HUnitTestComponentB comp1 = sceneObject_1->GetComponent<UnitTestComponentB>();
+			HUnitTestComponentA comp0_1_0 = sceneObject_0_1_0->GetComponent<UnitTestComponentA>();
+
+			B3D_TEST_ASSERT(comp0 != nullptr)
+			B3D_TEST_ASSERT(comp1 != nullptr)
+			B3D_TEST_ASSERT(comp0_1_0 != nullptr)
+			B3D_TEST_ASSERT(comp0_1_0->StringValue == "testValue")
+			B3D_TEST_ASSERT(comp0->SceneObjectReference == sceneObject_0_1_0)
+			B3D_TEST_ASSERT(comp0->ComponentReference == comp1)
+			B3D_TEST_ASSERT(comp0_1_0->SceneObjectReference == sceneObject_0)
+			B3D_TEST_ASSERT(comp0_1_0->ComponentReference == comp0)
+		}
+	}
+
+	// TODO - Add following tests:
+	// 1. Instantiate the above prefab and verify prefab links are valid
+	// 2. Create a new scene into which we instantiate the above prefab (See example below)
+	//  - Have the prefab reference some of the scene's objects, and ensure those are valid
+	//  - Ensure scene objects have correct prefab links, and the prefab itself does
+	// 3. Update the prefab, verify update has been applied correctly in the scene
+	// 4. Make an instance specific change in the scene, verify the instance specific change persists
+	// 5. TODO - Nested prefab test
+
+
+	//// Load & save a scene that contains a prefab and references its objects
+	//{
+	//	{
+	//		// unitTest4Scene_1.prefab:
+	//		// parentSO0
+	//		//  - [unitTest4Scene_0.prefab]
+	//		// parentSO1
+	//		//  - parentSO1_0 (Comp1)
+
+	//		Scene.Clear();
+
+	//		HSceneObject parentSO0 = sceneInstance->CreateSceneObject("parentSO0", false);
+	//		HSceneObject parentSO1 = sceneInstance->CreateSceneObject("parentSO1", false);
+	//		HSceneObject parentSO1_0 = sceneInstance->CreateSceneObject("parentSO1_0", false);
+
+	//		parentSO1_0.Parent = parentSO1;
+	//		parentSO0.LocalPosition = new Vector3(50.0f, 50.0f, 50.0f);
+
+	//		UnitTestComponentA parentComp1_0 = parentSO1_0->AddComponent<UnitTestComponentA>();
+
+	//		Prefab scene0Prefab = ProjectLibrary.Load<Prefab>("unitTest4Scene_0.prefab");
+	//		HSceneObject prefabInstance = scene0Prefab.Instantiate();
+	//		prefabInstance.Parent = parentSO0;
+	//		prefabInstance.LocalPosition = Vector3.Zero;
+
+	//		HSceneObject so0 = prefabInstance.FindChild("so0", false);
+	//		HSceneObject so1 = prefabInstance.FindChild("so1", false);
+	//		HSceneObject so0_1 = so0.FindChild("so0_1", false);
+	//		HSceneObject so1_0 = so1.FindChild("so1_0", false);
+	//		HSceneObject so0_1_0 = so0_1.FindChild("so0_1_0", false);
+
+	//		UnitTestComponentA comp0_1_0 = so0_1_0->GetComponent<UnitTestComponentA>();
+
+	//		parentComp1_0.otherSO = so1_0;
+	//		parentComp1_0.otherComponent2 = comp0_1_0;
+
+	//		EditorApplication.SaveScene("unitTest4Scene_1.prefab");
+	//	}
+	//	{
+	//		EditorApplication.LoadScene("unitTest4Scene_1.prefab");
+
+	//		HSceneObject parentSO0 = Scene.Root.FindChild("parentSO0", false);
+	//		HSceneObject parentSO1 = Scene.Root.FindChild("parentSO1", false);
+	//		HSceneObject parentSO1_0 = parentSO1.FindChild("parentSO1_0", false);
+
+	//		UnitTestComponentA parentComp1_0 = parentSO1_0->GetComponent<UnitTestComponentA>();
+
+	//		HSceneObject prefabInstance = parentSO0.GetChild(0);
+	//		HSceneObject so0 = prefabInstance.FindChild("so0", false);
+	//		HSceneObject so1 = prefabInstance.FindChild("so1", false);
+	//		HSceneObject so0_1 = so0.FindChild("so0_1", false);
+	//		HSceneObject so1_0 = so1.FindChild("so1_0", false);
+	//		HSceneObject so0_1_0 = so0_1.FindChild("so0_1_0", false);
+
+	//		UnitTestComponentA comp0_1_0 = so0_1_0->GetComponent<UnitTestComponentA>();
+
+	//		B3D_TEST_ASSERT(parentComp1_0.otherSO == so1_0);
+	//		B3D_TEST_ASSERT(parentComp1_0.otherComponent2 == comp0_1_0);
+	//	}
+	//}
+
+	//Debug.Log("Passed stage 2");
+
+	//// Modify prefab, reload the scene and ensure it is updated with modified prefab
+	//{
+	//	{
+	//		// unitTest4Scene_0.prefab:
+	//		// so0
+	//		//  - so0_1 (Comp1)
+	//		//    - so0_1_0 (Comp1)
+	//		// so1 (Comp1, Comp2)
+	//		//  - so1_0
+	//		//  - so1_1
+
+	//		Scene.Load("unitTest4Scene_0.prefab");
+
+	//		HSceneObject sceneRoot = Scene.Root;
+	//		HSceneObject so0 = sceneRoot.FindChild("so0", false);
+	//		HSceneObject so0_0 = so0.FindChild("so0_0", false);
+	//		HSceneObject so0_1 = so0.FindChild("so0_1", false);
+	//		HSceneObject so1 = sceneRoot.FindChild("so1", false);
+	//		HSceneObject so1_0 = so1.FindChild("so1_0", false);
+	//		HSceneObject so0_1_0 = so0_1.FindChild("so0_1_0", false);
+
+	//		HSceneObject so1_1 = sceneInstance->CreateSceneObject("so1_1");
+	//		so1_1.Parent = so1;
+
+	//		so0.RemoveComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp1 = so1->AddComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0_1_0 = so0_1_0->GetComponent<UnitTestComponentA>();
+
+	//		so0_0.Destroy();
+
+	//		comp1.otherSO = so1_0;
+	//		comp1.otherComponent2 = comp0_1_0;
+
+	//		comp0_1_0.otherSO = so1_1;
+	//		comp0_1_0.otherComponent2 = comp1;
+	//		comp0_1_0.a = 123;
+	//		comp0_1_0.b = "modifiedValue";
+
+	//		so1.Name = "so1_modified";
+	//		so1.LocalPosition = new Vector3(0, 999.0f, 0.0f);
+
+	//		EditorApplication.SaveScene("unitTest4Scene_0.prefab");
+	//	}
+
+	//	{
+	//		EditorApplication.LoadScene("unitTest4Scene_1.prefab");
+
+	//		HSceneObject parentSO0 = Scene.Root.FindChild("parentSO0", false);
+	//		HSceneObject parentSO1 = Scene.Root.FindChild("parentSO1", false);
+	//		HSceneObject parentSO1_0 = parentSO1.FindChild("parentSO1_0", false);
+
+	//		UnitTestComponentA parentComp1_0 = parentSO1_0->GetComponent<UnitTestComponentA>();
+
+	//		HSceneObject prefabInstance = parentSO0.GetChild(0);
+	//		HSceneObject so0 = prefabInstance.FindChild("so0", false);
+	//		HSceneObject so1 = prefabInstance.FindChild("so1_modified", false);
+	//		HSceneObject so0_0 = so0.FindChild("so0_0", false);
+	//		HSceneObject so0_1 = so0.FindChild("so0_1", false);
+	//		HSceneObject so1_0 = so1.FindChild("so1_0", false);
+	//		HSceneObject so0_1_0 = so0_1.FindChild("so0_1_0", false);
+	//		HSceneObject so1_1 = so1.FindChild("so1_1", false);
+
+	//		UnitTestComponentA comp0 = so0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp1 = so1->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0_1_0 = so0_1_0->GetComponent<UnitTestComponentA>();
+
+	//		B3D_TEST_ASSERT(parentComp1_0.otherSO == so1_0);
+	//		B3D_TEST_ASSERT(parentComp1_0.otherComponent2 == comp0_1_0);
+	//		B3D_TEST_ASSERT(so1_1 != nullptr);
+	//		B3D_TEST_ASSERT(so0_0 == nullptr);
+	//		B3D_TEST_ASSERT(comp0 == nullptr);
+	//		B3D_TEST_ASSERT(comp0_1_0.otherSO == so1_1);
+	//		B3D_TEST_ASSERT(comp0_1_0.otherComponent2 == comp1);
+	//		B3D_TEST_ASSERT(comp0_1_0.a == 123);
+	//		B3D_TEST_ASSERT(comp0_1_0.b == "modifiedValue");
+	//		B3D_TEST_ASSERT(comp1.otherSO == so1_0);
+	//		B3D_TEST_ASSERT(comp1.otherComponent2 == comp0_1_0);
+	//		B3D_TEST_ASSERT(MathEx.ApproxEquals(so1.LocalPosition.y, 999.0f));
+	//	}
+	//}
+
+	//Debug.Log("Passed stage 3");
+
+	//// Make instance specific changes to the prefab, modify the prefab itself and ensure
+	//// both changes persist
+	//{
+	//	// Create new scene referencing the prefab and make instance modifications
+	//	{
+	//		// unitTest4Scene_2.prefab:
+	//		// parent2SO0
+	//		//  - [unitTest4Scene_0.prefab]
+	//		// parent2SO1
+	//		//  - parent2SO1_0 (Comp1)
+
+	//		// unitTest4Scene_0.prefab (unitTest4Scene_2.prefab instance):
+	//		// so0 (Comp1(INSTANCE))
+	//		//  - so0_0 (INSTANCE)
+	//		//  - so0_1 (Comp1)
+	//		//    - so0_1_0 (Comp1)
+	//		// so1 (Comp2)
+	//		//  - so1_0
+
+	//		Scene.Clear();
+
+	//		HSceneObject parent2SO0 = sceneInstance->CreateSceneObject("parent2SO0");
+	//		HSceneObject parent2SO1 = sceneInstance->CreateSceneObject("parent2SO1");
+	//		HSceneObject parent2SO1_0 = sceneInstance->CreateSceneObject("parent2SO1_0");
+
+	//		parent2SO1_0.Parent = parent2SO1;
+
+	//		UnitTestComponentA parentComp1_0 = parent2SO1_0->AddComponent<UnitTestComponentA>();
+
+	//		Prefab scene0Prefab = ProjectLibrary.Load<Prefab>("unitTest4Scene_0.prefab");
+	//		HSceneObject prefabInstance = scene0Prefab.Instantiate();
+	//		prefabInstance.Parent = parent2SO0;
+
+	//		HSceneObject so0 = prefabInstance.FindChild("so0", false);
+	//		HSceneObject so1 = prefabInstance.FindChild("so1_modified", false);
+
+	//		HSceneObject so0_1 = so0.FindChild("so0_1", false);
+	//		HSceneObject so1_0 = so1.FindChild("so1_0", false);
+	//		HSceneObject so1_1 = so1.FindChild("so1_1", false);
+	//		HSceneObject so0_1_0 = so0_1.FindChild("so0_1_0", false);
+
+	//		UnitTestComponentB comp1 = so1->GetComponent<UnitTestComponentB>();
+	//		UnitTestComponentA comp0_1_0 = so0_1_0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0_1 = so0_1->GetComponent<UnitTestComponentA>();
+
+	//		HSceneObject so0_0 = sceneInstance->CreateSceneObject("so0_0");
+	//		so0_0.Parent = so0;
+	//		UnitTestComponentA comp0 = so0->AddComponent<UnitTestComponentA>();
+
+	//		so1.RemoveComponent<UnitTestComponentA>();
+	//		so1_1.Destroy();
+
+	//		comp0.otherSO = so0_1_0;
+	//		comp0.otherComponent = comp1;
+
+	//		parentComp1_0.otherSO = so1_0;
+	//		parentComp1_0.otherComponent2 = comp0_1_0;
+
+	//		comp0_1_0.otherSO = parent2SO1_0;
+	//		comp0_1_0.otherComponent2 = parentComp1_0;
+	//		comp0_1_0.b = "instanceValue";
+
+	//		comp0_1.b = "instanceValue2";
+
+	//		EditorApplication.SaveScene("unitTest4Scene_2.prefab");
+	//	}
+
+	//	Debug.Log("Passed stage 4.1");
+
+	//	// Reload the scene and ensure instance modifications remain
+	//	{
+	//		EditorApplication.LoadScene("unitTest4Scene_2.prefab");
+
+	//		HSceneObject root = Scene.Root;
+	//		HSceneObject parent2SO0 = root.FindChild("parent2SO0", false);
+	//		HSceneObject parent2SO1 = root.FindChild("parent2SO1", false);
+	//		HSceneObject parent2SO1_0 = parent2SO1.FindChild("parent2SO1_0", false);
+
+	//		HSceneObject prefabInstance = parent2SO0.GetChild(0);
+
+	//		HSceneObject so0 = prefabInstance.FindChild("so0", false);
+	//		HSceneObject so1 = prefabInstance.FindChild("so1_modified", false);
+	//		HSceneObject so0_0 = so0.FindChild("so0_0", false);
+	//		HSceneObject so0_1 = so0.FindChild("so0_1", false);
+	//		HSceneObject so1_0 = so1.FindChild("so1_0", false);
+	//		HSceneObject so1_1 = so1.FindChild("so1_1", false);
+	//		HSceneObject so0_1_0 = so0_1.FindChild("so0_1_0", false);
+
+	//		UnitTestComponentA parentComp1_0 = parent2SO1_0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0 = so0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentB comp1 = so1->GetComponent<UnitTestComponentB>();
+	//		UnitTestComponentA comp11 = so1->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0_1_0 = so0_1_0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0_1 = so0_1->GetComponent<UnitTestComponentA>();
+
+	//		B3D_TEST_ASSERT(so0_0 != nullptr);
+	//		B3D_TEST_ASSERT(comp0 != nullptr);
+	//		B3D_TEST_ASSERT(so1_1 == nullptr);
+	//		B3D_TEST_ASSERT(comp11 == nullptr);
+
+	//		B3D_TEST_ASSERT(comp0.otherSO == so0_1_0);
+	//		B3D_TEST_ASSERT(comp0.otherComponent == comp1);
+
+	//		B3D_TEST_ASSERT(parentComp1_0.otherSO == so1_0);
+	//		B3D_TEST_ASSERT(parentComp1_0.otherComponent2 == comp0_1_0);
+
+	//		B3D_TEST_ASSERT(comp0_1_0.otherSO == parent2SO1_0);
+	//		B3D_TEST_ASSERT(comp0_1_0.otherComponent2 == parentComp1_0);
+	//		B3D_TEST_ASSERT(comp0_1_0.b == "instanceValue");
+
+	//		B3D_TEST_ASSERT(comp0_1.b == "instanceValue2");
+	//	}
+
+	//	Debug.Log("Passed stage 4.2");
+
+	//	// Load original scene and ensure instance modifications didn't influence it
+	//	{
+	//		EditorApplication.LoadScene("unitTest4Scene_1.prefab");
+
+	//		HSceneObject parentSO0 = Scene.Root.FindChild("parentSO0", false);
+	//		HSceneObject parentSO1 = Scene.Root.FindChild("parentSO1", false);
+	//		HSceneObject parentSO1_0 = parentSO1.FindChild("parentSO1_0", false);
+
+	//		UnitTestComponentA parentComp1_0 = parentSO1_0->GetComponent<UnitTestComponentA>();
+
+	//		HSceneObject prefabInstance = parentSO0.GetChild(0);
+	//		HSceneObject so0 = prefabInstance.FindChild("so0", false);
+	//		HSceneObject so1 = prefabInstance.FindChild("so1_modified", false);
+	//		HSceneObject so0_0 = so0.FindChild("so0_0", false);
+	//		HSceneObject so0_1 = so0.FindChild("so0_1", false);
+	//		HSceneObject so1_0 = so1.FindChild("so1_0", false);
+	//		HSceneObject so0_1_0 = so0_1.FindChild("so0_1_0", false);
+	//		HSceneObject so1_1 = so1.FindChild("so1_1", false);
+
+	//		UnitTestComponentA comp0 = so0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp1 = so1->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0_1_0 = so0_1_0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0_1 = so0_1->GetComponent<UnitTestComponentA>();
+
+	//		B3D_TEST_ASSERT(parentComp1_0.otherSO == so1_0);
+	//		B3D_TEST_ASSERT(parentComp1_0.otherComponent2 == comp0_1_0);
+	//		B3D_TEST_ASSERT(so1_1 != nullptr);
+	//		B3D_TEST_ASSERT(so0_0 == nullptr);
+	//		B3D_TEST_ASSERT(comp0 == nullptr);
+	//		B3D_TEST_ASSERT(comp0_1_0.otherSO == so1_1);
+	//		B3D_TEST_ASSERT(comp0_1_0.otherComponent2 == comp1);
+	//		B3D_TEST_ASSERT(comp0_1_0.a == 123);
+	//		B3D_TEST_ASSERT(comp0_1_0.b == "modifiedValue");
+	//		B3D_TEST_ASSERT(comp1.otherSO == so1_0);
+	//		B3D_TEST_ASSERT(comp1.otherComponent2 == comp0_1_0);
+	//		B3D_TEST_ASSERT(comp0_1.b == "originalValue2");
+	//		B3D_TEST_ASSERT(MathEx.ApproxEquals(so1.LocalPosition.y, 999.0f));
+	//	}
+
+	//	Debug.Log("Passed stage 4.3");
+
+	//	// Modify prefab and ensure both prefab and instance modifications remain
+	//	{
+	//		// unitTest4Scene_0.prefab:
+	//		// so0 (Comp2)
+	//		//  - so0_1
+	//		//    - so0_1_0 (Comp1)
+	//		// so1 (Comp1, Comp2)
+	//		//  - so1_1
+	//		//  - so1_2 (Comp1)
+
+	//		// unitTest4Scene_0.prefab (unitTest4Scene_2.prefab instance):
+	//		// so0 (Comp1)
+	//		//  - so0_0
+	//		//  - so0_1 (Comp1)
+	//		//    - so0_1_0 (Comp1)
+	//		// so1 (Comp2)
+	//		//  - so1_2 (Comp1)
+
+	//		Scene.Load("unitTest4Scene_0.prefab");
+
+	//		HSceneObject sceneRoot = Scene.Root;
+	//		HSceneObject so0 = sceneRoot.FindChild("so0", false);
+	//		HSceneObject so0_1 = so0.FindChild("so0_1", false);
+	//		HSceneObject so1 = sceneRoot.FindChild("so1_modified", false);
+	//		HSceneObject so1_0 = so1.FindChild("so1_0", false);
+	//		HSceneObject so0_1_0 = so0_1.FindChild("so0_1_0", false);
+
+	//		HSceneObject so1_2 = sceneInstance->CreateSceneObject("so1_2");
+	//		so1_2.Parent = so1;
+
+	//		so0->AddComponent<UnitTestComponentB>();
+	//		so0_1.RemoveComponent<UnitTestComponentA>();
+	//		so1_0.Destroy();
+
+	//		UnitTestComponentA comp3 = so1_2->AddComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0_1_0 = so0_1_0->GetComponent<UnitTestComponentA>();
+	//		comp0_1_0.b = "modifiedValueAgain";
+	//		so1.Name = "so1_modifiedAgain";
+
+	//		comp3.otherSO = so0_1;
+	//		comp3.otherComponent2 = comp0_1_0;
+
+	//		EditorApplication.SaveScene("unitTest4Scene_0.prefab");
+	//	}
+
+	//	Debug.Log("Passed stage 4.4");
+
+	//	// Reload the scene and ensure both instance and prefab modifications remain
+	//	{
+	//		EditorApplication.LoadScene("unitTest4Scene_2.prefab");
+
+	//		HSceneObject root = Scene.Root;
+	//		HSceneObject parent2SO0 = root.FindChild("parent2SO0", false);
+	//		HSceneObject parent2SO1 = root.FindChild("parent2SO1", false);
+	//		HSceneObject parent2SO1_0 = parent2SO1.FindChild("parent2SO1_0", false);
+
+	//		HSceneObject prefabInstance = parent2SO0.GetChild(0);
+
+	//		HSceneObject so0 = prefabInstance.FindChild("so0", false);
+	//		HSceneObject so1 = prefabInstance.FindChild("so1_modifiedAgain", false);
+	//		HSceneObject so0_0 = so0.FindChild("so0_0", false);
+	//		HSceneObject so0_1 = so0.FindChild("so0_1", false);
+	//		HSceneObject so1_0 = so1.FindChild("so1_0", false);
+	//		HSceneObject so1_1 = so1.FindChild("so1_1", false);
+	//		HSceneObject so1_2 = so1.FindChild("so1_2", false);
+	//		HSceneObject so0_1_0 = so0_1.FindChild("so0_1_0", false);
+
+	//		UnitTestComponentA parentComp1_0 = parent2SO1_0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0 = so0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentB comp1 = so1->GetComponent<UnitTestComponentB>();
+	//		UnitTestComponentA comp11 = so1->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp0_1_0 = so0_1_0->GetComponent<UnitTestComponentA>();
+	//		UnitTestComponentA comp3 = so1_2->GetComponent<UnitTestComponentA>();
+
+	//		// Check instance modifications (they should override any prefab modifications)
+	//		B3D_TEST_ASSERT(so0_0 != nullptr);
+	//		B3D_TEST_ASSERT(comp0 != nullptr);
+	//		B3D_TEST_ASSERT(so1_1 == nullptr);
+	//		B3D_TEST_ASSERT(comp11 == nullptr);
+
+	//		B3D_TEST_ASSERT(comp0.otherSO == so0_1_0);
+	//		B3D_TEST_ASSERT(comp0.otherComponent == comp1);
+
+	//		B3D_TEST_ASSERT(parentComp1_0.otherSO == so1_0);
+	//		B3D_TEST_ASSERT(parentComp1_0.otherComponent2 == comp0_1_0);
+
+	//		B3D_TEST_ASSERT(comp0_1_0.otherSO == parent2SO1_0);
+	//		B3D_TEST_ASSERT(comp0_1_0.otherComponent2 == parentComp1_0);
+	//		B3D_TEST_ASSERT(comp0_1_0.b == "instanceValue");
+
+	//		// Check prefab modifications
+	//		B3D_TEST_ASSERT(so1_0 == nullptr);
+	//		B3D_TEST_ASSERT(so1.Name == "so1_modifiedAgain");
+
+	//		B3D_TEST_ASSERT(comp3.otherSO == so0_1);
+	//		B3D_TEST_ASSERT(comp3.otherComponent2 == comp0_1_0);
+	//	}
+
+	//	Debug.Log("Passed stage 4.5");
+	//}
+}
+
 using namespace bs;
 
 int main()
 {
-	MemStack::BeginThread();
+	VideoMode videoMode(1280, 720);
+	Application::StartUp(videoMode, "UnitTests", false);
 
 	SPtr<TestSuite> tests = CoreTestSuite::Create<CoreTestSuite>();
 
 	ExceptionTestOutput testOutput;
 	tests->Run(testOutput);
 
-	MemStack::EndThread();
+	Application::ShutDown();
+
 	return 0;
 }

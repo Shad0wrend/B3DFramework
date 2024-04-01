@@ -31,7 +31,6 @@ SceneObject::~SceneObject()
 
 HSceneObject SceneObject::Create(const String& name, u32 flags)
 {
-	// TODO - Scene should be something user provides on construction
 	const SPtr<SceneInstance>& mainScene = SceneManager::Instance().GetMainScene();
 	const SPtr<GameObjectCollection>& sceneGameObjectCollection = mainScene->GetGameObjectCollection();
 

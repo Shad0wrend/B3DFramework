@@ -38,9 +38,10 @@ namespace bs
 		 * Instantiates a prefab by creating an instance of the prefab's scene object hierarchy. The returned hierarchy
 		 * will be parented to world root by default.
 		 *
-		 * @return	Instantiated clone of the prefab's scene object hierarchy.
+		 * @param	sceneInstance	Scene instance into which to instantiate the prefab instance in.
+		 * @return					Instantiated clone of the prefab's scene object hierarchy.
 		 */
-		HSceneObject Instantiate() const { return InstantiateInternal(); }
+		HSceneObject Instantiate(const SPtr<SceneInstance>& sceneInstance) const { return Instantiate(sceneInstance, false); }
 
 		/**
 		 * Replaces the contents of this prefab with new contents from the provided object. Object will be automatically
@@ -74,33 +75,34 @@ namespace bs
 		 * Returns a reference to the internal prefab hierarchy. Returned hierarchy is not instantiated and cannot be
 		 * interacted with in a manner you would with normal scene objects.
 		 */
-		HSceneObject GetRootInternal() const { return mRoot; }
+		HSceneObject GetRoot() const { return mRoot; }
 
 		/**
 		 * Creates the clone of the prefab's current hierarchy but doesn't instantiate it.
 		 *
 		 * @param	cloneOwnerCollection	Collection into which to place the cloned scene objects. If @p preserveIds is true
-		 *									this must be a different collection that the current scene object, otherwise IDs would
-		 *									conflict.
+		 *									this must be a different collection that the prefab's internal collection,
+		 *									otherwise IDs would conflict.
 		 * @param	preserveIds				If false, each cloned game object will be assigned a brand new ID. Otherwise
 		 *									the ID of the original game objects will be preserved. Note that two instantiated
-			 *								scene objects should never have the same ID, so if preserving ID's make sure
-			 *								the original is destroyed before instantiating.
+		 *									scene objects should never have the same ID, so if preserving ID's make sure
+		 *									the original is destroyed before instantiating.
 		 * @return							Clone of the prefab's scene object hierarchy.
 		 */
-		HSceneObject CloneInternal(const SPtr<GameObjectCollection>& cloneOwnerCollection, bool preserveIds = false) const;
+		HSceneObject Clone(const SPtr<GameObjectCollection>& cloneOwnerCollection, bool preserveIds = false) const;
 
 		/**
 		 * Instantiates a prefab by creating an instance of the prefab's scene object hierarchy. The returned hierarchy
 		 * will be parented to world root by default.
 		 *
-		 * @param[in]	preserveUUIDs	If false, each cloned game object will be assigned a brand new UUID. Otherwise
-		 *								the UUID of the original game objects will be preserved. Note that two instantiated
-		 *								scene objects should never have the same UUID, so if preserving UUID's make sure
-		 *								the original is destroyed before instantiating.
-		 * @return						Instantiated clone of the prefab's scene object hierarchy.
+		 * @param	sceneInstance	Scene instance into which to instantiate the prefab instance in.
+		 * @param	preserveIds		If false, each cloned game object will be assigned a brand new UUID. Otherwise
+		 *							the UUID of the original game objects will be preserved. Note that two instantiated
+		 *							scene objects should never have the same UUID, so if preserving UUID's make sure
+		 *							the original is destroyed before instantiating.
+		 * @return					Instantiated clone of the prefab's scene object hierarchy.
 		 */
-		HSceneObject InstantiateInternal(bool preserveUUIDs = false) const;
+		HSceneObject Instantiate(const SPtr<SceneInstance>& sceneInstance = nullptr, bool preserveIds = false) const;
 
 		/** @} */
 

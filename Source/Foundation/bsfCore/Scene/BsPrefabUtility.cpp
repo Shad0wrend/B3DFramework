@@ -205,7 +205,7 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& sceneObject)
 			const SPtr<GameObjectCollection> gameObjectCollection = current->GetOwnerCollection().lock();
 
 			current->Destroy(true);
-			HSceneObject newInstance = prefabLink->CloneInternal(gameObjectCollection);
+			HSceneObject newInstance = prefabLink->Clone(gameObjectCollection);
 
 			// When restoring instance IDs it is important to make all the new handles point to the old GameObjectInstanceData.
 			// This is because old handles will have different GameObjectHandleData and we have no easy way of accessing it to
@@ -311,7 +311,7 @@ void PrefabUtility::RecordPrefabDelta(const HSceneObject& sceneObject)
 			{
 				HPrefab linkedPrefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
 				if(linkedPrefab.IsLoaded(false))
-					sceneObject->SetPrefabDelta(SceneObjectHierarchyDelta::Create(linkedPrefab->GetRootInternal(), sceneObject, SceneObjectHierarchyDeltaFlag::PrefabDelta));
+					sceneObject->SetPrefabDelta(SceneObjectHierarchyDelta::Create(linkedPrefab->GetRoot(), sceneObject, SceneObjectHierarchyDeltaFlag::PrefabDelta));
 				else
 				{
 					B3D_LOG(Warning, Prefab, "Cannot record prefab delta for scene object '{0}'. Failed to load prefab with ID: '{1}'.", sceneObject.GetId(), prefabResourceId);

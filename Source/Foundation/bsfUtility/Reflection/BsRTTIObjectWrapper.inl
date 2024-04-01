@@ -104,7 +104,7 @@ namespace bs::RTTIObjectWrapper
 
 	inline u32 SubObject<true>::GetTypeId() const
 	{
-		return mRTTITypeInstance->GetRttiId();
+		return mRTTIType->GetRttiId();
 	}
 
 	inline FieldIterator<true> SubObject<true>::GetFieldIterator() const

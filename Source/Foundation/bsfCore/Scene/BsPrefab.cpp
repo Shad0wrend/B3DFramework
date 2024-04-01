@@ -202,7 +202,7 @@ void Prefab::UpdateChildInstancesInternal() const
 	}, nullptr);
 }
 
-HSceneObject Prefab::InstantiateInternal(bool preserveUUIDs) const
+HSceneObject Prefab::Instantiate(const SPtr<SceneInstance>& sceneInstance, bool preserveIds) const
 {
 	if(mRoot == nullptr)
 		return HSceneObject();
@@ -215,22 +215,22 @@ HSceneObject Prefab::InstantiateInternal(bool preserveUUIDs) const
 	}
 #endif
 
-	SPtr<SceneInstance> scene = GetSceneManager().GetMainScene(); // TODO - Scene should be a a parameter
-	SPtr<GameObjectCollection> gameObjectCollection = scene->GetGameObjectCollection();
+	SPtr<SceneInstance> finalSceneInstance = sceneInstance != nullptr ? sceneInstance : GetSceneManager().GetMainScene(); // TODO - Null scene instance should be disallowed
+	SPtr<GameObjectCollection> gameObjectCollection = finalSceneInstance->GetGameObjectCollection();
 
-	HSceneObject clone = CloneInternal(gameObjectCollection, preserveUUIDs);
+	HSceneObject clone = Clone(gameObjectCollection, preserveIds);
 	clone->InstantiateInternal();
 
 	return clone;
 }
 
-HSceneObject Prefab::CloneInternal(const SPtr<GameObjectCollection>& cloneOwnerCollection, bool preserveUUIDs) const
+HSceneObject Prefab::Clone(const SPtr<GameObjectCollection>& cloneOwnerCollection, bool preserveIds) const
 {
 	if(mRoot == nullptr)
 		return HSceneObject();
 
 	mRoot->mPrefabHash = mHash;
-	return mRoot->Clone(cloneOwnerCollection, false, preserveUUIDs);
+	return mRoot->Clone(cloneOwnerCollection, false, preserveIds);
 }
 
 RTTITypeBase* Prefab::GetRttiStatic()

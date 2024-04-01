@@ -722,6 +722,8 @@ namespace bs
 		TID_GUIFlexibleSpace = 1246,
 		TID_UnitTestSerializationObjectA = 1247,
 		TID_UnitTestSerializationObjectB = 1248,
+		TID_UnitTestComponentA = 1249,
+		TID_UnitTestComponentB = 1250,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,
