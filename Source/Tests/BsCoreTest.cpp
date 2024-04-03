@@ -343,6 +343,218 @@ RTTITypeBase* UnitTestComponentB::GetRtti() const
 using HUnitTestComponentA = GameObjectHandle<UnitTestComponentA>;
 using HUnitTestComponentB = GameObjectHandle<UnitTestComponentB>;
 
+/** Wrapper for easier scene creation and object access. */
+struct Scene0Wrapper
+{
+	/** Populates the provided scene instance with the scene. */
+	Scene0Wrapper(const SPtr<SceneInstance>& sceneInstance)
+	{
+		SceneObject_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_0");
+		SceneObject_0_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_0_0");
+		SceneObject_0_1 = sceneInstance->CreateSceneObject("Scene0_SceneObject_0_1");
+		SceneObject_0_1_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_0_1_0");
+		SceneObject_1 = sceneInstance->CreateSceneObject("Scene0_SceneObject_1");
+		SceneObject_1_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_1_0");
+
+		SceneObject_0_0->SetParent(SceneObject_0);
+		SceneObject_0_1->SetParent(SceneObject_0);
+		SceneObject_1_0->SetParent(SceneObject_1);
+		SceneObject_0_1_0->SetParent(SceneObject_0_1);
+
+		SceneObject_0_1_0->SetPosition(Vector3(10.0f, 15.0f, 20.0f));
+		SceneObject_0_1->SetPosition(Vector3(1.0f, 2.0f, 3.0f));
+		SceneObject_1_0->SetPosition(Vector3(0, 123.0f, 0.0f));
+
+		Component_0 = SceneObject_0->AddComponent<UnitTestComponentA>();
+		Component_1 = SceneObject_1->AddComponent<UnitTestComponentB>();
+		Component_0_1 = SceneObject_0_1->AddComponent<UnitTestComponentA>();
+		Component_0_1_0 = SceneObject_0_1_0->AddComponent<UnitTestComponentA>();
+	}
+
+	/** Populates the scene objects and components by looking them up in the provided hierarchy. */
+	Scene0Wrapper(const HSceneObject& root)
+	{
+		SceneObject_0 = root->FindChild("Scene0_SceneObject_0", false);
+		SceneObject_0_0 = SceneObject_0->FindChild("Scene0_SceneObject_0_0", false);
+		SceneObject_0_1 = SceneObject_0->FindChild("Scene0_SceneObject_0_1", false);
+		SceneObject_0_1_0 = SceneObject_0_1->FindChild("Scene0_SceneObject_0_1_0", false);
+		SceneObject_1 = root->FindChild("Scene0_SceneObject_1", false);
+		SceneObject_1_0 = SceneObject_1->FindChild("Scene0_SceneObject_1_0", false);
+
+		Component_0 = SceneObject_0->GetComponent<UnitTestComponentA>();
+		Component_1 = SceneObject_1->GetComponent<UnitTestComponentB>();
+		Component_0_1 = SceneObject_0_1->GetComponent<UnitTestComponentA>();
+		Component_0_1_0 = SceneObject_0_1_0->GetComponent<UnitTestComponentA>();
+	}
+
+	template<class T>
+	void PerformSceneObjectUnaryOperation(T&& predicate)
+	{
+		predicate(SceneObject_0);
+		predicate(SceneObject_0_0);
+		predicate(SceneObject_0_1);
+		predicate(SceneObject_0_1_0);
+		predicate(SceneObject_1);
+		predicate(SceneObject_1_0);
+	}
+
+	template<class T>
+	void PerformComponentUnaryOperation(T&& predicate)
+	{
+		predicate(Component_0);
+		predicate(Component_1);
+		predicate(Component_0_1);
+		predicate(Component_0_1_0);
+	}
+
+	template<class T>
+	void PerformSceneObjectBinaryOperation(Scene0Wrapper& other, T&& predicate)
+	{
+		predicate(SceneObject_0, other.SceneObject_0);
+		predicate(SceneObject_0_0, other.SceneObject_0_0);
+		predicate(SceneObject_0_1, other.SceneObject_0_1);
+		predicate(SceneObject_0_1_0, other.SceneObject_0_1_0);
+		predicate(SceneObject_1, other.SceneObject_1);
+		predicate(SceneObject_1_0, other.SceneObject_1_0);
+	}
+
+	template<class T>
+	void PerformComponentBinaryOperation(Scene0Wrapper& other, T&& predicate)
+	{
+		predicate(Component_0, other.Component_0);
+		predicate(Component_1, other.Component_1);
+		predicate(Component_0_1, other.Component_0_1);
+		predicate(Component_0_1_0, other.Component_0_1_0);
+	}
+
+	HSceneObject SceneObject_0;
+	HSceneObject SceneObject_0_0;
+	HSceneObject SceneObject_0_1;
+	HSceneObject SceneObject_0_1_0;
+	HSceneObject SceneObject_1;
+	HSceneObject SceneObject_1_0;
+
+	HUnitTestComponentA Component_0;
+	HUnitTestComponentB Component_1;
+	HUnitTestComponentA Component_0_1;
+	HUnitTestComponentA Component_0_1_0;
+};
+
+/** Wrapper for easier scene creation and object access. */
+struct Scene1Wrapper 
+{
+	/** Populates the provided parent with the scene. */
+	Scene1Wrapper(const HSceneObject& parent, const SPtr<Prefab>& childPrefab)
+		:SceneInstance(parent->GetScene())
+	{
+		SceneObject_0 = SceneInstance->CreateSceneObject("Scene0_SceneObject_0");
+		SceneObject_0->SetParent(parent);
+
+		SceneObject_1 = SceneInstance->CreateSceneObject("Scene0_SceneObject_1");
+		SceneObject_1->SetParent(parent);
+
+		SceneObject_1_0 = SceneInstance->CreateSceneObject("Scene0_SceneObject_1_0");
+		SceneObject_1_0->SetParent(SceneObject_1);
+
+		SceneObject_0->SetPosition(Vector3(50.0f, 50.0f, 50.0f));
+		Component_1_0 = SceneObject_1_0->AddComponent<UnitTestComponentA>();
+
+		if(childPrefab != nullptr)
+		{
+			SceneObject_0_0_PrefabInstance = childPrefab->Instantiate(SceneInstance);
+			SceneObject_0_0_PrefabInstance->SetParent(SceneObject_0);
+			SceneObject_0_0_PrefabInstance->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
+		}
+	}
+
+	/** Populates the scene objects and components by looking them up in the provided hierarchy. */
+	Scene1Wrapper(const HSceneObject& root)
+	{
+		SceneInstance = root->GetScene();
+
+		SceneObject_0 = root->FindChild("Scene0_SceneObject_0", false);
+		SceneObject_1 = root->FindChild("Scene0_SceneObject_1", false);
+
+		if(SceneObject_1.IsValid())
+		{
+			SceneObject_1_0 = SceneObject_1->FindChild("Scene0_SceneObject_1_0", false);
+			Component_1_0 = SceneObject_1_0->GetComponent<UnitTestComponentA>();
+		}
+
+		if(SceneObject_0->GetChildCount() > 0)
+			SceneObject_0_0_PrefabInstance = SceneObject_0->GetChild(0);
+
+		OptionalSceneObject_2 = root->FindChild("Scene0_SceneObject_2", false);
+		if(OptionalSceneObject_2.IsValid())
+			OptionalComponent_2 = OptionalSceneObject_2->GetComponent<UnitTestComponentA>();
+	}
+
+	virtual ~Scene1Wrapper() = default;
+
+	static HSceneObject PopulateNewSceneInstance(const char* name, const SPtr<Prefab>& childPrefab)
+	{
+		SPtr<class SceneInstance> sceneInstance = SceneInstance::Create(name);
+		Scene1Wrapper wrapper(sceneInstance->GetRoot(), childPrefab);
+
+		return sceneInstance->GetRoot();
+	}
+
+	static void PopulateParent(const HSceneObject& parent, const SPtr<Prefab>& childPrefab)
+	{
+		Scene1Wrapper wrapper(parent, childPrefab);
+	}
+
+	void CreateOptionalObjects()
+	{
+		OptionalSceneObject_2 = SceneInstance->CreateSceneObject("Scene0_SceneObject_2");
+		OptionalComponent_2 = OptionalSceneObject_2->AddComponent<UnitTestComponentA>();
+	}
+
+	template<class T>
+	void PerformSceneObjectUnaryOperation(T&& predicate, bool skipOptional = false)
+	{
+		if(SceneObject_0.IsValid()) predicate(SceneObject_0);
+		if(SceneObject_1.IsValid()) predicate(SceneObject_1);
+		if(SceneObject_1_0.IsValid()) predicate(SceneObject_1_0);
+		if(!skipOptional && OptionalSceneObject_2.IsValid()) predicate(OptionalSceneObject_2);
+	}
+
+	template<class T>
+	void PerformComponentUnaryOperation(T&& predicate, bool skipOptional = false)
+	{
+		if(Component_1_0.IsValid()) predicate(Component_1_0);
+		if(!skipOptional && OptionalComponent_2.IsValid()) predicate(OptionalComponent_2);
+	}
+
+	template<class T>
+	void PerformSceneObjectBinaryOperation(Scene1Wrapper& other, T&& predicate, bool skipOptional = false)
+	{
+		if(SceneObject_0.IsValid()) predicate(SceneObject_0, other.SceneObject_0);
+		if(SceneObject_1.IsValid()) predicate(SceneObject_1, other.SceneObject_1);
+		if(SceneObject_1_0.IsValid()) predicate(SceneObject_1_0, other.SceneObject_1_0);
+		if(!skipOptional && OptionalSceneObject_2.IsValid()) predicate(OptionalSceneObject_2, other.OptionalSceneObject_2);
+	}
+
+	template<class T>
+	void PerformComponentBinaryOperation(Scene1Wrapper& other, T&& predicate, bool skipOptional = false)
+	{
+		if(Component_1_0.IsValid()) predicate(Component_1_0, other.Component_1_0);
+		if(!skipOptional && OptionalComponent_2.IsValid()) predicate(OptionalComponent_2, other.OptionalComponent_2);
+	}
+
+	SPtr<SceneInstance> SceneInstance;
+
+	HSceneObject SceneObject_0;
+	HSceneObject SceneObject_0_0_PrefabInstance;
+	HSceneObject SceneObject_1;
+	HSceneObject SceneObject_1_0;
+	HUnitTestComponentA Component_1_0;
+
+	// These objects may be created after initial construction
+	HSceneObject OptionalSceneObject_2;
+	HComponent OptionalComponent_2;
+};
+
 static float EvaluatePosition(float acceleration, float velocity, float time)
 {
 	return acceleration * time * time * 0.5f + velocity * time;
@@ -352,6 +564,28 @@ static float EvaluateVelocity(float acceleration, float time)
 {
 	return acceleration * time;
 }
+/** Type of check to perform when verifying prefab links. */
+enum class PrefabLinkCheckType
+{
+	/**
+	 * Instances must match object/resource ID of the prefab resource.
+	 * Prefab resource internal root must have empty object/resource id.
+	 * Nested prefab resource internal must have object and resource id pointing to the nested prefab resource.
+	 */
+	Regular,
+
+	/**
+	 * Same as regular, except for treatment of optionals in the nested prefab.
+	 * Optionals in the nested prefab resource must have empty object id, and resource id pointing to the nested prefab resource.
+	 */
+	OptionalsAreInstanceModifications,
+
+	/**
+	 * Same as regular, except if there is a second nested prefab, it will be treated as an instance modification.
+	 * Its objects must have empty object id, and resource id pointing to the (first) nested prefab resource.
+	 */
+	SecondNestedPrefabIsInstanceModification
+};
 
 class CoreTestSuite : public TestSuite
 {
@@ -365,17 +599,32 @@ private:
 	void TestSerializedObject();
 	void TestBinaryDelta();
 	void TestSceneSaveLoad();
+	void TestPrefabUpdate();
 
+	/** Asserts that provided array sizes match, and all element's match (based on their equality operators). */
 	template<typename T>
 	void TestAssertArraysMatch(const T& lhs, const T& rhs);
 
+	/** Asserts that provided array sizes match, and all element's match (based on their equality operators). Elements are assumed to be pointers and will be dereferenced before comparison. */
 	template<typename T>
 	void TestAssertArrayContentsMatch(const T& lhs, const T& rhs);
 
+	/** Asserts that provided maps contain an exact match set of keys (and no other), and all element's match (based on their equality operators). */
 	template<typename T>
 	void TestAssertMapsMatch(const T& lhs, const T& rhs);
 
+	/** Asserts that provided maps contain an exact match set of keys (and no other), and all element's match (based on their equality operators). Values are assumed to be pointers and will be dereferenced before comparison. */
 	void TestAssertObjectsMatch(const SPtr<UnitTestSerializationObjectA>& lhs, const SPtr<UnitTestSerializationObjectA>& rhs, bool isDelta);
+
+	/** Asserts that instance prefab & resource IDs point to the prefab. */
+	template<typename SceneWrapperType>
+	void TestAssertPrefabLinkValid(SceneWrapperType& instanceWrapper, SceneWrapperType& prefabWrapper, const UUID& prefabId, bool skipOptional = false);
+
+	/** Asserts that prefab & resource IDs are empty. */
+	template<typename SceneWrapperType>
+	void TestAssetPrefabLinkEmpty(SceneWrapperType& prefabWrapper, bool skipOptional = false);
+
+	void TestAssertScene1WrapperPrefabLinks(const HSceneObject& sourceInstanceRoot, const HSceneObject& newInstanceRoot, const HPrefab& rootPrefab, const HPrefab& firstNestedPrefab, const HPrefab& secondNestedPrefab, PrefabLinkCheckType checkType);
 
 	static SPtr<UnitTestSerializationObjectA> CreateSerializationTestObjectVariantA();
 	static SPtr<UnitTestSerializationObjectA> CreateSerializationTestObjectVariantB();
@@ -389,6 +638,7 @@ CoreTestSuite::CoreTestSuite()
 	B3D_ADD_TEST(CoreTestSuite::TestSerializedObject)
 	B3D_ADD_TEST(CoreTestSuite::TestBinaryDelta)
 	B3D_ADD_TEST(CoreTestSuite::TestSceneSaveLoad)
+	B3D_ADD_TEST(CoreTestSuite::TestPrefabUpdate)
 
 	// TODO - Add unit tests for:
 	// - Binary cloner test that restores external references
@@ -538,6 +788,106 @@ void CoreTestSuite::TestAssertObjectsMatch(const SPtr<UnitTestSerializationObjec
 	}
 }
 
+template<typename SceneWrapperType>
+void CoreTestSuite::TestAssertPrefabLinkValid(SceneWrapperType& instanceWrapper, SceneWrapperType& prefabWrapper, const UUID& prefabId, bool skipOptional)
+{
+	instanceWrapper.PerformSceneObjectBinaryOperation(prefabWrapper, [this, prefabId](const HSceneObject& instanceSceneObject, const HSceneObject& prefabSceneObject) {
+
+		B3D_TEST_ASSERT(!instanceSceneObject->GetPrefabObjectId().Empty())
+		B3D_TEST_ASSERT(instanceSceneObject->GetPrefabObjectId() == prefabSceneObject->GetId())
+		B3D_TEST_ASSERT(instanceSceneObject->GetPrefabResourceId() == prefabId)
+	}, skipOptional);
+
+	instanceWrapper.PerformComponentBinaryOperation(prefabWrapper, [this, prefabId](const HComponent& instanceComponent, const HSceneObject& prefabComponent) {
+
+		B3D_TEST_ASSERT(!instanceComponent->GetPrefabObjectId().Empty())
+		B3D_TEST_ASSERT(instanceComponent->GetPrefabObjectId() == prefabComponent->GetId())
+	}, skipOptional);
+}
+
+/** Asserts that prefab & resource IDs are empty. */
+template<typename SceneWrapperType>
+void CoreTestSuite::TestAssetPrefabLinkEmpty(SceneWrapperType& prefabWrapper, bool skipOptional)
+{
+	prefabWrapper.PerformSceneObjectUnaryOperation([this](const HSceneObject& sceneObject) {
+		B3D_TEST_ASSERT(sceneObject->GetPrefabObjectId().Empty())
+		B3D_TEST_ASSERT(sceneObject->GetPrefabResourceId().Empty()) }, skipOptional);
+}
+
+void CoreTestSuite::TestAssertScene1WrapperPrefabLinks(const HSceneObject& sourceInstanceRoot, const HSceneObject& newInstanceRoot, const HPrefab& rootPrefab, const HPrefab& firstNestedPrefab, const HPrefab& secondNestedPrefab, PrefabLinkCheckType checkType)
+{
+	// Wrappers for original scene object instances
+	Scene1Wrapper sourceInstanceWrapper_Root(sourceInstanceRoot);
+	Scene1Wrapper sourceInstanceWrapper_Child0(sourceInstanceWrapper_Root.SceneObject_0_0_PrefabInstance);
+
+	// Wrappers for prefab internals
+	Scene1Wrapper prefabInternalsWrapper_Root(rootPrefab->GetRoot());
+	Scene1Wrapper prefabInternalsWrapper_Root_Child0(prefabInternalsWrapper_Root.SceneObject_0_0_PrefabInstance);
+	Scene1Wrapper prefabInternalsWrapper_Child0(firstNestedPrefab->GetRoot());
+
+	// Wrapper for instantiated scene objects
+	Scene1Wrapper instancedWrapper_Root(newInstanceRoot);
+	Scene1Wrapper instancedWrapper_Child0(instancedWrapper_Root.SceneObject_0_0_PrefabInstance);
+
+	// Ensure that original prefab instances have correct prefab object & resource IDs
+	TestAssertPrefabLinkValid(sourceInstanceWrapper_Child0, prefabInternalsWrapper_Root_Child0, rootPrefab->GetId());
+	TestAssertPrefabLinkValid(sourceInstanceWrapper_Root, prefabInternalsWrapper_Root, rootPrefab->GetId());
+
+	// Ensure that newly instantiated prefab instances have correct prefab object & resource IDs
+	TestAssertPrefabLinkValid(instancedWrapper_Child0, prefabInternalsWrapper_Root_Child0, rootPrefab->GetId());
+	TestAssertPrefabLinkValid(instancedWrapper_Root, prefabInternalsWrapper_Root, rootPrefab->GetId());
+
+	// Ensure that prefab internals have correct prefab object & resource IDs (empty for root, nested otherwise)
+	TestAssetPrefabLinkEmpty(prefabInternalsWrapper_Root);
+
+	if(checkType == PrefabLinkCheckType::Regular || checkType == PrefabLinkCheckType::SecondNestedPrefabIsInstanceModification)
+		TestAssertPrefabLinkValid(prefabInternalsWrapper_Root_Child0, prefabInternalsWrapper_Child0, firstNestedPrefab->GetId());
+	else if(checkType == PrefabLinkCheckType::OptionalsAreInstanceModifications)
+	{
+		TestAssertPrefabLinkValid(prefabInternalsWrapper_Root_Child0, prefabInternalsWrapper_Child0, firstNestedPrefab->GetId(), true);
+		
+		// Optional object is not part of the child prefab resource, so it should have no prefab object (it should be treated as an instance modification)
+		B3D_TEST_ASSERT(prefabInternalsWrapper_Root_Child0.OptionalSceneObject_2->GetPrefabObjectId().Empty())
+		B3D_TEST_ASSERT(prefabInternalsWrapper_Root_Child0.OptionalSceneObject_2->GetPrefabResourceId() == firstNestedPrefab->GetId())
+		B3D_TEST_ASSERT(prefabInternalsWrapper_Root_Child0.OptionalComponent_2->GetPrefabObjectId().Empty())
+	}
+
+	// If it has second nested prefab, check that as well
+	if(sourceInstanceWrapper_Child0.SceneObject_0_0_PrefabInstance.IsValid())
+	{
+		B3D_ASSERT(secondNestedPrefab.IsLoaded());
+
+		Scene1Wrapper sourceInstanceWrapper_Child1(sourceInstanceWrapper_Child0.SceneObject_0_0_PrefabInstance);
+		Scene1Wrapper instancedWrapper_Child1(instancedWrapper_Child0.SceneObject_0_0_PrefabInstance);
+
+		Scene1Wrapper prefabInternalsWrapper_Root_Child1(prefabInternalsWrapper_Root_Child0.SceneObject_0_0_PrefabInstance);
+		Scene1Wrapper prefabInternalsWrapper_Child0_Child1(prefabInternalsWrapper_Child0.SceneObject_0_0_PrefabInstance);
+		Scene1Wrapper prefabInternalsWrapper_Child1(secondNestedPrefab->GetRoot());
+
+		TestAssertPrefabLinkValid(sourceInstanceWrapper_Child1, prefabInternalsWrapper_Root_Child1, rootPrefab->GetId());
+		TestAssertPrefabLinkValid(instancedWrapper_Child1, prefabInternalsWrapper_Root_Child1, rootPrefab->GetId());
+
+		if(checkType == PrefabLinkCheckType::SecondNestedPrefabIsInstanceModification)
+		{
+			prefabInternalsWrapper_Root_Child1.PerformSceneObjectUnaryOperation([this, nestedPrefabId = firstNestedPrefab->GetId()](const HSceneObject& sceneObject) {
+				B3D_TEST_ASSERT(sceneObject->GetPrefabObjectId().Empty())
+				B3D_TEST_ASSERT(sceneObject->GetPrefabResourceId() == nestedPrefabId)
+			});
+
+			prefabInternalsWrapper_Root_Child1.PerformComponentUnaryOperation([this](const HComponent& component) {
+				B3D_TEST_ASSERT(component->GetPrefabObjectId().Empty())
+			});
+		}
+		else
+		{
+			TestAssertPrefabLinkValid(prefabInternalsWrapper_Root_Child1, prefabInternalsWrapper_Child0, firstNestedPrefab->GetId());
+
+			// Check internals of first nested prefab compared to second nested prefab
+			TestAssertPrefabLinkValid(prefabInternalsWrapper_Child0_Child1, prefabInternalsWrapper_Child1, secondNestedPrefab->GetId());
+		}
+	}
+}
+
 void CoreTestSuite::TestAnimCurveIntegration()
 {
 	static constexpr float EPSILON = 0.0001f;
@@ -680,142 +1030,6 @@ void CoreTestSuite::TestBinaryDelta()
 	TestAssertObjectsMatch(objectA, objectB, true);
 }
 
-/** Wrapper for easier scene creation and object access. */
-struct Scene0Wrapper
-{
-	/** Populates the provided scene instance with the scene. */
-	Scene0Wrapper(const SPtr<SceneInstance>& sceneInstance)
-	{
-		SceneObject_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_0");
-		SceneObject_0_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_0_0");
-		SceneObject_0_1 = sceneInstance->CreateSceneObject("Scene0_SceneObject_0_1");
-		SceneObject_0_1_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_0_1_0");
-		SceneObject_1 = sceneInstance->CreateSceneObject("Scene0_SceneObject_1");
-		SceneObject_1_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_1_0");
-
-		SceneObject_0_0->SetParent(SceneObject_0);
-		SceneObject_0_1->SetParent(SceneObject_0);
-		SceneObject_1_0->SetParent(SceneObject_1);
-		SceneObject_0_1_0->SetParent(SceneObject_0_1);
-
-		SceneObject_0_1_0->SetPosition(Vector3(10.0f, 15.0f, 20.0f));
-		SceneObject_0_1->SetPosition(Vector3(1.0f, 2.0f, 3.0f));
-		SceneObject_1_0->SetPosition(Vector3(0, 123.0f, 0.0f));
-
-		Component_0 = SceneObject_0->AddComponent<UnitTestComponentA>();
-		Component_1 = SceneObject_1->AddComponent<UnitTestComponentB>();
-		Component_0_1 = SceneObject_0_1->AddComponent<UnitTestComponentA>();
-		Component_0_1_0 = SceneObject_0_1_0->AddComponent<UnitTestComponentA>();
-	}
-
-	/** Populates the scene objects and components by looking them up in the provided hierarchy. */
-	Scene0Wrapper(const HSceneObject& root)
-	{
-		SceneObject_0 = root->FindChild("Scene0_SceneObject_0", false);
-		SceneObject_0_0 = SceneObject_0->FindChild("Scene0_SceneObject_0_0", false);
-		SceneObject_0_1 = SceneObject_0->FindChild("Scene0_SceneObject_0_1", false);
-		SceneObject_0_1_0 = SceneObject_0_1->FindChild("Scene0_SceneObject_0_1_0", false);
-		SceneObject_1 = root->FindChild("Scene0_SceneObject_1", false);
-		SceneObject_1_0 = SceneObject_1->FindChild("Scene0_SceneObject_1_0", false);
-
-		Component_0 = SceneObject_0->GetComponent<UnitTestComponentA>();
-		Component_1 = SceneObject_1->GetComponent<UnitTestComponentB>();
-		Component_0_1 = SceneObject_0_1->GetComponent<UnitTestComponentA>();
-		Component_0_1_0 = SceneObject_0_1_0->GetComponent<UnitTestComponentA>();
-	}
-
-	template<class T>
-	void PerformSceneObjectUnaryOperation(T&& predicate)
-	{
-		predicate(SceneObject_0);
-		predicate(SceneObject_0_0);
-		predicate(SceneObject_0_1);
-		predicate(SceneObject_0_1_0);
-		predicate(SceneObject_1);
-		predicate(SceneObject_1_0);
-	}
-
-	template<class T>
-	void PerformComponentUnaryOperation(T&& predicate)
-	{
-		predicate(Component_0);
-		predicate(Component_1);
-		predicate(Component_0_1);
-		predicate(Component_0_1_0);
-	}
-
-	template<class T>
-	void PerformSceneObjectBinaryOperation(Scene0Wrapper& other, T&& predicate)
-	{
-		predicate(SceneObject_0, other.SceneObject_0);
-		predicate(SceneObject_0_0, other.SceneObject_0_0);
-		predicate(SceneObject_0_1, other.SceneObject_0_1);
-		predicate(SceneObject_0_1_0, other.SceneObject_0_1_0);
-		predicate(SceneObject_1, other.SceneObject_1);
-		predicate(SceneObject_1_0, other.SceneObject_1_0);
-	}
-
-	template<class T>
-	void PerformComponentBinaryOperation(Scene0Wrapper& other, T&& predicate)
-	{
-		predicate(Component_0, other.Component_0);
-		predicate(Component_1, other.Component_1);
-		predicate(Component_0_1, other.Component_0_1);
-		predicate(Component_0_1_0, other.Component_0_1_0);
-	}
-
-	HSceneObject SceneObject_0;
-	HSceneObject SceneObject_0_0;
-	HSceneObject SceneObject_0_1;
-	HSceneObject SceneObject_0_1_0;
-	HSceneObject SceneObject_1;
-	HSceneObject SceneObject_1_0;
-
-	HUnitTestComponentA Component_0;
-	HUnitTestComponentB Component_1;
-	HUnitTestComponentA Component_0_1;
-	HUnitTestComponentA Component_0_1_0;
-};
-
-/** Wrapper for easier scene creation and object access. */
-struct Scene1Wrapper
-{
-	/** Populates the provided scene instance with the scene. */
-	Scene1Wrapper(const SPtr<SceneInstance>& sceneInstance, const SPtr<Prefab>& childPrefab)
-	{
-		SceneObject_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_0");
-		SceneObject_0_0_PrefabInstance = childPrefab->Instantiate(sceneInstance);
-		SceneObject_1 = sceneInstance->CreateSceneObject("Scene0_SceneObject_1");
-		SceneObject_1_0 = sceneInstance->CreateSceneObject("Scene0_SceneObject_1_0");
-
-		SceneObject_0_0_PrefabInstance->SetParent(SceneObject_0);
-		SceneObject_1_0->SetParent(SceneObject_1);
-
-		SceneObject_0->SetPosition(Vector3(50.0f, 50.0f, 50.0f));
-		SceneObject_0_0_PrefabInstance->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
-
-		Component_1_0 = SceneObject_1_0->AddComponent<UnitTestComponentA>();
-	}
-
-	/** Populates the scene objects and components by looking them up in the provided hierarchy. */
-	Scene1Wrapper(const HSceneObject& root)
-	{
-		SceneObject_0 = root->FindChild("Scene0_SceneObject_0", false);
-		SceneObject_0_0_PrefabInstance = SceneObject_0->GetChild(0);
-		SceneObject_1 = root->FindChild("Scene0_SceneObject_1", false);
-		SceneObject_1_0 = SceneObject_1->FindChild("Scene0_SceneObject_1_0", false);
-
-		Component_1_0 = SceneObject_1_0->GetComponent<UnitTestComponentA>();
-	}
-
-	HSceneObject SceneObject_0;
-	HSceneObject SceneObject_0_0_PrefabInstance;
-	HSceneObject SceneObject_1;
-	HSceneObject SceneObject_1_0;
-
-	HUnitTestComponentA Component_1_0;
-};
-
 void CoreTestSuite::TestSceneSaveLoad()
 {
 	// Create & serialize scene 0
@@ -893,7 +1107,7 @@ void CoreTestSuite::TestSceneSaveLoad()
 	{
 		SPtr<SceneInstance> scene1Instance = SceneInstance::Create("UnitTestScene1Instance");
 
-		Scene1Wrapper scene1Wrapper(scene1Instance, scene0Prefab);
+		Scene1Wrapper scene1Wrapper(scene1Instance->GetRoot(), scene0Prefab);
 		Scene0Wrapper scene0Wrapper(scene1Wrapper.SceneObject_0_0_PrefabInstance);
 		HPrefab scene1prefab = Prefab::Create(scene1Instance->GetRoot());
 
@@ -1279,6 +1493,106 @@ void CoreTestSuite::TestSceneSaveLoad()
 
 	//	Debug.Log("Passed stage 4.5");
 	//}
+}
+
+void CoreTestSuite::TestPrefabUpdate()
+{
+	// Create a scene with a nested prefab
+	HSceneObject sourceHierarchy_Child0 = Scene1Wrapper::PopulateNewSceneInstance("UnitTestChild0SceneInstance", nullptr);
+	HPrefab prefab_Child0 = Prefab::Create(sourceHierarchy_Child0);
+
+	HSceneObject sourceHierarchy_Root = Scene1Wrapper::PopulateNewSceneInstance("UnitTestRootSceneInstance", prefab_Child0.GetShared());
+	HPrefab prefab_Root = Prefab::Create(sourceHierarchy_Root);
+
+	SPtr<SceneInstance> firstInstantiatedSceneInstance_Root = SceneInstance::Create("UnitTestFirstInstantiatedPrefabSceneInstance");
+	HSceneObject firstInstantiatedHierarchy_Root = prefab_Root->Instantiate(firstInstantiatedSceneInstance_Root);
+
+	// Ensure prefab links are valid
+	TestAssertScene1WrapperPrefabLinks(sourceHierarchy_Root, firstInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, nullptr, PrefabLinkCheckType::Regular);
+
+	// Modify instantiated hierarchy and update root prefab with modifications
+	{
+		// Wrapper for instantiated scene objects
+		Scene1Wrapper instancedWrapper_Root(firstInstantiatedHierarchy_Root);
+		Scene1Wrapper instancedWrapper_Child0(instancedWrapper_Root.SceneObject_0_0_PrefabInstance);
+
+		// Destroy objects in both root and nested prefab instance
+		instancedWrapper_Root.Component_1_0->Destroy();
+		instancedWrapper_Root.SceneObject_1_0->Destroy();
+		instancedWrapper_Child0.Component_1_0->Destroy();
+		instancedWrapper_Child0.SceneObject_1_0->Destroy();
+
+		// Add objects in both root and nested prefab instance
+		instancedWrapper_Root.CreateOptionalObjects();
+		instancedWrapper_Child0.CreateOptionalObjects();
+
+		// Update the root prefab
+		prefab_Root->Update(firstInstantiatedHierarchy_Root);
+	}
+
+	// Instantiate the prefab with new modifications
+	SPtr<SceneInstance> secondInstantiatedSceneInstance_Root = SceneInstance::Create("UnitTestSecondInstantiatedPrefabSceneInstance");
+	HSceneObject secondInstantiatedHierarchy_Root = prefab_Root->Instantiate(secondInstantiatedSceneInstance_Root);
+
+	// Ensure prefab links are valid
+	TestAssertScene1WrapperPrefabLinks(firstInstantiatedHierarchy_Root, secondInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, nullptr, PrefabLinkCheckType::OptionalsAreInstanceModifications);
+
+	// Update the child prefab, then update root prefab again
+	{
+		// Wrapper for instantiated scene objects
+		Scene1Wrapper instancedWrapper_Root(secondInstantiatedHierarchy_Root);
+		Scene1Wrapper instancedWrapper_Child0(instancedWrapper_Root.SceneObject_0_0_PrefabInstance);
+
+		prefab_Child0->Update(instancedWrapper_Child0.SceneObject_0_0_PrefabInstance);
+		prefab_Root->Update(secondInstantiatedHierarchy_Root);
+	}
+
+	// Instantiate the prefab with new modifications
+	SPtr<SceneInstance> thirdInstantiatedSceneInstance_Root = SceneInstance::Create("UnitTestThirdInstantiatedPrefabSceneInstance");
+	HSceneObject thirdInstantiatedHierarchy_Root = prefab_Root->Instantiate(thirdInstantiatedSceneInstance_Root);
+
+	// Ensure prefab links are valid
+	TestAssertScene1WrapperPrefabLinks(secondInstantiatedHierarchy_Root, thirdInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, nullptr, PrefabLinkCheckType::Regular);
+
+	// Create another child prefab
+	HSceneObject sourceHierarchy_Child_1 = Scene1Wrapper::PopulateNewSceneInstance("UnitTestChild1SceneInstance", nullptr);
+	HPrefab prefab_Child1 = Prefab::Create(sourceHierarchy_Child_1);
+
+	// Add another child prefab instance as a child to the current nested prefab instance
+	{
+		// Wrapper for instantiated scene objects
+		Scene1Wrapper instancedWrapper_Root(thirdInstantiatedHierarchy_Root);
+		Scene1Wrapper instancedWrapper_Child0(instancedWrapper_Root.SceneObject_0_0_PrefabInstance);
+		
+		HSceneObject instantiatedSceneInstance_Child1 = prefab_Child1->Instantiate(instancedWrapper_Root.SceneInstance);
+		instantiatedSceneInstance_Child1->SetParent(instancedWrapper_Child0.SceneObject_0);
+
+		prefab_Root->Update(thirdInstantiatedHierarchy_Root);
+	}
+
+	// Instantiate the prefab with new modifications
+	SPtr<SceneInstance> fourthInstantiatedSceneInstance_Root = SceneInstance::Create("UnitTestFourthInstantiatedPrefabSceneInstance");
+	HSceneObject fourthInstantiatedHierarchy_Root = prefab_Root->Instantiate(fourthInstantiatedSceneInstance_Root);
+
+	// Ensure prefab links are valid
+	TestAssertScene1WrapperPrefabLinks(thirdInstantiatedHierarchy_Root, fourthInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, prefab_Child1, PrefabLinkCheckType::SecondNestedPrefabIsInstanceModification);
+
+	// Update the child prefab, then update root prefab again
+	{
+		// Wrapper for instantiated scene objects
+		Scene1Wrapper instancedWrapper_Root(fourthInstantiatedHierarchy_Root);
+		Scene1Wrapper instancedWrapper_Child0(instancedWrapper_Root.SceneObject_0_0_PrefabInstance);
+
+		prefab_Child0->Update(instancedWrapper_Child0.SceneObject_0_0_PrefabInstance);
+		prefab_Root->Update(fourthInstantiatedHierarchy_Root);
+	}
+
+	// Instantiate the prefab with new modifications
+	SPtr<SceneInstance> fifthInstantiatedSceneInstance_Root = SceneInstance::Create("UnitTestFifthInstantiatedPrefabSceneInstance");
+	HSceneObject fifthInstantiatedHierarchy_Root = prefab_Root->Instantiate(fifthInstantiatedSceneInstance_Root);
+
+	// Ensure prefab links are valid
+	TestAssertScene1WrapperPrefabLinks(fourthInstantiatedHierarchy_Root, fifthInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, prefab_Child1, PrefabLinkCheckType::Regular);
 }
 
 using namespace bs;
