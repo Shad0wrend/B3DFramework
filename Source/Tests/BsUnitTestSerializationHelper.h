@@ -1,0 +1,27 @@
+//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+#include "BsCorePrerequisites.h"
+#include "BsUnitTestSerializableObjects.h"
+#include "Testing/BsTestSuite.h"
+
+namespace bs
+{
+	struct UnitTestSerializationHelpers
+	{
+		/** Asserts that provided array sizes match, and all element's match (based on their equality operators). */
+		template <typename T>
+		static void TestAssertArraysMatch(TestSuite& testSuite, const T& lhs, const T& rhs);
+
+		/** Asserts that provided array sizes match, and all element's match (based on their equality operators). Elements are assumed to be pointers and will be dereferenced before comparison. */
+		template <typename T>
+		static void TestAssertArrayContentsMatch(TestSuite& testSuite, const T& lhs, const T& rhs);
+
+		/** Asserts that provided maps contain an exact match set of keys (and no other), and all element's match (based on their equality operators). */
+		template <typename T>
+		static void TestAssertMapsMatch(TestSuite& testSuite, const T& lhs, const T& rhs);
+
+		/** Asserts that provided maps contain an exact match set of keys (and no other), and all element's match (based on their equality operators). Values are assumed to be pointers and will be dereferenced before comparison. */
+		static void TestAssertObjectsMatch(TestSuite& testSuite, const SPtr<UnitTestSerializationObjectA>& lhs, const SPtr<UnitTestSerializationObjectA>& rhs, bool isDelta);
+	};
+} // namespace bs

@@ -1,0 +1,66 @@
+//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+#include "Testing/BsConsoleTestOutput.h"
+#include "Scene/BsComponent.h"
+
+namespace bs
+{
+	class UnitTestComponentA : public Component
+	{
+	public:
+		HSceneObject SceneObjectReference;
+		HComponent ComponentReference;
+		String StringValue;
+
+		/************************************************************************/
+		/* 							COMPONENT OVERRIDES                    		*/
+		/************************************************************************/
+
+	protected:
+		friend class SceneObject;
+
+		UnitTestComponentA(const HSceneObject& parent);
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class UnitTestComponentARTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const;
+
+	protected:
+		UnitTestComponentA() {} // Serialization only
+	};
+
+	class UnitTestComponentB : public Component
+	{
+	public:
+		HSceneObject SceneObjectReference;
+		String StringValue;
+
+		/************************************************************************/
+		/* 							COMPONENT OVERRIDES                    		*/
+		/************************************************************************/
+
+	protected:
+		friend class SceneObject;
+
+		UnitTestComponentB(const HSceneObject& parent);
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class UnitTestComponentBRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const;
+
+	protected:
+		UnitTestComponentB() {} // Serialization only
+	};
+
+	using HUnitTestComponentA = GameObjectHandle<UnitTestComponentA>;
+	using HUnitTestComponentB = GameObjectHandle<UnitTestComponentB>;
+} // namespace bs

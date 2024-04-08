@@ -16,6 +16,9 @@ namespace bs
 /** Tests if condition is true, and reports unit test failure with a message if it fails. */
 #define B3D_TEST_ASSERT_MSG(expr, msg) Assertment((expr), msg, __FILE__, __LINE__);
 
+/** Tests if condition is true, and reports unit test failure if it fails. Expects a reference to the TestSuite. */
+#define B3D_TEST_ASSERT_EXTERNAL(TestSuite, Expr) TestSuite.Assertment((Expr), __FUNCTION__, __FILE__, __LINE__);
+
 	/**
 	 * Primary class for unit testing. Override and register unit tests in constructor then run the tests using the
 	 * desired method of output.
@@ -53,6 +56,23 @@ namespace bs
 			return std::static_pointer_cast<TestSuite>(B3DMakeShared<T>());
 		}
 
+		/**
+		 * @name Internal
+		 * @{
+		 */
+
+		/**
+		 * Reports success or failure depending on the result of an expression.
+		 *
+		 * @param[in]	success		If true success is reported, otherwise failure.
+		 * @param[in]	desc		Message describing the nature of the failure.
+		 * @param[in]	file		Name of the source code file the assert originates from.
+		 * @param[in]	line		Line number at which the assert was triggered at.
+		 */
+		void Assertment(bool success, const String& desc, const String& file, long line);
+
+		/** @} */
+
 	protected:
 		TestSuite() = default;
 
@@ -69,16 +89,6 @@ namespace bs
 		 * @param[in]	name	Name of the test we can use for referencing it later.
 		 */
 		void AddTest(Func test, const String& name);
-
-		/**
-		 * Reports success or failure depending on the result of an expression.
-		 *
-		 * @param[in]	success		If true success is reported, otherwise failure.
-		 * @param[in]	desc		Message describing the nature of the failure.
-		 * @param[in]	file		Name of the source code file the B3D_ASSERTment originates from.
-		 * @param[in]	line		Line number at which the B3D_ASSERTment was triggered at.
-		 */
-		void Assertment(bool success, const String& desc, const String& file, long line);
 
 		Vector<TestEntry> mTests;
 		Vector<SPtr<TestSuite>> mSuites;

@@ -230,14 +230,33 @@ if(B3D_BUILD_TESTS)
 		
 	target_link_libraries(UtilityTest bsf)
 	target_include_directories(UtilityTest PRIVATE
-		"Foundation/bsfUtility"
-		"Foundation/bsfUtility/ThirdParty")
+		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/ThirdParty"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/Tests"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/Tests/RTTI")
 
 	add_executable(CoreTest
-		Tests/BsCoreTest.cpp)
+		Tests/BsCoreTest.cpp
+		Tests/BsUnitTestComponents.h
+		Tests/BsUnitTestComponents.cpp
+		Tests/BsUnitTestSerializableObjects.h
+		Tests/BsUnitTestSerializableObjects.cpp
+		Tests/BsUnitTestSerializationHelper.h
+		Tests/BsUnitTestSerializationHelper.cpp
+		Tests/BsUnitTestPrefabUpdateHelper.h
+		Tests/BsUnitTestPrefabUpdateHelper.cpp
+		Tests/BsUnitTestScenes.h
+		Tests/BsUnitTestScenes.cpp
+		Tests/RTTI/BsUnitTestComponentsRTTI.h
+		Tests/RTTI/BsUnitTestSerializableObjectsRTTI.h)
 		
 	target_link_libraries(CoreTest bsf)
-	
+	target_include_directories(CoreTest PRIVATE
+		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/ThirdParty"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/Tests"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/Tests/RTTI")
+
 	set_property(TARGET UtilityTest PROPERTY FOLDER Tests)
 	set_property(TARGET CoreTest PROPERTY FOLDER Tests)	
 	
