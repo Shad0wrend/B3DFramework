@@ -27,16 +27,15 @@ namespace bs
 			skipOptional);
 	}
 
-	/** Asserts that prefab & resource IDs are empty. */
 	template <typename SceneWrapperType>
-	void UnitTestPrefabUpdateHelper::TestAssetPrefabLinkEmpty(TestSuite& testSuite, SceneWrapperType& prefabWrapper, bool skipOptional)
+	void UnitTestPrefabUpdateHelper::TestAssetRootPrefabLinkValid(TestSuite& testSuite, SceneWrapperType& prefabWrapper, const UUID& prefabId, bool skipOptional)
 	{
-		prefabWrapper.PerformSceneObjectUnaryOperation([&testSuite](const HSceneObject& sceneObject) {
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, sceneObject->GetPrefabObjectId().Empty())
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, sceneObject->GetPrefabResourceId().Empty()) }, skipOptional);
+		prefabWrapper.PerformSceneObjectUnaryOperation([prefabId, &testSuite](const HSceneObject& sceneObject) {
+			B3D_TEST_ASSERT_EXTERNAL(testSuite, sceneObject->GetPrefabObjectId() == sceneObject->GetId())
+			B3D_TEST_ASSERT_EXTERNAL(testSuite, sceneObject->GetPrefabResourceId() == prefabId) }, skipOptional);
 	}
 
-	void UnitTestPrefabUpdateHelper::TestAssertScene1WrapperPrefabLinks(TestSuite& testSuite, const HSceneObject& sourceInstanceRoot, const HSceneObject& newInstanceRoot, const HPrefab& rootPrefab, const HPrefab& firstNestedPrefab, const HPrefab& secondNestedPrefab, PrefabLinkCheckType checkType)
+	void UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinks(TestSuite& testSuite, const HSceneObject& sourceInstanceRoot, const HSceneObject& newInstanceRoot, const HPrefab& rootPrefab, const HPrefab& firstNestedPrefab, const HPrefab& secondNestedPrefab, PrefabLinkCheckType checkType)
 	{
 		// Wrappers for original scene object instances
 		UnitTestSceneB sourceInstanceWrapper_Root(sourceInstanceRoot);
@@ -59,8 +58,8 @@ namespace bs
 		TestAssertPrefabLinkValid(testSuite, instancedWrapper_Child0, prefabInternalsWrapper_Root_Child0, rootPrefab->GetId());
 		TestAssertPrefabLinkValid(testSuite, instancedWrapper_Root, prefabInternalsWrapper_Root, rootPrefab->GetId());
 
-		// Ensure that prefab internals have correct prefab object & resource IDs (empty for root, nested otherwise)
-		TestAssetPrefabLinkEmpty(testSuite, prefabInternalsWrapper_Root);
+		// Ensure that prefab internals have correct prefab object & resource IDs (pointing to self for root, pointing to nested otherwise)
+		TestAssetRootPrefabLinkValid(testSuite, prefabInternalsWrapper_Root, rootPrefab->GetId());
 
 		if(checkType == PrefabLinkCheckType::Regular || checkType == PrefabLinkCheckType::SecondNestedPrefabIsInstanceModification)
 			TestAssertPrefabLinkValid(testSuite, prefabInternalsWrapper_Root_Child0, prefabInternalsWrapper_Child0, firstNestedPrefab->GetId());
@@ -69,9 +68,12 @@ namespace bs
 			TestAssertPrefabLinkValid(testSuite, prefabInternalsWrapper_Root_Child0, prefabInternalsWrapper_Child0, firstNestedPrefab->GetId(), true);
 
 			// Optional object is not part of the child prefab resource, so it should have no prefab object (it should be treated as an instance modification)
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, prefabInternalsWrapper_Root_Child0.OptionalSceneObject_2->GetPrefabObjectId().Empty())
+			B3D_TEST_ASSERT_EXTERNAL(testSuite, !prefabInternalsWrapper_Root_Child0.OptionalSceneObject_2->GetPrefabObjectId().Empty())
+			B3D_TEST_ASSERT_EXTERNAL(testSuite, prefabInternalsWrapper_Root_Child0.OptionalSceneObject_2->GetPrefabObjectId() == prefabInternalsWrapper_Root_Child0.OptionalSceneObject_2->GetId())
 			B3D_TEST_ASSERT_EXTERNAL(testSuite, prefabInternalsWrapper_Root_Child0.OptionalSceneObject_2->GetPrefabResourceId() == firstNestedPrefab->GetId())
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, prefabInternalsWrapper_Root_Child0.OptionalComponent_2->GetPrefabObjectId().Empty())
+
+			B3D_TEST_ASSERT_EXTERNAL(testSuite, !prefabInternalsWrapper_Root_Child0.OptionalComponent_2->GetPrefabObjectId().Empty())
+			B3D_TEST_ASSERT_EXTERNAL(testSuite, prefabInternalsWrapper_Root_Child0.OptionalComponent_2->GetPrefabObjectId() == prefabInternalsWrapper_Root_Child0.OptionalComponent_2.GetId())
 		}
 
 		// If it has second nested prefab, check that as well
@@ -83,7 +85,6 @@ namespace bs
 			UnitTestSceneB instancedWrapper_Child1(instancedWrapper_Child0.OptionalSceneObject_0_0_PrefabInstance);
 
 			UnitTestSceneB prefabInternalsWrapper_Root_Child1(prefabInternalsWrapper_Root_Child0.OptionalSceneObject_0_0_PrefabInstance);
-			UnitTestSceneB prefabInternalsWrapper_Child0_Child1(prefabInternalsWrapper_Child0.OptionalSceneObject_0_0_PrefabInstance);
 			UnitTestSceneB prefabInternalsWrapper_Child1(secondNestedPrefab->GetRoot());
 
 			TestAssertPrefabLinkValid(testSuite, sourceInstanceWrapper_Child1, prefabInternalsWrapper_Root_Child1, rootPrefab->GetId());
@@ -91,22 +92,41 @@ namespace bs
 
 			if(checkType == PrefabLinkCheckType::SecondNestedPrefabIsInstanceModification)
 			{
-				prefabInternalsWrapper_Root_Child1.PerformSceneObjectUnaryOperation(
-					[nestedPrefabId = firstNestedPrefab->GetId(), &testSuite](const HSceneObject& sceneObject)
-																					{
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, sceneObject->GetPrefabObjectId().Empty())
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, sceneObject->GetPrefabResourceId() == nestedPrefabId) });
-
-				prefabInternalsWrapper_Root_Child1.PerformComponentUnaryOperation([&testSuite](const HComponent& component)
-																				  { B3D_TEST_ASSERT_EXTERNAL(testSuite, component->GetPrefabObjectId().Empty()) });
+				// Instance modification should link to the original prefab
+				TestAssertPrefabLinkValid(testSuite, prefabInternalsWrapper_Root_Child1, prefabInternalsWrapper_Child1, secondNestedPrefab->GetId());
 			}
 			else
 			{
+				// After first nested prefab has been updated, second nested prefab instance should link to first nested prefab
 				TestAssertPrefabLinkValid(testSuite, prefabInternalsWrapper_Root_Child1, prefabInternalsWrapper_Child0, firstNestedPrefab->GetId());
 
-				// Check internals of first nested prefab compared to second nested prefab
+				// And second nested prefab instance within first nested prefab should link to second nested prefab
+				UnitTestSceneB prefabInternalsWrapper_Child0_Child1(prefabInternalsWrapper_Child0.OptionalSceneObject_0_0_PrefabInstance);
 				TestAssertPrefabLinkValid(testSuite, prefabInternalsWrapper_Child0_Child1, prefabInternalsWrapper_Child1, secondNestedPrefab->GetId());
 			}
 		}
 	}
+
+	void UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(TestSuite& testSuite, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, bool ignoreGameObjectIds, bool skipOptional)
+	{
+		UnitTestSceneB unitTestSceneLHS(lhsRoot);
+		UnitTestSceneB unitTestSceneRHS(rhsRoot);
+
+		unitTestSceneLHS.PerformSceneObjectBinaryOperation(
+			unitTestSceneRHS, [&testSuite, ignoreGameObjectIds](const HSceneObject& lhs, const HSceneObject& rhs) {
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignoreGameObjectIds || lhs.GetId() == rhs.GetId())
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId())
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, lhs->GetPrefabResourceId() == rhs->GetPrefabResourceId()) },
+			skipOptional);
+
+		unitTestSceneLHS.PerformComponentBinaryOperation(
+			unitTestSceneRHS, [&testSuite, ignoreGameObjectIds](const HComponent& lhs, const HComponent& rhs) {
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignoreGameObjectIds || lhs.GetId() == rhs.GetId())
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId()) },
+			skipOptional);
+
+		if(unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance.IsValid())
+			TestAssertUnitTestSceneBPrefabLinksMatch(testSuite, unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance, unitTestSceneRHS.OptionalSceneObject_0_0_PrefabInstance, ignoreGameObjectIds, skipOptional);
+	}
+
 } // namespace bs

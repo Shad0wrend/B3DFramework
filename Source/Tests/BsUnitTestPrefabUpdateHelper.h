@@ -34,10 +34,13 @@ namespace bs
 		template <typename UnitTestSceneType>
 		static void TestAssertPrefabLinkValid(TestSuite& testSuite, UnitTestSceneType& instanceWrapper, UnitTestSceneType& prefabWrapper, const UUID& prefabId, bool skipOptional = false);
 
-		/** Asserts that prefab & resource IDs are empty. */
-		template <typename UnitTestSceneType>
-		static void TestAssetPrefabLinkEmpty(TestSuite& testSuite, UnitTestSceneType& prefabWrapper, bool skipOptional = false);
+		/** Asserts that prefab & resource IDs are valid for root prefab. */
+		template <typename SceneWrapperType>
+		static void TestAssetRootPrefabLinkValid(TestSuite& testSuite, SceneWrapperType& prefabWrapper, const UUID& prefabId, bool skipOptional = false);
 
-		static void TestAssertScene1WrapperPrefabLinks(TestSuite& testSuite, const HSceneObject& sourceInstanceRoot, const HSceneObject& newInstanceRoot, const HPrefab& rootPrefab, const HPrefab& firstNestedPrefab, const HPrefab& secondNestedPrefab, PrefabLinkCheckType checkType);
+		static void TestAssertUnitTestSceneBPrefabLinks(TestSuite& testSuite, const HSceneObject& sourceInstanceRoot, const HSceneObject& newInstanceRoot, const HPrefab& rootPrefab, const HPrefab& firstNestedPrefab, const HPrefab& secondNestedPrefab, PrefabLinkCheckType checkType);
+
+		/** Compares two hierarchies and ensure their prefab object IDs and prefab resource IDs match. */
+		static void TestAssertUnitTestSceneBPrefabLinksMatch(TestSuite& testSuite, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, bool ignoreGameObjectIds, bool skipOptional = false);
 	};
 } // namespace bs

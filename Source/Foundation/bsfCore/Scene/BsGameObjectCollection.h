@@ -60,21 +60,22 @@ namespace bs
 
 		/**
 		 * Call this method after you clone/copy/deserialize a new instance of an existing game object. It will ensure that
-		 * any existing handles are updated so they point to the newly created object.
+		 * any existing handles are updated so they point to the newly created object. The old object is expected to be
+		 * discarded, as they cannot both exist at once.
 		 *
 		 * @param	newObjectHandle				Newly created handle pointing to the newly created object.
 		 * @param	originalObjectInstanceData	Game object instance data of the game object we're replacing.
 		 *
 		 * @note
 		 * The internal mechanism works as follows:
-		 *	- @p originalInstanceData is updated so it points to the new object (as referenced by @p handle)
-		 *  - @p handle is updated so it points to @p originalInstanceData
-		 *	- Newly created game object is updated so it holds @p originalInstanceData
+		 *	- @p originalObjectInstanceData is updated so it points to the new object (as referenced by @p handle)
+		 *  - @p newObjectHandle is updated so it points to @p originalObjectInstanceData 
+		 *	- Newly created game object is updated so it holds @p originalObjectInstanceData 
 		 *
 		 * This works because any old handles will point to the original GameObjectInstanceData, which we just patched to
 		 * point to the new object.
 		 *
-		 * And any new handles will be patched when we update @p handle itself, as our system guarantees that all handles
+		 * And any new handles will be patched when we update @p newObjectHandle itself, as our system guarantees that all handles
 		 * created during a single clone/deserialization operation share the same handle data, so it's enough to just patch
 		 * this handle.
 		 */

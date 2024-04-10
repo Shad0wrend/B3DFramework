@@ -12,6 +12,9 @@
 	<Type Name="bs::TResourceHandle&lt;*&gt;">
 		<DisplayString Condition="mData._Ptr == 0 || mData._Ptr->MPtr._Ptr == 0">Empty</DisplayString>
 		<DisplayString>Name = Unknown, UUID = {mData._Ptr->MUuid}</DisplayString>
+		<Expand>
+			<ExpandedItem Condition="mData._Ptr != 0 &amp;&amp; mData._Ptr->MPtr._Ptr != 0">($T1*)mData._Ptr->MPtr._Ptr</ExpandedItem>
+		</Expand>
 	</Type>
 	
 	<Type Name="std::shared_ptr&lt;*&gt;">

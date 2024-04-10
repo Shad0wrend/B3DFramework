@@ -8,6 +8,7 @@
 #include "FileSystem/BsDataStream.h"
 #include "Scene/BsComponent.h"
 #include "Scene/BsGameObjectManager.h"
+#include "Scene/BsGameObjectCollection.h"
 #include "Scene/BsPrefab.h"
 #include "Scene/BsSceneManager.h"
 #include "Scene/BsSceneObject.h"
@@ -257,9 +258,10 @@ void CoreTestSuite::TestSceneSaveLoad()
 			 B3D_TEST_ASSERT(instanceSceneObject->GetPrefabObjectId() == prefabSceneObject->GetId())
 			 B3D_TEST_ASSERT(instanceSceneObject->GetPrefabResourceId() == scene0PrefabId)
 
-			 // Prefab hierarchy should have no links
-			 B3D_TEST_ASSERT(prefabSceneObject->GetPrefabObjectId().Empty())
-			 B3D_TEST_ASSERT(prefabSceneObject->GetPrefabResourceId().Empty())
+			 // Prefab hierarchy should link to itself
+			 B3D_TEST_ASSERT(!prefabSceneObject->GetPrefabObjectId().Empty())
+			 B3D_TEST_ASSERT(prefabSceneObject->GetPrefabObjectId() == prefabSceneObject->GetId())
+			 B3D_TEST_ASSERT(prefabSceneObject->GetPrefabResourceId() == scene0PrefabId)
 		});
 
 		instancedScene0Wrapper.PerformComponentBinaryOperation(prefabScene0Wrapper,
@@ -268,8 +270,9 @@ void CoreTestSuite::TestSceneSaveLoad()
 			 B3D_TEST_ASSERT(!instanceComponent->GetPrefabObjectId().Empty())
 			 B3D_TEST_ASSERT(instanceComponent->GetPrefabObjectId() == prefabComponent->GetId())
 
-			 // Prefab hierarchy should have no links
-			 B3D_TEST_ASSERT(prefabComponent->GetPrefabObjectId().Empty())
+			 // Prefab hierarchy should link to itself
+			 B3D_TEST_ASSERT(!prefabComponent->GetPrefabObjectId().Empty())
+			 B3D_TEST_ASSERT(prefabComponent->GetPrefabObjectId() == prefabComponent->GetId())
 		});
 	}
 
@@ -677,8 +680,15 @@ void CoreTestSuite::TestPrefabUpdate()
 
 	HSceneObject firstInstantiatedHierarchy_Root = prefab_Root->Instantiate();
 
+	// Keep a copy of the current prefab hierarchy
+	SPtr<GameObjectCollection> firstPrefabObjectCollection_Root = GameObjectCollection::Create();
+	HSceneObject firstPrefabHierarchy_Root = prefab_Root->Clone(firstPrefabObjectCollection_Root, true);
+
+	SPtr<GameObjectCollection> firstPrefabObjectCollection_Child0 = GameObjectCollection::Create();
+	HSceneObject firstPrefabHierarchy_Child0 = prefab_Child0->Clone(firstPrefabObjectCollection_Child0, true);
+
 	// Ensure prefab links are valid
-	UnitTestPrefabUpdateHelper::TestAssertScene1WrapperPrefabLinks(*this, sourceHierarchy_Root, firstInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, nullptr, PrefabLinkCheckType::Regular);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatchPrefabInternals(*this, sourceHierarchy_Root, firstInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, nullptr, PrefabLinkCheckType::Regular);
 
 	// Modify instantiated hierarchy and update root prefab with modifications
 	{
@@ -703,24 +713,45 @@ void CoreTestSuite::TestPrefabUpdate()
 	// Instantiate the prefab with new modifications
 	HSceneObject secondInstantiatedHierarchy_Root = prefab_Root->Instantiate();
 
-	// Ensure prefab links are valid
-	UnitTestPrefabUpdateHelper::TestAssertScene1WrapperPrefabLinks(*this, firstInstantiatedHierarchy_Root, secondInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, nullptr, PrefabLinkCheckType::OptionalsAreInstanceModifications);
+	// Keep a copy of the current prefab hierarchy
+	SPtr<GameObjectCollection> secondPrefabObjectCollection_Root = GameObjectCollection::Create();
+	HSceneObject secondPrefabHierarchy_Root = prefab_Root->Clone(secondPrefabObjectCollection_Root, true);
+
+	// Ensure prefab links in instanced hierarchy match those in the prefab internals
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatchPrefabInternals(*this, firstInstantiatedHierarchy_Root, secondInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, nullptr, PrefabLinkCheckType::OptionalsAreInstanceModifications);
+
+	// Ensure IDs are unchanged from the previous instance and prefab internals
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, firstInstantiatedHierarchy_Root, sourceHierarchy_Root, true, true);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, secondInstantiatedHierarchy_Root, sourceHierarchy_Root, true, true);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, prefab_Root->GetRoot(), firstPrefabHierarchy_Root, false, true);
 
 	// Update the child prefab, then update root prefab again
 	{
 		// Wrapper for instantiated scene objects
 		UnitTestSceneB instancedWrapper_Root(secondInstantiatedHierarchy_Root);
-		UnitTestSceneB instancedWrapper_Child0(instancedWrapper_Root.OptionalSceneObject_0_0_PrefabInstance);
 
-		prefab_Child0->Update(instancedWrapper_Child0.OptionalSceneObject_0_0_PrefabInstance);
+		prefab_Child0->Update(instancedWrapper_Root.OptionalSceneObject_0_0_PrefabInstance);
 		prefab_Root->Update(secondInstantiatedHierarchy_Root);
 	}
 
 	// Instantiate the prefab with new modifications
 	HSceneObject thirdInstantiatedHierarchy_Root = prefab_Root->Instantiate();
 
-	// Ensure prefab links are valid
-	UnitTestPrefabUpdateHelper::TestAssertScene1WrapperPrefabLinks(*this, secondInstantiatedHierarchy_Root, thirdInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, nullptr, PrefabLinkCheckType::Regular);
+	// Keep a copy of the current prefab hierarchy
+	SPtr<GameObjectCollection> thirdPrefabObjectCollection_Root = GameObjectCollection::Create();
+	HSceneObject thirdPrefabHierarchy_Root = prefab_Root->Clone(thirdPrefabObjectCollection_Root, true);
+
+	SPtr<GameObjectCollection> secondPrefabObjectCollection_Child0 = GameObjectCollection::Create();
+	HSceneObject secondPrefabHierarchy_Child0 = prefab_Child0->Clone(secondPrefabObjectCollection_Child0, true);
+
+	// Ensure prefab links in instanced hierarchy match those in the prefab internals
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatchPrefabInternals(*this, secondInstantiatedHierarchy_Root, thirdInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, nullptr, PrefabLinkCheckType::Regular);
+
+	// Ensure IDs are unchanged from the previous instance and prefab internals
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, secondInstantiatedHierarchy_Root, firstInstantiatedHierarchy_Root, true);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, thirdInstantiatedHierarchy_Root, firstInstantiatedHierarchy_Root, true);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, prefab_Root->GetRoot(), secondPrefabHierarchy_Root, false);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, prefab_Child0->GetRoot(), firstPrefabHierarchy_Child0, false, true);
 
 	// Create another child prefab
 	HSceneObject sourceHierarchy_Child_1 = UnitTestSceneB::PopulateNewSceneInstance("UnitTestChild1SceneInstance", nullptr);
@@ -741,24 +772,55 @@ void CoreTestSuite::TestPrefabUpdate()
 	// Instantiate the prefab with new modifications
 	HSceneObject fourthInstantiatedHierarchy_Root = prefab_Root->Instantiate();
 
-	// Ensure prefab links are valid
-	UnitTestPrefabUpdateHelper::TestAssertScene1WrapperPrefabLinks(*this, thirdInstantiatedHierarchy_Root, fourthInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, prefab_Child1, PrefabLinkCheckType::SecondNestedPrefabIsInstanceModification);
+	// Keep a copy of the current prefab hierarchy
+	SPtr<GameObjectCollection> fourthPrefabObjectCollection_Root = GameObjectCollection::Create();
+	HSceneObject fourthPrefabHierarchy_Root = prefab_Root->Clone(fourthPrefabObjectCollection_Root, true);
+
+	// Ensure prefab links in instanced hierarchy match those in the prefab internals
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatchPrefabInternals(*this, thirdInstantiatedHierarchy_Root, fourthInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, prefab_Child1, PrefabLinkCheckType::SecondNestedPrefabIsInstanceModification);
+
+	// Ensure IDs are unchanged from the previous instance and prefab internals
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, thirdInstantiatedHierarchy_Root, secondInstantiatedHierarchy_Root, true);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, fourthInstantiatedHierarchy_Root, secondInstantiatedHierarchy_Root, true);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, prefab_Root->GetRoot(), thirdPrefabHierarchy_Root, false);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, prefab_Child0->GetRoot(), secondPrefabHierarchy_Child0, false);
 
 	// Update the child prefab, then update root prefab again
 	{
 		// Wrapper for instantiated scene objects
 		UnitTestSceneB instancedWrapper_Root(fourthInstantiatedHierarchy_Root);
-		UnitTestSceneB instancedWrapper_Child0(instancedWrapper_Root.OptionalSceneObject_0_0_PrefabInstance);
 
-		prefab_Child0->Update(instancedWrapper_Child0.OptionalSceneObject_0_0_PrefabInstance);
+		prefab_Child0->Update(instancedWrapper_Root.OptionalSceneObject_0_0_PrefabInstance);
+	}
+
+	// Ensure prefab links in instanced hierarchy match those in the prefab internals
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatchPrefabInternals(*this, thirdInstantiatedHierarchy_Root, fourthInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, prefab_Child1, PrefabLinkCheckType::SecondNestedPrefabIsInstanceModification);
+
+	// Update root prefab again
+	{
+		// Wrapper for instantiated scene objects
+		UnitTestSceneB instancedWrapper_Root(fourthInstantiatedHierarchy_Root);
+
 		prefab_Root->Update(fourthInstantiatedHierarchy_Root);
 	}
 
 	// Instantiate the prefab with new modifications
 	HSceneObject fifthInstantiatedHierarchy_Root = prefab_Root->Instantiate();
 
-	// Ensure prefab links are valid
-	UnitTestPrefabUpdateHelper::TestAssertScene1WrapperPrefabLinks(*this, fourthInstantiatedHierarchy_Root, fifthInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, prefab_Child1, PrefabLinkCheckType::Regular);
+	// Keep a copy of the current prefab hierarchy
+	SPtr<GameObjectCollection> fifthPrefabObjectCollection_Root = GameObjectCollection::Create();
+	HSceneObject fifthPrefabHierarchy_Root = prefab_Root->Clone(fifthPrefabObjectCollection_Root, true); // Not yet used
+
+	SPtr<GameObjectCollection> thirdPrefabObjectCollection_Child = GameObjectCollection::Create();
+	HSceneObject thirdPrefabHierarchy_Child0 = prefab_Child0->Clone(thirdPrefabObjectCollection_Child, true); // Not yet used
+
+	// Ensure prefab links in instanced hierarchy match those in the prefab internals
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatchPrefabInternals(*this, fourthInstantiatedHierarchy_Root, fifthInstantiatedHierarchy_Root, prefab_Root, prefab_Child0, prefab_Child1, PrefabLinkCheckType::Regular);
+
+	// Ensure IDs are unchanged from the previous instance and prefab internals
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, fourthInstantiatedHierarchy_Root, thirdInstantiatedHierarchy_Root, true);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, fifthInstantiatedHierarchy_Root, thirdInstantiatedHierarchy_Root, true);
+	UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(*this, prefab_Root->GetRoot(), fourthPrefabHierarchy_Root, false);
 
 
 	// TODO - Add unit test that assigns the nested prefab's root instance to the root prefab
