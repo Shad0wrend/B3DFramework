@@ -17,6 +17,7 @@
 #include "BsUnitTestScenes.h"
 #include "BsUnitTestSerializationHelper.h"
 #include "BsUnitTestPrefabUpdateHelper.h"
+#include "Scene/BsPrefabUtility.h"
 
 using namespace bs;
 
@@ -707,7 +708,7 @@ void CoreTestSuite::TestPrefabUpdate()
 		instancedWrapper_Child0.CreateOptionalObjects();
 
 		// Update the root prefab
-		prefab_Root->Update(firstInstantiatedHierarchy_Root);
+		PrefabUtility::UpdatePrefab(prefab_Root, firstInstantiatedHierarchy_Root);
 	}
 
 	// Instantiate the prefab with new modifications
@@ -730,8 +731,8 @@ void CoreTestSuite::TestPrefabUpdate()
 		// Wrapper for instantiated scene objects
 		UnitTestSceneB instancedWrapper_Root(secondInstantiatedHierarchy_Root);
 
-		prefab_Child0->Update(instancedWrapper_Root.OptionalSceneObject_0_0_PrefabInstance);
-		prefab_Root->Update(secondInstantiatedHierarchy_Root);
+		PrefabUtility::UpdatePrefab(prefab_Child0, instancedWrapper_Root.OptionalSceneObject_0_0_PrefabInstance);
+		PrefabUtility::UpdatePrefab(prefab_Root, secondInstantiatedHierarchy_Root);
 	}
 
 	// Instantiate the prefab with new modifications
@@ -766,7 +767,7 @@ void CoreTestSuite::TestPrefabUpdate()
 		HSceneObject instantiatedSceneInstance_Child1 = prefab_Child1->Instantiate(instancedWrapper_Root.SceneInstance);
 		instantiatedSceneInstance_Child1->SetParent(instancedWrapper_Child0.SceneObject_0);
 
-		prefab_Root->Update(thirdInstantiatedHierarchy_Root);
+		PrefabUtility::UpdatePrefab(prefab_Root, thirdInstantiatedHierarchy_Root);
 	}
 
 	// Instantiate the prefab with new modifications
@@ -790,7 +791,7 @@ void CoreTestSuite::TestPrefabUpdate()
 		// Wrapper for instantiated scene objects
 		UnitTestSceneB instancedWrapper_Root(fourthInstantiatedHierarchy_Root);
 
-		prefab_Child0->Update(instancedWrapper_Root.OptionalSceneObject_0_0_PrefabInstance);
+		PrefabUtility::UpdatePrefab(prefab_Child0, instancedWrapper_Root.OptionalSceneObject_0_0_PrefabInstance);
 	}
 
 	// Ensure prefab links in instanced hierarchy match those in the prefab internals
@@ -801,7 +802,7 @@ void CoreTestSuite::TestPrefabUpdate()
 		// Wrapper for instantiated scene objects
 		UnitTestSceneB instancedWrapper_Root(fourthInstantiatedHierarchy_Root);
 
-		prefab_Root->Update(fourthInstantiatedHierarchy_Root);
+		PrefabUtility::UpdatePrefab(prefab_Root, fourthInstantiatedHierarchy_Root);
 	}
 
 	// Instantiate the prefab with new modifications

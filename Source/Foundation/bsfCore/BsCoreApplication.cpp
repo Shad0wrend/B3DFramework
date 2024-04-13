@@ -43,6 +43,7 @@
 #include "Particles/BsVectorField.h"
 #include "RenderAPI/BsGpuBackend.h"
 #include "RenderAPI/BsGpuDevice.h"
+#include "Scene/BsPrefab.h"
 #include "Text/BsFont.h"
 #include "Threading/BsScheduler.h"
 
@@ -90,6 +91,7 @@ CoreApplication::~CoreApplication()
 	ProfilerGPU::ShutDown();
 
 	SceneManager::ShutDown();
+	PrefabManager::ShutDown();
 
 	Input::ShutDown();
 
@@ -197,6 +199,7 @@ void CoreApplication::OnStartUp()
 
 	// Must be initialized before the scene manager, as game scene creation triggers physics scene creation
 	PhysicsManager::StartUp(mStartUpDesc.Physics, mStartUpDesc.PhysicsCooking);
+	PrefabManager::StartUp();
 	SceneManager::StartUp();
 	RendererManager::Instance().SetActive(mStartUpDesc.Renderer);
 	StartUpRenderer();

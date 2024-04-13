@@ -32,21 +32,15 @@ namespace bs
 		 */
 		static void RevertToPrefab(const HSceneObject& sceneObject);
 
-		/** Scans the provided hierarchy for any prefab instances, and updates them to the latest prefab data. */
-		static void UpdateAllInstancesFromPrefabs(const HSceneObject& sceneObject);
-
 		/**
-		 * Updates the provided scene object hierarchy with latest data from the associated provided prefab. Provided scene object
-		 * hierarchy must be a part of an instance of the provided prefab. If the provided object is not the instance hierarchy root,
-		 * root will be found and updated.
+		 * Updates the provided prefab resource so it stores a copy of the provided scene hierarchy. Provided
+		 * scene hierarchy is made to be an instance of the prefab, if not already an instance of the provided
+		 * prefab, or any other prefab. All other currently loaded instances of @p prefab will be updated to
+		 * match the updated hierarchy.
 		 */
-		static void UpdateInstanceFromPrefab(const HSceneObject& sceneObject);
+		static void UpdatePrefab(const HPrefab& prefab, const HSceneObject& root);
 
-		/**
-		 * Updates the provided scene object hierarchy with latest data from the provided prefab. Provided scene object
-		 * hierarchy must be a root object of an instance of the provided prefab. Returns null if nothing was updated.
-		 */
-		static HSceneObject UpdateInstanceFromPrefab(const HSceneObject& instance, const Prefab& prefab);
+		// TODO - Everything below should be internal
 
 		/**
 		 * Assigns the provided prefab resource ID to the provided scene object hierarchy recursively. If a scene object
@@ -70,15 +64,6 @@ namespace bs
 		static void ClearPrefabIds(const HSceneObject& sceneObject);
 
 		/**
-		 * Updates the internal prefab delta data by recording the difference between the current values in the provided
-		 * prefab instance and its prefab.
-		 *
-		 * @note
-		 * If the provided object contains any child prefab instances, this will be done recursively for them as well.
-		 */
-		static void RecordPrefabDelta(const HSceneObject& sceneObject);
-
-		/**
 		 * Iterates over the provided scene object hierarchy and records a map of game object id -> { prefab object id, prefab resource id } for each
 		 * scene object and component in the hierarchy.
 		 *
@@ -100,8 +85,25 @@ namespace bs
 		 */
 		static UnorderedMap<UUID, UUID> GetPrefabToInstanceIdMap(const HSceneObject& sceneObject, bool visitChildPrefabs);
 	private:
+		friend class Prefab;
+
+		/**
+		 * Scans the provided hierarchy for any prefab instances, loads their prefab resources and checks if prefab resources
+		 * have any new changes since the instance was created. If they do, the instance is updated with latest information
+		 * from the prefab resource.
+		 *
+		 * Returns true if any changes were made.
+		 */
+		static bool UpdateNestedPrefabInstances(const HSceneObject& sceneObject);
+
 		/** Scans the provided hierarchy for any prefab instances, and updates them to the latest prefab data. */
-		static void UpdateAllInstancesFromPrefabsRecursive(const HSceneObject& instanceRoot, FrameUnorderedMap<UUID, HPrefab>& inOutPrefabCache, FrameVector<UUID>& inOutParentPrefabChain);
+		static bool UpdateNestedPrefabInstancesRecursive(const HSceneObject& root, FrameUnorderedMap<UUID, HPrefab>& inOutPrefabCache, FrameVector<UUID>& inOutParentPrefabChain);
+
+		/**
+		 * Updates the provided scene object hierarchy with latest data from the provided prefab. Provided scene object
+		 * hierarchy must be a root object of an instance of the provided prefab. Returns null if nothing was updated.
+		 */
+		static HSceneObject UpdateInstanceFromPrefab(const HSceneObject& instance, const Prefab& prefab);
 	};
 
 	/** @} */

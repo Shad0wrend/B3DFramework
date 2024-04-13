@@ -8,6 +8,7 @@
 #include "BsCoreApplication.h"
 #include "BsGameObjectCollection.h"
 #include "BsSceneManager.h"
+#include "BsSceneObjectHierarchyDelta.h"
 
 using namespace bs;
 
@@ -246,6 +247,24 @@ UnorderedMap<UUID, UUID> PrefabIdUtility::RestoreOriginalPrefabIds(const UUID& r
 	return remappedGameObjectIDs;
 }
 
+void PrefabManager::RegisterPrefab(Prefab& prefab)
+{
+	if(prefab.IsScene()) // Not keeping track of scenes
+		return;
+
+	B3D_ENSURE(mLivePrefabs.insert(&prefab).second);
+}
+
+void PrefabManager::UnregisterPrefab(Prefab* prefab)
+{
+	if(prefab->IsScene()) // Not keeping track of scenes
+		return;
+
+	auto found = mLivePrefabs.find(prefab);
+	if(B3D_ENSURE(found != mLivePrefabs.end()))
+		mLivePrefabs.erase(found);
+}
+
 Prefab::Prefab()
 	: Resource(false), mGameObjectCollection(GameObjectCollection::Create())
 {
@@ -263,7 +282,7 @@ HPrefab Prefab::Create(const HSceneObject& sceneObject, bool isScene)
 	newPrefab->mIsScene = isScene;
 	newPrefab->mUUID = UUIDGenerator::GenerateRandom(); // TODO - This should be done automatically on resource creation
 
-	newPrefab->Initialize(sceneObject);
+	newPrefab->ReplaceInternalHierarchy(sceneObject);
 
 	return B3DStaticResourceCast<Prefab>(GetResources().CreateResourceHandle(newPrefab, newPrefab->mUUID));
 }
@@ -276,10 +295,31 @@ SPtr<Prefab> Prefab::CreateEmpty()
 	return newPrefab;
 }
 
-void Prefab::Initialize(const HSceneObject& sceneObject)
+void Prefab::Initialize()
 {
-	sceneObject->mPrefabDelta = nullptr;
+	Resource::Initialize();
 
+	EnsureMainThread();
+	PrefabManager::Instance().RegisterPrefab(*this);
+
+	// Ensure we have all the latest version of child prefabs
+	const bool isPrefabUpdated = PrefabUtility::UpdateNestedPrefabInstances(mRoot);
+	if(isPrefabUpdated)
+	{
+		TickPrefabVersion();
+		RecordNestedPrefabInstanceDeltas();
+	}
+}
+
+void Prefab::Destroy()
+{
+	PrefabManager::Instance().UnregisterPrefab(this);
+
+	Resource::Destroy();
+}
+
+void Prefab::ReplaceInternalHierarchy(const HSceneObject& sceneObject)
+{
 	const SPtr<GameObjectCollection> newGameObjectCollection = GameObjectCollection::Create();
 	HSceneObject newRoot = sceneObject->Clone(newGameObjectCollection, false, true);
 	newRoot->mParent = nullptr;
@@ -303,76 +343,49 @@ void Prefab::Initialize(const HSceneObject& sceneObject)
 	// Ensure the prefab hierarchy keeps the original ids
 	UnorderedMap<UUID, UUID> remappedGameObjectIDs = PrefabIdUtility::RestoreOriginalPrefabIds(mUUID, mRoot, newRoot);
 
-	// Ensure the instance hierarchy links to this prefab
-	// TODO - This shouldn't be done if hierarchy is part of some other prefab instance. In that case we need to clear the instance prefab delta
-	// and rely on UpdateFromPrefab to update the parent prefab to the version with correct IDs.
-	B3D_ASSERT(mUUID != UUID::kEmpty);
-	sceneObject->IterateHierarchy([this, &remappedGameObjectIDs](const HSceneObject& sceneObject)
+	// If the source hierarchy is not a prefab instance, make it an instance of this prefab
+	if(!sceneObject->IsPrefabInstance())
 	{
-		if(sceneObject->HasFlag(SOF_DontSave))
-			return false;
+		B3D_ASSERT(mUUID != UUID::kEmpty);
+		sceneObject->IterateHierarchy([this, &remappedGameObjectIDs](const HSceneObject& sceneObject) {
+			if(sceneObject->HasFlag(SOF_DontSave))
+				return false;
 
-		if(auto found = remappedGameObjectIDs.find(sceneObject.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
-		{
-			sceneObject->SetPrefabObjectId(found->second);
-			sceneObject->SetPrefabResourceId(mUUID);
-		}
+			if(auto found = remappedGameObjectIDs.find(sceneObject.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
+			{
+				sceneObject->SetPrefabObjectId(found->second);
+				sceneObject->SetPrefabResourceId(mUUID);
+			}
 
-		return true;
-	},
-	[this, &remappedGameObjectIDs](const HComponent& component)
+			return true;
+		},
+		[this, &remappedGameObjectIDs](const HComponent& component) {
+			if(auto found = remappedGameObjectIDs.find(component.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
+				component->SetPrefabObjectId(found->second);
+		});
+	}
+	else
 	{
-		if(auto found = remappedGameObjectIDs.find(component.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
-			component->SetPrefabObjectId(found->second);
-	});
+		// Otherwise, we rely on the caller to call UpdateFromPrefab on all instances of this prefab, including @p sceneObject
+	}
 
-	// Generate deltas for nested prefabs
-	newRoot->IterateHierarchy([this](const HSceneObject& sceneObject) {
-		if(sceneObject->IsPrefabInstanceRoot()) // TODO - Should skip any that aren't first level of nested object
-			PrefabUtility::RecordPrefabDelta(sceneObject);
-
-		return true;
-	}, nullptr);
+	// Clear the delta as the prefab was just updated to match the hierarchy exactly
+	sceneObject->SetPrefabDelta(nullptr);
 
 	if(mRoot.IsValid())
 		mRoot->Destroy(true);
 
 	mRoot = newRoot; // Note: PrefabIdUtility::RestoreOriginalPrefabIds() depends on this being changed after it has been called, as it may try to access the original prefab root
 	mGameObjectCollection = newGameObjectCollection;
-	mPrefabVersion = UUIDGenerator::GenerateRandom();
-}
 
-void Prefab::Update(const HSceneObject& sceneObject)
-{
-	Initialize(sceneObject);
-}
-
-void Prefab::UpdateChildInstancesInternal() const
-{
-	if(!mRoot.IsValid())
-		return;
-
-	mRoot->IterateHierarchy([this](const HSceneObject& sceneObject)
-	{
-		if(sceneObject->IsPrefabInstanceRoot())
-			PrefabUtility::UpdateInstanceFromPrefab(sceneObject);
-
-		return true;
-	}, nullptr);
+	TickPrefabVersion();
+	RecordNestedPrefabInstanceDeltas();
 }
 
 HSceneObject Prefab::Instantiate(const SPtr<SceneInstance>& sceneInstance, bool preserveIds) const
 {
 	if(mRoot == nullptr)
 		return HSceneObject();
-
-#if B3D_IS_ENGINE
-	if(GetCoreApplication().IsEditor())
-	{
-		// Update any child prefab instances in case their prefabs changed
-		UpdateChildInstancesInternal();
-	}
-#endif
 
 	SPtr<GameObjectCollection> gameObjectCollection;
 	if(sceneInstance != nullptr)
@@ -383,14 +396,10 @@ HSceneObject Prefab::Instantiate(const SPtr<SceneInstance>& sceneInstance, bool 
 	HSceneObject clone = Clone(gameObjectCollection, preserveIds);
 	PrefabUtility::AssignPrefabInstanceIds(clone, mRoot, mUUID);
 
-	SPtr<SceneInstance> finalSceneInstance;
 	if(sceneInstance != nullptr)
-	{
-		finalSceneInstance = sceneInstance;
 		clone->SetParent(sceneInstance->GetRoot());
-	}
 	else
-		finalSceneInstance = SceneInstance::Create("PrefabInstance", clone);
+		(void)SceneInstance::Create("PrefabInstance", clone);
 
 	clone->InstantiateInternal();
 
@@ -404,6 +413,42 @@ HSceneObject Prefab::Clone(const SPtr<GameObjectCollection>& cloneOwnerCollectio
 
 	mRoot->SetPrefabVersion(mPrefabVersion); // TODO - Might make sense to assign this to the entire hierarchy. Also for internal hierarchy, it should be set when internal hierarchy is updated.
 	return mRoot->Clone(cloneOwnerCollection, false, preserveIds);
+}
+
+void Prefab::TickPrefabVersion()
+{
+	mPrefabVersion = UUIDGenerator::GenerateRandom();
+}
+
+void Prefab::RecordNestedPrefabInstanceDeltas()
+{
+	if(!mRoot.IsValid())
+		return;
+
+	// Generate deltas for first level of nested prefabs (Any deeper levels will be either part of the
+	// nested prefab themselves, or instance modifications of those nested prefabs)
+	mRoot->IterateHierarchy([this](const HSceneObject& sceneObject) {
+		if(sceneObject->IsPrefabInstanceRoot())
+		{
+			sceneObject->SetPrefabDelta(nullptr);
+
+			const UUID& prefabResourceId = sceneObject->GetPrefabResourceId();
+			if(!prefabResourceId.Empty())
+			{
+				HPrefab linkedPrefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
+				if(linkedPrefab.IsLoaded(false))
+					sceneObject->SetPrefabDelta(SceneObjectHierarchyDelta::Create(linkedPrefab->GetRoot(), sceneObject, SceneObjectHierarchyDeltaFlag::PrefabDelta));
+				else
+				{
+					B3D_LOG(Warning, Prefab, "Cannot record prefab delta for scene object '{0}'. Failed to load prefab with ID: '{1}'.", sceneObject.GetId(), prefabResourceId);
+				}
+			}
+
+			return false;
+		}
+
+		return true;
+	}, nullptr);
 }
 
 RTTITypeBase* Prefab::GetRttiStatic()

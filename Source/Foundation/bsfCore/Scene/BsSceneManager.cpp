@@ -41,6 +41,11 @@ SceneInstance::SceneInstance(ConstructPrivately dummy, const String& name, const
 	: mName(name), mRoot(root), mPhysicsScene(physicsScene), mGameObjectCollection(root->GetOwnerCollection())
 {}
 
+SceneInstance::~SceneInstance()
+{
+	GetSceneManager().NotifySceneInstanceDestroyed(this);
+}
+
 HSceneObject SceneInstance::CreateSceneObject(const String& name)
 {
 	HSceneObject newSceneObject = SceneObject::CreateInternal(mGameObjectCollection, name);
@@ -57,6 +62,7 @@ SPtr<SceneInstance> SceneInstance::Create(const String& name)
 	SPtr<SceneInstance> sceneInstance = B3DMakeShared<SceneInstance>(ConstructPrivately(), name, root, GetPhysics().CreatePhysicsScene());
 	root->SetScene(sceneInstance, false);
 
+	SceneManager::Instance().NotifySceneInstanceCreated(sceneInstance);
 	return sceneInstance;
 }
 
@@ -69,6 +75,7 @@ SPtr<SceneInstance> SceneInstance::Create(const String& name, const HSceneObject
 	SPtr<SceneInstance> sceneInstance = B3DMakeShared<SceneInstance>(ConstructPrivately(), name, root, GetPhysics().CreatePhysicsScene());
 	root->SetScene(sceneInstance, true);
 
+	SceneManager::Instance().NotifySceneInstanceCreated(sceneInstance);
 	return sceneInstance;
 }
 
@@ -456,6 +463,21 @@ void SceneManager::NotifyComponentDestroyedInternal(const HComponent& component,
 		if(existingListType != 0)
 			RemoveFromStateList(component);
 	}
+}
+
+void SceneManager::NotifySceneInstanceCreated(const SPtr<SceneInstance>& sceneInstance)
+{
+	if(!B3D_ENSURE(sceneInstance != nullptr))
+		return;
+
+	mSceneInstances[sceneInstance.get()] = sceneInstance;
+}
+
+void SceneManager::NotifySceneInstanceDestroyed(SceneInstance* sceneInstance)
+{
+	auto found = mSceneInstances.find(sceneInstance);
+	if(B3D_ENSURE(found != mSceneInstances.end()))
+		mSceneInstances.erase(found);
 }
 
 void SceneManager::AddToStateList(const HComponent& component, u32 listType)

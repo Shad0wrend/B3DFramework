@@ -44,6 +44,7 @@ namespace bs
 
 	public:
 		SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const SPtr<PhysicsScene>& physicsScene);
+		~SceneInstance();
 
 		/** Name of the scene. */
 		B3D_SCRIPT_EXPORT(ExportName(Name), Property(Getter))
@@ -101,6 +102,9 @@ namespace bs
 
 		/** Returns the object that represents the main scene. */
 		const SPtr<SceneInstance>& GetMainScene() const { return mMainScene; } // TODO - Concept of main scene should be removed
+
+		/** Returns all live scene instances. */
+		const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& GetAllSceneInstances() const { return mSceneInstances; }
 
 		/**
 		 * Destroys all scene objects in the scene.
@@ -207,6 +211,12 @@ namespace bs
 		/** Notifies the manager that a component is about to be destroyed. The manager triggers necessary callbacks. */
 		void NotifyComponentDestroyedInternal(const HComponent& component, bool immediate);
 
+		/** Notifies the manager that a new scene instance was created. */
+		void NotifySceneInstanceCreated(const SPtr<SceneInstance>& sceneInstance);
+
+		/** Notifies the manager that a scene instance was destroyed. */
+		void NotifySceneInstanceDestroyed(SceneInstance* sceneInstance);
+
 	protected:
 		/** Types of events that represent component state changes relevant to the scene manager. */
 		enum class ComponentStateEventType
@@ -272,6 +282,7 @@ namespace bs
 
 	protected:
 		SPtr<SceneInstance> mMainScene;
+		UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>> mSceneInstances;
 
 		UnorderedMap<SceneActor*, BoundActorData> mBoundActors;
 		UnorderedMap<Camera*, SPtr<Camera>> mCameras;

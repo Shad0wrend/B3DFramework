@@ -14,9 +14,26 @@ namespace bs
 
 	B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(Prefab, Log)
 
+	/** Keeps track of all live prefabs and ensures they are kept up to date. */
+	class B3D_CORE_EXPORT PrefabManager : public Module<PrefabManager>
+	{
+	public:
+		/** Returns all prefabs that are currently loaded. */
+		const UnorderedSet<Prefab*>& GetLivePrefabs() const { return mLivePrefabs; }
+
+	private:
+		friend class Prefab;
+
+		void RegisterPrefab(Prefab& prefab);
+		void UnregisterPrefab(Prefab* prefab);
+
+		UnorderedSet<Prefab*> mLivePrefabs;
+	};
+
 	/**
-	 * Prefab is a saveable hierarchy of scene objects. In general it can serve as any grouping of scene objects
-	 * (for example a level) or be used as a form of a template instantiated and reused throughout the scene.
+	 * Prefab is a saveable hierarchy of scene objects. It can be instanced, and instances will maintain  link to the
+	 * original prefab they were created from, allowing you to update them to latest version if the prefab changes.
+	 * Prefabs can also be nested within each-other, as long as there are no circular dependencies.
 	 */
 	class B3D_CORE_EXPORT Prefab : public Resource
 	{
@@ -36,7 +53,7 @@ namespace bs
 
 		/**
 		 * Instantiates a prefab by creating an instance of the prefab's scene object hierarchy. The returned hierarchy
-		 * will be parented to world root by default.
+		 * will be parented to the provided scene instance root.
 		 *
 		 * @param	sceneInstance	Scene instance into which to instantiate the prefab instance in. If null, prefab will be instantiated
 		 *							in a brand new scene instance.
@@ -45,32 +62,18 @@ namespace bs
 		HSceneObject Instantiate(const SPtr<SceneInstance>& sceneInstance = nullptr) const { return Instantiate(sceneInstance, false); }
 
 		/**
-		 * Replaces the contents of this prefab with new contents from the provided object. Object will be automatically
-		 * linked to this prefab, and its previous prefab link (if any) will be broken.
-		 */
-		void Update(const HSceneObject& sceneObject);
-
-		/**
 		 * Returns a version value that gets updated every time the prefab contents update. Can be used for detecting if a prefab instance
 		 * is up to date.
 		 */
 		UUID GetPrefabVersion() const { return mPrefabVersion; }
 
-		/**
-		 * Determines if the prefab represents a scene or just a generic group of objects. The only difference between the
-		 * two is the way root object is handled: scenes are assumed to be saved with the scene root object (which is
-		 * hidden), while object group root is a normal scene object (not hidden). This is relevant when when prefabs are
-		 * loaded, so the systems knows to append the root object to non-scene prefabs.
-		 */
+		/** Determines if the prefab represents a scene or just a generic group of objects. */
 		bool IsScene() const { return mIsScene; }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
 		 */
-
-		/** Updates any prefab child instances by loading their prefabs and making sure they are up to date. */
-		void UpdateChildInstancesInternal() const;
 
 		/**
 		 * Returns a reference to the internal prefab hierarchy. Returned hierarchy is not instantiated and cannot be
@@ -105,16 +108,26 @@ namespace bs
 		 */
 		HSceneObject Instantiate(const SPtr<SceneInstance>& sceneInstance, bool preserveIds) const;
 
+		/**
+		 * Replaces the contents of this prefab with new contents from the provided object. Object will be automatically
+		 * linked to this prefab.
+		 */
+		void ReplaceInternalHierarchy(const HSceneObject& sceneObject);
+
+		/** Updates the internal prefab version to a new value. You should call this after modifying the prefab hierarchy. */
+		void TickPrefabVersion();
+
+		/** Updates deltas for any nested prefab instances. */
+		void RecordNestedPrefabInstanceDeltas();
+
 		/** @} */
 
 	private:
-		using CoreObject::Initialize;
-
-		/**	Initializes the internal prefab hierarchy. Must be called druing creation. */
-		void Initialize(const HSceneObject& sceneObject);
-
 		/**	Creates an empty and uninitialized prefab. */
 		static SPtr<Prefab> CreateEmpty();
+
+		void Initialize() override;
+		void Destroy() override;
 
 		HSceneObject mRoot;
 		UUID mPrefabVersion = UUID::kEmpty;

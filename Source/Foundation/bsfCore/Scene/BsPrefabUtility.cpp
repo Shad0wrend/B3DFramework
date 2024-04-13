@@ -3,6 +3,7 @@
 #include "Scene/BsPrefabUtility.h"
 
 #include "BsGameObjectCollection.h"
+#include "BsSceneManager.h"
 #include "Scene/BsSceneObjectHierarchyDelta.h"
 #include "Scene/BsPrefab.h"
 #include "Scene/BsSceneObject.h"
@@ -193,51 +194,59 @@ HSceneObject PrefabUtility::UpdateInstanceFromPrefab(const HSceneObject& instanc
 	return newInstance;
 }
 
-void PrefabUtility::UpdateInstanceFromPrefab(const HSceneObject& sceneObject)
+void PrefabUtility::UpdatePrefab(const HPrefab& prefab, const HSceneObject& root)
 {
-	if(!B3D_ENSURE(sceneObject.IsValid()))
+	if(!B3D_ENSURE(prefab.IsLoaded(false)))
 		return;
 
-	HSceneObject prefabInstanceRoot = sceneObject->GetPrefabInstanceRoot();
-	if(!prefabInstanceRoot.IsValid())
-		return;
+	prefab->ReplaceInternalHierarchy(root);
 
-	const bool isInstantiated = prefabInstanceRoot->IsInstantiated();
-	const UUID prefabResourceId = prefabInstanceRoot->GetPrefabResourceId();
-	HPrefab prefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
+	// Update all live prefab instances
+	FrameScope frameScope;
 
-	if(!prefab.IsLoaded(false))
+	FrameUnorderedMap<UUID, HPrefab> prefabCache;
+	prefabCache.insert(std::make_pair(prefab.GetId(), prefab));
+
+	const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& sceneInstances = GetSceneManager().GetAllSceneInstances();
+	for(const auto& pair : sceneInstances)
 	{
-		B3D_LOG(Warning, Scene, "Cannot update scene object from prefab. Prefab resource with ID: '{0}' cannot be found.", prefabResourceId);
-		return;
+		SPtr<SceneInstance> scene = pair.second.lock();
+		if(B3D_ENSURE(scene != nullptr))
+		{
+			FrameVector<UUID> parentPrefabChain;
+			UpdateNestedPrefabInstancesRecursive(scene->GetRoot(), prefabCache, parentPrefabChain);
+		}
 	}
 
-	HSceneObject newInstance = UpdateInstanceFromPrefab(sceneObject, *prefab);
-	if(newInstance == nullptr)
-		return;
+	UnorderedSet<Prefab*> livePrefabs = PrefabManager::Instance().GetLivePrefabs();
+	for(const auto& entry : livePrefabs)
+	{
+		const UUID& prefabResourceId = entry->GetId();
+		if(auto found = prefabCache.find(prefabResourceId); found != prefabCache.end())
+			continue;
 
-	// Load everything referenced by the new prefab objects
-	GetResources().LoadFromUuid(prefabResourceId, true, ResourceLoadFlag::LoadDependencies);
-
-	if(isInstantiated)
-		newInstance->InstantiateInternal();
-
-	GetResources().UnloadAllUnused();
+		FrameVector<UUID> parentPrefabChain;
+		if(UpdateNestedPrefabInstancesRecursive(entry->GetRoot(), prefabCache, parentPrefabChain))
+		{
+			entry->TickPrefabVersion();
+			entry->RecordNestedPrefabInstanceDeltas();
+		}
+	}
 }
 
-void PrefabUtility::UpdateAllInstancesFromPrefabs(const HSceneObject& sceneObject)
+bool PrefabUtility::UpdateNestedPrefabInstances(const HSceneObject& sceneObject)
 {
 	FrameScope frameScope;
 
 	FrameUnorderedMap<UUID, HPrefab> prefabCache;
 	FrameVector<UUID> parentPrefabChain;
-	UpdateAllInstancesFromPrefabsRecursive(sceneObject, prefabCache, parentPrefabChain);
+	return UpdateNestedPrefabInstancesRecursive(sceneObject, prefabCache, parentPrefabChain);
 }
 
-void PrefabUtility::UpdateAllInstancesFromPrefabsRecursive(const HSceneObject& root, FrameUnorderedMap<UUID, HPrefab>& inOutPrefabCache, FrameVector<UUID>& inOutParentPrefabChain)
+bool PrefabUtility::UpdateNestedPrefabInstancesRecursive(const HSceneObject& root, FrameUnorderedMap<UUID, HPrefab>& inOutPrefabCache, FrameVector<UUID>& inOutParentPrefabChain)
 {
 	if(!B3D_ENSURE(root.IsValid()))
-		return;
+		return false;
 
 	struct PrefabInstanceRoot
 	{
@@ -278,24 +287,35 @@ void PrefabUtility::UpdateAllInstancesFromPrefabsRecursive(const HSceneObject& r
 				parentPrefabChainCopy.push_back(nestedPrefab->GetId());
 				inOutPrefabCache.insert(std::make_pair(nestedPrefab->GetId(), nestedPrefab));
 
-				UpdateAllInstancesFromPrefabsRecursive(child, inOutPrefabCache, parentPrefabChainCopy);
+				HSceneObject nestedPrefabRoot = nestedPrefab->GetRoot();
+				if(B3D_ENSURE(nestedPrefabRoot.IsValid()))
+				{
+					if(UpdateNestedPrefabInstancesRecursive(nestedPrefabRoot, inOutPrefabCache, parentPrefabChainCopy))
+					{
+						nestedPrefab->TickPrefabVersion();
+						nestedPrefab->RecordNestedPrefabInstanceDeltas();
+					}
+				}
 			}
 			else
 				B3D_LOG(Error, Scene, "Failed to update instance from prefab. Prefab with ID: {0} cannot be loaded.", nestedPrefabId);
 		}
 
 		nestedInstancePrefabRootsToUpdate.emplace_back(child, nestedPrefab);
-		return false;
+
+		// Keep iterating to also visit any instance modification instances, which will not be part of their parent instance yet.
+		return true;
 
 	},
 	nullptr, false);
 
 	if(foundCircularDependency)
-		return;
+		return false;
 
 	if(nestedInstancePrefabRootsToUpdate.empty())
-		return;
+		return false;
 
+	bool isAnythingModified = false;
 	for(const auto& entry : nestedInstancePrefabRootsToUpdate)
 	{
 		HSceneObject objectToUpdate = entry.SceneObject;
@@ -305,8 +325,11 @@ void PrefabUtility::UpdateAllInstancesFromPrefabsRecursive(const HSceneObject& r
 		if(!entry.Prefab.IsLoaded(false))
 			continue;
 
-		UpdateInstanceFromPrefab(objectToUpdate, *entry.Prefab);
+		if(UpdateInstanceFromPrefab(objectToUpdate, *entry.Prefab) != nullptr)
+			isAnythingModified = true;
 	}
+
+	return isAnythingModified;
 }
 
 void PrefabUtility::AssignPrefabResourceId(const HSceneObject& sceneObject, const UUID& newPrefabResourceId)
@@ -411,39 +434,6 @@ void PrefabUtility::ClearPrefabIds(const HSceneObject& sceneObject)
 		{
 			component->SetPrefabObjectId(UUID::kEmpty);
 		});
-}
-
-void PrefabUtility::RecordPrefabDelta(const HSceneObject& sceneObject)
-{
-	if(!B3D_ENSURE(sceneObject.IsValid()))
-		return;
-
-	HSceneObject prefabInstanceRoot = sceneObject->GetPrefabInstanceRoot();
-	if(!prefabInstanceRoot.IsValid())
-		return;
-
-	prefabInstanceRoot->IterateHierarchy(
-		[](const HSceneObject& sceneObject)
-		{
-			sceneObject->SetPrefabDelta(nullptr);
-
-			const UUID& prefabResourceId = sceneObject->GetPrefabResourceId();
-			if(!prefabResourceId.Empty())
-			{
-				HPrefab linkedPrefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
-				if(linkedPrefab.IsLoaded(false))
-					sceneObject->SetPrefabDelta(SceneObjectHierarchyDelta::Create(linkedPrefab->GetRoot(), sceneObject, SceneObjectHierarchyDeltaFlag::PrefabDelta));
-				else
-				{
-					B3D_LOG(Warning, Prefab, "Cannot record prefab delta for scene object '{0}'. Failed to load prefab with ID: '{1}'.", sceneObject.GetId(), prefabResourceId);
-				}
-			}
-
-			return true;
-		},
-		nullptr);
-
-	GetResources().UnloadAllUnused();
 }
 
 UnorderedMap<UUID, PrefabLinkInformation> PrefabUtility::GetInstanceToPrefabLinkInformationMap(const HSceneObject& sceneObject, bool visitChildPrefabs)
