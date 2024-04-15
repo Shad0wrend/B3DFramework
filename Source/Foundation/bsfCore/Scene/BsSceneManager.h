@@ -100,6 +100,8 @@ namespace bs
 		SceneManager();
 		~SceneManager();
 
+		void OnStartUp() override;
+
 		/** Returns the object that represents the main scene. */
 		const SPtr<SceneInstance>& GetMainScene() const { return mMainScene; } // TODO - Concept of main scene should be removed
 

@@ -25,7 +25,19 @@ namespace bs
 		 * Same as regular, except if there is a second nested prefab, it will be treated as an instance modification.
 		 * Its objects must have empty object id, and resource id pointing to the (first) nested prefab resource.
 		 */
-		SecondNestedPrefabIsInstanceModification
+		SecondNestedPrefabIsInstanceModification,
+		PrefabIsInstanceModification = SecondNestedPrefabIsInstanceModification
+	};
+
+	/** Information about nested prefabs used when performing prefab related unit tests. */
+	struct UnitTestPrefabInformation
+	{
+		UnitTestPrefabInformation(const HPrefab& prefab = HPrefab(), PrefabLinkCheckType checkType = PrefabLinkCheckType::Regular)
+			: Prefab(prefab), CheckType(checkType)
+		{ }
+
+		HPrefab Prefab;
+		PrefabLinkCheckType CheckType = PrefabLinkCheckType::Regular;
 	};
 
 	struct UnitTestPrefabUpdateHelper
@@ -38,9 +50,20 @@ namespace bs
 		template <typename SceneWrapperType>
 		static void TestAssetRootPrefabLinkValid(TestSuite& testSuite, SceneWrapperType& prefabWrapper, const UUID& prefabId, bool skipOptional = false);
 
-		static void TestAssertUnitTestSceneBPrefabLinksMatchPrefabInternals(TestSuite& testSuite, const HSceneObject& sourceInstanceRoot, const HSceneObject& newInstanceRoot, const HPrefab& rootPrefab, const HPrefab& firstNestedPrefab, const HPrefab& secondNestedPrefab, PrefabLinkCheckType checkType);
+		/** Checks if prefab instance matches the object and resource IDs in the internal prefab hierarchy. */
+		static void TestAssertUnitTestSceneBPrefabLinksMatchPrefabInternals(TestSuite& testSuite, const HSceneObject& instanceRoot, const HSceneObject& prefabRoot, const UUID& prefabId);
 
-		/** Compares two hierarchies and ensure their prefab object IDs and prefab resource IDs match. */
+		/**
+		 * Checks if object IDs are valid in prefab internals. If prefab contains nested prefabs they should be listed in order from root to nested in
+		 * @p prefabs array. All nested prefab instances will be checked against their prefab resources.
+		 */
+		static void TestAssertUnitTestSceneBPrefabInternalsMatch(TestSuite& testSuite, u32 prefabIndex, const TArray<UnitTestPrefabInformation>& prefabs);
+
+		/**
+		 * Compares two hierarchies and ensure their prefab object IDs and prefab resource IDs match. Note that order of roots matter - if an object is not present in
+		 * the LHS hierarchy, it will be skipped. If the object is present in LHS hierarchy, but not in RHS hierarchy, test will fail. So when adding objects pass
+		 * the new hierarchy as RHS, and when destroying objects pass the new hierarchy as LHS.
+		 */
 		static void TestAssertUnitTestSceneBPrefabLinksMatch(TestSuite& testSuite, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, bool ignoreGameObjectIds, bool skipOptional = false);
 	};
 } // namespace bs

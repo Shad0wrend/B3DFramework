@@ -45,6 +45,12 @@ namespace bs
 				serializationContext->GameObjectCollection = prefab->mGameObjectCollection;
 		}
 
+		void OnDeserializationEnded(IReflectable* object, SerializationContext* context) override
+		{
+			Prefab* const prefab = static_cast<Prefab*>(object);
+			prefab->Initialize();
+		}
+
 		const String& GetRttiName()
 		{
 			static String name = "Prefab";

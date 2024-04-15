@@ -3,6 +3,7 @@
 #include "Scene/BsPrefabUtility.h"
 
 #include "BsGameObjectCollection.h"
+#include "BsPrefabIdRemapper.h"
 #include "BsSceneManager.h"
 #include "Scene/BsSceneObjectHierarchyDelta.h"
 #include "Scene/BsPrefab.h"
@@ -75,8 +76,8 @@ void RestoreInstanceData(const HSceneObject& sceneObject, const UnorderedMap<UUI
 			{
 				if(auto found = instanceData.find(prefabObjectId); found != instanceData.end())
 				{
+					sceneObject->SetId(found->second.Id); // Id must be set before calling SetInstanceData
 					sceneObject->SetInstanceData(found->second.InstanceData);
-					sceneObject->SetId(found->second.Id);
 				}
 			}
 
@@ -92,8 +93,8 @@ void RestoreInstanceData(const HSceneObject& sceneObject, const UnorderedMap<UUI
 			{
 				if(auto found = instanceData.find(prefabObjectId); found != instanceData.end())
 				{
+					component->SetId(found->second.Id); // Id must be set before calling SetInstanceData
 					component->SetInstanceData(found->second.InstanceData);
-					component->SetId(found->second.Id);
 
 					HComponent mutableComponentHandle = component; // TODO - Unify this so it's the same as the SceneObject case above
 					mutableComponentHandle.SetObject(component.GetShared());
@@ -185,8 +186,8 @@ HSceneObject PrefabUtility::UpdateInstanceFromPrefab(const HSceneObject& instanc
 
 	newInstance->SetParent(parent, false);
 
-	if(prefabDelta != nullptr)
-		prefabDelta->Apply(newInstance, SceneObjectHierarchyDeltaFlag::PrefabDelta);
+	//if(prefabDelta != nullptr)
+	//	prefabDelta->Apply(newInstance, SceneObjectHierarchyDeltaFlag::PrefabDelta);
 
 	newInstance->SetLocalTransform(transform);
 	newInstance->mPrefabDelta = prefabDelta;
@@ -245,7 +246,7 @@ bool PrefabUtility::UpdateNestedPrefabInstances(const HSceneObject& sceneObject)
 
 bool PrefabUtility::UpdateNestedPrefabInstancesRecursive(const HSceneObject& root, FrameUnorderedMap<UUID, HPrefab>& inOutPrefabCache, FrameVector<UUID>& inOutParentPrefabChain)
 {
-	if(!B3D_ENSURE(root.IsValid()))
+	if(!root.IsValid())
 		return false;
 
 	struct PrefabInstanceRoot
@@ -325,6 +326,8 @@ bool PrefabUtility::UpdateNestedPrefabInstancesRecursive(const HSceneObject& roo
 		if(!entry.Prefab.IsLoaded(false))
 			continue;
 
+		// TODO - This will clone contents of entry.Prefab, which means it will be linked directly to that prefab
+		// - But as this is a part of another prefab instance, it needs to link to that prefab. So need to call Prefab::Update. Or add logic to patch prefab IDs externally
 		if(UpdateInstanceFromPrefab(objectToUpdate, *entry.Prefab) != nullptr)
 			isAnythingModified = true;
 	}

@@ -80,9 +80,7 @@ SPtr<SceneInstance> SceneInstance::Create(const String& name, const HSceneObject
 }
 
 SceneManager::SceneManager()
-	: mMainScene(SceneInstance::Create("Main"))
 {
-	mMainScene->mRoot->SetScene(mMainScene);
 }
 
 SceneManager::~SceneManager()
@@ -91,6 +89,12 @@ SceneManager::~SceneManager()
 
 	if(mMainScene->mRoot != nullptr && !mMainScene->mRoot.IsDestroyed())
 		mMainScene->mRoot->Destroy(true);
+}
+
+void SceneManager::OnStartUp()
+{
+	mMainScene = SceneInstance::Create("Main");
+	mMainScene->mRoot->SetScene(mMainScene);
 }
 
 void SceneManager::ClearScene(bool forceAll)

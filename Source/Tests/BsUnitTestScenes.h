@@ -81,6 +81,8 @@ namespace bs
 	 */
 	struct UnitTestSceneB
 	{
+		UnitTestSceneB() = default;
+
 		/** Populates the provided parent with the scene. */
 		UnitTestSceneB(const HSceneObject& parent, const SPtr<Prefab>& childPrefab);
 
