@@ -90,7 +90,7 @@ void Prefab::Destroy()
 	Resource::Destroy();
 }
 
-void Prefab::ReplaceInternalHierarchy(const HSceneObject& sceneObject)
+UnorderedMap<UUID, UUID> Prefab::ReplaceInternalHierarchy(const HSceneObject& sceneObject)
 {
 	const SPtr<GameObjectCollection> newGameObjectCollection = GameObjectCollection::Create();
 	HSceneObject newRoot = sceneObject->Clone(newGameObjectCollection, false, true);
@@ -123,22 +123,23 @@ void Prefab::ReplaceInternalHierarchy(const HSceneObject& sceneObject)
 	if(!sceneObject->IsPrefabInstance() || sceneObject->IsPrefabInstanceRoot())
 	{
 		B3D_ASSERT(mUUID != UUID::kEmpty);
-		sceneObject->IterateHierarchy([this, &remappedGameObjectIDs](const HSceneObject& sceneObject) {
-			if(sceneObject->HasFlag(SOF_DontSave))
-				return false;
+		sceneObject->IterateHierarchy([this, &remappedGameObjectIDs](const HSceneObject& sceneObject)
+									  {
+		if(sceneObject->HasFlag(SOF_DontSave))
+			return false;
 
-			if(auto found = remappedGameObjectIDs.find(sceneObject.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
-			{
-				sceneObject->SetPrefabObjectId(found->second);
-				sceneObject->SetPrefabResourceId(mUUID);
-			}
+		if(auto found = remappedGameObjectIDs.find(sceneObject.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
+		{
+			sceneObject->SetPrefabObjectId(found->second);
+			sceneObject->SetPrefabResourceId(mUUID);
+		}
 
-			return true;
-		},
-		[this, &remappedGameObjectIDs](const HComponent& component) {
-			if(auto found = remappedGameObjectIDs.find(component.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
-				component->SetPrefabObjectId(found->second);
-		});
+		return true; },
+		  [this, &remappedGameObjectIDs](const HComponent& component)
+		  {
+			  if(auto found = remappedGameObjectIDs.find(component.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
+				  component->SetPrefabObjectId(found->second);
+		  });
 	}
 	else
 	{
@@ -156,6 +157,8 @@ void Prefab::ReplaceInternalHierarchy(const HSceneObject& sceneObject)
 
 	TickPrefabVersion();
 	RecordNestedPrefabInstanceDeltas();
+
+	return remappedGameObjectIDs;
 }
 
 HSceneObject Prefab::Instantiate(const SPtr<SceneInstance>& sceneInstance, bool preserveIds) const

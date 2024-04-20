@@ -93,9 +93,14 @@ namespace bs
 			if(firstNestedInternals_Parent_nested.OptionalSceneObject_0_0_PrefabInstance.IsValid())
 				firstNestedPrefabInternals_Parent[nestedPrefabInternalsIndex] = UnitTestSceneB(firstNestedInternals_Parent_nested.OptionalSceneObject_0_0_PrefabInstance);
 
-			if(nestedPrefabInformation.CheckType == PrefabLinkCheckType::Regular)
-				TestAssertPrefabLinkValid(testSuite, rootInternals_Parent_nested, firstNestedInternals_Parent_nested, firstNestedPrefabInformation.Prefab->GetId());
-			else if(nestedPrefabInformation.CheckType == PrefabLinkCheckType::OptionalsAreInstanceModifications)
+			if(nestedPrefabInformation.Flags.IsSet(PrefabCheckFlag::PrefabIsInstanceModification))
+			{
+				UnitTestSceneB internals_Nested(nestedPrefabInformation.Prefab->GetRoot());
+
+				// Instance modification should link to the original prefab
+				TestAssertPrefabLinkValid(testSuite, rootInternals_Parent_nested, internals_Nested, nestedPrefabInformation.Prefab->GetId());
+			}
+			else if(nestedPrefabInformation.Flags.IsSet(PrefabCheckFlag::OptionalsAreInstanceModifications))
 			{
 				TestAssertPrefabLinkValid(testSuite, rootInternals_Parent_nested, firstNestedInternals_Parent_nested, firstNestedPrefabInformation.Prefab->GetId(), true);
 
@@ -107,12 +112,9 @@ namespace bs
 				B3D_TEST_ASSERT_EXTERNAL(testSuite, !rootInternals_Parent_nested.OptionalComponent_2->GetPrefabObjectId().Empty())
 				B3D_TEST_ASSERT_EXTERNAL(testSuite, rootInternals_Parent_nested.OptionalComponent_2->GetPrefabObjectId() == rootInternals_Parent_nested.OptionalComponent_2.GetId())
 			}
-			else if(nestedPrefabInformation.CheckType == PrefabLinkCheckType::PrefabIsInstanceModification)
+			else
 			{
-				UnitTestSceneB internals_Nested(nestedPrefabInformation.Prefab->GetRoot());
-
-				// Instance modification should link to the original prefab
-				TestAssertPrefabLinkValid(testSuite, rootInternals_Parent_nested, internals_Nested, nestedPrefabInformation.Prefab->GetId());
+				TestAssertPrefabLinkValid(testSuite, rootInternals_Parent_nested, firstNestedInternals_Parent_nested, firstNestedPrefabInformation.Prefab->GetId());
 			}
 
 			if(checkNestedPrefabs)
@@ -120,26 +122,40 @@ namespace bs
 		}
 	}
 
-	void UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(TestSuite& testSuite, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, bool ignoreGameObjectIds, bool skipOptional)
+	void UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(TestSuite& testSuite, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, bool ignoreGameObjectIds, bool skipOptional, bool skipPrefabObjectIdCheck)
 	{
 		UnitTestSceneB unitTestSceneLHS(lhsRoot);
 		UnitTestSceneB unitTestSceneRHS(rhsRoot);
 
 		unitTestSceneLHS.PerformSceneObjectBinaryOperation(
-			unitTestSceneRHS, [&testSuite, ignoreGameObjectIds](const HSceneObject& lhs, const HSceneObject& rhs) {
+			unitTestSceneRHS, [&testSuite, ignoreGameObjectIds, skipPrefabObjectIdCheck](const HSceneObject& lhs, const HSceneObject& rhs) {
 				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignoreGameObjectIds || lhs.GetId() == rhs.GetId())
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId())
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, lhs->GetPrefabResourceId() == rhs->GetPrefabResourceId()) },
+
+				// If an object was part of root but isn't anymore, we allow prefab object ID changes, as this could have been an instance
+				// modification that became a part of a nested prefab, in which case prefab object ID is expected to change.
+				const bool lhsIsPartOfRoot = lhs->GetPrefabObjectId() == lhs.GetId();
+				const bool rhsIsPartOfRoot = rhs->GetPrefabObjectId() == rhs.GetId();
+				const bool ignorePrefabObjectId = skipPrefabObjectIdCheck || (lhsIsPartOfRoot && !rhsIsPartOfRoot) || (rhsIsPartOfRoot && !lhsIsPartOfRoot);
+
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignorePrefabObjectId || lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId())
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, skipPrefabObjectIdCheck || lhs->GetPrefabResourceId() == rhs->GetPrefabResourceId()) },
 			skipOptional);
 
 		unitTestSceneLHS.PerformComponentBinaryOperation(
-			unitTestSceneRHS, [&testSuite, ignoreGameObjectIds](const HComponent& lhs, const HComponent& rhs) {
+			unitTestSceneRHS, [&testSuite, ignoreGameObjectIds, skipPrefabObjectIdCheck](const HComponent& lhs, const HComponent& rhs) {
 				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignoreGameObjectIds || lhs.GetId() == rhs.GetId())
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId()) },
+
+				// If an object was part of root but isn't anymore, we allow prefab object ID changes, as this could have been an instance
+				// modification that became a part of a nested prefab, in which case prefab object ID is expected to change.
+				const bool lhsIsPartOfRoot = lhs->GetPrefabObjectId() == lhs.GetId();
+				const bool rhsIsPartOfRoot = rhs->GetPrefabObjectId() == rhs.GetId();
+				const bool ignorePrefabObjectId = skipPrefabObjectIdCheck || (lhsIsPartOfRoot && !rhsIsPartOfRoot) || (rhsIsPartOfRoot && !lhsIsPartOfRoot);
+
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignorePrefabObjectId || lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId()) },
 			skipOptional);
 
 		if(unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance.IsValid())
-			TestAssertUnitTestSceneBPrefabLinksMatch(testSuite, unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance, unitTestSceneRHS.OptionalSceneObject_0_0_PrefabInstance, ignoreGameObjectIds, skipOptional);
+			TestAssertUnitTestSceneBPrefabLinksMatch(testSuite, unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance, unitTestSceneRHS.OptionalSceneObject_0_0_PrefabInstance, ignoreGameObjectIds, skipOptional, skipPrefabObjectIdCheck);
 	}
 
 } // namespace bs

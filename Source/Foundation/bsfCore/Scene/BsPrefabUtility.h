@@ -22,6 +22,22 @@ namespace bs
 		UUID PrefabResourceId; /**< Id of the prefab resource. */
 	};
 
+	/** Allows various prefab utilities to retrieve and cache prefabs while performing operations. */
+	struct PrefabCache
+	{
+		/** Attempts to find a prefab with the provided ID in the cache. If not found prefab will be loaded and added to cache. */
+		HPrefab FindOrLoadPrefab(const UUID& prefabId);
+
+		/** Adds a previously loaded prefab to cache. */
+		void AddToCache(const HPrefab& prefab);
+
+		/** Checks does the prefab exist in cache. */
+		bool ExistsInCache(const UUID& prefabId);
+
+	private:
+		FrameUnorderedMap<UUID, HPrefab> mPrefabs;
+	};
+
 	/** Performs various prefab specific operations. */
 	class B3D_CORE_EXPORT PrefabUtility
 	{
@@ -97,7 +113,7 @@ namespace bs
 		static bool UpdateNestedPrefabInstances(const HSceneObject& sceneObject);
 
 		/** Scans the provided hierarchy for any prefab instances, and updates them to the latest prefab data. */
-		static bool UpdateNestedPrefabInstancesRecursive(const HSceneObject& root, FrameUnorderedMap<UUID, HPrefab>& inOutPrefabCache, FrameVector<UUID>& inOutParentPrefabChain);
+		static bool UpdateNestedPrefabInstancesRecursive(const HSceneObject& root, PrefabCache& inOutPrefabCache, FrameVector<UUID>& inOutParentPrefabChain, FrameUnorderedSet<UUID>& inOutUpdatedPrefabs);
 
 		/**
 		 * Updates the provided scene object hierarchy with latest data from the provided prefab. Provided scene object
