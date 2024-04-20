@@ -26,10 +26,7 @@ namespace bs
 		 * Same as regular, except if there is a second nested prefab, it will be treated as an instance modification.
 		 * Its objects must have empty object id, and resource id pointing to the (first) nested prefab resource.
 		 */
-		PrefabIsInstanceModification = 1 << 2,
-
-		/** Skip comparing prefab object IDs when comparing old and new prefab internal hierarchy. */
-		SkipInternalPrefabObjectIdCheck = 1 << 3,
+		PrefabIsInstanceModification = 1 << 2
 	};
 
 	using PrefabCheckFlags = Flags<PrefabCheckFlag>;
@@ -44,6 +41,32 @@ namespace bs
 
 		HPrefab Prefab;
 		PrefabCheckFlags Flags = PrefabCheckFlag::Regular;
+	};
+
+	/** Flags that control which checks to skip when performing prefab related unit tests. */
+	enum class UnitTestPrefabObjectOptionFlag
+	{
+		PerformAllChecks = 0,
+		SkipGameObjectCheck = 1 << 0,
+		SkipPrefabObjectCheck = 1 << 1,
+		SkipPrefabResourceCheck = 1 << 2,
+		SkipAllChecks = SkipGameObjectCheck | SkipPrefabObjectCheck | SkipPrefabResourceCheck,
+	};
+
+	using UnitTestPrefabObjectOptionFlags = Flags<UnitTestPrefabObjectOptionFlag>;
+	B3D_FLAGS_OPERATORS(UnitTestPrefabObjectOptionFlag)
+
+	/** Options that control which checks to skip when performing prefab related unit tests. */
+	struct UnitTestPrefabObjectOptions
+	{
+		UnitTestPrefabObjectOptionFlags GlobalOptions = UnitTestPrefabObjectOptionFlag::PerformAllChecks;
+
+		UnorderedMap<UUID, UnorderedMap<String, UnitTestPrefabObjectOptionFlags>> ObjectOptionsPerPrefab;
+
+		void SetFlagsForObject(const HPrefab& prefab, const GameObjectHandleBase& gameObject, UnitTestPrefabObjectOptionFlags flags);
+		void SetFlagsForObject(const HPrefab& prefab, const HSceneObject& sceneObject, UnitTestPrefabObjectOptionFlags flags, bool setOnChildren);
+		UnitTestPrefabObjectOptionFlags GetFlagsForObject(const UUID& prefabId, const String& name) const;
+		void ClearAllObjectFlags();
 	};
 
 	struct UnitTestPrefabUpdateHelper
@@ -70,6 +93,6 @@ namespace bs
 		 * the LHS hierarchy, it will be skipped. If the object is present in LHS hierarchy, but not in RHS hierarchy, test will fail. So when adding objects pass
 		 * the new hierarchy as RHS, and when destroying objects pass the new hierarchy as LHS.
 		 */
-		static void TestAssertUnitTestSceneBPrefabLinksMatch(TestSuite& testSuite, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, bool ignoreGameObjectIds, bool skipOptional = false, bool skipPrefabObjectIdCheck = false);
+		static void TestAssertUnitTestSceneBPrefabLinksMatch(TestSuite& testSuite, const UUID& rootPrefabId, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, const UnitTestPrefabObjectOptions& options);
 	};
 } // namespace bs

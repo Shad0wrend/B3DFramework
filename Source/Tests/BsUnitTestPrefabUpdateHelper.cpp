@@ -8,6 +8,50 @@
 
 namespace bs
 {
+	void UnitTestPrefabObjectOptions::SetFlagsForObject(const HPrefab& prefab, const GameObjectHandleBase& gameObject, UnitTestPrefabObjectOptionFlags flags)
+	{
+		UnorderedMap<String, UnitTestPrefabObjectOptionFlags>& objectOptions = ObjectOptionsPerPrefab[prefab.GetId()];
+		objectOptions[gameObject->GetName()] = flags;
+	}
+
+	void UnitTestPrefabObjectOptions::SetFlagsForObject(const HPrefab& prefab, const HSceneObject& sceneObject, UnitTestPrefabObjectOptionFlags flags, bool setOnChildren)
+	{
+		UnorderedMap<String, UnitTestPrefabObjectOptionFlags>& objectOptions = ObjectOptionsPerPrefab[prefab.GetId()];
+		objectOptions[sceneObject->GetName()] = flags;
+
+		if(setOnChildren)
+		{
+			sceneObject->IterateHierarchy([flags, &objectOptions](const HSceneObject& child)
+										  {
+				objectOptions[child->GetName()] = flags;
+
+				if(child->IsPrefabInstanceRoot())
+					return false; // Don't recurse into other prefab instances
+				return true; },
+				  [flags, &objectOptions](const HComponent& component)
+				  {
+					  objectOptions[component->GetName()] = flags;
+				  },
+				  false);
+		}
+	}
+
+	UnitTestPrefabObjectOptionFlags UnitTestPrefabObjectOptions::GetFlagsForObject(const UUID& prefabId, const String& name) const
+	{
+		if(auto foundPrefab = ObjectOptionsPerPrefab.find(prefabId); foundPrefab != ObjectOptionsPerPrefab.end())
+		{
+			if(auto foundObject = foundPrefab->second.find(name); foundObject != foundPrefab->second.end())
+				return GlobalOptions | foundObject->second;
+		}
+
+		return GlobalOptions;
+	}
+
+	void UnitTestPrefabObjectOptions::ClearAllObjectFlags()
+	{
+		ObjectOptionsPerPrefab.clear();
+	}
+
 	template <typename SceneWrapperType>
 	void UnitTestPrefabUpdateHelper::TestAssertPrefabLinkValid(TestSuite& testSuite, SceneWrapperType& instanceWrapper, SceneWrapperType& prefabWrapper, const UUID& prefabId, bool skipOptional)
 	{
@@ -122,40 +166,28 @@ namespace bs
 		}
 	}
 
-	void UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(TestSuite& testSuite, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, bool ignoreGameObjectIds, bool skipOptional, bool skipPrefabObjectIdCheck)
+	void UnitTestPrefabUpdateHelper::TestAssertUnitTestSceneBPrefabLinksMatch(TestSuite& testSuite, const UUID& rootPrefabId, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, const UnitTestPrefabObjectOptions& options)
 	{
 		UnitTestSceneB unitTestSceneLHS(lhsRoot);
 		UnitTestSceneB unitTestSceneRHS(rhsRoot);
 
 		unitTestSceneLHS.PerformSceneObjectBinaryOperation(
-			unitTestSceneRHS, [&testSuite, ignoreGameObjectIds, skipPrefabObjectIdCheck](const HSceneObject& lhs, const HSceneObject& rhs) {
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignoreGameObjectIds || lhs.GetId() == rhs.GetId())
+			unitTestSceneRHS, [&testSuite, &options, &rootPrefabId](const HSceneObject& lhs, const HSceneObject& rhs) {
 
-				// If an object was part of root but isn't anymore, we allow prefab object ID changes, as this could have been an instance
-				// modification that became a part of a nested prefab, in which case prefab object ID is expected to change.
-				const bool lhsIsPartOfRoot = lhs->GetPrefabObjectId() == lhs.GetId();
-				const bool rhsIsPartOfRoot = rhs->GetPrefabObjectId() == rhs.GetId();
-				const bool ignorePrefabObjectId = skipPrefabObjectIdCheck || (lhsIsPartOfRoot && !rhsIsPartOfRoot) || (rhsIsPartOfRoot && !lhsIsPartOfRoot);
+				UnitTestPrefabObjectOptionFlags flags = options.GetFlagsForObject(rootPrefabId, lhs->GetName());
 
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignorePrefabObjectId || lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId())
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, skipPrefabObjectIdCheck || lhs->GetPrefabResourceId() == rhs->GetPrefabResourceId()) },
-			skipOptional);
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipGameObjectCheck) || lhs.GetId() == rhs.GetId())
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck) || lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId())
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipPrefabResourceCheck) || lhs->GetPrefabResourceId() == rhs->GetPrefabResourceId()) });
 
 		unitTestSceneLHS.PerformComponentBinaryOperation(
-			unitTestSceneRHS, [&testSuite, ignoreGameObjectIds, skipPrefabObjectIdCheck](const HComponent& lhs, const HComponent& rhs) {
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignoreGameObjectIds || lhs.GetId() == rhs.GetId())
-
-				// If an object was part of root but isn't anymore, we allow prefab object ID changes, as this could have been an instance
-				// modification that became a part of a nested prefab, in which case prefab object ID is expected to change.
-				const bool lhsIsPartOfRoot = lhs->GetPrefabObjectId() == lhs.GetId();
-				const bool rhsIsPartOfRoot = rhs->GetPrefabObjectId() == rhs.GetId();
-				const bool ignorePrefabObjectId = skipPrefabObjectIdCheck || (lhsIsPartOfRoot && !rhsIsPartOfRoot) || (rhsIsPartOfRoot && !lhsIsPartOfRoot);
-
-				B3D_TEST_ASSERT_EXTERNAL(testSuite, ignorePrefabObjectId || lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId()) },
-			skipOptional);
+			unitTestSceneRHS, [&testSuite, &options, &rootPrefabId](const HComponent& lhs, const HComponent& rhs) {
+				UnitTestPrefabObjectOptionFlags flags = options.GetFlagsForObject(rootPrefabId, lhs->GetName());
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipGameObjectCheck) || lhs.GetId() == rhs.GetId())
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck) || lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId()) });
 
 		if(unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance.IsValid())
-			TestAssertUnitTestSceneBPrefabLinksMatch(testSuite, unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance, unitTestSceneRHS.OptionalSceneObject_0_0_PrefabInstance, ignoreGameObjectIds, skipOptional, skipPrefabObjectIdCheck);
+			TestAssertUnitTestSceneBPrefabLinksMatch(testSuite, rootPrefabId, unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance, unitTestSceneRHS.OptionalSceneObject_0_0_PrefabInstance, options);
 	}
 
 } // namespace bs
