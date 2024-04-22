@@ -315,7 +315,9 @@ void CoreTestSuite::TestSceneSaveLoad()
 	{
 		SPtr<SceneInstance> scene1Instance = SceneInstance::Create("UnitTestScene1Instance");
 
-		UnitTestSceneB scene1Wrapper(scene1Instance->GetRoot(), scene0Prefab);
+		UnitTestSceneB scene1Wrapper = UnitTestSceneB::PopulateParent(scene1Instance->GetRoot());
+		scene1Wrapper.SetUnitTestSceneAChildPrefab_0_0(*scene0Prefab);
+
 		UnitTestSceneA scene0Wrapper(scene1Wrapper.OptionalSceneObject_0_0_PrefabInstance);
 		HPrefab scene1prefab = Prefab::Create(scene1Instance->GetRoot());
 
@@ -782,10 +784,18 @@ void CoreTestSuite::TestPrefabScenario1()
 	mPrefabTestInformation[0].InstanceRootInScene = mSceneHierarchy->CreateSceneObject("Prefab #1 Instance Root");
 
 	// Create hierarchy for Prefab 1 in the scene hierarchy
-	UnitTestSceneB::PopulateParent(mPrefabTestInformation[0].InstanceRootInScene, nullptr);
+	UnitTestSceneB::PopulateParent(mPrefabTestInformation[0].InstanceRootInScene);
 
 	// Construct the prefab from Prefab #1 Instance Root in the scene hierarchy
 	mPrefabTestInformation[0].Prefab = Prefab::Create(mPrefabTestInformation[0].InstanceRootInScene, false);
+
+
+	// TODO - Split the test asserts into 4 separate cases
+	//  - each can accept its own set of check options, which become function local rather than class members
+	//  - prefab check flags should be moved from mPRefabTestInformation into check options as well
+
+	// TODO - Then go over each of the scenarios one by one and implement the tests
+	// - Taking account for needing to update check IDs and adding support for second prefab instance
 
 	TestAssertPrefabScenario();
 }
@@ -804,7 +814,7 @@ void CoreTestSuite::TestPrefabScenario2()
 
 	prefab1InstanceRoot_Wrapper.Component_1_0->Destroy();
 	prefab1InstanceRoot_Wrapper.SceneObject_1_0->Destroy();
-	prefab1InstanceRoot_Wrapper.CreateOptionalObjects();
+	prefab1InstanceRoot_Wrapper.CreateOptionalSceneObject_2();
 
 	// Update Prefab1 from Prefab #1 Instance Root in scene hierarchy
 	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mPrefabTestInformation[0].InstanceRootInScene);
@@ -818,7 +828,7 @@ void CoreTestSuite::TestPrefabScenario2()
 void CoreTestSuite::TestPrefabScenario3()
 {
 	// Create prefab 2
-	mPrefabTestInformation[1].Prefab = Prefab::Create(UnitTestSceneB::PopulateNewSceneInstance("Prefab #2 Scene Instance", nullptr), false);
+	mPrefabTestInformation[1].Prefab = Prefab::Create(UnitTestSceneB::PopulateNewSceneInstance("Prefab #2 Scene Instance"), false);
 
 	// Add Prefab #2 Instance Root in the scene, as child of Prefab 2 Instance Root/SceneObject_0
 	UnitTestSceneB prefab1InstanceRoot_Wrapper(mPrefabTestInformation[0].InstanceRootInScene);
@@ -841,7 +851,7 @@ void CoreTestSuite::TestPrefabScenario4()
 
 	//prefab2InstanceRoot_Wrapper.Component_1_0->Destroy();
 	//prefab2InstanceRoot_Wrapper.SceneObject_1_0->Destroy(); // TODO
-	prefab2InstanceRoot_Wrapper.CreateOptionalObjects();
+	prefab2InstanceRoot_Wrapper.CreateOptionalSceneObject_2();
 
 	// Update Prefab1 from Prefab #1 Instance Root in scene hierarchy
 	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mPrefabTestInformation[0].InstanceRootInScene);
@@ -894,14 +904,12 @@ void CoreTestSuite::TestPrefabScenario6()
 void CoreTestSuite::TestPrefabScenario7()
 {
 	// Create prefab 3
-	mPrefabTestInformation[2].Prefab = Prefab::Create(UnitTestSceneB::PopulateNewSceneInstance("Prefab #3 Scene Instance", nullptr), false);
+	mPrefabTestInformation[2].Prefab = Prefab::Create(UnitTestSceneB::PopulateNewSceneInstance("Prefab #3 Scene Instance"), false);
 
 	// Add Prefab #2 Instance Root in the scene, as child of Prefab 2 Instance Root/SceneObject_0
 	UnitTestSceneB prefab2InstanceRoot_Wrapper(mPrefabTestInformation[1].InstanceRootInScene);
-
-	mPrefabTestInformation[2].InstanceRootInScene = mPrefabTestInformation[2].Prefab->Instantiate(mSceneHierarchy);
+	mPrefabTestInformation[2].InstanceRootInScene = prefab2InstanceRoot_Wrapper.SetUnitTestSceneBChildPrefab_0_0(*mPrefabTestInformation[2].Prefab);
 	mPrefabTestInformation[2].InstanceRootInScene->SetName("Prefab #3 Instance Root");
-	mPrefabTestInformation[2].InstanceRootInScene->SetParent(prefab2InstanceRoot_Wrapper.SceneObject_0);
 
 	// Update Prefab1 from Prefab #1 Instance Root in scene hierarchy
 	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mPrefabTestInformation[0].InstanceRootInScene);
@@ -920,7 +928,6 @@ void CoreTestSuite::TestPrefabScenario8()
 	PrefabUtility::UpdatePrefab(mPrefabTestInformation[1].Prefab, mPrefabTestInformation[1].InstanceRootInScene);
 
 	// Skip prefab object & resource check these will change for instance modifications, and that's as expected
-	mPrefabCheckOptions.SetFlagsForObject(UUID::kEmpty, mPrefabTestInformation[2].Prefab, mPrefabTestInformation[2].InstanceRootInScene, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck | UnitTestPrefabObjectOptionFlag::SkipPrefabResourceCheck, true);
 	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[2].Prefab, mPrefabTestInformation[2].InstanceRootInScene, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck | UnitTestPrefabObjectOptionFlag::SkipPrefabResourceCheck, true);
 
 	TestAssertPrefabScenario();

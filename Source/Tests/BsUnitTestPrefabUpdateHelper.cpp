@@ -117,6 +117,11 @@ namespace bs
 		{
 			TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(testSuite, instanceScene.OptionalSceneObject_0_0_PrefabInstance, prefabInternalsScene.OptionalSceneObject_0_0_PrefabInstance, prefabId);
 		}
+
+		if(instanceScene.OptionalSceneObject_1_1_PrefabInstance.IsValid())
+		{
+			TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(testSuite, instanceScene.OptionalSceneObject_1_1_PrefabInstance, prefabInternalsScene.OptionalSceneObject_1_1_PrefabInstance, prefabId);
+		}
 	}
 
 	void UnitTestPrefabUpdateHelper::TestAssertPrefabInternalsMatch_UnitTestSceneB(TestSuite& testSuite, u32 prefabIndex, const TArray<UnitTestPrefabInformation>& prefabs, const UnitTestPrefabObjectOptions& options)
@@ -200,6 +205,9 @@ namespace bs
 
 		if(unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance.IsValid())
 			TestAssertPrefabLinksMatch_UnitTestSceneB(testSuite, unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance, unitTestSceneRHS.OptionalSceneObject_0_0_PrefabInstance, prefabIndex + 1, prefabs, instanceRootId, options);
+
+		if(unitTestSceneLHS.OptionalSceneObject_1_1_PrefabInstance.IsValid())
+			TestAssertPrefabLinksMatch_UnitTestSceneB(testSuite, unitTestSceneLHS.OptionalSceneObject_1_1_PrefabInstance, unitTestSceneRHS.OptionalSceneObject_1_1_PrefabInstance, prefabIndex + 1, prefabs, instanceRootId, options);
 	}
 
 } // namespace bs

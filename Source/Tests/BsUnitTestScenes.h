@@ -5,6 +5,7 @@
 #include "Scene/BsSceneManager.h"
 #include "Scene/BsSceneObject.h"
 #include "BsUnitTestComponents.h"
+#include "Scene/BsPrefabUtility.h"
 
 namespace bs
 {
@@ -74,28 +75,33 @@ namespace bs
 	 * Allows you to easily set up the following scene object hierarchy:
 	 * Root
 	 *  SceneObject_0 [Components: None]
-	 *    OptionalSceneObject_0_0_PrefabInstance (Optional child prefab instance, if prefab is provided)
+	 *    OptionalSceneObject_0_0_PrefabInstance (Optional child prefab instance)
 	 *  SceneObject_1 [Components: None]
 	 *    SceneObject_1_0 [Components: UnitTestComponentA]
+	 *    OptionalSceneObject_1_1_PrefabInstance (Optional child prefab instance)
 	 *  OptionalSceneObject_2 [Components: UnitTestComponentA] (Optional object that can be created after initial construction)
 	 */
 	struct UnitTestSceneB
 	{
 		UnitTestSceneB() = default;
 
-		/** Populates the provided parent with the scene. */
-		UnitTestSceneB(const HSceneObject& parent, const SPtr<Prefab>& childPrefab);
-
 		/** Populates the scene objects and components by looking them up in the provided hierarchy. */
 		UnitTestSceneB(const HSceneObject& root);
 
 		virtual ~UnitTestSceneB() = default;
 
-		static HSceneObject PopulateNewSceneInstance(const char* name, const SPtr<Prefab>& childPrefab);
-		static void PopulateParent(const HSceneObject& parent, const SPtr<Prefab>& childPrefab);
+		static HSceneObject PopulateNewSceneInstance(const char* name);
+		static UnitTestSceneB PopulateParent(const HSceneObject& parent);
 
-		/** Creates OptionalSceneObect_2 and its associated components. */
-		void CreateOptionalObjects();
+		HSceneObject SetUnitTestSceneAChildPrefab_0_0(const Prefab& prefab);
+		HSceneObject SetUnitTestSceneBChildPrefab_0_0(const Prefab& prefab);
+		HSceneObject SetUnitTestSceneBChildPrefab_1_1(const Prefab& prefab);
+
+		/** Creates OptionalSceneObject_2 and its associated component. */
+		void CreateOptionalSceneObject_2();
+
+		/** Destroys SceneObject_1_0 and its associated component. */
+		void DestroySceneObject_1_0();
 
 		/** Performs an operation over scene objects in the scene. If an object has been destroyed, the predicate won't be called on it. If @p skipOptional is true, OptionalSceneObject_2 will not be visited. */
 		template <class T>
@@ -135,6 +141,9 @@ namespace bs
 			if(!skipOptional && OptionalComponent_2.IsValid()) predicate(OptionalComponent_2, other.OptionalComponent_2);
 		}
 
+		/** Check if all current game object match the original recorded IDs. */
+		void TestAssertOriginalIds(TestSuite& testSuite);
+
 		SPtr<SceneInstance> SceneInstance;
 		HSceneObject Root;
 
@@ -142,7 +151,13 @@ namespace bs
 		HSceneObject OptionalSceneObject_0_0_PrefabInstance;
 		HSceneObject SceneObject_1;
 		HSceneObject SceneObject_1_0;
+		HSceneObject OptionalSceneObject_1_1_PrefabInstance;
 		HUnitTestComponentA Component_1_0;
+
+		SPtr<UnitTestSceneB> OptionalPrefabInstance_0_0;
+		SPtr<UnitTestSceneB> OptionalPrefabInstance_1_1;
+
+		UnorderedMap<UUID, PrefabLinkInformation> OriginalObjectIds;
 
 		// These objects may be created after initial construction
 		HSceneObject OptionalSceneObject_2;
