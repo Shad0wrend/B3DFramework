@@ -86,12 +86,5 @@ namespace bs
 		 * @p prefabs array. All nested prefab instances will be checked against their prefab resources.
 		 */
 		static void TestAssertPrefabInternalsMatch_UnitTestSceneB(TestSuite& testSuite, u32 prefabIndex, const TArray<UnitTestPrefabInformation>& prefabs, const UnitTestPrefabObjectOptions& options);
-
-		/**
-		 * Compares two hierarchies and ensure their prefab object IDs and prefab resource IDs match. Note that order of roots matter - if an object is not present in
-		 * the LHS hierarchy, it will be skipped. If the object is present in LHS hierarchy, but not in RHS hierarchy, test will fail. So when adding objects pass
-		 * the new hierarchy as RHS, and when destroying objects pass the new hierarchy as LHS.
-		 */
-		static void TestAssertPrefabLinksMatch_UnitTestSceneB(TestSuite& testSuite, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, u32 prefabIndex, const TArray<UnitTestPrefabInformation>& prefabs, const UUID& instanceRootId, const UnitTestPrefabObjectOptions& options);
 	};
 } // namespace bs

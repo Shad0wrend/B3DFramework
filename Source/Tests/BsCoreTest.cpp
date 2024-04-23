@@ -55,19 +55,16 @@ private:
 	void TestAssertPrefabScenario();
 
 	SPtr<SceneInstance> mSceneHierarchy;
+	UnitTestSceneB mScene;
 
 	struct PrefabTestInformation
 	{
-		HSceneObject InstanceRootInScene;
 		HPrefab Prefab;
-
-		SPtr<GameObjectCollection> InternalsObjectCollection;
-		HSceneObject InternalsCopy;
+		UnitTestSceneB PrefabInternalsScene;
 
 		PrefabCheckFlags CheckFlags = PrefabCheckFlag::Regular;
 	};
 
-	HSceneObject mLastInstantiatedPrefab1InstanceRoot;
 	Array<PrefabTestInformation, 3> mPrefabTestInformation;
 	UnitTestPrefabObjectOptions mPrefabCheckOptions;
 };
@@ -720,29 +717,20 @@ void CoreTestSuite::TestAssertPrefabScenario()
 		auto prefab1TestInformation = mPrefabTestInformation[0];
 
 		const HPrefab prefab = prefab1TestInformation.Prefab;
-		const HSceneObject instanceRootInScene = prefab1TestInformation.InstanceRootInScene;
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Ensure the instances correctly link to the prefab (both the hierarchy used to create/update the prefab, and newly instantiated hierarchy)
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(*this, mScene.Root, prefab->GetRoot(), prefab->GetId());
+
 		HSceneObject instantiatedInstanceRoot = prefab->Instantiate();
-		UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(*this, instanceRootInScene, prefab->GetRoot(), prefab->GetId());
 		UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(*this, instantiatedInstanceRoot, prefab->GetRoot(), prefab->GetId());
+		instantiatedInstanceRoot->Destroy();
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Ensure IDs are unchanged from the previous instances
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		if(mLastInstantiatedPrefab1InstanceRoot != nullptr)
-		{
-			UnitTestPrefabObjectOptions options = mPrefabCheckOptions;
-			options.GlobalOptions |= UnitTestPrefabObjectOptionFlag::SkipGameObjectCheck;
-
-			UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatch_UnitTestSceneB(*this, mLastInstantiatedPrefab1InstanceRoot, instantiatedInstanceRoot, 0, prefabInformation, UUID::kEmpty, options);
-			UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatch_UnitTestSceneB(*this, mLastInstantiatedPrefab1InstanceRoot, instanceRootInScene, 0, prefabInformation, UUID::kEmpty, options);
-			
-			mLastInstantiatedPrefab1InstanceRoot->Destroy(true);
-			mLastInstantiatedPrefab1InstanceRoot = instantiatedInstanceRoot;
-		}
+		mScene.TestAssertOriginalIds(*this);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -759,20 +747,12 @@ void CoreTestSuite::TestAssertPrefabScenario()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Ensure IDs are unchanged from the previous prefab internals
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	u32 prefabIndex = 0;
 	for(auto& entry : mPrefabTestInformation)
 	{
 		if(entry.Prefab == nullptr)
 			continue;
 
-		if(entry.InternalsCopy != nullptr)
-		{
-			UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatch_UnitTestSceneB(*this, entry.InternalsCopy, entry.Prefab->GetRoot(), prefabIndex, prefabInformation, entry.Prefab.GetId(), mPrefabCheckOptions);
-		}
-
-		entry.InternalsObjectCollection = GameObjectCollection::Create();
-		entry.InternalsCopy = entry.Prefab->Clone(entry.InternalsObjectCollection, true);
-		prefabIndex++;
+		entry.PrefabInternalsScene.TestAssertOriginalIds(*this);
 	}
 }
 
@@ -781,14 +761,16 @@ void CoreTestSuite::TestPrefabScenario1()
 {
 	// Create an instance for the main scene hierarchy
 	mSceneHierarchy = SceneInstance::Create("Scene Hierarchy");
-	mPrefabTestInformation[0].InstanceRootInScene = mSceneHierarchy->CreateSceneObject("Prefab #1 Instance Root");
+	HSceneObject sceneRoot = mSceneHierarchy->CreateSceneObject("Prefab #1 Instance Root");
 
 	// Create hierarchy for Prefab 1 in the scene hierarchy
-	UnitTestSceneB::PopulateParent(mPrefabTestInformation[0].InstanceRootInScene);
+	mScene = UnitTestSceneB::PopulateParent(sceneRoot);
 
 	// Construct the prefab from Prefab #1 Instance Root in the scene hierarchy
-	mPrefabTestInformation[0].Prefab = Prefab::Create(mPrefabTestInformation[0].InstanceRootInScene, false);
+	mPrefabTestInformation[0].Prefab = Prefab::Create(mScene.Root, false);
+	mPrefabTestInformation[0].PrefabInternalsScene = UnitTestSceneB(mPrefabTestInformation[0].Prefab->GetRoot());
 
+	mScene.UpdatePrefabLinkIds();
 
 	// TODO - Split the test asserts into 4 separate cases
 	//  - each can accept its own set of check options, which become function local rather than class members
@@ -804,20 +786,19 @@ void CoreTestSuite::TestPrefabScenario1()
 void CoreTestSuite::TestPrefabScenario2()
 {
 	// Add a new object to the scene hierarchy
-	UnitTestSceneB prefab1InstanceRoot_Wrapper(mPrefabTestInformation[0].InstanceRootInScene);
+	mPrefabCheckOptions.SetFlagsForObject(UUID::kEmpty, mPrefabTestInformation[0].Prefab, mScene.Component_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
+	mPrefabCheckOptions.SetFlagsForObject(UUID::kEmpty, mPrefabTestInformation[0].Prefab, mScene.SceneObject_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
 
-	mPrefabCheckOptions.SetFlagsForObject(UUID::kEmpty, mPrefabTestInformation[0].Prefab, prefab1InstanceRoot_Wrapper.Component_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
-	mPrefabCheckOptions.SetFlagsForObject(UUID::kEmpty, mPrefabTestInformation[0].Prefab, prefab1InstanceRoot_Wrapper.SceneObject_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
+	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[0].Prefab, mScene.Component_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
+	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[0].Prefab, mScene.SceneObject_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
 
-	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[0].Prefab, prefab1InstanceRoot_Wrapper.Component_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
-	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[0].Prefab, prefab1InstanceRoot_Wrapper.SceneObject_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
-
-	prefab1InstanceRoot_Wrapper.Component_1_0->Destroy();
-	prefab1InstanceRoot_Wrapper.SceneObject_1_0->Destroy();
-	prefab1InstanceRoot_Wrapper.CreateOptionalSceneObject_2();
+	mScene.DestroySceneObject_1_0();
+	mScene.CreateOptionalSceneObject_2();
 
 	// Update Prefab1 from Prefab #1 Instance Root in scene hierarchy
-	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mPrefabTestInformation[0].InstanceRootInScene);
+	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mScene.Root);
+	mScene.AddNewObjectIds(mScene.OptionalSceneObject_2);
+	mPrefabTestInformation[0].PrefabInternalsScene.RefreshHierarchy(mPrefabTestInformation[0].Prefab->GetRoot());
 
 	TestAssertPrefabScenario();
 
@@ -828,17 +809,19 @@ void CoreTestSuite::TestPrefabScenario2()
 void CoreTestSuite::TestPrefabScenario3()
 {
 	// Create prefab 2
-	mPrefabTestInformation[1].Prefab = Prefab::Create(UnitTestSceneB::PopulateNewSceneInstance("Prefab #2 Scene Instance"), false);
+	HSceneObject prefab2NewHierarchy = UnitTestSceneB::PopulateNewSceneInstance("Prefab #2 Scene Instance");
+	mPrefabTestInformation[1].Prefab = Prefab::Create(prefab2NewHierarchy, false);
+	mPrefabTestInformation[1].PrefabInternalsScene = UnitTestSceneB(mPrefabTestInformation[1].Prefab->GetRoot());
+	prefab2NewHierarchy->Destroy();
 
 	// Add Prefab #2 Instance Root in the scene, as child of Prefab 2 Instance Root/SceneObject_0
-	UnitTestSceneB prefab1InstanceRoot_Wrapper(mPrefabTestInformation[0].InstanceRootInScene);
-
-	mPrefabTestInformation[1].InstanceRootInScene = mPrefabTestInformation[1].Prefab->Instantiate(mSceneHierarchy);
-	mPrefabTestInformation[1].InstanceRootInScene->SetName("Prefab #2 Instance Root");
-	mPrefabTestInformation[1].InstanceRootInScene->SetParent(prefab1InstanceRoot_Wrapper.SceneObject_0);
+	HSceneObject prefab2Instance = mScene.SetUnitTestSceneBChildPrefab_0_0(*mPrefabTestInformation[1].Prefab);
+	prefab2Instance->SetName("Prefab #2 Instance Root");
 
 	// Update Prefab1 from Prefab #1 Instance Root in scene hierarchy
-	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mPrefabTestInformation[0].InstanceRootInScene);
+	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mScene.Root);
+	mPrefabTestInformation[0].PrefabInternalsScene.RefreshHierarchy(mPrefabTestInformation[0].Prefab->GetRoot());
+	mScene.OptionalPrefabInstance_0_0->AddNewObjectIds();
 	
 	TestAssertPrefabScenario();
 }
@@ -846,21 +829,20 @@ void CoreTestSuite::TestPrefabScenario3()
 // Add new object as part of Prefab #2 Instance Root, when update Prefab1 with Prefab #1 Instance Root
 void CoreTestSuite::TestPrefabScenario4()
 {
-	UnitTestSceneB prefab1InstanceRoot_Wrapper(mPrefabTestInformation[0].InstanceRootInScene);
-	UnitTestSceneB prefab2InstanceRoot_Wrapper(prefab1InstanceRoot_Wrapper.OptionalSceneObject_0_0_PrefabInstance);
-
 	//prefab2InstanceRoot_Wrapper.Component_1_0->Destroy();
 	//prefab2InstanceRoot_Wrapper.SceneObject_1_0->Destroy(); // TODO
-	prefab2InstanceRoot_Wrapper.CreateOptionalSceneObject_2();
+	mScene.OptionalPrefabInstance_0_0->CreateOptionalSceneObject_2();
 
 	// Update Prefab1 from Prefab #1 Instance Root in scene hierarchy
-	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mPrefabTestInformation[0].InstanceRootInScene);
+	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mScene.Root);
+	mScene.OptionalPrefabInstance_0_0->AddNewObjectIds(mScene.OptionalPrefabInstance_0_0->OptionalSceneObject_2);
+	mPrefabTestInformation[0].PrefabInternalsScene.RefreshHierarchy(mPrefabTestInformation[0].Prefab->GetRoot());
 
 	//mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[2].Prefab, prefab2InstanceRoot_Wrapper.Component_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
 	//mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[2].Prefab, prefab2InstanceRoot_Wrapper.SceneObject_1_0, UnitTestPrefabObjectOptionFlag::SkipAllChecks);
 
-	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[1].Prefab, prefab2InstanceRoot_Wrapper.OptionalComponent_2, UnitTestPrefabObjectOptionFlag::IsInstanceModification);
-	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[1].Prefab, prefab2InstanceRoot_Wrapper.OptionalSceneObject_2, UnitTestPrefabObjectOptionFlag::IsInstanceModification);
+	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[1].Prefab, mScene.OptionalPrefabInstance_0_0->OptionalComponent_2, UnitTestPrefabObjectOptionFlag::IsInstanceModification);
+	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[1].Prefab, mScene.OptionalPrefabInstance_0_0->OptionalSceneObject_2, UnitTestPrefabObjectOptionFlag::IsInstanceModification);
 	
 	TestAssertPrefabScenario();
 	mPrefabCheckOptions.ClearAllObjectFlags();
@@ -869,22 +851,22 @@ void CoreTestSuite::TestPrefabScenario4()
 // Update Prefab2 with Prefab #2 Instance Root
 void CoreTestSuite::TestPrefabScenario5()
 {
-	UnitTestSceneB prefab1InstanceRoot_Wrapper(mPrefabTestInformation[0].InstanceRootInScene);
-	UnitTestSceneB prefab2InstanceRoot_Wrapper(prefab1InstanceRoot_Wrapper.OptionalSceneObject_0_0_PrefabInstance);
-
 	UnitTestSceneB prefab1Internals_Wrapper(mPrefabTestInformation[0].Prefab->GetRoot());
 	UnitTestSceneB prefab2Internals_Wrapper(prefab1Internals_Wrapper.OptionalSceneObject_0_0_PrefabInstance);
 
 	// Update Prefab2 from Prefab #2 Instance Root in scene hierarchy
-	PrefabUtility::UpdatePrefab(mPrefabTestInformation[1].Prefab, mPrefabTestInformation[1].InstanceRootInScene);
+	PrefabUtility::UpdatePrefab(mPrefabTestInformation[1].Prefab, mScene.OptionalPrefabInstance_0_0->Root);
+	mPrefabTestInformation[0].PrefabInternalsScene.RefreshHierarchy(mPrefabTestInformation[0].Prefab->GetRoot());
+	mPrefabTestInformation[0].PrefabInternalsScene.OptionalPrefabInstance_0_0->UpdatePrefabObjectIds(mPrefabTestInformation[0].PrefabInternalsScene.OptionalPrefabInstance_0_0->OptionalSceneObject_2);
+	mPrefabTestInformation[1].PrefabInternalsScene.RefreshHierarchy(mPrefabTestInformation[1].Prefab->GetRoot());
 
 	// Skip prefab object check as the prefab object ID will change for instance modifications, and that's as expected
-	mPrefabCheckOptions.SetFlagsForObject(UUID::kEmpty, mPrefabTestInformation[1].Prefab, prefab2Internals_Wrapper.OptionalSceneObject_2, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck);
-	mPrefabCheckOptions.SetFlagsForObject(UUID::kEmpty, mPrefabTestInformation[1].Prefab, prefab2Internals_Wrapper.OptionalComponent_2, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck);
+	mPrefabCheckOptions.SetFlagsForObject(UUID::kEmpty, mPrefabTestInformation[1].Prefab, mPrefabTestInformation[0].PrefabInternalsScene.OptionalPrefabInstance_0_0->OptionalSceneObject_2, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck);
+	mPrefabCheckOptions.SetFlagsForObject(UUID::kEmpty, mPrefabTestInformation[1].Prefab, mPrefabTestInformation[0].PrefabInternalsScene.OptionalPrefabInstance_0_0->OptionalComponent_2, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck);
 
 	// TODO - This is only needed when comparing against previous hierarchy
-	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[1].Prefab, prefab2Internals_Wrapper.OptionalSceneObject_2, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck);
-	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[1].Prefab, prefab2Internals_Wrapper.OptionalComponent_2, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck);
+	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[1].Prefab, mPrefabTestInformation[0].PrefabInternalsScene.OptionalPrefabInstance_0_0->OptionalSceneObject_2, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck);
+	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[1].Prefab, mPrefabTestInformation[0].PrefabInternalsScene.OptionalPrefabInstance_0_0->OptionalComponent_2, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck);
 
 	TestAssertPrefabScenario();
 
@@ -895,7 +877,8 @@ void CoreTestSuite::TestPrefabScenario5()
 void CoreTestSuite::TestPrefabScenario6()
 {
 	// Update Prefab1 from Prefab #1 Instance Root in scene hierarchy
-	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mPrefabTestInformation[0].InstanceRootInScene);
+	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mScene.Root);
+	mPrefabTestInformation[0].PrefabInternalsScene.RefreshHierarchy(mPrefabTestInformation[0].Prefab->GetRoot());
 
 	TestAssertPrefabScenario();
 }
@@ -904,15 +887,19 @@ void CoreTestSuite::TestPrefabScenario6()
 void CoreTestSuite::TestPrefabScenario7()
 {
 	// Create prefab 3
-	mPrefabTestInformation[2].Prefab = Prefab::Create(UnitTestSceneB::PopulateNewSceneInstance("Prefab #3 Scene Instance"), false);
+	HSceneObject prefab3NewHierarchy = UnitTestSceneB::PopulateNewSceneInstance("Prefab #3 Scene Instance");
+	mPrefabTestInformation[2].Prefab = Prefab::Create(prefab3NewHierarchy);
+	mPrefabTestInformation[2].PrefabInternalsScene = UnitTestSceneB(mPrefabTestInformation[2].Prefab->GetRoot());
+	prefab3NewHierarchy->Destroy();
 
-	// Add Prefab #2 Instance Root in the scene, as child of Prefab 2 Instance Root/SceneObject_0
-	UnitTestSceneB prefab2InstanceRoot_Wrapper(mPrefabTestInformation[1].InstanceRootInScene);
-	mPrefabTestInformation[2].InstanceRootInScene = prefab2InstanceRoot_Wrapper.SetUnitTestSceneBChildPrefab_0_0(*mPrefabTestInformation[2].Prefab);
-	mPrefabTestInformation[2].InstanceRootInScene->SetName("Prefab #3 Instance Root");
+	// Add Prefab #3 Instance Root in the scene, as child of Prefab 2 Instance Root/SceneObject_0
+	HSceneObject prefab3Instance = mScene.OptionalPrefabInstance_0_0->SetUnitTestSceneBChildPrefab_0_0(*mPrefabTestInformation[2].Prefab);
+	prefab3Instance->SetName("Prefab #3 Instance Root");
 
 	// Update Prefab1 from Prefab #1 Instance Root in scene hierarchy
-	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mPrefabTestInformation[0].InstanceRootInScene);
+	PrefabUtility::UpdatePrefab(mPrefabTestInformation[0].Prefab, mScene.Root);
+	mPrefabTestInformation[0].PrefabInternalsScene.RefreshHierarchy(mPrefabTestInformation[0].Prefab->GetRoot());
+	mScene.OptionalPrefabInstance_0_0->OptionalPrefabInstance_0_0->UpdatePrefabLinkIds();
 
 	mPrefabTestInformation[1].CheckFlags = PrefabCheckFlag::SkipPrefabInternalsCheck;
 	mPrefabTestInformation[2].CheckFlags = PrefabCheckFlag::PrefabIsInstanceModification;
@@ -925,10 +912,13 @@ void CoreTestSuite::TestPrefabScenario7()
 void CoreTestSuite::TestPrefabScenario8()
 {
 	// Update Prefab2 from Prefab #2 Instance Root in scene hierarchy
-	PrefabUtility::UpdatePrefab(mPrefabTestInformation[1].Prefab, mPrefabTestInformation[1].InstanceRootInScene);
+	PrefabUtility::UpdatePrefab(mPrefabTestInformation[1].Prefab, mScene.OptionalPrefabInstance_0_0->Root);
+	mPrefabTestInformation[0].PrefabInternalsScene.RefreshHierarchy(mPrefabTestInformation[0].Prefab->GetRoot());
+	mPrefabTestInformation[0].PrefabInternalsScene.OptionalPrefabInstance_0_0->OptionalPrefabInstance_0_0->UpdatePrefabLinkIds();
+	mPrefabTestInformation[1].PrefabInternalsScene.RefreshHierarchy(mPrefabTestInformation[1].Prefab->GetRoot());
 
 	// Skip prefab object & resource check these will change for instance modifications, and that's as expected
-	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[2].Prefab, mPrefabTestInformation[2].InstanceRootInScene, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck | UnitTestPrefabObjectOptionFlag::SkipPrefabResourceCheck, true);
+	mPrefabCheckOptions.SetFlagsForObject(mPrefabTestInformation[0].Prefab.GetId(), mPrefabTestInformation[2].Prefab, mScene.OptionalPrefabInstance_0_0->OptionalPrefabInstance_0_0->Root, UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck | UnitTestPrefabObjectOptionFlag::SkipPrefabResourceCheck, true);
 
 	TestAssertPrefabScenario();
 

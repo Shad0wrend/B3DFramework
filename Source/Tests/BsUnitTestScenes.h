@@ -103,6 +103,9 @@ namespace bs
 		/** Destroys SceneObject_1_0 and its associated component. */
 		void DestroySceneObject_1_0();
 
+		/** Refreshes the hierarchy by assigning a new root object. Original IDs are not updated, except for newly added optional objects, or objects that were destroyed. */
+		void RefreshHierarchy(const HSceneObject& root);
+
 		/** Performs an operation over scene objects in the scene. If an object has been destroyed, the predicate won't be called on it. If @p skipOptional is true, OptionalSceneObject_2 will not be visited. */
 		template <class T>
 		void PerformSceneObjectUnaryOperation(T&& predicate, bool skipOptional = false)
@@ -140,6 +143,18 @@ namespace bs
 			if(Component_1_0.IsValid()) predicate(Component_1_0, other.Component_1_0);
 			if(!skipOptional && OptionalComponent_2.IsValid()) predicate(OptionalComponent_2, other.OptionalComponent_2);
 		}
+
+		void AddOrUpdateIds(HSceneObject object, bool updatePrefabObjectId = true, bool updatePrefabResourceId = false, bool allowAddNew = false);
+		void AddOrUpdateIds(bool updatePrefabObjectId = true, bool updatePrefabResourceId = false, bool allowAddNew = false) { return AddOrUpdateIds(Root, updatePrefabObjectId, updatePrefabResourceId, allowAddNew); }
+
+		void UpdatePrefabLinkIds(HSceneObject object) { AddOrUpdateIds(object, true, true, false); }
+		void UpdatePrefabLinkIds() { UpdatePrefabLinkIds(Root); }
+
+		void UpdatePrefabObjectIds(HSceneObject object) { AddOrUpdateIds(object, true, false, false); }
+		void UpdatePrefabObjectIds() { UpdatePrefabObjectIds(Root); }
+
+		void AddNewObjectIds(HSceneObject object) { AddOrUpdateIds(object, true, true, true); }
+		void AddNewObjectIds() { AddNewObjectIds(Root); }
 
 		/** Check if all current game object match the original recorded IDs. */
 		void TestAssertOriginalIds(TestSuite& testSuite);

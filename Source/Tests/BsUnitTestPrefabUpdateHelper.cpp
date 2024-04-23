@@ -180,34 +180,4 @@ namespace bs
 		}
 	}
 
-	void UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatch_UnitTestSceneB(TestSuite& testSuite, const HSceneObject& lhsRoot, const HSceneObject& rhsRoot, u32 prefabIndex, const TArray<UnitTestPrefabInformation>& prefabs, const UUID& instanceRootId, const UnitTestPrefabObjectOptions& options)
-	{
-		UnitTestSceneB unitTestSceneLHS(lhsRoot);
-		UnitTestSceneB unitTestSceneRHS(rhsRoot);
-
-		const UnitTestPrefabInformation& prefabInformation = prefabs[prefabIndex];
-
-		unitTestSceneLHS.PerformSceneObjectBinaryOperation(
-			unitTestSceneRHS, [&testSuite, &options, &instanceRootId, &prefabInformation](const HSceneObject& lhs, const HSceneObject& rhs) { 
-			UnitTestPrefabObjectOptionFlags flags = options.GetFlagsForObject(instanceRootId, prefabInformation.Prefab.GetId(), lhs->GetName());
-
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipGameObjectCheck) || lhs.GetId() == rhs.GetId())
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck) || lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId())
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipPrefabResourceCheck) || lhs->GetPrefabResourceId() == rhs->GetPrefabResourceId())
-		});
-		unitTestSceneLHS.PerformComponentBinaryOperation(
-			unitTestSceneRHS, [&testSuite, &options, &instanceRootId, &prefabInformation](const HComponent& lhs, const HComponent& rhs)
-			{
-			UnitTestPrefabObjectOptionFlags flags = options.GetFlagsForObject(instanceRootId, prefabInformation.Prefab->GetId(), lhs->GetName());
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipGameObjectCheck) || lhs.GetId() == rhs.GetId())
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, flags.IsSet(UnitTestPrefabObjectOptionFlag::SkipPrefabObjectCheck) || lhs->GetPrefabObjectId() == rhs->GetPrefabObjectId())
-		});
-
-		if(unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance.IsValid())
-			TestAssertPrefabLinksMatch_UnitTestSceneB(testSuite, unitTestSceneLHS.OptionalSceneObject_0_0_PrefabInstance, unitTestSceneRHS.OptionalSceneObject_0_0_PrefabInstance, prefabIndex + 1, prefabs, instanceRootId, options);
-
-		if(unitTestSceneLHS.OptionalSceneObject_1_1_PrefabInstance.IsValid())
-			TestAssertPrefabLinksMatch_UnitTestSceneB(testSuite, unitTestSceneLHS.OptionalSceneObject_1_1_PrefabInstance, unitTestSceneRHS.OptionalSceneObject_1_1_PrefabInstance, prefabIndex + 1, prefabs, instanceRootId, options);
-	}
-
 } // namespace bs
