@@ -74,13 +74,13 @@ namespace bs
 		void SetPrefabObjectId(const UUID& id) { mPrefabObjectId = id; }
 
 		/**
-		 * Replaces the instance data with another objects instance data. This object will basically become the original
+		 * Replaces the instance data with another object's instance data. This object will basically become the original
 		 * owner of the provided instance data as far as all game object handles referencing it are concerned.
 		 *
 		 * @note
 		 * No alive objects should ever be sharing the same instance data. This can be used for restoring dead handles.
 		 */
-		virtual void SetInstanceData(const SPtr<GameObjectInstanceData>& other);
+		void SetInstanceData(const SPtr<GameObjectInstanceData>& other);
 
 		/** Returns instance data that identifies this GameObject and is used for referencing by game object handles. */
 		virtual const SPtr<GameObjectInstanceData>& GetInstanceData() const { return mInstanceData; }

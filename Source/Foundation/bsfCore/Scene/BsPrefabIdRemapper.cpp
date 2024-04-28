@@ -1,14 +1,16 @@
 //************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Scene/BsPrefabIdRemapper.h"
+
+#include "BsGameObjectCollection.h"
 #include "BsPrefab.h"
 #include "BsSceneObject.h"
 #include "Resources/BsResources.h"
 
 using namespace bs;
 
-PrefabIdRemapper::PrefabIdRemapper(const HSceneObject& originalPrefabHierarchy, const UUID& rootPrefabId)
-	:mPrefabId(rootPrefabId)
+PrefabIdRemapper::PrefabIdRemapper(const HSceneObject& originalPrefabHierarchy, const UUID& rootPrefabId, const SPtr<GameObjectCollection>& newGameObjectCollection)
+	:mPrefabId(rootPrefabId), mNewGameObjectCollection(newGameObjectCollection)
 {
 	PrefabInformation rootPrefabInformation;
 	rootPrefabInformation.PrefabId = rootPrefabId;
@@ -46,7 +48,7 @@ UnorderedMap<UUID, UUID> PrefabIdRemapper::RestoreOriginalPrefabIds(const HScene
 
 		// Deduce and assign component IDs
 		// Note: Important to process components before the scene object, as we depend on the owning scene object's IDs to be unchanged
-		for(auto& component : sceneObject->GetComponents())
+		for(auto component : sceneObject->GetComponents())
 		{
 			const UUID originalComponentId = component.GetId();
 			PrefabObjectIdAndLinkInformation componentIds = DeduceInternalPrefabIds(component->GetPrefabObjectId(), currentObjectToProcess.SceneObject->GetPrefabResourceId(), currentObjectToProcess);
@@ -166,10 +168,9 @@ PrefabIdRemapper::PrefabObjectIdAndLinkInformation PrefabIdRemapper::DeduceInter
 	return output;
 }
 
-void PrefabIdRemapper::AssignInternalPrefabIds(const GameObjectHandleBase& gameObject, const UUID& gameObjectIdInPrefab, const PrefabLinkInformation& linkInformationInPrefab, const UUID& rootPrefabResourceId, i32 nestingLevel)
+void PrefabIdRemapper::AssignInternalPrefabIds(GameObjectHandleBase& gameObject, const UUID& gameObjectIdInPrefab, const PrefabLinkInformation& linkInformationInPrefab, const UUID& rootPrefabResourceId, i32 nestingLevel)
 {
-	gameObject->SetId(gameObjectIdInPrefab);
-	gameObject.GetSharedHandleData()->Id = gameObjectIdInPrefab;
+	mNewGameObjectCollection->ChangeGameObjectId(gameObject, gameObjectIdInPrefab);
 
 	if(nestingLevel == 0) // Root objects just point to self
 		gameObject->SetPrefabObjectId(gameObjectIdInPrefab);

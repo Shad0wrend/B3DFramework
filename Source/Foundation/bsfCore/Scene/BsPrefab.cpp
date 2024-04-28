@@ -113,7 +113,7 @@ UnorderedMap<UUID, UUID> Prefab::ReplaceInternalHierarchy(const HSceneObject& sc
 		entry->Destroy();
 
 	// Ensure the prefab hierarchy keeps the original ids
-	PrefabIdRemapper idRemapper(mRoot, mUUID);
+	PrefabIdRemapper idRemapper(mRoot, mUUID, newGameObjectCollection);
 	UnorderedMap<UUID, UUID> remappedGameObjectIDs = idRemapper.RestoreOriginalPrefabIds(newRoot);
 
 	// Link the source hierarchy to this prefab if:

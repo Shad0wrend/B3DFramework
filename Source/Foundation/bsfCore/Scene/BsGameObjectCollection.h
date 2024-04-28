@@ -71,6 +71,7 @@ namespace bs
 		 *	- @p originalObjectInstanceData is updated so it points to the new object (as referenced by @p handle)
 		 *  - @p newObjectHandle is updated so it points to @p originalObjectInstanceData 
 		 *	- Newly created game object is updated so it holds @p originalObjectInstanceData 
+		 *  - Collection ID mapping is updated in case object ID changed
 		 *
 		 * This works because any old handles will point to the original GameObjectInstanceData, which we just patched to
 		 * point to the new object.
@@ -80,6 +81,9 @@ namespace bs
 		 * this handle.
 		 */
 		void ReplaceGameObjectInstance(GameObjectHandleBase& newObjectHandle, const SPtr<GameObjectInstanceData>& originalObjectInstanceData);
+
+		/** Changes the instance ID of the provided game object. */
+		void ChangeGameObjectId(GameObjectHandleBase& gameObject, const UUID& newId);
 
 		/**
 		 * Notifies the collection that we are about to register game objects whose handle might not be immediately valid. This

@@ -108,7 +108,6 @@ namespace bs
 		 *  @{
 		 */
 
-		void SetInstanceData(const SPtr<GameObjectInstanceData>& other) override;
 		void SetOwnerCollection(const SPtr<GameObjectCollection>& collection) override;
 
 		/**

@@ -54,7 +54,7 @@ namespace bs
 		 * prefab, or any other prefab. All other currently loaded instances of @p prefab will be updated to
 		 * match the updated hierarchy.
 		 */
-		static void UpdatePrefab(const HPrefab& prefab, const HSceneObject& root);
+		static void UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObject& sceneObjectToUpdateWith);
 
 		// TODO - Everything below should be internal
 

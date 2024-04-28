@@ -120,7 +120,7 @@ namespace bs
 			PrefabLinkInformation LinkInformation;
 		};
 
-		PrefabIdRemapper(const HSceneObject& originalPrefabHierarchy, const UUID& rootPrefabId);
+		PrefabIdRemapper(const HSceneObject& originalPrefabHierarchy, const UUID& rootPrefabId, const SPtr<GameObjectCollection>& newGameObjectCollection);
 
 		/**
 		 * Updates all objects in @p hierarchyRoot with IDs so they match previously stored prefab hierarchy.
@@ -161,9 +161,10 @@ namespace bs
 		 * @param rootPrefabResourceId			ID of the prefab resource that the resulting hierarchy will be stored in.
 		 * @param nestingLevel					Current depth of nested prefab we are at. 0 for root, 1 for first nested prefab, etc.
 		 */
-		static void AssignInternalPrefabIds(const GameObjectHandleBase& gameObject, const UUID& gameObjectIdInPrefab, const PrefabLinkInformation& linkInformationInPrefab, const UUID& rootPrefabResourceId, i32 nestingLevel);
+		void AssignInternalPrefabIds(GameObjectHandleBase& gameObject, const UUID& gameObjectIdInPrefab, const PrefabLinkInformation& linkInformationInPrefab, const UUID& rootPrefabResourceId, i32 nestingLevel);
 
 		UnorderedMap<UUID, PrefabInformation> mPrefabCache;
 		UUID mPrefabId; /**< ID of the prefab we're restoring IDs for. */
+		SPtr<GameObjectCollection> mNewGameObjectCollection; /**< Game object collection to use for remapping the object IDs. */
 	};
 } // namespace bs

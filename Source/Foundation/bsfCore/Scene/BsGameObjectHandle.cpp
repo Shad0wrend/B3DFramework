@@ -39,7 +39,6 @@ void GameObjectHandleBase::SetObject(const SPtr<GameObject>& object)
 
 	mSharedHandleData->InstanceData = instanceData;
 	mSharedHandleData->Id = id;
-			
 }
 
 RTTITypeBase* GameObjectHandleBase::GetRttiStatic()

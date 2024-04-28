@@ -113,15 +113,6 @@ void SceneObject::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
 	}
 }
 
-void SceneObject::SetInstanceData(const SPtr<GameObjectInstanceData>& other)
-{
-	GameObject::SetInstanceData(other);
-
-	// Instance data changed, so make sure to refresh the handles to reflect that
-	SPtr<SceneObject> thisPtr = GetHandle().GetShared();
-	mThisHandle.SetObject(thisPtr);
-}
-
 void SceneObject::SetOwnerCollection(const SPtr<GameObjectCollection>& collection)
 {
 	for(const auto& component : mComponents)

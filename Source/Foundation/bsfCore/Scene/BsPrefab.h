@@ -81,6 +81,9 @@ namespace bs
 		 */
 		HSceneObject GetRoot() const { return mRoot; }
 
+		/** Returns the game object collection that owns all the game objects in the prefab. */
+		SPtr<GameObjectCollection> GetGameObjectCollection() const { return mGameObjectCollection; }
+
 		/**
 		 * Creates the clone of the prefab's current hierarchy but doesn't instantiate it.
 		 *

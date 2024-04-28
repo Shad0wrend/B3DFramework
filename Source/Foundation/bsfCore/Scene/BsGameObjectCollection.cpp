@@ -122,11 +122,44 @@ void GameObjectCollection::ReplaceGameObjectInstance(GameObjectHandleBase& newOb
 {
 	B3D_ASSERT(originalObjectInstanceData != nullptr);
 
+	const UUID originalObjectId = newObjectHandle.GetId();
 	const SPtr<GameObject> newObject = newObjectHandle.GetShared();
-	B3D_ENSURE(newObject == nullptr || newObjectHandle.GetId() == newObject->GetId());
 
 	newObjectHandle->SetInstanceData(originalObjectInstanceData);
 	newObjectHandle.SetObject(newObject);
+
+	const UUID newObjectId = newObjectHandle.GetId();
+	if(originalObjectId != newObjectId)
+	{
+		if(auto found = mObjects.find(originalObjectId); found != mObjects.end())
+		{
+			GameObjectHandleBase handle = found->second;
+
+			mObjects.erase(found);
+			mObjects[newObjectId] = handle;
+		}
+	}
+}
+
+void GameObjectCollection::ChangeGameObjectId(GameObjectHandleBase& gameObject, const UUID& newId)
+{
+	const UUID originalObjectId = gameObject.GetId();
+
+	if(originalObjectId != newId)
+	{
+		if(!gameObject.IsDestroyed(false))
+			gameObject->SetId(newId);
+
+		gameObject.GetSharedHandleData()->Id = newId;
+
+		if(auto found = mObjects.find(originalObjectId); found != mObjects.end())
+		{
+			GameObjectHandleBase handle = found->second;
+
+			mObjects.erase(found);
+			mObjects[newId] = handle;
+		}
+	}
 }
 
 void GameObjectCollection::QueueForDestroy(const GameObjectHandleBase& object)
