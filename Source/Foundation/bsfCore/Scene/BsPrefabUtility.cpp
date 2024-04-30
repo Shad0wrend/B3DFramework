@@ -32,7 +32,7 @@ struct PrefabInstanceData
  *
  * @note	Does not recurse into child prefab instances.
  */
-void RecordInstanceData(const HSceneObject& sceneObject, UnorderedMap<UUID, PrefabInstanceData>& outInstanceData)
+static void RecordInstanceData(const HSceneObject& sceneObject, UnorderedMap<UUID, PrefabInstanceData>& outInstanceData)
 {
 	sceneObject->IterateHierarchy(
 		[&outInstanceData](const HSceneObject& sceneObject)
@@ -59,7 +59,7 @@ void RecordInstanceData(const HSceneObject& sceneObject, UnorderedMap<UUID, Pref
  *
  * @note	Does not recurse into child prefab instances.
  */
-void RestoreInstanceData(const HSceneObject& sceneObject, const UnorderedMap<UUID, PrefabInstanceData>& instanceData)
+static void RestoreInstanceData(const HSceneObject& sceneObject, const UnorderedMap<UUID, PrefabInstanceData>& instanceData)
 {
 	SPtr<GameObjectCollection> gameObjectCollection = sceneObject->GetOwnerCollection().lock();
 	if(!B3D_ENSURE(gameObjectCollection))
@@ -109,6 +109,57 @@ struct PrefabInstanceRoot
 	HSceneObject SceneObjectInParentPrefab;
 	HPrefab PrefabToUpdateFrom;
 };
+
+struct ObjectInPrefab
+{
+	ObjectInPrefab(HPrefab prefab, HGameObject instanceInPrefab)
+		: Prefab(prefab), InstanceInPrefab(instanceInPrefab)
+	{ }
+
+	HPrefab Prefab;
+	HGameObject InstanceInPrefab;
+};
+
+/** Looks up a counterpart of the provided game object in the specified prefab. Under the hood loads the prefab as required. */
+static Optional<ObjectInPrefab> FindInstanceInPrefab(const GameObjectHandleBase& gameObject, const UUID& prefabResourceId)
+{
+	const HPrefab prefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
+
+	if(!prefab.IsLoaded())
+	{
+		B3D_LOG(Error, Prefab, "Unable to find instance in prefab. Prefab {0} cannot be loaded.", prefabResourceId);
+		return {};
+	}
+
+	const SPtr<GameObjectCollection>& gameObjectCollection = prefab->GetGameObjectCollection();
+	if(!B3D_ENSURE(gameObjectCollection))
+		return {};
+
+	HGameObject instanceInPrefab;
+	if(!gameObjectCollection->TryGetObject(gameObject->GetPrefabObjectId(), instanceInPrefab))
+		return {};
+
+	return ObjectInPrefab(prefab, instanceInPrefab);
+}
+
+/** Looks up a counterpart of the provided scene object in the prefab it is an instance of. Under the hood loads the prefab as required. */
+static Optional<ObjectInPrefab> FindInstanceInPrefab(const HSceneObject& sceneObject)
+{
+	if(!sceneObject->IsPrefabInstance())
+		return {};
+
+	return FindInstanceInPrefab(sceneObject, sceneObject->GetPrefabResourceId());
+}
+
+/** Looks up a counterpart of the provided component in the prefab it is an instance of. Under the hood loads the prefab as required. */
+static Optional<ObjectInPrefab> FindInstanceInPrefab(const HComponent& component)
+{
+	HSceneObject sceneObject = component->SceneObject();
+	if(!sceneObject->IsPrefabInstance())
+		return {};
+
+	return FindInstanceInPrefab(component, sceneObject->GetPrefabResourceId());
+}
 
 HPrefab PrefabCache::FindOrLoadPrefab(const UUID& prefabId)
 {
@@ -229,34 +280,105 @@ HSceneObject PrefabUtility::UpdateInstanceFromPrefab(const HSceneObject& instanc
 	return newInstance;
 }
 
+/**
+ * Iterates the provided hierarchy and maps each game object to the bottom-most prefab in the prefab hierarchy.
+ * This is only relevant if @p root is part of prefab instance hierarchy. If @p root itself is a prefab instance,
+ * but has not parent hierarchy, this is not considered being a part of a prefab instance hierarchy. Objects
+ * that are not part of a prefab instance hierarchy will not be included in the map.
+ */
+static UnorderedMap<UUID, PrefabLinkInformation> MapInstanceIdBottomMostPrefab(const HSceneObject& root)
+{
+	// First iterate parents of @p sceneObjectToUpdateWith, and find the root-most prefab instance
+	UUID rootInstancePrefabId;
+	{
+		// Start with the parent, because we don't care if sceneObjectToUpdateWith is an instance itself, as that doesn't require special handling
+		HSceneObject currentObject = root->GetParent();
+		while(currentObject.IsValid())
+		{
+			if(!currentObject->IsPrefabInstance())
+				break;
+
+			rootInstancePrefabId = currentObject->GetPrefabResourceId();
+			currentObject = currentObject->GetParent();
+		}
+	}
+
+	// For each object in the provided instance hierarchy, determine the bottom-most prefab it has been defined in, relative to the root prefab instance
+	UnorderedMap<UUID, PrefabLinkInformation> instanceIdToBottomMostPrefab;
+	if(!rootInstancePrefabId.Empty())
+	{
+		root->IterateHierarchy([&rootInstancePrefabId, &instanceIdToBottomMostPrefab](const HSceneObject& sceneObject) {
+			if(sceneObject->GetPrefabResourceId() == rootInstancePrefabId) // If an object is not part of the root instance, we don't need special handling
+			{
+				// Map scene object
+				{
+					HPrefab bottomMostPrefab = nullptr;
+					HSceneObject sceneObjectInBottomMostPrefab = sceneObject;
+
+					while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(sceneObjectInBottomMostPrefab))
+					{
+						if(!found.has_value())
+							break;
+
+						sceneObjectInBottomMostPrefab = B3DStaticGameObjectCast<SceneObject>(found->InstanceInPrefab);
+						bottomMostPrefab = found->Prefab;
+
+						// Reached the bottom-most prefab, as the instance points to itself
+						if(bottomMostPrefab->GetId() == sceneObjectInBottomMostPrefab->GetPrefabResourceId())
+							break;
+					}
+
+					if(bottomMostPrefab != nullptr)
+					{
+						instanceIdToBottomMostPrefab[sceneObject.GetId()] = PrefabLinkInformation(sceneObjectInBottomMostPrefab->GetId(), bottomMostPrefab->GetId());
+					}
+				}
+
+				// Map components
+				for(const auto& component : sceneObject->GetComponents())
+				{
+					HPrefab bottomMostPrefab = nullptr;
+					HComponent componentInBottomMostPrefab = component;
+
+					while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(componentInBottomMostPrefab))
+					{
+						if(!found.has_value())
+							break;
+
+						componentInBottomMostPrefab = B3DStaticGameObjectCast<Component>(found->InstanceInPrefab);
+						bottomMostPrefab = found->Prefab;
+
+						// Reached the bottom-most prefab, as the instance points to itself
+						if(bottomMostPrefab->GetId() == componentInBottomMostPrefab->SceneObject()->GetPrefabResourceId())
+							break;
+					}
+
+					if(bottomMostPrefab != nullptr)
+					{
+						instanceIdToBottomMostPrefab[component.GetId()] = PrefabLinkInformation(componentInBottomMostPrefab->GetId(), bottomMostPrefab->GetId());
+					}
+				}
+			}
+
+			return true;
+		}, nullptr, true);
+	}
+
+	return instanceIdToBottomMostPrefab;
+}
+
 void PrefabUtility::UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObject& sceneObjectToUpdateWith)
 {
 	if(!B3D_ENSURE(prefabToUpdate.IsLoaded(false)))
 		return;
 
+	// For each object in the provided instance hierarchy, determine the bottom-most prefab it has been defined in, relative to the root prefab instance
+	UnorderedMap<UUID, PrefabLinkInformation> instanceIdToBottomMostPrefab = MapInstanceIdBottomMostPrefab(sceneObjectToUpdateWith);
+
 	FrameScope frameScope;
 
-	// TODO - Move outside
-	auto fnFindInstanceInPrefab = [](const HSceneObject& sceneObject) -> Optional<PrefabInstanceRoot> {
-		if(!sceneObject->IsPrefabInstance())
-			return {};
-
-		const UUID prefabId = sceneObject->GetPrefabResourceId();
-		const HPrefab prefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabId, false, ResourceLoadFlag::None));
-
-		if(!prefab.IsLoaded()) // TODO - Log error?
-			return {};
-
-		const SPtr<GameObjectCollection>& gameObjectCollection = prefab->GetGameObjectCollection();
-		if(!B3D_ENSURE(gameObjectCollection))
-			return {};
-
-		HGameObject instanceInPrefab;
-		if(!gameObjectCollection->TryGetObject(sceneObject->GetPrefabObjectId(), instanceInPrefab))
-			return {};
-
-		return PrefabInstanceRoot(prefab, B3DStaticGameObjectCast<SceneObject>(instanceInPrefab), nullptr);
-	};
+	PrefabCache prefabCache;
+	prefabCache.AddToCache(prefabToUpdate);
 
 	// Is the provided hierarchy already an instance of a prefab? If so, record a list of prefab instances that are parents of the instance we're updating. We'll need this below.
 	FrameVector<PrefabInstanceRoot> prefabInstanceParents;
@@ -264,10 +386,13 @@ void PrefabUtility::UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObje
 	{
 		HSceneObject currentSceneObject = sceneObjectToUpdateWith;
 		HPrefab parentPrefab = nullptr;
-		while(Optional<PrefabInstanceRoot> maybePrefabInstanceRoot = fnFindInstanceInPrefab(currentSceneObject))
+		while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(currentSceneObject))
 		{
-			currentSceneObject = maybePrefabInstanceRoot->SceneObjectInParentPrefab;
-			parentPrefab = maybePrefabInstanceRoot->ParentPrefab;
+			if(!found.has_value())
+				break;
+
+			currentSceneObject = B3DStaticGameObjectCast<SceneObject>(found->InstanceInPrefab);
+			parentPrefab = found->Prefab;
 
 			// Current prefab becomes the prefab to update from for the parent
 			if(!prefabInstanceParents.empty())
@@ -276,36 +401,39 @@ void PrefabUtility::UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObje
 			if(parentPrefab == prefabToUpdate)
 				break;
 
-			prefabInstanceParents.push_back(std::move(maybePrefabInstanceRoot.value()));
+			prefabInstanceParents.push_back(PrefabInstanceRoot(found->Prefab, currentSceneObject, nullptr));
 		}
 	}
 
 	// TODO - Consider moving much of the logic from ReplaceInternalHierarchy to here
-	// TODO - Can the above remapping be utilized to handle assignment of all instance IDs after creating/updating prefab?
-	// - Probably. If UpdateFromPrefab is called on the instance itself, it should remap
-	// - But that doesn't work for brand new instances unless we also perform some kind of ID remapping
 	UnorderedMap<UUID, UUID> instanceIdToUpdatePrefabId = prefabToUpdate->ReplaceInternalHierarchy(sceneObjectToUpdateWith);
+
+	// TODO - Once I implement the new remapping logic, can I use that for the initial prefab object ID assignment as well?
 
 	// If root prefab contains an object that was an instance modification, and is now part of the update prefab, it's prefab object ID will change
 	// (as original object IDs doesn't link to anything). So we need to know to remap that prefab object ID to the new prefab object ID.
 	UnorderedMap<UUID, UUID> rootPrefabIdToUpdatePrefabId;
 	sceneObjectToUpdateWith->IterateHierarchy([&instanceIdToUpdatePrefabId, &rootPrefabIdToUpdatePrefabId](const HSceneObject& child) mutable -> bool
 	{
+		// TODO - Will this work if root instance contains multiple instances of the same prefab? In that case we'll have multiple objects with
+		// the same 'child->GetPrefabObjectId()'. e.g. if we add two instance of prefab #4 as children of prefab #2, and then update prefab #2
 		if(auto found = instanceIdToUpdatePrefabId.find(child.GetId()); found != instanceIdToUpdatePrefabId.end())
-			rootPrefabIdToUpdatePrefabId.insert(std::make_pair(child->GetPrefabObjectId(), found->second));
+		{
+			auto result = rootPrefabIdToUpdatePrefabId.insert(std::make_pair(child->GetPrefabObjectId(), found->second));
+			B3D_ENSURE(result.second);
+		}
 
 		return true;
 	},
 	   [&instanceIdToUpdatePrefabId, &rootPrefabIdToUpdatePrefabId](const HComponent& component) mutable -> void
 	   {
-		   if(auto found = instanceIdToUpdatePrefabId.find(component.GetId()); found != instanceIdToUpdatePrefabId.end())
-			   rootPrefabIdToUpdatePrefabId.insert(std::make_pair(component->GetPrefabObjectId(), found->second));
+	   		if(auto found = instanceIdToUpdatePrefabId.find(component.GetId()); found != instanceIdToUpdatePrefabId.end())
+	   		{
+	   			auto result = rootPrefabIdToUpdatePrefabId.insert(std::make_pair(component->GetPrefabObjectId(), found->second));
+				B3D_ENSURE(result.second);
+	   		}
 	   },
 	   true);
-
-	// Update all live prefab instances
-	PrefabCache prefabCache;
-	prefabCache.AddToCache(prefabToUpdate);
 
 	// If our instance is part of another prefab's instance, we need to make sure the instance points to the correct prefab object IDs.
 	// This is needed because if an object is an instance modification of some parent prefab instance,
@@ -364,6 +492,7 @@ void PrefabUtility::UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObje
 		// the prefab could contain multiple instances of our update prefab, and we're only updating one that's related to @p root
 	}
 
+	// Update all live scene instances
 	const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& sceneInstances = GetSceneManager().GetAllSceneInstances();
 	for(const auto& pair : sceneInstances)
 	{
@@ -375,6 +504,7 @@ void PrefabUtility::UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObje
 		}
 	}
 
+	// Update all live prefabs
 	UnorderedSet<Prefab*> livePrefabs = PrefabManager::Instance().GetLivePrefabs();
 	for(const auto& entry : livePrefabs)
 	{

@@ -109,7 +109,17 @@ PrefabIdRemapper::PrefabObjectIdAndLinkInformation PrefabIdRemapper::DeduceInter
 	//       the process until we reach our active prefab, or find no more prefab links.
 	//     - If we don't find our active prefab, we generate a new instance ID.
 
-	// TODO - Describe process for deducing prefab links
+	// Process to convert prefab resource ID -> internal prefab resource ID is similar as above, with a few differences:
+	// 1. If the object has no prefab object ID, we assign the prefab ID of the parent scene object. If no parent object, the active prefab ID is used.
+	// 2. If unable to find a matching object in the active prefab (using process described during prefab object ID lookup), resource ID is assigned
+	//    depending on the current nesting level:
+	//    - If root (nestingLevel == 0), we take the resource ID directly from the instance scene object, as this is a newly added nested prefab.
+	//      This is because such object must be a part of some other prefab (it has a prefab object ID, but not our prefab resource ID), and it
+	//      hasn't been registered with our prefab just yet (its prefab object ID was not found in the active prefab).
+	//    - If not root (nestingLevel > 0), we take the prefab ID from the parent scene object. This is a newly added nested prefab that is
+	//      treated as an instance modification. It must be an instance modification because of its nesting level, because if it was part of
+	//      its parent prefab, it would have already been linked to that prefab and nesting level would be 0. We assign such an object
+	//		resource ID of the parent, as we expect the instance modification might become part of the parent.
 
 	PrefabObjectIdAndLinkInformation output;
 
@@ -122,9 +132,6 @@ PrefabIdRemapper::PrefabObjectIdAndLinkInformation PrefabIdRemapper::DeduceInter
 
 		return output;
 	}
-	// TODO - Improved process for prefab links?
-	//  - prefabResourceId initially provided should be an exact link depending on the current object (rather than always the root)
-	//  - 
 
 	// Find prefab link IDs in the original hierarchy
 	const UnorderedMap<UUID, PrefabLinkInformation>& prefabHierarchyIds = GetOrPopulatePrefabInformation(prefabResourceId).PrefabHierarchyIds;
@@ -146,12 +153,12 @@ PrefabIdRemapper::PrefabObjectIdAndLinkInformation PrefabIdRemapper::DeduceInter
 	}
 
 	output.GameObjectId = UUIDGenerator::GenerateRandom();
+	output.LinkInformation.PrefabObjectId = prefabObjectId;
 
 	// This is an object with a prefab link, but its not part of the top-most instance, which means its a newly added nested prefab and needs a new ID
 	// and link IDs will be taken from the instance itself.
 	if(nestingLevel == 0)
 	{
-		output.LinkInformation.PrefabObjectId = prefabObjectId;
 		output.LinkInformation.PrefabResourceId = associatedSceneObjectInformation.SceneObject->GetPrefabResourceId();
 
 		if(!B3D_ENSURE(!output.LinkInformation.PrefabResourceId.Empty()))
@@ -161,7 +168,6 @@ PrefabIdRemapper::PrefabObjectIdAndLinkInformation PrefabIdRemapper::DeduceInter
 	// need to be taken from the prefab it is part of (as the current link IDs point to that other prefab)
 	else
 	{
-		output.LinkInformation.PrefabObjectId = prefabObjectId;
 		output.LinkInformation.PrefabResourceId = prefabResourceId;
 	}
 
