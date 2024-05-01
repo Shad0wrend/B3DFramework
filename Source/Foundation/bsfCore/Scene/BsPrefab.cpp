@@ -90,7 +90,7 @@ void Prefab::Destroy()
 	Resource::Destroy();
 }
 
-UnorderedMap<UUID, UUID> Prefab::ReplaceInternalHierarchy(const HSceneObject& sceneObject)
+UnorderedMap<UUID, UUID> Prefab::ReplaceInternalHierarchy(const HSceneObject& sceneObject, bool assignIds)
 {
 	const SPtr<GameObjectCollection> newGameObjectCollection = GameObjectCollection::Create();
 	HSceneObject newRoot = sceneObject->Clone(newGameObjectCollection, false, true);
@@ -120,30 +120,33 @@ UnorderedMap<UUID, UUID> Prefab::ReplaceInternalHierarchy(const HSceneObject& sc
 	//  - The source hierarchy is not a prefab instance of any prefab yet
 	//  - The source hierarchy is a root of a prefab instance (this may be an instance of this prefab, or some other prefab, in both
 	//    cases we need to make the hierarchy link to this prefab)
-	if(!sceneObject->IsPrefabInstance() || sceneObject->IsPrefabInstanceRoot())
+	if(assignIds)
 	{
-		B3D_ASSERT(mUUID != UUID::kEmpty);
-		sceneObject->IterateHierarchy([this, &remappedGameObjectIDs](const HSceneObject& sceneObject)
-									  {
-		if(sceneObject->HasFlag(SOF_DontSave))
-			return false;
-
-		if(auto found = remappedGameObjectIDs.find(sceneObject.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
+		if(!sceneObject->IsPrefabInstance() || sceneObject->IsPrefabInstanceRoot())
 		{
-			sceneObject->SetPrefabObjectId(found->second);
-			sceneObject->SetPrefabResourceId(mUUID);
-		}
+			 B3D_ASSERT(mUUID != UUID::kEmpty);
+			 sceneObject->IterateHierarchy([this, &remappedGameObjectIDs](const HSceneObject& sceneObject)
+										  {
+			 if(sceneObject->HasFlag(SOF_DontSave))
+				return false;
 
-		return true; },
-		  [this, &remappedGameObjectIDs](const HComponent& component)
-		  {
-			  if(auto found = remappedGameObjectIDs.find(component.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
-				  component->SetPrefabObjectId(found->second);
-		  });
-	}
-	else
-	{
-		// Otherwise, we rely on the caller to call UpdateFromPrefab on all instances of this prefab, including @p sceneObject
+			 if(auto found = remappedGameObjectIDs.find(sceneObject.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
+			{
+				sceneObject->SetPrefabObjectId(found->second);
+				sceneObject->SetPrefabResourceId(mUUID);
+			 }
+
+			 return true; },
+			   [this, &remappedGameObjectIDs](const HComponent& component)
+			   {
+				  if(auto found = remappedGameObjectIDs.find(component.GetId()); B3D_ENSURE(found != remappedGameObjectIDs.end()))
+					  component->SetPrefabObjectId(found->second);
+			   });
+		}
+		else
+		{
+			// Otherwise, we rely on the caller to call UpdateFromPrefab on all instances of this prefab, including @p sceneObject
+		}
 	}
 
 	// Clear the delta as the prefab was just updated to match the hierarchy exactly

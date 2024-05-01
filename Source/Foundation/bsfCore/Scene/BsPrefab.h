@@ -115,7 +115,7 @@ namespace bs
 		 * Replaces the contents of this prefab with new contents from the provided object. Object will be automatically
 		 * linked to this prefab. Returns a map of @p sceneObject IDs that were remapped to new IDs within the prefab.
 		 */
-		UnorderedMap<UUID, UUID> ReplaceInternalHierarchy(const HSceneObject& sceneObject);
+		UnorderedMap<UUID, UUID> ReplaceInternalHierarchy(const HSceneObject& sceneObject, bool assignIds = true);
 
 		/** Updates the internal prefab version to a new value. You should call this after modifying the prefab hierarchy. */
 		void TickPrefabVersion();

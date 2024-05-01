@@ -281,12 +281,51 @@ HSceneObject PrefabUtility::UpdateInstanceFromPrefab(const HSceneObject& instanc
 }
 
 /**
- * Iterates the provided hierarchy and maps each game object to the bottom-most prefab in the prefab hierarchy.
- * This is only relevant if @p root is part of prefab instance hierarchy. If @p root itself is a prefab instance,
- * but has not parent hierarchy, this is not considered being a part of a prefab instance hierarchy. Objects
- * that are not part of a prefab instance hierarchy will not be included in the map.
+ * Iterates the provided hierarchy and for each object visits the prefab resource as referenced by the object. If the visited object
+ * itself contains a prefab link, its prefab resource is visited as well. Returns the game object ID within the last prefab that
+ * is referencing the object, excluding the prefabs that own the object (cases where object links to its own prefab).
+ *
+ * e.g. if we have this hierarchy:
+ *   ***Scene***
+ *   Root
+ *     PFB1 Instance [Game Object ID = OBI1, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+ *       PFB2 Instance [Game Object ID = OBI2, Prefab Object ID = OB12, Prefab Resource ID = PFB1]
+ *         Optional object [Game Object ID = OBI3, Prefab Object ID = OB13, Prefab Resource ID = PFB1]
+ *
+ *   ***PFB1***
+ *   PFB1 Instance [Game Object ID = OB11, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+ *     PFB2 Instance [Game Object ID = OB12, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+ *       Optional object [Game Object ID = OB13, Prefab Object ID = OB13, Prefab Resource ID = PFB2]
+ *
+ *   ***PFB2***
+ *   PFB2 Instance [Game Object ID = OB21, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+ *
+ * For Scene/Optional object, this method would return { OBI3 -> OB13 }. As PFB1 is the last object
+ * that links to Optional object.
+ *
+ * Another example with a nested prefab:
+ *   ***Scene***
+ *   Root
+ *     PFB1 Instance [Game Object ID = OBI1, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+ *       PFB2 Instance [Game Object ID = OBI2, Prefab Object ID = OB12, Prefab Resource ID = PFB1]
+ *         PFB3 Instance [Game Object ID = OBI3, Prefab Object ID = OB31, Prefab Resource ID = PFB2]
+ *
+ *   ***PFB1***
+ *   PFB1 Instance [Game Object ID = OB11, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+ *     PFB2 Instance [Game Object ID = OB12, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+ *
+ *   ***PFB2***
+ *   PFB2 Instance [Game Object ID = OB21, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+ *
+ *   ***PFB3***
+ *   PFB3 Instance [Game Object ID = OB31, Prefab Object ID = OB31, Prefab Resource ID = PFB3]
+ *
+ * For Scene/PFB3 Instance this method would return { OBI3 -> OBI3 }. Even though PFB3 is the last prefab to reference the object,
+ * it's a self reference. Instead we return the parent - which in this case is the scene itself as neither PFB1 or PFB2 reference
+ * the object. This ensures that if we ever update PFB2 or PFB3 with the object, the prefab object ID of OBI3 is the one that
+ * gets remapped.
  */
-static UnorderedMap<UUID, PrefabLinkInformation> MapInstanceIdBottomMostPrefab(const HSceneObject& root)
+static UnorderedMap<UUID, UUID> GenerateInstanceIdToPrefabThatNeedsRemappingInstanceId(const HSceneObject& root)
 {
 	// First iterate parents of @p sceneObjectToUpdateWith, and find the root-most prefab instance
 	UUID rootInstancePrefabId;
@@ -304,94 +343,210 @@ static UnorderedMap<UUID, PrefabLinkInformation> MapInstanceIdBottomMostPrefab(c
 	}
 
 	// For each object in the provided instance hierarchy, determine the bottom-most prefab it has been defined in, relative to the root prefab instance
-	UnorderedMap<UUID, PrefabLinkInformation> instanceIdToBottomMostPrefab;
-	if(!rootInstancePrefabId.Empty())
-	{
-		root->IterateHierarchy([&rootInstancePrefabId, &instanceIdToBottomMostPrefab](const HSceneObject& sceneObject) {
-			if(sceneObject->GetPrefabResourceId() == rootInstancePrefabId) // If an object is not part of the root instance, we don't need special handling
+	UnorderedMap<UUID, UUID> instanceIdToBottomMostPrefab;
+	root->IterateHierarchy([&rootInstancePrefabId, &instanceIdToBottomMostPrefab](const HSceneObject& sceneObject) {
+		// Map scene object
+		{
+			HPrefab bottomMostPrefab = nullptr;
+			HSceneObject sceneObjectInBottomMostPrefab = sceneObject;
+
+			if(!rootInstancePrefabId.Empty() && sceneObject->GetPrefabResourceId() == rootInstancePrefabId) // If an object is not part of the root instance, we don't need special handling
 			{
-				// Map scene object
+				while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(sceneObjectInBottomMostPrefab))
 				{
-					HPrefab bottomMostPrefab = nullptr;
-					HSceneObject sceneObjectInBottomMostPrefab = sceneObject;
+					if(!found.has_value())
+						break;
 
-					while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(sceneObjectInBottomMostPrefab))
-					{
-						if(!found.has_value())
-							break;
+					HSceneObject instanceInPrefab = B3DStaticGameObjectCast<SceneObject>(found->InstanceInPrefab);
 
-						HSceneObject instanceInPrefab = B3DStaticGameObjectCast<SceneObject>(found->InstanceInPrefab);
+					// Reached the bottom-most prefab, as the instance points to itself
+					if(found->Prefab->GetId() == instanceInPrefab->GetPrefabResourceId())
+						break;
 
-						// Reached the bottom-most prefab, as the instance points to itself
-						if(found->Prefab->GetId() == instanceInPrefab->GetPrefabResourceId())
-							break;
-
-						sceneObjectInBottomMostPrefab = instanceInPrefab;
-						bottomMostPrefab = found->Prefab;
-					}
-
-					if(bottomMostPrefab != nullptr)
-					{
-						instanceIdToBottomMostPrefab[sceneObject.GetId()] = PrefabLinkInformation(sceneObjectInBottomMostPrefab->GetId(), bottomMostPrefab->GetId());
-					}
-				}
-
-				// Map components
-				for(const auto& component : sceneObject->GetComponents())
-				{
-					HPrefab bottomMostPrefab = nullptr;
-					HComponent componentInBottomMostPrefab = component;
-
-					while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(componentInBottomMostPrefab))
-					{
-						if(!found.has_value())
-							break;
-
-						HComponent instanceInPrefab = B3DStaticGameObjectCast<Component>(found->InstanceInPrefab);
-
-						// Reached the bottom-most prefab, as the instance points to itself
-						if(found->Prefab->GetId() == instanceInPrefab->SceneObject()->GetPrefabResourceId())
-							break;
-
-						componentInBottomMostPrefab = instanceInPrefab;
-						bottomMostPrefab = found->Prefab;
-					}
-
-					if(bottomMostPrefab != nullptr)
-					{
-						instanceIdToBottomMostPrefab[component.GetId()] = PrefabLinkInformation(componentInBottomMostPrefab->GetId(), bottomMostPrefab->GetId());
-					}
+					sceneObjectInBottomMostPrefab = instanceInPrefab;
+					bottomMostPrefab = found->Prefab;
 				}
 			}
 
-			return true;
-		}, nullptr, true);
-	}
+			if(bottomMostPrefab != nullptr)
+				instanceIdToBottomMostPrefab[sceneObject.GetId()] = sceneObjectInBottomMostPrefab->GetId();
+			else
+				instanceIdToBottomMostPrefab[sceneObject.GetId()] = sceneObject.GetId();
+		}
+
+		// Map components
+		for(const auto& component : sceneObject->GetComponents())
+		{
+			HPrefab bottomMostPrefab = nullptr;
+			HComponent componentInBottomMostPrefab = component;
+
+			if(!rootInstancePrefabId.Empty() && sceneObject->GetPrefabResourceId() == rootInstancePrefabId) // If an object is not part of the root instance, we don't need special handling
+			{
+				while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(componentInBottomMostPrefab))
+				{
+					if(!found.has_value())
+						break;
+
+					HComponent instanceInPrefab = B3DStaticGameObjectCast<Component>(found->InstanceInPrefab);
+
+					// Reached the bottom-most prefab, as the instance points to itself
+					if(found->Prefab->GetId() == instanceInPrefab->SceneObject()->GetPrefabResourceId())
+						break;
+
+					componentInBottomMostPrefab = instanceInPrefab;
+					bottomMostPrefab = found->Prefab;
+				}
+			}
+
+			if(bottomMostPrefab != nullptr)
+				instanceIdToBottomMostPrefab[component.GetId()] = componentInBottomMostPrefab->GetId();
+			else
+				instanceIdToBottomMostPrefab[component.GetId()] = component.GetId();
+		}
+
+		return true;
+	}, nullptr, true);
 
 	return instanceIdToBottomMostPrefab;
 }
 
+/**
+ * Iterates the hierarchy in @p root, and if a scene object or component is found in @p remappingTable, assigns it the prefab object ID
+ * from the remapping table, and provided @p prefabId as the prefab resource ID.
+ */
+static void RemapSceneObjectHierarchyIds(const HSceneObject& root, const UnorderedMap<UUID, UUID>& remappingTable, const UUID& prefabId)
+{
+	root->IterateHierarchy(
+		[&remappingTable, prefabId](const HSceneObject& sceneObject)
+		{
+			if(sceneObject->HasFlag(SOF_DontSave))
+				return false;
+
+			if(auto found = remappingTable.find(sceneObject.GetId()); found != remappingTable.end())
+			{
+				sceneObject->SetPrefabObjectId(found->second);
+				sceneObject->SetPrefabResourceId(prefabId);
+			}
+
+			return true; },
+		[&remappingTable](const HComponent& component)
+		{
+			if(auto found = remappingTable.find(component.GetId()); found != remappingTable.end())
+				component->SetPrefabObjectId(found->second);
+		});
+}
+
+// -------------------------------------------------------------------
+// At the highest level this method performs the following actions:
+// 1. Updates the provided prefab
+// 2. Ensures that parent prefab instances of @p sceneObjectToUpdateWith are updated
+//   - This means iterating bottom up from the prefab we updated, to the root instance
+// 3. Ensures that prefab object IDs in @p sceneObjectToUpdateWith and parent prefab instances are updated accordingly
+// 4. Updates all loaded instances of the prefab we updated
+//
+// -------------------------------------------------------------------
+// #2 and #3 requires further explanation. Suppose we have a scene such as this:
+//   ***Scene***
+//   Root
+//     PFB1 Instance [Game Object ID = OBI1, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//       PFB2 Instance [Game Object ID = OBI2, Prefab Object ID = OB12, Prefab Resource ID = PFB1]
+//
+//   ***PFB1***
+//   PFB1 Instance [Game Object ID = OB11, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//     PFB2 Instance [Game Object ID = OB12, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+//
+//   ***PFB2***
+//   PFB2 Instance [Game Object ID = OB21, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+//
+// We then add an new object as a child of PFB2 Instance, and update PFB1 with PFB1 Instance:
+//   ***PFB1***
+//   PFB1 Instance [Game Object ID = OB11, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//     PFB2 Instance [Game Object ID = OB12, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+//       Optional object [Game Object ID = OB13, Prefab Object ID = OB13, Prefab Resource ID = PFB2]
+//
+//   ***Scene***
+//   Root
+//     PFB1 Instance [Game Object ID = OBI1, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//       PFB2 Instance [Game Object ID = OBI2, Prefab Object ID = OB12, Prefab Resource ID = PFB1]
+//         Optional object [Game Object ID = OBI3, Prefab Object ID = OB13, Prefab Resource ID = PFB1]
+//
+// If we then update PFB2 with PFB2 Instance:
+//   ***PFB2***
+//   PFB2 Instance [Game Object ID = OB21, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+//     Optional object [Game Object ID = OB22, Prefab Object ID = OB22, Prefab Resource ID = PFB2]
+//
+//   ***PFB1***
+//   PFB1 Instance [Game Object ID = OB11, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//     PFB2 Instance #1 [Game Object ID = OB12, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+//       Optional object [Game Object ID = OB13, Prefab Object ID = OB22, Prefab Resource ID = PFB2]
+//
+// Note that when updating PFB2 we also had to update PFB1, and change the Prefab Object ID of OB13 to point
+// to OB22 in PFB2.
+//
+// -------------------------------------------------------------------
+// #2 and #3 are also required when adding nested prefabs. Suppose we have a scene such as this:
+//   ***Scene***
+//   Root
+//     PFB1 Instance [Game Object ID = OBI1, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//       PFB2 Instance [Game Object ID = OBI2, Prefab Object ID = OB12, Prefab Resource ID = PFB1]
+//
+//   ***PFB1***
+//   PFB1 Instance [Game Object ID = OB11, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//     PFB2 Instance [Game Object ID = OB12, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+//
+//   ***PFB2***
+//   PFB2 Instance [Game Object ID = OB21, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+//
+//   ***PFB3***
+//   PFB3 Instance [Game Object ID = OB31, Prefab Object ID = OB31, Prefab Resource ID = PFB3]
+//
+// We then add an instance of PFB3 as a child to PFB2 Instance
+//   ***Scene***
+//   Root
+//     PFB1 Instance [Game Object ID = OBI1, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//       PFB2 Instance [Game Object ID = OBI2, Prefab Object ID = OB12, Prefab Resource ID = PFB1]
+//         PFB3 Instance [Game Object ID = OBI3, Prefab Object ID = OB31, Prefab Resource ID = PFB2]
+//
+// And the proceed to update PFB2 with PFB2 Instance:
+//   ***PFB2***
+//   PFB2 Instance [Game Object ID = OB21, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+//     PFB3 Instance [Game Object ID = OB22, Prefab Object ID = OB31, Prefab Resource ID = PFB3]
+//
+//   ***PFB1***
+//   PFB1 Instance [Game Object ID = OB11, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//     PFB2 Instance [Game Object ID = OB12, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
+//       PFB3 Instance [Game Object ID = OB13, Prefab Object ID = OB22, Prefab Resource ID = PFB2]
+//
+//   ***Scene***
+//   Root
+//     PFB1 Instance [Game Object ID = OBI1, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
+//       PFB2 Instance [Game Object ID = OBI2, Prefab Object ID = OB12, Prefab Resource ID = PFB1]
+//         PFB3 Instance [Game Object ID = OBI3, Prefab Object ID = OB13, Prefab Resource ID = PFB1]
+//
+// In this case after updating PFB2, we need to update both PFB1 and Scene.
+//  - PFB1 will be updated with the new version of PFB2, adding PFB3 Instance [Game Object ID = OB13], linking to PFB2. 
+//  - PFB3 Instance [Game Object ID = OBI3] in the Scene must be updated so it now links to PFB1.
+//   - This is because PFB2 update triggered the update to PFB1, linking OB13 -> OB22, and our scene must now link OBI3 -> OB13
+//
+// This means the code below must keep careful track of the prefab object IDs as we're updating the prefab hierarchy chain.
 void PrefabUtility::UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObject& sceneObjectToUpdateWith)
 {
 	if(!B3D_ENSURE(prefabToUpdate.IsLoaded(false)))
 		return;
 
-	// If @p sceneObjectToUpdateWith is part of some other prefab's instance hierarchy, we might need to patch prefab object IDs after performing the update. In general this happens in two cases:
-	// 1. If an object is a child of a nested prefab instance within a parent prefab instance, but only the parent prefab has been updated with the object. In that case the parent prefab will treat
-	//    the object as an instance modification and its prefab object ID will point to itself. Once we update the nested prefab with the object, we must patch the prefab object ID in the parent prefab,
-	//    so it points to the instance ID assigned to it in the nested prefab.
-	// 2. If a new prefab instance is being added as a child of an existing nested prefab instance, and we update the nested prefab with the new prefab instance, we need to update the new prefab instance
-	//    prefab object IDs so they point to the top-most prefab.
-	// 
-	// The map below will contain a list of prefabs and instances in those prefabs that we might need to patch.
-	UnorderedMap<UUID, PrefabLinkInformation> instanceIdToBottomMostPrefab = MapInstanceIdBottomMostPrefab(sceneObjectToUpdateWith);
+	// As described above, the code must keep careful track of how to update prefab object IDs in @p sceneObjectToUpdateWith hierarchy. Note this also
+	// may include parents of @p sceneObjectToUpdateWith, as changes need to be propagated to parent prefab instances.
+
+	// Find the object ID in the last (bottom-most, most-nested) prefab that an object is linked to (ignoring links to itself). If the object is not linked
+	// to any prefab, or is just linked to itself, this will be its own ID. This ID represents the object whose prefab object ID we will need to update.
+	UnorderedMap<UUID, UUID> instanceIdToPrefabThatNeedsRemappingInstanceId = GenerateInstanceIdToPrefabThatNeedsRemappingInstanceId(sceneObjectToUpdateWith);
 
 	FrameScope frameScope;
 
 	PrefabCache prefabCache;
 	prefabCache.AddToCache(prefabToUpdate);
 
-	// Is the provided hierarchy already an instance of a prefab? If so, record a list of prefab instances that are parents of the instance we're updating. We'll need this below.
+	// Record any parent prefab instances. As described above, we need to update these recursively bottom to top, in order to maintain prefab object ID links.
 	FrameVector<PrefabInstanceRoot> prefabInstanceParents;
 	if(sceneObjectToUpdateWith->IsPrefabInstance())
 	{
@@ -416,96 +571,63 @@ void PrefabUtility::UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObje
 		}
 	}
 
-	// TODO - Consider moving much of the logic from ReplaceInternalHierarchy to here
-	UnorderedMap<UUID, UUID> instanceIdToUpdatePrefabId = prefabToUpdate->ReplaceInternalHierarchy(sceneObjectToUpdateWith);
+	// Update the prefab, and retrieve the map containing the prefab object IDs that we assigned. 
+	UnorderedMap<UUID, UUID> instanceIdToPrefabToUpdateInstanceId = prefabToUpdate->ReplaceInternalHierarchy(sceneObjectToUpdateWith, false);
 
-	// TODO - Once I implement the new remapping logic, can I use that for the initial prefab object ID assignment as well?
-
-	// If root prefab contains an object that was an instance modification, and is now part of the update prefab, it's prefab object ID will change
-	// (as original object IDs doesn't link to anything). So we need to know to remap that prefab object ID to the new prefab object ID.
-	UnorderedMap<UUID, UUID> rootPrefabIdToUpdatePrefabId;
-	sceneObjectToUpdateWith->IterateHierarchy([&instanceIdToUpdatePrefabId, &rootPrefabIdToUpdatePrefabId, &instanceIdToBottomMostPrefab](const HSceneObject& child) mutable -> bool
+	// Combine @p instanceIdToFirstRelevantPrefab with @p instanceIdToPrefabToUpdateInstanceId to give us a map that tells us which objects need
+	// their prefab object ID remapped (value in @p instanceIdToPrefabThatNeedsRemappingInstanceId), and what is prefab object ID to remap to (value in @p instanceIdToPrefabToUpdateInstanceId).
+	UnorderedMap<UUID, UUID> prefabObjectIdRemapping;
+	sceneObjectToUpdateWith->IterateHierarchy([&instanceIdToPrefabToUpdateInstanceId, &prefabObjectIdRemapping, &instanceIdToPrefabThatNeedsRemappingInstanceId](const HSceneObject& child) mutable -> bool
 	{
-		UUID lookupId;
-		if(auto found = instanceIdToBottomMostPrefab.find(child.GetId()); found != instanceIdToBottomMostPrefab.end())
-			lookupId = found->second.PrefabObjectId;
-		else
-			lookupId = child->GetId();
+		UUID idInFirstRelevantPrefab;
+		if(auto found = instanceIdToPrefabThatNeedsRemappingInstanceId.find(child.GetId()); B3D_ENSURE(found != instanceIdToPrefabThatNeedsRemappingInstanceId.end()))
+			idInFirstRelevantPrefab = found->second;
 
-		// TODO - Will this work if root instance contains multiple instances of the same prefab? In that case we'll have multiple objects with
-		// the same 'child->GetPrefabObjectId()'. e.g. if we add two instance of prefab #4 as children of prefab #2, and then update prefab #2
-		if(auto found = instanceIdToUpdatePrefabId.find(child.GetId()); found != instanceIdToUpdatePrefabId.end())
+		if(auto found = instanceIdToPrefabToUpdateInstanceId.find(child.GetId()); found != instanceIdToPrefabToUpdateInstanceId.end())
 		{
-			auto result = rootPrefabIdToUpdatePrefabId.insert(std::make_pair(lookupId, found->second));
+			auto result = prefabObjectIdRemapping.insert(std::make_pair(idInFirstRelevantPrefab, found->second));
 			B3D_ENSURE(result.second);
 		}
 
 		return true;
 	},
-	   [&instanceIdToUpdatePrefabId, &rootPrefabIdToUpdatePrefabId, &instanceIdToBottomMostPrefab](const HComponent& component) mutable -> void
+	   [&instanceIdToPrefabToUpdateInstanceId, &prefabObjectIdRemapping, &instanceIdToPrefabThatNeedsRemappingInstanceId](const HComponent& component) mutable -> void
 	   {
 			UUID lookupId;
-			if(auto found = instanceIdToBottomMostPrefab.find(component.GetId()); found != instanceIdToBottomMostPrefab.end())
-				lookupId = found->second.PrefabObjectId;
-			else
-				lookupId = component->GetId();
+		    if(auto found = instanceIdToPrefabThatNeedsRemappingInstanceId.find(component.GetId()); B3D_ENSURE(found != instanceIdToPrefabThatNeedsRemappingInstanceId.end()))
+				lookupId = found->second;
 
-	   		if(auto found = instanceIdToUpdatePrefabId.find(component.GetId()); found != instanceIdToUpdatePrefabId.end())
+	   		if(auto found = instanceIdToPrefabToUpdateInstanceId.find(component.GetId()); found != instanceIdToPrefabToUpdateInstanceId.end())
 	   		{
-	   			auto result = rootPrefabIdToUpdatePrefabId.insert(std::make_pair(lookupId, found->second));
+	   			auto result = prefabObjectIdRemapping.insert(std::make_pair(lookupId, found->second));
 				B3D_ENSURE(result.second);
 	   		}
 	   },
 	   true);
 
-	// If our instance is part of another prefab's instance, we need to make sure the instance points to the correct prefab object IDs.
-	// This is needed because if an object is an instance modification of some parent prefab instance,
-	// yet this operation makes it a part of the nested prefab instance, it will be assigned a unique ID, in which case we need
-	// to update the original prefab instance's prefab object ID, so it continues linking to the object.
-	//
-	// e.g. If we have a scene such as this:
-	// Prefab #1 Instance
-	//  - Prefab #2 Instance
-	//   - My scene object
-	//
-	// After adding "My scene object" if we update Prefab #1, "My scene object" will become an instance modification
-	// of Prefab #1, and within Prefab #1 will have a prefab object ID that links to itself.
-	// 
-	// If we then later update Prefab #2, that same object will now become part of Prefab #2. This means we need to
-	// update Prefab #1, so instance of "My scene object" links to the object in Prefab #2.
-	for(auto it = prefabInstanceParents.rbegin(); it != prefabInstanceParents.rend(); ++it) // Start from most nested
+	// In order to keep prefab object IDs valid, we need to update all parent prefab instances of the object we just updated, starting from most nested (bottom-most) to root (top-most).
+	for(auto it = prefabInstanceParents.rbegin(); it != prefabInstanceParents.rend(); ++it)
 	{
 		const PrefabInstanceRoot& prefabInstanceRoot = *it;
 
-		// Ensure the prefab IDs match to what was output when we updated the prefab. This will ensure the scene object instance hierarchy links to the
-		// prefab, and correctly set up IDs in the case when an object was an instance modification of part of a parent prefab, and we just added it to
-		// a child's prefab.
-		prefabInstanceRoot.SceneObjectInParentPrefab->IterateHierarchy(
-			[&rootPrefabIdToUpdatePrefabId, prefabId = prefabInstanceRoot.PrefabToUpdateFrom.GetId()](const HSceneObject& sceneObject) {
-			if(sceneObject->HasFlag(SOF_DontSave))
-				return false;
-
-			if(auto found = rootPrefabIdToUpdatePrefabId.find(sceneObject.GetId()); found != rootPrefabIdToUpdatePrefabId.end())
-			{
-				sceneObject->SetPrefabObjectId(found->second);
-				sceneObject->SetPrefabResourceId(prefabId);
-			}
-
-			return true; },
-		  [&rootPrefabIdToUpdatePrefabId](const HComponent& component) {
-			  if(auto found = rootPrefabIdToUpdatePrefabId.find(component.GetId()); found != rootPrefabIdToUpdatePrefabId.end())
-				  component->SetPrefabObjectId(found->second);
-		});
+		// If this prefab contains any object in the @p prefabObjectIdRemapping, this means this is the last prefab that has a link to this object (excluding
+		// owner prefab of the object, if any). We need to update its prefab object ID, as it could have changed during ReplaceInternalHierarchy call above,
+		// or during previous iterations of this loop when UpdateInstanceFromPrefab was called.
+		// 
+		// We need to perform the prefab object ID remapping before the UpdateInstanceFromPrefab call, otherwise game object instance data will not be restored
+		// correctly as it relies on matching prefab object IDs.
+		RemapSceneObjectHierarchyIds(prefabInstanceRoot.SceneObjectInParentPrefab, prefabObjectIdRemapping, prefabInstanceRoot.PrefabToUpdateFrom.GetId());
 
 		HSceneObject newHierarchy = UpdateInstanceFromPrefab(prefabInstanceRoot.SceneObjectInParentPrefab, *prefabInstanceRoot.PrefabToUpdateFrom);
 		if(!B3D_ENSURE(newHierarchy != nullptr))
 			continue;
 
-		// Make sure rootPrefabIdToUpdatePrefabId is kept up to date. If any of its prefab object IDs were just updated, remap them to the updated values,
-		// so they always point to the top-most nested prefab.
-		// This way when we reach the root prefab (which is the only prefab that contains the game objects that will map to these IDs), we can correctly map to its nested prefab object ID.
+		// UpdateInstanceFromPrefab could have resulted in new prefab instance objects getting created, with their own unique IDs. We need to make sure
+		// that parent prefab instances wanting to linking to those objects (as stored in @p prefabObjectIdRemapping) now link to the new prefab instance.
+		// This action is performed for each iteration as we go up the prefab instance hierarchy, ensuring the parent prefab instance links to the
+		// last (top-most, least-nested) instance of the object.
 		const UnorderedMap<UUID, UUID> prefabObjectToInstanceIdMap = GetPrefabToInstanceIdMap(prefabInstanceRoot.SceneObjectInParentPrefab, true);
-		for(auto& entry : rootPrefabIdToUpdatePrefabId)
+		for(auto& entry : prefabObjectIdRemapping)
 		{
 			if(auto found = prefabObjectToInstanceIdMap.find(entry.second); found != prefabObjectToInstanceIdMap.end())
 				entry.second = found->second;
@@ -515,30 +637,11 @@ void PrefabUtility::UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObje
 		// the prefab could contain multiple instances of our update prefab, and we're only updating one that's related to @p root
 	}
 
-	// TODO - Code duplicated from above, handle this better
-	if(!prefabInstanceParents.empty())
-	{
-		sceneObjectToUpdateWith->IterateHierarchy(
-			[&rootPrefabIdToUpdatePrefabId, prefabId = prefabInstanceParents.back().ParentPrefab->GetId()](const HSceneObject& sceneObject)
-			{
-		if(sceneObject->HasFlag(SOF_DontSave))
-			return false;
+	// Same as we do above for prefab instance roots, but ensures that any objects in the scene itself also have prefab object IDs assigned
+	const UUID rootPrefabId = prefabInstanceParents.empty() ? prefabToUpdate.GetId() : prefabInstanceParents.back().ParentPrefab->GetId();
+	RemapSceneObjectHierarchyIds(sceneObjectToUpdateWith, prefabObjectIdRemapping, rootPrefabId);
 
-		if(auto found = rootPrefabIdToUpdatePrefabId.find(sceneObject.GetId()); found != rootPrefabIdToUpdatePrefabId.end())
-		{
-			sceneObject->SetPrefabObjectId(found->second);
-			sceneObject->SetPrefabResourceId(prefabId);
-		}
-
-		return true; },
-			[&rootPrefabIdToUpdatePrefabId](const HComponent& component)
-			{
-				if(auto found = rootPrefabIdToUpdatePrefabId.find(component.GetId()); found != rootPrefabIdToUpdatePrefabId.end())
-					component->SetPrefabObjectId(found->second);
-			});
-	}
-
-	// Update all live scene instances
+	// Ensure all instances of @p prefabToUpdate are up to date in all live scene instances
 	const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& sceneInstances = GetSceneManager().GetAllSceneInstances();
 	for(const auto& pair : sceneInstances)
 	{
@@ -550,7 +653,7 @@ void PrefabUtility::UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObje
 		}
 	}
 
-	// Update all live prefabs
+	// Ensure all instances of @p prefabToUpdate are up to date in all live prefabs
 	UnorderedSet<Prefab*> livePrefabs = PrefabManager::Instance().GetLivePrefabs();
 	for(const auto& entry : livePrefabs)
 	{
