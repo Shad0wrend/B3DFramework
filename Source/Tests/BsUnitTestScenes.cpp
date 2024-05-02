@@ -84,10 +84,12 @@ UnitTestSceneB UnitTestSceneB::PopulateParent(const HSceneObject& parent)
 
 	scene.SceneObject_1_0 = scene.SceneInstance->CreateSceneObject("SceneB_SceneObject_1_0");
 	scene.SceneObject_1_0->SetParent(scene.SceneObject_1);
+	scene.SceneObject_1_0_Id = scene.SceneObject_1_0.GetId();
 
 	scene.SceneObject_0->SetPosition(Vector3(50.0f, 50.0f, 50.0f));
 	scene.Component_1_0 = scene.SceneObject_1_0->AddComponent<UnitTestComponentA>();
 	scene.Component_1_0->SetName("SceneB_Component_1_0");
+	scene.Component_1_0_Id = scene.Component_1_0.GetId();
 
 	scene.AddOrUpdateIds(scene.Root, true, true, true);
 
@@ -148,6 +150,9 @@ void UnitTestSceneB::DestroySceneObject_1_0()
 
 	SceneObject_1_0 = nullptr;
 	Component_1_0 = nullptr;
+
+	SceneObject_1_0_Id = UUID::kEmpty;
+	Component_1_0_Id = UUID::kEmpty;
 }
 
 void UnitTestSceneB::RefreshHierarchy(const HSceneObject& root)
@@ -208,18 +213,24 @@ void UnitTestSceneB::RefreshHierarchy(const HSceneObject& root)
 	}
 
 	// These objects can be destroyed after initial construction
-	if(SceneObject_1_0 != nullptr && newSceneObject_1_0 == nullptr)
+	if(!SceneObject_1_0_Id.Empty() && newSceneObject_1_0 == nullptr)
 	{
-		ObjectInformation.erase(SceneObject_1_0.GetId());
-		ObjectInformation.erase(Component_1_0.GetId());
+		ObjectInformation.erase(SceneObject_1_0_Id);
+		ObjectInformation.erase(Component_1_0_Id);
 
 		SceneObject_1_0 = nullptr;
 		Component_1_0 = nullptr;
+
+		SceneObject_1_0_Id = UUID::kEmpty;
+		Component_1_0_Id = UUID::kEmpty;
 	}
 	else
 	{
 		SceneObject_1_0 = newSceneObject_1_0;
 		Component_1_0 = newComponent_1_0;
+
+		SceneObject_1_0_Id = SceneObject_1_0.GetId();
+		Component_1_0_Id = Component_1_0.GetId();
 	}
 }
 

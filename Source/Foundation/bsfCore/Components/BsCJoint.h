@@ -94,7 +94,6 @@ namespace bs
 
 	protected:
 		friend class CRigidbody;
-		using Component::DestroyInternal;
 
 		/** Creates the internal representation of the Joint for use by the component. */
 		virtual SPtr<Joint> CreateInternal() = 0;

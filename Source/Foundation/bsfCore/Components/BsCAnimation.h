@@ -238,8 +238,6 @@ namespace bs
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
 	protected:
-		using Component::DestroyInternal;
-
 		/** Creates the internal representation of the Animation and restores the values saved by the Component. */
 		void RestoreInternal(bool previewMode);
 

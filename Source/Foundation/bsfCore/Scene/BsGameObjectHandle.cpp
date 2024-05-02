@@ -23,10 +23,10 @@ GameObjectHandleBase::GameObjectHandleBase(const SPtr<GameObject>& object)
 
 bool GameObjectHandleBase::IsDestroyed(bool checkQueued) const
 {
-	return mSharedHandleData->InstanceData == nullptr || mSharedHandleData->InstanceData->Object == nullptr || (checkQueued && mSharedHandleData->InstanceData->Object->GetIsDestroyed());
+	return mSharedHandleData->InstanceData == nullptr || mSharedHandleData->InstanceData->Object == nullptr || (checkQueued && mSharedHandleData->InstanceData->Object->GetIsQueuedForDestroy());
 }
 
-void GameObjectHandleBase::SetObject(const SPtr<GameObject>& object)
+void GameObjectHandleBase::SetObjectInstanceData(const SPtr<GameObject>& object)
 {
 	B3D_ASSERT(mSharedHandleData != nullptr);
 	B3D_ASSERT(object != nullptr);

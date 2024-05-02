@@ -196,6 +196,9 @@ namespace bs
 		HSceneObject OptionalSceneObject_1_1_PrefabInstance;
 		HUnitTestComponentA Component_1_0;
 
+		UUID SceneObject_1_0_Id;
+		UUID Component_1_0_Id;
+
 		SPtr<UnitTestSceneB> OptionalPrefabInstance_0_0;
 		SPtr<UnitTestSceneB> OptionalPrefabInstance_1_1;
 

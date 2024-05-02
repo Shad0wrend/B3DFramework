@@ -40,7 +40,7 @@ GameObjectHandleBase GameObjectCollection::RegisterAndInitializeObject(const SPt
 		if(auto found = mUnresolvedHandleSharedHandleData.find(handle.GetId()); found != mUnresolvedHandleSharedHandleData.end())
 		{
 			handle = GameObjectHandleBase(found->second);
-			handle.SetObject(object);
+			handle.SetObjectInstanceData(object);
 		}
 		// Handle hasn't been registered yet, store its shared handle data for when it does get registered.
 		else
@@ -88,8 +88,6 @@ void GameObjectCollection::UnregisterObject(GameObjectHandleBase& object, bool t
 
 		// TODO: Some systems still depend on sending out a global OnDestroyed event
 		GameObjectManager::Instance().OnDestroyed(B3DStaticGameObjectCast<GameObject>(object));
-
-		object.Destroy();
 	}
 }
 
@@ -126,7 +124,7 @@ void GameObjectCollection::ReplaceGameObjectInstance(GameObjectHandleBase& newOb
 	const SPtr<GameObject> newObject = newObjectHandle.GetShared();
 
 	newObjectHandle->SetInstanceData(originalObjectInstanceData);
-	newObjectHandle.SetObject(newObject);
+	newObjectHandle.SetObjectInstanceData(newObject);
 
 	const UUID newObjectId = newObjectHandle.GetId();
 	if(originalObjectId != newObjectId)
@@ -177,10 +175,10 @@ void GameObjectCollection::DestroyQueuedObjects()
 		GameObjectHandleBase handle = it->second;
 		it = mQueuedForDestroy.erase(it);
 
-		if(handle.IsDestroyed())
+		if(handle.IsDestroyed(false))
 			continue;
 
-		handle->DestroyInternal(handle, true);
+		handle->DestroyImmediate();
 	}
 
 	mQueuedForDestroy.clear();
@@ -260,7 +258,7 @@ void GameObjectCollection::EndHandleResolve()
 		if(foundObject == mObjects.end())
 			continue;
 
-		unresolvedHandle.SetObject(foundObject->second);
+		unresolvedHandle.SetObjectInstanceData(foundObject->second);
 		B3D_ASSERT(remappedUUID == unresolvedHandle.GetId());
 	}
 

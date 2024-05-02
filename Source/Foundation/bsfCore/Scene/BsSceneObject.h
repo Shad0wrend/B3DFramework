@@ -166,16 +166,10 @@ namespace bs
 		 */
 		static HSceneObject CreateInternal(const SPtr<GameObjectCollection>& ownerCollection, const SPtr<SceneObject>& sceneObject);
 
-		/**
-		 * Destroys this object and any of its held components.
-		 *
-		 * @param[in]	handle		Game object handle to this object.
-		 * @param[in]	immediate	If true, the object will be deallocated and become unusable right away. Otherwise the
-		 *							deallocation will be delayed to the end of frame (preferred method).
-		 *
-		 * @note	Unlike Destroy(), does not remove the object from its parent.
-		 */
-		void DestroyInternal(GameObjectHandleBase& handle, bool immediate = false) override;
+		/** Queues the provided scene object to be destroyed at the end of the frame, including all children and components. */
+		void QueueForDestroy();
+
+		void DestroyImmediate() override;
 
 		/**	Checks is the scene object instantiated and visible in the scene. */
 		bool IsInstantiated() const { return (mFlags & SOF_DontInstantiate) == 0; }
@@ -612,22 +606,10 @@ namespace bs
 		HComponent GetComponent(RTTITypeBase* type) const;
 
 		/**
-		 * Removes the component from this object, and deallocates it.
-		 *
-		 * @param[in]	component	The component to destroy.
-		 * @param[in]	immediate	If true, the component will be deallocated and become unusable right away. Otherwise
-		 *							the deallocation will be delayed to the end of frame (preferred method).
+		 * Notifies the scene object that a component is about to be destroyed. This will remove the component from
+		 * the internal component list, and trigger necessary events.
 		 */
-		void DestroyComponent(const HComponent component, bool immediate = false);
-
-		/**
-		 * Removes the component from this object, and deallocates it.
-		 *
-		 * @param[in]	component	The component to destroy.
-		 * @param[in]	immediate	If true, the component will be deallocated and become unusable right away. Otherwise
-		 *							the deallocation will be delayed to the end of frame (preferred method).
-		 */
-		void DestroyComponent(Component* component, bool immediate = false);
+		void NotifyWillDestroyComponent(const HComponent& component);
 
 		/**	Returns all components on this object. */
 		const Vector<HComponent>& GetComponents() const { return mComponents; }

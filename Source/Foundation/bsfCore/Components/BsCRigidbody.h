@@ -220,8 +220,6 @@ namespace bs
 	protected:
 		friend class CCollider;
 
-		using Component::DestroyInternal;
-
 		/**
 		 * Searches child scene objects for Collider components and attaches them to the rigidbody. Make sure to call
 		 * clearColliders() if you need to clear old colliders first.

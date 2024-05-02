@@ -46,8 +46,6 @@ namespace bs
 		void Update() override;
 
 	protected:
-		using Component::DestroyInternal;
-
 		/** Creates the internal representation of the AudioListener and restores the values saved by the Component. */
 		void RestoreInternal();
 

@@ -106,7 +106,7 @@ namespace bs
 		const SPtr<GameObjectHandleData>& GetSharedHandleData() const { return mSharedHandleData; }
 
 		/** Clears the handle so it doesn't point to any object. Note this will affect any other handles sharing the handle data. */
-		void ClearObject()
+		void ClearObjectInstanceData()
 		{
 			B3D_ASSERT(mSharedHandleData != nullptr);
 
@@ -115,7 +115,7 @@ namespace bs
 		}
 
 		/** Updates the handle so it points to the provided object. Note this will affect any other handles sharing the handle data. */
-		void SetObject(const SPtr<GameObject>& object);
+		void SetObjectInstanceData(const SPtr<GameObject>& object);
 
 		/**
 		 * Updates the handle so it points to the same object as the provided object. Compared to the other overload of this method,
@@ -124,7 +124,7 @@ namespace bs
 		 *
 		 * Note this will affect any other handles sharing the handle data.
 		 */
-		void SetObject(const GameObjectHandleBase& other)
+		void SetObjectInstanceData(const GameObjectHandleBase& other)
 		{
 			B3D_ASSERT(mSharedHandleData != nullptr);
 			B3D_ASSERT(other.mSharedHandleData != nullptr);
@@ -151,15 +151,6 @@ namespace bs
 		GameObjectHandleBase(std::nullptr_t)
 			: mSharedHandleData(B3DMakeShared<GameObjectHandleData>(nullptr, UUID::kEmpty))
 		{}
-
-		/**	Invalidates the handle signifying the referenced object was destroyed. */
-		void Destroy()
-		{
-			// It's important not to clear mSharedHandleData->InstanceData as some code might rely on it. (for example for restoring lost handles)
-
-			if(mSharedHandleData->InstanceData != nullptr)
-				mSharedHandleData->InstanceData->Object = nullptr;
-		}
 
 		/** Data shared between a set of handles pointing the referenced object. */
 		SPtr<GameObjectHandleData> mSharedHandleData;

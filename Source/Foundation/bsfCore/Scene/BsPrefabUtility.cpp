@@ -165,8 +165,7 @@ void PrefabUtility::RevertToPrefab(const HSceneObject& sceneObject)
 	HSceneObject parent = sceneObject->GetParent();
 
 	// This will destroy the object but keep it in the parent's child list
-	HSceneObject currentSceneObject = sceneObject;
-	sceneObject->DestroyInternal(currentSceneObject, true);
+	sceneObject->DestroyImmediate();
 
 	HSceneObject newInstance = linkedPrefab->Instantiate(nullptr, false);
 

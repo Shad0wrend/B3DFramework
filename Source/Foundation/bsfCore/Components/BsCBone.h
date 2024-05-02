@@ -60,8 +60,6 @@ namespace bs
 		void OnTransformChanged(TransformChangedFlags flags);
 
 	protected:
-		using Component::DestroyInternal;
-
 		String mBoneName;
 		HAnimation mParent;
 

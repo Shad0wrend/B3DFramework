@@ -150,6 +150,8 @@ namespace bs
 		 */
 		virtual void OnTransformChanged(TransformChangedFlags flags) {}
 
+		void DestroyImmediate() override;
+
 		/** Checks whether the component wants to received the specified transform changed message. */
 		bool SupportsNotify(TransformChangedFlags flags) const { return (mNotifyFlags & flags) != 0; }
 
@@ -170,17 +172,6 @@ namespace bs
 
 		/** Returns an index that unique identifies a component with the SceneManager. */
 		u32 GetSceneManagerId() const { return mSceneManagerId; }
-
-		/**
-		 * Destroys this component.
-		 *
-		 * @param[in]	handle		Game object handle this this object.
-		 * @param[in]	immediate	If true, the object will be deallocated and become unusable right away. Otherwise the
-		 *							deallocation will be delayed to the end of frame (preferred method).
-		 *
-		 * @note	Unlike Destroy(), does not remove the component from its parent.
-		 */
-		void DestroyInternal(GameObjectHandleBase& handle, bool immediate) override;
 
 	private:
 		Component(const Component& other) {}

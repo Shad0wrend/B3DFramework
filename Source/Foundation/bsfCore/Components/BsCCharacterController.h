@@ -145,7 +145,6 @@ namespace bs
 		/************************************************************************/
 	protected:
 		friend class SceneObject;
-		using Component::DestroyInternal;
 
 		void OnInitialized() override;
 		void OnDestroyed() override;

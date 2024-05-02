@@ -25,7 +25,7 @@ SceneObject::~SceneObject()
 	if(!mThisHandle.IsDestroyed())
 	{
 		B3D_LOG(Warning, Scene, "Object is being deleted without being destroyed first? {0}", mName);
-		DestroyInternal(mThisHandle, true);
+		DestroyImmediate();
 	}
 }
 
@@ -64,8 +64,7 @@ HSceneObject SceneObject::CreateInternal(const SPtr<GameObjectCollection>& owner
 
 void SceneObject::Destroy(bool immediate)
 {
-	// Parent is our owner, so when his reference to us is removed, delete might be called.
-	// So make sure this is the last thing we do.
+	// Detach from parent immediately
 	if(mParent != nullptr)
 	{
 		if(!mParent.IsDestroyed())
@@ -74,43 +73,47 @@ void SceneObject::Destroy(bool immediate)
 		mParent = nullptr;
 	}
 
-	SetIsDestroyed();
-	DestroyInternal(mThisHandle, immediate);
+	if(immediate)
+		DestroyImmediate();
+	else
+		QueueForDestroy();
 }
 
-void SceneObject::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
+void SceneObject::QueueForDestroy()
 {
+	for(const auto& child : mChildren)
+		child->QueueForDestroy();
+
+	for(const auto& component : mComponents)
+		component->Destroy(false);
+
+	SetIsQueuedForDestroy();
+
 	const SPtr<GameObjectCollection>& ownerCollection = mOwnerCollection.lock();
+	if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
+		ownerCollection->QueueForDestroy(mThisHandle);
+}
 
-	if(immediate)
+void SceneObject::DestroyImmediate()
+{
+	for(auto it = mChildren.begin(); it != mChildren.end(); ++it)
+		(*it)->DestroyImmediate();
+
+	mChildren.clear();
+
+	// It's important to remove the elements from the array as soon as they're destroyed, as OnDestroy callbacks
+	// for components might query the SO's components, and we want to only return live ones
+	while(!mComponents.empty())
 	{
-		for(auto iter = mChildren.begin(); iter != mChildren.end(); ++iter)
-			(*iter)->DestroyInternal(*iter, true);
-
-		mChildren.clear();
-
-		// It's important to remove the elements from the array as soon as they're destroyed, as OnDestroy callbacks
-		// for components might query the SO's components, and we want to only return live ones
-		while(!mComponents.empty())
-		{
-			HComponent component = mComponents.back();
-			component->SetIsDestroyed();
-
-			if(IsInstantiated())
-				GetSceneManager().NotifyComponentDestroyedInternal(component, immediate);
-
-			component->DestroyInternal(component, true);
-			mComponents.erase(mComponents.end() - 1);
-		}
-
-		if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
-			ownerCollection->UnregisterObject(handle, IsInstantiated());
+		HComponent component = mComponents.back();
+		component->DestroyImmediate();
 	}
-	else
-	{
-		if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
-			ownerCollection->QueueForDestroy(handle);
-	}
+
+	const SPtr<GameObjectCollection>& ownerCollection = mOwnerCollection.lock();
+	if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
+		ownerCollection->UnregisterObject(mThisHandle, IsInstantiated());
+
+	GameObject::DestroyImmediate();
 }
 
 void SceneObject::SetOwnerCollection(const SPtr<GameObjectCollection>& collection)
@@ -863,7 +866,7 @@ HComponent SceneObject::GetComponent(RTTITypeBase* type) const
 	return HComponent();
 }
 
-void SceneObject::DestroyComponent(const HComponent component, bool immediate)
+void SceneObject::NotifyWillDestroyComponent(const HComponent& component)
 {
 	if(component == nullptr)
 	{
@@ -871,35 +874,10 @@ void SceneObject::DestroyComponent(const HComponent component, bool immediate)
 		return;
 	}
 
-	auto iter = std::find(mComponents.begin(), mComponents.end(), component);
-
-	if(iter != mComponents.end())
-	{
-		(*iter)->SetIsDestroyed();
-
-		if(IsInstantiated())
-			GetSceneManager().NotifyComponentDestroyedInternal(*iter, immediate);
-
-		(*iter)->DestroyInternal(*iter, immediate);
-		mComponents.erase(iter);
-	}
+	if(auto found = std::find(mComponents.begin(), mComponents.end(), component); found != mComponents.end())
+		mComponents.erase(found);
 	else
 		B3D_LOG(Warning, Scene, "Trying to remove a component that doesn't exist on this SceneObject.");
-}
-
-void SceneObject::DestroyComponent(Component* component, bool immediate)
-{
-	auto iterFind = std::find_if(mComponents.begin(), mComponents.end(), [component](const HComponent& x)
-								 {
-			if(x.IsDestroyed())
-				return false;
-
-			return x.GetSharedHandleData()->InstanceData->Object.get() == component; });
-
-	if(iterFind != mComponents.end())
-	{
-		DestroyComponent(*iterFind, immediate);
-	}
 }
 
 HComponent SceneObject::AddComponent(u32 typeId)

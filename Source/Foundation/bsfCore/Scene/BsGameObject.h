@@ -62,10 +62,10 @@ namespace bs
 		 * Marks the object as destroyed. Generally this means the object has been queued for destruction but it hasn't
 		 * occurred yet.
 		 */
-		void SetIsDestroyed() { mIsDestroyed = true; }
+		void SetIsQueuedForDestroy() { mIsQueuedForDestroy = true; }
 
 		/**	Checks if the object has been destroyed. */
-		bool GetIsDestroyed() const { return mIsDestroyed; }
+		bool GetIsQueuedForDestroy() const { return mIsQueuedForDestroy; }
 
 		/** @copydoc GetId */
 		void SetId(const UUID& id) { mId = id; }
@@ -94,6 +94,12 @@ namespace bs
 		 */
 		virtual void SetOwnerCollection(const SPtr<GameObjectCollection>& collection);
 
+		/**
+		 * Destroys the game object without delay. Object will be removed from its game object collection, and reference to the object
+		 * in all active handles will become null. If any object contains any child objects, those will be destroyed as well.
+		 */
+		virtual void DestroyImmediate();
+
 		/** @} */
 
 	protected:
@@ -106,15 +112,6 @@ namespace bs
 		/**	Initializes the GameObject after construction. */
 		void Initialize(const SPtr<GameObject>& object);
 
-		/**
-		 * Destroys this object.
-		 *
-		 * @param[in]	handle		Game object handle to this object.
-		 * @param[in]	immediate	If true, the object will be deallocated and become unusable right away. Otherwise the
-		 *							deallocation will be delayed to the end of frame (preferred method).
-		 */
-		virtual void DestroyInternal(GameObjectHandleBase& handle, bool immediate = false) = 0;
-
 	protected:
 		String mName;
 		HGameObject mThisHandle;
@@ -126,7 +123,7 @@ namespace bs
 	private:
 		friend class Prefab;
 		SPtr<GameObjectInstanceData> mInstanceData;
-		bool mIsDestroyed = false;
+		bool mIsQueuedForDestroy = false;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

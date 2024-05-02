@@ -123,8 +123,6 @@ namespace bs
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
 	protected:
-		using Component::DestroyInternal;
-
 		/** Creates the internal representation of the Collider for use by the component. */
 		virtual SPtr<Collider> CreateInternal() = 0;
 

@@ -36,6 +36,11 @@ void GameObject::SetOwnerCollection(const SPtr<GameObjectCollection>& collection
 	mOwnerCollection = collection;
 }
 
+void GameObject::DestroyImmediate()
+{
+	mInstanceData->Object = nullptr;
+}
+
 RTTITypeBase* GameObject::GetRttiStatic()
 {
 	return GameObjectRTTI::Instance();
