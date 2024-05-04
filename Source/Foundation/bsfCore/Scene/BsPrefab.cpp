@@ -129,27 +129,41 @@ UnorderedMap<UUID, UUID> Prefab::ReplaceInternalHierarchy(const HSceneObject& sc
 	return remappedGameObjectIDs;
 }
 
-HSceneObject Prefab::Instantiate(const SPtr<SceneInstance>& sceneInstance, bool preserveIds) const
+HSceneObject Prefab::Instantiate(const SPtr<SceneInstance>& sceneInstance) const
+{
+	SPtr<SceneInstance> sceneInstanceMutableShared = sceneInstance;
+	return Instantiate(sceneInstanceMutableShared, false);
+}
+
+SPtr<SceneInstance> Prefab::Instantiate() const
+{
+	SPtr<SceneInstance> sceneInstance;
+	Instantiate(sceneInstance, false);
+
+	return sceneInstance;
+}
+
+HSceneObject Prefab::Instantiate(SPtr<SceneInstance>& inOutSceneInstance, bool preserveIds) const
 {
 	if(mRoot == nullptr)
 		return HSceneObject();
 
+
 	SPtr<GameObjectCollection> gameObjectCollection;
-	if(sceneInstance != nullptr)
-		gameObjectCollection = sceneInstance->GetGameObjectCollection();
+	if(inOutSceneInstance != nullptr)
+		gameObjectCollection = inOutSceneInstance->GetGameObjectCollection();
 	else
 		gameObjectCollection = GameObjectCollection::Create();
 
 	HSceneObject clone = Clone(gameObjectCollection, preserveIds);
 	PrefabUtility::AssignPrefabInstanceIds(clone, mRoot, mUUID);
 
-	if(sceneInstance != nullptr)
-		clone->SetParent(sceneInstance->GetRoot());
+	if(inOutSceneInstance != nullptr)
+		clone->SetParent(inOutSceneInstance->GetRoot());
 	else
-		(void)SceneInstance::Create("PrefabInstance", clone);
+		inOutSceneInstance = SceneInstance::Create("PrefabInstance", clone);
 
 	clone->InstantiateInternal();
-
 	return clone;
 }
 

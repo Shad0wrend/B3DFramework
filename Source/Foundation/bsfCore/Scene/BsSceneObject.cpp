@@ -199,7 +199,7 @@ void SceneObject::InstantiateInternal(bool prefabOnly)
 {
 	std::function<void(SceneObject*)> instantiateRecursive = [&](SceneObject* obj)
 	{
-		if(obj->mParentScene == nullptr)
+		if(obj->GetScene() == nullptr)
 		{
 			B3D_LOG(Warning, Scene, "Cannot instantiate scene object. No associated scene found.");
 			return;
@@ -208,7 +208,7 @@ void SceneObject::InstantiateInternal(bool prefabOnly)
 		obj->mFlags &= ~SOF_DontInstantiate;
 
 		if(obj->mParent == nullptr)
-			obj->SetParent(obj->mParentScene->GetRoot());
+			obj->SetParent(obj->GetScene()->GetRoot());
 
 		for(auto& component : obj->mComponents)
 			component->InstantiateInternal();
@@ -553,7 +553,7 @@ void SceneObject::SetParentInternal(const HSceneObject& parent, bool keepWorldTr
 		if(parent != nullptr)
 		{
 			parent->AddChild(GetHandle());
-			SetScene(parent->mParentScene, true);
+			SetScene(parent->GetScene(), true);
 		}
 		else
 			SetScene(nullptr, true);
@@ -574,18 +574,10 @@ void SceneObject::SetParentInternal(const HSceneObject& parent, bool keepWorldTr
 	}
 }
 
-const SPtr<SceneInstance>& SceneObject::GetScene() const
-{
-	if(mParentScene)
-		return mParentScene;
-
-	B3D_LOG(Warning, Scene, "Attempting to access a scene of a SceneObject with no scene, returning main scene instead.");
-	return GetSceneManager().GetMainScene();
-}
-
 void SceneObject::SetScene(const SPtr<SceneInstance>& scene, bool recursive)
 {
-	if(mParentScene == scene)
+	const SPtr<SceneInstance> currentScene = mParentScene.lock();
+	if(currentScene == scene)
 		return;
 
 	if(!B3D_ENSURE(scene != nullptr))

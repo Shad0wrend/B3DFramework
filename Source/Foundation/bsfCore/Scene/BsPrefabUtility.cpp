@@ -162,12 +162,13 @@ void PrefabUtility::RevertToPrefab(const HSceneObject& sceneObject)
 	UnorderedMap<UUID, PrefabInstanceData> instanceData;
 	RecordInstanceData(sceneObject, instanceData);
 
+	SPtr<SceneInstance> sceneInstance = sceneObject->GetScene();
 	HSceneObject parent = sceneObject->GetParent();
 
 	// This will destroy the object but keep it in the parent's child list
 	sceneObject->DestroyImmediate();
 
-	HSceneObject newInstance = linkedPrefab->Instantiate(nullptr, false);
+	HSceneObject newInstance = linkedPrefab->Instantiate(sceneInstance, false);
 
 	// Remove default parent, and replace with original one
 	newInstance->mParent->RemoveChild(newInstance);

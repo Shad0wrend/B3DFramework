@@ -17,6 +17,7 @@
 #include "BsUnitTestScenes.h"
 #include "BsUnitTestSerializationHelper.h"
 #include "BsUnitTestPrefabUpdateHelper.h"
+#include "Resources/BsResources.h"
 #include "Scene/BsPrefabUtility.h"
 
 using namespace bs;
@@ -272,11 +273,16 @@ void CoreTestSuite::TestSceneSaveLoad()
 		B3D_TEST_ASSERT(scene0Wrapper.Component_0->ComponentReference == scene0Wrapper.Component_1)
 		B3D_TEST_ASSERT(scene0Wrapper.Component_0_1_0->SceneObjectReference == scene0Wrapper.SceneObject_0)
 		B3D_TEST_ASSERT(scene0Wrapper.Component_0_1_0->ComponentReference == scene0Wrapper.Component_0)
+
+		// Ensure the prefab stays loaded so tests below don't fail
+		HResource scene0PRefabHandle = GetResources().CreateResourceHandle(scene0Prefab);
+		GetResources().LoadFromUuid(scene0Prefab->GetId());
 	}
 
 	// Instantiate the scene and ensure prefab links are valid
 	{
-		HSceneObject instancedSceneRoot = scene0Prefab->Instantiate();
+		SPtr<SceneInstance> instancedScene = scene0Prefab->Instantiate();
+		HSceneObject instancedSceneRoot = instancedScene->GetRoot();
 		UnitTestSceneA instancedScene0Wrapper(instancedSceneRoot);
 
 		UnitTestSceneA prefabScene0Wrapper(scene0Prefab->GetRoot());
@@ -722,10 +728,12 @@ void CoreTestSuite::TestAssertPrefabScenario()
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(*this, mScene, nullptr, UUID::kEmpty, prefabSceneLookup);
 
-		HSceneObject instantiatedInstanceRoot = prefab->Instantiate();
-		UnitTestSceneB instantiatedScene(instantiatedInstanceRoot);
-		UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(*this, instantiatedScene, nullptr, UUID::kEmpty, prefabSceneLookup);
-		instantiatedInstanceRoot->Destroy();
+		{
+			SPtr<SceneInstance> instantiatedSceneInstance = prefab->Instantiate();
+			HSceneObject instantiatedInstanceRoot = instantiatedSceneInstance->GetRoot();
+			UnitTestSceneB instantiatedScene(instantiatedInstanceRoot);
+			UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(*this, instantiatedScene, nullptr, UUID::kEmpty, prefabSceneLookup);
+		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Ensure IDs are unchanged from the previous instances
@@ -1210,6 +1218,16 @@ void CoreTestSuite::TestPrefabScenario9()
 
 	// Run the checks
 	TestAssertPrefabScenario();
+
+	// Clean up
+	mScene.Reset();
+	mSceneHierarchy = nullptr;
+
+	for(auto& prefabTestInformation : mPrefabTestInformation)
+	{
+		prefabTestInformation.Prefab = nullptr;
+		prefabTestInformation.PrefabInternalsScene = nullptr;
+	}
 }
 
 // TODO - Add an object to instance of prefab#4, update prefab#4

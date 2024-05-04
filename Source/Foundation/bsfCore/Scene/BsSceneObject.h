@@ -382,7 +382,7 @@ namespace bs
 		void IterateHierarchy(const Function<bool(const HSceneObject&)>& onSceneObjectFound, const Function<void(const HComponent&)>& onComponentFound, bool visitSelf = true) const;
 
 		/** Returns the scene this object is part of. Can be null if scene object hasn't been instantiated. */
-		const SPtr<SceneInstance>& GetScene() const;
+		SPtr<SceneInstance> GetScene() const { return mParentScene.lock(); }
 
 		/**
 		 * Searches the scene object hierarchy to find a child scene object using the provided path.
@@ -465,7 +465,7 @@ namespace bs
 	private:
 		friend class SceneInstance;
 
-		SPtr<SceneInstance> mParentScene;
+		WeakSPtr<SceneInstance> mParentScene;
 		HSceneObject mParent;
 		Vector<HSceneObject> mChildren;
 		bool mActiveSelf = true;

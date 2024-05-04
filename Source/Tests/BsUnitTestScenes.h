@@ -128,6 +128,9 @@ namespace bs
 		/** Refreshes the hierarchy by assigning a new root object. Original IDs are not updated, except for newly added optional objects, or objects that were destroyed. */
 		void RefreshHierarchy(const HSceneObject& root);
 
+		/** Resets all the values to default. */
+		void Reset();
+
 		/** Performs an operation over scene objects in the scene. If an object has been destroyed, the predicate won't be called on it. */
 		template <class T>
 		void PerformSceneObjectUnaryOperation(T&& predicate)
@@ -183,7 +186,7 @@ namespace bs
 		/** Check if all current game object match the original recorded IDs. */
 		void TestAssertHierarchyMatchesOriginalIds(TestSuite& testSuite);
 
-		// TODO - Doc
+		// TODO - Do
 		void TestAssertHierarchyMatchesPrefabLinks(TestSuite& testSuite, const UnorderedMap<UUID, SPtr<UnitTestSceneB>>& prefabSceneLookup, u32 nestingLevel = 0, const UUID& parentPrefabId = UUID::kEmpty, const SPtr<UnitTestSceneB>& parentPrefabScene = nullptr);
 
 		SPtr<SceneInstance> SceneInstance;

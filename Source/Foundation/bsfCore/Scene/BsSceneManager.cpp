@@ -89,6 +89,10 @@ SceneManager::~SceneManager()
 
 	if(mMainScene->mRoot != nullptr && !mMainScene->mRoot.IsDestroyed())
 		mMainScene->mRoot->Destroy(true);
+
+	// Clear strong references to SceneInstance before destructor exits, as their destructors may call into the SceneManager, so we must sure
+	// data remains valid
+	mMainScene = nullptr;
 }
 
 void SceneManager::OnStartUp()
@@ -99,24 +103,22 @@ void SceneManager::OnStartUp()
 
 void SceneManager::ClearScene(bool forceAll)
 {
-	u32 numChildren = mMainScene->mRoot->GetChildCount();
+	const u32 childCount = mMainScene->mRoot->GetChildCount();
 
-	u32 curIdx = 0;
-	for(u32 i = 0; i < numChildren; i++)
+	u32 childIndex = 0;
+	for(u32 i = 0; i < childCount; i++)
 	{
-		HSceneObject child = mMainScene->mRoot->GetChild(curIdx);
+		HSceneObject child = mMainScene->mRoot->GetChild(childIndex);
 
 		if(forceAll || !child->HasFlag(SOF_Persistent))
 			child->Destroy();
 		else
-			curIdx++;
+			childIndex++;
 	}
 
 	const SPtr<GameObjectCollection>& gameObjectCollection = mMainScene->GetGameObjectCollection();
-	if(gameObjectCollection != nullptr)
+	if(B3D_ENSURE(gameObjectCollection != nullptr))
 		gameObjectCollection->DestroyQueuedObjects();
-	else
-		GameObjectManager::Instance().DestroyQueuedObjects();
 
 	HSceneObject newRoot = SceneObject::CreateInternal(gameObjectCollection, "SceneRoot");
 	SetRootNodeInternal(newRoot);
@@ -124,7 +126,7 @@ void SceneManager::ClearScene(bool forceAll)
 
 void SceneManager::LoadScene(const HPrefab& scene)
 {
-	HSceneObject root = scene->Instantiate(nullptr, true);
+	HSceneObject root = scene->Instantiate(mMainScene, true);
 	SetRootNodeInternal(root);
 }
 

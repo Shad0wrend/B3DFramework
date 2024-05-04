@@ -234,6 +234,29 @@ void UnitTestSceneB::RefreshHierarchy(const HSceneObject& root)
 	}
 }
 
+void UnitTestSceneB::Reset()
+{
+	Root = nullptr;
+	SceneObject_0 = nullptr;
+	OptionalSceneObject_0_0_PrefabInstance = nullptr;
+	SceneObject_1 = nullptr;
+	SceneObject_1_0 = nullptr;
+	OptionalSceneObject_1_1_PrefabInstance = nullptr;
+	OptionalSceneObject_2 = nullptr;
+
+	Component_1_0 = nullptr;
+	OptionalComponent_2 = nullptr;
+
+	SceneObject_1_0_Id = UUID::kEmpty;
+	Component_1_0_Id = UUID::kEmpty;
+
+	SceneInstance = nullptr;
+	OptionalPrefabInstance_0_0 = nullptr;
+	OptionalPrefabInstance_1_1 = nullptr;
+
+	ObjectInformation.clear();
+}
+
 void UnitTestSceneB::AddOrUpdateIds(HSceneObject object, bool updatePrefabObjectId, bool updatePrefabResourceId, bool allowAddNew)
 {
 	object->IterateHierarchy([this, updatePrefabObjectId, updatePrefabResourceId, allowAddNew](const HSceneObject& sceneObject)
