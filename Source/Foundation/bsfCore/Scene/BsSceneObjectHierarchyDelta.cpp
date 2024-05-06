@@ -350,6 +350,7 @@ bool SceneObjectHierarchyDelta::GenerateSceneObjectDelta(const HSceneObject& ori
 	}
 	else
 	{
+		// Convert to serialized object first, because non-native delta handler only supports this
 		const SPtr<SerializedObject> serializedOriginal = SerializedObject::Create(*original, SerializedObjectEncodeFlag::IsDeltaCopy);
 		const SPtr<SerializedObject> serializedModified = SerializedObject::Create(*modified, SerializedObjectEncodeFlag::IsDeltaCopy);
 
@@ -421,6 +422,7 @@ void SceneObjectHierarchyDelta::GenerateComponentDelta(const HSceneObject& origi
 
 			if(originalComponent.GetId() == modifiedComponentId)
 			{
+				// Convert to serialized object first, because non-native delta handler only supports this
 				const SPtr<SerializedObject> serializedOriginal = SerializedObject::Create(*originalComponent, SerializedObjectEncodeFlag::IsDeltaCopy);
 				const SPtr<SerializedObject> serializedModified = SerializedObject::Create(*modifiedComponent, SerializedObjectEncodeFlag::IsDeltaCopy);
 
