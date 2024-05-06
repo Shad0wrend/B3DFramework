@@ -15,35 +15,6 @@ namespace bs
 	 *  @{
 	 */
 
-	template<typename T, typename = void>
-	struct HasKeyType : std::false_type {};
-
-	template<typename T>
-	struct HasKeyType<T, std::void_t<typename T::key_type>> : std::true_type {};
-
-	template<typename T, typename = void>
-	struct HasFind : std::false_type {};
-
-	template<typename T>
-	//struct HasFind<T, std::void_t<decltype(T::find(std::declval<typename T::key_type>()))>> : std::is_same<decltype(T::find(std::declval<typename T::key_type>)), typename T::iterator> {};
-	//struct HasFind<T, std::void_t<decltype(std::declval<T>().find(std::declval<typename T::key_type>()))>> : std::is_same<decltype(std::declval<T>().find(std::declval<typename T::key_type>)), typename T::const_iterator> {};
-	struct HasFind<T, std::void_t<decltype(std::declval<T>().find(std::declval<typename T::key_type>()))>> : std::true_type {};
-
-	/** Returns true if SeekToKey() may be called on the iterator. Generally true for set/map containers. */
-	template<class T>
-	static constexpr bool SupportsSeekToKey()
-	{
-		if constexpr(HasFind<T>::value && HasKeyType<T>::value)
-			return true;
-
-		return false;
-	}
-
-	static_assert(SupportsSeekToKey<std::map<bs::u32, bs::SerializedField>>());
-	static_assert(SupportsSeekToKey<std::unordered_map<bs::u32, bs::SerializedField>>());
-	static_assert(SupportsSeekToKey<std::set<bs::u32>>());
-	static_assert(!SupportsSeekToKey<std::vector<bs::u32>>());
-
 	class B3D_UTILITY_EXPORT ISerializedRTTI : public RTTIType<ISerialized, IReflectable, ISerializedRTTI>
 	{
 	public:
