@@ -1316,7 +1316,10 @@ void CoreTestSuite::TestPrefabScenario10()
 	}
 }
 
-// TODO - Assign prefab#3 instance #1 to prefab#2 instance #1 root
+// TODO - Add check to ensure circular references aren't possible
+// TODO - Add check that I can't update Prefab A with Prefab B's instance (doesn't make sense from the editor perspective, so no need to handle this case)
+// TODO - Add a check where I move PFB3 Instance #1 as a parent of PFB2 Instance #1
+// - Actually, should disallow this as well? But how. I still want to allow adding a new prefab instance of another prefab
 
 using namespace bs;
 
