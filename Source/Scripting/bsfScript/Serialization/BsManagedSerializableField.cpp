@@ -109,7 +109,10 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 			{
 				auto fieldData = B3DMakeShared<ManagedSerializableFieldDataChar>();
 				if(value != nullptr)
+				{
 					memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
+					fieldData->Value32 = fieldData->Value;
+				}
 
 				return fieldData;
 			}
@@ -199,7 +202,13 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 
 				auto fieldData = B3DMakeShared<ManagedSerializableFieldDataString>();
 				if(strVal != nullptr)
+				{
 					fieldData->Value = MonoUtil::MonoToWString(strVal);
+
+					fieldData->Value32 = U32String(fieldData->Value.size(), '0');
+					for(size_t i = 0; i < fieldData->Value.size(); ++i)
+						fieldData->Value32[i] = fieldData->Value[i];
+				}
 				else
 					fieldData->IsNull = allowNull;
 

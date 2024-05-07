@@ -144,14 +144,19 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataCharRTTI : public RTTIType<ManagedSerializableFieldDataChar, ManagedSerializableFieldData, ManagedSerializableFieldDataCharRTTI>
 	{
 	private:
-		wchar_t& GetValue(ManagedSerializableFieldDataChar* obj) { return obj->Value; }
-
-		void SetValue(ManagedSerializableFieldDataChar* obj, wchar_t& val) { obj->Value = val; }
+		u32& GetValue(ManagedSerializableFieldDataChar* obj) { return obj->Value32; }
+		void SetValue(ManagedSerializableFieldDataChar* obj, u32& val) { obj->Value32 = val; }
 
 	public:
 		ManagedSerializableFieldDataCharRTTI()
 		{
 			AddPlainField("mValue", 0, &ManagedSerializableFieldDataCharRTTI::GetValue, &ManagedSerializableFieldDataCharRTTI::SetValue);
+		}
+
+		void OnDeserializationEnded(IReflectable* object, SerializationContext* context) override
+		{
+			ManagedSerializableFieldDataChar* const fieldData = static_cast<ManagedSerializableFieldDataChar*>(object);
+			fieldData->Value = (wchar_t)fieldData->Value32;
 		}
 
 		const String& GetRttiName() override
@@ -167,7 +172,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return B3DMakeShared<ManagedSerializableFieldDataBool>();
+			return B3DMakeShared<ManagedSerializableFieldDataChar>();
 		}
 	};
 
@@ -474,14 +479,23 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataStringRTTI : public RTTIType<ManagedSerializableFieldDataString, ManagedSerializableFieldData, ManagedSerializableFieldDataStringRTTI>
 	{
 	private:
-		WString& GetValue(ManagedSerializableFieldDataString* obj) { return obj->Value; }
+		U32String& GetValue(ManagedSerializableFieldDataString* obj) { return obj->Value32; }
 
-		void SetValue(ManagedSerializableFieldDataString* obj, WString& val) { obj->Value = val; }
+		void SetValue(ManagedSerializableFieldDataString* obj, U32String& val) { obj->Value32 = val; }
 
 	public:
 		ManagedSerializableFieldDataStringRTTI()
 		{
 			AddPlainField("mValue", 0, &ManagedSerializableFieldDataStringRTTI::GetValue, &ManagedSerializableFieldDataStringRTTI::SetValue);
+		}
+
+		void OnDeserializationEnded(IReflectable* object, SerializationContext* context) override
+		{
+			ManagedSerializableFieldDataString* const fieldData = static_cast<ManagedSerializableFieldDataString*>(object);
+
+			fieldData->Value = WString(fieldData->Value32.size(), '0');
+			for(size_t i = 0; i < fieldData->Value32.size(); ++i)
+				fieldData->Value[i] = (wchar_t)fieldData->Value32[i];
 		}
 
 		const String& GetRttiName() override

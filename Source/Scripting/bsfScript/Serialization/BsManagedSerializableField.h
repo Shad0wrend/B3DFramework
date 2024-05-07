@@ -200,6 +200,7 @@ namespace bs
 		size_t GetHash() override;
 
 		wchar_t Value = 0;
+		u32 Value32 = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -497,6 +498,7 @@ namespace bs
 		size_t GetHash() override;
 
 		WString Value;
+		U32String Value32;
 		bool IsNull = false;
 
 		/************************************************************************/
