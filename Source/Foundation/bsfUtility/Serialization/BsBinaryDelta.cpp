@@ -581,7 +581,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 				}
 			} 
 
-			// For maps we also need to iterate over LHS container, to find remove entries
+			// For maps we also need to iterate over LHS container, to find removed entries
 			if(isMap && maybeLhsField.has_value())
 			{
 				ValueIterator<IsLHSIReflectable> lhsValueIterator = maybeLhsField->GetValueIterator();
@@ -1516,5 +1516,3 @@ void BinaryDeltaHandler::GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance
 		}
 	}
 }
-
-

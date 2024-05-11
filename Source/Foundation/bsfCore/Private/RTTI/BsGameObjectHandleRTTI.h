@@ -18,6 +18,62 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Specializes delta handler that is only used for GameObjectHandle type. Allows the system to perform ad-hoc ID remapping while comparing handles. */
+	class B3D_UTILITY_EXPORT GameObjectHandleDeltaHandler : public BinaryDeltaHandler
+	{
+	protected:
+		SPtr<SerializedObject> GenerateDeltaRecursive(IReflectable* original, IReflectable* modified, ObjectMap& objectMap, SerializationContext* context, bool replicableOnly) override;
+	};
+
+	inline SPtr<SerializedObject> GameObjectHandleDeltaHandler::GenerateDeltaRecursive(IReflectable* original, IReflectable* modified, ObjectMap& objectMap, SerializationContext* context, bool replicableOnly)
+	{
+		if(B3D_ENSURE(original == nullptr && modified != nullptr))
+			return nullptr;
+
+		auto fnGetOrDecodeHandle = [context](IReflectable* object, SPtr<GameObjectHandleBase>& outDecodedHandle) -> GameObjectHandleBase*
+		{
+			if(object->GetTypeId() == TID_SerializedObject)
+			{
+				SerializedObject* serializedObject = B3DRTTICast<SerializedObject>(object);
+				if(!B3D_ENSURE(serializedObject->GetRootTypeId() == TID_GameObjectHandleBase))
+					return nullptr;
+
+				outDecodedHandle = B3DRTTICast<GameObjectHandleBase>(serializedObject->Decode(context));
+				return outDecodedHandle.get();
+			}
+
+			return B3DRTTICast<GameObjectHandleBase>(object);
+		};
+
+		SPtr<GameObjectHandleBase> originalHandleShared;
+		GameObjectHandleBase* const originalHandle = fnGetOrDecodeHandle(original, originalHandleShared);
+		if(!B3D_ENSURE(originalHandle != nullptr))
+			return nullptr;
+
+		SPtr<GameObjectHandleBase> modifiedHandleShared;
+		GameObjectHandleBase* const modifiedHandle = fnGetOrDecodeHandle(modified, modifiedHandleShared);
+		if(!B3D_ENSURE(modifiedHandle != nullptr))
+			return nullptr;
+
+		UUID originalId = originalHandle->GetId();
+		UUID modifiedId = modifiedHandle->GetId();
+
+		if(context != nullptr)
+		{
+			CoreSerializationContext* const serializationContext = static_cast<CoreSerializationContext*>(context);
+			if(auto found = serializationContext->GameObjectIdRemapping.find(originalId); found != serializationContext->GameObjectIdRemapping.end())
+				originalId = found->second;
+
+			if(auto found = serializationContext->GameObjectIdRemapping.find(modifiedId); found != serializationContext->GameObjectIdRemapping.end())
+				modifiedId = found->second;
+		}
+
+		if(originalId == modifiedId)
+			return nullptr;
+
+		return SerializedObject::Create(*modifiedHandle);
+	}
+
 	class B3D_CORE_EXPORT GameObjectHandleRTTI : public RTTIType<GameObjectHandleBase, IReflectable, GameObjectHandleRTTI>
 	{
 	private:
@@ -45,6 +101,12 @@ namespace bs
 		{
 			//AddPlainField("mInstanceID", 0, &GameObjectHandleRTTI::GetInstanceId, &GameObjectHandleRTTI::SetInstanceId);
 			AddPlainField("mId", 1, &GameObjectHandleRTTI::GetId, &GameObjectHandleRTTI::SetId);
+		}
+
+		IDeltaHandler& GetDeltaHandler() const override
+		{
+			static GameObjectHandleDeltaHandler kDeltaHandler;
+			return kDeltaHandler;
 		}
 
 		void OnDeserializationEnded(IReflectable* object, SerializationContext* context)
