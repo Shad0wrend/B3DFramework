@@ -110,7 +110,7 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original, SceneObjectH
 	}
 
 	// Construct newly added scene objects, but don't instantiate them until later
-	Vector<HSceneObject> createdSceneObjects;
+	UnorderedMap<UUID, HSceneObject> createdSceneObjects;
 	for(const auto& sceneObjectId : AddedSceneObjects)
 	{
 		if(!B3D_ENSURE(!gameObjectCollection->GetObject(sceneObjectId).IsValid())) // Object with same ID already exists
@@ -131,8 +131,18 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original, SceneObjectH
 		newSceneObject->SetPrefabObjectId(deltaObject->PrefabObjectId);
 		newSceneObject->SetPrefabResourceId(deltaObject->PrefabResourceId);
 
-		createdSceneObjects.push_back(newSceneObject->GetHandle());
+		auto result = createdSceneObjects.insert(std::make_pair(sceneObjectId, newSceneObject->GetHandle()));
+		B3D_ENSURE(result.second);
 	}
+
+	// Looks up scene objects based on modified object IDs stored in the delta
+	auto fnFindSceneObject = [&createdSceneObjects, &gameObjectCollection](const UUID& id)
+	{
+		if(auto found = createdSceneObjects.find(id); found != createdSceneObjects.end())
+			return found->second;
+
+		return B3DStaticGameObjectCast<SceneObject>(gameObjectCollection->GetObject(id));
+	};
 
 	// Construct newly added components
 	for(const auto& componentId : AddedComponents)
@@ -148,7 +158,7 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original, SceneObjectH
 		if(!B3D_ENSURE(deltaObject->Data != nullptr))
 			continue;
 
-		HSceneObject parentSceneObject = B3DStaticGameObjectCast<SceneObject>(gameObjectCollection->GetObject(deltaObject->ParentId));
+		HSceneObject parentSceneObject = fnFindSceneObject(deltaObject->ParentId);
 		if(!B3D_ENSURE(parentSceneObject.IsValid()))
 			continue;
 
@@ -175,18 +185,18 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original, SceneObjectH
 		const bool isSceneObject = deltaObject->Data->GetRootTypeId() == SceneObject::GetRttiStatic()->GetRttiId();
 		if(isSceneObject)
 		{
-			HSceneObject sceneObject = B3DStaticGameObjectCast<SceneObject>(gameObjectCollection->GetObject(gameObjectId));
+			HSceneObject sceneObject = fnFindSceneObject(gameObjectId);
 			if(!B3D_ENSURE(sceneObject.IsValid()))
 				return;
 
-			if(deltaObject->Flags.IsSet(GameObjectDeltaFlag::ParentChanged))
+			const bool isNewObject = addedSceneObjectsMap.find(gameObjectId) != addedSceneObjectsMap.end();
+			if(deltaObject->Flags.IsSet(GameObjectDeltaFlag::ParentChanged) || isNewObject)
 			{
-				HSceneObject parentSceneObject = B3DStaticGameObjectCast<SceneObject>(gameObjectCollection->GetObject(deltaObject->ParentId));
+				HSceneObject parentSceneObject = fnFindSceneObject(deltaObject->ParentId);
 				if(B3D_ENSURE(parentSceneObject.IsValid()))
 					sceneObject->SetParent(parentSceneObject, false);
 			}
 
-			const bool isNewObject = addedSceneObjectsMap.find(gameObjectId) != addedSceneObjectsMap.end();
 			if(!isNewObject && deltaObject->Data != nullptr)
 			{
 				IDeltaHandler& deltaHandler = sceneObject->GetRtti()->GetDeltaHandler();
@@ -195,12 +205,15 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original, SceneObjectH
 		}
 		else // Component
 		{
+			const bool isNewObject = addedComponentsMap.find(gameObjectId) != addedComponentsMap.end();
+			if(isNewObject)
+				continue;
+
 			HComponent component = B3DStaticGameObjectCast<Component>(gameObjectCollection->GetObject(gameObjectId));
 			if(!B3D_ENSURE(component.IsValid()))
 				return;
 
-			const bool isNewObject = addedComponentsMap.find(gameObjectId) != addedComponentsMap.end();
-			if(!isNewObject && deltaObject->Data != nullptr)
+			if(deltaObject->Data != nullptr)
 			{
 				IDeltaHandler& deltaHandler = component->GetRtti()->GetDeltaHandler();
 				deltaHandler.ApplyDelta(component.GetShared(), deltaObject->Data, &serializationContext);
@@ -213,15 +226,26 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original, SceneObjectH
 	{
 		for(const auto& entry : createdSceneObjects)
 		{
-			if(!entry->IsInstantiated())
-				entry->InstantiateInternal();
+			if(!entry.second->IsInstantiated())
+				entry.second->InstantiateInternal();
 		}
 	}
+
+	UnorderedMap<UUID, UUID> prefabToInstanceMap = PrefabUtility::GetPrefabToInstanceIdMap(original, true);
 
 	// Remove components and scene objects
 	for(const auto& componentId : RemovedComponents)
 	{
-		HComponent component = B3DStaticGameObjectCast<Component>(gameObjectCollection->GetObject(componentId));
+		UUID componentInstanceId = componentId;
+
+		if(isPrefabDelta)
+		{
+			// For destroyed objects we record the ID of the original object (which will be the prefab object ID of the object we're applying the delta to)
+			if(auto found = prefabToInstanceMap.find(componentId); found != prefabToInstanceMap.end())
+				componentInstanceId = found->second;
+		}
+
+		HComponent component = B3DStaticGameObjectCast<Component>(gameObjectCollection->GetObject(componentInstanceId));
 		if(!B3D_ENSURE(component.IsValid()))
 			continue;
 
@@ -231,7 +255,16 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original, SceneObjectH
 	FrameUnorderedSet<UUID> destroyedObjects;
 	for(const auto& sceneObjectId : RemovedSceneObjects)
 	{
-		HSceneObject sceneObject = B3DStaticGameObjectCast<SceneObject>(gameObjectCollection->GetObject(sceneObjectId));
+		UUID sceneObjectInstanceId = sceneObjectId;
+
+		if(isPrefabDelta)
+		{
+			// For destroyed objects we record the ID of the original object (which will be the prefab object ID of the object we're applying the delta to)
+			if(auto found = prefabToInstanceMap.find(sceneObjectId); found != prefabToInstanceMap.end())
+				sceneObjectInstanceId = found->second;
+		}
+
+		HSceneObject sceneObject = B3DStaticGameObjectCast<SceneObject>(gameObjectCollection->GetObject(sceneObjectInstanceId));
 		if(!B3D_ENSURE(sceneObject.IsValid()))
 			continue;
 
@@ -272,10 +305,7 @@ void SceneObjectHierarchyDelta::GenerateHierarchyDelta(const HSceneObject& origi
 				modifiedCompareId = found->second;
 
 			HSceneObject modifiedChild = B3DStaticGameObjectCast<SceneObject>(modifiedGameObjectCollection->GetObject(modifiedCompareId));
-			if(!modifiedChild.IsValid())
-				outDelta->RemovedSceneObjects.push_back(originalChild.GetId());
-			else
-				GenerateSceneObjectDelta(originalChild, modifiedChild, context, flags, ignoreParent, outDelta);
+			GenerateSceneObjectDelta(originalChild, modifiedChild, context, flags, ignoreParent, outDelta);
 		}
 	};
 
@@ -297,11 +327,7 @@ void SceneObjectHierarchyDelta::GenerateHierarchyDelta(const HSceneObject& origi
 			UUID originalCompareId = GetPrefabOrInstanceId(modifiedChild, isPrefabDelta);
 			HSceneObject originalChild = B3DStaticGameObjectCast<SceneObject>(originalGameObjectCollection->GetObject(originalCompareId));
 			if(!originalChild.IsValid())
-			{
 				GenerateSceneObjectDelta(HSceneObject(), modifiedChild, context, flags, false, outDelta);
-
-				outDelta->AddedSceneObjects.push_back(modifiedChild.GetId());
-			}
 		}
 	};
 
@@ -333,7 +359,7 @@ bool SceneObjectHierarchyDelta::GenerateSceneObjectDelta(const HSceneObject& ori
 	if(!isModifiedValid)
 	{
 		fnEnsureOutputObjectIsValid();
-		outDelta->RemovedSceneObjects.push_back(modified.GetId());
+		outDelta->RemovedSceneObjects.push_back(original.GetId());
 
 		return true;
 	}
@@ -454,7 +480,7 @@ void SceneObjectHierarchyDelta::GenerateComponentDelta(const HSceneObject& origi
 	for(u32 modifiedComponentIndex = 0; modifiedComponentIndex < modifiedComponentCount; modifiedComponentIndex++)
 	{
 		const HComponent& modifiedComponent = modifiedComponents[modifiedComponentIndex];
-		const UUID& modifiedComponentId = GetPrefabOrInstanceId(modified, isPrefabDelta);
+		const UUID& modifiedComponentId = GetPrefabOrInstanceId(modifiedComponent, isPrefabDelta);
 
 		bool foundMatch = false;
 		for(u32 originalComponentIndex = 0; originalComponentIndex < originalComponentCount; originalComponentIndex++)
