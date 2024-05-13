@@ -194,11 +194,11 @@ void PrefabUpdateHelper::UpdatePrefab(const HPrefab& prefabToUpdate, const HScen
 
 	// Combine @p instanceIdToFirstRelevantPrefab with @p instanceIdToPrefabToUpdateInstanceId to give us a map that tells us which objects need
 	// their prefab object ID remapped (value in @p instanceIdToPrefabThatNeedsRemappingInstanceId), and what is prefab object ID to remap to (value in @p instanceIdToPrefabToUpdateInstanceId).
-	UnorderedMap<UUID, UUID> prefabObjectIdRemapping;
+	UnorderedMap<UUID, PrefabLinkInformation> prefabObjectIdRemapping;
 	for(const auto& entry : instanceIdToPrefabThatNeedsRemappingInstanceId)
 	{
 		if(auto found = instanceIdToPrefabToUpdateInstanceId.find(entry.first); found != instanceIdToPrefabToUpdateInstanceId.end())
-			prefabObjectIdRemapping[entry.second] = found->second;
+			prefabObjectIdRemapping[entry.second] = PrefabLinkInformation(found->second, prefabToUpdate->GetId());
 	}
 
 	// In order to keep prefab object IDs valid, we need to update all parent prefab instances of the object we just updated, starting from most nested (bottom-most) to root (top-most).
@@ -212,7 +212,7 @@ void PrefabUpdateHelper::UpdatePrefab(const HPrefab& prefabToUpdate, const HScen
 		// 
 		// We need to perform the prefab object ID remapping before the UpdateInstanceFromPrefab call, otherwise game object instance data will not be restored
 		// correctly as it relies on matching prefab object IDs.
-		PrefabUtility::RemapPrefabInstanceIds(prefabInstanceRoot.SceneObjectInParentPrefab, prefabObjectIdRemapping, prefabInstanceRoot.PrefabToUpdateFrom.GetId());
+		PrefabUtility::RemapPrefabInstanceIds(prefabInstanceRoot.SceneObjectInParentPrefab, prefabObjectIdRemapping);
 
 		HSceneObject newHierarchy = PrefabUtility::UpdateInstanceFromPrefab(prefabInstanceRoot.SceneObjectInParentPrefab, *prefabInstanceRoot.PrefabToUpdateFrom);
 		if(!B3D_ENSURE(newHierarchy != nullptr))
@@ -225,8 +225,8 @@ void PrefabUpdateHelper::UpdatePrefab(const HPrefab& prefabToUpdate, const HScen
 		const UnorderedMap<UUID, UUID> prefabObjectToInstanceIdMap = PrefabUtility::GetPrefabToInstanceIdMap(prefabInstanceRoot.SceneObjectInParentPrefab, true);
 		for(auto& entry : prefabObjectIdRemapping)
 		{
-			if(auto found = prefabObjectToInstanceIdMap.find(entry.second); found != prefabObjectToInstanceIdMap.end())
-				entry.second = found->second;
+			if(auto found = prefabObjectToInstanceIdMap.find(entry.second.PrefabObjectId); found != prefabObjectToInstanceIdMap.end())
+				entry.second = PrefabLinkInformation(found->second, prefabInstanceRoot.ParentPrefab->GetId());
 		}
 
 		prefabInstanceRoot.ParentPrefab->TickPrefabVersion();
@@ -236,8 +236,7 @@ void PrefabUpdateHelper::UpdatePrefab(const HPrefab& prefabToUpdate, const HScen
 	}
 
 	// Same as we do above for prefab instance roots, but this time for the scene hierarchy
-	const UUID rootPrefabId = prefabInstanceParents.empty() ? prefabToUpdate.GetId() : prefabInstanceParents.back().ParentPrefab->GetId();
-	PrefabUtility::RemapPrefabInstanceIds(sceneObjectToUpdateWith, prefabObjectIdRemapping, rootPrefabId);
+	PrefabUtility::RemapPrefabInstanceIds(sceneObjectToUpdateWith, prefabObjectIdRemapping);
 
 	// Ensure all instances of @p prefabToUpdate are up to date in all live scene instances and all live prefabs
 	PrefabCache prefabCache;

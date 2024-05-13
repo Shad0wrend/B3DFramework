@@ -427,6 +427,28 @@ void PrefabUtility::RemapPrefabInstanceIds(const HSceneObject& root, const Unord
 		});
 }
 
+void PrefabUtility::RemapPrefabInstanceIds(const HSceneObject& root, const UnorderedMap<UUID, PrefabLinkInformation>& remappingTable)
+{
+	root->IterateHierarchy(
+		[&remappingTable](const HSceneObject& sceneObject)
+		{
+			if(sceneObject->HasFlag(SOF_DontSave))
+				return false;
+
+			if(auto found = remappingTable.find(sceneObject.GetId()); found != remappingTable.end())
+			{
+				sceneObject->SetPrefabObjectId(found->second.PrefabObjectId);
+				sceneObject->SetPrefabResourceId(found->second.PrefabResourceId);
+			}
+
+			return true; },
+		[&remappingTable](const HComponent& component)
+		{
+			if(auto found = remappingTable.find(component.GetId()); found != remappingTable.end())
+				component->SetPrefabObjectId(found->second.PrefabObjectId);
+		});
+}
+
 void PrefabUtility::ClearPrefabIds(const HSceneObject& sceneObject)
 {
 	const UUID originalResourceId = sceneObject->GetPrefabResourceId();
