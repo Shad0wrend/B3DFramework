@@ -41,6 +41,4 @@ else()
 	B3DFindImportedLibrary(PhysX SimulationController STATIC)
 endif()
 
-install_dependency_binaries(PhysX)
-
 B3DEndFindPackage(PhysX PhysX3${BS_PHYSX_SUFFIX})

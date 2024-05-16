@@ -28,7 +28,7 @@ target_link_libraries(bsfMono PUBLIC ${mono_LIBRARIES})
 
 ## Local libs
 target_link_libraries(bsfMono PUBLIC bsf)
-B3DCopyImportedDependencyBinariesOnBuild(bsfMono)
+B3DSetUpPostBuildAndInstallSteps(bsfMono)
 
 # Runtime executable
 if(B3D_IS_ENGINE)
@@ -36,7 +36,7 @@ if(B3D_IS_ENGINE)
 	add_executable(MonoExec BsMonoExec.cpp)
 	target_link_libraries(MonoExec ${mono_LIBRARIES})
 
-	install_bsf_target(MonoExec)
+	B3DSetUpPostBuildAndInstallSteps(MonoExec)
 endif()
 
 # IDE specific

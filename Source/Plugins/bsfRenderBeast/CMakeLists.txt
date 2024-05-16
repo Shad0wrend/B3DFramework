@@ -19,7 +19,7 @@ set_property(TARGET bsfRenderBeast PROPERTY FOLDER Plugins)
 
 # Install
 if(B3D_RENDERER MATCHES "RenderBeast")
-	install_bsf_target(bsfRenderBeast)
+	B3DSetUpPostBuildAndInstallSteps(bsfRenderBeast)
 endif()
 
 conditional_cotire(bsfRenderBeast)

@@ -28,7 +28,7 @@ set_property(TARGET bsfD3D11RenderAPI PROPERTY FOLDER Plugins)
 
 # Install
 if(B3D_RENDER_BACKEND MATCHES "DirectX 11" OR B3D_BUILD_ALL_RENDER_BACKENDS)
-	install_bsf_target(bsfD3D11RenderAPI)
+	B3DSetUpPostBuildAndInstallSteps(bsfD3D11RenderAPI)
 endif()
 
 conditional_cotire(bsfD3D11RenderAPI)

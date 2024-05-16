@@ -29,6 +29,6 @@ endif()
 set_property(TARGET bsfFBXImporter PROPERTY FOLDER Plugins)
 
 # Install
-install_bsf_target(bsfFBXImporter)
+B3DSetUpPostBuildAndInstallSteps(bsfFBXImporter)
 
 conditional_cotire(bsfFBXImporter)

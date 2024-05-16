@@ -198,7 +198,7 @@ if(NOT B3D_IS_ENGINE)
 	)
 endif()
 
-install_bsf_target(bsf)
+B3DSetUpPostBuildAndInstallSteps(bsf)
 
 if(NOT B3D_IS_ENGINE)
 	# This doesn't actually install anything as it is an imported library

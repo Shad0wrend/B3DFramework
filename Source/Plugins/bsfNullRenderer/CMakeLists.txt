@@ -19,7 +19,7 @@ set_property(TARGET bsfNullRenderer PROPERTY FOLDER Plugins)
 
 # Install
 if(B3D_RENDERER MATCHES "Null")
-	install_bsf_target(bsfNullRenderer)
+	B3DSetUpPostBuildAndInstallSteps(bsfNullRenderer)
 endif()
 
 conditional_cotire(bsfNullRenderer)

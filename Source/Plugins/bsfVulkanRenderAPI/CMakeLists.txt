@@ -56,6 +56,9 @@ endif()
 
 if(WIN32)
 	target_link_libraries(bsfVulkanRenderAPI PRIVATE ${RenderDoc_LIBRARIES})
+
+	#install(IMPORTED_RUNTIME_ARTIFACTS bsfVulkanRenderAPI RUNTIME)
+
 endif()
 
 ## OS libs
@@ -78,8 +81,7 @@ set_property(TARGET bsfVulkanRenderAPI PROPERTY FOLDER Plugins)
 
 # Install
 if(B3D_RENDER_BACKEND MATCHES "Vulkan" OR B3D_BUILD_ALL_RENDER_BACKENDS)
-	install_bsf_target(bsfVulkanRenderAPI)
-	B3DCopyImportedDependencyBinariesOnBuild(bsfVulkanRenderAPI)
+	B3DSetUpPostBuildAndInstallSteps(bsfVulkanRenderAPI)
 endif()
 
 conditional_cotire(bsfVulkanRenderAPI)

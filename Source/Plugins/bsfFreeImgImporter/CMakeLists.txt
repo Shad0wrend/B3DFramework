@@ -27,6 +27,6 @@ target_link_libraries(bsfFreeImgImporter bsf)
 set_property(TARGET bsfFreeImgImporter PROPERTY FOLDER Plugins)
 
 # Install
-install_bsf_target(bsfFreeImgImporter)
+B3DSetUpPostBuildAndInstallSteps(bsfFreeImgImporter)
 
 conditional_cotire(bsfFreeImgImporter)

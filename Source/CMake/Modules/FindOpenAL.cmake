@@ -26,8 +26,4 @@ else()
 	B3DFindImportedLibrary(OpenAL ${OpenAL_LIBNAME} SHARED)
 endif()
 
-if(B3D_USE_BUNDLED_LIBRARIES)
-	install_dependency_binaries(OpenAL)
-endif()
-
 B3DEndFindPackage(OpenAL ${OpenAL_LIBNAME})

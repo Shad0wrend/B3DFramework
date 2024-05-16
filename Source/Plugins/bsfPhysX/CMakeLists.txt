@@ -31,8 +31,7 @@ set_property(TARGET bsfPhysX PROPERTY FOLDER Plugins)
 
 # Install
 if(B3D_PHYSICS_BACKEND MATCHES "PhysX")
-	install_bsf_target(bsfPhysX)
-	B3DCopyImportedDependencyBinariesOnBuild(bsfPhysX)
+	B3DSetUpPostBuildAndInstallSteps(bsfPhysX)
 endif()
 	
 conditional_cotire(bsfPhysX)

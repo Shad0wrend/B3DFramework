@@ -180,115 +180,6 @@ function(add_subdirectory_optional subdir_name)
 	endif()
 endfunction()
 
-function(install_dependency_binary FILE_PATH CONFIG)
-	if(NOT EXISTS ${FILE_PATH})
-		return()
-	endif()
-
-	get_filename_component(FILE_NAME ${FILE_PATH} NAME)
-	
-	# Remove shortest extension (CMake built-in method removes longest)
-	string(REGEX REPLACE "\\.[^.]*$" "" FILE_NAME ${FILE_NAME})
-	
-	if(WIN32)
-		if(B3D_IS_64BIT)
-			set(PLATFORM "x64")
-		else()
-			set(PLATFORM "x86")
-		endif()
-
-		set(FULL_FILE_NAME ${FILE_NAME}.dll)
-
-		set(SRC_PATH "${BSF_SOURCE_DIR}/../bin/${PLATFORM}/${CONFIG}/${FULL_FILE_NAME}")
-
-		if(NOT B3D_IS_ENGINE)
-			set(DEST_DIR bin)
-		else()
-			set(DEST_DIR .)
-		endif()
-	else()
-		# Check if there are so-versioned files in the source directory, and if so use the filename including
-		# the major soversion, because that's what the linker will use.
-		get_filename_component(SRC_DIR ${FILE_PATH} DIRECTORY)
-		file(GLOB_RECURSE ALL_FILES RELATIVE ${SRC_DIR} "${SRC_DIR}/*.so.*")
-
-		foreach(CUR_PATH ${ALL_FILES})
-			get_filename_component(EXTENSION ${CUR_PATH} EXT)
-
-			if(EXTENSION MATCHES "^\\.so\\.([0-9]+)$")
-				set(SO_VERSION ${CMAKE_MATCH_1})
-				break()
-			endif()
-		endforeach()
-
-		if(DEFINED SO_VERSION)
-			set(FULL_FILE_NAME ${FILE_NAME}.so.${SO_VERSION})
-		else()
-			set(FULL_FILE_NAME ${FILE_NAME}.so)
-		endif()
-
-		set(SRC_PATH ${FILE_PATH})
-		
-		if(NOT B3D_IS_ENGINE)
-			set(DEST_DIR lib/bsf-${B3D_FRAMEWORK_VERSION_MAJOR}.${B3D_FRAMEWORK_VERSION_MINOR}.${B3D_FRAMEWORK_VERSION_PATCH})
-		else()
-			set(DEST_DIR lib/b3d-${B3D_VERSION_MAJOR}.${B3D_VERSION_MINOR}.${B3D_VERSION_PATCH})
-		endif()
-	endif()
-
-	if(CONFIG MATCHES "Release")
-		set(CONFIGS Release RelWithDebInfo MinSizeRel)
-	else()
-		set(CONFIGS Debug)
-	endif()
-
-	install(
-		FILES ${SRC_PATH}
-		DESTINATION ${DEST_DIR}
-		CONFIGURATIONS ${CONFIGS}
-		RENAME ${FULL_FILE_NAME}
-		OPTIONAL)
-endfunction()
-
-MACRO(install_dependency_binaries FOLDER_NAME)
-	foreach(LOOP_ENTRY ${${FOLDER_NAME}_SHARED_LIBS})
-		install_dependency_binary(${${LOOP_ENTRY}_LIBRARY_RELEASE} Release)
-		install_dependency_binary(${${LOOP_ENTRY}_LIBRARY_DEBUG} Debug)
-	endforeach()
-ENDMACRO()
-
-# Dependency .dll install is handled automatically if the imported .lib has the same name as the .dll
-# and the .dll is in the project root bin folder. Otherwise you need to call this manually.
-MACRO(install_dependency_dll FOLDER_NAME SRC_DIR LIB_NAME)
-	if(B3D_IS_64BIT)
-		set(PLATFORM "x64")
-	else()
-		set(PLATFORM "x86")
-	endif()
-
-	if(NOT B3D_IS_ENGINE)
-		set(BIN_DIR bin)
-	else()
-		set(BIN_DIR .)
-	endif()
-
-	set(FULL_FILE_NAME ${LIB_NAME}.dll)
-	set(SRC_RELEASE "${SRC_DIR}/bin/${PLATFORM}/Release/${FULL_FILE_NAME}")
-	set(SRC_DEBUG "${SRC_DIR}/bin/${PLATFORM}/Debug/${FULL_FILE_NAME}")
-	
-	install(
-		FILES ${SRC_RELEASE}
-		DESTINATION ${BIN_DIR}
-		CONFIGURATIONS Release RelWithDebInfo MinSizeRel
-	)
-		
-	install(
-		FILES ${SRC_DEBUG}
-		DESTINATION ${BIN_DIR}
-		CONFIGURATIONS Debug
-	)
-ENDMACRO()
-
 function(target_link_framework TARGET FRAMEWORK)
 	find_library(FM_${FRAMEWORK} ${FRAMEWORK})
 
@@ -359,7 +250,11 @@ function(check_and_update_binary_deps DEP_PREFIX DEP_NAME DEP_FOLDER DEP_VERSION
 	endif()
 endfunction()
 
-function(strip_symbols targetName outputFilename)
+# Strips symbols that are embedded in the target executable, and saves them in a separate file.
+#
+# @param	targetName		Name of the target from whose executable or library to strip the symbols.
+# @param	outputFilename	Filename of the file containing the stripped symbols.
+function(B3DStripSymbols targetName outputFilename)
 	if(UNIX AND BSF_STRIP_DEBUG_INFO)
 		if(CMAKE_BUILD_TYPE STREQUAL Release)
 			set(fileToStrip $<TARGET_FILE:${targetName}>)
@@ -397,86 +292,105 @@ function(strip_symbols targetName outputFilename)
 	endif()
 endfunction()
 
-function(install_bsf_target targetName)
-	strip_symbols(${targetName} symbolsFile)
-	
-	if(NOT B3D_IS_ENGINE)
-		set(BIN_DIR bin)
-		install(
-			TARGETS ${targetName}
-			EXPORT bsf
-			RUNTIME DESTINATION ${BIN_DIR}
-			LIBRARY DESTINATION lib
-			ARCHIVE DESTINATION lib
-		)
-	else()
-		set(BIN_DIR .)
-		install(
-			TARGETS ${targetName}
-			EXPORT bsf
-			RUNTIME DESTINATION ${BIN_DIR}
-			LIBRARY DESTINATION lib
-		)
-	endif()
-	
-	if(MSVC)
-		install(
-			FILES $<TARGET_PDB_FILE:${targetName}>
-			DESTINATION ${BIN_DIR}
-			OPTIONAL
-		)
-	else()
-		install(
-			FILES ${symbolsFile}
-			DESTINATION lib
-			OPTIONAL)
-	endif()
-endfunction()
-
-# Registers a post-build command that copies all binary files from imported libraries that the provided target depends on, into the build folder.
+# Sets up required post-build and install steps for the provided target. This should be called on all non-imported
+# targets. This should be called after all the relevant libraries have been linked to the target.
 #
-# @param	target		Library for which to scan and copy the dependant imported libraries.
-function(B3DCopyImportedDependencyBinariesOnBuild target)
-	if(WIN32)
-		get_target_property(libraries ${target} LINK_LIBRARIES)
-		foreach(library ${libraries})
-			if(NOT TARGET ${library})
-				continue()
-			endif()
+# In particular these are the operations performed:
+# 1. Sets up a post-build step that strips symbols embedded in the executable.
+# 2. Sets up a post-build step that copies any linked imported binaries (e.g. dll) into the build directory
+# 3. Sets up an install step that installs all output artifacts from the provided target
+# 4. Sets up an install step that installs the symbol file for the target
+# 5. Sets up an install step that installs any linked imported binaries (e.g. dll)
+function(B3DSetUpPostBuildAndInstallSteps target)
 
-			get_target_property(isImported ${library} IMPORTED)
-			if(NOT ${isImported})
-				continue()
-			endif()
+	# Strip symbols
+	B3DStripSymbols(${target} symbolsFile)
 
-			get_target_property(libraryImportLocation ${library} IMPORTED_LOCATION)
-
-			cmake_path(IS_PREFIX PROJECT_SOURCE_DIR ${libraryImportLocation} isInProjectFolder)
-			if(NOT ${isInProjectFolder})
-				continue()
-			endif()
-
-			get_filename_component(libraryFileName ${libraryImportLocation} NAME)
-
-			if(NOT libraryFileName MATCHES "\.dll$")
-				continue()
-			endif()
-
-			get_target_property(libraryImportLocationDebug ${library} IMPORTED_LOCATION_DEBUG)
-
-			set(source ${libraryImportLocation})
-			set(debugSource ${libraryImportLocationDebug})
-			set(destination $<TARGET_FILE_DIR:bsf>)
-
-			add_custom_command(
-					TARGET ${target} POST_BUILD
-					COMMAND ${CMAKE_COMMAND}
-					ARGS    -E copy_if_different $<$<CONFIG:Debug>:${debugSource}>$<$<NOT:$<CONFIG:Debug>>:${source}> ${destination}
-					COMMENT "Copying $<$<CONFIG:Debug>:${debugSource}>$<$<NOT:$<CONFIG:Debug>>:${source}> to ${destination}\n"
-					COMMAND_EXPAND_LISTS
-			)
-		endforeach()
+	# Set up directory in which to output the binaries
+	if(NOT B3D_IS_ENGINE)
+		set(installBinaryDirectory bin)
+	else()
+		set(installBinaryDirectory .)
 	endif()
+
+	get_target_property(targetType ${target} TYPE)
+	if (NOT targetType STREQUAL "STATIC_LIBRARY")
+		# Install target artifacts
+		install(
+				TARGETS ${target}
+				EXPORT bsf
+				RUNTIME DESTINATION ${installBinaryDirectory}
+		)
+
+		# Install symbol file
+		if(MSVC)
+			install(
+					FILES $<TARGET_PDB_FILE:${target}>
+					DESTINATION ${installBinaryDirectory}
+					OPTIONAL
+			)
+		else()
+			install(
+					FILES ${symbolsFile}
+					DESTINATION lib
+					OPTIONAL)
+		endif()
+	endif()
+
+	# Find all linked imported libraries
+	get_target_property(libraries ${target} LINK_LIBRARIES)
+	foreach(library ${libraries})
+		if(NOT TARGET ${library})
+			continue()
+		endif()
+
+		get_target_property(isImported ${library} IMPORTED)
+		if(NOT ${isImported})
+			continue()
+		endif()
+
+		get_target_property(libraryImportLocation ${library} IMPORTED_LOCATION)
+
+		cmake_path(IS_PREFIX PROJECT_SOURCE_DIR ${libraryImportLocation} isInProjectFolder)
+		if(NOT ${isInProjectFolder})
+			continue()
+		endif()
+
+		get_filename_component(libraryFileName ${libraryImportLocation} NAME)
+
+		# TODO: Not handling Linux/macOS
+		if(NOT libraryFileName MATCHES "\.dll$")
+			continue()
+		endif()
+
+		get_target_property(libraryImportLocationDebug ${library} IMPORTED_LOCATION_DEBUG)
+
+		set(source ${libraryImportLocation})
+		set(debugSource ${libraryImportLocationDebug})
+		set(destination $<TARGET_FILE_DIR:bsf>)
+
+		# Copy imported library on build
+		add_custom_command(
+				TARGET ${target} POST_BUILD
+				COMMAND ${CMAKE_COMMAND}
+				ARGS    -E copy_if_different $<$<CONFIG:Debug>:${debugSource}>$<$<NOT:$<CONFIG:Debug>>:${source}> ${destination}
+				COMMENT "Copying $<$<CONFIG:Debug>:${debugSource}>$<$<NOT:$<CONFIG:Debug>>:${source}> to ${destination}\n"
+				COMMAND_EXPAND_LISTS
+		)
+
+		# Install imported library
+		install(
+				FILES ${source}
+				DESTINATION ${installBinaryDirectory}
+				CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+		)
+
+		install(
+				FILES ${debugSource}
+				DESTINATION ${installBinaryDirectory}
+				CONFIGURATIONS Debug
+		)
+	endforeach()
 endfunction()
 
 function(copy_folder_on_build target srcDir dstDir name filter)

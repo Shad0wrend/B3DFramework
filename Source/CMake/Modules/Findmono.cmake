@@ -15,13 +15,6 @@ list(APPEND mono_INCLUDE_SEARCH_DIRS ${mono_INSTALL_DIR}/include/mono-2.0 /usr/i
 B3DFindImportedIncludes(mono mono/jit/jit.h)
 B3DFindImportedLibraryWithAlternateBinaryName(mono mono-2.0 SHARED mono-2.0-sgen)
 
-if(WIN32)
-	# .dll has a different name than .lib, so we must register it separately
-	install_dependency_dll(mono ${mono_INSTALL_DIR} mono-2.0-sgen)
-endif()
-	
-install_dependency_binaries(mono)
-
 B3DEndFindPackage(mono mono-2.0)
 
 # Install the managed libraries and config files required by Mono

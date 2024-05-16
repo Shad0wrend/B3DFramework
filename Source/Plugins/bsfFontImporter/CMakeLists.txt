@@ -27,6 +27,6 @@ target_link_libraries(bsfFontImporter bsf)
 set_property(TARGET bsfFontImporter PROPERTY FOLDER Plugins)
 
 # Install
-install_bsf_target(bsfFontImporter)
+B3DSetUpPostBuildAndInstallSteps(bsfFontImporter)
 
 conditional_cotire(bsfFontImporter)

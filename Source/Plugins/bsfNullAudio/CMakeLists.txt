@@ -19,7 +19,7 @@ set_property(TARGET bsfNullAudio PROPERTY FOLDER Plugins)
 
 # Install
 if(B3D_AUDIO_BACKEND MATCHES "Null")
-	install_bsf_target(bsfNullAudio)
+	B3DSetUpPostBuildAndInstallSteps(bsfNullAudio)
 endif()
 
 conditional_cotire(bsfNullAudio)

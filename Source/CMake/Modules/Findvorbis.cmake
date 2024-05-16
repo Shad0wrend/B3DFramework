@@ -27,8 +27,4 @@ else()
 	B3DFindImportedLibrary(vorbis ${vorbis_LIB_PREFIX}vorbisfile SHARED)
 endif()
 
-if(B3D_USE_BUNDLED_LIBRARIES)
-	install_dependency_binaries(vorbis)
-endif()
-
 B3DEndFindPackage(vorbis ${vorbis_LIB_PREFIX}vorbis)
