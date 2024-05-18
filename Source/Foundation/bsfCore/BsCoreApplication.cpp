@@ -163,7 +163,7 @@ void CoreApplication::OnStartUp()
 
 	mTaskScheduler = B3DMakeShared<Scheduler>(schedulerCreateInformation);
 
-	mApplicationCache = B3DMakeShared<PersistentCache>();
+	mApplicationCache = PersistentCache::Create();
 	mApplicationCache->Initialize(FileSystem::GetApplicationDataFolder());
 
 	ShaderCompilers::StartUp();

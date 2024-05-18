@@ -130,12 +130,14 @@ namespace bs
 			CacheOperationType Type;
 		};
 
+		struct PrivatelyConstruct { };
+
 	public:
 		/** Version of the cache. Ticking this value will cause any cached data using the old version to be invalidated. */
 		static constexpr u32 kVersion = 1;
 
-		PersistentCache() = default;
-		~PersistentCache();
+		PersistentCache(PrivatelyConstruct);
+		~PersistentCache() = default;
 
 		/**
 		 * Initializes the cache. Must be called at least once before using the cache. Can be called multiple times in which the cache will be reinitialized
@@ -188,6 +190,9 @@ namespace bs
 			return B3DRTTICast<T>(TryGetEntry(path));
 		}
 
+		/** Creates a new persistent cache object. */
+		static SPtr<PersistentCache> Create();
+
 	private:
 		static constexpr const char* kCacheRootFolderName = "PersistentCache";
 		static constexpr const char* kCacheStagingDirectory = "Staging";
@@ -235,6 +240,9 @@ namespace bs
 
 		/** Iterates over all entries with dirty meta-data, and writes the meta-data into their packages. */
 		void WriteDirtyMetaData();
+
+		/** Called when the shared pointer to this goes out of scope. */
+		void SharedDeleter(PersistentCache* cache);
 
 		Path mCacheFolder;
 		u64 mUsedCacheSizeInBytes = 0;

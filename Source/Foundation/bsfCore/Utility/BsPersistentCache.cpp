@@ -73,15 +73,8 @@ PersistentCache::CacheOperation::~CacheOperation()
 	cacheShared->NotifyOperationWillEnd(EntryPath, Type);
 }
 
-PersistentCache::~PersistentCache()
-{
-	{
-		Lock lock(mMutex);
-		WaitForAllOperationsToComplete(lock);
-	}
-
-	WriteDirtyMetaData();
-}
+PersistentCache::PersistentCache(PrivatelyConstruct)
+{ }
 
 void PersistentCache::Initialize(const Path& cacheFolder)
 {
@@ -177,6 +170,21 @@ void PersistentCache::Initialize(const Path& cacheFolder)
 	}
 
 	RunEvictionIfRequired();
+}
+
+SPtr<PersistentCache> PersistentCache::Create()
+{
+	return B3DMakeShared<PersistentCache>(PrivatelyConstruct());
+}
+
+void PersistentCache::SharedDeleter(PersistentCache* cache)
+{
+	{
+		Lock lock(mMutex);
+		WaitForAllOperationsToComplete(lock);
+	}
+
+	WriteDirtyMetaData();
 }
 
 void PersistentCache::RunEvictionIfRequired()
