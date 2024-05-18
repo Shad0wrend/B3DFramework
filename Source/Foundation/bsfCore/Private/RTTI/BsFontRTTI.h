@@ -177,7 +177,6 @@ namespace bs
 		}
 
 		u32 mBakedPageCount = 0;
-
 	};
 
 	class B3D_CORE_EXPORT FontRTTI : public RTTIType<Font, Resource, FontRTTI>
@@ -186,34 +185,8 @@ namespace bs
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_NAMED(RenderMode, mInformation.RenderMode, 2)
 			B3D_RTTI_MEMBER_NAMED(DPI, mInformation.DPI, 3)
+			B3D_RTTI_MEMBER_CONTAINER(mFontBitmaps, 4)
 		B3D_RTTI_END_MEMBERS
-
-		FontBitmapInformation& GetBitmap(Font* obj, u32 idx)
-		{
-			if(idx >= obj->mFontBitmaps.size())
-				B3D_EXCEPT(InternalErrorException, "Index out of range: " + ToString(idx) + ". Valid range: 0 .. " + ToString((int)obj->mFontBitmaps.size()));
-
-			auto iter = obj->mFontBitmaps.begin();
-			for(u32 i = 0; i < idx; i++, ++iter)
-			{}
-
-			return *iter->second;
-		}
-
-		void SetBitmap(Font* obj, u32 idx, FontBitmapInformation& value)
-		{
-			obj->mFontBitmaps[value.Size] = B3DMakeShared<FontBitmapInformation>();
-			*obj->mFontBitmaps[value.Size] = value;
-		}
-
-		u32 GetBitmapCount(Font* obj)
-		{
-			return (u32)obj->mFontBitmaps.size();
-		}
-
-		void SetBitmapCount(Font* obj, u32 size)
-		{
-		}
 
 		SPtr<DataStream> GetFontData(Font* obj, u32& outSize)
 		{
@@ -238,7 +211,7 @@ namespace bs
 	public:
 		FontRTTI()
 		{
-			AddReflectableArrayField("mBitmaps", 0, &FontRTTI::GetBitmap, &FontRTTI::GetBitmapCount, &FontRTTI::SetBitmap, &FontRTTI::SetBitmapCount);
+			//AddReflectableArrayField("mBitmaps", 0, &FontRTTI::GetBitmap, &FontRTTI::GetBitmapCount, &FontRTTI::SetBitmap, &FontRTTI::SetBitmapCount);
 			AddDataBlockField("mFontData", 1, &FontRTTI::GetFontData, &FontRTTI::SetFontData);
 		}
 
