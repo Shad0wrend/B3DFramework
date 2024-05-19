@@ -36,6 +36,29 @@ namespace bs
 		RTTITypeBase* GetRtti() const override;
 	};
 
+	/** List of operations that may be performed on a RTTIType object, to be used with RTTITypeOnOperationStarted/Ended notifies. */
+	enum class RTTIOperationType
+	{
+		Unknown,
+		/**
+		 * Serializing an object to a binary stream. If the object is part of a class hierarchy, the start 
+		 * notify will first be called on the most-derived child, followed by its parent, and so on. End notify
+		 * will be called in the reverse order.
+		 */ 
+		Serialization,
+		/**
+		 * Serializing an object from a binary stream. If the object is part of a class hierarchy, the start 
+		 * notify will first be called on the base class, followed by its child, and so on. End notify
+		 * will be called in the reverse order.
+		 */ 
+		Deserialization,
+		DeltaGenerate, /**< Generating a delta between two objects. */
+		DeltaApply, /**< Applying a delta to an object. */
+		SerializedObjectCreate, /**< Converting an IReflectable object to SerializedObject. */
+		SerializedObjectDecode, /**< Decoding a SerializedObject into IReflectable object. */
+		GatherReferences, /**< Searching the RTTI fields for references to certain object or object type. */
+	};
+
 	/** @} */
 
 	/** @addtogroup Internal-Utility
@@ -86,10 +109,10 @@ namespace bs
 		virtual u32 GetRttiId() const = 0;
 
 		/** Called before any operation that is iterating over the type's fields starts. */
-		virtual void OnOperationStarted(IReflectable& object, RTTIOperationContext& context) {}
+		virtual void OnOperationStarted(IReflectable& object, RTTIOperationType operationType, RTTIOperationContext& context) {}
 
 		/** Called after any operation that is iterating over the type's fields ends. */
-		virtual void OnOperationEnded(IReflectable& object, RTTIOperationContext& context) {}
+		virtual void OnOperationEnded(IReflectable& object, RTTIOperationType operationType, RTTIOperationContext& context) {}
 
 		/**
 		 * Called by the serializers when serialization for this object has started. Use this to do any preprocessing on
@@ -459,23 +482,9 @@ namespace bs
 	template <typename Type, typename BaseType, typename MyRTTIType>
 	InitRTTIOnStart<Type, BaseType> RTTIType<Type, BaseType, MyRTTIType>::initOnStart;
 
-	/** List of operations that may be performed on a RTTIType object. */
-	enum class RTTIOperationType
-	{
-		Unknown,
-		Serialization, /**< Serializing an object to a binary stream. */ 
-		Deserialization, /**< Deserializing an object from a binary stream. */
-		DeltaGenerate, /**< Generating a delta between two objects. */
-		DeltaApply, /**< Applying a delta to an object. */
-		SerializedObjectCreate, /**< Converting an IReflectable object to SerializedObject. */
-		SerializedObjectDecode, /**< Decoding a SerializedObject into IReflectable object. */
-		GatherReferences, /**< Searching the RTTI fields for references to certain object or object type. */
-	};
-
 	/** Provides information about the operation being performed on RTTIType objects. */
 	struct B3D_UTILITY_EXPORT RTTIOperationContext : IReflectable
 	{
-		RTTIOperationType OperationType = RTTIOperationType::Unknown;
 		u32 Flags = 0;
 
 		static RTTITypeBase* GetRttiStatic();

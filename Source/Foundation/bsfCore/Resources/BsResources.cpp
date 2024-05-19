@@ -440,8 +440,8 @@ SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool 
 		B3D_EXCEPT(InternalErrorException, "File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
 	}
 
-	RTTIOperationEngineContext serzContext;
-	serzContext.Flags = loadWithSaveData ? SF_KeepResourceSourceData : 0;
+	RTTIOperationEngineContext rttiOperationContext;
+	rttiOperationContext.Flags = loadWithSaveData ? SF_KeepResourceSourceData : 0;
 
 	// Read meta-data
 	SPtr<SavedResourceData> metaData;
@@ -452,7 +452,7 @@ SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool 
 			stream->Read(&objectSize, sizeof(objectSize));
 
 			BinarySerializer bs;
-			metaData = std::static_pointer_cast<SavedResourceData>(bs.Decode(stream, objectSize, BinarySerializerFlag::None, &serzContext));
+			metaData = std::static_pointer_cast<SavedResourceData>(bs.Decode(stream, objectSize, rttiOperationContext));
 		}
 	}
 
@@ -473,13 +473,13 @@ SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool 
 				stream->Seek(0);
 
 				BinarySerializer bs;
-				loadedData = bs.Decode(stream, objectSize, BinarySerializerFlag::None, &serzContext, [&progress](float val)
+				loadedData = bs.Decode(stream, objectSize, rttiOperationContext, BinarySerializerFlag::None, [&progress](float val)
 									   { progress.exchange(0.9f + val * 0.1f, std::memory_order_relaxed); });
 			}
 			else
 			{
 				BinarySerializer bs;
-				loadedData = bs.Decode(stream, objectSize, BinarySerializerFlag::None, &serzContext, [&progress](float val)
+				loadedData = bs.Decode(stream, objectSize, rttiOperationContext, BinarySerializerFlag::None, [&progress](float val)
 									   { progress.exchange(val, std::memory_order_relaxed); });
 			}
 		}

@@ -838,7 +838,7 @@ SPtr<Resource> Package::LoadAndDeserializeResource(const UUID& id, size_t offset
 		return nullptr;
 	}
 
-	RTTIOperationEngineContext serializationContext;
+	RTTIOperationEngineContext rttiOperationContext;
 
 	// Read resource data
 	SPtr<IReflectable> loadedData;
@@ -855,7 +855,7 @@ SPtr<Resource> Package::LoadAndDeserializeResource(const UUID& id, size_t offset
 		
 		{
 			BinarySerializer binarySerializer;
-			loadedData = binarySerializer.Decode(dataStream, (u32)sizeInStream, BinarySerializerFlag::None, &serializationContext,
+			loadedData = binarySerializer.Decode(dataStream, (u32)sizeInStream, rttiOperationContext, BinarySerializerFlag::None,
 				[&outProgress](float progress) { outProgress.exchange(progress, std::memory_order_relaxed); });
 		}
 		else
@@ -872,7 +872,7 @@ SPtr<Resource> Package::LoadAndDeserializeResource(const UUID& id, size_t offset
 			if (decompressionSuccessful)
 			{
 				BinarySerializer bs;
-				loadedData = bs.Decode(uncompressedStream, (u32)uncompressedStream->Size(), BinarySerializerFlag::None, &serializationContext,
+				loadedData = bs.Decode(uncompressedStream, (u32)uncompressedStream->Size(), rttiOperationContext, BinarySerializerFlag::None,
 									   [&outProgress, kCompressionProgressWeight](float progress) {
 										   outProgress.exchange(kCompressionProgressWeight + progress * (1.0f - kCompressionProgressWeight), std::memory_order_relaxed);
 									   });

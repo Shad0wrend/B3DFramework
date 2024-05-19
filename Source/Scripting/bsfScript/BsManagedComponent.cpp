@@ -105,14 +105,14 @@ void ManagedComponent::Restore(const RawBackupData& data, bool missingType)
 	{
 		BinarySerializer bs;
 
-		RTTIOperationEngineContext serzContext;
-		serzContext.GameObjectCollection = SO()->GetOwnerCollection().lock();
-		serzContext.GameObjectCollection->BeginHandleResolve();
+		RTTIOperationEngineContext rttiOperationContext;
+		rttiOperationContext.GameObjectCollection = SO()->GetOwnerCollection().lock();
+		rttiOperationContext.GameObjectCollection->BeginHandleResolve();
 
 		auto serializableObject = std::static_pointer_cast<ManagedSerializableObject>(
-			bs.Decode(B3DMakeShared<MemoryDataStream>(data.Data, data.Size), data.Size, BinarySerializerFlag::None, &serzContext));
+			bs.Decode(B3DMakeShared<MemoryDataStream>(data.Data, data.Size), data.Size, rttiOperationContext));
 
-		serzContext.GameObjectCollection->EndHandleResolve();
+		rttiOperationContext.GameObjectCollection->EndHandleResolve();
 
 		if(!missingType)
 		{

@@ -6,6 +6,7 @@
 #include "Prerequisites/BsPrerequisitesUtil.h"
 #include "Serialization/BsSerializedObject.h"
 #include "Reflection/BsRTTIField.h"
+#include "Reflection/BsRTTIType.h"
 #include "Utility/BsBitstream.h"
 
 namespace bs
@@ -71,37 +72,44 @@ namespace bs
 		/**
 		 * Encodes all serializable fields provided by @p object into a binary format.
 		 *
-		 * @param[in]	object					Object to encode into binary format.
-		 * @param[in]	stream					Stream into which to output the encoded data. The stream must own its memory
-		 *										buffer so it may grow as required during encoding, or your must guarantee
-		 *										the stream is of adequate size otherwise.
-		 * @param[in]	flags					Flags used for controlling serialization.
-		 * @param[in]	rttiContext					Optional object that will be passed along to all serialized objects through
-		 *										their serialization callbacks. Can be used for controlling serialization,
-		 *										maintaining state or sharing information between objects during
-		 *										serialization.
+		 * @param	object					Object to encode into binary format.
+		 * @param	stream					Stream into which to output the encoded data. The stream must own its memory
+		 *									buffer so it may grow as required during encoding, or your must guarantee
+		 *									the stream is of adequate size otherwise.
+		 * @param	context					Optional object that will be passed along to all serialized objects through
+		 *									RTTI operation notify methods. Can be used for controlling serialization,
+		 *									maintaining state or sharing information between objects during serialization.
+		 * @param	flags					Flags used for controlling serialization.
 		 */
-		void Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags = BinarySerializerFlag::None, RTTIOperationContext* rttiContext = nullptr);
+		void Encode(IReflectable* object, const SPtr<DataStream>& stream, RTTIOperationContext& context, BinarySerializerFlags flags = BinarySerializerFlag::None);
+
+		/** Overload of Encode(IReflectable*, const SPtr<DataStream>&, BinarySerializerFlags, RTTIOperationContext&) that uses default constructed context. */
+		void Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags = BinarySerializerFlag::None);
 
 		/**
 		 * Decodes an object from binary data.
 		 *
-		 * @param[in]	stream  	Stream containing the binary data to decode.
-		 * @param[in]	dataLength	Length of the data in bytes. If zero, all the data from the stream will be read.
-		 * @param[in]	context		Optional object that will be passed along to all serialized objects through
-		 *							their deserialization callbacks. Can be used for controlling deserialization,
-		 *							maintaining state or sharing information between objects during deserialization.
-		 * @param[in]	progress	Optional callback that will occasionally trigger, reporting the current progress
-		 *							of the operation. The reported value is in range [0, 1].
-		 * @param[in]	schema		RTTI schema that contains information about types as they were when the data was
-		 *							originally serialized. Schema is only used (and required) if BinarySerializerFlag::NoMeta
-		 *							is set,	otherwise this information is read directly	from the encoded data.
+		 * @param	stream  	Stream containing the binary data to decode.
+		 * @param	dataLength	Length of the data in bytes. If zero, all the data from the stream will be read.
+		 * @param	context		Optional object that will be passed along to all serialized objects through
+		 *						their deserialization callbacks. Can be used for controlling deserialization,
+		 *						maintaining state or sharing information between objects during deserialization.
+		 * @param	progress	Optional callback that will occasionally trigger, reporting the current progress
+		 *						of the operation. The reported value is in range [0, 1].
+		 * @param	schema		RTTI schema that contains information about types as they were when the data was
+		 *						originally serialized. Schema is only used (and required) if BinarySerializerFlag::NoMeta
+		 *						is set,	otherwise this information is read directly	from the encoded data.
 		 *
 		 * @note
 		 * Child elements are guaranteed to be fully deserialized before their parents, except for fields marked with WeakRef flag.
 		 */
-		SPtr<IReflectable> Decode(const SPtr<DataStream>& stream, u32 dataLength, BinarySerializerFlags flags = BinarySerializerFlag::None, RTTIOperationContext* context = nullptr, std::function<void(float)> progress = nullptr, SPtr<RTTISchema> schema = nullptr);
+		SPtr<IReflectable> Decode(const SPtr<DataStream>& stream, u32 dataLength, RTTIOperationContext& context, BinarySerializerFlags flags = BinarySerializerFlag::None, Function<void(float)> progress = nullptr, SPtr<RTTISchema> schema = nullptr);
 
+		/**
+		 * Overload of Decode(const SPtr<DataStream>&, u32, RTTIOperationContext, BinarySerializerFlags, Function<void(float)>, SPtr<RTTISchema>) that uses
+		 * default constructed context.
+		 */
+		SPtr<IReflectable> Decode(const SPtr<DataStream>& stream, u32 dataLength, BinarySerializerFlags flags = BinarySerializerFlag::None, std::function<void(float)> progress = nullptr, SPtr<RTTISchema> schema = nullptr);
 	private:
 		/** Determines how many bytes need to be read before the progress report callback is triggered. */
 		static constexpr u32 kReportAfterBytes = 32768;

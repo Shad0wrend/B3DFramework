@@ -233,7 +233,7 @@ public:
 		SPtr<RTTISchema> Schema; /**< Schema that describes the object. */
 	};
 
-	BinaryDeserializationContext(FrameAllocator& allocator, BufferedBitstreamReader& stream, size_t dataEnd, BinarySerializerFlags flags, RTTIOperationContext* rttiContext);
+	BinaryDeserializationContext(FrameAllocator& allocator, BufferedBitstreamReader& stream, size_t dataEnd, BinarySerializerFlags flags, RTTIOperationContext& rttiContext);
 
 	/**
 	 * Deserializes a single IReflectable object. 
@@ -316,7 +316,7 @@ private:
 	static bool IsObjectMetaData(u32 encodedData);
 
 	FrameAllocator& mAllocator;
-	RTTIOperationContext* mRTTIContext = nullptr;
+	RTTIOperationContext& mRTTIContext;
 	BufferedBitstreamReader& mStream; /**< Stream from which to read the data. */
 	size_t mDataEnd = 0; /**< Byte at which the data ends. Stream will not be advanced past this point. */
 	BinarySerializerFlags mFlags = BinarySerializerFlag::None; /**< Flags used to control deserialization. */
@@ -324,7 +324,7 @@ private:
 	Map<u32, ObjectDeserializationData> mReflectableObjectsToDeserialize;
 };
 
-BinaryDeserializationContext::BinaryDeserializationContext(FrameAllocator& allocator, BufferedBitstreamReader& stream, size_t dataEnd, BinarySerializerFlags flags, RTTIOperationContext* rttiContext)
+BinaryDeserializationContext::BinaryDeserializationContext(FrameAllocator& allocator, BufferedBitstreamReader& stream, size_t dataEnd, BinarySerializerFlags flags, RTTIOperationContext& rttiContext)
 	: mAllocator(allocator), mStream(stream), mDataEnd(dataEnd), mFlags(flags), mRTTIContext(rttiContext)
 { }
 
@@ -361,7 +361,8 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 		{
 			RTTITypeBase* curRTTI = *iter;
 
-			curRTTI->OnDeserializationEnded(object, mRTTIContext);
+			curRTTI->OnDeserializationEnded(object, &mRTTIContext);
+			curRTTI->OnOperationEnded(*object, RTTIOperationType::Deserialization, mRTTIContext);
 			mAllocator.Destruct(curRTTI);
 		}
 
@@ -379,7 +380,10 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 
 	// Iterate in reverse to notify base classes before derived classes
 	for(auto iter = rttiInstances.rbegin(); iter != rttiInstances.rend(); ++iter)
-		(*iter)->OnDeserializationStarted(output.get(), mRTTIContext);
+	{
+		(*iter)->OnDeserializationStarted(output.get(), &mRTTIContext);
+		(*iter)->OnOperationStarted(*output.get(), RTTIOperationType::Deserialization, mRTTIContext);
+	}
 
 	RTTITypeBase* rttiInstance = nullptr;
 	u32 rttiInstanceIdx = 0;
@@ -1180,7 +1184,7 @@ public:
 		SPtr<IReflectable> Object;
 	};
 
-	BinarySerializationContext(FrameAllocator& allocator, BufferedBitstreamWriter& stream, BinarySerializerFlags flags, RTTIOperationContext* rttiContext);
+	BinarySerializationContext(FrameAllocator& allocator, BufferedBitstreamWriter& stream, BinarySerializerFlags flags, RTTIOperationContext& rttiContext);
 
 	/**
 	 * Serializes a single IReflectable object. Any pointers referencing other reflectable types will be registered in mObjectsToSerialize, and
@@ -1238,7 +1242,7 @@ private:
 	FrameAllocator& mAllocator;
 	BufferedBitstreamWriter mStream;
 	BinarySerializerFlags mFlags;
-	RTTIOperationContext* mRTTIContext = nullptr;
+	RTTIOperationContext& mRTTIContext;
 	UnorderedMap<void*, u32> mReflectableObjectToID;
 	u32 mLastUsedObjectId = 1;
 };
@@ -1258,7 +1262,8 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 		while(!rttiInstances.empty())
 		{
 			RTTITypeBase* rttiInstance = rttiInstances.top();
-			rttiInstance->OnSerializationEnded(object, mRTTIContext);
+			rttiInstance->OnSerializationEnded(object, &mRTTIContext);
+			rttiInstance->OnOperationEnded(*object, RTTIOperationType::Serialization, mRTTIContext);
 			mAllocator.Destruct(rttiInstance);
 
 			rttiInstances.pop();
@@ -1271,7 +1276,8 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 		RTTITypeBase* rttiInstance = rtti->CloneInternal(mAllocator);
 		rttiInstances.push(rttiInstance);
 
-		rttiInstance->OnSerializationStarted(object, mRTTIContext);
+		rttiInstance->OnOperationStarted(*object, RTTIOperationType::Serialization, mRTTIContext);
+		rttiInstance->OnSerializationStarted(object, &mRTTIContext);
 
 		if(writeMeta)
 		{
@@ -1650,7 +1656,7 @@ u32 BinarySerializationContext::RegisterReflectableObjectForSerialization(SPtr<I
 }
 
 
-BinarySerializationContext::BinarySerializationContext(FrameAllocator& allocator, BufferedBitstreamWriter& stream, BinarySerializerFlags flags, RTTIOperationContext* rttiContext)
+BinarySerializationContext::BinarySerializationContext(FrameAllocator& allocator, BufferedBitstreamWriter& stream, BinarySerializerFlags flags, RTTIOperationContext& rttiContext)
 	: mAllocator(allocator), mStream(stream), mFlags(flags), mRTTIContext(rttiContext)
 { }
 
@@ -1658,15 +1664,15 @@ BinarySerializer::BinarySerializer()
 	: mAlloc(&GetFrameAllocator())
 {}
 
-void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags, RTTIOperationContext* rttiContext)
+void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stream, RTTIOperationContext& context, BinarySerializerFlags flags)
 {
-	mContext = rttiContext;
+	mContext = &context;
 	mBuffer.Seek(0);
 
 	mAlloc->MarkFrame();
 
 	BufferedBitstreamWriter bufferedStream(&mBuffer, stream, kWriteBufferSize, kFlushAfterBytes);
-	BinarySerializationContext serializationContext(*mAlloc, bufferedStream, flags, rttiContext);
+	BinarySerializationContext serializationContext(*mAlloc, bufferedStream, flags, context);
 
 	Vector<SPtr<IReflectable>> encodedObjects;
 	u32 objectId = serializationContext.FindOrCreateReflectableObjectId(object);
@@ -1725,9 +1731,15 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 	mAlloc->Clear();
 }
 
-SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 dataLength, BinarySerializerFlags flags, RTTIOperationContext* context, std::function<void(float)> progress, SPtr<RTTISchema> schema)
+void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags)
 {
-	mContext = context;
+	RTTIOperationContext rttiOperationContext;
+	return Encode(object, stream, rttiOperationContext, flags);
+}
+
+SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 dataLength, RTTIOperationContext& context, BinarySerializerFlags flags, std::function<void(float)> progress, SPtr<RTTISchema> schema)
+{
+	mContext = &context;
 	mReportProgress = nullptr;
 	mTotalBytesToRead = dataLength;
 	mBuffer.Seek(0);
@@ -1850,6 +1862,12 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 		mReportProgress(1.0f);
 
 	return rootObject;
+}
+
+SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 dataLength, BinarySerializerFlags flags, std::function<void(float)> progress, SPtr<RTTISchema> schema)
+{
+	RTTIOperationContext rttiOperationContext;
+	return Decode(stream, dataLength, rttiOperationContext, flags, std::move(progress), std::move(schema));
 }
 
 #undef COPY_TO_BUFFER

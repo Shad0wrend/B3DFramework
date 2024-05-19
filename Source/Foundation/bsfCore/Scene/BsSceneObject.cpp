@@ -852,12 +852,12 @@ HSceneObject SceneObject::Clone(const SPtr<GameObjectCollection>& cloneOwnerColl
 
 	B3D_ENSURE(!preserveIds || cloneOwnerCollection != mOwnerCollection.lock());
 
-	RTTIOperationEngineContext serializationContext;
-	serializationContext.PreserveGameObjectIds = preserveIds;
-	serializationContext.GameObjectCollection = cloneOwnerCollection;
+	RTTIOperationEngineContext rttiOperationContext;
+	rttiOperationContext.PreserveGameObjectIds = preserveIds;
+	rttiOperationContext.GameObjectCollection = cloneOwnerCollection;
 
 	stream->Seek(0);
-	SPtr<SceneObject> clone = std::static_pointer_cast<SceneObject>(serializer.Decode(stream, (u32)stream->Size(), BinarySerializerFlag::None, &serializationContext));
+	SPtr<SceneObject> clone = std::static_pointer_cast<SceneObject>(serializer.Decode(stream, (u32)stream->Size(), rttiOperationContext));
 
 	return clone->GetHandle();
 }
@@ -873,12 +873,12 @@ HSceneObject SceneObject::Clone(const SPtr<SceneInstance>& cloneSceneInstance, b
 
 	B3D_ENSURE(!preserveIds || cloneSceneInstance->GetGameObjectCollection() != mOwnerCollection.lock());
 
-	RTTIOperationEngineContext serializationContext;
-	serializationContext.PreserveGameObjectIds = preserveIds;
-	serializationContext.GameObjectCollection = cloneSceneInstance->GetGameObjectCollection();
+	RTTIOperationEngineContext rttiOperationContext;
+	rttiOperationContext.PreserveGameObjectIds = preserveIds;
+	rttiOperationContext.GameObjectCollection = cloneSceneInstance->GetGameObjectCollection();
 
 	stream->Seek(0);
-	SPtr<SceneObject> clone = std::static_pointer_cast<SceneObject>(serializer.Decode(stream, (u32)stream->Size(), BinarySerializerFlag::None, &serializationContext));
+	SPtr<SceneObject> clone = std::static_pointer_cast<SceneObject>(serializer.Decode(stream, (u32)stream->Size(), rttiOperationContext));
 	clone->SetParent(cloneSceneInstance->GetRoot());
 
 	if(initialize)

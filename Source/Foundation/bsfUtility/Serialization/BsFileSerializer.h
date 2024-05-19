@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Prerequisites/BsPrerequisitesUtil.h"
+#include "Reflection/BsRTTIType.h"
 
 namespace bs
 {
@@ -23,13 +24,16 @@ namespace bs
 		 * Parses the provided object, serializes all of its data as specified by its RTTIType and saves the serialized
 		 * data to the provided file location.
 		 *
-		 * @param[in]	object		Object to encode.
-		 * @param[in]	context		Optional object that will be passed along to all serialized objects through
-		 *							their serialization callbacks. Can be used for controlling serialization,
-		 *							maintaining state or sharing information between objects during
-		 *							serialization.
+		 * @param	object		Object to encode.
+		 * @param	context		Optional object that will be passed along to all serialized objects through
+		 *						their operation notify methods . Can be used for controlling serialization,
+		 *						maintaining state or sharing information between objects during
+		 *						serialization.
 		 */
-		void Encode(IReflectable* object, RTTIOperationContext* context = nullptr);
+		void Encode(IReflectable* object, RTTIOperationContext& context);
+
+		/** Overload of Encode(IReflectable*, RTTIOperationContext&) that uses a default-constructed context. */
+		void Encode(IReflectable* object);
 
 	private:
 		SPtr<DataStream> mOutputStream;
@@ -45,12 +49,15 @@ namespace bs
 		/**
 		 * Deserializes an IReflectable object by reading the binary data at the provided file location.
 		 *
-		 * @param[in]	context		Optional object that will be passed along to all deserialized objects through
-		 *							their deserialization callbacks. Can be used for controlling deserialization,
-		 *							maintaining state or sharing information between objects during
-		 *							deserialization.
+		 * @param	context		Optional object that will be passed along to all deserialized objects through
+		 *						their deserialization callbacks. Can be used for controlling deserialization,
+		 *						maintaining state or sharing information between objects during
+		 *						deserialization.
 		 */
-		SPtr<IReflectable> Decode(RTTIOperationContext* context = nullptr);
+		SPtr<IReflectable> Decode(RTTIOperationContext& context);
+
+		/** Deserializes an IReflectable object by reading the binary data at the provided file location. */
+		SPtr<IReflectable> Decode();
 
 		/** Gets the size in bytes of the next object in the file. Returns 0 if no next object. */
 		u32 GetSize() const;

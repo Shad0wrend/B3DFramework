@@ -28,7 +28,7 @@ FileEncoder::FileEncoder(const SPtr<DataStream>& stream)
 { }
 
 
-void FileEncoder::Encode(IReflectable* object, RTTIOperationContext* context)
+void FileEncoder::Encode(IReflectable* object, RTTIOperationContext& context)
 {
 	if(object == nullptr)
 		return;
@@ -37,7 +37,7 @@ void FileEncoder::Encode(IReflectable* object, RTTIOperationContext* context)
 	mOutputStream->Skip(sizeof(u32));
 
 	BinarySerializer bs;
-	bs.Encode(object, mOutputStream, BinarySerializerFlag::None, context);
+	bs.Encode(object, mOutputStream, context);
 
 	size_t endPos = mOutputStream->Tell();
 	auto size = (u32)(endPos - startPos - sizeof(u32));
@@ -45,6 +45,12 @@ void FileEncoder::Encode(IReflectable* object, RTTIOperationContext* context)
 	mOutputStream->Seek(startPos);
 	mOutputStream->Write((char*)&size, sizeof(size));
 	mOutputStream->Skip(size);
+}
+
+void FileEncoder::Encode(IReflectable* object)
+{
+	RTTIOperationContext rttiOperationContext;
+	Encode(object, rttiOperationContext);
 }
 
 FileDecoder::FileDecoder(const Path& fileLocation)
@@ -64,7 +70,7 @@ FileDecoder::FileDecoder(const SPtr<DataStream>& stream)
 	: mInputStream(stream)
 { }
 
-SPtr<IReflectable> FileDecoder::Decode(RTTIOperationContext* context)
+SPtr<IReflectable> FileDecoder::Decode(RTTIOperationContext& context)
 {
 	if(mInputStream->Eof())
 		return nullptr;
@@ -73,9 +79,15 @@ SPtr<IReflectable> FileDecoder::Decode(RTTIOperationContext* context)
 	mInputStream->Read(&objectSize, sizeof(objectSize));
 
 	BinarySerializer bs;
-	SPtr<IReflectable> object = bs.Decode(mInputStream, objectSize, BinarySerializerFlag::None, context);
+	SPtr<IReflectable> object = bs.Decode(mInputStream, objectSize, context);
 
 	return object;
+}
+
+SPtr<IReflectable> FileDecoder::Decode()
+{
+	RTTIOperationContext rttiOperationContext;
+	return Decode(rttiOperationContext);
 }
 
 u32 FileDecoder::GetSize() const
