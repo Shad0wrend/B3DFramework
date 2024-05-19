@@ -399,10 +399,10 @@ namespace bs
  */
 #define B3D_RTTI_MEMBER(name, id) B3D_RTTI_MEMBER_FULL(name, name, id, bs::RTTIFieldInfo::DEFAULT)
 
-/** Same as B3D_RTTI_MEMBER_CONTAINER, but allows you to specify separate names for the field name and the member variable. */
+/** Same as B3D_RTTI_MEMBER, but allows you to specify separate names for the field name and the member variable. */
 #define B3D_RTTI_MEMBER_NAMED(name, field, id) B3D_RTTI_MEMBER_FULL(name, field, id, RTTIFieldInfo::DEFAULT)
 
-/** Same as B3D_RTTI_MEMBER_ITERATOR, but allows you to specify an info structure that further describes the field. */
+/** Same as B3D_RTTI_MEMBER, but allows you to specify an info structure that further describes the field. */
 #define B3D_RTTI_MEMBER_INFO(name, id, info) B3D_RTTI_MEMBER_FULL(name, name, id, info)
 /**
  * Same as B3D_RTTI_MEMBER_CONTAINER, but allows you to specify separate names for the field name and the member variable,
@@ -422,6 +422,55 @@ namespace bs
 
 /** Same as B3D_RTTI_MEMBER_ITERATOR, but allows you to specify an info structure that further describes the field. */
 #define B3D_RTTI_MEMBER_CONTAINER_INFO(name, id, info) B3D_RTTI_MEMBER_CONTAINER_FULL(name, name, id, info)
+
+/** Common code for implementing both B3D_RTTI_GENERATED_MEMBER_FULL and B3D_RTTI_GENERATED_MEMBER_CONTAINER_FULL. */
+#define B3D_RTTI_GENERATED_MEMBER_IMPL(name, field, id, info, container)                                                                                            \
+	META_Entry_##name;                                                                                                                                              \
+                                                                                                                                                                    \
+	using __TRTTIIterator##name##Type = TRTTIIterator<decltype(MyType::field), container>;                                                                          \
+	using __TRTTIIteratorDeleter##name##Type = TRTTIIteratorDeleter<decltype(MyType::field), container>;                                                            \
+                                                                                                                                                                    \
+	UPtr<__TRTTIIterator##name##Type, DefaultAllocatorTag, __TRTTIIteratorDeleter##name##Type> GetIterator##name(OwnerType& object, FrameAllocator& allocator)      \
+	{                                                                                                                                                               \
+		return CreateRTTIIterator<decltype(field), container>(allocator, field);                                                                                    \
+	}                                                                                                                                                               \
+	const __TRTTIIterator##name##Type::ElementType& GetValue##name(OwnerType& object, FrameAllocator& allocator, __TRTTIIterator##name##Type& iterator)             \
+	{                                                                                                                                                               \
+		return *iterator;                                                                                                                                           \
+	}                                                                                                                                                               \
+	void SetValue##name(OwnerType& object, FrameAllocator& allocator, __TRTTIIterator##name##Type& iterator, const __TRTTIIterator##name##Type::ElementType& value) \
+	{                                                                                                                                                               \
+		iterator = value;                                                                                                                                           \
+	}                                                                                                                                                               \
+                                                                                                                                                                    \
+	struct META_NextEntry_##name                                                                                                                                    \
+	{};                                                                                                                                                             \
+	void META_InitPrevEntry(META_NextEntry_##name typeId)                                                                                                           \
+	{                                                                                                                                                               \
+		AddField(#name, id, &MyType::GetIterator##name, &MyType::GetValue##name, &MyType::SetValue##name, info);                                                    \
+                                                                                                                                                                    \
+		META_InitPrevEntry(META_Entry_##name());                                                                                                                    \
+	}                                                                                                                                                               \
+                                                                                                                                                                    \
+	typedef META_NextEntry_##name
+
+/**
+ * Same as B3D_RTTI_MEMBER, but the field is looked up on the RTTIType class itself. These fields should be manually
+ * populated after RTTI operation starts, and manually applied before it ends.
+ */
+#define B3D_RTTI_GENERATED_MEMBER(name, id) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, bs::RTTIFieldInfo::DEFAULT, false)
+
+/** Same as B3D_RTTI_GENERATED_MEMBER, but allows you to specify an info structure that further describes the field. */
+#define B3D_RTTI_GENERATED_MEMBER_INFO(name, id, info) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, info, false)
+
+/**
+ * Same as B3D_RTTI_MEMBER_CONTAINER, but the field is looked up on the RTTIType class itself. These fields should be manually
+ * populated after RTTI operation starts, and manually applied before it ends.
+ */
+#define B3D_RTTI_GENERATED_MEMBER_CONTAINER(name, id) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, bs::RTTIFieldInfo::DEFAULT, true)
+
+/** Same as B3D_RTTI_GENERATED_MEMBER_CONTAINER, but allows you to specify an info structure that further describes the field. */
+#define B3D_RTTI_GENERATED_MEMBER_CONTAINER_INFO(name, id, info) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, info, true)
 
 /** Ends definitions for member fields with a RTTI type. Must follow B3D_RTTI_BEGIN_MEMBERS. */
 #define B3D_RTTI_END_MEMBERS                                  \

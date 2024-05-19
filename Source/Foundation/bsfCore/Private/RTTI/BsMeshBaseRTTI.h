@@ -20,9 +20,9 @@ namespace bs
 	class MeshBaseRTTI : public RTTIType<MeshBase, Resource, MeshBaseRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(VertexCount, mProperties.VertexCount, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(IndexCount, mProperties.IndexCount, 1)
-			B3D_RTTI_MEMBER_PLAIN_ARRAY_NAMED(SubMeshes, mProperties.SubMeshes, 2)
+			B3D_RTTI_MEMBER_NAMED(VertexCount, mProperties.VertexCount, 0)
+			B3D_RTTI_MEMBER_NAMED(IndexCount, mProperties.IndexCount, 1)
+			B3D_RTTI_MEMBER_CONTAINER_NAMED(SubMeshes, mProperties.SubMeshes, 2)
 		B3D_RTTI_END_MEMBERS
 
 	public:

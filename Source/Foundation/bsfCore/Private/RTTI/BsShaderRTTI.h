@@ -396,25 +396,25 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(QueueSortType, 0)
-			B3D_RTTI_MEMBER_PLAIN(QueuePriority, 1)
-			B3D_RTTI_MEMBER_PLAIN(SeparablePasses, 2)
-			B3D_RTTI_MEMBER_PLAIN(Flags, 3)
+			B3D_RTTI_MEMBER(QueueSortType, 0)
+			B3D_RTTI_MEMBER(QueuePriority, 1)
+			B3D_RTTI_MEMBER(SeparablePasses, 2)
+			B3D_RTTI_MEMBER(Flags, 3)
 
-			B3D_RTTI_MEMBER_PLAIN_MAP(DataParameters, 4, Name)
-			B3D_RTTI_MEMBER_PLAIN_MAP(TextureParameters, 5, Name)
-			B3D_RTTI_MEMBER_PLAIN_MAP(SamplerParameters, 6, Name)
-			B3D_RTTI_MEMBER_PLAIN_MAP(BufferParameters, 7, Name)
-			B3D_RTTI_MEMBER_PLAIN_MAP(DataParameterBlocks, 8, Name)
+			B3D_RTTI_MEMBER_CONTAINER(DataParameters, 4)
+			B3D_RTTI_MEMBER_CONTAINER(TextureParameters, 5)
+			B3D_RTTI_MEMBER_CONTAINER(SamplerParameters, 6)
+			B3D_RTTI_MEMBER_CONTAINER(BufferParameters, 7)
+			B3D_RTTI_MEMBER_CONTAINER(DataParameterBlocks, 8)
 
-			B3D_RTTI_MEMBER_PLAIN_ARRAY(DataDefaultValues, 9)
-			B3D_RTTI_MEMBER_PLAIN_ARRAY(TextureDefaultValues, 10)
-			B3D_RTTI_MEMBER_PLAIN_ARRAY(SamplerDefaultValues, 11)
+			B3D_RTTI_MEMBER_CONTAINER(DataDefaultValues, 9)
+			B3D_RTTI_MEMBER_CONTAINER(TextureDefaultValues, 10)
+			B3D_RTTI_MEMBER_CONTAINER(SamplerDefaultValues, 11)
 
-			B3D_RTTI_MEMBER_PLAIN_ARRAY(ParamAttributes, 12)
-			B3D_RTTI_MEMBER_PLAIN_ARRAY(VariationParams, 13)
+			B3D_RTTI_MEMBER_CONTAINER(ParamAttributes, 12)
+			B3D_RTTI_MEMBER_CONTAINER(VariationParams, 13)
 
-			B3D_RTTI_MEMBER_REFLPTR(CompilerMetaData, 14)
+			B3D_RTTI_MEMBER(CompilerMetaData, 14)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -439,7 +439,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFLPTR_ARRAY(Techniques, 0)
+			B3D_RTTI_MEMBER_CONTAINER(Techniques, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -464,7 +464,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFLPTR_ARRAY(Techniques, 0)
+			B3D_RTTI_MEMBER_CONTAINER(Techniques, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -489,8 +489,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(mName, 0)
-			B3D_RTTI_MEMBER_REFL(mInformation, 1)
+			B3D_RTTI_MEMBER(mName, 0)
+			B3D_RTTI_MEMBER(mInformation, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -525,8 +525,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(mName, 0)
-			B3D_RTTI_MEMBER_REFL(mInformation, 1)
+			B3D_RTTI_MEMBER(mName, 0)
+			B3D_RTTI_MEMBER(mInformation, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -560,16 +560,11 @@ namespace bs
 	class B3D_CORE_EXPORT ShaderMetaDataRTTI : public RTTIType<ShaderMetaData, ResourceMetaData, ShaderMetaDataRTTI>
 	{
 	private:
-		Vector<String>& GetIncludes(ShaderMetaData* obj) { return obj->Includes; }
-
-		void SetIncludes(ShaderMetaData* obj, Vector<String>& includes) { obj->Includes = includes; }
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(Includes, 0)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		ShaderMetaDataRTTI()
-		{
-			AddPlainField("includes", 0, &ShaderMetaDataRTTI::GetIncludes, &ShaderMetaDataRTTI::SetIncludes);
-		}
-
 		const String& GetRttiName() override
 		{
 			static String name = "ShaderMetaData";

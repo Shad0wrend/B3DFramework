@@ -23,12 +23,12 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Instructions, 0)
-			B3D_RTTI_MEMBER_REFLPTR(ParameterDescription, 1)
-			B3D_RTTI_MEMBER_PLAIN(VertexInput, 2)
-			B3D_RTTI_MEMBER_PLAIN(Messages, 3)
-			B3D_RTTI_MEMBER_PLAIN(CompilerId, 4)
-			B3D_RTTI_MEMBER_PLAIN(CompilerVersion, 5)
+			B3D_RTTI_MEMBER(Instructions, 0)
+			B3D_RTTI_MEMBER(ParameterDescription, 1)
+			B3D_RTTI_MEMBER(VertexInput, 2)
+			B3D_RTTI_MEMBER(Messages, 3)
+			B3D_RTTI_MEMBER(CompilerId, 4)
+			B3D_RTTI_MEMBER(CompilerVersion, 5)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -53,12 +53,12 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(UniformBuffers, 0)
-			B3D_RTTI_MEMBER_PLAIN(UniformBufferMembers, 1)
-			B3D_RTTI_MEMBER_PLAIN(Samplers, 2)
-			B3D_RTTI_MEMBER_PLAIN(SampledTextures, 3)
-			B3D_RTTI_MEMBER_PLAIN(StorageTextures, 4)
-			B3D_RTTI_MEMBER_PLAIN(Buffers, 5)
+			B3D_RTTI_MEMBER(UniformBuffers, 0)
+			B3D_RTTI_MEMBER(UniformBufferMembers, 1)
+			B3D_RTTI_MEMBER(Samplers, 2)
+			B3D_RTTI_MEMBER(SampledTextures, 3)
+			B3D_RTTI_MEMBER(StorageTextures, 4)
+			B3D_RTTI_MEMBER(Buffers, 5)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -83,13 +83,13 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(mType, 2)
-			B3D_RTTI_MEMBER_PLAIN(mNeedsAdjacencyInfo, 3)
-			B3D_RTTI_MEMBER_PLAIN(mEntryPoint, 4)
-			B3D_RTTI_MEMBER_PLAIN(mSource, 6)
-			B3D_RTTI_MEMBER_PLAIN(mLanguage, 7)
-			B3D_RTTI_MEMBER_PLAIN(mName, 8)
-			B3D_RTTI_MEMBER_REFLPTR(mBytecode, 9)
+			B3D_RTTI_MEMBER(mType, 2)
+			B3D_RTTI_MEMBER(mNeedsAdjacencyInfo, 3)
+			B3D_RTTI_MEMBER(mEntryPoint, 4)
+			B3D_RTTI_MEMBER(mSource, 6)
+			B3D_RTTI_MEMBER(mLanguage, 7)
+			B3D_RTTI_MEMBER(mName, 8)
+			B3D_RTTI_MEMBER(mBytecode, 9)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -124,13 +124,13 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Name, 0)
-			B3D_RTTI_MEMBER_PLAIN(Source, 1)
-			B3D_RTTI_MEMBER_PLAIN(EntryPoint, 2)
-			B3D_RTTI_MEMBER_PLAIN(Language, 3)
-			B3D_RTTI_MEMBER_PLAIN(Type, 4)
-			B3D_RTTI_MEMBER_PLAIN(RequiresAdjacency, 5)
-			B3D_RTTI_MEMBER_REFLPTR(Bytecode, 6)
+			B3D_RTTI_MEMBER(Name, 0)
+			B3D_RTTI_MEMBER(Source, 1)
+			B3D_RTTI_MEMBER(EntryPoint, 2)
+			B3D_RTTI_MEMBER(Language, 3)
+			B3D_RTTI_MEMBER(Type, 4)
+			B3D_RTTI_MEMBER(RequiresAdjacency, 5)
+			B3D_RTTI_MEMBER(Bytecode, 6)
 		B3D_RTTI_END_MEMBERS
 
 	public:

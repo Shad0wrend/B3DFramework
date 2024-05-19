@@ -20,38 +20,31 @@ namespace bs
 
 	class MeshRTTI : public RTTIType<Mesh, MeshBase, MeshRTTI>
 	{
+		SPtr<MeshData> mMeshData;
+
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFLPTR(mVertexDescription, 0)
-			B3D_RTTI_MEMBER_PLAIN(mIndexType, 1)
-			B3D_RTTI_MEMBER_PLAIN(mUsage, 2)
-			B3D_RTTI_MEMBER_REFLPTR(mSkeleton, 4)
-			B3D_RTTI_MEMBER_REFLPTR(mMorphShapes, 5)
+			B3D_RTTI_MEMBER(mVertexDescription, 0)
+			B3D_RTTI_MEMBER(mIndexType, 1)
+			B3D_RTTI_MEMBER(mUsage, 2)
+			B3D_RTTI_GENERATED_MEMBER(mMeshData, 3)
+			B3D_RTTI_MEMBER(mSkeleton, 4)
+			B3D_RTTI_MEMBER(mMorphShapes, 5)
 		B3D_RTTI_END_MEMBERS
 
-		SPtr<MeshData> GetMeshData(Mesh* obj)
-		{
-			SPtr<MeshData> meshData = obj->AllocBuffer();
-
-			obj->ReadData(meshData);
-			GetRenderThread().PostCommand([] {}, "MeshRTTI::GetMeshData", true, obj->GetName());
-
-			return meshData;
-		}
-
-		void SetMeshData(Mesh* obj, SPtr<MeshData> meshData)
-		{
-			obj->mCPUData = meshData;
-		}
-
 	public:
-		MeshRTTI()
+		void OnSerializationStarted(IReflectable* object, SerializationContext* context) override
 		{
-			AddReflectablePtrField("mMeshData", 3, &MeshRTTI::GetMeshData, &MeshRTTI::SetMeshData);
+			Mesh* const mesh = static_cast<Mesh*>(object);
+			mMeshData = mesh->AllocBuffer();
+
+			mesh->ReadData(mMeshData);
+			GetRenderThread().PostCommand([] {}, "MeshRTTI::GetMeshData", true, mesh->GetName());
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* object, SerializationContext* context) override
 		{
-			Mesh* mesh = static_cast<Mesh*>(obj);
+			Mesh* const mesh = static_cast<Mesh*>(object);
+			mesh->mCPUData = mMeshData;
 			mesh->Initialize();
 		}
 

@@ -22,15 +22,15 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(mSize, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(height, mProperties.Height, 2)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(width, mProperties.Width, 3)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(depth, mProperties.Depth, 4)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(numMips, mProperties.MipMapCount, 5)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(hwGamma, mProperties.UseHardwareSRGB, 6)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(numSamples, mProperties.SampleCount, 7)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(type, mProperties.Type, 9)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(format, mProperties.Format, 10)
+			B3D_RTTI_MEMBER(mSize, 0)
+			B3D_RTTI_MEMBER_NAMED(height, mProperties.Height, 2)
+			B3D_RTTI_MEMBER_NAMED(width, mProperties.Width, 3)
+			B3D_RTTI_MEMBER_NAMED(depth, mProperties.Depth, 4)
+			B3D_RTTI_MEMBER_NAMED(numMips, mProperties.MipMapCount, 5)
+			B3D_RTTI_MEMBER_NAMED(hwGamma, mProperties.UseHardwareSRGB, 6)
+			B3D_RTTI_MEMBER_NAMED(numSamples, mProperties.SampleCount, 7)
+			B3D_RTTI_MEMBER_NAMED(type, mProperties.Type, 9)
+			B3D_RTTI_MEMBER_NAMED(format, mProperties.Format, 10)
 		B3D_RTTI_END_MEMBERS
 
 		i32& GetUsage(Texture* obj) { return obj->mProperties.Usage; }

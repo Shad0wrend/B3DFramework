@@ -22,10 +22,10 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFLPTR(mVertexDescription, 0)
-			B3D_RTTI_MEMBER_PLAIN(mIndexType, 1)
-			B3D_RTTI_MEMBER_PLAIN(mVertexCount, 2)
-			B3D_RTTI_MEMBER_PLAIN(mIndexCount, 3)
+			B3D_RTTI_MEMBER(mVertexDescription, 0)
+			B3D_RTTI_MEMBER(mIndexType, 1)
+			B3D_RTTI_MEMBER(mVertexCount, 2)
+			B3D_RTTI_MEMBER(mIndexCount, 3)
 		B3D_RTTI_END_MEMBERS
 
 		SPtr<DataStream> GetData(MeshData* obj, u32& size)
