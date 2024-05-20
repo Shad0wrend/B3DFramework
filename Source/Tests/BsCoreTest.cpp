@@ -213,7 +213,8 @@ void CoreTestSuite::TestSerializedObject()
 	const SPtr<UnitTestSerializationObjectA> object = UnitTestSerializationObjectA::CreateVariantB();
 
 	const SPtr<SerializedObject> serializedObject = SerializedObject::Create(*object);
-	const SPtr<UnitTestSerializationObjectA> deserializedObject = B3DRTTICast<UnitTestSerializationObjectA>(serializedObject->Decode());
+	RTTIOperationEngineContext rttiOperationContext;
+	const SPtr<UnitTestSerializationObjectA> deserializedObject = B3DRTTICast<UnitTestSerializationObjectA>(serializedObject->Decode(rttiOperationContext));
 
 	UnitTestSerializationHelpers::TestAssertObjectsMatch(*this, object, deserializedObject, false);
 }
@@ -227,8 +228,11 @@ void CoreTestSuite::TestBinaryDelta()
 	const SPtr<SerializedObject> serializedObjectB = SerializedObject::Create(*objectB.get());
 
 	IDeltaHandler& deltaHandler = objectA->GetRtti()->GetDeltaHandler();
-	SPtr<SerializedObject> delta = deltaHandler.GenerateDelta(serializedObjectA, serializedObjectB);
-	deltaHandler.ApplyDelta(objectA, delta, nullptr);
+	RTTIOperationEngineContext generateDeltaRTTIOperationContext;
+	SPtr<SerializedObject> delta = deltaHandler.GenerateDelta(serializedObjectA, serializedObjectB, generateDeltaRTTIOperationContext);
+
+	RTTIOperationEngineContext applyDeltaRTTIOperationContext;
+	deltaHandler.ApplyDelta(objectA, delta, applyDeltaRTTIOperationContext);
 
 	UnitTestSerializationHelpers::TestAssertObjectsMatch(*this, objectA, objectB, true);
 }
@@ -262,8 +266,8 @@ void CoreTestSuite::TestSceneSaveLoad()
 		serializedScene0Stream->Seek(0);
 
 		BinarySerializer serializer;
-		RTTIOperationEngineContext serializationContext;
-		scene0Prefab = B3DRTTICast<Prefab>(serializer.Decode(serializedScene0Stream, (u32)serializedScene0Stream->Size(), BinarySerializerFlag::None, &serializationContext));
+		RTTIOperationEngineContext rttiOperationContext;
+		scene0Prefab = B3DRTTICast<Prefab>(serializer.Decode(serializedScene0Stream, (u32)serializedScene0Stream->Size(), rttiOperationContext));
 
 		UnitTestSceneA scene0Wrapper(scene0Prefab->GetRoot());
 
@@ -338,8 +342,8 @@ void CoreTestSuite::TestSceneSaveLoad()
 		serializedScene1Stream->Seek(0);
 
 		BinarySerializer serializer;
-		RTTIOperationEngineContext serializationContext;
-		scene1Prefab = B3DRTTICast<Prefab>(serializer.Decode(serializedScene1Stream, (u32)serializedScene1Stream->Size(), BinarySerializerFlag::None, &serializationContext));
+		RTTIOperationEngineContext rttiOperationContext;
+		scene1Prefab = B3DRTTICast<Prefab>(serializer.Decode(serializedScene1Stream, (u32)serializedScene1Stream->Size(), rttiOperationContext));
 
 		UnitTestSceneB scene1Wrapper(scene1Prefab->GetRoot());
 		UnitTestSceneA scene0Wrapper(scene1Wrapper.OptionalSceneObject_0_0_PrefabInstance);

@@ -20,7 +20,7 @@ namespace bs
 	class B3D_UTILITY_EXPORT IntermediateSerializer
 	{
 	public:
-		IntermediateSerializer(FrameAllocator* allocator, RTTIOperationContext* context = nullptr);
+		IntermediateSerializer(FrameAllocator* allocator, RTTIOperationContext& context);
 
 		/** Encodes an IReflectable object into an intermediate representation. */
 		SPtr<SerializedObject> Encode(IReflectable* object, SerializedObjectEncodeFlags flags);
@@ -120,7 +120,7 @@ namespace bs
 
 		UnorderedMap<const SerializedObject*, ObjectDeserializationData> mDeserializedObjectMap;
 		UnorderedMap<const IReflectable*, SPtr<SerializedObject>> mSerializedObjectMap;
-		RTTIOperationContext* mContext = nullptr;
+		RTTIOperationContext& mContext;
 		FrameAllocator* mAllocator = nullptr;
 	};
 

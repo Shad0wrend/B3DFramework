@@ -7,7 +7,7 @@
 
 using namespace bs;
 
-IntermediateSerializer::IntermediateSerializer(FrameAllocator* allocator, RTTIOperationContext* context)
+IntermediateSerializer::IntermediateSerializer(FrameAllocator* allocator, RTTIOperationContext& context)
 	: mAllocator(allocator), mContext(context)
 {}
 
@@ -77,7 +77,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 			continue;
 
 		RTTITypeBase* rttiInstance = rtti->CloneInternal(*mAllocator);
-		rttiInstance->OnDeserializationStarted(object.get(), mContext);
+		rttiInstance->OnDeserializationStarted(object.get(), &mContext);
 		rttiInstances.push(rttiInstance);
 
 		const u32 fieldCount = rtti->GetFieldCount();
@@ -302,7 +302,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 	while(!rttiInstances.empty())
 	{
 		RTTITypeBase* rttiInstance = rttiInstances.top();
-		rttiInstance->OnDeserializationEnded(object.get(), mContext);
+		rttiInstance->OnDeserializationEnded(object.get(), &mContext);
 		mAllocator->Destruct(rttiInstance);
 
 		rttiInstances.pop();
@@ -424,7 +424,7 @@ SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const 
 		while(!rttiInstances.empty())
 		{
 			RTTITypeBase* rttiInstance = rttiInstances.top();
-			rttiInstance->OnSerializationEnded(const_cast<IReflectable*>(&object), mContext);
+			rttiInstance->OnSerializationEnded(const_cast<IReflectable*>(&object), &mContext);
 			mAllocator->Destruct(rttiInstance);
 
 			rttiInstances.pop();
@@ -442,7 +442,7 @@ SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const 
 		RTTITypeBase* rttiInstance = rtti->CloneInternal(*mAllocator);
 		rttiInstances.push(rttiInstance);
 
-		rttiInstance->OnSerializationStarted(const_cast<IReflectable*>(&object), mContext);
+		rttiInstance->OnSerializationStarted(const_cast<IReflectable*>(&object), &mContext);
 
 		output->SubObjects.push_back(SerializedSubObject());
 		SerializedSubObject& subObject = output->SubObjects.back();

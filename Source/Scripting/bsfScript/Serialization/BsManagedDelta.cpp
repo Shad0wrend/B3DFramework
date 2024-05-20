@@ -16,7 +16,7 @@ SPtr<SerializedObject> ManagedDeltaHandler::GenerateDeltaRecursive(IReflectable*
 	if(original->GetTypeId() == TID_SerializedObject)
 	{
 		auto* orgSerzObj = static_cast<SerializedObject*>(original);
-		orgDecodedObject = std::static_pointer_cast<ManagedSerializableObject>(orgSerzObj->Decode(&context));
+		orgDecodedObject = std::static_pointer_cast<ManagedSerializableObject>(orgSerzObj->Decode(context));
 
 		orgManSerzObj = orgDecodedObject.get();
 	}
@@ -31,7 +31,7 @@ SPtr<SerializedObject> ManagedDeltaHandler::GenerateDeltaRecursive(IReflectable*
 	if(modified->GetTypeId() == TID_SerializedObject)
 	{
 		auto* newSerzObj = static_cast<SerializedObject*>(modified);
-		newDecodedObject = std::static_pointer_cast<ManagedSerializableObject>(newSerzObj->Decode(&context));
+		newDecodedObject = std::static_pointer_cast<ManagedSerializableObject>(newSerzObj->Decode(context));
 
 		newManSerzObj = newDecodedObject.get();
 	}
@@ -64,7 +64,7 @@ void ManagedDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& o
 {
 	SPtr<SerializedObject> diffObj = std::static_pointer_cast<SerializedObject>(delta->SubObjects[0].FieldEntries[0].Value);
 
-	SPtr<ManagedSerializableDelta> diff = std::static_pointer_cast<ManagedSerializableDelta>(diffObj->Decode(&context));
+	SPtr<ManagedSerializableDelta> diff = std::static_pointer_cast<ManagedSerializableDelta>(diffObj->Decode(context));
 
 	if(diff != nullptr)
 	{

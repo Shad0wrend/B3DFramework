@@ -172,25 +172,19 @@ namespace bs
 		/**
 		 * Decodes the serialized object back into its original IReflectable object form.
 		 *
-		 * @param[in]	context			Optional object that will be passed along to all serialized objects through
-		 *								their serialization callbacks. Can be used for controlling serialization,
-		 *								maintaining state or sharing information between objects during
-		 *								serialization.
+		 * @param	context		Object that will be passed along to all RTTI type objects through their notify callbacks. Can be used for controlling
+		 *						serialization, maintaining state or sharing information between objects during serialization.
 		 */
-		SPtr<IReflectable> Decode(RTTIOperationContext* context = nullptr) const;
+		SPtr<IReflectable> Decode(RTTIOperationContext& context) const;
 
 		/**
 		 * Serializes the provided object and returns its SerializedObject representation.
 		 *
-		 * @param[in]	object		Object to serialize;
-		 * @param[in]	flags		Flags used for controlling the serialization process.
-		 * @param[in]	context		Optional object that will be passed along to all deserialized objects through
-		 *							their deserialization callbacks. Can be used for controlling deserialization,
-		 *							maintaining state or sharing information between objects during
-		 *							deserialization.
-		 * @return					Serialized version of @p obj.
+		 * @param	object		Object to serialize.
+		 * @param	flags		Flags used for controlling the serialization process.
+		 * @return				Serialized version of @p object.
 		 */
-		static SPtr<SerializedObject> Create(IReflectable& object, SerializedObjectEncodeFlags flags = SerializedObjectEncodeFlags(), RTTIOperationContext* context = nullptr);
+		static SPtr<SerializedObject> Create(IReflectable& object, SerializedObjectEncodeFlags flags = SerializedObjectEncodeFlags());
 
 		Vector<SerializedSubObject> SubObjects;
 

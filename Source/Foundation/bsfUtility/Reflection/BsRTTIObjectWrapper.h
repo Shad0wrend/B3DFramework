@@ -225,7 +225,7 @@ namespace bs::RTTIObjectWrapper
 		ValueIterator<false> GetValueIterator() const;
 
 		/** Clones the contents of this field and returns them as intermediate serialized data. */
-		SPtr<ISerialized> Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext* context) const;
+		SPtr<ISerialized> Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext& context) const;
 
 	private:
 		friend struct Field<true>;
@@ -251,7 +251,7 @@ namespace bs::RTTIObjectWrapper
 		ValueIterator<true> GetValueIterator() const;
 
 		/** Clones the contents of this field and returns them as intermediate serialized data. */
-		SPtr<ISerialized> Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext* context) const;
+		SPtr<ISerialized> Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext& context) const;
 
 	private:
 		friend struct Field<false>;
@@ -441,7 +441,7 @@ namespace bs::RTTIObjectWrapper
 		bool ComparePlain(const Value<true>& other) const;
 
 		/** Clones the contents of this value and returns them as intermediate serialized data. */
-		SPtr<ISerialized> Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext* context) const;
+		SPtr<ISerialized> Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext& context) const;
 
 	private:
 		friend struct Value<true>;
@@ -499,7 +499,7 @@ namespace bs::RTTIObjectWrapper
 		bool ComparePlain(const Value<true>& other) const;
 
 		/** Clones the contents of this value and returns them as intermediate serialized data. */
-		SPtr<ISerialized> Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext* context) const;
+		SPtr<ISerialized> Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext& context) const;
 
 	private:
 		friend struct Value<false>;

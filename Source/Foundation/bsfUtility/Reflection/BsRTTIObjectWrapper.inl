@@ -191,7 +191,7 @@ namespace bs::RTTIObjectWrapper
 		return ValueIterator<false>(mValue, mFrameAllocator);
 	}
 
-	inline SPtr<ISerialized> Field<false>::Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext* context) const
+	inline SPtr<ISerialized> Field<false>::Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext& context) const
 	{
 		return mValue != nullptr ? mValue->Clone() : nullptr;
 	}
@@ -231,7 +231,7 @@ namespace bs::RTTIObjectWrapper
 		}
 	}
 
-	inline SPtr<ISerialized> Field<true>::Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext* context) const
+	inline SPtr<ISerialized> Field<true>::Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext& context) const
 	{
 		IntermediateSerializer intermediateSerializer(mFrameAllocator, context);
 
@@ -572,7 +572,7 @@ namespace bs::RTTIObjectWrapper
 		return isModified;
 	}
 
-	inline SPtr<ISerialized> Value<false>::Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext* context) const
+	inline SPtr<ISerialized> Value<false>::Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext& context) const
 	{
 		if(mValue != nullptr)
 			return mValue->Clone();
@@ -789,7 +789,7 @@ namespace bs::RTTIObjectWrapper
 		return isModified;
 	}
 
-	inline SPtr<ISerialized> Value<true>::Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext* context) const
+	inline SPtr<ISerialized> Value<true>::Clone(SerializedObjectEncodeFlags flags, RTTIOperationContext& context) const
 	{
 		auto* field = static_cast<RTTIIteratorField*>(mField);
 

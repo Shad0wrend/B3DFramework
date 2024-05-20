@@ -22,16 +22,17 @@ namespace bs
 	}
 } // namespace bs
 
-SPtr<SerializedObject> SerializedObject::Create(IReflectable& object, SerializedObjectEncodeFlags flags, RTTIOperationContext* context)
+SPtr<SerializedObject> SerializedObject::Create(IReflectable& object, SerializedObjectEncodeFlags flags)
 {
-	IntermediateSerializer is(&GetFrameAllocator(), context);
-	return is.Encode(&object, flags);
+	RTTIOperationContext rttiOperationContext;
+	IntermediateSerializer intermediateSerializer(&GetFrameAllocator(), rttiOperationContext);
+	return intermediateSerializer.Encode(&object, flags);
 }
 
-SPtr<IReflectable> SerializedObject::Decode(RTTIOperationContext* context) const
+SPtr<IReflectable> SerializedObject::Decode(RTTIOperationContext& context) const
 {
-	IntermediateSerializer is(&GetFrameAllocator(), context);
-	return is.Decode(this);
+	IntermediateSerializer intermediateSerializer(&GetFrameAllocator(), context);
+	return intermediateSerializer.Decode(this);
 }
 
 u32 SerializedObject::GetRootTypeId() const

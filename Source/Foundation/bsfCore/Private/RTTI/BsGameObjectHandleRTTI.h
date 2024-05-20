@@ -38,7 +38,7 @@ namespace bs
 				if(!B3D_ENSURE(serializedObject->GetRootTypeId() == TID_GameObjectHandleBase))
 					return nullptr;
 
-				outDecodedHandle = B3DRTTICast<GameObjectHandleBase>(serializedObject->Decode(&context));
+				outDecodedHandle = B3DRTTICast<GameObjectHandleBase>(serializedObject->Decode(context));
 				return outDecodedHandle.get();
 			}
 

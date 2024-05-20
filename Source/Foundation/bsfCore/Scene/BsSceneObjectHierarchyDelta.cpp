@@ -126,7 +126,7 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original, SceneObjectH
 		if(!B3D_ENSURE(deltaObject->Data != nullptr))
 			continue;
 
-		const SPtr<SceneObject> newSceneObject = B3DRTTICast<SceneObject>(deltaObject->Data->Decode(&rttiOperationContext));
+		const SPtr<SceneObject> newSceneObject = B3DRTTICast<SceneObject>(deltaObject->Data->Decode(rttiOperationContext));
 		if(!B3D_ENSURE(newSceneObject != nullptr))
 			continue;
 
@@ -164,7 +164,7 @@ void SceneObjectHierarchyDelta::Apply(const HSceneObject& original, SceneObjectH
 		if(!B3D_ENSURE(parentSceneObject.IsValid()))
 			continue;
 
-		const SPtr<Component> newComponent = B3DRTTICast<Component>(deltaObject->Data->Decode(&rttiOperationContext));
+		const SPtr<Component> newComponent = B3DRTTICast<Component>(deltaObject->Data->Decode(rttiOperationContext));
 		if(!B3D_ENSURE(newComponent != nullptr))
 			continue;
 

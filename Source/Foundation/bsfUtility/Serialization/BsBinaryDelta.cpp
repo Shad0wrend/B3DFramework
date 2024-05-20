@@ -9,6 +9,7 @@
 #include "Reflection/BsRTTIObjectWrapper.h"
 #include "FileSystem/BsDataStream.h"
 #include "RTTI/BsBinaryDeltaRTTI.h"
+#include "Utility/BsUtility.h"
 
 using namespace bs;
 
@@ -357,7 +358,7 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 		case SerializableFT_Plain:
 			{
 				if(isLhsMissing || maybeLhsTupleElement->ComparePlain(rhsTupleElement))
-					tupleElementModification = rhsTupleElement.Clone(flags, &context);
+					tupleElementModification = rhsTupleElement.Clone(flags, context);
 			}
 			break;
 		case SerializableFT_DataBlock:
@@ -413,7 +414,7 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 				}
 
 				if(isDataBlockModified)
-					tupleElementModification = rhs.Clone(flags, &context);
+					tupleElementModification = rhs.Clone(flags, context);
 			}
 			break;
 		}
@@ -427,7 +428,7 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 					serializedTupleDelta = B3DMakeShared<SerializedTupleDelta>();
 
 					const Value<IsRHSIReflectable>& rhsTupleKeyElement = rhs.GetTupleElement(0);
-					serializedTupleDelta->Key = rhsTupleKeyElement.Clone(flags, &context);
+					serializedTupleDelta->Key = rhsTupleKeyElement.Clone(flags, context);
 
 					modification = serializedTupleDelta;
 				}
@@ -1093,7 +1094,8 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 					{
 						void* deserializedMapKey = field->CreateEmptyFieldValue(allocator);
 
-						IntermediateSerializer intermediateSerializer(&allocator);
+						RTTIOperationEngineContext rttiOperationContext;
+						IntermediateSerializer intermediateSerializer(&allocator, rttiOperationContext);
 						intermediateSerializer.DeserializeTupleElement(*field, deserializedMapKey, 0, mapDeltaElement.first);
 
 						if(!mapDeltaElement.second.IsRemoved)
