@@ -43,11 +43,13 @@ namespace bs
 			}
 		}
 
-		void OnDeserializationEnded(IReflectable* object, RTTIOperationContext* context) override
+		void OnOperationEnded(Mesh& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			Mesh* const mesh = static_cast<Mesh*>(object);
-			mesh->mCPUData = mMeshData;
-			mesh->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+			{
+				object.mCPUData = mMeshData;
+				object.Initialize();
+			}
 		}
 
 		SPtr<IReflectable> NewRttiObject()

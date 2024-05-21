@@ -275,7 +275,6 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 				}
 			}
 
-			rttiInstance->OnDeserializationEnded(object, nullptr);
 			rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::Patch, rttiOperationContext);
 			allocator.Destruct(rttiInstance);
 		}

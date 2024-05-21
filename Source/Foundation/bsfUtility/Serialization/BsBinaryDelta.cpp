@@ -777,7 +777,6 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 
 					RTTITypeBase* rttiInstance = rttiInstances.back().first;
 
-					rttiInstance->OnDeserializationEnded(destinationObject, &context);
 					rttiInstance->NotifyOperationEnded(*destinationObject, RTTIOperationType::DeltaApply, context);
 					allocator.Destruct(rttiInstance);
 

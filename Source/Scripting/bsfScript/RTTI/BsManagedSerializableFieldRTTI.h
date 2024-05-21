@@ -153,10 +153,12 @@ namespace bs
 			AddPlainField("mValue", 0, &ManagedSerializableFieldDataCharRTTI::GetValue, &ManagedSerializableFieldDataCharRTTI::SetValue);
 		}
 
-		void OnDeserializationEnded(IReflectable* object, RTTIOperationContext* context) override
+		void OnOperationEnded(ManagedSerializableFieldDataChar& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			ManagedSerializableFieldDataChar* const fieldData = static_cast<ManagedSerializableFieldDataChar*>(object);
-			fieldData->Value = (wchar_t)fieldData->Value32;
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				object.Value = (wchar_t)object.Value32;
+			}
 		}
 
 		const String& GetRttiName() override
@@ -489,13 +491,14 @@ namespace bs
 			AddPlainField("mValue", 0, &ManagedSerializableFieldDataStringRTTI::GetValue, &ManagedSerializableFieldDataStringRTTI::SetValue);
 		}
 
-		void OnDeserializationEnded(IReflectable* object, RTTIOperationContext* context) override
+		void OnOperationEnded(ManagedSerializableFieldDataString& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			ManagedSerializableFieldDataString* const fieldData = static_cast<ManagedSerializableFieldDataString*>(object);
-
-			fieldData->Value = WString(fieldData->Value32.size(), '0');
-			for(size_t i = 0; i < fieldData->Value32.size(); ++i)
-				fieldData->Value[i] = (wchar_t)fieldData->Value32[i];
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				object.Value = WString(object.Value32.size(), '0');
+				for(size_t i = 0; i < object.Value32.size(); ++i)
+					object.Value[i] = (wchar_t)object.Value32[i];
+			}
 		}
 
 		const String& GetRttiName() override

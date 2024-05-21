@@ -129,67 +129,68 @@ namespace bs
 			}
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(SceneObject& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			SceneObject* sceneObject = static_cast<SceneObject*>(obj);
-
-			// It's possible we're just accessing the game object fields, in which case the process below is not needed
-			// (it's only required for new scene objects).
-			if(sceneObject->mRTTIData.Empty())
-				return;
-
-			auto* serializationContext = B3DRTTICast<RTTIOperationEngineContext>(context);
-			GODeserializationData& goDeserializationData = AnyCastRef<GODeserializationData>(sceneObject->mRTTIData);
-
-			// Register the newly created SO with the GameObjectManager and provide it with the original ID so that
-			// deserialized handles pointing to this object can be resolved.
-			SPtr<SceneObject> sceneObjectShared = std::static_pointer_cast<SceneObject>(goDeserializationData.Ptr);
-
-			if(sceneObject->mId.Empty() || !serializationContext->PreserveGameObjectIds)
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				const UUID oldId = sceneObject->mId;
-				sceneObject->mId = UUIDGenerator::GenerateRandom();
+				// It's possible we're just accessing the game object fields, in which case the process below is not needed
+				// (it's only required for new scene objects).
+				if(object.mRTTIData.Empty())
+					return;
 
-				if(!oldId.Empty())
+				auto* serializationContext = context.As<RTTIOperationEngineContext>();
+				GODeserializationData& goDeserializationData = AnyCastRef<GODeserializationData>(object.mRTTIData);
+
+				// Register the newly created SO with the GameObjectManager and provide it with the original ID so that
+				// deserialized handles pointing to this object can be resolved.
+				SPtr<SceneObject> sceneObjectShared = std::static_pointer_cast<SceneObject>(goDeserializationData.Ptr);
+
+				if(object.mId.Empty() || !serializationContext->PreserveGameObjectIds)
+				{
+					const UUID oldId = object.mId;
+					object.mId = UUIDGenerator::GenerateRandom();
+
+					if(!oldId.Empty())
+					{
+						if(serializationContext->GameObjectCollection != nullptr)
+							serializationContext->GameObjectCollection->RegisterUnresolvedHandleIdRemapping(oldId, object.mId);
+					}
+				}
+
+				HSceneObject sceneObjectHandle = SceneObject::CreateInternal(serializationContext->GameObjectCollection, sceneObjectShared);
+
+				// We stored all components and children in a temporary structure because they rely on the SceneObject being
+				// initialized with the GameObjectManager. Now that it is, we add them.
+				for(auto& component : mComponents)
+					object.InternalAddComponent(component, false);
+
+				for(auto& child : mChildren)
+				{
+					if(child != nullptr)
+						child->SetParentInternal(object.GetHandle(), false);
+				}
+
+				// If this is the deserialization parent, end deserialization (which resolves all game object handles, if we
+				// provided valid IDs), and instantiate (i.e. activate) the deserialized hierarchy.
+				if(mIsDeserializationParent)
 				{
 					if(serializationContext->GameObjectCollection != nullptr)
-						serializationContext->GameObjectCollection->RegisterUnresolvedHandleIdRemapping(oldId, sceneObject->mId);
+						serializationContext->GameObjectCollection->EndHandleResolve();
+
+					serializationContext->IsGameObjectDeserializationActive = false;
+
+					bool parentActive = true;
+					if(object.GetParent() != nullptr)
+						parentActive = object.GetParent()->GetActive();
+
+					object.SetActiveHierarchy(parentActive, false);
+
+					if(serializationContext->InitializeNewGameObjects)
+						object.Initialize();
 				}
+
+				object.mRTTIData = nullptr;
 			}
-
-			HSceneObject sceneObjectHandle = SceneObject::CreateInternal(serializationContext->GameObjectCollection, sceneObjectShared);
-
-			// We stored all components and children in a temporary structure because they rely on the SceneObject being
-			// initialized with the GameObjectManager. Now that it is, we add them.
-			for(auto& component : mComponents)
-				sceneObject->InternalAddComponent(component, false);
-
-			for(auto& child : mChildren)
-			{
-				if(child != nullptr)
-					child->SetParentInternal(sceneObject->GetHandle(), false);
-			}
-
-			// If this is the deserialization parent, end deserialization (which resolves all game object handles, if we
-			// provided valid IDs), and instantiate (i.e. activate) the deserialized hierarchy.
-			if(mIsDeserializationParent)
-			{
-				if(serializationContext->GameObjectCollection != nullptr)
-					serializationContext->GameObjectCollection->EndHandleResolve();
-
-				serializationContext->IsGameObjectDeserializationActive = false;
-
-				bool parentActive = true;
-				if(sceneObject->GetParent() != nullptr)
-					parentActive = sceneObject->GetParent()->GetActive();
-
-				sceneObject->SetActiveHierarchy(parentActive, false);
-
-				if(serializationContext->InitializeNewGameObjects)
-					sceneObject->Initialize();
-			}
-
-			sceneObject->mRTTIData = nullptr;
 		}
 
 		const String& GetRttiName() override

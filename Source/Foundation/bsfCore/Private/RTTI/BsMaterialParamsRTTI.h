@@ -235,45 +235,46 @@ namespace bs
 			}
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(MaterialParams& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			MaterialParams* paramsObj = static_cast<MaterialParams*>(obj);
-
-			// This field was added in later versions of the file format, so generate valid data for it if loading from
-			// an older serialized version
-			if(!paramsObj->mDataParams)
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				paramsObj->mNumDataParams = 0;
-				for(auto& entry : paramsObj->mParams)
+				// This field was added in later versions of the file format, so generate valid data for it if loading from
+				// an older serialized version
+				if(!object.mDataParams)
 				{
-					if(entry.Type != MaterialParams::ParamType::Data)
-						continue;
-
-					paramsObj->mNumDataParams++;
-				}
-
-				paramsObj->mDataParams = (MaterialParams::DataParamInfo*)paramsObj->mAlloc.Alloc(
-					paramsObj->mNumDataParams * sizeof(MaterialParams::DataParamInfo));
-				memset(paramsObj->mDataParams, 0, paramsObj->mNumDataParams * sizeof(MaterialParams::DataParamInfo));
-
-				u32 paramIdx = 0;
-				u32 dataBufferIdx = 0;
-				for(auto& entry : paramsObj->mParams)
-				{
-					if(entry.Type != MaterialParams::ParamType::Data)
-						continue;
-
-					const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[(int)entry.DataType];
-					const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
-					for(u32 i = 0; i < entry.ArraySize; i++)
+					object.mNumDataParams = 0;
+					for(auto& entry : object.mParams)
 					{
-						paramsObj->mDataParams[paramIdx + i].Offset = dataBufferIdx;
+						if(entry.Type != MaterialParams::ParamType::Data)
+							continue;
 
-						dataBufferIdx += paramSize;
+						object.mNumDataParams++;
 					}
 
-					entry.Index = paramIdx;
-					paramIdx += entry.ArraySize;
+					object.mDataParams = (MaterialParams::DataParamInfo*)object.mAlloc.Alloc(
+						object.mNumDataParams * sizeof(MaterialParams::DataParamInfo));
+					memset(object.mDataParams, 0, object.mNumDataParams * sizeof(MaterialParams::DataParamInfo));
+
+					u32 paramIdx = 0;
+					u32 dataBufferIdx = 0;
+					for(auto& entry : object.mParams)
+					{
+						if(entry.Type != MaterialParams::ParamType::Data)
+							continue;
+
+						const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[(int)entry.DataType];
+						const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
+						for(u32 i = 0; i < entry.ArraySize; i++)
+						{
+							object.mDataParams[paramIdx + i].Offset = dataBufferIdx;
+
+							dataBufferIdx += paramSize;
+						}
+
+						entry.Index = paramIdx;
+						paramIdx += entry.ArraySize;
+					}
 				}
 			}
 		}

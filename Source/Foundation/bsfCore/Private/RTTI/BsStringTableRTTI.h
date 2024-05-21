@@ -44,10 +44,12 @@ namespace bs
 			AddPlainField("mIdentifiers", 2, &StringTableRTTI::GetIdentifiers, &StringTableRTTI::SetIdentifiers);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(StringTable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			StringTable* stringTable = static_cast<StringTable*>(obj);
-			stringTable->SetActiveLanguage(stringTable->mActiveLanguage);
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				object.SetActiveLanguage(object.mActiveLanguage);
+			}
 		}
 
 		const String& GetRttiName()

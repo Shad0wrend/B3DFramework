@@ -302,7 +302,6 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 	while(!rttiInstances.empty())
 	{
 		RTTITypeBase* rttiInstance = rttiInstances.top();
-		rttiInstance->OnDeserializationEnded(object.get(), &mContext);
 		rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::Deserialization, mContext);
 		mAllocator->Destruct(rttiInstance);
 

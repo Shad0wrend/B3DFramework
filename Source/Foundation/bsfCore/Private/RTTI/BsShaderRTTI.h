@@ -494,15 +494,18 @@ namespace bs
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(Shader& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			Shader* shader = static_cast<Shader*>(obj);
-			shader->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+			{
+				object.Initialize();
 
-			// Note: Important to call Initialize before the call below, because it will trigger a sync to render thread, and shaders render thread representation only gets created once Initialize() is called.
-			for(const auto& technique : shader->mInformation.Techniques)
-				technique->SetOwner(std::static_pointer_cast<Shader>(shader->GetShared()));
+				// Note: Important to call Initialize before the call below, because it will trigger a sync to render thread, and shaders render thread representation only gets created once Initialize() is called.
+				for(const auto& technique : object.mInformation.Techniques)
+					technique->SetOwner(std::static_pointer_cast<Shader>(object.GetShared()));
+			}
 		}
+
 
 		const String& GetRttiName() override
 		{
@@ -530,14 +533,15 @@ namespace bs
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(ct::Shader& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			ct::Shader* const shader = static_cast<ct::Shader*>(obj);
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+			{
+				for(const auto& technique : object.mInformation.Techniques)
+					technique->SetOwner(std::static_pointer_cast<ct::Shader>(object.GetShared()));
 
-			for(const auto& technique : shader->mInformation.Techniques)
-				technique->SetOwner(std::static_pointer_cast<ct::Shader>(shader->GetShared()));
-
-			shader->Initialize();
+				object.Initialize();
+			}
 		}
 
 		const String& GetRttiName() override

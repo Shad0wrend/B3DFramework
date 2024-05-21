@@ -84,41 +84,43 @@ namespace bs
 			AddReflectablePtrArrayField("mPixelData", 12, &TextureRTTI::GetPixelData, &TextureRTTI::GetPixelDataArraySize, &TextureRTTI::SetPixelData, &TextureRTTI::SetPixelDataArraySize, RTTIFieldInfo(RTTIFieldFlag::SkipInReferenceSearch));
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(Texture& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			Texture* texture = static_cast<Texture*>(obj);
-			TextureProperties& texProps = texture->mProperties;
-
-			// Update pixel format if needed as it's possible the original texture was saved using some other render API
-			// that has an unsupported format.
-			PixelFormat originalFormat = texProps.Format;
-			PixelFormat validFormat = TextureManager::Instance().GetNativeFormat(
-				texProps.Type, texProps.Format, texProps.Usage, texProps.UseHardwareSRGB);
-
-			if(originalFormat != validFormat)
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
 			{
-				texProps.Format = validFormat;
+				TextureProperties& texProps = object.mProperties;
+
+				// Update pixel format if needed as it's possible the original texture was saved using some other render API
+				// that has an unsupported format.
+				PixelFormat originalFormat = texProps.Format;
+				PixelFormat validFormat = TextureManager::Instance().GetNativeFormat(
+					texProps.Type, texProps.Format, texProps.Usage, texProps.UseHardwareSRGB);
+
+				if(originalFormat != validFormat)
+				{
+					texProps.Format = validFormat;
+
+					for(size_t i = 0; i < mPixelData.size(); i++)
+					{
+						SPtr<PixelData> origData = mPixelData[i];
+						SPtr<PixelData> newData = PixelData::Create(origData->GetWidth(), origData->GetHeight(), origData->GetDepth(), validFormat);
+
+						PixelUtil::BulkPixelConversion(*origData, *newData);
+						mPixelData[i] = newData;
+					}
+				}
+
+				// A bit clumsy initializing with already set values, but I feel its better than complicating things and storing the values
+				// in mRTTIData.
+				object.Initialize();
 
 				for(size_t i = 0; i < mPixelData.size(); i++)
 				{
-					SPtr<PixelData> origData = mPixelData[i];
-					SPtr<PixelData> newData = PixelData::Create(origData->GetWidth(), origData->GetHeight(), origData->GetDepth(), validFormat);
+					u32 face = (size_t)Math::Floor(i / (float)(texProps.MipMapCount + 1));
+					u32 mipmap = i % (texProps.MipMapCount + 1);
 
-					PixelUtil::BulkPixelConversion(*origData, *newData);
-					mPixelData[i] = newData;
+					object.WriteData(mPixelData[i], face, mipmap, false);
 				}
-			}
-
-			// A bit clumsy initializing with already set values, but I feel its better than complicating things and storing the values
-			// in mRTTIData.
-			texture->Initialize();
-
-			for(size_t i = 0; i < mPixelData.size(); i++)
-			{
-				u32 face = (size_t)Math::Floor(i / (float)(texProps.MipMapCount + 1));
-				u32 mipmap = i % (texProps.MipMapCount + 1);
-
-				texture->WriteData(mPixelData[i], face, mipmap, false);
 			}
 		}
 

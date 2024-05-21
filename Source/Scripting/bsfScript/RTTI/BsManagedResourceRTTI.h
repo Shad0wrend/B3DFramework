@@ -44,13 +44,14 @@ namespace bs
 			}
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(ManagedResource& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			ManagedResource* mr = static_cast<ManagedResource*>(obj);
-
-			SPtr<Resource> mrPtr = std::static_pointer_cast<Resource>(mr->GetShared());
-			HManagedResource handle = B3DStaticResourceCast<ManagedResource>(GetResources().CreateResourceHandle(mrPtr));
-			mr->SetHandle(mSerializableObject->Deserialize(), handle);
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				SPtr<Resource> shared = std::static_pointer_cast<Resource>(object.GetShared());
+				HManagedResource handle = B3DStaticResourceCast<ManagedResource>(GetResources().CreateResourceHandle(shared));
+				object.SetHandle(mSerializableObject->Deserialize(), handle);
+			}
 		}
 
 		const String& GetRttiName()

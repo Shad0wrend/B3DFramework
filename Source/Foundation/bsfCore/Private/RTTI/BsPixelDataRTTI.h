@@ -55,18 +55,21 @@ namespace bs
 			AddPlainField("version", 10, &PixelDataRTTI::GetVersion, &PixelDataRTTI::SetVersion);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(PixelData& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			PixelData* pixelData = static_cast<PixelData*>(obj);
-
-			// Convert row & slice pitch from pixels to bytes, in case pixel data was stored with an older version
-			if(mVersion == 0)
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				u32 pixelSize = PixelUtil::GetNumElemBytes(pixelData->GetFormat());
-				pixelData->mRowPitch *= pixelSize;
-				pixelData->mSlicePitch *= pixelSize;
+				// Convert row & slice pitch from pixels to bytes, in case pixel data was stored with an older version
+				if(mVersion == 0)
+				{
+					u32 pixelSize = PixelUtil::GetNumElemBytes(object.GetFormat());
+					object.mRowPitch *= pixelSize;
+					object.mSlicePitch *= pixelSize;
+				}
+				
 			}
 		}
+
 
 		const String& GetRttiName()
 		{

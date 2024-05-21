@@ -31,7 +31,22 @@ namespace bs
 			AddReflectablePtrField("mMaterialParams", 2, &MaterialRTTI::GetMaterialParams, &MaterialRTTI::SetMaterialParams);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override;
+		void OnOperationEnded(Material& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				if(!operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+					object.Initialize();
+
+				if(!mMatParams)
+					return;
+
+				object.InitializeTechniques();
+
+				if(object.GetNumTechniques() > 0)
+					object.SetParams(mMatParams);
+			}
+		}
 
 		const String& GetRttiName() override
 		{
@@ -44,7 +59,10 @@ namespace bs
 			return TID_Material;
 		}
 
-		SPtr<IReflectable> NewRttiObject();
+		SPtr<IReflectable> NewRttiObject()
+		{
+			return Material::CreateEmpty();
+		}
 
 	private:
 		SPtr<MaterialParams> mMatParams;

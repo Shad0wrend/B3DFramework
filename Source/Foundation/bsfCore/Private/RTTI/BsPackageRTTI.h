@@ -126,17 +126,18 @@ namespace bs
 			}
 		}
 
-		void OnDeserializationEnded(IReflectable* object, RTTIOperationContext* context) override
+		void OnOperationEnded(Package& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			Package* const package = static_cast<Package*>(object);
-
-			for (const auto& entry : mResourceMetaData)
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				UPtr<Package::ResourceInformation> resourceInformation = B3DMakeUnique<Package::ResourceInformation>();
-				resourceInformation->MetaData = entry;
+				for (const auto& entry : mResourceMetaData)
+				{
+					UPtr<Package::ResourceInformation> resourceInformation = B3DMakeUnique<Package::ResourceInformation>();
+					resourceInformation->MetaData = entry;
 
-				package->mResourceInformationByPath[entry->Path] = resourceInformation.get();
-				package->mResourceInformationByUUID[entry->Id] = std::move(resourceInformation);
+					object.mResourceInformationByPath[entry->Path] = resourceInformation.get();
+					object.mResourceInformationByUUID[entry->Id] = std::move(resourceInformation);
+				}
 			}
 		}
 

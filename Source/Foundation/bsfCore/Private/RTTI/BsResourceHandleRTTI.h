@@ -29,17 +29,19 @@ namespace bs
 			AddPlainField("mUUID", 0, &ResourceHandleRTTI::GetUuid, &ResourceHandleRTTI::SetUuid);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(TResourceHandleBase<false>& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			TResourceHandleBase<false>* resourceHandle = static_cast<TResourceHandleBase<false>*>(obj);
-
-			if(resourceHandle->mData && !resourceHandle->mData->MUuid.Empty())
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				HResource loadedResource = GetResources().GetResourceHandleInternal(resourceHandle->mData->MUuid);
+				if(object.mData && !object.mData->MUuid.Empty())
+				{
+					HResource loadedResource = GetResources().GetResourceHandleInternal(object.mData->MUuid);
 
-				resourceHandle->ReleaseRef();
-				resourceHandle->mData = loadedResource.mData;
-				resourceHandle->AddRef();
+					object.ReleaseRef();
+					object.mData = loadedResource.mData;
+					object.AddRef();
+				}
+				
 			}
 		}
 
@@ -77,14 +79,15 @@ namespace bs
 			AddPlainField("mUUID", 0, &WeakResourceHandleRTTI::GetUuid, &WeakResourceHandleRTTI::SetUuid);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(TResourceHandleBase<true>& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			TResourceHandleBase<true>* resourceHandle = static_cast<TResourceHandleBase<true>*>(obj);
-
-			if(resourceHandle->mData && !resourceHandle->mData->MUuid.Empty())
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				HResource loadedResource = GetResources().GetResourceHandleInternal(resourceHandle->mData->MUuid);
-				resourceHandle->mData = loadedResource.mData;
+				if(object.mData && !object.mData->MUuid.Empty())
+				{
+					HResource loadedResource = GetResources().GetResourceHandleInternal(object.mData->MUuid);
+					object.mData = loadedResource.mData;
+				}
 			}
 		}
 

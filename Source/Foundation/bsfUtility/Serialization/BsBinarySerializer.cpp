@@ -361,7 +361,6 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 		{
 			RTTITypeBase* curRTTI = *iter;
 
-			curRTTI->OnDeserializationEnded(object, &mRTTIContext);
 			curRTTI->NotifyOperationEnded(*object, RTTIOperationType::Deserialization, mRTTIContext);
 			mAllocator.Destruct(curRTTI);
 		}

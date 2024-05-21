@@ -160,15 +160,6 @@ namespace bs
 		virtual void NotifyOperationEnded(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) = 0;
 
 		/**
-		 * Called by the serializers when deserialization for this object has ended. At this point you can be sure the
-		 * instance has been fully deserialized and you may safely use it.
-		 *
-		 * One exception being are fields you marked with RTTI_Flag_WeakRef, as they might be resolved only after
-		 * deserialization has fully completed for all objects.
-		 */
-		virtual void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) {}
-
-		/**
 		 * Returns a handler that determines how are deltas generated and applied when it comes to objects of this RTTI
 		 * type. A delta is a list of differences between two objects that may be saved, viewed or applied to another
 		 * object.
