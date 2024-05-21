@@ -747,7 +747,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 
 					rttiInstances.push_back(std::make_pair(rttiInstance, destinationObject));
 					rttiInstance->OnDeserializationStarted(destinationObject, &context);
-					rttiInstance->NotifyOnOperationStarted(*destinationObject, RTTIOperationType::DeltaApply, context);
+					rttiInstance->NotifyOperationStarted(*destinationObject, RTTIOperationType::DeltaApply, context);
 
 					rttiTypes.pop();
 				}
@@ -779,7 +779,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 					RTTITypeBase* rttiInstance = rttiInstances.back().first;
 
 					rttiInstance->OnDeserializationEnded(destinationObject, &context);
-					rttiInstance->NotifyOnOperationEnded(*destinationObject, RTTIOperationType::DeltaApply, context);
+					rttiInstance->NotifyOperationEnded(*destinationObject, RTTIOperationType::DeltaApply, context);
 					allocator.Destruct(rttiInstance);
 
 					rttiInstances.erase(rttiInstances.end() - 1);
@@ -1052,7 +1052,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 			continue;
 
 		RTTITypeBase* rttiInstance = rtti->CloneInternal(allocator);
-		rttiInstance->NotifyOnOperationStarted(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
+		rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
 		rttiInstances.push(rttiInstance);
 
 		FrameVector<DeltaCommand> subObjectCommands;
@@ -1168,8 +1168,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 	while(!rttiInstances.empty())
 	{
 		RTTITypeBase* rttiInstance = rttiInstances.top();
-		rttiInstance->OnSerializationEnded(object.get(), nullptr);
-		rttiInstance->NotifyOnOperationEnded(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
+		rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
 		allocator.Destruct(rttiInstance);
 
 		rttiInstances.pop();

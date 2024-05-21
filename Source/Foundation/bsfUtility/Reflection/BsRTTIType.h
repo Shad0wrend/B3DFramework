@@ -154,16 +154,10 @@ namespace bs
 		virtual u32 GetRttiId() const = 0;
 
 		/** Called before any operation that is iterating over the type's fields starts. */
-		virtual void NotifyOnOperationStarted(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) = 0;
+		virtual void NotifyOperationStarted(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) = 0;
 
 		/** Called after any operation that is iterating over the type's fields ends. */
-		virtual void NotifyOnOperationEnded(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) = 0;
-
-		/**
-		 * Called by the serializers when serialization for this object has ended. After serialization has ended you can
-		 * be sure that the type has been fully serialized, and you may clean up any temporary data.
-		 */
-		virtual void OnSerializationEnded(IReflectable* obj, RTTIOperationContext* context) {}
+		virtual void NotifyOperationEnded(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) = 0;
 
 		/**
 		 * Called by the serializers when deserialization for this object has started. Use this to do any preprocessing
@@ -517,18 +511,18 @@ namespace bs
 			return UPtrRTTIIterator<DataType, IsContainer>(allocator.Construct<TRTTIIterator<DataType, IsContainer>>(value), TRTTIIteratorDeleter<DataType, IsContainer>(&allocator));
 		}
 
-		/** @copydoc NotifyOnOperationStarted(IReflectable&, RTTIOperationTypeFlags, RTTIOperationContext&) */
+		/** @copydoc NotifyOperationStarted(IReflectable&, RTTIOperationTypeFlags, RTTIOperationContext&) */
 		virtual void OnOperationStarted(Type& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) {}
 
-		/** @copydoc NotifyOnOperationEnded(IReflectable&, RTTIOperationTypeFlags, RTTIOperationContext&) */
+		/** @copydoc NotifyOperationEnded(IReflectable&, RTTIOperationTypeFlags, RTTIOperationContext&) */
 		virtual void OnOperationEnded(Type& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) {}
 
-		void NotifyOnOperationStarted(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) final
+		void NotifyOperationStarted(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) final
 		{
 			OnOperationStarted(static_cast<Type&>(object), operationType, context);
 		}
 
-		void NotifyOnOperationEnded(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) final
+		void NotifyOperationEnded(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) final
 		{
 			OnOperationEnded(static_cast<Type&>(object), operationType, context);
 		}

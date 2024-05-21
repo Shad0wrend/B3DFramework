@@ -50,7 +50,7 @@ namespace bs::RTTIObjectWrapper
 		B3D_ASSERT(subObject.mRTTITypeInstance == nullptr);
 
 		RTTITypeBase* rttiTypeInstance = subObject.mRTTIType->CloneInternal(*mFrameAllocator);
-		rttiTypeInstance->NotifyOnOperationStarted(*mObject, operationType, context);
+		rttiTypeInstance->NotifyOperationStarted(*mObject, operationType, context);
 
 		mRTTITypeInstances.push_back(rttiTypeInstance);
 		subObject.mRTTITypeInstance = rttiTypeInstance;
@@ -64,8 +64,7 @@ namespace bs::RTTIObjectWrapper
 		{
 			RTTITypeBase* const currentRTTIInstance = *it;
 
-			currentRTTIInstance->OnSerializationEnded(mObject, &context);
-			currentRTTIInstance->NotifyOnOperationEnded(*mObject, operationType, context);
+			currentRTTIInstance->NotifyOperationEnded(*mObject, operationType, context);
 			mFrameAllocator->Destruct(currentRTTIInstance);
 		}
 

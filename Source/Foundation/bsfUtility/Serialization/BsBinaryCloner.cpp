@@ -58,7 +58,7 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 	{
 		RTTITypeBase* rttiInstance = rtti->CloneInternal(allocator);
 
-		rttiInstance->NotifyOnOperationStarted(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
+		rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
 		SubObjectExternalReferences* subObjectReferences = nullptr;
 
 		auto fnGetSubObjectReferences = [&subObjectReferences, &externalReferences, rtti]()
@@ -211,8 +211,7 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 		RTTITypeBase* rttiInstance = rttiInstances.top();
 		rttiInstances.pop();
 
-		rttiInstance->OnSerializationEnded(object, nullptr);
-		rttiInstance->NotifyOnOperationEnded(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
+		rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
 		allocator.Destruct(rttiInstance);
 	}
 
@@ -229,7 +228,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 		{
 			RTTITypeBase* rttiInstance = subObject.Rtti->CloneInternal(allocator);
 			rttiInstance->OnDeserializationStarted(object, nullptr);
-			rttiInstance->NotifyOnOperationStarted(*object, RTTIOperationType::Patch, rttiOperationContext);
+			rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::Patch, rttiOperationContext);
 
 			for(auto& reference : subObject.References)
 			{
@@ -278,7 +277,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 			}
 
 			rttiInstance->OnDeserializationEnded(object, nullptr);
-			rttiInstance->NotifyOnOperationEnded(*object, RTTIOperationType::Patch, rttiOperationContext);
+			rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::Patch, rttiOperationContext);
 			allocator.Destruct(rttiInstance);
 		}
 	}
@@ -288,7 +287,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 		if(!subObject.ChildObjects.empty())
 		{
 			RTTITypeBase* rttiInstance = subObject.Rtti->CloneInternal(allocator);
-			rttiInstance->NotifyOnOperationStarted(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
+			rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
 
 			for(auto& childObjectReferences : subObject.ChildObjects)
 			{
@@ -343,8 +342,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 				}
 			}
 
-			rttiInstance->OnSerializationEnded(object, nullptr);
-			rttiInstance->NotifyOnOperationEnded(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
+			rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
 			allocator.Destruct(rttiInstance);
 		}
 	}

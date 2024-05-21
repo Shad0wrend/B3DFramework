@@ -362,7 +362,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 			RTTITypeBase* curRTTI = *iter;
 
 			curRTTI->OnDeserializationEnded(object, &mRTTIContext);
-			curRTTI->NotifyOnOperationEnded(*object, RTTIOperationType::Deserialization, mRTTIContext);
+			curRTTI->NotifyOperationEnded(*object, RTTIOperationType::Deserialization, mRTTIContext);
 			mAllocator.Destruct(curRTTI);
 		}
 
@@ -382,7 +382,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 	for(auto iter = rttiInstances.rbegin(); iter != rttiInstances.rend(); ++iter)
 	{
 		(*iter)->OnDeserializationStarted(output.get(), &mRTTIContext);
-		(*iter)->NotifyOnOperationStarted(*output.get(), RTTIOperationType::Deserialization, mRTTIContext);
+		(*iter)->NotifyOperationStarted(*output.get(), RTTIOperationType::Deserialization, mRTTIContext);
 	}
 
 	RTTITypeBase* rttiInstance = nullptr;
@@ -1262,8 +1262,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 		while(!rttiInstances.empty())
 		{
 			RTTITypeBase* rttiInstance = rttiInstances.top();
-			rttiInstance->OnSerializationEnded(object, &mRTTIContext);
-			rttiInstance->NotifyOnOperationEnded(*object, RTTIOperationType::Serialization, mRTTIContext);
+			rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::Serialization, mRTTIContext);
 			mAllocator.Destruct(rttiInstance);
 
 			rttiInstances.pop();
@@ -1276,7 +1275,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 		RTTITypeBase* rttiInstance = rtti->CloneInternal(mAllocator);
 		rttiInstances.push(rttiInstance);
 
-		rttiInstance->NotifyOnOperationStarted(*object, RTTIOperationType::Serialization, mRTTIContext);
+		rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::Serialization, mRTTIContext);
 
 		if(writeMeta)
 		{

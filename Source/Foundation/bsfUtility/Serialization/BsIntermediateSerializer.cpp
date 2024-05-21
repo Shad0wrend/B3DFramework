@@ -78,7 +78,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 
 		RTTITypeBase* rttiInstance = rtti->CloneInternal(*mAllocator);
 		rttiInstance->OnDeserializationStarted(object.get(), &mContext);
-		rttiInstance->NotifyOnOperationStarted(*object, RTTIOperationType::Deserialization, mContext);
+		rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::Deserialization, mContext);
 		rttiInstances.push(rttiInstance);
 
 		const u32 fieldCount = rtti->GetFieldCount();
@@ -304,7 +304,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 	{
 		RTTITypeBase* rttiInstance = rttiInstances.top();
 		rttiInstance->OnDeserializationEnded(object.get(), &mContext);
-		rttiInstance->NotifyOnOperationEnded(*object, RTTIOperationType::Deserialization, mContext);
+		rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::Deserialization, mContext);
 		mAllocator->Destruct(rttiInstance);
 
 		rttiInstances.pop();
@@ -426,8 +426,7 @@ SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const 
 		while(!rttiInstances.empty())
 		{
 			RTTITypeBase* rttiInstance = rttiInstances.top();
-			rttiInstance->OnSerializationEnded(const_cast<IReflectable*>(&object), &mContext);
-			rttiInstance->NotifyOnOperationEnded(const_cast<IReflectable&>(object), RTTIOperationType::Serialization, mContext);
+			rttiInstance->NotifyOperationEnded(const_cast<IReflectable&>(object), RTTIOperationType::Serialization, mContext);
 			mAllocator->Destruct(rttiInstance);
 
 			rttiInstances.pop();
@@ -445,7 +444,7 @@ SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const 
 		RTTITypeBase* rttiInstance = rtti->CloneInternal(*mAllocator);
 		rttiInstances.push(rttiInstance);
 
-		rttiInstance->NotifyOnOperationStarted(const_cast<IReflectable&>(object), RTTIOperationType::Serialization, mContext);
+		rttiInstance->NotifyOperationStarted(const_cast<IReflectable&>(object), RTTIOperationType::Serialization, mContext);
 
 		output->SubObjects.push_back(SerializedSubObject());
 		SerializedSubObject& subObject = output->SubObjects.back();
