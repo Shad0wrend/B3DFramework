@@ -43,10 +43,10 @@ namespace bs
 		}
 
 	private:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(SpriteVectorPath& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			SpriteVectorPath* spriteVectorPath = static_cast<SpriteVectorPath*>(obj);
-			spriteVectorPath->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 	};
 

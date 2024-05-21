@@ -43,10 +43,10 @@ namespace bs
 		}
 
 	private:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(SpriteGlyph& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			SpriteGlyph* glyph = static_cast<SpriteGlyph*>(obj);
-			glyph->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 	};
 

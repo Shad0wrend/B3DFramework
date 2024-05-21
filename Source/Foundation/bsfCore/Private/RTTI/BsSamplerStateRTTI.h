@@ -30,10 +30,10 @@ namespace bs
 			AddPlainField("mData", 0, &SamplerStateRTTI::GetData, &SamplerStateRTTI::SetData);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(SamplerState& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			SamplerState* samplerState = static_cast<SamplerState*>(obj);
-			samplerState->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName()

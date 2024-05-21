@@ -46,10 +46,10 @@ namespace bs
 			}
 		}
 
-		void OnDeserializationEnded(IReflectable* object, RTTIOperationContext* context) override
+		void OnOperationEnded(Prefab& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			Prefab* const prefab = static_cast<Prefab*>(object);
-			prefab->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName()

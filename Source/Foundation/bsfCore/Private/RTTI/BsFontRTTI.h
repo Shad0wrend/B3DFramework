@@ -233,10 +233,10 @@ namespace bs
 		}
 
 	protected:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(Font& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			Font* font = static_cast<Font*>(obj);
-			font->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 	};
 

@@ -35,14 +35,6 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN(mShadowBias, 12)
 		B3D_RTTI_END_MEMBERS
 	public:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
-		{
-			// Note: Since this is a CoreObject I should call Initialize() right after deserialization,
-			// but since this specific type is used in Components we delay initialization until Component
-			// itself does it. Keep this is mind in case this ever needs to be deserialized for non-Component
-			// purposes (you'll need to call initialize manually).
-		}
-
 		const String& GetRttiName() override
 		{
 			static String name = "Light";

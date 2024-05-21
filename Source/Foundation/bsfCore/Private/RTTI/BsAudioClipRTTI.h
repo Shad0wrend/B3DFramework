@@ -56,10 +56,10 @@ namespace bs
 			AddDataBlockField("mData", 6, &AudioClipRTTI::GetData, &AudioClipRTTI::SetData);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(AudioClip& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			AudioClip* clip = static_cast<AudioClip*>(obj);
-			clip->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName()

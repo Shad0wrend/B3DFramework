@@ -43,10 +43,10 @@ namespace bs
 		}
 
 	protected:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(VectorField& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			VectorField* vectorField = static_cast<VectorField*>(obj);
-			vectorField->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 	};
 

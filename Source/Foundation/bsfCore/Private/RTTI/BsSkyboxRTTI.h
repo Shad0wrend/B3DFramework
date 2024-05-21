@@ -34,14 +34,6 @@ namespace bs
 			}
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
-		{
-			// Note: Since this is a CoreObject I should call Initialize() right after deserialization,
-			// but since this specific type is used in Components we delay initialization until Component
-			// itself does it. Keep this is mind in case this ever needs to be deserialized for non-Component
-			// purposes (you'll need to call initialize manually).
-		}
-
 		const String& GetRttiName()
 		{
 			static String name = "Skybox";

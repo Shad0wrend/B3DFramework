@@ -38,10 +38,10 @@ namespace bs
 			AddDataBlockField("mCookedData", 0, &FPhysXMeshRTTI::GetCookedData, &FPhysXMeshRTTI::SetCookedData);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(FPhysXMesh& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			FPhysXMesh* mesh = static_cast<FPhysXMesh*>(obj);
-			mesh->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName()

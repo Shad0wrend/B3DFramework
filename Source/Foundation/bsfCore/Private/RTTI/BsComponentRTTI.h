@@ -19,31 +19,32 @@ namespace bs
 	class B3D_CORE_EXPORT ComponentRTTI : public RTTIType<Component, GameObject, ComponentRTTI>
 	{
 	public:
-		void OnDeserializationEnded(IReflectable* object, RTTIOperationContext* context) override
+		void OnOperationEnded(Component& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			Component* const component = static_cast<Component*>(object);
+			if(!operationType.IsSet(RTTIOperationType::WriteBit))
+				return;
 
 			// It's possible we're just accessing the game object fields, in which case the process below is not needed
 			// (it's only required for new components).
-			if(component->mRTTIData.Empty())
+			if(object.mRTTIData.Empty())
 				return;
 
-			auto* const serializationContext = B3DRTTICast<RTTIOperationEngineContext>(context);
+			auto* const serializationContext = context.As<RTTIOperationEngineContext>();
 			B3D_ASSERT(serializationContext != nullptr);
 
-			if(component->mId.Empty() || !serializationContext->PreserveGameObjectIds)
+			if(object.mId.Empty() || !serializationContext->PreserveGameObjectIds)
 			{
-				const UUID oldId = component->GetId();
-				component->mId = UUIDGenerator::GenerateRandom();
+				const UUID oldId = object.GetId();
+				object.mId = UUIDGenerator::GenerateRandom();
 
 				if(!oldId.Empty())
 				{
 					if(B3D_ENSURE(serializationContext->GameObjectCollection != nullptr))
-						serializationContext->GameObjectCollection->RegisterUnresolvedHandleIdRemapping(oldId, component->GetId());
+						serializationContext->GameObjectCollection->RegisterUnresolvedHandleIdRemapping(oldId, object.GetId());
 				}
 			}
 
-			GODeserializationData& deserializationData = AnyCastRef<GODeserializationData>(component->mRTTIData);
+			GODeserializationData& deserializationData = AnyCastRef<GODeserializationData>(object.mRTTIData);
 
 			// This shouldn't be null during normal deserialization but could be during some other operations, like applying
 			// a binary diff.
@@ -57,7 +58,7 @@ namespace bs
 					GameObjectHandleBase handle = serializationContext->GameObjectCollection->RegisterNewObject(componentShared);
 			}
 
-			component->mRTTIData = nullptr;
+			object.mRTTIData = nullptr;
 		}
 
 		const String& GetRttiName() override

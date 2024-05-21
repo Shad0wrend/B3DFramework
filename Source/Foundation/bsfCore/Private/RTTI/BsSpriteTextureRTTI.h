@@ -40,10 +40,10 @@ namespace bs
 		}
 
 	private:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(SpriteTexture& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			SpriteTexture* texture = static_cast<SpriteTexture*>(obj);
-			texture->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 	};
 

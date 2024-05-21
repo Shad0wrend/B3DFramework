@@ -27,10 +27,10 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN(mClearFlags, 4)
 		B3D_RTTI_END_MEMBERS
 	public:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(Viewport& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			Viewport* viewport = static_cast<Viewport*>(obj);
-			viewport->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName() override

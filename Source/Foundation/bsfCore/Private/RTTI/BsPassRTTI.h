@@ -34,10 +34,10 @@ namespace bs
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(Pass& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			Pass* pass = static_cast<Pass*>(obj);
-			pass->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName() override
@@ -75,10 +75,10 @@ namespace bs
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(ct::Pass& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			ct::Pass* pass = static_cast<ct::Pass*>(obj);
-			pass->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName() override

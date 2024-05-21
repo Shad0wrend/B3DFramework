@@ -144,10 +144,10 @@ namespace bs
 			B3D_RTTI_MEMBER_CONTAINER(mRulesets, 0)
 		B3D_RTTI_END_MEMBERS
 	public:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationEnded(GUIStyleSheet& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			GUIStyleSheet* const styleSheet = static_cast<GUIStyleSheet*>(obj);
-			styleSheet->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName() override

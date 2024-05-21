@@ -86,10 +86,10 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN_NAMED(rootMotionRot, mRootMotion->Rotation, 9)
 		B3D_RTTI_END_MEMBERS
 	public:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(AnimationClip& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			AnimationClip* clip = static_cast<AnimationClip*>(obj);
-			clip->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName()

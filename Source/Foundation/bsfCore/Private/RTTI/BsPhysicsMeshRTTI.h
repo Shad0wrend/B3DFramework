@@ -23,10 +23,10 @@ namespace bs
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnDeserializationEnded(IReflectable* obj, RTTIOperationContext* context)
+		void OnOperationEnded(PhysicsMesh& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			PhysicsMesh* mesh = static_cast<PhysicsMesh*>(obj);
-			mesh->Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+				object.Initialize();
 		}
 
 		const String& GetRttiName()
