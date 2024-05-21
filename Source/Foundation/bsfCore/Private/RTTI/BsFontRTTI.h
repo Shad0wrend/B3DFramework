@@ -162,17 +162,18 @@ namespace bs
 		}
 
 	protected:
-		void OnSerializationStarted(IReflectable* obj, RTTIOperationContext* context) override
+		void OnOperationStarted(FontBitmapInformation& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			FontBitmapInformation* bitmapInformation = static_cast<FontBitmapInformation*>(obj);
-
-			mBakedPageCount = 0;
-			for(const auto& entry : bitmapInformation->TexturePages)
+			if(operationType.IsSet(RTTIOperationType::ReadBit))
 			{
-				if(entry.IsDynamic)
-					break;
+				mBakedPageCount = 0;
+				for(const auto& entry : object.TexturePages)
+				{
+					if(entry.IsDynamic)
+						break;
 
-				mBakedPageCount++;
+					mBakedPageCount++;
+				}
 			}
 		}
 
