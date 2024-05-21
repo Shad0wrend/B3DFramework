@@ -747,7 +747,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 
 					rttiInstances.push_back(std::make_pair(rttiInstance, destinationObject));
 					rttiInstance->OnDeserializationStarted(destinationObject, &context);
-					rttiInstance->OnOperationStarted(*destinationObject, RTTIOperationType::DeltaApply, context);
+					rttiInstance->NotifyOnOperationStarted(*destinationObject, RTTIOperationType::DeltaApply, context);
 
 					rttiTypes.pop();
 				}
@@ -779,7 +779,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 					RTTITypeBase* rttiInstance = rttiInstances.back().first;
 
 					rttiInstance->OnDeserializationEnded(destinationObject, &context);
-					rttiInstance->OnOperationEnded(*destinationObject, RTTIOperationType::DeltaApply, context);
+					rttiInstance->NotifyOnOperationEnded(*destinationObject, RTTIOperationType::DeltaApply, context);
 					allocator.Destruct(rttiInstance);
 
 					rttiInstances.erase(rttiInstances.end() - 1);
@@ -1053,7 +1053,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 
 		RTTITypeBase* rttiInstance = rtti->CloneInternal(allocator);
 		rttiInstance->OnSerializationStarted(object.get(), &rttiOperationContext);
-		rttiInstance->OnOperationStarted(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
+		rttiInstance->NotifyOnOperationStarted(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
 		rttiInstances.push(rttiInstance);
 
 		FrameVector<DeltaCommand> subObjectCommands;
@@ -1170,7 +1170,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 	{
 		RTTITypeBase* rttiInstance = rttiInstances.top();
 		rttiInstance->OnSerializationEnded(object.get(), nullptr);
-		rttiInstance->OnOperationEnded(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
+		rttiInstance->NotifyOnOperationEnded(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
 		allocator.Destruct(rttiInstance);
 
 		rttiInstances.pop();

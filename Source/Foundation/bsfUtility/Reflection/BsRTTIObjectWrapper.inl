@@ -51,7 +51,7 @@ namespace bs::RTTIObjectWrapper
 
 		RTTITypeBase* rttiTypeInstance = subObject.mRTTIType->CloneInternal(*mFrameAllocator);
 		rttiTypeInstance->OnSerializationStarted(mObject, &context);
-		rttiTypeInstance->OnOperationStarted(*mObject, operationType, context);
+		rttiTypeInstance->NotifyOnOperationStarted(*mObject, operationType, context);
 
 		mRTTITypeInstances.push_back(rttiTypeInstance);
 		subObject.mRTTITypeInstance = rttiTypeInstance;
@@ -66,7 +66,7 @@ namespace bs::RTTIObjectWrapper
 			RTTITypeBase* const currentRTTIInstance = *it;
 
 			currentRTTIInstance->OnSerializationEnded(mObject, &context);
-			currentRTTIInstance->OnOperationEnded(*mObject, operationType, context);
+			currentRTTIInstance->NotifyOnOperationEnded(*mObject, operationType, context);
 			mFrameAllocator->Destruct(currentRTTIInstance);
 		}
 
