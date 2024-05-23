@@ -45,20 +45,20 @@ namespace bs
 		// Flags that added to type
 		////////////////////////////////
 
+		/** First bit at which operation types start. Leaves 32 values for operation types. Not to be used externally. */
+		FlagsStartBit = 5,
+
 		/** Operation performs a read on the RTTI fields. Exclusive with WriteBit. */
-		ReadBit = 1 << 0,
+		ReadBit = 1 << (FlagsStartBit + 0),
 
 		/** Operation performs a write on the RTTI fields. Exclusive with ReadBit. */
-		WriteBit = 1 << 1,
+		WriteBit = 1 << (FlagsStartBit + 1),
 
 		/**
 		 * Set when performing writes on an existing object (i.e. object was not created by the RTTI operation itself).
 		 * Only relevant for operations that write to fields.
 		 */
-		PreExistingObjectBit = 1 << 2,
-
-		/** First bit at which operation types start. Not to be used externally. */
-		TypeBitStart = 1 << 30,
+		PreExistingObjectBit = 1 << (FlagsStartBit + 2),
 
 		////////////////////////////////
 		// Operation types
@@ -69,15 +69,15 @@ namespace bs
 		 * class hierarchy, the start notify will first be called on the most-derived child, followed by its parent, and so on.
 		 * End notify will be called in the reverse order.
 		 */
-		Serialization = (TypeBitStart + 0) | ReadBit,
+		Serialization = 0 | ReadBit,
 		/**
 		 * Deserializing a brand new object from a binary stream or some other format. If the object is part of a class hierarchy,
 		 * the start notify will first be called on the base class, followed by its child, and so on. End notify will be called in
 		 * the reverse order.
 		 */
-		Deserialization = (TypeBitStart + 1) | WriteBit,
-		DeltaGenerate = (TypeBitStart + 2) | ReadBit, /**< Generating a delta between two objects. */
-		DeltaRead = (TypeBitStart + 3) | ReadBit, /**< Decodes objects encoded in a delta to object instances.  */
+		Deserialization = 1 | WriteBit,
+		DeltaGenerate = 2 | ReadBit, /**< Generating a delta between two objects. */
+		DeltaRead = 3 | ReadBit, /**< Decodes objects encoded in a delta to object instances.  */
 		/**
 		 * Some or all fields on a pre-existing object will be updated with new data. Object initialization should be skipped as the
 		 * object is pre-existing, but some kind of refresh/update might be required. If the object is part of a class hierarchy,
@@ -85,20 +85,20 @@ namespace bs
 		 * field data will be applied, and finally end notify will be called on the entire class hierarchy in reverse order (from
 		 * most-derived child to base).
 		 */
-		DeltaApply = (TypeBitStart + 4) | WriteBit | PreExistingObjectBit,
+		DeltaApply = 4 | WriteBit | PreExistingObjectBit,
 		/**
 		 * Some or all fields on a pre-existing object will be updated with new data. Object initialization should be skipped as the
 		 * object is pre-existing, but some kind of refresh/update might be required. If the object is part of a class hierarchy,
 		 * start notify will be fired on the exact class whose fields are being updated, followed by the end notify after all fields
 		 * have been updated. This process will start with the base class, followed by its child class, and so on.
 		 */
-		Patch = (TypeBitStart + 5) | WriteBit | PreExistingObjectBit,
+		Patch = 5 | WriteBit | PreExistingObjectBit,
 		/**
 		 * Searching the RTTI fields for references to certain IReflectable object instances or types. If the object is part of
 		 * a class hierarchy, the start notify will first be called on the most-derived child, followed by its parent, and so on.
 		 * End notify will be called in the reverse order.
 		 */
-		GatherReferences = (TypeBitStart + 6) | ReadBit,
+		GatherReferences = 6 | ReadBit,
 	};
 
 	using RTTIOperationTypeFlags = Flags<RTTIOperationType>;
