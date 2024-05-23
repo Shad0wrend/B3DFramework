@@ -85,8 +85,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFL(Texture, 0)
-			B3D_RTTI_MEMBER_PLAIN(IsDynamic, 1)
+			B3D_RTTI_MEMBER(Texture, 0)
+			B3D_RTTI_MEMBER(IsDynamic, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -110,41 +110,19 @@ namespace bs
 	class B3D_CORE_EXPORT FontBitmapInformationRTTI : public RTTIType<FontBitmapInformation, IReflectable, FontBitmapInformationRTTI>
 	{
 	private:
+		Vector<FontBitmapPage> mBakedPages;
+
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Size, 0)
-			B3D_RTTI_MEMBER_PLAIN(BaselineOffset, 1)
-			B3D_RTTI_MEMBER_PLAIN(LineHeight, 2)
-			B3D_RTTI_MEMBER_PLAIN(MissingGlyph, 3)
-			B3D_RTTI_MEMBER_PLAIN(SpaceWidth, 4)
-			B3D_RTTI_MEMBER_PLAIN(Characters, 6)
+			B3D_RTTI_MEMBER(Size, 0)
+			B3D_RTTI_MEMBER(BaselineOffset, 1)
+			B3D_RTTI_MEMBER(LineHeight, 2)
+			B3D_RTTI_MEMBER(MissingGlyph, 3)
+			B3D_RTTI_MEMBER(SpaceWidth, 4)
+			B3D_RTTI_MEMBER(Characters, 6)
+			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mBakedPages, 5)
 		B3D_RTTI_END_MEMBERS
 
-		FontBitmapPage& GetPage(FontBitmapInformation* object, u32 index)
-		{
-			return object->TexturePages[index];
-		}
-
-		void SetPage(FontBitmapInformation* object, u32 index, FontBitmapPage& value)
-		{
-			object->TexturePages[index] = value;
-		}
-
-		u32 GetPageCount(FontBitmapInformation* object)
-		{
-			return mBakedPageCount;
-		}
-
-		void SetPageCount(FontBitmapInformation* object, u32 size)
-		{
-			object->TexturePages.resize(size);
-		}
-
 	public:
-		FontBitmapInformationRTTI()
-		{
-			AddReflectableArrayField("TexturePages", 5, &FontBitmapInformationRTTI::GetPage, &FontBitmapInformationRTTI::GetPageCount, &FontBitmapInformationRTTI::SetPage, &FontBitmapInformationRTTI::SetPageCount);
-		}
-
 		const String& GetRttiName()
 		{
 			static String name = "FontBitmapInformation";
@@ -166,18 +144,29 @@ namespace bs
 		{
 			if(operationType.IsSet(RTTIOperationType::ReadBit))
 			{
-				mBakedPageCount = 0;
 				for(const auto& entry : object.TexturePages)
 				{
 					if(entry.IsDynamic)
 						break;
 
-					mBakedPageCount++;
+					mBakedPages.push_back(entry);
 				}
 			}
 		}
 
-		u32 mBakedPageCount = 0;
+		void OnOperationEnded(FontBitmapInformation& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+			{
+				const u32 bakedPageCount = (u32)mBakedPages.size();
+
+				object.TexturePages.reserve(bakedPageCount);
+				for(u32 pageIndex = 0; pageIndex < bakedPageCount; ++pageIndex)
+				{
+					object.TexturePages.push_back(mBakedPages[pageIndex]);
+				}
+			}
+		}
 	};
 
 	class B3D_CORE_EXPORT FontRTTI : public RTTIType<Font, Resource, FontRTTI>

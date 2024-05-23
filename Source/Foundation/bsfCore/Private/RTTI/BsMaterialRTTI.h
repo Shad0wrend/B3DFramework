@@ -15,22 +15,14 @@ namespace bs
 
 	class B3D_CORE_EXPORT MaterialRTTI : public RTTIType<Material, Resource, MaterialRTTI>
 	{
-	private:
-		HShader& GetShader(Material* obj) { return obj->mShader; }
+		SPtr<MaterialParams> mMaterialParameters;
 
-		void SetShader(Material* obj, HShader& val) { obj->mShader = val; }
-
-		SPtr<MaterialParams> GetMaterialParams(Material* obj) { return obj->mParams; }
-
-		void SetMaterialParams(Material* obj, SPtr<MaterialParams> value) { mMatParams = value; }
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(mShader, 0)
+			B3D_RTTI_GENERATED_MEMBER(mMaterialParameters, 2)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		MaterialRTTI()
-		{
-			AddReflectableField("mShader", 0, &MaterialRTTI::GetShader, &MaterialRTTI::SetShader);
-			AddReflectablePtrField("mMaterialParams", 2, &MaterialRTTI::GetMaterialParams, &MaterialRTTI::SetMaterialParams);
-		}
-
 		void OnOperationEnded(Material& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit))
@@ -38,13 +30,21 @@ namespace bs
 				if(!operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
 					object.Initialize();
 
-				if(!mMatParams)
+				if(!mMaterialParameters)
 					return;
 
 				object.InitializeTechniques();
 
 				if(object.GetNumTechniques() > 0)
-					object.SetParams(mMatParams);
+					object.SetParams(mMaterialParameters);
+			}
+		}
+
+		void OnOperationStarted(Material& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::ReadBit))
+			{
+				mMaterialParameters = object.mParams;
 			}
 		}
 
@@ -63,9 +63,6 @@ namespace bs
 		{
 			return Material::CreateEmpty();
 		}
-
-	private:
-		SPtr<MaterialParams> mMatParams;
 	};
 
 	/** @} */

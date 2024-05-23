@@ -17,23 +17,22 @@ namespace bs
 
 	class B3D_CORE_EXPORT PixelDataRTTI : public RTTIType<PixelData, GpuResourceData, PixelDataRTTI>
 	{
-		static u32 VERSION;
+		static constexpr u32 kVersion = 1;
+
+		u32 mVersion = kVersion;
 
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(left, mExtents.Left, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(top, mExtents.Top, 1)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(right, mExtents.Right, 2)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(bottom, mExtents.Bottom, 3)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(front, mExtents.Front, 4)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(back, mExtents.Back, 5)
-			B3D_RTTI_MEMBER_PLAIN(mRowPitch, 6)
-			B3D_RTTI_MEMBER_PLAIN(mSlicePitch, 7)
-			B3D_RTTI_MEMBER_PLAIN(mFormat, 8)
+			B3D_RTTI_MEMBER_NAMED(left, mExtents.Left, 0)
+			B3D_RTTI_MEMBER_NAMED(top, mExtents.Top, 1)
+			B3D_RTTI_MEMBER_NAMED(right, mExtents.Right, 2)
+			B3D_RTTI_MEMBER_NAMED(bottom, mExtents.Bottom, 3)
+			B3D_RTTI_MEMBER_NAMED(front, mExtents.Front, 4)
+			B3D_RTTI_MEMBER_NAMED(back, mExtents.Back, 5)
+			B3D_RTTI_MEMBER(mRowPitch, 6)
+			B3D_RTTI_MEMBER(mSlicePitch, 7)
+			B3D_RTTI_MEMBER(mFormat, 8)
+			B3D_RTTI_GENERATED_MEMBER(mVersion, 10)
 		B3D_RTTI_END_MEMBERS
-
-		u32& GetVersion(PixelData* obj) { return VERSION; }
-
-		void SetVersion(PixelData* obj, u32& val) { mVersion = val; }
 
 		SPtr<DataStream> GetData(PixelData* obj, u32& size)
 		{
@@ -52,7 +51,6 @@ namespace bs
 		PixelDataRTTI()
 		{
 			AddDataBlockField("data", 9, &PixelDataRTTI::GetData, &PixelDataRTTI::SetData);
-			AddPlainField("version", 10, &PixelDataRTTI::GetVersion, &PixelDataRTTI::SetVersion);
 		}
 
 		void OnOperationEnded(PixelData& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
@@ -66,10 +64,8 @@ namespace bs
 					object.mRowPitch *= pixelSize;
 					object.mSlicePitch *= pixelSize;
 				}
-				
 			}
 		}
-
 
 		const String& GetRttiName()
 		{
@@ -84,16 +80,9 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			SPtr<PixelData> newPixelData = B3DMakeShared<PixelData>();
-
-			return newPixelData;
+			return B3DMakeShared<PixelData>();
 		}
-
-	private:
-		u32 mVersion = 0;
 	};
-
-	u32 PixelDataRTTI::VERSION = 1;
 
 	/** @} */
 	/** @endcond */

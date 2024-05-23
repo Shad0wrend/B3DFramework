@@ -26,10 +26,10 @@ namespace bs
 	{
 	public:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFL(Texture, 0)
-			B3D_RTTI_MEMBER_PLAIN(IsLoadStore, 1)
-			B3D_RTTI_MEMBER_PLAIN(Surface, 2)
-			B3D_RTTI_MEMBER_REFL(SpriteImage, 3)
+			B3D_RTTI_MEMBER(Texture, 0)
+			B3D_RTTI_MEMBER(IsLoadStore, 1)
+			B3D_RTTI_MEMBER(Surface, 2)
+			B3D_RTTI_MEMBER(SpriteImage, 3)
 		B3D_RTTI_END_MEMBERS
 
 		const String& GetRttiName() override

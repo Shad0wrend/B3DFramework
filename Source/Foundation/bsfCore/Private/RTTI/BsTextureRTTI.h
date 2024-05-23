@@ -21,6 +21,8 @@ namespace bs
 	class B3D_CORE_EXPORT TextureRTTI : public RTTIType<Texture, Resource, TextureRTTI>
 	{
 	private:
+		Vector<SPtr<PixelData>> mPixelData;
+
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mSize, 0)
 			B3D_RTTI_MEMBER_NAMED(height, mProperties.Height, 2)
@@ -31,57 +33,62 @@ namespace bs
 			B3D_RTTI_MEMBER_NAMED(numSamples, mProperties.SampleCount, 7)
 			B3D_RTTI_MEMBER_NAMED(type, mProperties.Type, 9)
 			B3D_RTTI_MEMBER_NAMED(format, mProperties.Format, 10)
+			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mPixelData, 12)
 		B3D_RTTI_END_MEMBERS
 
-		i32& GetUsage(Texture* obj) { return obj->mProperties.Usage; }
 
-		void SetUsage(Texture* obj, i32& val)
+		UPtrRTTIIterator<i32, false> GetUsageIterator(Texture& object, FrameAllocator& frameAllocator)
+		{
+			return CreateRTTIIterator<i32, false>(frameAllocator, object.mProperties.Usage);
+		}
+
+		const i32& GetUsage(Texture& object, FrameAllocator& frameAllocator, TRTTIIterator<i32, false>& iterator)
+		{
+			return *iterator;
+		}
+
+		void SetUsage(Texture& object, FrameAllocator& frameAllocator, TRTTIIterator<i32, false>& iterator, const i32& value)
 		{
 			// Render target and depth stencil texture formats are for in-memory use only
 			// and don't make sense when serialized
-			if((val & (TU_DEPTHSTENCIL | TU_RENDERTARGET)) != 0)
-			{
-				obj->mProperties.Usage &= ~(TU_DEPTHSTENCIL | TU_RENDERTARGET);
-				obj->mProperties.Usage |= TU_STATIC;
+			i32 finalValue = value;
+			if((value & (TU_DEPTHSTENCIL | TU_RENDERTARGET)) != 0)
+				{
+				finalValue &= ~(TU_DEPTHSTENCIL | TU_RENDERTARGET);
+				finalValue |= TU_STATIC;
 			}
-			else
-				obj->mProperties.Usage = val;
-		}
 
-		SPtr<PixelData> GetPixelData(Texture* obj, u32 idx)
-		{
-			u32 face = (size_t)Math::Floor(idx / (float)(obj->mProperties.MipMapCount + 1));
-			u32 mipmap = idx % (obj->mProperties.MipMapCount + 1);
-
-			SPtr<PixelData> pixelData = obj->mProperties.AllocBuffer(face, mipmap);
-
-			obj->ReadData(pixelData, face, mipmap);
-			GetRenderThread().PostCommand([] {}, "TextureRTTI::GetPixelData", true, obj->GetName());
-
-			return pixelData;
-		}
-
-		void SetPixelData(Texture* obj, u32 idx, SPtr<PixelData> data)
-		{
-			mPixelData[idx] = data;
-		}
-
-		u32 GetPixelDataArraySize(Texture* obj)
-		{
-			return obj->mProperties.GetFaceCount() * (obj->mProperties.MipMapCount + 1);
-		}
-
-		void SetPixelDataArraySize(Texture* obj, u32 size)
-		{
-			mPixelData.resize(size);
+			iterator = finalValue;
 		}
 
 	public:
 		TextureRTTI()
 		{
-			AddPlainField("mUsage", 11, &TextureRTTI::GetUsage, &TextureRTTI::SetUsage);
+			AddField("mUsage", 11, &TextureRTTI::GetUsageIterator, &TextureRTTI::GetUsage, &TextureRTTI::SetUsage);
+		}
 
-			AddReflectablePtrArrayField("mPixelData", 12, &TextureRTTI::GetPixelData, &TextureRTTI::GetPixelDataArraySize, &TextureRTTI::SetPixelData, &TextureRTTI::SetPixelDataArraySize, RTTIFieldInfo(RTTIFieldFlag::SkipInReferenceSearch));
+		void OnOperationStarted(Texture& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::ReadBit) && operationType != RTTIOperationType::GatherReferences)
+			{
+				const u32 faceCount = object.GetProperties().GetFaceCount();
+				const u32 mipLevelCount = object.GetProperties().MipMapCount + 1;
+
+				const u32 surfaceCount = faceCount * mipLevelCount; 
+				mPixelData.reserve(surfaceCount);
+				for(u32 surfaceIndex = 0; surfaceIndex < surfaceCount; ++surfaceIndex)
+				{
+					u32 face = surfaceIndex / mipLevelCount;
+					u32 mipmap = surfaceIndex % mipLevelCount;
+
+					SPtr<PixelData> pixelData = object.GetProperties().AllocBuffer(face, mipmap);
+
+					object.ReadData(pixelData, face, mipmap);
+					GetRenderThread().PostCommand([] {}, "TextureRTTI::GetPixelData", true, object.GetName());
+
+					mPixelData.push_back(pixelData);
+				}
+			}
 		}
 
 		void OnOperationEnded(Texture& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
@@ -139,9 +146,6 @@ namespace bs
 		{
 			return Texture::CreateEmpty();
 		}
-
-	private:
-		Vector<SPtr<PixelData>> mPixelData;
 	};
 
 	/** @} */
