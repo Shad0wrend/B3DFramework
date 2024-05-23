@@ -18,41 +18,26 @@ namespace bs
 
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableAssemblyInfoRTTI : public RTTIType<ManagedSerializableAssemblyInfo, IReflectable, ManagedSerializableAssemblyInfoRTTI>
 	{
-	private:
-		String& GetName(ManagedSerializableAssemblyInfo* obj)
-		{
-			return obj->MName;
-		}
-
-		void SetName(ManagedSerializableAssemblyInfo* obj, String& val)
-		{
-			obj->MName = val;
-		}
-
-		SPtr<ManagedSerializableObjectInfo> GetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, u32 idx)
-		{
-			auto iter = obj->MObjectInfos.begin();
-			for(u32 i = 0; i < idx; i++)
-				iter++;
-
-			return iter->second;
-		}
-
-		void SetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, u32 idx, SPtr<ManagedSerializableObjectInfo> val)
-		{
-			obj->MTypeNameToId[val->GetFullTypeName()] = val->MTypeInfo->MTypeId;
-			obj->MObjectInfos[val->MTypeInfo->MTypeId] = val;
-		}
-
-		u32 GetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj) { return (u32)obj->MObjectInfos.size(); }
-
-		void SetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj, u32 size) {}
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(MName, 0)
+			B3D_RTTI_MEMBER_CONTAINER(MObjectInfos, 1)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		ManagedSerializableAssemblyInfoRTTI()
+		void OnOperationEnded(ManagedSerializableAssemblyInfo& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			AddPlainField("mName", 0, &ManagedSerializableAssemblyInfoRTTI::GetName, &ManagedSerializableAssemblyInfoRTTI::SetName);
-			AddReflectablePtrArrayField("mObjectInfos", 1, &ManagedSerializableAssemblyInfoRTTI::GetSerializableObjectInfo, &ManagedSerializableAssemblyInfoRTTI::GetSerializableObjectInfoArraySize, &ManagedSerializableAssemblyInfoRTTI::SetSerializableObjectInfo, &ManagedSerializableAssemblyInfoRTTI::SetSerializableObjectInfoArraySize);
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				object.MTypeNameToId.clear();
+				for(const auto& pair : object.MObjectInfos)
+				{
+					if(!B3D_ENSURE(pair.second != nullptr))
+						continue;
+
+					B3D_ENSURE(pair.first == pair.second->MTypeInfo->MTypeId);
+					object.MTypeNameToId[pair.second->GetFullTypeName()] = pair.second->MTypeInfo->MTypeId;
+				}
+			}
 		}
 
 		const String& GetRttiName()
@@ -77,52 +62,27 @@ namespace bs
 	private:
 		using RTTIType<ManagedSerializableObjectInfo, IReflectable, ManagedSerializableObjectInfoRTTI>::GetBaseClass;
 
-		SPtr<ManagedSerializableTypeInfoObject> GetTypeInfo(ManagedSerializableObjectInfo* obj)
-		{
-			return obj->MTypeInfo;
-		}
-
-		void SetTypeInfo(ManagedSerializableObjectInfo* obj, SPtr<ManagedSerializableTypeInfoObject> val)
-		{
-			obj->MTypeInfo = val;
-		}
-
-		SPtr<ManagedSerializableObjectInfo> GetBaseClass(ManagedSerializableObjectInfo* obj)
-		{
-			return obj->MBaseClass;
-		}
-
-		void SetBaseClass(ManagedSerializableObjectInfo* obj, SPtr<ManagedSerializableObjectInfo> val)
-		{
-			obj->MBaseClass = val;
-		}
-
-		SPtr<ManagedSerializableMemberInfo> GetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, u32 idx)
-		{
-			auto iter = obj->MFields.begin();
-			for(u32 i = 0; i < idx; i++)
-				iter++;
-
-			return iter->second;
-		}
-
-		void SetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, u32 idx, SPtr<ManagedSerializableMemberInfo> val)
-		{
-			obj->MFieldNameToId[val->MName] = val->MFieldId;
-			obj->MFields[val->MFieldId] = val;
-		}
-
-		u32 GetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj) { return (u32)obj->MFields.size(); }
-
-		void SetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj, u32 size) {}
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(MTypeInfo, 0)
+			B3D_RTTI_MEMBER(MBaseClass, 2)
+			B3D_RTTI_MEMBER_CONTAINER(MFields, 3)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		ManagedSerializableObjectInfoRTTI()
+		void OnOperationEnded(ManagedSerializableObjectInfo& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			AddReflectablePtrField("mTypeInfo", 0, &ManagedSerializableObjectInfoRTTI::GetTypeInfo, &ManagedSerializableObjectInfoRTTI::SetTypeInfo);
-			AddReflectablePtrField("mBaseClass", 2, &ManagedSerializableObjectInfoRTTI::GetBaseClass, &ManagedSerializableObjectInfoRTTI::SetBaseClass);
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				object.MFieldNameToId.clear();
+				for(const auto& pair : object.MFields)
+				{
+					if(!B3D_ENSURE(pair.second != nullptr))
+						continue;
 
-			AddReflectablePtrArrayField("mFields", 3, &ManagedSerializableObjectInfoRTTI::GetSerializableFieldInfo, &ManagedSerializableObjectInfoRTTI::GetSerializableFieldInfoArraySize, &ManagedSerializableObjectInfoRTTI::SetSerializableFieldInfo, &ManagedSerializableObjectInfoRTTI::SetSerializableFieldInfoArraySize);
+					B3D_ENSURE(pair.first == pair.second->MFieldId);
+					object.MFieldNameToId[pair.second->MName] = pair.second->MFieldId;
+				}
+			}
 		}
 
 		const String& GetRttiName() override
@@ -146,11 +106,11 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(MName, 0)
-			B3D_RTTI_MEMBER_REFLPTR(MTypeInfo, 1)
-			B3D_RTTI_MEMBER_PLAIN(MFieldId, 2)
-			B3D_RTTI_MEMBER_PLAIN(MFlags, 3)
-			B3D_RTTI_MEMBER_PLAIN(MParentTypeId, 4)
+			B3D_RTTI_MEMBER(MName, 0)
+			B3D_RTTI_MEMBER(MTypeInfo, 1)
+			B3D_RTTI_MEMBER(MFieldId, 2)
+			B3D_RTTI_MEMBER(MFlags, 3)
+			B3D_RTTI_MEMBER(MParentTypeId, 4)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -254,7 +214,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(MType, 0)
+			B3D_RTTI_MEMBER(MType, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -283,9 +243,9 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(MUnderlyingType, 0)
-			B3D_RTTI_MEMBER_PLAIN(MTypeNamespace, 1)
-			B3D_RTTI_MEMBER_PLAIN(MTypeName, 2)
+			B3D_RTTI_MEMBER(MUnderlyingType, 0)
+			B3D_RTTI_MEMBER(MTypeNamespace, 1)
+			B3D_RTTI_MEMBER(MTypeName, 2)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -314,10 +274,10 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(MType, 0)
-			B3D_RTTI_MEMBER_PLAIN(MTypeName, 1)
-			B3D_RTTI_MEMBER_PLAIN(MTypeNamespace, 2)
-			B3D_RTTI_MEMBER_PLAIN(MRtiiTypeId, 3)
+			B3D_RTTI_MEMBER(MType, 0)
+			B3D_RTTI_MEMBER(MTypeName, 1)
+			B3D_RTTI_MEMBER(MTypeNamespace, 2)
+			B3D_RTTI_MEMBER(MRtiiTypeId, 3)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -346,7 +306,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFLPTR(MResourceType, 0)
+			B3D_RTTI_MEMBER(MResourceType, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -375,12 +335,12 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(MTypeName, 0)
-			B3D_RTTI_MEMBER_PLAIN(MTypeNamespace, 1)
-			B3D_RTTI_MEMBER_PLAIN(MValueType, 2)
-			B3D_RTTI_MEMBER_PLAIN(MTypeId, 4)
-			B3D_RTTI_MEMBER_PLAIN(MFlags, 5)
-			B3D_RTTI_MEMBER_PLAIN(MRtiiTypeId, 6)
+			B3D_RTTI_MEMBER(MTypeName, 0)
+			B3D_RTTI_MEMBER(MTypeNamespace, 1)
+			B3D_RTTI_MEMBER(MValueType, 2)
+			B3D_RTTI_MEMBER(MTypeId, 4)
+			B3D_RTTI_MEMBER(MFlags, 5)
+			B3D_RTTI_MEMBER(MRtiiTypeId, 6)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -409,8 +369,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFLPTR(MElementType, 0)
-			B3D_RTTI_MEMBER_PLAIN(MRank, 1)
+			B3D_RTTI_MEMBER(MElementType, 0)
+			B3D_RTTI_MEMBER(MRank, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -439,7 +399,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFLPTR(MElementType, 0)
+			B3D_RTTI_MEMBER(MElementType, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -468,8 +428,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFLPTR(MKeyType, 0)
-			B3D_RTTI_MEMBER_REFLPTR(MValueType, 1)
+			B3D_RTTI_MEMBER(MKeyType, 0)
+			B3D_RTTI_MEMBER(MValueType, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:

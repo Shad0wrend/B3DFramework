@@ -20,29 +20,16 @@ namespace bs
 
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedComponentRTTI : public RTTIType<ManagedComponent, Component, ManagedComponentRTTI>
 	{
-	private:
+		SPtr<ManagedSerializableObject> mSerializedObjectData;
+
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(mNamespace, 0)
-			B3D_RTTI_MEMBER_PLAIN(mTypeName, 1)
-			B3D_RTTI_MEMBER_PLAIN(mMissingType, 3)
+			B3D_RTTI_MEMBER(mNamespace, 0)
+			B3D_RTTI_MEMBER(mTypeName, 1)
+			B3D_RTTI_MEMBER(mMissingType, 3)
+			B3D_RTTI_GENERATED_MEMBER(mSerializedObjectData, 2)
 		B3D_RTTI_END_MEMBERS
 
-		SPtr<ManagedSerializableObject> GetObjectData(ManagedComponent* obj)
-		{
-			return mSerializedObjectData;
-		}
-
-		void SetObjectData(ManagedComponent* obj, SPtr<ManagedSerializableObject> val)
-		{
-			obj->mSerializedObjectData = val;
-		}
-
 	public:
-		ManagedComponentRTTI()
-		{
-			AddReflectablePtrField("mObjectData", 2, &ManagedComponentRTTI::GetObjectData, &ManagedComponentRTTI::SetObjectData);
-		}
-
 		void OnOperationStarted(ManagedComponent& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::ReadBit))
@@ -53,7 +40,14 @@ namespace bs
 					mSerializedObjectData = ManagedSerializableObject::CreateFromExisting(managedInstance);
 				else
 					mSerializedObjectData = object.mSerializedObjectData;
-				
+			}
+		}
+
+		void OnOperationEnded(ManagedComponent& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				object.mSerializedObjectData = mSerializedObjectData;
 			}
 		}
 
@@ -72,9 +66,6 @@ namespace bs
 		{
 			return SceneObject::CreateEmptyComponent<ManagedComponent>();
 		}
-
-	private:
-		SPtr<ManagedSerializableObject> mSerializedObjectData;
 	};
 
 	/** @} */

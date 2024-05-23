@@ -18,14 +18,14 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFL(mTransform, 0)
-			B3D_RTTI_MEMBER_PLAIN(mActive, 1)
-			B3D_RTTI_MEMBER_PLAIN(mMobility, 2)
-			B3D_RTTI_MEMBER_PLAIN(mSize, 3)
-			B3D_RTTI_MEMBER_PLAIN(mMaxDistance, 4)
-			B3D_RTTI_MEMBER_REFL(mMaterial, 5)
-			B3D_RTTI_MEMBER_PLAIN(mLayer, 6)
-			B3D_RTTI_MEMBER_PLAIN(mLayerMask, 7)
+			B3D_RTTI_MEMBER(mTransform, 0)
+			B3D_RTTI_MEMBER(mActive, 1)
+			B3D_RTTI_MEMBER(mMobility, 2)
+			B3D_RTTI_MEMBER(mSize, 3)
+			B3D_RTTI_MEMBER(mMaxDistance, 4)
+			B3D_RTTI_MEMBER(mMaterial, 5)
+			B3D_RTTI_MEMBER(mLayer, 6)
+			B3D_RTTI_MEMBER(mLayerMask, 7)
 		B3D_RTTI_END_MEMBERS
 	public:
 		const String& GetRttiName() override
