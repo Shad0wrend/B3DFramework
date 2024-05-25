@@ -49,85 +49,62 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT MaterialParamStructDataRTTI : public RTTIType<MaterialParamStructData, IReflectable, MaterialParamStructDataRTTI>
+	class B3D_CORE_EXPORT MaterialParamBufferDataRTTI : public RTTIType<MaterialParamBufferData, IReflectable, MaterialParamBufferDataRTTI>
 	{
 	public:
-		SPtr<DataStream> GetDataBuffer(MaterialParamStructData* obj, u32& size)
-		{
-			size = obj->DataSize;
-
-			return B3DMakeShared<MemoryDataStream>(obj->Data, obj->DataSize);
-		}
-
-		void SetDataBuffer(MaterialParamStructData* obj, const SPtr<DataStream>& value, u32 size)
-		{
-			obj->Data = (u8*)B3DAllocate(size);
-			value->Read(obj->Data, size);
-
-			obj->DataSize = size;
-		}
-
-		MaterialParamStructDataRTTI()
-		{
-			AddDataBlockField("dataBuffer", 0, &MaterialParamStructDataRTTI::GetDataBuffer, &MaterialParamStructDataRTTI::SetDataBuffer);
-		}
-
 		const String& GetRttiName() override
 		{
-			static String name = "StructParamData";
+			static String name = "BufferParamData";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_StructParamData;
+			return TID_BufferParamData;
 		}
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return B3DMakeShared<MaterialParamStructData>();
+			return B3DMakeShared<MaterialParamBufferData>();
+		}
+	};
+
+	class B3D_CORE_EXPORT MaterialParamSamplerStateDataRTTI : public RTTIType<MaterialParamSamplerStateData, IReflectable, MaterialParamSamplerStateDataRTTI>
+	{
+	public:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(Value, 0)
+		B3D_RTTI_END_MEMBERS
+
+		const String& GetRttiName() override
+		{
+			static String name = "SamplerStateParamData";
+			return name;
+		}
+
+		u32 GetRttiId() const override
+		{
+			return TID_SamplerStateParamData;
+		}
+
+		SPtr<IReflectable> NewRttiObject()
+		{
+			return B3DMakeShared<MaterialParamSamplerStateData>();
 		}
 	};
 
 	class B3D_CORE_EXPORT MaterialParamsRTTI : public RTTIType<MaterialParams, IReflectable, MaterialParamsRTTI>
 	{
 	public:
-		struct MaterialParam
-		{
-			String Name;
-			u32 Index;
-			MaterialParams::ParamData Data;
-		};
-
-		MaterialParam& GetParamData(MaterialParams* obj, u32 idx)
-		{
-			return mMatParams[idx];
-		}
-
-		void SetParamData(MaterialParams* obj, u32 idx, MaterialParam& param)
-		{
-			u32 paramIdx = param.Index;
-
-			// Older saved files might not have indices preserved
-			if(paramIdx == (u32)-1)
-				paramIdx = mNextParamIdx++;
-
-			if(obj->mParams.size() <= (size_t)paramIdx)
-				obj->mParams.resize((size_t)paramIdx + 1);
-
-			obj->mParams[paramIdx] = param.Data;
-			obj->mParamLookup[param.Name] = paramIdx;
-		}
-
-		u32 GetParamDataArraySize(MaterialParams* obj)
-		{
-			return (u32)mMatParams.size();
-		}
-
-		void SetParamDataArraySize(MaterialParams* obj, u32 size)
-		{
-			obj->mParams.resize(size);
-		}
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_CONTAINER(mParamLookup, 0)
+			B3D_RTTI_MEMBER_CONTAINER(mParams, 1)
+			B3D_RTTI_MEMBER_CONTAINER(mDataParameterMetaData, 3)
+			B3D_RTTI_MEMBER_CONTAINER(mStructParameterMetaData, 4)
+			B3D_RTTI_MEMBER_CONTAINER(mTextureParameters, 5)
+			B3D_RTTI_MEMBER_CONTAINER(mBufferParameters, 6)
+			B3D_RTTI_MEMBER_CONTAINER(mSamplerParameters, 7)
+		B3D_RTTI_END_MEMBERS
 
 		SPtr<DataStream> GetDataBuffer(MaterialParams* obj, u32& size)
 		{
@@ -144,139 +121,9 @@ namespace bs
 			obj->mDataSize = size;
 		}
 
-		MaterialParamStructData& GetStructParam(MaterialParams* obj, u32 idx) { return obj->mStructParams[idx]; }
-
-		void SetStructParam(MaterialParams* obj, u32 idx, MaterialParamStructData& param)
-		{
-			MaterialParamStructData& newStructParam = obj->mStructParams[idx];
-			newStructParam.Data = (u8*)obj->mAlloc.Alloc(param.DataSize);
-			memcpy(newStructParam.Data, param.Data, param.DataSize);
-			newStructParam.DataSize = param.DataSize;
-
-			B3DFree(param.Data);
-			param.Data = nullptr;
-		}
-
-		u32 GetStructArraySize(MaterialParams* obj) { return (u32)obj->mNumStructParams; }
-
-		void SetStructArraySize(MaterialParams* obj, u32 size)
-		{
-			obj->mNumStructParams = size;
-			obj->mStructParams = obj->mAlloc.Construct<MaterialParamStructData>(size);
-		}
-
-		MaterialParamTextureData& GetTextureParam(MaterialParams* obj, u32 idx) { return obj->mTextureParams[idx]; }
-
-		void SetTextureParam(MaterialParams* obj, u32 idx, MaterialParamTextureData& param) { obj->mTextureParams[idx] = param; }
-
-		u32 GetTextureArraySize(MaterialParams* obj) { return (u32)obj->mNumTextureParams; }
-
-		void SetTextureArraySize(MaterialParams* obj, u32 size)
-		{
-			obj->mNumTextureParams = size;
-			obj->mTextureParams = obj->mAlloc.Construct<MaterialParamTextureData>(size);
-		}
-
-		SPtr<SamplerState> GetSamplerStateParam(MaterialParams* obj, u32 idx) { return obj->mSamplerStateParams[idx].Value; }
-
-		void SetSamplerStateParam(MaterialParams* obj, u32 idx, SPtr<SamplerState> param) { obj->mSamplerStateParams[idx].Value = param; }
-
-		u32 GetSamplerStateArraySize(MaterialParams* obj) { return (u32)obj->mNumSamplerParams; }
-
-		void SetSamplerStateArraySize(MaterialParams* obj, u32 size)
-		{
-			obj->mNumSamplerParams = size;
-			obj->mSamplerStateParams = obj->mAlloc.Construct<MaterialParamSamplerStateData>(size);
-		}
-
-		u32& GetNumBufferParams(MaterialParams* obj)
-		{
-			return obj->mNumBufferParams;
-		}
-
-		void SetNumBufferParams(MaterialParams* obj, u32& value)
-		{
-			obj->mNumBufferParams = value;
-			obj->mBufferParams = obj->mAlloc.Construct<MaterialParamBufferData>(value);
-		}
-
-		MaterialParamsBase::DataParamInfo& GetDataParam(MaterialParams* obj, u32 idx) { return obj->mDataParams[idx]; }
-
-		void SetDataParam(MaterialParams* obj, u32 idx, MaterialParamsBase::DataParamInfo& param) { obj->mDataParams[idx] = param; }
-
-		u32 GetDataParamArraySize(MaterialParams* obj) { return (u32)obj->mNumDataParams; }
-
-		void SetDataParamArraySize(MaterialParams* obj, u32 size)
-		{
-			obj->mNumDataParams = size;
-			obj->mDataParams = obj->mAlloc.Construct<MaterialParamsBase::DataParamInfo>(size);
-		}
-
 		MaterialParamsRTTI()
 		{
-			AddPlainArrayField("paramData", 0, &MaterialParamsRTTI::GetParamData, &MaterialParamsRTTI::GetParamDataArraySize, &MaterialParamsRTTI::SetParamData, &MaterialParamsRTTI::SetParamDataArraySize);
-			AddDataBlockField("dataBuffer", 1, &MaterialParamsRTTI::GetDataBuffer, &MaterialParamsRTTI::SetDataBuffer);
-			AddReflectableArrayField("structParams", 2, &MaterialParamsRTTI::GetStructParam, &MaterialParamsRTTI::GetStructArraySize, &MaterialParamsRTTI::SetStructParam, &MaterialParamsRTTI::SetStructArraySize);
-			AddReflectableArrayField("textureParams", 3, &MaterialParamsRTTI::GetTextureParam, &MaterialParamsRTTI::GetTextureArraySize, &MaterialParamsRTTI::SetTextureParam, &MaterialParamsRTTI::SetTextureArraySize);
-			AddReflectablePtrArrayField("samplerStateParams", 4, &MaterialParamsRTTI::GetSamplerStateParam, &MaterialParamsRTTI::GetSamplerStateArraySize, &MaterialParamsRTTI::SetSamplerStateParam, &MaterialParamsRTTI::SetSamplerStateArraySize);
-			AddPlainField("numBufferParams", 5, &MaterialParamsRTTI::GetNumBufferParams, &MaterialParamsRTTI::SetNumBufferParams);
-			AddPlainArrayField("dataParams", 6, &MaterialParamsRTTI::GetDataParam, &MaterialParamsRTTI::GetDataParamArraySize, &MaterialParamsRTTI::SetDataParam, &MaterialParamsRTTI::SetDataParamArraySize);
-		}
-
-		void OnOperationStarted(MaterialParams& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
-		{
-			if(operationType.IsSet(RTTIOperationType::ReadBit))
-			{
-				for(auto& entry : object.mParamLookup)
-				{
-					u32 paramIdx = entry.second;
-					mMatParams.push_back({ entry.first, paramIdx, object.mParams[paramIdx] });
-				}
-			}
-		}
-
-		void OnOperationEnded(MaterialParams& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
-		{
-			if(operationType.IsSet(RTTIOperationType::WriteBit))
-			{
-				// This field was added in later versions of the file format, so generate valid data for it if loading from
-				// an older serialized version
-				if(!object.mDataParams)
-				{
-					object.mNumDataParams = 0;
-					for(auto& entry : object.mParams)
-					{
-						if(entry.Type != MaterialParams::ParamType::Data)
-							continue;
-
-						object.mNumDataParams++;
-					}
-
-					object.mDataParams = (MaterialParams::DataParamInfo*)object.mAlloc.Alloc(
-						object.mNumDataParams * sizeof(MaterialParams::DataParamInfo));
-					memset(object.mDataParams, 0, object.mNumDataParams * sizeof(MaterialParams::DataParamInfo));
-
-					u32 paramIdx = 0;
-					u32 dataBufferIdx = 0;
-					for(auto& entry : object.mParams)
-					{
-						if(entry.Type != MaterialParams::ParamType::Data)
-							continue;
-
-						const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[(int)entry.DataType];
-						const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
-						for(u32 i = 0; i < entry.ArraySize; i++)
-						{
-							object.mDataParams[paramIdx + i].Offset = dataBufferIdx;
-
-							dataBufferIdx += paramSize;
-						}
-
-						entry.Index = paramIdx;
-						paramIdx += entry.ArraySize;
-					}
-				}
-			}
+			AddDataBlockField("dataBuffer", 2, &MaterialParamsRTTI::GetDataBuffer, &MaterialParamsRTTI::SetDataBuffer);
 		}
 
 		const String& GetRttiName() override
@@ -294,10 +141,6 @@ namespace bs
 		{
 			return B3DMakeShared<MaterialParams>();
 		}
-
-	private:
-		Vector<MaterialParam> mMatParams;
-		u32 mNextParamIdx = 0;
 	};
 
 	template <>
@@ -462,73 +305,15 @@ namespace bs
 		}
 	};
 
+	
 	template <>
-	struct RTTIPlainType<MaterialParamsRTTI::MaterialParam>
+	struct RTTIPlainType<MaterialParamsBase::StructParameterMetaData> : RTTIPlainTypeHelper<MaterialParamsBase::StructParameterMetaData, TID_StructParameterMetaData, 0, false>
 	{
-		enum
+		template <class Processor>
+		static void RTTIEnumerateFields(MaterialParamsBase::StructParameterMetaData& object, Processor& processor, u8 version)
 		{
-			id = TID_MaterialRTTIParam
-		};
-
-		enum
-		{
-			hasDynamicSize = 1
-		};
-
-		static BitLength ToMemory(const MaterialParamsRTTI::MaterialParam& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			static constexpr u32 kVersion = 1;
-
-			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
-											   {
-				BitLength size = 0;
-				size += B3DRTTIWrite(data.Name, stream);
-				size += B3DRTTIWrite(data.Data, stream);
-
-				// Version 1 data
-				size += B3DRTTIWrite(kVersion, stream);
-				size += B3DRTTIWrite(data.Index, stream);
-
-				return size; });
-		}
-
-		static BitLength FromMemory(MaterialParamsRTTI::MaterialParam& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			BitLength size;
-
-			BitLength sizeRead = B3DRTTIReadSizeHeader(stream, compress, size);
-			sizeRead += B3DRTTIRead(data.Name, stream);
-			sizeRead += B3DRTTIRead(data.Data, stream);
-
-			// More fields means a newer version of the data format
-			if(size > sizeRead)
-			{
-				uint32_t version = 0;
-				B3DRTTIRead(version, stream);
-
-				switch(version)
-				{
-				case 1:
-					B3DRTTIRead(data.Index, stream);
-					break;
-				default:
-					B3D_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
-					break;
-				}
-			}
-			else
-				data.Index = (uint32_t)-1; // Lets the other code know that index needs to be generated
-
-			return size;
-		}
-
-		static BitLength GetSize(const MaterialParamsRTTI::MaterialParam& data, const RTTIFieldInfo& fieldInfo, bool compress)
-		{
-			BitLength size = B3DRTTISize(data.Name) + B3DRTTISize(data.Data) + B3DRTTISize(data.Index) +
-				sizeof(uint32_t) * 1;
-
-			B3DRTTIAddHeaderSize(size, compress);
-			return size;
+			processor(object.Offset);
+			processor(object.DataSize);
 		}
 	};
 

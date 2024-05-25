@@ -562,9 +562,9 @@ namespace bs
 		TID_MaterialParamColor = 1086,
 		TID_WeakResourceHandle = 1087,
 		TID_TextureParamData = 1088,
-		TID_StructParamData = 1089,
+		TID_StructParameterMetaData = 1089,
 		TID_MaterialParams = 1090,
-		TID_MaterialRTTIParam = 1091,
+		//TID_MaterialRTTIParam = 1091,
 		TID_PhysicsMaterial = 1092,
 		TID_CCollider = 1093,
 		TID_CBoxCollider = 1094,
@@ -725,6 +725,8 @@ namespace bs
 		TID_UnitTestComponentA = 1249,
 		TID_UnitTestComponentB = 1250,
 		TID_D6JointDrive = 1251,
+		TID_BufferParamData = 1252,
+		TID_SamplerStateParamData = 1253,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,

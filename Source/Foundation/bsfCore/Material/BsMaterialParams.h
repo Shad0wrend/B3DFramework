@@ -76,6 +76,13 @@ namespace bs
 			u32 SpriteTextureIdx;
 		};
 
+		/** Meta data for a single struct parameter. */
+		struct StructParameterMetaData
+		{
+			u32 Offset;
+			u32 DataSize;
+		};
+
 		/**
 		 * Creates a new material params object and initializes enough room for parameters from the provided parameter data.
 		 */
@@ -106,16 +113,16 @@ namespace bs
 			GpuDataParameterType dataType = TGpuDataParamInfo<T>::TypeId;
 
 			const ParamData* param = nullptr;
-			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
+			auto result = GetParamData(name, ParamType::Data, dataType, arrayIdx, &param);
 			if(result != GetParamResult::Success)
 				return;
 
-			const DataParamInfo& paramInfo = mDataParams[param->index + arrayIdx];
+			const DataParamInfo& paramInfo = mDataParameterMetaData[param->Index + arrayIdx];
 
-			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::PARAM_SIZES.lookup[dataType];
-			u32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[dataType];
+			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
-			memcpy(output, &mDataParamsBuffer[paramInfo.offset], sizeof(paramTypeSize));
+			memcpy(output, &mDataParamsBuffer[paramInfo.Offset], sizeof(paramTypeSize));
 		}
 
 		/**
@@ -134,16 +141,16 @@ namespace bs
 			GpuDataParameterType dataType = TGpuDataParamInfo<T>::TypeId;
 
 			const ParamData* param = nullptr;
-			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
+			auto result = GetParamData(name, ParamType::Data, dataType, arrayIdx, &param);
 			if(result != GetParamResult::Success)
 				return;
 
-			const DataParamInfo& paramInfo = mDataParams[param->index + arrayIdx];
+			const DataParamInfo& paramInfo = mDataParameterMetaData[param->Index + arrayIdx];
 
-			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::PARAM_SIZES.lookup[dataType];
-			u32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[dataType];
+			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
-			memcpy(&mDataParamsBuffer[paramInfo.offset], input, sizeof(paramTypeSize));
+			memcpy(&mDataParamsBuffer[paramInfo.Offset], input, sizeof(paramTypeSize));
 		}
 
 		/**
@@ -164,11 +171,11 @@ namespace bs
 			GpuDataParameterType dataType = TGpuDataParamInfo<T>::TypeId;
 
 			const ParamData* param = nullptr;
-			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
+			auto result = GetParamData(name, ParamType::Data, dataType, arrayIdx, &param);
 			if(result != GetParamResult::Success)
 				return EMPTY_CURVE;
 
-			return getCurveParam<T>(*param, arrayIdx);
+			return GetCurveParam<T>(*param, arrayIdx);
 		}
 
 		/**
@@ -187,7 +194,7 @@ namespace bs
 			GpuDataParameterType dataType = TGpuDataParamInfo<T>::TypeId;
 
 			const ParamData* param = nullptr;
-			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
+			auto result = GetParamData(name, ParamType::Data, dataType, arrayIdx, &param);
 			if(result != GetParamResult::Success)
 				return;
 
@@ -213,7 +220,7 @@ namespace bs
 		 * @param[in]	arrayIdx	If the parameter is an array, index of the entry to access.
 		 * @param[in]	input		New value of the parameter.
 		 */
-		void SetColorGradientParam(const String& name, u32 arrayIdx, const ColorGradientHDR& input) const;
+		void SetColorGradientParam(const String& name, u32 arrayIdx, const ColorGradientHDR& input);
 
 		/**
 		 * Returns an index of the parameter with the specified name. Index can be used in a call to getParamData(u32) to
@@ -283,7 +290,7 @@ namespace bs
 		{
 			GpuDataParameterType dataType = (GpuDataParameterType)TGpuDataParamInfo<T>::TypeId;
 
-			const DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
+			const DataParamInfo& paramInfo = mDataParameterMetaData[param.Index + arrayIdx];
 
 			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[dataType];
 			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
@@ -298,11 +305,11 @@ namespace bs
 		 * object.
 		 */
 		template <typename T>
-		void SetDataParam(const ParamData& param, u32 arrayIdx, const T& input) const
+		void SetDataParam(const ParamData& param, u32 arrayIdx, const T& input)
 		{
 			GpuDataParameterType dataType = (GpuDataParameterType)TGpuDataParamInfo<T>::TypeId;
 
-			DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
+			DataParamInfo& paramInfo = mDataParameterMetaData[param.Index + arrayIdx];
 			if(paramInfo.FloatCurve)
 			{
 				B3DPoolFree(paramInfo.FloatCurve);
@@ -337,7 +344,7 @@ namespace bs
 			// Only supported for float types
 			if(dataType == GPDT_FLOAT1)
 			{
-				const DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
+				const DataParamInfo& paramInfo = mDataParameterMetaData[param.Index + arrayIdx];
 				if(paramInfo.FloatCurve)
 					return *paramInfo.FloatCurve;
 			}
@@ -352,14 +359,14 @@ namespace bs
 		 * and belongs to this object.
 		 */
 		template <typename T>
-		void SetCurveParam(const ParamData& param, u32 arrayIdx, TAnimationCurve<T> input) const
+		void SetCurveParam(const ParamData& param, u32 arrayIdx, TAnimationCurve<T> input)
 		{
 			GpuDataParameterType dataType = (GpuDataParameterType)TGpuDataParamInfo<T>::TypeId;
 
 			// Only supported for float types
 			if(dataType == GPDT_FLOAT1)
 			{
-				DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
+				DataParamInfo& paramInfo = mDataParameterMetaData[param.Index + arrayIdx];
 				if(paramInfo.FloatCurve)
 					B3DPoolFree(paramInfo.FloatCurve);
 
@@ -381,12 +388,12 @@ namespace bs
 		 * parameter reference directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid
 		 * and belongs to this object.
 		 */
-		void SetColorGradientParam(const ParamData& param, u32 arrayIdx, const ColorGradientHDR& input) const;
+		void SetColorGradientParam(const ParamData& param, u32 arrayIdx, const ColorGradientHDR& input);
 
 		/** Returns pointer to the internal data buffer for a data parameter at the specified index. */
 		u8* GetData(u32 index) const
 		{
-			return &mDataParamsBuffer[mDataParams[index].Offset];
+			return &mDataParamsBuffer[mDataParameterMetaData[index].Offset];
 		}
 
 		/** Returns a counter that gets incremented whenever a parameter gets updated. */
@@ -398,38 +405,17 @@ namespace bs
 		UnorderedMap<String, u32> mParamLookup;
 		Vector<ParamData> mParams;
 
-		DataParamInfo* mDataParams = nullptr;
+		TInlineArray<DataParamInfo, 16> mDataParameterMetaData;
+		TInlineArray<StructParameterMetaData, 2> mStructParameterMetaData;
 		u8* mDataParamsBuffer = nullptr;
 
 		u32 mDataSize = 0;
-		u32 mNumDataParams = 0;
-		u32 mNumStructParams = 0;
-		u32 mNumTextureParams = 0;
-		u32 mNumBufferParams = 0;
-		u32 mNumSamplerParams = 0;
+		u32 mTextureParameterCount = 0;
+		u32 mBufferParameterCount = 0;
+		u32 mSamplerParameterCount = 0;
 
 		mutable u64 mParamVersion = 1;
 		mutable StaticAlloc<kStaticBufferSize> mAlloc;
-	};
-
-	/** Raw data for a single structure parameter. */
-	class B3D_CORE_EXPORT MaterialParamStructDataRenderProxy
-	{
-	public:
-		u8* Data;
-		u32 DataSize;
-	};
-
-	/** Raw data for a single structure parameter. */
-	class B3D_CORE_EXPORT MaterialParamStructData : public IReflectable
-	{
-	public:
-		u8* Data;
-		u32 DataSize;
-
-		friend class MaterialParamStructDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
 	};
 
 	/** Data for a single texture parameter. */
@@ -464,10 +450,14 @@ namespace bs
 	};
 
 	/** Data for a single buffer parameter. */
-	class B3D_CORE_EXPORT MaterialParamBufferData
+	class B3D_CORE_EXPORT MaterialParamBufferData : public IReflectable
 	{
 	public:
 		SPtr<GpuBuffer> Value;
+
+		friend class MaterialParamBufferDataRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** Data for a single sampler state parameter. */
@@ -478,10 +468,14 @@ namespace bs
 	};
 
 	/** Data for a single sampler state parameter. */
-	class B3D_CORE_EXPORT MaterialParamSamplerStateData
+	class B3D_CORE_EXPORT MaterialParamSamplerStateData : public IReflectable
 	{
 	public:
 		SPtr<SamplerState> Value;
+
+		friend class MaterialParamSamplerStateDataRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** Helper typedefs that reference types used by either render or main thread implementation of TMaterialParams<IsRenderProxy>. */
@@ -492,7 +486,6 @@ namespace bs
 	template <>
 	struct TMaterialParamsTypes<false>
 	{
-		typedef MaterialParamStructData StructParamDataType;
 		typedef MaterialParamTextureData TextureParamDataType;
 		typedef MaterialParamBufferData BufferParamDataType;
 		typedef MaterialParamSamplerStateData SamplerStateParamDataType;
@@ -501,7 +494,6 @@ namespace bs
 	template <>
 	struct TMaterialParamsTypes<true>
 	{
-		typedef MaterialParamStructDataRenderProxy StructParamDataType;
 		typedef MaterialParamTextureDataRenderProxy TextureParamDataType;
 		typedef MaterialParamBufferDataRenderProxy BufferParamDataType;
 		typedef MaterialParamSamplerStateDataRenderProxy SamplerStateParamDataType;
@@ -518,7 +510,6 @@ namespace bs
 		using SpriteImageType = CoreVariantHandleType<SpriteImage, IsRenderProxy>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
 
-		using ParamStructDataType = typename TMaterialParamsTypes<IsRenderProxy>::StructParamDataType;
 		using ParamTextureDataType = typename TMaterialParamsTypes<IsRenderProxy>::TextureParamDataType;
 		using ParamBufferDataType = typename TMaterialParamsTypes<IsRenderProxy>::BufferParamDataType;
 		using ParamSamplerStateDataType = typename TMaterialParamsTypes<IsRenderProxy>::SamplerStateParamDataType;
@@ -786,10 +777,9 @@ namespace bs
 		void GetDefaultSamplerState(const ParamData& param, SPtr<SamplerState>& value) const;
 
 	protected:
-		ParamStructDataType* mStructParams = nullptr;
-		ParamTextureDataType* mTextureParams = nullptr;
-		ParamBufferDataType* mBufferParams = nullptr;
-		ParamSamplerStateDataType* mSamplerStateParams = nullptr;
+		TInlineArray<ParamTextureDataType, 8> mTextureParameters;
+		TInlineArray<ParamBufferDataType, 4> mBufferParameters;
+		TInlineArray<ParamSamplerStateDataType, 2> mSamplerParameters;
 		TextureType* mDefaultTextureParams = nullptr;
 		SPtr<SamplerState>* mDefaultSamplerStateParams = nullptr;
 	};
