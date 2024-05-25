@@ -20,10 +20,6 @@ namespace bs
 
 	class B3D_CORE_EXPORT PackageMetaDataRTTI : public RTTIType<PackageMetaData, IReflectable, PackageMetaDataRTTI>
 	{
-	private:
-		B3D_RTTI_BEGIN_MEMBERS
-		B3D_RTTI_END_MEMBERS
-
 	public:
 		const String& GetRttiName() override
 		{
@@ -46,13 +42,13 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-		B3D_RTTI_MEMBER_PLAIN(Path, 0)
-		B3D_RTTI_MEMBER_PLAIN(Id, 1)
-		B3D_RTTI_MEMBER_PLAIN(TypeId, 2)
-		B3D_RTTI_MEMBER_PLAIN(Dependencies, 3)
-		B3D_RTTI_MEMBER_PLAIN(CompressionType, 4)
-		B3D_RTTI_MEMBER_PLAIN(Flags, 5)
-		B3D_RTTI_MEMBER_REFLPTR(UserMetaData, 6)
+			B3D_RTTI_MEMBER(Path, 0)
+			B3D_RTTI_MEMBER(Id, 1)
+			B3D_RTTI_MEMBER(TypeId, 2)
+			B3D_RTTI_MEMBER(Dependencies, 3)
+			B3D_RTTI_MEMBER(CompressionType, 4)
+			B3D_RTTI_MEMBER(Flags, 5)
+			B3D_RTTI_MEMBER(UserMetaData, 6)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -75,10 +71,6 @@ namespace bs
 
 	class B3D_CORE_EXPORT PackageResourceUserMetaDataRTTI : public RTTIType<PackageResourceUserMetaData, IReflectable, PackageResourceUserMetaDataRTTI>
 	{
-	private:
-		B3D_RTTI_BEGIN_MEMBERS
-		B3D_RTTI_END_MEMBERS
-
 	public:
 		const String& GetRttiName() override
 		{
@@ -99,24 +91,16 @@ namespace bs
 
 	class B3D_CORE_EXPORT PackageRTTI : public RTTIType<Package, IReflectable, PackageRTTI>
 	{
-	private:
+		Vector<SPtr<PackageResourceMetaData>> mResourceMetaData;
+
 		B3D_RTTI_BEGIN_MEMBERS
-		B3D_RTTI_MEMBER_PLAIN(mName, 0)
-		B3D_RTTI_MEMBER_PLAIN(mId, 1)
-		B3D_RTTI_MEMBER_REFLPTR(mPackageMetaData, 2)
+			B3D_RTTI_MEMBER(mName, 0)
+			B3D_RTTI_MEMBER(mId, 1)
+			B3D_RTTI_MEMBER(mPackageMetaData, 2)
+			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mResourceMetaData, 3)
 		B3D_RTTI_END_MEMBERS
 
-		SPtr<PackageResourceMetaData> GetResourceMetaData(Package* object, u32 index) { return mResourceMetaData[index]; }
-		void SetResourceMetaData(Package* object, u32 index, SPtr<PackageResourceMetaData> data) { mResourceMetaData[index] = std::move(data); }
-		u32 GetResourceMetaDataCount(Package* object) { return (u32)mResourceMetaData.size(); }
-		void SetResourceMetaDataCount(Package* object, u32 size) { mResourceMetaData.resize(size); }
-
 	public:
-		PackageRTTI()
-		{
-			AddReflectablePtrArrayField("mResourceMetaData", 3, &PackageRTTI::GetResourceMetaData, &PackageRTTI::GetResourceMetaDataCount, &PackageRTTI::SetResourceMetaData, &PackageRTTI::SetResourceMetaDataCount);
-		}
-
 		void OnOperationStarted(Package& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::ReadBit))
@@ -156,9 +140,6 @@ namespace bs
 		{
 			return B3DMakeShared<Package>();
 		}
-
-	private:
-		Vector<SPtr<PackageResourceMetaData>> mResourceMetaData;
 	};
 
 	/** @} */

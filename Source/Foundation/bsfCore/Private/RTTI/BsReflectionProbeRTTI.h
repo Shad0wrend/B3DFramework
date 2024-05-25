@@ -18,15 +18,15 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFL(mTransform, 0)
-			B3D_RTTI_MEMBER_PLAIN(mActive, 1)
-			B3D_RTTI_MEMBER_PLAIN(mMobility, 2)
-			B3D_RTTI_MEMBER_PLAIN(mType, 3)
-			B3D_RTTI_MEMBER_PLAIN(mRadius, 4)
-			B3D_RTTI_MEMBER_PLAIN(mExtents, 5)
-			B3D_RTTI_MEMBER_PLAIN(mTransitionDistance, 6)
-			B3D_RTTI_MEMBER_REFL(mCustomTexture, 7)
-			B3D_RTTI_MEMBER_REFLPTR(mFilteredTexture, 8)
+			B3D_RTTI_MEMBER(mTransform, 0)
+			B3D_RTTI_MEMBER(mActive, 1)
+			B3D_RTTI_MEMBER(mMobility, 2)
+			B3D_RTTI_MEMBER(mType, 3)
+			B3D_RTTI_MEMBER(mRadius, 4)
+			B3D_RTTI_MEMBER(mExtents, 5)
+			B3D_RTTI_MEMBER(mTransitionDistance, 6)
+			B3D_RTTI_MEMBER(mCustomTexture, 7)
+			B3D_RTTI_MEMBER(mFilteredTexture, 8)
 		B3D_RTTI_END_MEMBERS
 	public:
 		void OnOperationStarted(ReflectionProbe& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override

@@ -18,30 +18,38 @@ namespace bs
 
 	class B3D_CORE_EXPORT ResourceHandleRTTI : public RTTIType<TResourceHandleBase<false>, IReflectable, ResourceHandleRTTI>
 	{
-	private:
-		UUID& GetUuid(TResourceHandleBase<false>* obj) { return obj->mData != nullptr ? obj->mData->MUuid : UUID::kEmpty; }
+		UUID mId;
 
-		void SetUuid(TResourceHandleBase<false>* obj, UUID& uuid) { obj->mData->MUuid = uuid; }
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_GENERATED_MEMBER(mId, 0)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		ResourceHandleRTTI()
+		void OnOperationStarted(TResourceHandleBase<false>& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			AddPlainField("mUUID", 0, &ResourceHandleRTTI::GetUuid, &ResourceHandleRTTI::SetUuid);
+			if(operationType.IsSet(RTTIOperationType::ReadBit))
+			{
+				mId = object.mData != nullptr ? object.mData->MUuid : UUID::kEmpty;
+			}
 		}
 
 		void OnOperationEnded(TResourceHandleBase<false>& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				if(object.mData && !object.mData->MUuid.Empty())
+				if(object.mData != nullptr)
 				{
-					HResource loadedResource = GetResources().GetResourceHandleInternal(object.mData->MUuid);
+					object.mData->MUuid = mId;
 
-					object.ReleaseRef();
-					object.mData = loadedResource.mData;
-					object.AddRef();
+					if(!object.mData->MUuid.Empty())
+					{
+						HResource loadedResource = GetResources().GetResourceHandleInternal(object.mData->MUuid);
+
+						object.ReleaseRef();
+						object.mData = loadedResource.mData;
+						object.AddRef();
+					}
 				}
-				
 			}
 		}
 

@@ -16,17 +16,11 @@ namespace bs
 
 	class B3D_EXPORT PlainTextRTTI : public RTTIType<PlainText, Resource, PlainTextRTTI>
 	{
-	private:
-		WString& GetString(PlainText* obj) { return obj->mString; }
-
-		void SetString(PlainText* obj, WString& val) { obj->mString = val; }
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(mString, 0)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		PlainTextRTTI()
-		{
-			AddPlainField("mString", 0, &PlainTextRTTI::GetString, &PlainTextRTTI::SetString);
-		}
-
 		const String& GetRttiName()
 		{
 			static String name = "PlainText";

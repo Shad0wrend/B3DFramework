@@ -19,7 +19,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(mMapping, 0)
+			B3D_RTTI_MEMBER(mMapping, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:

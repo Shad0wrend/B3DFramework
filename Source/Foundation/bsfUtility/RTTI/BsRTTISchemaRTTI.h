@@ -53,11 +53,11 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Type, 0)
-			B3D_RTTI_MEMBER_PLAIN(HasDynamicSize, 1)
-			B3D_RTTI_MEMBER_PLAIN(FixedSize, 2)
-			B3D_RTTI_MEMBER_PLAIN(FieldTypeId, 3)
-			B3D_RTTI_MEMBER_REFLPTR(FieldTypeSchema, 4)
+			B3D_RTTI_MEMBER(Type, 0)
+			B3D_RTTI_MEMBER(HasDynamicSize, 1)
+			B3D_RTTI_MEMBER(FixedSize, 2)
+			B3D_RTTI_MEMBER(FieldTypeId, 3)
+			B3D_RTTI_MEMBER(FieldTypeSchema, 4)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -82,16 +82,16 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Id, 0)
-			B3D_RTTI_MEMBER_PLAIN(Type, 1)
-			B3D_RTTI_MEMBER_PLAIN(IsArray, 2)
-			B3D_RTTI_MEMBER_PLAIN(HasDynamicSize, 3)
-			B3D_RTTI_MEMBER_PLAIN(Size, 4)
-			B3D_RTTI_MEMBER_PLAIN(FieldTypeId, 5)
-			B3D_RTTI_MEMBER_REFLPTR(FieldTypeSchema, 6)
-			B3D_RTTI_MEMBER_PLAIN(Info, 7)
-			B3D_RTTI_MEMBER_REFL_ARRAY(FieldTypes, 8)
-			B3D_RTTI_MEMBER_PLAIN(IsIterator, 9)
+			B3D_RTTI_MEMBER(Id, 0)
+			B3D_RTTI_MEMBER(Type, 1)
+			B3D_RTTI_MEMBER(IsArray, 2)
+			B3D_RTTI_MEMBER(HasDynamicSize, 3)
+			B3D_RTTI_MEMBER(Size, 4)
+			B3D_RTTI_MEMBER(FieldTypeId, 5)
+			B3D_RTTI_MEMBER(FieldTypeSchema, 6)
+			B3D_RTTI_MEMBER(Info, 7)
+			B3D_RTTI_MEMBER_CONTAINER(FieldTypes, 8)
+			B3D_RTTI_MEMBER(IsIterator, 9)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -116,9 +116,9 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(TypeId, 0)
-			B3D_RTTI_MEMBER_REFLPTR(BaseTypeSchema, 1)
-			B3D_RTTI_MEMBER_REFL_ARRAY(FieldSchemas, 2)
+			B3D_RTTI_MEMBER(TypeId, 0)
+			B3D_RTTI_MEMBER(BaseTypeSchema, 1)
+			B3D_RTTI_MEMBER_CONTAINER(FieldSchemas, 2)
 		B3D_RTTI_END_MEMBERS
 
 	public:

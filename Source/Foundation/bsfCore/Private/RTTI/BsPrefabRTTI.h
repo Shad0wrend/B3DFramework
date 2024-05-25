@@ -18,24 +18,17 @@ namespace bs
 
 	class B3D_CORE_EXPORT PrefabRTTI : public RTTIType<Prefab, Resource, PrefabRTTI>
 	{
-	private:
+		SPtr<SceneObject> mRootSceneObject;
+
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(mPrefabVersion, 1)
+			B3D_RTTI_GENERATED_MEMBER(mRootSceneObject, 0)
+			B3D_RTTI_MEMBER(mPrefabVersion, 1)
 			// B3D_RTTI_MEMBER_PLAIN(mNextLinkId, 2)
-			B3D_RTTI_MEMBER_PLAIN(mUUID, 3)
-			B3D_RTTI_MEMBER_PLAIN(mIsScene, 4)
+			B3D_RTTI_MEMBER(mUUID, 3)
+			B3D_RTTI_MEMBER(mIsScene, 4)
 		B3D_RTTI_END_MEMBERS
 
-		SPtr<SceneObject> GetSceneObject(Prefab* obj) { return obj->mRoot.GetShared(); }
-
-		void SetSceneObject(Prefab* obj, SPtr<SceneObject> value) { obj->mRoot = value->GetHandle(); }
-
 	public:
-		PrefabRTTI()
-		{
-			AddReflectablePtrField("mRoot", 0, &PrefabRTTI::GetSceneObject, &PrefabRTTI::SetSceneObject);
-		}
-
 		void OnOperationStarted(Prefab& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit))
@@ -44,12 +37,22 @@ namespace bs
 				if(serializationContext != nullptr)
 					serializationContext->GameObjectCollection = object.mGameObjectCollection;
 			}
+
+			if(operationType.IsSet(RTTIOperationType::ReadBit))
+			{
+				mRootSceneObject = object.mRoot.GetShared();
+			}
 		}
 
 		void OnOperationEnded(Prefab& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
-				object.Initialize();
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				object.mRoot = mRootSceneObject->GetHandle();
+
+				if(!operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+					object.Initialize();
+			}
 		}
 
 		const String& GetRttiName()

@@ -16,36 +16,17 @@ namespace bs
 
 	class B3D_CORE_EXPORT PhysicsMaterialRTTI : public RTTIType<PhysicsMaterial, Resource, PhysicsMaterialRTTI>
 	{
-	private:
-		float& GetStaticFriction(PhysicsMaterial* obj)
-		{
-			return mStaticFriction;
-		}
+		float mStaticFriction;
+		float mDynamicFriction;
+		float mRestitutionCoefficient;
 
-		void SetStaticFriction(PhysicsMaterial* obj, float& size) { obj->SetStaticFriction(size); }
-
-		float& GetDynamicFriction(PhysicsMaterial* obj)
-		{
-			return mDynamicFriction;
-		}
-
-		void SetDynamicFriction(PhysicsMaterial* obj, float& size) { obj->SetDynamicFriction(size); }
-
-		float& GetRestitutionCoefficient(PhysicsMaterial* obj)
-		{
-			return mRestitutionCoefficient;
-		}
-
-		void SetRestitutionCoefficient(PhysicsMaterial* obj, float& size) { obj->SetRestitutionCoefficient(size); }
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_GENERATED_MEMBER(mStaticFriction, 0)
+			B3D_RTTI_GENERATED_MEMBER(mDynamicFriction, 1)
+			B3D_RTTI_GENERATED_MEMBER(mRestitutionCoefficient, 2)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		PhysicsMaterialRTTI()
-		{
-			AddPlainField("staticFriction", 0, &PhysicsMaterialRTTI::GetStaticFriction, &PhysicsMaterialRTTI::SetStaticFriction);
-			AddPlainField("dynamicFriction", 1, &PhysicsMaterialRTTI::GetDynamicFriction, &PhysicsMaterialRTTI::SetDynamicFriction);
-			AddPlainField("restitutionCoefficient", 2, &PhysicsMaterialRTTI::GetRestitutionCoefficient, &PhysicsMaterialRTTI::SetRestitutionCoefficient);
-		}
-
 		void OnOperationStarted(PhysicsMaterial& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::ReadBit))
@@ -53,6 +34,16 @@ namespace bs
 				mStaticFriction = object.GetStaticFriction();
 				mDynamicFriction = object.GetDynamicFriction();
 				mRestitutionCoefficient = object.GetRestitutionCoefficient();
+			}
+		}
+
+		void OnOperationEnded(PhysicsMaterial& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				object.SetStaticFriction(mStaticFriction);
+				object.SetDynamicFriction(mDynamicFriction);
+				object.SetRestitutionCoefficient(mRestitutionCoefficient);
 			}
 		}
 
@@ -71,11 +62,6 @@ namespace bs
 		{
 			return PhysicsMaterial::CreatePtrInternal();
 		}
-
-	private:
-		float mStaticFriction;
-		float mDynamicFriction;
-		float mRestitutionCoefficient;
 	};
 
 	/** @} */

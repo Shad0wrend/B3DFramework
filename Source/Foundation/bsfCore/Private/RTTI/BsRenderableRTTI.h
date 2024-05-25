@@ -17,14 +17,14 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFL(mTransform, 0)
-			B3D_RTTI_MEMBER_PLAIN(mActive, 1)
-			B3D_RTTI_MEMBER_PLAIN(mMobility, 2)
-			B3D_RTTI_MEMBER_REFL(mMesh, 3)
-			B3D_RTTI_MEMBER_PLAIN(mLayer, 4)
-			B3D_RTTI_MEMBER_REFL_ARRAY(mMaterials, 5)
-			B3D_RTTI_MEMBER_PLAIN(mCullDistanceFactor, 6)
-			B3D_RTTI_MEMBER_PLAIN(mWriteVelocity, 7)
+			B3D_RTTI_MEMBER(mTransform, 0)
+			B3D_RTTI_MEMBER(mActive, 1)
+			B3D_RTTI_MEMBER(mMobility, 2)
+			B3D_RTTI_MEMBER(mMesh, 3)
+			B3D_RTTI_MEMBER(mLayer, 4)
+			B3D_RTTI_MEMBER_CONTAINER(mMaterials, 5)
+			B3D_RTTI_MEMBER(mCullDistanceFactor, 6)
+			B3D_RTTI_MEMBER(mWriteVelocity, 7)
 		B3D_RTTI_END_MEMBERS
 
 	public:

@@ -21,29 +21,21 @@ namespace bs
 	class B3D_CORE_EXPORT ResourceManifestRTTI : public RTTIType<ResourceManifest, IReflectable, ResourceManifestRTTI>
 	{
 	private:
-		String& GetName(ResourceManifest* obj) { return obj->mName; }
-
-		void SetName(ResourceManifest* obj, String& val) { obj->mName = val; }
-
-		UnorderedMap<UUID, Path>& GetUuidMap(ResourceManifest* obj) { return obj->mUUIDToFilePath; }
-
-		void SetUuidMap(ResourceManifest* obj, UnorderedMap<UUID, Path>& val)
-		{
-			obj->mUUIDToFilePath = val;
-
-			obj->mFilePathToUUID.clear();
-
-			for(auto& entry : obj->mUUIDToFilePath)
-			{
-				obj->mFilePathToUUID[entry.second] = entry.first;
-			}
-		}
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(mName, 0)
+			B3D_RTTI_MEMBER(mUUIDToFilePath, 1)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		ResourceManifestRTTI()
+		void OnOperationEnded(ResourceManifest& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			AddPlainField("mName", 0, &ResourceManifestRTTI::GetName, &ResourceManifestRTTI::SetName);
-			AddPlainField("mUUIDToFilePath", 1, &ResourceManifestRTTI::GetUuidMap, &ResourceManifestRTTI::SetUuidMap);
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				object.mFilePathToUUID.clear();
+
+				for(auto& entry : object.mUUIDToFilePath)
+					object.mFilePathToUUID[entry.second] = entry.first;
+			}
 		}
 
 		const String& GetRttiName()

@@ -21,15 +21,15 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.Type, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.Radius, 1)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(angle, mInfo.Angle, 2)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(length, mInfo.Length, 3)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.Thickness, 4)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(arc, mInfo.Arc, 5)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(modeType, mInfo.Mode.Type, 6)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(modeInterval, mInfo.Mode.Interval, 7)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(modeSpeed, mInfo.Mode.Speed, 8)
+			B3D_RTTI_MEMBER_NAMED(type, mInfo.Type, 0)
+			B3D_RTTI_MEMBER_NAMED(radius, mInfo.Radius, 1)
+			B3D_RTTI_MEMBER_NAMED(angle, mInfo.Angle, 2)
+			B3D_RTTI_MEMBER_NAMED(length, mInfo.Length, 3)
+			B3D_RTTI_MEMBER_NAMED(thickness, mInfo.Thickness, 4)
+			B3D_RTTI_MEMBER_NAMED(arc, mInfo.Arc, 5)
+			B3D_RTTI_MEMBER_NAMED(modeType, mInfo.Mode.Type, 6)
+			B3D_RTTI_MEMBER_NAMED(modeInterval, mInfo.Mode.Interval, 7)
+			B3D_RTTI_MEMBER_NAMED(modeSpeed, mInfo.Mode.Speed, 8)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -54,8 +54,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.Radius, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.Thickness, 1)
+			B3D_RTTI_MEMBER_NAMED(radius, mInfo.Radius, 0)
+			B3D_RTTI_MEMBER_NAMED(thickness, mInfo.Thickness, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -80,8 +80,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.Radius, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.Thickness, 1)
+			B3D_RTTI_MEMBER_NAMED(radius, mInfo.Radius, 0)
+			B3D_RTTI_MEMBER_NAMED(thickness, mInfo.Thickness, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -106,8 +106,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.Type, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(extents, mInfo.Extents, 1)
+			B3D_RTTI_MEMBER_NAMED(type, mInfo.Type, 0)
+			B3D_RTTI_MEMBER_NAMED(extents, mInfo.Extents, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -132,10 +132,10 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(length, mInfo.Length, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(modeType, mInfo.Mode.Type, 1)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(modeInterval, mInfo.Mode.Interval, 2)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(modeSpeed, mInfo.Mode.Speed, 3)
+			B3D_RTTI_MEMBER_NAMED(length, mInfo.Length, 0)
+			B3D_RTTI_MEMBER_NAMED(modeType, mInfo.Mode.Type, 1)
+			B3D_RTTI_MEMBER_NAMED(modeInterval, mInfo.Mode.Interval, 2)
+			B3D_RTTI_MEMBER_NAMED(modeSpeed, mInfo.Mode.Speed, 3)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -160,12 +160,12 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.Radius, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.Thickness, 1)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(arc, mInfo.Arc, 2)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(modeType, mInfo.Mode.Type, 3)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(modeInterval, mInfo.Mode.Interval, 4)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(modeSpeed, mInfo.Mode.Speed, 5)
+			B3D_RTTI_MEMBER_NAMED(radius, mInfo.Radius, 0)
+			B3D_RTTI_MEMBER_NAMED(thickness, mInfo.Thickness, 1)
+			B3D_RTTI_MEMBER_NAMED(arc, mInfo.Arc, 2)
+			B3D_RTTI_MEMBER_NAMED(modeType, mInfo.Mode.Type, 3)
+			B3D_RTTI_MEMBER_NAMED(modeInterval, mInfo.Mode.Interval, 4)
+			B3D_RTTI_MEMBER_NAMED(modeSpeed, mInfo.Mode.Speed, 5)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -190,7 +190,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(extents, mInfo.Extents, 0)
+			B3D_RTTI_MEMBER_NAMED(extents, mInfo.Extents, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -215,9 +215,9 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.Type, 0)
-			B3D_RTTI_MEMBER_REFL_NAMED(mesh, mInfo.Mesh, 1)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(sequential, mInfo.Sequential, 2)
+			B3D_RTTI_MEMBER_NAMED(type, mInfo.Type, 0)
+			B3D_RTTI_MEMBER_NAMED(mesh, mInfo.Mesh, 1)
+			B3D_RTTI_MEMBER_NAMED(sequential, mInfo.Sequential, 2)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -242,8 +242,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.Type, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(sequential, mInfo.Sequential, 1)
+			B3D_RTTI_MEMBER_NAMED(type, mInfo.Type, 0)
+			B3D_RTTI_MEMBER_NAMED(sequential, mInfo.Sequential, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -334,21 +334,21 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(mEmissionRate, 0)
-			B3D_RTTI_MEMBER_PLAIN(mInitialLifetime, 1)
-			B3D_RTTI_MEMBER_PLAIN(mInitialSpeed, 2)
-			B3D_RTTI_MEMBER_PLAIN(mInitialSize, 3)
-			B3D_RTTI_MEMBER_PLAIN(mInitialSize3D, 4)
-			B3D_RTTI_MEMBER_PLAIN(mUse3DSize, 5)
-			B3D_RTTI_MEMBER_PLAIN(mInitialRotation, 6)
-			B3D_RTTI_MEMBER_PLAIN(mInitialRotation3D, 7)
-			B3D_RTTI_MEMBER_PLAIN(mUse3DRotation, 8)
-			B3D_RTTI_MEMBER_PLAIN(mInitialColor, 9)
-			B3D_RTTI_MEMBER_PLAIN(mFlipU, 10)
-			B3D_RTTI_MEMBER_PLAIN(mFlipV, 11)
-			B3D_RTTI_MEMBER_REFLPTR(mShape, 12)
-			B3D_RTTI_MEMBER_PLAIN(mRandomOffset, 13)
-			B3D_RTTI_MEMBER_PLAIN_ARRAY(mBursts, 14)
+			B3D_RTTI_MEMBER(mEmissionRate, 0)
+			B3D_RTTI_MEMBER(mInitialLifetime, 1)
+			B3D_RTTI_MEMBER(mInitialSpeed, 2)
+			B3D_RTTI_MEMBER(mInitialSize, 3)
+			B3D_RTTI_MEMBER(mInitialSize3D, 4)
+			B3D_RTTI_MEMBER(mUse3DSize, 5)
+			B3D_RTTI_MEMBER(mInitialRotation, 6)
+			B3D_RTTI_MEMBER(mInitialRotation3D, 7)
+			B3D_RTTI_MEMBER(mUse3DRotation, 8)
+			B3D_RTTI_MEMBER(mInitialColor, 9)
+			B3D_RTTI_MEMBER(mFlipU, 10)
+			B3D_RTTI_MEMBER(mFlipV, 11)
+			B3D_RTTI_MEMBER(mShape, 12)
+			B3D_RTTI_MEMBER(mRandomOffset, 13)
+			B3D_RTTI_MEMBER_CONTAINER(mBursts, 14)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -373,8 +373,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(numCycles, mDesc.NumCycles, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(randomizeRow, mDesc.RandomizeRow, 1)
+			B3D_RTTI_MEMBER_NAMED(numCycles, mDesc.NumCycles, 0)
+			B3D_RTTI_MEMBER_NAMED(randomizeRow, mDesc.RandomizeRow, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -399,10 +399,10 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(center, mDesc.Center, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(velocity, mDesc.Velocity, 1)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(radial, mDesc.Radial, 2)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(worldSpace, mDesc.WorldSpace, 3)
+			B3D_RTTI_MEMBER_NAMED(center, mDesc.Center, 0)
+			B3D_RTTI_MEMBER_NAMED(velocity, mDesc.Velocity, 1)
+			B3D_RTTI_MEMBER_NAMED(radial, mDesc.Radial, 2)
+			B3D_RTTI_MEMBER_NAMED(worldSpace, mDesc.WorldSpace, 3)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -427,8 +427,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(velocity, mDesc.Velocity, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(worldSpace, mDesc.WorldSpace, 1)
+			B3D_RTTI_MEMBER_NAMED(velocity, mDesc.Velocity, 0)
+			B3D_RTTI_MEMBER_NAMED(worldSpace, mDesc.WorldSpace, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -453,8 +453,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(force, mDesc.Force, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(worldSpace, mDesc.WorldSpace, 1)
+			B3D_RTTI_MEMBER_NAMED(force, mDesc.Force, 0)
+			B3D_RTTI_MEMBER_NAMED(worldSpace, mDesc.WorldSpace, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -479,7 +479,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(scale, mDesc.Scale, 0)
+			B3D_RTTI_MEMBER_NAMED(scale, mDesc.Scale, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -504,7 +504,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(color, mDesc.Color, 0)
+			B3D_RTTI_MEMBER_NAMED(color, mDesc.Color, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -529,9 +529,9 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(size, mDesc.Size, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(size3D, mDesc.Size3D, 1)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(use3DSize, mDesc.Use3DSize, 2)
+			B3D_RTTI_MEMBER_NAMED(size, mDesc.Size, 0)
+			B3D_RTTI_MEMBER_NAMED(size3D, mDesc.Size3D, 1)
+			B3D_RTTI_MEMBER_NAMED(use3DSize, mDesc.Use3DSize, 2)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -556,9 +556,9 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(rotation, mDesc.Rotation, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(rotation3D, mDesc.Rotation3D, 1)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(use3DRotation, mDesc.Use3DRotation, 2)
+			B3D_RTTI_MEMBER_NAMED(rotation, mDesc.Rotation, 0)
+			B3D_RTTI_MEMBER_NAMED(rotation3D, mDesc.Rotation3D, 1)
+			B3D_RTTI_MEMBER_NAMED(use3DRotation, mDesc.Use3DRotation, 2)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -583,12 +583,12 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN_NAMED(radius, mDesc.Radius, 0)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(dampening, mDesc.Dampening, 1)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(layer, mDesc.Layer, 2)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(lifetimeLoss, mDesc.LifetimeLoss, 3)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(mode, mDesc.Mode, 4)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(restitution, mDesc.Restitution, 5)
+			B3D_RTTI_MEMBER_NAMED(radius, mDesc.Radius, 0)
+			B3D_RTTI_MEMBER_NAMED(dampening, mDesc.Dampening, 1)
+			B3D_RTTI_MEMBER_NAMED(layer, mDesc.Layer, 2)
+			B3D_RTTI_MEMBER_NAMED(lifetimeLoss, mDesc.LifetimeLoss, 3)
+			B3D_RTTI_MEMBER_NAMED(mode, mDesc.Mode, 4)
+			B3D_RTTI_MEMBER_NAMED(restitution, mDesc.Restitution, 5)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -613,16 +613,16 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFL(VectorField, 0)
-			B3D_RTTI_MEMBER_PLAIN(Intensity, 1)
-			B3D_RTTI_MEMBER_PLAIN(Tightness, 2)
-			B3D_RTTI_MEMBER_PLAIN(Scale, 3)
-			B3D_RTTI_MEMBER_PLAIN(Offset, 4)
-			B3D_RTTI_MEMBER_PLAIN(Rotation, 5)
-			B3D_RTTI_MEMBER_PLAIN(RotationRate, 6)
-			B3D_RTTI_MEMBER_PLAIN(TilingX, 7)
-			B3D_RTTI_MEMBER_PLAIN(TilingY, 8)
-			B3D_RTTI_MEMBER_PLAIN(TilingZ, 9)
+			B3D_RTTI_MEMBER(VectorField, 0)
+			B3D_RTTI_MEMBER(Intensity, 1)
+			B3D_RTTI_MEMBER(Tightness, 2)
+			B3D_RTTI_MEMBER(Scale, 3)
+			B3D_RTTI_MEMBER(Offset, 4)
+			B3D_RTTI_MEMBER(Rotation, 5)
+			B3D_RTTI_MEMBER(RotationRate, 6)
+			B3D_RTTI_MEMBER(TilingX, 7)
+			B3D_RTTI_MEMBER(TilingY, 8)
+			B3D_RTTI_MEMBER(TilingZ, 9)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -647,10 +647,10 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(Enabled, 0)
-			B3D_RTTI_MEMBER_PLAIN(Restitution, 1)
-			B3D_RTTI_MEMBER_PLAIN(Dampening, 2)
-			B3D_RTTI_MEMBER_PLAIN(RadiusScale, 3)
+			B3D_RTTI_MEMBER(Enabled, 0)
+			B3D_RTTI_MEMBER(Restitution, 1)
+			B3D_RTTI_MEMBER(Dampening, 2)
+			B3D_RTTI_MEMBER(RadiusScale, 3)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -675,12 +675,12 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFL(VectorField, 0)
-			B3D_RTTI_MEMBER_PLAIN(ColorOverLifetime, 1)
-			B3D_RTTI_MEMBER_PLAIN(SizeScaleOverLifetime, 2)
-			B3D_RTTI_MEMBER_REFL(DepthCollision, 3)
-			B3D_RTTI_MEMBER_PLAIN(Acceleration, 4)
-			B3D_RTTI_MEMBER_PLAIN(Drag, 5)
+			B3D_RTTI_MEMBER(VectorField, 0)
+			B3D_RTTI_MEMBER(ColorOverLifetime, 1)
+			B3D_RTTI_MEMBER(SizeScaleOverLifetime, 2)
+			B3D_RTTI_MEMBER(DepthCollision, 3)
+			B3D_RTTI_MEMBER(Acceleration, 4)
+			B3D_RTTI_MEMBER(Drag, 5)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -705,22 +705,22 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(SimulationSpace, 0)
-			B3D_RTTI_MEMBER_PLAIN(Orientation, 1)
-			B3D_RTTI_MEMBER_PLAIN(OrientationLockY, 2)
-			B3D_RTTI_MEMBER_PLAIN(OrientationPlaneNormal, 3)
-			B3D_RTTI_MEMBER_PLAIN(SortMode, 4)
-			B3D_RTTI_MEMBER_PLAIN(Duration, 5)
-			B3D_RTTI_MEMBER_PLAIN(IsLooping, 6)
-			B3D_RTTI_MEMBER_PLAIN(MaxParticles, 7)
-			B3D_RTTI_MEMBER_PLAIN(UseAutomaticSeed, 8)
+			B3D_RTTI_MEMBER(SimulationSpace, 0)
+			B3D_RTTI_MEMBER(Orientation, 1)
+			B3D_RTTI_MEMBER(OrientationLockY, 2)
+			B3D_RTTI_MEMBER(OrientationPlaneNormal, 3)
+			B3D_RTTI_MEMBER(SortMode, 4)
+			B3D_RTTI_MEMBER(Duration, 5)
+			B3D_RTTI_MEMBER(IsLooping, 6)
+			B3D_RTTI_MEMBER(MaxParticles, 7)
+			B3D_RTTI_MEMBER(UseAutomaticSeed, 8)
 			// B3D_RTTI_MEMBER_PLAIN(gravityScale, 9)
-			B3D_RTTI_MEMBER_PLAIN(ManualSeed, 10)
-			B3D_RTTI_MEMBER_REFL(Material, 11)
-			B3D_RTTI_MEMBER_PLAIN(UseAutomaticBounds, 12)
-			B3D_RTTI_MEMBER_PLAIN(CustomBounds, 13)
-			B3D_RTTI_MEMBER_PLAIN(RenderMode, 14)
-			B3D_RTTI_MEMBER_REFL(Mesh, 15)
+			B3D_RTTI_MEMBER(ManualSeed, 10)
+			B3D_RTTI_MEMBER(Material, 11)
+			B3D_RTTI_MEMBER(UseAutomaticBounds, 12)
+			B3D_RTTI_MEMBER(CustomBounds, 13)
+			B3D_RTTI_MEMBER(RenderMode, 14)
+			B3D_RTTI_MEMBER(Mesh, 15)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -745,11 +745,11 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFL(mSettings, 0)
-			B3D_RTTI_MEMBER_REFLPTR_ARRAY(mEmitters, 1)
-			B3D_RTTI_MEMBER_REFLPTR_ARRAY(mEvolvers, 2)
-			B3D_RTTI_MEMBER_REFL(mGpuSimulationSettings, 3)
-			B3D_RTTI_MEMBER_PLAIN(mLayer, 4)
+			B3D_RTTI_MEMBER(mSettings, 0)
+			B3D_RTTI_MEMBER_CONTAINER(mEmitters, 1)
+			B3D_RTTI_MEMBER_CONTAINER(mEvolvers, 2)
+			B3D_RTTI_MEMBER(mGpuSimulationSettings, 3)
+			B3D_RTTI_MEMBER(mLayer, 4)
 		B3D_RTTI_END_MEMBERS
 
 	public:
