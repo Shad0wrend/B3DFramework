@@ -221,7 +221,7 @@ namespace bs::RTTIObjectWrapper
 		}
 		else
 		{
-			if(mField->Schema.IsArray)
+			if(mField->Schema.IsContainer)
 			{
 				const u32 arraySize = mField->GetArraySize(mRTTITypeInstance, mObject);
 				return ValueIterator<true>(mField, mRTTITypeInstance, mObject, arraySize, mFrameAllocator);
@@ -454,7 +454,7 @@ namespace bs::RTTIObjectWrapper
 			else // Just a regular field
 				return Value<true>(mField, ~0u, mIterator, mRTTITypeInstance, mObject, mFrameAllocator);
 		}
-		else // DEPRECATED
+		else
 		{
 			if(mElementCount == ~0u) // Just a regular field
 				return Value<true>(mField, ~0u, ~0u, mRTTITypeInstance, mObject, mFrameAllocator);
@@ -627,53 +627,25 @@ namespace bs::RTTIObjectWrapper
 			return Object<true>(nullptr, nullptr, mFrameAllocator);
 
 		const RTTIFieldTypeSchema& fieldTypeSchema = mField->Schema.FieldTypes[mTupleElementIndex];
-		if(mIterator != nullptr)
+		if(!B3D_ENSURE(mIterator != nullptr))
+			return Object<true>(nullptr, nullptr, mFrameAllocator);
+
+		auto* field = static_cast<RTTIIteratorField*>(mField);
+		const void* fieldValue = field->GetIteratorValue(mRTTITypeInstance, mObject, *mFrameAllocator, *mIterator);
+
+		if(fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
 		{
-			auto* field = static_cast<RTTIIteratorField*>(mField);
-			const void* fieldValue = field->GetIteratorValue(mRTTITypeInstance, mObject, *mFrameAllocator, *mIterator);
+			SPtr<IReflectable> object = field->GetReflectablePointer(fieldValue, mTupleElementIndex);
 
-			if(fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
-			{
-				SPtr<IReflectable> object = field->GetReflectablePointer(fieldValue, mTupleElementIndex);
-
-				const u32 typeId = fieldTypeSchema.FieldTypeId;
-				return Object<true>(object.get(), IReflectable::GetRTTITypeFromTypeId(typeId), mFrameAllocator);
-			}
-			else if(fieldTypeSchema.Type == SerializableFT_Reflectable)
-			{
-				const IReflectable& object = field->GetReflectable(fieldValue, mTupleElementIndex);
-
-				const u32 typeId = fieldTypeSchema.FieldTypeId;
-				return Object<true>(const_cast<IReflectable*>(&object), IReflectable::GetRTTITypeFromTypeId(typeId), mFrameAllocator);
-			}
+			const u32 typeId = fieldTypeSchema.FieldTypeId;
+			return Object<true>(object.get(), IReflectable::GetRTTITypeFromTypeId(typeId), mFrameAllocator);
 		}
-		else
+		else if(fieldTypeSchema.Type == SerializableFT_Reflectable)
 		{
-			const bool isArrayElement = mArrayIndex != ~0u;
-			if(fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
-			{
-				SPtr<IReflectable> object;
+			const IReflectable& object = field->GetReflectable(fieldValue, mTupleElementIndex);
 
-				auto* field = static_cast<RTTIReflectablePtrFieldBase*>(mField);
-				if(isArrayElement)
-					object = field->GetArrayValue(mRTTITypeInstance, mObject, mArrayIndex);
-				else
-					object = field->GetValue(mRTTITypeInstance, mObject);
-
-				return Object<true>(object.get(), field->GetType(), mFrameAllocator);
-			}
-			else if(fieldTypeSchema.Type == SerializableFT_Reflectable)
-			{
-				IReflectable* object;
-
-				auto* field = static_cast<RTTIReflectableFieldBase*>(mField);
-				if(isArrayElement)
-					object = &field->GetArrayValue(mRTTITypeInstance, mObject, mArrayIndex);
-				else
-					object = &field->GetValue(mRTTITypeInstance, mObject);
-
-				return Object<true>(object, field->GetType(), mFrameAllocator);
-			}
+			const u32 typeId = fieldTypeSchema.FieldTypeId;
+			return Object<true>(const_cast<IReflectable*>(&object), IReflectable::GetRTTITypeFromTypeId(typeId), mFrameAllocator);
 		}
 
 		B3D_ASSERT(false && "Invalid field type");
@@ -695,31 +667,13 @@ namespace bs::RTTIObjectWrapper
 		if(!B3D_ENSURE(mTupleElementIndex != ~0u))
 			return 0;
 
-		if(mIterator != nullptr)
-		{
-			auto* field = static_cast<RTTIIteratorField*>(mField);
-			const void* fieldValue = field->GetIteratorValue(mRTTITypeInstance, mObject, *mFrameAllocator, *mIterator);
+		if(!B3D_ENSURE(mIterator != nullptr))
+			return 0;
 
-			return field->GetPlainTypeSize(fieldValue, mTupleElementIndex, false).Bytes;
-		}
-		else
-		{
-			auto* field = static_cast<RTTIPlainFieldBase*>(mField);
+		auto* field = static_cast<RTTIIteratorField*>(mField);
+		const void* fieldValue = field->GetIteratorValue(mRTTITypeInstance, mObject, *mFrameAllocator, *mIterator);
 
-			u32 size;
-			if(field->Schema.FieldTypes[mTupleElementIndex].HasDynamicSize)
-			{
-				const bool isArrayElement = mArrayIndex != ~0u;
-				if(isArrayElement)
-					size = field->GetArrayElemDynamicSize(mRTTITypeInstance, mObject, (int)mArrayIndex, false).Bytes;
-				else
-					size = field->GetDynamicSize(mRTTITypeInstance, mObject, false).Bytes;
-			}
-			else
-				size = field->Schema.FieldTypes[mTupleElementIndex].FixedSize.Bytes;
-
-			return size;
-		}
+		return field->GetPlainTypeSize(fieldValue, mTupleElementIndex, false).Bytes;
 	}
 
 	inline void Value<true>::GetPlainData(u8* buffer, u32 bufferSize) const
@@ -727,25 +681,14 @@ namespace bs::RTTIObjectWrapper
 		if(!B3D_ENSURE(mTupleElementIndex != ~0u))
 			return;
 
-		if(mIterator != nullptr)
-		{
-			auto* field = static_cast<RTTIIteratorField*>(mField);
-			const void* fieldValue = field->GetIteratorValue(mRTTITypeInstance, mObject, *mFrameAllocator, *mIterator);
-			Bitstream tempStream(buffer, bufferSize);
+		if(!B3D_ENSURE(mIterator != nullptr))
+			return;
 
-			field->WritePlainTypeTupleToStream(fieldValue, mTupleElementIndex, tempStream, false);
-		}
-		else
-		{
-			auto* field = static_cast<RTTIPlainFieldBase*>(mField);
-			Bitstream tempStream(buffer, bufferSize);
+		auto* field = static_cast<RTTIIteratorField*>(mField);
+		const void* fieldValue = field->GetIteratorValue(mRTTITypeInstance, mObject, *mFrameAllocator, *mIterator);
+		Bitstream tempStream(buffer, bufferSize);
 
-			const bool isArrayElement = mArrayIndex != ~0u;
-			if(isArrayElement)
-				field->ArrayElemToStream(mRTTITypeInstance, mObject, (int)mArrayIndex, tempStream);
-			else
-				field->ToStream(mRTTITypeInstance, mObject, tempStream);
-		}
+		field->WritePlainTypeTupleToStream(fieldValue, mTupleElementIndex, tempStream, false);
 	}
 
 	inline bool Value<true>::ComparePlain(const Value<true>& other) const

@@ -98,8 +98,8 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 				if(iterator != nullptr)
 					iterator->Clear();
 
-				const bool encodedAsArray = iteratorField->Schema.IsArray && iteratorField->IteratorSupportsSeekToIndex();
-				const bool encodedAsMap = iteratorField->Schema.IsArray && iteratorField->IteratorSupportsSeekToKey();
+				const bool encodedAsArray = iteratorField->Schema.IsContainer && iteratorField->IteratorSupportsSeekToIndex();
+				const bool encodedAsMap = iteratorField->Schema.IsContainer && iteratorField->IteratorSupportsSeekToKey();
 
 				if(encodedAsArray)
 				{
@@ -128,7 +128,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 					DeserializeElement(*rttiInstance, object, *iteratorField, iterator, serializedFieldValue);
 				}
 			}
-			else if(curGenericField->Schema.IsArray) // DEPRECATED
+			else if(curGenericField->Schema.IsContainer) // DEPRECATED
 			{
 				SPtr<SerializedArray> serializedArray = std::static_pointer_cast<SerializedArray>(serializedFieldValue);
 
@@ -486,7 +486,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable* object, R
 	bool shallow = flags.IsSet(SerializedObjectEncodeFlag::Shallow);
 
 	SPtr<ISerialized> output;
-	if(field->Schema.IsArray)
+	if(field->Schema.IsContainer)
 	{
 		const u32 arrayElementCount = field->GetArraySize(rtti, object);
 		bool wholeArray = arrayIdx == ~0u;
@@ -582,7 +582,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable* object, R
 				break;
 			}
 		default:
-			B3D_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsArray));
+			B3D_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsContainer));
 		}
 	}
 	else
@@ -654,7 +654,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable* object, R
 				break;
 			}
 		default:
-			B3D_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsArray));
+			B3D_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsContainer));
 		}
 	}
 
@@ -671,8 +671,8 @@ SPtr<ISerialized> IntermediateSerializer::SerializeField(IReflectable& object, R
 		if(iterator == nullptr)
 			return nullptr;
 
-		const bool encodeAsArray = field.Schema.IsArray && field.IteratorSupportsSeekToIndex();
-		const bool encodeAsMap = field.Schema.IsArray && field.IteratorSupportsSeekToKey();
+		const bool encodeAsArray = field.Schema.IsContainer && field.IteratorSupportsSeekToIndex();
+		const bool encodeAsMap = field.Schema.IsContainer && field.IteratorSupportsSeekToKey();
 
 		SPtr<SerializedArray> serializedArray;
 		SPtr<SerializedMap> serializedMap;
@@ -804,7 +804,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeTupleElement(IReflectable& ob
 			return serializedPlainData;
 		}
 	default:
-		B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, field.Schema.IsArray);
+		B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, field.Schema.IsContainer);
 		return nullptr;
 	}
 }

@@ -4,10 +4,6 @@
 #include "Reflection/BsIReflectable.h"
 #include "Reflection/BsRTTIType.h"
 #include "Reflection/BsRTTIField.h"
-#include "Reflection/BsRTTIPlainField.h"
-#include "Reflection/BsRTTIReflectableField.h"
-#include "Reflection/BsRTTIReflectablePtrField.h"
-#include "Reflection/BsRTTIManagedDataBlockField.h"
 #include "Serialization/BsBinarySerializer.h"
 #include "FileSystem/BsDataStream.h"
 
@@ -91,7 +87,7 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 				{
 					const void* fieldValue = iterator->GetValue();
 
-					if(field->Schema.IsArray)
+					if(field->Schema.IsContainer)
 					{
 						if(iteratorField->IteratorSupportsSeekToIndex())
 							referenceId.ArrayIndex = arrayIndex;
@@ -134,72 +130,6 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 					arrayIndex++;
 				}
 			}
-			else // DEPRECATED
-			{
-				referenceId.TupleElementIndex = 0; // Not supporting tuple elements in this case
-
-				if(field->Schema.IsArray)
-				{
-					const u32 arraySize = field->GetArraySize(rttiInstance, object);
-
-					for(u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
-					{
-						referenceId.ArrayIndex = arrayIndex;
-
-						if(field->Schema.Type == SerializableFT_ReflectablePtr)
-						{
-							auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(field);
-							SPtr<IReflectable> childObj = curField->GetArrayValue(rttiInstance, object, arrayIndex);
-
-							if(childObj != nullptr)
-							{
-								ObjectReference reference;
-								reference.Id = referenceId;
-								reference.Object = childObj;
-
-								fnGetSubObjectReferences().References.push_back(reference);
-							}
-						}
-						else if(field->Schema.Type == SerializableFT_Reflectable)
-						{
-							auto* curField = static_cast<RTTIReflectableFieldBase*>(field);
-							IReflectable* childObj = &curField->GetArrayValue(rttiInstance, object, arrayIndex);
-
-							ObjectExternalReferences childExternalReferences = GatherExternalReferences(childObj, allocator, rttiOperationContext);
-							childExternalReferences.Id = referenceId;
-
-							fnGetSubObjectReferences().ChildObjects.push_back(childExternalReferences);
-						}
-					}
-				}
-				else
-				{
-					if(field->Schema.Type == SerializableFT_ReflectablePtr)
-					{
-						auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(field);
-						SPtr<IReflectable> childObj = curField->GetValue(rttiInstance, object);
-
-						if(childObj != nullptr)
-						{
-							ObjectReference reference;
-							reference.Id = referenceId;
-							reference.Object = childObj;
-
-							fnGetSubObjectReferences().References.push_back(reference);
-						}
-					}
-					else if(field->Schema.Type == SerializableFT_Reflectable)
-					{
-						auto* curField = static_cast<RTTIReflectableFieldBase*>(field);
-						IReflectable* childObj = &curField->GetValue(rttiInstance, object);
-
-						ObjectExternalReferences childExternalReferences = GatherExternalReferences(childObj, allocator, rttiOperationContext);
-						childExternalReferences.Id = referenceId;
-
-						fnGetSubObjectReferences().ChildObjects.push_back(childExternalReferences);
-					}
-				}
-			}
 		}
 
 		rttiInstances.push(rttiInstance);
@@ -232,12 +162,12 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 			for(auto& reference : subObject.References)
 			{
 				RTTIField* const field = reference.Id.Field;
-				if(field->Schema.IsIterator)
+				if(B3D_ENSURE(field->Schema.IsIterator))
 				{
 					auto* const iteratorField = static_cast<RTTIIteratorField*>(field);
 					const SPtr<IRTTIIterator> iterator = iteratorField->GetIterator(rttiInstance, object, allocator);
 
-					if(field->Schema.IsArray)
+					if(field->Schema.IsContainer)
 					{
 						if(iteratorField->IteratorSupportsSeekToIndex())
 						{
@@ -265,14 +195,6 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 					iteratorField->SetReflectablePointer(fieldValue, reference.Id.TupleElementIndex, reference.Object);
 					iteratorField->SetIteratorValue(rttiInstance, object, allocator, *iterator, fieldValue);
 				}
-				else // DEPRECATED
-				{
-					auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(reference.Id.Field);
-					if(curField->Schema.IsArray)
-						curField->SetArrayValue(rttiInstance, object, reference.Id.ArrayIndex, reference.Object);
-					else
-						curField->SetValue(rttiInstance, object, reference.Object);
-				}
 			}
 
 			rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::Patch, rttiOperationContext);
@@ -291,12 +213,12 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 			{
 				RTTIField* const field = childObjectReferences.Id.Field;
 
-				if(field->Schema.IsIterator)
+				if(B3D_ENSURE(field->Schema.IsIterator))
 				{
 					auto* const iteratorField = static_cast<RTTIIteratorField*>(field);
 					const SPtr<IRTTIIterator> iterator = iteratorField->GetIterator(rttiInstance, object, allocator);
 
-					if(field->Schema.IsArray)
+					if(field->Schema.IsContainer)
 					{
 						if(iteratorField->IteratorSupportsSeekToIndex())
 						{
@@ -325,18 +247,6 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 					const IReflectable& childObject = iteratorField->GetReflectable(fieldValue, childObjectReferences.Id.TupleElementIndex);
 
 					RestoreExternalReferences(const_cast<IReflectable*>(&childObject), allocator, childObjectReferences, rttiOperationContext);
-				}
-				else // DEPRECATED
-				{
-					auto* curField = static_cast<RTTIReflectableFieldBase*>(childObjectReferences.Id.Field);
-
-					IReflectable* childObject = nullptr;
-					if(curField->Schema.IsArray)
-						childObject = &curField->GetArrayValue(rttiInstance, object, childObjectReferences.Id.ArrayIndex);
-					else
-						childObject = &curField->GetValue(rttiInstance, object);
-
-					RestoreExternalReferences(childObject, allocator, childObjectReferences, rttiOperationContext);
 				}
 			}
 

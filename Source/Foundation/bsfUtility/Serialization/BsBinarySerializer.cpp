@@ -174,8 +174,8 @@ FieldTypeMetaData FieldTypeMetaData::Create(const RTTIFieldSchema& fieldSchema, 
 	FieldTypeMetaData output;
 	output.IsObjectDescriptor = 0;
 
-	B3D_ASSERT(fieldTypeSchema.Type != SerializableFT_DataBlock || !fieldSchema.IsArray);
-	output.FieldType = EncodeFieldTypeBits(fieldTypeSchema.Type, fieldSchema.IsArray, fieldTypeSchema.HasDynamicSize, isAnotherFieldTypeFollowing);
+	B3D_ASSERT(fieldTypeSchema.Type != SerializableFT_DataBlock || !fieldSchema.IsContainer);
+	output.FieldType = EncodeFieldTypeBits(fieldTypeSchema.Type, fieldSchema.IsContainer, fieldTypeSchema.HasDynamicSize, isAnotherFieldTypeFollowing);
 	output.IsLastFieldInType = isLastFieldInType;
 
 	const u32 fieldTypeId = fieldTypeSchema.FieldTypeId;
@@ -491,7 +491,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 
 		if(field != nullptr)
 		{
-			if(field->Schema.IsArray != decodedFieldSchema.IsArray)
+			if(field->Schema.IsContainer != decodedFieldSchema.IsContainer)
 			{
 				B3D_LOG(Error, Serialization, "Data type mismatch. One is array, other is a single type.");
 				return false;
@@ -541,7 +541,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 			// RTTI has been switched to iterator types
 
 			u32 elementCount = 1;
-			if(decodedFieldSchema.IsArray)
+			if(decodedFieldSchema.IsContainer)
 			{
 				if(compressed)
 					mStream.ReadVarInt(elementCount);
@@ -653,7 +653,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 							break;
 						}
 					default:
-						B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldTypeSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsArray));
+						B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldTypeSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsContainer));
 					}
 				}
 
@@ -666,7 +666,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 				}
 			}
 		}
-		else if(decodedFieldSchema.IsArray) // DEPRECATED
+		else if(decodedFieldSchema.IsContainer) // DEPRECATED
 		{
 			// If marked as array, we support both the old path and the new iterator-based path, so old serialized data can be gracefully loaded even if the
 			// RTTI has been switched to iterator types
@@ -778,7 +778,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 							break;
 						}
 					default:
-						B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldTypeSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsArray));
+						B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldTypeSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsContainer));
 					}
 				}
 			}
@@ -916,7 +916,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 					break;
 				}
 			default:
-				B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsArray));
+				B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsContainer));
 			}
 
 			mStream.ClearBuffered(false);
@@ -1036,7 +1036,7 @@ RTTIFieldSchema BinaryDeserializationContext::ReadFieldMetaData(BufferedBitstrea
 	firstFieldTypeMetaData.PackedData = (u16)(fieldMetaData & 0xFFFF);
 
 	bool hasMoreFieldTypes;
-	const RTTIFieldTypeSchema firstFieldTypeSchema = firstFieldTypeMetaData.ToFieldTypeSchema(fieldSchema.IsArray, hasMoreFieldTypes);
+	const RTTIFieldTypeSchema firstFieldTypeSchema = firstFieldTypeMetaData.ToFieldTypeSchema(fieldSchema.IsContainer, hasMoreFieldTypes);
 
 	terminator = firstFieldTypeMetaData.IsLastFieldInType;
 	fieldSchema.FieldTypes.Add(firstFieldTypeSchema);
@@ -1308,7 +1308,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 				RTTIIteratorField* const iteratorField = static_cast<RTTIIteratorField*>(field);
 				SPtr<IRTTIIterator> iterator = iteratorField->GetIterator(rttiInstance, object, mAllocator);
 
-				if(iteratorField->Schema.IsArray)
+				if(iteratorField->Schema.IsContainer)
 				{
 					u32 elementCount = 0;
 					if(iterator != nullptr)
@@ -1363,13 +1363,13 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 									break;
 								}
 							default:
-								B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, iteratorField->Schema.IsArray);
+								B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, iteratorField->Schema.IsContainer);
 							}
 						}
 					}
 				}
 			}
-			else if(field->Schema.IsArray) // DEPRECATED
+			else if(field->Schema.IsContainer) // DEPRECATED
 			{
 				u32 arrayNumElems = field->GetArraySize(rttiInstance, object);
 
@@ -1428,7 +1428,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 						break;
 					}
 				default:
-					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", field->Schema.Type, field->Schema.IsArray);
+					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", field->Schema.Type, field->Schema.IsContainer);
 				}
 			}
 			else // All but DataBlock case is DEPRECATED
@@ -1495,7 +1495,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 						break;
 					}
 				default:
-					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", field->Schema.Type, field->Schema.IsArray);
+					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", field->Schema.Type, field->Schema.IsContainer);
 				}
 			}
 

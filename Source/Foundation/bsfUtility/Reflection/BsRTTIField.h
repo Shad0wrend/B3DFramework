@@ -70,14 +70,14 @@ namespace bs
 	{
 		RTTIFieldSchema() = default;
 		RTTIFieldSchema(i16 id, bool isArray, bool isIterator, const RTTIFieldInfo& info)
-			: Id(id), IsArray(isArray), IsIterator(isIterator), Info(info)
+			: Id(id), IsContainer(isArray), IsIterator(isIterator), Info(info)
 		{}
 		RTTIFieldSchema(i16 id, bool isArray, bool hasDynamicSize, BitLength size, SerializableFieldType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
-			: Id(id), IsArray(isArray), HasDynamicSize(hasDynamicSize), Size(size), Type(type), FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema)), Info(info)
+			: Id(id), IsContainer(isArray), HasDynamicSize(hasDynamicSize), Size(size), Type(type), FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema)), Info(info)
 		{}
 
 		u16 Id = 0;
-		bool IsArray = false;
+		bool IsContainer = false;
 		bool IsIterator = false; // DEPRECATED - Once we fully switch to iterator model, we can assume this based on type
 		bool HasDynamicSize = false; // DEPRECATED - Stored in FieldTypes now
 		BitLength Size = 0; // DEPRECATED - Stored in FieldTypes now

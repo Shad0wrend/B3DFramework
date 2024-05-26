@@ -139,22 +139,16 @@ namespace bs
 		 * @param context			Serialization context.
 		 * @param allocator			Allocator to perform temporary allocations with.
 		 */
-		void GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, void* mapKey, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator);
+		void GenerateDeltaCommandForFieldEntry(RTTITypeBase* rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, void* mapKey, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator);
 
 		/**
-		 * Generates delta commands for a single field entry (e.g. a single array entry, or the entire field if not an array).
+		 * Generates delta commands for a data block field.
 		 *
-		 * @param rttiInstance		RTTIType instance for the current object.
-		 * @param object			Object that contains the field we're applying the delta to.
 		 * @param field				Field to which to apply the delta to.
 		 * @param entryDelta		Object containing the delta value to apply.
-		 * @param arrayIndex		Optional array index, if the entry we're applying the value to is part of an array. Set to ~0u if not an array.
-		 * @param inOutObjectMap	Map that contains any deserialized objects so far, and into which new deserialized objects will be inserted.
 		 * @param outCommands		List of generated commands into which to output the commands.
-		 * @param context			Serialization context.
-		 * @param allocator			Allocator to perform temporary allocations with.
 		 */
-		void GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance, const SPtr<IReflectable>& object, RTTIField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator); // DEPRECATED - Except the DataBlock case
+		void GenerateDeltaCommandForDataBlockField(RTTIField& field, const SPtr<ISerialized>& entryDelta, FrameVector<DeltaCommand>& outCommands);
 	};
 
 	/** Holds a single tuple element entry in SerializedTupleDelta. */

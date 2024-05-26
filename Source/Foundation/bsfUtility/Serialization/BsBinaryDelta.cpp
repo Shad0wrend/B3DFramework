@@ -519,8 +519,8 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 			SPtr<ISerialized> modification;
 			bool hasModification = false;
 
-			const bool isMap = field->Schema.IsIterator && field->Schema.IsArray && static_cast<RTTIIteratorField*>(field)->IteratorSupportsSeekToKey();
-			const bool isArray = field->Schema.IsArray;
+			const bool isMap = field->Schema.IsIterator && field->Schema.IsContainer && static_cast<RTTIIteratorField*>(field)->IteratorSupportsSeekToKey();
+			const bool isArray = field->Schema.IsContainer;
 
 			ValueIterator<IsRHSIReflectable> rhsValueIterator = rhsField.GetValueIterator();
 			for(u32 elementIndex = 0; rhsValueIterator.MoveNext(); ++elementIndex)
@@ -906,66 +906,38 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 			break;
 		}
 
-		if(command.Field != nullptr && command.Field->Schema.IsIterator)
+		if(command.Field != nullptr)
 		{
-			auto& field = *static_cast<RTTIIteratorField*>(command.Field);
-
-			switch(type)
+			if(command.Field->Schema.IsIterator)
 			{
-			case Diff_ReflectablePtr:
-				{
-					B3D_ASSERT(currentIterator != nullptr);
-					B3D_ASSERT(currentIteratorFieldValue != nullptr);
+				auto& field = *static_cast<RTTIIteratorField*>(command.Field);
 
-					field.SetReflectablePointer(currentIteratorFieldValue, command.TupleElementIndex, command.Object);
-				}
-				break;
-			case Diff_Reflectable:
-				{
-					B3D_ASSERT(currentIterator != nullptr);
-					B3D_ASSERT(currentIteratorFieldValue != nullptr);
-					B3D_ASSERT(command.Object != nullptr);
-
-					field.SetReflectable(currentIteratorFieldValue, command.TupleElementIndex, *command.Object);
-				}
-				break;
-			case Diff_Plain:
-				{
-					B3D_ASSERT(currentIterator != nullptr);
-					B3D_ASSERT(currentIteratorFieldValue != nullptr);
-
-					Bitstream tempStream(command.Value, command.Size);
-					field.ReadPlainTypeTupleFromStream(currentIteratorFieldValue, command.TupleElementIndex, tempStream, false);
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		else // DEPRECATED - All except DataBlock case
-		{
-			if(isArray)
-			{
 				switch(type)
 				{
 				case Diff_ReflectablePtr:
 					{
-						auto* field = static_cast<RTTIReflectablePtrFieldBase*>(command.Field);
-						field->SetArrayValue(rttiInstance, destinationObject, command.ArrayIndex, command.Object);
+						B3D_ASSERT(currentIterator != nullptr);
+						B3D_ASSERT(currentIteratorFieldValue != nullptr);
+
+						field.SetReflectablePointer(currentIteratorFieldValue, command.TupleElementIndex, command.Object);
 					}
 					break;
 				case Diff_Reflectable:
 					{
-						auto* field = static_cast<RTTIReflectableFieldBase*>(command.Field);
-						field->SetArrayValue(rttiInstance, destinationObject, command.ArrayIndex, *command.Object);
+						B3D_ASSERT(currentIterator != nullptr);
+						B3D_ASSERT(currentIteratorFieldValue != nullptr);
+						B3D_ASSERT(command.Object != nullptr);
+
+						field.SetReflectable(currentIteratorFieldValue, command.TupleElementIndex, *command.Object);
 					}
 					break;
 				case Diff_Plain:
 					{
-						auto* field = static_cast<RTTIPlainFieldBase*>(command.Field);
+						B3D_ASSERT(currentIterator != nullptr);
+						B3D_ASSERT(currentIteratorFieldValue != nullptr);
 
 						Bitstream tempStream(command.Value, command.Size);
-						field->ArrayElemFromBuffer(rttiInstance, destinationObject, command.ArrayIndex, tempStream);
+						field.ReadPlainTypeTupleFromStream(currentIteratorFieldValue, command.TupleElementIndex, tempStream, false);
 					}
 					break;
 				default:
@@ -974,36 +946,10 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 			}
 			else
 			{
-				switch(type)
+				if(B3D_ENSURE(!isArray) && B3D_ENSURE(type == Diff_DataBlock))
 				{
-				case Diff_ReflectablePtr:
-					{
-						auto* field = static_cast<RTTIReflectablePtrFieldBase*>(command.Field);
-						field->SetValue(rttiInstance, destinationObject, command.Object);
-					}
-					break;
-				case Diff_Reflectable:
-					{
-						auto* field = static_cast<RTTIReflectableFieldBase*>(command.Field);
-						field->SetValue(rttiInstance, destinationObject, *command.Object);
-					}
-					break;
-				case Diff_Plain:
-					{
-						auto* field = static_cast<RTTIPlainFieldBase*>(command.Field);
-
-						Bitstream tempStream(command.Value, command.Size);
-						field->FromBuffer(rttiInstance, destinationObject, tempStream);
-					}
-					break;
-				case Diff_DataBlock:
-					{
-						auto* field = static_cast<RTTIManagedDataBlockFieldBase*>(command.Field);
-						field->SetValue(rttiInstance, destinationObject, command.StreamValue, command.Size);
-					}
-					break;
-				default:
-					break;
+					auto* field = static_cast<RTTIManagedDataBlockFieldBase*>(command.Field);
+					field->SetValue(rttiInstance, destinationObject, command.StreamValue, command.Size);
 				}
 			}
 		}
@@ -1107,7 +1053,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 
 					for(auto& arrayDeltaElement : serializedArrayDelta->Entries)
 					{
-						GenerateDeltaCommandForEntry(rttiInstance, object, *field, arrayDeltaElement.second.Value, arrayDeltaElement.second.Index, nullptr, objectMap, subObjectCommands, context, allocator);
+						GenerateDeltaCommandForFieldEntry(rttiInstance, object, *field, arrayDeltaElement.second.Value, arrayDeltaElement.second.Index, nullptr, objectMap, subObjectCommands, context, allocator);
 					}
 				}
 				else if(const auto& serializedMapDelta = B3DRTTICast<SerializedMapDelta>(fieldDelta))
@@ -1122,7 +1068,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 
 						if(!mapDeltaElement.second.IsRemoved)
 						{
-							GenerateDeltaCommandForEntry(rttiInstance, object, *field, mapDeltaElement.second.Value, ~0u, deserializedMapKey, objectMap, subObjectCommands, context, allocator);
+							GenerateDeltaCommandForFieldEntry(rttiInstance, object, *field, mapDeltaElement.second.Value, ~0u, deserializedMapKey, objectMap, subObjectCommands, context, allocator);
 						}
 						else
 						{
@@ -1137,28 +1083,13 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 				}
 				else
 				{
-					GenerateDeltaCommandForEntry(rttiInstance, object, *field, fieldDelta, ~0u, nullptr, objectMap, subObjectCommands, context, allocator);
+					GenerateDeltaCommandForFieldEntry(rttiInstance, object, *field, fieldDelta, ~0u, nullptr, objectMap, subObjectCommands, context, allocator);
 				}
-			}
-			else if(genericField->Schema.IsArray) // DEPRECATED
-			{
-				SPtr<SerializedArrayDelta> arrayDelta = std::static_pointer_cast<SerializedArrayDelta>(fieldDelta);
-
-				const u32 arrayDeltaElementCount = arrayDelta->ElementCount;
-
-				DeltaCommand arraySizeCommand;
-				arraySizeCommand.Field = genericField;
-				arraySizeCommand.Type = Diff_ArraySize | Diff_ArrayFlag;
-				arraySizeCommand.ArraySize = arrayDeltaElementCount;
-
-				subObjectCommands.push_back(arraySizeCommand);
-
-				for(auto& arrayDeltaElement : arrayDelta->Entries)
-					GenerateDeltaCommandForEntry(rttiInstance, object, *genericField, arrayDeltaElement.second.Value, arrayDeltaElement.second.Index, objectMap, subObjectCommands, context, allocator);
 			}
 			else
 			{
-				GenerateDeltaCommandForEntry(rttiInstance, object, *genericField, fieldDelta, ~0u, objectMap, subObjectCommands, context, allocator);
+				// Must be a data block field
+				GenerateDeltaCommandForDataBlockField(*genericField, fieldDelta, subObjectCommands);
 			}
 		}
 
@@ -1193,7 +1124,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 	}
 }
 
-void BinaryDeltaHandler::GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, void* mapKey, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator)
+void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTITypeBase* rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, void* mapKey, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator)
 {
 	const SPtr<SerializedTupleDelta> serializedTupleDelta = B3DRTTICast<SerializedTupleDelta>(entryDelta);
 	if(!B3D_ENSURE(field.Schema.FieldTypes.Size() == 1 || serializedTupleDelta != nullptr))
@@ -1368,175 +1299,24 @@ void BinaryDeltaHandler::GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance
 	outCommands.push_back(iteratorEndCommand);
 }
 
-void BinaryDeltaHandler::GenerateDeltaCommandForEntry(RTTITypeBase* rttiInstance, const SPtr<IReflectable>& object, RTTIField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator)
+void BinaryDeltaHandler::GenerateDeltaCommandForDataBlockField(RTTIField& field, const SPtr<ISerialized>& entryDelta, FrameVector<DeltaCommand>& outCommands)
 {
-	const SPtr<SerializedTupleDelta> serializedTupleDelta = B3DRTTICast<SerializedTupleDelta>(entryDelta);
-	if(!B3D_ENSURE(field.Schema.FieldTypes.Size() == 1 || serializedTupleDelta != nullptr))
+	if(!B3D_ENSURE(field.Schema.FieldTypes.Size() == 1))
 		return;
 
-	const bool isArrayElement = arrayIndex != ~0u;
-	const u32 arraySize = isArrayElement ? field.GetArraySize(rttiInstance, object.get()) : 1;
+	if(!B3D_ENSURE(field.Schema.FieldTypes[0].Type == SerializableFT_DataBlock))
+		return;
 
-	for(u32 tupleElementIndex = 0; tupleElementIndex < field.Schema.FieldTypes.Size(); ++tupleElementIndex)
-	{
-		SPtr<ISerialized> serializedEntryDelta;
+	SPtr<SerializedDataBlock> serializedDataBlock = std::static_pointer_cast<SerializedDataBlock>(entryDelta);
+	if(!B3D_ENSURE(serializedDataBlock != nullptr))
+		return;
 
-		if(serializedTupleDelta != nullptr)
-		{
-			auto foundTupleEntry = std::find_if(serializedTupleDelta->Values.begin(), serializedTupleDelta->Values.end(),
-				[tupleElementIndex](const SerializedTupleEntryDelta& entry)
-				{
-					return entry.Index == tupleElementIndex;
-				});
+	DeltaCommand command;
+	command.Field = &field;
+	command.Type = Diff_DataBlock;
+	command.StreamValue = serializedDataBlock->Stream;
+	command.Value = nullptr;
+	command.Size = serializedDataBlock->Size;
 
-			if(foundTupleEntry == serializedTupleDelta->Values.end())
-				continue;
-
-			serializedEntryDelta = foundTupleEntry->Value;
-		}
-		else
-			serializedEntryDelta = entryDelta;
-
-		switch(field.Schema.FieldTypes[tupleElementIndex].Type)
-		{
-		case SerializableFT_ReflectablePtr:
-			{
-				auto& reflectableField = static_cast<RTTIReflectablePtrFieldBase&>(field);
-				SPtr<SerializedObject> serializedObjectDelta = std::static_pointer_cast<SerializedObject>(serializedEntryDelta);
-
-				DeltaCommand command;
-				command.Field = &field;
-				command.Type = Diff_ReflectablePtr;
-
-				if(isArrayElement)
-				{
-					command.Type |= Diff_ArrayFlag;
-					command.ArrayIndex = arrayIndex;
-				}
-
-				if(serializedObjectDelta == nullptr)
-					command.Object = nullptr;
-				else
-				{
-					SPtr<IReflectable> childObject;
-
-					if(isArrayElement)
-					{
-						if(arrayIndex < arraySize)
-							childObject = reflectableField.GetArrayValue(rttiInstance, object.get(), arrayIndex);
-					}
-					else
-						childObject = reflectableField.GetValue(rttiInstance, object.get());
-
-					if(childObject == nullptr)
-					{
-						RTTITypeBase* childRtti = IReflectable::GetRTTITypeFromTypeId(serializedObjectDelta->GetRootTypeId());
-						if(childRtti != nullptr)
-						{
-							auto findObj = inOutObjectMap.find(serializedObjectDelta);
-							if(findObj == inOutObjectMap.end())
-							{
-								SPtr<IReflectable> newObject = childRtti->NewRttiObject();
-								findObj = inOutObjectMap.insert(std::make_pair(serializedObjectDelta, newObject)).first;
-							}
-
-							IDeltaHandler::GenerateDeltaApplyCommands(childRtti, findObj->second, serializedObjectDelta, allocator, inOutObjectMap, outCommands, context);
-							command.Object = findObj->second;
-						}
-						else
-						{
-							command.Object = nullptr;
-						}
-					}
-					else
-					{
-						IDeltaHandler::GenerateDeltaApplyCommands(childObject->GetRtti(), childObject, serializedObjectDelta, allocator, inOutObjectMap, outCommands, context);
-						command.Object = childObject;
-					}
-				}
-
-				outCommands.push_back(command);
-			}
-			break;
-		case SerializableFT_Reflectable:
-			{
-				auto& reflectableField = static_cast<RTTIReflectableFieldBase&>(field);
-				SPtr<SerializedObject> fieldObjectData = std::static_pointer_cast<SerializedObject>(serializedEntryDelta);
-
-				SPtr<IReflectable> clonedObject;
-				if(isArrayElement)
-				{
-					if(arrayIndex < arraySize)
-					{
-						IReflectable& childObject = reflectableField.GetArrayValue(rttiInstance, object.get(), arrayIndex);
-						clonedObject = BinaryCloner::Clone(&childObject, true);
-					}
-					else
-					{
-						RTTITypeBase* childRtti = IReflectable::GetRTTITypeFromTypeId(fieldObjectData->GetRootTypeId());
-						if(childRtti != nullptr)
-							clonedObject = childRtti->NewRttiObject();
-					}
-				}
-				else
-				{
-					IReflectable& childObject = reflectableField.GetValue(rttiInstance, object.get());
-					clonedObject = BinaryCloner::Clone(&childObject, true);
-				}
-
-				IDeltaHandler::GenerateDeltaApplyCommands(clonedObject->GetRtti(), clonedObject, fieldObjectData, allocator, inOutObjectMap, outCommands, context);
-
-				DeltaCommand command;
-				command.Field = &field;
-				command.Type = Diff_Reflectable;
-				command.Object = clonedObject;
-
-				if(isArrayElement)
-				{
-					command.Type |= Diff_ArrayFlag;
-					command.ArrayIndex = arrayIndex;
-				}
-
-
-				outCommands.push_back(command);
-			}
-			break;
-		case SerializableFT_Plain:
-			{
-				SPtr<SerializedPlainData> serializedPlainData = std::static_pointer_cast<SerializedPlainData>(serializedEntryDelta);
-
-				if(serializedPlainData->Size > 0)
-				{
-					DeltaCommand command;
-					command.Field = &field;
-					command.Type = Diff_Plain;
-					command.Value = serializedPlainData->Value;
-					command.Size = serializedPlainData->Size;
-
-					if(isArrayElement)
-					{
-						command.Type |= Diff_ArrayFlag;
-						command.ArrayIndex = arrayIndex;
-					}
-
-					outCommands.push_back(command);
-				}
-			}
-			break;
-		case SerializableFT_DataBlock:
-			{
-				SPtr<SerializedDataBlock> serializedDataBlock = std::static_pointer_cast<SerializedDataBlock>(serializedEntryDelta);
-
-				DeltaCommand command;
-				command.Field = &field;
-				command.Type = Diff_DataBlock;
-				command.StreamValue = serializedDataBlock->Stream;
-				command.Value = nullptr;
-				command.Size = serializedDataBlock->Size;
-
-				outCommands.push_back(command);
-			}
-			break;
-		}
-	}
+	outCommands.push_back(command);
 }
