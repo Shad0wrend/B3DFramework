@@ -217,5 +217,12 @@ namespace bs
 		return USPtr<Type>(data);
 	}
 
+	// Checks is the provided type an unsafe shared pointer
+	template <typename T>
+	struct B3DIsUnsafeSharedPointer : std::false_type {};
+
+	template <typename T>
+	struct B3DIsUnsafeSharedPointer<USPtr<T>> : std::true_type {};
+
 	/** @} */
 } // namespace bs
