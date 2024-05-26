@@ -6,13 +6,10 @@
 #include <algorithm>
 #include <unordered_map>
 
-#include "BsRTTIIteratorField.h"
 #include "Prerequisites/BsPrerequisitesUtil.h"
 #include "Reflection/BsRTTIField.h"
-#include "Reflection/BsRTTIPlainField.h"
-#include "Reflection/BsRTTIReflectableField.h"
-#include "Reflection/BsRTTIReflectablePtrField.h"
-#include "Reflection/BsRTTIManagedDataBlockField.h"
+#include "Reflection/BsRTTIIteratorField.h"
+#include "Reflection/BsRTTIDataBlockField.h"
 #include "Reflection/BsIReflectable.h"
 #include "Reflection/BsRTTITypeMacros.h"
 #include "Serialization/BsBinaryDelta.h"
