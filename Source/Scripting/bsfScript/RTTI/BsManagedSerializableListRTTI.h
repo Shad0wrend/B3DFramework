@@ -16,53 +16,37 @@ namespace bs
 
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableListRTTI : public RTTIType<ManagedSerializableList, IReflectable, ManagedSerializableListRTTI>
 	{
-	private:
-		SPtr<ManagedSerializableTypeInfoList> GetTypeInfo(ManagedSerializableList* obj)
-		{
-			return obj->mListTypeInfo;
-		}
+		TArray<SPtr<ManagedSerializableFieldData>> mListEntries;
 
-		void SetTypeInfo(ManagedSerializableList* obj, SPtr<ManagedSerializableTypeInfoList> val)
-		{
-			obj->mListTypeInfo = val;
-		}
-
-		u32& GetNumElements(ManagedSerializableList* obj)
-		{
-			return (u32&)obj->mNumElements;
-		}
-
-		void SetNumElements(ManagedSerializableList* obj, u32& numElements)
-		{
-			obj->mNumElements = numElements;
-		}
-
-		SPtr<ManagedSerializableFieldData> GetListEntry(ManagedSerializableList* obj, u32 arrayIdx)
-		{
-			return obj->GetFieldData(arrayIdx);
-		}
-
-		void SetListEntry(ManagedSerializableList* obj, u32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
-		{
-			obj->SetFieldData(arrayIdx, val);
-		}
-
-		u32 GetNumListEntries(ManagedSerializableList* obj)
-		{
-			return (u32)obj->mNumElements;
-		}
-
-		void SetNumListEntries(ManagedSerializableList* obj, u32 numEntries)
-		{
-			obj->mCachedEntries = Vector<SPtr<ManagedSerializableFieldData>>(numEntries);
-		}
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(mListTypeInfo, 0)
+			B3D_RTTI_MEMBER(mNumElements, 1)
+			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mListEntries, 2)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		ManagedSerializableListRTTI()
+		void OnOperationStarted(ManagedSerializableList& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			AddReflectablePtrField("mListTypeInfo", 0, &ManagedSerializableListRTTI::GetTypeInfo, &ManagedSerializableListRTTI::SetTypeInfo);
-			AddPlainField("mNumElements", 1, &ManagedSerializableListRTTI::GetNumElements, &ManagedSerializableListRTTI::SetNumElements);
-			AddReflectablePtrArrayField("mListEntries", 2, &ManagedSerializableListRTTI::GetListEntry, &ManagedSerializableListRTTI::GetNumListEntries, &ManagedSerializableListRTTI::SetListEntry, &ManagedSerializableListRTTI::SetNumListEntries);
+			if(operationType.IsSet(RTTIOperationType::ReadBit))
+			{
+				const u32 entryCount = object.mNumElements;
+				mListEntries.reserve(entryCount);
+
+				for(u32 entryIndex = 0; entryIndex < entryCount; ++entryIndex)
+					mListEntries.Add(object.GetFieldData(entryIndex));
+			}
+		}
+
+		void OnOperationEnded(ManagedSerializableList& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				const u32 entryCount = (u32)mListEntries.size();
+				object.mCachedEntries.resize(entryCount);
+
+				for(u32 entryIndex = 0; entryIndex < entryCount; ++entryIndex)
+					object.SetFieldData(entryIndex, mListEntries[entryIndex]);
+			}
 		}
 
 		const String& GetRttiName()

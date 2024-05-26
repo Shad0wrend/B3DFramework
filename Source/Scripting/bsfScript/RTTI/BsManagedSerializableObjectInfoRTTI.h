@@ -139,11 +139,7 @@ namespace bs
 
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldInfoRTTI : public RTTIType<ManagedSerializableFieldInfo, ManagedSerializableMemberInfo, ManagedSerializableFieldInfoRTTI>
 	{
-	private:
 	public:
-		ManagedSerializableFieldInfoRTTI()
-		{}
-
 		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableFieldInfo";

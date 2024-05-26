@@ -40,11 +40,11 @@ namespace bs
 
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDictionaryRTTI : public RTTIType<ManagedSerializableDictionary, IReflectable, ManagedSerializableDictionaryRTTI>
 	{
-		Vector<ManagedSerializableDictionaryKeyValue> mSequentialData;
+		Vector<ManagedSerializableDictionaryKeyValue> mDictionaryEntries;
 
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mDictionaryTypeInfo, 0)
-			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mSequentialData, 1)
+			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mDictionaryEntries, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -54,7 +54,7 @@ namespace bs
 			{
 				auto enumerator = object.GetEnumerator();
 				while(enumerator.MoveNext())
-					mSequentialData.push_back(ManagedSerializableDictionaryKeyValue(enumerator.GetKey(), enumerator.GetValue()));
+					mDictionaryEntries.push_back(ManagedSerializableDictionaryKeyValue(enumerator.GetKey(), enumerator.GetValue()));
 			}
 		}
 
@@ -62,7 +62,7 @@ namespace bs
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				for(const auto& entry : mSequentialData)
+				for(const auto& entry : mDictionaryEntries)
 					object.SetFieldData(entry.Key, entry.Value);
 			}
 		}

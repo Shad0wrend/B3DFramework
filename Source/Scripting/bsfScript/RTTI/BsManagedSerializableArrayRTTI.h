@@ -20,7 +20,7 @@ namespace bs
 
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableArrayRTTI : public RTTIType<ManagedSerializableArray, IReflectable, ManagedSerializableArrayRTTI>
 	{
-		Vector<SPtr<ManagedSerializableFieldData>> mArrayEntries;
+		TArray<SPtr<ManagedSerializableFieldData>> mArrayEntries;
 
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mArrayTypeInfo, 0)
@@ -38,9 +38,7 @@ namespace bs
 				mArrayEntries.reserve(arrayLength);
 
 				for(u32 arrayElementIndex = 0; arrayElementIndex < arrayLength; ++arrayElementIndex)
-				{
-					mArrayEntries.emplace_back(object.GetFieldData(arrayElementIndex));
-				}
+					mArrayEntries.Add(object.GetFieldData(arrayElementIndex));
 			}
 		}
 

@@ -18,49 +18,14 @@ namespace bs
 
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableObjectRTTI : public RTTIType<ManagedSerializableObject, IReflectable, ManagedSerializableObjectRTTI>
 	{
-	private:
-		SPtr<ManagedSerializableObjectInfo> GetInfo(ManagedSerializableObject* obj)
-		{
-			return obj->mObjInfo;
-		}
+		TArray<SPtr<ManagedSerializableFieldDataEntry>> mFieldEntries;
 
-		void SetInfo(ManagedSerializableObject* obj, SPtr<ManagedSerializableObjectInfo> val)
-		{
-			obj->mObjInfo = val;
-		}
-
-		SPtr<ManagedSerializableFieldDataEntry> GetFieldEntry(ManagedSerializableObject* obj, u32 arrayIdx)
-		{
-			SPtr<ManagedSerializableMemberInfo> field = mSequentialFields[arrayIdx];
-
-			SPtr<ManagedSerializableFieldKey> fieldKey = ManagedSerializableFieldKey::Create(field->MParentTypeId, field->MFieldId);
-			SPtr<ManagedSerializableFieldData> fieldData = obj->GetFieldData(field);
-
-			return ManagedSerializableFieldDataEntry::Create(fieldKey, fieldData);
-		}
-
-		void SetFieldsEntry(ManagedSerializableObject* obj, u32 arrayIdx, SPtr<ManagedSerializableFieldDataEntry> val)
-		{
-			obj->mCachedData[*val->MKey] = val->MValue;
-		}
-
-		u32 GetNumFieldEntries(ManagedSerializableObject* obj)
-		{
-			return (u32)mSequentialFields.size();
-		}
-
-		void SetNumFieldEntries(ManagedSerializableObject* obj, u32 numEntries)
-		{
-			// Do nothing
-		}
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(mObjInfo, 0)
+			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mFieldEntries, 1)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		ManagedSerializableObjectRTTI()
-		{
-			AddReflectablePtrField("mObjInfo", 0, &ManagedSerializableObjectRTTI::GetInfo, &ManagedSerializableObjectRTTI::SetInfo);
-			AddReflectablePtrArrayField("mFieldEntries", 1, &ManagedSerializableObjectRTTI::GetFieldEntry, &ManagedSerializableObjectRTTI::GetNumFieldEntries, &ManagedSerializableObjectRTTI::SetFieldsEntry, &ManagedSerializableObjectRTTI::SetNumFieldEntries);
-		}
-
 		void OnOperationStarted(ManagedSerializableObject& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::ReadBit))
@@ -68,14 +33,32 @@ namespace bs
 				SPtr<ManagedSerializableObjectInfo> currentTypeObjectInfo = object.mObjInfo;
 				while(currentTypeObjectInfo != nullptr)
 				{
-					for(auto& field : currentTypeObjectInfo->MFields)
+					for(const auto& pair : currentTypeObjectInfo->MFields)
 					{
-						if(field.second->IsSerializable())
-							mSequentialFields.push_back(field.second);
+						const SPtr<ManagedSerializableMemberInfo>& memberInfo = pair.second;
+
+						if(memberInfo->IsSerializable())
+						{
+							const SPtr<ManagedSerializableFieldKey> fieldKey = ManagedSerializableFieldKey::Create((u16)memberInfo->MParentTypeId, (u16)memberInfo->MFieldId);
+							const SPtr<ManagedSerializableFieldData> fieldData = object.GetFieldData(memberInfo);
+
+							mFieldEntries.Add(ManagedSerializableFieldDataEntry::Create(fieldKey, fieldData));
+						}
 					}
 
 					currentTypeObjectInfo = currentTypeObjectInfo->MBaseClass;
 				}
+			}
+		}
+
+		void OnOperationEnded(ManagedSerializableObject& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::WriteBit))
+			{
+				const u32 entryCount = (u32)mFieldEntries.size();
+
+				for(u32 entryIndex = 0; entryIndex < entryCount; ++entryIndex)
+					object.mCachedData[*mFieldEntries[entryIndex]->MKey] = mFieldEntries[entryIndex]->MValue;
 			}
 		}
 
@@ -100,9 +83,6 @@ namespace bs
 		{
 			return ManagedSerializableObject::CreateEmpty();
 		}
-
-	private:
-		Vector<SPtr<ManagedSerializableMemberInfo>> mSequentialFields;
 	};
 
 	/** @} */
