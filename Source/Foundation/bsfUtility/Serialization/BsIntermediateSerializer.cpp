@@ -136,7 +136,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 				if(!B3D_ENSURE(curGenericField->Schema.FieldTypes.Size() == 1))
 					continue;
 
-				if(!B3D_ENSURE(curGenericField->Schema.FieldTypes[0].Type == SerializableFT_DataBlock))
+				if(!B3D_ENSURE(curGenericField->Schema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
 					continue;
 
 				auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(curGenericField);
@@ -209,7 +209,7 @@ void IntermediateSerializer::DeserializeTupleElement(RTTIIteratorField& field, v
 	RTTIFieldTypeSchema& tupleElementSchema = field.Schema.FieldTypes[tupleElementIndex];
 	switch(tupleElementSchema.Type)
 	{
-	case SerializableFT_ReflectablePtr:
+	case RTTIFieldDataType::ReflectablePointer:
 		{
 			SPtr<SerializedObject> referencedSerializedObject = std::static_pointer_cast<SerializedObject>(entry);
 
@@ -222,7 +222,7 @@ void IntermediateSerializer::DeserializeTupleElement(RTTIIteratorField& field, v
 			field.SetReflectablePointer(outFieldValue, tupleElementIndex, referencedObject);
 		}
 		break;
-	case SerializableFT_Reflectable:
+	case RTTIFieldDataType::Reflectable:
 		{
 			SPtr<SerializedObject> referencedSerializedObject = std::static_pointer_cast<SerializedObject>(entry);
 			RTTITypeBase* childRtti = nullptr;
@@ -239,7 +239,7 @@ void IntermediateSerializer::DeserializeTupleElement(RTTIIteratorField& field, v
 			}
 			break;
 		}
-	case SerializableFT_Plain:
+	case RTTIFieldDataType::Plain:
 		{
 			SPtr<SerializedPlainData> serializedPlainData = std::static_pointer_cast<SerializedPlainData>(entry);
 			if(serializedPlainData != nullptr)
@@ -341,7 +341,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeDataBlockField(IReflectable* 
 	if(!B3D_ENSURE(field->Schema.FieldTypes.Size() == 1))
 		return nullptr;
 
-	if(!B3D_ENSURE(field->Schema.FieldTypes[0].Type == SerializableFT_DataBlock))
+	if(!B3D_ENSURE(field->Schema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
 		return nullptr;
 
 	auto curField = static_cast<RTTIManagedDataBlockFieldBase*>(field);
@@ -463,7 +463,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeTupleElement(IReflectable& ob
 
 	switch(typeSchema.Type)
 	{
-	case SerializableFT_ReflectablePtr:
+	case RTTIFieldDataType::ReflectablePointer:
 		{
 			if(!shallow)
 			{
@@ -475,12 +475,12 @@ SPtr<ISerialized> IntermediateSerializer::SerializeTupleElement(IReflectable& ob
 
 			return nullptr;
 		}
-	case SerializableFT_Reflectable:
+	case RTTIFieldDataType::Reflectable:
 		{
 			const IReflectable& inlineObject = field.GetReflectable(fieldValue, tupleElementIndex);
 			return SerializeReflectableObject(inlineObject, flags);
 		}
-	case SerializableFT_Plain:
+	case RTTIFieldDataType::Plain:
 		{
 			u32 typeSize = 0;
 			if(typeSchema.HasDynamicSize)
@@ -499,7 +499,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeTupleElement(IReflectable& ob
 			return serializedPlainData;
 		}
 	default:
-		B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, field.Schema.IsContainer);
+		B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", (u32)typeSchema.Type, field.Schema.IsContainer);
 		return nullptr;
 	}
 }

@@ -101,7 +101,7 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 
 						referenceId.TupleElementIndex = tupleElementIndex;
 
-						if(fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
+						if(fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer)
 						{
 							SPtr<IReflectable> childObject = iteratorField->GetReflectablePointer(fieldValue, tupleElementIndex);
 
@@ -115,7 +115,7 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 
 							}
 						}
-						else if(fieldTypeSchema.Type == SerializableFT_Reflectable)
+						else if(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable)
 						{
 							const IReflectable& childObject = iteratorField->GetReflectable(fieldValue, tupleElementIndex);
 
@@ -189,7 +189,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 						continue;
 
 					const RTTIFieldTypeSchema& fieldTypeSchema = field->Schema.FieldTypes[reference.Id.TupleElementIndex];
-					if(!B3D_ENSURE(fieldTypeSchema.Type == SerializableFT_ReflectablePtr))
+					if(!B3D_ENSURE(fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer))
 						continue;
 
 					iteratorField->SetReflectablePointer(fieldValue, reference.Id.TupleElementIndex, reference.Object);
@@ -241,7 +241,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 
 					const RTTIFieldTypeSchema& fieldTypeSchema = field->Schema.FieldTypes[childObjectReferences.Id.TupleElementIndex];
 
-					if(!B3D_ENSURE(fieldTypeSchema.Type == SerializableFT_Reflectable))
+					if(!B3D_ENSURE(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable))
 						continue;
 
 					const IReflectable& childObject = iteratorField->GetReflectable(fieldValue, childObjectReferences.Id.TupleElementIndex);

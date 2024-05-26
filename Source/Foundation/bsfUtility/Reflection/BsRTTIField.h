@@ -39,25 +39,25 @@ namespace bs
 	 *				 Managed data blocks have their buffers deleted after they go out of scope. This is useful if you need to return some
 	 *				 temporary data. On the other hand if the data in the block belongs to your class, and isn't temporary, keep the data unmanaged.
 	 */
-	enum SerializableFieldType
+	enum class RTTIFieldDataType
 	{
-		SerializableFT_Plain,
-		SerializableFT_DataBlock,
-		SerializableFT_Reflectable,
-		SerializableFT_ReflectablePtr
+		Plain,
+		DataBlock,
+		Reflectable,
+		ReflectablePointer
 	};
 
 	/** Information about a type stored in a RTTIField. A single field can hold one or multiple types (e.g. in case of a map entry it will store a key/value pair). */
 	struct B3D_UTILITY_EXPORT RTTIFieldTypeSchema : IReflectable
 	{
 		RTTIFieldTypeSchema() = default;
-		RTTIFieldTypeSchema(bool hasDynamicSize, BitLength fixedSize, SerializableFieldType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema)
+		RTTIFieldTypeSchema(bool hasDynamicSize, BitLength fixedSize, RTTIFieldDataType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema)
 			: HasDynamicSize(hasDynamicSize), FixedSize(fixedSize), Type(type), FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema))
 		{}
 
 		bool HasDynamicSize = false;
 		BitLength FixedSize = 0;
-		SerializableFieldType Type = SerializableFT_Plain;
+		RTTIFieldDataType Type = RTTIFieldDataType::Plain;
 		u32 FieldTypeId = 0;
 		SPtr<RTTISchema> FieldTypeSchema;
 
@@ -72,16 +72,16 @@ namespace bs
 		RTTIFieldSchema(i16 id, bool isArray, bool isIterator, const RTTIFieldInfo& info)
 			: Id(id), IsContainer(isArray), IsIterator(isIterator), Info(info)
 		{}
-		RTTIFieldSchema(i16 id, bool isArray, bool hasDynamicSize, BitLength size, SerializableFieldType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
+		RTTIFieldSchema(i16 id, bool isArray, bool hasDynamicSize, BitLength size, RTTIFieldDataType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
 			: Id(id), IsContainer(isArray), HasDynamicSize(hasDynamicSize), Size(size), Type(type), FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema)), Info(info)
 		{}
 
 		u16 Id = 0;
 		bool IsContainer = false;
-		bool IsIterator = false; // DEPRECATED - Once we fully switch to iterator model, we can assume this based on type
+		bool IsIterator = false; // DEPRECATED - Replace to GetFieldType() method that either returns Iterator or DataBlock
 		bool HasDynamicSize = false; // DEPRECATED - Stored in FieldTypes now
 		BitLength Size = 0; // DEPRECATED - Stored in FieldTypes now
-		SerializableFieldType Type = SerializableFT_Plain; // DEPRECATED - Stored in FieldTypes now
+		RTTIFieldDataType Type = RTTIFieldDataType::Plain; // DEPRECATED - Stored in FieldTypes now
 		u32 FieldTypeId = 0; // DEPRECATED - Stored in FieldTypes now
 		SPtr<RTTISchema> FieldTypeSchema; // DEPRECATED - Stored in FieldTypes now
 		RTTIFieldInfo Info;

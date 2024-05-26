@@ -436,11 +436,11 @@ namespace bs
 				using UnderlyingType = typename B3DDecaySharedPointer<FieldType>::value;
 				static_assert(std::is_base_of_v<IReflectable, UnderlyingType>, "RTTI fields holding shared pointers must ensure the pointed-to data types implement the IReflectable interface.");
 
-				return RTTIFieldTypeSchema(true, 0, SerializableFT_ReflectablePtr, UnderlyingType::GetRttiStatic()->GetRttiId(), UnderlyingType::GetRttiStatic()->GetSchema());
+				return RTTIFieldTypeSchema(true, 0, RTTIFieldDataType::ReflectablePointer, UnderlyingType::GetRttiStatic()->GetRttiId(), UnderlyingType::GetRttiStatic()->GetSchema());
 			}
 			else if constexpr(IsReflectable<FieldType>())
 			{
-				return RTTIFieldTypeSchema(true, 0, SerializableFT_Reflectable, FieldType::GetRttiStatic()->GetRttiId(), FieldType::GetRttiStatic()->GetSchema());
+				return RTTIFieldTypeSchema(true, 0, RTTIFieldDataType::Reflectable, FieldType::GetRttiStatic()->GetRttiId(), FieldType::GetRttiStatic()->GetSchema());
 			}
 			else if constexpr(IsPlain<FieldType>())
 			{
@@ -460,7 +460,7 @@ namespace bs
 					}
 				}
 
-				return RTTIFieldTypeSchema(RTTIPlainType<FieldType>::hasDynamicSize, fixedSize, SerializableFT_Plain, RTTIPlainType<FieldType>::id, nullptr);
+				return RTTIFieldTypeSchema(RTTIPlainType<FieldType>::hasDynamicSize, fixedSize, RTTIFieldDataType::Plain, RTTIPlainType<FieldType>::id, nullptr);
 			}
 			else
 			{

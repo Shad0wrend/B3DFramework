@@ -54,7 +54,7 @@ namespace bs
 			this->getter = getter;
 			this->setter = setter;
 
-			Init(std::move(name), RTTIFieldSchema(uniqueId, false, true, 0, SerializableFT_DataBlock, 0, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, false, true, 0, RTTIFieldDataType::DataBlock, 0, nullptr, info));
 		}
 
 		void InitSchema() override

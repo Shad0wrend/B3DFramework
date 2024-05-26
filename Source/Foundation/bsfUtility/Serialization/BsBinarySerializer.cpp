@@ -59,7 +59,7 @@ enum FieldTypeBits : u8
 };
 
 /** Decodes the FieldTypeBits enum into individual parts. */
-static void DecodeFieldTypeBits(FieldTypeBits bits, SerializableFieldType& outType, bool& outIsArray, bool& outHasDynamicSize, bool& outHasAnotherTypeFollowing)
+static void DecodeFieldTypeBits(FieldTypeBits bits, RTTIFieldDataType& outType, bool& outIsArray, bool& outHasDynamicSize, bool& outHasAnotherTypeFollowing)
 {
 	outIsArray = false;
 	outHasDynamicSize = true;
@@ -68,7 +68,7 @@ static void DecodeFieldTypeBits(FieldTypeBits bits, SerializableFieldType& outTy
 	// TODO: Special case. This overlaps with FT_DynamicSizePlainWithAnotherType, which cannot be used at the moment. We need to upgrade all the data blocks so they use the new schema first, then we can remove this.
 	if(bits == FT_DataBlockOld)
 	{
-		outType = SerializableFT_DataBlock;
+		outType = RTTIFieldDataType::DataBlock;
 		outIsArray = false;
 		outHasDynamicSize = true;
 		outHasAnotherTypeFollowing = false;
@@ -83,16 +83,16 @@ static void DecodeFieldTypeBits(FieldTypeBits bits, SerializableFieldType& outTy
 		outHasDynamicSize = false;
 		[[fallthrough]];
 	case FT_DynamicSizePlainType:
-		outType = SerializableFT_Plain;
+		outType = RTTIFieldDataType::Plain;
 		break;
 	case FT_DataBlockType:
-		outType = SerializableFT_DataBlock;
+		outType = RTTIFieldDataType::DataBlock;
 		break;
 	case FT_ReflectableType:
-		outType = SerializableFT_Reflectable;
+		outType = RTTIFieldDataType::Reflectable;
 		break;
 	case FT_ReflectablePointerType:
-		outType = SerializableFT_ReflectablePtr;
+		outType = RTTIFieldDataType::ReflectablePointer;
 		break;
 	default:
 		B3D_ENSURE(false);
@@ -104,25 +104,25 @@ static void DecodeFieldTypeBits(FieldTypeBits bits, SerializableFieldType& outTy
 }
 
 /** Encodes a set of individual flags into the FieldTypeBits enum. */
-static FieldTypeBits EncodeFieldTypeBits(SerializableFieldType type, bool isArray, bool hasDynamicSize, bool hasAnotherTypeFollowing)
+static FieldTypeBits EncodeFieldTypeBits(RTTIFieldDataType type, bool isArray, bool hasDynamicSize, bool hasAnotherTypeFollowing)
 {
 	u32 output = 0;
 
 	switch(type)
 	{
-	case SerializableFT_Plain:
+	case RTTIFieldDataType::Plain:
 		if(hasDynamicSize)
 			output |= FT_DynamicSizePlainType;
 		else
 			output |= FT_FixedSizePlainType;
 		break;
-	case SerializableFT_DataBlock:
+	case RTTIFieldDataType::DataBlock:
 		output |= FT_DataBlockType;
 		break;
-	case SerializableFT_Reflectable:
+	case RTTIFieldDataType::Reflectable:
 		output |= FT_ReflectableType;
 		break;
-	case SerializableFT_ReflectablePtr:
+	case RTTIFieldDataType::ReflectablePointer:
 		output |= FT_ReflectablePointerType;
 		break;
 	}
@@ -174,7 +174,7 @@ FieldTypeMetaData FieldTypeMetaData::Create(const RTTIFieldSchema& fieldSchema, 
 	FieldTypeMetaData output;
 	output.IsObjectDescriptor = 0;
 
-	B3D_ASSERT(fieldTypeSchema.Type != SerializableFT_DataBlock || !fieldSchema.IsContainer);
+	B3D_ASSERT(fieldTypeSchema.Type != RTTIFieldDataType::DataBlock || !fieldSchema.IsContainer);
 	output.FieldType = EncodeFieldTypeBits(fieldTypeSchema.Type, fieldSchema.IsContainer, fieldTypeSchema.HasDynamicSize, isAnotherFieldTypeFollowing);
 	output.IsLastFieldInType = isLastFieldInType;
 
@@ -514,32 +514,14 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 
 				if(field->Schema.FieldTypes[fieldTypeIndex].Type != decodedFieldSchema.FieldTypes[fieldTypeIndex].Type)
 				{
-					B3D_LOG(Error, Serialization, "Data type mismatch. Type stored in file and actual type don't match ({0} vs {1}).", field->Schema.FieldTypes[fieldTypeIndex].Type, decodedFieldSchema.FieldTypes[fieldTypeIndex].Type);
+					B3D_LOG(Error, Serialization, "Data type mismatch. Type stored in file and actual type don't match ({0} vs {1}).", (u32)field->Schema.FieldTypes[fieldTypeIndex].Type, (u32)decodedFieldSchema.FieldTypes[fieldTypeIndex].Type);
 					return false;
 				}
 			}
 		}
 
-		bool isIteratorField = field != nullptr && field->Schema.IsIterator;
-		
-		if(field == nullptr) // DEPRECATED: This code is only needed until we fully move to iterators, as information if the field is an iterator is not stored in the decoded field data.
+		if(decodedFieldSchema.IsIterator)
 		{
-			RTTITypeBase* const rttiType = IReflectable::GetRTTITypeFromTypeId(objectTypeId);
-			if(rttiType != nullptr)
-			{
-				RTTIField* const rttiField = rttiType->FindField(decodedFieldSchema.Id);
-				if(rttiField != nullptr)
-				{
-					isIteratorField = rttiField->Schema.IsIterator;
-				}
-			}
-		}
-
-		if(isIteratorField)
-		{
-			// If marked as array, we support both the old path and the new iterator-based path, so old serialized data can be gracefully loaded even if the
-			// RTTI has been switched to iterator types
-
 			u32 elementCount = 1;
 			if(decodedFieldSchema.IsContainer)
 			{
@@ -576,7 +558,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 
 					switch(decodedFieldTypeSchema.Type)
 					{
-					case SerializableFT_ReflectablePtr:
+					case RTTIFieldDataType::ReflectablePointer:
 						{
 							const u32 referencedObjectId = ReadReferencedReflectableObjectId();
 
@@ -596,7 +578,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 							}
 							break;
 						}
-					case SerializableFT_Reflectable:
+					case RTTIFieldDataType::Reflectable:
 						{
 							SPtr<IReflectable> referencedObject;
 							if(iteratorField != nullptr)
@@ -612,7 +594,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 
 							break;
 						}
-					case SerializableFT_Plain:
+					case RTTIFieldDataType::Plain:
 						{
 							uint64_t typeSizeBits = decodedFieldTypeSchema.FixedSize.GetBits();
 							if(decodedFieldTypeSchema.HasDynamicSize)
@@ -666,257 +648,49 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 				}
 			}
 		}
-		else if(decodedFieldSchema.IsContainer) // DEPRECATED
+		else
 		{
-			// If marked as array, we support both the old path and the new iterator-based path, so old serialized data can be gracefully loaded even if the
-			// RTTI has been switched to iterator types
-
-			u32 elementCount = 1;
-			if(compressed)
-				mStream.ReadVarInt(elementCount);
-			else
-				mStream.ReadBytes(elementCount);
-
-			if(field != nullptr)
-				field->SetArraySize(rttiInstance, output.get(), elementCount);
-
-			for(u32 elementIndex = 0; elementIndex < elementCount; ++elementIndex)
+			if(B3D_ENSURE(!decodedFieldSchema.IsContainer && decodedFieldSchema.FieldTypes.Size() == 1 && decodedFieldSchema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
 			{
-				for(u32 typeIndex = 0; typeIndex < (u32)decodedFieldSchema.FieldTypes.Size(); ++typeIndex)
+				auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(field);
+
+				// Data block size
+				u32 dataBlockSize = 0;
+				if(compressed)
+					mStream.ReadVarInt(dataBlockSize);
+				else
+					mStream.ReadBytes(dataBlockSize);
+
+				mStream.Align();
+
+				// Data block data
+				if(curField != nullptr)
 				{
-					const RTTIFieldTypeSchema& decodedFieldTypeSchema = decodedFieldSchema.FieldTypes[typeIndex];
-
-					switch(decodedFieldTypeSchema.Type)
+					const SPtr<DataStream>& dataStream = mStream.GetDataStream();
+					if(dataStream->IsFile()) // Allow streaming
 					{
-					case SerializableFT_ReflectablePtr:
-						{
-							const u32 referencedObjectId = ReadReferencedReflectableObjectId();
+						uint64_t curOffset = mStream.Tell();
 
-							// If reading from schema we need to create object here as we don't know its type during the normal pass
-							if(outputObjectSchema != nullptr)
-								EnsureReflectableObjectExists(referencedObjectId, fieldTypeSchema);
+						// Data blocks don't support data that isn't byte aligned, but encoder should take care of that
+						B3D_ASSERT((curOffset % 8) == 0);
+						curOffset /= 8;
 
-							if(field != nullptr)
-							{
-								auto* reflectablePointerField = static_cast<RTTIReflectablePtrFieldBase*>(field);
+						dataStream->Seek(curOffset);
+						curField->SetValue(rttiInstance, output.get(), dataStream, dataBlockSize);
 
-								if(reflectablePointerField != nullptr)
-								{
-									SPtr<IReflectable> referencedObject;
-									if(reflectablePointerField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef))
-										referencedObject = GetReflectableObject(referencedObjectId);
-									else
-										referencedObject = GetOrDeserializeReflectableObject(referencedObjectId, fieldTypeSchema);
-
-									reflectablePointerField->SetArrayValue(rttiInstance, output.get(), elementIndex, referencedObject);
-								}
-							}
-							break;
-						}
-					case SerializableFT_Reflectable:
-						{
-							SPtr<IReflectable> referencedObject;
-							if(field != nullptr)
-							{
-								auto* reflectableField = static_cast<RTTIReflectableFieldBase*>(field);
-								referencedObject = reflectableField->NewObject();
-							}
-
-							DeserializeReflectableObject(fieldTypeSchema, referencedObject);
-
-							if(field != nullptr)
-							{
-								auto* reflectableField = static_cast<RTTIReflectableFieldBase*>(field);
-
-								// Note: Would be nice to avoid this copy by value and decode directly into the field
-								reflectableField->SetArrayValue(rttiInstance, output.get(), elementIndex, *referencedObject);
-								
-							}
-
-							break;
-						}
-					case SerializableFT_Plain:
-						{
-							uint64_t typeSizeBits = decodedFieldTypeSchema.FixedSize.GetBits();
-							if(decodedFieldTypeSchema.HasDynamicSize)
-							{
-								if(compressed)
-								{
-									BitLength typeSize;
-									BitLength headerSize = B3DRTTIReadSizeHeader(mStream, true, typeSize);
-									mStream.Skip(-(int64_t)headerSize.GetBits());
-
-									typeSizeBits = typeSize.GetBits();
-								}
-								else
-								{
-									uint32_t typeSize;
-									mStream.ReadBytes(typeSize);
-									mStream.SkipBytes(-(int32_t)sizeof(uint32_t));
-
-									typeSizeBits = (uint64_t)typeSize * 8;
-								}
-							}
-
-							if(field != nullptr)
-							{
-								auto* plainField = static_cast<RTTIPlainFieldBase*>(field);
-
-								mStream.Preload((uint32_t)Math::DivideAndRoundUp(typeSizeBits, (uint64_t)8));
-								plainField->ArrayElemFromBuffer(rttiInstance, output.get(), elementIndex, mStream.GetBitstream(), compressed);
-
-								mStream.Skip(typeSizeBits);
-							}
-							else
-							{
-								bool builtin = decodedFieldTypeSchema.FieldTypeId < 16;
-								if(compressed && builtin)
-									SkipBuiltinType(decodedFieldTypeSchema.FieldTypeId, mStream, compressed);
-								else
-									mStream.Skip(typeSizeBits);
-							}
-							break;
-						}
-					default:
-						B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldTypeSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsContainer));
-					}
-				}
-			}
-		}
-		else // All but DataBlock case is DEPRECATED
-		{
-			switch(decodedFieldSchema.Type) // TODO - Not supporting tuples
-			{
-			case SerializableFT_ReflectablePtr:
-				{
-					auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(field);
-
-					const u32 referencedObjectId = ReadReferencedReflectableObjectId();
-
-					// If reading from schema we need to create object here as we don't know its type during the normal pass
-					if(outputObjectSchema != nullptr)
-						EnsureReflectableObjectExists(referencedObjectId, fieldTypeSchema);
-
-					if(curField != nullptr)
-					{
-						SPtr<IReflectable> referencedObject;
-						if(curField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef))
-							referencedObject = GetReflectableObject(referencedObjectId);
-						else
-							referencedObject = GetOrDeserializeReflectableObject(referencedObjectId, fieldTypeSchema);
-
-						curField->SetValue(rttiInstance, output.get(), referencedObject);
-					}
-
-					break;
-				}
-			case SerializableFT_Reflectable:
-				{
-					auto* curField = static_cast<RTTIReflectableFieldBase*>(field);
-
-					// Note: Ideally we can skip decoding the entry if the field no longer exists
-					SPtr<IReflectable> childObj;
-					if(curField)
-						childObj = curField->NewObject();
-
-					DeserializeReflectableObject(fieldTypeSchema, childObj);
-
-					if(curField != nullptr)
-					{
-						// Note: Would be nice to avoid this copy by value and decode directly into the field
-						curField->SetValue(rttiInstance, output.get(), *childObj);
-					}
-
-					break;
-				}
-			case SerializableFT_Plain:
-				{
-					auto* curField = static_cast<RTTIPlainFieldBase*>(field);
-
-					uint64_t typeSizeBits = decodedFieldSchema.Size.GetBits();
-					if(decodedFieldSchema.HasDynamicSize)
-					{
-						if(compressed)
-						{
-							BitLength typeSize;
-							BitLength headerSize = B3DRTTIReadSizeHeader(mStream, true, typeSize);
-							mStream.Skip(-(int64_t)headerSize.GetBits());
-
-							typeSizeBits = typeSize.GetBits();
-						}
-						else
-						{
-							uint32_t typeSize;
-							mStream.ReadBytes(typeSize);
-							mStream.SkipBytes(-(int32_t)sizeof(uint32_t));
-
-							typeSizeBits = (uint64_t)typeSize * 8;
-						}
-					}
-
-					if(curField != nullptr)
-					{
-						mStream.Preload((uint32_t)Math::DivideAndRoundUp(typeSizeBits, (uint64_t)8));
-						curField->FromBuffer(rttiInstance, output.get(), mStream.GetBitstream(), compressed);
-
-						mStream.Skip(typeSizeBits);
-					}
-					else
-					{
-						bool builtin = decodedFieldSchema.FieldTypeId < 16;
-						if(compressed && builtin)
-							SkipBuiltinType(decodedFieldSchema.FieldTypeId, mStream, compressed);
-						else
-							mStream.Skip(typeSizeBits);
-					}
-
-					break;
-				}
-			case SerializableFT_DataBlock:
-				{
-					auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(field);
-
-					// Data block size
-					u32 dataBlockSize = 0;
-					if(compressed)
-						mStream.ReadVarInt(dataBlockSize);
-					else
-						mStream.ReadBytes(dataBlockSize);
-
-					mStream.Align();
-
-					// Data block data
-					if(curField != nullptr)
-					{
-						const SPtr<DataStream>& dataStream = mStream.GetDataStream();
-						if(dataStream->IsFile()) // Allow streaming
-						{
-							uint64_t curOffset = mStream.Tell();
-
-							// Data blocks don't support data that isn't byte aligned, but encoder should take care of that
-							B3D_ASSERT((curOffset % 8) == 0);
-							curOffset /= 8;
-
-							dataStream->Seek(curOffset);
-							curField->SetValue(rttiInstance, output.get(), dataStream, dataBlockSize);
-
-							mStream.SkipBytes(dataBlockSize);
-						}
-						else
-						{
-							SPtr<MemoryDataStream> dataBlockStream = B3DMakeShared<MemoryDataStream>(dataBlockSize);
-							mStream.ReadBytes(dataBlockStream->Data(), dataBlockSize);
-
-							curField->SetValue(rttiInstance, output.get(), dataBlockStream, dataBlockSize);
-						}
-					}
-					else
 						mStream.SkipBytes(dataBlockSize);
+					}
+					else
+					{
+						SPtr<MemoryDataStream> dataBlockStream = B3DMakeShared<MemoryDataStream>(dataBlockSize);
+						mStream.ReadBytes(dataBlockStream->Data(), dataBlockSize);
 
-					break;
+						curField->SetValue(rttiInstance, output.get(), dataBlockStream, dataBlockSize);
+					}
 				}
-			default:
-				B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsContainer));
+				else
+					mStream.SkipBytes(dataBlockSize);
+				
 			}
 
 			mStream.ClearBuffered(false);
@@ -1046,6 +820,7 @@ RTTIFieldSchema BinaryDeserializationContext::ReadFieldMetaData(BufferedBitstrea
 	fieldSchema.Type = firstFieldTypeSchema.Type;
 	fieldSchema.Size = firstFieldTypeSchema.FixedSize;
 	fieldSchema.FieldTypeId = firstFieldTypeSchema.FieldTypeId;
+	fieldSchema.IsIterator = firstFieldTypeSchema.Type != RTTIFieldDataType::DataBlock;
 
 	while(hasMoreFieldTypes)
 	{
@@ -1331,7 +1106,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 							const RTTIFieldTypeSchema& typeSchema = iteratorField->Schema.FieldTypes[typeIndex];
 							switch(typeSchema.Type)
 							{
-							case SerializableFT_ReflectablePtr:
+							case RTTIFieldDataType::ReflectablePointer:
 								{
 									SPtr<IReflectable> childObject;
 
@@ -1346,7 +1121,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 
 									break;
 								}
-							case SerializableFT_Reflectable:
+							case RTTIFieldDataType::Reflectable:
 								{
 									const IReflectable& childObject = iteratorField->GetReflectable(fieldValue, typeIndex);
 									if(!SerializeReflectableObjectInline(const_cast<IReflectable*>(&childObject), outReferencedObjectsToSerialize)) // TODO - Get rid of const cast
@@ -1357,13 +1132,13 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 
 									break;
 								}
-							case SerializableFT_Plain:
+							case RTTIFieldDataType::Plain:
 								{
 									iteratorField->WritePlainTypeTupleToStream(fieldValue, typeIndex, mStream.GetBitstream(), compress);
 									break;
 								}
 							default:
-								B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", typeSchema.Type, iteratorField->Schema.IsContainer);
+								B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", (u32)typeSchema.Type, iteratorField->Schema.IsContainer);
 							}
 						}
 					}
@@ -1371,7 +1146,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 			}
 			else
 			{
-				if(B3D_ENSURE(!field->Schema.IsContainer && field->Schema.FieldTypes.Size() == 1 && field->Schema.FieldTypes[0].Type == SerializableFT_DataBlock))
+				if(B3D_ENSURE(!field->Schema.IsContainer && field->Schema.FieldTypes.Size() == 1 && field->Schema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
 				{
 					auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(field);
 

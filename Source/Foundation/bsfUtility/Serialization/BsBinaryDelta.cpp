@@ -304,15 +304,15 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 
 		switch(fieldTypeSchema.Type)
 		{
-		case SerializableFT_ReflectablePtr:
-		case SerializableFT_Reflectable:
+		case RTTIFieldDataType::ReflectablePointer:
+		case RTTIFieldDataType::Reflectable:
 			{
 				Optional<Object<IsLHSIReflectable>> maybeLhsObject = isLhsMissing ? std::nullopt : std::make_optional(maybeLhsTupleElement->GetObject());
 				Object<IsRHSIReflectable> rhsObject = rhsTupleElement.GetObject();
 
 				bool isLHSEntryNull = isLhsMissing;
 				bool isRHSEntryNull = false;
-				if(fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
+				if(fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer)
 				{
 					isLHSEntryNull = isLHSEntryNull || maybeLhsObject->GetWrappedObject() == nullptr;
 					isRHSEntryNull = rhsObject.GetWrappedObject() == nullptr;
@@ -355,13 +355,13 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 				}
 			}
 			break;
-		case SerializableFT_Plain:
+		case RTTIFieldDataType::Plain:
 			{
 				if(isLhsMissing || maybeLhsTupleElement->ComparePlain(rhsTupleElement))
 					tupleElementModification = rhsTupleElement.Clone(flags, context);
 			}
 			break;
-		case SerializableFT_DataBlock:
+		case RTTIFieldDataType::DataBlock:
 			{
 				bool isDataBlockModified = isLhsMissing;
 				if(!isLhsMissing)
@@ -1216,7 +1216,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTITypeBase* rttiIns
 
 		switch(field.Schema.FieldTypes[tupleElementIndex].Type)
 		{
-		case SerializableFT_ReflectablePtr:
+		case RTTIFieldDataType::ReflectablePointer:
 			{
 				SPtr<SerializedObject> serializedObjectDelta = std::static_pointer_cast<SerializedObject>(serializedEntryDelta);
 
@@ -1239,7 +1239,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTITypeBase* rttiIns
 				outCommands.push_back(command);
 			}
 			break;
-		case SerializableFT_Reflectable:
+		case RTTIFieldDataType::Reflectable:
 			{
 				SPtr<SerializedObject> serializedObjectDelta = std::static_pointer_cast<SerializedObject>(serializedEntryDelta);
 
@@ -1261,7 +1261,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTITypeBase* rttiIns
 				outCommands.push_back(command);
 			}
 			break;
-		case SerializableFT_Plain:
+		case RTTIFieldDataType::Plain:
 			{
 				SPtr<SerializedPlainData> serializedPlainData = std::static_pointer_cast<SerializedPlainData>(serializedEntryDelta);
 
@@ -1304,7 +1304,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForDataBlockField(RTTIField& field,
 	if(!B3D_ENSURE(field.Schema.FieldTypes.Size() == 1))
 		return;
 
-	if(!B3D_ENSURE(field.Schema.FieldTypes[0].Type == SerializableFT_DataBlock))
+	if(!B3D_ENSURE(field.Schema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
 		return;
 
 	SPtr<SerializedDataBlock> serializedDataBlock = std::static_pointer_cast<SerializedDataBlock>(entryDelta);

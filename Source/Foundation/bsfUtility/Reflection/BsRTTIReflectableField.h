@@ -88,7 +88,7 @@ namespace bs
 			this->Getter = getter;
 			this->Setter = setter;
 
-			Init(std::move(name), RTTIFieldSchema(uniqueId, false, true, 0, SerializableFT_Reflectable, 0, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, false, true, 0, RTTIFieldDataType::Reflectable, 0, nullptr, info));
 		}
 
 		/**
@@ -111,7 +111,7 @@ namespace bs
 			ArrayGetSize = getSize;
 			ArraySetSize = setSize;
 
-			Init(std::move(name), RTTIFieldSchema(uniqueId, true, true, 0, SerializableFT_Reflectable, 0, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, true, true, 0, RTTIFieldDataType::Reflectable, 0, nullptr, info));
 		}
 
 		void InitSchema() override

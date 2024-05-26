@@ -132,7 +132,7 @@ namespace bs
 			this->Getter = getter;
 			this->Setter = setter;
 
-			Init(std::move(name), RTTIFieldSchema(uniqueId, false, RTTIPlainType<DataType>::hasDynamicSize, size, SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, false, RTTIPlainType<DataType>::hasDynamicSize, size, RTTIFieldDataType::Plain, RTTIPlainType<DataType>::id, nullptr, info));
 		}
 
 		/**
@@ -165,7 +165,7 @@ namespace bs
 			ArrayGetSize = getSize;
 			ArraySetSize = setSize;
 
-			Init(std::move(name), RTTIFieldSchema(uniqueId, true, RTTIPlainType<DataType>::hasDynamicSize, size, SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, true, RTTIPlainType<DataType>::hasDynamicSize, size, RTTIFieldDataType::Plain, RTTIPlainType<DataType>::id, nullptr, info));
 		}
 
 		void InitSchema() override

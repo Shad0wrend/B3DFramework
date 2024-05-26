@@ -633,14 +633,14 @@ namespace bs::RTTIObjectWrapper
 		auto* field = static_cast<RTTIIteratorField*>(mField);
 		const void* fieldValue = field->GetIteratorValue(mRTTITypeInstance, mObject, *mFrameAllocator, *mIterator);
 
-		if(fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
+		if(fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer)
 		{
 			SPtr<IReflectable> object = field->GetReflectablePointer(fieldValue, mTupleElementIndex);
 
 			const u32 typeId = fieldTypeSchema.FieldTypeId;
 			return Object<true>(object.get(), IReflectable::GetRTTITypeFromTypeId(typeId), mFrameAllocator);
 		}
-		else if(fieldTypeSchema.Type == SerializableFT_Reflectable)
+		else if(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable)
 		{
 			const IReflectable& object = field->GetReflectable(fieldValue, mTupleElementIndex);
 

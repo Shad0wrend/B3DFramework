@@ -22,7 +22,7 @@ bool HasReflectableChildren(RTTITypeBase* type)
 
 			for(const auto& fieldTypeSchema : field->Schema.FieldTypes)
 			{
-				if(fieldTypeSchema.Type == SerializableFT_Reflectable || fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
+				if(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable || fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer)
 					return true;
 			}
 		}
@@ -37,7 +37,7 @@ bool HasReflectableChildren(RTTITypeBase* type)
 			const RTTIField* const field = derivedClass->GetField(fieldIndex);
 			for(const auto& fieldTypeSchema : field->Schema.FieldTypes)
 			{
-				if(fieldTypeSchema.Type == SerializableFT_Reflectable || fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
+				if(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable || fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer)
 					return true;
 			}
 		}
@@ -59,7 +59,7 @@ static void FindResourceDependenciesRecursive(IReflectable& object, FrameAllocat
 	Function<void(const RTTIFieldTypeSchema&, RTTIObjectWrapper::Value<true>&)> fnProcessFieldTupleValue =
 		[&outDependencies, &fnFieldFilter, &fnProcessFieldTupleValue, recurseChildren](const RTTIFieldTypeSchema& fieldTypeSchema, RTTIObjectWrapper::Value<true>& value)
 	{
-		if(fieldTypeSchema.Type == SerializableFT_Reflectable)
+		if(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable)
 		{
 			if(fieldTypeSchema.FieldTypeId == TID_ResourceHandle)
 			{
@@ -79,7 +79,7 @@ static void FindResourceDependenciesRecursive(IReflectable& object, FrameAllocat
 
 		if(recurseChildren)
 		{
-			if(fieldTypeSchema.Type == SerializableFT_Reflectable || fieldTypeSchema.Type == SerializableFT_ReflectablePtr)
+			if(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable || fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer)
 			{
 				RTTIObjectWrapper::Object<true> wrappedChildObject = value.GetObject();
 				RTTIObjectWrapper::IterateFieldTupleValues(wrappedChildObject, RTTIOperationType::GatherReferences, fnProcessFieldTupleValue, fnFieldFilter);
