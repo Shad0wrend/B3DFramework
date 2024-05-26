@@ -1369,133 +1369,28 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 					}
 				}
 			}
-			else if(field->Schema.IsContainer) // DEPRECATED
+			else
 			{
-				u32 arrayNumElems = field->GetArraySize(rttiInstance, object);
-
-				// Copy num vector elements
-				if(compress)
-					mStream.WriteVarInt(arrayNumElems);
-				else
-					mStream.WriteBytes(arrayNumElems);
-
-				switch(field->Schema.Type) // TODO - Not supporting tuples
+				if(B3D_ENSURE(!field->Schema.IsContainer && field->Schema.FieldTypes.Size() == 1 && field->Schema.FieldTypes[0].Type == SerializableFT_DataBlock))
 				{
-				case SerializableFT_ReflectablePtr:
-					{
-						auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(field);
+					auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(field);
 
-						for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
-						{
-							SPtr<IReflectable> childObject;
+					u32 dataBlockSize = 0;
+					SPtr<DataStream> blockStream = curField->GetValue(rttiInstance, object, dataBlockSize);
 
-							if(!mFlags.IsSet(BinarySerializerFlag::Shallow))
-								childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
+					// Data block size
+					if(compress)
+						mStream.WriteVarInt(dataBlockSize);
+					else
+						mStream.WriteBytes(dataBlockSize);
 
-							u32 objId = RegisterReflectableObjectForSerialization(childObject, outReferencedObjectsToSerialize);
-							if(compress)
-								mStream.WriteVarInt(objId);
-							else
-								mStream.WriteBytes(objId);
-						}
+					// Data block data
+					auto dataToStore = (u8*)B3DStackAllocate(dataBlockSize);
+					blockStream->Read(dataToStore, dataBlockSize);
 
-						break;
-					}
-				case SerializableFT_Reflectable:
-					{
-						auto* curField = static_cast<RTTIReflectableFieldBase*>(field);
-
-						for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
-						{
-							IReflectable& childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
-
-							if(!SerializeReflectableObjectInline(&childObject, outReferencedObjectsToSerialize))
-							{
-								cleanup();
-								return false;
-							}
-						}
-
-						break;
-					}
-				case SerializableFT_Plain:
-					{
-						auto* curField = static_cast<RTTIPlainFieldBase*>(field);
-
-						for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
-							curField->ArrayElemToStream(rttiInstance, object, arrIdx, mStream.GetBitstream(), compress);
-
-						break;
-					}
-				default:
-					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", field->Schema.Type, field->Schema.IsContainer);
-				}
-			}
-			else // All but DataBlock case is DEPRECATED
-			{
-				switch(field->Schema.Type) // TODO - Not supporting tuples
-				{
-				case SerializableFT_ReflectablePtr:
-					{
-						auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(field);
-						SPtr<IReflectable> childObject;
-
-						if(!mFlags.IsSet(BinarySerializerFlag::Shallow))
-							childObject = curField->GetValue(rttiInstance, object);
-
-						u32 objId = RegisterReflectableObjectForSerialization(childObject, outReferencedObjectsToSerialize);
-						if(compress)
-							mStream.WriteVarInt(objId);
-						else
-							mStream.WriteBytes(objId);
-
-						break;
-					}
-				case SerializableFT_Reflectable:
-					{
-						auto* curField = static_cast<RTTIReflectableFieldBase*>(field);
-						IReflectable& childObject = curField->GetValue(rttiInstance, object);
-
-						if(!SerializeReflectableObjectInline(&childObject, outReferencedObjectsToSerialize))
-						{
-							cleanup();
-							return false;
-						}
-
-						break;
-					}
-				case SerializableFT_Plain:
-					{
-						auto* curField = static_cast<RTTIPlainFieldBase*>(field);
-						curField->ToStream(rttiInstance, object, mStream.GetBitstream(), compress);
-
-						break;
-					}
-				case SerializableFT_DataBlock:
-					{
-						auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(field);
-
-						u32 dataBlockSize = 0;
-						SPtr<DataStream> blockStream = curField->GetValue(rttiInstance, object, dataBlockSize);
-
-						// Data block size
-						if(compress)
-							mStream.WriteVarInt(dataBlockSize);
-						else
-							mStream.WriteBytes(dataBlockSize);
-
-						// Data block data
-						auto dataToStore = (u8*)B3DStackAllocate(dataBlockSize);
-						blockStream->Read(dataToStore, dataBlockSize);
-
-						mStream.Align();
-						mStream.WriteBytes(dataToStore, dataBlockSize);
-						B3DStackFree(dataToStore);
-
-						break;
-					}
-				default:
-					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", field->Schema.Type, field->Schema.IsContainer);
+					mStream.Align();
+					mStream.WriteBytes(dataToStore, dataBlockSize);
+					B3DStackFree(dataToStore);
 				}
 			}
 
