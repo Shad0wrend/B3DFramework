@@ -661,7 +661,17 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 	IReflectable* destinationObject = nullptr;
 	RTTITypeBase* rttiInstance = nullptr;
 
-	FrameStack<IReflectable*> objectStack;
+	struct ObjectAndRTTIInstance
+	{
+		ObjectAndRTTIInstance(IReflectable* object = nullptr, RTTITypeBase* rttiInstance = nullptr)
+			: Object(object), RttiInstance(rttiInstance)
+		{ }
+
+		IReflectable* Object;
+		RTTITypeBase* RttiInstance;
+	};
+
+	FrameStack<ObjectAndRTTIInstance> objectStack;
 	FrameVector<std::pair<RTTITypeBase*, IReflectable*>> rttiInstances;
 
 	struct IteratorAndValue
@@ -729,7 +739,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 		case Diff_ObjectStart:
 			{
 				destinationObject = command.Object.get();
-				objectStack.push(destinationObject);
+				objectStack.push(ObjectAndRTTIInstance(destinationObject, nullptr));
 
 				FrameStack<RTTITypeBase*> rttiTypes;
 				RTTITypeBase* curRtti = destinationObject->GetRtti();
@@ -765,7 +775,10 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 						rttiInstance = iter->first;
 				}
 
-				B3D_ASSERT(rttiInstance);
+				B3D_ASSERT(rttiInstance != nullptr);
+
+				if(B3D_ENSURE(!objectStack.empty()))
+					objectStack.top().RttiInstance = rttiInstance;
 			}
 			break;
 		case Diff_ObjectEnd:
@@ -786,9 +799,16 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 				objectStack.pop();
 
 				if(!objectStack.empty())
-					destinationObject = objectStack.top();
+				{
+					ObjectAndRTTIInstance objectAndRTTIInstance = objectStack.top();
+					destinationObject = objectAndRTTIInstance.Object;
+					rttiInstance = objectAndRTTIInstance.RttiInstance;
+				}
 				else
+				{
 					destinationObject = nullptr;
+					rttiInstance = nullptr;
+				}
 			}
 			break;
 		case Diff_IterableEntryStart:
