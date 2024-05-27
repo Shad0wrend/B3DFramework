@@ -13,7 +13,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDictionaryKeyValueRTTI : public RTTIType<ManagedSerializableDictionaryKeyValue, IReflectable, ManagedSerializableDictionaryKeyValueRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDictionaryKeyValueRTTI : public TRTTIType<ManagedSerializableDictionaryKeyValue, IReflectable, ManagedSerializableDictionaryKeyValueRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Key, 0)
@@ -38,7 +38,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDictionaryRTTI : public RTTIType<ManagedSerializableDictionary, IReflectable, ManagedSerializableDictionaryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDictionaryRTTI : public TRTTIType<ManagedSerializableDictionary, IReflectable, ManagedSerializableDictionaryRTTI>
 	{
 		Vector<ManagedSerializableDictionaryKeyValue> mDictionaryEntries;
 

@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT PackageMetaDataRTTI : public RTTIType<PackageMetaData, IReflectable, PackageMetaDataRTTI>
+	class B3D_CORE_EXPORT PackageMetaDataRTTI : public TRTTIType<PackageMetaData, IReflectable, PackageMetaDataRTTI>
 	{
 	public:
 		const String& GetRttiName() override
@@ -38,7 +38,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT PackageResourceMetaDataRTTI : public RTTIType<PackageResourceMetaData, IReflectable, PackageResourceMetaDataRTTI>
+	class B3D_CORE_EXPORT PackageResourceMetaDataRTTI : public TRTTIType<PackageResourceMetaData, IReflectable, PackageResourceMetaDataRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -69,7 +69,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT PackageResourceUserMetaDataRTTI : public RTTIType<PackageResourceUserMetaData, IReflectable, PackageResourceUserMetaDataRTTI>
+	class B3D_CORE_EXPORT PackageResourceUserMetaDataRTTI : public TRTTIType<PackageResourceUserMetaData, IReflectable, PackageResourceUserMetaDataRTTI>
 	{
 	public:
 		const String& GetRttiName() override
@@ -89,7 +89,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT PackageRTTI : public RTTIType<Package, IReflectable, PackageRTTI>
+	class B3D_CORE_EXPORT PackageRTTI : public TRTTIType<Package, IReflectable, PackageRTTI>
 	{
 		Vector<SPtr<PackageResourceMetaData>> mResourceMetaData;
 

@@ -17,7 +17,7 @@ using namespace bs;
 
 namespace bs
 {
-	class B3D_EXPORT GUIPanelRTTI : public RTTIType<GUIPanel, GUILayout, GUIPanelRTTI>
+	class B3D_EXPORT GUIPanelRTTI : public TRTTIType<GUIPanel, GUILayout, GUIPanelRTTI>
 	{
 	public:
 		const String& GetRttiName()

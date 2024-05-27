@@ -5,7 +5,7 @@
 
 namespace bs
 {
-	class UnitTestSerializationObjectARTTI : public RTTIType<UnitTestSerializationObjectA, IReflectable, UnitTestSerializationObjectARTTI>
+	class UnitTestSerializationObjectARTTI : public TRTTIType<UnitTestSerializationObjectA, IReflectable, UnitTestSerializationObjectARTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -64,7 +64,7 @@ namespace bs
 		}
 	};
 
-	class UnitTestSerializationObjectBRTTI : public RTTIType<UnitTestSerializationObjectB, IReflectable, UnitTestSerializationObjectBRTTI>
+	class UnitTestSerializationObjectBRTTI : public TRTTIType<UnitTestSerializationObjectB, IReflectable, UnitTestSerializationObjectBRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

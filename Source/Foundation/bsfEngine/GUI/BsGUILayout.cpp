@@ -13,7 +13,7 @@ using namespace bs;
 
 namespace bs
 {
-	class B3D_EXPORT GUILayoutRTTI : public RTTIType<GUILayout, GUIElement, GUILayoutRTTI>
+	class B3D_EXPORT GUILayoutRTTI : public TRTTIType<GUILayout, GUIElement, GUILayoutRTTI>
 	{
 	public:
 		const String& GetRttiName()

@@ -73,7 +73,7 @@ namespace bs
 		return SerializedObject::Create(*modifiedHandle);
 	}
 
-	class B3D_CORE_EXPORT GameObjectHandleRTTI : public RTTIType<GameObjectHandleBase, IReflectable, GameObjectHandleRTTI>
+	class B3D_CORE_EXPORT GameObjectHandleRTTI : public TRTTIType<GameObjectHandleBase, IReflectable, GameObjectHandleRTTI>
 	{
 		UUID mId;
 

@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_EXPORT ScriptCodeImportOptionsRTTI : public RTTIType<ScriptCodeImportOptions, ImportOptions, ScriptCodeImportOptionsRTTI>
+	class B3D_EXPORT ScriptCodeImportOptionsRTTI : public TRTTIType<ScriptCodeImportOptions, ImportOptions, ScriptCodeImportOptionsRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CCharacterControllerRTTI : public RTTIType<CCharacterController, Component, CCharacterControllerRTTI>
+	class B3D_CORE_EXPORT CCharacterControllerRTTI : public TRTTIType<CCharacterController, Component, CCharacterControllerRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

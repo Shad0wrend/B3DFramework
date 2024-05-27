@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT AudioListenerRTTI : public RTTIType<AudioListener, IReflectable, AudioListenerRTTI>
+	class B3D_CORE_EXPORT AudioListenerRTTI : public TRTTIType<AudioListener, IReflectable, AudioListenerRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

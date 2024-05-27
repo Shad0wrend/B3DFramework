@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CD6JointRTTI : public RTTIType<CD6Joint, CJoint, CD6JointRTTI>
+	class B3D_CORE_EXPORT CD6JointRTTI : public TRTTIType<CD6Joint, CJoint, CD6JointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_CONTAINER_NAMED(mD6JointMotion, mDesc.Motion, 0)

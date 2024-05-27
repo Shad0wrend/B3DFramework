@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CColliderRTTI : public RTTIType<CCollider, Component, CColliderRTTI>
+	class B3D_CORE_EXPORT CColliderRTTI : public TRTTIType<CCollider, Component, CColliderRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mLayer, 0)

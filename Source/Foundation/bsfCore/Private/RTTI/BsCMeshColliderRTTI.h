@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CMeshColliderRTTI : public RTTIType<CMeshCollider, CCollider, CMeshColliderRTTI>
+	class B3D_CORE_EXPORT CMeshColliderRTTI : public TRTTIType<CMeshCollider, CCollider, CMeshColliderRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

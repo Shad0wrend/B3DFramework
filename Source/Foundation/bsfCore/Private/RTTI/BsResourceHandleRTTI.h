@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT ResourceHandleRTTI : public RTTIType<TResourceHandleBase<false>, IReflectable, ResourceHandleRTTI>
+	class B3D_CORE_EXPORT ResourceHandleRTTI : public TRTTIType<TResourceHandleBase<false>, IReflectable, ResourceHandleRTTI>
 	{
 		UUID mId;
 
@@ -74,7 +74,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT WeakResourceHandleRTTI : public RTTIType<TResourceHandleBase<true>, IReflectable, WeakResourceHandleRTTI>
+	class B3D_CORE_EXPORT WeakResourceHandleRTTI : public TRTTIType<TResourceHandleBase<true>, IReflectable, WeakResourceHandleRTTI>
 	{
 		UUID mId;
 

@@ -13,7 +13,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT GpuResourceDataRTTI : public RTTIType<GpuResourceData, IReflectable, GpuResourceDataRTTI>
+	class B3D_CORE_EXPORT GpuResourceDataRTTI : public TRTTIType<GpuResourceData, IReflectable, GpuResourceDataRTTI>
 	{
 	public:
 		const String& GetRttiName()

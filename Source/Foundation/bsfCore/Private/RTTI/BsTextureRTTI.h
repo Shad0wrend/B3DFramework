@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT TextureRTTI : public RTTIType<Texture, Resource, TextureRTTI>
+	class B3D_CORE_EXPORT TextureRTTI : public TRTTIType<Texture, Resource, TextureRTTI>
 	{
 	private:
 		Vector<SPtr<PixelData>> mPixelData;

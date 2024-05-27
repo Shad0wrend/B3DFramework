@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_EXPORT GameSettingsRTTI : public RTTIType<GameSettings, IReflectable, GameSettingsRTTI>
+	class B3D_EXPORT GameSettingsRTTI : public TRTTIType<GameSettings, IReflectable, GameSettingsRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

@@ -13,7 +13,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT D6JointDriveRTTI : public RTTIType<D6JointDrive, IReflectable, D6JointDriveRTTI>
+	class B3D_CORE_EXPORT D6JointDriveRTTI : public TRTTIType<D6JointDrive, IReflectable, D6JointDriveRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Stiffness, 0)

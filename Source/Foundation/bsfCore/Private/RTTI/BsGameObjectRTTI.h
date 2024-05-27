@@ -24,7 +24,7 @@ namespace bs
 		SPtr<GameObject> Ptr;
 	};
 
-	class B3D_CORE_EXPORT GameObjectRTTI : public RTTIType<GameObject, IReflectable, GameObjectRTTI>
+	class B3D_CORE_EXPORT GameObjectRTTI : public TRTTIType<GameObject, IReflectable, GameObjectRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

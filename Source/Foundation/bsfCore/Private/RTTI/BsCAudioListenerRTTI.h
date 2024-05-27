@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CAudioListenerRTTI : public RTTIType<CAudioListener, Component, CAudioListenerRTTI>
+	class B3D_CORE_EXPORT CAudioListenerRTTI : public TRTTIType<CAudioListener, Component, CAudioListenerRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mInternal, 0)

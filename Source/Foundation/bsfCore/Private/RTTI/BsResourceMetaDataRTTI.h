@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT ResourceMetaDataRTTI : public RTTIType<ResourceMetaData, IReflectable, ResourceMetaDataRTTI>
+	class B3D_CORE_EXPORT ResourceMetaDataRTTI : public TRTTIType<ResourceMetaData, IReflectable, ResourceMetaDataRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

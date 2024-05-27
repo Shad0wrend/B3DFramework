@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CLightProbeVolumeRTTI : public RTTIType<CLightProbeVolume, Component, CLightProbeVolumeRTTI>
+	class B3D_CORE_EXPORT CLightProbeVolumeRTTI : public TRTTIType<CLightProbeVolume, Component, CLightProbeVolumeRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

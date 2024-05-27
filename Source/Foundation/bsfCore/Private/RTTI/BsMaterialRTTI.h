@@ -13,7 +13,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT MaterialRTTI : public RTTIType<Material, Resource, MaterialRTTI>
+	class B3D_CORE_EXPORT MaterialRTTI : public TRTTIType<Material, Resource, MaterialRTTI>
 	{
 		SPtr<MaterialParams> mMaterialParameters;
 

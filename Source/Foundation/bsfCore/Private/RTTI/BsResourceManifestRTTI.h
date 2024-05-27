@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT ResourceManifestRTTI : public RTTIType<ResourceManifest, IReflectable, ResourceManifestRTTI>
+	class B3D_CORE_EXPORT ResourceManifestRTTI : public TRTTIType<ResourceManifest, IReflectable, ResourceManifestRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedComponentRTTI : public RTTIType<ManagedComponent, Component, ManagedComponentRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedComponentRTTI : public TRTTIType<ManagedComponent, Component, ManagedComponentRTTI>
 	{
 		SPtr<ManagedSerializableObject> mSerializedObjectData;
 

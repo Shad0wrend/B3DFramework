@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CCapsuleColliderRTTI : public RTTIType<CCapsuleCollider, CCollider, CCapsuleColliderRTTI>
+	class B3D_CORE_EXPORT CCapsuleColliderRTTI : public TRTTIType<CCapsuleCollider, CCollider, CCapsuleColliderRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT MorphShapeRTTI : public RTTIType<MorphShape, IReflectable, MorphShapeRTTI>
+	class B3D_CORE_EXPORT MorphShapeRTTI : public TRTTIType<MorphShape, IReflectable, MorphShapeRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -41,7 +41,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT MorphChannelRTTI : public RTTIType<MorphChannel, IReflectable, MorphChannelRTTI>
+	class B3D_CORE_EXPORT MorphChannelRTTI : public TRTTIType<MorphChannel, IReflectable, MorphChannelRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -67,7 +67,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT MorphShapesRTTI : public RTTIType<MorphShapes, IReflectable, MorphShapesRTTI>
+	class B3D_CORE_EXPORT MorphShapesRTTI : public TRTTIType<MorphShapes, IReflectable, MorphShapesRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

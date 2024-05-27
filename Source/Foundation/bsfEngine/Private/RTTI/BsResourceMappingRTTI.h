@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_EXPORT ResourceMappingRTTI : public RTTIType<ResourceMapping, IReflectable, ResourceMappingRTTI>
+	class B3D_EXPORT ResourceMappingRTTI : public TRTTIType<ResourceMapping, IReflectable, ResourceMappingRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

@@ -84,7 +84,7 @@ RTTITypeBase* RTTISchema::GetRtti() const
 	return GetRttiStatic();
 }
 
-class RTTIOperationContextRTTI : public RTTIType<RTTIOperationContext, IReflectable, RTTIOperationContextRTTI>
+class RTTIOperationContextRTTI : public TRTTIType<RTTIOperationContext, IReflectable, RTTIOperationContextRTTI>
 {
 	const String& GetRttiName() override
 	{

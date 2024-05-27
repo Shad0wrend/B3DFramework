@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_UTILITY_EXPORT ISerializedRTTI : public RTTIType<ISerialized, IReflectable, ISerializedRTTI>
+	class B3D_UTILITY_EXPORT ISerializedRTTI : public TRTTIType<ISerialized, IReflectable, ISerializedRTTI>
 	{
 	public:
 		const String& GetRttiName()
@@ -35,7 +35,7 @@ namespace bs
 		}
 	};
 
-	class B3D_UTILITY_EXPORT SerializedPlainDataRTTI : public RTTIType<SerializedPlainData, ISerialized, SerializedPlainDataRTTI>
+	class B3D_UTILITY_EXPORT SerializedPlainDataRTTI : public TRTTIType<SerializedPlainData, ISerialized, SerializedPlainDataRTTI>
 	{
 	private:
 		SPtr<DataStream> GetData(SerializedPlainData* obj, u32& size)
@@ -77,7 +77,7 @@ namespace bs
 		}
 	};
 
-	class B3D_UTILITY_EXPORT SerializedDataBlockRTTI : public RTTIType<SerializedDataBlock, ISerialized, SerializedDataBlockRTTI>
+	class B3D_UTILITY_EXPORT SerializedDataBlockRTTI : public TRTTIType<SerializedDataBlock, ISerialized, SerializedDataBlockRTTI>
 	{
 	private:
 		SPtr<DataStream> GetData(SerializedDataBlock* obj, u32& size)
@@ -121,7 +121,7 @@ namespace bs
 		}
 	};
 
-	class B3D_UTILITY_EXPORT SerializedObjectRTTI : public RTTIType<SerializedObject, ISerialized, SerializedObjectRTTI>
+	class B3D_UTILITY_EXPORT SerializedObjectRTTI : public TRTTIType<SerializedObject, ISerialized, SerializedObjectRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -146,7 +146,7 @@ namespace bs
 		}
 	};
 
-	class B3D_UTILITY_EXPORT SerializedArrayRTTI : public RTTIType<SerializedArray, ISerialized, SerializedArrayRTTI>
+	class B3D_UTILITY_EXPORT SerializedArrayRTTI : public TRTTIType<SerializedArray, ISerialized, SerializedArrayRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -171,7 +171,7 @@ namespace bs
 		}
 	};
 
-	class B3D_UTILITY_EXPORT SerializedMapRTTI : public RTTIType<SerializedMap, ISerialized, SerializedMapRTTI>
+	class B3D_UTILITY_EXPORT SerializedMapRTTI : public TRTTIType<SerializedMap, ISerialized, SerializedMapRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -196,7 +196,7 @@ namespace bs
 		}
 	};
 
-	class B3D_UTILITY_EXPORT SerializedSubObjectRTTI : public RTTIType<SerializedSubObject, IReflectable, SerializedSubObjectRTTI>
+	class B3D_UTILITY_EXPORT SerializedSubObjectRTTI : public TRTTIType<SerializedSubObject, IReflectable, SerializedSubObjectRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -222,7 +222,7 @@ namespace bs
 		}
 	};
 
-	class B3D_UTILITY_EXPORT SerializedTupleRTTI : public RTTIType<SerializedTuple, ISerialized, SerializedTupleRTTI>
+	class B3D_UTILITY_EXPORT SerializedTupleRTTI : public TRTTIType<SerializedTuple, ISerialized, SerializedTupleRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -247,7 +247,7 @@ namespace bs
 		}
 	};
 
-	class B3D_UTILITY_EXPORT SerializedFieldRTTI : public RTTIType<SerializedField, IReflectable, SerializedFieldRTTI>
+	class B3D_UTILITY_EXPORT SerializedFieldRTTI : public TRTTIType<SerializedField, IReflectable, SerializedFieldRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

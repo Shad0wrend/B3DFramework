@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_EXPORT CGUIWidgetRTTI : public RTTIType<CGUIWidget, Component, CGUIWidgetRTTI>
+	class B3D_EXPORT CGUIWidgetRTTI : public TRTTIType<CGUIWidget, Component, CGUIWidgetRTTI>
 	{
 	public:
 		const String& GetRttiName() override

@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CCameraRTTI : public RTTIType<CCamera, Component, CCameraRTTI>
+	class B3D_CORE_EXPORT CCameraRTTI : public TRTTIType<CCamera, Component, CCameraRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

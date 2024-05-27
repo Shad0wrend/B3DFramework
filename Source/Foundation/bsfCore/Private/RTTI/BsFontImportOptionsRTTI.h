@@ -16,7 +16,7 @@ namespace bs
 
 	B3D_ALLOW_MEMCPY_SERIALIZATION(CharRange)
 
-	class B3D_CORE_EXPORT FontImportOptionsRTTI : public RTTIType<FontImportOptions, ImportOptions, FontImportOptionsRTTI>
+	class B3D_CORE_EXPORT FontImportOptionsRTTI : public TRTTIType<FontImportOptions, ImportOptions, FontImportOptionsRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

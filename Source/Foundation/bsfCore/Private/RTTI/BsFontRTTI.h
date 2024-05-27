@@ -81,7 +81,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT FontBitmapPageRTTI : public RTTIType<FontBitmapPage, IReflectable, FontBitmapPageRTTI>
+	class B3D_CORE_EXPORT FontBitmapPageRTTI : public TRTTIType<FontBitmapPage, IReflectable, FontBitmapPageRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -107,7 +107,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT FontBitmapInformationRTTI : public RTTIType<FontBitmapInformation, IReflectable, FontBitmapInformationRTTI>
+	class B3D_CORE_EXPORT FontBitmapInformationRTTI : public TRTTIType<FontBitmapInformation, IReflectable, FontBitmapInformationRTTI>
 	{
 	private:
 		Vector<FontBitmapPage> mBakedPages;
@@ -169,7 +169,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT FontRTTI : public RTTIType<Font, Resource, FontRTTI>
+	class B3D_CORE_EXPORT FontRTTI : public TRTTIType<Font, Resource, FontRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

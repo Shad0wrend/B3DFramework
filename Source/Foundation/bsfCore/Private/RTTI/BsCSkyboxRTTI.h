@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CSkyboxRTTI : public RTTIType<CSkybox, Component, CSkyboxRTTI>
+	class B3D_CORE_EXPORT CSkyboxRTTI : public TRTTIType<CSkybox, Component, CSkyboxRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

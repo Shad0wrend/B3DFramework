@@ -13,7 +13,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT ImportOptionsRTTI : public RTTIType<ImportOptions, IReflectable, ImportOptionsRTTI>
+	class B3D_CORE_EXPORT ImportOptionsRTTI : public TRTTIType<ImportOptions, IReflectable, ImportOptionsRTTI>
 	{
 	public:
 		const String& GetRttiName()

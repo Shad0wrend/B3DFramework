@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT SavedResourceDataRTTI : public RTTIType<SavedResourceData, IReflectable, SavedResourceDataRTTI>
+	class B3D_CORE_EXPORT SavedResourceDataRTTI : public TRTTIType<SavedResourceData, IReflectable, SavedResourceDataRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

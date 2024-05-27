@@ -17,7 +17,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class RenderTargetRTTI : public RTTIType<RenderTarget, IReflectable, RenderTargetRTTI>
+	class RenderTargetRTTI : public TRTTIType<RenderTarget, IReflectable, RenderTargetRTTI>
 	{
 	public:
 		SPtr<IReflectable> NewRttiObject()
@@ -38,7 +38,7 @@ namespace bs
 		}
 	};
 
-	class RenderTextureRTTI : public RTTIType<RenderTexture, RenderTarget, RenderTextureRTTI>
+	class RenderTextureRTTI : public TRTTIType<RenderTexture, RenderTarget, RenderTextureRTTI>
 	{
 	public:
 		SPtr<IReflectable> NewRttiObject()
@@ -59,7 +59,7 @@ namespace bs
 		}
 	};
 
-	class RenderWindowRTTI : public RTTIType<RenderWindow, RenderTarget, RenderWindowRTTI>
+	class RenderWindowRTTI : public TRTTIType<RenderWindow, RenderTarget, RenderWindowRTTI>
 	{
 	public:
 		SPtr<IReflectable> NewRttiObject()

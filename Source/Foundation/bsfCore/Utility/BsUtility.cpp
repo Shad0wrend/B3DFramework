@@ -153,7 +153,7 @@ Vector<HComponent> Utility::FindComponents(const HSceneObject& object, u32 typeI
 	return output;
 }
 
-class RTTIOperationEngineContextRTTI : public RTTIType<RTTIOperationEngineContext, RTTIOperationContext, RTTIOperationEngineContextRTTI>
+class RTTIOperationEngineContextRTTI : public TRTTIType<RTTIOperationEngineContext, RTTIOperationContext, RTTIOperationEngineContextRTTI>
 {
 	const String& GetRttiName() override
 	{

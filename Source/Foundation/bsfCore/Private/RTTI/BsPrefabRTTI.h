@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT PrefabRTTI : public RTTIType<Prefab, Resource, PrefabRTTI>
+	class B3D_CORE_EXPORT PrefabRTTI : public TRTTIType<Prefab, Resource, PrefabRTTI>
 	{
 		SPtr<SceneObject> mRootSceneObject;
 

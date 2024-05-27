@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableArrayRTTI : public RTTIType<ManagedSerializableArray, IReflectable, ManagedSerializableArrayRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableArrayRTTI : public TRTTIType<ManagedSerializableArray, IReflectable, ManagedSerializableArrayRTTI>
 	{
 		TArray<SPtr<ManagedSerializableFieldData>> mArrayEntries;
 

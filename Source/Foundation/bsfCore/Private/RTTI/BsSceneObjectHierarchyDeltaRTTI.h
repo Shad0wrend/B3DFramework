@@ -21,7 +21,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT SceneObjectHierarchyDeltaObjectRTTI : public RTTIType<SceneObjectHierarchyDeltaObject, IReflectable, SceneObjectHierarchyDeltaObjectRTTI>
+	class B3D_CORE_EXPORT SceneObjectHierarchyDeltaObjectRTTI : public TRTTIType<SceneObjectHierarchyDeltaObject, IReflectable, SceneObjectHierarchyDeltaObjectRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -50,7 +50,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT SceneObjectHierarchyDeltaRTTI : public RTTIType<SceneObjectHierarchyDelta, IReflectable, SceneObjectHierarchyDeltaRTTI>
+	class B3D_CORE_EXPORT SceneObjectHierarchyDeltaRTTI : public TRTTIType<SceneObjectHierarchyDelta, IReflectable, SceneObjectHierarchyDeltaRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

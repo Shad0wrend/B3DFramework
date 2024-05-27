@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedResourceMetaDataRTTI : public RTTIType<ManagedResourceMetaData, ResourceMetaData, ManagedResourceMetaDataRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedResourceMetaDataRTTI : public TRTTIType<ManagedResourceMetaData, ResourceMetaData, ManagedResourceMetaDataRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

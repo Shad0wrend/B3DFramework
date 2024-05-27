@@ -13,7 +13,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT RenderableRTTI : public RTTIType<Renderable, IReflectable, RenderableRTTI>
+	class B3D_CORE_EXPORT RenderableRTTI : public TRTTIType<Renderable, IReflectable, RenderableRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

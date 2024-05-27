@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT ComponentRTTI : public RTTIType<Component, GameObject, ComponentRTTI>
+	class B3D_CORE_EXPORT ComponentRTTI : public TRTTIType<Component, GameObject, ComponentRTTI>
 	{
 	public:
 		void OnOperationEnded(Component& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override

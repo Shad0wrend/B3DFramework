@@ -17,7 +17,7 @@ namespace bs
 
 	B3D_ALLOW_MEMCPY_SERIALIZATION(SubMesh);
 
-	class MeshBaseRTTI : public RTTIType<MeshBase, Resource, MeshBaseRTTI>
+	class MeshBaseRTTI : public TRTTIType<MeshBase, Resource, MeshBaseRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_NAMED(VertexCount, mProperties.VertexCount, 0)

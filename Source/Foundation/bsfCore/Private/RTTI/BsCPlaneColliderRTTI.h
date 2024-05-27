@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CPlaneColliderRTTI : public RTTIType<CPlaneCollider, CCollider, CPlaneColliderRTTI>
+	class B3D_CORE_EXPORT CPlaneColliderRTTI : public TRTTIType<CPlaneCollider, CCollider, CPlaneColliderRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

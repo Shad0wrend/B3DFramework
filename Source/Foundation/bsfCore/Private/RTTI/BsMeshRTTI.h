@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class MeshRTTI : public RTTIType<Mesh, MeshBase, MeshRTTI>
+	class MeshRTTI : public TRTTIType<Mesh, MeshBase, MeshRTTI>
 	{
 		SPtr<MeshData> mMeshData;
 

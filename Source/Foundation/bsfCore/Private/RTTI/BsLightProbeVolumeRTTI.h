@@ -88,7 +88,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT LightProbeVolumeRTTI : public RTTIType<LightProbeVolume, IReflectable, LightProbeVolumeRTTI>
+	class B3D_CORE_EXPORT LightProbeVolumeRTTI : public TRTTIType<LightProbeVolume, IReflectable, LightProbeVolumeRTTI>
 	{
 		SavedLightProbeInfo mSavedLightProbeInfo;
 

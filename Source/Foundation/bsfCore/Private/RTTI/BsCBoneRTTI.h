@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CBoneRTTI : public RTTIType<CBone, Component, CBoneRTTI>
+	class B3D_CORE_EXPORT CBoneRTTI : public TRTTIType<CBone, Component, CBoneRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mBoneName, 0)

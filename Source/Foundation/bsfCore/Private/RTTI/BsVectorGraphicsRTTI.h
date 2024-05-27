@@ -153,7 +153,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT VectorPathRTTI : public RTTIType<VectorPath, Resource, VectorPathRTTI>
+	class B3D_CORE_EXPORT VectorPathRTTI : public TRTTIType<VectorPath, Resource, VectorPathRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -181,7 +181,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT VectorPathRenderableRTTI : public RTTIType<ct::VectorPathRenderable, IReflectable, VectorPathRenderableRTTI>
+	class B3D_CORE_EXPORT VectorPathRenderableRTTI : public TRTTIType<ct::VectorPathRenderable, IReflectable, VectorPathRenderableRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

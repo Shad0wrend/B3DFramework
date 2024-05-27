@@ -17,7 +17,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedResourceRTTI : public RTTIType<ManagedResource, Resource, ManagedResourceRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedResourceRTTI : public TRTTIType<ManagedResource, Resource, ManagedResourceRTTI>
 	{
 		SPtr<ManagedSerializableObject> mSerializableObject;
 

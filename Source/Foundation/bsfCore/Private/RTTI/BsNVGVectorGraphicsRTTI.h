@@ -65,7 +65,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT NVGVectorPathRenderableRTTI : public RTTIType<ct::NVGVectorPathRenderable, ct::VectorPathRenderable, NVGVectorPathRenderableRTTI>
+	class B3D_CORE_EXPORT NVGVectorPathRenderableRTTI : public TRTTIType<ct::NVGVectorPathRenderable, ct::VectorPathRenderable, NVGVectorPathRenderableRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

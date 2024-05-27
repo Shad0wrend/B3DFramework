@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT AudioClipRTTI : public RTTIType<AudioClip, Resource, AudioClipRTTI>
+	class B3D_CORE_EXPORT AudioClipRTTI : public TRTTIType<AudioClip, Resource, AudioClipRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

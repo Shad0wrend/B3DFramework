@@ -72,17 +72,10 @@ namespace bs
 		RTTIFieldSchema(i16 id, bool isArray, bool isIterator, const RTTIFieldInfo& info)
 			: Id(id), IsContainer(isArray), IsIterator(isIterator), Info(info)
 		{}
-		RTTIFieldSchema(i16 id, bool isArray, bool hasDynamicSize, BitLength size, RTTIFieldDataType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
-			: Id(id), IsContainer(isArray), HasDynamicSize(hasDynamicSize), Size(size), Type(type), FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema)), Info(info)
-		{}
 
 		u16 Id = 0;
 		bool IsContainer = false;
 		bool IsIterator = false; // DEPRECATED - Replace to GetFieldType() method that either returns Iterator or DataBlock
-		bool HasDynamicSize = false; // DEPRECATED - Stored in FieldTypes now
-		BitLength Size = 0; // DEPRECATED - Stored in FieldTypes now
-		RTTIFieldDataType Type = RTTIFieldDataType::Plain; // DEPRECATED - Stored in FieldTypes now
-		u32 FieldTypeId = 0; // DEPRECATED - Stored in FieldTypes now
 		SPtr<RTTISchema> FieldTypeSchema; // DEPRECATED - Stored in FieldTypes now
 		RTTIFieldInfo Info;
 		TInlineArray<RTTIFieldTypeSchema, 2> FieldTypes; /**< Types references by the field. In 99% of the cases this is a single type, but in case of e.g. a map it will be two types (key/value pair). */

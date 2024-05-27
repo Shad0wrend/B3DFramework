@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CRigidbodyRTTI : public RTTIType<CRigidbody, Component, CRigidbodyRTTI>
+	class B3D_CORE_EXPORT CRigidbodyRTTI : public TRTTIType<CRigidbody, Component, CRigidbodyRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

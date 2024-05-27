@@ -16,7 +16,7 @@ using namespace bs;
 
 namespace bs
 {
-	class B3D_EXPORT GUIRenderableRTTI : public RTTIType<GUIRenderable, GUIElement, GUIRenderableRTTI>
+	class B3D_EXPORT GUIRenderableRTTI : public TRTTIType<GUIRenderable, GUIElement, GUIRenderableRTTI>
 	{
 	public:
 		const String& GetRttiName()

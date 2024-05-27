@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldKeyRTTI : public RTTIType<ManagedSerializableFieldKey, IReflectable, ManagedSerializableFieldKeyRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldKeyRTTI : public TRTTIType<ManagedSerializableFieldKey, IReflectable, ManagedSerializableFieldKeyRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -41,7 +41,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataRTTI : public RTTIType<ManagedSerializableFieldData, IReflectable, ManagedSerializableFieldDataRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataRTTI : public TRTTIType<ManagedSerializableFieldData, IReflectable, ManagedSerializableFieldDataRTTI>
 	{
 	public:
 		const String& GetRttiName()
@@ -62,7 +62,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataEntryRTTI : public RTTIType<ManagedSerializableFieldDataEntry, IReflectable, ManagedSerializableFieldDataEntryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataEntryRTTI : public TRTTIType<ManagedSerializableFieldDataEntry, IReflectable, ManagedSerializableFieldDataEntryRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(MKey, 0)
@@ -87,7 +87,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataBoolRTTI : public RTTIType<ManagedSerializableFieldDataBool, ManagedSerializableFieldData, ManagedSerializableFieldDataBoolRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataBoolRTTI : public TRTTIType<ManagedSerializableFieldDataBool, ManagedSerializableFieldData, ManagedSerializableFieldDataBoolRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -111,7 +111,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataCharRTTI : public RTTIType<ManagedSerializableFieldDataChar, ManagedSerializableFieldData, ManagedSerializableFieldDataCharRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataCharRTTI : public TRTTIType<ManagedSerializableFieldDataChar, ManagedSerializableFieldData, ManagedSerializableFieldDataCharRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value32, 0)
@@ -143,7 +143,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI8RTTI : public RTTIType<ManagedSerializableFieldDataI8, ManagedSerializableFieldData, ManagedSerializableFieldDataI8RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI8RTTI : public TRTTIType<ManagedSerializableFieldDataI8, ManagedSerializableFieldData, ManagedSerializableFieldDataI8RTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -167,7 +167,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU8RTTI : public RTTIType<ManagedSerializableFieldDataU8, ManagedSerializableFieldData, ManagedSerializableFieldDataU8RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU8RTTI : public TRTTIType<ManagedSerializableFieldDataU8, ManagedSerializableFieldData, ManagedSerializableFieldDataU8RTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -191,7 +191,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI16RTTI : public RTTIType<ManagedSerializableFieldDataI16, ManagedSerializableFieldData, ManagedSerializableFieldDataI16RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI16RTTI : public TRTTIType<ManagedSerializableFieldDataI16, ManagedSerializableFieldData, ManagedSerializableFieldDataI16RTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -215,7 +215,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU16RTTI : public RTTIType<ManagedSerializableFieldDataU16, ManagedSerializableFieldData, ManagedSerializableFieldDataU16RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU16RTTI : public TRTTIType<ManagedSerializableFieldDataU16, ManagedSerializableFieldData, ManagedSerializableFieldDataU16RTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -239,7 +239,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI32RTTI : public RTTIType<ManagedSerializableFieldDataI32, ManagedSerializableFieldData, ManagedSerializableFieldDataI32RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI32RTTI : public TRTTIType<ManagedSerializableFieldDataI32, ManagedSerializableFieldData, ManagedSerializableFieldDataI32RTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -263,7 +263,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU32RTTI : public RTTIType<ManagedSerializableFieldDataU32, ManagedSerializableFieldData, ManagedSerializableFieldDataU32RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU32RTTI : public TRTTIType<ManagedSerializableFieldDataU32, ManagedSerializableFieldData, ManagedSerializableFieldDataU32RTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -287,7 +287,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI64RTTI : public RTTIType<ManagedSerializableFieldDataI64, ManagedSerializableFieldData, ManagedSerializableFieldDataI64RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI64RTTI : public TRTTIType<ManagedSerializableFieldDataI64, ManagedSerializableFieldData, ManagedSerializableFieldDataI64RTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -311,7 +311,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU64RTTI : public RTTIType<ManagedSerializableFieldDataU64, ManagedSerializableFieldData, ManagedSerializableFieldDataU64RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU64RTTI : public TRTTIType<ManagedSerializableFieldDataU64, ManagedSerializableFieldData, ManagedSerializableFieldDataU64RTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -335,7 +335,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataFloatRTTI : public RTTIType<ManagedSerializableFieldDataFloat, ManagedSerializableFieldData, ManagedSerializableFieldDataFloatRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataFloatRTTI : public TRTTIType<ManagedSerializableFieldDataFloat, ManagedSerializableFieldData, ManagedSerializableFieldDataFloatRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -359,7 +359,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataDoubleRTTI : public RTTIType<ManagedSerializableFieldDataDouble, ManagedSerializableFieldData, ManagedSerializableFieldDataDoubleRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataDoubleRTTI : public TRTTIType<ManagedSerializableFieldDataDouble, ManagedSerializableFieldData, ManagedSerializableFieldDataDoubleRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -383,7 +383,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataStringRTTI : public RTTIType<ManagedSerializableFieldDataString, ManagedSerializableFieldData, ManagedSerializableFieldDataStringRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataStringRTTI : public TRTTIType<ManagedSerializableFieldDataString, ManagedSerializableFieldData, ManagedSerializableFieldDataStringRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value32, 0)
@@ -417,7 +417,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataResourceRefRTTI : public RTTIType<ManagedSerializableFieldDataResourceRef, ManagedSerializableFieldData, ManagedSerializableFieldDataResourceRefRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataResourceRefRTTI : public TRTTIType<ManagedSerializableFieldDataResourceRef, ManagedSerializableFieldData, ManagedSerializableFieldDataResourceRefRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -441,7 +441,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataGameObjectRefRTTI : public RTTIType<ManagedSerializableFieldDataGameObjectRef, ManagedSerializableFieldData, ManagedSerializableFieldDataGameObjectRefRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataGameObjectRefRTTI : public TRTTIType<ManagedSerializableFieldDataGameObjectRef, ManagedSerializableFieldData, ManagedSerializableFieldDataGameObjectRefRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -465,7 +465,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataReflectableRefRTTI : public RTTIType<ManagedSerializableFieldDataReflectableRef, ManagedSerializableFieldData, ManagedSerializableFieldDataReflectableRefRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataReflectableRefRTTI : public TRTTIType<ManagedSerializableFieldDataReflectableRef, ManagedSerializableFieldData, ManagedSerializableFieldDataReflectableRefRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -489,7 +489,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataObjectRTTI : public RTTIType<ManagedSerializableFieldDataObject, ManagedSerializableFieldData, ManagedSerializableFieldDataObjectRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataObjectRTTI : public TRTTIType<ManagedSerializableFieldDataObject, ManagedSerializableFieldData, ManagedSerializableFieldDataObjectRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -513,7 +513,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataArrayRTTI : public RTTIType<ManagedSerializableFieldDataArray, ManagedSerializableFieldData, ManagedSerializableFieldDataArrayRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataArrayRTTI : public TRTTIType<ManagedSerializableFieldDataArray, ManagedSerializableFieldData, ManagedSerializableFieldDataArrayRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -537,7 +537,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataListRTTI : public RTTIType<ManagedSerializableFieldDataList, ManagedSerializableFieldData, ManagedSerializableFieldDataListRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataListRTTI : public TRTTIType<ManagedSerializableFieldDataList, ManagedSerializableFieldData, ManagedSerializableFieldDataListRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)
@@ -561,7 +561,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataDictionaryRTTI : public RTTIType<ManagedSerializableFieldDataDictionary, ManagedSerializableFieldData, ManagedSerializableFieldDataDictionaryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataDictionaryRTTI : public TRTTIType<ManagedSerializableFieldDataDictionary, ManagedSerializableFieldData, ManagedSerializableFieldDataDictionaryRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Value, 0)

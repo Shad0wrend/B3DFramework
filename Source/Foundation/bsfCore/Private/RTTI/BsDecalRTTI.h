@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT DecalRTTI : public RTTIType<Decal, IReflectable, DecalRTTI>
+	class B3D_CORE_EXPORT DecalRTTI : public TRTTIType<Decal, IReflectable, DecalRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

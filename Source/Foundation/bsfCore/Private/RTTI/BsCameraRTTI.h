@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CameraRTTI : public RTTIType<Camera, IReflectable, CameraRTTI>
+	class B3D_CORE_EXPORT CameraRTTI : public TRTTIType<Camera, IReflectable, CameraRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

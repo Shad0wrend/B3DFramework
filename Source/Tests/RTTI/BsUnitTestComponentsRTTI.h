@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	class UnitTestComponentARTTI : public RTTIType<UnitTestComponentA, Component, UnitTestComponentARTTI>
+	class UnitTestComponentARTTI : public TRTTIType<UnitTestComponentA, Component, UnitTestComponentARTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -33,7 +33,7 @@ namespace bs
 		}
 	};
 
-	class UnitTestComponentBRTTI : public RTTIType<UnitTestComponentB, Component, UnitTestComponentBRTTI>
+	class UnitTestComponentBRTTI : public TRTTIType<UnitTestComponentB, Component, UnitTestComponentBRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

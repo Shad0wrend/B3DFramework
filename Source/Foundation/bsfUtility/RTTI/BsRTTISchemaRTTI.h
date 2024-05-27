@@ -49,7 +49,7 @@ namespace bs
 		}
 	};
 
-	class RTTIFieldTypeSchemaRTTI : public RTTIType<RTTIFieldTypeSchema, IReflectable, RTTIFieldTypeSchemaRTTI>
+	class RTTIFieldTypeSchemaRTTI : public TRTTIType<RTTIFieldTypeSchema, IReflectable, RTTIFieldTypeSchemaRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -78,7 +78,7 @@ namespace bs
 		}
 	};
 
-	class RTTIFieldSchemaRTTI : public RTTIType<RTTIFieldSchema, IReflectable, RTTIFieldSchemaRTTI>
+	class RTTIFieldSchemaRTTI : public TRTTIType<RTTIFieldSchema, IReflectable, RTTIFieldSchemaRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -112,7 +112,7 @@ namespace bs
 		}
 	};
 
-	class RTTISchemaRTTI : public RTTIType<RTTISchema, IReflectable, RTTISchemaRTTI>
+	class RTTISchemaRTTI : public TRTTIType<RTTISchema, IReflectable, RTTISchemaRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

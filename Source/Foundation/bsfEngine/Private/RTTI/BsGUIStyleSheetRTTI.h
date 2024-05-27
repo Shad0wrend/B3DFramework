@@ -56,7 +56,7 @@ namespace bs
 		}
 	};
 
-	class B3D_EXPORT GUIStyleSheetRuleRTTI : public RTTIType<GUIStyleSheetRules, IReflectable, GUIStyleSheetRuleRTTI>
+	class B3D_EXPORT GUIStyleSheetRuleRTTI : public TRTTIType<GUIStyleSheetRules, IReflectable, GUIStyleSheetRuleRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -112,7 +112,7 @@ namespace bs
 		}
 	};
 
-	class B3D_EXPORT GUIStyleSheetRulesetRTTI : public RTTIType<GUIStyleSheetRuleset, IReflectable, GUIStyleSheetRulesetRTTI>
+	class B3D_EXPORT GUIStyleSheetRulesetRTTI : public TRTTIType<GUIStyleSheetRuleset, IReflectable, GUIStyleSheetRulesetRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -137,7 +137,7 @@ namespace bs
 		}
 	};
 
-	class B3D_EXPORT GUIStyleSheetRTTI : public RTTIType<GUIStyleSheet, Resource, GUIStyleSheetRTTI>
+	class B3D_EXPORT GUIStyleSheetRTTI : public TRTTIType<GUIStyleSheet, Resource, GUIStyleSheetRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT LightRTTI : public RTTIType<Light, IReflectable, LightRTTI>
+	class B3D_CORE_EXPORT LightRTTI : public TRTTIType<Light, IReflectable, LightRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

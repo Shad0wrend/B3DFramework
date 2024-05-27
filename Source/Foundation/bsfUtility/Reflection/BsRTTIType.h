@@ -295,7 +295,7 @@ namespace bs
 	 * as well a providing information about class hierarchy, and run-time type checking.
 	 */
 	template <typename Type, typename BaseType, typename MyRTTIType>
-	class RTTIType : public RTTITypeBase
+	class TRTTIType : public RTTITypeBase
 	{
 	protected:
 		/************************************************************************/
@@ -305,7 +305,7 @@ namespace bs
 		static InitRTTIOnStart<Type, BaseType> initOnStart;
 
 	public:
-		RTTIType()
+		TRTTIType()
 		{
 			// Compiler will only generate code for stuff that is directly used, including static data members,
 			// so we fool it here like we're using the class directly. Otherwise compiler won't generate the code for the member
@@ -313,7 +313,7 @@ namespace bs
 			initOnStart.MakeSureIAmInstantiated();
 		}
 
-		virtual ~RTTIType() = default;
+		virtual ~TRTTIType() = default;
 
 		/** Returns a singleton of this RTTI type. */
 		static MyRTTIType* Instance()
@@ -441,7 +441,7 @@ namespace bs
 	};
 
 	template <typename Type, typename BaseType, typename MyRTTIType>
-	InitRTTIOnStart<Type, BaseType> RTTIType<Type, BaseType, MyRTTIType>::initOnStart;
+	InitRTTIOnStart<Type, BaseType> TRTTIType<Type, BaseType, MyRTTIType>::initOnStart;
 
 	/** Provides information about the operation being performed on RTTIType objects. */
 	struct B3D_UTILITY_EXPORT RTTIOperationContext : IReflectable

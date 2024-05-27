@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT ShaderIncludeRTTI : public RTTIType<ShaderInclude, Resource, ShaderIncludeRTTI>
+	class B3D_CORE_EXPORT ShaderIncludeRTTI : public TRTTIType<ShaderInclude, Resource, ShaderIncludeRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mString, 0)

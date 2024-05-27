@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CReflectionProbeRTTI : public RTTIType<CReflectionProbe, Component, CReflectionProbeRTTI>
+	class B3D_CORE_EXPORT CReflectionProbeRTTI : public TRTTIType<CReflectionProbe, Component, CReflectionProbeRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

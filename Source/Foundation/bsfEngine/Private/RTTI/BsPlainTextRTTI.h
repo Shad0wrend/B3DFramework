@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_EXPORT PlainTextRTTI : public RTTIType<PlainText, Resource, PlainTextRTTI>
+	class B3D_EXPORT PlainTextRTTI : public TRTTIType<PlainText, Resource, PlainTextRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mString, 0)

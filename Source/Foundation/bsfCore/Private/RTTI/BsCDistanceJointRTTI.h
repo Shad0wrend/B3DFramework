@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CDistanceJointRTTI : public RTTIType<CDistanceJoint, CJoint, CDistanceJointRTTI>
+	class B3D_CORE_EXPORT CDistanceJointRTTI : public TRTTIType<CDistanceJoint, CJoint, CDistanceJointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_NAMED(mFlag, mDesc.Flag, 0)

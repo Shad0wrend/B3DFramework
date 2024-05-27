@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CFixedJointRTTI : public RTTIType<CFixedJoint, CJoint, CFixedJointRTTI>
+	class B3D_CORE_EXPORT CFixedJointRTTI : public TRTTIType<CFixedJoint, CJoint, CFixedJointRTTI>
 	{
 	public:
 		const String& GetRttiName() override

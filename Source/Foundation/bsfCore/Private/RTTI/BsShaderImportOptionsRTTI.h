@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT ShaderImportOptionsRTTI : public RTTIType<ShaderImportOptions, ImportOptions, ShaderImportOptionsRTTI>
+	class B3D_CORE_EXPORT ShaderImportOptionsRTTI : public TRTTIType<ShaderImportOptions, ImportOptions, ShaderImportOptionsRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_CONTAINER(mDefines, 0)

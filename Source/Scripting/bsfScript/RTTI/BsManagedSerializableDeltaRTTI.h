@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_SCRIPT_INTEROP_EXPORT ModifiedFieldRTTI : public RTTIType<ManagedSerializableDelta::ModifiedField, IReflectable, ModifiedFieldRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedFieldRTTI : public TRTTIType<ManagedSerializableDelta::ModifiedField, IReflectable, ModifiedFieldRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(ParentType, 0)
@@ -40,7 +40,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ModifiedArrayEntryRTTI : public RTTIType<ManagedSerializableDelta::ModifiedArrayEntry, IReflectable, ModifiedArrayEntryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedArrayEntryRTTI : public TRTTIType<ManagedSerializableDelta::ModifiedArrayEntry, IReflectable, ModifiedArrayEntryRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -66,7 +66,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ModifiedDictionaryEntryRTTI : public RTTIType<ManagedSerializableDelta::ModifiedDictionaryEntry, IReflectable, ModifiedDictionaryEntryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedDictionaryEntryRTTI : public TRTTIType<ManagedSerializableDelta::ModifiedDictionaryEntry, IReflectable, ModifiedDictionaryEntryRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -92,7 +92,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ModificationRTTI : public RTTIType<ManagedSerializableDelta::Modification, IReflectable, ModificationRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModificationRTTI : public TRTTIType<ManagedSerializableDelta::Modification, IReflectable, ModificationRTTI>
 	{
 	public:
 		const String& GetRttiName() override
@@ -112,7 +112,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ModifiedObjectRTTI : public RTTIType<ManagedSerializableDelta::ModifiedObject, ManagedSerializableDelta::Modification, ModifiedObjectRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedObjectRTTI : public TRTTIType<ManagedSerializableDelta::ModifiedObject, ManagedSerializableDelta::Modification, ModifiedObjectRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -137,7 +137,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ModifiedArrayRTTI : public RTTIType<ManagedSerializableDelta::ModifiedArray, ManagedSerializableDelta::Modification, ModifiedArrayRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedArrayRTTI : public TRTTIType<ManagedSerializableDelta::ModifiedArray, ManagedSerializableDelta::Modification, ModifiedArrayRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(OrigSizes, 0)
@@ -163,7 +163,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ModifiedDictionaryRTTI : public RTTIType<ManagedSerializableDelta::ModifiedDictionary, ManagedSerializableDelta::Modification, ModifiedDictionaryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedDictionaryRTTI : public TRTTIType<ManagedSerializableDelta::ModifiedDictionary, ManagedSerializableDelta::Modification, ModifiedDictionaryRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -189,7 +189,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ModifiedEntryRTTI : public RTTIType<ManagedSerializableDelta::ModifiedEntry, ManagedSerializableDelta::Modification, ModifiedEntryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedEntryRTTI : public TRTTIType<ManagedSerializableDelta::ModifiedEntry, ManagedSerializableDelta::Modification, ModifiedEntryRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -214,7 +214,7 @@ namespace bs
 		}
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDeltaRTTI : public RTTIType<ManagedSerializableDelta, IReflectable, ManagedSerializableDeltaRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDeltaRTTI : public TRTTIType<ManagedSerializableDelta, IReflectable, ManagedSerializableDeltaRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

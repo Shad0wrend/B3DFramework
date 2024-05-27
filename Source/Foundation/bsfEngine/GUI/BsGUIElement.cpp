@@ -20,7 +20,7 @@ using namespace bs;
 
 namespace bs
 {
-	class B3D_EXPORT GUIElementRTTI : public RTTIType<GUIElement, IReflectable, GUIElementRTTI>
+	class B3D_EXPORT GUIElementRTTI : public TRTTIType<GUIElement, IReflectable, GUIElementRTTI>
 	{
 	public:
 		const String& GetRttiName()

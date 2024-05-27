@@ -18,7 +18,7 @@ namespace bs
 
 	B3D_ALLOW_MEMCPY_SERIALIZATION(SamplerStateInformation);
 
-	class B3D_CORE_EXPORT SamplerStateRTTI : public RTTIType<SamplerState, IReflectable, SamplerStateRTTI>
+	class B3D_CORE_EXPORT SamplerStateRTTI : public TRTTIType<SamplerState, IReflectable, SamplerStateRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mInformation, 0)
