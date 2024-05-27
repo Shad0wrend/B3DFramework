@@ -6,13 +6,13 @@
 
 using namespace bs;
 
-RTTITypeBase::~RTTITypeBase()
+RTTIType::~RTTIType()
 {
 	for(const auto& item : mFields)
 		B3DDelete(item);
 }
 
-RTTIField* RTTITypeBase::FindField(const String& name)
+RTTIField* RTTIType::FindField(const String& name)
 {
 	auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x)
 									 { return x->Name == name; });
@@ -25,7 +25,7 @@ RTTIField* RTTITypeBase::FindField(const String& name)
 	return *foundElement;
 }
 
-RTTIField* RTTITypeBase::FindField(int uniqueFieldId)
+RTTIField* RTTIType::FindField(int uniqueFieldId)
 {
 	auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&uniqueFieldId](RTTIField* x)
 									 { return x->Schema.Id == uniqueFieldId; });
@@ -36,7 +36,7 @@ RTTIField* RTTITypeBase::FindField(int uniqueFieldId)
 	return *foundElement;
 }
 
-void RTTITypeBase::AddNewField(RTTIField* field)
+void RTTIType::AddNewField(RTTIField* field)
 {
 	if(field == nullptr)
 		B3D_EXCEPT(InvalidParametersException, "Field argument can't be null.");
@@ -58,12 +58,12 @@ void RTTITypeBase::AddNewField(RTTIField* field)
 	mFields.push_back(field);
 }
 
-void RTTITypeBase::InitSchemaInternal()
+void RTTIType::InitSchemaInternal()
 {
 	mSchema = B3DMakeShared<RTTISchema>();
 	mSchema->TypeId = GetRttiId();
 
-	RTTITypeBase* baseType = GetBaseClass();
+	RTTIType* baseType = GetBaseClass();
 	if(baseType)
 		mSchema->BaseTypeSchema = baseType->GetSchema();
 
@@ -74,12 +74,12 @@ void RTTITypeBase::InitSchemaInternal()
 	}
 }
 
-RTTITypeBase* RTTISchema::GetRttiStatic()
+RTTIType* RTTISchema::GetRttiStatic()
 {
 	return RTTISchemaRTTI::Instance();
 }
 
-RTTITypeBase* RTTISchema::GetRtti() const
+RTTIType* RTTISchema::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -104,12 +104,12 @@ class RTTIOperationContextRTTI : public TRTTIType<RTTIOperationContext, IReflect
 	}
 };
 
-RTTITypeBase* RTTIOperationContext::GetRttiStatic()
+RTTIType* RTTIOperationContext::GetRttiStatic()
 {
 	return RTTIOperationContextRTTI::Instance();
 }
 
-RTTITypeBase* RTTIOperationContext::GetRtti() const
+RTTIType* RTTIOperationContext::GetRtti() const
 {
 	return GetRttiStatic();
 }

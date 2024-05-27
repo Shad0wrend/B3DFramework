@@ -379,12 +379,12 @@ TInlineArray<VertexElement, 8> VertexDescription::GetMissingElementsForShaderInp
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* VertexDescription::GetRttiStatic()
+RTTIType* VertexDescription::GetRttiStatic()
 {
 	return VertexDescriptionRTTI::Instance();
 }
 
-RTTITypeBase* VertexDescription::GetRtti() const
+RTTIType* VertexDescription::GetRtti() const
 {
 	return VertexDescription::GetRttiStatic();
 }

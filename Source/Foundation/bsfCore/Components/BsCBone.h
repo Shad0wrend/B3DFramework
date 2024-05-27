@@ -68,8 +68,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CBoneRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		CBone(); // Serialization only

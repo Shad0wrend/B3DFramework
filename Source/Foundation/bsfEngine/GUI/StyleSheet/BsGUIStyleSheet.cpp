@@ -244,24 +244,24 @@ void GUIStyleSheetRules::Override(const GUIStyleSheetRules& other)
 #undef OVERRIDE_PROPERTY
 }
 
-RTTITypeBase* GUIStyleSheetRules::GetRttiStatic()
+RTTIType* GUIStyleSheetRules::GetRttiStatic()
 {
 	return GUIStyleSheetRuleRTTI::Instance();
 }
 
-RTTITypeBase* GUIStyleSheetRules::GetRtti() const
+RTTIType* GUIStyleSheetRules::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
 SPtr<const GUIStyleSheetRuleset> GUIStyleSheetRuleset::kDefault = B3DMakeShared<GUIStyleSheetRuleset>();
 
-RTTITypeBase* GUIStyleSheetRuleset::GetRttiStatic()
+RTTIType* GUIStyleSheetRuleset::GetRttiStatic()
 {
 	return GUIStyleSheetRulesetRTTI::Instance();
 }
 
-RTTITypeBase* GUIStyleSheetRuleset::GetRtti() const
+RTTIType* GUIStyleSheetRuleset::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -610,12 +610,12 @@ SPtr<GUIStyleSheet> GUIStyleSheet::CreateUninitialized(TArray<GUIStyleSheetRules
 	return newStyleSheet;
 }
 
-RTTITypeBase* GUIStyleSheet::GetRttiStatic()
+RTTIType* GUIStyleSheet::GetRttiStatic()
 {
 	return GUIStyleSheetRTTI::Instance();
 }
 
-RTTITypeBase* GUIStyleSheet::GetRtti() const
+RTTIType* GUIStyleSheet::GetRtti() const
 {
 	return GetRttiStatic();
 }

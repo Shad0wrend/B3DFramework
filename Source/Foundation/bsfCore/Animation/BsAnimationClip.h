@@ -324,8 +324,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class AnimationClipRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 		/**
 		 * Creates an AnimationClip with no data. You must populate its data manually followed by a call to Initialize().

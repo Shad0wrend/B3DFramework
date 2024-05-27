@@ -160,8 +160,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GameObjectHandleRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */
@@ -239,8 +239,8 @@ namespace bs
 		template<class CastType>
 		GameObjectHandle<CastType> As() const
 		{
-			RTTITypeBase* const CastTypeRTTI = CastType::GetRttiStatic();
-			RTTITypeBase* const MyTypeRTTI = T::GetRttiStatic();
+			RTTIType* const CastTypeRTTI = CastType::GetRttiStatic();
+			RTTIType* const MyTypeRTTI = T::GetRttiStatic();
 
 			if(CastTypeRTTI->IsDerivedFrom(MyTypeRTTI))
 				return GameObjectHandle<CastType>(GetSharedHandleData());

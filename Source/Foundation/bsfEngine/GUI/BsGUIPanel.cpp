@@ -302,12 +302,12 @@ GUIPanel* GUIPanel::Create(i16 depth, u16 depthRangeMin, u16 depthRangeMax, cons
 	return B3DNew<GUIPanel>(depth, depthRangeMin, depthRangeMax, GUISizeConstraints::Create(options));
 }
 
-RTTITypeBase* GUIPanel::GetRttiStatic()
+RTTIType* GUIPanel::GetRttiStatic()
 {
 	return GUIPanelRTTI::Instance();
 }
 
-RTTITypeBase* GUIPanel::GetRtti() const
+RTTIType* GUIPanel::GetRtti() const
 {
 	return GetRttiStatic();
 }

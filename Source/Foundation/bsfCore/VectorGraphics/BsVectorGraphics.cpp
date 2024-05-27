@@ -265,24 +265,24 @@ namespace bs
 		return B3DStaticResourceCast<VectorPath>(GetResources().CreateResourceHandle(newVectorPath));
 	}
 
-	RTTITypeBase* VectorPath::GetRttiStatic()
+	RTTIType* VectorPath::GetRttiStatic()
 	{
 		return VectorPathRTTI::Instance();
 	}
 
-	RTTITypeBase* VectorPath::GetRtti() const
+	RTTIType* VectorPath::GetRtti() const
 	{
 		return GetRttiStatic();
 	}
 
 	namespace ct
 	{
-		RTTITypeBase* VectorPathRenderable::GetRttiStatic()
+		RTTIType* VectorPathRenderable::GetRttiStatic()
 		{
 			return VectorPathRenderableRTTI::Instance();
 		}
 
-		RTTITypeBase* VectorPathRenderable::GetRtti() const
+		RTTIType* VectorPathRenderable::GetRtti() const
 		{
 			return GetRttiStatic();
 		}

@@ -5,12 +5,12 @@
 
 using namespace bs;
 
-RTTITypeBase* GameSettings::GetRttiStatic()
+RTTIType* GameSettings::GetRttiStatic()
 {
 	return GameSettingsRTTI::Instance();
 }
 
-RTTITypeBase* GameSettings::GetRtti() const
+RTTIType* GameSettings::GetRtti() const
 {
 	return GameSettings::GetRttiStatic();
 }

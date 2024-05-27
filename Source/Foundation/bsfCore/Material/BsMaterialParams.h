@@ -438,8 +438,8 @@ namespace bs
 		TextureSurface Surface;
 
 		friend class MaterialParamTextureDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/** Data for a single buffer parameter. */
@@ -456,8 +456,8 @@ namespace bs
 		SPtr<GpuBuffer> Value;
 
 		friend class MaterialParamBufferDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/** Data for a single sampler state parameter. */
@@ -474,8 +474,8 @@ namespace bs
 		SPtr<SamplerState> Value;
 
 		friend class MaterialParamSamplerStateDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/** Helper typedefs that reference types used by either render or main thread implementation of TMaterialParams<IsRenderProxy>. */
@@ -835,8 +835,8 @@ namespace bs
 		MaterialParams() {} // Only for serialization
 
 		friend class MaterialParamsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	namespace ct

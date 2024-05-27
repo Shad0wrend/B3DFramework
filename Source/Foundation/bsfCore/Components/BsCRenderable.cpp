@@ -105,12 +105,12 @@ void CRenderable::OnDestroyed()
 	mInternal->Destroy();
 }
 
-RTTITypeBase* CRenderable::GetRttiStatic()
+RTTIType* CRenderable::GetRttiStatic()
 {
 	return CRenderableRTTI::Instance();
 }
 
-RTTITypeBase* CRenderable::GetRtti() const
+RTTIType* CRenderable::GetRtti() const
 {
 	return CRenderable::GetRttiStatic();
 }

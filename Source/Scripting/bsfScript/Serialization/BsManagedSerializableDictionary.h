@@ -27,8 +27,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableDictionaryKeyValueRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -240,8 +240,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableDictionaryRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/** @} */

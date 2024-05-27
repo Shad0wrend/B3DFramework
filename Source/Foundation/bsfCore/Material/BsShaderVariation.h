@@ -220,8 +220,8 @@ namespace bs
 
 	public:
 		friend class ShaderVariationRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** A container for all variations of a single Shader. */

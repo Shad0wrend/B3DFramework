@@ -39,12 +39,12 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-RTTITypeBase* ParticleSystemSettings::GetRttiStatic()
+RTTIType* ParticleSystemSettings::GetRttiStatic()
 {
 	return ParticleSystemSettingsRTTI::Instance();
 }
 
-RTTITypeBase* ParticleSystemSettings::GetRtti() const
+RTTIType* ParticleSystemSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -65,12 +65,12 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-RTTITypeBase* ParticleVectorFieldSettings::GetRttiStatic()
+RTTIType* ParticleVectorFieldSettings::GetRttiStatic()
 {
 	return ParticleVectorFieldSettingsRTTI::Instance();
 }
 
-RTTITypeBase* ParticleVectorFieldSettings::GetRtti() const
+RTTIType* ParticleVectorFieldSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -85,12 +85,12 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-RTTITypeBase* ParticleDepthCollisionSettings::GetRttiStatic()
+RTTIType* ParticleDepthCollisionSettings::GetRttiStatic()
 {
 	return ParticleDepthCollisionSettingsRTTI::Instance();
 }
 
-RTTITypeBase* ParticleDepthCollisionSettings::GetRtti() const
+RTTIType* ParticleDepthCollisionSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -107,12 +107,12 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-RTTITypeBase* ParticleGpuSimulationSettings::GetRttiStatic()
+RTTIType* ParticleGpuSimulationSettings::GetRttiStatic()
 {
 	return ParticleGpuSimulationSettingsRTTI::Instance();
 }
 
-RTTITypeBase* ParticleGpuSimulationSettings::GetRtti() const
+RTTIType* ParticleGpuSimulationSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -476,12 +476,12 @@ SPtr<ParticleSystem> ParticleSystem::CreateEmpty()
 	return ptr;
 }
 
-RTTITypeBase* ParticleSystem::GetRttiStatic()
+RTTIType* ParticleSystem::GetRttiStatic()
 {
 	return ParticleSystemRTTI::Instance();
 }
 
-RTTITypeBase* ParticleSystem::GetRtti() const
+RTTIType* ParticleSystem::GetRtti() const
 {
 	return ParticleSystem::GetRttiStatic();
 }

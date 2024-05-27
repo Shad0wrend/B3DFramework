@@ -237,8 +237,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GUIStyleSheetRuleRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains a set of rules for a particular selector. */
@@ -258,8 +258,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GUIStyleSheetRulesetRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains a set of rulesets for all states that are commonly changing on a GUI element (e.g. hover, focused, checked, active, etc.). */
@@ -400,8 +400,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GUIStyleSheetRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains a set of multiple style sheets, sorted by importance. */

@@ -923,12 +923,12 @@ namespace bs::ct
 		}
 	}
 
-	RTTITypeBase* NVGVectorPathRenderable::GetRttiStatic()
+	RTTIType* NVGVectorPathRenderable::GetRttiStatic()
 	{
 		return NVGVectorPathRenderableRTTI::Instance();
 	}
 
-	RTTITypeBase* NVGVectorPathRenderable::GetRtti() const
+	RTTIType* NVGVectorPathRenderable::GetRtti() const
 	{
 		return GetRttiStatic();
 	}

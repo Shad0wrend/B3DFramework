@@ -57,12 +57,12 @@ void GameObject::QueueForDestroy()
 	SetGameObjectFlag(GameObjectTransientFlag::QueuedForDestroy);
 }
 
-RTTITypeBase* GameObject::GetRttiStatic()
+RTTIType* GameObject::GetRttiStatic()
 {
 	return GameObjectRTTI::Instance();
 }
 
-RTTITypeBase* GameObject::GetRtti() const
+RTTIType* GameObject::GetRtti() const
 {
 	return GameObject::GetRttiStatic();
 }

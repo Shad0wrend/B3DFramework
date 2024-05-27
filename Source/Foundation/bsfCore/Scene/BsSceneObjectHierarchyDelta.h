@@ -48,8 +48,8 @@ namespace bs
 		SceneObjectHierarchyDeltaObject() = default; // RTTI only
 
 		friend class SceneObjectHierarchyDeltaObjectRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Flags used to control the creation of SceneObjectHierarchyDelta. */
@@ -115,8 +115,8 @@ namespace bs
 
 	public:
 		friend class SceneObjectHierarchyDeltaRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

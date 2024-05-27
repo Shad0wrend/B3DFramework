@@ -13,12 +13,12 @@ SPtr<FontImportOptions> FontImportOptions::Create()
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
-RTTITypeBase* FontImportOptions::GetRttiStatic()
+RTTIType* FontImportOptions::GetRttiStatic()
 {
 	return FontImportOptionsRTTI::Instance();
 }
 
-RTTITypeBase* FontImportOptions::GetRtti() const
+RTTIType* FontImportOptions::GetRtti() const
 {
 	return FontImportOptions::GetRttiStatic();
 }

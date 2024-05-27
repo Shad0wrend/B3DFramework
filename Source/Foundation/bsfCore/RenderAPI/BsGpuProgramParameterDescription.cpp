@@ -9,12 +9,12 @@ constexpr u32 RTTIPlainType<GpuDataParameterBlockInformation>::kVersion;
 constexpr u32 RTTIPlainType<GpuObjectParameterInformation>::kVersion;
 constexpr u32 RTTIPlainType<GpuDataParameterInformation>::kVersion;
 
-RTTITypeBase* GpuProgramParameterDescription::GetRttiStatic()
+RTTIType* GpuProgramParameterDescription::GetRttiStatic()
 {
 	return GpuProgramParameterDescriptionRTTI::Instance();
 }
 
-RTTITypeBase* GpuProgramParameterDescription::GetRtti() const
+RTTIType* GpuProgramParameterDescription::GetRtti() const
 {
 	return GpuProgramParameterDescription::GetRttiStatic();
 }

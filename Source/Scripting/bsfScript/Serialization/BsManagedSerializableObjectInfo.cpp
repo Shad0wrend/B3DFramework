@@ -14,12 +14,12 @@
 #include "Wrappers/BsScriptRRefBase.h"
 
 using namespace bs;
-RTTITypeBase* ManagedSerializableAssemblyInfo::GetRttiStatic()
+RTTIType* ManagedSerializableAssemblyInfo::GetRttiStatic()
 {
 	return ManagedSerializableAssemblyInfoRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableAssemblyInfo::GetRtti() const
+RTTIType* ManagedSerializableAssemblyInfo::GetRtti() const
 {
 	return ManagedSerializableAssemblyInfo::GetRttiStatic();
 }
@@ -58,22 +58,22 @@ SPtr<ManagedSerializableMemberInfo> ManagedSerializableObjectInfo::FindMatchingF
 	return nullptr;
 }
 
-RTTITypeBase* ManagedSerializableObjectInfo::GetRttiStatic()
+RTTIType* ManagedSerializableObjectInfo::GetRttiStatic()
 {
 	return ManagedSerializableObjectInfoRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableObjectInfo::GetRtti() const
+RTTIType* ManagedSerializableObjectInfo::GetRtti() const
 {
 	return ManagedSerializableObjectInfo::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableMemberInfo::GetRttiStatic()
+RTTIType* ManagedSerializableMemberInfo::GetRttiStatic()
 {
 	return ManagedSerializableMemberInfoRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableMemberInfo::GetRtti() const
+RTTIType* ManagedSerializableMemberInfo::GetRtti() const
 {
 	return ManagedSerializableMemberInfo::GetRttiStatic();
 }
@@ -93,12 +93,12 @@ void ManagedSerializableFieldInfo::SetValue(MonoObject* instance, void* value) c
 	MMonoField->Set(instance, value);
 }
 
-RTTITypeBase* ManagedSerializableFieldInfo::GetRttiStatic()
+RTTIType* ManagedSerializableFieldInfo::GetRttiStatic()
 {
 	return ManagedSerializableFieldInfoRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldInfo::GetRtti() const
+RTTIType* ManagedSerializableFieldInfo::GetRtti() const
 {
 	return ManagedSerializableFieldInfo::GetRttiStatic();
 }
@@ -118,22 +118,22 @@ void ManagedSerializablePropertyInfo::SetValue(MonoObject* instance, void* value
 	MMonoProperty->Set(instance, value);
 }
 
-RTTITypeBase* ManagedSerializablePropertyInfo::GetRttiStatic()
+RTTIType* ManagedSerializablePropertyInfo::GetRttiStatic()
 {
 	return ManagedSerializablePropertyInfoRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializablePropertyInfo::GetRtti() const
+RTTIType* ManagedSerializablePropertyInfo::GetRtti() const
 {
 	return ManagedSerializablePropertyInfo::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfo::GetRttiStatic()
+RTTIType* ManagedSerializableTypeInfo::GetRttiStatic()
 {
 	return ManagedSerializableTypeInfoRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfo::GetRtti() const
+RTTIType* ManagedSerializableTypeInfo::GetRtti() const
 {
 	return ManagedSerializableTypeInfo::GetRttiStatic();
 }
@@ -190,12 +190,12 @@ bool ManagedSerializableTypeInfoPrimitive::IsTypeLoaded() const
 	return nullptr;
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoPrimitive::GetRttiStatic()
+RTTIType* ManagedSerializableTypeInfoPrimitive::GetRttiStatic()
 {
 	return ManagedSerializableTypeInfoPrimitiveRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoPrimitive::GetRtti() const
+RTTIType* ManagedSerializableTypeInfoPrimitive::GetRtti() const
 {
 	return ManagedSerializableTypeInfoPrimitive::GetRttiStatic();
 }
@@ -228,12 +228,12 @@ bool ManagedSerializableTypeInfoEnum::IsTypeLoaded() const
 	return nullptr;
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoEnum::GetRttiStatic()
+RTTIType* ManagedSerializableTypeInfoEnum::GetRttiStatic()
 {
 	return ManagedSerializableTypeInfoEnumRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoEnum::GetRtti() const
+RTTIType* ManagedSerializableTypeInfoEnum::GetRtti() const
 {
 	return ManagedSerializableTypeInfoEnum::GetRttiStatic();
 }
@@ -294,12 +294,12 @@ bool ManagedSerializableTypeInfoRef::IsTypeLoaded() const
 	return objInfo->MMonoClass->GetInternalClassInternal();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoRef::GetRttiStatic()
+RTTIType* ManagedSerializableTypeInfoRef::GetRttiStatic()
 {
 	return ManagedSerializableTypeInfoRefRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoRef::GetRtti() const
+RTTIType* ManagedSerializableTypeInfoRef::GetRtti() const
 {
 	return ManagedSerializableTypeInfoRef::GetRttiStatic();
 }
@@ -338,12 +338,12 @@ bool ManagedSerializableTypeInfoRRef::IsTypeLoaded() const
 		return ScriptAssemblyManager::Instance().GetBuiltinClasses().RrefBaseClass->GetInternalClassInternal();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoRRef::GetRttiStatic()
+RTTIType* ManagedSerializableTypeInfoRRef::GetRttiStatic()
 {
 	return ManagedSerializableTypeInfoRRefRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoRRef::GetRtti() const
+RTTIType* ManagedSerializableTypeInfoRRef::GetRtti() const
 {
 	return ManagedSerializableTypeInfoRRef::GetRttiStatic();
 }
@@ -373,12 +373,12 @@ bool ManagedSerializableTypeInfoObject::IsTypeLoaded() const
 	return objInfo->MMonoClass->GetInternalClassInternal();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoObject::GetRttiStatic()
+RTTIType* ManagedSerializableTypeInfoObject::GetRttiStatic()
 {
 	return ManagedSerializableTypeInfoObjectRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoObject::GetRtti() const
+RTTIType* ManagedSerializableTypeInfoObject::GetRtti() const
 {
 	return ManagedSerializableTypeInfoObject::GetRttiStatic();
 }
@@ -407,12 +407,12 @@ bool ManagedSerializableTypeInfoArray::IsTypeLoaded() const
 	return ScriptArray::BuildArrayClass(MElementType->GetMonoClass(), MRank);
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoArray::GetRttiStatic()
+RTTIType* ManagedSerializableTypeInfoArray::GetRttiStatic()
 {
 	return ManagedSerializableTypeInfoArrayRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoArray::GetRtti() const
+RTTIType* ManagedSerializableTypeInfoArray::GetRtti() const
 {
 	return ManagedSerializableTypeInfoArray::GetRttiStatic();
 }
@@ -444,12 +444,12 @@ bool ManagedSerializableTypeInfoList::IsTypeLoaded() const
 	return MonoUtil::BindGenericParameters(genericListClass->GetInternalClassInternal(), genParams, 1);
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoList::GetRttiStatic()
+RTTIType* ManagedSerializableTypeInfoList::GetRttiStatic()
 {
 	return ManagedSerializableTypeInfoListRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoList::GetRtti() const
+RTTIType* ManagedSerializableTypeInfoList::GetRtti() const
 {
 	return ManagedSerializableTypeInfoList::GetRttiStatic();
 }
@@ -483,12 +483,12 @@ bool ManagedSerializableTypeInfoDictionary::IsTypeLoaded() const
 	return MonoUtil::BindGenericParameters(genericDictionaryClass->GetInternalClassInternal(), params, 2);
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoDictionary::GetRttiStatic()
+RTTIType* ManagedSerializableTypeInfoDictionary::GetRttiStatic()
 {
 	return ManagedSerializableTypeInfoDictionaryRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableTypeInfoDictionary::GetRtti() const
+RTTIType* ManagedSerializableTypeInfoDictionary::GetRtti() const
 {
 	return ManagedSerializableTypeInfoDictionary::GetRttiStatic();
 }

@@ -5,22 +5,22 @@
 
 namespace bs
 {
-	RTTITypeBase* UnitTestSerializationObjectB::GetRttiStatic()
+	RTTIType* UnitTestSerializationObjectB::GetRttiStatic()
 	{
 		return UnitTestSerializationObjectBRTTI::Instance();
 	}
 
-	RTTITypeBase* UnitTestSerializationObjectB::GetRtti() const
+	RTTIType* UnitTestSerializationObjectB::GetRtti() const
 	{
 		return GetRttiStatic();
 	}
 
-	RTTITypeBase* UnitTestSerializationObjectA::GetRttiStatic()
+	RTTIType* UnitTestSerializationObjectA::GetRttiStatic()
 	{
 		return UnitTestSerializationObjectARTTI::Instance();
 	}
 
-	RTTITypeBase* UnitTestSerializationObjectA::GetRtti() const
+	RTTIType* UnitTestSerializationObjectA::GetRtti() const
 	{
 		return GetRttiStatic();
 	}

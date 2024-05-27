@@ -29,8 +29,8 @@ namespace bs
 		SPtr<RTTISchema> BaseTypeSchema;
 		Vector<RTTIFieldSchema> FieldSchemas;
 
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** List of operations that may be performed on a RTTIType object, to be used with RTTITypeOnOperationStarted/Ended notifies. */
@@ -123,23 +123,23 @@ namespace bs
 	 *	- Arrays of both plain and reflectable types are supported
 	 *	- Data blocks - A managed or unmanaged block of data. See ManagedDataBlock.
 	 */
-	class B3D_UTILITY_EXPORT RTTITypeBase
+	class B3D_UTILITY_EXPORT RTTIType
 	{
 	public:
-		RTTITypeBase() = default;
-		virtual ~RTTITypeBase();
+		RTTIType() = default;
+		virtual ~RTTIType();
 
 		/** Returns RTTI type information for all classes that derive from the class that owns this RTTI type. */
-		virtual Vector<RTTITypeBase*>& GetDerivedClasses() const = 0;
+		virtual Vector<RTTIType*>& GetDerivedClasses() const = 0;
 
 		/**
 		 * Returns RTTI type information for the class that owns this RTTI type. If the class has not base type, null is
 		 * returned instead.
 		 */
-		virtual RTTITypeBase* GetBaseClass() const = 0;
+		virtual RTTIType* GetBaseClass() const = 0;
 
 		/** Returns true if current RTTI class is derived from @p base. (Or if it is the same type as base) */
-		virtual bool IsDerivedFrom(const RTTITypeBase* base) const = 0;
+		virtual bool IsDerivedFrom(const RTTIType* base) const = 0;
 
 		/** Creates a new instance of the class owning this RTTI type. */
 		virtual SPtr<IReflectable> NewRttiObject() = 0;
@@ -198,14 +198,14 @@ namespace bs
 		 */
 
 		/** Called by the RTTI system when a class is first found in order to form child/parent class hierarchy. */
-		virtual void RegisterDerivedClassInternal(RTTITypeBase* derivedClass) = 0;
+		virtual void RegisterDerivedClassInternal(RTTIType* derivedClass) = 0;
 
 		/**
 		 * Constucts a cloned version of the underlying class. The cloned version will not have any field information and
 		 * should instead be used for passing to various RTTIField methods during serialization/deserialization. This
 		 * allows each object instance to have a unique places to store temporary instance-specific data.
 		 */
-		virtual RTTITypeBase* CloneInternal(FrameAllocator& alloc) = 0;
+		virtual RTTIType* CloneInternal(FrameAllocator& alloc) = 0;
 
 		/** Initializes the type schema. Should be called once after construction. */
 		void InitSchemaInternal();
@@ -234,7 +234,7 @@ namespace bs
 	public:
 		InitRTTIOnStart()
 		{
-			RTTITypeBase* rttiType = Type::GetRttiStatic();
+			RTTIType* rttiType = Type::GetRttiStatic();
 			rttiType->InitSchemaInternal();
 
 			IReflectable::RegisterRTTITypeInternal(rttiType);
@@ -251,7 +251,7 @@ namespace bs
 	public:
 		InitRTTIOnStart()
 		{
-			RTTITypeBase* rttiType = Type::GetRttiStatic();
+			RTTIType* rttiType = Type::GetRttiStatic();
 			rttiType->InitSchemaInternal();
 
 			IReflectable::RegisterRTTITypeInternal(rttiType);
@@ -267,14 +267,14 @@ namespace bs
 	template <typename Type>
 	struct GetRttiType
 	{
-		RTTITypeBase* operator()() { return Type::GetRttiStatic(); }
+		RTTIType* operator()() { return Type::GetRttiStatic(); }
 	};
 
 	/** Specialization for root class of RTTI hierarchy - IReflectable. */
 	template <>
 	struct GetRttiType<IReflectable>
 	{
-		RTTITypeBase* operator()() { return nullptr; }
+		RTTIType* operator()() { return nullptr; }
 	};
 
 	/** @} */
@@ -295,7 +295,7 @@ namespace bs
 	 * as well a providing information about class hierarchy, and run-time type checking.
 	 */
 	template <typename Type, typename BaseType, typename MyRTTIType>
-	class TRTTIType : public RTTITypeBase
+	class TRTTIType : public RTTIType
 	{
 	protected:
 		/************************************************************************/
@@ -322,27 +322,27 @@ namespace bs
 			return &inst;
 		}
 
-		Vector<RTTITypeBase*>& GetDerivedClasses() const override
+		Vector<RTTIType*>& GetDerivedClasses() const override
 		{
-			static Vector<RTTITypeBase*> mRTTIDerivedClasses;
+			static Vector<RTTIType*> mRTTIDerivedClasses;
 			return mRTTIDerivedClasses;
 		}
 
-		RTTITypeBase* GetBaseClass() const override
+		RTTIType* GetBaseClass() const override
 		{
 			return GetRttiType<BaseType>()();
 		}
 
-		bool IsDerivedFrom(const RTTITypeBase* base) const override
+		bool IsDerivedFrom(const RTTIType* base) const override
 		{
 			B3D_ASSERT(base != nullptr);
 
-			TInlineArray<const RTTITypeBase*, 6> todo;
+			TInlineArray<const RTTIType*, 6> todo;
 			todo.Add(base);
 
 			while(!todo.Empty())
 			{
-				const RTTITypeBase* currentType = todo.Back();
+				const RTTIType* currentType = todo.Back();
 				todo.Pop();
 
 				if(currentType->GetRttiId() == GetRttiId())
@@ -355,12 +355,12 @@ namespace bs
 			return false;
 		}
 
-		void RegisterDerivedClassInternal(RTTITypeBase* derivedClass) override
+		void RegisterDerivedClassInternal(RTTIType* derivedClass) override
 		{
 			GetDerivedClasses().push_back(derivedClass);
 		}
 
-		RTTITypeBase* CloneInternal(FrameAllocator& alloc) override
+		RTTIType* CloneInternal(FrameAllocator& alloc) override
 		{
 			return alloc.Construct<MyRTTIType>();
 		}
@@ -448,8 +448,8 @@ namespace bs
 	{
 		u32 Flags = 0;
 
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Returns true if the provided object can be safely cast into type T. */

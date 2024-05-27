@@ -6,12 +6,12 @@
 
 using namespace bs;
 
-RTTITypeBase* D6JointDrive::GetRttiStatic()
+RTTIType* D6JointDrive::GetRttiStatic()
 {
 	return D6JointDriveRTTI::Instance();
 }
 
-RTTITypeBase* D6JointDrive::GetRtti() const
+RTTIType* D6JointDrive::GetRtti() const
 {
 	return GetRttiStatic();
 }

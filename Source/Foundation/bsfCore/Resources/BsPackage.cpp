@@ -22,32 +22,32 @@ struct SerializedResourceHeader
 	u64 SizeInDataStream = 0; /**< Size of the resources when serialized to the data stream (in bytes). */
 };
 
-RTTITypeBase* PackageResourceMetaData::GetRttiStatic()
+RTTIType* PackageResourceMetaData::GetRttiStatic()
 {
 	return PackageResourceMetaDataRTTI::Instance();
 }
 
-RTTITypeBase* PackageResourceMetaData::GetRtti() const
+RTTIType* PackageResourceMetaData::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* PackageResourceUserMetaData::GetRttiStatic()
+RTTIType* PackageResourceUserMetaData::GetRttiStatic()
 {
 	return PackageResourceUserMetaDataRTTI::Instance();
 }
 
-RTTITypeBase* PackageResourceUserMetaData::GetRtti() const
+RTTIType* PackageResourceUserMetaData::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* PackageMetaData::GetRttiStatic()
+RTTIType* PackageMetaData::GetRttiStatic()
 {
 	return PackageMetaDataRTTI::Instance();
 }
 
-RTTITypeBase* PackageMetaData::GetRtti() const
+RTTIType* PackageMetaData::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -1244,12 +1244,12 @@ Package::ResourceInformation* Package::GetResourceInformation(const Path& path, 
 	return nullptr;
 }
 
-RTTITypeBase* Package::GetRttiStatic()
+RTTIType* Package::GetRttiStatic()
 {
 	return PackageRTTI::Instance();
 }
 
-RTTITypeBase* Package::GetRtti() const
+RTTIType* Package::GetRtti() const
 {
 	return GetRttiStatic();
 }

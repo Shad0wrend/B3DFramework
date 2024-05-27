@@ -68,12 +68,12 @@ void CLightProbeVolume::OnDestroyed()
 	GetSceneManager().UnbindActorInternal(mInternal);
 }
 
-RTTITypeBase* CLightProbeVolume::GetRttiStatic()
+RTTIType* CLightProbeVolume::GetRttiStatic()
 {
 	return CLightProbeVolumeRTTI::Instance();
 }
 
-RTTITypeBase* CLightProbeVolume::GetRtti() const
+RTTIType* CLightProbeVolume::GetRtti() const
 {
 	return CLightProbeVolume::GetRttiStatic();
 }

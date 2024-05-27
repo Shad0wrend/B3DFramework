@@ -42,10 +42,10 @@ namespace bs
 		 * @param flags					Flags controlling the serialization process.
 		 * @return						Serialized field, or null if the field data is null.
 		 */
-		SPtr<ISerialized> SerializeIterableField(IReflectable& object, RTTITypeBase& rttiInstance, RTTIIteratorField& field, SerializedObjectEncodeFlags flags);
+		SPtr<ISerialized> SerializeIterableField(IReflectable& object, RTTIType& rttiInstance, RTTIIteratorField& field, SerializedObjectEncodeFlags flags);
 
 		/** Serializes a data block field entry from a reflectable object into a SerializedInstance. */
-		SPtr<ISerialized> SerializeDataBlockField(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, SerializedObjectEncodeFlags flags);
+		SPtr<ISerialized> SerializeDataBlockField(IReflectable* object, RTTIType* rtti, RTTIField* field, SerializedObjectEncodeFlags flags);
 
 		/**
 		 * Serializes an element at the provided iterator location. 
@@ -57,7 +57,7 @@ namespace bs
 		 * @param flags					Flags controlling the serialization process.
 		 * @return						Serialized element, or null if the source element is null.
 		 */
-		SPtr<ISerialized> SerializeElement(IReflectable& object, RTTITypeBase& rttiInstance, RTTIIteratorField& field, IRTTIIterator& iterator, SerializedObjectEncodeFlags flags);
+		SPtr<ISerialized> SerializeElement(IReflectable& object, RTTIType& rttiInstance, RTTIIteratorField& field, IRTTIIterator& iterator, SerializedObjectEncodeFlags flags);
 
 		/**
 		 * Serializes a single tuple element from the provided iterator location. 
@@ -70,10 +70,10 @@ namespace bs
 		 * @param flags					Flags controlling the serialization process.
 		 * @return						Serialized tuple element, or null if the source element is null.
 		 */
-		SPtr<ISerialized> SerializeTupleElement(IReflectable& object, RTTITypeBase& rttiInstance, RTTIIteratorField& field, IRTTIIterator& iterator, u32 tupleElementIndex, SerializedObjectEncodeFlags flags);
+		SPtr<ISerialized> SerializeTupleElement(IReflectable& object, RTTIType& rttiInstance, RTTIIteratorField& field, IRTTIIterator& iterator, u32 tupleElementIndex, SerializedObjectEncodeFlags flags);
 
 		/** Deserializes a single field, array or map entry from the provided field, at the provided iterator location. */
-		void DeserializeElement(RTTITypeBase& rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<IRTTIIterator>& iterator, const SPtr<ISerialized>& entry);
+		void DeserializeElement(RTTIType& rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<IRTTIIterator>& iterator, const SPtr<ISerialized>& entry);
 
 		/** Similar to DeserializeElement overload accepting an iterator, except accepts a pre-allocated output field value in which to write to. */
 		void DeserializeElement(RTTIIteratorField& field, void* outFieldValue, const SPtr<ISerialized>& entry);

@@ -331,11 +331,11 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 		B3D_EXCEPT(InternalErrorException, "Encountered a base-class object while looking for a new object. Base class objects are only supposed to be parts of a larger object.");
 	}
 
-	RTTITypeBase* rtti = nullptr;
+	RTTIType* rtti = nullptr;
 	if(output)
 		rtti = output->GetRtti();
 
-	FrameVector<RTTITypeBase*> rttiInstances;
+	FrameVector<RTTIType*> rttiInstances;
 
 	auto finalizeObject = [&rttiInstances, this](IReflectable* object)
 	{
@@ -343,7 +343,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 		// depends on the old functionality, so we'll keep it this way
 		for(auto iter = rttiInstances.rbegin(); iter != rttiInstances.rend(); ++iter)
 		{
-			RTTITypeBase* curRTTI = *iter;
+			RTTIType* curRTTI = *iter;
 
 			curRTTI->NotifyOperationEnded(*object, RTTIOperationType::Deserialization, mRTTIContext);
 			mAllocator.Destruct(curRTTI);
@@ -352,10 +352,10 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 		rttiInstances.clear();
 	};
 
-	RTTITypeBase* curRTTI = rtti;
+	RTTIType* curRTTI = rtti;
 	while(curRTTI)
 	{
-		RTTITypeBase* rttiInstance = curRTTI->CloneInternal(mAllocator);
+		RTTIType* rttiInstance = curRTTI->CloneInternal(mAllocator);
 		rttiInstances.push_back(rttiInstance);
 
 		curRTTI = curRTTI->GetBaseClass();
@@ -367,7 +367,7 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 		(*iter)->NotifyOperationStarted(*output.get(), RTTIOperationType::Deserialization, mRTTIContext);
 	}
 
-	RTTITypeBase* rttiInstance = nullptr;
+	RTTIType* rttiInstance = nullptr;
 	u32 rttiInstanceIdx = 0;
 	if(!rttiInstances.empty())
 		rttiInstance = rttiInstances[0];
@@ -1004,16 +1004,16 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 	const bool writeMeta = !mFlags.IsSet(BinarySerializerFlag::NoMeta);
 	const bool compress = mFlags.IsSet(BinarySerializerFlag::Compress);
 
-	RTTITypeBase* rtti = object->GetRtti();
+	RTTIType* rtti = object->GetRtti();
 	bool isBaseClass = false;
 
-	FrameStack<RTTITypeBase*> rttiInstances;
+	FrameStack<RTTIType*> rttiInstances;
 
 	const auto cleanup = [&]() // TODO - Use scope guard
 	{
 		while(!rttiInstances.empty())
 		{
-			RTTITypeBase* rttiInstance = rttiInstances.top();
+			RTTIType* rttiInstance = rttiInstances.top();
 			rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::Serialization, mRTTIContext);
 			mAllocator.Destruct(rttiInstance);
 
@@ -1024,7 +1024,7 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 	// If an object has base classes, we need to iterate through all of them
 	do
 	{
-		RTTITypeBase* rttiInstance = rtti->CloneInternal(mAllocator);
+		RTTIType* rttiInstance = rtti->CloneInternal(mAllocator);
 		rttiInstances.push(rttiInstance);
 
 		rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::Serialization, mRTTIContext);

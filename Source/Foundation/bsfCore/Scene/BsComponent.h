@@ -204,8 +204,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ComponentRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 	protected:
 		Component() = default; // Serialization only

@@ -63,8 +63,8 @@ namespace bs
 		SPtr<GameObjectCollection> GameObjectCollection; /**< If deserializing game objects, collection to place them in. */
 		UnorderedMap<UUID, UUID> GameObjectIdRemapping; /**< If provided, game object IDs will be remapped to provided values. */
 
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/** @} */

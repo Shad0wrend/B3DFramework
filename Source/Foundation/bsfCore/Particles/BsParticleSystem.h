@@ -133,8 +133,8 @@ namespace bs
 
 	public:
 		friend class ParticleDepthCollisonSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */
@@ -337,8 +337,8 @@ namespace bs
 
 	public:
 		friend class ParticleVectorFieldSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	namespace ct
@@ -404,8 +404,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleSystemSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Settings used for controlling particle system GPU simulation. */
@@ -421,8 +421,8 @@ namespace bs
 
 	public:
 		friend class ParticleGpuSimulationSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */
@@ -644,8 +644,8 @@ namespace bs
 
 	public:
 		friend class ParticleSystemRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

@@ -94,8 +94,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class AutoExposureSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Settings that control tonemap post-process. */
@@ -151,8 +151,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class TonemappingSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Settings that control white balance post-process. */
@@ -186,8 +186,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class WhiteBalanceSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Settings that control color grading post-process. */
@@ -230,8 +230,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ColorGradingSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Settings that control screen space ambient occlusion. */
@@ -304,8 +304,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class AmbientOcclusionSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Types of available depth of field effects. */
@@ -473,8 +473,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class DepthOfFieldSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	namespace ct
@@ -574,8 +574,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class MotionBlurSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Settings that control temporal anti-aliasing. */
@@ -607,8 +607,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class TemporalAASettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -654,8 +654,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ScreenSpaceReflectionsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Settings that control the bloom effect. Bloom adds an extra highlight to bright areas of the scene. */
@@ -708,8 +708,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class BloomSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Settings that control the screen-space lens flare effect. */
@@ -817,8 +817,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ScreenSpaceLensFlareSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Types of available chromatic aberration effects. */
@@ -893,8 +893,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ChromaticAberrationSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	namespace ct
@@ -931,8 +931,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class FilmGrainSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Various options that control shadow rendering for a specific view. */
@@ -981,8 +981,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ShadowSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Base class for both main and render thread variants of RenderSettings. */
@@ -1181,8 +1181,8 @@ namespace bs
 
 	public:
 		friend class RenderSettingsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	namespace ct

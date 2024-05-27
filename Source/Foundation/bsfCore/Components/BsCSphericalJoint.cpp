@@ -64,12 +64,12 @@ SPtr<Joint> CSphericalJoint::CreateInternal()
 	return joint;
 }
 
-RTTITypeBase* CSphericalJoint::GetRttiStatic()
+RTTIType* CSphericalJoint::GetRttiStatic()
 {
 	return CSphericalJointRTTI::Instance();
 }
 
-RTTITypeBase* CSphericalJoint::GetRtti() const
+RTTIType* CSphericalJoint::GetRtti() const
 {
 	return CSphericalJoint::GetRttiStatic();
 }

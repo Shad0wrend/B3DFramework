@@ -198,7 +198,7 @@ namespace bs
 	class LogEntry;
 	// Reflection
 	class IReflectable;
-	class RTTITypeBase;
+	class RTTIType;
 	// Serialization
 	class ISerializable;
 	class SerializableType;

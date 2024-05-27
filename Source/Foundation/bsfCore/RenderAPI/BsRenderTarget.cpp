@@ -41,12 +41,12 @@ void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* RenderTarget::GetRttiStatic()
+RTTIType* RenderTarget::GetRttiStatic()
 {
 	return RenderTargetRTTI::Instance();
 }
 
-RTTITypeBase* RenderTarget::GetRtti() const
+RTTIType* RenderTarget::GetRtti() const
 {
 	return RenderTarget::GetRttiStatic();
 }

@@ -425,92 +425,92 @@ bool SerializedMap::Equals(const SPtr<ISerialized>& other) const
 	return false;
 }
 
-RTTITypeBase* ISerialized::GetRttiStatic()
+RTTIType* ISerialized::GetRttiStatic()
 {
 	return ISerializedRTTI::Instance();
 }
 
-RTTITypeBase* ISerialized::GetRtti() const
+RTTIType* ISerialized::GetRtti() const
 {
 	return ISerialized::GetRttiStatic();
 }
 
-RTTITypeBase* SerializedDataBlock::GetRttiStatic()
+RTTIType* SerializedDataBlock::GetRttiStatic()
 {
 	return SerializedDataBlockRTTI::Instance();
 }
 
-RTTITypeBase* SerializedDataBlock::GetRtti() const
+RTTIType* SerializedDataBlock::GetRtti() const
 {
 	return SerializedDataBlock::GetRttiStatic();
 }
 
-RTTITypeBase* SerializedPlainData::GetRttiStatic()
+RTTIType* SerializedPlainData::GetRttiStatic()
 {
 	return SerializedPlainDataRTTI::Instance();
 }
 
-RTTITypeBase* SerializedPlainData::GetRtti() const
+RTTIType* SerializedPlainData::GetRtti() const
 {
 	return SerializedPlainData::GetRttiStatic();
 }
 
-RTTITypeBase* SerializedObject::GetRttiStatic()
+RTTIType* SerializedObject::GetRttiStatic()
 {
 	return SerializedObjectRTTI::Instance();
 }
 
-RTTITypeBase* SerializedObject::GetRtti() const
+RTTIType* SerializedObject::GetRtti() const
 {
 	return SerializedObject::GetRttiStatic();
 }
 
-RTTITypeBase* SerializedArray::GetRttiStatic()
+RTTIType* SerializedArray::GetRttiStatic()
 {
 	return SerializedArrayRTTI::Instance();
 }
 
-RTTITypeBase* SerializedArray::GetRtti() const
+RTTIType* SerializedArray::GetRtti() const
 {
 	return SerializedArray::GetRttiStatic();
 }
 
-RTTITypeBase* SerializedMap::GetRttiStatic()
+RTTIType* SerializedMap::GetRttiStatic()
 {
 	return SerializedMapRTTI::Instance();
 }
 
-RTTITypeBase* SerializedMap::GetRtti() const
+RTTIType* SerializedMap::GetRtti() const
 {
 	return SerializedMap::GetRttiStatic();
 }
 
-RTTITypeBase* SerializedSubObject::GetRttiStatic()
+RTTIType* SerializedSubObject::GetRttiStatic()
 {
 	return SerializedSubObjectRTTI::Instance();
 }
 
-RTTITypeBase* SerializedSubObject::GetRtti() const
+RTTIType* SerializedSubObject::GetRtti() const
 {
 	return SerializedSubObject::GetRttiStatic();
 }
 
-RTTITypeBase* SerializedField::GetRttiStatic()
+RTTIType* SerializedField::GetRttiStatic()
 {
 	return SerializedFieldRTTI::Instance();
 }
 
-RTTITypeBase* SerializedField::GetRtti() const
+RTTIType* SerializedField::GetRtti() const
 {
 	return SerializedField::GetRttiStatic();
 }
 
-RTTITypeBase* SerializedTuple::GetRttiStatic()
+RTTIType* SerializedTuple::GetRttiStatic()
 {
 	return SerializedTupleRTTI::Instance();
 }
 
-RTTITypeBase* SerializedTuple::GetRtti() const
+RTTIType* SerializedTuple::GetRtti() const
 {
 	return GetRttiStatic();
 }

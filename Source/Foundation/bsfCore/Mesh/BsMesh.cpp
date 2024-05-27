@@ -163,12 +163,12 @@ HMesh Mesh::Dummy()
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* Mesh::GetRttiStatic()
+RTTIType* Mesh::GetRttiStatic()
 {
 	return MeshRTTI::Instance();
 }
 
-RTTITypeBase* Mesh::GetRtti() const
+RTTIType* Mesh::GetRtti() const
 {
 	return Mesh::GetRttiStatic();
 }

@@ -126,8 +126,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class PassRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */
@@ -173,8 +173,8 @@ namespace bs
 			/************************************************************************/
 		public:
 			friend class bs::PassRenderProxyRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const override;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
 		};
 
 		/** @} */

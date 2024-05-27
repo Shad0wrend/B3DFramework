@@ -87,12 +87,12 @@ void CAudioListener::UpdateTransform()
 	mInternal->SetVelocity(mVelocity);
 }
 
-RTTITypeBase* CAudioListener::GetRttiStatic()
+RTTIType* CAudioListener::GetRttiStatic()
 {
 	return CAudioListenerRTTI::Instance();
 }
 
-RTTITypeBase* CAudioListener::GetRtti() const
+RTTIType* CAudioListener::GetRtti() const
 {
 	return CAudioListener::GetRttiStatic();
 }

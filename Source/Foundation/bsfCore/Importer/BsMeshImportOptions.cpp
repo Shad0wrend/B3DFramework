@@ -5,22 +5,22 @@
 
 using namespace bs;
 
-RTTITypeBase* AnimationSplitInfo::GetRttiStatic()
+RTTIType* AnimationSplitInfo::GetRttiStatic()
 {
 	return AnimationSplitInfoRTTI::Instance();
 }
 
-RTTITypeBase* AnimationSplitInfo::GetRtti() const
+RTTIType* AnimationSplitInfo::GetRtti() const
 {
 	return AnimationSplitInfo::GetRttiStatic();
 }
 
-RTTITypeBase* ImportedAnimationEvents::GetRttiStatic()
+RTTIType* ImportedAnimationEvents::GetRttiStatic()
 {
 	return ImportedAnimationEventsRTTI::Instance();
 }
 
-RTTITypeBase* ImportedAnimationEvents::GetRtti() const
+RTTIType* ImportedAnimationEvents::GetRtti() const
 {
 	return ImportedAnimationEvents::GetRttiStatic();
 }
@@ -30,12 +30,12 @@ SPtr<MeshImportOptions> MeshImportOptions::Create()
 	return B3DMakeShared<MeshImportOptions>();
 }
 
-RTTITypeBase* MeshImportOptions::GetRttiStatic()
+RTTIType* MeshImportOptions::GetRttiStatic()
 {
 	return MeshImportOptionsRTTI::Instance();
 }
 
-RTTITypeBase* MeshImportOptions::GetRtti() const
+RTTIType* MeshImportOptions::GetRtti() const
 {
 	return MeshImportOptions::GetRttiStatic();
 }

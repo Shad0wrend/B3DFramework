@@ -32,22 +32,22 @@ SPtr<PersistentCacheObject> PersistentCacheObject::Create(const TInlineArray<SPt
 	return cacheObject;
 }
 
-RTTITypeBase* PersistentCacheObject::GetRttiStatic()
+RTTIType* PersistentCacheObject::GetRttiStatic()
 {
 	return PersistentCacheObjectRTTI::Instance();
 }
 
-RTTITypeBase* PersistentCacheObject::GetRtti() const
+RTTIType* PersistentCacheObject::GetRtti() const
 {
 	return PersistentCacheObject::GetRttiStatic();
 }
 
-RTTITypeBase* PersistentCacheMetaData::GetRttiStatic()
+RTTIType* PersistentCacheMetaData::GetRttiStatic()
 {
 	return PersistentCacheMetaDataRTTI::Instance();
 }
 
-RTTITypeBase* PersistentCacheMetaData::GetRtti() const
+RTTIType* PersistentCacheMetaData::GetRtti() const
 {
 	return PersistentCacheMetaData::GetRttiStatic();
 }

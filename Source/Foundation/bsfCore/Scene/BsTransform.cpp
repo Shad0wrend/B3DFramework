@@ -147,12 +147,12 @@ void Transform::SetForward(const Vector3& forwardDir)
 	SetRotation(currentRotation);
 }
 
-RTTITypeBase* Transform::GetRttiStatic()
+RTTIType* Transform::GetRttiStatic()
 {
 	return TransformRTTI::Instance();
 }
 
-RTTITypeBase* Transform::GetRtti() const
+RTTIType* Transform::GetRtti() const
 {
 	return Transform::GetRttiStatic();
 }

@@ -163,12 +163,12 @@ SPtr<Viewport> Viewport::CreateEmpty()
 	return viewportPtr;
 }
 
-RTTITypeBase* Viewport::GetRttiStatic()
+RTTIType* Viewport::GetRttiStatic()
 {
 	return ViewportRTTI::Instance();
 }
 
-RTTITypeBase* Viewport::GetRtti() const
+RTTIType* Viewport::GetRtti() const
 {
 	return Viewport::GetRttiStatic();
 }

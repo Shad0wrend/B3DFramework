@@ -188,8 +188,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SkeletonRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 		/**
 		 * Creates a Skeleton with no data. You must populate its data manually.

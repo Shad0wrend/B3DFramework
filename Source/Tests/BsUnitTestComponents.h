@@ -27,8 +27,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class UnitTestComponentARTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		UnitTestComponentA() {} // Serialization only
@@ -54,8 +54,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class UnitTestComponentBRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		UnitTestComponentB() {} // Serialization only

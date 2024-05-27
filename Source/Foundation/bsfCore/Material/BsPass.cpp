@@ -171,12 +171,12 @@ SPtr<Pass> Pass::CreateEmpty()
 	return newPassPtr;
 }
 
-RTTITypeBase* Pass::GetRttiStatic()
+RTTIType* Pass::GetRttiStatic()
 {
 	return PassRTTI::Instance();
 }
 
-RTTITypeBase* Pass::GetRtti() const
+RTTIType* Pass::GetRtti() const
 {
 	return Pass::GetRttiStatic();
 }
@@ -224,12 +224,12 @@ SPtr<Pass> Pass::CreateEmpty()
 	return passShared;
 }
 
-RTTITypeBase* Pass::GetRttiStatic()
+RTTIType* Pass::GetRttiStatic()
 {
 	return PassRenderProxyRTTI::Instance();
 }
 
-RTTITypeBase* Pass::GetRtti() const
+RTTIType* Pass::GetRtti() const
 {
 	return Pass::GetRttiStatic();
 }

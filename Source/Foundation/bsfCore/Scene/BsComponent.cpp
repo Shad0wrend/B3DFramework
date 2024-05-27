@@ -133,12 +133,12 @@ void Component::RefreshEnabledState(bool triggerEvents)
 	}
 }
 
-RTTITypeBase* Component::GetRttiStatic()
+RTTIType* Component::GetRttiStatic()
 {
 	return ComponentRTTI::Instance();
 }
 
-RTTITypeBase* Component::GetRtti() const
+RTTIType* Component::GetRtti() const
 {
 	return Component::GetRttiStatic();
 }

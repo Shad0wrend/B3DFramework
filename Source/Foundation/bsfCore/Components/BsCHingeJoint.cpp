@@ -96,12 +96,12 @@ SPtr<Joint> CHingeJoint::CreateInternal()
 	return joint;
 }
 
-RTTITypeBase* CHingeJoint::GetRttiStatic()
+RTTIType* CHingeJoint::GetRttiStatic()
 {
 	return CHingeJointRTTI::Instance();
 }
 
-RTTITypeBase* CHingeJoint::GetRtti() const
+RTTIType* CHingeJoint::GetRtti() const
 {
 	return CHingeJoint::GetRttiStatic();
 }

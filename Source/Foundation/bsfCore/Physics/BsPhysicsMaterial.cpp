@@ -23,12 +23,12 @@ SPtr<PhysicsMaterial> PhysicsMaterial::CreatePtrInternal(float staticFriction, f
 	return newMaterial;
 }
 
-RTTITypeBase* PhysicsMaterial::GetRttiStatic()
+RTTIType* PhysicsMaterial::GetRttiStatic()
 {
 	return PhysicsMaterialRTTI::Instance();
 }
 
-RTTITypeBase* PhysicsMaterial::GetRtti() const
+RTTIType* PhysicsMaterial::GetRtti() const
 {
 	return GetRttiStatic();
 }

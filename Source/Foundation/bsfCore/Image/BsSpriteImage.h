@@ -218,8 +218,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SpriteImageRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

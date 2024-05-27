@@ -16,12 +16,12 @@ SPtr<AudioListener> AudioListener::Create()
 	return GetAudio().CreateListener();
 }
 
-RTTITypeBase* AudioListener::GetRttiStatic()
+RTTIType* AudioListener::GetRttiStatic()
 {
 	return AudioListenerRTTI::Instance();
 }
 
-RTTITypeBase* AudioListener::GetRtti() const
+RTTIType* AudioListener::GetRtti() const
 {
 	return AudioListener::GetRttiStatic();
 }

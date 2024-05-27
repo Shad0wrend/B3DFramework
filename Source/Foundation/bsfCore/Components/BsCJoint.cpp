@@ -285,12 +285,12 @@ void CJoint::TriggerOnJointBroken()
 	OnJointBreak();
 }
 
-RTTITypeBase* CJoint::GetRttiStatic()
+RTTIType* CJoint::GetRttiStatic()
 {
 	return CJointRTTI::Instance();
 }
 
-RTTITypeBase* CJoint::GetRtti() const
+RTTIType* CJoint::GetRtti() const
 {
 	return CJoint::GetRttiStatic();
 }

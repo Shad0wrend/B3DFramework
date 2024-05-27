@@ -12,7 +12,7 @@ using namespace bs;
  * Checks if the specified type (or any of its derived classes) have any IReflectable pointer or value types as
  * their fields.
  */
-bool HasReflectableChildren(RTTITypeBase* type)
+bool HasReflectableChildren(RTTIType* type)
 {
 	{
 		const u32 fieldCount = type->GetFieldCount();
@@ -28,7 +28,7 @@ bool HasReflectableChildren(RTTITypeBase* type)
 		}
 	}
 
-	const Vector<RTTITypeBase*>& derivedClasses = type->GetDerivedClasses();
+	const Vector<RTTIType*>& derivedClasses = type->GetDerivedClasses();
 	for(auto& derivedClass : derivedClasses)
 	{
 		const u32 fieldCount = derivedClass->GetFieldCount();
@@ -87,7 +87,7 @@ static void FindResourceDependenciesRecursive(IReflectable& object, FrameAllocat
 		}
 	};
 
-	RTTITypeBase* const rtti = object.GetRtti();
+	RTTIType* const rtti = object.GetRtti();
 	RTTIObjectWrapper::Object<true> wrappedObject(&object, rtti, &allocator);
 	RTTIObjectWrapper::IterateFieldTupleValues(wrappedObject, RTTIOperationType::GatherReferences, fnProcessFieldTupleValue, fnFieldFilter);
 }
@@ -173,12 +173,12 @@ class RTTIOperationEngineContextRTTI : public TRTTIType<RTTIOperationEngineConte
 	}
 };
 
-RTTITypeBase* RTTIOperationEngineContext::GetRttiStatic()
+RTTIType* RTTIOperationEngineContext::GetRttiStatic()
 {
 	return RTTIOperationEngineContextRTTI::Instance();
 }
 
-RTTITypeBase* RTTIOperationEngineContext::GetRtti() const
+RTTIType* RTTIOperationEngineContext::GetRtti() const
 {
 	return GetRttiStatic();
 }

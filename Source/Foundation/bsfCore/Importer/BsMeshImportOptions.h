@@ -49,8 +49,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class AnimationSplitInfoRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** A set of animation events that will be added to an animation clip during animation import. */
@@ -70,8 +70,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ImportedAnimationEventsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -154,8 +154,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class MeshImportOptionsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

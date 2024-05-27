@@ -13,12 +13,12 @@ SPtr<TextureImportOptions> TextureImportOptions::Create()
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
-RTTITypeBase* TextureImportOptions::GetRttiStatic()
+RTTIType* TextureImportOptions::GetRttiStatic()
 {
 	return TextureImportOptionsRTTI::Instance();
 }
 
-RTTITypeBase* TextureImportOptions::GetRtti() const
+RTTIType* TextureImportOptions::GetRtti() const
 {
 	return TextureImportOptions::GetRttiStatic();
 }

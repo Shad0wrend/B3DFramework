@@ -65,8 +65,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CPlaneColliderRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 	protected:
 		CPlaneCollider(); // Serialization only

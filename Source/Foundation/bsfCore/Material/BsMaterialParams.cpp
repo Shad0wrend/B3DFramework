@@ -309,32 +309,32 @@ void MaterialParamsBase::ReportGetParamError(GetParamResult errorCode, const Str
 	}
 }
 
-RTTITypeBase* MaterialParamTextureData::GetRttiStatic()
+RTTIType* MaterialParamTextureData::GetRttiStatic()
 {
 	return MaterialParamTextureDataRTTI::Instance();
 }
 
-RTTITypeBase* MaterialParamTextureData::GetRtti() const
+RTTIType* MaterialParamTextureData::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* MaterialParamBufferData::GetRttiStatic()
+RTTIType* MaterialParamBufferData::GetRttiStatic()
 {
 	return MaterialParamBufferDataRTTI::Instance();
 }
 
-RTTITypeBase* MaterialParamBufferData::GetRtti() const
+RTTIType* MaterialParamBufferData::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* MaterialParamSamplerStateData::GetRttiStatic()
+RTTIType* MaterialParamSamplerStateData::GetRttiStatic()
 {
 	return MaterialParamSamplerStateDataRTTI::Instance();
 }
 
-RTTITypeBase* MaterialParamSamplerStateData::GetRtti() const
+RTTIType* MaterialParamSamplerStateData::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -1018,12 +1018,12 @@ void MaterialParams::GetCoreObjectDependencies(Vector<CoreObject*>& coreObjects)
 	}
 }
 
-RTTITypeBase* MaterialParams::GetRttiStatic()
+RTTIType* MaterialParams::GetRttiStatic()
 {
 	return MaterialParamsRTTI::Instance();
 }
 
-RTTITypeBase* MaterialParams::GetRtti() const
+RTTIType* MaterialParams::GetRtti() const
 {
 	return MaterialParams::GetRttiStatic();
 }

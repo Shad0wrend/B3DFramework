@@ -227,12 +227,12 @@ void ManagedSerializableList::InitMonoObjects(MonoClass* listClass)
 	mCopyToMethod = listClass->GetMethod("CopyTo", 4);
 }
 
-RTTITypeBase* ManagedSerializableList::GetRttiStatic()
+RTTIType* ManagedSerializableList::GetRttiStatic()
 {
 	return ManagedSerializableListRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableList::GetRtti() const
+RTTIType* ManagedSerializableList::GetRtti() const
 {
 	return ManagedSerializableList::GetRttiStatic();
 }

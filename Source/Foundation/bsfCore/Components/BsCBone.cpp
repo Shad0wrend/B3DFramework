@@ -105,12 +105,12 @@ void CBone::SetParentInternal(const HAnimation& animation, bool isInternal)
 	mParent = animation;
 }
 
-RTTITypeBase* CBone::GetRttiStatic()
+RTTIType* CBone::GetRttiStatic()
 {
 	return CBoneRTTI::Instance();
 }
 
-RTTITypeBase* CBone::GetRtti() const
+RTTIType* CBone::GetRtti() const
 {
 	return CBone::GetRttiStatic();
 }

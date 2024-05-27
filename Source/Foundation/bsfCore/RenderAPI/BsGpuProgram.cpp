@@ -6,12 +6,12 @@
 
 using namespace bs;
 
-RTTITypeBase* GpuProgramCreateInformation::GetRttiStatic()
+RTTIType* GpuProgramCreateInformation::GetRttiStatic()
 {
 	return GpuProgramCreateInformationRTTI::Instance();
 }
 
-RTTITypeBase* GpuProgramCreateInformation::GetRtti() const
+RTTIType* GpuProgramCreateInformation::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -22,12 +22,12 @@ GpuProgramBytecode::~GpuProgramBytecode()
 		B3DFree(Instructions.Data);
 }
 
-RTTITypeBase* GpuProgramBytecode::GetRttiStatic()
+RTTIType* GpuProgramBytecode::GetRttiStatic()
 {
 	return GpuProgramBytecodeRTTI::Instance();
 }
 
-RTTITypeBase* GpuProgramBytecode::GetRtti() const
+RTTIType* GpuProgramBytecode::GetRtti() const
 {
 	return GpuProgramBytecode::GetRttiStatic();
 }
@@ -48,12 +48,12 @@ bool GpuProgram::IsSupported() const
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
-RTTITypeBase* GpuProgram::GetRttiStatic()
+RTTIType* GpuProgram::GetRttiStatic()
 {
 	return GpuProgramRTTI::Instance();
 }
 
-RTTITypeBase* GpuProgram::GetRtti() const
+RTTIType* GpuProgram::GetRtti() const
 {
 	return GpuProgram::GetRttiStatic();
 }

@@ -143,12 +143,12 @@ SPtr<ParticleTextureAnimation> ParticleTextureAnimation::Create()
 	return B3DMakeShared<ParticleTextureAnimation>();
 }
 
-RTTITypeBase* ParticleTextureAnimation::GetRttiStatic()
+RTTIType* ParticleTextureAnimation::GetRttiStatic()
 {
 	return ParticleTextureAnimationRTTI::Instance();
 }
 
-RTTITypeBase* ParticleTextureAnimation::GetRtti() const
+RTTIType* ParticleTextureAnimation::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -209,12 +209,12 @@ SPtr<ParticleOrbit> ParticleOrbit::Create()
 	return B3DMakeShared<ParticleOrbit>();
 }
 
-RTTITypeBase* ParticleOrbit::GetRttiStatic()
+RTTIType* ParticleOrbit::GetRttiStatic()
 {
 	return ParticleOrbitRTTI::Instance();
 }
 
-RTTITypeBase* ParticleOrbit::GetRtti() const
+RTTIType* ParticleOrbit::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -258,12 +258,12 @@ SPtr<ParticleVelocity> ParticleVelocity::Create()
 	return B3DMakeShared<ParticleVelocity>();
 }
 
-RTTITypeBase* ParticleVelocity::GetRttiStatic()
+RTTIType* ParticleVelocity::GetRttiStatic()
 {
 	return ParticleVelocityRTTI::Instance();
 }
 
-RTTITypeBase* ParticleVelocity::GetRtti() const
+RTTIType* ParticleVelocity::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -307,12 +307,12 @@ SPtr<ParticleForce> ParticleForce::Create()
 	return B3DMakeShared<ParticleForce>();
 }
 
-RTTITypeBase* ParticleForce::GetRttiStatic()
+RTTIType* ParticleForce::GetRttiStatic()
 {
 	return ParticleForceRTTI::Instance();
 }
 
-RTTITypeBase* ParticleForce::GetRtti() const
+RTTIType* ParticleForce::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -356,12 +356,12 @@ SPtr<ParticleGravity> ParticleGravity::Create()
 	return B3DMakeShared<ParticleGravity>();
 }
 
-RTTITypeBase* ParticleGravity::GetRttiStatic()
+RTTIType* ParticleGravity::GetRttiStatic()
 {
 	return ParticleGravityRTTI::Instance();
 }
 
-RTTITypeBase* ParticleGravity::GetRtti() const
+RTTIType* ParticleGravity::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -394,12 +394,12 @@ SPtr<ParticleColor> ParticleColor::Create()
 	return B3DMakeShared<ParticleColor>();
 }
 
-RTTITypeBase* ParticleColor::GetRttiStatic()
+RTTIType* ParticleColor::GetRttiStatic()
 {
 	return ParticleColorRTTI::Instance();
 }
 
-RTTITypeBase* ParticleColor::GetRtti() const
+RTTIType* ParticleColor::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -446,12 +446,12 @@ SPtr<ParticleSize> ParticleSize::Create()
 	return B3DMakeShared<ParticleSize>();
 }
 
-RTTITypeBase* ParticleSize::GetRttiStatic()
+RTTIType* ParticleSize::GetRttiStatic()
 {
 	return ParticleSizeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleSize::GetRtti() const
+RTTIType* ParticleSize::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -498,12 +498,12 @@ SPtr<ParticleRotation> ParticleRotation::Create()
 	return B3DMakeShared<ParticleRotation>();
 }
 
-RTTITypeBase* ParticleRotation::GetRttiStatic()
+RTTIType* ParticleRotation::GetRttiStatic()
 {
 	return ParticleRotationRTTI::Instance();
 }
 
-RTTITypeBase* ParticleRotation::GetRtti() const
+RTTIType* ParticleRotation::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -761,12 +761,12 @@ SPtr<ParticleCollisions> ParticleCollisions::Create()
 	return B3DMakeShared<ParticleCollisions>();
 }
 
-RTTITypeBase* ParticleCollisions::GetRttiStatic()
+RTTIType* ParticleCollisions::GetRttiStatic()
 {
 	return ParticleCollisionsRTTI::Instance();
 }
 
-RTTITypeBase* ParticleCollisions::GetRtti() const
+RTTIType* ParticleCollisions::GetRtti() const
 {
 	return GetRttiStatic();
 }

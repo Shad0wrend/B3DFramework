@@ -220,8 +220,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class LightProbeVolumeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		LightProbeVolume() = default; // Serialization only

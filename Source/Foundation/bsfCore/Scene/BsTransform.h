@@ -167,8 +167,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class TransformRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

@@ -630,12 +630,12 @@ void CAnimation::EventTriggered(const HAnimationClip& clip, const String& name)
 		ScriptOnEventTriggeredInternal(clip, name);
 }
 
-RTTITypeBase* CAnimation::GetRttiStatic()
+RTTIType* CAnimation::GetRttiStatic()
 {
 	return CAnimationRTTI::Instance();
 }
 
-RTTITypeBase* CAnimation::GetRtti() const
+RTTIType* CAnimation::GetRtti() const
 {
 	return CAnimation::GetRttiStatic();
 }

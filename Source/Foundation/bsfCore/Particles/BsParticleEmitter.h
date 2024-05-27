@@ -198,8 +198,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterConeShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Information describing a ParticleEmitterSphereShape. */
@@ -264,8 +264,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterSphereShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Information describing a ParticleEmitterHemisphereShape. */
@@ -330,8 +330,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterHemisphereShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Determines the emission type for the cone particle emitter shape. */
@@ -405,8 +405,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterBoxShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Information describing a ParticleEmitterLineShape. */
@@ -466,8 +466,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterLineShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Information describing a ParticleEmitterCircleShape. */
@@ -542,8 +542,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterCircleShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Information describing a ParticleEmitterRectShape. */
@@ -597,8 +597,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterRectShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Determines the emission type for the mesh particle emitter shape. */
@@ -756,8 +756,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterStaticMeshShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Information describing a ParticleEmitterSkinnedMeshShape. */
@@ -828,8 +828,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterSkinnedMeshShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Specifies a burst of particles that occurs at a certain time point. */
@@ -1074,8 +1074,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleEmitterRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

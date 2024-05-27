@@ -9,12 +9,12 @@ UnitTestComponentA::UnitTestComponentA(const HSceneObject& parent)
 	: Component(parent)
 {}
 
-RTTITypeBase* UnitTestComponentA::GetRttiStatic()
+RTTIType* UnitTestComponentA::GetRttiStatic()
 {
 	return UnitTestComponentARTTI::Instance();
 }
 
-RTTITypeBase* UnitTestComponentA::GetRtti() const
+RTTIType* UnitTestComponentA::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -23,12 +23,12 @@ UnitTestComponentB::UnitTestComponentB(const HSceneObject& parent)
 	: Component(parent)
 {}
 
-RTTITypeBase* UnitTestComponentB::GetRttiStatic()
+RTTIType* UnitTestComponentB::GetRttiStatic()
 {
 	return UnitTestComponentBRTTI::Instance();
 }
 
-RTTITypeBase* UnitTestComponentB::GetRtti() const
+RTTIType* UnitTestComponentB::GetRtti() const
 {
 	return GetRttiStatic();
 }

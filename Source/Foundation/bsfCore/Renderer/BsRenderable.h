@@ -221,8 +221,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class RenderableRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	namespace ct

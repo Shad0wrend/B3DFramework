@@ -15,12 +15,12 @@ SPtr<MorphShape> MorphShape::Create(const String& name, float weight, const Vect
 	return B3DMakeShared<MorphShape>(name, weight, vertices);
 }
 
-RTTITypeBase* MorphShape::GetRttiStatic()
+RTTIType* MorphShape::GetRttiStatic()
 {
 	return MorphShapeRTTI::Instance();
 }
 
-RTTITypeBase* MorphShape::GetRtti() const
+RTTIType* MorphShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -44,12 +44,12 @@ SPtr<MorphChannel> MorphChannel::CreateEmpty()
 	return B3DMakeSharedFromExisting(raw);
 }
 
-RTTITypeBase* MorphChannel::GetRttiStatic()
+RTTIType* MorphChannel::GetRttiStatic()
 {
 	return MorphChannelRTTI::Instance();
 }
 
-RTTITypeBase* MorphChannel::GetRtti() const
+RTTIType* MorphChannel::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -71,12 +71,12 @@ SPtr<MorphShapes> MorphShapes::CreateEmpty()
 	return B3DMakeSharedFromExisting(raw);
 }
 
-RTTITypeBase* MorphShapes::GetRttiStatic()
+RTTIType* MorphShapes::GetRttiStatic()
 {
 	return MorphShapesRTTI::Instance();
 }
 
-RTTITypeBase* MorphShapes::GetRtti() const
+RTTIType* MorphShapes::GetRtti() const
 {
 	return GetRttiStatic();
 }

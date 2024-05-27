@@ -510,12 +510,12 @@ void CRigidbody::OnTransformChanged(TransformChangedFlags flags)
 		mParentJoint->NotifyRigidbodyMoved(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));
 }
 
-RTTITypeBase* CRigidbody::GetRttiStatic()
+RTTIType* CRigidbody::GetRttiStatic()
 {
 	return CRigidbodyRTTI::Instance();
 }
 
-RTTITypeBase* CRigidbody::GetRtti() const
+RTTIType* CRigidbody::GetRtti() const
 {
 	return CRigidbody::GetRttiStatic();
 }

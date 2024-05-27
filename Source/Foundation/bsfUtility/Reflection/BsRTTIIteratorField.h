@@ -21,7 +21,7 @@ namespace bs
 		virtual ~RTTIIteratorField() = default;
 
 		/** Returns the iterator that can be used for iterating all entries in the field. */
-		virtual SPtr<IRTTIIterator> GetIterator(RTTITypeBase* rttiTypeInstance, void* object, FrameAllocator& frameAllocator) const = 0;
+		virtual SPtr<IRTTIIterator> GetIterator(RTTIType* rttiTypeInstance, void* object, FrameAllocator& frameAllocator) const = 0;
 
 		/** Returns true if the iterator is allowed to seek to index. True for iterators over arrays. */
 		virtual bool IteratorSupportsSeekToIndex() const = 0;
@@ -30,16 +30,16 @@ namespace bs
 		virtual bool IteratorSupportsSeekToKey() const = 0;
 
 		/** Returns the current value of the iterator. */
-		virtual const void* GetIteratorValue(RTTITypeBase* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const = 0;
+		virtual const void* GetIteratorValue(RTTIType* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const = 0;
 
 		/** Returns a modifiable copy of the current value of the iterator. Returned value must be freed via FreeFieldValue() when done using it. */
-		virtual void* GetIteratorValueCopy(RTTITypeBase* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const = 0;
+		virtual void* GetIteratorValueCopy(RTTIType* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const = 0;
 
 		/**
 		 * Inserts a new value before the iterator location. @p value must have been created by a call to CreateEmptyFieldValue() or
 		 * GetIteratorValueCopy(), using the same @p frameAllocator. 
 		 */
-		virtual void SetIteratorValue(RTTITypeBase* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator, void* value) = 0;
+		virtual void SetIteratorValue(RTTIType* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator, void* value) = 0;
 
 		/**
 		 * Creates a new empty field value. This should be populated by calls to WritePlainTypeTupleToStream(), SetReflectablePointer() or SetReflectable(), then
@@ -130,20 +130,20 @@ namespace bs
 	 * RTTI field type that supports iteration over arbitrary containers, including maps. Unlike older field types, this field type internally handles plain, reflectable and reflectable pointer types,
 	 * rather than requiring a separate field type for each.
 	 *
-	 * @tparam RTTIType				RTTIType of the object that contains the field we're accessing.
+	 * @tparam ObjectRTTIType		RTTIType of the object that contains the field we're accessing.
 	 * @tparam DataType				Type of the container being iterated over. 
 	 * @tparam IsDataTypeContainer	Set to true DataType is a container (e.g. vector, map) and you wish to iterate over it as such. If false, the iterator will act as faux iterator over a single element.
 	 * @tparam ObjectType			Type of the object that the field is a member of.
 	 */
-	template <class RTTIType, class DataType, bool IsDataTypeContainer, class ObjectType>
+	template <class ObjectRTTIType, class DataType, bool IsDataTypeContainer, class ObjectType>
 	struct TRTTIIteratorField : public RTTIIteratorField
 	{
 		using IteratorType = TRTTIIterator<DataType, IsDataTypeContainer>;
 		using ElementType = typename IteratorType::ElementType;
 
-		typedef UPtr<IteratorType, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, IsDataTypeContainer>> (RTTIType::*GetIteratorDelegate)(ObjectType&, FrameAllocator&);
-		typedef const ElementType& (RTTIType::*GetValueDelegate)(ObjectType&, FrameAllocator&, IteratorType&);
-		typedef void (RTTIType::*SetValueDelegate)(ObjectType&, FrameAllocator&, IteratorType&, const ElementType&);
+		typedef UPtr<IteratorType, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, IsDataTypeContainer>> (ObjectRTTIType::*GetIteratorDelegate)(ObjectType&, FrameAllocator&);
+		typedef const ElementType& (ObjectRTTIType::*GetValueDelegate)(ObjectType&, FrameAllocator&, IteratorType&);
+		typedef void (ObjectRTTIType::*SetValueDelegate)(ObjectType&, FrameAllocator&, IteratorType&, const ElementType&);
 
 		TRTTIIteratorField(String name, u16 uniqueId, GetIteratorDelegate getIteratorCallback, GetValueDelegate getValueCallback, SetValueDelegate setValueCallback, const RTTIFieldInfo& fieldInfo)
 		{
@@ -173,9 +173,9 @@ namespace bs
 			}
 		}
 
-		SPtr<IRTTIIterator> GetIterator(RTTITypeBase* rttiTypeInstance, void* object, FrameAllocator& frameAllocator) const override
+		SPtr<IRTTIIterator> GetIterator(RTTIType* rttiTypeInstance, void* object, FrameAllocator& frameAllocator) const override
 		{
-			RTTIType* const exactRttiTypeInstane = static_cast<RTTIType*>(rttiTypeInstance);
+			ObjectRTTIType* const exactRttiTypeInstane = static_cast<ObjectRTTIType*>(rttiTypeInstance);
 			ObjectType* const exactObject = static_cast<ObjectType*>(object);
 
 			return std::move((exactRttiTypeInstane->*mGetIteratorCallback)(*exactObject, frameAllocator));
@@ -191,18 +191,18 @@ namespace bs
 			return IteratorType::SupportsSeekToKey();
 		}
 
-		const void* GetIteratorValue(RTTITypeBase* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const override
+		const void* GetIteratorValue(RTTIType* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const override
 		{
-			RTTIType* const exactRttiTypeInstance = static_cast<RTTIType*>(rttiTypeInstance);
+			ObjectRTTIType* const exactRttiTypeInstance = static_cast<ObjectRTTIType*>(rttiTypeInstance);
 			ObjectType* const exactObject = static_cast<ObjectType*>(object);
 			IteratorType& exactIterator = static_cast<IteratorType&>(iterator);
 
 			return &(exactRttiTypeInstance->*mGetValueCallback)(*exactObject, frameAllocator, exactIterator);
 		}
 
-		void SetIteratorValue(RTTITypeBase* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator, void* value) override
+		void SetIteratorValue(RTTIType* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator, void* value) override
 		{
-			RTTIType* const exactRttiTypeInstance = static_cast<RTTIType*>(rttiTypeInstance);
+			ObjectRTTIType* const exactRttiTypeInstance = static_cast<ObjectRTTIType*>(rttiTypeInstance);
 			ObjectType* const exactObject = static_cast<ObjectType*>(object);
 			IteratorType& exactIterator = static_cast<IteratorType&>(iterator);
 
@@ -215,7 +215,7 @@ namespace bs
 			return frameAllocator.Construct<ElementType>();
 		}
 
-		void* GetIteratorValueCopy(RTTITypeBase* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const override
+		void* GetIteratorValueCopy(RTTIType* rttiTypeInstance, void* object, FrameAllocator& frameAllocator, IRTTIIterator& iterator) const override
 		{
 			 return frameAllocator.Construct<ElementType>(*static_cast<const ElementType*>(GetIteratorValue(rttiTypeInstance, object, frameAllocator, iterator)));
 		}

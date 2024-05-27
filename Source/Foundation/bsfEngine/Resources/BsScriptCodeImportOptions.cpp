@@ -13,12 +13,12 @@ SPtr<ScriptCodeImportOptions> ScriptCodeImportOptions::Create()
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
-RTTITypeBase* ScriptCodeImportOptions::GetRttiStatic()
+RTTIType* ScriptCodeImportOptions::GetRttiStatic()
 {
 	return ScriptCodeImportOptionsRTTI::Instance();
 }
 
-RTTITypeBase* ScriptCodeImportOptions::GetRtti() const
+RTTIType* ScriptCodeImportOptions::GetRtti() const
 {
 	return ScriptCodeImportOptions::GetRttiStatic();
 }

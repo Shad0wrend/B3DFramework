@@ -48,8 +48,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class AudioClipImportOptionsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/** @} */

@@ -96,8 +96,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ShaderImportOptionsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	private:
 		UnorderedMap<String, String> mDefines;

@@ -98,7 +98,7 @@ namespace bs
 			{
 				u32 ArrayIndex;
 				u32 ArraySize;
-				RTTITypeBase* RttiType;
+				RTTIType* RttiType;
 				void* MapKey;
 			};
 		};
@@ -110,7 +110,7 @@ namespace bs
 		virtual void GenerateDeltaApplyCommands(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& delta, FrameAllocator& allocator, DeltaObjectMap& objectMap, FrameVector<DeltaCommand>& inOutDeltaCommands, RTTIOperationContext& context) = 0;
 
 		/** Retrieves the appropriate IDeltaHandler from the provided object and calls the other GenerateDeltaApplyCommands overload. */
-		void GenerateDeltaApplyCommands(RTTITypeBase* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& delta, FrameAllocator& allocator, DeltaObjectMap& objectMap, FrameVector<DeltaCommand>& inOutDeltaCommands, RTTIOperationContext& context);
+		void GenerateDeltaApplyCommands(RTTIType* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& delta, FrameAllocator& allocator, DeltaObjectMap& objectMap, FrameVector<DeltaCommand>& inOutDeltaCommands, RTTIOperationContext& context);
 	};
 
 	/**
@@ -139,7 +139,7 @@ namespace bs
 		 * @param context			Serialization context.
 		 * @param allocator			Allocator to perform temporary allocations with.
 		 */
-		void GenerateDeltaCommandForFieldEntry(RTTITypeBase* rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, void* mapKey, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator);
+		void GenerateDeltaCommandForFieldEntry(RTTIType* rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, void* mapKey, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator);
 
 		/**
 		 * Generates delta commands for a data block field.
@@ -164,8 +164,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedTupleEntryDeltaRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains a delta between two tuples. Only different tuple elements are stored in the delta. */
@@ -185,8 +185,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedTupleDeltaRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Holds a single array element entry in SerializedArrayDelta. */
@@ -202,8 +202,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedArrayEntryDeltaRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains a delta between two arrays. Only different array elements are stored in the delta. */
@@ -223,8 +223,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedArrayDeltaRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Holds a single array element entry in SerializedMapDelta. */
@@ -240,8 +240,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedMapEntryDeltaRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains a delta between two maps. Only different and removed array elements are stored in the delta. */
@@ -260,8 +260,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedMapDeltaRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

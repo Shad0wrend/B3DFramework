@@ -35,8 +35,8 @@ namespace bs
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 		friend class GpuProgramCreateInformationRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -70,8 +70,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GpuProgramBytecodeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -146,8 +146,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GpuProgramRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

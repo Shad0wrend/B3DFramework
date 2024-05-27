@@ -115,8 +115,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SkyboxRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 		/**	Creates a new skybox instance without initializing it. */
 		static SPtr<Skybox> CreateEmpty();

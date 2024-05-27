@@ -58,12 +58,12 @@ SPtr<Collider> CSphereCollider::CreateInternal()
 	return collider;
 }
 
-RTTITypeBase* CSphereCollider::GetRttiStatic()
+RTTIType* CSphereCollider::GetRttiStatic()
 {
 	return CSphereColliderRTTI::Instance();
 }
 
-RTTITypeBase* CSphereCollider::GetRtti() const
+RTTIType* CSphereCollider::GetRtti() const
 {
 	return CSphereCollider::GetRttiStatic();
 }

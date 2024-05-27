@@ -197,12 +197,12 @@ void GUIInteractable::Destroy()
 	GUIRenderable::Destroy();
 }
 
-RTTITypeBase* GUIInteractable::GetRttiStatic()
+RTTIType* GUIInteractable::GetRttiStatic()
 {
 	return GUIInteractableRTTI::Instance();
 }
 
-RTTITypeBase* GUIInteractable::GetRtti() const
+RTTIType* GUIInteractable::GetRtti() const
 {
 	return GetRttiStatic();
 }

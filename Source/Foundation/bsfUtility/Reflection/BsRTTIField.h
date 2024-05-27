@@ -11,7 +11,7 @@
 
 namespace bs
 {
-	class RTTITypeBase;
+	class RTTIType;
 	struct RTTISchema;
 
 	/** @addtogroup Internal-Utility
@@ -61,8 +61,8 @@ namespace bs
 		u32 FieldTypeId = 0;
 		SPtr<RTTISchema> FieldTypeSchema;
 
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains serializable meta-data about a single RTTI field. */
@@ -80,8 +80,8 @@ namespace bs
 		RTTIFieldInfo Info;
 		TInlineArray<RTTIFieldTypeSchema, 2> FieldTypes; /**< Types references by the field. In 99% of the cases this is a single type, but in case of e.g. a map it will be two types (key/value pair). */
 
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**

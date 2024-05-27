@@ -995,12 +995,12 @@ SPtr<Material> Material::CreateEmpty()
 	return newMat;
 }
 
-RTTITypeBase* Material::GetRttiStatic()
+RTTIType* Material::GetRttiStatic()
 {
 	return MaterialRTTI::Instance();
 }
 
-RTTITypeBase* Material::GetRtti() const
+RTTIType* Material::GetRtti() const
 {
 	return Material::GetRttiStatic();
 }

@@ -78,22 +78,22 @@ bool SerializedTupleDelta::Equals(const SPtr<ISerialized>& other) const
 	return false;
 }
 
-RTTITypeBase* SerializedTupleDelta::GetRttiStatic()
+RTTIType* SerializedTupleDelta::GetRttiStatic()
 {
 	return SerializedTupleDeltaRTTI::Instance();
 }
 
-RTTITypeBase* SerializedTupleDelta::GetRtti() const
+RTTIType* SerializedTupleDelta::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* SerializedTupleEntryDelta::GetRttiStatic()
+RTTIType* SerializedTupleEntryDelta::GetRttiStatic()
 {
 	return SerializedTupleEntryDeltaRTTI::Instance();
 }
 
-RTTITypeBase* SerializedTupleEntryDelta::GetRtti() const
+RTTIType* SerializedTupleEntryDelta::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -157,22 +157,22 @@ bool SerializedArrayDelta::Equals(const SPtr<ISerialized>& other) const
 	return false;
 }
 
-RTTITypeBase* SerializedArrayDelta::GetRttiStatic()
+RTTIType* SerializedArrayDelta::GetRttiStatic()
 {
 	return SerializedArrayDeltaRTTI::Instance();
 }
 
-RTTITypeBase* SerializedArrayDelta::GetRtti() const
+RTTIType* SerializedArrayDelta::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* SerializedArrayEntryDelta::GetRttiStatic()
+RTTIType* SerializedArrayEntryDelta::GetRttiStatic()
 {
 	return SerializedArrayEntryDeltaRTTI::Instance();
 }
 
-RTTITypeBase* SerializedArrayEntryDelta::GetRtti() const
+RTTIType* SerializedArrayEntryDelta::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -240,22 +240,22 @@ bool SerializedMapDelta::Equals(const SPtr<ISerialized>& other) const
 	return false;
 }
 
-RTTITypeBase* SerializedMapDelta::GetRttiStatic()
+RTTIType* SerializedMapDelta::GetRttiStatic()
 {
 	return SerializedMapDeltaRTTI::Instance();
 }
 
-RTTITypeBase* SerializedMapDelta::GetRtti() const
+RTTIType* SerializedMapDelta::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* SerializedMapEntryDelta::GetRttiStatic()
+RTTIType* SerializedMapEntryDelta::GetRttiStatic()
 {
 	return SerializedMapEntryDeltaRTTI::Instance();
 }
 
-RTTITypeBase* SerializedMapEntryDelta::GetRtti() const
+RTTIType* SerializedMapEntryDelta::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -327,7 +327,7 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 							tupleElementModification = found->second;
 						else
 						{
-							RTTITypeBase* rttiType = nullptr;
+							RTTIType* rttiType = nullptr;
 							if(maybeLhsObject->GetTypeId() == rhsObject.GetTypeId())
 								rttiType = IReflectable::GetRTTITypeFromTypeId(rhsObject.GetTypeId());
 
@@ -457,7 +457,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 	{
 		SubObject<IsRHSIReflectable> rhsSubObject = rhsSubObjectIterator.GetValue();
 
-		RTTITypeBase* rtti = IReflectable::GetRTTITypeFromTypeId(rhsSubObject.GetTypeId());
+		RTTIType* rtti = IReflectable::GetRTTITypeFromTypeId(rhsSubObject.GetTypeId());
 		if(rtti == nullptr)
 			continue;
 
@@ -659,20 +659,20 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 	GenerateDeltaApplyCommands(object, delta, allocator, objectMap, commands, context);
 
 	IReflectable* destinationObject = nullptr;
-	RTTITypeBase* rttiInstance = nullptr;
+	RTTIType* rttiInstance = nullptr;
 
 	struct ObjectAndRTTIInstance
 	{
-		ObjectAndRTTIInstance(IReflectable* object = nullptr, RTTITypeBase* rttiInstance = nullptr)
+		ObjectAndRTTIInstance(IReflectable* object = nullptr, RTTIType* rttiInstance = nullptr)
 			: Object(object), RttiInstance(rttiInstance)
 		{ }
 
 		IReflectable* Object;
-		RTTITypeBase* RttiInstance;
+		RTTIType* RttiInstance;
 	};
 
 	FrameStack<ObjectAndRTTIInstance> objectStack;
-	FrameVector<std::pair<RTTITypeBase*, IReflectable*>> rttiInstances;
+	FrameVector<std::pair<RTTIType*, IReflectable*>> rttiInstances;
 
 	struct IteratorAndValue
 	{
@@ -737,8 +737,8 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 				destinationObject = command.Object.get();
 				objectStack.push(ObjectAndRTTIInstance(destinationObject, nullptr));
 
-				FrameStack<RTTITypeBase*> rttiTypes;
-				RTTITypeBase* curRtti = destinationObject->GetRtti();
+				FrameStack<RTTIType*> rttiTypes;
+				RTTIType* curRtti = destinationObject->GetRtti();
 				while(curRtti != nullptr)
 				{
 					rttiTypes.push(curRtti);
@@ -748,8 +748,8 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 				// Call base class first, followed by derived classes
 				while(!rttiTypes.empty())
 				{
-					RTTITypeBase* curRtti = rttiTypes.top();
-					RTTITypeBase* rttiInstance = curRtti->CloneInternal(allocator);
+					RTTIType* curRtti = rttiTypes.top();
+					RTTIType* rttiInstance = curRtti->CloneInternal(allocator);
 
 					rttiInstances.push_back(std::make_pair(rttiInstance, destinationObject));
 					rttiInstance->NotifyOperationStarted(*destinationObject, RTTIOperationType::DeltaApply, context);
@@ -784,7 +784,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 					if(rttiInstances.back().second != destinationObject)
 						break;
 
-					RTTITypeBase* rttiInstance = rttiInstances.back().first;
+					RTTIType* rttiInstance = rttiInstances.back().first;
 
 					rttiInstance->NotifyOperationEnded(*destinationObject, RTTIOperationType::DeltaApply, context);
 					allocator.Destruct(rttiInstance);
@@ -954,7 +954,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 	allocator.Clear();
 }
 
-void IDeltaHandler::GenerateDeltaApplyCommands(RTTITypeBase* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& delta, FrameAllocator& allocator, DeltaObjectMap& objectMap, FrameVector<DeltaCommand>& inOutDeltaCommands, RTTIOperationContext& context)
+void IDeltaHandler::GenerateDeltaApplyCommands(RTTIType* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& delta, FrameAllocator& allocator, DeltaObjectMap& objectMap, FrameVector<DeltaCommand>& inOutDeltaCommands, RTTIOperationContext& context)
 {
 	IDeltaHandler& deltaHandler = rtti->GetDeltaHandler();
 	deltaHandler.GenerateDeltaApplyCommands(object, delta, allocator, objectMap, inOutDeltaCommands, context);
@@ -1001,17 +1001,17 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 	FrameVector<FrameVector<DeltaCommand>> commandsPerSubObject;
 
 	RTTIOperationContext rttiOperationContext;
-	Stack<RTTITypeBase*> rttiInstances;
+	Stack<RTTIType*> rttiInstances;
 	for(auto& subObject : delta->SubObjects)
 	{
-		RTTITypeBase* rtti = IReflectable::GetRTTITypeFromTypeId(subObject.TypeId);
+		RTTIType* rtti = IReflectable::GetRTTITypeFromTypeId(subObject.TypeId);
 		if(rtti == nullptr)
 			continue;
 
 		if(!object->IsDerivedFrom(rtti))
 			continue;
 
-		RTTITypeBase* rttiInstance = rtti->CloneInternal(allocator);
+		RTTIType* rttiInstance = rtti->CloneInternal(allocator);
 		rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
 		rttiInstances.push(rttiInstance);
 
@@ -1112,7 +1112,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 
 	while(!rttiInstances.empty())
 	{
-		RTTITypeBase* rttiInstance = rttiInstances.top();
+		RTTIType* rttiInstance = rttiInstances.top();
 		rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::DeltaRead, rttiOperationContext);
 		allocator.Destruct(rttiInstance);
 
@@ -1120,7 +1120,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 	}
 }
 
-void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTITypeBase* rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, void* mapKey, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator)
+void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTIType* rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, void* mapKey, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator)
 {
 	const SPtr<SerializedTupleDelta> serializedTupleDelta = B3DRTTICast<SerializedTupleDelta>(entryDelta);
 	if(!B3D_ENSURE(field.Schema.FieldTypes.Size() == 1 || serializedTupleDelta != nullptr))
@@ -1194,7 +1194,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTITypeBase* rttiIns
 			if(serializedObject == nullptr)
 				return nullptr;
 
-			RTTITypeBase* childRtti = IReflectable::GetRTTITypeFromTypeId(serializedObject->GetRootTypeId());
+			RTTIType* childRtti = IReflectable::GetRTTITypeFromTypeId(serializedObject->GetRootTypeId());
 			if(childRtti != nullptr)
 			{
 				auto foundObject = inOutObjectMap.find(serializedObject);

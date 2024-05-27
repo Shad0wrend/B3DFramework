@@ -31,8 +31,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ScriptCodeImportOptionsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/** @} */

@@ -184,8 +184,8 @@ namespace bs
 			NVGVectorPathRenderable() = default; // Deserialization only
 
 			friend class NVGVectorPathRenderableRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const override;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
 		};
 	}
 

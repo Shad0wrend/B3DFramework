@@ -107,12 +107,12 @@ void CSliderJoint::GetLocalTransform(JointBody body, Vector3& position, Quaterni
 	}
 }
 
-RTTITypeBase* CSliderJoint::GetRttiStatic()
+RTTIType* CSliderJoint::GetRttiStatic()
 {
 	return CSliderJointRTTI::Instance();
 }
 
-RTTITypeBase* CSliderJoint::GetRtti() const
+RTTIType* CSliderJoint::GetRtti() const
 {
 	return CSliderJoint::GetRttiStatic();
 }

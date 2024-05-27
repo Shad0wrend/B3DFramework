@@ -48,11 +48,11 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 	if(object == nullptr)
 		return externalReferences;
 
-	RTTITypeBase* rtti = object->GetRtti();
-	Stack<RTTITypeBase*> rttiInstances;
+	RTTIType* rtti = object->GetRtti();
+	Stack<RTTIType*> rttiInstances;
 	while(rtti != nullptr)
 	{
-		RTTITypeBase* rttiInstance = rtti->CloneInternal(allocator);
+		RTTIType* rttiInstance = rtti->CloneInternal(allocator);
 
 		rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
 		SubObjectExternalReferences* subObjectReferences = nullptr;
@@ -138,7 +138,7 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 
 	while(!rttiInstances.empty())
 	{
-		RTTITypeBase* rttiInstance = rttiInstances.top();
+		RTTIType* rttiInstance = rttiInstances.top();
 		rttiInstances.pop();
 
 		rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
@@ -156,7 +156,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 
 		if(!subObject.References.empty())
 		{
-			RTTITypeBase* rttiInstance = subObject.Rtti->CloneInternal(allocator);
+			RTTIType* rttiInstance = subObject.Rtti->CloneInternal(allocator);
 			rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::Patch, rttiOperationContext);
 
 			for(auto& reference : subObject.References)
@@ -206,7 +206,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 	{
 		if(!subObject.ChildObjects.empty())
 		{
-			RTTITypeBase* rttiInstance = subObject.Rtti->CloneInternal(allocator);
+			RTTIType* rttiInstance = subObject.Rtti->CloneInternal(allocator);
 			rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::GatherReferences, rttiOperationContext);
 
 			for(auto& childObjectReferences : subObject.ChildObjects)

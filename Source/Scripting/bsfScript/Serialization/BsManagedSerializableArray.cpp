@@ -285,12 +285,12 @@ u32 ManagedSerializableArray::GetTotalLength() const
 	return totalNumElements;
 }
 
-RTTITypeBase* ManagedSerializableArray::GetRttiStatic()
+RTTIType* ManagedSerializableArray::GetRttiStatic()
 {
 	return ManagedSerializableArrayRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableArray::GetRtti() const
+RTTIType* ManagedSerializableArray::GetRtti() const
 {
 	return ManagedSerializableArray::GetRttiStatic();
 }

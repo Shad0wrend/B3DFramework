@@ -59,12 +59,12 @@ SPtr<Collider> CBoxCollider::CreateInternal()
 	return collider;
 }
 
-RTTITypeBase* CBoxCollider::GetRttiStatic()
+RTTIType* CBoxCollider::GetRttiStatic()
 {
 	return CBoxColliderRTTI::Instance();
 }
 
-RTTITypeBase* CBoxCollider::GetRtti() const
+RTTIType* CBoxCollider::GetRtti() const
 {
 	return CBoxCollider::GetRttiStatic();
 }

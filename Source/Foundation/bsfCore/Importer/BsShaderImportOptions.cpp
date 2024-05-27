@@ -8,12 +8,12 @@ using namespace bs;
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
-RTTITypeBase* ShaderImportOptions::GetRttiStatic()
+RTTIType* ShaderImportOptions::GetRttiStatic()
 {
 	return ShaderImportOptionsRTTI::Instance();
 }
 
-RTTITypeBase* ShaderImportOptions::GetRtti() const
+RTTIType* ShaderImportOptions::GetRtti() const
 {
 	return ShaderImportOptions::GetRttiStatic();
 }

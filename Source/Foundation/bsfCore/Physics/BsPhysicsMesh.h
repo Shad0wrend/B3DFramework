@@ -67,8 +67,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class PhysicsMeshRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */
@@ -96,8 +96,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class FPhysicsMeshRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

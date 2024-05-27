@@ -146,12 +146,12 @@ bool CParticleSystem::TogglePreviewModeInternal(bool enabled)
 	}
 }
 
-RTTITypeBase* CParticleSystem::GetRttiStatic()
+RTTIType* CParticleSystem::GetRttiStatic()
 {
 	return CParticleSystemRTTI::Instance();
 }
 
-RTTITypeBase* CParticleSystem::GetRtti() const
+RTTIType* CParticleSystem::GetRtti() const
 {
 	return CParticleSystem::GetRttiStatic();
 }

@@ -258,12 +258,12 @@ SPtr<Technique> Technique::CreateEmpty()
 	return techniquePtr;
 }
 
-RTTITypeBase* Technique::GetRttiStatic()
+RTTIType* Technique::GetRttiStatic()
 {
 	return TechniqueRTTI::Instance();
 }
 
-RTTITypeBase* Technique::GetRtti() const
+RTTIType* Technique::GetRtti() const
 {
 	return Technique::GetRttiStatic();
 }
@@ -312,12 +312,12 @@ void Technique::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& all
 		syncPacket->ApplySyncData(this);
 }
 
-RTTITypeBase* Technique::GetRttiStatic()
+RTTIType* Technique::GetRttiStatic()
 {
 	return TechniqueRenderProxyRTTI::Instance();
 }
 
-RTTITypeBase* Technique::GetRtti() const
+RTTIType* Technique::GetRtti() const
 {
 	return Technique::GetRttiStatic();
 }

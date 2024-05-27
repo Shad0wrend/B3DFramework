@@ -26,12 +26,12 @@ SPtr<PlainText> PlainText::CreatePtrInternal(const WString& data)
 	return plainTextPtr;
 }
 
-RTTITypeBase* PlainText::GetRttiStatic()
+RTTIType* PlainText::GetRttiStatic()
 {
 	return PlainTextRTTI::Instance();
 }
 
-RTTITypeBase* PlainText::GetRtti() const
+RTTIType* PlainText::GetRtti() const
 {
 	return PlainText::GetRttiStatic();
 }

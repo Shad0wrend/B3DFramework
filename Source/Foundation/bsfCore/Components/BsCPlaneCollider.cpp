@@ -67,12 +67,12 @@ bool CPlaneCollider::IsValidParent(const HRigidbody& parent) const
 	return parent->GetIsKinematic();
 }
 
-RTTITypeBase* CPlaneCollider::GetRttiStatic()
+RTTIType* CPlaneCollider::GetRttiStatic()
 {
 	return CPlaneColliderRTTI::Instance();
 }
 
-RTTITypeBase* CPlaneCollider::GetRtti() const
+RTTIType* CPlaneCollider::GetRtti() const
 {
 	return CPlaneCollider::GetRttiStatic();
 }

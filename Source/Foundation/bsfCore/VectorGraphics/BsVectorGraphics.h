@@ -642,8 +642,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class VectorPathRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	namespace ct
@@ -676,8 +676,8 @@ namespace bs
 			VectorPathRenderable() = default; // Deserialization only
 
 			friend class bs::VectorPathRenderableRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const override;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
 		};
 	} // namespace ct
 

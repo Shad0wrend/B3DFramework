@@ -130,12 +130,12 @@ void Decal::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flags)
 	MarkRenderProxyDataDirty((u32)flags);
 }
 
-RTTITypeBase* Decal::GetRttiStatic()
+RTTIType* Decal::GetRttiStatic()
 {
 	return DecalRTTI::Instance();
 }
 
-RTTITypeBase* Decal::GetRtti() const
+RTTIType* Decal::GetRtti() const
 {
 	return Decal::GetRttiStatic();
 }

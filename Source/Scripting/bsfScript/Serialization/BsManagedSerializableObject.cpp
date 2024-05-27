@@ -249,12 +249,12 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableObject::GetFieldData(const
 	}
 }
 
-RTTITypeBase* ManagedSerializableObject::GetRttiStatic()
+RTTIType* ManagedSerializableObject::GetRttiStatic()
 {
 	return ManagedSerializableObjectRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableObject::GetRtti() const
+RTTIType* ManagedSerializableObject::GetRtti() const
 {
 	return ManagedSerializableObject::GetRttiStatic();
 }

@@ -30,10 +30,10 @@ namespace bs
 		 * @note
 		 * You must derive your own version of RTTITypeBase, in which you may encapsulate all reflection specific operations.
 		 */
-		virtual RTTITypeBase* GetRtti() const = 0;
+		virtual RTTIType* GetRtti() const = 0;
 
 		/** Returns true if current RTTI class is derived from @p base (Or if it is the same type as base). */
-		bool IsDerivedFrom(const RTTITypeBase* base) const;
+		bool IsDerivedFrom(const RTTIType* base) const;
 
 		/** Returns an unique type identifier of the class. */
 		u32 GetTypeId() const;
@@ -69,27 +69,27 @@ namespace bs
 		static SPtr<IReflectable> CreateInstanceFromTypeId(u32 rttiTypeId);
 
 		/** Returns all available RTTI types. */
-		static UnorderedMap<u32, RTTITypeBase*>& GetAllRttiTypes()
+		static UnorderedMap<u32, RTTIType*>& GetAllRttiTypes()
 		{
-			static UnorderedMap<u32, RTTITypeBase*> mAllRTTITypes;
+			static UnorderedMap<u32, RTTIType*> mAllRTTITypes;
 			return mAllRTTITypes;
 		}
 
 		/** Returns class' RTTI type from type id. */
-		static RTTITypeBase* GetRTTITypeFromTypeId(u32 rttiTypeId);
+		static RTTIType* GetRTTITypeFromTypeId(u32 rttiTypeId);
 
 		/** @name Internal
 		 *  @{
 		 */
 
 		/** Called by each type implementing RTTITypeBase, on program load. */
-		static void RegisterRTTITypeInternal(RTTITypeBase* rttiType);
+		static void RegisterRTTITypeInternal(RTTIType* rttiType);
 
 		/** Checks if the provided type id is unique. */
 		static bool IsTypeIdDuplicateInternal(u32 typeId);
 
 		/** Returns an interface you can use to access class' Run Time Type Information. */
-		static RTTITypeBase* GetRttiStatic();
+		static RTTIType* GetRttiStatic();
 
 		/** @} */
 	};

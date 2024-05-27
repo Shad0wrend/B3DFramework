@@ -67,12 +67,12 @@ bool CMeshCollider::IsValidParent(const HRigidbody& parent) const
 	return !mMesh.IsLoaded() || mMesh->GetType() == PhysicsMeshType::Convex || parent->GetIsKinematic();
 }
 
-RTTITypeBase* CMeshCollider::GetRttiStatic()
+RTTIType* CMeshCollider::GetRttiStatic()
 {
 	return CMeshColliderRTTI::Instance();
 }
 
-RTTITypeBase* CMeshCollider::GetRtti() const
+RTTIType* CMeshCollider::GetRtti() const
 {
 	return CMeshCollider::GetRttiStatic();
 }

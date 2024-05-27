@@ -343,8 +343,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ShaderInformationBaseRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	class ShaderInformationRenderProxyRTTI;
@@ -363,8 +363,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class bs::ShaderInformationRenderProxyRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Descriptor structure used for initialization of a Shader. */
@@ -392,8 +392,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ShaderInformationRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Descriptor structure used for initialization of a Shader. */
@@ -673,8 +673,8 @@ namespace bs
 
 	public:
 		friend class ShaderRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */
@@ -693,8 +693,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ShaderMetaDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */
@@ -733,8 +733,8 @@ namespace bs
 
 		public:
 			friend class ShaderRenderProxyRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const override;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
 		};
 
 		/** @} */

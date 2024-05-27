@@ -350,12 +350,12 @@ void CCollider::TriggerOnCollisionEnd(const CollisionDataRaw& data)
 	OnCollisionEnd(hit);
 }
 
-RTTITypeBase* CCollider::GetRttiStatic()
+RTTIType* CCollider::GetRttiStatic()
 {
 	return CColliderRTTI::Instance();
 }
 
-RTTITypeBase* CCollider::GetRtti() const
+RTTIType* CCollider::GetRtti() const
 {
 	return CCollider::GetRttiStatic();
 }

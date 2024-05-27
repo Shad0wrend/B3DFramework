@@ -169,8 +169,8 @@ namespace bs
 
 	public:
 		friend class TechniqueRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */
@@ -211,8 +211,8 @@ namespace bs
 
 		public:
 			friend class bs::TechniqueRenderProxyRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const override;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
 		};
 
 		/** @} */

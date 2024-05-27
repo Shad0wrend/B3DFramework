@@ -13,12 +13,12 @@ SPtr<AudioClipImportOptions> AudioClipImportOptions::Create()
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
-RTTITypeBase* AudioClipImportOptions::GetRttiStatic()
+RTTIType* AudioClipImportOptions::GetRttiStatic()
 {
 	return AudioClipImportOptionsRTTI::Instance();
 }
 
-RTTITypeBase* AudioClipImportOptions::GetRtti() const
+RTTIType* AudioClipImportOptions::GetRtti() const
 {
 	return GetRttiStatic();
 }

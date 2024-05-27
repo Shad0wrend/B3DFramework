@@ -607,7 +607,7 @@ namespace bs
 		 * Don't call this too often as it is relatively slow. It is more efficient to call it once and store the result
 		 * for further use.
 		 */
-		HComponent GetComponent(RTTITypeBase* type) const;
+		HComponent GetComponent(RTTIType* type) const;
 
 		/**	Returns all components on this object. */
 		const Vector<HComponent>& GetComponents() const { return mComponents; }
@@ -658,8 +658,8 @@ namespace bs
 	public:
 		friend class GameObjectRTTI;
 		friend class SceneObjectRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

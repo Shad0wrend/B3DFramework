@@ -10,12 +10,12 @@
 
 using namespace bs;
 
-RTTITypeBase* ShaderCompilerMetaData::GetRttiStatic()
+RTTIType* ShaderCompilerMetaData::GetRttiStatic()
 {
 	return ShaderCompilerMetaDataRTTI::Instance();
 }
 
-RTTITypeBase* ShaderCompilerMetaData::GetRtti() const
+RTTIType* ShaderCompilerMetaData::GetRtti() const
 {
 	return ShaderCompilerMetaData::GetRttiStatic();
 }

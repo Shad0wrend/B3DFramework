@@ -802,12 +802,12 @@ void Camera::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag)
 	MarkRenderProxyDataDirty((u32)flag);
 }
 
-RTTITypeBase* Camera::GetRttiStatic()
+RTTIType* Camera::GetRttiStatic()
 {
 	return CameraRTTI::Instance();
 }
 
-RTTITypeBase* Camera::GetRtti() const
+RTTIType* Camera::GetRtti() const
 {
 	return Camera::GetRttiStatic();
 }

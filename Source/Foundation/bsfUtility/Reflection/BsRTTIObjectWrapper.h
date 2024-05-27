@@ -73,7 +73,7 @@ namespace bs::RTTIObjectWrapper
 	{
 	public:
 		SubObject() = default;
-		SubObject(IReflectable* object, RTTITypeBase* rttiType, FrameAllocator* frameAllocator);
+		SubObject(IReflectable* object, RTTIType* rttiType, FrameAllocator* frameAllocator);
 
 		/** Returns the type ID of the RTTIType. */
 		u32 GetTypeId() const;
@@ -85,8 +85,8 @@ namespace bs::RTTIObjectWrapper
 		friend class Object<true>;
 
 		IReflectable* mObject = nullptr;
-		RTTITypeBase* mRTTIType = nullptr;
-		RTTITypeBase* mRTTITypeInstance = nullptr;
+		RTTIType* mRTTIType = nullptr;
+		RTTIType* mRTTITypeInstance = nullptr;
 
 		FrameAllocator* mFrameAllocator = nullptr;
 	};
@@ -133,7 +133,7 @@ namespace bs::RTTIObjectWrapper
 	{
 	public:
 		Object() = default;
-		Object(IReflectable* object, RTTITypeBase* rttiType, FrameAllocator* frameAllocator);
+		Object(IReflectable* object, RTTIType* rttiType, FrameAllocator* frameAllocator);
 
 		/** Returns the type ID of the root RTTIType. */
 		u32 GetTypeId() const;
@@ -159,8 +159,8 @@ namespace bs::RTTIObjectWrapper
 
 	private:
 		IReflectable* mObject = nullptr;
-		RTTITypeBase* mRTTIType = nullptr;
-		FrameVector<RTTITypeBase*> mRTTITypeInstances;
+		RTTIType* mRTTIType = nullptr;
+		FrameVector<RTTIType*> mRTTITypeInstances;
 
 		FrameAllocator* mFrameAllocator = nullptr;
 	};
@@ -191,7 +191,7 @@ namespace bs::RTTIObjectWrapper
 	template <>
 	struct SubObjectIterator<true>
 	{
-		SubObjectIterator(RTTITypeBase* rttiType, IReflectable* object, FrameAllocator* frameAllocator);
+		SubObjectIterator(RTTIType* rttiType, IReflectable* object, FrameAllocator* frameAllocator);
 
 		/**
 		 * Moves to the next base type and return false if no type was available (end was reached).
@@ -204,8 +204,8 @@ namespace bs::RTTIObjectWrapper
 
 	private:
 		IReflectable* mObject = nullptr;
-		RTTITypeBase* mRTTIType = nullptr;
-		RTTITypeBase* mCurrentRTTIType = nullptr;
+		RTTIType* mRTTIType = nullptr;
+		RTTIType* mCurrentRTTIType = nullptr;
 
 		FrameAllocator* mFrameAllocator = nullptr;
 	};
@@ -242,7 +242,7 @@ namespace bs::RTTIObjectWrapper
 	{
 	public:
 		Field() = default;
-		Field(RTTITypeBase* rttiType, RTTIField* field, IReflectable* object, FrameAllocator* frameAllocator);
+		Field(RTTIType* rttiType, RTTIField* field, IReflectable* object, FrameAllocator* frameAllocator);
 
 		/** Returns the unique identifier of the field within a RTTIType. */
 		u32 GetId() const;
@@ -256,7 +256,7 @@ namespace bs::RTTIObjectWrapper
 	private:
 		friend struct Field<false>;
 
-		RTTITypeBase* mRTTITypeInstance = nullptr;
+		RTTIType* mRTTITypeInstance = nullptr;
 		RTTIField* mField = nullptr;
 		IReflectable* mObject = nullptr;
 
@@ -281,7 +281,7 @@ namespace bs::RTTIObjectWrapper
 	private:
 		SerializedObject* mValue = nullptr;
 		u32 mSubObjectIndex = ~0u;
-		RTTITypeBase* mRTTIType = nullptr;
+		RTTIType* mRTTIType = nullptr;
 		UnorderedMap<u32, SerializedField>::iterator mFieldIterator;
 		bool mIsIteratorSet = false;
 
@@ -292,7 +292,7 @@ namespace bs::RTTIObjectWrapper
 	template <>
 	struct FieldIterator<true>
 	{
-		FieldIterator(RTTITypeBase* rttiType, RTTITypeBase* rttiTypeInstance, IReflectable* value, FrameAllocator* allocator);
+		FieldIterator(RTTIType* rttiType, RTTIType* rttiTypeInstance, IReflectable* value, FrameAllocator* allocator);
 
 		/**
 		 * Moves to the next field and return false if no field was available (end was reached).
@@ -305,8 +305,8 @@ namespace bs::RTTIObjectWrapper
 
 	private:
 		IReflectable* mValue = nullptr;
-		RTTITypeBase* mRTTIType = nullptr;
-		RTTITypeBase* mRTTITypeInstance = nullptr;
+		RTTIType* mRTTIType = nullptr;
+		RTTIType* mRTTITypeInstance = nullptr;
 		u32 mFieldIndex = ~0u;
 
 		FrameAllocator* mFrameAllocator = nullptr;
@@ -359,8 +359,8 @@ namespace bs::RTTIObjectWrapper
 	template <>
 	struct ValueIterator<true>
 	{
-		ValueIterator(RTTIField* field, RTTITypeBase* rttiType, IReflectable* object, const SPtr<IRTTIIterator>& iterator, FrameAllocator* allocator);
-		ValueIterator(RTTIField* field, RTTITypeBase* rttiType, IReflectable* object, u32 elementCount, FrameAllocator* allocator);
+		ValueIterator(RTTIField* field, RTTIType* rttiType, IReflectable* object, const SPtr<IRTTIIterator>& iterator, FrameAllocator* allocator);
+		ValueIterator(RTTIField* field, RTTIType* rttiType, IReflectable* object, u32 elementCount, FrameAllocator* allocator);
 
 		/**
 		 * Moves to the next value and return false if no value was available (end was reached).
@@ -396,7 +396,7 @@ namespace bs::RTTIObjectWrapper
 		u32 mElementCount = 0;
 
 		IReflectable* mObject = nullptr;
-		RTTITypeBase* mRTTITypeInstance = nullptr;
+		RTTIType* mRTTITypeInstance = nullptr;
 		RTTIField* mField = nullptr;
 
 		FrameAllocator* mFrameAllocator = nullptr;
@@ -461,8 +461,8 @@ namespace bs::RTTIObjectWrapper
 	{
 	public:
 		Value() = default;
-		Value(RTTIField* field, u32 tupleElementIndex, const SPtr<IRTTIIterator>& iterator, RTTITypeBase* rttiTypeInstance, IReflectable* object, FrameAllocator* allocator);
-		Value(RTTIField* field, u32 tupleElementIndex, u32 arrayIndex, RTTITypeBase* rttiTypeInstance, IReflectable* object, FrameAllocator* allocator);
+		Value(RTTIField* field, u32 tupleElementIndex, const SPtr<IRTTIIterator>& iterator, RTTIType* rttiTypeInstance, IReflectable* object, FrameAllocator* allocator);
+		Value(RTTIField* field, u32 tupleElementIndex, u32 arrayIndex, RTTIType* rttiTypeInstance, IReflectable* object, FrameAllocator* allocator);
 
 		/** If the value represents a tuple (e.g. std::pair<K, V>), represents the index within the tuple. */
 		u32 GetTupleElementIndex() const { return mTupleElementIndex; }
@@ -509,7 +509,7 @@ namespace bs::RTTIObjectWrapper
 		u32 mArrayIndex = ~0u;
 
 		IReflectable* mObject = nullptr;
-		RTTITypeBase* mRTTITypeInstance = nullptr;
+		RTTIType* mRTTITypeInstance = nullptr;
 		RTTIField* mField = nullptr;
 
 		FrameAllocator* mFrameAllocator = nullptr;

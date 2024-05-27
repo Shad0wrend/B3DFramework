@@ -241,12 +241,12 @@ u32 ShaderVariations::Find(const ShaderVariationParameters& variation) const
 	return (u32)-1;
 }
 
-RTTITypeBase* ShaderVariationParameters::GetRttiStatic()
+RTTIType* ShaderVariationParameters::GetRttiStatic()
 {
 	return ShaderVariationRTTI::Instance();
 }
 
-RTTITypeBase* ShaderVariationParameters::GetRtti() const
+RTTIType* ShaderVariationParameters::GetRtti() const
 {
 	return ShaderVariationParameters::GetRttiStatic();
 }

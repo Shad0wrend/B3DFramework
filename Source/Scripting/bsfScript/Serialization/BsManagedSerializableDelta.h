@@ -34,8 +34,8 @@ namespace bs
 			/************************************************************************/
 		public:
 			friend class ModificationRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const override;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
 		};
 
 		/**
@@ -56,8 +56,8 @@ namespace bs
 			/************************************************************************/
 		public:
 			friend class ModifiedFieldRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const override;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
 		};
 
 		/**	Represents a single modified array or list entry. */
@@ -74,8 +74,8 @@ namespace bs
 			/************************************************************************/
 		public:
 			friend class ModifiedArrayEntryRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const override;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
 		};
 
 		/**	Represents a single modified dictionary entry. */
@@ -92,8 +92,8 @@ namespace bs
 			/************************************************************************/
 		public:
 			friend class ModifiedArrayEntryRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const override;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
 		};
 
 		/**
@@ -111,8 +111,8 @@ namespace bs
 			/************************************************************************/
 		public:
 			friend class ModifiedObjectRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const;
 		};
 
 		/**	Contains data about all modifications in an array or a list. */
@@ -129,8 +129,8 @@ namespace bs
 			/************************************************************************/
 		public:
 			friend class ModifiedArrayRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const;
 		};
 
 		/**	Contains data about all modifications in a dictionary. */
@@ -148,8 +148,8 @@ namespace bs
 			/************************************************************************/
 		public:
 			friend class ModifiedDictionaryRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const;
 		};
 
 		/** Contains data about modification of a primitive field (field's new value). */
@@ -167,8 +167,8 @@ namespace bs
 			/************************************************************************/
 		public:
 			friend class ModifiedEntryRTTI;
-			static RTTITypeBase* GetRttiStatic();
-			RTTITypeBase* GetRtti() const;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const;
 		};
 
 	public:
@@ -252,8 +252,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableDeltaRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

@@ -219,12 +219,12 @@ void ReflectionProbe::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flags)
 	MarkRenderProxyDataDirty((u32)flags);
 }
 
-RTTITypeBase* ReflectionProbe::GetRttiStatic()
+RTTIType* ReflectionProbe::GetRttiStatic()
 {
 	return ReflectionProbeRTTI::Instance();
 }
 
-RTTITypeBase* ReflectionProbe::GetRtti() const
+RTTIType* ReflectionProbe::GetRtti() const
 {
 	return ReflectionProbe::GetRttiStatic();
 }

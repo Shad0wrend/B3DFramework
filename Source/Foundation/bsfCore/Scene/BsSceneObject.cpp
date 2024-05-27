@@ -887,7 +887,7 @@ HSceneObject SceneObject::Clone(const SPtr<SceneInstance>& cloneSceneInstance, b
 	return clone->GetHandle();
 }
 
-HComponent SceneObject::GetComponent(RTTITypeBase* type) const
+HComponent SceneObject::GetComponent(RTTIType* type) const
 {
 	if(type != Component::GetRttiStatic())
 	{
@@ -974,12 +974,12 @@ void SceneObject::InternalAddComponent(const HComponent& component, bool initial
 	}
 }
 
-RTTITypeBase* SceneObject::GetRttiStatic()
+RTTIType* SceneObject::GetRttiStatic()
 {
 	return SceneObjectRTTI::Instance();
 }
 
-RTTITypeBase* SceneObject::GetRtti() const
+RTTIType* SceneObject::GetRtti() const
 {
 	return SceneObject::GetRttiStatic();
 }

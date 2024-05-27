@@ -333,8 +333,8 @@ namespace bs
 		Texture() = default; // Serialization only
 
 		friend class TextureRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

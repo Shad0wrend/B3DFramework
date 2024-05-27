@@ -78,8 +78,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CHingeJointRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		CHingeJoint(); // Serialization only

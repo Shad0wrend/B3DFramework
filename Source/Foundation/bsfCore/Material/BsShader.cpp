@@ -216,12 +216,12 @@ void ShaderInformationBase::SetParamBlockAttribs(const String& name, bool shared
 	DataParameterBlocks[name] = desc;
 }
 
-RTTITypeBase* ShaderInformationBase::GetRttiStatic()
+RTTIType* ShaderInformationBase::GetRttiStatic()
 {
 	return ShaderInformationBaseRTTI::Instance();
 }
 
-RTTITypeBase* ShaderInformationBase::GetRtti() const
+RTTIType* ShaderInformationBase::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -259,23 +259,23 @@ ct::ShaderInformation ShaderInformation::ConvertToRenderProxy(const ShaderInform
 	return output;
 }
 
-RTTITypeBase* ShaderInformation::GetRttiStatic()
+RTTIType* ShaderInformation::GetRttiStatic()
 {
 	return ShaderInformationRTTI::Instance();
 }
 
-RTTITypeBase* ShaderInformation::GetRtti() const
+RTTIType* ShaderInformation::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
 namespace bs::ct {
-RTTITypeBase* ShaderInformation::GetRttiStatic()
+RTTIType* ShaderInformation::GetRttiStatic()
 {
 	return ShaderInformationRenderProxyRTTI::Instance();
 }
 
-RTTITypeBase* ShaderInformation::GetRtti() const
+RTTIType* ShaderInformation::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -679,22 +679,22 @@ Array<u64, 2> Shader::ComputeIncludeHash(const String& path)
 	return ComputeHash(shaderIncludeSource.value());
 }
 
-RTTITypeBase* Shader::GetRttiStatic()
+RTTIType* Shader::GetRttiStatic()
 {
 	return ShaderRTTI::Instance();
 }
 
-RTTITypeBase* Shader::GetRtti() const
+RTTIType* Shader::GetRtti() const
 {
 	return Shader::GetRttiStatic();
 }
 
-RTTITypeBase* ShaderMetaData::GetRttiStatic()
+RTTIType* ShaderMetaData::GetRttiStatic()
 {
 	return ShaderMetaDataRTTI::Instance();
 }
 
-RTTITypeBase* ShaderMetaData::GetRtti() const
+RTTIType* ShaderMetaData::GetRtti() const
 {
 	return ShaderMetaData::GetRttiStatic();
 }
@@ -736,12 +736,12 @@ SPtr<Shader> Shader::CreateEmpty()
 	return shaderShared;
 }
 
-RTTITypeBase* Shader::GetRttiStatic()
+RTTIType* Shader::GetRttiStatic()
 {
 	return ShaderRenderProxyRTTI::Instance();
 }
 
-RTTITypeBase* Shader::GetRtti() const
+RTTIType* Shader::GetRtti() const
 {
 	return GetRttiStatic();
 }

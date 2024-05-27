@@ -91,12 +91,12 @@ SPtr<Collider> CCapsuleCollider::CreateInternal()
 	return collider;
 }
 
-RTTITypeBase* CCapsuleCollider::GetRttiStatic()
+RTTIType* CCapsuleCollider::GetRttiStatic()
 {
 	return CCapsuleColliderRTTI::Instance();
 }
 
-RTTITypeBase* CCapsuleCollider::GetRtti() const
+RTTIType* CCapsuleCollider::GetRtti() const
 {
 	return CCapsuleCollider::GetRttiStatic();
 }

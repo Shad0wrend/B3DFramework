@@ -41,8 +41,8 @@ namespace bs
 
 	public:
 		friend class ScriptSerializableFieldDataKeyRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -134,8 +134,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**	Contains type and value of a single field in an object. */
@@ -153,8 +153,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataEntryRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -180,8 +180,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataBoolRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -208,8 +208,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataCharRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -235,8 +235,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataI8RTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -262,8 +262,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataU8RTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -289,8 +289,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataI16RTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -316,8 +316,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataU16RTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -343,8 +343,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataI32RTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -370,8 +370,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataU32RTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -397,8 +397,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataI64RTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/**
@@ -424,8 +424,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataU64RTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -451,8 +451,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataFloatRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -478,8 +478,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataDoubleRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -507,8 +507,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataStringRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -532,8 +532,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataResourceRefRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -557,8 +557,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataGameObjectRefRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -582,8 +582,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldReflectableRefRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -609,8 +609,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataObjectRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -636,8 +636,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataArrayRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -663,8 +663,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataListRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -690,8 +690,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableFieldDataDictionaryRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

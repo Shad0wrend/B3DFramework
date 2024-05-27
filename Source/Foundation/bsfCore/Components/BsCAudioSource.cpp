@@ -214,12 +214,12 @@ void CAudioSource::UpdateTransform()
 	mInternal->SetVelocity(mVelocity);
 }
 
-RTTITypeBase* CAudioSource::GetRttiStatic()
+RTTIType* CAudioSource::GetRttiStatic()
 {
 	return CAudioSourceRTTI::Instance();
 }
 
-RTTITypeBase* CAudioSource::GetRtti() const
+RTTIType* CAudioSource::GetRtti() const
 {
 	return CAudioSource::GetRttiStatic();
 }

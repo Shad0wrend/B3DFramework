@@ -101,8 +101,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CGUIWidgetRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 		CGUIWidget(); // Serialization only
 	};

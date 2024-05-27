@@ -8,12 +8,12 @@ using namespace bs;
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
-RTTITypeBase* ImportOptions::GetRttiStatic()
+RTTIType* ImportOptions::GetRttiStatic()
 {
 	return ImportOptionsRTTI::Instance();
 }
 
-RTTITypeBase* ImportOptions::GetRtti() const
+RTTIType* ImportOptions::GetRtti() const
 {
 	return ImportOptions::GetRttiStatic();
 }

@@ -228,12 +228,12 @@ void CCharacterController::TriggerOnControllerHit(const ControllerControllerColl
 	OnControllerHit(hit);
 }
 
-RTTITypeBase* CCharacterController::GetRttiStatic()
+RTTIType* CCharacterController::GetRttiStatic()
 {
 	return CCharacterControllerRTTI::Instance();
 }
 
-RTTITypeBase* CCharacterController::GetRtti() const
+RTTIType* CCharacterController::GetRtti() const
 {
 	return CCharacterController::GetRttiStatic();
 }

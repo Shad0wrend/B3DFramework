@@ -181,8 +181,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class DecalRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 	protected:
 		Decal() = default; // Serialization only

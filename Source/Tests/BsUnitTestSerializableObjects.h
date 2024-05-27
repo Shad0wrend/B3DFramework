@@ -21,8 +21,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializationTestObjectBRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	struct UnitTestSerializationObjectA : IReflectable
@@ -87,7 +87,7 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class UnitTestSerializationObjectARTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 } // namespace bs

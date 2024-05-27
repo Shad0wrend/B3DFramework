@@ -26,12 +26,12 @@ SPtr<ScriptCode> ScriptCode::CreatePtrInternal(const WString& data, bool editorS
 	return scriptCodePtr;
 }
 
-RTTITypeBase* ScriptCode::GetRttiStatic()
+RTTIType* ScriptCode::GetRttiStatic()
 {
 	return ScriptCodeRTTI::Instance();
 }
 
-RTTITypeBase* ScriptCode::GetRtti() const
+RTTIType* ScriptCode::GetRtti() const
 {
 	return ScriptCode::GetRttiStatic();
 }

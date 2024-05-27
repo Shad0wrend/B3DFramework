@@ -45,12 +45,12 @@ SceneObjectHierarchyDeltaObject::SceneObjectHierarchyDeltaObject(const HSceneObj
 	Flags.Set(GameObjectDeltaFlag::SceneObjectDelta);
 }
 
-RTTITypeBase* SceneObjectHierarchyDeltaObject::GetRttiStatic()
+RTTIType* SceneObjectHierarchyDeltaObject::GetRttiStatic()
 {
 	return SceneObjectHierarchyDeltaObjectRTTI::Instance();
 }
 
-RTTITypeBase* SceneObjectHierarchyDeltaObject::GetRtti() const
+RTTIType* SceneObjectHierarchyDeltaObject::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -509,12 +509,12 @@ void SceneObjectHierarchyDelta::GenerateComponentDelta(const HSceneObject& origi
 	}
 }
 
-RTTITypeBase* SceneObjectHierarchyDelta::GetRttiStatic()
+RTTIType* SceneObjectHierarchyDelta::GetRttiStatic()
 {
 	return SceneObjectHierarchyDeltaRTTI::Instance();
 }
 
-RTTITypeBase* SceneObjectHierarchyDelta::GetRtti() const
+RTTIType* SceneObjectHierarchyDelta::GetRtti() const
 {
 	return GetRttiStatic();
 }

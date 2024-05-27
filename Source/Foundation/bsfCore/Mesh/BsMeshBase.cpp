@@ -56,12 +56,12 @@ RenderProxySyncPacket* MeshBase::CreateRenderProxySyncPacket(FrameAllocator& all
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* MeshBase::GetRttiStatic()
+RTTIType* MeshBase::GetRttiStatic()
 {
 	return MeshBaseRTTI::Instance();
 }
 
-RTTITypeBase* MeshBase::GetRtti() const
+RTTIType* MeshBase::GetRtti() const
 {
 	return MeshBase::GetRttiStatic();
 }

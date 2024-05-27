@@ -88,12 +88,12 @@ void GUILayout::RemoveElementAt(u32 idx)
 	MarkLayoutAsDirty();
 }
 
-RTTITypeBase* GUILayout::GetRttiStatic()
+RTTIType* GUILayout::GetRttiStatic()
 {
 	return GUILayoutRTTI::Instance();
 }
 
-RTTITypeBase* GUILayout::GetRtti() const
+RTTIType* GUILayout::GetRtti() const
 {
 	return GetRttiStatic();
 }

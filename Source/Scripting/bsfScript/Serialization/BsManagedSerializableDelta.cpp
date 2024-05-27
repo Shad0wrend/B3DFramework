@@ -14,12 +14,12 @@ ManagedSerializableDelta::ModifiedField::ModifiedField(const SPtr<ManagedSeriali
 	: ParentType(parentType), FieldType(fieldType), Modification(modification)
 {}
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedField::GetRttiStatic()
+RTTIType* ManagedSerializableDelta::ModifiedField::GetRttiStatic()
 {
 	return ModifiedFieldRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedField::GetRtti() const
+RTTIType* ManagedSerializableDelta::ModifiedField::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -28,12 +28,12 @@ ManagedSerializableDelta::ModifiedArrayEntry::ModifiedArrayEntry(u32 idx, const 
 	: Idx(idx), Modification(modification)
 {}
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedArrayEntry::GetRttiStatic()
+RTTIType* ManagedSerializableDelta::ModifiedArrayEntry::GetRttiStatic()
 {
 	return ModifiedArrayEntryRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedArrayEntry::GetRtti() const
+RTTIType* ManagedSerializableDelta::ModifiedArrayEntry::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -43,22 +43,22 @@ ManagedSerializableDelta::ModifiedDictionaryEntry::ModifiedDictionaryEntry(
 	: Key(key), Modification(modification)
 {}
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedDictionaryEntry::GetRttiStatic()
+RTTIType* ManagedSerializableDelta::ModifiedDictionaryEntry::GetRttiStatic()
 {
 	return ModifiedDictionaryEntryRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedDictionaryEntry::GetRtti() const
+RTTIType* ManagedSerializableDelta::ModifiedDictionaryEntry::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableDelta::Modification::GetRttiStatic()
+RTTIType* ManagedSerializableDelta::Modification::GetRttiStatic()
 {
 	return ModificationRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDelta::Modification::GetRtti() const
+RTTIType* ManagedSerializableDelta::Modification::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -68,12 +68,12 @@ SPtr<ManagedSerializableDelta::ModifiedObject> ManagedSerializableDelta::Modifie
 	return B3DMakeShared<ModifiedObject>();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedObject::GetRttiStatic()
+RTTIType* ManagedSerializableDelta::ModifiedObject::GetRttiStatic()
 {
 	return ModifiedObjectRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedObject::GetRtti() const
+RTTIType* ManagedSerializableDelta::ModifiedObject::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -83,12 +83,12 @@ SPtr<ManagedSerializableDelta::ModifiedArray> ManagedSerializableDelta::Modified
 	return B3DMakeShared<ModifiedArray>();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedArray::GetRttiStatic()
+RTTIType* ManagedSerializableDelta::ModifiedArray::GetRttiStatic()
 {
 	return ModifiedArrayRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedArray::GetRtti() const
+RTTIType* ManagedSerializableDelta::ModifiedArray::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -98,12 +98,12 @@ SPtr<ManagedSerializableDelta::ModifiedDictionary> ManagedSerializableDelta::Mod
 	return B3DMakeShared<ModifiedDictionary>();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedDictionary::GetRttiStatic()
+RTTIType* ManagedSerializableDelta::ModifiedDictionary::GetRttiStatic()
 {
 	return ModifiedDictionaryRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedDictionary::GetRtti() const
+RTTIType* ManagedSerializableDelta::ModifiedDictionary::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -117,12 +117,12 @@ SPtr<ManagedSerializableDelta::ModifiedEntry> ManagedSerializableDelta::Modified
 	return B3DMakeShared<ModifiedEntry>(value);
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedEntry::GetRttiStatic()
+RTTIType* ManagedSerializableDelta::ModifiedEntry::GetRttiStatic()
 {
 	return ModifiedEntryRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDelta::ModifiedEntry::GetRtti() const
+RTTIType* ManagedSerializableDelta::ModifiedEntry::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -628,12 +628,12 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableDelta::ApplyDiff(const SPt
 	return newData;
 }
 
-RTTITypeBase* ManagedSerializableDelta::GetRttiStatic()
+RTTIType* ManagedSerializableDelta::GetRttiStatic()
 {
 	return ManagedSerializableDeltaRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDelta::GetRtti() const
+RTTIType* ManagedSerializableDelta::GetRtti() const
 {
 	return ManagedSerializableDelta::GetRttiStatic();
 }

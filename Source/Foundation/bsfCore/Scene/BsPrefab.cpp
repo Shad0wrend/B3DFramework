@@ -212,12 +212,12 @@ void Prefab::RecordNestedPrefabInstanceDeltas()
 	//}, nullptr, false);
 }
 
-RTTITypeBase* Prefab::GetRttiStatic()
+RTTIType* Prefab::GetRttiStatic()
 {
 	return PrefabRTTI::Instance();
 }
 
-RTTITypeBase* Prefab::GetRtti() const
+RTTIType* Prefab::GetRtti() const
 {
 	return Prefab::GetRttiStatic();
 }

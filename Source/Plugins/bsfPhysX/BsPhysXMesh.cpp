@@ -332,12 +332,12 @@ SPtr<MeshData> FPhysXMesh::GetMeshData() const
 	return meshData;
 }
 
-RTTITypeBase* FPhysXMesh::GetRttiStatic()
+RTTIType* FPhysXMesh::GetRttiStatic()
 {
 	return FPhysXMeshRTTI::Instance();
 }
 
-RTTITypeBase* FPhysXMesh::GetRtti() const
+RTTIType* FPhysXMesh::GetRtti() const
 {
 	return GetRttiStatic();
 }

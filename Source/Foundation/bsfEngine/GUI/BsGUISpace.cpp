@@ -60,12 +60,12 @@ GUIFixedSpace* GUIFixedSpace::Create(u32 size)
 	return B3DNew<GUIFixedSpace>(size);
 }
 
-RTTITypeBase* GUIFixedSpace::GetRttiStatic()
+RTTIType* GUIFixedSpace::GetRttiStatic()
 {
 	return GUIFixedSpaceRTTI::Instance();
 }
 
-RTTITypeBase* GUIFixedSpace::GetRtti() const
+RTTIType* GUIFixedSpace::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -85,12 +85,12 @@ GUIFlexibleSpace* GUIFlexibleSpace::Create()
 	return B3DNew<GUIFlexibleSpace>();
 }
 
-RTTITypeBase* GUIFlexibleSpace::GetRttiStatic()
+RTTIType* GUIFlexibleSpace::GetRttiStatic()
 {
 	return GUIFlexibleSpaceRTTI::Instance();
 }
 
-RTTITypeBase* GUIFlexibleSpace::GetRtti() const
+RTTIType* GUIFlexibleSpace::GetRtti() const
 {
 	return GetRttiStatic();
 }

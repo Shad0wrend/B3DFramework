@@ -45,8 +45,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ISerializedRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 }
 
@@ -98,8 +98,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedTupleRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains data for a single field in a serialized object. */
@@ -115,8 +115,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedFieldRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains a sub-set of fields of a SerializedObject for a single class in a class hierarchy. */
@@ -132,8 +132,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedSubObjectRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Flags used for controlling the serialization process when encoding an IReflectable to a  SerializedObject. */
@@ -193,8 +193,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedObjectRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains data for a serialized value of a specific field or array entry. */
@@ -221,8 +221,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedPlainDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains data for a serialized value of a data block field. */
@@ -243,8 +243,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedDataBlockRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** A serialized array containing a list of all its entries. */
@@ -263,8 +263,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedArrayRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** A serialized map containing a list of all its entries. */
@@ -283,8 +283,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedMapRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

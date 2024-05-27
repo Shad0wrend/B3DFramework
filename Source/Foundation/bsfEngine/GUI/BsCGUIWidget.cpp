@@ -103,12 +103,12 @@ void CGUIWidget::OnDestroyed()
 	mInternal = nullptr;
 }
 
-RTTITypeBase* CGUIWidget::GetRttiStatic()
+RTTIType* CGUIWidget::GetRttiStatic()
 {
 	return CGUIWidgetRTTI::Instance();
 }
 
-RTTITypeBase* CGUIWidget::GetRtti() const
+RTTIType* CGUIWidget::GetRtti() const
 {
 	return CGUIWidget::GetRttiStatic();
 }

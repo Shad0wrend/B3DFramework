@@ -303,12 +303,12 @@ void ParticleEmitterConeShape::CalcBounds(AABox& shape, AABox& velocity) const
 	velocity.SetMax(Vector3(sinAngle, sinAngle, 1.0f));
 }
 
-RTTITypeBase* ParticleEmitterConeShape::GetRttiStatic()
+RTTIType* ParticleEmitterConeShape::GetRttiStatic()
 {
 	return ParticleEmitterConeShapeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitterConeShape::GetRtti() const
+RTTIType* ParticleEmitterConeShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -349,12 +349,12 @@ SPtr<ParticleEmitterSphereShape> ParticleEmitterSphereShape::Create()
 	return B3DMakeShared<ParticleEmitterSphereShape>();
 }
 
-RTTITypeBase* ParticleEmitterSphereShape::GetRttiStatic()
+RTTIType* ParticleEmitterSphereShape::GetRttiStatic()
 {
 	return ParticleEmitterSphereShapeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitterSphereShape::GetRtti() const
+RTTIType* ParticleEmitterSphereShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -397,12 +397,12 @@ SPtr<ParticleEmitterHemisphereShape> ParticleEmitterHemisphereShape::Create()
 	return B3DMakeShared<ParticleEmitterHemisphereShape>();
 }
 
-RTTITypeBase* ParticleEmitterHemisphereShape::GetRttiStatic()
+RTTIType* ParticleEmitterHemisphereShape::GetRttiStatic()
 {
 	return ParticleEmitterHemisphereShapeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitterHemisphereShape::GetRtti() const
+RTTIType* ParticleEmitterHemisphereShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -570,12 +570,12 @@ SPtr<ParticleEmitterBoxShape> ParticleEmitterBoxShape::Create()
 	return B3DMakeShared<ParticleEmitterBoxShape>();
 }
 
-RTTITypeBase* ParticleEmitterBoxShape::GetRttiStatic()
+RTTIType* ParticleEmitterBoxShape::GetRttiStatic()
 {
 	return ParticleEmitterBoxShapeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitterBoxShape::GetRtti() const
+RTTIType* ParticleEmitterBoxShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -620,12 +620,12 @@ SPtr<ParticleEmitterLineShape> ParticleEmitterLineShape::Create()
 	return B3DMakeShared<ParticleEmitterLineShape>();
 }
 
-RTTITypeBase* ParticleEmitterLineShape::GetRttiStatic()
+RTTIType* ParticleEmitterLineShape::GetRttiStatic()
 {
 	return ParticleEmitterLineShapeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitterLineShape::GetRtti() const
+RTTIType* ParticleEmitterLineShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -678,12 +678,12 @@ SPtr<ParticleEmitterCircleShape> ParticleEmitterCircleShape::Create()
 	return B3DMakeShared<ParticleEmitterCircleShape>();
 }
 
-RTTITypeBase* ParticleEmitterCircleShape::GetRttiStatic()
+RTTIType* ParticleEmitterCircleShape::GetRttiStatic()
 {
 	return ParticleEmitterCircleShapeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitterCircleShape::GetRtti() const
+RTTIType* ParticleEmitterCircleShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -725,12 +725,12 @@ SPtr<ParticleEmitterRectShape> ParticleEmitterRectShape::Create()
 	return B3DMakeShared<ParticleEmitterRectShape>();
 }
 
-RTTITypeBase* ParticleEmitterRectShape::GetRttiStatic()
+RTTIType* ParticleEmitterRectShape::GetRttiStatic()
 {
 	return ParticleEmitterRectShapeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitterRectShape::GetRtti() const
+RTTIType* ParticleEmitterRectShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -1049,12 +1049,12 @@ SPtr<ParticleEmitterStaticMeshShape> ParticleEmitterStaticMeshShape::Create()
 	return B3DMakeShared<ParticleEmitterStaticMeshShape>();
 }
 
-RTTITypeBase* ParticleEmitterStaticMeshShape::GetRttiStatic()
+RTTIType* ParticleEmitterStaticMeshShape::GetRttiStatic()
 {
 	return ParticleEmitterStaticMeshShapeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitterStaticMeshShape::GetRtti() const
+RTTIType* ParticleEmitterStaticMeshShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -1221,12 +1221,12 @@ SPtr<ParticleEmitterSkinnedMeshShape> ParticleEmitterSkinnedMeshShape::Create()
 	return B3DMakeShared<ParticleEmitterSkinnedMeshShape>();
 }
 
-RTTITypeBase* ParticleEmitterSkinnedMeshShape::GetRttiStatic()
+RTTIType* ParticleEmitterSkinnedMeshShape::GetRttiStatic()
 {
 	return ParticleEmitterSkinnedMeshShapeRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitterSkinnedMeshShape::GetRtti() const
+RTTIType* ParticleEmitterSkinnedMeshShape::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -1433,12 +1433,12 @@ SPtr<ParticleEmitter> ParticleEmitter::Create()
 	return B3DMakeShared<ParticleEmitter>();
 }
 
-RTTITypeBase* ParticleEmitter::GetRttiStatic()
+RTTIType* ParticleEmitter::GetRttiStatic()
 {
 	return ParticleEmitterRTTI::Instance();
 }
 
-RTTITypeBase* ParticleEmitter::GetRtti() const
+RTTIType* ParticleEmitter::GetRtti() const
 {
 	return GetRttiStatic();
 }

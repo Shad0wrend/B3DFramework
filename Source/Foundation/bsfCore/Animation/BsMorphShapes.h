@@ -75,8 +75,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class MorphShapeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 		MorphShape() = default; // Serialization only
 	};
@@ -120,8 +120,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class MorphChannelRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 		/**
 		 * Creates MorphShapes with no data. You must populate its data manually.
@@ -168,8 +168,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class MorphShapesRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 		/**
 		 * Creates MorphShapes with no data. You must populate its data manually.

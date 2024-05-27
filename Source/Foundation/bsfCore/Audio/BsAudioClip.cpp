@@ -47,12 +47,12 @@ SPtr<AudioClip> AudioClip::CreateEmpty()
 	return newClip;
 }
 
-RTTITypeBase* AudioClip::GetRttiStatic()
+RTTIType* AudioClip::GetRttiStatic()
 {
 	return AudioClipRTTI::Instance();
 }
 
-RTTITypeBase* AudioClip::GetRtti() const
+RTTIType* AudioClip::GetRtti() const
 {
 	return GetRttiStatic();
 }

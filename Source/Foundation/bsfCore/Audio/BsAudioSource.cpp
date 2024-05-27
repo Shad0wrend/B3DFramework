@@ -65,12 +65,12 @@ void AudioSource::NotifyResourceChanged(const HResource& resource)
 	OnClipChanged();
 }
 
-RTTITypeBase* AudioSource::GetRttiStatic()
+RTTIType* AudioSource::GetRttiStatic()
 {
 	return AudioSourceRTTI::Instance();
 }
 
-RTTITypeBase* AudioSource::GetRtti() const
+RTTIType* AudioSource::GetRtti() const
 {
 	return AudioSource::GetRttiStatic();
 }

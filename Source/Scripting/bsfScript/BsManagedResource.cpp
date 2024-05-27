@@ -132,12 +132,12 @@ void ManagedResource::Destroy()
 	ManagedResourceManager::Instance().UnregisterManagedResource(mMyHandle);
 }
 
-RTTITypeBase* ManagedResource::GetRttiStatic()
+RTTIType* ManagedResource::GetRttiStatic()
 {
 	return ManagedResourceRTTI::Instance();
 }
 
-RTTITypeBase* ManagedResource::GetRtti() const
+RTTIType* ManagedResource::GetRtti() const
 {
 	return ManagedResource::GetRttiStatic();
 }

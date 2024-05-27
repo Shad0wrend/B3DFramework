@@ -243,8 +243,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class LightRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 	protected:
 		Light() = default; // Serialization only

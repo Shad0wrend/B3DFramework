@@ -143,12 +143,12 @@ SPtr<SpriteVectorPath> SpriteVectorPath::CreateEmpty()
 	return spriteVectorPath;
 }
 
-RTTITypeBase* SpriteVectorPath::GetRttiStatic()
+RTTIType* SpriteVectorPath::GetRttiStatic()
 {
 	return SpriteVectorPathRTTI::Instance();
 }
 
-RTTITypeBase* SpriteVectorPath::GetRtti() const
+RTTIType* SpriteVectorPath::GetRtti() const
 {
 	return GetRttiStatic();
 }

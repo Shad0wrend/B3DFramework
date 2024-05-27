@@ -53,7 +53,7 @@ namespace bs
 		 */
 		struct SubObjectExternalReferences
 		{
-			RTTITypeBase* Rtti = nullptr;
+			RTTIType* Rtti = nullptr;
 			Vector<ObjectReference> References;
 			Vector<ObjectExternalReferences> ChildObjects;
 		};

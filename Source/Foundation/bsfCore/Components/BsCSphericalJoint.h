@@ -62,8 +62,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CSphericalJointRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		CSphericalJoint(); // Serialization only

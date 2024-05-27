@@ -299,12 +299,12 @@ void Texture::CreateCpuBuffers()
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* Texture::GetRttiStatic()
+RTTIType* Texture::GetRttiStatic()
 {
 	return TextureRTTI::Instance();
 }
 
-RTTITypeBase* Texture::GetRtti() const
+RTTIType* Texture::GetRtti() const
 {
 	return Texture::GetRttiStatic();
 }

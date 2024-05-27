@@ -26,10 +26,10 @@ namespace bs
 	struct RTTIDataBlockFieldBase : public RTTIField
 	{
 		/** Retrieves a data block from the specified instance. */
-		virtual SPtr<DataStream> GetValue(RTTITypeBase* rtti, void* object, u32& size) = 0;
+		virtual SPtr<DataStream> GetValue(RTTIType* rtti, void* object, u32& size) = 0;
 
 		/** Sets a data block on the specified instance. */
-		virtual void SetValue(RTTITypeBase* rtti, void* object, const SPtr<DataStream>& data, u32 size) = 0;
+		virtual void SetValue(RTTIType* rtti, void* object, const SPtr<DataStream>& data, u32 size) = 0;
 	};
 
 	/** Class containing a data block field containing a specific type. */
@@ -71,7 +71,7 @@ namespace bs
 			Schema.FieldTypes.Add(fieldTypeSchema);
 		}
 
-		SPtr<DataStream> GetValue(RTTITypeBase* rtti, void* object, u32& size) override
+		SPtr<DataStream> GetValue(RTTIType* rtti, void* object, u32& size) override
 		{
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObj = static_cast<ObjectType*>(object);
@@ -79,7 +79,7 @@ namespace bs
 			return (rttiObject->*getter)(castObj, size);
 		}
 
-		void SetValue(RTTITypeBase* rtti, void* object, const SPtr<DataStream>& value, u32 size) override
+		void SetValue(RTTIType* rtti, void* object, const SPtr<DataStream>& value, u32 size) override
 		{
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObj = static_cast<ObjectType*>(object);

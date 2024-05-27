@@ -57,22 +57,22 @@ const CharacterInformation& FontBitmapInformation::GetCharacterInformation(u32 c
 	return MissingGlyph;
 }
 
-RTTITypeBase* FontBitmapInformation::GetRttiStatic()
+RTTIType* FontBitmapInformation::GetRttiStatic()
 {
 	return FontBitmapInformationRTTI::Instance();
 }
 
-RTTITypeBase* FontBitmapInformation::GetRtti() const
+RTTIType* FontBitmapInformation::GetRtti() const
 {
 	return FontBitmapInformation::GetRttiStatic();
 }
 
-RTTITypeBase* FontBitmapPage::GetRttiStatic()
+RTTIType* FontBitmapPage::GetRttiStatic()
 {
 	return FontBitmapPageRTTI::Instance();
 }
 
-RTTITypeBase* FontBitmapPage::GetRtti() const
+RTTIType* FontBitmapPage::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -551,12 +551,12 @@ SPtr<Font> Font::CreateEmpty()
 	return newFont;
 }
 
-RTTITypeBase* Font::GetRttiStatic()
+RTTIType* Font::GetRttiStatic()
 {
 	return FontRTTI::Instance();
 }
 
-RTTITypeBase* Font::GetRtti() const
+RTTIType* Font::GetRtti() const
 {
 	return Font::GetRttiStatic();
 }

@@ -26,12 +26,12 @@ SPtr<ShaderInclude> ShaderInclude::CreatePtrInternal(const String& includeString
 	return shaderIncludePtr;
 }
 
-RTTITypeBase* ShaderInclude::GetRttiStatic()
+RTTIType* ShaderInclude::GetRttiStatic()
 {
 	return ShaderIncludeRTTI::Instance();
 }
 
-RTTITypeBase* ShaderInclude::GetRtti() const
+RTTIType* ShaderInclude::GetRtti() const
 {
 	return ShaderInclude::GetRttiStatic();
 }

@@ -171,8 +171,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class AudioClipRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 		/**
 		 * Creates an AudioClip with no samples. You must populate its data manually followed by a call to Initialize().

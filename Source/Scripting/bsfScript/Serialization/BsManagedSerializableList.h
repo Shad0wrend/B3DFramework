@@ -153,8 +153,8 @@ namespace bs
 
 	public:
 		friend class ManagedSerializableListRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/** @} */

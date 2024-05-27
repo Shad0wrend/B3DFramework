@@ -278,12 +278,12 @@ SPtr<StringTable> StringTable::CreatePtrInternal()
 	return scriptCodePtr;
 }
 
-RTTITypeBase* StringTable::GetRttiStatic()
+RTTIType* StringTable::GetRttiStatic()
 {
 	return StringTableRTTI::Instance();
 }
 
-RTTITypeBase* StringTable::GetRtti() const
+RTTIType* StringTable::GetRtti() const
 {
 	return StringTable::GetRttiStatic();
 }

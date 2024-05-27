@@ -176,12 +176,12 @@ SPtr<Joint> CD6Joint::CreateInternal()
 	return joint;
 }
 
-RTTITypeBase* CD6Joint::GetRttiStatic()
+RTTIType* CD6Joint::GetRttiStatic()
 {
 	return CD6JointRTTI::Instance();
 }
 
-RTTITypeBase* CD6Joint::GetRtti() const
+RTTIType* CD6Joint::GetRtti() const
 {
 	return CD6Joint::GetRttiStatic();
 }

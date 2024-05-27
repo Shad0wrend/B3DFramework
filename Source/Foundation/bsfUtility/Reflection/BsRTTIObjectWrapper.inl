@@ -32,7 +32,7 @@ namespace bs::RTTIObjectWrapper
 		// Do nothing
 	}
 
-	inline Object<true>::Object(IReflectable* object, RTTITypeBase* type, FrameAllocator* frameAllocator)
+	inline Object<true>::Object(IReflectable* object, RTTIType* type, FrameAllocator* frameAllocator)
 		: mObject(object), mRTTIType(type), mFrameAllocator(frameAllocator)
 	{
 		B3D_ASSERT(type != nullptr);
@@ -49,7 +49,7 @@ namespace bs::RTTIObjectWrapper
 		B3D_ASSERT(subObject.mRTTIType != nullptr);
 		B3D_ASSERT(subObject.mRTTITypeInstance == nullptr);
 
-		RTTITypeBase* rttiTypeInstance = subObject.mRTTIType->CloneInternal(*mFrameAllocator);
+		RTTIType* rttiTypeInstance = subObject.mRTTIType->CloneInternal(*mFrameAllocator);
 		rttiTypeInstance->NotifyOperationStarted(*mObject, operationType, context);
 
 		mRTTITypeInstances.push_back(rttiTypeInstance);
@@ -62,7 +62,7 @@ namespace bs::RTTIObjectWrapper
 		// depends on the old functionality, so we'll keep it this way
 		for(auto it = mRTTITypeInstances.rbegin(); it != mRTTITypeInstances.rend(); ++it)
 		{
-			RTTITypeBase* const currentRTTIInstance = *it;
+			RTTIType* const currentRTTIInstance = *it;
 
 			currentRTTIInstance->NotifyOperationEnded(*mObject, operationType, context);
 			mFrameAllocator->Destruct(currentRTTIInstance);
@@ -93,7 +93,7 @@ namespace bs::RTTIObjectWrapper
 		return FieldIterator<false>(mObject, mSubObjectIndex, mFrameAllocator);
 	}
 
-	inline SubObject<true>::SubObject(IReflectable* object, RTTITypeBase* type, FrameAllocator* frameAllocator)
+	inline SubObject<true>::SubObject(IReflectable* object, RTTIType* type, FrameAllocator* frameAllocator)
 		: mObject(object), mRTTIType(type), mFrameAllocator(frameAllocator)
 	{
 		B3D_ASSERT(object != nullptr);
@@ -148,7 +148,7 @@ namespace bs::RTTIObjectWrapper
 		return SubObject<false>(mObject, mCurrentSubObjectIndex, mFrameAllocator);
 	}
 
-	inline SubObjectIterator<true>::SubObjectIterator(RTTITypeBase* rttiType, IReflectable* object, FrameAllocator* frameAllocator)
+	inline SubObjectIterator<true>::SubObjectIterator(RTTIType* rttiType, IReflectable* object, FrameAllocator* frameAllocator)
 		: mObject(object), mRTTIType(rttiType), mFrameAllocator(frameAllocator)
 	{
 		B3D_ASSERT(rttiType != nullptr);
@@ -196,7 +196,7 @@ namespace bs::RTTIObjectWrapper
 		return mValue != nullptr ? mValue->Clone() : nullptr;
 	}
 
-	inline Field<true>::Field(RTTITypeBase* rttiTypeInstance, RTTIField* field, IReflectable* object, FrameAllocator* frameAllocator)
+	inline Field<true>::Field(RTTIType* rttiTypeInstance, RTTIField* field, IReflectable* object, FrameAllocator* frameAllocator)
 		: mRTTITypeInstance(rttiTypeInstance), mField(field), mObject(object), mFrameAllocator(frameAllocator)
 	{
 		B3D_ASSERT(rttiTypeInstance != nullptr);
@@ -349,7 +349,7 @@ namespace bs::RTTIObjectWrapper
 		return {};
 	}
 
-	inline ValueIterator<true>::ValueIterator(RTTIField* field, RTTITypeBase* rttiTypeInstance, IReflectable* object, const SPtr<IRTTIIterator>& iterator, FrameAllocator* frameAllocator)
+	inline ValueIterator<true>::ValueIterator(RTTIField* field, RTTIType* rttiTypeInstance, IReflectable* object, const SPtr<IRTTIIterator>& iterator, FrameAllocator* frameAllocator)
 		: mIterator(iterator), mObject(object), mRTTITypeInstance(rttiTypeInstance), mField(field), mFrameAllocator(frameAllocator)
 	{
 		B3D_ASSERT(field != nullptr);
@@ -359,7 +359,7 @@ namespace bs::RTTIObjectWrapper
 		B3D_ASSERT(frameAllocator != nullptr);
 	}
 
-	inline ValueIterator<true>::ValueIterator(RTTIField* field, RTTITypeBase* rttiTypeInstance, IReflectable* object, u32 elementCount, FrameAllocator* frameAllocator)
+	inline ValueIterator<true>::ValueIterator(RTTIField* field, RTTIType* rttiTypeInstance, IReflectable* object, u32 elementCount, FrameAllocator* frameAllocator)
 		: mElementCount(elementCount), mObject(object), mRTTITypeInstance(rttiTypeInstance), mField(field), mFrameAllocator(frameAllocator)
 	{
 		B3D_ASSERT(field != nullptr);
@@ -577,7 +577,7 @@ namespace bs::RTTIObjectWrapper
 		return nullptr;
 	}
 
-	inline Value<true>::Value(RTTIField* field, u32 tupleElementIndex, const SPtr<IRTTIIterator>& iterator, RTTITypeBase* rttiTypeInstance, IReflectable* object, FrameAllocator* frameAllocator)
+	inline Value<true>::Value(RTTIField* field, u32 tupleElementIndex, const SPtr<IRTTIIterator>& iterator, RTTIType* rttiTypeInstance, IReflectable* object, FrameAllocator* frameAllocator)
 		: mField(field), mTupleElementIndex(tupleElementIndex), mIterator(iterator), mRTTITypeInstance(rttiTypeInstance), mObject(object), mFrameAllocator(frameAllocator)
 	{
 		B3D_ASSERT(field != nullptr);
@@ -587,7 +587,7 @@ namespace bs::RTTIObjectWrapper
 		B3D_ASSERT(frameAllocator != nullptr);
 	}
 
-	inline Value<true>::Value(RTTIField* field, u32 tupleElementIndex, u32 arrayIndex, RTTITypeBase* rttiTypeInstance, IReflectable* object, FrameAllocator* frameAllocator)
+	inline Value<true>::Value(RTTIField* field, u32 tupleElementIndex, u32 arrayIndex, RTTIType* rttiTypeInstance, IReflectable* object, FrameAllocator* frameAllocator)
 		: mField(field), mTupleElementIndex(tupleElementIndex), mArrayIndex(arrayIndex), mRTTITypeInstance(rttiTypeInstance), mObject(object), mFrameAllocator(frameAllocator)
 	{
 		B3D_ASSERT(field != nullptr);
@@ -771,7 +771,7 @@ namespace bs::RTTIObjectWrapper
 		return Field<false>(mFieldIterator->first, mFieldIterator->second.Value, mFrameAllocator);
 	}
 
-	inline FieldIterator<true>::FieldIterator(RTTITypeBase* rttiType, RTTITypeBase* rttiTypeInstance, IReflectable* value, FrameAllocator* frameAllocator)
+	inline FieldIterator<true>::FieldIterator(RTTIType* rttiType, RTTIType* rttiTypeInstance, IReflectable* value, FrameAllocator* frameAllocator)
 		: mValue(value), mRTTIType(rttiType), mRTTITypeInstance(rttiTypeInstance), mFrameAllocator(frameAllocator)
 	{
 		B3D_ASSERT(rttiType != nullptr);
@@ -823,7 +823,7 @@ namespace bs::RTTIObjectWrapper
 		{
 			SubObject<IsIReflectable> subObject = subObjectIterator.GetValue();
 
-			RTTITypeBase* rtti = IReflectable::GetRTTITypeFromTypeId(subObject.GetTypeId());
+			RTTIType* rtti = IReflectable::GetRTTITypeFromTypeId(subObject.GetTypeId());
 			if(!B3D_ENSURE(rtti != nullptr))
 				continue;
 

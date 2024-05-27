@@ -160,8 +160,8 @@ namespace bs
 
 	public:
 		friend class MeshRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 		/************************************************************************/
 		/* 								STATICS		                     		*/

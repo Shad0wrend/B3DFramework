@@ -676,12 +676,12 @@ void GUIElement::SetLayoutUpdateParent(GUIElement* layoutUpdateParent)
 		child->SetLayoutUpdateParent(layoutUpdateParent);
 }
 
-RTTITypeBase* GUIElement::GetRttiStatic()
+RTTIType* GUIElement::GetRttiStatic()
 {
 	return GUIElementRTTI::Instance();
 }
 
-RTTITypeBase* GUIElement::GetRtti() const
+RTTIType* GUIElement::GetRtti() const
 {
 	return GUIElement::GetRttiStatic();
 }

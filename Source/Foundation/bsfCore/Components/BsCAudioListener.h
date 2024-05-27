@@ -67,8 +67,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CAudioListenerRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		CAudioListener(); // Serialization only

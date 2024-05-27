@@ -70,12 +70,12 @@ void Resource::RemoveResourceDependency(const HResource& resource)
 	mDependencies.erase(std::remove(mDependencies.begin(), mDependencies.end(), resource.GetWeak()), mDependencies.end());
 }
 
-RTTITypeBase* Resource::GetRttiStatic()
+RTTIType* Resource::GetRttiStatic()
 {
 	return ResourceRTTI::Instance();
 }
 
-RTTITypeBase* Resource::GetRtti() const
+RTTIType* Resource::GetRtti() const
 {
 	return Resource::GetRttiStatic();
 }

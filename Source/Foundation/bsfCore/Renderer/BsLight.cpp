@@ -242,12 +242,12 @@ void Light::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag)
 	MarkRenderProxyDataDirty((u32)flag);
 }
 
-RTTITypeBase* Light::GetRttiStatic()
+RTTIType* Light::GetRttiStatic()
 {
 	return LightRTTI::Instance();
 }
 
-RTTITypeBase* Light::GetRtti() const
+RTTIType* Light::GetRtti() const
 {
 	return Light::GetRttiStatic();
 }

@@ -124,12 +124,12 @@ RenderProxySyncPacket* SpriteImage::CreateRenderProxySyncPacket(FrameAllocator& 
 	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
 
-RTTITypeBase* SpriteImage::GetRttiStatic()
+RTTIType* SpriteImage::GetRttiStatic()
 {
 	return SpriteImageRTTI::Instance();
 }
 
-RTTITypeBase* SpriteImage::GetRtti() const
+RTTIType* SpriteImage::GetRtti() const
 {
 	return GetRttiStatic();
 }

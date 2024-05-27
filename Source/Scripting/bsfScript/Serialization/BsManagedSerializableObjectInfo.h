@@ -106,8 +106,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable primitive (for example int, float, etc.). */
@@ -125,8 +125,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoPrimitiveRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable enum. */
@@ -146,8 +146,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoEnumRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable game object or resourcee. */
@@ -168,8 +168,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoRefRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a reference to a resource. */
@@ -187,8 +187,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoRRefRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable complex object (for example struct or class). */
@@ -211,8 +211,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoObjectRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable Array. */
@@ -231,8 +231,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoArrayRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable List. */
@@ -250,8 +250,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoListRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable Dictionary. */
@@ -270,8 +270,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoDictionaryRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains data about a single member in a managed complex object. */
@@ -319,8 +319,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableMemberInfoRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains data about a single field in a managed complex object. */
@@ -340,8 +340,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableFieldInfoRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains data about a single property in a managed complex object. */
@@ -361,8 +361,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializablePropertyInfoRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains data about fields of a complex object, and the object's class hierarchy if it belongs to one. */
@@ -400,8 +400,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableObjectInfoRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about all managed serializable objects in a specific managed assembly. */
@@ -418,8 +418,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableAssemblyInfoRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

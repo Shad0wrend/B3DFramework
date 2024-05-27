@@ -341,12 +341,12 @@ void LightProbeVolume::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag dirtyFlag
 	MarkRenderProxyDataDirty((u32)dirtyFlag);
 }
 
-RTTITypeBase* LightProbeVolume::GetRttiStatic()
+RTTIType* LightProbeVolume::GetRttiStatic()
 {
 	return LightProbeVolumeRTTI::Instance();
 }
 
-RTTITypeBase* LightProbeVolume::GetRtti() const
+RTTIType* LightProbeVolume::GetRtti() const
 {
 	return LightProbeVolume::GetRttiStatic();
 }

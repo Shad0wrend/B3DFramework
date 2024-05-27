@@ -342,12 +342,12 @@ u32 PixelData::GetInternalBufferSize() const
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* PixelData::GetRttiStatic()
+RTTIType* PixelData::GetRttiStatic()
 {
 	return PixelDataRTTI::Instance();
 }
 
-RTTITypeBase* PixelData::GetRtti() const
+RTTIType* PixelData::GetRtti() const
 {
 	return PixelData::GetRttiStatic();
 }

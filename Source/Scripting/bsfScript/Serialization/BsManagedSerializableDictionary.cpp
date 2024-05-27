@@ -16,12 +16,12 @@ ManagedSerializableDictionaryKeyValue::ManagedSerializableDictionaryKeyValue(con
 {
 }
 
-RTTITypeBase* ManagedSerializableDictionaryKeyValue::GetRttiStatic()
+RTTIType* ManagedSerializableDictionaryKeyValue::GetRttiStatic()
 {
 	return ManagedSerializableDictionaryKeyValueRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDictionaryKeyValue::GetRtti() const
+RTTIType* ManagedSerializableDictionaryKeyValue::GetRtti() const
 {
 	return ManagedSerializableDictionaryKeyValue::GetRttiStatic();
 }
@@ -455,12 +455,12 @@ void ManagedSerializableDictionary::InitMonoObjects(MonoClass* dictionaryClass)
 	mValuesCopyTo = valueCollectionClass->GetMethod("CopyTo", 2);
 }
 
-RTTITypeBase* ManagedSerializableDictionary::GetRttiStatic()
+RTTIType* ManagedSerializableDictionary::GetRttiStatic()
 {
 	return ManagedSerializableDictionaryRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableDictionary::GetRtti() const
+RTTIType* ManagedSerializableDictionary::GetRtti() const
 {
 	return ManagedSerializableDictionary::GetRttiStatic();
 }

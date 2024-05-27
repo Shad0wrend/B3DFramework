@@ -16,12 +16,12 @@ SPtr<ResourceMapping> ResourceMapping::Create()
 	return B3DMakeShared<ResourceMapping>();
 }
 
-RTTITypeBase* ResourceMapping::GetRttiStatic()
+RTTIType* ResourceMapping::GetRttiStatic()
 {
 	return ResourceMappingRTTI::Instance();
 }
 
-RTTITypeBase* ResourceMapping::GetRtti() const
+RTTIType* ResourceMapping::GetRtti() const
 {
 	return GetRttiStatic();
 }

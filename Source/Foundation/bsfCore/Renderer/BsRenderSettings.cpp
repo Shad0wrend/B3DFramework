@@ -8,52 +8,52 @@
 
 using namespace bs;
 
-RTTITypeBase* AutoExposureSettings::GetRttiStatic()
+RTTIType* AutoExposureSettings::GetRttiStatic()
 {
 	return AutoExposureSettingsRTTI::Instance();
 }
 
-RTTITypeBase* AutoExposureSettings::GetRtti() const
+RTTIType* AutoExposureSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* TonemappingSettings::GetRttiStatic()
+RTTIType* TonemappingSettings::GetRttiStatic()
 {
 	return TonemappingSettingsRTTI::Instance();
 }
 
-RTTITypeBase* TonemappingSettings::GetRtti() const
+RTTIType* TonemappingSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* WhiteBalanceSettings::GetRttiStatic()
+RTTIType* WhiteBalanceSettings::GetRttiStatic()
 {
 	return WhiteBalanceSettingsRTTI::Instance();
 }
 
-RTTITypeBase* WhiteBalanceSettings::GetRtti() const
+RTTIType* WhiteBalanceSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* ColorGradingSettings::GetRttiStatic()
+RTTIType* ColorGradingSettings::GetRttiStatic()
 {
 	return ColorGradingSettingsRTTI::Instance();
 }
 
-RTTITypeBase* ColorGradingSettings::GetRtti() const
+RTTIType* ColorGradingSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* AmbientOcclusionSettings::GetRttiStatic()
+RTTIType* AmbientOcclusionSettings::GetRttiStatic()
 {
 	return AmbientOcclusionSettingsRTTI::Instance();
 }
 
-RTTITypeBase* AmbientOcclusionSettings::GetRtti() const
+RTTIType* AmbientOcclusionSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -61,62 +61,62 @@ RTTITypeBase* AmbientOcclusionSettings::GetRtti() const
 template struct TDepthOfFieldSettings<false>;
 template struct TDepthOfFieldSettings<true>;
 
-RTTITypeBase* DepthOfFieldSettings::GetRttiStatic()
+RTTIType* DepthOfFieldSettings::GetRttiStatic()
 {
 	return DepthOfFieldSettingsRTTI::Instance();
 }
 
-RTTITypeBase* DepthOfFieldSettings::GetRtti() const
+RTTIType* DepthOfFieldSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* ScreenSpaceReflectionsSettings::GetRttiStatic()
+RTTIType* ScreenSpaceReflectionsSettings::GetRttiStatic()
 {
 	return ScreenSpaceReflectionsSettingsRTTI::Instance();
 }
 
-RTTITypeBase* ScreenSpaceReflectionsSettings::GetRtti() const
+RTTIType* ScreenSpaceReflectionsSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* BloomSettings::GetRttiStatic()
+RTTIType* BloomSettings::GetRttiStatic()
 {
 	return BloomSettingsRTTI::Instance();
 }
 
-RTTITypeBase* BloomSettings::GetRtti() const
+RTTIType* BloomSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* ScreenSpaceLensFlareSettings::GetRttiStatic()
+RTTIType* ScreenSpaceLensFlareSettings::GetRttiStatic()
 {
 	return ScreenSpaceLensFlareSettingsRTTI::Instance();
 }
 
-RTTITypeBase* ScreenSpaceLensFlareSettings::GetRtti() const
+RTTIType* ScreenSpaceLensFlareSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* MotionBlurSettings::GetRttiStatic()
+RTTIType* MotionBlurSettings::GetRttiStatic()
 {
 	return MotionBlurSettingsRTTI::Instance();
 }
 
-RTTITypeBase* MotionBlurSettings::GetRtti() const
+RTTIType* MotionBlurSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* TemporalAASettings::GetRttiStatic()
+RTTIType* TemporalAASettings::GetRttiStatic()
 {
 	return TemporalAASettingsRTTI::Instance();
 }
 
-RTTITypeBase* TemporalAASettings::GetRtti() const
+RTTIType* TemporalAASettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -124,32 +124,32 @@ RTTITypeBase* TemporalAASettings::GetRtti() const
 template struct TChromaticAberrationSettings<false>;
 template struct TChromaticAberrationSettings<true>;
 
-RTTITypeBase* ChromaticAberrationSettings::GetRttiStatic()
+RTTIType* ChromaticAberrationSettings::GetRttiStatic()
 {
 	return ChromaticAberrationSettingsRTTI::Instance();
 }
 
-RTTITypeBase* ChromaticAberrationSettings::GetRtti() const
+RTTIType* ChromaticAberrationSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* FilmGrainSettings::GetRttiStatic()
+RTTIType* FilmGrainSettings::GetRttiStatic()
 {
 	return FilmGrainSettingsRTTI::Instance();
 }
 
-RTTITypeBase* FilmGrainSettings::GetRtti() const
+RTTIType* FilmGrainSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
 
-RTTITypeBase* ShadowSettings::GetRttiStatic()
+RTTIType* ShadowSettings::GetRttiStatic()
 {
 	return ShadowSettingsRTTI::Instance();
 }
 
-RTTITypeBase* ShadowSettings::GetRtti() const
+RTTIType* ShadowSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -157,12 +157,12 @@ RTTITypeBase* ShadowSettings::GetRtti() const
 template struct TRenderSettings<false>;
 template struct TRenderSettings<true>;
 
-RTTITypeBase* RenderSettings::GetRttiStatic()
+RTTIType* RenderSettings::GetRttiStatic()
 {
 	return RenderSettingsRTTI::Instance();
 }
 
-RTTITypeBase* RenderSettings::GetRtti() const
+RTTIType* RenderSettings::GetRtti() const
 {
 	return GetRttiStatic();
 }

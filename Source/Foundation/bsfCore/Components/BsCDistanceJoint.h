@@ -90,8 +90,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CDistanceJointRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		CDistanceJoint(); // Serialization only

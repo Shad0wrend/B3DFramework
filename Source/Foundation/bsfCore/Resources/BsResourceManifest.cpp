@@ -216,12 +216,12 @@ SPtr<ResourceManifest> ResourceManifest::Load(const Path& path, const Path& phys
 	return copy;
 }
 
-RTTITypeBase* ResourceManifest::GetRttiStatic()
+RTTIType* ResourceManifest::GetRttiStatic()
 {
 	return ResourceManifestRTTI::Instance();
 }
 
-RTTITypeBase* ResourceManifest::GetRtti() const
+RTTIType* ResourceManifest::GetRtti() const
 {
 	return ResourceManifest::GetRttiStatic();
 }

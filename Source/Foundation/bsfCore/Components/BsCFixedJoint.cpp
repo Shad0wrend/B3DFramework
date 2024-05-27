@@ -61,12 +61,12 @@ void CFixedJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternio
 	}
 }
 
-RTTITypeBase* CFixedJoint::GetRttiStatic()
+RTTIType* CFixedJoint::GetRttiStatic()
 {
 	return CFixedJointRTTI::Instance();
 }
 
-RTTITypeBase* CFixedJoint::GetRtti() const
+RTTIType* CFixedJoint::GetRtti() const
 {
 	return CFixedJoint::GetRttiStatic();
 }

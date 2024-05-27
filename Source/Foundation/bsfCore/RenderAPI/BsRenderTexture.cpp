@@ -167,12 +167,12 @@ const RenderTextureProperties& RenderTexture::GetProperties() const
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* RenderTexture::GetRttiStatic()
+RTTIType* RenderTexture::GetRttiStatic()
 {
 	return RenderTextureRTTI::Instance();
 }
 
-RTTITypeBase* RenderTexture::GetRtti() const
+RTTIType* RenderTexture::GetRtti() const
 {
 	return RenderTexture::GetRttiStatic();
 }

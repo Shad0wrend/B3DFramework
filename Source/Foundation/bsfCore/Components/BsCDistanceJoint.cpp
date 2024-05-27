@@ -120,12 +120,12 @@ SPtr<Joint> CDistanceJoint::CreateInternal()
 	return joint;
 }
 
-RTTITypeBase* CDistanceJoint::GetRttiStatic()
+RTTIType* CDistanceJoint::GetRttiStatic()
 {
 	return CDistanceJointRTTI::Instance();
 }
 
-RTTITypeBase* CDistanceJoint::GetRtti() const
+RTTIType* CDistanceJoint::GetRtti() const
 {
 	return CDistanceJoint::GetRttiStatic();
 }

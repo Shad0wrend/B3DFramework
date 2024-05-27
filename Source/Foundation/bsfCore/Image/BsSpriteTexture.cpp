@@ -114,12 +114,12 @@ SPtr<SpriteTexture> SpriteTexture::CreateEmpty()
 	return texture;
 }
 
-RTTITypeBase* SpriteTexture::GetRttiStatic()
+RTTIType* SpriteTexture::GetRttiStatic()
 {
 	return SpriteTextureRTTI::Instance();
 }
 
-RTTITypeBase* SpriteTexture::GetRtti() const
+RTTIType* SpriteTexture::GetRtti() const
 {
 	return GetRttiStatic();
 }

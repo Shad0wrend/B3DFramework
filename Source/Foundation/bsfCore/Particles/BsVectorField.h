@@ -118,8 +118,8 @@ namespace bs
 		VectorField() = default; // Serialization only
 
 		friend class VectorFieldRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

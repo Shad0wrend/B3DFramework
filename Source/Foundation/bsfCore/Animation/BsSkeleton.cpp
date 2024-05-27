@@ -346,12 +346,12 @@ SPtr<Skeleton> Skeleton::CreateEmpty()
 	return newSkeleton;
 }
 
-RTTITypeBase* Skeleton::GetRttiStatic()
+RTTIType* Skeleton::GetRttiStatic()
 {
 	return SkeletonRTTI::Instance();
 }
 
-RTTITypeBase* Skeleton::GetRtti() const
+RTTIType* Skeleton::GetRtti() const
 {
 	return GetRttiStatic();
 }

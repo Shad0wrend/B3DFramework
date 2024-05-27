@@ -133,8 +133,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CJointRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 		CJoint(JOINT_DESC& desc); // Serialization only
 	};

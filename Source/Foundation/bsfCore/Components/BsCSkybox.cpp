@@ -42,12 +42,12 @@ void CSkybox::OnDestroyed()
 	GetSceneManager().UnbindActorInternal(mInternal);
 }
 
-RTTITypeBase* CSkybox::GetRttiStatic()
+RTTIType* CSkybox::GetRttiStatic()
 {
 	return CSkyboxRTTI::Instance();
 }
 
-RTTITypeBase* CSkybox::GetRtti() const
+RTTIType* CSkybox::GetRtti() const
 {
 	return CSkybox::GetRttiStatic();
 }

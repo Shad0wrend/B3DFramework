@@ -427,12 +427,12 @@ void ManagedComponent::OnTransformChanged(TransformChangedFlags flags)
 	}
 }
 
-RTTITypeBase* ManagedComponent::GetRttiStatic()
+RTTIType* ManagedComponent::GetRttiStatic()
 {
 	return ManagedComponentRTTI::Instance();
 }
 
-RTTITypeBase* ManagedComponent::GetRtti() const
+RTTIType* ManagedComponent::GetRtti() const
 {
 	return ManagedComponent::GetRttiStatic();
 }

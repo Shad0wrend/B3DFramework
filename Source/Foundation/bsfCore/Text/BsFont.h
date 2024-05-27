@@ -55,8 +55,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class FontBitmapPageRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Contains information about font characters rendered into one or multiple bitmaps, for specific font size. */
@@ -98,8 +98,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class FontBitmapInformationRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Determines how is a font rendered into the bitmap texture. */
@@ -236,8 +236,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class FontRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains a rendered bitmap for a single glyph. */

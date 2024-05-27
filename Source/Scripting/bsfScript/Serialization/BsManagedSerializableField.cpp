@@ -1256,232 +1256,232 @@ void ManagedSerializableFieldDataDictionary::Deserialize()
 	}
 }
 
-RTTITypeBase* ManagedSerializableFieldKey::GetRttiStatic()
+RTTIType* ManagedSerializableFieldKey::GetRttiStatic()
 {
 	return ManagedSerializableFieldKeyRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldKey::GetRtti() const
+RTTIType* ManagedSerializableFieldKey::GetRtti() const
 {
 	return ManagedSerializableFieldKey::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldData::GetRttiStatic()
+RTTIType* ManagedSerializableFieldData::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldData::GetRtti() const
+RTTIType* ManagedSerializableFieldData::GetRtti() const
 {
 	return ManagedSerializableFieldData::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataEntry::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataEntry::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataEntryRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataEntry::GetRtti() const
+RTTIType* ManagedSerializableFieldDataEntry::GetRtti() const
 {
 	return ManagedSerializableFieldDataEntry::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataBool::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataBool::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataBoolRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataBool::GetRtti() const
+RTTIType* ManagedSerializableFieldDataBool::GetRtti() const
 {
 	return ManagedSerializableFieldDataBool::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataChar::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataChar::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataCharRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataChar::GetRtti() const
+RTTIType* ManagedSerializableFieldDataChar::GetRtti() const
 {
 	return ManagedSerializableFieldDataChar::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataI8::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataI8::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataI8RTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataI8::GetRtti() const
+RTTIType* ManagedSerializableFieldDataI8::GetRtti() const
 {
 	return ManagedSerializableFieldDataI8::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataU8::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataU8::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataU8RTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataU8::GetRtti() const
+RTTIType* ManagedSerializableFieldDataU8::GetRtti() const
 {
 	return ManagedSerializableFieldDataU8::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataI16::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataI16::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataI16RTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataI16::GetRtti() const
+RTTIType* ManagedSerializableFieldDataI16::GetRtti() const
 {
 	return ManagedSerializableFieldDataI16::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataU16::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataU16::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataU16RTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataU16::GetRtti() const
+RTTIType* ManagedSerializableFieldDataU16::GetRtti() const
 {
 	return ManagedSerializableFieldDataU16::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataI32::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataI32::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataI32RTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataI32::GetRtti() const
+RTTIType* ManagedSerializableFieldDataI32::GetRtti() const
 {
 	return ManagedSerializableFieldDataI32::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataU32::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataU32::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataU32RTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataU32::GetRtti() const
+RTTIType* ManagedSerializableFieldDataU32::GetRtti() const
 {
 	return ManagedSerializableFieldDataU32::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataI64::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataI64::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataI64RTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataI64::GetRtti() const
+RTTIType* ManagedSerializableFieldDataI64::GetRtti() const
 {
 	return ManagedSerializableFieldDataI64::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataU64::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataU64::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataU64RTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataU64::GetRtti() const
+RTTIType* ManagedSerializableFieldDataU64::GetRtti() const
 {
 	return ManagedSerializableFieldDataU64::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataFloat::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataFloat::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataFloatRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataFloat::GetRtti() const
+RTTIType* ManagedSerializableFieldDataFloat::GetRtti() const
 {
 	return ManagedSerializableFieldDataFloat::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataDouble::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataDouble::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataDoubleRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataDouble::GetRtti() const
+RTTIType* ManagedSerializableFieldDataDouble::GetRtti() const
 {
 	return ManagedSerializableFieldDataDouble::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataString::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataString::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataStringRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataString::GetRtti() const
+RTTIType* ManagedSerializableFieldDataString::GetRtti() const
 {
 	return ManagedSerializableFieldDataString::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataResourceRef::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataResourceRef::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataResourceRefRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataResourceRef::GetRtti() const
+RTTIType* ManagedSerializableFieldDataResourceRef::GetRtti() const
 {
 	return ManagedSerializableFieldDataResourceRef::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataGameObjectRef::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataGameObjectRef::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataGameObjectRefRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataGameObjectRef::GetRtti() const
+RTTIType* ManagedSerializableFieldDataGameObjectRef::GetRtti() const
 {
 	return ManagedSerializableFieldDataGameObjectRef::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataReflectableRef::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataReflectableRef::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataReflectableRefRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataReflectableRef::GetRtti() const
+RTTIType* ManagedSerializableFieldDataReflectableRef::GetRtti() const
 {
 	return ManagedSerializableFieldDataReflectableRef::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataObject::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataObject::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataObjectRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataObject::GetRtti() const
+RTTIType* ManagedSerializableFieldDataObject::GetRtti() const
 {
 	return ManagedSerializableFieldDataObject::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataArray::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataArray::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataArrayRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataArray::GetRtti() const
+RTTIType* ManagedSerializableFieldDataArray::GetRtti() const
 {
 	return ManagedSerializableFieldDataArray::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataList::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataList::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataListRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataList::GetRtti() const
+RTTIType* ManagedSerializableFieldDataList::GetRtti() const
 {
 	return ManagedSerializableFieldDataList::GetRttiStatic();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataDictionary::GetRttiStatic()
+RTTIType* ManagedSerializableFieldDataDictionary::GetRttiStatic()
 {
 	return ManagedSerializableFieldDataDictionaryRTTI::Instance();
 }
 
-RTTITypeBase* ManagedSerializableFieldDataDictionary::GetRtti() const
+RTTIType* ManagedSerializableFieldDataDictionary::GetRtti() const
 {
 	return ManagedSerializableFieldDataDictionary::GetRttiStatic();
 }

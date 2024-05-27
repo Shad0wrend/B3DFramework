@@ -278,12 +278,12 @@ void AnimationClip::GetMorphMapping(const String& name, u32& frameIdx, u32& weig
 	}
 }
 
-RTTITypeBase* AnimationClip::GetRttiStatic()
+RTTIType* AnimationClip::GetRttiStatic()
 {
 	return AnimationClipRTTI::Instance();
 }
 
-RTTITypeBase* AnimationClip::GetRtti() const
+RTTIType* AnimationClip::GetRtti() const
 {
 	return GetRttiStatic();
 }

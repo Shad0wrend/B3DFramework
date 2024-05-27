@@ -122,8 +122,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CD6JointRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		CD6Joint(); // Serialization only

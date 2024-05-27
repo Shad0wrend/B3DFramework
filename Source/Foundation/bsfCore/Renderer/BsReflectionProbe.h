@@ -214,8 +214,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ReflectionProbeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		ReflectionProbe() = default; // Serialization only

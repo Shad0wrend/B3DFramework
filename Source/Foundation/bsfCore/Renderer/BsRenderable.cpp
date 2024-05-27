@@ -424,12 +424,12 @@ SPtr<Renderable> Renderable::CreateEmpty()
 	return handlerPtr;
 }
 
-RTTITypeBase* Renderable::GetRttiStatic()
+RTTIType* Renderable::GetRttiStatic()
 {
 	return RenderableRTTI::Instance();
 }
 
-RTTITypeBase* Renderable::GetRtti() const
+RTTIType* Renderable::GetRtti() const
 {
 	return Renderable::GetRttiStatic();
 }

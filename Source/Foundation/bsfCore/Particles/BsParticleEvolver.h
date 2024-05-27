@@ -123,8 +123,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleTextureAnimationRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Structure used for initializing a ParticleOrbit object. */
@@ -185,8 +185,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleOrbitRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Structure used for initializing a ParticleVelocity object. */
@@ -238,8 +238,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleVelocityRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Structure used for initializing a ParticleForce object. */
@@ -291,8 +291,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleForceRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Structure used for initializing a ParticleGravity object. */
@@ -341,8 +341,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleGravityRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Structure used for initializing a ParticleColor object. */
@@ -391,8 +391,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleColorRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Structure used for initializing a ParticleSize object. */
@@ -455,8 +455,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleSizeRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Structure used for initializing a ParticleRotation object. */
@@ -517,8 +517,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleRotationRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Types of collision modes that ParticleCollisions evolver can operate in. */
@@ -630,8 +630,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleCollisionsRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

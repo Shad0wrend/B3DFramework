@@ -292,8 +292,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CRigidbodyRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 	protected:
 		CRigidbody(); // Serialization only

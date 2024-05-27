@@ -58,12 +58,12 @@ void CReflectionProbe::OnDestroyed()
 	GetSceneManager().UnbindActorInternal(mInternal);
 }
 
-RTTITypeBase* CReflectionProbe::GetRttiStatic()
+RTTIType* CReflectionProbe::GetRttiStatic()
 {
 	return CReflectionProbeRTTI::Instance();
 }
 
-RTTITypeBase* CReflectionProbe::GetRtti() const
+RTTIType* CReflectionProbe::GetRtti() const
 {
 	return CReflectionProbe::GetRttiStatic();
 }

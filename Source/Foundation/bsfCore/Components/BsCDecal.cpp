@@ -41,12 +41,12 @@ void CDecal::OnDestroyed()
 	GetSceneManager().UnbindActorInternal(mInternal);
 }
 
-RTTITypeBase* CDecal::GetRttiStatic()
+RTTIType* CDecal::GetRttiStatic()
 {
 	return CDecalRTTI::Instance();
 }
 
-RTTITypeBase* CDecal::GetRtti() const
+RTTIType* CDecal::GetRtti() const
 {
 	return CDecal::GetRttiStatic();
 }

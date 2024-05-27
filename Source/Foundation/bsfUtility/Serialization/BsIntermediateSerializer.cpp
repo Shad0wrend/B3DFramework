@@ -16,7 +16,7 @@ SPtr<IReflectable> IntermediateSerializer::Decode(const SerializedObject* serial
 	mDeserializedObjectMap.clear();
 
 	SPtr<IReflectable> output;
-	RTTITypeBase* type = IReflectable::GetRTTITypeFromTypeId(serializedObject->GetRootTypeId());
+	RTTIType* type = IReflectable::GetRTTITypeFromTypeId(serializedObject->GetRootTypeId());
 	if(type != nullptr)
 	{
 		output = type->NewRttiObject();
@@ -66,16 +66,16 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 	if(subobjectCount == 0)
 		return;
 
-	FrameStack<RTTITypeBase*> rttiInstances;
+	FrameStack<RTTIType*> rttiInstances;
 	for(i32 subObjectIdx = (i32)subobjectCount - 1; subObjectIdx >= 0; subObjectIdx--)
 	{
 		const SerializedSubObject& subObject = serializableObject->SubObjects[subObjectIdx];
 
-		RTTITypeBase* rtti = IReflectable::GetRTTITypeFromTypeId(subObject.TypeId);
+		RTTIType* rtti = IReflectable::GetRTTITypeFromTypeId(subObject.TypeId);
 		if(rtti == nullptr)
 			continue;
 
-		RTTITypeBase* rttiInstance = rtti->CloneInternal(*mAllocator);
+		RTTIType* rttiInstance = rtti->CloneInternal(*mAllocator);
 		rttiInstance->NotifyOperationStarted(*object, RTTIOperationType::Deserialization, mContext);
 		rttiInstances.push(rttiInstance);
 
@@ -152,7 +152,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 
 	while(!rttiInstances.empty())
 	{
-		RTTITypeBase* rttiInstance = rttiInstances.top();
+		RTTIType* rttiInstance = rttiInstances.top();
 		rttiInstance->NotifyOperationEnded(*object, RTTIOperationType::Deserialization, mContext);
 		mAllocator->Destruct(rttiInstance);
 
@@ -160,7 +160,7 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 	}
 }
 
-void IntermediateSerializer::DeserializeElement(RTTITypeBase& rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<IRTTIIterator>& iterator, const SPtr<ISerialized>& entry)
+void IntermediateSerializer::DeserializeElement(RTTIType& rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<IRTTIIterator>& iterator, const SPtr<ISerialized>& entry)
 {
 	if(!B3D_ENSURE(iterator != nullptr))
 		return;
@@ -224,7 +224,7 @@ void IntermediateSerializer::DeserializeTupleElement(RTTIIteratorField& field, v
 	case RTTIFieldDataType::Reflectable:
 		{
 			SPtr<SerializedObject> referencedSerializedObject = std::static_pointer_cast<SerializedObject>(entry);
-			RTTITypeBase* childRtti = nullptr;
+			RTTIType* childRtti = nullptr;
 
 			if(referencedSerializedObject != nullptr)
 				childRtti = IReflectable::GetRTTITypeFromTypeId(referencedSerializedObject->GetRootTypeId());
@@ -267,14 +267,14 @@ SPtr<SerializedObject> IntermediateSerializer::GetOrSerializeReflectableObject(c
 
 SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const IReflectable& object, SerializedObjectEncodeFlags flags)
 {
-	FrameStack<RTTITypeBase*> rttiInstances;
-	RTTITypeBase* rtti = object.GetRtti();
+	FrameStack<RTTIType*> rttiInstances;
+	RTTIType* rtti = object.GetRtti();
 
 	const auto cleanup = [&]()
 	{
 		while(!rttiInstances.empty())
 		{
-			RTTITypeBase* rttiInstance = rttiInstances.top();
+			RTTIType* rttiInstance = rttiInstances.top();
 			rttiInstance->NotifyOperationEnded(const_cast<IReflectable&>(object), RTTIOperationType::Serialization, mContext);
 			mAllocator->Destruct(rttiInstance);
 
@@ -290,7 +290,7 @@ SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const 
 	// If an object has base classes, we need to iterate through all of them
 	do
 	{
-		RTTITypeBase* rttiInstance = rtti->CloneInternal(*mAllocator);
+		RTTIType* rttiInstance = rtti->CloneInternal(*mAllocator);
 		rttiInstances.push(rttiInstance);
 
 		rttiInstance->NotifyOperationStarted(const_cast<IReflectable&>(object), RTTIOperationType::Serialization, mContext);
@@ -332,7 +332,7 @@ SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const 
 	return output;
 }
 
-SPtr<ISerialized> IntermediateSerializer::SerializeDataBlockField(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, SerializedObjectEncodeFlags flags)
+SPtr<ISerialized> IntermediateSerializer::SerializeDataBlockField(IReflectable* object, RTTIType* rtti, RTTIField* field, SerializedObjectEncodeFlags flags)
 {
 	if(!B3D_ENSURE(!field->Schema.IsContainer))
 		return nullptr;
@@ -360,7 +360,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeDataBlockField(IReflectable* 
 	return serializedDataBlock;
 }
 
-SPtr<ISerialized> IntermediateSerializer::SerializeIterableField(IReflectable& object, RTTITypeBase& rttiInstance, RTTIIteratorField& field, SerializedObjectEncodeFlags flags)
+SPtr<ISerialized> IntermediateSerializer::SerializeIterableField(IReflectable& object, RTTIType& rttiInstance, RTTIIteratorField& field, SerializedObjectEncodeFlags flags)
 {
 	if(!B3D_ENSURE(field.Schema.IsIterator))
 		return nullptr;
@@ -418,7 +418,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeIterableField(IReflectable& o
 	return output;
 }
 
-SPtr<ISerialized> IntermediateSerializer::SerializeElement(IReflectable& object, RTTITypeBase& rttiInstance, RTTIIteratorField& field, IRTTIIterator& iterator, SerializedObjectEncodeFlags flags)
+SPtr<ISerialized> IntermediateSerializer::SerializeElement(IReflectable& object, RTTIType& rttiInstance, RTTIIteratorField& field, IRTTIIterator& iterator, SerializedObjectEncodeFlags flags)
 {
 	if(!iterator.IsValid())
 		return nullptr;
@@ -447,7 +447,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeElement(IReflectable& object,
 	return serializedEntry;
 }
 
-SPtr<ISerialized> IntermediateSerializer::SerializeTupleElement(IReflectable& object, RTTITypeBase& rttiInstance, RTTIIteratorField& field, IRTTIIterator& iterator, u32 tupleElementIndex, SerializedObjectEncodeFlags flags)
+SPtr<ISerialized> IntermediateSerializer::SerializeTupleElement(IReflectable& object, RTTIType& rttiInstance, RTTIIteratorField& field, IRTTIIterator& iterator, u32 tupleElementIndex, SerializedObjectEncodeFlags flags)
 {
 	if(!B3D_ENSURE(iterator.IsValid()))
 		return nullptr;
@@ -511,7 +511,7 @@ SPtr<IReflectable> IntermediateSerializer::GetOrDeserializeReflectableObject(con
 	auto found = mDeserializedObjectMap.find(serializedObject.get());
 	if(found == mDeserializedObjectMap.end())
 	{
-		RTTITypeBase* objectRttiType = nullptr;
+		RTTIType* objectRttiType = nullptr;
 
 		if(serializedObject != nullptr)
 			objectRttiType = IReflectable::GetRTTITypeFromTypeId(serializedObject->GetRootTypeId());

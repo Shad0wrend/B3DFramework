@@ -36,8 +36,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ResourceMappingRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 	};
 
 	/** Interface that can be implemented by the resource loaders required by GameResourceManager. */

@@ -395,12 +395,12 @@ void RenderWindow::OnExternalMaximizedInternal(bool maximized)
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* RenderWindow::GetRttiStatic()
+RTTIType* RenderWindow::GetRttiStatic()
 {
 	return RenderWindowRTTI::Instance();
 }
 
-RTTITypeBase* RenderWindow::GetRtti() const
+RTTIType* RenderWindow::GetRtti() const
 {
 	return RenderWindow::GetRttiStatic();
 }

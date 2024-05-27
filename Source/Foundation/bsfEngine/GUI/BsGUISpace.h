@@ -55,8 +55,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GUIFixedSpaceRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**
@@ -93,8 +93,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GUIFlexibleSpaceRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

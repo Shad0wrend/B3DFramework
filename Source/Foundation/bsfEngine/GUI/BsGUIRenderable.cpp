@@ -354,12 +354,12 @@ void GUIRenderable::RefreshStyle()
 	}
 }
 
-RTTITypeBase* GUIRenderable::GetRttiStatic()
+RTTIType* GUIRenderable::GetRttiStatic()
 {
 	return GUIRenderableRTTI::Instance();
 }
 
-RTTITypeBase* GUIRenderable::GetRtti() const
+RTTIType* GUIRenderable::GetRtti() const
 {
 	return GetRttiStatic();
 }

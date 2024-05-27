@@ -71,8 +71,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CSliderJointRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		CSliderJoint(); // Serialization only

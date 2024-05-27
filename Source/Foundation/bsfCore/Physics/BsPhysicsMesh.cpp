@@ -46,12 +46,12 @@ void PhysicsMesh::Initialize()
 	Resource::Initialize();
 }
 
-RTTITypeBase* PhysicsMesh::GetRttiStatic()
+RTTIType* PhysicsMesh::GetRttiStatic()
 {
 	return PhysicsMeshRTTI::Instance();
 }
 
-RTTITypeBase* PhysicsMesh::GetRtti() const
+RTTIType* PhysicsMesh::GetRtti() const
 {
 	return GetRttiStatic();
 }
@@ -65,12 +65,12 @@ FPhysicsMesh::~FPhysicsMesh()
 {
 }
 
-RTTITypeBase* FPhysicsMesh::GetRttiStatic()
+RTTIType* FPhysicsMesh::GetRttiStatic()
 {
 	return FPhysicsMeshRTTI::Instance();
 }
 
-RTTITypeBase* FPhysicsMesh::GetRtti() const
+RTTIType* FPhysicsMesh::GetRtti() const
 {
 	return GetRttiStatic();
 }

@@ -168,12 +168,12 @@ void Skybox::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flags)
 	MarkRenderProxyDataDirty((u32)flags);
 }
 
-RTTITypeBase* Skybox::GetRttiStatic()
+RTTIType* Skybox::GetRttiStatic()
 {
 	return SkyboxRTTI::Instance();
 }
 
-RTTITypeBase* Skybox::GetRtti() const
+RTTIType* Skybox::GetRtti() const
 {
 	return Skybox::GetRttiStatic();
 }

@@ -56,12 +56,12 @@ void CLight::OnDestroyed()
 	mInternal->Destroy();
 }
 
-RTTITypeBase* CLight::GetRttiStatic()
+RTTIType* CLight::GetRttiStatic()
 {
 	return CLightRTTI::Instance();
 }
 
-RTTITypeBase* CLight::GetRtti() const
+RTTIType* CLight::GetRtti() const
 {
 	return CLight::GetRttiStatic();
 }

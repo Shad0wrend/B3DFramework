@@ -74,12 +74,12 @@ void CCamera::OnDestroyed()
 	mInternal->Destroy();
 }
 
-RTTITypeBase* CCamera::GetRttiStatic()
+RTTIType* CCamera::GetRttiStatic()
 {
 	return CCameraRTTI::Instance();
 }
 
-RTTITypeBase* CCamera::GetRtti() const
+RTTIType* CCamera::GetRtti() const
 {
 	return CCamera::GetRttiStatic();
 }

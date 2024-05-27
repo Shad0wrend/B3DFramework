@@ -157,12 +157,12 @@ SPtr<SpriteGlyph> SpriteGlyph::CreateEmpty()
 	return texture;
 }
 
-RTTITypeBase* SpriteGlyph::GetRttiStatic()
+RTTIType* SpriteGlyph::GetRttiStatic()
 {
 	return SpriteGlyphRTTI::Instance();
 }
 
-RTTITypeBase* SpriteGlyph::GetRtti() const
+RTTIType* SpriteGlyph::GetRtti() const
 {
 	return GetRttiStatic();
 }

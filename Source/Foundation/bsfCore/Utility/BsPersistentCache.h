@@ -59,8 +59,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class PersistentCacheObjectRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Meta-data associated with each cache entry. */
@@ -76,8 +76,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class PersistentCacheMetaDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

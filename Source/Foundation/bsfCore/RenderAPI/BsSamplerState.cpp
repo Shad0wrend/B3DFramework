@@ -47,12 +47,12 @@ u64 SamplerState::GenerateHash(const SamplerStateInformation& information)
 /* 								RTTI		                     		*/
 /************************************************************************/
 
-RTTITypeBase* SamplerState::GetRttiStatic()
+RTTIType* SamplerState::GetRttiStatic()
 {
 	return SamplerStateRTTI::Instance();
 }
 
-RTTITypeBase* SamplerState::GetRtti() const
+RTTIType* SamplerState::GetRtti() const
 {
 	return SamplerState::GetRttiStatic();
 }

@@ -53,8 +53,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class PackageResourceMetaDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains user-specified meta-data for a resource stored in a Package. */
@@ -68,8 +68,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class PackageResourceUserMetaDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains meta-data for the entirety of a Package (not individual resources). */
@@ -83,8 +83,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class PackageMetaDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** Contains a hierarchy of folders and resources within a package. */
@@ -462,8 +462,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class PackageRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 
 		Package() = default;
 	};

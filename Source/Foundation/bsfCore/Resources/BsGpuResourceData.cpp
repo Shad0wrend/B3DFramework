@@ -107,12 +107,12 @@ void GpuResourceData::UnlockInternal() const
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* GpuResourceData::GetRttiStatic()
+RTTIType* GpuResourceData::GetRttiStatic()
 {
 	return GpuResourceDataRTTI::Instance();
 }
 
-RTTITypeBase* GpuResourceData::GetRtti() const
+RTTIType* GpuResourceData::GetRtti() const
 {
 	return GpuResourceData::GetRttiStatic();
 }

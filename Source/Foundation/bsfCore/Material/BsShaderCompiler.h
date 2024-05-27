@@ -62,8 +62,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ShaderCompilerMetaDataRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/**	Interface used for compilers that transform a source file written in a higher level shading language into a Shader and shader variations usable by the engine. */

@@ -394,12 +394,12 @@ Bounds MeshData::CalculateBounds() const
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* MeshData::GetRttiStatic()
+RTTIType* MeshData::GetRttiStatic()
 {
 	return MeshDataRTTI::Instance();
 }
 
-RTTITypeBase* MeshData::GetRtti() const
+RTTIType* MeshData::GetRtti() const
 {
 	return MeshData::GetRttiStatic();
 }

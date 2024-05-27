@@ -56,8 +56,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CMeshColliderRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const;
 
 	protected:
 		CMeshCollider(); // Serialization only

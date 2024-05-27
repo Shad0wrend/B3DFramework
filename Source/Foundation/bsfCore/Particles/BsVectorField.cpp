@@ -78,12 +78,12 @@ SPtr<ct::RenderProxy> VectorField::CreateRenderProxy() const
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
 
-RTTITypeBase* VectorField::GetRttiStatic()
+RTTIType* VectorField::GetRttiStatic()
 {
 	return VectorFieldRTTI::Instance();
 }
 
-RTTITypeBase* VectorField::GetRtti() const
+RTTIType* VectorField::GetRtti() const
 {
 	return VectorField::GetRttiStatic();
 }

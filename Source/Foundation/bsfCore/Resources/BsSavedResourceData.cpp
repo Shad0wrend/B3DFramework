@@ -9,12 +9,12 @@ SavedResourceData::SavedResourceData(const Vector<UUID>& dependencies, bool allo
 	: mDependencies(dependencies), mAllowAsync(allowAsync), mCompressionMethod(compressionMethod)
 {}
 
-RTTITypeBase* SavedResourceData::GetRttiStatic()
+RTTIType* SavedResourceData::GetRttiStatic()
 {
 	return SavedResourceDataRTTI::Instance();
 }
 
-RTTITypeBase* SavedResourceData::GetRtti() const
+RTTIType* SavedResourceData::GetRtti() const
 {
 	return SavedResourceData::GetRttiStatic();
 }
