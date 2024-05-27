@@ -83,12 +83,12 @@ namespace bs
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Id, 0)
-			B3D_RTTI_MEMBER(Type, 1)
+			//B3D_RTTI_MEMBER(Type, 1)
 			B3D_RTTI_MEMBER(IsContainer, 2)
-			B3D_RTTI_MEMBER(HasDynamicSize, 3)
-			B3D_RTTI_MEMBER(Size, 4)
-			B3D_RTTI_MEMBER(FieldTypeId, 5)
-			B3D_RTTI_MEMBER(FieldTypeSchema, 6)
+			//B3D_RTTI_MEMBER(HasDynamicSize, 3)
+			//B3D_RTTI_MEMBER(Size, 4)
+			//B3D_RTTI_MEMBER(FieldTypeId, 5)
+			//B3D_RTTI_MEMBER(FieldTypeSchema, 6)
 			B3D_RTTI_MEMBER(Info, 7)
 			B3D_RTTI_MEMBER_CONTAINER(FieldTypes, 8)
 			B3D_RTTI_MEMBER(IsIterator, 9)

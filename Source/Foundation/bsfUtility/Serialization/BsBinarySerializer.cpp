@@ -41,7 +41,6 @@ enum FieldTypeBits : u8
 	FT_DataBlockWithAnotherType					= FT_DataBlockType | FT_WithAnotherTypeMask,													// 0b001'10
 	FT_DynamicSizePlain							= FT_DynamicSizePlainType,																		// 0b100'00
 	FT_DynamicSizePlainArray					= FT_DynamicSizePlainType | FT_ArrayMask,														// 0b100'01
-	FT_DataBlockOld								= 0b100'10, // Special case: Old DataBlock bitmask coincides with FT_DynamicSizePlainWithAnotherType. Needs special handling.
 	FT_DynamicSizePlainWithAnotherType			= FT_DynamicSizePlainType | FT_WithAnotherTypeMask,												// 0b100'10
 	FT_DynamicSizePlainArrayWithAnotherType		= FT_DynamicSizePlainType | FT_ArrayMask | FT_WithAnotherTypeMask,								// 0b100'11
 	FT_Reflectable								= FT_ReflectableType,																			// 0b101'00
@@ -60,17 +59,6 @@ static void DecodeFieldTypeBits(FieldTypeBits bits, RTTIFieldDataType& outType, 
 	outIsArray = false;
 	outHasDynamicSize = true;
 	outHasAnotherTypeFollowing = false;
-
-	// TODO: Special case. This overlaps with FT_DynamicSizePlainWithAnotherType, which cannot be used at the moment. We need to upgrade all the data blocks so they use the new schema first, then we can remove this.
-	if(bits == FT_DataBlockOld)
-	{
-		outType = RTTIFieldDataType::DataBlock;
-		outIsArray = false;
-		outHasDynamicSize = true;
-		outHasAnotherTypeFollowing = false;
-
-		return;
-	}
 
 	const FieldTypeBits typeBits = (FieldTypeBits)(bits & 0b111'00);
 	switch(typeBits)
@@ -811,11 +799,6 @@ RTTIFieldSchema BinaryDeserializationContext::ReadFieldMetaData(BufferedBitstrea
 	terminator = firstFieldTypeMetaData.IsLastFieldInType;
 	fieldSchema.FieldTypes.Add(firstFieldTypeSchema);
 
-	// For now, duplicate these fields. But ultimately we'll remove them in favor data stored of FieldTypes
-	fieldSchema.HasDynamicSize = firstFieldTypeSchema.HasDynamicSize;
-	fieldSchema.Type = firstFieldTypeSchema.Type;
-	fieldSchema.Size = firstFieldTypeSchema.FixedSize;
-	fieldSchema.FieldTypeId = firstFieldTypeSchema.FieldTypeId;
 	fieldSchema.IsIterator = firstFieldTypeSchema.Type != RTTIFieldDataType::DataBlock;
 
 	while(hasMoreFieldTypes)
@@ -1223,13 +1206,17 @@ void BinarySerializationContext::WriteFieldMetaData(const RTTIFieldSchema& field
 	//// B - Built-in type ID
 
 	FieldTypeMetaData firstFieldTypeMetaData;
-	if(fieldSchema.FieldTypes.Empty()) // Old approach, single field type
+
+	if(isLastFieldInType)
 	{
-		const RTTIFieldTypeSchema fieldTypeSchema(fieldSchema.HasDynamicSize, fieldSchema.Size, fieldSchema.Type, fieldSchema.FieldTypeId, fieldSchema.FieldTypeSchema);
-		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldTypeSchema, isLastFieldInType, false);
+		B3D_ENSURE(fieldSchema.FieldTypes.Empty());
+		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, RTTIFieldTypeSchema(false, 0, RTTIFieldDataType::Plain, 0, nullptr), true, false);
 	}
 	else
 	{
+		if(!B3D_ENSURE(!fieldSchema.FieldTypes.Empty()))
+			return;
+
 		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldTypes[0], isLastFieldInType, fieldSchema.FieldTypes.Size() > 1);
 	}
 

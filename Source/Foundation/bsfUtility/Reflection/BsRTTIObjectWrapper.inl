@@ -223,6 +223,8 @@ namespace bs::RTTIObjectWrapper
 		{
 			if(B3D_ENSURE(!mField->Schema.IsContainer))
 				return ValueIterator<true>(mField, mRTTITypeInstance, mObject, ~0u, mFrameAllocator);
+
+			return ValueIterator<true>(nullptr, nullptr, nullptr, ~0u, mFrameAllocator);
 		}
 	}
 
