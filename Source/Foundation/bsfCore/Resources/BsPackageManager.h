@@ -85,7 +85,7 @@ namespace bs
 	};
 
 	/** Information about an acquired package read lock. */
-	struct PackageReadLock
+	struct B3D_CORE_EXPORT PackageReadLock
 	{
 		PackageReadLock(RuntimePackageInformation& runtimePackageInformation, Mutex& lockMutex, const char* lockReason);
 		~PackageReadLock();
@@ -102,7 +102,7 @@ namespace bs
 	};
 
 	/** Information about an acquired package write lock. */
-	struct PackageWriteLock
+	struct B3D_CORE_EXPORT PackageWriteLock
 	{
 		PackageWriteLock(RuntimePackageInformation* runtimePackageInformation, Mutex& lockMutex, const char* lockReason);
 		~PackageWriteLock();
