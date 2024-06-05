@@ -1130,6 +1130,8 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 					u32 dataBlockSize = 0;
 					SPtr<DataStream> blockStream = curField->GetValue(rttiInstance, object, dataBlockSize);
 
+					const u64 originalBlockStreamLocation = blockStream->Tell();
+
 					// Data block size
 					if(compress)
 						mStream.WriteVarInt(dataBlockSize);
@@ -1143,6 +1145,8 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 					mStream.Align();
 					mStream.WriteBytes(dataToStore, dataBlockSize);
 					B3DStackFree(dataToStore);
+
+					blockStream->Seek(originalBlockStreamLocation);
 				}
 			}
 
