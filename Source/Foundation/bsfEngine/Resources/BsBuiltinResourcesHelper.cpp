@@ -346,7 +346,11 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 	const Path packagePath = Path::Combine(outputFolder, packageFilename);
 
 	PackageManager& packageManager = GetPackageManager();
-	packageManager.SavePackage(package, packagePath, SavePackageOptions());
+
+	SavePackageOptions savePackageOptions;
+	savePackageOptions.Compress = false; // Note: Important that fonts are uncompressed, as the data will be read directly from the file when rendering the font glyphs
+
+	packageManager.SavePackage(package, packagePath, savePackageOptions);
 }
 
 Vector<bool> BuiltinResourcesHelper::GenerateImportFlags(const nlohmann::json& entries, const Path& inputFolder, time_t lastUpdateTime, bool forceImport, const nlohmann::json* dependencies, const Path& dependencyFolder)

@@ -96,22 +96,19 @@ void BuiltinResources::OnStartUp()
 	mBuiltinRawDataFolder = Paths::GetDataPath() + u8"Raw/";
 
 	mBuiltinDataFolder = Paths::GetDataPath();
-	mEngineSkinSpritesFolder = mBuiltinDataFolder + kSkinFolder + kSpriteFolder;
 	mEngineShaderFolder = mBuiltinDataFolder + kShaderFolder;
-	mEngineMeshFolder = mBuiltinDataFolder + kMeshFolder;
-	mEngineCursorFolder = mBuiltinDataFolder + kCursorFolder;
-	mEngineFontsFolder = mBuiltinDataFolder + kFontsFolder;
 
 	ResourceManifestPath = mBuiltinDataFolder + "ResourceManifest.asset";
 
 	// Load manifest
 	if(FileSystem::Exists(ResourceManifestPath))
-		mResourceManifest = ResourceManifest::Load(ResourceManifestPath, mBuiltinDataFolder, "/B3D/EngineData/");
+		mResourceManifest = ResourceManifest::Load(ResourceManifestPath, mBuiltinDataFolder, kVirtualPathPrefix);
 
 	if(mResourceManifest == nullptr)
 		mResourceManifest = ResourceManifest::Create("BuiltinResources");
 
 	GetResources().RegisterResourceManifest(mResourceManifest);
+	GetPackageManager().LoadPackages(mBuiltinDataFolder, true, kVirtualPathPrefix);
 	ShaderCompilers::Instance().RegisterSearchPath(GetRawShaderFolder());
 
 	// Load basic resources
@@ -136,7 +133,12 @@ void BuiltinResources::OnStartUp()
 
 	mWhiteSpriteTexture = GetSkinTexture(kWhiteTex);
 
-	mFont = GetResources().Load<Font>(mEngineFontsFolder + (String(kDefaultFontName) + u8".asset"));
+	const Path& fontsFolderVirtualPath = Path::Combine(kVirtualPathPrefix, kFontsFolder);
+	const Path& defaultFontVirtualPath = Path::Combine(fontsFolderVirtualPath, kDefaultFontName);
+
+	mFont = GetResources().Load<Font>(Path::Combine(mBuiltinDataFolder, kFontsFolder) + (String(kDefaultFontName) + u8".asset")); // DEBUG ONLY
+
+	//mFont = GetResources().Load<Font>(defaultFontVirtualPath, ResourceLoadOptions(false));
 	mDefaultGUIStyleSheet = GUIStyleSheet::Parse(mBuiltinRawDataFolder + "GUI.css");
 	mDefaultGUIStyleSheetCascade = B3DMakeShared<GUIStyleSheetCascade>();
 	mDefaultGUIStyleSheetCascade->RegisterStyleSheet(mDefaultGUIStyleSheet, GUIStyleSheet::kBuiltinImportance);
@@ -210,10 +212,10 @@ void BuiltinResources::OnStartUp()
 	/* 								ICON		                     		*/
 	/************************************************************************/
 
-	Path iconPath = mBuiltinDataFolder + kIconFolder;
-	iconPath.Append(String(kIconTextureName) + u8".asset");
+	const Path& iconFolderVirtualPath = Path::Combine(kVirtualPathPrefix, kIconFolder);
+	const Path& iconVirtualPath = Path::Combine(iconFolderVirtualPath, kIconTextureName);
 
-	HTexture iconTex = GetResources().Load<Texture>(iconPath);
+	HTexture iconTex = GetResources().Load<Texture>(iconVirtualPath, ResourceLoadOptions(false));
 
 	mFrameworkIcon = iconTex->GetProperties().AllocBuffer(0, 0);
 	iconTex->ReadData(mFrameworkIcon);
@@ -223,10 +225,10 @@ void BuiltinResources::OnStartUp()
 
 HSpriteTexture BuiltinResources::GetSkinTexture(const String& name) const
 {
-	Path texturePath = mEngineSkinSpritesFolder;
-	texturePath.Append(u8"sprite_" + name + u8".asset");
+	Path texturePath = Path::Combine(Path::Combine(kVirtualPathPrefix, kSkinFolder), kSpriteFolder);
+	texturePath.Append(u8"sprite_" + name);
 
-	return GetResources().Load<SpriteTexture>(texturePath);
+	return GetResources().Load<SpriteTexture>(texturePath, ResourceLoadOptions(false));
 }
 
 HShader BuiltinResources::GetShader(const Path& path) const
@@ -237,15 +239,18 @@ HShader BuiltinResources::GetShader(const Path& path) const
 
 HFont BuiltinResources::GetFont(const String& font) const
 {
-	Path fontFilePath = mEngineFontsFolder + String(font + ".asset");
-	if(!FileSystem::Exists(fontFilePath))
+	const Path& fontFolderVirtualPath = Path::Combine(kVirtualPathPrefix, kFontsFolder);
+	Path fontVirtualFilePath = Path::Combine(fontFolderVirtualPath, font);
+
+	const PackageManager& packageManager = GetPackageManager();
+	if(!packageManager.TryResolveVirtualResourcePath(fontVirtualFilePath).has_value())
 	{
-		fontFilePath.SetFilename(String(font + ".ttf.asset"));
+		fontVirtualFilePath.SetFilename(font + ".ttf");
 
-		if(!FileSystem::Exists(fontFilePath))
-			fontFilePath.SetFilename(String(font + ".otf.asset"));
+		if(!packageManager.TryResolveVirtualResourcePath(fontVirtualFilePath).has_value())
+			fontVirtualFilePath.SetFilename(font + ".otf");
 
-		if(!FileSystem::Exists(fontFilePath))
+		if(!packageManager.TryResolveVirtualResourcePath(fontVirtualFilePath).has_value())
 		{
 			B3D_LOG(Warning, GUI, "Cannot find font of the requested font : {0}. Using default font instead.", font);
 			return GetDefaultFont();
@@ -256,7 +261,8 @@ HFont BuiltinResources::GetFont(const String& font) const
 	// - Other alternative is to integrate ProjectLibrary into the framework, but in my mind that should remain editor only functionality. We can perhaps pull some generic
 	// package manipulation in a helper library, for use in the framework.
 
-	return GetResources().Load<Font>(fontFilePath);
+	return GetResources().Load<Font>(Path::Combine(mBuiltinDataFolder, kFontsFolder) + (fontVirtualFilePath.GetTail() + u8".asset")); // DEBUG ONLY
+	//return GetResources().Load<Font>(fontVirtualFilePath, ResourceLoadOptions(false));
 }
 
 HShader BuiltinResources::GetOrCompileShader(const Path& path) const
@@ -287,10 +293,10 @@ HShader BuiltinResources::GetOrCompileShader(const Path& path) const
 
 HTexture BuiltinResources::GetCursorTexture(const String& name) const
 {
-	Path cursorPath = mEngineCursorFolder;
-	cursorPath.Append(name + u8".asset");
+	const Path& cursorFolderVirtualPath = Path::Combine(kVirtualPathPrefix, kCursorFolder);
+	const Path& cursorVirtualPath = Path::Combine(cursorFolderVirtualPath, name);
 
-	return GetResources().Load<Texture>(cursorPath);
+	return GetResources().Load<Texture>(cursorVirtualPath, ResourceLoadOptions(false));
 }
 
 const PixelData& BuiltinResources::GetCursorArrow(Vector2I& hotSpot)
@@ -392,33 +398,31 @@ Path BuiltinResources::GetEditorRawShaderIncludeFolder()
 
 HMesh BuiltinResources::GetMesh(BuiltinMesh mesh) const
 {
-	Path meshPath = mEngineMeshFolder;
-
-	static const String kAssetExtension = ".asset";
+	Path meshVirtualPath = Path::Combine(kVirtualPathPrefix, kMeshFolder);
 
 	switch(mesh)
 	{
 	case BuiltinMesh::Box:
-		meshPath.Append(kMeshBoxFile + kAssetExtension);
+		meshVirtualPath.Append(kMeshBoxFile);
 		break;
 	case BuiltinMesh::Sphere:
-		meshPath.Append(kMeshSphereFile + kAssetExtension);
+		meshVirtualPath.Append(kMeshSphereFile);
 		break;
 	case BuiltinMesh::Cone:
-		meshPath.Append(kMeshConeFile + kAssetExtension);
+		meshVirtualPath.Append(kMeshConeFile);
 		break;
 	case BuiltinMesh::Cylinder:
-		meshPath.Append(kMeshCylinderFile + kAssetExtension);
+		meshVirtualPath.Append(kMeshCylinderFile);
 		break;
 	case BuiltinMesh::Quad:
-		meshPath.Append(kMeshQuadFile + kAssetExtension);
+		meshVirtualPath.Append(kMeshQuadFile);
 		break;
 	case BuiltinMesh::Disc:
-		meshPath.Append(kMeshDiscFile + kAssetExtension);
+		meshVirtualPath.Append(kMeshDiscFile);
 		break;
 	}
 
-	return GetResources().Load<Mesh>(meshPath);
+	return GetResources().Load<Mesh>(meshVirtualPath, ResourceLoadOptions(false));
 }
 
 HShader BuiltinResources::GetBuiltinShader(BuiltinShader type) const
@@ -446,34 +450,31 @@ HShader BuiltinResources::GetBuiltinShader(BuiltinShader type) const
 
 HTexture BuiltinResources::GetTexture(BuiltinTexture type)
 {
-	Path texturePath = Paths::GetDataPath();
-	texturePath.Append(kTextureFolder);
-
-	static const String kAssetExtension = ".asset";
+	Path textureVirtualPath = Path::Combine(kVirtualPathPrefix, kTextureFolder);
 
 	switch(type)
 	{
 	case BuiltinTexture::Black:
-		texturePath.Append(kTextureBlackFile + kAssetExtension);
+		textureVirtualPath.Append(kTextureBlackFile);
 		break;
 	case BuiltinTexture::White:
-		texturePath.Append(kTextureWhiteFile + kAssetExtension);
+		textureVirtualPath.Append(kTextureWhiteFile);
 		break;
 	case BuiltinTexture::Normal:
-		texturePath.Append(kTextureNormalFile + kAssetExtension);
+		textureVirtualPath.Append(kTextureNormalFile);
 		break;
 	case BuiltinTexture::BokehFlare:
-		texturePath.Append(u8"BokehHex.png.asset");
+		textureVirtualPath.Append(u8"BokehHex.png");
 		break;
 	case BuiltinTexture::Black3D:
-		texturePath.Append(kTextureBlack3DFile + kAssetExtension);
+		textureVirtualPath.Append(kTextureBlack3DFile);
 		break;
 	case BuiltinTexture::White3D:
-		texturePath.Append(kTextureWhite3DFile + kAssetExtension);
+		textureVirtualPath.Append(kTextureWhite3DFile);
 		break;
 	}
 
-	return GetResources().Load<Texture>(texturePath);
+	return GetResources().Load<Texture>(textureVirtualPath, ResourceLoadOptions(false));
 }
 
 HMaterial BuiltinResources::CreateSpriteTextMaterial() const

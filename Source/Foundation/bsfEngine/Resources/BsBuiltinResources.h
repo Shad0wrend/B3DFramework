@@ -175,6 +175,9 @@ namespace bs
 
 #endif
 
+		/** Virtual path prefix that may be used for accessing all builtin resources managed by this class. */
+		static constexpr const char* kVirtualPathPrefix = "/B3D/EngineData/";
+
 		static constexpr const char* kIconTextureName = "bsfIcon.png";
 		static constexpr const char* kMultiLineLabelStyle = "MultiLineLabel";
 
@@ -252,11 +255,7 @@ namespace bs
 
 		Path mBuiltinRawDataFolder;
 		Path mBuiltinDataFolder;
-		Path mEngineSkinSpritesFolder;
 		Path mEngineShaderFolder;
-		Path mEngineMeshFolder;
-		Path mEngineCursorFolder;
-		Path mEngineFontsFolder;
 
 		Path ResourceManifestPath;
 

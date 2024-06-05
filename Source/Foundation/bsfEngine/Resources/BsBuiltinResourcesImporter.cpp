@@ -29,7 +29,6 @@ static constexpr const char* kTimestampName = u8"Timestamp.asset";
 static constexpr const char* kManifestName = u8"ResourceManifest.asset";
 static constexpr const char* kDependenciesJsonName = u8"ShaderDependencies.json";
 static constexpr const char* kDataListJson = u8"DataList.json";
-static constexpr const char* kGuiSkinJson = u8"GUISkin.json";
 
 static Path sInputFolder;
 static Path sOutputFolder;

@@ -76,7 +76,7 @@ HResource Resources::Load(const Path& resourcePath, const ResourceLoadOptions& l
 	AcquirePackageReadLockOptions readLockOptions(true, true, "Load resource");
 	UPtr<PackageReadLock> packageReadLock;
 	const AcquirePackageLockResult lockResult = packageManager.AcquireReadLock(resourcePackagePath.PhysicalPackagePath, readLockOptions, packageReadLock);
-	if(!B3D_ENSURE(lockResult == AcquirePackageLockResult::Acquired && packageReadLock == nullptr))
+	if(!B3D_ENSURE(lockResult == AcquirePackageLockResult::Acquired && packageReadLock != nullptr))
 		return nullptr;
 
 	const SPtr<Package>& package = packageReadLock->GetPackage();
@@ -110,7 +110,7 @@ HResource Resources::Load(const UUID& resourceId, const ResourceLoadOptions& loa
 	AcquirePackageReadLockOptions readLockOptions(true, true, "Load resource");
 	UPtr<PackageReadLock> packageReadLock;
 	const AcquirePackageLockResult lockResult = packageManager.AcquireReadLock(packagePath, readLockOptions, packageReadLock);
-	if(!B3D_ENSURE(lockResult == AcquirePackageLockResult::Acquired && packageReadLock == nullptr))
+	if(!B3D_ENSURE(lockResult == AcquirePackageLockResult::Acquired && packageReadLock != nullptr))
 		return nullptr;
 
 	return Load(std::move(packageReadLock), resourceId, loadOptions);
@@ -211,6 +211,8 @@ Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePa
 		{
 			output.State = LoadInfo::Loading;
 			output.Size = 0;
+
+			Lock handleLock(mResourceHandleMutex);
 
 			auto iterFind = mHandles.find(uuid);
 			if(iterFind != mHandles.end())
@@ -1287,6 +1289,12 @@ bool Resources::IsLoaded(const UUID& uuid, bool checkInProgress)
 		{
 			return true;
 		}
+
+		if(auto found = mLoadedResourceInformation.find(uuid); found != mLoadedResourceInformation.end())
+			return true;
+
+		if(auto found = mInProgressLoadInformation.find(uuid); checkInProgress && found != mInProgressLoadInformation.end())
+			return true;
 	}
 
 	return false;
@@ -1435,14 +1443,18 @@ HResource Resources::CreateResourceHandle(const SPtr<Resource>& resource, const 
 	HResource newHandle(resource, resourceId);
 
 	{
-		Lock lock(mLoadedResourceMutex);
+		Lock handleLock(mResourceHandleMutex);
 
 		if(resource)
 		{
 			resource->SetHandle(newHandle.GetWeak());
 
+			Lock lock(mLoadedResourceMutex);
+
 			LoadedResourceData& resData = mLoadedResources[resourceId];
 			resData.Resource = newHandle.GetWeak();
+
+			// TODO - A
 		}
 
 		mHandles[resourceId] = newHandle.GetWeak();
@@ -1453,7 +1465,7 @@ HResource Resources::CreateResourceHandle(const SPtr<Resource>& resource, const 
 
 HResource Resources::GetOrCreateResourceHandle(const UUID& resourceId)
 {
-	Lock lock(mLoadedResourceMutex);
+	Lock handleLock(mResourceHandleMutex);
 	if(auto found = mHandles.find(resourceId); found != mHandles.end()) // Not loaded, but handle does exist
 		return found->second.Lock();
 

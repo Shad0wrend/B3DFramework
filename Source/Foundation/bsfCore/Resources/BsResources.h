@@ -232,7 +232,8 @@ namespace bs
 		HResource LoadFromUuid(const UUID& uuid, bool async = false, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
 		/**
-		 * Loads a resource at the specified path.
+		 * Loads a resource at the specified path. Resources are searched in all currently loaded packages within the PackageManager,
+		 * as well as any in-memory resources registered with the Resources manager.
 		 *
 		 * @param resourcePath			Path to the resource. This may be a virtual or physical path. e.g.:
 		 *									Virtual path: '/game/textures/path/to/resource'
@@ -244,7 +245,8 @@ namespace bs
 		HResource Load(const Path& resourcePath, const ResourceLoadOptions& loadOptions);
 
 		/**
-		 * Loads a resource with the specified ID.
+		 * Loads a resource with the specified ID. Resources are searched in all currently loaded packages within the PackageManager,
+		 * as well as any in-memory resources registered with the Resources manager.
 		 *
 		 * @param resourceId			ID of the resource.
 		 * @param loadOptions			Options to control the loading process.
@@ -257,14 +259,14 @@ namespace bs
 		template <class T>
 		TResourceHandle<T> Load(const Path& resourcePath, const ResourceLoadOptions& loadOptions)
 		{
-			return B3DStaticResourceCast<T>(Load(resourcePath), loadOptions);
+			return B3DStaticResourceCast<T>(Load(resourcePath, loadOptions));
 		}
 
 		/** @copydoc Load(const UUID&, const ResourceLoadOptions&) */
 		template <class T>
 		TResourceHandle<T> Load(const UUID& resourceId, const ResourceLoadOptions& loadOptions)
 		{
-			return B3DStaticResourceCast<T>(Load(resourceId), loadOptions);
+			return B3DStaticResourceCast<T>(Load(resourceId, loadOptions));
 		}
 
 		/**
@@ -549,7 +551,8 @@ namespace bs
 		SPtr<ResourceManifest> mDefaultResourceManifest; // TODO - Deprecated
 
 		Mutex mInProgressResourcesMutex; // TODO - Deprecated
-		Mutex mLoadedResourceMutex; // TODO - Deprecated
+		Mutex mLoadedResourceMutex;
+		Mutex mResourceHandleMutex;
 		Mutex mDefaultManifestMutex; // TODO - Deprecated
 		RecursiveMutex mDestroyMutex;
 
