@@ -277,6 +277,9 @@ namespace bs
 		/** Combines two paths and returns the result. Right path should be relative. */
 		static Path Combine(const Path& left, const Path& right);
 
+		/** Combines three paths and returns the result. Right path should be relative. */
+		static Path Combine(const Path& left, const Path& middle, const Path& right);
+
 		/** Strips invalid characters from the provided string and replaces them with empty spaces. */
 		static void StripInvalid(String& path);
 

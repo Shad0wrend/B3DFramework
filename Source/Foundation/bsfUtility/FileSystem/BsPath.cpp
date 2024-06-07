@@ -515,6 +515,15 @@ Path Path::Combine(const Path& left, const Path& right)
 	return output.Append(right);
 }
 
+Path Path::Combine(const Path& left, const Path& middle, const Path& right)
+{
+	Path output = left;
+	output.Append(middle);
+	output.Append(right);
+
+	return output;
+}
+
 void Path::StripInvalid(String& path)
 {
 	String illegalChars = "\\/:?\"<>|";

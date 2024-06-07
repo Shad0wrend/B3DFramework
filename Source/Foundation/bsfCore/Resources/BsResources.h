@@ -191,13 +191,6 @@ namespace bs
 		 */
 		HResource Load(const TWeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
-		/** @copydoc Load(const WeakResourceHandle<Resource>&, ResourceLoadFlags) */
-		template <class T>
-		TResourceHandle<T> Load(const TWeakResourceHandle<T>& handle, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
-		{
-			return static_resource_cast<T>(Load((const TWeakResourceHandle<Resource>&)handle, loadFlags));
-		}
-
 		/**
 		 * Loads the resource asynchronously. Initially returned resource handle will be invalid until resource loading is
 		 * done. Use ResourceHandle<T>::isLoaded to check if resource has been loaded, or
@@ -210,13 +203,6 @@ namespace bs
 		 */
 		B3D_SCRIPT_EXPORT()
 		HResource LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
-
-		/** @copydoc LoadAsync */
-		template <class T>
-		TResourceHandle<T> LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
-		{
-			return static_resource_cast<T>(LoadAsync(filePath, loadFlags));
-		}
 
 		/**
 		 * Loads the resource with the given UUID. Returns an empty handle if resource can't be loaded.
@@ -268,6 +254,24 @@ namespace bs
 		{
 			return B3DStaticResourceCast<T>(Load(resourceId, loadOptions));
 		}
+
+		/**
+		 * Checks if the resource at the provided path exists. 
+		 *
+		 * @param resourcePath			Path to the resource. This may be a virtual or physical path. e.g.:
+		 *									Virtual path: '/game/textures/path/to/resource'
+		 *									Physical path: 'D:/path/to/package.b3d/path/to/resource'
+		 * @return						True if the resource can be located, false otherwise.
+		 */
+		bool Exists(const Path& resourcePath) const;
+
+		/**
+		 * Checks if the resource with the provided ID exists. 
+		 *
+		 * @param resourceId			ID of the resource.
+		 * @return						True if the resource can be located, false otherwise.
+		 */
+		bool Exists(const UUID& resourceId) const;
 
 		/**
 		 * Releases an internal reference to the resource held by the resources system. This allows the resource to be
@@ -523,7 +527,7 @@ namespace bs
 		 */
 		LoadInfo LoadInternal(const UUID& UUID, const Path& filePath, bool synchronous, ResourceLoadFlags loadFlags); // TODO - Deprecated
 
-		// TODO
+		// TODO - Doc
 		HResource Load(UPtr<PackageReadLock> packageReadLock, const UUID& resourceId, const ResourceLoadOptions& loadOptions);
 
 		/** Performs actually reading and deserializing of the resource file. Called from various worker threads. */

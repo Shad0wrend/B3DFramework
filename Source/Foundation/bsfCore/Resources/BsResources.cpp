@@ -24,6 +24,56 @@ using namespace bs;
 
 const ResourceLoadOptions ResourceLoadOptions::kDefault;
 
+// TODO - Doc
+static bool TryAcquirePackageLockForResourceLoad(const Path& resourcePath, const char* lockReason, UPtr<PackageReadLock>& outReadLock, UUID& outResourceId)
+{
+	PackageManager& packageManager = GetPackageManager();
+
+	Optional<ResourcePackagePath> maybeResourcePackagePath = packageManager.TryResolvePhysicalResourcePath(resourcePath);
+	if(!maybeResourcePackagePath.has_value()) // Maybe it's a virtual path
+		maybeResourcePackagePath = packageManager.TryResolveVirtualResourcePath(resourcePath);
+
+	if(!maybeResourcePackagePath.has_value())
+		return false;
+
+	const ResourcePackagePath& resourcePackagePath = *maybeResourcePackagePath;
+
+	AcquirePackageReadLockOptions readLockOptions(true, true, lockReason);
+	const AcquirePackageLockResult lockResult = packageManager.AcquireReadLock(resourcePackagePath.PhysicalPackagePath, readLockOptions, outReadLock);
+	if(!B3D_ENSURE(lockResult == AcquirePackageLockResult::Acquired && outReadLock != nullptr))
+		return false;
+
+	const SPtr<Package>& package = outReadLock->GetPackage();
+	if(!B3D_ENSURE(package != nullptr))
+		return nullptr;
+
+	const SPtr<const PackageResourceMetaData>& resourceMetaData = package->GetResourceMetaData(resourcePackagePath.ResourcePathWithinPackage);
+	if(resourceMetaData == nullptr)
+		return false;
+
+	outResourceId = resourceMetaData->Id;
+	return true;
+}
+
+// TODO - Doc
+static bool TryAcquirePackageLockForResourceLoad(const UUID& resourceId, const char* lockReason, UPtr<PackageReadLock>& outReadLock, Path& outPackagePath)
+{
+	PackageManager& packageManager = GetPackageManager();
+
+	const Optional<Path> maybePackagePath = packageManager.TryGetPackagePathForResource(resourceId);
+	if(!maybePackagePath.has_value())
+		return false;
+
+	outPackagePath = *maybePackagePath;
+
+	AcquirePackageReadLockOptions readLockOptions(true, true, lockReason);
+	const AcquirePackageLockResult lockResult = packageManager.AcquireReadLock(outPackagePath, readLockOptions, outReadLock);
+	if(!B3D_ENSURE(lockResult == AcquirePackageLockResult::Acquired && outReadLock != nullptr))
+		return false;
+
+	return true;
+}
+
 Resources::Resources()
 {
 	{
@@ -59,61 +109,42 @@ HResource Resources::Load(const Path& filePath, ResourceLoadFlags loadFlags)
 
 HResource Resources::Load(const Path& resourcePath, const ResourceLoadOptions& loadOptions)
 {
-	PackageManager& packageManager = GetPackageManager();
-
-	Optional<ResourcePackagePath> maybeResourcePackagePath = packageManager.TryResolvePhysicalResourcePath(resourcePath);
-	if(!maybeResourcePackagePath.has_value()) // Maybe it's a virtual path
-		maybeResourcePackagePath = packageManager.TryResolveVirtualResourcePath(resourcePath);
-
-	if(!maybeResourcePackagePath.has_value())
+	UPtr<PackageReadLock> packageReadLock;
+	UUID resourceId;
+	if(!TryAcquirePackageLockForResourceLoad(resourcePath, "Load resource", packageReadLock, resourceId))
 	{
 		B3D_LOG(Warning, Resources, "Cannot load resource. File at path '{0}' doesn't exist.", resourcePath);
 		return nullptr;
 	}
-
-	const ResourcePackagePath& resourcePackagePath = *maybeResourcePackagePath;
-
-	AcquirePackageReadLockOptions readLockOptions(true, true, "Load resource");
-	UPtr<PackageReadLock> packageReadLock;
-	const AcquirePackageLockResult lockResult = packageManager.AcquireReadLock(resourcePackagePath.PhysicalPackagePath, readLockOptions, packageReadLock);
-	if(!B3D_ENSURE(lockResult == AcquirePackageLockResult::Acquired && packageReadLock != nullptr))
-		return nullptr;
-
-	const SPtr<Package>& package = packageReadLock->GetPackage();
-	if(!B3D_ENSURE(package != nullptr))
-		return nullptr;
-
-	const SPtr<const PackageResourceMetaData>& resourceMetaData = package->GetResourceMetaData(resourcePackagePath.ResourcePathWithinPackage);
-	if(resourceMetaData == nullptr)
-	{
-		B3D_LOG(Warning, Resources, "Cannot load resource. Resource with path '{0}' cannot be found in package '{1}'.", resourcePackagePath.ResourcePathWithinPackage, resourcePackagePath.PhysicalPackagePath);
-	}
-
-	const UUID& resourceId = resourceMetaData->Id;
 
 	return Load(std::move(packageReadLock), resourceId, loadOptions);
 }
 
 HResource Resources::Load(const UUID& resourceId, const ResourceLoadOptions& loadOptions)
 {
-	PackageManager& packageManager = GetPackageManager();
-
-	const Optional<Path> maybePackagePath = packageManager.TryGetPackagePathForResource(resourceId);
-	if(!maybePackagePath.has_value())
+	UPtr<PackageReadLock> packageReadLock;
+	Path packagePath;
+	if(!TryAcquirePackageLockForResourceLoad(resourceId, "Load resource", packageReadLock, packagePath))
 	{
 		B3D_LOG(Warning, Resources, "Cannot load resource. Resource with ID '{0}' doesn't exist.", resourceId);
 		return nullptr;
 	}
 
-	const Path& packagePath = *maybePackagePath;
-
-	AcquirePackageReadLockOptions readLockOptions(true, true, "Load resource");
-	UPtr<PackageReadLock> packageReadLock;
-	const AcquirePackageLockResult lockResult = packageManager.AcquireReadLock(packagePath, readLockOptions, packageReadLock);
-	if(!B3D_ENSURE(lockResult == AcquirePackageLockResult::Acquired && packageReadLock != nullptr))
-		return nullptr;
-
 	return Load(std::move(packageReadLock), resourceId, loadOptions);
+}
+
+bool Resources::Exists(const Path& resourcePath) const
+{
+	UPtr<PackageReadLock> packageReadLock;
+	UUID resourceId;
+	return TryAcquirePackageLockForResourceLoad(resourcePath, "Check resource exists", packageReadLock, resourceId);
+}
+
+bool Resources::Exists(const UUID& resourceId) const
+{
+	UPtr<PackageReadLock> packageReadLock;
+	Path packagePath;
+	return TryAcquirePackageLockForResourceLoad(resourceId, "Check resource exists", packageReadLock, packagePath);
 }
 
 HResource Resources::Load(const TWeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags)
