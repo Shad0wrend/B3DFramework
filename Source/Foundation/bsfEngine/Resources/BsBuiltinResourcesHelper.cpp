@@ -101,15 +101,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 	{
 		const String spriteName = String("sprite_" + fileName);
 
-		Path relativePath = fileName;
-		Path fullPath = spriteOutputFolder + relativePath;
-		fullPath.SetFilename(spriteName + ".asset");
-
 		HResource spriteTexture = GetResources().CreateResourceHandle(SpriteTexture::CreateShared(texture), UUID);
-
-		Resources::Instance().Save(spriteTexture, fullPath, true, compress);
-		manifest->RegisterResource(spriteTexture.GetId(), fullPath);
-
 		GetResources().SaveAsSinglePackage(spriteTexture, spriteOutputFolder, spriteName, ResourceSaveOptions(true, compress));
 	};
 
@@ -118,19 +110,11 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 	{
 		const String spriteName = String("sprite_" + fileName);
 
-		Path relativePath = fileName;
-		Path outputPath = spriteOutputFolder + relativePath;
-		outputPath.SetFilename(spriteName + ".asset");
-
 		SPtr<SpriteTexture> spriteTextureShared = SpriteTexture::CreateShared(texture);
 		spriteTextureShared->SetAnimation(animation);
 		spriteTextureShared->SetAnimationPlayback(playback);
 
 		HResource spriteTexture = GetResources().CreateResourceHandle(spriteTextureShared, UUID);
-
-		Resources::Instance().Save(spriteTexture, outputPath, true, compress);
-		manifest->RegisterResource(spriteTexture.GetId(), outputPath);
-
 		GetResources().SaveAsSinglePackage(spriteTexture, spriteOutputFolder, spriteName, ResourceSaveOptions(true, compress));
 	};
 
@@ -172,10 +156,6 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 			HResource outputRes = importOp.Op.GetReturnValue();
 			if(outputRes != nullptr)
 			{
-				const Path& fullOutputPath = importOp.OutputFolder + (importOp.OutputName + ".asset");
-				Resources::Instance().Save(outputRes, fullOutputPath, true, compress);
-				manifest->RegisterResource(outputRes.GetId(), fullOutputPath);
-
 				GetResources().SaveAsSinglePackage(outputRes, importOp.OutputFolder, importOp.OutputName, ResourceSaveOptions(true, compress));
 
 				const nlohmann::json& entry = importOp.JsonEntry;
@@ -256,12 +236,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 		SPtr<Texture> texturePtr = Texture::CreateShared(pixelData);
 		HResource texture = GetResources().CreateResourceHandle(texturePtr, UUID(uuid.c_str()));
 
-		const Path& fullPath = folder + (name + ".asset");
-		Resources::Instance().Save(texture, fullPath, true, compress);
-		manifest->RegisterResource(texture.GetId(), fullPath);
-
 		GetResources().SaveAsSinglePackage(texture, folder, name, ResourceSaveOptions(true, compress));
-
 		return B3DStaticResourceCast<Texture>(texture);
 	};
 
@@ -311,11 +286,6 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 	HFont font = Importer::Instance().Import<Font>(inputFile, fontImportOptions, UUID);
 
 	String fontName = outputName;
-	Path outputPath = outputFolder + fontName;
-	outputPath.SetFilename(outputPath.GetFilename() + u8".asset");
-
-	Resources::Instance().Save(font, outputPath, true);
-	manifest->RegisterResource(font.GetId(), outputPath);
 
 	const SPtr<Package> package = Package::Create(outputName);
 	package->AddResource(outputName, font);
@@ -325,16 +295,9 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 	{
 		SPtr<const FontBitmapInformation> fontData = font->GetBitmap(size);
 
-		Path texPageOutputPath = outputPath;
-
 		u32 pageIdx = 0;
 		for(auto& page : fontData->TexturePages)
 		{
-			texPageOutputPath.SetFilename(fontName + u8"_" + ToString(size) + u8"_texpage_" + ToString(pageIdx) + u8".asset");
-
-			Resources::Instance().Save(page.Texture, texPageOutputPath, true);
-			manifest->RegisterResource(page.Texture.GetId(), texPageOutputPath);
-
 			const String& texturePageName = StringUtil::Format("{0}FontPage{1}", fontName, pageIdx);
 			package->AddResource(texturePageName, page.Texture);
 

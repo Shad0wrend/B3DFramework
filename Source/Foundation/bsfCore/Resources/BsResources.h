@@ -178,19 +178,6 @@ namespace bs
 		B3D_NO_RREF HResource Load(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
 		/**
-		 * Loads the resource asynchronously. Initially returned resource handle will be invalid until resource loading is
-		 * done. Use ResourceHandle<T>::isLoaded to check if resource has been loaded, or
-		 * ResourceHandle<T>::blockUntilLoaded to wait until load completes.
-		 *
-		 * @param[in]	filePath	Full pathname of the file.
-		 * @param[in]	loadFlags	Flags used to control the load process.
-		 *
-		 * @see		Load(const Path&, ResourceLoadFlags)
-		 */
-		B3D_SCRIPT_EXPORT()
-		HResource LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
-
-		/**
 		 * Loads the resource with the given UUID. Returns an empty handle if resource can't be loaded.
 		 *
 		 * @param[in]	uuid		UUID of the resource to load.
@@ -306,26 +293,6 @@ namespace bs
 		 */
 		B3D_SCRIPT_EXPORT()
 		void Save(B3D_NO_RREF const HResource& resource, const Path& filePath, bool overwrite, bool compress = false);
-
-		/**
-		 * Saves an existing resource to its previous location.
-		 *
-		 * @param[in]	resource 	Handle to the resource.
-		 * @param[in]	compress	Should the resource be compressed before saving. Some resources have data that is
-		 *							already compressed and this option will be ignored for such resources.
-		 *
-		 * @note
-		 * If the resource is used on the GPU and you are in some way modifying it from the render thread, make sure all
-		 * render thread commands are submitted and executed before you call this method. Otherwise an obsolete version of
-		 * the resource might get saved.
-		 * @note
-		 * If saving a render thread resource this is a potentially very slow operation as we must wait on the render thread
-		 * and the GPU in order to read the resource.
-		 * @note
-		 * Thread safe if you guarantee the resource isn't being written to from another thread.
-		 */
-		B3D_SCRIPT_EXPORT()
-		void Save(B3D_NO_RREF const HResource& resource, bool compress = false);
 
 		/**
 		 * Saves a resource into its own package. The package will be created in @p folder, with @p name as the package name. There will

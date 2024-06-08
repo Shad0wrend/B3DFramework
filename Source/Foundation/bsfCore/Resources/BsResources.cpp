@@ -147,25 +147,6 @@ bool Resources::Exists(const UUID& resourceId) const
 	return TryAcquirePackageLockForResourceLoad(resourceId, "Check resource exists", packageReadLock, packagePath);
 }
 
-HResource Resources::LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags)
-{
-	UUID uuid;
-	Path physicalFilePath = EnsurePhysicalPath(filePath);
-
-	if(!FileSystem::IsFile(physicalFilePath))
-	{
-		B3D_LOG(Warning, Resources, "Cannot load resource. Specified file: {0} doesn't exist.", physicalFilePath);
-		return HResource();
-	}
-
-	bool foundUUID = GetUUIDFromFilePath(physicalFilePath, uuid);
-
-	if(!foundUUID)
-		uuid = UUIDGenerator::GenerateRandom();
-
-	return LoadInternal(uuid, physicalFilePath, false, loadFlags).Resource;
-}
-
 HResource Resources::LoadFromUuid(const UUID& uuid, bool async, ResourceLoadFlags loadFlags)
 {
 	Path filePath;
@@ -1003,16 +984,6 @@ void Resources::Save(const HResource& resource, const Path& filePath, bool overw
 	}
 
 	SaveInternal(resource.GetShared(), filePath, compress);
-}
-
-void Resources::Save(const HResource& resource, bool compress)
-{
-	if(resource == nullptr)
-		return;
-
-	Path path;
-	if(GetFilePathFromUuid(resource.GetId(), path))
-		Save(resource, path, true, compress);
 }
 
 void Resources::SaveAsSinglePackage(const HResource& resource, const Path& folder, const String& name, const ResourceSaveOptions& saveOptions)

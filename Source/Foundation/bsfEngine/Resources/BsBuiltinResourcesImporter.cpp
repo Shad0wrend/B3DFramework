@@ -181,11 +181,6 @@ void GenerateTextures()
 	auto fnSaveTexture = [](const Path& folder, const String& name, const SPtr<Texture>& texture, const String& uuid)
 	{
 		HResource textureResource = GetResources().CreateResourceHandle(texture, bs::UUID(uuid));
-
-		const Path& fullPath = folder + (name + ".asset");
-		GetResources().Save(textureResource, fullPath, true);
-		sManifest->RegisterResource(textureResource.GetId(), fullPath);
-
 		GetResources().SaveAsSinglePackage(textureResource, folder, name);
 	};
 
@@ -265,11 +260,6 @@ void GenerateMeshes()
 	auto fnSaveMesh = [](const Path& folder, const String& name, const SPtr<Mesh>& mesh, const String& uuid)
 	{
 		HResource meshResource = GetResources().CreateResourceHandle(mesh, bs::UUID(uuid));
-
-		const Path fullPath = folder + String(name + ".asset");
-		GetResources().Save(meshResource, fullPath, true);
-		sManifest->RegisterResource(meshResource.GetId(), fullPath);
-
 		GetResources().SaveAsSinglePackage(meshResource, folder, name);
 	};
 
