@@ -147,15 +147,6 @@ bool Resources::Exists(const UUID& resourceId) const
 	return TryAcquirePackageLockForResourceLoad(resourceId, "Check resource exists", packageReadLock, packagePath);
 }
 
-HResource Resources::Load(const TWeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags)
-{
-	if(handle.mData == nullptr)
-		return HResource();
-
-	UUID uuid = handle.GetId();
-	return LoadFromUuid(uuid, false, loadFlags);
-}
-
 HResource Resources::LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags)
 {
 	UUID uuid;

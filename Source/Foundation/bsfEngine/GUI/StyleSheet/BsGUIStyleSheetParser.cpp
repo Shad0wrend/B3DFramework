@@ -957,7 +957,7 @@ bool GUIStyleSheetParser::TryParseImage(HSpriteImage& outValue)
 
 	if(isURL)
 	{
-		outValue = GetResources().Load<SpriteImage>(urlOrIconName);
+		outValue = GetResources().Load<SpriteImage>(urlOrIconName, ResourceLoadOptions(false));
 
 		if(!outValue.IsLoaded(false))
 			Warning(StringUtil::Format("Unable to load image at path \"{0}\".", urlOrIconName));
@@ -1003,7 +1003,7 @@ bool GUIStyleSheetParser::TryParseFont(HFont& outValue)
 		if(!TryParseURL(url))
 			return false;
 
-		outValue = GetResources().Load<Font>(url);
+		outValue = GetResources().Load<Font>(url, ResourceLoadOptions(false));
 
 		if(!outValue.IsLoaded(false))
 			Warning(StringUtil::Format("Unable to load font at path \"{0}\".", url));
@@ -1349,7 +1349,7 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 		value.GetValue(stringLiteralIndex);
 
 		const Path filePath = mStringLiterals[stringLiteralIndex];
-		outValue = GetResources().Load<SpriteImage>(filePath);
+		outValue = GetResources().Load<SpriteImage>(filePath, ResourceLoadOptions(false));
 
 		if(!outValue.IsLoaded(false))
 			Warning(StringUtil::Format("Unable to load image at path \"{0}\".", filePath));
@@ -1387,7 +1387,7 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 		value.GetValue(stringLiteralIndex);
 
 		const Path filePath = mStringLiterals[stringLiteralIndex];
-		outValue = GetResources().Load<Font>(filePath);
+		outValue = GetResources().Load<Font>(filePath, ResourceLoadOptions(false));
 
 		if(!outValue.IsLoaded(false))
 			Warning(StringUtil::Format("Unable to load font at path \"{0}\".", filePath));

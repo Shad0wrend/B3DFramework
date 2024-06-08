@@ -177,20 +177,6 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		B3D_NO_RREF HResource Load(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
-		/** @copydoc Load(const Path&, ResourceLoadFlags) */
-		template <class T>
-		TResourceHandle<T> Load(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
-		{
-			return B3DStaticResourceCast<T>(Load(filePath, loadFlags));
-		}
-
-		/**
-		 * Loads the resource for the provided weak resource handle, or returns a loaded resource if already loaded.
-		 *
-		 * @see		Load(const Path&, ResourceLoadFlags)
-		 */
-		HResource Load(const TWeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
-
 		/**
 		 * Loads the resource asynchronously. Initially returned resource handle will be invalid until resource loading is
 		 * done. Use ResourceHandle<T>::isLoaded to check if resource has been loaded, or
