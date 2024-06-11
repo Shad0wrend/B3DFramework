@@ -87,7 +87,7 @@ const PrefabIdRemapper::PrefabInformation& PrefabIdRemapper::GetOrPopulatePrefab
 		return found->second;
 
 	PrefabInformation prefabInformation;
-	prefabInformation.Prefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
+	prefabInformation.Prefab = GetResources().Load<Prefab>(prefabResourceId, ResourceLoadOptions(false, false, false));
 
 	if(prefabInformation.Prefab.IsLoaded(false))
 		prefabInformation.PrefabHierarchyIds = PrefabUtility::GetInstanceToPrefabLinkInformationMap(prefabInformation.Prefab->GetRoot(), true);

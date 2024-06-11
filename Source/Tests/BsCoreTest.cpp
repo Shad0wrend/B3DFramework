@@ -279,7 +279,7 @@ void CoreTestSuite::TestSceneSaveLoad()
 
 		// Ensure the prefab stays loaded so tests below don't fail
 		HResource scene0PRefabHandle = GetResources().CreateResourceHandle(scene0Prefab);
-		GetResources().LoadFromUuid(scene0Prefab->GetId());
+		GetResources().Load(scene0Prefab->GetId(), ResourceLoadOptions(false));
 	}
 
 	// Instantiate the scene and ensure prefab links are valid

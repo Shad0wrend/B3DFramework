@@ -50,10 +50,12 @@ MonoObject* ScriptResources::InternalLoadFromUuid(UUID* uuid, ResourceLoadFlag f
 {
 	ResourceLoadFlags loadFlags = flags;
 
-	if(GetApplication().IsEditor())
-		loadFlags |= ResourceLoadFlag::KeepSourceData;
+	ResourceLoadOptions loadOptions;
+	loadOptions.LoadDependencies = loadFlags.IsSet(ResourceLoadFlag::LoadDependencies);
+	loadOptions.KeepInternalReference = loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef);
+	loadOptions.AsynchronousLoad = false;
 
-	HResource resource = GetResources().LoadFromUuid(*uuid, false, loadFlags);
+	HResource resource = GetResources().Load(*uuid, loadOptions);
 	if(!resource.IsLoaded(false))
 		return nullptr;
 
@@ -87,10 +89,11 @@ MonoObject* ScriptResources::InternalLoadAsyncFromUuid(UUID* uuid, ResourceLoadF
 {
 	ResourceLoadFlags loadFlags = flags;
 
-	if(GetApplication().IsEditor())
-		loadFlags |= ResourceLoadFlag::KeepSourceData;
+	ResourceLoadOptions loadOptions;
+	loadOptions.LoadDependencies = loadFlags.IsSet(ResourceLoadFlag::LoadDependencies);
+	loadOptions.KeepInternalReference = loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef);
 
-	HResource resource = GetResources().LoadFromUuid(*uuid, true, loadFlags);
+	HResource resource = GetResources().Load(*uuid, loadOptions);
 	if(resource == nullptr)
 		return nullptr;
 

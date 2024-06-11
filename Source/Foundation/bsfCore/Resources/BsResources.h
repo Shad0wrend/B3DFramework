@@ -165,19 +165,6 @@ namespace bs
 		~Resources();
 
 		/**
-		 * Loads the resource with the given UUID. Returns an empty handle if resource can't be loaded.
-		 *
-		 * @param[in]	uuid		UUID of the resource to load.
-		 * @param[in]	async		If true resource will be loaded asynchronously. Handle to non-loaded resource will be
-		 *							returned immediately while loading will continue in the background.
-		 * @param[in]	loadFlags	Flags used to control the load process.
-		 *
-		 * @see		Load(const Path&, bool)
-		 */
-		B3D_SCRIPT_EXPORT()
-		HResource LoadFromUuid(const UUID& uuid, bool async = false, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
-
-		/**
 		 * Loads a resource at the specified path. Resources are searched in all currently loaded packages within the PackageManager,
 		 * as well as any in-memory resources registered with the Resources manager.
 		 *
@@ -427,24 +414,8 @@ namespace bs
 	private:
 		friend class ResourceHandle;
 
-		/**
-		 * Starts resource loading or returns an already loaded resource. Both UUID and filePath must match the	same
-		 * resource, although you may provide an empty path in which case the resource will be retrieved from memory if its
-		 * currently loaded.
-		 */
-		LoadInfo LoadInternal(const UUID& UUID, const Path& filePath, bool synchronous, ResourceLoadFlags loadFlags); // TODO - Deprecated
-
 		// TODO - Doc
 		HResource Load(UPtr<PackageReadLock> packageReadLock, const UUID& resourceId, const ResourceLoadOptions& loadOptions);
-
-		/** Performs actually reading and deserializing of the resource file. Called from various worker threads. */
-		SPtr<Resource> LoadFromDiskAndDeserialize(const Path& filePath, bool loadWithSaveData, std::atomic<float>& progress); // TODO - Deprecated
-
-		/**	Triggered when individual resource has finished loading. */
-		void LoadComplete(HResource& resource, bool notifyProgress); // TODO - Deprecated
-
-		/**	Callback triggered when the task manager is ready to process the loading task. */
-		void LoadCallback(const Path& filePath, HResource& resource, bool loadWithSaveData); // TODO - Deprecated
 
 		/**
 		 * Checks if the provided in-progress load has completed any finalizes the operation. Operation is deemed complete once its primary resource and
@@ -470,7 +441,6 @@ namespace bs
 		UnorderedMap<UUID, TWeakResourceHandle<Resource>> mHandles;
 		UnorderedMap<UUID, LoadedResourceData> mLoadedResources;
 		UnorderedMap<UUID, ResourceLoadData*> mInProgressResources; // Resources that are being asynchronously loaded // TODO - Deprecated
-		UnorderedMap<UUID, Vector<ResourceLoadData*>> mDependantLoads; // Allows dependency to be notified when a dependant is loaded // TODO - Deprecated
 
 		// New package based code
 		UnorderedMap<UUID, UPtr<LoadedResourceInformation>> mLoadedResourceInformation;

@@ -116,7 +116,7 @@ HPrefab PrefabCache::FindOrLoadPrefab(const UUID& prefabId)
 	if(auto found = mPrefabs.find(prefabId); found != mPrefabs.end())
 		return found->second;
 
-	HPrefab prefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabId, false, ResourceLoadFlag::None));
+	HPrefab prefab = GetResources().Load<Prefab>(prefabId, ResourceLoadOptions(false, false, false));
 
 	if(!prefab.IsLoaded(false))
 	{
@@ -151,7 +151,7 @@ void PrefabUtility::RevertToPrefab(const HSceneObject& sceneObject)
 	if(!B3D_ENSURE(!prefabResourceId.Empty()))
 		return;
 
-	HPrefab linkedPrefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
+	HPrefab linkedPrefab = GetResources().Load<Prefab>(prefabResourceId, ResourceLoadOptions(false, false, false));
 	if(!linkedPrefab.IsLoaded(false))
 	{
 		B3D_LOG(Warning, Prefab, "Cannot revert scene object '{0}' to prefab. Failed to load prefab with ID: '{1}'.", sceneObject.GetId(), prefabResourceId);

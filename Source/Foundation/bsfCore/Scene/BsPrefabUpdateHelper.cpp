@@ -25,7 +25,7 @@ struct PrefabInstanceRoot
 
 Optional<PrefabUpdateHelper::ObjectInPrefab> PrefabUpdateHelper::FindInstanceInPrefab(const GameObjectHandleBase& gameObject, const UUID& prefabResourceId)
 {
-	const HPrefab prefab = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabResourceId, false, ResourceLoadFlag::None));
+	const HPrefab prefab = GetResources().Load<Prefab>(prefabResourceId, ResourceLoadOptions(false, false, false));
 
 	if(!prefab.IsLoaded())
 	{
