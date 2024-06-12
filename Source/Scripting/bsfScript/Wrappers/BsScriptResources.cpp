@@ -104,9 +104,9 @@ MonoObject* ScriptResources::InternalLoadAsyncFromUuid(UUID* uuid, ResourceLoadF
 	return nullptr;
 }
 
-float ScriptResources::InternalGetLoadProgress(ScriptRRefBase* resource, bool loadDependencies)
+float ScriptResources::InternalGetLoadProgress(ScriptRRefBase* resource)
 {
-	return GetResources().GetLoadProgress(resource->GetHandle(), loadDependencies);
+	return GetResources().GetLoadProgress(resource->GetHandle());
 }
 
 void ScriptResources::InternalRelease(ScriptResourceBase* resource)

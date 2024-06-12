@@ -144,16 +144,13 @@ namespace bs
         /// Returns the loading progress of a resource that's being asynchronously loaded.
         /// </summary>
         /// <param name="resource">Resource whose load progress to check.</param>
-        /// <param name="includeDependencies">If false the progress will reflect the load progress only for this individual
-        ///                                   resource. If true the progress will reflect load progress of this resource
-        ///                                   and all of its dependencies.</param>
         /// <returns>Load progress in range [0, 1].</returns>
-        public static float GetLoadProgress(RRefBase resource, bool includeDependencies = true)
+        public static float GetLoadProgress(RRefBase resource)
         {
             if(resource == null)
                 return 0.0f;
 
-            return Internal_GetLoadProgress(resource.GetCachedPtr(), includeDependencies);
+            return Internal_GetLoadProgress(resource.GetCachedPtr());
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -169,7 +166,7 @@ namespace bs
         private static extern RRefBase Internal_LoadAsyncFromUUID(ref UUID uuid, ResourceLoadFlag flags);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern float Internal_GetLoadProgress(IntPtr resource, bool loadDependencies);
+        private static extern float Internal_GetLoadProgress(IntPtr resource);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_Release(IntPtr resource);

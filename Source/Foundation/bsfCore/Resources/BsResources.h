@@ -84,41 +84,6 @@ namespace bs
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) Resources : public Module<Resources>
 	{
 		/** Information about a loaded resource. */
-		struct LoadedResourceData // TODO - Deprecated
-		{
-			LoadedResourceData() = default;
-
-			LoadedResourceData(const TWeakResourceHandle<Resource>& resource, u32 size)
-				: Resource(resource), Size(size)
-			{}
-
-			TWeakResourceHandle<Resource> Resource;
-			u32 NumInternalRefs = 0;
-			u32 Size = 0;
-		};
-
-		/** Information about a resource that's currently being loaded. */
-		struct ResourceLoadData // TODO - Deprecated
-		{
-			ResourceLoadData(const TWeakResourceHandle<Resource>& resource, u32 numDependencies, u32 size)
-				: ResData(resource, size), RemainingDependencies(numDependencies)
-			{}
-
-			LoadedResourceData ResData;
-			SPtr<Resource> LoadedData;
-			u32 RemainingDependencies;
-			Vector<HResource> Dependencies;
-			bool NotifyImmediately;
-			bool LoadStarted = false;
-			SPtr<SignalEvent> LoadingEvent;
-
-			// Progress reporting
-			u32 DependencySize = 0;
-			u32 DependencyLoadedAmount = 0;
-			std::atomic<float> Progress;
-		};
-
-		/** Information about a loaded resource. */
 		struct LoadedResourceInformation
 		{
 			TWeakResourceHandle<Resource> ResourceHandle;
@@ -144,24 +109,8 @@ namespace bs
 			SignalEvent LoadingEvent;
 		};
 
-		/** Information about an issued resource load. */
-		struct LoadInfo // TODO - Deprecated
-		{
-			enum State
-			{
-				Loading,
-				Failed,
-				AlreadyInProgress,
-				AlreadyLoaded
-			};
-
-			HResource Resource;
-			u32 Size;
-			State State;
-		};
-
 	public:
-		Resources();
+		Resources() = default;
 		~Resources();
 
 		/**
@@ -280,37 +229,13 @@ namespace bs
 		bool IsLoaded(const UUID& uuid, bool checkInProgress = true);
 
 		/**
-		 * Returns the loading progress of a resource that's being asynchronously loaded.
-		 *
-		 * @param[in]	resource				Resource whose load progress to check.
-		 * @param[in]	includeDependencies		If false the progress will reflect the load progress only for this
-		 *										inidividual resource. If true the progress will reflect load progress
-		 *										of this resource and all of its dependencies.
-		 * @return								Load progress in range [0, 1].
-		 */
-		B3D_SCRIPT_EXPORT()
-		float GetLoadProgress(const HResource& resource, bool includeDependencies = true); // TODO - Deprecated
-		
-		/**
 		 * Returns the loading progress of a resource that's being loaded
 		 *
 		 * @param	resource	Resource whose load progress to check.
 		 * @return				Load progress in range [0, 1].
 		 */
 		B3D_SCRIPT_EXPORT()
-		float GetLoadProgress2(const HResource& resource);
-
-		// TODO - Doc
-		struct LoadProgress
-		{
-			LoadProgress(u64 totalSize = 0, float progress = 0.0f)
-				:TotalSize(totalSize), Progress(progress)
-			{ }
-
-			u64 TotalSize;
-			float Progress;
-		};
-		void GetLoadProgressRecursive(const HResource& resource, UnorderedMap<UUID, LoadProgress>& loadProgressMap);
+		float GetLoadProgress(const HResource& resource);
 
 		/**
 		 *Allows you to set a resource manifest containing UUID <-> file path mapping that is used when resolving
@@ -415,6 +340,20 @@ namespace bs
 		friend class ResourceHandle;
 
 		// TODO - Doc
+		struct LoadProgress
+		{
+			LoadProgress(u64 totalSize = 0, float progress = 0.0f)
+				:TotalSize(totalSize), Progress(progress)
+			{ }
+
+			u64 TotalSize;
+			float Progress;
+		};
+
+		// TODO - Doc
+		void GetLoadProgressRecursive(const HResource& resource, UnorderedMap<UUID, LoadProgress>& loadProgressMap);
+
+		// TODO - Doc
 		HResource Load(UPtr<PackageReadLock> packageReadLock, const UUID& resourceId, const ResourceLoadOptions& loadOptions);
 
 		/**
@@ -432,17 +371,11 @@ namespace bs
 		Vector<SPtr<ResourceManifest>> mResourceManifests; // TODO - Deprecated
 		SPtr<ResourceManifest> mDefaultResourceManifest; // TODO - Deprecated
 
-		Mutex mInProgressResourcesMutex; // TODO - Deprecated
 		Mutex mLoadedResourceMutex;
 		Mutex mResourceHandleMutex;
 		Mutex mDefaultManifestMutex; // TODO - Deprecated
-		RecursiveMutex mDestroyMutex;
 
 		UnorderedMap<UUID, TWeakResourceHandle<Resource>> mHandles;
-		UnorderedMap<UUID, LoadedResourceData> mLoadedResources;
-		UnorderedMap<UUID, ResourceLoadData*> mInProgressResources; // Resources that are being asynchronously loaded // TODO - Deprecated
-
-		// New package based code
 		UnorderedMap<UUID, UPtr<LoadedResourceInformation>> mLoadedResourceInformation;
 		UnorderedMap<UUID, TInlineArray<SPtr<InProgressLoadInformation>, 1>> mInProgressLoadInformation;
 		UnorderedMap<UUID, TInlineArray<SPtr<InProgressLoadInformation>, 4>> mDependantResourceLoads;

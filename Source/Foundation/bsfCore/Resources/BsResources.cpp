@@ -74,15 +74,6 @@ static bool TryAcquirePackageLockForResourceLoad(const UUID& resourceId, const c
 	return true;
 }
 
-Resources::Resources()
-{
-	{
-		Lock lock(mDefaultManifestMutex);
-		mDefaultResourceManifest = ResourceManifest::Create("Default");
-		mResourceManifests.push_back(mDefaultResourceManifest);
-	}
-}
-
 Resources::~Resources()
 {
 	UnloadAll();
@@ -343,86 +334,71 @@ void Resources::TryFinalizeLoad(const SPtr<InProgressLoadInformation>& inProgres
 
 void Resources::ReleaseInternalReference(ResourceHandle& resource)
 {
-	const UUID& uuid = resource.GetId();
+	const UUID& resourceId = resource.GetId();
 
+	bool lostLastReference = false;
 	{
-		bool loadInProgress = false;
-
+		Lock lock(mLoadedResourceMutex);
+		if(auto found = mLoadedResourceInformation.find(resourceId); found != mLoadedResourceInformation.end())
 		{
-			Lock inProgressLock(mInProgressResourcesMutex);
-			auto iterFind2 = mInProgressResources.find(uuid);
-			if(iterFind2 != mInProgressResources.end())
-				loadInProgress = true;
+			LoadedResourceInformation& loadedResourceInformation = *found->second;
+
+			B3D_ASSERT(loadedResourceInformation.InternalReferenceCount > 0);
+			loadedResourceInformation.InternalReferenceCount--;
+			resource.DecrementInternalReferenceCount();
+
+			const std::uint32_t referenceCount = resource.GetHandleData()->ReferenceCount.load(std::memory_order_relaxed);
+			lostLastReference = referenceCount == 0;
 		}
-
-		// Technically we should be able to just cancel a load in progress instead of blocking until it finishes.
-		// However that would mean the last reference could get lost on whatever thread did the loading, which
-		// isn't something that's supported. If this ends up being a problem either make handle counting atomic
-		// or add a separate queue for objects destroyed from the load threads.
-		if(loadInProgress)
-			resource.BlockUntilLoaded();
-
-		bool lostLastRef = false;
-		{
-			Lock loadedLock(mLoadedResourceMutex);
-			auto iterFind = mLoadedResources.find(uuid);
-			if(iterFind != mLoadedResources.end())
-			{
-				LoadedResourceData& resData = iterFind->second;
-
-				B3D_ASSERT(resData.NumInternalRefs > 0);
-				resData.NumInternalRefs--;
-				resource.DecrementInternalReferenceCount();
-
-				std::uint32_t refCount = resource.GetHandleData()->ReferenceCount.load(std::memory_order_relaxed);
-				lostLastRef = refCount == 0;
-			}
-		}
-
-		if(lostLastRef)
-			Destroy(resource);
 	}
+
+	if(lostLastReference)
+		Destroy(resource);
 }
 
 void Resources::UnloadAllUnused()
 {
-	Vector<HResource> resourcesToUnload;
+	FrameScope frameScope;
+	FrameVector<HResource> resourcesToUnload;
 
 	{
 		Lock lock(mLoadedResourceMutex);
-		for(auto iter = mLoadedResources.begin(); iter != mLoadedResources.end(); ++iter)
+		for(auto it = mLoadedResourceInformation.begin(); it != mLoadedResourceInformation.end(); ++it)
 		{
-			const LoadedResourceData& resData = iter->second;
+			const LoadedResourceInformation& loadedResourceInformation = *it->second;
 
-			std::uint32_t refCount = resData.Resource.mData->ReferenceCount.load(std::memory_order_relaxed);
-			B3D_ASSERT(refCount > 0); // No references but kept in mLoadedResources list?
+			const std::uint32_t referenceCount = loadedResourceInformation.ResourceHandle.mData->ReferenceCount.load(std::memory_order_relaxed);
+			B3D_ASSERT(referenceCount > 0); // No references but kept in loaded resource map?
 
-			if(refCount == resData.NumInternalRefs) // Only internal references exist, free it
-				resourcesToUnload.push_back(resData.Resource.Lock());
+			if(referenceCount == loadedResourceInformation.InternalReferenceCount) // Only internal references exist, free it
+				resourcesToUnload.push_back(loadedResourceInformation.ResourceHandle.Lock());
 		}
 	}
 
 	// Note: When unloading multiple resources it's possible that unloading one will also unload
 	// another resource in "resourcesToUnload". This is fine because "unload" deals with invalid
 	// handles gracefully.
-	for(auto iter = resourcesToUnload.begin(); iter != resourcesToUnload.end(); ++iter)
-	{
-		ReleaseInternalReference(*iter);
-	}
+	for(auto& resource : resourcesToUnload)
+		Destroy(resource);
 }
 
 void Resources::UnloadAll()
 {
-	// Unload and invalidate all resources
-	UnorderedMap<UUID, LoadedResourceData> loadedResourcesCopy;
+	FrameScope frameScope;
+	FrameVector<HResource> resourcesToUnload;
 
+	// Unload and invalidate all resources
 	{
 		Lock lock(mLoadedResourceMutex);
-		loadedResourcesCopy = mLoadedResources;
+		for(auto it = mLoadedResourceInformation.begin(); it != mLoadedResourceInformation.end(); ++it)
+		{
+			const LoadedResourceInformation& loadedResourceInformation = *it->second;
+			resourcesToUnload.push_back(loadedResourceInformation.ResourceHandle.Lock());
+		}
 	}
 
-	for(auto& loadedResourcePair : loadedResourcesCopy)
-		Destroy(loadedResourcePair.second.Resource);
+	for(auto& resource : resourcesToUnload)
+		Destroy(resource);
 }
 
 void Resources::Destroy(ResourceHandle& resource)
@@ -430,52 +406,13 @@ void Resources::Destroy(ResourceHandle& resource)
 	if(resource.mData == nullptr)
 		return;
 
-	// TODO - Begin deprecated
-	RecursiveLock lock(mDestroyMutex);
-
-	// If load in progress, first wait until it completes
 	const UUID& resourceId = resource.GetId();
-	if(!resource.IsLoaded(false))
-	{
-		bool loadInProgress = false;
-		{
-			Lock lock(mInProgressResourcesMutex);
-			auto iterFind2 = mInProgressResources.find(resourceId);
-			if(iterFind2 != mInProgressResources.end())
-				loadInProgress = true;
-		}
-
-		if(loadInProgress) // If it's still loading wait until that finishes
-			resource.BlockUntilLoaded();
-		else
-			return; // Already unloaded
-	}
-
-	// At this point resource is guaranteed to be loaded and this state cannot change by some other thread because of
-	// the mDestroyMutex lock
-	// TODO - End deprecated
 
 	// Notify external systems before we actually destroy it
 	OnResourceDestroyed(resourceId);
 
 	{
 		Lock lock(mLoadedResourceMutex);
-		auto iterFind = mLoadedResources.find(resourceId);
-		if(iterFind != mLoadedResources.end())
-		{
-			LoadedResourceData& resData = iterFind->second;
-			while(resData.NumInternalRefs > 0)
-			{
-				resData.NumInternalRefs--;
-				resData.Resource.DecrementInternalReferenceCount();
-			}
-
-			mLoadedResources.erase(iterFind);
-		}
-		else
-		{
-			B3D_ASSERT(false); // This should never happen but in case it does fail silently in release mode
-		}
 
 		// TODO - Do I need to wait for in-progress loads to finish above?
 		UPtr<LoadedResourceInformation> loadedResourceInformation;
@@ -651,23 +588,8 @@ SPtr<ResourceManifest> Resources::GetResourceManifest(const String& name) const
 
 bool Resources::IsLoaded(const UUID& uuid, bool checkInProgress)
 {
-	if(checkInProgress)
-	{
-		Lock inProgressLock(mInProgressResourcesMutex);
-		auto iterFind2 = mInProgressResources.find(uuid);
-		if(iterFind2 != mInProgressResources.end())
-		{
-			return true;
-		}
-	}
-
 	{
 		Lock loadedLock(mLoadedResourceMutex);
-		auto iterFind = mLoadedResources.find(uuid);
-		if(iterFind != mLoadedResources.end())
-		{
-			return true;
-		}
 
 		if(auto found = mLoadedResourceInformation.find(uuid); found != mLoadedResourceInformation.end())
 			return true;
@@ -679,53 +601,7 @@ bool Resources::IsLoaded(const UUID& uuid, bool checkInProgress)
 	return false;
 }
 
-float Resources::GetLoadProgress(const HResource& resource, bool includeDependencies)
-{
-	const UUID& uuid = resource.GetId();
-	if(uuid.Empty())
-		return 0.0f;
-
-	Lock inProgressLock(mInProgressResourcesMutex);
-	Lock loadedLock(mLoadedResourceMutex);
-
-	// Fully loaded
-	auto iterFind = mLoadedResources.find(uuid);
-	if(iterFind != mLoadedResources.end())
-		return 1.0f;
-
-	// Not loaded nor being loaded
-	auto iterFind2 = mInProgressResources.find(uuid);
-	if(iterFind2 == mInProgressResources.end())
-		return 0.0f;
-
-	ResourceLoadData* loadData = iterFind2->second;
-
-	// Don't care about dependencies, just report own progress directly
-	if(!includeDependencies)
-		return loadData->Progress.load(std::memory_order_relaxed);
-
-	// Dependencies that are already fully loaded will just have their loaded sizes in 'dependencyLoadedAmount', while
-	// for those still in progress we need to check their load data
-	float totalBytesLoaded = (float)loadData->DependencyLoadedAmount;
-	for(auto& entry : loadData->Dependencies)
-	{
-		auto iterFind3 = mInProgressResources.find(entry.GetId());
-		if(iterFind3 == mInProgressResources.end())
-			continue;
-
-		ResourceLoadData* dependencyLoadData = iterFind3->second;
-		totalBytesLoaded += dependencyLoadData->ResData.Size * dependencyLoadData->Progress.load(std::memory_order_relaxed);
-	}
-
-	totalBytesLoaded += loadData->ResData.Size * loadData->Progress.load(std::memory_order_relaxed);
-
-	float totalBytesToLoad = (float)(loadData->DependencySize + loadData->ResData.Size);
-	B3D_ASSERT(totalBytesLoaded <= totalBytesToLoad);
-
-	return std::min(1.0f, totalBytesLoaded / totalBytesToLoad);
-}
-
-float Resources::GetLoadProgress2(const HResource& resource)
+float Resources::GetLoadProgress(const HResource& resource)
 {
 	UnorderedMap<UUID, LoadProgress> loadProgressMap;
 	GetLoadProgressRecursive(resource, loadProgressMap);
@@ -830,10 +706,10 @@ HResource Resources::CreateResourceHandle(const SPtr<Resource>& resource, const 
 
 			Lock lock(mLoadedResourceMutex);
 
-			LoadedResourceData& resData = mLoadedResources[resourceId];
-			resData.Resource = newHandle.GetWeak();
+			UPtr<LoadedResourceInformation> loadedResourceInformation = B3DMakeUnique<LoadedResourceInformation>();
+			loadedResourceInformation->ResourceHandle = newHandle.GetWeak();
 
-			// TODO - Add to mLoadedResourceInformation. Update other usages of mLoadedResources
+			mLoadedResourceInformation[resourceId] = std::move(loadedResourceInformation);
 		}
 
 		mHandles[resourceId] = newHandle.GetWeak(); // TODO - Need to free entry from this map if the handle data goes out of scope

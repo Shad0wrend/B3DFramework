@@ -34,7 +34,7 @@ namespace bs
 		static void InternalRelease(ScriptResourceBase* resource);
 		static void InternalReleaseRef(ScriptRRefBase* resource);
 		static void InternalUnloadUnused();
-		static float InternalGetLoadProgress(ScriptRRefBase* resource, bool loadDependencies);
+		static float InternalGetLoadProgress(ScriptRRefBase* resource);
 	};
 
 	/** @} */
