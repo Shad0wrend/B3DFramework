@@ -128,7 +128,7 @@ namespace bs
 
 	/**
 	 * RTTI field type that supports iteration over arbitrary containers, including maps. Unlike older field types, this field type internally handles plain, reflectable and reflectable pointer types,
-	 * rather than requiring a separate field type for each.
+	 * rather than requiring a separate field type for each. Also handles access to non-container elements by mimicing a single-element container.
 	 *
 	 * @tparam ObjectRTTIType		RTTIType of the object that contains the field we're accessing.
 	 * @tparam DataType				Type of the container being iterated over. 
@@ -156,7 +156,7 @@ namespace bs
 			this->mSetValueCallback = setValueCallback;
 
 			this->Name = std::move(name);
-			this->Schema = RTTIFieldSchema(uniqueId, IsDataTypeContainer, true, fieldInfo);
+			this->Schema = RTTIFieldSchema(uniqueId, IsDataTypeContainer, RTTIFieldType::Iterable, fieldInfo);
 		}
 
 		void InitSchema() override
@@ -164,12 +164,12 @@ namespace bs
 			// Special case for pairs so we natively support reflectable types in maps (This could technically be extended to support std::tuple as well if needed)
 			if constexpr(B3DIsStdPair<ElementType>::value)
 			{
-				this->Schema.FieldTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::first_type>>(this->Schema.Info));
-				this->Schema.FieldTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::second_type>>(this->Schema.Info));
+				this->Schema.FieldDataTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::first_type>>(this->Schema.Info));
+				this->Schema.FieldDataTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::second_type>>(this->Schema.Info));
 			}
 			else
 			{
-				this->Schema.FieldTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<ElementType>>(this->Schema.Info));
+				this->Schema.FieldDataTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<ElementType>>(this->Schema.Info));
 			}
 		}
 
@@ -429,18 +429,18 @@ namespace bs
 	private:
 		/** Creates a schema for a type stored in the field. */
 		template<typename FieldType>
-		RTTIFieldTypeSchema CreateFieldTypeSchema(const RTTIFieldInfo& fieldInfo)
+		RTTIFieldDataTypeSchema CreateFieldTypeSchema(const RTTIFieldInfo& fieldInfo)
 		{
 			if constexpr(IsReflectableShared<FieldType>())
 			{
 				using UnderlyingType = typename B3DDecaySharedPointer<FieldType>::value;
 				static_assert(std::is_base_of_v<IReflectable, UnderlyingType>, "RTTI fields holding shared pointers must ensure the pointed-to data types implement the IReflectable interface.");
 
-				return RTTIFieldTypeSchema(true, 0, RTTIFieldDataType::ReflectablePointer, UnderlyingType::GetRttiStatic()->GetRttiId(), UnderlyingType::GetRttiStatic()->GetSchema());
+				return RTTIFieldDataTypeSchema(true, 0, RTTIFieldDataType::ReflectablePointer, UnderlyingType::GetRttiStatic()->GetRttiId(), UnderlyingType::GetRttiStatic()->GetSchema());
 			}
 			else if constexpr(IsReflectable<FieldType>())
 			{
-				return RTTIFieldTypeSchema(true, 0, RTTIFieldDataType::Reflectable, FieldType::GetRttiStatic()->GetRttiId(), FieldType::GetRttiStatic()->GetSchema());
+				return RTTIFieldDataTypeSchema(true, 0, RTTIFieldDataType::Reflectable, FieldType::GetRttiStatic()->GetRttiId(), FieldType::GetRttiStatic()->GetSchema());
 			}
 			else if constexpr(IsPlain<FieldType>())
 			{
@@ -460,12 +460,12 @@ namespace bs
 					}
 				}
 
-				return RTTIFieldTypeSchema(RTTIPlainType<FieldType>::hasDynamicSize, fixedSize, RTTIFieldDataType::Plain, RTTIPlainType<FieldType>::id, nullptr);
+				return RTTIFieldDataTypeSchema(RTTIPlainType<FieldType>::hasDynamicSize, fixedSize, RTTIFieldDataType::Plain, RTTIPlainType<FieldType>::id, nullptr);
 			}
 			else
 			{
 				static_assert(false, "Cannot initialize RTTIField. Unsupported type provided. Make sure your type either derives from IReflectable or implements the RTTIPlainType<T> specialization.");
-				return RTTIFieldTypeSchema();
+				return RTTIFieldDataTypeSchema();
 			}
 		}
 

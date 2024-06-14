@@ -55,20 +55,20 @@ namespace bs
 			this->getter = getter;
 			this->setter = setter;
 
-			Init(std::move(name), RTTIFieldSchema(uniqueId, false, false,  info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, false, RTTIFieldType::DataBlock,  info));
 		}
 
 		void InitSchema() override
 		{
 			// Add the new schema type
-			RTTIFieldTypeSchema fieldTypeSchema;
+			RTTIFieldDataTypeSchema fieldTypeSchema;
 			fieldTypeSchema.FieldTypeId = 0;
 			fieldTypeSchema.FieldTypeSchema = nullptr;
 			fieldTypeSchema.Type = RTTIFieldDataType::DataBlock;
 			fieldTypeSchema.FixedSize = 0;
 			fieldTypeSchema.HasDynamicSize = false;
 
-			Schema.FieldTypes.Add(fieldTypeSchema);
+			Schema.FieldDataTypes.Add(fieldTypeSchema);
 		}
 
 		SPtr<DataStream> GetValue(RTTIType* rtti, void* object, u32& size) override

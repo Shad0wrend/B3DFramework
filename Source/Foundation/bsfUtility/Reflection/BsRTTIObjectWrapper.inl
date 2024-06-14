@@ -212,18 +212,18 @@ namespace bs::RTTIObjectWrapper
 
 	inline ValueIterator<true> Field<true>::GetValueIterator() const
 	{
-		if(mField->Schema.IsIterator)
+		switch(mField->Schema.FieldType)
+		{
+		case RTTIFieldType::Iterable:
 		{
 			auto* const field = static_cast<RTTIIteratorField*>(mField);
 			const SPtr<IRTTIIterator> iterator = field->GetIterator(mRTTITypeInstance, mObject, *mFrameAllocator);
 
 			return ValueIterator<true>(mField, mRTTITypeInstance, mObject, iterator, mFrameAllocator);
 		}
-		else
-		{
-			if(B3D_ENSURE(!mField->Schema.IsContainer))
-				return ValueIterator<true>(mField, mRTTITypeInstance, mObject, ~0u, mFrameAllocator);
-
+		case RTTIFieldType::DataBlock:
+			return ValueIterator<true>(mField, mRTTITypeInstance, mObject, ~0u, mFrameAllocator);
+		default:
 			return ValueIterator<true>(nullptr, nullptr, nullptr, ~0u, mFrameAllocator);
 		}
 	}
@@ -232,13 +232,20 @@ namespace bs::RTTIObjectWrapper
 	{
 		IntermediateSerializer intermediateSerializer(mFrameAllocator, context);
 
-		if(mField->Schema.IsIterator)
+		switch(mField->Schema.FieldType)
+		{
+		case RTTIFieldType::Iterable:
 		{
 			auto* const field = static_cast<RTTIIteratorField*>(mField);
 			return intermediateSerializer.SerializeIterableField(*mObject, *mRTTITypeInstance, *field, flags);
 		}
-
-		return intermediateSerializer.SerializeDataBlockField(mObject, mRTTITypeInstance, mField, flags);
+		case RTTIFieldType::DataBlock:
+		{
+			return intermediateSerializer.SerializeDataBlockField(mObject, mRTTITypeInstance, mField, flags);
+		}
+		default:
+			return nullptr;
+		}
 	}
 
 	inline ValueIterator<false>::ValueIterator(const SPtr<ISerialized>& value, FrameAllocator* frameAllocator)
@@ -601,7 +608,7 @@ namespace bs::RTTIObjectWrapper
 		if(mTupleElementIndex != ~0u)
 			return 1;
 
-		return (u32)mField->Schema.FieldTypes.Size();
+		return (u32)mField->Schema.FieldDataTypes.Size();
 	}
 
 	inline Value<true> Value<true>::GetTupleElement(u32 tupleElementIndex) const
@@ -620,10 +627,10 @@ namespace bs::RTTIObjectWrapper
 		if(!B3D_ENSURE(mTupleElementIndex != ~0u))
 			return Object<true>(nullptr, nullptr, mFrameAllocator);
 
-		if(!B3D_ENSURE(mTupleElementIndex < mField->Schema.FieldTypes.Size()))
+		if(!B3D_ENSURE(mTupleElementIndex < mField->Schema.FieldDataTypes.Size()))
 			return Object<true>(nullptr, nullptr, mFrameAllocator);
 
-		const RTTIFieldTypeSchema& fieldTypeSchema = mField->Schema.FieldTypes[mTupleElementIndex];
+		const RTTIFieldDataTypeSchema& fieldTypeSchema = mField->Schema.FieldDataTypes[mTupleElementIndex];
 		if(!B3D_ENSURE(mIterator != nullptr))
 			return Object<true>(nullptr, nullptr, mFrameAllocator);
 
@@ -868,9 +875,9 @@ namespace bs::RTTIObjectWrapper
 	void IterateFieldTupleValues(Object<IsIReflectable> object, RTTIOperationType operationType, Predicate&& fnPredicate, FieldFilterPredicate&& fnFieldFilterPredicate)
 	{
 		IterateFieldValues(object, operationType, [&fnPredicate](const RTTIFieldSchema& rttiFieldSchema, const Value<IsIReflectable>& value) {
-			for(u32 tupleElementIndex = 0; tupleElementIndex < (u32)rttiFieldSchema.FieldTypes.Size(); ++tupleElementIndex)
+			for(u32 tupleElementIndex = 0; tupleElementIndex < (u32)rttiFieldSchema.FieldDataTypes.Size(); ++tupleElementIndex)
 			{
-				const RTTIFieldTypeSchema& fieldTypeSchema = rttiFieldSchema.FieldTypes[tupleElementIndex];
+				const RTTIFieldDataTypeSchema& fieldTypeSchema = rttiFieldSchema.FieldDataTypes[tupleElementIndex];
 				Value<IsIReflectable> tupleElement = value.GetTupleElement(tupleElementIndex);
 
 				fnPredicate(fieldTypeSchema, tupleElement);

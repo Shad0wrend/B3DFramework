@@ -20,7 +20,7 @@ bool HasReflectableChildren(RTTIType* type)
 		{
 			const RTTIField* const field = type->GetField(fieldIndex);
 
-			for(const auto& fieldTypeSchema : field->Schema.FieldTypes)
+			for(const auto& fieldTypeSchema : field->Schema.FieldDataTypes)
 			{
 				if(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable || fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer)
 					return true;
@@ -35,7 +35,7 @@ bool HasReflectableChildren(RTTIType* type)
 		for(u32 fieldIndex = 0; fieldIndex < fieldCount; fieldIndex++)
 		{
 			const RTTIField* const field = derivedClass->GetField(fieldIndex);
-			for(const auto& fieldTypeSchema : field->Schema.FieldTypes)
+			for(const auto& fieldTypeSchema : field->Schema.FieldDataTypes)
 			{
 				if(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable || fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer)
 					return true;
@@ -56,8 +56,8 @@ static void FindResourceDependenciesRecursive(IReflectable& object, FrameAllocat
 			return true;
 		};
 
-	Function<void(const RTTIFieldTypeSchema&, RTTIObjectWrapper::Value<true>&)> fnProcessFieldTupleValue =
-		[&outDependencies, &fnFieldFilter, &fnProcessFieldTupleValue, recurseChildren](const RTTIFieldTypeSchema& fieldTypeSchema, RTTIObjectWrapper::Value<true>& value)
+	Function<void(const RTTIFieldDataTypeSchema&, RTTIObjectWrapper::Value<true>&)> fnProcessFieldTupleValue =
+		[&outDependencies, &fnFieldFilter, &fnProcessFieldTupleValue, recurseChildren](const RTTIFieldDataTypeSchema& fieldTypeSchema, RTTIObjectWrapper::Value<true>& value)
 	{
 		if(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable)
 		{

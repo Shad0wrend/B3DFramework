@@ -133,7 +133,6 @@
 #if !B3D_IS_ENGINE
 #include "../../../Foundation/bsfCore/Resources/BsResourceManifest.h"
 #endif
-#include "BsScriptResourceManifest.generated.h"
 #if !B3D_IS_ENGINE
 #include "../../../Foundation/bsfCore/Importer/BsTextureImportOptions.h"
 #endif

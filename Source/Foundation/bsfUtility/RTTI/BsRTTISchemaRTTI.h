@@ -49,7 +49,7 @@ namespace bs
 		}
 	};
 
-	class RTTIFieldTypeSchemaRTTI : public TRTTIType<RTTIFieldTypeSchema, IReflectable, RTTIFieldTypeSchemaRTTI>
+	class RTTIFieldDataTypeSchemaRTTI : public TRTTIType<RTTIFieldDataTypeSchema, IReflectable, RTTIFieldDataTypeSchemaRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -63,18 +63,18 @@ namespace bs
 	public:
 		const String& GetRttiName()
 		{
-			static String name = "RTTIFieldTupleSchema";
+			static String name = "RTTIFieldDataTypeSchema";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_RTTIFieldTypeSchema;
+			return TID_RTTIFieldDataTypeSchema;
 		}
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return B3DMakeShared<RTTIFieldTypeSchema>();
+			return B3DMakeShared<RTTIFieldDataTypeSchema>();
 		}
 	};
 
@@ -83,15 +83,11 @@ namespace bs
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Id, 0)
-			//B3D_RTTI_MEMBER(Type, 1)
 			B3D_RTTI_MEMBER(IsContainer, 2)
-			//B3D_RTTI_MEMBER(HasDynamicSize, 3)
-			//B3D_RTTI_MEMBER(Size, 4)
-			//B3D_RTTI_MEMBER(FieldTypeId, 5)
-			//B3D_RTTI_MEMBER(FieldTypeSchema, 6)
 			B3D_RTTI_MEMBER(Info, 7)
-			B3D_RTTI_MEMBER_CONTAINER(FieldTypes, 8)
-			B3D_RTTI_MEMBER(IsIterator, 9)
+			B3D_RTTI_MEMBER_CONTAINER(FieldDataTypes, 8)
+			//B3D_RTTI_MEMBER(IsIterator, 9)
+			B3D_RTTI_MEMBER(FieldType, 10)
 		B3D_RTTI_END_MEMBERS
 
 	public:

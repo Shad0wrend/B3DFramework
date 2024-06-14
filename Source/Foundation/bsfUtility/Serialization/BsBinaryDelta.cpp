@@ -289,11 +289,11 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 	SPtr<SerializedTupleDelta> serializedTupleDelta;
 	Optional<SPtr<ISerialized>> modification;
 
-	const bool isTuple = fieldSchema.FieldTypes.Size() > 1;
+	const bool isTuple = fieldSchema.FieldDataTypes.Size() > 1;
 	const bool isLhsMissing = !maybeLhs.has_value(); // Will be true if e.g. comparing an array or map entry that doesn't exist in LHS object
-	for(u32 tupleElementIndex = 0; tupleElementIndex < (u32)fieldSchema.FieldTypes.Size(); ++tupleElementIndex)
+	for(u32 tupleElementIndex = 0; tupleElementIndex < (u32)fieldSchema.FieldDataTypes.Size(); ++tupleElementIndex)
 	{
-		const RTTIFieldTypeSchema& fieldTypeSchema = fieldSchema.FieldTypes[tupleElementIndex];
+		const RTTIFieldDataTypeSchema& fieldTypeSchema = fieldSchema.FieldDataTypes[tupleElementIndex];
 
 		const Value<IsRHSIReflectable>& rhsTupleElement = rhs.GetTupleElement(tupleElementIndex);
 		Optional<Value<IsLHSIReflectable>> maybeLhsTupleElement;
@@ -519,7 +519,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 			SPtr<ISerialized> modification;
 			bool hasModification = false;
 
-			const bool isMap = field->Schema.IsIterator && field->Schema.IsContainer && static_cast<RTTIIteratorField*>(field)->IteratorSupportsSeekToKey();
+			const bool isMap = field->Schema.FieldType == RTTIFieldType::Iterable && field->Schema.IsContainer && static_cast<RTTIIteratorField*>(field)->IteratorSupportsSeekToKey();
 			const bool isArray = field->Schema.IsContainer;
 
 			ValueIterator<IsRHSIReflectable> rhsValueIterator = rhsField.GetValueIterator();
@@ -698,7 +698,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 		{
 		case Diff_ArraySize:
 			{
-				if(B3D_ENSURE(command.Field->Schema.IsIterator))
+				if(B3D_ENSURE(command.Field->Schema.FieldType == RTTIFieldType::Iterable))
 				{
 					auto& field = *static_cast<RTTIIteratorField*>(command.Field);
 					SPtr<IRTTIIterator> iterator = field.GetIterator(rttiInstance, destinationObject, allocator);
@@ -810,7 +810,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 		case Diff_IterableEntryStart:
 			{
 				B3D_ASSERT(command.Field != nullptr);
-				B3D_ASSERT(command.Field->Schema.IsIterator);
+				B3D_ASSERT(command.Field->Schema.FieldType == RTTIFieldType::Iterable);
 				B3D_ASSERT(rttiInstance != nullptr);
 				B3D_ASSERT(destinationObject != nullptr);
 
@@ -857,7 +857,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 		case Diff_IterableEntryEnd:
 			{
 				B3D_ASSERT(command.Field != nullptr);
-				B3D_ASSERT(command.Field->Schema.IsIterator);
+				B3D_ASSERT(command.Field->Schema.FieldType == RTTIFieldType::Iterable);
 				B3D_ASSERT(currentIterator != nullptr);
 				B3D_ASSERT(currentIteratorFieldValue != nullptr);
 				B3D_ASSERT(rttiInstance != nullptr);
@@ -882,7 +882,7 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 		case Diff_RemoveMapEntry:
 			{
 				B3D_ASSERT(command.Field != nullptr);
-				B3D_ASSERT(command.Field->Schema.IsIterator);
+				B3D_ASSERT(command.Field->Schema.FieldType == RTTIFieldType::Iterable);
 				B3D_ASSERT(command.MapKey != nullptr);
 				B3D_ASSERT(rttiInstance != nullptr);
 				B3D_ASSERT(destinationObject != nullptr);
@@ -904,7 +904,9 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 
 		if(command.Field != nullptr)
 		{
-			if(command.Field->Schema.IsIterator)
+			switch(command.Field->Schema.FieldType)
+			{
+			case RTTIFieldType::Iterable:
 			{
 				auto& field = *static_cast<RTTIIteratorField*>(command.Field);
 
@@ -940,13 +942,13 @@ void IDeltaHandler::ApplyDelta(const SPtr<IReflectable>& object, const SPtr<Seri
 					break;
 				}
 			}
-			else
+			break;
+			case RTTIFieldType::DataBlock:
 			{
-				if(B3D_ENSURE(!isArray) && B3D_ENSURE(type == Diff_DataBlock))
-				{
-					auto* field = static_cast<RTTIDataBlockFieldBase*>(command.Field);
-					field->SetValue(rttiInstance, destinationObject, command.StreamValue, command.Size);
-				}
+				auto* field = static_cast<RTTIDataBlockFieldBase*>(command.Field);
+				field->SetValue(rttiInstance, destinationObject, command.StreamValue, command.Size);
+			}
+			break;
 			}
 		}
 	}
@@ -1032,7 +1034,9 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 
 			SPtr<ISerialized> fieldDelta = diffEntry.second.Value;
 
-			if(genericField->Schema.IsIterator)
+			switch(genericField->Schema.FieldType)
+			{
+			case RTTIFieldType::Iterable:
 			{
 				auto* field = static_cast<RTTIIteratorField*>(genericField);
 
@@ -1082,10 +1086,12 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 					GenerateDeltaCommandForFieldEntry(rttiInstance, object, *field, fieldDelta, ~0u, nullptr, objectMap, subObjectCommands, context, allocator);
 				}
 			}
-			else
+			break;
+			case RTTIFieldType::DataBlock:
 			{
-				// Must be a data block field
 				GenerateDeltaCommandForDataBlockField(*genericField, fieldDelta, subObjectCommands);
+			}
+			break;
 			}
 		}
 
@@ -1123,7 +1129,7 @@ void BinaryDeltaHandler::GenerateDeltaApplyCommands(const SPtr<IReflectable>& ob
 void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTIType* rttiInstance, const SPtr<IReflectable>& object, RTTIIteratorField& field, const SPtr<ISerialized>& entryDelta, u32 arrayIndex, void* mapKey, DeltaObjectMap& inOutObjectMap, FrameVector<DeltaCommand>& outCommands, RTTIOperationContext& context, FrameAllocator& allocator)
 {
 	const SPtr<SerializedTupleDelta> serializedTupleDelta = B3DRTTICast<SerializedTupleDelta>(entryDelta);
-	if(!B3D_ENSURE(field.Schema.FieldTypes.Size() == 1 || serializedTupleDelta != nullptr))
+	if(!B3D_ENSURE(field.Schema.FieldDataTypes.Size() == 1 || serializedTupleDelta != nullptr))
 		return;
 
 	SPtr<IRTTIIterator> iterator = field.GetIterator(rttiInstance, object.get(), allocator);
@@ -1164,7 +1170,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTIType* rttiInstanc
 
 	outCommands.push_back(iteratorStartCommand);
 
-	for(u32 tupleElementIndex = 0; tupleElementIndex < field.Schema.FieldTypes.Size(); ++tupleElementIndex)
+	for(u32 tupleElementIndex = 0; tupleElementIndex < field.Schema.FieldDataTypes.Size(); ++tupleElementIndex)
 	{
 		SPtr<ISerialized> serializedEntryDelta;
 		if(serializedTupleDelta != nullptr)
@@ -1210,7 +1216,7 @@ void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTIType* rttiInstanc
 			return nullptr;
 		};
 
-		switch(field.Schema.FieldTypes[tupleElementIndex].Type)
+		switch(field.Schema.FieldDataTypes[tupleElementIndex].Type)
 		{
 		case RTTIFieldDataType::ReflectablePointer:
 			{
@@ -1297,10 +1303,10 @@ void BinaryDeltaHandler::GenerateDeltaCommandForFieldEntry(RTTIType* rttiInstanc
 
 void BinaryDeltaHandler::GenerateDeltaCommandForDataBlockField(RTTIField& field, const SPtr<ISerialized>& entryDelta, FrameVector<DeltaCommand>& outCommands)
 {
-	if(!B3D_ENSURE(field.Schema.FieldTypes.Size() == 1))
+	if(!B3D_ENSURE(field.Schema.FieldDataTypes.Size() == 1))
 		return;
 
-	if(!B3D_ENSURE(field.Schema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
+	if(!B3D_ENSURE(field.Schema.FieldDataTypes[0].Type == RTTIFieldDataType::DataBlock))
 		return;
 
 	SPtr<SerializedDataBlock> serializedDataBlock = std::static_pointer_cast<SerializedDataBlock>(entryDelta);

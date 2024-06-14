@@ -77,7 +77,7 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 			ReferenceId referenceId;
 			referenceId.Field = field;
 
-			if(field->Schema.IsIterator)
+			if(field->Schema.FieldType == RTTIFieldType::Iterable)
 			{
 				auto* const iteratorField = static_cast<RTTIIteratorField*>(field);
 				const SPtr<IRTTIIterator> iterator = iteratorField->GetIterator(rttiInstance, object, allocator);
@@ -95,9 +95,9 @@ BinaryCloner::ObjectExternalReferences BinaryCloner::GatherExternalReferences(IR
 							referenceId.MapKey = fieldValue;
 					}
 
-					for(u32 tupleElementIndex = 0; tupleElementIndex < (u32)field->Schema.FieldTypes.Size(); ++tupleElementIndex)
+					for(u32 tupleElementIndex = 0; tupleElementIndex < (u32)field->Schema.FieldDataTypes.Size(); ++tupleElementIndex)
 					{
-						const RTTIFieldTypeSchema& fieldTypeSchema = field->Schema.FieldTypes[tupleElementIndex];
+						const RTTIFieldDataTypeSchema& fieldTypeSchema = field->Schema.FieldDataTypes[tupleElementIndex];
 
 						referenceId.TupleElementIndex = tupleElementIndex;
 
@@ -162,7 +162,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 			for(auto& reference : subObject.References)
 			{
 				RTTIField* const field = reference.Id.Field;
-				if(B3D_ENSURE(field->Schema.IsIterator))
+				if(B3D_ENSURE(field->Schema.FieldType == RTTIFieldType::Iterable))
 				{
 					auto* const iteratorField = static_cast<RTTIIteratorField*>(field);
 					const SPtr<IRTTIIterator> iterator = iteratorField->GetIterator(rttiInstance, object, allocator);
@@ -185,10 +185,10 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 
 					void* fieldValue = iteratorField->GetIteratorValueCopy(rttiInstance, object, allocator, *iterator);
 
-					if(!B3D_ENSURE(reference.Id.TupleElementIndex < (u32)field->Schema.FieldTypes.Size()))
+					if(!B3D_ENSURE(reference.Id.TupleElementIndex < (u32)field->Schema.FieldDataTypes.Size()))
 						continue;
 
-					const RTTIFieldTypeSchema& fieldTypeSchema = field->Schema.FieldTypes[reference.Id.TupleElementIndex];
+					const RTTIFieldDataTypeSchema& fieldTypeSchema = field->Schema.FieldDataTypes[reference.Id.TupleElementIndex];
 					if(!B3D_ENSURE(fieldTypeSchema.Type == RTTIFieldDataType::ReflectablePointer))
 						continue;
 
@@ -213,7 +213,7 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 			{
 				RTTIField* const field = childObjectReferences.Id.Field;
 
-				if(B3D_ENSURE(field->Schema.IsIterator))
+				if(B3D_ENSURE(field->Schema.FieldType == RTTIFieldType::Iterable))
 				{
 					auto* const iteratorField = static_cast<RTTIIteratorField*>(field);
 					const SPtr<IRTTIIterator> iterator = iteratorField->GetIterator(rttiInstance, object, allocator);
@@ -236,10 +236,10 @@ void BinaryCloner::RestoreExternalReferences(IReflectable* object, FrameAllocato
 
 					const void* fieldValue = iteratorField->GetIteratorValue(rttiInstance, object, allocator, *iterator);
 
-					if(!B3D_ENSURE(childObjectReferences.Id.TupleElementIndex < (u32)field->Schema.FieldTypes.Size()))
+					if(!B3D_ENSURE(childObjectReferences.Id.TupleElementIndex < (u32)field->Schema.FieldDataTypes.Size()))
 						continue;
 
-					const RTTIFieldTypeSchema& fieldTypeSchema = field->Schema.FieldTypes[childObjectReferences.Id.TupleElementIndex];
+					const RTTIFieldDataTypeSchema& fieldTypeSchema = field->Schema.FieldDataTypes[childObjectReferences.Id.TupleElementIndex];
 
 					if(!B3D_ENSURE(fieldTypeSchema.Type == RTTIFieldDataType::Reflectable))
 						continue;

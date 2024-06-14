@@ -47,11 +47,18 @@ namespace bs
 		ReflectablePointer
 	};
 
-	/** Information about a type stored in a RTTIField. A single field can hold one or multiple types (e.g. in case of a map entry it will store a key/value pair). */
-	struct B3D_UTILITY_EXPORT RTTIFieldTypeSchema : IReflectable
+	/** Field type that is used for accessing data for a particular field in a RTTIType. */
+	enum class RTTIFieldType
 	{
-		RTTIFieldTypeSchema() = default;
-		RTTIFieldTypeSchema(bool hasDynamicSize, BitLength fixedSize, RTTIFieldDataType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema)
+		Iterable,
+		DataBlock
+	};
+
+	/** Information about a type stored in a RTTIField. A single field can hold one or multiple types (e.g. in case of a map entry it will store a key/value pair). */
+	struct B3D_UTILITY_EXPORT RTTIFieldDataTypeSchema : IReflectable
+	{
+		RTTIFieldDataTypeSchema() = default;
+		RTTIFieldDataTypeSchema(bool hasDynamicSize, BitLength fixedSize, RTTIFieldDataType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema)
 			: HasDynamicSize(hasDynamicSize), FixedSize(fixedSize), Type(type), FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema))
 		{}
 
@@ -69,15 +76,15 @@ namespace bs
 	struct B3D_UTILITY_EXPORT RTTIFieldSchema : IReflectable
 	{
 		RTTIFieldSchema() = default;
-		RTTIFieldSchema(i16 id, bool isArray, bool isIterator, const RTTIFieldInfo& info)
-			: Id(id), IsContainer(isArray), IsIterator(isIterator), Info(info)
+		RTTIFieldSchema(i16 id, bool isContainer, RTTIFieldType fieldType, const RTTIFieldInfo& info)
+			: Id(id), IsContainer(isContainer), FieldType(fieldType), Info(info)
 		{}
 
 		u16 Id = 0;
 		bool IsContainer = false;
-		bool IsIterator = false; // DEPRECATED - Replace to GetFieldType() method that either returns Iterator or DataBlock
+		RTTIFieldType FieldType = RTTIFieldType::Iterable;
 		RTTIFieldInfo Info;
-		TInlineArray<RTTIFieldTypeSchema, 2> FieldTypes; /**< Types references by the field. In 99% of the cases this is a single type, but in case of e.g. a map it will be two types (key/value pair). */
+		TInlineArray<RTTIFieldDataTypeSchema, 2> FieldDataTypes; /**< Types referenced by the field. In 99% of the cases this is a single type, but in case of e.g. a map it will be two types (key/value pair). */
 
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const override;

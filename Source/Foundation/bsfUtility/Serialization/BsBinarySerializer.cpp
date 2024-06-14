@@ -136,10 +136,10 @@ union FieldTypeSizeOrExtendedMetaData
 union FieldTypeMetaData
 {
 	/** Creates the field meta-data from the type schema. */
-	static FieldTypeMetaData Create(const RTTIFieldSchema& fieldSchema, const RTTIFieldTypeSchema& fieldTypeSchema, bool isLastFieldInType, bool isAnotherFieldTypeFollowing);
+	static FieldTypeMetaData Create(const RTTIFieldSchema& fieldSchema, const RTTIFieldDataTypeSchema& fieldTypeSchema, bool isLastFieldInType, bool isAnotherFieldTypeFollowing);
 
 	/** Converts the internal data to RTTIFieldTypeSchema. */
-	RTTIFieldTypeSchema ToFieldTypeSchema(bool& outIsArray, bool& outHasMoreTypesFollowing) const;
+	RTTIFieldDataTypeSchema ToFieldTypeSchema(bool& outIsArray, bool& outHasMoreTypesFollowing) const;
 
 	u16 PackedData;
 	struct
@@ -153,7 +153,7 @@ union FieldTypeMetaData
 };
 
 
-FieldTypeMetaData FieldTypeMetaData::Create(const RTTIFieldSchema& fieldSchema, const RTTIFieldTypeSchema& fieldTypeSchema, bool isLastFieldInType, bool isAnotherFieldTypeFollowing)
+FieldTypeMetaData FieldTypeMetaData::Create(const RTTIFieldSchema& fieldSchema, const RTTIFieldDataTypeSchema& fieldTypeSchema, bool isLastFieldInType, bool isAnotherFieldTypeFollowing)
 {
 	FieldTypeMetaData output;
 	output.IsObjectDescriptor = 0;
@@ -179,9 +179,9 @@ FieldTypeMetaData FieldTypeMetaData::Create(const RTTIFieldSchema& fieldSchema, 
 	return output;
 }
 
-RTTIFieldTypeSchema FieldTypeMetaData::ToFieldTypeSchema(bool& outIsArray, bool& outHasMoreTypesFollowing) const
+RTTIFieldDataTypeSchema FieldTypeMetaData::ToFieldTypeSchema(bool& outIsArray, bool& outHasMoreTypesFollowing) const
 {
-	RTTIFieldTypeSchema schema;
+	RTTIFieldDataTypeSchema schema;
 
 	DecodeFieldTypeBits(FieldType, schema.Type, outIsArray, schema.HasDynamicSize, outHasMoreTypesFollowing);
 
@@ -479,160 +479,161 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 				return false;
 			}
 
-			if(field->Schema.FieldTypes.Size() != decodedFieldSchema.FieldTypes.Size())
+			if(field->Schema.FieldDataTypes.Size() != decodedFieldSchema.FieldDataTypes.Size())
 			{
-				B3D_LOG(Error, Serialization, "Data type mismatch. Field type count doesn't match ({0} vs {1}). ", field->Schema.FieldTypes.Size(), decodedFieldSchema.FieldTypes.Size());
+				B3D_LOG(Error, Serialization, "Data type mismatch. Field type count doesn't match ({0} vs {1}). ", field->Schema.FieldDataTypes.Size(), decodedFieldSchema.FieldDataTypes.Size());
 				return false;
 			}
 
-			const u32 fieldTypeCount = (u32)field->Schema.FieldTypes.Size();
+			const u32 fieldTypeCount = (u32)field->Schema.FieldDataTypes.Size();
 			for(u32 fieldTypeIndex = 0; fieldTypeIndex < fieldTypeCount; ++fieldTypeIndex)
 			{
-				if(!decodedFieldSchema.FieldTypes[fieldTypeIndex].HasDynamicSize && field->Schema.FieldTypes[fieldTypeIndex].FixedSize != decodedFieldSchema.FieldTypes[fieldTypeIndex].FixedSize)
+				if(!decodedFieldSchema.FieldDataTypes[fieldTypeIndex].HasDynamicSize && field->Schema.FieldDataTypes[fieldTypeIndex].FixedSize != decodedFieldSchema.FieldDataTypes[fieldTypeIndex].FixedSize)
 				{
-					B3D_LOG(Error, Serialization, "Data type mismatch. Type size stored in file and actual type size don't match ({0} vs {1}).", field->Schema.FieldTypes[fieldTypeIndex].FixedSize.Bytes, decodedFieldSchema.FieldTypes[fieldTypeIndex].FixedSize.Bytes);
+					B3D_LOG(Error, Serialization, "Data type mismatch. Type size stored in file and actual type size don't match ({0} vs {1}).", field->Schema.FieldDataTypes[fieldTypeIndex].FixedSize.Bytes, decodedFieldSchema.FieldDataTypes[fieldTypeIndex].FixedSize.Bytes);
 					return false;
 				}
 
-				if(field->Schema.FieldTypes[fieldTypeIndex].Type != decodedFieldSchema.FieldTypes[fieldTypeIndex].Type)
+				if(field->Schema.FieldDataTypes[fieldTypeIndex].Type != decodedFieldSchema.FieldDataTypes[fieldTypeIndex].Type)
 				{
-					B3D_LOG(Error, Serialization, "Data type mismatch. Type stored in file and actual type don't match ({0} vs {1}).", (u32)field->Schema.FieldTypes[fieldTypeIndex].Type, (u32)decodedFieldSchema.FieldTypes[fieldTypeIndex].Type);
+					B3D_LOG(Error, Serialization, "Data type mismatch. Type stored in file and actual type don't match ({0} vs {1}).", (u32)field->Schema.FieldDataTypes[fieldTypeIndex].Type, (u32)decodedFieldSchema.FieldDataTypes[fieldTypeIndex].Type);
 					return false;
 				}
 			}
 		}
 
-		if(decodedFieldSchema.IsIterator)
+		switch(decodedFieldSchema.FieldType)
 		{
-			u32 elementCount = 1;
-			if(decodedFieldSchema.IsContainer)
+		case RTTIFieldType::Iterable:
 			{
-				if(compressed)
-					mStream.ReadVarInt(elementCount);
-				else
-					mStream.ReadBytes(elementCount);
-			}
-
-			RTTIIteratorField* iteratorField = nullptr;
-
-			if(field != nullptr)
-				iteratorField = static_cast<RTTIIteratorField*>(field);
-
-			SPtr<IRTTIIterator> iterator;
-
-			if(iteratorField != nullptr)
-			{
-				iterator = iteratorField->GetIterator(rttiInstance, output.get(), mAllocator);
-
-				if(iterator != nullptr)
-					iterator->Clear();
-			}
-
-			for(u32 elementIndex = 0; elementIndex < elementCount; ++elementIndex)
-			{
-				void* fieldValue = nullptr;
-				if(iterator != nullptr)
-					fieldValue = iteratorField->CreateEmptyFieldValue(mAllocator);
-
-				for(u32 typeIndex = 0; typeIndex < (u32)decodedFieldSchema.FieldTypes.Size(); ++typeIndex)
+				u32 elementCount = 1;
+				if(decodedFieldSchema.IsContainer)
 				{
-					const RTTIFieldTypeSchema& decodedFieldTypeSchema = decodedFieldSchema.FieldTypes[typeIndex];
+					if(compressed)
+						mStream.ReadVarInt(elementCount);
+					else
+						mStream.ReadBytes(elementCount);
+				}
 
-					switch(decodedFieldTypeSchema.Type)
+				RTTIIteratorField* iteratorField = nullptr;
+
+				if(field != nullptr)
+					iteratorField = static_cast<RTTIIteratorField*>(field);
+
+				SPtr<IRTTIIterator> iterator;
+
+				if(iteratorField != nullptr)
+				{
+					iterator = iteratorField->GetIterator(rttiInstance, output.get(), mAllocator);
+
+					if(iterator != nullptr)
+						iterator->Clear();
+				}
+
+				for(u32 elementIndex = 0; elementIndex < elementCount; ++elementIndex)
+				{
+					void* fieldValue = nullptr;
+					if(iterator != nullptr)
+						fieldValue = iteratorField->CreateEmptyFieldValue(mAllocator);
+
+					for(u32 typeIndex = 0; typeIndex < (u32)decodedFieldSchema.FieldDataTypes.Size(); ++typeIndex)
 					{
-					case RTTIFieldDataType::ReflectablePointer:
+						const RTTIFieldDataTypeSchema& decodedFieldTypeSchema = decodedFieldSchema.FieldDataTypes[typeIndex];
+
+						switch(decodedFieldTypeSchema.Type)
 						{
-							const u32 referencedObjectId = ReadReferencedReflectableObjectId();
+						case RTTIFieldDataType::ReflectablePointer:
+							{
+								const u32 referencedObjectId = ReadReferencedReflectableObjectId();
 
-							// If reading from schema we need to create object here as we don't know its type during the normal pass
-							if(outputObjectSchema != nullptr)
-								EnsureReflectableObjectExists(referencedObjectId, decodedFieldTypeSchema.FieldTypeSchema);
+								// If reading from schema we need to create object here as we don't know its type during the normal pass
+								if(outputObjectSchema != nullptr)
+									EnsureReflectableObjectExists(referencedObjectId, decodedFieldTypeSchema.FieldTypeSchema);
 
-							if(iteratorField != nullptr)
+								if(iteratorField != nullptr)
+								{
+									SPtr<IReflectable> referencedObject;
+									if(iteratorField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef))
+										referencedObject = GetReflectableObject(referencedObjectId);
+									else
+										referencedObject = GetOrDeserializeReflectableObject(referencedObjectId, decodedFieldTypeSchema.FieldTypeSchema);
+
+									iteratorField->SetReflectablePointer(fieldValue, typeIndex, referencedObject);
+								}
+								break;
+							}
+						case RTTIFieldDataType::Reflectable:
 							{
 								SPtr<IReflectable> referencedObject;
-								if(iteratorField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef))
-									referencedObject = GetReflectableObject(referencedObjectId);
-								else
-									referencedObject = GetOrDeserializeReflectableObject(referencedObjectId, decodedFieldTypeSchema.FieldTypeSchema);
+								if(iteratorField != nullptr)
+									referencedObject = IReflectable::CreateInstanceFromTypeId(iteratorField->Schema.FieldDataTypes[typeIndex].FieldTypeId);
 
-								iteratorField->SetReflectablePointer(fieldValue, typeIndex, referencedObject);
-							}
-							break;
-						}
-					case RTTIFieldDataType::Reflectable:
-						{
-							SPtr<IReflectable> referencedObject;
-							if(iteratorField != nullptr)
-								referencedObject = IReflectable::CreateInstanceFromTypeId(iteratorField->Schema.FieldTypes[typeIndex].FieldTypeId);
+								DeserializeReflectableObject(decodedFieldTypeSchema.FieldTypeSchema, referencedObject);
 
-							DeserializeReflectableObject(decodedFieldTypeSchema.FieldTypeSchema, referencedObject);
-
-							if(iteratorField != nullptr)
-							{
-								// Note: Would be nice to avoid this copy by value and decode directly into the field
-								iteratorField->SetReflectable(fieldValue, typeIndex, *referencedObject);
-							}
-
-							break;
-						}
-					case RTTIFieldDataType::Plain:
-						{
-							uint64_t typeSizeBits = decodedFieldTypeSchema.FixedSize.GetBits();
-							if(decodedFieldTypeSchema.HasDynamicSize)
-							{
-								if(compressed)
+								if(iteratorField != nullptr)
 								{
-									BitLength typeSize;
-									BitLength headerSize = B3DRTTIReadSizeHeader(mStream, true, typeSize);
-									mStream.Skip(-(int64_t)headerSize.GetBits());
-
-									typeSizeBits = typeSize.GetBits();
+									// Note: Would be nice to avoid this copy by value and decode directly into the field
+									iteratorField->SetReflectable(fieldValue, typeIndex, *referencedObject);
 								}
-								else
+
+								break;
+							}
+						case RTTIFieldDataType::Plain:
+							{
+								uint64_t typeSizeBits = decodedFieldTypeSchema.FixedSize.GetBits();
+								if(decodedFieldTypeSchema.HasDynamicSize)
 								{
-									uint32_t typeSize;
-									mStream.ReadBytes(typeSize);
-									mStream.SkipBytes(-(int32_t)sizeof(uint32_t));
+									if(compressed)
+									{
+										BitLength typeSize;
+										BitLength headerSize = B3DRTTIReadSizeHeader(mStream, true, typeSize);
+										mStream.Skip(-(int64_t)headerSize.GetBits());
 
-									typeSizeBits = (uint64_t)typeSize * 8;
+										typeSizeBits = typeSize.GetBits();
+									}
+									else
+									{
+										uint32_t typeSize;
+										mStream.ReadBytes(typeSize);
+										mStream.SkipBytes(-(int32_t)sizeof(uint32_t));
+
+										typeSizeBits = (uint64_t)typeSize * 8;
+									}
 								}
-							}
 
-							if(iteratorField != nullptr)
-							{
-								mStream.Preload((uint32_t)Math::DivideAndRoundUp(typeSizeBits, (uint64_t)8));
-								iteratorField->ReadPlainTypeTupleFromStream(fieldValue, typeIndex, mStream.GetBitstream(), compressed);
+								if(iteratorField != nullptr)
+								{
+									mStream.Preload((uint32_t)Math::DivideAndRoundUp(typeSizeBits, (uint64_t)8));
+									iteratorField->ReadPlainTypeTupleFromStream(fieldValue, typeIndex, mStream.GetBitstream(), compressed);
 
-								mStream.Skip(typeSizeBits);
-							}
-							else
-							{
-								bool builtin = decodedFieldTypeSchema.FieldTypeId < 16;
-								if(compressed && builtin)
-									SkipBuiltinType(decodedFieldTypeSchema.FieldTypeId, mStream, compressed);
-								else
 									mStream.Skip(typeSizeBits);
+								}
+								else
+								{
+									bool builtin = decodedFieldTypeSchema.FieldTypeId < 16;
+									if(compressed && builtin)
+										SkipBuiltinType(decodedFieldTypeSchema.FieldTypeId, mStream, compressed);
+									else
+										mStream.Skip(typeSizeBits);
+								}
+								break;
 							}
-							break;
+						default:
+							B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldTypeSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsContainer));
 						}
-					default:
-						B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(decodedFieldTypeSchema.Type)) + ", Is array: " + ToString(decodedFieldSchema.IsContainer));
+					}
+
+					if(iterator != nullptr)
+					{
+						iterator->SeekToEnd(); // Ensures value is inserted at the end of the iterable container
+
+						iteratorField->SetIteratorValue(rttiInstance, output.get(), mAllocator, *iterator, fieldValue);
+						iteratorField->FreeFieldValue(fieldValue, mAllocator);
 					}
 				}
-
-				if(iterator != nullptr)
-				{
-					iterator->SeekToEnd(); // Ensures value is inserted at the end of the iterable container
-
-					iteratorField->SetIteratorValue(rttiInstance, output.get(), mAllocator, *iterator, fieldValue);
-					iteratorField->FreeFieldValue(fieldValue, mAllocator);
-				}
 			}
-		}
-		else
-		{
-			if(B3D_ENSURE(!decodedFieldSchema.IsContainer && decodedFieldSchema.FieldTypes.Size() == 1 && decodedFieldSchema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
+			break;
+		case RTTIFieldType::DataBlock:
 			{
 				auto* curField = static_cast<RTTIDataBlockFieldBase*>(field);
 
@@ -672,11 +673,15 @@ bool BinaryDeserializationContext::DeserializeReflectableObject(SPtr<RTTISchema>
 				}
 				else
 					mStream.SkipBytes(dataBlockSize);
-				
-			}
 
-			mStream.ClearBuffered(false);
+			}
+			break;
+		default:
+			B3D_ENSURE(false);
+			break;
 		}
+
+		mStream.ClearBuffered(false);
 	}
 
 	finalizeObject(output.get());
@@ -792,12 +797,12 @@ RTTIFieldSchema BinaryDeserializationContext::ReadFieldMetaData(BufferedBitstrea
 	firstFieldTypeMetaData.PackedData = (u16)(fieldMetaData & 0xFFFF);
 
 	bool hasMoreFieldTypes;
-	const RTTIFieldTypeSchema firstFieldTypeSchema = firstFieldTypeMetaData.ToFieldTypeSchema(fieldSchema.IsContainer, hasMoreFieldTypes);
+	const RTTIFieldDataTypeSchema firstFieldTypeSchema = firstFieldTypeMetaData.ToFieldTypeSchema(fieldSchema.IsContainer, hasMoreFieldTypes);
 
 	terminator = firstFieldTypeMetaData.IsLastFieldInType;
-	fieldSchema.FieldTypes.Add(firstFieldTypeSchema);
+	fieldSchema.FieldDataTypes.Add(firstFieldTypeSchema);
 
-	fieldSchema.IsIterator = firstFieldTypeSchema.Type != RTTIFieldDataType::DataBlock;
+	fieldSchema.FieldType = firstFieldTypeSchema.Type == RTTIFieldDataType::DataBlock ? RTTIFieldType::DataBlock : RTTIFieldType::Iterable;
 
 	while(hasMoreFieldTypes)
 	{
@@ -808,8 +813,8 @@ RTTIFieldSchema BinaryDeserializationContext::ReadFieldMetaData(BufferedBitstrea
 		additionalFieldTypeMetaData.PackedData = fieldTypeMetaData;
 
 		bool isArray;
-		const RTTIFieldTypeSchema additionalFieldTypeSchema = additionalFieldTypeMetaData.ToFieldTypeSchema(isArray, hasMoreFieldTypes);
-		fieldSchema.FieldTypes.Add(additionalFieldTypeSchema);
+		const RTTIFieldDataTypeSchema additionalFieldTypeSchema = additionalFieldTypeMetaData.ToFieldTypeSchema(isArray, hasMoreFieldTypes);
+		fieldSchema.FieldDataTypes.Add(additionalFieldTypeSchema);
 	}
 
 	return fieldSchema;
@@ -1055,75 +1060,76 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 				WriteFieldMetaData(field->Schema, false, mStream);
 			}
 
-			if(field->Schema.IsIterator)
+			switch(field->Schema.FieldType)
 			{
-				RTTIIteratorField* const iteratorField = static_cast<RTTIIteratorField*>(field);
-				SPtr<IRTTIIterator> iterator = iteratorField->GetIterator(rttiInstance, object, mAllocator);
-
-				if(iteratorField->Schema.IsContainer)
+				case RTTIFieldType::Iterable:
 				{
-					u32 elementCount = 0;
-					if(iterator != nullptr)
-						elementCount = (u32)iterator->GetElementCount();
+					RTTIIteratorField* const iteratorField = static_cast<RTTIIteratorField*>(field);
+					SPtr<IRTTIIterator> iterator = iteratorField->GetIterator(rttiInstance, object, mAllocator);
 
-					// Copy num vector elements
-					if(compress)
-						mStream.WriteVarInt(elementCount);
-					else
-						mStream.WriteBytes(elementCount);
-				}
-
-				if(iterator != nullptr)
-				{
-					for(; iterator->IsValid(); iterator->Increment())
+					if(iteratorField->Schema.IsContainer)
 					{
-						const void* fieldValue = iteratorField->GetIteratorValue(rttiInstance, object, mAllocator, *iterator);
-						for(u32 typeIndex = 0; typeIndex < (u32)iteratorField->Schema.FieldTypes.Size(); ++typeIndex)
+						u32 elementCount = 0;
+						if(iterator != nullptr)
+							elementCount = (u32)iterator->GetElementCount();
+
+						// Copy num vector elements
+						if(compress)
+							mStream.WriteVarInt(elementCount);
+						else
+							mStream.WriteBytes(elementCount);
+					}
+
+					if(iterator != nullptr)
+					{
+						for(; iterator->IsValid(); iterator->Increment())
 						{
-							const RTTIFieldTypeSchema& typeSchema = iteratorField->Schema.FieldTypes[typeIndex];
-							switch(typeSchema.Type)
+							const void* fieldValue = iteratorField->GetIteratorValue(rttiInstance, object, mAllocator, *iterator);
+							for(u32 typeIndex = 0; typeIndex < (u32)iteratorField->Schema.FieldDataTypes.Size(); ++typeIndex)
 							{
-							case RTTIFieldDataType::ReflectablePointer:
+								const RTTIFieldDataTypeSchema& typeSchema = iteratorField->Schema.FieldDataTypes[typeIndex];
+								switch(typeSchema.Type)
 								{
-									SPtr<IReflectable> childObject;
-
-									if(!mFlags.IsSet(BinarySerializerFlag::Shallow))
-										childObject = iteratorField->GetReflectablePointer(fieldValue, typeIndex);
-
-									const u32 objectId = RegisterReflectableObjectForSerialization(childObject, outReferencedObjectsToSerialize);
-									if(compress)
-										mStream.WriteVarInt(objectId);
-									else
-										mStream.WriteBytes(objectId);
-
-									break;
-								}
-							case RTTIFieldDataType::Reflectable:
-								{
-									const IReflectable& childObject = iteratorField->GetReflectable(fieldValue, typeIndex);
-									if(!SerializeReflectableObjectInline(const_cast<IReflectable*>(&childObject), outReferencedObjectsToSerialize)) // TODO - Get rid of const cast
+								case RTTIFieldDataType::ReflectablePointer:
 									{
-										cleanup();
-										return false;
-									}
+										SPtr<IReflectable> childObject;
 
-									break;
+										if(!mFlags.IsSet(BinarySerializerFlag::Shallow))
+											childObject = iteratorField->GetReflectablePointer(fieldValue, typeIndex);
+
+										const u32 objectId = RegisterReflectableObjectForSerialization(childObject, outReferencedObjectsToSerialize);
+										if(compress)
+											mStream.WriteVarInt(objectId);
+										else
+											mStream.WriteBytes(objectId);
+
+										break;
+									}
+								case RTTIFieldDataType::Reflectable:
+									{
+										const IReflectable& childObject = iteratorField->GetReflectable(fieldValue, typeIndex);
+										if(!SerializeReflectableObjectInline(const_cast<IReflectable*>(&childObject), outReferencedObjectsToSerialize)) // TODO - Get rid of const cast
+										{
+											cleanup();
+											return false;
+										}
+
+										break;
+									}
+								case RTTIFieldDataType::Plain:
+									{
+										iteratorField->WritePlainTypeTupleToStream(fieldValue, typeIndex, mStream.GetBitstream(), compress);
+										break;
+									}
+								default:
+									B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", (u32)typeSchema.Type, iteratorField->Schema.IsContainer);
 								}
-							case RTTIFieldDataType::Plain:
-								{
-									iteratorField->WritePlainTypeTupleToStream(fieldValue, typeIndex, mStream.GetBitstream(), compress);
-									break;
-								}
-							default:
-								B3D_LOG(Error, Serialization, "Error serializing data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", (u32)typeSchema.Type, iteratorField->Schema.IsContainer);
 							}
 						}
 					}
 				}
-			}
-			else
-			{
-				if(B3D_ENSURE(!field->Schema.IsContainer && field->Schema.FieldTypes.Size() == 1 && field->Schema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
+				break;
+				case RTTIFieldType::DataBlock:
 				{
 					auto* curField = static_cast<RTTIDataBlockFieldBase*>(field);
 
@@ -1148,6 +1154,10 @@ bool BinarySerializationContext::SerializeReflectableObject(IReflectable* object
 
 					blockStream->Seek(originalBlockStreamLocation);
 				}
+				break;
+			default:
+				B3D_ENSURE(false);
+				break;
 			}
 
 			mStream.Flush(false);
@@ -1211,26 +1221,26 @@ void BinarySerializationContext::WriteFieldMetaData(const RTTIFieldSchema& field
 
 	if(isLastFieldInType)
 	{
-		B3D_ENSURE(fieldSchema.FieldTypes.Empty());
-		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, RTTIFieldTypeSchema(false, 0, RTTIFieldDataType::Plain, 0, nullptr), true, false);
+		B3D_ENSURE(fieldSchema.FieldDataTypes.Empty());
+		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, RTTIFieldDataTypeSchema(false, 0, RTTIFieldDataType::Plain, 0, nullptr), true, false);
 	}
 	else
 	{
-		if(!B3D_ENSURE(!fieldSchema.FieldTypes.Empty()))
+		if(!B3D_ENSURE(!fieldSchema.FieldDataTypes.Empty()))
 			return;
 
-		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldTypes[0], isLastFieldInType, fieldSchema.FieldTypes.Size() > 1);
+		firstFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldDataTypes[0], isLastFieldInType, fieldSchema.FieldDataTypes.Size() > 1);
 	}
 
 	// Encodes field ID and meta-data for the first type
 	const u32 fieldMetaData = fieldSchema.Id << 16 | (u32)firstFieldTypeMetaData.PackedData;
 	stream.WriteBytes(fieldMetaData);
 
-	const u32 fieldTypeCount = (u32)fieldSchema.FieldTypes.Size();
+	const u32 fieldTypeCount = (u32)fieldSchema.FieldDataTypes.Size();
 	for(u32 fieldTypeIndex = 1; fieldTypeIndex < fieldTypeCount; fieldTypeIndex++)
 	{
 		const bool isLastFieldType = (fieldTypeIndex + 1) == fieldTypeCount;
-		FieldTypeMetaData additionalFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldTypes[fieldTypeIndex], false, !isLastFieldType);
+		FieldTypeMetaData additionalFieldTypeMetaData = FieldTypeMetaData::Create(fieldSchema, fieldSchema.FieldDataTypes[fieldTypeIndex], false, !isLastFieldType);
 
 		stream.WriteBytes(additionalFieldTypeMetaData.PackedData);
 	}

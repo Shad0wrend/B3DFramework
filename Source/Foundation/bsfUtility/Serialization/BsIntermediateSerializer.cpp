@@ -89,7 +89,9 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 				continue;
 
 			const SPtr<ISerialized>& serializedFieldValue = iterFindFieldData->second.Value;
-			if(curGenericField->Schema.IsIterator)
+			switch(curGenericField->Schema.FieldType)
+			{
+			case RTTIFieldType::Iterable:
 			{
 				RTTIIteratorField* iteratorField = static_cast<RTTIIteratorField*>(curGenericField);
 				SPtr<IRTTIIterator> iterator = iteratorField->GetIterator(rttiInstance, object.get(), *mAllocator);
@@ -127,17 +129,9 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 					DeserializeElement(*rttiInstance, object, *iteratorField, iterator, serializedFieldValue);
 				}
 			}
-			else // Data block field
+			break;
+			case RTTIFieldType::DataBlock:
 			{
-				if(!B3D_ENSURE(!curGenericField->Schema.IsContainer))
-					continue;
-
-				if(!B3D_ENSURE(curGenericField->Schema.FieldTypes.Size() == 1))
-					continue;
-
-				if(!B3D_ENSURE(curGenericField->Schema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
-					continue;
-
 				auto* curField = static_cast<RTTIDataBlockFieldBase*>(curGenericField);
 
 				SPtr<SerializedDataBlock> serializedDataBlock = std::static_pointer_cast<SerializedDataBlock>(serializedFieldValue);
@@ -146,6 +140,12 @@ void IntermediateSerializer::DeserializeReflectableObject(const SPtr<IReflectabl
 					serializedDataBlock->Stream->Seek(serializedDataBlock->Offset);
 					curField->SetValue(rttiInstance, object.get(), serializedDataBlock->Stream, serializedDataBlock->Size);
 				}
+				
+			}
+			break;
+			default:
+				B3D_ENSURE(false);
+			break;
 			}
 		}
 	}
@@ -177,13 +177,13 @@ void IntermediateSerializer::DeserializeElement(RTTIIteratorField& field, void* 
 {
 	SPtr<SerializedTuple> serializedTuple;
 
-	const bool isTuple = field.Schema.FieldTypes.Size() > 1;
+	const bool isTuple = field.Schema.FieldDataTypes.Size() > 1;
 	if(isTuple)
 		serializedTuple = std::static_pointer_cast<SerializedTuple>(entry);
 
-	for(u32 fieldTypeIndex = 0; fieldTypeIndex < (u32)field.Schema.FieldTypes.Size(); ++fieldTypeIndex)
+	for(u32 fieldTypeIndex = 0; fieldTypeIndex < (u32)field.Schema.FieldDataTypes.Size(); ++fieldTypeIndex)
 	{
-		RTTIFieldTypeSchema& tupleSchema = field.Schema.FieldTypes[fieldTypeIndex];
+		RTTIFieldDataTypeSchema& tupleSchema = field.Schema.FieldDataTypes[fieldTypeIndex];
 
 		SPtr<ISerialized> serializedTupleValue;
 		if(isTuple)
@@ -202,10 +202,10 @@ void IntermediateSerializer::DeserializeElement(RTTIIteratorField& field, void* 
 
 void IntermediateSerializer::DeserializeTupleElement(RTTIIteratorField& field, void* outFieldValue, u32 tupleElementIndex, const SPtr<ISerialized>& entry)
 {
-	if(!B3D_ENSURE(tupleElementIndex < field.Schema.FieldTypes.Size()))
+	if(!B3D_ENSURE(tupleElementIndex < field.Schema.FieldDataTypes.Size()))
 		return;
 
-	RTTIFieldTypeSchema& tupleElementSchema = field.Schema.FieldTypes[tupleElementIndex];
+	RTTIFieldDataTypeSchema& tupleElementSchema = field.Schema.FieldDataTypes[tupleElementIndex];
 	switch(tupleElementSchema.Type)
 	{
 	case RTTIFieldDataType::ReflectablePointer:
@@ -311,10 +311,18 @@ SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const 
 				continue;
 
 			SPtr<ISerialized> serializedEntry;
-			if(field->Schema.IsIterator)
+			switch(field->Schema.FieldType)
+			{
+			case RTTIFieldType::Iterable:
 				serializedEntry = SerializeIterableField(const_cast<IReflectable&>(object), *rttiInstance, static_cast<RTTIIteratorField&>(*field), flags);
-			else
+				break;
+			case RTTIFieldType::DataBlock:
 				serializedEntry = SerializeDataBlockField(const_cast<IReflectable*>(&object), rttiInstance, field, flags);
+				break;
+			default:
+				B3D_ENSURE(false);
+				continue;
+			}
 
 			SerializedField entry;
 			entry.FieldId = field->Schema.Id;
@@ -334,13 +342,7 @@ SPtr<SerializedObject> IntermediateSerializer::SerializeReflectableObject(const 
 
 SPtr<ISerialized> IntermediateSerializer::SerializeDataBlockField(IReflectable* object, RTTIType* rtti, RTTIField* field, SerializedObjectEncodeFlags flags)
 {
-	if(!B3D_ENSURE(!field->Schema.IsContainer))
-		return nullptr;
-
-	if(!B3D_ENSURE(field->Schema.FieldTypes.Size() == 1))
-		return nullptr;
-
-	if(!B3D_ENSURE(field->Schema.FieldTypes[0].Type == RTTIFieldDataType::DataBlock))
+	if(!B3D_ENSURE(field->Schema.FieldType == RTTIFieldType::DataBlock))
 		return nullptr;
 
 	auto curField = static_cast<RTTIDataBlockFieldBase*>(field);
@@ -362,7 +364,7 @@ SPtr<ISerialized> IntermediateSerializer::SerializeDataBlockField(IReflectable* 
 
 SPtr<ISerialized> IntermediateSerializer::SerializeIterableField(IReflectable& object, RTTIType& rttiInstance, RTTIIteratorField& field, SerializedObjectEncodeFlags flags)
 {
-	if(!B3D_ENSURE(field.Schema.IsIterator))
+	if(!B3D_ENSURE(field.Schema.FieldType == RTTIFieldType::Iterable))
 		return nullptr;
 
 	SPtr<ISerialized> output;
@@ -425,13 +427,13 @@ SPtr<ISerialized> IntermediateSerializer::SerializeElement(IReflectable& object,
 
 	SPtr<ISerialized> serializedEntry;
 	SPtr<SerializedTuple> serializedTuple;
-	if(field.Schema.FieldTypes.Size() > 1)
+	if(field.Schema.FieldDataTypes.Size() > 1)
 	{
 		serializedTuple = B3DMakeShared<SerializedTuple>();
 		serializedEntry = serializedTuple;
 	}
 
-	for(u32 typeIndex = 0; typeIndex < (u32)field.Schema.FieldTypes.Size(); ++typeIndex)
+	for(u32 typeIndex = 0; typeIndex < (u32)field.Schema.FieldDataTypes.Size(); ++typeIndex)
 	{
 		SPtr<ISerialized> serializedTupleElement = SerializeTupleElement(object, rttiInstance, field, iterator, typeIndex, flags);
 
@@ -452,11 +454,11 @@ SPtr<ISerialized> IntermediateSerializer::SerializeTupleElement(IReflectable& ob
 	if(!B3D_ENSURE(iterator.IsValid()))
 		return nullptr;
 
-	if(!B3D_ENSURE(field.Schema.FieldTypes.Size() >= tupleElementIndex))
+	if(!B3D_ENSURE(field.Schema.FieldDataTypes.Size() >= tupleElementIndex))
 		return nullptr;
 
 	const bool shallow = flags.IsSet(SerializedObjectEncodeFlag::Shallow);
-	const RTTIFieldTypeSchema& typeSchema = field.Schema.FieldTypes[tupleElementIndex];
+	const RTTIFieldDataTypeSchema& typeSchema = field.Schema.FieldDataTypes[tupleElementIndex];
 
 	const void* fieldValue = field.GetIteratorValue(&rttiInstance, &object, *mAllocator, iterator);
 
