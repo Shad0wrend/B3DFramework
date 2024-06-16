@@ -279,7 +279,9 @@ void GameObjectCollection::EndHandleResolve()
 SPtr<GameObjectCollection> GameObjectCollection::Create()
 {
 	SPtr<GameObjectCollection> collection = B3DMakeShared<GameObjectCollection>(PrivatelyConstruct());
-	GameObjectManager::Instance().RegisterGameObjectCollection(collection);
+
+	if(GameObjectManager::IsStarted()) // May not be started for default object
+		GameObjectManager::Instance().RegisterGameObjectCollection(collection);
 
 	return collection;
 }

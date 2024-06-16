@@ -12,7 +12,7 @@ using namespace bs;
 CoreObject::CoreObject(bool createRenderProxy)
 	: mFlags(createRenderProxy ? CoreObjectFlag::RequiresRenderProxy : CoreObjectFlag::None)
 	, mRenderProxyDirtyFlags(0)
-	, mInternalID(CoreObjectManager::Instance().GenerateId())
+	, mInternalID(CoreObjectManager::GenerateId())
 {
 }
 

@@ -9,8 +9,9 @@
 
 using namespace bs;
 
+std::atomic<u64> CoreObjectManager::NextAvailableId = { 1 };
+
 CoreObjectManager::CoreObjectManager()
-	: mNextAvailableID(1)
 {
 	for(u32 allocatorIndex = 0; allocatorIndex < B3DSize(mSyncAllocators); allocatorIndex++)
 		mSyncAllocators[allocatorIndex] = B3DNew<FrameAllocator>();
@@ -40,9 +41,7 @@ CoreObjectManager::~CoreObjectManager()
 
 u64 CoreObjectManager::GenerateId()
 {
-	Lock lock(mObjectsMutex);
-
-	return mNextAvailableID++;
+	return NextAvailableId.fetch_add(1);
 }
 
 void CoreObjectManager::RegisterObject(CoreObject* object)

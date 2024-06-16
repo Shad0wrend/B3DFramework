@@ -66,7 +66,7 @@ namespace bs
 		~CoreObjectManager();
 
 		/** Generates a new unique ID for a core object. */
-		u64 GenerateId();
+		static u64 GenerateId();
 
 		/** Registers a new CoreObject notifying the manager the object	is created. */
 		void RegisterObject(CoreObject* object);
@@ -132,7 +132,6 @@ namespace bs
 		 */
 		void UpdateDependencies(CoreObject* object, Vector<CoreObject*>* dependencies);
 
-		u64 mNextAvailableID;
 		Map<u64, CoreObject*> mObjects;
 		Map<u64, DirtyObjectData> mDirtyObjects;
 		Map<u64, Vector<CoreObject*>> mDependencies;
@@ -151,6 +150,9 @@ namespace bs
 		u32 mActiveFrameAllocatorIndex = 0;
 
 		Mutex mObjectsMutex;
+
+		static std::atomic<u64> NextAvailableId;
+
 	};
 
 	/** @} */

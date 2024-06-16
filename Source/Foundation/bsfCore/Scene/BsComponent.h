@@ -49,6 +49,8 @@ namespace bs
 	class B3D_CORE_EXPORT Component : public GameObject
 	{
 	public:
+		virtual ~Component() = default;
+
 		/**	Returns a handle to this object. */
 		HComponent GetHandle() const { return B3DStaticGameObjectCast<Component>(mThisHandle); }
 
@@ -131,7 +133,6 @@ namespace bs
 		friend class SceneObjectRTTI;
 
 		Component(HSceneObject parent);
-		virtual ~Component() = default;
 
 		/** Called once when the component has been created. Called regardless of the state the component is in. */
 		virtual void OnCreated() {}

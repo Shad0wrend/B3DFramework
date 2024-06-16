@@ -11,6 +11,15 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Flags that may be set on IReflectable objects. */
+	enum class ReflectableObjectFlag
+	{
+		IsDefaultObject = 1 << 0,
+	};
+
+	using ReflectableObjectFlags = Flags<ReflectableObjectFlag>;
+	B3D_FLAGS_OPERATORS(ReflectableObjectFlag)
+
 	/**
 	 * Interface implemented by classes that provide run time type information.
 	 *
@@ -44,6 +53,12 @@ namespace bs
 		 * @note	Name is not necessarily unique.
 		 */
 		const String& GetTypeName() const;
+
+		/** Returns mutable flags specific to reflectable objects. */
+		ReflectableObjectFlags& GetReflectableObjectFlags() { return mReflectableObjectFlags; }
+
+		/** Returns flags specific to reflectable objects. */
+		const ReflectableObjectFlags& GetReflectableObjectFlags() const { return mReflectableObjectFlags; }
 
 		/** Casts this to T. Returns null if unable to cast. */
 		template<class T>
@@ -92,6 +107,10 @@ namespace bs
 		static RTTIType* GetRttiStatic();
 
 		/** @} */
+
+	private:
+		ReflectableObjectFlags mReflectableObjectFlags;
+
 	};
 
 	/** @} */

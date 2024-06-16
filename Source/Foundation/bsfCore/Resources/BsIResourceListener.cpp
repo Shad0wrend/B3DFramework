@@ -7,7 +7,8 @@ using namespace bs;
 
 IResourceListener::IResourceListener()
 {
-	ResourceListenerManager::Instance().RegisterListener(this);
+	if(ResourceListenerManager::IsStarted()) // May not be started in the default object case, which gets constructed early
+		ResourceListenerManager::Instance().RegisterListener(this);
 }
 
 IResourceListener::~IResourceListener()

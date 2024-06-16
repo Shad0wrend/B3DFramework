@@ -207,6 +207,9 @@ namespace bs
 		 */
 		virtual RTTIType* CloneInternal(FrameAllocator& alloc) = 0;
 
+		/** Constructs the default object for the type, if it's possible to construct one. */
+		virtual void InitializeDefaultObject() = 0;
+
 		/** Initializes the type schema. Should be called once after construction. */
 		void InitSchemaInternal();
 
@@ -236,6 +239,7 @@ namespace bs
 		{
 			RTTIType* rttiType = Type::GetRttiStatic();
 			rttiType->InitSchemaInternal();
+			rttiType->InitializeDefaultObject();
 
 			IReflectable::RegisterRTTITypeInternal(rttiType);
 			BaseType::GetRttiStatic()->RegisterDerivedClassInternal(rttiType);
@@ -253,6 +257,7 @@ namespace bs
 		{
 			RTTIType* rttiType = Type::GetRttiStatic();
 			rttiType->InitSchemaInternal();
+			rttiType->InitializeDefaultObject();
 
 			IReflectable::RegisterRTTITypeInternal(rttiType);
 		}
@@ -322,6 +327,9 @@ namespace bs
 			return &inst;
 		}
 
+		/** Returns the default constructed object of this type. Will return null if the class is abstract. */
+		Type* GetDefaultObject() const { return DefaultObject; }
+
 		Vector<RTTIType*>& GetDerivedClasses() const override
 		{
 			static Vector<RTTIType*> mRTTIDerivedClasses;
@@ -363,6 +371,21 @@ namespace bs
 		RTTIType* CloneInternal(FrameAllocator& alloc) override
 		{
 			return alloc.Construct<MyRTTIType>();
+		}
+
+		void InitializeDefaultObject() override
+		{
+			if(DefaultObject != nullptr)
+			{
+				B3DDelete(DefaultObject);
+				DefaultObject = nullptr;
+			}
+
+			if constexpr(!std::is_abstract_v<Type> && std::is_default_constructible_v<Type>)
+			{
+				DefaultObject = B3DNew<Type>();
+				DefaultObject->GetReflectableObjectFlags().Set(ReflectableObjectFlag::IsDefaultObject);
+			}
 		}
 
 	protected:
@@ -438,10 +461,15 @@ namespace bs
 		{
 			OnOperationEnded(static_cast<Type&>(object), operationType, context);
 		}
+
+		static Type* DefaultObject;
 	};
 
 	template <typename Type, typename BaseType, typename MyRTTIType>
 	InitRTTIOnStart<Type, BaseType> TRTTIType<Type, BaseType, MyRTTIType>::initOnStart;
+
+	template <typename Type, typename BaseType, typename MyRTTIType>
+	Type* TRTTIType<Type, BaseType, MyRTTIType>::DefaultObject = nullptr;
 
 	/** Provides information about the operation being performed on RTTIType objects. */
 	struct B3D_UTILITY_EXPORT RTTIOperationContext : IReflectable
