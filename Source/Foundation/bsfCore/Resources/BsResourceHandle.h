@@ -253,9 +253,11 @@ namespace bs
 		}
 
 		/**	Copy constructor allowing conversion from derived to base type. */
-		template<class DerivedResourceType, std::enable_if_t<std::is_base_of_v<ResourceType, DerivedResourceType>, int> = 0>
+		template<class DerivedResourceType, std::enable_if_t<std::disjunction_v<std::is_same<ResourceType, Resource>, std::is_base_of<ResourceType, DerivedResourceType>>, int> = 0>
 		TResourceHandle(const TResourceHandle<DerivedResourceType, IsWeakHandle>& other)
 		{
+			// Above enable_if purposefully ignores is_base_of<> check if base is Resource. This is because is_base_of<> requires a fully defined type, requiring excessive #includes.
+
 			other.IncrementReferenceCount();
 			this->mData = other.GetHandleData();
 		}
@@ -432,10 +434,12 @@ namespace bs
 			this->mData = other.GetHandleData();
 		}
 
-		/**	Copy constructor allowing conversion from base to derived type, for casts. */
-		template<class DerivedResourceType, std::enable_if_t<!std::is_base_of_v<ResourceType, DerivedResourceType>, int> = 0>
+		/** Copy constructor allowing conversion from base to derived type, for casts. */
+		template<class DerivedResourceType, std::enable_if_t<!std::disjunction_v<std::is_same<ResourceType, Resource>, std::is_base_of<ResourceType, DerivedResourceType>>, int> = 0>
 		TResourceHandle(const TResourceHandle<DerivedResourceType, IsWeakHandle>& other)
 		{
+			// Above enable_if purposefully ignores is_base_of<> check if base is Resource. This is because is_base_of<> requires a fully defined type, requiring excessive #includes.
+
 			other.IncrementReferenceCount();
 			this->mData = other.GetHandleData();
 		}

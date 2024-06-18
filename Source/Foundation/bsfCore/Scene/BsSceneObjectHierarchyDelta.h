@@ -14,6 +14,16 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Flags that mark which portion of a scene-object is modified. */
+	enum class B3D_SCRIPT_EXPORT() SceneObjectDiffFlags // TODO - Deprecated. Only kept because it is still used by script code
+	{
+		Name = 1,
+		Position = 2,
+		Rotation = 4,
+		Active = 16,
+		Scale = 8
+	};
+
 	/** Flags that specify additional information about game object delta. */
 	enum class GameObjectDeltaFlag
 	{

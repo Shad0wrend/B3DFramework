@@ -131,9 +131,6 @@
 #include "../../../Foundation/bsfCore/Material/BsShaderVariation.h"
 #include "BsScriptShaderVariationParameters.generated.h"
 #if !B3D_IS_ENGINE
-#include "../../../Foundation/bsfCore/Resources/BsResourceManifest.h"
-#endif
-#if !B3D_IS_ENGINE
 #include "../../../Foundation/bsfCore/Importer/BsTextureImportOptions.h"
 #endif
 #include "BsScriptTextureImportOptions.generated.h"
@@ -217,9 +214,6 @@ namespace bs
 		ADD_ENTRY(MeshImportOptions, ScriptMeshImportOptions)
 #endif
 		ADD_ENTRY(ShaderVariationParameters, ScriptShaderVariationParameters)
-#if !B3D_IS_ENGINE
-		ADD_ENTRY(ResourceManifest, ScriptResourceManifest)
-#endif
 #if !B3D_IS_ENGINE
 		ADD_ENTRY(TextureImportOptions, ScriptTextureImportOptions)
 #endif

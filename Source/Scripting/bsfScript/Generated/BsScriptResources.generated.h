@@ -4,7 +4,6 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObject.h"
-#include "../../../Foundation/bsfCore/Resources/BsResources.h"
 #include "Utility/BsUUID.h"
 
 namespace bs { class Resources; }
@@ -39,24 +38,11 @@ namespace bs
 		static HEvent OnResourceDestroyedConn;
 		static HEvent OnResourceModifiedConn;
 
-		static MonoObject* InternalLoad(MonoString* filePath, ResourceLoadFlag loadFlags);
-		static MonoObject* InternalLoadAsync(MonoString* filePath, ResourceLoadFlag loadFlags);
-		static MonoObject* InternalLoadFromUuid(UUID* uuid, bool async, ResourceLoadFlag loadFlags);
 		static void InternalReleaseInternalReference(MonoObject* resource);
 		static void InternalUnloadAllUnused();
 		static void InternalUnloadAll();
-		static void InternalSave(MonoObject* resource, MonoString* filePath, bool overwrite, bool compress);
-		static void InternalSave0(MonoObject* resource, bool compress);
-		static MonoArray* InternalGetDependencies(MonoString* filePath);
 		static bool InternalIsLoaded(UUID* uuid, bool checkInProgress);
-		static float InternalGetLoadProgress(MonoObject* resource, bool includeDependencies);
-		static float InternalGetLoadProgress2(MonoObject* resource);
-		static void InternalRegisterResourceManifest(MonoObject* manifest);
-		static void InternalUnregisterResourceManifest(MonoObject* manifest);
-		static MonoObject* InternalGetResourceManifest(MonoString* name);
-		static bool InternalGetFilePathFromUuid(UUID* uuid, MonoString** filePath);
-		static bool InternalGetUUIDFromFilePath(MonoString* path, UUID* outUUID);
-		static MonoString* InternalEnsurePhysicalPath(MonoString* path);
+		static float InternalGetLoadProgress(MonoObject* resource);
 	};
 #endif
 }

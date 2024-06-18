@@ -4944,6 +4944,19 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Options describing the evolver.</doc>
 		</property>
 	</class>
+	<enum native="SceneObjectDiffFlags" script="SceneObjectDiffFlags">
+		<doc>Flags that mark which portion of a scene-object is modified.</doc>
+		<enumentry native="Name" script="Name">
+		</enumentry>
+		<enumentry native="Position" script="Position">
+		</enumentry>
+		<enumentry native="Rotation" script="Rotation">
+		</enumentry>
+		<enumentry native="Scale" script="Scale">
+		</enumentry>
+		<enumentry native="Active" script="Active">
+		</enumentry>
+	</enum>
 	<struct native="PARTICLE_ROTATION_DESC" script="ParticleRotationOptions">
 		<doc>Structure used for initializing a ParticleRotation object.</doc>
 		<ctor>
@@ -6440,105 +6453,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Helper entry that includes all languages.</doc>
 		</enumentry>
 	</enum>
-	<class native="ResourceManifest" script="ResourceManifest">
-		<doc>Serializable class that contains UUID &lt;-&gt; file path mapping for resources.</doc>
-		<method native="RegisterResource" script="RegisterResource" static="false">
-			<doc>Registers a new resource in the manifest.</doc>
-			<param name="uuid" type="UUID">
-			</param>
-			<param name="filePath" type="string">
-			</param>
-		</method>
-		<method native="UnregisterResource" script="UnregisterResource" static="false">
-			<doc>Removes a resource from the manifest.</doc>
-			<param name="uuid" type="UUID">
-			</param>
-		</method>
-		<method native="UUIDToPhysicalFilePath" script="UUIDToPhysicalFilePath" static="false">
-			<doc>Attempts to find a resource with the provided UUID and outputs the absolute physical path to the resource if found. Returns true if UUID was found, false otherwise.</doc>
-			<param name="uuid" type="UUID">
-			</param>
-			<param name="filePath" type="string">
-			</param>
-			<returns type="bool">
-			</returns>
-		</method>
-		<method native="PhysicalFilePathToUUID" script="PhysicalFilePathToUUID" static="false">
-			<doc>Attempts to find a resource with the provided physical path and outputs the UUID to the resource if found. Returns true if path was found, false otherwise.</doc>
-			<param name="filePath" type="string">
-			</param>
-			<param name="outUUID" type="UUID">
-			</param>
-			<returns type="bool">
-			</returns>
-		</method>
-		<method native="VirtualFilePathToUUID" script="VirtualFilePathToUUID" static="false">
-			<doc>Attempts to find a resource with the provided virtual path and outputs the UUID to the resource if found. Returns true if path was found, false otherwise.</doc>
-			<param name="filePath" type="string">
-			</param>
-			<param name="outUUID" type="UUID">
-			</param>
-			<returns type="bool">
-			</returns>
-		</method>
-		<method native="UuidExists" script="UuidExists" static="false">
-			<doc>Checks if provided UUID exists in the manifest.</doc>
-			<param name="uuid" type="UUID">
-			</param>
-			<returns type="bool">
-			</returns>
-		</method>
-		<method native="FilePathExists" script="FilePathExists" static="false">
-			<doc>Checks if the provided path exists in the manifest.</doc>
-			<param name="filePath" type="string">
-			</param>
-			<returns type="bool">
-			</returns>
-		</method>
-		<method native="VirtualToPhysicalPath" script="VirtualToPhysicalPath" static="false">
-			<doc>Converts a virtual path to a physical one. Note the existance of the path in the manifest will not be checked, the only requirement is that the virtual path begins with virtual path prefix. This means you can use this method for translating virtual -&gt; physical paths before they are added to the manifest. Returns false if <paramref name="virtualPath"/> doesn&apos;t start with the manifest&apos;s virtual path prefix.</doc>
-			<param name="virtualPath" type="string">
-			</param>
-			<param name="outPhysicalPath" type="string">
-			</param>
-			<returns type="bool">
-			</returns>
-		</method>
-		<method native="Save" script="Save" static="true">
-			<doc>Saves the resource manifest to the specified location.</doc>
-			<param name="manifest" type="ResourceManifest">
-				<doc>Manifest to save.</doc>
-			</param>
-			<param name="path" type="string">
-				<doc>Full pathname of the file to save the manifest in.</doc>
-			</param>
-			<param name="physicalPathPrefix" type="string">
-				<doc>If not empty, all pathnames in the manifest will be stored as if relative to this path.</doc>
-			</param>
-		</method>
-		<method native="Load" script="Load" static="true">
-			<doc>Loads the resource manifest from the specified location.</doc>
-			<param name="path" type="string">
-				<doc>Full pathname of the file to load the manifest from.</doc>
-			</param>
-			<param name="physicalPathPrefix" type="string">
-				<doc>If not empty, all loaded path names will have this path prepended.</doc>
-			</param>
-			<param name="virtualPathPrefix" type="string">
-				<doc>If not empty, adds an additional set of paths that the resource can be referenced from.</doc>
-			</param>
-			<returns type="ResourceManifest">
-			</returns>
-		</method>
-		<ctor>
-			<doc>Creates a new empty resource manifest. Provided name should be unique among manifests.</doc>
-			<param name="name" type="string">
-			</param>
-		</ctor>
-		<property name="Name" type="string" getter="GetName" setter="" static="false">
-			<doc>Returns an unique name of the resource manifest.</doc>
-		</property>
-	</class>
 	<class native="TextureImportOptions" script="TextureImportOptions">
 		<doc>Contains import options you may use to control how is a texture imported.</doc>
 		<ctor>
@@ -7831,42 +7745,6 @@ Optionally if the parameter is an array you may provide an array index you which
 	</enum>
 	<class native="Resources" script="Resources">
 		<doc>Manager for dealing with all engine resources. It allows you to save new resources and load existing ones.</doc>
-		<method native="Load" script="Load" static="false">
-			<doc>Loads the resource from a given path. Returns an empty handle if resource can&apos;t be loaded. Resource is loaded synchronously.</doc>
-			<param name="filePath" type="string">
-				<doc>File path to the resource to load. This can be absolute or relative to the working folder.</doc>
-			</param>
-			<param name="loadFlags" type="ResourceLoadFlag">
-				<doc>Flags used to control the load process.</doc>
-			</param>
-			<returns type="Resource">
-			</returns>
-		</method>
-		<method native="LoadAsync" script="LoadAsync" static="false">
-			<doc>Loads the resource asynchronously. Initially returned resource handle will be invalid until resource loading is done. Use ResourceHandle&lt;T&gt;::isLoaded to check if resource has been loaded, or ResourceHandle&lt;T&gt;::blockUntilLoaded to wait until load completes.</doc>
-			<param name="filePath" type="string">
-				<doc>Full pathname of the file.</doc>
-			</param>
-			<param name="loadFlags" type="ResourceLoadFlag">
-				<doc>Flags used to control the load process.</doc>
-			</param>
-			<returns type="RRefBase">
-			</returns>
-		</method>
-		<method native="LoadFromUuid" script="LoadFromUuid" static="false">
-			<doc>Loads the resource with the given UUID. Returns an empty handle if resource can&apos;t be loaded.</doc>
-			<param name="uuid" type="UUID">
-				<doc>UUID of the resource to load.</doc>
-			</param>
-			<param name="async" type="bool">
-				<doc>If true resource will be loaded asynchronously. Handle to non-loaded resource will be returned immediately while loading will continue in the background.</doc>
-			</param>
-			<param name="loadFlags" type="ResourceLoadFlag">
-				<doc>Flags used to control the load process.</doc>
-			</param>
-			<returns type="RRefBase">
-			</returns>
-		</method>
 		<method native="ReleaseInternalReference" script="ReleaseInternalReference" static="false">
 			<doc>Releases an internal reference to the resource held by the resources system. This allows the resource to be unloaded when it goes out of scope, if the resource was loaded with <see cref="KeepInternalReference"/> option.
 Alternatively you can also skip manually calling ReleaseInternalReference() and call UnloadAllUnused() which will unload all resources that do not have any external references, but you lose the fine grained control of what will be unloaded.</doc>
@@ -7878,39 +7756,6 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 		</method>
 		<method native="UnloadAll" script="UnloadAll" static="false">
 			<doc>Forces unload of all resources, whether they are being used or not.</doc>
-		</method>
-		<method native="Save" script="Save" static="false">
-			<doc>Saves the resource at the specified location.</doc>
-			<param name="resource" type="Resource">
-				<doc>Handle to the resource.</doc>
-			</param>
-			<param name="filePath" type="string">
-				<doc>Full pathname of the file to save as.</doc>
-			</param>
-			<param name="overwrite" type="bool">
-				<doc>If true, any existing resource at the specified location will be overwritten.</doc>
-			</param>
-			<param name="compress" type="bool">
-				<doc>Should the resource be compressed before saving. Some resources have data that is already compressed and this option will be ignored for such resources.</doc>
-			</param>
-		</method>
-		<method native="Save" script="Save" static="false">
-			<doc>Saves an existing resource to its previous location.</doc>
-			<param name="resource" type="Resource">
-				<doc>Handle to the resource.</doc>
-			</param>
-			<param name="compress" type="bool">
-				<doc>Should the resource be compressed before saving. Some resources have data that is already compressed and this option will be ignored for such resources.</doc>
-			</param>
-		</method>
-		<method native="GetDependencies" script="GetDependencies" static="false">
-			<doc>Returns a list of dependencies from the resources at the specified path. Resource will not be loaded or parsed, but instead the saved list of dependencies will be read from the file and returned.</doc>
-			<param name="filePath" type="string">
-				<doc>Full path to the resource to get dependencies for.</doc>
-			</param>
-			<returns type="UUID">
-				<doc>List of dependencies represented as UUIDs.</doc>
-			</returns>
 		</method>
 		<method native="IsLoaded" script="IsLoaded" static="false">
 			<doc>Checks is the resource with the specified UUID loaded.</doc>
@@ -7925,66 +7770,12 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			</returns>
 		</method>
 		<method native="GetLoadProgress" script="GetLoadProgress" static="false">
-			<doc>Returns the loading progress of a resource that&apos;s being asynchronously loaded.</doc>
-			<param name="resource" type="RRefBase">
-				<doc>Resource whose load progress to check.</doc>
-			</param>
-			<param name="includeDependencies" type="bool">
-				<doc>If false the progress will reflect the load progress only for this inidividual resource. If true the progress will reflect load progress of this resource and all of its dependencies.</doc>
-			</param>
-			<returns type="float">
-				<doc>Load progress in range [0, 1].</doc>
-			</returns>
-		</method>
-		<method native="GetLoadProgress2" script="GetLoadProgress2" static="false">
 			<doc>Returns the loading progress of a resource that&apos;s being loaded</doc>
 			<param name="resource" type="RRefBase">
 				<doc>Resource whose load progress to check.</doc>
 			</param>
 			<returns type="float">
 				<doc>Load progress in range [0, 1].</doc>
-			</returns>
-		</method>
-		<method native="RegisterResourceManifest" script="RegisterResourceManifest" static="false">
-			<doc>Allows you to set a resource manifest containing UUID &lt;-&gt; file path mapping that is used when resolving resource references.</doc>
-			<param name="manifest" type="ResourceManifest">
-			</param>
-		</method>
-		<method native="UnregisterResourceManifest" script="UnregisterResourceManifest" static="false">
-			<doc>Unregisters a resource manifest previously registered with registerResourceManifest().</doc>
-			<param name="manifest" type="ResourceManifest">
-			</param>
-		</method>
-		<method native="GetResourceManifest" script="GetResourceManifest" static="false">
-			<doc>Allows you to retrieve resource manifest containing UUID &lt;-&gt; file path mapping that is used when resolving resource references.</doc>
-			<param name="name" type="string">
-			</param>
-			<returns type="ResourceManifest">
-			</returns>
-		</method>
-		<method native="GetFilePathFromUuid" script="GetFilePathFromUuid" static="false">
-			<doc>Attempts to retrieve file path from the provided UUID. Returns true if successful, false otherwise.</doc>
-			<param name="uuid" type="UUID">
-			</param>
-			<param name="filePath" type="string">
-			</param>
-			<returns type="bool">
-			</returns>
-		</method>
-		<method native="GetUUIDFromFilePath" script="GetUUIDFromFilePath" static="false">
-			<doc>Attempts to retrieve UUID from the provided physical file path. Returns true if successful, false otherwise.</doc>
-			<param name="path" type="string">
-			</param>
-			<param name="outUUID" type="UUID">
-			</param>
-			<returns type="bool">
-			</returns>
-		</method>
-		<method native="EnsurePhysicalPath" script="EnsurePhysicalPath" static="false">
-			<doc>Converts a potentially virtual path into a physical one. If the path is not virtual, returns the path as-is.</doc>
-			<param name="path" type="string">
-			</param>
-			<returns type="string">
 			</returns>
 		</method>
 		<event native="OnResourceLoaded" script="OnResourceLoaded" static="false">

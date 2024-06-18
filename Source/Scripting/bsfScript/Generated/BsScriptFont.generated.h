@@ -4,7 +4,6 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptResource.h"
-#include "Text/BsFont.h"
 
 namespace bs { class Font; }
 namespace bs

@@ -109,6 +109,7 @@ namespace bs
 		/** @} */
 
 	private:
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		ReflectableObjectFlags mReflectableObjectFlags;
 
 	};
