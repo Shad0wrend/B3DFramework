@@ -78,6 +78,8 @@ namespace bs
 		/** Determines if the prefab represents a scene or just a generic group of objects. */
 		bool IsScene() const { return mIsScene; }
 
+		bool AllowAsyncLoading() const override { return false; }
+
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{

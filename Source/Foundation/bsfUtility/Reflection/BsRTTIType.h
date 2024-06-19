@@ -150,6 +150,9 @@ namespace bs
 		/** Returns an RTTI id that uniquely represents each class in the RTTI system. */
 		virtual u32 GetRttiId() const = 0;
 
+		/** Returns the default constructed object of this type. Will return null if the class is abstract. */
+		virtual IReflectable* GetDefaultObject() const = 0;
+
 		/** Called before any operation that is iterating over the type's fields starts. */
 		virtual void NotifyOperationStarted(IReflectable& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) = 0;
 
@@ -327,8 +330,7 @@ namespace bs
 			return &inst;
 		}
 
-		/** Returns the default constructed object of this type. Will return null if the class is abstract. */
-		Type* GetDefaultObject() const { return DefaultObject; }
+		IReflectable* GetDefaultObject() const override { return DefaultObject; }
 
 		Vector<RTTIType*>& GetDerivedClasses() const override
 		{

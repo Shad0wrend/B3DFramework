@@ -229,8 +229,14 @@ HResource Resources::Load(UPtr<PackageReadLock> packageReadLock, const UUID& res
 	};
 
 	bool asyncLoad = loadOptions.AsynchronousLoad;
-	//if(!Resources::SupportsAsyncLoad(metaData->TypeId)) // TODO - Implement this by reading the value from a RTTI default object
-	//	asyncLoad = false;
+
+	// Disable async load if not supported
+	RTTIType* const rttiType = IReflectable::GetRTTITypeFromTypeId(metaData->TypeId);
+	if(asyncLoad && rttiType != nullptr)
+	{
+		if(const Resource* defaultObject = B3DRTTICast<Resource>(rttiType->GetDefaultObject()))
+			asyncLoad = defaultObject->AllowAsyncLoading();
+	}
 
 	if(asyncLoad)
 	{
