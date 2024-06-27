@@ -21,14 +21,14 @@ namespace bs
 	 *
 	 * Each ticket can have an associated callback, which will trigger when a ticket is Called.
 	 */
-	class SchedulerTicket
+	class B3D_UTILITY_EXPORT SchedulerTicket
 	{
 	public:
 		SchedulerTicket() = default;
 		SchedulerTicket(const SchedulerTicket& other) = default;
 		SchedulerTicket(SchedulerTicket&& other) = default;
 		SchedulerTicket& operator=(const SchedulerTicket& other) = default;
-		~SchedulerTicket();
+		SchedulerTicket& operator=(SchedulerTicket&& other) = default;
 
 		/** Blocks calling code until the ticket is out of the Waiting state. */
 		void WaitUntilCalled() const;
@@ -40,19 +40,18 @@ namespace bs
 		 * Registers a callback that will trigger when the ticket triggers. Multiple callbacks can be registered,
 		 * in which case they will trigger in the order they were registered.
 		 */
-		template <typename Function>
-		void DoWhenCalled(Function&& callback) const;
+		void DoWhenCalled(Function<void()>&& callback) const;
 
 	private:
 		friend class SchedulerTicketQueue;
 
-		SchedulerTicket(SchedulerTicketData* record);
+		SchedulerTicket(SPtr<SchedulerTicketData>&& record);
 
-		SchedulerTicketData* mData = nullptr;
+		SPtr<SchedulerTicketData> mData;
 	};
 
 	/** Linked list entry storing information about one ticket, and links a ticket to its previous/next ticket. */
-	struct SchedulerTicketData
+	struct B3D_UTILITY_EXPORT SchedulerTicketData
 	{
 		inline ~SchedulerTicketData();
 
@@ -86,11 +85,11 @@ namespace bs
 	{
 		Scheduler* Scheduler = nullptr;
 		Mutex Mutex;
-		SchedulerTicketData* LastTicket = nullptr;
+		SchedulerTicketData LastTicketData;
 	};
 
 	/** Queue that hands out scheduler tickets. */
-	class SchedulerTicketQueue
+	class B3D_UTILITY_EXPORT SchedulerTicketQueue
 	{
 	public:
 		SchedulerTicketQueue(Scheduler& scheduler);

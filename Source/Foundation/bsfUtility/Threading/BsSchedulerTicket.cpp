@@ -6,18 +6,9 @@ using namespace bs;
 
 // Note: Code ported from marl library (https://github.com/google/marl)
 
-SchedulerTicket::SchedulerTicket(SchedulerTicketData* record)
-	: mData(record)
+SchedulerTicket::SchedulerTicket(SPtr<SchedulerTicketData>&& record)
+	: mData(std::move(record))
 { }
-
-inline SchedulerTicket::~SchedulerTicket()
-{
-	if(mData != nullptr)
-	{
-		B3DPoolDelete(mData);
-		mData = nullptr;
-	}
-}
 
 void SchedulerTicket::WaitUntilCalled() const
 {
@@ -30,13 +21,12 @@ void SchedulerTicket::TransitionToDoneState() const
 	mData->TransitionToDoneState();
 }
 
-template <typename Function>
-void SchedulerTicket::DoWhenCalled(Function&& callback) const
+void SchedulerTicket::DoWhenCalled(Function<void()>&& callback) const
 {
 	Lock lock(mData->SharedData->Mutex);
 	if(mData->IsCalled)
 	{
-		Scheduler::Post(std::forward<Function>(callback));
+		mData->SharedData->Scheduler->Post(SchedulerTask(std::move(callback)));
 		return;
 	}
 
@@ -50,13 +40,13 @@ void SchedulerTicket::DoWhenCalled(Function&& callback) const
 				b();
 			}
 
-			Function a, b;
+			Function<void()> a, b;
 		};
 
-		mData->Callback = std::move(JoinedCallbacks{ std::move(mData->Callback), std::forward<Function>(callback) });
+		mData->Callback = JoinedCallbacks{ std::move(mData->Callback), std::move(callback) };
 	}
 	else
-		mData->Callback = std::forward<Function>(callback);
+		mData->Callback = std::move(callback);
 }
 
 inline SchedulerTicketQueue::SchedulerTicketQueue(Scheduler& scheduler)
@@ -67,7 +57,7 @@ inline SchedulerTicketQueue::SchedulerTicketQueue(Scheduler& scheduler)
 SchedulerTicket SchedulerTicketQueue::TakeTicket()
 {
 	SchedulerTicket output;
-	TakeTickets(1, [&output](SchedulerTicket&& ticket) { output = ticket; });
+	TakeTickets(1, [&output](SchedulerTicket&& ticket) { output = std::move(ticket); });
 	return output;
 }
 
@@ -79,28 +69,31 @@ void SchedulerTicketQueue::TakeTickets(u32 count, const F& callback)
 
 	for(u32 ticketIndex = 0; ticketIndex < count; ++ticketIndex)
 	{
-		SchedulerTicketData* const record = B3DPoolNew<SchedulerTicketData>();
+		SPtr<SchedulerTicketData> record = B3DMakeSharedFromExisting(B3DPoolNew<SchedulerTicketData>(), [](SchedulerTicketData* object)
+		{
+			B3DPoolDelete(object);
+		});
 		record->SharedData = mSharedData;
 
 		if (first == nullptr)
-			first = record;
+			first = record.get();
 
 		if (last != nullptr)
 		{
-			last->Next = record;
+			last->Next = record.get();
 			record->Previous = last;
 		}
 
-		last = record;
+		last = record.get();
 
-		callback(SchedulerTicket(record));
+		callback(SchedulerTicket(std::move(record)));
 	}
 
-	last->Next = mSharedData->LastTicket;
+	last->Next = &mSharedData->LastTicketData;
 
 	Lock lock(mSharedData->Mutex);
-	first->Previous = mSharedData->LastTicket->Previous;
-	mSharedData->LastTicket->Previous = last;
+	first->Previous = mSharedData->LastTicketData.Previous;
+	mSharedData->LastTicketData.Previous = last;
 
 	if(first->Previous == nullptr)
 		first->TransitionToCalledState(lock);
