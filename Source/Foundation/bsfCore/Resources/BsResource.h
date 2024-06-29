@@ -56,6 +56,9 @@ namespace bs
 			mId = id;
 		}
 
+		/** Call this on the resource after it has been duplicated (on the duplicated object). */
+		void NotifyDidDuplicate() { OnDidDuplicate(); }
+
 		/** @} */
 
 	protected:
@@ -86,6 +89,9 @@ namespace bs
 		 */
 		void RemoveResourceDependency(const HResource& resource);
 
+		/** Called on the resource after it has been duplicated (called on the duplicated object). */
+		virtual void OnDidDuplicate() { }
+
 		/**
 		 * Returns true if the resource can be compressed using a generic compression when saved on a storage device.
 		 * Certain resources already have their contents compressed (like audio files) and will not benefit from further
@@ -98,7 +104,7 @@ namespace bs
 		TWeakResourceHandle<Resource> mSelfHandle;
 
 		u32 mSize;
-		SPtr<ResourceMetaData> mMetaData;
+		SPtr<ResourceMetaData> mMetaData; // TODO - Deprecate this if possible
 
 		/**
 		 * Signal to the resource implementation if original data should be kept in memory. This is sometimes needed if
