@@ -520,6 +520,9 @@ namespace bs
 		/** @copydoc ReplaceAll(const String&, const String&, const String&) */
 		static const WString ReplaceAll(const WString& source, const WString& replaceWhat, const WString& replaceWithWhat);
 
+		/** Removes the file extension from the provided string. If string has multiple extensions, only the last extension will be removed. */
+		static String StripExtension(const String& input);
+
 		/**
 		 * Compares two strings. Returns true if the two compare equal.
 		 *

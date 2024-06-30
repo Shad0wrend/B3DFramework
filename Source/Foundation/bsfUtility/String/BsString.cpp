@@ -175,6 +175,16 @@ const WString StringUtil::ReplaceAll(const WString& source, const WString& repla
 	return ReplaceAllInternal<wchar_t>(source, replaceWhat, replaceWithWhat);
 }
 
+String StringUtil::StripExtension(const String& input)
+{
+	String::size_type position = input.rfind('.');
+	if(position != String::npos)
+		return input.substr(0, position);
+
+	return input;
+	
+}
+
 /************************************************************************/
 /* 						VARIOUS TO STRING CONVERSIONS                   */
 /************************************************************************/

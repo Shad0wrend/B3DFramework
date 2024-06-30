@@ -130,6 +130,21 @@ Vector<SubResourceRaw> Importer::ImportAllInternal(const Path& inputFilePath, SP
 	return importer->ImportAll(inputFilePath, importOptions);
 }
 
+TAsyncOp<Vector<SubResourceRaw>> Importer::ImportAllAsyncInternal(const Path& inputFilePath, SPtr<const ImportOptions> importOptions)
+{
+	TAsyncOp<Vector<SubResourceRaw>> output;
+
+	SpecificImporter* importer = PrepareForImport(inputFilePath, importOptions);
+	if(!importer)
+	{
+		output.CompleteOperation(Vector<SubResourceRaw>());
+		return output;
+	}
+
+	QueueForImport(importer, inputFilePath, importOptions, UUID::kEmpty, output);
+	return output;
+}
+
 SpecificImporter* Importer::PrepareForImport(const Path& filePath, SPtr<const ImportOptions>& importOptions) const
 {
 	if(!FileSystem::IsFile(filePath))
@@ -204,6 +219,14 @@ void DoImport(TAsyncOp<SPtr<MultiResource>> op, SpecificImporter* importer, cons
 	}
 
 	op.CompleteOperation(B3DMakeShared<MultiResource>(subresources));
+}
+
+template <>
+void DoImport(TAsyncOp<Vector<SubResourceRaw>> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid, const SPtr<const ImportOptions>& importOptions)
+{
+	Vector<SubResourceRaw> rawSubresources = importer->ImportAll(filePath, importOptions);
+
+	op.CompleteOperation(rawSubresources);
 }
 
 template <class ReturnType>

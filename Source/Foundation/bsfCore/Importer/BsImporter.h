@@ -161,8 +161,11 @@ namespace bs
 		/** Alternative to import() which doesn't create a resource handle, but instead returns a raw resource pointer. */
 		SPtr<Resource> ImportInternal(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
 
-		/** Alternative to importAll() which doesn't create resource handles, but instead returns raw resource pointers. */
+		/** Alternative to ImportAll() which doesn't create resource handles, but instead returns raw resource pointers. */
 		Vector<SubResourceRaw> ImportAllInternal(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
+
+		/** Alternative to ImportAllAsync() which doesn't create resource handles, but instead returns raw resource pointers. */
+		TAsyncOp<Vector<SubResourceRaw>> ImportAllAsyncInternal(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
 
 		/** @} */
 	private:
