@@ -18,6 +18,7 @@ namespace bs
 		FailedAlreadyExists,
 		FailedInvalidInput,
 		FailedInternalError,
+		FailedNotFound,
 	};
 
 	struct Result;
