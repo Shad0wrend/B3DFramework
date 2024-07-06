@@ -18,6 +18,12 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Contains paths to resources currently involved in a drag and drop operation. */
+	struct DraggedResources
+	{
+		Vector<Path> ResourcePaths;
+	};
+
 	/** Flags that can be used to control resource loading. */
 	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Resources)) ResourceLoadFlag
 	{
