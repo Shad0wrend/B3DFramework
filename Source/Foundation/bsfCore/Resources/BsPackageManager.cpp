@@ -154,6 +154,11 @@ UPtr<PackageWriteLock> PackageManager::SavePackage(const SPtr<Package>& package,
 	}
 
 	FileSystem::Remove(destinationPath);
+
+	const Path& destinationParentFolderPath = destinationPath.GetParent();
+	if(!FileSystem::Exists(destinationParentFolderPath))
+		FileSystem::CreateDir(destinationParentFolderPath);
+
 	FileSystem::Move(temporarySavePath, destinationPath);
 
 	package->AssociateFileWithPackage(destinationPath);
