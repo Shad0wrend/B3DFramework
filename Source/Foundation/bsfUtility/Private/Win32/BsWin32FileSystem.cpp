@@ -433,7 +433,7 @@ bool FileSystem::Iterate(const Path& dirPath, std::function<bool(const Path&)> f
 {
 	WString findPath = UTF8::ToWide(dirPath.ToString());
 
-	if(Win32IsFile(findPath))
+	if(IsFile(dirPath) || !Exists(dirPath))
 		return false;
 
 	if(dirPath.IsFile()) // Assuming the file is a folder, just improperly formatted in Path
