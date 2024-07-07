@@ -1,5 +1,9 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#include <codecvt>
+#include <locale>
+
+#include "BsUnicode.h"
 #include "Image/BsColor.h"
 #include "Math/BsMath.h"
 #include "Math/BsMatrix3.h"
@@ -421,11 +425,7 @@ WString ToWString(const Vector<bs::WString>& val)
 
 String ToString(const WString& source)
 {
-	StringStream stream;
-	for(auto& entry : source)
-		stream << entry;
-
-	return stream.str();
+	return UTF8::FromWide(source);
 }
 
 String ToString(const wchar_t* source)
