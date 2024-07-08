@@ -19,6 +19,7 @@ namespace bs
 		FailedInvalidInput,
 		FailedInternalError,
 		FailedNotFound,
+		FailedReadOnly,
 	};
 
 	struct Result;
@@ -32,6 +33,8 @@ namespace bs
 	{
 		TResult(const Result& other);
 		TResult(Result&& other);
+		template<class OtherType> TResult(const TResult<OtherType>& other);
+		template<class OtherType> TResult(TResult<OtherType>&& other);
 
 		/** Returns true if the result is one of the success states. */
 		bool IsSuccessful() const;
@@ -62,7 +65,32 @@ namespace bs
 		 * @param	additionalErrorMessage	Additional error message for information that cannot easily be stored in @p errorMessage.
 		 * @return							Newly created TResult object.
 		 */
-		static TResult Fail(const char* errorMessage, ResultStatus status = ResultStatus::Failed, String additionalErrorMessage = StringUtil::kBlank);
+		static TResult Fail(const char* errorMessage, ResultStatus status = ResultStatus::Failed, const String& additionalErrorMessage = StringUtil::kBlank);
+
+		/**
+		 * Creates the fail result object by inheriting the status from another result object. Other result object error message is appended
+		 * in the additional error message.
+		 *
+		 * @param	errorMessage			Error message describing the failure.
+		 * @param	childResult				Result from which to inherit the failure status and append the error message.
+		 * @param	additionalErrorMessage	Additional error message for information that cannot easily be stored in @p errorMessage. The other result's
+		 *									error message will be appended to this error message.
+		 * @return							Newly created TResult object.
+		 */
+		template<typename OtherType>
+		static TResult Fail(const char* errorMessage, TResult<OtherType>&& childResult, const String& additionalErrorMessage = StringUtil::kBlank);
+
+		/**
+		 * Creates the fail result object by inheriting the status from another result object. Other result object error message is appended
+		 * in the additional error message.
+		 *
+		 * @param	errorMessage			Error message describing the failure.
+		 * @param	childResult				Result from which to inherit the failure status and append the error message.
+		 * @param	additionalErrorMessage	Additional error message for information that cannot easily be stored in @p errorMessage. The other result's
+		 *									error message will be appended to this error message.
+		 * @return							Newly created TResult object.
+		 */
+		static TResult Fail(const char* errorMessage, Result&& childResult, const String& additionalErrorMessage = StringUtil::kBlank);
 
 		ResultStatus Status = ResultStatus::Failed;
 		const char* ErrorMessage = nullptr;
@@ -105,14 +133,50 @@ namespace bs
 		 */
 		static Result Fail(const char* errorMessage, ResultStatus status = ResultStatus::Failed, String additionalErrorMessage = StringUtil::kBlank);
 
+		/**
+		 * Creates the fail result object by inheriting the status from another result object. Other result object error message is appended
+		 * in the additional error message.
+		 *
+		 * @param	errorMessage			Error message describing the failure.
+		 * @param	childResult				Result from which to inherit the failure status and append the error message.
+		 * @param	additionalErrorMessage	Additional error message for information that cannot easily be stored in @p errorMessage. The other result's
+		 *									error message will be appended to this error message.
+		 * @return							Newly created TResult object.
+		 */
+		template<typename OtherType>
+		static Result Fail(const char* errorMessage, TResult<OtherType>&& childResult, const String& additionalErrorMessage = StringUtil::kBlank);
+
+		/**
+		 * Creates the fail result object by inheriting the status from another result object. Other result object error message is appended
+		 * in the additional error message.
+		 *
+		 * @param	errorMessage			Error message describing the failure.
+		 * @param	childResult				Result from which to inherit the failure status and append the error message.
+		 * @param	additionalErrorMessage	Additional error message for information that cannot easily be stored in @p errorMessage. The other result's
+		 *									error message will be appended to this error message.
+		 * @return							Newly created TResult object.
+		 */
+		static Result Fail(const char* errorMessage, Result&& childResult, const String& additionalErrorMessage = StringUtil::kBlank);
+
 		ResultStatus Status = ResultStatus::Failed;
 		const char* ErrorMessage = nullptr;
 		String AdditionalErrorMessage;
 
 	private:
+		template <typename T> friend struct TResult;
+
 		Result(ResultStatus status, const char* errorMessage, String additionalErrorMessage = StringUtil::kBlank);
 		Result(ResultStatus status);
 
+		/**
+		 * Combines error messages from two result objects into a string that can be used as an additional string object for the new result object.
+		 *
+		 * @param	additionalErrorMessage		Additional error message for the primary result object.
+		 * @param	childErrorMessage			Error message from the child result object. Can be null.
+		 * @param	childAdditionalErrorMessage Additional error message from the child result object.
+		 * @return								Combined string with all three error messages.
+		 */
+		static String CombineAdditionalErrorMessage(const String& additionalErrorMessage, const char* childErrorMessage, const String& childAdditionalErrorMessage);
 	};
 
 	template<typename T>
@@ -141,6 +205,18 @@ namespace bs
 	{ }
 
 	template<typename T>
+	template<typename OtherType>
+	TResult<T>::TResult(const TResult<OtherType>& other)
+		: Status(other.Status), ErrorMessage(other.ErrorMessage), AdditionalErrorMessage(other.AdditionalErrorMessage)
+	{ }
+
+	template<typename T>
+	template<typename OtherType>
+	TResult<T>::TResult(TResult<OtherType>&& other)
+		: Status(other.Status), ErrorMessage(other.ErrorMessage), AdditionalErrorMessage(std::move(other.AdditionalErrorMessage))
+	{ }
+
+	template<typename T>
 	bool TResult<T>::IsSuccessful() const { return Status == ResultStatus::Succeeded; }
 
 	template<typename T>
@@ -156,9 +232,24 @@ namespace bs
 	}
 
 	template<typename T>
-	TResult<T> TResult<T>::Fail(const char* errorMessage, ResultStatus status, String additionalErrorMessage)
+	TResult<T> TResult<T>::Fail(const char* errorMessage, ResultStatus status, const String& additionalErrorMessage)
 	{
-		return TResult(status, errorMessage, std::move(additionalErrorMessage));
+		return TResult(status, errorMessage, additionalErrorMessage);
+	}
+
+	template<typename T>
+	template<typename OtherType>
+	TResult<T> TResult<T>::Fail(const char* errorMessage, TResult<OtherType>&& childResult, const String& additionalErrorMessage)
+	{
+		String combinedAdditionalErrorMessage = Result::CombineAdditionalErrorMessage(additionalErrorMessage, childResult.ErrorMessage, childResult.AdditionalErrorMessage);
+		return TResult(childResult.Status, errorMessage, std::move(combinedAdditionalErrorMessage));
+	}
+
+	template<typename T>
+	TResult<T> TResult<T>::Fail(const char* errorMessage, Result&& childResult, const String& additionalErrorMessage)
+	{
+		String combinedAdditionalErrorMessage = Result::CombineAdditionalErrorMessage(additionalErrorMessage, childResult.ErrorMessage, childResult.AdditionalErrorMessage);
+		return TResult(childResult.Status, errorMessage, std::move(combinedAdditionalErrorMessage));
 	}
 
 	inline Result::Result(ResultStatus status, const char* errorMessage, String additionalErrorMessage)
@@ -189,6 +280,44 @@ namespace bs
 	inline Result Result::Fail(const char* errorMessage, ResultStatus status, String additionalErrorMessage)
 	{
 		return Result(status, errorMessage, std::move(additionalErrorMessage));
+	}
+
+	template<typename OtherType>
+	Result Result::Fail(const char* errorMessage, TResult<OtherType>&& childResult, const String& additionalErrorMessage)
+	{
+		String combinedAdditionalErrorMessage = Result::CombineAdditionalErrorMessage(additionalErrorMessage, childResult.ErrorMessage, childResult.AdditionalErrorMessage);
+		return Result(childResult.Status, errorMessage, std::move(combinedAdditionalErrorMessage));
+	}
+
+	inline Result Result::Fail(const char* errorMessage, Result&& childResult, const String& additionalErrorMessage)
+	{
+		String combinedAdditionalErrorMessage = Result::CombineAdditionalErrorMessage(additionalErrorMessage, childResult.ErrorMessage, childResult.AdditionalErrorMessage);
+		return Result(childResult.Status, errorMessage, std::move(combinedAdditionalErrorMessage));
+	}
+
+	/**
+	 * Combines error messages from two result objects into a string that can be used as an additional string object for the new result object.
+	 *
+	 * @param	additionalErrorMessage		Additional error message for the primary result object.
+	 * @param	childErrorMessage			Error message from the child result object. Can be null.
+	 * @param	childAdditionalErrorMessage Additional error message from the child result object.
+	 * @return								Combined string with all three error messages.
+	 */
+	inline String Result::CombineAdditionalErrorMessage(const String& additionalErrorMessage, const char* childErrorMessage, const String& childAdditionalErrorMessage)
+	{
+		StringStream combinedAdditionalErrorMessage;
+		if(!additionalErrorMessage.empty())
+			combinedAdditionalErrorMessage << additionalErrorMessage;
+
+		if(!additionalErrorMessage.empty() && (childErrorMessage != nullptr || !childAdditionalErrorMessage.empty()))
+			combinedAdditionalErrorMessage << "\n";
+
+		if(childErrorMessage != nullptr)
+			combinedAdditionalErrorMessage << "Child error: " << childErrorMessage << " " << childAdditionalErrorMessage;
+		else if(!childAdditionalErrorMessage.empty())
+			combinedAdditionalErrorMessage << "Child error: " << childAdditionalErrorMessage;
+
+		return combinedAdditionalErrorMessage.str();
 	}
 
 	/** @} */
