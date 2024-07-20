@@ -95,8 +95,6 @@ Texture::Texture(const TextureCreateInformation& createInformation)
 
 void Texture::Initialize()
 {
-	mSize = CalculateSize();
-
 	// Allocate CPU buffers if needed
 	if((mProperties.Usage & TU_CPUCACHED) != 0)
 	{

@@ -103,7 +103,6 @@ namespace bs
 		UUID mId;
 		TWeakResourceHandle<Resource> mSelfHandle;
 
-		u32 mSize;
 		SPtr<ResourceMetaData> mMetaData; // TODO - Deprecate this if possible
 
 		/**

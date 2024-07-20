@@ -34,7 +34,7 @@ namespace bs
 	public:
 		void OnOperationStarted(Mesh& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
-			if(operationType.IsSet(RTTIOperationType::ReadBit))
+			if(operationType.IsSet(RTTIOperationType::ReadBit) && operationType != RTTIOperationType::GatherReferences)
 			{
 				mMeshData = object.AllocBuffer();
 
