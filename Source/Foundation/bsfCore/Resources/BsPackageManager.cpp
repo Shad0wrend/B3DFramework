@@ -250,12 +250,6 @@ void PackageManager::ChangePhysicalPackagePath(const PackageWriteLock& packageWr
 
 void PackageManager::ChangeVirtualPackagePath(const PackageWriteLock& packageWriteLock, const Path& newVirtualPathPrefix)
 {
-	if(newVirtualPathPrefix.IsAbsolute())
-	{
-		B3D_LOG(Warning, Resources, "Cannot change virtual package path. Provided path '{0}' is not relative.", newVirtualPathPrefix);
-		return;
-	}
-
 	const SPtr<Package>& package = packageWriteLock.GetPackage();
 	const Path& oldVirtualPathPrefix = packageWriteLock.RuntimePackageInformation->VirtualPathPrefix;
 	{
