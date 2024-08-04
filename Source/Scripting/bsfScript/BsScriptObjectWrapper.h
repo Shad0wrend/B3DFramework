@@ -114,8 +114,26 @@ namespace bs
 		ScriptObjectWrapper(IScriptExportable* nativeObject, MonoObject* scriptObject);
 		virtual ~ScriptObjectWrapper();
 
+		MonoObject* GetScriptObject() const;
+
 		/** Called when the script system is notified that the script object has been destroyed. */
 		virtual void NotifyScriptObjectDestroyed(bool isDestroyedDueToScriptReload);
+
+		/**
+		 * If this method returns true, then the we will keep a strong reference to the script object as long as the native object is alive. Note this is only safe for
+		 * native objects that are explicitly destroyed, as the wrapper itself holds a strong reference to the native object and the object would never be freed if we only
+		 * rely on reference counting. Note when explicitly destroying the native object, you need to manually call NotifyNativeObjectDestroyed() from the destroy method.
+		 *
+		 * // TODO - The above approach might not work for e.g. resources. I might need to add a boolean to IScriptExportable that lets the object know if its being referenced
+		 * // from script or not. Then at certain intervals we can iterate over all script object wrappers and check objects that have their reference count at 1 with the
+		 * // script reference flag set. In such situation we can release the script object strong handle.
+		 * // - Actually this approach can be extended in the general case and we can keep strong handles in all cases, and don't need this method at all
+		 * // - TODO - What when the object gets referenced from native code again? e.g. a weak resource handle gets converted into a strong one. Then the
+		 * //   script object might get killed, but the native object is still alive. But in that case we might be okay to just re-create the script object?
+		 */
+		virtual bool ShouldKeepStrongReferenceToScriptObject() const { return false; }
+
+		void NotifyNativeObjectDestroyed() override;
 
 		/**
 		 * @name Script reload
@@ -139,7 +157,7 @@ namespace bs
 		 * Called on all script object wrappers when script reload is about to happen, after BackupDataBeforeScriptReload() is called. Allows the wrapper to
 		 * release any explicit strong handles it may be holding, so the object gets released correctly.
 		 */
-		virtual void ReleaseStrongHandlesBeforeScriptReload() { }
+		virtual void ReleaseStrongHandlesBeforeScriptReload();
 
 		/**
 		 * Called after script reload completes. This needs to recreate the internal script object, as the old one will have been destroyed during the reload.
@@ -154,6 +172,9 @@ namespace bs
 		virtual void RestoreDataAfterScriptReload(const ScriptObjectReloadPersistentData& data) { }
 
 		/** @} */
+
+	protected:
+		u32 mStrongScriptObjectHandle = ~0u;
 	};
 
 	template <typename NativeTypeContainer, typename SelfType, typename ScriptWrapperObjectBaseClass>
@@ -190,14 +211,39 @@ namespace bs
 
 		virtual ~TScriptObjectWrapper() = default;
 
+		/** Returns the storage object that is responsible for holding a strong reference to the native object. */
+		const ScriptExportedNativeObjectStorage<NativeTypeContainerType>& GetNativeObjectStorage() const { return mNativeObjectStorage; }
+
 		// TODO - Doc
 		virtual MonoObject* CreateScriptObject(bool construct)
 		{
 			return sInteropMetaData.ScriptClass->CreateInstance(construct);
 		}
 
+		void RecreateScriptObjectAfterScriptReload() override
+		{
+			MonoObject* const scriptObject = CreateScriptObject(true);
+
+			SelfType* self = (SelfType*)(ScriptWrapperObjectBaseClass*)this; // Needed due to multiple inheritance. Safe since SelfType must point to an class derived from this one.
+
+			if(sInteropMetaData.ThisPtrField != nullptr)
+				sInteropMetaData.ThisPtrField->Set(scriptObject, &self);
+		}
+
 		// TODO - Doc
-		static SelfType* ToNative(MonoObject* scriptObject)
+		static MonoObject* GetOrCreateScriptObjectWrapper(NativeTypeContainerType nativeObject)
+		{
+			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
+				return scriptObjectWrapper->GetScriptObject();
+
+			MonoObject* const scriptObject = SelfType::sInteropMetaData.ScriptClass->CreateInstance(false);
+			B3DNew<SelfType>(nativeObject, scriptObject);
+
+			return scriptObject;
+		}
+
+		/** Returns the script object wrapper associated with the provided script object. */
+		static SelfType* GetScriptObjectWrapper(MonoObject* scriptObject)
 		{
 			SelfType* scriptObjectWrapper = nullptr;
 
@@ -226,6 +272,10 @@ namespace bs
 		static ScriptMeta sInteropMetaData;
 		static InitializeScriptObjectWrapperOnLoadTime<NativeTypeContainerType, SelfType, ScriptWrapperObjectBaseClass> sInitializeOnLoadTime;
 
+		/**
+		 * Holds a strong reference to the native object and allows the object to be retrieved as shared pointer or a handle. Redundant raw pointer to this
+		 * same object is also kept in IScriptObjectWrapper::mNativeObject.
+		 */
 		ScriptExportedNativeObjectStorage<NativeTypeContainerType> mNativeObjectStorage;
 	};
 
