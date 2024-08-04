@@ -6,6 +6,7 @@
 #include "Serialization/BsScriptAssemblyManager.h"
 #include "Scene/BsGameObjectManager.h"
 #include "BsMonoAssembly.h"
+#include "BsScriptObjectWrapper.h"
 
 using namespace bs;
 ScriptObjectManager::~ScriptObjectManager()
@@ -23,9 +24,20 @@ void ScriptObjectManager::UnregisterScriptObject(ScriptObjectBase* instance)
 	mScriptObjects.erase(instance);
 }
 
+void ScriptObjectManager::RegisterScriptObjectWrapper(ScriptObjectWrapper* scriptObjectWrapper)
+{
+	mScriptObjectWrappers.insert(scriptObjectWrapper);
+}
+
+void ScriptObjectManager::UnregisterScriptObjectWrapper(ScriptObjectWrapper* scriptObjectWrapper)
+{
+	mScriptObjectWrappers.erase(scriptObjectWrapper);
+}
+
 void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& assemblies)
 {
 	Map<ScriptObjectBase*, ScriptObjectBackup> backupData;
+	UnorderedMap<IScriptObjectWrapper*, ScriptObjectReloadPersistentData> reloadPeristentDataMap;
 
 	OnRefreshStarted();
 
@@ -38,8 +50,18 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 	for(auto& scriptObject : mScriptObjects)
 		backupData[scriptObject] = scriptObject->BeginRefresh();
 
+	for(auto& scriptObjectWrapper : mScriptObjectWrappers)
+	{
+		Optional<ScriptObjectReloadPersistentData> reloadPersistentData = scriptObjectWrapper->BackupDataBeforeScriptReload();
+		if(reloadPersistentData.has_value())
+			reloadPeristentDataMap[scriptObjectWrapper] = *reloadPersistentData;
+	}
+
 	for(auto& scriptObject : mScriptObjects)
 		scriptObject->ClearManagedInstanceInternal();
+
+	for(auto& scriptObjectWrapper : mScriptObjectWrappers)
+		scriptObjectWrapper->ReleaseStrongHandlesBeforeScriptReload();
 
 	MonoManager::Instance().UnloadScriptDomain();
 
@@ -49,6 +71,11 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 
 	for(auto& scriptObject : mScriptObjects)
 		B3D_ASSERT(scriptObject->IsPersistent() && "Non-persistent ScriptObject alive after domain unload.");
+
+	for(auto& scriptObjectWrapper : mScriptObjectWrappers)
+	{
+		B3D_ENSURE(scriptObjectWrapper->ShouldPersistScriptReload());
+	}
 
 	ScriptAssemblyManager::Instance().ClearAssemblyInfo();
 
@@ -63,13 +90,31 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 	for(auto& scriptObject : mScriptObjects)
 		scriptObjCopy[idx++] = scriptObject;
 
+	TArray<ScriptObjectWrapper*> scriptObjectWrappersToRestore;
+	scriptObjectWrappersToRestore.Reserve((u64)mScriptObjects.size());
+
+	for(const auto& scriptObjectWrapper : mScriptObjectWrappers)
+		scriptObjectWrappersToRestore.Add(scriptObjectWrapper);
+
 	OnRefreshDomainLoaded();
 
 	for(auto& scriptObject : scriptObjCopy)
 		scriptObject->RestoreManagedInstanceInternal();
 
+	for(auto& scriptObjectWrapper : scriptObjectWrappersToRestore)
+		scriptObjectWrapper->RecreateScriptObjectAfterScriptReload();
+
 	for(auto& scriptObject : scriptObjCopy)
 		scriptObject->EndRefresh(backupData[scriptObject]);
+
+	for(auto& scriptObjectWrapper : scriptObjectWrappersToRestore)
+	{
+		const auto found = reloadPeristentDataMap.find(scriptObjectWrapper);
+		if(found == reloadPeristentDataMap.end())
+			continue;
+
+		scriptObjectWrapper->RestoreDataAfterScriptReload(found->second);
+	}
 
 	OnRefreshComplete();
 }
@@ -80,6 +125,8 @@ void ScriptObjectManager::NotifyObjectFinalized(ScriptObjectBase* instance)
 
 	Lock lock(mMutex);
 	mFinalizedObjects[mFinalizedQueueIdx].push_back(instance);
+
+	// TODO - Need to handle ScriptObjectWrapper types
 }
 
 void ScriptObjectManager::Update()
@@ -100,4 +147,9 @@ void ScriptObjectManager::ProcessFinalizedObjects(bool assemblyRefresh)
 		finalizedObj->OnManagedInstanceDeletedInternal(assemblyRefresh);
 
 	mFinalizedObjects[readQueueIdx].clear();
+
+	for(auto& finalizedScriptObjectWrapper : mFinalizedScriptObjectWrappers[readQueueIdx])
+		finalizedScriptObjectWrapper->NotifyScriptObjectDestroyed(assemblyRefresh);
+
+	mFinalizedScriptObjectWrappers[readQueueIdx].clear();
 }

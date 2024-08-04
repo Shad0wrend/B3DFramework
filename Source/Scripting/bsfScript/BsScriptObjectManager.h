@@ -8,6 +8,8 @@
 
 namespace bs
 {
+	class ScriptObjectWrapper;
+
 	/** @addtogroup bsfScript
 	 *  @{
 	 */
@@ -34,10 +36,16 @@ namespace bs
 		~ScriptObjectManager();
 
 		/**	Registers a newly created script interop object. */
-		void RegisterScriptObject(ScriptObjectBase* instance);
+		void RegisterScriptObject(ScriptObjectBase* instance); // TODO - Deprecated
 
 		/**	Unregisters a script interop object that is no longer valid. */
-		void UnregisterScriptObject(ScriptObjectBase* instance);
+		void UnregisterScriptObject(ScriptObjectBase* instance); // TODO - Deprecated
+
+		/**	Registers a newly created script object wrapper. */
+		void RegisterScriptObjectWrapper(ScriptObjectWrapper* scriptObjectWrapper);
+
+		/**	Unregisters a script object wrapper that is no longer valid. */
+		void UnregisterScriptObjectWrapper(ScriptObjectWrapper* scriptObjectWrapper);
 
 		/**
 		 * Refreshes the list of active assemblies. Unloads all current assemblies and loads the newly provided set. This
@@ -82,9 +90,11 @@ namespace bs
 		Event<void()> OnRefreshComplete;
 
 	private:
-		Set<ScriptObjectBase*> mScriptObjects;
+		Set<ScriptObjectBase*> mScriptObjects; // TODO - Deprecated
+		UnorderedSet<ScriptObjectWrapper*> mScriptObjectWrappers;
 
 		Vector<ScriptObjectBase*> mFinalizedObjects[2];
+		Vector<ScriptObjectWrapper*> mFinalizedScriptObjectWrappers[2];
 		u32 mFinalizedQueueIdx = 0;
 		Mutex mMutex;
 	};
