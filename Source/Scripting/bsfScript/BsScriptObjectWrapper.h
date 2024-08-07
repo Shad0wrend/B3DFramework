@@ -266,7 +266,7 @@ namespace bs
 
 		// TODO - Doc
 		template<typename Condition = NativeTypeContainerType, std::enable_if_t<!std::is_same_v<Condition, nullptr_t>, int> = 0>
-		static MonoObject* GetOrCreateScriptObjectWrapper(NativeTypeContainerType nativeObject)
+		static MonoObject* GetOrCreateScriptObject(NativeTypeContainerType nativeObject)
 		{
 			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
 				return scriptObjectWrapper->GetScriptObject();
