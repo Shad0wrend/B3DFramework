@@ -41,94 +41,39 @@ namespace bs
 		Any Data; // TODO - Don't use Any
 	};
 
-	// TODO - Doc
-	template<typename NativeObjectType>
-	class ScriptExportedNativeObjectStorage
+	/** Contains mapping between a native object type and its script export wrapper type. */
+	template<class NativeObjectType>
+	struct TScriptExportedTypeInformation
 	{
-	public:
-		using NativeType = void;
+		const ScriptMeta* ScriptMetaData = nullptr;
+		u32 TypeId = ~0u; /*< RTTI ID of the native object. */
+		MonoClass* ScriptClass = nullptr;
+		std::function<MonoObject*(const NativeObjectType&)> CreateCallback;
 	};
 
 	// TODO - Doc
-	template<typename NativeObjectType>
-	class ScriptExportedNativeObjectStorage<SPtr<NativeObjectType>>
+	struct ScriptExportedTypeMappings
 	{
-	public:
-		using NativeType = NativeObjectType;
-
-		ScriptExportedNativeObjectStorage(SPtr<NativeObjectType> nativeObject)
-			:mNativeObject(std::move(nativeObject))
-		{ }
+		// TODO - Doc
+		static TArray<TScriptExportedTypeInformation<HResource>>& GetResourceTypeMappings()
+		{
+			static TArray<TScriptExportedTypeInformation<HResource>> sEntries;
+			return sEntries;
+		}
+		
+		// TODO - Doc
+		static TArray<TScriptExportedTypeInformation<HGameObject>>& GetGameObjectTypeMappings()
+		{
+			static TArray<TScriptExportedTypeInformation<HGameObject>> sEntries;
+			return sEntries;
+		}
 
 		// TODO - Doc
-		NativeObjectType* Get() const { return mNativeObject.get(); }
-
-		// TODO - Doc
-		const SPtr<NativeObjectType>& GetShared() const { return mNativeObject; }
-
-		// TODO - Doc
-		void Clear() { mNativeObject = nullptr; }
-
-		// TODO - Doc
-		static NativeObjectType* GetRawPointer(const SPtr<NativeObjectType>& object) { return object.get(); }
-	private:
-		SPtr<NativeObjectType> mNativeObject;
-	};
-
-	// TODO - Doc
-	template<typename NativeObjectType>
-	class ScriptExportedNativeObjectStorage<TResourceHandle<NativeObjectType>>
-	{
-		using NativeType = NativeObjectType;
-
-		ScriptExportedNativeObjectStorage(TResourceHandle<NativeObjectType> nativeObject)
-			:mNativeObject(std::move(nativeObject))
-		{ }
-
-		// TODO - Doc
-		NativeObjectType* Get() const { return mNativeObject.Get(); }
-
-		// TODO - Doc
-		const SPtr<NativeObjectType>& GetShared() const { return mNativeObject.GetShared(); }
-
-		// TODO - Doc
-		const TResourceHandle<NativeObjectType>& GetHandle() const { return mNativeObject; }
-
-		// TODO - Doc
-		void Clear() { mNativeObject = nullptr; }
-
-		// TODO - Doc
-		static NativeObjectType* GetRawPointer(const TResourceHandle<NativeObjectType>& object) { return object.Get(); }
-	private:
-		TResourceHandle<NativeObjectType> mNativeObject;
-	};
-
-	// TODO - Doc
-	template<typename NativeObjectType>
-	class ScriptExportedNativeObjectStorage<GameObjectHandle<NativeObjectType>>
-	{
-		using NativeType = NativeObjectType;
-
-		ScriptExportedNativeObjectStorage(GameObjectHandle<NativeObjectType> nativeObject)
-			:mNativeObject(std::move(nativeObject))
-		{ }
-
-		// TODO - Doc
-		NativeObjectType* Get() const { return mNativeObject.Get(); }
-
-		// TODO - Doc
-		const SPtr<NativeObjectType>& GetShared() const { return mNativeObject.GetShared(); }
-
-		// TODO - Doc
-		const GameObjectHandle<NativeObjectType>& GetHandle() const { return mNativeObject; }
-
-		// TODO - Doc
-		void Clear() { mNativeObject = nullptr; }
-
-		// TODO - Doc
-		static NativeObjectType* GetRawPointer(const GameObjectHandle<NativeObjectType>& object) { return object.Get(); }
-	private:
-		GameObjectHandle<NativeObjectType> mNativeObject;
+		static TArray<TScriptExportedTypeInformation<SPtr<IReflectable>>>& GetReflectableTypeMappings()
+		{
+			static TArray<TScriptExportedTypeInformation<SPtr<IReflectable>>> sEntries;
+			return sEntries;
+		}
 	};
 
 	// TODO - Doc
@@ -202,113 +147,41 @@ namespace bs
 		u32 mStrongScriptObjectHandle = ~0u;
 	};
 
-	template <typename NativeTypeContainer, typename SelfType, typename ScriptWrapperObjectBaseClass>
+	template <typename SelfType>
 	class TScriptObjectWrapper;
 
 	// TODO - Doc
-	template <typename NativeTypeContainer, typename SelfType, typename ScriptWrapperObjectBaseClass>
+	template <typename SelfType>
 	struct InitializeScriptObjectWrapperOnLoadTime
 	{
 	public:
 		InitializeScriptObjectWrapperOnLoadTime()
 		{
-			TScriptObjectWrapper<NativeTypeContainer, SelfType, ScriptWrapperObjectBaseClass>::InitializeMetaDataAtLoadTime();
+			TScriptObjectWrapper<SelfType>::InitializeMetaDataAtLoadTime();
 		}
 
 		void MakeSureIAmInstantiated() {}
 	};
 
 	/**	Template version of ScriptObjectBase populates the object meta-data on library load. */
-	template <typename NativeTypeContainerType, typename SelfType, typename ScriptWrapperObjectBaseClass = ScriptObjectWrapper>
-	class TScriptObjectWrapper : public ScriptWrapperObjectBaseClass 
+	template <typename SelfType>
+	class TScriptObjectWrapper : public ScriptObjectWrapper 
 	{
 	public:
-		using NativeType = typename ScriptExportedNativeObjectStorage<NativeTypeContainerType>::NativeType;
-
-		/** Constructor for wrappers that are expected to be instantiated (non-abstract types). */
-		template<typename Condition = NativeTypeContainerType, std::enable_if_t<!std::is_same_v<Condition, nullptr_t>, int> = 0>
-		TScriptObjectWrapper(NativeTypeContainerType nativeObject, MonoObject* scriptObject)
-			: ScriptWrapperObjectBaseClass(ScriptExportedNativeObjectStorage<NativeTypeContainerType>::GetRawPointer(nativeObject), scriptObject), mNativeObjectStorage(std::move(nativeObject))
+		TScriptObjectWrapper(IScriptExportable* nativeObject, MonoObject* scriptObject)
+			: ScriptObjectWrapper(nativeObject, scriptObject)
 		{
 			sInitializeOnLoadTime.MakeSureIAmInstantiated();
-
-			SelfType* self = (SelfType*)(ScriptWrapperObjectBaseClass*)this; // Needed due to multiple inheritance. Safe since SelfType must point to an class derived from this one.
-
-			if(sInteropMetaData.ScriptObjectWrapperPointerField != nullptr)
-				sInteropMetaData.ScriptObjectWrapperPointerField->Set(scriptObject, &self);
-
-			if(sInteropMetaData.IsUsingNewScriptObjectManagerField != nullptr)
-			{
-				i32 value = 1;
-				sInteropMetaData.IsUsingNewScriptObjectManagerField->Set(scriptObject, &value);
-			}
-		}
-
-		/** Constructors for wrappers that won't be instantiated (abstract types). Those wrappers only provide interop bindings and don't do lifetime tracking. */
-		template<typename Condition = NativeTypeContainerType, std::enable_if_t<std::is_same_v<Condition, nullptr_t>, int> = 0>
-		TScriptObjectWrapper(MonoObject* scriptObject)
-			: ScriptWrapperObjectBaseClass(nullptr, scriptObject)
-		{
-			sInitializeOnLoadTime.MakeSureIAmInstantiated();
-
-			SelfType* self = (SelfType*)(ScriptWrapperObjectBaseClass*)this; // Needed due to multiple inheritance. Safe since SelfType must point to an class derived from this one.
-
-			if(sInteropMetaData.ScriptObjectWrapperPointerField != nullptr)
-				sInteropMetaData.ScriptObjectWrapperPointerField->Set(scriptObject, &self);
-
-			if(sInteropMetaData.IsUsingNewScriptObjectManagerField != nullptr)
-			{
-				i32 value = 1;
-				sInteropMetaData.IsUsingNewScriptObjectManagerField->Set(scriptObject, &value);
-			}
+			BindSelfToScriptObject(scriptObject);
 		}
 
 		virtual ~TScriptObjectWrapper() = default;
 
-		/** Returns the storage object that is responsible for holding a strong reference to the native object. */
-		const ScriptExportedNativeObjectStorage<NativeTypeContainerType>& GetNativeObjectStorage() const { return mNativeObjectStorage; }
-
-		/** Returns the wrapped native object as a shared pointer. */
-		template <typename NativeTypeLocal = NativeType, std::enable_if_t<B3DHasGetShared<NativeTypeLocal>::value, int> = 0>
-		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStorage.GetShared(); }
-
-		/** Returns the wrapped native object as a handle. */
-		template <typename NativeTypeLocal = NativeType, std::enable_if_t<B3DHasGetHandle<NativeTypeLocal>::value, int> = 0>
-		const SPtr<NativeType>& GetNativeObjectAsHandle() const { return mNativeObjectStorage.GetHandle(); }
-
 		// TODO - Doc
-		virtual MonoObject* CreateScriptObject(bool construct)
-		{
-			return sInteropMetaData.ScriptClass->CreateInstance(construct);
-		}
-
 		void RecreateScriptObjectAfterScriptReload() override
 		{
-			MonoObject* const scriptObject = CreateScriptObject(true);
-
-			SelfType* self = (SelfType*)(ScriptWrapperObjectBaseClass*)this; // Needed due to multiple inheritance. Safe since SelfType must point to an class derived from this one.
-
-			if(sInteropMetaData.ScriptObjectWrapperPointerField != nullptr)
-				sInteropMetaData.ScriptObjectWrapperPointerField->Set(scriptObject, &self);
-
-			if(sInteropMetaData.IsUsingNewScriptObjectManagerField != nullptr)
-			{
-				i32 value = 1;
-				sInteropMetaData.IsUsingNewScriptObjectManagerField->Set(scriptObject, &value);
-			}
-		}
-
-		// TODO - Doc
-		template<typename Condition = NativeTypeContainerType, std::enable_if_t<!std::is_same_v<Condition, nullptr_t>, int> = 0>
-		static MonoObject* GetOrCreateScriptObject(NativeTypeContainerType nativeObject)
-		{
-			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
-				return scriptObjectWrapper->GetScriptObject();
-
-			MonoObject* const scriptObject = SelfType::sInteropMetaData.ScriptClass->CreateInstance(false);
-			B3DNew<SelfType>(nativeObject, scriptObject);
-
-			return scriptObject;
+			MonoObject* const scriptObject = SelfType::CreateScriptObject(true);
+			BindSelfToScriptObject(scriptObject);
 		}
 
 		/** Returns the script object wrapper associated with the provided script object. */
@@ -333,37 +206,214 @@ namespace bs
 			ScriptMeta localMetaData = ScriptMeta(SelfType::GetAssemblyName(), SelfType::GetNamespace(), SelfType::GetTypeName(), &SelfType::SetupScriptBindings);
 
 			MonoManager::RegisterScriptType(&sInteropMetaData, localMetaData);
+			SelfType::RegisterNativeToScriptTypeMapping();
 		}
 
-		// TODO - When object is finalized, ScriptObjectManager needs to notify ScriptObjectWrapper
-
 	protected:
-		static ScriptMeta sInteropMetaData;
-		static InitializeScriptObjectWrapperOnLoadTime<NativeTypeContainerType, SelfType, ScriptWrapperObjectBaseClass> sInitializeOnLoadTime;
+		// TODO - Doc
+		void BindSelfToScriptObject(MonoObject* scriptObject)
+		{
+			SelfType* self = (SelfType*)(ScriptObjectWrapper*)this; // Needed due to multiple inheritance. Safe since SelfType must point to an class derived from this one.
 
-		/**
-		 * Holds a strong reference to the native object and allows the object to be retrieved as shared pointer or a handle. Redundant raw pointer to this
-		 * same object is also kept in IScriptObjectWrapper::mNativeObject.
-		 */
-		ScriptExportedNativeObjectStorage<NativeTypeContainerType> mNativeObjectStorage;
+			if(sInteropMetaData.ScriptObjectWrapperPointerField != nullptr)
+				sInteropMetaData.ScriptObjectWrapperPointerField->Set(scriptObject, &self);
+
+			if(sInteropMetaData.IsUsingNewScriptObjectManagerField != nullptr)
+			{
+				i32 value = 1;
+				sInteropMetaData.IsUsingNewScriptObjectManagerField->Set(scriptObject, &value);
+			}
+		}
+
+		static ScriptMeta sInteropMetaData;
+		static InitializeScriptObjectWrapperOnLoadTime<SelfType> sInitializeOnLoadTime;
 	};
 
-	template <typename NativeTypeContainerType, typename SelfType, typename ScriptWrapperObjectBaseClass>
-	InitializeScriptObjectWrapperOnLoadTime<NativeTypeContainerType, SelfType, ScriptWrapperObjectBaseClass> TScriptObjectWrapper<NativeTypeContainerType, SelfType, ScriptWrapperObjectBaseClass>::sInitializeOnLoadTime;
+	template <typename SelfType>
+	InitializeScriptObjectWrapperOnLoadTime<SelfType> TScriptObjectWrapper<SelfType>::sInitializeOnLoadTime;
 
-	template <typename NativeTypeContainerType, typename SelfType, typename ScriptWrapperObjectBaseClass>
-	ScriptMeta TScriptObjectWrapper<NativeTypeContainerType, SelfType, ScriptWrapperObjectBaseClass>::sInteropMetaData;
+	template <typename SelfType>
+	ScriptMeta TScriptObjectWrapper<SelfType>::sInteropMetaData;
 
 	/**	Specialized version of TScriptObjectWrapper that should be used for types that are never going to be explicitly instantiated (e.g. singletons, static-only classes and base classes). */
-	template <typename SelfType, typename ScriptWrapperObjectBaseClass = ScriptObjectWrapper>
-	class TNonInstantiableScriptObjectWrapper : public TScriptObjectWrapper<nullptr_t, SelfType, ScriptWrapperObjectBaseClass>
+	template <typename SelfType>
+	class TNonInstantiableScriptObjectWrapper : public TScriptObjectWrapper<SelfType>
 	{
 	public:
 		TNonInstantiableScriptObjectWrapper(MonoObject* scriptObject)
-			:TScriptObjectWrapper<nullptr_t, SelfType, ScriptWrapperObjectBaseClass>(scriptObject)
+			:TScriptObjectWrapper<SelfType>(nullptr, scriptObject)
 		{ }
+
+		// TODO - Doc
+		static MonoObject* CreateScriptObject(bool construct)
+		{
+			return nullptr;
+		}
+
+	protected:
+		friend class TScriptObjectWrapper<SelfType>;
+
+		// TODO - Doc
+		static void RegisterNativeToScriptTypeMapping()
+		{
+			// Do nothing
+		}
 	};
 
+	// TODO - Doc
+	template<typename NativeType, typename SelfType>
+	class TScriptReflectableWrapper : public TScriptObjectWrapper<SelfType> // TODO - Move to own file
+	{
+	public:
+		TScriptReflectableWrapper(const SPtr<NativeType>& nativeObject, MonoObject* scriptObject)
+			: TScriptObjectWrapper<SelfType>(nativeObject.get(), scriptObject), mNativeObjectStrongHandle(nativeObject)
+		{ }
+
+		/** Returns the wrapped native object as a shared pointer. */
+		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle; }
+
+		// TODO - Doc
+		static MonoObject* CreateScriptObjectAndWrapper(const SPtr<IReflectable>& nativeObject)
+		{
+			MonoObject* const scriptObject = SelfType::CreateScriptObject(false);
+			B3DNew<SelfType>(B3DRTTICast<NativeType>(nativeObject), scriptObject);
+
+			return scriptObject;
+		}
+
+		// TODO - Doc
+		static MonoObject* GetOrCreateScriptObject(const SPtr<NativeType>& nativeObject)
+		{
+			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
+				return scriptObjectWrapper->GetScriptObject();
+
+			// TODO - This needs to perform RTTI ID lookup and call the creation callback on the returned info
+			return CreateScriptObjectAndWrapper(nativeObject);
+		}
+
+	protected:
+		friend class TScriptObjectWrapper<SelfType>;
+
+		// TODO - Doc
+		static void RegisterNativeToScriptTypeMapping()
+		{
+			TScriptExportedTypeInformation<SPtr<IReflectable>> typeMappingInformation;
+			typeMappingInformation.TypeId = NativeType::GetRttiStatic()->GetRttiId();
+			typeMappingInformation.ScriptClass = nullptr; // Populated later
+			typeMappingInformation.ScriptMetaData = &SelfType::sInteropMetaData;
+			typeMappingInformation.CreateCallback = &CreateScriptObjectAndWrapper;
+
+			ScriptExportedTypeMappings::GetReflectableTypeMappings().Add(typeMappingInformation);
+		}
+
+		SPtr<NativeType> mNativeObjectStrongHandle;
+	};
+
+	// TODO - Doc
+	template<typename NativeType, typename SelfType>
+	class TScriptGameObjectWrapper : public TScriptObjectWrapper<SelfType> // TODO - Move to own file
+	{
+	public:
+		TScriptGameObjectWrapper(const GameObjectHandle<NativeType>& nativeObject, MonoObject* scriptObject)
+			: TScriptObjectWrapper<SelfType>(nativeObject.Get(), scriptObject), mNativeObjectStrongHandle(nativeObject)
+		{ }
+
+		/** Returns the wrapped native object as a shared pointer. */
+		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle.GetShared(); }
+
+		/** Returns the wrapped native object as a handle. */
+		const GameObjectHandle<NativeType>& GetNativeObjectAsHandle() const { return mNativeObjectStrongHandle; }
+
+		// TODO - Doc
+		static MonoObject* CreateScriptObjectAndWrapper(const HGameObject& nativeObject)
+		{
+			MonoObject* const scriptObject = SelfType::CreateScriptObject(false);
+			B3DNew<SelfType>(B3DStaticGameObjectCast<NativeType>(nativeObject), scriptObject);
+
+			return scriptObject;
+		}
+
+		// TODO - Doc
+		static MonoObject* GetOrCreateScriptObject(const GameObjectHandle<NativeType>& nativeObject)
+		{
+			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
+				return scriptObjectWrapper->GetScriptObject();
+
+			// TODO - This needs to perform RTTI ID lookup and call the creation callback on the returned info
+			return CreateScriptObjectAndWrapper(nativeObject);
+		}
+
+	protected:
+		friend class TScriptObjectWrapper<SelfType>;
+
+		// TODO - Doc
+		static void RegisterNativeToScriptTypeMapping()
+		{
+			TScriptExportedTypeInformation<HGameObject> typeMappingInformation;
+			typeMappingInformation.TypeId = NativeType::GetRttiStatic()->GetRttiId();
+			typeMappingInformation.ScriptClass = nullptr; // Populated later
+			typeMappingInformation.ScriptMetaData = &SelfType::sInteropMetaData;
+			typeMappingInformation.CreateCallback = &CreateScriptObjectAndWrapper;
+
+			ScriptExportedTypeMappings::GetGameObjectTypeMappings().Add(typeMappingInformation);
+		}
+
+		GameObjectHandle<NativeType> mNativeObjectStrongHandle;
+	};
+
+	// TODO - Doc
+	template<typename NativeType, typename SelfType>
+	class TScriptResourceWrapper : public TScriptObjectWrapper<SelfType> // TODO - Move to own file
+	{
+	public:
+		TScriptResourceWrapper(const TResourceHandle<NativeType>& nativeObject, MonoObject* scriptObject)
+			: TScriptObjectWrapper<SelfType>(nativeObject.Get(), scriptObject), mNativeObjectStrongHandle(nativeObject)
+		{ }
+
+		/** Returns the wrapped native object as a shared pointer. */
+		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle.GetShared(); }
+
+		/** Returns the wrapped native object as a handle. */
+		const TResourceHandle<NativeType>& GetNativeObjectAsHandle() const { return mNativeObjectStrongHandle; }
+
+		// TODO - Doc
+		static MonoObject* CreateScriptObjectAndWrapper(const HResource& nativeObject)
+		{
+			MonoObject* const scriptObject = SelfType::CreateScriptObject(false);
+			B3DNew<SelfType>(B3DStaticResourceCast<NativeType>(nativeObject), scriptObject);
+
+			return scriptObject;
+		}
+
+		// TODO - Doc
+		static MonoObject* GetOrCreateScriptObject(const TResourceHandle<NativeType>& nativeObject)
+		{
+			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
+				return scriptObjectWrapper->GetScriptObject();
+
+			// TODO - This needs to perform RTTI ID lookup and call the creation callback on the returned info
+			return CreateScriptObjectAndWrapper(nativeObject);
+		}
+
+	protected:
+		friend class TScriptObjectWrapper<SelfType>;
+
+		// TODO - Doc
+		static void RegisterNativeToScriptTypeMapping()
+		{
+			TScriptExportedTypeInformation<HResource> typeMappingInformation;
+			typeMappingInformation.TypeId = NativeType::GetRttiStatic()->GetRttiId();
+			typeMappingInformation.ScriptClass = nullptr; // Populated later
+			typeMappingInformation.ScriptMetaData = &SelfType::sInteropMetaData;
+			typeMappingInformation.CreateCallback = &CreateScriptObjectAndWrapper;
+
+			ScriptExportedTypeMappings::GetResourceTypeMappings().Add(typeMappingInformation);
+		}
+
+		TResourceHandle<NativeType> mNativeObjectStrongHandle;
+	};
+
+	// TODO - Add wrapper for GUI elements and non-reflectable classes
 
 	// TODO - Doc
 #define B3D_SCRIPT_OBJECT_WRAPPER(Assembly, Namespace, Name) \
