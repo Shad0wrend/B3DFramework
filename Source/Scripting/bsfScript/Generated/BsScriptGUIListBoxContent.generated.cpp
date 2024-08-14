@@ -32,17 +32,17 @@ namespace bs
 		Vector<HString> vecElements;
 		if(value.Elements != nullptr)
 		{
-			ScriptArray arrayElements(value.Elements);
-			vecElements.resize(arrayElements.Size());
-			for(int i = 0; i < (int)arrayElements.Size(); i++)
+			ScriptArray scriptArrayElements(value.Elements);
+			vecElements.resize(scriptArrayElements.Size());
+			for(int elementIndex = 0; elementIndex < (int)scriptArrayElements.Size(); elementIndex++)
 			{
-				ScriptLocString* scriptElements;
-				scriptElements = ScriptLocString::ToNative(arrayElements.Get<MonoObject*>(i));
-				if(scriptElements != nullptr)
+				ScriptLocString* scriptWrapperObjectElements;
+				scriptWrapperObjectElements = ScriptLocString::ToNative(scriptArrayElements.Get<MonoObject*>(elementIndex));
+				if(scriptWrapperObjectElements != nullptr)
 				{
-					SPtr<HString> arrayElemPtrElements = scriptElements->GetInternal();
-					if(arrayElemPtrElements)
-						vecElements[i] = *arrayElemPtrElements;
+					SPtr<HString> arrayElementPointerElements = scriptWrapperObjectElements->GetInternal();
+					if(arrayElementPointerElements)
+						vecElements[elementIndex] = *arrayElementPointerElements;
 				}
 			}
 		}
@@ -55,18 +55,18 @@ namespace bs
 	__GUIListBoxContentInterop ScriptGUIListBoxContent::ToInterop(const GUIListBoxContent& value)
 	{
 		__GUIListBoxContentInterop output;
-		int arraySizeElements = (int)value.Elements.size();
+		int elementCountElements = (int)value.Elements.size();
 		MonoArray* vecElements;
-		ScriptArray arrayElements = ScriptArray::Create<ScriptLocString>(arraySizeElements);
-		for(int i = 0; i < arraySizeElements; i++)
+		ScriptArray scriptArrayElements = ScriptArray::Create<ScriptLocString>(elementCountElements);
+		for(int elementIndex = 0; elementIndex < elementCountElements; elementIndex++)
 		{
-			SPtr<HString> arrayElemPtrElements = B3DMakeShared<HString>();
-			*arrayElemPtrElements = value.Elements[i];
-			MonoObject* arrayElemElements;
-			arrayElemElements = ScriptLocString::Create(arrayElemPtrElements);
-			arrayElements.Set(i, arrayElemElements);
+			SPtr<HString> arrayElementPointerElements = B3DMakeShared<HString>();
+			*arrayElementPointerElements = value.Elements[elementIndex];
+			MonoObject* arrayElementElements;
+			arrayElementElements = ScriptLocString::Create(arrayElementPointerElements);
+			scriptArrayElements.Set(elementIndex, arrayElementElements);
 		}
-		vecElements = arrayElements.GetInternal();
+		vecElements = scriptArrayElements.GetInternal();
 		output.Elements = vecElements;
 		output.AllowMultiselect = value.AllowMultiselect;
 

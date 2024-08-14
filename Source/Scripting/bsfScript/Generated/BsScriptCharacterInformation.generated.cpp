@@ -44,11 +44,11 @@ namespace bs
 		Vector<KerningPair> vecKerningPairs;
 		if(value.KerningPairs != nullptr)
 		{
-			ScriptArray arrayKerningPairs(value.KerningPairs);
-			vecKerningPairs.resize(arrayKerningPairs.Size());
-			for(int i = 0; i < (int)arrayKerningPairs.Size(); i++)
+			ScriptArray scriptArrayKerningPairs(value.KerningPairs);
+			vecKerningPairs.resize(scriptArrayKerningPairs.Size());
+			for(int elementIndex = 0; elementIndex < (int)scriptArrayKerningPairs.Size(); elementIndex++)
 			{
-				vecKerningPairs[i] = arrayKerningPairs.Get<KerningPair>(i);
+				vecKerningPairs[elementIndex] = scriptArrayKerningPairs.Get<KerningPair>(elementIndex);
 			}
 		}
 		output.KerningPairs = vecKerningPairs;
@@ -71,14 +71,14 @@ namespace bs
 		output.YOffset = value.YOffset;
 		output.XAdvance = value.XAdvance;
 		output.YAdvance = value.YAdvance;
-		int arraySizeKerningPairs = (int)value.KerningPairs.size();
+		int elementCountKerningPairs = (int)value.KerningPairs.size();
 		MonoArray* vecKerningPairs;
-		ScriptArray arrayKerningPairs = ScriptArray::Create<ScriptKerningPair>(arraySizeKerningPairs);
-		for(int i = 0; i < arraySizeKerningPairs; i++)
+		ScriptArray scriptArrayKerningPairs = ScriptArray::Create<ScriptKerningPair>(elementCountKerningPairs);
+		for(int elementIndex = 0; elementIndex < elementCountKerningPairs; elementIndex++)
 		{
-			arrayKerningPairs.Set(i, value.KerningPairs[i]);
+			scriptArrayKerningPairs.Set(elementIndex, value.KerningPairs[elementIndex]);
 		}
-		vecKerningPairs = arrayKerningPairs.GetInternal();
+		vecKerningPairs = scriptArrayKerningPairs.GetInternal();
 		output.KerningPairs = vecKerningPairs;
 
 		return output;

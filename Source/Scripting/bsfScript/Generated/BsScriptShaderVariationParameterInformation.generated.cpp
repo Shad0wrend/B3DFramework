@@ -39,11 +39,11 @@ namespace bs
 		TInlineArray<ShaderVariationParameterValue, 4> vecValues;
 		if(value.Values != nullptr)
 		{
-			ScriptArray arrayValues(value.Values);
-			vecValues.resize(arrayValues.Size());
-			for(int i = 0; i < (int)arrayValues.Size(); i++)
+			ScriptArray scriptArrayValues(value.Values);
+			vecValues.resize(scriptArrayValues.Size());
+			for(int elementIndex = 0; elementIndex < (int)scriptArrayValues.Size(); elementIndex++)
 			{
-				vecValues[i] = ScriptShaderVariationParameterValue::FromInterop(arrayValues.Get<__ShaderVariationParameterValueInterop>(i));
+				vecValues[elementIndex] = ScriptShaderVariationParameterValue::FromInterop(scriptArrayValues.Get<__ShaderVariationParameterValueInterop>(elementIndex));
 			}
 		}
 		output.Values = vecValues;
@@ -61,14 +61,14 @@ namespace bs
 		tmpIdentifier = MonoUtil::StringToMono(value.Identifier);
 		output.Identifier = tmpIdentifier;
 		output.IsInternal = value.IsInternal;
-		int arraySizeValues = (int)value.Values.size();
+		int elementCountValues = (int)value.Values.size();
 		MonoArray* vecValues;
-		ScriptArray arrayValues = ScriptArray::Create<ScriptShaderVariationParameterValue>(arraySizeValues);
-		for(int i = 0; i < arraySizeValues; i++)
+		ScriptArray scriptArrayValues = ScriptArray::Create<ScriptShaderVariationParameterValue>(elementCountValues);
+		for(int elementIndex = 0; elementIndex < elementCountValues; elementIndex++)
 		{
-			arrayValues.Set(i, ScriptShaderVariationParameterValue::ToInterop(value.Values[i]));
+			scriptArrayValues.Set(elementIndex, ScriptShaderVariationParameterValue::ToInterop(value.Values[elementIndex]));
 		}
-		vecValues = arrayValues.GetInternal();
+		vecValues = scriptArrayValues.GetInternal();
 		output.Values = vecValues;
 
 		return output;

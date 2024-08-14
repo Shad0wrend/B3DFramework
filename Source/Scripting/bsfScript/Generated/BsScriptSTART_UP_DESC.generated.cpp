@@ -53,11 +53,11 @@ namespace bs
 		Vector<String> vecImporters;
 		if(value.Importers != nullptr)
 		{
-			ScriptArray arrayImporters(value.Importers);
-			vecImporters.resize(arrayImporters.Size());
-			for(int i = 0; i < (int)arrayImporters.Size(); i++)
+			ScriptArray scriptArrayImporters(value.Importers);
+			vecImporters.resize(scriptArrayImporters.Size());
+			for(int elementIndex = 0; elementIndex < (int)scriptArrayImporters.Size(); elementIndex++)
 			{
-				vecImporters[i] = arrayImporters.Get<String>(i);
+				vecImporters[elementIndex] = scriptArrayImporters.Get<String>(elementIndex);
 			}
 		}
 		output.Importers = vecImporters;
@@ -88,14 +88,14 @@ namespace bs
 		__RENDER_WINDOW_DESCInterop tmpPrimaryWindowDesc;
 		tmpPrimaryWindowDesc = ScriptRenderWindowDesc::ToInterop(value.PrimaryWindowDesc);
 		output.PrimaryWindowDesc = tmpPrimaryWindowDesc;
-		int arraySizeImporters = (int)value.Importers.size();
+		int elementCountImporters = (int)value.Importers.size();
 		MonoArray* vecImporters;
-		ScriptArray arrayImporters = ScriptArray::Create<String>(arraySizeImporters);
-		for(int i = 0; i < arraySizeImporters; i++)
+		ScriptArray scriptArrayImporters = ScriptArray::Create<String>(elementCountImporters);
+		for(int elementIndex = 0; elementIndex < elementCountImporters; elementIndex++)
 		{
-			arrayImporters.Set(i, value.Importers[i]);
+			scriptArrayImporters.Set(elementIndex, value.Importers[elementIndex]);
 		}
-		vecImporters = arrayImporters.GetInternal();
+		vecImporters = scriptArrayImporters.GetInternal();
 		output.Importers = vecImporters;
 
 		return output;
