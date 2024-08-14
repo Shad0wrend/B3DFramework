@@ -32,17 +32,17 @@ namespace bs
 	{
 		PARTICLE_SIZE_DESC output;
 		SPtr<TDistribution<float>> tmpSize;
-		ScriptFloatDistribution* scriptSize;
-		scriptSize = ScriptFloatDistribution::ToNative(value.Size);
-		if(scriptSize != nullptr)
-			tmpSize = scriptSize->GetInternal();
+		ScriptFloatDistribution* scriptWrapperObjectSize;
+		scriptWrapperObjectSize = ScriptFloatDistribution::ToNative(value.Size);
+		if(scriptWrapperObjectSize != nullptr)
+			tmpSize = scriptWrapperObjectSize->GetInternal();
 		if(tmpSize != nullptr)
 		output.Size = *tmpSize;
 		SPtr<TDistribution<TVector3<float>>> tmpSize3D;
-		ScriptVector3Distribution* scriptSize3D;
-		scriptSize3D = ScriptVector3Distribution::ToNative(value.Size3D);
-		if(scriptSize3D != nullptr)
-			tmpSize3D = scriptSize3D->GetInternal();
+		ScriptVector3Distribution* scriptWrapperObjectSize3D;
+		scriptWrapperObjectSize3D = ScriptVector3Distribution::ToNative(value.Size3D);
+		if(scriptWrapperObjectSize3D != nullptr)
+			tmpSize3D = scriptWrapperObjectSize3D->GetInternal();
 		if(tmpSize3D != nullptr)
 		output.Size3D = *tmpSize3D;
 		output.Use3DSize = value.Use3DSize;

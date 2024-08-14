@@ -36,10 +36,10 @@ namespace bs
 	{
 		SpriteVectorPathCreateInformation output;
 		TResourceHandle<VectorPath> tmpVectorPath;
-		ScriptRRefBase* scriptVectorPath;
-		scriptVectorPath = ScriptRRefBase::ToNative(value.VectorPath);
-		if(scriptVectorPath != nullptr)
-			tmpVectorPath = B3DStaticResourceCast<VectorPath>(scriptVectorPath->GetHandle());
+		ScriptRRefBase* scriptWrapperObjectVectorPath;
+		scriptWrapperObjectVectorPath = ScriptRRefBase::ToNative(value.VectorPath);
+		if(scriptWrapperObjectVectorPath != nullptr)
+			tmpVectorPath = B3DStaticResourceCast<VectorPath>(scriptWrapperObjectVectorPath->GetHandle());
 		output.VectorPath = tmpVectorPath;
 		output.Size = value.Size;
 		output.ScalingMode = value.ScalingMode;
@@ -54,10 +54,10 @@ namespace bs
 	{
 		__SpriteVectorPathCreateInformationInterop output;
 		MonoObject* tmpVectorPath;
-		ScriptRRefBase* scriptVectorPath;
-		scriptVectorPath = ScriptResourceManager::Instance().GetScriptRRef(value.VectorPath);
-		if(scriptVectorPath != nullptr)
-			tmpVectorPath = scriptVectorPath->GetManagedInstance();
+		ScriptRRefBase* scriptWrapperObjectVectorPath;
+		scriptWrapperObjectVectorPath = ScriptResourceManager::Instance().GetScriptRRef(value.VectorPath);
+		if(scriptWrapperObjectVectorPath != nullptr)
+			tmpVectorPath = scriptWrapperObjectVectorPath->GetManagedInstance();
 		else
 			tmpVectorPath = nullptr;
 		output.VectorPath = tmpVectorPath;

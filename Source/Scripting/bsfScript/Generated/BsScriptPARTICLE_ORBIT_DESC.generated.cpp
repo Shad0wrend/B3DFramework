@@ -32,24 +32,24 @@ namespace bs
 	{
 		PARTICLE_ORBIT_DESC output;
 		SPtr<TDistribution<TVector3<float>>> tmpCenter;
-		ScriptVector3Distribution* scriptCenter;
-		scriptCenter = ScriptVector3Distribution::ToNative(value.Center);
-		if(scriptCenter != nullptr)
-			tmpCenter = scriptCenter->GetInternal();
+		ScriptVector3Distribution* scriptWrapperObjectCenter;
+		scriptWrapperObjectCenter = ScriptVector3Distribution::ToNative(value.Center);
+		if(scriptWrapperObjectCenter != nullptr)
+			tmpCenter = scriptWrapperObjectCenter->GetInternal();
 		if(tmpCenter != nullptr)
 		output.Center = *tmpCenter;
 		SPtr<TDistribution<TVector3<float>>> tmpVelocity;
-		ScriptVector3Distribution* scriptVelocity;
-		scriptVelocity = ScriptVector3Distribution::ToNative(value.Velocity);
-		if(scriptVelocity != nullptr)
-			tmpVelocity = scriptVelocity->GetInternal();
+		ScriptVector3Distribution* scriptWrapperObjectVelocity;
+		scriptWrapperObjectVelocity = ScriptVector3Distribution::ToNative(value.Velocity);
+		if(scriptWrapperObjectVelocity != nullptr)
+			tmpVelocity = scriptWrapperObjectVelocity->GetInternal();
 		if(tmpVelocity != nullptr)
 		output.Velocity = *tmpVelocity;
 		SPtr<TDistribution<float>> tmpRadial;
-		ScriptFloatDistribution* scriptRadial;
-		scriptRadial = ScriptFloatDistribution::ToNative(value.Radial);
-		if(scriptRadial != nullptr)
-			tmpRadial = scriptRadial->GetInternal();
+		ScriptFloatDistribution* scriptWrapperObjectRadial;
+		scriptWrapperObjectRadial = ScriptFloatDistribution::ToNative(value.Radial);
+		if(scriptWrapperObjectRadial != nullptr)
+			tmpRadial = scriptWrapperObjectRadial->GetInternal();
 		if(tmpRadial != nullptr)
 		output.Radial = *tmpRadial;
 		output.WorldSpace = value.WorldSpace;

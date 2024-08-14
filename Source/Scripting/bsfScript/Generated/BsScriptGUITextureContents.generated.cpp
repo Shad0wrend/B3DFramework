@@ -31,10 +31,10 @@ namespace bs
 	{
 		GUITextureContents output;
 		TResourceHandle<SpriteImage> tmpImage;
-		ScriptSpriteImageBase* scriptImage;
-		scriptImage = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.Image);
-		if(scriptImage != nullptr)
-			tmpImage = B3DStaticResourceCast<SpriteImage>(scriptImage->GetGenericHandle());
+		ScriptSpriteImageBase* scriptWrapperObjectImage;
+		scriptWrapperObjectImage = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.Image);
+		if(scriptWrapperObjectImage != nullptr)
+			tmpImage = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectImage->GetGenericHandle());
 		output.Image = tmpImage;
 		output.ScaleMode = value.ScaleMode;
 		output.IsTransparent = value.IsTransparent;
@@ -46,10 +46,10 @@ namespace bs
 	{
 		__GUITextureContentsInterop output;
 		MonoObject* tmpImage;
-		ScriptResourceBase* scriptImage;
-		scriptImage = ScriptResourceManager::Instance().GetScriptResource(value.Image, true);
-		if(scriptImage != nullptr)
-			tmpImage = scriptImage->GetManagedInstance();
+		ScriptResourceBase* scriptWrapperObjectImage;
+		scriptWrapperObjectImage = ScriptResourceManager::Instance().GetScriptResource(value.Image, true);
+		if(scriptWrapperObjectImage != nullptr)
+			tmpImage = scriptWrapperObjectImage->GetManagedInstance();
 		else
 			tmpImage = nullptr;
 		output.Image = tmpImage;

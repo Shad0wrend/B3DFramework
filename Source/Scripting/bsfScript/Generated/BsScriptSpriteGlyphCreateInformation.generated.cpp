@@ -34,10 +34,10 @@ namespace bs
 	{
 		SpriteGlyphCreateInformation output;
 		TResourceHandle<Font> tmpFont;
-		ScriptRRefBase* scriptFont;
-		scriptFont = ScriptRRefBase::ToNative(value.Font);
-		if(scriptFont != nullptr)
-			tmpFont = B3DStaticResourceCast<Font>(scriptFont->GetHandle());
+		ScriptRRefBase* scriptWrapperObjectFont;
+		scriptWrapperObjectFont = ScriptRRefBase::ToNative(value.Font);
+		if(scriptWrapperObjectFont != nullptr)
+			tmpFont = B3DStaticResourceCast<Font>(scriptWrapperObjectFont->GetHandle());
 		output.Font = tmpFont;
 		output.Glyph = value.Glyph;
 		output.Size = value.Size;
@@ -52,10 +52,10 @@ namespace bs
 	{
 		__SpriteGlyphCreateInformationInterop output;
 		MonoObject* tmpFont;
-		ScriptRRefBase* scriptFont;
-		scriptFont = ScriptResourceManager::Instance().GetScriptRRef(value.Font);
-		if(scriptFont != nullptr)
-			tmpFont = scriptFont->GetManagedInstance();
+		ScriptRRefBase* scriptWrapperObjectFont;
+		scriptWrapperObjectFont = ScriptResourceManager::Instance().GetScriptRRef(value.Font);
+		if(scriptWrapperObjectFont != nullptr)
+			tmpFont = scriptWrapperObjectFont->GetManagedInstance();
 		else
 			tmpFont = nullptr;
 		output.Font = tmpFont;

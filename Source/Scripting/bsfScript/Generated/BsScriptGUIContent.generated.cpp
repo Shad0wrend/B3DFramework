@@ -32,20 +32,20 @@ namespace bs
 	{
 		GUIContent output;
 		SPtr<HString> tmpText;
-		ScriptLocString* scriptText;
-		scriptText = ScriptLocString::ToNative(value.Text);
-		if(scriptText != nullptr)
-			tmpText = scriptText->GetInternal();
+		ScriptLocString* scriptWrapperObjectText;
+		scriptWrapperObjectText = ScriptLocString::ToNative(value.Text);
+		if(scriptWrapperObjectText != nullptr)
+			tmpText = scriptWrapperObjectText->GetInternal();
 		if(tmpText != nullptr)
 		output.Text = *tmpText;
 		GUIContentImages tmpImages;
 		tmpImages = ScriptGUIContentImages::FromInterop(value.Images);
 		output.Images = tmpImages;
 		SPtr<HString> tmpTooltip;
-		ScriptLocString* scriptTooltip;
-		scriptTooltip = ScriptLocString::ToNative(value.Tooltip);
-		if(scriptTooltip != nullptr)
-			tmpTooltip = scriptTooltip->GetInternal();
+		ScriptLocString* scriptWrapperObjectTooltip;
+		scriptWrapperObjectTooltip = ScriptLocString::ToNative(value.Tooltip);
+		if(scriptWrapperObjectTooltip != nullptr)
+			tmpTooltip = scriptWrapperObjectTooltip->GetInternal();
 		if(tmpTooltip != nullptr)
 		output.Tooltip = *tmpTooltip;
 

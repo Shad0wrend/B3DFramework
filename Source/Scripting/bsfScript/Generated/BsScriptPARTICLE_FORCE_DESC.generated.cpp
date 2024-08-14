@@ -30,10 +30,10 @@ namespace bs
 	{
 		PARTICLE_FORCE_DESC output;
 		SPtr<TDistribution<TVector3<float>>> tmpForce;
-		ScriptVector3Distribution* scriptForce;
-		scriptForce = ScriptVector3Distribution::ToNative(value.Force);
-		if(scriptForce != nullptr)
-			tmpForce = scriptForce->GetInternal();
+		ScriptVector3Distribution* scriptWrapperObjectForce;
+		scriptWrapperObjectForce = ScriptVector3Distribution::ToNative(value.Force);
+		if(scriptWrapperObjectForce != nullptr)
+			tmpForce = scriptWrapperObjectForce->GetInternal();
 		if(tmpForce != nullptr)
 		output.Force = *tmpForce;
 		output.WorldSpace = value.WorldSpace;

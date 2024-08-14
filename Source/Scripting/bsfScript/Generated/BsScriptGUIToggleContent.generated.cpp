@@ -35,10 +35,10 @@ namespace bs
 		tmpGeneralContent = ScriptGUIContent::FromInterop(value.GeneralContent);
 		output.GeneralContent = tmpGeneralContent;
 		SPtr<GUIToggleGroup> tmpToggleGroup;
-		ScriptGUIToggleGroup* scriptToggleGroup;
-		scriptToggleGroup = ScriptGUIToggleGroup::ToNative(value.ToggleGroup);
-		if(scriptToggleGroup != nullptr)
-			tmpToggleGroup = scriptToggleGroup->GetInternal();
+		ScriptGUIToggleGroup* scriptWrapperObjectToggleGroup;
+		scriptWrapperObjectToggleGroup = ScriptGUIToggleGroup::ToNative(value.ToggleGroup);
+		if(scriptWrapperObjectToggleGroup != nullptr)
+			tmpToggleGroup = scriptWrapperObjectToggleGroup->GetInternal();
 		output.ToggleGroup = tmpToggleGroup;
 
 		return output;

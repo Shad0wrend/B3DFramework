@@ -42,10 +42,10 @@ namespace bs
 		output.Name = tmpName;
 		output.Flags = value.Flags;
 		SPtr<TAnimationCurve<float>> tmpCurve;
-		ScriptAnimationCurve* scriptCurve;
-		scriptCurve = ScriptAnimationCurve::ToNative(value.Curve);
-		if(scriptCurve != nullptr)
-			tmpCurve = scriptCurve->GetInternal();
+		ScriptAnimationCurve* scriptWrapperObjectCurve;
+		scriptWrapperObjectCurve = ScriptAnimationCurve::ToNative(value.Curve);
+		if(scriptWrapperObjectCurve != nullptr)
+			tmpCurve = scriptWrapperObjectCurve->GetInternal();
 		if(tmpCurve != nullptr)
 		output.Curve = *tmpCurve;
 
@@ -94,10 +94,10 @@ namespace bs
 		output.Name = tmpName;
 		output.Flags = value.Flags;
 		SPtr<TAnimationCurve<TVector3<float>>> tmpCurve;
-		ScriptVector3Curve* scriptCurve;
-		scriptCurve = ScriptVector3Curve::ToNative(value.Curve);
-		if(scriptCurve != nullptr)
-			tmpCurve = scriptCurve->GetInternal();
+		ScriptVector3Curve* scriptWrapperObjectCurve;
+		scriptWrapperObjectCurve = ScriptVector3Curve::ToNative(value.Curve);
+		if(scriptWrapperObjectCurve != nullptr)
+			tmpCurve = scriptWrapperObjectCurve->GetInternal();
 		if(tmpCurve != nullptr)
 		output.Curve = *tmpCurve;
 
@@ -146,10 +146,10 @@ namespace bs
 		output.Name = tmpName;
 		output.Flags = value.Flags;
 		SPtr<TAnimationCurve<TVector2<float>>> tmpCurve;
-		ScriptVector2Curve* scriptCurve;
-		scriptCurve = ScriptVector2Curve::ToNative(value.Curve);
-		if(scriptCurve != nullptr)
-			tmpCurve = scriptCurve->GetInternal();
+		ScriptVector2Curve* scriptWrapperObjectCurve;
+		scriptWrapperObjectCurve = ScriptVector2Curve::ToNative(value.Curve);
+		if(scriptWrapperObjectCurve != nullptr)
+			tmpCurve = scriptWrapperObjectCurve->GetInternal();
 		if(tmpCurve != nullptr)
 		output.Curve = *tmpCurve;
 
@@ -198,10 +198,10 @@ namespace bs
 		output.Name = tmpName;
 		output.Flags = value.Flags;
 		SPtr<TAnimationCurve<Quaternion>> tmpCurve;
-		ScriptQuaternionCurve* scriptCurve;
-		scriptCurve = ScriptQuaternionCurve::ToNative(value.Curve);
-		if(scriptCurve != nullptr)
-			tmpCurve = scriptCurve->GetInternal();
+		ScriptQuaternionCurve* scriptWrapperObjectCurve;
+		scriptWrapperObjectCurve = ScriptQuaternionCurve::ToNative(value.Curve);
+		if(scriptWrapperObjectCurve != nullptr)
+			tmpCurve = scriptWrapperObjectCurve->GetInternal();
 		if(tmpCurve != nullptr)
 		output.Curve = *tmpCurve;
 
@@ -250,10 +250,10 @@ namespace bs
 		output.Name = tmpName;
 		output.Flags = value.Flags;
 		SPtr<TAnimationCurve<int32_t>> tmpCurve;
-		ScriptIntegerCurve* scriptCurve;
-		scriptCurve = ScriptIntegerCurve::ToNative(value.Curve);
-		if(scriptCurve != nullptr)
-			tmpCurve = scriptCurve->GetInternal();
+		ScriptIntegerCurve* scriptWrapperObjectCurve;
+		scriptWrapperObjectCurve = ScriptIntegerCurve::ToNative(value.Curve);
+		if(scriptWrapperObjectCurve != nullptr)
+			tmpCurve = scriptWrapperObjectCurve->GetInternal();
 		if(tmpCurve != nullptr)
 		output.Curve = *tmpCurve;
 

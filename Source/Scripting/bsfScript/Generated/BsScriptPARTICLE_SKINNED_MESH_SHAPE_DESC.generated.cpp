@@ -33,10 +33,10 @@ namespace bs
 		output.Type = value.Type;
 		output.Sequential = value.Sequential;
 		GameObjectHandle<CRenderable> tmpRenderable;
-		ScriptRenderable* scriptRenderable;
-		scriptRenderable = ScriptRenderable::ToNative(value.Renderable);
-		if(scriptRenderable != nullptr)
-			tmpRenderable = scriptRenderable->GetHandle();
+		ScriptRenderable* scriptWrapperObjectRenderable;
+		scriptWrapperObjectRenderable = ScriptRenderable::ToNative(value.Renderable);
+		if(scriptWrapperObjectRenderable != nullptr)
+			tmpRenderable = scriptWrapperObjectRenderable->GetHandle();
 		output.Renderable = tmpRenderable;
 
 		return output;
@@ -48,11 +48,11 @@ namespace bs
 		output.Type = value.Type;
 		output.Sequential = value.Sequential;
 		MonoObject* tmpRenderable;
-		ScriptComponentBase* scriptRenderable = nullptr;
+		ScriptComponentBase* scriptWrapperObjectRenderable = nullptr;
 		if(value.Renderable.GetComponent())
-			scriptRenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Renderable.GetComponent()));
-		if(scriptRenderable != nullptr)
-			tmpRenderable = scriptRenderable->GetManagedInstance();
+			scriptWrapperObjectRenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Renderable.GetComponent()));
+		if(scriptWrapperObjectRenderable != nullptr)
+			tmpRenderable = scriptWrapperObjectRenderable->GetManagedInstance();
 		else
 			tmpRenderable = nullptr;
 		output.Renderable = tmpRenderable;

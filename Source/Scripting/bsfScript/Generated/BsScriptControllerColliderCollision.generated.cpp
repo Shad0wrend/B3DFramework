@@ -33,10 +33,10 @@ namespace bs
 	{
 		ControllerColliderCollision output;
 		GameObjectHandle<CCollider> tmpCollider;
-		ScriptColliderBase* scriptCollider;
-		scriptCollider = (ScriptColliderBase*)ScriptCollider::ToNative(value.Collider);
-		if(scriptCollider != nullptr)
-			tmpCollider = B3DStaticGameObjectCast<CCollider>(scriptCollider->GetComponent());
+		ScriptColliderBase* scriptWrapperObjectCollider;
+		scriptWrapperObjectCollider = (ScriptColliderBase*)ScriptCollider::ToNative(value.Collider);
+		if(scriptWrapperObjectCollider != nullptr)
+			tmpCollider = B3DStaticGameObjectCast<CCollider>(scriptWrapperObjectCollider->GetComponent());
 		output.Collider = tmpCollider;
 		output.TriangleIndex = value.TriangleIndex;
 		output.Position = value.Position;
@@ -51,11 +51,11 @@ namespace bs
 	{
 		__ControllerColliderCollisionInterop output;
 		MonoObject* tmpCollider;
-		ScriptComponentBase* scriptCollider = nullptr;
+		ScriptComponentBase* scriptWrapperObjectCollider = nullptr;
 		if(value.Collider)
-			scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Collider));
-		if(scriptCollider != nullptr)
-			tmpCollider = scriptCollider->GetManagedInstance();
+			scriptWrapperObjectCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Collider));
+		if(scriptWrapperObjectCollider != nullptr)
+			tmpCollider = scriptWrapperObjectCollider->GetManagedInstance();
 		else
 			tmpCollider = nullptr;
 		output.Collider = tmpCollider;

@@ -33,10 +33,10 @@ namespace bs
 	{
 		ControllerControllerCollision output;
 		GameObjectHandle<CCharacterController> tmpController;
-		ScriptCharacterController* scriptController;
-		scriptController = ScriptCharacterController::ToNative(value.Controller);
-		if(scriptController != nullptr)
-			tmpController = scriptController->GetHandle();
+		ScriptCharacterController* scriptWrapperObjectController;
+		scriptWrapperObjectController = ScriptCharacterController::ToNative(value.Controller);
+		if(scriptWrapperObjectController != nullptr)
+			tmpController = scriptWrapperObjectController->GetHandle();
 		output.Controller = tmpController;
 		output.Position = value.Position;
 		output.Normal = value.Normal;
@@ -50,11 +50,11 @@ namespace bs
 	{
 		__ControllerControllerCollisionInterop output;
 		MonoObject* tmpController;
-		ScriptComponentBase* scriptController = nullptr;
+		ScriptComponentBase* scriptWrapperObjectController = nullptr;
 		if(value.Controller)
-			scriptController = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Controller));
-		if(scriptController != nullptr)
-			tmpController = scriptController->GetManagedInstance();
+			scriptWrapperObjectController = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Controller));
+		if(scriptWrapperObjectController != nullptr)
+			tmpController = scriptWrapperObjectController->GetManagedInstance();
 		else
 			tmpController = nullptr;
 		output.Controller = tmpController;

@@ -30,10 +30,10 @@ namespace bs
 	{
 		PARTICLE_COLOR_DESC output;
 		SPtr<TColorDistribution<ColorGradient>> tmpColor;
-		ScriptColorDistribution* scriptColor;
-		scriptColor = ScriptColorDistribution::ToNative(value.Color);
-		if(scriptColor != nullptr)
-			tmpColor = scriptColor->GetInternal();
+		ScriptColorDistribution* scriptWrapperObjectColor;
+		scriptWrapperObjectColor = ScriptColorDistribution::ToNative(value.Color);
+		if(scriptWrapperObjectColor != nullptr)
+			tmpColor = scriptWrapperObjectColor->GetInternal();
 		if(tmpColor != nullptr)
 		output.Color = *tmpColor;
 

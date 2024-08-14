@@ -31,10 +31,10 @@ namespace bs
 		ParticleBurst output;
 		output.Time = value.Time;
 		SPtr<TDistribution<float>> tmpCount;
-		ScriptFloatDistribution* scriptCount;
-		scriptCount = ScriptFloatDistribution::ToNative(value.Count);
-		if(scriptCount != nullptr)
-			tmpCount = scriptCount->GetInternal();
+		ScriptFloatDistribution* scriptWrapperObjectCount;
+		scriptWrapperObjectCount = ScriptFloatDistribution::ToNative(value.Count);
+		if(scriptWrapperObjectCount != nullptr)
+			tmpCount = scriptWrapperObjectCount->GetInternal();
 		if(tmpCount != nullptr)
 		output.Count = *tmpCount;
 		output.Cycles = value.Cycles;

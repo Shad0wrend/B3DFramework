@@ -32,10 +32,10 @@ namespace bs
 	{
 		FontBitmapPage output;
 		TResourceHandle<Texture> tmpTexture;
-		ScriptRRefBase* scriptTexture;
-		scriptTexture = ScriptRRefBase::ToNative(value.Texture);
-		if(scriptTexture != nullptr)
-			tmpTexture = B3DStaticResourceCast<Texture>(scriptTexture->GetHandle());
+		ScriptRRefBase* scriptWrapperObjectTexture;
+		scriptWrapperObjectTexture = ScriptRRefBase::ToNative(value.Texture);
+		if(scriptWrapperObjectTexture != nullptr)
+			tmpTexture = B3DStaticResourceCast<Texture>(scriptWrapperObjectTexture->GetHandle());
 		output.Texture = tmpTexture;
 		output.IsDynamic = value.IsDynamic;
 
@@ -46,10 +46,10 @@ namespace bs
 	{
 		__FontBitmapPageInterop output;
 		MonoObject* tmpTexture;
-		ScriptRRefBase* scriptTexture;
-		scriptTexture = ScriptResourceManager::Instance().GetScriptRRef(value.Texture);
-		if(scriptTexture != nullptr)
-			tmpTexture = scriptTexture->GetManagedInstance();
+		ScriptRRefBase* scriptWrapperObjectTexture;
+		scriptWrapperObjectTexture = ScriptResourceManager::Instance().GetScriptRRef(value.Texture);
+		if(scriptWrapperObjectTexture != nullptr)
+			tmpTexture = scriptWrapperObjectTexture->GetManagedInstance();
 		else
 			tmpTexture = nullptr;
 		output.Texture = tmpTexture;

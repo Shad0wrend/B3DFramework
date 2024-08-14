@@ -35,10 +35,10 @@ namespace bs
 		tmpName = MonoUtil::MonoToString(value.Name);
 		output.Name = tmpName;
 		TResourceHandle<Resource> tmpValue;
-		ScriptResource* scriptValue;
-		scriptValue = ScriptResource::ToNative(value.Value);
-		if(scriptValue != nullptr)
-			tmpValue = B3DStaticResourceCast<Resource>(scriptValue->GetGenericHandle());
+		ScriptResource* scriptWrapperObjectValue;
+		scriptWrapperObjectValue = ScriptResource::ToNative(value.Value);
+		if(scriptWrapperObjectValue != nullptr)
+			tmpValue = B3DStaticResourceCast<Resource>(scriptWrapperObjectValue->GetGenericHandle());
 		output.Value = tmpValue;
 
 		return output;
@@ -51,10 +51,10 @@ namespace bs
 		tmpName = MonoUtil::StringToMono(value.Name);
 		output.Name = tmpName;
 		MonoObject* tmpValue;
-		ScriptResourceBase* scriptValue;
-		scriptValue = ScriptResourceManager::Instance().GetScriptResource(value.Value, true);
-		if(scriptValue != nullptr)
-			tmpValue = scriptValue->GetManagedInstance();
+		ScriptResourceBase* scriptWrapperObjectValue;
+		scriptWrapperObjectValue = ScriptResourceManager::Instance().GetScriptResource(value.Value, true);
+		if(scriptWrapperObjectValue != nullptr)
+			tmpValue = scriptWrapperObjectValue->GetManagedInstance();
 		else
 			tmpValue = nullptr;
 		output.Value = tmpValue;
