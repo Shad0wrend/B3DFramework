@@ -64,7 +64,7 @@ ScriptArray::ScriptArray(MonoArray* existingArray)
 ScriptArray::ScriptArray(MonoClass& klass, u32 size)
 	: mInternal(nullptr)
 {
-	mInternal = mono_array_new(MonoManager::Instance().GetDomain(), klass.GetInternalClassInternal(), size);
+	mInternal = mono_array_new(MonoManager::Instance().GetDomain(), klass.GetInternalClass(), size);
 }
 
 ScriptArray::ScriptArray(::MonoClass* klass, u32 size)

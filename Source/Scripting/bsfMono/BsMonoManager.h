@@ -12,6 +12,13 @@ namespace bs
 	 *  @{
 	 */
 
+	// TODO - Doc
+	struct RegisteredScriptWrapperTypeInformation // TODO - This might better belong in ScriptAssemblyManager
+	{
+		ScriptWrapperObjectMetaData* MetaData; /**< Pointer to the meta-data on the associated TScriptObjectWrapper. */
+		ScriptWrapperObjectMetaData LocalMetaData; /**< Local copy of the meta-data that will be used to initialize @p MetaData. */
+	};
+
 	/**	Available Mono versions. */
 	enum class MonoVersion
 	{
@@ -75,30 +82,24 @@ namespace bs
 		 * @param metaData			Pointer to the meta-data object to initialize, stored statically on the associated TScriptObjectWrapper.
 		 * @param localMetaData		Local copy of the meta-data that will be used to initialize @p metaData.
 		 */
-		static void RegisterScriptType(ScriptTypeMetaData* metaData, const ScriptTypeMetaData& localMetaData);
+		static void RegisterScriptType(ScriptWrapperObjectMetaData* metaData, const ScriptWrapperObjectMetaData& localMetaData);
+
+		/**	Returns a list of all registered script wrapper types, by assembly. */
+		static UnorderedMap<String, Vector<RegisteredScriptWrapperTypeInformation>>& GetScriptWrapperTypeInformation()
+		{
+			static UnorderedMap<String, Vector<RegisteredScriptWrapperTypeInformation>> sRegisteredScriptWrapperTypes;
+			return sRegisteredScriptWrapperTypes;
+		}
 
 		/** Triggered when the assembly domain and all relevant assemblies are about to be unloaded. */
 		Event<void()> OnDomainUnload;
 
 	private:
-		struct RegisteredScriptTypeInformation
-		{
-			ScriptTypeMetaData* MetaData; /**< Pointer to the meta-data on the associated TScriptObjectWrapper. */
-			ScriptTypeMetaData LocalMetaData; /**< Local copy of the meta-data that will be used to initialize @p MetaData. */
-		};
-
 		/**
 		 * Initializes meta-data and sets up bindings for all script types registered with RegisterScriptType() for the provided assembly. This should be called
 		 * after an assembly is loaded or reloaded.
 		 */
 		void RefreshScriptTypeMetaDataAndBindings(MonoAssembly& assembly);
-
-		/**	Returns a list of all types that will be initializes with their assembly gets loaded. */
-		static UnorderedMap<String, Vector<RegisteredScriptTypeInformation>>& GetScriptTypeMetaDataMap()
-		{
-			static UnorderedMap<String, Vector<RegisteredScriptTypeInformation>> sRegisteredScriptTypes;
-			return sRegisteredScriptTypes;
-		}
 
 		UnorderedMap<String, MonoAssembly*> mAssemblies;
 		MonoDomain* mScriptDomain;

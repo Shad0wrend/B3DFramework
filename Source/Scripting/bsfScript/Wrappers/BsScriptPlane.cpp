@@ -16,7 +16,7 @@ void ScriptPlane::InitRuntimeData()
 MonoObject* ScriptPlane::Box(const Plane& value)
 {
 	// We're casting away const but it's fine since structs are passed by value anyway
-	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 }
 
 Plane ScriptPlane::Unbox(MonoObject* obj)

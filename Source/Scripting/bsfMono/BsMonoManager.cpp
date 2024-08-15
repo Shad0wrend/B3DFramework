@@ -185,10 +185,10 @@ bs::MonoAssembly& MonoManager::LoadAssembly(const Path& path, const String& name
 void MonoManager::RefreshScriptTypeMetaDataAndBindings(MonoAssembly& assembly)
 {
 	// Fully initialize all types that use this assembly
-	Vector<RegisteredScriptTypeInformation>& typeMetas = GetScriptTypeMetaDataMap()[assembly.mName];
+	Vector<RegisteredScriptWrapperTypeInformation>& typeMetas = GetScriptWrapperTypeInformation()[assembly.mName];
 	for(auto& entry : typeMetas)
 	{
-		ScriptTypeMetaData* meta = entry.MetaData;
+		ScriptWrapperObjectMetaData* meta = entry.MetaData;
 		*meta = entry.LocalMetaData;
 
 		meta->ScriptClass = assembly.GetClass(meta->Namespace, meta->Name);
@@ -228,7 +228,7 @@ void MonoManager::UnloadAll()
 
 	// Make sure to explicitly clear this meta-data, as it contains structures allocated from other dynamic libraries,
 	// which will likely get unloaded right after shutdown
-	GetScriptTypeMetaDataMap().clear();
+	GetScriptWrapperTypeInformation().clear();
 }
 
 bs::MonoAssembly* MonoManager::GetAssembly(const String& name) const
@@ -241,9 +241,9 @@ bs::MonoAssembly* MonoManager::GetAssembly(const String& name) const
 	return nullptr;
 }
 
-void MonoManager::RegisterScriptType(ScriptTypeMetaData* metaData, const ScriptTypeMetaData& localMetaData)
+void MonoManager::RegisterScriptType(ScriptWrapperObjectMetaData* metaData, const ScriptWrapperObjectMetaData& localMetaData)
 {
-	Vector<RegisteredScriptTypeInformation>& mMetas = GetScriptTypeMetaDataMap()[localMetaData.Assembly];
+	Vector<RegisteredScriptWrapperTypeInformation>& mMetas = GetScriptWrapperTypeInformation()[localMetaData.Assembly];
 	mMetas.push_back({ metaData, localMetaData });
 }
 
@@ -300,7 +300,7 @@ void MonoManager::UnloadScriptDomain()
 			B3DDelete(assemblyEntry.second);
 
 		// Metas hold references to various assembly objects that were just deleted, so clear them
-		Vector<RegisteredScriptTypeInformation>& typeMetas = GetScriptTypeMetaDataMap()[assemblyEntry.first];
+		Vector<RegisteredScriptWrapperTypeInformation>& typeMetas = GetScriptWrapperTypeInformation()[assemblyEntry.first];
 		for(auto& entry : typeMetas)
 		{
 			entry.MetaData->ScriptClass = nullptr;

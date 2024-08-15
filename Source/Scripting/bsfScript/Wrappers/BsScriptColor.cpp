@@ -16,7 +16,7 @@ void ScriptColor::InitRuntimeData()
 MonoObject* ScriptColor::Box(const Color& value)
 {
 	// We're casting away const but it's fine since structs are passed by value anyway
-	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 }
 
 Color ScriptColor::Unbox(MonoObject* obj)

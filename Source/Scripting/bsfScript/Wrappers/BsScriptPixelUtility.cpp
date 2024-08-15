@@ -98,7 +98,7 @@ MonoArray* ScriptPixelUtility::InternalGenerateMipmaps(MonoObject* source, MipMa
 	Vector<SPtr<PixelData>> mipmaps = PixelUtil::GenMipmaps(*sourcePixelData, *options);
 
 	u32 numElements = (u32)mipmaps.size();
-	ScriptArray scriptArray(ScriptPixelData::GetMetaData()->ScriptClass->GetInternalClassInternal(), numElements);
+	ScriptArray scriptArray(ScriptPixelData::GetMetaData()->ScriptClass->GetInternalClass(), numElements);
 
 	for(u32 i = 0; i < numElements; i++)
 	{

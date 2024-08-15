@@ -8,6 +8,7 @@
 #include "BsMonoField.h"
 #include "BsMonoClass.h"
 #include "Script/BsIScriptObjectWrapper.h"
+#include "Serialization/BsScriptAssemblyManager.h"
 
 namespace bs
 {
@@ -39,40 +40,6 @@ namespace bs
 		{}
 
 		Any Data; // TODO - Don't use Any
-	};
-
-	/** Contains mapping between a native object type and its script export wrapper type. */
-	template<class NativeObjectType>
-	struct TScriptExportedTypeInformation
-	{
-		const ScriptTypeMetaData* ScriptMetaData = nullptr;
-		u32 TypeId = ~0u; /*< RTTI ID of the native object. */
-		std::function<MonoObject*(const NativeObjectType&)> CreateCallback;
-	};
-
-	// TODO - Doc
-	struct ScriptExportedTypeMappings
-	{
-		// TODO - Doc
-		static TArray<TScriptExportedTypeInformation<HResource>>& GetResourceTypeMappings()
-		{
-			static TArray<TScriptExportedTypeInformation<HResource>> sEntries;
-			return sEntries;
-		}
-		
-		// TODO - Doc
-		static TArray<TScriptExportedTypeInformation<HGameObject>>& GetGameObjectTypeMappings()
-		{
-			static TArray<TScriptExportedTypeInformation<HGameObject>> sEntries;
-			return sEntries;
-		}
-
-		// TODO - Doc
-		static TArray<TScriptExportedTypeInformation<SPtr<IReflectable>>>& GetReflectableTypeMappings()
-		{
-			static TArray<TScriptExportedTypeInformation<SPtr<IReflectable>>> sEntries;
-			return sEntries;
-		}
 	};
 
 	// TODO - Doc
@@ -195,17 +162,17 @@ namespace bs
 		}
 
 		// TODO - Doc
-		static const ScriptTypeMetaData* GetMetaData() { return &sInteropMetaData; }
+		static const ScriptWrapperObjectMetaData* GetMetaData() { return &sInteropMetaData; }
 
 		// TODO - Doc
 		static void InitializeMetaDataAtLoadTime()
 		{
 			// Need to delay init of sInteropMetaData since it's also a static, and we can't guarantee the order
 			// (if it gets initialized after this, it will just overwrite the data)
-			ScriptTypeMetaData localMetaData = ScriptTypeMetaData(SelfType::GetAssemblyName(), SelfType::GetNamespace(), SelfType::GetTypeName(), &SelfType::SetupScriptBindings);
+			ScriptWrapperObjectMetaData localMetaData = ScriptWrapperObjectMetaData(SelfType::GetAssemblyName(), SelfType::GetNamespace(), SelfType::GetTypeName(), &SelfType::SetupScriptBindings);
 
+			SelfType::InitializeAdditionalMetaData(localMetaData);
 			MonoManager::RegisterScriptType(&sInteropMetaData, localMetaData);
-			SelfType::RegisterNativeToScriptTypeMapping();
 		}
 
 	protected:
@@ -224,7 +191,7 @@ namespace bs
 			}
 		}
 
-		static ScriptTypeMetaData sInteropMetaData;
+		static ScriptWrapperObjectMetaData sInteropMetaData;
 		static InitializeScriptObjectWrapperOnLoadTime<SelfType> sInitializeOnLoadTime;
 	};
 
@@ -232,7 +199,7 @@ namespace bs
 	InitializeScriptObjectWrapperOnLoadTime<SelfType> TScriptObjectWrapper<SelfType>::sInitializeOnLoadTime;
 
 	template <typename SelfType>
-	ScriptTypeMetaData TScriptObjectWrapper<SelfType>::sInteropMetaData;
+	ScriptWrapperObjectMetaData TScriptObjectWrapper<SelfType>::sInteropMetaData;
 
 	/**	Specialized version of TScriptObjectWrapper that should be used for types that are never going to be explicitly instantiated (e.g. singletons, static-only classes and base classes). */
 	template <typename SelfType>
@@ -253,7 +220,7 @@ namespace bs
 		friend class TScriptObjectWrapper<SelfType>;
 
 		// TODO - Doc
-		static void RegisterNativeToScriptTypeMapping()
+		static void InitializeAdditionalMetaData(ScriptWrapperObjectMetaData& metaData)
 		{
 			// Do nothing
 		}
@@ -283,10 +250,18 @@ namespace bs
 		// TODO - Doc
 		static MonoObject* GetOrCreateScriptObject(const SPtr<NativeType>& nativeObject)
 		{
+			if(nativeObject == nullptr)
+				return nullptr;
+
 			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
 				return scriptObjectWrapper->GetScriptObject();
 
-			// TODO - This needs to perform RTTI ID lookup and call the creation callback on the returned info
+			// TODO: Could skip expensive lookup if the type has no derived classes (should be most cases). In that case the code-gen could generate
+			// code that calls a streamlined version of this method, with no lookup.
+			ScriptWrapperObjectMetaData* metaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(nativeObject->GetTypeId());
+			if(!B3D_ENSURE(metaData))
+				return metaData->ReflectableCreateCallback(nativeObject);
+
 			return CreateScriptObjectAndWrapper(nativeObject);
 		}
 
@@ -294,14 +269,10 @@ namespace bs
 		friend class TScriptObjectWrapper<SelfType>;
 
 		// TODO - Doc
-		static void RegisterNativeToScriptTypeMapping()
+		static void InitializeAdditionalMetaData(ScriptWrapperObjectMetaData& metaData)
 		{
-			TScriptExportedTypeInformation<SPtr<IReflectable>> typeMappingInformation;
-			typeMappingInformation.TypeId = NativeType::GetRttiStatic()->GetRttiId();
-			typeMappingInformation.ScriptMetaData = &SelfType::sInteropMetaData;
-			typeMappingInformation.CreateCallback = &CreateScriptObjectAndWrapper;
-
-			ScriptExportedTypeMappings::GetReflectableTypeMappings().Add(typeMappingInformation);
+			metaData.TypeId = NativeType::GetRttiStatic()->GetRttiId();
+			metaData.ReflectableCreateCallback = &CreateScriptObjectAndWrapper;
 		}
 
 		SPtr<NativeType> mNativeObjectStrongHandle;
@@ -334,10 +305,18 @@ namespace bs
 		// TODO - Doc
 		static MonoObject* GetOrCreateScriptObject(const GameObjectHandle<NativeType>& nativeObject)
 		{
+			if(!nativeObject.IsValid())
+				return nullptr;
+
 			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
 				return scriptObjectWrapper->GetScriptObject();
 
-			// TODO - This needs to perform RTTI ID lookup and call the creation callback on the returned info
+			// TODO: Could skip expensive lookup if the type has no derived classes (should be most cases). In that case the code-gen could generate
+			// code that calls a streamlined version of this method, with no lookup.
+			ScriptWrapperObjectMetaData* metaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(nativeObject->GetTypeId());
+			if(!B3D_ENSURE(metaData))
+				return metaData->GameObjectCreateCallback(nativeObject);
+
 			return CreateScriptObjectAndWrapper(nativeObject);
 		}
 
@@ -345,14 +324,10 @@ namespace bs
 		friend class TScriptObjectWrapper<SelfType>;
 
 		// TODO - Doc
-		static void RegisterNativeToScriptTypeMapping()
+		static void InitializeAdditionalMetaData(ScriptWrapperObjectMetaData& metaData)
 		{
-			TScriptExportedTypeInformation<HGameObject> typeMappingInformation;
-			typeMappingInformation.TypeId = NativeType::GetRttiStatic()->GetRttiId();
-			typeMappingInformation.ScriptMetaData = &SelfType::sInteropMetaData;
-			typeMappingInformation.CreateCallback = &CreateScriptObjectAndWrapper;
-
-			ScriptExportedTypeMappings::GetGameObjectTypeMappings().Add(typeMappingInformation);
+			metaData.TypeId = NativeType::GetRttiStatic()->GetRttiId();
+			metaData.GameObjectCreateCallback = &CreateScriptObjectAndWrapper;
 		}
 
 		GameObjectHandle<NativeType> mNativeObjectStrongHandle;
@@ -385,10 +360,18 @@ namespace bs
 		// TODO - Doc
 		static MonoObject* GetOrCreateScriptObject(const TResourceHandle<NativeType>& nativeObject)
 		{
+			if(!nativeObject.IsValid())
+				return nullptr;
+
 			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
 				return scriptObjectWrapper->GetScriptObject();
 
-			// TODO - This needs to perform RTTI ID lookup and call the creation callback on the returned info
+			// TODO: Could skip expensive lookup if the type has no derived classes (should be most cases). In that case the code-gen could generate
+			// code that calls a streamlined version of this method, with no lookup.
+			ScriptWrapperObjectMetaData* metaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(nativeObject->GetTypeId());
+			if(!B3D_ENSURE(metaData))
+				return metaData->ResourceCreateCallback(nativeObject);
+
 			return CreateScriptObjectAndWrapper(nativeObject);
 		}
 
@@ -396,14 +379,10 @@ namespace bs
 		friend class TScriptObjectWrapper<SelfType>;
 
 		// TODO - Doc
-		static void RegisterNativeToScriptTypeMapping()
+		static void InitializeAdditionalMetaData(ScriptWrapperObjectMetaData& metaData)
 		{
-			TScriptExportedTypeInformation<HResource> typeMappingInformation;
-			typeMappingInformation.TypeId = NativeType::GetRttiStatic()->GetRttiId();
-			typeMappingInformation.ScriptMetaData = &SelfType::sInteropMetaData;
-			typeMappingInformation.CreateCallback = &CreateScriptObjectAndWrapper;
-
-			ScriptExportedTypeMappings::GetResourceTypeMappings().Add(typeMappingInformation);
+			metaData.TypeId = NativeType::GetRttiStatic()->GetRttiId();
+			metaData.ResourceCreateCallback = &CreateScriptObjectAndWrapper;
 		}
 
 		TResourceHandle<NativeType> mNativeObjectStrongHandle;

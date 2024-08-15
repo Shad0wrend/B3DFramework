@@ -16,7 +16,7 @@ void ScriptQuaternion::InitRuntimeData()
 MonoObject* ScriptQuaternion::Box(const Quaternion& value)
 {
 	// We're casting away const but it's fine since structs are passed by value anyway
-	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 }
 
 Quaternion ScriptQuaternion::Unbox(MonoObject* obj)

@@ -11,15 +11,25 @@ namespace bs
 	 */
 
 	/**	Contains information required for initializing and handling a single script class. */
-	struct B3D_MONO_EXPORT ScriptTypeMetaData
+	struct B3D_MONO_EXPORT ScriptWrapperObjectMetaData
 	{
-		ScriptTypeMetaData();
-		ScriptTypeMetaData(const String& assembly, const String& nameSpace, const String& name, std::function<void()> setupScriptBindingsCallback);
+		ScriptWrapperObjectMetaData() = default;
+		ScriptWrapperObjectMetaData(const String& assembly, const String& nameSpace, const String& name, std::function<void()> setupScriptBindingsCallback);
 
 		// TODO - These should be const char
 		String Namespace; /**< Namespace the script class is located in. */
 		String Name; /**< Type name of the script class. */
 		String Assembly; /**< Name of the assembly the script class is located in. */
+
+		u32 TypeId = ~0u; /*< RTTI ID of the native object. */
+
+		/** Callbacks use to create the correct script object and script wrapper object from a native object. */
+		union
+		{
+			MonoObject* (*ReflectableCreateCallback)(const SPtr<IReflectable>&) = nullptr;
+			MonoObject* (*ResourceCreateCallback)(const HResource&);
+			MonoObject* (*GameObjectCreateCallback)(const HGameObject&);
+		};
 
 		/** Callback that will be triggered when assembly containing the class is loaded or refreshed. Used for initialization of script bindings for the type. */
 		std::function<void()> SetupScriptBindingsCallback;

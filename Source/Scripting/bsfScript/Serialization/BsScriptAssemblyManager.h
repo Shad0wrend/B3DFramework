@@ -3,7 +3,6 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObjectWrapper.h"
 #include "Serialization/BsManagedSerializableObjectInfo.h"
 #include "Utility/BsModule.h"
 
@@ -136,6 +135,12 @@ namespace bs
 		 */
 		ReflectableTypeInfo* GetReflectableTypeInfo(u32 rttiTypeId);
 
+		/** Returns script wrapper object meta-data for the type as specified by the provided RTTI type ID. */
+		ScriptWrapperObjectMetaData* GetScriptWrapperMetaData(u32 typeId);
+
+		/** Returns script wrapper object meta-data for the type as specified by the script type. */
+		ScriptWrapperObjectMetaData* GetScriptWrapperMetaData(::MonoReflectionType* type);
+
 		/**
 		 * Checks if the managed serializable object info for the specified type exists.
 		 *
@@ -179,7 +184,7 @@ namespace bs
 		 * Creates a lookup that allows you to find script object wrapper type based on RTTI type ID or script type. Should be called after
 		 * an assembly is loaded or reloaded.
 		 */
-		void LoadTypeMappings(MonoAssembly& assembly);
+		void InitializeScriptWrapperMetaDataLookup(MonoAssembly& assembly);
 
 		UnorderedMap<String, SPtr<ManagedSerializableAssemblyInfo>> mAssemblyInfos;
 		UnorderedMap<::MonoReflectionType*, BuiltinComponentInfo> mBuiltinComponentInfos; // TODO - To be deprecated
@@ -190,12 +195,8 @@ namespace bs
 		UnorderedMap<u32, ReflectableTypeInfo> mReflectableTypeInfosByTID; // TODO - To be deprecated
 		UnorderedMap<::MonoReflectionType*, ReflectableTypeInfo> mReflectableTypeInfos; // TODO - To be deprecated
 
-		UnorderedMap<u32, TScriptExportedTypeInformation<SPtr<IReflectable>>> mTypeIdToReflectableTypeInformation;
-		UnorderedMap<::MonoReflectionType*, TScriptExportedTypeInformation<SPtr<IReflectable>>> mScriptTypeToReflectableTypeInformation;
-		UnorderedMap<u32, TScriptExportedTypeInformation<HResource>> mTypeIdToResourceTypeInformation;
-		UnorderedMap<::MonoReflectionType*, TScriptExportedTypeInformation<HResource>> mScriptTypeToResourceTypeInformation;
-		UnorderedMap<u32, TScriptExportedTypeInformation<HGameObject>> mTypeIdToGameObjectTypeInformation;
-		UnorderedMap<::MonoReflectionType*, TScriptExportedTypeInformation<HGameObject>> mScriptTypeToGameObjectTypeInformation;
+		UnorderedMap<u32, ScriptWrapperObjectMetaData*> mScriptWrapperMetaDataByTypeId;
+		UnorderedMap<::MonoReflectionType*, ScriptWrapperObjectMetaData*> mScriptWrapperMetaDataByScriptClass;
 
 		bool mBaseTypesInitialized = false;
 

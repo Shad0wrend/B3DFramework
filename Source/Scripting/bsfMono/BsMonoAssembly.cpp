@@ -299,7 +299,7 @@ const Vector<MonoClass*>& MonoAssembly::GetAllClasses() const
 				void* iter = nullptr;
 				do
 				{
-					::MonoClass* rawNestedClass = mono_class_get_nested_types(curNestedClass->GetInternalClassInternal(), &iter);
+					::MonoClass* rawNestedClass = mono_class_get_nested_types(curNestedClass->GetInternalClass(), &iter);
 					if(rawNestedClass == nullptr)
 						break;
 

@@ -74,7 +74,7 @@ MonoObject* ScriptComponent::InternalAddComponent(MonoObject* parentSceneObject,
 	MonoClass* managedComponent = sam.GetBuiltinClasses().ManagedComponentClass;
 	::MonoClass* requestedClass = MonoUtil::GetClass(type);
 
-	bool isManagedComponent = MonoUtil::IsSubClassOf(requestedClass, managedComponent->GetInternalClassInternal());
+	bool isManagedComponent = MonoUtil::IsSubClassOf(requestedClass, managedComponent->GetInternalClass());
 	if(isManagedComponent)
 	{
 		GameObjectHandle<ManagedComponent> mc = so->AddComponent<ManagedComponent>(type);
@@ -178,7 +178,7 @@ MonoArray* ScriptComponent::InternalGetComponentsPerType(MonoObject* parentScene
 		}
 	}
 
-	ScriptArray scriptArray(metaData.ScriptClass->GetInternalClassInternal(), (u32)managedComponents.size());
+	ScriptArray scriptArray(metaData.ScriptClass->GetInternalClass(), (u32)managedComponents.size());
 	for(u32 i = 0; i < (u32)managedComponents.size(); i++)
 		scriptArray.Set(i, managedComponents[i]);
 
@@ -212,7 +212,7 @@ MonoArray* ScriptComponent::InternalGetComponents(MonoObject* parentSceneObject)
 		}
 	}
 
-	ScriptArray scriptArray(metaData.ScriptClass->GetInternalClassInternal(), (u32)managedComponents.size());
+	ScriptArray scriptArray(metaData.ScriptClass->GetInternalClass(), (u32)managedComponents.size());
 	for(u32 i = 0; i < (u32)managedComponents.size(); i++)
 		scriptArray.Set(i, managedComponents[i]);
 

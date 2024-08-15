@@ -48,7 +48,7 @@ MonoObject* ScriptAsyncOpBase::CreateInternal(const AsyncOpBase& op, const std::
 		asyncOpClass = metaData.ScriptClass;
 	else
 	{
-		::MonoClass* rawClass = BindGenericParam(returnTypeClass->GetInternalClassInternal());
+		::MonoClass* rawClass = BindGenericParam(returnTypeClass->GetInternalClass());
 		asyncOpClass = MonoManager::Instance().FindClass(rawClass);
 	}
 
@@ -71,7 +71,7 @@ MonoObject* ScriptAsyncOpBase::CreateInternal(const AsyncOpBase& op, const std::
 	MonoClass* asyncOpClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().GenericAsyncOpClass;
 
 	::MonoClass* params[1] = { param };
-	return MonoUtil::BindGenericParameters(asyncOpClass->GetInternalClassInternal(), params, 1);
+	return MonoUtil::BindGenericParameters(asyncOpClass->GetInternalClass(), params, 1);
 }
 
 bool ScriptAsyncOpBase::InternalIsComplete(ScriptAsyncOpBase* thisPtr)

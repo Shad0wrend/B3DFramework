@@ -92,7 +92,7 @@ MonoArray* ScriptScriptCode::InternalGetTypes(ScriptScriptCode* thisPtr)
 	u32 numValidTypes = (u32)validTypes.size();
 	MonoClass* typeClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemTypeClass;
 
-	ScriptArray scriptArray(typeClass->GetInternalClassInternal(), numValidTypes);
+	ScriptArray scriptArray(typeClass->GetInternalClass(), numValidTypes);
 	for(u32 i = 0; i < numValidTypes; i++)
 		scriptArray.Set(i, validTypes[i]);
 

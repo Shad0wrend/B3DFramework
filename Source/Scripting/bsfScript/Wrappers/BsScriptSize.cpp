@@ -17,7 +17,7 @@ void ScriptSize2::InitRuntimeData()
 MonoObject* ScriptSize2::Box(const Size2& value)
 {
 	// We're casting away const but it's fine since structs are passed by value anyway
-	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 }
 
 Size2 ScriptSize2::Unbox(MonoObject* obj)
@@ -35,7 +35,7 @@ void ScriptSize2UI::InitRuntimeData()
 MonoObject* ScriptSize2UI::Box(const Size2UI& value)
 {
 	// We're casting away const but it's fine since structs are passed by value anyway
-	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 }
 
 Size2UI ScriptSize2UI::Unbox(MonoObject* obj)

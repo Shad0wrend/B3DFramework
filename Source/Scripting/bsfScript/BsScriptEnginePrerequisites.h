@@ -126,7 +126,7 @@ namespace bs
 	class ScriptColliderBase;
 	class ScriptAudioClip;
 	class ScriptReflectableBase;
-	struct ScriptTypeMetaData;
+	struct ScriptWrapperObjectMetaData;
 
 	typedef GameObjectHandle<ManagedComponent> HManagedComponent;
 	typedef TResourceHandle<ManagedResource> HManagedResource;
@@ -193,7 +193,7 @@ namespace bs
 	/** Information about a builtin component wrapped as a script object. */
 	struct BuiltinComponentInfo
 	{
-		const ScriptTypeMetaData* MetaData;
+		const ScriptWrapperObjectMetaData* MetaData;
 		u32 TypeId;
 		MonoClass* MonoClass;
 		std::function<ScriptComponentBase*(const HComponent&)> CreateCallback;
@@ -229,7 +229,7 @@ namespace bs
 	/** Information about a builtin resource wrapped as a script object. */
 	struct BuiltinResourceInfo
 	{
-		const ScriptTypeMetaData* MetaData;
+		const ScriptWrapperObjectMetaData* MetaData;
 		u32 TypeId;
 		MonoClass* MonoClass;
 		ScriptResourceType ResType;
@@ -239,7 +239,7 @@ namespace bs
 	/** Information about a native reflectable object wrapped as a script object. */
 	struct ReflectableTypeInfo
 	{
-		const ScriptTypeMetaData* MetaData;
+		const ScriptWrapperObjectMetaData* MetaData;
 		u32 TypeId;
 		MonoClass* MonoClass;
 		std::function<MonoObject*(const SPtr<IReflectable>&)> CreateCallback;

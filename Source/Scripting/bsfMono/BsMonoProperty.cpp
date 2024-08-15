@@ -75,7 +75,7 @@ bool MonoProperty::HasAttribute(MonoClass* monoClass)
 	if(attrInfo == nullptr)
 		return false;
 
-	bool hasAttr = mono_custom_attrs_has_attr(attrInfo, monoClass->GetInternalClassInternal()) != 0;
+	bool hasAttr = mono_custom_attrs_has_attr(attrInfo, monoClass->GetInternalClass()) != 0;
 
 	mono_custom_attrs_free(attrInfo);
 
@@ -92,8 +92,8 @@ MonoObject* MonoProperty::GetAttribute(MonoClass* monoClass)
 		return nullptr;
 
 	MonoObject* foundAttr = nullptr;
-	if(mono_custom_attrs_has_attr(attrInfo, monoClass->GetInternalClassInternal()))
-		foundAttr = mono_custom_attrs_get_attr(attrInfo, monoClass->GetInternalClassInternal());
+	if(mono_custom_attrs_has_attr(attrInfo, monoClass->GetInternalClass()))
+		foundAttr = mono_custom_attrs_get_attr(attrInfo, monoClass->GetInternalClass());
 
 	mono_custom_attrs_free(attrInfo);
 	return foundAttr;

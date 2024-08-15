@@ -112,7 +112,7 @@ void ScriptSerializableField::InternalGetStyle(ScriptSerializableField* nativeIn
 		}
 	}
 
-	MonoUtil::ValueCopy(style, &interopStyle, ScriptSerializableFieldStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
+	MonoUtil::ValueCopy(style, &interopStyle, ScriptSerializableFieldStyle::GetMetaData()->ScriptClass->GetInternalClass());
 }
 
 ScriptSerializableFieldStyle::ScriptSerializableFieldStyle(MonoObject* managedInstance)

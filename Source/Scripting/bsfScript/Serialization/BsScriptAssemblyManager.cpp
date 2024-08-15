@@ -41,7 +41,7 @@ void ScriptAssemblyManager::LoadAssemblyInfo(const String& assemblyName, const B
 		return;
 
 	LoadTypeMappings(*curAssembly, typeMappings);
-	LoadTypeMappings(*curAssembly);
+	InitializeScriptWrapperMetaDataLookup(*curAssembly);
 
 	SPtr<ManagedSerializableAssemblyInfo> assemblyInfo = B3DMakeShared<ManagedSerializableAssemblyInfo>();
 	assemblyInfo->MName = assemblyName;
@@ -78,14 +78,14 @@ void ScriptAssemblyManager::LoadAssemblyInfo(const String& assemblyName, const B
 			if(isSerializable || isInspectable)
 				typeInfo->MFlags |= ScriptTypeFlag::Inspectable;
 
-			MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(curClass->GetInternalClassInternal());
+			MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(curClass->GetInternalClass());
 
 			if(monoPrimitiveType == MonoPrimitiveType::ValueType)
 				typeInfo->MValueType = true;
 			else
 				typeInfo->MValueType = false;
 
-			::MonoReflectionType* type = MonoUtil::GetType(curClass->GetInternalClassInternal());
+			::MonoReflectionType* type = MonoUtil::GetType(curClass->GetInternalClass());
 
 			// Is this a wrapper for some reflectable type?
 			ReflectableTypeInfo* reflTypeInfo = GetReflectableTypeInfo(type);
@@ -325,6 +325,9 @@ void ScriptAssemblyManager::ClearAssemblyInfo()
 
 	mReflectableTypeInfos.clear();
 	mReflectableTypeInfosByTID.clear();
+
+	mScriptWrapperMetaDataByTypeId.clear();
+	mScriptWrapperMetaDataByScriptClass.clear();
 }
 
 SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* monoClass)
@@ -332,12 +335,12 @@ SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* 
 	if(!mBaseTypesInitialized)
 		B3D_EXCEPT(InvalidStateException, "Calling getTypeInfo without previously initializing base types.");
 
-	MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(monoClass->GetInternalClassInternal());
+	MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(monoClass->GetInternalClass());
 
 	// If enum get the enum base data type
-	bool isEnum = MonoUtil::IsEnum(monoClass->GetInternalClassInternal());
+	bool isEnum = MonoUtil::IsEnum(monoClass->GetInternalClass());
 	if(isEnum)
-		monoPrimitiveType = MonoUtil::GetEnumPrimitiveType(monoClass->GetInternalClassInternal());
+		monoPrimitiveType = MonoUtil::GetEnumPrimitiveType(monoClass->GetInternalClass());
 
 	//  Determine field type
 	//// Check for simple types or enums first
@@ -440,7 +443,7 @@ SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* 
 			{
 				typeInfo->MType = ScriptReferenceType::BuiltinResource;
 
-				::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClassInternal());
+				::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClass());
 				BuiltinResourceInfo* builtinInfo = GetBuiltinResourceInfo(type);
 				if(builtinInfo == nullptr)
 				{
@@ -474,7 +477,7 @@ SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* 
 			{
 				typeInfo->MType = ScriptReferenceType::BuiltinComponent;
 
-				::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClassInternal());
+				::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClass());
 				BuiltinComponentInfo* builtinInfo = GetBuiltinComponentInfo(type);
 				if(builtinInfo == nullptr)
 				{
@@ -489,7 +492,7 @@ SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* 
 		}
 		else
 		{
-			::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClassInternal());
+			::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClass());
 
 			// Is this a wrapper for some reflectable type?
 			ReflectableTypeInfo* reflTypeInfo = GetReflectableTypeInfo(type);
@@ -583,7 +586,7 @@ SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* 
 		{
 			SPtr<ManagedSerializableTypeInfoArray> typeInfo = B3DMakeShared<ManagedSerializableTypeInfoArray>();
 
-			::MonoClass* elementClass = ScriptArray::GetElementClass(monoClass->GetInternalClassInternal());
+			::MonoClass* elementClass = ScriptArray::GetElementClass(monoClass->GetInternalClass());
 			if(elementClass != nullptr)
 			{
 				MonoClass* monoElementClass = MonoManager::Instance().FindClass(elementClass);
@@ -594,7 +597,7 @@ SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* 
 			if(typeInfo->MElementType == nullptr)
 				return nullptr;
 
-			typeInfo->MRank = ScriptArray::GetRank(monoClass->GetInternalClassInternal());
+			typeInfo->MRank = ScriptArray::GetRank(monoClass->GetInternalClass());
 
 			return typeInfo;
 		}
@@ -748,7 +751,7 @@ void ScriptAssemblyManager::LoadTypeMappings(MonoAssembly& assembly, const Built
 		BuiltinComponentInfo info = entry;
 		info.MonoClass = assembly.GetClass(entry.MetaData->Namespace, entry.MetaData->Name);
 
-		::MonoReflectionType* type = MonoUtil::GetType(info.MonoClass->GetInternalClassInternal());
+		::MonoReflectionType* type = MonoUtil::GetType(info.MonoClass->GetInternalClass());
 
 		mBuiltinComponentInfos[type] = info;
 		mBuiltinComponentInfosByTID[info.TypeId] = info;
@@ -759,7 +762,7 @@ void ScriptAssemblyManager::LoadTypeMappings(MonoAssembly& assembly, const Built
 		BuiltinResourceInfo info = entry;
 		info.MonoClass = assembly.GetClass(entry.MetaData->Namespace, entry.MetaData->Name);
 
-		::MonoReflectionType* type = MonoUtil::GetType(info.MonoClass->GetInternalClassInternal());
+		::MonoReflectionType* type = MonoUtil::GetType(info.MonoClass->GetInternalClass());
 
 		mBuiltinResourceInfos[type] = info;
 		mBuiltinResourceInfosByTID[info.TypeId] = info;
@@ -771,28 +774,31 @@ void ScriptAssemblyManager::LoadTypeMappings(MonoAssembly& assembly, const Built
 		ReflectableTypeInfo info = entry;
 		info.MonoClass = assembly.GetClass(entry.MetaData->Namespace, entry.MetaData->Name);
 
-		::MonoReflectionType* type = MonoUtil::GetType(info.MonoClass->GetInternalClassInternal());
+		::MonoReflectionType* type = MonoUtil::GetType(info.MonoClass->GetInternalClass());
 
 		mReflectableTypeInfos[type] = info;
 		mReflectableTypeInfosByTID[info.TypeId] = info;
 	}
 }
 
-void ScriptAssemblyManager::LoadTypeMappings(MonoAssembly& assembly)
+void ScriptAssemblyManager::InitializeScriptWrapperMetaDataLookup(MonoAssembly& assembly)
 {
-	for(const auto& entry : ScriptExportedTypeMappings::GetReflectableTypeMappings())
+	const UnorderedMap<String, Vector<RegisteredScriptWrapperTypeInformation>> scriptWrapperTypeInformationMap = MonoManager::GetScriptWrapperTypeInformation();
+	const auto found = scriptWrapperTypeInformationMap.find(assembly.GetName());
+	if(found == scriptWrapperTypeInformationMap.end())
+		return;
+
+	for(const auto& entry : found->second)
 	{
-		if(!B3D_ENSURE(entry.ScriptMetaData))
+		if(!B3D_ENSURE(entry.MetaData))
 			continue;
 
-		//if(entry.ScriptMetaData->Assembly)
+		::MonoReflectionType* type = MonoUtil::GetType(entry.MetaData->ScriptClass->GetInternalClass());
+		mScriptWrapperMetaDataByScriptClass[type] = entry.MetaData;
 
-		//if(entry.)
-
-		// TODO
+		if(entry.MetaData->TypeId != ~0u)
+			mScriptWrapperMetaDataByTypeId[entry.MetaData->TypeId] = entry.MetaData;
 	}
-	
-	// TODO
 }
 
 BuiltinComponentInfo* ScriptAssemblyManager::GetBuiltinComponentInfo(::MonoReflectionType* type)
@@ -858,6 +864,22 @@ ReflectableTypeInfo* ScriptAssemblyManager::GetReflectableTypeInfo(uint32_t rtti
 	return &(iterFind->second);
 }
 
+ScriptWrapperObjectMetaData* ScriptAssemblyManager::GetScriptWrapperMetaData(u32 typeId)
+{
+	if(auto found = mScriptWrapperMetaDataByTypeId.find(typeId); found == mScriptWrapperMetaDataByTypeId.end())
+		return found->second;
+
+	return nullptr;
+}
+
+ScriptWrapperObjectMetaData* ScriptAssemblyManager::GetScriptWrapperMetaData(::MonoReflectionType* type)
+{
+	if(auto found = mScriptWrapperMetaDataByScriptClass.find(type); found == mScriptWrapperMetaDataByScriptClass.end())
+		return found->second;
+
+	return nullptr;
+}
+
 bool ScriptAssemblyManager::GetSerializableObjectInfo(const String& ns, const String& typeName, SPtr<ManagedSerializableObjectInfo>& outInfo)
 {
 	String fullName = ns + "." + typeName;
@@ -911,8 +933,8 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 			return nullptr;
 		}
 
-		const ScriptTypeMetaData* managedResourceMeta = ScriptManagedResource::GetMetaData();
-		const ScriptTypeMetaData* managedComponentMeta = ScriptManagedComponent::GetMetaData();
+		const ScriptWrapperObjectMetaData* managedResourceMeta = ScriptManagedResource::GetMetaData();
+		const ScriptWrapperObjectMetaData* managedComponentMeta = ScriptManagedComponent::GetMetaData();
 
 		if(monoClass->IsSubClassOf(ScriptResource::GetMetaData()->ScriptClass)) // Resource
 		{

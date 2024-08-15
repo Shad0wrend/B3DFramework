@@ -82,7 +82,7 @@ void ScriptRRefBase::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
 	MonoClass* rrefClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().GenericRRefClass;
 
 	::MonoClass* params[1] = { param };
-	return MonoUtil::BindGenericParameters(rrefClass->GetInternalClassInternal(), params, 1);
+	return MonoUtil::BindGenericParameters(rrefClass->GetInternalClass(), params, 1);
 }
 
 bool ScriptRRefBase::InternalIsLoaded(ScriptRRefBase* thisPtr)
