@@ -45,9 +45,8 @@ namespace bs
 	template<class NativeObjectType>
 	struct TScriptExportedTypeInformation
 	{
-		const ScriptMeta* ScriptMetaData = nullptr;
+		const ScriptTypeMetaData* ScriptMetaData = nullptr;
 		u32 TypeId = ~0u; /*< RTTI ID of the native object. */
-		MonoClass* ScriptClass = nullptr;
 		std::function<MonoObject*(const NativeObjectType&)> CreateCallback;
 	};
 
@@ -196,14 +195,14 @@ namespace bs
 		}
 
 		// TODO - Doc
-		static const ScriptMeta* GetMetaData() { return &sInteropMetaData; }
+		static const ScriptTypeMetaData* GetMetaData() { return &sInteropMetaData; }
 
 		// TODO - Doc
 		static void InitializeMetaDataAtLoadTime()
 		{
 			// Need to delay init of sInteropMetaData since it's also a static, and we can't guarantee the order
 			// (if it gets initialized after this, it will just overwrite the data)
-			ScriptMeta localMetaData = ScriptMeta(SelfType::GetAssemblyName(), SelfType::GetNamespace(), SelfType::GetTypeName(), &SelfType::SetupScriptBindings);
+			ScriptTypeMetaData localMetaData = ScriptTypeMetaData(SelfType::GetAssemblyName(), SelfType::GetNamespace(), SelfType::GetTypeName(), &SelfType::SetupScriptBindings);
 
 			MonoManager::RegisterScriptType(&sInteropMetaData, localMetaData);
 			SelfType::RegisterNativeToScriptTypeMapping();
@@ -225,7 +224,7 @@ namespace bs
 			}
 		}
 
-		static ScriptMeta sInteropMetaData;
+		static ScriptTypeMetaData sInteropMetaData;
 		static InitializeScriptObjectWrapperOnLoadTime<SelfType> sInitializeOnLoadTime;
 	};
 
@@ -233,7 +232,7 @@ namespace bs
 	InitializeScriptObjectWrapperOnLoadTime<SelfType> TScriptObjectWrapper<SelfType>::sInitializeOnLoadTime;
 
 	template <typename SelfType>
-	ScriptMeta TScriptObjectWrapper<SelfType>::sInteropMetaData;
+	ScriptTypeMetaData TScriptObjectWrapper<SelfType>::sInteropMetaData;
 
 	/**	Specialized version of TScriptObjectWrapper that should be used for types that are never going to be explicitly instantiated (e.g. singletons, static-only classes and base classes). */
 	template <typename SelfType>
@@ -299,7 +298,6 @@ namespace bs
 		{
 			TScriptExportedTypeInformation<SPtr<IReflectable>> typeMappingInformation;
 			typeMappingInformation.TypeId = NativeType::GetRttiStatic()->GetRttiId();
-			typeMappingInformation.ScriptClass = nullptr; // Populated later
 			typeMappingInformation.ScriptMetaData = &SelfType::sInteropMetaData;
 			typeMappingInformation.CreateCallback = &CreateScriptObjectAndWrapper;
 
@@ -351,7 +349,6 @@ namespace bs
 		{
 			TScriptExportedTypeInformation<HGameObject> typeMappingInformation;
 			typeMappingInformation.TypeId = NativeType::GetRttiStatic()->GetRttiId();
-			typeMappingInformation.ScriptClass = nullptr; // Populated later
 			typeMappingInformation.ScriptMetaData = &SelfType::sInteropMetaData;
 			typeMappingInformation.CreateCallback = &CreateScriptObjectAndWrapper;
 
@@ -403,7 +400,6 @@ namespace bs
 		{
 			TScriptExportedTypeInformation<HResource> typeMappingInformation;
 			typeMappingInformation.TypeId = NativeType::GetRttiStatic()->GetRttiId();
-			typeMappingInformation.ScriptClass = nullptr; // Populated later
 			typeMappingInformation.ScriptMetaData = &SelfType::sInteropMetaData;
 			typeMappingInformation.CreateCallback = &CreateScriptObjectAndWrapper;
 

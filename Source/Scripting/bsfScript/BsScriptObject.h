@@ -151,7 +151,7 @@ namespace bs
 		}
 
 		/** Returns the meta-data containing class and method information for the managed type. */
-		static const ScriptMeta* GetMetaData() { return &metaData; }
+		static const ScriptTypeMetaData* GetMetaData() { return &metaData; }
 
 		/**
 		 * Initializes the meta-data containing class and method information for the managed type. Called on library load
@@ -161,13 +161,13 @@ namespace bs
 		{
 			// Need to delay init of actual metaData since it's also a static, and we can't guarantee the order
 			// (if it gets initialized after this, it will just overwrite the data)
-			ScriptMeta localMetaData = ScriptMeta(Type::GetAssemblyName(), Type::GetNamespace(), Type::GetTypeName(), &Type::InitRuntimeData);
+			ScriptTypeMetaData localMetaData = ScriptTypeMetaData(Type::GetAssemblyName(), Type::GetNamespace(), Type::GetTypeName(), &Type::InitRuntimeData);
 
 			MonoManager::RegisterScriptType(&metaData, localMetaData);
 		}
 
 	protected:
-		static ScriptMeta metaData;
+		static ScriptTypeMetaData metaData;
 
 	private:
 		static InitScriptObjectOnStart<Type, Base> initOnStart;
@@ -177,7 +177,7 @@ namespace bs
 	InitScriptObjectOnStart<Type, Base> ScriptObject<Type, Base>::initOnStart;
 
 	template <typename Type, typename Base>
-	ScriptMeta ScriptObject<Type, Base>::metaData;
+	ScriptTypeMetaData ScriptObject<Type, Base>::metaData;
 
 /** Helper macro to use with script interop objects that form a link between C++ and CLR. */
 #define SCRIPT_OBJ(assembly, namespace, name) \

@@ -6,11 +6,11 @@
 #include "BsMonoField.h"
 
 using namespace bs;
-ScriptMeta::ScriptMeta()
+ScriptTypeMetaData::ScriptTypeMetaData()
 {
 }
 
-ScriptMeta::ScriptMeta(const String& assembly, const String& nameSpace, const String& name, std::function<void()> setupScriptBindingsCallback)
+ScriptTypeMetaData::ScriptTypeMetaData(const String& assembly, const String& nameSpace, const String& name, std::function<void()> setupScriptBindingsCallback)
 	: Namespace(nameSpace), Name(name), Assembly(assembly), SetupScriptBindingsCallback(std::move(setupScriptBindingsCallback))
 {
 }

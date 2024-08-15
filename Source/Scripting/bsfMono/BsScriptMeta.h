@@ -11,10 +11,10 @@ namespace bs
 	 */
 
 	/**	Contains information required for initializing and handling a single script class. */
-	struct B3D_MONO_EXPORT ScriptMeta
+	struct B3D_MONO_EXPORT ScriptTypeMetaData
 	{
-		ScriptMeta();
-		ScriptMeta(const String& assembly, const String& nameSpace, const String& name, std::function<void()> setupScriptBindingsCallback);
+		ScriptTypeMetaData();
+		ScriptTypeMetaData(const String& assembly, const String& nameSpace, const String& name, std::function<void()> setupScriptBindingsCallback);
 
 		// TODO - These should be const char
 		String Namespace; /**< Namespace the script class is located in. */

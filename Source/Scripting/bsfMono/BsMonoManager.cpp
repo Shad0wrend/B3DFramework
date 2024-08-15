@@ -176,19 +176,19 @@ bs::MonoAssembly& MonoManager::LoadAssembly(const Path& path, const String& name
 	if(!assembly->mIsLoaded)
 	{
 		assembly->Load();
-		InitializeScriptTypes(*assembly);
+		RefreshScriptTypeMetaDataAndBindings(*assembly); // TODO - This should probably be moved to ScriptAssemblyManager
 	}
 
 	return *assembly;
 }
 
-void MonoManager::InitializeScriptTypes(MonoAssembly& assembly)
+void MonoManager::RefreshScriptTypeMetaDataAndBindings(MonoAssembly& assembly)
 {
 	// Fully initialize all types that use this assembly
-	Vector<ScriptMetaInfo>& typeMetas = GetScriptMetaData()[assembly.mName];
+	Vector<RegisteredScriptTypeInformation>& typeMetas = GetScriptTypeMetaDataMap()[assembly.mName];
 	for(auto& entry : typeMetas)
 	{
-		ScriptMeta* meta = entry.MetaData;
+		ScriptTypeMetaData* meta = entry.MetaData;
 		*meta = entry.LocalMetaData;
 
 		meta->ScriptClass = assembly.GetClass(meta->Namespace, meta->Name);
@@ -228,7 +228,7 @@ void MonoManager::UnloadAll()
 
 	// Make sure to explicitly clear this meta-data, as it contains structures allocated from other dynamic libraries,
 	// which will likely get unloaded right after shutdown
-	GetScriptMetaData().clear();
+	GetScriptTypeMetaDataMap().clear();
 }
 
 bs::MonoAssembly* MonoManager::GetAssembly(const String& name) const
@@ -241,9 +241,9 @@ bs::MonoAssembly* MonoManager::GetAssembly(const String& name) const
 	return nullptr;
 }
 
-void MonoManager::RegisterScriptType(ScriptMeta* metaData, const ScriptMeta& localMetaData)
+void MonoManager::RegisterScriptType(ScriptTypeMetaData* metaData, const ScriptTypeMetaData& localMetaData)
 {
-	Vector<ScriptMetaInfo>& mMetas = GetScriptMetaData()[localMetaData.Assembly];
+	Vector<RegisteredScriptTypeInformation>& mMetas = GetScriptTypeMetaDataMap()[localMetaData.Assembly];
 	mMetas.push_back({ metaData, localMetaData });
 }
 
@@ -300,7 +300,7 @@ void MonoManager::UnloadScriptDomain()
 			B3DDelete(assemblyEntry.second);
 
 		// Metas hold references to various assembly objects that were just deleted, so clear them
-		Vector<ScriptMetaInfo>& typeMetas = GetScriptMetaData()[assemblyEntry.first];
+		Vector<RegisteredScriptTypeInformation>& typeMetas = GetScriptTypeMetaDataMap()[assemblyEntry.first];
 		for(auto& entry : typeMetas)
 		{
 			entry.MetaData->ScriptClass = nullptr;

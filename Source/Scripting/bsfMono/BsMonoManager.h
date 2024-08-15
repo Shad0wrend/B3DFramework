@@ -71,30 +71,33 @@ namespace bs
 		/**
 		 * Registers a new script type. This should be done before any assembly loading is done. Upon assembly load these
 		 * script types will be initialized with necessary information about their managed counterparts.
+		 *
+		 * @param metaData			Pointer to the meta-data object to initialize, stored statically on the associated TScriptObjectWrapper.
+		 * @param localMetaData		Local copy of the meta-data that will be used to initialize @p metaData.
 		 */
-		static void RegisterScriptType(ScriptMeta* metaData, const ScriptMeta& localMetaData);
+		static void RegisterScriptType(ScriptTypeMetaData* metaData, const ScriptTypeMetaData& localMetaData);
 
 		/** Triggered when the assembly domain and all relevant assemblies are about to be unloaded. */
 		Event<void()> OnDomainUnload;
 
 	private:
-		struct ScriptMetaInfo
+		struct RegisteredScriptTypeInformation
 		{
-			ScriptMeta* MetaData;
-			ScriptMeta LocalMetaData;
+			ScriptTypeMetaData* MetaData; /**< Pointer to the meta-data on the associated TScriptObjectWrapper. */
+			ScriptTypeMetaData LocalMetaData; /**< Local copy of the meta-data that will be used to initialize @p MetaData. */
 		};
 
 		/**
-		 * Initializes any script types registered with registerScriptType() for this assembly. This sets up any
-		 * native <-> managed internal calls and other similar code for such types.
+		 * Initializes meta-data and sets up bindings for all script types registered with RegisterScriptType() for the provided assembly. This should be called
+		 * after an assembly is loaded or reloaded.
 		 */
-		void InitializeScriptTypes(MonoAssembly& assembly);
+		void RefreshScriptTypeMetaDataAndBindings(MonoAssembly& assembly);
 
 		/**	Returns a list of all types that will be initializes with their assembly gets loaded. */
-		static UnorderedMap<String, Vector<ScriptMetaInfo>>& GetScriptMetaData()
+		static UnorderedMap<String, Vector<RegisteredScriptTypeInformation>>& GetScriptTypeMetaDataMap()
 		{
-			static UnorderedMap<String, Vector<ScriptMetaInfo>> mTypesToInitialize;
-			return mTypesToInitialize;
+			static UnorderedMap<String, Vector<RegisteredScriptTypeInformation>> sRegisteredScriptTypes;
+			return sRegisteredScriptTypes;
 		}
 
 		UnorderedMap<String, MonoAssembly*> mAssemblies;

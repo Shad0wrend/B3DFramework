@@ -41,6 +41,7 @@ void ScriptAssemblyManager::LoadAssemblyInfo(const String& assemblyName, const B
 		return;
 
 	LoadTypeMappings(*curAssembly, typeMappings);
+	LoadTypeMappings(*curAssembly);
 
 	SPtr<ManagedSerializableAssemblyInfo> assemblyInfo = B3DMakeShared<ManagedSerializableAssemblyInfo>();
 	assemblyInfo->MName = assemblyName;
@@ -777,6 +778,23 @@ void ScriptAssemblyManager::LoadTypeMappings(MonoAssembly& assembly, const Built
 	}
 }
 
+void ScriptAssemblyManager::LoadTypeMappings(MonoAssembly& assembly)
+{
+	for(const auto& entry : ScriptExportedTypeMappings::GetReflectableTypeMappings())
+	{
+		if(!B3D_ENSURE(entry.ScriptMetaData))
+			continue;
+
+		//if(entry.ScriptMetaData->Assembly)
+
+		//if(entry.)
+
+		// TODO
+	}
+	
+	// TODO
+}
+
 BuiltinComponentInfo* ScriptAssemblyManager::GetBuiltinComponentInfo(::MonoReflectionType* type)
 {
 	auto iterFind = mBuiltinComponentInfos.find(type);
@@ -893,8 +911,8 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 			return nullptr;
 		}
 
-		const ScriptMeta* managedResourceMeta = ScriptManagedResource::GetMetaData();
-		const ScriptMeta* managedComponentMeta = ScriptManagedComponent::GetMetaData();
+		const ScriptTypeMetaData* managedResourceMeta = ScriptManagedResource::GetMetaData();
+		const ScriptTypeMetaData* managedComponentMeta = ScriptManagedComponent::GetMetaData();
 
 		if(monoClass->IsSubClassOf(ScriptResource::GetMetaData()->ScriptClass)) // Resource
 		{

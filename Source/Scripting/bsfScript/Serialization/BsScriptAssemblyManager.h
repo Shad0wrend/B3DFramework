@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
+#include "BsScriptObjectWrapper.h"
 #include "Serialization/BsManagedSerializableObjectInfo.h"
 #include "Utility/BsModule.h"
 
@@ -172,16 +173,30 @@ namespace bs
 		 * Adds mappings between managed objects and their native wrappers to their respective lookup tables and
 		 * initializes any assembly specific data.
 		 */
-		void LoadTypeMappings(MonoAssembly& assembly, const BuiltinTypeMappings& mapping);
+		void LoadTypeMappings(MonoAssembly& assembly, const BuiltinTypeMappings& mapping); // TODO - Will be deprecated in favor of the method below
+
+		/**
+		 * Creates a lookup that allows you to find script object wrapper type based on RTTI type ID or script type. Should be called after
+		 * an assembly is loaded or reloaded.
+		 */
+		void LoadTypeMappings(MonoAssembly& assembly);
 
 		UnorderedMap<String, SPtr<ManagedSerializableAssemblyInfo>> mAssemblyInfos;
-		UnorderedMap<::MonoReflectionType*, BuiltinComponentInfo> mBuiltinComponentInfos;
-		UnorderedMap<u32, BuiltinComponentInfo> mBuiltinComponentInfosByTID;
-		UnorderedMap<::MonoReflectionType*, BuiltinResourceInfo> mBuiltinResourceInfos;
-		UnorderedMap<u32, BuiltinResourceInfo> mBuiltinResourceInfosByTID;
-		UnorderedMap<u32, BuiltinResourceInfo> mBuiltinResourceInfosByType;
-		UnorderedMap<u32, ReflectableTypeInfo> mReflectableTypeInfosByTID;
-		UnorderedMap<::MonoReflectionType*, ReflectableTypeInfo> mReflectableTypeInfos;
+		UnorderedMap<::MonoReflectionType*, BuiltinComponentInfo> mBuiltinComponentInfos; // TODO - To be deprecated
+		UnorderedMap<u32, BuiltinComponentInfo> mBuiltinComponentInfosByTID; // TODO - To be deprecated
+		UnorderedMap<::MonoReflectionType*, BuiltinResourceInfo> mBuiltinResourceInfos; // TODO - To be deprecated
+		UnorderedMap<u32, BuiltinResourceInfo> mBuiltinResourceInfosByTID; // TODO - To be deprecated
+		UnorderedMap<u32, BuiltinResourceInfo> mBuiltinResourceInfosByType; // TODO - To be deprecated
+		UnorderedMap<u32, ReflectableTypeInfo> mReflectableTypeInfosByTID; // TODO - To be deprecated
+		UnorderedMap<::MonoReflectionType*, ReflectableTypeInfo> mReflectableTypeInfos; // TODO - To be deprecated
+
+		UnorderedMap<u32, TScriptExportedTypeInformation<SPtr<IReflectable>>> mTypeIdToReflectableTypeInformation;
+		UnorderedMap<::MonoReflectionType*, TScriptExportedTypeInformation<SPtr<IReflectable>>> mScriptTypeToReflectableTypeInformation;
+		UnorderedMap<u32, TScriptExportedTypeInformation<HResource>> mTypeIdToResourceTypeInformation;
+		UnorderedMap<::MonoReflectionType*, TScriptExportedTypeInformation<HResource>> mScriptTypeToResourceTypeInformation;
+		UnorderedMap<u32, TScriptExportedTypeInformation<HGameObject>> mTypeIdToGameObjectTypeInformation;
+		UnorderedMap<::MonoReflectionType*, TScriptExportedTypeInformation<HGameObject>> mScriptTypeToGameObjectTypeInformation;
+
 		bool mBaseTypesInitialized = false;
 
 		BuiltinScriptClasses mBuiltin;
