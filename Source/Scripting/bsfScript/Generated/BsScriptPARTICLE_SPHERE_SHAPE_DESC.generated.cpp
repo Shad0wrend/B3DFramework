@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptParticleSphereShapeOptions::Box(const PARTICLE_SPHERE_SHAPE_DESC& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	PARTICLE_SPHERE_SHAPE_DESC ScriptParticleSphereShapeOptions::Unbox(MonoObject* value)

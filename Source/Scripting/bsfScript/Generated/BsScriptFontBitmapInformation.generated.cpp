@@ -50,7 +50,7 @@ namespace bs
 
 		__CharacterInformationInterop interop__output;
 		interop__output = ScriptCharacterInformation::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharacterInformation::GetMetaData()->ScriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharacterInformation::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 
 	float ScriptFontBitmapInformation::InternalGetSize(ScriptFontBitmapInformation* self)
@@ -108,7 +108,7 @@ namespace bs
 
 		__CharacterInformationInterop interop__output;
 		interop__output = ScriptCharacterInformation::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharacterInformation::GetMetaData()->ScriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharacterInformation::GetMetaData()->ScriptClass->GetInternalClass());
 
 
 	}

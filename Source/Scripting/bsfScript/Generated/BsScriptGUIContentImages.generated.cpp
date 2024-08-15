@@ -19,7 +19,7 @@ namespace bs
 
 	MonoObject*ScriptGUIContentImages::Box(const __GUIContentImagesInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__GUIContentImagesInterop ScriptGUIContentImages::Unbox(MonoObject* value)

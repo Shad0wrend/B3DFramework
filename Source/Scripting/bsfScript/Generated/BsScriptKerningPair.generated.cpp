@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptKerningPair::Box(const KerningPair& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	KerningPair ScriptKerningPair::Unbox(MonoObject* value)

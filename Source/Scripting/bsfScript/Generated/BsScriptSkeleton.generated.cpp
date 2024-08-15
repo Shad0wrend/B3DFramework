@@ -50,6 +50,6 @@ namespace bs
 
 		__SkeletonBoneInfoExInterop interop__output;
 		interop__output = ScriptBoneInfo::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptBoneInfo::GetMetaData()->ScriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptBoneInfo::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 }

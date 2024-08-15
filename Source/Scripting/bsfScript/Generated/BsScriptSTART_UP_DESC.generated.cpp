@@ -19,7 +19,7 @@ namespace bs
 
 	MonoObject*ScriptStartUpDesc::Box(const __START_UP_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__START_UP_DESCInterop ScriptStartUpDesc::Unbox(MonoObject* value)

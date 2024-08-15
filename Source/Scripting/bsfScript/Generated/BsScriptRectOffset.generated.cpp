@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptRectOffset::Box(const RectOffset& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	RectOffset ScriptRectOffset::Unbox(MonoObject* value)

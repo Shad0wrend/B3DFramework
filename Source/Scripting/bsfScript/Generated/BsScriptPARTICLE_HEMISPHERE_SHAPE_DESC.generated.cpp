@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptParticleHemisphereShapeOptions::Box(const PARTICLE_HEMISPHERE_SHAPE_DESC& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	PARTICLE_HEMISPHERE_SHAPE_DESC ScriptParticleHemisphereShapeOptions::Unbox(MonoObject* value)

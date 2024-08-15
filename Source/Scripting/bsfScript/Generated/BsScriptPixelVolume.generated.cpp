@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptPixelVolume::Box(const PixelVolume& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	PixelVolume ScriptPixelVolume::Unbox(MonoObject* value)

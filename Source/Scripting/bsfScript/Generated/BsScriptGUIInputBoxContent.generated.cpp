@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptGUIInputBoxContent::Box(const GUIInputBoxContent& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	GUIInputBoxContent ScriptGUIInputBoxContent::Unbox(MonoObject* value)

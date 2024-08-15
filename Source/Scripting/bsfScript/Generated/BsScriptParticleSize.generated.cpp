@@ -49,7 +49,7 @@ namespace bs
 
 		__PARTICLE_SIZE_DESCInterop interop__output;
 		interop__output = ScriptParticleSizeOptions::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptParticleSizeOptions::GetMetaData()->ScriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptParticleSizeOptions::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 
 	void ScriptParticleSize::InternalCreate(MonoObject* managedInstance, __PARTICLE_SIZE_DESCInterop* desc)

@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptParticleStaticMeshShapeOptions::Box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptParticleStaticMeshShapeOptions::Unbox(MonoObject* value)

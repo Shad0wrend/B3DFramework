@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptGUIOption::Box(const GUIOption& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	GUIOption ScriptGUIOption::Unbox(MonoObject* value)

@@ -19,7 +19,7 @@ namespace bs
 
 	MonoObject*ScriptRenderWindowDesc::Box(const __RENDER_WINDOW_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__RENDER_WINDOW_DESCInterop ScriptRenderWindowDesc::Unbox(MonoObject* value)

@@ -21,7 +21,7 @@ namespace bs
 
 	MonoObject*ScriptCollisionData::Box(const __CollisionDataInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__CollisionDataInterop ScriptCollisionData::Unbox(MonoObject* value)

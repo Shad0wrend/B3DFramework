@@ -49,7 +49,7 @@ namespace bs
 
 		__PARTICLE_STATIC_MESH_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptParticleStaticMeshShapeOptions::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptParticleStaticMeshShapeOptions::GetMetaData()->ScriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptParticleStaticMeshShapeOptions::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 
 	void ScriptParticleEmitterStaticMeshShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_STATIC_MESH_SHAPE_DESCInterop* desc)

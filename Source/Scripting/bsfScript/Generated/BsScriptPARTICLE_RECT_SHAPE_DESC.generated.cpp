@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptParticleRectShapeOptions::Box(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_RECT_SHAPE_DESCInterop ScriptParticleRectShapeOptions::Unbox(MonoObject* value)

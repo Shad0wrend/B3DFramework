@@ -26,7 +26,7 @@ namespace bs
 
 	MonoObject*ScriptNamedFloatCurve::Box(const __TNamedAnimationCurve_float_Interop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__TNamedAnimationCurve_float_Interop ScriptNamedFloatCurve::Unbox(MonoObject* value)
@@ -78,7 +78,7 @@ namespace bs
 
 	MonoObject*ScriptNamedVector3Curve::Box(const __TNamedAnimationCurve_TVector3_float__Interop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__TNamedAnimationCurve_TVector3_float__Interop ScriptNamedVector3Curve::Unbox(MonoObject* value)
@@ -130,7 +130,7 @@ namespace bs
 
 	MonoObject*ScriptNamedVector2Curve::Box(const __TNamedAnimationCurve_TVector2_float__Interop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__TNamedAnimationCurve_TVector2_float__Interop ScriptNamedVector2Curve::Unbox(MonoObject* value)
@@ -182,7 +182,7 @@ namespace bs
 
 	MonoObject*ScriptNamedQuaternionCurve::Box(const __TNamedAnimationCurve_Quaternion_Interop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__TNamedAnimationCurve_Quaternion_Interop ScriptNamedQuaternionCurve::Unbox(MonoObject* value)
@@ -234,7 +234,7 @@ namespace bs
 
 	MonoObject*ScriptNamedIntegerCurve::Box(const __TNamedAnimationCurve_int32_t_Interop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__TNamedAnimationCurve_int32_t_Interop ScriptNamedIntegerCurve::Unbox(MonoObject* value)

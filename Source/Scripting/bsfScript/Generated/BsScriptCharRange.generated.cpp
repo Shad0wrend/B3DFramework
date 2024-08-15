@@ -17,7 +17,7 @@ namespace bs
 
 	MonoObject*ScriptCharRange::Box(const CharRange& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	CharRange ScriptCharRange::Unbox(MonoObject* value)

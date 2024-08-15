@@ -49,7 +49,7 @@ namespace bs
 
 		__PARTICLE_BOX_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptParticleBoxShapeOptions::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptParticleBoxShapeOptions::GetMetaData()->ScriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptParticleBoxShapeOptions::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 
 	void ScriptParticleEmitterBoxShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_BOX_SHAPE_DESCInterop* desc)

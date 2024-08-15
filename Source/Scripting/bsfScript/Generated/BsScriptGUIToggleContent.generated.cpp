@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptGUIToggleContent::Box(const __GUIToggleContentInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__GUIToggleContentInterop ScriptGUIToggleContent::Unbox(MonoObject* value)

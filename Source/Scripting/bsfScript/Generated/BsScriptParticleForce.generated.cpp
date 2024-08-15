@@ -49,7 +49,7 @@ namespace bs
 
 		__PARTICLE_FORCE_DESCInterop interop__output;
 		interop__output = ScriptParticleForceOptions::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptParticleForceOptions::GetMetaData()->ScriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptParticleForceOptions::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 
 	void ScriptParticleForce::InternalCreate(MonoObject* managedInstance, __PARTICLE_FORCE_DESCInterop* desc)

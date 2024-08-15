@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptParticleOrbitOptions::Box(const __PARTICLE_ORBIT_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_ORBIT_DESCInterop ScriptParticleOrbitOptions::Unbox(MonoObject* value)

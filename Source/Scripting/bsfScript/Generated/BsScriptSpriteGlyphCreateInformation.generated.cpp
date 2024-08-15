@@ -22,7 +22,7 @@ namespace bs
 
 	MonoObject*ScriptSpriteGlyphCreateInformation::Box(const __SpriteGlyphCreateInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__SpriteGlyphCreateInformationInterop ScriptSpriteGlyphCreateInformation::Unbox(MonoObject* value)

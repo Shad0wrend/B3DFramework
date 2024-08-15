@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptVectorFieldOptions::Box(const __VECTOR_FIELD_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__VECTOR_FIELD_DESCInterop ScriptVectorFieldOptions::Unbox(MonoObject* value)

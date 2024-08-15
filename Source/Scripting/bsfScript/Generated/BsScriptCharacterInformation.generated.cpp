@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptCharacterInformation::Box(const __CharacterInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__CharacterInformationInterop ScriptCharacterInformation::Unbox(MonoObject* value)

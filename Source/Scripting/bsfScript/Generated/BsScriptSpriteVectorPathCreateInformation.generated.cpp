@@ -24,7 +24,7 @@ namespace bs
 
 	MonoObject*ScriptSpriteVectorPathCreateInformation::Box(const __SpriteVectorPathCreateInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__SpriteVectorPathCreateInformationInterop ScriptSpriteVectorPathCreateInformation::Unbox(MonoObject* value)

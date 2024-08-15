@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptFontInformation::Box(const __FontInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__FontInformationInterop ScriptFontInformation::Unbox(MonoObject* value)

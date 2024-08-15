@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptGUISliderHandleContent::Box(const GUISliderHandleContent& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	GUISliderHandleContent ScriptGUISliderHandleContent::Unbox(MonoObject* value)

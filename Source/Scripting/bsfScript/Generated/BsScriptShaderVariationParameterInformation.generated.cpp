@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptShaderVariationParameterInformation::Box(const __ShaderVariationParameterInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__ShaderVariationParameterInformationInterop ScriptShaderVariationParameterInformation::Unbox(MonoObject* value)

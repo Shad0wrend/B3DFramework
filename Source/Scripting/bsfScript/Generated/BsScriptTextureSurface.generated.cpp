@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptTextureSurface::Box(const TextureSurface& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	TextureSurface ScriptTextureSurface::Unbox(MonoObject* value)

@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptParticleRotationOptions::Box(const __PARTICLE_ROTATION_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_ROTATION_DESCInterop ScriptParticleRotationOptions::Unbox(MonoObject* value)

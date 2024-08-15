@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptLightProbeInfo::Box(const __LightProbeInfoInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__LightProbeInfoInterop ScriptLightProbeInfo::Unbox(MonoObject* value)

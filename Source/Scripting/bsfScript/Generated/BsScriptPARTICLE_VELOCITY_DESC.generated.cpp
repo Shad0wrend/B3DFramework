@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptParticleVelocityOptions::Box(const __PARTICLE_VELOCITY_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_VELOCITY_DESCInterop ScriptParticleVelocityOptions::Unbox(MonoObject* value)

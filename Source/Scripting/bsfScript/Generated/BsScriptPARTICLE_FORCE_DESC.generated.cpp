@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptParticleForceOptions::Box(const __PARTICLE_FORCE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_FORCE_DESCInterop ScriptParticleForceOptions::Unbox(MonoObject* value)

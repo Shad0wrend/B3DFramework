@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptFontBitmapPage::Box(const __FontBitmapPageInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__FontBitmapPageInterop ScriptFontBitmapPage::Unbox(MonoObject* value)

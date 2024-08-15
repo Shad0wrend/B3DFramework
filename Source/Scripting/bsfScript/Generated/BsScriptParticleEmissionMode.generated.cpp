@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptParticleEmissionMode::Box(const ParticleEmissionMode& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	ParticleEmissionMode ScriptParticleEmissionMode::Unbox(MonoObject* value)

@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptLimitConeRange::Box(const __LimitConeRangeInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__LimitConeRangeInterop ScriptLimitConeRange::Unbox(MonoObject* value)

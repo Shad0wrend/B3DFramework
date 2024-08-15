@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptSpriteImageCreateInformation::Box(const __SpriteImageCreateInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__SpriteImageCreateInformationInterop ScriptSpriteImageCreateInformation::Unbox(MonoObject* value)

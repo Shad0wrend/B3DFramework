@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptD6JointDrive::Box(const __D6JointDriveInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__D6JointDriveInterop ScriptD6JointDrive::Unbox(MonoObject* value)

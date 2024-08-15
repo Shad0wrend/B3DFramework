@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptVector3I::Box(const TVector3I<int32_t>& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	TVector3I<int32_t> ScriptVector3I::Unbox(MonoObject* value)
@@ -34,7 +34,7 @@ namespace bs
 
 	MonoObject*ScriptVector3UI::Box(const TVector3I<uint32_t>& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	TVector3I<uint32_t> ScriptVector3UI::Unbox(MonoObject* value)

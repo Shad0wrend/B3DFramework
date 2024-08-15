@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptParticleGravityOptions::Box(const PARTICLE_GRAVITY_DESC& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	PARTICLE_GRAVITY_DESC ScriptParticleGravityOptions::Unbox(MonoObject* value)

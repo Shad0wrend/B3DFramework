@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptLimitAngularRange::Box(const __LimitAngularRangeInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__LimitAngularRangeInterop ScriptLimitAngularRange::Unbox(MonoObject* value)

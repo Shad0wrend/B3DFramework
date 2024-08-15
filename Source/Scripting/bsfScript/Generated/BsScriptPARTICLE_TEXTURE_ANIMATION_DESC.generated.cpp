@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptParticleTextureAnimationOptions::Box(const PARTICLE_TEXTURE_ANIMATION_DESC& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	PARTICLE_TEXTURE_ANIMATION_DESC ScriptParticleTextureAnimationOptions::Unbox(MonoObject* value)
