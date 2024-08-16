@@ -866,7 +866,7 @@ ReflectableTypeInfo* ScriptAssemblyManager::GetReflectableTypeInfo(uint32_t rtti
 
 ScriptWrapperObjectMetaData* ScriptAssemblyManager::GetScriptWrapperMetaData(u32 typeId)
 {
-	if(auto found = mScriptWrapperMetaDataByTypeId.find(typeId); found == mScriptWrapperMetaDataByTypeId.end())
+	if(auto found = mScriptWrapperMetaDataByTypeId.find(typeId); found != mScriptWrapperMetaDataByTypeId.end())
 		return found->second;
 
 	return nullptr;
@@ -874,7 +874,7 @@ ScriptWrapperObjectMetaData* ScriptAssemblyManager::GetScriptWrapperMetaData(u32
 
 ScriptWrapperObjectMetaData* ScriptAssemblyManager::GetScriptWrapperMetaData(::MonoReflectionType* type)
 {
-	if(auto found = mScriptWrapperMetaDataByScriptClass.find(type); found == mScriptWrapperMetaDataByScriptClass.end())
+	if(auto found = mScriptWrapperMetaDataByScriptClass.find(type); found != mScriptWrapperMetaDataByScriptClass.end())
 		return found->second;
 
 	return nullptr;

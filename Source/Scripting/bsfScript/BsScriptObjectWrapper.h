@@ -54,21 +54,6 @@ namespace bs
 		/** Called when the script system is notified that the script object has been destroyed. */
 		virtual void NotifyScriptObjectDestroyed(bool isDestroyedDueToScriptReload);
 
-		/**
-		 * If this method returns true, then the we will keep a strong reference to the script object as long as the native object is alive. Note this is only safe for
-		 * native objects that are explicitly destroyed, as the wrapper itself holds a strong reference to the native object and the object would never be freed if we only
-		 * rely on reference counting. Note when explicitly destroying the native object, you need to manually call NotifyNativeObjectDestroyed() from the destroy method.
-		 *
-		 * // TODO - The above approach might not work for e.g. resources. I might need to add a boolean to IScriptExportable that lets the object know if its being referenced
-		 * // from script or not. Then at certain intervals we can iterate over all script object wrappers and check objects that have their reference count at 1 with the
-		 * // script reference flag set. In such situation we can release the script object strong handle.
-		 * // - Actually this approach can be extended in the general case and we can keep strong handles in all cases, and don't need this method at all
-		 * // - And I don't need a special flag, I can just check if the wrapper is assigned to IScriptExportable
-		 * // - TODO - What when the object gets referenced from native code again? e.g. a weak resource handle gets converted into a strong one. Then the
-		 * //   script object might get killed, but the native object is still alive. But in that case we might be okay to just re-create the script object?
-		 */
-		virtual bool ShouldKeepStrongReferenceToScriptObject() const { return false; }
-
 		void NotifyNativeObjectDestroyed() override;
 
 		/**
@@ -259,7 +244,7 @@ namespace bs
 			// TODO: Could skip expensive lookup if the type has no derived classes (should be most cases). In that case the code-gen could generate
 			// code that calls a streamlined version of this method, with no lookup.
 			ScriptWrapperObjectMetaData* metaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(nativeObject->GetTypeId());
-			if(!B3D_ENSURE(metaData))
+			if(B3D_ENSURE(metaData != nullptr))
 				return metaData->ReflectableCreateCallback(nativeObject);
 
 			return CreateScriptObjectAndWrapper(nativeObject);
