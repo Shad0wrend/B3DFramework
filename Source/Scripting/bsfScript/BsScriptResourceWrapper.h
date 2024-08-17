@@ -31,7 +31,7 @@ namespace bs
 	{
 	public:
 		TScriptResourceWrapper(const TResourceHandle<NativeType>& nativeObject, MonoObject* scriptObject)
-			: TScriptObjectWrapper<SelfType>(nativeObject.Get(), scriptObject), mNativeObjectStrongHandle(nativeObject)
+			: TScriptObjectWrapper<SelfType, ScriptResourceWrapper>(nativeObject.Get(), scriptObject), mNativeObjectStrongHandle(nativeObject)
 		{ }
 
 		/** Returns the wrapped native object as a shared pointer. */
@@ -78,7 +78,7 @@ namespace bs
 		}
 
 	protected:
-		friend class TScriptObjectWrapper<SelfType>;
+		friend class TScriptObjectWrapper<SelfType, ScriptResourceWrapper>;
 
 		/** Initialize RTTI type ID and callback used to create the script object/script object wrapper. */
 		static void InitializeAdditionalMetaData(ScriptWrapperObjectMetaData& metaData)

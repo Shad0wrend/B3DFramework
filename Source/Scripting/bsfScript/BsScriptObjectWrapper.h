@@ -136,7 +136,7 @@ namespace bs
 	{
 	public:
 		TScriptObjectWrapper(IScriptExportable* nativeObject, MonoObject* scriptObject)
-			: ScriptObjectWrapper(nativeObject, scriptObject)
+			: BaseType(nativeObject, scriptObject)
 		{
 			sInitializeOnLoadTime.MakeSureIAmInstantiated();
 			BindSelfToScriptObject(scriptObject);
@@ -182,7 +182,7 @@ namespace bs
 		/** Stores a pointer to itself in the script object. This ensures that calls to GetScriptObjectWrapper() can return the script object wrapper associated with the script object. */
 		void BindSelfToScriptObject(MonoObject* scriptObject)
 		{
-			SelfType* self = (SelfType*)(ScriptObjectWrapper*)this; // Needed due to multiple inheritance. Safe since SelfType must point to an class derived from this one.
+			SelfType* self = (SelfType*)(BaseType*)this; // Needed due to multiple inheritance. Safe since SelfType must point to an class derived from this one.
 
 			if(sInteropMetaData.ScriptObjectWrapperPointerField != nullptr)
 				sInteropMetaData.ScriptObjectWrapperPointerField->Set(scriptObject, &self);
