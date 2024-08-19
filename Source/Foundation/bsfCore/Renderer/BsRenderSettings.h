@@ -8,6 +8,7 @@
 #include "Math/BsVector3.h"
 #include "Image/BsColor.h"
 #include "Image/BsTexture.h"
+#include "Script/BsIScriptExportable.h"
 
 namespace bs
 {
@@ -659,7 +660,7 @@ namespace bs
 	};
 
 	/** Settings that control the bloom effect. Bloom adds an extra highlight to bright areas of the scene. */
-	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) BloomSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) BloomSettings : public IReflectable, public IScriptExportable
 	{
 		struct SyncPacket;
 

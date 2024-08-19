@@ -50,7 +50,7 @@ namespace bs
 	bool ScriptBloomSettings::InternalGetEnabled(ScriptBloomSettings* self)
 	{
 		bool tmp__output;
-		tmp__output = std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Enabled;
+		tmp__output = static_cast<BloomSettings*>(self->GetNativeObject())->Enabled;
 
 		bool __output;
 		__output = tmp__output;
@@ -60,13 +60,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetEnabled(ScriptBloomSettings* self, bool value)
 	{
-		std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Enabled = value;
+		static_cast<BloomSettings*>(self->GetNativeObject())->Enabled = value;
 	}
 
 	uint32_t ScriptBloomSettings::InternalGetQuality(ScriptBloomSettings* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Quality;
+		tmp__output = static_cast<BloomSettings*>(self->GetNativeObject())->Quality;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -76,13 +76,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetQuality(ScriptBloomSettings* self, uint32_t value)
 	{
-		std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Quality = value;
+		static_cast<BloomSettings*>(self->GetNativeObject())->Quality = value;
 	}
 
 	float ScriptBloomSettings::InternalGetThreshold(ScriptBloomSettings* self)
 	{
 		float tmp__output;
-		tmp__output = std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Threshold;
+		tmp__output = static_cast<BloomSettings*>(self->GetNativeObject())->Threshold;
 
 		float __output;
 		__output = tmp__output;
@@ -92,13 +92,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetThreshold(ScriptBloomSettings* self, float value)
 	{
-		std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Threshold = value;
+		static_cast<BloomSettings*>(self->GetNativeObject())->Threshold = value;
 	}
 
 	float ScriptBloomSettings::InternalGetIntensity(ScriptBloomSettings* self)
 	{
 		float tmp__output;
-		tmp__output = std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Intensity;
+		tmp__output = static_cast<BloomSettings*>(self->GetNativeObject())->Intensity;
 
 		float __output;
 		__output = tmp__output;
@@ -108,13 +108,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetIntensity(ScriptBloomSettings* self, float value)
 	{
-		std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Intensity = value;
+		static_cast<BloomSettings*>(self->GetNativeObject())->Intensity = value;
 	}
 
 	void ScriptBloomSettings::InternalGetTint(ScriptBloomSettings* self, Color* __output)
 	{
 		Color tmp__output;
-		tmp__output = std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Tint;
+		tmp__output = static_cast<BloomSettings*>(self->GetNativeObject())->Tint;
 
 		*__output = tmp__output;
 
@@ -123,13 +123,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetTint(ScriptBloomSettings* self, Color* value)
 	{
-		std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->Tint = *value;
+		static_cast<BloomSettings*>(self->GetNativeObject())->Tint = *value;
 	}
 
 	float ScriptBloomSettings::InternalGetFilterSize(ScriptBloomSettings* self)
 	{
 		float tmp__output;
-		tmp__output = std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->FilterSize;
+		tmp__output = static_cast<BloomSettings*>(self->GetNativeObject())->FilterSize;
 
 		float __output;
 		__output = tmp__output;
@@ -139,6 +139,6 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetFilterSize(ScriptBloomSettings* self, float value)
 	{
-		std::static_pointer_cast<BloomSettings>(self->GetBaseNativeObjectAsShared())->FilterSize = value;
+		static_cast<BloomSettings*>(self->GetNativeObject())->FilterSize = value;
 	}
 }
