@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsViewport.h"
 #include "Image/BsColor.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsViewport.h"
@@ -13,14 +13,14 @@
 namespace bs { class Viewport; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptViewport : public TScriptReflectable<ScriptViewport, Viewport>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptViewport : public TScriptReflectableWrapper<Viewport, ScriptViewport>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Viewport")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Viewport")
 
-		ScriptViewport(MonoObject* managedInstance, const SPtr<Viewport>& value);
+		ScriptViewport(const SPtr<Viewport>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<Viewport>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static void InternalSetTarget(ScriptViewport* self, MonoObject* target);
@@ -36,6 +36,6 @@ namespace bs
 		static float InternalGetClearDepthValue(ScriptViewport* self);
 		static void InternalSetClearStencilValue(ScriptViewport* self, uint16_t value);
 		static uint16_t InternalGetClearStencilValue(ScriptViewport* self);
-		static void InternalCreate(MonoObject* managedInstance, MonoObject* target, float x, float y, float width, float height);
+		static void InternalCreate(MonoObject* scriptObject, MonoObject* target, float x, float y, float width, float height);
 	};
 }

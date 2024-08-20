@@ -9,6 +9,7 @@
 #include "Image/BsColor.h"
 #include "Math/BsRect2I.h"
 #include "Math/BsRect2.h"
+#include "Script/BsIScriptExportable.h"
 #include "Utility/BsEvent.h"
 
 namespace bs
@@ -134,7 +135,7 @@ namespace bs
 	 * Viewport determines to which RenderTarget should rendering be performed. It allows you to render to a sub-region of the
 	 * target by specifying the area rectangle, and allows you to set up color/depth/stencil clear values for that specific region.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Viewport : public IReflectable, public CoreObject, public TViewport<false>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Viewport : public IReflectable, public IScriptExportable, public CoreObject, public TViewport<false>
 	{
 	public:
 		/**	Determines the render target the viewport is associated with. */

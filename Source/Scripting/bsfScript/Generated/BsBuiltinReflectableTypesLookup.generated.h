@@ -32,8 +32,6 @@
 #include "BsScriptAudioClipImportOptions.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsPixelData.h"
 #include "BsScriptPixelData.generated.h"
-#include "../../../Foundation/bsfCore/RenderAPI/BsViewport.h"
-#include "BsScriptViewport.generated.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsRenderTarget.h"
 #include "BsScriptRenderTarget.generated.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
@@ -158,7 +156,6 @@ namespace bs
 		ADD_ENTRY(AudioClipImportOptions, ScriptAudioClipImportOptions)
 #endif
 		ADD_ENTRY(PixelData, ScriptPixelData)
-		ADD_ENTRY(Viewport, ScriptViewport)
 		ADD_ENTRY(RenderTarget, ScriptRenderTarget)
 		ADD_ENTRY(ParticleGravity, ScriptParticleGravity)
 		ADD_ENTRY(ScreenSpaceLensFlareSettings, ScriptScreenSpaceLensFlareSettings)

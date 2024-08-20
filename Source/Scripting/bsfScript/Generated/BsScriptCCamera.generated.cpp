@@ -90,7 +90,7 @@ namespace bs
 		tmp__output = self->GetHandle()->GetViewport();
 
 		MonoObject* __output;
-		__output = ScriptViewport::Create(tmp__output);
+		__output = ScriptViewport::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}
