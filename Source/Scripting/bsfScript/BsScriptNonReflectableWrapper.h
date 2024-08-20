@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Extends TScriptObjectWrapper by providing functionality required for types not deriving from IReflectable that may be passed along as a shared pointer. */
-	template<typename NativeType, typename SelfType, typename BaseType>
+	template<typename NativeType, typename SelfType, typename BaseType = ScriptObjectWrapper>
 	class TScriptNonReflectableWrapper : public TScriptObjectWrapper<SelfType, BaseType>
 	{
 	public:
@@ -21,9 +21,9 @@ namespace bs
 		{ }
 
 		/** Returns the wrapped native object as a shared pointer. */
-		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle.GetShared(); }
+		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle; }
 
-		SPtr<GameObject> GetBaseNativeObjectAsShared() const override { return GetNativeObjectAsShared(); }
+		SPtr<NativeType> GetBaseNativeObjectAsShared() const { return GetNativeObjectAsShared(); }
 
 		/**
 		 * Creates a new script object and a script object wrapper of @p SelfType, and associates them with the provided native object. Should not be called if @p nativeObject
