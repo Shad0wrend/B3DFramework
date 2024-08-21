@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "Script/BsIScriptExportable.h"
 #include "Image/BsPixelVolume.h"
 #include "Resources/BsGpuResourceData.h"
 #include "Reflection/BsIReflectable.h"

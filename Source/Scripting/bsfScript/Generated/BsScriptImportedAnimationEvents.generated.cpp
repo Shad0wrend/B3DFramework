@@ -9,42 +9,41 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptImportedAnimationEvents::ScriptImportedAnimationEvents(MonoObject* managedInstance, const SPtr<ImportedAnimationEvents>& value)
-		:TScriptReflectable(managedInstance, value)
+	ScriptImportedAnimationEvents::ScriptImportedAnimationEvents(const SPtr<ImportedAnimationEvents>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
 	}
 
-	void ScriptImportedAnimationEvents::InitRuntimeData()
+	void ScriptImportedAnimationEvents::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_ImportedAnimationEvents", (void*)&ScriptImportedAnimationEvents::InternalImportedAnimationEvents);
-		metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptImportedAnimationEvents::InternalGetName);
-		metaData.ScriptClass->AddInternalCall("Internal_SetName", (void*)&ScriptImportedAnimationEvents::InternalSetName);
-		metaData.ScriptClass->AddInternalCall("Internal_GetEvents", (void*)&ScriptImportedAnimationEvents::InternalGetEvents);
-		metaData.ScriptClass->AddInternalCall("Internal_SetEvents", (void*)&ScriptImportedAnimationEvents::InternalSetEvents);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ImportedAnimationEvents", (void*)&ScriptImportedAnimationEvents::InternalImportedAnimationEvents);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptImportedAnimationEvents::InternalGetName);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetName", (void*)&ScriptImportedAnimationEvents::InternalSetName);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetEvents", (void*)&ScriptImportedAnimationEvents::InternalGetEvents);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetEvents", (void*)&ScriptImportedAnimationEvents::InternalSetEvents);
 
 	}
 
-	MonoObject* ScriptImportedAnimationEvents::Create(const SPtr<ImportedAnimationEvents>& value)
+	MonoObject* ScriptImportedAnimationEvents::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptImportedAnimationEvents>()) ScriptImportedAnimationEvents(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
-	void ScriptImportedAnimationEvents::InternalImportedAnimationEvents(MonoObject* managedInstance)
+	void ScriptImportedAnimationEvents::InternalImportedAnimationEvents(MonoObject* scriptObject)
 	{
 		SPtr<ImportedAnimationEvents> nativeObject = B3DMakeShared<ImportedAnimationEvents>();
-		new (B3DAllocate<ScriptImportedAnimationEvents>())ScriptImportedAnimationEvents(managedInstance, nativeObject);
+		B3DNew<ScriptImportedAnimationEvents>(nativeObject, scriptObject);
 	}
 
 	MonoString* ScriptImportedAnimationEvents::InternalGetName(ScriptImportedAnimationEvents* self)
 	{
 		String tmp__output;
-		tmp__output = self->GetInternal()->Name;
+		tmp__output = static_cast<ImportedAnimationEvents*>(self->GetNativeObject())->Name;
 
 		MonoString* __output;
 		__output = MonoUtil::StringToMono(tmp__output);
@@ -56,13 +55,13 @@ namespace bs
 	{
 		String tmpvalue;
 		tmpvalue = MonoUtil::MonoToString(value);
-		self->GetInternal()->Name = tmpvalue;
+		static_cast<ImportedAnimationEvents*>(self->GetNativeObject())->Name = tmpvalue;
 	}
 
 	MonoArray* ScriptImportedAnimationEvents::InternalGetEvents(ScriptImportedAnimationEvents* self)
 	{
 		Vector<AnimationEvent> nativeArray__output;
-		nativeArray__output = self->GetInternal()->Events;
+		nativeArray__output = static_cast<ImportedAnimationEvents*>(self->GetNativeObject())->Events;
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -89,7 +88,7 @@ namespace bs
 			}
 
 		}
-		self->GetInternal()->Events = nativeArrayvalue;
+		static_cast<ImportedAnimationEvents*>(self->GetNativeObject())->Events = nativeArrayvalue;
 	}
 #endif
 }

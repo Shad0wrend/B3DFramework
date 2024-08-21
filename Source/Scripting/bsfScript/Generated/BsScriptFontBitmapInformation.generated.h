@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
@@ -13,14 +13,14 @@ namespace bs { struct __CharacterInformationInterop; }
 namespace bs { struct __FontBitmapPageInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontBitmapInformation : public TScriptReflectable<ScriptFontBitmapInformation, FontBitmapInformation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontBitmapInformation : public TScriptReflectableWrapper<FontBitmapInformation, ScriptFontBitmapInformation>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "FontBitmapInformation")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "FontBitmapInformation")
 
-		ScriptFontBitmapInformation(MonoObject* managedInstance, const SPtr<FontBitmapInformation>& value);
+		ScriptFontBitmapInformation(const SPtr<FontBitmapInformation>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<FontBitmapInformation>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static void InternalGetCharacterInformation(ScriptFontBitmapInformation* self, uint32_t characterId, __CharacterInformationInterop* __output);

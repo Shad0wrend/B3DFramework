@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "BsScriptRenderTarget.generated.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsRenderTexture.h"
 #include "../../../Foundation/bsfCore/Image/BsPixelData.h"
@@ -12,21 +12,21 @@ namespace bs { class RenderTexture; }
 namespace bs { class RenderTextureEx; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderTexture : public TScriptReflectable<ScriptRenderTexture, RenderTexture, ScriptRenderTargetBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderTexture : public TScriptReflectableWrapper<RenderTexture, ScriptRenderTexture>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "RenderTexture")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "RenderTexture")
 
-		ScriptRenderTexture(MonoObject* managedInstance, const SPtr<RenderTexture>& value);
+		ScriptRenderTexture(const SPtr<RenderTexture>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<RenderTexture>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		static void InternalCreate(MonoObject* managedInstance, PixelFormat format, int32_t width, int32_t height, int32_t numSamples, bool gammaCorrection, bool createDepth, PixelFormat depthStencilFormat);
-		static void InternalCreate0(MonoObject* managedInstance, MonoObject* colorSurface);
-		static void InternalCreate1(MonoObject* managedInstance, MonoObject* colorSurface, MonoObject* depthStencilSurface);
-		static void InternalCreate2(MonoObject* managedInstance, MonoArray* colorSurface);
-		static void InternalCreate3(MonoObject* managedInstance, MonoArray* colorSurface, MonoObject* depthStencilSurface);
+		static void InternalCreate(MonoObject* scriptObject, PixelFormat format, int32_t width, int32_t height, int32_t numSamples, bool gammaCorrection, bool createDepth, PixelFormat depthStencilFormat);
+		static void InternalCreate0(MonoObject* scriptObject, MonoObject* colorSurface);
+		static void InternalCreate1(MonoObject* scriptObject, MonoObject* colorSurface, MonoObject* depthStencilSurface);
+		static void InternalCreate2(MonoObject* scriptObject, MonoArray* colorSurface);
+		static void InternalCreate3(MonoObject* scriptObject, MonoArray* colorSurface, MonoObject* depthStencilSurface);
 		static MonoObject* InternalGetColorSurface(ScriptRenderTexture* self);
 		static MonoArray* InternalGetColorSurfaces(ScriptRenderTexture* self);
 		static MonoObject* InternalGetDepthStencilSurface(ScriptRenderTexture* self);

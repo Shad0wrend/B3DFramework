@@ -3,23 +3,23 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Material/BsShaderVariation.h"
 
 namespace bs { class ShaderVariationParameters; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderVariationParameters : public TScriptReflectable<ScriptShaderVariationParameters, ShaderVariationParameters>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderVariationParameters : public TScriptReflectableWrapper<ShaderVariationParameters, ScriptShaderVariationParameters>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ShaderVariationParameters")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ShaderVariationParameters")
 
-		ScriptShaderVariationParameters(MonoObject* managedInstance, const SPtr<ShaderVariationParameters>& value);
+		ScriptShaderVariationParameters(const SPtr<ShaderVariationParameters>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<ShaderVariationParameters>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		static void InternalShaderVariationParameters(MonoObject* managedInstance);
+		static void InternalShaderVariationParameters(MonoObject* scriptObject);
 		static int32_t InternalGetInt(ScriptShaderVariationParameters* self, MonoString* name);
 		static uint32_t InternalGetUInt(ScriptShaderVariationParameters* self, MonoString* name);
 		static float InternalGetFloat(ScriptShaderVariationParameters* self, MonoString* name);

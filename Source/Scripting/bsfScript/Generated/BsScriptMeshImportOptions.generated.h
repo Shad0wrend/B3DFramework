@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "BsScriptImportOptions.generated.h"
 #include "../../../Foundation/bsfCore/Importer/BsMeshImportOptions.h"
 #include "../../../Foundation/bsfCore/Importer/BsMeshImportOptions.h"
@@ -14,14 +14,14 @@ namespace bs { class MeshImportOptions; }
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptMeshImportOptions : public TScriptReflectable<ScriptMeshImportOptions, MeshImportOptions, ScriptImportOptionsBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptMeshImportOptions : public TScriptReflectableWrapper<MeshImportOptions, ScriptMeshImportOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "MeshImportOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "MeshImportOptions")
 
-		ScriptMeshImportOptions(MonoObject* managedInstance, const SPtr<MeshImportOptions>& value);
+		ScriptMeshImportOptions(const SPtr<MeshImportOptions>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<MeshImportOptions>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static bool InternalGetCpuCached(ScriptMeshImportOptions* self);
@@ -48,7 +48,7 @@ namespace bs
 		static void InternalSetAnimationSplits(ScriptMeshImportOptions* self, MonoArray* value);
 		static MonoArray* InternalGetAnimationEvents(ScriptMeshImportOptions* self);
 		static void InternalSetAnimationEvents(ScriptMeshImportOptions* self, MonoArray* value);
-		static void InternalCreate(MonoObject* managedInstance);
+		static void InternalCreate(MonoObject* scriptObject);
 	};
 #endif
 }

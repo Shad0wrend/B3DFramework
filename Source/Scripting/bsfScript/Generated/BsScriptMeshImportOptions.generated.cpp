@@ -11,62 +11,60 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptMeshImportOptions::ScriptMeshImportOptions(MonoObject* managedInstance, const SPtr<MeshImportOptions>& value)
-		:TScriptReflectable(managedInstance, value)
+	ScriptMeshImportOptions::ScriptMeshImportOptions(const SPtr<MeshImportOptions>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
-		mInternal = value;
 	}
 
-	void ScriptMeshImportOptions::InitRuntimeData()
+	void ScriptMeshImportOptions::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetCpuCached", (void*)&ScriptMeshImportOptions::InternalGetCpuCached);
-		metaData.ScriptClass->AddInternalCall("Internal_SetCpuCached", (void*)&ScriptMeshImportOptions::InternalSetCpuCached);
-		metaData.ScriptClass->AddInternalCall("Internal_GetImportNormals", (void*)&ScriptMeshImportOptions::InternalGetImportNormals);
-		metaData.ScriptClass->AddInternalCall("Internal_SetImportNormals", (void*)&ScriptMeshImportOptions::InternalSetImportNormals);
-		metaData.ScriptClass->AddInternalCall("Internal_GetImportTangents", (void*)&ScriptMeshImportOptions::InternalGetImportTangents);
-		metaData.ScriptClass->AddInternalCall("Internal_SetImportTangents", (void*)&ScriptMeshImportOptions::InternalSetImportTangents);
-		metaData.ScriptClass->AddInternalCall("Internal_GetImportBlendShapes", (void*)&ScriptMeshImportOptions::InternalGetImportBlendShapes);
-		metaData.ScriptClass->AddInternalCall("Internal_SetImportBlendShapes", (void*)&ScriptMeshImportOptions::InternalSetImportBlendShapes);
-		metaData.ScriptClass->AddInternalCall("Internal_GetImportSkin", (void*)&ScriptMeshImportOptions::InternalGetImportSkin);
-		metaData.ScriptClass->AddInternalCall("Internal_SetImportSkin", (void*)&ScriptMeshImportOptions::InternalSetImportSkin);
-		metaData.ScriptClass->AddInternalCall("Internal_GetImportAnimation", (void*)&ScriptMeshImportOptions::InternalGetImportAnimation);
-		metaData.ScriptClass->AddInternalCall("Internal_SetImportAnimation", (void*)&ScriptMeshImportOptions::InternalSetImportAnimation);
-		metaData.ScriptClass->AddInternalCall("Internal_GetReduceKeyFrames", (void*)&ScriptMeshImportOptions::InternalGetReduceKeyFrames);
-		metaData.ScriptClass->AddInternalCall("Internal_SetReduceKeyFrames", (void*)&ScriptMeshImportOptions::InternalSetReduceKeyFrames);
-		metaData.ScriptClass->AddInternalCall("Internal_GetImportRootMotion", (void*)&ScriptMeshImportOptions::InternalGetImportRootMotion);
-		metaData.ScriptClass->AddInternalCall("Internal_SetImportRootMotion", (void*)&ScriptMeshImportOptions::InternalSetImportRootMotion);
-		metaData.ScriptClass->AddInternalCall("Internal_GetImportScale", (void*)&ScriptMeshImportOptions::InternalGetImportScale);
-		metaData.ScriptClass->AddInternalCall("Internal_SetImportScale", (void*)&ScriptMeshImportOptions::InternalSetImportScale);
-		metaData.ScriptClass->AddInternalCall("Internal_GetCollisionMeshType", (void*)&ScriptMeshImportOptions::InternalGetCollisionMeshType);
-		metaData.ScriptClass->AddInternalCall("Internal_SetCollisionMeshType", (void*)&ScriptMeshImportOptions::InternalSetCollisionMeshType);
-		metaData.ScriptClass->AddInternalCall("Internal_GetAnimationSplits", (void*)&ScriptMeshImportOptions::InternalGetAnimationSplits);
-		metaData.ScriptClass->AddInternalCall("Internal_SetAnimationSplits", (void*)&ScriptMeshImportOptions::InternalSetAnimationSplits);
-		metaData.ScriptClass->AddInternalCall("Internal_GetAnimationEvents", (void*)&ScriptMeshImportOptions::InternalGetAnimationEvents);
-		metaData.ScriptClass->AddInternalCall("Internal_SetAnimationEvents", (void*)&ScriptMeshImportOptions::InternalSetAnimationEvents);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptMeshImportOptions::InternalCreate);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetCpuCached", (void*)&ScriptMeshImportOptions::InternalGetCpuCached);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetCpuCached", (void*)&ScriptMeshImportOptions::InternalSetCpuCached);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetImportNormals", (void*)&ScriptMeshImportOptions::InternalGetImportNormals);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetImportNormals", (void*)&ScriptMeshImportOptions::InternalSetImportNormals);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetImportTangents", (void*)&ScriptMeshImportOptions::InternalGetImportTangents);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetImportTangents", (void*)&ScriptMeshImportOptions::InternalSetImportTangents);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetImportBlendShapes", (void*)&ScriptMeshImportOptions::InternalGetImportBlendShapes);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetImportBlendShapes", (void*)&ScriptMeshImportOptions::InternalSetImportBlendShapes);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetImportSkin", (void*)&ScriptMeshImportOptions::InternalGetImportSkin);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetImportSkin", (void*)&ScriptMeshImportOptions::InternalSetImportSkin);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetImportAnimation", (void*)&ScriptMeshImportOptions::InternalGetImportAnimation);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetImportAnimation", (void*)&ScriptMeshImportOptions::InternalSetImportAnimation);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetReduceKeyFrames", (void*)&ScriptMeshImportOptions::InternalGetReduceKeyFrames);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetReduceKeyFrames", (void*)&ScriptMeshImportOptions::InternalSetReduceKeyFrames);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetImportRootMotion", (void*)&ScriptMeshImportOptions::InternalGetImportRootMotion);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetImportRootMotion", (void*)&ScriptMeshImportOptions::InternalSetImportRootMotion);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetImportScale", (void*)&ScriptMeshImportOptions::InternalGetImportScale);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetImportScale", (void*)&ScriptMeshImportOptions::InternalSetImportScale);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetCollisionMeshType", (void*)&ScriptMeshImportOptions::InternalGetCollisionMeshType);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetCollisionMeshType", (void*)&ScriptMeshImportOptions::InternalSetCollisionMeshType);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAnimationSplits", (void*)&ScriptMeshImportOptions::InternalGetAnimationSplits);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAnimationSplits", (void*)&ScriptMeshImportOptions::InternalSetAnimationSplits);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAnimationEvents", (void*)&ScriptMeshImportOptions::InternalGetAnimationEvents);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAnimationEvents", (void*)&ScriptMeshImportOptions::InternalSetAnimationEvents);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptMeshImportOptions::InternalCreate);
 
 	}
 
-	MonoObject* ScriptMeshImportOptions::Create(const SPtr<MeshImportOptions>& value)
+	MonoObject* ScriptMeshImportOptions::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptMeshImportOptions>()) ScriptMeshImportOptions(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
-	void ScriptMeshImportOptions::InternalCreate(MonoObject* managedInstance)
+	void ScriptMeshImportOptions::InternalCreate(MonoObject* scriptObject)
 	{
 		SPtr<MeshImportOptions> nativeObject = MeshImportOptions::Create();
-		new (B3DAllocate<ScriptMeshImportOptions>())ScriptMeshImportOptions(managedInstance, nativeObject);
+		B3DNew<ScriptMeshImportOptions>(nativeObject, scriptObject);
 	}
 	bool ScriptMeshImportOptions::InternalGetCpuCached(ScriptMeshImportOptions* self)
 	{
 		bool tmp__output;
-		tmp__output = self->GetInternal()->CpuCached;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->CpuCached;
 
 		bool __output;
 		__output = tmp__output;
@@ -76,13 +74,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetCpuCached(ScriptMeshImportOptions* self, bool value)
 	{
-		self->GetInternal()->CpuCached = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->CpuCached = value;
 	}
 
 	bool ScriptMeshImportOptions::InternalGetImportNormals(ScriptMeshImportOptions* self)
 	{
 		bool tmp__output;
-		tmp__output = self->GetInternal()->ImportNormals;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportNormals;
 
 		bool __output;
 		__output = tmp__output;
@@ -92,13 +90,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetImportNormals(ScriptMeshImportOptions* self, bool value)
 	{
-		self->GetInternal()->ImportNormals = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportNormals = value;
 	}
 
 	bool ScriptMeshImportOptions::InternalGetImportTangents(ScriptMeshImportOptions* self)
 	{
 		bool tmp__output;
-		tmp__output = self->GetInternal()->ImportTangents;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportTangents;
 
 		bool __output;
 		__output = tmp__output;
@@ -108,13 +106,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetImportTangents(ScriptMeshImportOptions* self, bool value)
 	{
-		self->GetInternal()->ImportTangents = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportTangents = value;
 	}
 
 	bool ScriptMeshImportOptions::InternalGetImportBlendShapes(ScriptMeshImportOptions* self)
 	{
 		bool tmp__output;
-		tmp__output = self->GetInternal()->ImportBlendShapes;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportBlendShapes;
 
 		bool __output;
 		__output = tmp__output;
@@ -124,13 +122,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetImportBlendShapes(ScriptMeshImportOptions* self, bool value)
 	{
-		self->GetInternal()->ImportBlendShapes = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportBlendShapes = value;
 	}
 
 	bool ScriptMeshImportOptions::InternalGetImportSkin(ScriptMeshImportOptions* self)
 	{
 		bool tmp__output;
-		tmp__output = self->GetInternal()->ImportSkin;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportSkin;
 
 		bool __output;
 		__output = tmp__output;
@@ -140,13 +138,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetImportSkin(ScriptMeshImportOptions* self, bool value)
 	{
-		self->GetInternal()->ImportSkin = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportSkin = value;
 	}
 
 	bool ScriptMeshImportOptions::InternalGetImportAnimation(ScriptMeshImportOptions* self)
 	{
 		bool tmp__output;
-		tmp__output = self->GetInternal()->ImportAnimation;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportAnimation;
 
 		bool __output;
 		__output = tmp__output;
@@ -156,13 +154,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetImportAnimation(ScriptMeshImportOptions* self, bool value)
 	{
-		self->GetInternal()->ImportAnimation = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportAnimation = value;
 	}
 
 	bool ScriptMeshImportOptions::InternalGetReduceKeyFrames(ScriptMeshImportOptions* self)
 	{
 		bool tmp__output;
-		tmp__output = self->GetInternal()->ReduceKeyFrames;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->ReduceKeyFrames;
 
 		bool __output;
 		__output = tmp__output;
@@ -172,13 +170,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetReduceKeyFrames(ScriptMeshImportOptions* self, bool value)
 	{
-		self->GetInternal()->ReduceKeyFrames = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->ReduceKeyFrames = value;
 	}
 
 	bool ScriptMeshImportOptions::InternalGetImportRootMotion(ScriptMeshImportOptions* self)
 	{
 		bool tmp__output;
-		tmp__output = self->GetInternal()->ImportRootMotion;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportRootMotion;
 
 		bool __output;
 		__output = tmp__output;
@@ -188,13 +186,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetImportRootMotion(ScriptMeshImportOptions* self, bool value)
 	{
-		self->GetInternal()->ImportRootMotion = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportRootMotion = value;
 	}
 
 	float ScriptMeshImportOptions::InternalGetImportScale(ScriptMeshImportOptions* self)
 	{
 		float tmp__output;
-		tmp__output = self->GetInternal()->ImportScale;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportScale;
 
 		float __output;
 		__output = tmp__output;
@@ -204,13 +202,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetImportScale(ScriptMeshImportOptions* self, float value)
 	{
-		self->GetInternal()->ImportScale = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->ImportScale = value;
 	}
 
 	CollisionMeshType ScriptMeshImportOptions::InternalGetCollisionMeshType(ScriptMeshImportOptions* self)
 	{
 		CollisionMeshType tmp__output;
-		tmp__output = self->GetInternal()->CollisionMeshType;
+		tmp__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->CollisionMeshType;
 
 		CollisionMeshType __output;
 		__output = tmp__output;
@@ -220,13 +218,13 @@ namespace bs
 
 	void ScriptMeshImportOptions::InternalSetCollisionMeshType(ScriptMeshImportOptions* self, CollisionMeshType value)
 	{
-		self->GetInternal()->CollisionMeshType = value;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->CollisionMeshType = value;
 	}
 
 	MonoArray* ScriptMeshImportOptions::InternalGetAnimationSplits(ScriptMeshImportOptions* self)
 	{
 		Vector<AnimationSplitInfo> nativeArray__output;
-		nativeArray__output = self->GetInternal()->AnimationSplits;
+		nativeArray__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->AnimationSplits;
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -236,7 +234,7 @@ namespace bs
 			SPtr<AnimationSplitInfo> arrayElementPointer__output = B3DMakeShared<AnimationSplitInfo>();
 			*arrayElementPointer__output = nativeArray__output[elementIndex];
 			MonoObject* arrayElement__output;
-			arrayElement__output = ScriptAnimationSplitInfo::Create(arrayElementPointer__output);
+			arrayElement__output = ScriptAnimationSplitInfo::GetOrCreateScriptObject(arrayElementPointer__output);
 			scriptArray__output.Set(elementIndex, arrayElement__output);
 		}
 		__output = scriptArray__output.GetInternal();
@@ -254,23 +252,23 @@ namespace bs
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayvalue.Size(); elementIndex++)
 			{
 				ScriptAnimationSplitInfo* scriptObjectWrappervalue;
-				scriptObjectWrappervalue = ScriptAnimationSplitInfo::ToNative(scriptArrayvalue.Get<MonoObject*>(elementIndex));
+				scriptObjectWrappervalue = ScriptAnimationSplitInfo::GetScriptObjectWrapper(scriptArrayvalue.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappervalue != nullptr)
 				{
-					SPtr<AnimationSplitInfo> arrayElementPointervalue = scriptObjectWrappervalue->GetInternal();
+					SPtr<AnimationSplitInfo> arrayElementPointervalue = std::static_pointer_cast<AnimationSplitInfo>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
 					if(arrayElementPointervalue)
 						nativeArrayvalue[elementIndex] = *arrayElementPointervalue;
 				}
 			}
 
 		}
-		self->GetInternal()->AnimationSplits = nativeArrayvalue;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->AnimationSplits = nativeArrayvalue;
 	}
 
 	MonoArray* ScriptMeshImportOptions::InternalGetAnimationEvents(ScriptMeshImportOptions* self)
 	{
 		Vector<ImportedAnimationEvents> nativeArray__output;
-		nativeArray__output = self->GetInternal()->AnimationEvents;
+		nativeArray__output = static_cast<MeshImportOptions*>(self->GetNativeObject())->AnimationEvents;
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -280,7 +278,7 @@ namespace bs
 			SPtr<ImportedAnimationEvents> arrayElementPointer__output = B3DMakeShared<ImportedAnimationEvents>();
 			*arrayElementPointer__output = nativeArray__output[elementIndex];
 			MonoObject* arrayElement__output;
-			arrayElement__output = ScriptImportedAnimationEvents::Create(arrayElementPointer__output);
+			arrayElement__output = ScriptImportedAnimationEvents::GetOrCreateScriptObject(arrayElementPointer__output);
 			scriptArray__output.Set(elementIndex, arrayElement__output);
 		}
 		__output = scriptArray__output.GetInternal();
@@ -298,17 +296,17 @@ namespace bs
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayvalue.Size(); elementIndex++)
 			{
 				ScriptImportedAnimationEvents* scriptObjectWrappervalue;
-				scriptObjectWrappervalue = ScriptImportedAnimationEvents::ToNative(scriptArrayvalue.Get<MonoObject*>(elementIndex));
+				scriptObjectWrappervalue = ScriptImportedAnimationEvents::GetScriptObjectWrapper(scriptArrayvalue.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappervalue != nullptr)
 				{
-					SPtr<ImportedAnimationEvents> arrayElementPointervalue = scriptObjectWrappervalue->GetInternal();
+					SPtr<ImportedAnimationEvents> arrayElementPointervalue = std::static_pointer_cast<ImportedAnimationEvents>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
 					if(arrayElementPointervalue)
 						nativeArrayvalue[elementIndex] = *arrayElementPointervalue;
 				}
 			}
 
 		}
-		self->GetInternal()->AnimationEvents = nativeArrayvalue;
+		static_cast<MeshImportOptions*>(self->GetNativeObject())->AnimationEvents = nativeArrayvalue;
 	}
 #endif
 }

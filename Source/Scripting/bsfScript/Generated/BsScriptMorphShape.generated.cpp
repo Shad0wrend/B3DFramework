@@ -7,33 +7,32 @@
 
 namespace bs
 {
-	ScriptMorphShape::ScriptMorphShape(MonoObject* managedInstance, const SPtr<MorphShape>& value)
-		:TScriptReflectable(managedInstance, value)
+	ScriptMorphShape::ScriptMorphShape(const SPtr<MorphShape>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
 	}
 
-	void ScriptMorphShape::InitRuntimeData()
+	void ScriptMorphShape::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptMorphShape::InternalGetName);
-		metaData.ScriptClass->AddInternalCall("Internal_GetWeight", (void*)&ScriptMorphShape::InternalGetWeight);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptMorphShape::InternalGetName);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetWeight", (void*)&ScriptMorphShape::InternalGetWeight);
 
 	}
 
-	MonoObject* ScriptMorphShape::Create(const SPtr<MorphShape>& value)
+	MonoObject* ScriptMorphShape::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptMorphShape>()) ScriptMorphShape(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoString* ScriptMorphShape::InternalGetName(ScriptMorphShape* self)
 	{
 		String tmp__output;
-		tmp__output = self->GetInternal()->GetName();
+		tmp__output = static_cast<MorphShape*>(self->GetNativeObject())->GetName();
 
 		MonoString* __output;
 		__output = MonoUtil::StringToMono(tmp__output);
@@ -44,7 +43,7 @@ namespace bs
 	float ScriptMorphShape::InternalGetWeight(ScriptMorphShape* self)
 	{
 		float tmp__output;
-		tmp__output = self->GetInternal()->GetWeight();
+		tmp__output = static_cast<MorphShape*>(self->GetNativeObject())->GetWeight();
 
 		float __output;
 		__output = tmp__output;

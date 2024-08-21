@@ -48,10 +48,10 @@ namespace bs
 		Path tmpinputFilePath;
 		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
 		SPtr<ImportOptions> tmpimportOptions;
-		ScriptImportOptionsBase* scriptObjectWrapperimportOptions;
-		scriptObjectWrapperimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
+		ScriptImportOptionsWrapperBase* scriptObjectWrapperimportOptions;
+		scriptObjectWrapperimportOptions = (ScriptImportOptionsWrapperBase*)ScriptImportOptions::GetScriptObjectWrapper(importOptions);
 		if(scriptObjectWrapperimportOptions != nullptr)
-			tmpimportOptions = scriptObjectWrapperimportOptions->GetInternal();
+			tmpimportOptions = std::static_pointer_cast<ImportOptions>(scriptObjectWrapperimportOptions->GetBaseNativeObjectAsShared());
 		tmp__output = Importer::Instance().Import(tmpinputFilePath, tmpimportOptions, *UUID);
 
 		MonoObject* __output;
@@ -71,10 +71,10 @@ namespace bs
 		Path tmpinputFilePath;
 		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
 		SPtr<ImportOptions> tmpimportOptions;
-		ScriptImportOptionsBase* scriptObjectWrapperimportOptions;
-		scriptObjectWrapperimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
+		ScriptImportOptionsWrapperBase* scriptObjectWrapperimportOptions;
+		scriptObjectWrapperimportOptions = (ScriptImportOptionsWrapperBase*)ScriptImportOptions::GetScriptObjectWrapper(importOptions);
 		if(scriptObjectWrapperimportOptions != nullptr)
-			tmpimportOptions = scriptObjectWrapperimportOptions->GetInternal();
+			tmpimportOptions = std::static_pointer_cast<ImportOptions>(scriptObjectWrapperimportOptions->GetBaseNativeObjectAsShared());
 		tmp__output = Importer::Instance().ImportAsync(tmpinputFilePath, tmpimportOptions, *UUID);
 
 		MonoObject* __output;
@@ -102,10 +102,10 @@ namespace bs
 		Path tmpinputFilePath;
 		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
 		SPtr<ImportOptions> tmpimportOptions;
-		ScriptImportOptionsBase* scriptObjectWrapperimportOptions;
-		scriptObjectWrapperimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
+		ScriptImportOptionsWrapperBase* scriptObjectWrapperimportOptions;
+		scriptObjectWrapperimportOptions = (ScriptImportOptionsWrapperBase*)ScriptImportOptions::GetScriptObjectWrapper(importOptions);
 		if(scriptObjectWrapperimportOptions != nullptr)
-			tmpimportOptions = scriptObjectWrapperimportOptions->GetInternal();
+			tmpimportOptions = std::static_pointer_cast<ImportOptions>(scriptObjectWrapperimportOptions->GetBaseNativeObjectAsShared());
 		tmp__output = Importer::Instance().ImportAll(tmpinputFilePath, tmpimportOptions);
 
 		MonoObject* __output;
@@ -120,10 +120,10 @@ namespace bs
 		Path tmpinputFilePath;
 		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
 		SPtr<ImportOptions> tmpimportOptions;
-		ScriptImportOptionsBase* scriptObjectWrapperimportOptions;
-		scriptObjectWrapperimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
+		ScriptImportOptionsWrapperBase* scriptObjectWrapperimportOptions;
+		scriptObjectWrapperimportOptions = (ScriptImportOptionsWrapperBase*)ScriptImportOptions::GetScriptObjectWrapper(importOptions);
 		if(scriptObjectWrapperimportOptions != nullptr)
-			tmpimportOptions = scriptObjectWrapperimportOptions->GetInternal();
+			tmpimportOptions = std::static_pointer_cast<ImportOptions>(scriptObjectWrapperimportOptions->GetBaseNativeObjectAsShared());
 		tmp__output = Importer::Instance().ImportAllAsync(tmpinputFilePath, tmpimportOptions);
 
 		MonoObject* __output;

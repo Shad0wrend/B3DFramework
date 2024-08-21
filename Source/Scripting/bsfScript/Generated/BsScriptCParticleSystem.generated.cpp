@@ -56,9 +56,9 @@ namespace bs
 	{
 		SPtr<ParticleSystemSettings> tmpsettings;
 		ScriptParticleSystemSettings* scriptObjectWrappersettings;
-		scriptObjectWrappersettings = ScriptParticleSystemSettings::ToNative(settings);
+		scriptObjectWrappersettings = ScriptParticleSystemSettings::GetScriptObjectWrapper(settings);
 		if(scriptObjectWrappersettings != nullptr)
-			tmpsettings = scriptObjectWrappersettings->GetInternal();
+			tmpsettings = std::static_pointer_cast<ParticleSystemSettings>(scriptObjectWrappersettings->GetBaseNativeObjectAsShared());
 		self->GetHandle()->SetSettings(*tmpsettings);
 	}
 
@@ -68,7 +68,7 @@ namespace bs
 		*tmp__output = self->GetHandle()->GetSettings();
 
 		MonoObject* __output;
-		__output = ScriptParticleSystemSettings::Create(tmp__output);
+		__output = ScriptParticleSystemSettings::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}
@@ -77,9 +77,9 @@ namespace bs
 	{
 		SPtr<ParticleGpuSimulationSettings> tmpsettings;
 		ScriptParticleGpuSimulationSettings* scriptObjectWrappersettings;
-		scriptObjectWrappersettings = ScriptParticleGpuSimulationSettings::ToNative(settings);
+		scriptObjectWrappersettings = ScriptParticleGpuSimulationSettings::GetScriptObjectWrapper(settings);
 		if(scriptObjectWrappersettings != nullptr)
-			tmpsettings = scriptObjectWrappersettings->GetInternal();
+			tmpsettings = std::static_pointer_cast<ParticleGpuSimulationSettings>(scriptObjectWrappersettings->GetBaseNativeObjectAsShared());
 		self->GetHandle()->SetGpuSimulationSettings(*tmpsettings);
 	}
 
@@ -89,7 +89,7 @@ namespace bs
 		*tmp__output = self->GetHandle()->GetGpuSimulationSettings();
 
 		MonoObject* __output;
-		__output = ScriptParticleGpuSimulationSettings::Create(tmp__output);
+		__output = ScriptParticleGpuSimulationSettings::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}

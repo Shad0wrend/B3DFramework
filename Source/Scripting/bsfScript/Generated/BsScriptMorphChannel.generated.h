@@ -3,20 +3,20 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsMorphShapes.h"
 
 namespace bs { class MorphChannel; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptMorphChannel : public TScriptReflectable<ScriptMorphChannel, MorphChannel>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptMorphChannel : public TScriptReflectableWrapper<MorphChannel, ScriptMorphChannel>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "MorphChannel")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "MorphChannel")
 
-		ScriptMorphChannel(MonoObject* managedInstance, const SPtr<MorphChannel>& value);
+		ScriptMorphChannel(const SPtr<MorphChannel>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<MorphChannel>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoString* InternalGetName(ScriptMorphChannel* self);

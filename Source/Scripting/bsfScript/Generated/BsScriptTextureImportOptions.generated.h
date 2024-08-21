@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "BsScriptImportOptions.generated.h"
 #include "../../../Foundation/bsfCore/Importer/BsTextureImportOptions.h"
 #include "../../../Foundation/bsfCore/Image/BsPixelData.h"
@@ -13,14 +13,14 @@ namespace bs { class TextureImportOptions; }
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptTextureImportOptions : public TScriptReflectable<ScriptTextureImportOptions, TextureImportOptions, ScriptImportOptionsBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTextureImportOptions : public TScriptReflectableWrapper<TextureImportOptions, ScriptTextureImportOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "TextureImportOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "TextureImportOptions")
 
-		ScriptTextureImportOptions(MonoObject* managedInstance, const SPtr<TextureImportOptions>& value);
+		ScriptTextureImportOptions(const SPtr<TextureImportOptions>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<TextureImportOptions>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static PixelFormat InternalGetFormat(ScriptTextureImportOptions* self);
@@ -37,7 +37,7 @@ namespace bs
 		static void InternalSetCubemap(ScriptTextureImportOptions* self, bool value);
 		static CubemapSourceType InternalGetCubemapSourceType(ScriptTextureImportOptions* self);
 		static void InternalSetCubemapSourceType(ScriptTextureImportOptions* self, CubemapSourceType value);
-		static void InternalCreate(MonoObject* managedInstance);
+		static void InternalCreate(MonoObject* scriptObject);
 	};
 #endif
 }

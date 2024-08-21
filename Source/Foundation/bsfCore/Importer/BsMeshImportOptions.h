@@ -5,6 +5,7 @@
 #include "BsCorePrerequisites.h"
 #include "Importer/BsImportOptions.h"
 #include "Animation/BsAnimationClip.h"
+#include "Script/BsIScriptExportable.h"
 
 namespace bs
 {
@@ -21,7 +22,7 @@ namespace bs
 	};
 
 	/** Information about how to split an AnimationClip into multiple separate clips. */
-	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) AnimationSplitInfo : IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) AnimationSplitInfo : IReflectable, IScriptExportable
 	{
 		B3D_SCRIPT_EXPORT()
 		AnimationSplitInfo() = default;
@@ -54,7 +55,7 @@ namespace bs
 	};
 
 	/** A set of animation events that will be added to an animation clip during animation import. */
-	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportedAnimationEvents : IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportedAnimationEvents : IReflectable, IScriptExportable
 	{
 		B3D_SCRIPT_EXPORT()
 		ImportedAnimationEvents() = default;

@@ -56,7 +56,7 @@ namespace bs
 		tmp__output = self->GetHandle()->GetSkeleton();
 
 		MonoObject* __output;
-		__output = ScriptSkeleton::Create(tmp__output);
+		__output = ScriptSkeleton::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}
@@ -67,7 +67,7 @@ namespace bs
 		tmp__output = self->GetHandle()->GetMorphShapes();
 
 		MonoObject* __output;
-		__output = ScriptMorphShapes::Create(tmp__output);
+		__output = ScriptMorphShapes::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}

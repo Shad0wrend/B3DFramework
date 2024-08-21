@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "BsScriptImportOptions.generated.h"
 #include "../../../Foundation/bsfEngine/Resources/BsScriptCodeImportOptions.h"
 
@@ -11,19 +11,19 @@ namespace bs { class ScriptCodeImportOptions; }
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptScriptCodeImportOptions : public TScriptReflectable<ScriptScriptCodeImportOptions, ScriptCodeImportOptions, ScriptImportOptionsBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptScriptCodeImportOptions : public TScriptReflectableWrapper<ScriptCodeImportOptions, ScriptScriptCodeImportOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ScriptCodeImportOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ScriptCodeImportOptions")
 
-		ScriptScriptCodeImportOptions(MonoObject* managedInstance, const SPtr<ScriptCodeImportOptions>& value);
+		ScriptScriptCodeImportOptions(const SPtr<ScriptCodeImportOptions>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<ScriptCodeImportOptions>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static bool InternalGetEditorScript(ScriptScriptCodeImportOptions* self);
 		static void InternalSetEditorScript(ScriptScriptCodeImportOptions* self, bool value);
-		static void InternalCreate(MonoObject* managedInstance);
+		static void InternalCreate(MonoObject* scriptObject);
 	};
 #endif
 }

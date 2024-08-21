@@ -98,7 +98,7 @@ namespace bs
 	};
 
 	/** Controls depth buffer collisions for GPU simulated particles. */
-	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleDepthCollisionSettings : IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleDepthCollisionSettings : IReflectable, IScriptExportable
 	{
 		struct SyncPacket;
 
@@ -326,7 +326,7 @@ namespace bs
 
 	/** Settings used for controlling a vector field in a GPU simulated particle system. */
 	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
-	ParticleVectorFieldSettings : TParticleVectorFieldSettings<false>, IReflectable
+	ParticleVectorFieldSettings : TParticleVectorFieldSettings<false>, IReflectable, IScriptExportable
 	{
 		friend struct ct::ParticleVectorFieldSettings;
 		struct SyncPacket;
@@ -394,7 +394,7 @@ namespace bs
 
 	/** Generic settings used for controlling a ParticleSystem. */
 	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
-	ParticleSystemSettings : TParticleSystemSettings<false>, IReflectable
+	ParticleSystemSettings : TParticleSystemSettings<false>, IReflectable, IScriptExportable
 	{
 		friend struct ct::ParticleSystemSettings;
 		struct SyncPacket;
@@ -410,7 +410,7 @@ namespace bs
 
 	/** Settings used for controlling particle system GPU simulation. */
 	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
-	ParticleGpuSimulationSettings : TParticleGpuSimulationSettings<false>, IReflectable
+	ParticleGpuSimulationSettings : TParticleGpuSimulationSettings<false>, IReflectable, IScriptExportable
 	{
 		friend struct ct::ParticleGpuSimulationSettings;
 		struct SyncPacket;

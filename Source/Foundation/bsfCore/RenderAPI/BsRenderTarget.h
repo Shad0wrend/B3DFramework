@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "Script/BsIScriptExportable.h"
 #include "Image/BsPixelUtil.h"
 #include "RenderAPI/BsViewport.h"
 #include "CoreObject/BsCoreObject.h"
@@ -105,7 +106,7 @@ namespace bs
 	};
 
 	/** Render target is a frame buffer or a texture that the render system renders the scene to. */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderTarget : public IReflectable, public CoreObject
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderTarget : public IReflectable, public IScriptExportable, public CoreObject
 	{
 	public:
 		RenderTarget();

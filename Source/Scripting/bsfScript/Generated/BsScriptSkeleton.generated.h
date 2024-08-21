@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsSkeleton.h"
 #include "../Extensions/BsSkeletonEx.h"
 
@@ -12,14 +12,14 @@ namespace bs { class SkeletonEx; }
 namespace bs { struct __SkeletonBoneInfoExInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSkeleton : public TScriptReflectable<ScriptSkeleton, Skeleton>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSkeleton : public TScriptReflectableWrapper<Skeleton, ScriptSkeleton>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Skeleton")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Skeleton")
 
-		ScriptSkeleton(MonoObject* managedInstance, const SPtr<Skeleton>& value);
+		ScriptSkeleton(const SPtr<Skeleton>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<Skeleton>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static uint32_t InternalGetNumBones(ScriptSkeleton* self);

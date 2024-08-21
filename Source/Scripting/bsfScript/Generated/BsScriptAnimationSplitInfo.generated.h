@@ -3,25 +3,25 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Importer/BsMeshImportOptions.h"
 
 namespace bs { struct AnimationSplitInfo; }
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationSplitInfo : public TScriptReflectable<ScriptAnimationSplitInfo, AnimationSplitInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationSplitInfo : public TScriptReflectableWrapper<AnimationSplitInfo, ScriptAnimationSplitInfo>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AnimationSplitInfo")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AnimationSplitInfo")
 
-		ScriptAnimationSplitInfo(MonoObject* managedInstance, const SPtr<AnimationSplitInfo>& value);
+		ScriptAnimationSplitInfo(const SPtr<AnimationSplitInfo>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<AnimationSplitInfo>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		static void InternalAnimationSplitInfo(MonoObject* managedInstance);
-		static void InternalAnimationSplitInfo0(MonoObject* managedInstance, MonoString* name, uint32_t startFrame, uint32_t endFrame, bool isAdditive);
+		static void InternalAnimationSplitInfo(MonoObject* scriptObject);
+		static void InternalAnimationSplitInfo0(MonoObject* scriptObject, MonoString* name, uint32_t startFrame, uint32_t endFrame, bool isAdditive);
 		static MonoString* InternalGetName(ScriptAnimationSplitInfo* self);
 		static void InternalSetName(ScriptAnimationSplitInfo* self, MonoString* value);
 		static uint32_t InternalGetStartFrame(ScriptAnimationSplitInfo* self);

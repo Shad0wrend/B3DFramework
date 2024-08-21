@@ -9,40 +9,38 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptScriptCodeImportOptions::ScriptScriptCodeImportOptions(MonoObject* managedInstance, const SPtr<ScriptCodeImportOptions>& value)
-		:TScriptReflectable(managedInstance, value)
+	ScriptScriptCodeImportOptions::ScriptScriptCodeImportOptions(const SPtr<ScriptCodeImportOptions>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
-		mInternal = value;
 	}
 
-	void ScriptScriptCodeImportOptions::InitRuntimeData()
+	void ScriptScriptCodeImportOptions::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetEditorScript", (void*)&ScriptScriptCodeImportOptions::InternalGetEditorScript);
-		metaData.ScriptClass->AddInternalCall("Internal_SetEditorScript", (void*)&ScriptScriptCodeImportOptions::InternalSetEditorScript);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptScriptCodeImportOptions::InternalCreate);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetEditorScript", (void*)&ScriptScriptCodeImportOptions::InternalGetEditorScript);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetEditorScript", (void*)&ScriptScriptCodeImportOptions::InternalSetEditorScript);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptScriptCodeImportOptions::InternalCreate);
 
 	}
 
-	MonoObject* ScriptScriptCodeImportOptions::Create(const SPtr<ScriptCodeImportOptions>& value)
+	MonoObject* ScriptScriptCodeImportOptions::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptScriptCodeImportOptions>()) ScriptScriptCodeImportOptions(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
-	void ScriptScriptCodeImportOptions::InternalCreate(MonoObject* managedInstance)
+	void ScriptScriptCodeImportOptions::InternalCreate(MonoObject* scriptObject)
 	{
 		SPtr<ScriptCodeImportOptions> nativeObject = ScriptCodeImportOptions::Create();
-		new (B3DAllocate<ScriptScriptCodeImportOptions>())ScriptScriptCodeImportOptions(managedInstance, nativeObject);
+		B3DNew<ScriptScriptCodeImportOptions>(nativeObject, scriptObject);
 	}
 	bool ScriptScriptCodeImportOptions::InternalGetEditorScript(ScriptScriptCodeImportOptions* self)
 	{
 		bool tmp__output;
-		tmp__output = self->GetInternal()->EditorScript;
+		tmp__output = static_cast<ScriptCodeImportOptions*>(self->GetNativeObject())->EditorScript;
 
 		bool __output;
 		__output = tmp__output;
@@ -52,7 +50,7 @@ namespace bs
 
 	void ScriptScriptCodeImportOptions::InternalSetEditorScript(ScriptScriptCodeImportOptions* self, bool value)
 	{
-		self->GetInternal()->EditorScript = value;
+		static_cast<ScriptCodeImportOptions*>(self->GetNativeObject())->EditorScript = value;
 	}
 #endif
 }

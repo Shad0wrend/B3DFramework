@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "BsScriptImportOptions.generated.h"
 #include "../../../Foundation/bsfCore/Importer/BsShaderImportOptions.h"
 #include "../../../Foundation/bsfCore/Material/BsShaderCompiler.h"
@@ -12,14 +12,14 @@ namespace bs { class ShaderImportOptions; }
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderImportOptions : public TScriptReflectable<ScriptShaderImportOptions, ShaderImportOptions, ScriptImportOptionsBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderImportOptions : public TScriptReflectableWrapper<ShaderImportOptions, ScriptShaderImportOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ShaderImportOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ShaderImportOptions")
 
-		ScriptShaderImportOptions(MonoObject* managedInstance, const SPtr<ShaderImportOptions>& value);
+		ScriptShaderImportOptions(const SPtr<ShaderImportOptions>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<ShaderImportOptions>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static void InternalSetDefine(ScriptShaderImportOptions* self, MonoString* define, MonoString* value);
@@ -28,7 +28,7 @@ namespace bs
 		static void InternalRemoveDefine(ScriptShaderImportOptions* self, MonoString* define);
 		static ShadingLanguageFlag InternalGetLanguages(ScriptShaderImportOptions* self);
 		static void InternalSetLanguages(ScriptShaderImportOptions* self, ShadingLanguageFlag value);
-		static void InternalCreate(MonoObject* managedInstance);
+		static void InternalCreate(MonoObject* scriptObject);
 	};
 #endif
 }

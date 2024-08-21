@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "BsScriptImportOptions.generated.h"
 #include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"
 #include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"
@@ -13,14 +13,14 @@ namespace bs { class FontImportOptions; }
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontImportOptions : public TScriptReflectable<ScriptFontImportOptions, FontImportOptions, ScriptImportOptionsBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontImportOptions : public TScriptReflectableWrapper<FontImportOptions, ScriptFontImportOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "FontImportOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "FontImportOptions")
 
-		ScriptFontImportOptions(MonoObject* managedInstance, const SPtr<FontImportOptions>& value);
+		ScriptFontImportOptions(const SPtr<FontImportOptions>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<FontImportOptions>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoArray* InternalGetFontSizes(ScriptFontImportOptions* self);
@@ -35,7 +35,7 @@ namespace bs
 		static void InternalSetBold(ScriptFontImportOptions* self, bool value);
 		static bool InternalGetItalic(ScriptFontImportOptions* self);
 		static void InternalSetItalic(ScriptFontImportOptions* self, bool value);
-		static void InternalCreate(MonoObject* managedInstance);
+		static void InternalCreate(MonoObject* scriptObject);
 	};
 #endif
 }

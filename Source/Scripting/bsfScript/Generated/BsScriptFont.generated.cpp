@@ -40,7 +40,7 @@ namespace bs
 		tmp__output = self->GetHandle()->GetBitmap(size);
 
 		MonoObject* __output;
-		__output = ScriptFontBitmapInformation::Create(tmp__output);
+		__output = ScriptFontBitmapInformation::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}

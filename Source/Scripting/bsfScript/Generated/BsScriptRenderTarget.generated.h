@@ -3,37 +3,35 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsRenderTarget.h"
 
 namespace bs { class RenderTarget; }
 namespace bs { class RenderTargetEx; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderTargetBase : public ScriptReflectableBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderTargetWrapperBase : public ScriptReflectableWrapper
 	{
 	public:
-		ScriptRenderTargetBase(MonoObject* instance);
-		virtual ~ScriptRenderTargetBase() {}
+		using ScriptReflectableWrapper::ScriptReflectableWrapper;
 
-		SPtr<RenderTarget> GetInternal() const;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderTarget : public TScriptReflectable<ScriptRenderTarget, RenderTarget, ScriptRenderTargetBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderTarget : public TScriptReflectableWrapper<RenderTarget, ScriptRenderTarget, ScriptRenderTargetWrapperBase>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "RenderTarget")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "RenderTarget")
 
-		ScriptRenderTarget(MonoObject* managedInstance, const SPtr<RenderTarget>& value);
+		ScriptRenderTarget(const SPtr<RenderTarget>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<RenderTarget>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		static uint32_t InternalGetWidth(ScriptRenderTargetBase* self);
-		static uint32_t InternalGetHeight(ScriptRenderTargetBase* self);
-		static bool InternalGetGammaCorrection(ScriptRenderTargetBase* self);
-		static int32_t InternalGetPriority(ScriptRenderTargetBase* self);
-		static void InternalSetPriority(ScriptRenderTargetBase* self, int32_t priority);
-		static uint32_t InternalGetSampleCount(ScriptRenderTargetBase* self);
+		static uint32_t InternalGetWidth(ScriptRenderTargetWrapperBase* self);
+		static uint32_t InternalGetHeight(ScriptRenderTargetWrapperBase* self);
+		static bool InternalGetGammaCorrection(ScriptRenderTargetWrapperBase* self);
+		static int32_t InternalGetPriority(ScriptRenderTargetWrapperBase* self);
+		static void InternalSetPriority(ScriptRenderTargetWrapperBase* self, int32_t priority);
+		static uint32_t InternalGetSampleCount(ScriptRenderTargetWrapperBase* self);
 	};
 }

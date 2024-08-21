@@ -89,9 +89,9 @@ namespace bs
 	{
 		SPtr<ShaderVariationParameters> tmpvariation;
 		ScriptShaderVariationParameters* scriptObjectWrappervariation;
-		scriptObjectWrappervariation = ScriptShaderVariationParameters::ToNative(variation);
+		scriptObjectWrappervariation = ScriptShaderVariationParameters::GetScriptObjectWrapper(variation);
 		if(scriptObjectWrappervariation != nullptr)
-			tmpvariation = scriptObjectWrappervariation->GetInternal();
+			tmpvariation = std::static_pointer_cast<ShaderVariationParameters>(scriptObjectWrappervariation->GetBaseNativeObjectAsShared());
 		self->GetHandle()->SetVariation(*tmpvariation);
 	}
 
@@ -133,7 +133,7 @@ namespace bs
 		*tmp__output = self->GetHandle()->GetVariation();
 
 		MonoObject* __output;
-		__output = ScriptShaderVariationParameters::Create(tmp__output);
+		__output = ScriptShaderVariationParameters::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}

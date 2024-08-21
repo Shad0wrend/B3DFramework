@@ -9,33 +9,32 @@
 
 namespace bs
 {
-	ScriptSkeleton::ScriptSkeleton(MonoObject* managedInstance, const SPtr<Skeleton>& value)
-		:TScriptReflectable(managedInstance, value)
+	ScriptSkeleton::ScriptSkeleton(const SPtr<Skeleton>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
 	}
 
-	void ScriptSkeleton::InitRuntimeData()
+	void ScriptSkeleton::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetNumBones", (void*)&ScriptSkeleton::InternalGetNumBones);
-		metaData.ScriptClass->AddInternalCall("Internal_GetBoneInfo", (void*)&ScriptSkeleton::InternalGetBoneInfo);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetNumBones", (void*)&ScriptSkeleton::InternalGetNumBones);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetBoneInfo", (void*)&ScriptSkeleton::InternalGetBoneInfo);
 
 	}
 
-	MonoObject* ScriptSkeleton::Create(const SPtr<Skeleton>& value)
+	MonoObject* ScriptSkeleton::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptSkeleton>()) ScriptSkeleton(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	uint32_t ScriptSkeleton::InternalGetNumBones(ScriptSkeleton* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = self->GetInternal()->GetNumBones();
+		tmp__output = static_cast<Skeleton*>(self->GetNativeObject())->GetNumBones();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -46,7 +45,7 @@ namespace bs
 	void ScriptSkeleton::InternalGetBoneInfo(ScriptSkeleton* self, int32_t boneIdx, __SkeletonBoneInfoExInterop* __output)
 	{
 		SkeletonBoneInfoEx tmp__output;
-		tmp__output = SkeletonEx::GetBoneInfo(self->GetInternal(), boneIdx);
+		tmp__output = SkeletonEx::GetBoneInfo(std::static_pointer_cast<Skeleton>(self->GetBaseNativeObjectAsShared()), boneIdx);
 
 		__SkeletonBoneInfoExInterop interop__output;
 		interop__output = ScriptBoneInfo::ToInterop(tmp__output);

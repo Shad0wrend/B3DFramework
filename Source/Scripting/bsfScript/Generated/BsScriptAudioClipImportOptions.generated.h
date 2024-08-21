@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "BsScriptImportOptions.generated.h"
 #include "../../../Foundation/bsfCore/Audio/BsAudioClipImportOptions.h"
 #include "../../../Foundation/bsfCore/Audio/BsAudioClip.h"
@@ -13,14 +13,14 @@ namespace bs { class AudioClipImportOptions; }
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioClipImportOptions : public TScriptReflectable<ScriptAudioClipImportOptions, AudioClipImportOptions, ScriptImportOptionsBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioClipImportOptions : public TScriptReflectableWrapper<AudioClipImportOptions, ScriptAudioClipImportOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AudioClipImportOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AudioClipImportOptions")
 
-		ScriptAudioClipImportOptions(MonoObject* managedInstance, const SPtr<AudioClipImportOptions>& value);
+		ScriptAudioClipImportOptions(const SPtr<AudioClipImportOptions>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<AudioClipImportOptions>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static AudioFormat InternalGetFormat(ScriptAudioClipImportOptions* self);
@@ -31,7 +31,7 @@ namespace bs
 		static void InternalSetIs3D(ScriptAudioClipImportOptions* self, bool value);
 		static uint32_t InternalGetBitDepth(ScriptAudioClipImportOptions* self);
 		static void InternalSetBitDepth(ScriptAudioClipImportOptions* self, uint32_t value);
-		static void InternalCreate(MonoObject* managedInstance);
+		static void InternalCreate(MonoObject* scriptObject);
 	};
 #endif
 }

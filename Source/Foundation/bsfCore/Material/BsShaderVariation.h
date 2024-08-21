@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "Script/BsIScriptExportable.h"
 
 namespace bs
 {
@@ -83,7 +84,7 @@ namespace bs
 	 * Contains information about a single variation of a Shader. Each variation can have a separate set of
 	 * \#defines that control shader compilation.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShaderVariationParameters : public IReflectable
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShaderVariationParameters : public IReflectable, public IScriptExportable
 	{
 	public:
 		B3D_SCRIPT_EXPORT()

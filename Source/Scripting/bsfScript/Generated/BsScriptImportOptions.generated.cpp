@@ -8,35 +8,25 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptImportOptionsBase::ScriptImportOptionsBase(MonoObject* managedInstance)
-		:ScriptReflectableBase(managedInstance)
-	 { }
-
-	SPtr<ImportOptions> ScriptImportOptionsBase::GetInternal() const
+	ScriptImportOptions::ScriptImportOptions(const SPtr<ImportOptions>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
-		return std::static_pointer_cast<ImportOptions>(mInternal);
-	}
-	ScriptImportOptions::ScriptImportOptions(MonoObject* managedInstance, const SPtr<ImportOptions>& value)
-		:TScriptReflectable(managedInstance, value)
-	{
-		mInternal = value;
 	}
 
-	void ScriptImportOptions::InitRuntimeData()
+	void ScriptImportOptions::SetupScriptBindings()
 	{
 
 	}
 
-	MonoObject* ScriptImportOptions::Create(const SPtr<ImportOptions>& value)
+	MonoObject* ScriptImportOptions::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptImportOptions>()) ScriptImportOptions(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 #endif
 }

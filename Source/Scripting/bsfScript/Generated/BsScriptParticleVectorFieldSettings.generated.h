@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 #include "Math/BsVector3.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
@@ -12,14 +12,14 @@
 namespace bs { struct ParticleVectorFieldSettings; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleVectorFieldSettings : public TScriptReflectable<ScriptParticleVectorFieldSettings, ParticleVectorFieldSettings>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleVectorFieldSettings : public TScriptReflectableWrapper<ParticleVectorFieldSettings, ScriptParticleVectorFieldSettings>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleVectorFieldSettings")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleVectorFieldSettings")
 
-		ScriptParticleVectorFieldSettings(MonoObject* managedInstance, const SPtr<ParticleVectorFieldSettings>& value);
+		ScriptParticleVectorFieldSettings(const SPtr<ParticleVectorFieldSettings>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<ParticleVectorFieldSettings>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetVectorField(ScriptParticleVectorFieldSettings* self);

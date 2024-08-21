@@ -4,6 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsIReflectable.h"
+#include "Script/BsIScriptExportable.h"
 
 namespace bs
 {
@@ -15,7 +16,7 @@ namespace bs
 	 * Base class for creating import options from. Import options are specific for each importer and control how is data
 	 * imported.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportOptions : public IReflectable
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportOptions : public IReflectable, public IScriptExportable
 	{
 	public:
 		virtual ~ImportOptions() = default;

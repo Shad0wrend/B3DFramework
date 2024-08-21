@@ -9,34 +9,32 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptShaderImportOptions::ScriptShaderImportOptions(MonoObject* managedInstance, const SPtr<ShaderImportOptions>& value)
-		:TScriptReflectable(managedInstance, value)
+	ScriptShaderImportOptions::ScriptShaderImportOptions(const SPtr<ShaderImportOptions>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
-		mInternal = value;
 	}
 
-	void ScriptShaderImportOptions::InitRuntimeData()
+	void ScriptShaderImportOptions::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_SetDefine", (void*)&ScriptShaderImportOptions::InternalSetDefine);
-		metaData.ScriptClass->AddInternalCall("Internal_GetDefine", (void*)&ScriptShaderImportOptions::InternalGetDefine);
-		metaData.ScriptClass->AddInternalCall("Internal_HasDefine", (void*)&ScriptShaderImportOptions::InternalHasDefine);
-		metaData.ScriptClass->AddInternalCall("Internal_RemoveDefine", (void*)&ScriptShaderImportOptions::InternalRemoveDefine);
-		metaData.ScriptClass->AddInternalCall("Internal_GetLanguages", (void*)&ScriptShaderImportOptions::InternalGetLanguages);
-		metaData.ScriptClass->AddInternalCall("Internal_SetLanguages", (void*)&ScriptShaderImportOptions::InternalSetLanguages);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptShaderImportOptions::InternalCreate);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetDefine", (void*)&ScriptShaderImportOptions::InternalSetDefine);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetDefine", (void*)&ScriptShaderImportOptions::InternalGetDefine);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_HasDefine", (void*)&ScriptShaderImportOptions::InternalHasDefine);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_RemoveDefine", (void*)&ScriptShaderImportOptions::InternalRemoveDefine);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetLanguages", (void*)&ScriptShaderImportOptions::InternalGetLanguages);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetLanguages", (void*)&ScriptShaderImportOptions::InternalSetLanguages);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptShaderImportOptions::InternalCreate);
 
 	}
 
-	MonoObject* ScriptShaderImportOptions::Create(const SPtr<ShaderImportOptions>& value)
+	MonoObject* ScriptShaderImportOptions::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptShaderImportOptions>()) ScriptShaderImportOptions(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	void ScriptShaderImportOptions::InternalSetDefine(ScriptShaderImportOptions* self, MonoString* define, MonoString* value)
 	{
@@ -44,7 +42,7 @@ namespace bs
 		tmpdefine = MonoUtil::MonoToString(define);
 		String tmpvalue;
 		tmpvalue = MonoUtil::MonoToString(value);
-		self->GetInternal()->SetDefine(tmpdefine, tmpvalue);
+		static_cast<ShaderImportOptions*>(self->GetNativeObject())->SetDefine(tmpdefine, tmpvalue);
 	}
 
 	bool ScriptShaderImportOptions::InternalGetDefine(ScriptShaderImportOptions* self, MonoString* define, MonoString** value)
@@ -53,7 +51,7 @@ namespace bs
 		String tmpdefine;
 		tmpdefine = MonoUtil::MonoToString(define);
 		String tmpvalue;
-		tmp__output = self->GetInternal()->GetDefine(tmpdefine, tmpvalue);
+		tmp__output = static_cast<ShaderImportOptions*>(self->GetNativeObject())->GetDefine(tmpdefine, tmpvalue);
 
 		bool __output;
 		__output = tmp__output;
@@ -67,7 +65,7 @@ namespace bs
 		bool tmp__output;
 		String tmpdefine;
 		tmpdefine = MonoUtil::MonoToString(define);
-		tmp__output = self->GetInternal()->HasDefine(tmpdefine);
+		tmp__output = static_cast<ShaderImportOptions*>(self->GetNativeObject())->HasDefine(tmpdefine);
 
 		bool __output;
 		__output = tmp__output;
@@ -79,18 +77,18 @@ namespace bs
 	{
 		String tmpdefine;
 		tmpdefine = MonoUtil::MonoToString(define);
-		self->GetInternal()->RemoveDefine(tmpdefine);
+		static_cast<ShaderImportOptions*>(self->GetNativeObject())->RemoveDefine(tmpdefine);
 	}
 
-	void ScriptShaderImportOptions::InternalCreate(MonoObject* managedInstance)
+	void ScriptShaderImportOptions::InternalCreate(MonoObject* scriptObject)
 	{
 		SPtr<ShaderImportOptions> nativeObject = ShaderImportOptions::Create();
-		new (B3DAllocate<ScriptShaderImportOptions>())ScriptShaderImportOptions(managedInstance, nativeObject);
+		B3DNew<ScriptShaderImportOptions>(nativeObject, scriptObject);
 	}
 	ShadingLanguageFlag ScriptShaderImportOptions::InternalGetLanguages(ScriptShaderImportOptions* self)
 	{
 		Flags<ShadingLanguageFlag> tmp__output;
-		tmp__output = self->GetInternal()->Languages;
+		tmp__output = static_cast<ShaderImportOptions*>(self->GetNativeObject())->Languages;
 
 		ShadingLanguageFlag __output;
 		__output = (ShadingLanguageFlag)(uint32_t)tmp__output;
@@ -100,7 +98,7 @@ namespace bs
 
 	void ScriptShaderImportOptions::InternalSetLanguages(ScriptShaderImportOptions* self, ShadingLanguageFlag value)
 	{
-		self->GetInternal()->Languages = value;
+		static_cast<ShaderImportOptions*>(self->GetNativeObject())->Languages = value;
 	}
 #endif
 }

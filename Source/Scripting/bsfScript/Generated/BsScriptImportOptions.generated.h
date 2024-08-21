@@ -3,30 +3,28 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Importer/BsImportOptions.h"
 
 namespace bs { class ImportOptions; }
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptImportOptionsBase : public ScriptReflectableBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptImportOptionsWrapperBase : public ScriptReflectableWrapper
 	{
 	public:
-		ScriptImportOptionsBase(MonoObject* instance);
-		virtual ~ScriptImportOptionsBase() {}
+		using ScriptReflectableWrapper::ScriptReflectableWrapper;
 
-		SPtr<ImportOptions> GetInternal() const;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptImportOptions : public TScriptReflectable<ScriptImportOptions, ImportOptions, ScriptImportOptionsBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptImportOptions : public TScriptReflectableWrapper<ImportOptions, ScriptImportOptions, ScriptImportOptionsWrapperBase>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ImportOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ImportOptions")
 
-		ScriptImportOptions(MonoObject* managedInstance, const SPtr<ImportOptions>& value);
+		ScriptImportOptions(const SPtr<ImportOptions>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<ImportOptions>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 	};

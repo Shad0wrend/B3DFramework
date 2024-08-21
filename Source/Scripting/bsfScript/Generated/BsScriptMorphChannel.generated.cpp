@@ -8,33 +8,32 @@
 
 namespace bs
 {
-	ScriptMorphChannel::ScriptMorphChannel(MonoObject* managedInstance, const SPtr<MorphChannel>& value)
-		:TScriptReflectable(managedInstance, value)
+	ScriptMorphChannel::ScriptMorphChannel(const SPtr<MorphChannel>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
 	}
 
-	void ScriptMorphChannel::InitRuntimeData()
+	void ScriptMorphChannel::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptMorphChannel::InternalGetName);
-		metaData.ScriptClass->AddInternalCall("Internal_GetShapes", (void*)&ScriptMorphChannel::InternalGetShapes);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptMorphChannel::InternalGetName);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetShapes", (void*)&ScriptMorphChannel::InternalGetShapes);
 
 	}
 
-	MonoObject* ScriptMorphChannel::Create(const SPtr<MorphChannel>& value)
+	MonoObject* ScriptMorphChannel::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptMorphChannel>()) ScriptMorphChannel(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoString* ScriptMorphChannel::InternalGetName(ScriptMorphChannel* self)
 	{
 		String tmp__output;
-		tmp__output = self->GetInternal()->GetName();
+		tmp__output = static_cast<MorphChannel*>(self->GetNativeObject())->GetName();
 
 		MonoString* __output;
 		__output = MonoUtil::StringToMono(tmp__output);
@@ -45,7 +44,7 @@ namespace bs
 	MonoArray* ScriptMorphChannel::InternalGetShapes(ScriptMorphChannel* self)
 	{
 		Vector<SPtr<MorphShape>> nativeArray__output;
-		nativeArray__output = self->GetInternal()->GetShapes();
+		nativeArray__output = static_cast<MorphChannel*>(self->GetNativeObject())->GetShapes();
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -54,7 +53,7 @@ namespace bs
 		{
 			SPtr<MorphShape> arrayElementPointer__output = nativeArray__output[elementIndex];
 			MonoObject* arrayElement__output;
-			arrayElement__output = ScriptMorphShape::Create(arrayElementPointer__output);
+			arrayElement__output = ScriptMorphShape::GetOrCreateScriptObject(arrayElementPointer__output);
 			scriptArray__output.Set(elementIndex, arrayElement__output);
 		}
 		__output = scriptArray__output.GetInternal();

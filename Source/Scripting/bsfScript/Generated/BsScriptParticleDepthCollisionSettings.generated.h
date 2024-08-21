@@ -3,23 +3,23 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 
 namespace bs { struct ParticleDepthCollisionSettings; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleDepthCollisionSettings : public TScriptReflectable<ScriptParticleDepthCollisionSettings, ParticleDepthCollisionSettings>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleDepthCollisionSettings : public TScriptReflectableWrapper<ParticleDepthCollisionSettings, ScriptParticleDepthCollisionSettings>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleDepthCollisionSettings")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleDepthCollisionSettings")
 
-		ScriptParticleDepthCollisionSettings(MonoObject* managedInstance, const SPtr<ParticleDepthCollisionSettings>& value);
+		ScriptParticleDepthCollisionSettings(const SPtr<ParticleDepthCollisionSettings>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<ParticleDepthCollisionSettings>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		static void InternalParticleDepthCollisionSettings(MonoObject* managedInstance);
+		static void InternalParticleDepthCollisionSettings(MonoObject* scriptObject);
 		static bool InternalGetEnabled(ScriptParticleDepthCollisionSettings* self);
 		static void InternalSetEnabled(ScriptParticleDepthCollisionSettings* self, bool value);
 		static float InternalGetRestitution(ScriptParticleDepthCollisionSettings* self);

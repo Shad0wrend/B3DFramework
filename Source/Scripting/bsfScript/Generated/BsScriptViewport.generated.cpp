@@ -50,10 +50,10 @@ namespace bs
 	void ScriptViewport::InternalSetTarget(ScriptViewport* self, MonoObject* target)
 	{
 		SPtr<RenderTarget> tmptarget;
-		ScriptRenderTargetBase* scriptObjectWrappertarget;
-		scriptObjectWrappertarget = (ScriptRenderTargetBase*)ScriptRenderTarget::ToNative(target);
+		ScriptRenderTargetWrapperBase* scriptObjectWrappertarget;
+		scriptObjectWrappertarget = (ScriptRenderTargetWrapperBase*)ScriptRenderTarget::GetScriptObjectWrapper(target);
 		if(scriptObjectWrappertarget != nullptr)
-			tmptarget = scriptObjectWrappertarget->GetInternal();
+			tmptarget = std::static_pointer_cast<RenderTarget>(scriptObjectWrappertarget->GetBaseNativeObjectAsShared());
 		static_cast<Viewport*>(self->GetNativeObject())->SetTarget(tmptarget);
 	}
 
@@ -66,12 +66,12 @@ namespace bs
 		if(tmp__output)
 		{
 			if(B3DRTTIIsOfType<RenderTexture>(tmp__output))
-				__output = ScriptRenderTexture::Create(std::static_pointer_cast<RenderTexture>(tmp__output));
+				__output = ScriptRenderTexture::GetOrCreateScriptObject(std::static_pointer_cast<RenderTexture>(tmp__output));
 			else
-				__output = ScriptRenderTarget::Create(tmp__output);
+				__output = ScriptRenderTarget::GetOrCreateScriptObject(tmp__output);
 		}
 		else
-			__output = ScriptRenderTarget::Create(tmp__output);
+			__output = ScriptRenderTarget::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}
@@ -161,10 +161,10 @@ namespace bs
 	void ScriptViewport::InternalCreate(MonoObject* scriptObject, MonoObject* target, float x, float y, float width, float height)
 	{
 		SPtr<RenderTarget> tmptarget;
-		ScriptRenderTargetBase* scriptObjectWrappertarget;
-		scriptObjectWrappertarget = (ScriptRenderTargetBase*)ScriptRenderTarget::ToNative(target);
+		ScriptRenderTargetWrapperBase* scriptObjectWrappertarget;
+		scriptObjectWrappertarget = (ScriptRenderTargetWrapperBase*)ScriptRenderTarget::GetScriptObjectWrapper(target);
 		if(scriptObjectWrappertarget != nullptr)
-			tmptarget = scriptObjectWrappertarget->GetInternal();
+			tmptarget = std::static_pointer_cast<RenderTarget>(scriptObjectWrappertarget->GetBaseNativeObjectAsShared());
 		SPtr<Viewport> nativeObject = Viewport::Create(tmptarget, x, y, width, height);
 		B3DNew<ScriptViewport>(nativeObject, scriptObject);
 	}

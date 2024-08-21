@@ -39,7 +39,7 @@ void ScriptGUIRenderTexture::InternalCreateInstance(MonoObject* instance, Script
 
 	SPtr<RenderTexture> renderTexture;
 	if(texture != nullptr)
-		renderTexture = texture->GetInternal();
+		renderTexture = texture->GetNativeObjectAsShared();
 
 	GUIRenderTexture* guiTexture = GUIRenderTexture::Create(renderTexture, transparent, options, MonoUtil::MonoToString(style));
 
@@ -50,7 +50,7 @@ void ScriptGUIRenderTexture::InternalSetTexture(ScriptGUIRenderTexture* nativeIn
 {
 	SPtr<RenderTexture> renderTexture;
 	if(texture != nullptr)
-		renderTexture = texture->GetInternal();
+		renderTexture = texture->GetNativeObjectAsShared();
 
 	GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->GetGuiElement();
 	guiTexture->SetRenderTexture(renderTexture);

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Importer/BsMeshImportOptions.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationClip.h"
 
@@ -12,17 +12,17 @@ namespace bs { struct __AnimationEventInterop; }
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptImportedAnimationEvents : public TScriptReflectable<ScriptImportedAnimationEvents, ImportedAnimationEvents>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptImportedAnimationEvents : public TScriptReflectableWrapper<ImportedAnimationEvents, ScriptImportedAnimationEvents>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ImportedAnimationEvents")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ImportedAnimationEvents")
 
-		ScriptImportedAnimationEvents(MonoObject* managedInstance, const SPtr<ImportedAnimationEvents>& value);
+		ScriptImportedAnimationEvents(const SPtr<ImportedAnimationEvents>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<ImportedAnimationEvents>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		static void InternalImportedAnimationEvents(MonoObject* managedInstance);
+		static void InternalImportedAnimationEvents(MonoObject* scriptObject);
 		static MonoString* InternalGetName(ScriptImportedAnimationEvents* self);
 		static void InternalSetName(ScriptImportedAnimationEvents* self, MonoString* value);
 		static MonoArray* InternalGetEvents(ScriptImportedAnimationEvents* self);

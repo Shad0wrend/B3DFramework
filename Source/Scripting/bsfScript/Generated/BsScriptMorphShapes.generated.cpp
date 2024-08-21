@@ -8,32 +8,31 @@
 
 namespace bs
 {
-	ScriptMorphShapes::ScriptMorphShapes(MonoObject* managedInstance, const SPtr<MorphShapes>& value)
-		:TScriptReflectable(managedInstance, value)
+	ScriptMorphShapes::ScriptMorphShapes(const SPtr<MorphShapes>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
 	}
 
-	void ScriptMorphShapes::InitRuntimeData()
+	void ScriptMorphShapes::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetChannels", (void*)&ScriptMorphShapes::InternalGetChannels);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetChannels", (void*)&ScriptMorphShapes::InternalGetChannels);
 
 	}
 
-	MonoObject* ScriptMorphShapes::Create(const SPtr<MorphShapes>& value)
+	MonoObject* ScriptMorphShapes::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptMorphShapes>()) ScriptMorphShapes(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoArray* ScriptMorphShapes::InternalGetChannels(ScriptMorphShapes* self)
 	{
 		Vector<SPtr<MorphChannel>> nativeArray__output;
-		nativeArray__output = self->GetInternal()->GetChannels();
+		nativeArray__output = static_cast<MorphShapes*>(self->GetNativeObject())->GetChannels();
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -42,7 +41,7 @@ namespace bs
 		{
 			SPtr<MorphChannel> arrayElementPointer__output = nativeArray__output[elementIndex];
 			MonoObject* arrayElement__output;
-			arrayElement__output = ScriptMorphChannel::Create(arrayElementPointer__output);
+			arrayElement__output = ScriptMorphChannel::GetOrCreateScriptObject(arrayElementPointer__output);
 			scriptArray__output.Set(elementIndex, arrayElement__output);
 		}
 		__output = scriptArray__output.GetInternal();

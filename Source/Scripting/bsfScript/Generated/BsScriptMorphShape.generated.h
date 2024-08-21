@@ -3,20 +3,20 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptReflectable.h"
+#include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsMorphShapes.h"
 
 namespace bs { class MorphShape; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptMorphShape : public TScriptReflectable<ScriptMorphShape, MorphShape>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptMorphShape : public TScriptReflectableWrapper<MorphShape, ScriptMorphShape>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "MorphShape")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "MorphShape")
 
-		ScriptMorphShape(MonoObject* managedInstance, const SPtr<MorphShape>& value);
+		ScriptMorphShape(const SPtr<MorphShape>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* Create(const SPtr<MorphShape>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoString* InternalGetName(ScriptMorphShape* self);

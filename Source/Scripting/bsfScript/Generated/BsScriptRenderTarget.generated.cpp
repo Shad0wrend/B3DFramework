@@ -8,46 +8,36 @@
 
 namespace bs
 {
-	ScriptRenderTargetBase::ScriptRenderTargetBase(MonoObject* managedInstance)
-		:ScriptReflectableBase(managedInstance)
-	 { }
-
-	SPtr<RenderTarget> ScriptRenderTargetBase::GetInternal() const
+	ScriptRenderTarget::ScriptRenderTarget(const SPtr<RenderTarget>& nativeObject, MonoObject* scriptObject)
+		:TScriptReflectableWrapper(nativeObject, scriptObject)
 	{
-		return std::static_pointer_cast<RenderTarget>(mInternal);
-	}
-	ScriptRenderTarget::ScriptRenderTarget(MonoObject* managedInstance, const SPtr<RenderTarget>& value)
-		:TScriptReflectable(managedInstance, value)
-	{
-		mInternal = value;
 	}
 
-	void ScriptRenderTarget::InitRuntimeData()
+	void ScriptRenderTarget::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetWidth", (void*)&ScriptRenderTarget::InternalGetWidth);
-		metaData.ScriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptRenderTarget::InternalGetHeight);
-		metaData.ScriptClass->AddInternalCall("Internal_GetGammaCorrection", (void*)&ScriptRenderTarget::InternalGetGammaCorrection);
-		metaData.ScriptClass->AddInternalCall("Internal_GetPriority", (void*)&ScriptRenderTarget::InternalGetPriority);
-		metaData.ScriptClass->AddInternalCall("Internal_SetPriority", (void*)&ScriptRenderTarget::InternalSetPriority);
-		metaData.ScriptClass->AddInternalCall("Internal_GetSampleCount", (void*)&ScriptRenderTarget::InternalGetSampleCount);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetWidth", (void*)&ScriptRenderTarget::InternalGetWidth);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptRenderTarget::InternalGetHeight);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetGammaCorrection", (void*)&ScriptRenderTarget::InternalGetGammaCorrection);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPriority", (void*)&ScriptRenderTarget::InternalGetPriority);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetPriority", (void*)&ScriptRenderTarget::InternalSetPriority);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetSampleCount", (void*)&ScriptRenderTarget::InternalGetSampleCount);
 
 	}
 
-	MonoObject* ScriptRenderTarget::Create(const SPtr<RenderTarget>& value)
+	MonoObject* ScriptRenderTarget::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptRenderTarget>()) ScriptRenderTarget(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
-	uint32_t ScriptRenderTarget::InternalGetWidth(ScriptRenderTargetBase* self)
+	uint32_t ScriptRenderTarget::InternalGetWidth(ScriptRenderTargetWrapperBase* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = RenderTargetEx::GetWidth(self->GetInternal());
+		tmp__output = RenderTargetEx::GetWidth(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -55,10 +45,10 @@ namespace bs
 		return __output;
 	}
 
-	uint32_t ScriptRenderTarget::InternalGetHeight(ScriptRenderTargetBase* self)
+	uint32_t ScriptRenderTarget::InternalGetHeight(ScriptRenderTargetWrapperBase* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = RenderTargetEx::GetHeight(self->GetInternal());
+		tmp__output = RenderTargetEx::GetHeight(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -66,10 +56,10 @@ namespace bs
 		return __output;
 	}
 
-	bool ScriptRenderTarget::InternalGetGammaCorrection(ScriptRenderTargetBase* self)
+	bool ScriptRenderTarget::InternalGetGammaCorrection(ScriptRenderTargetWrapperBase* self)
 	{
 		bool tmp__output;
-		tmp__output = RenderTargetEx::GetGammaCorrection(self->GetInternal());
+		tmp__output = RenderTargetEx::GetGammaCorrection(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		bool __output;
 		__output = tmp__output;
@@ -77,10 +67,10 @@ namespace bs
 		return __output;
 	}
 
-	int32_t ScriptRenderTarget::InternalGetPriority(ScriptRenderTargetBase* self)
+	int32_t ScriptRenderTarget::InternalGetPriority(ScriptRenderTargetWrapperBase* self)
 	{
 		int32_t tmp__output;
-		tmp__output = RenderTargetEx::GetPriority(self->GetInternal());
+		tmp__output = RenderTargetEx::GetPriority(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		int32_t __output;
 		__output = tmp__output;
@@ -88,15 +78,15 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptRenderTarget::InternalSetPriority(ScriptRenderTargetBase* self, int32_t priority)
+	void ScriptRenderTarget::InternalSetPriority(ScriptRenderTargetWrapperBase* self, int32_t priority)
 	{
-		RenderTargetEx::SetPriority(self->GetInternal(), priority);
+		RenderTargetEx::SetPriority(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()), priority);
 	}
 
-	uint32_t ScriptRenderTarget::InternalGetSampleCount(ScriptRenderTargetBase* self)
+	uint32_t ScriptRenderTarget::InternalGetSampleCount(ScriptRenderTargetWrapperBase* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = RenderTargetEx::GetSampleCount(self->GetInternal());
+		tmp__output = RenderTargetEx::GetSampleCount(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		uint32_t __output;
 		__output = tmp__output;
