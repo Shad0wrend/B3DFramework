@@ -20,10 +20,10 @@ namespace bs
 		using ScriptObjectWrapper::ScriptObjectWrapper;
 
 		/** Returns the root base class of the wrapped native object as a shared pointer. */
-		virtual SPtr<Resource> GetBaseNativeObjectAsShared() const = 0;
+		SPtr<Resource> GetBaseNativeObjectAsShared() const { return mNativeObjectStrongHandle.GetShared(); }
 
 		/** Returns the root base class of the wrapped native object as a handle. */
-		virtual HResource GetBaseNativeObjectAsHandle() const = 0;
+		const HResource& GetBaseNativeObjectAsHandle() const { return mNativeObjectStrongHandle; }
 
 		/**
 		 * Attempts to retrieve an existing associated script object from the provided native object. If one doesn't exist, a new script
@@ -71,6 +71,9 @@ namespace bs
 
 			return scriptObjectWrapper;
 		}
+
+	protected:
+		HResource mNativeObjectStrongHandle;
 	};
 
 	/** Extends TScriptObjectWrapper by providing functionality required for types that may be passed along as a Resource handle. */
@@ -79,17 +82,17 @@ namespace bs
 	{
 	public:
 		TScriptResourceWrapper(const TResourceHandle<NativeType>& nativeObject, MonoObject* scriptObject)
-			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.Get(), scriptObject), mNativeObjectStrongHandle(nativeObject)
-		{ }
+			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.Get(), scriptObject)
+		{
+			mNativeObjectStrongHandle = nativeObject;
+		}
 
 		/** Returns the wrapped native object as a shared pointer. */
-		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle.GetShared(); }
+		SPtr<NativeType> GetNativeObjectAsShared() const { return std::static_pointer_cast<NativeType>(mNativeObjectStrongHandle.GetShared()); }
 
 		/** Returns the wrapped native object as a handle. */
-		const TResourceHandle<NativeType>& GetNativeObjectAsHandle() const { return mNativeObjectStrongHandle; }
+		TResourceHandle<NativeType> GetNativeObjectAsHandle() const { return B3DStaticResourceCast<NativeType>(mNativeObjectStrongHandle); }
 
-		SPtr<Resource> GetBaseNativeObjectAsShared() const override { return GetNativeObjectAsShared(); }
-		HResource GetBaseNativeObjectAsHandle() const override { return GetNativeObjectAsHandle(); }
 		u32 GetNativeObjectReferenceCount() const override { return (u32)mNativeObjectStrongHandle.GetReferenceCount(); }
 
 		/**
@@ -142,8 +145,6 @@ namespace bs
 			metaData.CreateCallbackType = ScriptWrapperCreateCallbackType::Resource;
 			metaData.GetScriptExportable = &GetScriptExportable;
 		}
-
-		TResourceHandle<NativeType> mNativeObjectStrongHandle;
 	};
 
 	/** @} */

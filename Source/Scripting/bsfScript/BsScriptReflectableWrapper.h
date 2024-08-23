@@ -19,7 +19,7 @@ namespace bs
 		using ScriptObjectWrapper::ScriptObjectWrapper;
 
 		/** Returns the root base class of the wrapped native object as a shared pointer. */
-		virtual SPtr<IReflectable> GetBaseNativeObjectAsShared() const = 0;
+		const SPtr<IReflectable>& GetBaseNativeObjectAsShared() const { return mNativeObjectStrongHandle; }
 
 		/**
 		 * Attempts to retrieve an existing associated script object from the provided native object. If one doesn't exist, a new script
@@ -67,6 +67,9 @@ namespace bs
 
 			return scriptObjectWrapper;
 		}
+
+	protected:
+		SPtr<IReflectable> mNativeObjectStrongHandle;
 	};
 
 	/** Extends TScriptObjectWrapper by providing functionality required for wrapped native types that may be passed along as an IReflectable shared pointer. */
@@ -75,14 +78,15 @@ namespace bs
 	{
 	public:
 		TScriptReflectableWrapper(const SPtr<NativeType>& nativeObject, MonoObject* scriptObject)
-			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.get(), scriptObject), mNativeObjectStrongHandle(nativeObject)
-		{ }
+			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.get(), scriptObject)
+		{
+			mNativeObjectStrongHandle = nativeObject;
+		}
 
 		/** Returns the wrapped native object as a shared pointer. */
-		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle; }
+		SPtr<NativeType> GetNativeObjectAsShared() const { return std::static_pointer_cast<NativeType>(mNativeObjectStrongHandle); }
 
-		SPtr<IReflectable> GetBaseNativeObjectAsShared() const override { return GetNativeObjectAsShared(); }
-		u32 GetNativeObjectReferenceCount() const override { return (u32)mNativeObjectStrongHandle.use_count(); }
+		u32 GetNativeObjectReferenceCount() const { return (u32)mNativeObjectStrongHandle.use_count(); }
 
 		/**
 		 * Creates a new script object and a script object wrapper of @p SelfType, and associates them with the provided native object. Should not be called if @p nativeObject
@@ -134,8 +138,6 @@ namespace bs
 			metaData.CreateCallbackType = ScriptWrapperCreateCallbackType::Reflectable;
 			metaData.GetScriptExportable = &GetScriptExportable;
 		}
-
-		SPtr<NativeType> mNativeObjectStrongHandle;
 	};
 
 	/** @} */

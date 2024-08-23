@@ -19,10 +19,10 @@ namespace bs
 		using ScriptObjectWrapper::ScriptObjectWrapper;
 
 		/** Returns the root base class of the wrapped native object as a shared pointer. */
-		virtual SPtr<GameObject> GetBaseNativeObjectAsShared() const = 0;
+		SPtr<GameObject> GetBaseNativeObjectAsShared() const { return mNativeObjectStrongHandle.GetShared(); }
 
 		/** Returns the root base class of the wrapped native object as a handle. */
-		virtual HGameObject GetBaseNativeObjectAsHandle() const = 0;
+		const HGameObject& GetBaseNativeObjectAsHandle() const { return mNativeObjectStrongHandle; }
 
 		/** Checks is the native object alive and valid. */
 		bool IsNativeObjectValid() const { return GetBaseNativeObjectAsHandle().IsValid(); }
@@ -73,6 +73,9 @@ namespace bs
 
 			return scriptObjectWrapper;
 		}
+
+	protected:
+		HGameObject mNativeObjectStrongHandle;
 	};
 
 	/** Extends TScriptObjectWrapper by providing functionality required for types that may be passed along as a GameObject handle. */
@@ -81,17 +84,16 @@ namespace bs
 	{
 	public:
 		TScriptGameObjectWrapper(const GameObjectHandle<NativeType>& nativeObject, MonoObject* scriptObject)
-			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.Get(), scriptObject), mNativeObjectStrongHandle(nativeObject)
-		{ }
+			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.Get(), scriptObject)
+		{
+			mNativeObjectStrongHandle = nativeObject;
+		}
 
 		/** Returns the wrapped native object as a shared pointer. */
-		SPtr<NativeType> GetNativeObjectAsShared() const { return mNativeObjectStrongHandle.GetShared(); }
+		SPtr<NativeType> GetNativeObjectAsShared() const { return std::static_pointer_cast<NativeType>(mNativeObjectStrongHandle.GetShared()); }
 
 		/** Returns the wrapped native object as a handle. */
-		const GameObjectHandle<NativeType>& GetNativeObjectAsHandle() const { return mNativeObjectStrongHandle; }
-
-		SPtr<GameObject> GetBaseNativeObjectAsShared() const override { return GetNativeObjectAsShared(); }
-		HGameObject GetBaseNativeObjectAsHandle() const override { return GetNativeObjectAsHandle(); }
+		const GameObjectHandle<NativeType>& GetNativeObjectAsHandle() const { return B3DStaticGameObjectCast<NativeType>(mNativeObjectStrongHandle); }
 
 		/**
 		 * Creates a new script object and a script object wrapper of @p SelfType, and associates them with the provided native object. Should not be called if @p nativeObject
@@ -143,8 +145,6 @@ namespace bs
 			metaData.CreateCallbackType = ScriptWrapperCreateCallbackType::GameObject;
 			metaData.GetScriptExportable = &GetScriptExportable;
 		}
-
-		GameObjectHandle<NativeType> mNativeObjectStrongHandle;
 	};
 
 	/**	Interop class between C++ & CLR for GameObject. */
