@@ -3,6 +3,7 @@
 #include "Scene/BsGameObject.h"
 #include "BsGameObjectCollection.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
+#include "Script/BsIScriptObjectWrapper.h"
 
 using namespace bs;
 
@@ -39,6 +40,9 @@ void GameObject::SetOwnerCollection(const SPtr<GameObjectCollection>& collection
 
 void GameObject::DestroyImmediate()
 {
+	if(IScriptObjectWrapper* scriptObjectWrapper = GetScriptObjectWrapper())
+		scriptObjectWrapper->NotifyNativeObjectDestroyed();
+
 	const SPtr<GameObjectCollection>& ownerCollection = mOwnerCollection.lock();
 	if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
 		ownerCollection->UnregisterObject(mThisHandle, HasGameObjectFlag(GameObjectTransientFlag::Initialized));

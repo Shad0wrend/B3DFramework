@@ -10,6 +10,7 @@
 #include "Scene/BsGameObject.h"
 #include "Scene/BsComponent.h"
 #include "Scene/BsTransform.h"
+#include "Script/BsIScriptExportable.h"
 
 namespace bs
 {

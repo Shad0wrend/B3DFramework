@@ -11,6 +11,7 @@
 #include "Scene/BsPrefabUtility.h"
 #include "BsCoreApplication.h"
 #include "BsGameObjectCollection.h"
+#include "Script/BsIScriptObjectWrapper.h"
 
 using namespace bs;
 

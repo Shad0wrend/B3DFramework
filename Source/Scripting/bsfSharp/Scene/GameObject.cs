@@ -22,7 +22,10 @@ namespace bs
             get
             {
                 UUID uuid;
-                Internal_GetUUID(mCachedPtr, out uuid);
+                if(mIsUsingNewScriptObjectWrapper > 0)
+                    Internal_GetId(mCachedPtr, out uuid);
+                else
+                    Internal_GetUUID(mCachedPtr, out uuid);
                 return uuid;
             }
         }
@@ -30,13 +33,28 @@ namespace bs
         /// <summary>
         /// Checks if the game object has been destroyed.
         /// </summary>
-        public bool IsDestroyed => Internal_GetIsDestroyed(mCachedPtr);
+        public bool IsDestroyed
+        {
+            get
+            {
+                if(mIsUsingNewScriptObjectWrapper > 0)
+                    return Internal_IsDestroyed(mCachedPtr);
+                else
+                    return Internal_GetIsDestroyed(mCachedPtr);
+            }
+        }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_GetUUID(IntPtr nativeInstance, out UUID uuid);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern bool Internal_GetIsDestroyed(IntPtr nativeInstance);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_GetId(IntPtr nativeInstance, out UUID id);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern bool Internal_IsDestroyed(IntPtr nativeInstance);
     }
 
     /// <summary>

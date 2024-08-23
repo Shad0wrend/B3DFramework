@@ -24,6 +24,9 @@ namespace bs
 		/** Returns the root base class of the wrapped native object as a handle. */
 		virtual HGameObject GetBaseNativeObjectAsHandle() const = 0;
 
+		/** Checks is the native object alive and valid. */
+		bool IsNativeObjectValid() const { return GetBaseNativeObjectAsHandle().IsValid(); }
+
 		/**
 		 * Attempts to retrieve an existing associated script object from the provided native object. If one doesn't exist, a new script
 		 * object and the associated script wrapper will be created.
@@ -82,7 +85,7 @@ namespace bs
 		{ }
 
 		/** Returns the wrapped native object as a shared pointer. */
-		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle.GetShared(); }
+		SPtr<NativeType> GetNativeObjectAsShared() const { return mNativeObjectStrongHandle.GetShared(); }
 
 		/** Returns the wrapped native object as a handle. */
 		const GameObjectHandle<NativeType>& GetNativeObjectAsHandle() const { return mNativeObjectStrongHandle; }
@@ -142,6 +145,28 @@ namespace bs
 		}
 
 		GameObjectHandle<NativeType> mNativeObjectStrongHandle;
+	};
+
+	/**	Interop class between C++ & CLR for GameObject. */
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGameObject2 : public TScriptGameObjectWrapper<GameObject, ScriptGameObject2>
+	{
+	public:
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GameObject")
+
+		ScriptGameObject2(const HGameObject& nativeObject, MonoObject* scriptObject);
+
+		/** Dummy method to create the script object. Not used as game objects are always just base classes, not created directly. */
+		static MonoObject* CreateScriptObject(bool construct)
+		{
+			return nullptr;
+		}
+
+	private:
+		/************************************************************************/
+		/* 								CLR HOOKS						   		*/
+		/************************************************************************/
+		static void Internal_GetId(ScriptGameObject2* nativeInstance, UUID* outId);
+		static bool Internal_IsDestroyed(ScriptGameObject2* nativeInstance);
 	};
 
 	/** @} */

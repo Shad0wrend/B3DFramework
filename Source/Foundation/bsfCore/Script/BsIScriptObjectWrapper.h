@@ -29,11 +29,11 @@ namespace bs
 		/** Returns the native object that is linked to the script object managed by the wrapper. */
 		IScriptExportable* GetNativeObject() const { return mNativeObject; }
 
-	protected:
-		friend class IScriptExportable;
-
 		/** Notifies the wrapper that the native object it is managing is about to be destroyed. */
 		virtual void NotifyNativeObjectDestroyed();
+
+	protected:
+		friend class IScriptExportable;
 
 		/** Notifies the wrapper when the script object has been destroyed. */
 		virtual void NotifyScriptObjectDestroyed();
