@@ -19,8 +19,8 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableAssemblyInfoRTTI : public TRTTIType<ManagedSerializableAssemblyInfo, IReflectable, ManagedSerializableAssemblyInfoRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MName, 0)
-			B3D_RTTI_MEMBER_CONTAINER(MObjectInfos, 1)
+			B3D_RTTI_MEMBER(Name, 0)
+			B3D_RTTI_MEMBER_CONTAINER(ObjectInfos, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -28,14 +28,14 @@ namespace bs
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				object.MTypeNameToId.clear();
-				for(const auto& pair : object.MObjectInfos)
+				object.TypeNameToId.clear();
+				for(const auto& pair : object.ObjectInfos)
 				{
 					if(!B3D_ENSURE(pair.second != nullptr))
 						continue;
 
-					B3D_ENSURE(pair.first == pair.second->MTypeInfo->MTypeId);
-					object.MTypeNameToId[pair.second->GetFullTypeName()] = pair.second->MTypeInfo->MTypeId;
+					B3D_ENSURE(pair.first == pair.second->TypeInfo->TypeId);
+					object.TypeNameToId[pair.second->GetFullTypeName()] = pair.second->TypeInfo->TypeId;
 				}
 			}
 		}
@@ -63,9 +63,9 @@ namespace bs
 		using TRTTIType<ManagedSerializableObjectInfo, IReflectable, ManagedSerializableObjectInfoRTTI>::GetBaseClass;
 
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MTypeInfo, 0)
-			B3D_RTTI_MEMBER(MBaseClass, 2)
-			B3D_RTTI_MEMBER_CONTAINER(MFields, 3)
+			B3D_RTTI_MEMBER(TypeInfo, 0)
+			B3D_RTTI_MEMBER(BaseClass, 2)
+			B3D_RTTI_MEMBER_CONTAINER(Fields, 3)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -73,14 +73,14 @@ namespace bs
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit))
 			{
-				object.MFieldNameToId.clear();
-				for(const auto& pair : object.MFields)
+				object.FieldNameToId.clear();
+				for(const auto& pair : object.Fields)
 				{
 					if(!B3D_ENSURE(pair.second != nullptr))
 						continue;
 
-					B3D_ENSURE(pair.first == pair.second->MFieldId);
-					object.MFieldNameToId[pair.second->MName] = pair.second->MFieldId;
+					B3D_ENSURE(pair.first == pair.second->FieldId);
+					object.FieldNameToId[pair.second->Name] = pair.second->FieldId;
 				}
 			}
 		}
@@ -106,11 +106,11 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MName, 0)
-			B3D_RTTI_MEMBER(MTypeInfo, 1)
-			B3D_RTTI_MEMBER(MFieldId, 2)
-			B3D_RTTI_MEMBER(MFlags, 3)
-			B3D_RTTI_MEMBER(MParentTypeId, 4)
+			B3D_RTTI_MEMBER(Name, 0)
+			B3D_RTTI_MEMBER(TypeInfo, 1)
+			B3D_RTTI_MEMBER(FieldId, 2)
+			B3D_RTTI_MEMBER(Flags, 3)
+			B3D_RTTI_MEMBER(ParentTypeId, 4)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -202,7 +202,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MType, 0)
+			B3D_RTTI_MEMBER(Type, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -231,9 +231,9 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MUnderlyingType, 0)
-			B3D_RTTI_MEMBER(MTypeNamespace, 1)
-			B3D_RTTI_MEMBER(MTypeName, 2)
+			B3D_RTTI_MEMBER(UnderlyingType, 0)
+			B3D_RTTI_MEMBER(TypeNamespace, 1)
+			B3D_RTTI_MEMBER(TypeName, 2)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -262,10 +262,10 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MType, 0)
-			B3D_RTTI_MEMBER(MTypeName, 1)
-			B3D_RTTI_MEMBER(MTypeNamespace, 2)
-			B3D_RTTI_MEMBER(MRtiiTypeId, 3)
+			B3D_RTTI_MEMBER(Type, 0)
+			B3D_RTTI_MEMBER(TypeName, 1)
+			B3D_RTTI_MEMBER(TypeNamespace, 2)
+			B3D_RTTI_MEMBER(RtiiTypeId, 3)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -294,7 +294,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MResourceType, 0)
+			B3D_RTTI_MEMBER(ResourceType, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -323,12 +323,12 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MTypeName, 0)
-			B3D_RTTI_MEMBER(MTypeNamespace, 1)
-			B3D_RTTI_MEMBER(MValueType, 2)
-			B3D_RTTI_MEMBER(MTypeId, 4)
-			B3D_RTTI_MEMBER(MFlags, 5)
-			B3D_RTTI_MEMBER(MRtiiTypeId, 6)
+			B3D_RTTI_MEMBER(TypeName, 0)
+			B3D_RTTI_MEMBER(TypeNamespace, 1)
+			B3D_RTTI_MEMBER(ValueType, 2)
+			B3D_RTTI_MEMBER(TypeId, 4)
+			B3D_RTTI_MEMBER(Flags, 5)
+			B3D_RTTI_MEMBER(RttiTypeId, 6)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -357,8 +357,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MElementType, 0)
-			B3D_RTTI_MEMBER(MRank, 1)
+			B3D_RTTI_MEMBER(ElementType, 0)
+			B3D_RTTI_MEMBER(Rank, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -387,7 +387,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MElementType, 0)
+			B3D_RTTI_MEMBER(ElementType, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -416,8 +416,8 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MKeyType, 0)
-			B3D_RTTI_MEMBER(MValueType, 1)
+			B3D_RTTI_MEMBER(KeyType, 0)
+			B3D_RTTI_MEMBER(ValueType, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:

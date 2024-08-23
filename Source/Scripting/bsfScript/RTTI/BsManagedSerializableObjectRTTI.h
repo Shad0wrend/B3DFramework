@@ -33,20 +33,20 @@ namespace bs
 				SPtr<ManagedSerializableObjectInfo> currentTypeObjectInfo = object.mObjInfo;
 				while(currentTypeObjectInfo != nullptr)
 				{
-					for(const auto& pair : currentTypeObjectInfo->MFields)
+					for(const auto& pair : currentTypeObjectInfo->Fields)
 					{
 						const SPtr<ManagedSerializableMemberInfo>& memberInfo = pair.second;
 
 						if(memberInfo->IsSerializable())
 						{
-							const SPtr<ManagedSerializableFieldKey> fieldKey = ManagedSerializableFieldKey::Create((u16)memberInfo->MParentTypeId, (u16)memberInfo->MFieldId);
+							const SPtr<ManagedSerializableFieldKey> fieldKey = ManagedSerializableFieldKey::Create((u16)memberInfo->ParentTypeId, (u16)memberInfo->FieldId);
 							const SPtr<ManagedSerializableFieldData> fieldData = object.GetFieldData(memberInfo);
 
 							mFieldEntries.Add(ManagedSerializableFieldDataEntry::Create(fieldKey, fieldData));
 						}
 					}
 
-					currentTypeObjectInfo = currentTypeObjectInfo->MBaseClass;
+					currentTypeObjectInfo = currentTypeObjectInfo->BaseClass;
 				}
 			}
 		}

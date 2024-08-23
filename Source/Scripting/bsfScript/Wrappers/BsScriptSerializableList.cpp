@@ -25,7 +25,7 @@ MonoObject* ScriptSerializableList::Create(const ScriptSerializableProperty* nat
 {
 	SPtr<ManagedSerializableTypeInfoList> listTypeInfo =
 		std::static_pointer_cast<ManagedSerializableTypeInfoList>(native->GetTypeInfo());
-	MonoReflectionType* internalElementType = MonoUtil::GetType(listTypeInfo->MElementType->GetMonoClass());
+	MonoReflectionType* internalElementType = MonoUtil::GetType(listTypeInfo->ElementType->GetMonoClass());
 
 	void* params[2] = { internalElementType, managed };
 	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 2);
@@ -36,5 +36,5 @@ MonoObject* ScriptSerializableList::Create(const ScriptSerializableProperty* nat
 
 MonoObject* ScriptSerializableList::InternalCreateProperty(ScriptSerializableList* nativeInstance)
 {
-	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MElementType);
+	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->ElementType);
 }

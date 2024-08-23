@@ -39,8 +39,8 @@ ManagedSerializableDictionary::Enumerator::Enumerator(const ManagedSerializableD
 		MonoObject* keyCollection = parent->mKeysProp->Get(managedInstance);
 		MonoObject* valueCollection = parent->mValuesProp->Get(managedInstance);
 
-		mKeyType = parent->mDictionaryTypeInfo->MKeyType->GetMonoClass();
-		mValueType = parent->mDictionaryTypeInfo->MValueType->GetMonoClass();
+		mKeyType = parent->mDictionaryTypeInfo->KeyType->GetMonoClass();
+		mValueType = parent->mDictionaryTypeInfo->ValueType->GetMonoClass();
 
 		ScriptArray keys(mKeyType, mNumEntries);
 		ScriptArray values(mValueType, mNumEntries);
@@ -147,7 +147,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableDictionary::Enumerator::Ge
 			else
 				obj = *(MonoObject**)val;
 
-			return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->MKeyType, obj);
+			return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->KeyType, obj);
 		}
 		else
 			return nullptr;
@@ -178,7 +178,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableDictionary::Enumerator::Ge
 			else
 				obj = *(MonoObject**)val;
 
-			return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->MValueType, obj);
+			return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->ValueType, obj);
 		}
 		else
 			return nullptr;
@@ -356,21 +356,21 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableDictionary::GetFieldData(c
 		MonoObject* value = nullptr;
 
 		void* params[2];
-		params[0] = key->GetValue(mDictionaryTypeInfo->MKeyType);
+		params[0] = key->GetValue(mDictionaryTypeInfo->KeyType);
 		params[1] = &value;
 
 		MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 		mTryGetValueMethod->Invoke(managedInstance, params);
 
 		MonoObject* boxedValue = value;
-		::MonoClass* valueTypeClass = mDictionaryTypeInfo->MValueType->GetMonoClass();
+		::MonoClass* valueTypeClass = mDictionaryTypeInfo->ValueType->GetMonoClass();
 		if(MonoUtil::IsValueType(valueTypeClass))
 		{
 			if(value != nullptr)
 				boxedValue = MonoUtil::Box(valueTypeClass, &value);
 		}
 
-		return ManagedSerializableFieldData::Create(mDictionaryTypeInfo->MValueType, boxedValue);
+		return ManagedSerializableFieldData::Create(mDictionaryTypeInfo->ValueType, boxedValue);
 	}
 	else
 	{
@@ -394,8 +394,8 @@ void ManagedSerializableDictionary::SetFieldData(const SPtr<ManagedSerializableF
 void ManagedSerializableDictionary::SetFieldData(MonoObject* obj, const SPtr<ManagedSerializableFieldData>& key, const SPtr<ManagedSerializableFieldData>& val)
 {
 	void* params[2];
-	params[0] = key->GetValue(mDictionaryTypeInfo->MKeyType);
-	params[1] = val->GetValue(mDictionaryTypeInfo->MValueType);
+	params[0] = key->GetValue(mDictionaryTypeInfo->KeyType);
+	params[1] = val->GetValue(mDictionaryTypeInfo->ValueType);
 
 	mAddMethod->Invoke(obj, params);
 }
@@ -405,7 +405,7 @@ void ManagedSerializableDictionary::RemoveFieldData(const SPtr<ManagedSerializab
 	if(mGCHandle != 0)
 	{
 		void* params[1];
-		params[0] = key->GetValue(mDictionaryTypeInfo->MKeyType);
+		params[0] = key->GetValue(mDictionaryTypeInfo->KeyType);
 
 		MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 		mRemoveMethod->Invoke(managedInstance, params);
@@ -423,7 +423,7 @@ bool ManagedSerializableDictionary::Contains(const SPtr<ManagedSerializableField
 	if(mGCHandle != 0)
 	{
 		void* params[1];
-		params[0] = key->GetValue(mDictionaryTypeInfo->MKeyType);
+		params[0] = key->GetValue(mDictionaryTypeInfo->KeyType);
 
 		MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 		MonoObject* returnVal = mContainsKeyMethod->Invoke(managedInstance, params);

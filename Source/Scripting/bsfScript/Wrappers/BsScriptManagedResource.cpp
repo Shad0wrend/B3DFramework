@@ -40,7 +40,7 @@ MonoObject* ScriptManagedResource::CreateManagedInstanceInternal(bool construct)
 	if(!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mType, currentObjInfo))
 		return nullptr;
 
-	MonoObject* instance = currentObjInfo->MMonoClass->CreateInstance(construct);
+	MonoObject* instance = currentObjInfo->ScriptClass->CreateInstance(construct);
 	mGCHandle = MonoUtil::NewGcHandle(instance, false);
 
 	return instance;

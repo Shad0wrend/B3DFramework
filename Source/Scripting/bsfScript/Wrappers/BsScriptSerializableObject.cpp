@@ -58,10 +58,10 @@ void ScriptSerializableObject::InternalCreateInstance(MonoObject* instance, Mono
 
 MonoObject* ScriptSerializableObject::InternalGetBaseClass(ScriptSerializableObject* thisPtr, MonoObject* owningObject)
 {
-	if(!thisPtr->mObjInfo->MBaseClass)
+	if(!thisPtr->mObjInfo->BaseClass)
 		return nullptr;
 
-	MonoReflectionType* reflType = MonoUtil::GetType(thisPtr->mObjInfo->MBaseClass->MMonoClass->GetInternalClass());
+	MonoReflectionType* reflType = MonoUtil::GetType(thisPtr->mObjInfo->BaseClass->ScriptClass->GetInternalClass());
 	return Create(owningObject, reflType);
 }
 
@@ -73,9 +73,9 @@ ScriptSerializableObject* ScriptSerializableObject::CreateInternal(MonoObject* i
 
 	if(objInfo != nullptr)
 	{
-		sortedFields.resize(objInfo->MFields.size());
+		sortedFields.resize(objInfo->Fields.size());
 		u32 i = 0;
-		for(auto& fieldPair : objInfo->MFields)
+		for(auto& fieldPair : objInfo->Fields)
 		{
 			sortedFields[i] = fieldPair.second;
 			i++;
@@ -83,7 +83,7 @@ ScriptSerializableObject* ScriptSerializableObject::CreateInternal(MonoObject* i
 	}
 
 	std::sort(sortedFields.begin(), sortedFields.end(), [&](const SPtr<ManagedSerializableMemberInfo>& x, const SPtr<ManagedSerializableMemberInfo>& y)
-			  { return x->MFieldId < y->MFieldId; });
+			  { return x->FieldId < y->FieldId; });
 
 	::MonoClass* serializableFieldClass = ScriptSerializableField::GetMetaData()->ScriptClass->GetInternalClass();
 	ScriptArray scriptArray(serializableFieldClass, (u32)sortedFields.size());

@@ -28,9 +28,9 @@ MonoObject* ScriptAsyncOpBase::CreateInternal(const AsyncOpBase& op, const std::
 	if(resInfo)
 		returnTypeClass = resInfo->MonoClass;
 
-	ReflectableTypeInfo* reflTypeInfo = ScriptAssemblyManager::Instance().GetReflectableTypeInfo(rttiId);
-	if(reflTypeInfo)
-		returnTypeClass = reflTypeInfo->MonoClass;
+	const ScriptWrapperObjectMetaData* const scriptWrapperObjectMetaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(rttiId);
+	if(scriptWrapperObjectMetaData != nullptr)
+		returnTypeClass = scriptWrapperObjectMetaData->ScriptClass;
 
 	if(!returnTypeClass)
 	{

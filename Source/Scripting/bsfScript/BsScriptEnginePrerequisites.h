@@ -236,13 +236,4 @@ namespace bs
 		std::function<ScriptResourceBase*(const HResource&, MonoObject*)> CreateCallback;
 	};
 
-	/** Information about a native reflectable object wrapped as a script object. */
-	struct ReflectableTypeInfo
-	{
-		const ScriptWrapperObjectMetaData* MetaData;
-		u32 TypeId;
-		MonoClass* MonoClass;
-		std::function<MonoObject*(const SPtr<IReflectable>&)> CreateCallback;
-	};
-
 } // namespace bs

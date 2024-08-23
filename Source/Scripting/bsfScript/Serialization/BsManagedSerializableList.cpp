@@ -73,7 +73,7 @@ MonoObject* ManagedSerializableList::CreateManagedInstance(const SPtr<ManagedSer
 	void* params[1] = { &size };
 	MonoObject* instance = listClass->CreateInstance("int", params);
 
-	ScriptArray tempArray(typeInfo->MElementType->GetMonoClass(), size);
+	ScriptArray tempArray(typeInfo->ElementType->GetMonoClass(), size);
 	params[0] = tempArray.GetInternal();
 
 	MonoMethod* addRangeMethod = listClass->GetMethod("AddRange", 1);
@@ -108,7 +108,7 @@ void ManagedSerializableList::SetFieldData(u32 arrayIdx, const SPtr<ManagedSeria
 
 void ManagedSerializableList::SetFieldData(MonoObject* obj, u32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
 {
-	mItemProp->SetIndexed(obj, arrayIdx, val->GetValue(mListTypeInfo->MElementType));
+	mItemProp->SetIndexed(obj, arrayIdx, val->GetValue(mListTypeInfo->ElementType));
 }
 
 void ManagedSerializableList::AddFieldDataInternal(const SPtr<ManagedSerializableFieldData>& val)
@@ -116,7 +116,7 @@ void ManagedSerializableList::AddFieldDataInternal(const SPtr<ManagedSerializabl
 	MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 
 	void* params[1];
-	params[0] = val->GetValue(mListTypeInfo->MElementType);
+	params[0] = val->GetValue(mListTypeInfo->ElementType);
 	mAddMethod->Invoke(managedInstance, params);
 }
 
@@ -127,7 +127,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableList::GetFieldData(u32 arr
 		MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 		MonoObject* obj = mItemProp->GetIndexed(managedInstance, arrayIdx);
 
-		return ManagedSerializableFieldData::Create(mListTypeInfo->MElementType, obj);
+		return ManagedSerializableFieldData::Create(mListTypeInfo->ElementType, obj);
 	}
 	else
 		return mCachedEntries[arrayIdx];
@@ -137,7 +137,7 @@ void ManagedSerializableList::Resize(u32 newSize)
 {
 	if(mGCHandle != 0)
 	{
-		ScriptArray tempArray(mListTypeInfo->MElementType->GetMonoClass(), newSize);
+		ScriptArray tempArray(mListTypeInfo->ElementType->GetMonoClass(), newSize);
 
 		u32 minSize = std::min(mNumElements, newSize);
 		u32 dummy = 0;

@@ -6,9 +6,20 @@
 
 namespace bs
 {
+	class IScriptExportable;
+
 	/** @addtogroup Mono
 	 *  @{
 	 */
+
+	/** Type of create callback specified in ScriptWrapperObjectMetaData. */
+	enum class ScriptWrapperCreateCallbackType
+	{
+		None,
+		Reflectable,
+		Resource,
+		GameObject,
+	};
 
 	/**	Contains information required for initializing and handling a single script class. */
 	struct B3D_MONO_EXPORT ScriptWrapperObjectMetaData
@@ -21,7 +32,8 @@ namespace bs
 		String Name; /**< Type name of the script class. */
 		String Assembly; /**< Name of the assembly the script class is located in. */
 
-		u32 TypeId = ~0u; /*< RTTI ID of the native object. */
+		u32 TypeId = ~0u; /**< RTTI ID of the native object. */
+		ScriptWrapperCreateCallbackType CreateCallbackType = ScriptWrapperCreateCallbackType::None; /**< Specifies which of the callbacks in the *CreateCallback union is valid. */
 
 		/** Callbacks use to create the correct script object and script wrapper object from a native object. */
 		union
@@ -30,6 +42,8 @@ namespace bs
 			MonoObject* (*ResourceCreateCallback)(const HResource&);
 			MonoObject* (*GameObjectCreateCallback)(const HGameObject&);
 		};
+
+		IScriptExportable* (*GetScriptExportable)(IReflectable*) = nullptr; /** Casts the IReflectable type to IScriptExportable. */
 
 		/** Callback that will be triggered when assembly containing the class is loaded or refreshed. Used for initialization of script bindings for the type. */
 		std::function<void()> SetupScriptBindingsCallback;

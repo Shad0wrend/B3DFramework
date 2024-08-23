@@ -82,7 +82,7 @@ MonoObject* ScriptManagedComponent::CreateManagedInstanceInternal(bool construct
 	else
 	{
 		mTypeMissing = false;
-		instance = currentObjInfo->MMonoClass->CreateInstance(construct);
+		instance = currentObjInfo->ScriptClass->CreateInstance(construct);
 	}
 
 	mGCHandle = MonoUtil::NewGcHandle(instance, false);

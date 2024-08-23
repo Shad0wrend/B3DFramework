@@ -4,6 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
+#include "Script/BsIScriptExportable.h"
 
 namespace bs
 {
@@ -22,6 +23,53 @@ namespace bs
 
 		/** Returns the root base class of the wrapped native object as a handle. */
 		virtual HGameObject GetBaseNativeObjectAsHandle() const = 0;
+
+		/**
+		 * Attempts to retrieve an existing associated script object from the provided native object. If one doesn't exist, a new script
+		 * object and the associated script wrapper will be created.
+		 *
+		 * Unlike GetOrCreateScriptObject implemented on TScriptGameObjectWrapper, this always accepts the object as a GameObject, and
+		 * needs to perform type lookup to get the exact script wrapper type.
+		 */
+		static MonoObject* GetOrCreateScriptObject(const HGameObject& nativeObject)
+		{
+			if(!nativeObject.IsValid())
+				return nullptr;
+
+			const u32 rttiId = nativeObject->GetTypeId();
+			const ScriptWrapperObjectMetaData* const scriptWrapperObjectMetaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(rttiId);
+			if(scriptWrapperObjectMetaData == nullptr)
+			{
+				B3D_LOG(Error, Script, "Cannot retrieve script object. Mapping between a game object and a managed type is missing for type \"{0}\"", rttiId);
+				return nullptr;
+			}
+
+			if(scriptWrapperObjectMetaData->CreateCallbackType != ScriptWrapperCreateCallbackType::GameObject)
+			{
+				B3D_LOG(Error, Script, "Cannot retrieve script object. Script wrapper for type \"{0}\" does not support creation of a GameObject handle.", rttiId);
+				return nullptr;
+			}
+
+			if(!B3D_ENSURE(scriptWrapperObjectMetaData->GetScriptExportable != nullptr))
+				return nullptr;
+
+			IScriptExportable* const scriptExportableObject = scriptWrapperObjectMetaData->GetScriptExportable(nativeObject.Get());
+			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)scriptExportableObject->GetScriptObjectWrapper())
+				return scriptObjectWrapper->GetScriptObject();
+
+			return scriptWrapperObjectMetaData->GameObjectCreateCallback(nativeObject);
+		}
+
+		/** Returns the script object wrapper associated with the provided script object, and wrapped by a wrapper that owns the provided meta-data. */
+		static ScriptGameObjectWrapper* GetScriptObjectWrapper(const ScriptWrapperObjectMetaData& wrapperMetaData, MonoObject* scriptObject)
+		{
+			ScriptGameObjectWrapper* scriptObjectWrapper = nullptr;
+
+			if(wrapperMetaData.ScriptObjectWrapperPointerField != nullptr && scriptObject != nullptr)
+				wrapperMetaData.ScriptObjectWrapperPointerField->Get(scriptObject, &scriptObjectWrapper);
+
+			return scriptObjectWrapper;
+		}
 	};
 
 	/** Extends TScriptObjectWrapper by providing functionality required for types that may be passed along as a GameObject handle. */
@@ -54,6 +102,12 @@ namespace bs
 			return scriptObject;
 		}
 
+		/** Casts the reflectable object to script exportable. */
+		static IScriptExportable* GetScriptExportable(IReflectable* nativeObject)
+		{
+			return (IScriptExportable*)(NativeType*)nativeObject;
+		}
+
 		/**
 		 * Attempts to retrieve an existing associated script object from the provided native object. If one doesn't exist, a new script
 		 * object and the associated script wrapper will be created.
@@ -68,7 +122,7 @@ namespace bs
 
 			// TODO: Could skip expensive lookup if the type has no derived classes (should be most cases). In that case the code-gen could generate
 			// code that calls a streamlined version of this method, with no lookup.
-			ScriptWrapperObjectMetaData* metaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(nativeObject->GetTypeId());
+			const ScriptWrapperObjectMetaData* metaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(nativeObject->GetTypeId());
 			if(!B3D_ENSURE(metaData))
 				return metaData->GameObjectCreateCallback(nativeObject);
 
@@ -83,6 +137,8 @@ namespace bs
 		{
 			metaData.TypeId = NativeType::GetRttiStatic()->GetRttiId();
 			metaData.GameObjectCreateCallback = &CreateScriptObjectAndWrapper;
+			metaData.CreateCallbackType = ScriptWrapperCreateCallbackType::GameObject;
+			metaData.GetScriptExportable = &GetScriptExportable;
 		}
 
 		GameObjectHandle<NativeType> mNativeObjectStrongHandle;

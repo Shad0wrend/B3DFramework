@@ -56,7 +56,6 @@ namespace bs
 	{
 		Vector<BuiltinComponentInfo> Components;
 		Vector<BuiltinResourceInfo> Resources;
-		Vector<ReflectableTypeInfo> ReflectableObjects;
 
 		static const BuiltinTypeMappings kEmpty;
 	};
@@ -123,23 +122,11 @@ namespace bs
 		 */
 		BuiltinResourceInfo* GetBuiltinResourceInfo(ScriptResourceType type);
 
-		/**
-		 * Maps a mono type to information about a wrapped reflectable object. Returns null if type doesn't correspond to
-		 * a reflectable object.
-		 */
-		ReflectableTypeInfo* GetReflectableTypeInfo(::MonoReflectionType* type);
-
-		/**
-		 * Maps a type id to information about a wrapped reflectable object. Returns null if type id doesn't correspond to
-		 * a reflectable object.
-		 */
-		ReflectableTypeInfo* GetReflectableTypeInfo(u32 rttiTypeId);
-
 		/** Returns script wrapper object meta-data for the type as specified by the provided RTTI type ID. */
-		ScriptWrapperObjectMetaData* GetScriptWrapperMetaData(u32 typeId);
+		const ScriptWrapperObjectMetaData* GetScriptWrapperMetaData(u32 typeId) const;
 
 		/** Returns script wrapper object meta-data for the type as specified by the script type. */
-		ScriptWrapperObjectMetaData* GetScriptWrapperMetaData(::MonoReflectionType* type);
+		const ScriptWrapperObjectMetaData* GetScriptWrapperMetaData(::MonoReflectionType* type) const;
 
 		/**
 		 * Checks if the managed serializable object info for the specified type exists.
@@ -192,8 +179,6 @@ namespace bs
 		UnorderedMap<::MonoReflectionType*, BuiltinResourceInfo> mBuiltinResourceInfos; // TODO - To be deprecated
 		UnorderedMap<u32, BuiltinResourceInfo> mBuiltinResourceInfosByTID; // TODO - To be deprecated
 		UnorderedMap<u32, BuiltinResourceInfo> mBuiltinResourceInfosByType; // TODO - To be deprecated
-		UnorderedMap<u32, ReflectableTypeInfo> mReflectableTypeInfosByTID; // TODO - To be deprecated
-		UnorderedMap<::MonoReflectionType*, ReflectableTypeInfo> mReflectableTypeInfos; // TODO - To be deprecated
 
 		UnorderedMap<u32, ScriptWrapperObjectMetaData*> mScriptWrapperMetaDataByTypeId;
 		UnorderedMap<::MonoReflectionType*, ScriptWrapperObjectMetaData*> mScriptWrapperMetaDataByScriptClass;

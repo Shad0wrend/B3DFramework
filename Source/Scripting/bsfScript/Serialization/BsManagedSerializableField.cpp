@@ -7,6 +7,8 @@
 #include "BsMonoManager.h"
 #include "BsScriptResourceManager.h"
 #include "BsScriptGameObjectManager.h"
+#include "BsScriptObjectWrapper.h"
+#include "BsScriptReflectableWrapper.h"
 #include "Wrappers/BsScriptManagedResource.h"
 #include "Wrappers/BsScriptSceneObject.h"
 #include "Wrappers/BsScriptComponent.h"
@@ -48,9 +50,9 @@ bool CompareFieldData(const SPtr<ManagedSerializableFieldData>& oldData, const S
 bool IsPrimitiveOrEnumType(const SPtr<ManagedSerializableTypeInfo>& typeInfo, ScriptPrimitiveType underlyingType)
 {
 	if(const auto primitiveTypeInfo = B3DRTTICast<ManagedSerializableTypeInfoPrimitive>(typeInfo.get()))
-		return primitiveTypeInfo->MType == underlyingType;
+		return primitiveTypeInfo->Type == underlyingType;
 	else if(const auto enumTypeInfo = B3DRTTICast<ManagedSerializableTypeInfoEnum>(typeInfo.get()))
-		return enumTypeInfo->MUnderlyingType == underlyingType;
+		return enumTypeInfo->UnderlyingType == underlyingType;
 
 	return false;
 }
@@ -91,9 +93,9 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 		ScriptPrimitiveType primitiveType = ScriptPrimitiveType::I32;
 
 		if(auto primitiveTypeInfo = B3DRTTICast<ManagedSerializableTypeInfoPrimitive>(typeInfo.get()))
-			primitiveType = primitiveTypeInfo->MType;
+			primitiveType = primitiveTypeInfo->Type;
 		else if(auto enumTypeInfo = B3DRTTICast<ManagedSerializableTypeInfoEnum>(typeInfo.get()))
-			primitiveType = enumTypeInfo->MUnderlyingType;
+			primitiveType = enumTypeInfo->UnderlyingType;
 
 		switch(primitiveType)
 		{
@@ -221,7 +223,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 	else if(typeInfo->GetTypeId() == TID_SerializableTypeInfoRef)
 	{
 		auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRef>(typeInfo);
-		switch(refTypeInfo->MType)
+		switch(refTypeInfo->Type)
 		{
 		case ScriptReferenceType::SceneObject:
 			{
@@ -251,7 +253,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 		case ScriptReferenceType::BuiltinComponentBase:
 		case ScriptReferenceType::BuiltinComponent:
 			{
-				BuiltinComponentInfo* info = ScriptAssemblyManager::Instance().GetBuiltinComponentInfo(refTypeInfo->MRtiiTypeId);
+				BuiltinComponentInfo* info = ScriptAssemblyManager::Instance().GetBuiltinComponentInfo(refTypeInfo->RtiiTypeId);
 				if(info == nullptr)
 					return nullptr;
 
@@ -281,7 +283,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 		case ScriptReferenceType::BuiltinResourceBase:
 		case ScriptReferenceType::BuiltinResource:
 			{
-				BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(refTypeInfo->MRtiiTypeId);
+				BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(refTypeInfo->RtiiTypeId);
 				if(info == nullptr)
 					return nullptr;
 
@@ -297,16 +299,19 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 			}
 		case ScriptReferenceType::ReflectableObject:
 			{
-				ReflectableTypeInfo* info = ScriptAssemblyManager::Instance().GetReflectableTypeInfo(refTypeInfo->MRtiiTypeId);
-				if(info == nullptr)
+				const ScriptWrapperObjectMetaData* scriptWrapperMetaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(refTypeInfo->RtiiTypeId);
+				if(scriptWrapperMetaData == nullptr)
 					return nullptr;
 
 				auto fieldData = B3DMakeShared<ManagedSerializableFieldDataReflectableRef>();
 
 				if(value != nullptr)
 				{
-					ScriptReflectableBase* scriptReflectable = (ScriptReflectableBase*)ScriptObjectImpl::ToNative(value);
-					fieldData->Value = scriptReflectable->GetReflectable();
+					const ScriptReflectableWrapper* const scriptReflectableWrapper = ScriptReflectableWrapper::GetScriptObjectWrapper(*scriptWrapperMetaData, value);
+					if(!B3D_ENSURE(scriptReflectableWrapper != nullptr))
+						return nullptr;
+
+					fieldData->Value = scriptReflectableWrapper->GetBaseNativeObjectAsShared();
 				}
 
 				return fieldData;
@@ -346,7 +351,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 			fieldData->Value = ManagedSerializableArray::CreateFromExisting(value, arrayTypeInfo);
 		else if(!allowNull)
 		{
-			Vector<u32> sizes(arrayTypeInfo->MRank, 0);
+			Vector<u32> sizes(arrayTypeInfo->Rank, 0);
 			fieldData->Value = ManagedSerializableArray::CreateNew(arrayTypeInfo, sizes);
 		}
 
@@ -475,7 +480,7 @@ void* ManagedSerializableFieldDataFloat::GetValue(const SPtr<ManagedSerializable
 	if(typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 	{
 		auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
-		if(primitiveTypeInfo->MType == ScriptPrimitiveType::Float)
+		if(primitiveTypeInfo->Type == ScriptPrimitiveType::Float)
 			return &Value;
 	}
 
@@ -488,7 +493,7 @@ void* ManagedSerializableFieldDataDouble::GetValue(const SPtr<ManagedSerializabl
 	if(typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 	{
 		auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
-		if(primitiveTypeInfo->MType == ScriptPrimitiveType::Double)
+		if(primitiveTypeInfo->Type == ScriptPrimitiveType::Double)
 			return &Value;
 	}
 
@@ -501,7 +506,7 @@ void* ManagedSerializableFieldDataString::GetValue(const SPtr<ManagedSerializabl
 	if(typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 	{
 		auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
-		if(primitiveTypeInfo->MType == ScriptPrimitiveType::String)
+		if(primitiveTypeInfo->Type == ScriptPrimitiveType::String)
 		{
 			if(!IsNull)
 				return MonoUtil::WstringToMono(Value);
@@ -523,15 +528,15 @@ void* ManagedSerializableFieldDataResourceRef::GetValue(const SPtr<ManagedSerial
 		if(!Value.IsLoaded())
 			return nullptr;
 
-		if(refTypeInfo->MType == ScriptReferenceType::ManagedResourceBase ||
-		   refTypeInfo->MType == ScriptReferenceType::ManagedResource)
+		if(refTypeInfo->Type == ScriptReferenceType::ManagedResourceBase ||
+		   refTypeInfo->Type == ScriptReferenceType::ManagedResource)
 		{
 			ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(Value, false);
 			B3D_ASSERT(scriptResource != nullptr);
 
 			return scriptResource->GetManagedInstance();
 		}
-		else if(refTypeInfo->MType == ScriptReferenceType::BuiltinResourceBase || refTypeInfo->MType == ScriptReferenceType::BuiltinResource)
+		else if(refTypeInfo->Type == ScriptReferenceType::BuiltinResourceBase || refTypeInfo->Type == ScriptReferenceType::BuiltinResource)
 		{
 			ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(Value, true);
 
@@ -543,7 +548,7 @@ void* ManagedSerializableFieldDataResourceRef::GetValue(const SPtr<ManagedSerial
 		const auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRRef>(typeInfo);
 
 		::MonoClass* resourceRRefClass = nullptr;
-		if(refTypeInfo->MResourceType)
+		if(refTypeInfo->ResourceType)
 		{
 			if(!typeInfo->IsTypeLoaded())
 				return nullptr;
@@ -569,7 +574,7 @@ void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSeri
 	{
 		auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRef>(typeInfo);
 
-		if(refTypeInfo->MType == ScriptReferenceType::SceneObject)
+		if(refTypeInfo->Type == ScriptReferenceType::SceneObject)
 		{
 			if(Value)
 			{
@@ -580,7 +585,7 @@ void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSeri
 			else
 				return nullptr;
 		}
-		else if(refTypeInfo->MType == ScriptReferenceType::ManagedComponentBase || refTypeInfo->MType == ScriptReferenceType::ManagedComponent)
+		else if(refTypeInfo->Type == ScriptReferenceType::ManagedComponentBase || refTypeInfo->Type == ScriptReferenceType::ManagedComponent)
 		{
 			if(Value)
 			{
@@ -593,7 +598,7 @@ void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSeri
 			else
 				return nullptr;
 		}
-		else if(refTypeInfo->MType == ScriptReferenceType::BuiltinComponentBase || refTypeInfo->MType == ScriptReferenceType::BuiltinComponent)
+		else if(refTypeInfo->Type == ScriptReferenceType::BuiltinComponentBase || refTypeInfo->Type == ScriptReferenceType::BuiltinComponent)
 		{
 			if(Value)
 			{
@@ -616,18 +621,10 @@ void* ManagedSerializableFieldDataReflectableRef::GetValue(const SPtr<ManagedSer
 {
 	if(typeInfo->GetTypeId() == TID_SerializableTypeInfoRef)
 	{
-		const auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRef>(typeInfo);
-
 		if(!Value)
 			return nullptr;
 
-		u32 rttiId = refTypeInfo->MRtiiTypeId;
-		ReflectableTypeInfo* info = ScriptAssemblyManager::Instance().GetReflectableTypeInfo(rttiId);
-
-		if(info == nullptr)
-			return nullptr;
-
-		return info->CreateCallback(Value);
+		return ScriptReflectableWrapper::GetOrCreateScriptObject(Value);
 	}
 
 	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -642,7 +639,7 @@ void* ManagedSerializableFieldDataObject::GetValue(const SPtr<ManagedSerializabl
 
 		if(Value != nullptr)
 		{
-			if(objectTypeInfo->MValueType)
+			if(objectTypeInfo->ValueType)
 			{
 				MonoObject* managedInstance = Value->GetManagedInstance();
 
@@ -803,7 +800,7 @@ MonoObject* ManagedSerializableFieldDataFloat::GetValueBoxed(const SPtr<ManagedS
 	if(typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 	{
 		auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
-		if(primitiveTypeInfo->MType == ScriptPrimitiveType::Float)
+		if(primitiveTypeInfo->Type == ScriptPrimitiveType::Float)
 			return MonoUtil::Box(MonoUtil::GetFloatClass(), &Value);
 	}
 
@@ -816,7 +813,7 @@ MonoObject* ManagedSerializableFieldDataDouble::GetValueBoxed(const SPtr<Managed
 	if(typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 	{
 		auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
-		if(primitiveTypeInfo->MType == ScriptPrimitiveType::Double)
+		if(primitiveTypeInfo->Type == ScriptPrimitiveType::Double)
 			return MonoUtil::Box(MonoUtil::GetDoubleClass(), &Value);
 	}
 

@@ -21,7 +21,6 @@
 
 #include "Serialization/BsBuiltinResourceLookup.h"
 #include "Generated/BsBuiltinComponentLookup.generated.h"
-#include "Generated/BsBuiltinReflectableTypesLookup.generated.h"
 
 using namespace bs;
 void EngineScriptLibrary::Initialize()
@@ -48,7 +47,6 @@ void EngineScriptLibrary::Initialize()
 
 	mEngineTypeMappings.Resources = BuiltinResourceTypes::GetEntries();
 	mEngineTypeMappings.Components = BuiltinComponent::GetEntries();
-	mEngineTypeMappings.ReflectableObjects = BuiltinReflectableTypes::GetEntries();
 
 	ScriptAssemblyManager::Instance().LoadAssemblyInfo(kEngineAssembly, mEngineTypeMappings);
 

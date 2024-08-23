@@ -118,7 +118,7 @@ namespace bs
 		bool IsTypeLoaded() const override;
 		::MonoClass* GetMonoClass() const override;
 
-		ScriptPrimitiveType MType;
+		ScriptPrimitiveType Type;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -137,9 +137,9 @@ namespace bs
 		bool IsTypeLoaded() const override;
 		::MonoClass* GetMonoClass() const override;
 
-		ScriptPrimitiveType MUnderlyingType;
-		String MTypeNamespace;
-		String MTypeName;
+		ScriptPrimitiveType UnderlyingType;
+		String TypeNamespace;
+		String TypeName;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -158,10 +158,10 @@ namespace bs
 		bool IsTypeLoaded() const override;
 		::MonoClass* GetMonoClass() const override;
 
-		ScriptReferenceType MType;
-		u32 MRtiiTypeId;
-		String MTypeNamespace;
-		String MTypeName;
+		ScriptReferenceType Type;
+		u32 RtiiTypeId;
+		String TypeNamespace;
+		String TypeName;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -180,7 +180,7 @@ namespace bs
 		bool IsTypeLoaded() const override;
 		::MonoClass* GetMonoClass() const override;
 
-		SPtr<ManagedSerializableTypeInfo> MResourceType;
+		SPtr<ManagedSerializableTypeInfo> ResourceType;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -199,12 +199,12 @@ namespace bs
 		bool IsTypeLoaded() const override;
 		::MonoClass* GetMonoClass() const override;
 
-		String MTypeNamespace;
-		String MTypeName;
-		bool MValueType;
-		u32 MRtiiTypeId;
-		ScriptTypeFlags MFlags;
-		u32 MTypeId;
+		String TypeNamespace;
+		String TypeName;
+		bool ValueType;
+		u32 RttiTypeId;
+		ScriptTypeFlags Flags;
+		u32 TypeId;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -223,8 +223,8 @@ namespace bs
 		bool IsTypeLoaded() const override;
 		::MonoClass* GetMonoClass() const override;
 
-		SPtr<ManagedSerializableTypeInfo> MElementType;
-		u32 MRank;
+		SPtr<ManagedSerializableTypeInfo> ElementType;
+		u32 Rank;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -243,7 +243,7 @@ namespace bs
 		bool IsTypeLoaded() const override;
 		::MonoClass* GetMonoClass() const override;
 
-		SPtr<ManagedSerializableTypeInfo> MElementType;
+		SPtr<ManagedSerializableTypeInfo> ElementType;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -262,8 +262,8 @@ namespace bs
 		bool IsTypeLoaded() const override;
 		::MonoClass* GetMonoClass() const override;
 
-		SPtr<ManagedSerializableTypeInfo> MKeyType;
-		SPtr<ManagedSerializableTypeInfo> MValueType;
+		SPtr<ManagedSerializableTypeInfo> KeyType;
+		SPtr<ManagedSerializableTypeInfo> ValueType;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -282,7 +282,7 @@ namespace bs
 		virtual ~ManagedSerializableMemberInfo() = default;
 
 		/**	Determines should the member be serialized when serializing the parent object. */
-		bool IsSerializable() const { return MFlags.IsSet(ScriptFieldFlag::Serializable); }
+		bool IsSerializable() const { return Flags.IsSet(ScriptFieldFlag::Serializable); }
 
 		/**
 		 * Returns a boxed value contained in the member in the specified object instance.
@@ -307,12 +307,12 @@ namespace bs
 		 */
 		virtual MonoObject* GetAttribute(MonoClass* monoClass) = 0;
 
-		String MName;
-		u32 MFieldId = 0;
-		u32 MParentTypeId;
+		String Name;
+		u32 FieldId = 0;
+		u32 ParentTypeId;
 
-		SPtr<ManagedSerializableTypeInfo> MTypeInfo;
-		ScriptFieldFlags MFlags;
+		SPtr<ManagedSerializableTypeInfo> TypeInfo;
+		ScriptFieldFlags Flags;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -333,7 +333,7 @@ namespace bs
 		MonoObject* GetValue(MonoObject* instance) const override;
 		void SetValue(MonoObject* instance, void* value) const override;
 
-		MonoField* MMonoField = nullptr;
+		MonoField* ScriptField = nullptr;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -354,7 +354,7 @@ namespace bs
 		MonoObject* GetValue(MonoObject* instance) const override;
 		void SetValue(MonoObject* instance, void* value) const override;
 
-		MonoProperty* MMonoProperty = nullptr;
+		MonoProperty* ScriptProperty = nullptr;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -372,7 +372,7 @@ namespace bs
 		ManagedSerializableObjectInfo() = default;
 
 		/** Returns the managed type name of the object's type, including the namespace in format "namespace.typename". */
-		String GetFullTypeName() const { return MTypeInfo->MTypeNamespace + "." + MTypeInfo->MTypeName; }
+		String GetFullTypeName() const { return TypeInfo->TypeNamespace + "." + TypeInfo->TypeName; }
 
 		/**
 		 * Attempts to find a field part of this object that matches the provided parameters.
@@ -386,14 +386,14 @@ namespace bs
 		 */
 		SPtr<ManagedSerializableMemberInfo> FindMatchingField(const SPtr<ManagedSerializableMemberInfo>& fieldInfo, const SPtr<ManagedSerializableTypeInfo>& fieldTypeInfo) const;
 
-		SPtr<ManagedSerializableTypeInfoObject> MTypeInfo;
-		MonoClass* MMonoClass = nullptr;
+		SPtr<ManagedSerializableTypeInfoObject> TypeInfo;
+		MonoClass* ScriptClass = nullptr;
 
-		UnorderedMap<String, u32> MFieldNameToId;
-		UnorderedMap<u32, SPtr<ManagedSerializableMemberInfo>> MFields;
+		UnorderedMap<String, u32> FieldNameToId;
+		UnorderedMap<u32, SPtr<ManagedSerializableMemberInfo>> Fields;
 
-		SPtr<ManagedSerializableObjectInfo> MBaseClass;
-		Vector<std::weak_ptr<ManagedSerializableObjectInfo>> MDerivedClasses;
+		SPtr<ManagedSerializableObjectInfo> BaseClass;
+		Vector<std::weak_ptr<ManagedSerializableObjectInfo>> DerivedClasses;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -408,10 +408,10 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableAssemblyInfo : public IReflectable
 	{
 	public:
-		String MName;
+		String Name;
 
-		UnorderedMap<String, u32> MTypeNameToId;
-		UnorderedMap<u32, SPtr<ManagedSerializableObjectInfo>> MObjectInfos;
+		UnorderedMap<String, u32> TypeNameToId;
+		UnorderedMap<u32, SPtr<ManagedSerializableObjectInfo>> ObjectInfos;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

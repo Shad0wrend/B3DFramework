@@ -86,7 +86,7 @@ MonoArray* ScriptScriptCode::InternalGetTypes(ScriptScriptCode* thisPtr)
 	{
 		SPtr<ManagedSerializableObjectInfo> objInfo;
 		if(ScriptAssemblyManager::Instance().GetSerializableObjectInfo(ToString(type.first), ToString(type.second), objInfo))
-			validTypes.push_back(MonoUtil::GetType(objInfo->MTypeInfo->GetMonoClass()));
+			validTypes.push_back(MonoUtil::GetType(objInfo->TypeInfo->GetMonoClass()));
 	}
 
 	u32 numValidTypes = (u32)validTypes.size();

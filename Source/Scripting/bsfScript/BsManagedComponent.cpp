@@ -322,7 +322,7 @@ void ManagedComponent::Initialize()
 	}
 	else
 	{
-		instance = mObjInfo->MMonoClass->CreateInstance();
+		instance = mObjInfo->ScriptClass->CreateInstance();
 		mMissingType = false;
 	}
 

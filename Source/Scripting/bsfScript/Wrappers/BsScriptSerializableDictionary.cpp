@@ -27,8 +27,8 @@ MonoObject* ScriptSerializableDictionary::Create(const ScriptSerializablePropert
 	SPtr<ManagedSerializableTypeInfoDictionary> dictTypeInfo =
 		std::static_pointer_cast<ManagedSerializableTypeInfoDictionary>(native->GetTypeInfo());
 
-	MonoReflectionType* internalKeyType = MonoUtil::GetType(dictTypeInfo->MKeyType->GetMonoClass());
-	MonoReflectionType* internalValueType = MonoUtil::GetType(dictTypeInfo->MValueType->GetMonoClass());
+	MonoReflectionType* internalKeyType = MonoUtil::GetType(dictTypeInfo->KeyType->GetMonoClass());
+	MonoReflectionType* internalValueType = MonoUtil::GetType(dictTypeInfo->ValueType->GetMonoClass());
 
 	void* params[3] = { internalKeyType, internalValueType, managed };
 	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 3);
@@ -39,10 +39,10 @@ MonoObject* ScriptSerializableDictionary::Create(const ScriptSerializablePropert
 
 MonoObject* ScriptSerializableDictionary::InternalCreateKeyProperty(ScriptSerializableDictionary* nativeInstance)
 {
-	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MKeyType);
+	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->KeyType);
 }
 
 MonoObject* ScriptSerializableDictionary::InternalCreateValueProperty(ScriptSerializableDictionary* nativeInstance)
 {
-	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MValueType);
+	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->ValueType);
 }

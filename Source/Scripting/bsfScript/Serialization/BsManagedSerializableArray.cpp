@@ -25,8 +25,8 @@ ManagedSerializableArray::ManagedSerializableArray(const ConstructPrivately& dum
 
 	InitMonoObjects();
 
-	mNumElements.resize(typeInfo->MRank);
-	for(u32 i = 0; i < typeInfo->MRank; i++)
+	mNumElements.resize(typeInfo->Rank);
+	for(u32 i = 0; i < typeInfo->Rank; i++)
 		mNumElements[i] = GetLengthInternal(i);
 }
 
@@ -73,7 +73,7 @@ MonoObject* ManagedSerializableArray::CreateManagedInstance(const SPtr<ManagedSe
 	for(u32 i = 0; i < (u32)sizes.size(); i++)
 		lengthArray.Set(i, sizes[i]);
 
-	void* params[2] = { MonoUtil::GetType(typeInfo->MElementType->GetMonoClass()), lengthArray.GetInternal() };
+	void* params[2] = { MonoUtil::GetType(typeInfo->ElementType->GetMonoClass()), lengthArray.GetInternal() };
 	return createInstance->Invoke(nullptr, params);
 }
 
@@ -101,10 +101,10 @@ void ManagedSerializableArray::SetFieldData(u32 arrayIdx, const SPtr<ManagedSeri
 void ManagedSerializableArray::SetFieldData(MonoArray* obj, u32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
 {
 	if(MonoUtil::IsValueType(mElementMonoClass))
-		SetValueInternal(obj, arrayIdx, val->GetValue(mArrayTypeInfo->MElementType));
+		SetValueInternal(obj, arrayIdx, val->GetValue(mArrayTypeInfo->ElementType));
 	else
 	{
-		MonoObject* ptrToObj = (MonoObject*)val->GetValue(mArrayTypeInfo->MElementType);
+		MonoObject* ptrToObj = (MonoObject*)val->GetValue(mArrayTypeInfo->ElementType);
 		SetValueInternal(obj, arrayIdx, &ptrToObj);
 	}
 }
@@ -128,10 +128,10 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableArray::GetFieldData(u32 ar
 			if(arrayValue != nullptr)
 				boxedObj = MonoUtil::Box(mElementMonoClass, arrayValue);
 
-			return ManagedSerializableFieldData::Create(mArrayTypeInfo->MElementType, boxedObj);
+			return ManagedSerializableFieldData::Create(mArrayTypeInfo->ElementType, boxedObj);
 		}
 		else
-			return ManagedSerializableFieldData::Create(mArrayTypeInfo->MElementType, *(MonoObject**)arrayValue);
+			return ManagedSerializableFieldData::Create(mArrayTypeInfo->ElementType, *(MonoObject**)arrayValue);
 	}
 	else
 		return mCachedEntries[arrayIdx];
@@ -142,8 +142,8 @@ void ManagedSerializableArray::Serialize()
 	if(mGCHandle == 0)
 		return;
 
-	mNumElements.resize(mArrayTypeInfo->MRank);
-	for(u32 i = 0; i < mArrayTypeInfo->MRank; i++)
+	mNumElements.resize(mArrayTypeInfo->Rank);
+	for(u32 i = 0; i < mArrayTypeInfo->Rank; i++)
 		mNumElements[i] = GetLengthInternal(i);
 
 	u32 numElements = GetTotalLength();
@@ -197,7 +197,7 @@ void ManagedSerializableArray::SetValueInternal(MonoArray* obj, u32 arrayIdx, vo
 
 void ManagedSerializableArray::InitMonoObjects()
 {
-	mElementMonoClass = mArrayTypeInfo->MElementType->GetMonoClass();
+	mElementMonoClass = mArrayTypeInfo->ElementType->GetMonoClass();
 
 	MonoClass* arrayClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemArrayClass;
 	mCopyMethod = arrayClass->GetMethodExact("Copy", "Array,Array,int");
@@ -230,7 +230,7 @@ void ManagedSerializableArray::Resize(const Vector<u32>& newSizes)
 {
 	if(mGCHandle != 0)
 	{
-		B3D_ASSERT(mArrayTypeInfo->MRank == (u32)newSizes.size());
+		B3D_ASSERT(mArrayTypeInfo->Rank == (u32)newSizes.size());
 
 		u32 srcCount = 1;
 		for(auto& numElems : mNumElements)
