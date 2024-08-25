@@ -82,10 +82,10 @@ namespace bs
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayobjects.Size(); elementIndex++)
 			{
 				ScriptSceneObject* scriptObjectWrapperobjects;
-				scriptObjectWrapperobjects = ScriptSceneObject::ToNative(scriptArrayobjects.Get<MonoObject*>(elementIndex));
+				scriptObjectWrapperobjects = ScriptSceneObject::GetScriptObjectWrapper(scriptArrayobjects.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrapperobjects != nullptr)
 				{
-					GameObjectHandle<SceneObject> arrayElementPointerobjects = scriptObjectWrapperobjects->GetHandle();
+					GameObjectHandle<SceneObject> arrayElementPointerobjects = B3DStaticGameObjectCast<SceneObject>(scriptObjectWrapperobjects->GetBaseNativeObjectAsHandle());
 					nativeArrayobjects[elementIndex] = arrayElementPointerobjects;
 				}
 			}
@@ -103,13 +103,10 @@ namespace bs
 		ScriptArray scriptArray__output = ScriptArray::Create<ScriptSceneObject>(elementCount__output);
 		for(int elementIndex = 0; elementIndex < elementCount__output; elementIndex++)
 		{
-			ScriptSceneObject* scriptObjectWrapper__output = nullptr;
+			MonoObject* tempscriptArray__output = nullptr;
 			if(nativeArray__output[elementIndex])
-			scriptObjectWrapper__output = ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(nativeArray__output[elementIndex]);
-			if(scriptObjectWrapper__output != nullptr)
-				scriptArray__output.Set(elementIndex, scriptObjectWrapper__output->GetManagedInstance());
-			else
-				scriptArray__output.Set(elementIndex, nullptr);
+			tempscriptArray__output = ScriptSceneObject::GetOrCreateScriptObject(nativeArray__output[elementIndex]);
+			scriptArray__output.Set(elementIndex, tempscriptArray__output);
 		}
 		__output = scriptArray__output.GetInternal();
 

@@ -57,13 +57,10 @@ namespace bs
 		tmp__output = self->GetInternal()->GetRoot();
 
 		MonoObject* __output;
-		ScriptSceneObject* script__output = nullptr;
+		MonoObject* temp__output = nullptr;
 		if(tmp__output)
-		script__output = ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(tmp__output);
-		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
-		else
-			__output = nullptr;
+		temp__output = ScriptSceneObject::GetOrCreateScriptObject(tmp__output);
+		__output = temp__output;
 
 		return __output;
 	}
@@ -98,13 +95,10 @@ namespace bs
 		tmp__output = self->GetInternal()->CreateSceneObject(tmpname);
 
 		MonoObject* __output;
-		ScriptSceneObject* script__output = nullptr;
+		MonoObject* temp__output = nullptr;
 		if(tmp__output)
-		script__output = ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(tmp__output);
-		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
-		else
-			__output = nullptr;
+		temp__output = ScriptSceneObject::GetOrCreateScriptObject(tmp__output);
+		__output = temp__output;
 
 		return __output;
 	}
@@ -123,9 +117,9 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		GameObjectHandle<SceneObject> tmproot;
 		ScriptSceneObject* scriptObjectWrapperroot;
-		scriptObjectWrapperroot = ScriptSceneObject::ToNative(root);
+		scriptObjectWrapperroot = ScriptSceneObject::GetScriptObjectWrapper(root);
 		if(scriptObjectWrapperroot != nullptr)
-			tmproot = scriptObjectWrapperroot->GetHandle();
+			tmproot = B3DStaticGameObjectCast<SceneObject>(scriptObjectWrapperroot->GetBaseNativeObjectAsHandle());
 		SPtr<SceneInstance> nativeObject = SceneInstance::Create(tmpname, tmproot);
 		new (B3DAllocate<ScriptSceneInstance>())ScriptSceneInstance(managedInstance, nativeObject);
 	}

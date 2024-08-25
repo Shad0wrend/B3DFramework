@@ -38,13 +38,7 @@ namespace bs
 		 * Attempts to find the interop object for the specified GameObject. If one cannot be found new one is created and
 		 * returned.
 		 */
-		ScriptGameObjectBase* GetOrCreateScriptGameObject(const HGameObject& gameObject);
-
-		/**
-		 * Attempts to find the interop object for the specified SceneObject. If one cannot be found new one is created and
-		 * returned.
-		 */
-		ScriptSceneObject* GetOrCreateScriptSceneObject(const HSceneObject& sceneObject);
+		MonoObject* GetOrCreateScriptGameObject(const HGameObject& gameObject);
 
 		/**
 		 * Connects an existing instance of a ManagedComponent instance with the native ManagedComponent class by creating
@@ -86,7 +80,6 @@ namespace bs
 		void OnGameObjectDestroyed(const HGameObject& go);
 
 		UnorderedMap<UUID, ScriptComponentBase*> mScriptComponents;
-		UnorderedMap<UUID, ScriptSceneObject*> mScriptSceneObjects;
 
 		HEvent mOnAssemblyReloadDoneConn;
 		HEvent onGameObjectDestroyedConn;
