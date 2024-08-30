@@ -5,6 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Components/BsCJoint.h"
+#include "../../../Foundation/bsfCore/Components/BsCRigidbody.h"
 #include "BsScriptCRigidbody.generated.h"
 #include "Wrappers/BsScriptVector.h"
 #include "Wrappers/BsScriptQuaternion.h"

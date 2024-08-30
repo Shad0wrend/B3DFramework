@@ -11,6 +11,7 @@
 #include "BsScriptPhysicsQueryHit.generated.h"
 #include "Wrappers/BsScriptQuaternion.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsMesh.h"
+#include "../../../Foundation/bsfCore/Components/BsCCollider.h"
 #include "BsScriptCCollider.generated.h"
 
 namespace bs
