@@ -15,11 +15,7 @@
 using namespace bs;
 ScriptManagedComponent::ScriptManagedComponent(const HManagedComponent& nativeObject, MonoObject* scriptObject)
 	: TScriptGameObjectWrapper(nativeObject, scriptObject)
-{
-	MonoUtil::GetClassName(scriptObject, mNamespace, mType);
-
-	nativeObject->BindToScriptObject();
-}
+{ }
 
 void ScriptManagedComponent::SetupScriptBindings()
 {
@@ -62,45 +58,42 @@ void ScriptManagedComponent::InternalInvoke(ScriptManagedComponent* self, MonoSt
 	}
 }
 
-void ScriptManagedComponent::RecreateScriptObjectAfterScriptReload()
+void ScriptManagedComponent::CreateAndBindScriptObject()
 {
-	SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
+	B3D_ENSURE(GetScriptObject() == nullptr);
 
-	// See if this type even still exists
-	MonoObject* scriptObject;
-	if(!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mType, currentObjInfo))
-	{
-		mTypeMissing = true;
-		scriptObject = ScriptAssemblyManager::Instance().GetBuiltinClasses().MissingComponentClass->CreateInstance(true);
-	}
-	else
-	{
-		mTypeMissing = false;
-		scriptObject = currentObjInfo->ScriptClass->CreateInstance(true);
-	}
+	if(!IsNativeObjectValid())
+		return;
+
+	HManagedComponent component = GetNativeObjectAsHandle();
+	bool isTypeMissing = false;
+	MonoObject* const scriptObject = component->CreateScriptObject(isTypeMissing);
 
 	if(scriptObject != nullptr)
 	{
 		CreateStrongScriptObjectHandle(scriptObject);
 		BindSelfToScriptObject(scriptObject);
 	}
+
+	component->BindToScriptObject(isTypeMissing);
+}
+
+void ScriptManagedComponent::RecreateScriptObjectAfterScriptReload()
+{
+	CreateAndBindScriptObject();
 }
 
 Optional<ScriptObjectReloadPersistentData> ScriptManagedComponent::BackupDataBeforeScriptReload()
 {
+	if(!IsNativeObjectValid())
+		return { };
+
 	HManagedComponent managedComponent = GetNativeObjectAsHandle();
 
-	// It's possible that managed component is destroyed but a reference to it
-	// is still kept. Don't backup such components.
-	if(!managedComponent.IsDestroyed(true))
-	{
-		ScriptObjectReloadPersistentData backupData;
-		backupData.Data = managedComponent->Backup(true);
+	ScriptObjectReloadPersistentData backupData;
+	backupData.Data = managedComponent->Backup(true);
 
-		return backupData;
-	}
-
-	return {};
+	return backupData;
 }
 
 void ScriptManagedComponent::RestoreDataAfterScriptReload(const ScriptObjectReloadPersistentData& data)
@@ -108,5 +101,5 @@ void ScriptManagedComponent::RestoreDataAfterScriptReload(const ScriptObjectRelo
 	HManagedComponent managedComponent = GetNativeObjectAsHandle();
 
 	RawBackupData componentBackup = AnyCast<RawBackupData>(data.Data);
-	managedComponent->Restore(componentBackup, mTypeMissing);
+	managedComponent->Restore(componentBackup);
 }

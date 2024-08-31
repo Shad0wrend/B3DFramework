@@ -53,13 +53,9 @@ namespace bs
 		/**
 		 * Restores a component from previously serialized data.
 		 *
-		 * @param[in]	data		Serialized managed component data that will be used for initializing the new managed
-		 *							instance.
-		 * @param[in]	missingType	Is the component's type missing (can happen after assembly reload). If true then the
-		 *							serialized data will be stored internally until later date when user perhaps restores
-		 *							the type with another refresh. @p instance must be null if this is true.
+		 * @param[in]	data		Serialized managed component data that will be used for initializing the new managed instance.
 		 */
-		void Restore(const RawBackupData& data, bool missingType);
+		void Restore(const RawBackupData& data);
 
 		/**	Triggers the managed OnReset callback. */
 		void TriggerOnReset();
@@ -71,7 +67,15 @@ namespace bs
 		 * Binds the managed component to the currently assigned script object. This involves setting up bindings and resolving
 		 * the exact managed component class.
 		 */
-		void BindToScriptObject();
+		void BindToScriptObject(bool isTypeMissing);
+
+		/**
+		 * Creates the script object of the correct type.
+		 *
+		 * @param	outMissingType		Set to true if the type cannot be found, and the created object is of missing type.
+		 * @return						Creates script object of the correct component type, or if type cannot be found, script object of missing type.
+		 */
+		MonoObject* CreateScriptObject(bool& outMissingType) const;
 
 		typedef void(B3D_THUNKCALL* OnCreatedThunkDef)(MonoObject*, MonoException**);
 		typedef void(B3D_THUNKCALL* OnInitializedThunkDef)(MonoObject*, MonoException**);

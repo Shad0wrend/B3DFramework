@@ -30,31 +30,6 @@ ScriptGameObjectManager::~ScriptGameObjectManager()
 	mOnAssemblyReloadDoneConn.Disconnect();
 }
 
-ScriptManagedComponent* ScriptGameObjectManager::CreateManagedScriptComponent(MonoObject* existingInstance, const HManagedComponent& component)
-{
-
-
-	return nativeInstance;
-}
-
-ScriptManagedComponent* ScriptGameObjectManager::GetManagedScriptComponent(const HManagedComponent& component) const
-{
-	auto findIter = mScriptComponents.find(component.GetId());
-	if(findIter != mScriptComponents.end())
-		return static_cast<ScriptManagedComponent*>(findIter->second);
-
-	return nullptr;
-}
-
-ScriptComponentBase* ScriptGameObjectManager::GetScriptComponent(const UUID& id) const
-{
-	auto findIter = mScriptComponents.find(id);
-	if(findIter != mScriptComponents.end())
-		return findIter->second;
-
-	return nullptr;
-}
-
 void ScriptGameObjectManager::SendComponentResetEvents()
 {
 	for(auto& scriptObjectEntry : mScriptComponents)

@@ -116,6 +116,9 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 		scriptObjectWrapper->RestoreDataAfterScriptReload(found->second);
 	}
 
+	for(auto& scriptObjectWrapper : scriptObjectWrappersToRestore)
+		scriptObjectWrapper->NotifyScriptReloadFinished();
+
 	OnRefreshComplete();
 }
 

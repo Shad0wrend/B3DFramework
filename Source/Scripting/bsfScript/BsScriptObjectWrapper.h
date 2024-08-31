@@ -64,7 +64,7 @@ namespace bs
 		}
 
 		/** Used by derived classes to connect callbacks to native object events. */
-		virtual void RegisterEvents() const;
+		virtual void RegisterEvents() const { }
 
 		void NotifyNativeObjectDestroyed() override;
 
@@ -93,16 +93,22 @@ namespace bs
 		virtual void ReleaseStrongHandlesBeforeScriptReload() { ReleaseStrongScriptObjectHandle(); }
 
 		/**
-		 * Called after script reload completes. This needs to recreate the internal script object, as the old one will have been destroyed during the reload.
-		 * Only relevant for script objects that persist script reload (i.e. ShouldPersistScriptReload() returns true).
+		 * Called on all script object wrappers after script assemblies have been reloaded. This needs to recreate the internal script object using the new assemblies,
+		 * as the old one will have been destroyed during the reload. Only relevant for script objects that persist script reload (i.e. ShouldPersistScriptReload() returns true).
 		 */
 		virtual void RecreateScriptObjectAfterScriptReload() { }
 
 		/**
-		 * Called as the final step after script reload completes. Allows you to restore data backed up in BackupDataBeforeScriptReload() call to the
-		 * newly created script object. Only relevant for script objects that persist script reload (i.e. ShouldPersistScriptReload() returns true).
+		 * Called on all script object wrappers after script objects have been created in RecreateScriptObjectAfterScriptReload(). Allows you to restore data backed up
+		 * in BackupDataBeforeScriptReload() call to the newly created script object. Only relevant for script objects that persist script reload (i.e. ShouldPersistScriptReload() returns true).
 		 */
 		virtual void RestoreDataAfterScriptReload(const ScriptObjectReloadPersistentData& data) { }
+
+		/**
+		 * Called on all script object wrappers as the final step in script reload, after RestoreDataAfterScriptReload(). Allows you to perform actions that require
+		 * the entire scripting world to be fully recreated.
+		 */
+		virtual void NotifyScriptReloadFinished() { }
 
 		/** @} */
 

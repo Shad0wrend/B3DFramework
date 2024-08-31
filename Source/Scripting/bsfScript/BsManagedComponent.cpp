@@ -100,13 +100,12 @@ RawBackupData ManagedComponent::Backup(bool clearExisting)
 	return backupData;
 }
 
-void ManagedComponent::Restore(const RawBackupData& data, bool missingType)
+void ManagedComponent::Restore(const RawBackupData& data)
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
 	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
 		return;
 
-	BindToScriptObject();
 	mObjInfo = nullptr;
 
 	MonoObject* const scriptObject = scriptObjectWrapper->GetScriptObject();
@@ -123,7 +122,7 @@ void ManagedComponent::Restore(const RawBackupData& data, bool missingType)
 
 		rttiOperationContext.GameObjectCollection->EndHandleResolve();
 
-		if(!missingType)
+		if(!mMissingType)
 		{
 			ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mTypeName, mObjInfo);
 
@@ -133,15 +132,36 @@ void ManagedComponent::Restore(const RawBackupData& data, bool missingType)
 			mSerializedObjectData = serializableObject;
 	}
 
-	if(!missingType)
+	if(!mMissingType)
 		mSerializedObjectData = nullptr;
 
-	mMissingType = missingType;
 	mRequiresReset = true;
 }
 
-void ManagedComponent::BindToScriptObject()
+MonoObject* ManagedComponent::CreateScriptObject(bool& outIsMissingType) const
 {
+	SPtr<ManagedSerializableObjectInfo> objectInfo = nullptr;
+
+	// See if this type even still exists
+	MonoObject* scriptObject;
+	if(!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mTypeName, objectInfo))
+	{
+		outIsMissingType = true;
+		scriptObject = ScriptAssemblyManager::Instance().GetBuiltinClasses().MissingComponentClass->CreateInstance(true);
+	}
+	else
+	{
+		outIsMissingType = false;
+		scriptObject = objectInfo->ScriptClass->CreateInstance(true);
+	}
+
+	return scriptObject;
+}
+
+void ManagedComponent::BindToScriptObject(bool isTypeMissing)
+{
+	mMissingType = isTypeMissing;
+
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
 	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
 		return;
@@ -335,29 +355,11 @@ void ManagedComponent::Initialize()
 
 	mObjInfo = nullptr;
 
-	MonoObject* instance;
-	if(!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mTypeName, mObjInfo))
-	{
-		instance = ScriptAssemblyManager::Instance().GetBuiltinClasses().MissingComponentClass->CreateInstance(true);
-		mMissingType = true;
-	}
-	else
-	{
-		instance = mObjInfo->ScriptClass->CreateInstance();
-		mMissingType = false;
-	}
+	bool isTypeMissing;
+	MonoObject* const scriptObject = CreateScriptObject(isTypeMissing);
 
-	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(B3D_ENSURE(scriptObjectWrapper == nullptr))
-	{
-		
-	}
-
-	ScriptManagedComponent::GetOrCreateScriptObject(componentHandle);
-
-	ScriptManagedComponent* const nativeInstance = new(B3DAllocate<ScriptManagedComponent>())
-		ScriptManagedComponent(existingInstance, component);
-	ScriptGameObjectManager::Instance().CreateManagedScriptComponent(instance, componentHandle); TODO
+	B3DNew<ScriptManagedComponent>(mThisHandle, scriptObject);
+	BindToScriptObject(isTypeMissing);
 }
 
 void ManagedComponent::OnCreated()

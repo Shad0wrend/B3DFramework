@@ -20,10 +20,17 @@ namespace bs
 
 		ScriptManagedComponent(const HManagedComponent& nativeObject, MonoObject* scriptObject);
 
+		/**
+		 * Returns null as managed components cannot be created statically. Their script object type is mutable depending on the script type they are referencing. Use non-static CreateAndBindScriptObject()
+		 * member instead.
+		 */
 		static MonoObject* CreateScriptObject(bool construct)
 		{
 			return nullptr;
 		}
+
+		/** Creates a new script object of the correct component type and binds it to the script object wrapper. Script object wrapper must not have a script object assigned. */
+		void CreateAndBindScriptObject();
 
 	private:
 		friend class ManagedComponent;
@@ -31,10 +38,6 @@ namespace bs
 		void RecreateScriptObjectAfterScriptReload() override;
 		Optional<ScriptObjectReloadPersistentData> BackupDataBeforeScriptReload() override;
 		void RestoreDataAfterScriptReload(const ScriptObjectReloadPersistentData& data) override;
-
-		String mNamespace;
-		String mType;
-		bool mTypeMissing = false;
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
