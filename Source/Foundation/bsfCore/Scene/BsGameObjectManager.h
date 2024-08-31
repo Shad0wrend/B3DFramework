@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**
-	 * Tracks GameObject creation and destructions. Also resolves GameObject references from GameObject handles.
+	 * Keeps track of all active game object collections.
 	 *
 	 * @note	Main thread only.
 	 */
@@ -25,9 +25,6 @@ namespace bs
 
 		/**	Destroys any GameObjects that were queued for destruction. */
 		void DestroyQueuedObjects();
-
-		/**	Triggered when a game object is being destroyed. */
-		Event<void(const HGameObject&)> OnDestroyed;
 
 	private:
 		friend class GameObjectCollection;

@@ -5,7 +5,6 @@
 #include "BsMonoAssembly.h"
 #include "Serialization/BsScriptAssemblyManager.h"
 #include "BsScriptResourceManager.h"
-#include "BsScriptGameObjectManager.h"
 #include "BsManagedResourceManager.h"
 #include "Script/BsScriptManager.h"
 #include "Wrappers/BsScriptInput.h"
@@ -38,7 +37,6 @@ void EngineScriptLibrary::Initialize()
 	ManagedResourceManager::StartUp();
 	ScriptAssemblyManager::StartUp();
 	ScriptResourceManager::StartUp();
-	ScriptGameObjectManager::StartUp();
 	ScriptScene::StartUp();
 	ScriptInput::StartUp();
 	ScriptVirtualInput::StartUp();
@@ -119,7 +117,6 @@ void EngineScriptLibrary::ShutdownModules()
 	MonoManager::Instance().unloadAll();
 #endif
 
-	ScriptGameObjectManager::ShutDown();
 	ScriptResourceManager::ShutDown();
 	ScriptAssemblyManager::ShutDown();
 	ScriptObjectManager::ShutDown();

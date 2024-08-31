@@ -1,7 +1,6 @@
 //********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Wrappers/BsScriptManagedComponent.h"
-#include "BsScriptGameObjectManager.h"
 #include "Serialization/BsScriptAssemblyManager.h"
 #include "BsScriptMeta.h"
 #include "BsMonoClass.h"
@@ -66,8 +65,8 @@ void ScriptManagedComponent::CreateAndBindScriptObject()
 		return;
 
 	HManagedComponent component = GetNativeObjectAsHandle();
-	bool isTypeMissing = false;
-	MonoObject* const scriptObject = component->CreateScriptObject(isTypeMissing);
+	SPtr<ManagedSerializableObjectInfo> objectInformation;
+	MonoObject* const scriptObject = component->CreateScriptObject(objectInformation);
 
 	if(scriptObject != nullptr)
 	{
@@ -75,7 +74,7 @@ void ScriptManagedComponent::CreateAndBindScriptObject()
 		BindSelfToScriptObject(scriptObject);
 	}
 
-	component->BindToScriptObject(isTypeMissing);
+	component->BindToScriptObject(objectInformation);
 }
 
 void ScriptManagedComponent::RecreateScriptObjectAfterScriptReload()
@@ -103,3 +102,13 @@ void ScriptManagedComponent::RestoreDataAfterScriptReload(const ScriptObjectRelo
 	RawBackupData componentBackup = AnyCast<RawBackupData>(data.Data);
 	managedComponent->Restore(componentBackup);
 }
+
+void ScriptManagedComponent::NotifyScriptReloadFinished()
+{
+	if(!IsNativeObjectValid())
+		return;
+
+	HManagedComponent managedComponent = GetNativeObjectAsHandle();
+	managedComponent->TriggerOnReset();
+}
+

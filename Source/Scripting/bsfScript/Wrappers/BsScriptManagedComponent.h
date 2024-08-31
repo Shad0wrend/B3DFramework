@@ -38,6 +38,7 @@ namespace bs
 		void RecreateScriptObjectAfterScriptReload() override;
 		Optional<ScriptObjectReloadPersistentData> BackupDataBeforeScriptReload() override;
 		void RestoreDataAfterScriptReload(const ScriptObjectReloadPersistentData& data) override;
+		void NotifyScriptReloadFinished() override;
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/

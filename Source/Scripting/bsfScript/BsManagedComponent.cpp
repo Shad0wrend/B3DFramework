@@ -7,7 +7,6 @@
 #include "BsMonoUtil.h"
 #include "BsMonoMethod.h"
 #include "Serialization/BsManagedSerializableObject.h"
-#include "BsScriptGameObjectManager.h"
 #include "Serialization/BsScriptAssemblyManager.h"
 #include "Wrappers/BsScriptManagedComponent.h"
 #include "BsMonoAssembly.h"
@@ -40,7 +39,7 @@ RawBackupData ManagedComponent::Backup(bool clearExisting)
 
 	// If type is not missing read data from actual managed instance, instead just
 	// return the data we backed up before the type was lost
-	if(!mMissingType)
+	if(mObjInfo != nullptr)
 	{
 		MonoObject* scriptObject = nullptr;
 		ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
@@ -103,10 +102,8 @@ RawBackupData ManagedComponent::Backup(bool clearExisting)
 void ManagedComponent::Restore(const RawBackupData& data)
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
-
-	mObjInfo = nullptr;
 
 	MonoObject* const scriptObject = scriptObjectWrapper->GetScriptObject();
 	if(scriptObject != nullptr && data.Data != nullptr)
@@ -122,48 +119,36 @@ void ManagedComponent::Restore(const RawBackupData& data)
 
 		rttiOperationContext.GameObjectCollection->EndHandleResolve();
 
-		if(!mMissingType)
-		{
-			ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mTypeName, mObjInfo);
-
+		if(mObjInfo != nullptr)
 			serializableObject->Deserialize(scriptObject, mObjInfo);
-		}
 		else
 			mSerializedObjectData = serializableObject;
 	}
 
-	if(!mMissingType)
+	if(mObjInfo != nullptr)
 		mSerializedObjectData = nullptr;
 
 	mRequiresReset = true;
 }
 
-MonoObject* ManagedComponent::CreateScriptObject(bool& outIsMissingType) const
+MonoObject* ManagedComponent::CreateScriptObject(SPtr<ManagedSerializableObjectInfo>& outObjectInformation) const
 {
-	SPtr<ManagedSerializableObjectInfo> objectInfo = nullptr;
-
 	// See if this type even still exists
 	MonoObject* scriptObject;
-	if(!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mTypeName, objectInfo))
-	{
-		outIsMissingType = true;
+	if(!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mTypeName, outObjectInformation))
 		scriptObject = ScriptAssemblyManager::Instance().GetBuiltinClasses().MissingComponentClass->CreateInstance(true);
-	}
 	else
-	{
-		outIsMissingType = false;
-		scriptObject = objectInfo->ScriptClass->CreateInstance(true);
-	}
+		scriptObject = outObjectInformation->ScriptClass->CreateInstance(true);
 
 	return scriptObject;
 }
 
-void ManagedComponent::BindToScriptObject(bool isTypeMissing)
+void ManagedComponent::BindToScriptObject(const SPtr<ManagedSerializableObjectInfo>& objectInformation)
 {
-	mMissingType = isTypeMissing;
+	mObjInfo = objectInformation;
 
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
 
 	mFullTypeName = mNamespace + "." + mTypeName;
@@ -318,7 +303,7 @@ bool ManagedComponent::CalculateBounds(Bounds& bounds)
 void ManagedComponent::Update()
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
 
 	if(mOnUpdateThunk != nullptr)
@@ -334,7 +319,7 @@ void ManagedComponent::Update()
 void ManagedComponent::TriggerOnReset()
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
 
 	if(mRequiresReset && mOnResetThunk != nullptr)
@@ -353,24 +338,22 @@ void ManagedComponent::Initialize()
 {
 	Component::Initialize();
 
-	mObjInfo = nullptr;
+	SPtr<ManagedSerializableObjectInfo> objectInformation;
+	MonoObject* const scriptObject = CreateScriptObject(objectInformation);
 
-	bool isTypeMissing;
-	MonoObject* const scriptObject = CreateScriptObject(isTypeMissing);
-
-	B3DNew<ScriptManagedComponent>(mThisHandle, scriptObject);
-	BindToScriptObject(isTypeMissing);
+	B3DNew<ScriptManagedComponent>(B3DStaticGameObjectCast<ManagedComponent>(mThisHandle), scriptObject);
+	BindToScriptObject(objectInformation);
 }
 
 void ManagedComponent::OnCreated()
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
 
 	MonoObject* const scriptObject = scriptObjectWrapper->GetScriptObject();
 
-	if(mSerializedObjectData != nullptr && !mMissingType)
+	if(mSerializedObjectData != nullptr && mObjInfo != nullptr)
 	{
 		mSerializedObjectData->Deserialize(scriptObject, mObjInfo);
 		mSerializedObjectData = nullptr;
@@ -389,7 +372,7 @@ void ManagedComponent::OnCreated()
 void ManagedComponent::OnBeginPlay()
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
 
 	if(mOnInitializedThunk != nullptr)
@@ -407,7 +390,7 @@ void ManagedComponent::OnBeginPlay()
 void ManagedComponent::OnDestroyed()
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
 
 	if(mOnDestroyThunk != nullptr)
@@ -423,7 +406,7 @@ void ManagedComponent::OnDestroyed()
 void ManagedComponent::OnEnabled()
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
 
 	if(mOnEnabledThunk != nullptr)
@@ -439,7 +422,7 @@ void ManagedComponent::OnEnabled()
 void ManagedComponent::OnDisabled()
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
 
 	if(mOnDisabledThunk != nullptr)
@@ -455,7 +438,7 @@ void ManagedComponent::OnDisabled()
 void ManagedComponent::OnTransformChanged(TransformChangedFlags flags)
 {
 	ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)GetScriptObjectWrapper();
-	if(!B3D_ENSURE(scriptObjectWrapper == nullptr))
+	if(!B3D_ENSURE(scriptObjectWrapper != nullptr))
 		return;
 
 	if(mOnTransformChangedThunk != nullptr)

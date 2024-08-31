@@ -83,12 +83,7 @@ void GameObjectCollection::UnregisterObject(GameObjectHandleBase& object, bool t
 	object->mOwnerCollection.reset();
 
 	if(triggerDestroyEvent)
-	{
 		OnDestroyed(B3DStaticGameObjectCast<GameObject>(object));
-
-		// TODO: Some systems still depend on sending out a global OnDestroyed event
-		GameObjectManager::Instance().OnDestroyed(B3DStaticGameObjectCast<GameObject>(object));
-	}
 }
 
 GameObjectHandleBase GameObjectCollection::GetObject(const UUID& id) const

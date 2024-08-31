@@ -93,7 +93,7 @@ namespace bs
 			// TODO: Could skip expensive lookup if the type has no derived classes (should be most cases). In that case the code-gen could generate
 			// code that calls a streamlined version of this method, with no lookup.
 			const ScriptWrapperObjectMetaData* metaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(nativeObject->GetTypeId());
-			if(!B3D_ENSURE(metaData))
+			if(B3D_ENSURE(metaData))
 				return metaData->ResourceCreateCallback(nativeObject);
 
 			return CreateScriptObjectAndWrapper(nativeObject);

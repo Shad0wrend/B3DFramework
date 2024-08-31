@@ -25,7 +25,6 @@ namespace bs
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mNamespace, 0)
 			B3D_RTTI_MEMBER(mTypeName, 1)
-			B3D_RTTI_MEMBER(mMissingType, 3)
 			B3D_RTTI_GENERATED_MEMBER(mSerializedObjectData, 2)
 		B3D_RTTI_END_MEMBERS
 

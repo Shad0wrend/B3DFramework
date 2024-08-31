@@ -67,15 +67,15 @@ namespace bs
 		 * Binds the managed component to the currently assigned script object. This involves setting up bindings and resolving
 		 * the exact managed component class.
 		 */
-		void BindToScriptObject(bool isTypeMissing);
+		void BindToScriptObject(const SPtr<ManagedSerializableObjectInfo>& objectInformation);
 
 		/**
 		 * Creates the script object of the correct type.
 		 *
-		 * @param	outMissingType		Set to true if the type cannot be found, and the created object is of missing type.
+		 * @param	outObjectInfo		Information about the component type. Can be null in case the type does no longer exist.
 		 * @return						Creates script object of the correct component type, or if type cannot be found, script object of missing type.
 		 */
-		MonoObject* CreateScriptObject(bool& outMissingType) const;
+		MonoObject* CreateScriptObject(SPtr<ManagedSerializableObjectInfo>& outObjectInfo) const;
 
 		typedef void(B3D_THUNKCALL* OnCreatedThunkDef)(MonoObject*, MonoException**);
 		typedef void(B3D_THUNKCALL* OnInitializedThunkDef)(MonoObject*, MonoException**);

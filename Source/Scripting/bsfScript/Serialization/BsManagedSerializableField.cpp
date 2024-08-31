@@ -6,7 +6,6 @@
 #include "BsMonoUtil.h"
 #include "BsMonoManager.h"
 #include "BsScriptResourceManager.h"
-#include "BsScriptGameObjectManager.h"
 #include "BsScriptObjectWrapper.h"
 #include "BsScriptReflectableWrapper.h"
 #include "Wrappers/BsScriptManagedResource.h"
