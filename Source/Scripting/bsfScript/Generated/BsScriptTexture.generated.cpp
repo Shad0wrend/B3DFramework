@@ -15,47 +15,51 @@
 
 namespace bs
 {
-	ScriptTexture::ScriptTexture(MonoObject* managedInstance, const TResourceHandle<Texture>& value)
-		:TScriptResource(managedInstance, value)
+	ScriptTexture::ScriptTexture(const TResourceHandle<Texture>& nativeObject, MonoObject* scriptObject)
+		:TScriptResourceWrapper(nativeObject, scriptObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptTexture::InitRuntimeData()
+	void ScriptTexture::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptTexture::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_ReadData", (void*)&ScriptTexture::InternalReadData);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptTexture::InternalCreate);
-		metaData.ScriptClass->AddInternalCall("Internal_GetPixelFormat", (void*)&ScriptTexture::InternalGetPixelFormat);
-		metaData.ScriptClass->AddInternalCall("Internal_GetUsage", (void*)&ScriptTexture::InternalGetUsage);
-		metaData.ScriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTexture::InternalGetType);
-		metaData.ScriptClass->AddInternalCall("Internal_GetWidth", (void*)&ScriptTexture::InternalGetWidth);
-		metaData.ScriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptTexture::InternalGetHeight);
-		metaData.ScriptClass->AddInternalCall("Internal_GetDepth", (void*)&ScriptTexture::InternalGetDepth);
-		metaData.ScriptClass->AddInternalCall("Internal_GetGammaCorrection", (void*)&ScriptTexture::InternalGetGammaCorrection);
-		metaData.ScriptClass->AddInternalCall("Internal_GetSampleCount", (void*)&ScriptTexture::InternalGetSampleCount);
-		metaData.ScriptClass->AddInternalCall("Internal_GetMipmapCount", (void*)&ScriptTexture::InternalGetMipmapCount);
-		metaData.ScriptClass->AddInternalCall("Internal_GetPixels", (void*)&ScriptTexture::InternalGetPixels);
-		metaData.ScriptClass->AddInternalCall("Internal_SetPixels", (void*)&ScriptTexture::InternalSetPixels);
-		metaData.ScriptClass->AddInternalCall("Internal_SetPixelsArray", (void*)&ScriptTexture::InternalSetPixelsArray);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptTexture::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ReadData", (void*)&ScriptTexture::InternalReadData);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptTexture::InternalCreate);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPixelFormat", (void*)&ScriptTexture::InternalGetPixelFormat);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetUsage", (void*)&ScriptTexture::InternalGetUsage);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTexture::InternalGetType);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetWidth", (void*)&ScriptTexture::InternalGetWidth);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptTexture::InternalGetHeight);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetDepth", (void*)&ScriptTexture::InternalGetDepth);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetGammaCorrection", (void*)&ScriptTexture::InternalGetGammaCorrection);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetSampleCount", (void*)&ScriptTexture::InternalGetSampleCount);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMipmapCount", (void*)&ScriptTexture::InternalGetMipmapCount);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPixels", (void*)&ScriptTexture::InternalGetPixels);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetPixels", (void*)&ScriptTexture::InternalSetPixels);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetPixelsArray", (void*)&ScriptTexture::InternalSetPixelsArray);
 
 	}
 
-	 MonoObject*ScriptTexture::CreateInstance()
+	MonoObject* ScriptTexture::CreateScriptObject(bool construct)
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoObject* ScriptTexture::InternalGetRef(ScriptTexture* self)
 	{
-		return self->GetRRef();
+		return self->GetOrCreateResourceReference();
 	}
 
 	MonoObject* ScriptTexture::InternalReadData(ScriptTexture* self, uint32_t face, uint32_t mipLevel)
 	{
 		TAsyncOp<SPtr<PixelData>> tmp__output;
-		tmp__output = self->GetHandle()->ReadData(face, mipLevel);
+		tmp__output = static_cast<Texture*>(self->GetNativeObject())->ReadData(face, mipLevel);
 
 		MonoObject* __output;
 		auto fnConvertCallback = [](const Any& returnValue)
@@ -71,16 +75,16 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTexture::InternalCreate(MonoObject* managedInstance, PixelFormat format, uint32_t width, uint32_t height, uint32_t depth, TextureType texType, TextureUsage usage, uint32_t numSamples, bool hasMipmaps, bool gammaCorrection)
+	void ScriptTexture::InternalCreate(MonoObject* scriptObject, PixelFormat format, uint32_t width, uint32_t height, uint32_t depth, TextureType texType, TextureUsage usage, uint32_t numSamples, bool hasMipmaps, bool gammaCorrection)
 	{
 		TResourceHandle<Texture> nativeObject = TextureEx::Create(format, width, height, depth, texType, usage, numSamples, hasMipmaps, gammaCorrection);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(nativeObject, managedInstance);
+		B3DNew<ScriptTexture>(nativeObject, scriptObject);
 	}
 
 	PixelFormat ScriptTexture::InternalGetPixelFormat(ScriptTexture* self)
 	{
 		PixelFormat tmp__output;
-		tmp__output = TextureEx::GetPixelFormat(self->GetHandle());
+		tmp__output = TextureEx::GetPixelFormat(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		PixelFormat __output;
 		__output = tmp__output;
@@ -91,7 +95,7 @@ namespace bs
 	TextureUsage ScriptTexture::InternalGetUsage(ScriptTexture* self)
 	{
 		TextureUsage tmp__output;
-		tmp__output = TextureEx::GetUsage(self->GetHandle());
+		tmp__output = TextureEx::GetUsage(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		TextureUsage __output;
 		__output = tmp__output;
@@ -102,7 +106,7 @@ namespace bs
 	TextureType ScriptTexture::InternalGetType(ScriptTexture* self)
 	{
 		TextureType tmp__output;
-		tmp__output = TextureEx::GetType(self->GetHandle());
+		tmp__output = TextureEx::GetType(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		TextureType __output;
 		__output = tmp__output;
@@ -113,7 +117,7 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetWidth(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = TextureEx::GetWidth(self->GetHandle());
+		tmp__output = TextureEx::GetWidth(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -124,7 +128,7 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetHeight(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = TextureEx::GetHeight(self->GetHandle());
+		tmp__output = TextureEx::GetHeight(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -135,7 +139,7 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetDepth(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = TextureEx::GetDepth(self->GetHandle());
+		tmp__output = TextureEx::GetDepth(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -146,7 +150,7 @@ namespace bs
 	bool ScriptTexture::InternalGetGammaCorrection(ScriptTexture* self)
 	{
 		bool tmp__output;
-		tmp__output = TextureEx::GetGammaCorrection(self->GetHandle());
+		tmp__output = TextureEx::GetGammaCorrection(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		bool __output;
 		__output = tmp__output;
@@ -157,7 +161,7 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetSampleCount(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = TextureEx::GetSampleCount(self->GetHandle());
+		tmp__output = TextureEx::GetSampleCount(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -168,7 +172,7 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetMipmapCount(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = TextureEx::GetMipmapCount(self->GetHandle());
+		tmp__output = TextureEx::GetMipmapCount(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -179,7 +183,7 @@ namespace bs
 	MonoObject* ScriptTexture::InternalGetPixels(ScriptTexture* self, uint32_t face, uint32_t mipLevel)
 	{
 		SPtr<PixelData> tmp__output;
-		tmp__output = TextureEx::GetPixels(self->GetHandle(), face, mipLevel);
+		tmp__output = TextureEx::GetPixels(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()), face, mipLevel);
 
 		MonoObject* __output;
 		__output = ScriptPixelData::GetOrCreateScriptObject(tmp__output);
@@ -194,7 +198,7 @@ namespace bs
 		scriptObjectWrapperdata = ScriptPixelData::GetScriptObjectWrapper(data);
 		if(scriptObjectWrapperdata != nullptr)
 			tmpdata = std::static_pointer_cast<PixelData>(scriptObjectWrapperdata->GetBaseNativeObjectAsShared());
-		TextureEx::SetPixels(self->GetHandle(), tmpdata, face, mipLevel);
+		TextureEx::SetPixels(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()), tmpdata, face, mipLevel);
 	}
 
 	void ScriptTexture::InternalSetPixelsArray(ScriptTexture* self, MonoArray* colors, uint32_t face, uint32_t mipLevel)
@@ -210,6 +214,6 @@ namespace bs
 			}
 
 		}
-		TextureEx::SetPixelsArray(self->GetHandle(), nativeArraycolors, face, mipLevel);
+		TextureEx::SetPixelsArray(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()), nativeArraycolors, face, mipLevel);
 	}
 }

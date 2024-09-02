@@ -3,19 +3,19 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 
 namespace bs { class Font; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptFont : public TScriptResource<ScriptFont, Font>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptFont : public TScriptResourceWrapper<Font, ScriptFont>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Font")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Font")
 
-		ScriptFont(MonoObject* managedInstance, const TResourceHandle<Font>& value);
+		ScriptFont(const TResourceHandle<Font>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptFont* self);

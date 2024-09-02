@@ -3,19 +3,19 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 
 namespace bs { class VectorPath; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorPath : public TScriptResource<ScriptVectorPath, VectorPath>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorPath : public TScriptResourceWrapper<VectorPath, ScriptVectorPath>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "VectorPath")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "VectorPath")
 
-		ScriptVectorPath(MonoObject* managedInstance, const TResourceHandle<VectorPath>& value);
+		ScriptVectorPath(const TResourceHandle<VectorPath>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptVectorPath* self);

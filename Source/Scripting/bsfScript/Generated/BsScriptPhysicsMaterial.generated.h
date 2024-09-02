@@ -3,19 +3,19 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 
 namespace bs { class PhysicsMaterial; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsMaterial : public TScriptResource<ScriptPhysicsMaterial, PhysicsMaterial>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsMaterial : public TScriptResourceWrapper<PhysicsMaterial, ScriptPhysicsMaterial>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PhysicsMaterial")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "PhysicsMaterial")
 
-		ScriptPhysicsMaterial(MonoObject* managedInstance, const TResourceHandle<PhysicsMaterial>& value);
+		ScriptPhysicsMaterial(const TResourceHandle<PhysicsMaterial>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptPhysicsMaterial* self);
@@ -26,6 +26,6 @@ namespace bs
 		static float InternalGetDynamicFriction(ScriptPhysicsMaterial* self);
 		static void InternalSetRestitutionCoefficient(ScriptPhysicsMaterial* self, float value);
 		static float InternalGetRestitutionCoefficient(ScriptPhysicsMaterial* self);
-		static void InternalCreate(MonoObject* managedInstance, float staticFriction, float dynamicFriction, float restitution);
+		static void InternalCreate(MonoObject* scriptObject, float staticFriction, float dynamicFriction, float restitution);
 	};
 }

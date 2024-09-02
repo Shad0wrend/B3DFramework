@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
+#include "BsScriptObject.h"
 #include "BsScriptObjectWrapper.h"
 #include "BsScriptResourceManager.h"
 #include "Resources/BsResource.h"
@@ -157,12 +158,18 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Resource")
 
-	private:
 		ScriptResource(const HResource& nativeObject, MonoObject* scriptObject);
 
 		/** Retrieves the underlying native object cast to the correct type. */
 		Resource* GetNativeObject() const;
 
+		/** Dummy method to create the script object. Not used as Resources is only used as base class and not created directly. */
+		static MonoObject* CreateScriptObject(bool construct)
+		{
+			return nullptr;
+		}
+
+	private:
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/

@@ -11,45 +11,49 @@
 
 namespace bs
 {
-	ScriptPhysicsMaterial::ScriptPhysicsMaterial(MonoObject* managedInstance, const TResourceHandle<PhysicsMaterial>& value)
-		:TScriptResource(managedInstance, value)
+	ScriptPhysicsMaterial::ScriptPhysicsMaterial(const TResourceHandle<PhysicsMaterial>& nativeObject, MonoObject* scriptObject)
+		:TScriptResourceWrapper(nativeObject, scriptObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptPhysicsMaterial::InitRuntimeData()
+	void ScriptPhysicsMaterial::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptPhysicsMaterial::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_SetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalSetStaticFriction);
-		metaData.ScriptClass->AddInternalCall("Internal_GetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalGetStaticFriction);
-		metaData.ScriptClass->AddInternalCall("Internal_SetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalSetDynamicFriction);
-		metaData.ScriptClass->AddInternalCall("Internal_GetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalGetDynamicFriction);
-		metaData.ScriptClass->AddInternalCall("Internal_SetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalSetRestitutionCoefficient);
-		metaData.ScriptClass->AddInternalCall("Internal_GetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalGetRestitutionCoefficient);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptPhysicsMaterial::InternalCreate);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptPhysicsMaterial::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalSetStaticFriction);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalGetStaticFriction);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalSetDynamicFriction);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalGetDynamicFriction);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalSetRestitutionCoefficient);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalGetRestitutionCoefficient);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptPhysicsMaterial::InternalCreate);
 
 	}
 
-	 MonoObject*ScriptPhysicsMaterial::CreateInstance()
+	MonoObject* ScriptPhysicsMaterial::CreateScriptObject(bool construct)
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoObject* ScriptPhysicsMaterial::InternalGetRef(ScriptPhysicsMaterial* self)
 	{
-		return self->GetRRef();
+		return self->GetOrCreateResourceReference();
 	}
 
 	void ScriptPhysicsMaterial::InternalSetStaticFriction(ScriptPhysicsMaterial* self, float value)
 	{
-		self->GetHandle()->SetStaticFriction(value);
+		static_cast<PhysicsMaterial*>(self->GetNativeObject())->SetStaticFriction(value);
 	}
 
 	float ScriptPhysicsMaterial::InternalGetStaticFriction(ScriptPhysicsMaterial* self)
 	{
 		float tmp__output;
-		tmp__output = self->GetHandle()->GetStaticFriction();
+		tmp__output = static_cast<PhysicsMaterial*>(self->GetNativeObject())->GetStaticFriction();
 
 		float __output;
 		__output = tmp__output;
@@ -59,13 +63,13 @@ namespace bs
 
 	void ScriptPhysicsMaterial::InternalSetDynamicFriction(ScriptPhysicsMaterial* self, float value)
 	{
-		self->GetHandle()->SetDynamicFriction(value);
+		static_cast<PhysicsMaterial*>(self->GetNativeObject())->SetDynamicFriction(value);
 	}
 
 	float ScriptPhysicsMaterial::InternalGetDynamicFriction(ScriptPhysicsMaterial* self)
 	{
 		float tmp__output;
-		tmp__output = self->GetHandle()->GetDynamicFriction();
+		tmp__output = static_cast<PhysicsMaterial*>(self->GetNativeObject())->GetDynamicFriction();
 
 		float __output;
 		__output = tmp__output;
@@ -75,13 +79,13 @@ namespace bs
 
 	void ScriptPhysicsMaterial::InternalSetRestitutionCoefficient(ScriptPhysicsMaterial* self, float value)
 	{
-		self->GetHandle()->SetRestitutionCoefficient(value);
+		static_cast<PhysicsMaterial*>(self->GetNativeObject())->SetRestitutionCoefficient(value);
 	}
 
 	float ScriptPhysicsMaterial::InternalGetRestitutionCoefficient(ScriptPhysicsMaterial* self)
 	{
 		float tmp__output;
-		tmp__output = self->GetHandle()->GetRestitutionCoefficient();
+		tmp__output = static_cast<PhysicsMaterial*>(self->GetNativeObject())->GetRestitutionCoefficient();
 
 		float __output;
 		__output = tmp__output;
@@ -89,9 +93,9 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptPhysicsMaterial::InternalCreate(MonoObject* managedInstance, float staticFriction, float dynamicFriction, float restitution)
+	void ScriptPhysicsMaterial::InternalCreate(MonoObject* scriptObject, float staticFriction, float dynamicFriction, float restitution)
 	{
 		TResourceHandle<PhysicsMaterial> nativeObject = PhysicsMaterial::Create(staticFriction, dynamicFriction, restitution);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(nativeObject, managedInstance);
+		B3DNew<ScriptPhysicsMaterial>(nativeObject, scriptObject);
 	}
 }

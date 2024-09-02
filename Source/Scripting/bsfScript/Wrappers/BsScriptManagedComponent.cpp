@@ -14,7 +14,9 @@
 using namespace bs;
 ScriptManagedComponent::ScriptManagedComponent(const HManagedComponent& nativeObject, MonoObject* scriptObject)
 	: TScriptGameObjectWrapper(nativeObject, scriptObject)
-{ }
+{
+	RegisterEvents();
+}
 
 void ScriptManagedComponent::SetupScriptBindings()
 {

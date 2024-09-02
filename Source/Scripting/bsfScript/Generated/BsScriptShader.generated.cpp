@@ -11,35 +11,39 @@
 
 namespace bs
 {
-	ScriptShader::ScriptShader(MonoObject* managedInstance, const TResourceHandle<Shader>& value)
-		:TScriptResource(managedInstance, value)
+	ScriptShader::ScriptShader(const TResourceHandle<Shader>& nativeObject, MonoObject* scriptObject)
+		:TScriptResourceWrapper(nativeObject, scriptObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptShader::InitRuntimeData()
+	void ScriptShader::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptShader::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_GetVariationParams", (void*)&ScriptShader::InternalGetVariationParams);
-		metaData.ScriptClass->AddInternalCall("Internal_GetParameters", (void*)&ScriptShader::InternalGetParameters);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptShader::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetVariationParams", (void*)&ScriptShader::InternalGetVariationParams);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetParameters", (void*)&ScriptShader::InternalGetParameters);
 
 	}
 
-	 MonoObject*ScriptShader::CreateInstance()
+	MonoObject* ScriptShader::CreateScriptObject(bool construct)
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoObject* ScriptShader::InternalGetRef(ScriptShader* self)
 	{
-		return self->GetRRef();
+		return self->GetOrCreateResourceReference();
 	}
 
 	MonoArray* ScriptShader::InternalGetVariationParams(ScriptShader* self)
 	{
 		Vector<ShaderVariationParameterInformation> nativeArray__output;
-		nativeArray__output = self->GetHandle()->GetVariationParams();
+		nativeArray__output = static_cast<Shader*>(self->GetNativeObject())->GetVariationParams();
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -56,7 +60,7 @@ namespace bs
 	MonoArray* ScriptShader::InternalGetParameters(ScriptShader* self)
 	{
 		Vector<ShaderParameter> nativeArray__output;
-		nativeArray__output = ShaderEx::GetParameters(self->GetHandle());
+		nativeArray__output = ShaderEx::GetParameters(B3DStaticResourceCast<Shader>(self->GetBaseNativeObjectAsHandle()));
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();

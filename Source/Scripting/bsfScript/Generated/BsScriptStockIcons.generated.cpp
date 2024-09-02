@@ -5,7 +5,6 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Text/BsStockIcons.h"
-#include "BsScriptResourceManager.h"
 #include "BsScriptSpriteImage.generated.h"
 #include "BsScriptFont.generated.h"
 
@@ -31,12 +30,10 @@ namespace bs
 		tmp__output = StockIcons::Instance().GetIcon(icon, size);
 
 		MonoObject* __output;
-		ScriptResourceBase* script__output;
-		script__output = ScriptResourceManager::Instance().GetScriptResource(tmp__output, true);
-		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
-		else
-			__output = nullptr;
+		MonoObject* temp__output = nullptr;
+		if(tmp__output)
+		temp__output = ScriptResourceWrapper::GetOrCreateScriptObject(tmp__output);
+		__output = temp__output;
 
 		return __output;
 	}
@@ -58,12 +55,10 @@ namespace bs
 		tmp__output = StockIcons::Instance().GetFont(icon);
 
 		MonoObject* __output;
-		ScriptResourceBase* script__output;
-		script__output = ScriptResourceManager::Instance().GetScriptResource(tmp__output, true);
-		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
-		else
-			__output = nullptr;
+		MonoObject* temp__output = nullptr;
+		if(tmp__output)
+		temp__output = ScriptResourceWrapper::GetOrCreateScriptObject(tmp__output);
+		__output = temp__output;
 
 		return __output;
 	}

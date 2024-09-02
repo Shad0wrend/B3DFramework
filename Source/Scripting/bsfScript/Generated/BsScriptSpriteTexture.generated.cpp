@@ -13,58 +13,62 @@
 
 namespace bs
 {
-	ScriptSpriteTexture::ScriptSpriteTexture(MonoObject* managedInstance, const TResourceHandle<SpriteTexture>& value)
-		:TScriptResource(managedInstance, value)
+	ScriptSpriteTexture::ScriptSpriteTexture(const TResourceHandle<SpriteTexture>& nativeObject, MonoObject* scriptObject)
+		:TScriptResourceWrapper(nativeObject, scriptObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptSpriteTexture::InitRuntimeData()
+	void ScriptSpriteTexture::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteTexture::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_SetAtlasTexture", (void*)&ScriptSpriteTexture::InternalSetAtlasTexture);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteTexture::InternalCreate);
-		metaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteTexture::InternalCreate0);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteTexture::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAtlasTexture", (void*)&ScriptSpriteTexture::InternalSetAtlasTexture);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteTexture::InternalCreate);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteTexture::InternalCreate0);
 
 	}
 
-	 MonoObject*ScriptSpriteTexture::CreateInstance()
+	MonoObject* ScriptSpriteTexture::CreateScriptObject(bool construct)
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoObject* ScriptSpriteTexture::InternalGetRef(ScriptSpriteTexture* self)
 	{
-		return self->GetRRef();
+		return self->GetOrCreateResourceReference();
 	}
 
 	void ScriptSpriteTexture::InternalSetAtlasTexture(ScriptSpriteTexture* self, MonoObject* texture)
 	{
 		TResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scriptObjectWrappertexture;
-		scriptObjectWrappertexture = ScriptRRefBase::ToNative(texture);
+		scriptObjectWrappertexture = ScriptRRefBase::GetScriptObjectWrapper(texture);
 		if(scriptObjectWrappertexture != nullptr)
-			tmptexture = B3DStaticResourceCast<Texture>(scriptObjectWrappertexture->GetHandle());
-		self->GetHandle()->SetAtlasTexture(tmptexture);
+			tmptexture = B3DStaticResourceCast<Texture>(scriptObjectWrappertexture->GetBaseNativeObjectAsHandle());
+		static_cast<SpriteTexture*>(self->GetNativeObject())->SetAtlasTexture(tmptexture);
 	}
 
-	void ScriptSpriteTexture::InternalCreate(MonoObject* managedInstance, MonoObject* texture)
+	void ScriptSpriteTexture::InternalCreate(MonoObject* scriptObject, MonoObject* texture)
 	{
 		TResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scriptObjectWrappertexture;
-		scriptObjectWrappertexture = ScriptRRefBase::ToNative(texture);
+		scriptObjectWrappertexture = ScriptRRefBase::GetScriptObjectWrapper(texture);
 		if(scriptObjectWrappertexture != nullptr)
-			tmptexture = B3DStaticResourceCast<Texture>(scriptObjectWrappertexture->GetHandle());
+			tmptexture = B3DStaticResourceCast<Texture>(scriptObjectWrappertexture->GetBaseNativeObjectAsHandle());
 		TResourceHandle<SpriteTexture> nativeObject = SpriteTexture::Create(tmptexture);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(nativeObject, managedInstance);
+		B3DNew<ScriptSpriteTexture>(nativeObject, scriptObject);
 	}
 
-	void ScriptSpriteTexture::InternalCreate0(MonoObject* managedInstance, __SpriteTextureCreateInformationInterop* createInformation)
+	void ScriptSpriteTexture::InternalCreate0(MonoObject* scriptObject, __SpriteTextureCreateInformationInterop* createInformation)
 	{
 		SpriteTextureCreateInformation tmpcreateInformation;
 		tmpcreateInformation = ScriptSpriteTextureCreateInformation::FromInterop(*createInformation);
 		TResourceHandle<SpriteTexture> nativeObject = SpriteTexture::Create(tmpcreateInformation);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(nativeObject, managedInstance);
+		B3DNew<ScriptSpriteTexture>(nativeObject, scriptObject);
 	}
 }

@@ -3,20 +3,20 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfCore/Localization/BsStringTable.h"
 
 namespace bs { class StringTable; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptStringTable : public TScriptResource<ScriptStringTable, StringTable>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptStringTable : public TScriptResourceWrapper<StringTable, ScriptStringTable>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "StringTable")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "StringTable")
 
-		ScriptStringTable(MonoObject* managedInstance, const TResourceHandle<StringTable>& value);
+		ScriptStringTable(const TResourceHandle<StringTable>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptStringTable* self);
@@ -27,6 +27,6 @@ namespace bs
 		static void InternalSetString(ScriptStringTable* self, MonoString* identifier, Language language, MonoString* value);
 		static MonoString* InternalGetString(ScriptStringTable* self, MonoString* identifier, Language language);
 		static void InternalRemoveString(ScriptStringTable* self, MonoString* identifier);
-		static void InternalCreate(MonoObject* managedInstance);
+		static void InternalCreate(MonoObject* scriptObject);
 	};
 }

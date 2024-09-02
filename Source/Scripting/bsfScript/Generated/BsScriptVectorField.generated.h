@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsVectorField.h"
 #include "Math/BsVector3.h"
 
@@ -11,18 +11,18 @@ namespace bs { class VectorField; }
 namespace bs { struct __VECTOR_FIELD_DESCInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorField : public TScriptResource<ScriptVectorField, VectorField>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorField : public TScriptResourceWrapper<VectorField, ScriptVectorField>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "VectorField")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "VectorField")
 
-		ScriptVectorField(MonoObject* managedInstance, const TResourceHandle<VectorField>& value);
+		ScriptVectorField(const TResourceHandle<VectorField>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptVectorField* self);
 
-		static void InternalCreate(MonoObject* managedInstance, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values);
+		static void InternalCreate(MonoObject* scriptObject, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values);
 	};
 }

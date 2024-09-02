@@ -82,7 +82,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 
@@ -93,9 +93,9 @@ namespace bs
 	{
 		TResourceHandle<Texture> tmpvalue;
 		ScriptRRefBase* scriptObjectWrappervalue;
-		scriptObjectWrappervalue = ScriptRRefBase::ToNative(value);
+		scriptObjectWrappervalue = ScriptRRefBase::GetScriptObjectWrapper(value);
 		if(scriptObjectWrappervalue != nullptr)
-			tmpvalue = B3DStaticResourceCast<Texture>(scriptObjectWrappervalue->GetHandle());
+			tmpvalue = B3DStaticResourceCast<Texture>(scriptObjectWrappervalue->GetBaseNativeObjectAsHandle());
 		static_cast<DepthOfFieldSettings*>(self->GetNativeObject())->BokehShape = tmpvalue;
 	}
 

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfCore/Material/BsShader.h"
 #include "../Extensions/BsShaderEx.h"
 
@@ -13,14 +13,14 @@ namespace bs { class ShaderEx; }
 namespace bs { struct __ShaderParameterInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptShader : public TScriptResource<ScriptShader, Shader>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptShader : public TScriptResourceWrapper<Shader, ScriptShader>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Shader")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Shader")
 
-		ScriptShader(MonoObject* managedInstance, const TResourceHandle<Shader>& value);
+		ScriptShader(const TResourceHandle<Shader>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptShader* self);

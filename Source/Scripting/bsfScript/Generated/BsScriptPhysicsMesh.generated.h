@@ -3,27 +3,27 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 
 namespace bs { class PhysicsMesh; }
 namespace bs { class PhysicsMeshEx; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsMesh : public TScriptResource<ScriptPhysicsMesh, PhysicsMesh>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsMesh : public TScriptResourceWrapper<PhysicsMesh, ScriptPhysicsMesh>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PhysicsMesh")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "PhysicsMesh")
 
-		ScriptPhysicsMesh(MonoObject* managedInstance, const TResourceHandle<PhysicsMesh>& value);
+		ScriptPhysicsMesh(const TResourceHandle<PhysicsMesh>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptPhysicsMesh* self);
 
 		static PhysicsMeshType InternalGetType(ScriptPhysicsMesh* self);
-		static void InternalCreate(MonoObject* managedInstance, MonoObject* meshData, PhysicsMeshType type);
+		static void InternalCreate(MonoObject* scriptObject, MonoObject* meshData, PhysicsMeshType type);
 		static MonoObject* InternalGetMeshData(ScriptPhysicsMesh* self);
 	};
 }

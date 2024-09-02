@@ -5,14 +5,13 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Importer/BsImporter.h"
-#include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptAsyncOp.h"
 #include "Reflection/BsRTTIType.h"
 #include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"
 #include "BsScriptFontImportOptions.generated.h"
 #include "../../../Foundation/bsfCore/Importer/BsShaderImportOptions.h"
 #include "BsScriptShaderImportOptions.generated.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "BsScriptImportOptions.generated.h"
 #include "../../../Foundation/bsfEngine/Resources/BsScriptCodeImportOptions.h"
 #include "BsScriptScriptCodeImportOptions.generated.h"
@@ -55,12 +54,10 @@ namespace bs
 		tmp__output = Importer::Instance().Import(tmpinputFilePath, tmpimportOptions, *UUID);
 
 		MonoObject* __output;
-		ScriptResourceBase* script__output;
-		script__output = ScriptResourceManager::Instance().GetScriptResource(tmp__output, true);
-		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
-		else
-			__output = nullptr;
+		MonoObject* temp__output = nullptr;
+		if(tmp__output)
+		temp__output = ScriptResourceWrapper::GetOrCreateScriptObject(tmp__output);
+		__output = temp__output;
 
 		return __output;
 	}

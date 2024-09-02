@@ -3,9 +3,8 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
 #include "BsManagedResource.h"
-#include "BsScriptObject.h"
+#include "BsScriptResourceWrapper.h"
 
 namespace bs
 {
@@ -14,39 +13,36 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for ManagedResource. */
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptManagedResource : public ScriptObject<ScriptManagedResource, ScriptResourceBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptManagedResource : public TScriptResourceWrapper<ManagedResource, ScriptManagedResource>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ManagedResource")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ManagedResource")
 
-		ScriptManagedResource(MonoObject* instance, const HManagedResource& resource);
+		ScriptManagedResource(const HManagedResource& nativeObject, MonoObject* scriptObject);
 
-		HResource GetGenericHandle() const override { return mResource; }
+		/**
+		 * Returns null as managed resources cannot be created statically. Their script object type is mutable depending on the script type they are referencing. Use non-static CreateAndBindScriptObject()
+		 * member instead.
+		 */
+		static MonoObject* CreateScriptObject(bool construct)
+		{
+			return nullptr;
+		}
 
-		/**	Returns a handle to the internal wrapped resource. */
-		const HManagedResource& GetHandle() const { return mResource; }
+		/** Creates a new script object of the correct resource type and binds it to the script object wrapper. Script object wrapper must not have a script object assigned. */
+		void CreateAndBindScriptObject();
 
 	private:
-		friend class ScriptResourceManager;
 		friend class ManagedResource;
 
-		ScriptObjectBackup BeginRefresh() override;
-		void EndRefresh(const ScriptObjectBackup& backupData) override;
-		MonoObject* CreateManagedInstanceInternal(bool construct) override;
-		void ClearManagedInstanceInternal() override;
-		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
-
-		/** Called by the owned managed resource when it is destroyed. */
-		void NotifyDestroyedInternal();
-
-		HManagedResource mResource;
-		String mNamespace;
-		String mType;
+		void RecreateScriptObjectAfterScriptReload() override;
+		Optional<ScriptObjectReloadPersistentData> BackupDataBeforeScriptReload() override;
+		void RestoreDataAfterScriptReload(const ScriptObjectReloadPersistentData& data) override;
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void InternalCreateInstance(MonoObject* instance);
+		static void InternalCreateInstance(MonoObject* scriptObject);
 	};
 
 	/** @} */

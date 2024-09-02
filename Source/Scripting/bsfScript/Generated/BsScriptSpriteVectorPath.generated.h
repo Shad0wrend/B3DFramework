@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "BsScriptSpriteImage.generated.h"
 #include "Utility/BsUtil.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteVectorPath.h"
@@ -12,20 +12,20 @@ namespace bs { class SpriteVectorPath; }
 namespace bs { struct __SpriteVectorPathCreateInformationInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteVectorPath : public TScriptResource<ScriptSpriteVectorPath, SpriteVectorPath, ScriptSpriteImageBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteVectorPath : public TScriptResourceWrapper<SpriteVectorPath, ScriptSpriteVectorPath>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SpriteVectorPath")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteVectorPath")
 
-		ScriptSpriteVectorPath(MonoObject* managedInstance, const TResourceHandle<SpriteVectorPath>& value);
+		ScriptSpriteVectorPath(const TResourceHandle<SpriteVectorPath>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptSpriteVectorPath* self);
 
 		static void InternalSetVectorPath(ScriptSpriteVectorPath* self, MonoObject* vectorPath);
-		static void InternalCreate(MonoObject* managedInstance, MonoObject* vectorPath, TSize2<uint32_t>* size);
-		static void InternalCreate0(MonoObject* managedInstance, __SpriteVectorPathCreateInformationInterop* createInformation);
+		static void InternalCreate(MonoObject* scriptObject, MonoObject* vectorPath, TSize2<uint32_t>* size);
+		static void InternalCreate0(MonoObject* scriptObject, __SpriteVectorPathCreateInformationInterop* createInformation);
 	};
 }

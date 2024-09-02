@@ -7,7 +7,7 @@
 #include "BsScriptResourceManager.h"
 #include "Serialization/BsScriptAssemblyManager.h"
 #include "Wrappers/BsScriptManagedResource.h"
-#include "Wrappers/BsScriptResource.h"
+#include "Wrappers/BsScriptRRefBase.h"
 
 using namespace bs;
 

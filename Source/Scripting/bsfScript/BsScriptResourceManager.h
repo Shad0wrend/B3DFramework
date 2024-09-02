@@ -3,8 +3,8 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
+#include "BsScriptResourceWrapper.h"
 #include "Utility/BsModule.h"
-#include "Wrappers/BsScriptResource.h"
 
 namespace bs
 {
@@ -40,7 +40,7 @@ namespace bs
 		template <class T>
 		ScriptRRefBase* GetScriptRRef(const TResourceHandle<T>& resource)
 		{
-			::MonoClass* rrefClass = ScriptResourceBase::GetRRefClass(T::GetRttiStatic()->GetRttiId());
+			::MonoClass* rrefClass = ScriptResourceWrapper::GetResourceReferenceScriptClass(T::GetRttiStatic()->GetRttiId());
 			return GetScriptRRef(resource, rrefClass);
 		}
 

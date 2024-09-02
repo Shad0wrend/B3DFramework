@@ -9,35 +9,39 @@
 
 namespace bs
 {
-	ScriptFont::ScriptFont(MonoObject* managedInstance, const TResourceHandle<Font>& value)
-		:TScriptResource(managedInstance, value)
+	ScriptFont::ScriptFont(const TResourceHandle<Font>& nativeObject, MonoObject* scriptObject)
+		:TScriptResourceWrapper(nativeObject, scriptObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptFont::InitRuntimeData()
+	void ScriptFont::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptFont::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_GetBitmap", (void*)&ScriptFont::InternalGetBitmap);
-		metaData.ScriptClass->AddInternalCall("Internal_GetClosestSize", (void*)&ScriptFont::InternalGetClosestSize);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptFont::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetBitmap", (void*)&ScriptFont::InternalGetBitmap);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetClosestSize", (void*)&ScriptFont::InternalGetClosestSize);
 
 	}
 
-	 MonoObject*ScriptFont::CreateInstance()
+	MonoObject* ScriptFont::CreateScriptObject(bool construct)
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoObject* ScriptFont::InternalGetRef(ScriptFont* self)
 	{
-		return self->GetRRef();
+		return self->GetOrCreateResourceReference();
 	}
 
 	MonoObject* ScriptFont::InternalGetBitmap(ScriptFont* self, float size)
 	{
 		SPtr<FontBitmapInformation> tmp__output;
-		tmp__output = self->GetHandle()->GetBitmap(size);
+		tmp__output = static_cast<Font*>(self->GetNativeObject())->GetBitmap(size);
 
 		MonoObject* __output;
 		__output = ScriptFontBitmapInformation::GetOrCreateScriptObject(tmp__output);
@@ -48,7 +52,7 @@ namespace bs
 	float ScriptFont::InternalGetClosestSize(ScriptFont* self, float size)
 	{
 		float tmp__output;
-		tmp__output = self->GetHandle()->GetClosestSize(size);
+		tmp__output = static_cast<Font*>(self->GetNativeObject())->GetClosestSize(size);
 
 		float __output;
 		__output = tmp__output;

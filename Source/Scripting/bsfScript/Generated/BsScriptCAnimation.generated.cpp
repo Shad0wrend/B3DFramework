@@ -78,7 +78,7 @@ namespace bs
 		ScriptRRefBase* scriptp0;
 		scriptp0 = ScriptResourceManager::Instance().GetScriptRRef(p0);
 		if(scriptp0 != nullptr)
-			tmpp0 = scriptp0->GetManagedInstance();
+			tmpp0 = scriptp0->GetScriptObject();
 		else
 			tmpp0 = nullptr;
 		MonoUtil::InvokeThunk(ScriptRebuildFloatPropertiesInternalThunk, GetScriptObject(), tmpp0);
@@ -95,7 +95,7 @@ namespace bs
 		ScriptRRefBase* scriptp0;
 		scriptp0 = ScriptResourceManager::Instance().GetScriptRRef(p0);
 		if(scriptp0 != nullptr)
-			tmpp0 = scriptp0->GetManagedInstance();
+			tmpp0 = scriptp0->GetScriptObject();
 		else
 			tmpp0 = nullptr;
 		MonoString* tmpp1;
@@ -113,9 +113,9 @@ namespace bs
 	{
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
-		scriptObjectWrapperclip = ScriptRRefBase::ToNative(clip);
+		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
-			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetHandle());
+			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetBaseNativeObjectAsHandle());
 		static_cast<CAnimation*>(self->GetNativeObject())->SetDefaultClip(tmpclip);
 	}
 
@@ -128,7 +128,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 
@@ -171,9 +171,9 @@ namespace bs
 	{
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
-		scriptObjectWrapperclip = ScriptRRefBase::ToNative(clip);
+		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
-			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetHandle());
+			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetBaseNativeObjectAsHandle());
 		static_cast<CAnimation*>(self->GetNativeObject())->Play(tmpclip);
 	}
 
@@ -181,9 +181,9 @@ namespace bs
 	{
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
-		scriptObjectWrapperclip = ScriptRRefBase::ToNative(clip);
+		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
-			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetHandle());
+			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetBaseNativeObjectAsHandle());
 		static_cast<CAnimation*>(self->GetNativeObject())->BlendAdditive(tmpclip, weight, fadeLength, layer);
 	}
 
@@ -205,9 +205,9 @@ namespace bs
 	{
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
-		scriptObjectWrapperclip = ScriptRRefBase::ToNative(clip);
+		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
-			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetHandle());
+			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetBaseNativeObjectAsHandle());
 		static_cast<CAnimation*>(self->GetNativeObject())->CrossFade(tmpclip, fadeLength);
 	}
 
@@ -215,9 +215,9 @@ namespace bs
 	{
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
-		scriptObjectWrapperclip = ScriptRRefBase::ToNative(clip);
+		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
-			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetHandle());
+			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetBaseNativeObjectAsHandle());
 		static_cast<CAnimation*>(self->GetNativeObject())->Sample(tmpclip, time);
 	}
 
@@ -247,9 +247,9 @@ namespace bs
 		bool tmp__output;
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
-		scriptObjectWrapperclip = ScriptRRefBase::ToNative(clip);
+		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
-			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetHandle());
+			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetBaseNativeObjectAsHandle());
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetState(tmpclip, *state);
 
 		bool __output;
@@ -262,9 +262,9 @@ namespace bs
 	{
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
-		scriptObjectWrapperclip = ScriptRRefBase::ToNative(clip);
+		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
-			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetHandle());
+			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetBaseNativeObjectAsHandle());
 		static_cast<CAnimation*>(self->GetNativeObject())->SetState(tmpclip, *state);
 	}
 
@@ -340,7 +340,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 

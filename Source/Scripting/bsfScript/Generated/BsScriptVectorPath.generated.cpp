@@ -8,27 +8,31 @@
 
 namespace bs
 {
-	ScriptVectorPath::ScriptVectorPath(MonoObject* managedInstance, const TResourceHandle<VectorPath>& value)
-		:TScriptResource(managedInstance, value)
+	ScriptVectorPath::ScriptVectorPath(const TResourceHandle<VectorPath>& nativeObject, MonoObject* scriptObject)
+		:TScriptResourceWrapper(nativeObject, scriptObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptVectorPath::InitRuntimeData()
+	void ScriptVectorPath::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorPath::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorPath::InternalGetRef);
 
 	}
 
-	 MonoObject*ScriptVectorPath::CreateInstance()
+	MonoObject* ScriptVectorPath::CreateScriptObject(bool construct)
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoObject* ScriptVectorPath::InternalGetRef(ScriptVectorPath* self)
 	{
-		return self->GetRRef();
+		return self->GetOrCreateResourceReference();
 	}
 
 }

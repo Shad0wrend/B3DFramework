@@ -13,31 +13,35 @@
 
 namespace bs
 {
-	ScriptVectorField::ScriptVectorField(MonoObject* managedInstance, const TResourceHandle<VectorField>& value)
-		:TScriptResource(managedInstance, value)
+	ScriptVectorField::ScriptVectorField(const TResourceHandle<VectorField>& nativeObject, MonoObject* scriptObject)
+		:TScriptResourceWrapper(nativeObject, scriptObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptVectorField::InitRuntimeData()
+	void ScriptVectorField::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorField::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptVectorField::InternalCreate);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorField::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptVectorField::InternalCreate);
 
 	}
 
-	 MonoObject*ScriptVectorField::CreateInstance()
+	MonoObject* ScriptVectorField::CreateScriptObject(bool construct)
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoObject* ScriptVectorField::InternalGetRef(ScriptVectorField* self)
 	{
-		return self->GetRRef();
+		return self->GetOrCreateResourceReference();
 	}
 
-	void ScriptVectorField::InternalCreate(MonoObject* managedInstance, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values)
+	void ScriptVectorField::InternalCreate(MonoObject* scriptObject, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values)
 	{
 		VECTOR_FIELD_DESC tmpdesc;
 		tmpdesc = ScriptVectorFieldOptions::FromInterop(*desc);
@@ -52,6 +56,6 @@ namespace bs
 			}
 		}
 		TResourceHandle<VectorField> nativeObject = VectorField::Create(tmpdesc, nativeArrayvalues);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(nativeObject, managedInstance);
+		B3DNew<ScriptVectorField>(nativeObject, scriptObject);
 	}
 }

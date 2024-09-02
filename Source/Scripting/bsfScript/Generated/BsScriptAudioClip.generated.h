@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfCore/Audio/BsAudioClip.h"
 #include "../../../Foundation/bsfCore/Audio/BsAudioClip.h"
 
 namespace bs { class AudioClip; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioClip : public TScriptResource<ScriptAudioClip, AudioClip>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioClip : public TScriptResourceWrapper<AudioClip, ScriptAudioClip>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AudioClip")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AudioClip")
 
-		ScriptAudioClip(MonoObject* managedInstance, const TResourceHandle<AudioClip>& value);
+		ScriptAudioClip(const TResourceHandle<AudioClip>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptAudioClip* self);

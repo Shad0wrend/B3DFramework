@@ -4,7 +4,6 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "BsScriptResourceManager.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptSpriteImage.generated.h"
 
@@ -31,52 +30,52 @@ namespace bs
 	{
 		GUIContentImages output;
 		TResourceHandle<SpriteImage> tmpNormal;
-		ScriptSpriteImageBase* scriptWrapperObjectNormal;
-		scriptWrapperObjectNormal = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.Normal);
+		ScriptSpriteImageWrapperBase* scriptWrapperObjectNormal;
+		scriptWrapperObjectNormal = (ScriptSpriteImageWrapperBase*)ScriptSpriteImage::GetScriptObjectWrapper(value.Normal);
 		if(scriptWrapperObjectNormal != nullptr)
-			tmpNormal = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectNormal->GetGenericHandle());
+			tmpNormal = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectNormal->GetBaseNativeObjectAsHandle());
 		output.Normal = tmpNormal;
 		TResourceHandle<SpriteImage> tmpHover;
-		ScriptSpriteImageBase* scriptWrapperObjectHover;
-		scriptWrapperObjectHover = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.Hover);
+		ScriptSpriteImageWrapperBase* scriptWrapperObjectHover;
+		scriptWrapperObjectHover = (ScriptSpriteImageWrapperBase*)ScriptSpriteImage::GetScriptObjectWrapper(value.Hover);
 		if(scriptWrapperObjectHover != nullptr)
-			tmpHover = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectHover->GetGenericHandle());
+			tmpHover = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectHover->GetBaseNativeObjectAsHandle());
 		output.Hover = tmpHover;
 		TResourceHandle<SpriteImage> tmpActive;
-		ScriptSpriteImageBase* scriptWrapperObjectActive;
-		scriptWrapperObjectActive = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.Active);
+		ScriptSpriteImageWrapperBase* scriptWrapperObjectActive;
+		scriptWrapperObjectActive = (ScriptSpriteImageWrapperBase*)ScriptSpriteImage::GetScriptObjectWrapper(value.Active);
 		if(scriptWrapperObjectActive != nullptr)
-			tmpActive = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectActive->GetGenericHandle());
+			tmpActive = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectActive->GetBaseNativeObjectAsHandle());
 		output.Active = tmpActive;
 		TResourceHandle<SpriteImage> tmpFocused;
-		ScriptSpriteImageBase* scriptWrapperObjectFocused;
-		scriptWrapperObjectFocused = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.Focused);
+		ScriptSpriteImageWrapperBase* scriptWrapperObjectFocused;
+		scriptWrapperObjectFocused = (ScriptSpriteImageWrapperBase*)ScriptSpriteImage::GetScriptObjectWrapper(value.Focused);
 		if(scriptWrapperObjectFocused != nullptr)
-			tmpFocused = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectFocused->GetGenericHandle());
+			tmpFocused = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectFocused->GetBaseNativeObjectAsHandle());
 		output.Focused = tmpFocused;
 		TResourceHandle<SpriteImage> tmpNormalOn;
-		ScriptSpriteImageBase* scriptWrapperObjectNormalOn;
-		scriptWrapperObjectNormalOn = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.NormalOn);
+		ScriptSpriteImageWrapperBase* scriptWrapperObjectNormalOn;
+		scriptWrapperObjectNormalOn = (ScriptSpriteImageWrapperBase*)ScriptSpriteImage::GetScriptObjectWrapper(value.NormalOn);
 		if(scriptWrapperObjectNormalOn != nullptr)
-			tmpNormalOn = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectNormalOn->GetGenericHandle());
+			tmpNormalOn = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectNormalOn->GetBaseNativeObjectAsHandle());
 		output.NormalOn = tmpNormalOn;
 		TResourceHandle<SpriteImage> tmpHoverOn;
-		ScriptSpriteImageBase* scriptWrapperObjectHoverOn;
-		scriptWrapperObjectHoverOn = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.HoverOn);
+		ScriptSpriteImageWrapperBase* scriptWrapperObjectHoverOn;
+		scriptWrapperObjectHoverOn = (ScriptSpriteImageWrapperBase*)ScriptSpriteImage::GetScriptObjectWrapper(value.HoverOn);
 		if(scriptWrapperObjectHoverOn != nullptr)
-			tmpHoverOn = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectHoverOn->GetGenericHandle());
+			tmpHoverOn = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectHoverOn->GetBaseNativeObjectAsHandle());
 		output.HoverOn = tmpHoverOn;
 		TResourceHandle<SpriteImage> tmpActiveOn;
-		ScriptSpriteImageBase* scriptWrapperObjectActiveOn;
-		scriptWrapperObjectActiveOn = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.ActiveOn);
+		ScriptSpriteImageWrapperBase* scriptWrapperObjectActiveOn;
+		scriptWrapperObjectActiveOn = (ScriptSpriteImageWrapperBase*)ScriptSpriteImage::GetScriptObjectWrapper(value.ActiveOn);
 		if(scriptWrapperObjectActiveOn != nullptr)
-			tmpActiveOn = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectActiveOn->GetGenericHandle());
+			tmpActiveOn = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectActiveOn->GetBaseNativeObjectAsHandle());
 		output.ActiveOn = tmpActiveOn;
 		TResourceHandle<SpriteImage> tmpFocusedOn;
-		ScriptSpriteImageBase* scriptWrapperObjectFocusedOn;
-		scriptWrapperObjectFocusedOn = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.FocusedOn);
+		ScriptSpriteImageWrapperBase* scriptWrapperObjectFocusedOn;
+		scriptWrapperObjectFocusedOn = (ScriptSpriteImageWrapperBase*)ScriptSpriteImage::GetScriptObjectWrapper(value.FocusedOn);
 		if(scriptWrapperObjectFocusedOn != nullptr)
-			tmpFocusedOn = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectFocusedOn->GetGenericHandle());
+			tmpFocusedOn = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectFocusedOn->GetBaseNativeObjectAsHandle());
 		output.FocusedOn = tmpFocusedOn;
 
 		return output;
@@ -86,68 +85,52 @@ namespace bs
 	{
 		__GUIContentImagesInterop output;
 		MonoObject* tmpNormal;
-		ScriptResourceBase* scriptWrapperObjectNormal;
-		scriptWrapperObjectNormal = ScriptResourceManager::Instance().GetScriptResource(value.Normal, true);
-		if(scriptWrapperObjectNormal != nullptr)
-			tmpNormal = scriptWrapperObjectNormal->GetManagedInstance();
-		else
-			tmpNormal = nullptr;
+		MonoObject* temptmpNormal = nullptr;
+		if(value.Normal)
+		temptmpNormal = ScriptResourceWrapper::GetOrCreateScriptObject(value.Normal);
+		tmpNormal = temptmpNormal;
 		output.Normal = tmpNormal;
 		MonoObject* tmpHover;
-		ScriptResourceBase* scriptWrapperObjectHover;
-		scriptWrapperObjectHover = ScriptResourceManager::Instance().GetScriptResource(value.Hover, true);
-		if(scriptWrapperObjectHover != nullptr)
-			tmpHover = scriptWrapperObjectHover->GetManagedInstance();
-		else
-			tmpHover = nullptr;
+		MonoObject* temptmpHover = nullptr;
+		if(value.Hover)
+		temptmpHover = ScriptResourceWrapper::GetOrCreateScriptObject(value.Hover);
+		tmpHover = temptmpHover;
 		output.Hover = tmpHover;
 		MonoObject* tmpActive;
-		ScriptResourceBase* scriptWrapperObjectActive;
-		scriptWrapperObjectActive = ScriptResourceManager::Instance().GetScriptResource(value.Active, true);
-		if(scriptWrapperObjectActive != nullptr)
-			tmpActive = scriptWrapperObjectActive->GetManagedInstance();
-		else
-			tmpActive = nullptr;
+		MonoObject* temptmpActive = nullptr;
+		if(value.Active)
+		temptmpActive = ScriptResourceWrapper::GetOrCreateScriptObject(value.Active);
+		tmpActive = temptmpActive;
 		output.Active = tmpActive;
 		MonoObject* tmpFocused;
-		ScriptResourceBase* scriptWrapperObjectFocused;
-		scriptWrapperObjectFocused = ScriptResourceManager::Instance().GetScriptResource(value.Focused, true);
-		if(scriptWrapperObjectFocused != nullptr)
-			tmpFocused = scriptWrapperObjectFocused->GetManagedInstance();
-		else
-			tmpFocused = nullptr;
+		MonoObject* temptmpFocused = nullptr;
+		if(value.Focused)
+		temptmpFocused = ScriptResourceWrapper::GetOrCreateScriptObject(value.Focused);
+		tmpFocused = temptmpFocused;
 		output.Focused = tmpFocused;
 		MonoObject* tmpNormalOn;
-		ScriptResourceBase* scriptWrapperObjectNormalOn;
-		scriptWrapperObjectNormalOn = ScriptResourceManager::Instance().GetScriptResource(value.NormalOn, true);
-		if(scriptWrapperObjectNormalOn != nullptr)
-			tmpNormalOn = scriptWrapperObjectNormalOn->GetManagedInstance();
-		else
-			tmpNormalOn = nullptr;
+		MonoObject* temptmpNormalOn = nullptr;
+		if(value.NormalOn)
+		temptmpNormalOn = ScriptResourceWrapper::GetOrCreateScriptObject(value.NormalOn);
+		tmpNormalOn = temptmpNormalOn;
 		output.NormalOn = tmpNormalOn;
 		MonoObject* tmpHoverOn;
-		ScriptResourceBase* scriptWrapperObjectHoverOn;
-		scriptWrapperObjectHoverOn = ScriptResourceManager::Instance().GetScriptResource(value.HoverOn, true);
-		if(scriptWrapperObjectHoverOn != nullptr)
-			tmpHoverOn = scriptWrapperObjectHoverOn->GetManagedInstance();
-		else
-			tmpHoverOn = nullptr;
+		MonoObject* temptmpHoverOn = nullptr;
+		if(value.HoverOn)
+		temptmpHoverOn = ScriptResourceWrapper::GetOrCreateScriptObject(value.HoverOn);
+		tmpHoverOn = temptmpHoverOn;
 		output.HoverOn = tmpHoverOn;
 		MonoObject* tmpActiveOn;
-		ScriptResourceBase* scriptWrapperObjectActiveOn;
-		scriptWrapperObjectActiveOn = ScriptResourceManager::Instance().GetScriptResource(value.ActiveOn, true);
-		if(scriptWrapperObjectActiveOn != nullptr)
-			tmpActiveOn = scriptWrapperObjectActiveOn->GetManagedInstance();
-		else
-			tmpActiveOn = nullptr;
+		MonoObject* temptmpActiveOn = nullptr;
+		if(value.ActiveOn)
+		temptmpActiveOn = ScriptResourceWrapper::GetOrCreateScriptObject(value.ActiveOn);
+		tmpActiveOn = temptmpActiveOn;
 		output.ActiveOn = tmpActiveOn;
 		MonoObject* tmpFocusedOn;
-		ScriptResourceBase* scriptWrapperObjectFocusedOn;
-		scriptWrapperObjectFocusedOn = ScriptResourceManager::Instance().GetScriptResource(value.FocusedOn, true);
-		if(scriptWrapperObjectFocusedOn != nullptr)
-			tmpFocusedOn = scriptWrapperObjectFocusedOn->GetManagedInstance();
-		else
-			tmpFocusedOn = nullptr;
+		MonoObject* temptmpFocusedOn = nullptr;
+		if(value.FocusedOn)
+		temptmpFocusedOn = ScriptResourceWrapper::GetOrCreateScriptObject(value.FocusedOn);
+		tmpFocusedOn = temptmpFocusedOn;
 		output.FocusedOn = tmpFocusedOn;
 
 		return output;

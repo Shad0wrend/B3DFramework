@@ -148,9 +148,9 @@ namespace bs
 		bool tmp__output;
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
-		scriptObjectWrappermesh = ScriptRRefBase::ToNative(mesh);
+		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
 		if(scriptObjectWrappermesh != nullptr)
-			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetHandle());
+			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetBaseNativeObjectAsHandle());
 		PhysicsQueryHit tmphit;
 		tmp__output = self->GetInternal()->ConvexCast(tmpmesh, *position, *rotation, *unitDir, tmphit, layer, max);
 
@@ -253,9 +253,9 @@ namespace bs
 		Vector<PhysicsQueryHit> nativeArray__output;
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
-		scriptObjectWrappermesh = ScriptRRefBase::ToNative(mesh);
+		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
 		if(scriptObjectWrappermesh != nullptr)
-			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetHandle());
+			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetBaseNativeObjectAsHandle());
 		nativeArray__output = self->GetInternal()->ConvexCastAll(tmpmesh, *position, *rotation, *unitDir, layer, max);
 
 		MonoArray* __output;
@@ -330,9 +330,9 @@ namespace bs
 		bool tmp__output;
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
-		scriptObjectWrappermesh = ScriptRRefBase::ToNative(mesh);
+		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
 		if(scriptObjectWrappermesh != nullptr)
-			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetHandle());
+			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetBaseNativeObjectAsHandle());
 		tmp__output = self->GetInternal()->ConvexCastAny(tmpmesh, *position, *rotation, *unitDir, layer, max);
 
 		bool __output;
@@ -406,9 +406,9 @@ namespace bs
 		Vector<GameObjectHandle<CCollider>> nativeArray__output;
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
-		scriptObjectWrappermesh = ScriptRRefBase::ToNative(mesh);
+		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
 		if(scriptObjectWrappermesh != nullptr)
-			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetHandle());
+			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetBaseNativeObjectAsHandle());
 		nativeArray__output = self->GetInternal()->ConvexOverlap(tmpmesh, *position, *rotation, layer);
 
 		MonoArray* __output;
@@ -464,9 +464,9 @@ namespace bs
 		bool tmp__output;
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
-		scriptObjectWrappermesh = ScriptRRefBase::ToNative(mesh);
+		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
 		if(scriptObjectWrappermesh != nullptr)
-			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetHandle());
+			tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptObjectWrappermesh->GetBaseNativeObjectAsHandle());
 		tmp__output = self->GetInternal()->ConvexOverlapAny(tmpmesh, *position, *rotation, layer);
 
 		bool __output;

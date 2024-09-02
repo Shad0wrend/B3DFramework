@@ -4,7 +4,6 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "BsScriptResourceManager.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptSpriteImage.generated.h"
 
@@ -31,10 +30,10 @@ namespace bs
 	{
 		GUITextureContents output;
 		TResourceHandle<SpriteImage> tmpImage;
-		ScriptSpriteImageBase* scriptWrapperObjectImage;
-		scriptWrapperObjectImage = (ScriptSpriteImageBase*)ScriptSpriteImage::ToNative(value.Image);
+		ScriptSpriteImageWrapperBase* scriptWrapperObjectImage;
+		scriptWrapperObjectImage = (ScriptSpriteImageWrapperBase*)ScriptSpriteImage::GetScriptObjectWrapper(value.Image);
 		if(scriptWrapperObjectImage != nullptr)
-			tmpImage = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectImage->GetGenericHandle());
+			tmpImage = B3DStaticResourceCast<SpriteImage>(scriptWrapperObjectImage->GetBaseNativeObjectAsHandle());
 		output.Image = tmpImage;
 		output.ScaleMode = value.ScaleMode;
 		output.IsTransparent = value.IsTransparent;
@@ -46,12 +45,10 @@ namespace bs
 	{
 		__GUITextureContentsInterop output;
 		MonoObject* tmpImage;
-		ScriptResourceBase* scriptWrapperObjectImage;
-		scriptWrapperObjectImage = ScriptResourceManager::Instance().GetScriptResource(value.Image, true);
-		if(scriptWrapperObjectImage != nullptr)
-			tmpImage = scriptWrapperObjectImage->GetManagedInstance();
-		else
-			tmpImage = nullptr;
+		MonoObject* temptmpImage = nullptr;
+		if(value.Image)
+		temptmpImage = ScriptResourceWrapper::GetOrCreateScriptObject(value.Image);
+		tmpImage = temptmpImage;
 		output.Image = tmpImage;
 		output.ScaleMode = value.ScaleMode;
 		output.IsTransparent = value.IsTransparent;

@@ -35,9 +35,9 @@ namespace bs
 		SpriteTextureCreateInformation output;
 		TResourceHandle<Texture> tmpAtlasTexture;
 		ScriptRRefBase* scriptWrapperObjectAtlasTexture;
-		scriptWrapperObjectAtlasTexture = ScriptRRefBase::ToNative(value.AtlasTexture);
+		scriptWrapperObjectAtlasTexture = ScriptRRefBase::GetScriptObjectWrapper(value.AtlasTexture);
 		if(scriptWrapperObjectAtlasTexture != nullptr)
-			tmpAtlasTexture = B3DStaticResourceCast<Texture>(scriptWrapperObjectAtlasTexture->GetHandle());
+			tmpAtlasTexture = B3DStaticResourceCast<Texture>(scriptWrapperObjectAtlasTexture->GetBaseNativeObjectAsHandle());
 		output.AtlasTexture = tmpAtlasTexture;
 		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
@@ -53,7 +53,7 @@ namespace bs
 		ScriptRRefBase* scriptWrapperObjectAtlasTexture;
 		scriptWrapperObjectAtlasTexture = ScriptResourceManager::Instance().GetScriptRRef(value.AtlasTexture);
 		if(scriptWrapperObjectAtlasTexture != nullptr)
-			tmpAtlasTexture = scriptWrapperObjectAtlasTexture->GetManagedInstance();
+			tmpAtlasTexture = scriptWrapperObjectAtlasTexture->GetScriptObject();
 		else
 			tmpAtlasTexture = nullptr;
 		output.AtlasTexture = tmpAtlasTexture;

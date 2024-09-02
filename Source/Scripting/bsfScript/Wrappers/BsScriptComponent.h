@@ -21,7 +21,7 @@ namespace bs
 
 		ScriptComponent(const HComponent& nativeObject, MonoObject* scriptObject);
 
-		/** Dummy method to create the script object. Not used as components are always just base classes, not created directly. */
+		/** Dummy method to create the script object. Not used as Component is only used as base class and not created directly. */
 		static MonoObject* CreateScriptObject(bool construct)
 		{
 			return nullptr;

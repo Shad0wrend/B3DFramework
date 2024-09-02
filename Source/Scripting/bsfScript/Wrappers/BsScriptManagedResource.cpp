@@ -4,32 +4,78 @@
 #include "BsScriptResourceManager.h"
 #include "Serialization/BsScriptAssemblyManager.h"
 #include "BsScriptMeta.h"
-#include "BsMonoField.h"
 #include "BsMonoClass.h"
-#include "BsMonoManager.h"
 #include "BsManagedResource.h"
 #include "Resources/BsResources.h"
-#include "Error/BsException.h"
 #include "BsMonoUtil.h"
 
 using namespace bs;
-ScriptManagedResource::ScriptManagedResource(MonoObject* instance, const HManagedResource& resource)
-	: ScriptObject(instance), mResource(resource)
+ScriptManagedResource::ScriptManagedResource(const HManagedResource& nativeObject, MonoObject* scriptObject)
+	: TScriptResourceWrapper(nativeObject, scriptObject)
 {
-	B3D_ASSERT(instance != nullptr);
-
-	MonoUtil::GetClassName(instance, mNamespace, mType);
-	mGCHandle = MonoUtil::NewGcHandle(instance, false);
+	RegisterEvents();
 }
 
-void ScriptManagedResource::InitRuntimeData()
+void ScriptManagedResource::SetupScriptBindings()
 {
-	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptManagedResource::InternalCreateInstance);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptManagedResource::InternalCreateInstance);
 }
 
-void ScriptManagedResource::InternalCreateInstance(MonoObject* instance)
+void ScriptManagedResource::InternalCreateInstance(MonoObject* scriptObject)
 {
-	HManagedResource resource = ManagedResource::Create(instance);
+	HManagedResource resource = ManagedResource::Create(scriptObject);
+}
+
+void ScriptManagedResource::CreateAndBindScriptObject()
+{
+	B3D_ENSURE(GetScriptObject() == nullptr);
+
+	if(!IsNativeObjectValid())
+		return;
+
+	HManagedResource resource = GetNativeObjectAsHandle();
+	SPtr<ManagedSerializableObjectInfo> objectInformation;
+	MonoObject* const scriptObject = resource->CreateScriptObject(objectInformation);
+
+	if(scriptObject != nullptr)
+	{
+		CreateStrongScriptObjectHandle(scriptObject);
+		BindSelfToScriptObject(scriptObject);
+	}
+
+	resource->BindToScriptObject(objectInformation);
+}
+
+void ScriptManagedResource::RecreateScriptObjectAfterScriptReload()
+{
+	CreateAndBindScriptObject();
+}
+
+Optional<ScriptObjectReloadPersistentData> ScriptManagedResource::BackupDataBeforeScriptReload()
+{
+	if(!IsNativeObjectValid())
+		return { };
+
+	HManagedResource managedResource = GetNativeObjectAsHandle();
+
+	ScriptObjectReloadPersistentData backupData;
+	backupData.Data = managedResource->Backup();
+
+	return backupData;
+}
+
+void ScriptManagedResource::RestoreDataAfterScriptReload(const ScriptObjectReloadPersistentData& data)
+{
+	HManagedResource managedResource = GetNativeObjectAsHandle();
+
+	ResourceBackupData resourceBackup = AnyCast<ResourceBackupData>(data.Data);
+	managedResource->Restore(resourceBackup);
+
+	MonoObject* instance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
+
+	// If we could not find resource type after refresh, treat it as if it was destroyed
+	if(instance == nullptr)
+		OnManagedInstanceDeletedInternal(false);
 }
 
 MonoObject* ScriptManagedResource::CreateManagedInstanceInternal(bool construct)
@@ -44,31 +90,6 @@ MonoObject* ScriptManagedResource::CreateManagedInstanceInternal(bool construct)
 	mGCHandle = MonoUtil::NewGcHandle(instance, false);
 
 	return instance;
-}
-
-void ScriptManagedResource::ClearManagedInstanceInternal()
-{
-	FreeManagedInstance();
-}
-
-ScriptObjectBackup ScriptManagedResource::BeginRefresh()
-{
-	ScriptObjectBackup backupData;
-	backupData.Data = mResource->Backup();
-
-	return backupData;
-}
-
-void ScriptManagedResource::EndRefresh(const ScriptObjectBackup& backupData)
-{
-	MonoObject* instance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
-
-	ResourceBackupData resourceBackup = AnyCast<ResourceBackupData>(backupData.Data);
-	mResource->Restore(resourceBackup);
-
-	// If we could not find resource type after refresh, treat it as if it was destroyed
-	if(instance == nullptr)
-		OnManagedInstanceDeletedInternal(false);
 }
 
 void ScriptManagedResource::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
@@ -86,9 +107,4 @@ void ScriptManagedResource::OnManagedInstanceDeletedInternal(bool assemblyRefres
 
 		ScriptResourceManager::Instance().DestroyScriptResource(this);
 	}
-}
-
-void ScriptManagedResource::NotifyDestroyedInternal()
-{
-	FreeManagedInstance();
 }

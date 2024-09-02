@@ -51,7 +51,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 
@@ -67,9 +67,9 @@ namespace bs
 	{
 		TResourceHandle<StringTable> tmptable;
 		ScriptRRefBase* scriptObjectWrappertable;
-		scriptObjectWrappertable = ScriptRRefBase::ToNative(table);
+		scriptObjectWrappertable = ScriptRRefBase::GetScriptObjectWrapper(table);
 		if(scriptObjectWrappertable != nullptr)
-			tmptable = B3DStaticResourceCast<StringTable>(scriptObjectWrappertable->GetHandle());
+			tmptable = B3DStaticResourceCast<StringTable>(scriptObjectWrappertable->GetBaseNativeObjectAsHandle());
 		StringTableManager::Instance().SetTable(id, tmptable);
 	}
 }

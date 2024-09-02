@@ -58,9 +58,9 @@ namespace bs
 	{
 		TResourceHandle<AudioClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
-		scriptObjectWrapperclip = ScriptRRefBase::ToNative(clip);
+		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
-			tmpclip = B3DStaticResourceCast<AudioClip>(scriptObjectWrapperclip->GetHandle());
+			tmpclip = B3DStaticResourceCast<AudioClip>(scriptObjectWrapperclip->GetBaseNativeObjectAsHandle());
 		static_cast<CAudioSource*>(self->GetNativeObject())->SetClip(tmpclip);
 	}
 
@@ -73,7 +73,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 

@@ -35,9 +35,9 @@ namespace bs
 		output.Sequential = value.Sequential;
 		TResourceHandle<Mesh> tmpMesh;
 		ScriptRRefBase* scriptWrapperObjectMesh;
-		scriptWrapperObjectMesh = ScriptRRefBase::ToNative(value.Mesh);
+		scriptWrapperObjectMesh = ScriptRRefBase::GetScriptObjectWrapper(value.Mesh);
 		if(scriptWrapperObjectMesh != nullptr)
-			tmpMesh = B3DStaticResourceCast<Mesh>(scriptWrapperObjectMesh->GetHandle());
+			tmpMesh = B3DStaticResourceCast<Mesh>(scriptWrapperObjectMesh->GetBaseNativeObjectAsHandle());
 		output.Mesh = tmpMesh;
 
 		return output;
@@ -52,7 +52,7 @@ namespace bs
 		ScriptRRefBase* scriptWrapperObjectMesh;
 		scriptWrapperObjectMesh = ScriptResourceManager::Instance().GetScriptRRef(value.Mesh);
 		if(scriptWrapperObjectMesh != nullptr)
-			tmpMesh = scriptWrapperObjectMesh->GetManagedInstance();
+			tmpMesh = scriptWrapperObjectMesh->GetScriptObject();
 		else
 			tmpMesh = nullptr;
 		output.Mesh = tmpMesh;

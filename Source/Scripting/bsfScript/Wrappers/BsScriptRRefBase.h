@@ -5,7 +5,6 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObject.h"
 #include "Image/BsTexture.h"
-#include "Wrappers/BsScriptResource.h"
 #include "BsMonoClass.h"
 #include "Reflection/BsRTTIType.h"
 

@@ -16,44 +16,48 @@
 
 namespace bs
 {
-	ScriptMesh::ScriptMesh(MonoObject* managedInstance, const TResourceHandle<Mesh>& value)
-		:TScriptResource(managedInstance, value)
+	ScriptMesh::ScriptMesh(const TResourceHandle<Mesh>& nativeObject, MonoObject* scriptObject)
+		:TScriptResourceWrapper(nativeObject, scriptObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptMesh::InitRuntimeData()
+	void ScriptMesh::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptMesh::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_GetSkeleton", (void*)&ScriptMesh::InternalGetSkeleton);
-		metaData.ScriptClass->AddInternalCall("Internal_GetMorphShapes", (void*)&ScriptMesh::InternalGetMorphShapes);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptMesh::InternalCreate);
-		metaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptMesh::InternalCreate0);
-		metaData.ScriptClass->AddInternalCall("Internal_Create1", (void*)&ScriptMesh::InternalCreate1);
-		metaData.ScriptClass->AddInternalCall("Internal_Create2", (void*)&ScriptMesh::InternalCreate2);
-		metaData.ScriptClass->AddInternalCall("Internal_GetSubMeshes", (void*)&ScriptMesh::InternalGetSubMeshes);
-		metaData.ScriptClass->AddInternalCall("Internal_GetSubMeshCount", (void*)&ScriptMesh::InternalGetSubMeshCount);
-		metaData.ScriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptMesh::InternalGetBounds);
-		metaData.ScriptClass->AddInternalCall("Internal_GetMeshData", (void*)&ScriptMesh::InternalGetMeshData);
-		metaData.ScriptClass->AddInternalCall("Internal_SetMeshData", (void*)&ScriptMesh::InternalSetMeshData);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptMesh::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetSkeleton", (void*)&ScriptMesh::InternalGetSkeleton);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMorphShapes", (void*)&ScriptMesh::InternalGetMorphShapes);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptMesh::InternalCreate);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptMesh::InternalCreate0);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create1", (void*)&ScriptMesh::InternalCreate1);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create2", (void*)&ScriptMesh::InternalCreate2);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetSubMeshes", (void*)&ScriptMesh::InternalGetSubMeshes);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetSubMeshCount", (void*)&ScriptMesh::InternalGetSubMeshCount);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptMesh::InternalGetBounds);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMeshData", (void*)&ScriptMesh::InternalGetMeshData);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetMeshData", (void*)&ScriptMesh::InternalSetMeshData);
 
 	}
 
-	 MonoObject*ScriptMesh::CreateInstance()
+	MonoObject* ScriptMesh::CreateScriptObject(bool construct)
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
 	MonoObject* ScriptMesh::InternalGetRef(ScriptMesh* self)
 	{
-		return self->GetRRef();
+		return self->GetOrCreateResourceReference();
 	}
 
 	MonoObject* ScriptMesh::InternalGetSkeleton(ScriptMesh* self)
 	{
 		SPtr<Skeleton> tmp__output;
-		tmp__output = self->GetHandle()->GetSkeleton();
+		tmp__output = static_cast<Mesh*>(self->GetNativeObject())->GetSkeleton();
 
 		MonoObject* __output;
 		__output = ScriptSkeleton::GetOrCreateScriptObject(tmp__output);
@@ -64,7 +68,7 @@ namespace bs
 	MonoObject* ScriptMesh::InternalGetMorphShapes(ScriptMesh* self)
 	{
 		SPtr<MorphShapes> tmp__output;
-		tmp__output = self->GetHandle()->GetMorphShapes();
+		tmp__output = static_cast<Mesh*>(self->GetNativeObject())->GetMorphShapes();
 
 		MonoObject* __output;
 		__output = ScriptMorphShapes::GetOrCreateScriptObject(tmp__output);
@@ -72,13 +76,13 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptMesh::InternalCreate(MonoObject* managedInstance, int32_t numVertices, int32_t numIndices, DrawOperationType topology, MeshUsage usage, VertexLayout vertex, IndexType index)
+	void ScriptMesh::InternalCreate(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, DrawOperationType topology, MeshUsage usage, VertexLayout vertex, IndexType index)
 	{
 		TResourceHandle<Mesh> nativeObject = MeshEx::Create(numVertices, numIndices, topology, usage, vertex, index);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(nativeObject, managedInstance);
+		B3DNew<ScriptMesh>(nativeObject, scriptObject);
 	}
 
-	void ScriptMesh::InternalCreate0(MonoObject* managedInstance, int32_t numVertices, int32_t numIndices, MonoArray* subMeshes, MeshUsage usage, VertexLayout vertex, IndexType index)
+	void ScriptMesh::InternalCreate0(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, MonoArray* subMeshes, MeshUsage usage, VertexLayout vertex, IndexType index)
 	{
 		Vector<SubMesh> nativeArraysubMeshes;
 		if(subMeshes != nullptr)
@@ -92,10 +96,10 @@ namespace bs
 
 		}
 		TResourceHandle<Mesh> nativeObject = MeshEx::Create(numVertices, numIndices, nativeArraysubMeshes, usage, vertex, index);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(nativeObject, managedInstance);
+		B3DNew<ScriptMesh>(nativeObject, scriptObject);
 	}
 
-	void ScriptMesh::InternalCreate1(MonoObject* managedInstance, MonoObject* data, DrawOperationType topology, MeshUsage usage)
+	void ScriptMesh::InternalCreate1(MonoObject* scriptObject, MonoObject* data, DrawOperationType topology, MeshUsage usage)
 	{
 		SPtr<RendererMeshData> tmpdata;
 		ScriptMeshData* scriptObjectWrapperdata;
@@ -103,10 +107,10 @@ namespace bs
 		if(scriptObjectWrapperdata != nullptr)
 			tmpdata = scriptObjectWrapperdata->GetInternal();
 		TResourceHandle<Mesh> nativeObject = MeshEx::Create(tmpdata, topology, usage);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(nativeObject, managedInstance);
+		B3DNew<ScriptMesh>(nativeObject, scriptObject);
 	}
 
-	void ScriptMesh::InternalCreate2(MonoObject* managedInstance, MonoObject* data, MonoArray* subMeshes, MeshUsage usage)
+	void ScriptMesh::InternalCreate2(MonoObject* scriptObject, MonoObject* data, MonoArray* subMeshes, MeshUsage usage)
 	{
 		SPtr<RendererMeshData> tmpdata;
 		ScriptMeshData* scriptObjectWrapperdata;
@@ -125,13 +129,13 @@ namespace bs
 
 		}
 		TResourceHandle<Mesh> nativeObject = MeshEx::Create(tmpdata, nativeArraysubMeshes, usage);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(nativeObject, managedInstance);
+		B3DNew<ScriptMesh>(nativeObject, scriptObject);
 	}
 
 	MonoArray* ScriptMesh::InternalGetSubMeshes(ScriptMesh* self)
 	{
 		Vector<SubMesh> nativeArray__output;
-		nativeArray__output = MeshEx::GetSubMeshes(self->GetHandle());
+		nativeArray__output = MeshEx::GetSubMeshes(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()));
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -148,7 +152,7 @@ namespace bs
 	uint32_t ScriptMesh::InternalGetSubMeshCount(ScriptMesh* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = MeshEx::GetSubMeshCount(self->GetHandle());
+		tmp__output = MeshEx::GetSubMeshCount(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -158,13 +162,13 @@ namespace bs
 
 	void ScriptMesh::InternalGetBounds(ScriptMesh* self, AABox* box, Sphere* sphere)
 	{
-		MeshEx::GetBounds(self->GetHandle(), box, sphere);
+		MeshEx::GetBounds(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()), box, sphere);
 	}
 
 	MonoObject* ScriptMesh::InternalGetMeshData(ScriptMesh* self)
 	{
 		SPtr<RendererMeshData> tmp__output;
-		tmp__output = MeshEx::GetMeshData(self->GetHandle());
+		tmp__output = MeshEx::GetMeshData(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()));
 
 		MonoObject* __output;
 		__output = ScriptMeshData::Create(tmp__output);
@@ -179,6 +183,6 @@ namespace bs
 		scriptObjectWrappervalue = ScriptMeshData::ToNative(value);
 		if(scriptObjectWrappervalue != nullptr)
 			tmpvalue = scriptObjectWrappervalue->GetInternal();
-		MeshEx::SetMeshData(self->GetHandle(), tmpvalue);
+		MeshEx::SetMeshData(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()), tmpvalue);
 	}
 }

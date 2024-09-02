@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationClip.h"
 
 namespace bs { class AnimationClip; }
 namespace bs { struct __AnimationEventInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationClip : public TScriptResource<ScriptAnimationClip, AnimationClip>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationClip : public TScriptResourceWrapper<AnimationClip, ScriptAnimationClip>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AnimationClip")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AnimationClip")
 
-		ScriptAnimationClip(MonoObject* managedInstance, const TResourceHandle<AnimationClip>& value);
+		ScriptAnimationClip(const TResourceHandle<AnimationClip>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptAnimationClip* self);
@@ -32,7 +32,7 @@ namespace bs
 		static float InternalGetLength(ScriptAnimationClip* self);
 		static uint32_t InternalGetSampleRate(ScriptAnimationClip* self);
 		static void InternalSetSampleRate(ScriptAnimationClip* self, uint32_t sampleRate);
-		static void InternalCreate(MonoObject* managedInstance, bool isAdditive);
-		static void InternalCreate0(MonoObject* managedInstance, MonoObject* curves, bool isAdditive, uint32_t sampleRate, MonoObject* rootMotion);
+		static void InternalCreate(MonoObject* scriptObject, bool isAdditive);
+		static void InternalCreate0(MonoObject* scriptObject, MonoObject* curves, bool isAdditive, uint32_t sampleRate, MonoObject* rootMotion);
 	};
 }

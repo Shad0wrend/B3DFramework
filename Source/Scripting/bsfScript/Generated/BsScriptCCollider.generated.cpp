@@ -124,9 +124,9 @@ namespace bs
 	{
 		TResourceHandle<PhysicsMaterial> tmpmaterial;
 		ScriptRRefBase* scriptObjectWrappermaterial;
-		scriptObjectWrappermaterial = ScriptRRefBase::ToNative(material);
+		scriptObjectWrappermaterial = ScriptRRefBase::GetScriptObjectWrapper(material);
 		if(scriptObjectWrappermaterial != nullptr)
-			tmpmaterial = B3DStaticResourceCast<PhysicsMaterial>(scriptObjectWrappermaterial->GetHandle());
+			tmpmaterial = B3DStaticResourceCast<PhysicsMaterial>(scriptObjectWrappermaterial->GetBaseNativeObjectAsHandle());
 		static_cast<CCollider*>(self->GetNativeObject())->SetMaterial(tmpmaterial);
 	}
 
@@ -139,7 +139,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 

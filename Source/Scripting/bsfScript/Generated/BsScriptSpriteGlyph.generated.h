@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "BsScriptSpriteImage.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteGlyph.h"
 
@@ -11,14 +11,14 @@ namespace bs { class SpriteGlyph; }
 namespace bs { struct __SpriteGlyphCreateInformationInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteGlyph : public TScriptResource<ScriptSpriteGlyph, SpriteGlyph, ScriptSpriteImageBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteGlyph : public TScriptResourceWrapper<SpriteGlyph, ScriptSpriteGlyph>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SpriteGlyph")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteGlyph")
 
-		ScriptSpriteGlyph(MonoObject* managedInstance, const TResourceHandle<SpriteGlyph>& value);
+		ScriptSpriteGlyph(const TResourceHandle<SpriteGlyph>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptSpriteGlyph* self);
@@ -26,7 +26,7 @@ namespace bs
 		static void InternalSetFont(ScriptSpriteGlyph* self, MonoObject* font);
 		static void InternalSetGlyph(ScriptSpriteGlyph* self, uint32_t glyph);
 		static void InternalSetGlyphSize(ScriptSpriteGlyph* self, float size);
-		static void InternalCreate(MonoObject* managedInstance, MonoObject* font, uint32_t glyph, float size);
-		static void InternalCreate0(MonoObject* managedInstance, __SpriteGlyphCreateInformationInterop* createInformation);
+		static void InternalCreate(MonoObject* scriptObject, MonoObject* font, uint32_t glyph, float size);
+		static void InternalCreate0(MonoObject* scriptObject, __SpriteGlyphCreateInformationInterop* createInformation);
 	};
 }

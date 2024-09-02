@@ -4,9 +4,8 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "BsScriptResourceManager.h"
 #include "Resources/BsResource.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 
 namespace bs
 {
@@ -51,12 +50,10 @@ namespace bs
 		tmpName = MonoUtil::StringToMono(value.Name);
 		output.Name = tmpName;
 		MonoObject* tmpValue;
-		ScriptResourceBase* scriptWrapperObjectValue;
-		scriptWrapperObjectValue = ScriptResourceManager::Instance().GetScriptResource(value.Value, true);
-		if(scriptWrapperObjectValue != nullptr)
-			tmpValue = scriptWrapperObjectValue->GetManagedInstance();
-		else
-			tmpValue = nullptr;
+		MonoObject* temptmpValue = nullptr;
+		if(value.Value)
+		temptmpValue = ScriptResourceWrapper::GetOrCreateScriptObject(value.Value);
+		tmpValue = temptmpValue;
 		output.Value = tmpValue;
 
 		return output;

@@ -51,9 +51,9 @@ namespace bs
 	{
 		TResourceHandle<Mesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
-		scriptObjectWrappermesh = ScriptRRefBase::ToNative(mesh);
+		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
 		if(scriptObjectWrappermesh != nullptr)
-			tmpmesh = B3DStaticResourceCast<Mesh>(scriptObjectWrappermesh->GetHandle());
+			tmpmesh = B3DStaticResourceCast<Mesh>(scriptObjectWrappermesh->GetBaseNativeObjectAsHandle());
 		static_cast<CRenderable*>(self->GetNativeObject())->SetMesh(tmpmesh);
 	}
 
@@ -66,7 +66,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 
@@ -77,9 +77,9 @@ namespace bs
 	{
 		TResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptObjectWrappermaterial;
-		scriptObjectWrappermaterial = ScriptRRefBase::ToNative(material);
+		scriptObjectWrappermaterial = ScriptRRefBase::GetScriptObjectWrapper(material);
 		if(scriptObjectWrappermaterial != nullptr)
-			tmpmaterial = B3DStaticResourceCast<Material>(scriptObjectWrappermaterial->GetHandle());
+			tmpmaterial = B3DStaticResourceCast<Material>(scriptObjectWrappermaterial->GetBaseNativeObjectAsHandle());
 		static_cast<CRenderable*>(self->GetNativeObject())->SetMaterial(idx, tmpmaterial);
 	}
 
@@ -87,9 +87,9 @@ namespace bs
 	{
 		TResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptObjectWrappermaterial;
-		scriptObjectWrappermaterial = ScriptRRefBase::ToNative(material);
+		scriptObjectWrappermaterial = ScriptRRefBase::GetScriptObjectWrapper(material);
 		if(scriptObjectWrappermaterial != nullptr)
-			tmpmaterial = B3DStaticResourceCast<Material>(scriptObjectWrappermaterial->GetHandle());
+			tmpmaterial = B3DStaticResourceCast<Material>(scriptObjectWrappermaterial->GetBaseNativeObjectAsHandle());
 		static_cast<CRenderable*>(self->GetNativeObject())->SetMaterial(tmpmaterial);
 	}
 
@@ -102,7 +102,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 
@@ -119,10 +119,10 @@ namespace bs
 			for(int elementIndex = 0; elementIndex < (int)scriptArraymaterials.Size(); elementIndex++)
 			{
 				ScriptRRefBase* scriptObjectWrappermaterials;
-				scriptObjectWrappermaterials = ScriptRRefBase::ToNative(scriptArraymaterials.Get<MonoObject*>(elementIndex));
+				scriptObjectWrappermaterials = ScriptRRefBase::GetScriptObjectWrapper(scriptArraymaterials.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappermaterials != nullptr)
 				{
-					TResourceHandle<Material> arrayElementPointermaterials = B3DStaticResourceCast<Material>(scriptObjectWrappermaterials->GetHandle());
+					TResourceHandle<Material> arrayElementPointermaterials = B3DStaticResourceCast<Material>(scriptObjectWrappermaterials->GetBaseNativeObjectAsHandle());
 					nativeArraymaterials[elementIndex] = arrayElementPointermaterials;
 				}
 			}
@@ -143,7 +143,7 @@ namespace bs
 			ScriptRRefBase* scriptObjectWrapper__output;
 			scriptObjectWrapper__output = ScriptResourceManager::Instance().GetScriptRRef(nativeArray__output[elementIndex]);
 			if(scriptObjectWrapper__output != nullptr)
-				scriptArray__output.Set(elementIndex, scriptObjectWrapper__output->GetManagedInstance());
+				scriptArray__output.Set(elementIndex, scriptObjectWrapper__output->GetScriptObject());
 			else
 				scriptArray__output.Set(elementIndex, nullptr);
 		}

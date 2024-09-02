@@ -33,9 +33,9 @@ namespace bs
 		BlendClipInfo output;
 		TResourceHandle<AnimationClip> tmpClip;
 		ScriptRRefBase* scriptWrapperObjectClip;
-		scriptWrapperObjectClip = ScriptRRefBase::ToNative(value.Clip);
+		scriptWrapperObjectClip = ScriptRRefBase::GetScriptObjectWrapper(value.Clip);
 		if(scriptWrapperObjectClip != nullptr)
-			tmpClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectClip->GetHandle());
+			tmpClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectClip->GetBaseNativeObjectAsHandle());
 		output.Clip = tmpClip;
 		output.Position = value.Position;
 
@@ -49,7 +49,7 @@ namespace bs
 		ScriptRRefBase* scriptWrapperObjectClip;
 		scriptWrapperObjectClip = ScriptResourceManager::Instance().GetScriptRRef(value.Clip);
 		if(scriptWrapperObjectClip != nullptr)
-			tmpClip = scriptWrapperObjectClip->GetManagedInstance();
+			tmpClip = scriptWrapperObjectClip->GetScriptObject();
 		else
 			tmpClip = nullptr;
 		output.Clip = tmpClip;

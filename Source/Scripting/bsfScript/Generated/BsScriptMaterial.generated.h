@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "Image/BsColor.h"
 #include "Math/BsMatrix4.h"
 #include "../../../Foundation/bsfCore/Material/BsShaderVariation.h"
@@ -18,14 +18,14 @@ namespace bs { class Material; }
 namespace bs { class MaterialEx; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptMaterial : public TScriptResource<ScriptMaterial, Material>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptMaterial : public TScriptResourceWrapper<Material, ScriptMaterial>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Material")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Material")
 
-		ScriptMaterial(MonoObject* managedInstance, const TResourceHandle<Material>& value);
+		ScriptMaterial(const TResourceHandle<Material>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptMaterial* self);
@@ -54,8 +54,8 @@ namespace bs
 		static void InternalGetMat3(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, Matrix3* __output);
 		static void InternalGetMat4(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, Matrix4* __output);
 		static bool InternalIsAnimated(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx);
-		static void InternalCreate(MonoObject* managedInstance);
-		static void InternalCreate0(MonoObject* managedInstance, MonoObject* shader);
+		static void InternalCreate(MonoObject* scriptObject);
+		static void InternalCreate0(MonoObject* scriptObject, MonoObject* shader);
 		static void InternalSetTexture(ScriptMaterial* self, MonoString* name, MonoObject* value, uint32_t mipLevel, uint32_t numMipLevels, uint32_t arraySlice, uint32_t numArraySlices);
 		static MonoObject* InternalGetTexture(ScriptMaterial* self, MonoString* name);
 		static void InternalSetSpriteImage(ScriptMaterial* self, MonoString* name, MonoObject* value);

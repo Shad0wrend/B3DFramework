@@ -33,27 +33,27 @@ namespace bs
 		Blend2DInfo output;
 		TResourceHandle<AnimationClip> tmpTopLeftClip;
 		ScriptRRefBase* scriptWrapperObjectTopLeftClip;
-		scriptWrapperObjectTopLeftClip = ScriptRRefBase::ToNative(value.TopLeftClip);
+		scriptWrapperObjectTopLeftClip = ScriptRRefBase::GetScriptObjectWrapper(value.TopLeftClip);
 		if(scriptWrapperObjectTopLeftClip != nullptr)
-			tmpTopLeftClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectTopLeftClip->GetHandle());
+			tmpTopLeftClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectTopLeftClip->GetBaseNativeObjectAsHandle());
 		output.TopLeftClip = tmpTopLeftClip;
 		TResourceHandle<AnimationClip> tmpTopRightClip;
 		ScriptRRefBase* scriptWrapperObjectTopRightClip;
-		scriptWrapperObjectTopRightClip = ScriptRRefBase::ToNative(value.TopRightClip);
+		scriptWrapperObjectTopRightClip = ScriptRRefBase::GetScriptObjectWrapper(value.TopRightClip);
 		if(scriptWrapperObjectTopRightClip != nullptr)
-			tmpTopRightClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectTopRightClip->GetHandle());
+			tmpTopRightClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectTopRightClip->GetBaseNativeObjectAsHandle());
 		output.TopRightClip = tmpTopRightClip;
 		TResourceHandle<AnimationClip> tmpBotLeftClip;
 		ScriptRRefBase* scriptWrapperObjectBotLeftClip;
-		scriptWrapperObjectBotLeftClip = ScriptRRefBase::ToNative(value.BotLeftClip);
+		scriptWrapperObjectBotLeftClip = ScriptRRefBase::GetScriptObjectWrapper(value.BotLeftClip);
 		if(scriptWrapperObjectBotLeftClip != nullptr)
-			tmpBotLeftClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectBotLeftClip->GetHandle());
+			tmpBotLeftClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectBotLeftClip->GetBaseNativeObjectAsHandle());
 		output.BotLeftClip = tmpBotLeftClip;
 		TResourceHandle<AnimationClip> tmpBotRightClip;
 		ScriptRRefBase* scriptWrapperObjectBotRightClip;
-		scriptWrapperObjectBotRightClip = ScriptRRefBase::ToNative(value.BotRightClip);
+		scriptWrapperObjectBotRightClip = ScriptRRefBase::GetScriptObjectWrapper(value.BotRightClip);
 		if(scriptWrapperObjectBotRightClip != nullptr)
-			tmpBotRightClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectBotRightClip->GetHandle());
+			tmpBotRightClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectBotRightClip->GetBaseNativeObjectAsHandle());
 		output.BotRightClip = tmpBotRightClip;
 
 		return output;
@@ -66,7 +66,7 @@ namespace bs
 		ScriptRRefBase* scriptWrapperObjectTopLeftClip;
 		scriptWrapperObjectTopLeftClip = ScriptResourceManager::Instance().GetScriptRRef(value.TopLeftClip);
 		if(scriptWrapperObjectTopLeftClip != nullptr)
-			tmpTopLeftClip = scriptWrapperObjectTopLeftClip->GetManagedInstance();
+			tmpTopLeftClip = scriptWrapperObjectTopLeftClip->GetScriptObject();
 		else
 			tmpTopLeftClip = nullptr;
 		output.TopLeftClip = tmpTopLeftClip;
@@ -74,7 +74,7 @@ namespace bs
 		ScriptRRefBase* scriptWrapperObjectTopRightClip;
 		scriptWrapperObjectTopRightClip = ScriptResourceManager::Instance().GetScriptRRef(value.TopRightClip);
 		if(scriptWrapperObjectTopRightClip != nullptr)
-			tmpTopRightClip = scriptWrapperObjectTopRightClip->GetManagedInstance();
+			tmpTopRightClip = scriptWrapperObjectTopRightClip->GetScriptObject();
 		else
 			tmpTopRightClip = nullptr;
 		output.TopRightClip = tmpTopRightClip;
@@ -82,7 +82,7 @@ namespace bs
 		ScriptRRefBase* scriptWrapperObjectBotLeftClip;
 		scriptWrapperObjectBotLeftClip = ScriptResourceManager::Instance().GetScriptRRef(value.BotLeftClip);
 		if(scriptWrapperObjectBotLeftClip != nullptr)
-			tmpBotLeftClip = scriptWrapperObjectBotLeftClip->GetManagedInstance();
+			tmpBotLeftClip = scriptWrapperObjectBotLeftClip->GetScriptObject();
 		else
 			tmpBotLeftClip = nullptr;
 		output.BotLeftClip = tmpBotLeftClip;
@@ -90,7 +90,7 @@ namespace bs
 		ScriptRRefBase* scriptWrapperObjectBotRightClip;
 		scriptWrapperObjectBotRightClip = ScriptResourceManager::Instance().GetScriptRRef(value.BotRightClip);
 		if(scriptWrapperObjectBotRightClip != nullptr)
-			tmpBotRightClip = scriptWrapperObjectBotRightClip->GetManagedInstance();
+			tmpBotRightClip = scriptWrapperObjectBotRightClip->GetScriptObject();
 		else
 			tmpBotRightClip = nullptr;
 		output.BotRightClip = tmpBotRightClip;

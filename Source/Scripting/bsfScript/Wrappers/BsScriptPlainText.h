@@ -19,14 +19,14 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "PlainText")
 
+		ScriptPlainText(const HPlainText& nativeObject, MonoObject* scriptObject);
+
 		/** Retrieves the underlying native object cast to the correct type. */
 		PlainText* GetNativeObject() const;
 
 		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		ScriptPlainText(const HPlainText& nativeObject, MonoObject* scriptObject);
-
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/

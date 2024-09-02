@@ -13,109 +13,109 @@
 
 namespace bs
 {
-	ScriptSpriteImageBase::ScriptSpriteImageBase(MonoObject* managedInstance)
-		:ScriptResourceBase(managedInstance)
-	 { }
-
-	ScriptSpriteImage::ScriptSpriteImage(MonoObject* managedInstance, const TResourceHandle<SpriteImage>& value)
-		:TScriptResource(managedInstance, value)
+	ScriptSpriteImage::ScriptSpriteImage(const TResourceHandle<SpriteImage>& nativeObject, MonoObject* scriptObject)
+		:TScriptResourceWrapper(nativeObject, scriptObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptSpriteImage::InitRuntimeData()
+	void ScriptSpriteImage::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteImage::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_GetSize", (void*)&ScriptSpriteImage::InternalGetSize);
-		metaData.ScriptClass->AddInternalCall("Internal_GetAnimationFrameSize", (void*)&ScriptSpriteImage::InternalGetAnimationFrameSize);
-		metaData.ScriptClass->AddInternalCall("Internal_GetAtlasTexture", (void*)&ScriptSpriteImage::InternalGetAtlasTexture);
-		metaData.ScriptClass->AddInternalCall("Internal_SetUVRange", (void*)&ScriptSpriteImage::InternalSetUVRange);
-		metaData.ScriptClass->AddInternalCall("Internal_GetUVRange", (void*)&ScriptSpriteImage::InternalGetUVRange);
-		metaData.ScriptClass->AddInternalCall("Internal_SetAnimation", (void*)&ScriptSpriteImage::InternalSetAnimation);
-		metaData.ScriptClass->AddInternalCall("Internal_GetAnimation", (void*)&ScriptSpriteImage::InternalGetAnimation);
-		metaData.ScriptClass->AddInternalCall("Internal_SetAnimationPlayback", (void*)&ScriptSpriteImage::InternalSetAnimationPlayback);
-		metaData.ScriptClass->AddInternalCall("Internal_GetAnimationPlayback", (void*)&ScriptSpriteImage::InternalGetAnimationPlayback);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteImage::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetSize", (void*)&ScriptSpriteImage::InternalGetSize);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAnimationFrameSize", (void*)&ScriptSpriteImage::InternalGetAnimationFrameSize);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAtlasTexture", (void*)&ScriptSpriteImage::InternalGetAtlasTexture);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetUVRange", (void*)&ScriptSpriteImage::InternalSetUVRange);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetUVRange", (void*)&ScriptSpriteImage::InternalGetUVRange);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAnimation", (void*)&ScriptSpriteImage::InternalSetAnimation);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAnimation", (void*)&ScriptSpriteImage::InternalGetAnimation);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAnimationPlayback", (void*)&ScriptSpriteImage::InternalSetAnimationPlayback);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAnimationPlayback", (void*)&ScriptSpriteImage::InternalGetAnimationPlayback);
 
 	}
 
-	 MonoObject*ScriptSpriteImage::CreateInstance()
+	MonoObject* ScriptSpriteImage::CreateScriptObject(bool construct)
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
-	MonoObject* ScriptSpriteImage::InternalGetRef(ScriptSpriteImageBase* self)
+	MonoObject* ScriptSpriteImage::InternalGetRef(ScriptSpriteImageWrapperBase* self)
 	{
-		return self->GetRRef(self->GetGenericHandle(), SpriteImage::GetRttiStatic()->GetRttiId());
+		return self->GetOrCreateResourceReference(self->GetNativeObjectAsHandle(), SpriteImage::GetRttiStatic()->GetRttiId());
 	}
 
-	void ScriptSpriteImage::InternalGetSize(ScriptSpriteImageBase* self, TSize2<uint32_t>* __output)
+	void ScriptSpriteImage::InternalGetSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output)
 	{
 		TSize2<uint32_t> tmp__output;
-		tmp__output = B3DStaticResourceCast<SpriteImage>(self->GetGenericHandle())->GetSize();
+		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetSize();
 
 		*__output = tmp__output;
 	}
 
-	void ScriptSpriteImage::InternalGetAnimationFrameSize(ScriptSpriteImageBase* self, TSize2<uint32_t>* __output)
+	void ScriptSpriteImage::InternalGetAnimationFrameSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output)
 	{
 		TSize2<uint32_t> tmp__output;
-		tmp__output = B3DStaticResourceCast<SpriteImage>(self->GetGenericHandle())->GetAnimationFrameSize();
+		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAnimationFrameSize();
 
 		*__output = tmp__output;
 	}
 
-	MonoObject* ScriptSpriteImage::InternalGetAtlasTexture(ScriptSpriteImageBase* self)
+	MonoObject* ScriptSpriteImage::InternalGetAtlasTexture(ScriptSpriteImageWrapperBase* self)
 	{
 		TResourceHandle<Texture> tmp__output;
-		tmp__output = B3DStaticResourceCast<SpriteImage>(self->GetGenericHandle())->GetAtlasTexture();
+		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAtlasTexture();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 
 		return __output;
 	}
 
-	void ScriptSpriteImage::InternalSetUVRange(ScriptSpriteImageBase* self, Rect2* uvRange)
+	void ScriptSpriteImage::InternalSetUVRange(ScriptSpriteImageWrapperBase* self, Rect2* uvRange)
 	{
-		B3DStaticResourceCast<SpriteImage>(self->GetGenericHandle())->SetUVRange(*uvRange);
+		static_cast<SpriteImage*>(self->GetNativeObject())->SetUVRange(*uvRange);
 	}
 
-	void ScriptSpriteImage::InternalGetUVRange(ScriptSpriteImageBase* self, Rect2* __output)
+	void ScriptSpriteImage::InternalGetUVRange(ScriptSpriteImageWrapperBase* self, Rect2* __output)
 	{
 		Rect2 tmp__output;
-		tmp__output = B3DStaticResourceCast<SpriteImage>(self->GetGenericHandle())->GetUVRange();
+		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetUVRange();
 
 		*__output = tmp__output;
 	}
 
-	void ScriptSpriteImage::InternalSetAnimation(ScriptSpriteImageBase* self, SpriteSheetGridAnimation* animation)
+	void ScriptSpriteImage::InternalSetAnimation(ScriptSpriteImageWrapperBase* self, SpriteSheetGridAnimation* animation)
 	{
-		B3DStaticResourceCast<SpriteImage>(self->GetGenericHandle())->SetAnimation(*animation);
+		static_cast<SpriteImage*>(self->GetNativeObject())->SetAnimation(*animation);
 	}
 
-	void ScriptSpriteImage::InternalGetAnimation(ScriptSpriteImageBase* self, SpriteSheetGridAnimation* __output)
+	void ScriptSpriteImage::InternalGetAnimation(ScriptSpriteImageWrapperBase* self, SpriteSheetGridAnimation* __output)
 	{
 		SpriteSheetGridAnimation tmp__output;
-		tmp__output = B3DStaticResourceCast<SpriteImage>(self->GetGenericHandle())->GetAnimation();
+		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAnimation();
 
 		*__output = tmp__output;
 	}
 
-	void ScriptSpriteImage::InternalSetAnimationPlayback(ScriptSpriteImageBase* self, SpriteAnimationPlayback playback)
+	void ScriptSpriteImage::InternalSetAnimationPlayback(ScriptSpriteImageWrapperBase* self, SpriteAnimationPlayback playback)
 	{
-		B3DStaticResourceCast<SpriteImage>(self->GetGenericHandle())->SetAnimationPlayback(playback);
+		static_cast<SpriteImage*>(self->GetNativeObject())->SetAnimationPlayback(playback);
 	}
 
-	SpriteAnimationPlayback ScriptSpriteImage::InternalGetAnimationPlayback(ScriptSpriteImageBase* self)
+	SpriteAnimationPlayback ScriptSpriteImage::InternalGetAnimationPlayback(ScriptSpriteImageWrapperBase* self)
 	{
 		SpriteAnimationPlayback tmp__output;
-		tmp__output = B3DStaticResourceCast<SpriteImage>(self->GetGenericHandle())->GetAnimationPlayback();
+		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAnimationPlayback();
 
 		SpriteAnimationPlayback __output;
 		__output = tmp__output;

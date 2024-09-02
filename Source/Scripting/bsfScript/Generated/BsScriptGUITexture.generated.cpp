@@ -34,9 +34,9 @@ namespace bs
 	{
 		TResourceHandle<SpriteImage> tmpimage;
 		ScriptRRefBase* scriptObjectWrapperimage;
-		scriptObjectWrapperimage = ScriptRRefBase::ToNative(image);
+		scriptObjectWrapperimage = ScriptRRefBase::GetScriptObjectWrapper(image);
 		if(scriptObjectWrapperimage != nullptr)
-			tmpimage = B3DStaticResourceCast<SpriteImage>(scriptObjectWrapperimage->GetHandle());
+			tmpimage = B3DStaticResourceCast<SpriteImage>(scriptObjectWrapperimage->GetBaseNativeObjectAsHandle());
 		static_cast<GUITexture*>(self->GetGuiElement())->SetImage(tmpimage);
 	}
 

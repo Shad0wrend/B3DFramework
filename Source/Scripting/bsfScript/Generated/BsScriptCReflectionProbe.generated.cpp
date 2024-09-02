@@ -96,7 +96,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+			__output = script__output->GetScriptObject();
 		else
 			__output = nullptr;
 
@@ -107,9 +107,9 @@ namespace bs
 	{
 		TResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scriptObjectWrappertexture;
-		scriptObjectWrappertexture = ScriptRRefBase::ToNative(texture);
+		scriptObjectWrappertexture = ScriptRRefBase::GetScriptObjectWrapper(texture);
 		if(scriptObjectWrappertexture != nullptr)
-			tmptexture = B3DStaticResourceCast<Texture>(scriptObjectWrappertexture->GetHandle());
+			tmptexture = B3DStaticResourceCast<Texture>(scriptObjectWrappertexture->GetBaseNativeObjectAsHandle());
 		static_cast<CReflectionProbe*>(self->GetNativeObject())->SetCustomTexture(tmptexture);
 	}
 

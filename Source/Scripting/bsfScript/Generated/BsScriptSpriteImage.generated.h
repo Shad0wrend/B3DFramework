@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "Utility/BsUtil.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "Math/BsRect2.h"
@@ -12,33 +12,33 @@
 namespace bs { class SpriteImage; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteImageBase : public ScriptResourceBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteImageWrapperBase : public ScriptResourceWrapper
 	{
 	public:
-		ScriptSpriteImageBase(MonoObject* instance);
-		virtual ~ScriptSpriteImageBase() {}
+		using ScriptResourceWrapper::ScriptResourceWrapper;
+
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteImage : public TScriptResource<ScriptSpriteImage, SpriteImage, ScriptSpriteImageBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteImage : public TScriptResourceWrapper<SpriteImage, ScriptSpriteImage, ScriptSpriteImageWrapperBase>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SpriteImage")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteImage")
 
-		ScriptSpriteImage(MonoObject* managedInstance, const TResourceHandle<SpriteImage>& value);
+		ScriptSpriteImage(const TResourceHandle<SpriteImage>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		static MonoObject* InternalGetRef(ScriptSpriteImageBase* self);
+		static MonoObject* InternalGetRef(ScriptSpriteImageWrapperBase* self);
 
-		static void InternalGetSize(ScriptSpriteImageBase* self, TSize2<uint32_t>* __output);
-		static void InternalGetAnimationFrameSize(ScriptSpriteImageBase* self, TSize2<uint32_t>* __output);
-		static MonoObject* InternalGetAtlasTexture(ScriptSpriteImageBase* self);
-		static void InternalSetUVRange(ScriptSpriteImageBase* self, Rect2* uvRange);
-		static void InternalGetUVRange(ScriptSpriteImageBase* self, Rect2* __output);
-		static void InternalSetAnimation(ScriptSpriteImageBase* self, SpriteSheetGridAnimation* animation);
-		static void InternalGetAnimation(ScriptSpriteImageBase* self, SpriteSheetGridAnimation* __output);
-		static void InternalSetAnimationPlayback(ScriptSpriteImageBase* self, SpriteAnimationPlayback playback);
-		static SpriteAnimationPlayback InternalGetAnimationPlayback(ScriptSpriteImageBase* self);
+		static void InternalGetSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output);
+		static void InternalGetAnimationFrameSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output);
+		static MonoObject* InternalGetAtlasTexture(ScriptSpriteImageWrapperBase* self);
+		static void InternalSetUVRange(ScriptSpriteImageWrapperBase* self, Rect2* uvRange);
+		static void InternalGetUVRange(ScriptSpriteImageWrapperBase* self, Rect2* __output);
+		static void InternalSetAnimation(ScriptSpriteImageWrapperBase* self, SpriteSheetGridAnimation* animation);
+		static void InternalGetAnimation(ScriptSpriteImageWrapperBase* self, SpriteSheetGridAnimation* __output);
+		static void InternalSetAnimationPlayback(ScriptSpriteImageWrapperBase* self, SpriteAnimationPlayback playback);
+		static SpriteAnimationPlayback InternalGetAnimationPlayback(ScriptSpriteImageWrapperBase* self);
 	};
 }

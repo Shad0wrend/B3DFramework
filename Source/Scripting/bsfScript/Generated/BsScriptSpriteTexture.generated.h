@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/BsScriptResource.h"
+#include "BsScriptResourceWrapper.h"
 #include "BsScriptSpriteImage.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
 
@@ -11,20 +11,20 @@ namespace bs { class SpriteTexture; }
 namespace bs { struct __SpriteTextureCreateInformationInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteTexture : public TScriptResource<ScriptSpriteTexture, SpriteTexture, ScriptSpriteImageBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteTexture : public TScriptResourceWrapper<SpriteTexture, ScriptSpriteTexture>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SpriteTexture")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteTexture")
 
-		ScriptSpriteTexture(MonoObject* managedInstance, const TResourceHandle<SpriteTexture>& value);
+		ScriptSpriteTexture(const TResourceHandle<SpriteTexture>& nativeObject, MonoObject* scriptObject);
 
-		static MonoObject* CreateInstance();
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetRef(ScriptSpriteTexture* self);
 
 		static void InternalSetAtlasTexture(ScriptSpriteTexture* self, MonoObject* texture);
-		static void InternalCreate(MonoObject* managedInstance, MonoObject* texture);
-		static void InternalCreate0(MonoObject* managedInstance, __SpriteTextureCreateInformationInterop* createInformation);
+		static void InternalCreate(MonoObject* scriptObject, MonoObject* texture);
+		static void InternalCreate0(MonoObject* scriptObject, __SpriteTextureCreateInformationInterop* createInformation);
 	};
 }
