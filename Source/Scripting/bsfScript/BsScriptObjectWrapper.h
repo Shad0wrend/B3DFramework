@@ -41,6 +41,38 @@ namespace bs
 		Any Data; // TODO - Don't use Any
 	};
 
+	/** Determines how is script object lifetime tracked, and when should the native object be destroyed. */
+	enum class ScriptObjectLifetimeTrackingMode
+	{
+		/**
+		 * Script object wrapper will hold a strong handle onto the script object. Garbage collection will
+		 * trigger at certain time intervals and check if the native object is referenced only by the script
+		 * object wrapper. If so, the strong handle will transition to a weak handle and the native object
+		 * will be destroyed when the script object gets deleted.
+		 *
+		 * This should be used by objects that can be referenced by both native and script code, and are
+		 * released when their reference count drops to 0.
+		 */
+		StrongHandleWithGarbageCollection,
+
+		/**
+		 * Script object wrapper will hold a strong handle onto the script object. Strong handle will be freed
+		 * when the native object is destroyed.
+		 *
+		 * This should be used for objects that can be referenced by both native and script code, and have an
+		 * explicit Destroy() method.
+		 */
+		StrongHandleWithExplicitDestroy,
+
+		/**
+		 * Script object wrapper will hold a weak handle onto the script object. Native object will be freed
+		 * when the script object gets deleted.
+		 *
+		 * This should be used for objects that are referenced from script code only (e.g. objects passed into script code by value).
+		 */
+		WeakHandle
+	};
+
 	/**
 	 * Extends IScriptObjectWrapper by keeping a strong reference to the script object, and releasing it as needed.
 	 * As well as providing an interface for script reload functionality.. See IScriptObjectWrapper.
@@ -53,9 +85,6 @@ namespace bs
 
 		MonoObject* GetScriptObject() const;
 
-		/** Called when the script system is notified that the script object has been destroyed. */
-		virtual void NotifyScriptObjectDestroyed(bool isDestroyedDueToScriptReload);
-
 		/** Returns the number of strong references on the underlying native object. */
 		virtual u32 GetNativeObjectReferenceCount() const
 		{
@@ -66,13 +95,32 @@ namespace bs
 		/** Used by derived classes to connect callbacks to native object events. */
 		virtual void RegisterEvents() const { }
 
-		/**
-		 * Returns true if the native object is explicitly destroyed (e.g. by calling a Destroy() method). Return false if the native object is reference counted and destroyed when the
-		 * reference count reaches zero, and the script wrapper is holding a strong reference to the native object. Reference counted objects will be garbage collected at time intervals.
-		 */
-		virtual bool IsNativeObjectExplicitlyDestroyed() const { return false; }
-
 		void NotifyNativeObjectDestroyed() override;
+
+		/**
+		 * @name Script object lifetime tracking
+		 * @{
+		 */
+
+		/** Determines how is script object lifetime tracked, and when should the native object be destroyed. See ScriptObjectLifetimeTrackingMode. */
+		virtual ScriptObjectLifetimeTrackingMode GetLifetimeTrackingMode() const { return ScriptObjectLifetimeTrackingMode::StrongHandleWithGarbageCollection; }
+
+		/**
+		 * Changes the internal script object handle from strong to weak. If the handle is already weak does nothing. Only relevant
+		 * if lifetime tracking mode is using garbage collection.
+		 */
+		virtual void TransitionToWeakHandle();
+
+		/**
+		 * Changes the internal script object handle from weak to strong. If the handle is already strong does nothing. Only relevant
+		 * if lifetime tracking mode is using garbage collection.
+		 */
+		virtual void TransitionToStrongHandle();
+
+		/** Called when the script system is notified that the script object has been destroyed. */
+		virtual void NotifyScriptObjectDestroyed(bool isDestroyedDueToScriptReload);
+
+		/** @} */
 
 		/**
 		 * @name Script reload
@@ -120,12 +168,13 @@ namespace bs
 
 	protected:
 		/** Creates a new handle to the provided script object. Previous handle must be released. */
-		void CreateStrongScriptObjectHandle(MonoObject* scriptObject);
+		void CreateScriptObjectHandle(MonoObject* scriptObject);
 
 		/** Releases the currently held script object strong handle, if any. */ 
 		void ReleaseStrongScriptObjectHandle();
 
-		u32 mStrongScriptObjectHandle = ~0u;
+		u32 mScriptObjectHandle = ~0u;
+		bool mRequiresStrongHandle = false;
 	};
 
 	template <typename SelfType, typename BaseType>
@@ -170,7 +219,7 @@ namespace bs
 
 			if(B3D_ENSURE(scriptObject != nullptr))
 			{
-				CreateStrongScriptObjectHandle(scriptObject);
+				CreateScriptObjectHandle(scriptObject);
 				BindSelfToScriptObject(scriptObject);
 			}
 		}

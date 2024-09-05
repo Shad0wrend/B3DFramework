@@ -13,7 +13,7 @@ ScriptObjectWrapper::ScriptObjectWrapper(IScriptExportable* nativeObject, MonoOb
 {
 	ScriptObjectManager::Instance().RegisterScriptObjectWrapper(this);
 
-	CreateStrongScriptObjectHandle(scriptObject);
+	CreateScriptObjectHandle(scriptObject);
 }
 
 ScriptObjectWrapper::~ScriptObjectWrapper()
@@ -23,10 +23,10 @@ ScriptObjectWrapper::~ScriptObjectWrapper()
 
 MonoObject* ScriptObjectWrapper::GetScriptObject() const
 {
-	if(mStrongScriptObjectHandle == ~0u)
+	if(mScriptObjectHandle == ~0u)
 		return nullptr;
 
-	return MonoUtil::GetObjectFromGcHandle(mStrongScriptObjectHandle);
+	return MonoUtil::GetObjectFromGcHandle(mScriptObjectHandle);
 }
 
 void ScriptObjectWrapper::NotifyScriptObjectDestroyed(bool isDestroyedDueToScriptReload)
@@ -42,21 +42,75 @@ void ScriptObjectWrapper::NotifyNativeObjectDestroyed()
 	IScriptObjectWrapper::NotifyNativeObjectDestroyed();
 }
 
-void ScriptObjectWrapper::CreateStrongScriptObjectHandle(MonoObject* scriptObject)
+void ScriptObjectWrapper::CreateScriptObjectHandle(MonoObject* scriptObject)
 {
 	if(B3D_ENSURE(scriptObject != nullptr))
 	{
-		B3D_ENSURE(mStrongScriptObjectHandle == ~0u);
-		mStrongScriptObjectHandle = MonoUtil::NewGcHandle(scriptObject, false);
+		B3D_ENSURE(mScriptObjectHandle == ~0u);
+
+		if(GetLifetimeTrackingMode() == ScriptObjectLifetimeTrackingMode::WeakHandle)
+		{
+			mScriptObjectHandle = MonoUtil::NewWeakGcHandle(scriptObject);
+			mRequiresStrongHandle = false; // Not used in WeakHandle mode, but set it anyway
+		}
+		else
+		{
+			mScriptObjectHandle = MonoUtil::NewGcHandle(scriptObject, false);
+			mRequiresStrongHandle = true; // Always start of as a strong handle, GC can transition to weak if needed
+		}
 	}
+}
+
+void ScriptObjectWrapper::TransitionToWeakHandle()
+{
+	if(!mRequiresStrongHandle)
+		return;
+
+	if(mScriptObjectHandle == ~0u)
+		return;
+
+	if(!B3D_ENSURE(GetLifetimeTrackingMode() == ScriptObjectLifetimeTrackingMode::StrongHandleWithGarbageCollection))
+		return;
+
+	MonoObject* const scriptObject = GetScriptObject();
+	if(!B3D_ENSURE(scriptObject != nullptr))
+		return;
+
+	const u32 weakHandle = MonoUtil::NewWeakGcHandle(scriptObject);
+	MonoUtil::FreeGcHandle(mScriptObjectHandle);
+
+	mScriptObjectHandle = weakHandle;
+	mRequiresStrongHandle = false;
+}
+
+void ScriptObjectWrapper::TransitionToStrongHandle()
+{
+	if(mRequiresStrongHandle)
+		return;
+
+	if(mScriptObjectHandle == ~0u)
+		return;
+
+	if(!B3D_ENSURE(GetLifetimeTrackingMode() == ScriptObjectLifetimeTrackingMode::StrongHandleWithGarbageCollection))
+		return;
+
+	MonoObject* const scriptObject = GetScriptObject();
+	if(scriptObject == nullptr)
+		return;
+
+	const u32 strongHandle = MonoUtil::NewGcHandle(scriptObject);
+	MonoUtil::FreeGcHandle(mScriptObjectHandle);
+
+	mScriptObjectHandle = strongHandle;
+	mRequiresStrongHandle = true;
 }
 
 void ScriptObjectWrapper::ReleaseStrongScriptObjectHandle()
 {
-	if(mStrongScriptObjectHandle != ~0u)
+	if(mScriptObjectHandle != ~0u)
 	{
-		MonoUtil::FreeGcHandle(mStrongScriptObjectHandle);
-		mStrongScriptObjectHandle = ~0u;
+		MonoUtil::FreeGcHandle(mScriptObjectHandle);
+		mScriptObjectHandle = ~0u;
 	}
 }
 

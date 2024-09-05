@@ -87,7 +87,8 @@ namespace bs
 		}
 
 		bool ShouldPersistScriptReload() const override { return true; }
-		bool IsNativeObjectExplicitlyDestroyed() const override { return true; }
+		ScriptObjectLifetimeTrackingMode GetLifetimeTrackingMode() const override { return ScriptObjectLifetimeTrackingMode::StrongHandleWithExplicitDestroy; }
+
 		void NotifyScriptObjectDestroyed(bool isDestroyedDueToScriptReload) override
 		{
 			// Keep the wrapper alive if script reload and the native object is still valid
@@ -98,7 +99,7 @@ namespace bs
 			}
 
 			// Handle should have been cleared already
-			B3D_ENSURE(mStrongScriptObjectHandle == ~0u);
+			B3D_ENSURE(mScriptObjectHandle == ~0u);
 		}
 
 		/**

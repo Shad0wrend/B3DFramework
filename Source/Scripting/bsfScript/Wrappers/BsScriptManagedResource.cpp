@@ -41,7 +41,7 @@ void ScriptManagedResource::CreateAndBindScriptObject()
 
 	if(scriptObject != nullptr)
 	{
-		CreateStrongScriptObjectHandle(scriptObject);
+		CreateScriptObjectHandle(scriptObject);
 		BindSelfToScriptObject(scriptObject);
 	}
 

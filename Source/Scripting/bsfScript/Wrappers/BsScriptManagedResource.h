@@ -20,7 +20,7 @@ namespace bs
 
 		ScriptManagedResource(const HManagedResource& nativeObject, MonoObject* scriptObject);
 
-		bool IsNativeObjectExplicitlyDestroyed() const override { return false; }
+		ScriptObjectLifetimeTrackingMode GetLifetimeTrackingMode() const override { return ScriptObjectLifetimeTrackingMode::StrongHandleWithExplicitDestroy; }
 
 		/**
 		 * Returns null as managed resources cannot be created statically. Their script object type is mutable depending on the script type they are referencing. Use non-static CreateAndBindScriptObject()

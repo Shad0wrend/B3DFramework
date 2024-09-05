@@ -10,7 +10,6 @@
 #include "BsMonoProperty.h"
 #include "Wrappers/BsScriptManagedResource.h"
 #include "Wrappers/BsScriptComponent.h"
-#include "Wrappers/BsScriptReflectable.h"
 #include "BsManagedSerializableObject.h"
 #include "BsManagedResource.h"
 #include "Wrappers/BsScriptManagedComponent.h"

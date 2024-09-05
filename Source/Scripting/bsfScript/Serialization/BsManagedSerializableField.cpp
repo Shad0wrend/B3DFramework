@@ -19,7 +19,6 @@
 #include "Serialization/BsManagedSerializableDictionary.h"
 #include "Serialization/BsScriptAssemblyManager.h"
 #include "Utility/BsUtility.h"
-#include "Wrappers/BsScriptReflectable.h"
 #include "Wrappers/BsScriptRRefBase.h"
 
 using namespace bs;
