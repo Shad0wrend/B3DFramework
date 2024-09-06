@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptParticleEvolver::ScriptParticleEvolver(const SPtr<ParticleEvolver>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleEvolver::ScriptParticleEvolver(const SPtr<ParticleEvolver>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

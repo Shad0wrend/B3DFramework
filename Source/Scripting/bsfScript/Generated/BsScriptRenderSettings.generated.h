@@ -28,7 +28,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "RenderSettings")
 
-		ScriptRenderSettings(const SPtr<RenderSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptRenderSettings(const SPtr<RenderSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

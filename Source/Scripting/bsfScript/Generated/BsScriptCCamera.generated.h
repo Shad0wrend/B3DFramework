@@ -21,7 +21,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Camera")
 
-		ScriptCamera(const GameObjectHandle<CCamera>& nativeObject, MonoObject* scriptObject);
+		ScriptCamera(const GameObjectHandle<CCamera>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

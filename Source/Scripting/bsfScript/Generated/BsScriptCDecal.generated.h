@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Decal")
 
-		ScriptDecal(const GameObjectHandle<CDecal>& nativeObject, MonoObject* scriptObject);
+		ScriptDecal(const GameObjectHandle<CDecal>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

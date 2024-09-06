@@ -13,7 +13,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Bone")
 
-		ScriptBone(const GameObjectHandle<CBone>& nativeObject, MonoObject* scriptObject);
+		ScriptBone(const GameObjectHandle<CBone>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

@@ -8,8 +8,8 @@
 
 namespace bs
 {
-	ScriptFixedJoint::ScriptFixedJoint(const GameObjectHandle<CFixedJoint>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptFixedJoint::ScriptFixedJoint(const GameObjectHandle<CFixedJoint>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

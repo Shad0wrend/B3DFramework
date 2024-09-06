@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptTonemappingSettings::ScriptTonemappingSettings(const SPtr<TonemappingSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptTonemappingSettings::ScriptTonemappingSettings(const SPtr<TonemappingSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -46,7 +46,7 @@ namespace bs
 	void ScriptTonemappingSettings::InternalTonemappingSettings(MonoObject* scriptObject)
 	{
 		SPtr<TonemappingSettings> nativeObject = B3DMakeShared<TonemappingSettings>();
-		B3DNew<ScriptTonemappingSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptTonemappingSettings>(nativeObject, scriptObject);
 	}
 
 	float ScriptTonemappingSettings::InternalGetFilmicCurveShoulderStrength(ScriptTonemappingSettings* self)

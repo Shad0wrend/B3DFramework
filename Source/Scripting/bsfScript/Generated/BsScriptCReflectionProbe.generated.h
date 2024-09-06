@@ -15,7 +15,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ReflectionProbe")
 
-		ScriptReflectionProbe(const GameObjectHandle<CReflectionProbe>& nativeObject, MonoObject* scriptObject);
+		ScriptReflectionProbe(const GameObjectHandle<CReflectionProbe>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

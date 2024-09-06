@@ -89,6 +89,10 @@ MonoObject* ScriptResourceWrapper::GetOrCreateResourceReference(const HResource&
 	return ScriptRRefBase::BindGenericParam(resourceScriptClass);
 }
 
+ScriptResource::ScriptResource(const HResource& nativeObject)
+	:TScriptResourceWrapper(nativeObject)
+{ }
+
 void ScriptResource::SetupScriptBindings()
 {
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptResource::InternalGetName);

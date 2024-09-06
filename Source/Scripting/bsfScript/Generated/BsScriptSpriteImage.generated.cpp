@@ -13,8 +13,8 @@
 
 namespace bs
 {
-	ScriptSpriteImage::ScriptSpriteImage(const TResourceHandle<SpriteImage>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptSpriteImage::ScriptSpriteImage(const TResourceHandle<SpriteImage>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

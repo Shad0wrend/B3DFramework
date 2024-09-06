@@ -19,8 +19,8 @@ namespace bs
 	ScriptAnimation::ScriptUpdateFloatPropertiesInternalThunkDefinition ScriptAnimation::ScriptUpdateFloatPropertiesInternalThunk; 
 	ScriptAnimation::ScriptOnEventTriggeredInternalThunkDefinition ScriptAnimation::ScriptOnEventTriggeredInternalThunk; 
 
-	ScriptAnimation::ScriptAnimation(const GameObjectHandle<CAnimation>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptAnimation::ScriptAnimation(const GameObjectHandle<CAnimation>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

@@ -15,7 +15,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ChromaticAberrationSettings")
 
-		ScriptChromaticAberrationSettings(const SPtr<ChromaticAberrationSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptChromaticAberrationSettings(const SPtr<ChromaticAberrationSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

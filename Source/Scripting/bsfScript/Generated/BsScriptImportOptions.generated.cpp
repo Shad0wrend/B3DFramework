@@ -8,8 +8,8 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptImportOptions::ScriptImportOptions(const SPtr<ImportOptions>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptImportOptions::ScriptImportOptions(const SPtr<ImportOptions>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

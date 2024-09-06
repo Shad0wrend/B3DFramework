@@ -9,8 +9,8 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptImportedAnimationEvents::ScriptImportedAnimationEvents(const SPtr<ImportedAnimationEvents>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptImportedAnimationEvents::ScriptImportedAnimationEvents(const SPtr<ImportedAnimationEvents>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -38,7 +38,7 @@ namespace bs
 	void ScriptImportedAnimationEvents::InternalImportedAnimationEvents(MonoObject* scriptObject)
 	{
 		SPtr<ImportedAnimationEvents> nativeObject = B3DMakeShared<ImportedAnimationEvents>();
-		B3DNew<ScriptImportedAnimationEvents>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptImportedAnimationEvents>(nativeObject, scriptObject);
 	}
 
 	MonoString* ScriptImportedAnimationEvents::InternalGetName(ScriptImportedAnimationEvents* self)

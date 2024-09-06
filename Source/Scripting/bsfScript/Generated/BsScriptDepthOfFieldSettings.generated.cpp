@@ -11,8 +11,8 @@
 
 namespace bs
 {
-	ScriptDepthOfFieldSettings::ScriptDepthOfFieldSettings(const SPtr<DepthOfFieldSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptDepthOfFieldSettings::ScriptDepthOfFieldSettings(const SPtr<DepthOfFieldSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -70,7 +70,7 @@ namespace bs
 	void ScriptDepthOfFieldSettings::InternalDepthOfFieldSettings(MonoObject* scriptObject)
 	{
 		SPtr<DepthOfFieldSettings> nativeObject = B3DMakeShared<DepthOfFieldSettings>();
-		B3DNew<ScriptDepthOfFieldSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptDepthOfFieldSettings>(nativeObject, scriptObject);
 	}
 
 	MonoObject* ScriptDepthOfFieldSettings::InternalGetBokehShape(ScriptDepthOfFieldSettings* self)

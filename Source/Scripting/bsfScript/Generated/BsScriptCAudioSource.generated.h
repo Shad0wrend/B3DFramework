@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AudioSource")
 
-		ScriptAudioSource(const GameObjectHandle<CAudioSource>& nativeObject, MonoObject* scriptObject);
+		ScriptAudioSource(const GameObjectHandle<CAudioSource>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

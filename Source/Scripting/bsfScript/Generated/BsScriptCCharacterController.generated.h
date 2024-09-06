@@ -22,7 +22,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "CharacterController")
 
-		ScriptCharacterController(const GameObjectHandle<CCharacterController>& nativeObject, MonoObject* scriptObject);
+		ScriptCharacterController(const GameObjectHandle<CCharacterController>& nativeObject);
 
 		virtual void RegisterEvents();
 		static MonoObject* CreateScriptObject(bool construct);

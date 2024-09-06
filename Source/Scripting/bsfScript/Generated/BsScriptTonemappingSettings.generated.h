@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "TonemappingSettings")
 
-		ScriptTonemappingSettings(const SPtr<TonemappingSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptTonemappingSettings(const SPtr<TonemappingSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

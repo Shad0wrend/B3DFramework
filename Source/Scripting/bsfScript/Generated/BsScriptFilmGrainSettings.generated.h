@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "FilmGrainSettings")
 
-		ScriptFilmGrainSettings(const SPtr<FilmGrainSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptFilmGrainSettings(const SPtr<FilmGrainSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

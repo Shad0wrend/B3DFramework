@@ -16,8 +16,8 @@
 
 namespace bs
 {
-	ScriptMesh::ScriptMesh(const TResourceHandle<Mesh>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptMesh::ScriptMesh(const TResourceHandle<Mesh>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -79,7 +79,7 @@ namespace bs
 	void ScriptMesh::InternalCreate(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, DrawOperationType topology, MeshUsage usage, VertexLayout vertex, IndexType index)
 	{
 		TResourceHandle<Mesh> nativeObject = MeshEx::Create(numVertices, numIndices, topology, usage, vertex, index);
-		B3DNew<ScriptMesh>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptMesh>(nativeObject, scriptObject);
 	}
 
 	void ScriptMesh::InternalCreate0(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, MonoArray* subMeshes, MeshUsage usage, VertexLayout vertex, IndexType index)
@@ -96,7 +96,7 @@ namespace bs
 
 		}
 		TResourceHandle<Mesh> nativeObject = MeshEx::Create(numVertices, numIndices, nativeArraysubMeshes, usage, vertex, index);
-		B3DNew<ScriptMesh>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptMesh>(nativeObject, scriptObject);
 	}
 
 	void ScriptMesh::InternalCreate1(MonoObject* scriptObject, MonoObject* data, DrawOperationType topology, MeshUsage usage)
@@ -107,7 +107,7 @@ namespace bs
 		if(scriptObjectWrapperdata != nullptr)
 			tmpdata = scriptObjectWrapperdata->GetInternal();
 		TResourceHandle<Mesh> nativeObject = MeshEx::Create(tmpdata, topology, usage);
-		B3DNew<ScriptMesh>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptMesh>(nativeObject, scriptObject);
 	}
 
 	void ScriptMesh::InternalCreate2(MonoObject* scriptObject, MonoObject* data, MonoArray* subMeshes, MeshUsage usage)
@@ -129,7 +129,7 @@ namespace bs
 
 		}
 		TResourceHandle<Mesh> nativeObject = MeshEx::Create(tmpdata, nativeArraysubMeshes, usage);
-		B3DNew<ScriptMesh>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptMesh>(nativeObject, scriptObject);
 	}
 
 	MonoArray* ScriptMesh::InternalGetSubMeshes(ScriptMesh* self)

@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ScreenSpaceLensFlareSettings")
 
-		ScriptScreenSpaceLensFlareSettings(const SPtr<ScreenSpaceLensFlareSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptScreenSpaceLensFlareSettings(const SPtr<ScreenSpaceLensFlareSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

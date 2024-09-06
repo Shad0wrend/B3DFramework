@@ -21,7 +21,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleEmitterShape")
 
-		ScriptParticleEmitterShape(const SPtr<ParticleEmitterShape>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleEmitterShape(const SPtr<ParticleEmitterShape>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

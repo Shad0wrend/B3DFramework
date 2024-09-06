@@ -43,8 +43,8 @@ namespace bs
 	class TScriptReflectableWrapper : public TScriptObjectWrapper<SelfType, BaseType>
 	{
 	public:
-		TScriptReflectableWrapper(const SPtr<NativeType>& nativeObject, MonoObject* scriptObject)
-			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.get(), scriptObject)
+		TScriptReflectableWrapper(const SPtr<NativeType>& nativeObject)
+			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.get())
 		{
 			mNativeObjectStrongHandle = nativeObject;
 		}
@@ -61,7 +61,7 @@ namespace bs
 		static MonoObject* CreateScriptObjectAndWrapper(const SPtr<IReflectable>& nativeObject)
 		{
 			MonoObject* const scriptObject = SelfType::CreateScriptObject(false);
-			B3DNew<SelfType>(B3DRTTICast<NativeType>(nativeObject), scriptObject);
+			ScriptObjectWrapper::Create<SelfType>(B3DRTTICast<NativeType>(nativeObject), scriptObject);
 
 			return scriptObject;
 		}

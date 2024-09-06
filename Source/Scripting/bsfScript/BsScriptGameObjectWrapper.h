@@ -49,8 +49,8 @@ namespace bs
 	class TScriptGameObjectWrapper : public TScriptObjectWrapper<SelfType, BaseType>
 	{
 	public:
-		TScriptGameObjectWrapper(const GameObjectHandle<NativeType>& nativeObject, MonoObject* scriptObject)
-			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.Get(), scriptObject)
+		TScriptGameObjectWrapper(const GameObjectHandle<NativeType>& nativeObject)
+			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.Get())
 		{
 			mNativeObjectStrongHandle = nativeObject;
 		}
@@ -84,7 +84,7 @@ namespace bs
 		static MonoObject* CreateScriptObjectAndWrapper(const HGameObject& nativeObject)
 		{
 			MonoObject* const scriptObject = SelfType::CreateScriptObject(false);
-			B3DNew<SelfType>(B3DStaticGameObjectCast<NativeType>(nativeObject), scriptObject);
+			ScriptObjectWrapper::Create<SelfType>(B3DStaticGameObjectCast<NativeType>(nativeObject), scriptObject);
 
 			return scriptObject;
 		}
@@ -135,7 +135,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GameObject")
 
-		ScriptGameObject(const HGameObject& nativeObject, MonoObject* scriptObject);
+		ScriptGameObject(const HGameObject& nativeObject);
 
 		/** Dummy method to create the script object. Not used as game objects are always just base classes, not created directly. */
 		static MonoObject* CreateScriptObject(bool construct)

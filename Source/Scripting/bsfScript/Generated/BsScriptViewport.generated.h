@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Viewport")
 
-		ScriptViewport(const SPtr<Viewport>& nativeObject, MonoObject* scriptObject);
+		ScriptViewport(const SPtr<Viewport>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

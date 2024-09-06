@@ -66,8 +66,8 @@ namespace bs
 	class TScriptResourceWrapper : public TScriptObjectWrapper<SelfType, BaseType>
 	{
 	public:
-		TScriptResourceWrapper(const TResourceHandle<NativeType>& nativeObject, MonoObject* scriptObject)
-			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.Get(), scriptObject)
+		TScriptResourceWrapper(const TResourceHandle<NativeType>& nativeObject)
+			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.Get())
 		{
 			mNativeObjectStrongHandle = nativeObject;
 		}
@@ -109,7 +109,7 @@ namespace bs
 		static MonoObject* CreateScriptObjectAndWrapper(const HResource& nativeObject)
 		{
 			MonoObject* const scriptObject = SelfType::CreateScriptObject(false);
-			B3DNew<SelfType>(B3DStaticResourceCast<NativeType>(nativeObject), scriptObject);
+			ScriptObjectWrapper::Create<SelfType>(B3DStaticResourceCast<NativeType>(nativeObject), scriptObject);
 
 			return scriptObject;
 		}
@@ -160,7 +160,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Resource")
 
-		ScriptResource(const HResource& nativeObject, MonoObject* scriptObject);
+		ScriptResource(const HResource& nativeObject);
 
 		/** Retrieves the underlying native object cast to the correct type. */
 		Resource* GetNativeObject() const;

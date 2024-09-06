@@ -16,7 +16,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ScriptCodeImportOptions")
 
-		ScriptScriptCodeImportOptions(const SPtr<ScriptCodeImportOptions>& nativeObject, MonoObject* scriptObject);
+		ScriptScriptCodeImportOptions(const SPtr<ScriptCodeImportOptions>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

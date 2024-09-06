@@ -20,7 +20,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleSystemSettings")
 
-		ScriptParticleSystemSettings(const SPtr<ParticleSystemSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleSystemSettings(const SPtr<ParticleSystemSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptDistanceJoint::ScriptDistanceJoint(const GameObjectHandle<CDistanceJoint>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptDistanceJoint::ScriptDistanceJoint(const GameObjectHandle<CDistanceJoint>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

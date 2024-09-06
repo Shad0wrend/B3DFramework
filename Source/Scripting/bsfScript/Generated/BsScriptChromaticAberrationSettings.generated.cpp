@@ -10,8 +10,8 @@
 
 namespace bs
 {
-	ScriptChromaticAberrationSettings::ScriptChromaticAberrationSettings(const SPtr<ChromaticAberrationSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptChromaticAberrationSettings::ScriptChromaticAberrationSettings(const SPtr<ChromaticAberrationSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -43,7 +43,7 @@ namespace bs
 	void ScriptChromaticAberrationSettings::InternalChromaticAberrationSettings(MonoObject* scriptObject)
 	{
 		SPtr<ChromaticAberrationSettings> nativeObject = B3DMakeShared<ChromaticAberrationSettings>();
-		B3DNew<ScriptChromaticAberrationSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptChromaticAberrationSettings>(nativeObject, scriptObject);
 	}
 
 	MonoObject* ScriptChromaticAberrationSettings::InternalGetFringeTexture(ScriptChromaticAberrationSettings* self)

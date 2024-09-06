@@ -14,8 +14,8 @@
 
 namespace bs
 {
-	ScriptSpriteVectorPath::ScriptSpriteVectorPath(const TResourceHandle<SpriteVectorPath>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptSpriteVectorPath::ScriptSpriteVectorPath(const TResourceHandle<SpriteVectorPath>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -62,7 +62,7 @@ namespace bs
 		if(scriptObjectWrappervectorPath != nullptr)
 			tmpvectorPath = B3DStaticResourceCast<VectorPath>(scriptObjectWrappervectorPath->GetBaseNativeObjectAsHandle());
 		TResourceHandle<SpriteVectorPath> nativeObject = SpriteVectorPath::Create(tmpvectorPath, *size);
-		B3DNew<ScriptSpriteVectorPath>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptSpriteVectorPath>(nativeObject, scriptObject);
 	}
 
 	void ScriptSpriteVectorPath::InternalCreate0(MonoObject* scriptObject, __SpriteVectorPathCreateInformationInterop* createInformation)
@@ -70,6 +70,6 @@ namespace bs
 		SpriteVectorPathCreateInformation tmpcreateInformation;
 		tmpcreateInformation = ScriptSpriteVectorPathCreateInformation::FromInterop(*createInformation);
 		TResourceHandle<SpriteVectorPath> nativeObject = SpriteVectorPath::Create(tmpcreateInformation);
-		B3DNew<ScriptSpriteVectorPath>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptSpriteVectorPath>(nativeObject, scriptObject);
 	}
 }

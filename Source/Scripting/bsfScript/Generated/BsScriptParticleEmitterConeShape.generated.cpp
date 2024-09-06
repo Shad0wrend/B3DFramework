@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptParticleEmitterConeShape::ScriptParticleEmitterConeShape(const SPtr<ParticleEmitterConeShape>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleEmitterConeShape::ScriptParticleEmitterConeShape(const SPtr<ParticleEmitterConeShape>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -56,12 +56,12 @@ namespace bs
 		PARTICLE_CONE_SHAPE_DESC tmpdesc;
 		tmpdesc = ScriptParticleConeShapeOptions::FromInterop(*desc);
 		SPtr<ParticleEmitterConeShape> nativeObject = ParticleEmitterConeShape::Create(tmpdesc);
-		B3DNew<ScriptParticleEmitterConeShape>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleEmitterConeShape>(nativeObject, scriptObject);
 	}
 
 	void ScriptParticleEmitterConeShape::InternalCreate0(MonoObject* scriptObject)
 	{
 		SPtr<ParticleEmitterConeShape> nativeObject = ParticleEmitterConeShape::Create();
-		B3DNew<ScriptParticleEmitterConeShape>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleEmitterConeShape>(nativeObject, scriptObject);
 	}
 }

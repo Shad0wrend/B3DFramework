@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleRotation")
 
-		ScriptParticleRotation(const SPtr<ParticleRotation>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleRotation(const SPtr<ParticleRotation>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

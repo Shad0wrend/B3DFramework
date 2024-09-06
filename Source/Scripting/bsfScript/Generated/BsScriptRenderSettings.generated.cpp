@@ -21,8 +21,8 @@
 
 namespace bs
 {
-	ScriptRenderSettings::ScriptRenderSettings(const SPtr<RenderSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptRenderSettings::ScriptRenderSettings(const SPtr<RenderSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -100,7 +100,7 @@ namespace bs
 	void ScriptRenderSettings::InternalRenderSettings(MonoObject* scriptObject)
 	{
 		SPtr<RenderSettings> nativeObject = B3DMakeShared<RenderSettings>();
-		B3DNew<ScriptRenderSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptRenderSettings>(nativeObject, scriptObject);
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetDepthOfField(ScriptRenderSettings* self)

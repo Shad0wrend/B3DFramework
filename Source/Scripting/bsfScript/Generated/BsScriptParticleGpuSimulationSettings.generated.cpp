@@ -12,8 +12,8 @@
 
 namespace bs
 {
-	ScriptParticleGpuSimulationSettings::ScriptParticleGpuSimulationSettings(const SPtr<ParticleGpuSimulationSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleGpuSimulationSettings::ScriptParticleGpuSimulationSettings(const SPtr<ParticleGpuSimulationSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

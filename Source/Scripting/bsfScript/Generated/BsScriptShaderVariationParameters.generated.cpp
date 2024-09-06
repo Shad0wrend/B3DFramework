@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptShaderVariationParameters::ScriptShaderVariationParameters(const SPtr<ShaderVariationParameters>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptShaderVariationParameters::ScriptShaderVariationParameters(const SPtr<ShaderVariationParameters>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -44,7 +44,7 @@ namespace bs
 	void ScriptShaderVariationParameters::InternalShaderVariationParameters(MonoObject* scriptObject)
 	{
 		SPtr<ShaderVariationParameters> nativeObject = B3DMakeShared<ShaderVariationParameters>();
-		B3DNew<ScriptShaderVariationParameters>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptShaderVariationParameters>(nativeObject, scriptObject);
 	}
 
 	int32_t ScriptShaderVariationParameters::InternalGetInt(ScriptShaderVariationParameters* self, MonoString* name)

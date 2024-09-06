@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptShadowSettings::ScriptShadowSettings(const SPtr<ShadowSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptShadowSettings::ScriptShadowSettings(const SPtr<ShadowSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -40,7 +40,7 @@ namespace bs
 	void ScriptShadowSettings::InternalShadowSettings(MonoObject* scriptObject)
 	{
 		SPtr<ShadowSettings> nativeObject = B3DMakeShared<ShadowSettings>();
-		B3DNew<ScriptShadowSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptShadowSettings>(nativeObject, scriptObject);
 	}
 
 	float ScriptShadowSettings::InternalGetDirectionalShadowDistance(ScriptShadowSettings* self)

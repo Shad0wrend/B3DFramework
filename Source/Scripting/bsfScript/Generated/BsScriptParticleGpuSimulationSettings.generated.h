@@ -19,7 +19,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleGpuSimulationSettings")
 
-		ScriptParticleGpuSimulationSettings(const SPtr<ParticleGpuSimulationSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleGpuSimulationSettings(const SPtr<ParticleGpuSimulationSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

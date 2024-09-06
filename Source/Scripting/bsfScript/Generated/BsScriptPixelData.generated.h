@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "PixelData")
 
-		ScriptPixelData(const SPtr<PixelData>& nativeObject, MonoObject* scriptObject);
+		ScriptPixelData(const SPtr<PixelData>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

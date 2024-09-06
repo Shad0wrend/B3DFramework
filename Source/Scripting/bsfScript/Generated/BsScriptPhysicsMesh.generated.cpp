@@ -13,8 +13,8 @@
 
 namespace bs
 {
-	ScriptPhysicsMesh::ScriptPhysicsMesh(const TResourceHandle<PhysicsMesh>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptPhysicsMesh::ScriptPhysicsMesh(const TResourceHandle<PhysicsMesh>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -62,7 +62,7 @@ namespace bs
 		if(scriptObjectWrappermeshData != nullptr)
 			tmpmeshData = scriptObjectWrappermeshData->GetInternal();
 		TResourceHandle<PhysicsMesh> nativeObject = PhysicsMeshEx::Create(tmpmeshData, type);
-		B3DNew<ScriptPhysicsMesh>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptPhysicsMesh>(nativeObject, scriptObject);
 	}
 
 	MonoObject* ScriptPhysicsMesh::InternalGetMeshData(ScriptPhysicsMesh* self)

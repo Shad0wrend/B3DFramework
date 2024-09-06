@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptLight::ScriptLight(const GameObjectHandle<CLight>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptLight::ScriptLight(const GameObjectHandle<CLight>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

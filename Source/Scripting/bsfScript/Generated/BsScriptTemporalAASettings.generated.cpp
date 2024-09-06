@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptTemporalAASettings::ScriptTemporalAASettings(const SPtr<TemporalAASettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptTemporalAASettings::ScriptTemporalAASettings(const SPtr<TemporalAASettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -38,7 +38,7 @@ namespace bs
 	void ScriptTemporalAASettings::InternalTemporalAASettings(MonoObject* scriptObject)
 	{
 		SPtr<TemporalAASettings> nativeObject = B3DMakeShared<TemporalAASettings>();
-		B3DNew<ScriptTemporalAASettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptTemporalAASettings>(nativeObject, scriptObject);
 	}
 
 	bool ScriptTemporalAASettings::InternalGetEnabled(ScriptTemporalAASettings* self)

@@ -13,7 +13,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "PhysicsMaterial")
 
-		ScriptPhysicsMaterial(const TResourceHandle<PhysicsMaterial>& nativeObject, MonoObject* scriptObject);
+		ScriptPhysicsMaterial(const TResourceHandle<PhysicsMaterial>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

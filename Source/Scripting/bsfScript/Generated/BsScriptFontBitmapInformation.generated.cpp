@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptFontBitmapInformation::ScriptFontBitmapInformation(const SPtr<FontBitmapInformation>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptFontBitmapInformation::ScriptFontBitmapInformation(const SPtr<FontBitmapInformation>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

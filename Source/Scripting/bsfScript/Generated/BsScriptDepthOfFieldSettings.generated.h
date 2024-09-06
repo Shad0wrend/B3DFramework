@@ -16,7 +16,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "DepthOfFieldSettings")
 
-		ScriptDepthOfFieldSettings(const SPtr<DepthOfFieldSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptDepthOfFieldSettings(const SPtr<DepthOfFieldSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

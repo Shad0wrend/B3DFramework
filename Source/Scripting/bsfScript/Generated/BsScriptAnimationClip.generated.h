@@ -15,7 +15,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AnimationClip")
 
-		ScriptAnimationClip(const TResourceHandle<AnimationClip>& nativeObject, MonoObject* scriptObject);
+		ScriptAnimationClip(const TResourceHandle<AnimationClip>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptCapsuleCollider::ScriptCapsuleCollider(const GameObjectHandle<CCapsuleCollider>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptCapsuleCollider::ScriptCapsuleCollider(const GameObjectHandle<CCapsuleCollider>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

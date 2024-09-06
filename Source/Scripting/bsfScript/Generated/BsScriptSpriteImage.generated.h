@@ -24,7 +24,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteImage")
 
-		ScriptSpriteImage(const TResourceHandle<SpriteImage>& nativeObject, MonoObject* scriptObject);
+		ScriptSpriteImage(const TResourceHandle<SpriteImage>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

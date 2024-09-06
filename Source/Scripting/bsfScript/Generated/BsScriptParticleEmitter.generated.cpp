@@ -32,8 +32,8 @@
 
 namespace bs
 {
-	ScriptParticleEmitter::ScriptParticleEmitter(const SPtr<ParticleEmitter>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleEmitter::ScriptParticleEmitter(const SPtr<ParticleEmitter>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -412,6 +412,6 @@ namespace bs
 	void ScriptParticleEmitter::InternalCreate(MonoObject* scriptObject)
 	{
 		SPtr<ParticleEmitter> nativeObject = ParticleEmitter::Create();
-		B3DNew<ScriptParticleEmitter>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleEmitter>(nativeObject, scriptObject);
 	}
 }

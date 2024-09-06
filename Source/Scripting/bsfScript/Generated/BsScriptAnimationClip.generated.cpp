@@ -14,8 +14,8 @@
 
 namespace bs
 {
-	ScriptAnimationClip::ScriptAnimationClip(const TResourceHandle<AnimationClip>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptAnimationClip::ScriptAnimationClip(const TResourceHandle<AnimationClip>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -169,7 +169,7 @@ namespace bs
 	void ScriptAnimationClip::InternalCreate(MonoObject* scriptObject, bool isAdditive)
 	{
 		TResourceHandle<AnimationClip> nativeObject = AnimationClip::Create(isAdditive);
-		B3DNew<ScriptAnimationClip>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptAnimationClip>(nativeObject, scriptObject);
 	}
 
 	void ScriptAnimationClip::InternalCreate0(MonoObject* scriptObject, MonoObject* curves, bool isAdditive, uint32_t sampleRate, MonoObject* rootMotion)
@@ -185,6 +185,6 @@ namespace bs
 		if(scriptObjectWrapperrootMotion != nullptr)
 			tmprootMotion = scriptObjectWrapperrootMotion->GetInternal();
 		TResourceHandle<AnimationClip> nativeObject = AnimationClip::Create(tmpcurves, isAdditive, sampleRate, tmprootMotion);
-		B3DNew<ScriptAnimationClip>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptAnimationClip>(nativeObject, scriptObject);
 	}
 }

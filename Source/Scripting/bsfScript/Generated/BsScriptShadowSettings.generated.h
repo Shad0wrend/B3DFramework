@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ShadowSettings")
 
-		ScriptShadowSettings(const SPtr<ShadowSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptShadowSettings(const SPtr<ShadowSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

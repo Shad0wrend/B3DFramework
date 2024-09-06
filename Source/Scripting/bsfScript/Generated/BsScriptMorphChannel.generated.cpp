@@ -8,8 +8,8 @@
 
 namespace bs
 {
-	ScriptMorphChannel::ScriptMorphChannel(const SPtr<MorphChannel>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptMorphChannel::ScriptMorphChannel(const SPtr<MorphChannel>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

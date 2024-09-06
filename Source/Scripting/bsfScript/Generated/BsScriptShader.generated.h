@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Shader")
 
-		ScriptShader(const TResourceHandle<Shader>& nativeObject, MonoObject* scriptObject);
+		ScriptShader(const TResourceHandle<Shader>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptParticleEmitterStaticMeshShape::ScriptParticleEmitterStaticMeshShape(const SPtr<ParticleEmitterStaticMeshShape>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleEmitterStaticMeshShape::ScriptParticleEmitterStaticMeshShape(const SPtr<ParticleEmitterStaticMeshShape>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -56,12 +56,12 @@ namespace bs
 		PARTICLE_STATIC_MESH_SHAPE_DESC tmpdesc;
 		tmpdesc = ScriptParticleStaticMeshShapeOptions::FromInterop(*desc);
 		SPtr<ParticleEmitterStaticMeshShape> nativeObject = ParticleEmitterStaticMeshShape::Create(tmpdesc);
-		B3DNew<ScriptParticleEmitterStaticMeshShape>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleEmitterStaticMeshShape>(nativeObject, scriptObject);
 	}
 
 	void ScriptParticleEmitterStaticMeshShape::InternalCreate0(MonoObject* scriptObject)
 	{
 		SPtr<ParticleEmitterStaticMeshShape> nativeObject = ParticleEmitterStaticMeshShape::Create();
-		B3DNew<ScriptParticleEmitterStaticMeshShape>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleEmitterStaticMeshShape>(nativeObject, scriptObject);
 	}
 }

@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "WhiteBalanceSettings")
 
-		ScriptWhiteBalanceSettings(const SPtr<WhiteBalanceSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptWhiteBalanceSettings(const SPtr<WhiteBalanceSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

@@ -20,7 +20,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "RRefBase")
 
-		ScriptRRefBase(const TResourceHandle<Resource>& nativeObject, MonoObject* scriptObject);
+		ScriptRRefBase(const TResourceHandle<Resource>& nativeObject);
 
 		/**
 		 * Returns null as resource references cannot be created statically. Their script object type is mutable depending on the resource type they are referencing. Use CreateScriptObject() that accepts

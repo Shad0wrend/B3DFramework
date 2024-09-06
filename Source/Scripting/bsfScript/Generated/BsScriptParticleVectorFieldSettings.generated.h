@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleVectorFieldSettings")
 
-		ScriptParticleVectorFieldSettings(const SPtr<ParticleVectorFieldSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleVectorFieldSettings(const SPtr<ParticleVectorFieldSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

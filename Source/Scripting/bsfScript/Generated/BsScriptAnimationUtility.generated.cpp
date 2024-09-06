@@ -12,8 +12,8 @@
 
 namespace bs
 {
-	ScriptAnimationUtility::ScriptAnimationUtility(const SPtr<AnimationUtility>& nativeObject, MonoObject* scriptObject)
-		:TScriptNonReflectableWrapper(nativeObject, scriptObject)
+	ScriptAnimationUtility::ScriptAnimationUtility(const SPtr<AnimationUtility>& nativeObject)
+		:TScriptNonReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

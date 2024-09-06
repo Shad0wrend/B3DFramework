@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptScreenSpaceReflectionsSettings::ScriptScreenSpaceReflectionsSettings(const SPtr<ScreenSpaceReflectionsSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptScreenSpaceReflectionsSettings::ScriptScreenSpaceReflectionsSettings(const SPtr<ScreenSpaceReflectionsSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -40,7 +40,7 @@ namespace bs
 	void ScriptScreenSpaceReflectionsSettings::InternalScreenSpaceReflectionsSettings(MonoObject* scriptObject)
 	{
 		SPtr<ScreenSpaceReflectionsSettings> nativeObject = B3DMakeShared<ScreenSpaceReflectionsSettings>();
-		B3DNew<ScriptScreenSpaceReflectionsSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptScreenSpaceReflectionsSettings>(nativeObject, scriptObject);
 	}
 
 	bool ScriptScreenSpaceReflectionsSettings::InternalGetEnabled(ScriptScreenSpaceReflectionsSettings* self)

@@ -15,7 +15,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AnimationSplitInfo")
 
-		ScriptAnimationSplitInfo(const SPtr<AnimationSplitInfo>& nativeObject, MonoObject* scriptObject);
+		ScriptAnimationSplitInfo(const SPtr<AnimationSplitInfo>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

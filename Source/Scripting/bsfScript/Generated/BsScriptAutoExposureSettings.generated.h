@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AutoExposureSettings")
 
-		ScriptAutoExposureSettings(const SPtr<AutoExposureSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptAutoExposureSettings(const SPtr<AutoExposureSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

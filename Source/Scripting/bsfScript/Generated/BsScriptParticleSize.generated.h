@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleSize")
 
-		ScriptParticleSize(const SPtr<ParticleSize>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleSize(const SPtr<ParticleSize>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

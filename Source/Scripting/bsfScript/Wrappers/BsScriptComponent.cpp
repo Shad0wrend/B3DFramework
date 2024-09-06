@@ -13,8 +13,8 @@
 
 using namespace bs;
 
-ScriptComponent::ScriptComponent(const HComponent& nativeObject, MonoObject* scriptObject)
-	: TScriptGameObjectWrapper(nativeObject, scriptObject)
+ScriptComponent::ScriptComponent(const HComponent& nativeObject)
+	: TScriptGameObjectWrapper(nativeObject)
 { }
 
 void ScriptComponent::SetupScriptBindings()

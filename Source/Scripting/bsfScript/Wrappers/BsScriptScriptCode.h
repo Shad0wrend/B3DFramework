@@ -19,7 +19,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ScriptCode")
 
-		ScriptScriptCode(const HScriptCode& nativeObject, MonoObject* scriptObject);
+		ScriptScriptCode(const HScriptCode& nativeObject);
 
 		/** Retrieves the underlying native object cast to the correct type. */
 		ScriptCode* GetNativeObject() const;

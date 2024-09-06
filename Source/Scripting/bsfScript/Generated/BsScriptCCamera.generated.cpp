@@ -13,8 +13,8 @@
 
 namespace bs
 {
-	ScriptCamera::ScriptCamera(const GameObjectHandle<CCamera>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptCamera::ScriptCamera(const GameObjectHandle<CCamera>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

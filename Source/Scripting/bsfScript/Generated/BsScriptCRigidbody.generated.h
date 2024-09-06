@@ -21,7 +21,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Rigidbody")
 
-		ScriptRigidbody(const GameObjectHandle<CRigidbody>& nativeObject, MonoObject* scriptObject);
+		ScriptRigidbody(const GameObjectHandle<CRigidbody>& nativeObject);
 
 		virtual void RegisterEvents();
 		static MonoObject* CreateScriptObject(bool construct);

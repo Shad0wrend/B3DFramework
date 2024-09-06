@@ -11,8 +11,8 @@
 
 namespace bs
 {
-	ScriptSkybox::ScriptSkybox(const GameObjectHandle<CSkybox>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptSkybox::ScriptSkybox(const GameObjectHandle<CSkybox>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

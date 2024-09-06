@@ -8,8 +8,8 @@
 #include "Serialization/BsScriptAssemblyManager.h"
 
 using namespace bs;
-ScriptRRefBase::ScriptRRefBase(const TResourceHandle<Resource>& nativeObject, MonoObject* scriptObject)
-	: TScriptResourceWrapper(nativeObject, scriptObject)
+ScriptRRefBase::ScriptRRefBase(const TResourceHandle<Resource>& nativeObject)
+	: TScriptResourceWrapper(nativeObject)
 {}
 
 void ScriptRRefBase::SetupScriptBindings()
@@ -37,7 +37,7 @@ MonoObject* ScriptRRefBase::CreateScriptObject(const HResource& handle, ::MonoCl
 	}
 
 	MonoObject* scriptObject = type->CreateInstance();
-	B3DNew<ScriptRRefBase>(handle, scriptObject);
+	ScriptObjectWrapper::Create<ScriptRRefBase>(handle, scriptObject);
 
 	return scriptObject;
 }

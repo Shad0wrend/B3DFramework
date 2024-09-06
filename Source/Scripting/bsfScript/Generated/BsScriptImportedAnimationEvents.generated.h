@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ImportedAnimationEvents")
 
-		ScriptImportedAnimationEvents(const SPtr<ImportedAnimationEvents>& nativeObject, MonoObject* scriptObject);
+		ScriptImportedAnimationEvents(const SPtr<ImportedAnimationEvents>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

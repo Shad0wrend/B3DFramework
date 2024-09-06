@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "FontImportOptions")
 
-		ScriptFontImportOptions(const SPtr<FontImportOptions>& nativeObject, MonoObject* scriptObject);
+		ScriptFontImportOptions(const SPtr<FontImportOptions>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

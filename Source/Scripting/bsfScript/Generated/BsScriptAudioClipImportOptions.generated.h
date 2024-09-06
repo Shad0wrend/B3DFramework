@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AudioClipImportOptions")
 
-		ScriptAudioClipImportOptions(const SPtr<AudioClipImportOptions>& nativeObject, MonoObject* scriptObject);
+		ScriptAudioClipImportOptions(const SPtr<AudioClipImportOptions>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

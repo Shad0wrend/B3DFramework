@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptSphericalJoint::ScriptSphericalJoint(const GameObjectHandle<CSphericalJoint>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptSphericalJoint::ScriptSphericalJoint(const GameObjectHandle<CSphericalJoint>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

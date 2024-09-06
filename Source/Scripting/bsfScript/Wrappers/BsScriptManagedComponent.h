@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ManagedComponent")
 
-		ScriptManagedComponent(const HManagedComponent& nativeObject, MonoObject* scriptObject);
+		ScriptManagedComponent(const HManagedComponent& nativeObject);
 
 		/**
 		 * Returns null as managed components cannot be created statically. Their script object type is mutable depending on the script type they are referencing. Use non-static CreateAndBindScriptObject()

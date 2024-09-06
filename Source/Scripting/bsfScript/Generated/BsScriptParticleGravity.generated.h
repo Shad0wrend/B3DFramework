@@ -16,7 +16,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleGravity")
 
-		ScriptParticleGravity(const SPtr<ParticleGravity>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleGravity(const SPtr<ParticleGravity>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

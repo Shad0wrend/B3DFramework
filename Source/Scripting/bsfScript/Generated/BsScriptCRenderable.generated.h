@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Renderable")
 
-		ScriptRenderable(const GameObjectHandle<CRenderable>& nativeObject, MonoObject* scriptObject);
+		ScriptRenderable(const GameObjectHandle<CRenderable>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

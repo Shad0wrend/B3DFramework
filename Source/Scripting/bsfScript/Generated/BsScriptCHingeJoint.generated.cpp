@@ -10,8 +10,8 @@
 
 namespace bs
 {
-	ScriptHingeJoint::ScriptHingeJoint(const GameObjectHandle<CHingeJoint>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptHingeJoint::ScriptHingeJoint(const GameObjectHandle<CHingeJoint>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

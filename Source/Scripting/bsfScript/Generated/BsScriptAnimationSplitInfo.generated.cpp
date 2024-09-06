@@ -8,8 +8,8 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptAnimationSplitInfo::ScriptAnimationSplitInfo(const SPtr<AnimationSplitInfo>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptAnimationSplitInfo::ScriptAnimationSplitInfo(const SPtr<AnimationSplitInfo>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -42,7 +42,7 @@ namespace bs
 	void ScriptAnimationSplitInfo::InternalAnimationSplitInfo(MonoObject* scriptObject)
 	{
 		SPtr<AnimationSplitInfo> nativeObject = B3DMakeShared<AnimationSplitInfo>();
-		B3DNew<ScriptAnimationSplitInfo>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptAnimationSplitInfo>(nativeObject, scriptObject);
 	}
 
 	void ScriptAnimationSplitInfo::InternalAnimationSplitInfo0(MonoObject* scriptObject, MonoString* name, uint32_t startFrame, uint32_t endFrame, bool isAdditive)
@@ -50,7 +50,7 @@ namespace bs
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<AnimationSplitInfo> nativeObject = B3DMakeShared<AnimationSplitInfo>(tmpname, startFrame, endFrame, isAdditive);
-		B3DNew<ScriptAnimationSplitInfo>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptAnimationSplitInfo>(nativeObject, scriptObject);
 	}
 
 	MonoString* ScriptAnimationSplitInfo::InternalGetName(ScriptAnimationSplitInfo* self)

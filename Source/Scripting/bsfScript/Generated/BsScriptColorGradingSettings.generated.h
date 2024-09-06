@@ -15,7 +15,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ColorGradingSettings")
 
-		ScriptColorGradingSettings(const SPtr<ColorGradingSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptColorGradingSettings(const SPtr<ColorGradingSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Prefab")
 
-		ScriptPrefab(const HPrefab& nativeObject, MonoObject* scriptObject);
+		ScriptPrefab(const HPrefab& nativeObject);
 
 		/** Retrieves the underlying native object cast to the correct type. */
 		Prefab* GetNativeObject() const;

@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptWhiteBalanceSettings::ScriptWhiteBalanceSettings(const SPtr<WhiteBalanceSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptWhiteBalanceSettings::ScriptWhiteBalanceSettings(const SPtr<WhiteBalanceSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -36,7 +36,7 @@ namespace bs
 	void ScriptWhiteBalanceSettings::InternalWhiteBalanceSettings(MonoObject* scriptObject)
 	{
 		SPtr<WhiteBalanceSettings> nativeObject = B3DMakeShared<WhiteBalanceSettings>();
-		B3DNew<ScriptWhiteBalanceSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptWhiteBalanceSettings>(nativeObject, scriptObject);
 	}
 
 	float ScriptWhiteBalanceSettings::InternalGetTemperature(ScriptWhiteBalanceSettings* self)

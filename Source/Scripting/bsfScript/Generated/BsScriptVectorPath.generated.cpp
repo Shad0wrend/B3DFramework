@@ -8,8 +8,8 @@
 
 namespace bs
 {
-	ScriptVectorPath::ScriptVectorPath(const TResourceHandle<VectorPath>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptVectorPath::ScriptVectorPath(const TResourceHandle<VectorPath>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

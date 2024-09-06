@@ -8,12 +8,10 @@
 
 using namespace bs;
 
-ScriptObjectWrapper::ScriptObjectWrapper(IScriptExportable* nativeObject, MonoObject* scriptObject)
+ScriptObjectWrapper::ScriptObjectWrapper(IScriptExportable* nativeObject)
 	:IScriptObjectWrapper(nativeObject)
 {
 	ScriptObjectManager::Instance().RegisterScriptObjectWrapper(this);
-
-	CreateScriptObjectHandle(scriptObject);
 }
 
 ScriptObjectWrapper::~ScriptObjectWrapper()
@@ -37,7 +35,7 @@ void ScriptObjectWrapper::NotifyScriptObjectDestroyed(bool isDestroyedDueToScrip
 
 void ScriptObjectWrapper::NotifyNativeObjectDestroyed()
 {
-	ReleaseStrongScriptObjectHandle();
+	ReleaseScriptObjectHandle();
 
 	IScriptObjectWrapper::NotifyNativeObjectDestroyed();
 }
@@ -105,7 +103,7 @@ void ScriptObjectWrapper::TransitionToStrongHandle()
 	mRequiresStrongHandle = true;
 }
 
-void ScriptObjectWrapper::ReleaseStrongScriptObjectHandle()
+void ScriptObjectWrapper::ReleaseScriptObjectHandle()
 {
 	if(mScriptObjectHandle != ~0u)
 	{
@@ -114,9 +112,7 @@ void ScriptObjectWrapper::ReleaseStrongScriptObjectHandle()
 	}
 }
 
-
-ScriptScriptObject::ScriptScriptObject(MonoObject* scriptObject)
-	: TNonInstantiableScriptObjectWrapper(scriptObject)
+ScriptScriptObject::ScriptScriptObject()
 {}
 
 void ScriptScriptObject::SetupScriptBindings()

@@ -80,7 +80,7 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptObjectWrapper : public IScriptObjectWrapper
 	{
 	public:
-		ScriptObjectWrapper(IScriptExportable* nativeObject, MonoObject* scriptObject);
+		ScriptObjectWrapper(IScriptExportable* nativeObject);
 		virtual ~ScriptObjectWrapper();
 
 		MonoObject* GetScriptObject() const;
@@ -144,7 +144,7 @@ namespace bs
 		 * Called on all script object wrappers when script reload is about to happen, after BackupDataBeforeScriptReload() is called. Allows the wrapper to
 		 * release any explicit strong handles it may be holding, so the object gets released correctly.
 		 */
-		virtual void ReleaseStrongHandlesBeforeScriptReload() { ReleaseStrongScriptObjectHandle(); }
+		virtual void ReleaseStrongHandlesBeforeScriptReload() { ReleaseScriptObjectHandle(); }
 
 		/**
 		 * Called on all script object wrappers after script assemblies have been reloaded. This needs to recreate the internal script object using the new assemblies,
@@ -166,12 +166,25 @@ namespace bs
 
 		/** @} */
 
+		/**
+		 * Creates a script wrapper object of the specified type and initializes it. All wrappers should be created using this method rather
+		 * than manually creating them.
+		 */
+		template<typename ScriptWrapperType, typename NativeType>
+		static ScriptWrapperType* Create(NativeType&& nativeObject, MonoObject* scriptObject)
+		{
+			ScriptWrapperType* const scriptWrapper = B3DNew<ScriptWrapperType>(std::forward<NativeType>(nativeObject));
+			scriptWrapper->BindToScriptObject(scriptObject);
+
+			return scriptWrapper;
+		}
+
 	protected:
 		/** Creates a new handle to the provided script object. Previous handle must be released. */
 		void CreateScriptObjectHandle(MonoObject* scriptObject);
 
 		/** Releases the currently held script object strong handle, if any. */ 
-		void ReleaseStrongScriptObjectHandle();
+		void ReleaseScriptObjectHandle();
 
 		u32 mScriptObjectHandle = ~0u;
 		bool mRequiresStrongHandle = false;
@@ -204,11 +217,10 @@ namespace bs
 	class TScriptObjectWrapper : public BaseType 
 	{
 	public:
-		TScriptObjectWrapper(IScriptExportable* nativeObject, MonoObject* scriptObject)
-			: BaseType(nativeObject, scriptObject)
+		TScriptObjectWrapper(IScriptExportable* nativeObject)
+			: BaseType(nativeObject)
 		{
 			sInitializeOnLoadTime.MakeSureIAmInstantiated();
-			BindSelfToScriptObject(scriptObject);
 		}
 
 		virtual ~TScriptObjectWrapper() = default;
@@ -218,10 +230,7 @@ namespace bs
 			MonoObject* const scriptObject = SelfType::CreateScriptObject(true);
 
 			if(B3D_ENSURE(scriptObject != nullptr))
-			{
-				CreateScriptObjectHandle(scriptObject);
-				BindSelfToScriptObject(scriptObject);
-			}
+				BindToScriptObject(scriptObject);
 		}
 
 		/** Returns the script object wrapper associated with the provided script object. */
@@ -253,10 +262,14 @@ namespace bs
 		}
 
 	protected:
+		friend class ScriptObjectWrapper;
+
 		/** Stores a pointer to itself in the script object. This ensures that calls to GetScriptObjectWrapper() can return the script object wrapper associated with the script object. */
-		void BindSelfToScriptObject(MonoObject* scriptObject)
+		void BindToScriptObject(MonoObject* scriptObject)
 		{
 			SelfType* self = (SelfType*)(BaseType*)this; // Needed due to multiple inheritance. Safe since SelfType must point to an class derived from this one.
+
+			self->CreateScriptObjectHandle(scriptObject);
 
 			if(sInteropMetaData.ScriptObjectWrapperPointerField != nullptr)
 				sInteropMetaData.ScriptObjectWrapperPointerField->Set(scriptObject, &self);
@@ -283,8 +296,8 @@ namespace bs
 	class TNonInstantiableScriptObjectWrapper : public TScriptObjectWrapper<SelfType>
 	{
 	public:
-		TNonInstantiableScriptObjectWrapper(MonoObject* scriptObject)
-			:TScriptObjectWrapper<SelfType>(nullptr, scriptObject)
+		TNonInstantiableScriptObjectWrapper()
+			:TScriptObjectWrapper<SelfType>(nullptr)
 		{ }
 
 		/** Dummy method to create the script object. Not needed for non-instantiable types. */
@@ -328,7 +341,7 @@ namespace bs
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ScriptObject")
 
 	private:
-		ScriptScriptObject(MonoObject* scriptObject);
+		ScriptScriptObject();
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/

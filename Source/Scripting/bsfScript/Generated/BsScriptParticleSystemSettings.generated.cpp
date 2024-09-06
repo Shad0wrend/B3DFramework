@@ -12,8 +12,8 @@
 
 namespace bs
 {
-	ScriptParticleSystemSettings::ScriptParticleSystemSettings(const SPtr<ParticleSystemSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleSystemSettings::ScriptParticleSystemSettings(const SPtr<ParticleSystemSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

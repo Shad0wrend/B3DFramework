@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptParticleEmitterSkinnedMeshShape::ScriptParticleEmitterSkinnedMeshShape(const SPtr<ParticleEmitterSkinnedMeshShape>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleEmitterSkinnedMeshShape::ScriptParticleEmitterSkinnedMeshShape(const SPtr<ParticleEmitterSkinnedMeshShape>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -56,12 +56,12 @@ namespace bs
 		PARTICLE_SKINNED_MESH_SHAPE_DESC tmpdesc;
 		tmpdesc = ScriptParticleSkinnedMeshShapeOptions::FromInterop(*desc);
 		SPtr<ParticleEmitterSkinnedMeshShape> nativeObject = ParticleEmitterSkinnedMeshShape::Create(tmpdesc);
-		B3DNew<ScriptParticleEmitterSkinnedMeshShape>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleEmitterSkinnedMeshShape>(nativeObject, scriptObject);
 	}
 
 	void ScriptParticleEmitterSkinnedMeshShape::InternalCreate0(MonoObject* scriptObject)
 	{
 		SPtr<ParticleEmitterSkinnedMeshShape> nativeObject = ParticleEmitterSkinnedMeshShape::Create();
-		B3DNew<ScriptParticleEmitterSkinnedMeshShape>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleEmitterSkinnedMeshShape>(nativeObject, scriptObject);
 	}
 }

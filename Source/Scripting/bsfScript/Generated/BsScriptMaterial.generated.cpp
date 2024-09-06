@@ -22,8 +22,8 @@
 
 namespace bs
 {
-	ScriptMaterial::ScriptMaterial(const TResourceHandle<Material>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptMaterial::ScriptMaterial(const TResourceHandle<Material>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -330,7 +330,7 @@ namespace bs
 	void ScriptMaterial::InternalCreate(MonoObject* scriptObject)
 	{
 		TResourceHandle<Material> nativeObject = Material::Create();
-		B3DNew<ScriptMaterial>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptMaterial>(nativeObject, scriptObject);
 	}
 
 	void ScriptMaterial::InternalCreate0(MonoObject* scriptObject, MonoObject* shader)
@@ -341,7 +341,7 @@ namespace bs
 		if(scriptObjectWrappershader != nullptr)
 			tmpshader = B3DStaticResourceCast<Shader>(scriptObjectWrappershader->GetBaseNativeObjectAsHandle());
 		TResourceHandle<Material> nativeObject = Material::Create(tmpshader);
-		B3DNew<ScriptMaterial>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptMaterial>(nativeObject, scriptObject);
 	}
 
 	void ScriptMaterial::InternalSetTexture(ScriptMaterial* self, MonoString* name, MonoObject* value, uint32_t mipLevel, uint32_t numMipLevels, uint32_t arraySlice, uint32_t numArraySlices)

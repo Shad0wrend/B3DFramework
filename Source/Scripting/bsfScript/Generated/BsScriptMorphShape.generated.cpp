@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptMorphShape::ScriptMorphShape(const SPtr<MorphShape>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptMorphShape::ScriptMorphShape(const SPtr<MorphShape>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

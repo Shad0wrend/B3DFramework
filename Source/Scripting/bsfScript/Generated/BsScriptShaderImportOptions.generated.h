@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ShaderImportOptions")
 
-		ScriptShaderImportOptions(const SPtr<ShaderImportOptions>& nativeObject, MonoObject* scriptObject);
+		ScriptShaderImportOptions(const SPtr<ShaderImportOptions>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

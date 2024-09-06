@@ -137,7 +137,7 @@ void ManagedResource::Initialize()
 		SPtr<ManagedSerializableObjectInfo> objectInformation;
 		MonoObject* const scriptObject = CreateScriptObject(objectInformation);
 
-		B3DNew<ScriptManagedResource>(B3DStaticResourceCast<ManagedResource>(GetHandle()), scriptObject);
+		ScriptObjectWrapper::Create<ScriptManagedResource>(B3DStaticResourceCast<ManagedResource>(GetHandle()), scriptObject);
 		BindToScriptObject(objectInformation);
 
 		if(mSerializedObjectData != nullptr && mObjectInformation != nullptr)

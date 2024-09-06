@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "FontBitmapInformation")
 
-		ScriptFontBitmapInformation(const SPtr<FontBitmapInformation>& nativeObject, MonoObject* scriptObject);
+		ScriptFontBitmapInformation(const SPtr<FontBitmapInformation>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

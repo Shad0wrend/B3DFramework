@@ -11,8 +11,8 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptMeshImportOptions::ScriptMeshImportOptions(const SPtr<MeshImportOptions>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptMeshImportOptions::ScriptMeshImportOptions(const SPtr<MeshImportOptions>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -60,7 +60,7 @@ namespace bs
 	void ScriptMeshImportOptions::InternalCreate(MonoObject* scriptObject)
 	{
 		SPtr<MeshImportOptions> nativeObject = MeshImportOptions::Create();
-		B3DNew<ScriptMeshImportOptions>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptMeshImportOptions>(nativeObject, scriptObject);
 	}
 	bool ScriptMeshImportOptions::InternalGetCpuCached(ScriptMeshImportOptions* self)
 	{

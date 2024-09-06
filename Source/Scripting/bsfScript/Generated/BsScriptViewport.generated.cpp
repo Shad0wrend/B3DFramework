@@ -13,8 +13,8 @@
 
 namespace bs
 {
-	ScriptViewport::ScriptViewport(const SPtr<Viewport>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptViewport::ScriptViewport(const SPtr<Viewport>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -167,6 +167,6 @@ namespace bs
 		if(scriptObjectWrappertarget != nullptr)
 			tmptarget = std::static_pointer_cast<RenderTarget>(scriptObjectWrappertarget->GetBaseNativeObjectAsShared());
 		SPtr<Viewport> nativeObject = Viewport::Create(tmptarget, x, y, width, height);
-		B3DNew<ScriptViewport>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptViewport>(nativeObject, scriptObject);
 	}
 }

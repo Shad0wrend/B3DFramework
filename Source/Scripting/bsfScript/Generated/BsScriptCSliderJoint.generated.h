@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SliderJoint")
 
-		ScriptSliderJoint(const GameObjectHandle<CSliderJoint>& nativeObject, MonoObject* scriptObject);
+		ScriptSliderJoint(const GameObjectHandle<CSliderJoint>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

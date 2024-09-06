@@ -8,8 +8,8 @@
 
 namespace bs
 {
-	ScriptAudioListener::ScriptAudioListener(const GameObjectHandle<CAudioListener>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptAudioListener::ScriptAudioListener(const GameObjectHandle<CAudioListener>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

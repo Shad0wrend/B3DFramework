@@ -12,8 +12,8 @@
 
 namespace bs
 {
-	ScriptRenderable::ScriptRenderable(const GameObjectHandle<CRenderable>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptRenderable::ScriptRenderable(const GameObjectHandle<CRenderable>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

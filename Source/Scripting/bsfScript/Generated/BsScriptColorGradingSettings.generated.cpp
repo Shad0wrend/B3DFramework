@@ -8,8 +8,8 @@
 
 namespace bs
 {
-	ScriptColorGradingSettings::ScriptColorGradingSettings(const SPtr<ColorGradingSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptColorGradingSettings::ScriptColorGradingSettings(const SPtr<ColorGradingSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

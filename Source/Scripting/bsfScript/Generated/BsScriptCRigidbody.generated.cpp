@@ -15,8 +15,8 @@ namespace bs
 	ScriptRigidbody::OnCollisionStayThunkDefinition ScriptRigidbody::OnCollisionStayThunk; 
 	ScriptRigidbody::OnCollisionEndThunkDefinition ScriptRigidbody::OnCollisionEndThunk; 
 
-	ScriptRigidbody::ScriptRigidbody(const GameObjectHandle<CRigidbody>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptRigidbody::ScriptRigidbody(const GameObjectHandle<CRigidbody>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

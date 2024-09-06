@@ -21,7 +21,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleEvolver")
 
-		ScriptParticleEvolver(const SPtr<ParticleEvolver>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleEvolver(const SPtr<ParticleEvolver>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

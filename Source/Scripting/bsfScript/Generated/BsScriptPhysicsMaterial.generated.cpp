@@ -11,8 +11,8 @@
 
 namespace bs
 {
-	ScriptPhysicsMaterial::ScriptPhysicsMaterial(const TResourceHandle<PhysicsMaterial>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptPhysicsMaterial::ScriptPhysicsMaterial(const TResourceHandle<PhysicsMaterial>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -96,6 +96,6 @@ namespace bs
 	void ScriptPhysicsMaterial::InternalCreate(MonoObject* scriptObject, float staticFriction, float dynamicFriction, float restitution)
 	{
 		TResourceHandle<PhysicsMaterial> nativeObject = PhysicsMaterial::Create(staticFriction, dynamicFriction, restitution);
-		B3DNew<ScriptPhysicsMaterial>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptPhysicsMaterial>(nativeObject, scriptObject);
 	}
 }

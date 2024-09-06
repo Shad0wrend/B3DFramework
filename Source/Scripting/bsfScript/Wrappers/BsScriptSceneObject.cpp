@@ -11,8 +11,8 @@
 #include "Generated/BsScriptSceneInstance.generated.h"
 
 using namespace bs;
-ScriptSceneObject::ScriptSceneObject(const HSceneObject& nativeObject, MonoObject* scriptObject)
-	: TScriptGameObjectWrapper(nativeObject, scriptObject)
+ScriptSceneObject::ScriptSceneObject(const HSceneObject& nativeObject)
+	: TScriptGameObjectWrapper(nativeObject)
 { }
 
 void ScriptSceneObject::SetupScriptBindings()
@@ -78,7 +78,7 @@ MonoObject* ScriptSceneObject::CreateScriptObject(bool construct)
 void ScriptSceneObject::InternalCreateInstance(MonoObject* scriptObject, MonoString* name, u32 flags)
 {
 	HSceneObject sceneObject = SceneObject::Create(MonoUtil::MonoToString(name), flags);
-	B3DNew<ScriptSceneObject>(sceneObject, scriptObject);
+	ScriptObjectWrapper::Create<ScriptSceneObject>(sceneObject, scriptObject);
 }
 
 void ScriptSceneObject::InternalSetName(ScriptSceneObject* self, MonoString* name)

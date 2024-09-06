@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptPlaneCollider::ScriptPlaneCollider(const GameObjectHandle<CPlaneCollider>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptPlaneCollider::ScriptPlaneCollider(const GameObjectHandle<CPlaneCollider>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

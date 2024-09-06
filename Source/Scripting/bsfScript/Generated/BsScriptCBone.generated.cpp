@@ -8,8 +8,8 @@
 
 namespace bs
 {
-	ScriptBone::ScriptBone(const GameObjectHandle<CBone>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptBone::ScriptBone(const GameObjectHandle<CBone>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

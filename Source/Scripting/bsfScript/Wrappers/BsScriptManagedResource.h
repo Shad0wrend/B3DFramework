@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ManagedResource")
 
-		ScriptManagedResource(const HManagedResource& nativeObject, MonoObject* scriptObject);
+		ScriptManagedResource(const HManagedResource& nativeObject);
 
 		ScriptObjectLifetimeTrackingMode GetLifetimeTrackingMode() const override { return ScriptObjectLifetimeTrackingMode::StrongHandleWithExplicitDestroy; }
 

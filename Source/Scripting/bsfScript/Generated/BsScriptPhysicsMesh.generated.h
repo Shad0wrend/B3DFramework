@@ -15,7 +15,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "PhysicsMesh")
 
-		ScriptPhysicsMesh(const TResourceHandle<PhysicsMesh>& nativeObject, MonoObject* scriptObject);
+		ScriptPhysicsMesh(const TResourceHandle<PhysicsMesh>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

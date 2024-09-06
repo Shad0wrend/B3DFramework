@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "TemporalAASettings")
 
-		ScriptTemporalAASettings(const SPtr<TemporalAASettings>& nativeObject, MonoObject* scriptObject);
+		ScriptTemporalAASettings(const SPtr<TemporalAASettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

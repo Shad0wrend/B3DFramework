@@ -8,8 +8,8 @@
 
 namespace bs
 {
-	ScriptBloomSettings::ScriptBloomSettings(const SPtr<BloomSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptBloomSettings::ScriptBloomSettings(const SPtr<BloomSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -45,7 +45,7 @@ namespace bs
 	void ScriptBloomSettings::InternalBloomSettings(MonoObject* scriptObject)
 	{
 		SPtr<BloomSettings> nativeObject = B3DMakeShared<BloomSettings>();
-		B3DNew<ScriptBloomSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptBloomSettings>(nativeObject, scriptObject);
 	}
 
 	bool ScriptBloomSettings::InternalGetEnabled(ScriptBloomSettings* self)

@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptSphereCollider::ScriptSphereCollider(const GameObjectHandle<CSphereCollider>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptSphereCollider::ScriptSphereCollider(const GameObjectHandle<CSphereCollider>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

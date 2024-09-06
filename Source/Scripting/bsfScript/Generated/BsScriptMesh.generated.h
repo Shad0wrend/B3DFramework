@@ -21,7 +21,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Mesh")
 
-		ScriptMesh(const TResourceHandle<Mesh>& nativeObject, MonoObject* scriptObject);
+		ScriptMesh(const TResourceHandle<Mesh>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

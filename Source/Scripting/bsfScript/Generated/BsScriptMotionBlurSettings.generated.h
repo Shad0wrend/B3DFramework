@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "MotionBlurSettings")
 
-		ScriptMotionBlurSettings(const SPtr<MotionBlurSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptMotionBlurSettings(const SPtr<MotionBlurSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

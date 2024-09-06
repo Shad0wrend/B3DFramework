@@ -31,8 +31,8 @@
 
 namespace bs
 {
-	ScriptParticleSystem::ScriptParticleSystem(const GameObjectHandle<CParticleSystem>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptParticleSystem::ScriptParticleSystem(const GameObjectHandle<CParticleSystem>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

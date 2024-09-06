@@ -28,7 +28,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "D6Joint")
 
-		ScriptD6Joint(const GameObjectHandle<CD6Joint>& nativeObject, MonoObject* scriptObject);
+		ScriptD6Joint(const GameObjectHandle<CD6Joint>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

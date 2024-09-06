@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptSliderJoint::ScriptSliderJoint(const GameObjectHandle<CSliderJoint>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptSliderJoint::ScriptSliderJoint(const GameObjectHandle<CSliderJoint>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

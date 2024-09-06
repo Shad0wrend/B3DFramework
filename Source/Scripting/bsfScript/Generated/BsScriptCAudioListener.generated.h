@@ -13,7 +13,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AudioListener")
 
-		ScriptAudioListener(const GameObjectHandle<CAudioListener>& nativeObject, MonoObject* scriptObject);
+		ScriptAudioListener(const GameObjectHandle<CAudioListener>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptSkeleton::ScriptSkeleton(const SPtr<Skeleton>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptSkeleton::ScriptSkeleton(const SPtr<Skeleton>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

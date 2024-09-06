@@ -13,8 +13,8 @@
 
 namespace bs
 {
-	ScriptSpriteTexture::ScriptSpriteTexture(const TResourceHandle<SpriteTexture>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptSpriteTexture::ScriptSpriteTexture(const TResourceHandle<SpriteTexture>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -61,7 +61,7 @@ namespace bs
 		if(scriptObjectWrappertexture != nullptr)
 			tmptexture = B3DStaticResourceCast<Texture>(scriptObjectWrappertexture->GetBaseNativeObjectAsHandle());
 		TResourceHandle<SpriteTexture> nativeObject = SpriteTexture::Create(tmptexture);
-		B3DNew<ScriptSpriteTexture>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptSpriteTexture>(nativeObject, scriptObject);
 	}
 
 	void ScriptSpriteTexture::InternalCreate0(MonoObject* scriptObject, __SpriteTextureCreateInformationInterop* createInformation)
@@ -69,6 +69,6 @@ namespace bs
 		SpriteTextureCreateInformation tmpcreateInformation;
 		tmpcreateInformation = ScriptSpriteTextureCreateInformation::FromInterop(*createInformation);
 		TResourceHandle<SpriteTexture> nativeObject = SpriteTexture::Create(tmpcreateInformation);
-		B3DNew<ScriptSpriteTexture>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptSpriteTexture>(nativeObject, scriptObject);
 	}
 }

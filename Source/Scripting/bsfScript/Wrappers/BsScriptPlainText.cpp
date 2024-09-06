@@ -12,8 +12,8 @@
 using namespace std::placeholders;
 
 using namespace bs;
-ScriptPlainText::ScriptPlainText(const HPlainText& nativeObject, MonoObject* scriptObject)
-	: TScriptResourceWrapper(nativeObject, scriptObject)
+ScriptPlainText::ScriptPlainText(const HPlainText& nativeObject)
+	: TScriptResourceWrapper(nativeObject)
 {
 	RegisterEvents();
 }
@@ -40,7 +40,7 @@ void ScriptPlainText::InternalCreateInstance(MonoObject* scriptObject, MonoStrin
 	WString wideString = MonoUtil::MonoToWString(text);
 	HPlainText plainText = PlainText::Create(wideString);
 
-	B3DNew<ScriptPlainText>(plainText, scriptObject);
+	ScriptObjectWrapper::Create<ScriptPlainText>(plainText, scriptObject);
 }
 
 MonoString* ScriptPlainText::InternalGetText(ScriptPlainText* self)

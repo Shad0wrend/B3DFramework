@@ -13,7 +13,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Skybox")
 
-		ScriptSkybox(const GameObjectHandle<CSkybox>& nativeObject, MonoObject* scriptObject);
+		ScriptSkybox(const GameObjectHandle<CSkybox>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

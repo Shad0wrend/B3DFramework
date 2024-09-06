@@ -9,8 +9,8 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptShaderImportOptions::ScriptShaderImportOptions(const SPtr<ShaderImportOptions>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptShaderImportOptions::ScriptShaderImportOptions(const SPtr<ShaderImportOptions>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -84,7 +84,7 @@ namespace bs
 	void ScriptShaderImportOptions::InternalCreate(MonoObject* scriptObject)
 	{
 		SPtr<ShaderImportOptions> nativeObject = ShaderImportOptions::Create();
-		B3DNew<ScriptShaderImportOptions>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptShaderImportOptions>(nativeObject, scriptObject);
 	}
 	ShadingLanguageFlag ScriptShaderImportOptions::InternalGetLanguages(ScriptShaderImportOptions* self)
 	{

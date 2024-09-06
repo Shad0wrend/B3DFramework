@@ -24,8 +24,8 @@ namespace bs
 		static_cast<CJoint*>(GetNativeObject())->OnJointBreak.Connect(std::bind(&ScriptJointWrapperBase::OnJointBreak, this));
 		ScriptGameObjectWrapper::RegisterEvents();
 	}
-	ScriptJoint::ScriptJoint(const GameObjectHandle<CJoint>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptJoint::ScriptJoint(const GameObjectHandle<CJoint>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

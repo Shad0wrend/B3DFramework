@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptParticleRotation::ScriptParticleRotation(const SPtr<ParticleRotation>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleRotation::ScriptParticleRotation(const SPtr<ParticleRotation>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -56,12 +56,12 @@ namespace bs
 		PARTICLE_ROTATION_DESC tmpdesc;
 		tmpdesc = ScriptParticleRotationOptions::FromInterop(*desc);
 		SPtr<ParticleRotation> nativeObject = ParticleRotation::Create(tmpdesc);
-		B3DNew<ScriptParticleRotation>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleRotation>(nativeObject, scriptObject);
 	}
 
 	void ScriptParticleRotation::InternalCreate0(MonoObject* scriptObject)
 	{
 		SPtr<ParticleRotation> nativeObject = ParticleRotation::Create();
-		B3DNew<ScriptParticleRotation>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleRotation>(nativeObject, scriptObject);
 	}
 }

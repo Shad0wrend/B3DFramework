@@ -16,7 +16,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "DistanceJoint")
 
-		ScriptDistanceJoint(const GameObjectHandle<CDistanceJoint>& nativeObject, MonoObject* scriptObject);
+		ScriptDistanceJoint(const GameObjectHandle<CDistanceJoint>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

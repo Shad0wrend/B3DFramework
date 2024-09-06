@@ -19,7 +19,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "MeshImportOptions")
 
-		ScriptMeshImportOptions(const SPtr<MeshImportOptions>& nativeObject, MonoObject* scriptObject);
+		ScriptMeshImportOptions(const SPtr<MeshImportOptions>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

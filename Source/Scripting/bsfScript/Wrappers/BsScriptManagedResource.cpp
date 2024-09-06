@@ -10,8 +10,8 @@
 #include "BsMonoUtil.h"
 
 using namespace bs;
-ScriptManagedResource::ScriptManagedResource(const HManagedResource& nativeObject, MonoObject* scriptObject)
-	: TScriptResourceWrapper(nativeObject, scriptObject)
+ScriptManagedResource::ScriptManagedResource(const HManagedResource& nativeObject)
+	: TScriptResourceWrapper(nativeObject)
 {
 	RegisterEvents();
 }
@@ -24,7 +24,7 @@ void ScriptManagedResource::SetupScriptBindings()
 void ScriptManagedResource::InternalCreateInstance(MonoObject* scriptObject)
 {
 	HManagedResource resource = ManagedResource::CreateUninitialized();
-	B3DNew<ScriptManagedResource>(resource, scriptObject);
+	ScriptObjectWrapper::Create<ScriptManagedResource>(resource, scriptObject);
 	resource->Initialize();
 }
 
@@ -40,10 +40,7 @@ void ScriptManagedResource::CreateAndBindScriptObject()
 	MonoObject* const scriptObject = resource->CreateScriptObject(objectInformation);
 
 	if(scriptObject != nullptr)
-	{
-		CreateScriptObjectHandle(scriptObject);
-		BindSelfToScriptObject(scriptObject);
-	}
+		BindToScriptObject(scriptObject);
 
 	resource->BindToScriptObject(objectInformation);
 }

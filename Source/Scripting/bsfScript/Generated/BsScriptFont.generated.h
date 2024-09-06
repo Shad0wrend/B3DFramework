@@ -13,7 +13,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Font")
 
-		ScriptFont(const TResourceHandle<Font>& nativeObject, MonoObject* scriptObject);
+		ScriptFont(const TResourceHandle<Font>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

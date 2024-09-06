@@ -11,8 +11,8 @@
 
 namespace bs
 {
-	ScriptStringTable::ScriptStringTable(const TResourceHandle<StringTable>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptStringTable::ScriptStringTable(const TResourceHandle<StringTable>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -118,6 +118,6 @@ namespace bs
 	void ScriptStringTable::InternalCreate(MonoObject* scriptObject)
 	{
 		TResourceHandle<StringTable> nativeObject = StringTable::Create();
-		B3DNew<ScriptStringTable>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptStringTable>(nativeObject, scriptObject);
 	}
 }

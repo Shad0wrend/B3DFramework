@@ -11,8 +11,8 @@
 
 namespace bs
 {
-	ScriptShader::ScriptShader(const TResourceHandle<Shader>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptShader::ScriptShader(const TResourceHandle<Shader>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

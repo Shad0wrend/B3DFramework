@@ -35,7 +35,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Collider")
 
-		ScriptCollider(const GameObjectHandle<CCollider>& nativeObject, MonoObject* scriptObject);
+		ScriptCollider(const GameObjectHandle<CCollider>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

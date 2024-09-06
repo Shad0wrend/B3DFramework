@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Texture")
 
-		ScriptTexture(const TResourceHandle<Texture>& nativeObject, MonoObject* scriptObject);
+		ScriptTexture(const TResourceHandle<Texture>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

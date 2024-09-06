@@ -16,8 +16,8 @@ namespace bs
 	class TScriptNonReflectableWrapper : public TScriptObjectWrapper<SelfType, BaseType>
 	{
 	public:
-		TScriptNonReflectableWrapper(const SPtr<NativeType>& nativeObject, MonoObject* scriptObject)
-			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.get(), scriptObject), mNativeObjectStrongHandle(nativeObject)
+		TScriptNonReflectableWrapper(const SPtr<NativeType>& nativeObject)
+			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.get()), mNativeObjectStrongHandle(nativeObject)
 		{ }
 
 		/** Returns the wrapped native object as a shared pointer. */
@@ -32,7 +32,7 @@ namespace bs
 		static MonoObject* CreateScriptObjectAndWrapper(const SPtr<NativeType>& nativeObject)
 		{
 			MonoObject* const scriptObject = SelfType::CreateScriptObject(false);
-			B3DNew<SelfType>(std::static_pointer_cast<NativeType>(nativeObject), scriptObject);
+			ScriptObjectWrapper::Create<SelfType>(std::static_pointer_cast<NativeType>(nativeObject), scriptObject);
 
 			return scriptObject;
 		}

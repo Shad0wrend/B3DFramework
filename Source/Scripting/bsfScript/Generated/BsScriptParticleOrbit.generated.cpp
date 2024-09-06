@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptParticleOrbit::ScriptParticleOrbit(const SPtr<ParticleOrbit>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleOrbit::ScriptParticleOrbit(const SPtr<ParticleOrbit>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -56,12 +56,12 @@ namespace bs
 		PARTICLE_ORBIT_DESC tmpdesc;
 		tmpdesc = ScriptParticleOrbitOptions::FromInterop(*desc);
 		SPtr<ParticleOrbit> nativeObject = ParticleOrbit::Create(tmpdesc);
-		B3DNew<ScriptParticleOrbit>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleOrbit>(nativeObject, scriptObject);
 	}
 
 	void ScriptParticleOrbit::InternalCreate0(MonoObject* scriptObject)
 	{
 		SPtr<ParticleOrbit> nativeObject = ParticleOrbit::Create();
-		B3DNew<ScriptParticleOrbit>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleOrbit>(nativeObject, scriptObject);
 	}
 }

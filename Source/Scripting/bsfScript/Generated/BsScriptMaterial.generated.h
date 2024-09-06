@@ -23,7 +23,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Material")
 
-		ScriptMaterial(const TResourceHandle<Material>& nativeObject, MonoObject* scriptObject);
+		ScriptMaterial(const TResourceHandle<Material>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

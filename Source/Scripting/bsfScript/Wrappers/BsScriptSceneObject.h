@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SceneObject")
 
-		ScriptSceneObject(const HSceneObject& nativeObject, MonoObject* scriptObject);
+		ScriptSceneObject(const HSceneObject& nativeObject);
 
 		/** Retrieves the underlying native object cast to the correct type. */
 		SceneObject* GetNativeObject() const;

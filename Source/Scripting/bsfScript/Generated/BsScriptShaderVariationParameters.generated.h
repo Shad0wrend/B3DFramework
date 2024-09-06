@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ShaderVariationParameters")
 
-		ScriptShaderVariationParameters(const SPtr<ShaderVariationParameters>& nativeObject, MonoObject* scriptObject);
+		ScriptShaderVariationParameters(const SPtr<ShaderVariationParameters>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

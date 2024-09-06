@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ScreenSpaceReflectionsSettings")
 
-		ScriptScreenSpaceReflectionsSettings(const SPtr<ScreenSpaceReflectionsSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptScreenSpaceReflectionsSettings(const SPtr<ScreenSpaceReflectionsSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

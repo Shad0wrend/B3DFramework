@@ -11,8 +11,8 @@
 
 namespace bs
 {
-	ScriptAudioSource::ScriptAudioSource(const GameObjectHandle<CAudioSource>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptAudioSource::ScriptAudioSource(const GameObjectHandle<CAudioSource>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

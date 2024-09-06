@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleVelocity")
 
-		ScriptParticleVelocity(const SPtr<ParticleVelocity>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleVelocity(const SPtr<ParticleVelocity>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

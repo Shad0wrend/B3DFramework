@@ -13,8 +13,8 @@
 
 namespace bs
 {
-	ScriptParticleVectorFieldSettings::ScriptParticleVectorFieldSettings(const SPtr<ParticleVectorFieldSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleVectorFieldSettings::ScriptParticleVectorFieldSettings(const SPtr<ParticleVectorFieldSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

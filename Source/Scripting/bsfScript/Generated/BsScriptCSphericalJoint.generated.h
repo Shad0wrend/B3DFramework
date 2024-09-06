@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SphericalJoint")
 
-		ScriptSphericalJoint(const GameObjectHandle<CSphericalJoint>& nativeObject, MonoObject* scriptObject);
+		ScriptSphericalJoint(const GameObjectHandle<CSphericalJoint>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

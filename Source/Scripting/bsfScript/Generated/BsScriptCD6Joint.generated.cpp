@@ -14,8 +14,8 @@
 
 namespace bs
 {
-	ScriptD6Joint::ScriptD6Joint(const GameObjectHandle<CD6Joint>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptD6Joint::ScriptD6Joint(const GameObjectHandle<CD6Joint>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

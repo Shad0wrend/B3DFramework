@@ -16,7 +16,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteGlyph")
 
-		ScriptSpriteGlyph(const TResourceHandle<SpriteGlyph>& nativeObject, MonoObject* scriptObject);
+		ScriptSpriteGlyph(const TResourceHandle<SpriteGlyph>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

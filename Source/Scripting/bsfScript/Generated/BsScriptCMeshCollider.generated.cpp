@@ -11,8 +11,8 @@
 
 namespace bs
 {
-	ScriptMeshCollider::ScriptMeshCollider(const GameObjectHandle<CMeshCollider>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptMeshCollider::ScriptMeshCollider(const GameObjectHandle<CMeshCollider>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

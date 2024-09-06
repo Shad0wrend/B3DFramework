@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptParticleSize::ScriptParticleSize(const SPtr<ParticleSize>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleSize::ScriptParticleSize(const SPtr<ParticleSize>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -56,12 +56,12 @@ namespace bs
 		PARTICLE_SIZE_DESC tmpdesc;
 		tmpdesc = ScriptParticleSizeOptions::FromInterop(*desc);
 		SPtr<ParticleSize> nativeObject = ParticleSize::Create(tmpdesc);
-		B3DNew<ScriptParticleSize>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleSize>(nativeObject, scriptObject);
 	}
 
 	void ScriptParticleSize::InternalCreate0(MonoObject* scriptObject)
 	{
 		SPtr<ParticleSize> nativeObject = ParticleSize::Create();
-		B3DNew<ScriptParticleSize>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleSize>(nativeObject, scriptObject);
 	}
 }

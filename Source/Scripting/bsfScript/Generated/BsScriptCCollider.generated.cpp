@@ -50,8 +50,8 @@ namespace bs
 		static_cast<CCollider*>(GetNativeObject())->OnCollisionEnd.Connect(std::bind(&ScriptColliderWrapperBase::OnCollisionEnd, this, std::placeholders::_1));
 		ScriptGameObjectWrapper::RegisterEvents();
 	}
-	ScriptCollider::ScriptCollider(const GameObjectHandle<CCollider>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptCollider::ScriptCollider(const GameObjectHandle<CCollider>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

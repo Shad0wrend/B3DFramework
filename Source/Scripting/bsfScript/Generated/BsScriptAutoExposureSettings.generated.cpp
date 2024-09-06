@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptAutoExposureSettings::ScriptAutoExposureSettings(const SPtr<AutoExposureSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptAutoExposureSettings::ScriptAutoExposureSettings(const SPtr<AutoExposureSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -48,7 +48,7 @@ namespace bs
 	void ScriptAutoExposureSettings::InternalAutoExposureSettings(MonoObject* scriptObject)
 	{
 		SPtr<AutoExposureSettings> nativeObject = B3DMakeShared<AutoExposureSettings>();
-		B3DNew<ScriptAutoExposureSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptAutoExposureSettings>(nativeObject, scriptObject);
 	}
 
 	float ScriptAutoExposureSettings::InternalGetHistogramLog2Min(ScriptAutoExposureSettings* self)

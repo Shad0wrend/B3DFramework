@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptFont::ScriptFont(const TResourceHandle<Font>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptFont::ScriptFont(const TResourceHandle<Font>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

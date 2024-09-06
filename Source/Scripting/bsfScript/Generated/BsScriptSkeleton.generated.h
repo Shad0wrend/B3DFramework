@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Skeleton")
 
-		ScriptSkeleton(const SPtr<Skeleton>& nativeObject, MonoObject* scriptObject);
+		ScriptSkeleton(const SPtr<Skeleton>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

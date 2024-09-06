@@ -19,7 +19,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Component")
 
-		ScriptComponent(const HComponent& nativeObject, MonoObject* scriptObject);
+		ScriptComponent(const HComponent& nativeObject);
 
 		/** Dummy method to create the script object. Not used as Component is only used as base class and not created directly. */
 		static MonoObject* CreateScriptObject(bool construct)

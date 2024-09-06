@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptParticleColor::ScriptParticleColor(const SPtr<ParticleColor>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleColor::ScriptParticleColor(const SPtr<ParticleColor>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -56,12 +56,12 @@ namespace bs
 		PARTICLE_COLOR_DESC tmpdesc;
 		tmpdesc = ScriptParticleColorOptions::FromInterop(*desc);
 		SPtr<ParticleColor> nativeObject = ParticleColor::Create(tmpdesc);
-		B3DNew<ScriptParticleColor>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleColor>(nativeObject, scriptObject);
 	}
 
 	void ScriptParticleColor::InternalCreate0(MonoObject* scriptObject)
 	{
 		SPtr<ParticleColor> nativeObject = ParticleColor::Create();
-		B3DNew<ScriptParticleColor>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleColor>(nativeObject, scriptObject);
 	}
 }

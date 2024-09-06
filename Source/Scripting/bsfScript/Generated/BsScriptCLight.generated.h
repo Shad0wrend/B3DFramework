@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Light")
 
-		ScriptLight(const GameObjectHandle<CLight>& nativeObject, MonoObject* scriptObject);
+		ScriptLight(const GameObjectHandle<CLight>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

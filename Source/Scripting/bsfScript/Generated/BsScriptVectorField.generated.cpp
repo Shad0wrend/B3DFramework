@@ -13,8 +13,8 @@
 
 namespace bs
 {
-	ScriptVectorField::ScriptVectorField(const TResourceHandle<VectorField>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptVectorField::ScriptVectorField(const TResourceHandle<VectorField>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -56,6 +56,6 @@ namespace bs
 			}
 		}
 		TResourceHandle<VectorField> nativeObject = VectorField::Create(tmpdesc, nativeArrayvalues);
-		B3DNew<ScriptVectorField>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptVectorField>(nativeObject, scriptObject);
 	}
 }

@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "MorphShape")
 
-		ScriptMorphShape(const SPtr<MorphShape>& nativeObject, MonoObject* scriptObject);
+		ScriptMorphShape(const SPtr<MorphShape>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

@@ -8,8 +8,8 @@
 
 namespace bs
 {
-	ScriptRenderTarget::ScriptRenderTarget(const SPtr<RenderTarget>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptRenderTarget::ScriptRenderTarget(const SPtr<RenderTarget>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

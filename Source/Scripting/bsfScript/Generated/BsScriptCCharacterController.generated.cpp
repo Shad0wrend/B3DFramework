@@ -14,8 +14,8 @@ namespace bs
 	ScriptCharacterController::OnColliderHitThunkDefinition ScriptCharacterController::OnColliderHitThunk; 
 	ScriptCharacterController::OnControllerHitThunkDefinition ScriptCharacterController::OnControllerHitThunk; 
 
-	ScriptCharacterController::ScriptCharacterController(const GameObjectHandle<CCharacterController>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptCharacterController::ScriptCharacterController(const GameObjectHandle<CCharacterController>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

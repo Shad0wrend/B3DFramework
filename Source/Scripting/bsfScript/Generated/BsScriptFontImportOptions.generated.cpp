@@ -10,8 +10,8 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptFontImportOptions::ScriptFontImportOptions(const SPtr<FontImportOptions>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptFontImportOptions::ScriptFontImportOptions(const SPtr<FontImportOptions>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -47,7 +47,7 @@ namespace bs
 	void ScriptFontImportOptions::InternalCreate(MonoObject* scriptObject)
 	{
 		SPtr<FontImportOptions> nativeObject = FontImportOptions::Create();
-		B3DNew<ScriptFontImportOptions>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptFontImportOptions>(nativeObject, scriptObject);
 	}
 	MonoArray* ScriptFontImportOptions::InternalGetFontSizes(ScriptFontImportOptions* self)
 	{

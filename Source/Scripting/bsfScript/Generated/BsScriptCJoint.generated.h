@@ -29,7 +29,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Joint")
 
-		ScriptJoint(const GameObjectHandle<CJoint>& nativeObject, MonoObject* scriptObject);
+		ScriptJoint(const GameObjectHandle<CJoint>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

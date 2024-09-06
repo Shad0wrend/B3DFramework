@@ -14,8 +14,8 @@
 using namespace std::placeholders;
 
 using namespace bs;
-ScriptScriptCode::ScriptScriptCode(const HScriptCode& nativeObject, MonoObject* scriptObject)
-	: TScriptResourceWrapper(nativeObject, scriptObject)
+ScriptScriptCode::ScriptScriptCode(const HScriptCode& nativeObject)
+	: TScriptResourceWrapper(nativeObject)
 {
 	RegisterEvents();
 }
@@ -46,7 +46,7 @@ void ScriptScriptCode::InternalCreateInstance(MonoObject* scriptObject, MonoStri
 	WString strText = MonoUtil::MonoToWString(text);
 	HScriptCode scriptCode = ScriptCode::Create(strText);
 
-	B3DNew<ScriptScriptCode>(scriptCode, scriptObject);
+	ScriptObjectWrapper::Create<ScriptScriptCode>(scriptCode, scriptObject);
 }
 
 MonoString* ScriptScriptCode::InternalGetText(ScriptScriptCode* self)

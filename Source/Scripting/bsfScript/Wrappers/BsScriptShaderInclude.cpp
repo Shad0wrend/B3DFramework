@@ -4,8 +4,8 @@
 #include "BsMonoManager.h"
 
 using namespace bs;
-ScriptShaderInclude::ScriptShaderInclude(const HShaderInclude& nativeObject, MonoObject* scriptObject)
-	: TScriptResourceWrapper(nativeObject, scriptObject)
+ScriptShaderInclude::ScriptShaderInclude(const HShaderInclude& nativeObject)
+	: TScriptResourceWrapper(nativeObject)
 {
 	RegisterEvents();
 }

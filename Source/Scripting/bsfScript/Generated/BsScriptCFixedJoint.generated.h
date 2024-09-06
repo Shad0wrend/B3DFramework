@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "FixedJoint")
 
-		ScriptFixedJoint(const GameObjectHandle<CFixedJoint>& nativeObject, MonoObject* scriptObject);
+		ScriptFixedJoint(const GameObjectHandle<CFixedJoint>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

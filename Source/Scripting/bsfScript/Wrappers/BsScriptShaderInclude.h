@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ShaderInclude")
 
-		ScriptShaderInclude(const HShaderInclude& nativeObject, MonoObject* scriptObject);
+		ScriptShaderInclude(const HShaderInclude& nativeObject);
 
 		/** Retrieves the underlying native object cast to the correct type. */
 		ShaderInclude* GetNativeObject() const;

@@ -12,8 +12,8 @@
 
 namespace bs
 {
-	ScriptDecal::ScriptDecal(const GameObjectHandle<CDecal>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptDecal::ScriptDecal(const GameObjectHandle<CDecal>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

@@ -13,8 +13,8 @@
 
 namespace bs
 {
-	ScriptSpriteGlyph::ScriptSpriteGlyph(const TResourceHandle<SpriteGlyph>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptSpriteGlyph::ScriptSpriteGlyph(const TResourceHandle<SpriteGlyph>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -73,7 +73,7 @@ namespace bs
 		if(scriptObjectWrapperfont != nullptr)
 			tmpfont = B3DStaticResourceCast<Font>(scriptObjectWrapperfont->GetBaseNativeObjectAsHandle());
 		TResourceHandle<SpriteGlyph> nativeObject = SpriteGlyph::Create(tmpfont, glyph, size);
-		B3DNew<ScriptSpriteGlyph>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptSpriteGlyph>(nativeObject, scriptObject);
 	}
 
 	void ScriptSpriteGlyph::InternalCreate0(MonoObject* scriptObject, __SpriteGlyphCreateInformationInterop* createInformation)
@@ -81,6 +81,6 @@ namespace bs
 		SpriteGlyphCreateInformation tmpcreateInformation;
 		tmpcreateInformation = ScriptSpriteGlyphCreateInformation::FromInterop(*createInformation);
 		TResourceHandle<SpriteGlyph> nativeObject = SpriteGlyph::Create(tmpcreateInformation);
-		B3DNew<ScriptSpriteGlyph>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptSpriteGlyph>(nativeObject, scriptObject);
 	}
 }

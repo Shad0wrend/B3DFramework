@@ -15,7 +15,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleSystem")
 
-		ScriptParticleSystem(const GameObjectHandle<CParticleSystem>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleSystem(const GameObjectHandle<CParticleSystem>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

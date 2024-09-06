@@ -45,8 +45,8 @@ ScriptGameObjectWrapper* ScriptGameObjectWrapper::GetScriptObjectWrapper(const S
 	return scriptObjectWrapper;
 }
 
-ScriptGameObject::ScriptGameObject(const HGameObject& nativeObject, MonoObject* scriptObject)
-	: TScriptGameObjectWrapper(nativeObject, scriptObject)
+ScriptGameObject::ScriptGameObject(const HGameObject& nativeObject)
+	: TScriptGameObjectWrapper(nativeObject)
 {}
 
 void ScriptGameObject::SetupScriptBindings()

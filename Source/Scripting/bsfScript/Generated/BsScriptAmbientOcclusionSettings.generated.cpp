@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	ScriptAmbientOcclusionSettings::ScriptAmbientOcclusionSettings(const SPtr<AmbientOcclusionSettings>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptAmbientOcclusionSettings::ScriptAmbientOcclusionSettings(const SPtr<AmbientOcclusionSettings>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -48,7 +48,7 @@ namespace bs
 	void ScriptAmbientOcclusionSettings::InternalAmbientOcclusionSettings(MonoObject* scriptObject)
 	{
 		SPtr<AmbientOcclusionSettings> nativeObject = B3DMakeShared<AmbientOcclusionSettings>();
-		B3DNew<ScriptAmbientOcclusionSettings>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptAmbientOcclusionSettings>(nativeObject, scriptObject);
 	}
 
 	bool ScriptAmbientOcclusionSettings::InternalGetEnabled(ScriptAmbientOcclusionSettings* self)

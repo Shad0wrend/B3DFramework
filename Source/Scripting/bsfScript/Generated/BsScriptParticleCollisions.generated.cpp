@@ -11,8 +11,8 @@
 
 namespace bs
 {
-	ScriptParticleCollisions::ScriptParticleCollisions(const SPtr<ParticleCollisions>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleCollisions::ScriptParticleCollisions(const SPtr<ParticleCollisions>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -129,12 +129,12 @@ namespace bs
 	void ScriptParticleCollisions::InternalCreate(MonoObject* scriptObject, PARTICLE_COLLISIONS_DESC* desc)
 	{
 		SPtr<ParticleCollisions> nativeObject = ParticleCollisions::Create(*desc);
-		B3DNew<ScriptParticleCollisions>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleCollisions>(nativeObject, scriptObject);
 	}
 
 	void ScriptParticleCollisions::InternalCreate0(MonoObject* scriptObject)
 	{
 		SPtr<ParticleCollisions> nativeObject = ParticleCollisions::Create();
-		B3DNew<ScriptParticleCollisions>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleCollisions>(nativeObject, scriptObject);
 	}
 }

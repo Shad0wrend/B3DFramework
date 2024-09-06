@@ -12,8 +12,8 @@
 
 namespace bs
 {
-	ScriptReflectionProbe::ScriptReflectionProbe(const GameObjectHandle<CReflectionProbe>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptReflectionProbe::ScriptReflectionProbe(const GameObjectHandle<CReflectionProbe>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

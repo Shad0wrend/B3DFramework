@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteVectorPath")
 
-		ScriptSpriteVectorPath(const TResourceHandle<SpriteVectorPath>& nativeObject, MonoObject* scriptObject);
+		ScriptSpriteVectorPath(const TResourceHandle<SpriteVectorPath>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

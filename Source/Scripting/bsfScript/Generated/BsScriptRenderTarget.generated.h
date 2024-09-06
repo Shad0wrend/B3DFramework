@@ -22,7 +22,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "RenderTarget")
 
-		ScriptRenderTarget(const SPtr<RenderTarget>& nativeObject, MonoObject* scriptObject);
+		ScriptRenderTarget(const SPtr<RenderTarget>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

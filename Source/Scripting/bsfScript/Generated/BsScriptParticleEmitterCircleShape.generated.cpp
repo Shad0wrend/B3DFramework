@@ -9,8 +9,8 @@
 
 namespace bs
 {
-	ScriptParticleEmitterCircleShape::ScriptParticleEmitterCircleShape(const SPtr<ParticleEmitterCircleShape>& nativeObject, MonoObject* scriptObject)
-		:TScriptReflectableWrapper(nativeObject, scriptObject)
+	ScriptParticleEmitterCircleShape::ScriptParticleEmitterCircleShape(const SPtr<ParticleEmitterCircleShape>& nativeObject)
+		:TScriptReflectableWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -56,12 +56,12 @@ namespace bs
 		PARTICLE_CIRCLE_SHAPE_DESC tmpdesc;
 		tmpdesc = ScriptParticleCircleShapeOptions::FromInterop(*desc);
 		SPtr<ParticleEmitterCircleShape> nativeObject = ParticleEmitterCircleShape::Create(tmpdesc);
-		B3DNew<ScriptParticleEmitterCircleShape>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleEmitterCircleShape>(nativeObject, scriptObject);
 	}
 
 	void ScriptParticleEmitterCircleShape::InternalCreate0(MonoObject* scriptObject)
 	{
 		SPtr<ParticleEmitterCircleShape> nativeObject = ParticleEmitterCircleShape::Create();
-		B3DNew<ScriptParticleEmitterCircleShape>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptParticleEmitterCircleShape>(nativeObject, scriptObject);
 	}
 }

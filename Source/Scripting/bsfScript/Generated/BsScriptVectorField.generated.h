@@ -16,7 +16,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "VectorField")
 
-		ScriptVectorField(const TResourceHandle<VectorField>& nativeObject, MonoObject* scriptObject);
+		ScriptVectorField(const TResourceHandle<VectorField>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

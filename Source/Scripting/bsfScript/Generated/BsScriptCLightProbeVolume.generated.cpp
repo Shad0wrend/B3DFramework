@@ -11,8 +11,8 @@
 
 namespace bs
 {
-	ScriptLightProbeVolume::ScriptLightProbeVolume(const GameObjectHandle<CLightProbeVolume>& nativeObject, MonoObject* scriptObject)
-		:TScriptGameObjectWrapper(nativeObject, scriptObject)
+	ScriptLightProbeVolume::ScriptLightProbeVolume(const GameObjectHandle<CLightProbeVolume>& nativeObject)
+		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}

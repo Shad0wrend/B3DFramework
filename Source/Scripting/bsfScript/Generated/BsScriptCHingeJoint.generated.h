@@ -19,7 +19,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "HingeJoint")
 
-		ScriptHingeJoint(const GameObjectHandle<CHingeJoint>& nativeObject, MonoObject* scriptObject);
+		ScriptHingeJoint(const GameObjectHandle<CHingeJoint>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

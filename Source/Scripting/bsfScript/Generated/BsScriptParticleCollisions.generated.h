@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleCollisions")
 
-		ScriptParticleCollisions(const SPtr<ParticleCollisions>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleCollisions(const SPtr<ParticleCollisions>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

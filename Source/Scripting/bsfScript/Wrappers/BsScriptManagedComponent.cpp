@@ -12,8 +12,8 @@
 #include "BsMonoUtil.h"
 
 using namespace bs;
-ScriptManagedComponent::ScriptManagedComponent(const HManagedComponent& nativeObject, MonoObject* scriptObject)
-	: TScriptGameObjectWrapper(nativeObject, scriptObject)
+ScriptManagedComponent::ScriptManagedComponent(const HManagedComponent& nativeObject)
+	: TScriptGameObjectWrapper(nativeObject)
 {
 	RegisterEvents();
 }
@@ -71,10 +71,7 @@ void ScriptManagedComponent::CreateAndBindScriptObject()
 	MonoObject* const scriptObject = component->CreateScriptObject(objectInformation);
 
 	if(scriptObject != nullptr)
-	{
-		CreateScriptObjectHandle(scriptObject);
-		BindSelfToScriptObject(scriptObject);
-	}
+		BindToScriptObject(scriptObject);
 
 	component->BindToScriptObject(objectInformation);
 }

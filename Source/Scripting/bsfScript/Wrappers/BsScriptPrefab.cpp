@@ -8,8 +8,8 @@
 #include "Wrappers/BsScriptSceneObject.h"
 
 using namespace bs;
-ScriptPrefab::ScriptPrefab(const HPrefab& nativeObject, MonoObject* scriptObject)
-	: TScriptResourceWrapper(nativeObject, scriptObject)
+ScriptPrefab::ScriptPrefab(const HPrefab& nativeObject)
+	: TScriptResourceWrapper(nativeObject)
 {
 	RegisterEvents();
 }
@@ -34,7 +34,7 @@ Prefab* ScriptPrefab::GetNativeObject() const
 void ScriptPrefab::InternalCreateInstance(MonoObject* scriptObject, ScriptSceneObject* so, bool isScene)
 {
 	HPrefab prefab = Prefab::Create(so->GetNativeObjectAsHandle(), isScene);
-	B3DNew<ScriptPrefab>(prefab, scriptObject);
+	ScriptObjectWrapper::Create<ScriptPrefab>(prefab, scriptObject);
 }
 
 MonoObject* ScriptPrefab::InternalInstantiate(ScriptPrefab* self)

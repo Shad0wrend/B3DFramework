@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AmbientOcclusionSettings")
 
-		ScriptAmbientOcclusionSettings(const SPtr<AmbientOcclusionSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptAmbientOcclusionSettings(const SPtr<AmbientOcclusionSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

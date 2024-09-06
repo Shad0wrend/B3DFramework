@@ -17,7 +17,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleOrbit")
 
-		ScriptParticleOrbit(const SPtr<ParticleOrbit>& nativeObject, MonoObject* scriptObject);
+		ScriptParticleOrbit(const SPtr<ParticleOrbit>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

@@ -15,7 +15,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "BloomSettings")
 
-		ScriptBloomSettings(const SPtr<BloomSettings>& nativeObject, MonoObject* scriptObject);
+		ScriptBloomSettings(const SPtr<BloomSettings>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

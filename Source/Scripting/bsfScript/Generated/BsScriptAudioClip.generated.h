@@ -15,7 +15,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AudioClip")
 
-		ScriptAudioClip(const TResourceHandle<AudioClip>& nativeObject, MonoObject* scriptObject);
+		ScriptAudioClip(const TResourceHandle<AudioClip>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

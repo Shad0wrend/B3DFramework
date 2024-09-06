@@ -14,7 +14,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "StringTable")
 
-		ScriptStringTable(const TResourceHandle<StringTable>& nativeObject, MonoObject* scriptObject);
+		ScriptStringTable(const TResourceHandle<StringTable>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

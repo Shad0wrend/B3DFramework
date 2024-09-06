@@ -18,7 +18,7 @@ namespace bs
 	public:
 		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "LightProbeVolume")
 
-		ScriptLightProbeVolume(const GameObjectHandle<CLightProbeVolume>& nativeObject, MonoObject* scriptObject);
+		ScriptLightProbeVolume(const GameObjectHandle<CLightProbeVolume>& nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
 

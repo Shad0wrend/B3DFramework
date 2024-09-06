@@ -15,8 +15,8 @@
 
 namespace bs
 {
-	ScriptTexture::ScriptTexture(const TResourceHandle<Texture>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptTexture::ScriptTexture(const TResourceHandle<Texture>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
@@ -78,7 +78,7 @@ namespace bs
 	void ScriptTexture::InternalCreate(MonoObject* scriptObject, PixelFormat format, uint32_t width, uint32_t height, uint32_t depth, TextureType texType, TextureUsage usage, uint32_t numSamples, bool hasMipmaps, bool gammaCorrection)
 	{
 		TResourceHandle<Texture> nativeObject = TextureEx::Create(format, width, height, depth, texType, usage, numSamples, hasMipmaps, gammaCorrection);
-		B3DNew<ScriptTexture>(nativeObject, scriptObject);
+		ScriptObjectWrapper::Create<ScriptTexture>(nativeObject, scriptObject);
 	}
 
 	PixelFormat ScriptTexture::InternalGetPixelFormat(ScriptTexture* self)

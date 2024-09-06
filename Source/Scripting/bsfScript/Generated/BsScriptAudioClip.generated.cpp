@@ -8,8 +8,8 @@
 
 namespace bs
 {
-	ScriptAudioClip::ScriptAudioClip(const TResourceHandle<AudioClip>& nativeObject, MonoObject* scriptObject)
-		:TScriptResourceWrapper(nativeObject, scriptObject)
+	ScriptAudioClip::ScriptAudioClip(const TResourceHandle<AudioClip>& nativeObject)
+		:TScriptResourceWrapper(nativeObject)
 	{
 		RegisterEvents();
 	}
