@@ -14,35 +14,8 @@ namespace bs
     /// Base class for all GUI elements. Every GUI element can at least be positioned in it's parent layout/panel and be
     /// hidden/visible, focused/unfocused and assigned a context menu.
     /// </summary>
-    public abstract class GUIInteractable : ScriptObject
+    public abstract class GUIElement : ScriptObject // TODO - Move to its own file
     {
-        /// <summary>
-        /// Triggered when a GUI element receives keyboard focus.
-        /// </summary>
-        public Action OnFocusGained;
-
-        /// <summary>
-        /// Triggered when a GUI element loses keyboard focus.
-        /// </summary>
-        public Action OnFocusLost;
-
-        /// <summary>
-        /// Returns the layout this element belongs to, if any.
-        /// </summary>
-        public GUILayout Parent
-        {
-            get { return Internal_GetParent(mCachedPtr); }
-        }
-
-        /// <summary>
-        /// Name of the style that determines the appearance of this GUI element.
-        /// </summary>
-        public string Style
-        {
-            get { return Internal_GetStyle(mCachedPtr); }
-            set { Internal_SetStyle(mCachedPtr, value); }
-        }
-
         /// <summary>
         /// Gets or sets non-clipped bounds of the GUI element. Relative to a parent GUI panel.
         /// </summary>
@@ -113,30 +86,11 @@ namespace bs
         }
 
         /// <summary>
-        /// Assigns or removes keyboard focus on this element.
+        /// Returns the layout this element belongs to, if any.
         /// </summary>
-        public bool Focus
+        public GUILayout Parent
         {
-            set { Internal_SetFocus(mCachedPtr, value); }
-        }
-
-        /// <summary>
-        /// Determines will this element block elements underneath it from receiving events like pointer click, hover
-        /// on/off or be able to gain focus. True by default.
-        /// </summary>
-        public bool Blocking
-        {
-            get { return Internal_GetBlocking(mCachedPtr); }
-            set { Internal_SetBlocking(mCachedPtr, value); }
-        }
-
-        /// <summary>
-        /// Determines if the element can be navigated to by using keys/buttons (e.g. the 'Tab' button on the keyboard.
-        /// </summary>
-        public bool AcceptsKeyFocus
-        {
-            get { return Internal_GetAcceptsKeyFocus(mCachedPtr); }
-            set { Internal_SetAcceptsKeyFocus(mCachedPtr, value); }
+            get { return Internal_GetParent(mCachedPtr); }
         }
 
         /// <summary>
@@ -208,20 +162,127 @@ namespace bs
         }
 
         /// <summary>
+        /// Resets element bounds to their initial values dictated by the element's style.
+        /// </summary>
+        public void ResetDimensions()
+        {
+            Internal_ResetDimensions(mCachedPtr);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern bool Internal_GetVisible(IntPtr nativeInstance);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetVisible(IntPtr nativeInstance, bool visible);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern bool Internal_GetActive(IntPtr nativeInstance);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetActive(IntPtr nativeInstance, bool enabled);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern bool Internal_GetDisabled(IntPtr nativeInstance);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetDisabled(IntPtr nativeInstance, bool disabled);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetPosition(IntPtr nativeInstance, int x, int y);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetWidth(IntPtr nativeInstance, int width);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetFlexibleWidth(IntPtr nativeInstance, int minWidth, int maxWidth);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetHeight(IntPtr nativeInstance, int height);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetFlexibleHeight(IntPtr nativeInstance, int minHeight, int maxHeight);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_ResetDimensions(IntPtr nativeInstance);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_GetBounds(IntPtr nativeInstance, out Rect2I value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetBounds(IntPtr nativeInstance, ref Rect2I value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_GetVisibleBounds(IntPtr nativeInstance, out Rect2I value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_GetScreenBounds(IntPtr nativeInstance, out Rect2I value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern GUILayout Internal_GetParent(IntPtr nativeInstance);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_Destroy(IntPtr nativeInstance);
+    }
+
+    /// <summary>
+    /// Base class for all GUI elements that can be interacted with (e.g. respond to input). 
+    /// </summary>
+    public abstract class GUIInteractable : GUIElement
+    {
+        /// <summary>
+        /// Triggered when a GUI element receives keyboard focus.
+        /// </summary>
+        public Action OnFocusGained;
+
+        /// <summary>
+        /// Triggered when a GUI element loses keyboard focus.
+        /// </summary>
+        public Action OnFocusLost;
+
+        /// <summary>
+        /// Name of the style that determines the appearance of this GUI element.
+        /// </summary>
+        public string Style
+        {
+            get { return Internal_GetStyle(mCachedPtr); }
+            set { Internal_SetStyle(mCachedPtr, value); }
+        }
+
+
+        /// <summary>
+        /// Assigns or removes keyboard focus on this element.
+        /// </summary>
+        public bool Focus
+        {
+            set { Internal_SetFocus(mCachedPtr, value); }
+        }
+
+        /// <summary>
+        /// Determines will this element block elements underneath it from receiving events like pointer click, hover
+        /// on/off or be able to gain focus. True by default.
+        /// </summary>
+        public bool Blocking
+        {
+            get { return Internal_GetBlocking(mCachedPtr); }
+            set { Internal_SetBlocking(mCachedPtr, value); }
+        }
+
+        /// <summary>
+        /// Determines if the element can be navigated to by using keys/buttons (e.g. the 'Tab' button on the keyboard.
+        /// </summary>
+        public bool AcceptsKeyFocus
+        {
+            get { return Internal_GetAcceptsKeyFocus(mCachedPtr); }
+            set { Internal_SetAcceptsKeyFocus(mCachedPtr, value); }
+        }
+
+        /// <summary>
         /// Colors the element with a specific tint.
         /// </summary>
         /// <param name="color">Tint to apply to the element.</param>
         public void SetTint(Color color)
         {
             Internal_SetTint(mCachedPtr, ref color);
-        }
-
-        /// <summary>
-        /// Resets element bounds to their initial values dictated by the element's style.
-        /// </summary>
-        public void ResetDimensions()
-        {
-            Internal_ResetDimensions(mCachedPtr);
         }
 
         /// <summary>
@@ -256,24 +317,6 @@ namespace bs
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern bool Internal_GetVisible(IntPtr nativeInstance);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetVisible(IntPtr nativeInstance, bool visible);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern bool Internal_GetActive(IntPtr nativeInstance);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetActive(IntPtr nativeInstance, bool enabled);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern bool Internal_GetDisabled(IntPtr nativeInstance);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetDisabled(IntPtr nativeInstance, bool disabled);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetFocus(IntPtr nativeInstance, bool focus);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -289,39 +332,6 @@ namespace bs
         private static extern void Internal_SetAcceptsKeyFocus(IntPtr nativeInstance, bool accepts);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern GUILayout Internal_GetParent(IntPtr nativeInstance);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetPosition(IntPtr nativeInstance, int x, int y);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetWidth(IntPtr nativeInstance, int width);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetFlexibleWidth(IntPtr nativeInstance, int minWidth, int maxWidth);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetHeight(IntPtr nativeInstance, int height);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetFlexibleHeight(IntPtr nativeInstance, int minHeight, int maxHeight);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_ResetDimensions(IntPtr nativeInstance);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_GetBounds(IntPtr nativeInstance, out Rect2I value);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetBounds(IntPtr nativeInstance, ref Rect2I value);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_GetVisibleBounds(IntPtr nativeInstance, out Rect2I value);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_GetScreenBounds(IntPtr nativeInstance, out Rect2I value);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetContextMenu(IntPtr nativeInstance, IntPtr contextMenu);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -332,9 +342,6 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetTint(IntPtr nativeInstance, ref Color tint);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_Destroy(IntPtr nativeInstance);
     }
 
     /** @} */

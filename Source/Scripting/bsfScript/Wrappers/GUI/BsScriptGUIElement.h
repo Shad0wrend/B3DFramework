@@ -6,6 +6,7 @@
 #include "BsScriptObject.h"
 #include "GUI/BsGUIOptions.h"
 #include "GUI/BsGUIElement.h"
+#include "GUI/BsGUIInteractable.h"
 
 namespace bs
 {
@@ -87,6 +88,9 @@ namespace bs
 
 		virtual ~ScriptGUIInteractableBase() {}
 
+		/**	Returns the underlying GUIElementBase wrapped by this object. */
+		GUIInteractable* GetGuiInteractable() const { return static_cast<GUIInteractable*>(mElement); }
+
 		void Destroy() override;
 	};
 
@@ -114,10 +118,40 @@ namespace bs
 	 *  @{
 	 */
 
-	/**
-	 * Interop class between C++ & CLR for GUIInteractable. This includes only base methods belonging directly to GUIElement
-	 * while specific GUI element implementations have their own interop classes.
-	 */
+	/** Interop class between C++ & CLR for GUIElement. */
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIElement : public ScriptObject<ScriptGUIElement>
+	{
+	public:
+		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIElement")
+
+	private:
+		ScriptGUIElement(MonoObject* instance);
+
+		/************************************************************************/
+		/* 								CLR HOOKS						   		*/
+		/************************************************************************/
+		static void InternalDestroy(ScriptGUIElementBase* nativeInstance);
+		static void InternalSetVisible(ScriptGUIElementBase* nativeInstance, bool visible);
+		static bool InternalGetVisible(ScriptGUIElementBase* nativeInstance);
+		static void InternalSetActive(ScriptGUIElementBase* nativeInstance, bool active);
+		static bool InternalGetActive(ScriptGUIElementBase* nativeInstance);
+		static void InternalSetDisabled(ScriptGUIElementBase* nativeInstance, bool disabled);
+		static bool InternalGetDisabled(ScriptGUIElementBase* nativeInstance);
+		static MonoObject* InternalGetParent(ScriptGUIElementBase* nativeInstance);
+		static void InternalGetBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds);
+		static void InternalSetBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds);
+		static void InternalGetVisibleBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds);
+		static void InternalGetScreenBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds);
+		static void InternalSetPosition(ScriptGUIElementBase* nativeInstance, i32 x, i32 y);
+		static void InternalSetWidth(ScriptGUIElementBase* nativeInstance, u32 width);
+		static void InternalSetHeight(ScriptGUIElementBase* nativeInstance, u32 height);
+		static void InternalSetFlexibleWidth(ScriptGUIElementBase* nativeInstance, u32 minWidth, u32 maxWidth);
+		static void InternalSetFlexibleHeight(ScriptGUIElementBase* nativeInstance, u32 minHeight, u32 maxHeight);
+		static void InternalResetDimensions(ScriptGUIElementBase* nativeInstance);
+	};
+
+
+	/** Interop class between C++ & CLR for GUIInteractable. */
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIInteractable : public ScriptObject<ScriptGUIInteractable>
 	{
 	public:
@@ -129,33 +163,15 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void InternalDestroy(ScriptGUIElementBase* nativeInstance);
-		static void InternalSetVisible(ScriptGUIElementBase* nativeInstance, bool visible);
-		static void InternalSetActive(ScriptGUIElementBase* nativeInstance, bool active);
-		static void InternalSetDisabled(ScriptGUIElementBase* nativeInstance, bool disabled);
-		static void InternalSetFocus(ScriptGUIElementBase* nativeInstance, bool focus);
-		static void InternalSetBlocking(ScriptGUIElementBase* nativeInstance, bool blocking);
-		static void InternalSetAcceptsKeyFocus(ScriptGUIElementBase* nativeInstance, bool accepts);
-		static bool InternalGetVisible(ScriptGUIElementBase* nativeInstance);
-		static bool InternalGetActive(ScriptGUIElementBase* nativeInstance);
-		static bool InternalGetDisabled(ScriptGUIElementBase* nativeInstance);
-		static bool InternalGetBlocking(ScriptGUIElementBase* nativeInstance);
-		static bool InternalGetAcceptsKeyFocus(ScriptGUIElementBase* nativeInstance);
-		static MonoObject* InternalGetParent(ScriptGUIElementBase* nativeInstance);
-		static void InternalGetBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds);
-		static void InternalSetBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds);
-		static void InternalGetVisibleBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds);
-		static void InternalGetScreenBounds(ScriptGUIElementBase* nativeInstance, Rect2I* bounds);
-		static void InternalSetPosition(ScriptGUIElementBase* nativeInstance, i32 x, i32 y);
-		static void InternalSetWidth(ScriptGUIElementBase* nativeInstance, u32 width);
-		static void InternalSetFlexibleWidth(ScriptGUIElementBase* nativeInstance, u32 minWidth, u32 maxWidth);
-		static void InternalSetHeight(ScriptGUIElementBase* nativeInstance, u32 height);
-		static void InternalSetFlexibleHeight(ScriptGUIElementBase* nativeInstance, u32 minHeight, u32 maxHeight);
-		static void InternalSetTint(ScriptGUIElementBase* nativeInstance, Color* tint);
-		static void InternalSetContextMenu(ScriptGUIElementBase* nativeInstance, ScriptContextMenu* contextMenu);
-		static void InternalResetDimensions(ScriptGUIElementBase* nativeInstance);
-		static MonoString* InternalGetStyle(ScriptGUIElementBase* nativeInstance);
-		static void InternalSetStyle(ScriptGUIElementBase* nativeInstance, MonoString* style);
+		static void InternalSetFocus(ScriptGUIInteractableBase* nativeInstance, bool focus);
+		static void InternalSetBlocking(ScriptGUIInteractableBase* nativeInstance, bool blocking);
+		static bool InternalGetBlocking(ScriptGUIInteractableBase* nativeInstance);
+		static void InternalSetAcceptsKeyFocus(ScriptGUIInteractableBase* nativeInstance, bool accepts);
+		static bool InternalGetAcceptsKeyFocus(ScriptGUIInteractableBase* nativeInstance);
+		static void InternalSetTint(ScriptGUIInteractableBase* nativeInstance, Color* tint);
+		static void InternalSetContextMenu(ScriptGUIInteractableBase* nativeInstance, ScriptContextMenu* contextMenu);
+		static MonoString* InternalGetStyle(ScriptGUIInteractableBase* nativeInstance);
+		static void InternalSetStyle(ScriptGUIInteractableBase* nativeInstance, MonoString* style);
 
 		typedef void(B3D_THUNKCALL* OnFocusChangedThunkDef)(MonoObject*, MonoException**);
 
