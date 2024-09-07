@@ -14,7 +14,7 @@ namespace bs
     /// Base class for all GUI elements. Every GUI element can at least be positioned in it's parent layout/panel and be
     /// hidden/visible, focused/unfocused and assigned a context menu.
     /// </summary>
-    public abstract class GUIElement : ScriptObject
+    public abstract class GUIInteractable : ScriptObject
     {
         /// <summary>
         /// Triggered when a GUI element receives keyboard focus.

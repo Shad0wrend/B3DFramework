@@ -15,7 +15,7 @@ namespace bs
 	/// caller.
 	/// </summary>
 	[ShowInInspector]
-	public partial class GUIProgressBar : GUIElement
+	public partial class GUIProgressBar : GUIInteractable
 	{
 		private GUIProgressBar(bool __dummy0) { }
 		protected GUIProgressBar() { }

@@ -22,7 +22,7 @@ namespace bs
     /// <summary>
     /// A GUI element container with support for vertical & horizontal scrolling.
     /// </summary>
-    public sealed class GUIScrollArea : GUIElement
+    public sealed class GUIScrollArea : GUIInteractable
     {
         private GUILayout _mainLayout;
 

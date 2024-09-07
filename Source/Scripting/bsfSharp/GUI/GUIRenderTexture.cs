@@ -13,7 +13,7 @@ namespace bs
     /// Allows you to display a render texture in the GUI. Has the same functionality as GUITexture, but also forwards any
     /// input to underlying GUI elements being rendered on the provided render texture.
     /// </summary>
-    public sealed class GUIRenderTexture : GUIElement
+    public sealed class GUIRenderTexture : GUIInteractable
     {
         private RenderTexture renderTexture;
 

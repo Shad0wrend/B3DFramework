@@ -12,7 +12,7 @@ namespace bs
 
 	/// <summary>GUI element that displays text and optionally a content image.</summary>
 	[ShowInInspector]
-	public partial class GUILabel : GUIElement
+	public partial class GUILabel : GUIInteractable
 	{
 		private GUILabel(bool __dummy0) { }
 		protected GUILabel() { }

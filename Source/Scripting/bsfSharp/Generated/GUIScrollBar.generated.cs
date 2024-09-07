@@ -12,7 +12,7 @@ namespace bs
 
 	/// <summary>GUI element representing an element with a draggable handle of a variable size.</summary>
 	[ShowInInspector]
-	public partial class GUIScrollBar : GUIElement
+	public partial class GUIScrollBar : GUIInteractable
 	{
 		private GUIScrollBar(bool __dummy0) { }
 		protected GUIScrollBar() { }

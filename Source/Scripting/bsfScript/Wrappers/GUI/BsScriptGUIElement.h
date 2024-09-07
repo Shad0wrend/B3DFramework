@@ -121,7 +121,7 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIInteractable : public ScriptObject<ScriptGUIInteractable>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIElement")
+		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIInteractable")
 
 	private:
 		ScriptGUIInteractable(MonoObject* instance);

@@ -12,7 +12,7 @@ namespace bs
 
 	/// <summary>A GUI element that displays a texture.</summary>
 	[ShowInInspector]
-	public partial class GUITexture : GUIElement
+	public partial class GUITexture : GUIInteractable
 	{
 		private GUITexture(bool __dummy0) { }
 		protected GUITexture() { }

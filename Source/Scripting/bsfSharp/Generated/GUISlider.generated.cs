@@ -12,7 +12,7 @@ namespace bs
 
 	/// <summary>A slider with a draggable handle that can be vertical or horizontal.</summary>
 	[ShowInInspector]
-	public partial class GUISlider : GUIElement
+	public partial class GUISlider : GUIInteractable
 	{
 		private GUISlider(bool __dummy0) { }
 		protected GUISlider() { }

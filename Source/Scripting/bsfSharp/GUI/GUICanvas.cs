@@ -13,7 +13,7 @@ namespace bs
     /// A GUI element that allows the user to draw custom graphics. All drawn elements relative to the canvas, to its origin
     /// in the top left corner.
     /// </summary>
-    public sealed class GUICanvas : GUIElement
+    public sealed class GUICanvas : GUIInteractable
     {
         /// <summary>
         /// Creates a new canvas element.

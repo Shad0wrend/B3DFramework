@@ -15,7 +15,7 @@ namespace bs
 	/// types of text manipulation.
 	/// </summary>
 	[ShowInInspector]
-	public partial class GUIInputBox : GUIElement
+	public partial class GUIInputBox : GUIInteractable
 	{
 		private GUIInputBox(bool __dummy0) { }
 		protected GUIInputBox() { }

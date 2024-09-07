@@ -12,7 +12,7 @@ namespace bs
 
 	/// <summary>Base class for a clickable GUI button element.</summary>
 	[ShowInInspector]
-	public partial class GUIClickable : GUIElement
+	public partial class GUIClickable : GUIInteractable
 	{
 		private GUIClickable(bool __dummy0) { }
 		protected GUIClickable() { }
