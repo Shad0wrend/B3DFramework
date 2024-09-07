@@ -1,9 +1,10 @@
-//********************************* bs::framework - Copyright 2024 Marko Pintera ************************************//
+//*********************************** bs::framework - Copyright 2024 Marko Pintera ***************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
+#include "Script/BsIScriptExportable.h"
 
 namespace bs
 {
@@ -11,32 +12,27 @@ namespace bs
 	 *  @{
 	 */
 
-	/** Extends TScriptObjectWrapper by providing functionality required for types not deriving from IReflectable that may be passed along as a shared pointer. */
+	/** Extends TScriptObjectWrapper by providing functionality required for types deriving from GUIElement passed along as a pointer. */
 	template<typename NativeType, typename SelfType, typename BaseType = ScriptObjectWrapper>
-	class TScriptNonReflectableWrapper : public TScriptObjectWrapper<SelfType, BaseType>
+	class TScriptGUIElementWrapper : public TScriptObjectWrapper<SelfType, BaseType>
 	{
 		using Super = TScriptObjectWrapper<SelfType, BaseType>;
 	public:
-		TScriptNonReflectableWrapper(const SPtr<NativeType>& nativeObject)
-			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.get()), mNativeObjectStrongHandle(nativeObject)
+		TScriptGUIElementWrapper(const NativeType* nativeObject)
+			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject), mNativeObject(nativeObject)
 		{ }
 
-		/** Returns the wrapped native object as a shared pointer. */
-		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle; }
-
-		SPtr<NativeType> GetBaseNativeObjectAsShared() const { return GetNativeObjectAsShared(); }
-
 		/** Checks is the native object alive and valid. */
-		bool IsNativeObjectValid() const { return mNativeObjectStrongHandle != nullptr; }
+		bool IsNativeObjectValid() const { return mNativeObject != nullptr; }
 
 		/**
 		 * Creates a new script object and a script object wrapper of @p SelfType, and associates them with the provided native object. Should not be called if @p nativeObject
 		 * already has an associated script object.
 		 */
-		static MonoObject* CreateScriptObjectAndWrapper(const SPtr<NativeType>& nativeObject)
+		static MonoObject* CreateScriptObjectAndWrapper(const NativeType* nativeObject)
 		{
 			MonoObject* const scriptObject = SelfType::CreateScriptObject(false);
-			ScriptObjectWrapper::Create<SelfType>(std::static_pointer_cast<NativeType>(nativeObject), scriptObject);
+			ScriptObjectWrapper::Create<SelfType>(static_cast<NativeType>(nativeObject), scriptObject);
 
 			return scriptObject;
 		}
@@ -45,9 +41,9 @@ namespace bs
 		 * Attempts to retrieve an existing associated script object from the provided native object. If one doesn't exist, a new script
 		 * object and the associated script wrapper will be created.
 		 */
-		static MonoObject* GetOrCreateScriptObject(const SPtr<NativeType>& nativeObject)
+		static MonoObject* GetOrCreateScriptObject(const NativeType* nativeObject)
 		{
-			if(!nativeObject.IsValid())
+			if(nativeObject == nullptr)
 				return nullptr;
 
 			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
@@ -61,14 +57,14 @@ namespace bs
 
 		void NotifyNativeObjectDestroyed() override
 		{
-			mNativeObjectStrongHandle = nullptr;
+			mNativeObject = nullptr;
 			Super::NotifyNativeObjectDestroyed();
 		}
 
 		static void InitializeAdditionalMetaData(ScriptWrapperObjectMetaData& metaData)
 		{ }
 
-		SPtr<NativeType> mNativeObjectStrongHandle;
+		NativeType* mNativeObject = nullptr;
 	};
 
 	/** @} */

@@ -16,11 +16,15 @@ namespace bs
 	/** Provides a base class for all script object wrappers that wrap an IReflectable object that may be passed as a shared pointer. */
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptReflectableWrapper : public ScriptObjectWrapper
 	{
+		using Super = ScriptObjectWrapper;
 	public:
 		using ScriptObjectWrapper::ScriptObjectWrapper;
 
 		/** Returns the root base class of the wrapped native object as a shared pointer. */
 		const SPtr<IReflectable>& GetBaseNativeObjectAsShared() const { return mNativeObjectStrongHandle; }
+
+		/** Checks is the native object alive and valid. */
+		bool IsNativeObjectValid() const { return mNativeObjectStrongHandle != nullptr; }
 
 		/**
 		 * Attempts to retrieve an existing associated script object from the provided native object. If one doesn't exist, a new script
@@ -35,6 +39,12 @@ namespace bs
 		static ScriptReflectableWrapper* GetScriptObjectWrapper(const ScriptWrapperObjectMetaData& wrapperMetaData, MonoObject* scriptObject);
 
 	protected:
+		void NotifyNativeObjectDestroyed() override
+		{
+			mNativeObjectStrongHandle = nullptr;
+			Super::NotifyNativeObjectDestroyed();
+		}
+
 		SPtr<IReflectable> mNativeObjectStrongHandle;
 	};
 
