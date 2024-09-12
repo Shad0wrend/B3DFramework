@@ -239,19 +239,6 @@ namespace bs
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        protected static extern void Internal_CreateInstanceYFromScrollArea(GUILayout instance, GUIScrollArea parentArea);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        protected static extern void Internal_CreateInstanceX(GUILayout instance, GUIOption[] options);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        protected static extern void Internal_CreateInstanceY(GUILayout instance, GUIOption[] options);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        protected static extern void Internal_CreateInstancePanel(GUILayout instance, Int16 depth, ushort depthRangeMin,
-            ushort depthRangeMax, GUIOption[] options);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
         protected static extern void Internal_AddElement(IntPtr instance, IntPtr element);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

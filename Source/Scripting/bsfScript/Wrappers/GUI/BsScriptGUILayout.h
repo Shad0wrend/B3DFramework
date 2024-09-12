@@ -31,7 +31,7 @@ namespace bs
 
 		ScriptGUILayout(GUILayout* nativeObject);
 
-		static MonoObject* CreateScriptObject(bool construct);
+		static MonoObject* CreateScriptObject(bool construct) { return nullptr; }
 
 	protected:
 		friend class ScriptGUIPanel;
@@ -40,10 +40,6 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void InternalCreateInstanceX(MonoObject* instance, MonoArray* guiOptions);
-		static void InternalCreateInstanceY(MonoObject* instance, MonoArray* guiOptions);
-		static void InternalCreateInstancePanel(MonoObject* instance, i16 depth, u16 depthRangeMin, u32 depthRangeMax, MonoArray* guiOptions);
-		static void InternalCreateInstanceYFromScrollArea(MonoObject* instance, MonoObject* parentScrollArea);
 		static void InternalAddElement(ScriptGUILayoutWrapperBase* self, ScriptGUIElementWrapper* element);
 		static void InternalInsertElement(ScriptGUILayoutWrapperBase* self, u32 index, ScriptGUIElementWrapper* element);
 		static u32 InternalGetChildCount(ScriptGUILayoutWrapperBase* self);
@@ -60,27 +56,37 @@ namespace bs
 		ScriptGUIPanel(GUIPanel* nativeObject);
 
 		static MonoObject* CreateScriptObject(bool construct);
-	};
-
-	/**	Specialized ScriptGUILayout that is used only in GUI scroll areas. */
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollAreaLayout : public ScriptGUILayout // TODO
-	{
-	public:
-		/**
-		 * Constructor.
-		 *
-		 * @param[in]	instance	Managed GUILayout instance.
-		 * @param[in]	layout  	Native GUILayout instance.
-		 */
-		ScriptGUIScrollAreaLayout(MonoObject* instance, GUILayout* layout);
-
-		/** @copydoc ScriptGUILayout::destroy */
-		void Destroy();
 
 	private:
-		friend class ScriptGUIScrollArea;
+		static void InternalCreate(MonoObject* instance, i16 depth, u16 depthRangeMin, u32 depthRangeMax, MonoArray* guiOptions);
+	};
 
-		ScriptGUIScrollArea* mParentScrollArea;
+	/**	Interop class between C++ & CLR for GUILayoutX.  */
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUILayoutX : public TScriptGUIElementWrapper<GUILayoutX, ScriptGUILayoutX, ScriptGUILayoutWrapperBase>
+	{
+	public:
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GUILayoutX")
+
+		ScriptGUILayoutX(GUILayoutX* nativeObject);
+
+		static MonoObject* CreateScriptObject(bool construct);
+
+	private:
+		static void InternalCreate(MonoObject* instance, MonoArray* guiOptions);
+	};
+
+	/**	Interop class between C++ & CLR for GUILayoutY.  */
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUILayoutY : public TScriptGUIElementWrapper<GUILayoutY, ScriptGUILayoutY, ScriptGUILayoutWrapperBase>
+	{
+	public:
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GUILayoutY")
+
+		ScriptGUILayoutY(GUILayoutY* nativeObject);
+
+		static MonoObject* CreateScriptObject(bool construct);
+
+	private:
+		static void InternalCreate(MonoObject* instance, MonoArray* guiOptions);
 	};
 
 	/** @} */

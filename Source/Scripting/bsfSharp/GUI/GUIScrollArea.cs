@@ -24,14 +24,14 @@ namespace bs
     /// </summary>
     public sealed class GUIScrollArea : GUIInteractable
     {
-        private GUILayout _mainLayout;
+        private GUIScrollArea(bool __dummy0) { }
 
         /// <summary>
         /// Default vertical layout into which you should place elements that need to be scrollable.
         /// </summary>
         public GUILayout Layout
         {
-            get { return _mainLayout; }
+            get { return Internal_GetLayout(mCachedPtr); }
         }
 
         /// <summary>
@@ -93,7 +93,6 @@ namespace bs
             string style, params GUIOption[] options)
         {
             Internal_CreateInstance(this, vertBarType, horzBarType, scrollBarStyle, style, options);
-            _mainLayout = new GUILayoutY(this);
         }
 
         /// <summary>
@@ -109,7 +108,6 @@ namespace bs
         public GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType, string style, params GUIOption[] options)
         {
             Internal_CreateInstance(this, vertBarType, horzBarType, "", style, options);
-            _mainLayout = new GUILayoutY(this);
         }
 
         /// <summary>
@@ -122,7 +120,6 @@ namespace bs
         public GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType, params GUIOption[] options)
         {
             Internal_CreateInstance(this, vertBarType, horzBarType, "", "", options);
-            _mainLayout = new GUILayoutY(this);
         }
 
         /// <summary>
@@ -136,7 +133,6 @@ namespace bs
         public GUIScrollArea(string style, params GUIOption[] options)
         {
             Internal_CreateInstance(this, ScrollBarType.ShowIfDoesntFit, ScrollBarType.ShowIfDoesntFit, "", style, options);
-            _mainLayout = new GUILayoutY(this);
         }
 
         /// <summary>
@@ -147,7 +143,6 @@ namespace bs
         public GUIScrollArea(params GUIOption[] options)
         {
             Internal_CreateInstance(this, ScrollBarType.ShowIfDoesntFit, ScrollBarType.ShowIfDoesntFit, "", "", options);
-            _mainLayout = new GUILayoutY(this);
         }
 
         /// <summary>
@@ -162,20 +157,14 @@ namespace bs
         public GUIScrollArea(string scrollBarStyle, string scrollAreaStyle, params GUIOption[] options)
         {
             Internal_CreateInstance(this, ScrollBarType.ShowIfDoesntFit, ScrollBarType.ShowIfDoesntFit, scrollBarStyle, scrollAreaStyle, options);
-            _mainLayout = new GUILayoutY(this);
-        }
-
-        /// <inheritdoc/>
-        public override void Destroy()
-        {
-            _mainLayout.Destroy();
-
-            base.Destroy();
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_CreateInstance(GUIScrollArea instance, ScrollBarType vertBarType, ScrollBarType horzBarType,
             string scrollBarStyle, string scrollAreaStyle, params GUIOption[] options);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern GUILayoutY Internal_GetLayout(IntPtr nativeInstance);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_GetContentBounds(IntPtr nativeInstance, out Rect2I value);

@@ -14,12 +14,14 @@ namespace bs
     /// </summary>
     public sealed class GUILayoutX : GUILayout
     {
+        private GUILayoutX(bool __dummy0) { }
+
         /// <summary>
         /// Constructs a new empty horizontal layout.
         /// </summary>
         public GUILayoutX()
         {
-            Internal_CreateInstanceX(this, new GUIOption[0]);
+            Internal_Create(this, new GUIOption[0]);
         }
 
         /// <summary>
@@ -28,8 +30,11 @@ namespace bs
         /// <param name="options">Options that allow you to control how is the layout positioned and sized.</param>
         public GUILayoutX(params GUIOption[] options)
         {
-            Internal_CreateInstanceX(this, options);
+            Internal_Create(this, options);
         }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_Create(GUILayoutX instance, GUIOption[] options);
     }
 
     /** @} */

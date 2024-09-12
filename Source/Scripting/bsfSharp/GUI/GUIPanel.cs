@@ -14,8 +14,7 @@ namespace bs
     /// </summary>
     public sealed class GUIPanel : GUILayout
     {
-        private GUIPanel()
-        { }
+        private GUIPanel(bool __dummy0) { }
 
         /// <summary>
         /// Constructs a new GUI panel object.
@@ -31,7 +30,7 @@ namespace bs
         public GUIPanel(Int16 depth = 0, ushort depthRangeMin = ushort.MaxValue, ushort depthRangeMax = ushort.MaxValue,
             params GUIOption[] options)
         {
-            Internal_CreateInstancePanel(this, depth, depthRangeMin, depthRangeMax, options);
+            Internal_Create(this, depth, depthRangeMin, depthRangeMax, options);
         }
 
         /// <summary>
@@ -40,8 +39,13 @@ namespace bs
         /// <param name="options">Options that allow you to control how is the panel positioned and sized.</param>
         public GUIPanel(params GUIOption[] options)
         {
-            Internal_CreateInstancePanel(this, 0, ushort.MaxValue, ushort.MaxValue, options);
+            Internal_Create(this, 0, ushort.MaxValue, ushort.MaxValue, options);
         }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_Create(GUIPanel instance, Int16 depth, ushort depthRangeMin,
+            ushort depthRangeMax, GUIOption[] options);
+
     }
 
     /** @} */

@@ -13,41 +13,29 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUIScrollArea.  */
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollArea : public TScriptGUIInteractable<ScriptGUIScrollArea>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollArea : public TScriptGUIElementWrapper<GUIScrollArea, ScriptGUIScrollArea, ScriptGUIInteractableWrapperBase>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIScrollArea")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GUIScrollArea")
 
-		/**
-		 * Initializes the interop object by providing it with the interop object for the internal layout held by the
-		 * scroll area.
-		 */
-		void Initialize(ScriptGUIScrollAreaLayout* layout);
+		ScriptGUIScrollArea(GUIScrollArea* nativeObject);
 
+		/** Returns the native object that is being wrapped. */
+		GUIScrollArea* GetNativeObject() const { return static_cast<GUIScrollArea*>(mNativeObject); }
+
+		static MonoObject* CreateScriptObject(bool construct);
 	private:
-		friend class ScriptGUIScrollAreaLayout;
-
-		ScriptGUIScrollArea(MonoObject* instance, GUIScrollArea* scrollArea);
-
-		void Destroy() override;
-
-		/**
-		 * Called when the child script GUI layout gets destroyed. Notifies this object that it shouldn't use it anymore.
-		 */
-		void NotifyLayoutDestroyed();
-
-		ScriptGUIScrollAreaLayout* mLayout;
-
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
 		static void InternalCreateInstance(MonoObject* instance, ScrollBarType vertBarType, ScrollBarType horzBarType, MonoString* scrollBarStyle, MonoString* scrollAreaStyle, MonoArray* guiOptions);
-		static void InternalGetContentBounds(ScriptGUIScrollArea* nativeInstance, Rect2I* bounds);
-		static float InternalGetHorzScroll(ScriptGUIScrollArea* nativeInstance);
-		static void InternalSetHorzScroll(ScriptGUIScrollArea* nativeInstance, float value);
-		static float InternalGetVertScroll(ScriptGUIScrollArea* nativeInstance);
-		static void InternalSetVertScroll(ScriptGUIScrollArea* nativeInstance, float value);
-		static int InternalGetScrollBarWidth(ScriptGUIScrollArea* nativeInstance);
+		static MonoObject* InternalGetLayout(ScriptGUIScrollArea* self);
+		static void InternalGetContentBounds(ScriptGUIScrollArea* self, Rect2I* bounds);
+		static float InternalGetHorzScroll(ScriptGUIScrollArea* self);
+		static void InternalSetHorzScroll(ScriptGUIScrollArea* self, float value);
+		static float InternalGetVertScroll(ScriptGUIScrollArea* self);
+		static void InternalSetVertScroll(ScriptGUIScrollArea* self, float value);
+		static int InternalGetScrollBarWidth(ScriptGUIScrollArea* self);
 	};
 
 	/** @} */

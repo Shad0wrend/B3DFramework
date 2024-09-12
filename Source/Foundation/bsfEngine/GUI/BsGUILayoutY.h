@@ -37,11 +37,9 @@ namespace bs
 		void UpdateOptimalLayoutSizes() override;
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
+		void UpdateLayoutRecursive(const GUILayoutData& data) override;
 
 		/** @} */
-
-	protected:
-		void UpdateLayoutRecursive(const GUILayoutData& data) override;
 	};
 
 	/** @} */

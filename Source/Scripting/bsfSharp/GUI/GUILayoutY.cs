@@ -14,22 +14,14 @@ namespace bs
     /// </summary>
     public sealed class GUILayoutY : GUILayout
     {
-        /// <summary>
-        /// Internal method used by the runtime. Initializes a managed version of the vertical layout that is referenced
-        /// by a native GUI scroll area element.
-        /// </summary>
-        /// <param name="parentArea">Scroll area of which we want to reference the layout of.</param>
-        internal GUILayoutY(GUIScrollArea parentArea)
-        {
-            Internal_CreateInstanceYFromScrollArea(this, parentArea);
-        }
+        private GUILayoutY(bool __dummy0) { }
 
         /// <summary>
         /// Constructs a new empty vertical layout.
         /// </summary>
         public GUILayoutY()
         {
-            Internal_CreateInstanceY(this, new GUIOption[0]);
+            Internal_Create(this, new GUIOption[0]);
         }
 
         /// <summary>
@@ -37,8 +29,11 @@ namespace bs
         /// </summary>
         public GUILayoutY(params GUIOption[] options)
         {
-            Internal_CreateInstanceY(this, options);
+            Internal_Create(this, options);
         }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_Create(GUILayoutY instance, GUIOption[] options);
     }
 
     /** @} */

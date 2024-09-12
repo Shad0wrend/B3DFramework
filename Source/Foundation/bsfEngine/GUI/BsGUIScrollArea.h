@@ -67,7 +67,7 @@ namespace bs
 		static GUIScrollArea* Create(const GUIOptions& options, const String& scrollBarStyle = StringUtil::kBlank, const String& scrollAreaStyle = StringUtil::kBlank);
 
 		/**	Returns the scroll area layout that you may use to add elements inside the scroll area. */
-		GUILayout& GetLayout() const { return *mContentLayout; }
+		GUILayoutY& GetLayout() const { return *mContentLayout; }
 
 		/**	Scrolls the area up by specified amount of pixels, if possible. */
 		void ScrollUpPx(u32 pixels);
@@ -179,7 +179,7 @@ namespace bs
 		ScrollBarType mHorzBarType;
 		String mScrollBarStyle;
 
-		GUILayout* mContentLayout;
+		GUILayoutY* mContentLayout;
 		GUIVerticalScrollBar* mVertScroll;
 		GUIHorizontalScrollBar* mHorzScroll;
 

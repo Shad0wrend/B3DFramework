@@ -19,72 +19,11 @@ ScriptGUILayout::ScriptGUILayout(GUILayout* nativeObject)
 
 void ScriptGUILayout::SetupScriptBindings()
 {
-	sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateInstanceX", (void*)&ScriptGUILayout::InternalCreateInstanceX);
-	sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateInstanceY", (void*)&ScriptGUILayout::InternalCreateInstanceY);
-	sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateInstancePanel", (void*)&ScriptGUILayout::InternalCreateInstancePanel);
-	sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateInstanceYFromScrollArea", (void*)&ScriptGUILayout::InternalCreateInstanceYFromScrollArea);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_AddElement", (void*)&ScriptGUILayout::InternalAddElement);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_InsertElement", (void*)&ScriptGUILayout::InternalInsertElement);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetChildCount", (void*)&ScriptGUILayout::InternalGetChildCount);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetChild", (void*)&ScriptGUILayout::InternalGetChild);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_Clear", (void*)&ScriptGUILayout::InternalClear);
-}
-
-MonoObject* ScriptGUILayout::CreateScriptObject(bool construct)
-{
-	return sInteropMetaData.ScriptClass->CreateInstance(construct);
-}
-
-void ScriptGUILayout::InternalCreateInstanceX(MonoObject* instance, MonoArray* guiOptions)
-{
-	GUIOptions options;
-
-	ScriptArray scriptArray(guiOptions);
-	u32 arrayLen = scriptArray.Size();
-	for(u32 i = 0; i < arrayLen; i++)
-		options.AddOption(scriptArray.Get<GUIOption>(i));
-
-	GUILayout* layout = GUILayoutX::Create(options);
-	ScriptObjectWrapper::Create<ScriptGUILayout>(layout, instance);
-}
-
-void ScriptGUILayout::InternalCreateInstanceY(MonoObject* instance, MonoArray* guiOptions)
-{
-	GUIOptions options;
-
-	ScriptArray scriptArray(guiOptions);
-	u32 arrayLen = scriptArray.Size();
-	for(u32 i = 0; i < arrayLen; i++)
-		options.AddOption(scriptArray.Get<GUIOption>(i));
-
-	GUILayout* layout = GUILayoutY::Create(options);
-	ScriptObjectWrapper::Create<ScriptGUILayout>(layout, instance);
-}
-
-void ScriptGUILayout::InternalCreateInstancePanel(MonoObject* instance, i16 depth, u16 depthRangeMin, u32 depthRangeMax, MonoArray* guiOptions)
-{
-	GUIOptions options;
-
-	ScriptArray scriptArray(guiOptions);
-	u32 arrayLen = scriptArray.Size();
-	for(u32 i = 0; i < arrayLen; i++)
-		options.AddOption(scriptArray.Get<GUIOption>(i));
-
-	GUIPanel* panel = GUIPanel::Create(depth, depthRangeMin, depthRangeMax, options);
-	ScriptObjectWrapper::Create<ScriptGUIPanel>(panel, instance);
-}
-
-void ScriptGUILayout::InternalCreateInstanceYFromScrollArea(MonoObject* instance, MonoObject* parentScrollArea)
-{
-	ScriptGUIScrollArea* scriptScrollArea = ScriptGUIScrollArea::ToNative(parentScrollArea);
-	GUIScrollArea* scrollArea = (GUIScrollArea*)scriptScrollArea->GetGuiElement();
-
-	GUILayout* nativeLayout = &scrollArea->GetLayout();
-
-	ScriptGUIScrollAreaLayout* const layoutWrapper = ScriptObjectWrapper::Create<ScriptGUIScrollAreaLayout>(nativeLayout, instance);
-
-	// This method is expected to be called during GUIScrollArea construction, so we finish its initialization
-	scriptScrollArea->Initialize(layoutWrapper);
 }
 
 void ScriptGUILayout::InternalAddElement(ScriptGUILayoutWrapperBase* self, ScriptGUIElementWrapper* element)
@@ -143,36 +82,100 @@ void ScriptGUILayout::InternalClear(ScriptGUILayoutWrapperBase* self)
 }
 
 ScriptGUIPanel::ScriptGUIPanel(GUIPanel* nativeObject)
-	: ScriptGUIPanel(nativeObject)
+	: TScriptGUIElementWrapper(nativeObject)
 {}
 
 void ScriptGUIPanel::SetupScriptBindings()
-{}
+{
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptGUIPanel::InternalCreate);
+}
 
 MonoObject* ScriptGUIPanel::CreateScriptObject(bool construct)
 {
-	return sInteropMetaData.ScriptClass->CreateInstance(construct);
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
+
+	if(construct)
+		return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+	return sInteropMetaData.ScriptClass->CreateInstance(false);
 }
 
-ScriptGUIScrollAreaLayout::ScriptGUIScrollAreaLayout(MonoObject* instance, GUILayout* layout)
-	: ScriptGUILayout(instance, layout, false), mParentScrollArea(nullptr)
+void ScriptGUIPanel::InternalCreate(MonoObject* instance, i16 depth, u16 depthRangeMin, u32 depthRangeMax, MonoArray* guiOptions)
 {
+	GUIOptions options;
+
+	ScriptArray scriptArray(guiOptions);
+	u32 arrayLen = scriptArray.Size();
+	for(u32 i = 0; i < arrayLen; i++)
+		options.AddOption(scriptArray.Get<GUIOption>(i));
+
+	GUIPanel* panel = GUIPanel::Create(depth, depthRangeMin, depthRangeMax, options);
+	ScriptObjectWrapper::Create<ScriptGUIPanel>(panel, instance);
 }
 
-void ScriptGUIScrollAreaLayout::Destroy()
+ScriptGUILayoutX::ScriptGUILayoutX(GUILayoutX* nativeObject)
+	: TScriptGUIElementWrapper(nativeObject)
+{}
+
+void ScriptGUILayoutX::SetupScriptBindings()
 {
-	if(!mIsDestroyed)
-	{
-		if(mParentScrollArea != nullptr)
-			mParentScrollArea->NotifyLayoutDestroyed();
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptGUILayoutX::InternalCreate);
+}
 
-		while(mChildren.size() > 0)
-		{
-			ChildInfo childInfo = mChildren[0];
-			childInfo.Element->Destroy();
-		}
+MonoObject* ScriptGUILayoutX::CreateScriptObject(bool construct)
+{
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
 
-		mLayout = nullptr;
-		mIsDestroyed = true;
-	}
+	if(construct)
+		return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+	return sInteropMetaData.ScriptClass->CreateInstance(false);
+}
+
+void ScriptGUILayoutX::InternalCreate(MonoObject* instance, MonoArray* guiOptions)
+{
+	GUIOptions options;
+
+	ScriptArray scriptArray(guiOptions);
+	u32 arrayLen = scriptArray.Size();
+	for(u32 i = 0; i < arrayLen; i++)
+		options.AddOption(scriptArray.Get<GUIOption>(i));
+
+	GUILayoutX* layout = GUILayoutX::Create(options);
+	ScriptObjectWrapper::Create<ScriptGUILayoutX>(layout, instance);
+}
+
+ScriptGUILayoutY::ScriptGUILayoutY(GUILayoutY* nativeObject)
+	: TScriptGUIElementWrapper(nativeObject)
+{ }
+
+void ScriptGUILayoutY::SetupScriptBindings()
+{
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptGUILayoutY::InternalCreate);
+}
+
+MonoObject* ScriptGUILayoutY::CreateScriptObject(bool construct)
+{
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
+
+	if(construct)
+		return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+	return sInteropMetaData.ScriptClass->CreateInstance(false);
+}
+
+void ScriptGUILayoutY::InternalCreate(MonoObject* instance, MonoArray* guiOptions)
+{
+	GUIOptions options;
+
+	ScriptArray scriptArray(guiOptions);
+	u32 arrayLen = scriptArray.Size();
+	for(u32 i = 0; i < arrayLen; i++)
+		options.AddOption(scriptArray.Get<GUIOption>(i));
+
+	GUILayoutY* layout = GUILayoutY::Create(options);
+	ScriptObjectWrapper::Create<ScriptGUILayoutY>(layout, instance);
 }

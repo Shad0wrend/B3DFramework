@@ -7,57 +7,38 @@
 #include "BsMonoManager.h"
 #include "Image/BsSpriteTexture.h"
 #include "BsMonoUtil.h"
-#include "GUI/BsGUILayout.h"
+#include "GUI/BsGUILayoutY.h"
 #include "GUI/BsGUIScrollArea.h"
 #include "GUI/BsGUIOptions.h"
 #include "Wrappers/GUI/BsScriptGUILayout.h"
 
 using namespace bs;
-ScriptGUIScrollArea::ScriptGUIScrollArea(MonoObject* instance, GUIScrollArea* scrollArea)
-	: TScriptGUIInteractable(instance, scrollArea), mLayout(nullptr)
+ScriptGUIScrollArea::ScriptGUIScrollArea(GUIScrollArea* nativeObject)
+	: TScriptGUIElementWrapper(nativeObject)
 {
 }
 
-void ScriptGUIScrollArea::InitRuntimeData()
+void ScriptGUIScrollArea::SetupScriptBindings()
 {
-	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollArea::InternalCreateInstance);
-	metaData.ScriptClass->AddInternalCall("Internal_GetContentBounds", (void*)&ScriptGUIScrollArea::InternalGetContentBounds);
-	metaData.ScriptClass->AddInternalCall("Internal_GetHorzScroll", (void*)&ScriptGUIScrollArea::InternalGetHorzScroll);
-	metaData.ScriptClass->AddInternalCall("Internal_SetHorzScroll", (void*)&ScriptGUIScrollArea::InternalSetHorzScroll);
-	metaData.ScriptClass->AddInternalCall("Internal_GetVertScroll", (void*)&ScriptGUIScrollArea::InternalGetVertScroll);
-	metaData.ScriptClass->AddInternalCall("Internal_SetVertScroll", (void*)&ScriptGUIScrollArea::InternalSetVertScroll);
-	metaData.ScriptClass->AddInternalCall("Internal_GetScrollBarWidth", (void*)&ScriptGUIScrollArea::InternalGetScrollBarWidth);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollArea::InternalCreateInstance);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetLayout", (void*)&ScriptGUIScrollArea::InternalGetLayout);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetContentBounds", (void*)&ScriptGUIScrollArea::InternalGetContentBounds);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetHorzScroll", (void*)&ScriptGUIScrollArea::InternalGetHorzScroll);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetHorzScroll", (void*)&ScriptGUIScrollArea::InternalSetHorzScroll);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetVertScroll", (void*)&ScriptGUIScrollArea::InternalGetVertScroll);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetVertScroll", (void*)&ScriptGUIScrollArea::InternalSetVertScroll);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetScrollBarWidth", (void*)&ScriptGUIScrollArea::InternalGetScrollBarWidth);
 }
 
-void ScriptGUIScrollArea::Initialize(ScriptGUIScrollAreaLayout* layout)
+MonoObject* ScriptGUIScrollArea::CreateScriptObject(bool construct)
 {
-	mLayout = layout;
-	mLayout->mParentScrollArea = this;
-}
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
 
-void ScriptGUIScrollArea::NotifyLayoutDestroyed()
-{
-	mLayout = nullptr;
-}
+	if(construct)
+		return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
 
-void ScriptGUIScrollArea::Destroy()
-{
-	if(!mIsDestroyed)
-	{
-		if(mParent != nullptr)
-			mParent->RemoveChild(this);
-
-		if(mLayout != nullptr)
-		{
-			mLayout->Destroy();
-			mLayout = nullptr;
-		}
-
-		mElement->Destroy();
-		mElement = nullptr;
-
-		mIsDestroyed = true;
-	}
+	return sInteropMetaData.ScriptClass->CreateInstance(false);
 }
 
 void ScriptGUIScrollArea::InternalCreateInstance(MonoObject* instance, ScrollBarType vertBarType, ScrollBarType horzBarType, MonoString* scrollBarStyle, MonoString* scrollAreaStyle, MonoArray* guiOptions)
@@ -70,41 +51,58 @@ void ScriptGUIScrollArea::InternalCreateInstance(MonoObject* instance, ScrollBar
 		options.AddOption(scriptArray.Get<GUIOption>(i));
 
 	GUIScrollArea* guiScrollArea = GUIScrollArea::Create(vertBarType, horzBarType, options, MonoUtil::MonoToString(scrollBarStyle), MonoUtil::MonoToString(scrollAreaStyle));
-
-	new(B3DAllocate<ScriptGUIScrollArea>()) ScriptGUIScrollArea(instance, guiScrollArea);
+	ScriptObjectWrapper::Create<ScriptGUIScrollArea>(guiScrollArea, instance);
 }
 
-void ScriptGUIScrollArea::InternalGetContentBounds(ScriptGUIScrollArea* nativeInstance, Rect2I* bounds)
+MonoObject* ScriptGUIScrollArea::InternalGetLayout(ScriptGUIScrollArea* self)
 {
-	GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGuiElement());
-	*bounds = guiScrollArea->GetContentBounds();
+	if(!self->IsNativeObjectValid())
+		return nullptr;
+	
+	return ScriptGUILayoutY::GetOrCreateScriptObject(&self->GetNativeObject()->GetLayout());
 }
 
-float ScriptGUIScrollArea::InternalGetHorzScroll(ScriptGUIScrollArea* nativeInstance)
+void ScriptGUIScrollArea::InternalGetContentBounds(ScriptGUIScrollArea* self, Rect2I* bounds)
 {
-	GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGuiElement());
-	return guiScrollArea->GetHorizontalScroll();
+	if(!self->IsNativeObjectValid())
+		*bounds = Rect2I::kEmpty;
+
+	*bounds = self->GetNativeObject()->GetContentBounds();
 }
 
-void ScriptGUIScrollArea::InternalSetHorzScroll(ScriptGUIScrollArea* nativeInstance, float value)
+float ScriptGUIScrollArea::InternalGetHorzScroll(ScriptGUIScrollArea* self)
 {
-	GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGuiElement());
-	guiScrollArea->ScrollToHorizontal(value);
+	if(!self->IsNativeObjectValid())
+		return 0.0f;
+
+	return self->GetNativeObject()->GetHorizontalScroll();
 }
 
-float ScriptGUIScrollArea::InternalGetVertScroll(ScriptGUIScrollArea* nativeInstance)
+void ScriptGUIScrollArea::InternalSetHorzScroll(ScriptGUIScrollArea* self, float value)
 {
-	GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGuiElement());
-	return guiScrollArea->GetVerticalScroll();
+	if(!self->IsNativeObjectValid())
+		return;
+
+	self->GetNativeObject()->ScrollToHorizontal(value);
 }
 
-void ScriptGUIScrollArea::InternalSetVertScroll(ScriptGUIScrollArea* nativeInstance, float value)
+float ScriptGUIScrollArea::InternalGetVertScroll(ScriptGUIScrollArea* self)
 {
-	GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGuiElement());
-	guiScrollArea->ScrollToVertical(value);
+	if(!self->IsNativeObjectValid())
+		return 0.0f;
+
+	return self->GetNativeObject()->GetVerticalScroll();
 }
 
-int ScriptGUIScrollArea::InternalGetScrollBarWidth(ScriptGUIScrollArea* nativeInstance)
+void ScriptGUIScrollArea::InternalSetVertScroll(ScriptGUIScrollArea* self, float value)
+{
+	if(!self->IsNativeObjectValid())
+		return;
+
+	self->GetNativeObject()->ScrollToVertical(value);
+}
+
+int ScriptGUIScrollArea::InternalGetScrollBarWidth(ScriptGUIScrollArea* self)
 {
 	return GUIScrollArea::kScrollBarWidth;
 }
