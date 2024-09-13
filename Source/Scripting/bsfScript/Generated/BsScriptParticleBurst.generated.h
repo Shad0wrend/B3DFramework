@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 
@@ -17,10 +17,10 @@ namespace bs
 		float Interval;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleBurst : public ScriptObject<ScriptParticleBurst>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleBurst : public TScriptStructWrapper<ScriptParticleBurst>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleBurst")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleBurst")
 
 		static MonoObject* Box(const __ParticleBurstInterop& value);
 		static __ParticleBurstInterop Unbox(MonoObject* value);
@@ -28,7 +28,7 @@ namespace bs
 		static __ParticleBurstInterop ToInterop(const ParticleBurst& value);
 
 	private:
-		ScriptParticleBurst(MonoObject* managedInstance);
+		ScriptParticleBurst();
 
 	};
 }

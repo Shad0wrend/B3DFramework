@@ -10,16 +10,12 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptRenderWindowDesc::ScriptRenderWindowDesc(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptRenderWindowDesc::ScriptRenderWindowDesc()
 	{ }
 
-	void ScriptRenderWindowDesc::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptRenderWindowDesc::Box(const __RENDER_WINDOW_DESCInterop& value)
+	MonoObject* ScriptRenderWindowDesc::Box(const __RENDER_WINDOW_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__RENDER_WINDOW_DESCInterop ScriptRenderWindowDesc::Unbox(MonoObject* value)

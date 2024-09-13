@@ -13,16 +13,12 @@
 
 namespace bs
 {
-	ScriptPhysicsQueryHit::ScriptPhysicsQueryHit(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptPhysicsQueryHit::ScriptPhysicsQueryHit()
 	{ }
 
-	void ScriptPhysicsQueryHit::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptPhysicsQueryHit::Box(const __PhysicsQueryHitInterop& value)
+	MonoObject* ScriptPhysicsQueryHit::Box(const __PhysicsQueryHitInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PhysicsQueryHitInterop ScriptPhysicsQueryHit::Unbox(MonoObject* value)

@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptSpriteSheetGridAnimation::ScriptSpriteSheetGridAnimation(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptSpriteSheetGridAnimation::ScriptSpriteSheetGridAnimation()
 	{ }
 
-	void ScriptSpriteSheetGridAnimation::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptSpriteSheetGridAnimation::Box(const SpriteSheetGridAnimation& value)
+	MonoObject* ScriptSpriteSheetGridAnimation::Box(const SpriteSheetGridAnimation& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	SpriteSheetGridAnimation ScriptSpriteSheetGridAnimation::Unbox(MonoObject* value)

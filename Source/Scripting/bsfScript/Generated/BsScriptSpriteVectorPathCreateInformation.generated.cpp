@@ -15,16 +15,12 @@
 
 namespace bs
 {
-	ScriptSpriteVectorPathCreateInformation::ScriptSpriteVectorPathCreateInformation(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptSpriteVectorPathCreateInformation::ScriptSpriteVectorPathCreateInformation()
 	{ }
 
-	void ScriptSpriteVectorPathCreateInformation::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptSpriteVectorPathCreateInformation::Box(const __SpriteVectorPathCreateInformationInterop& value)
+	MonoObject* ScriptSpriteVectorPathCreateInformation::Box(const __SpriteVectorPathCreateInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__SpriteVectorPathCreateInformationInterop ScriptSpriteVectorPathCreateInformation::Unbox(MonoObject* value)

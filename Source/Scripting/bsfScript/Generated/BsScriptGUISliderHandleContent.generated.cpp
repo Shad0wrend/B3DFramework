@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptGUISliderHandleContent::ScriptGUISliderHandleContent(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptGUISliderHandleContent::ScriptGUISliderHandleContent()
 	{ }
 
-	void ScriptGUISliderHandleContent::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptGUISliderHandleContent::Box(const GUISliderHandleContent& value)
+	MonoObject* ScriptGUISliderHandleContent::Box(const GUISliderHandleContent& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	GUISliderHandleContent ScriptGUISliderHandleContent::Unbox(MonoObject* value)

@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Mesh/BsMeshData.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptBoneWeight : public ScriptObject<ScriptBoneWeight>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptBoneWeight : public TScriptStructWrapper<ScriptBoneWeight>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "BoneWeight")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "BoneWeight")
 
 		static MonoObject* Box(const BoneWeight& value);
 		static BoneWeight Unbox(MonoObject* value);
 
 	private:
-		ScriptBoneWeight(MonoObject* managedInstance);
+		ScriptBoneWeight();
 
 	};
 }

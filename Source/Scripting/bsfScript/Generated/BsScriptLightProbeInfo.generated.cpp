@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptLightProbeInfo::ScriptLightProbeInfo(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptLightProbeInfo::ScriptLightProbeInfo()
 	{ }
 
-	void ScriptLightProbeInfo::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptLightProbeInfo::Box(const __LightProbeInfoInterop& value)
+	MonoObject* ScriptLightProbeInfo::Box(const __LightProbeInfoInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__LightProbeInfoInterop ScriptLightProbeInfo::Unbox(MonoObject* value)

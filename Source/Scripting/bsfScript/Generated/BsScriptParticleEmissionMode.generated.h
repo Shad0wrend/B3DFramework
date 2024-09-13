@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleEmissionMode : public ScriptObject<ScriptParticleEmissionMode>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleEmissionMode : public TScriptStructWrapper<ScriptParticleEmissionMode>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleEmissionMode")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleEmissionMode")
 
 		static MonoObject* Box(const ParticleEmissionMode& value);
 		static ParticleEmissionMode Unbox(MonoObject* value);
 
 	private:
-		ScriptParticleEmissionMode(MonoObject* managedInstance);
+		ScriptParticleEmissionMode();
 
 	};
 }

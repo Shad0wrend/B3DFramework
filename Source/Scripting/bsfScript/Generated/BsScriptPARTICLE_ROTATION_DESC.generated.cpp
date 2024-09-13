@@ -11,16 +11,12 @@
 
 namespace bs
 {
-	ScriptParticleRotationOptions::ScriptParticleRotationOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleRotationOptions::ScriptParticleRotationOptions()
 	{ }
 
-	void ScriptParticleRotationOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleRotationOptions::Box(const __PARTICLE_ROTATION_DESCInterop& value)
+	MonoObject* ScriptParticleRotationOptions::Box(const __PARTICLE_ROTATION_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_ROTATION_DESCInterop ScriptParticleRotationOptions::Unbox(MonoObject* value)

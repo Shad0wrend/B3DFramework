@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptShaderVariationParameterValue::ScriptShaderVariationParameterValue(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptShaderVariationParameterValue::ScriptShaderVariationParameterValue()
 	{ }
 
-	void ScriptShaderVariationParameterValue::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptShaderVariationParameterValue::Box(const __ShaderVariationParameterValueInterop& value)
+	MonoObject* ScriptShaderVariationParameterValue::Box(const __ShaderVariationParameterValueInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__ShaderVariationParameterValueInterop ScriptShaderVariationParameterValue::Unbox(MonoObject* value)

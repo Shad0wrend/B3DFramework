@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 
@@ -16,10 +16,10 @@ namespace bs
 		Spring Spring;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitCommon : public ScriptObject<ScriptLimitCommon>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitCommon : public TScriptStructWrapper<ScriptLimitCommon>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LimitCommon")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "LimitCommon")
 
 		static MonoObject* Box(const __LimitCommonInterop& value);
 		static __LimitCommonInterop Unbox(MonoObject* value);
@@ -27,7 +27,7 @@ namespace bs
 		static __LimitCommonInterop ToInterop(const LimitCommon& value);
 
 	private:
-		ScriptLimitCommon(MonoObject* managedInstance);
+		ScriptLimitCommon();
 
 	};
 }

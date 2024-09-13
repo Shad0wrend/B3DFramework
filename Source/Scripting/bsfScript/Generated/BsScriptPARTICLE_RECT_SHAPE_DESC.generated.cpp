@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptParticleRectShapeOptions::ScriptParticleRectShapeOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleRectShapeOptions::ScriptParticleRectShapeOptions()
 	{ }
 
-	void ScriptParticleRectShapeOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleRectShapeOptions::Box(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
+	MonoObject* ScriptParticleRectShapeOptions::Box(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_RECT_SHAPE_DESCInterop ScriptParticleRectShapeOptions::Unbox(MonoObject* value)

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimation.h"
 
 namespace bs
@@ -14,10 +14,10 @@ namespace bs
 		float Position;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptBlendClipInfo : public ScriptObject<ScriptBlendClipInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptBlendClipInfo : public TScriptStructWrapper<ScriptBlendClipInfo>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "BlendClipInfo")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "BlendClipInfo")
 
 		static MonoObject* Box(const __BlendClipInfoInterop& value);
 		static __BlendClipInfoInterop Unbox(MonoObject* value);
@@ -25,7 +25,7 @@ namespace bs
 		static __BlendClipInfoInterop ToInterop(const BlendClipInfo& value);
 
 	private:
-		ScriptBlendClipInfo(MonoObject* managedInstance);
+		ScriptBlendClipInfo();
 
 	};
 }

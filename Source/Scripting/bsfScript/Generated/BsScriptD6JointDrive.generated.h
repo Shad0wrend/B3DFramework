@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsD6Joint.h"
 
 namespace bs
@@ -16,10 +16,10 @@ namespace bs
 		bool Acceleration;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptD6JointDrive : public ScriptObject<ScriptD6JointDrive>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptD6JointDrive : public TScriptStructWrapper<ScriptD6JointDrive>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "D6JointDrive")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "D6JointDrive")
 
 		static MonoObject* Box(const __D6JointDriveInterop& value);
 		static __D6JointDriveInterop Unbox(MonoObject* value);
@@ -27,7 +27,7 @@ namespace bs
 		static __D6JointDriveInterop ToInterop(const D6JointDrive& value);
 
 	private:
-		ScriptD6JointDrive(MonoObject* managedInstance);
+		ScriptD6JointDrive();
 
 	};
 }

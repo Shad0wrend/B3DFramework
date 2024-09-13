@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpring : public ScriptObject<ScriptSpring>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpring : public TScriptStructWrapper<ScriptSpring>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Spring")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Spring")
 
 		static MonoObject* Box(const Spring& value);
 		static Spring Unbox(MonoObject* value);
 
 	private:
-		ScriptSpring(MonoObject* managedInstance);
+		ScriptSpring();
 
 	};
 }

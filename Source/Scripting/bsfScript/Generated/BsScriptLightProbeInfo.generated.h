@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Renderer/BsLightProbeVolume.h"
 #include "Math/BsVector3.h"
 
@@ -15,10 +15,10 @@ namespace bs
 		TVector3<float> Position;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptLightProbeInfo : public ScriptObject<ScriptLightProbeInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLightProbeInfo : public TScriptStructWrapper<ScriptLightProbeInfo>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LightProbeInfo")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "LightProbeInfo")
 
 		static MonoObject* Box(const __LightProbeInfoInterop& value);
 		static __LightProbeInfoInterop Unbox(MonoObject* value);
@@ -26,7 +26,7 @@ namespace bs
 		static __LightProbeInfoInterop ToInterop(const LightProbeInfo& value);
 
 	private:
-		ScriptLightProbeInfo(MonoObject* managedInstance);
+		ScriptLightProbeInfo();
 
 	};
 }

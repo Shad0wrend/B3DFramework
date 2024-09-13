@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptParticleGravityOptions::ScriptParticleGravityOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleGravityOptions::ScriptParticleGravityOptions()
 	{ }
 
-	void ScriptParticleGravityOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleGravityOptions::Box(const PARTICLE_GRAVITY_DESC& value)
+	MonoObject* ScriptParticleGravityOptions::Box(const PARTICLE_GRAVITY_DESC& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	PARTICLE_GRAVITY_DESC ScriptParticleGravityOptions::Unbox(MonoObject* value)

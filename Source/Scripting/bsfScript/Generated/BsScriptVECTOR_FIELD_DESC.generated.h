@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsVectorField.h"
 #include "Math/BsAABox.h"
 
@@ -17,10 +17,10 @@ namespace bs
 		AABox Bounds;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorFieldOptions : public ScriptObject<ScriptVectorFieldOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorFieldOptions : public TScriptStructWrapper<ScriptVectorFieldOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "VectorFieldOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "VectorFieldOptions")
 
 		static MonoObject* Box(const __VECTOR_FIELD_DESCInterop& value);
 		static __VECTOR_FIELD_DESCInterop Unbox(MonoObject* value);
@@ -28,7 +28,7 @@ namespace bs
 		static __VECTOR_FIELD_DESCInterop ToInterop(const VECTOR_FIELD_DESC& value);
 
 	private:
-		ScriptVectorFieldOptions(MonoObject* managedInstance);
+		ScriptVectorFieldOptions();
 
 	};
 }

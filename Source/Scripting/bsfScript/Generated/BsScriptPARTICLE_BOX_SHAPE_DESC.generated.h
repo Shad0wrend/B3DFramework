@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 #include "Math/BsVector3.h"
@@ -16,10 +16,10 @@ namespace bs
 		TVector3<float> Extents;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleBoxShapeOptions : public ScriptObject<ScriptParticleBoxShapeOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleBoxShapeOptions : public TScriptStructWrapper<ScriptParticleBoxShapeOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleBoxShapeOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleBoxShapeOptions")
 
 		static MonoObject* Box(const __PARTICLE_BOX_SHAPE_DESCInterop& value);
 		static __PARTICLE_BOX_SHAPE_DESCInterop Unbox(MonoObject* value);
@@ -27,7 +27,7 @@ namespace bs
 		static __PARTICLE_BOX_SHAPE_DESCInterop ToInterop(const PARTICLE_BOX_SHAPE_DESC& value);
 
 	private:
-		ScriptParticleBoxShapeOptions(MonoObject* managedInstance);
+		ScriptParticleBoxShapeOptions();
 
 	};
 }

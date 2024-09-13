@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptKerningPair::ScriptKerningPair(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptKerningPair::ScriptKerningPair()
 	{ }
 
-	void ScriptKerningPair::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptKerningPair::Box(const KerningPair& value)
+	MonoObject* ScriptKerningPair::Box(const KerningPair& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	KerningPair ScriptKerningPair::Unbox(MonoObject* value)

@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptAnimationEvent::ScriptAnimationEvent(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptAnimationEvent::ScriptAnimationEvent()
 	{ }
 
-	void ScriptAnimationEvent::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptAnimationEvent::Box(const __AnimationEventInterop& value)
+	MonoObject* ScriptAnimationEvent::Box(const __AnimationEventInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__AnimationEventInterop ScriptAnimationEvent::Unbox(MonoObject* value)

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "Math/BsVector3.h"
 
@@ -17,10 +17,10 @@ namespace bs
 		float Separation;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptContactPoint : public ScriptObject<ScriptContactPoint>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptContactPoint : public TScriptStructWrapper<ScriptContactPoint>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ContactPoint")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ContactPoint")
 
 		static MonoObject* Box(const __ContactPointInterop& value);
 		static __ContactPointInterop Unbox(MonoObject* value);
@@ -28,7 +28,7 @@ namespace bs
 		static __ContactPointInterop ToInterop(const ContactPoint& value);
 
 	private:
-		ScriptContactPoint(MonoObject* managedInstance);
+		ScriptContactPoint();
 
 	};
 }

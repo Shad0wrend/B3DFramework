@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleTextureAnimationOptions : public ScriptObject<ScriptParticleTextureAnimationOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleTextureAnimationOptions : public TScriptStructWrapper<ScriptParticleTextureAnimationOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleTextureAnimationOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleTextureAnimationOptions")
 
 		static MonoObject* Box(const PARTICLE_TEXTURE_ANIMATION_DESC& value);
 		static PARTICLE_TEXTURE_ANIMATION_DESC Unbox(MonoObject* value);
 
 	private:
-		ScriptParticleTextureAnimationOptions(MonoObject* managedInstance);
+		ScriptParticleTextureAnimationOptions();
 
 	};
 }

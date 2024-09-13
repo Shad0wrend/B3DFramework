@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptParticleSkinnedMeshShapeOptions::ScriptParticleSkinnedMeshShapeOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleSkinnedMeshShapeOptions::ScriptParticleSkinnedMeshShapeOptions()
 	{ }
 
-	void ScriptParticleSkinnedMeshShapeOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleSkinnedMeshShapeOptions::Box(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
+	MonoObject* ScriptParticleSkinnedMeshShapeOptions::Box(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptParticleSkinnedMeshShapeOptions::Unbox(MonoObject* value)

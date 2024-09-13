@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptParticleColorOptions::ScriptParticleColorOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleColorOptions::ScriptParticleColorOptions()
 	{ }
 
-	void ScriptParticleColorOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleColorOptions::Box(const __PARTICLE_COLOR_DESCInterop& value)
+	MonoObject* ScriptParticleColorOptions::Box(const __PARTICLE_COLOR_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_COLOR_DESCInterop ScriptParticleColorOptions::Unbox(MonoObject* value)

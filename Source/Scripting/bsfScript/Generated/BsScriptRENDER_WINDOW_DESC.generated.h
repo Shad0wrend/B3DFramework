@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsRenderWindow.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsVideoModeInfo.h"
 #include "BsScriptVideoMode.generated.h"
@@ -33,10 +33,10 @@ namespace bs
 		bool HideUntilSwap;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderWindowDesc : public ScriptObject<ScriptRenderWindowDesc>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderWindowDesc : public TScriptStructWrapper<ScriptRenderWindowDesc>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "RenderWindowDesc")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "RenderWindowDesc")
 
 		static MonoObject* Box(const __RENDER_WINDOW_DESCInterop& value);
 		static __RENDER_WINDOW_DESCInterop Unbox(MonoObject* value);
@@ -44,7 +44,7 @@ namespace bs
 		static __RENDER_WINDOW_DESCInterop ToInterop(const RENDER_WINDOW_DESC& value);
 
 	private:
-		ScriptRenderWindowDesc(MonoObject* managedInstance);
+		ScriptRenderWindowDesc();
 
 	};
 #endif

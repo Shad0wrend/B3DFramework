@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/Utility/BsRectOffset.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptRectOffset : public ScriptObject<ScriptRectOffset>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRectOffset : public TScriptStructWrapper<ScriptRectOffset>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "RectOffset")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "RectOffset")
 
 		static MonoObject* Box(const RectOffset& value);
 		static RectOffset Unbox(MonoObject* value);
 
 	private:
-		ScriptRectOffset(MonoObject* managedInstance);
+		ScriptRectOffset();
 
 	};
 }

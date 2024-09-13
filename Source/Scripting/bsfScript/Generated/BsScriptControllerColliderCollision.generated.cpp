@@ -11,16 +11,12 @@
 
 namespace bs
 {
-	ScriptControllerColliderCollision::ScriptControllerColliderCollision(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptControllerColliderCollision::ScriptControllerColliderCollision()
 	{ }
 
-	void ScriptControllerColliderCollision::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptControllerColliderCollision::Box(const __ControllerColliderCollisionInterop& value)
+	MonoObject* ScriptControllerColliderCollision::Box(const __ControllerColliderCollisionInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__ControllerColliderCollisionInterop ScriptControllerColliderCollision::Unbox(MonoObject* value)

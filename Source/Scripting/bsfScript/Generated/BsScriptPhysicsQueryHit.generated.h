@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "Math/BsVector3.h"
 #include "Math/BsVector2.h"
@@ -21,10 +21,10 @@ namespace bs
 		MonoObject* Collider;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsQueryHit : public ScriptObject<ScriptPhysicsQueryHit>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsQueryHit : public TScriptStructWrapper<ScriptPhysicsQueryHit>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PhysicsQueryHit")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "PhysicsQueryHit")
 
 		static MonoObject* Box(const __PhysicsQueryHitInterop& value);
 		static __PhysicsQueryHitInterop Unbox(MonoObject* value);
@@ -32,7 +32,7 @@ namespace bs
 		static __PhysicsQueryHitInterop ToInterop(const PhysicsQueryHit& value);
 
 	private:
-		ScriptPhysicsQueryHit(MonoObject* managedInstance);
+		ScriptPhysicsQueryHit();
 
 	};
 }

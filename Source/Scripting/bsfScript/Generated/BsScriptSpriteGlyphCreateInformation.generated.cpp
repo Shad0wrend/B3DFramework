@@ -13,16 +13,12 @@
 
 namespace bs
 {
-	ScriptSpriteGlyphCreateInformation::ScriptSpriteGlyphCreateInformation(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptSpriteGlyphCreateInformation::ScriptSpriteGlyphCreateInformation()
 	{ }
 
-	void ScriptSpriteGlyphCreateInformation::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptSpriteGlyphCreateInformation::Box(const __SpriteGlyphCreateInformationInterop& value)
+	MonoObject* ScriptSpriteGlyphCreateInformation::Box(const __SpriteGlyphCreateInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__SpriteGlyphCreateInformationInterop ScriptSpriteGlyphCreateInformation::Unbox(MonoObject* value)

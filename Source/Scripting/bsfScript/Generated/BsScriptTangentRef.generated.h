@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationUtility.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationUtility.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationUtility.h"
@@ -16,10 +16,10 @@ namespace bs
 		TangentType Type;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptTangentRef : public ScriptObject<ScriptTangentRef>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTangentRef : public TScriptStructWrapper<ScriptTangentRef>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "TangentRef")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "TangentRef")
 
 		static MonoObject* Box(const __TangentRefInterop& value);
 		static __TangentRefInterop Unbox(MonoObject* value);
@@ -27,7 +27,7 @@ namespace bs
 		static __TangentRefInterop ToInterop(const TangentRef& value);
 
 	private:
-		ScriptTangentRef(MonoObject* managedInstance);
+		ScriptTangentRef();
 
 	};
 }

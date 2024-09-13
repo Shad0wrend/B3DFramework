@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 
@@ -15,10 +15,10 @@ namespace bs
 		bool WorldSpace;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleVelocityOptions : public ScriptObject<ScriptParticleVelocityOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleVelocityOptions : public TScriptStructWrapper<ScriptParticleVelocityOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleVelocityOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleVelocityOptions")
 
 		static MonoObject* Box(const __PARTICLE_VELOCITY_DESCInterop& value);
 		static __PARTICLE_VELOCITY_DESCInterop Unbox(MonoObject* value);
@@ -26,7 +26,7 @@ namespace bs
 		static __PARTICLE_VELOCITY_DESCInterop ToInterop(const PARTICLE_VELOCITY_DESC& value);
 
 	private:
-		ScriptParticleVelocityOptions(MonoObject* managedInstance);
+		ScriptParticleVelocityOptions();
 
 	};
 }

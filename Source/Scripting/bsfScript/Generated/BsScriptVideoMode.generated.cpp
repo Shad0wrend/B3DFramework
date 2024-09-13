@@ -8,16 +8,12 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptVideoMode::ScriptVideoMode(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptVideoMode::ScriptVideoMode()
 	{ }
 
-	void ScriptVideoMode::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptVideoMode::Box(const __VideoModeInterop& value)
+	MonoObject* ScriptVideoMode::Box(const __VideoModeInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__VideoModeInterop ScriptVideoMode::Unbox(MonoObject* value)

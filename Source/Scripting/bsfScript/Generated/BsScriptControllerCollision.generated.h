@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
 #include "Math/BsVector3.h"
 
@@ -17,10 +17,10 @@ namespace bs
 		float MotionAmount;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptControllerCollision : public ScriptObject<ScriptControllerCollision>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptControllerCollision : public TScriptStructWrapper<ScriptControllerCollision>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ControllerCollision")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ControllerCollision")
 
 		static MonoObject* Box(const __ControllerCollisionInterop& value);
 		static __ControllerCollisionInterop Unbox(MonoObject* value);
@@ -28,7 +28,7 @@ namespace bs
 		static __ControllerCollisionInterop ToInterop(const ControllerCollision& value);
 
 	private:
-		ScriptControllerCollision(MonoObject* managedInstance);
+		ScriptControllerCollision();
 
 	};
 }

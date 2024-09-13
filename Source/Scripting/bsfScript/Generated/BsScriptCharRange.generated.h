@@ -3,22 +3,22 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"
 
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptCharRange : public ScriptObject<ScriptCharRange>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCharRange : public TScriptStructWrapper<ScriptCharRange>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "CharRange")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "CharRange")
 
 		static MonoObject* Box(const CharRange& value);
 		static CharRange Unbox(MonoObject* value);
 
 	private:
-		ScriptCharRange(MonoObject* managedInstance);
+		ScriptCharRange();
 
 	};
 #endif

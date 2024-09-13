@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 
@@ -17,10 +17,10 @@ namespace bs
 		Spring Spring;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitLinear : public ScriptObject<ScriptLimitLinear>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitLinear : public TScriptStructWrapper<ScriptLimitLinear>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LimitLinear")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "LimitLinear")
 
 		static MonoObject* Box(const __LimitLinearInterop& value);
 		static __LimitLinearInterop Unbox(MonoObject* value);
@@ -28,7 +28,7 @@ namespace bs
 		static __LimitLinearInterop ToInterop(const LimitLinear& value);
 
 	private:
-		ScriptLimitLinear(MonoObject* managedInstance);
+		ScriptLimitLinear();
 
 	};
 }

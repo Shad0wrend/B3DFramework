@@ -11,16 +11,12 @@
 
 namespace bs
 {
-	ScriptFontBitmapPage::ScriptFontBitmapPage(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptFontBitmapPage::ScriptFontBitmapPage()
 	{ }
 
-	void ScriptFontBitmapPage::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptFontBitmapPage::Box(const __FontBitmapPageInterop& value)
+	MonoObject* ScriptFontBitmapPage::Box(const __FontBitmapPageInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__FontBitmapPageInterop ScriptFontBitmapPage::Unbox(MonoObject* value)

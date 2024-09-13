@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptTangentRef::ScriptTangentRef(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptTangentRef::ScriptTangentRef()
 	{ }
 
-	void ScriptTangentRef::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptTangentRef::Box(const __TangentRefInterop& value)
+	MonoObject* ScriptTangentRef::Box(const __TangentRefInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__TangentRefInterop ScriptTangentRef::Unbox(MonoObject* value)

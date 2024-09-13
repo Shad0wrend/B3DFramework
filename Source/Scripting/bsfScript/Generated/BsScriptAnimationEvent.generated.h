@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationClip.h"
 
 namespace bs
@@ -14,10 +14,10 @@ namespace bs
 		float Time;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationEvent : public ScriptObject<ScriptAnimationEvent>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationEvent : public TScriptStructWrapper<ScriptAnimationEvent>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AnimationEvent")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AnimationEvent")
 
 		static MonoObject* Box(const __AnimationEventInterop& value);
 		static __AnimationEventInterop Unbox(MonoObject* value);
@@ -25,7 +25,7 @@ namespace bs
 		static __AnimationEventInterop ToInterop(const AnimationEvent& value);
 
 	private:
-		ScriptAnimationEvent(MonoObject* managedInstance);
+		ScriptAnimationEvent();
 
 	};
 }

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "BsScriptContactPoint.generated.h"
@@ -16,10 +16,10 @@ namespace bs
 		MonoArray* ContactPoints;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptCollisionData : public ScriptObject<ScriptCollisionData>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCollisionData : public TScriptStructWrapper<ScriptCollisionData>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "CollisionData")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "CollisionData")
 
 		static MonoObject* Box(const __CollisionDataInterop& value);
 		static __CollisionDataInterop Unbox(MonoObject* value);
@@ -27,7 +27,7 @@ namespace bs
 		static __CollisionDataInterop ToInterop(const CollisionData& value);
 
 	private:
-		ScriptCollisionData(MonoObject* managedInstance);
+		ScriptCollisionData();
 
 	};
 }

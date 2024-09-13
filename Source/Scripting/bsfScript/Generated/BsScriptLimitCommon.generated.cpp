@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptLimitCommon::ScriptLimitCommon(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptLimitCommon::ScriptLimitCommon()
 	{ }
 
-	void ScriptLimitCommon::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptLimitCommon::Box(const __LimitCommonInterop& value)
+	MonoObject* ScriptLimitCommon::Box(const __LimitCommonInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__LimitCommonInterop ScriptLimitCommon::Unbox(MonoObject* value)

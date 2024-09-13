@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptGUIInputBoxContent::ScriptGUIInputBoxContent(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptGUIInputBoxContent::ScriptGUIInputBoxContent()
 	{ }
 
-	void ScriptGUIInputBoxContent::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptGUIInputBoxContent::Box(const GUIInputBoxContent& value)
+	MonoObject* ScriptGUIInputBoxContent::Box(const GUIInputBoxContent& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	GUIInputBoxContent ScriptGUIInputBoxContent::Unbox(MonoObject* value)

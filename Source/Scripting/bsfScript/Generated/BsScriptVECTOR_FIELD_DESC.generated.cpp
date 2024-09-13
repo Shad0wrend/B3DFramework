@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptVectorFieldOptions::ScriptVectorFieldOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptVectorFieldOptions::ScriptVectorFieldOptions()
 	{ }
 
-	void ScriptVectorFieldOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptVectorFieldOptions::Box(const __VECTOR_FIELD_DESCInterop& value)
+	MonoObject* ScriptVectorFieldOptions::Box(const __VECTOR_FIELD_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__VECTOR_FIELD_DESCInterop ScriptVectorFieldOptions::Unbox(MonoObject* value)

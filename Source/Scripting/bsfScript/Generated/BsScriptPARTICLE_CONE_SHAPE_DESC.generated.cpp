@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptParticleConeShapeOptions::ScriptParticleConeShapeOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleConeShapeOptions::ScriptParticleConeShapeOptions()
 	{ }
 
-	void ScriptParticleConeShapeOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleConeShapeOptions::Box(const __PARTICLE_CONE_SHAPE_DESCInterop& value)
+	MonoObject* ScriptParticleConeShapeOptions::Box(const __PARTICLE_CONE_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_CONE_SHAPE_DESCInterop ScriptParticleConeShapeOptions::Unbox(MonoObject* value)

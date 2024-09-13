@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIContent.h"
 #include "../../../Foundation/bsfCore/Localization/BsHString.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIContent.h"
@@ -18,10 +18,10 @@ namespace bs
 		MonoObject* Tooltip;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIContent : public ScriptObject<ScriptGUIContent>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIContent : public TScriptStructWrapper<ScriptGUIContent>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIContent")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GUIContent")
 
 		static MonoObject* Box(const __GUIContentInterop& value);
 		static __GUIContentInterop Unbox(MonoObject* value);
@@ -29,7 +29,7 @@ namespace bs
 		static __GUIContentInterop ToInterop(const GUIContent& value);
 
 	private:
-		ScriptGUIContent(MonoObject* managedInstance);
+		ScriptGUIContent();
 
 	};
 }

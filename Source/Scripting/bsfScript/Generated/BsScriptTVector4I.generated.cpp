@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptVector4I::ScriptVector4I(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptVector4I::ScriptVector4I()
 	{ }
 
-	void ScriptVector4I::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptVector4I::Box(const TVector4I<int32_t>& value)
+	MonoObject* ScriptVector4I::Box(const TVector4I<int32_t>& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	TVector4I<int32_t> ScriptVector4I::Unbox(MonoObject* value)
@@ -25,16 +21,12 @@ namespace bs
 	}
 
 
-	ScriptVector4UI::ScriptVector4UI(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptVector4UI::ScriptVector4UI()
 	{ }
 
-	void ScriptVector4UI::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptVector4UI::Box(const TVector4I<uint32_t>& value)
+	MonoObject* ScriptVector4UI::Box(const TVector4I<uint32_t>& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	TVector4I<uint32_t> ScriptVector4UI::Unbox(MonoObject* value)

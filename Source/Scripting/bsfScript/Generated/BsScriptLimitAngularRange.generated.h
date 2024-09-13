@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "Math/BsRadian.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
@@ -19,10 +19,10 @@ namespace bs
 		Spring Spring;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitAngularRange : public ScriptObject<ScriptLimitAngularRange>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitAngularRange : public TScriptStructWrapper<ScriptLimitAngularRange>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LimitAngularRange")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "LimitAngularRange")
 
 		static MonoObject* Box(const __LimitAngularRangeInterop& value);
 		static __LimitAngularRangeInterop Unbox(MonoObject* value);
@@ -30,7 +30,7 @@ namespace bs
 		static __LimitAngularRangeInterop ToInterop(const LimitAngularRange& value);
 
 	private:
-		ScriptLimitAngularRange(MonoObject* managedInstance);
+		ScriptLimitAngularRange();
 
 	};
 }

@@ -11,16 +11,12 @@
 
 namespace bs
 {
-	ScriptParticleSizeOptions::ScriptParticleSizeOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleSizeOptions::ScriptParticleSizeOptions()
 	{ }
 
-	void ScriptParticleSizeOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleSizeOptions::Box(const __PARTICLE_SIZE_DESCInterop& value)
+	MonoObject* ScriptParticleSizeOptions::Box(const __PARTICLE_SIZE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_SIZE_DESCInterop ScriptParticleSizeOptions::Unbox(MonoObject* value)

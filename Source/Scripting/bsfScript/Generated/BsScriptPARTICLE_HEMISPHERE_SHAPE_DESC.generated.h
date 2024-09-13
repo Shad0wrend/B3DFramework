@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleHemisphereShapeOptions : public ScriptObject<ScriptParticleHemisphereShapeOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleHemisphereShapeOptions : public TScriptStructWrapper<ScriptParticleHemisphereShapeOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleHemisphereShapeOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleHemisphereShapeOptions")
 
 		static MonoObject* Box(const PARTICLE_HEMISPHERE_SHAPE_DESC& value);
 		static PARTICLE_HEMISPHERE_SHAPE_DESC Unbox(MonoObject* value);
 
 	private:
-		ScriptParticleHemisphereShapeOptions(MonoObject* managedInstance);
+		ScriptParticleHemisphereShapeOptions();
 
 	};
 }

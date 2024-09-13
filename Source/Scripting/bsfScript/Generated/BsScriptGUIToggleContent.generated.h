@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIToggleable.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIContent.h"
 #include "BsScriptGUIContent.generated.h"
@@ -16,10 +16,10 @@ namespace bs
 		MonoObject* ToggleGroup;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggleContent : public ScriptObject<ScriptGUIToggleContent>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggleContent : public TScriptStructWrapper<ScriptGUIToggleContent>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIToggleContent")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GUIToggleContent")
 
 		static MonoObject* Box(const __GUIToggleContentInterop& value);
 		static __GUIToggleContentInterop Unbox(MonoObject* value);
@@ -27,7 +27,7 @@ namespace bs
 		static __GUIToggleContentInterop ToInterop(const GUIToggleContent& value);
 
 	private:
-		ScriptGUIToggleContent(MonoObject* managedInstance);
+		ScriptGUIToggleContent();
 
 	};
 }

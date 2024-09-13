@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptSpring::ScriptSpring(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptSpring::ScriptSpring()
 	{ }
 
-	void ScriptSpring::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptSpring::Box(const Spring& value)
+	MonoObject* ScriptSpring::Box(const Spring& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	Spring ScriptSpring::Unbox(MonoObject* value)

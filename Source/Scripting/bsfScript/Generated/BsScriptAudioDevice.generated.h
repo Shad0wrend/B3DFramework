@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Audio/BsAudio.h"
 
 namespace bs
@@ -13,10 +13,10 @@ namespace bs
 		MonoString* Name;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioDevice : public ScriptObject<ScriptAudioDevice>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioDevice : public TScriptStructWrapper<ScriptAudioDevice>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AudioDevice")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "AudioDevice")
 
 		static MonoObject* Box(const __AudioDeviceInterop& value);
 		static __AudioDeviceInterop Unbox(MonoObject* value);
@@ -24,7 +24,7 @@ namespace bs
 		static __AudioDeviceInterop ToInterop(const AudioDevice& value);
 
 	private:
-		ScriptAudioDevice(MonoObject* managedInstance);
+		ScriptAudioDevice();
 
 	};
 }

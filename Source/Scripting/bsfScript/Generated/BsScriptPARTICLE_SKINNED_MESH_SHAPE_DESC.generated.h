@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 
@@ -16,10 +16,10 @@ namespace bs
 		MonoObject* Renderable;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleSkinnedMeshShapeOptions : public ScriptObject<ScriptParticleSkinnedMeshShapeOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleSkinnedMeshShapeOptions : public TScriptStructWrapper<ScriptParticleSkinnedMeshShapeOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleSkinnedMeshShapeOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleSkinnedMeshShapeOptions")
 
 		static MonoObject* Box(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value);
 		static __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop Unbox(MonoObject* value);
@@ -27,7 +27,7 @@ namespace bs
 		static __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ToInterop(const PARTICLE_SKINNED_MESH_SHAPE_DESC& value);
 
 	private:
-		ScriptParticleSkinnedMeshShapeOptions(MonoObject* managedInstance);
+		ScriptParticleSkinnedMeshShapeOptions();
 
 	};
 }

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsVideoModeInfo.h"
 
 namespace bs
@@ -18,10 +18,10 @@ namespace bs
 		bool IsCustom;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVideoMode : public ScriptObject<ScriptVideoMode>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVideoMode : public TScriptStructWrapper<ScriptVideoMode>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "VideoMode")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "VideoMode")
 
 		static MonoObject* Box(const __VideoModeInterop& value);
 		static __VideoModeInterop Unbox(MonoObject* value);
@@ -29,7 +29,7 @@ namespace bs
 		static __VideoModeInterop ToInterop(const VideoMode& value);
 
 	private:
-		ScriptVideoMode(MonoObject* managedInstance);
+		ScriptVideoMode();
 
 	};
 #endif

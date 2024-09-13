@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptContactPoint::ScriptContactPoint(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptContactPoint::ScriptContactPoint()
 	{ }
 
-	void ScriptContactPoint::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptContactPoint::Box(const __ContactPointInterop& value)
+	MonoObject* ScriptContactPoint::Box(const __ContactPointInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__ContactPointInterop ScriptContactPoint::Unbox(MonoObject* value)

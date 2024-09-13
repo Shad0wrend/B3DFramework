@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationUtility.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptKeyframeRef : public ScriptObject<ScriptKeyframeRef>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptKeyframeRef : public TScriptStructWrapper<ScriptKeyframeRef>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "KeyframeRef")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "KeyframeRef")
 
 		static MonoObject* Box(const KeyframeRef& value);
 		static KeyframeRef Unbox(MonoObject* value);
 
 	private:
-		ScriptKeyframeRef(MonoObject* managedInstance);
+		ScriptKeyframeRef();
 
 	};
 }

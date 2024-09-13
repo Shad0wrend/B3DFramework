@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsHingeJoint.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptHingeJointDrive : public ScriptObject<ScriptHingeJointDrive>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptHingeJointDrive : public TScriptStructWrapper<ScriptHingeJointDrive>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "HingeJointDrive")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "HingeJointDrive")
 
 		static MonoObject* Box(const HingeJointDrive& value);
 		static HingeJointDrive Unbox(MonoObject* value);
 
 	private:
-		ScriptHingeJointDrive(MonoObject* managedInstance);
+		ScriptHingeJointDrive();
 
 	};
 }

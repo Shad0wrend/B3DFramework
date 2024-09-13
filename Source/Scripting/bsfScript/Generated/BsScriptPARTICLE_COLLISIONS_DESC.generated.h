@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleCollisionsOptions : public ScriptObject<ScriptParticleCollisionsOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleCollisionsOptions : public TScriptStructWrapper<ScriptParticleCollisionsOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleCollisionsOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleCollisionsOptions")
 
 		static MonoObject* Box(const PARTICLE_COLLISIONS_DESC& value);
 		static PARTICLE_COLLISIONS_DESC Unbox(MonoObject* value);
 
 	private:
-		ScriptParticleCollisionsOptions(MonoObject* managedInstance);
+		ScriptParticleCollisionsOptions();
 
 	};
 }

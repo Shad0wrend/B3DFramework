@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 
@@ -16,10 +16,10 @@ namespace bs
 		FontRenderMode RenderMode;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontCreateInformation : public ScriptObject<ScriptFontCreateInformation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontCreateInformation : public TScriptStructWrapper<ScriptFontCreateInformation>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "FontCreateInformation")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "FontCreateInformation")
 
 		static MonoObject* Box(const __FontCreateInformationInterop& value);
 		static __FontCreateInformationInterop Unbox(MonoObject* value);
@@ -27,7 +27,7 @@ namespace bs
 		static __FontCreateInformationInterop ToInterop(const FontCreateInformation& value);
 
 	private:
-		ScriptFontCreateInformation(MonoObject* managedInstance);
+		ScriptFontCreateInformation();
 
 	};
 }

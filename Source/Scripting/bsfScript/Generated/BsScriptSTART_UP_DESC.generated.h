@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/BsCoreApplication.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsRenderWindow.h"
 #include "BsScriptRENDER_WINDOW_DESC.generated.h"
@@ -24,10 +24,10 @@ namespace bs
 		MonoArray* Importers;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptStartUpDesc : public ScriptObject<ScriptStartUpDesc>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptStartUpDesc : public TScriptStructWrapper<ScriptStartUpDesc>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "StartUpDesc")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "StartUpDesc")
 
 		static MonoObject* Box(const __START_UP_DESCInterop& value);
 		static __START_UP_DESCInterop Unbox(MonoObject* value);
@@ -35,7 +35,7 @@ namespace bs
 		static __START_UP_DESCInterop ToInterop(const START_UP_DESC& value);
 
 	private:
-		ScriptStartUpDesc(MonoObject* managedInstance);
+		ScriptStartUpDesc();
 
 	};
 #endif

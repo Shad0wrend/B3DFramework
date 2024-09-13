@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteSheetGridAnimation : public ScriptObject<ScriptSpriteSheetGridAnimation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteSheetGridAnimation : public TScriptStructWrapper<ScriptSpriteSheetGridAnimation>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SpriteSheetGridAnimation")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteSheetGridAnimation")
 
 		static MonoObject* Box(const SpriteSheetGridAnimation& value);
 		static SpriteSheetGridAnimation Unbox(MonoObject* value);
 
 	private:
-		ScriptSpriteSheetGridAnimation(MonoObject* managedInstance);
+		ScriptSpriteSheetGridAnimation();
 
 	};
 }

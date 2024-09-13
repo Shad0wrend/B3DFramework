@@ -11,16 +11,12 @@
 
 namespace bs
 {
-	ScriptParticleStaticMeshShapeOptions::ScriptParticleStaticMeshShapeOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleStaticMeshShapeOptions::ScriptParticleStaticMeshShapeOptions()
 	{ }
 
-	void ScriptParticleStaticMeshShapeOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleStaticMeshShapeOptions::Box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
+	MonoObject* ScriptParticleStaticMeshShapeOptions::Box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptParticleStaticMeshShapeOptions::Unbox(MonoObject* value)

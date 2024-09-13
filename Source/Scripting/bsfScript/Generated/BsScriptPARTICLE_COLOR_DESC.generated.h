@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 
@@ -14,10 +14,10 @@ namespace bs
 		MonoObject* Color;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleColorOptions : public ScriptObject<ScriptParticleColorOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleColorOptions : public TScriptStructWrapper<ScriptParticleColorOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleColorOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleColorOptions")
 
 		static MonoObject* Box(const __PARTICLE_COLOR_DESCInterop& value);
 		static __PARTICLE_COLOR_DESCInterop Unbox(MonoObject* value);
@@ -25,7 +25,7 @@ namespace bs
 		static __PARTICLE_COLOR_DESCInterop ToInterop(const PARTICLE_COLOR_DESC& value);
 
 	private:
-		ScriptParticleColorOptions(MonoObject* managedInstance);
+		ScriptParticleColorOptions();
 
 	};
 }

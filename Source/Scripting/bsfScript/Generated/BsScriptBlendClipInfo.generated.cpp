@@ -11,16 +11,12 @@
 
 namespace bs
 {
-	ScriptBlendClipInfo::ScriptBlendClipInfo(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptBlendClipInfo::ScriptBlendClipInfo()
 	{ }
 
-	void ScriptBlendClipInfo::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptBlendClipInfo::Box(const __BlendClipInfoInterop& value)
+	MonoObject* ScriptBlendClipInfo::Box(const __BlendClipInfoInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__BlendClipInfoInterop ScriptBlendClipInfo::Unbox(MonoObject* value)

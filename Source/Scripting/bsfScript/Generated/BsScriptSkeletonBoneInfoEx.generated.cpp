@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptBoneInfo::ScriptBoneInfo(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptBoneInfo::ScriptBoneInfo()
 	{ }
 
-	void ScriptBoneInfo::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptBoneInfo::Box(const __SkeletonBoneInfoExInterop& value)
+	MonoObject* ScriptBoneInfo::Box(const __SkeletonBoneInfoExInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__SkeletonBoneInfoExInterop ScriptBoneInfo::Unbox(MonoObject* value)

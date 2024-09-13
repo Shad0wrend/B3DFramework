@@ -13,16 +13,12 @@
 
 namespace bs
 {
-	ScriptSpriteTextureCreateInformation::ScriptSpriteTextureCreateInformation(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptSpriteTextureCreateInformation::ScriptSpriteTextureCreateInformation()
 	{ }
 
-	void ScriptSpriteTextureCreateInformation::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptSpriteTextureCreateInformation::Box(const __SpriteTextureCreateInformationInterop& value)
+	MonoObject* ScriptSpriteTextureCreateInformation::Box(const __SpriteTextureCreateInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__SpriteTextureCreateInformationInterop ScriptSpriteTextureCreateInformation::Unbox(MonoObject* value)

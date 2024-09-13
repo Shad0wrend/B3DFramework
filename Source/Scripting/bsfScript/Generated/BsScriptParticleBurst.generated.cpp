@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptParticleBurst::ScriptParticleBurst(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleBurst::ScriptParticleBurst()
 	{ }
 
-	void ScriptParticleBurst::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleBurst::Box(const __ParticleBurstInterop& value)
+	MonoObject* ScriptParticleBurst::Box(const __ParticleBurstInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__ParticleBurstInterop ScriptParticleBurst::Unbox(MonoObject* value)

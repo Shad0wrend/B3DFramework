@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptGUITextureContents::ScriptGUITextureContents(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptGUITextureContents::ScriptGUITextureContents()
 	{ }
 
-	void ScriptGUITextureContents::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptGUITextureContents::Box(const __GUITextureContentsInterop& value)
+	MonoObject* ScriptGUITextureContents::Box(const __GUITextureContentsInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__GUITextureContentsInterop ScriptGUITextureContents::Unbox(MonoObject* value)

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Importer/BsImporter.h"
 
 namespace bs
@@ -15,10 +15,10 @@ namespace bs
 		MonoObject* Value;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSubResource : public ScriptObject<ScriptSubResource>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSubResource : public TScriptStructWrapper<ScriptSubResource>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SubResource")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SubResource")
 
 		static MonoObject* Box(const __SubResourceInterop& value);
 		static __SubResourceInterop Unbox(MonoObject* value);
@@ -26,7 +26,7 @@ namespace bs
 		static __SubResourceInterop ToInterop(const SubResource& value);
 
 	private:
-		ScriptSubResource(MonoObject* managedInstance);
+		ScriptSubResource();
 
 	};
 #endif

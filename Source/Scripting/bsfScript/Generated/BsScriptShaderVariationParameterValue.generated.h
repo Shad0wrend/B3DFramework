@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Material/BsShader.h"
 
 namespace bs
@@ -14,10 +14,10 @@ namespace bs
 		int32_t Value;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderVariationParameterValue : public ScriptObject<ScriptShaderVariationParameterValue>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderVariationParameterValue : public TScriptStructWrapper<ScriptShaderVariationParameterValue>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ShaderVariationParameterValue")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ShaderVariationParameterValue")
 
 		static MonoObject* Box(const __ShaderVariationParameterValueInterop& value);
 		static __ShaderVariationParameterValueInterop Unbox(MonoObject* value);
@@ -25,7 +25,7 @@ namespace bs
 		static __ShaderVariationParameterValueInterop ToInterop(const ShaderVariationParameterValue& value);
 
 	private:
-		ScriptShaderVariationParameterValue(MonoObject* managedInstance);
+		ScriptShaderVariationParameterValue();
 
 	};
 }

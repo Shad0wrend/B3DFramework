@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
 #include "Image/BsColor.h"
 
@@ -15,10 +15,10 @@ namespace bs
 		float Time;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptColorGradientKey : public ScriptObject<ScriptColorGradientKey>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptColorGradientKey : public TScriptStructWrapper<ScriptColorGradientKey>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ColorGradientKey")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ColorGradientKey")
 
 		static MonoObject* Box(const __ColorGradientKeyInterop& value);
 		static __ColorGradientKeyInterop Unbox(MonoObject* value);
@@ -26,7 +26,7 @@ namespace bs
 		static __ColorGradientKeyInterop ToInterop(const ColorGradientKey& value);
 
 	private:
-		ScriptColorGradientKey(MonoObject* managedInstance);
+		ScriptColorGradientKey();
 
 	};
 }

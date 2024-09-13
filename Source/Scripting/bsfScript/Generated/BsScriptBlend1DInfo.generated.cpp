@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptBlend1DInfo::ScriptBlend1DInfo(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptBlend1DInfo::ScriptBlend1DInfo()
 	{ }
 
-	void ScriptBlend1DInfo::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptBlend1DInfo::Box(const __Blend1DInfoInterop& value)
+	MonoObject* ScriptBlend1DInfo::Box(const __Blend1DInfoInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__Blend1DInfoInterop ScriptBlend1DInfo::Unbox(MonoObject* value)

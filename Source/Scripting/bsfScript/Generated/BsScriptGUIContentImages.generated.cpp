@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptGUIContentImages::ScriptGUIContentImages(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptGUIContentImages::ScriptGUIContentImages()
 	{ }
 
-	void ScriptGUIContentImages::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptGUIContentImages::Box(const __GUIContentImagesInterop& value)
+	MonoObject* ScriptGUIContentImages::Box(const __GUIContentImagesInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__GUIContentImagesInterop ScriptGUIContentImages::Unbox(MonoObject* value)

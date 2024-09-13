@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../Extensions/BsSkeletonEx.h"
 #include "Math/BsMatrix4.h"
 
@@ -16,10 +16,10 @@ namespace bs
 		Matrix4 InvBindPose;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptBoneInfo : public ScriptObject<ScriptBoneInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptBoneInfo : public TScriptStructWrapper<ScriptBoneInfo>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "BoneInfo")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "BoneInfo")
 
 		static MonoObject* Box(const __SkeletonBoneInfoExInterop& value);
 		static __SkeletonBoneInfoExInterop Unbox(MonoObject* value);
@@ -27,7 +27,7 @@ namespace bs
 		static __SkeletonBoneInfoExInterop ToInterop(const SkeletonBoneInfoEx& value);
 
 	private:
-		ScriptBoneInfo(MonoObject* managedInstance);
+		ScriptBoneInfo();
 
 	};
 }

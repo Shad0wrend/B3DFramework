@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 
@@ -26,10 +26,10 @@ namespace bs
 		MonoArray* KerningPairs;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptCharacterInformation : public ScriptObject<ScriptCharacterInformation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCharacterInformation : public TScriptStructWrapper<ScriptCharacterInformation>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "CharacterInformation")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "CharacterInformation")
 
 		static MonoObject* Box(const __CharacterInformationInterop& value);
 		static __CharacterInformationInterop Unbox(MonoObject* value);
@@ -37,7 +37,7 @@ namespace bs
 		static __CharacterInformationInterop ToInterop(const CharacterInformation& value);
 
 	private:
-		ScriptCharacterInformation(MonoObject* managedInstance);
+		ScriptCharacterInformation();
 
 	};
 }

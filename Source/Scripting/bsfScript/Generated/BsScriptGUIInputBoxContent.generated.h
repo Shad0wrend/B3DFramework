@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIInputBox.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIInputBoxContent : public ScriptObject<ScriptGUIInputBoxContent>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIInputBoxContent : public TScriptStructWrapper<ScriptGUIInputBoxContent>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIInputBoxContent")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GUIInputBoxContent")
 
 		static MonoObject* Box(const GUIInputBoxContent& value);
 		static GUIInputBoxContent Unbox(MonoObject* value);
 
 	private:
-		ScriptGUIInputBoxContent(MonoObject* managedInstance);
+		ScriptGUIInputBoxContent();
 
 	};
 }

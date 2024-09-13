@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Image/BsPixelVolume.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptPixelVolume : public ScriptObject<ScriptPixelVolume>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPixelVolume : public TScriptStructWrapper<ScriptPixelVolume>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PixelVolume")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "PixelVolume")
 
 		static MonoObject* Box(const PixelVolume& value);
 		static PixelVolume Unbox(MonoObject* value);
 
 	private:
-		ScriptPixelVolume(MonoObject* managedInstance);
+		ScriptPixelVolume();
 
 	};
 }

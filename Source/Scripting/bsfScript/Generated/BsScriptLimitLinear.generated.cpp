@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptLimitLinear::ScriptLimitLinear(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptLimitLinear::ScriptLimitLinear()
 	{ }
 
-	void ScriptLimitLinear::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptLimitLinear::Box(const __LimitLinearInterop& value)
+	MonoObject* ScriptLimitLinear::Box(const __LimitLinearInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__LimitLinearInterop ScriptLimitLinear::Unbox(MonoObject* value)

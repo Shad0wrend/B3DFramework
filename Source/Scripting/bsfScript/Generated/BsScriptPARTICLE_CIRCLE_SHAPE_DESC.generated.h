@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 #include "Math/BsDegree.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
@@ -18,10 +18,10 @@ namespace bs
 		ParticleEmissionMode Mode;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleCircleShapeOptions : public ScriptObject<ScriptParticleCircleShapeOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleCircleShapeOptions : public TScriptStructWrapper<ScriptParticleCircleShapeOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleCircleShapeOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleCircleShapeOptions")
 
 		static MonoObject* Box(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value);
 		static __PARTICLE_CIRCLE_SHAPE_DESCInterop Unbox(MonoObject* value);
@@ -29,7 +29,7 @@ namespace bs
 		static __PARTICLE_CIRCLE_SHAPE_DESCInterop ToInterop(const PARTICLE_CIRCLE_SHAPE_DESC& value);
 
 	private:
-		ScriptParticleCircleShapeOptions(MonoObject* managedInstance);
+		ScriptParticleCircleShapeOptions();
 
 	};
 }

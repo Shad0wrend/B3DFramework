@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptKerningPair : public ScriptObject<ScriptKerningPair>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptKerningPair : public TScriptStructWrapper<ScriptKerningPair>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "KerningPair")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "KerningPair")
 
 		static MonoObject* Box(const KerningPair& value);
 		static KerningPair Unbox(MonoObject* value);
 
 	private:
-		ScriptKerningPair(MonoObject* managedInstance);
+		ScriptKerningPair();
 
 	};
 }

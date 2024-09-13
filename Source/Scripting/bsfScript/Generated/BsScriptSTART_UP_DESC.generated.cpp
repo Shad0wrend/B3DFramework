@@ -10,16 +10,12 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptStartUpDesc::ScriptStartUpDesc(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptStartUpDesc::ScriptStartUpDesc()
 	{ }
 
-	void ScriptStartUpDesc::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptStartUpDesc::Box(const __START_UP_DESCInterop& value)
+	MonoObject* ScriptStartUpDesc::Box(const __START_UP_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__START_UP_DESCInterop ScriptStartUpDesc::Unbox(MonoObject* value)

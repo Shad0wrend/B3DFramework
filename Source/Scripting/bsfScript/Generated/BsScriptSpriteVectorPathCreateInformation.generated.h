@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteVectorPath.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "Math/BsRect2.h"
@@ -23,10 +23,10 @@ namespace bs
 		SpriteSheetGridAnimation Animation;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteVectorPathCreateInformation : public ScriptObject<ScriptSpriteVectorPathCreateInformation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteVectorPathCreateInformation : public TScriptStructWrapper<ScriptSpriteVectorPathCreateInformation>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SpriteVectorPathCreateInformation")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteVectorPathCreateInformation")
 
 		static MonoObject* Box(const __SpriteVectorPathCreateInformationInterop& value);
 		static __SpriteVectorPathCreateInformationInterop Unbox(MonoObject* value);
@@ -34,7 +34,7 @@ namespace bs
 		static __SpriteVectorPathCreateInformationInterop ToInterop(const SpriteVectorPathCreateInformation& value);
 
 	private:
-		ScriptSpriteVectorPathCreateInformation(MonoObject* managedInstance);
+		ScriptSpriteVectorPathCreateInformation();
 
 	};
 }

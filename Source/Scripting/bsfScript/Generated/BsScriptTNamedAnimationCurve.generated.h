@@ -3,15 +3,15 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
@@ -29,10 +29,10 @@ namespace bs
 		MonoObject* Curve;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedFloatCurve : public ScriptObject<ScriptNamedFloatCurve>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedFloatCurve : public TScriptStructWrapper<ScriptNamedFloatCurve>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "NamedFloatCurve")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "NamedFloatCurve")
 
 		static MonoObject* Box(const __TNamedAnimationCurve_float_Interop& value);
 		static __TNamedAnimationCurve_float_Interop Unbox(MonoObject* value);
@@ -40,7 +40,7 @@ namespace bs
 		static __TNamedAnimationCurve_float_Interop ToInterop(const TNamedAnimationCurve<float>& value);
 
 	private:
-		ScriptNamedFloatCurve(MonoObject* managedInstance);
+		ScriptNamedFloatCurve();
 
 	};
 
@@ -51,10 +51,10 @@ namespace bs
 		MonoObject* Curve;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedVector3Curve : public ScriptObject<ScriptNamedVector3Curve>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedVector3Curve : public TScriptStructWrapper<ScriptNamedVector3Curve>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "NamedVector3Curve")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "NamedVector3Curve")
 
 		static MonoObject* Box(const __TNamedAnimationCurve_TVector3_float__Interop& value);
 		static __TNamedAnimationCurve_TVector3_float__Interop Unbox(MonoObject* value);
@@ -62,7 +62,7 @@ namespace bs
 		static __TNamedAnimationCurve_TVector3_float__Interop ToInterop(const TNamedAnimationCurve<TVector3<float>>& value);
 
 	private:
-		ScriptNamedVector3Curve(MonoObject* managedInstance);
+		ScriptNamedVector3Curve();
 
 	};
 
@@ -73,10 +73,10 @@ namespace bs
 		MonoObject* Curve;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedVector2Curve : public ScriptObject<ScriptNamedVector2Curve>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedVector2Curve : public TScriptStructWrapper<ScriptNamedVector2Curve>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "NamedVector2Curve")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "NamedVector2Curve")
 
 		static MonoObject* Box(const __TNamedAnimationCurve_TVector2_float__Interop& value);
 		static __TNamedAnimationCurve_TVector2_float__Interop Unbox(MonoObject* value);
@@ -84,7 +84,7 @@ namespace bs
 		static __TNamedAnimationCurve_TVector2_float__Interop ToInterop(const TNamedAnimationCurve<TVector2<float>>& value);
 
 	private:
-		ScriptNamedVector2Curve(MonoObject* managedInstance);
+		ScriptNamedVector2Curve();
 
 	};
 
@@ -95,10 +95,10 @@ namespace bs
 		MonoObject* Curve;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedQuaternionCurve : public ScriptObject<ScriptNamedQuaternionCurve>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedQuaternionCurve : public TScriptStructWrapper<ScriptNamedQuaternionCurve>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "NamedQuaternionCurve")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "NamedQuaternionCurve")
 
 		static MonoObject* Box(const __TNamedAnimationCurve_Quaternion_Interop& value);
 		static __TNamedAnimationCurve_Quaternion_Interop Unbox(MonoObject* value);
@@ -106,7 +106,7 @@ namespace bs
 		static __TNamedAnimationCurve_Quaternion_Interop ToInterop(const TNamedAnimationCurve<Quaternion>& value);
 
 	private:
-		ScriptNamedQuaternionCurve(MonoObject* managedInstance);
+		ScriptNamedQuaternionCurve();
 
 	};
 
@@ -117,10 +117,10 @@ namespace bs
 		MonoObject* Curve;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedIntegerCurve : public ScriptObject<ScriptNamedIntegerCurve>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptNamedIntegerCurve : public TScriptStructWrapper<ScriptNamedIntegerCurve>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "NamedIntegerCurve")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "NamedIntegerCurve")
 
 		static MonoObject* Box(const __TNamedAnimationCurve_int32_t_Interop& value);
 		static __TNamedAnimationCurve_int32_t_Interop Unbox(MonoObject* value);
@@ -128,7 +128,7 @@ namespace bs
 		static __TNamedAnimationCurve_int32_t_Interop ToInterop(const TNamedAnimationCurve<int32_t>& value);
 
 	private:
-		ScriptNamedIntegerCurve(MonoObject* managedInstance);
+		ScriptNamedIntegerCurve();
 
 	};
 }

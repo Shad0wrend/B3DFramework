@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../Extensions/BsShaderEx.h"
 #include "../Extensions/BsShaderEx.h"
 #include "../Extensions/BsShaderEx.h"
@@ -18,10 +18,10 @@ namespace bs
 		Flags<ShaderParameterFlag> Flags;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderParameter : public ScriptObject<ScriptShaderParameter>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderParameter : public TScriptStructWrapper<ScriptShaderParameter>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ShaderParameter")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ShaderParameter")
 
 		static MonoObject* Box(const __ShaderParameterInterop& value);
 		static __ShaderParameterInterop Unbox(MonoObject* value);
@@ -29,7 +29,7 @@ namespace bs
 		static __ShaderParameterInterop ToInterop(const ShaderParameter& value);
 
 	private:
-		ScriptShaderParameter(MonoObject* managedInstance);
+		ScriptShaderParameter();
 
 	};
 }

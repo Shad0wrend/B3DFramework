@@ -3,36 +3,36 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector4I.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector4I.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector4I : public ScriptObject<ScriptVector4I>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector4I : public TScriptStructWrapper<ScriptVector4I>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Vector4I")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Vector4I")
 
 		static MonoObject* Box(const TVector4I<int32_t>& value);
 		static TVector4I<int32_t> Unbox(MonoObject* value);
 
 	private:
-		ScriptVector4I(MonoObject* managedInstance);
+		ScriptVector4I();
 
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector4UI : public ScriptObject<ScriptVector4UI>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector4UI : public TScriptStructWrapper<ScriptVector4UI>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Vector4UI")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Vector4UI")
 
 		static MonoObject* Box(const TVector4I<uint32_t>& value);
 		static TVector4I<uint32_t> Unbox(MonoObject* value);
 
 	private:
-		ScriptVector4UI(MonoObject* managedInstance);
+		ScriptVector4UI();
 
 	};
 }

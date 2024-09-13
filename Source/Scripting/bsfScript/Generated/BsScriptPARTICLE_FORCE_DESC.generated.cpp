@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptParticleForceOptions::ScriptParticleForceOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleForceOptions::ScriptParticleForceOptions()
 	{ }
 
-	void ScriptParticleForceOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleForceOptions::Box(const __PARTICLE_FORCE_DESCInterop& value)
+	MonoObject* ScriptParticleForceOptions::Box(const __PARTICLE_FORCE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_FORCE_DESCInterop ScriptParticleForceOptions::Unbox(MonoObject* value)

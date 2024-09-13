@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUISliderHandle.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISliderHandleContent : public ScriptObject<ScriptGUISliderHandleContent>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISliderHandleContent : public TScriptStructWrapper<ScriptGUISliderHandleContent>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUISliderHandleContent")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GUISliderHandleContent")
 
 		static MonoObject* Box(const GUISliderHandleContent& value);
 		static GUISliderHandleContent Unbox(MonoObject* value);
 
 	private:
-		ScriptGUISliderHandleContent(MonoObject* managedInstance);
+		ScriptGUISliderHandleContent();
 
 	};
 }

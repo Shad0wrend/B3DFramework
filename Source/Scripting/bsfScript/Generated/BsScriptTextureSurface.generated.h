@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptTextureSurface : public ScriptObject<ScriptTextureSurface>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTextureSurface : public TScriptStructWrapper<ScriptTextureSurface>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "TextureSurface")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "TextureSurface")
 
 		static MonoObject* Box(const TextureSurface& value);
 		static TextureSurface Unbox(MonoObject* value);
 
 	private:
-		ScriptTextureSurface(MonoObject* managedInstance);
+		ScriptTextureSurface();
 
 	};
 }

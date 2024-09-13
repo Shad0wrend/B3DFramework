@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
@@ -17,10 +17,10 @@ namespace bs
 		bool Use3DRotation;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleRotationOptions : public ScriptObject<ScriptParticleRotationOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleRotationOptions : public TScriptStructWrapper<ScriptParticleRotationOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleRotationOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleRotationOptions")
 
 		static MonoObject* Box(const __PARTICLE_ROTATION_DESCInterop& value);
 		static __PARTICLE_ROTATION_DESCInterop Unbox(MonoObject* value);
@@ -28,7 +28,7 @@ namespace bs
 		static __PARTICLE_ROTATION_DESCInterop ToInterop(const PARTICLE_ROTATION_DESC& value);
 
 	private:
-		ScriptParticleRotationOptions(MonoObject* managedInstance);
+		ScriptParticleRotationOptions();
 
 	};
 }

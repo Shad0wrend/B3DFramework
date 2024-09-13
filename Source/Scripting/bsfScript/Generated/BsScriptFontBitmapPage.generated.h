@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 
 namespace bs
@@ -14,10 +14,10 @@ namespace bs
 		bool IsDynamic;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontBitmapPage : public ScriptObject<ScriptFontBitmapPage>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontBitmapPage : public TScriptStructWrapper<ScriptFontBitmapPage>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "FontBitmapPage")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "FontBitmapPage")
 
 		static MonoObject* Box(const __FontBitmapPageInterop& value);
 		static __FontBitmapPageInterop Unbox(MonoObject* value);
@@ -25,7 +25,7 @@ namespace bs
 		static __FontBitmapPageInterop ToInterop(const FontBitmapPage& value);
 
 	private:
-		ScriptFontBitmapPage(MonoObject* managedInstance);
+		ScriptFontBitmapPage();
 
 	};
 }

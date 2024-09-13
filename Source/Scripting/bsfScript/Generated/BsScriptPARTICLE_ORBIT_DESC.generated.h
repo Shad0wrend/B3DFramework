@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
@@ -18,10 +18,10 @@ namespace bs
 		bool WorldSpace;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleOrbitOptions : public ScriptObject<ScriptParticleOrbitOptions>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleOrbitOptions : public TScriptStructWrapper<ScriptParticleOrbitOptions>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleOrbitOptions")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "ParticleOrbitOptions")
 
 		static MonoObject* Box(const __PARTICLE_ORBIT_DESCInterop& value);
 		static __PARTICLE_ORBIT_DESCInterop Unbox(MonoObject* value);
@@ -29,7 +29,7 @@ namespace bs
 		static __PARTICLE_ORBIT_DESCInterop ToInterop(const PARTICLE_ORBIT_DESC& value);
 
 	private:
-		ScriptParticleOrbitOptions(MonoObject* managedInstance);
+		ScriptParticleOrbitOptions();
 
 	};
 }

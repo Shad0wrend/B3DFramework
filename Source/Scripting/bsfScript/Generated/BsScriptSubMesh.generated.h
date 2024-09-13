@@ -3,21 +3,21 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsSubMesh.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSubMesh : public ScriptObject<ScriptSubMesh>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSubMesh : public TScriptStructWrapper<ScriptSubMesh>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SubMesh")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SubMesh")
 
 		static MonoObject* Box(const SubMesh& value);
 		static SubMesh Unbox(MonoObject* value);
 
 	private:
-		ScriptSubMesh(MonoObject* managedInstance);
+		ScriptSubMesh();
 
 	};
 }

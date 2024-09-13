@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "Math/BsRadian.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
@@ -19,10 +19,10 @@ namespace bs
 		Spring Spring;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitConeRange : public ScriptObject<ScriptLimitConeRange>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitConeRange : public TScriptStructWrapper<ScriptLimitConeRange>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LimitConeRange")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "LimitConeRange")
 
 		static MonoObject* Box(const __LimitConeRangeInterop& value);
 		static __LimitConeRangeInterop Unbox(MonoObject* value);
@@ -30,7 +30,7 @@ namespace bs
 		static __LimitConeRangeInterop ToInterop(const LimitConeRange& value);
 
 	private:
-		ScriptLimitConeRange(MonoObject* managedInstance);
+		ScriptLimitConeRange();
 
 	};
 }

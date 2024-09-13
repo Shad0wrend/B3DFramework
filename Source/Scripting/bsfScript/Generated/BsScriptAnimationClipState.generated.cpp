@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptAnimationClipState::ScriptAnimationClipState(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptAnimationClipState::ScriptAnimationClipState()
 	{ }
 
-	void ScriptAnimationClipState::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptAnimationClipState::Box(const AnimationClipState& value)
+	MonoObject* ScriptAnimationClipState::Box(const AnimationClipState& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	AnimationClipState ScriptAnimationClipState::Unbox(MonoObject* value)

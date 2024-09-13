@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptShaderParameter::ScriptShaderParameter(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptShaderParameter::ScriptShaderParameter()
 	{ }
 
-	void ScriptShaderParameter::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptShaderParameter::Box(const __ShaderParameterInterop& value)
+	MonoObject* ScriptShaderParameter::Box(const __ShaderParameterInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__ShaderParameterInterop ScriptShaderParameter::Unbox(MonoObject* value)

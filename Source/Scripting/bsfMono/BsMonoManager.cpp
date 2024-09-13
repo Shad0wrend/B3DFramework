@@ -207,7 +207,8 @@ void MonoManager::RefreshScriptTypeMetaDataAndBindings(MonoAssembly& assembly)
 		else
 			meta->IsUsingNewScriptObjectManagerField = nullptr;
 
-		meta->SetupScriptBindingsCallback();
+		if(meta->SetupScriptBindingsCallback != nullptr)
+			meta->SetupScriptBindingsCallback();
 	}
 }
 

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimation.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimation.h"
 #include "BsScriptBlendClipInfo.generated.h"
@@ -15,10 +15,10 @@ namespace bs
 		MonoArray* Clips;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptBlend1DInfo : public ScriptObject<ScriptBlend1DInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptBlend1DInfo : public TScriptStructWrapper<ScriptBlend1DInfo>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Blend1DInfo")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "Blend1DInfo")
 
 		static MonoObject* Box(const __Blend1DInfoInterop& value);
 		static __Blend1DInfoInterop Unbox(MonoObject* value);
@@ -26,7 +26,7 @@ namespace bs
 		static __Blend1DInfoInterop ToInterop(const Blend1DInfo& value);
 
 	private:
-		ScriptBlend1DInfo(MonoObject* managedInstance);
+		ScriptBlend1DInfo();
 
 	};
 }

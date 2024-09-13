@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptHingeJointDrive::ScriptHingeJointDrive(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptHingeJointDrive::ScriptHingeJointDrive()
 	{ }
 
-	void ScriptHingeJointDrive::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptHingeJointDrive::Box(const HingeJointDrive& value)
+	MonoObject* ScriptHingeJointDrive::Box(const HingeJointDrive& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	HingeJointDrive ScriptHingeJointDrive::Unbox(MonoObject* value)

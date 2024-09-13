@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptAudioDevice::ScriptAudioDevice(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptAudioDevice::ScriptAudioDevice()
 	{ }
 
-	void ScriptAudioDevice::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptAudioDevice::Box(const __AudioDeviceInterop& value)
+	MonoObject* ScriptAudioDevice::Box(const __AudioDeviceInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__AudioDeviceInterop ScriptAudioDevice::Unbox(MonoObject* value)

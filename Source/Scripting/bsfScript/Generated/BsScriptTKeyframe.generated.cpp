@@ -13,16 +13,12 @@
 
 namespace bs
 {
-	ScriptKeyFrameInt::ScriptKeyFrameInt(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptKeyFrameInt::ScriptKeyFrameInt()
 	{ }
 
-	void ScriptKeyFrameInt::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptKeyFrameInt::Box(const TKeyframe<int32_t>& value)
+	MonoObject* ScriptKeyFrameInt::Box(const TKeyframe<int32_t>& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	TKeyframe<int32_t> ScriptKeyFrameInt::Unbox(MonoObject* value)
@@ -31,16 +27,12 @@ namespace bs
 	}
 
 
-	ScriptKeyFrame::ScriptKeyFrame(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptKeyFrame::ScriptKeyFrame()
 	{ }
 
-	void ScriptKeyFrame::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptKeyFrame::Box(const TKeyframe<float>& value)
+	MonoObject* ScriptKeyFrame::Box(const TKeyframe<float>& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	TKeyframe<float> ScriptKeyFrame::Unbox(MonoObject* value)
@@ -49,16 +41,12 @@ namespace bs
 	}
 
 
-	ScriptKeyFrameVec3::ScriptKeyFrameVec3(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptKeyFrameVec3::ScriptKeyFrameVec3()
 	{ }
 
-	void ScriptKeyFrameVec3::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptKeyFrameVec3::Box(const __TKeyframe_TVector3_float__Interop& value)
+	MonoObject* ScriptKeyFrameVec3::Box(const __TKeyframe_TVector3_float__Interop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__TKeyframe_TVector3_float__Interop ScriptKeyFrameVec3::Unbox(MonoObject* value)
@@ -89,16 +77,12 @@ namespace bs
 	}
 
 
-	ScriptKeyFrameVec2::ScriptKeyFrameVec2(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptKeyFrameVec2::ScriptKeyFrameVec2()
 	{ }
 
-	void ScriptKeyFrameVec2::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptKeyFrameVec2::Box(const __TKeyframe_TVector2_float__Interop& value)
+	MonoObject* ScriptKeyFrameVec2::Box(const __TKeyframe_TVector2_float__Interop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__TKeyframe_TVector2_float__Interop ScriptKeyFrameVec2::Unbox(MonoObject* value)
@@ -129,16 +113,12 @@ namespace bs
 	}
 
 
-	ScriptKeyFrameQuat::ScriptKeyFrameQuat(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptKeyFrameQuat::ScriptKeyFrameQuat()
 	{ }
 
-	void ScriptKeyFrameQuat::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptKeyFrameQuat::Box(const __TKeyframe_Quaternion_Interop& value)
+	MonoObject* ScriptKeyFrameQuat::Box(const __TKeyframe_Quaternion_Interop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__TKeyframe_Quaternion_Interop ScriptKeyFrameQuat::Unbox(MonoObject* value)

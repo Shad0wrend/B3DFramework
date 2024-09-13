@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteGlyph.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "Math/BsRect2.h"
@@ -21,10 +21,10 @@ namespace bs
 		SpriteSheetGridAnimation Animation;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteGlyphCreateInformation : public ScriptObject<ScriptSpriteGlyphCreateInformation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteGlyphCreateInformation : public TScriptStructWrapper<ScriptSpriteGlyphCreateInformation>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SpriteGlyphCreateInformation")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "SpriteGlyphCreateInformation")
 
 		static MonoObject* Box(const __SpriteGlyphCreateInformationInterop& value);
 		static __SpriteGlyphCreateInformationInterop Unbox(MonoObject* value);
@@ -32,7 +32,7 @@ namespace bs
 		static __SpriteGlyphCreateInformationInterop ToInterop(const SpriteGlyphCreateInformation& value);
 
 	private:
-		ScriptSpriteGlyphCreateInformation(MonoObject* managedInstance);
+		ScriptSpriteGlyphCreateInformation();
 
 	};
 }

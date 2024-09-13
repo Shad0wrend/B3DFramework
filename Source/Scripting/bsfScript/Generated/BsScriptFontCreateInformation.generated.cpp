@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptFontCreateInformation::ScriptFontCreateInformation(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptFontCreateInformation::ScriptFontCreateInformation()
 	{ }
 
-	void ScriptFontCreateInformation::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptFontCreateInformation::Box(const __FontCreateInformationInterop& value)
+	MonoObject* ScriptFontCreateInformation::Box(const __FontCreateInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__FontCreateInformationInterop ScriptFontCreateInformation::Unbox(MonoObject* value)

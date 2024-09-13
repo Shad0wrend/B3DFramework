@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptSpriteImageCreateInformation::ScriptSpriteImageCreateInformation(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptSpriteImageCreateInformation::ScriptSpriteImageCreateInformation()
 	{ }
 
-	void ScriptSpriteImageCreateInformation::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptSpriteImageCreateInformation::Box(const __SpriteImageCreateInformationInterop& value)
+	MonoObject* ScriptSpriteImageCreateInformation::Box(const __SpriteImageCreateInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__SpriteImageCreateInformationInterop ScriptSpriteImageCreateInformation::Unbox(MonoObject* value)

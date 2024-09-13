@@ -11,16 +11,12 @@
 
 namespace bs
 {
-	ScriptParticleOrbitOptions::ScriptParticleOrbitOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleOrbitOptions::ScriptParticleOrbitOptions()
 	{ }
 
-	void ScriptParticleOrbitOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleOrbitOptions::Box(const __PARTICLE_ORBIT_DESCInterop& value)
+	MonoObject* ScriptParticleOrbitOptions::Box(const __PARTICLE_ORBIT_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_ORBIT_DESCInterop ScriptParticleOrbitOptions::Unbox(MonoObject* value)

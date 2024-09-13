@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "BsScriptObject.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
 #include "../../../Foundation/bsfCore/Localization/BsHString.h"
 
@@ -15,10 +15,10 @@ namespace bs
 		bool AllowMultiselect;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIListBoxContent : public ScriptObject<ScriptGUIListBoxContent>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIListBoxContent : public TScriptStructWrapper<ScriptGUIListBoxContent>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIListBoxContent")
+		B3D_SCRIPT_OBJECT_WRAPPER(kEngineAssembly, kEngineNs, "GUIListBoxContent")
 
 		static MonoObject* Box(const __GUIListBoxContentInterop& value);
 		static __GUIListBoxContentInterop Unbox(MonoObject* value);
@@ -26,7 +26,7 @@ namespace bs
 		static __GUIListBoxContentInterop ToInterop(const GUIListBoxContent& value);
 
 	private:
-		ScriptGUIListBoxContent(MonoObject* managedInstance);
+		ScriptGUIListBoxContent();
 
 	};
 }

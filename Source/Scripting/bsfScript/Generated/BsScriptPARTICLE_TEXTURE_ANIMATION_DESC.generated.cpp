@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptParticleTextureAnimationOptions::ScriptParticleTextureAnimationOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleTextureAnimationOptions::ScriptParticleTextureAnimationOptions()
 	{ }
 
-	void ScriptParticleTextureAnimationOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleTextureAnimationOptions::Box(const PARTICLE_TEXTURE_ANIMATION_DESC& value)
+	MonoObject* ScriptParticleTextureAnimationOptions::Box(const PARTICLE_TEXTURE_ANIMATION_DESC& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	PARTICLE_TEXTURE_ANIMATION_DESC ScriptParticleTextureAnimationOptions::Unbox(MonoObject* value)

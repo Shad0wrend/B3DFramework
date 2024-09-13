@@ -8,16 +8,12 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptCharRange::ScriptCharRange(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptCharRange::ScriptCharRange()
 	{ }
 
-	void ScriptCharRange::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptCharRange::Box(const CharRange& value)
+	MonoObject* ScriptCharRange::Box(const CharRange& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	CharRange ScriptCharRange::Unbox(MonoObject* value)

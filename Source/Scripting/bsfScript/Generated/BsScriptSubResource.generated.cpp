@@ -10,16 +10,12 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptSubResource::ScriptSubResource(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptSubResource::ScriptSubResource()
 	{ }
 
-	void ScriptSubResource::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptSubResource::Box(const __SubResourceInterop& value)
+	MonoObject* ScriptSubResource::Box(const __SubResourceInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__SubResourceInterop ScriptSubResource::Unbox(MonoObject* value)

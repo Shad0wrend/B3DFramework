@@ -7,16 +7,12 @@
 
 namespace bs
 {
-	ScriptParticleHemisphereShapeOptions::ScriptParticleHemisphereShapeOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleHemisphereShapeOptions::ScriptParticleHemisphereShapeOptions()
 	{ }
 
-	void ScriptParticleHemisphereShapeOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleHemisphereShapeOptions::Box(const PARTICLE_HEMISPHERE_SHAPE_DESC& value)
+	MonoObject* ScriptParticleHemisphereShapeOptions::Box(const PARTICLE_HEMISPHERE_SHAPE_DESC& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	PARTICLE_HEMISPHERE_SHAPE_DESC ScriptParticleHemisphereShapeOptions::Unbox(MonoObject* value)

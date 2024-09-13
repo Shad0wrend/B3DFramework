@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptParticleVelocityOptions::ScriptParticleVelocityOptions(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptParticleVelocityOptions::ScriptParticleVelocityOptions()
 	{ }
 
-	void ScriptParticleVelocityOptions::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptParticleVelocityOptions::Box(const __PARTICLE_VELOCITY_DESCInterop& value)
+	MonoObject* ScriptParticleVelocityOptions::Box(const __PARTICLE_VELOCITY_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__PARTICLE_VELOCITY_DESCInterop ScriptParticleVelocityOptions::Unbox(MonoObject* value)

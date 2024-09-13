@@ -9,16 +9,12 @@
 
 namespace bs
 {
-	ScriptCharacterInformation::ScriptCharacterInformation(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptCharacterInformation::ScriptCharacterInformation()
 	{ }
 
-	void ScriptCharacterInformation::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptCharacterInformation::Box(const __CharacterInformationInterop& value)
+	MonoObject* ScriptCharacterInformation::Box(const __CharacterInformationInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__CharacterInformationInterop ScriptCharacterInformation::Unbox(MonoObject* value)

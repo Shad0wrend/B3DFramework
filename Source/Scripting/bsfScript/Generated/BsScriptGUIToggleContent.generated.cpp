@@ -11,16 +11,12 @@
 
 namespace bs
 {
-	ScriptGUIToggleContent::ScriptGUIToggleContent(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptGUIToggleContent::ScriptGUIToggleContent()
 	{ }
 
-	void ScriptGUIToggleContent::InitRuntimeData()
-	{ }
-
-	MonoObject*ScriptGUIToggleContent::Box(const __GUIToggleContentInterop& value)
+	MonoObject* ScriptGUIToggleContent::Box(const __GUIToggleContentInterop& value)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
 	__GUIToggleContentInterop ScriptGUIToggleContent::Unbox(MonoObject* value)
