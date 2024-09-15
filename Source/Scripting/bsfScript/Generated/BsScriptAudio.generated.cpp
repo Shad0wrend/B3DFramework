@@ -9,21 +9,21 @@
 
 namespace bs
 {
-	ScriptAudio::ScriptAudio(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptAudio::ScriptAudio()
+		:TScriptTypeDefinition()
 	{
 	}
 
-	void ScriptAudio::InitRuntimeData()
+	void ScriptAudio::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_SetVolume", (void*)&ScriptAudio::InternalSetVolume);
-		metaData.ScriptClass->AddInternalCall("Internal_GetVolume", (void*)&ScriptAudio::InternalGetVolume);
-		metaData.ScriptClass->AddInternalCall("Internal_SetPaused", (void*)&ScriptAudio::InternalSetPaused);
-		metaData.ScriptClass->AddInternalCall("Internal_IsPaused", (void*)&ScriptAudio::InternalIsPaused);
-		metaData.ScriptClass->AddInternalCall("Internal_SetActiveDevice", (void*)&ScriptAudio::InternalSetActiveDevice);
-		metaData.ScriptClass->AddInternalCall("Internal_GetActiveDevice", (void*)&ScriptAudio::InternalGetActiveDevice);
-		metaData.ScriptClass->AddInternalCall("Internal_GetDefaultDevice", (void*)&ScriptAudio::InternalGetDefaultDevice);
-		metaData.ScriptClass->AddInternalCall("Internal_GetAllDevices", (void*)&ScriptAudio::InternalGetAllDevices);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetVolume", (void*)&ScriptAudio::InternalSetVolume);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetVolume", (void*)&ScriptAudio::InternalGetVolume);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetPaused", (void*)&ScriptAudio::InternalSetPaused);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsPaused", (void*)&ScriptAudio::InternalIsPaused);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetActiveDevice", (void*)&ScriptAudio::InternalSetActiveDevice);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetActiveDevice", (void*)&ScriptAudio::InternalGetActiveDevice);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetDefaultDevice", (void*)&ScriptAudio::InternalGetDefaultDevice);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAllDevices", (void*)&ScriptAudio::InternalGetAllDevices);
 
 	}
 

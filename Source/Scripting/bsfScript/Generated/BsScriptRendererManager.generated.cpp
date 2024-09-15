@@ -8,14 +8,14 @@
 
 namespace bs
 {
-	ScriptRendererManager::ScriptRendererManager(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptRendererManager::ScriptRendererManager()
+		:TScriptTypeDefinition()
 	{
 	}
 
-	void ScriptRendererManager::InitRuntimeData()
+	void ScriptRendererManager::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_RequestFrameCapture", (void*)&ScriptRendererManager::InternalRequestFrameCapture);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_RequestFrameCapture", (void*)&ScriptRendererManager::InternalRequestFrameCapture);
 
 	}
 

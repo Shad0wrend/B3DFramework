@@ -264,21 +264,6 @@ namespace bs
 		}
 	};
 
-	/** Implements default methods required by script object wrapper implementations. */
-#define B3D_SCRIPT_TYPE_DEFINITION(Assembly, Namespace, Name) \
-	static const char* GetAssemblyName()      \
-	{                                         \
-		return Assembly;                      \
-	}                                         \
-	static const char* GetNamespace()         \
-	{                                         \
-		return Namespace;                     \
-	}                                         \
-	static const char* GetTypeName()          \
-	{                                         \
-		return Name;                          \
-	}                                         \
-
 	/**	Script object wrapper for ScriptObject. (Script prefix used as standard for script object wrappers, wrapping ScriptObject. Therefore ScriptScriptObject.) */
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptScriptObject : public TScriptTypeDefinition<ScriptScriptObject>
 	{

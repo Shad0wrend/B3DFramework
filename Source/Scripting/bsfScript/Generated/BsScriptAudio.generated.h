@@ -4,20 +4,22 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Audio/BsAudio.h"
-#include "BsScriptObject.h"
+#include "BsScriptTypeDefinition.h"
 #include "../../../Foundation/bsfCore/Audio/BsAudio.h"
 
 namespace bs { struct __AudioDeviceInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudio : public ScriptObject<ScriptAudio>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudio : public TScriptTypeDefinition<ScriptAudio>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Audio")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Audio")
 
-		ScriptAudio(MonoObject* managedInstance);
+		ScriptAudio();
 
 		static void SetupScriptBindings();
+
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static void InternalSetVolume(float volume);

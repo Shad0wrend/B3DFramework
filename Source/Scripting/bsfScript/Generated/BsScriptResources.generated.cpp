@@ -16,40 +16,39 @@ namespace bs
 	ScriptResources::OnResourceDestroyedThunkDefinition ScriptResources::OnResourceDestroyedThunk; 
 	ScriptResources::OnResourceModifiedThunkDefinition ScriptResources::OnResourceModifiedThunk; 
 
-	HEvent ScriptResources::OnResourceLoadedConn;
-	HEvent ScriptResources::OnResourceDestroyedConn;
-	HEvent ScriptResources::OnResourceModifiedConn;
+	HEvent ScriptResources::OnResourceLoadedConnection;
+	HEvent ScriptResources::OnResourceDestroyedConnection;
+	HEvent ScriptResources::OnResourceModifiedConnection;
 
-	ScriptResources::ScriptResources(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptResources::ScriptResources()
+		:TScriptTypeDefinition()
 	{
-		mGCHandle = MonoUtil::NewWeakGcHandle(managedInstance);
 	}
 
-	void ScriptResources::InitRuntimeData()
+	void ScriptResources::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_ReleaseInternalReference", (void*)&ScriptResources::InternalReleaseInternalReference);
-		metaData.ScriptClass->AddInternalCall("Internal_UnloadAllUnused", (void*)&ScriptResources::InternalUnloadAllUnused);
-		metaData.ScriptClass->AddInternalCall("Internal_UnloadAll", (void*)&ScriptResources::InternalUnloadAll);
-		metaData.ScriptClass->AddInternalCall("Internal_IsLoaded", (void*)&ScriptResources::InternalIsLoaded);
-		metaData.ScriptClass->AddInternalCall("Internal_GetLoadProgress", (void*)&ScriptResources::InternalGetLoadProgress);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ReleaseInternalReference", (void*)&ScriptResources::InternalReleaseInternalReference);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_UnloadAllUnused", (void*)&ScriptResources::InternalUnloadAllUnused);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_UnloadAll", (void*)&ScriptResources::InternalUnloadAll);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsLoaded", (void*)&ScriptResources::InternalIsLoaded);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetLoadProgress", (void*)&ScriptResources::InternalGetLoadProgress);
 
-		OnResourceLoadedThunk = (OnResourceLoadedThunkDefinition)metaData.ScriptClass->GetMethodExact("Internal_OnResourceLoaded", "RRefBase")->GetThunk();
-		OnResourceDestroyedThunk = (OnResourceDestroyedThunkDefinition)metaData.ScriptClass->GetMethodExact("Internal_OnResourceDestroyed", "UUID&")->GetThunk();
-		OnResourceModifiedThunk = (OnResourceModifiedThunkDefinition)metaData.ScriptClass->GetMethodExact("Internal_OnResourceModified", "RRefBase")->GetThunk();
+		OnResourceLoadedThunk = (OnResourceLoadedThunkDefinition)sInteropMetaData.ScriptClass->GetMethodExact("Internal_OnResourceLoaded", "RRefBase")->GetThunk();
+		OnResourceDestroyedThunk = (OnResourceDestroyedThunkDefinition)sInteropMetaData.ScriptClass->GetMethodExact("Internal_OnResourceDestroyed", "UUID&")->GetThunk();
+		OnResourceModifiedThunk = (OnResourceModifiedThunkDefinition)sInteropMetaData.ScriptClass->GetMethodExact("Internal_OnResourceModified", "RRefBase")->GetThunk();
 	}
 
 	void ScriptResources::StartUp()
 	{
-		OnResourceLoadedConn = Resources::Instance().OnResourceLoaded.Connect(&ScriptResources::OnResourceLoaded);
-		OnResourceDestroyedConn = Resources::Instance().OnResourceDestroyed.Connect(&ScriptResources::OnResourceDestroyed);
-		OnResourceModifiedConn = Resources::Instance().OnResourceModified.Connect(&ScriptResources::OnResourceModified);
+		OnResourceLoadedConnection = Resources::Instance().OnResourceLoaded.Connect(&ScriptResources::OnResourceLoaded);
+		OnResourceDestroyedConnection = Resources::Instance().OnResourceDestroyed.Connect(&ScriptResources::OnResourceDestroyed);
+		OnResourceModifiedConnection = Resources::Instance().OnResourceModified.Connect(&ScriptResources::OnResourceModified);
 	}
 	void ScriptResources::ShutDown()
 	{
-		OnResourceLoadedConn.Disconnect();
-		OnResourceDestroyedConn.Disconnect();
-		OnResourceModifiedConn.Disconnect();
+		OnResourceLoadedConnection.Disconnect();
+		OnResourceDestroyedConnection.Disconnect();
+		OnResourceModifiedConnection.Disconnect();
 	}
 
 	void ScriptResources::OnResourceLoaded(const TResourceHandle<Resource>& p0)

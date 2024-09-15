@@ -4,19 +4,21 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Text/BsStockIcons.h"
-#include "BsScriptObject.h"
+#include "BsScriptTypeDefinition.h"
 #include "../../../Foundation/bsfCore/Text/BsStockIcons.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptStockIcons : public ScriptObject<ScriptStockIcons>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptStockIcons : public TScriptTypeDefinition<ScriptStockIcons>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "StockIcons")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "StockIcons")
 
-		ScriptStockIcons(MonoObject* managedInstance);
+		ScriptStockIcons();
 
 		static void SetupScriptBindings();
+
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalGetIcon(StockIcon icon, float size);

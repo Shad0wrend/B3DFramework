@@ -106,5 +106,20 @@ namespace bs
 	template <typename SelfType>
 	ScriptTypeMetaData TScriptTypeDefinition<SelfType>::sInteropMetaData;
 
+	/** Implements default methods required by script object wrapper implementations. */
+#define B3D_SCRIPT_TYPE_DEFINITION(Assembly, Namespace, Name) \
+	static const char* GetAssemblyName()      \
+	{                                         \
+		return Assembly;                      \
+	}                                         \
+	static const char* GetNamespace()         \
+	{                                         \
+		return Namespace;                     \
+	}                                         \
+	static const char* GetTypeName()          \
+	{                                         \
+		return Name;                          \
+	}                                         \
+
 	/** @} */
 } // namespace bs

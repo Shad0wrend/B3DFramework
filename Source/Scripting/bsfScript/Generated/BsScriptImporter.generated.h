@@ -4,20 +4,22 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Importer/BsImporter.h"
-#include "BsScriptObject.h"
+#include "BsScriptTypeDefinition.h"
 #include "Utility/BsUUID.h"
 
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptImporter : public ScriptObject<ScriptImporter>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptImporter : public TScriptTypeDefinition<ScriptImporter>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Importer")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Importer")
 
-		ScriptImporter(MonoObject* managedInstance);
+		ScriptImporter();
 
 		static void SetupScriptBindings();
+
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static MonoObject* InternalImport(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID);

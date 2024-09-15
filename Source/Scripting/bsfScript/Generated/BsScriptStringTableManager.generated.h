@@ -4,19 +4,21 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Localization/BsStringTableManager.h"
-#include "BsScriptObject.h"
+#include "BsScriptTypeDefinition.h"
 #include "../../../Foundation/bsfCore/Localization/BsStringTable.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptStringTables : public ScriptObject<ScriptStringTables>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptStringTables : public TScriptTypeDefinition<ScriptStringTables>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "StringTables")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "StringTables")
 
-		ScriptStringTables(MonoObject* managedInstance);
+		ScriptStringTables();
 
 		static void SetupScriptBindings();
+
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static void InternalSetActiveLanguage(Language language);

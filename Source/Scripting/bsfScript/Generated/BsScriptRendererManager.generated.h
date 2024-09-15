@@ -4,18 +4,20 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRendererManager.h"
-#include "BsScriptObject.h"
+#include "BsScriptTypeDefinition.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptRendererManager : public ScriptObject<ScriptRendererManager>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRendererManager : public TScriptTypeDefinition<ScriptRendererManager>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "RendererManager")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "RendererManager")
 
-		ScriptRendererManager(MonoObject* managedInstance);
+		ScriptRendererManager();
 
 		static void SetupScriptBindings();
+
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static void InternalRequestFrameCapture();

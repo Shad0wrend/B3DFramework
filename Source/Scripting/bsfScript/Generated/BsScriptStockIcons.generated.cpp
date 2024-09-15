@@ -10,17 +10,17 @@
 
 namespace bs
 {
-	ScriptStockIcons::ScriptStockIcons(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptStockIcons::ScriptStockIcons()
+		:TScriptTypeDefinition()
 	{
 	}
 
-	void ScriptStockIcons::InitRuntimeData()
+	void ScriptStockIcons::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetIcon", (void*)&ScriptStockIcons::InternalGetIcon);
-		metaData.ScriptClass->AddInternalCall("Internal_GetUnicode", (void*)&ScriptStockIcons::InternalGetUnicode);
-		metaData.ScriptClass->AddInternalCall("Internal_GetFont", (void*)&ScriptStockIcons::InternalGetFont);
-		metaData.ScriptClass->AddInternalCall("Internal_ParseIconName", (void*)&ScriptStockIcons::InternalParseIconName);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetIcon", (void*)&ScriptStockIcons::InternalGetIcon);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetUnicode", (void*)&ScriptStockIcons::InternalGetUnicode);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetFont", (void*)&ScriptStockIcons::InternalGetFont);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ParseIconName", (void*)&ScriptStockIcons::InternalParseIconName);
 
 	}
 

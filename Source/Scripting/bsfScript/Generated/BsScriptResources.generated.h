@@ -4,27 +4,27 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Resources/BsResources.h"
-#include "BsScriptObject.h"
+#include "BsScriptTypeDefinition.h"
 #include "Utility/BsUUID.h"
 
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptResources : public ScriptObject<ScriptResources>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptResources : public TScriptTypeDefinition<ScriptResources>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Resources")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Resources")
 
-		ScriptResources(MonoObject* managedInstance);
+		ScriptResources();
 
 		static void SetupScriptBindings();
+
+		static MonoObject* CreateScriptObject(bool construct);
 
 		static void StartUp();
 		static void ShutDown();
 
 	private:
-		uint32_t mGCHandle = 0;
-
 		static void OnResourceLoaded(const TResourceHandle<Resource>& p0);
 		static void OnResourceDestroyed(const UUID& p0);
 		static void OnResourceModified(const TResourceHandle<Resource>& p0);
@@ -36,9 +36,9 @@ namespace bs
 		typedef void(B3D_THUNKCALL *OnResourceModifiedThunkDefinition) (MonoObject* p0, MonoException**);
 		static OnResourceModifiedThunkDefinition OnResourceModifiedThunk;
 
-		static HEvent OnResourceLoadedConn;
-		static HEvent OnResourceDestroyedConn;
-		static HEvent OnResourceModifiedConn;
+		static HEvent OnResourceLoadedConnection;
+		static HEvent OnResourceDestroyedConnection;
+		static HEvent OnResourceModifiedConnection;
 
 		static void InternalReleaseInternalReference(MonoObject* resource);
 		static void InternalUnloadAllUnused();

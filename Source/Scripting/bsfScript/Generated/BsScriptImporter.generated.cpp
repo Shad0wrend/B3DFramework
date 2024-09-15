@@ -26,18 +26,18 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptImporter::ScriptImporter(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptImporter::ScriptImporter()
+		:TScriptTypeDefinition()
 	{
 	}
 
-	void ScriptImporter::InitRuntimeData()
+	void ScriptImporter::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_Import", (void*)&ScriptImporter::InternalImport);
-		metaData.ScriptClass->AddInternalCall("Internal_ImportAsync", (void*)&ScriptImporter::InternalImportAsync);
-		metaData.ScriptClass->AddInternalCall("Internal_ImportAll", (void*)&ScriptImporter::InternalImportAll);
-		metaData.ScriptClass->AddInternalCall("Internal_ImportAllAsync", (void*)&ScriptImporter::InternalImportAllAsync);
-		metaData.ScriptClass->AddInternalCall("Internal_SupportsFileType", (void*)&ScriptImporter::InternalSupportsFileType);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Import", (void*)&ScriptImporter::InternalImport);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ImportAsync", (void*)&ScriptImporter::InternalImportAsync);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ImportAll", (void*)&ScriptImporter::InternalImportAll);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ImportAllAsync", (void*)&ScriptImporter::InternalImportAllAsync);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SupportsFileType", (void*)&ScriptImporter::InternalSupportsFileType);
 
 	}
 

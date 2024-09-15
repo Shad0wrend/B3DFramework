@@ -4,18 +4,20 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysics.h"
-#include "BsScriptObject.h"
+#include "BsScriptTypeDefinition.h"
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysics : public ScriptObject<ScriptPhysics>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysics : public TScriptTypeDefinition<ScriptPhysics>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Physics")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Physics")
 
-		ScriptPhysics(MonoObject* managedInstance);
+		ScriptPhysics();
 
 		static void SetupScriptBindings();
+
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
 		static void InternalToggleCollision(uint64_t groupA, uint64_t groupB, bool enabled);

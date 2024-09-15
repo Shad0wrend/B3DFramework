@@ -11,18 +11,18 @@
 
 namespace bs
 {
-	ScriptStringTables::ScriptStringTables(MonoObject* managedInstance)
-		:ScriptObject(managedInstance)
+	ScriptStringTables::ScriptStringTables()
+		:TScriptTypeDefinition()
 	{
 	}
 
-	void ScriptStringTables::InitRuntimeData()
+	void ScriptStringTables::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_SetActiveLanguage", (void*)&ScriptStringTables::InternalSetActiveLanguage);
-		metaData.ScriptClass->AddInternalCall("Internal_GetActiveLanguage", (void*)&ScriptStringTables::InternalGetActiveLanguage);
-		metaData.ScriptClass->AddInternalCall("Internal_GetTable", (void*)&ScriptStringTables::InternalGetTable);
-		metaData.ScriptClass->AddInternalCall("Internal_RemoveTable", (void*)&ScriptStringTables::InternalRemoveTable);
-		metaData.ScriptClass->AddInternalCall("Internal_SetTable", (void*)&ScriptStringTables::InternalSetTable);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetActiveLanguage", (void*)&ScriptStringTables::InternalSetActiveLanguage);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetActiveLanguage", (void*)&ScriptStringTables::InternalGetActiveLanguage);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetTable", (void*)&ScriptStringTables::InternalGetTable);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_RemoveTable", (void*)&ScriptStringTables::InternalRemoveTable);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetTable", (void*)&ScriptStringTables::InternalSetTable);
 
 	}
 
