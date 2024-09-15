@@ -6058,6 +6058,46 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			</param>
 		</ctor>
 	</class>
+	<struct native="ShaderParameter" script="ShaderParameter">
+		<doc>Contains information about a single shader parameter.</doc>
+		<field name="Name" type="string">
+			<doc>Name of the parameter variable.</doc>
+		</field>
+		<field name="Identifier" type="string">
+			<doc>Variable identifier of the parameter.</doc>
+		</field>
+		<field name="Type" type="ShaderParameterType">
+			<doc>Data type of the parameter.</doc>
+		</field>
+		<field name="Flags" type="ShaderParameterFlag">
+			<doc>Flags used to further describe the parameter.</doc>
+		</field>
+	</struct>
+	<enum native="CursorType" script="CursorType">
+		<doc>Available cursor types.</doc>
+		<enumentry native="Arrow" script="Arrow">
+		</enumentry>
+		<enumentry native="ArrowDrag" script="ArrowDrag">
+		</enumentry>
+		<enumentry native="ArrowLeftRight" script="ArrowLeftRight">
+		</enumentry>
+		<enumentry native="Wait" script="Wait">
+		</enumentry>
+		<enumentry native="IBeam" script="IBeam">
+		</enumentry>
+		<enumentry native="SizeNESW" script="SizeNESW">
+		</enumentry>
+		<enumentry native="SizeNS" script="SizeNS">
+		</enumentry>
+		<enumentry native="SizeNWSE" script="SizeNWSE">
+		</enumentry>
+		<enumentry native="SizeWE" script="SizeWE">
+		</enumentry>
+		<enumentry native="Deny" script="Deny">
+		</enumentry>
+		<enumentry native="Count" script="Count">
+		</enumentry>
+	</enum>
 	<enum native="VectorGraphicsRasterizationScaling" script="VectorGraphicsRasterizationScaling">
 		<doc>Determines how to scale path canvas when rasterizing for a particular size.</doc>
 		<enumentry native="StretchToFit" script="StretchToFit">
@@ -12565,19 +12605,76 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			</param>
 		</ctor>
 	</class>
-	<struct native="ShaderParameter" script="ShaderParameter">
-		<doc>Contains information about a single shader parameter.</doc>
-		<field name="Name" type="string">
-			<doc>Name of the parameter variable.</doc>
-		</field>
-		<field name="Identifier" type="string">
-			<doc>Variable identifier of the parameter.</doc>
-		</field>
-		<field name="Type" type="ShaderParameterType">
-			<doc>Data type of the parameter.</doc>
-		</field>
-		<field name="Flags" type="ShaderParameterFlag">
-			<doc>Flags used to further describe the parameter.</doc>
-		</field>
-	</struct>
+	<class native="Cursor" script="Cursor">
+		<doc>Allows you to manipulate the platform cursor in various ways.</doc>
+		<method native="SetScreenPosition" script="SetScreenPosition" static="false">
+			<doc>Moves the cursor to the specified screen position.</doc>
+			<param name="screenPos" type="Vector2I">
+			</param>
+		</method>
+		<method native="GetScreenPosition" script="GetScreenPosition" static="false">
+			<doc>Retrieves the cursor position in screen coordinates.</doc>
+			<returns type="Vector2I">
+			</returns>
+		</method>
+		<method native="Hide" script="Hide" static="false">
+			<doc>Hides the cursor.</doc>
+		</method>
+		<method native="Show" script="Show" static="false">
+			<doc>Shows the cursor.</doc>
+		</method>
+		<method native="ClipToRect" script="ClipToRect" static="false">
+			<doc>Limit cursor movement to specific area on the screen.</doc>
+			<param name="screenRect" type="Rect2I">
+			</param>
+		</method>
+		<method native="ClipDisable" script="ClipDisable" static="false">
+			<doc>Disables cursor clipping that was set using any of the clipTo* methods.</doc>
+		</method>
+		<method native="SetCursor" script="SetCursor" static="false">
+			<doc>Sets a cursor icon. Uses one of the built-in cursor types.</doc>
+			<param name="type" type="CursorType">
+			</param>
+		</method>
+		<method native="SetCursor" script="SetCursor" static="false">
+			<doc>Sets a cursor icon. Uses one of the manually registered icons.</doc>
+			<param name="name" type="string">
+				<doc>The name to identify the cursor, one set previously by calling setCursorIcon().</doc>
+			</param>
+		</method>
+		<method native="SetCursorIcon" script="SetCursorIcon" static="false">
+			<doc>Registers a new custom cursor icon you can then set by calling &quot;setCursor&quot;.</doc>
+			<param name="name" type="string">
+				<doc>The name to identify the cursor.</doc>
+			</param>
+			<param name="pixelData" type="PixelData">
+				<doc>Cursor image data.</doc>
+			</param>
+			<param name="hotSpot" type="Vector2I">
+				<doc>Offset on the cursor image to where the actual input happens (for example tip of the Arrow cursor).</doc>
+			</param>
+		</method>
+		<method native="SetCursorIcon" script="SetCursorIcon" static="false">
+			<doc>Registers a new custom cursor icon you can then set by calling setCursor().</doc>
+			<param name="type" type="CursorType">
+				<doc>One of the built-in cursor types.</doc>
+			</param>
+			<param name="pixelData" type="PixelData">
+				<doc>Cursor image data.</doc>
+			</param>
+			<param name="hotSpot" type="Vector2I">
+				<doc>Offset on the cursor image to where the actual input happens (for example tip of the Arrow cursor).</doc>
+			</param>
+		</method>
+		<method native="ClearCursorIcon" script="ClearCursorIcon" static="false">
+			<doc>Removes a custom cursor icon and releases any data associated with it.</doc>
+			<param name="name" type="string">
+			</param>
+		</method>
+		<method native="ClearCursorIcon" script="ClearCursorIcon" static="false">
+			<doc>Removes a custom cursor icon and releases any data associated with it. Restores original icon associated with this cursor type.</doc>
+			<param name="type" type="CursorType">
+			</param>
+		</method>
+	</class>
 </entries>

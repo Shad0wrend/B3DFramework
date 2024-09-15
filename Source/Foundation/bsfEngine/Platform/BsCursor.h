@@ -18,7 +18,7 @@ namespace bs
 	 *
 	 * @note	Thread safe.
 	 */
-	class B3D_EXPORT Cursor : public Module<Cursor>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Platform)) Cursor : public Module<Cursor>
 	{
 		/**	Internal container for data about a single cursor icon. */
 		struct CustomIcon
@@ -37,27 +37,34 @@ namespace bs
 		Cursor();
 
 		/**	Moves the cursor to the specified screen position. */
+		B3D_SCRIPT_EXPORT()
 		void SetScreenPosition(const Vector2I& screenPos);
 
 		/**	Retrieves the cursor position in screen coordinates. */
+		B3D_SCRIPT_EXPORT()
 		Vector2I GetScreenPosition();
 
 		/**	Hides the cursor. */
+		B3D_SCRIPT_EXPORT()
 		void Hide();
 
 		/**	Shows the cursor. */
+		B3D_SCRIPT_EXPORT()
 		void Show();
 
 		/**	Limit cursor movement to the specified window. */
 		void ClipToWindow(const RenderWindow& window);
 
 		/**	Limit cursor movement to specific area on the screen. */
+		B3D_SCRIPT_EXPORT()
 		void ClipToRect(const Rect2I& screenRect);
 
 		/**	Disables cursor clipping that was set using any of the clipTo* methods. */
+		B3D_SCRIPT_EXPORT()
 		void ClipDisable();
 
 		/**	Sets a cursor icon. Uses one of the built-in cursor types. */
+		B3D_SCRIPT_EXPORT()
 		void SetCursor(CursorType type);
 
 		/**
@@ -65,6 +72,7 @@ namespace bs
 		 *
 		 * @param[in]	name		The name to identify the cursor, one set previously by calling setCursorIcon().
 		 */
+		B3D_SCRIPT_EXPORT()
 		void SetCursor(const String& name);
 
 		/**
@@ -79,6 +87,7 @@ namespace bs
 		 * Stores an internal copy of the pixel data. Clear it by calling removeCursorIcon(). If a custom icon with the
 		 * same name already exists it will be replaced.
 		 */
+		B3D_SCRIPT_EXPORT()
 		void SetCursorIcon(const String& name, const PixelData& pixelData, const Vector2I& hotSpot);
 
 		/**
@@ -93,15 +102,18 @@ namespace bs
 		 * Stores an internal copy of the pixel data. Clear it by calling removeCursorIcon(). If a custom icon with the
 		 * same type already exists it will be replaced.
 		 */
+		B3D_SCRIPT_EXPORT()
 		void SetCursorIcon(CursorType type, const PixelData& pixelData, const Vector2I& hotSpot);
 
 		/**	Removes a custom cursor icon and releases any data associated with it. */
+		B3D_SCRIPT_EXPORT()
 		void ClearCursorIcon(const String& name);
 
 		/**
 		 * Removes a custom cursor icon and releases any data associated with it. Restores original icon associated with
 		 * this cursor type.
 		 */
+		B3D_SCRIPT_EXPORT()
 		void ClearCursorIcon(CursorType type);
 
 	private:

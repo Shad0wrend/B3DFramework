@@ -9,7 +9,7 @@ namespace bs
 	 */
 
 	/**	Available cursor types. */
-	enum class CursorType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Platform)) CursorType
 	{
 		Arrow,
 		ArrowDrag,
