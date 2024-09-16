@@ -8,7 +8,7 @@
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Material/BsMaterial.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector2.generated.h"
 
 namespace bs
 {

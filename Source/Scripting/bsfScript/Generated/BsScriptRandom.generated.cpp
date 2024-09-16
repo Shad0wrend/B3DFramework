@@ -6,7 +6,7 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfUtility/Math/BsRandom.h"
 #include "BsScriptTVector3.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector2.generated.h"
 
 namespace bs
 {

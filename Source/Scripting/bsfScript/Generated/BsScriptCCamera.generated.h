@@ -10,7 +10,7 @@
 #include "../../../Foundation/bsfCore/Renderer/BsCamera.h"
 #include "Math/BsRadian.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
-#include "Math/BsVector2.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 #include "Math/BsRay.h"
 
 namespace bs { class CCamera; }

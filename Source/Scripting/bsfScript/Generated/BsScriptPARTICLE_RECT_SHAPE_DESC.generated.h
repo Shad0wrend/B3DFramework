@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
-#include "Math/BsVector2.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 
 namespace bs
 {

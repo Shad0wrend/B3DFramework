@@ -9,7 +9,7 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationClip.h"
 #include "BsScriptBlend1DInfo.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector2.generated.h"
 #include "BsScriptBlend2DInfo.generated.h"
 #include "BsScriptAnimationClipState.generated.h"
 

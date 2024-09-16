@@ -7,7 +7,7 @@
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector2.generated.h"
 
 namespace bs
 {

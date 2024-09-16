@@ -147,6 +147,45 @@
 			<doc>Returns the precise time since application start, in microseconds. Unlike other time methods this is not only updated every frame, but will return exact time at the moment it is called.</doc>
 		</property>
 	</class>
+	<enum native="AudioFormat" script="AudioFormat">
+		<doc>Valid internal engine audio formats.</doc>
+		<enumentry native="PCM" script="PCM">
+			<doc>Pulse code modulation audio (&quot;raw&quot; uncompressed audio).</doc>
+		</enumentry>
+		<enumentry native="VORBIS" script="VORBIS">
+			<doc>Vorbis compressed audio.</doc>
+		</enumentry>
+	</enum>
+	<struct native="TVector2&lt;float&gt;" script="Vector2">
+		<doc>A two dimensional vector.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="float">
+			</param>
+			<param name="y" type="float">
+			</param>
+		</ctor>
+		<field name="X" type="float">
+		</field>
+		<field name="Y" type="float">
+		</field>
+	</struct>
+	<struct native="TVector2&lt;double&gt;" script="Vector2d">
+		<doc>A two dimensional vector.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="double">
+			</param>
+			<param name="y" type="double">
+			</param>
+		</ctor>
+		<field name="X" type="double">
+		</field>
+		<field name="Y" type="double">
+		</field>
+	</struct>
 	<enum native="LogVerbosity" script="LogVerbosity">
 		<doc>Represents verbosity level at which a specific log message will be displayed.</doc>
 		<enumentry native="Fatal" script="Fatal">
@@ -277,121 +316,6 @@
 			<doc>Returns the number of color keys in the gradient.</doc>
 		</property>
 	</class>
-	<class native="MultiResource" script="MultiResource">
-		<doc>Contains a group of resources imported from a single source file.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="entries" type="SubResource">
-			</param>
-		</ctor>
-		<property name="Entries" type="SubResource" getter="GetEntries" setter="SetEntries" static="false">
-		</property>
-	</class>
-	<class native="ColorGradientHDR" script="ColorGradientHDR">
-		<doc>Represents a range of color values over some parameters, similar to a curve. Internally represented as a set of keys that get interpolated between. Capable of representing HDR colors, unlike the normal ColorGradient.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="color" type="Color">
-			</param>
-		</ctor>
-		<ctor>
-			<param name="keys" type="ColorGradientKey">
-			</param>
-		</ctor>
-		<method native="SetKeys" script="SetKeys" static="false">
-			<doc>Keys that control the gradient, sorted by time from first to last. Key times should be in range [0, 1].</doc>
-			<param name="keys" type="ColorGradientKey">
-			</param>
-			<param name="duration" type="float">
-			</param>
-		</method>
-		<method native="GetKeys" script="GetKeys" static="false">
-			<returns type="ColorGradientKey">
-			</returns>
-		</method>
-		<method native="GetKey" script="GetKey" static="false">
-			<doc>Returns the color key at the specified index. If out of range an empty key is returned.</doc>
-			<param name="idx" type="int">
-			</param>
-			<returns type="ColorGradientKey">
-			</returns>
-		</method>
-		<method native="SetConstant" script="SetConstant" static="false">
-			<doc>Specify a &quot;gradient&quot; that represents a single color value.</doc>
-			<param name="color" type="Color">
-			</param>
-		</method>
-		<method native="Evaluate" script="Evaluate" static="false">
-			<param name="t" type="float">
-			</param>
-			<returns type="Color">
-			</returns>
-		</method>
-		<property name="NumKeys" type="int" getter="GetNumKeys" setter="" static="false">
-			<doc>Returns the number of color keys in the gradient.</doc>
-		</property>
-	</class>
-	<struct native="RENDER_WINDOW_DESC" script="RenderWindowDesc">
-		<doc>Structure that is used for initializing a render window.</doc>
-		<ctor>
-		</ctor>
-		<field name="VideoMode" type="VideoMode">
-			<doc>Output monitor, frame buffer resize and refresh rate.</doc>
-		</field>
-		<field name="Fullscreen" type="bool">
-			<doc>Should the window be opened in fullscreen mode.</doc>
-		</field>
-		<field name="Vsync" type="bool">
-			<doc>Should the window wait for vertical sync before swapping buffers.</doc>
-		</field>
-		<field name="VsyncInterval" type="int">
-			<doc>Determines how many vsync intervals occur per frame. FPS = refreshRate/interval. Usually 1 when vsync active.</doc>
-		</field>
-		<field name="Hidden" type="bool">
-			<doc>Should the window be hidden initially.</doc>
-		</field>
-		<field name="DepthBuffer" type="bool">
-			<doc>Should the window be created with a depth/stencil buffer.</doc>
-		</field>
-		<field name="MultisampleCount" type="int">
-			<doc>If higher than 1, texture containing multiple samples per pixel is created.</doc>
-		</field>
-		<field name="MultisampleHint" type="string">
-			<doc>Hint about what kind of multisampling to use. Render system specific.</doc>
-		</field>
-		<field name="Gamma" type="bool">
-			<doc>Should the written color pixels be gamma corrected before write.</doc>
-		</field>
-		<field name="Left" type="int">
-			<doc>Window origin on X axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
-		</field>
-		<field name="Top" type="int">
-			<doc>Window origin on Y axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
-		</field>
-		<field name="Title" type="string">
-			<doc>Title of the window.</doc>
-		</field>
-		<field name="ShowTitleBar" type="bool">
-			<doc>Determines if the title-bar should be shown or not.</doc>
-		</field>
-		<field name="ShowBorder" type="bool">
-			<doc>Determines if the window border should be shown or not.</doc>
-		</field>
-		<field name="AllowResize" type="bool">
-			<doc>Determines if the user can resize the window by dragging on the window edges.</doc>
-		</field>
-		<field name="ToolWindow" type="bool">
-			<doc>Tool windows have no task bar entry and always remain on top of their parent window.</doc>
-		</field>
-		<field name="Modal" type="bool">
-			<doc>When a modal window is open all other windows will be locked until modal window is closed.</doc>
-		</field>
-		<field name="HideUntilSwap" type="bool">
-			<doc>Window will be created as hidden and only be shown when the first framebuffer swap happens.</doc>
-		</field>
-	</struct>
 	<enum native="PropertyDistributionType" script="PropertyDistributionType">
 		<doc>Determines type of distribution used by distribution properties.</doc>
 		<enumentry native="PDT_Constant" script="Constant">
@@ -525,6 +449,121 @@
 		</method>
 		<property name="KeyFrames" type="KeyFrameInt" getter="GetKeyFrames" setter="" static="false">
 			<doc>Returns a list of all keyframes in the curve.</doc>
+		</property>
+	</class>
+	<class native="MultiResource" script="MultiResource">
+		<doc>Contains a group of resources imported from a single source file.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="entries" type="SubResource">
+			</param>
+		</ctor>
+		<property name="Entries" type="SubResource" getter="GetEntries" setter="SetEntries" static="false">
+		</property>
+	</class>
+	<struct native="RENDER_WINDOW_DESC" script="RenderWindowDesc">
+		<doc>Structure that is used for initializing a render window.</doc>
+		<ctor>
+		</ctor>
+		<field name="VideoMode" type="VideoMode">
+			<doc>Output monitor, frame buffer resize and refresh rate.</doc>
+		</field>
+		<field name="Fullscreen" type="bool">
+			<doc>Should the window be opened in fullscreen mode.</doc>
+		</field>
+		<field name="Vsync" type="bool">
+			<doc>Should the window wait for vertical sync before swapping buffers.</doc>
+		</field>
+		<field name="VsyncInterval" type="int">
+			<doc>Determines how many vsync intervals occur per frame. FPS = refreshRate/interval. Usually 1 when vsync active.</doc>
+		</field>
+		<field name="Hidden" type="bool">
+			<doc>Should the window be hidden initially.</doc>
+		</field>
+		<field name="DepthBuffer" type="bool">
+			<doc>Should the window be created with a depth/stencil buffer.</doc>
+		</field>
+		<field name="MultisampleCount" type="int">
+			<doc>If higher than 1, texture containing multiple samples per pixel is created.</doc>
+		</field>
+		<field name="MultisampleHint" type="string">
+			<doc>Hint about what kind of multisampling to use. Render system specific.</doc>
+		</field>
+		<field name="Gamma" type="bool">
+			<doc>Should the written color pixels be gamma corrected before write.</doc>
+		</field>
+		<field name="Left" type="int">
+			<doc>Window origin on X axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
+		</field>
+		<field name="Top" type="int">
+			<doc>Window origin on Y axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
+		</field>
+		<field name="Title" type="string">
+			<doc>Title of the window.</doc>
+		</field>
+		<field name="ShowTitleBar" type="bool">
+			<doc>Determines if the title-bar should be shown or not.</doc>
+		</field>
+		<field name="ShowBorder" type="bool">
+			<doc>Determines if the window border should be shown or not.</doc>
+		</field>
+		<field name="AllowResize" type="bool">
+			<doc>Determines if the user can resize the window by dragging on the window edges.</doc>
+		</field>
+		<field name="ToolWindow" type="bool">
+			<doc>Tool windows have no task bar entry and always remain on top of their parent window.</doc>
+		</field>
+		<field name="Modal" type="bool">
+			<doc>When a modal window is open all other windows will be locked until modal window is closed.</doc>
+		</field>
+		<field name="HideUntilSwap" type="bool">
+			<doc>Window will be created as hidden and only be shown when the first framebuffer swap happens.</doc>
+		</field>
+	</struct>
+	<class native="ColorGradientHDR" script="ColorGradientHDR">
+		<doc>Represents a range of color values over some parameters, similar to a curve. Internally represented as a set of keys that get interpolated between. Capable of representing HDR colors, unlike the normal ColorGradient.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="color" type="Color">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="keys" type="ColorGradientKey">
+			</param>
+		</ctor>
+		<method native="SetKeys" script="SetKeys" static="false">
+			<doc>Keys that control the gradient, sorted by time from first to last. Key times should be in range [0, 1].</doc>
+			<param name="keys" type="ColorGradientKey">
+			</param>
+			<param name="duration" type="float">
+			</param>
+		</method>
+		<method native="GetKeys" script="GetKeys" static="false">
+			<returns type="ColorGradientKey">
+			</returns>
+		</method>
+		<method native="GetKey" script="GetKey" static="false">
+			<doc>Returns the color key at the specified index. If out of range an empty key is returned.</doc>
+			<param name="idx" type="int">
+			</param>
+			<returns type="ColorGradientKey">
+			</returns>
+		</method>
+		<method native="SetConstant" script="SetConstant" static="false">
+			<doc>Specify a &quot;gradient&quot; that represents a single color value.</doc>
+			<param name="color" type="Color">
+			</param>
+		</method>
+		<method native="Evaluate" script="Evaluate" static="false">
+			<param name="t" type="float">
+			</param>
+			<returns type="Color">
+			</returns>
+		</method>
+		<property name="NumKeys" type="int" getter="GetNumKeys" setter="" static="false">
+			<doc>Returns the number of color keys in the gradient.</doc>
 		</property>
 	</class>
 	<struct native="Blend1DInfo" script="Blend1DInfo">
@@ -2193,15 +2232,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Returns a list of all available audio devices.</doc>
 		</property>
 	</class>
-	<enum native="AudioFormat" script="AudioFormat">
-		<doc>Valid internal engine audio formats.</doc>
-		<enumentry native="PCM" script="PCM">
-			<doc>Pulse code modulation audio (&quot;raw&quot; uncompressed audio).</doc>
-		</enumentry>
-		<enumentry native="VORBIS" script="VORBIS">
-			<doc>Vorbis compressed audio.</doc>
-		</enumentry>
-	</enum>
 	<enum native="AudioReadMode" script="AudioReadMode">
 		<doc>Modes that determine how and when is audio data read.</doc>
 		<enumentry native="LoadDecompressed" script="LoadDecompressed">

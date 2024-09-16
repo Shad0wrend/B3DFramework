@@ -6,8 +6,8 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "BsScriptTVector3.generated.h"
-#include "Math/BsVector2.h"
-#include "Wrappers/BsScriptVector.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2.h"
+#include "BsScriptTVector2.generated.h"
 #include "Math/BsQuaternion.h"
 #include "Wrappers/BsScriptQuaternion.h"
 

@@ -1,0 +1,37 @@
+//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#include "BsScriptTVector2.generated.h"
+#include "BsMonoMethod.h"
+#include "BsMonoClass.h"
+#include "BsMonoUtil.h"
+
+namespace bs
+{
+	ScriptVector2::ScriptVector2()
+	{ }
+
+	MonoObject* ScriptVector2::Box(const TVector2<float>& value)
+	{
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
+	}
+
+	TVector2<float> ScriptVector2::Unbox(MonoObject* value)
+	{
+		return *(TVector2<float>*)MonoUtil::Unbox(value);
+	}
+
+
+	ScriptVector2d::ScriptVector2d()
+	{ }
+
+	MonoObject* ScriptVector2d::Box(const TVector2<double>& value)
+	{
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
+	}
+
+	TVector2<double> ScriptVector2d::Unbox(MonoObject* value)
+	{
+		return *(TVector2<double>*)MonoUtil::Unbox(value);
+	}
+
+}

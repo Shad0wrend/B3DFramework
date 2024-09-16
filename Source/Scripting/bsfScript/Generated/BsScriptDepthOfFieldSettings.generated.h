@@ -6,7 +6,7 @@
 #include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRenderSettings.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRenderSettings.h"
-#include "Math/BsVector2.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 
 namespace bs { struct DepthOfFieldSettings; }
 namespace bs

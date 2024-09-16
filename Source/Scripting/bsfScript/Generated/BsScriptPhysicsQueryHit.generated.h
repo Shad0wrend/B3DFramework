@@ -6,7 +6,7 @@
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
-#include "Math/BsVector2.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 
 namespace bs
 {

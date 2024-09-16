@@ -14,7 +14,7 @@
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
-#include "Math/BsVector2.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 #include "Math/BsQuaternion.h"
 
 namespace bs

@@ -10,7 +10,7 @@
 #include "BsScriptTVector3.generated.h"
 #include "BsScriptTKeyframe.generated.h"
 #include "BsScriptTKeyframe.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector2.generated.h"
 #include "Wrappers/BsScriptQuaternion.h"
 
 namespace bs

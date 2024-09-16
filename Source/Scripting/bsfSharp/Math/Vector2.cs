@@ -12,12 +12,8 @@ namespace bs
     /// <summary>
     /// A two dimensional vector.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential), SerializeObject]
-    public struct Vector2 // Note: Must match C++ struct Vector2
+    public partial struct Vector2
     {
-        public float x;
-        public float y;
-
         public static readonly Vector2 Zero = new Vector2(0.0f, 0.0f);
         public static readonly Vector2 One = new Vector2(1.0f, 1.0f);
         public static readonly Vector2 XAxis = new Vector2(1.0f, 0.0f);
@@ -35,9 +31,9 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        return x;
+                        return X;
                     case 1:
-                        return y;
+                        return Y;
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector2 index.");
                 }
@@ -48,10 +44,10 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        x = value;
+                        X = value;
                         break;
                     case 1:
-                        y = value;
+                        Y = value;
                         break;
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector2 index.");
@@ -77,7 +73,7 @@ namespace bs
         {
             get
             {
-                return MathEx.Sqrt(x * x + y * y);
+                return MathEx.Sqrt(X * X + Y * Y);
             }
         }
 
@@ -88,77 +84,58 @@ namespace bs
         {
             get
             {
-                return (x * x + y * y);
+                return (X * X + Y * Y);
             }
-        }
-
-        /// <summary>
-        /// Creates a new default initialized vector value.
-        /// </summary>
-        public static Vector2 Default()
-        {
-            return new Vector2();
-        }
-
-        /// <summary>
-        /// Creates a new two dimensional vector.
-        /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        public Vector2(float x, float y)
-        {
-            this.x = x;
-            this.y = y;
         }
 
         public static Vector2 operator +(Vector2 a, Vector2 b)
         {
-            return new Vector2(a.x + b.x, a.y + b.y);
+            return new Vector2(a.X + b.X, a.Y + b.Y);
         }
 
         public static Vector2 operator +(Vector2 v, float scalar)
         {
-            return new Vector2(v.x + scalar, v.y + scalar);
+            return new Vector2(v.X + scalar, v.Y + scalar);
         }
 
         public static Vector2 operator -(Vector2 a, Vector2 b)
         {
-            return new Vector2(a.x - b.x, a.y - b.y);
+            return new Vector2(a.X - b.X, a.Y - b.Y);
         }
 
         public static Vector2 operator -(Vector2 v)
         {
-            return new Vector2(-v.x, -v.y);
+            return new Vector2(-v.X, -v.Y);
         }
 
         public static Vector2 operator -(Vector2 v, float scalar)
         {
-            return new Vector2(v.x - scalar, v.y - scalar);
+            return new Vector2(v.X - scalar, v.Y - scalar);
         }
 
         public static Vector2 operator *(Vector2 a, Vector2 b)
         {
-            return new Vector2(a.x * b.x, a.y * b.y);
+            return new Vector2(a.X * b.X, a.Y * b.Y);
         }
 
         public static Vector2 operator *(Vector2 v, float d)
         {
-            return new Vector2(v.x * d, v.y * d);
+            return new Vector2(v.X * d, v.Y * d);
         }
 
         public static Vector2 operator *(float d, Vector2 v)
         {
-            return new Vector2(v.x * d, v.y * d);
+            return new Vector2(v.X * d, v.Y * d);
         }
 
         public static Vector2 operator /(Vector2 v, float d)
         {
-            return new Vector2(v.x / d, v.y / d);
+            return new Vector2(v.X / d, v.Y / d);
         }
 
         public static bool operator ==(Vector2 lhs, Vector2 rhs)
         {
-            return lhs.x == rhs.x && lhs.y == rhs.y;
+            return lhs.X == rhs.X && lhs.Y == rhs.Y;
         }
 
         public static bool operator !=(Vector2 lhs, Vector2 rhs)
@@ -174,7 +151,7 @@ namespace bs
         /// <returns>One vector scaled by another.</returns>
         public static Vector2 Scale(Vector2 a, Vector2 b)
         {
-            return new Vector2(a.x * b.x, a.y * b.y);
+            return new Vector2(a.X * b.X, a.Y * b.Y);
         }
 
         /// <summary>
@@ -199,7 +176,7 @@ namespace bs
         /// <returns>Inner product between the two vectors.</returns>
         public static float Dot(Vector2 lhs, Vector2 rhs)
         {
-            return lhs.x * rhs.x + lhs.y * rhs.y;
+            return lhs.X * rhs.X + lhs.Y * rhs.Y;
         }
 
         /// <summary>
@@ -210,7 +187,7 @@ namespace bs
         /// <returns>Cross product between the two vectors.</returns>
         public static float Cross(Vector2 lhs, Vector2 rhs)
         {
-            return lhs.x * rhs.y - lhs.y * rhs.x;
+            return lhs.X * rhs.Y - lhs.Y * rhs.X;
         }
 
         /// <summary>
@@ -221,8 +198,8 @@ namespace bs
         /// <returns>Distance between the two points.</returns>
         public static float Distance(Vector2 a, Vector2 b)
         {
-            Vector2 vector2 = new Vector2(a.x - b.x, a.y - b.y);
-            return MathEx.Sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
+            Vector2 vector2 = new Vector2(a.X - b.X, a.Y - b.Y);
+            return MathEx.Sqrt(vector2.X * vector2.X + vector2.Y * vector2.Y);
         }
 
         /// <summary>
@@ -232,7 +209,7 @@ namespace bs
         /// <returns>Magnitude of the vector.</returns>
         public static float Magnitude(Vector2 v)
         {
-            return MathEx.Sqrt(v.x * v.x + v.y * v.y);
+            return MathEx.Sqrt(v.X * v.X + v.Y * v.Y);
         }
 
         /// <summary>
@@ -242,7 +219,7 @@ namespace bs
         /// <returns>Squared magnitude of the vector.</returns>
         public static float SqrMagnitude(Vector2 v)
         {
-            return (v.x * v.x + v.y * v.y);
+            return (v.X * v.X + v.Y * v.Y);
         }
 
         /// <summary>
@@ -253,7 +230,7 @@ namespace bs
         /// <returns>Vector consisting of maximum components of the first and second vector.</returns>
         public static Vector2 Max(Vector2 a, Vector2 b)
         {
-            return new Vector2(MathEx.Max(a.x, b.x), MathEx.Max(a.y, b.y));
+            return new Vector2(MathEx.Max(a.X, b.X), MathEx.Max(a.Y, b.Y));
         }
 
         /// <summary>
@@ -264,7 +241,7 @@ namespace bs
         /// <returns>Vector consisting of minimum components of the first and second vector.</returns>
         public static Vector2 Min(Vector2 a, Vector2 b)
         {
-            return new Vector2(MathEx.Min(a.x, b.x), MathEx.Min(a.y, b.y));
+            return new Vector2(MathEx.Min(a.X, b.X), MathEx.Min(a.Y, b.Y));
         }
 
         /// <summary>
@@ -273,8 +250,8 @@ namespace bs
         /// <param name="scale">Scale factors to multiply components by.</param>
         public void Scale(Vector2 scale)
         {
-            x *= scale.x;
-            y *= scale.y;
+            X *= scale.X;
+            Y *= scale.Y;
         }
 
         /// <summary>
@@ -290,7 +267,7 @@ namespace bs
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return x.GetHashCode() ^ y.GetHashCode() << 2;
+            return X.GetHashCode() ^ Y.GetHashCode() << 2;
         }
 
         /// <inheritdoc/>
@@ -300,7 +277,7 @@ namespace bs
                 return false;
 
             Vector2 vec = (Vector2)other;
-            if (x.Equals(vec.x) && y.Equals(vec.y))
+            if (X.Equals(vec.X) && Y.Equals(vec.Y))
                 return true;
 
             return false;
@@ -309,7 +286,7 @@ namespace bs
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "(" + x + ", " + y + ")";
+            return "(" + X + ", " + Y + ")";
         }
     }
 

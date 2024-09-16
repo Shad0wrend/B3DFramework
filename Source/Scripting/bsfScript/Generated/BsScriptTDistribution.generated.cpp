@@ -8,7 +8,7 @@
 #include "BsScriptTAnimationCurve.generated.h"
 #include "BsScriptTVector3.generated.h"
 #include "BsScriptTAnimationCurve.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector2.generated.h"
 #include "BsScriptTAnimationCurve.generated.h"
 
 namespace bs

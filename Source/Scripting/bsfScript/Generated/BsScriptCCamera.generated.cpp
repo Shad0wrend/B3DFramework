@@ -9,7 +9,7 @@
 #include "BsScriptRenderSettings.generated.h"
 #include "BsScriptViewport.generated.h"
 #include "BsScriptTVector3.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector2.generated.h"
 
 namespace bs
 {

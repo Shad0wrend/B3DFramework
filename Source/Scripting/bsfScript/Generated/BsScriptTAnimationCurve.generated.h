@@ -24,7 +24,7 @@
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
-#include "Math/BsVector2.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 #include "Math/BsQuaternion.h"
 
 namespace bs { struct __TKeyframe_TVector3_float__Interop; }

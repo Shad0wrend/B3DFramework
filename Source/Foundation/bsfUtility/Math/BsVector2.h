@@ -20,6 +20,7 @@ namespace bs
 
 		constexpr TVector2() = default;
 
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		constexpr TVector2(BS_ZERO)
 			: X((T)0.0), Y((T)0.0)
 		{}
@@ -361,8 +362,8 @@ namespace bs
 	template<> const TVector2<float> TVector2<float>::kUnitY{0.0f, 1.0f};
 	template<> const TVector2<double> TVector2<double>::kUnitY{0.0, 1.0};
 
-	extern template struct TVector2<float>;
-	extern template struct TVector2<double>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector2)) TVector2<float>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector2d)) TVector2<double>;
 
 	/** @} */
 } // namespace bs

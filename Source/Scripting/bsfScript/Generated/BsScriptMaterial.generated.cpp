@@ -13,7 +13,7 @@
 #include "BsScriptShaderVariationParameters.generated.h"
 #include "BsScriptColorGradientHDR.generated.h"
 #include "BsScriptTAnimationCurve.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector2.generated.h"
 #include "BsScriptTVector3.generated.h"
 #include "Wrappers/BsScriptVector.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"

@@ -10,7 +10,7 @@
 #include "../Extensions/BsMeshDataEx.h"
 #include "Wrappers/BsScriptVector.h"
 #include "Wrappers/BsScriptColor.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector2.generated.h"
 #include "BsScriptBoneWeight.generated.h"
 
 namespace bs

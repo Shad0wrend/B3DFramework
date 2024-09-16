@@ -10,7 +10,7 @@
 #include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 #include "Math/BsVector4.h"
 #include "Image/BsColor.h"
-#include "Math/BsVector2.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 #include "../../../Foundation/bsfCore/Mesh/BsMeshData.h"
 
 namespace bs { class MeshDataEx; }

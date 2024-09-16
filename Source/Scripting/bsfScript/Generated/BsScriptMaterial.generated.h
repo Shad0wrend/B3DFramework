@@ -9,7 +9,7 @@
 #include "../../../Foundation/bsfCore/Material/BsShaderVariation.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
-#include "Math/BsVector2.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "Math/BsVector4.h"
 #include "Math/BsMatrix3.h"

@@ -14,22 +14,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/**	Interop class between C++ & CLR for Vector2. */
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector2 : public ScriptObject<ScriptVector2>
-	{
-	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Vector2")
-
-		/** Unboxes a boxed managed Vector2 struct and returns the native version of the structure. */
-		static Vector2 Unbox(MonoObject* obj);
-
-		/**	Boxes a native Vector2 struct and returns a managed object containing it. */
-		static MonoObject* Box(const Vector2& value);
-
-	private:
-		ScriptVector2(MonoObject* instance);
-	};
-
 	/**	Interop class between C++ & CLR for Vector4. */
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector4 : public ScriptObject<ScriptVector4>
 	{
