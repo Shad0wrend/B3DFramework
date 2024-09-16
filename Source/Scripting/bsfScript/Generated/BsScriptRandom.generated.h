@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfUtility/Math/BsRandom.h"
 #include "BsScriptObject.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "Math/BsVector2.h"
 #include "Math/BsDegree.h"
 

@@ -6,8 +6,8 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Components/BsCCollider.h"
 #include "BsScriptCCollider.generated.h"
-#include "Math/BsVector3.h"
-#include "Wrappers/BsScriptVector.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
+#include "BsScriptTVector3.generated.h"
 
 namespace bs
 {

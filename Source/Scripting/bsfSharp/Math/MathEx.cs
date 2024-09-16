@@ -776,7 +776,7 @@ namespace bs
         /// <returns>True if equal, false otherwise.</returns>
         public static bool ApproxEquals(Vector3 a, Vector3 b, float epsilon = 1.192092896e-07F)
         {
-            return Abs(b.x - a.x) <= epsilon && Abs(b.y - a.y) <= epsilon && Abs(b.z - a.z) <= epsilon;
+            return Abs(b.X - a.X) <= epsilon && Abs(b.Y - a.Y) <= epsilon && Abs(b.Z - a.Z) <= epsilon;
         }
 
         /// <summary>

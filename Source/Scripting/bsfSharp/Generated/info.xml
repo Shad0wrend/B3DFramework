@@ -189,58 +189,6 @@
 			<doc>Returns the total number of bones in the skeleton.</doc>
 		</property>
 	</class>
-	<class native="MotionBlurSettings" script="MotionBlurSettings">
-		<doc>Settings that control the motion blur effect.</doc>
-		<ctor>
-		</ctor>
-		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
-			<doc>Enables or disables the motion blur effect.</doc>
-		</property>
-		<property name="Domain" type="MotionBlurDomain" getter="GetDomain" setter="SetDomain" static="false">
-			<doc>Determines which parts of the scene will trigger motion blur.</doc>
-		</property>
-		<property name="Filter" type="MotionBlurFilter" getter="GetFilter" setter="SetFilter" static="false">
-			<doc>Type of filter to use when filtering samples contributing to a blurred pixel.</doc>
-		</property>
-		<property name="Quality" type="MotionBlurQuality" getter="GetQuality" setter="SetQuality" static="false">
-			<doc>Determines the number of samples to take during motion blur filtering. Increasing this value will yield higher quality blur at the cost of the performance.</doc>
-		</property>
-		<property name="MaximumRadius" type="float" getter="GetMaximumRadius" setter="SetMaximumRadius" static="false">
-			<doc>Determines the maximum radius over which the blur samples are allowed to be taken, in percent of the screen width (e.g. with 1% radius, on 1920x1028 resolution the maximum radius in pixels will be 1920 * 0.01 = 20px). This clamps the maximum velocity that can affect the blur, as higher velocities require higher radius. Very high values can adversely affect performance as cache accesses become more random.</doc>
-		</property>
-	</class>
-	<struct native="START_UP_DESC" script="StartUpDesc">
-		<doc>Structure containing parameters for starting the application.</doc>
-		<ctor>
-		</ctor>
-		<field name="RenderApi" type="string">
-			<doc>Name of the render system plugin to use.</doc>
-		</field>
-		<field name="Renderer" type="string">
-			<doc>Name of the renderer plugin to use.</doc>
-		</field>
-		<field name="Physics" type="string">
-			<doc>Name of physics plugin to use.</doc>
-		</field>
-		<field name="Audio" type="string">
-			<doc>Name of the audio plugin to use.</doc>
-		</field>
-		<field name="Input" type="string">
-			<doc>Name of the input plugin to use.</doc>
-		</field>
-		<field name="PhysicsCooking" type="bool">
-			<doc>True if physics cooking library should be loaded. Cooking is useful for creating collision meshes during development type, but might be unnecessary in the final application. When turned off you can save on space by not shipping the cooking library.</doc>
-		</field>
-		<field name="AsyncAnimation" type="bool">
-			<doc>True if animation should be evaluated at the same time while rendering is happening. This introduces a one frame delay to all animations but can result in better performance. If false the animation will be forced to finish evaluating before rendering starts, ensuring up-to-date frame but potentially blocking the rendering thread from moving forward until the animation finishes.</doc>
-		</field>
-		<field name="PrimaryWindowDesc" type="RenderWindowDesc">
-			<doc>Describes the window to create during start-up.</doc>
-		</field>
-		<field name="Importers" type="string">
-			<doc>A list of importer plugins to load.</doc>
-		</field>
-	</struct>
 	<struct native="ColorGradientKey" script="ColorGradientKey">
 		<doc>Single key in a ColorGradient.</doc>
 		<ctor>
@@ -328,98 +276,6 @@
 		<property name="NumKeys" type="int" getter="GetNumKeys" setter="" static="false">
 			<doc>Returns the number of color keys in the gradient.</doc>
 		</property>
-	</class>
-	<class native="Random" script="Random">
-		<doc>Generates pseudo random numbers using the Xorshift128 algorithm. Suitable for high performance requirements.</doc>
-		<ctor>
-			<doc>Initializes a new generator using the specified seed.</doc>
-			<param name="seed" type="int">
-			</param>
-		</ctor>
-		<method native="SetSeed" script="SetSeed" static="false">
-			<doc>Changes the seed of the generator to the specified value.</doc>
-			<param name="seed" type="int">
-			</param>
-		</method>
-		<method native="Get" script="Get" static="false">
-			<doc>Returns a random value in range [0, std::numeric_limits&lt;uint32_t&gt;::max()].</doc>
-			<returns type="int">
-			</returns>
-		</method>
-		<method native="GetRange" script="GetRange" static="false">
-			<doc>Returns a random value in range [min, max].</doc>
-			<param name="min" type="int">
-			</param>
-			<param name="max" type="int">
-			</param>
-			<returns type="int">
-			</returns>
-		</method>
-		<method native="GetUNorm" script="GetUNorm" static="false">
-			<doc>Returns a random value in range [0, 1].</doc>
-			<returns type="float">
-			</returns>
-		</method>
-		<method native="GetSNorm" script="GetSNorm" static="false">
-			<doc>Returns a random value in range [-1, 1].</doc>
-			<returns type="float">
-			</returns>
-		</method>
-		<method native="GetUnitVector" script="GetUnitVector" static="false">
-			<doc>Returns a random unit vector in three dimensions.</doc>
-			<returns type="Vector3">
-			</returns>
-		</method>
-		<method native="GetUnitVector2D" script="GetUnitVector2D" static="false">
-			<doc>Returns a random unit vector in two dimensions.</doc>
-			<returns type="Vector2">
-			</returns>
-		</method>
-		<method native="GetPointInSphere" script="GetPointInSphere" static="false">
-			<doc>Returns a random point inside a unit sphere.</doc>
-			<returns type="Vector3">
-			</returns>
-		</method>
-		<method native="GetPointInSphereShell" script="GetPointInSphereShell" static="false">
-			<doc>Returns a random point inside the specified range in a sphere shell of unit radius, with the specified thickness, in range [0, 1]. Thickness of 0 will generate points on the sphere surface, while thickness of 1 will generate points within the entire sphere volume. Intermediate values represent the shell, which is a volume between two concentric spheres.</doc>
-			<param name="thickness" type="float">
-			</param>
-			<returns type="Vector3">
-			</returns>
-		</method>
-		<method native="GetPointInCircle" script="GetPointInCircle" static="false">
-			<doc>Returns a random point inside a unit circle.</doc>
-			<returns type="Vector2">
-			</returns>
-		</method>
-		<method native="GetPointInCircleShell" script="GetPointInCircleShell" static="false">
-			<doc>Returns a random point inside the specified range in a circle shell of unit radius, with the specified thickness, in range [0, 1]. Thickness of 0 will generate points on the circle edge, while thickness of 1 will generate points within the entire circle surface. Intermediate values represent the shell, which is the surface between two concentric circles.</doc>
-			<param name="thickness" type="float">
-			</param>
-			<returns type="Vector2">
-			</returns>
-		</method>
-		<method native="GetPointInArc" script="GetPointInArc" static="false">
-			<doc>Returns a random point on a unit arc with the specified length (angle). Angle of 360 represents a circle.</doc>
-			<param name="angle" type="Degree">
-			</param>
-			<returns type="Vector2">
-			</returns>
-		</method>
-		<method native="GetPointInArcShell" script="GetPointInArcShell" static="false">
-			<doc>Returns a random point inside the specified range in an arc shell of unit radius, with the specified length (angle) and thickness in range [0, 1]. Angle of 360 represents a circle shell. Thickness of 0 will generate points on the arc edge, while thickness of 1 will generate points on the entire arc &apos;slice&apos;. Intermediate vlaues represent the shell, which is the surface between two concentric circles.</doc>
-			<param name="angle" type="Degree">
-			</param>
-			<param name="thickness" type="float">
-			</param>
-			<returns type="Vector2">
-			</returns>
-		</method>
-		<method native="GetBarycentric" script="GetBarycentric" static="false">
-			<doc>Returns a random set of Barycentric coordinates that may be used for generating random points on a triangle.</doc>
-			<returns type="Vector3">
-			</returns>
-		</method>
 	</class>
 	<class native="MultiResource" script="MultiResource">
 		<doc>Contains a group of resources imported from a single source file.</doc>
@@ -714,6 +570,144 @@
 		<field name="Y" type="int">
 		</field>
 	</struct>
+	<struct native="TVector3&lt;float&gt;" script="Vector3">
+		<doc>A three dimensional vector.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="float">
+			</param>
+			<param name="y" type="float">
+			</param>
+			<param name="z" type="float">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="vec" type="Vector4">
+			</param>
+		</ctor>
+		<field name="X" type="float">
+		</field>
+		<field name="Y" type="float">
+		</field>
+		<field name="Z" type="float">
+		</field>
+	</struct>
+	<struct native="TVector3&lt;double&gt;" script="Vector3d">
+		<doc>A three dimensional vector.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="double">
+			</param>
+			<param name="y" type="double">
+			</param>
+			<param name="z" type="double">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="vec" type="Vector4">
+			</param>
+		</ctor>
+		<field name="X" type="double">
+		</field>
+		<field name="Y" type="double">
+		</field>
+		<field name="Z" type="double">
+		</field>
+	</struct>
+	<class native="Random" script="Random">
+		<doc>Generates pseudo random numbers using the Xorshift128 algorithm. Suitable for high performance requirements.</doc>
+		<ctor>
+			<doc>Initializes a new generator using the specified seed.</doc>
+			<param name="seed" type="int">
+			</param>
+		</ctor>
+		<method native="SetSeed" script="SetSeed" static="false">
+			<doc>Changes the seed of the generator to the specified value.</doc>
+			<param name="seed" type="int">
+			</param>
+		</method>
+		<method native="Get" script="Get" static="false">
+			<doc>Returns a random value in range [0, std::numeric_limits&lt;uint32_t&gt;::max()].</doc>
+			<returns type="int">
+			</returns>
+		</method>
+		<method native="GetRange" script="GetRange" static="false">
+			<doc>Returns a random value in range [min, max].</doc>
+			<param name="min" type="int">
+			</param>
+			<param name="max" type="int">
+			</param>
+			<returns type="int">
+			</returns>
+		</method>
+		<method native="GetUNorm" script="GetUNorm" static="false">
+			<doc>Returns a random value in range [0, 1].</doc>
+			<returns type="float">
+			</returns>
+		</method>
+		<method native="GetSNorm" script="GetSNorm" static="false">
+			<doc>Returns a random value in range [-1, 1].</doc>
+			<returns type="float">
+			</returns>
+		</method>
+		<method native="GetUnitVector" script="GetUnitVector" static="false">
+			<doc>Returns a random unit vector in three dimensions.</doc>
+			<returns type="Vector3">
+			</returns>
+		</method>
+		<method native="GetUnitVector2D" script="GetUnitVector2D" static="false">
+			<doc>Returns a random unit vector in two dimensions.</doc>
+			<returns type="Vector2">
+			</returns>
+		</method>
+		<method native="GetPointInSphere" script="GetPointInSphere" static="false">
+			<doc>Returns a random point inside a unit sphere.</doc>
+			<returns type="Vector3">
+			</returns>
+		</method>
+		<method native="GetPointInSphereShell" script="GetPointInSphereShell" static="false">
+			<doc>Returns a random point inside the specified range in a sphere shell of unit radius, with the specified thickness, in range [0, 1]. Thickness of 0 will generate points on the sphere surface, while thickness of 1 will generate points within the entire sphere volume. Intermediate values represent the shell, which is a volume between two concentric spheres.</doc>
+			<param name="thickness" type="float">
+			</param>
+			<returns type="Vector3">
+			</returns>
+		</method>
+		<method native="GetPointInCircle" script="GetPointInCircle" static="false">
+			<doc>Returns a random point inside a unit circle.</doc>
+			<returns type="Vector2">
+			</returns>
+		</method>
+		<method native="GetPointInCircleShell" script="GetPointInCircleShell" static="false">
+			<doc>Returns a random point inside the specified range in a circle shell of unit radius, with the specified thickness, in range [0, 1]. Thickness of 0 will generate points on the circle edge, while thickness of 1 will generate points within the entire circle surface. Intermediate values represent the shell, which is the surface between two concentric circles.</doc>
+			<param name="thickness" type="float">
+			</param>
+			<returns type="Vector2">
+			</returns>
+		</method>
+		<method native="GetPointInArc" script="GetPointInArc" static="false">
+			<doc>Returns a random point on a unit arc with the specified length (angle). Angle of 360 represents a circle.</doc>
+			<param name="angle" type="Degree">
+			</param>
+			<returns type="Vector2">
+			</returns>
+		</method>
+		<method native="GetPointInArcShell" script="GetPointInArcShell" static="false">
+			<doc>Returns a random point inside the specified range in an arc shell of unit radius, with the specified length (angle) and thickness in range [0, 1]. Angle of 360 represents a circle shell. Thickness of 0 will generate points on the arc edge, while thickness of 1 will generate points on the entire arc &apos;slice&apos;. Intermediate vlaues represent the shell, which is the surface between two concentric circles.</doc>
+			<param name="angle" type="Degree">
+			</param>
+			<param name="thickness" type="float">
+			</param>
+			<returns type="Vector2">
+			</returns>
+		</method>
+		<method native="GetBarycentric" script="GetBarycentric" static="false">
+			<doc>Returns a random set of Barycentric coordinates that may be used for generating random points on a triangle.</doc>
+			<returns type="Vector3">
+			</returns>
+		</method>
+	</class>
 	<class native="CAnimation" script="Animation">
 		<method native="Play" script="Play" static="false">
 			<param name="clip" type="RRef&lt;AnimationClip&gt;">
@@ -2585,6 +2579,58 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<property name="SampleCount" type="int" getter="GetSampleCount" setter="" static="false">
 		</property>
 	</class>
+	<class native="MotionBlurSettings" script="MotionBlurSettings">
+		<doc>Settings that control the motion blur effect.</doc>
+		<ctor>
+		</ctor>
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
+			<doc>Enables or disables the motion blur effect.</doc>
+		</property>
+		<property name="Domain" type="MotionBlurDomain" getter="GetDomain" setter="SetDomain" static="false">
+			<doc>Determines which parts of the scene will trigger motion blur.</doc>
+		</property>
+		<property name="Filter" type="MotionBlurFilter" getter="GetFilter" setter="SetFilter" static="false">
+			<doc>Type of filter to use when filtering samples contributing to a blurred pixel.</doc>
+		</property>
+		<property name="Quality" type="MotionBlurQuality" getter="GetQuality" setter="SetQuality" static="false">
+			<doc>Determines the number of samples to take during motion blur filtering. Increasing this value will yield higher quality blur at the cost of the performance.</doc>
+		</property>
+		<property name="MaximumRadius" type="float" getter="GetMaximumRadius" setter="SetMaximumRadius" static="false">
+			<doc>Determines the maximum radius over which the blur samples are allowed to be taken, in percent of the screen width (e.g. with 1% radius, on 1920x1028 resolution the maximum radius in pixels will be 1920 * 0.01 = 20px). This clamps the maximum velocity that can affect the blur, as higher velocities require higher radius. Very high values can adversely affect performance as cache accesses become more random.</doc>
+		</property>
+	</class>
+	<struct native="START_UP_DESC" script="StartUpDesc">
+		<doc>Structure containing parameters for starting the application.</doc>
+		<ctor>
+		</ctor>
+		<field name="RenderApi" type="string">
+			<doc>Name of the render system plugin to use.</doc>
+		</field>
+		<field name="Renderer" type="string">
+			<doc>Name of the renderer plugin to use.</doc>
+		</field>
+		<field name="Physics" type="string">
+			<doc>Name of physics plugin to use.</doc>
+		</field>
+		<field name="Audio" type="string">
+			<doc>Name of the audio plugin to use.</doc>
+		</field>
+		<field name="Input" type="string">
+			<doc>Name of the input plugin to use.</doc>
+		</field>
+		<field name="PhysicsCooking" type="bool">
+			<doc>True if physics cooking library should be loaded. Cooking is useful for creating collision meshes during development type, but might be unnecessary in the final application. When turned off you can save on space by not shipping the cooking library.</doc>
+		</field>
+		<field name="AsyncAnimation" type="bool">
+			<doc>True if animation should be evaluated at the same time while rendering is happening. This introduces a one frame delay to all animations but can result in better performance. If false the animation will be forced to finish evaluating before rendering starts, ensuring up-to-date frame but potentially blocking the rendering thread from moving forward until the animation finishes.</doc>
+		</field>
+		<field name="PrimaryWindowDesc" type="RenderWindowDesc">
+			<doc>Describes the window to create during start-up.</doc>
+		</field>
+		<field name="Importers" type="string">
+			<doc>A list of importer plugins to load.</doc>
+		</field>
+	</struct>
 	<class native="CAudioListener" script="AudioListener">
 	</class>
 	<class native="CAudioSource" script="AudioSource">

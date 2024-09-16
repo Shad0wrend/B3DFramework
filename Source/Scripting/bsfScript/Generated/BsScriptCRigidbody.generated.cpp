@@ -6,7 +6,7 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Components/BsCRigidbody.h"
 #include "BsScriptCollisionData.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 #include "Wrappers/BsScriptQuaternion.h"
 
 namespace bs

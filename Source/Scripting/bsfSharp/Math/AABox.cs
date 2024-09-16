@@ -45,9 +45,9 @@ namespace bs
         {
             get
             { 		
-                return new Vector3((maximum.x + minimum.x) * 0.5f,
-                        (maximum.y + minimum.y) * 0.5f,
-                        (maximum.z + minimum.z) * 0.5f);
+                return new Vector3((maximum.X + minimum.X) * 0.5f,
+                        (maximum.Y + minimum.Y) * 0.5f,
+                        (maximum.Z + minimum.Z) * 0.5f);
             }
         }
 
@@ -95,9 +95,9 @@ namespace bs
 
             Vector3 newCenter = tfrm.MultiplyAffine(center);
             Vector3 newHalfSize = new Vector3(
-                MathEx.Abs(tfrm.m00) * halfSize.x + MathEx.Abs(tfrm.m01) * halfSize.y + MathEx.Abs(tfrm.m02) * halfSize.z,
-                MathEx.Abs(tfrm.m10) * halfSize.x + MathEx.Abs(tfrm.m11) * halfSize.y + MathEx.Abs(tfrm.m12) * halfSize.z,
-                MathEx.Abs(tfrm.m20) * halfSize.x + MathEx.Abs(tfrm.m21) * halfSize.y + MathEx.Abs(tfrm.m22) * halfSize.z);
+                MathEx.Abs(tfrm.m00) * halfSize.X + MathEx.Abs(tfrm.m01) * halfSize.Y + MathEx.Abs(tfrm.m02) * halfSize.Z,
+                MathEx.Abs(tfrm.m10) * halfSize.X + MathEx.Abs(tfrm.m11) * halfSize.Y + MathEx.Abs(tfrm.m12) * halfSize.Z,
+                MathEx.Abs(tfrm.m20) * halfSize.X + MathEx.Abs(tfrm.m21) * halfSize.Y + MathEx.Abs(tfrm.m22) * halfSize.Z);
 
             minimum = newCenter - newHalfSize;
             maximum = newCenter + newHalfSize;

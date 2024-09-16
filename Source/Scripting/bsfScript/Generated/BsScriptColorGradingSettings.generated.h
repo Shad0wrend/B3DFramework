@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRenderSettings.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
 namespace bs { struct ColorGradingSettings; }
 namespace bs

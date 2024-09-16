@@ -9,7 +9,7 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Particles/BsVectorField.h"
 #include "BsScriptVECTOR_FIELD_DESC.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 
 namespace bs
 {

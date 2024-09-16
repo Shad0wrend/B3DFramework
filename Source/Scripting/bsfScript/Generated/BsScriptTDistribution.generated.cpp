@@ -6,7 +6,7 @@
 #include "BsMonoUtil.h"
 #include "BsScriptRandom.generated.h"
 #include "BsScriptTAnimationCurve.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 #include "BsScriptTAnimationCurve.generated.h"
 #include "Wrappers/BsScriptVector.h"
 #include "BsScriptTAnimationCurve.generated.h"

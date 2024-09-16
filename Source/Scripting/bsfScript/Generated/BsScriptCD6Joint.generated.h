@@ -13,7 +13,7 @@
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "Math/BsQuaternion.h"
 
 namespace bs { struct __LimitConeRangeInterop; }

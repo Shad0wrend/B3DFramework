@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptComponent.h"
 #include "../../../Foundation/bsfCore/Renderer/BsReflectionProbe.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
 namespace bs { class CReflectionProbe; }
 namespace bs

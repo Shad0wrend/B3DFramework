@@ -4,7 +4,7 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 
 namespace bs
 {

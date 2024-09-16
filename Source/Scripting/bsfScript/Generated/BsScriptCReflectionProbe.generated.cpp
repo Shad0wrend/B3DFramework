@@ -7,7 +7,7 @@
 #include "../../../Foundation/bsfCore/Components/BsCReflectionProbe.h"
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
 
 namespace bs

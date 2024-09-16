@@ -8,7 +8,7 @@
 #include "BsScriptParticleVectorFieldSettings.generated.h"
 #include "BsScriptTColorDistribution.generated.h"
 #include "BsScriptTDistribution.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 
 namespace bs
 {

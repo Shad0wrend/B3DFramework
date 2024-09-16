@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsVectorField.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
 namespace bs { class VectorField; }
 namespace bs { struct __VECTOR_FIELD_DESCInterop; }

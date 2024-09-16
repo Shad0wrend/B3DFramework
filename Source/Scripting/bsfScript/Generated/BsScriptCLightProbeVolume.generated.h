@@ -6,7 +6,7 @@
 #include "Wrappers/BsScriptComponent.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3I.h"
 #include "../../../Foundation/bsfCore/Renderer/BsLightProbeVolume.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "Math/BsAABox.h"
 
 namespace bs { class CLightProbeVolume; }

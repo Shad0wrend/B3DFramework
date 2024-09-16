@@ -9,7 +9,7 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
 namespace bs { struct ParticleGpuSimulationSettings; }
 namespace bs

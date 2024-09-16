@@ -7,7 +7,7 @@
 #include "../../../Foundation/bsfCore/Components/BsCJoint.h"
 #include "../../../Foundation/bsfCore/Components/BsCRigidbody.h"
 #include "BsScriptCRigidbody.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 #include "Wrappers/BsScriptQuaternion.h"
 
 namespace bs

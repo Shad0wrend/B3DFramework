@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Renderer/BsLightProbeVolume.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
 namespace bs
 {

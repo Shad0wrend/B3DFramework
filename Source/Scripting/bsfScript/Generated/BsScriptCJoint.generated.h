@@ -4,7 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptComponent.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "../../../Foundation/bsfCore/Physics/BsFJoint.h"
 #include "Math/BsQuaternion.h"
 

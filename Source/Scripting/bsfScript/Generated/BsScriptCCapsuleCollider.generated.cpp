@@ -5,7 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Components/BsCCapsuleCollider.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 
 namespace bs
 {

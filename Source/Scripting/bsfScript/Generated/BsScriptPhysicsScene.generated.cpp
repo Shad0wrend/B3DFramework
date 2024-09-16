@@ -7,7 +7,7 @@
 #include "../../../Foundation/bsfCore/Physics/BsPhysics.h"
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 #include "BsScriptPhysicsQueryHit.generated.h"
 #include "Wrappers/BsScriptQuaternion.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsMesh.h"

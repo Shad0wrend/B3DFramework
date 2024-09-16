@@ -6,7 +6,7 @@
 #include "Wrappers/BsScriptComponent.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "../../../Foundation/bsfCore/Physics/BsRigidbody.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "Math/BsQuaternion.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "../../../Foundation/bsfCore/Physics/BsRigidbody.h"

@@ -7,7 +7,7 @@
 #include "../../../Foundation/bsfCore/Components/BsCLightProbeVolume.h"
 #include "BsScriptTVector3I.generated.h"
 #include "BsScriptLightProbeInfo.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 
 namespace bs
 {

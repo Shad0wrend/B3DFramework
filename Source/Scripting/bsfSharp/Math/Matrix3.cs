@@ -292,9 +292,9 @@ namespace bs
         public Vector3 Transform(Vector3 vec)
         {
             Vector3 outVec;
-            outVec.x = m00 * vec.x + m01 * vec.y + m02 * vec.z;
-            outVec.y = m10 * vec.x + m11 * vec.y + m12 * vec.z;
-            outVec.z = m20 * vec.x + m21 * vec.y + m22 * vec.z;
+            outVec.X = m00 * vec.X + m01 * vec.Y + m02 * vec.Z;
+            outVec.Y = m10 * vec.X + m11 * vec.Y + m12 * vec.Z;
+            outVec.Z = m20 * vec.X + m21 * vec.Y + m22 * vec.Z;
             return outVec;
         }
 
@@ -444,9 +444,9 @@ namespace bs
             {
                 if (radians < MathEx.Pi)
                 {
-                    axis.x = m21 - m12;
-                    axis.y = m02 - m20;
-                    axis.z = m10 - m01;
+                    axis.X = m21 - m12;
+                    axis.Y = m02 - m20;
+                    axis.Z = m10 - m01;
 
                     axis.Normalize();
                 }
@@ -460,18 +460,18 @@ namespace bs
                         if (m00 >= m22)
                         {
                             // r00 is maximum diagonal term
-                            axis.x = 0.5f*MathEx.Sqrt(m00 - m11 - m22 + 1.0f);
-                            halfInverse = 0.5f/axis.x;
-                            axis.y = halfInverse*m01;
-                            axis.z = halfInverse*m02;
+                            axis.X = 0.5f*MathEx.Sqrt(m00 - m11 - m22 + 1.0f);
+                            halfInverse = 0.5f/axis.X;
+                            axis.Y = halfInverse*m01;
+                            axis.Z = halfInverse*m02;
                         }
                         else
                         {
                             // r22 is maximum diagonal term
-                            axis.z = 0.5f*MathEx.Sqrt(m22 - m00 - m11 + 1.0f);
-                            halfInverse = 0.5f/axis.z;
-                            axis.x = halfInverse*m02;
-                            axis.y = halfInverse*m12;
+                            axis.Z = 0.5f*MathEx.Sqrt(m22 - m00 - m11 + 1.0f);
+                            halfInverse = 0.5f/axis.Z;
+                            axis.X = halfInverse*m02;
+                            axis.Y = halfInverse*m12;
                         }
                     }
                     else
@@ -480,18 +480,18 @@ namespace bs
                         if (m11 >= m22)
                         {
                             // r11 is maximum diagonal term
-                            axis.y = 0.5f*MathEx.Sqrt(m11 - m00 - m22 + 1.0f);
-                            halfInverse  = 0.5f/axis.y;
-                            axis.x = halfInverse*m01;
-                            axis.z = halfInverse*m12;
+                            axis.Y = 0.5f*MathEx.Sqrt(m11 - m00 - m22 + 1.0f);
+                            halfInverse  = 0.5f/axis.Y;
+                            axis.X = halfInverse*m01;
+                            axis.Z = halfInverse*m12;
                         }
                         else
                         {
                             // r22 is maximum diagonal term
-                            axis.z = 0.5f*MathEx.Sqrt(m22 - m00 - m11 + 1.0f);
-                            halfInverse = 0.5f/axis.z;
-                            axis.x = halfInverse*m02;
-                            axis.y = halfInverse*m12;
+                            axis.Z = 0.5f*MathEx.Sqrt(m22 - m00 - m11 + 1.0f);
+                            halfInverse = 0.5f/axis.Z;
+                            axis.X = halfInverse*m02;
+                            axis.Y = halfInverse*m12;
                         }
                     }
                 }
@@ -500,9 +500,9 @@ namespace bs
             {
                 // The angle is 0 and the matrix is the identity.  Any axis will
                 // work, so just use the x-axis.
-                axis.x = 1.0f;
-                axis.y = 0.0f;
-                axis.z = 0.0f;
+                axis.X = 1.0f;
+                axis.Y = 0.0f;
+                axis.Z = 0.0f;
             }
         }
 
@@ -540,7 +540,7 @@ namespace bs
         /// <returns>Rotation matrix that can rotate an object to the specified angles.</returns>
         public static Matrix3 FromEuler(Vector3 euler, EulerAngleOrder order)
         {
-            return FromEuler(new Degree(euler.x), new Degree(euler.y), new Degree(euler.y), order);
+            return FromEuler(new Degree(euler.X), new Degree(euler.Y), new Degree(euler.Y), order);
         }
 
         /// <summary>
@@ -590,7 +590,7 @@ namespace bs
         /// <returns>Rotation matrix that can rotate an object to the specified angles.</returns>
         public static Matrix3 FromEuler(Vector3 euler)
         {
-            return FromEuler(new Degree(euler.x), new Degree(euler.y), new Degree(euler.y));
+            return FromEuler(new Degree(euler.X), new Degree(euler.Y), new Degree(euler.Y));
         }
 
         /// <summary>
@@ -642,15 +642,15 @@ namespace bs
             float cos = MathEx.Cos(angle);
             float sin = MathEx.Sin(angle);
             float oneMinusCos = 1.0f - cos;
-            float x2 = axis.x * axis.x;
-            float y2 = axis.y * axis.y;
-            float z2 = axis.z * axis.z;
-            float xym = axis.x * axis.y * oneMinusCos;
-            float xzm = axis.x * axis.z * oneMinusCos;
-            float yzm = axis.y * axis.z * oneMinusCos;
-            float xSin = axis.x * sin;
-            float ySin = axis.y * sin;
-            float zSin = axis.z * sin;
+            float x2 = axis.X * axis.X;
+            float y2 = axis.Y * axis.Y;
+            float z2 = axis.Z * axis.Z;
+            float xym = axis.X * axis.Y * oneMinusCos;
+            float xzm = axis.X * axis.Z * oneMinusCos;
+            float yzm = axis.Y * axis.Z * oneMinusCos;
+            float xSin = axis.X * sin;
+            float ySin = axis.Y * sin;
+            float zSin = axis.Z * sin;
 
             mat.m00 = x2 * oneMinusCos + cos;
             mat.m01 = xym - zSin;

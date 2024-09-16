@@ -465,9 +465,9 @@ namespace bs
         public Vector3 MultiplyAffine(Vector3 p)
         {
             return new Vector3(
-                m00 * p.x + m01 * p.y + m02 * p.z + m03,
-                m10 * p.x + m11 * p.y + m12 * p.z + m13,
-                m20 * p.x + m21 * p.y + m22 * p.z + m23);
+                m00 * p.X + m01 * p.Y + m02 * p.Z + m03,
+                m10 * p.X + m11 * p.Y + m12 * p.Z + m13,
+                m20 * p.X + m21 * p.Y + m22 * p.Z + m23);
         }
 
         /// <summary>
@@ -478,9 +478,9 @@ namespace bs
         public Vector3 MultiplyDirection(Vector3 d)
         {
             return new Vector3(
-                    m00 * d.x + m01 * d.y + m02 * d.z + m03,
-                    m10 * d.x + m11 * d.y + m12 * d.z + m13,
-                    m20 * d.x + m21 * d.y + m22 * d.z + m23);
+                    m00 * d.X + m01 * d.Y + m02 * d.Z + m03,
+                    m10 * d.X + m11 * d.Y + m12 * d.Z + m13,
+                    m20 * d.X + m21 * d.Y + m22 * d.Z + m23);
         }
 
         /// <summary>
@@ -509,11 +509,11 @@ namespace bs
         {
             Vector3 r = new Vector3();
 
-            float fInvW = 1.0f / (m30 * p.x + m31 * p.y + m32 * p.z + m33);
+            float fInvW = 1.0f / (m30 * p.X + m31 * p.Y + m32 * p.Z + m33);
 
-            r.x = (m00 * p.x + m01 * p.y + m02 * p.z + m03) * fInvW;
-            r.y = (m10 * p.x + m11 * p.y + m12 * p.z + m13) * fInvW;
-            r.z = (m20 * p.x + m21 * p.y + m22 * p.z + m23) * fInvW;
+            r.X = (m00 * p.X + m01 * p.Y + m02 * p.Z + m03) * fInvW;
+            r.Y = (m10 * p.X + m11 * p.Y + m12 * p.Z + m13) * fInvW;
+            r.Z = (m20 * p.X + m21 * p.Y + m22 * p.Z + m23) * fInvW;
 
             return r;
         }
@@ -558,9 +558,9 @@ namespace bs
             Matrix3 rot3x3 = rotation.ToRotationMatrix();
             Matrix4 mat = new Matrix4();
 
-            mat.m00 = scale.x * rot3x3.m00; mat.m01 = scale.y * rot3x3.m01; mat.m02 = scale.z * rot3x3.m02; mat.m03 = translation.x;
-            mat.m10 = scale.x * rot3x3.m10; mat.m11 = scale.y * rot3x3.m11; mat.m12 = scale.z * rot3x3.m12; mat.m13 = translation.y;
-            mat.m20 = scale.x * rot3x3.m20; mat.m21 = scale.y * rot3x3.m21; mat.m22 = scale.z * rot3x3.m22; mat.m23 = translation.z;
+            mat.m00 = scale.X * rot3x3.m00; mat.m01 = scale.Y * rot3x3.m01; mat.m02 = scale.Z * rot3x3.m02; mat.m03 = translation.X;
+            mat.m10 = scale.X * rot3x3.m10; mat.m11 = scale.Y * rot3x3.m11; mat.m12 = scale.Z * rot3x3.m12; mat.m13 = translation.Y;
+            mat.m20 = scale.X * rot3x3.m20; mat.m21 = scale.Y * rot3x3.m21; mat.m22 = scale.Z * rot3x3.m22; mat.m23 = translation.Z;
 
             // No projection term
             mat.m30 = 0; mat.m31 = 0; mat.m32 = 0; mat.m33 = 1;

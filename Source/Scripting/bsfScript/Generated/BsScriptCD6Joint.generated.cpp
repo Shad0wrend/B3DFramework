@@ -9,7 +9,7 @@
 #include "BsScriptLimitLinear.generated.h"
 #include "BsScriptLimitAngularRange.generated.h"
 #include "BsScriptLimitConeRange.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 #include "Wrappers/BsScriptQuaternion.h"
 
 namespace bs

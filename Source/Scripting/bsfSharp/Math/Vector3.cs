@@ -12,18 +12,13 @@ namespace bs
     /// <summary>
     /// A three dimensional vector.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential), SerializeObject]
-    public struct Vector3 // Note: Must match C++ class Vector3
+    public partial struct Vector3
     {
         public static readonly Vector3 Zero = new Vector3(0.0f, 0.0f, 0.0f);
         public static readonly Vector3 One = new Vector3(1.0f, 1.0f, 1.0f);
         public static readonly Vector3 XAxis = new Vector3(1.0f, 0.0f, 0.0f);
         public static readonly Vector3 YAxis = new Vector3(0.0f, 1.0f, 0.0f);
         public static readonly Vector3 ZAxis = new Vector3(0.0f, 0.0f, 1.0f);
-
-        public float x;
-        public float y;
-        public float z;
 
         /// <summary>
         /// Accesses a specific component of the vector.
@@ -37,11 +32,11 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        return x;
+                        return X;
                     case 1:
-                        return y;
+                        return Y;
                     case 2:
-                        return z;
+                        return Z;
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector3 index.");
                 }
@@ -52,13 +47,13 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        x = value;
+                        X = value;
                         break;
                     case 1:
-                        y = value;
+                        Y = value;
                         break;
                     case 2:
-                        z = value;
+                        Z = value;
                         break;
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector3 index.");
@@ -84,7 +79,7 @@ namespace bs
         {
             get
             {
-                return (float)MathEx.Sqrt(x * x + y * y + z * z);
+                return (float)MathEx.Sqrt(X * X + Y * Y + Z * Z);
             }
         }
 
@@ -95,29 +90,8 @@ namespace bs
         {
             get
             {
-                return (x * x + y * y + z * z);
+                return (X * X + Y * Y + Z * Z);
             }
-        }
-
-        /// <summary>
-        /// Creates a new default initialized vector value.
-        /// </summary>
-        public static Vector3 Default()
-        {
-            return new Vector3();
-        }
-
-        /// <summary>
-        /// Creates a new three dimensional vector.
-        /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <param name="z">Z coordinate.</param>
-        public Vector3(float x, float y, float z)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
         }
 
         /// <summary>
@@ -127,47 +101,47 @@ namespace bs
         /// <returns>A new four dimensional vector.</returns>
         public static explicit operator Vector4(Vector3 vec)
         {
-            return new Vector4(vec.x, vec.y, vec.z, 0.0f);
+            return new Vector4(vec.X, vec.Y, vec.Z, 0.0f);
         }
 
         public static Vector3 operator+ (Vector3 a, Vector3 b)
         {
-            return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+            return new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         }
 
         public static Vector3 operator- (Vector3 a, Vector3 b)
         {
-            return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
+            return new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
         public static Vector3 operator- (Vector3 v)
         {
-            return new Vector3(-v.x, -v.y, -v.z);
+            return new Vector3(-v.X, -v.Y, -v.Z);
         }
 
         public static Vector3 operator*(Vector3 a, Vector3 b)
         {
-            return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+            return new Vector3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
         }
 
         public static Vector3 operator* (Vector3 v, float d)
         {
-            return new Vector3(v.x * d, v.y * d, v.z * d);
+            return new Vector3(v.X * d, v.Y * d, v.Z * d);
         }
 
         public static Vector3 operator* (float d, Vector3 v)
         {
-            return new Vector3(v.x * d, v.y * d, v.z * d);
+            return new Vector3(v.X * d, v.Y * d, v.Z * d);
         }
 
         public static Vector3 operator/ (Vector3 v, float d)
         {
-            return new Vector3(v.x / d, v.y / d, v.z / d);
+            return new Vector3(v.X / d, v.Y / d, v.Z / d);
         }
 
         public static bool operator ==(Vector3 lhs, Vector3 rhs)
         {
-            return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+            return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
         }
 
         public static bool operator !=(Vector3 lhs, Vector3 rhs)
@@ -182,7 +156,7 @@ namespace bs
         /// <returns>Magnitude of the vector.</returns>
         public static float Magnitude(Vector3 v)
         {
-            return MathEx.Sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+            return MathEx.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
 
         /// <summary>
@@ -192,7 +166,7 @@ namespace bs
         /// <returns>Squared magnitude of the vector.</returns>
         public static float SqrMagnitude(Vector3 v)
         {
-            return (v.x * v.x + v.y * v.y + v.z * v.z);
+            return (v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
 
         /// <summary>
@@ -203,7 +177,7 @@ namespace bs
         /// <returns>One vector scaled by another.</returns>
         public static Vector3 Scale(Vector3 a, Vector3 b)
         {
-            return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+            return new Vector3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
         }
 
         /// <summary>
@@ -214,7 +188,7 @@ namespace bs
         /// <returns>Cross product between two vectors.</returns>
         public static Vector3 Cross(Vector3 lhs, Vector3 rhs)
         {
-            return new Vector3(lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x);
+            return new Vector3(lhs.Y * rhs.Z - lhs.Z * rhs.Y, lhs.Z * rhs.X - lhs.X * rhs.Z, lhs.X * rhs.Y - lhs.Y * rhs.X);
         }
 
         /// <summary>
@@ -239,7 +213,7 @@ namespace bs
         /// <returns>Inner product between the two vectors.</returns>
         public static float Dot(Vector3 lhs, Vector3 rhs)
         {
-            return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+            return lhs.X * rhs.X + lhs.Y * rhs.Y + lhs.Z * rhs.Z;
         }
 
         /// <summary>
@@ -250,8 +224,8 @@ namespace bs
         /// <returns>Distance between the two points.</returns>
         public static float Distance(Vector3 a, Vector3 b)
         {
-            Vector3 vector3 = new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
-            return MathEx.Sqrt(vector3.x * vector3.x + vector3.y * vector3.y + vector3.z * vector3.z);
+            Vector3 vector3 = new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+            return MathEx.Sqrt(vector3.X * vector3.X + vector3.Y * vector3.Y + vector3.Z * vector3.Z);
         }
 
         /// <summary>
@@ -260,9 +234,9 @@ namespace bs
         /// <param name="scale">Scale factors to multiply components by.</param>
         public void Scale(Vector3 scale)
         {
-            x *= scale.x;
-            y *= scale.y;
-            z *= scale.z;
+            X *= scale.X;
+            Y *= scale.Y;
+            Z *= scale.Z;
         }
 
         /// <summary>
@@ -283,10 +257,10 @@ namespace bs
         /// <param name="z">Second orthonormal vector.</param>
         public static void OrthogonalComplement(Vector3 x, out Vector3 y, out Vector3 z)
         {
-            if (MathEx.Abs(x.x) > MathEx.Abs(x.y))
-                y = new Vector3(-x.z, 0, x.x);
+            if (MathEx.Abs(x.X) > MathEx.Abs(x.Y))
+                y = new Vector3(-x.Z, 0, x.X);
             else
-                y = new Vector3(0, x.z, -x.y);
+                y = new Vector3(0, x.Z, -x.Y);
 
             z = Cross(x, y);
 
@@ -322,7 +296,7 @@ namespace bs
         /// <returns>Vector consisting of maximum components of the first and second vector.</returns>
         public static Vector3 Max(Vector3 a, Vector3 b)
         {
-            return new Vector3(MathEx.Max(a.x, b.x), MathEx.Max(a.y, b.y), MathEx.Max(a.z, b.z));
+            return new Vector3(MathEx.Max(a.X, b.X), MathEx.Max(a.Y, b.Y), MathEx.Max(a.Z, b.Z));
         }
 
         /// <summary>
@@ -333,13 +307,13 @@ namespace bs
         /// <returns>Vector consisting of minimum components of the first and second vector.</returns>
         public static Vector3 Min(Vector3 a, Vector3 b)
         {
-            return new Vector3(MathEx.Min(a.x, b.x), MathEx.Min(a.y, b.y), MathEx.Min(a.z, b.z));
+            return new Vector3(MathEx.Min(a.X, b.X), MathEx.Min(a.Y, b.Y), MathEx.Min(a.Z, b.Z));
         }
 
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2;
+            return X.GetHashCode() ^ Y.GetHashCode() << 2 ^ Z.GetHashCode() >> 2;
         }
 
         /// <inheritdoc/>
@@ -349,7 +323,7 @@ namespace bs
                 return false;
 
             Vector3 vec = (Vector3)other;
-            if (x.Equals(vec.x) && y.Equals(vec.y) && z.Equals(vec.z))
+            if (X.Equals(vec.X) && Y.Equals(vec.Y) && Z.Equals(vec.Z))
                 return true;
 
             return false;
@@ -358,7 +332,7 @@ namespace bs
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "(" + x + ", " + y + ", " + z + ")";
+            return "(" + X + ", " + Y + ", " + Z + ")";
         }
     }
 

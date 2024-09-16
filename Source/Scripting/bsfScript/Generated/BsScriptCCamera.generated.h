@@ -9,7 +9,7 @@
 #include "Math/BsMatrix4.h"
 #include "../../../Foundation/bsfCore/Renderer/BsCamera.h"
 #include "Math/BsRadian.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "Math/BsVector2.h"
 #include "Math/BsRay.h"
 

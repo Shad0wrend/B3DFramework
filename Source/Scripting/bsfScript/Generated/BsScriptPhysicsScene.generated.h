@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysics.h"
 #include "BsScriptNonReflectableWrapper.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "Math/BsRay.h"
 #include "Math/BsSphere.h"

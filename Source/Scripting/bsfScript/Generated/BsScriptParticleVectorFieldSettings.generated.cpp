@@ -7,7 +7,7 @@
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Particles/BsVectorField.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 #include "BsScriptTDistribution.generated.h"
 #include "Wrappers/BsScriptQuaternion.h"
 

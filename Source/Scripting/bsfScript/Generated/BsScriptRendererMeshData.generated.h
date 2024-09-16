@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRendererMeshData.h"
 #include "BsScriptNonReflectableWrapper.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRendererMeshData.h"
 #include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 #include "Math/BsVector4.h"

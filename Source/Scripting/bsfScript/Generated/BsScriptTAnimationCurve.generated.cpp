@@ -7,7 +7,7 @@
 #include "BsScriptTKeyframe.generated.h"
 #include "BsScriptTKeyframe.generated.h"
 #include "BsScriptTKeyframe.generated.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 #include "BsScriptTKeyframe.generated.h"
 #include "BsScriptTKeyframe.generated.h"
 #include "Wrappers/BsScriptVector.h"

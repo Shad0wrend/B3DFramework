@@ -5,7 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRendererMeshData.h"
-#include "Wrappers/BsScriptVector.h"
+#include "BsScriptTVector3.generated.h"
 #include "BsScriptRendererMeshData.generated.h"
 #include "../Extensions/BsMeshDataEx.h"
 #include "Wrappers/BsScriptVector.h"

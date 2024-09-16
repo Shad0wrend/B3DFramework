@@ -6,7 +6,7 @@
 #include "Wrappers/BsScriptComponent.h"
 #include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
 #include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
 #include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
 #include "Math/BsRadian.h"

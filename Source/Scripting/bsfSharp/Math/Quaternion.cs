@@ -310,9 +310,9 @@ namespace bs
 
                 Vector3 c = Vector3.Cross(fromDirection, toDirection);
 
-                x = c.x * invs;
-                y = c.y * invs;
-                z = c.z * invs;
+                x = c.X * invs;
+                y = c.Y * invs;
+                z = c.Z * invs;
                 w = s * 0.5f;
                 Normalize();
             }
@@ -468,17 +468,17 @@ namespace bs
             {
                 angle = 2.0f * MathEx.Acos(w);
                 float fInvLength = MathEx.InvSqrt(fSqrLength);
-                axis.x = x*fInvLength;
-                axis.y = y*fInvLength;
-                axis.z = z*fInvLength;
+                axis.X = x*fInvLength;
+                axis.Y = y*fInvLength;
+                axis.Z = z*fInvLength;
             }
             else
             {
                 // Angle is 0, so any axis will do
                 angle = (Degree)0.0f;
-                axis.x = 1.0f;
-                axis.y = 0.0f;
-                axis.z = 0.0f;
+                axis.X = 1.0f;
+                axis.Y = 0.0f;
+                axis.Z = 0.0f;
             }
         }
 
@@ -492,17 +492,17 @@ namespace bs
         {
             Matrix3 matRot = ToRotationMatrix();
 
-            xAxis.x = matRot[0, 0];
-            xAxis.y = matRot[1, 0];
-            xAxis.z = matRot[2, 0];
+            xAxis.X = matRot[0, 0];
+            xAxis.Y = matRot[1, 0];
+            xAxis.Z = matRot[2, 0];
 
-            yAxis.x = matRot[0, 1];
-            yAxis.y = matRot[1, 1];
-            yAxis.z = matRot[2, 1];
+            yAxis.X = matRot[0, 1];
+            yAxis.Y = matRot[1, 1];
+            yAxis.Z = matRot[2, 1];
 
-            zAxis.x = matRot[0, 2];
-            zAxis.y = matRot[1, 2];
-            zAxis.z = matRot[2, 2];
+            zAxis.X = matRot[0, 2];
+            zAxis.Y = matRot[1, 2];
+            zAxis.Z = matRot[2, 2];
         }
 
     /// <summary>
@@ -692,9 +692,9 @@ namespace bs
             float halfAngle = (float)(0.5f*angle.Radians);
             float sin = (float)MathEx.Sin(halfAngle);
             quat.w = (float)MathEx.Cos(halfAngle);
-            quat.x = sin * axis.x;
-            quat.y = sin * axis.y;
-            quat.z = sin * axis.z;
+            quat.x = sin * axis.X;
+            quat.y = sin * axis.Y;
+            quat.z = sin * axis.Z;
 
             return quat;
         }
@@ -710,17 +710,17 @@ namespace bs
         {
             Matrix3 mat;
 
-            mat.m00 = xAxis.x;
-            mat.m10 = xAxis.y;
-            mat.m20 = xAxis.z;
+            mat.m00 = xAxis.X;
+            mat.m10 = xAxis.Y;
+            mat.m20 = xAxis.Z;
 
-            mat.m01 = yAxis.x;
-            mat.m11 = yAxis.y;
-            mat.m21 = yAxis.z;
+            mat.m01 = yAxis.X;
+            mat.m11 = yAxis.Y;
+            mat.m21 = yAxis.Z;
 
-            mat.m02 = zAxis.x;
-            mat.m12 = zAxis.y;
-            mat.m22 = zAxis.z;
+            mat.m02 = zAxis.X;
+            mat.m12 = zAxis.Y;
+            mat.m22 = zAxis.Z;
 
             return FromRotationMatrix(mat);
         }
@@ -769,7 +769,7 @@ namespace bs
         /// <returns>Quaternion that can rotate an object to the specified angles.</returns>
         public static Quaternion FromEuler(Vector3 euler, EulerAngleOrder order = EulerAngleOrder.YXZ)
         {
-            return FromEuler((Degree)euler.x, (Degree)euler.y, (Degree)euler.z, order);
+            return FromEuler((Degree)euler.X, (Degree)euler.Y, (Degree)euler.Z, order);
         }
 
         /// <inheritdoc/>

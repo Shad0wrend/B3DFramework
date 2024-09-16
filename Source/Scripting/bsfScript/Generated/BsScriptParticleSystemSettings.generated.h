@@ -10,7 +10,7 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
-#include "Math/BsVector3.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
 namespace bs { struct ParticleSystemSettings; }
 namespace bs
