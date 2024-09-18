@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptGUIElementWrapper.h"
 #include "BsScriptGUIToggleable.generated.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIToggle.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIToggleable.h"
 

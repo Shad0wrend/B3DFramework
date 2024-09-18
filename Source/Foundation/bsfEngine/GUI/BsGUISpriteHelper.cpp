@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUISpriteHelper.h"
 
-#include "BsGUIHelper.h"
+#include "BsGUIUtility.h"
 #include "BsGUIVectorPaths.h"
 #include "Image/BsSpriteTexture.h"
 #include "2D/BsTextSprite.h"
@@ -270,7 +270,7 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 	GUIContentSpriteCreateInformation contentSpriteCreateInformation(size, content, styleSheetRules, tint, batchId);
 	contentSpriteCreateInformation.Depth = depth;
 	contentSpriteCreateInformation.Offset = offset;
-	contentSpriteCreateInformation.ContentArea = GUIHelper::CalculateContentArea(size, styleSheetRules);
+	contentSpriteCreateInformation.ContentArea = GUIUtility::CalculateContentArea(size, styleSheetRules);
 
 	sprites.BuildRenderElements(contentSpriteCreateInformation, element.mRenderElements);
 }
@@ -283,7 +283,7 @@ TextSpriteInformation GUISpriteHelper::BuildTextSpriteInformation(const GUIInter
 	if(element.mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = element.mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		const Rect2I contentArea = GUIHelper::CalculateContentArea(size, styleSheetRules);
+		const Rect2I contentArea = GUIUtility::CalculateContentArea(size, styleSheetRules);
 
 		return GUIContentSprites::BuildTextSpriteInformation(contentArea, text, styleSheetRules, tint, wordWrap);
 	}

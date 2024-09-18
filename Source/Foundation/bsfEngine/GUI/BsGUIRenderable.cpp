@@ -1,7 +1,7 @@
 //************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIRenderable.h"
-#include "BsGUIHelper.h"
+#include "BsGUIUtility.h"
 #include "GUI/BsGUIWidget.h"
 #include "GUI/BsGUIManager.h"
 #include "Resources/BsBuiltinResources.h"
@@ -205,7 +205,7 @@ Rect2I GUIRenderable::GetCachedContentBoundsInElementSpace() const
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		return GUIHelper::CalculateContentArea(layoutSize, styleSheetRules);
+		return GUIUtility::CalculateContentArea(layoutSize, styleSheetRules);
 	}
 
 	return Rect2I(0, 0, layoutSize.Width, layoutSize.Height);

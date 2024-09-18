@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptGUIElementWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIContent.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUILabel.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 
 namespace bs { class GUILabel; }

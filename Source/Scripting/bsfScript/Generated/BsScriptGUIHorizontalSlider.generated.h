@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptGUIElementWrapper.h"
 #include "BsScriptGUISlider.generated.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUISlider.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 
 namespace bs { class GUIHorizontalSlider; }

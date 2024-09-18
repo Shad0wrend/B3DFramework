@@ -6,8 +6,9 @@
 #include "BsScriptGUIElementWrapper.h"
 #include "BsScriptGUIClickable.generated.h"
 #include "../../../Foundation/bsfCore/Localization/BsHString.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
 
 namespace bs { class GUIListBox; }
 namespace bs { struct __GUIListBoxContentInterop; }

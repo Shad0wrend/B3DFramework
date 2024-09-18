@@ -12741,6 +12741,31 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			</param>
 		</event>
 	</class>
+	<class native="GUIUtility" script="GUIUtility">
+		<doc>Helper class that performs various operations related to GUI.</doc>
+		<method native="CalculateOptimalSize" script="CalculateOptimalSize" static="true">
+			<doc>Calculates optimal size of a GUI element. This is the size that allows the GUI element to properly display all of its content.</doc>
+			<param name="elem" type="GUIElement">
+			</param>
+			<returns type="Vector2I">
+			</returns>
+		</method>
+		<method native="CalculateTextBounds" script="CalculateTextBounds" static="true">
+			<doc>Calculates optimal content size for the provided text using the provided font and size. Size is calculated without word wrap.</doc>
+			<param name="text" type="string">
+				<doc>Text to calculate the size for.</doc>
+			</param>
+			<param name="font" type="RRef&lt;Font&gt;">
+				<doc>Font to use for rendering the text.</doc>
+			</param>
+			<param name="fontSize" type="float">
+				<doc>Size of individual characters in the font, in points.</doc>
+			</param>
+			<returns type="Vector2I">
+				<doc>Width/height required to display the text, in pixels.</doc>
+			</returns>
+		</method>
+	</class>
 	<class native="GUIResizableVerticalScrollBar" script="GUIResizableVerticalScrollBar">
 		<doc>Specialization of a GUIScrollBar for vertical scrolling, with the ability to resize the scroll bar.</doc>
 		<ctor>

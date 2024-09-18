@@ -5,8 +5,8 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIProgressBar.h"
+#include "BsScriptGUIProgressBar.generated.h"
 #include "BsScriptGUIOption.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIProgressBar.h"
 
 namespace bs
 {

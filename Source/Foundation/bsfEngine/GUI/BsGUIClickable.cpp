@@ -1,11 +1,12 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIClickable.h"
+
+#include "BsGUIUtility.h"
 #include "Image/BsSpriteTexture.h"
 #include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUICommandEvent.h"
-#include "GUI/BsGUIHelper.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 
 using namespace bs;
@@ -65,7 +66,7 @@ Vector2I GUIClickable::CalculateUnconstrainedOptimalSize() const
 		return Vector2I::kZero;
 
 	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-	const Size2UI contentSize = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, styleSheetRules, GetSizeConstraints().MaxWidth);
+	const Size2UI contentSize = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, styleSheetRules, GetSizeConstraints().MaxWidth);
 	
 	return Vector2I((i32)contentSize.Width, (i32)contentSize.Height);
 }

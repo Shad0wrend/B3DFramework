@@ -5,8 +5,8 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIVerticalScrollBar.h"
+#include "BsScriptGUIVerticalScrollBar.generated.h"
 #include "BsScriptGUIOption.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIVerticalScrollBar.h"
 
 namespace bs
 {

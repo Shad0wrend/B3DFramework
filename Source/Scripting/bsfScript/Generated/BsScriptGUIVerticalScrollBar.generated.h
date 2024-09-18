@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptGUIElementWrapper.h"
 #include "BsScriptGUIScrollBar.generated.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIVerticalScrollBar.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 
 namespace bs { class GUIVerticalScrollBar; }

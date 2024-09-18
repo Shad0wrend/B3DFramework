@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUITooltip.h"
+
+#include "BsGUIUtility.h"
 #include "GUI/BsGUIPanel.h"
 #include "Renderer/BsCamera.h"
 #include "RenderAPI/BsViewport.h"
@@ -8,7 +10,6 @@
 #include "GUI/BsGUILayoutX.h"
 #include "GUI/BsGUITexture.h"
 #include "GUI/BsGUILabel.h"
-#include "GUI/BsGUIHelper.h"
 #include "Resources/BsBuiltinResources.h"
 #include "GUI/BsDropDownAreaPlacement.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
@@ -37,7 +38,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	const GUIStyleSheetRules backgroundStyleSheetRules = styleSheetCascade.BuildRules(GUITexture::kElementType, kBackgroundStyleClass);
 
 	GUISizeConstraints dimensions = GUISizeConstraints::Create(GUIOptions(GUIOption::FixedWidth(kTooltipWidth)));
-	Size2UI size = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(text, multiLineLabelStyleSheetRules, dimensions.MaxWidth);
+	Size2UI size = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(text, multiLineLabelStyleSheetRules, dimensions.MaxWidth);
 
 	size.Width += backgroundStyleSheetRules.Padding.Left + backgroundStyleSheetRules.Padding.Right;
 	size.Height += backgroundStyleSheetRules.Padding.Top + backgroundStyleSheetRules.Padding.Bottom;

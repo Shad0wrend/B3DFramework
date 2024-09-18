@@ -6,9 +6,9 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
 #include "BsScriptHString.generated.h"
-#include "BsScriptGUIListBoxContent.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
 #include "BsScriptGUIOption.generated.h"
+#include "BsScriptGUIListBox.generated.h"
+#include "BsScriptGUIListBoxContent.generated.h"
 
 namespace bs
 {

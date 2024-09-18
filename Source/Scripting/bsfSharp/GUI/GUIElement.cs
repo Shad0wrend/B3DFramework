@@ -169,6 +169,26 @@ namespace bs
             Internal_ResetDimensions(mCachedPtr);
         }
 
+        /// <summary>
+        /// Calculates the bounds of a GUI element. This is similar to <see cref="GUIElement.Bounds"/> but allows you to
+        /// returns bounds relative to a specific parent GUI element.
+        /// </summary>
+        /// <param name="element">Elements to calculate the bounds for.</param>
+        /// <param name="relativeTo">GUI layout the bounds will be relative to. If this is null or the provided element is
+        ///                          not a parent of the provided GUI element, the returned bounds will be relative to the
+        ///                          first GUI panel parent instead.</param>
+        /// <returns>Bounds of a GUI element relative to the provided GUI layout.</returns>
+        public Rect2I CalculateBoundsRelativeTo(GUILayout relativeTo = null)
+        {
+            IntPtr relativeToNative = IntPtr.Zero;
+            if (relativeTo != null)
+                relativeToNative = relativeTo.GetCachedPtr();
+
+            Rect2I output;
+            Internal_CalculateBoundsRelativeTo(GetCachedPtr(), relativeToNative, out output);
+            return output;
+        }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern bool Internal_GetVisible(IntPtr nativeInstance);
 
@@ -222,6 +242,9 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_Destroy(IntPtr nativeInstance);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_CalculateBoundsRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out Rect2I output);
     }
 
     /** @} */

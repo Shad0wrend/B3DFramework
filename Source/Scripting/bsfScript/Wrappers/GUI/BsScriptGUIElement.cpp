@@ -33,6 +33,7 @@ void ScriptGUIElement::SetupScriptBindings()
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetBounds", (void*)&ScriptGUIElement::InternalSetBounds);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetVisibleBounds", (void*)&ScriptGUIElement::InternalGetVisibleBounds);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetScreenBounds", (void*)&ScriptGUIElement::InternalGetScreenBounds);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_CalculateBoundsRelativeTo", (void*)&ScriptGUIElement::InternalCalculateBoundsRelativeTo);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetPosition", (void*)&ScriptGUIElement::InternalSetPosition);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetWidth", (void*)&ScriptGUIElement::InternalSetWidth);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetHeight", (void*)&ScriptGUIElement::InternalSetHeight);
@@ -125,7 +126,7 @@ void ScriptGUIElement::InternalGetBounds(ScriptGUIElementWrapper* self, Rect2I* 
 		return;
 	}
 
-	*bounds = self->GetNativeObject()->GetBoundsRelativeTo();
+	*bounds = self->GetNativeObject()->CalculateBoundsRelativeTo();
 }
 
 void ScriptGUIElement::InternalSetBounds(ScriptGUIElementWrapper* self, Rect2I* bounds)
@@ -146,7 +147,7 @@ void ScriptGUIElement::InternalGetVisibleBounds(ScriptGUIElementWrapper* self, R
 		return;
 	}
 
-	*bounds = self->GetNativeObject()->GetBoundsRelativeTo();
+	*bounds = self->GetNativeObject()->CalculateBoundsRelativeTo();
 }
 
 void ScriptGUIElement::InternalGetScreenBounds(ScriptGUIElementWrapper* self, Rect2I* bounds)
@@ -158,6 +159,29 @@ void ScriptGUIElement::InternalGetScreenBounds(ScriptGUIElementWrapper* self, Re
 	}
 
 	*bounds = self->GetNativeObject()->GetScreenBounds();
+}
+
+void ScriptGUIElement::InternalCalculateBoundsRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, Rect2I* bounds)
+{
+	if(!self->IsNativeObjectValid())
+	{
+		*bounds = Rect2I();
+		return;
+	}
+
+	GUIElement* relativeToElement = nullptr;
+	if(relativeTo != nullptr)
+	{
+		if(!relativeTo->IsNativeObjectValid())
+		{
+			*bounds = Rect2I();
+			return;
+		}
+
+		relativeToElement = relativeTo->GetNativeObject();
+	}
+
+	*bounds = self->GetNativeObject()->CalculateBoundsRelativeTo(relativeToElement);
 }
 
 void ScriptGUIElement::InternalSetPosition(ScriptGUIElementWrapper* self, i32 x, i32 y)

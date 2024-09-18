@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptGUIElementWrapper.h"
 #include "BsScriptGUIClickable.generated.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIButton.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIContent.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 

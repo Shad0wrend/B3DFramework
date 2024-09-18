@@ -5,7 +5,7 @@
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUIToggleGroup.h"
 #include "BsGUICommandEvent.h"
-#include "BsGUIHelper.h"
+#include "BsGUIUtility.h"
 #include "BsGUIVectorPaths.h"
 #include "Image/BsSpriteVectorPath.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
@@ -134,7 +134,7 @@ Size2UI GUIToggleable::CalculateCheckmarkContentAreaSize(const Size2UI& elementO
 	const GUIStyleSheetRules& elementStyleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 
 	const Vector2I elementConstrainedOptimalSize = elementSizeConstraints.CalculateConstrainedSize(elementOptimalSize).Optimal;
-	const Rect2I elementContentArea = GUIHelper::CalculateContentArea(Size2UI((u32)elementConstrainedOptimalSize.X, (u32)elementConstrainedOptimalSize.Y), elementStyleSheetRules);
+	const Rect2I elementContentArea = GUIUtility::CalculateContentArea(Size2UI((u32)elementConstrainedOptimalSize.X, (u32)elementConstrainedOptimalSize.Y), elementStyleSheetRules);
 
 	// Determine the size of the area in which to fit the checkmark. Actual checkmark will be scaled to fit (without cropping/stretching) in this area
 	Size2UI checkmarkAreaSize(BsZero);
@@ -183,7 +183,7 @@ Vector2I GUIToggleable::CalculateUnconstrainedOptimalSize() const
 		return optimalSize;
 
 	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-	const Rect2I contentArea = GUIHelper::CalculateContentArea(Size2UI(optimalSize.X, optimalSize.Y), styleSheetRules);
+	const Rect2I contentArea = GUIUtility::CalculateContentArea(Size2UI(optimalSize.X, optimalSize.Y), styleSheetRules);
 
 	const Size2UI checkmarkSize = CalculateCheckmarkContentAreaSize(Size2UI((u32)optimalSize.X, (u32)optimalSize.Y));
 	Size2UI contentSizeWithCheckMark(contentArea.Width, contentArea.Height);
@@ -194,7 +194,7 @@ Vector2I GUIToggleable::CalculateUnconstrainedOptimalSize() const
 		contentSizeWithCheckMark.Height = Math::Max(contentSizeWithCheckMark.Height, checkmarkSize.Height);
 	}
 
-	const Size2UI optimalSizeWithCheckmark = GUIHelper::CalculateSizeWithPaddingAndBorder(contentSizeWithCheckMark, styleSheetRules);
+	const Size2UI optimalSizeWithCheckmark = GUIUtility::CalculateSizeWithPaddingAndBorder(contentSizeWithCheckMark, styleSheetRules);
 	return Vector2I((i32)optimalSizeWithCheckmark.Width, (i32)optimalSizeWithCheckmark.Height);
 }
 

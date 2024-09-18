@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIListBox.h"
 
-#include "BsGUIHelper.h"
+#include "BsGUIUtility.h"
 #include "BsGUIVectorPaths.h"
 #include "GUI/BsGUIWidget.h"
 #include "GUI/BsGUISizeConstraints.h"
@@ -147,7 +147,7 @@ Rect2I GUIListBox::GetCachedContentBoundsInElementSpace() const
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		return GUIHelper::CalculateContentArea(layoutSize, styleSheetRules);
+		return GUIUtility::CalculateContentArea(layoutSize, styleSheetRules);
 	}
 
 	return Rect2I(0, 0, layoutSize.Width, layoutSize.Height);
@@ -164,13 +164,13 @@ Rect2I GUIListBox::GetArrowCachedContentBoundsInElementSpace() const
 	const Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
 
 	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-	const Rect2I& fullContentArea = GUIHelper::CalculateContentArea(layoutSize, styleSheetRules);
+	const Rect2I& fullContentArea = GUIUtility::CalculateContentArea(layoutSize, styleSheetRules);
 
 	const GUIStyleSheetRuleInformation& arrowRuleInformation = GetPseudoElementStyleSheetRuleInformation(mArrowPseudoElementIndex);
 	if(arrowRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& arrowRules = arrowRuleInformation.CurrentStateRuleset->Rules;
-		output = GUIHelper::CalculateContentArea(GetArrowCachedContentSize(), arrowRules);
+		output = GUIUtility::CalculateContentArea(GetArrowCachedContentSize(), arrowRules);
 
 		const i32 arrowAreaOffset = Math::Max(0, (i32)fullContentArea.Width - (i32)(output.Width + arrowRules.Padding.Right + arrowRules.BorderRight.GetVisibleWidth()));
 		output.X += fullContentArea.X + arrowAreaOffset;

@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIInputBox.h"
+
+#include "BsGUIUtility.h"
 #include "GUI/BsGUIManager.h"
 #include "2D/BsImageSprite.h"
 #include "Image/BsSpriteTexture.h"
@@ -12,7 +14,6 @@
 #include "GUI/BsGUIInputCaret.h"
 #include "GUI/BsGUIInputSelection.h"
 #include "GUI/BsGUIContextMenu.h"
-#include "GUI/BsGUIHelper.h"
 #include "Utility/BsTime.h"
 #include "Platform/BsPlatform.h"
 #include "String/BsUnicode.h"
@@ -164,7 +165,7 @@ Vector2I GUIInputBox::CalculateUnconstrainedOptimalSize() const
 		return Vector2I::kZero;
 
 	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-	const Size2UI contentSize = GUIHelper::CalculateOptimalContentSizeWithPaddingAndBorder(mText, styleSheetRules, GetSizeConstraints().MaxWidth);
+	const Size2UI contentSize = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(mText, styleSheetRules, GetSizeConstraints().MaxWidth);
 	
 	return Vector2I((i32)contentSize.Width, (i32)contentSize.Height);
 }

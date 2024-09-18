@@ -5,8 +5,8 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUISlider.h"
+#include "BsScriptGUIHorizontalSlider.generated.h"
 #include "BsScriptGUIOption.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUISlider.h"
 
 namespace bs
 {

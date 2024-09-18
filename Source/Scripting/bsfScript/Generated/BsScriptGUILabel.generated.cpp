@@ -6,8 +6,8 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUILabel.h"
 #include "BsScriptGUIContent.generated.h"
+#include "BsScriptGUILabel.generated.h"
 #include "BsScriptGUIOption.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUILabel.h"
 
 namespace bs
 {

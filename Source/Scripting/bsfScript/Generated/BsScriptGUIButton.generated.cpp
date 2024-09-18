@@ -5,9 +5,9 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIButton.h"
+#include "BsScriptGUIButton.generated.h"
 #include "BsScriptGUIContent.generated.h"
 #include "BsScriptGUIOption.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIButton.h"
 
 namespace bs
 {

@@ -10,6 +10,11 @@
 
 namespace bs
 {
+	class ScriptGUILayoutWrapperBase;
+}
+
+namespace bs
+{
 	/** @addtogroup ScriptInteropEngine
 	 *  @{
 	 */
@@ -40,6 +45,7 @@ namespace bs
 		static void InternalSetBounds(ScriptGUIElementWrapper* self, Rect2I* bounds);
 		static void InternalGetVisibleBounds(ScriptGUIElementWrapper* self, Rect2I* bounds);
 		static void InternalGetScreenBounds(ScriptGUIElementWrapper* self, Rect2I* bounds);
+		static void InternalCalculateBoundsRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, Rect2I* bounds);
 		static void InternalSetPosition(ScriptGUIElementWrapper* self, i32 x, i32 y);
 		static void InternalSetWidth(ScriptGUIElementWrapper* self, u32 width);
 		static void InternalSetHeight(ScriptGUIElementWrapper* self, u32 height);

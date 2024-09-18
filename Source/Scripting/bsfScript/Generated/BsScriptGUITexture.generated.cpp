@@ -9,8 +9,8 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "BsScriptGUIOption.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
+#include "BsScriptGUITexture.generated.h"
 #include "BsScriptGUITextureContents.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUITexture.h"
 
 namespace bs
 {

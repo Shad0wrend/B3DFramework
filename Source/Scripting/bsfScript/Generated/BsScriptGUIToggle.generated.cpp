@@ -5,9 +5,9 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIToggle.h"
+#include "BsScriptGUIToggle.generated.h"
 #include "BsScriptGUIOption.generated.h"
 #include "BsScriptGUIToggleContent.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIToggle.h"
 
 namespace bs
 {

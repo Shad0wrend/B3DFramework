@@ -6,6 +6,7 @@
 #include "BsScriptGUIElementWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUITexture.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUITexture.h"
 
 namespace bs { class GUITexture; }
 namespace bs { struct __GUITextureContentsInterop; }
