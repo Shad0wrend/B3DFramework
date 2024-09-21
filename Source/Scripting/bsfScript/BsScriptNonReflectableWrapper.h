@@ -11,23 +11,44 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Provides a root base class to use for TScriptNonReflectableWrapper implementations. Ensures all derived types have a common base class that holds the native object of the root type in the class hierarchy. */
+	template<typename NativeType>
+	class B3D_SCRIPT_INTEROP_EXPORT TScriptNonReflectableWrapperBase : public ScriptObjectWrapper
+	{
+		using Super = ScriptObjectWrapper;
+	public:
+		using ScriptObjectWrapper::ScriptObjectWrapper;
+
+		/** Returns the root base class of the wrapped native object as a shared pointer. */
+		const SPtr<NativeType>& GetBaseNativeObjectAsShared() const { return mNativeObjectStrongHandle; }
+
+		/** Checks is the native object alive and valid. */
+		bool IsNativeObjectValid() const { return mNativeObjectStrongHandle != nullptr; }
+
+	protected:
+		void NotifyNativeObjectDestroyed() override
+		{
+			mNativeObjectStrongHandle = nullptr;
+			Super::NotifyNativeObjectDestroyed();
+		}
+
+		SPtr<NativeType> mNativeObjectStrongHandle;
+	};
+
 	/** Extends TScriptObjectWrapper by providing functionality required for types not deriving from IReflectable that may be passed along as a shared pointer. */
-	template<typename NativeType, typename SelfType, typename BaseType = ScriptObjectWrapper>
+	template<typename NativeType, typename SelfType, typename BaseType = TScriptNonReflectableWrapperBase<NativeType>>
 	class TScriptNonReflectableWrapper : public TScriptObjectWrapper<SelfType, BaseType>
 	{
 		using Super = TScriptObjectWrapper<SelfType, BaseType>;
 	public:
 		TScriptNonReflectableWrapper(const SPtr<NativeType>& nativeObject)
-			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.get()), mNativeObjectStrongHandle(nativeObject)
-		{ }
+			: TScriptObjectWrapper<SelfType, BaseType>(nativeObject.get())
+		{
+			mNativeObjectStrongHandle = nativeObject;
+		}
 
 		/** Returns the wrapped native object as a shared pointer. */
-		const SPtr<NativeType>& GetNativeObjectAsShared() const { return mNativeObjectStrongHandle; }
-
-		SPtr<NativeType> GetBaseNativeObjectAsShared() const { return GetNativeObjectAsShared(); }
-
-		/** Checks is the native object alive and valid. */
-		bool IsNativeObjectValid() const { return mNativeObjectStrongHandle != nullptr; }
+		SPtr<NativeType> GetNativeObjectAsShared() const { return std::static_pointer_cast<NativeType>(mNativeObjectStrongHandle); }
 
 		/**
 		 * Creates a new script object and a script object wrapper of @p SelfType, and associates them with the provided native object. Should not be called if @p nativeObject
@@ -55,15 +76,6 @@ namespace bs
 
 			return CreateScriptObjectAndWrapper(nativeObject);
 		}
-
-	protected:
-		void NotifyNativeObjectDestroyed() override
-		{
-			mNativeObjectStrongHandle = nullptr;
-			Super::NotifyNativeObjectDestroyed();
-		}
-
-		SPtr<NativeType> mNativeObjectStrongHandle;
 	};
 
 	/** @} */
