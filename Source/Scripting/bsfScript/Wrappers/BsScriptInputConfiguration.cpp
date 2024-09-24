@@ -79,7 +79,7 @@ void ScriptInputConfiguration::InternalRegisterAxis(ScriptInputConfiguration* th
 {
 	String nameStr = MonoUtil::MonoToString(name);
 
-	VIRTUAL_AXIS_DESC axisDesc;
+	VirtualAxisCreateInformation axisDesc;
 	axisDesc.Type = (u32)type;
 	axisDesc.DeadZone = deadZone;
 	axisDesc.Invert = invert;

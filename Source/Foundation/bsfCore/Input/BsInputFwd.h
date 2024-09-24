@@ -26,227 +26,227 @@ namespace bs
 	 * When storing these sequentially make sure to only reference the low order 2 bytes. Two high order bytes are used for
 	 * various flags.
 	 */
-	enum ButtonCode : u32
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Input)) ButtonCode : u32
 	{
-		BC_UNASSIGNED = 0x00,
-		BC_ESCAPE = 0x01,
-		BC_1 = 0x02,
-		BC_2 = 0x03,
-		BC_3 = 0x04,
-		BC_4 = 0x05,
-		BC_5 = 0x06,
-		BC_6 = 0x07,
-		BC_7 = 0x08,
-		BC_8 = 0x09,
-		BC_9 = 0x0A,
-		BC_0 = 0x0B,
-		BC_MINUS = 0x0C, // - on main keyboard
-		BC_EQUALS = 0x0D,
-		BC_BACK = 0x0E, // backspace
-		BC_TAB = 0x0F,
-		BC_Q = 0x10,
-		BC_W = 0x11,
-		BC_E = 0x12,
-		BC_R = 0x13,
-		BC_T = 0x14,
-		BC_Y = 0x15,
-		BC_U = 0x16,
-		BC_I = 0x17,
-		BC_O = 0x18,
-		BC_P = 0x19,
-		BC_LBRACKET = 0x1A,
-		BC_RBRACKET = 0x1B,
-		BC_RETURN = 0x1C, // Enter on main keyboard
-		BC_LCONTROL = 0x1D,
-		BC_A = 0x1E,
-		BC_S = 0x1F,
-		BC_D = 0x20,
-		BC_F = 0x21,
-		BC_G = 0x22,
-		BC_H = 0x23,
-		BC_J = 0x24,
-		BC_K = 0x25,
-		BC_L = 0x26,
-		BC_SEMICOLON = 0x27,
-		BC_APOSTROPHE = 0x28,
-		BC_GRAVE = 0x29, // accent
-		BC_LSHIFT = 0x2A,
-		BC_BACKSLASH = 0x2B,
-		BC_Z = 0x2C,
-		BC_X = 0x2D,
-		BC_C = 0x2E,
-		BC_V = 0x2F,
-		BC_B = 0x30,
-		BC_N = 0x31,
-		BC_M = 0x32,
-		BC_COMMA = 0x33,
-		BC_PERIOD = 0x34, // . on main keyboard
-		BC_SLASH = 0x35, // / on main keyboard
-		BC_RSHIFT = 0x36,
-		BC_MULTIPLY = 0x37, // * on numeric keypad
-		BC_LMENU = 0x38, // left Alt
-		BC_SPACE = 0x39,
-		BC_CAPITAL = 0x3A,
-		BC_F1 = 0x3B,
-		BC_F2 = 0x3C,
-		BC_F3 = 0x3D,
-		BC_F4 = 0x3E,
-		BC_F5 = 0x3F,
-		BC_F6 = 0x40,
-		BC_F7 = 0x41,
-		BC_F8 = 0x42,
-		BC_F9 = 0x43,
-		BC_F10 = 0x44,
-		BC_NUMLOCK = 0x45,
-		BC_SCROLL = 0x46, // Scroll Lock
-		BC_NUMPAD7 = 0x47,
-		BC_NUMPAD8 = 0x48,
-		BC_NUMPAD9 = 0x49,
-		BC_SUBTRACT = 0x4A, // - on numeric keypad
-		BC_NUMPAD4 = 0x4B,
-		BC_NUMPAD5 = 0x4C,
-		BC_NUMPAD6 = 0x4D,
-		BC_ADD = 0x4E, // + on numeric keypad
-		BC_NUMPAD1 = 0x4F,
-		BC_NUMPAD2 = 0x50,
-		BC_NUMPAD3 = 0x51,
-		BC_NUMPAD0 = 0x52,
-		BC_DECIMAL = 0x53, // . on numeric keypad
-		BC_OEM_102 = 0x56, // < > | on UK/Germany keyboards
-		BC_F11 = 0x57,
-		BC_F12 = 0x58,
-		BC_F13 = 0x64, //                     (NEC PC98)
-		BC_F14 = 0x65, //                     (NEC PC98)
-		BC_F15 = 0x66, //                     (NEC PC98)
-		BC_KANA = 0x70, // (Japanese keyboard)
-		BC_ABNT_C1 = 0x73, // / ? on Portugese (Brazilian) keyboards
-		BC_CONVERT = 0x79, // (Japanese keyboard)
-		BC_NOCONVERT = 0x7B, // (Japanese keyboard)
-		BC_YEN = 0x7D, // (Japanese keyboard)
-		BC_ABNT_C2 = 0x7E, // Numpad . on Portugese (Brazilian) keyboards
-		BC_NUMPADEQUALS = 0x8D, // = on numeric keypad (NEC PC98)
-		BC_PREVTRACK = 0x90, // Previous Track (BC_CIRCUMFLEX on Japanese keyboard)
-		BC_AT = 0x91, //                     (NEC PC98)
-		BC_COLON = 0x92, //                     (NEC PC98)
-		BC_UNDERLINE = 0x93, //                     (NEC PC98)
-		BC_KANJI = 0x94, // (Japanese keyboard)
-		BC_STOP = 0x95, //                     (NEC PC98)
-		BC_AX = 0x96, //                     (Japan AX)
-		BC_UNLABELED = 0x97, //                        (J3100)
-		BC_NEXTTRACK = 0x99, // Next Track
-		BC_NUMPADENTER = 0x9C, // Enter on numeric keypad
-		BC_RCONTROL = 0x9D,
-		BC_MUTE = 0xA0, // Mute
-		BC_CALCULATOR = 0xA1, // Calculator
-		BC_PLAYPAUSE = 0xA2, // Play / Pause
-		BC_MEDIASTOP = 0xA4, // Media Stop
-		BC_VOLUMEDOWN = 0xAE, // Volume -
-		BC_VOLUMEUP = 0xB0, // Volume +
-		BC_WEBHOME = 0xB2, // Web home
-		BC_NUMPADCOMMA = 0xB3, // , on numeric keypad (NEC PC98)
-		BC_DIVIDE = 0xB5, // / on numeric keypad
-		BC_SYSRQ = 0xB7,
-		BC_RMENU = 0xB8, // right Alt
-		BC_PAUSE = 0xC5, // Pause
-		BC_HOME = 0xC7, // Home on arrow keypad
-		BC_UP = 0xC8, // UpArrow on arrow keypad
-		BC_PGUP = 0xC9, // PgUp on arrow keypad
-		BC_LEFT = 0xCB, // LeftArrow on arrow keypad
-		BC_RIGHT = 0xCD, // RightArrow on arrow keypad
-		BC_END = 0xCF, // End on arrow keypad
-		BC_DOWN = 0xD0, // DownArrow on arrow keypad
-		BC_PGDOWN = 0xD1, // PgDn on arrow keypad
-		BC_INSERT = 0xD2, // Insert on arrow keypad
-		BC_DELETE = 0xD3, // Delete on arrow keypad
-		BC_LWIN = 0xDB, // Left Windows key
-		BC_RWIN = 0xDC, // Right Windows key
-		BC_APPS = 0xDD, // AppMenu key
-		BC_POWER = 0xDE, // System Power
-		BC_SLEEP = 0xDF, // System Sleep
-		BC_WAKE = 0xE3, // System Wake
-		BC_WEBSEARCH = 0xE5, // Web Search
-		BC_WEBFAVORITES = 0xE6, // Web Favorites
-		BC_WEBREFRESH = 0xE7, // Web Refresh
-		BC_WEBSTOP = 0xE8, // Web Stop
-		BC_WEBFORWARD = 0xE9, // Web Forward
-		BC_WEBBACK = 0xEA, // Web Back
-		BC_MYCOMPUTER = 0xEB, // My Computer
-		BC_MAIL = 0xEC, // Mail
-		BC_MEDIASELECT = 0xED, // Media Select
-		BC_MOUSE_LEFT = 0x800000EE, // Mouse buttons - Most important bit signifies this key is a mouse button
-		BC_MOUSE_RIGHT,
-		BC_MOUSE_MIDDLE,
-		BC_MOUSE_BTN4,
-		BC_MOUSE_BTN5,
-		BC_MOUSE_BTN6,
-		BC_MOUSE_BTN7,
-		BC_MOUSE_BTN8,
-		BC_MOUSE_BTN9,
-		BC_MOUSE_BTN10,
-		BC_MOUSE_BTN11,
-		BC_MOUSE_BTN12,
-		BC_MOUSE_BTN13,
-		BC_MOUSE_BTN14,
-		BC_MOUSE_BTN15,
-		BC_MOUSE_BTN16,
-		BC_MOUSE_BTN17,
-		BC_MOUSE_BTN18,
-		BC_MOUSE_BTN19,
-		BC_MOUSE_BTN20,
-		BC_MOUSE_BTN21,
-		BC_MOUSE_BTN22,
-		BC_MOUSE_BTN23,
-		BC_MOUSE_BTN24,
-		BC_MOUSE_BTN25,
-		BC_MOUSE_BTN26,
-		BC_MOUSE_BTN27,
-		BC_MOUSE_BTN28,
-		BC_MOUSE_BTN29,
-		BC_MOUSE_BTN30,
-		BC_MOUSE_BTN31,
-		BC_MOUSE_BTN32,
-		BC_GAMEPAD_A = 0x4000010F, // Joystick/Gamepad buttons- Second most important bit signifies key is a gamepad button
-		BC_GAMEPAD_B, // Similar to keyboard names, these are for convenience named after Xbox controller buttons
-		BC_GAMEPAD_X, // but if some other controller is connected you will need to learn yourself which of these
-		BC_GAMEPAD_Y, // corresponds to which actual button on the controller.
-		BC_GAMEPAD_LB,
-		BC_GAMEPAD_RB,
-		BC_GAMEPAD_LS,
-		BC_GAMEPAD_RS,
-		BC_GAMEPAD_BACK,
-		BC_GAMEPAD_START,
-		BC_GAMEPAD_DPAD_LEFT,
-		BC_GAMEPAD_DPAD_RIGHT,
-		BC_GAMEPAD_DPAD_UP,
-		BC_GAMEPAD_DPAD_DOWN,
-		BC_GAMEPAD_BTN1,
-		BC_GAMEPAD_BTN2,
-		BC_GAMEPAD_BTN3,
-		BC_GAMEPAD_BTN4,
-		BC_GAMEPAD_BTN5,
-		BC_GAMEPAD_BTN6,
-		BC_GAMEPAD_BTN7,
-		BC_GAMEPAD_BTN8,
-		BC_GAMEPAD_BTN9,
-		BC_GAMEPAD_BTN10,
-		BC_GAMEPAD_BTN11,
-		BC_GAMEPAD_BTN12,
-		BC_GAMEPAD_BTN13,
-		BC_GAMEPAD_BTN14,
-		BC_GAMEPAD_BTN15,
-		BC_GAMEPAD_BTN16,
-		BC_GAMEPAD_BTN17,
-		BC_GAMEPAD_BTN18,
-		BC_GAMEPAD_BTN19,
-		BC_GAMEPAD_BTN20,
-		BC_GAMEPAD_DPAD_UPLEFT,
-		BC_GAMEPAD_DPAD_UPRIGHT,
-		BC_GAMEPAD_DPAD_DOWNLEFT,
-		BC_GAMEPAD_DPAD_DOWNRIGHT,
-		BC_NumKeys = BC_MEDIASELECT - BC_UNASSIGNED + 1, // IMPORTANT: Make sure to update these if you modify the values above
-		BC_NumMouse = BC_MOUSE_BTN32 - BC_MOUSE_LEFT + 1,
-		BC_NumGamepad = BC_GAMEPAD_DPAD_DOWNRIGHT - BC_GAMEPAD_A + 1,
-		BC_Count = BC_NumKeys + BC_NumMouse + BC_NumGamepad,
+		Unassigned = 0x00,
+		Escape = 0x01,
+		Key1 = 0x02,
+		Key2 = 0x03,
+		Key3 = 0x04,
+		Key4 = 0x05,
+		Key5 = 0x06,
+		Key6 = 0x07,
+		Key7 = 0x08,
+		Key8 = 0x09,
+		Key9 = 0x0A,
+		Key0 = 0x0B,
+		Minus = 0x0C, // - on main keyboard
+		Equals = 0x0D,
+		Backspace = 0x0E, // backspace
+		Tab = 0x0F,
+		Q = 0x10,
+		W = 0x11,
+		E = 0x12,
+		R = 0x13,
+		T = 0x14,
+		Y = 0x15,
+		U = 0x16,
+		I = 0x17,
+		O = 0x18,
+		P = 0x19,
+		LeftBracket = 0x1A,
+		RightBracket = 0x1B,
+		Enter = 0x1C, // Enter on main keyboard
+		LeftControl = 0x1D,
+		A = 0x1E,
+		S = 0x1F,
+		D = 0x20,
+		F = 0x21,
+		G = 0x22,
+		H = 0x23,
+		J = 0x24,
+		K = 0x25,
+		L = 0x26,
+		Semicolon = 0x27,
+		Apostrophe = 0x28,
+		Grave = 0x29, // accent
+		LeftShift = 0x2A,
+		Backslash = 0x2B,
+		Z = 0x2C,
+		X = 0x2D,
+		C = 0x2E,
+		V = 0x2F,
+		B = 0x30,
+		N = 0x31,
+		M = 0x32,
+		Comma = 0x33,
+		Period = 0x34, // . on main keyboard
+		Slash = 0x35, // / on main keyboard
+		RightShift = 0x36,
+		NumpadMultiply = 0x37, // * on numeric keypad
+		LeftAlt = 0x38, // left Alt
+		Space = 0x39,
+		CapsLock = 0x3A,
+		F1 = 0x3B,
+		F2 = 0x3C,
+		F3 = 0x3D,
+		F4 = 0x3E,
+		F5 = 0x3F,
+		F6 = 0x40,
+		F7 = 0x41,
+		F8 = 0x42,
+		F9 = 0x43,
+		F10 = 0x44,
+		NumLock = 0x45,
+		ScrollLock = 0x46, // Scroll Lock
+		Numpad7 = 0x47,
+		Numpad8 = 0x48,
+		Numpad9 = 0x49,
+		NumpadMinus = 0x4A, // - on numeric keypad
+		Numpad4 = 0x4B,
+		Numpad5 = 0x4C,
+		Numpad6 = 0x4D,
+		NumpadPlus = 0x4E, // + on numeric keypad
+		Numpad1 = 0x4F,
+		Numpad2 = 0x50,
+		Numpad3 = 0x51,
+		Numpad0 = 0x52,
+		NumpadDecimal = 0x53, // . on numeric keypad
+		OEM102 = 0x56, // < > | on UK/Germany keyboards
+		F11 = 0x57,
+		F12 = 0x58,
+		F13 = 0x64, //                     (NEC PC98)
+		F14 = 0x65, //                     (NEC PC98)
+		F15 = 0x66, //                     (NEC PC98)
+		Kana = 0x70, // (Japanese keyboard)
+		ABNTC1 = 0x73, // / ? on Portugese (Brazilian) keyboards
+		Convert = 0x79, // (Japanese keyboard)
+		NoConvert = 0x7B, // (Japanese keyboard)
+		Yen = 0x7D, // (Japanese keyboard)
+		ABNTC2 = 0x7E, // Numpad . on Portugese (Brazilian) keyboards
+		NumadEquals = 0x8D, // = on numeric keypad (NEC PC98)
+		PreviousTrack = 0x90, // Previous Track (BC_CIRCUMFLEX on Japanese keyboard)
+		At = 0x91, //                     (NEC PC98)
+		Colon = 0x92, //                     (NEC PC98)
+		Underline = 0x93, //                     (NEC PC98)
+		Kanji = 0x94, // (Japanese keyboard)
+		Stop = 0x95, //                     (NEC PC98)
+		AX = 0x96, //                     (Japan AX)
+		Unlabeled = 0x97, //                        (J3100)
+		NextTrack = 0x99, // Next Track
+		NumpadEnter = 0x9C, // Enter on numeric keypad
+		RightControl = 0x9D,
+		Mute = 0xA0, // Mute
+		Calculator = 0xA1, // Calculator
+		PlayPause = 0xA2, // Play / Pause
+		MediaStop = 0xA4, // Media Stop
+		VolumeDown = 0xAE, // Volume -
+		VolumeUp = 0xB0, // Volume +
+		WebHome = 0xB2, // Web home
+		NumpadComma = 0xB3, // , on numeric keypad (NEC PC98)
+		NumpadDivide = 0xB5, // / on numeric keypad
+		SysRq = 0xB7,
+		RightAlt = 0xB8, // right Alt
+		Pause = 0xC5, // Pause
+		Home = 0xC7, // Home on arrow keypad
+		ArrowUp = 0xC8, // UpArrow on arrow keypad
+		PageUp = 0xC9, // PgUp on arrow keypad
+		ArrowLeft = 0xCB, // LeftArrow on arrow keypad
+		ArrowRight = 0xCD, // RightArrow on arrow keypad
+		End = 0xCF, // End on arrow keypad
+		ArrowDown = 0xD0, // DownArrow on arrow keypad
+		PageDown = 0xD1, // PgDn on arrow keypad
+		Insert = 0xD2, // Insert on arrow keypad
+		Delete = 0xD3, // Delete on arrow keypad
+		LeftWindows = 0xDB, // Left Windows key
+		RightWindows = 0xDC, // Right Windows key
+		ApplicationMenu = 0xDD, // AppMenu key
+		Power = 0xDE, // System Power
+		Sleep = 0xDF, // System Sleep
+		Awake = 0xE3, // System Wake
+		WebSearch = 0xE5, // Web Search
+		WebFavorites = 0xE6, // Web Favorites
+		WebRefresh = 0xE7, // Web Refresh
+		WebStop = 0xE8, // Web Stop
+		WebForward = 0xE9, // Web Forward
+		WebBack = 0xEA, // Web Back
+		MyComputer = 0xEB, // My Computer
+		Mail = 0xEC, // Mail
+		MediaSelect = 0xED, // Media Select
+		MouseLeft = 0x800000EE, // Mouse buttons - Most important bit signifies this key is a mouse button
+		MouseRight,
+		MouseMiddle,
+		MouseButton4,
+		MouseButton5,
+		MouseButton6,
+		MouseButton7,
+		MouseButton8,
+		MouseButton9,
+		MouseButton10,
+		MouseButton11,
+		MouseButton12,
+		MouseButton13,
+		MouseButton14,
+		MouseButton15,
+		MouseButton16,
+		MouseButton17,
+		MouseButton18,
+		MouseButton19,
+		MouseButton20,
+		MouseButton21,
+		MouseButton22,
+		MouseButton23,
+		MouseButton24,
+		MouseButton25,
+		MouseButton26,
+		MouseButton27,
+		MouseButton28,
+		MouseButton29,
+		MouseButton30,
+		MouseButton31,
+		MouseButton32,
+		GamepadA = 0x4000010F, // Joystick/Gamepad buttons- Second most important bit signifies key is a gamepad button
+		GamepadB, // Similar to keyboard names, these are for convenience named after Xbox controller buttons
+		GamepadX, // but if some other controller is connected you will need to learn yourself which of these
+		GamepadY, // corresponds to which actual button on the controller.
+		GamepadLeftBumper,
+		GamepadRightBumper,
+		GamepadLeftStick,
+		GamepadRightStick,
+		GamepadBack,
+		GamepadStart,
+		GamepadDPadLeft,
+		GamepadDPatRight,
+		GamepadDPadUp,
+		GamepadDPadDown,
+		GamepadButton1,
+		GamepadButton2,
+		GamepadButton3,
+		GamepadButton4,
+		GamepadButton5,
+		GamepadButton6,
+		GamepadButton7,
+		GamepadButton8,
+		GamepadButton9,
+		GamepadButton10,
+		GamepadButton11,
+		GamepadButton12,
+		GamepadButton13,
+		GamepadButton14,
+		GamepadButton15,
+		GamepadButton16,
+		GamepadButton17,
+		GamepadButton18,
+		GamepadButton19,
+		GamepadButton20,
+		GamepadDPadUpLeft,
+		GamepadDPadUpRight,
+		GamepadDPadDownLeft,
+		GamepadDPadDownRight,
+		KeyboardKeyCount = MediaSelect - Unassigned + 1, // IMPORTANT: Make sure to update these if you modify the values above
+		MouseKeyCount = MouseButton32 - MouseLeft + 1,
+		GamepadKeyCount = GamepadDPadDownRight - GamepadA + 1,
+		TotalKeyCount = KeyboardKeyCount + MouseKeyCount + GamepadKeyCount,
 	};
 
 	/**	Contains data about a button input event. */
@@ -262,13 +262,13 @@ namespace bs
 		u32 DeviceIdx; /**< Index of the device that the event originated from. */
 
 		/**	Query is the pressed button a keyboard button. */
-		bool IsKeyboard() const { return (ButtonCode & 0xC0000000) == 0; }
+		bool IsKeyboard() const { return ((u32)ButtonCode & 0xC0000000) == 0; }
 
 		/** Query is the pressed button a mouse button. */
-		bool IsMouse() const { return (ButtonCode & 0x80000000) != 0; }
+		bool IsMouse() const { return ((u32)ButtonCode & 0x80000000) != 0; }
 
 		/** Query is the pressed button a gamepad button. */
-		bool IsGamepad() const { return (ButtonCode & 0x40000000) != 0; }
+		bool IsGamepad() const { return ((u32)ButtonCode & 0x40000000) != 0; }
 
 		/**
 		 * Check if the event has been marked as used. Internally this means nothing but caller might choose to ignore an
@@ -404,7 +404,7 @@ namespace bs
 	};
 
 	/**	Common input axis types. */
-	enum class InputAxis
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Input)) InputAxis
 	{
 		MouseX, /**< Mouse axis X. Provides unnormalized relative movement. */
 		MouseY, /**< Mouse axis Y. Provides unnormalized relative movement. */
@@ -419,7 +419,7 @@ namespace bs
 	};
 
 	/**	Modifiers used with along with keyboard buttons. */
-	enum class ButtonModifier
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Input)) ButtonModifier
 	{
 		None = 0x00,
 		Shift = 0x01,

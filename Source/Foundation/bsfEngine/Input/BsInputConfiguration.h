@@ -15,9 +15,9 @@ namespace bs
 	 * Describes a virtual button. Virtual buttons allow you to map custom actions without needing to know about what
 	 * physical buttons trigger those actions.
 	 */
-	struct B3D_EXPORT VIRTUAL_BUTTON_DESC
+	struct B3D_EXPORT VirtualButtonInformation
 	{
-		VIRTUAL_BUTTON_DESC() = default;
+		VirtualButtonInformation() = default;
 
 		/**
 		 * Constructs a virtual button descriptor.
@@ -27,27 +27,30 @@ namespace bs
 		 * @param[in]	repeatable	If true, the virtual button events will be sent continually while the physical button
 		 *							is being held.
 		 */
-		VIRTUAL_BUTTON_DESC(ButtonCode buttonCode, ButtonModifier modifiers = ButtonModifier::None, bool repeatable = false);
+		VirtualButtonInformation(ButtonCode buttonCode, ButtonModifier modifiers = ButtonModifier::None, bool repeatable = false);
 
-		ButtonCode ButtonCode = BC_0;
+		ButtonCode ButtonCode = ButtonCode::Key0;
 		ButtonModifier Modifiers = ButtonModifier::None;
 		bool Repeatable = false;
 	};
+
+	/** Information used for initializing a virtual button. */
+	struct B3D_EXPORT VirtualButtonCreateInformation : VirtualButtonInformation { };
 
 	/**
 	 * Describes a virtual axis. Virtual axes allow you to map custom axes without needing to know the actual physical
 	 * device handling those axes.
 	 */
-	struct B3D_EXPORT VIRTUAL_AXIS_DESC
+	struct B3D_EXPORT VirtualAxisInformation
 	{
-		VIRTUAL_AXIS_DESC() = default;
+		VirtualAxisInformation() = default;
 
 		/**
 		 * Constructs a new virtual axis descriptor.
 		 *
-		 * @param[in]	type		@copydoc VIRTUAL_AXIS_DESC::Type
+		 * @param[in]	type		@copydoc VirtualAxisInformation::Type
 		 */
-		VIRTUAL_AXIS_DESC(u32 type);
+		VirtualAxisInformation(u32 type);
 
 		/** Type of physical axis to map to. See InputAxis type for common types, but you are not limited to those values. */
 		u32 Type = (u32)InputAxis::MouseX;
@@ -69,6 +72,12 @@ namespace bs
 		bool Normalize = false;
 	};
 
+	/** Information used for initializing a virtual axis. */
+	struct B3D_EXPORT B3D_SCRIPT_EXPORT() VirtualAxisCreateInformation : VirtualAxisInformation
+	{
+		using VirtualAxisInformation::VirtualAxisInformation;
+	};
+
 	/**
 	 * Identifier for a virtual button.
 	 *
@@ -78,7 +87,7 @@ namespace bs
 	 * @note
 	 * This class is not thread safe and should only be used on the main thread.
 	 *
-	 * @see		VIRTUAL_BUTTON_DESC
+	 * @see		VirtualButtonInformation
 	 */
 	class B3D_EXPORT VirtualButton
 	{
@@ -110,7 +119,7 @@ namespace bs
 	 * @note
 	 * This class is not thread safe and should only be used on the main thread.
 	 *
-	 * @see		VIRTUAL_AXIS_DESC
+	 * @see		VirtualAxisCreateInformation
 	 */
 	class B3D_EXPORT VirtualAxis
 	{
@@ -131,7 +140,7 @@ namespace bs
 	};
 
 	/**	Contains virtual <-> physical key mappings. */
-	class B3D_EXPORT InputConfiguration
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Input)) InputConfiguration : public IScriptExportable
 	{
 		static const int kMaxNumDevicesPerType = 8;
 		static const int kMaxNumDevices = (u32)InputDevice::Count * kMaxNumDevicesPerType;
@@ -141,7 +150,7 @@ namespace bs
 		{
 			String Name;
 			VirtualButton Button;
-			VIRTUAL_BUTTON_DESC Desc;
+			VirtualButtonInformation Desc;
 		};
 
 		/**	Internal virtual axis data container. */
@@ -149,7 +158,7 @@ namespace bs
 		{
 			String Name;
 			VirtualAxis Axis;
-			VIRTUAL_AXIS_DESC Desc;
+			VirtualAxisInformation Desc;
 		};
 
 		/**	Internal container for holding axis data for all devices. */
@@ -159,43 +168,50 @@ namespace bs
 		};
 
 	public:
+		B3D_SCRIPT_EXPORT()
 		InputConfiguration() = default;
 
 		/**
 		 * Registers a new virtual button.
 		 *
-		 * @param[in]	name		Unique name used to access the virtual button.
-		 * @param[in]	buttonCode	Physical button the virtual button is triggered by.
-		 * @param[in]	modifiers	Modifiers required to be pressed with the physical button to trigger the virtual button.
-		 * @param[in]	repeatable	If true, the virtual button events will be sent continually while the physical button
-		 *							is being held.
+		 * @param	name		Unique name used to access the virtual button.
+		 * @param	buttonCode	Physical button the virtual button is triggered by.
+		 * @param	modifiers	Modifiers required to be pressed with the physical button to trigger the virtual button.
+		 * @param	repeatable	If true, the virtual button events will be sent continually while the physical button
+		 *						is being held.
 		 */
+		B3D_SCRIPT_EXPORT()
 		void RegisterButton(const String& name, ButtonCode buttonCode, ButtonModifier modifiers = ButtonModifier::None, bool repeatable = false);
 
 		/**	Unregisters a virtual button with the specified name. Events will no longer be generated for that button. */
+		B3D_SCRIPT_EXPORT()
 		void UnregisterButton(const String& name);
 
 		/**
 		 * Registers a new virtual axis.
 		 *
-		 * @param[in]	name	Unique name used to access the axis.
-		 * @param[in]	desc	Descriptor structure containing virtual axis creation parameters.
+		 * @param	name				Unique name used to access the axis.
+		 * @param	createInformation	Descriptor structure containing virtual axis creation parameters.
 		 */
-		void RegisterAxis(const String& name, const VIRTUAL_AXIS_DESC& desc);
+		B3D_SCRIPT_EXPORT()
+		void RegisterAxis(const String& name, const VirtualAxisCreateInformation& createInformation);
 
 		/**
 		 * Unregisters a virtual axis with the specified name. You will no longer be able to retrieve valid values for that
 		 * axis.
 		 */
+		B3D_SCRIPT_EXPORT()
 		void UnregisterAxis(const String& name);
 
 		/**
-		 * Sets repeat interval for held virtual buttons. Buttons will be continously triggered in interval increments as
+		 * Repeat interval for held virtual buttons. Buttons will be continously triggered in interval increments as
 		 * long as they button is being held.
 		 */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(RepeatInterval))
 		void SetRepeatInterval(u64 milliseconds) { mRepeatInterval = milliseconds; }
 
-		/**	Gets the currently set repeat interval for held virtual buttons. */
+		/** @copydoc SetRepeatInterval */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(RepeatInterval))
 		u64 GetRepeatInterval() const { return mRepeatInterval; }
 
 		/** @name Internal
@@ -205,15 +221,15 @@ namespace bs
 		/**
 		 * Returns data about virtual buttons that are triggered by the specified physical button code and modifier flags.
 		 */
-		bool GetButtonsInternal(ButtonCode code, u32 modifiers, Vector<VirtualButton>& btns, Vector<VIRTUAL_BUTTON_DESC>& btnDescs) const;
+		bool GetButtonsInternal(ButtonCode code, u32 modifiers, Vector<VirtualButton>& btns, Vector<VirtualButtonInformation>& btnDescs) const;
 
 		/**	Retrieves virtual axis descriptor for the provided axis. */
-		bool GetAxisInternal(const VirtualAxis& axis, VIRTUAL_AXIS_DESC& axisDesc) const;
+		bool GetAxisInternal(const VirtualAxis& axis, VirtualAxisInformation& axisDesc) const;
 
 		/** @} */
 
 	private:
-		Vector<VirtualButtonData> mButtons[BC_Count];
+		Vector<VirtualButtonData> mButtons[static_cast<size_t>(ButtonCode::TotalKeyCount)];
 		Vector<VirtualAxisData> mAxes;
 
 		u64 mRepeatInterval = 300;

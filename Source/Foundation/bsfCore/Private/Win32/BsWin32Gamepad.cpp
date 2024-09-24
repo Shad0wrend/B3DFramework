@@ -94,35 +94,35 @@ void HandlePov(Input* owner, Gamepad::Pimpl* m, int pov, DIDEVICEOBJECTDATA& di)
 		switch(di.dwData)
 		{
 		case 0:
-			newPOVState.Code = BC_GAMEPAD_DPAD_UP;
+			newPOVState.Code = ButtonCode::GamepadDPadUp;
 			newPOVState.Pressed = true;
 			break;
 		case 4500:
-			newPOVState.Code = BC_GAMEPAD_DPAD_UPRIGHT;
+			newPOVState.Code = ButtonCode::GamepadDPadUpRight;
 			newPOVState.Pressed = true;
 			break;
 		case 9000:
-			newPOVState.Code = BC_GAMEPAD_DPAD_RIGHT;
+			newPOVState.Code = ButtonCode::GamepadDPatRight;
 			newPOVState.Pressed = true;
 			break;
 		case 13500:
-			newPOVState.Code = BC_GAMEPAD_DPAD_DOWNRIGHT;
+			newPOVState.Code = ButtonCode::GamepadDPadDownRight;
 			newPOVState.Pressed = true;
 			break;
 		case 18000:
-			newPOVState.Code = BC_GAMEPAD_DPAD_DOWN;
+			newPOVState.Code = ButtonCode::GamepadDPadDown;
 			newPOVState.Pressed = true;
 			break;
 		case 22500:
-			newPOVState.Code = BC_GAMEPAD_DPAD_DOWNLEFT;
+			newPOVState.Code = ButtonCode::GamepadDPadDownLeft;
 			newPOVState.Pressed = true;
 			break;
 		case 27000:
-			newPOVState.Code = BC_GAMEPAD_DPAD_LEFT;
+			newPOVState.Code = ButtonCode::GamepadDPadLeft;
 			newPOVState.Pressed = true;
 			break;
 		case 31500:
-			newPOVState.Code = BC_GAMEPAD_DPAD_UPLEFT;
+			newPOVState.Code = ButtonCode::GamepadDPadUpLeft;
 			newPOVState.Pressed = true;
 			break;
 		}
@@ -158,40 +158,40 @@ ButtonCode GamepadButtonToButtonCode(i32 code)
 	switch(code)
 	{
 	case 0:
-		return BC_GAMEPAD_DPAD_UP;
+		return ButtonCode::GamepadDPadUp;
 	case 1:
-		return BC_GAMEPAD_DPAD_DOWN;
+		return ButtonCode::GamepadDPadDown;
 	case 2:
-		return BC_GAMEPAD_DPAD_LEFT;
+		return ButtonCode::GamepadDPadLeft;
 	case 3:
-		return BC_GAMEPAD_DPAD_RIGHT;
+		return ButtonCode::GamepadDPatRight;
 	case 4:
-		return BC_GAMEPAD_START;
+		return ButtonCode::GamepadStart;
 	case 5:
-		return BC_GAMEPAD_BACK;
+		return ButtonCode::GamepadBack;
 	case 6:
-		return BC_GAMEPAD_LS;
+		return ButtonCode::GamepadLeftStick;
 	case 7:
-		return BC_GAMEPAD_RS;
+		return ButtonCode::GamepadRightStick;
 	case 8:
-		return BC_GAMEPAD_LB;
+		return ButtonCode::GamepadLeftBumper;
 	case 9:
-		return BC_GAMEPAD_RB;
+		return ButtonCode::GamepadRightBumper;
 	case 10:
-		return BC_GAMEPAD_BTN1;
+		return ButtonCode::GamepadButton1;
 	case 11:
-		return BC_GAMEPAD_LS;
+		return ButtonCode::GamepadLeftStick;
 	case 12:
-		return BC_GAMEPAD_A;
+		return ButtonCode::GamepadA;
 	case 13:
-		return BC_GAMEPAD_B;
+		return ButtonCode::GamepadB;
 	case 14:
-		return BC_GAMEPAD_X;
+		return ButtonCode::GamepadX;
 	case 15:
-		return BC_GAMEPAD_Y;
+		return ButtonCode::GamepadY;
 	}
 
-	return (ButtonCode)(BC_GAMEPAD_BTN1 + (code - 15));
+	return (ButtonCode)(static_cast<unsigned>(ButtonCode::GamepadButton1) + (code - 15));
 }
 
 Gamepad::Gamepad(const String& name, const GamepadInfo& gamepadInfo, Input* owner)
@@ -263,17 +263,17 @@ void Gamepad::Capture()
 		}
 
 		// DPAD (POV)
-		ButtonCode dpadButton = BC_UNASSIGNED;
+		ButtonCode dpadButton = ButtonCode::Unassigned;
 		if((inputState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) != 0)
-			dpadButton = BC_GAMEPAD_DPAD_UP;
+			dpadButton = ButtonCode::GamepadDPadUp;
 		else if((inputState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) != 0)
-			dpadButton = BC_GAMEPAD_DPAD_DOWN;
+			dpadButton = ButtonCode::GamepadDPadDown;
 		if((inputState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) != 0)
-			dpadButton = BC_GAMEPAD_DPAD_LEFT;
+			dpadButton = ButtonCode::GamepadDPadLeft;
 		else if((inputState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) != 0)
-			dpadButton = BC_GAMEPAD_DPAD_RIGHT;
+			dpadButton = ButtonCode::GamepadDPatRight;
 
-		if(dpadButton != BC_UNASSIGNED) // Pressed
+		if(dpadButton != ButtonCode::Unassigned) // Pressed
 		{
 			// Another button was previously pressed
 			if(m->PovState[0].Pressed)

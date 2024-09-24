@@ -118,28 +118,28 @@ void Mouse::Capture()
 		switch(diBuff[i].dwOfs)
 		{
 		case DIMOFS_BUTTON0:
-			DoMouseClick(mOwner, BC_MOUSE_LEFT, diBuff[i]);
+			DoMouseClick(mOwner, ButtonCode::MouseLeft, diBuff[i]);
 			break;
 		case DIMOFS_BUTTON1:
-			DoMouseClick(mOwner, BC_MOUSE_RIGHT, diBuff[i]);
+			DoMouseClick(mOwner, ButtonCode::MouseRight, diBuff[i]);
 			break;
 		case DIMOFS_BUTTON2:
-			DoMouseClick(mOwner, BC_MOUSE_MIDDLE, diBuff[i]);
+			DoMouseClick(mOwner, ButtonCode::MouseMiddle, diBuff[i]);
 			break;
 		case DIMOFS_BUTTON3:
-			DoMouseClick(mOwner, BC_MOUSE_BTN4, diBuff[i]);
+			DoMouseClick(mOwner, ButtonCode::MouseButton4, diBuff[i]);
 			break;
 		case DIMOFS_BUTTON4:
-			DoMouseClick(mOwner, BC_MOUSE_BTN5, diBuff[i]);
+			DoMouseClick(mOwner, ButtonCode::MouseButton5, diBuff[i]);
 			break;
 		case DIMOFS_BUTTON5:
-			DoMouseClick(mOwner, BC_MOUSE_BTN6, diBuff[i]);
+			DoMouseClick(mOwner, ButtonCode::MouseButton6, diBuff[i]);
 			break;
 		case DIMOFS_BUTTON6:
-			DoMouseClick(mOwner, BC_MOUSE_BTN7, diBuff[i]);
+			DoMouseClick(mOwner, ButtonCode::MouseButton7, diBuff[i]);
 			break;
 		case DIMOFS_BUTTON7:
-			DoMouseClick(mOwner, BC_MOUSE_BTN8, diBuff[i]);
+			DoMouseClick(mOwner, ButtonCode::MouseButton8, diBuff[i]);
 			break;
 		case DIMOFS_X:
 			relX += diBuff[i].dwData;

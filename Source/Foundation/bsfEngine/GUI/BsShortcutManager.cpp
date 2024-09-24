@@ -30,13 +30,13 @@ void ShortcutManager::RemoveShortcut(const ShortcutKey& key)
 void ShortcutManager::OnButtonDown(const ButtonEvent& event)
 {
 	u32 modifiers = 0;
-	if(Input::Instance().IsButtonHeld(BC_LSHIFT) || Input::Instance().IsButtonHeld(BC_RSHIFT))
+	if(Input::Instance().IsButtonHeld(ButtonCode::LeftShift) || Input::Instance().IsButtonHeld(ButtonCode::RightShift))
 		modifiers |= (u32)ButtonModifier::Shift;
 
-	if(Input::Instance().IsButtonHeld(BC_LCONTROL) || Input::Instance().IsButtonHeld(BC_RCONTROL))
+	if(Input::Instance().IsButtonHeld(ButtonCode::LeftControl) || Input::Instance().IsButtonHeld(ButtonCode::RightControl))
 		modifiers |= (u32)ButtonModifier::Ctrl;
 
-	if(Input::Instance().IsButtonHeld(BC_LMENU) || Input::Instance().IsButtonHeld(BC_RMENU))
+	if(Input::Instance().IsButtonHeld(ButtonCode::LeftAlt) || Input::Instance().IsButtonHeld(ButtonCode::RightAlt))
 		modifiers |= (u32)ButtonModifier::Alt;
 
 	ShortcutKey searchKey((ButtonModifier)modifiers, event.ButtonCode);

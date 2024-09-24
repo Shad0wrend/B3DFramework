@@ -76,7 +76,7 @@ bool VirtualInput::IsButtonHeld(const VirtualButton& button, u32 deviceIdx) cons
 
 float VirtualInput::GetAxisValue(const VirtualAxis& axis, u32 deviceIdx) const
 {
-	VIRTUAL_AXIS_DESC axisDesc;
+	VirtualAxisInformation axisDesc;
 	if(mInputConfiguration->GetAxisInternal(axis, axisDesc))
 	{
 		float axisValue = GetInput().GetAxisValue((u32)axisDesc.Type, deviceIdx);
@@ -209,11 +209,11 @@ void VirtualInput::UpdateInternal()
 
 void VirtualInput::ButtonDown(const ButtonEvent& event)
 {
-	if(event.ButtonCode == BC_LSHIFT || event.ButtonCode == BC_RSHIFT)
+	if(event.ButtonCode == ButtonCode::LeftShift || event.ButtonCode == ButtonCode::RightShift)
 		mActiveModifiers |= (u32)ButtonModifier::Shift;
-	else if(event.ButtonCode == BC_LCONTROL || event.ButtonCode == BC_RCONTROL)
+	else if(event.ButtonCode == ButtonCode::LeftControl || event.ButtonCode == ButtonCode::RightControl)
 		mActiveModifiers |= (u32)ButtonModifier::Ctrl;
-	else if(event.ButtonCode == BC_LMENU || event.ButtonCode == BC_RMENU)
+	else if(event.ButtonCode == ButtonCode::LeftAlt || event.ButtonCode == ButtonCode::RightAlt)
 		mActiveModifiers |= (u32)ButtonModifier::Alt;
 
 	tempButtons.clear();
@@ -231,7 +231,7 @@ void VirtualInput::ButtonDown(const ButtonEvent& event)
 		for(u32 i = 0; i < numButtons; i++)
 		{
 			const VirtualButton& btn = tempButtons[i];
-			const VIRTUAL_BUTTON_DESC& btnDesc = tempBtnDescs[i];
+			const VirtualButtonInformation& btnDesc = tempBtnDescs[i];
 
 			ButtonData& data = cachedStates[btn.ButtonIdentifier];
 
@@ -254,11 +254,11 @@ void VirtualInput::ButtonDown(const ButtonEvent& event)
 
 void VirtualInput::ButtonUp(const ButtonEvent& event)
 {
-	if(event.ButtonCode == BC_LSHIFT || event.ButtonCode == BC_RSHIFT)
+	if(event.ButtonCode == ButtonCode::LeftShift || event.ButtonCode == ButtonCode::RightShift)
 		mActiveModifiers &= ~(u32)ButtonModifier::Shift;
-	else if(event.ButtonCode == BC_LCONTROL || event.ButtonCode == BC_RCONTROL)
+	else if(event.ButtonCode == ButtonCode::LeftControl || event.ButtonCode == ButtonCode::RightControl)
 		mActiveModifiers &= ~(u32)ButtonModifier::Ctrl;
-	else if(event.ButtonCode == BC_LMENU || event.ButtonCode == BC_RMENU)
+	else if(event.ButtonCode == ButtonCode::LeftAlt || event.ButtonCode == ButtonCode::RightAlt)
 		mActiveModifiers &= ~(u32)ButtonModifier::Alt;
 
 	tempButtons.clear();
@@ -276,7 +276,7 @@ void VirtualInput::ButtonUp(const ButtonEvent& event)
 		for(u32 i = 0; i < numButtons; i++)
 		{
 			const VirtualButton& btn = tempButtons[i];
-			const VIRTUAL_BUTTON_DESC& btnDesc = tempBtnDescs[i];
+			const VirtualButtonInformation& btnDesc = tempBtnDescs[i];
 
 			ButtonData& data = cachedStates[btn.ButtonIdentifier];
 

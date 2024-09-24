@@ -116,7 +116,7 @@ void Keyboard::Capture()
 	{
 		ButtonCode buttonCode = (ButtonCode)diBuff[i].dwOfs;
 
-		m->KeyBuffer[buttonCode] = (u8)(diBuff[i].dwData);
+		m->KeyBuffer[(u32)buttonCode] = (u8)(diBuff[i].dwData);
 
 		if(diBuff[i].dwData & 0x80)
 			mOwner->NotifyButtonPressedInternal(0, buttonCode, diBuff[i].dwTimeStamp);

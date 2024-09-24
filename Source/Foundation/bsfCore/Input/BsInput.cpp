@@ -21,7 +21,7 @@ const float Input::kWeightModifier = 0.5f;
 
 Input::DeviceData::DeviceData()
 {
-	for(u32 i = 0; i < BC_Count; i++)
+	for(u32 i = 0; i < static_cast<unsigned>(ButtonCode::TotalKeyCount); i++)
 		KeyStates[i] = ButtonState::Off;
 }
 
@@ -82,7 +82,7 @@ void Input::UpdateInternal()
 
 	for(auto& deviceData : mDevices)
 	{
-		for(u32 i = 0; i < BC_Count; i++)
+		for(u32 i = 0; i < static_cast<unsigned>(ButtonCode::TotalKeyCount); i++)
 		{
 			if(deviceData.KeyStates[i] == ButtonState::ToggledOff || deviceData.KeyStates[i] == ButtonState::ToggledOnOff)
 				deviceData.KeyStates[i] = ButtonState::Off;
@@ -202,7 +202,7 @@ void Input::TriggerCallbacksInternal()
 			{
 				const ButtonEvent& eventData = mButtonDownEvents[1][event.Idx];
 
-				mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOn;
+				mDevices[eventData.DeviceIdx].KeyStates[(u32)eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOn;
 				OnButtonDown(mButtonDownEvents[1][event.Idx]);
 			}
 			break;
@@ -213,10 +213,10 @@ void Input::TriggerCallbacksInternal()
 				while(eventData.DeviceIdx >= (u32)mDevices.size())
 					mDevices.push_back(DeviceData());
 
-				if(mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] == ButtonState::ToggledOn)
-					mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOnOff;
+				if(mDevices[eventData.DeviceIdx].KeyStates[(u32)eventData.ButtonCode & 0x0000FFFF] == ButtonState::ToggledOn)
+					mDevices[eventData.DeviceIdx].KeyStates[(u32)eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOnOff;
 				else
-					mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOff;
+					mDevices[eventData.DeviceIdx].KeyStates[(u32)eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOff;
 
 				OnButtonUp(mButtonUpEvents[1][event.Idx]);
 			}
@@ -516,9 +516,9 @@ bool Input::IsButtonHeld(ButtonCode button, u32 deviceIdx) const
 	if(deviceIdx >= (u32)mDevices.size())
 		return false;
 
-	return mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::On ||
-		mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::ToggledOn ||
-		mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::ToggledOnOff;
+	return mDevices[deviceIdx].KeyStates[(u32)button & 0x0000FFFF] == ButtonState::On ||
+		mDevices[deviceIdx].KeyStates[(u32)button & 0x0000FFFF] == ButtonState::ToggledOn ||
+		mDevices[deviceIdx].KeyStates[(u32)button & 0x0000FFFF] == ButtonState::ToggledOnOff;
 }
 
 bool Input::IsButtonUp(ButtonCode button, u32 deviceIdx) const
@@ -526,8 +526,8 @@ bool Input::IsButtonUp(ButtonCode button, u32 deviceIdx) const
 	if(deviceIdx >= (u32)mDevices.size())
 		return false;
 
-	return mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::ToggledOff ||
-		mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::ToggledOnOff;
+	return mDevices[deviceIdx].KeyStates[(u32)button & 0x0000FFFF] == ButtonState::ToggledOff ||
+		mDevices[deviceIdx].KeyStates[(u32)button & 0x0000FFFF] == ButtonState::ToggledOnOff;
 }
 
 bool Input::IsButtonDown(ButtonCode button, u32 deviceIdx) const
@@ -535,8 +535,8 @@ bool Input::IsButtonDown(ButtonCode button, u32 deviceIdx) const
 	if(deviceIdx >= (u32)mDevices.size())
 		return false;
 
-	return mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::ToggledOn ||
-		mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::ToggledOnOff;
+	return mDevices[deviceIdx].KeyStates[(u32)button & 0x0000FFFF] == ButtonState::ToggledOn ||
+		mDevices[deviceIdx].KeyStates[(u32)button & 0x0000FFFF] == ButtonState::ToggledOnOff;
 }
 
 bool Input::IsPointerButtonHeld(PointerEventButton pointerButton) const

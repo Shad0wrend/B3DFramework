@@ -187,7 +187,7 @@ void GUIManager::Update()
 	if(mShowTooltip)
 	{
 		float diff = GetTime().GetRealTimeInSeconds() - mTooltipElementHoverStart;
-		if(diff >= kTooltipHoverTime || GetInput().IsButtonHeld(BC_LCONTROL) || GetInput().IsButtonHeld(BC_RCONTROL))
+		if(diff >= kTooltipHoverTime || GetInput().IsButtonHeld(ButtonCode::LeftControl) || GetInput().IsButtonHeld(ButtonCode::RightControl))
 		{
 			for(auto& entry : mElementsUnderPointer)
 			{

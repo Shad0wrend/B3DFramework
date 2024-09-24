@@ -131,7 +131,7 @@ namespace bs
 
 		// Transient
 		Vector<VirtualButton> tempButtons;
-		Vector<VIRTUAL_BUTTON_DESC> tempBtnDescs;
+		Vector<VirtualButtonInformation> tempBtnDescs;
 	};
 
 	/** Provides easier access to VirtualInput. */

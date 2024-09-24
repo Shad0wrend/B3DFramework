@@ -40,7 +40,7 @@ namespace bs
 			DeviceData();
 
 			Vector<float> Axes;
-			ButtonState KeyStates[BC_Count];
+			ButtonState KeyStates[static_cast<size_t>(ButtonCode::TotalKeyCount)];
 		};
 
 		/**	Different types of possible input event callbacks. */
