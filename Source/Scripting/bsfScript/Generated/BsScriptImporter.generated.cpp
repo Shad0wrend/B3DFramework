@@ -21,6 +21,7 @@
 #include "BsScriptMeshImportOptions.generated.h"
 #include "../../../Foundation/bsfCore/Importer/BsTextureImportOptions.h"
 #include "BsScriptTextureImportOptions.generated.h"
+#include "BsScriptResourceWrapper.h"
 #include "BsScriptMultiResource.generated.h"
 
 namespace bs
