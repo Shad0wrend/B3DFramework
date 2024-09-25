@@ -89,10 +89,12 @@ namespace bs
 	 *
 	 * @see		VirtualButtonInformation
 	 */
-	class B3D_EXPORT VirtualButton
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Input)) VirtualButton
 	{
 	public:
 		VirtualButton() = default;
+
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		VirtualButton(const String& name);
 
 		bool operator==(const VirtualButton& rhs) const
@@ -121,10 +123,12 @@ namespace bs
 	 *
 	 * @see		VirtualAxisCreateInformation
 	 */
-	class B3D_EXPORT VirtualAxis
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Input)) VirtualAxis
 	{
 	public:
 		VirtualAxis() = default;
+
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		VirtualAxis(const String& name);
 
 		u32 AxisIdentifier = 0;

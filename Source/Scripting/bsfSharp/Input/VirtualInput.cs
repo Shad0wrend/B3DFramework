@@ -40,6 +40,19 @@ namespace bs
             set { Internal_SetKeyConfig(value); }
         }
 
+        public static VirtualButton GetOrCreateVirtualButton(string name)
+        {
+            VirtualButton virtualButton;
+            Internal_GetOrCreateVirtualButton(name, out virtualButton);
+            return virtualButton;
+        }
+        public static VirtualAxis GetOrCreateVirtualAxis(string name)
+        {
+            VirtualAxis virtualAxis;
+            Internal_GetOrCreateVirtualAxis(name, out virtualAxis);
+            return virtualAxis;
+        }
+
         /// <summary>
         /// Checks if the physical button combination corresponding to the specified virtual button is being pressed this
         /// frame.
@@ -134,6 +147,12 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern float Internal_GetAxisValue(ref VirtualAxis button, int deviceIdx);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_GetOrCreateVirtualButton(string name, out VirtualButton button);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_GetOrCreateVirtualAxis(string name, out VirtualAxis axis);
     };
 
     /** @} */

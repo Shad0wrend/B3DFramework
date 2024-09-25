@@ -6,10 +6,10 @@
 #include "BsMonoMethod.h"
 #include "BsMonoUtil.h"
 #include "Input/BsVirtualInput.h"
-#include "Wrappers/BsScriptVirtualButton.h"
-#include "Wrappers/BsScriptInputConfiguration.h"
 #include "BsPlayInEditor.h"
 #include "BsScriptInputConfiguration.generated.h"
+#include "BsScriptVirtualAxis.generated.h"
+#include "BsScriptVirtualButton.generated.h"
 
 using namespace bs;
 ScriptVirtualInput::OnButtonEventThunkDef ScriptVirtualInput::OnButtonUpThunk;
@@ -32,6 +32,8 @@ void ScriptVirtualInput::InitRuntimeData()
 	metaData.ScriptClass->AddInternalCall("Internal_IsButtonDown", (void*)&ScriptVirtualInput::InternalIsButtonDown);
 	metaData.ScriptClass->AddInternalCall("Internal_IsButtonUp", (void*)&ScriptVirtualInput::InternalIsButtonUp);
 	metaData.ScriptClass->AddInternalCall("Internal_GetAxisValue", (void*)&ScriptVirtualInput::InternalGetAxisValue);
+	metaData.ScriptClass->AddInternalCall("Internal_GetOrCreateVirtualButton", (void*)&ScriptVirtualInput::Internal_GetOrCreateVirtualButton);
+	metaData.ScriptClass->AddInternalCall("Internal_GetOrCreateVirtualAxis", (void*)&ScriptVirtualInput::Internal_GetOrCreateVirtualAxis);
 
 	OnButtonUpThunk = (OnButtonEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerButtonDown", "VirtualButton,int")->GetThunk();
 	OnButtonDownThunk = (OnButtonEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerButtonUp", "VirtualButton,int")->GetThunk();
@@ -112,4 +114,14 @@ bool ScriptVirtualInput::InternalIsButtonUp(VirtualButton* btn, u32 deviceIdx)
 float ScriptVirtualInput::InternalGetAxisValue(VirtualAxis* axis, u32 deviceIdx)
 {
 	return VirtualInput::Instance().GetAxisValue(*axis, deviceIdx);
+}
+
+void ScriptVirtualInput::Internal_GetOrCreateVirtualButton(MonoString* name, VirtualButton* button)
+{
+	*button = VirtualButton(MonoUtil::MonoToString(name));
+}
+
+void ScriptVirtualInput::Internal_GetOrCreateVirtualAxis(MonoString* name, VirtualAxis* axis)
+{
+	*axis = VirtualAxis(MonoUtil::MonoToString(name));
 }

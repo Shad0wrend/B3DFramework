@@ -65,6 +65,8 @@ namespace bs
 		static bool InternalIsButtonDown(VirtualButton* btn, u32 deviceIdx);
 		static bool InternalIsButtonUp(VirtualButton* btn, u32 deviceIdx);
 		static float InternalGetAxisValue(VirtualAxis* axis, u32 deviceIdx);
+		static void Internal_GetOrCreateVirtualButton(MonoString* name, VirtualButton* button);
+		static void Internal_GetOrCreateVirtualAxis(MonoString* name, VirtualAxis* axis);
 
 		typedef void(B3D_THUNKCALL* OnButtonEventThunkDef)(MonoObject*, u32, MonoException**);
 

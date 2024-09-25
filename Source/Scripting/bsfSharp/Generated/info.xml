@@ -7088,6 +7088,14 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>A list of potential values this parameter can take on.</doc>
 		</field>
 	</struct>
+	<struct native="VirtualAxis" script="VirtualAxis">
+		<doc>Identifier for a virtual axis.
+Primary purpose of this class is to avoid expensive string compare (axis names), and instead use a unique axis identifier for compare. Generally you want to create one of these using the axis name, and then store it for later use.</doc>
+		<ctor>
+		</ctor>
+		<field name="AxisIdentifier" type="int">
+		</field>
+	</struct>
 	<class native="RendererManager" script="RendererManager">
 		<doc>Allows you to change and retrieve the active renderer. Active renderer will be used for rendering all objects in the following frame.</doc>
 		<method native="RequestFrameCapture" script="RequestFrameCapture" static="false">
@@ -12932,6 +12940,14 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			</param>
 		</ctor>
 	</class>
+	<struct native="VirtualButton" script="VirtualButton">
+		<doc>Identifier for a virtual button.
+Primary purpose of this class is to avoid expensive string compare, and instead use a unique button identifier for compare. Generally you want to create one of these using the button name, and then store it for later use.</doc>
+		<ctor>
+		</ctor>
+		<field name="ButtonIdentifier" type="int">
+		</field>
+	</struct>
 	<class native="InputConfiguration" script="InputConfiguration">
 		<doc>Contains virtual &lt;-&gt; physical key mappings.</doc>
 		<ctor>
