@@ -22,7 +22,7 @@ namespace bs
 	 * Primary module used for dealing with input. Allows you to receieve and query raw or OS input for
 	 * mouse/keyboard/gamepad.
 	 */
-	class B3D_CORE_EXPORT Input : public Module<Input>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Input)) Input : public Module<Input>
 	{
 		/** Possible button states. */
 		enum class ButtonState
@@ -78,6 +78,7 @@ namespace bs
 		 * @param[in]	type		Type of axis to query. Usually a type from InputAxis but can be a custom value.
 		 * @param[in]	deviceIdx	Index of the device in case more than one is hooked up (0 - primary).
 		 */
+		B3D_SCRIPT_EXPORT()
 		float GetAxisValue(u32 type, u32 deviceIdx = 0) const;
 
 		/**
@@ -86,6 +87,7 @@ namespace bs
 		 * @param[in]	keyCode		Code of the button to query.
 		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool IsButtonHeld(ButtonCode keyCode, u32 deviceIdx = 0) const;
 
 		/**
@@ -94,6 +96,7 @@ namespace bs
 		 * @param[in]	keyCode		Code of the button to query.
 		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool IsButtonUp(ButtonCode keyCode, u32 deviceIdx = 0) const;
 
 		/**
@@ -102,12 +105,15 @@ namespace bs
 		 * @param[in]	keyCode		Code of the button to query.
 		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool IsButtonDown(ButtonCode keyCode, u32 deviceIdx = 0) const;
 
 		/** Returns position of the pointer (for example mouse cursor) relative to the screen. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(PointerPosition))
 		Vector2I GetPointerPosition() const;
 
 		/** Returns difference between pointer position between current and last frame. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(PointerDelta))
 		Vector2I GetPointerDelta() const { return mPointerDelta; }
 
 		/**
@@ -115,6 +121,7 @@ namespace bs
 		 *
 		 * @param[in]	pointerButton		Code of the button to query.
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool IsPointerButtonHeld(PointerEventButton pointerButton) const;
 
 		/**
@@ -122,6 +129,7 @@ namespace bs
 		 *
 		 * @param[in]	pointerButton		Code of the button to query.
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool IsPointerButtonUp(PointerEventButton pointerButton) const;
 
 		/**
@@ -129,12 +137,15 @@ namespace bs
 		 *
 		 * @param[in]	pointerButton		Code of the button to query.
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool IsPointerButtonDown(PointerEventButton pointerButton) const;
 
 		/** Query has the left pointer button has been double-clicked this frame. */
+		B3D_SCRIPT_EXPORT()
 		bool IsPointerDoubleClicked() const;
 
 		/** Enables or disables mouse smoothing. Smoothing makes the changes to mouse axes more gradual. */
+		B3D_SCRIPT_EXPORT()
 		void SetMouseSmoothing(bool enabled);
 
 		/** Returns the number of detected devices of the specified type. */
@@ -144,24 +155,31 @@ namespace bs
 		String GetDeviceName(InputDevice type, u32 idx);
 
 		/** Triggered whenever a button is first pressed. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const ButtonEvent&)> OnButtonDown;
 
 		/**	Triggered whenever a button is first released. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const ButtonEvent&)> OnButtonUp;
 
 		/**	Triggered whenever user inputs a text character. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const TextInputEvent&)> OnCharInput;
 
 		/**	Triggers when some pointing device (mouse cursor, touch) moves. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const PointerEvent&)> OnPointerMoved;
 
 		/**	Triggers when some pointing device (mouse cursor, touch) button is pressed. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const PointerEvent&)> OnPointerPressed;
 
 		/**	Triggers when some pointing device (mouse cursor, touch) button is released. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const PointerEvent&)> OnPointerReleased;
 
 		/**	Triggers when some pointing device (mouse cursor, touch) button is double clicked. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const PointerEvent&)> OnPointerDoubleClick;
 
 		// TODO Low priority: Remove this, I can emulate it using virtual input

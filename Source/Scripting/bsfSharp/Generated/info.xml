@@ -4352,6 +4352,128 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<enumentry native="Count" script="Count">
 		</enumentry>
 	</enum>
+	<class native="Input" script="Input">
+		<doc>Primary module used for dealing with input. Allows you to receieve and query raw or OS input for mouse/keyboard/gamepad.</doc>
+		<method native="GetAxisValue" script="GetAxisValue" static="false">
+			<doc>Returns value of the specified input axis. Normally in range [-1.0, 1.0] but can be outside the range for devices with unbound axes (for example mouse).</doc>
+			<param name="type" type="int">
+				<doc>Type of axis to query. Usually a type from InputAxis but can be a custom value.</doc>
+			</param>
+			<param name="deviceIdx" type="int">
+				<doc>Index of the device in case more than one is hooked up (0 - primary).</doc>
+			</param>
+			<returns type="float">
+			</returns>
+		</method>
+		<method native="IsButtonHeld" script="IsButtonHeld" static="false">
+			<doc>Query if the provided button is currently being held (this frame or previous frames).</doc>
+			<param name="keyCode" type="ButtonCode">
+				<doc>Code of the button to query.</doc>
+			</param>
+			<param name="deviceIdx" type="int">
+				<doc>Device to query the button on (0 - primary).</doc>
+			</param>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="IsButtonUp" script="IsButtonUp" static="false">
+			<doc>Query if the provided button is currently being released (only true for one frame).</doc>
+			<param name="keyCode" type="ButtonCode">
+				<doc>Code of the button to query.</doc>
+			</param>
+			<param name="deviceIdx" type="int">
+				<doc>Device to query the button on (0 - primary).</doc>
+			</param>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="IsButtonDown" script="IsButtonDown" static="false">
+			<doc>Query if the provided button is currently being pressed (only true for one frame).</doc>
+			<param name="keyCode" type="ButtonCode">
+				<doc>Code of the button to query.</doc>
+			</param>
+			<param name="deviceIdx" type="int">
+				<doc>Device to query the button on (0 - primary).</doc>
+			</param>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="IsPointerButtonHeld" script="IsPointerButtonHeld" static="false">
+			<doc>Query if the provided pointer button is currently being held (this frame or previous frames).</doc>
+			<param name="pointerButton" type="PointerEventButton">
+				<doc>Code of the button to query.</doc>
+			</param>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="IsPointerButtonUp" script="IsPointerButtonUp" static="false">
+			<doc>Query if the provided pointer button is currently being released (only true for one frame).</doc>
+			<param name="pointerButton" type="PointerEventButton">
+				<doc>Code of the button to query.</doc>
+			</param>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="IsPointerButtonDown" script="IsPointerButtonDown" static="false">
+			<doc>Query if the provided pointer button is currently being pressed (only true for one frame).</doc>
+			<param name="pointerButton" type="PointerEventButton">
+				<doc>Code of the button to query.</doc>
+			</param>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="IsPointerDoubleClicked" script="IsPointerDoubleClicked" static="false">
+			<doc>Query has the left pointer button has been double-clicked this frame.</doc>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="SetMouseSmoothing" script="SetMouseSmoothing" static="false">
+			<doc>Enables or disables mouse smoothing. Smoothing makes the changes to mouse axes more gradual.</doc>
+			<param name="enabled" type="bool">
+			</param>
+		</method>
+		<property name="PointerPosition" type="Vector2I" getter="GetPointerPosition" setter="" static="false">
+			<doc>Returns position of the pointer (for example mouse cursor) relative to the screen.</doc>
+		</property>
+		<property name="PointerDelta" type="Vector2I" getter="GetPointerDelta" setter="" static="false">
+			<doc>Returns difference between pointer position between current and last frame.</doc>
+		</property>
+		<event native="OnButtonDown" script="OnButtonDown" static="false">
+			<doc>Triggered whenever a button is first pressed.</doc>
+			<param name="p0" type="ButtonEvent">
+			</param>
+		</event>
+		<event native="OnButtonUp" script="OnButtonUp" static="false">
+			<doc>Triggered whenever a button is first released.</doc>
+			<param name="p0" type="ButtonEvent">
+			</param>
+		</event>
+		<event native="OnCharInput" script="OnCharInput" static="false">
+			<doc>Triggered whenever user inputs a text character.</doc>
+			<param name="p0" type="TextInputEvent">
+			</param>
+		</event>
+		<event native="OnPointerMoved" script="OnPointerMoved" static="false">
+			<doc>Triggers when some pointing device (mouse cursor, touch) moves.</doc>
+			<param name="p0" type="PointerEvent">
+			</param>
+		</event>
+		<event native="OnPointerPressed" script="OnPointerPressed" static="false">
+			<doc>Triggers when some pointing device (mouse cursor, touch) button is pressed.</doc>
+			<param name="p0" type="PointerEvent">
+			</param>
+		</event>
+		<event native="OnPointerReleased" script="OnPointerReleased" static="false">
+			<doc>Triggers when some pointing device (mouse cursor, touch) button is released.</doc>
+			<param name="p0" type="PointerEvent">
+			</param>
+		</event>
+		<event native="OnPointerDoubleClick" script="OnPointerDoubleClick" static="false">
+			<doc>Triggers when some pointing device (mouse cursor, touch) button is double clicked.</doc>
+			<param name="p0" type="PointerEvent">
+			</param>
+		</event>
+	</class>
 	<enum native="D6JointDriveType" script="D6JointDriveType">
 		<doc>Type of drives that can be used for moving or rotating bodies attached to the joint.</doc>
 		<enumentry native="SLERP" script="SLERP">

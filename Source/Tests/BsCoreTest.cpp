@@ -1324,6 +1324,11 @@ void CoreTestSuite::TestPrefabScenario10()
 // TODO - Add check that I can't update Prefab A with Prefab B's instance (doesn't make sense from the editor perspective, so no need to handle this case)
 // TODO - Add a check where I move PFB3 Instance #1 as a parent of PFB2 Instance #1
 // - Actually, should disallow this as well? But how. I still want to allow adding a new prefab instance of another prefab
+// TODO - Disallow moving objects between prefabs? Or automatically reset the prefab & object IDs when an object is reparented, so it's treated as a brand new instance
+// - Handling this reparenting gracefully otherwise becomes very hard to reason about. It's better to just disallow it. It's a rare case anyway.
+// TODO - Perhaps even disallow direct changes to nested prefabs altogether, it makes tracing deltas tricky. If a nested prefab needs to be changed the user needs to
+//   enter editing mode for that nested prefab only, and editor limits the operations to that prefab only. When done, user applies the changes to that prefab.
+//  - But this doesn't really work. How to even perform instance changes at all then?
 
 using namespace bs;
 

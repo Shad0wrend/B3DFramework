@@ -1,0 +1,76 @@
+//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+
+#include "BsScriptEnginePrerequisites.h"
+#include "../../../Foundation/bsfCore/Input/BsInput.h"
+#include "BsScriptTypeDefinition.h"
+#include "../../../Foundation/bsfUtility/Math/BsVector2I.h"
+#include "../../../Foundation/bsfCore/Input/BsInputFwd.h"
+#include "../../../Foundation/bsfCore/Input/BsInputFwd.h"
+#include "../../../Foundation/bsfCore/Input/BsInputFwd.h"
+#include "../../../Foundation/bsfCore/Input/BsInputFwd.h"
+#include "../../../Foundation/bsfCore/Input/BsInputFwd.h"
+
+namespace bs { struct __PointerEventInterop; }
+namespace bs
+{
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptInput : public TScriptTypeDefinition<ScriptInput>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Input")
+
+		ScriptInput();
+
+		static void SetupScriptBindings();
+
+		static MonoObject* CreateScriptObject(bool construct);
+
+		static void StartUp();
+		static void ShutDown();
+
+	private:
+		static void OnButtonDown(const ButtonEvent& p0);
+		static void OnButtonUp(const ButtonEvent& p0);
+		static void OnCharInput(const TextInputEvent& p0);
+		static void OnPointerMoved(const PointerEvent& p0);
+		static void OnPointerPressed(const PointerEvent& p0);
+		static void OnPointerReleased(const PointerEvent& p0);
+		static void OnPointerDoubleClick(const PointerEvent& p0);
+
+		typedef void(B3D_THUNKCALL *OnButtonDownThunkDefinition) (MonoObject* p0, MonoException**);
+		static OnButtonDownThunkDefinition OnButtonDownThunk;
+		typedef void(B3D_THUNKCALL *OnButtonUpThunkDefinition) (MonoObject* p0, MonoException**);
+		static OnButtonUpThunkDefinition OnButtonUpThunk;
+		typedef void(B3D_THUNKCALL *OnCharInputThunkDefinition) (MonoObject* p0, MonoException**);
+		static OnCharInputThunkDefinition OnCharInputThunk;
+		typedef void(B3D_THUNKCALL *OnPointerMovedThunkDefinition) (MonoObject* p0, MonoException**);
+		static OnPointerMovedThunkDefinition OnPointerMovedThunk;
+		typedef void(B3D_THUNKCALL *OnPointerPressedThunkDefinition) (MonoObject* p0, MonoException**);
+		static OnPointerPressedThunkDefinition OnPointerPressedThunk;
+		typedef void(B3D_THUNKCALL *OnPointerReleasedThunkDefinition) (MonoObject* p0, MonoException**);
+		static OnPointerReleasedThunkDefinition OnPointerReleasedThunk;
+		typedef void(B3D_THUNKCALL *OnPointerDoubleClickThunkDefinition) (MonoObject* p0, MonoException**);
+		static OnPointerDoubleClickThunkDefinition OnPointerDoubleClickThunk;
+
+		static HEvent OnButtonDownConnection;
+		static HEvent OnButtonUpConnection;
+		static HEvent OnCharInputConnection;
+		static HEvent OnPointerMovedConnection;
+		static HEvent OnPointerPressedConnection;
+		static HEvent OnPointerReleasedConnection;
+		static HEvent OnPointerDoubleClickConnection;
+
+		static float InternalGetAxisValue(uint32_t type, uint32_t deviceIdx);
+		static bool InternalIsButtonHeld(ButtonCode keyCode, uint32_t deviceIdx);
+		static bool InternalIsButtonUp(ButtonCode keyCode, uint32_t deviceIdx);
+		static bool InternalIsButtonDown(ButtonCode keyCode, uint32_t deviceIdx);
+		static void InternalGetPointerPosition(TVector2I<int32_t>* __output);
+		static void InternalGetPointerDelta(TVector2I<int32_t>* __output);
+		static bool InternalIsPointerButtonHeld(PointerEventButton pointerButton);
+		static bool InternalIsPointerButtonUp(PointerEventButton pointerButton);
+		static bool InternalIsPointerButtonDown(PointerEventButton pointerButton);
+		static bool InternalIsPointerDoubleClicked();
+		static void InternalSetMouseSmoothing(bool enabled);
+	};
+}
