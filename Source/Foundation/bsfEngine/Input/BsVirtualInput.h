@@ -16,7 +16,7 @@ namespace bs
 	 * Handles virtual input that allows you to receive virtual input events that hide the actual physical input, allowing
 	 * you to easily change the input keys while being transparent to the external code.
 	 */
-	class B3D_EXPORT VirtualInput : public Module<VirtualInput>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Input)) VirtualInput : public Module<VirtualInput>
 	{
 		/**	Possible states of virtual buttons. */
 		enum class ButtonState
@@ -55,19 +55,20 @@ namespace bs
 	public:
 		VirtualInput();
 
-		/**	Creates a new empty input configuration. */
-		static SPtr<InputConfiguration> CreateConfiguration();
-
-		/**	Sets an input configuration that determines how physical keys map to virtual buttons. */
+		/**	Input configuration that determines how physical keys map to virtual buttons. */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Configuration))
 		void SetConfiguration(const SPtr<InputConfiguration>& input);
 
-		/**	Retrieves the active input configuration that determines how physical keys map to virtual buttons. */
+		/** @copydoc SetConfiguration */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Configuration))
 		SPtr<InputConfiguration> GetConfiguration() const { return mInputConfiguration; }
 
 		/** Creates a new virtual button associated with the name, or returns an existing button if it exists. */
+		B3D_SCRIPT_EXPORT()
 		static VirtualButton GetOrCreateVirtualButton(const String& name);
 
 		/** Creates a new virtual axis associated with the name, or returns an existing axis if it exists. */
+		B3D_SCRIPT_EXPORT()
 		static VirtualAxis GetOrCreateVirtualAxis(const String& name);
 
 		/**
@@ -76,6 +77,7 @@ namespace bs
 		 * @param[in]	button		Virtual button identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool IsButtonDown(const VirtualButton& button, u32 deviceIdx = 0) const;
 
 		/**
@@ -84,6 +86,7 @@ namespace bs
 		 * @param[in]	button		Virtual button identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool IsButtonUp(const VirtualButton& button, u32 deviceIdx = 0) const;
 
 		/**
@@ -93,6 +96,7 @@ namespace bs
 		 * @param[in]	button		Virtual button identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool IsButtonHeld(const VirtualButton& button, u32 deviceIdx = 0) const;
 
 		/**
@@ -102,15 +106,19 @@ namespace bs
 		 * @param[in]	axis		Virtual axis identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
+		B3D_SCRIPT_EXPORT()
 		float GetAxisValue(const VirtualAxis& axis, u32 deviceIdx = 0) const;
 
 		/**	Triggered when a virtual button is pressed. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const VirtualButton&, u32 deviceIdx)> OnButtonDown;
 
 		/**	Triggered when a virtual button is released. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const VirtualButton&, u32 deviceIdx)> OnButtonUp;
 
 		/**	Triggered every frame when a virtual button is being held down. */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const VirtualButton&, u32 deviceIdx)> OnButtonHeld;
 
 		/** @name Internal

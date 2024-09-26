@@ -7,7 +7,6 @@
 #include "BsScriptResourceManager.h"
 #include "Script/BsScriptManager.h"
 #include "Wrappers/BsScriptInput.h"
-#include "Wrappers/BsScriptVirtualInput.h"
 #include "BsScriptObjectManager.h"
 #include "BsApplication.h"
 #include "FileSystem/BsFileSystem.h"
@@ -16,6 +15,7 @@
 #include "BsPlayInEditor.h"
 #include "Wrappers/BsScriptScene.h"
 #include "GUI/BsGUIManager.h"
+#include "BsScriptVirtualInput.generated.h"
 
 using namespace bs;
 void EngineScriptLibrary::Initialize()

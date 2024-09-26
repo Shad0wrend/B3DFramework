@@ -3661,6 +3661,91 @@ In range [-1.0f, 1.0f].</doc>
 			<doc>Determines the number of samples used for percentage closer shadow map filtering. Higher values yield higher quality shadows, at the cost of performance. Valid range is [1, 4].</doc>
 		</property>
 	</class>
+	<class native="VirtualInput" script="VirtualInput">
+		<doc>Handles virtual input that allows you to receive virtual input events that hide the actual physical input, allowing you to easily change the input keys while being transparent to the external code.</doc>
+		<method native="GetOrCreateVirtualButton" script="GetOrCreateVirtualButton" static="true">
+			<doc>Creates a new virtual button associated with the name, or returns an existing button if it exists.</doc>
+			<param name="name" type="string">
+			</param>
+			<returns type="VirtualButton">
+			</returns>
+		</method>
+		<method native="GetOrCreateVirtualAxis" script="GetOrCreateVirtualAxis" static="true">
+			<doc>Creates a new virtual axis associated with the name, or returns an existing axis if it exists.</doc>
+			<param name="name" type="string">
+			</param>
+			<returns type="VirtualAxis">
+			</returns>
+		</method>
+		<method native="IsButtonDown" script="IsButtonDown" static="false">
+			<doc>Check is the virtual button just getting pressed. This state is only active for one frame.</doc>
+			<param name="button" type="VirtualButton">
+				<doc>Virtual button identifier.</doc>
+			</param>
+			<param name="deviceIdx" type="int">
+				<doc>Optional device index in case multiple input devices are available.</doc>
+			</param>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="IsButtonUp" script="IsButtonUp" static="false">
+			<doc>Check is the virtual button just getting released. This state is only active for one frame.</doc>
+			<param name="button" type="VirtualButton">
+				<doc>Virtual button identifier.</doc>
+			</param>
+			<param name="deviceIdx" type="int">
+				<doc>Optional device index in case multiple input devices are available.</doc>
+			</param>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="IsButtonHeld" script="IsButtonHeld" static="false">
+			<doc>Check is the virtual button is being held. This state is active as long as the button is being held down, possibly for multiple frames.</doc>
+			<param name="button" type="VirtualButton">
+				<doc>Virtual button identifier.</doc>
+			</param>
+			<param name="deviceIdx" type="int">
+				<doc>Optional device index in case multiple input devices are available.</doc>
+			</param>
+			<returns type="bool">
+			</returns>
+		</method>
+		<method native="GetAxisValue" script="GetAxisValue" static="false">
+			<doc>Returns normalized value for the specified input axis. Returned value will usually be in [-1.0, 1.0] range, but can be outside the range for devices with unbound axes (for example mouse).</doc>
+			<param name="axis" type="VirtualAxis">
+				<doc>Virtual axis identifier.</doc>
+			</param>
+			<param name="deviceIdx" type="int">
+				<doc>Optional device index in case multiple input devices are available.</doc>
+			</param>
+			<returns type="float">
+			</returns>
+		</method>
+		<property name="Configuration" type="InputConfiguration" getter="GetConfiguration" setter="SetConfiguration" static="false">
+			<doc>Input configuration that determines how physical keys map to virtual buttons.</doc>
+		</property>
+		<event native="OnButtonDown" script="OnButtonDown" static="false">
+			<doc>Triggered when a virtual button is pressed.</doc>
+			<param name="p0" type="VirtualButton">
+			</param>
+			<param name="p1" type="int">
+			</param>
+		</event>
+		<event native="OnButtonUp" script="OnButtonUp" static="false">
+			<doc>Triggered when a virtual button is released.</doc>
+			<param name="p0" type="VirtualButton">
+			</param>
+			<param name="p1" type="int">
+			</param>
+		</event>
+		<event native="OnButtonHeld" script="OnButtonHeld" static="false">
+			<doc>Triggered every frame when a virtual button is being held down.</doc>
+			<param name="p0" type="VirtualButton">
+			</param>
+			<param name="p1" type="int">
+			</param>
+		</event>
+	</class>
 	<class native="RenderSettings" script="RenderSettings">
 		<doc>Settings that control rendering for a specific camera (view).</doc>
 		<ctor>

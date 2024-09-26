@@ -14,15 +14,10 @@ u32 VirtualInput::sNextVirtualAxisId = 0;
 
 VirtualInput::VirtualInput()
 {
-	mInputConfiguration = CreateConfiguration();
+	mInputConfiguration = B3DMakeShared<InputConfiguration>();
 
 	Input::Instance().OnButtonDown.Connect(std::bind(&VirtualInput::ButtonDown, this, _1));
 	Input::Instance().OnButtonUp.Connect(std::bind(&VirtualInput::ButtonUp, this, _1));
-}
-
-SPtr<InputConfiguration> VirtualInput::CreateConfiguration()
-{
-	return B3DMakeShared<InputConfiguration>();
 }
 
 void VirtualInput::SetConfiguration(const SPtr<InputConfiguration>& input)
