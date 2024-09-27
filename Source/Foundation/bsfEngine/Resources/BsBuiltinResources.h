@@ -18,7 +18,7 @@ namespace bs
 	 */
 
 	/**	Types of builtin meshes that are always available. */
-	enum class BuiltinMesh
+	enum class B3D_SCRIPT_EXPORT() BuiltinMesh
 	{
 		Box,
 		Sphere,
@@ -29,7 +29,7 @@ namespace bs
 	};
 
 	/**	Types of builtin textures that are always available. */
-	enum class BuiltinTexture
+	enum class B3D_SCRIPT_EXPORT() BuiltinTexture
 	{
 		White,
 		Black,
@@ -64,7 +64,7 @@ namespace bs
 	};
 
 	/**	Holds references to built-in resources used by the core engine. */
-	class B3D_EXPORT BuiltinResources : public bs::Module<BuiltinResources>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT() BuiltinResources : public Module<BuiltinResources>
 	{
 	public:
 		BuiltinResources() = default;
@@ -77,7 +77,8 @@ namespace bs
 		SPtr<const GUIStyleSheetCascade> GetDefaultGUIStyleSheetCascade() const { return mDefaultGUIStyleSheetCascade; }
 
 		/**	Returns a small entirely white texture. */
-		const HSpriteTexture& GetWhiteSpriteTexture() const { return mWhiteSpriteTexture; }
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(WhiteSpriteTexture))
+		B3D_NO_RREF const HSpriteTexture& GetWhiteSpriteTexture() const { return mWhiteSpriteTexture; }
 
 		/**	Returns a dummy 2x2 texture that may be used when no other is available. Don't modify the returned texture. */
 		const HTexture& GetDummyTexture() const { return mDummyTexture; }
@@ -116,7 +117,8 @@ namespace bs
 		const PixelData& GetFrameworkIcon();
 
 		/**	Returns one of the builtin shader types. */
-		HShader GetBuiltinShader(BuiltinShader type) const;
+		B3D_SCRIPT_EXPORT()
+		B3D_NO_RREF HShader GetBuiltinShader(BuiltinShader type) const;
 
 		/**	Creates a material used for textual sprite rendering (for example text in GUI). */
 		HMaterial CreateSpriteTextMaterial() const;
@@ -128,17 +130,20 @@ namespace bs
 		HMaterial CreateSpriteLineMaterial() const;
 
 		/**	Retrieves one of the builtin meshes. */
-		HMesh GetMesh(BuiltinMesh mesh) const;
+		B3D_SCRIPT_EXPORT()
+		B3D_NO_RREF HMesh GetMesh(BuiltinMesh mesh) const;
 
 		/**
 		 * Loads a shader at the specified path.
 		 *
 		 * @param[in]	path	Path relative to the default shader folder with no file extension.
 		 */
-		HShader GetShader(const Path& path) const;
+		B3D_SCRIPT_EXPORT()
+		B3D_NO_RREF HShader GetShader(const Path& path) const;
 
 		/** Attempts to return a font of the given font family. Returns the default font is provided font is not found. */
-		HFont GetFont(const String& font) const; // TODO: This needs to perform a lookup in the project library. See method implementation for more information.
+		B3D_SCRIPT_EXPORT()
+		B3D_NO_RREF HFont GetFont(const String& font) const; // TODO: This needs to perform a lookup in the project library. See method implementation for more information.
 
 		/**
 		 * Loads the shader with the specified name from the cache if available, or compiles the shader from source if not available.
@@ -146,12 +151,15 @@ namespace bs
 		 * @param	path		Absolute path to the shader source file.
 		 * @return				Valid shader if successful, or null otherwise.
 		 */
-		HShader GetOrCompileShader(const Path& path) const;
+		B3D_SCRIPT_EXPORT()
+		B3D_NO_RREF HShader GetOrCompileShader(const Path& path) const;
 
 		/** Returns the default font used by the engine. */
-		HFont GetDefaultFont() const { return mFont; }
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(DefaultFont))
+		B3D_NO_RREF HFont GetDefaultFont() const { return mFont; }
 
 		/**	Retrieves one of the builtin textures. */
+		B3D_SCRIPT_EXPORT()
 		static HTexture GetTexture(BuiltinTexture type);
 
 		/**	Returns absolute path to the builtin shader folder where raw shader files are located. */

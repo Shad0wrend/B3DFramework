@@ -1839,6 +1839,21 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>If enabled, axis values will be normalized to [-1, 1] range. Most axes already come in normalized form and this value will not affect such axes. Some axes, like mouse movement are not normalized by default and will instead report relative movement. By enabling this you will normalize such axes to [-1, 1] range.</doc>
 		</field>
 	</struct>
+	<enum native="BuiltinMesh" script="BuiltinMesh">
+		<doc>Types of builtin meshes that are always available.</doc>
+		<enumentry native="Cone" script="Cone">
+		</enumentry>
+		<enumentry native="Box" script="Box">
+		</enumentry>
+		<enumentry native="Sphere" script="Sphere">
+		</enumentry>
+		<enumentry native="Cylinder" script="Cylinder">
+		</enumentry>
+		<enumentry native="Quad" script="Quad">
+		</enumentry>
+		<enumentry native="Disc" script="Disc">
+		</enumentry>
+	</enum>
 	<struct native="TNamedAnimationCurve&lt;float&gt;" script="NamedFloatCurve">
 		<doc>An animation curve and its name.</doc>
 		<ctor>
@@ -2306,6 +2321,60 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
 			</param>
 		</ctor>
+	</class>
+	<class native="BuiltinResources" script="BuiltinResources">
+		<doc>Holds references to built-in resources used by the core engine.</doc>
+		<method native="GetBuiltinShader" script="GetBuiltinShader" static="false">
+			<doc>Returns one of the builtin shader types.</doc>
+			<param name="type" type="BuiltinShader">
+			</param>
+			<returns type="Shader">
+			</returns>
+		</method>
+		<method native="GetMesh" script="GetMesh" static="false">
+			<doc>Retrieves one of the builtin meshes.</doc>
+			<param name="mesh" type="BuiltinMesh">
+			</param>
+			<returns type="Mesh">
+			</returns>
+		</method>
+		<method native="GetShader" script="GetShader" static="false">
+			<doc>Loads a shader at the specified path.</doc>
+			<param name="path" type="string">
+				<doc>Path relative to the default shader folder with no file extension.</doc>
+			</param>
+			<returns type="Shader">
+			</returns>
+		</method>
+		<method native="GetFont" script="GetFont" static="false">
+			<doc>Attempts to return a font of the given font family. Returns the default font is provided font is not found.</doc>
+			<param name="font" type="string">
+			</param>
+			<returns type="Font">
+			</returns>
+		</method>
+		<method native="GetOrCompileShader" script="GetOrCompileShader" static="false">
+			<doc>Loads the shader with the specified name from the cache if available, or compiles the shader from source if not available.</doc>
+			<param name="path" type="string">
+				<doc>Absolute path to the shader source file.</doc>
+			</param>
+			<returns type="Shader">
+				<doc>Valid shader if successful, or null otherwise.</doc>
+			</returns>
+		</method>
+		<method native="GetTexture" script="GetTexture" static="true">
+			<doc>Retrieves one of the builtin textures.</doc>
+			<param name="type" type="BuiltinTexture">
+			</param>
+			<returns type="RRef&lt;Texture&gt;">
+			</returns>
+		</method>
+		<property name="WhiteSpriteTexture" type="SpriteTexture" getter="GetWhiteSpriteTexture" setter="" static="false">
+			<doc>Returns a small entirely white texture.</doc>
+		</property>
+		<property name="DefaultFont" type="Font" getter="GetDefaultFont" setter="" static="false">
+			<doc>Returns the default font used by the engine.</doc>
+		</property>
 	</class>
 	<class native="TemporalAASettings" script="TemporalAASettings">
 		<doc>Settings that control temporal anti-aliasing.</doc>
@@ -13021,6 +13090,39 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 		<enumentry native="FontAwesomeZ" script="FontAwesomeZ">
 		</enumentry>
 	</enum>
+	<class native="GUIResizableVerticalScrollBar" script="GUIResizableVerticalScrollBar">
+		<doc>Specialization of a GUIScrollBar for vertical scrolling, with the ability to resize the scroll bar.</doc>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+	</class>
+	<enum native="BuiltinTexture" script="BuiltinTexture">
+		<doc>Types of builtin textures that are always available.</doc>
+		<enumentry native="White" script="White">
+		</enumentry>
+		<enumentry native="Black" script="Black">
+		</enumentry>
+		<enumentry native="BokehFlare" script="BokehFlare">
+		</enumentry>
+		<enumentry native="Normal" script="Normal">
+		</enumentry>
+		<enumentry native="White3D" script="White3D">
+		</enumentry>
+		<enumentry native="Black3D" script="Black3D">
+		</enumentry>
+	</enum>
 	<enum native="BuiltinShader" script="BuiltinShader">
 		<doc>Types of builtin shaders that are always available.</doc>
 		<enumentry native="Decal" script="Decal">
@@ -13642,24 +13744,6 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 				<doc>Width/height required to display the text, in pixels.</doc>
 			</returns>
 		</method>
-	</class>
-	<class native="GUIResizableVerticalScrollBar" script="GUIResizableVerticalScrollBar">
-		<doc>Specialization of a GUIScrollBar for vertical scrolling, with the ability to resize the scroll bar.</doc>
-		<ctor>
-			<doc>Creates a new GUI element.</doc>
-			<param name="styleClass" type="string">
-				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
-			</param>
-			<param name="options" type="GUIOption">
-				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Creates a new GUI element.</doc>
-			<param name="options" type="GUIOption">
-				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
-			</param>
-		</ctor>
 	</class>
 	<class native="Cursor" script="Cursor">
 		<doc>Allows you to manipulate the platform cursor in various ways.</doc>

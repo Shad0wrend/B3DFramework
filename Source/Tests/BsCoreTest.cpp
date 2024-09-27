@@ -1326,6 +1326,8 @@ void CoreTestSuite::TestPrefabScenario10()
 // - Actually, should disallow this as well? But how. I still want to allow adding a new prefab instance of another prefab
 // TODO - Disallow moving objects between prefabs? Or automatically reset the prefab & object IDs when an object is reparented, so it's treated as a brand new instance
 // - Handling this reparenting gracefully otherwise becomes very hard to reason about. It's better to just disallow it. It's a rare case anyway.
+// TODO - Each nested prefab should have a root object that must always exist. Attempting to delete it without breaking a prefab link should fail in code, and in editor
+//   show a dialog box warning. Moving an object out of that root, or within a nested prefab's root breaks the prefab link, as mentioned above.
 // TODO - Perhaps even disallow direct changes to nested prefabs altogether, it makes tracing deltas tricky. If a nested prefab needs to be changed the user needs to
 //   enter editing mode for that nested prefab only, and editor limits the operations to that prefab only. When done, user applies the changes to that prefab.
 //  - But this doesn't really work. How to even perform instance changes at all then?
