@@ -25,7 +25,7 @@ namespace bs
 		bool UseDesktopResolution = true; /**< If running in fullscreen should the user's desktop resolution be used instead of the specified resolution. */
 		u32 ResolutionWidth = 1280; /**< Width of the window. */
 		u32 ResolutionHeight = 720; /**< Height of the window. */
-		WString TitleBarText; /**< Text displayed in window's titlebar. */
+		String TitleBarText; /**< Text displayed in window's titlebar. */
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
