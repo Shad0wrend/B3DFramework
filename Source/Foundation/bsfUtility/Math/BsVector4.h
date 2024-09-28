@@ -259,7 +259,7 @@ namespace bs
 	template<> const TVector4<double> TVector4<double>::kZero{BsZero};
 
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector4)) TVector4<float>;
-	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector4d)) TVector4<double>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector4D)) TVector4<double>;
 
 	/** @} */
 } // namespace bs

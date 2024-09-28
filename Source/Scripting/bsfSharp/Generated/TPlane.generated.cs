@@ -28,7 +28,7 @@ namespace bs
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
 	public partial struct PlaneD
 	{
-		public Vector3d Normal;
+		public Vector3D Normal;
 		public double D;
 	}
 

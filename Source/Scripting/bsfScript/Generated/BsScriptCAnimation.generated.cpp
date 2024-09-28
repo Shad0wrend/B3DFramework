@@ -12,6 +12,7 @@
 #include "BsScriptTVector2.generated.h"
 #include "BsScriptBlend2DInfo.generated.h"
 #include "BsScriptAnimationClipState.generated.h"
+#include "BsScriptTAABox.generated.h"
 
 namespace bs
 {
@@ -275,17 +276,21 @@ namespace bs
 		static_cast<CAnimation*>(self->GetNativeObject())->SetMorphChannelWeight(tmpname, weight);
 	}
 
-	void ScriptAnimation::InternalSetBounds(ScriptAnimation* self, AABox* bounds)
+	void ScriptAnimation::InternalSetBounds(ScriptAnimation* self, __TAABox_float_Interop* bounds)
 	{
-		static_cast<CAnimation*>(self->GetNativeObject())->SetBounds(*bounds);
+		TAABox<float> tmpbounds;
+		tmpbounds = ScriptAABox::FromInterop(*bounds);
+		static_cast<CAnimation*>(self->GetNativeObject())->SetBounds(tmpbounds);
 	}
 
-	void ScriptAnimation::InternalGetBounds(ScriptAnimation* self, AABox* __output)
+	void ScriptAnimation::InternalGetBounds(ScriptAnimation* self, __TAABox_float_Interop* __output)
 	{
-		AABox tmp__output;
+		TAABox<float> tmp__output;
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetBounds();
 
-		*__output = tmp__output;
+		__TAABox_float_Interop interop__output;
+		interop__output = ScriptAABox::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptAABox::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 
 	void ScriptAnimation::InternalSetUseBounds(ScriptAnimation* self, bool enable)

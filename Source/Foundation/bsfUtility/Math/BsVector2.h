@@ -363,7 +363,7 @@ namespace bs
 	template<> const TVector2<double> TVector2<double>::kUnitY{0.0, 1.0};
 
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector2)) TVector2<float>;
-	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector2d)) TVector2<double>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector2D)) TVector2<double>;
 
 	/** @} */
 } // namespace bs

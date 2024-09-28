@@ -5,14 +5,15 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
-#include "Math/BsAABox.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
+#include "../../../Foundation/bsfUtility/Math/BsAABox.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
 namespace bs { struct ParticleSystemSettings; }
+namespace bs { struct __TAABox_float_Interop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleSystemSettings : public TScriptReflectableWrapper<ParticleSystemSettings, ScriptParticleSystemSettings>
@@ -57,7 +58,7 @@ namespace bs
 		static void InternalSetManualSeed(ScriptParticleSystemSettings* self, uint32_t value);
 		static bool InternalGetUseAutomaticBounds(ScriptParticleSystemSettings* self);
 		static void InternalSetUseAutomaticBounds(ScriptParticleSystemSettings* self, bool value);
-		static void InternalGetCustomBounds(ScriptParticleSystemSettings* self, AABox* __output);
-		static void InternalSetCustomBounds(ScriptParticleSystemSettings* self, AABox* value);
+		static void InternalGetCustomBounds(ScriptParticleSystemSettings* self, __TAABox_float_Interop* __output);
+		static void InternalSetCustomBounds(ScriptParticleSystemSettings* self, __TAABox_float_Interop* value);
 	};
 }

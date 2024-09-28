@@ -11,9 +11,10 @@
 #include "Math/BsRadian.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector2.h"
-#include "Math/BsRay.h"
+#include "../../../Foundation/bsfUtility/Math/BsRay.h"
 
 namespace bs { class CCamera; }
+namespace bs { struct __TRay_float_Interop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptCamera : public TScriptGameObjectWrapper<CCamera, ScriptCamera>
@@ -68,7 +69,7 @@ namespace bs
 		static void InternalNdcToWorldPoint(ScriptCamera* self, TVector2<float>* ndcPoint, float depth, TVector3<float>* __output);
 		static void InternalNdcToViewPoint(ScriptCamera* self, TVector2<float>* ndcPoint, float depth, TVector3<float>* __output);
 		static void InternalNdcToScreenPoint(ScriptCamera* self, TVector2<float>* ndcPoint, TVector2I<int32_t>* __output);
-		static void InternalScreenPointToRay(ScriptCamera* self, TVector2I<int32_t>* screenPoint, Ray* __output);
+		static void InternalScreenPointToRay(ScriptCamera* self, TVector2I<int32_t>* screenPoint, __TRay_float_Interop* __output);
 		static void InternalProjectPoint(ScriptCamera* self, TVector3<float>* point, TVector3<float>* __output);
 		static void InternalUnprojectPoint(ScriptCamera* self, TVector3<float>* point, TVector3<float>* __output);
 		static void InternalSetMain(ScriptCamera* self, bool main);

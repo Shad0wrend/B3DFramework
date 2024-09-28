@@ -8,6 +8,7 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Material/BsMaterial.h"
 #include "../../../Foundation/bsfCore/Mesh/BsMesh.h"
+#include "BsScriptTAABox.generated.h"
 #include "BsScriptTVector3.generated.h"
 
 namespace bs
@@ -324,18 +325,22 @@ namespace bs
 		static_cast<ParticleSystemSettings*>(self->GetNativeObject())->UseAutomaticBounds = value;
 	}
 
-	void ScriptParticleSystemSettings::InternalGetCustomBounds(ScriptParticleSystemSettings* self, AABox* __output)
+	void ScriptParticleSystemSettings::InternalGetCustomBounds(ScriptParticleSystemSettings* self, __TAABox_float_Interop* __output)
 	{
-		AABox tmp__output;
+		TAABox<float> tmp__output;
 		tmp__output = static_cast<ParticleSystemSettings*>(self->GetNativeObject())->CustomBounds;
 
-		*__output = tmp__output;
+		__TAABox_float_Interop interop__output;
+		interop__output = ScriptAABox::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptAABox::GetMetaData()->ScriptClass->GetInternalClass());
 
 
 	}
 
-	void ScriptParticleSystemSettings::InternalSetCustomBounds(ScriptParticleSystemSettings* self, AABox* value)
+	void ScriptParticleSystemSettings::InternalSetCustomBounds(ScriptParticleSystemSettings* self, __TAABox_float_Interop* value)
 	{
-		static_cast<ParticleSystemSettings*>(self->GetNativeObject())->CustomBounds = *value;
+		TAABox<float> tmpvalue;
+		tmpvalue = ScriptAABox::FromInterop(*value);
+		static_cast<ParticleSystemSettings*>(self->GetNativeObject())->CustomBounds = tmpvalue;
 	}
 }

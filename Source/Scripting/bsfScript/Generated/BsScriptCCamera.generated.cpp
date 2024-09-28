@@ -10,6 +10,7 @@
 #include "BsScriptViewport.generated.h"
 #include "BsScriptTVector3.generated.h"
 #include "BsScriptTVector2.generated.h"
+#include "BsScriptTRay.generated.h"
 
 namespace bs
 {
@@ -401,12 +402,14 @@ namespace bs
 		*__output = tmp__output;
 	}
 
-	void ScriptCamera::InternalScreenPointToRay(ScriptCamera* self, TVector2I<int32_t>* screenPoint, Ray* __output)
+	void ScriptCamera::InternalScreenPointToRay(ScriptCamera* self, TVector2I<int32_t>* screenPoint, __TRay_float_Interop* __output)
 	{
-		Ray tmp__output;
+		TRay<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ScreenPointToRay(*screenPoint);
 
-		*__output = tmp__output;
+		__TRay_float_Interop interop__output;
+		interop__output = ScriptRay::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptRay::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 
 	void ScriptCamera::InternalProjectPoint(ScriptCamera* self, TVector3<float>* point, TVector3<float>* __output)

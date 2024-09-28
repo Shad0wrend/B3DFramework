@@ -9,15 +9,8 @@ namespace bs
      *  @{
      */
 
-    /// <summary>
-    /// A ray in 3D space represented with an origin and direction.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential), SerializeObject]
-    public struct Ray // Note: Must match C++ struct Ray
+    public partial struct Ray
     {
-        public Vector3 origin;
-        public Vector3 direction;
-
         /// <summary>
         /// Creates a new ray.
         /// </summary>
@@ -25,8 +18,8 @@ namespace bs
         /// <param name="direction">Normalized direction of the ray.</param>
         public Ray(Vector3 origin, Vector3 direction)
         {
-            this.origin = origin;
-            this.direction = direction;
+            this.Origin = origin;
+            this.Direction = direction;
         }
 
         /// <summary>
@@ -37,7 +30,7 @@ namespace bs
         /// <returns>Point along the ray <paramref name="t"/> units away from the origin.</returns>
         public static Vector3 operator*(Ray ray, float t)
         {
-            return ray.origin + ray.direction * t;
+            return ray.Origin + ray.Direction * t;
         }
 
         /// <summary>
@@ -49,10 +42,10 @@ namespace bs
         {
             Vector3 end = this * 1.0f;
 
-            origin = matrix.Multiply(origin);
+            Origin = matrix.Multiply(Origin);
             end = matrix.Multiply(end);
 
-            direction = Vector3.Normalize(end - origin);
+            Direction = Vector3.Normalize(end - Origin);
         }
 
         /// <summary>
@@ -63,16 +56,16 @@ namespace bs
         {
             Vector3 end = this * 1.0f;
 
-            origin = matrix.MultiplyDirection(origin);
+            Origin = matrix.MultiplyDirection(Origin);
             end = matrix.MultiplyDirection(end);
 
-            direction = Vector3.Normalize(end - origin);
+            Direction = Vector3.Normalize(end - Origin);
         }
 
         /// <inheritdoc/>
         public override string ToString()
         {
-            return String.Format("(origin: {0} direction: {1})", origin, direction);
+            return String.Format("(origin: {0} direction: {1})", Origin, Direction);
         }
     };
 

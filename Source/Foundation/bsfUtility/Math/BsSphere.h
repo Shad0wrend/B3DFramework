@@ -23,6 +23,7 @@ namespace bs
 			: Radius((T)1.0), Center(TVector3<T>::kZero)
 		{ }
 
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		TSphere(const TVector3<T>& center, T radius)
 			: Radius(radius), Center(center)
 		{ }
@@ -58,6 +59,9 @@ namespace bs
 		 */
 		std::pair<bool, T> Intersects(const TRay<T>& ray, bool discardInside = true) const;
 	};
+
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Sphere)) TSphere<float>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(SphereD)) TSphere<double>;
 
 	/** @} */
 } // namespace bs

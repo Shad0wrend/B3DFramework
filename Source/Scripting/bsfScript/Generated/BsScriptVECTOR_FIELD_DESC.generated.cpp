@@ -4,6 +4,8 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
+#include "../../../Foundation/bsfUtility/Math/BsAABox.h"
+#include "BsScriptTAABox.generated.h"
 
 namespace bs
 {
@@ -26,7 +28,9 @@ namespace bs
 		output.CountX = value.CountX;
 		output.CountY = value.CountY;
 		output.CountZ = value.CountZ;
-		output.Bounds = value.Bounds;
+		TAABox<float> tmpBounds;
+		tmpBounds = ScriptAABox::FromInterop(value.Bounds);
+		output.Bounds = tmpBounds;
 
 		return output;
 	}
@@ -37,7 +41,9 @@ namespace bs
 		output.CountX = value.CountX;
 		output.CountY = value.CountY;
 		output.CountZ = value.CountZ;
-		output.Bounds = value.Bounds;
+		__TAABox_float_Interop tmpBounds;
+		tmpBounds = ScriptAABox::ToInterop(value.Bounds);
+		output.Bounds = tmpBounds;
 
 		return output;
 	}

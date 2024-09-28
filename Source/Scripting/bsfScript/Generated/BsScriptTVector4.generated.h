@@ -23,16 +23,16 @@ namespace bs
 
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector4d : public TScriptTypeDefinition<ScriptVector4d>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector4D : public TScriptTypeDefinition<ScriptVector4D>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Vector4d")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Vector4D")
 
 		static MonoObject* Box(const TVector4<double>& value);
 		static TVector4<double> Unbox(MonoObject* value);
 
 	private:
-		ScriptVector4d();
+		ScriptVector4D();
 
 	};
 }

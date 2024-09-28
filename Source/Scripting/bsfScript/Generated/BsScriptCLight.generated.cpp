@@ -6,6 +6,7 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Components/BsCLight.h"
 #include "Wrappers/BsScriptColor.h"
+#include "BsScriptTSphere.generated.h"
 
 namespace bs
 {
@@ -202,11 +203,13 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptLight::InternalGetBounds(ScriptLight* self, Sphere* __output)
+	void ScriptLight::InternalGetBounds(ScriptLight* self, __TSphere_float_Interop* __output)
 	{
-		Sphere tmp__output;
+		TSphere<float> tmp__output;
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetBounds();
 
-		*__output = tmp__output;
+		__TSphere_float_Interop interop__output;
+		interop__output = ScriptSphere::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptSphere::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 }

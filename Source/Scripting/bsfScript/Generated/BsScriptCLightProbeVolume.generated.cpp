@@ -8,6 +8,7 @@
 #include "BsScriptTVector3I.generated.h"
 #include "BsScriptLightProbeInfo.generated.h"
 #include "BsScriptTVector3.generated.h"
+#include "BsScriptTAABox.generated.h"
 
 namespace bs
 {
@@ -100,9 +101,11 @@ namespace bs
 		static_cast<CLightProbeVolume*>(self->GetNativeObject())->RenderProbes();
 	}
 
-	void ScriptLightProbeVolume::InternalResize(ScriptLightProbeVolume* self, AABox* volume, TVector3I<int32_t>* cellCount)
+	void ScriptLightProbeVolume::InternalResize(ScriptLightProbeVolume* self, __TAABox_float_Interop* volume, TVector3I<int32_t>* cellCount)
 	{
-		static_cast<CLightProbeVolume*>(self->GetNativeObject())->Resize(*volume, *cellCount);
+		TAABox<float> tmpvolume;
+		tmpvolume = ScriptAABox::FromInterop(*volume);
+		static_cast<CLightProbeVolume*>(self->GetNativeObject())->Resize(tmpvolume, *cellCount);
 	}
 
 	void ScriptLightProbeVolume::InternalClip(ScriptLightProbeVolume* self)
@@ -115,12 +118,14 @@ namespace bs
 		static_cast<CLightProbeVolume*>(self->GetNativeObject())->Reset();
 	}
 
-	void ScriptLightProbeVolume::InternalGetGridVolume(ScriptLightProbeVolume* self, AABox* __output)
+	void ScriptLightProbeVolume::InternalGetGridVolume(ScriptLightProbeVolume* self, __TAABox_float_Interop* __output)
 	{
-		AABox tmp__output;
+		TAABox<float> tmp__output;
 		tmp__output = static_cast<CLightProbeVolume*>(self->GetNativeObject())->GetGridVolume();
 
-		*__output = tmp__output;
+		__TAABox_float_Interop interop__output;
+		interop__output = ScriptAABox::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptAABox::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 
 	void ScriptLightProbeVolume::InternalGetCellCount(ScriptLightProbeVolume* self, TVector3I<int32_t>* __output)

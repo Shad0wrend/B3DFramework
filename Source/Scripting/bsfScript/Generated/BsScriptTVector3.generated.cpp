@@ -21,15 +21,15 @@ namespace bs
 	}
 
 
-	ScriptVector3d::ScriptVector3d()
+	ScriptVector3D::ScriptVector3D()
 	{ }
 
-	MonoObject* ScriptVector3d::Box(const TVector3<double>& value)
+	MonoObject* ScriptVector3D::Box(const TVector3<double>& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	TVector3<double> ScriptVector3d::Unbox(MonoObject* value)
+	TVector3<double> ScriptVector3D::Unbox(MonoObject* value)
 	{
 		return *(TVector3<double>*)MonoUtil::Unbox(value);
 	}

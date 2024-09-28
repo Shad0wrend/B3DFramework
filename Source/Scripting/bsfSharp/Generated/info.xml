@@ -185,7 +185,7 @@
 		<field name="Y" type="float">
 		</field>
 	</struct>
-	<struct native="TVector2&lt;double&gt;" script="Vector2d">
+	<struct native="TVector2&lt;double&gt;" script="Vector2D">
 		<doc>A two dimensional vector.</doc>
 		<ctor>
 		</ctor>
@@ -671,7 +671,7 @@
 		<field name="Z" type="float">
 		</field>
 	</struct>
-	<struct native="TVector3&lt;double&gt;" script="Vector3d">
+	<struct native="TVector3&lt;double&gt;" script="Vector3D">
 		<doc>A three dimensional vector.</doc>
 		<ctor>
 		</ctor>
@@ -694,104 +694,6 @@
 		<field name="Z" type="double">
 		</field>
 	</struct>
-	<class native="Mesh" script="Mesh">
-		<doc>Primary class for holding geometry. Stores data in the form of vertex buffers and optionally an index buffer, which may be bound to the pipeline for drawing. May contain multiple sub-meshes.</doc>
-		<ctor>
-			<doc>Creates a new mesh with enough space to hold the a number of primitives using the specified layout. All indices will be part of a single sub-mesh.</doc>
-			<param name="numVertices" type="int">
-				<doc>Number of vertices in the mesh.</doc>
-			</param>
-			<param name="numIndices" type="int">
-				<doc>Number of indices in the mesh. Must be a multiple of primitive size as specified by provided topology.</doc>
-			</param>
-			<param name="topology" type="MeshTopology">
-				<doc>Determines how should the provided indices be interpreted by the pipeline. Default option is a triangle list, where three indices represent a single triangle.</doc>
-			</param>
-			<param name="usage" type="MeshUsage">
-				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
-			</param>
-			<param name="vertex" type="VertexLayout">
-				<doc>Controls how are vertices organized in the vertex buffer and what data they contain.</doc>
-			</param>
-			<param name="index" type="IndexType">
-				<doc>Size of indices, use smaller size for better performance, however be careful not to go over the number of vertices limited by the data type size.</doc>
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Creates a new mesh with enough space to hold the a number of primitives using the specified layout. Indices can be referenced by multiple sub-meshes.</doc>
-			<param name="numVertices" type="int">
-				<doc>Number of vertices in the mesh.</doc>
-			</param>
-			<param name="numIndices" type="int">
-				<doc>Number of indices in the mesh. Must be a multiple of primitive size as specified by provided topology.</doc>
-			</param>
-			<param name="subMeshes" type="SubMesh">
-				<doc>Defines how are indices separated into sub-meshes, and how are those sub-meshes rendered. Sub-meshes may be rendered independently, each with a different material.</doc>
-			</param>
-			<param name="usage" type="MeshUsage">
-				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
-			</param>
-			<param name="vertex" type="VertexLayout">
-				<doc>Controls how are vertices organized in the vertex buffer and what data they contain.</doc>
-			</param>
-			<param name="index" type="IndexType">
-				<doc>Size of indices, use smaller size for better performance, however be careful not to go over the number of vertices limited by the data type size.</doc>
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described by the mesh data exactly. Mesh will have no sub-meshes.</doc>
-			<param name="data" type="RendererMeshData">
-				<doc>Vertex and index data to initialize the mesh with.</doc>
-			</param>
-			<param name="topology" type="MeshTopology">
-				<doc>Determines how should the provided indices be interpreted by the pipeline. Default option is a triangle list, where three indices represent a single triangle.</doc>
-			</param>
-			<param name="usage" type="MeshUsage">
-				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Creates a new mesh with enough space to hold the a number of primitives using the specified layout. Indices can be referenced by multiple sub-meshes.</doc>
-			<param name="data" type="RendererMeshData">
-				<doc>Vertex and index data to initialize the mesh with.</doc>
-			</param>
-			<param name="subMeshes" type="SubMesh">
-				<doc>Defines how are indices separated into sub-meshes, and how are those sub-meshes rendered. Sub-meshes may be rendered independently, each with a different material.</doc>
-			</param>
-			<param name="usage" type="MeshUsage">
-				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
-			</param>
-		</ctor>
-		<property name="Skeleton" type="Skeleton" getter="GetSkeleton" setter="" static="false">
-			<doc>Gets the skeleton required for animation of this mesh, if any is available.</doc>
-		</property>
-		<property name="MorphShapes" type="MorphShapes" getter="GetMorphShapes" setter="" static="false">
-			<doc>Returns an object containing all shapes used for morph animation, if any are available.</doc>
-		</property>
-		<property name="SubMeshes" type="SubMesh" getter="GetSubMeshes" setter="" static="false">
-			<doc>Returns all sub-meshes contained in the mesh.</doc>
-		</property>
-		<property name="SubMeshCount" type="int" getter="GetSubMeshCount" setter="" static="false">
-			<doc>Returns the number of sub-meshes contained in this mesh.</doc>
-		</property>
-		<property name="MeshData" type="RendererMeshData" getter="GetMeshData" setter="SetMeshData" static="false">
-			<doc>Accesses the vertex and index data of the mesh. If reading, mesh must have been created with the MeshUsage::CPUCached flag. If writing the caller must ensure the data matches mesh&apos;s vertex/index counts, vertex layout and index format.</doc>
-		</property>
-	</class>
-	<class native="ParticleEvolver" script="ParticleEvolver">
-		<doc>Updates properties of all active particles in a particle system in some way.</doc>
-	</class>
-	<enum native="ClearFlagBits" script="ClearFlags">
-		<doc>Flags that determine which portion of the viewport to clear.</doc>
-		<enumentry native="Empty" script="Empty">
-		</enumentry>
-		<enumentry native="Color" script="Color">
-		</enumentry>
-		<enumentry native="Depth" script="Depth">
-		</enumentry>
-		<enumentry native="Stencil" script="Stencil">
-		</enumentry>
-	</enum>
 	<class native="RenderTexture" script="RenderTexture">
 		<doc>Render target specialization that allows you to render into one or multiple textures. Such textures can then be used in other operations as GPU program input.</doc>
 		<ctor>
@@ -896,7 +798,7 @@
 		<field name="W" type="float">
 		</field>
 	</struct>
-	<struct native="TVector4&lt;double&gt;" script="Vector4d">
+	<struct native="TVector4&lt;double&gt;" script="Vector4D">
 		<doc>A four dimensional vector.</doc>
 		<ctor>
 		</ctor>
@@ -928,9 +830,121 @@
 	</struct>
 	<struct native="TPlane&lt;double&gt;" script="PlaneD">
 		<doc>A plane represented by a normal and a distance.</doc>
-		<field name="Normal" type="Vector3d">
+		<field name="Normal" type="Vector3D">
 		</field>
 		<field name="D" type="double">
+		</field>
+	</struct>
+	<enum native="TangentType" script="TangentType">
+		<doc>Type of tangent on a keyframe in an animation curve.</doc>
+		<enumentry native="In" script="In">
+		</enumentry>
+		<enumentry native="Out" script="Out">
+		</enumentry>
+	</enum>
+	<struct native="TAABox&lt;float&gt;" script="AABox">
+		<doc>Axis aligned box represented by minimum and maximum point.</doc>
+		<ctor>
+		</ctor>
+		<field name="Minimum" type="Vector3">
+		</field>
+		<field name="Maximum" type="Vector3">
+		</field>
+	</struct>
+	<struct native="TAABox&lt;double&gt;" script="AABoxD">
+		<doc>Axis aligned box represented by minimum and maximum point.</doc>
+		<ctor>
+		</ctor>
+		<field name="Minimum" type="Vector3D">
+		</field>
+		<field name="Maximum" type="Vector3D">
+		</field>
+	</struct>
+	<struct native="BlendClipInfo" script="BlendClipInfo">
+		<doc>Represents an animation clip used in 1D blending. Each clip has a position on the number line.</doc>
+		<ctor>
+		</ctor>
+		<field name="Clip" type="RRef&lt;AnimationClip&gt;">
+		</field>
+		<field name="Position" type="float">
+		</field>
+	</struct>
+	<struct native="KeyframeRef" script="KeyframeRef">
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="curveIdx" type="int">
+			</param>
+			<param name="keyIdx" type="int">
+			</param>
+		</ctor>
+		<field name="CurveIdx" type="int">
+		</field>
+		<field name="KeyIdx" type="int">
+		</field>
+	</struct>
+	<class native="GUILabel" script="GUILabel">
+		<doc>GUI element that displays text and optionally a content image.</doc>
+		<method native="SetContent" script="SetContent" static="false">
+			<doc>Changes the active content of the label.</doc>
+			<param name="content" type="GUIContent">
+			</param>
+		</method>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+	</class>
+	<struct native="TSphere&lt;float&gt;" script="Sphere">
+		<doc>A sphere represented by a center point and a radius.</doc>
+		<ctor>
+			<doc>Default constructor. Creates a unit sphere around the origin.</doc>
+		</ctor>
+		<field name="Radius" type="float">
+		</field>
+		<field name="Center" type="Vector3">
+		</field>
+	</struct>
+	<struct native="TSphere&lt;double&gt;" script="SphereD">
+		<doc>A sphere represented by a center point and a radius.</doc>
+		<ctor>
+			<doc>Default constructor. Creates a unit sphere around the origin.</doc>
+		</ctor>
+		<field name="Radius" type="double">
+		</field>
+		<field name="Center" type="Vector3D">
 		</field>
 	</struct>
 	<class native="Random" script="Random">
@@ -1025,6 +1039,24 @@
 			</returns>
 		</method>
 	</class>
+	<struct native="TRay&lt;float&gt;" script="Ray">
+		<doc>A ray in 3D space represented with an origin and direction.</doc>
+		<ctor>
+		</ctor>
+		<field name="Origin" type="Vector3">
+		</field>
+		<field name="Direction" type="Vector3">
+		</field>
+	</struct>
+	<struct native="TRay&lt;double&gt;" script="RayD">
+		<doc>A ray in 3D space represented with an origin and direction.</doc>
+		<ctor>
+		</ctor>
+		<field name="Origin" type="Vector3D">
+		</field>
+		<field name="Direction" type="Vector3D">
+		</field>
+	</struct>
 	<class native="CAnimation" script="Animation">
 		<method native="Play" script="Play" static="false">
 			<param name="clip" type="RRef&lt;AnimationClip&gt;">
@@ -1731,29 +1763,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Determines should the time be advanced automatically. Certain type of animation clips don&apos;t involve playback (e.g. for blending where animation weight controls the animation).</doc>
 		</field>
 	</struct>
-	<struct native="BlendClipInfo" script="BlendClipInfo">
-		<doc>Represents an animation clip used in 1D blending. Each clip has a position on the number line.</doc>
-		<ctor>
-		</ctor>
-		<field name="Clip" type="RRef&lt;AnimationClip&gt;">
-		</field>
-		<field name="Position" type="float">
-		</field>
-	</struct>
-	<struct native="KeyframeRef" script="KeyframeRef">
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="curveIdx" type="int">
-			</param>
-			<param name="keyIdx" type="int">
-			</param>
-		</ctor>
-		<field name="CurveIdx" type="int">
-		</field>
-		<field name="KeyIdx" type="int">
-		</field>
-	</struct>
 	<struct native="Blend2DInfo" script="Blend2DInfo">
 		<doc>Defines a 2D blend where two animation clips are blended between each other using bilinear interpolation.</doc>
 		<field name="TopLeftClip" type="RRef&lt;AnimationClip&gt;">
@@ -2193,13 +2202,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<field name="Name" type="string">
 		</field>
 	</struct>
-	<enum native="TangentType" script="TangentType">
-		<doc>Type of tangent on a keyframe in an animation curve.</doc>
-		<enumentry native="In" script="In">
-		</enumentry>
-		<enumentry native="Out" script="Out">
-		</enumentry>
-	</enum>
 	<class native="GUISlider" script="GUISlider">
 		<doc>A slider with a draggable handle that can be vertical or horizontal.</doc>
 		<method native="SetRange" script="SetRange" static="false">
@@ -2712,6 +2714,104 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Return the size (in bytes) of the buffer this image requires.</doc>
 		</property>
 	</class>
+	<class native="Mesh" script="Mesh">
+		<doc>Primary class for holding geometry. Stores data in the form of vertex buffers and optionally an index buffer, which may be bound to the pipeline for drawing. May contain multiple sub-meshes.</doc>
+		<ctor>
+			<doc>Creates a new mesh with enough space to hold the a number of primitives using the specified layout. All indices will be part of a single sub-mesh.</doc>
+			<param name="numVertices" type="int">
+				<doc>Number of vertices in the mesh.</doc>
+			</param>
+			<param name="numIndices" type="int">
+				<doc>Number of indices in the mesh. Must be a multiple of primitive size as specified by provided topology.</doc>
+			</param>
+			<param name="topology" type="MeshTopology">
+				<doc>Determines how should the provided indices be interpreted by the pipeline. Default option is a triangle list, where three indices represent a single triangle.</doc>
+			</param>
+			<param name="usage" type="MeshUsage">
+				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
+			</param>
+			<param name="vertex" type="VertexLayout">
+				<doc>Controls how are vertices organized in the vertex buffer and what data they contain.</doc>
+			</param>
+			<param name="index" type="IndexType">
+				<doc>Size of indices, use smaller size for better performance, however be careful not to go over the number of vertices limited by the data type size.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new mesh with enough space to hold the a number of primitives using the specified layout. Indices can be referenced by multiple sub-meshes.</doc>
+			<param name="numVertices" type="int">
+				<doc>Number of vertices in the mesh.</doc>
+			</param>
+			<param name="numIndices" type="int">
+				<doc>Number of indices in the mesh. Must be a multiple of primitive size as specified by provided topology.</doc>
+			</param>
+			<param name="subMeshes" type="SubMesh">
+				<doc>Defines how are indices separated into sub-meshes, and how are those sub-meshes rendered. Sub-meshes may be rendered independently, each with a different material.</doc>
+			</param>
+			<param name="usage" type="MeshUsage">
+				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
+			</param>
+			<param name="vertex" type="VertexLayout">
+				<doc>Controls how are vertices organized in the vertex buffer and what data they contain.</doc>
+			</param>
+			<param name="index" type="IndexType">
+				<doc>Size of indices, use smaller size for better performance, however be careful not to go over the number of vertices limited by the data type size.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described by the mesh data exactly. Mesh will have no sub-meshes.</doc>
+			<param name="data" type="RendererMeshData">
+				<doc>Vertex and index data to initialize the mesh with.</doc>
+			</param>
+			<param name="topology" type="MeshTopology">
+				<doc>Determines how should the provided indices be interpreted by the pipeline. Default option is a triangle list, where three indices represent a single triangle.</doc>
+			</param>
+			<param name="usage" type="MeshUsage">
+				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new mesh with enough space to hold the a number of primitives using the specified layout. Indices can be referenced by multiple sub-meshes.</doc>
+			<param name="data" type="RendererMeshData">
+				<doc>Vertex and index data to initialize the mesh with.</doc>
+			</param>
+			<param name="subMeshes" type="SubMesh">
+				<doc>Defines how are indices separated into sub-meshes, and how are those sub-meshes rendered. Sub-meshes may be rendered independently, each with a different material.</doc>
+			</param>
+			<param name="usage" type="MeshUsage">
+				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
+			</param>
+		</ctor>
+		<property name="Skeleton" type="Skeleton" getter="GetSkeleton" setter="" static="false">
+			<doc>Gets the skeleton required for animation of this mesh, if any is available.</doc>
+		</property>
+		<property name="MorphShapes" type="MorphShapes" getter="GetMorphShapes" setter="" static="false">
+			<doc>Returns an object containing all shapes used for morph animation, if any are available.</doc>
+		</property>
+		<property name="SubMeshes" type="SubMesh" getter="GetSubMeshes" setter="" static="false">
+			<doc>Returns all sub-meshes contained in the mesh.</doc>
+		</property>
+		<property name="SubMeshCount" type="int" getter="GetSubMeshCount" setter="" static="false">
+			<doc>Returns the number of sub-meshes contained in this mesh.</doc>
+		</property>
+		<property name="MeshData" type="RendererMeshData" getter="GetMeshData" setter="SetMeshData" static="false">
+			<doc>Accesses the vertex and index data of the mesh. If reading, mesh must have been created with the MeshUsage::CPUCached flag. If writing the caller must ensure the data matches mesh&apos;s vertex/index counts, vertex layout and index format.</doc>
+		</property>
+	</class>
+	<class native="ParticleEvolver" script="ParticleEvolver">
+		<doc>Updates properties of all active particles in a particle system in some way.</doc>
+	</class>
+	<enum native="ClearFlagBits" script="ClearFlags">
+		<doc>Flags that determine which portion of the viewport to clear.</doc>
+		<enumentry native="Empty" script="Empty">
+		</enumentry>
+		<enumentry native="Color" script="Color">
+		</enumentry>
+		<enumentry native="Depth" script="Depth">
+		</enumentry>
+		<enumentry native="Stencil" script="Stencil">
+		</enumentry>
+	</enum>
 	<class native="Viewport" script="Viewport">
 		<doc>Viewport determines to which RenderTarget should rendering be performed. It allows you to render to a sub-region of the target by specifying the area rectangle, and allows you to set up color/depth/stencil clear values for that specific region.</doc>
 		<ctor>
@@ -13467,50 +13567,6 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 		<event native="OnConfirm" script="OnConfirm" static="false">
 			<doc>Triggered when the user hits the Enter key with the input box in focus.</doc>
 		</event>
-	</class>
-	<class native="GUILabel" script="GUILabel">
-		<doc>GUI element that displays text and optionally a content image.</doc>
-		<method native="SetContent" script="SetContent" static="false">
-			<doc>Changes the active content of the label.</doc>
-			<param name="content" type="GUIContent">
-			</param>
-		</method>
-		<ctor>
-			<doc>Creates a new GUI element.</doc>
-			<param name="contents" type="GUIContent">
-				<doc>Structure describing the contents of the GUI element to create.</doc>
-			</param>
-			<param name="styleClass" type="string">
-				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
-			</param>
-			<param name="options" type="GUIOption">
-				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Creates a new GUI element.</doc>
-			<param name="contents" type="GUIContent">
-				<doc>Structure describing the contents of the GUI element to create.</doc>
-			</param>
-			<param name="options" type="GUIOption">
-				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Creates a new GUI element.</doc>
-			<param name="styleClass" type="string">
-				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
-			</param>
-			<param name="options" type="GUIOption">
-				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Creates a new GUI element.</doc>
-			<param name="options" type="GUIOption">
-				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
-			</param>
-		</ctor>
 	</class>
 	<struct native="GUIListBoxContent" script="GUIListBoxContent">
 		<doc>Structure describing contents of a GUIListBox element.</doc>

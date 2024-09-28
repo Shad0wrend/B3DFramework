@@ -74,8 +74,8 @@ namespace bs
 		std::pair<bool, T> Intersects(const TVector3<T>& a, const TVector3<T>& b, const TVector3<T>& c, const TVector3<T>& normal, bool positiveSide = true, bool negativeSide = true) const;
 	};
 
-	//extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Ray)) TRay<float>;
-	//extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(RayD)) TRay<double>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Ray)) TRay<float>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(RayD)) TRay<double>;
 
 	/** @} */
 } // namespace bs

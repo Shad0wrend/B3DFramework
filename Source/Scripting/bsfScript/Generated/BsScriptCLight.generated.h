@@ -5,11 +5,12 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptComponent.h"
 #include "../../../Foundation/bsfCore/Renderer/BsLight.h"
-#include "Math/BsSphere.h"
 #include "Image/BsColor.h"
 #include "Math/BsDegree.h"
+#include "../../../Foundation/bsfUtility/Math/BsSphere.h"
 
 namespace bs { class CLight; }
+namespace bs { struct __TSphere_float_Interop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptLight : public TScriptGameObjectWrapper<CLight, ScriptLight>
@@ -44,6 +45,6 @@ namespace bs
 		static bool InternalGetCastsShadow(ScriptLight* self);
 		static void InternalSetShadowBias(ScriptLight* self, float bias);
 		static float InternalGetShadowBias(ScriptLight* self);
-		static void InternalGetBounds(ScriptLight* self, Sphere* __output);
+		static void InternalGetBounds(ScriptLight* self, __TSphere_float_Interop* __output);
 	};
 }

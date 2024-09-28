@@ -5,7 +5,8 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsVectorField.h"
-#include "Math/BsAABox.h"
+#include "../../../Foundation/bsfUtility/Math/BsAABox.h"
+#include "BsScriptTAABox.generated.h"
 
 namespace bs
 {
@@ -14,7 +15,7 @@ namespace bs
 		uint32_t CountX;
 		uint32_t CountY;
 		uint32_t CountZ;
-		AABox Bounds;
+		__TAABox_float_Interop Bounds;
 	};
 
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorFieldOptions : public TScriptTypeDefinition<ScriptVectorFieldOptions>

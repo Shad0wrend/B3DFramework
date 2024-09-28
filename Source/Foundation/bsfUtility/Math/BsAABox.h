@@ -43,10 +43,13 @@ namespace bs
 		TVector3<T> Maximum;
 
 		TAABox()
-			: Minimum(TVector3<T>((T)-0.5, (T)-0.5, (T)-0.5)), Maximum(TVector3<T>((T)0.5, (T)0.5, (T)0.5))
+			: Minimum(TVector3<T>::kZero), Maximum(TVector3<T>::kZero)
 		{ }
 
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		TAABox(const TAABox& copy) = default;
+
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		TAABox(const TVector3<T>& min, const TVector3<T>& max);
 
 		~TAABox() = default;
@@ -224,6 +227,9 @@ namespace bs
 		NEAR_LEFT_BOTTOM, NEAR_RIGHT_BOTTOM, FAR_RIGHT_BOTTOM,
 		NEAR_LEFT_BOTTOM, FAR_RIGHT_BOTTOM, FAR_LEFT_BOTTOM
 	};
+
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(AABox)) TAABox<float>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(AABoxD)) TAABox<double>;
 
 	/** @} */
 } // namespace bs

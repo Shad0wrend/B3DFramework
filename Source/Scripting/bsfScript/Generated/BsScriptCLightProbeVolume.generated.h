@@ -7,10 +7,11 @@
 #include "../../../Foundation/bsfUtility/Math/BsVector3I.h"
 #include "../../../Foundation/bsfCore/Renderer/BsLightProbeVolume.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
-#include "Math/BsAABox.h"
+#include "../../../Foundation/bsfUtility/Math/BsAABox.h"
 
 namespace bs { class CLightProbeVolume; }
 namespace bs { struct __LightProbeInfoInterop; }
+namespace bs { struct __TAABox_float_Interop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptLightProbeVolume : public TScriptGameObjectWrapper<CLightProbeVolume, ScriptLightProbeVolume>
@@ -32,10 +33,10 @@ namespace bs
 		static MonoArray* InternalGetProbes(ScriptLightProbeVolume* self);
 		static void InternalRenderProbe(ScriptLightProbeVolume* self, uint32_t handle);
 		static void InternalRenderProbes(ScriptLightProbeVolume* self);
-		static void InternalResize(ScriptLightProbeVolume* self, AABox* volume, TVector3I<int32_t>* cellCount);
+		static void InternalResize(ScriptLightProbeVolume* self, __TAABox_float_Interop* volume, TVector3I<int32_t>* cellCount);
 		static void InternalClip(ScriptLightProbeVolume* self);
 		static void InternalReset(ScriptLightProbeVolume* self);
-		static void InternalGetGridVolume(ScriptLightProbeVolume* self, AABox* __output);
+		static void InternalGetGridVolume(ScriptLightProbeVolume* self, __TAABox_float_Interop* __output);
 		static void InternalGetCellCount(ScriptLightProbeVolume* self, TVector3I<int32_t>* __output);
 	};
 }

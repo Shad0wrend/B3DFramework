@@ -11,33 +11,8 @@ namespace bs
     /// <summary>
     /// Axis aligned box represented by minimum and maximum point.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential), SerializeObject]
-    public struct AABox // Note: Must match C++ class AABox
+    public partial struct AABox
     {
-        [SerializeField]
-        private Vector3 minimum;
-
-        [SerializeField]
-        private Vector3 maximum;
-
-        /// <summary>
-        /// Corner of the box with minimum values (opposite to maximum corner).
-        /// </summary>
-        public Vector3 Minimum
-        {
-            get { return minimum; }
-            set { minimum = value; }
-        }
-
-        /// <summary>
-        /// Corner of the box with maximum values (opposite to minimum corner).
-        /// </summary>
-        public Vector3 Maximum
-        {
-            get { return maximum; }
-            set { maximum = value; }
-        }
-
         /// <summary>
         /// Returns the center of the box.
         /// </summary>
@@ -45,9 +20,9 @@ namespace bs
         {
             get
             { 		
-                return new Vector3((maximum.X + minimum.X) * 0.5f,
-                        (maximum.Y + minimum.Y) * 0.5f,
-                        (maximum.Z + minimum.Z) * 0.5f);
+                return new Vector3((Maximum.X + Minimum.X) * 0.5f,
+                        (Maximum.Y + Minimum.Y) * 0.5f,
+                        (Maximum.Z + Minimum.Z) * 0.5f);
             }
         }
 
@@ -58,16 +33,8 @@ namespace bs
         {
             get
             {
-                return maximum - minimum;
+                return Maximum - Minimum;
             }
-        }
-
-        /// <summary>
-        /// Creates a new default initialized axis aligned box value.
-        /// </summary>
-        public static AABox Default()
-        {
-            return new AABox();
         }
 
         /// <summary>
@@ -77,8 +44,8 @@ namespace bs
         /// <param name="max">Corner of the box with maximum values.</param>
         public AABox(Vector3 min, Vector3 max)
         {
-            minimum = min;
-            maximum = max;
+            Minimum = min;
+            Maximum = max;
         }
 
         /// <summary>
@@ -99,14 +66,14 @@ namespace bs
                 MathEx.Abs(tfrm.m10) * halfSize.X + MathEx.Abs(tfrm.m11) * halfSize.Y + MathEx.Abs(tfrm.m12) * halfSize.Z,
                 MathEx.Abs(tfrm.m20) * halfSize.X + MathEx.Abs(tfrm.m21) * halfSize.Y + MathEx.Abs(tfrm.m22) * halfSize.Z);
 
-            minimum = newCenter - newHalfSize;
-            maximum = newCenter + newHalfSize;
+            Minimum = newCenter - newHalfSize;
+            Maximum = newCenter + newHalfSize;
         }
 
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "Min: " + minimum + ". Max: " + maximum;
+            return "Min: " + Minimum + ". Max: " + Maximum;
         }
     };
 

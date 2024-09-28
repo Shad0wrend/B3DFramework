@@ -10,28 +10,22 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>A two dimensional vector.</summary>
+	/// <summary>A ray in 3D space represented with an origin and direction.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector2
+	public partial struct Ray
 	{
 		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector2 Default()
+		public static Ray Default()
 		{
-			Vector2 value = new Vector2();
-			value.X = 0;
-			value.Y = 0;
+			Ray value = new Ray();
+			value.Origin = Vector3.Default();
+			value.Direction = Vector3.Default();
 
 			return value;
 		}
 
-		public Vector2(float x, float y)
-		{
-			this.X = x;
-			this.Y = y;
-		}
-
-		public float X;
-		public float Y;
+		public Vector3 Origin;
+		public Vector3 Direction;
 	}
 
 	/** @} */
@@ -40,28 +34,22 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>A two dimensional vector.</summary>
+	/// <summary>A ray in 3D space represented with an origin and direction.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector2D
+	public partial struct RayD
 	{
 		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector2D Default()
+		public static RayD Default()
 		{
-			Vector2D value = new Vector2D();
-			value.X = 0;
-			value.Y = 0;
+			RayD value = new RayD();
+			value.Origin = Vector3D.Default();
+			value.Direction = Vector3D.Default();
 
 			return value;
 		}
 
-		public Vector2D(double x, double y)
-		{
-			this.X = x;
-			this.Y = y;
-		}
-
-		public double X;
-		public double Y;
+		public Vector3D Origin;
+		public Vector3D Direction;
 	}
 
 	/** @} */

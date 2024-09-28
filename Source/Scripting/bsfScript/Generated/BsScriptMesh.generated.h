@@ -4,16 +4,18 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptResourceWrapper.h"
-#include "Math/BsSphere.h"
 #include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 #include "../../../Foundation/bsfCore/Mesh/BsMeshBase.h"
 #include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRendererMeshData.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsSubMesh.h"
-#include "Math/BsAABox.h"
+#include "../../../Foundation/bsfUtility/Math/BsAABox.h"
+#include "../../../Foundation/bsfUtility/Math/BsSphere.h"
 
 namespace bs { class Mesh; }
 namespace bs { class MeshEx; }
+namespace bs { struct __TAABox_float_Interop; }
+namespace bs { struct __TSphere_float_Interop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptMesh : public TScriptResourceWrapper<Mesh, ScriptMesh>
@@ -38,7 +40,7 @@ namespace bs
 		static void InternalCreate2(MonoObject* scriptObject, MonoObject* data, MonoArray* subMeshes, MeshUsage usage);
 		static MonoArray* InternalGetSubMeshes(ScriptMesh* self);
 		static uint32_t InternalGetSubMeshCount(ScriptMesh* self);
-		static void InternalGetBounds(ScriptMesh* self, AABox* box, Sphere* sphere);
+		static void InternalGetBounds(ScriptMesh* self, __TAABox_float_Interop* box, __TSphere_float_Interop* sphere);
 		static MonoObject* InternalGetMeshData(ScriptMesh* self);
 		static void InternalSetMeshData(ScriptMesh* self, MonoObject* value);
 	};

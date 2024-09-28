@@ -56,9 +56,9 @@ namespace bs
 			/** Initializes bounds from a Sphere. */
 			AABox(const Sphere& sphere)
 			{
-				Center = Vector4(sphere.GetCenter());
+				Center = Vector4(sphere.Center);
 
-				float radius = sphere.GetRadius();
+				float radius = sphere.Radius;
 				Extents = Vector4(radius, radius, radius, 0.0f);
 			}
 

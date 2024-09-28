@@ -48,12 +48,12 @@ namespace bs
 
 	/// <summary>A four dimensional vector.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector4d
+	public partial struct Vector4D
 	{
 		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector4d Default()
+		public static Vector4D Default()
 		{
-			Vector4d value = new Vector4d();
+			Vector4D value = new Vector4D();
 			value.X = 0;
 			value.Y = 0;
 			value.Z = 0;
@@ -62,7 +62,7 @@ namespace bs
 			return value;
 		}
 
-		public Vector4d(double x, double y, double z, double w)
+		public Vector4D(double x, double y, double z, double w)
 		{
 			this.X = 0;
 			this.Y = 0;

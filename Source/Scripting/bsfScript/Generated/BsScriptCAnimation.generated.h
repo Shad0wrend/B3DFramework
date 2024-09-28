@@ -9,11 +9,12 @@
 #include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimation.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimation.h"
-#include "Math/BsAABox.h"
+#include "../../../Foundation/bsfUtility/Math/BsAABox.h"
 
 namespace bs { struct __Blend2DInfoInterop; }
 namespace bs { class CAnimation; }
 namespace bs { struct __Blend1DInfoInterop; }
+namespace bs { struct __TAABox_float_Interop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimation : public TScriptGameObjectWrapper<CAnimation, ScriptAnimation>
@@ -58,8 +59,8 @@ namespace bs
 		static bool InternalGetState(ScriptAnimation* self, MonoObject* clip, AnimationClipState* state);
 		static void InternalSetState(ScriptAnimation* self, MonoObject* clip, AnimationClipState* state);
 		static void InternalSetMorphChannelWeight(ScriptAnimation* self, MonoString* name, float weight);
-		static void InternalSetBounds(ScriptAnimation* self, AABox* bounds);
-		static void InternalGetBounds(ScriptAnimation* self, AABox* __output);
+		static void InternalSetBounds(ScriptAnimation* self, __TAABox_float_Interop* bounds);
+		static void InternalGetBounds(ScriptAnimation* self, __TAABox_float_Interop* __output);
 		static void InternalSetUseBounds(ScriptAnimation* self, bool enable);
 		static bool InternalGetUseBounds(ScriptAnimation* self);
 		static void InternalSetEnableCull(ScriptAnimation* self, bool enable);

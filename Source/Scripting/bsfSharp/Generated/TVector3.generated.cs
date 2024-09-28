@@ -52,12 +52,12 @@ namespace bs
 
 	/// <summary>A three dimensional vector.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector3d
+	public partial struct Vector3D
 	{
 		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector3d Default()
+		public static Vector3D Default()
 		{
-			Vector3d value = new Vector3d();
+			Vector3D value = new Vector3D();
 			value.X = 0;
 			value.Y = 0;
 			value.Z = 0;
@@ -65,14 +65,14 @@ namespace bs
 			return value;
 		}
 
-		public Vector3d(double x, double y, double z)
+		public Vector3D(double x, double y, double z)
 		{
 			this.X = x;
 			this.Y = y;
 			this.Z = z;
 		}
 
-		public Vector3d(Vector4 vec)
+		public Vector3D(Vector4 vec)
 		{
 			this.X = 0;
 			this.Y = 0;

@@ -13,6 +13,8 @@
 #include "../../../Foundation/bsfCore/Mesh/BsMesh.h"
 #include "../Extensions/BsMeshEx.h"
 #include "BsScriptSubMesh.generated.h"
+#include "BsScriptTAABox.generated.h"
+#include "BsScriptTSphere.generated.h"
 
 namespace bs
 {
@@ -160,9 +162,18 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptMesh::InternalGetBounds(ScriptMesh* self, AABox* box, Sphere* sphere)
+	void ScriptMesh::InternalGetBounds(ScriptMesh* self, __TAABox_float_Interop* box, __TSphere_float_Interop* sphere)
 	{
-		MeshEx::GetBounds(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()), box, sphere);
+		TAABox<float> tmpbox;
+		TSphere<float> tmpsphere;
+		MeshEx::GetBounds(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()), &tmpbox, &tmpsphere);
+
+		__TAABox_float_Interop interopbox;
+		interopbox = ScriptAABox::ToInterop(tmpbox);
+		MonoUtil::ValueCopy(box, &interopbox, ScriptAABox::GetMetaData()->ScriptClass->GetInternalClass());
+		__TSphere_float_Interop interopsphere;
+		interopsphere = ScriptSphere::ToInterop(tmpsphere);
+		MonoUtil::ValueCopy(sphere, &interopsphere, ScriptSphere::GetMetaData()->ScriptClass->GetInternalClass());
 	}
 
 	MonoObject* ScriptMesh::InternalGetMeshData(ScriptMesh* self)

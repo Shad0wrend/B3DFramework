@@ -10,28 +10,22 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>A two dimensional vector.</summary>
+	/// <summary>A sphere represented by a center point and a radius.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector2
+	public partial struct Sphere
 	{
 		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector2 Default()
+		public static Sphere Default()
 		{
-			Vector2 value = new Vector2();
-			value.X = 0;
-			value.Y = 0;
+			Sphere value = new Sphere();
+			value.Radius = 0;
+			value.Center = Vector3.Default();
 
 			return value;
 		}
 
-		public Vector2(float x, float y)
-		{
-			this.X = x;
-			this.Y = y;
-		}
-
-		public float X;
-		public float Y;
+		public float Radius;
+		public Vector3 Center;
 	}
 
 	/** @} */
@@ -40,28 +34,22 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>A two dimensional vector.</summary>
+	/// <summary>A sphere represented by a center point and a radius.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector2D
+	public partial struct SphereD
 	{
 		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector2D Default()
+		public static SphereD Default()
 		{
-			Vector2D value = new Vector2D();
-			value.X = 0;
-			value.Y = 0;
+			SphereD value = new SphereD();
+			value.Radius = 0;
+			value.Center = Vector3D.Default();
 
 			return value;
 		}
 
-		public Vector2D(double x, double y)
-		{
-			this.X = x;
-			this.Y = y;
-		}
-
-		public double X;
-		public double Y;
+		public double Radius;
+		public Vector3D Center;
 	}
 
 	/** @} */
