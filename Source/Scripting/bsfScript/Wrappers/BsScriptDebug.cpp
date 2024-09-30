@@ -5,8 +5,8 @@
 #include "BsMonoClass.h"
 #include "BsMonoMethod.h"
 #include "BsMonoUtil.h"
+#include "BsScriptLogEntry.generated.h"
 #include "Debug/BsDebug.h"
-#include "Generated/BsScriptScriptExportableLogEntry.generated.h"
 
 using namespace bs;
 HEvent ScriptDebug::mOnLogEntryAddedConn;
@@ -79,8 +79,7 @@ MonoArray* ScriptDebug::InternalGetMessages()
 	ScriptArray output = ScriptArray::Create<ScriptLogEntry>(numEntries);
 	for(u32 i = 0; i < numEntries; i++)
 	{
-		ScriptExportableLogEntry logEntry = { entries[i].Message, entries[i].Verbosity, entries[i].CategoryName };
-		output.Set(i, ScriptLogEntry::ToInterop(logEntry));
+		output.Set(i, ScriptLogEntry::ToInterop(entries[i]));
 	}
 
 	return output.GetInternal();

@@ -282,6 +282,20 @@
 		<field name="Time" type="float">
 		</field>
 	</struct>
+	<struct native="LogEntry" script="LogEntry">
+		<doc>A single log entry, containing a message and a channel the message was recorded on.</doc>
+		<ctor>
+		</ctor>
+		<field name="Message" type="string">
+		</field>
+		<field name="Verbosity" type="LogVerbosity">
+		</field>
+		<field name="CategoryName" type="string">
+		</field>
+		<field name="LocalTime" type="ulong">
+			<doc>Local time of message</doc>
+		</field>
+	</struct>
 	<class native="ApplicationEx" script="Application">
 		<doc>Script-exported API for Application.</doc>
 		<method native="StartUp" script="StartUp" static="true">
@@ -1397,61 +1411,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	<class native="VectorGraphicsSettings" script="VectorGraphicsSettings">
 		<doc>Settings that control how is a VectorPath drawn.</doc>
 	</class>
-	<class native="ParticleEmitterStaticMeshShape" script="ParticleEmitterStaticMeshShape">
-		<doc>Particle emitter shape that emits particles from a surface of a static (non-animated) mesh. Particles can be emitted from mesh vertices, edges or triangles. If information about normals exists, particles will also inherit the normals.</doc>
-		<ctor>
-			<doc>Creates a new particle emitter static mesh shape.</doc>
-			<param name="desc" type="ParticleStaticMeshShapeOptions">
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Creates a new particle emitter static mesh shape.</doc>
-		</ctor>
-		<property name="Options" type="ParticleStaticMeshShapeOptions" getter="GetOptions" setter="SetOptions" static="false">
-			<doc>Options describing the shape.</doc>
-		</property>
-	</class>
-	<struct native="PixelVolume" script="PixelVolume">
-		<doc>Represents a 3D region of pixels used for referencing pixel data.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="left" type="int">
-			</param>
-			<param name="top" type="int">
-			</param>
-			<param name="right" type="int">
-			</param>
-			<param name="bottom" type="int">
-			</param>
-		</ctor>
-		<ctor>
-			<param name="left" type="int">
-			</param>
-			<param name="top" type="int">
-			</param>
-			<param name="front" type="int">
-			</param>
-			<param name="right" type="int">
-			</param>
-			<param name="bottom" type="int">
-			</param>
-			<param name="back" type="int">
-			</param>
-		</ctor>
-		<field name="Left" type="int">
-		</field>
-		<field name="Top" type="int">
-		</field>
-		<field name="Right" type="int">
-		</field>
-		<field name="Bottom" type="int">
-		</field>
-		<field name="Front" type="int">
-		</field>
-		<field name="Back" type="int">
-		</field>
-	</struct>
 	<class native="CCharacterController" script="CharacterController">
 		<method native="Move" script="Move" static="false">
 			<param name="displacement" type="Vector3">
@@ -2449,6 +2408,61 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Size of a single sample in bits. The clip will be converted to this bit depth on import.</doc>
 		</property>
 	</class>
+	<class native="ParticleEmitterStaticMeshShape" script="ParticleEmitterStaticMeshShape">
+		<doc>Particle emitter shape that emits particles from a surface of a static (non-animated) mesh. Particles can be emitted from mesh vertices, edges or triangles. If information about normals exists, particles will also inherit the normals.</doc>
+		<ctor>
+			<doc>Creates a new particle emitter static mesh shape.</doc>
+			<param name="desc" type="ParticleStaticMeshShapeOptions">
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new particle emitter static mesh shape.</doc>
+		</ctor>
+		<property name="Options" type="ParticleStaticMeshShapeOptions" getter="GetOptions" setter="SetOptions" static="false">
+			<doc>Options describing the shape.</doc>
+		</property>
+	</class>
+	<struct native="PixelVolume" script="PixelVolume">
+		<doc>Represents a 3D region of pixels used for referencing pixel data.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="left" type="int">
+			</param>
+			<param name="top" type="int">
+			</param>
+			<param name="right" type="int">
+			</param>
+			<param name="bottom" type="int">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="left" type="int">
+			</param>
+			<param name="top" type="int">
+			</param>
+			<param name="front" type="int">
+			</param>
+			<param name="right" type="int">
+			</param>
+			<param name="bottom" type="int">
+			</param>
+			<param name="back" type="int">
+			</param>
+		</ctor>
+		<field name="Left" type="int">
+		</field>
+		<field name="Top" type="int">
+		</field>
+		<field name="Right" type="int">
+		</field>
+		<field name="Bottom" type="int">
+		</field>
+		<field name="Front" type="int">
+		</field>
+		<field name="Back" type="int">
+		</field>
+	</struct>
 	<struct native="FontBitmapPage" script="FontBitmapPage">
 		<doc>Information about a single page containing font bitmaps.</doc>
 		<ctor>
@@ -9112,15 +9126,6 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			</returns>
 		</method>
 	</class>
-	<struct native="ScriptExportableLogEntry" script="LogEntry">
-		<doc>Script-exportable variant of LogEntry.</doc>
-		<field name="Message" type="string">
-		</field>
-		<field name="Verbosity" type="LogVerbosity">
-		</field>
-		<field name="CategoryName" type="string">
-		</field>
-	</struct>
 	<struct native="CharRange" script="CharRange">
 		<doc>Represents a range of character code.</doc>
 		<ctor>

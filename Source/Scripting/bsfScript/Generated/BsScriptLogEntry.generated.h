@@ -4,16 +4,17 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
-#include "../Wrappers/BsScriptDebug.h"
+#include "../../../Foundation/bsfUtility/Debug/BsLog.h"
 #include "../../../Foundation/bsfUtility/Debug/BsLog.h"
 
 namespace bs
 {
-	struct __ScriptExportableLogEntryInterop
+	struct __LogEntryInterop
 	{
 		MonoString* Message;
 		LogVerbosity Verbosity;
 		MonoString* CategoryName;
+		uint64_t LocalTime;
 	};
 
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptLogEntry : public TScriptTypeDefinition<ScriptLogEntry>
@@ -21,10 +22,10 @@ namespace bs
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "LogEntry")
 
-		static MonoObject* Box(const __ScriptExportableLogEntryInterop& value);
-		static __ScriptExportableLogEntryInterop Unbox(MonoObject* value);
-		static ScriptExportableLogEntry FromInterop(const __ScriptExportableLogEntryInterop& value);
-		static __ScriptExportableLogEntryInterop ToInterop(const ScriptExportableLogEntry& value);
+		static MonoObject* Box(const __LogEntryInterop& value);
+		static __LogEntryInterop Unbox(MonoObject* value);
+		static LogEntry FromInterop(const __LogEntryInterop& value);
+		static __LogEntryInterop ToInterop(const LogEntry& value);
 
 	private:
 		ScriptLogEntry();

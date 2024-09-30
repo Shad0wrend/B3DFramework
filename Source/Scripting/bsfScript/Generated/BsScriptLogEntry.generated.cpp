@@ -1,6 +1,6 @@
 //********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "BsScriptScriptExportableLogEntry.generated.h"
+#include "BsScriptLogEntry.generated.h"
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
@@ -10,33 +10,32 @@ namespace bs
 	ScriptLogEntry::ScriptLogEntry()
 	{ }
 
-	MonoObject* ScriptLogEntry::Box(const __ScriptExportableLogEntryInterop& value)
+	MonoObject* ScriptLogEntry::Box(const __LogEntryInterop& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	__ScriptExportableLogEntryInterop ScriptLogEntry::Unbox(MonoObject* value)
+	__LogEntryInterop ScriptLogEntry::Unbox(MonoObject* value)
 	{
-		return *(__ScriptExportableLogEntryInterop*)MonoUtil::Unbox(value);
+		return *(__LogEntryInterop*)MonoUtil::Unbox(value);
 	}
 
-	ScriptExportableLogEntry ScriptLogEntry::FromInterop(const __ScriptExportableLogEntryInterop& value)
+	LogEntry ScriptLogEntry::FromInterop(const __LogEntryInterop& value)
 	{
-		ScriptExportableLogEntry output;
+		LogEntry output;
 		String tmpMessage;
 		tmpMessage = MonoUtil::MonoToString(value.Message);
 		output.Message = tmpMessage;
 		output.Verbosity = value.Verbosity;
-		String tmpCategoryName;
-		tmpCategoryName = MonoUtil::MonoToString(value.CategoryName);
-		output.CategoryName = tmpCategoryName;
+		B3D_LOG(Error, Script, "const char* type cannot be assigned from scripting for field 'CategoryName'. This is not supported for this type.");
+		output.LocalTime = value.LocalTime;
 
 		return output;
 	}
 
-	__ScriptExportableLogEntryInterop ScriptLogEntry::ToInterop(const ScriptExportableLogEntry& value)
+	__LogEntryInterop ScriptLogEntry::ToInterop(const LogEntry& value)
 	{
-		__ScriptExportableLogEntryInterop output;
+		__LogEntryInterop output;
 		MonoString* tmpMessage;
 		tmpMessage = MonoUtil::StringToMono(value.Message);
 		output.Message = tmpMessage;
@@ -44,6 +43,7 @@ namespace bs
 		MonoString* tmpCategoryName;
 		tmpCategoryName = MonoUtil::StringToMono(value.CategoryName);
 		output.CategoryName = tmpCategoryName;
+		output.LocalTime = value.LocalTime;
 
 		return output;
 	}

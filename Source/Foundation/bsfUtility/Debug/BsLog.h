@@ -36,11 +36,12 @@ namespace bs
 	};
 
 	/** A single log entry, containing a message and a channel the message was recorded on. */
-	class B3D_UTILITY_EXPORT LogEntry
+	class B3D_UTILITY_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Debug)) LogEntry
 	{
 	public:
 		LogEntry() = default;
 
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		LogEntry(String message, LogVerbosity verbosity, const char* categoryName)
 			: Message(std::move(message)), Verbosity(verbosity), CategoryName(categoryName), LocalTime(std::time(nullptr))
 		{}
