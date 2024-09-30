@@ -20,8 +20,6 @@ namespace bs
 
 		static void SetupScriptBindings();
 
-		static MonoObject* CreateScriptObject(bool construct);
-
 	private:
 		static MonoObject* InternalGetWhiteSpriteTexture();
 		static MonoObject* InternalGetBuiltinShader(BuiltinShader type);

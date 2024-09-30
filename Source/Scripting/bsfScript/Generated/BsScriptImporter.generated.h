@@ -19,8 +19,6 @@ namespace bs
 
 		static void SetupScriptBindings();
 
-		static MonoObject* CreateScriptObject(bool construct);
-
 	private:
 		static MonoObject* InternalImport(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID);
 		static MonoObject* InternalImportAsync(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID);

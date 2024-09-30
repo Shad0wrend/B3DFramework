@@ -349,7 +349,8 @@ table td
 		stream << R"(			<td>)" << ToString(entry.LocalTime, false, false, TimeToStringConversionType::Time)
 			   << "</td>" << std::endl;
 
-		stream << R"(			<td>)" << entry.CategoryName << "</td>" << std::endl;
+		if(entry.CategoryName != nullptr)
+			stream << R"(			<td>)" << entry.CategoryName << "</td>" << std::endl;
 
 		String parsedMessage = StringUtil::ReplaceAll(entry.Message, "\n", "<br>\n");
 
@@ -453,9 +454,12 @@ void Debug::SaveTextLog(const Path& path) const
 			break;
 		}
 
-		builtMsg.append(" <");
-		builtMsg.append(entry.CategoryName);
-		builtMsg.append(">");
+		if(entry.CategoryName != nullptr)
+		{
+			builtMsg.append(" <");
+			builtMsg.append(entry.CategoryName);
+			builtMsg.append(">");
+		}
 
 		builtMsg.append(" | ");
 

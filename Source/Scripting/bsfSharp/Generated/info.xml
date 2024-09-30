@@ -150,56 +150,6 @@
 			<doc>Returns the precise time since application start, in microseconds. Unlike other time methods this is not only updated every frame, but will return exact time at the moment it is called.</doc>
 		</property>
 	</class>
-	<enum native="AudioFormat" script="AudioFormat">
-		<doc>Valid internal engine audio formats.</doc>
-		<enumentry native="PCM" script="PCM">
-			<doc>Pulse code modulation audio (&quot;raw&quot; uncompressed audio).</doc>
-		</enumentry>
-		<enumentry native="VORBIS" script="VORBIS">
-			<doc>Vorbis compressed audio.</doc>
-		</enumentry>
-	</enum>
-	<enum native="PointerEventType" script="PointerEventType">
-		<doc>Type of pointer event.</doc>
-		<enumentry native="CursorMoved" script="CursorMoved">
-		</enumentry>
-		<enumentry native="ButtonPressed" script="ButtonPressed">
-		</enumentry>
-		<enumentry native="ButtonReleased" script="ButtonReleased">
-		</enumentry>
-		<enumentry native="DoubleClick" script="DoubleClick">
-		</enumentry>
-	</enum>
-	<struct native="TVector2&lt;float&gt;" script="Vector2">
-		<doc>A two dimensional vector.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="x" type="float">
-			</param>
-			<param name="y" type="float">
-			</param>
-		</ctor>
-		<field name="X" type="float">
-		</field>
-		<field name="Y" type="float">
-		</field>
-	</struct>
-	<struct native="TVector2&lt;double&gt;" script="Vector2D">
-		<doc>A two dimensional vector.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="x" type="double">
-			</param>
-			<param name="y" type="double">
-			</param>
-		</ctor>
-		<field name="X" type="double">
-		</field>
-		<field name="Y" type="double">
-		</field>
-	</struct>
 	<enum native="LogVerbosity" script="LogVerbosity">
 		<doc>Represents verbosity level at which a specific log message will be displayed.</doc>
 		<enumentry native="VeryVerbose" script="VeryVerbose">
@@ -368,6 +318,62 @@
 		<property name="NumKeys" type="int" getter="GetNumKeys" setter="" static="false">
 			<doc>Returns the number of color keys in the gradient.</doc>
 		</property>
+	</class>
+	<enum native="DrawOperationType" script="MeshTopology">
+		<doc>Describes operation that will be used for rendering a certain set of vertices.</doc>
+		<enumentry native="DOT_POINT_LIST" script="PointList">
+			<doc>Each vertex represents a point.</doc>
+		</enumentry>
+		<enumentry native="DOT_LINE_STRIP" script="LineStrip">
+			<doc>Each vertex (except the first) forms a line with the previous vertex.</doc>
+		</enumentry>
+		<enumentry native="DOT_LINE_LIST" script="LineList">
+			<doc>Each sequential pair of vertices represent a line.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_STRIP" script="TriangleStrip">
+			<doc>Each vertex (except the first two) form a triangle with the previous two vertices.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_LIST" script="TriangleList">
+			<doc>Each sequential 3-tuple of vertices represent a triangle.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_FAN" script="TriangleFan">
+			<doc>Each vertex (except the first two) form a triangle with the first vertex and previous vertex.</doc>
+		</enumentry>
+	</enum>
+	<class native="Debug" script="Debug">
+		<doc>Utility class providing various debug functionality.</doc>
+		<method native="Log" script="Log" static="false">
+			<doc>Logs a new message.</doc>
+			<param name="message" type="string">
+				<doc>The message describing the log entry.</doc>
+			</param>
+			<param name="verbosity" type="LogVerbosity">
+				<doc>Verbosity of the message, determining its importance.</doc>
+			</param>
+			<param name="categoryName" type="string">
+				<doc>Category of the message, determining which system is it relevant to.</doc>
+			</param>
+		</method>
+		<method native="ClearLog" script="ClearLog" static="false">
+			<doc>Removes all log entries for a specific category and/or verbosity level.</doc>
+			<param name="categoryName" type="string">
+				<doc>Name of the category to clear. Specify null to clear all categories.</doc>
+			</param>
+			<param name="verbosity" type="LogVerbosity">
+				<doc>Verbosity level to clear.</doc>
+			</param>
+		</method>
+		<property name="LogEntries" type="LogEntry" getter="GetLogEntries" setter="" static="false">
+			<doc>Returns all existing log entries.</doc>
+		</property>
+		<event native="OnLogEntryAdded" script="OnLogEntryAdded" static="false">
+			<doc>Triggered when a new entry in the log is added.</doc>
+			<param name="p0" type="LogEntry">
+			</param>
+		</event>
+		<event native="OnLogModified" script="OnLogModified" static="false">
+			<doc>Triggered whenever one or multiple log entries were added or removed. Triggers only once per frame.</doc>
+		</event>
 	</class>
 	<enum native="PropertyDistributionType" script="PropertyDistributionType">
 		<doc>Determines type of distribution used by distribution properties.</doc>
@@ -619,6 +625,56 @@
 			<doc>Returns the number of color keys in the gradient.</doc>
 		</property>
 	</class>
+	<enum native="AudioFormat" script="AudioFormat">
+		<doc>Valid internal engine audio formats.</doc>
+		<enumentry native="PCM" script="PCM">
+			<doc>Pulse code modulation audio (&quot;raw&quot; uncompressed audio).</doc>
+		</enumentry>
+		<enumentry native="VORBIS" script="VORBIS">
+			<doc>Vorbis compressed audio.</doc>
+		</enumentry>
+	</enum>
+	<enum native="PointerEventType" script="PointerEventType">
+		<doc>Type of pointer event.</doc>
+		<enumentry native="CursorMoved" script="CursorMoved">
+		</enumentry>
+		<enumentry native="ButtonPressed" script="ButtonPressed">
+		</enumentry>
+		<enumentry native="ButtonReleased" script="ButtonReleased">
+		</enumentry>
+		<enumentry native="DoubleClick" script="DoubleClick">
+		</enumentry>
+	</enum>
+	<struct native="TVector2&lt;float&gt;" script="Vector2">
+		<doc>A two dimensional vector.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="float">
+			</param>
+			<param name="y" type="float">
+			</param>
+		</ctor>
+		<field name="X" type="float">
+		</field>
+		<field name="Y" type="float">
+		</field>
+	</struct>
+	<struct native="TVector2&lt;double&gt;" script="Vector2D">
+		<doc>A two dimensional vector.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="double">
+			</param>
+			<param name="y" type="double">
+			</param>
+		</ctor>
+		<field name="X" type="double">
+		</field>
+		<field name="Y" type="double">
+		</field>
+	</struct>
 	<struct native="Blend1DInfo" script="Blend1DInfo">
 		<doc>Defines a 1D blend where multiple animation clips are blended between each other using linear interpolation.</doc>
 		<field name="Clips" type="BlendClipInfo">
@@ -1351,27 +1407,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			</param>
 		</method>
 	</class>
-	<enum native="DrawOperationType" script="MeshTopology">
-		<doc>Describes operation that will be used for rendering a certain set of vertices.</doc>
-		<enumentry native="DOT_POINT_LIST" script="PointList">
-			<doc>Each vertex represents a point.</doc>
-		</enumentry>
-		<enumentry native="DOT_LINE_STRIP" script="LineStrip">
-			<doc>Each vertex (except the first) forms a line with the previous vertex.</doc>
-		</enumentry>
-		<enumentry native="DOT_LINE_LIST" script="LineList">
-			<doc>Each sequential pair of vertices represent a line.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_STRIP" script="TriangleStrip">
-			<doc>Each vertex (except the first two) form a triangle with the previous two vertices.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_LIST" script="TriangleList">
-			<doc>Each sequential 3-tuple of vertices represent a triangle.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_FAN" script="TriangleFan">
-			<doc>Each vertex (except the first two) form a triangle with the first vertex and previous vertex.</doc>
-		</enumentry>
-	</enum>
 	<enum native="PhysicsMeshType" script="PhysicsMeshType">
 		<doc>Valid types of a mesh used for physics.</doc>
 		<enumentry native="Triangle" script="Triangle">
@@ -2262,18 +2297,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Returns the weight of the shape, determining how are different shapes within a channel blended.</doc>
 		</property>
 	</class>
-	<enum native="AudioSourceState" script="AudioSourceState">
-		<doc>Valid states in which AudioSource can be in.</doc>
-		<enumentry native="Playing" script="Playing">
-			<doc>Source is currently playing.</doc>
-		</enumentry>
-		<enumentry native="Paused" script="Paused">
-			<doc>Source is currently paused (play will resume from paused point).</doc>
-		</enumentry>
-		<enumentry native="Stopped" script="Stopped">
-			<doc>Source is currently stopped (play will resume from start).</doc>
-		</enumentry>
-	</enum>
 	<class native="Audio" script="Audio">
 		<doc>Provides global functionality relating to sounds and music.</doc>
 		<property name="Volume" type="float" getter="GetVolume" setter="SetVolume" static="false">
@@ -2408,6 +2431,18 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Size of a single sample in bits. The clip will be converted to this bit depth on import.</doc>
 		</property>
 	</class>
+	<enum native="AudioSourceState" script="AudioSourceState">
+		<doc>Valid states in which AudioSource can be in.</doc>
+		<enumentry native="Playing" script="Playing">
+			<doc>Source is currently playing.</doc>
+		</enumentry>
+		<enumentry native="Paused" script="Paused">
+			<doc>Source is currently paused (play will resume from paused point).</doc>
+		</enumentry>
+		<enumentry native="Stopped" script="Stopped">
+			<doc>Source is currently stopped (play will resume from start).</doc>
+		</enumentry>
+	</enum>
 	<class native="ParticleEmitterStaticMeshShape" script="ParticleEmitterStaticMeshShape">
 		<doc>Particle emitter shape that emits particles from a surface of a static (non-animated) mesh. Particles can be emitted from mesh vertices, edges or triangles. If information about normals exists, particles will also inherit the normals.</doc>
 		<ctor>

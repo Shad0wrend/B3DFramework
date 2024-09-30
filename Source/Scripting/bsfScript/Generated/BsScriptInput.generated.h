@@ -24,8 +24,6 @@ namespace bs
 
 		static void SetupScriptBindings();
 
-		static MonoObject* CreateScriptObject(bool construct);
-
 		static void StartUp();
 		static void ShutDown();
 

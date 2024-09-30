@@ -18,8 +18,6 @@ namespace bs
 
 		static void SetupScriptBindings();
 
-		static MonoObject* CreateScriptObject(bool construct);
-
 	private:
 		static void InternalSetActiveLanguage(Language language);
 		static Language InternalGetActiveLanguage();

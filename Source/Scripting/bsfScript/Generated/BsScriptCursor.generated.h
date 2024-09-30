@@ -21,8 +21,6 @@ namespace bs
 
 		static void SetupScriptBindings();
 
-		static MonoObject* CreateScriptObject(bool construct);
-
 	private:
 		static void InternalSetScreenPosition(TVector2I<int32_t>* screenPos);
 		static void InternalGetScreenPosition(TVector2I<int32_t>* __output);

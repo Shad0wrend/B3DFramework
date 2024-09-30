@@ -17,8 +17,6 @@ namespace bs
 
 		static void SetupScriptBindings();
 
-		static MonoObject* CreateScriptObject(bool construct);
-
 	private:
 		static void InternalRequestFrameCapture();
 	};

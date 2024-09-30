@@ -25,7 +25,7 @@ namespace bs
 	 *
 	 * @note	Thread safe.
 	 */
-	class B3D_UTILITY_EXPORT Debug
+	class B3D_UTILITY_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Debug), Singleton(GetDebug)) Debug
 	{
 	public:
 		Debug() = default;
@@ -37,7 +37,21 @@ namespace bs
 		 * @param[in]	verbosity		Verbosity of the message, determining its importance.
 		 * @param[in]	categoryName	Category of the message, determining which system is it relevant to.
 		 */
+		B3D_SCRIPT_EXPORT()
 		void Log(const String& message, LogVerbosity verbosity, const char* categoryName);
+
+		/**
+		 * Removes all log entries for a specific category and/or verbosity level.
+		 *
+		 * @param	categoryName	Name of the category to clear. Specify null to clear all categories.
+		 * @param	verbosity		Verbosity level to clear.
+		 */
+		B3D_SCRIPT_EXPORT()
+		void ClearLog(const char* categoryName, LogVerbosity verbosity = LogVerbosity::Any) { return mLog.Clear(categoryName, verbosity); }
+
+		/** Returns all existing log entries. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(LogEntries))
+		Vector<LogEntry> GetLogEntries() { return mLog.GetEntries(); }
 
 		/** Retrieves the Log used by the Debug instance. */
 		class Log& GetLog() { return mLog; }
@@ -72,6 +86,7 @@ namespace bs
 		 *
 		 * @note	Main thread only.
 		 */
+		B3D_SCRIPT_EXPORT()
 		Event<void(const LogEntry&)> OnLogEntryAdded;
 
 		/**
@@ -79,6 +94,7 @@ namespace bs
 		 *
 		 * @note	Main thread only.
 		 */
+		B3D_SCRIPT_EXPORT()
 		Event<void()> OnLogModified;
 
 		/** This allows setting a log callback that can override the default action in log */
@@ -107,7 +123,7 @@ namespace bs
 		std::function<bool(const String& message, LogVerbosity verbosity, const char* categoryName)> mCustomLogCallback;
 	};
 
-	/** A simpler way of accessing the Debug module. */
+	/** Returns the Debug class singleton. */
 	B3D_UTILITY_EXPORT Debug& GetDebug();
 
 #ifndef B3D_LOG_VERBOSITY

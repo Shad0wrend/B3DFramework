@@ -18,8 +18,6 @@ namespace bs
 
 		static void SetupScriptBindings();
 
-		static MonoObject* CreateScriptObject(bool construct);
-
 	private:
 		static MonoObject* InternalGetIcon(StockIcon icon, float size);
 		static uint32_t InternalGetUnicode(StockIcon icon);
