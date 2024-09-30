@@ -31,6 +31,12 @@ void ScriptSceneObject::SetupScriptBindings()
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetParent", (void*)&ScriptSceneObject::InternalGetParent);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetParent", (void*)&ScriptSceneObject::InternalSetParent);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetScene", (void*)&ScriptSceneObject::InternalGetScene);
+
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_BreakPrefabLink", (void*)&ScriptSceneObject::InternalBreakPrefabLink);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsPrefabInstance", (void*)&ScriptSceneObject::InternalIsPrefabInstance);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPrefabInstanceRoot", (void*)&ScriptSceneObject::InternalGetPrefabInstanceRoot);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPrefabResourceId", (void*)&ScriptSceneObject::InternalGetPrefabResourceId);
+
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetNumChildren", (void*)&ScriptSceneObject::InternalGetNumChildren);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetChild", (void*)&ScriptSceneObject::InternalGetChild);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_FindChild", (void*)&ScriptSceneObject::InternalFindChild);
@@ -166,6 +172,46 @@ MonoObject* ScriptSceneObject::InternalGetScene(ScriptSceneObject* self)
 		return nullptr;
 
 	return ScriptSceneInstance::GetOrCreateScriptObject(self->GetNativeObject()->GetScene());
+}
+
+void ScriptSceneObject::InternalBreakPrefabLink(ScriptSceneObject* self)
+{
+	if(!self->IsNativeObjectValid())
+		return;
+
+	self->GetNativeObject()->BreakPrefabLink();
+}
+
+bool ScriptSceneObject::InternalIsPrefabInstance(ScriptSceneObject* self)
+{
+	if(!self->IsNativeObjectValid())
+		return false;
+
+	return self->GetNativeObject()->IsPrefabInstance();
+	
+}
+
+MonoObject* ScriptSceneObject::InternalGetPrefabInstanceRoot(ScriptSceneObject* self)
+{
+	if(!self->IsNativeObjectValid())
+		return nullptr;
+
+	HSceneObject parent = self->GetNativeObject()->GetPrefabInstanceRoot();
+
+	if(parent != nullptr)
+		return GetOrCreateScriptObject(parent);
+
+	return nullptr;
+}
+
+void ScriptSceneObject::InternalGetPrefabResourceId(ScriptSceneObject* self, UUID* uuid)
+{
+	*uuid = UUID::kEmpty;
+
+	if(!self->IsNativeObjectValid())
+		return;
+
+	*uuid = self->GetNativeObject()->GetPrefabResourceId();
 }
 
 void ScriptSceneObject::InternalGetNumChildren(ScriptSceneObject* self, u32* value)

@@ -39,13 +39,14 @@ namespace bs
 	};
 
 	/** Performs various prefab specific operations. */
-	class B3D_CORE_EXPORT PrefabUtility
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Scene), API(Editor), Static) PrefabUtility
 	{
 	public:
 		/**
 		 * Remove any instance specific changes to the object or its hierarchy from the provided prefab instance and
 		 * restore it to the exact copy of the linked prefab.
 		 */
+		B3D_SCRIPT_EXPORT()
 		static void RevertToPrefab(const HSceneObject& sceneObject);
 
 		/**
@@ -54,7 +55,8 @@ namespace bs
 		 * prefab, or any other prefab. All other currently loaded instances of @p prefab will be updated to
 		 * match the updated hierarchy.
 		 */
-		static void UpdatePrefab(const HPrefab& prefabToUpdate, const HSceneObject& sceneObjectToUpdateWith);
+		B3D_SCRIPT_EXPORT()
+		static void UpdatePrefab(B3D_NO_RREF const HPrefab& prefabToUpdate, const HSceneObject& sceneObjectToUpdateWith);
 
 		// TODO - Everything below should be internal
 

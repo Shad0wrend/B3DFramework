@@ -386,6 +386,46 @@ namespace bs
         }
 
         /// <summary>
+        /// Breaks the link between a prefab instance and its prefab. Object will retain all current values but will
+        /// no longer be influenced by modifications to its parent prefab.
+        /// </summary>
+        public void BreakPrefabLink()
+        {
+            Internal_BreakPrefabLink(mCachedPtr);
+        }
+
+        /// <summary>
+        /// Checks if a scene object has a prefab link. Scene objects with a prefab link will be automatically updated
+        /// when their prefab changes in order to reflect its changes.
+        /// </summary>
+        /// <returns>True if the object is a prefab instance (has a prefab link), false otherwise.</returns>
+        public bool IsPrefabInstance()
+        {
+            return Internal_IsPrefabInstance(mCachedPtr);
+        }
+
+        /// <summary>
+        /// Returns the root object of the prefab instance that this object belongs to, if any. 
+        /// </summary>
+        /// <returns>Prefab parent of the current object, or null if the object is not part of a prefab instance.</returns>
+        public SceneObject GetPrefabInstanceRoot()
+        {
+            return Internal_GetPrefabInstanceRoot(mCachedPtr);
+        }
+
+        /// <summary>
+        /// Returns the ID of the prefab resource linked to the scene object.
+        /// </summary>
+        /// <returns>Prefab resource ID if the object is part of a prefab, null otherwise. </returns>
+        public UUID GetPrefabResourceId()
+        {
+            UUID uuid;
+            Internal_GetPrefabResourceId(mCachedPtr, out uuid);
+
+            return uuid;
+        }
+
+        /// <summary>
         /// Orients the object so it is looking at the provided location.
         /// </summary>
         /// <param name="position">Position in local space where to look at.</param>
@@ -514,6 +554,18 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern SceneInstance Internal_GetScene(IntPtr nativeInstance);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_BreakPrefabLink(IntPtr soPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern bool Internal_IsPrefabInstance(IntPtr soPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern SceneObject Internal_GetPrefabInstanceRoot(IntPtr soPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_GetPrefabResourceId(IntPtr soPtr, out UUID uuid);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_GetNumChildren(IntPtr nativeInstance, out int value);

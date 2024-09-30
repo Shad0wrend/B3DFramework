@@ -45,6 +45,11 @@ namespace bs
 		static MonoObject* InternalGetParent(ScriptSceneObject* self);
 		static MonoObject* InternalGetScene(ScriptSceneObject* self);
 
+		static void InternalBreakPrefabLink(ScriptSceneObject* self);
+		static bool InternalIsPrefabInstance(ScriptSceneObject* self);
+		static MonoObject* InternalGetPrefabInstanceRoot(ScriptSceneObject* self);
+		static void InternalGetPrefabResourceId(ScriptSceneObject* self, UUID* uuid);
+
 		static void InternalGetNumChildren(ScriptSceneObject* self, u32* value);
 		static MonoObject* InternalGetChild(ScriptSceneObject* self, u32 childIndex);
 		static MonoObject* InternalFindChild(ScriptSceneObject* self, MonoString* name, bool recursive);
