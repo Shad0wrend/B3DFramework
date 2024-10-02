@@ -23,19 +23,19 @@ namespace bs
 		void Reload() override;
 		void Destroy() override;
 
-		/**	Returns the absolute path to the builtin managed engine assembly file. */
-		Path GetEngineAssemblyPath() const;
+		Path GetEngineAssemblyPath() const override;
+		const char* GetEngineAssemblyName() const override { return kEngineAssembly; }
 
 #if B3D_IS_ENGINE
-		/**	Returns the absolute path to the game managed assembly file. */
-		Path GetGameAssemblyPath() const;
+		Path GetGameAssemblyPath() const override;
+		const char* GetGameAssemblyName() const override { return kScriptGameAssembly; }
 #endif
 
-		/**	Returns the absolute path to the folder where built-in assemblies are located in. */
-		virtual Path GetBuiltinAssemblyFolder() const;
+		Path GetBuiltinAssemblyFolder() const override;
+		Path GetScriptAssemblyFolder() const override;
 
-		/**	Returns the absolute path to the folder where script assemblies are located in. */
-		virtual Path GetScriptAssemblyFolder() const;
+		Path GetBuiltinAssembliesPath() const override;
+		Path GetScriptingRuntimePath() const override;
 
 		/**	Returns the absolute path where the managed release assemblies are located. */
 		static const Path& GetReleaseAssemblyPath();
@@ -46,7 +46,7 @@ namespace bs
 		/** Returns the singleton instance of this library. */
 		static EngineScriptLibrary& Instance()
 		{
-			return static_cast<EngineScriptLibrary&>(*ScriptManager::Instance().GetScriptLibraryInternal());
+			return static_cast<EngineScriptLibrary&>(*ScriptManager::Instance().GetScriptLibrary());
 		}
 
 	protected:

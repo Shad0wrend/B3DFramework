@@ -28,6 +28,46 @@ namespace bs
 
 		/**	Called when the script system is being destroyed. */
 		virtual void Destroy() = 0;
+
+		/**	Returns the absolute path to the builtin managed engine assembly file. */
+		virtual Path GetEngineAssemblyPath() const { return Path::kBlank; }
+
+		/** Returns the name of the assembly that wraps built-in engine functionality, without extension. */
+		virtual const char* GetEngineAssemblyName() const { return nullptr; }
+
+#if B3D_IS_ENGINE
+		/**	Returns the absolute path to the game managed assembly file. */
+		virtual Path GetGameAssemblyPath() const { return Path::kBlank; }
+
+		/** Returns the name of the assembly that will store user's runtime application code, without extension. */
+		virtual const char* GetGameAssemblyName() const { return nullptr; }
+#endif
+
+		// TODO #if B3D_IS_EDITOR
+		/**	Returns the absolute path to the built-in managed editor assembly file. */
+		virtual Path GetEditorAssemblyPath() const { return Path::kBlank; }
+
+		/**	Returns the absolute path of the managed editor script assembly file. */
+		virtual Path GetEditorScriptAssemblyPath() const { return Path::kBlank; }
+
+		/** Returns the name of the assembly that wraps built-in editor functionality, without extension. */
+		virtual const char* GetEditorAssemblyName() const { return nullptr; }
+
+		/** Returns the name of the assembly that wraps user implemented editor functionality, without extension. */
+		virtual const char* GetScriptEditorAssemblyName() const { return nullptr; }
+		// TODO #endif
+
+		/**	Returns the absolute path to the folder where built-in assemblies are located in. */
+		virtual Path GetBuiltinAssemblyFolder() const { return Path::kBlank; }
+
+		/**	Returns the absolute path to the folder where script assemblies are located in. */
+		virtual Path GetScriptAssemblyFolder() const { return Path::kBlank; }
+
+		/** Returns the absolute path at which builtin assemblies requires by the scripting runtime are located. */
+		virtual Path GetBuiltinAssembliesPath() const = 0;
+		
+		/** Returns the absolute path at which miscellaneous files required by the scripting runtime are located. */
+		virtual Path GetScriptingRuntimePath() const = 0;
 	};
 
 	/**	Handles initialization of a scripting system. */
@@ -50,10 +90,10 @@ namespace bs
 		 * Sets the active script library that controls what kind and which scripts are loaded. Must be called before
 		 * the module is started up.
 		 */
-		static void SetScriptLibraryInternal(const SPtr<ScriptLibrary>& library) { sScriptLibrary = library; }
+		static void SetScriptLibrary(const SPtr<ScriptLibrary>& library) { sScriptLibrary = library; }
 
 		/** Returns the currently assigned script library. */
-		static const SPtr<ScriptLibrary>& GetScriptLibraryInternal() { return sScriptLibrary; }
+		static const SPtr<ScriptLibrary>& GetScriptLibrary() { return sScriptLibrary; }
 
 	private:
 		static SPtr<ScriptLibrary> sScriptLibrary;

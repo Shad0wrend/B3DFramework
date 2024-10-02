@@ -171,3 +171,13 @@ const Path& EngineScriptLibrary::GetDebugAssemblyPath()
 	static Path path = Paths::FindPath(Paths::kDebugAssemblyPath);
 	return path;
 }
+
+Path EngineScriptLibrary::GetBuiltinAssembliesPath() const
+{
+	return MonoManager::Instance().GetFrameworkAssembliesFolder();
+}
+
+Path EngineScriptLibrary::GetScriptingRuntimePath() const
+{
+	return MonoManager::Instance().GetMonoEtcFolder();
+}
