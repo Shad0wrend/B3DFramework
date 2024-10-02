@@ -7,7 +7,7 @@
 #include "../../../Foundation/bsfCore/Material/BsMaterial.h"
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
-#include "Wrappers/BsScriptColor.h"
+#include "BsScriptColor.generated.h"
 #include "../../../Foundation/bsfCore/Material/BsMaterial.h"
 #include "../../../Foundation/bsfCore/Material/BsShader.h"
 #include "BsScriptShaderVariationParameters.generated.h"

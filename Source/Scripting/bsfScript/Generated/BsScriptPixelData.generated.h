@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Image/BsPixelData.h"
-#include "Image/BsColor.h"
+#include "../../../Foundation/bsfUtility/Image/BsColor.h"
 #include "../../../Foundation/bsfCore/Image/BsPixelData.h"
 #include "../../../Foundation/bsfCore/Image/BsPixelVolume.h"
 

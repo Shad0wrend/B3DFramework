@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRenderSettings.h"
-#include "Image/BsColor.h"
+#include "../../../Foundation/bsfUtility/Image/BsColor.h"
 
 namespace bs { struct BloomSettings; }
 namespace bs

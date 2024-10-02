@@ -12,14 +12,8 @@ namespace bs
     /// <summary>
     /// Contains a three-component color with an alpha component.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential), SerializeObject]
-    public struct Color // Note: Must match C++ class Color
+    public partial struct Color
     {
-        public float r;
-        public float g;
-        public float b;
-        public float a;
-
         public static Color Red { get { return new Color(1.0f, 0.0f, 0.0f, 1.0f); } }
         public static Color Green { get { return new Color(0.0f, 1.0f, 0.0f, 1.0f); } }
         public static Color Blue { get { return new Color(0.0f, 0.0f, 1.0f, 1.0f); } }
@@ -47,13 +41,13 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        return r;
+                        return R;
                     case 1:
-                        return g;
+                        return G;
                     case 2:
-                        return b;
+                        return B;
                     case 3:
-                        return a;
+                        return A;
                     default:
                         throw new IndexOutOfRangeException("Invalid Color index.");
                 }
@@ -63,16 +57,16 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        r = value;
+                        R = value;
                         break;
                     case 1:
-                        g = value;
+                        G = value;
                         break;
                     case 2:
-                        b = value;
+                        B = value;
                         break;
                     case 3:
-                        a = value;
+                        A = value;
                         break;
                     default:
                         throw new IndexOutOfRangeException("Invalid Color index.");
@@ -88,68 +82,39 @@ namespace bs
             return new Color();
         }
 
-        /// <summary>
-        /// Creates a new color value.
-        /// </summary>
-        /// <param name="r">Red component, in range [0, 1].</param>
-        /// <param name="g">Green component, in range [0, 1].</param>
-        /// <param name="b">Blue component, in range [0, 1].</param>
-        /// <param name="a">Alpha component, in range [0, 1].</param>
-        public Color(float r, float g, float b, float a)
-        {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = a;
-        }
-
-        /// <summary>
-        /// Creates a new color value. Alpha is assumed to be 1 (non-transparent).
-        /// </summary>
-        /// <param name="r">Red component, in range [0, 1].</param>
-        /// <param name="g">Green component, in range [0, 1].</param>
-        /// <param name="b">Blue component, in range [0, 1].</param>
-        public Color(float r, float g, float b)
-        {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = 1f;
-        }
-
         public static Color operator+ (Color a, Color b)
         {
-            return new Color(a.r + b.r, a.g + b.g, a.b + b.b, a.a + b.a);
+            return new Color(a.R + b.R, a.G + b.G, a.B + b.B, a.A + b.A);
         }
 
         public static Color operator- (Color a, Color b)
         {
-            return new Color(a.r - b.r, a.g - b.g, a.b - b.b, a.a - b.a);
+            return new Color(a.R - b.R, a.G - b.G, a.B - b.B, a.A - b.A);
         }
 
         public static Color operator* (Color a, Color b)
         {
-            return new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
+            return new Color(a.R * b.R, a.G * b.G, a.B * b.B, a.A * b.A);
         }
 
         public static Color operator* (Color a, float b)
         {
-            return new Color(a.r * b, a.g * b, a.b * b, a.a * b);
+            return new Color(a.R * b, a.G * b, a.B * b, a.A * b);
         }
 
         public static Color operator* (float b, Color a)
         {
-            return new Color(a.r * b, a.g * b, a.b * b, a.a * b);
+            return new Color(a.R * b, a.G * b, a.B * b, a.A * b);
         }
 
         public static Color operator/ (Color a, float b)
         {
-            return new Color(a.r / b, a.g / b, a.b / b, a.a / b);
+            return new Color(a.R / b, a.G / b, a.B / b, a.A / b);
         }
 
         public static bool operator ==(Color lhs, Color rhs)
         {
-            return lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a;
+            return lhs.R == rhs.R && lhs.G == rhs.G && lhs.B == rhs.B && lhs.A == rhs.A;
         }
 
         public static bool operator !=(Color lhs, Color rhs)
@@ -162,20 +127,20 @@ namespace bs
         /// </summary>
         public Color Linear =>
             new Color(
-                SRGBToLinear(r),
-                SRGBToLinear(g),
-                SRGBToLinear(b),
-                a);
+                SRGBToLinear(R),
+                SRGBToLinear(G),
+                SRGBToLinear(B),
+                A);
 
         /// <summary>
         /// Converts the current color from linear to gamma space and returns the result.
         /// </summary>
         public Color Gamma =>
             new Color(
-                LinearToSRGB(r),
-                LinearToSRGB(g),
-                LinearToSRGB(b),
-                a);
+                LinearToSRGB(R),
+                LinearToSRGB(G),
+                LinearToSRGB(B),
+                A);
 
         /// <summary>
         /// Converts the provided RGB color into HSV color space.
@@ -186,18 +151,18 @@ namespace bs
         {
             Color output = input;
 
-            float min = input.r < input.g ? input.r : input.g;
-            min = min < input.b ? min : input.b;
+            float min = input.R < input.G ? input.R : input.G;
+            min = min < input.B ? min : input.B;
 
-            float max = input.r > input.g ? input.r : input.g;
-            max = max > input.b ? max : input.b;
+            float max = input.R > input.G ? input.R : input.G;
+            max = max > input.B ? max : input.B;
 
-            output.b = max;
+            output.B = max;
 
             if (max == 0.0f)
             {
-                output.r = 0.0f;
-                output.g = 0.0f;
+                output.R = 0.0f;
+                output.G = 0.0f;
 
                 return output;
             }
@@ -205,28 +170,28 @@ namespace bs
             float delta = max - min;
             if (delta != 0.0f)
             {
-                output.g = (delta / max);
+                output.G = (delta / max);
             }
             else
             {
-                output.g = 0.0f;
+                output.G = 0.0f;
                 delta = 1.0f;
             }
 
-            if (input.r >= max)
-                output.r = (input.g - input.b) / delta;
+            if (input.R >= max)
+                output.R = (input.G - input.B) / delta;
             else
             {
-                if (input.g >= max)
-                    output.r = 2.0f + (input.b - input.r) / delta;
+                if (input.G >= max)
+                    output.R = 2.0f + (input.B - input.R) / delta;
                 else
-                    output.r = 4.0f + (input.r - input.g) / delta;
+                    output.R = 4.0f + (input.R - input.G) / delta;
             }
 
-            output.r /= 6.0f;
+            output.R /= 6.0f;
 
-            if (output.r < 0.0f)
-                output.r += 1.0f;
+            if (output.R < 0.0f)
+                output.R += 1.0f;
 
             return output;
         }
@@ -240,16 +205,16 @@ namespace bs
         {
             Color output = input;
 
-            if (input.g <= 0.0)
+            if (input.G <= 0.0)
             {
-                output.r = input.b;
-                output.g = input.b;
-                output.b = input.b;
+                output.R = input.B;
+                output.G = input.B;
+                output.B = input.B;
 
                 return output;
             }
 
-            float hh = input.r;
+            float hh = input.R;
             if (hh >= 1.0f)
                 hh = 0.0f;
 
@@ -257,41 +222,41 @@ namespace bs
 
             int i = (int)hh;
             float ff = hh - i;
-            float p = input.b * (1.0f - input.g);
-            float q = input.b * (1.0f - (input.g * ff));
-            float t = input.b * (1.0f - (input.g * (1.0f - ff)));
+            float p = input.B * (1.0f - input.G);
+            float q = input.B * (1.0f - (input.G * ff));
+            float t = input.B * (1.0f - (input.G * (1.0f - ff)));
 
             switch (i)
             {
                 case 0:
-                    output.r = input.b;
-                    output.g = t;
-                    output.b = p;
+                    output.R = input.B;
+                    output.G = t;
+                    output.B = p;
                     break;
                 case 1:
-                    output.r = q;
-                    output.g = input.b;
-                    output.b = p;
+                    output.R = q;
+                    output.G = input.B;
+                    output.B = p;
                     break;
                 case 2:
-                    output.r = p;
-                    output.g = input.b;
-                    output.b = t;
+                    output.R = p;
+                    output.G = input.B;
+                    output.B = t;
                     break;
                 case 3:
-                    output.r = p;
-                    output.g = q;
-                    output.b = input.b;
+                    output.R = p;
+                    output.G = q;
+                    output.B = input.B;
                     break;
                 case 4:
-                    output.r = t;
-                    output.g = p;
-                    output.b = input.b;
+                    output.R = t;
+                    output.G = p;
+                    output.B = input.B;
                     break;
                 default:
-                    output.r = input.b;
-                    output.g = p;
-                    output.b = q;
+                    output.R = input.B;
+                    output.G = p;
+                    output.B = q;
                     break;
             }
 
@@ -301,7 +266,7 @@ namespace bs
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return r.GetHashCode() ^ g.GetHashCode() << 2 ^ b.GetHashCode() >> 2 ^ a.GetHashCode() >> 1;
+            return R.GetHashCode() ^ G.GetHashCode() << 2 ^ B.GetHashCode() >> 2 ^ A.GetHashCode() >> 1;
         }
 
         /// <inheritdoc/>
@@ -311,7 +276,7 @@ namespace bs
                 return false;
 
             Color color = (Color)other;
-            if (r.Equals(color.r) && g.Equals(color.g) && b.Equals(color.b) && a.Equals(color.a))
+            if (R.Equals(color.R) && G.Equals(color.G) && B.Equals(color.B) && A.Equals(color.A))
                 return true;
 
             return false;
@@ -320,7 +285,7 @@ namespace bs
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "(" + r + ", " + g + ", " + b + ", " + a + ")";
+            return "(" + R + ", " + G + ", " + B + ", " + A + ")";
         }
         
         

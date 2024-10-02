@@ -5,7 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
-#include "Wrappers/BsScriptColor.h"
+#include "BsScriptColor.generated.h"
 #include "../Extensions/BsColorGradientEx.h"
 #include "BsScriptColorGradientKey.generated.h"
 

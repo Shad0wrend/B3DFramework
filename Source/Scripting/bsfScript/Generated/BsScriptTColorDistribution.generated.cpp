@@ -5,7 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "BsScriptColorGradient.generated.h"
-#include "Wrappers/BsScriptColor.h"
+#include "BsScriptColor.generated.h"
 #include "BsScriptColorGradientHDR.generated.h"
 
 namespace bs

@@ -4,7 +4,7 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "Wrappers/BsScriptColor.h"
+#include "BsScriptColor.generated.h"
 
 namespace bs
 {

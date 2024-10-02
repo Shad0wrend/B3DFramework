@@ -375,6 +375,27 @@
 			<doc>Triggered whenever one or multiple log entries were added or removed. Triggers only once per frame.</doc>
 		</event>
 	</class>
+	<struct native="Color" script="Color">
+		<doc>Color represented as 4 components, each being a floating point value ranging from 0 to 1. Color components are red, green, blue and alpha.</doc>
+		<ctor>
+			<param name="red" type="float">
+			</param>
+			<param name="green" type="float">
+			</param>
+			<param name="blue" type="float">
+			</param>
+			<param name="alpha" type="float">
+			</param>
+		</ctor>
+		<field name="R" type="float">
+		</field>
+		<field name="G" type="float">
+		</field>
+		<field name="B" type="float">
+		</field>
+		<field name="A" type="float">
+		</field>
+	</struct>
 	<enum native="PropertyDistributionType" script="PropertyDistributionType">
 		<doc>Determines type of distribution used by distribution properties.</doc>
 		<enumentry native="PDT_Constant" script="Constant">

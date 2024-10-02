@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
 #include "BsScriptObject.h"
-#include "Image/BsColor.h"
+#include "../../../Foundation/bsfUtility/Image/BsColor.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
 
 namespace bs { class ColorGradientEx; }

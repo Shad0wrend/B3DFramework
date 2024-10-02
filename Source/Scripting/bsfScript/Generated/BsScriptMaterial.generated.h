@@ -4,7 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptResourceWrapper.h"
-#include "Image/BsColor.h"
+#include "../../../Foundation/bsfUtility/Image/BsColor.h"
 #include "Math/BsMatrix4.h"
 #include "../../../Foundation/bsfCore/Material/BsShaderVariation.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"

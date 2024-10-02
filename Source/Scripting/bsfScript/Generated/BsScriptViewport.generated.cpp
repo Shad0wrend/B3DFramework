@@ -5,7 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "Reflection/BsRTTIType.h"
-#include "Wrappers/BsScriptColor.h"
+#include "BsScriptColor.generated.h"
 #include "BsScriptRenderTarget.generated.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsRenderTexture.h"
 #include "BsScriptRenderTexture.generated.h"

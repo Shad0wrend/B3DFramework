@@ -10,7 +10,7 @@
 #include "Wrappers/BsScriptAsyncOp.h"
 #include "BsScriptPixelData.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
-#include "Wrappers/BsScriptColor.h"
+#include "BsScriptColor.generated.h"
 #include "../Extensions/BsTextureEx.h"
 
 namespace bs

@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
-#include "Image/BsColor.h"
+#include "../../../Foundation/bsfUtility/Image/BsColor.h"
 #include "../../../Foundation/bsfCore/Image/BsPixelData.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
 

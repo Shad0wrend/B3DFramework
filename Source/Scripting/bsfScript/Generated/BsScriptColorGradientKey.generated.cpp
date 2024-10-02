@@ -4,8 +4,8 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "Image/BsColor.h"
-#include "Wrappers/BsScriptColor.h"
+#include "../../../Foundation/bsfUtility/Image/BsColor.h"
+#include "BsScriptColor.generated.h"
 
 namespace bs
 {

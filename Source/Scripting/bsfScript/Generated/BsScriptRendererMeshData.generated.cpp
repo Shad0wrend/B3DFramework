@@ -10,7 +10,7 @@
 #include "BsScriptTVector3.generated.h"
 #include "BsScriptRendererMeshData.generated.h"
 #include "../Extensions/BsMeshDataEx.h"
-#include "Wrappers/BsScriptColor.h"
+#include "BsScriptColor.generated.h"
 #include "BsScriptTVector2.generated.h"
 #include "BsScriptBoneWeight.generated.h"
 

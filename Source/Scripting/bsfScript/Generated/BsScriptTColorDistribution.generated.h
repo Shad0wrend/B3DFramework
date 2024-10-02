@@ -10,7 +10,7 @@
 #include "BsScriptNonReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
-#include "Image/BsColor.h"
+#include "../../../Foundation/bsfUtility/Image/BsColor.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 
