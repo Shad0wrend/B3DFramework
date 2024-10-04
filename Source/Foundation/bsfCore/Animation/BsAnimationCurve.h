@@ -243,7 +243,7 @@ namespace bs
 		float mLength = 0.0f;
 	};
 
-#ifdef BS_SBGEN
+#ifdef B3D_CODEGEN
 	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(AnimationCurve)) TAnimationCurve<float>;
 	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Vector3Curve)) TAnimationCurve<Vector3>;
 	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Vector2Curve)) TAnimationCurve<Vector2>;
@@ -306,7 +306,7 @@ namespace bs
 		TAnimationCurve<T> Curve;
 	};
 
-#ifdef BS_SBGEN
+#ifdef B3D_CODEGEN 
 	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedFloatCurve), ExportAsStruct(true)) TNamedAnimationCurve<float>;
 	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedVector3Curve), ExportAsStruct(true)) TNamedAnimationCurve<Vector3>;
 	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedVector2Curve), ExportAsStruct(true)) TNamedAnimationCurve<Vector2>;

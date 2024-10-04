@@ -4,7 +4,7 @@
 
 // This file's only purpose is to serve as an include guard for cpuid.h by checking for two of it's internal macros
 #if !(defined(__cpuid) && defined(__cpuid_count))
-#	if !BS_SBGEN
+#	if !B3D_CODEGEN
 #		include "cpuid.h"
 #	endif
 #endif

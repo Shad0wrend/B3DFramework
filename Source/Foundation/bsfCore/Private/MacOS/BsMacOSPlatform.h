@@ -6,14 +6,14 @@
 #include "RenderAPI/BsRenderWindow.h"
 
 // Don't include macOS frameworks when generating script bindings, as it can't find them
-#ifndef BS_SBGEN
+#ifndef B3D_CODEGEN
 #	include <Cocoa/Cocoa.h>
 #endif
 
 namespace bs
 {
 	// Forward declare Cocoa types for SBGen purposes, since we didn't include Cocoa.h above
-#if BS_SBGEN
+#if B3D_CODEGEN
 	class NSImage;
 	class NSCursor;
 	class NSScreen;

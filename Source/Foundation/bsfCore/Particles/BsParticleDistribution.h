@@ -244,7 +244,7 @@ namespace bs
 	using ColorDistribution = TColorDistribution<ColorGradient>;
 	using ColorHDRDistribution = TColorDistribution<ColorGradientHDR>;
 
-#ifdef BS_SBGEN
+#ifdef B3D_CODEGEN 
 	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ColorDistribution)) TColorDistribution<ColorGradient>;
 	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ColorHDRDistribution)) TColorDistribution<ColorGradientHDR>;
 #endif
@@ -447,7 +447,7 @@ namespace bs
 	using Vector3Distribution = TDistribution<Vector3>;
 	using Vector2Distribution = TDistribution<Vector2>;
 
-#ifdef BS_SBGEN
+#ifdef B3D_CODEGEN 
 	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(FloatDistribution)) TDistribution<float>;
 	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(Vector3Distribution)) TDistribution<Vector3>;
 	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(Vector2Distribution)) TDistribution<Vector2>;

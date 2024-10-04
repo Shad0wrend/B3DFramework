@@ -84,7 +84,7 @@ function(B3DRegisterCodeGenTarget)
 			-- ${GenScriptBinding_INCLUDE_DIRS} \
 			-std=c++17 \
 			-DBS_STATIC_LIB \
-			-DBS_SBGEN \
+			-DB3D_CODEGEN \
 			-D_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH \
 			-w")
 
