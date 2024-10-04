@@ -14,7 +14,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for Mesh, for adding additional functionality for the script version of the class. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(Mesh)) MeshEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(Mesh)) MeshEx
 	{
 	public:
 		/**

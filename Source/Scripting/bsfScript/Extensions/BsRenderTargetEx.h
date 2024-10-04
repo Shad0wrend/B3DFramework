@@ -13,7 +13,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for RenderTarget, for adding additional functionality for the script interface. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget)) RenderTargetEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(RenderTarget)) RenderTargetEx
 	{
 	public:
 		/** @copydoc RenderTargetProperties::Width */
@@ -42,7 +42,7 @@ namespace bs
 	};
 
 	/** Extension class for RenderTexture, for adding additional functionality for the script interface. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture)) RenderTextureEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(RenderTexture)) RenderTextureEx
 	{
 	public:
 		/**

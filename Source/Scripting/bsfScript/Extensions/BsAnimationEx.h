@@ -13,7 +13,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for AnimationCurves, for adding additional functionality for the script version of the class. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(AnimationCurves)) AnimationCurvesEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(AnimationCurves)) AnimationCurvesEx
 	{
 	public:
 		B3D_SCRIPT_EXPORT(ExtensionMethodForType(AnimationCurves), ExportName(Position), Property(Getter))
@@ -46,7 +46,7 @@ namespace bs
 	};
 
 	/** Extension class for RootMotion, for adding additional functionality for the script version of the class. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(RootMotion)) RootMotionEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(RootMotion)) RootMotionEx
 	{
 	public:
 		/** Animation curve representing the movement of the root bone. */

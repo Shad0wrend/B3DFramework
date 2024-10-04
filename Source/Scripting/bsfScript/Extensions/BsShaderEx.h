@@ -63,7 +63,7 @@ namespace bs
 	};
 
 	/** Extension class for Shader, for adding additional functionality for the script version of the class. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(Shader)) ShaderEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(Shader)) ShaderEx
 	{
 	public:
 		/** Returns information about all parameters available in the shader. */

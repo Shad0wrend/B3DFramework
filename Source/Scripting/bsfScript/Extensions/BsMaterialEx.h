@@ -13,7 +13,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for Material, for adding additional functionality for the script version of the class. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(Material)) MaterialEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(Material)) MaterialEx
 	{
 	public:
 		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Material), InteropOnly(true))

@@ -14,7 +14,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for Texture, for adding additional functionality for the script version of PixelData. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture)) TextureEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(Texture)) TextureEx
 	{
 	public:
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Texture), Visibility(Private))

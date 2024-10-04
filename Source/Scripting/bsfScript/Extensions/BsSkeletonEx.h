@@ -26,7 +26,7 @@ namespace bs
 	};
 
 	/** Extension class for Skeleton, for adding additional functionality for the script version of the class. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(Skeleton)) SkeletonEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(Skeleton)) SkeletonEx
 	{
 	public:
 		/** Returns information about a bone at the provided index.

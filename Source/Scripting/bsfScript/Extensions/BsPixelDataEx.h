@@ -14,7 +14,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for PixelData, for adding additional functionality for the script version of PixelData. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(PixelData)) PixelDataEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(PixelData)) PixelDataEx
 	{
 	public:
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(PixelData))

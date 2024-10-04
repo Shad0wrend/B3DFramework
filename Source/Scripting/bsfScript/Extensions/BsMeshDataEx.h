@@ -14,7 +14,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for RendererMeshData, for adding additional functionality for the script version of the class. */
-	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(RendererMeshData)) MeshDataEx
+	class B3D_SCRIPT_EXPORT(ExtensionClassForType(RendererMeshData)) MeshDataEx
 	{
 	public:
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(RendererMeshData))

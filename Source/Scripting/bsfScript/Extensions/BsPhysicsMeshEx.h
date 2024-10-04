@@ -14,7 +14,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for PhysicsMesh, for adding additional functionality for the script version of the class. */
-	class B3D_SCRIPT_INTEROP_EXPORT B3D_SCRIPT_EXPORT(ExtensionMethodForType(PhysicsMesh)) PhysicsMeshEx
+	class B3D_SCRIPT_INTEROP_EXPORT B3D_SCRIPT_EXPORT(ExtensionClassForType(PhysicsMesh)) PhysicsMeshEx
 	{
 	public:
 		/** @copydoc PhysicsMesh::Create() */
