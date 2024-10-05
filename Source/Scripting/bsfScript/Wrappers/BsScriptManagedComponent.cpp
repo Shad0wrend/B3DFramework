@@ -72,7 +72,7 @@ void ScriptManagedComponent::CreateAndBindScriptObject()
 	if(scriptObject != nullptr)
 		BindToScriptObject(scriptObject);
 
-	component->BindToScriptObject(objectInformation);
+	component->SetupScriptBindings(objectInformation);
 }
 
 void ScriptManagedComponent::RecreateScriptObjectAfterScriptReload()

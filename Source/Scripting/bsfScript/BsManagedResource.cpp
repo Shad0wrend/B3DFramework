@@ -138,7 +138,7 @@ void ManagedResource::Initialize()
 		MonoObject* const scriptObject = CreateScriptObject(objectInformation);
 
 		ScriptObjectWrapper::Create<ScriptManagedResource>(B3DStaticResourceCast<ManagedResource>(GetHandle()), scriptObject);
-		BindToScriptObject(objectInformation);
+		SetupScriptBindings(objectInformation);
 
 		if(mSerializedObjectData != nullptr && mObjectInformation != nullptr)
 		{
@@ -160,7 +160,7 @@ MonoObject* ManagedResource::CreateScriptObject(SPtr<ManagedSerializableObjectIn
 	return ScriptAssemblyManager::Instance().GetBuiltinClasses().MissingResourceClass->CreateInstance(true);
 }
 
-void ManagedResource::BindToScriptObject(const SPtr<ManagedSerializableObjectInfo>& objectInformation)
+void ManagedResource::SetupScriptBindings(const SPtr<ManagedSerializableObjectInfo>& objectInformation)
 {
 	mObjectInformation = objectInformation;
 }

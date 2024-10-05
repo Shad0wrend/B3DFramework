@@ -41,7 +41,7 @@ void ScriptManagedResource::CreateAndBindScriptObject()
 	if(scriptObject != nullptr)
 		BindToScriptObject(scriptObject);
 
-	resource->BindToScriptObject(objectInformation);
+	resource->SetupScriptBindings(objectInformation);
 }
 
 void ScriptManagedResource::RecreateScriptObjectAfterScriptReload()

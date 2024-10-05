@@ -143,7 +143,7 @@ MonoObject* ManagedComponent::CreateScriptObject(SPtr<ManagedSerializableObjectI
 	return scriptObject;
 }
 
-void ManagedComponent::BindToScriptObject(const SPtr<ManagedSerializableObjectInfo>& objectInformation)
+void ManagedComponent::SetupScriptBindings(const SPtr<ManagedSerializableObjectInfo>& objectInformation)
 {
 	mObjInfo = objectInformation;
 
@@ -342,7 +342,7 @@ void ManagedComponent::Initialize()
 	MonoObject* const scriptObject = CreateScriptObject(objectInformation);
 
 	ScriptObjectWrapper::Create<ScriptManagedComponent>(B3DStaticGameObjectCast<ManagedComponent>(mThisHandle), scriptObject);
-	BindToScriptObject(objectInformation);
+	SetupScriptBindings(objectInformation);
 }
 
 void ManagedComponent::OnCreated()

@@ -49,11 +49,8 @@ namespace bs
 
 		void Initialize() override;
 
-		/**
-		 * Binds the managed resource to the currently assigned script object. This involves setting up bindings and resolving
-		 * the exact managed resource class.
-		 */
-		void BindToScriptObject(const SPtr<ManagedSerializableObjectInfo>& objectInformation);
+		/** Sets up script bindings between native and managed class. Must be called after creating the script object wrapper, or after assembly is reloaded. */
+		void SetupScriptBindings(const SPtr<ManagedSerializableObjectInfo>& objectInformation);
 
 		/**
 		 * Creates the script object of the correct type.
