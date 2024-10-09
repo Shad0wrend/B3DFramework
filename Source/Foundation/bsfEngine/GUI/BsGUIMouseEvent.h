@@ -4,9 +4,11 @@
 
 #include "BsPrerequisites.h"
 #include "Math/BsVector2I.h"
+#include "BsDragAndDrop.h"
 
 namespace bs
 {
+	class DragAndDropData;
 	/** @addtogroup GUI
 	 *  @{
 	 */
@@ -72,11 +74,8 @@ namespace bs
 		/**	Checks is the specified mouse button pressed. */
 		bool IsButtonDown(GUIMouseButton button) const { return mButtonStates[(int)button]; }
 
-		/**	Gets the current drag and drop operation type id. Only valid if event is drag and drop related. */
-		u32 GetDragAndDropTypeId() const { return mDragTypeId; }
-
-		/** Returns internal data being dragged by a drag and drop event. . Only valid if event is drag and drop related. */
-		void* GetDragAndDropData() const { return mDragData; }
+		/** Returns data being dragged by a drag and drop event. Only valid if event is drag and drop related. */
+		const SPtr<DragAndDropData>& GetDragAndDropData() const { return mDragAndDropData; }
 
 		/**	Checks is the shift button being held. */
 		bool IsShiftDown() const { return mShift; }
@@ -121,13 +120,13 @@ namespace bs
 		void SetMouseDragEndData(const Vector2I& position);
 
 		/**	Initializes the event with DragAndDropDropped event data. */
-		void SetDragAndDropDroppedData(const Vector2I& position, u32 dragTypeId, void* dragData);
+		void SetDragAndDropDroppedData(const Vector2I& position, const SPtr<DragAndDropData>& dragAndDropData);
 
 		/**	Initializes the event with DragAndDropDragged event data. */
-		void SetDragAndDropDraggedData(const Vector2I& position, u32 dragTypeId, void* dragData);
+		void SetDragAndDropDraggedData(const Vector2I& position, const SPtr<DragAndDropData>& dragAndDropData);
 
 		/**	Initializes the event with DragAndDropLeft event data. */
-		void SetDragAndDropLeftData(const Vector2I& position, u32 dragTypeId, void* dragData);
+		void SetDragAndDropLeftData(const Vector2I& position, const SPtr<DragAndDropData>& dragAndDropData);
 
 		bool mButtonStates[(int)GUIMouseButton::Count];
 		Vector2I mPosition;
@@ -136,8 +135,7 @@ namespace bs
 		float mWheelScrollAmount = 0.0f;
 		GUIMouseEventType mType = GUIMouseEventType::MouseMove;
 		GUIMouseButton mButton = GUIMouseButton::Left;
-		u32 mDragTypeId;
-		void* mDragData;
+		SPtr<DragAndDropData> mDragAndDropData;
 
 		bool mShift = false;
 		bool mCtrl = false;

@@ -1,0 +1,31 @@
+//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+
+#include "BsScriptEnginePrerequisites.h"
+#include "BsScriptReflectableWrapper.h"
+#include "BsScriptDragAndDropData.generated.h"
+#include "../../../Foundation/bsfEngine/GUI/BsDragAndDrop.h"
+
+namespace bs { class ResourceDragAndDropData; }
+namespace bs
+{
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptResourceDragAndDropData : public TScriptReflectableWrapper<ResourceDragAndDropData, ScriptResourceDragAndDropData, ScriptDragAndDropDataWrapperBase>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ResourceDragAndDropData")
+
+		ScriptResourceDragAndDropData(const SPtr<ResourceDragAndDropData>& nativeObject);
+
+		static void SetupScriptBindings();
+
+		static MonoObject* CreateScriptObject(bool construct);
+
+	private:
+		static void InternalResourceDragAndDropData(MonoObject* scriptObject);
+		static void InternalResourceDragAndDropData0(MonoObject* scriptObject, MonoString* resourcePath);
+		static void InternalResourceDragAndDropData1(MonoObject* scriptObject, MonoArray* resourcePaths);
+		static MonoArray* InternalGetResourcePaths(ScriptResourceDragAndDropData* self);
+		static void InternalSetResourcePaths(ScriptResourceDragAndDropData* self, MonoArray* value);
+	};
+}

@@ -167,7 +167,7 @@ namespace bs
 	class GUIListBox;
 	class GUIDropDownDataEntry;
 	class GUIDropDownMenu;
-	class DragAndDropManager;
+	class DragAndDrop;
 	class GUIMenu;
 	class GUIMenuItem;
 	class GUIContent;
@@ -235,5 +235,8 @@ namespace bs
 		TID_GUIStyleSheetBorderElement = 30026,
 		TID_GUIStyleSheetSelector = 30027,
 		TID_GUIStyleSheetSelectorList = 30028,
+		TID_DragAndDropData = 30029,
+		TID_SceneObjectDragAndDropData = 30030,
+		TID_ResourceDragAndDropData = 30031,
 	};
 }

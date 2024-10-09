@@ -110,7 +110,7 @@ void GUIMouseEvent::SetMouseDragEndData(const Vector2I& position)
 	mWheelScrollAmount = 0.0f;
 }
 
-void GUIMouseEvent::SetDragAndDropDroppedData(const Vector2I& position, u32 dragTypeId, void* dragData)
+void GUIMouseEvent::SetDragAndDropDroppedData(const Vector2I& position, const SPtr<DragAndDropData>& dragAndDropData)
 {
 	mType = GUIMouseEventType::MouseDragAndDropDropped;
 	mPosition = position;
@@ -118,11 +118,10 @@ void GUIMouseEvent::SetDragAndDropDroppedData(const Vector2I& position, u32 drag
 	mDragAmount = Vector2I();
 	mDragStartPosition = Vector2I();
 	mWheelScrollAmount = 0.0f;
-	mDragTypeId = dragTypeId;
-	mDragData = dragData;
+	mDragAndDropData = dragAndDropData;
 }
 
-void GUIMouseEvent::SetDragAndDropDraggedData(const Vector2I& position, u32 dragTypeId, void* dragData)
+void GUIMouseEvent::SetDragAndDropDraggedData(const Vector2I& position, const SPtr<DragAndDropData>& dragAndDropData)
 {
 	mType = GUIMouseEventType::MouseDragAndDropDragged;
 	mPosition = position;
@@ -130,11 +129,10 @@ void GUIMouseEvent::SetDragAndDropDraggedData(const Vector2I& position, u32 drag
 	mDragAmount = Vector2I();
 	mDragStartPosition = Vector2I();
 	mWheelScrollAmount = 0.0f;
-	mDragTypeId = dragTypeId;
-	mDragData = dragData;
+	mDragAndDropData = dragAndDropData;
 }
 
-void GUIMouseEvent::SetDragAndDropLeftData(const Vector2I& position, u32 dragTypeId, void* dragData)
+void GUIMouseEvent::SetDragAndDropLeftData(const Vector2I& position, const SPtr<DragAndDropData>& dragAndDropData)
 {
 	mType = GUIMouseEventType::MouseDragAndDropLeft;
 	mPosition = position;
@@ -142,6 +140,5 @@ void GUIMouseEvent::SetDragAndDropLeftData(const Vector2I& position, u32 dragTyp
 	mDragAmount = Vector2I();
 	mDragStartPosition = Vector2I();
 	mWheelScrollAmount = 0.0f;
-	mDragTypeId = dragTypeId;
-	mDragData = dragData;
+	mDragAndDropData = dragAndDropData;
 }

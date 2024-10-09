@@ -13,29 +13,18 @@
 
 namespace bs
 {
-	ScriptGUIUtility::ScriptGUIUtility(MonoObject* managedInstance, const SPtr<GUIUtility>& value)
-		:ScriptObject(managedInstance), mInternal(value)
+	ScriptGUIUtility::ScriptGUIUtility()
+		:TScriptTypeDefinition()
 	{
 	}
 
-	void ScriptGUIUtility::InitRuntimeData()
+	void ScriptGUIUtility::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_CalculateOptimalSize", (void*)&ScriptGUIUtility::InternalCalculateOptimalSize);
-		metaData.ScriptClass->AddInternalCall("Internal_CalculateTextBounds", (void*)&ScriptGUIUtility::InternalCalculateTextBounds);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_CalculateOptimalSize", (void*)&ScriptGUIUtility::InternalCalculateOptimalSize);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_CalculateTextBounds", (void*)&ScriptGUIUtility::InternalCalculateTextBounds);
 
 	}
 
-	MonoObject* ScriptGUIUtility::Create(const SPtr<GUIUtility>& value)
-	{
-		if(value == nullptr) return nullptr; 
-
-		bool dummy = false;
-		void* ctorParams[1] = { &dummy };
-
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptGUIUtility>()) ScriptGUIUtility(managedInstance, value);
-		return managedInstance;
-	}
 	void ScriptGUIUtility::InternalCalculateOptimalSize(MonoObject* elem, TVector2I<int32_t>* __output)
 	{
 		GUIElement* tmpelem;

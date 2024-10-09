@@ -19,7 +19,7 @@
 #include "GUI/BsGUIInputCaret.h"
 #include "GUI/BsGUIInputSelection.h"
 #include "GUI/BsGUIContextMenu.h"
-#include "GUI/BsDragAndDropManager.h"
+#include "GUI/BsDragAndDrop.h"
 #include "GUI/BsGUIDropDownBoxManager.h"
 #include "GUI/BsGUIPanel.h"
 #include "GUI/BsGUINavGroup.h"
@@ -69,8 +69,8 @@ GUIManager::GUIManager()
 	mInputCaret = B3DNew<GUIInputCaret>();
 	mInputSelection = B3DNew<GUIInputSelection>();
 
-	DragAndDropManager::StartUp();
-	mDragEndedConn = DragAndDropManager::Instance().OnDragEnded.Connect(std::bind(&GUIManager::OnMouseDragEnded, this, _1, _2));
+	DragAndDrop::StartUp();
+	mDragEndedConn = DragAndDrop::Instance().OnDragEnded.Connect(std::bind(&GUIManager::OnMouseDragEnded, this, _1, _2));
 
 	GUIDropDownBoxManager::StartUp();
 	GUITooltipManager::StartUp();
@@ -87,7 +87,7 @@ GUIManager::~GUIManager()
 {
 	GUITooltipManager::ShutDown();
 	GUIDropDownBoxManager::ShutDown();
-	DragAndDropManager::ShutDown();
+	DragAndDrop::ShutDown();
 
 	// Make a copy of widgets, since destroying them will remove them from mWidgets and
 	// we can't iterate over an array thats getting modified
@@ -181,7 +181,7 @@ void GUIManager::UnregisterWidget(GUIWidget* widget)
 
 void GUIManager::Update()
 {
-	DragAndDropManager::Instance().UpdateInternal();
+	DragAndDrop::Instance().Update();
 
 	// Show tooltip if needed
 	if(mShowTooltip)
@@ -417,7 +417,7 @@ void GUIManager::OnMouseDragEnded(const PointerEvent& event, DragCallbackInfo& d
 {
 	GUIMouseButton guiButton = ButtonToGuiButton(event.Button);
 
-	if(DragAndDropManager::Instance().IsDragInProgress() && guiButton == GUIMouseButton::Left)
+	if(DragAndDrop::Instance().IsDragInProgress() && guiButton == GUIMouseButton::Left)
 	{
 		for(auto& elementInfo : mElementsUnderPointer)
 		{
@@ -427,14 +427,14 @@ void GUIManager::OnMouseDragEnded(const PointerEvent& event, DragCallbackInfo& d
 				localPos = GetWidgetRelativePos(elementInfo.Widget, event.ScreenPos);
 
 			bool acceptDrop = true;
-			if(DragAndDropManager::Instance().NeedsValidDropTarget())
+			if(DragAndDrop::Instance().NeedsValidDropTarget())
 			{
-				acceptDrop = elementInfo.Element->AcceptDragAndDrop(localPos, DragAndDropManager::Instance().GetDragTypeId());
+				acceptDrop = elementInfo.Element->AcceptDragAndDrop(localPos, DragAndDrop::Instance().GetDragTypeId());
 			}
 
 			if(acceptDrop)
 			{
-				mMouseEvent.SetDragAndDropDroppedData(localPos, DragAndDropManager::Instance().GetDragTypeId(), DragAndDropManager::Instance().GetDragData());
+				mMouseEvent.SetDragAndDropDroppedData(localPos, DragAndDrop::Instance().GetDragData());
 				dragInfo.Processed = SendMouseEvent(elementInfo.Element, mMouseEvent);
 
 				if(dragInfo.Processed)
@@ -498,7 +498,7 @@ void GUIManager::OnPointerMoved(const PointerEvent& event)
 		mLastPointerScreenPos = event.ScreenPos;
 
 		// Also if drag is in progress send DragAndDrop events
-		if(DragAndDropManager::Instance().IsDragInProgress())
+		if(DragAndDrop::Instance().IsDragInProgress())
 		{
 			bool acceptDrop = true;
 			for(auto& elementInfo : mElementsUnderPointer)
@@ -506,14 +506,14 @@ void GUIManager::OnPointerMoved(const PointerEvent& event)
 				Vector2I localPos = GetWidgetRelativePos(elementInfo.Widget, event.ScreenPos);
 
 				acceptDrop = true;
-				if(DragAndDropManager::Instance().NeedsValidDropTarget())
+				if(DragAndDrop::Instance().NeedsValidDropTarget())
 				{
-					acceptDrop = elementInfo.Element->AcceptDragAndDrop(localPos, DragAndDropManager::Instance().GetDragTypeId());
+					acceptDrop = elementInfo.Element->AcceptDragAndDrop(localPos, DragAndDrop::Instance().GetDragTypeId());
 				}
 
 				if(acceptDrop)
 				{
-					mMouseEvent.SetDragAndDropDraggedData(localPos, DragAndDropManager::Instance().GetDragTypeId(), DragAndDropManager::Instance().GetDragData());
+					mMouseEvent.SetDragAndDropDraggedData(localPos, DragAndDrop::Instance().GetDragData());
 					if(SendMouseEvent(elementInfo.Element, mMouseEvent))
 					{
 						event.IsUsed = true;
@@ -1063,7 +1063,7 @@ bool GUIManager::FindElementUnderPointer(const Vector2I& pointerScreenPos, bool 
 
 	// Send DragAndDropLeft event - It is similar to MouseOut events but we send it to all
 	// elements a user might hover over, while we send mouse over/out events only to active elements while dragging
-	if(DragAndDropManager::Instance().IsDragInProgress())
+	if(DragAndDrop::Instance().IsDragInProgress())
 	{
 		for(auto& elementInfo : mElementsUnderPointer)
 		{
@@ -1074,7 +1074,7 @@ bool GUIManager::FindElementUnderPointer(const Vector2I& pointerScreenPos, bool 
 			{
 				Vector2I localPos = GetWidgetRelativePos(elementInfo.Widget, pointerScreenPos);
 
-				mMouseEvent.SetDragAndDropLeftData(localPos, DragAndDropManager::Instance().GetDragTypeId(), DragAndDropManager::Instance().GetDragData());
+				mMouseEvent.SetDragAndDropLeftData(localPos, DragAndDrop::Instance().GetDragData());
 				if(SendMouseEvent(elementInfo.Element, mMouseEvent))
 				{
 					eventProcessed = true;

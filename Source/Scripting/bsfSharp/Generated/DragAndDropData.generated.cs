@@ -1,0 +1,23 @@
+//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+namespace bs
+{
+	/// <summary>Base type that should be inherited to provide specific data relevant to a drag and drop operation.</summary>
+	[ShowInInspector]
+	public partial class DragAndDropData : ScriptObject
+	{
+		private DragAndDropData(bool __dummy0) { }
+
+		public DragAndDropData()
+		{
+			Internal_DragAndDropData(this);
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_DragAndDropData(DragAndDropData managedInstance);
+	}
+}
