@@ -7,7 +7,7 @@
 #include "BsMonoManager.h"
 #include "BsMonoUtil.h"
 #include "Serialization/BsScriptAssemblyManager.h"
-#include "Serialization/BsManagedSerializableObjectInfo.h"
+#include "Serialization/BsManagedTypeInfo.h"
 #include <regex>
 
 using namespace std::placeholders;

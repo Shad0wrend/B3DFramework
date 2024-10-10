@@ -6,7 +6,7 @@
 #include "Reflection/BsRTTIType.h"
 #include "RTTI/BsStringRTTI.h"
 #include "RTTI/BsFlagsRTTI.h"
-#include "Serialization/BsManagedSerializableObjectInfo.h"
+#include "Serialization/BsManagedTypeInfo.h"
 #include "Error/BsException.h"
 
 namespace bs

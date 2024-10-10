@@ -5,7 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoManager.h"
 #include "Serialization/BsScriptAssemblyManager.h"
-#include "Serialization/BsManagedSerializableObjectInfo.h"
+#include "Serialization/BsManagedTypeInfo.h"
 #include "Wrappers/BsScriptSerializableProperty.h"
 #include "BsMonoUtil.h"
 
