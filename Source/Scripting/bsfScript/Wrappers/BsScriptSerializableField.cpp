@@ -32,7 +32,7 @@ MonoObject* ScriptSerializableField::Create(MonoObject* parentObject, const SPtr
 {
 	MonoString* monoStrName = MonoUtil::WstringToMono(ToWString(fieldInfo->Name));
 	MonoReflectionType* internalType = MonoUtil::GetType(fieldInfo->TypeInfo->GetMonoClass());
-	u32 fieldFlags = (u32)fieldInfo->Flags;
+	u32 fieldFlags = (u32)fieldInfo->MetaDataFlags;
 
 	void* params[4] = { parentObject, monoStrName, &fieldFlags, internalType };
 	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 4);
@@ -56,10 +56,10 @@ void ScriptSerializableField::InternalSetValue(ScriptSerializableField* nativeIn
 	if(value != nullptr && MonoUtil::IsValueType((MonoUtil::GetClass(value))))
 	{
 		void* rawValue = MonoUtil::Unbox(value);
-		nativeInstance->mFieldInfo->SetValue(instance, rawValue);
+		nativeInstance->mFieldInfo->SetUnboxedValue(instance, rawValue);
 	}
 	else
-		nativeInstance->mFieldInfo->SetValue(instance, value);
+		nativeInstance->mFieldInfo->SetUnboxedValue(instance, value);
 }
 
 void ScriptSerializableField::InternalGetStyle(ScriptSerializableField* nativeInstance, SerializableMemberStyle* style)
@@ -67,7 +67,7 @@ void ScriptSerializableField::InternalGetStyle(ScriptSerializableField* nativeIn
 	SPtr<ManagedMemberInfo> fieldInfo = nativeInstance->mFieldInfo;
 	SerializableMemberStyle interopStyle;
 
-	ManagedFieldMetaDataFlags fieldFlags = fieldInfo->Flags;
+	ManagedFieldMetaDataFlags fieldFlags = fieldInfo->MetaDataFlags;
 	if(fieldFlags.IsSet(ManagedFieldMetaDataFlag::Range))
 	{
 		MonoClass* range = ScriptAssemblyManager::Instance().GetBuiltinClasses().RangeAttribute;

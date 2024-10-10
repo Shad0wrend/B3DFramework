@@ -68,6 +68,17 @@ RTTIType* ManagedObjectInfo::GetRtti() const
 	return ManagedObjectInfo::GetRttiStatic();
 }
 
+void ManagedMemberInfo::SetValue(MonoObject* instance, MonoObject* value) const
+{
+	if(value != nullptr && MonoUtil::IsValueType((MonoUtil::GetClass(value))))
+	{
+		void* rawValue = MonoUtil::Unbox(value);
+		SetUnboxedValue(instance, rawValue);
+	}
+	else
+		SetUnboxedValue(instance, value);
+}
+
 RTTIType* ManagedMemberInfo::GetRttiStatic()
 {
 	return ManagedMemberInfoRTTI::Instance();
@@ -88,7 +99,7 @@ MonoObject* ManagedFieldInfo::GetValue(MonoObject* instance) const
 	return ScriptField->GetBoxed(instance);
 }
 
-void ManagedFieldInfo::SetValue(MonoObject* instance, void* value) const
+void ManagedFieldInfo::SetUnboxedValue(MonoObject* instance, void* value) const
 {
 	ScriptField->Set(instance, value);
 }
@@ -113,7 +124,7 @@ MonoObject* ManagedPropertyInfo::GetValue(MonoObject* instance) const
 	return ScriptProperty->Get(instance);
 }
 
-void ManagedPropertyInfo::SetValue(MonoObject* instance, void* value) const
+void ManagedPropertyInfo::SetUnboxedValue(MonoObject* instance, void* value) const
 {
 	ScriptProperty->Set(instance, value);
 }

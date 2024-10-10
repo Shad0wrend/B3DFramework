@@ -109,7 +109,7 @@ namespace bs
 			B3D_RTTI_MEMBER(Name, 0)
 			B3D_RTTI_MEMBER(TypeInfo, 1)
 			B3D_RTTI_MEMBER(FieldId, 2)
-			B3D_RTTI_MEMBER(Flags, 3)
+			B3D_RTTI_MEMBER(MetaDataFlags, 3)
 			B3D_RTTI_MEMBER(ParentTypeId, 4)
 		B3D_RTTI_END_MEMBERS
 

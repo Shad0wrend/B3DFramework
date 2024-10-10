@@ -1464,6 +1464,9 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	<class native="ImportOptions" script="ImportOptions">
 		<doc>Base class for creating import options from. Import options are specific for each importer and control how is data imported.</doc>
 	</class>
+	<class native="ManagedFieldInfo" script="ManagedFieldInfo">
+		<doc>Contains data about a single field in a managed object (class or struct).</doc>
+	</class>
 	<class native="VectorGraphicsSettings" script="VectorGraphicsSettings">
 		<doc>Settings that control how is a VectorPath drawn.</doc>
 	</class>
@@ -2191,6 +2194,9 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<property name="Is3D" type="bool" getter="Is3D" setter="" static="false">
 			<doc>Determines will the clip be played a spatial 3D sound, or as a normal sound (for example music).</doc>
 		</property>
+	</class>
+	<class native="ManagedPropertyInfo" script="ManagedPropertyInfo">
+		<doc>Contains data about a single property in a managed object (class or struct).</doc>
 	</class>
 	<struct native="AnimationEvent" script="AnimationEvent">
 		<doc>Event that is triggered when animation reaches a certain point.</doc>
@@ -3085,6 +3091,36 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>A list of importer plugins to load.</doc>
 		</field>
 	</struct>
+	<class native="ManagedMemberInfo" script="ManagedMemberInfo">
+		<doc>Contains data about a single member (field or property) in a managed object (class or struct).</doc>
+		<method native="GetValue" script="GetValue" static="false">
+			<doc>Returns a boxed value contained in the member in the specified object instance.</doc>
+			<param name="instance" type="object">
+				<doc>Object instance to access the member on.</doc>
+			</param>
+			<returns type="object">
+				<doc>A boxed value of the member.</doc>
+			</returns>
+		</method>
+		<method native="SetValue" script="SetValue" static="false">
+			<doc>Sets a value of the member in the specified object instance.</doc>
+			<param name="instance" type="object">
+				<doc>Object instance to access the member on.</doc>
+			</param>
+			<param name="value" type="object">
+				<doc>Boxed value to set on the member.</doc>
+			</param>
+		</method>
+		<property name="IsSerializable" type="bool" getter="IsSerializable" setter="" static="false">
+			<doc>Determines should the member be serialized when serializing the parent object.</doc>
+		</property>
+		<property name="Name" type="string" getter="GetName" setter="SetName" static="false">
+		</property>
+		<property name="TypeInfo" type="ManagedTypeInfo" getter="GetTypeInfo" setter="SetTypeInfo" static="false">
+		</property>
+		<property name="MetaDataFlags" type="ManagedFieldMetaDataFlag" getter="GetMetaDataFlags" setter="SetMetaDataFlags" static="false">
+		</property>
+	</class>
 	<class native="CAudioListener" script="AudioListener">
 	</class>
 	<class native="CAudioSource" script="AudioSource">

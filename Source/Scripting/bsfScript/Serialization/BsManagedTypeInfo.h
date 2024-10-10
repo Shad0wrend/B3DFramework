@@ -308,31 +308,42 @@ namespace bs
 	};
 
 	/**	Contains data about a single member (field or property) in a managed object (class or struct). */
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedMemberInfo : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT B3D_SCRIPT_EXPORT() ManagedMemberInfo : public IReflectable, public IScriptExportable
 	{
 	public:
 		ManagedMemberInfo() = default;
 		virtual ~ManagedMemberInfo() = default;
 
 		/**	Determines should the member be serialized when serializing the parent object. */
-		bool IsSerializable() const { return Flags.IsSet(ManagedFieldMetaDataFlag::Serializable); }
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(IsSerializable))
+		bool IsSerializable() const { return MetaDataFlags.IsSet(ManagedFieldMetaDataFlag::Serializable); }
 
 		/**
 		 * Returns a boxed value contained in the member in the specified object instance.
 		 *
-		 * @param[in]	instance	Object instance to access the member on.
-		 * @return					A boxed value of the member.
+		 * @param	instance	Object instance to access the member on.
+		 * @return				A boxed value of the member.
 		 */
+		B3D_SCRIPT_EXPORT()
 		virtual MonoObject* GetValue(MonoObject* instance) const = 0;
 
 		/**
 		 * Sets a value of the member in the specified object instance.
 		 *
-		 * @param[in]	instance	Object instance to access the member on.
-		 * @param[in]	value		Value to set on the property. For value type it should be a pointer to the value and for
-		 *							reference type it should be a pointer to MonoObject.
+		 * @param	instance	Object instance to access the member on.
+		 * @param	value		Value to set on the member. For value type it should be a pointer to the value and for
+		 *						reference type it should be a pointer to MonoObject.
 		 */
-		virtual void SetValue(MonoObject* instance, void* value) const = 0;
+		virtual void SetUnboxedValue(MonoObject* instance, void* value) const = 0;
+
+		/**
+		 * Sets a value of the member in the specified object instance.
+		 *
+		 * @param	instance	Object instance to access the member on.
+		 * @param	value		Boxed value to set on the member. 
+		 */
+		B3D_SCRIPT_EXPORT()
+		void SetValue(MonoObject* instance, MonoObject* value) const;
 
 		/**
 		 * Checks if the attribute of the provided type exists on the member and returns it, or returns null if the
@@ -340,12 +351,17 @@ namespace bs
 		 */
 		virtual MonoObject* GetAttribute(MonoClass* monoClass) = 0;
 
+		B3D_SCRIPT_EXPORT()
 		String Name;
+
+		B3D_SCRIPT_EXPORT()
+		SPtr<ManagedTypeInfo> TypeInfo;
+
+		B3D_SCRIPT_EXPORT()
+		ManagedFieldMetaDataFlags MetaDataFlags;
+
 		u32 FieldId = 0;
 		u32 ParentTypeId;
-
-		SPtr<ManagedTypeInfo> TypeInfo;
-		ManagedFieldMetaDataFlags Flags;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -357,14 +373,14 @@ namespace bs
 	};
 
 	/**	Contains data about a single field in a managed object (class or struct). */
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedFieldInfo : public ManagedMemberInfo
+	class B3D_SCRIPT_INTEROP_EXPORT B3D_SCRIPT_EXPORT() ManagedFieldInfo : public ManagedMemberInfo
 	{
 	public:
 		ManagedFieldInfo() = default;
 
 		MonoObject* GetAttribute(MonoClass* monoClass) override;
 		MonoObject* GetValue(MonoObject* instance) const override;
-		void SetValue(MonoObject* instance, void* value) const override;
+		void SetUnboxedValue(MonoObject* instance, void* value) const override;
 
 		MonoField* ScriptField = nullptr;
 
@@ -378,14 +394,14 @@ namespace bs
 	};
 
 	/**	Contains data about a single property in a managed object (class or struct). */
-	class B3D_SCRIPT_INTEROP_EXPORT ManagedPropertyInfo : public ManagedMemberInfo
+	class B3D_SCRIPT_INTEROP_EXPORT B3D_SCRIPT_EXPORT() ManagedPropertyInfo : public ManagedMemberInfo
 	{
 	public:
 		ManagedPropertyInfo() = default;
 
 		MonoObject* GetAttribute(MonoClass* monoClass) override;
 		MonoObject* GetValue(MonoObject* instance) const override;
-		void SetValue(MonoObject* instance, void* value) const override;
+		void SetUnboxedValue(MonoObject* instance, void* value) const override;
 
 		MonoProperty* ScriptProperty = nullptr;
 

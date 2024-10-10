@@ -141,27 +141,27 @@ void ScriptAssemblyManager::LoadAssemblyInfo(const String& assemblyName)
 			if(visibility == MonoMemberVisibility::Public)
 			{
 				if(typeIsSerializable && !field->HasAttribute(mBuiltin.DontSerializeFieldAttribute))
-					fieldInfo->Flags |= ManagedFieldMetaDataFlag::Serializable;
+					fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Serializable;
 
 				if(typeIsInspectable && !field->HasAttribute(mBuiltin.HideInInspectorAttribute))
-					fieldInfo->Flags |= ManagedFieldMetaDataFlag::Inspectable;
+					fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Inspectable;
 
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::Animable;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Animable;
 			}
 			else
 			{
 				if(typeIsSerializable && field->HasAttribute(mBuiltin.SerializeFieldAttribute))
-					fieldInfo->Flags |= ManagedFieldMetaDataFlag::Serializable;
+					fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Serializable;
 
 				if(typeIsInspectable && field->HasAttribute(mBuiltin.ShowInInspectorAttribute))
-					fieldInfo->Flags |= ManagedFieldMetaDataFlag::Inspectable;
+					fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Inspectable;
 			}
 
 			if(field->HasAttribute(mBuiltin.RangeAttribute))
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::Range;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Range;
 
 			if(field->HasAttribute(mBuiltin.StepAttribute))
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::Step;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Step;
 
 			if(field->HasAttribute(mBuiltin.LayerMaskAttribute))
 			{
@@ -171,31 +171,31 @@ void ScriptAssemblyManager::LoadAssemblyInfo(const String& assemblyName)
 					if(primTypeInfo->PrimitiveType == ManagedPrimitiveType::I64 ||
 					   primTypeInfo->PrimitiveType == ManagedPrimitiveType::U64)
 					{
-						fieldInfo->Flags |= ManagedFieldMetaDataFlag::AsLayerMask;
+						fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::AsLayerMask;
 					}
 				}
 			}
 
 			if(field->HasAttribute(mBuiltin.AsQuaternionAttribute))
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::AsQuaternion;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::AsQuaternion;
 
 			if(field->HasAttribute(mBuiltin.NotNullAttribute))
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::NotNull;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::NotNull;
 
 			if(field->HasAttribute(mBuiltin.CategoryAttribute))
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::Category;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Category;
 
 			if(field->HasAttribute(mBuiltin.OrderAttribute))
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::Order;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Order;
 
 			if(field->HasAttribute(mBuiltin.InlineAttribute))
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::Inline;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Inline;
 
 			if(field->HasAttribute(mBuiltin.LoadOnAssignAttribute))
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::LoadOnAssign;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::LoadOnAssign;
 
 			if(field->HasAttribute(mBuiltin.HdrAttribute))
-				fieldInfo->Flags |= ManagedFieldMetaDataFlag::HDR;
+				fieldInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::HDR;
 
 			objInfo->FieldNameToId[fieldInfo->Name] = fieldInfo->FieldId;
 			objInfo->Fields[fieldInfo->FieldId] = fieldInfo;
@@ -228,19 +228,19 @@ void ScriptAssemblyManager::LoadAssemblyInfo(const String& assemblyName)
 			{
 				MonoMemberVisibility visibility = property->GetVisibility();
 				if(visibility == MonoMemberVisibility::Public)
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::Animable;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Animable;
 
 				if(typeIsSerializable && property->HasAttribute(mBuiltin.SerializeFieldAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::Serializable;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Serializable;
 
 				if(typeIsInspectable && property->HasAttribute(mBuiltin.ShowInInspectorAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::Inspectable;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Inspectable;
 
 				if(property->HasAttribute(mBuiltin.RangeAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::Range;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Range;
 
 				if(property->HasAttribute(mBuiltin.StepAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::Step;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Step;
 
 				if(property->HasAttribute(mBuiltin.LayerMaskAttribute))
 				{
@@ -250,40 +250,40 @@ void ScriptAssemblyManager::LoadAssemblyInfo(const String& assemblyName)
 						if(primTypeInfo->PrimitiveType == ManagedPrimitiveType::I64 ||
 						   primTypeInfo->PrimitiveType == ManagedPrimitiveType::U64)
 						{
-							propertyInfo->Flags |= ManagedFieldMetaDataFlag::AsLayerMask;
+							propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::AsLayerMask;
 						}
 					}
 				}
 
 				if(property->HasAttribute(mBuiltin.AsQuaternionAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::AsQuaternion;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::AsQuaternion;
 
 				if(property->HasAttribute(mBuiltin.NotNullAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::NotNull;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::NotNull;
 
 				if(property->HasAttribute(mBuiltin.PassByCopyAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::PassByCopy;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::PassByCopy;
 
 				if(property->HasAttribute(mBuiltin.ApplyOnDirtyAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::ApplyOnDirty;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::ApplyOnDirty;
 
 				if(property->HasAttribute(mBuiltin.NativeWrapperAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::NativeWrapper;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::NativeWrapper;
 
 				if(property->HasAttribute(mBuiltin.CategoryAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::Category;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Category;
 
 				if(property->HasAttribute(mBuiltin.OrderAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::Order;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Order;
 
 				if(property->HasAttribute(mBuiltin.InlineAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::Inline;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::Inline;
 
 				if(property->HasAttribute(mBuiltin.LoadOnAssignAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::LoadOnAssign;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::LoadOnAssign;
 
 				if(property->HasAttribute(mBuiltin.HdrAttribute))
-					propertyInfo->Flags |= ManagedFieldMetaDataFlag::HDR;
+					propertyInfo->MetaDataFlags |= ManagedFieldMetaDataFlag::HDR;
 			}
 
 			objInfo->FieldNameToId[propertyInfo->Name] = propertyInfo->FieldId;

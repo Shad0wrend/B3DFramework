@@ -168,7 +168,7 @@ void ManagedSerializableObject::Deserialize(MonoObject* instance, const SPtr<Man
 
 				SPtr<ManagedMemberInfo> matchingFieldInfo = objInfo->FindMatchingField(field.second, curType->TypeInfo);
 				if(matchingFieldInfo != nullptr)
-					matchingFieldInfo->SetValue(instance, mCachedData[key]->GetValue(matchingFieldInfo->TypeInfo));
+					matchingFieldInfo->SetUnboxedValue(instance, mCachedData[key]->GetValue(matchingFieldInfo->TypeInfo));
 
 				i++;
 			}
@@ -219,7 +219,7 @@ void ManagedSerializableObject::SetFieldData(const SPtr<ManagedMemberInfo>& fiel
 	if(mGCHandle != 0)
 	{
 		MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
-		fieldInfo->SetValue(managedInstance, val->GetValue(fieldInfo->TypeInfo));
+		fieldInfo->SetUnboxedValue(managedInstance, val->GetValue(fieldInfo->TypeInfo));
 	}
 	else
 	{
