@@ -44,7 +44,7 @@ namespace bs
                 if (baseObjectInfo == null)
                     return null;
 
-                return new SerializableObject(baseObjectInfo.GetReflectionType(), parentProperty);
+                return new SerializableObject(baseObjectInfo.GetReflectionType(), parentObject);
             }
         }
 
