@@ -18,7 +18,7 @@
 
 #	undef GetMessage
 
-void LogToIdeConsole(const bs::String& message, const char* channel)
+static void LogToIdeConsole(const bs::String& message, const char* channel)
 {
 	static bs::Mutex mutex;
 
@@ -33,7 +33,7 @@ void LogToIdeConsole(const bs::String& message, const char* channel)
 	std::cout << "[" << channel << "] " << message << std::endl;
 }
 #else
-void LogToIdeConsole(const bs::String& message, const char* channel)
+static void LogToIdeConsole(const bs::String& message, const char* channel)
 {
 	std::cout << "[" << channel << "] " << message << std::endl;
 }
@@ -52,17 +52,8 @@ namespace bs
 
 using namespace bs;
 
-void Debug::Log(const String& message, LogVerbosity verbosity, const char* categoryName)
+static void LogToIdeConsole(const String& message, LogVerbosity verbosity)
 {
-	if(mCustomLogCallback)
-	{
-		// Run the custom callback and if it returns true skip the default action
-		if(mCustomLogCallback(message, verbosity, categoryName))
-			return;
-	}
-
-	mLog.LogMessage(message, verbosity, categoryName);
-
 	if(verbosity != LogVerbosity::Log)
 	{
 		switch(verbosity)
@@ -88,6 +79,19 @@ void Debug::Log(const String& message, LogVerbosity verbosity, const char* categ
 			break;
 		}
 	}
+}
+
+void Debug::Log(const String& message, LogVerbosity verbosity, const String& categoryName)
+{
+	if(mCustomLogCallback)
+	{
+		// Run the custom callback and if it returns true skip the default action
+		if(mCustomLogCallback(message, verbosity, categoryName.c_str()))
+			return;
+	}
+
+	mLog.LogMessage(message, verbosity, categoryName);
+	LogToIdeConsole(message, verbosity);
 }
 
 void Debug::WriteAsBmp(u8* rawPixels, u32 bytesPerPixel, u32 width, u32 height, const Path& filePath, bool overwrite) const
@@ -349,8 +353,7 @@ table td
 		stream << R"(			<td>)" << ToString(entry.LocalTime, false, false, TimeToStringConversionType::Time)
 			   << "</td>" << std::endl;
 
-		if(entry.CategoryName != nullptr)
-			stream << R"(			<td>)" << entry.CategoryName << "</td>" << std::endl;
+		stream << R"(			<td>)" << entry.CategoryName << "</td>" << std::endl;
 
 		String parsedMessage = StringUtil::ReplaceAll(entry.Message, "\n", "<br>\n");
 
@@ -454,7 +457,7 @@ void Debug::SaveTextLog(const Path& path) const
 			break;
 		}
 
-		if(entry.CategoryName != nullptr)
+		if(!entry.CategoryName.empty())
 		{
 			builtMsg.append(" <");
 			builtMsg.append(entry.CategoryName);

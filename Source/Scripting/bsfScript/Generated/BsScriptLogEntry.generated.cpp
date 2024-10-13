@@ -27,7 +27,9 @@ namespace bs
 		tmpMessage = MonoUtil::MonoToString(value.Message);
 		output.Message = tmpMessage;
 		output.Verbosity = value.Verbosity;
-		B3D_LOG(Error, Script, "const char* type cannot be assigned from scripting for field 'CategoryName'. This is not supported for this type.");
+		String tmpCategoryName;
+		tmpCategoryName = MonoUtil::MonoToString(value.CategoryName);
+		output.CategoryName = tmpCategoryName;
 		output.LocalTime = value.LocalTime;
 
 		return output;

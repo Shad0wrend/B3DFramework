@@ -38,7 +38,7 @@ namespace bs
 		 * @param[in]	categoryName	Category of the message, determining which system is it relevant to.
 		 */
 		B3D_SCRIPT_EXPORT()
-		void Log(const String& message, LogVerbosity verbosity, const char* categoryName);
+		void Log(const String& message, LogVerbosity verbosity, const String& categoryName);
 
 		/**
 		 * Removes all log entries for a specific category and/or verbosity level.
@@ -47,7 +47,7 @@ namespace bs
 		 * @param	verbosity		Verbosity level to clear.
 		 */
 		B3D_SCRIPT_EXPORT()
-		void ClearLog(const char* categoryName, LogVerbosity verbosity = LogVerbosity::Any) { return mLog.Clear(categoryName, verbosity); }
+		void ClearLog(const String& categoryName, LogVerbosity verbosity = LogVerbosity::Any) { return mLog.Clear(categoryName, verbosity); }
 
 		/** Returns all existing log entries. */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(LogEntries))

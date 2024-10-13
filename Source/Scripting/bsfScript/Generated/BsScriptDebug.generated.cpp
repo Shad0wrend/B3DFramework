@@ -59,17 +59,15 @@ namespace bs
 	{
 		String tmpmessage;
 		tmpmessage = MonoUtil::MonoToString(message);
-		const char* tmpcategoryName;
-		String tempStringtmpcategoryName = MonoUtil::MonoToString(categoryName);
-		tmpcategoryName = tempStringtmpcategoryName.c_str();
+		String tmpcategoryName;
+		tmpcategoryName = MonoUtil::MonoToString(categoryName);
 		GetDebug().Log(tmpmessage, verbosity, tmpcategoryName);
 	}
 
 	void ScriptDebug::InternalClearLog(MonoString* categoryName, LogVerbosity verbosity)
 	{
-		const char* tmpcategoryName;
-		String tempStringtmpcategoryName = MonoUtil::MonoToString(categoryName);
-		tmpcategoryName = tempStringtmpcategoryName.c_str();
+		String tmpcategoryName;
+		tmpcategoryName = MonoUtil::MonoToString(categoryName);
 		GetDebug().ClearLog(tmpcategoryName, verbosity);
 	}
 

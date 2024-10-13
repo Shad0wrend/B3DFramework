@@ -42,13 +42,13 @@ namespace bs
 		LogEntry() = default;
 
 		B3D_SCRIPT_EXPORT(Exclude(true))
-		LogEntry(String message, LogVerbosity verbosity, const char* categoryName)
-			: Message(std::move(message)), Verbosity(verbosity), CategoryName(categoryName), LocalTime(std::time(nullptr))
+		LogEntry(String message, LogVerbosity verbosity, String categoryName)
+			: Message(std::move(message)), Verbosity(verbosity), CategoryName(std::move(categoryName)), LocalTime(std::time(nullptr))
 		{}
 
 		String Message;
 		LogVerbosity Verbosity = LogVerbosity::Info;
-		const char* CategoryName = nullptr;
+		String CategoryName;
 		u64 LocalTime = 0; /**< Local time of message */
 	};
 
@@ -112,7 +112,7 @@ namespace bs
 		 * @param	verbosity		Verbosity of the message, determining its importance.
 		 * @param	categoryName	Category of the message, determining which system is it relevant to.
 		 */
-		void LogMessage(const String& message, LogVerbosity verbosity, const char* categoryName);
+		void LogMessage(const String& message, LogVerbosity verbosity, const String& categoryName);
 
 		/** Removes all log entries. */
 		void Clear();
@@ -120,10 +120,10 @@ namespace bs
 		/**
 		 * Removes all log entries for a specific category and/or verbosity level.
 		 *
-		 * @param	categoryName	Name of the category to clear. Specify null to clear all categories.
+		 * @param	categoryName	Name of the category to clear. Specify empty string to clear all categories.
 		 * @param	verbosity		Verbosity level to clear.
 		 */
-		void Clear(const char* categoryName, LogVerbosity verbosity = LogVerbosity::Any);
+		void Clear(const String& categoryName, LogVerbosity verbosity = LogVerbosity::Any);
 
 		/** Returns all existing log entries. */
 		Vector<LogEntry> GetEntries() const;

@@ -23,7 +23,7 @@ Log::~Log()
 	Clear();
 }
 
-void Log::LogMessage(const String& message, LogVerbosity verbosity, const char* category)
+void Log::LogMessage(const String& message, LogVerbosity verbosity, const String& category)
 {
 	RecursiveLock lock(mMutex);
 
@@ -42,14 +42,14 @@ void Log::Clear()
 	mHash++;
 }
 
-void Log::Clear(const char* categoryName, LogVerbosity verbosity)
+void Log::Clear(const String& categoryName, LogVerbosity verbosity)
 {
 	RecursiveLock lock(mMutex);
 
 	Vector<LogEntry> newEntries;
 	for(auto& entry : mEntries)
 	{
-		if(((verbosity == LogVerbosity::Any) || entry.Verbosity == verbosity) && (categoryName == nullptr || entry.CategoryName == categoryName))
+		if(((verbosity == LogVerbosity::Any) || entry.Verbosity == verbosity) && (categoryName.empty() || entry.CategoryName == categoryName))
 			continue;
 
 		newEntries.push_back(entry);
@@ -63,7 +63,7 @@ void Log::Clear(const char* categoryName, LogVerbosity verbosity)
 		LogEntry entry = mUnreadEntries.front();
 		mUnreadEntries.pop();
 
-		if(((verbosity == LogVerbosity::Any) || entry.Verbosity == verbosity) && (categoryName == nullptr || entry.CategoryName == categoryName))
+		if(((verbosity == LogVerbosity::Any) || entry.Verbosity == verbosity) && (categoryName.empty() || entry.CategoryName == categoryName))
 			continue;
 
 		newUnreadEntries.push(entry);
