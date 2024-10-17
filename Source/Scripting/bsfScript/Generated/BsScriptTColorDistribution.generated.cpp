@@ -63,9 +63,9 @@ namespace bs
 	{
 		SPtr<ColorGradient> tmpgradient;
 		ScriptColorGradient* scriptObjectWrappergradient;
-		scriptObjectWrappergradient = ScriptColorGradient::ToNative(gradient);
+		scriptObjectWrappergradient = ScriptColorGradient::GetScriptObjectWrapper(gradient);
 		if(scriptObjectWrappergradient != nullptr)
-			tmpgradient = scriptObjectWrappergradient->GetInternal();
+			tmpgradient = std::static_pointer_cast<ColorGradient>(scriptObjectWrappergradient->GetBaseNativeObjectAsShared());
 		SPtr<TColorDistribution<ColorGradient>> nativeObject = B3DMakeShared<TColorDistribution<ColorGradient>>(*tmpgradient);
 		ScriptObjectWrapper::Create<ScriptColorDistribution>(nativeObject, scriptObject);
 	}
@@ -74,14 +74,14 @@ namespace bs
 	{
 		SPtr<ColorGradient> tmpminGradient;
 		ScriptColorGradient* scriptObjectWrapperminGradient;
-		scriptObjectWrapperminGradient = ScriptColorGradient::ToNative(minGradient);
+		scriptObjectWrapperminGradient = ScriptColorGradient::GetScriptObjectWrapper(minGradient);
 		if(scriptObjectWrapperminGradient != nullptr)
-			tmpminGradient = scriptObjectWrapperminGradient->GetInternal();
+			tmpminGradient = std::static_pointer_cast<ColorGradient>(scriptObjectWrapperminGradient->GetBaseNativeObjectAsShared());
 		SPtr<ColorGradient> tmpmaxGradient;
 		ScriptColorGradient* scriptObjectWrappermaxGradient;
-		scriptObjectWrappermaxGradient = ScriptColorGradient::ToNative(maxGradient);
+		scriptObjectWrappermaxGradient = ScriptColorGradient::GetScriptObjectWrapper(maxGradient);
 		if(scriptObjectWrappermaxGradient != nullptr)
-			tmpmaxGradient = scriptObjectWrappermaxGradient->GetInternal();
+			tmpmaxGradient = std::static_pointer_cast<ColorGradient>(scriptObjectWrappermaxGradient->GetBaseNativeObjectAsShared());
 		SPtr<TColorDistribution<ColorGradient>> nativeObject = B3DMakeShared<TColorDistribution<ColorGradient>>(*tmpminGradient, *tmpmaxGradient);
 		ScriptObjectWrapper::Create<ScriptColorDistribution>(nativeObject, scriptObject);
 	}
@@ -119,7 +119,7 @@ namespace bs
 		*tmp__output = static_cast<TColorDistribution<ColorGradient>*>(self->GetNativeObject())->GetMinGradient();
 
 		MonoObject* __output;
-		__output = ScriptColorGradient::Create(tmp__output);
+		__output = ScriptColorGradient::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}
@@ -130,7 +130,7 @@ namespace bs
 		*tmp__output = static_cast<TColorDistribution<ColorGradient>*>(self->GetNativeObject())->GetMaxGradient();
 
 		MonoObject* __output;
-		__output = ScriptColorGradient::Create(tmp__output);
+		__output = ScriptColorGradient::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}
@@ -188,9 +188,9 @@ namespace bs
 	{
 		SPtr<ColorGradientHDR> tmpgradient;
 		ScriptColorGradientHDR* scriptObjectWrappergradient;
-		scriptObjectWrappergradient = ScriptColorGradientHDR::ToNative(gradient);
+		scriptObjectWrappergradient = ScriptColorGradientHDR::GetScriptObjectWrapper(gradient);
 		if(scriptObjectWrappergradient != nullptr)
-			tmpgradient = scriptObjectWrappergradient->GetInternal();
+			tmpgradient = std::static_pointer_cast<ColorGradientHDR>(scriptObjectWrappergradient->GetBaseNativeObjectAsShared());
 		SPtr<TColorDistribution<ColorGradientHDR>> nativeObject = B3DMakeShared<TColorDistribution<ColorGradientHDR>>(*tmpgradient);
 		ScriptObjectWrapper::Create<ScriptColorHDRDistribution>(nativeObject, scriptObject);
 	}
@@ -199,14 +199,14 @@ namespace bs
 	{
 		SPtr<ColorGradientHDR> tmpminGradient;
 		ScriptColorGradientHDR* scriptObjectWrapperminGradient;
-		scriptObjectWrapperminGradient = ScriptColorGradientHDR::ToNative(minGradient);
+		scriptObjectWrapperminGradient = ScriptColorGradientHDR::GetScriptObjectWrapper(minGradient);
 		if(scriptObjectWrapperminGradient != nullptr)
-			tmpminGradient = scriptObjectWrapperminGradient->GetInternal();
+			tmpminGradient = std::static_pointer_cast<ColorGradientHDR>(scriptObjectWrapperminGradient->GetBaseNativeObjectAsShared());
 		SPtr<ColorGradientHDR> tmpmaxGradient;
 		ScriptColorGradientHDR* scriptObjectWrappermaxGradient;
-		scriptObjectWrappermaxGradient = ScriptColorGradientHDR::ToNative(maxGradient);
+		scriptObjectWrappermaxGradient = ScriptColorGradientHDR::GetScriptObjectWrapper(maxGradient);
 		if(scriptObjectWrappermaxGradient != nullptr)
-			tmpmaxGradient = scriptObjectWrappermaxGradient->GetInternal();
+			tmpmaxGradient = std::static_pointer_cast<ColorGradientHDR>(scriptObjectWrappermaxGradient->GetBaseNativeObjectAsShared());
 		SPtr<TColorDistribution<ColorGradientHDR>> nativeObject = B3DMakeShared<TColorDistribution<ColorGradientHDR>>(*tmpminGradient, *tmpmaxGradient);
 		ScriptObjectWrapper::Create<ScriptColorHDRDistribution>(nativeObject, scriptObject);
 	}
@@ -244,7 +244,7 @@ namespace bs
 		*tmp__output = static_cast<TColorDistribution<ColorGradientHDR>*>(self->GetNativeObject())->GetMinGradient();
 
 		MonoObject* __output;
-		__output = ScriptColorGradientHDR::Create(tmp__output);
+		__output = ScriptColorGradientHDR::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}
@@ -255,7 +255,7 @@ namespace bs
 		*tmp__output = static_cast<TColorDistribution<ColorGradientHDR>*>(self->GetNativeObject())->GetMaxGradient();
 
 		MonoObject* __output;
-		__output = ScriptColorGradientHDR::Create(tmp__output);
+		__output = ScriptColorGradientHDR::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}

@@ -4,7 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
-#include "BsScriptObject.h"
+#include "BsScriptNonReflectableWrapper.h"
 #include "../../../Foundation/bsfUtility/Image/BsColor.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
 
@@ -12,24 +12,21 @@ namespace bs { class ColorGradientEx; }
 namespace bs { struct __ColorGradientKeyInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptColorGradient : public ScriptObject<ScriptColorGradient>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptColorGradient : public TScriptNonReflectableWrapper<ColorGradient, ScriptColorGradient>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ColorGradient")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ColorGradient")
 
-		ScriptColorGradient(MonoObject* managedInstance, const SPtr<ColorGradient>& value);
+		ScriptColorGradient(const SPtr<ColorGradient>& nativeObject);
 
 		static void SetupScriptBindings();
 
-		SPtr<ColorGradient> GetInternal() const { return mInternal; }
-		static MonoObject* Create(const SPtr<ColorGradient>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		SPtr<ColorGradient> mInternal;
-
-		static void InternalColorGradient(MonoObject* managedInstance);
-		static void InternalColorGradient0(MonoObject* managedInstance, Color* color);
-		static void InternalColorGradient1(MonoObject* managedInstance, MonoArray* keys);
+		static void InternalColorGradient(MonoObject* scriptObject);
+		static void InternalColorGradient0(MonoObject* scriptObject, Color* color);
+		static void InternalColorGradient1(MonoObject* scriptObject, MonoArray* keys);
 		static void InternalSetKeys(ScriptColorGradient* self, MonoArray* keys, float duration);
 		static MonoArray* InternalGetKeys(ScriptColorGradient* self);
 		static uint32_t InternalGetNumKeys(ScriptColorGradient* self);

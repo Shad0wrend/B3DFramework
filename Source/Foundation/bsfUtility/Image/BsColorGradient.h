@@ -6,6 +6,7 @@
 #include "Image/BsColor.h"
 #include "Allocators/BsPoolAlloc.h"
 #include "Utility/BsBitwise.h"
+#include "Script/BsIScriptExportable.h"
 
 namespace bs
 {
@@ -143,7 +144,7 @@ namespace bs
 	 * keys that get interpolated between. Stores colors as 32-bit integers, and is therefor unable to represent
 	 * a color range outside of [0, 1] - see ColorGradientHDR for an alternative.
 	 */
-	class B3D_UTILITY_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Image)) ColorGradient : public TColorGradient<RGBA, uint16_t>
+	class B3D_UTILITY_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Image)) ColorGradient : public TColorGradient<RGBA, uint16_t>, public IScriptExportable
 	{
 		using TColorGradient::TColorGradient;
 
@@ -154,7 +155,7 @@ namespace bs
 	 * Represents a range of color values over some parameters, similar to a curve. Internally represented as a set of
 	 * keys that get interpolated between. Capable of representing HDR colors, unlike the normal ColorGradient.
 	 */
-	class B3D_UTILITY_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Image)) ColorGradientHDR : public TColorGradient<Color, float>
+	class B3D_UTILITY_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Image)) ColorGradientHDR : public TColorGradient<Color, float>, public IScriptExportable
 	{
 		using TColorGradient::TColorGradient;
 

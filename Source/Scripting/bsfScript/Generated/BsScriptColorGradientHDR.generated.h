@@ -4,7 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
-#include "BsScriptObject.h"
+#include "BsScriptNonReflectableWrapper.h"
 #include "../../../Foundation/bsfUtility/Image/BsColor.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
 
@@ -12,24 +12,21 @@ namespace bs { class ColorGradientHDREx; }
 namespace bs { struct __ColorGradientKeyInterop; }
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptColorGradientHDR : public ScriptObject<ScriptColorGradientHDR>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptColorGradientHDR : public TScriptNonReflectableWrapper<ColorGradientHDR, ScriptColorGradientHDR>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ColorGradientHDR")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ColorGradientHDR")
 
-		ScriptColorGradientHDR(MonoObject* managedInstance, const SPtr<ColorGradientHDR>& value);
+		ScriptColorGradientHDR(const SPtr<ColorGradientHDR>& nativeObject);
 
 		static void SetupScriptBindings();
 
-		SPtr<ColorGradientHDR> GetInternal() const { return mInternal; }
-		static MonoObject* Create(const SPtr<ColorGradientHDR>& value);
+		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		SPtr<ColorGradientHDR> mInternal;
-
-		static void InternalColorGradientHDR(MonoObject* managedInstance);
-		static void InternalColorGradientHDR0(MonoObject* managedInstance, Color* color);
-		static void InternalColorGradientHDR1(MonoObject* managedInstance, MonoArray* keys);
+		static void InternalColorGradientHDR(MonoObject* scriptObject);
+		static void InternalColorGradientHDR0(MonoObject* scriptObject, Color* color);
+		static void InternalColorGradientHDR1(MonoObject* scriptObject, MonoArray* keys);
 		static void InternalSetKeys(ScriptColorGradientHDR* self, MonoArray* keys, float duration);
 		static MonoArray* InternalGetKeys(ScriptColorGradientHDR* self);
 		static uint32_t InternalGetNumKeys(ScriptColorGradientHDR* self);

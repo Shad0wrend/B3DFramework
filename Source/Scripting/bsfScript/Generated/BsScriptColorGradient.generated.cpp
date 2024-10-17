@@ -11,49 +11,49 @@
 
 namespace bs
 {
-	ScriptColorGradient::ScriptColorGradient(MonoObject* managedInstance, const SPtr<ColorGradient>& value)
-		:ScriptObject(managedInstance), mInternal(value)
+	ScriptColorGradient::ScriptColorGradient(const SPtr<ColorGradient>& nativeObject)
+		:TScriptNonReflectableWrapper(nativeObject)
 	{
+		RegisterEvents();
 	}
 
-	void ScriptColorGradient::InitRuntimeData()
+	void ScriptColorGradient::SetupScriptBindings()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_ColorGradient", (void*)&ScriptColorGradient::InternalColorGradient);
-		metaData.ScriptClass->AddInternalCall("Internal_ColorGradient0", (void*)&ScriptColorGradient::InternalColorGradient0);
-		metaData.ScriptClass->AddInternalCall("Internal_ColorGradient1", (void*)&ScriptColorGradient::InternalColorGradient1);
-		metaData.ScriptClass->AddInternalCall("Internal_SetKeys", (void*)&ScriptColorGradient::InternalSetKeys);
-		metaData.ScriptClass->AddInternalCall("Internal_GetKeys", (void*)&ScriptColorGradient::InternalGetKeys);
-		metaData.ScriptClass->AddInternalCall("Internal_GetNumKeys", (void*)&ScriptColorGradient::InternalGetNumKeys);
-		metaData.ScriptClass->AddInternalCall("Internal_GetKey", (void*)&ScriptColorGradient::InternalGetKey);
-		metaData.ScriptClass->AddInternalCall("Internal_SetConstant", (void*)&ScriptColorGradient::InternalSetConstant);
-		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptColorGradient::InternalEvaluate);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ColorGradient", (void*)&ScriptColorGradient::InternalColorGradient);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ColorGradient0", (void*)&ScriptColorGradient::InternalColorGradient0);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ColorGradient1", (void*)&ScriptColorGradient::InternalColorGradient1);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetKeys", (void*)&ScriptColorGradient::InternalSetKeys);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetKeys", (void*)&ScriptColorGradient::InternalGetKeys);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetNumKeys", (void*)&ScriptColorGradient::InternalGetNumKeys);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetKey", (void*)&ScriptColorGradient::InternalGetKey);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetConstant", (void*)&ScriptColorGradient::InternalSetConstant);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptColorGradient::InternalEvaluate);
 
 	}
 
-	MonoObject* ScriptColorGradient::Create(const SPtr<ColorGradient>& value)
+	MonoObject* ScriptColorGradient::CreateScriptObject(bool construct)
 	{
-		if(value == nullptr) return nullptr; 
-
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new (B3DAllocate<ScriptColorGradient>()) ScriptColorGradient(managedInstance, value);
-		return managedInstance;
+		if(construct)
+			return sInteropMetaData.ScriptClass->CreateInstance("bool", ctorParams);
+
+		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
-	void ScriptColorGradient::InternalColorGradient(MonoObject* managedInstance)
+	void ScriptColorGradient::InternalColorGradient(MonoObject* scriptObject)
 	{
 		SPtr<ColorGradient> nativeObject = B3DMakeShared<ColorGradient>();
-		new (B3DAllocate<ScriptColorGradient>())ScriptColorGradient(managedInstance, nativeObject);
+		ScriptObjectWrapper::Create<ScriptColorGradient>(nativeObject, scriptObject);
 	}
 
-	void ScriptColorGradient::InternalColorGradient0(MonoObject* managedInstance, Color* color)
+	void ScriptColorGradient::InternalColorGradient0(MonoObject* scriptObject, Color* color)
 	{
 		SPtr<ColorGradient> nativeObject = B3DMakeShared<ColorGradient>(*color);
-		new (B3DAllocate<ScriptColorGradient>())ScriptColorGradient(managedInstance, nativeObject);
+		ScriptObjectWrapper::Create<ScriptColorGradient>(nativeObject, scriptObject);
 	}
 
-	void ScriptColorGradient::InternalColorGradient1(MonoObject* managedInstance, MonoArray* keys)
+	void ScriptColorGradient::InternalColorGradient1(MonoObject* scriptObject, MonoArray* keys)
 	{
 		Vector<ColorGradientKey> nativeArraykeys;
 		if(keys != nullptr)
@@ -66,7 +66,7 @@ namespace bs
 			}
 		}
 		SPtr<ColorGradient> nativeObject = B3DMakeShared<ColorGradient>(nativeArraykeys);
-		new (B3DAllocate<ScriptColorGradient>())ScriptColorGradient(managedInstance, nativeObject);
+		ScriptObjectWrapper::Create<ScriptColorGradient>(nativeObject, scriptObject);
 	}
 
 	void ScriptColorGradient::InternalSetKeys(ScriptColorGradient* self, MonoArray* keys, float duration)
@@ -82,13 +82,13 @@ namespace bs
 			}
 
 		}
-		self->GetInternal()->SetKeys(nativeArraykeys, duration);
+		static_cast<ColorGradient*>(self->GetNativeObject())->SetKeys(nativeArraykeys, duration);
 	}
 
 	MonoArray* ScriptColorGradient::InternalGetKeys(ScriptColorGradient* self)
 	{
 		Vector<ColorGradientKey> nativeArray__output;
-		nativeArray__output = self->GetInternal()->GetKeys();
+		nativeArray__output = static_cast<ColorGradient*>(self->GetNativeObject())->GetKeys();
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -105,7 +105,7 @@ namespace bs
 	uint32_t ScriptColorGradient::InternalGetNumKeys(ScriptColorGradient* self)
 	{
 		uint32_t tmp__output;
-		tmp__output = self->GetInternal()->GetNumKeys();
+		tmp__output = static_cast<ColorGradient*>(self->GetNativeObject())->GetNumKeys();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -116,7 +116,7 @@ namespace bs
 	void ScriptColorGradient::InternalGetKey(ScriptColorGradient* self, uint32_t idx, __ColorGradientKeyInterop* __output)
 	{
 		ColorGradientKey tmp__output;
-		tmp__output = self->GetInternal()->GetKey(idx);
+		tmp__output = static_cast<ColorGradient*>(self->GetNativeObject())->GetKey(idx);
 
 		__ColorGradientKeyInterop interop__output;
 		interop__output = ScriptColorGradientKey::ToInterop(tmp__output);
@@ -125,13 +125,13 @@ namespace bs
 
 	void ScriptColorGradient::InternalSetConstant(ScriptColorGradient* self, Color* color)
 	{
-		self->GetInternal()->SetConstant(*color);
+		static_cast<ColorGradient*>(self->GetNativeObject())->SetConstant(*color);
 	}
 
 	void ScriptColorGradient::InternalEvaluate(ScriptColorGradient* self, float t, Color* __output)
 	{
 		Color tmp__output;
-		tmp__output = ColorGradientEx::Evaluate(self->GetInternal(), t);
+		tmp__output = ColorGradientEx::Evaluate(std::static_pointer_cast<ColorGradient>(self->GetBaseNativeObjectAsShared()), t);
 
 		*__output = tmp__output;
 	}

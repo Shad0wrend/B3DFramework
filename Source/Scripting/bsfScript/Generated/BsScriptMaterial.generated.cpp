@@ -174,9 +174,9 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<ColorGradientHDR> tmpvalue;
 		ScriptColorGradientHDR* scriptObjectWrappervalue;
-		scriptObjectWrappervalue = ScriptColorGradientHDR::ToNative(value);
+		scriptObjectWrappervalue = ScriptColorGradientHDR::GetScriptObjectWrapper(value);
 		if(scriptObjectWrappervalue != nullptr)
-			tmpvalue = scriptObjectWrappervalue->GetInternal();
+			tmpvalue = std::static_pointer_cast<ColorGradientHDR>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
 		static_cast<Material*>(self->GetNativeObject())->SetColorGradient(tmpname, *tmpvalue, arrayIdx);
 	}
 
@@ -259,7 +259,7 @@ namespace bs
 		*tmp__output = static_cast<Material*>(self->GetNativeObject())->GetColorGradient(tmpname, arrayIdx);
 
 		MonoObject* __output;
-		__output = ScriptColorGradientHDR::Create(tmp__output);
+		__output = ScriptColorGradientHDR::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}
