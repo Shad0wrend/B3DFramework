@@ -8,8 +8,8 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/VectorGraphics/BsVectorGraphics.h"
 #include "BsScriptVectorPath.generated.h"
-#include "Utility/BsUtil.h"
-#include "Wrappers/BsScriptSize.h"
+#include "../../../Foundation/bsfUtility/Utility/BsUtil.h"
+#include "BsScriptTSize2.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
 

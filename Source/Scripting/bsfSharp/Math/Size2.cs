@@ -12,33 +12,10 @@ namespace bs
     /// <summary>
     /// A two dimensional size.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential), SerializeObject]
-    public struct Size2 // Note: Must match C++ struct Size2
+    public partial struct Size2
     {
-        public float Width;
-        public float Height;
-
         public static readonly Size2 Zero = new Size2(0.0f, 0.0f);
         public static readonly Size2 One = new Size2(1.0f, 1.0f);
-
-        /// <summary>
-        /// Creates a new default initialized size value.
-        /// </summary>
-        public static Size2 Default()
-        {
-            return new Size2();
-        }
-
-        /// <summary>
-        /// Creates a new two dimensional size.
-        /// </summary>
-        /// <param name="width">Width</param>
-        /// <param name="height">Height</param>
-        public Size2(float width, float height)
-        {
-            this.Width = width;
-            this.Height = height;
-        }
 
         public static bool operator ==(Size2 lhs, Size2 rhs)
         {

@@ -8,7 +8,7 @@
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "Math/BsRect2.h"
 #include "../../../Foundation/bsfCore/VectorGraphics/BsVectorGraphics.h"
-#include "Utility/BsUtil.h"
+#include "../../../Foundation/bsfUtility/Utility/BsUtil.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 
 namespace bs

@@ -92,6 +92,113 @@
 		<enumentry native="ZYX" script="ZYX">
 		</enumentry>
 	</enum>
+	<enum native="DrawOperationType" script="MeshTopology">
+		<doc>Describes operation that will be used for rendering a certain set of vertices.</doc>
+		<enumentry native="DOT_POINT_LIST" script="PointList">
+			<doc>Each vertex represents a point.</doc>
+		</enumentry>
+		<enumentry native="DOT_LINE_STRIP" script="LineStrip">
+			<doc>Each vertex (except the first) forms a line with the previous vertex.</doc>
+		</enumentry>
+		<enumentry native="DOT_LINE_LIST" script="LineList">
+			<doc>Each sequential pair of vertices represent a line.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_STRIP" script="TriangleStrip">
+			<doc>Each vertex (except the first two) form a triangle with the previous two vertices.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_LIST" script="TriangleList">
+			<doc>Each sequential 3-tuple of vertices represent a triangle.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_FAN" script="TriangleFan">
+			<doc>Each vertex (except the first two) form a triangle with the first vertex and previous vertex.</doc>
+		</enumentry>
+	</enum>
+	<class native="Debug" script="Debug">
+		<doc>Utility class providing various debug functionality.</doc>
+		<method native="Log" script="Log" static="false">
+			<doc>Logs a new message.</doc>
+			<param name="message" type="string">
+				<doc>The message describing the log entry.</doc>
+			</param>
+			<param name="verbosity" type="LogVerbosity">
+				<doc>Verbosity of the message, determining its importance.</doc>
+			</param>
+			<param name="categoryName" type="string">
+				<doc>Category of the message, determining which system is it relevant to.</doc>
+			</param>
+		</method>
+		<method native="ClearLog" script="ClearLog" static="false">
+			<doc>Removes all log entries for a specific category and/or verbosity level.</doc>
+			<param name="categoryName" type="string">
+				<doc>Name of the category to clear. Specify null to clear all categories.</doc>
+			</param>
+			<param name="verbosity" type="LogVerbosity">
+				<doc>Verbosity level to clear.</doc>
+			</param>
+		</method>
+		<property name="LogEntries" type="LogEntry" getter="GetLogEntries" setter="" static="false">
+			<doc>Returns all existing log entries.</doc>
+		</property>
+		<event native="OnLogEntryAdded" script="OnLogEntryAdded" static="false">
+			<doc>Triggered when a new entry in the log is added.</doc>
+			<param name="p0" type="LogEntry">
+			</param>
+		</event>
+		<event native="OnLogModified" script="OnLogModified" static="false">
+			<doc>Triggered whenever one or multiple log entries were added or removed. Triggers only once per frame.</doc>
+		</event>
+	</class>
+	<struct native="Color" script="Color">
+		<doc>Color represented as 4 components, each being a floating point value ranging from 0 to 1. Color components are red, green, blue and alpha.</doc>
+		<ctor>
+			<param name="red" type="float">
+			</param>
+			<param name="green" type="float">
+			</param>
+			<param name="blue" type="float">
+			</param>
+			<param name="alpha" type="float">
+			</param>
+		</ctor>
+		<field name="R" type="float">
+		</field>
+		<field name="G" type="float">
+		</field>
+		<field name="B" type="float">
+		</field>
+		<field name="A" type="float">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;float&gt;" script="Size2">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="float">
+			</param>
+			<param name="height" type="float">
+			</param>
+		</ctor>
+		<field name="Width" type="float">
+		</field>
+		<field name="Height" type="float">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;uint32_t&gt;" script="Size2UI">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="int">
+			</param>
+			<param name="height" type="int">
+			</param>
+		</ctor>
+		<field name="Width" type="int">
+		</field>
+		<field name="Height" type="int">
+		</field>
+	</struct>
 	<class native="MeshData" script="MeshData">
 		<doc>Contains mesh vertex and index data used for initializing, updating and reading mesh data from Mesh.</doc>
 	</class>
@@ -229,83 +336,6 @@
 		</field>
 		<field name="LocalTime" type="ulong">
 			<doc>Local time of message</doc>
-		</field>
-	</struct>
-	<enum native="DrawOperationType" script="MeshTopology">
-		<doc>Describes operation that will be used for rendering a certain set of vertices.</doc>
-		<enumentry native="DOT_POINT_LIST" script="PointList">
-			<doc>Each vertex represents a point.</doc>
-		</enumentry>
-		<enumentry native="DOT_LINE_STRIP" script="LineStrip">
-			<doc>Each vertex (except the first) forms a line with the previous vertex.</doc>
-		</enumentry>
-		<enumentry native="DOT_LINE_LIST" script="LineList">
-			<doc>Each sequential pair of vertices represent a line.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_STRIP" script="TriangleStrip">
-			<doc>Each vertex (except the first two) form a triangle with the previous two vertices.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_LIST" script="TriangleList">
-			<doc>Each sequential 3-tuple of vertices represent a triangle.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_FAN" script="TriangleFan">
-			<doc>Each vertex (except the first two) form a triangle with the first vertex and previous vertex.</doc>
-		</enumentry>
-	</enum>
-	<class native="Debug" script="Debug">
-		<doc>Utility class providing various debug functionality.</doc>
-		<method native="Log" script="Log" static="false">
-			<doc>Logs a new message.</doc>
-			<param name="message" type="string">
-				<doc>The message describing the log entry.</doc>
-			</param>
-			<param name="verbosity" type="LogVerbosity">
-				<doc>Verbosity of the message, determining its importance.</doc>
-			</param>
-			<param name="categoryName" type="string">
-				<doc>Category of the message, determining which system is it relevant to.</doc>
-			</param>
-		</method>
-		<method native="ClearLog" script="ClearLog" static="false">
-			<doc>Removes all log entries for a specific category and/or verbosity level.</doc>
-			<param name="categoryName" type="string">
-				<doc>Name of the category to clear. Specify null to clear all categories.</doc>
-			</param>
-			<param name="verbosity" type="LogVerbosity">
-				<doc>Verbosity level to clear.</doc>
-			</param>
-		</method>
-		<property name="LogEntries" type="LogEntry" getter="GetLogEntries" setter="" static="false">
-			<doc>Returns all existing log entries.</doc>
-		</property>
-		<event native="OnLogEntryAdded" script="OnLogEntryAdded" static="false">
-			<doc>Triggered when a new entry in the log is added.</doc>
-			<param name="p0" type="LogEntry">
-			</param>
-		</event>
-		<event native="OnLogModified" script="OnLogModified" static="false">
-			<doc>Triggered whenever one or multiple log entries were added or removed. Triggers only once per frame.</doc>
-		</event>
-	</class>
-	<struct native="Color" script="Color">
-		<doc>Color represented as 4 components, each being a floating point value ranging from 0 to 1. Color components are red, green, blue and alpha.</doc>
-		<ctor>
-			<param name="red" type="float">
-			</param>
-			<param name="green" type="float">
-			</param>
-			<param name="blue" type="float">
-			</param>
-			<param name="alpha" type="float">
-			</param>
-		</ctor>
-		<field name="R" type="float">
-		</field>
-		<field name="G" type="float">
-		</field>
-		<field name="B" type="float">
-		</field>
-		<field name="A" type="float">
 		</field>
 	</struct>
 	<struct native="PARTICLE_CIRCLE_SHAPE_DESC" script="ParticleCircleShapeOptions">

@@ -7,7 +7,7 @@
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
-#include "Wrappers/BsScriptSize.h"
+#include "BsScriptTSize2.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
 

@@ -5,37 +5,40 @@
 
 namespace bs
 {
-String Md5(const WString& source)
-{
-	MD5 md5;
-	md5.update((u8*)source.data(), (u32)source.length() * sizeof(WString::value_type));
-	md5.finalize();
+	template struct B3D_UTILITY_EXPORT TSize2<float>;
+	template struct B3D_UTILITY_EXPORT TSize2<u32>;
 
-	u8 digest[16];
-	md5.decdigest(digest, sizeof(digest));
+	String Md5(const WString& source)
+	{
+		MD5 md5;
+		md5.update((u8*)source.data(), (u32)source.length() * sizeof(WString::value_type));
+		md5.finalize();
 
-	String buf;
-	buf.resize(32);
-	for(int i = 0; i < 16; i++)
-		snprintf(&(buf[0]) + i * 2, 3, "%02x", digest[i]);
+		u8 digest[16];
+		md5.decdigest(digest, sizeof(digest));
 
-	return buf;
-}
+		String buf;
+		buf.resize(32);
+		for(int i = 0; i < 16; i++)
+			snprintf(&(buf[0]) + i * 2, 3, "%02x", digest[i]);
 
-String Md5(const String& source)
-{
-	MD5 md5;
-	md5.update((u8*)source.data(), (u32)source.length() * sizeof(String::value_type));
-	md5.finalize();
+		return buf;
+	}
 
-	u8 digest[16];
-	md5.decdigest(digest, sizeof(digest));
+	String Md5(const String& source)
+	{
+		MD5 md5;
+		md5.update((u8*)source.data(), (u32)source.length() * sizeof(String::value_type));
+		md5.finalize();
 
-	String buf;
-	buf.resize(32);
-	for(int i = 0; i < 16; i++)
-		snprintf(&(buf[0]) + i * 2, 3, "%02x", digest[i]);
+		u8 digest[16];
+		md5.decdigest(digest, sizeof(digest));
 
-	return buf;
-}
+		String buf;
+		buf.resize(32);
+		for(int i = 0; i < 16; i++)
+			snprintf(&(buf[0]) + i * 2, 3, "%02x", digest[i]);
+
+		return buf;
+	}
 } // namespace bs

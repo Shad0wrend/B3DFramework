@@ -5,7 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptResourceWrapper.h"
 #include "BsScriptSpriteImage.generated.h"
-#include "Utility/BsUtil.h"
+#include "../../../Foundation/bsfUtility/Utility/BsUtil.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteVectorPath.h"
 
 namespace bs { class SpriteVectorPath; }

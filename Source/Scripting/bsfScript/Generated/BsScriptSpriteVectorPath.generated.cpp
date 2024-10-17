@@ -9,7 +9,7 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/VectorGraphics/BsVectorGraphics.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteVectorPath.h"
-#include "Wrappers/BsScriptSize.h"
+#include "BsScriptTSize2.generated.h"
 #include "BsScriptSpriteVectorPathCreateInformation.generated.h"
 
 namespace bs
