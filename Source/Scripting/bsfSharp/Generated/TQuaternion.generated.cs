@@ -21,7 +21,7 @@ namespace bs
 			value.X = 0;
 			value.Y = 0;
 			value.Z = 0;
-			value.W = 1;
+			value.W = 0;
 
 			return value;
 		}

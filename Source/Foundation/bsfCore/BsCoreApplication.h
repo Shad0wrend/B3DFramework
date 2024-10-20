@@ -63,7 +63,7 @@ namespace bs
 	 *
 	 * @note	Main thread only.
 	 */
-	class B3D_CORE_EXPORT CoreApplication : public Module<CoreApplication>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() CoreApplication : public Module<CoreApplication>
 	{
 	public:
 		CoreApplication(START_UP_DESC desc);

@@ -3197,6 +3197,21 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>A list of importer plugins to load.</doc>
 		</field>
 	</struct>
+	<struct native="GUISliderHandleContent" script="GUISliderHandleContent">
+		<doc>Structure describing contents of a GUISliderHandle element.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="flags" type="GUISliderHandleFlag">
+			</param>
+		</ctor>
+		<field name="Flags" type="GUISliderHandleFlag">
+			<doc>Flags that control how does the slider handle behave.</doc>
+		</field>
+	</struct>
+	<class native="CoreApplication" script="CoreApplication">
+		<doc>Represents the primary entry point for the core systems. Handles start-up, shutdown, primary loop and allows you to load and unload plugins.</doc>
+	</class>
 	<class native="ManagedMemberInfo" script="ManagedMemberInfo">
 		<doc>Contains data about a single member (field or property) in a managed object (class or struct).</doc>
 		<method native="ParseStyle" script="ParseStyle" static="false">
@@ -13591,6 +13606,9 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 		<enumentry native="FontAwesomeZ" script="FontAwesomeZ">
 		</enumentry>
 	</enum>
+	<class native="Application" script="Application">
+		<doc>Primary entry point for the framework. Handles startup and shutdown.</doc>
+	</class>
 	<class native="GUIResizableVerticalScrollBar" script="GUIResizableVerticalScrollBar">
 		<doc>Specialization of a GUIScrollBar for vertical scrolling, with the ability to resize the scroll bar.</doc>
 		<ctor>
@@ -14171,18 +14189,6 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 			<doc>If enabled, clicking on a specific slider position will cause the handle to jump to that position. If false the handle will only slightly move in that direction.</doc>
 		</enumentry>
 	</enum>
-	<struct native="GUISliderHandleContent" script="GUISliderHandleContent">
-		<doc>Structure describing contents of a GUISliderHandle element.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="flags" type="GUISliderHandleFlag">
-			</param>
-		</ctor>
-		<field name="Flags" type="GUISliderHandleFlag">
-			<doc>Flags that control how does the slider handle behave.</doc>
-		</field>
-	</struct>
 	<class native="GUIToggleGroup" script="GUIToggleGroup">
 		<doc>Object that allows you to group multiple GUI toggle buttons. Only one button among the grouped ones can be active.</doc>
 		<ctor>
