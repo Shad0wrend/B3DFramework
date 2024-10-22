@@ -10,7 +10,7 @@
 #include "CoreObject/BsRenderThread.h"
 #include "Threading/BsAsyncOp.h"
 #include "Resources/BsResources.h"
-#include "Image/BsPixelUtil.h"
+#include "Image/BsPixelUtility.h"
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsGpuDevice.h"
 
@@ -39,7 +39,7 @@ TextureProperties::TextureProperties(const TextureCreateInformation& createInfor
 
 bool TextureProperties::HasAlpha() const
 {
-	return PixelUtil::HasAlpha(Format);
+	return PixelUtility::HasAlpha(Format);
 }
 
 u32 TextureProperties::GetFaceCount() const
@@ -189,7 +189,7 @@ TAsyncOp<SPtr<PixelData>> Texture::ReadData(u32 face, u32 mipLevel)
 
 u32 Texture::CalculateSize() const
 {
-	return mProperties.GetFaceCount() * PixelUtil::GetMemorySize(mProperties.Width, mProperties.Height, mProperties.Depth, mProperties.Format);
+	return mProperties.GetFaceCount() * PixelUtility::GetMemorySize(mProperties.Width, mProperties.Height, mProperties.Depth, mProperties.Format);
 }
 
 void Texture::UpdateCpuBuffers(u32 subresourceIdx, const PixelData& pixelData)
@@ -208,7 +208,7 @@ void Texture::UpdateCpuBuffers(u32 subresourceIdx, const PixelData& pixelData)
 	mProperties.MapFromSubresourceIdx(subresourceIdx, face, mipLevel);
 
 	u32 mipWidth, mipHeight, mipDepth;
-	PixelUtil::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
+	PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
 
 	if(pixelData.GetWidth() != mipWidth || pixelData.GetHeight() != mipHeight ||
 	   pixelData.GetDepth() != mipDepth || pixelData.GetFormat() != mProperties.Format)
@@ -235,7 +235,7 @@ void Texture::ReadCachedData(PixelData& dest, u32 face, u32 mipLevel)
 	}
 
 	u32 mipWidth, mipHeight, mipDepth;
-	PixelUtil::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
+	PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
 
 	if(dest.GetWidth() != mipWidth || dest.GetHeight() != mipHeight ||
 	   dest.GetDepth() != mipDepth || dest.GetFormat() != mProperties.Format)
@@ -383,7 +383,7 @@ void Texture::ReadData(PixelData& destination, u32 mipLevel, u32 face, const SPt
 	PixelData& pixelData = static_cast<PixelData&>(destination);
 
 	u32 mipWidth, mipHeight, mipDepth;
-	PixelUtil::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
+	PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
 
 	if(pixelData.GetWidth() != mipWidth || pixelData.GetHeight() != mipHeight ||
 	   pixelData.GetDepth() != mipDepth || pixelData.GetFormat() != mProperties.Format)
@@ -487,7 +487,7 @@ void Texture::Copy(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target,
 	}
 
 	u32 srcWidth, srcHeight, srcDepth;
-	PixelUtil::GetSizeForMipLevel(
+	PixelUtility::GetSizeForMipLevel(
 		mProperties.Width,
 		mProperties.Height,
 		mProperties.Depth,
@@ -497,7 +497,7 @@ void Texture::Copy(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target,
 		srcDepth);
 
 	u32 dstWidth, dstHeight, dstDepth;
-	PixelUtil::GetSizeForMipLevel(
+	PixelUtility::GetSizeForMipLevel(
 		target->mProperties.Width,
 		target->mProperties.Height,
 		target->mProperties.Depth,

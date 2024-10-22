@@ -5,7 +5,7 @@
 #include "Renderer/BsRendererUtility.h"
 #include "Renderer/BsCamera.h"
 #include "Material/BsGpuParamsSet.h"
-#include "Image/BsPixelUtil.h"
+#include "Image/BsPixelUtility.h"
 #include "Utility/BsBitwise.h"
 #include "Renderer/BsGpuResourcePool.h"
 #include "BsRendererView.h"

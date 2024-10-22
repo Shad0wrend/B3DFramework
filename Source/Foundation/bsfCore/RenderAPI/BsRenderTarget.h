@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Script/BsIScriptExportable.h"
-#include "Image/BsPixelUtil.h"
+#include "Image/BsPixelUtility.h"
 #include "RenderAPI/BsViewport.h"
 #include "CoreObject/BsCoreObject.h"
 #include "Utility/BsEvent.h"

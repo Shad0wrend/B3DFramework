@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Importer/BsImportOptions.h"
-#include "Image/BsPixelUtil.h"
+#include "Image/BsPixelUtility.h"
 
 namespace bs
 {

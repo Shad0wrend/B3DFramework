@@ -11,7 +11,7 @@ HTexture TextureEx::Create(PixelFormat format, u32 width, u32 height, u32 depth,
 {
 	int numMips = 0;
 	if(hasMipmaps)
-		numMips = PixelUtil::GetMaxMipmaps(width, height, 1, format);
+		numMips = PixelUtility::GetMipmapCount(width, height, 1, format);
 
 	TextureCreateInformation texDesc;
 	texDesc.Name = "Script Texture";

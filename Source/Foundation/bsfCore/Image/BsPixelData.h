@@ -232,7 +232,6 @@ namespace bs
 		 * to hold "width" pixel, but doesn't have to be as some buffers require padding.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(RawRowPitch), Property(Getter))
-
 		u32 GetRowPitch() const { return mRowPitch; }
 
 		/**
@@ -240,7 +239,6 @@ namespace bs
 		 * required to hold "width * height" pixels, but doesn't have to be as some buffers require padding.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(RawSlicePitch), Property(Getter))
-
 		u32 GetSlicePitch() const { return mSlicePitch; }
 
 		/**
@@ -269,7 +267,6 @@ namespace bs
 
 		/** Returns the pixel format used by the internal buffer for storing the pixels. */
 		B3D_SCRIPT_EXPORT(ExportName(Format), Property(Getter))
-
 		PixelFormat GetFormat() const { return mFormat; }
 
 		/**	Returns width of the buffer in pixels. */
@@ -319,14 +316,12 @@ namespace bs
 
 		/** Returns extents of the pixel volume this object is capable of holding. */
 		B3D_SCRIPT_EXPORT(ExportName(Extents), Property(Getter))
-
 		PixelVolume GetExtents() const { return mExtents; }
 
 		/**
 		 * Return whether this buffer is laid out consecutive in memory (meaning the pitches are equal to the dimensions).
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(RawIsConsecutive), Property(Getter))
-
 		bool IsConsecutive() const
 		{
 			return mSlicePitch * GetDepth() == GetConsecutiveSize();

@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Utility/BsModule.h"
-#include "Image/BsPixelUtil.h"
+#include "Image/BsPixelUtility.h"
 #include "Image/BsTexture.h"
 
 namespace bs

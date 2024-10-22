@@ -242,13 +242,13 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 		SPtr<PixelData> src = iconsToGenerate[i].SrcData;
 
 		SPtr<PixelData> scaled48 = PixelData::Create(48, 48, 1, src->GetFormat());
-		PixelUtil::Scale(*src, *scaled48);
+		PixelUtility::Scale(*src, *scaled48);
 
 		SPtr<PixelData> scaled32 = PixelData::Create(32, 32, 1, src->GetFormat());
-		PixelUtil::Scale(*scaled48, *scaled32);
+		PixelUtility::Scale(*scaled48, *scaled32);
 
 		SPtr<PixelData> scaled16 = PixelData::Create(16, 16, 1, src->GetFormat());
-		PixelUtil::Scale(*scaled32, *scaled16);
+		PixelUtility::Scale(*scaled32, *scaled16);
 
 		const String iconName48 = iconsToGenerate[i].Name + "48";
 		const String iconName32 = iconsToGenerate[i].Name + "32";

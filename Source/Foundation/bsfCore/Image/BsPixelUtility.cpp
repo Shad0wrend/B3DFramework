@@ -1,6 +1,6 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Image/BsPixelUtil.h"
+#include "Image/BsPixelUtility.h"
 #include "Utility/BsBitwise.h"
 #include "Image/BsColor.h"
 #include "Math/BsMath.h"
@@ -63,8 +63,8 @@ struct LinearResampler
 {
 	static void Scale(const PixelData& source, const PixelData& dest)
 	{
-		u32 sourceElemSize = PixelUtil::GetNumElemBytes(source.GetFormat());
-		u32 destElemSize = PixelUtil::GetNumElemBytes(dest.GetFormat());
+		u32 sourceElemSize = PixelUtility::GetElementByteCount(source.GetFormat());
+		u32 destElemSize = PixelUtility::GetElementByteCount(dest.GetFormat());
 
 		u8* sourceData = source.GetData();
 		u8* destPtr = dest.GetData();
@@ -112,14 +112,14 @@ struct LinearResampler
 
 #define GETSOURCEDATA(x, y, z) sourceData + sourceElemSize*(x) + (y)*source.GetRowPitch() + (z)*source.GetSlicePitch()
 
-					PixelUtil::UnpackColor(&x1y1z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY1, sampleCoordZ1));
-					PixelUtil::UnpackColor(&x2y1z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY1, sampleCoordZ1));
-					PixelUtil::UnpackColor(&x1y2z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY2, sampleCoordZ1));
-					PixelUtil::UnpackColor(&x2y2z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY2, sampleCoordZ1));
-					PixelUtil::UnpackColor(&x1y1z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY1, sampleCoordZ2));
-					PixelUtil::UnpackColor(&x2y1z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY1, sampleCoordZ2));
-					PixelUtil::UnpackColor(&x1y2z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY2, sampleCoordZ2));
-					PixelUtil::UnpackColor(&x2y2z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY2, sampleCoordZ2));
+					PixelUtility::UnpackColor(&x1y1z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY1, sampleCoordZ1));
+					PixelUtility::UnpackColor(&x2y1z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY1, sampleCoordZ1));
+					PixelUtility::UnpackColor(&x1y2z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY2, sampleCoordZ1));
+					PixelUtility::UnpackColor(&x2y2z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY2, sampleCoordZ1));
+					PixelUtility::UnpackColor(&x1y1z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY1, sampleCoordZ2));
+					PixelUtility::UnpackColor(&x2y1z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY1, sampleCoordZ2));
+					PixelUtility::UnpackColor(&x1y2z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY2, sampleCoordZ2));
+					PixelUtility::UnpackColor(&x2y2z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY2, sampleCoordZ2));
 #undef GETSOURCEDATA
 
 					Color accum =
@@ -132,7 +132,7 @@ struct LinearResampler
 						x1y2z2 * ((1.0f - sampleWeightX) * sampleWeightY * sampleWeightZ) +
 						x2y2z2 * (sampleWeightX * sampleWeightY * sampleWeightZ);
 
-					PixelUtil::PackColor(accum, dest.GetFormat(), destPtr);
+					PixelUtility::PackColor(accum, dest.GetFormat(), destPtr);
 
 					destPtr += destElemSize;
 				}
@@ -153,8 +153,8 @@ struct LinearResampler_Float32
 {
 	static void Scale(const PixelData& source, const PixelData& dest)
 	{
-		u32 sourcePixelSize = PixelUtil::GetNumElemBytes(source.GetFormat());
-		u32 destPixelSize = PixelUtil::GetNumElemBytes(dest.GetFormat());
+		u32 sourcePixelSize = PixelUtility::GetElementByteCount(source.GetFormat());
+		u32 destPixelSize = PixelUtility::GetElementByteCount(dest.GetFormat());
 
 		u32 numSourceChannels = sourcePixelSize / sizeof(float);
 		u32 numDestChannels = destPixelSize / sizeof(float);
@@ -1901,12 +1901,12 @@ nvtt::WrapMode ToNvttWrapMode(MipMapWrapMode wrapMode)
 	return nvtt::WrapMode_Mirror;
 }
 
-u32 PixelUtil::GetNumElemBytes(PixelFormat format)
+u32 PixelUtility::GetElementByteCount(PixelFormat format)
 {
 	return GetDescriptionFor(format).ElemBytes;
 }
 
-u32 PixelUtil::GetBlockSize(PixelFormat format)
+u32 PixelUtility::GetBlockSize(PixelFormat format)
 {
 	switch(format)
 	{
@@ -1921,11 +1921,11 @@ u32 PixelUtil::GetBlockSize(PixelFormat format)
 	case PF_BC7:
 		return 16;
 	default:
-		return GetNumElemBytes(format);
+		return GetElementByteCount(format);
 	}
 }
 
-Vector2I PixelUtil::GetBlockDimensions(PixelFormat format)
+Vector2I PixelUtility::GetBlockDimensions(PixelFormat format)
 {
 	switch(format)
 	{
@@ -1943,7 +1943,7 @@ Vector2I PixelUtil::GetBlockDimensions(PixelFormat format)
 	}
 }
 
-u32 PixelUtil::GetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format)
+u32 PixelUtility::GetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format)
 {
 	if(IsCompressed(format))
 	{
@@ -1969,7 +1969,7 @@ u32 PixelUtil::GetMemorySize(u32 width, u32 height, u32 depth, PixelFormat forma
 	return width * height * depth * GetBlockSize(format);
 }
 
-void PixelUtil::GetPitch(u32 width, u32 height, u32 depth, PixelFormat format, u32& rowPitch, u32& depthPitch)
+void PixelUtility::GetPitch(u32 width, u32 height, u32 depth, PixelFormat format, u32& rowPitch, u32& depthPitch)
 {
 	u32 blockSize = GetBlockSize(format);
 
@@ -1998,7 +1998,7 @@ void PixelUtil::GetPitch(u32 width, u32 height, u32 depth, PixelFormat format, u
 	depthPitch = width * height * blockSize;
 }
 
-void PixelUtil::GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLevel, u32& mipWidth, u32& mipHeight, u32& mipDepth)
+void PixelUtility::GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLevel, u32& mipWidth, u32& mipHeight, u32& mipDepth)
 {
 	mipWidth = width;
 	mipHeight = height;
@@ -2012,42 +2012,42 @@ void PixelUtil::GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLeve
 	}
 }
 
-u32 PixelUtil::GetNumElemBits(PixelFormat format)
+u32 PixelUtility::GetElementBitCount(PixelFormat format)
 {
 	return GetDescriptionFor(format).ElemBytes * 8;
 }
 
-u32 PixelUtil::GetFlags(PixelFormat format)
+u32 PixelUtility::GetFlags(PixelFormat format)
 {
 	return GetDescriptionFor(format).Flags;
 }
 
-bool PixelUtil::HasAlpha(PixelFormat format)
+bool PixelUtility::HasAlpha(PixelFormat format)
 {
-	return (PixelUtil::GetFlags(format) & PFF_HASALPHA) > 0;
+	return (PixelUtility::GetFlags(format) & PFF_HASALPHA) > 0;
 }
 
-bool PixelUtil::IsFloatingPoint(PixelFormat format)
+bool PixelUtility::IsFloatingPoint(PixelFormat format)
 {
-	return (PixelUtil::GetFlags(format) & PFF_FLOAT) > 0;
+	return (PixelUtility::GetFlags(format) & PFF_FLOAT) > 0;
 }
 
-bool PixelUtil::IsCompressed(PixelFormat format)
+bool PixelUtility::IsCompressed(PixelFormat format)
 {
-	return (PixelUtil::GetFlags(format) & PFF_COMPRESSED) > 0;
+	return (PixelUtility::GetFlags(format) & PFF_COMPRESSED) > 0;
 }
 
-bool PixelUtil::IsNormalized(PixelFormat format)
+bool PixelUtility::IsNormalized(PixelFormat format)
 {
-	return (PixelUtil::GetFlags(format) & PFF_NORMALIZED) > 0;
+	return (PixelUtility::GetFlags(format) & PFF_NORMALIZED) > 0;
 }
 
-bool PixelUtil::IsDepth(PixelFormat format)
+bool PixelUtility::IsDepth(PixelFormat format)
 {
-	return (PixelUtil::GetFlags(format) & PFF_DEPTH) > 0;
+	return (PixelUtility::GetFlags(format) & PFF_DEPTH) > 0;
 }
 
-bool PixelUtil::CheckFormat(PixelFormat& format, TextureType texType, int usage)
+bool PixelUtility::CheckFormat(PixelFormat& format, TextureType texType, int usage)
 {
 	// First check just the usage since it's the most limiting factor
 
@@ -2114,7 +2114,7 @@ bool PixelUtil::CheckFormat(PixelFormat& format, TextureType texType, int usage)
 	}
 }
 
-bool PixelUtil::IsValidExtent(u32 width, u32 height, u32 depth, PixelFormat format)
+bool PixelUtility::IsValidExtent(u32 width, u32 height, u32 depth, PixelFormat format)
 {
 	if(IsCompressed(format))
 	{
@@ -2139,7 +2139,7 @@ bool PixelUtil::IsValidExtent(u32 width, u32 height, u32 depth, PixelFormat form
 	}
 }
 
-void PixelUtil::GetBitDepths(PixelFormat format, int (&rgba)[4])
+void PixelUtility::GetBitDepths(PixelFormat format, int (&rgba)[4])
 {
 	const PixelFormatDescription& des = GetDescriptionFor(format);
 	rgba[0] = des.Rbits;
@@ -2148,7 +2148,7 @@ void PixelUtil::GetBitDepths(PixelFormat format, int (&rgba)[4])
 	rgba[3] = des.Abits;
 }
 
-void PixelUtil::GetBitMasks(PixelFormat format, u32 (&rgba)[4])
+void PixelUtility::GetBitMasks(PixelFormat format, u32 (&rgba)[4])
 {
 	const PixelFormatDescription& des = GetDescriptionFor(format);
 	rgba[0] = des.Rmask;
@@ -2157,7 +2157,7 @@ void PixelUtil::GetBitMasks(PixelFormat format, u32 (&rgba)[4])
 	rgba[3] = des.Amask;
 }
 
-void PixelUtil::GetBitShifts(PixelFormat format, u8 (&rgba)[4])
+void PixelUtility::GetBitShifts(PixelFormat format, u8 (&rgba)[4])
 {
 	const PixelFormatDescription& des = GetDescriptionFor(format);
 	rgba[0] = des.Rshift;
@@ -2166,33 +2166,33 @@ void PixelUtil::GetBitShifts(PixelFormat format, u8 (&rgba)[4])
 	rgba[3] = des.Ashift;
 }
 
-String PixelUtil::GetFormatName(PixelFormat srcformat)
+String PixelUtility::GetFormatName(PixelFormat format)
 {
-	return GetDescriptionFor(srcformat).Name;
+	return GetDescriptionFor(format).Name;
 }
 
-bool PixelUtil::IsAccessible(PixelFormat srcformat)
+bool PixelUtility::IsAccessible(PixelFormat format)
 {
-	if(srcformat == PF_UNKNOWN)
+	if(format == PF_UNKNOWN)
 		return false;
 
-	u32 flags = GetFlags(srcformat);
+	u32 flags = GetFlags(format);
 	return !((flags & PFF_COMPRESSED) || (flags & PFF_DEPTH));
 }
 
-PixelComponentType PixelUtil::GetElementType(PixelFormat format)
+PixelComponentType PixelUtility::GetElementType(PixelFormat format)
 {
 	const PixelFormatDescription& des = GetDescriptionFor(format);
 	return des.ComponentType;
 }
 
-u32 PixelUtil::GetNumElements(PixelFormat format)
+u32 PixelUtility::GetElementCount(PixelFormat format)
 {
 	const PixelFormatDescription& des = GetDescriptionFor(format);
 	return des.ComponentCount;
 }
 
-u32 PixelUtil::GetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat format)
+u32 PixelUtility::GetMipmapCount(u32 width, u32 height, u32 depth, PixelFormat format)
 {
 	u32 count = 0;
 	if((width > 0) && (height > 0))
@@ -2210,12 +2210,12 @@ u32 PixelUtil::GetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat forma
 	return count;
 }
 
-void PixelUtil::PackColor(const Color& color, PixelFormat format, void* dest)
+void PixelUtility::PackColor(const Color& color, PixelFormat format, void* dest)
 {
 	PackColor(color.R, color.G, color.B, color.A, format, dest);
 }
 
-void PixelUtil::PackColor(u8 r, u8 g, u8 b, u8 a, PixelFormat format, void* dest)
+void PixelUtility::PackColor(u8 r, u8 g, u8 b, u8 a, PixelFormat format, void* dest)
 {
 	const PixelFormatDescription& des = GetDescriptionFor(format);
 
@@ -2237,7 +2237,7 @@ void PixelUtil::PackColor(u8 r, u8 g, u8 b, u8 a, PixelFormat format, void* dest
 	}
 }
 
-void PixelUtil::PackColor(float r, float g, float b, float a, const PixelFormat format, void* dest)
+void PixelUtility::PackColor(float r, float g, float b, float a, const PixelFormat format, void* dest)
 {
 	// Special cases
 	if(format == PF_RG11B10F)
@@ -2325,12 +2325,12 @@ void PixelUtil::PackColor(float r, float g, float b, float a, const PixelFormat 
 	Bitwise::IntWrite(curDst, numBytes, dwordValue);
 }
 
-void PixelUtil::UnpackColor(Color* color, PixelFormat format, const void* src)
+void PixelUtility::UnpackColor(Color* color, PixelFormat format, const void* src)
 {
 	UnpackColor(&color->R, &color->G, &color->B, &color->A, format, src);
 }
 
-void PixelUtil::UnpackColor(u8* r, u8* g, u8* b, u8* a, PixelFormat format, const void* src)
+void PixelUtility::UnpackColor(u8* r, u8* g, u8* b, u8* a, PixelFormat format, const void* src)
 {
 	const PixelFormatDescription& des = GetDescriptionFor(format);
 
@@ -2365,7 +2365,7 @@ void PixelUtil::UnpackColor(u8* r, u8* g, u8* b, u8* a, PixelFormat format, cons
 	}
 }
 
-void PixelUtil::UnpackColor(float* r, float* g, float* b, float* a, PixelFormat format, const void* src)
+void PixelUtility::UnpackColor(float* r, float* g, float* b, float* a, PixelFormat format, const void* src)
 {
 	// Special cases
 	if(format == PF_RG11B10F)
@@ -2443,7 +2443,7 @@ void PixelUtil::UnpackColor(float* r, float* g, float* b, float* a, PixelFormat 
 		*outputs[3] = 1.0f;
 }
 
-void PixelUtil::PackDepth(float depth, const PixelFormat format, void* dest)
+void PixelUtility::PackDepth(float depth, const PixelFormat format, void* dest)
 {
 	if(!IsDepth(format))
 	{
@@ -2455,7 +2455,7 @@ void PixelUtil::PackDepth(float depth, const PixelFormat format, void* dest)
 	// TODO implement depth packing
 }
 
-float PixelUtil::UnpackDepth(PixelFormat format, void* src)
+float PixelUtility::UnpackDepth(PixelFormat format, void* src)
 {
 	if(!IsDepth(format))
 	{
@@ -2488,26 +2488,26 @@ float PixelUtil::UnpackDepth(PixelFormat format, void* src)
 	}
 }
 
-void PixelUtil::BulkPixelConversion(const PixelData& src, PixelData& dst)
+void PixelUtility::BulkPixelConversion(const PixelData& source, PixelData& destination)
 {
-	if(src.GetWidth() != dst.GetWidth() || src.GetHeight() != dst.GetHeight() || src.GetDepth() != dst.GetDepth())
+	if(source.GetWidth() != destination.GetWidth() || source.GetHeight() != destination.GetHeight() || source.GetDepth() != destination.GetDepth())
 	{
 		B3D_LOG(Error, PixelUtility, "Cannot convert pixels between buffers of different sizes.");
 		return;
 	}
 
 	// The easy case
-	if(src.GetFormat() == dst.GetFormat())
+	if(source.GetFormat() == destination.GetFormat())
 	{
 		// Everything consecutive?
-		if(src.IsConsecutive() && dst.IsConsecutive())
+		if(source.IsConsecutive() && destination.IsConsecutive())
 		{
-			memcpy(dst.GetData(), src.GetData(), src.GetConsecutiveSize());
+			memcpy(destination.GetData(), source.GetData(), source.GetConsecutiveSize());
 			return;
 		}
 
-		PixelFormat format = src.GetFormat();
-		u32 pixelSize = GetNumElemBytes(format);
+		PixelFormat format = source.GetFormat();
+		u32 pixelSize = GetElementByteCount(format);
 
 		Vector2I blockDim = GetBlockDimensions(format);
 		if(IsCompressed(format))
@@ -2515,32 +2515,32 @@ void PixelUtil::BulkPixelConversion(const PixelData& src, PixelData& dst)
 			u32 blockSize = GetBlockSize(format);
 			pixelSize = blockSize / blockDim.X;
 
-			if(src.GetLeft() % blockDim.X != 0 || src.GetTop() % blockDim.Y != 0)
+			if(source.GetLeft() % blockDim.X != 0 || source.GetTop() % blockDim.Y != 0)
 			{
 				B3D_LOG(Error, PixelUtility, "Source offset must be a multiple of block size for compressed formats.");
 			}
 
-			if(dst.GetLeft() % blockDim.X != 0 || dst.GetTop() % blockDim.Y != 0)
+			if(destination.GetLeft() % blockDim.X != 0 || destination.GetTop() % blockDim.Y != 0)
 			{
 				B3D_LOG(Error, PixelUtility, "Destination offset must be a multiple of block size for compressed formats.");
 			}
 		}
 
-		u8* srcPtr = static_cast<u8*>(src.GetData()) + src.GetLeft() * pixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
-		u8* dstPtr = static_cast<u8*>(dst.GetData()) + dst.GetLeft() * pixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
+		u8* srcPtr = static_cast<u8*>(source.GetData()) + source.GetLeft() * pixelSize + source.GetTop() * source.GetRowPitch() + source.GetFront() * source.GetSlicePitch();
+		u8* dstPtr = static_cast<u8*>(destination.GetData()) + destination.GetLeft() * pixelSize + destination.GetTop() * destination.GetRowPitch() + destination.GetFront() * destination.GetSlicePitch();
 
 		// Get pitches+skips in bytes
-		const u32 srcRowPitchBytes = src.GetRowPitch();
-		const u32 srcSliceSkipBytes = src.GetSliceSkip();
+		const u32 srcRowPitchBytes = source.GetRowPitch();
+		const u32 srcSliceSkipBytes = source.GetSliceSkip();
 
-		const u32 dstRowPitchBytes = dst.GetRowPitch();
-		const u32 dstSliceSkipBytes = dst.GetSliceSkip();
+		const u32 dstRowPitchBytes = destination.GetRowPitch();
+		const u32 dstSliceSkipBytes = destination.GetSliceSkip();
 
 		// Otherwise, copy per row
-		const u32 rowSize = src.GetWidth() * pixelSize;
-		for(u32 z = src.GetFront(); z < src.GetBack(); z++)
+		const u32 rowSize = source.GetWidth() * pixelSize;
+		for(u32 z = source.GetFront(); z < source.GetBack(); z++)
 		{
-			for(u32 y = src.GetTop(); y < src.GetBottom(); y += blockDim.Y)
+			for(u32 y = source.GetTop(); y < source.GetBottom(); y += blockDim.Y)
 			{
 				memcpy(dstPtr, srcPtr, rowSize);
 
@@ -2556,9 +2556,9 @@ void PixelUtil::BulkPixelConversion(const PixelData& src, PixelData& dst)
 	}
 
 	// Check for compressed formats, we don't support decompression
-	if(IsCompressed(src.GetFormat()))
+	if(IsCompressed(source.GetFormat()))
 	{
-		if(src.GetFormat() != dst.GetFormat())
+		if(source.GetFormat() != destination.GetFormat())
 		{
 			B3D_LOG(Error, PixelUtility, "Cannot convert from a compressed format to another format.");
 			return;
@@ -2566,39 +2566,39 @@ void PixelUtil::BulkPixelConversion(const PixelData& src, PixelData& dst)
 	}
 
 	// Check for compression
-	if(IsCompressed(dst.GetFormat()))
+	if(IsCompressed(destination.GetFormat()))
 	{
-		if(src.GetFormat() != dst.GetFormat())
+		if(source.GetFormat() != destination.GetFormat())
 		{
 			CompressionOptions co;
-			co.Format = dst.GetFormat();
-			Compress(src, dst, co);
+			co.Format = destination.GetFormat();
+			Compress(source, destination, co);
 
 			return;
 		}
 	}
 
-	u32 srcPixelSize = GetNumElemBytes(src.GetFormat());
-	u32 dstPixelSize = GetNumElemBytes(dst.GetFormat());
-	u8* srcptr = static_cast<u8*>(src.GetData()) + src.GetLeft() * srcPixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
-	u8* dstptr = static_cast<u8*>(dst.GetData()) + dst.GetLeft() * dstPixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
+	u32 srcPixelSize = GetElementByteCount(source.GetFormat());
+	u32 dstPixelSize = GetElementByteCount(destination.GetFormat());
+	u8* srcptr = static_cast<u8*>(source.GetData()) + source.GetLeft() * srcPixelSize + source.GetTop() * source.GetRowPitch() + source.GetFront() * source.GetSlicePitch();
+	u8* dstptr = static_cast<u8*>(destination.GetData()) + destination.GetLeft() * dstPixelSize + destination.GetTop() * destination.GetRowPitch() + destination.GetFront() * destination.GetSlicePitch();
 
 	// Get pitches+skips in bytes
-	u32 srcRowSkipBytes = src.GetRowSkip();
-	u32 srcSliceSkipBytes = src.GetSliceSkip();
-	u32 dstRowSkipBytes = dst.GetRowSkip();
-	u32 dstSliceSkipBytes = dst.GetSliceSkip();
+	u32 srcRowSkipBytes = source.GetRowSkip();
+	u32 srcSliceSkipBytes = source.GetSliceSkip();
+	u32 dstRowSkipBytes = destination.GetRowSkip();
+	u32 dstSliceSkipBytes = destination.GetSliceSkip();
 
 	// The brute force fallback
 	float r, g, b, a;
-	for(u32 z = src.GetFront(); z < src.GetBack(); z++)
+	for(u32 z = source.GetFront(); z < source.GetBack(); z++)
 	{
-		for(u32 y = src.GetTop(); y < src.GetBottom(); y++)
+		for(u32 y = source.GetTop(); y < source.GetBottom(); y++)
 		{
-			for(u32 x = src.GetLeft(); x < src.GetRight(); x++)
+			for(u32 x = source.GetLeft(); x < source.GetRight(); x++)
 			{
-				UnpackColor(&r, &g, &b, &a, src.GetFormat(), srcptr);
-				PackColor(r, g, b, a, dst.GetFormat(), dstptr);
+				UnpackColor(&r, &g, &b, &a, source.GetFormat(), srcptr);
+				PackColor(r, g, b, a, destination.GetFormat(), dstptr);
 
 				srcptr += srcPixelSize;
 				dstptr += dstPixelSize;
@@ -2613,7 +2613,7 @@ void PixelUtil::BulkPixelConversion(const PixelData& src, PixelData& dst)
 	}
 }
 
-void PixelUtil::FlipComponentOrder(PixelData& data)
+void PixelUtility::FlipComponentOrder(PixelData& data)
 {
 	if(IsCompressed(data.GetFormat()))
 	{
@@ -2728,17 +2728,17 @@ void PixelUtil::FlipComponentOrder(PixelData& data)
 	}
 }
 
-void PixelUtil::Scale(const PixelData& src, PixelData& scaled, Filter filter)
+void PixelUtility::Scale(const PixelData& source, PixelData& scaled, ScaleFilter filter)
 {
-	B3D_ASSERT(PixelUtil::IsAccessible(src.GetFormat()));
-	B3D_ASSERT(PixelUtil::IsAccessible(scaled.GetFormat()));
+	B3D_ASSERT(PixelUtility::IsAccessible(source.GetFormat()));
+	B3D_ASSERT(PixelUtility::IsAccessible(scaled.GetFormat()));
 
 	PixelData temp;
 	switch(filter)
 	{
 	default:
-	case FILTER_NEAREST:
-		if(src.GetFormat() == scaled.GetFormat())
+	case ScaleFilter::Nearest:
+		if(source.GetFormat() == scaled.GetFormat())
 		{
 			// No intermediate buffer needed
 			temp = scaled;
@@ -2746,21 +2746,21 @@ void PixelUtil::Scale(const PixelData& src, PixelData& scaled, Filter filter)
 		else
 		{
 			// Allocate temporary buffer of destination size in source format
-			temp = PixelData(scaled.GetWidth(), scaled.GetHeight(), scaled.GetDepth(), src.GetFormat());
+			temp = PixelData(scaled.GetWidth(), scaled.GetHeight(), scaled.GetDepth(), source.GetFormat());
 			temp.AllocateInternalBuffer();
 		}
 
 		// No conversion
-		switch(PixelUtil::GetNumElemBytes(src.GetFormat()))
+		switch(PixelUtility::GetElementByteCount(source.GetFormat()))
 		{
-		case 1: NearestResampler<1>::Scale(src, temp); break;
-		case 2: NearestResampler<2>::Scale(src, temp); break;
-		case 3: NearestResampler<3>::Scale(src, temp); break;
-		case 4: NearestResampler<4>::Scale(src, temp); break;
-		case 6: NearestResampler<6>::Scale(src, temp); break;
-		case 8: NearestResampler<8>::Scale(src, temp); break;
-		case 12: NearestResampler<12>::Scale(src, temp); break;
-		case 16: NearestResampler<16>::Scale(src, temp); break;
+		case 1: NearestResampler<1>::Scale(source, temp); break;
+		case 2: NearestResampler<2>::Scale(source, temp); break;
+		case 3: NearestResampler<3>::Scale(source, temp); break;
+		case 4: NearestResampler<4>::Scale(source, temp); break;
+		case 6: NearestResampler<6>::Scale(source, temp); break;
+		case 8: NearestResampler<8>::Scale(source, temp); break;
+		case 12: NearestResampler<12>::Scale(source, temp); break;
+		case 16: NearestResampler<16>::Scale(source, temp); break;
 		default:
 			// Never reached
 			B3D_ASSERT(false);
@@ -2769,22 +2769,22 @@ void PixelUtil::Scale(const PixelData& src, PixelData& scaled, Filter filter)
 		if(temp.GetData() != scaled.GetData())
 		{
 			// Blit temp buffer
-			PixelUtil::BulkPixelConversion(temp, scaled);
+			PixelUtility::BulkPixelConversion(temp, scaled);
 
 			temp.FreeInternalBuffer();
 		}
 
 		break;
 
-	case FILTER_LINEAR:
-		switch(src.GetFormat())
+	case ScaleFilter::Linear:
+		switch(source.GetFormat())
 		{
 		case PF_RG8:
 		case PF_RGB8:
 		case PF_BGR8:
 		case PF_RGBA8:
 		case PF_BGRA8:
-			if(src.GetFormat() == scaled.GetFormat())
+			if(source.GetFormat() == scaled.GetFormat())
 			{
 				// No intermediate buffer needed
 				temp = scaled;
@@ -2792,17 +2792,17 @@ void PixelUtil::Scale(const PixelData& src, PixelData& scaled, Filter filter)
 			else
 			{
 				// Allocate temp buffer of destination size in source format
-				temp = PixelData(scaled.GetWidth(), scaled.GetHeight(), scaled.GetDepth(), src.GetFormat());
+				temp = PixelData(scaled.GetWidth(), scaled.GetHeight(), scaled.GetDepth(), source.GetFormat());
 				temp.AllocateInternalBuffer();
 			}
 
 			// No conversion
-			switch(PixelUtil::GetNumElemBytes(src.GetFormat()))
+			switch(PixelUtility::GetElementByteCount(source.GetFormat()))
 			{
-			case 1: LinearResampler_Byte<1>::Scale(src, temp); break;
-			case 2: LinearResampler_Byte<2>::Scale(src, temp); break;
-			case 3: LinearResampler_Byte<3>::Scale(src, temp); break;
-			case 4: LinearResampler_Byte<4>::Scale(src, temp); break;
+			case 1: LinearResampler_Byte<1>::Scale(source, temp); break;
+			case 2: LinearResampler_Byte<2>::Scale(source, temp); break;
+			case 3: LinearResampler_Byte<3>::Scale(source, temp); break;
+			case 4: LinearResampler_Byte<4>::Scale(source, temp); break;
 			default:
 				// Never reached
 				B3D_ASSERT(false);
@@ -2811,7 +2811,7 @@ void PixelUtil::Scale(const PixelData& src, PixelData& scaled, Filter filter)
 			if(temp.GetData() != scaled.GetData())
 			{
 				// Blit temp buffer
-				PixelUtil::BulkPixelConversion(temp, scaled);
+				PixelUtility::BulkPixelConversion(temp, scaled);
 				temp.FreeInternalBuffer();
 			}
 
@@ -2821,19 +2821,30 @@ void PixelUtil::Scale(const PixelData& src, PixelData& scaled, Filter filter)
 			if(scaled.GetFormat() == PF_RGB32F || scaled.GetFormat() == PF_RGBA32F)
 			{
 				// float32 to float32, avoid unpack/repack overhead
-				LinearResampler_Float32::Scale(src, scaled);
+				LinearResampler_Float32::Scale(source, scaled);
 				break;
 			}
 			// Else, fall through
 		default:
 			// Fallback case, slow but works
-			LinearResampler::Scale(src, scaled);
+			LinearResampler::Scale(source, scaled);
 		}
 		break;
 	}
 }
 
-void PixelUtil::Copy(const PixelData& src, PixelData& dst, u32 offsetX, u32 offsetY, u32 offsetZ)
+SPtr<PixelData> PixelUtility::Scale(const SPtr<PixelData>& source, const Size3UI& size, ScaleFilter filter)
+{
+	if(source == nullptr)
+		return nullptr;
+
+	SPtr<PixelData> output = PixelData::Create(size.Width, size.Height, size.Depth, source->GetFormat());
+	Scale(*source, *output, filter);
+
+	return output;
+}
+
+void PixelUtility::Copy(const PixelData& src, PixelData& dst, u32 offsetX, u32 offsetY, u32 offsetZ)
 {
 	if(src.GetFormat() != dst.GetFormat())
 	{
@@ -2856,7 +2867,7 @@ void PixelUtil::Copy(const PixelData& src, PixelData& dst, u32 offsetX, u32 offs
 	u8* srcPtr = (u8*)src.GetData() + offsetZ * src.GetSlicePitch();
 	u8* dstPtr = (u8*)dst.GetData();
 
-	u32 elemSize = GetNumElemBytes(dst.GetFormat());
+	u32 elemSize = GetElementByteCount(dst.GetFormat());
 	u32 rowSize = dst.GetWidth() * elemSize;
 
 	for(u32 z = 0; z < dst.GetDepth(); z++)
@@ -2877,13 +2888,13 @@ void PixelUtil::Copy(const PixelData& src, PixelData& dst, u32 offsetX, u32 offs
 	}
 }
 
-void PixelUtil::Mirror(PixelData& pixelData, MirrorMode mode)
+void PixelUtility::Mirror(PixelData& pixelData, MirrorMode mode)
 {
 	u32 width = pixelData.GetWidth();
 	u32 height = pixelData.GetHeight();
 	u32 depth = pixelData.GetDepth();
 
-	u32 elemSize = GetNumElemBytes(pixelData.GetFormat());
+	u32 elemSize = GetElementByteCount(pixelData.GetFormat());
 
 	if(mode.IsSet(MirrorModeBits::Z))
 	{
@@ -2965,71 +2976,91 @@ void PixelUtil::Mirror(PixelData& pixelData, MirrorMode mode)
 	}
 }
 
-void PixelUtil::LinearToSrgb(PixelData& pixelData)
+SPtr<PixelData> PixelUtility::LinearToSrgb(const SPtr<PixelData>& input)
 {
-	u32 depth = pixelData.GetDepth();
-	u32 height = pixelData.GetHeight();
-	u32 width = pixelData.GetWidth();
+	if(input == nullptr)
+		return nullptr;
 
-	u32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
-	u8* data = pixelData.GetData();
+	SPtr<PixelData> output = PixelData::Create(input->GetExtents(), input->GetFormat());
+
+	const u32 depth = input->GetDepth();
+	const u32 height = input->GetHeight();
+	const u32 width = input->GetWidth();
+
+	const PixelFormat pixelFormat = input->GetFormat();
+	const u32 pixelSize = PixelUtility::GetElementByteCount(input->GetFormat());
+	const u8* inputData = input->GetData();
+	u8* outputData = input->GetData();
 
 	for(u32 z = 0; z < depth; z++)
 	{
-		u32 zDataIdx = z * pixelData.GetSlicePitch();
+		const u32 zOffsetInBytes = z * input->GetSlicePitch();
 
 		for(u32 y = 0; y < height; y++)
 		{
-			u32 yDataIdx = y * pixelData.GetRowPitch();
+			const u32 yOffsetInBytes = y * input->GetRowPitch();
 
 			for(u32 x = 0; x < width; x++)
 			{
-				u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
-				u8* dest = data + dataIdx;
+				const u32 pixelOffsetInBytes = x * pixelSize + yOffsetInBytes + zOffsetInBytes;
+				const u8* source = inputData + pixelOffsetInBytes;
+				u8* destination = outputData + pixelOffsetInBytes;
 
 				Color color;
 
-				PixelUtil::UnpackColor(&color, pixelData.GetFormat(), dest);
+				PixelUtility::UnpackColor(&color, pixelFormat, source);
 				color = color.GetGamma();
-				PixelUtil::PackColor(color, pixelData.GetFormat(), dest);
+				PixelUtility::PackColor(color, pixelFormat, destination);
 			}
 		}
 	}
+
+	return output;
 }
 
-void PixelUtil::SRGBToLinear(PixelData& pixelData)
+SPtr<PixelData> PixelUtility::SRGBToLinear(const SPtr<PixelData>& input)
 {
-	u32 depth = pixelData.GetDepth();
-	u32 height = pixelData.GetHeight();
-	u32 width = pixelData.GetWidth();
+	if(input == nullptr)
+		return nullptr;
 
-	u32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
-	u8* data = pixelData.GetData();
+	SPtr<PixelData> output = PixelData::Create(input->GetExtents(), input->GetFormat());
+
+	const u32 depth = input->GetDepth();
+	const u32 height = input->GetHeight();
+	const u32 width = input->GetWidth();
+
+	const PixelFormat pixelFormat = input->GetFormat();
+	const u32 pixelSize = PixelUtility::GetElementByteCount(input->GetFormat());
+	const u8* inputData = input->GetData();
+	u8* outputData = input->GetData();
 
 	for(u32 z = 0; z < depth; z++)
 	{
-		u32 zDataIdx = z * pixelData.GetSlicePitch();
+		const u32 zOffsetInBytes = z * input->GetSlicePitch();
 
 		for(u32 y = 0; y < height; y++)
 		{
-			u32 yDataIdx = y * pixelData.GetRowPitch();
+			const u32 yOffsetInBytes = y * input->GetRowPitch();
 
 			for(u32 x = 0; x < width; x++)
 			{
-				u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
-				u8* dest = data + dataIdx;
+				const u32 pixelOffsetInBytes = x * pixelSize + yOffsetInBytes + zOffsetInBytes;
+				const u8* source = inputData + pixelOffsetInBytes;
+				u8* destination = outputData + pixelOffsetInBytes;
 
 				Color color;
 
-				PixelUtil::UnpackColor(&color, pixelData.GetFormat(), dest);
+				PixelUtility::UnpackColor(&color, pixelFormat, source);
 				color = color.GetLinear();
-				PixelUtil::PackColor(color, pixelData.GetFormat(), dest);
+				PixelUtility::PackColor(color, pixelFormat, destination);
 			}
 		}
 	}
+
+	return output;
 }
 
-void PixelUtil::Compress(const PixelData& src, PixelData& dst, const CompressionOptions& options)
+void PixelUtility::Compress(const PixelData& source, PixelData& destination, const CompressionOptions& options)
 {
 	if(!IsCompressed(options.Format))
 	{
@@ -3037,13 +3068,13 @@ void PixelUtil::Compress(const PixelData& src, PixelData& dst, const Compression
 		return;
 	}
 
-	if(src.GetDepth() != 1)
+	if(source.GetDepth() != 1)
 	{
 		B3D_LOG(Error, PixelUtility, "Compression failed. 3D texture compression not supported.");
 		return;
 	}
 
-	if(IsCompressed(src.GetFormat()))
+	if(IsCompressed(source.GetFormat()))
 	{
 		B3D_LOG(Error, PixelUtility, "Compression failed. Source data cannot be compressed.");
 		return;
@@ -3051,12 +3082,12 @@ void PixelUtil::Compress(const PixelData& src, PixelData& dst, const Compression
 
 	PixelFormat interimFormat = options.Format == PF_BC6H ? PF_RGBA32F : PF_BGRA8;
 
-	PixelData interimData(src.GetWidth(), src.GetHeight(), 1, interimFormat);
+	PixelData interimData(source.GetWidth(), source.GetHeight(), 1, interimFormat);
 	interimData.AllocateInternalBuffer();
-	BulkPixelConversion(src, interimData);
+	BulkPixelConversion(source, interimData);
 
 	nvtt::InputOptions io;
-	io.setTextureLayout(nvtt::TextureType_2D, src.GetWidth(), src.GetHeight());
+	io.setTextureLayout(nvtt::TextureType_2D, source.GetWidth(), source.GetHeight());
 	io.setMipmapGeneration(false);
 	io.setAlphaMode(ToNvttAlphaMode(options.AlphaMode));
 	io.setNormalMap(options.IsNormalMap);
@@ -3071,13 +3102,13 @@ void PixelUtil::Compress(const PixelData& src, PixelData& dst, const Compression
 	else
 		io.setGamma(1.0f, 1.0f);
 
-	io.setMipmapData(interimData.GetData(), src.GetWidth(), src.GetHeight());
+	io.setMipmapData(interimData.GetData(), source.GetWidth(), source.GetHeight());
 
 	nvtt::CompressionOptions co;
 	co.setFormat(ToNvttFormat(options.Format));
 	co.setQuality(ToNvttQuality(options.Quality));
 
-	NVTTCompressOutputHandler outputHandler(dst.GetData(), dst.GetConsecutiveSize());
+	NVTTCompressOutputHandler outputHandler(destination.GetData(), destination.GetConsecutiveSize());
 
 	nvtt::OutputOptions oo;
 	oo.setOutputHeader(false);
@@ -3091,39 +3122,64 @@ void PixelUtil::Compress(const PixelData& src, PixelData& dst, const Compression
 	}
 }
 
-Vector<SPtr<PixelData>> PixelUtil::GenMipmaps(const PixelData& src, const MipMapGenOptions& options)
+SPtr<PixelData> PixelUtility::Compress(const SPtr<PixelData>& source, const CompressionOptions& options)
 {
-	Vector<SPtr<PixelData>> outputMipBuffers;
+	if(source == nullptr)
+		return nullptr;
 
-	if(src.GetDepth() != 1)
+	SPtr<PixelData> output = PixelData::Create(source->GetWidth(), source->GetHeight(), source->GetDepth(), options.Format);
+	Compress(*source, *output, options);
+
+	return output;
+}
+
+SPtr<PixelData> PixelUtility::ConvertFormat(const SPtr<PixelData>& source, PixelFormat format)
+{
+	if(source == nullptr)
+		return nullptr;
+	
+	SPtr<PixelData> output = PixelData::Create(source->GetWidth(), source->GetHeight(), source->GetDepth(), format);
+	BulkPixelConversion(*source, *output);
+
+	return output;
+}
+
+Vector<SPtr<PixelData>> PixelUtility::GenerateMipmaps(const SPtr<PixelData>& source, const MipMapGenOptions& options)
+{
+	Vector<SPtr<PixelData>> output;
+
+	if(source == nullptr)
+		return output;
+
+	if(source->GetDepth() != 1)
 	{
 		B3D_LOG(Error, PixelUtility, "Mipmap generation failed. 3D texture formats not supported.");
-		return outputMipBuffers;
+		return output;
 	}
 
-	if(IsCompressed(src.GetFormat()))
+	if(IsCompressed(source->GetFormat()))
 	{
 		B3D_LOG(Error, PixelUtility, "Mipmap generation failed. Source data cannot be compressed.");
-		return outputMipBuffers;
+		return output;
 	}
 
-	if(!Bitwise::IsPow2(src.GetWidth()) || !Bitwise::IsPow2(src.GetHeight()))
+	if(!Bitwise::IsPow2(source->GetWidth()) || !Bitwise::IsPow2(source->GetHeight()))
 	{
 		B3D_LOG(Error, PixelUtility, "Mipmap generation failed. Texture width & height must be powers of 2.");
-		return outputMipBuffers;
+		return output;
 	}
 
-	PixelFormat interimFormat = IsFloatingPoint(src.GetFormat()) ? PF_RGBA32F : PF_BGRA8;
+	PixelFormat interimFormat = IsFloatingPoint(source->GetFormat()) ? PF_RGBA32F : PF_BGRA8;
 
-	PixelData interimData(src.GetWidth(), src.GetHeight(), 1, interimFormat);
+	PixelData interimData(source->GetWidth(), source->GetHeight(), 1, interimFormat);
 	interimData.AllocateInternalBuffer();
-	BulkPixelConversion(src, interimData);
+	BulkPixelConversion(*source, interimData);
 
 	if(interimFormat != PF_RGBA32F)
 		FlipComponentOrder(interimData);
 
 	nvtt::InputOptions io;
-	io.setTextureLayout(nvtt::TextureType_2D, src.GetWidth(), src.GetHeight());
+	io.setTextureLayout(nvtt::TextureType_2D, source->GetWidth(), source->GetHeight());
 	io.setMipmapGeneration(true);
 	io.setNormalMap(options.IsNormalMap);
 	io.setNormalizeMipmaps(options.NormalizeMipmaps);
@@ -3139,7 +3195,7 @@ Vector<SPtr<PixelData>> PixelUtil::GenMipmaps(const PixelData& src, const MipMap
 	else
 		io.setGamma(1.0f, 1.0f);
 
-	io.setMipmapData(interimData.GetData(), src.GetWidth(), src.GetHeight());
+	io.setMipmapData(interimData.GetData(), source->GetWidth(), source->GetHeight());
 
 	nvtt::CompressionOptions co;
 	co.setFormat(nvtt::Format_RGBA);
@@ -3155,15 +3211,15 @@ Vector<SPtr<PixelData>> PixelUtil::GenMipmaps(const PixelData& src, const MipMap
 		co.setPixelFormat(32, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x000000FF);
 	}
 
-	u32 numMips = GetMaxMipmaps(src.GetWidth(), src.GetHeight(), 1, src.GetFormat());
+	u32 numMips = GetMipmapCount(source->GetWidth(), source->GetHeight(), 1, source->GetFormat());
 
 	Vector<SPtr<PixelData>> rgbaMipBuffers;
 
 	// Note: This can be done more effectively without creating so many temp buffers
 	// and working with the original formats directly, but it would complicate the code
 	// too much at the moment.
-	u32 curWidth = src.GetWidth();
-	u32 curHeight = src.GetHeight();
+	u32 curWidth = source->GetWidth();
+	u32 curHeight = source->GetHeight();
 	for(u32 i = 0; i < numMips; i++)
 	{
 		rgbaMipBuffers.push_back(B3DMakeShared<PixelData>(curWidth, curHeight, 1, interimFormat));
@@ -3189,7 +3245,7 @@ Vector<SPtr<PixelData>> PixelUtil::GenMipmaps(const PixelData& src, const MipMap
 	if(!compressor.process(io, co, oo))
 	{
 		B3D_LOG(Error, PixelUtility, "Mipmap generation failed. Internal error.");
-		return outputMipBuffers;
+		return output;
 	}
 
 	interimData.FreeInternalBuffer();
@@ -3197,14 +3253,14 @@ Vector<SPtr<PixelData>> PixelUtil::GenMipmaps(const PixelData& src, const MipMap
 	for(u32 i = 0; i < (u32)rgbaMipBuffers.size(); i++)
 	{
 		SPtr<PixelData> argbBuffer = rgbaMipBuffers[i];
-		SPtr<PixelData> outputBuffer = B3DMakeShared<PixelData>(argbBuffer->GetWidth(), argbBuffer->GetHeight(), 1, src.GetFormat());
+		SPtr<PixelData> outputBuffer = B3DMakeShared<PixelData>(argbBuffer->GetWidth(), argbBuffer->GetHeight(), 1, source->GetFormat());
 		outputBuffer->AllocateInternalBuffer();
 
 		BulkPixelConversion(*argbBuffer, *outputBuffer);
 		argbBuffer->FreeInternalBuffer();
 
-		outputMipBuffers.push_back(outputBuffer);
+		output.push_back(outputBuffer);
 	}
 
-	return outputMipBuffers;
+	return output;
 }

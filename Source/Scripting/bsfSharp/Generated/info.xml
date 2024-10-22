@@ -1,5 +1,43 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <entries>
+	<struct native="TSize3&lt;float&gt;" script="Size3">
+		<doc>Encapsulates width/height/depth in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="float">
+			</param>
+			<param name="height" type="float">
+			</param>
+			<param name="depth" type="float">
+			</param>
+		</ctor>
+		<field name="Width" type="float">
+		</field>
+		<field name="Height" type="float">
+		</field>
+		<field name="Depth" type="float">
+		</field>
+	</struct>
+	<struct native="TSize3&lt;uint32_t&gt;" script="Size3UI">
+		<doc>Encapsulates width/height/depth in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="int">
+			</param>
+			<param name="height" type="int">
+			</param>
+			<param name="depth" type="int">
+			</param>
+		</ctor>
+		<field name="Width" type="int">
+		</field>
+		<field name="Height" type="int">
+		</field>
+		<field name="Depth" type="int">
+		</field>
+	</struct>
 	<class native="AnimationClip" script="AnimationClip">
 		<doc>Contains animation curves for translation/rotation/scale of scene objects/skeleton bones, as well as curves for generic property animation.</doc>
 		<ctor>
@@ -384,6 +422,20 @@
 		<enumentry native="Positive" script="Positive">
 		</enumentry>
 	</enum>
+	<struct native="LogEntry" script="LogEntry">
+		<doc>A single log entry, containing a message and a channel the message was recorded on.</doc>
+		<ctor>
+		</ctor>
+		<field name="Message" type="string">
+		</field>
+		<field name="Verbosity" type="LogVerbosity">
+		</field>
+		<field name="CategoryName" type="string">
+		</field>
+		<field name="LocalTime" type="ulong">
+			<doc>Local time of message</doc>
+		</field>
+	</struct>
 	<struct native="ColorGradientKey" script="ColorGradientKey">
 		<doc>Single key in a ColorGradient.</doc>
 		<ctor>
@@ -397,20 +449,6 @@
 		<field name="Color" type="Color">
 		</field>
 		<field name="Time" type="float">
-		</field>
-	</struct>
-	<struct native="LogEntry" script="LogEntry">
-		<doc>A single log entry, containing a message and a channel the message was recorded on.</doc>
-		<ctor>
-		</ctor>
-		<field name="Message" type="string">
-		</field>
-		<field name="Verbosity" type="LogVerbosity">
-		</field>
-		<field name="CategoryName" type="string">
-		</field>
-		<field name="LocalTime" type="ulong">
-			<doc>Local time of message</doc>
 		</field>
 	</struct>
 	<class native="ApplicationEx" script="Application">
@@ -1551,9 +1589,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Source is a single cylindrical panoramic image.</doc>
 		</enumentry>
 	</enum>
-	<class native="ImportOptions" script="ImportOptions">
-		<doc>Base class for creating import options from. Import options are specific for each importer and control how is data imported.</doc>
-	</class>
 	<class native="ManagedFieldInfo" script="ManagedFieldInfo">
 		<doc>Contains data about a single field in a managed object (class or struct).</doc>
 	</class>
@@ -2444,6 +2479,9 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Audio will be slowly streamed from the disk, and decompressed if needed. Uses very little memory, and has either low or high CPU impact depending if the audio is in a compressed format. Since data is streamed from the disk, read speeds could also be a bottleneck.</doc>
 		</enumentry>
 	</enum>
+	<class native="ImportOptions" script="ImportOptions">
+		<doc>Base class for creating import options from. Import options are specific for each importer and control how is data imported.</doc>
+	</class>
 	<class native="GUIHorizontalSlider" script="GUIHorizontalSlider">
 		<doc>A horizontal slider with a draggable handle.</doc>
 		<ctor>
@@ -2962,6 +3000,143 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Return the size (in bytes) of the buffer this image requires.</doc>
 		</property>
 	</class>
+	<enum native="CompressionQuality" script="CompressionQuality">
+		<doc>Types of texture compression quality.</doc>
+		<enumentry native="Fastest" script="Fastest">
+		</enumentry>
+		<enumentry native="Production" script="Production">
+		</enumentry>
+		<enumentry native="Normal" script="Normal">
+		</enumentry>
+		<enumentry native="Highest" script="Highest">
+		</enumentry>
+	</enum>
+	<struct native="LimitConeRange" script="LimitConeRange">
+		<doc>Represents a joint limit that contraints movement to within an elliptical cone.</doc>
+		<ctor>
+			<doc>Constructs a limit with a 45 degree cone.</doc>
+		</ctor>
+		<ctor>
+			<doc>Constructs a hard limit. Once the limit is reached the movement of the attached bodies will come to a stop.</doc>
+			<param name="yLimitAngle" type="Radian">
+				<doc>Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis.</doc>
+			</param>
+			<param name="zLimitAngle" type="Radian">
+				<doc>Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis.</doc>
+			</param>
+			<param name="contactDist" type="float">
+				<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit. Specify -1 for the default.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Constructs a soft limit. Once the limit is reached the bodies will bounce back according to the resitution parameter and will be pulled back towards the limit by the provided spring.</doc>
+			<param name="yLimitAngle" type="Radian">
+				<doc>Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis.</doc>
+			</param>
+			<param name="zLimitAngle" type="Radian">
+				<doc>Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis.</doc>
+			</param>
+			<param name="spring" type="Spring">
+				<doc>Spring that controls how are the bodies pulled back towards the limit when they breach it.</doc>
+			</param>
+			<param name="restitution" type="float">
+				<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
+			</param>
+		</ctor>
+		<field name="YLimitAngle" type="Radian">
+			<doc>Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis.</doc>
+		</field>
+		<field name="ZLimitAngle" type="Radian">
+			<doc>Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis.</doc>
+		</field>
+		<field name="ContactDist" type="float">
+			<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit.</doc>
+		</field>
+		<field name="Restitution" type="float">
+			<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
+		</field>
+		<field name="Spring" type="Spring">
+			<doc>Spring that controls how are the bodies pulled back towards the limit when they breach it.</doc>
+		</field>
+	</struct>
+	<enum native="AlphaMode" script="AlphaMode">
+		<doc>Mode of the alpha channel in a texture.</doc>
+		<enumentry native="None" script="None">
+		</enumentry>
+		<enumentry native="Premultiplied" script="Premultiplied">
+		</enumentry>
+		<enumentry native="Transparency" script="Transparency">
+		</enumentry>
+	</enum>
+	<enum native="MipMapWrapMode" script="MipMapWrapMode">
+		<doc>Wrap mode to use when generating mip maps.</doc>
+		<enumentry native="Repeat" script="Repeat">
+		</enumentry>
+		<enumentry native="Mirror" script="Mirror">
+		</enumentry>
+		<enumentry native="Clamp" script="Clamp">
+		</enumentry>
+	</enum>
+	<struct native="KerningPair" script="KerningPair">
+		<doc>Kerning pair representing larger or smaller offset between a specific pair of characters.</doc>
+		<field name="OtherCharId" type="int">
+		</field>
+		<field name="Amount" type="float">
+		</field>
+	</struct>
+	<enum native="MipMapFilter" script="MipMapFilter">
+		<doc>Filter to use when generating mip maps.</doc>
+		<enumentry native="Kaiser" script="Kaiser">
+		</enumentry>
+		<enumentry native="Box" script="Box">
+		</enumentry>
+		<enumentry native="Triangle" script="Triangle">
+		</enumentry>
+	</enum>
+	<struct native="CompressionOptions" script="CompressionOptions">
+		<doc>Options used to control texture compression.</doc>
+		<ctor>
+		</ctor>
+		<field name="Format" type="PixelFormat">
+		</field>
+		<field name="AlphaMode" type="AlphaMode">
+		</field>
+		<field name="IsNormalMap" type="bool">
+		</field>
+		<field name="IsSrgb" type="bool">
+		</field>
+		<field name="Quality" type="CompressionQuality">
+		</field>
+	</struct>
+	<struct native="MipMapGenOptions" script="MipMapGenOptions">
+		<doc>Options used to control texture mip map generation.</doc>
+		<ctor>
+		</ctor>
+		<field name="Filter" type="MipMapFilter">
+		</field>
+		<field name="WrapMode" type="MipMapWrapMode">
+		</field>
+		<field name="IsNormalMap" type="bool">
+		</field>
+		<field name="NormalizeMipmaps" type="bool">
+		</field>
+		<field name="IsSrgb" type="bool">
+		</field>
+	</struct>
+	<class native="CSphereCollider" script="SphereCollider">
+		<property name="Radius" type="float" getter="GetRadius" setter="SetRadius" static="false">
+		</property>
+		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
+			<doc>Determines position of the sphere shape, relative to the component&apos;s scene object.</doc>
+		</property>
+	</class>
+	<enum native="ScaleFilter" script="ScaleFilter">
+		<doc>Filtering types to use when scaling images.</doc>
+		<enumentry native="Nearest" script="Nearest">
+		</enumentry>
+		<enumentry native="Linear" script="Linear">
+		</enumentry>
+	</enum>
 	<class native="Mesh" script="Mesh">
 		<doc>Primary class for holding geometry. Stores data in the form of vertex buffers and optionally an index buffer, which may be bound to the pipeline for drawing. May contain multiple sub-meshes.</doc>
 		<ctor>
@@ -4822,54 +4997,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		</ctor>
 		<field name="Extent" type="float">
 			<doc>Distance at which the limit becomes active.</doc>
-		</field>
-		<field name="ContactDist" type="float">
-			<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit.</doc>
-		</field>
-		<field name="Restitution" type="float">
-			<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
-		</field>
-		<field name="Spring" type="Spring">
-			<doc>Spring that controls how are the bodies pulled back towards the limit when they breach it.</doc>
-		</field>
-	</struct>
-	<struct native="LimitConeRange" script="LimitConeRange">
-		<doc>Represents a joint limit that contraints movement to within an elliptical cone.</doc>
-		<ctor>
-			<doc>Constructs a limit with a 45 degree cone.</doc>
-		</ctor>
-		<ctor>
-			<doc>Constructs a hard limit. Once the limit is reached the movement of the attached bodies will come to a stop.</doc>
-			<param name="yLimitAngle" type="Radian">
-				<doc>Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis.</doc>
-			</param>
-			<param name="zLimitAngle" type="Radian">
-				<doc>Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis.</doc>
-			</param>
-			<param name="contactDist" type="float">
-				<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit. Specify -1 for the default.</doc>
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Constructs a soft limit. Once the limit is reached the bodies will bounce back according to the resitution parameter and will be pulled back towards the limit by the provided spring.</doc>
-			<param name="yLimitAngle" type="Radian">
-				<doc>Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis.</doc>
-			</param>
-			<param name="zLimitAngle" type="Radian">
-				<doc>Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis.</doc>
-			</param>
-			<param name="spring" type="Spring">
-				<doc>Spring that controls how are the bodies pulled back towards the limit when they breach it.</doc>
-			</param>
-			<param name="restitution" type="float">
-				<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
-			</param>
-		</ctor>
-		<field name="YLimitAngle" type="Radian">
-			<doc>Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis.</doc>
-		</field>
-		<field name="ZLimitAngle" type="Radian">
-			<doc>Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis.</doc>
 		</field>
 		<field name="ContactDist" type="float">
 			<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit.</doc>
@@ -6911,13 +7038,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<property name="Speed" type="float" getter="GetSpeed" setter="" static="false">
 		</property>
 		<property name="Limit" type="LimitLinearRange" getter="GetLimit" setter="SetLimit" static="false">
-		</property>
-	</class>
-	<class native="CSphereCollider" script="SphereCollider">
-		<property name="Radius" type="float" getter="GetRadius" setter="SetRadius" static="false">
-		</property>
-		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
-			<doc>Determines position of the sphere shape, relative to the component&apos;s scene object.</doc>
 		</property>
 	</class>
 	<struct native="SpriteImageInformation" script="SpriteImageInformation">
@@ -9414,13 +9534,6 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			</param>
 		</event>
 	</class>
-	<struct native="KerningPair" script="KerningPair">
-		<doc>Kerning pair representing larger or smaller offset between a specific pair of characters.</doc>
-		<field name="OtherCharId" type="int">
-		</field>
-		<field name="Amount" type="float">
-		</field>
-	</struct>
 	<struct native="CharacterInformation" script="CharacterInformation">
 		<doc>Describes a single character in a font of a specific size.</doc>
 		<field name="CharId" type="int">

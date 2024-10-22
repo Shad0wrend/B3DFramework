@@ -8,7 +8,7 @@
 #include "Allocators/BsPoolAlloc.h"
 #include "Private/Particles/BsParticleSet.h"
 #include "Animation/BsAnimationManager.h"
-#include "Image/BsPixelUtil.h"
+#include "Image/BsPixelUtility.h"
 
 using namespace bs;
 

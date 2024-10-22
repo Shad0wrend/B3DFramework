@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/**	Types of texture compression quality. */
-	enum class CompressionQuality
+	enum class B3D_SCRIPT_EXPORT() CompressionQuality
 	{
 		Fastest,
 		Normal,
@@ -25,7 +25,7 @@ namespace bs
 	};
 
 	/**	Mode of the alpha channel in a texture. */
-	enum class AlphaMode
+	enum class B3D_SCRIPT_EXPORT() AlphaMode
 	{
 		None, /*< Texture has no alpha values. */
 		Transparency, /*< Alpha is in the separate transparency channel. */
@@ -33,7 +33,7 @@ namespace bs
 	};
 
 	/**	Wrap mode to use when generating mip maps. */
-	enum class MipMapWrapMode
+	enum class B3D_SCRIPT_EXPORT() MipMapWrapMode
 	{
 		Mirror,
 		Repeat,
@@ -41,7 +41,7 @@ namespace bs
 	};
 
 	/**	Filter to use when generating mip maps. */
-	enum class MipMapFilter
+	enum class B3D_SCRIPT_EXPORT() MipMapFilter
 	{
 		Box,
 		Triangle,
@@ -60,7 +60,7 @@ namespace bs
 	B3D_FLAGS_OPERATORS(MirrorModeBits);
 
 	/**	Options used to control texture compression. */
-	struct CompressionOptions
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true)) CompressionOptions
 	{
 		PixelFormat Format = PF_BC1; /*< Format to compress to. Must be a format containing compressed data. */
 		AlphaMode AlphaMode = AlphaMode::None; /*< Controls how to (and if) to compress the alpha channel. */
@@ -70,7 +70,7 @@ namespace bs
 	};
 
 	/**	Options used to control texture mip map generation. */
-	struct MipMapGenOptions
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true)) MipMapGenOptions
 	{
 		MipMapFilter Filter = MipMapFilter::Box; /*< Filter to use when downsamping input data. */
 		MipMapWrapMode WrapMode = MipMapWrapMode::Mirror; /*< Determines how to downsample pixels on borders. */
@@ -79,36 +79,41 @@ namespace bs
 		bool IsSrgb = false; /*< Determines has the input data been gamma corrected. */
 	};
 
+	/**	Filtering types to use when scaling images. */
+	enum class B3D_SCRIPT_EXPORT() ScaleFilter
+	{
+		Nearest, /*< No filtering is performed and nearest existing value is used. */
+		Linear /*< Box filter is applied, averaging nearby pixels. */
+	};
+
 	/**	Utility methods for converting and managing pixel data and formats. */
-	class B3D_CORE_EXPORT PixelUtil
+	class B3D_CORE_EXPORT PixelUtility
 	{
 	public:
-		/**	Filtering types to use when scaling images. */
-		enum Filter
-		{
-			FILTER_NEAREST, /*< No filtering is performed and nearest existing value is used. */
-			FILTER_LINEAR /*< Box filter is applied, averaging nearby pixels. */
-		};
-
 		/**	Returns the size of a single pixel of the provided pixel format, in bytes. */
-		static u32 GetNumElemBytes(PixelFormat format);
+		B3D_SCRIPT_EXPORT()
+		static u32 GetElementByteCount(PixelFormat format);
 
 		/**
 		 * Returns the size of a single compressed block, in bytes. Returns pixel size if the format is not block
 		 * compressed.
 		 */
+		B3D_SCRIPT_EXPORT()
 		static u32 GetBlockSize(PixelFormat format);
 
 		/**
 		 * Returns the dimensions of a single compressed block, in number of pixels. Returns 1x1 for non-block-compressed
 		 * formats.
 		 */
+		B3D_SCRIPT_EXPORT()
 		static Vector2I GetBlockDimensions(PixelFormat format);
 
 		/**	Returns the size of a single pixel of the provided pixel format, in bits. */
-		static u32 GetNumElemBits(PixelFormat format);
+		B3D_SCRIPT_EXPORT()
+		static u32 GetElementBitCount(PixelFormat format);
 
 		/**	Returns the size of the memory region required to hold pixels of the provided size ana format. */
+		B3D_SCRIPT_EXPORT()
 		static u32 GetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format);
 
 		/**	Calculates the size of a mip level of a texture with the provided size. */
@@ -131,18 +136,23 @@ namespace bs
 		static u32 GetFlags(PixelFormat format);
 
 		/**	Checks if the provided pixel format has an alpha channel. */
+		B3D_SCRIPT_EXPORT()
 		static bool HasAlpha(PixelFormat format);
 
 		/**	Checks is the provided pixel format a floating point format. */
+		B3D_SCRIPT_EXPORT()
 		static bool IsFloatingPoint(PixelFormat format);
 
 		/**	Checks is the provided pixel format compressed. */
+		B3D_SCRIPT_EXPORT()
 		static bool IsCompressed(PixelFormat format);
 
 		/**	Checks is the provided pixel format a depth/stencil buffer format. */
+		B3D_SCRIPT_EXPORT()
 		static bool IsDepth(PixelFormat format);
 
 		/** Checks does the provided format store data in normalized range. */
+		B3D_SCRIPT_EXPORT()
 		static bool IsNormalized(PixelFormat format);
 
 		/**
@@ -195,25 +205,28 @@ namespace bs
 		static void GetBitShifts(PixelFormat format, u8 (&rgba)[4]);
 
 		/**	Returns the name of the pixel format. */
-		static String GetFormatName(PixelFormat srcformat);
+		B3D_SCRIPT_EXPORT()
+		static String GetFormatName(PixelFormat format);
 
 		/**
 		 * Returns true if the pixel data in the format can be directly accessed and read. This is generally not true
 		 * for compressed formats.
 		 */
-		static bool IsAccessible(PixelFormat srcformat);
+		static bool IsAccessible(PixelFormat format);
 
 		/**	Returns the type of an individual pixel element in the provided format. */
 		static PixelComponentType GetElementType(PixelFormat format);
 
 		/**	Returns the number of pixel elements in the provided format. */
-		static u32 GetNumElements(PixelFormat format);
+		B3D_SCRIPT_EXPORT()
+		static u32 GetElementCount(PixelFormat format);
 
 		/**
 		 * Returns the maximum number of mip maps that can be generated until we reach the minimum size possible. This
 		 * does not count the base level.
 		 */
-		static u32 GetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat format);
+		B3D_SCRIPT_EXPORT()
+		static u32 GetMipmapCount(u32 width, u32 height, u32 depth, PixelFormat format);
 
 		/**	Writes the color to the provided memory location. */
 		static void PackColor(const Color& color, PixelFormat format, void* dest);
@@ -255,13 +268,24 @@ namespace bs
 		 * Converts pixels from one format to another. Provided pixel data objects must have previously allocated buffers
 		 * of adequate size and their sizes must match.
 		 */
-		static void BulkPixelConversion(const PixelData& src, PixelData& dst);
+		static void BulkPixelConversion(const PixelData& source, PixelData& destination);
 
 		/** Flips the order of components in each individual pixel. For example RGBA -> ABGR. */
 		static void FlipComponentOrder(PixelData& data);
 
+		/** Converts provided pixels from one format to another.  */
+		B3D_SCRIPT_EXPORT();
+		static SPtr<PixelData> ConvertFormat(const SPtr<PixelData>& source, PixelFormat format);
+
 		/** Compresses the provided data using the specified compression options.  */
-		static void Compress(const PixelData& src, PixelData& dst, const CompressionOptions& options);
+		static void Compress(const PixelData& source, PixelData& destination, const CompressionOptions& options);
+
+		/**
+		 * Compresses the provided data using the specified compression options. Caller must ensure that specified format
+		 * is a compressed format.
+		 */
+		B3D_SCRIPT_EXPORT();
+		static SPtr<PixelData> Compress(const SPtr<PixelData>& source, const CompressionOptions& options);
 
 		/**
 		 * Generates mip-maps from the provided source data using the specified compression options. Returned list includes
@@ -270,14 +294,19 @@ namespace bs
 		 * @return	A list of calculated mip-map data. First entry is the largest mip and other follow in order from
 		 *			largest to smallest.
 		 */
-		static Vector<SPtr<PixelData>> GenMipmaps(const PixelData& src, const MipMapGenOptions& options);
+		B3D_SCRIPT_EXPORT()
+		static Vector<SPtr<PixelData>> GenerateMipmaps(const SPtr<PixelData>& source, const MipMapGenOptions& options);
 
 		/**
 		 * Scales pixel data in the source buffer and stores the scaled data in the destination buffer. Provided pixel data
 		 * objects must have previously allocated buffers of adequate size. You may also provided a filtering method to use
 		 * when scaling.
 		 */
-		static void Scale(const PixelData& src, PixelData& dst, Filter filter = FILTER_LINEAR);
+		static void Scale(const PixelData& source, PixelData& destination, ScaleFilter filter = ScaleFilter::Linear);
+
+		/** Scales pixel data in the source buffer according to the provided size and filtering method. */
+		B3D_SCRIPT_EXPORT()
+		static SPtr<PixelData> Scale(const SPtr<PixelData>& source, const Size3UI& size, ScaleFilter filter = ScaleFilter::Linear);
 
 		/**
 		 * Mirrors the contents of the provided object along the X, Y and/or Z axes. */
@@ -291,10 +320,12 @@ namespace bs
 		static void Copy(const PixelData& src, PixelData& dst, u32 offsetX = 0, u32 offsetY = 0, u32 offsetZ = 0);
 
 		/** Converts pixel data in linear space to one in sRGB space. Only converts the RGB components. */
-		static void LinearToSrgb(PixelData& pixelData);
+		B3D_SCRIPT_EXPORT()
+		static SPtr<PixelData> LinearToSrgb(const SPtr<PixelData>& input);
 
 		/** Converts pixel data in sRGB space to one in linear space. Only converts the RGB components. */
-		static void SRGBToLinear(PixelData& pixelData);
+		B3D_SCRIPT_EXPORT()
+		static SPtr<PixelData> SRGBToLinear(const SPtr<PixelData>& input);
 	};
 
 	/** @} */

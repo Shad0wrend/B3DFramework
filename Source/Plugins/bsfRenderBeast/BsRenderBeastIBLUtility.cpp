@@ -381,7 +381,7 @@ void RenderBeastIBLUtility::FilterCubemapForSpecular(GpuCommandBuffer& commandBu
 		cubemapDesc.Format = props.Format;
 		cubemapDesc.Width = props.Width;
 		cubemapDesc.Height = props.Height;
-		cubemapDesc.MipMapCount = PixelUtil::GetMaxMipmaps(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
+		cubemapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
 		cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
 		scratchCubemap = gpuDevice->CreateTexture(cubemapDesc);
@@ -604,7 +604,7 @@ void RenderBeastIBLUtility::FilterCubemapForIrradianceNonCompute(GpuCommandBuffe
 
 		// Downsample, summing up coefficients and weights all the way down to 1x1
 		auto& sourceProps = cubemap->GetProperties();
-		u32 numMips = PixelUtil::GetMaxMipmaps(sourceProps.Width, sourceProps.Height, 1, sourceProps.Format);
+		u32 numMips = PixelUtility::GetMipmapCount(sourceProps.Width, sourceProps.Height, 1, sourceProps.Format);
 
 		SPtr<PooledRenderTexture> downsampleInput = coeffsTex;
 		coeffsTex = nullptr;

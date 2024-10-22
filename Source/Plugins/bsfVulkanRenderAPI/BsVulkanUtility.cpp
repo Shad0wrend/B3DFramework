@@ -13,7 +13,7 @@ using namespace bs::ct;
 PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice& device, PixelFormat format, TextureType texType, int usage, bool optimalTiling, bool hwGamma)
 {
 	// Check for any obvious issues first
-	PixelUtil::CheckFormat(format, texType, usage);
+	PixelUtility::CheckFormat(format, texType, usage);
 
 	// Check actual device for format support
 	VkFormatFeatureFlags wantedFeatureFlags = VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT;
@@ -64,7 +64,7 @@ PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice&
 		}
 		else
 		{
-			const PixelComponentType& formatComponentType = PixelUtil::GetElementType(format);
+			const PixelComponentType& formatComponentType = PixelUtility::GetElementType(format);
 
 			if(formatComponentType == PCT_FLOAT16) // 16-bit format, fall back to 4-channel 16-bit, guaranteed to be supported
 				format = PF_RGBA16F;

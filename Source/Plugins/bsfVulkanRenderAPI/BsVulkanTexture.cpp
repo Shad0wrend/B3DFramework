@@ -381,7 +381,7 @@ VkSubresourceLayout VulkanImage::GetSubresourceLayout(u32 face, u32 mipLevel) co
 
 ImageSubresourcePitch VulkanImage::ConvertSubresourceLayoutToBlocks(const VkSubresourceLayout& subresourceLayout, PixelFormat format)
 {
-	const u32 blockSize = PixelUtil::GetBlockSize(format);
+	const u32 blockSize = PixelUtility::GetBlockSize(format);
 
 	B3D_ASSERT(subresourceLayout.rowPitch % blockSize == 0);
 	B3D_ASSERT(subresourceLayout.depthPitch % blockSize == 0);
@@ -389,10 +389,10 @@ ImageSubresourcePitch VulkanImage::ConvertSubresourceLayoutToBlocks(const VkSubr
 	u32 rowPitchInPixels = (u32)(subresourceLayout.rowPitch / blockSize);
 	u32 depthPitch = (u32)(subresourceLayout.depthPitch / blockSize);
 
-	if(PixelUtil::IsCompressed(format))
+	if(PixelUtility::IsCompressed(format))
 	{
 		// For compressed formats, we return the pitch in blocks
-		const Vector2I blockDimension = PixelUtil::GetBlockDimensions(format);
+		const Vector2I blockDimension = PixelUtility::GetBlockDimensions(format);
 		rowPitchInPixels *= blockDimension.X;
 		depthPitch *= blockDimension.X * blockDimension.Y;
 	}
@@ -861,7 +861,7 @@ VulkanBuffer* VulkanTexture::CreateStaging(const PixelData& pixelData, bool read
 
 	VmaAllocation allocation = mGpuDevice.AllocateMemory(buffer, VMA_MEMORY_USAGE_CPU_ONLY);
 
-	u32 blockSize = PixelUtil::GetBlockSize(pixelData.GetFormat());
+	u32 blockSize = PixelUtility::GetBlockSize(pixelData.GetFormat());
 
 	B3D_ASSERT(pixelData.GetRowPitch() % blockSize == 0);
 	B3D_ASSERT(pixelData.GetSlicePitch() % blockSize == 0);
@@ -869,9 +869,9 @@ VulkanBuffer* VulkanTexture::CreateStaging(const PixelData& pixelData, bool read
 	u32 rowPitchInPixels = pixelData.GetRowPitch() / blockSize;
 	u32 slicePitchInPixels = pixelData.GetSlicePitch() / blockSize;
 
-	if(PixelUtil::IsCompressed(pixelData.GetFormat()))
+	if(PixelUtility::IsCompressed(pixelData.GetFormat()))
 	{
-		Vector2I blockDim = PixelUtil::GetBlockDimensions(pixelData.GetFormat());
+		Vector2I blockDim = PixelUtility::GetBlockDimensions(pixelData.GetFormat());
 		rowPitchInPixels *= blockDim.X;
 		slicePitchInPixels *= blockDim.X * blockDim.Y;
 	}
@@ -948,10 +948,10 @@ ImageSubresourcePitch VulkanTexture::GetPitchForSubresource(VulkanImage* image, 
 	else
 	{
 		u32 mipWidth, mipHeight, mipDepth;
-		PixelUtil::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
+		PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
 
 		u32 rowPitch, depthPitch;
-		PixelUtil::GetPitch(mipWidth, mipHeight, mipDepth, mProperties.Format, rowPitch, depthPitch);
+		PixelUtility::GetPitch(mipWidth, mipHeight, mipDepth, mProperties.Format, rowPitch, depthPitch);
 
 		subresourceLayout.rowPitch = rowPitch;
 		subresourceLayout.depthPitch = depthPitch;
@@ -963,7 +963,7 @@ ImageSubresourcePitch VulkanTexture::GetPitchForSubresource(VulkanImage* image, 
 void VulkanTexture::CopyImageSubresourceToBuffer(VulkanGpuCommandBuffer& commandBuffer, VulkanImage* sourceImage, u32 sourceFace, u32 sourceMipLevel, VulkanBuffer* destinationBuffer, bool isBufferReadOnly)
 {
 	VkExtent3D extent;
-	PixelUtil::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, sourceMipLevel, extent.width, extent.height, extent.depth);
+	PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, sourceMipLevel, extent.width, extent.height, extent.depth);
 
 	const ImageSubresourcePitch pitch = GetPitchForSubresource(sourceImage, sourceFace, sourceMipLevel);
 
@@ -1029,7 +1029,7 @@ void VulkanTexture::CopyInternal(GpuCommandBuffer& commandBuffer, const SPtr<Tex
 
 	if(copyEntireSurface)
 	{
-		PixelUtil::GetSizeForMipLevel(
+		PixelUtility::GetSizeForMipLevel(
 			sourceProperties.Width,
 			sourceProperties.Height,
 			sourceProperties.Depth,
@@ -1134,7 +1134,7 @@ void VulkanTexture::BlitInternal(GpuCommandBuffer& commandBuffer, const SPtr<Tex
 	if (copyFromEntireSurface)
 	{
 		u32 mipWidth, mipHeight, mipDepth;
-		PixelUtil::GetSizeForMipLevel(
+		PixelUtility::GetSizeForMipLevel(
 			sourceProperties.Width,
 			sourceProperties.Height,
 			sourceProperties.Depth,
@@ -1156,7 +1156,7 @@ void VulkanTexture::BlitInternal(GpuCommandBuffer& commandBuffer, const SPtr<Tex
 	if (copyToEntireSurface)
 	{
 		u32 mipWidth, mipHeight, mipDepth;
-		PixelUtil::GetSizeForMipLevel(
+		PixelUtility::GetSizeForMipLevel(
 			destinationProperties.Width,
 			destinationProperties.Height,
 			destinationProperties.Depth,
@@ -1427,7 +1427,7 @@ void VulkanTexture::ReadDataInternal(PixelData& destination, u32 mipLevel, u32 f
 		}
 
 		PixelData myData = Lock(GBL_READ_ONLY, mipLevel, face);
-		PixelUtil::BulkPixelConversion(myData, destination);
+		PixelUtility::BulkPixelConversion(myData, destination);
 		Unlock();
 
 		return;
@@ -1461,7 +1461,7 @@ void VulkanTexture::ReadDataInternal(PixelData& destination, u32 mipLevel, u32 f
 
 	u8* data = stagingBuffer->Map(0, lockedArea.GetSize(), true);
 	lockedArea.SetExternalBuffer(data);
-	PixelUtil::BulkPixelConversion(lockedArea, destination);
+	PixelUtility::BulkPixelConversion(lockedArea, destination);
 
 	stagingBuffer->Unmap();
 	stagingBuffer->Destroy();
@@ -1527,7 +1527,7 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 		if(shouldMapDirectly)
 		{
 			PixelData myData = Lock(options, mipLevel, face);
-			PixelUtil::BulkPixelConversion(source, myData);
+			PixelUtility::BulkPixelConversion(source, myData);
 			Unlock();
 
 			return;
@@ -1540,7 +1540,7 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 
 	u8* data = stagingBuffer->Map(0, lockedArea.GetSize());
 	lockedArea.SetExternalBuffer(data);
-	PixelUtil::BulkPixelConversion(source, lockedArea);
+	PixelUtility::BulkPixelConversion(source, lockedArea);
 	stagingBuffer->Unmap();
 
 	SPtr<VulkanGpuCommandBuffer> vulkanCommandBuffer = std::static_pointer_cast<VulkanGpuCommandBuffer>(commandBuffer != nullptr
@@ -1583,7 +1583,7 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 	range.levelCount = 1;
 
 	VkExtent3D extent;
-	PixelUtil::GetSizeForMipLevel(props.Width, props.Height, props.Depth, mipLevel, extent.width, extent.height, extent.depth);
+	PixelUtility::GetSizeForMipLevel(props.Width, props.Height, props.Depth, mipLevel, extent.width, extent.height, extent.depth);
 
 	VkImageLayout transferLayout;
 	if(mDirectlyMappable)

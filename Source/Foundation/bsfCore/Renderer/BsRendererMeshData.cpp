@@ -6,7 +6,7 @@
 #include "Math/BsVector3.h"
 #include "Math/BsVector4.h"
 #include "Image/BsColor.h"
-#include "Image/BsPixelUtil.h"
+#include "Image/BsPixelUtility.h"
 #include "Renderer/BsRendererManager.h"
 #include "Renderer/BsRenderer.h"
 #include "Mesh/BsMeshUtility.h"
@@ -117,7 +117,7 @@ void RendererMeshData::GetColors(Color* buffer, u32 size)
 	Color* colorDst = buffer;
 	for(u32 i = 0; i < numElements; i++)
 	{
-		PixelUtil::UnpackColor(colorDst, PF_RGBA8, (void*)colorSrc);
+		PixelUtility::UnpackColor(colorDst, PF_RGBA8, (void*)colorSrc);
 
 		colorSrc += stride;
 		colorDst++;
@@ -138,7 +138,7 @@ void RendererMeshData::SetColors(Color* buffer, u32 size)
 	Color* colorSrc = buffer;
 	for(u32 i = 0; i < numElements; i++)
 	{
-		PixelUtil::PackColor(*colorSrc, PF_RGBA8, (void*)colorDst);
+		PixelUtility::PackColor(*colorSrc, PF_RGBA8, (void*)colorDst);
 
 		colorSrc++;
 		colorDst += stride;

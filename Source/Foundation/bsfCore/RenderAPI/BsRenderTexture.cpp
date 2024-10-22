@@ -86,7 +86,7 @@ void RenderTextureProperties::Construct(const TextureProperties* textureProps, u
 {
 	if(textureProps != nullptr)
 	{
-		PixelUtil::GetSizeForMipLevel(textureProps->Width, textureProps->Height, textureProps->Depth, mipLevel, Width, Height, numSlices);
+		PixelUtility::GetSizeForMipLevel(textureProps->Width, textureProps->Height, textureProps->Depth, mipLevel, Width, Height, numSlices);
 
 		numSlices *= numSlices;
 		MultisampleCount = textureProps->SampleCount;

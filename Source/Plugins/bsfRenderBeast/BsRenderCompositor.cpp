@@ -2350,7 +2350,7 @@ void RCNodeSceneColorDownsamples::Render(const RenderCompositorNodeInputs& input
 	auto* halfSceneColorNode = static_cast<RCNodeHalfSceneColor*>(inputs.InputNodes[0]);
 	const TextureProperties& halfSceneProps = halfSceneColorNode->Output->Texture->GetProperties();
 
-	const u32 totalDownsampleLevels = PixelUtil::GetMaxMipmaps(
+	const u32 totalDownsampleLevels = PixelUtility::GetMipmapCount(
 										  halfSceneProps.Width,
 										  halfSceneProps.Height,
 										  1,
@@ -2426,7 +2426,7 @@ void RCNodeHiZ::Render(const RenderCompositorNodeInputs& inputs)
 	u32 height = viewProps.Target.ViewRect.Height;
 
 	u32 size = Bitwise::NextPow2(std::max(width, height));
-	u32 numMips = PixelUtil::GetMaxMipmaps(size, size, 1, PF_R32F);
+	u32 numMips = PixelUtility::GetMipmapCount(size, size, 1, PF_R32F);
 	size = 1 << numMips;
 
 	// Note: Use the 32-bit buffer here as 16-bit causes too much banding (most of the scene gets assigned 4-5 different

@@ -158,7 +158,7 @@ SPtr<Resource> FreeImgImporter::Import(const Path& filePath, SPtr<const ImportOp
 	if(textureImportOptions->GenerateMips &&
 	   Bitwise::IsPow2(faceData[0]->GetWidth()) && Bitwise::IsPow2(faceData[0]->GetHeight()))
 	{
-		u32 maxPossibleMip = PixelUtil::GetMaxMipmaps(faceData[0]->GetWidth(), faceData[0]->GetHeight(), faceData[0]->GetDepth(), faceData[0]->GetFormat());
+		u32 maxPossibleMip = PixelUtility::GetMipmapCount(faceData[0]->GetWidth(), faceData[0]->GetHeight(), faceData[0]->GetDepth(), faceData[0]->GetFormat());
 
 		if(textureImportOptions->MaxMip == 0)
 			numMips = maxPossibleMip;
@@ -194,7 +194,7 @@ SPtr<Resource> FreeImgImporter::Import(const Path& filePath, SPtr<const ImportOp
 			MipMapGenOptions mipOptions;
 			mipOptions.IsSrgb = sRGB;
 
-			mipLevels = PixelUtil::GenMipmaps(*faceData[i], mipOptions);
+			mipLevels = PixelUtility::GenerateMipmaps(faceData[i], mipOptions);
 		}
 		else
 			mipLevels.push_back(faceData[i]);
@@ -203,7 +203,7 @@ SPtr<Resource> FreeImgImporter::Import(const Path& filePath, SPtr<const ImportOp
 		{
 			SPtr<PixelData> dst = newTexture->GetProperties().AllocBuffer(0, mip);
 
-			PixelUtil::BulkPixelConversion(*mipLevels[mip], *dst);
+			PixelUtility::BulkPixelConversion(*mipLevels[mip], *dst);
 			newTexture->WriteData(dst, i, mip);
 		}
 	}
@@ -380,8 +380,8 @@ SPtr<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
 	unsigned srcPitch = FreeImage_GetPitch(fiBitmap);
 
 	// Final data - invert image and trim pitch at the same time
-	u32 dstElemSize = PixelUtil::GetNumElemBytes(format);
-	u32 dstPitch = width * PixelUtil::GetNumElemBytes(format);
+	u32 dstElemSize = PixelUtility::GetElementByteCount(format);
+	u32 dstPitch = width * PixelUtility::GetElementByteCount(format);
 
 	// Bind output buffer
 	SPtr<PixelData> texData = B3DMakeShared<PixelData>(width, height, 1, format);
@@ -436,7 +436,7 @@ void ReadCubemapList(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 
 		output[i] = PixelData::Create(faceSize, faceSize, 1, source->GetFormat());
 
 		PixelVolume volume(faceStart.X, faceStart.Y, faceStart.X + faceSize, faceStart.Y + faceSize);
-		PixelUtil::Copy(*source, *output[i], faceStart.X, faceStart.Y);
+		PixelUtility::Copy(*source, *output[i], faceStart.X, faceStart.Y);
 
 		if(vertical)
 			faceStart.Y += faceSize;
@@ -480,12 +480,12 @@ void ReadCubemapCross(const SPtr<PixelData>& source, std::array<SPtr<PixelData>,
 		u32 faceY = (faceIndices[i] / numFacesInRow) * faceSize;
 
 		PixelVolume volume(faceX, faceY, faceX + faceSize, faceY + faceSize);
-		PixelUtil::Copy(*source, *output[i], faceX, faceY);
+		PixelUtility::Copy(*source, *output[i], faceX, faceY);
 	}
 
 	// Flip -Z as it's upside down
 	if(vertical)
-		PixelUtil::Mirror(*output[5], MirrorModeBits::X | MirrorModeBits::Y);
+		PixelUtility::Mirror(*output[5], MirrorModeBits::X | MirrorModeBits::Y);
 }
 
 /** Method that maps a direction to a point on a plane in range [0, 1] using spherical mapping. */
@@ -523,7 +523,7 @@ void DownsampleCubemap(const std::array<SPtr<PixelData>, 6>& input, std::array<S
 	for(u32 i = 0; i < 6; i++)
 	{
 		output[i] = PixelData::Create(size, size, 1, input[i]->GetFormat());
-		PixelUtil::Scale(*input[i], *output[i]);
+		PixelUtility::Scale(*input[i], *output[i]);
 	}
 }
 

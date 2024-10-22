@@ -71,13 +71,13 @@ std::pair<bool, T> TRay<T>::Intersects(const TVector3<T>& a, const TVector3<T>& 
 		else if(denom < -std::numeric_limits<T>::epsilon())
 		{
 			if(!positiveSide)
-				return std::pair<bool, float>(false, (T)0.0);
+				return std::pair<bool, T>(false, (T)0.0);
 		}
 		else
 		{
 			// Parallel or triangle area is close to zero when
 			// the plane normal not normalized.
-			return std::pair<bool, float>(false, (T)0.0);
+			return std::pair<bool, T>(false, (T)0.0);
 		}
 
 		t = normal.Dot(a - Origin) / denom;

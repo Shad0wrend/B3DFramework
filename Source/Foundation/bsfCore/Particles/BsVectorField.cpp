@@ -37,7 +37,7 @@ VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& v
 
 	const SPtr<PixelData> pixelData = PixelData::Create(mDesc.CountX, mDesc.CountY, mDesc.CountZ, PF_RGBA16F);
 
-	const u32 pixelSize = PixelUtil::GetNumElemBytes(PF_RGBA16F);
+	const u32 pixelSize = PixelUtility::GetElementByteCount(PF_RGBA16F);
 	u8* data = pixelData->GetData();
 	for(u32 z = 0; z < (u32)mDesc.CountZ; z++)
 	{
@@ -56,7 +56,7 @@ VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& v
 
 				const Vector3& source = arrayIdx < valuesToCopy ? values[arrayIdx] : Vector3::kZero;
 				u8* dest = data + dataIdx;
-				PixelUtil::PackColor(source.X, source.Y, source.Z, 1.0f, PF_RGBA16F, dest);
+				PixelUtility::PackColor(source.X, source.Y, source.Z, 1.0f, PF_RGBA16F, dest);
 			}
 		}
 	}

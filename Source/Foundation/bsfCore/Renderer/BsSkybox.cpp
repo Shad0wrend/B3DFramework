@@ -54,7 +54,7 @@ void Skybox::FilterTexture()
 		cubemapDesc.Format = PF_RG11B10F;
 		cubemapDesc.Width = ct::IBLUtility::kReflectionCubemapSize;
 		cubemapDesc.Height = ct::IBLUtility::kReflectionCubemapSize;
-		cubemapDesc.MipMapCount = PixelUtil::GetMaxMipmaps(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
+		cubemapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
 		cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
 		mFilteredRadiance = Texture::CreateShared(cubemapDesc);

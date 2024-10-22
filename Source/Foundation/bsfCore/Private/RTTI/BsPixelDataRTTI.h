@@ -60,7 +60,7 @@ namespace bs
 				// Convert row & slice pitch from pixels to bytes, in case pixel data was stored with an older version
 				if(mVersion == 0)
 				{
-					u32 pixelSize = PixelUtil::GetNumElemBytes(object.GetFormat());
+					u32 pixelSize = PixelUtility::GetElementByteCount(object.GetFormat());
 					object.mRowPitch *= pixelSize;
 					object.mSlicePitch *= pixelSize;
 				}

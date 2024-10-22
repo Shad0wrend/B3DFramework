@@ -112,7 +112,7 @@ namespace bs
 						SPtr<PixelData> origData = mPixelData[i];
 						SPtr<PixelData> newData = PixelData::Create(origData->GetWidth(), origData->GetHeight(), origData->GetDepth(), validFormat);
 
-						PixelUtil::BulkPixelConversion(*origData, *newData);
+						PixelUtility::BulkPixelConversion(*origData, *newData);
 						mPixelData[i] = newData;
 					}
 				}

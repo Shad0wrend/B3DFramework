@@ -184,7 +184,7 @@ void ClearLoadStoreMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Text
 	const TextureProperties& props = target->GetProperties();
 	PixelFormat pf = props.Format;
 
-	B3D_ASSERT(!PixelUtil::IsCompressed(pf));
+	B3D_ASSERT(!PixelUtility::IsCompressed(pf));
 
 	mOutputTextureParam.Set(target, surface);
 

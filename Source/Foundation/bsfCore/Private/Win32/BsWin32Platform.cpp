@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Private/Win32/BsWin32Platform.h"
 #include "RenderAPI/BsRenderWindow.h"
-#include "Image/BsPixelUtil.h"
+#include "Image/BsPixelUtility.h"
 #include "BsCoreApplication.h"
 #include "Debug/BsDebug.h"
 #include "Managers/BsRenderWindowManager.h"

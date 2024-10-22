@@ -39,7 +39,7 @@ SPtr<RenderTexture> VulkanTextureManager::CreateRenderTextureImpl(const RenderTe
 
 PixelFormat VulkanTextureManager::GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma)
 {
-	PixelUtil::CheckFormat(format, ttype, usage);
+	PixelUtility::CheckFormat(format, ttype, usage);
 
 	if(ct::VulkanUtility::GetPixelFormat(format, hwGamma) == VK_FORMAT_UNDEFINED)
 		return PF_RGBA8;
