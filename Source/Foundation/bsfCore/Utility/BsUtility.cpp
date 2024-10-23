@@ -71,7 +71,7 @@ static void FindResourceDependenciesRecursive(IReflectable& object, FrameAllocat
 					{
 						ResourceDependency& dependency = outDependencies[resource->GetId()];
 						dependency.Resource = *resource;
-						dependency.NumReferences++;
+						dependency.ReferenceCount++;
 					}
 				}
 			}

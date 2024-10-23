@@ -10,10 +10,7 @@ namespace bs
      *  @{
      */
 
-    /// <summary>
-    /// Handles dynamic loading of resources during runtime.
-    /// </summary>
-    public static class Resources
+    public partial class Resources
     {
         /// <summary>
         /// Loads a resource at the specified path. If resource is already loaded an existing instance is returned.
@@ -23,179 +20,99 @@ namespace bs
         /// running inside the editor this has similar functionality as if loading using the project library.
         /// </remarks>
         /// <typeparam name="T">Type of the resource.</typeparam>
-        /// <param name="path">Path of the resource, relative to game directory. If running from editor this will be
-        ///                    relative to the project library. If a sub-resource within a file is needed, append the name
-        ///                    of the subresource to the path (for example mymesh.fbx/my_animation).</param>
-        /// <param name="flags">Flags used to control the load process.</param>
-        /// <returns>Loaded resource, or null if resource cannot be found.</returns>
-        public static T Load<T>(string path, ResourceLoadFlag flags = ResourceLoadFlag.Default) where T : Resource
+        /// <param name="resourcePath">
+        /// Path to the resource. This may be a virtual or physical path. e.g.:
+        ///  Virtual path: '/game/textures/path/to/resource'
+        ///  Physical path: 'D:/path/to/package.b3d/path/to/resource'
+        /// </param>
+        /// <param name="loadOptions">Options to control the loading process.</param>
+        /// <returns>
+        /// Handle to the resource. Note if performing async loading this method will return immediately, but the resource may not yet be loaded.
+        /// Returns null if resource cannot be loaded, and logs why it failed.
+        /// </returns>
+        public static RRef<T> LoadAsReference<T>(string resourcePath, ResourceLoadOptions loadOptions = new ResourceLoadOptions()) where T : Resource
         {
-            return (T)Internal_Load(path, flags);
-        }
-
-        /// <summary>
-        /// Loads a resource with the specified UUID. If resource is already loaded an existing instance is returned.
-        /// </summary>
-        /// <remarks>
-        /// If running outside of the editor you must make sure to mark that the resource gets included in the build. If
-        /// running inside the editor this has similar functionality as if loading using the project library.
-        /// </remarks>
-        /// <typeparam name="T">Type of the resource.</typeparam>
-        /// <param name="uuid">Unique identifier of the resource to load.</param>
-        /// <param name="flags">Flags used to control the load process.</param>
-        /// <returns>Loaded resource, or null if resource cannot be found.</returns>
-        public static T Load<T>(UUID uuid, ResourceLoadFlag flags = ResourceLoadFlag.Default) where T : Resource
-        {
-            return (T)Internal_LoadFromUUID(ref uuid, flags);
-        }
-
-        /// <summary>
-        /// Loads a resource at the specified path asynchonously (on a separate thread). If resource is already loaded
-        /// an existing instance is returned. Use <see cref="RRefBase.IsLoaded"/> to confirm the resource has been loaded
-        /// before using it. Use <see cref="GetLoadProgress"/> to track the loading progress of the resource.
-        /// </summary>
-        /// <remarks>
-        /// If running outside of the editor you must make sure to mark that the resource gets included in the build. If
-        /// running inside the editor this has similar functionality as if loading using the project library.
-        /// </remarks>
-        /// <typeparam name="T">Type of the resource.</typeparam>
-        /// <param name="path">Path of the resource, relative to game directory. If running from editor this will be
-        ///                    relative to the project library. If a sub-resource within a file is needed, append the name
-        ///                    of the subresource to the path (for example mymesh.fbx/my_animation).</param>
-        /// <param name="flags">Flags used to control the load process.</param>
-        /// <returns>Loaded resource, or null if resource cannot be found.</returns>
-        public static RRef<T> LoadAsync<T>(string path, ResourceLoadFlag flags = ResourceLoadFlag.Default) where T : Resource
-        {
-            RRefBase rref = Internal_LoadAsync(path, flags);
-
-            if(rref != null)
-                return rref.As<T>();
+            RRefBase resourceReference = Internal_Load(resourcePath, ref loadOptions);
+            if (resourceReference != null)
+                return resourceReference.As<T>();
 
             return null;
         }
 
         /// <summary>
-        /// Loads a resource with the specified UUID asynchonously (on a separate thread). If resource is already loaded
-        /// an existing instance is returned. Use <see cref="RRefBase.IsLoaded"/> to confirm the resource has been loaded
-        /// before using it. Use <see cref="GetLoadProgress"/> to track the loading progress of the resource.
+        /// Loads a resource at the specified path. If resource is already loaded an existing instance is returned.
         /// </summary>
         /// <remarks>
         /// If running outside of the editor you must make sure to mark that the resource gets included in the build. If
         /// running inside the editor this has similar functionality as if loading using the project library.
         /// </remarks>
         /// <typeparam name="T">Type of the resource.</typeparam>
-        /// <param name="uuid">Unique identifier of the resource to load.</param>
-        /// <param name="flags">Flags used to control the load process.</param>
-        /// <returns>Loaded resource, or null if resource cannot be found.</returns>
-        public static RRef<T> LoadAsync<T>(UUID uuid, ResourceLoadFlag flags = ResourceLoadFlag.Default) where T : Resource
+        /// <param name="resourcePath">
+        /// Path to the resource. This may be a virtual or physical path. e.g.:
+        ///  Virtual path: '/game/textures/path/to/resource'
+        ///  Physical path: 'D:/path/to/package.b3d/path/to/resource'
+        /// </param>
+        /// <param name="loadOptions">Options to control the loading process.</param>
+        /// <returns>
+        /// Handle to the resource. Note if performing async loading this method will return immediately, but the resource may not yet be loaded.
+        /// Returns null if resource cannot be loaded, and logs why it failed.
+        /// </returns>
+        public static T Load<T>(string resourcePath, ResourceLoadOptions loadOptions = new ResourceLoadOptions()) where T : Resource
         {
-            RRefBase rref = Internal_LoadAsyncFromUUID(ref uuid, flags).As<T>();
-
-            if(rref != null)
-                return rref.As<T>();
+            RRef<T> resourceReference = LoadAsReference<T>(resourcePath, loadOptions);
+            if (resourceReference != null)
+                return resourceReference.Value;
 
             return null;
         }
 
         /// <summary>
-        /// Releases an internal reference to the resource held by the resources system. This allows the resource
-        ///	to be unloaded when it goes out of scope, if the resource was loaded with "keepLoaded" parameter.
-        ///
-        /// Alternatively you can also skip manually calling <see cref="Release(RRefBase)"/> and call <see cref="UnloadUnused"/>
-        /// which will unload all resources that do not have any external references, but you lose the fine grained control
-        /// of what will be unloaded.
+        /// Loads a resource with the specified ID. If resource is already loaded an existing instance is returned.
         /// </summary>
-        /// <param name="resource">Resource to release</param>
-        public static void Release(RRefBase resource)
+        /// <remarks>
+        /// If running outside of the editor you must make sure to mark that the resource gets included in the build. If
+        /// running inside the editor this has similar functionality as if loading using the project library.
+        /// </remarks>
+        /// <typeparam name="T">Type of the resource.</typeparam>
+        /// <param name="resourceId">ID of the resource</param>
+        /// <param name="loadOptions">Options to control the loading process.</param>
+        /// <returns>
+        /// Handle to the resource. Note if performing async loading this method will return immediately, but the resource may not yet be loaded.
+        /// Returns null if resource cannot be loaded, and logs why it failed.
+        /// </returns>
+        public static RRef<T> LoadAsReference<T>(UUID resourceId, ResourceLoadOptions loadOptions = new ResourceLoadOptions()) where T : Resource
         {
-            if (resource == null)
-                return;
+            RRefBase resourceReference = Internal_Load0(ref resourceId, ref loadOptions);
+            if (resourceReference != null)
+                return resourceReference.As<T>();
 
-            Internal_ReleaseRef(resource.GetCachedPtr());
+            return null;
         }
 
         /// <summary>
-        /// Releases an internal reference to the resource held by the resources system. This allows the resource
-        ///	to be unloaded when it goes out of scope, if the resource was loaded with "keepLoaded" parameter.
-        ///
-        /// Alternatively you can also skip manually calling <see cref="Release(Resource)"/> and call <see cref="UnloadUnused"/>
-        /// which will unload all resources that do not have any external references, but you lose the fine grained control
-        /// of what will be unloaded.
+        /// Loads a resource with the specified ID. If resource is already loaded an existing instance is returned.
         /// </summary>
-        /// <param name="resource">Resource to release</param>
-        public static void Release(Resource resource)
+        /// <remarks>
+        /// If running outside of the editor you must make sure to mark that the resource gets included in the build. If
+        /// running inside the editor this has similar functionality as if loading using the project library.
+        /// </remarks>
+        /// <typeparam name="T">Type of the resource.</typeparam>
+        /// <param name="resourceId">ID of the resource</param>
+        /// <param name="loadOptions">Options to control the loading process.</param>
+        /// <returns>
+        /// Handle to the resource. Note if performing async loading this method will return immediately, but the resource may not yet be loaded.
+        /// Returns null if resource cannot be loaded, and logs why it failed.
+        /// </returns>
+        public static T Load<T>(UUID resourceId, ResourceLoadOptions loadOptions = new ResourceLoadOptions()) where T : Resource
         {
-            if(resource == null)
-                return;
+            RRef<T> resourceReference = LoadAsReference<T>(resourceId, loadOptions);
+            if (resourceReference != null)
+                return resourceReference.Value;
 
-            Internal_Release(resource.GetCachedPtr());
+            return null;
         }
-
-        /// <summary>
-        /// Unloads all resources that are no longer referenced. This only applies to resources loaded with "keepLoaded"
-        /// parameter, as all other resources will be unloaded when they go out of scope.
-        /// </summary>
-        public static void UnloadUnused()
-        {
-            Internal_UnloadUnused();
-        }
-
-        /// <summary>
-        /// Returns the loading progress of a resource that's being asynchronously loaded.
-        /// </summary>
-        /// <param name="resource">Resource whose load progress to check.</param>
-        /// <returns>Load progress in range [0, 1].</returns>
-        public static float GetLoadProgress(RRefBase resource)
-        {
-            if(resource == null)
-                return 0.0f;
-
-            return Internal_GetLoadProgress(resource.GetCachedPtr());
-        }
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern Resource Internal_Load(string path, ResourceLoadFlag flags);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern Resource Internal_LoadFromUUID(ref UUID uuid, ResourceLoadFlag flags);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern RRefBase Internal_LoadAsync(string path, ResourceLoadFlag flags);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern RRefBase Internal_LoadAsyncFromUUID(ref UUID uuid, ResourceLoadFlag flags);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern float Internal_GetLoadProgress(IntPtr resource);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_Release(IntPtr resource);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_ReleaseRef(IntPtr resource);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_UnloadUnused();
     }
 
     /** @} */
-}
-#else
-namespace bs
-{
-    partial class Resources
-    {
-        /// <summary>
-        /// Loads the resource from a given path. Returns an empty handle if resource can&apos;t be loaded. Resource is loaded
-        /// synchronously.
-        /// </summary>
-        /// <param name="filePath">File path to the resource to load. This can be absolute or relative to the working folder.
-        /// </param>
-        /// <param name="loadFlags">Flags used to control the load process.</param>
-        public static T Load<T>(string filePath, ResourceLoadFlag loadFlags = ResourceLoadFlag.Default) where T: Resource
-        {
-            return Load(filePath, loadFlags) as T;
-        }
-    }
 }
 #endif

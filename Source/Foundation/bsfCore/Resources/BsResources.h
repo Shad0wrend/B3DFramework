@@ -18,44 +18,16 @@ namespace bs
 	 *  @{
 	 */
 
-	/** Flags that can be used to control resource loading. */
-	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Resources)) ResourceLoadFlag
-	{
-		/** No flags. */
-		None = 0,
-		/** If enabled all resources referenced by the root resource will be loaded as well. */
-		LoadDependencies = 1 << 0,
-		/**
-		 * If enabled the resource system will keep an internal reference to the resource so it doesn't get destroyed when
-		 * it goes out of scope. You can call Resources::release() to release the internal reference. Each call to load will
-		 * create a new internal reference and therefore must be followed by the same number of release calls. If
-		 * dependencies are being loaded, they will not have internal references created regardless of this parameter.
-		 */
-		KeepInternalRef = 1 << 1,
-		/**
-		 * Determines if the loaded resource keeps original data loaded. Sometime resources will process loaded data
-		 * and discard the original (e.g. uncompressing audio on load). This flag can prevent the resource from discarding
-		 * the original data. The original data might be required for saving the resource (via Resources::save), but will
-		 * use up extra memory. Normally you want to keep this enabled if you plan on saving the resource to disk.
-		 */
-		KeepSourceData = 1 << 2,
-		/** Default set of flags used for resource loading. */
-		Default = LoadDependencies | KeepInternalRef
-	};
-
-	typedef Flags<ResourceLoadFlag> ResourceLoadFlags;
-	B3D_FLAGS_OPERATORS(ResourceLoadFlag);
-
 	/** Options that may be used to customize resource load operation. */
-	struct B3D_CORE_EXPORT ResourceLoadOptions
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), API(Engine)) ResourceLoadOptions
 	{
 		ResourceLoadOptions(bool asynchronousLoad = true, bool loadDependencies = true, bool keepInternalReference = true)
 			: AsynchronousLoad(asynchronousLoad), LoadDependencies(loadDependencies), KeepInternalReference(keepInternalReference)
 		{ }
 
-		u8 AsynchronousLoad : 1;
-		u8 LoadDependencies : 1;
-		u8 KeepInternalReference : 1;
+		bool AsynchronousLoad;
+		bool LoadDependencies;
+		bool KeepInternalReference;
 
 		static const ResourceLoadOptions kDefault;
 	};
@@ -81,7 +53,7 @@ namespace bs
 	 *
 	 * @note	Main thread only.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) Resources : public Module<Resources>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Engine)) Resources : public Module<Resources>
 	{
 		/** Information about a loaded resource. */
 		struct LoadedResourceInformation
@@ -124,6 +96,7 @@ namespace bs
 		 * @return						Handle to the resource. Note if performing async loading this method will return immediately, but
 		 *								the resource may not yet be loaded. Returns null if resource cannot be loaded, and logs why it failed.
 		 */
+		B3D_SCRIPT_EXPORT(InteropOnly(true))
 		HResource Load(const Path& resourcePath, const ResourceLoadOptions& loadOptions);
 
 		/**
@@ -135,6 +108,7 @@ namespace bs
 		 * @return						Handle to the resource. Note if performing async loading this method will return immediately, but
 		 *								the resource may not yet be loaded. Returns null if resource cannot be loaded, and logs why it failed.
 		 */
+		B3D_SCRIPT_EXPORT(InteropOnly(true))
 		HResource Load(const UUID& resourceId, const ResourceLoadOptions& loadOptions);
 
 		/** @copydoc Load(const Path&, const ResourceLoadOptions&) */
@@ -159,6 +133,7 @@ namespace bs
 		 *									Physical path: 'D:/path/to/package.b3d/path/to/resource'
 		 * @return						True if the resource can be located, false otherwise.
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool Exists(const Path& resourcePath) const;
 
 		/**
@@ -167,6 +142,7 @@ namespace bs
 		 * @param resourceId			ID of the resource.
 		 * @return						True if the resource can be located, false otherwise.
 		 */
+		B3D_SCRIPT_EXPORT()
 		bool Exists(const UUID& resourceId) const;
 
 		/**

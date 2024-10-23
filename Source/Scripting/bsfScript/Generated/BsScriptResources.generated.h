@@ -5,11 +5,12 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Resources/BsResources.h"
 #include "BsScriptTypeDefinition.h"
+#include "../../../Foundation/bsfCore/Resources/BsResources.h"
 #include "Utility/BsUUID.h"
 
 namespace bs
 {
-#if !B3D_IS_ENGINE
+#if B3D_IS_ENGINE
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptResources : public TScriptTypeDefinition<ScriptResources>
 	{
 	public:
@@ -38,6 +39,10 @@ namespace bs
 		static HEvent OnResourceDestroyedConnection;
 		static HEvent OnResourceModifiedConnection;
 
+		static MonoObject* InternalLoad(MonoString* resourcePath, ResourceLoadOptions* loadOptions);
+		static MonoObject* InternalLoad0(UUID* resourceId, ResourceLoadOptions* loadOptions);
+		static bool InternalExists(MonoString* resourcePath);
+		static bool InternalExists0(UUID* resourceId);
 		static void InternalReleaseInternalReference(MonoObject* resource);
 		static void InternalUnloadAllUnused();
 		static void InternalUnloadAll();

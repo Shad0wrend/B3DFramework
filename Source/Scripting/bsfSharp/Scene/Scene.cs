@@ -97,7 +97,7 @@ namespace bs
         {
             Clear();
 
-            Prefab scene = Resources.Load<Prefab>(path);
+            Prefab scene = Resources.Load<Prefab>(path, new ResourceLoadOptions(false));
             SetActive(scene);
 
             return scene;
@@ -112,7 +112,7 @@ namespace bs
         {
             Clear();
 
-            activateOnLoadScene = Resources.LoadAsync<Prefab>(path);
+            activateOnLoadScene = Resources.LoadAsReference<Prefab>(path);
 
             if(activateOnLoadScene != null && activateOnLoadScene.IsLoaded)
                 SetActive(activateOnLoadScene.Value);

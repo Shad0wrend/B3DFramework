@@ -8,11 +8,12 @@
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
 #include "Resources/BsResource.h"
+#include "BsScriptResourceLoadOptions.generated.h"
 #include "BsScriptResourceWrapper.h"
 
 namespace bs
 {
-#if !B3D_IS_ENGINE
+#if B3D_IS_ENGINE
 	ScriptResources::OnResourceLoadedThunkDefinition ScriptResources::OnResourceLoadedThunk; 
 	ScriptResources::OnResourceDestroyedThunkDefinition ScriptResources::OnResourceDestroyedThunk; 
 	ScriptResources::OnResourceModifiedThunkDefinition ScriptResources::OnResourceModifiedThunk; 
@@ -28,6 +29,10 @@ namespace bs
 
 	void ScriptResources::SetupScriptBindings()
 	{
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Load", (void*)&ScriptResources::InternalLoad);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Load0", (void*)&ScriptResources::InternalLoad0);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Exists", (void*)&ScriptResources::InternalExists);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Exists0", (void*)&ScriptResources::InternalExists0);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ReleaseInternalReference", (void*)&ScriptResources::InternalReleaseInternalReference);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_UnloadAllUnused", (void*)&ScriptResources::InternalUnloadAllUnused);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_UnloadAll", (void*)&ScriptResources::InternalUnloadAll);
@@ -81,6 +86,64 @@ namespace bs
 		else
 			tmpp0 = nullptr;
 		MonoUtil::InvokeThunk(OnResourceModifiedThunk, tmpp0);
+	}
+
+	MonoObject* ScriptResources::InternalLoad(MonoString* resourcePath, ResourceLoadOptions* loadOptions)
+	{
+		TResourceHandle<Resource> tmp__output;
+		Path tmpresourcePath;
+		tmpresourcePath = MonoUtil::MonoToString(resourcePath);
+		tmp__output = Resources::Instance().Load(tmpresourcePath, *loadOptions);
+
+		MonoObject* __output;
+		ScriptRRefBase* script__output;
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
+		if(script__output != nullptr)
+			__output = script__output->GetScriptObject();
+		else
+			__output = nullptr;
+
+		return __output;
+	}
+
+	MonoObject* ScriptResources::InternalLoad0(UUID* resourceId, ResourceLoadOptions* loadOptions)
+	{
+		TResourceHandle<Resource> tmp__output;
+		tmp__output = Resources::Instance().Load(*resourceId, *loadOptions);
+
+		MonoObject* __output;
+		ScriptRRefBase* script__output;
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
+		if(script__output != nullptr)
+			__output = script__output->GetScriptObject();
+		else
+			__output = nullptr;
+
+		return __output;
+	}
+
+	bool ScriptResources::InternalExists(MonoString* resourcePath)
+	{
+		bool tmp__output;
+		Path tmpresourcePath;
+		tmpresourcePath = MonoUtil::MonoToString(resourcePath);
+		tmp__output = Resources::Instance().Exists(tmpresourcePath);
+
+		bool __output;
+		__output = tmp__output;
+
+		return __output;
+	}
+
+	bool ScriptResources::InternalExists0(UUID* resourceId)
+	{
+		bool tmp__output;
+		tmp__output = Resources::Instance().Exists(*resourceId);
+
+		bool __output;
+		__output = tmp__output;
+
+		return __output;
 	}
 
 	void ScriptResources::InternalReleaseInternalReference(MonoObject* resource)

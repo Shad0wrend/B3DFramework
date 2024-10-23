@@ -17,7 +17,7 @@ namespace bs
 		ResourceDependency() = default;
 
 		HResource Resource;
-		u32 NumReferences = 0;
+		u32 ReferenceCount = 0;
 	};
 
 	/** Static class containing various utility methods that do not fit anywhere else. */

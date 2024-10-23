@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace bs
 {
-#if !IS_B3D
+#if IS_B3D
 	/** @addtogroup Resources
 	 *  @{
 	 */
@@ -28,6 +28,25 @@ namespace bs
 
 		/// <summary>Called when the internal resource the handle is pointing to has changed.</summary>
 		public static event Action<RRefBase> OnResourceModified;
+
+		/// <summary>Checks if the resource at the provided path exists.</summary>
+		/// <param name="resourcePath">
+		/// Path to the resource. This may be a virtual or physical path. e.g.: Virtual path: 
+		/// &apos;/game/textures/path/to/resource&apos; Physical path: &apos;D:/path/to/package.b3d/path/to/resource&apos;
+		/// </param>
+		/// <returns>True if the resource can be located, false otherwise.</returns>
+		public static bool Exists(string resourcePath)
+		{
+			return Internal_Exists(resourcePath);
+		}
+
+		/// <summary>Checks if the resource with the provided ID exists.</summary>
+		/// <param name="resourceId">ID of the resource.</param>
+		/// <returns>True if the resource can be located, false otherwise.</returns>
+		public static bool Exists(UUID resourceId)
+		{
+			return Internal_Exists0(ref resourceId);
+		}
 
 		/// <summary>
 		/// Releases an internal reference to the resource held by the resources system. This allows the resource to be unloaded 
@@ -73,6 +92,14 @@ namespace bs
 			return Internal_GetLoadProgress(resource);
 		}
 
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern RRefBase Internal_Load(string resourcePath, ref ResourceLoadOptions loadOptions);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern RRefBase Internal_Load0(ref UUID resourceId, ref ResourceLoadOptions loadOptions);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern bool Internal_Exists(string resourcePath);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern bool Internal_Exists0(ref UUID resourceId);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ReleaseInternalReference(RRefBase resource);
 		[MethodImpl(MethodImplOptions.InternalCall)]

@@ -7020,6 +7020,23 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Enables the linear range limit.</doc>
 		</enumentry>
 	</enum>
+	<struct native="ResourceLoadOptions" script="ResourceLoadOptions">
+		<doc>Options that may be used to customize resource load operation.</doc>
+		<ctor>
+			<param name="asynchronousLoad" type="bool">
+			</param>
+			<param name="loadDependencies" type="bool">
+			</param>
+			<param name="keepInternalReference" type="bool">
+			</param>
+		</ctor>
+		<field name="AsynchronousLoad" type="bool">
+		</field>
+		<field name="LoadDependencies" type="bool">
+		</field>
+		<field name="KeepInternalReference" type="bool">
+		</field>
+	</struct>
 	<class native="CSliderJoint" script="SliderJoint">
 		<method native="SetFlag" script="SetFlag" static="false">
 			<param name="flag" type="SliderJointFlag">
@@ -9465,26 +9482,26 @@ Optionally if the parameter is an array you may provide an array index you which
 			<doc>Controls &quot;bounciness&quot; of an object during a collision. Value of 1 means the collision is elastic, and value of 0 means the value is inelastic. Must be in [0, 1] range.</doc>
 		</property>
 	</class>
-	<enum native="ResourceLoadFlag" script="ResourceLoadFlag">
-		<doc>Flags that can be used to control resource loading.</doc>
-		<enumentry native="None" script="None">
-			<doc>No flags.</doc>
-		</enumentry>
-		<enumentry native="LoadDependencies" script="LoadDependencies">
-			<doc>If enabled all resources referenced by the root resource will be loaded as well.</doc>
-		</enumentry>
-		<enumentry native="Default" script="Default">
-			<doc>Default set of flags used for resource loading.</doc>
-		</enumentry>
-		<enumentry native="KeepInternalRef" script="KeepInternalRef">
-			<doc>If enabled the resource system will keep an internal reference to the resource so it doesn&apos;t get destroyed when it goes out of scope. You can call Resources::release() to release the internal reference. Each call to load will create a new internal reference and therefore must be followed by the same number of release calls. If dependencies are being loaded, they will not have internal references created regardless of this parameter.</doc>
-		</enumentry>
-		<enumentry native="KeepSourceData" script="KeepSourceData">
-			<doc>Determines if the loaded resource keeps original data loaded. Sometime resources will process loaded data and discard the original (e.g. uncompressing audio on load). This flag can prevent the resource from discarding the original data. The original data might be required for saving the resource (via Resources::save), but will use up extra memory. Normally you want to keep this enabled if you plan on saving the resource to disk.</doc>
-		</enumentry>
-	</enum>
 	<class native="Resources" script="Resources">
 		<doc>Manager for dealing with all engine resources. It allows you to save new resources and load existing ones.</doc>
+		<method native="Exists" script="Exists" static="false">
+			<doc>Checks if the resource at the provided path exists.</doc>
+			<param name="resourcePath" type="string">
+				<doc>Path to the resource. This may be a virtual or physical path. e.g.: Virtual path: &apos;/game/textures/path/to/resource&apos; Physical path: &apos;D:/path/to/package.b3d/path/to/resource&apos;</doc>
+			</param>
+			<returns type="bool">
+				<doc>True if the resource can be located, false otherwise.</doc>
+			</returns>
+		</method>
+		<method native="Exists" script="Exists" static="false">
+			<doc>Checks if the resource with the provided ID exists.</doc>
+			<param name="resourceId" type="UUID">
+				<doc>ID of the resource.</doc>
+			</param>
+			<returns type="bool">
+				<doc>True if the resource can be located, false otherwise.</doc>
+			</returns>
+		</method>
 		<method native="ReleaseInternalReference" script="ReleaseInternalReference" static="false">
 			<doc>Releases an internal reference to the resource held by the resources system. This allows the resource to be unloaded when it goes out of scope, if the resource was loaded with <see cref="KeepInternalReference"/> option.
 Alternatively you can also skip manually calling ReleaseInternalReference() and call UnloadAllUnused() which will unload all resources that do not have any external references, but you lose the fine grained control of what will be unloaded.</doc>
