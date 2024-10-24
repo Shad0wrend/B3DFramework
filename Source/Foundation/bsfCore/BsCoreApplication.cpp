@@ -41,6 +41,7 @@
 #include "Renderer/BsGpuDataParameterBlock.h"
 #include "Particles/BsParticleManager.h"
 #include "Particles/BsVectorField.h"
+#include "Platform/BsFolderMonitor.h"
 #include "RenderAPI/BsGpuBackend.h"
 #include "RenderAPI/BsGpuDevice.h"
 #include "Scene/BsPrefab.h"
@@ -85,6 +86,8 @@ CoreApplication::~CoreApplication()
 {
 	mPrimaryWindow->Destroy();
 	mPrimaryWindow = nullptr;
+
+	FolderMonitorManager::ShutDown();
 
 	Importer::ShutDown();
 	MeshManager::ShutDown();
@@ -212,6 +215,7 @@ void CoreApplication::OnStartUp()
 	AudioManager::StartUp(mStartUpDesc.Audio);
 	AnimationManager::StartUp();
 	ParticleManager::StartUp();
+	FolderMonitorManager::StartUp();
 
 	for(auto& importerName : mStartUpDesc.Importers)
 		LoadPlugin(importerName);
@@ -286,6 +290,7 @@ void CoreApplication::RunMainLoopFrame()
 	RenderWindowManager::Instance().UpdateInternal();
 	GetInput().TriggerCallbacksInternal();
 	GetDebug().TriggerCallbacksInternal();
+	FolderMonitorManager::Instance().Update();
 
 	PreUpdate();
 

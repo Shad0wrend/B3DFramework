@@ -35,88 +35,89 @@ private:
 	FolderMonitor* mOwner;
 };
 
-struct FolderMonitor::FolderWatchInfo
+struct Win32FolderMonitor
 {
-	FolderWatchInfo(const Path& folderToMonitor, HANDLE dirHandle, bool monitorSubdirectories, DWORD monitorFlags);
-	~FolderWatchInfo();
+	Win32FolderMonitor(const Path& folderToMonitor, HANDLE dirHandle, bool monitorSubdirectories, DWORD monitorFlags);
+	~Win32FolderMonitor();
 
 	void StartMonitor(HANDLE compPortHandle);
 	void StopMonitor(HANDLE compPortHandle);
 
 	static const u32 kReadBufferSize = 65536;
 
-	Path MFolderToMonitor;
-	HANDLE MDirHandle;
-	OVERLAPPED MOverlapped;
-	MonitorState MState;
-	u8 MBuffer[kReadBufferSize];
-	DWORD MBufferSize;
-	bool MMonitorSubdirectories;
-	DWORD MMonitorFlags;
-	DWORD MReadError;
+	Path FolderToMonitor;
+	HANDLE DirectoryHandle;
+	OVERLAPPED Overlapped;
+	MonitorState State;
+	u8 Buffer[kReadBufferSize];
+	DWORD BufferSize;
+	bool MonitorSubdirectories;
+	DWORD MonitorFlags;
+	DWORD ReadError;
 
-	WString MCachedOldFileName; // Used during rename notifications as they are handled in two steps
+	WString CachedOldFileName; // Used during rename notifications as they are handled in two steps
 
-	Mutex MStatusMutex;
-	ConditionVariable MStartStopEvent;
+	Mutex StatusMutex;
+	ConditionVariable StartStopEvent;
 };
 
-FolderMonitor::FolderWatchInfo::FolderWatchInfo(const Path& folderToMonitor, HANDLE dirHandle, bool monitorSubdirectories, DWORD monitorFlags)
-	: MFolderToMonitor(folderToMonitor), MDirHandle(dirHandle), MState(MonitorState::Inactive), MBufferSize(0), MMonitorSubdirectories(monitorSubdirectories), MMonitorFlags(monitorFlags), MReadError(0)
+Win32FolderMonitor::Win32FolderMonitor(const Path& folderToMonitor, HANDLE dirHandle, bool monitorSubdirectories, DWORD monitorFlags)
+	: FolderToMonitor(folderToMonitor), DirectoryHandle(dirHandle), State(MonitorState::Inactive), BufferSize(0), MonitorSubdirectories(monitorSubdirectories), MonitorFlags(monitorFlags), ReadError(0)
 {
-	memset(&MOverlapped, 0, sizeof(MOverlapped));
+	memset(&Overlapped, 0, sizeof(Overlapped));
 }
 
-FolderMonitor::FolderWatchInfo::~FolderWatchInfo()
+Win32FolderMonitor::~Win32FolderMonitor()
 {
-	B3D_ASSERT(MState == MonitorState::Inactive);
+	B3D_ASSERT(State == MonitorState::Inactive);
 
 	StopMonitor(0);
 }
 
-void FolderMonitor::FolderWatchInfo::StartMonitor(HANDLE compPortHandle)
+void Win32FolderMonitor::StartMonitor(HANDLE compPortHandle)
 {
-	if(MState != MonitorState::Inactive)
+	if(State != MonitorState::Inactive)
 		return; // Already monitoring
 
 	{
-		Lock lock(MStatusMutex);
+		Lock lock(StatusMutex);
 
-		MState = MonitorState::Starting;
-		PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &MOverlapped);
+		State = MonitorState::Starting;
+		PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &Overlapped);
 
-		while(MState != MonitorState::Monitoring)
-			MStartStopEvent.wait(lock);
+		while(State != MonitorState::Monitoring)
+			StartStopEvent.wait(lock);
 	}
 
-	if(MReadError != ERROR_SUCCESS)
+	if(ReadError != ERROR_SUCCESS)
 	{
 		{
-			Lock lock(MStatusMutex);
-			MState = MonitorState::Inactive;
+			Lock lock(StatusMutex);
+			State = MonitorState::Inactive;
 		}
 
-		B3D_EXCEPT(InternalErrorException, "Failed to start folder monitor on folder \"" + MFolderToMonitor.ToString() + "\" because ReadDirectoryChangesW failed.");
+		B3D_LOG(Error, Generic, "Failed to start folder monitor on folder \"{0}\" because ReadDirectoryChangesW failed.", FolderToMonitor);
+		return;
 	}
 }
 
-void FolderMonitor::FolderWatchInfo::StopMonitor(HANDLE compPortHandle)
+void Win32FolderMonitor::StopMonitor(HANDLE compPortHandle)
 {
-	if(MState != MonitorState::Inactive)
+	if(State != MonitorState::Inactive)
 	{
-		Lock lock(MStatusMutex);
+		Lock lock(StatusMutex);
 
-		MState = MonitorState::Shutdown;
-		PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &MOverlapped);
+		State = MonitorState::Shutdown;
+		PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &Overlapped);
 
-		while(MState != MonitorState::Inactive)
-			MStartStopEvent.wait(lock);
+		while(State != MonitorState::Inactive)
+			StartStopEvent.wait(lock);
 	}
 
-	if(MDirHandle != INVALID_HANDLE_VALUE)
+	if(DirectoryHandle != INVALID_HANDLE_VALUE)
 	{
-		CloseHandle(MDirHandle);
-		MDirHandle = INVALID_HANDLE_VALUE;
+		CloseHandle(DirectoryHandle);
+		DirectoryHandle = INVALID_HANDLE_VALUE;
 	}
 }
 
@@ -306,41 +307,22 @@ struct FileAction
 
 struct FolderMonitor::Pimpl
 {
-	Vector<FolderWatchInfo*> MFoldersToWatch;
-	HANDLE MCompPortHandle;
+	Win32FolderMonitor* LowLevelMonitor = nullptr;
+	HANDLE CompPortHandle;
 
-	Queue<FileAction*> MFileActions;
-	List<FileAction*> MActiveFileActions;
+	Queue<FileAction*> FileActions;
+	List<FileAction*> ActiveFileActions;
 
-	Mutex MMainMutex;
-	Thread* MWorkerThread;
+	Mutex MainMutex;
+	Thread* WorkerThread;
 };
 
-FolderMonitor::FolderMonitor()
+FolderMonitor::FolderMonitor(const Path& folderPath, bool monitorSubdirectories, FolderChangeFlags changeFilter)
 {
 	m = B3DNew<Pimpl>();
-	m->MWorkerThread = nullptr;
-	m->MCompPortHandle = nullptr;
-}
+	m->WorkerThread = nullptr;
+	m->CompPortHandle = nullptr;
 
-FolderMonitor::~FolderMonitor()
-{
-	StopMonitorAll();
-
-	// No need for mutex since we know worker thread is shut down by now
-	while(!m->MFileActions.empty())
-	{
-		FileAction* action = m->MFileActions.front();
-		m->MFileActions.pop();
-
-		FileAction::Destroy(action);
-	}
-
-	B3DDelete(m);
-}
-
-void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, FolderChangeBits changeFilter)
-{
 	if(!FileSystem::IsDirectory(folderPath))
 	{
 		B3D_LOG(Error, Generic, "Provided path \"{0}\" is not a directory", folderPath);
@@ -352,212 +334,213 @@ void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, Fo
 
 	if(dirHandle == INVALID_HANDLE_VALUE)
 	{
-		B3D_EXCEPT(InternalErrorException, "Failed to open folder \"" + folderPath.ToString() + "\" for monitoring. Error code: " + ToString((u64)GetLastError()));
+		B3D_LOG(Error, Generic, "Failed to open folder \"{0}\" for monitoring. Error code: {1}", folderPath, (u64)GetLastError());
+		return;
 	}
 
 	DWORD filterFlags = 0;
 
-	if(changeFilter.IsSet(FolderChangeBit::FileName))
+	if(changeFilter.IsSet(FolderChangeFlag::FileAddedOrRemoved))
 		filterFlags |= FILE_NOTIFY_CHANGE_FILE_NAME;
 
-	if(changeFilter.IsSet(FolderChangeBit::DirName))
+	if(changeFilter.IsSet(FolderChangeFlag::DirectoryAddedOrRemoved))
 		filterFlags |= FILE_NOTIFY_CHANGE_DIR_NAME;
 
-	if(changeFilter.IsSet(FolderChangeBit::FileWrite))
+	if(changeFilter.IsSet(FolderChangeFlag::FileWritten))
 		filterFlags |= FILE_NOTIFY_CHANGE_LAST_WRITE;
 
-	m->MFoldersToWatch.push_back(B3DNew<FolderWatchInfo>(folderPath, dirHandle, subdirectories, filterFlags));
-	FolderWatchInfo* watchInfo = m->MFoldersToWatch.back();
+	m->LowLevelMonitor = B3DNew<Win32FolderMonitor>(folderPath, dirHandle, monitorSubdirectories, filterFlags);
 
-	m->MCompPortHandle = CreateIoCompletionPort(dirHandle, m->MCompPortHandle, (ULONG_PTR)watchInfo, 0);
+	m->CompPortHandle = CreateIoCompletionPort(dirHandle, m->CompPortHandle, (ULONG_PTR)m->LowLevelMonitor, 0);
 
-	if(m->MCompPortHandle == nullptr)
+	if(m->CompPortHandle == nullptr)
 	{
-		m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
-		B3DDelete(watchInfo);
-		B3D_EXCEPT(InternalErrorException, "Failed to open completion port for folder monitoring. Error code: " + ToString((u64)GetLastError()));
+		B3DDelete(m->LowLevelMonitor);
+		m->LowLevelMonitor = nullptr;
+
+		B3D_LOG(Error, Generic, "Failed to open completion port for folder monitoring. Error code: {0}", (u64)GetLastError());
+		return;
 	}
 
-	if(m->MWorkerThread == nullptr)
+	if(m->WorkerThread == nullptr)
 	{
-		m->MWorkerThread = B3DNew<Thread>([this]() { WorkerThreadMain(); });
+		m->WorkerThread = B3DNew<Thread>([this]() { WorkerThreadMain(); });
 
-		if(m->MWorkerThread == nullptr)
+		if(m->WorkerThread == nullptr)
 		{
-			m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
-			B3DDelete(watchInfo);
-			B3D_EXCEPT(InternalErrorException, "Failed to create a new worker thread for folder monitoring");
+			B3DDelete(m->LowLevelMonitor);
+			m->LowLevelMonitor = nullptr;
+
+			B3D_LOG(Error, Generic, "Failed to create a new worker thread for folder monitoring");
+			return;
 		}
 	}
 
-	if(m->MWorkerThread != nullptr)
+	if(m->WorkerThread != nullptr)
 	{
-		watchInfo->StartMonitor(m->MCompPortHandle);
+		m->LowLevelMonitor->StartMonitor(m->CompPortHandle);
 	}
 	else
 	{
-		m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
-		B3DDelete(watchInfo);
-		B3D_EXCEPT(InternalErrorException, "Failed to create a new worker thread for folder monitoring");
-	}
-}
+		B3DDelete(m->LowLevelMonitor);
+		m->LowLevelMonitor = nullptr;
 
-void FolderMonitor::StopMonitor(const Path& folderPath)
-{
-	auto findIter = std::find_if(m->MFoldersToWatch.begin(), m->MFoldersToWatch.end(), [&](const FolderWatchInfo* x)
-								 { return x->MFolderToMonitor == folderPath; });
-
-	if(findIter != m->MFoldersToWatch.end())
-	{
-		FolderWatchInfo* watchInfo = *findIter;
-
-		watchInfo->StopMonitor(m->MCompPortHandle);
-		B3DDelete(watchInfo);
-
-		m->MFoldersToWatch.erase(findIter);
+		B3D_LOG(Error, Generic, "Failed to create a new worker thread for folder monitoring");
+		return;
 	}
 
-	if(m->MFoldersToWatch.size() == 0)
-		StopMonitorAll();
+	FolderMonitorManager::Instance().RegisterMonitor(this);
 }
 
-void FolderMonitor::StopMonitorAll()
+FolderMonitor::~FolderMonitor()
 {
-	for(auto& watchInfo : m->MFoldersToWatch)
+	FolderMonitorManager::Instance().UnregisterMonitor(this);
+
+	if(m->LowLevelMonitor != nullptr)
 	{
-		watchInfo->StopMonitor(m->MCompPortHandle);
+		m->LowLevelMonitor->StopMonitor(m->CompPortHandle);
 
 		{
 			// Note: Need this mutex to ensure worker thread is done with watchInfo.
 			// Even though we wait for a condition variable from the worker thread in stopMonitor,
 			// that doesn't mean the worker thread is done with the condition variable
 			// (which is stored inside watchInfo)
-			Lock lock(m->MMainMutex);
-			B3DDelete(watchInfo);
+			Lock lock(m->MainMutex);
+			B3DDelete(m->LowLevelMonitor);
+			m->LowLevelMonitor = nullptr;
 		}
 	}
 
-	m->MFoldersToWatch.clear();
-
-	if(m->MWorkerThread != nullptr)
+	if(m->WorkerThread != nullptr)
 	{
-		PostQueuedCompletionStatus(m->MCompPortHandle, 0, 0, nullptr);
+		PostQueuedCompletionStatus(m->CompPortHandle, 0, 0, nullptr);
 
-		m->MWorkerThread->WaitUntilComplete();
-		B3DDelete(m->MWorkerThread);
-		m->MWorkerThread = nullptr;
+		m->WorkerThread->WaitUntilComplete();
+		B3DDelete(m->WorkerThread);
+		m->WorkerThread = nullptr;
 	}
 
-	if(m->MCompPortHandle != nullptr)
+	if(m->CompPortHandle != nullptr)
 	{
-		CloseHandle(m->MCompPortHandle);
-		m->MCompPortHandle = nullptr;
+		CloseHandle(m->CompPortHandle);
+		m->CompPortHandle = nullptr;
 	}
+
+	// No need for mutex since we know worker thread is shut down by now
+	while(!m->FileActions.empty())
+	{
+		FileAction* action = m->FileActions.front();
+		m->FileActions.pop();
+
+		FileAction::Destroy(action);
+	}
+
+	B3DDelete(m);
 }
 
 void FolderMonitor::WorkerThreadMain()
 {
-	FolderWatchInfo* watchInfo = nullptr;
+	Win32FolderMonitor* lowLevelMonitor = nullptr;
 
 	do
 	{
 		DWORD numBytes;
 		LPOVERLAPPED overlapped;
 
-		if(!GetQueuedCompletionStatus(m->MCompPortHandle, &numBytes, (PULONG_PTR)&watchInfo, &overlapped, INFINITE))
+		if(!GetQueuedCompletionStatus(m->CompPortHandle, &numBytes, (PULONG_PTR)&lowLevelMonitor, &overlapped, INFINITE))
 		{
 			B3D_ASSERT(false);
 			// TODO: Folder handle was lost most likely. Not sure how to deal with that. Shutdown watch on this folder and cleanup?
 		}
 
-		if(watchInfo != nullptr)
+		if(lowLevelMonitor != nullptr)
 		{
 			MonitorState state;
 
 			{
-				Lock lock(watchInfo->MStatusMutex);
-				state = watchInfo->MState;
+				Lock lock(lowLevelMonitor->StatusMutex);
+				state = lowLevelMonitor->State;
 			}
 
 			switch(state)
 			{
 			case MonitorState::Starting:
-				if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::kReadBufferSize, watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
+				if(!ReadDirectoryChangesW(lowLevelMonitor->DirectoryHandle, lowLevelMonitor->Buffer, Win32FolderMonitor::kReadBufferSize, lowLevelMonitor->MonitorSubdirectories, lowLevelMonitor->MonitorFlags, &lowLevelMonitor->BufferSize, &lowLevelMonitor->Overlapped, nullptr))
 				{
 					B3D_ASSERT(false); // TODO - Possibly the buffer was too small?
-					watchInfo->MReadError = GetLastError();
+					lowLevelMonitor->ReadError = GetLastError();
 				}
 				else
 				{
-					watchInfo->MReadError = ERROR_SUCCESS;
+					lowLevelMonitor->ReadError = ERROR_SUCCESS;
 
 					{
-						Lock lock(watchInfo->MStatusMutex);
-						watchInfo->MState = MonitorState::Monitoring;
+						Lock lock(lowLevelMonitor->StatusMutex);
+						lowLevelMonitor->State = MonitorState::Monitoring;
 					}
 				}
 
-				watchInfo->MStartStopEvent.notify_one();
+				lowLevelMonitor->StartStopEvent.notify_one();
 
 				break;
 			case MonitorState::Monitoring:
 				{
-					FileNotifyInfo info(watchInfo->MBuffer, FolderWatchInfo::kReadBufferSize);
-					HandleNotifications(info, *watchInfo);
+					FileNotifyInfo info(lowLevelMonitor->Buffer, Win32FolderMonitor::kReadBufferSize);
+					HandleNotifications(info);
 
-					if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::kReadBufferSize, watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
+					if(!ReadDirectoryChangesW(lowLevelMonitor->DirectoryHandle, lowLevelMonitor->Buffer, Win32FolderMonitor::kReadBufferSize, lowLevelMonitor->MonitorSubdirectories, lowLevelMonitor->MonitorFlags, &lowLevelMonitor->BufferSize, &lowLevelMonitor->Overlapped, nullptr))
 					{
 						B3D_ASSERT(false); // TODO: Failed during normal operation, possibly the buffer was too small. Shutdown watch on this folder and cleanup?
-						watchInfo->MReadError = GetLastError();
+						lowLevelMonitor->ReadError = GetLastError();
 					}
 					else
 					{
-						watchInfo->MReadError = ERROR_SUCCESS;
+						lowLevelMonitor->ReadError = ERROR_SUCCESS;
 					}
 				}
 				break;
 			case MonitorState::Shutdown:
-				if(watchInfo->MDirHandle != INVALID_HANDLE_VALUE)
+				if(lowLevelMonitor->DirectoryHandle != INVALID_HANDLE_VALUE)
 				{
-					CloseHandle(watchInfo->MDirHandle);
-					watchInfo->MDirHandle = INVALID_HANDLE_VALUE;
+					CloseHandle(lowLevelMonitor->DirectoryHandle);
+					lowLevelMonitor->DirectoryHandle = INVALID_HANDLE_VALUE;
 
 					{
-						Lock lock(watchInfo->MStatusMutex);
-						watchInfo->MState = MonitorState::Shutdown2;
+						Lock lock(lowLevelMonitor->StatusMutex);
+						lowLevelMonitor->State = MonitorState::Shutdown2;
 					}
 				}
 				else
 				{
 					{
-						Lock lock(watchInfo->MStatusMutex);
-						watchInfo->MState = MonitorState::Inactive;
+						Lock lock(lowLevelMonitor->StatusMutex);
+						lowLevelMonitor->State = MonitorState::Inactive;
 					}
 
 					{
-						Lock lock(m->MMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
-						watchInfo->MStartStopEvent.notify_one();
+						Lock lock(m->MainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
+						lowLevelMonitor->StartStopEvent.notify_one();
 					}
 				}
 
 				break;
 			case MonitorState::Shutdown2:
-				if(watchInfo->MDirHandle != INVALID_HANDLE_VALUE)
+				if(lowLevelMonitor->DirectoryHandle != INVALID_HANDLE_VALUE)
 				{
 					// Handle is still open? Try again.
-					CloseHandle(watchInfo->MDirHandle);
-					watchInfo->MDirHandle = INVALID_HANDLE_VALUE;
+					CloseHandle(lowLevelMonitor->DirectoryHandle);
+					lowLevelMonitor->DirectoryHandle = INVALID_HANDLE_VALUE;
 				}
 				else
 				{
 					{
-						Lock lock(watchInfo->MStatusMutex);
-						watchInfo->MState = MonitorState::Inactive;
+						Lock lock(lowLevelMonitor->StatusMutex);
+						lowLevelMonitor->State = MonitorState::Inactive;
 					}
 
 					{
-						Lock lock(m->MMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
-						watchInfo->MStartStopEvent.notify_one();
+						Lock lock(m->MainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
+						lowLevelMonitor->StartStopEvent.notify_one();
 					}
 				}
 
@@ -567,16 +550,16 @@ void FolderMonitor::WorkerThreadMain()
 			}
 		}
 	}
-	while(watchInfo != nullptr);
+	while(lowLevelMonitor != nullptr);
 }
 
-void FolderMonitor::HandleNotifications(FileNotifyInfo& notifyInfo, FolderWatchInfo& watchInfo)
+void FolderMonitor::HandleNotifications(FileNotifyInfo& notifyInfo)
 {
 	Vector<FileAction*> mActions;
 
 	do
 	{
-		WString fullPath = notifyInfo.GetFileNameWithPath(watchInfo.MFolderToMonitor);
+		WString fullPath = notifyInfo.GetFileNameWithPath(m->LowLevelMonitor->FolderToMonitor);
 
 		// Ignore notifications about hidden files
 		if((GetFileAttributesW(fullPath.c_str()) & FILE_ATTRIBUTE_HIDDEN) != 0)
@@ -594,38 +577,38 @@ void FolderMonitor::HandleNotifications(FileNotifyInfo& notifyInfo, FolderWatchI
 			mActions.push_back(FileAction::CreateModified(fullPath));
 			break;
 		case FILE_ACTION_RENAMED_OLD_NAME:
-			watchInfo.MCachedOldFileName = fullPath;
+			m->LowLevelMonitor->CachedOldFileName = fullPath;
 			break;
 		case FILE_ACTION_RENAMED_NEW_NAME:
-			mActions.push_back(FileAction::CreateRenamed(watchInfo.MCachedOldFileName, fullPath));
+			mActions.push_back(FileAction::CreateRenamed(m->LowLevelMonitor->CachedOldFileName, fullPath));
 			break;
 		}
 	}
 	while(notifyInfo.GetNext());
 
 	{
-		Lock lock(m->MMainMutex);
+		Lock lock(m->MainMutex);
 
 		for(auto& action : mActions)
-			m->MFileActions.push(action);
+			m->FileActions.push(action);
 	}
 }
 
-void FolderMonitor::UpdateInternal()
+void FolderMonitor::Update()
 {
 	{
-		Lock lock(m->MMainMutex);
+		Lock lock(m->MainMutex);
 
-		while(!m->MFileActions.empty())
+		while(!m->FileActions.empty())
 		{
-			FileAction* action = m->MFileActions.front();
-			m->MFileActions.pop();
+			FileAction* action = m->FileActions.front();
+			m->FileActions.pop();
 
-			m->MActiveFileActions.push_back(action);
+			m->ActiveFileActions.push_back(action);
 		}
 	}
 
-	for(auto iter = m->MActiveFileActions.begin(); iter != m->MActiveFileActions.end();)
+	for(auto iter = m->ActiveFileActions.begin(); iter != m->ActiveFileActions.end();)
 	{
 		FileAction* action = *iter;
 
@@ -675,7 +658,7 @@ void FolderMonitor::UpdateInternal()
 			break;
 		}
 
-		m->MActiveFileActions.erase(iter++);
+		m->ActiveFileActions.erase(iter++);
 		FileAction::Destroy(action);
 	}
 }

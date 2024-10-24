@@ -1667,6 +1667,18 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<enumentry native="W" script="W">
 		</enumentry>
 	</enum>
+	<enum native="FolderChangeFlag" script="FolderChangeFlag">
+		<doc>Types of notifications we would like to receive when we start a FolderMonitor on a certain folder.</doc>
+		<enumentry native="FileAddedOrRemoved" script="FileAddedOrRemoved">
+			<doc>Called when file is created, moved or removed.</doc>
+		</enumentry>
+		<enumentry native="DirectoryAddedOrRemoved" script="DirectoryAddedOrRemoved">
+			<doc>Called when directory is created, moved or removed.</doc>
+		</enumentry>
+		<enumentry native="FileWritten" script="FileWritten">
+			<doc>Called when file is written to.</doc>
+		</enumentry>
+	</enum>
 	<enum native="ColorComponent" script="ColorComponent">
 		<doc>Names of individual components of a color.</doc>
 		<enumentry native="B" script="B">

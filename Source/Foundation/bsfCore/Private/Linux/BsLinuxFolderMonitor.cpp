@@ -7,91 +7,86 @@
 
 using namespace bs;
 
-struct FolderMonitor::FolderWatchInfo
+struct LinuxFolderMonitor
 {
-	FolderWatchInfo(const Path& folderToMonitor, int inHandle, bool monitorSubdirectories, FolderChangeBits filter);
-	~FolderWatchInfo();
+	LinuxFolderMonitor(const Path& folderToMonitor, int inHandle, bool monitorSubdirectories, FolderChangeFlags filter);
+	~LinuxFolderMonitor();
 
-	void startMonitor();
-	void stopMonitor();
+	void StartMonitor();
+	void StopMonitor();
 
-	void addPath(const Path& path);
-	void removePath(const Path& path);
-	Path getPath(i32 handle);
+	void AddPath(const Path& path);
+	void RemovePath(const Path& path);
+	Path GetPath(i32 handle);
 
-	Path folderToMonitor;
-	int dirHandle;
-	bool monitorSubdirectories;
-	FolderChangeBits filter;
+	Path FolderToMonitor;
+	int DirectoryHandle;
+	bool MonitorSubdirectories;
+	FolderChangeFlags Filter;
 
-	UnorderedMap<Path, i32> pathToHandle;
-	UnorderedMap<i32, Path> handleToPath;
+	UnorderedMap<Path, i32> PathToHandle;
+	UnorderedMap<i32, Path> HandleToPath;
 };
 
-FolderMonitor::FolderWatchInfo::FolderWatchInfo(const Path& folderToMonitor, int inHandle, bool monitorSubdirectories, FolderChangeBits filter)
-	: folderToMonitor(folderToMonitor), dirHandle(inHandle), monitorSubdirectories(monitorSubdirectories), filter(filter)
+LinuxFolderMonitor::LinuxFolderMonitor(const Path& folderToMonitor, int inHandle, bool monitorSubdirectories, FolderChangeFlags filter)
+	: FolderToMonitor(folderToMonitor), DirectoryHandle(inHandle), MonitorSubdirectories(monitorSubdirectories), Filter(filter)
 {}
 
-FolderMonitor::FolderWatchInfo::~FolderWatchInfo()
+LinuxFolderMonitor::~LinuxFolderMonitor()
 {
-	stopMonitor();
+	StopMonitor();
 }
 
-void FolderMonitor::FolderWatchInfo::startMonitor()
+void LinuxFolderMonitor::StartMonitor()
 {
-	addPath(folderToMonitor);
+	AddPath(FolderToMonitor);
 
-	if(monitorSubdirectories)
-	{
-		FileSystem::Iterate(folderToMonitor, nullptr, [this](const Path& path)
-							{
-				addPath(path);
-				return true; });
-	}
+	if(MonitorSubdirectories)
+		FileSystem::Iterate(FolderToMonitor, nullptr, [this](const Path& path) { AddPath(path); return true; });
 }
 
-void FolderMonitor::FolderWatchInfo::stopMonitor()
+void LinuxFolderMonitor::StopMonitor()
 {
-	for(auto& entry : pathToHandle)
-		inotify_rm_watch(dirHandle, entry.second);
+	for(auto& entry : PathToHandle)
+		inotify_rm_watch(DirectoryHandle, entry.second);
 
-	pathToHandle.clear();
+	PathToHandle.clear();
 }
 
-void FolderMonitor::FolderWatchInfo::addPath(const Path& path)
+void LinuxFolderMonitor::AddPath(const Path& path)
 {
-	String pathString = path.toString();
+	String pathString = path.ToString();
 
-	i32 watchHandle = inotify_add_watch(dirHandle, pathString.c_str(), IN_ALL_EVENTS);
+	i32 watchHandle = inotify_add_watch(directoryHandle, pathString.c_str(), IN_ALL_EVENTS);
 	if(watchHandle == -1)
 	{
 		String error = strerror(errno);
 		B3D_LOG(Error, Platform, "Unable to start folder monitor for path: \"{0}\". Error: {1}", pathString, error);
 	}
 
-	pathToHandle[path] = watchHandle;
-	handleToPath[watchHandle] = path;
+	PathToHandle[path] = watchHandle;
+	HandleToPath[watchHandle] = path;
 }
 
-void FolderMonitor::FolderWatchInfo::removePath(const Path& path)
+void LinuxFolderMonitor::RemovePath(const Path& path)
 {
-	auto iterFind = pathToHandle.find(path);
-	if(iterFind != pathToHandle.end())
+	auto found = PathToHandle.find(path);
+	if(found != PathToHandle.end())
 	{
-		i32 watchHandle = iterFind->second;
-		pathToHandle.erase(iterFind);
+		i32 watchHandle = found->second;
+		PathToHandle.erase(found);
 
-		handleToPath.erase(watchHandle);
+		HandleToPath.erase(watchHandle);
 	}
 }
 
-Path FolderMonitor::FolderWatchInfo::getPath(i32 handle)
+Path LinuxFolderMonitor::GetPath(i32 handle)
 {
-	auto iterFind = handleToPath.find(handle);
-	if(iterFind != handleToPath.end())
-		return iterFind->second;
+	auto found = HandleToPath.find(handle);
+	if(found != HandleToPath.end())
+		return found->second;
 
-	return Path::BLANK;
+	return Path::kBlank;
 }
 
 class FolderMonitor::FileNotifyInfo
@@ -108,7 +103,7 @@ enum class FileActionType
 
 struct FileAction
 {
-	static FileAction* createAdded(const String& fileName)
+	static FileAction* CreateAdded(const String& fileName)
 	{
 		u8* bytes = (u8*)B3DAllocate((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
@@ -127,7 +122,7 @@ struct FileAction
 		return action;
 	}
 
-	static FileAction* createRemoved(const String& fileName)
+	static FileAction* CreateRemoved(const String& fileName)
 	{
 		u8* bytes = (u8*)B3DAllocate((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
@@ -146,7 +141,7 @@ struct FileAction
 		return action;
 	}
 
-	static FileAction* createModified(const String& fileName)
+	static FileAction* CreateModified(const String& fileName)
 	{
 		u8* bytes = (u8*)B3DAllocate((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
@@ -165,7 +160,7 @@ struct FileAction
 		return action;
 	}
 
-	static FileAction* createRenamed(const String& oldFilename, const String& newfileName)
+	static FileAction* CreateRenamed(const String& oldFilename, const String& newfileName)
 	{
 		u8* bytes = (u8*)B3DAllocate((u32)(sizeof(FileAction) + (oldFilename.size() + newfileName.size() + 2) * sizeof(String::value_type)));
 
@@ -204,173 +199,116 @@ struct FileAction
 
 struct FolderMonitor::Pimpl
 {
-	Vector<FolderWatchInfo*> monitors;
+	LinuxFolderMonitor* LowLevelMonitor = nullptr;
 
-	Vector<FileAction*> fileActions;
-	Vector<FileAction*> activeFileActions;
+	Vector<FileAction*> FileActions;
+	Vector<FileAction*> ActiveFileActions;
 
-	int inHandle;
-	bool started;
-	Mutex mainMutex;
-	Thread* workerThread;
+	int INotifyHandle = 0;
+	bool Started = false;
+	Mutex MainMutex;
+	Thread* WorkerThread = nullptr;
 };
 
-FolderMonitor::FolderMonitor()
+FolderMonitor::FolderMonitor(const Path& folderPath, bool monitorSubdirectories, FolderChangeFlags changeFilter)
 {
 	m = B3DNew<Pimpl>();
-	m->workerThread = nullptr;
-	m->inHandle = 0;
-	m->started = false;
-}
 
-FolderMonitor::~FolderMonitor()
-{
-	stopMonitorAll();
-
-	// No need for mutex since we know worker thread is shut down by now
-	for(auto& action : m->fileActions)
-		FileAction::Destroy(action);
-
-	B3DDelete(m);
-}
-
-void FolderMonitor::startMonitor(const Path& folderPath, bool subdirectories, FolderChangeBits changeFilter)
-{
 	if(!FileSystem::IsDirectory(folderPath))
 	{
 		B3D_LOG(Error, Platform, "Provided path \"{0}\" is not a directory", folderPath);
 		return;
 	}
 
-	// Check if there is overlap with existing monitors
-	for(auto& monitor : m->monitors)
+	// Initialize inotify
 	{
-		// Identical monitor exists
-		if(monitor->folderToMonitor.equals(folderPath))
-		{
-			B3D_LOG(Warning, Platform, "Folder is already monitored, cannot monitor it again.");
-			return;
-		}
+		Lock lock(m->MainMutex);
 
-		// This directory is part of a directory that's being monitored
-		if(monitor->monitorSubdirectories && folderPath.includes(monitor->folderToMonitor))
-		{
-			B3D_LOG(Warning, Platform, "Folder is already monitored, cannot monitor it again.");
-			return;
-		}
-
-		// This directory would include a directory of another monitor
-		if(subdirectories && monitor->folderToMonitor.includes(folderPath))
-		{
-			B3D_LOG(Warning, Platform, "Cannot add a recursive monitor as it conflicts with a previously monitored path");
-			return;
-		}
+		m->INotifyHandle = inotify_init();
+		m->Started = true;
 	}
 
-	// Initialize inotify if required
-	if(!m->started)
-	{
-		Lock lock(m->mainMutex);
-
-		m->inHandle = inotify_init();
-		m->started = true;
-	}
-
-	FolderWatchInfo* watchInfo = B3DNew<FolderWatchInfo>(folderPath, m->inHandle, subdirectories, changeFilter);
+	LinuxFolderMonitor* lowLeveMonitor = B3DNew<LinuxFolderMonitor>(folderPath, m->INotifyHandle, monitorSubdirectories, changeFilter);
 
 	// Register and start the monitor
 	{
 		Lock lock(m->mainMutex);
 
-		m->monitors.push_back(watchInfo);
-		watchInfo->startMonitor();
+		m->LowLevelMonitor = lowLevelMonitor;
+		LowLevelMonitor->StartMonitor();
 	}
 
-	// Start the worker thread if it isn't already
-	if(m->workerThread == nullptr)
+	// Start the worker thread
+	m->WorkerThread = B3DNew<Thread>(std::bind(&FolderMonitor::WorkerThreadMain, this));
+
+	if(m->WorkerThread == nullptr)
 	{
-		m->workerThread = B3DNew<Thread>(std::bind(&FolderMonitor::workerThreadMain, this));
-
-		if(m->workerThread == nullptr)
-			B3D_LOG(Error, Platform, "Failed to create a new worker thread for folder monitoring");
+		B3D_LOG(Error, Platform, "Failed to create a new worker thread for folder monitoring");
+		return;
 	}
+
+	FolderMonitorManager::Instance().RegisterMonitor(this);
 }
 
-void FolderMonitor::stopMonitor(const Path& folderPath)
+FolderMonitor::~FolderMonitor()
 {
-	auto findIter = std::find_if(m->monitors.begin(), m->monitors.end(), [&](const FolderWatchInfo* x)
-								 { return x->folderToMonitor == folderPath; });
+	FolderMonitorManager::Instance().UnregisterMonitor(this);
 
-	if(findIter != m->monitors.end())
 	{
-		// Special case if this is the last monitor
-		if(m->monitors.size() == 1)
-			stopMonitorAll();
-		else
-		{
-			Lock lock(m->mainMutex);
-			FolderWatchInfo* watchInfo = *findIter;
-
-			watchInfo->stopMonitor();
-			B3DDelete(watchInfo);
-
-			m->monitors.erase(findIter);
-		}
-	}
-}
-
-void FolderMonitor::stopMonitorAll()
-{
-	if(m->started)
-	{
-		Lock lock(m->mainMutex);
+		Lock lock(m->MainMutex);
 
 		// First tell the thread it's ready to be shutdown
-		m->started = false;
+		m->Started = false;
 
-		// Remove all watches (this will also wake up the thread). Note that at least one watch must be present otherwise
-		// the thread won't wake up (we ensure that elsewhere).
-		for(auto& watchInfo : m->monitors)
+		// Remove the low level monitor (this will also wake up the thread).
+		if(m->LowLevelMonitor != nullptr)
 		{
-			watchInfo->stopMonitor();
-			B3DDelete(watchInfo);
-		}
+			m->LowLevelMonitor->StopMonitor();
 
-		m->monitors.clear();
+			B3DDelete(m->LowLevelMonitor);
+			m->LowLevelMonitor = nullptr;
+		}
 	}
 
 	// Wait for the thread to shutdown
-	if(m->workerThread != nullptr)
+	if(m->WorkerThread != nullptr)
 	{
-		m->workerThread->join();
-		B3DDelete(m->workerThread);
-		m->workerThread = nullptr;
+		m->WorkerThread->join();
+
+		B3DDelete(m->WorkerThread);
+		m->WorkerThread = nullptr;
 	}
 
 	// Close the inotify handle
 	{
-		Lock lock(m->mainMutex);
-		if(m->inHandle != 0)
+		Lock lock(m->MainMutex);
+		if(m->INotifyHandle != 0)
 		{
-			close(m->inHandle);
-			m->inHandle = 0;
+			close(m->INotifyHandle);
+			m->INotifyHandle = 0;
 		}
 	}
+
+	// No need for mutex since we know worker thread is shut down by now
+	for(auto& action : m->FileActions)
+		FileAction::Destroy(action);
+
+	B3DDelete(m);
 }
 
-void FolderMonitor::workerThreadMain()
+void FolderMonitor::WorkerThreadMain()
 {
-	static const u32 BUFFER_SIZE = 16384;
+	static const u32 kBufferSize = 16384;
 
 	bool shouldRun;
 	i32 watchHandle;
 	{
-		Lock(m->mainMutex);
-		watchHandle = m->inHandle;
-		shouldRun = m->started;
+		Lock(m->MainMutex);
+		watchHandle = m->INotifyHandle;
+		shouldRun = m->Started;
 	}
 
-	u8 buffer[BUFFER_SIZE];
+	u8 buffer[kBufferSize];
 
 	while(shouldRun)
 	{
@@ -382,8 +320,8 @@ void FolderMonitor::workerThreadMain()
 
 		// Note: Must be after read, so shutdown can be started when we remove the watches (as then read() will return)
 		{
-			Lock(m->mainMutex);
-			shouldRun = m->started;
+			Lock(m->MainMutex);
+			shouldRun = m->Started;
 		}
 
 		i32 readPos = 0;
@@ -393,23 +331,23 @@ void FolderMonitor::workerThreadMain()
 			if(event->len > 0)
 			{
 				{
-					Lock lock(m->mainMutex);
+					Lock lock(m->MainMutex);
 
 					Path path;
-					FolderWatchInfo* monitor = nullptr;
-					for(auto& entry : m->monitors)
+					LinuxFolderMonitor* lowLevelMonitor = nullptr;
+					if(m->LowLevelMonitor != nullptr)
 					{
-						path = entry->GetPath(event->wd);
+						path = m->LowLevelMonitor->GetPath(event->wd);
 						if(!path.isEmpty())
 						{
 							path.append(event->name);
-							monitor = entry;
+							lowLevelMonitor = m->LowLevelMonitor;
 							break;
 						}
 					}
 
 					// This can happen if the path got removed during some recent previous event
-					if(monitor == nullptr)
+					if(lowLevelMonitor == nullptr)
 						goto next;
 
 					// Need to add/remove sub-directories to/from watch list
@@ -420,9 +358,9 @@ void FolderMonitor::workerThreadMain()
 						bool removed = (event->mask & (IN_DELETE | IN_MOVED_FROM)) != 0;
 
 						if(added)
-							monitor->addPath(path);
+							lowLevelMonitor->AddPath(path);
 						else if(removed)
-							monitor->removePath(path);
+							lowLevelMonitor->RemovePath(path);
 					}
 
 					// Actually trigger the events
@@ -432,13 +370,13 @@ void FolderMonitor::workerThreadMain()
 					{
 						if(isDirectory)
 						{
-							if(monitor->filter.IsSet(FolderChangeBit::DirName))
-								m->fileActions.push_back(FileAction::createAdded(path.toString()));
+							if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::DirectoryAddedOrRemoved))
+								m->FileActions.push_back(FileAction::CreateAdded(path.ToString()));
 						}
 						else
 						{
-							if(monitor->filter.IsSet(FolderChangeBit::FileName))
-								m->fileActions.push_back(FileAction::createAdded(path.toString()));
+							if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::FileAddedOrRemoved))
+								m->FileActions.push_back(FileAction::CreateAdded(path.ToString()));
 						}
 					}
 
@@ -447,20 +385,20 @@ void FolderMonitor::workerThreadMain()
 					{
 						if(isDirectory)
 						{
-							if(monitor->filter.IsSet(FolderChangeBit::DirName))
-								m->fileActions.push_back(FileAction::createRemoved(path.toString()));
+							if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::DirectoryAddedOrRemoved))
+								m->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
 						}
 						else
 						{
-							if(monitor->filter.IsSet(FolderChangeBit::FileName))
-								m->fileActions.push_back(FileAction::createRemoved(path.toString()));
+							if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::FileAddedOrRemoved))
+								m->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
 						}
 					}
 
 					// File was modified
-					if(((event->mask & IN_CLOSE_WRITE) != 0) && monitor->filter.IsSet(FolderChangeBit::FileWrite))
+					if(((event->mask & IN_CLOSE_WRITE) != 0) && lowLevelMonitor->Filter.IsSet(FolderChangeFlag::FileWritten))
 					{
-						m->fileActions.push_back(FileAction::createModified(path.toString()));
+						m->FileActions.push_back(FileAction::CreateModified(path.ToString()));
 					}
 
 					// Note: Not reporting renames, instead a remove + add event is created. To support renames I'd need
@@ -477,43 +415,43 @@ void FolderMonitor::workerThreadMain()
 	}
 }
 
-void FolderMonitor::handleNotifications(FileNotifyInfo& notifyInfo, FolderWatchInfo& watchInfo)
+void FolderMonitor::HandleNotifications(FileNotifyInfo& notifyInfo)
 {
 	// Do nothing
 }
 
-void FolderMonitor::UpdateInternal()
+void FolderMonitor::Update()
 {
 	{
-		Lock lock(m->mainMutex);
+		Lock lock(m->MainMutex);
 
-		std::swap(m->fileActions, m->activeFileActions);
+		std::swap(m->FileActions, m->ActiveFileActions);
 	}
 
-	for(auto& action : m->activeFileActions)
+	for(auto& action : m->ActiveFileActions)
 	{
 		switch(action->type)
 		{
 		case FileActionType::Added:
-			if(!onAdded.empty())
-				onAdded(Path(action->newName));
+			if(!OnAdded.empty())
+				OnAdded(Path(action->newName));
 			break;
 		case FileActionType::Removed:
-			if(!onRemoved.empty())
-				onRemoved(Path(action->newName));
+			if(!OnRemoved.empty())
+				OnRemoved(Path(action->newName));
 			break;
 		case FileActionType::Modified:
-			if(!onModified.empty())
-				onModified(Path(action->newName));
+			if(!OnModified.empty())
+				OnModified(Path(action->newName));
 			break;
 		case FileActionType::Renamed:
-			if(!onRenamed.empty())
-				onRenamed(Path(action->oldName), Path(action->newName));
+			if(!OnRenamed.empty())
+				OnRenamed(Path(action->oldName), Path(action->newName));
 			break;
 		}
 
 		FileAction::Destroy(action);
 	}
 
-	m->activeFileActions.clear();
+	m->ActiveFileActions.clear();
 }

@@ -29,7 +29,7 @@ struct CreatedFileInfo
 
 struct FileAction
 {
-	static FileAction* createAdded(const String& fileName)
+	static FileAction* CreateAdded(const String& fileName)
 	{
 		u8* bytes = (u8*)B3DAllocate((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
@@ -46,7 +46,7 @@ struct FileAction
 		return action;
 	}
 
-	static FileAction* createRemoved(const String& fileName)
+	static FileAction* CreateRemoved(const String& fileName)
 	{
 		u8* bytes = (u8*)B3DAllocate((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
@@ -63,7 +63,7 @@ struct FileAction
 		return action;
 	}
 
-	static FileAction* createModified(const String& fileName)
+	static FileAction* CreateModified(const String& fileName)
 	{
 		u8* bytes = (u8*)B3DAllocate((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
@@ -80,7 +80,7 @@ struct FileAction
 		return action;
 	}
 
-	static FileAction* createRenamed(const String& oldFilename, const String& newfileName)
+	static FileAction* CreateRenamed(const String& oldFilename, const String& newfileName)
 	{
 		u8* bytes = (u8*)B3DAllocate((u32)(sizeof(FileAction) + (oldFilename.size() + newfileName.size() + 2) * sizeof(String::value_type)));
 
@@ -112,63 +112,65 @@ struct FileAction
 	FileActionType type;
 };
 
+struct MacOSFolderMonitor;
+
 struct FolderMonitor::Pimpl
 {
-	Vector<FolderWatchInfo*> monitorsToStart;
-	Vector<FolderWatchInfo*> monitorsToStop;
-	Vector<FolderWatchInfo*> monitors;
+	MacOSFolderMonitor* LowLevelMonitor = nullptr;
+	bool RequestLowLevelMonitorStart = false;
+	bool RequestLowLevelMonitorStop = false;
 
-	Vector<FileAction*> fileActions;
-	Vector<FileAction*> activeFileActions;
+	Vector<FileAction*> FileActions;
+	Vector<FileAction*> ActiveFileActions;
 
-	Mutex mainMutex;
-	Thread* workerThread;
+	Mutex MainMutex;
+	Thread* WorkerThread = nullptr;
 };
 
-static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, size_t numEvents, void* eventPaths, const FSEventStreamEventFlags* eventFlags, const FSEventStreamEventId* eventIds);
+static void WatcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, size_t numEvents, void* eventPaths, const FSEventStreamEventFlags* eventFlags, const FSEventStreamEventId* eventIds);
 
-struct FolderMonitor::FolderWatchInfo
+struct MacOSFolderMonitor
 {
-	FolderWatchInfo(
+	MacOSFolderMonitor(
 		const Path& folderToMonitor,
 		FolderMonitor* owner,
 		bool monitorSubdirectories,
-		FolderChangeBits filter);
-	~FolderWatchInfo();
+		FolderChangeFlags filter);
+	~MacOSFolderMonitor();
 
-	void startMonitor();
-	void stopMonitor();
+	void StartMonitor();
+	void StopMonitor();
 
-	Path folderToMonitor;
-	FolderMonitor* owner;
-	bool monitorSubdirectories;
-	FolderChangeBits filter;
-	FSEventStreamRef streamRef;
-	bool hasStarted;
-	Vector<CreatedFileInfo> createdFiles;
+	Path FolderToMonitor;
+	FolderMonitor* Owner;
+	bool MonitorSubdirectories;
+	FolderChangeFlags Filter;
+	FSEventStreamRef StreamRef;
+	bool HasStarted;
+	Vector<CreatedFileInfo> CreatedFiles;
 };
 
-FolderMonitor::FolderWatchInfo::FolderWatchInfo(
+MacOSFolderMonitor::MacOSFolderMonitor(
 	const Path& folderToMonitor,
 	FolderMonitor* owner,
 	bool monitorSubdirectories,
-	FolderChangeBits filter)
-	: folderToMonitor(folderToMonitor)
-	, owner(owner)
-	, monitorSubdirectories(monitorSubdirectories)
-	, filter(filter)
-	, streamRef(nullptr)
-	, hasStarted(false)
+	FolderChangeFlags filter)
+	: FolderToMonitor(folderToMonitor)
+	, Owner(owner)
+	, MonitorSubdirectories(monitorSubdirectories)
+	, Filter(filter)
+	, StreamRef(nullptr)
+	, HasStarted(false)
 {}
 
-FolderMonitor::FolderWatchInfo::~FolderWatchInfo()
+MacOSFolderMonitor::~MacFolderMonitor()
 {
-	stopMonitor();
+	StopMonitor();
 }
 
-void FolderMonitor::FolderWatchInfo::startMonitor()
+void MacOSFolderMonitor::StartMonitor()
 {
-	String pathString = folderToMonitor.toString();
+	String pathString = FolderToMonitor.toString();
 	CFStringRef path = CFStringCreateWithCString(kCFAllocatorDefault, pathString.c_str(), kCFStringEncodingUTF8);
 
 	CFArrayRef pathArray = CFArrayCreate(nullptr, (const void**)&path, 1, nullptr);
@@ -176,9 +178,9 @@ void FolderMonitor::FolderWatchInfo::startMonitor()
 	context.info = this;
 
 	CFAbsoluteTime latency = 0.1f;
-	streamRef = FSEventStreamCreate(
+	StreamRef = FSEventStreamCreate(
 		kCFAllocatorDefault,
-		&watcherCallback,
+		&WatcherCallback,
 		&context,
 		pathArray,
 		kFSEventStreamEventIdSinceNow,
@@ -187,35 +189,35 @@ void FolderMonitor::FolderWatchInfo::startMonitor()
 
 	CFRelease(pathArray);
 
-	if(streamRef)
+	if(StreamRef)
 	{
-		FSEventStreamScheduleWithRunLoop(streamRef, CFRunLoopGetCurrent(), FolderMonitorMode);
-		if(FSEventStreamStart(streamRef))
-			hasStarted = true;
+		FSEventStreamScheduleWithRunLoop(StreamRef, CFRunLoopGetCurrent(), FolderMonitorMode);
+		if(FSEventStreamStart(StreamRef))
+			HasStarted = true;
 	}
 
 	CFRelease(path);
 }
 
-void FolderMonitor::FolderWatchInfo::stopMonitor()
+void MacOSFolderMonitor::StopMonitor()
 {
-	if(!streamRef)
+	if(!StreamRef)
 		return;
 
-	if(hasStarted)
+	if(HasStarted)
 	{
-		FSEventStreamStop(streamRef);
-		hasStarted = false;
+		FSEventStreamStop(StreamRef);
+		HasStarted = false;
 	}
 
-	FSEventStreamInvalidate(streamRef);
-	FSEventStreamRelease(streamRef);
+	FSEventStreamInvalidate(StreamRef);
+	FSEventStreamRelease(StreamRef);
 }
 
-static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, size_t numEvents, void* eventPaths, const FSEventStreamEventFlags* eventFlags, const FSEventStreamEventId* eventIds)
+static void WatcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, size_t numEvents, void* eventPaths, const FSEventStreamEventFlags* eventFlags, const FSEventStreamEventId* eventIds)
 {
-	auto* watcher = (FolderMonitor::FolderWatchInfo*)userInfo;
-	FolderMonitor::Pimpl* folderData = watcher->owner->GetPrivateDataInternal();
+	auto* lowLevelMonitor = (MacOSFolderMonitor*)userInfo;
+	FolderMonitor::Pimpl* folderData = lowLevelMonitor->Owner->GetPrivateDataInternal();
 
 	auto paths = (CFArrayRef)eventPaths;
 	CFIndex length = CFArrayGetCount(paths);
@@ -234,12 +236,12 @@ static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 		if(pathLength == 0)
 			continue;
 
-		Lock lock(folderData->mainMutex);
+		Lock lock(folderData->MainMutex);
 
 		// If not monitoring subdirectories, ignore paths that aren't direct descendants of the root path
-		if(!watcher->monitorSubdirectories)
+		if(!lowLevelMonitor->MonitorSubdirectories)
 		{
-			if(path.getParent() != watcher->folderToMonitor)
+			if(path.getParent() != lowLevelMonitor->FolderToMonitor)
 				continue;
 		}
 
@@ -261,9 +263,9 @@ static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 		if(wasRenamed)
 		{
 			if(FileSystem::Exists(path))
-				folderData->fileActions.push_back(FileAction::createAdded(path.toString()));
+				FolderData->FileActions.push_back(FileAction::CreateAdded(path.ToString()));
 			else
-				folderData->fileActions.push_back(FileAction::createRemoved(path.toString()));
+				FolderData->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
 		}
 
 		// File/folder was added
@@ -271,16 +273,16 @@ static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 		{
 			if(!isFile)
 			{
-				if(watcher->filter.IsSet(FolderChangeBit::DirName))
-					folderData->fileActions.push_back(FileAction::createAdded(path.toString()));
+				if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::DirectoryAddedOrRemoved))
+					FolderData->FileActions.push_back(FileAction::CreateAdded(path.ToString()));
 			}
 			else
 			{
-				if(watcher->filter.IsSet(FolderChangeBit::FileName))
+				if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::FileAddedOrRemoved))
 				{
 					// We delay all file creation events until the file is done writing
-					watcher->createdFiles.push_back(CreatedFileInfo());
-					CreatedFileInfo& createdFileInfo = watcher->createdFiles.back();
+					lowLevelMonitor->CreatedFiles.push_back(CreatedFileInfo());
+					CreatedFileInfo& createdFileInfo = lowLevelMonitor->createdFiles.back();
 					createdFileInfo.path = path;
 					createdFileInfo.lastSize = FileSystem::GetFileSize(path);
 					createdFileInfo.timer.reset();
@@ -293,25 +295,24 @@ static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 		{
 			if(!isFile)
 			{
-				if(watcher->filter.IsSet(FolderChangeBit::DirName))
-					folderData->fileActions.push_back(FileAction::createRemoved(path.toString()));
+				if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::DirectoryAddedOrRemoved))
+					FolderData->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
 			}
 			else
 			{
-				if(watcher->filter.IsSet(FolderChangeBit::FileName))
-					folderData->fileActions.push_back(FileAction::createRemoved(path.toString()));
+				if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::FileAddedOrRemoved))
+					FolderData->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
 			}
 		}
 
 		// File was modified
-		if(wasModified && watcher->filter.IsSet(FolderChangeBit::FileWrite))
+		if(wasModified && lowLevelMonitor->Filter.IsSet(FolderChangeFlag::FileWritten))
 		{
 			// Don't send out modified event if file was created
-			auto iterFind = std::find_if(watcher->createdFiles.begin(), watcher->createdFiles.end(), [&path](const CreatedFileInfo& info)
-										 { return info.path == path; });
+			auto found = std::find_if(lowLevelMonitor->CreatedFiles.begin(), lowLevelMonitor->CreatedFiles.end(), [&path](const CreatedFileInfo& info) { return info.path == path; });
 
-			if(iterFind == watcher->createdFiles.end())
-				folderData->fileActions.push_back(FileAction::createModified(path.toString()));
+			if(found == lowLevelMonitor->CreatedFiles.end())
+				folderData->FileActions.push_back(FileAction::CreateModified(path.ToString()));
 		}
 	}
 }
@@ -320,145 +321,95 @@ class FolderMonitor::FileNotifyInfo
 {
 };
 
-FolderMonitor::FolderMonitor()
+FolderMonitor::FolderMonitor(const Path& folderPath, bool monitorSubdirectories, FolderChangeFlags changeFilter)
 {
 	m = B3DNew<Pimpl>();
-	m->workerThread = nullptr;
-}
 
-FolderMonitor::~FolderMonitor()
-{
-	stopMonitorAll();
-
-	// No need for mutex since we know worker thread is shut down by now
-	for(auto& action : m->fileActions)
-		FileAction::Destroy(action);
-
-	B3DDelete(m);
-}
-
-void FolderMonitor::startMonitor(const Path& folderPath, bool subdirectories, FolderChangeBits changeFilter)
-{
 	if(!FileSystem::IsDirectory(folderPath))
 	{
 		B3D_LOG(Error, Platform, "Provided path \"{0}\" is not a directory.", folderPath);
 		return;
 	}
 
-	// Check if there is overlap with existing monitors
-	for(auto& monitor : m->monitors)
-	{
-		// Identical monitor exists
-		if(monitor->folderToMonitor.equals(folderPath))
-		{
-			B3D_LOG(Warning, Platform, "Folder is already monitored, cannot monitor it again.");
-			return;
-		}
-
-		// This directory is part of a directory that's being monitored
-		if(monitor->monitorSubdirectories && folderPath.includes(monitor->folderToMonitor))
-		{
-			B3D_LOG(Warning, Platform, "Folder is already monitored, cannot monitor it again.");
-			return;
-		}
-
-		// This directory would include a directory of another monitor
-		if(subdirectories && monitor->folderToMonitor.includes(folderPath))
-		{
-			B3D_LOG(Warning, Platform, "Cannot add a recursive monitor as it conflicts with a previously monitored path.");
-			return;
-		}
-	}
-
-	auto watchInfo = B3DNew<FolderWatchInfo>(folderPath, this, subdirectories, changeFilter);
+	auto lowLevelMonitor = B3DNew<MacOSFolderMonitor>(folderPath, this, monitorSubdirectories, changeFilter);
 
 	// Register and start the monitor
 	{
-		Lock lock(m->mainMutex);
+		Lock lock(m->MainMutex);
 
-		m->monitorsToStart.push_back(watchInfo);
-		m->monitors.push_back(watchInfo);
+		m->LowLevelMonitor = lowLevelMonitor;
+		m->RequestLowLevelMonitorStart = true;
 	}
 
-	// Start the worker thread if it isn't already
-	if(m->workerThread == nullptr)
+	// Start the worker thread
+	m->WorkerThread = B3DNew<Thread>(std::bind(&FolderMonitor::WorkerThreadMain, this));
+
+	if(m->WorkerThread == nullptr)
 	{
-		m->workerThread = B3DNew<Thread>(std::bind(&FolderMonitor::workerThreadMain, this));
-
-		if(m->workerThread == nullptr)
-			B3D_LOG(Error, Platform, "Failed to create a new worker thread for folder monitoring");
+		B3D_LOG(Error, Platform, "Failed to create a new worker thread for folder monitoring");
+		return;
 	}
+
+	FolderMonitorManager::Instance().RegisterMonitor(this);
 }
 
-void FolderMonitor::stopMonitor(const Path& folderPath)
+FolderMonitor::~FolderMonitor()
 {
-	auto findIter = std::find_if(m->monitors.begin(), m->monitors.end(), [&](const FolderWatchInfo* x)
-								 { return x->folderToMonitor == folderPath; });
+	FolderMonitorManager::Instance().UnregisterMonitor(this);
 
-	if(findIter != m->monitors.end())
 	{
-		// Special case if this is the last monitor
-		if(m->monitors.size() == 1)
-			stopMonitorAll();
-		else
-		{
-			Lock lock(m->mainMutex);
-			FolderWatchInfo* watchInfo = *findIter;
+		Lock lock(m->MainMutex);
 
-			m->monitorsToStop.push_back(watchInfo);
-			m->monitors.erase(findIter);
-		}
-	}
-}
-
-void FolderMonitor::stopMonitorAll()
-{
-	{
-		Lock lock(m->mainMutex);
-
-		// Remove all watches (this will also wake up the thread)
-		for(auto& watchInfo : m->monitors)
-			m->monitorsToStop.push_back(watchInfo);
-
-		m->monitors.clear();
+		m->RequestLowLevelMonitorStop = true;
 	}
 
 	// Wait for the thread to shutdown
-	if(m->workerThread != nullptr)
+	if(m->WorkerThread != nullptr)
 	{
-		m->workerThread->join();
-		B3DDelete(m->workerThread);
-		m->workerThread = nullptr;
+		m->WorkerThread->join();
+
+		B3DDelete(m->WorkerThread);
+		m->WorkerThread = nullptr;
 	}
+
+	// No need for mutex since we know worker thread is shut down by now
+	for(auto& action : m->FileActions)
+		FileAction::Destroy(action);
+
+	B3DDelete(m);
 }
 
-void FolderMonitor::workerThreadMain()
+void FolderMonitor::WorkerThreadMain()
 {
-	MemStack::beginThread();
+	MemStack::BeginThread();
 
 	while(true)
 	{
-		// Start up any newly added monitors
+		// Start up low level monitor if needed
 		{
-			Lock lock(m->mainMutex);
+			Lock lock(m->MainMutex);
 
-			for(auto& entry : m->monitorsToStart)
-				entry->startMonitor();
-
-			m->monitorsToStart.clear();
+			if(m->RequestLowLevelMonitorStart)
+			{
+				m->LowLevelMonitor->StartMonitor();
+				m->RequestLowLevelMonitorStart = false;
+			}
 		}
 
 		// Run the loop in order to receive events
 		i32 result = CFRunLoopRunInMode(FolderMonitorMode, 0.1f, false);
 
-		// Delete any stopped monitors
+		// Delete low level monitor if needed
 		{
-			Lock lock(m->mainMutex);
+			Lock lock(m->MainMutex);
 
-			for(auto& entry : m->monitorsToStop)
-				B3DDelete(entry);
+			if(m->RequestLowLevelMonitorStop)
+			{
+				B3DDelete(m->LowLevelMonitor);
+				m->LowLevelMonitor = nullptr;
 
-			m->monitorsToStop.clear();
+				m->RequestLowLevelMonitorStop = false
+			}
 		}
 
 		// All input sources removed, or explicitly stopped, bail
@@ -467,13 +418,13 @@ void FolderMonitor::workerThreadMain()
 
 		// Check if any created files have completed writing, and handle rename events
 		{
-			Lock lock(m->mainMutex);
+			Lock lock(m->MainMutex);
 
-			for(auto& monitor : m->monitors)
+			if(m->LowLevelMonitor != nullptr)
 			{
-				FolderMonitor::Pimpl* folderData = monitor->owner->GetPrivateDataInternal();
+				FolderMonitor::Pimpl* folderData = m->LowLevelMonitor->Owner->GetPrivateDataInternal();
 
-				for(auto iter = monitor->createdFiles.begin(); iter != monitor->createdFiles.end();)
+				for(auto iter = m->LowLevelMonitor->CreatedFiles.begin(); iter != m->LowLevelMonitor->CreatedFiles.end();)
 				{
 					CreatedFileInfo& entry = *iter;
 
@@ -486,8 +437,8 @@ void FolderMonitor::workerThreadMain()
 
 					if(entry.timer.getMilliseconds() > WRITE_STEADY_WAIT)
 					{
-						folderData->fileActions.push_back(FileAction::createAdded(entry.path.toString()));
-						iter = monitor->createdFiles.erase(iter);
+						folderData->FileActions.push_back(FileAction::CreateAdded(entry.path.ToString()));
+						iter = m->lowLevelMonitor->CreatedFiles.erase(iter);
 					}
 					else
 						++iter;
@@ -500,53 +451,53 @@ void FolderMonitor::workerThreadMain()
 		// Note: In this case we may also pay a 0.1 second timeout cost, since we don't explicitly wake the run loop.
 		//       Ideally we would also wake the run loop from the main thread so it is able to exit immediately.
 		{
-			Lock lock(m->mainMutex);
+			Lock lock(m->MainMutex);
 
-			if(m->monitors.empty())
+			if(m->LowLevelMonitor == nullptr)
 				break;
 		}
 	}
 
-	MemStack::endThread();
+	MemStack::EndThread();
 }
 
-void FolderMonitor::handleNotifications(FileNotifyInfo& notifyInfo, FolderWatchInfo& watchInfo)
+void FolderMonitor::HandleNotifications(FileNotifyInfo& notifyInfo)
 {
 	// Do nothing
 }
 
-void FolderMonitor::UpdateInternal()
+void FolderMonitor::Update()
 {
 	{
-		Lock lock(m->mainMutex);
+		Lock lock(m->MainMutex);
 
-		std::swap(m->fileActions, m->activeFileActions);
+		std::swap(m->FileActions, m->ActiveFileActions);
 	}
 
-	for(auto& action : m->activeFileActions)
+	for(auto& action : m->ActiveFileActions)
 	{
 		switch(action->type)
 		{
 		case FileActionType::Added:
-			if(!onAdded.empty())
-				onAdded(Path(action->newName));
+			if(!OnAdded.empty())
+				OnAdded(Path(action->newName));
 			break;
 		case FileActionType::Removed:
-			if(!onRemoved.empty())
-				onRemoved(Path(action->newName));
+			if(!OnRemoved.empty())
+				OnRemoved(Path(action->newName));
 			break;
 		case FileActionType::Modified:
-			if(!onModified.empty())
-				onModified(Path(action->newName));
+			if(!OnModified.empty())
+				OnModified(Path(action->newName));
 			break;
 		case FileActionType::Renamed:
-			if(!onRenamed.empty())
-				onRenamed(Path(action->oldName), Path(action->newName));
+			if(!OnRenamed.empty())
+				OnRenamed(Path(action->oldName), Path(action->newName));
 			break;
 		}
 
 		FileAction::Destroy(action);
 	}
 
-	m->activeFileActions.clear();
+	m->ActiveFileActions.clear();
 }
