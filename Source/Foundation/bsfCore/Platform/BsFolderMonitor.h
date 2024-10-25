@@ -25,7 +25,7 @@ namespace bs
 	 * Allows monitoring a file system folder for changes. Depending on the flags set this monitor can notify you when file
 	 * is changed/moved/renamed and similar.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(API(Editor)) FolderMonitor
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(API(Editor)) FolderMonitor : public IScriptExportable
 	{
 		class FileNotifyInfo;
 
