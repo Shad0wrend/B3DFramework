@@ -97,7 +97,7 @@ namespace bs
 		const RenderWindow* GetOwnerWindowInternal() const { return mOwnerWindow; }
 
 		/** @} */
-	private:
+	protected:
 		friend class Platform;
 
 		DropTarget(const RenderWindow* ownerWindow, const Rect2I& area);
