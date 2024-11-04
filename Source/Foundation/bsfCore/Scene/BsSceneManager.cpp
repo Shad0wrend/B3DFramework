@@ -550,7 +550,9 @@ void SceneManager::ProcessStateChanges()
 	for(auto& entry : mStateChanges)
 	{
 		const HComponent& component = entry.Obj;
-		if(component.IsDestroyed(false))
+
+		// Must check queued state, because the component can be destroyed while in the state list otherwise
+		if(component.IsDestroyed(true))
 			continue;
 
 		u32 existingListType;

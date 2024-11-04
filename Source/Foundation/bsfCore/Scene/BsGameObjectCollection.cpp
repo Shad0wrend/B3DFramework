@@ -54,6 +54,9 @@ GameObjectHandleBase GameObjectCollection::RegisterNewObject(const SPtr<GameObje
 	B3D_ENSURE(object->mOwnerCollection.lock() == nullptr);
 	object->mOwnerCollection = shared_from_this();
 
+	// Object was destroyed and then re-created without calling DestroyQueuedObjects(). This is not supported.
+	B3D_ENSURE(mQueuedForDestroy.find(object->GetId()) == mQueuedForDestroy.end());
+
 	return handle;
 }
 
@@ -69,6 +72,9 @@ void GameObjectCollection::RegisterExistingObject(const GameObjectHandleBase& ha
 
 	B3D_ENSURE(handle->mOwnerCollection.lock() == nullptr);
 	handle->mOwnerCollection = shared_from_this();
+
+	// Object was destroyed and then re-created without calling DestroyQueuedObjects(). This is not supported.
+	B3D_ENSURE(mQueuedForDestroy.find(handle->GetId()) == mQueuedForDestroy.end());
 }
 
 void GameObjectCollection::UnregisterObject(GameObjectHandleBase& object, bool triggerDestroyEvent)
@@ -130,6 +136,9 @@ void GameObjectCollection::ReplaceGameObjectInstance(GameObjectHandleBase& newOb
 
 			mObjects.erase(found);
 			mObjects[newObjectId] = handle;
+
+			// Object was destroyed and then re-created without calling DestroyQueuedObjects(). This is not supported.
+			B3D_ENSURE(mQueuedForDestroy.find(newObjectId) == mQueuedForDestroy.end());
 		}
 	}
 }
@@ -151,6 +160,9 @@ void GameObjectCollection::ChangeGameObjectId(GameObjectHandleBase& gameObject, 
 
 			mObjects.erase(found);
 			mObjects[newId] = handle;
+
+			// Object was destroyed and then re-created without calling DestroyQueuedObjects(). This is not supported.
+			B3D_ENSURE(mQueuedForDestroy.find(newId) == mQueuedForDestroy.end());
 		}
 	}
 }
