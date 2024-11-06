@@ -171,19 +171,18 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for UUID. */
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptUUID : public ScriptObject<ScriptUUID>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptUUID : public TScriptTypeDefinition<ScriptUUID>
 	{
 	public:
-		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "UUID")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "UUID")
+
+		ScriptUUID();
 
 		/**	Unboxes a boxed managed UUID struct and returns the native version of the structure. */
 		static UUID Unbox(MonoObject* obj);
 
 		/**	Boxes a native UUID struct and returns a managed object containing it. */
 		static MonoObject* Box(const UUID& value);
-
-	private:
-		ScriptUUID(MonoObject* instance);
 	};
 
 

@@ -121,17 +121,14 @@ void ScriptResource::InternalRelease(ScriptResourceWrapper* self)
 	mutableResourceHandle.ReleaseInternalReference();
 }
 
-ScriptUUID::ScriptUUID(MonoObject* instance)
-	: ScriptObject(instance)
-{}
-
-void ScriptUUID::InitRuntimeData()
+ScriptUUID::ScriptUUID()
+	: TScriptTypeDefinition()
 {}
 
 MonoObject* ScriptUUID::Box(const UUID& value)
 {
 	// We're casting away const but it's fine since structs are passed by value anyway
-	return MonoUtil::Box(metaData.ScriptClass->GetInternalClass(), (void*)&value);
+	return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 }
 
 UUID ScriptUUID::Unbox(MonoObject* obj)
