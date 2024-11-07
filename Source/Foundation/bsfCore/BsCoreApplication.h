@@ -41,7 +41,7 @@ namespace bs
 		 */
 		bool AsyncAnimation = true;
 
-		RENDER_WINDOW_DESC PrimaryWindowDesc; /**< Describes the window to create during start-up. */
+		RenderWindowCreateInformation PrimaryWindowDesc; /**< Describes the window to create during start-up. */
 
 		Vector<String> Importers; /**< A list of importer plugins to load. */
 

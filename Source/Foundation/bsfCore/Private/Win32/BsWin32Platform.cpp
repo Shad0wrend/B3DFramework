@@ -117,8 +117,7 @@ void Platform::SetCursorPosition(const Vector2I& screenPos)
 void Platform::CaptureMouse(const RenderWindow& window)
 {
 	SPtr<RenderWindow> primaryWindow = GetCoreApplication().GetPrimaryWindow();
-	u64 hwnd;
-	primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
+	const u64 hwnd = primaryWindow->GetPlatformWindowHandle();
 
 	PostMessage((HWND)hwnd, WM_BS_SETCAPTURE, WPARAM((HWND)hwnd), 0);
 }
@@ -126,8 +125,7 @@ void Platform::CaptureMouse(const RenderWindow& window)
 void Platform::ReleaseMouseCapture()
 {
 	SPtr<RenderWindow> primaryWindow = GetCoreApplication().GetPrimaryWindow();
-	u64 hwnd;
-	primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
+	const u64 hwnd = primaryWindow->GetPlatformWindowHandle();
 
 	PostMessage((HWND)hwnd, WM_BS_RELEASECAPTURE, WPARAM((HWND)hwnd), 0);
 }
@@ -140,8 +138,7 @@ bool Platform::IsPointOverWindow(const RenderWindow& window, const Vector2I& scr
 	point.x = screenPos.X;
 	point.y = screenPos.Y;
 
-	u64 hwndToCheck;
-	window.GetCustomAttribute("WINDOW", &hwndToCheck);
+	const u64 hwndToCheck = window.GetPlatformWindowHandle();
 
 	HWND hwndUnderPos = WindowFromPoint(point);
 	return hwndUnderPos == (HWND)hwndToCheck;
@@ -158,8 +155,7 @@ void Platform::HideCursor()
 	// WM_SETCURSOR in message loop to hide the cursor is smarter solution anyway.
 
 	SPtr<RenderWindow> primaryWindow = GetCoreApplication().GetPrimaryWindow();
-	u64 hwnd;
-	primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
+	const u64 hwnd = primaryWindow->GetPlatformWindowHandle();
 
 	PostMessage((HWND)hwnd, WM_SETCURSOR, WPARAM((HWND)hwnd), (LPARAM)MAKELONG(HTCLIENT, WM_MOUSEMOVE));
 }
@@ -175,8 +171,7 @@ void Platform::ShowCursor()
 	// WM_SETCURSOR in message loop to hide the cursor is smarter solution anyway.
 
 	SPtr<RenderWindow> primaryWindow = GetCoreApplication().GetPrimaryWindow();
-	u64 hwnd;
-	primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
+	const u64 hwnd = primaryWindow->GetPlatformWindowHandle();
 
 	PostMessage((HWND)hwnd, WM_SETCURSOR, WPARAM((HWND)hwnd), (LPARAM)MAKELONG(HTCLIENT, WM_MOUSEMOVE));
 }
@@ -188,8 +183,7 @@ bool Platform::IsCursorHidden()
 
 void Platform::ClipCursorToWindow(const RenderWindow& window)
 {
-	u64 hwnd;
-	window.GetCustomAttribute("WINDOW", &hwnd);
+	const u64 hwnd = window.GetPlatformWindowHandle();
 
 	mData->MCursorClipping = true;
 	mData->MClipWindow = (HWND)hwnd;
@@ -253,8 +247,7 @@ void Platform::SetCursor(PixelData& pixelData, const Vector2I& hotSpot)
 
 	// Make sure we notify the message loop to perform the actual cursor update
 	SPtr<RenderWindow> primaryWindow = GetCoreApplication().GetPrimaryWindow();
-	u64 hwnd;
-	primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
+	const u64 hwnd = primaryWindow->GetPlatformWindowHandle();
 
 	PostMessage((HWND)hwnd, WM_SETCURSOR, WPARAM((HWND)hwnd), (LPARAM)MAKELONG(HTCLIENT, WM_MOUSEMOVE));
 }
@@ -282,8 +275,7 @@ void Platform::SetIcon(const PixelData& pixelData)
 
 	// Make sure we notify the message loop to perform the actual cursor update
 	SPtr<RenderWindow> primaryWindow = GetCoreApplication().GetPrimaryWindow();
-	u64 hwnd;
-	primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
+	const u64 hwnd = primaryWindow->GetPlatformWindowHandle();
 
 	PostMessage((HWND)hwnd, WM_SETICON, WPARAM(ICON_BIG), (LPARAM)icon);
 }
@@ -325,8 +317,7 @@ void Win32Platform::RegisterDropTarget(DropTarget* target)
 	auto iterFind = mData->MDropTargets.DropTargetsPerWindow.find(window);
 	if(iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
 	{
-		u64 hwnd;
-		window->GetCustomAttribute("WINDOW", &hwnd);
+		const u64 hwnd = window->GetPlatformWindowHandle();
 
 		win32DropTarget = B3DNew<Win32DropTarget>((HWND)hwnd);
 		mData->MDropTargets.DropTargetsPerWindow[window] = win32DropTarget;
@@ -679,14 +670,14 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 	case WM_SETFOCUS:
 		{
 			if(!win->GetProperties().HasFocus)
-				win->NotifyWindowEventInternal(WindowEventType::FocusReceived);
+				win->NotifyWindowEvent(WindowEventType::FocusReceived);
 
 			return 0;
 		}
 	case WM_KILLFOCUS:
 		{
 			if(win->GetProperties().HasFocus)
-				win->NotifyWindowEventInternal(WindowEventType::FocusLost);
+				win->NotifyWindowEvent(WindowEventType::FocusLost);
 
 			return 0;
 		}
@@ -695,20 +686,20 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			return 0;
 		break;
 	case WM_MOVE:
-		win->NotifyWindowEventInternal(WindowEventType::Moved);
+		win->NotifyWindowEvent(WindowEventType::Moved);
 		return 0;
 	case WM_DISPLAYCHANGE:
-		win->NotifyWindowEventInternal(WindowEventType::Resized);
+		win->NotifyWindowEvent(WindowEventType::Resized);
 		break;
 	case WM_SIZE:
-		win->NotifyWindowEventInternal(WindowEventType::Resized);
+		win->NotifyWindowEvent(WindowEventType::Resized);
 
 		if(wParam == SIZE_MAXIMIZED)
-			win->NotifyWindowEventInternal(WindowEventType::Maximized);
+			win->NotifyWindowEvent(WindowEventType::Maximized);
 		else if(wParam == SIZE_MINIMIZED)
-			win->NotifyWindowEventInternal(WindowEventType::Minimized);
+			win->NotifyWindowEvent(WindowEventType::Minimized);
 		else if(wParam == SIZE_RESTORED)
-			win->NotifyWindowEventInternal(WindowEventType::Restored);
+			win->NotifyWindowEvent(WindowEventType::Restored);
 
 		return 0;
 	case WM_SETCURSOR:
@@ -768,7 +759,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 		break;
 	case WM_CLOSE:
 		{
-			win->NotifyWindowEventInternal(WindowEventType::CloseRequested);
+			win->NotifyWindowEvent(WindowEventType::CloseRequested);
 
 			return 0;
 		}
@@ -827,7 +818,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			mData->MIsTrackingMouse = false; // TrackMouseEvent ends when this message is received and needs to be re-applied
 
 			Lock lock(mData->MSync);
-			win->NotifyWindowEventInternal(WindowEventType::MouseLeft);
+			win->NotifyWindowEvent(WindowEventType::MouseLeft);
 		}
 		return 0;
 	case WM_LBUTTONUP:

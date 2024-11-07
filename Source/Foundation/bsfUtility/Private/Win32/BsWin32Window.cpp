@@ -23,20 +23,20 @@ struct Win32Window::Pimpl
 	DWORD StyleEx = 0;
 };
 
-Win32Window::Win32Window(const WINDOW_DESC& desc)
+Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 {
 	m = B3DNew<Pimpl>();
-	m->IsModal = desc.Modal;
-	m->IsHidden = desc.Hidden;
+	m->IsModal = createInformation.Modal;
+	m->IsHidden = createInformation.Hidden;
 	bool shouldFocus = true;
 
-	HMONITOR hMonitor = desc.Monitor;
-	if(!desc.External)
+	HMONITOR hMonitor = createInformation.Monitor;
+	if(!createInformation.External)
 	{
 		m->Style = WS_CLIPCHILDREN;
 
-		i32 left = desc.Left;
-		i32 top = desc.Top;
+		i32 left = createInformation.Left;
+		i32 top = createInformation.Top;
 
 		// If we didn't specified the adapter index, or if we didn't find it
 		if(hMonitor == nullptr)
@@ -57,8 +57,8 @@ Win32Window::Win32Window(const WINDOW_DESC& desc)
 		monitorInfo.cbSize = sizeof(MONITORINFO);
 		GetMonitorInfo(hMonitor, &monitorInfo);
 
-		u32 width = desc.Width;
-		u32 height = desc.Height;
+		u32 width = createInformation.Width;
+		u32 height = createInformation.Height;
 
 		// No specified top left -> Center the window in the middle of the monitor
 		if(left == -1 || top == -1)
@@ -86,40 +86,40 @@ Win32Window::Win32Window(const WINDOW_DESC& desc)
 			top += monitorInfo.rcWork.top;
 		}
 
-		if(!desc.Fullscreen)
+		if(!createInformation.Fullscreen)
 		{
-			if(desc.Parent)
+			if(createInformation.Parent)
 			{
-				if(desc.ToolWindow)
+				if(createInformation.ToolWindow)
 					m->StyleEx = WS_EX_TOOLWINDOW;
 				else
 					m->Style |= WS_CHILD;
 			}
 			else
 			{
-				if(desc.ToolWindow)
+				if(createInformation.ToolWindow)
 					m->StyleEx = WS_EX_TOOLWINDOW;
 			}
 
-			if(!desc.Parent || desc.ToolWindow)
+			if(!createInformation.Parent || createInformation.ToolWindow)
 			{
-				if(desc.ShowTitleBar)
+				if(createInformation.ShowTitleBar)
 				{
-					if(desc.ShowBorder || desc.AllowResize)
+					if(createInformation.ShowBorder || createInformation.AllowResize)
 						m->Style |= WS_OVERLAPPEDWINDOW;
 					else
 						m->Style |= WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 				}
 				else
 				{
-					if(desc.ShowBorder || desc.AllowResize)
+					if(createInformation.ShowBorder || createInformation.AllowResize)
 						m->Style |= WS_POPUP | WS_BORDER;
 					else
 						m->Style |= WS_POPUP;
 				}
 			}
 
-			if(!desc.OuterDimensions)
+			if(!createInformation.OuterDimensions)
 			{
 				// Calculate window dimensions required to get the requested client area
 				RECT rect;
@@ -145,7 +145,7 @@ Win32Window::Win32Window(const WINDOW_DESC& desc)
 					top = (screenh - height) / 2;
 			}
 
-			if(desc.BackgroundPixels != nullptr)
+			if(createInformation.BackgroundPixels != nullptr)
 				m->StyleEx |= WS_EX_LAYERED;
 		}
 		else
@@ -156,23 +156,23 @@ Win32Window::Win32Window(const WINDOW_DESC& desc)
 		}
 
 		UINT classStyle = 0;
-		if(desc.EnableDoubleClick)
+		if(createInformation.EnableDoubleClick)
 			classStyle |= CS_DBLCLKS;
 
 		// Register the window class
-		WNDCLASS wc = { classStyle, desc.WndProc, 0, 0, desc.Module,
+		WNDCLASS wc = { classStyle, createInformation.WndProc, 0, 0, createInformation.Module,
 						LoadIcon(nullptr, IDI_APPLICATION), LoadCursor(nullptr, IDC_ARROW),
 						(HBRUSH)GetStockObject(BLACK_BRUSH), 0, "Win32Wnd" };
 
 		RegisterClass(&wc);
 
 		// Create main window
-		m->HWnd = CreateWindowEx(m->StyleEx, "Win32Wnd", desc.Title.c_str(), m->Style, left, top, width, height, desc.Parent, nullptr, desc.Module, desc.CreationParams);
+		m->HWnd = CreateWindowEx(m->StyleEx, "Win32Wnd", createInformation.Title.c_str(), m->Style, left, top, width, height, createInformation.Parent, nullptr, createInformation.Module, createInformation.CreationParams);
 		m->IsExternal = false;
 	}
 	else
 	{
-		m->HWnd = desc.External;
+		m->HWnd = createInformation.External;
 		m->IsExternal = true;
 	}
 
@@ -186,10 +186,10 @@ Win32Window::Win32Window(const WINDOW_DESC& desc)
 	m->Height = rect.bottom;
 
 	// Set background, if any
-	if(desc.BackgroundPixels != nullptr)
+	if(createInformation.BackgroundPixels != nullptr)
 	{
 		HBITMAP backgroundBitmap = Win32PlatformUtility::CreateBitmap(
-			desc.BackgroundPixels, desc.BackgroundWidth, desc.BackgroundHeight, true);
+			createInformation.BackgroundPixels, createInformation.BackgroundWidth, createInformation.BackgroundHeight, true);
 
 		HDC hdcScreen = GetDC(nullptr);
 		HDC hdcMem = CreateCompatibleDC(hdcScreen);
@@ -210,7 +210,7 @@ Win32Window::Win32Window(const WINDOW_DESC& desc)
 
 		POINT zero = { 0 };
 
-		UpdateLayeredWindow(m->HWnd, hdcScreen, &origin, &size, hdcMem, &zero, RGB(0, 0, 0), &blend, desc.AlphaBlending ? ULW_ALPHA : ULW_OPAQUE);
+		UpdateLayeredWindow(m->HWnd, hdcScreen, &origin, &size, hdcMem, &zero, RGB(0, 0, 0), &blend, createInformation.AlphaBlending ? ULW_ALPHA : ULW_OPAQUE);
 
 		SelectObject(hdcMem, hOldBitmap);
 		DeleteDC(hdcMem);
@@ -425,7 +425,7 @@ void Win32Window::Restore()
 	}
 }
 
-void Win32Window::WindowMovedOrResizedInternal()
+void Win32Window::DoOnWindowMovedOrResized()
 {
 	if(!m->HWnd || IsIconic(m->HWnd))
 		return;

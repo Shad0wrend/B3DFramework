@@ -200,7 +200,7 @@ Rect2I GUIElement::GetScreenBounds() const
 		const RenderWindow* parentWindow = GUIManager::Instance().GetWidgetWindow(*mParentWidget);
 		if(parentWindow)
 		{
-			const Vector2I windowPos = parentWindow->WindowToScreenPos(widgetPos);
+			const Vector2I windowPos = parentWindow->WindowToScreenPosition(widgetPos);
 			area.X = windowPos.X;
 			area.Y = windowPos.Y;
 		}

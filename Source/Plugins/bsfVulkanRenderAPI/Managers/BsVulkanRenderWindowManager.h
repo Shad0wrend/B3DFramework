@@ -18,7 +18,7 @@ namespace bs
 		VulkanRenderWindowManager() = default;
 
 	protected:
-		SPtr<RenderWindow> CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId, const SPtr<RenderWindow>& parentWindow) override;
+		SPtr<RenderWindow> CreateImplementation(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow) override;
 	};
 
 	/** @} */

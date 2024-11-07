@@ -32,11 +32,6 @@ const RenderTargetProperties& RenderTarget::GetProperties() const
 	return GetPropertiesInternal();
 }
 
-void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
-{
-	B3D_EXCEPT(InvalidParametersException, "Attribute not found.");
-}
-
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
@@ -67,10 +62,5 @@ void RenderTarget::SetPriority(i32 priority)
 const RenderTargetProperties& RenderTarget::GetProperties() const
 {
 	return GetPropertiesInternal();
-}
-
-void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
-{
-	B3D_EXCEPT(InvalidParametersException, "Attribute not found.");
 }
 }}

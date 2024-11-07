@@ -19,37 +19,31 @@
 
 using namespace bs;
 
-Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
-	: RenderWindow(desc, windowId), mProperties(desc)
+Win32RenderWindow::Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow)
+	: RenderWindow(createInformation, windowId, parentWindow), mProperties(createInformation)
 {}
 
-void Win32RenderWindow::GetCustomAttribute(const String& name, void* pData) const
-{
-	if(name == "WINDOW")
-	{
-		u64* pHwnd = (u64*)pData;
-		*pHwnd = (u64)GetHWnd();
-		return;
-	}
-}
-
-Vector2I Win32RenderWindow::ScreenToWindowPos(const Vector2I& screenPos) const
+Vector2I Win32RenderWindow::ScreenToWindowPosition(const Vector2I& screenPos) const
 {
 	POINT pos;
 	pos.x = screenPos.X;
 	pos.y = screenPos.Y;
 
-	ScreenToClient(GetHWnd(), &pos);
+	HWND hwnd = (HWND)GetPlatformWindowHandle();
+
+	ScreenToClient(hwnd, &pos);
 	return Vector2I(pos.x, pos.y);
 }
 
-Vector2I Win32RenderWindow::WindowToScreenPos(const Vector2I& windowPos) const
+Vector2I Win32RenderWindow::WindowToScreenPosition(const Vector2I& windowPos) const
 {
 	POINT pos;
 	pos.x = windowPos.X;
 	pos.y = windowPos.Y;
 
-	ClientToScreen(GetHWnd(), &pos);
+	HWND hwnd = (HWND)GetPlatformWindowHandle();
+
+	ClientToScreen(hwnd, &pos);
 	return Vector2I(pos.x, pos.y);
 }
 
@@ -58,10 +52,10 @@ SPtr<ct::Win32RenderWindow> Win32RenderWindow::GetImplementationRenderProxy() co
 	return std::static_pointer_cast<ct::Win32RenderWindow>(mRenderProxy);
 }
 
-HWND Win32RenderWindow::GetHWnd() const
+u64 Win32RenderWindow::GetPlatformWindowHandle() const
 {
 	BlockUntilRenderProxyInitialized();
-	return GetImplementationRenderProxy()->GetWindowHandleInternal();
+	return GetImplementationRenderProxy()->GetPlatformWindowHandle();
 }
 
 void Win32RenderWindow::SyncProperties()
@@ -72,8 +66,11 @@ void Win32RenderWindow::SyncProperties()
 
 SPtr<ct::RenderProxy> Win32RenderWindow::CreateRenderProxy() const
 {
-	RENDER_WINDOW_DESC desc = mDesc;
-	SPtr<ct::RenderProxy> renderProxy = B3DMakeShared<ct::Win32RenderWindow>(desc, mWindowId);
+	SPtr<RenderWindow> parentWindow = mParentWindow.lock();
+	B3D_ENSURE(B3DIsWeakUnassigned(mParentWindow) || !mParentWindow.expired()); // If parent window is assigned, it must not be expired
+
+	RenderWindowCreateInformation createInformation = mCreateInformation;
+	SPtr<ct::RenderProxy> renderProxy = B3DMakeShared<ct::Win32RenderWindow>(createInformation, mWindowId, B3DGetRenderProxy(parentWindow));
 	renderProxy->SetShared(renderProxy);
 
 	return renderProxy;
@@ -81,8 +78,8 @@ SPtr<ct::RenderProxy> Win32RenderWindow::CreateRenderProxy() const
 
 namespace bs {
 namespace ct {
-Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
-	: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc), mWindow(nullptr), mIsChild(false), mShowOnSwap(false), mDisplayFrequency(0)
+Win32RenderWindow::Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow)
+	: RenderWindow(createInformation, windowId, parentWindow), mProperties(createInformation), mSyncedProperties(createInformation), mWindow(nullptr), mIsChild(false), mShowOnSwap(false), mDisplayFrequency(0)
 {}
 
 Win32RenderWindow::~Win32RenderWindow()
@@ -105,66 +102,65 @@ void Win32RenderWindow::Initialize()
 	RenderWindowProperties& props = mProperties;
 
 	// Create a window
-	WINDOW_DESC windowDesc;
-	windowDesc.ShowTitleBar = mDesc.ShowTitleBar;
-	windowDesc.ShowBorder = mDesc.ShowBorder;
-	windowDesc.AllowResize = mDesc.AllowResize;
-	windowDesc.EnableDoubleClick = true;
-	windowDesc.Fullscreen = mDesc.Fullscreen;
-	windowDesc.Width = mDesc.VideoMode.Width;
-	windowDesc.Height = mDesc.VideoMode.Height;
-	windowDesc.Hidden = mDesc.Hidden || mDesc.HideUntilSwap;
-	windowDesc.Left = mDesc.Left;
-	windowDesc.Top = mDesc.Top;
-	windowDesc.OuterDimensions = false;
-	windowDesc.Title = mDesc.Title;
-	windowDesc.ToolWindow = mDesc.ToolWindow;
-	windowDesc.CreationParams = this;
-	windowDesc.Modal = mDesc.Modal;
-	windowDesc.WndProc = &Win32Platform::Win32WndProcInternal;
+	WindowCreateInformation windowCreateInformation;
+	windowCreateInformation.ShowTitleBar = mCreateInformation.ShowTitleBar;
+	windowCreateInformation.ShowBorder = mCreateInformation.ShowBorder;
+	windowCreateInformation.AllowResize = mCreateInformation.AllowResize;
+	windowCreateInformation.EnableDoubleClick = true;
+	windowCreateInformation.Fullscreen = mCreateInformation.Fullscreen;
+	windowCreateInformation.Width = mCreateInformation.VideoMode.Width;
+	windowCreateInformation.Height = mCreateInformation.VideoMode.Height;
+	windowCreateInformation.Hidden = mCreateInformation.Hidden || mCreateInformation.HideUntilSwap;
+	windowCreateInformation.Left = mCreateInformation.Left;
+	windowCreateInformation.Top = mCreateInformation.Top;
+	windowCreateInformation.OuterDimensions = false;
+	windowCreateInformation.Title = mCreateInformation.Title;
+	windowCreateInformation.ToolWindow = mCreateInformation.ToolWindow;
+	windowCreateInformation.CreationParams = this;
+	windowCreateInformation.Modal = mCreateInformation.Modal;
+	windowCreateInformation.WndProc = &Win32Platform::Win32WndProcInternal;
 
 #ifdef BS_STATIC_LIB
 	windowDesc.module = GetModuleHandle(NULL);
 #else
-	windowDesc.Module = GetModuleHandle("bsfVulkanRenderAPI.dll");
+	windowCreateInformation.Module = GetModuleHandle("bsfVulkanRenderAPI.dll");
 #endif
 
-	auto opt = mDesc.PlatformSpecific.find("parentWindowHandle");
-	if(opt != mDesc.PlatformSpecific.end())
-		windowDesc.Parent = (HWND)Parseu64(opt->second);
-
-	opt = mDesc.PlatformSpecific.find("externalWindowHandle");
-	if(opt != mDesc.PlatformSpecific.end())
-		windowDesc.External = (HWND)Parseu64(opt->second);
+	if(!B3DIsWeakUnassigned(mParentWindow))
+	{
+		const SPtr<Win32RenderWindow> parentWindow = std::static_pointer_cast<Win32RenderWindow>(mParentWindow.lock());
+		if(B3D_ENSURE(parentWindow != nullptr))
+			windowCreateInformation.Parent = (HWND)parentWindow->GetPlatformWindowHandle();
+	}
 
 	const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
-	u32 numOutputs = videoModeInfo.GetNumOutputs();
-	if(numOutputs > 0)
+	u32 outputCount = videoModeInfo.GetOutputCount();
+	if(outputCount > 0)
 	{
-		u32 actualMonitorIdx = std::min(mDesc.VideoMode.OutputIdx, numOutputs - 1);
+		u32 actualMonitorIdx = std::min(mCreateInformation.VideoMode.OutputIdx, outputCount - 1);
 		const Win32VideoOutputInfo& outputInfo = static_cast<const Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
-		windowDesc.Monitor = outputInfo.GetMonitorHandle();
+		windowCreateInformation.Monitor = outputInfo.GetMonitorHandle();
 	}
 
 	// Must be set before creating a window, since wndProc will call ShowWindow if needed after creation
-	if(!windowDesc.External)
+	if(!windowCreateInformation.External)
 	{
-		mShowOnSwap = mDesc.HideUntilSwap && !mDesc.Hidden;
-		props.IsHidden = mDesc.HideUntilSwap || mDesc.Hidden;
+		mShowOnSwap = mCreateInformation.HideUntilSwap && !mCreateInformation.Hidden;
+		props.IsHidden = mCreateInformation.HideUntilSwap || mCreateInformation.Hidden;
 	}
 
-	mWindow = B3DNew<Win32Window>(windowDesc);
+	mWindow = B3DNew<Win32Window>(windowCreateInformation);
 
-	mIsChild = windowDesc.Parent != nullptr;
-	mDisplayFrequency = Math::RoundToI32(mDesc.VideoMode.RefreshRate);
+	mIsChild = windowCreateInformation.Parent != nullptr;
+	mDisplayFrequency = Math::RoundToI32(mCreateInformation.VideoMode.RefreshRate);
 
 	// Update local properties
-	props.IsFullScreen = mDesc.Fullscreen && !mIsChild;
+	props.IsFullScreen = mCreateInformation.Fullscreen && !mIsChild;
 	props.Width = mWindow->GetWidth();
 	props.Height = mWindow->GetHeight();
 	props.Top = mWindow->GetTop();
 	props.Left = mWindow->GetLeft();
-	props.HwGamma = mDesc.Gamma;
+	props.HwGamma = mCreateInformation.Gamma;
 	props.MultisampleCount = 1;
 
 	// Create Vulkan surface
@@ -173,7 +169,7 @@ void Win32RenderWindow::Initialize()
 	surfaceCreateInfo.pNext = nullptr;
 	surfaceCreateInfo.flags = 0;
 	surfaceCreateInfo.hwnd = mWindow->GetHWnd();
-	surfaceCreateInfo.hinstance = windowDesc.Module;
+	surfaceCreateInfo.hinstance = windowCreateInformation.Module;
 
 	VkInstance instance = GetVulkanGpuBackend().GetVkInstance();
 	VkSurfaceKHR vkSurface;
@@ -198,16 +194,16 @@ void Win32RenderWindow::Initialize()
 		B3D_EXCEPT(RenderingAPIException, "Cannot find a graphics queue that also supports present operations.");
 	}
 
-	SurfaceFormat format = presentDevice->GetSurfaceFormat(vkSurface, mDesc.Gamma);
+	SurfaceFormat format = presentDevice->GetSurfaceFormat(vkSurface, mCreateInformation.Gamma);
 	mColorFormat = format.ColorFormat;
 	mColorSpace = format.ColorSpace;
 	mDepthFormat = format.DepthFormat;
 
 	// Create swap chain
-	mSwapChain = presentDevice->GetResourceManager().Create<VulkanSwapChain>(mSurface, props.Width, props.Height, props.Vsync, mColorFormat, mColorSpace, mDesc.DepthBuffer, mDepthFormat);
+	mSwapChain = presentDevice->GetResourceManager().Create<VulkanSwapChain>(mSurface, props.Width, props.Height, props.Vsync, mColorFormat, mColorSpace, mCreateInformation.DepthBuffer, mDepthFormat);
 
 	// Make the window full screen if required
-	if(!windowDesc.External)
+	if(!windowCreateInformation.External)
 	{
 		if(props.IsFullScreen)
 		{
@@ -335,19 +331,19 @@ void Win32RenderWindow::Restore()
 
 void Win32RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 monitorIdx)
 {
-	ASSERT_IF_NOT_RENDER_THREAD;
+	ASSERT_IF_NOT_RENDER_THREAD
 
 	if(mIsChild)
 		return;
 
 	const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
-	u32 numOutputs = videoModeInfo.GetNumOutputs();
-	if(numOutputs == 0)
+	const u32 outputCount = videoModeInfo.GetOutputCount();
+	if(outputCount == 0)
 		return;
 
 	RenderWindowProperties& props = mProperties;
 
-	u32 actualMonitorIdx = std::min(monitorIdx, numOutputs - 1);
+	u32 actualMonitorIdx = std::min(monitorIdx, outputCount - 1);
 	const Win32VideoOutputInfo& outputInfo = static_cast<const Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 
 	mDisplayFrequency = Math::RoundToI32(refreshRate);
@@ -371,9 +367,7 @@ void Win32RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, 
 	GetMonitorInfo(hMonitor, &monitorInfo);
 
 	if(ChangeDisplaySettingsEx(monitorInfo.szDevice, &displayDeviceMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL)
-	{
-		B3D_EXCEPT(RenderingAPIException, "ChangeDisplaySettings failed");
-	}
+		B3D_LOG(Error, Platform, "ChangeDisplaySettings failed");
 
 	props.Top = monitorInfo.rcMonitor.top;
 	props.Left = monitorInfo.rcMonitor.left;
@@ -471,29 +465,19 @@ void Win32RenderWindow::SwapBuffers()
 		SetHidden(false);
 }
 
-HWND Win32RenderWindow::GetWindowHandleInternal() const
+u64 Win32RenderWindow::GetPlatformWindowHandle() const
 {
-	return mWindow->GetHWnd();
+	return (u64)mWindow->GetHWnd();
 }
 
-void Win32RenderWindow::GetCustomAttribute(const String& name, void* data) const
+void Win32RenderWindow::DoOnWindowMovedOrResized()
 {
-	if(name == "WINDOW")
-	{
-		u64* pWnd = (u64*)data;
-		*pWnd = (u64)mWindow->GetHWnd();
-		return;
-	}
-}
-
-void Win32RenderWindow::WindowMovedOrResizedInternal()
-{
-	ASSERT_IF_NOT_RENDER_THREAD;
+	ASSERT_IF_NOT_RENDER_THREAD
 
 	if(!mWindow)
 		return;
 
-	mWindow->WindowMovedOrResizedInternal();
+	mWindow->DoOnWindowMovedOrResized();
 
 	RenderWindowProperties& props = mProperties;
 	if(!props.IsFullScreen) // Fullscreen is handled directly by this object
@@ -519,7 +503,7 @@ void Win32RenderWindow::RebuildSwapChain()
 	VulkanSwapChain* oldSwapChain = mSwapChain;
 	oldSwapChain->MarkAsRetired();
 
-	mSwapChain = presentDevice->GetResourceManager().Create<VulkanSwapChain>(mSurface, mProperties.Width, mProperties.Height, mProperties.Vsync, mColorFormat, mColorSpace, mDesc.DepthBuffer, mDepthFormat, oldSwapChain);
+	mSwapChain = presentDevice->GetResourceManager().Create<VulkanSwapChain>(mSurface, mProperties.Width, mProperties.Height, mProperties.Vsync, mColorFormat, mColorSpace, mCreateInformation.DepthBuffer, mDepthFormat, oldSwapChain);
 	oldSwapChain->Destroy();
 
 	OnSwapChainDidRebuild();

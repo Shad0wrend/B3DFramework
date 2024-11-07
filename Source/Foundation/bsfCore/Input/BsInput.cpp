@@ -28,7 +28,7 @@ Input::DeviceData::DeviceData()
 Input::Input()
 {
 	SPtr<RenderWindow> primaryWindow = GetCoreApplication().GetPrimaryWindow();
-	primaryWindow->GetCustomAttribute("WINDOW", &mWindowHandle);
+	mWindowHandle = primaryWindow->GetPlatformWindowHandle();
 
 	// Subscribe to events
 	mCharInputConn = Platform::onCharInput.Connect(std::bind(&Input::CharInput, this, _1));
@@ -268,8 +268,7 @@ void Input::TriggerCallbacksInternal()
 
 void Input::InputWindowChanged(RenderWindow& win)
 {
-	u64 hWnd = 0;
-	win.GetCustomAttribute("WINDOW", &hWnd);
+	const u64 hWnd = win.GetPlatformWindowHandle();
 
 	if(mKeyboard != nullptr)
 		mKeyboard->ChangeCaptureContext(hWnd);

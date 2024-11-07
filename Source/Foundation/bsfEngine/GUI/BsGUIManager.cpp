@@ -199,7 +199,7 @@ void GUIManager::Update()
 					const RenderWindow* window = GetWidgetWindow(*parentWidget);
 					if(window != nullptr)
 					{
-						Vector2I windowPos = window->ScreenToWindowPos(GetInput().GetPointerPosition());
+						Vector2I windowPos = window->ScreenToWindowPosition(GetInput().GetPointerPosition());
 
 						GUITooltipManager::Instance().Show(*parentWidget, windowPos, tooltipText);
 						break;
@@ -800,7 +800,7 @@ void GUIManager::OnPointerPressed(const PointerEvent& event)
 				const RenderWindow* window = GetWidgetWindow(*elementInfo.Widget);
 				if(window != nullptr)
 				{
-					Vector2I windowPos = window->ScreenToWindowPos(event.ScreenPos);
+					Vector2I windowPos = window->ScreenToWindowPosition(event.ScreenPos);
 
 					menu->Open(windowPos, *elementInfo.Widget);
 					event.IsUsed = true;
@@ -973,7 +973,7 @@ bool GUIManager::FindElementUnderPointer(const Vector2I& pointerScreenPos, bool 
 
 	if(windowUnderPointer != nullptr)
 	{
-		Vector2I windowPos = windowUnderPointer->ScreenToWindowPos(pointerScreenPos);
+		Vector2I windowPos = windowUnderPointer->ScreenToWindowPosition(pointerScreenPos);
 
 		u32 widgetIdx = 0;
 		for(auto& widgetInfo : mWidgets)
@@ -1344,7 +1344,7 @@ Vector2I GUIManager::GetWidgetRelativePos(const GUIWidget* widget, const Vector2
 	if(window == nullptr)
 		return Vector2I();
 
-	Vector2I windowPos = window->ScreenToWindowPos(screenPos);
+	Vector2I windowPos = window->ScreenToWindowPosition(screenPos);
 	windowPos = WindowToBridgedCoords(widget->GetTarget()->GetTarget(), windowPos);
 
 	const Matrix4& worldTfrm = widget->GetWorldTfrm();
@@ -1496,7 +1496,7 @@ void GUIManager::TabFocusFirst()
 				continue;
 
 			Vector2I elementPos(elemBounds.X, elemBounds.Y);
-			Vector2I screenPos = window->WindowToScreenPos(elementPos);
+			Vector2I screenPos = window->WindowToScreenPosition(elementPos);
 
 			const u32 dist = screenPos.SquaredLength();
 			if(dist < nearestDist)

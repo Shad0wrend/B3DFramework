@@ -45,8 +45,6 @@ namespace bs
 			VulkanRenderTexture(VulkanGpuDevice& device, const RenderTextureCreateInformation& desc);
 			~VulkanRenderTexture() override = default;
 
-			void GetCustomAttribute(const String& name, void* data) const override;
-
 			/** Returns the underlying framebuffer object. */
 			VulkanFramebuffer* GetFramebuffer() const { return mFramebuffer; }
 

@@ -243,6 +243,13 @@ namespace bs
 		return B3DMakeUniqueFromExisting<Type, AllocatorTag, Delete>(rawPtr);
 	}
 
+	/** Returns true if the weak pointer is not assigned. Will return false if the pointer was assigned but has since expired. */
+	template<typename Type>
+	bool B3DIsWeakUnassigned(const WeakSPtr<Type>& pointer)
+	{
+		return !pointer.owner_before(WeakSPtr<Type>()) && !WeakSPtr<Type>().owner_before(pointer);
+	}
+
 	/**
 	 * "Smart" pointer that is not smart. Does nothing but hold a pointer value. No memory management is performed at all.
 	 * This class exists to make storing pointers in containers easier to manage, such as with non-member comparison

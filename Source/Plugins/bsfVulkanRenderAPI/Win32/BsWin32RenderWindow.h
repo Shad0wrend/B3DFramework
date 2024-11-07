@@ -21,21 +21,19 @@ namespace bs
 	public:
 		~Win32RenderWindow() = default;
 
-		void GetCustomAttribute(const String& name, void* pData) const override;
-		Vector2I ScreenToWindowPos(const Vector2I& screenPos) const override;
-		Vector2I WindowToScreenPos(const Vector2I& windowPos) const override;
+		Vector2I ScreenToWindowPosition(const Vector2I& screenPos) const override;
+		Vector2I WindowToScreenPosition(const Vector2I& windowPos) const override;
 
 		/** @copydoc RenderWindow::GetRenderProxy */
 		SPtr<ct::Win32RenderWindow> GetImplementationRenderProxy() const;
 
-		/**	Retrieves internal window handle. */
-		HWND GetHWnd() const;
+		u64 GetPlatformWindowHandle() const override;
 
 	protected:
 		friend class VulkanRenderWindowManager;
 		friend class ct::Win32RenderWindow;
 
-		Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
+		Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow);
 
 		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 		void SyncProperties() override;
@@ -57,7 +55,7 @@ namespace bs
 		class Win32RenderWindow : public RenderWindow
 		{
 		public:
-			Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
+			Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow);
 			~Win32RenderWindow();
 
 			void Move(i32 left, i32 top) override;
@@ -73,17 +71,14 @@ namespace bs
 			void SetVSync(bool enabled, u32 interval = 1) override;
 			void SwapBuffers();
 
-			void GetCustomAttribute(const String& name, void* data) const override;
-			void WindowMovedOrResizedInternal() override;
+			u64 GetPlatformWindowHandle() const override;
+			void DoOnWindowMovedOrResized() override;
 
 			/** Returns the swap chain owned by the window. */
 			VulkanSwapChain* GetSwapChain() const { return mSwapChain; }
 
 			/** Rebuilds the swap chain according to the currently set properties. */
 			void RebuildSwapChain();
-
-			/**	Returns internal window handle. */
-			HWND GetWindowHandleInternal() const;
 
 		protected:
 			friend class bs::Win32RenderWindow;

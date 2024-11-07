@@ -470,7 +470,7 @@ namespace bs
 	struct BlendStateInformation;
 	struct RenderTargetBlendStateInformation;
 	struct RenderTextureCreateInformation;
-	struct RENDER_WINDOW_DESC;
+	struct RenderWindowCreateInformation;
 	struct FONT_DESC;
 	struct CHAR_CONTROLLER_DESC;
 	struct JOINT_DESC;

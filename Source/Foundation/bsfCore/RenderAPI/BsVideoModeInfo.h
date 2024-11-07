@@ -69,7 +69,7 @@ namespace bs
 		const String& GetName() const { return mName; }
 
 		/**	Number of available video modes for this output. */
-		u32 GetNumVideoModes() const { return (u32)mVideoModes.size(); }
+		u32 GetVideoModeCount() const { return (u32)mVideoModes.size(); }
 
 		/**	Returns video mode at the specified index. */
 		const VideoMode& GetVideoMode(u32 idx) const { return *mVideoModes.at(idx); }
@@ -94,7 +94,7 @@ namespace bs
 		VideoModeInfo& operator=(const VideoModeInfo&) = delete; // Make non-copyable
 
 		/**	Returns the number of available output devices. */
-		u32 GetNumOutputs() const { return (u32)mOutputs.size(); }
+		u32 GetOutputCount() const { return (u32)mOutputs.size(); }
 
 		/**
 		 * Returns video mode information about a specific output device. 0th index always represents the primary device

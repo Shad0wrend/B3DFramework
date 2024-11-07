@@ -141,13 +141,4 @@ void VulkanRenderTexture::Initialize()
 	mFramebuffer = VulkanFramebufferCache::Instance().FindOrCreateFramebuffer(mGpuDevice, framebufferInformation, renderPassInformation);
 }
 
-void VulkanRenderTexture::GetCustomAttribute(const String& name, void* data) const
-{
-	if(name == "FB")
-	{
-		VulkanFramebuffer** fb = (VulkanFramebuffer**)data;
-		*fb = mFramebuffer;
-		return;
-	}
-}
 }} // namespace bs::ct

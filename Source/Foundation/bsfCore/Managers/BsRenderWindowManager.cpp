@@ -8,11 +8,11 @@ using namespace std::placeholders;
 
 using namespace bs;
 
-SPtr<RenderWindow> RenderWindowManager::Create(RENDER_WINDOW_DESC& desc, SPtr<RenderWindow> parentWindow)
+SPtr<RenderWindow> RenderWindowManager::Create(const RenderWindowCreateInformation& createInformation, const SPtr<RenderWindow>& parentWindow)
 {
 	u32 id = ct::RenderWindowManager::Instance().mNextWindowId.fetch_add(1, std::memory_order_relaxed);
 
-	SPtr<RenderWindow> renderWindow = CreateImpl(desc, id, parentWindow);
+	SPtr<RenderWindow> renderWindow = CreateImplementation(createInformation, id, parentWindow);
 	renderWindow->SetShared(renderWindow);
 
 	{
@@ -57,7 +57,7 @@ void RenderWindowManager::NotifyFocusReceived(ct::RenderWindow* renderProxy)
 {
 	Lock lock(mWindowMutex);
 
-	RenderWindow* window = GetCoreObject(renderProxy);
+	RenderWindow* window = GetRenderProxyObject(renderProxy);
 	mNewWindowInFocus = window;
 }
 
@@ -72,7 +72,7 @@ void RenderWindowManager::NotifyMovedOrResized(ct::RenderWindow* renderProxy)
 {
 	Lock lock(mWindowMutex);
 
-	RenderWindow* window = GetCoreObject(renderProxy);
+	RenderWindow* window = GetRenderProxyObject(renderProxy);
 	if(window == nullptr)
 		return;
 
@@ -85,7 +85,7 @@ void RenderWindowManager::NotifyMouseLeft(ct::RenderWindow* renderProxy)
 {
 	Lock lock(mWindowMutex);
 
-	RenderWindow* window = GetCoreObject(renderProxy);
+	RenderWindow* window = GetRenderProxyObject(renderProxy);
 	auto iterFind = std::find(begin(mMouseLeftWindows), end(mMouseLeftWindows), window);
 
 	if(iterFind == end(mMouseLeftWindows))
@@ -96,7 +96,7 @@ void RenderWindowManager::NotifyCloseRequested(ct::RenderWindow* renderProxy)
 {
 	Lock lock(mWindowMutex);
 
-	RenderWindow* window = GetCoreObject(renderProxy);
+	RenderWindow* window = GetRenderProxyObject(renderProxy);
 	auto iterFind = std::find(begin(mCloseRequestedWindows), end(mCloseRequestedWindows), window);
 
 	if(iterFind == end(mCloseRequestedWindows))
@@ -107,7 +107,7 @@ void RenderWindowManager::NotifySyncDataDirty(ct::RenderWindow* renderProxy)
 {
 	Lock lock(mWindowMutex);
 
-	RenderWindow* window = GetCoreObject(renderProxy);
+	RenderWindow* window = GetRenderProxyObject(renderProxy);
 
 	if(window != nullptr)
 		mDirtyProperties.insert(window);
@@ -188,7 +188,7 @@ RenderWindow* RenderWindowManager::GetTopMostModal() const
 	return mModalWindowStack.back();
 }
 
-RenderWindow* RenderWindowManager::GetCoreObject(const ct::RenderWindow* window) const
+RenderWindow* RenderWindowManager::GetRenderProxyObject(const ct::RenderWindow* window) const
 {
 	auto iterFind = mWindows.find(window->mWindowId);
 

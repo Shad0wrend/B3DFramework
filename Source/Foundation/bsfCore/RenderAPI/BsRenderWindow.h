@@ -45,7 +45,7 @@ namespace bs
 	 */
 
 	/** Structure that is used for initializing a render window. */
-	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(RenderAPI), ExportAsStruct(true), API(Framework)) RENDER_WINDOW_DESC
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(RenderAPI), ExportAsStruct(true), API(Framework)) RenderWindowCreateInformation
 	{
 		/** Output monitor, frame buffer resize and refresh rate. */
 		VideoMode VideoMode;
@@ -100,17 +100,13 @@ namespace bs
 
 		/** Window will be created as hidden and only be shown when the first framebuffer swap happens. */
 		bool HideUntilSwap = false;
-
-		/** Platform-specific creation options. */
-		B3D_SCRIPT_EXPORT(Exclude(true))
-		UnorderedMap<String, String> PlatformSpecific;
 	};
 
 	/**	Contains various properties that describe a render window. */
 	class B3D_CORE_EXPORT RenderWindowProperties : public RenderTargetProperties
 	{
 	public:
-		RenderWindowProperties(const RENDER_WINDOW_DESC& desc);
+		RenderWindowProperties(const RenderWindowCreateInformation& createInformation);
 		virtual ~RenderWindowProperties() = default;
 
 		/**	True if window is running in fullscreen mode. */
@@ -145,95 +141,82 @@ namespace bs
 		virtual ~RenderWindow() = default;
 
 		/**	Converts screen position into window local position. */
-		virtual Vector2I ScreenToWindowPos(const Vector2I& screenPos) const = 0;
+		virtual Vector2I ScreenToWindowPosition(const Vector2I& screenPosition) const = 0;
 
 		/**	Converts window local position to screen position. */
-		virtual Vector2I WindowToScreenPos(const Vector2I& windowPos) const = 0;
+		virtual Vector2I WindowToScreenPosition(const Vector2I& windowPosition) const = 0;
 
 		/**
 		 * Resize the window to specified width and height in pixels.
 		 *
-		 * @param[in]	width		Width of the window in pixels.
-		 * @param[in]	height		Height of the window in pixels.
+		 * @param	width		Width of the window in pixels.
+		 * @param	height		Height of the window in pixels.
 		 */
 		virtual void Resize(u32 width, u32 height);
 
 		/**
 		 * Move the window to specified screen coordinates.
 		 *
-		 * @param[in]	left		Position of the left border of the window on the screen.
-		 * @param[in]	top			Position of the top border of the window on the screen.
-		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
+		 * @param	left		Position of the left border of the window on the screen.
+		 * @param	top			Position of the top border of the window on the screen.
 		 */
 		virtual void Move(i32 left, i32 top);
 
-		/**
-		 * Hides the window.
-		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
-		 */
+		/** Hides the window. */
 		virtual void Hide();
 
-		/**
-		 * Shows a previously hidden window.
-		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
-		 */
+		/** Shows a previously hidden window. */
 		virtual void Show();
 
-		/**
-		 * @copydoc ct::RenderWindow::Minimize
-		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
-		 */
+		/**	Minimizes the window to the taskbar. */
 		virtual void Minimize();
 
-		/**
-		 * @copydoc ct::RenderWindow::Maximize
-		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
-		 */
+		/**	Maximizes the window over the entire current screen. */
 		virtual void Maximize();
 
-		/**
-		 * @copydoc ct::RenderWindow::Restore
-		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
-		 */
+		/**	Restores the window to original position and size if it is minimized or maximized. */
 		virtual void Restore();
 
 		/**
-		 * @copydoc ct::RenderWindow::SetFullscreen(u32, u32, float, u32)
+		 * Switches the window to fullscreen mode. Child windows cannot go into fullscreen mode.
 		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
+		 * @param	width		Width of the window frame buffer in pixels.
+		 * @param	height		Height of the window frame buffer in pixels.
+		 * @param	refreshRate	Refresh rate of the window in Hertz.
+		 * @param	monitorIndex	Index of the monitor to go fullscreen on.
+		 *
+		 * @note	If the exact provided mode isn't available, closest one is used instead.
 		 */
-		virtual void SetFullscreen(u32 width, u32 height, float refreshRate = 60.0f, u32 monitorIdx = 0);
+		virtual void SetFullscreen(u32 width, u32 height, float refreshRate = 60.0f, u32 monitorIndex = 0);
 
 		/**
-		 * @copydoc ct::RenderWindow::SetFullscreen(const VideoMode&)
+		 * Switches the window to fullscreen mode. Child windows cannot go into fullscreen mode.
 		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
+		 * @param	videoMode	Mode retrieved from VideoModeInfo in GpuDevice.
 		 */
 		virtual void SetFullscreen(const VideoMode& videoMode);
 
 		/**
-		 * @copydoc ct::RenderWindow::SetWindowed
+		 * Switches the window to windowed mode.
 		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
+		 * @param	width	Window width in pixels.
+		 * @param	height	Window height in pixels.
 		 */
 		virtual void SetWindowed(u32 width, u32 height);
 
 		/**
 		 * Swaps the frame buffers to display the next frame.
 		 *
-		 * @param[in]	syncMask	Optional synchronization mask that determines for which queues should the system wait
-		 *							before performing the swap buffer operation. By default the system waits for all queues.
-		 *							However if certain queues are performing non-rendering operations, or operations not
-		 *							related to this render target, you can exclude them from the sync mask for potentially
-		 *							better performance. You can use CommandSyncMask to generate a valid sync mask.
+		 * @param	syncMask	Optional synchronization mask that determines for which queues should the system wait
+		 *						before performing the swap buffer operation. By default the system waits for all queues.
+		 *						However if certain queues are performing non-rendering operations, or operations not
+		 *						related to this render target, you can exclude them from the sync mask for potentially
+		 *						better performance. You can use CommandSyncMask to generate a valid sync mask.
 		 */
 		virtual void SwapBuffers(u32 syncMask = 0xFFFFFFFF) {}
+
+		/** Returns a platform-specific window handle. (e.g. HWND on Windows) */
+		virtual u64 GetPlatformWindowHandle() const = 0;
 
 		/**	Returns properties that describe the render window. */
 		const RenderWindowProperties& GetProperties() const;
@@ -245,7 +228,7 @@ namespace bs
 		 * Creates a new render window using the specified options. Optionally makes the created window a child of another
 		 * window.
 		 */
-		static SPtr<RenderWindow> Create(RENDER_WINDOW_DESC& desc, SPtr<RenderWindow> parentWindow = nullptr);
+		static SPtr<RenderWindow> Create(const RenderWindowCreateInformation& createInformation, SPtr<RenderWindow> parentWindow = nullptr);
 
 		/** Triggers when the OS requests that the window is closed (e.g. user clicks on the X button in the title bar). */
 		Event<void()> OnCloseRequested;
@@ -254,25 +237,18 @@ namespace bs
 		 * @name Internal
 		 */
 
-		/** Notifies the window that a specific event occurred. Usually called by the platform specific main event loop. */
-		void NotifyWindowEventInternal(WindowEventType type);
-
-		// Methods to notify this window of external events that change the properties.
-		// These are useful when using "externalWindowHandle"
-		void OnExternalResizeInternal(u32 width, u32 height);
-		void OnExternalMoveInternal(i32 top, i32 left);
-		void OnExternalFocusInternal(bool focused);
-		void OnExternalMaximizedInternal(bool maximized);
+		/** Notifies the window that a specific event occurred as reported by the OS event loop. */
+		void NotifyWindowEvent(WindowEventType type);
 
 		/** Method that triggers whenever the window changes size or position. */
-		virtual void WindowMovedOrResizedInternal() {}
+		virtual void DoOnWindowMovedOrResized() {}
 
 		/** @} */
 
 	protected:
 		friend class RenderWindowManager;
 
-		RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
+		RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow);
 
 		/** Returns render window properties that may be edited. */
 		RenderWindowProperties& GetMutableProperties();
@@ -281,7 +257,8 @@ namespace bs
 		virtual void SyncProperties() = 0;
 
 	protected:
-		RENDER_WINDOW_DESC mDesc;
+		RenderWindowCreateInformation mCreateInformation;
+		WeakSPtr<RenderWindow> mParentWindow;
 		u32 mWindowId;
 
 		/************************************************************************/
@@ -305,16 +282,16 @@ namespace bs
 		class B3D_CORE_EXPORT RenderWindow : public RenderTarget
 		{
 		public:
-			RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
+			RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow);
 			virtual ~RenderWindow();
 
 			/**
 			 * Switches the window to fullscreen mode. Child windows cannot go into fullscreen mode.
 			 *
-			 * @param[in]	width		Width of the window frame buffer in pixels.
-			 * @param[in]	height		Height of the window frame buffer in pixels.
-			 * @param[in]	refreshRate	Refresh rate of the window in Hertz.
-			 * @param[in]	monitorIdx	Index of the monitor to go fullscreen on.
+			 * @param	width		Width of the window frame buffer in pixels.
+			 * @param	height		Height of the window frame buffer in pixels.
+			 * @param	refreshRate	Refresh rate of the window in Hertz.
+			 * @param	monitorIdx	Index of the monitor to go fullscreen on.
 			 *
 			 * @note	If the exact provided mode isn't available, closest one is used instead.
 			 */
@@ -323,25 +300,22 @@ namespace bs
 			/**
 			 * Switches the window to fullscreen mode. Child windows cannot go into fullscreen mode.
 			 *
-			 * @param[in]	videoMode	Mode retrieved from VideoModeInfo in RenderAPI.
+			 * @param	videoMode	Mode retrieved from VideoModeInfo in RenderAPI.
 			 */
 			virtual void SetFullscreen(const VideoMode& videoMode) {}
 
 			/**
 			 * Switches the window to windowed mode.
 			 *
-			 * @param[in]	width	Window width in pixels.
-			 * @param[in]	height	Window height in pixels.
+			 * @param	width	Window width in pixels.
+			 * @param	height	Window height in pixels.
 			 */
 			virtual void SetWindowed(u32 width, u32 height) {}
 
 			/**	Hide or show the window. */
 			virtual void SetHidden(bool hidden);
 
-			/**
-			 * Makes the render target active or inactive. (for example in the case of a window, it will hide or restore the
-			 * window).
-			 */
+			/** Makes the render target active or inactive. (for example in the case of a window, it will hide or restore the window). */
 			virtual void SetActive(bool state);
 
 			/**	Minimizes the window to the taskbar. */
@@ -370,14 +344,17 @@ namespace bs
 			 */
 			virtual void SetVSync(bool enabled, u32 interval = 1) = 0;
 
+			/** Returns a platform-specific window handle. (e.g. HWND on Windows) */
+			virtual u64 GetPlatformWindowHandle() const = 0;
+
 			/**	Returns properties that describe the render window. */
 			const RenderWindowProperties& GetProperties() const;
 
-			/** Notifies the window that a specific event occurred. Usually called by the platform specific main event loop. */
-			void NotifyWindowEventInternal(WindowEventType type);
+			/** Notifies the window that a specific event occurred as reported by the OS event loop. */
+			void NotifyWindowEvent(WindowEventType type);
 
 			/** Method that triggers whenever the window changes size or position. */
-			virtual void WindowMovedOrResizedInternal() {}
+			virtual void DoOnWindowMovedOrResized() {}
 
 			/** Triggered when the window swap chain has been recreated. */
 			mutable Event<void()> OnSwapChainDidRebuild;
@@ -397,7 +374,8 @@ namespace bs
 			/** Updates window properties from the synced property data. */
 			virtual void SyncProperties() = 0;
 
-			RENDER_WINDOW_DESC mDesc;
+			RenderWindowCreateInformation mCreateInformation;
+			WeakSPtr<RenderWindow> mParentWindow;
 			SpinLock mLock;
 			u32 mWindowId;
 		};

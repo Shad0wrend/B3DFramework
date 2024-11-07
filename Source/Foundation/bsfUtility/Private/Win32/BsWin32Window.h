@@ -17,9 +17,9 @@ namespace bs
 	 */
 
 	/**	Descriptor used for creating a platform specific native window. */
-	struct B3D_UTILITY_EXPORT WINDOW_DESC
+	struct B3D_UTILITY_EXPORT WindowCreateInformation
 	{
-		WINDOW_DESC() = default;
+		WindowCreateInformation() = default;
 
 		HINSTANCE Module = nullptr; /**< Instance to the local module. */
 		HMONITOR Monitor = nullptr; /**< Handle ot the monitor onto which to display the window. */
@@ -56,7 +56,7 @@ namespace bs
 	class B3D_UTILITY_EXPORT Win32Window
 	{
 	public:
-		Win32Window(const WINDOW_DESC& desc);
+		Win32Window(const WindowCreateInformation& createInformation);
 		~Win32Window();
 
 		/**	Returns position of the left-most border of the window, relative to the screen. */
@@ -107,8 +107,13 @@ namespace bs
 		/**	Returns the extended window style flags used for creating it. */
 		DWORD GetStyleEx() const;
 
+		/**
+		 * @name Internal
+		 * @{
+		 */
+
 		/** Called when window is moved or resized externally. */
-		void WindowMovedOrResizedInternal();
+		void DoOnWindowMovedOrResized();
 
 		/**
 		 * Enables all open windows. Enabled windows can receive mouse and keyboard input. This includes even windows
@@ -121,6 +126,8 @@ namespace bs
 		 * method to EnableAllWindowsInternal() that can help restore original state after it is called.
 		 */
 		void static RestoreModalWindowsInternal();
+
+		/** @} */
 
 	private:
 		friend class Win32WindowManager;

@@ -9,19 +9,19 @@
 
 using namespace bs;
 
-RenderWindowProperties::RenderWindowProperties(const RENDER_WINDOW_DESC& desc)
+RenderWindowProperties::RenderWindowProperties(const RenderWindowCreateInformation& createInformation)
 {
-	Width = desc.VideoMode.Width;
-	Height = desc.VideoMode.Height;
-	HwGamma = desc.Gamma;
-	Vsync = desc.Vsync;
-	VsyncInterval = desc.VsyncInterval;
-	MultisampleCount = desc.MultisampleCount;
-	Left = desc.Left;
-	Top = desc.Top;
-	IsFullScreen = desc.Fullscreen;
-	IsHidden = desc.Hidden;
-	IsModal = desc.Modal;
+	Width = createInformation.VideoMode.Width;
+	Height = createInformation.VideoMode.Height;
+	HwGamma = createInformation.Gamma;
+	Vsync = createInformation.Vsync;
+	VsyncInterval = createInformation.VsyncInterval;
+	MultisampleCount = createInformation.MultisampleCount;
+	Left = createInformation.Left;
+	Top = createInformation.Top;
+	IsFullScreen = createInformation.Fullscreen;
+	IsHidden = createInformation.Hidden;
+	IsModal = createInformation.Modal;
 	IsWindow = true;
 	RequiresTextureFlipping = false;
 }
@@ -33,8 +33,8 @@ void RenderWindow::Destroy()
 	RenderTarget::Destroy();
 }
 
-RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
-	: mDesc(desc), mWindowId(windowId)
+RenderWindow::RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow)
+	: mCreateInformation(createInformation), mWindowId(windowId), mParentWindow(parentWindow)
 {
 }
 
@@ -161,7 +161,7 @@ void RenderWindow::Restore()
 	}
 }
 
-void RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 monitorIdx)
+void RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 monitorIndex)
 {
 	std::function<void(SPtr<ct::RenderWindow>, u32, u32, float, u32)> fullscreenFunc =
 		[](SPtr<ct::RenderWindow> renderWindow, u32 width, u32 height, float refreshRate, u32 monitorIdx)
@@ -169,7 +169,7 @@ void RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 m
 		renderWindow->SetFullscreen(width, height, refreshRate, monitorIdx);
 	};
 
-	GetRenderThread().PostCommand(std::bind(fullscreenFunc, B3DGetRenderProxy(this), width, height, refreshRate, monitorIdx), "RenderWindow::SetFullscreen", true);
+	GetRenderThread().PostCommand(std::bind(fullscreenFunc, B3DGetRenderProxy(this), width, height, refreshRate, monitorIndex), "RenderWindow::SetFullscreen", true);
 
 	{
 		ScopedSpinLock lock(B3DGetRenderProxy(this)->mLock);
@@ -221,9 +221,9 @@ void RenderWindow::SetWindowed(u32 width, u32 height)
 	}
 }
 
-SPtr<RenderWindow> RenderWindow::Create(RENDER_WINDOW_DESC& desc, SPtr<RenderWindow> parentWindow)
+SPtr<RenderWindow> RenderWindow::Create(const RenderWindowCreateInformation& createInformation, SPtr<RenderWindow> parentWindow)
 {
-	return RenderWindowManager::Instance().Create(desc, parentWindow);
+	return RenderWindowManager::Instance().Create(createInformation, parentWindow);
 }
 
 RenderWindowProperties& RenderWindow::GetMutableProperties()
@@ -236,7 +236,7 @@ const RenderWindowProperties& RenderWindow::GetProperties() const
 	return static_cast<const RenderWindowProperties&>(GetPropertiesInternal());
 }
 
-void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
+void RenderWindow::NotifyWindowEvent(WindowEventType type)
 {
 	ASSERT_IF_RENDER_THREAD;
 
@@ -248,7 +248,7 @@ void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
 	{
 	case WindowEventType::Resized:
 		{
-			WindowMovedOrResizedInternal();
+			DoOnWindowMovedOrResized();
 
 			{
 				ScopedSpinLock lock(renderProxy->mLock);
@@ -263,7 +263,7 @@ void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
 		}
 	case WindowEventType::Moved:
 		{
-			WindowMovedOrResizedInternal();
+			DoOnWindowMovedOrResized();
 
 			{
 				ScopedSpinLock lock(renderProxy->mLock);
@@ -351,46 +351,6 @@ void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
 	}
 }
 
-void RenderWindow::OnExternalResizeInternal(u32 width, u32 height)
-{
-	RenderWindowProperties& props = GetMutableProperties();
-	props.Width = width;
-	props.Height = height;
-	NotifyWindowEventInternal(WindowEventType::Resized);
-}
-
-void RenderWindow::OnExternalMoveInternal(i32 top, i32 left)
-{
-	RenderWindowProperties& props = GetMutableProperties();
-	props.Top = top;
-	props.Left = left;
-	NotifyWindowEventInternal(WindowEventType::Moved);
-}
-
-void RenderWindow::OnExternalFocusInternal(bool focused)
-{
-	if(focused)
-	{
-		NotifyWindowEventInternal(WindowEventType::FocusReceived);
-	}
-	else
-	{
-		NotifyWindowEventInternal(WindowEventType::FocusLost);
-	}
-}
-
-void RenderWindow::OnExternalMaximizedInternal(bool maximized)
-{
-	if(maximized)
-	{
-		NotifyWindowEventInternal(WindowEventType::Maximized);
-	}
-	else
-	{
-		NotifyWindowEventInternal(WindowEventType::Restored);
-	}
-}
-
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
@@ -407,8 +367,8 @@ RTTIType* RenderWindow::GetRtti() const
 
 namespace bs { namespace ct
 {
-RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
-	: mDesc(desc), mWindowId(windowId)
+RenderWindow::RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow)
+	: mCreateInformation(createInformation), mWindowId(windowId), mParentWindow(parentWindow)
 {
 	RenderWindowManager::Instance().WindowCreated(this);
 }
@@ -438,7 +398,7 @@ void RenderWindow::SetActive(bool state)
 	ASSERT_IF_NOT_RENDER_THREAD;
 }
 
-void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
+void RenderWindow::NotifyWindowEvent(WindowEventType type)
 {
 	ASSERT_IF_NOT_RENDER_THREAD;
 
@@ -449,7 +409,7 @@ void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
 	{
 	case WindowEventType::Resized:
 		{
-			WindowMovedOrResizedInternal();
+			DoOnWindowMovedOrResized();
 
 			{
 				ScopedSpinLock lock(mLock);
@@ -464,7 +424,7 @@ void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
 		}
 	case WindowEventType::Moved:
 		{
-			WindowMovedOrResizedInternal();
+			DoOnWindowMovedOrResized();
 
 			{
 				ScopedSpinLock lock(mLock);

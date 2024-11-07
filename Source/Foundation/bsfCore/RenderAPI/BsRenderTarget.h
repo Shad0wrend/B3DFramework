@@ -112,9 +112,6 @@ namespace bs
 		RenderTarget();
 		virtual ~RenderTarget() = default;
 
-		/** Queries the render target for a custom attribute. This may be anything and is implementation specific. */
-		virtual void GetCustomAttribute(const String& name, void* pData) const;
-
 		/**
 		 * @copydoc ct::RenderTarget::SetPriority
 		 *
@@ -184,9 +181,6 @@ namespace bs
 			 * @param[in]	priority	The priority. Higher value means the target will be rendered sooner.
 			 */
 			void SetPriority(i32 priority);
-
-			/** Queries the render target for a custom attribute. This may be anything and is implementation specific. */
-			virtual void GetCustomAttribute(const String& name, void* pData) const;
 
 			/**	Returns properties that describe the render target. */
 			const RenderTargetProperties& GetProperties() const;
