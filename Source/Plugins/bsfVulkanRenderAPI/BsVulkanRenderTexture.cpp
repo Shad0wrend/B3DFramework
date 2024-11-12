@@ -9,15 +9,15 @@
 
 using namespace bs;
 
-VulkanRenderTexture::VulkanRenderTexture(const RenderTextureCreateInformation& desc)
-	: RenderTexture(desc), mProperties(desc, false)
+VulkanRenderTexture::VulkanRenderTexture(const RenderTextureCreateInformation& createInformation)
+	: RenderTexture(createInformation)
 {
 }
 
 namespace bs {
 namespace ct {
-VulkanRenderTexture::VulkanRenderTexture(VulkanGpuDevice& gpuDevice, const RenderTextureCreateInformation& desc)
-	: RenderTexture(desc), mGpuDevice(gpuDevice), mProperties(desc, false), mFramebuffer(nullptr)
+VulkanRenderTexture::VulkanRenderTexture(VulkanGpuDevice& gpuDevice, const RenderTextureCreateInformation& createInformation)
+	: RenderTexture(createInformation), mGpuDevice(gpuDevice), mFramebuffer(nullptr)
 {
 }
 
@@ -26,12 +26,12 @@ void VulkanRenderTexture::Initialize()
 	RenderTexture::Initialize();
 
 	VulkanRenderPassCreateInformation renderPassInformation;
-	renderPassInformation.SampleCount = mProperties.MultisampleCount > 1 ? mProperties.MultisampleCount : 1;
+	renderPassInformation.SampleCount = mRenderTargetProperties.MultisampleCount > 1 ? mRenderTargetProperties.MultisampleCount : 1;
 	renderPassInformation.IsOffscreenSurface = true;
 
 	VulkanFramebufferInformation framebufferInformation;
-	framebufferInformation.Width = mProperties.Width;
-	framebufferInformation.Height = mProperties.Height;
+	framebufferInformation.Width = mRenderTargetProperties.Width;
+	framebufferInformation.Height = mRenderTargetProperties.Height;
 
 	for(u32 renderTargetIndex = 0; renderTargetIndex < B3D_MAXIMUM_RENDER_TARGET_COUNT; ++renderTargetIndex)
 	{

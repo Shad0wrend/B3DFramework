@@ -434,7 +434,6 @@ void VulkanGpuBackend::OnStartUp()
 
 	// Create render window manager
 	RenderWindowManager::StartUp<VulkanRenderWindowManager>();
-	ct::RenderWindowManager::StartUp();
 
 	// Create vertex input manager
 	VulkanVertexInputManager::StartUp();
@@ -456,7 +455,6 @@ void VulkanGpuBackend::OnShutDown()
 
 	VulkanSubmitThread::ShutDown();
 	VulkanVertexInputManager::ShutDown();
-	ct::RenderWindowManager::ShutDown();
 	RenderWindowManager::ShutDown();
 	VulkanFramebufferCache::ShutDown();
 	VulkanRenderPassCache::ShutDown();

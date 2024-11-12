@@ -33,23 +33,6 @@ namespace bs
 		struct RenderTextureCreateInformation;
 	}
 
-	/**	Contains various properties that describe a render texture. */
-	class B3D_CORE_EXPORT RenderTextureProperties : public RenderTargetProperties
-	{
-	public:
-		RenderTextureProperties() = default;
-		RenderTextureProperties(const RenderTextureCreateInformation& createInformation, bool requiresFlipping);
-		RenderTextureProperties(const ct::RenderTextureCreateInformation& createInformation, bool requiresFlipping);
-
-		virtual ~RenderTextureProperties() {}
-
-	private:
-		void Construct(const TextureProperties* textureProps, u32 numSlices, u32 mipLevel, bool requiresFlipping, bool hwGamma);
-
-		friend class ct::RenderTexture;
-		friend class RenderTexture;
-	};
-
 	/**
 	 * Render target specialization that allows you to render into one or multiple textures. Such textures can then be used
 	 * in other operations as GPU program input.
@@ -78,9 +61,6 @@ namespace bs
 		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 		 */
 		const HTexture& GetDepthStencilTexture() const { return mBindableDepthStencilTex; }
-
-		/**	Returns properties that describe the render texture. */
-		const RenderTextureProperties& GetProperties() const;
 
 	protected:
 		friend class TextureManager;
@@ -160,9 +140,6 @@ namespace bs
 			 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 			 */
 			SPtr<Texture> GetDepthStencilTexture() const { return mInformation.DepthStencilSurface.Texture; }
-
-			/**	Returns properties that describe the render texture. */
-			const RenderTextureProperties& GetProperties() const;
 
 		protected:
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;

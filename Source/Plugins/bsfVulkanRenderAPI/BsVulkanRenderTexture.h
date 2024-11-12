@@ -25,11 +25,7 @@ namespace bs
 	protected:
 		friend class VulkanTextureManager;
 
-		VulkanRenderTexture(const RenderTextureCreateInformation& desc);
-
-		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
-
-		RenderTextureProperties mProperties;
+		VulkanRenderTexture(const RenderTextureCreateInformation& createInformation);
 	};
 
 	namespace ct
@@ -42,7 +38,7 @@ namespace bs
 		class VulkanRenderTexture : public RenderTexture
 		{
 		public:
-			VulkanRenderTexture(VulkanGpuDevice& device, const RenderTextureCreateInformation& desc);
+			VulkanRenderTexture(VulkanGpuDevice& device, const RenderTextureCreateInformation& createInformation);
 			~VulkanRenderTexture() override = default;
 
 			/** Returns the underlying framebuffer object. */
@@ -50,10 +46,8 @@ namespace bs
 
 		protected:
 			void Initialize() override;
-			const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 
 			VulkanGpuDevice& mGpuDevice;
-			RenderTextureProperties mProperties;
 			VulkanFramebuffer* mFramebuffer;
 		};
 

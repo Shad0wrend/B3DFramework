@@ -822,7 +822,7 @@ void GaussianBlurMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Textur
 	BS_RENMAT_PROFILE_BLOCK
 
 	const TextureProperties& srcProps = source->GetProperties();
-	const RenderTextureProperties& dstProps = destination->GetProperties();
+	const RenderTargetProperties& dstProps = destination->GetProperties();
 
 	POOLED_RenderTextureCreateInformation tempTextureDesc = POOLED_RenderTextureCreateInformation::Create2D(srcProps.Format, dstProps.Width, dstProps.Height, TU_RENDERTARGET);
 	SPtr<PooledRenderTexture> tempTexture = GetGpuResourcePool().Get(tempTextureDesc);

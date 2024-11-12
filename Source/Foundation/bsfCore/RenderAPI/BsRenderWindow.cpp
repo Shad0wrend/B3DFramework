@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsRenderWindow.h"
+
+#include "CoreObject/BsCoreObjectSync.h"
 #include "CoreObject/BsRenderThread.h"
 #include "Managers/BsRenderWindowManager.h"
 #include "RenderAPI/BsViewport.h"
@@ -9,255 +11,79 @@
 
 using namespace bs;
 
-RenderWindowProperties::RenderWindowProperties(const RenderWindowCreateInformation& createInformation)
+static RenderWindowProperties CreateRenderWindowProperties(const RenderWindowCreateInformation& createInformation)
 {
-	Width = createInformation.VideoMode.Width;
-	Height = createInformation.VideoMode.Height;
-	HwGamma = createInformation.Gamma;
-	Vsync = createInformation.Vsync;
-	VsyncInterval = createInformation.VsyncInterval;
-	MultisampleCount = createInformation.MultisampleCount;
-	Left = createInformation.Left;
-	Top = createInformation.Top;
-	IsFullScreen = createInformation.Fullscreen;
-	IsHidden = createInformation.Hidden;
-	IsModal = createInformation.Modal;
-	IsWindow = true;
-	RequiresTextureFlipping = false;
+	RenderWindowProperties output;
+
+	output.Vsync = createInformation.Vsync;
+	output.VsyncInterval = createInformation.VsyncInterval;
+	output.Left = createInformation.Left;
+	output.Top = createInformation.Top;
+	output.IsFullScreen = createInformation.Fullscreen;
+	output.IsHidden = createInformation.Hidden;
+	output.IsModal = createInformation.Modal;
+
+	return output;
+}
+
+static RenderTargetProperties CreateRenderTargetProperties(const RenderWindowCreateInformation& createInformation)
+{
+	RenderTargetProperties output;
+
+	output.Width = createInformation.VideoMode.Width;
+	output.Height = createInformation.VideoMode.Height;
+	output.HwGamma = createInformation.Gamma;
+	output.MultisampleCount = createInformation.MultisampleCount;
+	output.IsWindow = true;
+	output.RequiresTextureFlipping = false;
+
+	return output;
+}
+
+namespace bs
+{
+	B3D_SYNC_BLOCK_BEGIN(RenderWindow, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mRenderTargetProperties)
+		B3D_SYNC_BLOCK_ENTRY(mRenderWindowProperties)
+	B3D_SYNC_BLOCK_END
+}
+
+RenderProxySyncPacket* RenderWindow::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
+{
+	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
 
 void RenderWindow::Destroy()
 {
-	RenderWindowManager::Instance().NotifyWindowDestroyed(this);
+	RenderWindowManager::Instance().NotifyWindowDestroyed(*this);
 
 	RenderTarget::Destroy();
 }
 
 RenderWindow::RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow)
-	: mCreateInformation(createInformation), mWindowId(windowId), mParentWindow(parentWindow)
+	: mCreateInformation(createInformation), mWindowId(windowId), mParentWindow(parentWindow), mRenderWindowProperties(CreateRenderWindowProperties(createInformation))
 {
-}
-
-void RenderWindow::Resize(u32 width, u32 height)
-{
-	std::function<void(SPtr<ct::RenderWindow>, u32, u32)> resizeFunc =
-		[](SPtr<ct::RenderWindow> renderWindow, u32 width, u32 height)
-	{
-		renderWindow->Resize(width, height);
-	};
-
-	GetRenderThread().PostCommand([renderProxy = B3DGetRenderProxy(this), resizeFunc, width, height] { resizeFunc(renderProxy, width, height); }, "RenderWindow::Resize", true);
-
-	{
-		ScopedSpinLock lock(B3DGetRenderProxy(this)->mLock);
-		const RenderWindowProperties& syncedProps = B3DGetRenderProxy(this)->GetSyncedProperties();
-		RenderWindowProperties& mutableProps = GetMutableProperties();
-
-		mutableProps.Width = syncedProps.Width;
-		mutableProps.Height = syncedProps.Height;
-	}
-}
-
-void RenderWindow::Move(i32 left, i32 top)
-{
-	std::function<void(SPtr<ct::RenderWindow>, i32, i32)> moveFunc =
-		[](SPtr<ct::RenderWindow> renderWindow, i32 left, i32 top)
-	{
-		renderWindow->Move(left, top);
-	};
-
-	GetRenderThread().PostCommand([renderProxy = B3DGetRenderProxy(this), moveFunc, left, top] { moveFunc(renderProxy, left, top); }, "RenderWindow::Move", true);
-
-	{
-		ScopedSpinLock lock(B3DGetRenderProxy(this)->mLock);
-		const RenderWindowProperties& syncedProps = B3DGetRenderProxy(this)->GetSyncedProperties();
-		RenderWindowProperties& mutableProps = GetMutableProperties();
-
-		mutableProps.Left = syncedProps.Left;
-		mutableProps.Top = syncedProps.Top;
-	}
-}
-
-void RenderWindow::Hide()
-{
-	std::function<void(SPtr<ct::RenderWindow>)> hideFunc =
-		[](SPtr<ct::RenderWindow> renderWindow)
-	{
-		renderWindow->SetHidden(true);
-	};
-
-	GetMutableProperties().IsHidden = true;
-
-	GetRenderThread().PostCommand(std::bind(hideFunc, B3DGetRenderProxy(this)), "RenderWindow::Hide");
-}
-
-void RenderWindow::Show()
-{
-	std::function<void(SPtr<ct::RenderWindow>)> showFunc =
-		[](SPtr<ct::RenderWindow> renderWindow)
-	{
-		renderWindow->SetHidden(false);
-	};
-
-	GetMutableProperties().IsHidden = false;
-
-	GetRenderThread().PostCommand(std::bind(showFunc, B3DGetRenderProxy(this)), "RenderWindow::Show");
-}
-
-void RenderWindow::Minimize()
-{
-	std::function<void(SPtr<ct::RenderWindow>)> minimizeFunc =
-		[](SPtr<ct::RenderWindow> renderWindow)
-	{
-		renderWindow->Minimize();
-	};
-
-	GetMutableProperties().IsMaximized = false;
-
-	GetRenderThread().PostCommand(std::bind(minimizeFunc, B3DGetRenderProxy(this)), "RenderWindow::Minimize");
-}
-
-void RenderWindow::Maximize()
-{
-	std::function<void(SPtr<ct::RenderWindow>)> maximizeFunc =
-		[](SPtr<ct::RenderWindow> renderWindow)
-	{
-		renderWindow->Maximize();
-	};
-
-	GetMutableProperties().IsMaximized = true;
-
-	GetRenderThread().PostCommand(std::bind(maximizeFunc, B3DGetRenderProxy(this)), "RenderWindow::Maximize", true);
-
-	{
-		ScopedSpinLock lock(B3DGetRenderProxy(this)->mLock);
-		const RenderWindowProperties& syncedProps = B3DGetRenderProxy(this)->GetSyncedProperties();
-		RenderWindowProperties& mutableProps = GetMutableProperties();
-
-		mutableProps.Width = syncedProps.Width;
-		mutableProps.Height = syncedProps.Height;
-	}
-}
-
-void RenderWindow::Restore()
-{
-	std::function<void(SPtr<ct::RenderWindow>)> restoreFunc =
-		[](SPtr<ct::RenderWindow> renderWindow)
-	{
-		renderWindow->Restore();
-	};
-
-	GetMutableProperties().IsMaximized = false;
-
-	GetRenderThread().PostCommand(std::bind(restoreFunc, B3DGetRenderProxy(this)), "RenderWindow::Restore", true);
-
-	{
-		ScopedSpinLock lock(B3DGetRenderProxy(this)->mLock);
-		const RenderWindowProperties& syncedProps = B3DGetRenderProxy(this)->GetSyncedProperties();
-		RenderWindowProperties& mutableProps = GetMutableProperties();
-
-		mutableProps.Width = syncedProps.Width;
-		mutableProps.Height = syncedProps.Height;
-	}
-}
-
-void RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 monitorIndex)
-{
-	std::function<void(SPtr<ct::RenderWindow>, u32, u32, float, u32)> fullscreenFunc =
-		[](SPtr<ct::RenderWindow> renderWindow, u32 width, u32 height, float refreshRate, u32 monitorIdx)
-	{
-		renderWindow->SetFullscreen(width, height, refreshRate, monitorIdx);
-	};
-
-	GetRenderThread().PostCommand(std::bind(fullscreenFunc, B3DGetRenderProxy(this), width, height, refreshRate, monitorIndex), "RenderWindow::SetFullscreen", true);
-
-	{
-		ScopedSpinLock lock(B3DGetRenderProxy(this)->mLock);
-		const RenderWindowProperties& syncedProps = B3DGetRenderProxy(this)->GetSyncedProperties();
-		RenderWindowProperties& mutableProps = GetMutableProperties();
-
-		mutableProps.Width = syncedProps.Width;
-		mutableProps.Height = syncedProps.Height;
-	}
+	mRenderTargetProperties = CreateRenderTargetProperties(createInformation);
 }
 
 void RenderWindow::SetFullscreen(const VideoMode& mode)
 {
-	std::function<void(SPtr<ct::RenderWindow>, const VideoMode&)> fullscreenFunc =
-		[](SPtr<ct::RenderWindow> renderWindow, const VideoMode& mode)
-	{
-		renderWindow->SetFullscreen(mode);
-	};
-
-	GetRenderThread().PostCommand(std::bind(fullscreenFunc, B3DGetRenderProxy(this), std::cref(mode)), "RenderWindow::SetFullscreen", true);
-
-	{
-		ScopedSpinLock lock(B3DGetRenderProxy(this)->mLock);
-		const RenderWindowProperties& syncedProps = B3DGetRenderProxy(this)->GetSyncedProperties();
-		RenderWindowProperties& mutableProps = GetMutableProperties();
-
-		mutableProps.Width = syncedProps.Width;
-		mutableProps.Height = syncedProps.Height;
-	}
+	SetFullscreen(mode.Width, mode.Height, mode.RefreshRate, mode.OutputIdx);
 }
 
-void RenderWindow::SetWindowed(u32 width, u32 height)
-{
-	std::function<void(SPtr<ct::RenderWindow>, u32, u32)> windowedFunc =
-		[](SPtr<ct::RenderWindow> renderWindow, u32 width, u32 height)
-	{
-		renderWindow->SetWindowed(width, height);
-	};
-
-	GetRenderThread().PostCommand(std::bind(windowedFunc, B3DGetRenderProxy(this), width, height), "RenderWindow::SetWindowed", true);
-
-	{
-		ScopedSpinLock lock(B3DGetRenderProxy(this)->mLock);
-		const RenderWindowProperties& syncedProps = B3DGetRenderProxy(this)->GetSyncedProperties();
-		RenderWindowProperties& mutableProps = GetMutableProperties();
-
-		mutableProps.Width = syncedProps.Width;
-		mutableProps.Height = syncedProps.Height;
-	}
-}
-
-SPtr<RenderWindow> RenderWindow::Create(const RenderWindowCreateInformation& createInformation, SPtr<RenderWindow> parentWindow)
+SPtr<RenderWindow> RenderWindow::Create(const RenderWindowCreateInformation& createInformation, const SPtr<RenderWindow>& parentWindow)
 {
 	return RenderWindowManager::Instance().Create(createInformation, parentWindow);
 }
 
-RenderWindowProperties& RenderWindow::GetMutableProperties()
-{
-	return const_cast<RenderWindowProperties&>(GetProperties());
-}
-
-const RenderWindowProperties& RenderWindow::GetProperties() const
-{
-	return static_cast<const RenderWindowProperties&>(GetPropertiesInternal());
-}
-
 void RenderWindow::NotifyWindowEvent(WindowEventType type)
 {
-	ASSERT_IF_RENDER_THREAD;
-
-	ct::RenderWindow* renderProxy = B3DGetRenderProxy(this).get();
-	RenderWindowProperties& syncProps = renderProxy->GetSyncedProperties();
-	RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
-
 	switch(type)
 	{
 	case WindowEventType::Resized:
 		{
 			DoOnWindowMovedOrResized();
-
-			{
-				ScopedSpinLock lock(renderProxy->mLock);
-				syncProps.Width = props.Width;
-				syncProps.Height = props.Height;
-			}
-
-			ct::RenderWindowManager::Instance().NotifySyncDataDirty(renderProxy);
-			RenderWindowManager::Instance().NotifyMovedOrResized(renderProxy);
+			OnResized();
 
 			break;
 		}
@@ -265,87 +91,67 @@ void RenderWindow::NotifyWindowEvent(WindowEventType type)
 		{
 			DoOnWindowMovedOrResized();
 
-			{
-				ScopedSpinLock lock(renderProxy->mLock);
-				syncProps.Top = props.Top;
-				syncProps.Left = props.Left;
-			}
-
-			ct::RenderWindowManager::Instance().NotifySyncDataDirty(renderProxy);
-			RenderWindowManager::Instance().NotifyMovedOrResized(renderProxy);
-
 			break;
 		}
 	case WindowEventType::FocusReceived:
 		{
-			{
-				ScopedSpinLock lock(renderProxy->mLock);
-				syncProps.HasFocus = true;
-			}
+			mRenderWindowProperties.HasFocus = true;
 
-			props.HasFocus = true;
+			RenderWindowManager::Instance().NotifyFocusReceived(*this);
+			MarkRenderProxyDataDirty();
 
-			ct::RenderWindowManager::Instance().NotifySyncDataDirty(renderProxy);
-			RenderWindowManager::Instance().NotifyFocusReceived(renderProxy);
 			break;
 		}
 	case WindowEventType::FocusLost:
 		{
-			{
-				ScopedSpinLock lock(renderProxy->mLock);
-				syncProps.HasFocus = false;
-			}
+			mRenderWindowProperties.HasFocus = false;
 
-			props.HasFocus = false;
+			RenderWindowManager::Instance().NotifyFocusLost(*this);
+			MarkRenderProxyDataDirty();
 
-			ct::RenderWindowManager::Instance().NotifySyncDataDirty(renderProxy);
-			RenderWindowManager::Instance().NotifyFocusLost(renderProxy);
 			break;
 		}
 	case WindowEventType::Minimized:
 		{
-			{
-				ScopedSpinLock lock(renderProxy->mLock);
-				syncProps.IsMaximized = false;
-			}
+			mRenderWindowProperties.IsMaximized = false;
+			mRenderWindowProperties.IsMinimized = true;
+			MarkRenderProxyDataDirty();
 
-			props.IsMaximized = false;
-
-			ct::RenderWindowManager::Instance().NotifySyncDataDirty(renderProxy);
 			break;
 		}
 	case WindowEventType::Maximized:
 		{
-			{
-				ScopedSpinLock lock(renderProxy->mLock);
-				syncProps.IsMaximized = true;
-			}
+			mRenderWindowProperties.IsMaximized = true;
+			mRenderWindowProperties.IsMinimized = false;
+			MarkRenderProxyDataDirty();
 
-			props.IsMaximized = true;
-
-			ct::RenderWindowManager::Instance().NotifySyncDataDirty(renderProxy);
 			break;
 		}
 	case WindowEventType::Restored:
 		{
-			{
-				ScopedSpinLock lock(renderProxy->mLock);
-				syncProps.IsMaximized = false;
-			}
+			mRenderWindowProperties.IsMaximized = false;
+			mRenderWindowProperties.IsMinimized = false;
+			MarkRenderProxyDataDirty();
 
-			props.IsMaximized = false;
-
-			ct::RenderWindowManager::Instance().NotifySyncDataDirty(renderProxy);
 			break;
 		}
 	case WindowEventType::MouseLeft:
 		{
-			RenderWindowManager::Instance().NotifyMouseLeft(renderProxy);
+			RenderWindowManager::Instance().NotifyMouseLeft(*this);
 			break;
 		}
 	case WindowEventType::CloseRequested:
 		{
-			RenderWindowManager::Instance().NotifyCloseRequested(renderProxy);
+			const SPtr<RenderWindow> primaryWindow = GetCoreApplication().GetPrimaryWindow();
+
+			// Default behaviour for primary window is to quit the app on close
+			if(this == primaryWindow.get() && OnCloseRequested.Empty())
+			{
+				GetCoreApplication().QuitRequested();
+				return;
+			}
+
+			OnCloseRequested();
 			break;
 		}
 	}
@@ -362,158 +168,33 @@ RTTIType* RenderWindow::GetRttiStatic()
 
 RTTIType* RenderWindow::GetRtti() const
 {
-	return RenderWindow::GetRttiStatic();
+	return GetRttiStatic();
 }
 
 namespace bs { namespace ct
 {
 RenderWindow::RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow)
-	: mCreateInformation(createInformation), mWindowId(windowId), mParentWindow(parentWindow)
+	:  mCreateInformation(createInformation), mWindowId(windowId), mParentWindow(parentWindow), mRenderWindowProperties(CreateRenderWindowProperties(createInformation))
 {
-	RenderWindowManager::Instance().WindowCreated(this);
+	mRenderTargetProperties = CreateRenderTargetProperties(createInformation);
 }
 
-RenderWindow::~RenderWindow()
+void RenderWindow::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	RenderWindowManager::Instance().WindowDestroyed(this);
-}
+	auto* const syncPacket = data.GetSyncPacket<bs::RenderWindow::SyncPacket>();
+	if(syncPacket == nullptr)
+		return;
 
-void RenderWindow::SetHidden(bool hidden)
-{
-	ASSERT_IF_NOT_RENDER_THREAD;
+	const u32 oldWidth = mRenderTargetProperties.Width;
+	const u32 oldHeight = mRenderTargetProperties.Height;
+	const bool oldVSync = mRenderWindowProperties.Vsync;
+	const u32 oldVSyncInterval = mRenderWindowProperties.VsyncInterval;
 
-	RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
+	syncPacket->ApplySyncData(this);
 
-	props.IsHidden = hidden;
-	{
-		ScopedSpinLock lock(mLock);
-		GetSyncedProperties().IsHidden = hidden;
-	}
+	if(oldWidth != mRenderTargetProperties.Width || oldHeight != mRenderTargetProperties.Height || oldVSync != mRenderWindowProperties.Vsync || oldVSyncInterval != mRenderWindowProperties.VsyncInterval)
+		DoOnSwapChainPropertiesModified();
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-}
-
-void RenderWindow::SetActive(bool state)
-{
-	ASSERT_IF_NOT_RENDER_THREAD;
-}
-
-void RenderWindow::NotifyWindowEvent(WindowEventType type)
-{
-	ASSERT_IF_NOT_RENDER_THREAD;
-
-	RenderWindowProperties& syncProps = GetSyncedProperties();
-	RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
-
-	switch(type)
-	{
-	case WindowEventType::Resized:
-		{
-			DoOnWindowMovedOrResized();
-
-			{
-				ScopedSpinLock lock(mLock);
-				syncProps.Width = props.Width;
-				syncProps.Height = props.Height;
-			}
-
-			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-			bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
-
-			break;
-		}
-	case WindowEventType::Moved:
-		{
-			DoOnWindowMovedOrResized();
-
-			{
-				ScopedSpinLock lock(mLock);
-				syncProps.Top = props.Top;
-				syncProps.Left = props.Left;
-			}
-
-			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-			bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
-
-			break;
-		}
-	case WindowEventType::FocusReceived:
-		{
-			{
-				ScopedSpinLock lock(mLock);
-				syncProps.HasFocus = true;
-			}
-
-			props.HasFocus = true;
-
-			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-			bs::RenderWindowManager::Instance().NotifyFocusReceived(this);
-			break;
-		}
-	case WindowEventType::FocusLost:
-		{
-			{
-				ScopedSpinLock lock(mLock);
-				syncProps.HasFocus = false;
-			}
-
-			props.HasFocus = false;
-
-			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-			bs::RenderWindowManager::Instance().NotifyFocusLost(this);
-			break;
-		}
-	case WindowEventType::Minimized:
-		{
-			{
-				ScopedSpinLock lock(mLock);
-				syncProps.IsMaximized = false;
-			}
-
-			props.IsMaximized = false;
-
-			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-			break;
-		}
-	case WindowEventType::Maximized:
-		{
-			{
-				ScopedSpinLock lock(mLock);
-				syncProps.IsMaximized = true;
-			}
-
-			props.IsMaximized = true;
-
-			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-			break;
-		}
-	case WindowEventType::Restored:
-		{
-			{
-				ScopedSpinLock lock(mLock);
-				syncProps.IsMaximized = false;
-			}
-
-			props.IsMaximized = false;
-
-			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-			break;
-		}
-	case WindowEventType::MouseLeft:
-		{
-			bs::RenderWindowManager::Instance().NotifyMouseLeft(this);
-			break;
-		}
-	case WindowEventType::CloseRequested:
-		{
-			bs::RenderWindowManager::Instance().NotifyCloseRequested(this);
-			break;
-		}
-	}
-}
-
-const RenderWindowProperties& RenderWindow::GetProperties() const
-{
-	return static_cast<const RenderWindowProperties&>(GetPropertiesInternal());
+	Super::SyncFromCoreObject(data, allocator);
 }
 }}

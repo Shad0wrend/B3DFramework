@@ -29,26 +29,26 @@ struct B3D_CORE_EXPORT NativeDropTargetData
 	Vector<Win32DropTarget*> DropTargetsToDestroy;
 };
 
-struct Platform::Pimpl
+struct Platform::Private
 {
-	bool MIsCursorHidden = false;
-	NativeCursorData MCursor;
-	bool MUsingCustomCursor = false;
-	Map<const ct::RenderWindow*, WindowNonClientAreaData> MNonClientAreas;
+	bool IsCursorHidden = false;
+	NativeCursorData Cursor;
+	bool IsUsingCustomCursor = false;
+	Map<const RenderWindow*, WindowNonClientAreaData> NonClientAreas;
 
-	bool MIsTrackingMouse = false;
-	NativeDropTargetData MDropTargets;
+	bool IsTrackingMouse = false;
+	NativeDropTargetData DropTargets;
 
-	bool MRequiresStartUp = false;
-	bool MRequiresShutDown = false;
+	bool RequiresStartUp = false;
+	bool RequiresShutDown = false;
 
-	bool MCursorClipping = false;
-	HWND MClipWindow = 0;
-	RECT MClipRect;
+	bool CursorClipping = false;
+	HWND ClipWindow = 0;
+	RECT ClipRect;
 
-	bool MIsActive = false;
+	bool IsActive = false;
 
-	Mutex MSync;
+	Mutex Sync;
 };
 
 Event<void(const Vector2I&, const OSPointerButtonStates&)> Platform::onCursorMoved;
@@ -61,30 +61,30 @@ Event<void(u32)> Platform::onCharInput;
 
 Event<void()> Platform::onMouseCaptureChanged;
 
-Platform::Pimpl* Platform::mData = B3DNew<Platform::Pimpl>();
+Platform::Private* Platform::mData = B3DNew<Platform::Private>();
 
 /** Checks if any of the windows of the current application are active. */
-bool IsAppActive(Platform::Pimpl* data)
+bool IsAppActive(Platform::Private* data)
 {
-	Lock lock(data->MSync);
+	Lock lock(data->Sync);
 
-	return data->MIsActive;
+	return data->IsActive;
 }
 
 /** Enables or disables cursor clipping depending on the stored data. */
-void ApplyClipping(Platform::Pimpl* data)
+void ApplyClipping(Platform::Private* data)
 {
-	if(data->MCursorClipping)
+	if(data->CursorClipping)
 	{
-		if(data->MClipWindow)
+		if(data->ClipWindow)
 		{
 			// Clip cursor to the window
 			RECT clipWindowRect;
-			if(GetWindowRect(data->MClipWindow, &clipWindowRect))
+			if(GetWindowRect(data->ClipWindow, &clipWindowRect))
 				ClipCursor(&clipWindowRect);
 		}
 		else
-			ClipCursor(&data->MClipRect);
+			ClipCursor(&data->ClipRect);
 	}
 	else
 		ClipCursor(nullptr);
@@ -146,10 +146,10 @@ bool Platform::IsPointOverWindow(const RenderWindow& window, const Vector2I& scr
 
 void Platform::HideCursor()
 {
-	if(mData->MIsCursorHidden)
+	if(mData->IsCursorHidden)
 		return;
 
-	mData->MIsCursorHidden = true;
+	mData->IsCursorHidden = true;
 
 	// ShowCursor(FALSE) doesn't work. Presumably because we're in the wrong thread, and using
 	// WM_SETCURSOR in message loop to hide the cursor is smarter solution anyway.
@@ -162,10 +162,10 @@ void Platform::HideCursor()
 
 void Platform::ShowCursor()
 {
-	if(!mData->MIsCursorHidden)
+	if(!mData->IsCursorHidden)
 		return;
 
-	mData->MIsCursorHidden = false;
+	mData->IsCursorHidden = false;
 
 	// ShowCursor(FALSE) doesn't work. Presumably because we're in the wrong thread, and using
 	// WM_SETCURSOR in message loop to hide the cursor is smarter solution anyway.
@@ -178,15 +178,15 @@ void Platform::ShowCursor()
 
 bool Platform::IsCursorHidden()
 {
-	return mData->MIsCursorHidden;
+	return mData->IsCursorHidden;
 }
 
 void Platform::ClipCursorToWindow(const RenderWindow& window)
 {
 	const u64 hwnd = window.GetPlatformWindowHandle();
 
-	mData->MCursorClipping = true;
-	mData->MClipWindow = (HWND)hwnd;
+	mData->CursorClipping = true;
+	mData->ClipWindow = (HWND)hwnd;
 
 	if(IsAppActive(mData))
 		ApplyClipping(mData);
@@ -194,13 +194,13 @@ void Platform::ClipCursorToWindow(const RenderWindow& window)
 
 void Platform::ClipCursorToRect(const Rect2I& screenRect)
 {
-	mData->MCursorClipping = true;
-	mData->MClipWindow = 0;
+	mData->CursorClipping = true;
+	mData->ClipWindow = 0;
 
-	mData->MClipRect.left = screenRect.X;
-	mData->MClipRect.top = screenRect.Y;
-	mData->MClipRect.right = screenRect.X + screenRect.Width;
-	mData->MClipRect.bottom = screenRect.Y + screenRect.Height;
+	mData->ClipRect.left = screenRect.X;
+	mData->ClipRect.top = screenRect.Y;
+	mData->ClipRect.right = screenRect.X + screenRect.Width;
+	mData->ClipRect.bottom = screenRect.Y + screenRect.Height;
 
 	if(IsAppActive(mData))
 		ApplyClipping(mData);
@@ -208,8 +208,8 @@ void Platform::ClipCursorToRect(const Rect2I& screenRect)
 
 void Platform::ClipCursorDisable()
 {
-	mData->MCursorClipping = false;
-	mData->MClipWindow = 0;
+	mData->CursorClipping = false;
+	mData->ClipWindow = 0;
 
 	if(IsAppActive(mData))
 		ApplyClipping(mData);
@@ -218,13 +218,13 @@ void Platform::ClipCursorDisable()
 // TODO - Add support for animated custom cursor
 void Platform::SetCursor(PixelData& pixelData, const Vector2I& hotSpot)
 {
-	if(mData->MUsingCustomCursor)
+	if(mData->IsUsingCustomCursor)
 	{
 		::SetCursor(0);
-		DestroyIcon(mData->MCursor.Cursor);
+		DestroyIcon(mData->Cursor.Cursor);
 	}
 
-	mData->MUsingCustomCursor = true;
+	mData->IsUsingCustomCursor = true;
 
 	Vector<Color> pixels = pixelData.GetColors();
 	u32 width = pixelData.GetWidth();
@@ -240,7 +240,7 @@ void Platform::SetCursor(PixelData& pixelData, const Vector2I& hotSpot)
 	iconinfo.hbmMask = hMonoBitmap;
 	iconinfo.hbmColor = hBitmap;
 
-	mData->MCursor.Cursor = CreateIconIndirect(&iconinfo);
+	mData->Cursor.Cursor = CreateIconIndirect(&iconinfo);
 
 	DeleteObject(hBitmap);
 	DeleteObject(hMonoBitmap);
@@ -280,28 +280,28 @@ void Platform::SetIcon(const PixelData& pixelData)
 	PostMessage((HWND)hwnd, WM_SETICON, WPARAM(ICON_BIG), (LPARAM)icon);
 }
 
-void Platform::SetCaptionNonClientAreas(const ct::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
+void Platform::SetCaptionNonClientAreas(const RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
 {
-	Lock lock(mData->MSync);
+	Lock lock(mData->Sync);
 
-	mData->MNonClientAreas[&window].MoveAreas = nonClientAreas;
+	mData->NonClientAreas[&window].MoveAreas = nonClientAreas;
 }
 
-void Platform::SetResizeNonClientAreas(const ct::RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas)
+void Platform::SetResizeNonClientAreas(const RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas)
 {
-	Lock lock(mData->MSync);
+	Lock lock(mData->Sync);
 
-	mData->MNonClientAreas[&window].ResizeAreas = nonClientAreas;
+	mData->NonClientAreas[&window].ResizeAreas = nonClientAreas;
 }
 
-void Platform::ResetNonClientAreas(const ct::RenderWindow& window)
+void Platform::ResetNonClientAreas(const RenderWindow& window)
 {
-	Lock lock(mData->MSync);
+	Lock lock(mData->Sync);
 
-	auto iterFind = mData->MNonClientAreas.find(&window);
+	auto iterFind = mData->NonClientAreas.find(&window);
 
-	if(iterFind != end(mData->MNonClientAreas))
-		mData->MNonClientAreas.erase(iterFind);
+	if(iterFind != end(mData->NonClientAreas))
+		mData->NonClientAreas.erase(iterFind);
 }
 
 void Platform::Sleep(u32 duration)
@@ -314,17 +314,17 @@ void Win32Platform::RegisterDropTarget(DropTarget* target)
 	const RenderWindow* window = target->GetOwnerWindowInternal();
 
 	Win32DropTarget* win32DropTarget = nullptr;
-	auto iterFind = mData->MDropTargets.DropTargetsPerWindow.find(window);
-	if(iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
+	auto iterFind = mData->DropTargets.DropTargetsPerWindow.find(window);
+	if(iterFind == mData->DropTargets.DropTargetsPerWindow.end())
 	{
 		const u64 hwnd = window->GetPlatformWindowHandle();
 
 		win32DropTarget = B3DNew<Win32DropTarget>((HWND)hwnd);
-		mData->MDropTargets.DropTargetsPerWindow[window] = win32DropTarget;
+		mData->DropTargets.DropTargetsPerWindow[window] = win32DropTarget;
 
 		{
-			Lock lock(mData->MSync);
-			mData->MDropTargets.DropTargetsToInitialize.push_back(win32DropTarget);
+			Lock lock(mData->Sync);
+			mData->DropTargets.DropTargetsToInitialize.push_back(win32DropTarget);
 		}
 	}
 	else
@@ -335,8 +335,8 @@ void Win32Platform::RegisterDropTarget(DropTarget* target)
 
 void Win32Platform::UnregisterDropTarget(DropTarget* target)
 {
-	auto iterFind = mData->MDropTargets.DropTargetsPerWindow.find(target->GetOwnerWindowInternal());
-	if(iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
+	auto iterFind = mData->DropTargets.DropTargetsPerWindow.find(target->GetOwnerWindowInternal());
+	if(iterFind == mData->DropTargets.DropTargetsPerWindow.end())
 	{
 		B3D_LOG(Warning, Platform, "Attempting to destroy a drop target but cannot find its parent window.");
 	}
@@ -347,11 +347,11 @@ void Win32Platform::UnregisterDropTarget(DropTarget* target)
 
 		if(win32DropTarget->GetNumDropTargets() == 0)
 		{
-			mData->MDropTargets.DropTargetsPerWindow.erase(iterFind);
+			mData->DropTargets.DropTargetsPerWindow.erase(iterFind);
 
 			{
-				Lock lock(mData->MSync);
-				mData->MDropTargets.DropTargetsToDestroy.push_back(win32DropTarget);
+				Lock lock(mData->Sync);
+				mData->DropTargets.DropTargetsToDestroy.push_back(win32DropTarget);
 			}
 		}
 	}
@@ -443,7 +443,7 @@ void Platform::MessagePumpInternal()
 
 void Platform::StartUpInternal()
 {
-	Lock lock(mData->MSync);
+	Lock lock(mData->Sync);
 
 	if(timeBeginPeriod(1) == TIMERR_NOCANDO)
 	{
@@ -451,68 +451,65 @@ void Platform::StartUpInternal()
 								  "in performance for waiting threads.");
 	}
 
-	mData->MRequiresStartUp = true;
+	mData->RequiresStartUp = true;
 }
 
 void Platform::UpdateInternal()
 {
-	for(auto& dropTarget : mData->MDropTargets.DropTargetsPerWindow)
+	for(auto& dropTarget : mData->DropTargets.DropTargetsPerWindow)
 	{
 		dropTarget.second->Update();
 	}
-}
 
-void Platform::RenderThreadUpdateInternal()
-{
 	{
-		Lock lock(mData->MSync);
-		if(mData->MRequiresStartUp)
+		Lock lock(mData->Sync);
+		if(mData->RequiresStartUp)
 		{
 			OleInitialize(nullptr);
 
-			mData->MRequiresStartUp = false;
+			mData->RequiresStartUp = false;
 		}
 	}
 
 	{
-		Lock lock(mData->MSync);
-		for(auto& dropTargetToDestroy : mData->MDropTargets.DropTargetsToDestroy)
+		Lock lock(mData->Sync);
+		for(auto& dropTargetToDestroy : mData->DropTargets.DropTargetsToDestroy)
 		{
 			dropTargetToDestroy->UnregisterWithOs();
 			dropTargetToDestroy->Release();
 		}
 
-		mData->MDropTargets.DropTargetsToDestroy.clear();
+		mData->DropTargets.DropTargetsToDestroy.clear();
 	}
 
 	{
-		Lock lock(mData->MSync);
-		for(auto& dropTargetToInit : mData->MDropTargets.DropTargetsToInitialize)
+		Lock lock(mData->Sync);
+		for(auto& dropTargetToInit : mData->DropTargets.DropTargetsToInitialize)
 		{
 			dropTargetToInit->RegisterWithOs();
 		}
 
-		mData->MDropTargets.DropTargetsToInitialize.clear();
+		mData->DropTargets.DropTargetsToInitialize.clear();
 	}
 
 	MessagePumpInternal();
 
 	{
-		Lock lock(mData->MSync);
-		if(mData->MRequiresShutDown)
+		Lock lock(mData->Sync);
+		if(mData->RequiresShutDown)
 		{
 			OleUninitialize();
-			mData->MRequiresShutDown = false;
+			mData->RequiresShutDown = false;
 		}
 	}
 }
 
 void Platform::ShutDownInternal()
 {
-	Lock lock(mData->MSync);
+	Lock lock(mData->Sync);
 
 	timeEndPeriod(1);
-	mData->MRequiresShutDown = true;
+	mData->RequiresShutDown = true;
 }
 
 /**	Translate engine non client area to win32 non client area. */
@@ -621,11 +618,11 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 	{ // Store pointer to Win32Window in user data area
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)(((LPCREATESTRUCT)lParam)->lpCreateParams));
 
-		ct::RenderWindow* newWindow = (ct::RenderWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+		RenderWindow* newWindow = (RenderWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 		if(newWindow != nullptr)
 		{
-			const RenderWindowProperties& props = newWindow->GetProperties();
-			if(!props.IsHidden)
+			const RenderWindowProperties& renderWindowProperties = newWindow->GetRenderWindowProperties();
+			if(!renderWindowProperties.IsHidden)
 				ShowWindow(hWnd, SW_SHOWNORMAL);
 		}
 		else
@@ -634,7 +631,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 		return 0;
 	}
 
-	ct::RenderWindow* win = (ct::RenderWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	RenderWindow* win = (RenderWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	if(!win)
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 
@@ -647,18 +644,18 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			case WA_ACTIVE:
 			case WA_CLICKACTIVE:
 				{
-					Lock lock(mData->MSync);
+					Lock lock(mData->Sync);
 
-					mData->MIsActive = true;
+					mData->IsActive = true;
 				}
 
 				ApplyClipping(mData);
 				break;
 			case WA_INACTIVE:
 				{
-					Lock lock(mData->MSync);
+					Lock lock(mData->Sync);
 
-					mData->MIsActive = false;
+					mData->IsActive = false;
 				}
 
 				ClipCursor(nullptr);
@@ -669,14 +666,14 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 		}
 	case WM_SETFOCUS:
 		{
-			if(!win->GetProperties().HasFocus)
+			if(!win->GetRenderWindowProperties().HasFocus)
 				win->NotifyWindowEvent(WindowEventType::FocusReceived);
 
 			return 0;
 		}
 	case WM_KILLFOCUS:
 		{
-			if(win->GetProperties().HasFocus)
+			if(win->GetRenderWindowProperties().HasFocus)
 				win->NotifyWindowEvent(WindowEventType::FocusLost);
 
 			return 0;
@@ -735,7 +732,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 				return 0;
 			}
 
-			::SetCursor(mData->MCursor.Cursor);
+			::SetCursor(mData->Cursor.Cursor);
 		}
 		return true;
 	case WM_GETMINMAXINFO:
@@ -765,8 +762,8 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 		}
 	case WM_NCHITTEST:
 		{
-			auto iterFind = mData->MNonClientAreas.find(win);
-			if(iterFind == mData->MNonClientAreas.end())
+			auto iterFind = mData->NonClientAreas.find(win);
+			if(iterFind == mData->NonClientAreas.end())
 				break;
 
 			POINT mousePos;
@@ -815,9 +812,9 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 		{
 			// Note: Right now I track only mouse leaving client area. So it's possible for the "mouse left window" callback
 			// to trigger, while the mouse is still in the non-client area of the window.
-			mData->MIsTrackingMouse = false; // TrackMouseEvent ends when this message is received and needs to be re-applied
+			mData->IsTrackingMouse = false; // TrackMouseEvent ends when this message is received and needs to be re-applied
 
-			Lock lock(mData->MSync);
+			Lock lock(mData->Sync);
 			win->NotifyWindowEvent(WindowEventType::MouseLeft);
 		}
 		return 0;
@@ -917,7 +914,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 	case WM_MOUSEMOVE:
 		{
 			// Set up tracking so we get notified when mouse leaves the window
-			if(!mData->MIsTrackingMouse)
+			if(!mData->IsTrackingMouse)
 			{
 				TRACKMOUSEEVENT tme = { sizeof(tme) };
 				tme.dwFlags = TME_LEAVE;
@@ -925,7 +922,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 				tme.hwndTrack = hWnd;
 				TrackMouseEvent(&tme);
 
-				mData->MIsTrackingMouse = true;
+				mData->IsTrackingMouse = true;
 			}
 
 			Vector2I intMousePos;

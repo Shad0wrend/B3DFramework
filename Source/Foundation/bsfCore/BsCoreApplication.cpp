@@ -287,7 +287,7 @@ void CoreApplication::RunMainLoopFrame()
 	// so that all input is properly captured in case there is a focus change, and so that
 	// focus change is registered before input events are sent out (mouse press can result in code
 	// checking if a window is in focus, so it has to be up to date)
-	RenderWindowManager::Instance().UpdateInternal();
+	RenderWindowManager::Instance().Update();
 	GetInput().TriggerCallbacksInternal();
 	GetDebug().TriggerCallbacksInternal();
 	FolderMonitorManager::Instance().Update();
@@ -348,8 +348,6 @@ void CoreApplication::RunMainLoopFrame()
 	WaitUntilFrameFinished();
 
 	GetRenderThread().PostCommand([this] { BeginRenderThreadProfiling(); }, "BeginRenderThreadProfiling");
-	GetRenderThread().PostCommand([] { Platform::RenderThreadUpdateInternal(); }, "Platform::RenderThreadUpdate");
-	GetRenderThread().PostCommand([] { ct::RenderWindowManager::Instance().UpdateInternal(); }, "RenderWindowManager::Update");
 
 	PROFILE_CALL(RendererManager::Instance().GetActive()->RenderAll(perFrameData), "Render");
 

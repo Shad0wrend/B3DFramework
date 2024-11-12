@@ -67,7 +67,7 @@ RenderProxySyncPacket* SceneActor::CreateSceneActorRenderProxySyncPacket(FrameAl
 		return nullptr;
 
 	ActorDirtyFlags actorFlags(flags);
-	actorFlags &= (ActorDirtyFlag::Active | ActorDirtyFlag::Mobility | ActorDirtyFlag::Everything | ActorDirtyFlag::Mobility);
+	actorFlags &= (ActorDirtyFlag::Transform | ActorDirtyFlag::Mobility | ActorDirtyFlag::Active | ActorDirtyFlag::Everything);
 
 	if(actorFlags == ActorDirtyFlag::Transform)
 		return allocator.Construct<SyncTransformPacket>(*this, allocator, flags);

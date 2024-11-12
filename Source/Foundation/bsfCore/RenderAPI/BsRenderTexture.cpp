@@ -12,10 +12,25 @@
 
 using namespace bs;
 
-RenderTextureProperties::RenderTextureProperties(const RenderTextureCreateInformation& createInformation, bool requiresFlipping)
+static RenderTargetProperties CreateRenderTextureProperties(const TextureProperties& textureProperties, u32 sliceCount, u32 mipLevel, bool requiresFlipping, bool hwGamma)
 {
-	u32 firstIdx = (u32)-1;
-	bool requiresHwGamma = false;
+	RenderTargetProperties output;
+
+	u32 depth;
+	PixelUtility::GetSizeForMipLevel(textureProperties.Width, textureProperties.Height, textureProperties.Depth, mipLevel, output.Width, output.Height, depth);
+
+	output.MultisampleCount = textureProperties.SampleCount;
+	output.IsWindow = false;
+	output.RequiresTextureFlipping = requiresFlipping;
+	output.HwGamma = hwGamma;
+
+	return output;
+}
+
+static RenderTargetProperties CreateRenderTextureProperties(const RenderTextureCreateInformation& createInformation, bool requiresFlipping)
+{
+	u32 firstIndex = ~0u;
+	bool useHardwareSRGB = false;
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 	{
 		HTexture texture = createInformation.ColorSurfaces[i].Texture;
@@ -23,34 +38,34 @@ RenderTextureProperties::RenderTextureProperties(const RenderTextureCreateInform
 		if(!texture.IsLoaded())
 			continue;
 
-		if(firstIdx == (u32)-1)
-			firstIdx = i;
+		if(firstIndex == ~0u)
+			firstIndex = i;
 
-		requiresHwGamma |= texture->GetProperties().UseHardwareSRGB;
+		useHardwareSRGB |= texture->GetProperties().UseHardwareSRGB;
 	}
 
-	if(firstIdx == (u32)-1)
+	if(firstIndex == ~0u)
 	{
 		HTexture texture = createInformation.DepthStencilSurface.Texture;
 		if(texture.IsLoaded())
 		{
-			const TextureProperties& texProps = texture->GetProperties();
-			Construct(&texProps, createInformation.DepthStencilSurface.FaceCount, createInformation.DepthStencilSurface.MipLevel, requiresFlipping, false);
+			return CreateRenderTextureProperties(texture->GetProperties(), createInformation.DepthStencilSurface.FaceCount, createInformation.DepthStencilSurface.MipLevel, requiresFlipping, false);
 		}
 	}
 	else
 	{
-		HTexture texture = createInformation.ColorSurfaces[firstIdx].Texture;
+		HTexture texture = createInformation.ColorSurfaces[firstIndex].Texture;
 
-		const TextureProperties& texProps = texture->GetProperties();
-		Construct(&texProps, createInformation.ColorSurfaces[firstIdx].FaceCount, createInformation.ColorSurfaces[firstIdx].MipLevel, requiresFlipping, requiresHwGamma);
+		return CreateRenderTextureProperties(texture->GetProperties(), createInformation.ColorSurfaces[firstIndex].FaceCount, createInformation.ColorSurfaces[firstIndex].MipLevel, requiresFlipping, useHardwareSRGB);
 	}
+
+	return RenderTargetProperties();
 }
 
-RenderTextureProperties::RenderTextureProperties(const ct::RenderTextureCreateInformation& createInformation, bool requiresFlipping)
+static RenderTargetProperties CreateRenderTextureProperties(const ct::RenderTextureCreateInformation& createInformation, bool requiresFlipping)
 {
-	u32 firstIdx = (u32)-1;
-	bool requiresHwGamma = false;
+	u32 firstIndex = ~0u;
+	bool useHardwareSRGB = false;
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 	{
 		SPtr<ct::Texture> texture = createInformation.ColorSurfaces[i].Texture;
@@ -58,43 +73,28 @@ RenderTextureProperties::RenderTextureProperties(const ct::RenderTextureCreateIn
 		if(texture == nullptr)
 			continue;
 
-		if(firstIdx == (u32)-1)
-			firstIdx = i;
+		if(firstIndex == ~0u)
+			firstIndex = i;
 
-		requiresHwGamma |= texture->GetProperties().UseHardwareSRGB;
+		useHardwareSRGB |= texture->GetProperties().UseHardwareSRGB;
 	}
 
-	if(firstIdx == (u32)-1)
+	if(firstIndex == ~0u)
 	{
 		SPtr<ct::Texture> texture = createInformation.DepthStencilSurface.Texture;
 		if(texture != nullptr)
 		{
-			const TextureProperties& texProps = texture->GetProperties();
-			Construct(&texProps, createInformation.DepthStencilSurface.FaceCount, createInformation.DepthStencilSurface.MipLevel, requiresFlipping, false);
+			return CreateRenderTextureProperties(texture->GetProperties(), createInformation.DepthStencilSurface.FaceCount, createInformation.DepthStencilSurface.MipLevel, requiresFlipping, false);
 		}
 	}
 	else
 	{
-		SPtr<ct::Texture> texture = createInformation.ColorSurfaces[firstIdx].Texture;
+		SPtr<ct::Texture> texture = createInformation.ColorSurfaces[firstIndex].Texture;
 
-		const TextureProperties& texProps = texture->GetProperties();
-		Construct(&texProps, createInformation.ColorSurfaces[firstIdx].FaceCount, createInformation.ColorSurfaces[firstIdx].MipLevel, requiresFlipping, requiresHwGamma);
-	}
-}
-
-void RenderTextureProperties::Construct(const TextureProperties* textureProps, u32 numSlices, u32 mipLevel, bool requiresFlipping, bool hwGamma)
-{
-	if(textureProps != nullptr)
-	{
-		PixelUtility::GetSizeForMipLevel(textureProps->Width, textureProps->Height, textureProps->Depth, mipLevel, Width, Height, numSlices);
-
-		numSlices *= numSlices;
-		MultisampleCount = textureProps->SampleCount;
+		return CreateRenderTextureProperties(texture->GetProperties(), createInformation.ColorSurfaces[firstIndex].FaceCount, createInformation.ColorSurfaces[firstIndex].MipLevel, requiresFlipping, useHardwareSRGB);
 	}
 
-	IsWindow = false;
-	RequiresTextureFlipping = requiresFlipping;
-	this->HwGamma = hwGamma;
+	return RenderTargetProperties();
 }
 
 SPtr<RenderTexture> RenderTexture::Create(const TextureCreateInformation& textureCreateInformation, bool createDepth, PixelFormat depthStencilFormat)
@@ -118,6 +118,8 @@ RenderTexture::RenderTexture(const RenderTextureCreateInformation& createInforma
 
 	if(createInformation.DepthStencilSurface.Texture != nullptr)
 		mBindableDepthStencilTex = createInformation.DepthStencilSurface.Texture;
+
+	mRenderTargetProperties = CreateRenderTextureProperties(createInformation, false);
 }
 
 SPtr<ct::RenderProxy> RenderTexture::CreateRenderProxy() const
@@ -146,21 +148,13 @@ SPtr<ct::RenderProxy> RenderTexture::CreateRenderProxy() const
 namespace bs
 {
 	B3D_SYNC_BLOCK_BEGIN(RenderTexture, SyncPacket)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(RenderTextureProperties, Properties)
+		B3D_SYNC_BLOCK_ENTRY(mRenderTargetProperties)
 	B3D_SYNC_BLOCK_END
 }
 
 RenderProxySyncPacket* RenderTexture::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
-	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
-	syncPacket->Properties = GetProperties(); 
-
-	return syncPacket;
-}
-
-const RenderTextureProperties& RenderTexture::GetProperties() const
-{
-	return static_cast<const RenderTextureProperties&>(GetPropertiesInternal());
+	return allocator.Construct<SyncPacket>(*this, allocator, flags);
 }
 
 /************************************************************************/
@@ -181,7 +175,9 @@ namespace bs { namespace ct
 {
 RenderTexture::RenderTexture(const RenderTextureCreateInformation& createInformation)
 	: mInformation(createInformation)
-{}
+{
+	mRenderTargetProperties = CreateRenderTextureProperties(createInformation, false);
+}
 
 void RenderTexture::Initialize()
 {
@@ -222,17 +218,11 @@ SPtr<RenderTexture> RenderTexture::Create(const RenderTextureCreateInformation& 
 
 void RenderTexture::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	const auto* const syncPacket = data.GetSyncPacket<bs::RenderTexture::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<bs::RenderTexture::SyncPacket>();
 	if(!syncPacket)
 		return;
 
-	RenderTextureProperties& props = const_cast<RenderTextureProperties&>(GetProperties());
-	props = syncPacket->Properties;
-}
-
-const RenderTextureProperties& RenderTexture::GetProperties() const
-{
-	return static_cast<const RenderTextureProperties&>(GetPropertiesInternal());
+	syncPacket->ApplySyncData(this);
 }
 
 void RenderTexture::ThrowIfBuffersDontMatch() const

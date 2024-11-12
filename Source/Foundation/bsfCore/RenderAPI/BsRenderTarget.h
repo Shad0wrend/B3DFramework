@@ -76,19 +76,6 @@ namespace bs
 		 */
 		i32 Priority = 0;
 
-		/**
-		 * True if the render target will wait for vertical sync before swapping buffers. This will eliminate
-		 * tearing but may increase input latency.
-		 */
-		bool Vsync = false;
-
-		/**
-		 * Controls how often should the frame be presented in respect to display device refresh rate. Normal value is 1
-		 * where it will match the refresh rate. Higher values will decrease the frame rate (for example present interval of
-		 * 2 on 60Hz refresh rate will display at most 30 frames per second).
-		 */
-		u32 VsyncInterval = 1;
-
 		/** True if pixels written to the render target will be gamma corrected. */
 		bool HwGamma = false;
 
@@ -119,25 +106,16 @@ namespace bs
 		 */
 		void SetPriority(i32 priority);
 
-		/**
-		 * Returns properties that describe the render target.
-		 *
-		 * @note	Main thread only.
-		 */
-		const RenderTargetProperties& GetProperties() const;
+		/** Returns properties that describe the render target. */
+		const RenderTargetProperties& GetProperties() const { return mRenderTargetProperties; }
 
-		/**
-		 * Event that gets triggered whenever the render target is resized.
-		 *
-		 * @note	Main thread only.
-		 */
+		/** Event that gets triggered whenever the render target is resized. */
 		mutable Event<void()> OnResized;
 
 	protected:
 		friend class ct::RenderTarget;
 
-		/**	Returns properties that describe the render target. */
-		virtual const RenderTargetProperties& GetPropertiesInternal() const = 0;
+		RenderTargetProperties mRenderTargetProperties;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -183,7 +161,7 @@ namespace bs
 			void SetPriority(i32 priority);
 
 			/**	Returns properties that describe the render target. */
-			const RenderTargetProperties& GetProperties() const;
+			const RenderTargetProperties& GetProperties() const { return mRenderTargetProperties; }
 
 			/**
 			 * Returns a number that increments each time the target is rendered to. External systems can use this to
@@ -203,11 +181,8 @@ namespace bs
 		protected:
 			friend class bs::RenderTarget;
 
-			/**	Returns properties that describe the render target. */
-			virtual const RenderTargetProperties& GetPropertiesInternal() const = 0;
-
-		private:
 			u64 mUpdateCount = 0;
+			RenderTargetProperties mRenderTargetProperties;
 		};
 
 		/** @} */

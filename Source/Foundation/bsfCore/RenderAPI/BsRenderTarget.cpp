@@ -25,13 +25,6 @@ void RenderTarget::SetPriority(i32 priority)
 	GetRenderThread().PostCommand(std::bind(windowedFunc, B3DGetRenderProxy(this), priority), "RenderTarget::SetPriority");
 }
 
-const RenderTargetProperties& RenderTarget::GetProperties() const
-{
-	ASSERT_IF_RENDER_THREAD;
-
-	return GetPropertiesInternal();
-}
-
 /************************************************************************/
 /* 								SERIALIZATION                      		*/
 /************************************************************************/
@@ -54,13 +47,6 @@ RenderTarget::RenderTarget()
 
 void RenderTarget::SetPriority(i32 priority)
 {
-	RenderTargetProperties& props = const_cast<RenderTargetProperties&>(GetProperties());
-
-	props.Priority = priority;
-}
-
-const RenderTargetProperties& RenderTarget::GetProperties() const
-{
-	return GetPropertiesInternal();
+	mRenderTargetProperties.Priority = priority;
 }
 }}

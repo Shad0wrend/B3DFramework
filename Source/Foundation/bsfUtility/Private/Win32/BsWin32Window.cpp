@@ -336,29 +336,29 @@ Win32Window::~Win32Window()
 
 void Win32Window::Move(i32 left, i32 top)
 {
-	if(m->HWnd)
-	{
-		m->Top = top;
-		m->Left = left;
+	if(!m->HWnd)
+		return;
 
-		SetWindowPos(m->HWnd, HWND_TOP, left, top, m->Width, m->Height, SWP_NOSIZE);
-	}
+	m->Top = top;
+	m->Left = left;
+
+	SetWindowPos(m->HWnd, HWND_TOP, left, top, m->Width, m->Height, SWP_NOSIZE);
 }
 
 void Win32Window::Resize(u32 width, u32 height)
 {
-	if(m->HWnd)
-	{
-		RECT rc = { 0, 0, (LONG)width, (LONG)height };
-		AdjustWindowRect(&rc, GetWindowLong(m->HWnd, GWL_STYLE), false);
-		width = rc.right - rc.left;
-		height = rc.bottom - rc.top;
+	if(!m->HWnd)
+		return;
 
-		m->Width = width;
-		m->Height = height;
+	RECT rc = { 0, 0, (LONG)width, (LONG)height };
+	AdjustWindowRect(&rc, GetWindowLong(m->HWnd, GWL_STYLE), false);
+	width = rc.right - rc.left;
+	height = rc.bottom - rc.top;
 
-		SetWindowPos(m->HWnd, HWND_TOP, m->Left, m->Top, width, height, SWP_NOMOVE);
-	}
+	m->Width = width;
+	m->Height = height;
+
+	SetWindowPos(m->HWnd, HWND_TOP, m->Left, m->Top, width, height, SWP_NOMOVE);
 }
 
 void Win32Window::SetActive(bool state)
@@ -406,6 +406,8 @@ void Win32Window::Maximize()
 		// calculate the window size and notify the parent render window so it can immediately update the swap chain.
 		SetFocus(m->HWnd);
 	}
+
+	DoOnWindowMovedOrResized();
 }
 
 void Win32Window::Restore()
@@ -423,6 +425,8 @@ void Win32Window::Restore()
 		// calculate the window size and notify the parent render window so it can immediately update the swap chain.
 		SetFocus(m->HWnd);
 	}
+
+	DoOnWindowMovedOrResized();
 }
 
 void Win32Window::DoOnWindowMovedOrResized()

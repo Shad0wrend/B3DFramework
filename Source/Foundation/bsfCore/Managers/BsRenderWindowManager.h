@@ -24,28 +24,19 @@ namespace bs
 		SPtr<RenderWindow> Create(const RenderWindowCreateInformation& createInformation, const SPtr<RenderWindow>& parentWindow);
 
 		/** Called once per frame. Dispatches events. */
-		void UpdateInternal();
+		void Update();
 
-		/** Called by the render thread when window is destroyed. */
-		void NotifyWindowDestroyed(RenderWindow* window);
+		/** Called by the main thread when window is destroyed. */
+		void NotifyWindowDestroyed(RenderWindow& window);
 
-		/**	Called by the render thread when window receives focus. */
-		void NotifyFocusReceived(ct::RenderWindow* window);
+		/**	Called by the main thread when window receives focus. */
+		void NotifyFocusReceived(RenderWindow& window);
 
-		/**	Called by the render thread when window loses focus. */
-		void NotifyFocusLost(ct::RenderWindow* window);
+		/**	Called by the main thread when window loses focus. */
+		void NotifyFocusLost(RenderWindow& window);
 
-		/**	Called by the render thread when window is moved or resized. */
-		void NotifyMovedOrResized(ct::RenderWindow* window);
-
-		/**	Called by the render thread when mouse leaves a window. */
-		void NotifyMouseLeft(ct::RenderWindow* window);
-
-		/** Called by the render thread when the user requests for the window to close. */
-		void NotifyCloseRequested(ct::RenderWindow* renderProxy);
-
-		/**	Called by the main thread when window properties change. */
-		void NotifySyncDataDirty(ct::RenderWindow* renderProxy);
+		/**	Called by the main thread when mouse leaves a window. */
+		void NotifyMouseLeft(RenderWindow& window);
 
 		/**	Returns a list of all open render windows. */
 		Vector<RenderWindow*> GetRenderWindows() const;
@@ -72,56 +63,13 @@ namespace bs
 		virtual SPtr<RenderWindow> CreateImplementation(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow) = 0;
 
 	protected:
-		mutable Mutex mWindowMutex;
 		Map<u32, RenderWindow*> mWindows;
 		Vector<RenderWindow*> mModalWindowStack;
 
 		RenderWindow* mWindowInFocus = nullptr;
-		RenderWindow* mNewWindowInFocus = nullptr;
-		Vector<RenderWindow*> mMovedOrResizedWindows;
-		Vector<RenderWindow*> mMouseLeftWindows;
-		Vector<RenderWindow*> mCloseRequestedWindows;
-		UnorderedSet<RenderWindow*> mDirtyProperties;
+
+		u32 mNextWindowId = 0;
 	};
-
-	namespace ct
-	{
-		/**
-		 * Handles creation and internal updates relating to render windows.
-		 *
-		 * @note	Render thread only.
-		 */
-		class B3D_CORE_EXPORT RenderWindowManager : public Module<RenderWindowManager>
-		{
-		public:
-			RenderWindowManager();
-
-			/** Called once per frame. Dispatches events. */
-			void UpdateInternal();
-
-			/**	Called by the render thread when window properties change. */
-			void NotifySyncDataDirty(RenderWindow* window);
-
-			/**	Returns a list of all open render windows. */
-			Vector<RenderWindow*> GetRenderWindows() const;
-
-		protected:
-			friend class RenderWindow;
-			friend class bs::RenderWindow;
-			friend class bs::RenderWindowManager;
-
-			/**	Called whenever a window is created. */
-			void WindowCreated(RenderWindow* window);
-
-			/**	Called by the render thread when window is destroyed. */
-			void WindowDestroyed(RenderWindow* window);
-
-			mutable Mutex mWindowMutex;
-			Vector<RenderWindow*> mCreatedWindows;
-			UnorderedSet<RenderWindow*> mDirtyProperties;
-			std::atomic_uint mNextWindowId;
-		};
-	} // namespace ct
 
 	/** @} */
 } // namespace bs

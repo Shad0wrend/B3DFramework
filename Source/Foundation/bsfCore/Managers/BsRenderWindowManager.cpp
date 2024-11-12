@@ -5,174 +5,69 @@
 #include "BsCoreApplication.h"
 
 using namespace std::placeholders;
-
 using namespace bs;
 
 SPtr<RenderWindow> RenderWindowManager::Create(const RenderWindowCreateInformation& createInformation, const SPtr<RenderWindow>& parentWindow)
 {
-	u32 id = ct::RenderWindowManager::Instance().mNextWindowId.fetch_add(1, std::memory_order_relaxed);
+	const u32 id = mNextWindowId++;
 
 	SPtr<RenderWindow> renderWindow = CreateImplementation(createInformation, id, parentWindow);
 	renderWindow->SetShared(renderWindow);
 
-	{
-		Lock lock(mWindowMutex);
+	mWindows[renderWindow->mWindowId] = renderWindow.get();
 
-		mWindows[renderWindow->mWindowId] = renderWindow.get();
-	}
-
-	if(renderWindow->GetProperties().IsModal)
+	if(renderWindow->GetRenderWindowProperties().IsModal)
 		mModalWindowStack.push_back(renderWindow.get());
 
 	renderWindow->Initialize();
-
 	return renderWindow;
 }
 
-void RenderWindowManager::NotifyWindowDestroyed(RenderWindow* window)
+void RenderWindowManager::NotifyWindowDestroyed(RenderWindow& window)
 {
-	{
-		Lock lock(mWindowMutex);
+	if(mWindowInFocus == &window)
+		mWindowInFocus = nullptr;
 
-		auto iterFind = std::find(begin(mMovedOrResizedWindows), end(mMovedOrResizedWindows), window);
+	mWindows.erase(window.mWindowId);
 
-		if(iterFind != mMovedOrResizedWindows.end())
-			mMovedOrResizedWindows.erase(iterFind);
-
-		if(mNewWindowInFocus == window)
-			mNewWindowInFocus = nullptr;
-
-		mWindows.erase(window->mWindowId);
-		mDirtyProperties.erase(window);
-	}
-
-	{
-		auto iterFind = std::find(begin(mModalWindowStack), end(mModalWindowStack), window);
-		if(iterFind != mModalWindowStack.end())
-			mModalWindowStack.erase(iterFind);
-	}
+	auto found = std::find(begin(mModalWindowStack), end(mModalWindowStack), &window);
+	if(found != mModalWindowStack.end())
+		mModalWindowStack.erase(found);
 }
 
-void RenderWindowManager::NotifyFocusReceived(ct::RenderWindow* renderProxy)
+void RenderWindowManager::NotifyFocusReceived(RenderWindow& window)
 {
-	Lock lock(mWindowMutex);
-
-	RenderWindow* window = GetRenderProxyObject(renderProxy);
-	mNewWindowInFocus = window;
-}
-
-void RenderWindowManager::NotifyFocusLost(ct::RenderWindow* renderProxy)
-{
-	Lock lock(mWindowMutex);
-
-	mNewWindowInFocus = nullptr;
-}
-
-void RenderWindowManager::NotifyMovedOrResized(ct::RenderWindow* renderProxy)
-{
-	Lock lock(mWindowMutex);
-
-	RenderWindow* window = GetRenderProxyObject(renderProxy);
-	if(window == nullptr)
-		return;
-
-	auto iterFind = std::find(begin(mMovedOrResizedWindows), end(mMovedOrResizedWindows), window);
-	if(iterFind == end(mMovedOrResizedWindows))
-		mMovedOrResizedWindows.push_back(window);
-}
-
-void RenderWindowManager::NotifyMouseLeft(ct::RenderWindow* renderProxy)
-{
-	Lock lock(mWindowMutex);
-
-	RenderWindow* window = GetRenderProxyObject(renderProxy);
-	auto iterFind = std::find(begin(mMouseLeftWindows), end(mMouseLeftWindows), window);
-
-	if(iterFind == end(mMouseLeftWindows))
-		mMouseLeftWindows.push_back(window);
-}
-
-void RenderWindowManager::NotifyCloseRequested(ct::RenderWindow* renderProxy)
-{
-	Lock lock(mWindowMutex);
-
-	RenderWindow* window = GetRenderProxyObject(renderProxy);
-	auto iterFind = std::find(begin(mCloseRequestedWindows), end(mCloseRequestedWindows), window);
-
-	if(iterFind == end(mCloseRequestedWindows))
-		mCloseRequestedWindows.push_back(window);
-}
-
-void RenderWindowManager::NotifySyncDataDirty(ct::RenderWindow* renderProxy)
-{
-	Lock lock(mWindowMutex);
-
-	RenderWindow* window = GetRenderProxyObject(renderProxy);
-
-	if(window != nullptr)
-		mDirtyProperties.insert(window);
-}
-
-void RenderWindowManager::UpdateInternal()
-{
-	RenderWindow* newWinInFocus = nullptr;
-	Vector<RenderWindow*> movedOrResizedWindows;
-	Vector<RenderWindow*> mouseLeftWindows;
-	Vector<RenderWindow*> closeRequestedWindows;
-
-	{
-		Lock lock(mWindowMutex);
-		newWinInFocus = mNewWindowInFocus;
-
-		std::swap(mMovedOrResizedWindows, movedOrResizedWindows);
-		std::swap(mMouseLeftWindows, mouseLeftWindows);
-
-		for(auto& dirtyPropertyWindow : mDirtyProperties)
-			dirtyPropertyWindow->SyncProperties();
-
-		mDirtyProperties.clear();
-
-		std::swap(mCloseRequestedWindows, closeRequestedWindows);
-	}
-
-	if(mWindowInFocus != newWinInFocus)
+	if(mWindowInFocus != &window)
 	{
 		if(mWindowInFocus != nullptr)
 			OnFocusLost(*mWindowInFocus);
 
-		if(newWinInFocus != nullptr)
-			OnFocusGained(*newWinInFocus);
-
-		mWindowInFocus = newWinInFocus;
+		OnFocusGained(window);
+		mWindowInFocus = &window;
 	}
+}
 
-	for(auto& window : movedOrResizedWindows)
-		window->OnResized();
-
-	if(!OnMouseLeftWindow.Empty())
+void RenderWindowManager::NotifyFocusLost(RenderWindow& window)
+{
+	if(mWindowInFocus != nullptr)
 	{
-		for(auto& window : mouseLeftWindows)
-			OnMouseLeftWindow(*window);
+		OnFocusLost(*mWindowInFocus);
+		mWindowInFocus = nullptr;
 	}
+}
 
-	SPtr<RenderWindow> primaryWindow = GetCoreApplication().GetPrimaryWindow();
-	for(auto& entry : closeRequestedWindows)
-	{
-		// Default behaviour for primary window is to quit the app on close
-		if(entry == primaryWindow.get() && entry->OnCloseRequested.Empty())
-		{
-			GetCoreApplication().QuitRequested();
-			continue;
-		}
+void RenderWindowManager::NotifyMouseLeft(RenderWindow& window)
+{
+	OnMouseLeftWindow(window);
+}
 
-		entry->OnCloseRequested();
-	}
+void RenderWindowManager::Update()
+{
+	// TODO - Can be removed, but keeping it for now in case there are ordering issues with render thread sync
 }
 
 Vector<RenderWindow*> RenderWindowManager::GetRenderWindows() const
 {
-	Lock lock(mWindowMutex);
-
 	Vector<RenderWindow*> windows;
 	for(auto& windowPair : mWindows)
 		windows.push_back(windowPair.second);
@@ -197,58 +92,3 @@ RenderWindow* RenderWindowManager::GetRenderProxyObject(const ct::RenderWindow* 
 
 	return nullptr;
 }
-
-namespace bs { namespace ct
-{
-
-RenderWindowManager::RenderWindowManager()
-{
-	mNextWindowId = 0;
-}
-
-void RenderWindowManager::UpdateInternal()
-{
-	Lock lock(mWindowMutex);
-
-	for(auto& dirtyPropertyWindow : mDirtyProperties)
-		dirtyPropertyWindow->SyncProperties();
-
-	mDirtyProperties.clear();
-}
-
-void RenderWindowManager::WindowCreated(RenderWindow* window)
-{
-	Lock lock(mWindowMutex);
-
-	mCreatedWindows.push_back(window);
-}
-
-void RenderWindowManager::WindowDestroyed(RenderWindow* window)
-{
-	{
-		Lock lock(mWindowMutex);
-
-		auto iterFind = std::find(begin(mCreatedWindows), end(mCreatedWindows), window);
-
-		if(iterFind == mCreatedWindows.end())
-			B3D_EXCEPT(InternalErrorException, "Trying to destroy a window that is not in the created windows list.");
-
-		mCreatedWindows.erase(iterFind);
-		mDirtyProperties.erase(window);
-	}
-}
-
-Vector<RenderWindow*> RenderWindowManager::GetRenderWindows() const
-{
-	Lock lock(mWindowMutex);
-
-	return mCreatedWindows;
-}
-
-void RenderWindowManager::NotifySyncDataDirty(RenderWindow* window)
-{
-	Lock lock(mWindowMutex);
-
-	mDirtyProperties.insert(window);
-}
-}}
