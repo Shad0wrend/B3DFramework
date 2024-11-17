@@ -164,7 +164,6 @@ void LinuxRenderWindow::Hide()
 	LinuxPlatform::unlockX();
 
 	mRenderWindowProperties.IsHidden = true;
-	//mShowOnSwap = false; // TODO
 
 	MarkRenderProxyDataDirty();
 }
@@ -176,7 +175,6 @@ void LinuxRenderWindow::Show()
 	LinuxPlatform::unlockX();
 
 	mRenderWindowProperties.IsHidden = false;
-	//mShowOnSwap = false; // TODO
 
 	MarkRenderProxyDataDirty();
 }
@@ -483,12 +481,3 @@ using namespace bs::ct;
 LinuxRenderWindow::LinuxRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 platformWindowHandle, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, platformWindowHandle, parentWindow)
 {}
-
-void LinuxRenderWindow::SwapBuffers(u32 syncMask)
-{
-	ASSERT_IF_NOT_RENDER_THREAD;
-
-	// TODO - Implement show on swap
-	// if(mShowOnSwap)
-	//	setHidden(false);
-}

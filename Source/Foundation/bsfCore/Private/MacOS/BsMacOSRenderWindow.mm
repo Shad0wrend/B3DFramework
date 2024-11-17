@@ -134,9 +134,7 @@ void MacOSRenderWindow::Resize(u32 width, u32 height)
 void MacOSRenderWindow::Hide()
 {
 	mWindow->SetHidden(true);
-
 	mRenderWindowProperties.IsHidden = true;
-	//mShowOnSwap = false; // TODO
 
 	MarkRenderProxyDataDirty();
 }
@@ -146,8 +144,6 @@ void MacOSRenderWindow::Show()
 	mWindow->SetHidden(false);
 
 	mRenderWindowProperties.IsHidden = false;
-	//mShowOnSwap = false; // TODO
-
 	MarkRenderProxyDataDirty();
 }
 
@@ -354,13 +350,3 @@ using namespace bs::ct;
 MacOSRenderWindow::MacOSRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 platformWindowHandle, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, platformWindowHandle, parentWindow)
 { }
-
-void MacOSRenderWindow::SwapBuffers(UINT32 syncMask)
-{
-	ASSERT_IF_NOT_RENDER_THREAD;
-
-	// TODO - Implement show on swap
-	// if(mShowOnSwap)
-	//	setHidden(false);
-}
-

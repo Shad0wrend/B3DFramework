@@ -308,16 +308,8 @@ namespace bs
 			void Initialize() override;
 			void Destroy() override;
 
-			/**
-			 * Swaps the frame buffers to display the next frame.
-			 *
-			 * @param	syncMask	Optional synchronization mask that determines for which queues should the system wait
-			 *						before performing the swap buffer operation. By default the system waits for all queues.
-			 *						However if certain queues are performing non-rendering operations, or operations not
-			 *						related to this render target, you can exclude them from the sync mask for potentially
-			 *						better performance. You can use CommandSyncMask to generate a valid sync mask.
-			 */
-			virtual void SwapBuffers(u32 syncMask = 0xFFFFFFFF) {}
+			/** Called by the GPU backend after it requests swap chain back buffer to be presented. */
+			virtual void NotifySwapBuffersRequested();
 
 			/** Rebuilds the swap chain according to the currently set properties. */
 			virtual void RebuildSwapChain();
@@ -347,6 +339,7 @@ namespace bs
 			WeakSPtr<RenderWindow> mParentWindow;
 			u32 mWindowId = 0;
 			u64 mPlatformWindowHandle = 0;
+			bool mShowOnSwap = false;
 			SPtr<IRenderWindowSurface> mRenderWindowSurface;
 		};
 

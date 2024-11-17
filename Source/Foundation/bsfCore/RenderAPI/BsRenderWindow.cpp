@@ -5,8 +5,6 @@
 #include "CoreObject/BsCoreObjectSync.h"
 #include "CoreObject/BsRenderThread.h"
 #include "Managers/BsRenderWindowManager.h"
-#include "Managers/BsRenderWindowManager.h"
-#include "Managers/BsRenderWindowManager.h"
 #include "RenderAPI/BsViewport.h"
 #include "Platform/BsPlatform.h"
 #include "Private/RTTI/BsRenderTargetRTTI.h"
@@ -179,6 +177,7 @@ RenderWindow::RenderWindow(const RenderWindowCreateInformation& createInformatio
 	:  mCreateInformation(createInformation), mWindowId(windowId), mPlatformWindowHandle(platformWindowHandle), mParentWindow(parentWindow), mRenderWindowProperties(CreateRenderWindowProperties(createInformation))
 {
 	mRenderTargetProperties = CreateRenderTargetProperties(createInformation);
+	mShowOnSwap = mCreateInformation.HideUntilSwap && !mCreateInformation.Hidden;
 }
 
 void RenderWindow::Initialize()
@@ -210,6 +209,15 @@ void RenderWindow::Destroy()
 	Super::Destroy();
 }
 
+void RenderWindow::NotifySwapBuffersRequested()
+{
+	if(mShowOnSwap)
+	{
+		bs::RenderWindowManager::Instance().RequestShowWindow(mWindowId, true);
+		mShowOnSwap = false;
+	}
+}
+
 void RenderWindow::RebuildSwapChain()
 {
 	if(mRenderWindowSurface != nullptr)
@@ -235,11 +243,16 @@ void RenderWindow::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& 
 	const u32 oldHeight = mRenderTargetProperties.Height;
 	const bool oldVSync = mRenderWindowProperties.Vsync;
 	const u32 oldVSyncInterval = mRenderWindowProperties.VsyncInterval;
+	const bool oldIsHidden = mRenderWindowProperties.IsHidden;
 
 	syncPacket->ApplySyncData(this);
 
 	if(oldWidth != mRenderTargetProperties.Width || oldHeight != mRenderTargetProperties.Height || oldVSync != mRenderWindowProperties.Vsync || oldVSyncInterval != mRenderWindowProperties.VsyncInterval)
 		DoOnSwapChainPropertiesModified();
+
+	// Reset show on swap if user had explicitly shown the window
+	if(oldIsHidden != mRenderWindowProperties.IsHidden)
+		mShowOnSwap = false;
 
 	Super::SyncFromCoreObject(data, allocator);
 }

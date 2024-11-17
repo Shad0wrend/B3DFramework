@@ -65,8 +65,6 @@ namespace bs
 		public:
 			MacOSRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 platformWindowHandle, const SPtr<RenderWindow>& parentWindow);
 
-			void SwapBuffers(u32 syncMask = 0xFFFFFFFF) override;
-
 		protected:
 			friend class bs::MacOSRenderWindow;
 		};

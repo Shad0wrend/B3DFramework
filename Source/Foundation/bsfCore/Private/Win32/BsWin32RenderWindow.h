@@ -63,8 +63,6 @@ namespace bs
 		public:
 			Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 hWnd, const SPtr<RenderWindow>& parentWindow);
 
-			void SwapBuffers(u32 syncMask = 0xFFFFFFFF) override;
-
 		protected:
 			friend class bs::Win32RenderWindow;
 		};

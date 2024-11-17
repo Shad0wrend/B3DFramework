@@ -76,6 +76,26 @@ void RenderWindowManager::NotifyMouseLeft(RenderWindow& window)
 	OnMouseLeftWindow(window);
 }
 
+void RenderWindowManager::RequestShowWindow(u32 windowId, bool show)
+{
+	auto fnShowWindow = [windowId, show, this]
+	{
+		auto found = mWindows.find(windowId);
+		if(found == mWindows.end())
+			return;
+
+		if(show)
+			found->second->Show();
+		else
+			found->second->Hide();
+	};
+
+	if(GetCoreApplication().GetMainThreadId() == B3D_CURRENT_THREAD_ID)
+		fnShowWindow();
+	else
+		GetCoreApplication().GetMainThreadScheduler().Post(SchedulerTask(std::move(fnShowWindow)));
+}
+
 void RenderWindowManager::Update()
 {
 	// TODO - Can be removed, but keeping it for now in case there are ordering issues with render thread sync

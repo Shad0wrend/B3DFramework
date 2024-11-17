@@ -63,7 +63,6 @@ void Win32RenderWindow::Initialize()
 	// Must be set before creating a window, since wndProc will call ShowWindow if needed after creation
 	if(!windowCreateInformation.External)
 	{
-		//mShowOnSwap = mCreateInformation.HideUntilSwap && !mCreateInformation.Hidden; // TODO
 		mRenderWindowProperties.IsHidden = mCreateInformation.HideUntilSwap || mCreateInformation.Hidden;
 	}
 
@@ -184,9 +183,7 @@ void Win32RenderWindow::Resize(u32 width, u32 height)
 void Win32RenderWindow::Hide()
 {
 	mWindow->SetHidden(true);
-
 	mRenderWindowProperties.IsHidden = true;
-	//mShowOnSwap = false; // TODO
 
 	MarkRenderProxyDataDirty();
 }
@@ -194,9 +191,7 @@ void Win32RenderWindow::Hide()
 void Win32RenderWindow::Show()
 {
 	mWindow->SetHidden(false);
-
 	mRenderWindowProperties.IsHidden = false;
-	//mShowOnSwap = false; // TODO
 
 	MarkRenderProxyDataDirty();
 }
@@ -375,19 +370,9 @@ void Win32RenderWindow::DoOnWindowMovedOrResized()
 	Super::DoOnWindowMovedOrResized();
 }
 
-namespace bs {
-namespace ct {
-
+namespace bs::ct
+{
 Win32RenderWindow::Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 hWnd, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, hWnd, parentWindow)
 { }
-
-void Win32RenderWindow::SwapBuffers(u32 syncMask)
-{
-	ASSERT_IF_NOT_RENDER_THREAD
-
-	// TODO - Implement show on swap
-	//if(mShowOnSwap)
-	//	SetHidden(false);
-}
-}} // namespace bs::ct
+} // namespace bs::ct

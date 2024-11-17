@@ -3,14 +3,11 @@
 #include "BsVulkanGpuQueue.h"
 #include "BsVulkanGpuCommandBuffer.h"
 #include "BsVulkanOcclusionQuery.h"
+#include "BsVulkanRenderWindowSurface.h"
 #include "BsVulkanSubmitThread.h"
 #include "BsVulkanSwapChain.h"
 #include "BsVulkanTimerQuery.h"
 #include "Profiling/BsRenderStats.h"
-
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
-#include "Win32/BsWin32RenderWindow.h"
-#endif
 
 using namespace bs;
 using namespace bs::ct;
@@ -83,7 +80,7 @@ void VulkanGpuQueue::PresentRenderWindow(const SPtr<RenderWindow>& renderWindow,
 
 	// Retrieve the swap chain before command buffer submit, as the submit might internally rebuild the swap chain.
 	VulkanSwapChain* const swapChain = renderWindowSurface->GetSwapChain();
-	renderWindow->SwapBuffers();
+	renderWindow->NotifySwapBuffersRequested();
 
 	GetVulkanSubmitThread().QueuePresent(*this, *swapChain, syncMask);
 

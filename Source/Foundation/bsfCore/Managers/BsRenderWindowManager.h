@@ -41,6 +41,9 @@ namespace bs
 		/**	Called by the main thread when mouse leaves a window. */
 		void NotifyMouseLeft(RenderWindow& window);
 
+		/** Requests a window to be shown or hidden. Expected to be called from non-main thread, otherwise you can call this directly on the render window. */
+		void RequestShowWindow(u32 windowId, bool show);
+
 		/**	Returns a list of all open render windows. */
 		Vector<RenderWindow*> GetRenderWindows() const;
 
