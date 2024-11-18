@@ -42,6 +42,9 @@ namespace bs
 	}
 	void ScriptParticleCollisions::InternalSetPlanes(ScriptParticleCollisions* self, MonoArray* planes)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TPlane<float>> nativeArrayplanes;
 		if(planes != nullptr)
 		{
@@ -58,6 +61,9 @@ namespace bs
 	MonoArray* ScriptParticleCollisions::InternalGetPlanes(ScriptParticleCollisions* self)
 	{
 		Vector<TPlane<float>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<ParticleCollisions*>(self->GetNativeObject())->GetPlanes();
 
 		MonoArray* __output;
@@ -74,6 +80,9 @@ namespace bs
 
 	void ScriptParticleCollisions::InternalSetPlaneObjects(ScriptParticleCollisions* self, MonoArray* objects)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<GameObjectHandle<SceneObject>> nativeArrayobjects;
 		if(objects != nullptr)
 		{
@@ -96,6 +105,9 @@ namespace bs
 	MonoArray* ScriptParticleCollisions::InternalGetPlaneObjects(ScriptParticleCollisions* self)
 	{
 		Vector<GameObjectHandle<SceneObject>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<ParticleCollisions*>(self->GetNativeObject())->GetPlaneObjects();
 
 		MonoArray* __output;
@@ -115,11 +127,20 @@ namespace bs
 
 	void ScriptParticleCollisions::InternalSetOptions(ScriptParticleCollisions* self, PARTICLE_COLLISIONS_DESC* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<ParticleCollisions*>(self->GetNativeObject())->SetOptions(*options);
 	}
 
 	void ScriptParticleCollisions::InternalGetOptions(ScriptParticleCollisions* self, PARTICLE_COLLISIONS_DESC* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_COLLISIONS_DESC tmp__output;
 		tmp__output = static_cast<ParticleCollisions*>(self->GetNativeObject())->GetOptions();
 

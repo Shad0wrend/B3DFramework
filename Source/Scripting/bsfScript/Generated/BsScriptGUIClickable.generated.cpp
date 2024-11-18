@@ -70,6 +70,9 @@ namespace bs
 	}
 	void ScriptGUIClickable::InternalSetContent(ScriptGUIClickableWrapperBase* self, __GUIContentInterop* content)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		GUIContent tmpcontent;
 		tmpcontent = ScriptGUIContent::FromInterop(*content);
 		static_cast<GUIClickable*>(self->GetNativeObject())->SetContent(tmpcontent);

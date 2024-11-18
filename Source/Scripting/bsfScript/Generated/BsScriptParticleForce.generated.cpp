@@ -36,6 +36,9 @@ namespace bs
 	}
 	void ScriptParticleForce::InternalSetOptions(ScriptParticleForce* self, __PARTICLE_FORCE_DESCInterop* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		PARTICLE_FORCE_DESC tmpoptions;
 		tmpoptions = ScriptParticleForceOptions::FromInterop(*options);
 		static_cast<ParticleForce*>(self->GetNativeObject())->SetOptions(tmpoptions);
@@ -43,6 +46,12 @@ namespace bs
 
 	void ScriptParticleForce::InternalGetOptions(ScriptParticleForce* self, __PARTICLE_FORCE_DESCInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_FORCE_DESC tmp__output;
 		tmp__output = static_cast<ParticleForce*>(self->GetNativeObject())->GetOptions();
 

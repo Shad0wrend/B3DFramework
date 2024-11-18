@@ -58,6 +58,9 @@ namespace bs
 	float ScriptAnimationCurve::InternalEvaluate(ScriptAnimationCurve* self, float time, bool loop)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TAnimationCurve<float>*>(self->GetNativeObject())->Evaluate(time, loop);
 
 		float __output;
@@ -69,6 +72,9 @@ namespace bs
 	MonoArray* ScriptAnimationCurve::InternalGetKeyFrames(ScriptAnimationCurve* self)
 	{
 		Vector<TKeyframe<float>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<TAnimationCurve<float>*>(self->GetNativeObject())->GetKeyFrames();
 
 		MonoArray* __output;
@@ -125,6 +131,12 @@ namespace bs
 
 	void ScriptVector3Curve::InternalEvaluate(ScriptVector3Curve* self, float time, bool loop, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<TAnimationCurve<TVector3<float>>*>(self->GetNativeObject())->Evaluate(time, loop);
 
@@ -134,6 +146,9 @@ namespace bs
 	MonoArray* ScriptVector3Curve::InternalGetKeyFrames(ScriptVector3Curve* self)
 	{
 		Vector<TKeyframe<TVector3<float>>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<TAnimationCurve<TVector3<float>>*>(self->GetNativeObject())->GetKeyFrames();
 
 		MonoArray* __output;
@@ -190,6 +205,12 @@ namespace bs
 
 	void ScriptVector2Curve::InternalEvaluate(ScriptVector2Curve* self, float time, bool loop, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<TAnimationCurve<TVector2<float>>*>(self->GetNativeObject())->Evaluate(time, loop);
 
@@ -199,6 +220,9 @@ namespace bs
 	MonoArray* ScriptVector2Curve::InternalGetKeyFrames(ScriptVector2Curve* self)
 	{
 		Vector<TKeyframe<TVector2<float>>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<TAnimationCurve<TVector2<float>>*>(self->GetNativeObject())->GetKeyFrames();
 
 		MonoArray* __output;
@@ -255,6 +279,12 @@ namespace bs
 
 	void ScriptQuaternionCurve::InternalEvaluate(ScriptQuaternionCurve* self, float time, bool loop, TQuaternion<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TQuaternion<float> tmp__output;
 		tmp__output = static_cast<TAnimationCurve<TQuaternion<float>>*>(self->GetNativeObject())->Evaluate(time, loop);
 
@@ -264,6 +294,9 @@ namespace bs
 	MonoArray* ScriptQuaternionCurve::InternalGetKeyFrames(ScriptQuaternionCurve* self)
 	{
 		Vector<TKeyframe<TQuaternion<float>>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<TAnimationCurve<TQuaternion<float>>*>(self->GetNativeObject())->GetKeyFrames();
 
 		MonoArray* __output;
@@ -321,6 +354,9 @@ namespace bs
 	int32_t ScriptIntegerCurve::InternalEvaluate(ScriptIntegerCurve* self, float time, bool loop)
 	{
 		int32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TAnimationCurve<int32_t>*>(self->GetNativeObject())->Evaluate(time, loop);
 
 		int32_t __output;
@@ -332,6 +368,9 @@ namespace bs
 	MonoArray* ScriptIntegerCurve::InternalGetKeyFrames(ScriptIntegerCurve* self)
 	{
 		Vector<TKeyframe<int32_t>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<TAnimationCurve<int32_t>*>(self->GetNativeObject())->GetKeyFrames();
 
 		MonoArray* __output;

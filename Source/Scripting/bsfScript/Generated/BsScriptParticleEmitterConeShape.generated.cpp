@@ -36,6 +36,9 @@ namespace bs
 	}
 	void ScriptParticleEmitterConeShape::InternalSetOptions(ScriptParticleEmitterConeShape* self, __PARTICLE_CONE_SHAPE_DESCInterop* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		PARTICLE_CONE_SHAPE_DESC tmpoptions;
 		tmpoptions = ScriptParticleConeShapeOptions::FromInterop(*options);
 		static_cast<ParticleEmitterConeShape*>(self->GetNativeObject())->SetOptions(tmpoptions);
@@ -43,6 +46,12 @@ namespace bs
 
 	void ScriptParticleEmitterConeShape::InternalGetOptions(ScriptParticleEmitterConeShape* self, __PARTICLE_CONE_SHAPE_DESCInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_CONE_SHAPE_DESC tmp__output;
 		tmp__output = static_cast<ParticleEmitterConeShape*>(self->GetNativeObject())->GetOptions();
 

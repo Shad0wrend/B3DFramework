@@ -36,6 +36,9 @@ namespace bs
 	}
 	void ScriptMeshCollider::InternalSetMesh(ScriptMeshCollider* self, MonoObject* mesh)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
 		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
@@ -47,6 +50,9 @@ namespace bs
 	MonoObject* ScriptMeshCollider::InternalGetMesh(ScriptMeshCollider* self)
 	{
 		TResourceHandle<PhysicsMesh> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CMeshCollider*>(self->GetNativeObject())->GetMesh();
 
 		MonoObject* __output;

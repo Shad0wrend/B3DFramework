@@ -50,6 +50,9 @@ namespace bs
 	}
 	void ScriptViewport::InternalSetTarget(ScriptViewport* self, MonoObject* target)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		SPtr<RenderTarget> tmptarget;
 		ScriptRenderTargetWrapperBase* scriptObjectWrappertarget;
 		scriptObjectWrappertarget = (ScriptRenderTargetWrapperBase*)ScriptRenderTarget::GetScriptObjectWrapper(target);
@@ -61,6 +64,9 @@ namespace bs
 	MonoObject* ScriptViewport::InternalGetTarget(ScriptViewport* self)
 	{
 		SPtr<RenderTarget> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetTarget();
 
 		MonoObject* __output;
@@ -71,11 +77,20 @@ namespace bs
 
 	void ScriptViewport::InternalSetArea(ScriptViewport* self, Rect2* area)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<Viewport*>(self->GetNativeObject())->SetArea(*area);
 	}
 
 	void ScriptViewport::InternalGetArea(ScriptViewport* self, Rect2* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Rect2 tmp__output;
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetArea();
 
@@ -84,6 +99,12 @@ namespace bs
 
 	void ScriptViewport::InternalGetPixelArea(ScriptViewport* self, Rect2I* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Rect2I tmp__output;
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetPixelArea();
 
@@ -92,12 +113,18 @@ namespace bs
 
 	void ScriptViewport::InternalSetClearFlags(ScriptViewport* self, ClearFlagBits flags)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<Viewport*>(self->GetNativeObject())->SetClearFlags(flags);
 	}
 
 	ClearFlagBits ScriptViewport::InternalGetClearFlags(ScriptViewport* self)
 	{
 		Flags<ClearFlagBits> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetClearFlags();
 
 		ClearFlagBits __output;
@@ -108,11 +135,20 @@ namespace bs
 
 	void ScriptViewport::InternalSetClearColorValue(ScriptViewport* self, Color* color)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<Viewport*>(self->GetNativeObject())->SetClearColorValue(*color);
 	}
 
 	void ScriptViewport::InternalGetClearColorValue(ScriptViewport* self, Color* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Color tmp__output;
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetClearColorValue();
 
@@ -121,12 +157,18 @@ namespace bs
 
 	void ScriptViewport::InternalSetClearDepthValue(ScriptViewport* self, float depth)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<Viewport*>(self->GetNativeObject())->SetClearDepthValue(depth);
 	}
 
 	float ScriptViewport::InternalGetClearDepthValue(ScriptViewport* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetClearDepthValue();
 
 		float __output;
@@ -137,12 +179,18 @@ namespace bs
 
 	void ScriptViewport::InternalSetClearStencilValue(ScriptViewport* self, uint16_t value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<Viewport*>(self->GetNativeObject())->SetClearStencilValue(value);
 	}
 
 	uint16_t ScriptViewport::InternalGetClearStencilValue(ScriptViewport* self)
 	{
 		uint16_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetClearStencilValue();
 
 		uint16_t __output;

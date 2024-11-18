@@ -60,6 +60,9 @@ namespace bs
 	bool ScriptManagedMemberInfo::InternalIsSerializable(ScriptManagedMemberInfoWrapperBase* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<ManagedMemberInfo*>(self->GetNativeObject())->IsSerializable();
 
 		bool __output;
@@ -70,6 +73,12 @@ namespace bs
 
 	void ScriptManagedMemberInfo::InternalParseStyle(ScriptManagedMemberInfoWrapperBase* self, __ManagedMemberStyleInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		ManagedMemberStyle tmp__output;
 		tmp__output = static_cast<ManagedMemberInfo*>(self->GetNativeObject())->ParseStyle();
 
@@ -81,6 +90,9 @@ namespace bs
 	MonoObject* ScriptManagedMemberInfo::InternalGetValue(ScriptManagedMemberInfoWrapperBase* self, MonoObject* instance)
 	{
 		_MonoObject* tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		_MonoObject* tmpinstance;
 		tmpinstance = instance;
 		tmp__output = static_cast<ManagedMemberInfo*>(self->GetNativeObject())->GetValue(tmpinstance);
@@ -93,6 +105,9 @@ namespace bs
 
 	void ScriptManagedMemberInfo::InternalSetValue(ScriptManagedMemberInfoWrapperBase* self, MonoObject* instance, MonoObject* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		_MonoObject* tmpinstance;
 		tmpinstance = instance;
 		_MonoObject* tmpvalue;

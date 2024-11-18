@@ -36,6 +36,12 @@ namespace bs
 	}
 	void ScriptSphericalJoint::InternalGetLimit(ScriptSphericalJoint* self, __LimitConeRangeInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		LimitConeRange tmp__output;
 		tmp__output = static_cast<CSphericalJoint*>(self->GetNativeObject())->GetLimit();
 
@@ -46,6 +52,9 @@ namespace bs
 
 	void ScriptSphericalJoint::InternalSetLimit(ScriptSphericalJoint* self, __LimitConeRangeInterop* limit)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		LimitConeRange tmplimit;
 		tmplimit = ScriptLimitConeRange::FromInterop(*limit);
 		static_cast<CSphericalJoint*>(self->GetNativeObject())->SetLimit(tmplimit);
@@ -53,12 +62,18 @@ namespace bs
 
 	void ScriptSphericalJoint::InternalSetFlag(ScriptSphericalJoint* self, SphericalJointFlag flag, bool enabled)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CSphericalJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
 	}
 
 	bool ScriptSphericalJoint::InternalHasFlag(ScriptSphericalJoint* self, SphericalJointFlag flag)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CSphericalJoint*>(self->GetNativeObject())->HasFlag(flag);
 
 		bool __output;

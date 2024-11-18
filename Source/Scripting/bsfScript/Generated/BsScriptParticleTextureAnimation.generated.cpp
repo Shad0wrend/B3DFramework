@@ -36,11 +36,20 @@ namespace bs
 	}
 	void ScriptParticleTextureAnimation::InternalSetOptions(ScriptParticleTextureAnimation* self, PARTICLE_TEXTURE_ANIMATION_DESC* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<ParticleTextureAnimation*>(self->GetNativeObject())->SetOptions(*options);
 	}
 
 	void ScriptParticleTextureAnimation::InternalGetOptions(ScriptParticleTextureAnimation* self, PARTICLE_TEXTURE_ANIMATION_DESC* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_TEXTURE_ANIMATION_DESC tmp__output;
 		tmp__output = static_cast<ParticleTextureAnimation*>(self->GetNativeObject())->GetOptions();
 

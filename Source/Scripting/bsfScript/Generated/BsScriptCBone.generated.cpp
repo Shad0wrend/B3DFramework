@@ -33,6 +33,9 @@ namespace bs
 	}
 	void ScriptBone::InternalSetBoneName(ScriptBone* self, MonoString* name)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<CBone*>(self->GetNativeObject())->SetBoneName(tmpname);
@@ -41,6 +44,9 @@ namespace bs
 	MonoString* ScriptBone::InternalGetBoneName(ScriptBone* self)
 	{
 		String tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CBone*>(self->GetNativeObject())->GetBoneName();
 
 		MonoString* __output;

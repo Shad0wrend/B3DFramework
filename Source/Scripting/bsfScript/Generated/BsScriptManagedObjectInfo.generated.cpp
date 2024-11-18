@@ -46,6 +46,9 @@ namespace bs
 	MonoReflectionType* ScriptManagedObjectInfo::InternalGetReflectionType(ScriptManagedObjectInfo* self)
 	{
 		_MonoReflectionType* tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<ManagedObjectInfo*>(self->GetNativeObject())->GetReflectionType();
 
 		MonoReflectionType* __output;

@@ -125,6 +125,9 @@ namespace bs
 	MonoObject* ScriptRenderTexture::InternalGetColorSurface(ScriptRenderTexture* self)
 	{
 		TResourceHandle<Texture> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = RenderTextureEx::GetColorSurface(std::static_pointer_cast<RenderTexture>(self->GetBaseNativeObjectAsShared()));
 
 		MonoObject* __output;
@@ -139,6 +142,9 @@ namespace bs
 	MonoArray* ScriptRenderTexture::InternalGetColorSurfaces(ScriptRenderTexture* self)
 	{
 		Vector<TResourceHandle<Texture>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = RenderTextureEx::GetColorSurfaces(std::static_pointer_cast<RenderTexture>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -159,6 +165,9 @@ namespace bs
 	MonoObject* ScriptRenderTexture::InternalGetDepthStencilSurface(ScriptRenderTexture* self)
 	{
 		TResourceHandle<Texture> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = RenderTextureEx::GetDepthStencilSurface(std::static_pointer_cast<RenderTexture>(self->GetBaseNativeObjectAsShared()));
 
 		MonoObject* __output;

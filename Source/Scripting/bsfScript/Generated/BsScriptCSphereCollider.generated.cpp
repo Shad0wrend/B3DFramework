@@ -36,12 +36,18 @@ namespace bs
 	}
 	void ScriptSphereCollider::InternalSetRadius(ScriptSphereCollider* self, float radius)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CSphereCollider*>(self->GetNativeObject())->SetRadius(radius);
 	}
 
 	float ScriptSphereCollider::InternalGetRadius(ScriptSphereCollider* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CSphereCollider*>(self->GetNativeObject())->GetRadius();
 
 		float __output;
@@ -52,11 +58,20 @@ namespace bs
 
 	void ScriptSphereCollider::InternalSetCenter(ScriptSphereCollider* self, TVector3<float>* center)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CSphereCollider*>(self->GetNativeObject())->SetCenter(*center);
 	}
 
 	void ScriptSphereCollider::InternalGetCenter(ScriptSphereCollider* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CSphereCollider*>(self->GetNativeObject())->GetCenter();
 

@@ -43,6 +43,9 @@ namespace bs
 	MonoArray* ScriptShader::InternalGetVariationParams(ScriptShader* self)
 	{
 		Vector<ShaderVariationParameterInformation> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<Shader*>(self->GetNativeObject())->GetVariationParams();
 
 		MonoArray* __output;
@@ -60,6 +63,9 @@ namespace bs
 	MonoArray* ScriptShader::InternalGetParameters(ScriptShader* self)
 	{
 		Vector<ShaderParameter> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = ShaderEx::GetParameters(B3DStaticResourceCast<Shader>(self->GetBaseNativeObjectAsHandle()));
 
 		MonoArray* __output;

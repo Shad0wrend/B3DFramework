@@ -41,6 +41,9 @@ namespace bs
 	MonoObject* ScriptFont::InternalGetBitmap(ScriptFont* self, float size)
 	{
 		SPtr<FontBitmapInformation> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Font*>(self->GetNativeObject())->GetBitmap(size);
 
 		MonoObject* __output;
@@ -52,6 +55,9 @@ namespace bs
 	float ScriptFont::InternalGetClosestSize(ScriptFont* self, float size)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Font*>(self->GetNativeObject())->GetClosestSize(size);
 
 		float __output;

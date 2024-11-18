@@ -33,6 +33,9 @@ namespace bs
 	MonoArray* ScriptMorphShapes::InternalGetChannels(ScriptMorphShapes* self)
 	{
 		Vector<SPtr<MorphChannel>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<MorphShapes*>(self->GetNativeObject())->GetChannels();
 
 		MonoArray* __output;

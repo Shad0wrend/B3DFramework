@@ -5,7 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsRenderWindow.h"
-#include "BsScriptRENDER_WINDOW_DESC.generated.h"
+#include "BsScriptRenderWindowCreateInformation.generated.h"
 
 namespace bs
 {
@@ -43,8 +43,8 @@ namespace bs
 		output.Input = tmpInput;
 		output.PhysicsCooking = value.PhysicsCooking;
 		output.AsyncAnimation = value.AsyncAnimation;
-		RENDER_WINDOW_DESC tmpPrimaryWindowDesc;
-		tmpPrimaryWindowDesc = ScriptRenderWindowDesc::FromInterop(value.PrimaryWindowDesc);
+		RenderWindowCreateInformation tmpPrimaryWindowDesc;
+		tmpPrimaryWindowDesc = ScriptRenderWindowCreateInformation::FromInterop(value.PrimaryWindowDesc);
 		output.PrimaryWindowDesc = tmpPrimaryWindowDesc;
 		Vector<String> vecImporters;
 		if(value.Importers != nullptr)
@@ -81,8 +81,8 @@ namespace bs
 		output.Input = tmpInput;
 		output.PhysicsCooking = value.PhysicsCooking;
 		output.AsyncAnimation = value.AsyncAnimation;
-		__RENDER_WINDOW_DESCInterop tmpPrimaryWindowDesc;
-		tmpPrimaryWindowDesc = ScriptRenderWindowDesc::ToInterop(value.PrimaryWindowDesc);
+		__RenderWindowCreateInformationInterop tmpPrimaryWindowDesc;
+		tmpPrimaryWindowDesc = ScriptRenderWindowCreateInformation::ToInterop(value.PrimaryWindowDesc);
 		output.PrimaryWindowDesc = tmpPrimaryWindowDesc;
 		int elementCountImporters = (int)value.Importers.size();
 		MonoArray* vecImporters;

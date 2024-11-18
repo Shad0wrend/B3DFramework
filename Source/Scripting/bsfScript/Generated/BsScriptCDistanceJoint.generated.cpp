@@ -44,6 +44,9 @@ namespace bs
 	float ScriptDistanceJoint::InternalGetDistance(ScriptDistanceJoint* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetDistance();
 
 		float __output;
@@ -55,6 +58,9 @@ namespace bs
 	float ScriptDistanceJoint::InternalGetMinDistance(ScriptDistanceJoint* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetMinDistance();
 
 		float __output;
@@ -65,12 +71,18 @@ namespace bs
 
 	void ScriptDistanceJoint::InternalSetMinDistance(ScriptDistanceJoint* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetMinDistance(value);
 	}
 
 	float ScriptDistanceJoint::InternalGetMaxDistance(ScriptDistanceJoint* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetMaxDistance();
 
 		float __output;
@@ -81,12 +93,18 @@ namespace bs
 
 	void ScriptDistanceJoint::InternalSetMaxDistance(ScriptDistanceJoint* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetMaxDistance(value);
 	}
 
 	float ScriptDistanceJoint::InternalGetTolerance(ScriptDistanceJoint* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetTolerance();
 
 		float __output;
@@ -97,11 +115,20 @@ namespace bs
 
 	void ScriptDistanceJoint::InternalSetTolerance(ScriptDistanceJoint* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetTolerance(value);
 	}
 
 	void ScriptDistanceJoint::InternalGetSpring(ScriptDistanceJoint* self, Spring* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Spring tmp__output;
 		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetSpring();
 
@@ -110,17 +137,26 @@ namespace bs
 
 	void ScriptDistanceJoint::InternalSetSpring(ScriptDistanceJoint* self, Spring* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetSpring(*value);
 	}
 
 	void ScriptDistanceJoint::InternalSetFlag(ScriptDistanceJoint* self, DistanceJointFlag flag, bool enabled)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
 	}
 
 	bool ScriptDistanceJoint::InternalHasFlag(ScriptDistanceJoint* self, DistanceJointFlag flag)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->HasFlag(flag);
 
 		bool __output;

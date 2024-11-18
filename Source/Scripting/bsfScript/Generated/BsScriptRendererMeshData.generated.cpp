@@ -60,6 +60,9 @@ namespace bs
 	MonoObject* ScriptRendererMeshData::InternalGetData(ScriptRendererMeshData* self)
 	{
 		SPtr<MeshData> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<RendererMeshData*>(self->GetNativeObject())->GetData();
 
 		MonoObject* __output;
@@ -77,6 +80,9 @@ namespace bs
 	MonoArray* ScriptRendererMeshData::InternalGetPositions(ScriptRendererMeshData* self)
 	{
 		Vector<TVector3<float>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = MeshDataEx::GetPositions(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -93,6 +99,9 @@ namespace bs
 
 	void ScriptRendererMeshData::InternalSetPositions(ScriptRendererMeshData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TVector3<float>> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -109,6 +118,9 @@ namespace bs
 	MonoArray* ScriptRendererMeshData::InternalGetNormals(ScriptRendererMeshData* self)
 	{
 		Vector<TVector3<float>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = MeshDataEx::GetNormals(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -125,6 +137,9 @@ namespace bs
 
 	void ScriptRendererMeshData::InternalSetNormals(ScriptRendererMeshData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TVector3<float>> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -141,6 +156,9 @@ namespace bs
 	MonoArray* ScriptRendererMeshData::InternalGetTangents(ScriptRendererMeshData* self)
 	{
 		Vector<TVector4<float>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = MeshDataEx::GetTangents(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -157,6 +175,9 @@ namespace bs
 
 	void ScriptRendererMeshData::InternalSetTangents(ScriptRendererMeshData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TVector4<float>> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -173,6 +194,9 @@ namespace bs
 	MonoArray* ScriptRendererMeshData::InternalGetColors(ScriptRendererMeshData* self)
 	{
 		Vector<Color> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = MeshDataEx::GetColors(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -189,6 +213,9 @@ namespace bs
 
 	void ScriptRendererMeshData::InternalSetColors(ScriptRendererMeshData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<Color> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -205,6 +232,9 @@ namespace bs
 	MonoArray* ScriptRendererMeshData::InternalGetUV0(ScriptRendererMeshData* self)
 	{
 		Vector<TVector2<float>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = MeshDataEx::GetUV0(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -221,6 +251,9 @@ namespace bs
 
 	void ScriptRendererMeshData::InternalSetUV0(ScriptRendererMeshData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TVector2<float>> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -237,6 +270,9 @@ namespace bs
 	MonoArray* ScriptRendererMeshData::InternalGetUV1(ScriptRendererMeshData* self)
 	{
 		Vector<TVector2<float>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = MeshDataEx::GetUV1(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -253,6 +289,9 @@ namespace bs
 
 	void ScriptRendererMeshData::InternalSetUV1(ScriptRendererMeshData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TVector2<float>> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -269,6 +308,9 @@ namespace bs
 	MonoArray* ScriptRendererMeshData::InternalGetBoneWeights(ScriptRendererMeshData* self)
 	{
 		Vector<BoneWeight> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = MeshDataEx::GetBoneWeights(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -285,6 +327,9 @@ namespace bs
 
 	void ScriptRendererMeshData::InternalSetBoneWeights(ScriptRendererMeshData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<BoneWeight> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -301,6 +346,9 @@ namespace bs
 	MonoArray* ScriptRendererMeshData::InternalGetIndices(ScriptRendererMeshData* self)
 	{
 		Vector<uint32_t> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = MeshDataEx::GetIndices(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -317,6 +365,9 @@ namespace bs
 
 	void ScriptRendererMeshData::InternalSetIndices(ScriptRendererMeshData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<uint32_t> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -333,6 +384,9 @@ namespace bs
 	int32_t ScriptRendererMeshData::InternalGetVertexCount(ScriptRendererMeshData* self)
 	{
 		int32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = MeshDataEx::GetVertexCount(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		int32_t __output;
@@ -344,6 +398,9 @@ namespace bs
 	int32_t ScriptRendererMeshData::InternalGetIndexCount(ScriptRendererMeshData* self)
 	{
 		int32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = MeshDataEx::GetIndexCount(std::static_pointer_cast<RendererMeshData>(self->GetBaseNativeObjectAsShared()));
 
 		int32_t __output;

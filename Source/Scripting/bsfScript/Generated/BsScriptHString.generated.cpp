@@ -68,6 +68,9 @@ namespace bs
 	MonoString* ScriptLocString::InternalGetValue(ScriptLocString* self)
 	{
 		String tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<HString*>(self->GetNativeObject())->GetValue();
 
 		MonoString* __output;
@@ -78,6 +81,9 @@ namespace bs
 
 	void ScriptLocString::InternalSetParameter(ScriptLocString* self, uint32_t idx, MonoString* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpvalue;
 		tmpvalue = MonoUtil::MonoToString(value);
 		static_cast<HString*>(self->GetNativeObject())->SetParameter(idx, tmpvalue);

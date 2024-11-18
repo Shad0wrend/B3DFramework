@@ -60,6 +60,9 @@ namespace bs
 	bool ScriptGUIListBox::InternalIsMultiselect(ScriptGUIListBox* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUIListBox*>(self->GetNativeObject())->IsMultiselect();
 
 		bool __output;
@@ -70,6 +73,9 @@ namespace bs
 
 	void ScriptGUIListBox::InternalSetElements(ScriptGUIListBox* self, MonoArray* elements)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<HString> nativeArrayelements;
 		if(elements != nullptr)
 		{
@@ -92,17 +98,26 @@ namespace bs
 
 	void ScriptGUIListBox::InternalSelectElement(ScriptGUIListBox* self, uint32_t index)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUIListBox*>(self->GetNativeObject())->SelectElement(index);
 	}
 
 	void ScriptGUIListBox::InternalDeselectElement(ScriptGUIListBox* self, uint32_t index)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUIListBox*>(self->GetNativeObject())->DeselectElement(index);
 	}
 
 	uint32_t ScriptGUIListBox::InternalGetSelectedElementIndex(ScriptGUIListBox* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUIListBox*>(self->GetNativeObject())->GetSelectedElementIndex();
 
 		uint32_t __output;
@@ -114,6 +129,9 @@ namespace bs
 	MonoArray* ScriptGUIListBox::InternalGetElementStates(ScriptGUIListBox* self)
 	{
 		Vector<bool> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<GUIListBox*>(self->GetNativeObject())->GetElementStates();
 
 		MonoArray* __output;
@@ -130,6 +148,9 @@ namespace bs
 
 	void ScriptGUIListBox::InternalSetElementStates(ScriptGUIListBox* self, MonoArray* states)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<bool> nativeArraystates;
 		if(states != nullptr)
 		{

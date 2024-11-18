@@ -42,6 +42,9 @@ namespace bs
 	}
 	void ScriptGUITexture::InternalSetImage(ScriptGUITexture* self, MonoObject* image)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<SpriteImage> tmpimage;
 		ScriptRRefBase* scriptObjectWrapperimage;
 		scriptObjectWrapperimage = ScriptRRefBase::GetScriptObjectWrapper(image);

@@ -49,6 +49,9 @@ namespace bs
 	}
 	void ScriptRenderable::InternalSetMesh(ScriptRenderable* self, MonoObject* mesh)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<Mesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
 		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
@@ -60,6 +63,9 @@ namespace bs
 	MonoObject* ScriptRenderable::InternalGetMesh(ScriptRenderable* self)
 	{
 		TResourceHandle<Mesh> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CRenderable*>(self->GetNativeObject())->GetMesh();
 
 		MonoObject* __output;
@@ -75,6 +81,9 @@ namespace bs
 
 	void ScriptRenderable::InternalSetMaterial(ScriptRenderable* self, uint32_t idx, MonoObject* material)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptObjectWrappermaterial;
 		scriptObjectWrappermaterial = ScriptRRefBase::GetScriptObjectWrapper(material);
@@ -85,6 +94,9 @@ namespace bs
 
 	void ScriptRenderable::InternalSetMaterial0(ScriptRenderable* self, MonoObject* material)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptObjectWrappermaterial;
 		scriptObjectWrappermaterial = ScriptRRefBase::GetScriptObjectWrapper(material);
@@ -96,6 +108,9 @@ namespace bs
 	MonoObject* ScriptRenderable::InternalGetMaterial(ScriptRenderable* self, uint32_t idx)
 	{
 		TResourceHandle<Material> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CRenderable*>(self->GetNativeObject())->GetMaterial(idx);
 
 		MonoObject* __output;
@@ -111,6 +126,9 @@ namespace bs
 
 	void ScriptRenderable::InternalSetMaterials(ScriptRenderable* self, MonoArray* materials)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TResourceHandle<Material>> nativeArraymaterials;
 		if(materials != nullptr)
 		{
@@ -133,6 +151,9 @@ namespace bs
 	MonoArray* ScriptRenderable::InternalGetMaterials(ScriptRenderable* self)
 	{
 		Vector<TResourceHandle<Material>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<CRenderable*>(self->GetNativeObject())->GetMaterials();
 
 		MonoArray* __output;
@@ -154,12 +175,18 @@ namespace bs
 
 	void ScriptRenderable::InternalSetCullDistanceFactor(ScriptRenderable* self, float factor)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CRenderable*>(self->GetNativeObject())->SetCullDistanceFactor(factor);
 	}
 
 	float ScriptRenderable::InternalGetCullDistanceFactor(ScriptRenderable* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CRenderable*>(self->GetNativeObject())->GetCullDistanceFactor();
 
 		float __output;
@@ -170,12 +197,18 @@ namespace bs
 
 	void ScriptRenderable::InternalSetWriteVelocity(ScriptRenderable* self, bool enable)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CRenderable*>(self->GetNativeObject())->SetWriteVelocity(enable);
 	}
 
 	bool ScriptRenderable::InternalGetWriteVelocity(ScriptRenderable* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CRenderable*>(self->GetNativeObject())->GetWriteVelocity();
 
 		bool __output;
@@ -186,12 +219,18 @@ namespace bs
 
 	void ScriptRenderable::InternalSetLayer(ScriptRenderable* self, uint64_t layer)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CRenderable*>(self->GetNativeObject())->SetLayer(layer);
 	}
 
 	uint64_t ScriptRenderable::InternalGetLayer(ScriptRenderable* self)
 	{
 		uint64_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CRenderable*>(self->GetNativeObject())->GetLayer();
 
 		uint64_t __output;
@@ -202,6 +241,12 @@ namespace bs
 
 	void ScriptRenderable::InternalGetBounds(ScriptRenderable* self, Bounds* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Bounds tmp__output;
 		tmp__output = static_cast<CRenderable*>(self->GetNativeObject())->GetBounds();
 

@@ -36,6 +36,9 @@ namespace bs
 	}
 	void ScriptParticleSize::InternalSetOptions(ScriptParticleSize* self, __PARTICLE_SIZE_DESCInterop* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		PARTICLE_SIZE_DESC tmpoptions;
 		tmpoptions = ScriptParticleSizeOptions::FromInterop(*options);
 		static_cast<ParticleSize*>(self->GetNativeObject())->SetOptions(tmpoptions);
@@ -43,6 +46,12 @@ namespace bs
 
 	void ScriptParticleSize::InternalGetOptions(ScriptParticleSize* self, __PARTICLE_SIZE_DESCInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_SIZE_DESC tmp__output;
 		tmp__output = static_cast<ParticleSize*>(self->GetNativeObject())->GetOptions();
 

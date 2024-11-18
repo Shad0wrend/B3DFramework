@@ -71,6 +71,9 @@ namespace bs
 
 	void ScriptColorGradientHDR::InternalSetKeys(ScriptColorGradientHDR* self, MonoArray* keys, float duration)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<ColorGradientKey> nativeArraykeys;
 		if(keys != nullptr)
 		{
@@ -88,6 +91,9 @@ namespace bs
 	MonoArray* ScriptColorGradientHDR::InternalGetKeys(ScriptColorGradientHDR* self)
 	{
 		Vector<ColorGradientKey> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<ColorGradientHDR*>(self->GetNativeObject())->GetKeys();
 
 		MonoArray* __output;
@@ -105,6 +111,9 @@ namespace bs
 	uint32_t ScriptColorGradientHDR::InternalGetNumKeys(ScriptColorGradientHDR* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<ColorGradientHDR*>(self->GetNativeObject())->GetNumKeys();
 
 		uint32_t __output;
@@ -115,6 +124,12 @@ namespace bs
 
 	void ScriptColorGradientHDR::InternalGetKey(ScriptColorGradientHDR* self, uint32_t idx, __ColorGradientKeyInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		ColorGradientKey tmp__output;
 		tmp__output = static_cast<ColorGradientHDR*>(self->GetNativeObject())->GetKey(idx);
 
@@ -125,11 +140,20 @@ namespace bs
 
 	void ScriptColorGradientHDR::InternalSetConstant(ScriptColorGradientHDR* self, Color* color)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<ColorGradientHDR*>(self->GetNativeObject())->SetConstant(*color);
 	}
 
 	void ScriptColorGradientHDR::InternalEvaluate(ScriptColorGradientHDR* self, float t, Color* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Color tmp__output;
 		tmp__output = ColorGradientHDREx::Evaluate(std::static_pointer_cast<ColorGradientHDR>(self->GetBaseNativeObjectAsShared()), t);
 

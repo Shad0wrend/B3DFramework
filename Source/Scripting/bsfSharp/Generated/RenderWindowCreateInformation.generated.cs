@@ -13,12 +13,12 @@ namespace bs
 
 	/// <summary>Structure that is used for initializing a render window.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct RenderWindowDesc
+	public partial struct RenderWindowCreateInformation
 	{
 		/// <summary>Initializes the struct with default values.</summary>
-		public static RenderWindowDesc Default()
+		public static RenderWindowCreateInformation Default()
 		{
-			RenderWindowDesc value = new RenderWindowDesc();
+			RenderWindowCreateInformation value = new RenderWindowCreateInformation();
 			value.VideoMode = VideoMode.Default();
 			value.Fullscreen = false;
 			value.Vsync = false;
@@ -37,6 +37,7 @@ namespace bs
 			value.ToolWindow = false;
 			value.Modal = false;
 			value.HideUntilSwap = false;
+			value.CreateRenderSurface = true;
 
 			return value;
 		}
@@ -79,6 +80,11 @@ namespace bs
 		public bool Modal;
 		/// <summary>Window will be created as hidden and only be shown when the first framebuffer swap happens.</summary>
 		public bool HideUntilSwap;
+		/// <summary>
+		/// If true the window render surface will be created, which internally provides a swap chain and allows the GPU to 
+		/// render to the window.
+		/// </summary>
+		public bool CreateRenderSurface;
 	}
 
 	/** @} */

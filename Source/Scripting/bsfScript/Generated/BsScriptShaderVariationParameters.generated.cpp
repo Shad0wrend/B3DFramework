@@ -50,6 +50,9 @@ namespace bs
 	int32_t ScriptShaderVariationParameters::InternalGetInt(ScriptShaderVariationParameters* self, MonoString* name)
 	{
 		int32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetInt(tmpname);
@@ -63,6 +66,9 @@ namespace bs
 	uint32_t ScriptShaderVariationParameters::InternalGetUInt(ScriptShaderVariationParameters* self, MonoString* name)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetUInt(tmpname);
@@ -76,6 +82,9 @@ namespace bs
 	float ScriptShaderVariationParameters::InternalGetFloat(ScriptShaderVariationParameters* self, MonoString* name)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetFloat(tmpname);
@@ -89,6 +98,9 @@ namespace bs
 	bool ScriptShaderVariationParameters::InternalGetBool(ScriptShaderVariationParameters* self, MonoString* name)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetBool(tmpname);
@@ -101,6 +113,9 @@ namespace bs
 
 	void ScriptShaderVariationParameters::InternalSetInt(ScriptShaderVariationParameters* self, MonoString* name, int32_t value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->SetInt(tmpname, value);
@@ -108,6 +123,9 @@ namespace bs
 
 	void ScriptShaderVariationParameters::InternalSetUInt(ScriptShaderVariationParameters* self, MonoString* name, uint32_t value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->SetUInt(tmpname, value);
@@ -115,6 +133,9 @@ namespace bs
 
 	void ScriptShaderVariationParameters::InternalSetFloat(ScriptShaderVariationParameters* self, MonoString* name, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->SetFloat(tmpname, value);
@@ -122,6 +143,9 @@ namespace bs
 
 	void ScriptShaderVariationParameters::InternalSetBool(ScriptShaderVariationParameters* self, MonoString* name, bool value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->SetBool(tmpname, value);
@@ -129,6 +153,9 @@ namespace bs
 
 	void ScriptShaderVariationParameters::InternalRemoveParam(ScriptShaderVariationParameters* self, MonoString* paramName)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpparamName;
 		tmpparamName = MonoUtil::MonoToString(paramName);
 		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->RemoveParam(tmpparamName);
@@ -137,6 +164,9 @@ namespace bs
 	bool ScriptShaderVariationParameters::InternalHasParam(ScriptShaderVariationParameters* self, MonoString* paramName)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpparamName;
 		tmpparamName = MonoUtil::MonoToString(paramName);
 		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->HasParam(tmpparamName);
@@ -149,12 +179,18 @@ namespace bs
 
 	void ScriptShaderVariationParameters::InternalClearParams(ScriptShaderVariationParameters* self)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->ClearParams();
 	}
 
 	MonoArray* ScriptShaderVariationParameters::InternalGetParamNames(ScriptShaderVariationParameters* self)
 	{
 		Vector<String> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetParamNames();
 
 		MonoArray* __output;

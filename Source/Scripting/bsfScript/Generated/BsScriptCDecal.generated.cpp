@@ -45,6 +45,9 @@ namespace bs
 	}
 	void ScriptDecal::InternalSetMaterial(ScriptDecal* self, MonoObject* material)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptObjectWrappermaterial;
 		scriptObjectWrappermaterial = ScriptRRefBase::GetScriptObjectWrapper(material);
@@ -56,6 +59,9 @@ namespace bs
 	MonoObject* ScriptDecal::InternalGetMaterial(ScriptDecal* self)
 	{
 		TResourceHandle<Material> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CDecal*>(self->GetNativeObject())->GetMaterial();
 
 		MonoObject* __output;
@@ -71,11 +77,20 @@ namespace bs
 
 	void ScriptDecal::InternalSetSize(ScriptDecal* self, TVector2<float>* size)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CDecal*>(self->GetNativeObject())->SetSize(*size);
 	}
 
 	void ScriptDecal::InternalGetSize(ScriptDecal* self, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<CDecal*>(self->GetNativeObject())->GetSize();
 
@@ -84,12 +99,18 @@ namespace bs
 
 	void ScriptDecal::InternalSetMaxDistance(ScriptDecal* self, float distance)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CDecal*>(self->GetNativeObject())->SetMaxDistance(distance);
 	}
 
 	float ScriptDecal::InternalGetMaxDistance(ScriptDecal* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CDecal*>(self->GetNativeObject())->GetMaxDistance();
 
 		float __output;
@@ -100,12 +121,18 @@ namespace bs
 
 	void ScriptDecal::InternalSetLayer(ScriptDecal* self, uint64_t layer)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CDecal*>(self->GetNativeObject())->SetLayer(layer);
 	}
 
 	uint64_t ScriptDecal::InternalGetLayer(ScriptDecal* self)
 	{
 		uint64_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CDecal*>(self->GetNativeObject())->GetLayer();
 
 		uint64_t __output;
@@ -116,12 +143,18 @@ namespace bs
 
 	void ScriptDecal::InternalSetLayerMask(ScriptDecal* self, uint32_t mask)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CDecal*>(self->GetNativeObject())->SetLayerMask(mask);
 	}
 
 	uint32_t ScriptDecal::InternalGetLayerMask(ScriptDecal* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CDecal*>(self->GetNativeObject())->GetLayerMask();
 
 		uint32_t __output;

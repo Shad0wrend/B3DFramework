@@ -112,6 +112,9 @@ namespace bs
 	}
 	void ScriptAnimation::InternalSetDefaultClip(ScriptAnimation* self, MonoObject* clip)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
@@ -123,6 +126,9 @@ namespace bs
 	MonoObject* ScriptAnimation::InternalGetDefaultClip(ScriptAnimation* self)
 	{
 		TResourceHandle<AnimationClip> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetDefaultClip();
 
 		MonoObject* __output;
@@ -138,12 +144,18 @@ namespace bs
 
 	void ScriptAnimation::InternalSetWrapMode(ScriptAnimation* self, AnimWrapMode wrapMode)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAnimation*>(self->GetNativeObject())->SetWrapMode(wrapMode);
 	}
 
 	AnimWrapMode ScriptAnimation::InternalGetWrapMode(ScriptAnimation* self)
 	{
 		AnimWrapMode tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetWrapMode();
 
 		AnimWrapMode __output;
@@ -154,12 +166,18 @@ namespace bs
 
 	void ScriptAnimation::InternalSetSpeed(ScriptAnimation* self, float speed)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAnimation*>(self->GetNativeObject())->SetSpeed(speed);
 	}
 
 	float ScriptAnimation::InternalGetSpeed(ScriptAnimation* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetSpeed();
 
 		float __output;
@@ -170,6 +188,9 @@ namespace bs
 
 	void ScriptAnimation::InternalPlay(ScriptAnimation* self, MonoObject* clip)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
@@ -180,6 +201,9 @@ namespace bs
 
 	void ScriptAnimation::InternalBlendAdditive(ScriptAnimation* self, MonoObject* clip, float weight, float fadeLength, uint32_t layer)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
@@ -190,6 +214,9 @@ namespace bs
 
 	void ScriptAnimation::InternalBlend1D(ScriptAnimation* self, __Blend1DInfoInterop* info, float t)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Blend1DInfo tmpinfo;
 		tmpinfo = ScriptBlend1DInfo::FromInterop(*info);
 		static_cast<CAnimation*>(self->GetNativeObject())->Blend1D(tmpinfo, t);
@@ -197,6 +224,9 @@ namespace bs
 
 	void ScriptAnimation::InternalBlend2D(ScriptAnimation* self, __Blend2DInfoInterop* info, TVector2<float>* t)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Blend2DInfo tmpinfo;
 		tmpinfo = ScriptBlend2DInfo::FromInterop(*info);
 		static_cast<CAnimation*>(self->GetNativeObject())->Blend2D(tmpinfo, *t);
@@ -204,6 +234,9 @@ namespace bs
 
 	void ScriptAnimation::InternalCrossFade(ScriptAnimation* self, MonoObject* clip, float fadeLength)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
@@ -214,6 +247,9 @@ namespace bs
 
 	void ScriptAnimation::InternalSample(ScriptAnimation* self, MonoObject* clip, float time)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
@@ -224,17 +260,26 @@ namespace bs
 
 	void ScriptAnimation::InternalStop(ScriptAnimation* self, uint32_t layer)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAnimation*>(self->GetNativeObject())->Stop(layer);
 	}
 
 	void ScriptAnimation::InternalStopAll(ScriptAnimation* self)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAnimation*>(self->GetNativeObject())->StopAll();
 	}
 
 	bool ScriptAnimation::InternalIsPlaying(ScriptAnimation* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->IsPlaying();
 
 		bool __output;
@@ -246,6 +291,9 @@ namespace bs
 	bool ScriptAnimation::InternalGetState(ScriptAnimation* self, MonoObject* clip, AnimationClipState* state)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
@@ -261,6 +309,9 @@ namespace bs
 
 	void ScriptAnimation::InternalSetState(ScriptAnimation* self, MonoObject* clip, AnimationClipState* state)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
@@ -271,6 +322,9 @@ namespace bs
 
 	void ScriptAnimation::InternalSetMorphChannelWeight(ScriptAnimation* self, MonoString* name, float weight)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<CAnimation*>(self->GetNativeObject())->SetMorphChannelWeight(tmpname, weight);
@@ -278,6 +332,9 @@ namespace bs
 
 	void ScriptAnimation::InternalSetBounds(ScriptAnimation* self, __TAABox_float_Interop* bounds)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TAABox<float> tmpbounds;
 		tmpbounds = ScriptAABox::FromInterop(*bounds);
 		static_cast<CAnimation*>(self->GetNativeObject())->SetBounds(tmpbounds);
@@ -285,6 +342,12 @@ namespace bs
 
 	void ScriptAnimation::InternalGetBounds(ScriptAnimation* self, __TAABox_float_Interop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TAABox<float> tmp__output;
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetBounds();
 
@@ -295,12 +358,18 @@ namespace bs
 
 	void ScriptAnimation::InternalSetUseBounds(ScriptAnimation* self, bool enable)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAnimation*>(self->GetNativeObject())->SetUseBounds(enable);
 	}
 
 	bool ScriptAnimation::InternalGetUseBounds(ScriptAnimation* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetUseBounds();
 
 		bool __output;
@@ -311,12 +380,18 @@ namespace bs
 
 	void ScriptAnimation::InternalSetEnableCull(ScriptAnimation* self, bool enable)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAnimation*>(self->GetNativeObject())->SetEnableCull(enable);
 	}
 
 	bool ScriptAnimation::InternalGetEnableCull(ScriptAnimation* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetEnableCull();
 
 		bool __output;
@@ -328,6 +403,9 @@ namespace bs
 	uint32_t ScriptAnimation::InternalGetNumClips(ScriptAnimation* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetNumClips();
 
 		uint32_t __output;
@@ -339,6 +417,9 @@ namespace bs
 	MonoObject* ScriptAnimation::InternalGetClip(ScriptAnimation* self, uint32_t idx)
 	{
 		TResourceHandle<AnimationClip> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetClip(idx);
 
 		MonoObject* __output;
@@ -354,12 +435,18 @@ namespace bs
 
 	void ScriptAnimation::InternalRefreshClipMappingsInternal(ScriptAnimation* self)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAnimation*>(self->GetNativeObject())->RefreshClipMappingsInternal();
 	}
 
 	bool ScriptAnimation::InternalGetGenericCurveValueInternal(ScriptAnimation* self, uint32_t curveIdx, float* value)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetGenericCurveValueInternal(curveIdx, *value);
 
 		bool __output;
@@ -371,6 +458,9 @@ namespace bs
 	bool ScriptAnimation::InternalTogglePreviewModeInternal(ScriptAnimation* self, bool enabled)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->TogglePreviewModeInternal(enabled);
 
 		bool __output;

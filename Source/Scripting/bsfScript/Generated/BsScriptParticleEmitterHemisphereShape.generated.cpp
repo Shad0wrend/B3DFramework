@@ -36,11 +36,20 @@ namespace bs
 	}
 	void ScriptParticleEmitterHemisphereShape::InternalSetOptions(ScriptParticleEmitterHemisphereShape* self, PARTICLE_HEMISPHERE_SHAPE_DESC* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<ParticleEmitterHemisphereShape*>(self->GetNativeObject())->SetOptions(*options);
 	}
 
 	void ScriptParticleEmitterHemisphereShape::InternalGetOptions(ScriptParticleEmitterHemisphereShape* self, PARTICLE_HEMISPHERE_SHAPE_DESC* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_HEMISPHERE_SHAPE_DESC tmp__output;
 		tmp__output = static_cast<ParticleEmitterHemisphereShape*>(self->GetNativeObject())->GetOptions();
 

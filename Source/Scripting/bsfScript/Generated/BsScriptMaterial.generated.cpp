@@ -81,6 +81,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetShader(ScriptMaterial* self, MonoObject* shader)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<Shader> tmpshader;
 		ScriptRRefBase* scriptObjectWrappershader;
 		scriptObjectWrappershader = ScriptRRefBase::GetScriptObjectWrapper(shader);
@@ -91,6 +94,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetVariation(ScriptMaterial* self, MonoObject* variation)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		SPtr<ShaderVariationParameters> tmpvariation;
 		ScriptShaderVariationParameters* scriptObjectWrappervariation;
 		scriptObjectWrappervariation = ScriptShaderVariationParameters::GetScriptObjectWrapper(variation);
@@ -102,6 +108,9 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalClone(ScriptMaterial* self)
 	{
 		TResourceHandle<Material> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Material*>(self->GetNativeObject())->Clone();
 
 		MonoObject* __output;
@@ -118,6 +127,9 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalGetShader(ScriptMaterial* self)
 	{
 		TResourceHandle<Shader> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Material*>(self->GetNativeObject())->GetShader();
 
 		MonoObject* __output;
@@ -134,6 +146,9 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalGetVariation(ScriptMaterial* self)
 	{
 		SPtr<ShaderVariationParameters> tmp__output = B3DMakeShared<ShaderVariationParameters>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<Material*>(self->GetNativeObject())->GetVariation();
 
 		MonoObject* __output;
@@ -144,6 +159,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetFloat(ScriptMaterial* self, MonoString* name, float value, uint32_t arrayIdx)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<Material*>(self->GetNativeObject())->SetFloat(tmpname, value, arrayIdx);
@@ -151,6 +169,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetFloatCurve(ScriptMaterial* self, MonoString* name, MonoObject* value, uint32_t arrayIdx)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<float>> tmpvalue;
@@ -163,6 +184,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetColor(ScriptMaterial* self, MonoString* name, Color* value, uint32_t arrayIdx)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<Material*>(self->GetNativeObject())->SetColor(tmpname, *value, arrayIdx);
@@ -170,6 +194,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetColorGradient(ScriptMaterial* self, MonoString* name, MonoObject* value, uint32_t arrayIdx)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<ColorGradientHDR> tmpvalue;
@@ -182,6 +209,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetVec2(ScriptMaterial* self, MonoString* name, TVector2<float>* value, uint32_t arrayIdx)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<Material*>(self->GetNativeObject())->SetVec2(tmpname, *value, arrayIdx);
@@ -189,6 +219,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetVec3(ScriptMaterial* self, MonoString* name, TVector3<float>* value, uint32_t arrayIdx)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<Material*>(self->GetNativeObject())->SetVec3(tmpname, *value, arrayIdx);
@@ -196,6 +229,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetVec4(ScriptMaterial* self, MonoString* name, TVector4<float>* value, uint32_t arrayIdx)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<Material*>(self->GetNativeObject())->SetVec4(tmpname, *value, arrayIdx);
@@ -203,6 +239,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetMat3(ScriptMaterial* self, MonoString* name, Matrix3* value, uint32_t arrayIdx)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<Material*>(self->GetNativeObject())->SetMat3(tmpname, *value, arrayIdx);
@@ -210,6 +249,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetMat4(ScriptMaterial* self, MonoString* name, Matrix4* value, uint32_t arrayIdx)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<Material*>(self->GetNativeObject())->SetMat4(tmpname, *value, arrayIdx);
@@ -218,6 +260,9 @@ namespace bs
 	float ScriptMaterial::InternalGetFloat(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = static_cast<Material*>(self->GetNativeObject())->GetFloat(tmpname, arrayIdx);
@@ -231,6 +276,9 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalGetFloatCurve(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx)
 	{
 		SPtr<TAnimationCurve<float>> tmp__output = B3DMakeShared<TAnimationCurve<float>>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		*tmp__output = static_cast<Material*>(self->GetNativeObject())->GetFloatCurve(tmpname, arrayIdx);
@@ -243,6 +291,12 @@ namespace bs
 
 	void ScriptMaterial::InternalGetColor(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, Color* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		Color tmp__output;
@@ -254,6 +308,9 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalGetColorGradient(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx)
 	{
 		SPtr<ColorGradientHDR> tmp__output = B3DMakeShared<ColorGradientHDR>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		*tmp__output = static_cast<Material*>(self->GetNativeObject())->GetColorGradient(tmpname, arrayIdx);
@@ -266,6 +323,12 @@ namespace bs
 
 	void ScriptMaterial::InternalGetVec2(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		TVector2<float> tmp__output;
@@ -276,6 +339,12 @@ namespace bs
 
 	void ScriptMaterial::InternalGetVec3(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		TVector3<float> tmp__output;
@@ -286,6 +355,12 @@ namespace bs
 
 	void ScriptMaterial::InternalGetVec4(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, TVector4<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		TVector4<float> tmp__output;
@@ -296,6 +371,12 @@ namespace bs
 
 	void ScriptMaterial::InternalGetMat3(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, Matrix3* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		Matrix3 tmp__output;
@@ -306,6 +387,12 @@ namespace bs
 
 	void ScriptMaterial::InternalGetMat4(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, Matrix4* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		Matrix4 tmp__output;
@@ -317,6 +404,9 @@ namespace bs
 	bool ScriptMaterial::InternalIsAnimated(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = static_cast<Material*>(self->GetNativeObject())->IsAnimated(tmpname, arrayIdx);
@@ -346,6 +436,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetTexture(ScriptMaterial* self, MonoString* name, MonoObject* value, uint32_t mipLevel, uint32_t numMipLevels, uint32_t arraySlice, uint32_t numArraySlices)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		TResourceHandle<Texture> tmpvalue;
@@ -359,6 +452,9 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalGetTexture(ScriptMaterial* self, MonoString* name)
 	{
 		TResourceHandle<Texture> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = MaterialEx::GetTexture(B3DStaticResourceCast<Material>(self->GetBaseNativeObjectAsHandle()), tmpname);
@@ -376,6 +472,9 @@ namespace bs
 
 	void ScriptMaterial::InternalSetSpriteImage(ScriptMaterial* self, MonoString* name, MonoObject* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		TResourceHandle<SpriteImage> tmpvalue;
@@ -389,6 +488,9 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalGetSpriteImage(ScriptMaterial* self, MonoString* name)
 	{
 		TResourceHandle<SpriteImage> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = MaterialEx::GetSpriteImage(B3DStaticResourceCast<Material>(self->GetBaseNativeObjectAsHandle()), tmpname);

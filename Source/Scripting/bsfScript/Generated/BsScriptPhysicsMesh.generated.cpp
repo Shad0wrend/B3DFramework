@@ -46,6 +46,9 @@ namespace bs
 	PhysicsMeshType ScriptPhysicsMesh::InternalGetType(ScriptPhysicsMesh* self)
 	{
 		PhysicsMeshType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PhysicsMesh*>(self->GetNativeObject())->GetType();
 
 		PhysicsMeshType __output;
@@ -68,6 +71,9 @@ namespace bs
 	MonoObject* ScriptPhysicsMesh::InternalGetMeshData(ScriptPhysicsMesh* self)
 	{
 		SPtr<RendererMeshData> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = PhysicsMeshEx::GetMeshData(B3DStaticResourceCast<PhysicsMesh>(self->GetBaseNativeObjectAsHandle()));
 
 		MonoObject* __output;

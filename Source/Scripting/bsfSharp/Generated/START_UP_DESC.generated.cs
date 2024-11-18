@@ -26,7 +26,7 @@ namespace bs
 			value.Input = "";
 			value.PhysicsCooking = true;
 			value.AsyncAnimation = true;
-			value.PrimaryWindowDesc = RenderWindowDesc.Default();
+			value.PrimaryWindowDesc = RenderWindowCreateInformation.Default();
 			value.Importers = null;
 
 			return value;
@@ -56,7 +56,7 @@ namespace bs
 		/// </summary>
 		public bool AsyncAnimation;
 		/// <summary>Describes the window to create during start-up.</summary>
-		public RenderWindowDesc PrimaryWindowDesc;
+		public RenderWindowCreateInformation PrimaryWindowDesc;
 		/// <summary>A list of importer plugins to load.</summary>
 		public string[] Importers;
 	}

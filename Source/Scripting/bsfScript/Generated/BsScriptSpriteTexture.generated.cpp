@@ -45,6 +45,9 @@ namespace bs
 
 	void ScriptSpriteTexture::InternalSetAtlasTexture(ScriptSpriteTexture* self, MonoObject* texture)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scriptObjectWrappertexture;
 		scriptObjectWrappertexture = ScriptRRefBase::GetScriptObjectWrapper(texture);

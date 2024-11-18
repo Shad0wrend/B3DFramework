@@ -36,6 +36,9 @@ namespace bs
 	}
 	void ScriptParticleOrbit::InternalSetOptions(ScriptParticleOrbit* self, __PARTICLE_ORBIT_DESCInterop* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		PARTICLE_ORBIT_DESC tmpoptions;
 		tmpoptions = ScriptParticleOrbitOptions::FromInterop(*options);
 		static_cast<ParticleOrbit*>(self->GetNativeObject())->SetOptions(tmpoptions);
@@ -43,6 +46,12 @@ namespace bs
 
 	void ScriptParticleOrbit::InternalGetOptions(ScriptParticleOrbit* self, __PARTICLE_ORBIT_DESCInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_ORBIT_DESC tmp__output;
 		tmp__output = static_cast<ParticleOrbit*>(self->GetNativeObject())->GetOptions();
 

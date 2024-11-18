@@ -82,12 +82,18 @@ namespace bs
 	}
 	void ScriptCamera::InternalSetFlags(ScriptCamera* self, CameraFlag flags)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetFlags(flags);
 	}
 
 	CameraFlag ScriptCamera::InternalGetFlags(ScriptCamera* self)
 	{
 		Flags<CameraFlag> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetFlags();
 
 		CameraFlag __output;
@@ -99,6 +105,9 @@ namespace bs
 	MonoObject* ScriptCamera::InternalGetViewport(ScriptCamera* self)
 	{
 		SPtr<Viewport> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetViewport();
 
 		MonoObject* __output;
@@ -109,11 +118,20 @@ namespace bs
 
 	void ScriptCamera::InternalSetHorzFov(ScriptCamera* self, TRadian<float>* fovy)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetHorzFov(*fovy);
 	}
 
 	void ScriptCamera::InternalGetHorzFov(ScriptCamera* self, TRadian<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TRadian<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetHorzFov();
 
@@ -122,12 +140,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetNearClipDistance(ScriptCamera* self, float nearDist)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetNearClipDistance(nearDist);
 	}
 
 	float ScriptCamera::InternalGetNearClipDistance(ScriptCamera* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetNearClipDistance();
 
 		float __output;
@@ -138,12 +162,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetFarClipDistance(ScriptCamera* self, float farDist)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetFarClipDistance(farDist);
 	}
 
 	float ScriptCamera::InternalGetFarClipDistance(ScriptCamera* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetFarClipDistance();
 
 		float __output;
@@ -154,12 +184,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetAspectRatio(ScriptCamera* self, float ratio)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetAspectRatio(ratio);
 	}
 
 	float ScriptCamera::InternalGetAspectRatio(ScriptCamera* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetAspectRatio();
 
 		float __output;
@@ -170,6 +206,12 @@ namespace bs
 
 	void ScriptCamera::InternalGetProjectionMatrixRs(ScriptCamera* self, Matrix4* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Matrix4 tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetProjectionMatrixRs();
 
@@ -178,6 +220,12 @@ namespace bs
 
 	void ScriptCamera::InternalGetViewMatrix(ScriptCamera* self, Matrix4* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Matrix4 tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetViewMatrix();
 
@@ -186,12 +234,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetProjectionType(ScriptCamera* self, ProjectionType pt)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetProjectionType(pt);
 	}
 
 	ProjectionType ScriptCamera::InternalGetProjectionType(ScriptCamera* self)
 	{
 		ProjectionType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetProjectionType();
 
 		ProjectionType __output;
@@ -202,12 +256,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetOrthoWindowHeight(ScriptCamera* self, float h)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetOrthoWindowHeight(h);
 	}
 
 	float ScriptCamera::InternalGetOrthoWindowHeight(ScriptCamera* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetOrthoWindowHeight();
 
 		float __output;
@@ -218,12 +278,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetOrthoWindowWidth(ScriptCamera* self, float w)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetOrthoWindowWidth(w);
 	}
 
 	float ScriptCamera::InternalGetOrthoWindowWidth(ScriptCamera* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetOrthoWindowWidth();
 
 		float __output;
@@ -234,12 +300,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetPriority(ScriptCamera* self, int32_t priority)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetPriority(priority);
 	}
 
 	int32_t ScriptCamera::InternalGetPriority(ScriptCamera* self)
 	{
 		int32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetPriority();
 
 		int32_t __output;
@@ -250,12 +322,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetLayers(ScriptCamera* self, uint64_t layers)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetLayers(layers);
 	}
 
 	uint64_t ScriptCamera::InternalGetLayers(ScriptCamera* self)
 	{
 		uint64_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetLayers();
 
 		uint64_t __output;
@@ -266,12 +344,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetMsaaCount(ScriptCamera* self, uint32_t count)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetMsaaCount(count);
 	}
 
 	uint32_t ScriptCamera::InternalGetMsaaCount(ScriptCamera* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetMsaaCount();
 
 		uint32_t __output;
@@ -282,6 +366,9 @@ namespace bs
 
 	void ScriptCamera::InternalSetRenderSettings(ScriptCamera* self, MonoObject* settings)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		SPtr<RenderSettings> tmpsettings;
 		ScriptRenderSettings* scriptObjectWrappersettings;
 		scriptObjectWrappersettings = ScriptRenderSettings::GetScriptObjectWrapper(settings);
@@ -293,6 +380,9 @@ namespace bs
 	MonoObject* ScriptCamera::InternalGetRenderSettings(ScriptCamera* self)
 	{
 		SPtr<RenderSettings> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetRenderSettings();
 
 		MonoObject* __output;
@@ -303,11 +393,20 @@ namespace bs
 
 	void ScriptCamera::InternalNotifyNeedsRedraw(ScriptCamera* self)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->NotifyNeedsRedraw();
 	}
 
 	void ScriptCamera::InternalWorldToScreenPoint(ScriptCamera* self, TVector3<float>* worldPoint, TVector2I<int32_t>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2I<int32_t> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->WorldToScreenPoint(*worldPoint);
 
@@ -316,6 +415,12 @@ namespace bs
 
 	void ScriptCamera::InternalWorldToNdcPoint(ScriptCamera* self, TVector3<float>* worldPoint, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->WorldToNdcPoint(*worldPoint);
 
@@ -324,6 +429,12 @@ namespace bs
 
 	void ScriptCamera::InternalWorldToViewPoint(ScriptCamera* self, TVector3<float>* worldPoint, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->WorldToViewPoint(*worldPoint);
 
@@ -332,6 +443,12 @@ namespace bs
 
 	void ScriptCamera::InternalScreenToWorldPoint(ScriptCamera* self, TVector2I<int32_t>* screenPoint, float depth, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ScreenToWorldPoint(*screenPoint, depth);
 
@@ -340,6 +457,12 @@ namespace bs
 
 	void ScriptCamera::InternalScreenToViewPoint(ScriptCamera* self, TVector2I<int32_t>* screenPoint, float depth, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ScreenToViewPoint(*screenPoint, depth);
 
@@ -348,6 +471,12 @@ namespace bs
 
 	void ScriptCamera::InternalScreenToNdcPoint(ScriptCamera* self, TVector2I<int32_t>* screenPoint, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ScreenToNdcPoint(*screenPoint);
 
@@ -356,6 +485,12 @@ namespace bs
 
 	void ScriptCamera::InternalViewToWorldPoint(ScriptCamera* self, TVector3<float>* viewPoint, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ViewToWorldPoint(*viewPoint);
 
@@ -364,6 +499,12 @@ namespace bs
 
 	void ScriptCamera::InternalViewToScreenPoint(ScriptCamera* self, TVector3<float>* viewPoint, TVector2I<int32_t>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2I<int32_t> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ViewToScreenPoint(*viewPoint);
 
@@ -372,6 +513,12 @@ namespace bs
 
 	void ScriptCamera::InternalViewToNdcPoint(ScriptCamera* self, TVector3<float>* viewPoint, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ViewToNdcPoint(*viewPoint);
 
@@ -380,6 +527,12 @@ namespace bs
 
 	void ScriptCamera::InternalNdcToWorldPoint(ScriptCamera* self, TVector2<float>* ndcPoint, float depth, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->NdcToWorldPoint(*ndcPoint, depth);
 
@@ -388,6 +541,12 @@ namespace bs
 
 	void ScriptCamera::InternalNdcToViewPoint(ScriptCamera* self, TVector2<float>* ndcPoint, float depth, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->NdcToViewPoint(*ndcPoint, depth);
 
@@ -396,6 +555,12 @@ namespace bs
 
 	void ScriptCamera::InternalNdcToScreenPoint(ScriptCamera* self, TVector2<float>* ndcPoint, TVector2I<int32_t>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2I<int32_t> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->NdcToScreenPoint(*ndcPoint);
 
@@ -404,6 +569,12 @@ namespace bs
 
 	void ScriptCamera::InternalScreenPointToRay(ScriptCamera* self, TVector2I<int32_t>* screenPoint, __TRay_float_Interop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TRay<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ScreenPointToRay(*screenPoint);
 
@@ -414,6 +585,12 @@ namespace bs
 
 	void ScriptCamera::InternalProjectPoint(ScriptCamera* self, TVector3<float>* point, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ProjectPoint(*point);
 
@@ -422,6 +599,12 @@ namespace bs
 
 	void ScriptCamera::InternalUnprojectPoint(ScriptCamera* self, TVector3<float>* point, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->UnprojectPoint(*point);
 
@@ -430,12 +613,18 @@ namespace bs
 
 	void ScriptCamera::InternalSetMain(ScriptCamera* self, bool main)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCamera*>(self->GetNativeObject())->SetMain(main);
 	}
 
 	bool ScriptCamera::InternalIsMain(ScriptCamera* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->IsMain();
 
 		bool __output;

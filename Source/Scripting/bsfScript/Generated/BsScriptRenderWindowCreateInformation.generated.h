@@ -11,7 +11,7 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	struct __RENDER_WINDOW_DESCInterop
+	struct __RenderWindowCreateInformationInterop
 	{
 		__VideoModeInterop VideoMode;
 		bool Fullscreen;
@@ -31,20 +31,21 @@ namespace bs
 		bool ToolWindow;
 		bool Modal;
 		bool HideUntilSwap;
+		bool CreateRenderSurface;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderWindowDesc : public TScriptTypeDefinition<ScriptRenderWindowDesc>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderWindowCreateInformation : public TScriptTypeDefinition<ScriptRenderWindowCreateInformation>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "RenderWindowDesc")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "RenderWindowCreateInformation")
 
-		static MonoObject* Box(const __RENDER_WINDOW_DESCInterop& value);
-		static __RENDER_WINDOW_DESCInterop Unbox(MonoObject* value);
-		static RENDER_WINDOW_DESC FromInterop(const __RENDER_WINDOW_DESCInterop& value);
-		static __RENDER_WINDOW_DESCInterop ToInterop(const RENDER_WINDOW_DESC& value);
+		static MonoObject* Box(const __RenderWindowCreateInformationInterop& value);
+		static __RenderWindowCreateInformationInterop Unbox(MonoObject* value);
+		static RenderWindowCreateInformation FromInterop(const __RenderWindowCreateInformationInterop& value);
+		static __RenderWindowCreateInformationInterop ToInterop(const RenderWindowCreateInformation& value);
 
 	private:
-		ScriptRenderWindowDesc();
+		ScriptRenderWindowCreateInformation();
 
 	};
 #endif

@@ -39,6 +39,9 @@ namespace bs
 	}
 	void ScriptShaderImportOptions::InternalSetDefine(ScriptShaderImportOptions* self, MonoString* define, MonoString* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpdefine;
 		tmpdefine = MonoUtil::MonoToString(define);
 		String tmpvalue;
@@ -49,6 +52,9 @@ namespace bs
 	bool ScriptShaderImportOptions::InternalGetDefine(ScriptShaderImportOptions* self, MonoString* define, MonoString** value)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpdefine;
 		tmpdefine = MonoUtil::MonoToString(define);
 		String tmpvalue;
@@ -64,6 +70,9 @@ namespace bs
 	bool ScriptShaderImportOptions::InternalHasDefine(ScriptShaderImportOptions* self, MonoString* define)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpdefine;
 		tmpdefine = MonoUtil::MonoToString(define);
 		tmp__output = static_cast<ShaderImportOptions*>(self->GetNativeObject())->HasDefine(tmpdefine);
@@ -76,6 +85,9 @@ namespace bs
 
 	void ScriptShaderImportOptions::InternalRemoveDefine(ScriptShaderImportOptions* self, MonoString* define)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpdefine;
 		tmpdefine = MonoUtil::MonoToString(define);
 		static_cast<ShaderImportOptions*>(self->GetNativeObject())->RemoveDefine(tmpdefine);

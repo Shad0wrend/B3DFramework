@@ -47,6 +47,9 @@ namespace bs
 
 	void ScriptSpriteGlyph::InternalSetFont(ScriptSpriteGlyph* self, MonoObject* font)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<Font> tmpfont;
 		ScriptRRefBase* scriptObjectWrapperfont;
 		scriptObjectWrapperfont = ScriptRRefBase::GetScriptObjectWrapper(font);
@@ -57,11 +60,17 @@ namespace bs
 
 	void ScriptSpriteGlyph::InternalSetGlyph(ScriptSpriteGlyph* self, uint32_t glyph)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<SpriteGlyph*>(self->GetNativeObject())->SetGlyph(glyph);
 	}
 
 	void ScriptSpriteGlyph::InternalSetGlyphSize(ScriptSpriteGlyph* self, float size)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<SpriteGlyph*>(self->GetNativeObject())->SetGlyphSize(size);
 	}
 

@@ -38,6 +38,9 @@ namespace bs
 	uint32_t ScriptRenderTarget::InternalGetWidth(ScriptRenderTargetWrapperBase* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = RenderTargetEx::GetWidth(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		uint32_t __output;
@@ -49,6 +52,9 @@ namespace bs
 	uint32_t ScriptRenderTarget::InternalGetHeight(ScriptRenderTargetWrapperBase* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = RenderTargetEx::GetHeight(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		uint32_t __output;
@@ -60,6 +66,9 @@ namespace bs
 	bool ScriptRenderTarget::InternalGetGammaCorrection(ScriptRenderTargetWrapperBase* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = RenderTargetEx::GetGammaCorrection(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		bool __output;
@@ -71,6 +80,9 @@ namespace bs
 	int32_t ScriptRenderTarget::InternalGetPriority(ScriptRenderTargetWrapperBase* self)
 	{
 		int32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = RenderTargetEx::GetPriority(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		int32_t __output;
@@ -81,12 +93,18 @@ namespace bs
 
 	void ScriptRenderTarget::InternalSetPriority(ScriptRenderTargetWrapperBase* self, int32_t priority)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		RenderTargetEx::SetPriority(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()), priority);
 	}
 
 	uint32_t ScriptRenderTarget::InternalGetSampleCount(ScriptRenderTargetWrapperBase* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = RenderTargetEx::GetSampleCount(std::static_pointer_cast<RenderTarget>(self->GetBaseNativeObjectAsShared()));
 
 		uint32_t __output;

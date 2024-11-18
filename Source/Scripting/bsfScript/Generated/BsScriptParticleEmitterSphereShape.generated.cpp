@@ -36,11 +36,20 @@ namespace bs
 	}
 	void ScriptParticleEmitterSphereShape::InternalSetOptions(ScriptParticleEmitterSphereShape* self, PARTICLE_SPHERE_SHAPE_DESC* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<ParticleEmitterSphereShape*>(self->GetNativeObject())->SetOptions(*options);
 	}
 
 	void ScriptParticleEmitterSphereShape::InternalGetOptions(ScriptParticleEmitterSphereShape* self, PARTICLE_SPHERE_SHAPE_DESC* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_SPHERE_SHAPE_DESC tmp__output;
 		tmp__output = static_cast<ParticleEmitterSphereShape*>(self->GetNativeObject())->GetOptions();
 

@@ -60,6 +60,9 @@ namespace bs
 	MonoObject* ScriptJoint::InternalGetBody(ScriptJointWrapperBase* self, JointBody body)
 	{
 		GameObjectHandle<CRigidbody> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetBody(body);
 
 		MonoObject* __output;
@@ -73,6 +76,9 @@ namespace bs
 
 	void ScriptJoint::InternalSetBody(ScriptJointWrapperBase* self, JointBody body, MonoObject* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		GameObjectHandle<CRigidbody> tmpvalue;
 		ScriptRigidbody* scriptObjectWrappervalue;
 		scriptObjectWrappervalue = ScriptRigidbody::GetScriptObjectWrapper(value);
@@ -83,6 +89,12 @@ namespace bs
 
 	void ScriptJoint::InternalGetPosition(ScriptJointWrapperBase* self, JointBody body, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetPosition(body);
 
@@ -91,6 +103,12 @@ namespace bs
 
 	void ScriptJoint::InternalGetRotation(ScriptJointWrapperBase* self, JointBody body, TQuaternion<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TQuaternion<float> tmp__output;
 		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetRotation(body);
 
@@ -99,12 +117,18 @@ namespace bs
 
 	void ScriptJoint::InternalSetTransform(ScriptJointWrapperBase* self, JointBody body, TVector3<float>* position, TQuaternion<float>* rotation)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CJoint*>(self->GetNativeObject())->SetTransform(body, *position, *rotation);
 	}
 
 	float ScriptJoint::InternalGetBreakForce(ScriptJointWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetBreakForce();
 
 		float __output;
@@ -115,12 +139,18 @@ namespace bs
 
 	void ScriptJoint::InternalSetBreakForce(ScriptJointWrapperBase* self, float force)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CJoint*>(self->GetNativeObject())->SetBreakForce(force);
 	}
 
 	float ScriptJoint::InternalGetBreakTorque(ScriptJointWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetBreakTorque();
 
 		float __output;
@@ -131,12 +161,18 @@ namespace bs
 
 	void ScriptJoint::InternalSetBreakTorque(ScriptJointWrapperBase* self, float torque)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CJoint*>(self->GetNativeObject())->SetBreakTorque(torque);
 	}
 
 	bool ScriptJoint::InternalGetEnableCollision(ScriptJointWrapperBase* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetEnableCollision();
 
 		bool __output;
@@ -147,6 +183,9 @@ namespace bs
 
 	void ScriptJoint::InternalSetEnableCollision(ScriptJointWrapperBase* self, bool value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CJoint*>(self->GetNativeObject())->SetEnableCollision(value);
 	}
 }

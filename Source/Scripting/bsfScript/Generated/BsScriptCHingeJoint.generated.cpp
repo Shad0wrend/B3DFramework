@@ -41,6 +41,12 @@ namespace bs
 	}
 	void ScriptHingeJoint::InternalGetAngle(ScriptHingeJoint* self, TRadian<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TRadian<float> tmp__output;
 		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetAngle();
 
@@ -50,6 +56,9 @@ namespace bs
 	float ScriptHingeJoint::InternalGetSpeed(ScriptHingeJoint* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetSpeed();
 
 		float __output;
@@ -60,6 +69,12 @@ namespace bs
 
 	void ScriptHingeJoint::InternalGetLimit(ScriptHingeJoint* self, __LimitAngularRangeInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		LimitAngularRange tmp__output;
 		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetLimit();
 
@@ -70,6 +85,9 @@ namespace bs
 
 	void ScriptHingeJoint::InternalSetLimit(ScriptHingeJoint* self, __LimitAngularRangeInterop* limit)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		LimitAngularRange tmplimit;
 		tmplimit = ScriptLimitAngularRange::FromInterop(*limit);
 		static_cast<CHingeJoint*>(self->GetNativeObject())->SetLimit(tmplimit);
@@ -77,6 +95,12 @@ namespace bs
 
 	void ScriptHingeJoint::InternalGetDrive(ScriptHingeJoint* self, HingeJointDrive* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		HingeJointDrive tmp__output;
 		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetDrive();
 
@@ -85,17 +109,26 @@ namespace bs
 
 	void ScriptHingeJoint::InternalSetDrive(ScriptHingeJoint* self, HingeJointDrive* drive)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CHingeJoint*>(self->GetNativeObject())->SetDrive(*drive);
 	}
 
 	void ScriptHingeJoint::InternalSetFlag(ScriptHingeJoint* self, HingeJointFlag flag, bool enabled)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CHingeJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
 	}
 
 	bool ScriptHingeJoint::InternalHasFlag(ScriptHingeJoint* self, HingeJointFlag flag)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->HasFlag(flag);
 
 		bool __output;

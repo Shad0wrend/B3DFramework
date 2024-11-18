@@ -39,6 +39,9 @@ namespace bs
 	MonoObject* ScriptGUIWidget::InternalGetPanel(ScriptGUIWidget* self)
 	{
 		GUIPanel* tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CGUIWidget*>(self->GetNativeObject())->GetPanel();
 
 		MonoObject* __output;
@@ -50,6 +53,9 @@ namespace bs
 	uint8_t ScriptGUIWidget::InternalGetDepth(ScriptGUIWidget* self)
 	{
 		uint8_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CGUIWidget*>(self->GetNativeObject())->GetDepth();
 
 		uint8_t __output;
@@ -60,12 +66,18 @@ namespace bs
 
 	void ScriptGUIWidget::InternalSetDepth(ScriptGUIWidget* self, uint8_t depth)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CGUIWidget*>(self->GetNativeObject())->SetDepth(depth);
 	}
 
 	bool ScriptGUIWidget::InternalInBounds(ScriptGUIWidget* self, TVector2I<int32_t>* position)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CGUIWidget*>(self->GetNativeObject())->InBounds(*position);
 
 		bool __output;
@@ -76,6 +88,12 @@ namespace bs
 
 	void ScriptGUIWidget::InternalGetBounds(ScriptGUIWidget* self, Rect2I* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Rect2I tmp__output;
 		tmp__output = static_cast<CGUIWidget*>(self->GetNativeObject())->GetBounds();
 

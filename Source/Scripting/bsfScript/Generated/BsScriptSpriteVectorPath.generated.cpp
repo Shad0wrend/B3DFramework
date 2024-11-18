@@ -46,6 +46,9 @@ namespace bs
 
 	void ScriptSpriteVectorPath::InternalSetVectorPath(ScriptSpriteVectorPath* self, MonoObject* vectorPath)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<VectorPath> tmpvectorPath;
 		ScriptRRefBase* scriptObjectWrappervectorPath;
 		scriptObjectWrappervectorPath = ScriptRRefBase::GetScriptObjectWrapper(vectorPath);

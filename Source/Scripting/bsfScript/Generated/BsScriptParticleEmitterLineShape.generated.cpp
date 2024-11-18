@@ -36,6 +36,9 @@ namespace bs
 	}
 	void ScriptParticleEmitterLineShape::InternalSetOptions(ScriptParticleEmitterLineShape* self, __PARTICLE_LINE_SHAPE_DESCInterop* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		PARTICLE_LINE_SHAPE_DESC tmpoptions;
 		tmpoptions = ScriptParticleLineShapeOptions::FromInterop(*options);
 		static_cast<ParticleEmitterLineShape*>(self->GetNativeObject())->SetOptions(tmpoptions);
@@ -43,6 +46,12 @@ namespace bs
 
 	void ScriptParticleEmitterLineShape::InternalGetOptions(ScriptParticleEmitterLineShape* self, __PARTICLE_LINE_SHAPE_DESCInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_LINE_SHAPE_DESC tmp__output;
 		tmp__output = static_cast<ParticleEmitterLineShape*>(self->GetNativeObject())->GetOptions();
 

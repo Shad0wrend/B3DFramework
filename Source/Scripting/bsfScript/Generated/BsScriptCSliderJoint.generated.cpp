@@ -39,6 +39,9 @@ namespace bs
 	float ScriptSliderJoint::InternalGetPosition(ScriptSliderJoint* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CSliderJoint*>(self->GetNativeObject())->GetPosition();
 
 		float __output;
@@ -50,6 +53,9 @@ namespace bs
 	float ScriptSliderJoint::InternalGetSpeed(ScriptSliderJoint* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CSliderJoint*>(self->GetNativeObject())->GetSpeed();
 
 		float __output;
@@ -60,6 +66,12 @@ namespace bs
 
 	void ScriptSliderJoint::InternalGetLimit(ScriptSliderJoint* self, __LimitLinearRangeInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		LimitLinearRange tmp__output;
 		tmp__output = static_cast<CSliderJoint*>(self->GetNativeObject())->GetLimit();
 
@@ -70,6 +82,9 @@ namespace bs
 
 	void ScriptSliderJoint::InternalSetLimit(ScriptSliderJoint* self, __LimitLinearRangeInterop* limit)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		LimitLinearRange tmplimit;
 		tmplimit = ScriptLimitLinearRange::FromInterop(*limit);
 		static_cast<CSliderJoint*>(self->GetNativeObject())->SetLimit(tmplimit);
@@ -77,12 +92,18 @@ namespace bs
 
 	void ScriptSliderJoint::InternalSetFlag(ScriptSliderJoint* self, SliderJointFlag flag, bool enabled)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CSliderJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
 	}
 
 	bool ScriptSliderJoint::InternalHasFlag(ScriptSliderJoint* self, SliderJointFlag flag)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CSliderJoint*>(self->GetNativeObject())->HasFlag(flag);
 
 		bool __output;

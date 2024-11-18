@@ -46,12 +46,18 @@ namespace bs
 	}
 	void ScriptGUIToggleable::InternalSetIsToggled(ScriptGUIToggleableWrapperBase* self, bool isToggled)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUIToggleable*>(self->GetNativeObject())->SetIsToggled(isToggled);
 	}
 
 	bool ScriptGUIToggleable::InternalIsToggled(ScriptGUIToggleableWrapperBase* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUIToggleable*>(self->GetNativeObject())->IsToggled();
 
 		bool __output;

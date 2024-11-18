@@ -74,6 +74,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalRayCast(ScriptPhysicsScene* self, __TRay_float_Interop* ray, __PhysicsQueryHitInterop* hit, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TRay<float> tmpray;
 		tmpray = ScriptRay::FromInterop(*ray);
 		PhysicsQueryHit tmphit;
@@ -91,6 +94,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalRayCast0(ScriptPhysicsScene* self, TVector3<float>* origin, TVector3<float>* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		PhysicsQueryHit tmphit;
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->RayCast(*origin, *unitDir, tmphit, layer, max);
 
@@ -106,6 +112,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalBoxCast(ScriptPhysicsScene* self, __TAABox_float_Interop* box, TQuaternion<float>* rotation, TVector3<float>* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TAABox<float> tmpbox;
 		tmpbox = ScriptAABox::FromInterop(*box);
 		PhysicsQueryHit tmphit;
@@ -123,6 +132,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalSphereCast(ScriptPhysicsScene* self, __TSphere_float_Interop* sphere, TVector3<float>* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TSphere<float> tmpsphere;
 		tmpsphere = ScriptSphere::FromInterop(*sphere);
 		PhysicsQueryHit tmphit;
@@ -140,6 +152,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalCapsuleCast(ScriptPhysicsScene* self, Capsule* capsule, TQuaternion<float>* rotation, TVector3<float>* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		PhysicsQueryHit tmphit;
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->CapsuleCast(*capsule, *rotation, *unitDir, tmphit, layer, max);
 
@@ -155,6 +170,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalConvexCast(ScriptPhysicsScene* self, MonoObject* mesh, TVector3<float>* position, TQuaternion<float>* rotation, TVector3<float>* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
 		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
@@ -175,6 +193,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalRayCastAll(ScriptPhysicsScene* self, __TRay_float_Interop* ray, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TRay<float> tmpray;
 		tmpray = ScriptRay::FromInterop(*ray);
 		nativeArray__output = static_cast<PhysicsScene*>(self->GetNativeObject())->RayCastAll(tmpray, layer, max);
@@ -194,6 +215,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalRayCastAll0(ScriptPhysicsScene* self, TVector3<float>* origin, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<PhysicsScene*>(self->GetNativeObject())->RayCastAll(*origin, *unitDir, layer, max);
 
 		MonoArray* __output;
@@ -211,6 +235,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalBoxCastAll(ScriptPhysicsScene* self, __TAABox_float_Interop* box, TQuaternion<float>* rotation, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TAABox<float> tmpbox;
 		tmpbox = ScriptAABox::FromInterop(*box);
 		nativeArray__output = static_cast<PhysicsScene*>(self->GetNativeObject())->BoxCastAll(tmpbox, *rotation, *unitDir, layer, max);
@@ -230,6 +257,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalSphereCastAll(ScriptPhysicsScene* self, __TSphere_float_Interop* sphere, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TSphere<float> tmpsphere;
 		tmpsphere = ScriptSphere::FromInterop(*sphere);
 		nativeArray__output = static_cast<PhysicsScene*>(self->GetNativeObject())->SphereCastAll(tmpsphere, *unitDir, layer, max);
@@ -249,6 +279,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalCapsuleCastAll(ScriptPhysicsScene* self, Capsule* capsule, TQuaternion<float>* rotation, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<PhysicsScene*>(self->GetNativeObject())->CapsuleCastAll(*capsule, *rotation, *unitDir, layer, max);
 
 		MonoArray* __output;
@@ -266,6 +299,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalConvexCastAll(ScriptPhysicsScene* self, MonoObject* mesh, TVector3<float>* position, TQuaternion<float>* rotation, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
 		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
@@ -288,6 +324,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalRayCastAny(ScriptPhysicsScene* self, __TRay_float_Interop* ray, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TRay<float> tmpray;
 		tmpray = ScriptRay::FromInterop(*ray);
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->RayCastAny(tmpray, layer, max);
@@ -301,6 +340,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalRayCastAny0(ScriptPhysicsScene* self, TVector3<float>* origin, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->RayCastAny(*origin, *unitDir, layer, max);
 
 		bool __output;
@@ -312,6 +354,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalBoxCastAny(ScriptPhysicsScene* self, __TAABox_float_Interop* box, TQuaternion<float>* rotation, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TAABox<float> tmpbox;
 		tmpbox = ScriptAABox::FromInterop(*box);
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->BoxCastAny(tmpbox, *rotation, *unitDir, layer, max);
@@ -325,6 +370,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalSphereCastAny(ScriptPhysicsScene* self, __TSphere_float_Interop* sphere, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TSphere<float> tmpsphere;
 		tmpsphere = ScriptSphere::FromInterop(*sphere);
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->SphereCastAny(tmpsphere, *unitDir, layer, max);
@@ -338,6 +386,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalCapsuleCastAny(ScriptPhysicsScene* self, Capsule* capsule, TQuaternion<float>* rotation, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->CapsuleCastAny(*capsule, *rotation, *unitDir, layer, max);
 
 		bool __output;
@@ -349,6 +400,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalConvexCastAny(ScriptPhysicsScene* self, MonoObject* mesh, TVector3<float>* position, TQuaternion<float>* rotation, TVector3<float>* unitDir, uint64_t layer, float max)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
 		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
@@ -365,6 +419,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalBoxOverlap(ScriptPhysicsScene* self, __TAABox_float_Interop* box, TQuaternion<float>* rotation, uint64_t layer)
 	{
 		Vector<GameObjectHandle<CCollider>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TAABox<float> tmpbox;
 		tmpbox = ScriptAABox::FromInterop(*box);
 		nativeArray__output = static_cast<PhysicsScene*>(self->GetNativeObject())->BoxOverlap(tmpbox, *rotation, layer);
@@ -387,6 +444,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalSphereOverlap(ScriptPhysicsScene* self, __TSphere_float_Interop* sphere, uint64_t layer)
 	{
 		Vector<GameObjectHandle<CCollider>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TSphere<float> tmpsphere;
 		tmpsphere = ScriptSphere::FromInterop(*sphere);
 		nativeArray__output = static_cast<PhysicsScene*>(self->GetNativeObject())->SphereOverlap(tmpsphere, layer);
@@ -409,6 +469,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalCapsuleOverlap(ScriptPhysicsScene* self, Capsule* capsule, TQuaternion<float>* rotation, uint64_t layer)
 	{
 		Vector<GameObjectHandle<CCollider>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<PhysicsScene*>(self->GetNativeObject())->CapsuleOverlap(*capsule, *rotation, layer);
 
 		MonoArray* __output;
@@ -429,6 +492,9 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalConvexOverlap(ScriptPhysicsScene* self, MonoObject* mesh, TVector3<float>* position, TQuaternion<float>* rotation, uint64_t layer)
 	{
 		Vector<GameObjectHandle<CCollider>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
 		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
@@ -454,6 +520,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalBoxOverlapAny(ScriptPhysicsScene* self, __TAABox_float_Interop* box, TQuaternion<float>* rotation, uint64_t layer)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TAABox<float> tmpbox;
 		tmpbox = ScriptAABox::FromInterop(*box);
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->BoxOverlapAny(tmpbox, *rotation, layer);
@@ -467,6 +536,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalSphereOverlapAny(ScriptPhysicsScene* self, __TSphere_float_Interop* sphere, uint64_t layer)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TSphere<float> tmpsphere;
 		tmpsphere = ScriptSphere::FromInterop(*sphere);
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->SphereOverlapAny(tmpsphere, layer);
@@ -480,6 +552,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalCapsuleOverlapAny(ScriptPhysicsScene* self, Capsule* capsule, TQuaternion<float>* rotation, uint64_t layer)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->CapsuleOverlapAny(*capsule, *rotation, layer);
 
 		bool __output;
@@ -491,6 +566,9 @@ namespace bs
 	bool ScriptPhysicsScene::InternalConvexOverlapAny(ScriptPhysicsScene* self, MonoObject* mesh, TVector3<float>* position, TQuaternion<float>* rotation, uint64_t layer)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptObjectWrappermesh;
 		scriptObjectWrappermesh = ScriptRRefBase::GetScriptObjectWrapper(mesh);
@@ -506,6 +584,12 @@ namespace bs
 
 	void ScriptPhysicsScene::InternalGetGravity(ScriptPhysicsScene* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->GetGravity();
 
@@ -514,12 +598,18 @@ namespace bs
 
 	void ScriptPhysicsScene::InternalSetGravity(ScriptPhysicsScene* self, TVector3<float>* gravity)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<PhysicsScene*>(self->GetNativeObject())->SetGravity(*gravity);
 	}
 
 	uint32_t ScriptPhysicsScene::InternalAddBroadPhaseRegion(ScriptPhysicsScene* self, __TAABox_float_Interop* region)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		TAABox<float> tmpregion;
 		tmpregion = ScriptAABox::FromInterop(*region);
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->AddBroadPhaseRegion(tmpregion);
@@ -532,11 +622,17 @@ namespace bs
 
 	void ScriptPhysicsScene::InternalRemoveBroadPhaseRegion(ScriptPhysicsScene* self, uint32_t handle)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<PhysicsScene*>(self->GetNativeObject())->RemoveBroadPhaseRegion(handle);
 	}
 
 	void ScriptPhysicsScene::InternalClearBroadPhaseRegions(ScriptPhysicsScene* self)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<PhysicsScene*>(self->GetNativeObject())->ClearBroadPhaseRegions();
 	}
 }

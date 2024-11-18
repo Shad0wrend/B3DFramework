@@ -49,6 +49,9 @@ namespace bs
 	uint32_t ScriptPixelData::InternalGetRowPitch(ScriptPixelData* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PixelData*>(self->GetNativeObject())->GetRowPitch();
 
 		uint32_t __output;
@@ -60,6 +63,9 @@ namespace bs
 	uint32_t ScriptPixelData::InternalGetSlicePitch(ScriptPixelData* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PixelData*>(self->GetNativeObject())->GetSlicePitch();
 
 		uint32_t __output;
@@ -71,6 +77,9 @@ namespace bs
 	PixelFormat ScriptPixelData::InternalGetFormat(ScriptPixelData* self)
 	{
 		PixelFormat tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PixelData*>(self->GetNativeObject())->GetFormat();
 
 		PixelFormat __output;
@@ -81,6 +90,12 @@ namespace bs
 
 	void ScriptPixelData::InternalGetExtents(ScriptPixelData* self, PixelVolume* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PixelVolume tmp__output;
 		tmp__output = static_cast<PixelData*>(self->GetNativeObject())->GetExtents();
 
@@ -90,6 +105,9 @@ namespace bs
 	bool ScriptPixelData::InternalIsConsecutive(ScriptPixelData* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PixelData*>(self->GetNativeObject())->IsConsecutive();
 
 		bool __output;
@@ -101,6 +119,9 @@ namespace bs
 	uint32_t ScriptPixelData::InternalGetSize(ScriptPixelData* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PixelData*>(self->GetNativeObject())->GetSize();
 
 		uint32_t __output;
@@ -123,6 +144,12 @@ namespace bs
 
 	void ScriptPixelData::InternalGetPixel(ScriptPixelData* self, int32_t x, int32_t y, int32_t z, Color* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Color tmp__output;
 		tmp__output = PixelDataEx::GetPixel(std::static_pointer_cast<PixelData>(self->GetBaseNativeObjectAsShared()), x, y, z);
 
@@ -131,12 +158,18 @@ namespace bs
 
 	void ScriptPixelData::InternalSetPixel(ScriptPixelData* self, Color* value, int32_t x, int32_t y, int32_t z)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		PixelDataEx::SetPixel(std::static_pointer_cast<PixelData>(self->GetBaseNativeObjectAsShared()), *value, x, y, z);
 	}
 
 	MonoArray* ScriptPixelData::InternalGetPixels(ScriptPixelData* self)
 	{
 		Vector<Color> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = PixelDataEx::GetPixels(std::static_pointer_cast<PixelData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -153,6 +186,9 @@ namespace bs
 
 	void ScriptPixelData::InternalSetPixels(ScriptPixelData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<Color> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -169,6 +205,9 @@ namespace bs
 	MonoArray* ScriptPixelData::InternalGetRawPixels(ScriptPixelData* self)
 	{
 		Vector<char> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = PixelDataEx::GetRawPixels(std::static_pointer_cast<PixelData>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -185,6 +224,9 @@ namespace bs
 
 	void ScriptPixelData::InternalSetRawPixels(ScriptPixelData* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<char> nativeArrayvalue;
 		if(value != nullptr)
 		{

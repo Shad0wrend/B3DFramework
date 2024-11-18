@@ -37,12 +37,18 @@ namespace bs
 	}
 	void ScriptGUIProgressBar::InternalSetPercent(ScriptGUIProgressBar* self, float percent)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUIProgressBar*>(self->GetNativeObject())->SetPercent(percent);
 	}
 
 	float ScriptGUIProgressBar::InternalGetPercent(ScriptGUIProgressBar* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUIProgressBar*>(self->GetNativeObject())->GetPercent();
 
 		float __output;

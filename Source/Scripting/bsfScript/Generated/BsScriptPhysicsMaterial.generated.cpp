@@ -47,12 +47,18 @@ namespace bs
 
 	void ScriptPhysicsMaterial::InternalSetStaticFriction(ScriptPhysicsMaterial* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<PhysicsMaterial*>(self->GetNativeObject())->SetStaticFriction(value);
 	}
 
 	float ScriptPhysicsMaterial::InternalGetStaticFriction(ScriptPhysicsMaterial* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PhysicsMaterial*>(self->GetNativeObject())->GetStaticFriction();
 
 		float __output;
@@ -63,12 +69,18 @@ namespace bs
 
 	void ScriptPhysicsMaterial::InternalSetDynamicFriction(ScriptPhysicsMaterial* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<PhysicsMaterial*>(self->GetNativeObject())->SetDynamicFriction(value);
 	}
 
 	float ScriptPhysicsMaterial::InternalGetDynamicFriction(ScriptPhysicsMaterial* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PhysicsMaterial*>(self->GetNativeObject())->GetDynamicFriction();
 
 		float __output;
@@ -79,12 +91,18 @@ namespace bs
 
 	void ScriptPhysicsMaterial::InternalSetRestitutionCoefficient(ScriptPhysicsMaterial* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<PhysicsMaterial*>(self->GetNativeObject())->SetRestitutionCoefficient(value);
 	}
 
 	float ScriptPhysicsMaterial::InternalGetRestitutionCoefficient(ScriptPhysicsMaterial* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<PhysicsMaterial*>(self->GetNativeObject())->GetRestitutionCoefficient();
 
 		float __output;

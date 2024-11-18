@@ -46,6 +46,9 @@ namespace bs
 	uint32_t ScriptAudioClip::InternalGetBitDepth(ScriptAudioClip* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AudioClip*>(self->GetNativeObject())->GetBitDepth();
 
 		uint32_t __output;
@@ -57,6 +60,9 @@ namespace bs
 	uint32_t ScriptAudioClip::InternalGetFrequency(ScriptAudioClip* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AudioClip*>(self->GetNativeObject())->GetFrequency();
 
 		uint32_t __output;
@@ -68,6 +74,9 @@ namespace bs
 	uint32_t ScriptAudioClip::InternalGetNumChannels(ScriptAudioClip* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AudioClip*>(self->GetNativeObject())->GetNumChannels();
 
 		uint32_t __output;
@@ -79,6 +88,9 @@ namespace bs
 	AudioFormat ScriptAudioClip::InternalGetFormat(ScriptAudioClip* self)
 	{
 		AudioFormat tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AudioClip*>(self->GetNativeObject())->GetFormat();
 
 		AudioFormat __output;
@@ -90,6 +102,9 @@ namespace bs
 	AudioReadMode ScriptAudioClip::InternalGetReadMode(ScriptAudioClip* self)
 	{
 		AudioReadMode tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AudioClip*>(self->GetNativeObject())->GetReadMode();
 
 		AudioReadMode __output;
@@ -101,6 +116,9 @@ namespace bs
 	float ScriptAudioClip::InternalGetLength(ScriptAudioClip* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AudioClip*>(self->GetNativeObject())->GetLength();
 
 		float __output;
@@ -112,6 +130,9 @@ namespace bs
 	uint32_t ScriptAudioClip::InternalGetNumSamples(ScriptAudioClip* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AudioClip*>(self->GetNativeObject())->GetNumSamples();
 
 		uint32_t __output;
@@ -123,6 +144,9 @@ namespace bs
 	bool ScriptAudioClip::InternalIs3D(ScriptAudioClip* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AudioClip*>(self->GetNativeObject())->Is3D();
 
 		bool __output;

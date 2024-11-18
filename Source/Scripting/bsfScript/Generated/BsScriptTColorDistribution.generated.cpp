@@ -89,6 +89,9 @@ namespace bs
 	PropertyDistributionType ScriptColorDistribution::InternalGetType(ScriptColorDistribution* self)
 	{
 		PropertyDistributionType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TColorDistribution<ColorGradient>*>(self->GetNativeObject())->GetType();
 
 		PropertyDistributionType __output;
@@ -99,6 +102,12 @@ namespace bs
 
 	void ScriptColorDistribution::InternalGetMinConstant(ScriptColorDistribution* self, Color* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Color tmp__output;
 		tmp__output = static_cast<TColorDistribution<ColorGradient>*>(self->GetNativeObject())->GetMinConstant();
 
@@ -107,6 +116,12 @@ namespace bs
 
 	void ScriptColorDistribution::InternalGetMaxConstant(ScriptColorDistribution* self, Color* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Color tmp__output;
 		tmp__output = static_cast<TColorDistribution<ColorGradient>*>(self->GetNativeObject())->GetMaxConstant();
 
@@ -116,6 +131,9 @@ namespace bs
 	MonoObject* ScriptColorDistribution::InternalGetMinGradient(ScriptColorDistribution* self)
 	{
 		SPtr<ColorGradient> tmp__output = B3DMakeShared<ColorGradient>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TColorDistribution<ColorGradient>*>(self->GetNativeObject())->GetMinGradient();
 
 		MonoObject* __output;
@@ -127,6 +145,9 @@ namespace bs
 	MonoObject* ScriptColorDistribution::InternalGetMaxGradient(ScriptColorDistribution* self)
 	{
 		SPtr<ColorGradient> tmp__output = B3DMakeShared<ColorGradient>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TColorDistribution<ColorGradient>*>(self->GetNativeObject())->GetMaxGradient();
 
 		MonoObject* __output;
@@ -214,6 +235,9 @@ namespace bs
 	PropertyDistributionType ScriptColorHDRDistribution::InternalGetType(ScriptColorHDRDistribution* self)
 	{
 		PropertyDistributionType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TColorDistribution<ColorGradientHDR>*>(self->GetNativeObject())->GetType();
 
 		PropertyDistributionType __output;
@@ -224,6 +248,12 @@ namespace bs
 
 	void ScriptColorHDRDistribution::InternalGetMinConstant(ScriptColorHDRDistribution* self, Color* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Color tmp__output;
 		tmp__output = static_cast<TColorDistribution<ColorGradientHDR>*>(self->GetNativeObject())->GetMinConstant();
 
@@ -232,6 +262,12 @@ namespace bs
 
 	void ScriptColorHDRDistribution::InternalGetMaxConstant(ScriptColorHDRDistribution* self, Color* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Color tmp__output;
 		tmp__output = static_cast<TColorDistribution<ColorGradientHDR>*>(self->GetNativeObject())->GetMaxConstant();
 
@@ -241,6 +277,9 @@ namespace bs
 	MonoObject* ScriptColorHDRDistribution::InternalGetMinGradient(ScriptColorHDRDistribution* self)
 	{
 		SPtr<ColorGradientHDR> tmp__output = B3DMakeShared<ColorGradientHDR>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TColorDistribution<ColorGradientHDR>*>(self->GetNativeObject())->GetMinGradient();
 
 		MonoObject* __output;
@@ -252,6 +291,9 @@ namespace bs
 	MonoObject* ScriptColorHDRDistribution::InternalGetMaxGradient(ScriptColorHDRDistribution* self)
 	{
 		SPtr<ColorGradientHDR> tmp__output = B3DMakeShared<ColorGradientHDR>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TColorDistribution<ColorGradientHDR>*>(self->GetNativeObject())->GetMaxGradient();
 
 		MonoObject* __output;

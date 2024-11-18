@@ -1,6 +1,6 @@
 //********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "BsScriptRENDER_WINDOW_DESC.generated.h"
+#include "BsScriptRenderWindowCreateInformation.generated.h"
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
@@ -10,22 +10,22 @@
 namespace bs
 {
 #if !B3D_IS_ENGINE
-	ScriptRenderWindowDesc::ScriptRenderWindowDesc()
+	ScriptRenderWindowCreateInformation::ScriptRenderWindowCreateInformation()
 	{ }
 
-	MonoObject* ScriptRenderWindowDesc::Box(const __RENDER_WINDOW_DESCInterop& value)
+	MonoObject* ScriptRenderWindowCreateInformation::Box(const __RenderWindowCreateInformationInterop& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	__RENDER_WINDOW_DESCInterop ScriptRenderWindowDesc::Unbox(MonoObject* value)
+	__RenderWindowCreateInformationInterop ScriptRenderWindowCreateInformation::Unbox(MonoObject* value)
 	{
-		return *(__RENDER_WINDOW_DESCInterop*)MonoUtil::Unbox(value);
+		return *(__RenderWindowCreateInformationInterop*)MonoUtil::Unbox(value);
 	}
 
-	RENDER_WINDOW_DESC ScriptRenderWindowDesc::FromInterop(const __RENDER_WINDOW_DESCInterop& value)
+	RenderWindowCreateInformation ScriptRenderWindowCreateInformation::FromInterop(const __RenderWindowCreateInformationInterop& value)
 	{
-		RENDER_WINDOW_DESC output;
+		RenderWindowCreateInformation output;
 		VideoMode tmpVideoMode;
 		tmpVideoMode = ScriptVideoMode::FromInterop(value.VideoMode);
 		output.VideoMode = tmpVideoMode;
@@ -50,13 +50,14 @@ namespace bs
 		output.ToolWindow = value.ToolWindow;
 		output.Modal = value.Modal;
 		output.HideUntilSwap = value.HideUntilSwap;
+		output.CreateRenderSurface = value.CreateRenderSurface;
 
 		return output;
 	}
 
-	__RENDER_WINDOW_DESCInterop ScriptRenderWindowDesc::ToInterop(const RENDER_WINDOW_DESC& value)
+	__RenderWindowCreateInformationInterop ScriptRenderWindowCreateInformation::ToInterop(const RenderWindowCreateInformation& value)
 	{
-		__RENDER_WINDOW_DESCInterop output;
+		__RenderWindowCreateInformationInterop output;
 		__VideoModeInterop tmpVideoMode;
 		tmpVideoMode = ScriptVideoMode::ToInterop(value.VideoMode);
 		output.VideoMode = tmpVideoMode;
@@ -81,6 +82,7 @@ namespace bs
 		output.ToolWindow = value.ToolWindow;
 		output.Modal = value.Modal;
 		output.HideUntilSwap = value.HideUntilSwap;
+		output.CreateRenderSurface = value.CreateRenderSurface;
 
 		return output;
 	}

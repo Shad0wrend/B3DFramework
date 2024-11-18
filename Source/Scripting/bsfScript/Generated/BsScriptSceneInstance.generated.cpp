@@ -44,6 +44,9 @@ namespace bs
 	MonoString* ScriptSceneInstance::InternalGetName(ScriptSceneInstance* self)
 	{
 		String tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->GetName();
 
 		MonoString* __output;
@@ -55,6 +58,9 @@ namespace bs
 	MonoObject* ScriptSceneInstance::InternalGetRoot(ScriptSceneInstance* self)
 	{
 		GameObjectHandle<SceneObject> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->GetRoot();
 
 		MonoObject* __output;
@@ -69,6 +75,9 @@ namespace bs
 	bool ScriptSceneInstance::InternalIsActive(ScriptSceneInstance* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->IsActive();
 
 		bool __output;
@@ -80,6 +89,9 @@ namespace bs
 	MonoObject* ScriptSceneInstance::InternalGetPhysicsScene(ScriptSceneInstance* self)
 	{
 		SPtr<PhysicsScene> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->GetPhysicsScene();
 
 		MonoObject* __output;
@@ -90,6 +102,12 @@ namespace bs
 
 	void ScriptSceneInstance::InternalGetAssociatedResourceId(ScriptSceneInstance* self, UUID* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		UUID tmp__output;
 		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->GetAssociatedResourceId();
 
@@ -99,6 +117,9 @@ namespace bs
 	MonoObject* ScriptSceneInstance::InternalCreateSceneObject(ScriptSceneInstance* self, MonoString* name)
 	{
 		GameObjectHandle<SceneObject> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->CreateSceneObject(tmpname);

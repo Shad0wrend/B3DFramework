@@ -36,6 +36,9 @@ namespace bs
 	}
 	void ScriptParticleRotation::InternalSetOptions(ScriptParticleRotation* self, __PARTICLE_ROTATION_DESCInterop* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		PARTICLE_ROTATION_DESC tmpoptions;
 		tmpoptions = ScriptParticleRotationOptions::FromInterop(*options);
 		static_cast<ParticleRotation*>(self->GetNativeObject())->SetOptions(tmpoptions);
@@ -43,6 +46,12 @@ namespace bs
 
 	void ScriptParticleRotation::InternalGetOptions(ScriptParticleRotation* self, __PARTICLE_ROTATION_DESCInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_ROTATION_DESC tmp__output;
 		tmp__output = static_cast<ParticleRotation*>(self->GetNativeObject())->GetOptions();
 

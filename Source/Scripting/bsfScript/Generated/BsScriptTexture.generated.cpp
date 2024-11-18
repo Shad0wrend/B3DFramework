@@ -59,6 +59,9 @@ namespace bs
 	MonoObject* ScriptTexture::InternalReadData(ScriptTexture* self, uint32_t face, uint32_t mipLevel)
 	{
 		TAsyncOp<SPtr<PixelData>> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Texture*>(self->GetNativeObject())->ReadData(face, mipLevel);
 
 		MonoObject* __output;
@@ -84,6 +87,9 @@ namespace bs
 	PixelFormat ScriptTexture::InternalGetPixelFormat(ScriptTexture* self)
 	{
 		PixelFormat tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetPixelFormat(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		PixelFormat __output;
@@ -95,6 +101,9 @@ namespace bs
 	TextureUsage ScriptTexture::InternalGetUsage(ScriptTexture* self)
 	{
 		TextureUsage tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetUsage(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		TextureUsage __output;
@@ -106,6 +115,9 @@ namespace bs
 	TextureType ScriptTexture::InternalGetType(ScriptTexture* self)
 	{
 		TextureType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetType(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		TextureType __output;
@@ -117,6 +129,9 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetWidth(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetWidth(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
@@ -128,6 +143,9 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetHeight(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetHeight(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
@@ -139,6 +157,9 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetDepth(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetDepth(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
@@ -150,6 +171,9 @@ namespace bs
 	bool ScriptTexture::InternalGetGammaCorrection(ScriptTexture* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetGammaCorrection(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		bool __output;
@@ -161,6 +185,9 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetSampleCount(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetSampleCount(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
@@ -172,6 +199,9 @@ namespace bs
 	uint32_t ScriptTexture::InternalGetMipmapCount(ScriptTexture* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetMipmapCount(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
@@ -183,6 +213,9 @@ namespace bs
 	MonoObject* ScriptTexture::InternalGetPixels(ScriptTexture* self, uint32_t face, uint32_t mipLevel)
 	{
 		SPtr<PixelData> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = TextureEx::GetPixels(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()), face, mipLevel);
 
 		MonoObject* __output;
@@ -193,6 +226,9 @@ namespace bs
 
 	void ScriptTexture::InternalSetPixels(ScriptTexture* self, MonoObject* data, uint32_t face, uint32_t mipLevel)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		SPtr<PixelData> tmpdata;
 		ScriptPixelData* scriptObjectWrapperdata;
 		scriptObjectWrapperdata = ScriptPixelData::GetScriptObjectWrapper(data);
@@ -203,6 +239,9 @@ namespace bs
 
 	void ScriptTexture::InternalSetPixelsArray(ScriptTexture* self, MonoArray* colors, uint32_t face, uint32_t mipLevel)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<Color> nativeArraycolors;
 		if(colors != nullptr)
 		{

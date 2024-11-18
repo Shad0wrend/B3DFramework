@@ -45,6 +45,9 @@ namespace bs
 
 	void ScriptInputConfiguration::InternalRegisterButton(ScriptInputConfiguration* self, MonoString* name, ButtonCode buttonCode, ButtonModifier modifiers, bool repeatable)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<InputConfiguration*>(self->GetNativeObject())->RegisterButton(tmpname, buttonCode, modifiers, repeatable);
@@ -52,6 +55,9 @@ namespace bs
 
 	void ScriptInputConfiguration::InternalUnregisterButton(ScriptInputConfiguration* self, MonoString* name)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<InputConfiguration*>(self->GetNativeObject())->UnregisterButton(tmpname);
@@ -59,6 +65,9 @@ namespace bs
 
 	void ScriptInputConfiguration::InternalRegisterAxis(ScriptInputConfiguration* self, MonoString* name, VirtualAxisCreateInformation* createInformation)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<InputConfiguration*>(self->GetNativeObject())->RegisterAxis(tmpname, *createInformation);
@@ -66,6 +75,9 @@ namespace bs
 
 	void ScriptInputConfiguration::InternalUnregisterAxis(ScriptInputConfiguration* self, MonoString* name)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<InputConfiguration*>(self->GetNativeObject())->UnregisterAxis(tmpname);
@@ -73,12 +85,18 @@ namespace bs
 
 	void ScriptInputConfiguration::InternalSetRepeatInterval(ScriptInputConfiguration* self, uint64_t milliseconds)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<InputConfiguration*>(self->GetNativeObject())->SetRepeatInterval(milliseconds);
 	}
 
 	uint64_t ScriptInputConfiguration::InternalGetRepeatInterval(ScriptInputConfiguration* self)
 	{
 		uint64_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<InputConfiguration*>(self->GetNativeObject())->GetRepeatInterval();
 
 		uint64_t __output;

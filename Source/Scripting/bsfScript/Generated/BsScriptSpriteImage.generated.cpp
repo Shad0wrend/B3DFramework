@@ -51,6 +51,12 @@ namespace bs
 
 	void ScriptSpriteImage::InternalGetSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TSize2<uint32_t> tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetSize();
 
@@ -59,6 +65,12 @@ namespace bs
 
 	void ScriptSpriteImage::InternalGetAnimationFrameSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TSize2<uint32_t> tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAnimationFrameSize();
 
@@ -68,6 +80,9 @@ namespace bs
 	MonoObject* ScriptSpriteImage::InternalGetAtlasTexture(ScriptSpriteImageWrapperBase* self)
 	{
 		TResourceHandle<Texture> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAtlasTexture();
 
 		MonoObject* __output;
@@ -83,11 +98,20 @@ namespace bs
 
 	void ScriptSpriteImage::InternalSetUVRange(ScriptSpriteImageWrapperBase* self, Rect2* uvRange)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<SpriteImage*>(self->GetNativeObject())->SetUVRange(*uvRange);
 	}
 
 	void ScriptSpriteImage::InternalGetUVRange(ScriptSpriteImageWrapperBase* self, Rect2* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Rect2 tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetUVRange();
 
@@ -96,11 +120,20 @@ namespace bs
 
 	void ScriptSpriteImage::InternalSetAnimation(ScriptSpriteImageWrapperBase* self, SpriteSheetGridAnimation* animation)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<SpriteImage*>(self->GetNativeObject())->SetAnimation(*animation);
 	}
 
 	void ScriptSpriteImage::InternalGetAnimation(ScriptSpriteImageWrapperBase* self, SpriteSheetGridAnimation* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		SpriteSheetGridAnimation tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAnimation();
 
@@ -109,12 +142,18 @@ namespace bs
 
 	void ScriptSpriteImage::InternalSetAnimationPlayback(ScriptSpriteImageWrapperBase* self, SpriteAnimationPlayback playback)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<SpriteImage*>(self->GetNativeObject())->SetAnimationPlayback(playback);
 	}
 
 	SpriteAnimationPlayback ScriptSpriteImage::InternalGetAnimationPlayback(ScriptSpriteImageWrapperBase* self)
 	{
 		SpriteAnimationPlayback tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAnimationPlayback();
 
 		SpriteAnimationPlayback __output;

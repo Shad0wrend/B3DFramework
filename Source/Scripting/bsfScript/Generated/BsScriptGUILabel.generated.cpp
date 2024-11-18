@@ -39,6 +39,9 @@ namespace bs
 	}
 	void ScriptGUILabel::InternalSetContent(ScriptGUILabel* self, __GUIContentInterop* content)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		GUIContent tmpcontent;
 		tmpcontent = ScriptGUIContent::FromInterop(*content);
 		static_cast<GUILabel*>(self->GetNativeObject())->SetContent(tmpcontent);

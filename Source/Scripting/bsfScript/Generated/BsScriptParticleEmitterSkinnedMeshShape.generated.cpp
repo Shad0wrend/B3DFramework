@@ -36,6 +36,9 @@ namespace bs
 	}
 	void ScriptParticleEmitterSkinnedMeshShape::InternalSetOptions(ScriptParticleEmitterSkinnedMeshShape* self, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		PARTICLE_SKINNED_MESH_SHAPE_DESC tmpoptions;
 		tmpoptions = ScriptParticleSkinnedMeshShapeOptions::FromInterop(*options);
 		static_cast<ParticleEmitterSkinnedMeshShape*>(self->GetNativeObject())->SetOptions(tmpoptions);
@@ -43,6 +46,12 @@ namespace bs
 
 	void ScriptParticleEmitterSkinnedMeshShape::InternalGetOptions(ScriptParticleEmitterSkinnedMeshShape* self, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_SKINNED_MESH_SHAPE_DESC tmp__output;
 		tmp__output = static_cast<ParticleEmitterSkinnedMeshShape*>(self->GetNativeObject())->GetOptions();
 

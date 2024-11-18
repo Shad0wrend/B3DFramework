@@ -651,65 +651,6 @@
 		<property name="Entries" type="SubResource" getter="GetEntries" setter="SetEntries" static="false">
 		</property>
 	</class>
-	<struct native="RENDER_WINDOW_DESC" script="RenderWindowDesc">
-		<doc>Structure that is used for initializing a render window.</doc>
-		<ctor>
-		</ctor>
-		<field name="VideoMode" type="VideoMode">
-			<doc>Output monitor, frame buffer resize and refresh rate.</doc>
-		</field>
-		<field name="Fullscreen" type="bool">
-			<doc>Should the window be opened in fullscreen mode.</doc>
-		</field>
-		<field name="Vsync" type="bool">
-			<doc>Should the window wait for vertical sync before swapping buffers.</doc>
-		</field>
-		<field name="VsyncInterval" type="int">
-			<doc>Determines how many vsync intervals occur per frame. FPS = refreshRate/interval. Usually 1 when vsync active.</doc>
-		</field>
-		<field name="Hidden" type="bool">
-			<doc>Should the window be hidden initially.</doc>
-		</field>
-		<field name="DepthBuffer" type="bool">
-			<doc>Should the window be created with a depth/stencil buffer.</doc>
-		</field>
-		<field name="MultisampleCount" type="int">
-			<doc>If higher than 1, texture containing multiple samples per pixel is created.</doc>
-		</field>
-		<field name="MultisampleHint" type="string">
-			<doc>Hint about what kind of multisampling to use. Render system specific.</doc>
-		</field>
-		<field name="Gamma" type="bool">
-			<doc>Should the written color pixels be gamma corrected before write.</doc>
-		</field>
-		<field name="Left" type="int">
-			<doc>Window origin on X axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
-		</field>
-		<field name="Top" type="int">
-			<doc>Window origin on Y axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
-		</field>
-		<field name="Title" type="string">
-			<doc>Title of the window.</doc>
-		</field>
-		<field name="ShowTitleBar" type="bool">
-			<doc>Determines if the title-bar should be shown or not.</doc>
-		</field>
-		<field name="ShowBorder" type="bool">
-			<doc>Determines if the window border should be shown or not.</doc>
-		</field>
-		<field name="AllowResize" type="bool">
-			<doc>Determines if the user can resize the window by dragging on the window edges.</doc>
-		</field>
-		<field name="ToolWindow" type="bool">
-			<doc>Tool windows have no task bar entry and always remain on top of their parent window.</doc>
-		</field>
-		<field name="Modal" type="bool">
-			<doc>When a modal window is open all other windows will be locked until modal window is closed.</doc>
-		</field>
-		<field name="HideUntilSwap" type="bool">
-			<doc>Window will be created as hidden and only be shown when the first framebuffer swap happens.</doc>
-		</field>
-	</struct>
 	<class native="ColorGradientHDR" script="ColorGradientHDR">
 		<doc>Represents a range of color values over some parameters, similar to a curve. Internally represented as a set of keys that get interpolated between. Capable of representing HDR colors, unlike the normal ColorGradient.</doc>
 		<ctor>
@@ -3360,6 +3301,68 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Determines was video mode user created or provided by the API/OS. API/OS created video modes can contain additional information that allows the video mode to be used more accurately and you should use them when possible.</doc>
 		</field>
 	</struct>
+	<struct native="RenderWindowCreateInformation" script="RenderWindowCreateInformation">
+		<doc>Structure that is used for initializing a render window.</doc>
+		<ctor>
+		</ctor>
+		<field name="VideoMode" type="VideoMode">
+			<doc>Output monitor, frame buffer resize and refresh rate.</doc>
+		</field>
+		<field name="Fullscreen" type="bool">
+			<doc>Should the window be opened in fullscreen mode.</doc>
+		</field>
+		<field name="Vsync" type="bool">
+			<doc>Should the window wait for vertical sync before swapping buffers.</doc>
+		</field>
+		<field name="VsyncInterval" type="int">
+			<doc>Determines how many vsync intervals occur per frame. FPS = refreshRate/interval. Usually 1 when vsync active.</doc>
+		</field>
+		<field name="Hidden" type="bool">
+			<doc>Should the window be hidden initially.</doc>
+		</field>
+		<field name="DepthBuffer" type="bool">
+			<doc>Should the window be created with a depth/stencil buffer.</doc>
+		</field>
+		<field name="MultisampleCount" type="int">
+			<doc>If higher than 1, texture containing multiple samples per pixel is created.</doc>
+		</field>
+		<field name="MultisampleHint" type="string">
+			<doc>Hint about what kind of multisampling to use. Render system specific.</doc>
+		</field>
+		<field name="Gamma" type="bool">
+			<doc>Should the written color pixels be gamma corrected before write.</doc>
+		</field>
+		<field name="Left" type="int">
+			<doc>Window origin on X axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
+		</field>
+		<field name="Top" type="int">
+			<doc>Window origin on Y axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
+		</field>
+		<field name="Title" type="string">
+			<doc>Title of the window.</doc>
+		</field>
+		<field name="ShowTitleBar" type="bool">
+			<doc>Determines if the title-bar should be shown or not.</doc>
+		</field>
+		<field name="ShowBorder" type="bool">
+			<doc>Determines if the window border should be shown or not.</doc>
+		</field>
+		<field name="AllowResize" type="bool">
+			<doc>Determines if the user can resize the window by dragging on the window edges.</doc>
+		</field>
+		<field name="ToolWindow" type="bool">
+			<doc>Tool windows have no task bar entry and always remain on top of their parent window.</doc>
+		</field>
+		<field name="Modal" type="bool">
+			<doc>When a modal window is open all other windows will be locked until modal window is closed.</doc>
+		</field>
+		<field name="HideUntilSwap" type="bool">
+			<doc>Window will be created as hidden and only be shown when the first framebuffer swap happens.</doc>
+		</field>
+		<field name="CreateRenderSurface" type="bool">
+			<doc>If true the window render surface will be created, which internally provides a swap chain and allows the GPU to render to the window.</doc>
+		</field>
+	</struct>
 	<class native="MotionBlurSettings" script="MotionBlurSettings">
 		<doc>Settings that control the motion blur effect.</doc>
 		<ctor>
@@ -3405,7 +3408,7 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<field name="AsyncAnimation" type="bool">
 			<doc>True if animation should be evaluated at the same time while rendering is happening. This introduces a one frame delay to all animations but can result in better performance. If false the animation will be forced to finish evaluating before rendering starts, ensuring up-to-date frame but potentially blocking the rendering thread from moving forward until the animation finishes.</doc>
 		</field>
-		<field name="PrimaryWindowDesc" type="RenderWindowDesc">
+		<field name="PrimaryWindowDesc" type="RenderWindowCreateInformation">
 			<doc>Describes the window to create during start-up.</doc>
 		</field>
 		<field name="Importers" type="string">

@@ -34,6 +34,9 @@ namespace bs
 	MonoString* ScriptMorphChannel::InternalGetName(ScriptMorphChannel* self)
 	{
 		String tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<MorphChannel*>(self->GetNativeObject())->GetName();
 
 		MonoString* __output;
@@ -45,6 +48,9 @@ namespace bs
 	MonoArray* ScriptMorphChannel::InternalGetShapes(ScriptMorphChannel* self)
 	{
 		Vector<SPtr<MorphShape>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<MorphChannel*>(self->GetNativeObject())->GetShapes();
 
 		MonoArray* __output;

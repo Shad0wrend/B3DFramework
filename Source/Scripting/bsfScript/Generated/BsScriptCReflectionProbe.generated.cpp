@@ -45,6 +45,9 @@ namespace bs
 	ReflectionProbeType ScriptReflectionProbe::InternalGetType(ScriptReflectionProbe* self)
 	{
 		ReflectionProbeType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CReflectionProbe*>(self->GetNativeObject())->GetType();
 
 		ReflectionProbeType __output;
@@ -55,12 +58,18 @@ namespace bs
 
 	void ScriptReflectionProbe::InternalSetType(ScriptReflectionProbe* self, ReflectionProbeType type)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CReflectionProbe*>(self->GetNativeObject())->SetType(type);
 	}
 
 	float ScriptReflectionProbe::InternalGetRadius(ScriptReflectionProbe* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CReflectionProbe*>(self->GetNativeObject())->GetRadius();
 
 		float __output;
@@ -71,11 +80,20 @@ namespace bs
 
 	void ScriptReflectionProbe::InternalSetRadius(ScriptReflectionProbe* self, float radius)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CReflectionProbe*>(self->GetNativeObject())->SetRadius(radius);
 	}
 
 	void ScriptReflectionProbe::InternalGetExtents(ScriptReflectionProbe* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CReflectionProbe*>(self->GetNativeObject())->GetExtents();
 
@@ -84,12 +102,18 @@ namespace bs
 
 	void ScriptReflectionProbe::InternalSetExtents(ScriptReflectionProbe* self, TVector3<float>* extents)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CReflectionProbe*>(self->GetNativeObject())->SetExtents(*extents);
 	}
 
 	MonoObject* ScriptReflectionProbe::InternalGetCustomTexture(ScriptReflectionProbe* self)
 	{
 		TResourceHandle<Texture> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CReflectionProbe*>(self->GetNativeObject())->GetCustomTexture();
 
 		MonoObject* __output;
@@ -105,6 +129,9 @@ namespace bs
 
 	void ScriptReflectionProbe::InternalSetCustomTexture(ScriptReflectionProbe* self, MonoObject* texture)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scriptObjectWrappertexture;
 		scriptObjectWrappertexture = ScriptRRefBase::GetScriptObjectWrapper(texture);
@@ -115,6 +142,9 @@ namespace bs
 
 	void ScriptReflectionProbe::InternalCapture(ScriptReflectionProbe* self)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CReflectionProbe*>(self->GetNativeObject())->Capture();
 	}
 }

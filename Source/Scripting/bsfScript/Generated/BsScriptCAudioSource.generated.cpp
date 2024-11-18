@@ -56,6 +56,9 @@ namespace bs
 	}
 	void ScriptAudioSource::InternalSetClip(ScriptAudioSource* self, MonoObject* clip)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<AudioClip> tmpclip;
 		ScriptRRefBase* scriptObjectWrapperclip;
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
@@ -67,6 +70,9 @@ namespace bs
 	MonoObject* ScriptAudioSource::InternalGetClip(ScriptAudioSource* self)
 	{
 		TResourceHandle<AudioClip> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetClip();
 
 		MonoObject* __output;
@@ -82,12 +88,18 @@ namespace bs
 
 	void ScriptAudioSource::InternalSetVolume(ScriptAudioSource* self, float volume)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->SetVolume(volume);
 	}
 
 	float ScriptAudioSource::InternalGetVolume(ScriptAudioSource* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetVolume();
 
 		float __output;
@@ -98,12 +110,18 @@ namespace bs
 
 	void ScriptAudioSource::InternalSetPitch(ScriptAudioSource* self, float pitch)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->SetPitch(pitch);
 	}
 
 	float ScriptAudioSource::InternalGetPitch(ScriptAudioSource* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetPitch();
 
 		float __output;
@@ -114,12 +132,18 @@ namespace bs
 
 	void ScriptAudioSource::InternalSetIsLooping(ScriptAudioSource* self, bool loop)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->SetIsLooping(loop);
 	}
 
 	bool ScriptAudioSource::InternalGetIsLooping(ScriptAudioSource* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetIsLooping();
 
 		bool __output;
@@ -130,12 +154,18 @@ namespace bs
 
 	void ScriptAudioSource::InternalSetPriority(ScriptAudioSource* self, uint32_t priority)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->SetPriority(priority);
 	}
 
 	uint32_t ScriptAudioSource::InternalGetPriority(ScriptAudioSource* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetPriority();
 
 		uint32_t __output;
@@ -146,12 +176,18 @@ namespace bs
 
 	void ScriptAudioSource::InternalSetMinDistance(ScriptAudioSource* self, float distance)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->SetMinDistance(distance);
 	}
 
 	float ScriptAudioSource::InternalGetMinDistance(ScriptAudioSource* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetMinDistance();
 
 		float __output;
@@ -162,12 +198,18 @@ namespace bs
 
 	void ScriptAudioSource::InternalSetAttenuation(ScriptAudioSource* self, float attenuation)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->SetAttenuation(attenuation);
 	}
 
 	float ScriptAudioSource::InternalGetAttenuation(ScriptAudioSource* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetAttenuation();
 
 		float __output;
@@ -178,12 +220,18 @@ namespace bs
 
 	void ScriptAudioSource::InternalSetTime(ScriptAudioSource* self, float time)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->SetTime(time);
 	}
 
 	float ScriptAudioSource::InternalGetTime(ScriptAudioSource* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetTime();
 
 		float __output;
@@ -194,12 +242,18 @@ namespace bs
 
 	void ScriptAudioSource::InternalSetPlayOnStart(ScriptAudioSource* self, bool enable)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->SetPlayOnStart(enable);
 	}
 
 	bool ScriptAudioSource::InternalGetPlayOnStart(ScriptAudioSource* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetPlayOnStart();
 
 		bool __output;
@@ -210,22 +264,34 @@ namespace bs
 
 	void ScriptAudioSource::InternalPlay(ScriptAudioSource* self)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->Play();
 	}
 
 	void ScriptAudioSource::InternalPause(ScriptAudioSource* self)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->Pause();
 	}
 
 	void ScriptAudioSource::InternalStop(ScriptAudioSource* self)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CAudioSource*>(self->GetNativeObject())->Stop();
 	}
 
 	AudioSourceState ScriptAudioSource::InternalGetState(ScriptAudioSource* self)
 	{
 		AudioSourceState tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetState();
 
 		AudioSourceState __output;

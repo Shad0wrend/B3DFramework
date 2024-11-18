@@ -52,6 +52,9 @@ namespace bs
 	bool ScriptManagedTypeInfo::InternalMatches(ScriptManagedTypeInfoWrapperBase* self, MonoObject* typeInfo)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		SPtr<ManagedTypeInfo> tmptypeInfo;
 		ScriptManagedTypeInfoWrapperBase* scriptObjectWrappertypeInfo;
 		scriptObjectWrappertypeInfo = (ScriptManagedTypeInfoWrapperBase*)ScriptManagedTypeInfo::GetScriptObjectWrapper(typeInfo);
@@ -68,6 +71,9 @@ namespace bs
 	bool ScriptManagedTypeInfo::InternalIsTypeLoaded(ScriptManagedTypeInfoWrapperBase* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<ManagedTypeInfo*>(self->GetNativeObject())->IsTypeLoaded();
 
 		bool __output;
@@ -79,6 +85,9 @@ namespace bs
 	MonoReflectionType* ScriptManagedTypeInfo::InternalGetReflectionType(ScriptManagedTypeInfoWrapperBase* self)
 	{
 		_MonoReflectionType* tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<ManagedTypeInfo*>(self->GetNativeObject())->GetReflectionType();
 
 		MonoReflectionType* __output;

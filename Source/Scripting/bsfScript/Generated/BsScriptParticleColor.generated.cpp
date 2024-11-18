@@ -36,6 +36,9 @@ namespace bs
 	}
 	void ScriptParticleColor::InternalSetOptions(ScriptParticleColor* self, __PARTICLE_COLOR_DESCInterop* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		PARTICLE_COLOR_DESC tmpoptions;
 		tmpoptions = ScriptParticleColorOptions::FromInterop(*options);
 		static_cast<ParticleColor*>(self->GetNativeObject())->SetOptions(tmpoptions);
@@ -43,6 +46,12 @@ namespace bs
 
 	void ScriptParticleColor::InternalGetOptions(ScriptParticleColor* self, __PARTICLE_COLOR_DESCInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_COLOR_DESC tmp__output;
 		tmp__output = static_cast<ParticleColor*>(self->GetNativeObject())->GetOptions();
 

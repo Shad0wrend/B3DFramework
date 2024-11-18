@@ -54,12 +54,18 @@ namespace bs
 	}
 	void ScriptLight::InternalSetType(ScriptLight* self, LightType type)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetType(type);
 	}
 
 	LightType ScriptLight::InternalGetType(ScriptLight* self)
 	{
 		LightType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetType();
 
 		LightType __output;
@@ -70,11 +76,20 @@ namespace bs
 
 	void ScriptLight::InternalSetColor(ScriptLight* self, Color* color)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetColor(*color);
 	}
 
 	void ScriptLight::InternalGetColor(ScriptLight* self, Color* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		Color tmp__output;
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetColor();
 
@@ -83,12 +98,18 @@ namespace bs
 
 	void ScriptLight::InternalSetIntensity(ScriptLight* self, float intensity)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetIntensity(intensity);
 	}
 
 	float ScriptLight::InternalGetIntensity(ScriptLight* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetIntensity();
 
 		float __output;
@@ -99,12 +120,18 @@ namespace bs
 
 	void ScriptLight::InternalSetUseAutoAttenuation(ScriptLight* self, bool enabled)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetUseAutoAttenuation(enabled);
 	}
 
 	bool ScriptLight::InternalGetUseAutoAttenuation(ScriptLight* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetUseAutoAttenuation();
 
 		bool __output;
@@ -115,12 +142,18 @@ namespace bs
 
 	void ScriptLight::InternalSetAttenuationRadius(ScriptLight* self, float radius)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetAttenuationRadius(radius);
 	}
 
 	float ScriptLight::InternalGetAttenuationRadius(ScriptLight* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetAttenuationRadius();
 
 		float __output;
@@ -131,12 +164,18 @@ namespace bs
 
 	void ScriptLight::InternalSetSourceRadius(ScriptLight* self, float radius)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetSourceRadius(radius);
 	}
 
 	float ScriptLight::InternalGetSourceRadius(ScriptLight* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetSourceRadius();
 
 		float __output;
@@ -147,11 +186,20 @@ namespace bs
 
 	void ScriptLight::InternalSetSpotAngle(ScriptLight* self, TDegree<float>* spotAngle)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetSpotAngle(*spotAngle);
 	}
 
 	void ScriptLight::InternalGetSpotAngle(ScriptLight* self, TDegree<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TDegree<float> tmp__output;
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetSpotAngle();
 
@@ -160,11 +208,20 @@ namespace bs
 
 	void ScriptLight::InternalSetSpotFalloffAngle(ScriptLight* self, TDegree<float>* spotAngle)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetSpotFalloffAngle(*spotAngle);
 	}
 
 	void ScriptLight::InternalGetSpotFalloffAngle(ScriptLight* self, TDegree<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TDegree<float> tmp__output;
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetSpotFalloffAngle();
 
@@ -173,12 +230,18 @@ namespace bs
 
 	void ScriptLight::InternalSetCastsShadow(ScriptLight* self, bool castsShadow)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetCastsShadow(castsShadow);
 	}
 
 	bool ScriptLight::InternalGetCastsShadow(ScriptLight* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetCastsShadow();
 
 		bool __output;
@@ -189,12 +252,18 @@ namespace bs
 
 	void ScriptLight::InternalSetShadowBias(ScriptLight* self, float bias)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CLight*>(self->GetNativeObject())->SetShadowBias(bias);
 	}
 
 	float ScriptLight::InternalGetShadowBias(ScriptLight* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetShadowBias();
 
 		float __output;
@@ -205,6 +274,12 @@ namespace bs
 
 	void ScriptLight::InternalGetBounds(ScriptLight* self, __TSphere_float_Interop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TSphere<float> tmp__output;
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetBounds();
 

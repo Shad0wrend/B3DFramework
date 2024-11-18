@@ -54,12 +54,18 @@ namespace bs
 
 	void ScriptRandom::InternalSetSeed(ScriptRandom* self, uint32_t seed)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<Random*>(self->GetNativeObject())->SetSeed(seed);
 	}
 
 	uint32_t ScriptRandom::InternalGet(ScriptRandom* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->Get();
 
 		uint32_t __output;
@@ -71,6 +77,9 @@ namespace bs
 	int32_t ScriptRandom::InternalGetRange(ScriptRandom* self, int32_t min, int32_t max)
 	{
 		int32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetRange(min, max);
 
 		int32_t __output;
@@ -82,6 +91,9 @@ namespace bs
 	float ScriptRandom::InternalGetUNorm(ScriptRandom* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetUNorm();
 
 		float __output;
@@ -93,6 +105,9 @@ namespace bs
 	float ScriptRandom::InternalGetSNorm(ScriptRandom* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetSNorm();
 
 		float __output;
@@ -103,6 +118,12 @@ namespace bs
 
 	void ScriptRandom::InternalGetUnitVector(ScriptRandom* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetUnitVector();
 
@@ -111,6 +132,12 @@ namespace bs
 
 	void ScriptRandom::InternalGetUnitVector2D(ScriptRandom* self, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetUnitVector2D();
 
@@ -119,6 +146,12 @@ namespace bs
 
 	void ScriptRandom::InternalGetPointInSphere(ScriptRandom* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInSphere();
 
@@ -127,6 +160,12 @@ namespace bs
 
 	void ScriptRandom::InternalGetPointInSphereShell(ScriptRandom* self, float thickness, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInSphereShell(thickness);
 
@@ -135,6 +174,12 @@ namespace bs
 
 	void ScriptRandom::InternalGetPointInCircle(ScriptRandom* self, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInCircle();
 
@@ -143,6 +188,12 @@ namespace bs
 
 	void ScriptRandom::InternalGetPointInCircleShell(ScriptRandom* self, float thickness, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInCircleShell(thickness);
 
@@ -151,6 +202,12 @@ namespace bs
 
 	void ScriptRandom::InternalGetPointInArc(ScriptRandom* self, TDegree<float>* angle, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInArc(*angle);
 
@@ -159,6 +216,12 @@ namespace bs
 
 	void ScriptRandom::InternalGetPointInArcShell(ScriptRandom* self, TDegree<float>* angle, float thickness, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInArcShell(*angle, thickness);
 
@@ -167,6 +230,12 @@ namespace bs
 
 	void ScriptRandom::InternalGetBarycentric(ScriptRandom* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetBarycentric();
 

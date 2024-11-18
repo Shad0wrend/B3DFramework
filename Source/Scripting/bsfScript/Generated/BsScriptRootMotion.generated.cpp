@@ -37,6 +37,9 @@ namespace bs
 	MonoObject* ScriptRootMotion::InternalGetPositionCurves(ScriptRootMotion* self)
 	{
 		SPtr<TAnimationCurve<TVector3<float>>> tmp__output = B3DMakeShared<TAnimationCurve<TVector3<float>>>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = RootMotionEx::GetPositionCurves(std::static_pointer_cast<RootMotion>(self->GetBaseNativeObjectAsShared()));
 
 		MonoObject* __output;
@@ -48,6 +51,9 @@ namespace bs
 	MonoObject* ScriptRootMotion::InternalGetRotationCurves(ScriptRootMotion* self)
 	{
 		SPtr<TAnimationCurve<TQuaternion<float>>> tmp__output = B3DMakeShared<TAnimationCurve<TQuaternion<float>>>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = RootMotionEx::GetRotationCurves(std::static_pointer_cast<RootMotion>(self->GetBaseNativeObjectAsShared()));
 
 		MonoObject* __output;

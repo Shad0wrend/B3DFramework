@@ -94,6 +94,9 @@ namespace bs
 	PropertyDistributionType ScriptFloatDistribution::InternalGetType(ScriptFloatDistribution* self)
 	{
 		PropertyDistributionType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TDistribution<float>*>(self->GetNativeObject())->GetType();
 
 		PropertyDistributionType __output;
@@ -105,6 +108,9 @@ namespace bs
 	float ScriptFloatDistribution::InternalGetMinConstant(ScriptFloatDistribution* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TDistribution<float>*>(self->GetNativeObject())->GetMinConstant();
 
 		float __output;
@@ -116,6 +122,9 @@ namespace bs
 	float ScriptFloatDistribution::InternalGetMaxConstant(ScriptFloatDistribution* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TDistribution<float>*>(self->GetNativeObject())->GetMaxConstant();
 
 		float __output;
@@ -127,6 +136,9 @@ namespace bs
 	MonoObject* ScriptFloatDistribution::InternalGetMinCurve(ScriptFloatDistribution* self)
 	{
 		SPtr<TAnimationCurve<float>> tmp__output = B3DMakeShared<TAnimationCurve<float>>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TDistribution<float>*>(self->GetNativeObject())->GetMinCurve();
 
 		MonoObject* __output;
@@ -138,6 +150,9 @@ namespace bs
 	MonoObject* ScriptFloatDistribution::InternalGetMaxCurve(ScriptFloatDistribution* self)
 	{
 		SPtr<TAnimationCurve<float>> tmp__output = B3DMakeShared<TAnimationCurve<float>>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TDistribution<float>*>(self->GetNativeObject())->GetMaxCurve();
 
 		MonoObject* __output;
@@ -149,6 +164,9 @@ namespace bs
 	float ScriptFloatDistribution::InternalEvaluate(ScriptFloatDistribution* self, float t, float factor)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TDistribution<float>*>(self->GetNativeObject())->Evaluate(t, factor);
 
 		float __output;
@@ -160,6 +178,9 @@ namespace bs
 	float ScriptFloatDistribution::InternalEvaluate0(ScriptFloatDistribution* self, float t, MonoObject* factor)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		SPtr<Random> tmpfactor;
 		ScriptRandom* scriptObjectWrapperfactor;
 		scriptObjectWrapperfactor = ScriptRandom::GetScriptObjectWrapper(factor);
@@ -254,6 +275,9 @@ namespace bs
 	PropertyDistributionType ScriptVector3Distribution::InternalGetType(ScriptVector3Distribution* self)
 	{
 		PropertyDistributionType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TDistribution<TVector3<float>>*>(self->GetNativeObject())->GetType();
 
 		PropertyDistributionType __output;
@@ -264,6 +288,12 @@ namespace bs
 
 	void ScriptVector3Distribution::InternalGetMinConstant(ScriptVector3Distribution* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector3<float>>*>(self->GetNativeObject())->GetMinConstant();
 
@@ -272,6 +302,12 @@ namespace bs
 
 	void ScriptVector3Distribution::InternalGetMaxConstant(ScriptVector3Distribution* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector3<float>>*>(self->GetNativeObject())->GetMaxConstant();
 
@@ -281,6 +317,9 @@ namespace bs
 	MonoObject* ScriptVector3Distribution::InternalGetMinCurve(ScriptVector3Distribution* self)
 	{
 		SPtr<TAnimationCurve<TVector3<float>>> tmp__output = B3DMakeShared<TAnimationCurve<TVector3<float>>>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TDistribution<TVector3<float>>*>(self->GetNativeObject())->GetMinCurve();
 
 		MonoObject* __output;
@@ -292,6 +331,9 @@ namespace bs
 	MonoObject* ScriptVector3Distribution::InternalGetMaxCurve(ScriptVector3Distribution* self)
 	{
 		SPtr<TAnimationCurve<TVector3<float>>> tmp__output = B3DMakeShared<TAnimationCurve<TVector3<float>>>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TDistribution<TVector3<float>>*>(self->GetNativeObject())->GetMaxCurve();
 
 		MonoObject* __output;
@@ -302,6 +344,12 @@ namespace bs
 
 	void ScriptVector3Distribution::InternalEvaluate(ScriptVector3Distribution* self, float t, float factor, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector3<float>>*>(self->GetNativeObject())->Evaluate(t, factor);
 
@@ -310,6 +358,12 @@ namespace bs
 
 	void ScriptVector3Distribution::InternalEvaluate0(ScriptVector3Distribution* self, float t, MonoObject* factor, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		SPtr<Random> tmpfactor;
 		ScriptRandom* scriptObjectWrapperfactor;
 		scriptObjectWrapperfactor = ScriptRandom::GetScriptObjectWrapper(factor);
@@ -402,6 +456,9 @@ namespace bs
 	PropertyDistributionType ScriptVector2Distribution::InternalGetType(ScriptVector2Distribution* self)
 	{
 		PropertyDistributionType tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<TDistribution<TVector2<float>>*>(self->GetNativeObject())->GetType();
 
 		PropertyDistributionType __output;
@@ -412,6 +469,12 @@ namespace bs
 
 	void ScriptVector2Distribution::InternalGetMinConstant(ScriptVector2Distribution* self, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector2<float>>*>(self->GetNativeObject())->GetMinConstant();
 
@@ -420,6 +483,12 @@ namespace bs
 
 	void ScriptVector2Distribution::InternalGetMaxConstant(ScriptVector2Distribution* self, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector2<float>>*>(self->GetNativeObject())->GetMaxConstant();
 
@@ -429,6 +498,9 @@ namespace bs
 	MonoObject* ScriptVector2Distribution::InternalGetMinCurve(ScriptVector2Distribution* self)
 	{
 		SPtr<TAnimationCurve<TVector2<float>>> tmp__output = B3DMakeShared<TAnimationCurve<TVector2<float>>>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TDistribution<TVector2<float>>*>(self->GetNativeObject())->GetMinCurve();
 
 		MonoObject* __output;
@@ -440,6 +512,9 @@ namespace bs
 	MonoObject* ScriptVector2Distribution::InternalGetMaxCurve(ScriptVector2Distribution* self)
 	{
 		SPtr<TAnimationCurve<TVector2<float>>> tmp__output = B3DMakeShared<TAnimationCurve<TVector2<float>>>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<TDistribution<TVector2<float>>*>(self->GetNativeObject())->GetMaxCurve();
 
 		MonoObject* __output;
@@ -450,6 +525,12 @@ namespace bs
 
 	void ScriptVector2Distribution::InternalEvaluate(ScriptVector2Distribution* self, float t, float factor, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector2<float>>*>(self->GetNativeObject())->Evaluate(t, factor);
 
@@ -458,6 +539,12 @@ namespace bs
 
 	void ScriptVector2Distribution::InternalEvaluate0(ScriptVector2Distribution* self, float t, MonoObject* factor, TVector2<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		SPtr<Random> tmpfactor;
 		ScriptRandom* scriptObjectWrapperfactor;
 		scriptObjectWrapperfactor = ScriptRandom::GetScriptObjectWrapper(factor);

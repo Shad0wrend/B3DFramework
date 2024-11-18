@@ -62,6 +62,9 @@ namespace bs
 	}
 	void ScriptGUIInputBox::InternalSetText(ScriptGUIInputBox* self, MonoString* text)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmptext;
 		tmptext = MonoUtil::MonoToString(text);
 		static_cast<GUIInputBox*>(self->GetNativeObject())->SetText(tmptext);
@@ -70,6 +73,9 @@ namespace bs
 	MonoString* ScriptGUIInputBox::InternalGetText(ScriptGUIInputBox* self)
 	{
 		String tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUIInputBox*>(self->GetNativeObject())->GetText();
 
 		MonoString* __output;

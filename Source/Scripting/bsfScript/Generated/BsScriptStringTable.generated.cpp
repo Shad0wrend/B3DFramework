@@ -48,6 +48,9 @@ namespace bs
 	bool ScriptStringTable::InternalContains(ScriptStringTable* self, MonoString* identifier)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpidentifier;
 		tmpidentifier = MonoUtil::MonoToString(identifier);
 		tmp__output = static_cast<StringTable*>(self->GetNativeObject())->Contains(tmpidentifier);
@@ -61,6 +64,9 @@ namespace bs
 	uint32_t ScriptStringTable::InternalGetNumStrings(ScriptStringTable* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<StringTable*>(self->GetNativeObject())->GetNumStrings();
 
 		uint32_t __output;
@@ -72,6 +78,9 @@ namespace bs
 	MonoArray* ScriptStringTable::InternalGetIdentifiers(ScriptStringTable* self)
 	{
 		Vector<String> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<StringTable*>(self->GetNativeObject())->GetIdentifiers();
 
 		MonoArray* __output;
@@ -88,6 +97,9 @@ namespace bs
 
 	void ScriptStringTable::InternalSetString(ScriptStringTable* self, MonoString* identifier, Language language, MonoString* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpidentifier;
 		tmpidentifier = MonoUtil::MonoToString(identifier);
 		String tmpvalue;
@@ -98,6 +110,9 @@ namespace bs
 	MonoString* ScriptStringTable::InternalGetString(ScriptStringTable* self, MonoString* identifier, Language language)
 	{
 		String tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		String tmpidentifier;
 		tmpidentifier = MonoUtil::MonoToString(identifier);
 		tmp__output = static_cast<StringTable*>(self->GetNativeObject())->GetString(tmpidentifier, language);
@@ -110,6 +125,9 @@ namespace bs
 
 	void ScriptStringTable::InternalRemoveString(ScriptStringTable* self, MonoString* identifier)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpidentifier;
 		tmpidentifier = MonoUtil::MonoToString(identifier);
 		static_cast<StringTable*>(self->GetNativeObject())->RemoveString(tmpidentifier);

@@ -36,11 +36,20 @@ namespace bs
 	}
 	void ScriptPlaneCollider::InternalSetNormal(ScriptPlaneCollider* self, TVector3<float>* normal)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CPlaneCollider*>(self->GetNativeObject())->SetNormal(*normal);
 	}
 
 	void ScriptPlaneCollider::InternalGetNormal(ScriptPlaneCollider* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CPlaneCollider*>(self->GetNativeObject())->GetNormal();
 
@@ -49,12 +58,18 @@ namespace bs
 
 	void ScriptPlaneCollider::InternalSetDistance(ScriptPlaneCollider* self, float distance)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CPlaneCollider*>(self->GetNativeObject())->SetDistance(distance);
 	}
 
 	float ScriptPlaneCollider::InternalGetDistance(ScriptPlaneCollider* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CPlaneCollider*>(self->GetNativeObject())->GetDistance();
 
 		float __output;

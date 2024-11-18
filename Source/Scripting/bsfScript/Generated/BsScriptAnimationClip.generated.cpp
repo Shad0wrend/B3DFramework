@@ -56,6 +56,9 @@ namespace bs
 	MonoObject* ScriptAnimationClip::InternalGetCurves(ScriptAnimationClip* self)
 	{
 		SPtr<AnimationCurves> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AnimationClip*>(self->GetNativeObject())->GetCurves();
 
 		MonoObject* __output;
@@ -66,6 +69,9 @@ namespace bs
 
 	void ScriptAnimationClip::InternalSetCurves(ScriptAnimationClip* self, MonoObject* curves)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		SPtr<AnimationCurves> tmpcurves;
 		ScriptAnimationCurves* scriptObjectWrappercurves;
 		scriptObjectWrappercurves = ScriptAnimationCurves::GetScriptObjectWrapper(curves);
@@ -77,6 +83,9 @@ namespace bs
 	MonoArray* ScriptAnimationClip::InternalGetEvents(ScriptAnimationClip* self)
 	{
 		Vector<AnimationEvent> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<AnimationClip*>(self->GetNativeObject())->GetEvents();
 
 		MonoArray* __output;
@@ -93,6 +102,9 @@ namespace bs
 
 	void ScriptAnimationClip::InternalSetEvents(ScriptAnimationClip* self, MonoArray* events)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<AnimationEvent> nativeArrayevents;
 		if(events != nullptr)
 		{
@@ -109,6 +121,9 @@ namespace bs
 	MonoObject* ScriptAnimationClip::InternalGetRootMotion(ScriptAnimationClip* self)
 	{
 		SPtr<RootMotion> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AnimationClip*>(self->GetNativeObject())->GetRootMotion();
 
 		MonoObject* __output;
@@ -120,6 +135,9 @@ namespace bs
 	bool ScriptAnimationClip::InternalHasRootMotion(ScriptAnimationClip* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AnimationClip*>(self->GetNativeObject())->HasRootMotion();
 
 		bool __output;
@@ -131,6 +149,9 @@ namespace bs
 	bool ScriptAnimationClip::InternalIsAdditive(ScriptAnimationClip* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AnimationClip*>(self->GetNativeObject())->IsAdditive();
 
 		bool __output;
@@ -142,6 +163,9 @@ namespace bs
 	float ScriptAnimationClip::InternalGetLength(ScriptAnimationClip* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AnimationClip*>(self->GetNativeObject())->GetLength();
 
 		float __output;
@@ -153,6 +177,9 @@ namespace bs
 	uint32_t ScriptAnimationClip::InternalGetSampleRate(ScriptAnimationClip* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<AnimationClip*>(self->GetNativeObject())->GetSampleRate();
 
 		uint32_t __output;
@@ -163,6 +190,9 @@ namespace bs
 
 	void ScriptAnimationClip::InternalSetSampleRate(ScriptAnimationClip* self, uint32_t sampleRate)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<AnimationClip*>(self->GetNativeObject())->SetSampleRate(sampleRate);
 	}
 

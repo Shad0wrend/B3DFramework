@@ -90,12 +90,18 @@ namespace bs
 	}
 	void ScriptCollider::InternalSetIsTrigger(ScriptColliderWrapperBase* self, bool value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCollider*>(self->GetNativeObject())->SetIsTrigger(value);
 	}
 
 	bool ScriptCollider::InternalGetIsTrigger(ScriptColliderWrapperBase* self)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCollider*>(self->GetNativeObject())->GetIsTrigger();
 
 		bool __output;
@@ -106,12 +112,18 @@ namespace bs
 
 	void ScriptCollider::InternalSetMass(ScriptColliderWrapperBase* self, float mass)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCollider*>(self->GetNativeObject())->SetMass(mass);
 	}
 
 	float ScriptCollider::InternalGetMass(ScriptColliderWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCollider*>(self->GetNativeObject())->GetMass();
 
 		float __output;
@@ -122,6 +134,9 @@ namespace bs
 
 	void ScriptCollider::InternalSetMaterial(ScriptColliderWrapperBase* self, MonoObject* material)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<PhysicsMaterial> tmpmaterial;
 		ScriptRRefBase* scriptObjectWrappermaterial;
 		scriptObjectWrappermaterial = ScriptRRefBase::GetScriptObjectWrapper(material);
@@ -133,6 +148,9 @@ namespace bs
 	MonoObject* ScriptCollider::InternalGetMaterial(ScriptColliderWrapperBase* self)
 	{
 		TResourceHandle<PhysicsMaterial> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCollider*>(self->GetNativeObject())->GetMaterial();
 
 		MonoObject* __output;
@@ -148,12 +166,18 @@ namespace bs
 
 	void ScriptCollider::InternalSetContactOffset(ScriptColliderWrapperBase* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCollider*>(self->GetNativeObject())->SetContactOffset(value);
 	}
 
 	float ScriptCollider::InternalGetContactOffset(ScriptColliderWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCollider*>(self->GetNativeObject())->GetContactOffset();
 
 		float __output;
@@ -164,12 +188,18 @@ namespace bs
 
 	void ScriptCollider::InternalSetRestOffset(ScriptColliderWrapperBase* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCollider*>(self->GetNativeObject())->SetRestOffset(value);
 	}
 
 	float ScriptCollider::InternalGetRestOffset(ScriptColliderWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCollider*>(self->GetNativeObject())->GetRestOffset();
 
 		float __output;
@@ -180,12 +210,18 @@ namespace bs
 
 	void ScriptCollider::InternalSetLayer(ScriptColliderWrapperBase* self, uint64_t layer)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCollider*>(self->GetNativeObject())->SetLayer(layer);
 	}
 
 	uint64_t ScriptCollider::InternalGetLayer(ScriptColliderWrapperBase* self)
 	{
 		uint64_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCollider*>(self->GetNativeObject())->GetLayer();
 
 		uint64_t __output;
@@ -196,12 +232,18 @@ namespace bs
 
 	void ScriptCollider::InternalSetCollisionReportMode(ScriptColliderWrapperBase* self, CollisionReportMode mode)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCollider*>(self->GetNativeObject())->SetCollisionReportMode(mode);
 	}
 
 	CollisionReportMode ScriptCollider::InternalGetCollisionReportMode(ScriptColliderWrapperBase* self)
 	{
 		CollisionReportMode tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCollider*>(self->GetNativeObject())->GetCollisionReportMode();
 
 		CollisionReportMode __output;

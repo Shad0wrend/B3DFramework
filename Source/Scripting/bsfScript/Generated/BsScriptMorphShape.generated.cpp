@@ -33,6 +33,9 @@ namespace bs
 	MonoString* ScriptMorphShape::InternalGetName(ScriptMorphShape* self)
 	{
 		String tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<MorphShape*>(self->GetNativeObject())->GetName();
 
 		MonoString* __output;
@@ -44,6 +47,9 @@ namespace bs
 	float ScriptMorphShape::InternalGetWeight(ScriptMorphShape* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<MorphShape*>(self->GetNativeObject())->GetWeight();
 
 		float __output;

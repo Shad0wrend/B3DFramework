@@ -6,7 +6,7 @@
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/BsCoreApplication.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsRenderWindow.h"
-#include "BsScriptRENDER_WINDOW_DESC.generated.h"
+#include "BsScriptRenderWindowCreateInformation.generated.h"
 
 namespace bs
 {
@@ -20,7 +20,7 @@ namespace bs
 		MonoString* Input;
 		bool PhysicsCooking;
 		bool AsyncAnimation;
-		__RENDER_WINDOW_DESCInterop PrimaryWindowDesc;
+		__RenderWindowCreateInformationInterop PrimaryWindowDesc;
 		MonoArray* Importers;
 	};
 

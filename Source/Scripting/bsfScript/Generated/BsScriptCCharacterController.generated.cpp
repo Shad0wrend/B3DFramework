@@ -86,6 +86,9 @@ namespace bs
 	CharacterCollisionFlag ScriptCharacterController::InternalMove(ScriptCharacterController* self, TVector3<float>* displacement)
 	{
 		Flags<CharacterCollisionFlag> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->Move(*displacement);
 
 		CharacterCollisionFlag __output;
@@ -96,6 +99,12 @@ namespace bs
 
 	void ScriptCharacterController::InternalGetFootPosition(ScriptCharacterController* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetFootPosition();
 
@@ -104,12 +113,18 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetFootPosition(ScriptCharacterController* self, TVector3<float>* position)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetFootPosition(*position);
 	}
 
 	float ScriptCharacterController::InternalGetRadius(ScriptCharacterController* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetRadius();
 
 		float __output;
@@ -120,12 +135,18 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetRadius(ScriptCharacterController* self, float radius)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetRadius(radius);
 	}
 
 	float ScriptCharacterController::InternalGetHeight(ScriptCharacterController* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetHeight();
 
 		float __output;
@@ -136,11 +157,20 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetHeight(ScriptCharacterController* self, float height)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetHeight(height);
 	}
 
 	void ScriptCharacterController::InternalGetUp(ScriptCharacterController* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetUp();
 
@@ -149,12 +179,18 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetUp(ScriptCharacterController* self, TVector3<float>* up)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetUp(*up);
 	}
 
 	CharacterClimbingMode ScriptCharacterController::InternalGetClimbingMode(ScriptCharacterController* self)
 	{
 		CharacterClimbingMode tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetClimbingMode();
 
 		CharacterClimbingMode __output;
@@ -165,12 +201,18 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetClimbingMode(ScriptCharacterController* self, CharacterClimbingMode mode)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetClimbingMode(mode);
 	}
 
 	CharacterNonWalkableMode ScriptCharacterController::InternalGetNonWalkableMode(ScriptCharacterController* self)
 	{
 		CharacterNonWalkableMode tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetNonWalkableMode();
 
 		CharacterNonWalkableMode __output;
@@ -181,12 +223,18 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetNonWalkableMode(ScriptCharacterController* self, CharacterNonWalkableMode mode)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetNonWalkableMode(mode);
 	}
 
 	float ScriptCharacterController::InternalGetMinMoveDistance(ScriptCharacterController* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetMinMoveDistance();
 
 		float __output;
@@ -197,12 +245,18 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetMinMoveDistance(ScriptCharacterController* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetMinMoveDistance(value);
 	}
 
 	float ScriptCharacterController::InternalGetContactOffset(ScriptCharacterController* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetContactOffset();
 
 		float __output;
@@ -213,12 +267,18 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetContactOffset(ScriptCharacterController* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetContactOffset(value);
 	}
 
 	float ScriptCharacterController::InternalGetStepOffset(ScriptCharacterController* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetStepOffset();
 
 		float __output;
@@ -229,11 +289,20 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetStepOffset(ScriptCharacterController* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetStepOffset(value);
 	}
 
 	void ScriptCharacterController::InternalGetSlopeLimit(ScriptCharacterController* self, TRadian<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TRadian<float> tmp__output;
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetSlopeLimit();
 
@@ -242,12 +311,18 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetSlopeLimit(ScriptCharacterController* self, TRadian<float>* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetSlopeLimit(*value);
 	}
 
 	uint64_t ScriptCharacterController::InternalGetLayer(ScriptCharacterController* self)
 	{
 		uint64_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetLayer();
 
 		uint64_t __output;
@@ -258,6 +333,9 @@ namespace bs
 
 	void ScriptCharacterController::InternalSetLayer(ScriptCharacterController* self, uint64_t layer)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCharacterController*>(self->GetNativeObject())->SetLayer(layer);
 	}
 }

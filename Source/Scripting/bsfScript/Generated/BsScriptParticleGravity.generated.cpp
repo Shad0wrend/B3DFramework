@@ -36,11 +36,20 @@ namespace bs
 	}
 	void ScriptParticleGravity::InternalSetOptions(ScriptParticleGravity* self, PARTICLE_GRAVITY_DESC* options)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<ParticleGravity*>(self->GetNativeObject())->SetOptions(*options);
 	}
 
 	void ScriptParticleGravity::InternalGetOptions(ScriptParticleGravity* self, PARTICLE_GRAVITY_DESC* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		PARTICLE_GRAVITY_DESC tmp__output;
 		tmp__output = static_cast<ParticleGravity*>(self->GetNativeObject())->GetOptions();
 

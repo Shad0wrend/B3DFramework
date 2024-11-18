@@ -59,6 +59,9 @@ namespace bs
 	MonoObject* ScriptMesh::InternalGetSkeleton(ScriptMesh* self)
 	{
 		SPtr<Skeleton> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Mesh*>(self->GetNativeObject())->GetSkeleton();
 
 		MonoObject* __output;
@@ -70,6 +73,9 @@ namespace bs
 	MonoObject* ScriptMesh::InternalGetMorphShapes(ScriptMesh* self)
 	{
 		SPtr<MorphShapes> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<Mesh*>(self->GetNativeObject())->GetMorphShapes();
 
 		MonoObject* __output;
@@ -137,6 +143,9 @@ namespace bs
 	MonoArray* ScriptMesh::InternalGetSubMeshes(ScriptMesh* self)
 	{
 		Vector<SubMesh> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = MeshEx::GetSubMeshes(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()));
 
 		MonoArray* __output;
@@ -154,6 +163,9 @@ namespace bs
 	uint32_t ScriptMesh::InternalGetSubMeshCount(ScriptMesh* self)
 	{
 		uint32_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = MeshEx::GetSubMeshCount(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()));
 
 		uint32_t __output;
@@ -164,6 +176,9 @@ namespace bs
 
 	void ScriptMesh::InternalGetBounds(ScriptMesh* self, __TAABox_float_Interop* box, __TSphere_float_Interop* sphere)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TAABox<float> tmpbox;
 		TSphere<float> tmpsphere;
 		MeshEx::GetBounds(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()), &tmpbox, &tmpsphere);
@@ -179,6 +194,9 @@ namespace bs
 	MonoObject* ScriptMesh::InternalGetMeshData(ScriptMesh* self)
 	{
 		SPtr<RendererMeshData> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = MeshEx::GetMeshData(B3DStaticResourceCast<Mesh>(self->GetBaseNativeObjectAsHandle()));
 
 		MonoObject* __output;
@@ -189,6 +207,9 @@ namespace bs
 
 	void ScriptMesh::InternalSetMeshData(ScriptMesh* self, MonoObject* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		SPtr<RendererMeshData> tmpvalue;
 		ScriptRendererMeshData* scriptObjectWrappervalue;
 		scriptObjectWrappervalue = ScriptRendererMeshData::GetScriptObjectWrapper(value);

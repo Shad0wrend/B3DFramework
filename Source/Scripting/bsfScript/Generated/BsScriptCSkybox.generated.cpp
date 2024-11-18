@@ -39,6 +39,9 @@ namespace bs
 	MonoObject* ScriptSkybox::InternalGetTexture(ScriptSkybox* self)
 	{
 		TResourceHandle<Texture> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CSkybox*>(self->GetNativeObject())->GetTexture();
 
 		MonoObject* __output;
@@ -54,6 +57,9 @@ namespace bs
 
 	void ScriptSkybox::InternalSetTexture(ScriptSkybox* self, MonoObject* texture)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		TResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scriptObjectWrappertexture;
 		scriptObjectWrappertexture = ScriptRRefBase::GetScriptObjectWrapper(texture);
@@ -64,12 +70,18 @@ namespace bs
 
 	void ScriptSkybox::InternalSetBrightness(ScriptSkybox* self, float brightness)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CSkybox*>(self->GetNativeObject())->SetBrightness(brightness);
 	}
 
 	float ScriptSkybox::InternalGetBrightness(ScriptSkybox* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CSkybox*>(self->GetNativeObject())->GetBrightness();
 
 		float __output;

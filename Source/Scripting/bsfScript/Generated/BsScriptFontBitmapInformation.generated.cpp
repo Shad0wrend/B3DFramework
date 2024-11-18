@@ -45,6 +45,12 @@ namespace bs
 	}
 	void ScriptFontBitmapInformation::InternalGetCharacterInformation(ScriptFontBitmapInformation* self, uint32_t characterId, __CharacterInformationInterop* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		CharacterInformation tmp__output;
 		tmp__output = static_cast<FontBitmapInformation*>(self->GetNativeObject())->GetCharacterInformation(characterId);
 

@@ -48,12 +48,18 @@ namespace bs
 	}
 	void ScriptGUIScrollBar::InternalSetScrollHandlePosition(ScriptGUIScrollBarWrapperBase* self, float pct)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUIScrollBar*>(self->GetNativeObject())->SetScrollHandlePosition(pct);
 	}
 
 	float ScriptGUIScrollBar::InternalGetScrollHandlePosition(ScriptGUIScrollBarWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUIScrollBar*>(self->GetNativeObject())->GetScrollHandlePosition();
 
 		float __output;
@@ -64,12 +70,18 @@ namespace bs
 
 	void ScriptGUIScrollBar::InternalSetScrollHandleSize(ScriptGUIScrollBarWrapperBase* self, float pct)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUIScrollBar*>(self->GetNativeObject())->SetScrollHandleSize(pct);
 	}
 
 	float ScriptGUIScrollBar::InternalGetScrollHandleSize(ScriptGUIScrollBarWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUIScrollBar*>(self->GetNativeObject())->GetScrollHandleSize();
 
 		float __output;

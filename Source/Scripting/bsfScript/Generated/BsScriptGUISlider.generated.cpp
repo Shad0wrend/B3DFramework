@@ -53,12 +53,18 @@ namespace bs
 	}
 	void ScriptGUISlider::InternalSetHandlePositionInPercent(ScriptGUISliderWrapperBase* self, float percent)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUISlider*>(self->GetNativeObject())->SetHandlePositionInPercent(percent);
 	}
 
 	float ScriptGUISlider::InternalGetHandlePositionInPercent(ScriptGUISliderWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUISlider*>(self->GetNativeObject())->GetHandlePositionInPercent();
 
 		float __output;
@@ -69,12 +75,18 @@ namespace bs
 
 	void ScriptGUISlider::InternalSetHandlePositionInRange(ScriptGUISliderWrapperBase* self, float value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUISlider*>(self->GetNativeObject())->SetHandlePositionInRange(value);
 	}
 
 	float ScriptGUISlider::InternalGetHandlePositionInRange(ScriptGUISliderWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUISlider*>(self->GetNativeObject())->GetHandlePositionInRange();
 
 		float __output;
@@ -85,12 +97,18 @@ namespace bs
 
 	void ScriptGUISlider::InternalSetRange(ScriptGUISliderWrapperBase* self, float min, float max)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUISlider*>(self->GetNativeObject())->SetRange(min, max);
 	}
 
 	float ScriptGUISlider::InternalGetRangeMinimum(ScriptGUISliderWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUISlider*>(self->GetNativeObject())->GetRangeMinimum();
 
 		float __output;
@@ -102,6 +120,9 @@ namespace bs
 	float ScriptGUISlider::InternalGetRangeMaximum(ScriptGUISliderWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUISlider*>(self->GetNativeObject())->GetRangeMaximum();
 
 		float __output;
@@ -112,12 +133,18 @@ namespace bs
 
 	void ScriptGUISlider::InternalSetStep(ScriptGUISliderWrapperBase* self, float step)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<GUISlider*>(self->GetNativeObject())->SetStep(step);
 	}
 
 	float ScriptGUISlider::InternalGetStep(ScriptGUISliderWrapperBase* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<GUISlider*>(self->GetNativeObject())->GetStep();
 
 		float __output;

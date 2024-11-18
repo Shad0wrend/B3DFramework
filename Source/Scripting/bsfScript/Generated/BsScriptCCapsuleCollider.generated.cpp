@@ -40,11 +40,20 @@ namespace bs
 	}
 	void ScriptCapsuleCollider::InternalSetNormal(ScriptCapsuleCollider* self, TVector3<float>* normal)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCapsuleCollider*>(self->GetNativeObject())->SetNormal(*normal);
 	}
 
 	void ScriptCapsuleCollider::InternalGetNormal(ScriptCapsuleCollider* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCapsuleCollider*>(self->GetNativeObject())->GetNormal();
 
@@ -53,11 +62,20 @@ namespace bs
 
 	void ScriptCapsuleCollider::InternalSetCenter(ScriptCapsuleCollider* self, TVector3<float>* center)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCapsuleCollider*>(self->GetNativeObject())->SetCenter(*center);
 	}
 
 	void ScriptCapsuleCollider::InternalGetCenter(ScriptCapsuleCollider* self, TVector3<float>* __output)
 	{
+		if(!self->IsNativeObjectValid())
+			{
+				__output = {};
+			return;
+			}
+
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCapsuleCollider*>(self->GetNativeObject())->GetCenter();
 
@@ -66,12 +84,18 @@ namespace bs
 
 	void ScriptCapsuleCollider::InternalSetHalfHeight(ScriptCapsuleCollider* self, float halfHeight)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCapsuleCollider*>(self->GetNativeObject())->SetHalfHeight(halfHeight);
 	}
 
 	float ScriptCapsuleCollider::InternalGetHalfHeight(ScriptCapsuleCollider* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCapsuleCollider*>(self->GetNativeObject())->GetHalfHeight();
 
 		float __output;
@@ -82,12 +106,18 @@ namespace bs
 
 	void ScriptCapsuleCollider::InternalSetRadius(ScriptCapsuleCollider* self, float radius)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CCapsuleCollider*>(self->GetNativeObject())->SetRadius(radius);
 	}
 
 	float ScriptCapsuleCollider::InternalGetRadius(ScriptCapsuleCollider* self)
 	{
 		float tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CCapsuleCollider*>(self->GetNativeObject())->GetRadius();
 
 		float __output;

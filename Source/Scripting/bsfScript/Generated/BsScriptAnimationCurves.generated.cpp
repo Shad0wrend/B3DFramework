@@ -61,6 +61,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalAddPositionCurve(ScriptAnimationCurves* self, MonoString* name, MonoObject* curve)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<TVector3<float>>> tmpcurve;
@@ -73,6 +76,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalAddRotationCurve(ScriptAnimationCurves* self, MonoString* name, MonoObject* curve)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<TQuaternion<float>>> tmpcurve;
@@ -85,6 +91,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalAddScaleCurve(ScriptAnimationCurves* self, MonoString* name, MonoObject* curve)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<TVector3<float>>> tmpcurve;
@@ -97,6 +106,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalAddGenericCurve(ScriptAnimationCurves* self, MonoString* name, MonoObject* curve)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<float>> tmpcurve;
@@ -109,6 +121,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalRemovePositionCurve(ScriptAnimationCurves* self, MonoString* name)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<AnimationCurves*>(self->GetNativeObject())->RemovePositionCurve(tmpname);
@@ -116,6 +131,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalRemoveRotationCurve(ScriptAnimationCurves* self, MonoString* name)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<AnimationCurves*>(self->GetNativeObject())->RemoveRotationCurve(tmpname);
@@ -123,6 +141,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalRemoveScaleCurve(ScriptAnimationCurves* self, MonoString* name)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<AnimationCurves*>(self->GetNativeObject())->RemoveScaleCurve(tmpname);
@@ -130,6 +151,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalRemoveGenericCurve(ScriptAnimationCurves* self, MonoString* name)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
 		static_cast<AnimationCurves*>(self->GetNativeObject())->RemoveGenericCurve(tmpname);
@@ -138,6 +162,9 @@ namespace bs
 	MonoArray* ScriptAnimationCurves::InternalGetPositionCurves(ScriptAnimationCurves* self)
 	{
 		Vector<TNamedAnimationCurve<TVector3<float>>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = AnimationCurvesEx::GetPositionCurves(std::static_pointer_cast<AnimationCurves>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -154,6 +181,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalSetPositionCurves(ScriptAnimationCurves* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TNamedAnimationCurve<TVector3<float>>> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -170,6 +200,9 @@ namespace bs
 	MonoArray* ScriptAnimationCurves::InternalGetRotationCurves(ScriptAnimationCurves* self)
 	{
 		Vector<TNamedAnimationCurve<TQuaternion<float>>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = AnimationCurvesEx::GetRotationCurves(std::static_pointer_cast<AnimationCurves>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -186,6 +219,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalSetRotationCurves(ScriptAnimationCurves* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TNamedAnimationCurve<TQuaternion<float>>> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -202,6 +238,9 @@ namespace bs
 	MonoArray* ScriptAnimationCurves::InternalGetScaleCurves(ScriptAnimationCurves* self)
 	{
 		Vector<TNamedAnimationCurve<TVector3<float>>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = AnimationCurvesEx::GetScaleCurves(std::static_pointer_cast<AnimationCurves>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -218,6 +257,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalSetScaleCurves(ScriptAnimationCurves* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TNamedAnimationCurve<TVector3<float>>> nativeArrayvalue;
 		if(value != nullptr)
 		{
@@ -234,6 +276,9 @@ namespace bs
 	MonoArray* ScriptAnimationCurves::InternalGetGenericCurves(ScriptAnimationCurves* self)
 	{
 		Vector<TNamedAnimationCurve<float>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = AnimationCurvesEx::GetGenericCurves(std::static_pointer_cast<AnimationCurves>(self->GetBaseNativeObjectAsShared()));
 
 		MonoArray* __output;
@@ -250,6 +295,9 @@ namespace bs
 
 	void ScriptAnimationCurves::InternalSetGenericCurves(ScriptAnimationCurves* self, MonoArray* value)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<TNamedAnimationCurve<float>> nativeArrayvalue;
 		if(value != nullptr)
 		{

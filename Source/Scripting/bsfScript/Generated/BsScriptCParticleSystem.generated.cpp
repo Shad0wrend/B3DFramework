@@ -65,6 +65,9 @@ namespace bs
 	}
 	void ScriptParticleSystem::InternalSetSettings(ScriptParticleSystem* self, MonoObject* settings)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		SPtr<ParticleSystemSettings> tmpsettings;
 		ScriptParticleSystemSettings* scriptObjectWrappersettings;
 		scriptObjectWrappersettings = ScriptParticleSystemSettings::GetScriptObjectWrapper(settings);
@@ -76,6 +79,9 @@ namespace bs
 	MonoObject* ScriptParticleSystem::InternalGetSettings(ScriptParticleSystem* self)
 	{
 		SPtr<ParticleSystemSettings> tmp__output = B3DMakeShared<ParticleSystemSettings>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetSettings();
 
 		MonoObject* __output;
@@ -86,6 +92,9 @@ namespace bs
 
 	void ScriptParticleSystem::InternalSetGpuSimulationSettings(ScriptParticleSystem* self, MonoObject* settings)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		SPtr<ParticleGpuSimulationSettings> tmpsettings;
 		ScriptParticleGpuSimulationSettings* scriptObjectWrappersettings;
 		scriptObjectWrappersettings = ScriptParticleGpuSimulationSettings::GetScriptObjectWrapper(settings);
@@ -97,6 +106,9 @@ namespace bs
 	MonoObject* ScriptParticleSystem::InternalGetGpuSimulationSettings(ScriptParticleSystem* self)
 	{
 		SPtr<ParticleGpuSimulationSettings> tmp__output = B3DMakeShared<ParticleGpuSimulationSettings>();
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		*tmp__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetGpuSimulationSettings();
 
 		MonoObject* __output;
@@ -107,6 +119,9 @@ namespace bs
 
 	void ScriptParticleSystem::InternalSetEmitters(ScriptParticleSystem* self, MonoArray* emitters)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<SPtr<ParticleEmitter>> nativeArrayemitters;
 		if(emitters != nullptr)
 		{
@@ -129,6 +144,9 @@ namespace bs
 	MonoArray* ScriptParticleSystem::InternalGetEmitters(ScriptParticleSystem* self)
 	{
 		Vector<SPtr<ParticleEmitter>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetEmitters();
 
 		MonoArray* __output;
@@ -148,6 +166,9 @@ namespace bs
 
 	void ScriptParticleSystem::InternalSetEvolvers(ScriptParticleSystem* self, MonoArray* evolvers)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		Vector<SPtr<ParticleEvolver>> nativeArrayevolvers;
 		if(evolvers != nullptr)
 		{
@@ -170,6 +191,9 @@ namespace bs
 	MonoArray* ScriptParticleSystem::InternalGetEvolvers(ScriptParticleSystem* self)
 	{
 		Vector<SPtr<ParticleEvolver>> nativeArray__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		nativeArray__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetEvolvers();
 
 		MonoArray* __output;
@@ -189,12 +213,18 @@ namespace bs
 
 	void ScriptParticleSystem::InternalSetLayer(ScriptParticleSystem* self, uint64_t layer)
 	{
+		if(!self->IsNativeObjectValid())
+			return;
+
 		static_cast<CParticleSystem*>(self->GetNativeObject())->SetLayer(layer);
 	}
 
 	uint64_t ScriptParticleSystem::InternalGetLayer(ScriptParticleSystem* self)
 	{
 		uint64_t tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetLayer();
 
 		uint64_t __output;
@@ -206,6 +236,9 @@ namespace bs
 	bool ScriptParticleSystem::InternalTogglePreviewModeInternal(ScriptParticleSystem* self, bool enabled)
 	{
 		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
 		tmp__output = static_cast<CParticleSystem*>(self->GetNativeObject())->TogglePreviewModeInternal(enabled);
 
 		bool __output;
