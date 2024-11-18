@@ -45,10 +45,10 @@ namespace bs
 	void ScriptBoxCollider::InternalGetExtents(ScriptBoxCollider* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CBoxCollider*>(self->GetNativeObject())->GetExtents();
@@ -67,10 +67,10 @@ namespace bs
 	void ScriptBoxCollider::InternalGetCenter(ScriptBoxCollider* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CBoxCollider*>(self->GetNativeObject())->GetCenter();

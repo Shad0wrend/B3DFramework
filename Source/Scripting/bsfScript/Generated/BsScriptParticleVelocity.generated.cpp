@@ -47,10 +47,10 @@ namespace bs
 	void ScriptParticleVelocity::InternalGetOptions(ScriptParticleVelocity* self, __PARTICLE_VELOCITY_DESCInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_VELOCITY_DESC tmp__output;
 		tmp__output = static_cast<ParticleVelocity*>(self->GetNativeObject())->GetOptions();

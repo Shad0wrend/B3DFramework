@@ -292,10 +292,10 @@ namespace bs
 	void ScriptMaterial::InternalGetColor(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
@@ -324,10 +324,10 @@ namespace bs
 	void ScriptMaterial::InternalGetVec2(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
@@ -340,10 +340,10 @@ namespace bs
 	void ScriptMaterial::InternalGetVec3(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
@@ -356,10 +356,10 @@ namespace bs
 	void ScriptMaterial::InternalGetVec4(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, TVector4<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
@@ -372,10 +372,10 @@ namespace bs
 	void ScriptMaterial::InternalGetMat3(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, Matrix3* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
@@ -388,10 +388,10 @@ namespace bs
 	void ScriptMaterial::InternalGetMat4(ScriptMaterial* self, MonoString* name, uint32_t arrayIdx, Matrix4* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);

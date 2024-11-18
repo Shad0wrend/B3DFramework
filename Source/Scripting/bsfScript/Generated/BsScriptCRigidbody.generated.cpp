@@ -258,10 +258,10 @@ namespace bs
 	void ScriptRigidbody::InternalGetVelocity(ScriptRigidbody* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetVelocity();
@@ -280,10 +280,10 @@ namespace bs
 	void ScriptRigidbody::InternalGetAngularVelocity(ScriptRigidbody* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetAngularVelocity();
@@ -346,10 +346,10 @@ namespace bs
 	void ScriptRigidbody::InternalGetInertiaTensor(ScriptRigidbody* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetInertiaTensor();
@@ -390,10 +390,10 @@ namespace bs
 	void ScriptRigidbody::InternalGetCenterOfMassPosition(ScriptRigidbody* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetCenterOfMassPosition();
@@ -412,10 +412,10 @@ namespace bs
 	void ScriptRigidbody::InternalGetCenterOfMassRotation(ScriptRigidbody* self, TQuaternion<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TQuaternion<float> tmp__output;
 		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetCenterOfMassRotation();
@@ -538,10 +538,10 @@ namespace bs
 	void ScriptRigidbody::InternalGetVelocityAtPoint(ScriptRigidbody* self, TVector3<float>* point, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetVelocityAtPoint(*point);

@@ -49,10 +49,10 @@ namespace bs
 	void ScriptCapsuleCollider::InternalGetNormal(ScriptCapsuleCollider* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCapsuleCollider*>(self->GetNativeObject())->GetNormal();
@@ -71,10 +71,10 @@ namespace bs
 	void ScriptCapsuleCollider::InternalGetCenter(ScriptCapsuleCollider* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCapsuleCollider*>(self->GetNativeObject())->GetCenter();

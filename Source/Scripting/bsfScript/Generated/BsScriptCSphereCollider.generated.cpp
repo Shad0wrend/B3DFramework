@@ -67,10 +67,10 @@ namespace bs
 	void ScriptSphereCollider::InternalGetCenter(ScriptSphereCollider* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CSphereCollider*>(self->GetNativeObject())->GetCenter();

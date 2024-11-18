@@ -89,10 +89,10 @@ namespace bs
 	void ScriptGUIWidget::InternalGetBounds(ScriptGUIWidget* self, Rect2I* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Rect2I tmp__output;
 		tmp__output = static_cast<CGUIWidget*>(self->GetNativeObject())->GetBounds();

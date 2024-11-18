@@ -47,10 +47,10 @@ namespace bs
 	void ScriptParticleSize::InternalGetOptions(ScriptParticleSize* self, __PARTICLE_SIZE_DESCInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_SIZE_DESC tmp__output;
 		tmp__output = static_cast<ParticleSize*>(self->GetNativeObject())->GetOptions();

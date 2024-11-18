@@ -134,10 +134,10 @@ namespace bs
 	{
 		TVector3<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ParticleVectorFieldSettings*>(self->GetNativeObject())->Scale;
 
@@ -158,10 +158,10 @@ namespace bs
 	{
 		TVector3<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ParticleVectorFieldSettings*>(self->GetNativeObject())->Offset;
 
@@ -182,10 +182,10 @@ namespace bs
 	{
 		TQuaternion<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ParticleVectorFieldSettings*>(self->GetNativeObject())->Rotation;
 

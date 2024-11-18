@@ -37,10 +37,10 @@ namespace bs
 	void ScriptSphericalJoint::InternalGetLimit(ScriptSphericalJoint* self, __LimitConeRangeInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		LimitConeRange tmp__output;
 		tmp__output = static_cast<CSphericalJoint*>(self->GetNativeObject())->GetLimit();

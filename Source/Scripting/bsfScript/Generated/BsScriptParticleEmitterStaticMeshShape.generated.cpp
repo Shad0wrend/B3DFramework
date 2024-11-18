@@ -47,10 +47,10 @@ namespace bs
 	void ScriptParticleEmitterStaticMeshShape::InternalGetOptions(ScriptParticleEmitterStaticMeshShape* self, __PARTICLE_STATIC_MESH_SHAPE_DESCInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_STATIC_MESH_SHAPE_DESC tmp__output;
 		tmp__output = static_cast<ParticleEmitterStaticMeshShape*>(self->GetNativeObject())->GetOptions();

@@ -45,10 +45,10 @@ namespace bs
 	void ScriptParticleGravity::InternalGetOptions(ScriptParticleGravity* self, PARTICLE_GRAVITY_DESC* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_GRAVITY_DESC tmp__output;
 		tmp__output = static_cast<ParticleGravity*>(self->GetNativeObject())->GetOptions();

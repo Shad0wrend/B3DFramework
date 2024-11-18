@@ -67,10 +67,10 @@ namespace bs
 	void ScriptSliderJoint::InternalGetLimit(ScriptSliderJoint* self, __LimitLinearRangeInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		LimitLinearRange tmp__output;
 		tmp__output = static_cast<CSliderJoint*>(self->GetNativeObject())->GetLimit();

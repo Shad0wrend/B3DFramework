@@ -52,10 +52,10 @@ namespace bs
 	void ScriptSpriteImage::InternalGetSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TSize2<uint32_t> tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetSize();
@@ -66,10 +66,10 @@ namespace bs
 	void ScriptSpriteImage::InternalGetAnimationFrameSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TSize2<uint32_t> tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAnimationFrameSize();
@@ -107,10 +107,10 @@ namespace bs
 	void ScriptSpriteImage::InternalGetUVRange(ScriptSpriteImageWrapperBase* self, Rect2* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Rect2 tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetUVRange();
@@ -129,10 +129,10 @@ namespace bs
 	void ScriptSpriteImage::InternalGetAnimation(ScriptSpriteImageWrapperBase* self, SpriteSheetGridAnimation* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		SpriteSheetGridAnimation tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAnimation();

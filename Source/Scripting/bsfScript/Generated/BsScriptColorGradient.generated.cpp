@@ -125,10 +125,10 @@ namespace bs
 	void ScriptColorGradient::InternalGetKey(ScriptColorGradient* self, uint32_t idx, __ColorGradientKeyInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		ColorGradientKey tmp__output;
 		tmp__output = static_cast<ColorGradient*>(self->GetNativeObject())->GetKey(idx);
@@ -149,10 +149,10 @@ namespace bs
 	void ScriptColorGradient::InternalEvaluate(ScriptColorGradient* self, float t, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Color tmp__output;
 		tmp__output = ColorGradientEx::Evaluate(std::static_pointer_cast<ColorGradient>(self->GetBaseNativeObjectAsShared()), t);

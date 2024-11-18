@@ -103,10 +103,10 @@ namespace bs
 	void ScriptSceneInstance::InternalGetAssociatedResourceId(ScriptSceneInstance* self, UUID* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		UUID tmp__output;
 		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->GetAssociatedResourceId();

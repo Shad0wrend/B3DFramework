@@ -90,10 +90,10 @@ namespace bs
 	void ScriptJoint::InternalGetPosition(ScriptJointWrapperBase* self, JointBody body, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetPosition(body);
@@ -104,10 +104,10 @@ namespace bs
 	void ScriptJoint::InternalGetRotation(ScriptJointWrapperBase* self, JointBody body, TQuaternion<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TQuaternion<float> tmp__output;
 		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetRotation(body);

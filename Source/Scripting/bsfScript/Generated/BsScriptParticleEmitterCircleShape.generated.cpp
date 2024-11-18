@@ -47,10 +47,10 @@ namespace bs
 	void ScriptParticleEmitterCircleShape::InternalGetOptions(ScriptParticleEmitterCircleShape* self, __PARTICLE_CIRCLE_SHAPE_DESCInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_CIRCLE_SHAPE_DESC tmp__output;
 		tmp__output = static_cast<ParticleEmitterCircleShape*>(self->GetNativeObject())->GetOptions();

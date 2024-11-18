@@ -100,10 +100,10 @@ namespace bs
 	void ScriptCharacterController::InternalGetFootPosition(ScriptCharacterController* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetFootPosition();
@@ -166,10 +166,10 @@ namespace bs
 	void ScriptCharacterController::InternalGetUp(ScriptCharacterController* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetUp();
@@ -298,10 +298,10 @@ namespace bs
 	void ScriptCharacterController::InternalGetSlopeLimit(ScriptCharacterController* self, TRadian<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TRadian<float> tmp__output;
 		tmp__output = static_cast<CCharacterController*>(self->GetNativeObject())->GetSlopeLimit();

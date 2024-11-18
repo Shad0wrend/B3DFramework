@@ -47,10 +47,10 @@ namespace bs
 	void ScriptParticleEmitterRectShape::InternalGetOptions(ScriptParticleEmitterRectShape* self, __PARTICLE_RECT_SHAPE_DESCInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_RECT_SHAPE_DESC tmp__output;
 		tmp__output = static_cast<ParticleEmitterRectShape*>(self->GetNativeObject())->GetOptions();

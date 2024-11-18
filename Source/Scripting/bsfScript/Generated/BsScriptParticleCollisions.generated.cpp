@@ -136,10 +136,10 @@ namespace bs
 	void ScriptParticleCollisions::InternalGetOptions(ScriptParticleCollisions* self, PARTICLE_COLLISIONS_DESC* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_COLLISIONS_DESC tmp__output;
 		tmp__output = static_cast<ParticleCollisions*>(self->GetNativeObject())->GetOptions();

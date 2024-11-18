@@ -47,10 +47,10 @@ namespace bs
 	void ScriptParticleOrbit::InternalGetOptions(ScriptParticleOrbit* self, __PARTICLE_ORBIT_DESCInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_ORBIT_DESC tmp__output;
 		tmp__output = static_cast<ParticleOrbit*>(self->GetNativeObject())->GetOptions();

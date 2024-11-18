@@ -74,10 +74,10 @@ namespace bs
 	void ScriptManagedMemberInfo::InternalParseStyle(ScriptManagedMemberInfoWrapperBase* self, __ManagedMemberStyleInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		ManagedMemberStyle tmp__output;
 		tmp__output = static_cast<ManagedMemberInfo*>(self->GetNativeObject())->ParseStyle();

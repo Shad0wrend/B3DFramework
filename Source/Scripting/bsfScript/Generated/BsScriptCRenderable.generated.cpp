@@ -242,10 +242,10 @@ namespace bs
 	void ScriptRenderable::InternalGetBounds(ScriptRenderable* self, Bounds* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Bounds tmp__output;
 		tmp__output = static_cast<CRenderable*>(self->GetNativeObject())->GetBounds();

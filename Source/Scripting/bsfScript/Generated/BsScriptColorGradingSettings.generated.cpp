@@ -41,10 +41,10 @@ namespace bs
 	{
 		TVector3<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ColorGradingSettings*>(self->GetNativeObject())->Saturation;
 
@@ -65,10 +65,10 @@ namespace bs
 	{
 		TVector3<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ColorGradingSettings*>(self->GetNativeObject())->Contrast;
 
@@ -89,10 +89,10 @@ namespace bs
 	{
 		TVector3<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ColorGradingSettings*>(self->GetNativeObject())->Gain;
 
@@ -113,10 +113,10 @@ namespace bs
 	{
 		TVector3<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ColorGradingSettings*>(self->GetNativeObject())->Offset;
 

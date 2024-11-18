@@ -585,10 +585,10 @@ namespace bs
 	void ScriptPhysicsScene::InternalGetGravity(ScriptPhysicsScene* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<PhysicsScene*>(self->GetNativeObject())->GetGravity();

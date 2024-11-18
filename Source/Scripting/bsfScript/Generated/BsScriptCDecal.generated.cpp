@@ -86,10 +86,10 @@ namespace bs
 	void ScriptDecal::InternalGetSize(ScriptDecal* self, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<CDecal*>(self->GetNativeObject())->GetSize();

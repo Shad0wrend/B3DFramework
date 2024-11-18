@@ -132,10 +132,10 @@ namespace bs
 	void ScriptVector3Curve::InternalEvaluate(ScriptVector3Curve* self, float time, bool loop, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<TAnimationCurve<TVector3<float>>*>(self->GetNativeObject())->Evaluate(time, loop);
@@ -206,10 +206,10 @@ namespace bs
 	void ScriptVector2Curve::InternalEvaluate(ScriptVector2Curve* self, float time, bool loop, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<TAnimationCurve<TVector2<float>>*>(self->GetNativeObject())->Evaluate(time, loop);
@@ -280,10 +280,10 @@ namespace bs
 	void ScriptQuaternionCurve::InternalEvaluate(ScriptQuaternionCurve* self, float time, bool loop, TQuaternion<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TQuaternion<float> tmp__output;
 		tmp__output = static_cast<TAnimationCurve<TQuaternion<float>>*>(self->GetNativeObject())->Evaluate(time, loop);

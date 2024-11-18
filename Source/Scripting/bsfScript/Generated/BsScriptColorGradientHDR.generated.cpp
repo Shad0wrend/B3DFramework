@@ -125,10 +125,10 @@ namespace bs
 	void ScriptColorGradientHDR::InternalGetKey(ScriptColorGradientHDR* self, uint32_t idx, __ColorGradientKeyInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		ColorGradientKey tmp__output;
 		tmp__output = static_cast<ColorGradientHDR*>(self->GetNativeObject())->GetKey(idx);
@@ -149,10 +149,10 @@ namespace bs
 	void ScriptColorGradientHDR::InternalEvaluate(ScriptColorGradientHDR* self, float t, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Color tmp__output;
 		tmp__output = ColorGradientHDREx::Evaluate(std::static_pointer_cast<ColorGradientHDR>(self->GetBaseNativeObjectAsShared()), t);

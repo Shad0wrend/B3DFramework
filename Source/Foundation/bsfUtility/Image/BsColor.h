@@ -22,7 +22,7 @@ namespace bs
 	class B3D_UTILITY_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true)) Color
 	{
 	public:
-		constexpr explicit Color(float red = 1.0f, float green = 1.0f, float blue = 1.0f, float alpha = 1.0f)
+		constexpr Color(float red = 1.0f, float green = 1.0f, float blue = 1.0f, float alpha = 1.0f)
 			: R(red), G(green), B(blue), A(alpha)
 		{}
 

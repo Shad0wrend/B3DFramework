@@ -86,10 +86,10 @@ namespace bs
 	void ScriptViewport::InternalGetArea(ScriptViewport* self, Rect2* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Rect2 tmp__output;
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetArea();
@@ -100,10 +100,10 @@ namespace bs
 	void ScriptViewport::InternalGetPixelArea(ScriptViewport* self, Rect2I* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Rect2I tmp__output;
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetPixelArea();
@@ -144,10 +144,10 @@ namespace bs
 	void ScriptViewport::InternalGetClearColorValue(ScriptViewport* self, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Color tmp__output;
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetClearColorValue();

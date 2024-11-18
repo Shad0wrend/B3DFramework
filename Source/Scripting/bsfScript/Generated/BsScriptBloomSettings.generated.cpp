@@ -140,10 +140,10 @@ namespace bs
 	{
 		Color tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<BloomSettings*>(self->GetNativeObject())->Tint;
 

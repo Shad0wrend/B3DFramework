@@ -42,10 +42,10 @@ namespace bs
 	void ScriptHingeJoint::InternalGetAngle(ScriptHingeJoint* self, TRadian<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TRadian<float> tmp__output;
 		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetAngle();
@@ -70,10 +70,10 @@ namespace bs
 	void ScriptHingeJoint::InternalGetLimit(ScriptHingeJoint* self, __LimitAngularRangeInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		LimitAngularRange tmp__output;
 		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetLimit();
@@ -96,10 +96,10 @@ namespace bs
 	void ScriptHingeJoint::InternalGetDrive(ScriptHingeJoint* self, HingeJointDrive* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		HingeJointDrive tmp__output;
 		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetDrive();

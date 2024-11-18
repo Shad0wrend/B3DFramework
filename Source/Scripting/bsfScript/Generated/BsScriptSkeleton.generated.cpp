@@ -49,10 +49,10 @@ namespace bs
 	void ScriptSkeleton::InternalGetBoneInfo(ScriptSkeleton* self, int32_t boneIdx, __SkeletonBoneInfoExInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		SkeletonBoneInfoEx tmp__output;
 		tmp__output = SkeletonEx::GetBoneInfo(std::static_pointer_cast<Skeleton>(self->GetBaseNativeObjectAsShared()), boneIdx);

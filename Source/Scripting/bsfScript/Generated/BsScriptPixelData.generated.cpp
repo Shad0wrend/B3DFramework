@@ -91,10 +91,10 @@ namespace bs
 	void ScriptPixelData::InternalGetExtents(ScriptPixelData* self, PixelVolume* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PixelVolume tmp__output;
 		tmp__output = static_cast<PixelData*>(self->GetNativeObject())->GetExtents();
@@ -145,10 +145,10 @@ namespace bs
 	void ScriptPixelData::InternalGetPixel(ScriptPixelData* self, int32_t x, int32_t y, int32_t z, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Color tmp__output;
 		tmp__output = PixelDataEx::GetPixel(std::static_pointer_cast<PixelData>(self->GetBaseNativeObjectAsShared()), x, y, z);

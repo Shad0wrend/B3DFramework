@@ -47,10 +47,10 @@ namespace bs
 	void ScriptParticleRotation::InternalGetOptions(ScriptParticleRotation* self, __PARTICLE_ROTATION_DESCInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_ROTATION_DESC tmp__output;
 		tmp__output = static_cast<ParticleRotation*>(self->GetNativeObject())->GetOptions();

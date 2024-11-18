@@ -79,10 +79,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetTwist(ScriptD6Joint* self, TRadian<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TRadian<float> tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetTwist();
@@ -93,10 +93,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetSwingY(ScriptD6Joint* self, TRadian<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TRadian<float> tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetSwingY();
@@ -107,10 +107,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetSwingZ(ScriptD6Joint* self, TRadian<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TRadian<float> tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetSwingZ();
@@ -121,10 +121,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetLimitLinear(ScriptD6Joint* self, __LimitLinearInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		LimitLinear tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetLimitLinear();
@@ -147,10 +147,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetLimitTwist(ScriptD6Joint* self, __LimitAngularRangeInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		LimitAngularRange tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetLimitTwist();
@@ -173,10 +173,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetLimitSwing(ScriptD6Joint* self, __LimitConeRangeInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		LimitConeRange tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetLimitSwing();
@@ -199,10 +199,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetDrive(ScriptD6Joint* self, D6JointDriveType type, __D6JointDriveInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		D6JointDrive tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDrive(type);
@@ -225,10 +225,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetDrivePosition(ScriptD6Joint* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDrivePosition();
@@ -239,10 +239,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetDriveRotation(ScriptD6Joint* self, TQuaternion<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TQuaternion<float> tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDriveRotation();
@@ -261,10 +261,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetDriveLinearVelocity(ScriptD6Joint* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDriveLinearVelocity();
@@ -275,10 +275,10 @@ namespace bs
 	void ScriptD6Joint::InternalGetDriveAngularVelocity(ScriptD6Joint* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDriveAngularVelocity();

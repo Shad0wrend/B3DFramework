@@ -119,10 +119,10 @@ namespace bs
 	void ScriptRandom::InternalGetUnitVector(ScriptRandom* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetUnitVector();
@@ -133,10 +133,10 @@ namespace bs
 	void ScriptRandom::InternalGetUnitVector2D(ScriptRandom* self, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetUnitVector2D();
@@ -147,10 +147,10 @@ namespace bs
 	void ScriptRandom::InternalGetPointInSphere(ScriptRandom* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInSphere();
@@ -161,10 +161,10 @@ namespace bs
 	void ScriptRandom::InternalGetPointInSphereShell(ScriptRandom* self, float thickness, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInSphereShell(thickness);
@@ -175,10 +175,10 @@ namespace bs
 	void ScriptRandom::InternalGetPointInCircle(ScriptRandom* self, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInCircle();
@@ -189,10 +189,10 @@ namespace bs
 	void ScriptRandom::InternalGetPointInCircleShell(ScriptRandom* self, float thickness, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInCircleShell(thickness);
@@ -203,10 +203,10 @@ namespace bs
 	void ScriptRandom::InternalGetPointInArc(ScriptRandom* self, TDegree<float>* angle, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInArc(*angle);
@@ -217,10 +217,10 @@ namespace bs
 	void ScriptRandom::InternalGetPointInArcShell(ScriptRandom* self, TDegree<float>* angle, float thickness, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetPointInArcShell(*angle, thickness);
@@ -231,10 +231,10 @@ namespace bs
 	void ScriptRandom::InternalGetBarycentric(ScriptRandom* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<Random*>(self->GetNativeObject())->GetBarycentric();

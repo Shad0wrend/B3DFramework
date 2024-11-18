@@ -395,10 +395,10 @@ namespace bs
 	{
 		TVector2<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<DepthOfFieldSettings*>(self->GetNativeObject())->SensorSize;
 

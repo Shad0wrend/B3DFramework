@@ -124,10 +124,10 @@ namespace bs
 	void ScriptDistanceJoint::InternalGetSpring(ScriptDistanceJoint* self, Spring* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Spring tmp__output;
 		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetSpring();

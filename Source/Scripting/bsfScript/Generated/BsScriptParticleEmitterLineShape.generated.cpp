@@ -47,10 +47,10 @@ namespace bs
 	void ScriptParticleEmitterLineShape::InternalGetOptions(ScriptParticleEmitterLineShape* self, __PARTICLE_LINE_SHAPE_DESCInterop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		PARTICLE_LINE_SHAPE_DESC tmp__output;
 		tmp__output = static_cast<ParticleEmitterLineShape*>(self->GetNativeObject())->GetOptions();

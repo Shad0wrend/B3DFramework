@@ -343,10 +343,10 @@ namespace bs
 	void ScriptAnimation::InternalGetBounds(ScriptAnimation* self, __TAABox_float_Interop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TAABox<float> tmp__output;
 		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetBounds();

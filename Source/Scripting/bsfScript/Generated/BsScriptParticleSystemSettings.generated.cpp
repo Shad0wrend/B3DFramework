@@ -310,10 +310,10 @@ namespace bs
 	{
 		TVector3<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ParticleSystemSettings*>(self->GetNativeObject())->OrientationPlaneNormal;
 
@@ -422,10 +422,10 @@ namespace bs
 	{
 		TAABox<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ParticleSystemSettings*>(self->GetNativeObject())->CustomBounds;
 

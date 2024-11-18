@@ -130,10 +130,10 @@ namespace bs
 	{
 		TVector3<float> tmp__output;
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		tmp__output = static_cast<ParticleGpuSimulationSettings*>(self->GetNativeObject())->Acceleration;
 

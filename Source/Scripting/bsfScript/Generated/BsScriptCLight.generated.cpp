@@ -85,10 +85,10 @@ namespace bs
 	void ScriptLight::InternalGetColor(ScriptLight* self, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Color tmp__output;
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetColor();
@@ -195,10 +195,10 @@ namespace bs
 	void ScriptLight::InternalGetSpotAngle(ScriptLight* self, TDegree<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TDegree<float> tmp__output;
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetSpotAngle();
@@ -217,10 +217,10 @@ namespace bs
 	void ScriptLight::InternalGetSpotFalloffAngle(ScriptLight* self, TDegree<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TDegree<float> tmp__output;
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetSpotFalloffAngle();
@@ -275,10 +275,10 @@ namespace bs
 	void ScriptLight::InternalGetBounds(ScriptLight* self, __TSphere_float_Interop* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TSphere<float> tmp__output;
 		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetBounds();

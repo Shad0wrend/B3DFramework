@@ -289,10 +289,10 @@ namespace bs
 	void ScriptVector3Distribution::InternalGetMinConstant(ScriptVector3Distribution* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector3<float>>*>(self->GetNativeObject())->GetMinConstant();
@@ -303,10 +303,10 @@ namespace bs
 	void ScriptVector3Distribution::InternalGetMaxConstant(ScriptVector3Distribution* self, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector3<float>>*>(self->GetNativeObject())->GetMaxConstant();
@@ -345,10 +345,10 @@ namespace bs
 	void ScriptVector3Distribution::InternalEvaluate(ScriptVector3Distribution* self, float t, float factor, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector3<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector3<float>>*>(self->GetNativeObject())->Evaluate(t, factor);
@@ -359,10 +359,10 @@ namespace bs
 	void ScriptVector3Distribution::InternalEvaluate0(ScriptVector3Distribution* self, float t, MonoObject* factor, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		SPtr<Random> tmpfactor;
 		ScriptRandom* scriptObjectWrapperfactor;
@@ -470,10 +470,10 @@ namespace bs
 	void ScriptVector2Distribution::InternalGetMinConstant(ScriptVector2Distribution* self, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector2<float>>*>(self->GetNativeObject())->GetMinConstant();
@@ -484,10 +484,10 @@ namespace bs
 	void ScriptVector2Distribution::InternalGetMaxConstant(ScriptVector2Distribution* self, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector2<float>>*>(self->GetNativeObject())->GetMaxConstant();
@@ -526,10 +526,10 @@ namespace bs
 	void ScriptVector2Distribution::InternalEvaluate(ScriptVector2Distribution* self, float t, float factor, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		TVector2<float> tmp__output;
 		tmp__output = static_cast<TDistribution<TVector2<float>>*>(self->GetNativeObject())->Evaluate(t, factor);
@@ -540,10 +540,10 @@ namespace bs
 	void ScriptVector2Distribution::InternalEvaluate0(ScriptVector2Distribution* self, float t, MonoObject* factor, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		SPtr<Random> tmpfactor;
 		ScriptRandom* scriptObjectWrapperfactor;

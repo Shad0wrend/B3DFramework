@@ -103,10 +103,10 @@ namespace bs
 	void ScriptColorDistribution::InternalGetMinConstant(ScriptColorDistribution* self, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Color tmp__output;
 		tmp__output = static_cast<TColorDistribution<ColorGradient>*>(self->GetNativeObject())->GetMinConstant();
@@ -117,10 +117,10 @@ namespace bs
 	void ScriptColorDistribution::InternalGetMaxConstant(ScriptColorDistribution* self, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Color tmp__output;
 		tmp__output = static_cast<TColorDistribution<ColorGradient>*>(self->GetNativeObject())->GetMaxConstant();
@@ -249,10 +249,10 @@ namespace bs
 	void ScriptColorHDRDistribution::InternalGetMinConstant(ScriptColorHDRDistribution* self, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Color tmp__output;
 		tmp__output = static_cast<TColorDistribution<ColorGradientHDR>*>(self->GetNativeObject())->GetMinConstant();
@@ -263,10 +263,10 @@ namespace bs
 	void ScriptColorHDRDistribution::InternalGetMaxConstant(ScriptColorHDRDistribution* self, Color* __output)
 	{
 		if(!self->IsNativeObjectValid())
-			{
-				__output = {};
-				return;
-			}
+		{
+			*__output = {};
+			return;
+		}
 
 		Color tmp__output;
 		tmp__output = static_cast<TColorDistribution<ColorGradientHDR>*>(self->GetNativeObject())->GetMaxConstant();
