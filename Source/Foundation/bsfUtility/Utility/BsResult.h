@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Common result codes for TResult/Result types. */
-	enum class ResultStatus
+	enum class B3D_SCRIPT_EXPORT() ResultStatus
 	{
 		Succeeded,
 		Failed,
@@ -98,14 +98,21 @@ namespace bs
 		T Output;
 
 	private:
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		TResult(ResultStatus status, const char* errorMessage, String additionalErrorMessage = StringUtil::kBlank);
+
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		TResult(ResultStatus status, const T& output);
+
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		TResult(ResultStatus status, T&& output);
 	};
 
 	/** Same as TResult, but with no output object. */
-	struct Result
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true)) Result
 	{
+		Result() = default;
+
 		/** Converts TResult to Result (discards the output field). */
 		template<typename T> Result(const TResult<T>& other);
 
@@ -165,7 +172,10 @@ namespace bs
 	private:
 		template <typename T> friend struct TResult;
 
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		Result(ResultStatus status, const char* errorMessage, String additionalErrorMessage = StringUtil::kBlank);
+
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		Result(ResultStatus status);
 
 		/**

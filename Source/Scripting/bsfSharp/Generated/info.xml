@@ -300,6 +300,17 @@
 	<class native="MeshData" script="MeshData">
 		<doc>Contains mesh vertex and index data used for initializing, updating and reading mesh data from Mesh.</doc>
 	</class>
+	<struct native="Result" script="Result">
+		<doc>Same as TResult, but with no output object.</doc>
+		<ctor>
+		</ctor>
+		<field name="Status" type="ResultStatus">
+		</field>
+		<field name="ErrorMessage" type="string">
+		</field>
+		<field name="AdditionalErrorMessage" type="string">
+		</field>
+	</struct>
 	<class native="MorphChannel" script="MorphChannel">
 		<doc>A collection of morph shapes that are sequentially blended together. Each shape has a weight in range [0, 1] which determines at what point is that shape blended. As the channel percent moves from 0 to 1, different shapes will be blended with those before or after them, depending on their weight.</doc>
 		<property name="Name" type="string" getter="GetName" setter="" static="false">
@@ -696,15 +707,6 @@
 			<doc>Returns the number of color keys in the gradient.</doc>
 		</property>
 	</class>
-	<enum native="AudioFormat" script="AudioFormat">
-		<doc>Valid internal engine audio formats.</doc>
-		<enumentry native="PCM" script="PCM">
-			<doc>Pulse code modulation audio (&quot;raw&quot; uncompressed audio).</doc>
-		</enumentry>
-		<enumentry native="VORBIS" script="VORBIS">
-			<doc>Vorbis compressed audio.</doc>
-		</enumentry>
-	</enum>
 	<enum native="PointerEventType" script="PointerEventType">
 		<doc>Type of pointer event.</doc>
 		<enumentry native="CursorMoved" script="CursorMoved">
@@ -1445,6 +1447,34 @@
 		<field name="W" type="int">
 		</field>
 	</struct>
+	<struct native="Blend2DInfo" script="Blend2DInfo">
+		<doc>Defines a 2D blend where two animation clips are blended between each other using bilinear interpolation.</doc>
+		<field name="TopLeftClip" type="RRef&lt;AnimationClip&gt;">
+		</field>
+		<field name="TopRightClip" type="RRef&lt;AnimationClip&gt;">
+		</field>
+		<field name="BotLeftClip" type="RRef&lt;AnimationClip&gt;">
+		</field>
+		<field name="BotRightClip" type="RRef&lt;AnimationClip&gt;">
+		</field>
+	</struct>
+	<enum native="ResultStatus" script="ResultStatus">
+		<doc>Common result codes for TResult/Result types.</doc>
+		<enumentry native="FailedReadOnly" script="FailedReadOnly">
+		</enumentry>
+		<enumentry native="Succeeded" script="Succeeded">
+		</enumentry>
+		<enumentry native="Failed" script="Failed">
+		</enumentry>
+		<enumentry native="FailedAlreadyExists" script="FailedAlreadyExists">
+		</enumentry>
+		<enumentry native="FailedInvalidInput" script="FailedInvalidInput">
+		</enumentry>
+		<enumentry native="FailedInternalError" script="FailedInternalError">
+		</enumentry>
+		<enumentry native="FailedNotFound" script="FailedNotFound">
+		</enumentry>
+	</enum>
 	<struct native="PARTICLE_CIRCLE_SHAPE_DESC" script="ParticleCircleShapeOptions">
 		<doc>Information describing a ParticleEmitterCircleShape.</doc>
 		<ctor>
@@ -1873,17 +1903,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		</field>
 		<field name="Stopped" type="bool">
 			<doc>Determines should the time be advanced automatically. Certain type of animation clips don&apos;t involve playback (e.g. for blending where animation weight controls the animation).</doc>
-		</field>
-	</struct>
-	<struct native="Blend2DInfo" script="Blend2DInfo">
-		<doc>Defines a 2D blend where two animation clips are blended between each other using bilinear interpolation.</doc>
-		<field name="TopLeftClip" type="RRef&lt;AnimationClip&gt;">
-		</field>
-		<field name="TopRightClip" type="RRef&lt;AnimationClip&gt;">
-		</field>
-		<field name="BotLeftClip" type="RRef&lt;AnimationClip&gt;">
-		</field>
-		<field name="BotRightClip" type="RRef&lt;AnimationClip&gt;">
 		</field>
 	</struct>
 	<struct native="TKeyframe&lt;int32_t&gt;" script="KeyFrameInt">
@@ -2409,6 +2428,15 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Returns a list of all available audio devices.</doc>
 		</property>
 	</class>
+	<enum native="AudioFormat" script="AudioFormat">
+		<doc>Valid internal engine audio formats.</doc>
+		<enumentry native="PCM" script="PCM">
+			<doc>Pulse code modulation audio (&quot;raw&quot; uncompressed audio).</doc>
+		</enumentry>
+		<enumentry native="VORBIS" script="VORBIS">
+			<doc>Vorbis compressed audio.</doc>
+		</enumentry>
+	</enum>
 	<enum native="AudioReadMode" script="AudioReadMode">
 		<doc>Modes that determine how and when is audio data read.</doc>
 		<enumentry native="LoadDecompressed" script="LoadDecompressed">
