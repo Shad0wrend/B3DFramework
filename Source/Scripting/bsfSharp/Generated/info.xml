@@ -1447,6 +1447,88 @@
 		<field name="W" type="int">
 		</field>
 	</struct>
+	<class native="AnimationCurves" script="AnimationCurves">
+		<doc>A set of animation curves representing translation/rotation/scale and generic animation.</doc>
+		<ctor>
+		</ctor>
+		<method native="AddPositionCurve" script="AddPositionCurve" static="false">
+			<doc>Registers a new curve used for animating position.</doc>
+			<param name="name" type="string">
+				<doc>Unique name of the curve. This name will be used mapping the curve to the relevant bone in a skeleton, if any.</doc>
+			</param>
+			<param name="curve" type="Vector3Curve">
+				<doc>Curve to add to the clip.</doc>
+			</param>
+		</method>
+		<method native="AddRotationCurve" script="AddRotationCurve" static="false">
+			<doc>Registers a new curve used for animating rotation.</doc>
+			<param name="name" type="string">
+				<doc>Unique name of the curve. This name will be used mapping the curve to the relevant bone in a skeleton, if any.</doc>
+			</param>
+			<param name="curve" type="QuaternionCurve">
+				<doc>Curve to add to the clip.</doc>
+			</param>
+		</method>
+		<method native="AddScaleCurve" script="AddScaleCurve" static="false">
+			<doc>Registers a new curve used for animating scale.</doc>
+			<param name="name" type="string">
+				<doc>Unique name of the curve. This name will be used mapping the curve to the relevant bone in a skeleton, if any.</doc>
+			</param>
+			<param name="curve" type="Vector3Curve">
+				<doc>Curve to add to the clip.</doc>
+			</param>
+		</method>
+		<method native="AddGenericCurve" script="AddGenericCurve" static="false">
+			<doc>Registers a new curve used for generic animation.</doc>
+			<param name="name" type="string">
+				<doc>Unique name of the curve. This can be used for retrieving the value of the curve from animation.</doc>
+			</param>
+			<param name="curve" type="AnimationCurve">
+				<doc>Curve to add to the clip.</doc>
+			</param>
+		</method>
+		<method native="RemovePositionCurve" script="RemovePositionCurve" static="false">
+			<doc>Removes an existing curve from the clip.</doc>
+			<param name="name" type="string">
+			</param>
+		</method>
+		<method native="RemoveRotationCurve" script="RemoveRotationCurve" static="false">
+			<doc>Removes an existing curve from the clip.</doc>
+			<param name="name" type="string">
+			</param>
+		</method>
+		<method native="RemoveScaleCurve" script="RemoveScaleCurve" static="false">
+			<doc>Removes an existing curve from the clip.</doc>
+			<param name="name" type="string">
+			</param>
+		</method>
+		<method native="RemoveGenericCurve" script="RemoveGenericCurve" static="false">
+			<doc>Removes an existing curve from the clip.</doc>
+			<param name="name" type="string">
+			</param>
+		</method>
+		<property name="Position" type="NamedVector3Curve" getter="GetPositionCurves" setter="SetPositionCurves" static="false">
+			<doc>Curves for animating scene object&apos;s position.</doc>
+		</property>
+		<property name="Rotation" type="NamedQuaternionCurve" getter="GetRotationCurves" setter="SetRotationCurves" static="false">
+			<doc>Curves for animating scene object&apos;s rotation.</doc>
+		</property>
+		<property name="Scale" type="NamedVector3Curve" getter="GetScaleCurves" setter="SetScaleCurves" static="false">
+			<doc>Curves for animating scene object&apos;s scale.</doc>
+		</property>
+		<property name="Generic" type="NamedFloatCurve" getter="GetGenericCurves" setter="SetGenericCurves" static="false">
+			<doc>Curves for animating generic component properties.</doc>
+		</property>
+	</class>
+	<enum native="CompressionType" script="CompressionType">
+		<doc>Supported compression modes.</doc>
+		<enumentry native="Uncompressed" script="Uncompressed">
+		</enumentry>
+		<enumentry native="Snappy" script="Snappy">
+		</enumentry>
+		<enumentry native="Default" script="Default">
+		</enumentry>
+	</enum>
 	<struct native="Blend2DInfo" script="Blend2DInfo">
 		<doc>Defines a 2D blend where two animation clips are blended between each other using bilinear interpolation.</doc>
 		<field name="TopLeftClip" type="RRef&lt;AnimationClip&gt;">
@@ -1818,6 +1900,9 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<enumentry native="FlexibleHeight" script="FlexibleHeight">
 		</enumentry>
 	</enum>
+	<class native="PackageResourceUserMetaData" script="PackageResourceUserMetaData">
+		<doc>Contains user-specified meta-data for a resource stored in a Package.</doc>
+	</class>
 	<enum native="RangeComponent" script="RangeComponent">
 		<doc>Identifiers representing a range of values.</doc>
 		<enumentry native="Min" script="Min">
@@ -2208,79 +2293,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Actual curve containing animation data.</doc>
 		</field>
 	</struct>
-	<class native="AnimationCurves" script="AnimationCurves">
-		<doc>A set of animation curves representing translation/rotation/scale and generic animation.</doc>
-		<ctor>
-		</ctor>
-		<method native="AddPositionCurve" script="AddPositionCurve" static="false">
-			<doc>Registers a new curve used for animating position.</doc>
-			<param name="name" type="string">
-				<doc>Unique name of the curve. This name will be used mapping the curve to the relevant bone in a skeleton, if any.</doc>
-			</param>
-			<param name="curve" type="Vector3Curve">
-				<doc>Curve to add to the clip.</doc>
-			</param>
-		</method>
-		<method native="AddRotationCurve" script="AddRotationCurve" static="false">
-			<doc>Registers a new curve used for animating rotation.</doc>
-			<param name="name" type="string">
-				<doc>Unique name of the curve. This name will be used mapping the curve to the relevant bone in a skeleton, if any.</doc>
-			</param>
-			<param name="curve" type="QuaternionCurve">
-				<doc>Curve to add to the clip.</doc>
-			</param>
-		</method>
-		<method native="AddScaleCurve" script="AddScaleCurve" static="false">
-			<doc>Registers a new curve used for animating scale.</doc>
-			<param name="name" type="string">
-				<doc>Unique name of the curve. This name will be used mapping the curve to the relevant bone in a skeleton, if any.</doc>
-			</param>
-			<param name="curve" type="Vector3Curve">
-				<doc>Curve to add to the clip.</doc>
-			</param>
-		</method>
-		<method native="AddGenericCurve" script="AddGenericCurve" static="false">
-			<doc>Registers a new curve used for generic animation.</doc>
-			<param name="name" type="string">
-				<doc>Unique name of the curve. This can be used for retrieving the value of the curve from animation.</doc>
-			</param>
-			<param name="curve" type="AnimationCurve">
-				<doc>Curve to add to the clip.</doc>
-			</param>
-		</method>
-		<method native="RemovePositionCurve" script="RemovePositionCurve" static="false">
-			<doc>Removes an existing curve from the clip.</doc>
-			<param name="name" type="string">
-			</param>
-		</method>
-		<method native="RemoveRotationCurve" script="RemoveRotationCurve" static="false">
-			<doc>Removes an existing curve from the clip.</doc>
-			<param name="name" type="string">
-			</param>
-		</method>
-		<method native="RemoveScaleCurve" script="RemoveScaleCurve" static="false">
-			<doc>Removes an existing curve from the clip.</doc>
-			<param name="name" type="string">
-			</param>
-		</method>
-		<method native="RemoveGenericCurve" script="RemoveGenericCurve" static="false">
-			<doc>Removes an existing curve from the clip.</doc>
-			<param name="name" type="string">
-			</param>
-		</method>
-		<property name="Position" type="NamedVector3Curve" getter="GetPositionCurves" setter="SetPositionCurves" static="false">
-			<doc>Curves for animating scene object&apos;s position.</doc>
-		</property>
-		<property name="Rotation" type="NamedQuaternionCurve" getter="GetRotationCurves" setter="SetRotationCurves" static="false">
-			<doc>Curves for animating scene object&apos;s rotation.</doc>
-		</property>
-		<property name="Scale" type="NamedVector3Curve" getter="GetScaleCurves" setter="SetScaleCurves" static="false">
-			<doc>Curves for animating scene object&apos;s scale.</doc>
-		</property>
-		<property name="Generic" type="NamedFloatCurve" getter="GetGenericCurves" setter="SetGenericCurves" static="false">
-			<doc>Curves for animating generic component properties.</doc>
-		</property>
-	</class>
 	<class native="ManagedPropertyInfo" script="ManagedPropertyInfo">
 		<doc>Contains data about a single property in a managed object (class or struct).</doc>
 	</class>
@@ -3391,6 +3403,86 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>If true the window render surface will be created, which internally provides a swap chain and allows the GPU to render to the window.</doc>
 		</field>
 	</struct>
+	<class native="MeshImportOptions" script="MeshImportOptions">
+		<doc>Contains import options you may use to control how is a mesh imported from some external format into engine format.</doc>
+		<ctor>
+			<doc>Creates a new import options object that allows you to customize how are meshes imported.</doc>
+		</ctor>
+		<property name="CpuCached" type="bool" getter="GetCpuCached" setter="SetCpuCached" static="false">
+			<doc>Determines whether the texture data is also stored in CPU memory.</doc>
+		</property>
+		<property name="ImportNormals" type="bool" getter="GetImportNormals" setter="SetImportNormals" static="false">
+			<doc>Determines should mesh normals be imported if available.</doc>
+		</property>
+		<property name="ImportTangents" type="bool" getter="GetImportTangents" setter="SetImportTangents" static="false">
+			<doc>Determines should mesh tangents and bitangents be imported if available.</doc>
+		</property>
+		<property name="ImportBlendShapes" type="bool" getter="GetImportBlendShapes" setter="SetImportBlendShapes" static="false">
+			<doc>Determines should mesh blend shapes be imported if available.</doc>
+		</property>
+		<property name="ImportSkin" type="bool" getter="GetImportSkin" setter="SetImportSkin" static="false">
+			<doc>Determines should mesh skin data like bone weights, indices and bind poses be imported if available.</doc>
+		</property>
+		<property name="ImportAnimation" type="bool" getter="GetImportAnimation" setter="SetImportAnimation" static="false">
+			<doc>Determines should animation clips be imported if available.</doc>
+		</property>
+		<property name="ReduceKeyFrames" type="bool" getter="GetReduceKeyFrames" setter="SetReduceKeyFrames" static="false">
+			<doc>Enables or disables keyframe reduction. Keyframe reduction will reduce the number of key-frames in an animation clip by removing identical keyframes, and therefore reducing the size of the clip.</doc>
+		</property>
+		<property name="ImportRootMotion" type="bool" getter="GetImportRootMotion" setter="SetImportRootMotion" static="false">
+			<doc>Enables or disables import of root motion curves. When enabled, any animation curves in imported animations affecting the root bone will be available through a set of separate curves in AnimationClip, and they won&apos;t be evaluated through normal animation process. Instead it is expected that the user evaluates the curves manually and applies them as required.</doc>
+		</property>
+		<property name="ImportScale" type="float" getter="GetImportScale" setter="SetImportScale" static="false">
+			<doc>Uniformly scales the imported mesh by the specified value.</doc>
+		</property>
+		<property name="CollisionMeshType" type="CollisionMeshType" getter="GetCollisionMeshType" setter="SetCollisionMeshType" static="false">
+			<doc>Determines what type (if any) of collision mesh should be imported. If enabled the collision mesh will be available as a sub-resource returned by the importer (along with the normal mesh).</doc>
+		</property>
+		<property name="AnimationSplits" type="AnimationSplitInfo" getter="GetAnimationSplits" setter="SetAnimationSplits" static="false">
+			<doc>Animation split infos that determine how will the source animation clip be split. If no splits are present the data will be imported as one clip, but if splits are present the data will be split according to the split infos. Split infos only affect the primary animation clip, other clips will not be split.</doc>
+		</property>
+		<property name="AnimationEvents" type="ImportedAnimationEvents" getter="GetAnimationEvents" setter="SetAnimationEvents" static="false">
+			<doc>Set of events that will be added to the animation clip, if animation import is enabled.</doc>
+		</property>
+	</class>
+	<enum native="PackageResourceFlag" script="PackageResourceFlag">
+		<doc>Flags that can be set per-resource package meta-data.</doc>
+		<enumentry native="None" script="None">
+		</enumentry>
+		<enumentry native="Folder" script="Folder">
+			<doc>Resource entry represents a folder and has no associated resource data.</doc>
+		</enumentry>
+	</enum>
+	<class native="PackageResourceMetaData" script="PackageResourceMetaData">
+		<doc>Contains meta-data for a resource stored in a Package.</doc>
+		<property name="ResourceName" type="string" getter="GetResourceName" setter="" static="false">
+			<doc>Returns the name of the resource.</doc>
+		</property>
+		<property name="Path" type="string" getter="GetPath" setter="SetPath" static="false">
+			<doc>Path to the resource within the package.</doc>
+		</property>
+		<property name="Id" type="UUID" getter="GetId" setter="SetId" static="false">
+			<doc>Unique ID of the resource.</doc>
+		</property>
+		<property name="TypeId" type="int" getter="GetTypeId" setter="SetTypeId" static="false">
+			<doc>RTTI type ID of the resource contained.</doc>
+		</property>
+		<property name="Dependencies" type="UUID" getter="GetDependencies" setter="SetDependencies" static="false">
+			<doc>IDs of other resource that this resource depends on.</doc>
+		</property>
+		<property name="CompressionType" type="CompressionType" getter="GetCompressionType" setter="SetCompressionType" static="false">
+			<doc>Type of compression used on the serialized resource data.</doc>
+		</property>
+		<property name="Flags" type="PackageResourceFlag" getter="GetFlags" setter="SetFlags" static="false">
+			<doc>Flags to provide additional information about the resource.</doc>
+		</property>
+		<property name="UserMetaData" type="PackageResourceUserMetaData" getter="GetUserMetaData" setter="SetUserMetaData" static="false">
+			<doc>Optional user-specified meta-data. This can be anything, but should be kept small.</doc>
+		</property>
+	</class>
+	<class native="PackageMetaData" script="PackageMetaData">
+		<doc>Contains meta-data for the entirety of a Package (not individual resources).</doc>
+	</class>
 	<class native="MotionBlurSettings" script="MotionBlurSettings">
 		<doc>Settings that control the motion blur effect.</doc>
 		<ctor>
@@ -7498,48 +7590,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<property name="EndFrame" type="int" getter="GetEndFrame" setter="SetEndFrame" static="false">
 		</property>
 		<property name="IsAdditive" type="bool" getter="GetIsAdditive" setter="SetIsAdditive" static="false">
-		</property>
-	</class>
-	<class native="MeshImportOptions" script="MeshImportOptions">
-		<doc>Contains import options you may use to control how is a mesh imported from some external format into engine format.</doc>
-		<ctor>
-			<doc>Creates a new import options object that allows you to customize how are meshes imported.</doc>
-		</ctor>
-		<property name="CpuCached" type="bool" getter="GetCpuCached" setter="SetCpuCached" static="false">
-			<doc>Determines whether the texture data is also stored in CPU memory.</doc>
-		</property>
-		<property name="ImportNormals" type="bool" getter="GetImportNormals" setter="SetImportNormals" static="false">
-			<doc>Determines should mesh normals be imported if available.</doc>
-		</property>
-		<property name="ImportTangents" type="bool" getter="GetImportTangents" setter="SetImportTangents" static="false">
-			<doc>Determines should mesh tangents and bitangents be imported if available.</doc>
-		</property>
-		<property name="ImportBlendShapes" type="bool" getter="GetImportBlendShapes" setter="SetImportBlendShapes" static="false">
-			<doc>Determines should mesh blend shapes be imported if available.</doc>
-		</property>
-		<property name="ImportSkin" type="bool" getter="GetImportSkin" setter="SetImportSkin" static="false">
-			<doc>Determines should mesh skin data like bone weights, indices and bind poses be imported if available.</doc>
-		</property>
-		<property name="ImportAnimation" type="bool" getter="GetImportAnimation" setter="SetImportAnimation" static="false">
-			<doc>Determines should animation clips be imported if available.</doc>
-		</property>
-		<property name="ReduceKeyFrames" type="bool" getter="GetReduceKeyFrames" setter="SetReduceKeyFrames" static="false">
-			<doc>Enables or disables keyframe reduction. Keyframe reduction will reduce the number of key-frames in an animation clip by removing identical keyframes, and therefore reducing the size of the clip.</doc>
-		</property>
-		<property name="ImportRootMotion" type="bool" getter="GetImportRootMotion" setter="SetImportRootMotion" static="false">
-			<doc>Enables or disables import of root motion curves. When enabled, any animation curves in imported animations affecting the root bone will be available through a set of separate curves in AnimationClip, and they won&apos;t be evaluated through normal animation process. Instead it is expected that the user evaluates the curves manually and applies them as required.</doc>
-		</property>
-		<property name="ImportScale" type="float" getter="GetImportScale" setter="SetImportScale" static="false">
-			<doc>Uniformly scales the imported mesh by the specified value.</doc>
-		</property>
-		<property name="CollisionMeshType" type="CollisionMeshType" getter="GetCollisionMeshType" setter="SetCollisionMeshType" static="false">
-			<doc>Determines what type (if any) of collision mesh should be imported. If enabled the collision mesh will be available as a sub-resource returned by the importer (along with the normal mesh).</doc>
-		</property>
-		<property name="AnimationSplits" type="AnimationSplitInfo" getter="GetAnimationSplits" setter="SetAnimationSplits" static="false">
-			<doc>Animation split infos that determine how will the source animation clip be split. If no splits are present the data will be imported as one clip, but if splits are present the data will be split according to the split infos. Split infos only affect the primary animation clip, other clips will not be split.</doc>
-		</property>
-		<property name="AnimationEvents" type="ImportedAnimationEvents" getter="GetAnimationEvents" setter="SetAnimationEvents" static="false">
-			<doc>Set of events that will be added to the animation clip, if animation import is enabled.</doc>
 		</property>
 	</class>
 	<enum native="ButtonCode" script="ButtonCode">

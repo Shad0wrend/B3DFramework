@@ -6,9 +6,9 @@
 #include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsViewport.h"
 #include "../../../Foundation/bsfUtility/Image/BsColor.h"
-#include "../../../Foundation/bsfCore/RenderAPI/BsViewport.h"
 #include "Math/BsRect2.h"
 #include "Math/BsRect2I.h"
+#include "../../../Foundation/bsfCore/RenderAPI/BsViewport.h"
 
 namespace bs { class Viewport; }
 namespace bs

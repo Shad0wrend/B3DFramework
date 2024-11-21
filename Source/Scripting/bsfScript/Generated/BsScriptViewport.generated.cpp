@@ -7,8 +7,6 @@
 #include "Reflection/BsRTTIType.h"
 #include "BsScriptColor.generated.h"
 #include "BsScriptRenderTarget.generated.h"
-#include "../../../Foundation/bsfCore/RenderAPI/BsRenderTexture.h"
-#include "BsScriptRenderTexture.generated.h"
 #include "BsScriptViewport.generated.h"
 
 namespace bs

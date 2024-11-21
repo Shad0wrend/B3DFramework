@@ -6,11 +6,7 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsDragAndDrop.h"
 #include "Reflection/BsRTTIType.h"
-#include "../../../Foundation/bsfEngine/GUI/BsDragAndDrop.h"
-#include "BsScriptResourceDragAndDropData.generated.h"
 #include "BsScriptDragAndDropData.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsDragAndDrop.h"
-#include "BsScriptSceneObjectDragAndDropData.generated.h"
 
 namespace bs
 {

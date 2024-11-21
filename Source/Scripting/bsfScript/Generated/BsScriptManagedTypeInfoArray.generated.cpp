@@ -6,22 +6,6 @@
 #include "BsMonoUtil.h"
 #include "Reflection/BsRTTIType.h"
 #include "BsScriptManagedTypeInfo.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedTypeInfoDictionary.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedTypeInfoResourceReference.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedTypeInfoReference.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedTypeInfoPrimitive.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedTypeInfoArray.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedTypeInfoEnum.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedTypeInfoObject.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedTypeInfoList.generated.h"
 
 namespace bs
 {

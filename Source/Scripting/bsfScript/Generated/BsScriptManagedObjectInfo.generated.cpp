@@ -8,10 +8,6 @@
 #include "BsScriptManagedObjectInfo.generated.h"
 #include "BsScriptManagedTypeInfoObject.generated.h"
 #include "BsScriptManagedMemberInfo.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedFieldInfo.generated.h"
-#include "../Serialization/BsManagedTypeInfo.h"
-#include "BsScriptManagedPropertyInfo.generated.h"
 
 namespace bs
 {

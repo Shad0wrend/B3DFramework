@@ -16,7 +16,7 @@ namespace bs
 	class PackageResourceUserMetaData;
 
 	/** Flags that can be set per-resource package meta-data. */
-	enum class PackageResourceFlag
+	enum class B3D_SCRIPT_EXPORT() PackageResourceFlag
 	{
 		None = 0,
 		Folder = 1 << 0, /**< Resource entry represents a folder and has no associated resource data. */
@@ -26,7 +26,7 @@ namespace bs
 	B3D_FLAGS_OPERATORS(PackageResourceFlag);
 
 	/** Contains meta-data for a resource stored in a Package. */
-	class B3D_CORE_EXPORT PackageResourceMetaData final : public IReflectable
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() PackageResourceMetaData final : public IReflectable, public IScriptExportable
 	{
 	public:
 		PackageResourceMetaData() = default;
@@ -35,17 +35,31 @@ namespace bs
 		{ }
 
 		/** Returns the name of the resource. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(ResourceName))
 		String GetResourceName() const
 		{
 			return Path.IsFile() ? Path.GetFilename(false) : Path.GetTail();
 		}
 
+		B3D_SCRIPT_EXPORT()
 		Path Path; /**< Path to the resource within the package. */
+
+		B3D_SCRIPT_EXPORT()
 		UUID Id; /**< Unique ID of the resource. */
+
+		B3D_SCRIPT_EXPORT()
 		u32 TypeId = 0; /**< RTTI type ID of the resource contained. */
+
+		B3D_SCRIPT_EXPORT()
 		Vector<UUID> Dependencies; /**< IDs of other resource that this resource depends on. */
+
+		B3D_SCRIPT_EXPORT()
 		CompressionType CompressionType = CompressionType::Uncompressed; /**< Type of compression used on the serialized resource data. */
+
+		B3D_SCRIPT_EXPORT()
 		PackageResourceFlags Flags = PackageResourceFlag::None; /**< Flags to provide additional information about the resource. */
+
+		B3D_SCRIPT_EXPORT()
 		SPtr<PackageResourceUserMetaData> UserMetaData; /**< Optional user-specified meta-data. This can be anything, but should be kept small. */
 
 		/************************************************************************/
@@ -58,7 +72,7 @@ namespace bs
 	};
 
 	/** Contains user-specified meta-data for a resource stored in a Package. */
-	class B3D_CORE_EXPORT PackageResourceUserMetaData : public IReflectable
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() PackageResourceUserMetaData : public IReflectable, public IScriptExportable
 	{
 	public:
 		PackageResourceUserMetaData() = default;
@@ -73,7 +87,7 @@ namespace bs
 	};
 
 	/** Contains meta-data for the entirety of a Package (not individual resources). */
-	class B3D_CORE_EXPORT PackageMetaData : public IReflectable
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() PackageMetaData : public IReflectable, public IScriptExportable
 	{
 	public:
 		PackageMetaData() = default;

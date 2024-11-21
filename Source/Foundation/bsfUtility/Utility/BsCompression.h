@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Supported compression modes. */
-	enum class CompressionType
+	enum class B3D_SCRIPT_EXPORT() CompressionType
 	{
 		Uncompressed = 0,
 		Snappy = 1,
