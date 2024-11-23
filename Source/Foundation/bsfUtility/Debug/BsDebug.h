@@ -164,6 +164,18 @@ namespace bs
 	}                                                                                                                                                                                                                        \
 	while(0)
 
+	// Same as B3D_LOG, except Message is expected to be String rather than const char*.
+#define B3D_LOG_STRING(Verbosity, Category, Message, ...)                                                                                                                                                                           \
+	do                                                                                                                                                                                                                       \
+	{                                                                                                                                                                                                                        \
+		using namespace ::bs;                                                                                                                                                                                                \
+		if((i32)LogVerbosity::Verbosity <= (i32)LogCategory##Category::kCompileTimeVerbosity && !LogCategory##Category##Instance.IsVerbositySupressed(LogVerbosity::Verbosity))                                              \
+		{                                                                                                                                                                                                                    \
+			GetDebug().Log(StringUtil::Format(Message + "\n\t\t in ", ##__VA_ARGS__) + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::Verbosity, LogCategory##Category##Instance.GetName());	 \
+		}                                                                                                                                                                                                                    \
+	}                                                                                                                                                                                                                        \
+	while(0)
+
 	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(Uncategorized, Log)
 	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(FileSystem, Log)
 	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(RTTI, Log)
