@@ -1,5 +1,7 @@
 ﻿//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+
+using System;
 using System.IO;
 
 namespace bs
@@ -47,6 +49,20 @@ namespace bs
         public static bool IsPartOf(string path, string parent)
         {
             return Path.GetFullPath(path).StartsWith(Path.GetFullPath(parent));
+        }
+
+        /// <summary>
+        /// Converts an path into a path relative to the provided base.
+        /// </summary>
+        /// <param name="path">Path to convert.</param>
+        /// <param name="pathBase">Path to make relative to. Must be part of <paramref name="path"/></param>
+        /// <returns>Relative path</returns>
+        public static string MakeRelative(string path, string pathBase)
+        {
+            Uri pathUri = new Uri(path, UriKind.RelativeOrAbsolute);
+            Uri pathBaseUri = new Uri(pathBase, UriKind.RelativeOrAbsolute);
+
+            return Uri.UnescapeDataString(pathUri.MakeRelativeUri(pathBaseUri).ToString());
         }
 
         /// <summary>
