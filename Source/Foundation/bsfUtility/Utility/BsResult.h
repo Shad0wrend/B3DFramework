@@ -39,6 +39,9 @@ namespace bs
 		/** Returns true if the result is one of the success states. */
 		bool IsSuccessful() const;
 
+		/** Returns error message and additional error message as a combined string. */
+		String GetFullErrorMessage() const;
+
 		/**
 		 * Creates the success result object.
 		 *
@@ -122,6 +125,9 @@ namespace bs
 		/** Returns true if the result is one of the success states. */
 		bool IsSuccessful() const;
 
+		/** Returns error message and additional error message as a combined string. */
+		String GetFullErrorMessage() const { return CombineErrorMessage(ErrorMessage, AdditionalErrorMessage);}
+
 		/**
 		 * Creates the success result object.
 		 *
@@ -187,6 +193,9 @@ namespace bs
 		 * @return								Combined string with all three error messages.
 		 */
 		static String CombineAdditionalErrorMessage(const String& additionalErrorMessage, const char* childErrorMessage, const String& childAdditionalErrorMessage);
+
+		/** Combines the error message and additional error message into a single string. */
+		static String CombineErrorMessage(const char* errorMessage, const String& additionalErrorMessage);
 	};
 
 	template<typename T>
@@ -228,6 +237,12 @@ namespace bs
 
 	template<typename T>
 	bool TResult<T>::IsSuccessful() const { return Status == ResultStatus::Succeeded; }
+
+	template <typename T>
+	String TResult<T>::GetFullErrorMessage() const
+	{
+		return Result::CombineErrorMessage(ErrorMessage, AdditionalErrorMessage);
+	}
 
 	template<typename T>
 	TResult<T> TResult<T>::Success(const T& output, ResultStatus status)
@@ -305,14 +320,6 @@ namespace bs
 		return Result(childResult.Status, errorMessage, std::move(combinedAdditionalErrorMessage));
 	}
 
-	/**
-	 * Combines error messages from two result objects into a string that can be used as an additional string object for the new result object.
-	 *
-	 * @param	additionalErrorMessage		Additional error message for the primary result object.
-	 * @param	childErrorMessage			Error message from the child result object. Can be null.
-	 * @param	childAdditionalErrorMessage Additional error message from the child result object.
-	 * @return								Combined string with all three error messages.
-	 */
 	inline String Result::CombineAdditionalErrorMessage(const String& additionalErrorMessage, const char* childErrorMessage, const String& childAdditionalErrorMessage)
 	{
 		StringStream combinedAdditionalErrorMessage;
@@ -329,6 +336,21 @@ namespace bs
 
 		return combinedAdditionalErrorMessage.str();
 	}
+
+	inline String Result::CombineErrorMessage(const char* errorMessage, const String& additionalErrorMessage)
+	{
+		StringStream combinedErrorMessage;
+
+		if(errorMessage != nullptr)
+			combinedErrorMessage << errorMessage;
+
+		if(!additionalErrorMessage.empty())
+			combinedErrorMessage << "\n" << additionalErrorMessage;
+
+		return combinedErrorMessage.str();
+		
+	}
+
 
 	/** @} */
 } // namespace bs
