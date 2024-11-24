@@ -278,6 +278,24 @@ void PackageManager::ChangeVirtualPackagePath(const PackageWriteLock& packageWri
 	}
 }
 
+bool PackageManager::SavePackageMetaData(const PackageWriteLock& packageWriteLock)
+{
+	const Path& physicalPathToPackage = packageWriteLock.RuntimePackageInformation->PhysicalPath;
+	const SPtr<Package>& package = packageWriteLock.GetPackage();
+
+	const SPtr<DataStream> packageDataStream = FileSystem::OpenFile(physicalPathToPackage, false);
+	if(!B3D_ENSURE(packageDataStream != nullptr))
+		return false;
+
+	if(!B3D_ENSURE(package != nullptr))
+		return false;
+
+	package->Save(packageDataStream, true, true);
+	B3D_ENSURE(packageDataStream->Close());
+	
+	return true;
+}
+
 Optional<ResourcePackagePath> PackageManager::TryResolvePhysicalResourcePath(const Path& physicalResourcePath) const
 {
 	if(!physicalResourcePath.IsAbsolute())

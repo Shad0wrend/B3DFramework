@@ -48,7 +48,7 @@ namespace bs
 			B3D_RTTI_MEMBER(Dependencies, 3)
 			B3D_RTTI_MEMBER(CompressionType, 4)
 			B3D_RTTI_MEMBER(Flags, 5)
-			B3D_RTTI_MEMBER(UserMetaData, 6)
+			B3D_RTTI_MEMBER(AdditionalMetaData, 6)
 		B3D_RTTI_END_MEMBERS
 
 	public:

@@ -202,6 +202,14 @@ namespace bs
 		void ChangeVirtualPackagePath(const PackageWriteLock& packageWriteLock, const Path& newVirtualPathPrefix);
 
 		/**
+		 * Updates meta-data of a previously saved package.
+		 * 
+		 * @param	packageWriteLock	Write lock for the package to update the meta-data for.
+		 * @return						True if no errors occurred during the process.
+		 */
+		bool SavePackageMetaData(const PackageWriteLock& packageWriteLock);
+
+		/**
 		 * Attempts to lock a package for reading. Locking the package before performing read operations ensures that the
 		 * package is not modified or destroying while a read operation is in progress. 
 		 *

@@ -124,7 +124,7 @@ void PersistentCache::Initialize(const Path& cacheFolder)
 					if(!B3D_ENSURE(resourceMetaData != nullptr))
 						continue;
 
-					const SPtr<PersistentCacheMetaData> cacheObjectMetaData = B3DRTTICast<PersistentCacheMetaData>(resourceMetaData->UserMetaData);
+					const SPtr<PersistentCacheMetaData> cacheObjectMetaData = B3DRTTICast<PersistentCacheMetaData>(resourceMetaData->AdditionalMetaData);
 					if(!B3D_ENSURE(cacheObjectMetaData != nullptr))
 						continue;
 
@@ -308,7 +308,7 @@ void PersistentCache::WriteDirtyMetaData()
 			if(!B3D_ENSURE(resourceMetaData != nullptr))
 				continue;
 
-			SPtr<PersistentCacheMetaData> cacheObjectMetaData = B3DRTTICast<PersistentCacheMetaData>(resourceMetaData->UserMetaData);
+			SPtr<PersistentCacheMetaData> cacheObjectMetaData = B3DRTTICast<PersistentCacheMetaData>(resourceMetaData->AdditionalMetaData);
 			if(cacheObjectMetaData == nullptr)
 				cacheObjectMetaData = B3DMakeShared<PersistentCacheMetaData>();
 

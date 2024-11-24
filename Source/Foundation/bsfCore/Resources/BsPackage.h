@@ -60,7 +60,7 @@ namespace bs
 		PackageResourceFlags Flags = PackageResourceFlag::None; /**< Flags to provide additional information about the resource. */
 
 		B3D_SCRIPT_EXPORT()
-		SPtr<PackageResourceUserMetaData> UserMetaData; /**< Optional user-specified meta-data. This can be anything, but should be kept small. */
+		SPtr<PackageResourceUserMetaData> AdditionalMetaData; /**< Optional additional meta-data. This can be anything, but should be kept small. */
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -268,10 +268,10 @@ namespace bs
 		/** Returns resource meta-data for resource at the specified path. Returns null if not found. Paths are case sensitive. */
 		SPtr<const PackageResourceMetaData> GetResourceMetaData(const Path& path) const;
 
-		/** Assigns user-meta data for the resource with the specified identifier. */
+		/** Assigns additional meta-data for the resource with the specified identifier. */
 		void SetResourceMetaData(const UUID& id, const SPtr<PackageResourceUserMetaData>& data);
 
-		/** Assigns user-meta data for the resource at the specified path. Paths are case sensitive. */
+		/** Assigns additional meta-data for the resource at the specified path. Paths are case sensitive. */
 		void SetResourceMetaData(const Path& path, const SPtr<PackageResourceUserMetaData>& data);
 
 		/** Check if the resource is unloaded, loaded or in progress of being loaded. */

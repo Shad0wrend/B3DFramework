@@ -277,7 +277,7 @@ void Package::SetResourceMetaData(const UUID& id, const SPtr<PackageResourceUser
 		// Always make a copy and user might be reading from the meta-data, and we cannot modify it in a thread safe way
 		const SPtr<PackageResourceMetaData> metaDataCopy = B3DRTTIClone(resourceInformation->MetaData);
 
-		metaDataCopy->UserMetaData = data;
+		metaDataCopy->AdditionalMetaData = data;
 		resourceInformation->MetaData = metaDataCopy;
 	}
 }
@@ -292,7 +292,7 @@ void Package::SetResourceMetaData(const Path& path, const SPtr<PackageResourceUs
 		// Always make a copy and user might be reading from the meta-data, and we cannot modify it in a thread safe way
 		const SPtr<PackageResourceMetaData> metaDataCopy = B3DRTTIClone(resourceInformation->MetaData);
 
-		metaDataCopy->UserMetaData = data;
+		metaDataCopy->AdditionalMetaData = data;
 		resourceInformation->MetaData = metaDataCopy;
 	}
 }

@@ -79,13 +79,13 @@ namespace bs
 			set { Internal_SetFlags(mCachedPtr, value); }
 		}
 
-		/// <summary>Optional user-specified meta-data. This can be anything, but should be kept small.</summary>
+		/// <summary>Optional additional meta-data. This can be anything, but should be kept small.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public PackageResourceUserMetaData UserMetaData
+		public PackageResourceUserMetaData AdditionalMetaData
 		{
-			get { return Internal_GetUserMetaData(mCachedPtr); }
-			set { Internal_SetUserMetaData(mCachedPtr, value); }
+			get { return Internal_GetAdditionalMetaData(mCachedPtr); }
+			set { Internal_SetAdditionalMetaData(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -115,8 +115,8 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetFlags(IntPtr thisPtr, PackageResourceFlag value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PackageResourceUserMetaData Internal_GetUserMetaData(IntPtr thisPtr);
+		private static extern PackageResourceUserMetaData Internal_GetAdditionalMetaData(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetUserMetaData(IntPtr thisPtr, PackageResourceUserMetaData value);
+		private static extern void Internal_SetAdditionalMetaData(IntPtr thisPtr, PackageResourceUserMetaData value);
 	}
 }

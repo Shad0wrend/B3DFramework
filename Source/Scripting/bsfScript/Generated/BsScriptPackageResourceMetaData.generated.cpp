@@ -31,8 +31,8 @@ namespace bs
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetCompressionType", (void*)&ScriptPackageResourceMetaData::InternalSetCompressionType);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetFlags", (void*)&ScriptPackageResourceMetaData::InternalGetFlags);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetFlags", (void*)&ScriptPackageResourceMetaData::InternalSetFlags);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetUserMetaData", (void*)&ScriptPackageResourceMetaData::InternalGetUserMetaData);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetUserMetaData", (void*)&ScriptPackageResourceMetaData::InternalSetUserMetaData);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAdditionalMetaData", (void*)&ScriptPackageResourceMetaData::InternalGetAdditionalMetaData);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAdditionalMetaData", (void*)&ScriptPackageResourceMetaData::InternalSetAdditionalMetaData);
 
 	}
 
@@ -213,13 +213,13 @@ namespace bs
 		static_cast<PackageResourceMetaData*>(self->GetNativeObject())->Flags = value;
 	}
 
-	MonoObject* ScriptPackageResourceMetaData::InternalGetUserMetaData(ScriptPackageResourceMetaData* self)
+	MonoObject* ScriptPackageResourceMetaData::InternalGetAdditionalMetaData(ScriptPackageResourceMetaData* self)
 	{
 		SPtr<PackageResourceUserMetaData> tmp__output;
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<PackageResourceMetaData*>(self->GetNativeObject())->UserMetaData;
+		tmp__output = static_cast<PackageResourceMetaData*>(self->GetNativeObject())->AdditionalMetaData;
 
 		MonoObject* __output;
 		__output = ScriptPackageResourceUserMetaData::GetOrCreateScriptObject(tmp__output);
@@ -227,7 +227,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptPackageResourceMetaData::InternalSetUserMetaData(ScriptPackageResourceMetaData* self, MonoObject* value)
+	void ScriptPackageResourceMetaData::InternalSetAdditionalMetaData(ScriptPackageResourceMetaData* self, MonoObject* value)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
@@ -237,6 +237,6 @@ namespace bs
 		scriptObjectWrappervalue = (ScriptPackageResourceUserMetaDataWrapperBase*)ScriptPackageResourceUserMetaData::GetScriptObjectWrapper(value);
 		if(scriptObjectWrappervalue != nullptr)
 			tmpvalue = std::static_pointer_cast<PackageResourceUserMetaData>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
-		static_cast<PackageResourceMetaData*>(self->GetNativeObject())->UserMetaData = tmpvalue;
+		static_cast<PackageResourceMetaData*>(self->GetNativeObject())->AdditionalMetaData = tmpvalue;
 	}
 }

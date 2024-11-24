@@ -3476,8 +3476,8 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<property name="Flags" type="PackageResourceFlag" getter="GetFlags" setter="SetFlags" static="false">
 			<doc>Flags to provide additional information about the resource.</doc>
 		</property>
-		<property name="UserMetaData" type="PackageResourceUserMetaData" getter="GetUserMetaData" setter="SetUserMetaData" static="false">
-			<doc>Optional user-specified meta-data. This can be anything, but should be kept small.</doc>
+		<property name="AdditionalMetaData" type="PackageResourceUserMetaData" getter="GetAdditionalMetaData" setter="SetAdditionalMetaData" static="false">
+			<doc>Optional additional meta-data. This can be anything, but should be kept small.</doc>
 		</property>
 	</class>
 	<class native="PackageMetaData" script="PackageMetaData">

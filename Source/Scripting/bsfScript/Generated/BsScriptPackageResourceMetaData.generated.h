@@ -37,7 +37,7 @@ namespace bs
 		static void InternalSetCompressionType(ScriptPackageResourceMetaData* self, CompressionType value);
 		static PackageResourceFlag InternalGetFlags(ScriptPackageResourceMetaData* self);
 		static void InternalSetFlags(ScriptPackageResourceMetaData* self, PackageResourceFlag value);
-		static MonoObject* InternalGetUserMetaData(ScriptPackageResourceMetaData* self);
-		static void InternalSetUserMetaData(ScriptPackageResourceMetaData* self, MonoObject* value);
+		static MonoObject* InternalGetAdditionalMetaData(ScriptPackageResourceMetaData* self);
+		static void InternalSetAdditionalMetaData(ScriptPackageResourceMetaData* self, MonoObject* value);
 	};
 }
