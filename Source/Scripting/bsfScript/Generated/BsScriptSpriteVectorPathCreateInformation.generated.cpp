@@ -32,10 +32,10 @@ namespace bs
 	{
 		SpriteVectorPathCreateInformation output;
 		TResourceHandle<VectorPath> tmpVectorPath;
-		ScriptRRefBase* scriptWrapperObjectVectorPath;
-		scriptWrapperObjectVectorPath = ScriptRRefBase::GetScriptObjectWrapper(value.VectorPath);
-		if(scriptWrapperObjectVectorPath != nullptr)
-			tmpVectorPath = B3DStaticResourceCast<VectorPath>(scriptWrapperObjectVectorPath->GetNativeObject());
+		ScriptRRefBase* scriptObjectWrapperVectorPath;
+		scriptObjectWrapperVectorPath = ScriptRRefBase::GetScriptObjectWrapper(value.VectorPath);
+		if(scriptObjectWrapperVectorPath != nullptr)
+			tmpVectorPath = B3DStaticResourceCast<VectorPath>(scriptObjectWrapperVectorPath->GetNativeObject());
 		output.VectorPath = tmpVectorPath;
 		output.Size = value.Size;
 		output.ScalingMode = value.ScalingMode;

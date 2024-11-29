@@ -28,17 +28,17 @@ namespace bs
 	{
 		PARTICLE_SIZE_DESC output;
 		SPtr<TDistribution<float>> tmpSize;
-		ScriptFloatDistribution* scriptWrapperObjectSize;
-		scriptWrapperObjectSize = ScriptFloatDistribution::GetScriptObjectWrapper(value.Size);
-		if(scriptWrapperObjectSize != nullptr)
-			tmpSize = std::static_pointer_cast<TDistribution<float>>(scriptWrapperObjectSize->GetBaseNativeObjectAsShared());
+		ScriptFloatDistribution* scriptObjectWrapperSize;
+		scriptObjectWrapperSize = ScriptFloatDistribution::GetScriptObjectWrapper(value.Size);
+		if(scriptObjectWrapperSize != nullptr)
+			tmpSize = std::static_pointer_cast<TDistribution<float>>(scriptObjectWrapperSize->GetBaseNativeObjectAsShared());
 		if(tmpSize != nullptr)
 		output.Size = *tmpSize;
 		SPtr<TDistribution<TVector3<float>>> tmpSize3D;
-		ScriptVector3Distribution* scriptWrapperObjectSize3D;
-		scriptWrapperObjectSize3D = ScriptVector3Distribution::GetScriptObjectWrapper(value.Size3D);
-		if(scriptWrapperObjectSize3D != nullptr)
-			tmpSize3D = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptWrapperObjectSize3D->GetBaseNativeObjectAsShared());
+		ScriptVector3Distribution* scriptObjectWrapperSize3D;
+		scriptObjectWrapperSize3D = ScriptVector3Distribution::GetScriptObjectWrapper(value.Size3D);
+		if(scriptObjectWrapperSize3D != nullptr)
+			tmpSize3D = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptObjectWrapperSize3D->GetBaseNativeObjectAsShared());
 		if(tmpSize3D != nullptr)
 		output.Size3D = *tmpSize3D;
 		output.Use3DSize = value.Use3DSize;

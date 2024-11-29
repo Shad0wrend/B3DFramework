@@ -111,11 +111,12 @@ namespace bs
 			nativeArrayemitters.resize(scriptArrayemitters.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayemitters.Size(); elementIndex++)
 			{
+				SPtr<ParticleEmitter> arrayElementPointeremitters;
 				ScriptParticleEmitter* scriptObjectWrapperemitters;
 				scriptObjectWrapperemitters = ScriptParticleEmitter::GetScriptObjectWrapper(scriptArrayemitters.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrapperemitters != nullptr)
 				{
-					SPtr<ParticleEmitter> arrayElementPointeremitters = std::static_pointer_cast<ParticleEmitter>(scriptObjectWrapperemitters->GetBaseNativeObjectAsShared());
+					arrayElementPointeremitters = std::static_pointer_cast<ParticleEmitter>(scriptObjectWrapperemitters->GetBaseNativeObjectAsShared());
 					nativeArrayemitters[elementIndex] = arrayElementPointeremitters;
 				}
 			}
@@ -158,11 +159,12 @@ namespace bs
 			nativeArrayevolvers.resize(scriptArrayevolvers.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayevolvers.Size(); elementIndex++)
 			{
+				SPtr<ParticleEvolver> arrayElementPointerevolvers;
 				ScriptParticleEvolverWrapperBase* scriptObjectWrapperevolvers;
 				scriptObjectWrapperevolvers = (ScriptParticleEvolverWrapperBase*)ScriptParticleEvolver::GetScriptObjectWrapper(scriptArrayevolvers.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrapperevolvers != nullptr)
 				{
-					SPtr<ParticleEvolver> arrayElementPointerevolvers = std::static_pointer_cast<ParticleEvolver>(scriptObjectWrapperevolvers->GetBaseNativeObjectAsShared());
+					arrayElementPointerevolvers = std::static_pointer_cast<ParticleEvolver>(scriptObjectWrapperevolvers->GetBaseNativeObjectAsShared());
 					nativeArrayevolvers[elementIndex] = arrayElementPointerevolvers;
 				}
 			}

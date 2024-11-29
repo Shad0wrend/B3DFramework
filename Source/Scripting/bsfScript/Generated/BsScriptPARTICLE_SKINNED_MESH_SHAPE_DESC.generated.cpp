@@ -28,10 +28,10 @@ namespace bs
 		output.Type = value.Type;
 		output.Sequential = value.Sequential;
 		GameObjectHandle<CRenderable> tmpRenderable;
-		ScriptRenderable* scriptWrapperObjectRenderable;
-		scriptWrapperObjectRenderable = ScriptRenderable::GetScriptObjectWrapper(value.Renderable);
-		if(scriptWrapperObjectRenderable != nullptr)
-			tmpRenderable = B3DStaticGameObjectCast<CRenderable>(scriptWrapperObjectRenderable->GetBaseNativeObjectAsHandle());
+		ScriptRenderable* scriptObjectWrapperRenderable;
+		scriptObjectWrapperRenderable = ScriptRenderable::GetScriptObjectWrapper(value.Renderable);
+		if(scriptObjectWrapperRenderable != nullptr)
+			tmpRenderable = B3DStaticGameObjectCast<CRenderable>(scriptObjectWrapperRenderable->GetBaseNativeObjectAsHandle());
 		output.Renderable = tmpRenderable;
 
 		return output;

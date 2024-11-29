@@ -318,11 +318,12 @@ namespace bs
 			nativeArrayvalue.resize(scriptArrayvalue.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayvalue.Size(); elementIndex++)
 			{
+				SPtr<AnimationSplitInfo> arrayElementPointervalue;
 				ScriptAnimationSplitInfo* scriptObjectWrappervalue;
 				scriptObjectWrappervalue = ScriptAnimationSplitInfo::GetScriptObjectWrapper(scriptArrayvalue.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappervalue != nullptr)
 				{
-					SPtr<AnimationSplitInfo> arrayElementPointervalue = std::static_pointer_cast<AnimationSplitInfo>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
+					arrayElementPointervalue = std::static_pointer_cast<AnimationSplitInfo>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
 					if(arrayElementPointervalue)
 						nativeArrayvalue[elementIndex] = *arrayElementPointervalue;
 				}
@@ -368,11 +369,12 @@ namespace bs
 			nativeArrayvalue.resize(scriptArrayvalue.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayvalue.Size(); elementIndex++)
 			{
+				SPtr<ImportedAnimationEvents> arrayElementPointervalue;
 				ScriptImportedAnimationEvents* scriptObjectWrappervalue;
 				scriptObjectWrappervalue = ScriptImportedAnimationEvents::GetScriptObjectWrapper(scriptArrayvalue.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappervalue != nullptr)
 				{
-					SPtr<ImportedAnimationEvents> arrayElementPointervalue = std::static_pointer_cast<ImportedAnimationEvents>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
+					arrayElementPointervalue = std::static_pointer_cast<ImportedAnimationEvents>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
 					if(arrayElementPointervalue)
 						nativeArrayvalue[elementIndex] = *arrayElementPointervalue;
 				}

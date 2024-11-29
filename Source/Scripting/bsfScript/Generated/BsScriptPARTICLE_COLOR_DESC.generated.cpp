@@ -26,10 +26,10 @@ namespace bs
 	{
 		PARTICLE_COLOR_DESC output;
 		SPtr<TColorDistribution<ColorGradient>> tmpColor;
-		ScriptColorDistribution* scriptWrapperObjectColor;
-		scriptWrapperObjectColor = ScriptColorDistribution::GetScriptObjectWrapper(value.Color);
-		if(scriptWrapperObjectColor != nullptr)
-			tmpColor = std::static_pointer_cast<TColorDistribution<ColorGradient>>(scriptWrapperObjectColor->GetBaseNativeObjectAsShared());
+		ScriptColorDistribution* scriptObjectWrapperColor;
+		scriptObjectWrapperColor = ScriptColorDistribution::GetScriptObjectWrapper(value.Color);
+		if(scriptObjectWrapperColor != nullptr)
+			tmpColor = std::static_pointer_cast<TColorDistribution<ColorGradient>>(scriptObjectWrapperColor->GetBaseNativeObjectAsShared());
 		if(tmpColor != nullptr)
 		output.Color = *tmpColor;
 

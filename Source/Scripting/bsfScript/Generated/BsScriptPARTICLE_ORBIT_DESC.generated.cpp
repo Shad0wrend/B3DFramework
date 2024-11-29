@@ -28,24 +28,24 @@ namespace bs
 	{
 		PARTICLE_ORBIT_DESC output;
 		SPtr<TDistribution<TVector3<float>>> tmpCenter;
-		ScriptVector3Distribution* scriptWrapperObjectCenter;
-		scriptWrapperObjectCenter = ScriptVector3Distribution::GetScriptObjectWrapper(value.Center);
-		if(scriptWrapperObjectCenter != nullptr)
-			tmpCenter = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptWrapperObjectCenter->GetBaseNativeObjectAsShared());
+		ScriptVector3Distribution* scriptObjectWrapperCenter;
+		scriptObjectWrapperCenter = ScriptVector3Distribution::GetScriptObjectWrapper(value.Center);
+		if(scriptObjectWrapperCenter != nullptr)
+			tmpCenter = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptObjectWrapperCenter->GetBaseNativeObjectAsShared());
 		if(tmpCenter != nullptr)
 		output.Center = *tmpCenter;
 		SPtr<TDistribution<TVector3<float>>> tmpVelocity;
-		ScriptVector3Distribution* scriptWrapperObjectVelocity;
-		scriptWrapperObjectVelocity = ScriptVector3Distribution::GetScriptObjectWrapper(value.Velocity);
-		if(scriptWrapperObjectVelocity != nullptr)
-			tmpVelocity = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptWrapperObjectVelocity->GetBaseNativeObjectAsShared());
+		ScriptVector3Distribution* scriptObjectWrapperVelocity;
+		scriptObjectWrapperVelocity = ScriptVector3Distribution::GetScriptObjectWrapper(value.Velocity);
+		if(scriptObjectWrapperVelocity != nullptr)
+			tmpVelocity = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptObjectWrapperVelocity->GetBaseNativeObjectAsShared());
 		if(tmpVelocity != nullptr)
 		output.Velocity = *tmpVelocity;
 		SPtr<TDistribution<float>> tmpRadial;
-		ScriptFloatDistribution* scriptWrapperObjectRadial;
-		scriptWrapperObjectRadial = ScriptFloatDistribution::GetScriptObjectWrapper(value.Radial);
-		if(scriptWrapperObjectRadial != nullptr)
-			tmpRadial = std::static_pointer_cast<TDistribution<float>>(scriptWrapperObjectRadial->GetBaseNativeObjectAsShared());
+		ScriptFloatDistribution* scriptObjectWrapperRadial;
+		scriptObjectWrapperRadial = ScriptFloatDistribution::GetScriptObjectWrapper(value.Radial);
+		if(scriptObjectWrapperRadial != nullptr)
+			tmpRadial = std::static_pointer_cast<TDistribution<float>>(scriptObjectWrapperRadial->GetBaseNativeObjectAsShared());
 		if(tmpRadial != nullptr)
 		output.Radial = *tmpRadial;
 		output.WorldSpace = value.WorldSpace;

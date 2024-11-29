@@ -31,10 +31,10 @@ namespace bs
 		tmpGeneralContent = ScriptGUIContent::FromInterop(value.GeneralContent);
 		output.GeneralContent = tmpGeneralContent;
 		SPtr<GUIToggleGroup> tmpToggleGroup;
-		ScriptGUIToggleGroup* scriptWrapperObjectToggleGroup;
-		scriptWrapperObjectToggleGroup = ScriptGUIToggleGroup::GetScriptObjectWrapper(value.ToggleGroup);
-		if(scriptWrapperObjectToggleGroup != nullptr)
-			tmpToggleGroup = std::static_pointer_cast<GUIToggleGroup>(scriptWrapperObjectToggleGroup->GetBaseNativeObjectAsShared());
+		ScriptGUIToggleGroup* scriptObjectWrapperToggleGroup;
+		scriptObjectWrapperToggleGroup = ScriptGUIToggleGroup::GetScriptObjectWrapper(value.ToggleGroup);
+		if(scriptObjectWrapperToggleGroup != nullptr)
+			tmpToggleGroup = std::static_pointer_cast<GUIToggleGroup>(scriptObjectWrapperToggleGroup->GetBaseNativeObjectAsShared());
 		output.ToggleGroup = tmpToggleGroup;
 
 		return output;

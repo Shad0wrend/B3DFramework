@@ -16,6 +16,8 @@
 #include "BsManagedComponent.h"
 #include "BsScriptReflectableWrapper.h"
 #include "BsScriptResourceWrapper.h"
+#include "Serialization/BsBinarySerializer.h"
+#include "FileSystem/BsDataStream.h"
 #include "Wrappers/BsScriptRRefBase.h"
 
 using namespace bs;
@@ -975,3 +977,12 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 
 	return nullptr;
 }
+
+MonoObject* ScriptAssemblyManager::GetManagedObjectFromReflectable(const SPtr<IReflectable>& object)
+{
+	if(auto managedSerializableObject = B3DRTTICast<ManagedSerializableObject>(object))
+		return managedSerializableObject->Deserialize();
+
+	return ScriptReflectableWrapper::GetOrCreateScriptObject(object);
+}
+

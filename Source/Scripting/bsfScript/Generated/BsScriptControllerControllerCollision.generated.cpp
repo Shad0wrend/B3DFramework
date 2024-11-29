@@ -28,10 +28,10 @@ namespace bs
 	{
 		ControllerControllerCollision output;
 		GameObjectHandle<CCharacterController> tmpController;
-		ScriptCharacterController* scriptWrapperObjectController;
-		scriptWrapperObjectController = ScriptCharacterController::GetScriptObjectWrapper(value.Controller);
-		if(scriptWrapperObjectController != nullptr)
-			tmpController = B3DStaticGameObjectCast<CCharacterController>(scriptWrapperObjectController->GetBaseNativeObjectAsHandle());
+		ScriptCharacterController* scriptObjectWrapperController;
+		scriptObjectWrapperController = ScriptCharacterController::GetScriptObjectWrapper(value.Controller);
+		if(scriptObjectWrapperController != nullptr)
+			tmpController = B3DStaticGameObjectCast<CCharacterController>(scriptObjectWrapperController->GetBaseNativeObjectAsHandle());
 		output.Controller = tmpController;
 		output.Position = value.Position;
 		output.Normal = value.Normal;

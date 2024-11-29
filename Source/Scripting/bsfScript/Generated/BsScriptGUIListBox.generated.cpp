@@ -83,11 +83,12 @@ namespace bs
 			nativeArrayelements.resize(scriptArrayelements.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayelements.Size(); elementIndex++)
 			{
+				SPtr<HString> arrayElementPointerelements;
 				ScriptLocString* scriptObjectWrapperelements;
 				scriptObjectWrapperelements = ScriptLocString::GetScriptObjectWrapper(scriptArrayelements.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrapperelements != nullptr)
 				{
-					SPtr<HString> arrayElementPointerelements = std::static_pointer_cast<HString>(scriptObjectWrapperelements->GetBaseNativeObjectAsShared());
+					arrayElementPointerelements = std::static_pointer_cast<HString>(scriptObjectWrapperelements->GetBaseNativeObjectAsShared());
 					if(arrayElementPointerelements)
 						nativeArrayelements[elementIndex] = *arrayElementPointerelements;
 				}

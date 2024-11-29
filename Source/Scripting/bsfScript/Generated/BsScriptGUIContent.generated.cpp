@@ -28,20 +28,20 @@ namespace bs
 	{
 		GUIContent output;
 		SPtr<HString> tmpText;
-		ScriptLocString* scriptWrapperObjectText;
-		scriptWrapperObjectText = ScriptLocString::GetScriptObjectWrapper(value.Text);
-		if(scriptWrapperObjectText != nullptr)
-			tmpText = std::static_pointer_cast<HString>(scriptWrapperObjectText->GetBaseNativeObjectAsShared());
+		ScriptLocString* scriptObjectWrapperText;
+		scriptObjectWrapperText = ScriptLocString::GetScriptObjectWrapper(value.Text);
+		if(scriptObjectWrapperText != nullptr)
+			tmpText = std::static_pointer_cast<HString>(scriptObjectWrapperText->GetBaseNativeObjectAsShared());
 		if(tmpText != nullptr)
 		output.Text = *tmpText;
 		GUIContentImages tmpImages;
 		tmpImages = ScriptGUIContentImages::FromInterop(value.Images);
 		output.Images = tmpImages;
 		SPtr<HString> tmpTooltip;
-		ScriptLocString* scriptWrapperObjectTooltip;
-		scriptWrapperObjectTooltip = ScriptLocString::GetScriptObjectWrapper(value.Tooltip);
-		if(scriptWrapperObjectTooltip != nullptr)
-			tmpTooltip = std::static_pointer_cast<HString>(scriptWrapperObjectTooltip->GetBaseNativeObjectAsShared());
+		ScriptLocString* scriptObjectWrapperTooltip;
+		scriptObjectWrapperTooltip = ScriptLocString::GetScriptObjectWrapper(value.Tooltip);
+		if(scriptObjectWrapperTooltip != nullptr)
+			tmpTooltip = std::static_pointer_cast<HString>(scriptObjectWrapperTooltip->GetBaseNativeObjectAsShared());
 		if(tmpTooltip != nullptr)
 		output.Tooltip = *tmpTooltip;
 

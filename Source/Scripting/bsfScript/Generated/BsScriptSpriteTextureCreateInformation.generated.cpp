@@ -30,10 +30,10 @@ namespace bs
 	{
 		SpriteTextureCreateInformation output;
 		TResourceHandle<Texture> tmpAtlasTexture;
-		ScriptRRefBase* scriptWrapperObjectAtlasTexture;
-		scriptWrapperObjectAtlasTexture = ScriptRRefBase::GetScriptObjectWrapper(value.AtlasTexture);
-		if(scriptWrapperObjectAtlasTexture != nullptr)
-			tmpAtlasTexture = B3DStaticResourceCast<Texture>(scriptWrapperObjectAtlasTexture->GetNativeObject());
+		ScriptRRefBase* scriptObjectWrapperAtlasTexture;
+		scriptObjectWrapperAtlasTexture = ScriptRRefBase::GetScriptObjectWrapper(value.AtlasTexture);
+		if(scriptObjectWrapperAtlasTexture != nullptr)
+			tmpAtlasTexture = B3DStaticResourceCast<Texture>(scriptObjectWrapperAtlasTexture->GetNativeObject());
 		output.AtlasTexture = tmpAtlasTexture;
 		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;

@@ -26,10 +26,10 @@ namespace bs
 	{
 		PARTICLE_VELOCITY_DESC output;
 		SPtr<TDistribution<TVector3<float>>> tmpVelocity;
-		ScriptVector3Distribution* scriptWrapperObjectVelocity;
-		scriptWrapperObjectVelocity = ScriptVector3Distribution::GetScriptObjectWrapper(value.Velocity);
-		if(scriptWrapperObjectVelocity != nullptr)
-			tmpVelocity = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptWrapperObjectVelocity->GetBaseNativeObjectAsShared());
+		ScriptVector3Distribution* scriptObjectWrapperVelocity;
+		scriptObjectWrapperVelocity = ScriptVector3Distribution::GetScriptObjectWrapper(value.Velocity);
+		if(scriptObjectWrapperVelocity != nullptr)
+			tmpVelocity = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptObjectWrapperVelocity->GetBaseNativeObjectAsShared());
 		if(tmpVelocity != nullptr)
 		output.Velocity = *tmpVelocity;
 		output.WorldSpace = value.WorldSpace;

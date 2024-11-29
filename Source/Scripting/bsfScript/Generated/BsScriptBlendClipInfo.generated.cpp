@@ -28,10 +28,10 @@ namespace bs
 	{
 		BlendClipInfo output;
 		TResourceHandle<AnimationClip> tmpClip;
-		ScriptRRefBase* scriptWrapperObjectClip;
-		scriptWrapperObjectClip = ScriptRRefBase::GetScriptObjectWrapper(value.Clip);
-		if(scriptWrapperObjectClip != nullptr)
-			tmpClip = B3DStaticResourceCast<AnimationClip>(scriptWrapperObjectClip->GetNativeObject());
+		ScriptRRefBase* scriptObjectWrapperClip;
+		scriptObjectWrapperClip = ScriptRRefBase::GetScriptObjectWrapper(value.Clip);
+		if(scriptObjectWrapperClip != nullptr)
+			tmpClip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperClip->GetNativeObject());
 		output.Clip = tmpClip;
 		output.Position = value.Position;
 

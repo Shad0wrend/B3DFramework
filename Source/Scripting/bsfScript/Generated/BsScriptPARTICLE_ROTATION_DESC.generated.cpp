@@ -28,17 +28,17 @@ namespace bs
 	{
 		PARTICLE_ROTATION_DESC output;
 		SPtr<TDistribution<float>> tmpRotation;
-		ScriptFloatDistribution* scriptWrapperObjectRotation;
-		scriptWrapperObjectRotation = ScriptFloatDistribution::GetScriptObjectWrapper(value.Rotation);
-		if(scriptWrapperObjectRotation != nullptr)
-			tmpRotation = std::static_pointer_cast<TDistribution<float>>(scriptWrapperObjectRotation->GetBaseNativeObjectAsShared());
+		ScriptFloatDistribution* scriptObjectWrapperRotation;
+		scriptObjectWrapperRotation = ScriptFloatDistribution::GetScriptObjectWrapper(value.Rotation);
+		if(scriptObjectWrapperRotation != nullptr)
+			tmpRotation = std::static_pointer_cast<TDistribution<float>>(scriptObjectWrapperRotation->GetBaseNativeObjectAsShared());
 		if(tmpRotation != nullptr)
 		output.Rotation = *tmpRotation;
 		SPtr<TDistribution<TVector3<float>>> tmpRotation3D;
-		ScriptVector3Distribution* scriptWrapperObjectRotation3D;
-		scriptWrapperObjectRotation3D = ScriptVector3Distribution::GetScriptObjectWrapper(value.Rotation3D);
-		if(scriptWrapperObjectRotation3D != nullptr)
-			tmpRotation3D = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptWrapperObjectRotation3D->GetBaseNativeObjectAsShared());
+		ScriptVector3Distribution* scriptObjectWrapperRotation3D;
+		scriptObjectWrapperRotation3D = ScriptVector3Distribution::GetScriptObjectWrapper(value.Rotation3D);
+		if(scriptObjectWrapperRotation3D != nullptr)
+			tmpRotation3D = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptObjectWrapperRotation3D->GetBaseNativeObjectAsShared());
 		if(tmpRotation3D != nullptr)
 		output.Rotation3D = *tmpRotation3D;
 		output.Use3DRotation = value.Use3DRotation;

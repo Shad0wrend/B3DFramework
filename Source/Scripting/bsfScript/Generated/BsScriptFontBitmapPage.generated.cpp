@@ -28,10 +28,10 @@ namespace bs
 	{
 		FontBitmapPage output;
 		TResourceHandle<Texture> tmpTexture;
-		ScriptRRefBase* scriptWrapperObjectTexture;
-		scriptWrapperObjectTexture = ScriptRRefBase::GetScriptObjectWrapper(value.Texture);
-		if(scriptWrapperObjectTexture != nullptr)
-			tmpTexture = B3DStaticResourceCast<Texture>(scriptWrapperObjectTexture->GetNativeObject());
+		ScriptRRefBase* scriptObjectWrapperTexture;
+		scriptObjectWrapperTexture = ScriptRRefBase::GetScriptObjectWrapper(value.Texture);
+		if(scriptObjectWrapperTexture != nullptr)
+			tmpTexture = B3DStaticResourceCast<Texture>(scriptObjectWrapperTexture->GetNativeObject());
 		output.Texture = tmpTexture;
 		output.IsDynamic = value.IsDynamic;
 

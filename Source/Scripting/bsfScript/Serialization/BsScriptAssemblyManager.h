@@ -117,6 +117,14 @@ namespace bs
 		 */
 		SPtr<IReflectable> GetReflectableFromManagedObject(MonoObject* value);
 
+		/**
+		 * Converts a reflectable object into a managed object. The system first checks if the IReflectable is just
+		 * a serialized managed object, in which case the object is deserialized and returned. Otherwise the system
+		 * assumes the reflectable type is script exportable and attempts to retrieve or the script object wrapper
+		 * for the object.
+		 */
+		MonoObject* GetManagedObjectFromReflectable(const SPtr<IReflectable>& object);
+
 	private:
 		/**	Deletes all stored managed serializable object infos for all assemblies. */
 		void ClearScriptObjects();

@@ -33,11 +33,12 @@ namespace bs
 			ScriptArray scriptArrayCollider(value.Collider);
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayCollider.Size(); elementIndex++)
 			{
-				ScriptColliderWrapperBase* scriptWrapperObjectCollider;
-				scriptWrapperObjectCollider = (ScriptColliderWrapperBase*)ScriptCollider::GetScriptObjectWrapper(scriptArrayCollider.Get<MonoObject*>(elementIndex));
-				if(scriptWrapperObjectCollider != nullptr)
+				GameObjectHandle<CCollider> arrayElementPointerCollider;
+				ScriptColliderWrapperBase* scriptObjectWrapperCollider;
+				scriptObjectWrapperCollider = (ScriptColliderWrapperBase*)ScriptCollider::GetScriptObjectWrapper(scriptArrayCollider.Get<MonoObject*>(elementIndex));
+				if(scriptObjectWrapperCollider != nullptr)
 				{
-					GameObjectHandle<CCollider> arrayElementPointerCollider = B3DStaticGameObjectCast<CCollider>(scriptWrapperObjectCollider->GetBaseNativeObjectAsHandle());
+					arrayElementPointerCollider = B3DStaticGameObjectCast<CCollider>(scriptObjectWrapperCollider->GetBaseNativeObjectAsHandle());
 					vecCollider[elementIndex] = arrayElementPointerCollider;
 				}
 			}

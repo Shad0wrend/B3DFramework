@@ -26,10 +26,10 @@ namespace bs
 	{
 		PARTICLE_FORCE_DESC output;
 		SPtr<TDistribution<TVector3<float>>> tmpForce;
-		ScriptVector3Distribution* scriptWrapperObjectForce;
-		scriptWrapperObjectForce = ScriptVector3Distribution::GetScriptObjectWrapper(value.Force);
-		if(scriptWrapperObjectForce != nullptr)
-			tmpForce = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptWrapperObjectForce->GetBaseNativeObjectAsShared());
+		ScriptVector3Distribution* scriptObjectWrapperForce;
+		scriptObjectWrapperForce = ScriptVector3Distribution::GetScriptObjectWrapper(value.Force);
+		if(scriptObjectWrapperForce != nullptr)
+			tmpForce = std::static_pointer_cast<TDistribution<TVector3<float>>>(scriptObjectWrapperForce->GetBaseNativeObjectAsShared());
 		if(tmpForce != nullptr)
 		output.Force = *tmpForce;
 		output.WorldSpace = value.WorldSpace;

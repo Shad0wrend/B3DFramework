@@ -81,11 +81,12 @@ namespace bs
 			nativeArraycolorSurface.resize(scriptArraycolorSurface.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArraycolorSurface.Size(); elementIndex++)
 			{
+				TResourceHandle<Texture> arrayElementPointercolorSurface;
 				ScriptTexture* scriptObjectWrappercolorSurface;
 				scriptObjectWrappercolorSurface = ScriptTexture::GetScriptObjectWrapper(scriptArraycolorSurface.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappercolorSurface != nullptr)
 				{
-					TResourceHandle<Texture> arrayElementPointercolorSurface = B3DStaticResourceCast<Texture>(scriptObjectWrappercolorSurface->GetBaseNativeObjectAsHandle());
+					arrayElementPointercolorSurface = B3DStaticResourceCast<Texture>(scriptObjectWrappercolorSurface->GetBaseNativeObjectAsHandle());
 					nativeArraycolorSurface[elementIndex] = arrayElementPointercolorSurface;
 				}
 			}
@@ -103,11 +104,12 @@ namespace bs
 			nativeArraycolorSurface.resize(scriptArraycolorSurface.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArraycolorSurface.Size(); elementIndex++)
 			{
+				TResourceHandle<Texture> arrayElementPointercolorSurface;
 				ScriptTexture* scriptObjectWrappercolorSurface;
 				scriptObjectWrappercolorSurface = ScriptTexture::GetScriptObjectWrapper(scriptArraycolorSurface.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappercolorSurface != nullptr)
 				{
-					TResourceHandle<Texture> arrayElementPointercolorSurface = B3DStaticResourceCast<Texture>(scriptObjectWrappercolorSurface->GetBaseNativeObjectAsHandle());
+					arrayElementPointercolorSurface = B3DStaticResourceCast<Texture>(scriptObjectWrappercolorSurface->GetBaseNativeObjectAsHandle());
 					nativeArraycolorSurface[elementIndex] = arrayElementPointercolorSurface;
 				}
 			}

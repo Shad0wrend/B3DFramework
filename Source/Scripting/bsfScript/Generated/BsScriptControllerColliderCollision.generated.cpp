@@ -28,10 +28,10 @@ namespace bs
 	{
 		ControllerColliderCollision output;
 		GameObjectHandle<CCollider> tmpCollider;
-		ScriptColliderWrapperBase* scriptWrapperObjectCollider;
-		scriptWrapperObjectCollider = (ScriptColliderWrapperBase*)ScriptCollider::GetScriptObjectWrapper(value.Collider);
-		if(scriptWrapperObjectCollider != nullptr)
-			tmpCollider = B3DStaticGameObjectCast<CCollider>(scriptWrapperObjectCollider->GetBaseNativeObjectAsHandle());
+		ScriptColliderWrapperBase* scriptObjectWrapperCollider;
+		scriptObjectWrapperCollider = (ScriptColliderWrapperBase*)ScriptCollider::GetScriptObjectWrapper(value.Collider);
+		if(scriptObjectWrapperCollider != nullptr)
+			tmpCollider = B3DStaticGameObjectCast<CCollider>(scriptObjectWrapperCollider->GetBaseNativeObjectAsHandle());
 		output.Collider = tmpCollider;
 		output.TriangleIndex = value.TriangleIndex;
 		output.Position = value.Position;

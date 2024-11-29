@@ -115,11 +115,12 @@ namespace bs
 			nativeArrayvalue.resize(scriptArrayvalue.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayvalue.Size(); elementIndex++)
 			{
+				SPtr<ManagedMemberInfo> arrayElementPointervalue;
 				ScriptManagedMemberInfoWrapperBase* scriptObjectWrappervalue;
 				scriptObjectWrappervalue = (ScriptManagedMemberInfoWrapperBase*)ScriptManagedMemberInfo::GetScriptObjectWrapper(scriptArrayvalue.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappervalue != nullptr)
 				{
-					SPtr<ManagedMemberInfo> arrayElementPointervalue = std::static_pointer_cast<ManagedMemberInfo>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
+					arrayElementPointervalue = std::static_pointer_cast<ManagedMemberInfo>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
 					nativeArrayvalue[elementIndex] = arrayElementPointervalue;
 				}
 			}

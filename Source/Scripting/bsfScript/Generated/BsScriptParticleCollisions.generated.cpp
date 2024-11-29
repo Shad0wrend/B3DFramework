@@ -90,11 +90,12 @@ namespace bs
 			nativeArrayobjects.resize(scriptArrayobjects.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayobjects.Size(); elementIndex++)
 			{
+				GameObjectHandle<SceneObject> arrayElementPointerobjects;
 				ScriptSceneObject* scriptObjectWrapperobjects;
 				scriptObjectWrapperobjects = ScriptSceneObject::GetScriptObjectWrapper(scriptArrayobjects.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrapperobjects != nullptr)
 				{
-					GameObjectHandle<SceneObject> arrayElementPointerobjects = B3DStaticGameObjectCast<SceneObject>(scriptObjectWrapperobjects->GetBaseNativeObjectAsHandle());
+					arrayElementPointerobjects = B3DStaticGameObjectCast<SceneObject>(scriptObjectWrapperobjects->GetBaseNativeObjectAsHandle());
 					nativeArrayobjects[elementIndex] = arrayElementPointerobjects;
 				}
 			}

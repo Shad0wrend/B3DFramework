@@ -27,10 +27,10 @@ namespace bs
 		ParticleBurst output;
 		output.Time = value.Time;
 		SPtr<TDistribution<float>> tmpCount;
-		ScriptFloatDistribution* scriptWrapperObjectCount;
-		scriptWrapperObjectCount = ScriptFloatDistribution::GetScriptObjectWrapper(value.Count);
-		if(scriptWrapperObjectCount != nullptr)
-			tmpCount = std::static_pointer_cast<TDistribution<float>>(scriptWrapperObjectCount->GetBaseNativeObjectAsShared());
+		ScriptFloatDistribution* scriptObjectWrapperCount;
+		scriptObjectWrapperCount = ScriptFloatDistribution::GetScriptObjectWrapper(value.Count);
+		if(scriptObjectWrapperCount != nullptr)
+			tmpCount = std::static_pointer_cast<TDistribution<float>>(scriptObjectWrapperCount->GetBaseNativeObjectAsShared());
 		if(tmpCount != nullptr)
 		output.Count = *tmpCount;
 		output.Cycles = value.Cycles;

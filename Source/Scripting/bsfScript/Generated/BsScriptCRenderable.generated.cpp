@@ -136,11 +136,12 @@ namespace bs
 			nativeArraymaterials.resize(scriptArraymaterials.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArraymaterials.Size(); elementIndex++)
 			{
+				TResourceHandle<Material> arrayElementPointermaterials;
 				ScriptRRefBase* scriptObjectWrappermaterials;
 				scriptObjectWrappermaterials = ScriptRRefBase::GetScriptObjectWrapper(scriptArraymaterials.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappermaterials != nullptr)
 				{
-					TResourceHandle<Material> arrayElementPointermaterials = B3DStaticResourceCast<Material>(scriptObjectWrappermaterials->GetNativeObject());
+					arrayElementPointermaterials = B3DStaticResourceCast<Material>(scriptObjectWrappermaterials->GetNativeObject());
 					nativeArraymaterials[elementIndex] = arrayElementPointermaterials;
 				}
 			}

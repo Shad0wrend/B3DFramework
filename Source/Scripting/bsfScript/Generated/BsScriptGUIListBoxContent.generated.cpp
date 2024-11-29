@@ -32,11 +32,12 @@ namespace bs
 			vecElements.resize(scriptArrayElements.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayElements.Size(); elementIndex++)
 			{
-				ScriptLocString* scriptWrapperObjectElements;
-				scriptWrapperObjectElements = ScriptLocString::GetScriptObjectWrapper(scriptArrayElements.Get<MonoObject*>(elementIndex));
-				if(scriptWrapperObjectElements != nullptr)
+				SPtr<HString> arrayElementPointerElements;
+				ScriptLocString* scriptObjectWrapperElements;
+				scriptObjectWrapperElements = ScriptLocString::GetScriptObjectWrapper(scriptArrayElements.Get<MonoObject*>(elementIndex));
+				if(scriptObjectWrapperElements != nullptr)
 				{
-					SPtr<HString> arrayElementPointerElements = std::static_pointer_cast<HString>(scriptWrapperObjectElements->GetBaseNativeObjectAsShared());
+					arrayElementPointerElements = std::static_pointer_cast<HString>(scriptObjectWrapperElements->GetBaseNativeObjectAsShared());
 					if(arrayElementPointerElements)
 						vecElements[elementIndex] = *arrayElementPointerElements;
 				}

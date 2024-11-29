@@ -107,11 +107,12 @@ namespace bs
 			nativeArraycurveComponents.resize(scriptArraycurveComponents.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArraycurveComponents.Size(); elementIndex++)
 			{
+				SPtr<TAnimationCurve<float>> arrayElementPointercurveComponents;
 				ScriptAnimationCurve* scriptObjectWrappercurveComponents;
 				scriptObjectWrappercurveComponents = ScriptAnimationCurve::GetScriptObjectWrapper(scriptArraycurveComponents.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappercurveComponents != nullptr)
 				{
-					SPtr<TAnimationCurve<float>> arrayElementPointercurveComponents = std::static_pointer_cast<TAnimationCurve<float>>(scriptObjectWrappercurveComponents->GetBaseNativeObjectAsShared());
+					arrayElementPointercurveComponents = std::static_pointer_cast<TAnimationCurve<float>>(scriptObjectWrappercurveComponents->GetBaseNativeObjectAsShared());
 					nativeArraycurveComponents[elementIndex] = arrayElementPointercurveComponents;
 				}
 			}
@@ -159,11 +160,12 @@ namespace bs
 			nativeArraycurveComponents.resize(scriptArraycurveComponents.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArraycurveComponents.Size(); elementIndex++)
 			{
+				SPtr<TAnimationCurve<float>> arrayElementPointercurveComponents;
 				ScriptAnimationCurve* scriptObjectWrappercurveComponents;
 				scriptObjectWrappercurveComponents = ScriptAnimationCurve::GetScriptObjectWrapper(scriptArraycurveComponents.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappercurveComponents != nullptr)
 				{
-					SPtr<TAnimationCurve<float>> arrayElementPointercurveComponents = std::static_pointer_cast<TAnimationCurve<float>>(scriptObjectWrappercurveComponents->GetBaseNativeObjectAsShared());
+					arrayElementPointercurveComponents = std::static_pointer_cast<TAnimationCurve<float>>(scriptObjectWrappercurveComponents->GetBaseNativeObjectAsShared());
 					nativeArraycurveComponents[elementIndex] = arrayElementPointercurveComponents;
 				}
 			}
@@ -185,11 +187,12 @@ namespace bs
 			nativeArraycurves.resize(scriptArraycurves.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArraycurves.Size(); elementIndex++)
 			{
+				SPtr<TAnimationCurve<float>> arrayElementPointercurves;
 				ScriptAnimationCurve* scriptObjectWrappercurves;
 				scriptObjectWrappercurves = ScriptAnimationCurve::GetScriptObjectWrapper(scriptArraycurves.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappercurves != nullptr)
 				{
-					SPtr<TAnimationCurve<float>> arrayElementPointercurves = std::static_pointer_cast<TAnimationCurve<float>>(scriptObjectWrappercurves->GetBaseNativeObjectAsShared());
+					arrayElementPointercurves = std::static_pointer_cast<TAnimationCurve<float>>(scriptObjectWrappercurves->GetBaseNativeObjectAsShared());
 					nativeArraycurves[elementIndex] = arrayElementPointercurves;
 				}
 			}

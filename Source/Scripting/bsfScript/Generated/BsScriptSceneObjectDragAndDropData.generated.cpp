@@ -60,11 +60,12 @@ namespace bs
 			nativeArraysceneObjects.resize(scriptArraysceneObjects.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArraysceneObjects.Size(); elementIndex++)
 			{
+				GameObjectHandle<SceneObject> arrayElementPointersceneObjects;
 				ScriptSceneObject* scriptObjectWrappersceneObjects;
 				scriptObjectWrappersceneObjects = ScriptSceneObject::GetScriptObjectWrapper(scriptArraysceneObjects.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappersceneObjects != nullptr)
 				{
-					GameObjectHandle<SceneObject> arrayElementPointersceneObjects = B3DStaticGameObjectCast<SceneObject>(scriptObjectWrappersceneObjects->GetBaseNativeObjectAsHandle());
+					arrayElementPointersceneObjects = B3DStaticGameObjectCast<SceneObject>(scriptObjectWrappersceneObjects->GetBaseNativeObjectAsHandle());
 					nativeArraysceneObjects[elementIndex] = arrayElementPointersceneObjects;
 				}
 			}
@@ -108,11 +109,12 @@ namespace bs
 			nativeArrayvalue.resize(scriptArrayvalue.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayvalue.Size(); elementIndex++)
 			{
+				GameObjectHandle<SceneObject> arrayElementPointervalue;
 				ScriptSceneObject* scriptObjectWrappervalue;
 				scriptObjectWrappervalue = ScriptSceneObject::GetScriptObjectWrapper(scriptArrayvalue.Get<MonoObject*>(elementIndex));
 				if(scriptObjectWrappervalue != nullptr)
 				{
-					GameObjectHandle<SceneObject> arrayElementPointervalue = B3DStaticGameObjectCast<SceneObject>(scriptObjectWrappervalue->GetBaseNativeObjectAsHandle());
+					arrayElementPointervalue = B3DStaticGameObjectCast<SceneObject>(scriptObjectWrappervalue->GetBaseNativeObjectAsHandle());
 					nativeArrayvalue[elementIndex] = arrayElementPointervalue;
 				}
 			}

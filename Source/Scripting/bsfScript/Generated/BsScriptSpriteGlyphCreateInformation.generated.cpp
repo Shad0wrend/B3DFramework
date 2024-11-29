@@ -30,10 +30,10 @@ namespace bs
 	{
 		SpriteGlyphCreateInformation output;
 		TResourceHandle<Font> tmpFont;
-		ScriptRRefBase* scriptWrapperObjectFont;
-		scriptWrapperObjectFont = ScriptRRefBase::GetScriptObjectWrapper(value.Font);
-		if(scriptWrapperObjectFont != nullptr)
-			tmpFont = B3DStaticResourceCast<Font>(scriptWrapperObjectFont->GetNativeObject());
+		ScriptRRefBase* scriptObjectWrapperFont;
+		scriptObjectWrapperFont = ScriptRRefBase::GetScriptObjectWrapper(value.Font);
+		if(scriptObjectWrapperFont != nullptr)
+			tmpFont = B3DStaticResourceCast<Font>(scriptObjectWrapperFont->GetNativeObject());
 		output.Font = tmpFont;
 		output.Glyph = value.Glyph;
 		output.Size = value.Size;
