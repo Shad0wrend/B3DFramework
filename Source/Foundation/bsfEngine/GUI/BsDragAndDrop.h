@@ -73,17 +73,17 @@ namespace bs
 		ResourceDragAndDropData() = default;
 
 		B3D_SCRIPT_EXPORT()
-		ResourceDragAndDropData(const Path& resourcePath)
-			: ResourcePaths { resourcePath }
+		ResourceDragAndDropData(const Path& relativeResourcePath)
+			: RelativeResourcePaths { relativeResourcePath }
 		{ }
 
 		B3D_SCRIPT_EXPORT()
-		ResourceDragAndDropData(const Vector<Path>& resourcePaths)
-			: ResourcePaths(resourcePaths)
+		ResourceDragAndDropData(const Vector<Path>& relativeResourcePaths)
+			: RelativeResourcePaths(relativeResourcePaths)
 		{ }
 
 		B3D_SCRIPT_EXPORT()
-		Vector<Path> ResourcePaths;
+		Vector<Path> RelativeResourcePaths;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

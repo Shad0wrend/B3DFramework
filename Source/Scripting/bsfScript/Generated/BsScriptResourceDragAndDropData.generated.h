@@ -23,9 +23,9 @@ namespace bs
 
 	private:
 		static void InternalResourceDragAndDropData(MonoObject* scriptObject);
-		static void InternalResourceDragAndDropData0(MonoObject* scriptObject, MonoString* resourcePath);
-		static void InternalResourceDragAndDropData1(MonoObject* scriptObject, MonoArray* resourcePaths);
-		static MonoArray* InternalGetResourcePaths(ScriptResourceDragAndDropData* self);
-		static void InternalSetResourcePaths(ScriptResourceDragAndDropData* self, MonoArray* value);
+		static void InternalResourceDragAndDropData0(MonoObject* scriptObject, MonoString* relativeResourcePath);
+		static void InternalResourceDragAndDropData1(MonoObject* scriptObject, MonoArray* relativeResourcePaths);
+		static MonoArray* InternalGetRelativeResourcePaths(ScriptResourceDragAndDropData* self);
+		static void InternalSetRelativeResourcePaths(ScriptResourceDragAndDropData* self, MonoArray* value);
 	};
 }

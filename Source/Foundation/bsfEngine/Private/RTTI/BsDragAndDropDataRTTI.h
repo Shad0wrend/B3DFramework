@@ -64,7 +64,7 @@ namespace bs
 	class B3D_EXPORT ResourceDragAndDropDataRTTI : public TRTTIType<ResourceDragAndDropData, DragAndDropData, ResourceDragAndDropDataRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_CONTAINER(ResourcePaths, 0)
+			B3D_RTTI_MEMBER_CONTAINER(RelativeResourcePaths, 0)
 		B3D_RTTI_END_MEMBERS
 
 	public:

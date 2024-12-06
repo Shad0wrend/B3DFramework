@@ -17,33 +17,33 @@ namespace bs
 			Internal_ResourceDragAndDropData(this);
 		}
 
-		public ResourceDragAndDropData(string resourcePath)
+		public ResourceDragAndDropData(string relativeResourcePath)
 		{
-			Internal_ResourceDragAndDropData0(this, resourcePath);
+			Internal_ResourceDragAndDropData0(this, relativeResourcePath);
 		}
 
-		public ResourceDragAndDropData(string[] resourcePaths)
+		public ResourceDragAndDropData(string[] relativeResourcePaths)
 		{
-			Internal_ResourceDragAndDropData1(this, resourcePaths);
+			Internal_ResourceDragAndDropData1(this, relativeResourcePaths);
 		}
 
 		[ShowInInspector]
 		[NativeWrapper]
-		public string[] ResourcePaths
+		public string[] RelativeResourcePaths
 		{
-			get { return Internal_GetResourcePaths(mCachedPtr); }
-			set { Internal_SetResourcePaths(mCachedPtr, value); }
+			get { return Internal_GetRelativeResourcePaths(mCachedPtr); }
+			set { Internal_SetRelativeResourcePaths(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ResourceDragAndDropData(ResourceDragAndDropData managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ResourceDragAndDropData0(ResourceDragAndDropData managedInstance, string resourcePath);
+		private static extern void Internal_ResourceDragAndDropData0(ResourceDragAndDropData managedInstance, string relativeResourcePath);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ResourceDragAndDropData1(ResourceDragAndDropData managedInstance, string[] resourcePaths);
+		private static extern void Internal_ResourceDragAndDropData1(ResourceDragAndDropData managedInstance, string[] relativeResourcePaths);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string[] Internal_GetResourcePaths(IntPtr thisPtr);
+		private static extern string[] Internal_GetRelativeResourcePaths(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetResourcePaths(IntPtr thisPtr, string[] value);
+		private static extern void Internal_SetRelativeResourcePaths(IntPtr thisPtr, string[] value);
 	}
 }

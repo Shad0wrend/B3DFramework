@@ -18,8 +18,8 @@ namespace bs
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ResourceDragAndDropData", (void*)&ScriptResourceDragAndDropData::InternalResourceDragAndDropData);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ResourceDragAndDropData0", (void*)&ScriptResourceDragAndDropData::InternalResourceDragAndDropData0);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ResourceDragAndDropData1", (void*)&ScriptResourceDragAndDropData::InternalResourceDragAndDropData1);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetResourcePaths", (void*)&ScriptResourceDragAndDropData::InternalGetResourcePaths);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetResourcePaths", (void*)&ScriptResourceDragAndDropData::InternalSetResourcePaths);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRelativeResourcePaths", (void*)&ScriptResourceDragAndDropData::InternalGetRelativeResourcePaths);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetRelativeResourcePaths", (void*)&ScriptResourceDragAndDropData::InternalSetRelativeResourcePaths);
 
 	}
 
@@ -39,37 +39,37 @@ namespace bs
 		ScriptObjectWrapper::Create<ScriptResourceDragAndDropData>(nativeObject, scriptObject);
 	}
 
-	void ScriptResourceDragAndDropData::InternalResourceDragAndDropData0(MonoObject* scriptObject, MonoString* resourcePath)
+	void ScriptResourceDragAndDropData::InternalResourceDragAndDropData0(MonoObject* scriptObject, MonoString* relativeResourcePath)
 	{
-		Path tmpresourcePath;
-		tmpresourcePath = MonoUtil::MonoToString(resourcePath);
-		SPtr<ResourceDragAndDropData> nativeObject = B3DMakeShared<ResourceDragAndDropData>(tmpresourcePath);
+		Path tmprelativeResourcePath;
+		tmprelativeResourcePath = MonoUtil::MonoToString(relativeResourcePath);
+		SPtr<ResourceDragAndDropData> nativeObject = B3DMakeShared<ResourceDragAndDropData>(tmprelativeResourcePath);
 		ScriptObjectWrapper::Create<ScriptResourceDragAndDropData>(nativeObject, scriptObject);
 	}
 
-	void ScriptResourceDragAndDropData::InternalResourceDragAndDropData1(MonoObject* scriptObject, MonoArray* resourcePaths)
+	void ScriptResourceDragAndDropData::InternalResourceDragAndDropData1(MonoObject* scriptObject, MonoArray* relativeResourcePaths)
 	{
-		Vector<Path> nativeArrayresourcePaths;
-		if(resourcePaths != nullptr)
+		Vector<Path> nativeArrayrelativeResourcePaths;
+		if(relativeResourcePaths != nullptr)
 		{
-			ScriptArray scriptArrayresourcePaths(resourcePaths);
-			nativeArrayresourcePaths.resize(scriptArrayresourcePaths.Size());
-			for(int elementIndex = 0; elementIndex < (int)scriptArrayresourcePaths.Size(); elementIndex++)
+			ScriptArray scriptArrayrelativeResourcePaths(relativeResourcePaths);
+			nativeArrayrelativeResourcePaths.resize(scriptArrayrelativeResourcePaths.Size());
+			for(int elementIndex = 0; elementIndex < (int)scriptArrayrelativeResourcePaths.Size(); elementIndex++)
 			{
-				nativeArrayresourcePaths[elementIndex] = scriptArrayresourcePaths.Get<Path>(elementIndex);
+				nativeArrayrelativeResourcePaths[elementIndex] = scriptArrayrelativeResourcePaths.Get<Path>(elementIndex);
 			}
 		}
-		SPtr<ResourceDragAndDropData> nativeObject = B3DMakeShared<ResourceDragAndDropData>(nativeArrayresourcePaths);
+		SPtr<ResourceDragAndDropData> nativeObject = B3DMakeShared<ResourceDragAndDropData>(nativeArrayrelativeResourcePaths);
 		ScriptObjectWrapper::Create<ScriptResourceDragAndDropData>(nativeObject, scriptObject);
 	}
 
-	MonoArray* ScriptResourceDragAndDropData::InternalGetResourcePaths(ScriptResourceDragAndDropData* self)
+	MonoArray* ScriptResourceDragAndDropData::InternalGetRelativeResourcePaths(ScriptResourceDragAndDropData* self)
 	{
 		Vector<Path> nativeArray__output;
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		nativeArray__output = static_cast<ResourceDragAndDropData*>(self->GetNativeObject())->ResourcePaths;
+		nativeArray__output = static_cast<ResourceDragAndDropData*>(self->GetNativeObject())->RelativeResourcePaths;
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -83,7 +83,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptResourceDragAndDropData::InternalSetResourcePaths(ScriptResourceDragAndDropData* self, MonoArray* value)
+	void ScriptResourceDragAndDropData::InternalSetRelativeResourcePaths(ScriptResourceDragAndDropData* self, MonoArray* value)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
@@ -99,6 +99,6 @@ namespace bs
 			}
 
 		}
-		static_cast<ResourceDragAndDropData*>(self->GetNativeObject())->ResourcePaths = nativeArrayvalue;
+		static_cast<ResourceDragAndDropData*>(self->GetNativeObject())->RelativeResourcePaths = nativeArrayvalue;
 	}
 }
