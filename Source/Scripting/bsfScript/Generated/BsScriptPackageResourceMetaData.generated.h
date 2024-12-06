@@ -10,6 +10,7 @@
 #include "../../../Foundation/bsfCore/Resources/BsPackage.h"
 
 namespace bs { class PackageResourceMetaData; }
+namespace bs { class PackageResourceMetaDataExtension; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptPackageResourceMetaData : public TScriptReflectableWrapper<PackageResourceMetaData, ScriptPackageResourceMetaData>
@@ -39,5 +40,8 @@ namespace bs
 		static void InternalSetFlags(ScriptPackageResourceMetaData* self, PackageResourceFlag value);
 		static MonoObject* InternalGetAdditionalMetaData(ScriptPackageResourceMetaData* self);
 		static void InternalSetAdditionalMetaData(ScriptPackageResourceMetaData* self, MonoObject* value);
+		static MonoObject* InternalGetResourceMetaData(ScriptPackageResourceMetaData* self);
+		static void InternalSetResourceMetaData(ScriptPackageResourceMetaData* self, MonoObject* value);
+		static MonoReflectionType* InternalGetResourceType(ScriptPackageResourceMetaData* self);
 	};
 }

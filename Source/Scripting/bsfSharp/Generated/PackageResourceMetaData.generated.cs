@@ -79,13 +79,31 @@ namespace bs
 			set { Internal_SetFlags(mCachedPtr, value); }
 		}
 
-		/// <summary>Optional additional meta-data. This can be anything, but should be kept small.</summary>
+		/// <summary>
+		/// Optional additional meta-data set explicitly by the user. This can be anything, but should be kept small.
+		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public PackageResourceUserMetaData AdditionalMetaData
 		{
 			get { return Internal_GetAdditionalMetaData(mCachedPtr); }
 			set { Internal_SetAdditionalMetaData(mCachedPtr, value); }
+		}
+
+		/// <summary>Meta-data that is inherited from the Resource object.</summary>
+		[ShowInInspector]
+		[NativeWrapper]
+		public ResourceMetaData ResourceMetaData
+		{
+			get { return Internal_GetResourceMetaData(mCachedPtr); }
+			set { Internal_SetResourceMetaData(mCachedPtr, value); }
+		}
+
+		/// <summary>Returns managed type of the resource described by the meta-data.</summary>
+		[NativeWrapper]
+		public Type ResourceType
+		{
+			get { return Internal_GetResourceType(mCachedPtr); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -118,5 +136,11 @@ namespace bs
 		private static extern PackageResourceUserMetaData Internal_GetAdditionalMetaData(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetAdditionalMetaData(IntPtr thisPtr, PackageResourceUserMetaData value);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern ResourceMetaData Internal_GetResourceMetaData(IntPtr thisPtr);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_SetResourceMetaData(IntPtr thisPtr, ResourceMetaData value);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern Type Internal_GetResourceType(IntPtr thisPtr);
 	}
 }

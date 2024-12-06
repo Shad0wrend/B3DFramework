@@ -7,6 +7,8 @@
 #include "Reflection/BsRTTIType.h"
 #include "BsScriptResourceWrapper.h"
 #include "BsScriptPackageResourceUserMetaData.generated.h"
+#include "BsScriptResourceMetaData.generated.h"
+#include "../Extensions/BsPackageResourceMetaDataExtension.h"
 
 namespace bs
 {
@@ -33,6 +35,9 @@ namespace bs
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetFlags", (void*)&ScriptPackageResourceMetaData::InternalSetFlags);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAdditionalMetaData", (void*)&ScriptPackageResourceMetaData::InternalGetAdditionalMetaData);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAdditionalMetaData", (void*)&ScriptPackageResourceMetaData::InternalSetAdditionalMetaData);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetResourceMetaData", (void*)&ScriptPackageResourceMetaData::InternalGetResourceMetaData);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetResourceMetaData", (void*)&ScriptPackageResourceMetaData::InternalSetResourceMetaData);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetResourceType", (void*)&ScriptPackageResourceMetaData::InternalGetResourceType);
 
 	}
 
@@ -60,6 +65,19 @@ namespace bs
 		return __output;
 	}
 
+	MonoReflectionType* ScriptPackageResourceMetaData::InternalGetResourceType(ScriptPackageResourceMetaData* self)
+	{
+		_MonoReflectionType* tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
+		tmp__output = PackageResourceMetaDataExtension::GetResourceType(std::static_pointer_cast<PackageResourceMetaData>(self->GetBaseNativeObjectAsShared()));
+
+		MonoReflectionType* __output;
+		__output = tmp__output;
+
+		return __output;
+	}
 	MonoString* ScriptPackageResourceMetaData::InternalGetPath(ScriptPackageResourceMetaData* self)
 	{
 		Path tmp__output;
@@ -238,5 +256,32 @@ namespace bs
 		if(scriptObjectWrappervalue != nullptr)
 			tmpvalue = std::static_pointer_cast<PackageResourceUserMetaData>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
 		static_cast<PackageResourceMetaData*>(self->GetNativeObject())->AdditionalMetaData = tmpvalue;
+	}
+
+	MonoObject* ScriptPackageResourceMetaData::InternalGetResourceMetaData(ScriptPackageResourceMetaData* self)
+	{
+		SPtr<ResourceMetaData> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
+		tmp__output = static_cast<PackageResourceMetaData*>(self->GetNativeObject())->ResourceMetaData;
+
+		MonoObject* __output;
+		__output = ScriptResourceMetaData::GetOrCreateScriptObject(tmp__output);
+
+		return __output;
+	}
+
+	void ScriptPackageResourceMetaData::InternalSetResourceMetaData(ScriptPackageResourceMetaData* self, MonoObject* value)
+	{
+		if(!self->IsNativeObjectValid())
+			return;
+
+		SPtr<ResourceMetaData> tmpvalue;
+		ScriptResourceMetaDataWrapperBase* scriptObjectWrappervalue;
+		scriptObjectWrappervalue = (ScriptResourceMetaDataWrapperBase*)ScriptResourceMetaData::GetScriptObjectWrapper(value);
+		if(scriptObjectWrappervalue != nullptr)
+			tmpvalue = std::static_pointer_cast<ResourceMetaData>(scriptObjectWrappervalue->GetBaseNativeObjectAsShared());
+		static_cast<PackageResourceMetaData*>(self->GetNativeObject())->ResourceMetaData = tmpvalue;
 	}
 }

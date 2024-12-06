@@ -1,0 +1,39 @@
+//********************************* bs::framework - Copyright 2024 Marko Pintera ************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#include "Extensions/BsPackageResourceMetaDataExtension.h"
+#include "BsMonoClass.h"
+#include "BsMonoUtil.h"
+#include "Serialization/BsScriptAssemblyManager.h"
+#include "BsManagedResourceMetaData.h"
+
+using namespace bs;
+
+MonoReflectionType* PackageResourceMetaDataExtension::GetResourceType(const SPtr<PackageResourceMetaData>& self)
+{
+	if(!B3D_ENSURE(self != nullptr))
+		return nullptr;
+
+	const u32 typeId = self->TypeId;
+	if(typeId == TID_ManagedResource)
+	{
+		const auto metaData = B3DRTTICast<ManagedResourceMetaData>(self->ResourceMetaData);
+
+		if(metaData)
+		{
+			MonoClass* providedClass = MonoManager::Instance().FindClass(metaData->TypeNamespace, metaData->TypeName);
+
+			if(providedClass)
+				return MonoUtil::GetType(providedClass->GetInternalClass());
+		}
+	}
+	else
+	{
+		const ScriptTypeMetaData* const scriptWrapperObjectMetaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(self->TypeId);
+
+		if(scriptWrapperObjectMetaData)
+			return MonoUtil::GetType(scriptWrapperObjectMetaData->ScriptClass->GetInternalClass());
+	}
+
+	return nullptr;
+}
+
