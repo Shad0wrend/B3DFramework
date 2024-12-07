@@ -130,7 +130,6 @@ void ScriptObjectManager::ProcessFinalizedObjects(bool assemblyRefresh)
 
 void ScriptObjectManager::PerformGarbageCollection()
 {
-#if 0 // Disabled until I solve issues that are happening without GC
 	// TODO - Should time-slice this over multiple frames
 
 	for(const auto& entry : mScriptObjectWrappers)
@@ -140,6 +139,5 @@ void ScriptObjectManager::PerformGarbageCollection()
 		if(nativeObjectReferenceCount == 1)
 			entry->TransitionToWeakScriptObjectHandle();
 	}
-#endif
 }
 
