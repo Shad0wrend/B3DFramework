@@ -1875,18 +1875,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Clamp to end/beginning, keeping the last/first frame active.</doc>
 		</enumentry>
 	</enum>
-	<struct native="SkeletonBoneInfoEx" script="BoneInfo">
-		<doc>Contains internal information about a single bone in a Skeleton.</doc>
-		<field name="Name" type="string">
-			<doc>Unique name of the bone.</doc>
-		</field>
-		<field name="Parent" type="int">
-			<doc>Index of the parent bone (within the relevant Skeleton object). -1 if root bone.</doc>
-		</field>
-		<field name="InvBindPose" type="Matrix4">
-			<doc>Inverse transform of the pose the skeleton was initially created in.</doc>
-		</field>
-	</struct>
 	<enum native="RangeComponent" script="RangeComponent">
 		<doc>Identifiers representing a range of values.</doc>
 		<enumentry native="Min" script="Min">
@@ -1910,6 +1898,18 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<enumentry native="FlexibleHeight" script="FlexibleHeight">
 		</enumentry>
 	</enum>
+	<struct native="SkeletonBoneInfoEx" script="BoneInfo">
+		<doc>Contains internal information about a single bone in a Skeleton.</doc>
+		<field name="Name" type="string">
+			<doc>Unique name of the bone.</doc>
+		</field>
+		<field name="Parent" type="int">
+			<doc>Index of the parent bone (within the relevant Skeleton object). -1 if root bone.</doc>
+		</field>
+		<field name="InvBindPose" type="Matrix4">
+			<doc>Inverse transform of the pose the skeleton was initially created in.</doc>
+		</field>
+	</struct>
 	<enum native="ObjectMobility" script="ObjectMobility">
 		<doc>Controls what kind of mobility restrictions a scene object has. This is used primarily as a performance hint to other systems. Generally the more restricted the mobility the higher performance can be achieved.</doc>
 		<enumentry native="Movable" script="Movable">
