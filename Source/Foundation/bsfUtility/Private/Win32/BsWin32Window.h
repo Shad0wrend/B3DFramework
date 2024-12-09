@@ -59,6 +59,9 @@ namespace bs
 		Win32Window(const WindowCreateInformation& createInformation);
 		~Win32Window();
 
+		/** Initializes the window. To be called right after construction. */
+		void Initialize();
+
 		/**	Returns position of the left-most border of the window, relative to the screen. */
 		i32 GetLeft() const;
 

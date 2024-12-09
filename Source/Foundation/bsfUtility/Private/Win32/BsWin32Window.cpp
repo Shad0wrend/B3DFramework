@@ -28,7 +28,6 @@ Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 	m = B3DNew<Pimpl>();
 	m->IsModal = createInformation.Modal;
 	m->IsHidden = createInformation.Hidden;
-	bool shouldFocus = true;
 
 	HMONITOR hMonitor = createInformation.Monitor;
 	if(!createInformation.External)
@@ -216,10 +215,17 @@ Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 		DeleteDC(hdcMem);
 		ReleaseDC(nullptr, hdcScreen);
 	}
+}
+
+void Win32Window::Initialize()
+{
+	// Note: We don't do this in the constructor as RenderWindow needs to be able to create Win32Window before we call SetFocus below, as that calls the message
+	// loop which attempts to fetch the HWND from a null Win32Window otherwise.
 
 	// Handle modal windows
 	B3DMarkAllocatorFrame();
 
+	bool shouldFocus = true;
 	{
 		FrameVector<HWND> windowsToDisable;
 		FrameVector<HWND> windowsToBringToFront;
@@ -269,6 +275,7 @@ Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 	}
 
 	B3DClearAllocatorFrame();
+	
 }
 
 Win32Window::~Win32Window()

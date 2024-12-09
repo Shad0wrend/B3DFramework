@@ -67,6 +67,7 @@ void Win32RenderWindow::Initialize()
 	}
 
 	mWindow = B3DNew<Win32Window>(windowCreateInformation);
+	mWindow->Initialize();
 
 	mIsChild = windowCreateInformation.Parent != nullptr;
 	mDisplayFrequency = Math::RoundToI32(mCreateInformation.VideoMode.RefreshRate);
