@@ -19,6 +19,7 @@ void Resource::Destroy()
 	if(scriptObjectWrapper != nullptr)
 		scriptObjectWrapper->NotifyNativeObjectDestroyed();
 
+	ClearAssociatedScriptObjectWrapper();
 	CoreObject::Destroy();
 }
 

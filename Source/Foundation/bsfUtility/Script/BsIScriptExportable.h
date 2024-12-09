@@ -89,14 +89,21 @@ namespace bs
 
 		/** @} */
 
+		/**
+		 * @name Internal
+		 * @{
+		 */
+
+		/** Clears the currently associated script object wrapper. Generally called before the script object is destroyed. */
+		void ClearAssociatedScriptObjectWrapper() { mScriptObjectWrapper = nullptr; }
+
+		/** @} */
+
 	private:
 		friend class IScriptObjectWrapper;
 
 		/** Notifies the object that a script object wrapper has been created for it, allowing a script object to access the native object through it. */
 		void AssociateWithScriptObjectWrapper(IScriptObjectWrapper* wrapper);
-
-		/** Clears the currently associated script object wrapper. Generally called before the script object is destroyed. */
-		void ClearAssociatedScriptObjectWrapper() { mScriptObjectWrapper = nullptr; }
 
 		IScriptObjectWrapper* mScriptObjectWrapper = nullptr;
 	};

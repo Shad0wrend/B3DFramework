@@ -43,6 +43,8 @@ void GameObject::DestroyImmediate()
 	if(IScriptObjectWrapper* scriptObjectWrapper = GetScriptObjectWrapper())
 		scriptObjectWrapper->NotifyNativeObjectDestroyed();
 
+	ClearAssociatedScriptObjectWrapper();
+
 	const SPtr<GameObjectCollection>& ownerCollection = mOwnerCollection.lock();
 	if(ownerCollection != nullptr) // Allowed to be null during GameObjectCollection destructor call
 		ownerCollection->UnregisterObject(mThisHandle, HasGameObjectFlag(GameObjectTransientFlag::Initialized));
