@@ -63,7 +63,7 @@ void Win32RenderWindow::Initialize()
 	// Must be set before creating a window, since wndProc will call ShowWindow if needed after creation
 	if(!windowCreateInformation.External)
 	{
-		mRenderWindowProperties.IsHidden = mCreateInformation.HideUntilSwap || mCreateInformation.Hidden;
+		mRenderWindowProperties.IsHidden = mCreateInformation.Hidden;
 	}
 
 	mWindow = B3DNew<Win32Window>(windowCreateInformation);
