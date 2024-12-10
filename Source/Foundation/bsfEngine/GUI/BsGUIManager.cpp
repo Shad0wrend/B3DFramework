@@ -1863,6 +1863,9 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 
 void GUIRenderer::ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId)
 {
+	if(!B3D_ENSURE(camera != nullptr))
+		return;
+
 	auto iterFind = mPerCameraData.find(camera.get());
 	if(iterFind == mPerCameraData.end())
 		return;
