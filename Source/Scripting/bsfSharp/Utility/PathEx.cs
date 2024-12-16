@@ -48,6 +48,9 @@ namespace bs
         /// <returns>True if <paramref name="parent"/> contains <paramref name="path"/>.</returns>
         public static bool IsPartOf(string path, string parent)
         {
+            if (string.IsNullOrEmpty(parent))
+                return true;
+
             return Path.GetFullPath(path).StartsWith(Path.GetFullPath(parent));
         }
 
