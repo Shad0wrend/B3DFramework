@@ -562,7 +562,7 @@ void FolderMonitor::HandleNotifications(FileNotifyInfo& notifyInfo)
 		WString fullPath = notifyInfo.GetFileNameWithPath(m->LowLevelMonitor->FolderToMonitor);
 
 		// Ignore notifications about hidden files
-		if((GetFileAttributesW(fullPath.c_str()) & FILE_ATTRIBUTE_HIDDEN) != 0)
+		if(notifyInfo.GetAction() != FILE_ACTION_REMOVED && (GetFileAttributesW(fullPath.c_str()) & FILE_ATTRIBUTE_HIDDEN) != 0)
 			continue;
 
 		switch(notifyInfo.GetAction())
