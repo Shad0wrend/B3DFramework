@@ -65,7 +65,7 @@ namespace bs
             Uri pathUri = new Uri(path, UriKind.RelativeOrAbsolute);
             Uri pathBaseUri = new Uri(pathBase, UriKind.RelativeOrAbsolute);
 
-            return Uri.UnescapeDataString(pathUri.MakeRelativeUri(pathBaseUri).ToString());
+            return Uri.UnescapeDataString(pathBaseUri.MakeRelativeUri(pathUri).ToString());
         }
 
         /// <summary>
