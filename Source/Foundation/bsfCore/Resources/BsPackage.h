@@ -188,6 +188,27 @@ namespace bs
 		Loaded
 	};
 
+	/** Options used for controlling the Package::Save operation. */
+	struct SavePackageOptions
+	{
+		bool CompressResources = true; /**<	If true, resources will be compressed before being saved. */
+
+		/**
+		 * If true, the save process will attempt to write only package meta-data, without writing the resource data. This is only
+		 * possible if the new meta-data takes equal or less space than previous meta-data. If new meta-data takes more space
+		 * than existing meta-data, then the whole package will be resaved, as if this option is disabled.
+		 *
+		 * You can reduce the chance the meta-data takes more space than needed by adding MetaDataPaddingByteCount when saving the package.
+		 */
+		bool SaveMetaDataOnly = false;
+
+		/**
+		 * Number of empty space to insert after the meta-data in the package. This allows you to overwrite the meta-data with larger meta-data in the future,
+		 * without having to re-write the entire package (See the SaveMetaDataOnly option). 
+		 */
+		u32 MetaDataPaddingByteCount = 0;
+	};
+
 	/**
 	 * Contains Resources in a virtual file system, along with their associated meta-data. Provides mechanisms to easily (de)serialize the package
 	 * and load the individual resources within independently.
@@ -399,11 +420,12 @@ namespace bs
 		/**
 		 * Saves the package into the provided data stream.
 		 *
-		 * @param	stream				Stream into which to save the package.
-		 * @param	compressResources	If true, resources will be compressed before being saved.
-		 * @param	saveMetaDataOnly	If true, only package meta-data will be written, without writing the resource data.
+		 * @param	stream		Stream into which to save the package.
+		 * @param	options		Options controlling the save operation.
+		 * @return 				True if successful, false otherwise. If saving meta-data only, if false it returned it means the meta-data doesn't fit
+		 *						and you must attempt to re-save the entire package.
 		 */
-		void Save(const SPtr<DataStream>& stream, bool compressResources, bool saveMetaDataOnly = false);
+		bool Save(const SPtr<DataStream>& stream, const SavePackageOptions& options);
 
 		/** Creates a new empty package. */
 		static SPtr<Package> Create(const String& name = StringUtil::kBlank, const UUID& id = UUID::kEmpty);
@@ -480,6 +502,7 @@ namespace bs
 		Path mAssociatedPackageFilePath; /**< Path to the file in which the package data has been saved. Empty if package hasn't been saved yet. */
 		SPtr<PackageMetaData> mPackageMetaData;
 		size_t mSerializedMetaDataEnd = 0;
+		size_t mMetaDataPaddingByteCount = 0; /**< Extra empty bytes in the file after meta-data. Allows meta-data to grow without having to re-write the whole file. */
 
 		UnorderedMap<Path, ResourceInformation*, PathHashFunction<true>, PathEqualsFunction<true>> mResourceInformationByPath;
 		UnorderedMap<UUID, UPtr<ResourceInformation>> mResourceInformationByUUID;

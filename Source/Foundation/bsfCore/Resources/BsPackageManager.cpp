@@ -114,7 +114,7 @@ void PackageManager::LoadPackages(const Path& folderPath, bool recursive, const 
 	FileSystem::Iterate(folderPath, fnOnFileFound, nullptr, recursive);
 }
 
-UPtr<PackageWriteLock> PackageManager::SavePackage(const SPtr<Package>& package, const Path& destinationPath, const SavePackageOptions& options)
+UPtr<PackageWriteLock> PackageManager::SavePackage(const SPtr<Package>& package, const Path& destinationPath, const PackageManagerSavePackageOptions& options)
 {
 	if(package == nullptr)
 	{
@@ -138,7 +138,11 @@ UPtr<PackageWriteLock> PackageManager::SavePackage(const SPtr<Package>& package,
 	const Path& temporarySavePath = FileSystem::GetUniqueTemporaryFilePath();
 	SPtr<DataStream> temporaryPackageStream = FileSystem::CreateAndOpenFile(temporarySavePath);
 
-	package->Save(temporaryPackageStream, options.Compress);
+	SavePackageOptions savePackageOptions;
+	savePackageOptions.CompressResources = options.Compress;
+	savePackageOptions.MetaDataPaddingByteCount = options.MetaDataPaddingByteCount;
+
+	package->Save(temporaryPackageStream, savePackageOptions);
 	temporaryPackageStream->Close();
 
 	AcquirePackageWriteLockOptions writeLockOptions(true);
@@ -290,10 +294,14 @@ bool PackageManager::SavePackageMetaData(const PackageWriteLock& packageWriteLoc
 	if(!B3D_ENSURE(package != nullptr))
 		return false;
 
-	package->Save(packageDataStream, true, true);
+	SavePackageOptions savePackageOptions;
+	savePackageOptions.CompressResources = true;
+	savePackageOptions.SaveMetaDataOnly = true;
+
+	bool result = package->Save(packageDataStream, savePackageOptions);
 	B3D_ENSURE(packageDataStream->Close());
 	
-	return true;
+	return result;
 }
 
 Optional<ResourcePackagePath> PackageManager::TryResolvePhysicalResourcePath(const Path& physicalResourcePath) const

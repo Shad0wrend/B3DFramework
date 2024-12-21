@@ -103,6 +103,7 @@ namespace bs
 			B3D_RTTI_MEMBER(mId, 1)
 			B3D_RTTI_MEMBER(mPackageMetaData, 2)
 			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mResourceMetaData, 3)
+			B3D_RTTI_MEMBER(mMetaDataPaddingByteCount, 4)
 		B3D_RTTI_END_MEMBERS
 
 	public:

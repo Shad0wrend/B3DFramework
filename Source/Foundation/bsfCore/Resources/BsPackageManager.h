@@ -69,12 +69,13 @@ namespace bs
 	};
 
 	/** Options that control package save operation. */
-	struct SavePackageOptions
+	struct PackageManagerSavePackageOptions
 	{
 		bool Overwrite = true; /**< If set, save operation will overwrite any existing package at the provided path. */
 		bool Compress = true; /**< If set, compression will be used on package data when saving. */
 		bool CopyLoadStatesOnOverwrite = false; /**< If overwriting a package and this is true, load states will be copied from the original package into the package we're saving. */
 		Path VirtualPathPrefix; /**< @see AcquirePackageReadLockOptions::VirtualPathPrefix. */
+		u32 MetaDataPaddingByteCount = false; /**< Adds extra free space after package meta-data so we can update package meta-data without having to re-write the whole package (as long as new meta-data fits). */
 	};
 
 	/** Potential resulting status codes when attempting to acquire a package lock. */
@@ -175,7 +176,7 @@ namespace bs
 		 *			no other operations are being performed on the package.
 		 *			If a read lock for a package is acquired, the save operation at that same location will result in a deadlock.
 		 */
-		UPtr<PackageWriteLock> SavePackage(const SPtr<Package>& package, const Path& destinationPath, const SavePackageOptions& options);
+		UPtr<PackageWriteLock> SavePackage(const SPtr<Package>& package, const Path& destinationPath, const PackageManagerSavePackageOptions& options);
 
 		/**
 		 * Unloads a package at the specified path.
@@ -205,7 +206,8 @@ namespace bs
 		 * Updates meta-data of a previously saved package.
 		 * 
 		 * @param	packageWriteLock	Write lock for the package to update the meta-data for.
-		 * @return						True if no errors occurred during the process.
+		 * @return						True if no errors occurred during the process. False if errors occurred, or if the meta-data doesn't fit in the package,
+		 *								in which case you should re-attempt a full save.
 		 */
 		bool SavePackageMetaData(const PackageWriteLock& packageWriteLock);
 

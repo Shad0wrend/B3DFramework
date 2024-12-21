@@ -307,7 +307,7 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 
 	PackageManager& packageManager = GetPackageManager();
 
-	SavePackageOptions savePackageOptions;
+	PackageManagerSavePackageOptions savePackageOptions;
 	savePackageOptions.Compress = false; // Note: Important that fonts are uncompressed, as the data will be read directly from the file when rendering the font glyphs
 
 	packageManager.SavePackage(package, packagePath, savePackageOptions);

@@ -503,7 +503,7 @@ void Resources::SaveAsSinglePackage(const HResource& resource, const Path& folde
 	const SPtr<Package> package = Package::Create(name);
 	package->AddResource(name, resource);
 
-	SavePackageOptions packageSaveOptions;
+	PackageManagerSavePackageOptions packageSaveOptions;
 	packageSaveOptions.Compress = saveOptions.Compress;
 	packageSaveOptions.Overwrite = saveOptions.Overwrite;
 	packageSaveOptions.VirtualPathPrefix = saveOptions.VirtualPathPrefix;

@@ -326,7 +326,17 @@ void PersistentCache::WriteDirtyMetaData()
 			package->SetResourceMetaData(resourceUUID, cacheObjectMetaData);
 		}
 
-		package->Save(packageDataStream, true, true);
+		SavePackageOptions savePackageOptions;
+		savePackageOptions.CompressResources = true;
+		savePackageOptions.SaveMetaDataOnly = true;
+
+		if(!package->Save(packageDataStream, savePackageOptions))
+		{
+			// Try re-saving everything
+			savePackageOptions.SaveMetaDataOnly = false;
+			B3D_ENSURE(package->Save(packageDataStream, savePackageOptions));	
+		}
+
 		B3D_ENSURE(packageDataStream->Close());
 	}
 
@@ -671,7 +681,10 @@ bool PersistentCache::SetPackageForEntry(const CacheOperation& operation, const 
 		return false;
 	}
 
-	package->Save(temporaryFileStream, true);
+	SavePackageOptions savePackageOptions;
+	savePackageOptions.CompressResources = true;
+
+	package->Save(temporaryFileStream, savePackageOptions);
 
 	bool isTemporaryFileMoved = false;
 	ScopeGuard removeTemporaryFileOnFailure([this, &isTemporaryFileMoved, temporaryPackagePath]()

@@ -957,7 +957,7 @@ SPtr<Package> Package::Create(const String& name, const UUID& id)
 	return B3DMakeShared<Package>(name, id);
 }
 
-void Package::Save(const SPtr<DataStream>& stream, bool compressResources, bool saveMetaDataOnly)
+bool Package::Save(const SPtr<DataStream>& stream, const SavePackageOptions& options)
 {
 	Lock metaDataLock(mMetaDataMutex);
 
@@ -985,24 +985,27 @@ void Package::Save(const SPtr<DataStream>& stream, bool compressResources, bool 
 		const SPtr<PackageResourceMetaData> metaDataCopy = B3DMakeShared<PackageResourceMetaData>();
 		*metaDataCopy = *resourceInformation->MetaData;
 
-		metaDataCopy->CompressionType = compressResources ? kDefaultCompressionType : CompressionType::Uncompressed;
+		metaDataCopy->CompressionType = options.CompressResources ? kDefaultCompressionType : CompressionType::Uncompressed;
 		entryPair.second->MetaData = metaDataCopy;
 
 		resourceIndex++;
 	}
 
-#if B3D_DEBUG
-	if(saveMetaDataOnly)
+	if(options.SaveMetaDataOnly)
 	{
+		// Check if the new meta-data fits
 		SPtr<MemoryDataStream> metaDataStream = B3DMakeShared<MemoryDataStream>();
 		FileEncoder metaDataEncoder(metaDataStream);
 		metaDataEncoder.Encode(this);	
 
-		if(!B3D_ENSURE(mAssociatedPackageFilePath.IsEmpty() || metaDataStream->Tell() == mSerializedMetaDataEnd))
-			return;
-		
+		const u64 metaDataSize = (u64)metaDataStream->Tell();
+		if(metaDataSize > mSerializedMetaDataEnd)
+			return false;
+
+		mMetaDataPaddingByteCount = mSerializedMetaDataEnd - metaDataSize;
 	}
-#endif
+	else
+		mMetaDataPaddingByteCount = options.MetaDataPaddingByteCount;
 
 	// Package structure:
 	// 1. Meta data
@@ -1012,13 +1015,15 @@ void Package::Save(const SPtr<DataStream>& stream, bool compressResources, bool 
 	FileEncoder fileEncoder(stream);
 	fileEncoder.Encode(this);
 
-	// TODO - This can cause problems if the meta-data is different size than the original
-	if (saveMetaDataOnly)
-		return;
+	if(mMetaDataPaddingByteCount > 0)
+		B3D_ENSURE(stream->Skip(mMetaDataPaddingByteCount) == mMetaDataPaddingByteCount);
+
+	if (options.SaveMetaDataOnly)
+		return true;
 
 	BinarySerializer serializer;
 
-	const size_t dataBlockOffset = stream->Tell(); // After meta-data
+	const size_t dataBlockOffset = stream->Tell(); // After meta-data (plus optional padding)
 	const size_t resourceHeaderSize = resourceCount * sizeof(SerializedResourceHeader);
 
 	stream->Skip(resourceHeaderSize);
@@ -1032,7 +1037,7 @@ void Package::Save(const SPtr<DataStream>& stream, bool compressResources, bool 
 	for (auto& entry : mResourceInformationByUUID)
 	{
 		const SPtr<Resource>& loadedResource = entry.second->LoadedResource;
-		const CompressionType compressionType = compressResources ? kDefaultCompressionType : CompressionType::Uncompressed;
+		const CompressionType compressionType = options.CompressResources ? kDefaultCompressionType : CompressionType::Uncompressed;
 
 		resourceHeaders[resourceIndex].Id = entry.first;
 		resourceHeaders[resourceIndex].OffsetInDataStream = stream->Tell();
@@ -1139,6 +1144,8 @@ void Package::Save(const SPtr<DataStream>& stream, bool compressResources, bool 
 
 	stream->Seek(dataBlockOffset);
 	stream->Write(resourceHeaders.data(), resourceHeaders.size() * sizeof(SerializedResourceHeader));
+
+	return true;
 }
 
 void Package::AssociateFileWithPackage(const Path& path)
@@ -1235,7 +1242,7 @@ SPtr<Package> Package::Load(const SPtr<DataStream>& stream)
 	if (package == nullptr)
 		return nullptr;
 
-	package->mSerializedMetaDataEnd = stream->Tell();
+	package->mSerializedMetaDataEnd = stream->Tell() + package->mMetaDataPaddingByteCount;
 	const u32 resourceCount = (u32)package->mResourceInformationByUUID.size();
 
 	Vector<SerializedResourceHeader> headers(resourceCount);
