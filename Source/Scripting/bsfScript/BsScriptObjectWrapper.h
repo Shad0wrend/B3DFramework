@@ -64,7 +64,7 @@ namespace bs
 
 	/**
 	 * Extends IScriptObjectWrapper by keeping a strong reference to the script object, and releasing it as needed.
-	 * As well as providing an interface for script reload functionality.. See IScriptObjectWrapper.
+	 * As well as providing an interface for script reload functionality. See IScriptObjectWrapper.
 	 */
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptObjectWrapper : public IScriptObjectWrapper
 	{

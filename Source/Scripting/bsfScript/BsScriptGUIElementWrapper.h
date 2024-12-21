@@ -18,6 +18,8 @@ namespace bs
 	public:
 		using ScriptObjectWrapper::ScriptObjectWrapper;
 
+		ScriptObjectLifetimeTrackingMode GetLifetimeTrackingMode() const override { return ScriptObjectLifetimeTrackingMode::StrongHandleWithExplicitDestroy; } 
+
 		/** Checks is the native object alive and valid. */
 		bool IsNativeObjectValid() const { return mNativeObject != nullptr; }
 

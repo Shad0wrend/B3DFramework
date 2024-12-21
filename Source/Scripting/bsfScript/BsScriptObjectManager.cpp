@@ -132,14 +132,16 @@ void ScriptObjectManager::PerformGarbageCollection()
 {
 	// TODO - Should time-slice this over multiple frames
 
-#if 0
 	for(const auto& entry : mScriptObjectWrappers)
 	{
+		// TODO - Keep these entries in a separate list so we don't have to check here
+		if(entry->GetLifetimeTrackingMode() != ScriptObjectLifetimeTrackingMode::StrongHandleWithGarbageCollection)
+			continue;
+
 		const u32 nativeObjectReferenceCount = entry->GetNativeObjectReferenceCount();
 
 		if(nativeObjectReferenceCount == 1)
 			entry->TransitionToWeakScriptObjectHandle();
 	}
-#endif
 }
 
