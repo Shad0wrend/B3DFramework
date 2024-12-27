@@ -80,7 +80,7 @@ namespace bs
 		Type GetType() const override { return GUIElement::Type::Panel; }
 		void UpdateOptimalLayoutSizes() override;
 		GUIConstrainedSize CalculateConstrainedSize() const override;
-		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
+		void GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
 
 		/** Calculates the size of the provided child within this layout with the provided dimensions. */
 		Rect2I GetElementAreaInternal(const Rect2I& layoutArea, const GUIElement* element, const GUIConstrainedSize& sizeRange) const;

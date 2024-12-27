@@ -162,7 +162,7 @@ void GUIWidget::UpdateLayout()
 		u32 width = area.Width;
 		u32 height = area.Height;
 
-		const Rect2I& panelArea = mPanel->GetLayoutData().Area;
+		const Rect2I& panelArea = mPanel->GetLayoutData().AbsoluteArea;
 		if(panelArea.Width != width || panelArea.Height != height)
 		{
 			UpdateRootPanel();
@@ -224,11 +224,11 @@ void GUIWidget::UpdateLayout(GUIElement* elem)
 		dirtyElement->UpdateOptimalLayoutSizes();
 
 		GUIConstrainedSize elementSizeRange = panel->GetElementSizeRangeInternal(dirtyElement);
-		Rect2I elementArea = panel->GetElementAreaInternal(panel->GetLayoutData().Area, dirtyElement, elementSizeRange);
+		Rect2I elementArea = panel->GetElementAreaInternal(panel->GetLayoutData().AbsoluteArea, dirtyElement, elementSizeRange);
 
 		GUILayoutData childLayoutData = panel->GetLayoutData();
 		panel->UpdateDepthRangeInternal(childLayoutData);
-		childLayoutData.Area = elementArea;
+		childLayoutData.AbsoluteArea = elementArea;
 
 		panel->UpdateChildLayoutInternal(dirtyElement, childLayoutData);
 	}
@@ -442,9 +442,9 @@ void GUIWidget::UpdateRootPanel()
 	u32 height = area.Height;
 
 	GUILayoutData layoutData;
-	layoutData.Area.Width = width;
-	layoutData.Area.Height = height;
-	layoutData.ClipRect = Rect2I(0, 0, width, height);
+	layoutData.AbsoluteArea.Width = width;
+	layoutData.AbsoluteArea.Height = height;
+	layoutData.AbsoluteClippedArea = Rect2I(0, 0, width, height);
 	layoutData.SetWidgetDepth(mDepth);
 
 	mPanel->SetWidth(width);

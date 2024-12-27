@@ -53,15 +53,18 @@ namespace bs
 		/**	Returns a clip rectangle that is relative to the current bounds. */
 		Rect2I GetLocalClipRect() const
 		{
-			Rect2I localClipRect = ClipRect;
-			localClipRect.X -= Area.X;
-			localClipRect.Y -= Area.Y;
+			Rect2I localClipRect = AbsoluteClippedArea;
+			localClipRect.X -= AbsoluteArea.X;
+			localClipRect.Y -= AbsoluteArea.Y;
 
 			return localClipRect;
 		}
 
-		Rect2I Area;
-		Rect2I ClipRect;
+		Vector2I RelativePosition; /**< Coordinates relative to the parent GUI element. Set during UpdateLayout pass. */
+		Vector2I AbsolutePosition; /**< Coordinates relative to the parent GUI widget. Set during UpdateVisibleBounds pass. */
+		Size2UI Size; /**< Size of the GUI element in pixels. */
+		Rect2I AbsoluteArea; /**< Absolute coordinates, plus size of the GUI element. */
+		Rect2I AbsoluteClippedArea; /**< AbsoluteArea clipped by the parent's visible area. */
 		u32 Depth = 0;
 		u16 DepthRangeMin = -1;
 		u16 DepthRangeMax = -1;

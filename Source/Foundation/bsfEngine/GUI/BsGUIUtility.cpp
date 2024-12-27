@@ -26,70 +26,79 @@ Vector2I GUIUtility::CalcActualSize(u32 width, u32 height, GUILayout* layout, bo
 
 Vector2I GUIUtility::CalcActualSizeInternal(u32 width, u32 height, GUILayout* layout)
 {
-	u32 numElements = (u32)layout->GetChildCount();
-	Rect2I* elementAreas = nullptr;
+	u32 elementCount = (u32)layout->GetChildCount();
+	Vector2I* elementPositions = nullptr;
+	Size2UI* elementSizes = nullptr;
 
-	if(numElements > 0)
-		elementAreas = B3DStackNew<Rect2I>(numElements);
+	if(elementCount > 0)
+	{
+		elementPositions = B3DStackNew<Vector2I>(elementCount);
+		elementSizes =  B3DStackNew<Size2UI>(elementCount);
+	}
 
 	Rect2I parentArea;
 	parentArea.Width = width;
 	parentArea.Height = height;
 
-	layout->GetChildLayoutAreas(parentArea, elementAreas, numElements, layout->GetChildrenConstrainedSizes(), layout->GetCachedConstrainedSize());
+	layout->GetChildLayoutAreas(parentArea, elementPositions, elementSizes, elementCount, layout->GetChildrenConstrainedSizes(), layout->GetCachedConstrainedSize());
 
-	Rect2I* actualAreas = elementAreas; // We re-use the same array
-	for(u32 i = 0; i < numElements; i++)
+	Size2UI* actualSizes = elementSizes; // We re-use the same array
+	for(u32 i = 0; i < elementCount; i++)
 	{
 		GUIElement* child = layout->GetChild(i);
-		Rect2I childArea = elementAreas[i];
+		Size2UI childSize = elementSizes[i];
 
 		if(child->GetType() == GUIElement::Type::Layout || child->GetType() == GUIElement::Type::Panel)
 		{
-			Vector2I childActualSize = CalcActualSizeInternal(childArea.Width, childArea.Height, static_cast<GUILayout*>(child));
-			actualAreas[i].Width = (u32)childActualSize.X;
-			actualAreas[i].Height = (u32)childActualSize.Y;
+			Vector2I childActualSize = CalcActualSizeInternal(childSize.Width, childSize.Height, static_cast<GUILayout*>(child));
+			actualSizes[i].Width = (u32)childActualSize.X;
+			actualSizes[i].Height = (u32)childActualSize.Y;
 		}
 		else if(child->GetType() == GUIElement::Type::Interactable)
 		{
 			RectOffset padding = child->GetMargins();
 
-			actualAreas[i].Width = elementAreas[i].Width + padding.Left + padding.Right;
-			actualAreas[i].Height = elementAreas[i].Height + padding.Top + padding.Bottom;
+			actualSizes[i].Width = elementSizes[i].Width + padding.Left + padding.Right;
+			actualSizes[i].Height = elementSizes[i].Height + padding.Top + padding.Bottom;
 		}
 		else
 		{
-			actualAreas[i].Width = elementAreas[i].Width;
-			actualAreas[i].Height = elementAreas[i].Height;
+			actualSizes[i].Width = elementSizes[i].Width;
+			actualSizes[i].Height = elementSizes[i].Height;
 		}
 	}
 
 	Vector2I min;
 	Vector2I max;
 
-	if(numElements > 0)
+	if(elementCount > 0)
 	{
-		Rect2I childArea = actualAreas[0];
+		const Vector2I childPosition = elementPositions[0];
+		const Size2UI childSize = actualSizes[0];
 
-		min = Vector2I(childArea.X, childArea.Y);
-		max = Vector2I(childArea.X + childArea.Width, childArea.Y + childArea.Height);
+		min = Vector2I(childPosition.X, childPosition.Y);
+		max = Vector2I(childPosition.X + childSize.Width, childPosition.Y + childSize.Height);
 	}
 
-	for(u32 i = 1; i < numElements; i++)
+	for(u32 i = 1; i < elementCount; i++)
 	{
-		Rect2I childArea = actualAreas[i];
+		const Vector2I childPosition = elementPositions[i];
+		const Size2UI childSize = actualSizes[i];
 
-		min.X = std::min(min.X, childArea.X);
-		min.Y = std::min(min.Y, childArea.Y);
+		min.X = std::min(min.X, childPosition.X);
+		min.Y = std::min(min.Y, childPosition.Y);
 
-		max.X = std::max(max.X, childArea.X + (i32)childArea.Width);
-		max.Y = std::max(max.Y, childArea.Y + (i32)childArea.Height);
+		max.X = std::max(max.X, childPosition.X + (i32)childSize.Width);
+		max.Y = std::max(max.Y, childPosition.Y + (i32)childSize.Height);
 	}
 
 	Vector2I actualSize = max - min;
 
-	if(elementAreas != nullptr)
-		B3DStackFree(elementAreas);
+	if(elementSizes != nullptr)
+		B3DStackFree(elementSizes);
+
+	if(elementPositions != nullptr)
+		B3DStackFree(elementPositions);
 
 	return actualSize;
 }

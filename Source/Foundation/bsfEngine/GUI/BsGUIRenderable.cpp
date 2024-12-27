@@ -74,7 +74,7 @@ void GUIRenderable::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u
 {
 	const GUIRenderElement& renderElement = mRenderElements[renderElementIndex];
 
-	const Vector2I guiElementOffset(mLayoutData.Area.X, mLayoutData.Area.Y);
+	const Vector2I guiElementOffset(mLayoutData.AbsoluteArea.X, mLayoutData.AbsoluteArea.Y);
 	const Rect2 guiElementClipRectangle = (Rect2)mLayoutData.GetLocalClipRect();
 
 	// Build the render element bounds to use for clipping
@@ -96,8 +96,8 @@ void GUIRenderable::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u
 
 void GUIRenderable::UpdateClippedBounds()
 {
-	mClippedBounds = mLayoutData.Area;
-	mClippedBounds.Clip(mLayoutData.ClipRect);
+	mClippedBounds = mLayoutData.AbsoluteArea;
+	mClippedBounds.Clip(mLayoutData.AbsoluteClippedArea);
 }
 
 void GUIRenderable::SetStyleSheetClass(const String& styleClass)

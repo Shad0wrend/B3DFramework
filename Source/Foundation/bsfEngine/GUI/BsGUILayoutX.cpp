@@ -90,9 +90,9 @@ void GUILayoutX::UpdateOptimalLayoutSizes()
 	mConstrainedSize.Min.Y = std::max(mConstrainedSize.Min.Y, minSize.Y);
 }
 
-void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
+void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
 {
-	B3D_ASSERT(mChildren.size() == numElements);
+	B3D_ASSERT(mChildren.size() == elementCount);
 
 	u32 totalOptimalSize = mySizeRange.Optimal.X;
 	u32 totalNonClampedSize = 0;
@@ -115,7 +115,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 	u32 childIdx = 0;
 	for(auto& child : mChildren)
 	{
-		elementAreas[childIdx].Width = sizeRanges[childIdx].Optimal.X;
+		outElementSizes[childIdx].Width = sizeRanges[childIdx].Optimal.X;
 
 		if(B3DRTTIIsOfType<GUIFixedSpace>(child))
 		{
@@ -139,10 +139,10 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 				processedElements[childIdx] = true;
 			else
 			{
-				if(elementAreas[childIdx].Width > 0)
+				if(outElementSizes[childIdx].Width > 0)
 				{
 					numNonClampedElements++;
-					totalNonClampedSize += elementAreas[childIdx].Width;
+					totalNonClampedSize += outElementSizes[childIdx].Width;
 				}
 				else
 					processedElements[childIdx] = true;
@@ -173,14 +173,14 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 				}
 
 				u32 extraWidth = std::min((u32)Math::CeilToInt(avgSize), remainingSize);
-				u32 elementWidth = elementAreas[childIdx].Width + extraWidth;
+				u32 elementWidth = outElementSizes[childIdx].Width + extraWidth;
 
 				// Clamp if needed
 				if(B3DRTTIIsOfType<GUIFlexibleSpace>(child))
 				{
 					processedElements[childIdx] = true;
 					numNonClampedElements--;
-					elementAreas[childIdx].Width = elementWidth;
+					outElementSizes[childIdx].Width = elementWidth;
 
 					remainingSize = (u32)std::max(0, (i32)remainingSize - (i32)extraWidth);
 				}
@@ -205,7 +205,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 			continue;
 		}
 
-		elementScaleWeights[childIdx] = invOptimalSize * elementAreas[childIdx].Width;
+		elementScaleWeights[childIdx] = invOptimalSize * outElementSizes[childIdx].Width;
 
 		childIdx++;
 	}
@@ -234,13 +234,13 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 				float avgSize = totalRemainingSize * elementScaleWeights[childIdx];
 
 				u32 extraWidth = std::min((u32)Math::CeilToInt(avgSize), remainingSize);
-				u32 elementWidth = (u32)std::max(0, (i32)elementAreas[childIdx].Width - (i32)extraWidth);
+				u32 elementWidth = (u32)std::max(0, (i32)outElementSizes[childIdx].Width - (i32)extraWidth);
 
 				// Clamp if needed
 				switch(child->GetRtti()->GetRttiId())
 				{
 				case TID_GUIFlexibleSpace:
-					elementAreas[childIdx].Width = 0;
+					outElementSizes[childIdx].Width = 0;
 					processedElements[childIdx] = true;
 					numNonClampedElements--;
 					break;
@@ -263,8 +263,8 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 							numNonClampedElements--;
 						}
 
-						extraWidth = elementAreas[childIdx].Width - elementWidth;
-						elementAreas[childIdx].Width = elementWidth;
+						extraWidth = outElementSizes[childIdx].Width - elementWidth;
+						outElementSizes[childIdx].Width = elementWidth;
 						remainingSize = (u32)std::max(0, (i32)remainingSize - (i32)extraWidth);
 					}
 					break;
@@ -296,7 +296,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 
 				float avgSize = totalRemainingSize * elementScaleWeights[childIdx];
 				u32 extraWidth = std::min((u32)Math::CeilToInt(avgSize), remainingSize);
-				u32 elementWidth = elementAreas[childIdx].Width + extraWidth;
+				u32 elementWidth = outElementSizes[childIdx].Width + extraWidth;
 
 				// Clamp if needed
 				switch(child->GetRtti()->GetRttiId())
@@ -324,8 +324,8 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 							numNonClampedElements--;
 						}
 
-						extraWidth = elementWidth - elementAreas[childIdx].Width;
-						elementAreas[childIdx].Width = elementWidth;
+						extraWidth = elementWidth - outElementSizes[childIdx].Width;
+						outElementSizes[childIdx].Width = elementWidth;
 						remainingSize = (u32)std::max(0, (i32)remainingSize - (i32)extraWidth);
 					}
 					break;
@@ -342,7 +342,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 
 	for(auto& child : mChildren)
 	{
-		u32 elemWidth = elementAreas[childIdx].Width;
+		u32 elemWidth = outElementSizes[childIdx].Width;
 		xOffset += child->GetMargins().Left;
 
 		const GUIConstrainedSize& sizeRange = sizeRanges[childIdx];
@@ -357,7 +357,7 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 			if(sizeRange.Max.Y > 0 && elemHeight > (u32)sizeRange.Max.Y)
 				elemHeight = (u32)sizeRange.Max.Y;
 		}
-		elementAreas[childIdx].Height = elemHeight;
+		outElementSizes[childIdx].Height = elemHeight;
 
 		if(GUIInteractable* const element = B3DRTTICast<GUIInteractable>(child))
 		{
@@ -365,13 +365,13 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 			i32 yOffset = Math::CeilToInt(((i32)layoutArea.Height - (i32)(elemHeight + yPadding)) * 0.5f);
 			yOffset = std::max(0, yOffset);
 
-			elementAreas[childIdx].X = layoutArea.X + xOffset;
-			elementAreas[childIdx].Y = layoutArea.Y + yOffset;
+			outElementPositions[childIdx].X = layoutArea.X + xOffset;
+			outElementPositions[childIdx].Y = layoutArea.Y + yOffset;
 		}
 		else
 		{
-			elementAreas[childIdx].X = layoutArea.X + xOffset;
-			elementAreas[childIdx].Y = layoutArea.Y;
+			outElementPositions[childIdx].X = layoutArea.X + xOffset;
+			outElementPositions[childIdx].Y = layoutArea.Y;
 		}
 
 		xOffset += elemWidth + child->GetMargins().Right;
@@ -387,13 +387,17 @@ void GUILayoutX::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAr
 
 void GUILayoutX::UpdateLayoutRecursive(const GUILayoutData& data)
 {
-	u32 numElements = (u32)mChildren.size();
-	Rect2I* elementAreas = nullptr;
+	const u32 elementCount = (u32)mChildren.size();
+	Vector2I* elementPositions = nullptr;
+	Size2UI* elementSizes = nullptr;
 
-	if(numElements > 0)
-		elementAreas = B3DStackNew<Rect2I>(numElements);
+	if(elementCount > 0)
+	{
+		elementPositions = B3DStackNew<Vector2I>(elementCount);
+		elementSizes = B3DStackNew<Size2UI>(elementCount);
+	}
 
-	GetChildLayoutAreas(data.Area, elementAreas, numElements, mChildrenConstrainedSizes, mConstrainedSize);
+	GetChildLayoutAreas(data.AbsoluteArea, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
 
 	// Now that we have all the areas, actually assign them
 	u32 childIdx = 0;
@@ -403,9 +407,11 @@ void GUILayoutX::UpdateLayoutRecursive(const GUILayoutData& data)
 	{
 		if(child->IsActive())
 		{
-			childData.Area = elementAreas[childIdx];
-			childData.ClipRect = childData.Area;
-			childData.ClipRect.Clip(data.ClipRect);
+			childData.AbsoluteArea = Rect2I(elementPositions[childIdx].X, elementPositions[childIdx].Y, elementSizes[childIdx].Width, elementSizes[childIdx].Height);
+			childData.AbsolutePosition = elementPositions[childIdx];
+			childData.Size = elementSizes[childIdx];
+			childData.AbsoluteClippedArea = childData.AbsoluteArea;
+			childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
 
 			child->SetLayoutData(childData);
 			child->UpdateLayoutRecursive(childData);
@@ -414,8 +420,11 @@ void GUILayoutX::UpdateLayoutRecursive(const GUILayoutData& data)
 		childIdx++;
 	}
 
-	if(elementAreas != nullptr)
-		B3DStackFree(elementAreas);
+	if(elementSizes != nullptr)
+		B3DStackFree(elementSizes);
+
+	if(elementPositions != nullptr)
+		B3DStackFree(elementPositions);
 }
 
 GUILayoutX* GUILayoutX::Create()

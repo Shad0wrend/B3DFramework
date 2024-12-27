@@ -153,15 +153,18 @@ void GUIPanel::UpdateOptimalLayoutSizes()
 	mConstrainedSize.Min.Y = std::max(mConstrainedSize.Min.Y, minSize.Y);
 }
 
-void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
+void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
 {
-	B3D_ASSERT(mChildren.size() == numElements);
+	B3D_ASSERT(mChildren.size() == elementCount);
 
 	// Panel always uses optimal sizes and explicit positions
 	u32 childIdx = 0;
 	for(auto& child : mChildren)
 	{
-		elementAreas[childIdx] = GetElementAreaInternal(layoutArea, child, sizeRanges[childIdx]);
+		const Rect2I childElementArea = GetElementAreaInternal(layoutArea, child, sizeRanges[childIdx]);
+
+		outElementPositions[childIdx] = Vector2I(childElementArea.X, childElementArea.Y);
+		outElementSizes[childIdx] = Size2UI(childElementArea.Width, childElementArea.Height);
 
 		childIdx++;
 	}
@@ -250,13 +253,17 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 	GUILayoutData childData = data;
 	UpdateDepthRangeInternal(childData);
 
-	u32 numElements = (u32)mChildren.size();
-	Rect2I* elementAreas = nullptr;
+	u32 elementCount = (u32)mChildren.size();
+	Vector2I* elementPositions = nullptr;
+	Size2UI* elementSizes = nullptr;
 
-	if(numElements > 0)
-		elementAreas = B3DStackNew<Rect2I>(numElements);
+	if(elementCount > 0)
+	{
+		elementPositions = B3DStackNew<Vector2I>(elementCount);
+		elementSizes = B3DStackNew<Size2UI>(elementCount);
+	}
 
-	GetChildLayoutAreas(data.Area, elementAreas, numElements, mChildrenConstrainedSizes, mConstrainedSize);
+	GetChildLayoutAreas(data.AbsoluteArea, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
 
 	u32 childIdx = 0;
 
@@ -264,7 +271,9 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 	{
 		if(child->IsActive())
 		{
-			childData.Area = elementAreas[childIdx];
+			childData.AbsolutePosition = elementPositions[childIdx];
+			childData.Size = elementSizes[childIdx];
+			childData.AbsoluteArea = Rect2I(childData.AbsolutePosition.X, childData.AbsolutePosition.Y, childData.Size.Width, childData.Size.Height);
 
 			UpdateChildLayoutInternal(child, childData);
 		}
@@ -272,16 +281,19 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 		childIdx++;
 	}
 
-	if(elementAreas != nullptr)
-		B3DStackFree(elementAreas);
+	if(elementSizes != nullptr)
+		B3DStackFree(elementSizes);
+
+	if(elementPositions != nullptr)
+		B3DStackFree(elementPositions);
 }
 
 void GUIPanel::UpdateChildLayoutInternal(GUIElement* element, const GUILayoutData& data)
 {
 	GUILayoutData childData = data;
 
-	childData.ClipRect = data.Area;
-	childData.ClipRect.Clip(data.ClipRect);
+	childData.AbsoluteClippedArea = data.AbsoluteArea;
+	childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
 
 	element->SetLayoutData(childData);
 	element->UpdateLayoutRecursive(childData);

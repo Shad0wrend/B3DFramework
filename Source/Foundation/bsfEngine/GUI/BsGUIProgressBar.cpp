@@ -40,14 +40,14 @@ void GUIProgressBar::UpdateLayoutRecursive(const GUILayoutData& data)
 
 	GUILayoutData barLayoutData = data;
 
-	barLayoutData.Area.X += margins.Left;
-	barLayoutData.Area.Y += margins.Top;
+	barLayoutData.AbsoluteArea.X += margins.Left;
+	barLayoutData.AbsoluteArea.Y += margins.Top;
 
-	u32 maxProgressBarWidth = std::max((u32)0, (u32)(data.Area.Width - margins.Left - margins.Right));
-	u32 progressBarHeight = std::max((u32)0, (u32)(data.Area.Height - margins.Top - margins.Bottom));
+	u32 maxProgressBarWidth = std::max((u32)0, (u32)(data.AbsoluteArea.Width - margins.Left - margins.Right));
+	u32 progressBarHeight = std::max((u32)0, (u32)(data.AbsoluteArea.Height - margins.Top - margins.Bottom));
 
-	barLayoutData.Area.Width = (u32)Math::FloorToInt(maxProgressBarWidth * mPercent);
-	barLayoutData.Area.Height = progressBarHeight;
+	barLayoutData.AbsoluteArea.Width = (u32)Math::FloorToInt(maxProgressBarWidth * mPercent);
+	barLayoutData.AbsoluteArea.Height = progressBarHeight;
 
 	mBar->SetLayoutData(barLayoutData);
 }

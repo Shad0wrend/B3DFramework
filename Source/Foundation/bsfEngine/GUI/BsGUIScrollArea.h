@@ -165,15 +165,12 @@ namespace bs
 		void HorzScrollUpdate(float pct);
 
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
+		void UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Size2UI& parentVisibleAreaSize) override;
 
-		void GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
+		void GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
 
-		/**
-		 * @copydoc	GUIElementContainer::GetElementAreasInternal:
-		 *
-		 * @note	Also calculates some scroll area specific values.
-		 */
-		void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const;
+		/** Calculates the position and size of the scroll area child layout and the scroll bars. */
+		void CalculateRelativeElementAreas(const Size2UI& scrollAreaSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const;
 
 		ScrollBarType mVertBarType;
 		ScrollBarType mHorzBarType;

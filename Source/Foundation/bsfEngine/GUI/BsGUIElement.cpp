@@ -164,7 +164,7 @@ Rect2I GUIElement::CalculateBoundsRelativeTo(GUIElement* relativeTo)
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
-	Rect2I bounds = mLayoutData.Area;
+	Rect2I bounds = mLayoutData.AbsoluteArea;
 	bounds.X -= anchorBounds.X;
 	bounds.Y -= anchorBounds.Y;
 
@@ -183,7 +183,7 @@ const Rect2I& GUIElement::GetBounds() const
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
-	return mLayoutData.Area;
+	return mLayoutData.AbsoluteArea;
 }
 
 Rect2I GUIElement::GetScreenBounds() const
@@ -439,6 +439,20 @@ void GUIElement::UpdateLayoutRecursive(const GUILayoutData& data)
 	}
 }
 
+void GUIElement::UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Size2UI& parentVisibleAreaSize)
+{
+	mLayoutData.AbsoluteArea.X = mLayoutData.RelativePosition.X + parentOrigin.X;
+	mLayoutData.AbsoluteArea.Y = mLayoutData.RelativePosition.Y + parentOrigin.Y;
+
+	mLayoutData.AbsoluteClippedArea = mLayoutData.AbsoluteArea;
+	mLayoutData.AbsoluteClippedArea.Clip(Rect2I(parentOrigin.X, parentOrigin.Y, parentVisibleAreaSize.Width, parentVisibleAreaSize.Height));
+
+	//const Vector2I origin(mLayoutData.AbsoluteArea.X, mLayoutData.AbsoluteArea.Y);
+	//const Size2UI visibleAreaSize(mLayoutData.AbsoluteClippedArea.Width, mLayoutData.AbsoluteClippedArea.Height);
+	//for(auto& child : mChildren)
+	//	child->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(origin, visibleAreaSize);
+}
+
 GUIConstrainedSize GUIElement::CalculateConstrainedSize() const
 {
 	const GUISizeConstraints& sizeConstraints = GetSizeConstraints();
@@ -462,7 +476,7 @@ const RectOffset& GUIElement::GetPadding() const
 	return padding;
 }
 
-void GUIElement::GetChildLayoutAreas(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
+void GUIElement::GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
 {
 	B3D_ASSERT(mChildren.size() == 0);
 }

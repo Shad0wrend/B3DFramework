@@ -53,62 +53,62 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 	if(mHorizontal)
 	{
 		Vector2I optimalSize = mBackground->CalculateConstrainedSize().Optimal;
-		childData.Area.Height = optimalSize.Y;
-		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
+		childData.AbsoluteArea.Height = optimalSize.Y;
+		childData.AbsoluteArea.Y = data.AbsoluteArea.Y + (i32)((data.AbsoluteArea.Height - childData.AbsoluteArea.Height) * 0.5f);
 
-		childData.ClipRect = data.Area;
-		childData.ClipRect.Clip(data.ClipRect);
+		childData.AbsoluteClippedArea = data.AbsoluteArea;
+		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
 
 		mBackground->SetLayoutData(childData);
 
 		optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
-		childData.Area.Height = optimalSize.Y;
-		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
+		childData.AbsoluteArea.Height = optimalSize.Y;
+		childData.AbsoluteArea.Y = data.AbsoluteArea.Y + (i32)((data.AbsoluteArea.Height - childData.AbsoluteArea.Height) * 0.5f);
 
-		childData.ClipRect = data.Area;
-		childData.ClipRect.Clip(data.ClipRect);
+		childData.AbsoluteClippedArea = data.AbsoluteArea;
+		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
 
 		mSliderHandle->SetLayoutData(childData);
 		u32 handleWidth = optimalSize.X;
 
 		optimalSize = mFillBackground->CalculateConstrainedSize().Optimal;
-		childData.Area.Height = optimalSize.Y;
-		childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
-		childData.Area.Width = mSliderHandle->GetHandlePositionInPixels() + handleWidth / 2;
+		childData.AbsoluteArea.Height = optimalSize.Y;
+		childData.AbsoluteArea.Y = data.AbsoluteArea.Y + (i32)((data.AbsoluteArea.Height - childData.AbsoluteArea.Height) * 0.5f);
+		childData.AbsoluteArea.Width = mSliderHandle->GetHandlePositionInPixels() + handleWidth / 2;
 
-		childData.ClipRect = data.Area;
-		childData.ClipRect.Clip(data.ClipRect);
+		childData.AbsoluteClippedArea = data.AbsoluteArea;
+		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
 
 		mFillBackground->SetLayoutData(childData);
 	}
 	else
 	{
 		Vector2I optimalSize = mBackground->CalculateConstrainedSize().Optimal;
-		childData.Area.Width = optimalSize.X;
-		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
+		childData.AbsoluteArea.Width = optimalSize.X;
+		childData.AbsoluteArea.X = data.AbsoluteArea.X + (i32)((data.AbsoluteArea.Width - childData.AbsoluteArea.Width) * 0.5f);
 
-		childData.ClipRect = data.Area;
-		childData.ClipRect.Clip(data.ClipRect);
+		childData.AbsoluteClippedArea = data.AbsoluteArea;
+		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
 
 		mBackground->SetLayoutData(childData);
 
 		optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
-		childData.Area.Width = optimalSize.X;
-		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
+		childData.AbsoluteArea.Width = optimalSize.X;
+		childData.AbsoluteArea.X = data.AbsoluteArea.X + (i32)((data.AbsoluteArea.Width - childData.AbsoluteArea.Width) * 0.5f);
 
-		childData.ClipRect = data.Area;
-		childData.ClipRect.Clip(data.ClipRect);
+		childData.AbsoluteClippedArea = data.AbsoluteArea;
+		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
 
 		mSliderHandle->SetLayoutData(childData);
 		u32 handleHeight = optimalSize.Y;
 
 		optimalSize = mFillBackground->CalculateConstrainedSize().Optimal;
-		childData.Area.Width = optimalSize.X;
-		childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
-		childData.Area.Height = mSliderHandle->GetHandlePositionInPixels() + handleHeight / 2;
+		childData.AbsoluteArea.Width = optimalSize.X;
+		childData.AbsoluteArea.X = data.AbsoluteArea.X + (i32)((data.AbsoluteArea.Width - childData.AbsoluteArea.Width) * 0.5f);
+		childData.AbsoluteArea.Height = mSliderHandle->GetHandlePositionInPixels() + handleHeight / 2;
 
-		childData.ClipRect = data.Area;
-		childData.ClipRect.Clip(data.ClipRect);
+		childData.AbsoluteClippedArea = data.AbsoluteArea;
+		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
 
 		mFillBackground->SetLayoutData(childData);
 	}

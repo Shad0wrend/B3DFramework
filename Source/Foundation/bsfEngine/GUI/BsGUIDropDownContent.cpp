@@ -49,7 +49,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 		if(mIsToggle)
 			mStates[idx] = !mStates[idx];
 
-		mParent->ElementActivated(idx, mVisibleElements[visIdx].UnderlayButton->GetLayoutData().Area);
+		mParent->ElementActivated(idx, mVisibleElements[visIdx].UnderlayButton->GetLayoutData().AbsoluteArea);
 	};
 
 	// Remove all elements
@@ -228,7 +228,7 @@ bool GUIDropDownContent::DoOnCommandEvent(const GUICommandEvent& ev)
 			{
 				GUIDropDownDataEntry& entry = mDropDownData.Entries[mVisibleElements[mSelectedIdx].SequentialIndex];
 				if(entry.IsSubMenu())
-					mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetLayoutData().Area);
+					mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetLayoutData().AbsoluteArea);
 			}
 		}
 		return true;
@@ -240,7 +240,7 @@ bool GUIDropDownContent::DoOnCommandEvent(const GUICommandEvent& ev)
 			if(mIsToggle)
 				mVisibleElements[mSelectedIdx].Button->SetOnInternal(!mVisibleElements[mSelectedIdx].Button->IsOnInternal());
 
-			mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetLayoutData().Area);
+			mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetLayoutData().AbsoluteArea);
 		}
 		return true;
 	default:
@@ -389,16 +389,16 @@ Vector2I GUIDropDownContent::CalculateUnconstrainedOptimalSize() const
 void GUIDropDownContent::UpdateLayoutRecursive(const GUILayoutData& data)
 {
 	GUILayoutData childData = data;
-	i32 yOffset = data.Area.Y;
+	i32 yOffset = data.AbsoluteArea.Y;
 
 	for(auto& visibleElement : mVisibleElements)
 	{
 		const GUIDropDownDataEntry& element = mDropDownData.Entries[visibleElement.SequentialIndex];
 
-		childData.Area.Y = yOffset;
-		childData.Area.Height = GetElementHeight(visibleElement.SequentialIndex);
+		childData.AbsoluteArea.Y = yOffset;
+		childData.AbsoluteArea.Height = GetElementHeight(visibleElement.SequentialIndex);
 
-		yOffset += childData.Area.Height;
+		yOffset += childData.AbsoluteArea.Height;
 
 		if(element.IsSeparator())
 			visibleElement.Separator->SetLayoutData(childData);
