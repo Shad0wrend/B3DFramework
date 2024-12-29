@@ -439,18 +439,26 @@ void GUIElement::UpdateLayoutRecursive(const GUILayoutData& data)
 	}
 }
 
-void GUIElement::UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Size2UI& parentVisibleAreaSize)
+void GUIElement::UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
 {
-	mLayoutData.AbsoluteArea.X = mLayoutData.RelativePosition.X + parentOrigin.X;
-	mLayoutData.AbsoluteArea.Y = mLayoutData.RelativePosition.Y + parentOrigin.Y;
+	mLayoutData.AbsolutePosition.X = mLayoutData.RelativePosition.X + parentOrigin.X;
+	mLayoutData.AbsolutePosition.Y = mLayoutData.RelativePosition.Y + parentOrigin.Y;
+
+	mLayoutData.AbsoluteArea.X = mLayoutData.AbsolutePosition.X; // TODO - To be removed
+	mLayoutData.AbsoluteArea.Y = mLayoutData.AbsolutePosition.Y; // TODO - To be removed
+	mLayoutData.AbsoluteArea.Width = mLayoutData.Size.Width; // TODO - To be removed
+	mLayoutData.AbsoluteArea.Height = mLayoutData.Size.Height; // TODO - To be removed
 
 	mLayoutData.AbsoluteClippedArea = mLayoutData.AbsoluteArea;
-	mLayoutData.AbsoluteClippedArea.Clip(Rect2I(parentOrigin.X, parentOrigin.Y, parentVisibleAreaSize.Width, parentVisibleAreaSize.Height));
+	mLayoutData.AbsoluteClippedArea.Clip(parentVisibleArea);
+}
 
-	//const Vector2I origin(mLayoutData.AbsoluteArea.X, mLayoutData.AbsoluteArea.Y);
-	//const Size2UI visibleAreaSize(mLayoutData.AbsoluteClippedArea.Width, mLayoutData.AbsoluteClippedArea.Height);
-	//for(auto& child : mChildren)
-	//	child->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(origin, visibleAreaSize);
+void GUIElement::UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
+{
+	UpdateAbsoluteCoordinatesAndVisibleArea(parentOrigin, parentVisibleArea);
+
+	for(auto& child : mChildren)
+		child->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
 }
 
 GUIConstrainedSize GUIElement::CalculateConstrainedSize() const
@@ -476,7 +484,7 @@ const RectOffset& GUIElement::GetPadding() const
 	return padding;
 }
 
-void GUIElement::GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
+void GUIElement::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
 {
 	B3D_ASSERT(mChildren.size() == 0);
 }

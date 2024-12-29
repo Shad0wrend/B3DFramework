@@ -90,7 +90,7 @@ GUIConstrainedSize GUIPanel::CalculateConstrainedSize() const
 	return sizeRange;
 }
 
-GUIConstrainedSize GUIPanel::GetElementSizeRangeInternal(const GUIElement* element) const
+GUIConstrainedSize GUIPanel::GetChildElementSizeRange(const GUIElement* element) const
 {
 	if(element->GetType() == GUIElement::Type::FixedSpace || element->GetType() == GUIElement::Type::FlexibleSpace)
 	{
@@ -124,7 +124,7 @@ void GUIPanel::UpdateOptimalLayoutSizes()
 
 		if(child->IsActive())
 		{
-			childSizeRange = GetElementSizeRangeInternal(child);
+			childSizeRange = GetChildElementSizeRange(child);
 
 			u32 paddingX = child->GetMargins().Left + child->GetMargins().Right;
 			u32 paddingY = child->GetMargins().Top + child->GetMargins().Bottom;
@@ -153,7 +153,7 @@ void GUIPanel::UpdateOptimalLayoutSizes()
 	mConstrainedSize.Min.Y = std::max(mConstrainedSize.Min.Y, minSize.Y);
 }
 
-void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
+void GUIPanel::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
 {
 	B3D_ASSERT(mChildren.size() == elementCount);
 
@@ -161,7 +161,7 @@ void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElemen
 	u32 childIdx = 0;
 	for(auto& child : mChildren)
 	{
-		const Rect2I childElementArea = GetElementAreaInternal(layoutArea, child, sizeRanges[childIdx]);
+		const Rect2I childElementArea = CalculateRelativeElementArea(layoutSize, child, sizeRanges[childIdx]);
 
 		outElementPositions[childIdx] = Vector2I(childElementArea.X, childElementArea.Y);
 		outElementSizes[childIdx] = Size2UI(childElementArea.Width, childElementArea.Height);
@@ -170,20 +170,20 @@ void GUIPanel::GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElemen
 	}
 }
 
-Rect2I GUIPanel::GetElementAreaInternal(const Rect2I& layoutArea, const GUIElement* element, const GUIConstrainedSize& sizeRange) const
+Rect2I GUIPanel::CalculateRelativeElementArea(const Size2UI& layoutSize, const GUIElement* element, const GUIConstrainedSize& sizeRange) const
 {
 	const GUISizeConstraints& dimensions = element->GetSizeConstraints();
 
 	Rect2I area;
 
-	area.X = layoutArea.X + dimensions.X;
-	area.Y = layoutArea.Y + dimensions.Y;
+	area.X = dimensions.X;
+	area.Y = dimensions.Y;
 
 	if(dimensions.IsWidthFixed())
 		area.Width = (u32)sizeRange.Optimal.X;
 	else
 	{
-		u32 modifiedWidth = (u32)std::max(0, (i32)layoutArea.Width - dimensions.X);
+		u32 modifiedWidth = (u32)std::max(0, (i32)layoutSize.Width - dimensions.X);
 
 		if(modifiedWidth > (u32)sizeRange.Optimal.X)
 		{
@@ -203,7 +203,7 @@ Rect2I GUIPanel::GetElementAreaInternal(const Rect2I& layoutArea, const GUIEleme
 		area.Height = (u32)sizeRange.Optimal.Y;
 	else
 	{
-		u32 modifiedHeight = (u32)std::max(0, (i32)layoutArea.Height - dimensions.Y);
+		u32 modifiedHeight = (u32)std::max(0, (i32)layoutSize.Height - dimensions.Y);
 
 		if(modifiedHeight > (u32)sizeRange.Optimal.Y)
 		{
@@ -263,7 +263,7 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 		elementSizes = B3DStackNew<Size2UI>(elementCount);
 	}
 
-	GetChildLayoutAreas(data.AbsoluteArea, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
+	GetChildRelativeLayoutAreas(data.Size, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
 
 	u32 childIdx = 0;
 
@@ -271,14 +271,24 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 	{
 		if(child->IsActive())
 		{
-			childData.AbsolutePosition = elementPositions[childIdx];
+			childData.RelativePosition = elementPositions[childIdx];
 			childData.Size = elementSizes[childIdx];
-			childData.AbsoluteArea = Rect2I(childData.AbsolutePosition.X, childData.AbsolutePosition.Y, childData.Size.Width, childData.Size.Height);
 
-			UpdateChildLayoutInternal(child, childData);
+			child->SetLayoutData(childData);
+			//child->UpdateLayoutRecursive(childData); // TODO - Temporarily disabled while we have the code below
 		}
 
 		childIdx++;
+	}
+
+	// TODO - Temporarily doing this here
+	for(auto& child : mChildren)
+	{
+		if(child->IsActive())
+		{
+			child->UpdateAbsoluteCoordinatesAndVisibleArea(data.AbsolutePosition, data.AbsoluteClippedArea);
+			child->UpdateLayoutRecursive(child->GetLayoutData());
+		}
 	}
 
 	if(elementSizes != nullptr)
@@ -288,7 +298,7 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 		B3DStackFree(elementPositions);
 }
 
-void GUIPanel::UpdateChildLayoutInternal(GUIElement* element, const GUILayoutData& data)
+void GUIPanel::UpdateChildElementLayout(GUIElement* element, const GUILayoutData& data)
 {
 	GUILayoutData childData = data;
 
@@ -297,6 +307,12 @@ void GUIPanel::UpdateChildLayoutInternal(GUIElement* element, const GUILayoutDat
 
 	element->SetLayoutData(childData);
 	element->UpdateLayoutRecursive(childData);
+}
+
+void GUIPanel::UpdateChildElementAbsoluteCoordinatesAndVisibleArea(GUIElement* element)
+{
+	// TODO - Should be recursive eventually
+	element->UpdateAbsoluteCoordinatesAndVisibleArea(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
 }
 
 GUIPanel* GUIPanel::Create(i16 depth, u16 depthRangeMin, u16 depthRangeMax)

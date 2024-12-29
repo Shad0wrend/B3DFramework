@@ -193,26 +193,34 @@ namespace bs
 		/**
 		 * Updates the absolute coordinates of the GUI element using the currently assigned relative coordinates and the provided
 		 * @p origin. Also calculates the clip rectangles and marks culled elements as such. This should be called after updating the
-		 * layout (as layout update only updates relative coordinates). This may also be called independantly from layout update,
+		 * layout (as layout update only updates relative coordinates). This may also be called independently of layout update,
 		 * which is useful for scroll areas.
 		 * 
 		 * @param parentOrigin			Origin to add to the relative coordinates, in order to determine the absolute element coordinates.
-		 * @param parentVisibleAreaSize	Size of the visible area though which this element may be seen. This will be used for culling and clipping.
+		 * @param parentVisibleArea		Visible area though which this element may be seen. This will be used for culling and clipping.
 		 */
-		virtual void UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Size2UI& parentVisibleAreaSize);
+		void UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea);
+
+		/**
+		 * Same as UpdateAbsoluteCoordinatesAndVisibleArea, but also calls the same method on all the child elements as well.
+		 * 
+		 * @param parentOrigin			Origin to add to the relative coordinates, in order to determine the absolute element coordinates.
+		 * @param parentVisibleArea		Visible area though which this element may be seen. This will be used for culling and clipping.
+		 */
+		virtual void UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea);
 
 		/**
 		 * Calculates positions & sizes of all elements in the layout. This method expects a pre-allocated array to store
 		 * the data in.
 		 *
-		 * @param	layoutArea			Parent layout area to position the child elements in.
+		 * @param	layoutSize			Size of the parent layout area to position the child elements in.
 		 * @param	outElementPositions	Array to hold output positions. Must be the same size as the number of child elements.
 		 * @param	outElementSizes		Array to hold output areas. Must be the same size as the number of child elements.
 		 * @param	elementCount		Size of the element positions/sizes arrays.
 		 * @param	sizeRanges			Ranges of possible sizes used for the child elements. Array must be same size as elements array.
 		 * @param	mySizeRange			Size range of this element.
 		 */
-		virtual void GetChildLayoutAreas(const Rect2I& layoutArea, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const;
+		virtual void GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const;
 
 		/** Updates layout data that determines GUI elements final position & depth in the GUI widget. */
 		virtual void SetLayoutData(const GUILayoutData& data) { mLayoutData = data; }

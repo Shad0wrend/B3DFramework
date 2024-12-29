@@ -223,14 +223,18 @@ void GUIWidget::UpdateLayout(GUIElement* elem)
 		GUIElement* dirtyElement = elem;
 		dirtyElement->UpdateOptimalLayoutSizes();
 
-		GUIConstrainedSize elementSizeRange = panel->GetElementSizeRangeInternal(dirtyElement);
-		Rect2I elementArea = panel->GetElementAreaInternal(panel->GetLayoutData().AbsoluteArea, dirtyElement, elementSizeRange);
+		GUIConstrainedSize elementSizeRange = panel->GetChildElementSizeRange(dirtyElement);
+		const Rect2I relativeElementArea = panel->CalculateRelativeElementArea(panel->GetLayoutData().Size, dirtyElement, elementSizeRange);
 
 		GUILayoutData childLayoutData = panel->GetLayoutData();
 		panel->UpdateDepthRangeInternal(childLayoutData);
-		childLayoutData.AbsoluteArea = elementArea;
 
-		panel->UpdateChildLayoutInternal(dirtyElement, childLayoutData);
+		childLayoutData.RelativePosition = Vector2I(relativeElementArea.X, relativeElementArea.Y);
+		childLayoutData.Size = Size2UI(relativeElementArea.Width, relativeElementArea.Height);
+
+		dirtyElement->SetLayoutData(childLayoutData);
+		panel->UpdateChildElementAbsoluteCoordinatesAndVisibleArea(dirtyElement); // TODO - Temporarily here, should be done after layout update
+		dirtyElement->UpdateLayoutRecursive(childLayoutData);
 	}
 	else
 	{
@@ -442,8 +446,10 @@ void GUIWidget::UpdateRootPanel()
 	u32 height = area.Height;
 
 	GUILayoutData layoutData;
-	layoutData.AbsoluteArea.Width = width;
-	layoutData.AbsoluteArea.Height = height;
+	layoutData.RelativePosition = Vector2I::kZero;
+	layoutData.AbsolutePosition = Vector2I::kZero;
+	layoutData.Size = Size2UI(width, height);
+	layoutData.AbsoluteArea = Rect2I(0, 0, width, height);
 	layoutData.AbsoluteClippedArea = Rect2I(0, 0, width, height);
 	layoutData.SetWidgetDepth(mDepth);
 

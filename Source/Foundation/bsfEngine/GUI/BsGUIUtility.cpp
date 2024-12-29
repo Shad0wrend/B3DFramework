@@ -36,11 +36,7 @@ Vector2I GUIUtility::CalcActualSizeInternal(u32 width, u32 height, GUILayout* la
 		elementSizes =  B3DStackNew<Size2UI>(elementCount);
 	}
 
-	Rect2I parentArea;
-	parentArea.Width = width;
-	parentArea.Height = height;
-
-	layout->GetChildLayoutAreas(parentArea, elementPositions, elementSizes, elementCount, layout->GetChildrenConstrainedSizes(), layout->GetCachedConstrainedSize());
+	layout->GetChildRelativeLayoutAreas(Size2UI(width, height), elementPositions, elementSizes, elementCount, layout->GetChildrenConstrainedSizes(), layout->GetCachedConstrainedSize());
 
 	Size2UI* actualSizes = elementSizes; // We re-use the same array
 	for(u32 i = 0; i < elementCount; i++)
