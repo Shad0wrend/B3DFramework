@@ -48,6 +48,7 @@ namespace bs
 	 */
 	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIRenderable : public GUIElement
 	{
+		using Super = GUIElement;
 	public:
 		GUIRenderable(String styleClass, const GUISizeConstraints& sizeConstraints);
 		GUIRenderable(const char* styleClass, const GUISizeConstraints& sizeConstraints);
@@ -198,6 +199,7 @@ namespace bs
 
 		void SetLayoutData(const GUILayoutData& data) override;
 		void ChangeParentWidget(GUIWidget* widget) override;
+		void UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea) override;
 
 		/** @} */
 	protected:

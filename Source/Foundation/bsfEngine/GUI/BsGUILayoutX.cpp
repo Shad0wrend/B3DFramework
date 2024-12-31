@@ -411,20 +411,10 @@ void GUILayoutX::UpdateLayoutRecursive(const GUILayoutData& data)
 			childData.Size = elementSizes[childIdx];
 
 			child->SetLayoutData(childData);
-			//child->UpdateLayoutRecursive(childData); // TODO - Disabled while code below is present
+			child->UpdateLayoutRecursive(childData);
 		}
 
 		childIdx++;
-	}
-
-	// TODO - Temporarily doing this here
-	for(auto& child : mChildren)
-	{
-		if(child->IsActive())
-		{
-			child->UpdateAbsoluteCoordinatesAndVisibleArea(data.AbsolutePosition, data.AbsoluteClippedArea);
-			child->UpdateLayoutRecursive(child->GetLayoutData());
-		}
 	}
 
 	if(elementSizes != nullptr)

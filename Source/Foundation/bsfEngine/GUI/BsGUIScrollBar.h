@@ -73,6 +73,7 @@ namespace bs
 		void SetScrollPosInternal(float pct);
 
 		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		void UpdateLayoutRecursive(const GUILayoutData& data) override;
 
 		/** @} */
 	protected:

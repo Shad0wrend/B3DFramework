@@ -275,20 +275,10 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 			childData.Size = elementSizes[childIdx];
 
 			child->SetLayoutData(childData);
-			//child->UpdateLayoutRecursive(childData); // TODO - Temporarily disabled while we have the code below
+			child->UpdateLayoutRecursive(childData);
 		}
 
 		childIdx++;
-	}
-
-	// TODO - Temporarily doing this here
-	for(auto& child : mChildren)
-	{
-		if(child->IsActive())
-		{
-			child->UpdateAbsoluteCoordinatesAndVisibleArea(data.AbsolutePosition, data.AbsoluteClippedArea);
-			child->UpdateLayoutRecursive(child->GetLayoutData());
-		}
 	}
 
 	if(elementSizes != nullptr)
@@ -296,23 +286,6 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 
 	if(elementPositions != nullptr)
 		B3DStackFree(elementPositions);
-}
-
-void GUIPanel::UpdateChildElementLayout(GUIElement* element, const GUILayoutData& data)
-{
-	GUILayoutData childData = data;
-
-	childData.AbsoluteClippedArea = data.AbsoluteArea;
-	childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
-
-	element->SetLayoutData(childData);
-	element->UpdateLayoutRecursive(childData);
-}
-
-void GUIPanel::UpdateChildElementAbsoluteCoordinatesAndVisibleArea(GUIElement* element)
-{
-	// TODO - Should be recursive eventually
-	element->UpdateAbsoluteCoordinatesAndVisibleArea(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
 }
 
 GUIPanel* GUIPanel::Create(i16 depth, u16 depthRangeMin, u16 depthRangeMax)

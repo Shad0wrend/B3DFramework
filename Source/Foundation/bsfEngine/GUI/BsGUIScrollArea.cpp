@@ -259,7 +259,7 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 			vertScrollIdx = i;
 	}
 
-	const Size2UI scrollAreaSize(data.AbsoluteArea.Width, data.AbsoluteArea.Height);
+	const Size2UI scrollAreaSize(data.Size.Width, data.Size.Height);
 	CalculateRelativeElementAreas(scrollAreaSize, elementPositions, elementSizes, elementCount, mChildSizeRanges, mVisibleSize, mContentSize);
 
 	// Layout
@@ -270,7 +270,7 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 		layoutData.Size = elementSizes[layoutIdx];
 
 		mContentLayout->SetLayoutData(layoutData); // TODO - GUILayoutData should contain just depth, relative coordinate and size. Absolute coordinates and clip rectangle can be contained in another data structure, to make it clearer they are calculated in separate steps
-		//mContentLayout->UpdateLayoutRecursive(layoutData); // TODO - Disabled while code below is present
+		mContentLayout->UpdateLayoutRecursive(layoutData);
 	}
 
 	// Vertical scrollbar
@@ -280,7 +280,7 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 		layoutData.Size = elementSizes[vertScrollIdx];
 
 		mVertScroll->SetLayoutData(layoutData);
-		//mVertScroll->UpdateLayoutRecursive(layoutData); // TODO - Disabled while code below is present
+		mVertScroll->UpdateLayoutRecursive(layoutData);
 
 		// Set new handle size and update position to match the new size
 		u32 scrollableHeight = (u32)std::max(0, i32(mContentSize.Y) - i32(layoutData.Size.Height));
@@ -300,7 +300,7 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 		layoutData.Size = elementSizes[horzScrollIdx];
 
 		mHorzScroll->SetLayoutData(layoutData);
-		//mHorzScroll->UpdateLayoutRecursive(layoutData); // TODO - Disabled while code below is present
+		mHorzScroll->UpdateLayoutRecursive(layoutData);
 
 		// Set new handle size and update position to match the new size
 		u32 scrollableWidth = (u32)std::max(0, i32(mContentSize.X) - i32(layoutData.Size.Width));
@@ -313,14 +313,6 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 		mHorzScroll->SetScrollPosInternal(newScrollPct);
 	}
 
-	UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
-
-	if(mContentLayout->IsActive())
-		mContentLayout->UpdateLayoutRecursive(mContentLayout->GetLayoutData());
-
-	mHorzScroll->UpdateLayoutRecursive(mHorzScroll->GetLayoutData());
-	mVertScroll->UpdateLayoutRecursive(mVertScroll->GetLayoutData());
-
 	if(elementSizes != nullptr)
 		B3DStackFree(elementSizes);
 
@@ -330,10 +322,7 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 
 void GUIScrollArea::UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
 {
-	// TODO - Need to call this method from UpdateLayout
-	// - Need to verify that AbsoluteArea and AbsoluteClippedData are not used by children. Might need to refactor all GUI layouts at once for this to work?
-
-	//UpdateAbsoluteCoordinatesAndVisibleArea(parentOrigin, parentVisibleArea);
+	UpdateAbsoluteCoordinatesAndVisibleArea(parentOrigin, parentVisibleArea);
 
 	// Recalculate offsets in case scroll percent got updated externally (this needs to be delayed to this point because
 	// at the time of the update content and visible sizes might be out of date).
@@ -360,13 +349,11 @@ void GUIScrollArea::UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vecto
 		const Vector2I contentOrigin(mLayoutData.AbsolutePosition.X - Math::FloorToInt(mHorzOffset), mLayoutData.AbsolutePosition.Y - Math::FloorToInt(mVertOffset));
 		const Rect2I contentVisibleAreaSize(mLayoutData.AbsolutePosition.X, mLayoutData.AbsolutePosition.Y, (u32)mVisibleSize.X, (u32)mVisibleSize.Y); // TODO - Clip visible size by parent clip rectangle?
 
-		// TODO - Should be recursive
-		mContentLayout->UpdateAbsoluteCoordinatesAndVisibleArea(contentOrigin, contentVisibleAreaSize);
+		mContentLayout->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(contentOrigin, contentVisibleAreaSize);
 	}
 
-	// TODO - Should be recursive
-	mHorzScroll->UpdateAbsoluteCoordinatesAndVisibleArea(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
-	mVertScroll->UpdateAbsoluteCoordinatesAndVisibleArea(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
+	mHorzScroll->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
+	mVertScroll->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
 
 	// TODO - Need to mark elements as culled/not culled and add/remove them from widget draw group. Elements should by default
 	// not be added to the widget draw group on registration

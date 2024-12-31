@@ -91,13 +91,6 @@ namespace bs
 		 */
 		GUIConstrainedSize GetChildElementSizeRange(const GUIElement* element) const;
 
-		/** Assigns the specified layout information to a child element of a GUI panel. */
-		void UpdateChildElementLayout(GUIElement* element, const GUILayoutData& data);
-
-		/** Updates absolute coordinates, clip area and cull state for a particular child element of the panel. */
-		void UpdateChildElementAbsoluteCoordinatesAndVisibleArea(GUIElement* element);
-
-		/** @copydoc GUIElementBase::_updateLayoutInternal */
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
 
 		/**

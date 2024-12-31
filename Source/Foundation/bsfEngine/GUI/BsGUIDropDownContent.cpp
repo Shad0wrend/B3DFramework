@@ -389,16 +389,16 @@ Vector2I GUIDropDownContent::CalculateUnconstrainedOptimalSize() const
 void GUIDropDownContent::UpdateLayoutRecursive(const GUILayoutData& data)
 {
 	GUILayoutData childData = data;
-	i32 yOffset = data.AbsoluteArea.Y;
+	i32 yOffset = 0;
 
 	for(auto& visibleElement : mVisibleElements)
 	{
 		const GUIDropDownDataEntry& element = mDropDownData.Entries[visibleElement.SequentialIndex];
 
-		childData.AbsoluteArea.Y = yOffset;
-		childData.AbsoluteArea.Height = GetElementHeight(visibleElement.SequentialIndex);
+		childData.RelativePosition = Vector2I(0, yOffset);
+		childData.Size.Height = GetElementHeight(visibleElement.SequentialIndex);
 
-		yOffset += childData.AbsoluteArea.Height;
+		yOffset += (i32)childData.Size.Height;
 
 		if(element.IsSeparator())
 			visibleElement.Separator->SetLayoutData(childData);

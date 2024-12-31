@@ -53,62 +53,43 @@ void GUISlider::UpdateLayoutRecursive(const GUILayoutData& data)
 	if(mHorizontal)
 	{
 		Vector2I optimalSize = mBackground->CalculateConstrainedSize().Optimal;
-		childData.AbsoluteArea.Height = optimalSize.Y;
-		childData.AbsoluteArea.Y = data.AbsoluteArea.Y + (i32)((data.AbsoluteArea.Height - childData.AbsoluteArea.Height) * 0.5f);
-
-		childData.AbsoluteClippedArea = data.AbsoluteArea;
-		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
+		childData.Size.Height = optimalSize.Y;
+		childData.RelativePosition = Vector2I(0, (i32)((data.Size.Height - childData.Size.Height) * 0.5f));
 
 		mBackground->SetLayoutData(childData);
 
 		optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
-		childData.AbsoluteArea.Height = optimalSize.Y;
-		childData.AbsoluteArea.Y = data.AbsoluteArea.Y + (i32)((data.AbsoluteArea.Height - childData.AbsoluteArea.Height) * 0.5f);
-
-		childData.AbsoluteClippedArea = data.AbsoluteArea;
-		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
+		childData.Size.Height = optimalSize.Y;
+		childData.RelativePosition = Vector2I(0, (i32)((data.Size.Height - childData.Size.Height) * 0.5f));
 
 		mSliderHandle->SetLayoutData(childData);
+
 		u32 handleWidth = optimalSize.X;
 
 		optimalSize = mFillBackground->CalculateConstrainedSize().Optimal;
-		childData.AbsoluteArea.Height = optimalSize.Y;
-		childData.AbsoluteArea.Y = data.AbsoluteArea.Y + (i32)((data.AbsoluteArea.Height - childData.AbsoluteArea.Height) * 0.5f);
-		childData.AbsoluteArea.Width = mSliderHandle->GetHandlePositionInPixels() + handleWidth / 2;
-
-		childData.AbsoluteClippedArea = data.AbsoluteArea;
-		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
+		childData.Size = Size2UI(mSliderHandle->GetHandlePositionInPixels() + handleWidth / 2, optimalSize.Y);
+		childData.RelativePosition = Vector2I(0, (i32)((data.Size.Height - childData.Size.Height) * 0.5f));
 
 		mFillBackground->SetLayoutData(childData);
 	}
 	else
 	{
 		Vector2I optimalSize = mBackground->CalculateConstrainedSize().Optimal;
-		childData.AbsoluteArea.Width = optimalSize.X;
-		childData.AbsoluteArea.X = data.AbsoluteArea.X + (i32)((data.AbsoluteArea.Width - childData.AbsoluteArea.Width) * 0.5f);
-
-		childData.AbsoluteClippedArea = data.AbsoluteArea;
-		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
+		childData.Size.Width = optimalSize.X;
+		childData.RelativePosition = Vector2I((i32)((data.Size.Width - childData.Size.Width) * 0.5f), 0);
 
 		mBackground->SetLayoutData(childData);
 
 		optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
-		childData.AbsoluteArea.Width = optimalSize.X;
-		childData.AbsoluteArea.X = data.AbsoluteArea.X + (i32)((data.AbsoluteArea.Width - childData.AbsoluteArea.Width) * 0.5f);
-
-		childData.AbsoluteClippedArea = data.AbsoluteArea;
-		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
+		childData.Size.Width = optimalSize.X;
+		childData.RelativePosition = Vector2I((i32)((data.Size.Width - childData.Size.Width) * 0.5f), 0);
 
 		mSliderHandle->SetLayoutData(childData);
 		u32 handleHeight = optimalSize.Y;
 
 		optimalSize = mFillBackground->CalculateConstrainedSize().Optimal;
-		childData.AbsoluteArea.Width = optimalSize.X;
-		childData.AbsoluteArea.X = data.AbsoluteArea.X + (i32)((data.AbsoluteArea.Width - childData.AbsoluteArea.Width) * 0.5f);
-		childData.AbsoluteArea.Height = mSliderHandle->GetHandlePositionInPixels() + handleHeight / 2;
-
-		childData.AbsoluteClippedArea = data.AbsoluteArea;
-		childData.AbsoluteClippedArea.Clip(data.AbsoluteClippedArea);
+		childData.Size = Size2UI(optimalSize.X, mSliderHandle->GetHandlePositionInPixels() + handleHeight / 2);
+		childData.RelativePosition = Vector2I((i32)((data.Size.Width - childData.Size.Width) * 0.5f), 0);
 
 		mFillBackground->SetLayoutData(childData);
 	}

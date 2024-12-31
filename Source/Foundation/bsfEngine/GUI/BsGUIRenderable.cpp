@@ -131,8 +131,6 @@ void GUIRenderable::SetLayoutData(const GUILayoutData& data)
 	u8 elemDepth = GetElementDepth();
 	GUIElement::SetLayoutData(data);
 	SetElementDepth(elemDepth);
-
-	UpdateClippedBounds();
 }
 
 void GUIRenderable::ChangeParentWidget(GUIWidget* widget)
@@ -145,6 +143,14 @@ void GUIRenderable::ChangeParentWidget(GUIWidget* widget)
 
 	if(widgetChanged)
 		RefreshStyle();
+}
+
+void GUIRenderable::UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
+{
+	Super::UpdateAbsoluteCoordinatesAndVisibleArea(parentOrigin, parentVisibleArea);
+
+	// TODO - Concept of clipped bounds is strange. This looks like the same thing as mLayoutData.AbsoluteClippedArea, except for a few particular cases
+	UpdateClippedBounds();
 }
 
 const RectOffset& GUIRenderable::GetMargins() const

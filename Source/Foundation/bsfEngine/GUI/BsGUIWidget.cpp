@@ -162,8 +162,8 @@ void GUIWidget::UpdateLayout()
 		u32 width = area.Width;
 		u32 height = area.Height;
 
-		const Rect2I& panelArea = mPanel->GetLayoutData().AbsoluteArea;
-		if(panelArea.Width != width || panelArea.Height != height)
+		const Size2UI& panelSize = mPanel->GetLayoutData().Size;
+		if(panelSize.Width != width || panelSize.Height != height)
 		{
 			UpdateRootPanel();
 			OnOwnerTargetResized();
@@ -214,7 +214,7 @@ void GUIWidget::UpdateLayout(GUIElement* elem)
 	else
 		updateParent = elem;
 
-	// For GUIPanel we can do a an optimization and update only the element in question instead
+	// For GUIPanel we can do an optimization and update only the element in question instead
 	// of all the children
 	if(isPanelOptimized)
 	{
@@ -226,15 +226,16 @@ void GUIWidget::UpdateLayout(GUIElement* elem)
 		GUIConstrainedSize elementSizeRange = panel->GetChildElementSizeRange(dirtyElement);
 		const Rect2I relativeElementArea = panel->CalculateRelativeElementArea(panel->GetLayoutData().Size, dirtyElement, elementSizeRange);
 
-		GUILayoutData childLayoutData = panel->GetLayoutData();
+		const GUILayoutData parentPanelLayoutData = panel->GetLayoutData();
+		GUILayoutData childLayoutData = parentPanelLayoutData;
 		panel->UpdateDepthRangeInternal(childLayoutData);
 
 		childLayoutData.RelativePosition = Vector2I(relativeElementArea.X, relativeElementArea.Y);
 		childLayoutData.Size = Size2UI(relativeElementArea.Width, relativeElementArea.Height);
 
 		dirtyElement->SetLayoutData(childLayoutData);
-		panel->UpdateChildElementAbsoluteCoordinatesAndVisibleArea(dirtyElement); // TODO - Temporarily here, should be done after layout update
 		dirtyElement->UpdateLayoutRecursive(childLayoutData);
+		dirtyElement->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(parentPanelLayoutData.AbsolutePosition, parentPanelLayoutData.AbsoluteClippedArea);
 	}
 	else
 	{

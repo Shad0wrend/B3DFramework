@@ -98,6 +98,15 @@ u32 GUIScrollBar::GetRenderElementDepthRange() const
 	return 3;
 }
 
+void GUIScrollBar::UpdateLayoutRecursive(const GUILayoutData& data)
+{
+	GUILayoutData childLayoutData = data;
+	childLayoutData.RelativePosition = Vector2I::kZero;
+
+	mLayout->SetLayoutData(childLayoutData);
+	mLayout->UpdateLayoutRecursive(childLayoutData);
+}
+
 void GUIScrollBar::HandleMoved(float handlePct, float sizePct)
 {
 	if(!OnScrollOrResize.Empty())

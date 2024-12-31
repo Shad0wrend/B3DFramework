@@ -199,7 +199,7 @@ namespace bs
 		 * @param parentOrigin			Origin to add to the relative coordinates, in order to determine the absolute element coordinates.
 		 * @param parentVisibleArea		Visible area though which this element may be seen. This will be used for culling and clipping.
 		 */
-		void UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea);
+		virtual void UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea);
 
 		/**
 		 * Same as UpdateAbsoluteCoordinatesAndVisibleArea, but also calls the same method on all the child elements as well.
