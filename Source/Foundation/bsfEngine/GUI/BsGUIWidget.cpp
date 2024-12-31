@@ -235,7 +235,7 @@ void GUIWidget::UpdateLayout(GUIElement* elem)
 
 		dirtyElement->SetLayoutData(childLayoutData);
 		dirtyElement->UpdateLayoutRecursive(childLayoutData);
-		dirtyElement->UpdateAbsoluteCoordinates(parentPanelLayoutData.AbsolutePosition, parentPanelLayoutData.AbsoluteClippedArea);
+		dirtyElement->UpdateAbsoluteCoordinates(panel->GetCachedAbsolutePosition(), panel->GetCachedAbsoluteClippedArea());
 	}
 	else
 	{
@@ -447,15 +447,13 @@ void GUIWidget::UpdateRootPanel()
 
 	GUILayoutData layoutData;
 	layoutData.RelativePosition = Vector2I::kZero;
-	layoutData.AbsolutePosition = Vector2I::kZero;
 	layoutData.Size = Size2UI(width, height);
-	layoutData.AbsoluteArea = Rect2I(0, 0, width, height);
-	layoutData.AbsoluteClippedArea = Rect2I(0, 0, width, height);
 	layoutData.SetWidgetDepth(mDepth);
 
 	mPanel->SetWidth(width);
 	mPanel->SetHeight(height);
 
 	mPanel->SetLayoutData(layoutData);
+	mPanel->ResetAbsoluteClippedArea();
 	mPanel->MarkLayoutAsDirty();
 }

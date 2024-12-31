@@ -75,7 +75,7 @@ void GUIRenderable::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u
 	const GUIRenderElement& renderElement = mRenderElements[renderElementIndex];
 
 	const Vector2I guiElementOffset(mLayoutData.AbsoluteArea.X, mLayoutData.AbsoluteArea.Y);
-	const Rect2 guiElementClipRectangle = (Rect2)mLayoutData.GetLocalClipRect();
+	const Rect2 guiElementClipRectangle = (Rect2)GetCachedLocalClippedArea();
 
 	// Build the render element bounds to use for clipping
 	Rect2 renderElementClipRectangle = renderElement.ClipRectangle; // In space relative to parent GUI element
@@ -97,7 +97,7 @@ void GUIRenderable::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u
 void GUIRenderable::UpdateClippedBounds()
 {
 	mClippedBounds = mLayoutData.AbsoluteArea;
-	mClippedBounds.Clip(mLayoutData.AbsoluteClippedArea);
+	mClippedBounds.Clip(mAbsoluteClippedArea);
 }
 
 void GUIRenderable::SetStyleSheetClass(const String& styleClass)
@@ -223,7 +223,7 @@ Rect2I GUIRenderable::GetCachedClippedContentBoundsInContentSpace() const
 
 	// Transform into element space so we can clip it using the element clip rectangle
 	Rect2I contentClipRect = localContentBounds;
-	contentClipRect.Clip(mLayoutData.GetLocalClipRect());
+	contentClipRect.Clip(GetCachedLocalClippedArea());
 
 	// Transform into content sprite space
 	contentClipRect.X -= localContentBounds.X;

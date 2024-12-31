@@ -156,6 +156,29 @@ namespace bs
 		const Rect2I& GetCachedBounds() const { return mLayoutData.AbsoluteArea; }
 
 		/**
+		 * Returns the position of the GUI element relative to the parent widget.
+		 *
+		 * @note	This value is only updated during layout and/or absolute coordinate pass, which happens at the end of frame before GUI is drawn.
+		 *			This means this value may contain position that is from the previous frame, unless you manually request a layout update before
+		 *			retrieving this method.
+		 */
+		const Vector2I& GetCachedAbsolutePosition() const { return mAbsolutePosition; }
+
+		/**
+		 * Returns the position and size of the GUI element, relative to the parent widget. The returned area is clipped by the visible
+		 * area as specified by the parent GUI element (e.g. if the parent is a scroll area, only some or none of the GUI element may
+		 * be visible, if it's scrolled out of view).
+		 * 
+		 * @note	This value is only updated during layout and/or absolute coordinate pass, which happens at the end of frame before GUI is drawn.
+		 *			This means this value may contain position that is from the previous frame, unless you manually request a layout update before
+		 *			retrieving this method.
+		 */
+		const Rect2I& GetCachedAbsoluteClippedArea() const { return mAbsoluteClippedArea; }
+
+		/** Same as GetCachedAbsoluteClippedArea(), except the area is made relative to this GUI element. */
+		Rect2I GetCachedLocalClippedArea() const;
+
+		/**
 		 * Sets the bounds of the GUI element. Relative to a parent GUI panel. Equivalent to calling SetPosition(),
 		 * setWidth() and setHeight().
 		 */
@@ -208,8 +231,8 @@ namespace bs
 		 */
 		virtual void UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea);
 
-		/** Same as UpdateAbsoluteCoordinates, but also calls the same method on all the child elements as well. */
-		virtual void UpdateAbsoluteCoordinatesRecursive();
+		/** Calls UpdateAbsoluteCoordinates() on all child elements. */
+		virtual void UpdateAbsoluteCoordinatesForChildren();
 
 		/**
 		 * Calculates positions & sizes of all elements in the layout. This method expects a pre-allocated array to store
@@ -226,6 +249,9 @@ namespace bs
 
 		/** Updates layout data that determines GUI elements relative position, size and depth in the GUI widget. */
 		virtual void SetLayoutData(const GUILayoutData& data) { mLayoutData = data; }
+
+		/** Resets the absolute clipped area to full width/height of the GUI element. */
+		void ResetAbsoluteClippedArea() { mAbsoluteClippedArea = Rect2I(mAbsolutePosition.X, mAbsolutePosition.Y, mLayoutData.Size.Width, mLayoutData.Size.Height); }
 
 		/** Retrieves layout data that determines GUI elements relative position, size and depth in the GUI widget. */
 		const GUILayoutData& GetLayoutData() const { return mLayoutData; }
@@ -396,8 +422,8 @@ namespace bs
 
 		GUISizeConstraints mSizeConstraints; /**< Constraints on the element size as set by the style, or set explicitly at runtime. */
 		GUILayoutData mLayoutData; /**< Relative position (to parent), size, depth and other information, valid after a layout update. */
-		Vector2I mAbsolutePosition;
-		Rect2I mAbsoluteClippedBounds;
+		Vector2I mAbsolutePosition; /**< Absolute position of the GUI element (relative to parent GUI widget). Only valid after layout update & absolute coordinate update. */
+		Rect2I mAbsoluteClippedArea; /**< This is the absolute area of the GUI element as clipped by the parent visible bounds (e.g. if a parent is a scroll area). Only valid after layout update & absolute coordinate update. */
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

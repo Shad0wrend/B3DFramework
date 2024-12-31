@@ -218,7 +218,7 @@ void GUICanvas::Clear()
 void GUICanvas::UpdateRenderElements()
 {
 	Vector2 offset((float)mLayoutData.AbsoluteArea.X, (float)mLayoutData.AbsoluteArea.Y);
-	Rect2I clipRect = mLayoutData.GetLocalClipRect();
+	Rect2I clipRect = GetCachedLocalClippedArea();
 	BuildAllTriangleElementsIfDirty(offset, clipRect);
 
 	mRenderElements.Clear();
@@ -323,7 +323,7 @@ void GUICanvas::FillBuffer(
 	u32 indexStride = sizeof(u32);
 
 	Vector2I layoutOffset = Vector2I(mLayoutData.AbsoluteArea.X, mLayoutData.AbsoluteArea.Y) + offset;
-	Rect2I clipRect = mLayoutData.GetLocalClipRect();
+	Rect2I clipRect = GetCachedLocalClippedArea();
 
 	Vector2 floatOffset((float)layoutOffset.X, (float)layoutOffset.Y);
 	BuildAllTriangleElementsIfDirty(floatOffset, clipRect);

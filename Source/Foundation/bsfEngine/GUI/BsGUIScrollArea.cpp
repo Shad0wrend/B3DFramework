@@ -34,7 +34,7 @@ GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarTyp
 void GUIScrollArea::UpdateClippedBounds()
 {
 	mClippedBounds = mLayoutData.AbsoluteArea;
-	mClippedBounds.Clip(mLayoutData.AbsoluteClippedArea);
+	mClippedBounds.Clip(mAbsoluteClippedArea);
 }
 
 Vector2I GUIScrollArea::CalculateUnconstrainedOptimalSize() const
@@ -320,7 +320,7 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 		B3DStackFree(elementPositions);
 }
 
-void GUIScrollArea::UpdateAbsoluteCoordinatesRecursive()
+void GUIScrollArea::UpdateAbsoluteCoordinatesForChildren()
 {
 	// Recalculate offsets in case scroll percent got updated externally (this needs to be delayed to this point because
 	// at the time of the update content and visible sizes might be out of date).
@@ -344,14 +344,14 @@ void GUIScrollArea::UpdateAbsoluteCoordinatesRecursive()
 
 	if(mContentLayout->IsActive())
 	{
-		const Vector2I contentOrigin(mLayoutData.AbsolutePosition.X - Math::FloorToInt(mHorzOffset), mLayoutData.AbsolutePosition.Y - Math::FloorToInt(mVertOffset));
-		const Rect2I contentVisibleAreaSize(mLayoutData.AbsolutePosition.X, mLayoutData.AbsolutePosition.Y, (u32)mVisibleSize.X, (u32)mVisibleSize.Y); // TODO - Clip visible size by parent clip rectangle?
+		const Vector2I contentOrigin(mAbsolutePosition.X - Math::FloorToInt(mHorzOffset), mAbsolutePosition.Y - Math::FloorToInt(mVertOffset));
+		const Rect2I contentVisibleAreaSize(mAbsolutePosition.X, mAbsolutePosition.Y, (u32)mVisibleSize.X, (u32)mVisibleSize.Y); // TODO - Clip visible size by parent clip rectangle?
 
 		mContentLayout->UpdateAbsoluteCoordinates(contentOrigin, contentVisibleAreaSize);
 	}
 
-	mHorzScroll->UpdateAbsoluteCoordinates(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
-	mVertScroll->UpdateAbsoluteCoordinates(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
+	mHorzScroll->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
+	mVertScroll->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
 
 	// TODO - Need to mark elements as culled/not culled and add/remove them from widget draw group. Elements should by default
 	// not be added to the widget draw group on registration

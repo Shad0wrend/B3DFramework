@@ -35,7 +35,7 @@ GUIViewport* GUIViewport::Create(const GUIOptions& options, const HCamera& camer
 void GUIViewport::UpdateClippedBounds()
 {
 	mClippedBounds = mLayoutData.AbsoluteArea;
-	mClippedBounds.Clip(mLayoutData.AbsoluteClippedArea);
+	mClippedBounds.Clip(mAbsoluteClippedArea);
 }
 
 Vector2I GUIViewport::CalculateUnconstrainedOptimalSize() const

@@ -165,7 +165,7 @@ namespace bs
 		void HorzScrollUpdate(float pct);
 
 		void UpdateLayoutRecursive(const GUILayoutData& data) override;
-		void UpdateAbsoluteCoordinatesRecursive() override;
+		void UpdateAbsoluteCoordinatesForChildren() override;
 
 		void GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
 

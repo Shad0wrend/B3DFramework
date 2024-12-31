@@ -171,6 +171,15 @@ Rect2I GUIElement::CalculateBoundsRelativeTo(GUIElement* relativeTo)
 	return bounds;
 }
 
+Rect2I GUIElement::GetCachedLocalClippedArea() const
+{
+	Rect2I localClippedArea = mAbsoluteClippedArea;
+	localClippedArea.X -= mAbsolutePosition.X;
+	localClippedArea.Y -= mAbsolutePosition.Y;
+
+	return localClippedArea;
+}
+
 void GUIElement::SetBounds(const Rect2I& bounds)
 {
 	SetPosition(bounds.X, bounds.Y);
@@ -421,7 +430,7 @@ void GUIElement::UpdateLayout()
 {
 	UpdateOptimalLayoutSizes(); // We calculate optimal sizes of all layouts as a pre-processing step, as they are requested often during update layout
 	UpdateLayoutRecursive(GetLayoutData());
-	UpdateAbsoluteCoordinatesRecursive();
+	UpdateAbsoluteCoordinatesForChildren();
 }
 
 void GUIElement::UpdateOptimalLayoutSizes()
@@ -442,26 +451,26 @@ void GUIElement::UpdateLayoutRecursive(const GUILayoutData& data)
 
 void GUIElement::UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
 {
-	mLayoutData.AbsolutePosition.X = mLayoutData.RelativePosition.X + parentOrigin.X;
-	mLayoutData.AbsolutePosition.Y = mLayoutData.RelativePosition.Y + parentOrigin.Y;
+	mAbsolutePosition.X = mLayoutData.RelativePosition.X + parentOrigin.X;
+	mAbsolutePosition.Y = mLayoutData.RelativePosition.Y + parentOrigin.Y;
 
-	mLayoutData.AbsoluteArea.X = mLayoutData.AbsolutePosition.X; // TODO - To be removed
-	mLayoutData.AbsoluteArea.Y = mLayoutData.AbsolutePosition.Y; // TODO - To be removed
-	mLayoutData.AbsoluteArea.Width = mLayoutData.Size.Width; // TODO - To be removed
-	mLayoutData.AbsoluteArea.Height = mLayoutData.Size.Height; // TODO - To be removed
+	mLayoutData.AbsoluteArea.X = mAbsolutePosition.X;
+	mLayoutData.AbsoluteArea.Y = mAbsolutePosition.Y;
+	mLayoutData.AbsoluteArea.Width = mLayoutData.Size.Width;
+	mLayoutData.AbsoluteArea.Height = mLayoutData.Size.Height;
 
-	mLayoutData.AbsoluteClippedArea = mLayoutData.AbsoluteArea;
-	mLayoutData.AbsoluteClippedArea.Clip(parentVisibleArea);
+	mAbsoluteClippedArea = mLayoutData.AbsoluteArea;
+	mAbsoluteClippedArea.Clip(parentVisibleArea);
 
-	UpdateAbsoluteCoordinatesRecursive();
+	UpdateAbsoluteCoordinatesForChildren();
 }
 
-void GUIElement::UpdateAbsoluteCoordinatesRecursive()
+void GUIElement::UpdateAbsoluteCoordinatesForChildren()
 {
 	for(auto& child : mChildren)
 	{
-		child->UpdateAbsoluteCoordinates(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
-		child->UpdateAbsoluteCoordinatesRecursive();
+		child->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
+		child->UpdateAbsoluteCoordinatesForChildren();
 	}
 }
 
