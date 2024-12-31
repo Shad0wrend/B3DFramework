@@ -320,10 +320,8 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 		B3DStackFree(elementPositions);
 }
 
-void GUIScrollArea::UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
+void GUIScrollArea::UpdateAbsoluteCoordinatesRecursive()
 {
-	UpdateAbsoluteCoordinatesAndVisibleArea(parentOrigin, parentVisibleArea);
-
 	// Recalculate offsets in case scroll percent got updated externally (this needs to be delayed to this point because
 	// at the time of the update content and visible sizes might be out of date).
 	u32 scrollableHeight = (u32)std::max(0, i32(mContentSize.Y) - i32(mVisibleSize.Y));
@@ -349,11 +347,11 @@ void GUIScrollArea::UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vecto
 		const Vector2I contentOrigin(mLayoutData.AbsolutePosition.X - Math::FloorToInt(mHorzOffset), mLayoutData.AbsolutePosition.Y - Math::FloorToInt(mVertOffset));
 		const Rect2I contentVisibleAreaSize(mLayoutData.AbsolutePosition.X, mLayoutData.AbsolutePosition.Y, (u32)mVisibleSize.X, (u32)mVisibleSize.Y); // TODO - Clip visible size by parent clip rectangle?
 
-		mContentLayout->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(contentOrigin, contentVisibleAreaSize);
+		mContentLayout->UpdateAbsoluteCoordinates(contentOrigin, contentVisibleAreaSize);
 	}
 
-	mHorzScroll->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
-	mVertScroll->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
+	mHorzScroll->UpdateAbsoluteCoordinates(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
+	mVertScroll->UpdateAbsoluteCoordinates(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
 
 	// TODO - Need to mark elements as culled/not culled and add/remove them from widget draw group. Elements should by default
 	// not be added to the widget draw group on registration

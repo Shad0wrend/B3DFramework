@@ -199,7 +199,7 @@ namespace bs
 
 		void SetLayoutData(const GUILayoutData& data) override;
 		void ChangeParentWidget(GUIWidget* widget) override;
-		void UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea) override;
+		void UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea) override;
 
 		/** @} */
 	protected:

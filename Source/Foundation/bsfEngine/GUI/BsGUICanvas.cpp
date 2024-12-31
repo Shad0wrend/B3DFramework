@@ -443,7 +443,7 @@ void GUICanvas::BuildImageElement(const CanvasElement& element)
 		textureSize = desc.Image->GetSize();
 	}
 
-	Vector2I destSize(mLayoutData.AbsoluteArea.Width, mLayoutData.AbsoluteArea.Height);
+	Vector2I destSize(mLayoutData.Size.Width, mLayoutData.Size.Height);
 	desc.UvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, element.ScaleMode);
 
 	element.ImageSprite->Update(desc, (u64)GetParentWidget());

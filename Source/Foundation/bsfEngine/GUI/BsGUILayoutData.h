@@ -11,11 +11,8 @@ namespace bs
 	 *  @{
 	 */
 
-	/**
-	 * Contains all attributes that are output by GUI layouts and assigned to GUI elements. This includes element position,
-	 * size and depth.
-	 */
-	struct B3D_EXPORT GUILayoutData
+	/** Contains all information that is calculated during GUI element update layout pass. */
+	struct GUILayoutData
 	{
 		GUILayoutData()
 		{
@@ -61,10 +58,10 @@ namespace bs
 		}
 
 		Vector2I RelativePosition; /**< Coordinates relative to the parent GUI element. Set during UpdateLayout pass. */
-		Vector2I AbsolutePosition; /**< Coordinates relative to the parent GUI widget. Set during UpdateVisibleBounds pass. */
+		Vector2I AbsolutePosition; /**< Coordinates relative to the parent GUI widget. Set during UpdateAbsoluteCoordinates pass. */
 		Size2UI Size; /**< Size of the GUI element in pixels. */
 		Rect2I AbsoluteArea; /**< Absolute coordinates, plus size of the GUI element. */ // TODO - To be removed
-		Rect2I AbsoluteClippedArea; /**< AbsoluteArea clipped by the parent's visible area. */
+		Rect2I AbsoluteClippedArea; /**< Area clipped by the parent's visible area. */
 		u32 Depth = 0;
 		u16 DepthRangeMin = -1;
 		u16 DepthRangeMax = -1;

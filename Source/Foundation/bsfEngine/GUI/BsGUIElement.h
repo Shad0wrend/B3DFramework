@@ -176,38 +176,40 @@ namespace bs
 		 */
 
 		/**
-		 * Updates child elements positions, sizes, clip rectangles and depths so they fit into the provided bounds, while
-		 * respecting their layout options.
-		 *
-		 * @param[in]	data	Layout data containing the necessary bounds and restrictions to use for calculating the
-		 *						child element layout data.
+		 * Calculates optimal sizes of all child elements, as determined by their style and layout options. This is performed recursively
+		 * over all child elements, starting with the bottom-most child element. This should be called before UpdateLayoutRecursive().
 		 */
-		virtual void UpdateLayout(const GUILayoutData& data);
-
-		/** Calculates optimal sizes of all child elements, as determined by their style and layout options. */
 		virtual void UpdateOptimalLayoutSizes();
+
+		/**
+		 * Calculates element positions and sizes based on their options and layout. This is an expensive operation that requires
+		 * multiple passes over all child GUI elements. The operation is performed in three passes:
+		 *  1. Optimal sizes for all elements are determined. This is done for the bottom-most child first, and then for parent elements.
+		 *	2. Layout calculations are performed for all elements, starting with the top-most element. This determines relative positions and
+		 *	   final element size.
+		 *	3. Absolute coordinate calculations are performed for all elements, starting with the top-most element. This adds parent coordinates
+		 *	   to the element's local coordinates, and calculates the visible area of the element (area of the element as clipped by the parent,
+		 *	   e.g. for elements in a scroll area that might not be fully visible).
+		 */
+		virtual void UpdateLayout();
 
 		/** @copydoc UpdateLayout */
 		virtual void UpdateLayoutRecursive(const GUILayoutData& data);
 
 		/**
 		 * Updates the absolute coordinates of the GUI element using the currently assigned relative coordinates and the provided
-		 * @p origin. Also calculates the clip rectangles and marks culled elements as such. This should be called after updating the
-		 * layout (as layout update only updates relative coordinates). This may also be called independently of layout update,
-		 * which is useful for scroll areas.
+		 * @p parentOrigin. Also calculates the visible area clip rectangle and marks culled elements if they have no visible area.
+		 * This should be called after updating the layout (as layout update calculates the needed relative coordinates).
+		 * This may also be called independently of layout update, which is useful for scroll areas that then do not require
+		 * a full layout pass to scroll their children.
 		 * 
-		 * @param parentOrigin			Origin to add to the relative coordinates, in order to determine the absolute element coordinates.
-		 * @param parentVisibleArea		Visible area though which this element may be seen. This will be used for culling and clipping.
+		 * @param parentOrigin			Absolute origin to add to the relative coordinates, in order to determine the absolute element coordinates.
+		 * @param parentVisibleArea		Absolute visible (clipped) area though which this element may be seen. This will be used for culling and clipping.
 		 */
-		virtual void UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea);
+		virtual void UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea);
 
-		/**
-		 * Same as UpdateAbsoluteCoordinatesAndVisibleArea, but also calls the same method on all the child elements as well.
-		 * 
-		 * @param parentOrigin			Origin to add to the relative coordinates, in order to determine the absolute element coordinates.
-		 * @param parentVisibleArea		Visible area though which this element may be seen. This will be used for culling and clipping.
-		 */
-		virtual void UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea);
+		/** Same as UpdateAbsoluteCoordinates, but also calls the same method on all the child elements as well. */
+		virtual void UpdateAbsoluteCoordinatesRecursive();
 
 		/**
 		 * Calculates positions & sizes of all elements in the layout. This method expects a pre-allocated array to store
@@ -222,10 +224,10 @@ namespace bs
 		 */
 		virtual void GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const;
 
-		/** Updates layout data that determines GUI elements final position & depth in the GUI widget. */
+		/** Updates layout data that determines GUI elements relative position, size and depth in the GUI widget. */
 		virtual void SetLayoutData(const GUILayoutData& data) { mLayoutData = data; }
 
-		/** Retrieves layout data that determines GUI elements final position & depth in the GUI widget. */
+		/** Retrieves layout data that determines GUI elements relative position, size and depth in the GUI widget. */
 		const GUILayoutData& GetLayoutData() const { return mLayoutData; }
 
 		/**	Sets a new parent for this element. */
@@ -393,7 +395,9 @@ namespace bs
 		bool mIsPendingDestroy = false;
 
 		GUISizeConstraints mSizeConstraints; /**< Constraints on the element size as set by the style, or set explicitly at runtime. */
-		GUILayoutData mLayoutData; /**< Calculated position, size, depth and other information, valid after a layout update. */
+		GUILayoutData mLayoutData; /**< Relative position (to parent), size, depth and other information, valid after a layout update. */
+		Vector2I mAbsolutePosition;
+		Rect2I mAbsoluteClippedBounds;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

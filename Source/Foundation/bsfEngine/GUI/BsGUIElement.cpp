@@ -417,21 +417,11 @@ void GUIElement::SetDisabledRecursive(bool disabled)
 		MarkContentAsDirty();
 }
 
-void GUIElement::UpdateLayout(const GUILayoutData& data)
+void GUIElement::UpdateLayout()
 {
-	UpdateOptimalLayoutSizes(); // We calculate optimal sizes of all layouts as a pre-processing step, as they are requested often during update
-	UpdateLayoutRecursive(data);
-
-	GUILayoutData parentLayoutData;
-	if(mParent != nullptr)
-		parentLayoutData = mParent->GetLayoutData();
-	else
-	{
-		parentLayoutData.AbsolutePosition = mLayoutData.RelativePosition;
-		parentLayoutData.AbsoluteClippedArea = Rect2I(parentLayoutData.AbsolutePosition.X, parentLayoutData.AbsolutePosition.Y, GetLayoutData().Size.Width, GetLayoutData().Size.Height);
-	}
-
-	UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(parentLayoutData.AbsolutePosition, parentLayoutData.AbsoluteClippedArea);
+	UpdateOptimalLayoutSizes(); // We calculate optimal sizes of all layouts as a pre-processing step, as they are requested often during update layout
+	UpdateLayoutRecursive(GetLayoutData());
+	UpdateAbsoluteCoordinatesRecursive();
 }
 
 void GUIElement::UpdateOptimalLayoutSizes()
@@ -450,7 +440,7 @@ void GUIElement::UpdateLayoutRecursive(const GUILayoutData& data)
 	}
 }
 
-void GUIElement::UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
+void GUIElement::UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
 {
 	mLayoutData.AbsolutePosition.X = mLayoutData.RelativePosition.X + parentOrigin.X;
 	mLayoutData.AbsolutePosition.Y = mLayoutData.RelativePosition.Y + parentOrigin.Y;
@@ -462,17 +452,17 @@ void GUIElement::UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentO
 
 	mLayoutData.AbsoluteClippedArea = mLayoutData.AbsoluteArea;
 	mLayoutData.AbsoluteClippedArea.Clip(parentVisibleArea);
+
+	UpdateAbsoluteCoordinatesRecursive();
 }
 
-void GUIElement::UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
+void GUIElement::UpdateAbsoluteCoordinatesRecursive()
 {
-	// TODO - Call this on each child in the loop below instead of here. Remove input parameters.
-	// TODO - Move the call to UpdateAbsoluteCoordinatesAndVisibleAreaRecursive in UpdateAbsoluteCoordinatesAndVisibleArea?
-	//  - Then in UpdateLayout just call this method directly, which doesnt set the local values
-	UpdateAbsoluteCoordinatesAndVisibleArea(parentOrigin, parentVisibleArea);
-
 	for(auto& child : mChildren)
-		child->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
+	{
+		child->UpdateAbsoluteCoordinates(mLayoutData.AbsolutePosition, mLayoutData.AbsoluteClippedArea);
+		child->UpdateAbsoluteCoordinatesRecursive();
+	}
 }
 
 GUIConstrainedSize GUIElement::CalculateConstrainedSize() const

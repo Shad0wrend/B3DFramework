@@ -235,12 +235,11 @@ void GUIWidget::UpdateLayout(GUIElement* elem)
 
 		dirtyElement->SetLayoutData(childLayoutData);
 		dirtyElement->UpdateLayoutRecursive(childLayoutData);
-		dirtyElement->UpdateAbsoluteCoordinatesAndVisibleAreaRecursive(parentPanelLayoutData.AbsolutePosition, parentPanelLayoutData.AbsoluteClippedArea);
+		dirtyElement->UpdateAbsoluteCoordinates(parentPanelLayoutData.AbsolutePosition, parentPanelLayoutData.AbsoluteClippedArea);
 	}
 	else
 	{
-		GUILayoutData childLayoutData = updateParent->GetLayoutData();
-		updateParent->UpdateLayout(childLayoutData);
+		updateParent->UpdateLayout();
 	}
 
 	// Mark dirty contents

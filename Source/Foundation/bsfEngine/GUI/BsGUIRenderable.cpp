@@ -145,9 +145,9 @@ void GUIRenderable::ChangeParentWidget(GUIWidget* widget)
 		RefreshStyle();
 }
 
-void GUIRenderable::UpdateAbsoluteCoordinatesAndVisibleArea(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
+void GUIRenderable::UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
 {
-	Super::UpdateAbsoluteCoordinatesAndVisibleArea(parentOrigin, parentVisibleArea);
+	Super::UpdateAbsoluteCoordinates(parentOrigin, parentVisibleArea);
 
 	// TODO - Concept of clipped bounds is strange. This looks like the same thing as mLayoutData.AbsoluteClippedArea, except for a few particular cases
 	UpdateClippedBounds();
