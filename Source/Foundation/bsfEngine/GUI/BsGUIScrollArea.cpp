@@ -33,7 +33,7 @@ GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarTyp
 
 void GUIScrollArea::UpdateClippedBounds()
 {
-	mClippedBounds = mLayoutData.AbsoluteArea;
+	mClippedBounds = GetCachedAbsoluteBounds();
 	mClippedBounds.Clip(mAbsoluteClippedArea);
 }
 
@@ -269,7 +269,7 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 		layoutData.RelativePosition = elementPositions[layoutIdx];
 		layoutData.Size = elementSizes[layoutIdx];
 
-		mContentLayout->SetLayoutData(layoutData); // TODO - GUILayoutData should contain just depth, relative coordinate and size. Absolute coordinates and clip rectangle can be contained in another data structure, to make it clearer they are calculated in separate steps
+		mContentLayout->SetLayoutData(layoutData);
 		mContentLayout->UpdateLayoutRecursive(layoutData);
 	}
 

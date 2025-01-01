@@ -51,12 +51,12 @@ void GUISliderHandle::UpdateRenderElements()
 	if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 	{
 		size.Width = handleSize;
-		size.Height = mLayoutData.AbsoluteArea.Height;
+		size.Height = mLayoutData.Size.Height;
 		offset.X += GetHandlePositionInPixels();
 	}
 	else
 	{
-		size.Width = mLayoutData.AbsoluteArea.Width;
+		size.Width = mLayoutData.Size.Width;
 		size.Height = handleSize;
 		offset.Y += GetHandlePositionInPixels();
 	}
@@ -133,9 +133,9 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 				float handlePosPx = 0.0f;
 
 				if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
-					handlePosPx = (float)(ev.GetPosition().X - (i32)mLayoutData.AbsoluteArea.X - handleSize * 0.5f);
+					handlePosPx = (float)(ev.GetPosition().X - (i32)mAbsolutePosition.X - handleSize * 0.5f);
 				else
-					handlePosPx = (float)(ev.GetPosition().Y - (i32)mLayoutData.AbsoluteArea.Y - handleSize * 0.5f);
+					handlePosPx = (float)(ev.GetPosition().Y - (i32)mAbsolutePosition.Y - handleSize * 0.5f);
 
 				SetHandlePositionInPixels((i32)handlePosPx);
 				OnHandleMovedOrResized(mHandlePositionInPercent, GetHandleSizeInPercent());
@@ -144,7 +144,7 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 			bool isResizeable = mFlags.IsSet(GUISliderHandleFlag::Resizeable);
 			if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 			{
-				i32 left = (i32)mLayoutData.AbsoluteArea.X + GetHandlePositionInPixels();
+				i32 left = (i32)mAbsolutePosition.X + GetHandlePositionInPixels();
 				const i32 resizableHandleSize = (i32)GUIResizableHorizontalScrollHandleVectorPathBuilder::kResizableHandleSize;
 
 				if(isResizeable)
@@ -166,7 +166,7 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 			}
 			else
 			{
-				i32 top = (i32)mLayoutData.AbsoluteArea.Y + GetHandlePositionInPixels();
+				i32 top = (i32)mAbsolutePosition.Y + GetHandlePositionInPixels();
 
 				if(isResizeable)
 				{
@@ -201,9 +201,9 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 			{
 				i32 handlePosPx;
 				if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
-					handlePosPx = ev.GetPosition().X - mDragStartPos - mLayoutData.AbsoluteArea.X;
+					handlePosPx = ev.GetPosition().X - mDragStartPos - mAbsolutePosition.X;
 				else
-					handlePosPx = ev.GetPosition().Y - mDragStartPos - mLayoutData.AbsoluteArea.Y;
+					handlePosPx = ev.GetPosition().Y - mDragStartPos - mAbsolutePosition.Y;
 
 				SetHandlePositionInPixels(handlePosPx);
 				OnHandleMovedOrResized(mHandlePositionInPercent, GetHandleSizeInPercent());
@@ -212,9 +212,9 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 			{
 				i32 clickPosPx;
 				if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
-					clickPosPx = ev.GetPosition().X - mLayoutData.AbsoluteArea.X;
+					clickPosPx = ev.GetPosition().X - mAbsolutePosition.X;
 				else
-					clickPosPx = ev.GetPosition().Y - mLayoutData.AbsoluteArea.Y;
+					clickPosPx = ev.GetPosition().Y - mAbsolutePosition.Y;
 
 				i32 left = GetHandlePositionInPixels();
 				u32 maxSize = GetTotalLength();
@@ -295,7 +295,7 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 				{
 					if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 					{
-						i32 handleLeft = (i32)mLayoutData.AbsoluteArea.X + handlePosPx;
+						i32 handleLeft = (i32)mAbsolutePosition.X + handlePosPx;
 						i32 handleRight = handleLeft + handleSize;
 
 						if(ev.GetPosition().X < handleLeft)
@@ -305,7 +305,7 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 					}
 					else
 					{
-						i32 handleTop = (i32)mLayoutData.AbsoluteArea.Y + handlePosPx;
+						i32 handleTop = (i32)mAbsolutePosition.Y + handlePosPx;
 						i32 handleBottom = handleTop + handleSize;
 
 						if(ev.GetPosition().Y < handleTop)
@@ -367,7 +367,7 @@ bool GUISliderHandle::IsOnHandle(const Vector2I& position) const
 	u32 handleSize = GetHandleSizeInPixels();
 	if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 	{
-		i32 left = (i32)mLayoutData.AbsoluteArea.X + GetHandlePositionInPixels();
+		i32 left = (i32)mAbsolutePosition.X + GetHandlePositionInPixels();
 		i32 right = left + handleSize;
 
 		if(position.X >= left && position.X < right)
@@ -375,7 +375,7 @@ bool GUISliderHandle::IsOnHandle(const Vector2I& position) const
 	}
 	else
 	{
-		i32 top = (i32)mLayoutData.AbsoluteArea.Y + GetHandlePositionInPixels();
+		i32 top = (i32)mAbsolutePosition.Y + GetHandlePositionInPixels();
 		i32 bottom = top + handleSize;
 
 		if(position.Y >= top && position.Y < bottom)
@@ -416,9 +416,9 @@ void GUISliderHandle::SetHandlePositionInPixels(i32 position)
 
 u32 GUISliderHandle::GetTotalLength() const
 {
-	u32 maxSize = mLayoutData.AbsoluteArea.Height;
+	u32 maxSize = mLayoutData.Size.Height;
 	if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
-		maxSize = mLayoutData.AbsoluteArea.Width;
+		maxSize = mLayoutData.Size.Width;
 
 	return maxSize;
 }

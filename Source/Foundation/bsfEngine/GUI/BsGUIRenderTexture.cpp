@@ -79,8 +79,8 @@ void GUIRenderTexture::UpdateRenderElements()
 	if(mActiveImage != nullptr && mActiveImage.IsLoaded())
 		mDesc.Image = mActiveImage;
 
-	mDesc.Width = mLayoutData.AbsoluteArea.Width;
-	mDesc.Height = mLayoutData.AbsoluteArea.Height;
+	mDesc.Width = mLayoutData.Size.Width;
+	mDesc.Height = mLayoutData.Size.Height;
 	mDesc.Transparent = mTransparent;
 	mDesc.Color = GetTint();
 
@@ -88,7 +88,7 @@ void GUIRenderTexture::UpdateRenderElements()
 
 	const Rect2 imageBounds(
 		0.0f, 0.0f,
-		(float)mLayoutData.AbsoluteArea.Width, (float)mLayoutData.AbsoluteArea.Height);
+		(float)mLayoutData.Size.Width, (float)mLayoutData.Size.Height);
 
 	// Populate GUI render elements from the sprites
 	{

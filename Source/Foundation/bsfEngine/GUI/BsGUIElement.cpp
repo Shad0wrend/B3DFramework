@@ -159,12 +159,12 @@ Rect2I GUIElement::CalculateBoundsRelativeTo(GUIElement* relativeTo)
 
 	Rect2I anchorBounds;
 	if(relativeTo != nullptr)
-		anchorBounds = relativeTo->GetBounds();
+		anchorBounds = relativeTo->GetAbsoluteBounds();
 
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
-	Rect2I bounds = mLayoutData.AbsoluteArea;
+	Rect2I bounds = GetCachedAbsoluteBounds();
 	bounds.X -= anchorBounds.X;
 	bounds.Y -= anchorBounds.Y;
 
@@ -187,17 +187,17 @@ void GUIElement::SetBounds(const Rect2I& bounds)
 	SetHeight(bounds.Height);
 }
 
-const Rect2I& GUIElement::GetBounds() const
+Rect2I GUIElement::GetAbsoluteBounds() const
 {
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
-	return mLayoutData.AbsoluteArea;
+	return GetCachedAbsoluteBounds();
 }
 
 Rect2I GUIElement::GetScreenBounds() const
 {
-	Rect2I area = GetBounds();
+	Rect2I area = GetAbsoluteBounds();
 	if(mParentWidget)
 	{
 		const Matrix4& widgetTfrm = mParentWidget->GetWorldTfrm();
@@ -454,12 +454,7 @@ void GUIElement::UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, const R
 	mAbsolutePosition.X = mLayoutData.RelativePosition.X + parentOrigin.X;
 	mAbsolutePosition.Y = mLayoutData.RelativePosition.Y + parentOrigin.Y;
 
-	mLayoutData.AbsoluteArea.X = mAbsolutePosition.X;
-	mLayoutData.AbsoluteArea.Y = mAbsolutePosition.Y;
-	mLayoutData.AbsoluteArea.Width = mLayoutData.Size.Width;
-	mLayoutData.AbsoluteArea.Height = mLayoutData.Size.Height;
-
-	mAbsoluteClippedArea = mLayoutData.AbsoluteArea;
+	mAbsoluteClippedArea = Rect2I(mAbsolutePosition, mLayoutData.Size);
 	mAbsoluteClippedArea.Clip(parentVisibleArea);
 
 	UpdateAbsoluteCoordinatesForChildren();

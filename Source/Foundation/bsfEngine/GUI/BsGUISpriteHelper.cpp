@@ -241,7 +241,7 @@ void GUIContentSprites::CalculateContentBounds(const Rect2I& contentArea, const 
 
 void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIElementState state, GUIBackgroundSprite& sprite, const Vector2I& offset, u32 depth)
 {
-	const Size2UI size(element.GetLayoutData().AbsoluteArea.Width, element.GetLayoutData().AbsoluteArea.Height);
+	const Size2UI size(element.GetLayoutData().Size.Width, element.GetLayoutData().Size.Height);
 	const u64 batchId = (u64)element.GetParentWidget();
 	const Color& tint = element.GetTint();
 
@@ -259,7 +259,7 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 
 void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIElementState state, const GUIContent& content, GUIContentSprites& sprites, const Vector2I& offset, u32 depth, bool wordWrap)
 {
-	const Size2UI size(element.GetLayoutData().AbsoluteArea.Width, element.GetLayoutData().AbsoluteArea.Height);
+	const Size2UI size(element.GetLayoutData().Size.Width, element.GetLayoutData().Size.Height);
 	const u64 batchId = (u64)element.GetParentWidget();
 	const Color& tint = element.GetTint();
 
@@ -277,7 +277,7 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 
 TextSpriteInformation GUISpriteHelper::BuildTextSpriteInformation(const GUIInteractable& element, GUIElementState state, const String& text, bool wordWrap)
 {
-	const Size2UI size(element.GetLayoutData().AbsoluteArea.Width, element.GetLayoutData().AbsoluteArea.Height);
+	const Size2UI size(element.GetLayoutData().Size.Width, element.GetLayoutData().Size.Height);
 	const Color& tint = element.GetTint();
 
 	if(element.mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)

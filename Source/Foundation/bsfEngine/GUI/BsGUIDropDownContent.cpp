@@ -49,7 +49,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 		if(mIsToggle)
 			mStates[idx] = !mStates[idx];
 
-		mParent->ElementActivated(idx, mVisibleElements[visIdx].UnderlayButton->GetLayoutData().AbsoluteArea);
+		mParent->ElementActivated(idx, mVisibleElements[visIdx].UnderlayButton->GetCachedClippedBounds());
 	};
 
 	// Remove all elements
@@ -228,7 +228,7 @@ bool GUIDropDownContent::DoOnCommandEvent(const GUICommandEvent& ev)
 			{
 				GUIDropDownDataEntry& entry = mDropDownData.Entries[mVisibleElements[mSelectedIdx].SequentialIndex];
 				if(entry.IsSubMenu())
-					mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetLayoutData().AbsoluteArea);
+					mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetCachedAbsoluteBounds());
 			}
 		}
 		return true;
@@ -240,7 +240,7 @@ bool GUIDropDownContent::DoOnCommandEvent(const GUICommandEvent& ev)
 			if(mIsToggle)
 				mVisibleElements[mSelectedIdx].Button->SetOnInternal(!mVisibleElements[mSelectedIdx].Button->IsOnInternal());
 
-			mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetLayoutData().AbsoluteArea);
+			mParent->ElementActivated(mVisibleElements[mSelectedIdx].SequentialIndex, mVisibleElements[mSelectedIdx].UnderlayButton->GetCachedAbsoluteBounds());
 		}
 		return true;
 	default:

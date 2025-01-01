@@ -49,7 +49,6 @@ namespace bs
 
 		Vector2I RelativePosition; /**< Coordinates relative to the parent GUI element. Set during UpdateLayout pass. */
 		Size2UI Size; /**< Size of the GUI element in pixels. */
-		Rect2I AbsoluteArea; /**< Absolute coordinates, plus size of the GUI element. */ // TODO - To be removed
 		u32 Depth = 0;
 		u16 DepthRangeMin = -1;
 		u16 DepthRangeMax = -1;

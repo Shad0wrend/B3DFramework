@@ -142,7 +142,7 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a re-layouting operation.
 		 */
-		const Rect2I& GetBounds() const;
+		Rect2I GetAbsoluteBounds() const;
 
 		/**
 		 * Returns non-clipped bounds of the GUI element in screenspace. The bounds includes the content area,
@@ -153,7 +153,7 @@ namespace bs
 		Rect2I GetScreenBounds() const;
 
 		/** Same as GetBounds(), but never triggers a re-layouting pass, and instead always returns values from last layouting pass. */
-		const Rect2I& GetCachedBounds() const { return mLayoutData.AbsoluteArea; }
+		Rect2I GetCachedAbsoluteBounds() const { return Rect2I(mAbsolutePosition, mLayoutData.Size); }
 
 		/**
 		 * Returns the position of the GUI element relative to the parent widget.

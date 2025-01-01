@@ -118,7 +118,7 @@ void GUIInputBox::UpdateRenderElements()
 
 	// When text bounds are reduced the scroll needs to be adjusted so that
 	// input box isn't filled with mostly empty space.
-	Vector2I offset(mLayoutData.AbsoluteArea.X, mLayoutData.AbsoluteArea.Y);
+	Vector2I offset = mAbsolutePosition;
 	ClampScrollToBounds(mTextSprite.GetTextSprite().GetBounds(offset, Rect2I()));
 
 	const Rect2I contentBounds = GetCachedContentBoundsInElementSpace();

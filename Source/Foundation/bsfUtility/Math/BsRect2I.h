@@ -21,6 +21,8 @@ namespace bs
 			: X(x), Y(y), Width(width), Height(height)
 		{}
 
+		Rect2I(const Vector2I& position, const Size2UI& size);
+
 		i32 X = 0;
 		i32 Y = 0;
 		u32 Width = 0;
@@ -46,6 +48,12 @@ namespace bs
 
 		/** Extends this rectangle so that the provided rectangle is completely contained within it. */
 		void Encapsulate(const Rect2I& other);
+
+		/** Sets the X/Y coordinates of the rectangle. */
+		void SetPosition(const Vector2I& position);
+
+		/** Sets the width/height of the rectangle. */
+		void SetSize(const Size2UI& size);
 
 		/** Clips current rectangle so that it does not overlap the provided rectangle. */
 		void Clip(const Rect2I& clipRect);

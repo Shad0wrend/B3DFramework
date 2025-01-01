@@ -9,6 +9,10 @@ using namespace bs;
 
 const Rect2I Rect2I::kEmpty;
 
+Rect2I::Rect2I(const Vector2I& position, const Size2UI& size)
+	: X(position.X), Y(position.Y), Width(size.Width), Height(size.Height)
+{ }
+
 bool Rect2I::Contains(const Vector2I& point) const
 {
 	if(point.X >= X && point.X < (X + (i32)Width))
@@ -44,6 +48,18 @@ bool Rect2I::Overlaps(const Rect2I& other) const
 		return true;
 
 	return false;
+}
+
+void Rect2I::SetPosition(const Vector2I& position)
+{
+	X = position.X;
+	Y = position.Y;
+}
+
+void Rect2I::SetSize(const Size2UI& size)
+{
+	Width = size.Width;
+	Height = size.Height;
 }
 
 void Rect2I::Encapsulate(const Rect2I& other)

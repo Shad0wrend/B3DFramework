@@ -34,7 +34,7 @@ GUIViewport* GUIViewport::Create(const GUIOptions& options, const HCamera& camer
 
 void GUIViewport::UpdateClippedBounds()
 {
-	mClippedBounds = mLayoutData.AbsoluteArea;
+	mClippedBounds = GetCachedAbsoluteBounds();
 	mClippedBounds.Clip(mAbsoluteClippedArea);
 }
 
@@ -58,7 +58,7 @@ void GUIViewport::FillBuffer(
 void GUIViewport::UpdateRenderElements()
 {
 	// TODO - This doesn't get called if element mesh is dirty!!! and I need to update the viewport when offset changes (in which case mesh is marked as dirty)
-	float currentAspect = mLayoutData.AbsoluteArea.Width / (float)mLayoutData.AbsoluteArea.Height;
+	float currentAspect = mLayoutData.Size.Width / (float)mLayoutData.Size.Height;
 	Radian currentFOV = 2.0f * Math::Atan(Math::Tan(mVerticalFOV * 0.5f) * currentAspect);
 
 	mCamera->SetHorzFov(currentFOV);
@@ -67,10 +67,10 @@ void GUIViewport::UpdateRenderElements()
 	SPtr<RenderTarget> renderTarget = viewport->GetTarget();
 	const RenderTargetProperties& rtProps = renderTarget->GetProperties();
 
-	float x = mLayoutData.AbsoluteArea.X / (float)rtProps.Width;
-	float y = mLayoutData.AbsoluteArea.Y / (float)rtProps.Height;
-	float width = mLayoutData.AbsoluteArea.Width / (float)rtProps.Width;
-	float height = mLayoutData.AbsoluteArea.Height / (float)rtProps.Height;
+	float x = mAbsolutePosition.X / (float)rtProps.Width;
+	float y = mAbsolutePosition.Y / (float)rtProps.Height;
+	float width = mLayoutData.Size.Width / (float)rtProps.Width;
+	float height = mLayoutData.Size.Height / (float)rtProps.Height;
 
 	viewport->SetArea(Rect2(x, y, width, height));
 }

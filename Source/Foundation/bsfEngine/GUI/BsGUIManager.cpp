@@ -1374,7 +1374,7 @@ Vector2I GUIManager::WindowToBridgedCoords(const SPtr<RenderTarget>& target, con
 		const Matrix4& worldTfrm = parentWidget->GetWorldTfrm();
 
 		Vector4 vecLocalPos = worldTfrm.Inverse().MultiplyAffine(Vector4((float)windowPos.X, (float)windowPos.Y, 0.0f, 1.0f));
-		Rect2I bridgeBounds = bridgeElement->GetLayoutData().AbsoluteArea;
+		Rect2I bridgeBounds = bridgeElement->GetCachedAbsoluteBounds();
 
 		// Find coordinates relative to the bridge element
 		float x = vecLocalPos.X - (float)bridgeBounds.X;

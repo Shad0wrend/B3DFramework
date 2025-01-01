@@ -80,7 +80,7 @@ void GUITexture::UpdateRenderElements()
 		mDesc.Image = mActiveImage;
 		textureSize = mDesc.Image->GetAnimationFrameSize();
 	}
-	Vector2I destSize(mLayoutData.AbsoluteArea.Width, mLayoutData.AbsoluteArea.Height);
+	Vector2I destSize(mLayoutData.Size.Width, mLayoutData.Size.Height);
 
 	// ScaleToFit is the only scaling mode that might result in the GUITexture area not being completely covered by
 	// the sprite. We need the actual sprite size and offsets to center it.
@@ -105,8 +105,8 @@ void GUITexture::UpdateRenderElements()
 		}
 
 		imageSpriteOffset = Vector2I(
-			((i32)mLayoutData.AbsoluteArea.Width - destSize.X) / 2,
-			((i32)mLayoutData.AbsoluteArea.Height - destSize.Y) / 2);
+			((i32)mLayoutData.Size.Width - destSize.X) / 2,
+			((i32)mLayoutData.Size.Height - destSize.Y) / 2);
 	}
 	else
 		imageSpriteOffset = Vector2I();
