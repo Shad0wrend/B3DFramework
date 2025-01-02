@@ -234,7 +234,7 @@ void GUIWidget::UpdateLayout(GUIElement* elem)
 		childLayoutData.Size = Size2UI(relativeElementArea.Width, relativeElementArea.Height);
 
 		dirtyElement->SetLayoutData(childLayoutData);
-		dirtyElement->UpdateLayoutRecursive(childLayoutData);
+		dirtyElement->UpdateLayoutForChildren();
 		dirtyElement->UpdateAbsoluteCoordinates(panel->GetCachedAbsolutePosition(), panel->GetCachedAbsoluteClippedArea());
 	}
 	else

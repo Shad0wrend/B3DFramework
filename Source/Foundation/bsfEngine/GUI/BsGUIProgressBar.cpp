@@ -32,20 +32,20 @@ Vector2I GUIProgressBar::CalculateUnconstrainedOptimalSize() const
 	return optimalSize;
 }
 
-void GUIProgressBar::UpdateLayoutRecursive(const GUILayoutData& data)
+void GUIProgressBar::UpdateLayoutForChildren()
 {
-	GUILayoutData backgroundLayoutData = data;
+	GUILayoutData backgroundLayoutData = mLayoutData;
 	backgroundLayoutData.RelativePosition = Vector2I::kZero;
 
 	mBackground->SetLayoutData(backgroundLayoutData);
 
 	const RectOffset& margins = mBackground->GetPadding();
 
-	GUILayoutData barLayoutData = data;
+	GUILayoutData barLayoutData = mLayoutData;
 	barLayoutData.RelativePosition = Vector2I(margins.Left, margins.Top);
 
-	u32 maxProgressBarWidth = std::max((u32)0, (u32)(data.Size.Width - margins.Left - margins.Right));
-	u32 progressBarHeight = std::max((u32)0, (u32)(data.Size.Height - margins.Top - margins.Bottom));
+	u32 maxProgressBarWidth = std::max((u32)0, (u32)(mLayoutData.Size.Width - margins.Left - margins.Right));
+	u32 progressBarHeight = std::max((u32)0, (u32)(mLayoutData.Size.Height - margins.Top - margins.Bottom));
 
 	barLayoutData.Size.Width = (u32)Math::FloorToInt(maxProgressBarWidth * mPercent);
 	barLayoutData.Size.Height = progressBarHeight;

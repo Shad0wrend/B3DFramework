@@ -429,7 +429,7 @@ void GUIElement::SetDisabledRecursive(bool disabled)
 void GUIElement::UpdateLayout()
 {
 	UpdateOptimalLayoutSizes(); // We calculate optimal sizes of all layouts as a pre-processing step, as they are requested often during update layout
-	UpdateLayoutRecursive(GetLayoutData());
+	UpdateLayoutForChildren();
 	UpdateAbsoluteCoordinatesForChildren();
 }
 
@@ -438,14 +438,6 @@ void GUIElement::UpdateOptimalLayoutSizes()
 	for(auto& child : mChildren)
 	{
 		child->UpdateOptimalLayoutSizes();
-	}
-}
-
-void GUIElement::UpdateLayoutRecursive(const GUILayoutData& data)
-{
-	for(auto& child : mChildren)
-	{
-		child->UpdateLayoutRecursive(data);
 	}
 }
 

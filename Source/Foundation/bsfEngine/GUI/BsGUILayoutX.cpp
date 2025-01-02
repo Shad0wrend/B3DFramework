@@ -385,7 +385,7 @@ void GUILayoutX::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I
 		B3DStackFree(processedElements);
 }
 
-void GUILayoutX::UpdateLayoutRecursive(const GUILayoutData& data)
+void GUILayoutX::UpdateLayoutForChildren()
 {
 	const u32 elementCount = (u32)mChildren.size();
 	Vector2I* elementPositions = nullptr;
@@ -397,12 +397,12 @@ void GUILayoutX::UpdateLayoutRecursive(const GUILayoutData& data)
 		elementSizes = B3DStackNew<Size2UI>(elementCount);
 	}
 
-	GetChildRelativeLayoutAreas(data.Size, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
+	GetChildRelativeLayoutAreas(mLayoutData.Size, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
 
 	// Now that we have all the areas, actually assign them
 	u32 childIdx = 0;
 
-	GUILayoutData childData = data;
+	GUILayoutData childData = mLayoutData;
 	for(auto& child : mChildren)
 	{
 		if(child->IsActive())
@@ -411,7 +411,7 @@ void GUILayoutX::UpdateLayoutRecursive(const GUILayoutData& data)
 			childData.Size = elementSizes[childIdx];
 
 			child->SetLayoutData(childData);
-			child->UpdateLayoutRecursive(childData);
+			child->UpdateLayoutForChildren();
 		}
 
 		childIdx++;

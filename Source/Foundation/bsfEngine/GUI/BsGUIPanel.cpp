@@ -248,9 +248,9 @@ void GUIPanel::UpdateDepthRangeInternal(GUILayoutData& data)
 		data.DepthRangeMax = (u16)(newPanelDepthRangeMax - newPanelDepth);
 }
 
-void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
+void GUIPanel::UpdateLayoutForChildren()
 {
-	GUILayoutData childData = data;
+	GUILayoutData childData = mLayoutData;
 	UpdateDepthRangeInternal(childData);
 
 	u32 elementCount = (u32)mChildren.size();
@@ -263,7 +263,7 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 		elementSizes = B3DStackNew<Size2UI>(elementCount);
 	}
 
-	GetChildRelativeLayoutAreas(data.Size, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
+	GetChildRelativeLayoutAreas(mLayoutData.Size, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
 
 	u32 childIdx = 0;
 
@@ -275,7 +275,7 @@ void GUIPanel::UpdateLayoutRecursive(const GUILayoutData& data)
 			childData.Size = elementSizes[childIdx];
 
 			child->SetLayoutData(childData);
-			child->UpdateLayoutRecursive(childData);
+			child->UpdateLayoutForChildren();
 		}
 
 		childIdx++;

@@ -224,7 +224,7 @@ void GUIScrollArea::CalculateRelativeElementAreas(const Size2UI& scrollAreaSize,
 	}
 }
 
-void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
+void GUIScrollArea::UpdateLayoutForChildren()
 {
 	const u32 elementCount = (u32)mChildren.size();
 	Vector2I* elementPositions = nullptr;
@@ -253,28 +253,28 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 			vertScrollIdx = i;
 	}
 
-	const Size2UI scrollAreaSize(data.Size.Width, data.Size.Height);
+	const Size2UI scrollAreaSize(mLayoutData.Size.Width, mLayoutData.Size.Height);
 	CalculateRelativeElementAreas(scrollAreaSize, elementPositions, elementSizes, elementCount, mChildSizeRanges, mVisibleSize, mContentSize);
 
 	// Layout
 	if(mContentLayout->IsActive())
 	{
-		GUILayoutData layoutData = data;
+		GUILayoutData layoutData = mLayoutData;
 		layoutData.RelativePosition = elementPositions[layoutIdx];
 		layoutData.Size = elementSizes[layoutIdx];
 
 		mContentLayout->SetLayoutData(layoutData);
-		mContentLayout->UpdateLayoutRecursive(layoutData);
+		mContentLayout->UpdateLayoutForChildren();
 	}
 
 	// Vertical scrollbar
 	{
-		GUILayoutData layoutData = data;
+		GUILayoutData layoutData = mLayoutData;
 		layoutData.RelativePosition = elementPositions[vertScrollIdx];
 		layoutData.Size = elementSizes[vertScrollIdx];
 
 		mVertScroll->SetLayoutData(layoutData);
-		mVertScroll->UpdateLayoutRecursive(layoutData);
+		mVertScroll->UpdateLayoutForChildren();
 
 		// Set new handle size and update position to match the new size
 		u32 scrollableHeight = (u32)std::max(0, i32(mContentSize.Y) - i32(layoutData.Size.Height));
@@ -289,12 +289,12 @@ void GUIScrollArea::UpdateLayoutRecursive(const GUILayoutData& data)
 
 	// Horizontal scrollbar
 	{
-		GUILayoutData layoutData = data;
+		GUILayoutData layoutData = mLayoutData;
 		layoutData.RelativePosition = elementPositions[horzScrollIdx];
 		layoutData.Size = elementSizes[horzScrollIdx];
 
 		mHorzScroll->SetLayoutData(layoutData);
-		mHorzScroll->UpdateLayoutRecursive(layoutData);
+		mHorzScroll->UpdateLayoutForChildren();
 
 		// Set new handle size and update position to match the new size
 		u32 scrollableWidth = (u32)std::max(0, i32(mContentSize.X) - i32(layoutData.Size.Width));

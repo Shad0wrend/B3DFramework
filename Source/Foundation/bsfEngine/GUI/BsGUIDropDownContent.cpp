@@ -386,9 +386,9 @@ Vector2I GUIDropDownContent::CalculateUnconstrainedOptimalSize() const
 	return optimalSize;
 }
 
-void GUIDropDownContent::UpdateLayoutRecursive(const GUILayoutData& data)
+void GUIDropDownContent::UpdateLayoutForChildren()
 {
-	GUILayoutData childData = data;
+	GUILayoutData childData = mLayoutData;
 	i32 yOffset = 0;
 
 	for(auto& visibleElement : mVisibleElements)
@@ -401,12 +401,21 @@ void GUIDropDownContent::UpdateLayoutRecursive(const GUILayoutData& data)
 		yOffset += (i32)childData.Size.Height;
 
 		if(element.IsSeparator())
+		{
 			visibleElement.Separator->SetLayoutData(childData);
+			visibleElement.Separator->UpdateLayoutForChildren();
+		}
 		else
-			visibleElement.Layout->UpdateLayoutRecursive(childData);
+		{
+			visibleElement.Layout->SetLayoutData(childData);
+			visibleElement.Layout->UpdateLayoutForChildren();
+		}
 
 		if(visibleElement.UnderlayButton)
+		{
 			visibleElement.UnderlayButton->SetLayoutData(childData);
+			visibleElement.UnderlayButton->UpdateLayoutForChildren();
+		}
 	}
 }
 

@@ -41,7 +41,7 @@ namespace bs
 		/** @} */
 
 	protected:
-		void UpdateLayoutRecursive(const GUILayoutData& data) override;
+		void UpdateLayoutForChildren() override;
 	};
 
 	/** @} */

@@ -216,8 +216,8 @@ namespace bs
 		 */
 		virtual void UpdateLayout();
 
-		/** @copydoc UpdateLayout */
-		virtual void UpdateLayoutRecursive(const GUILayoutData& data);
+		/** Calculates sizes and relative positions for all child elements. Should be preceded with a call to UpdateOptimalLayoutSizes(). */
+		virtual void UpdateLayoutForChildren() { }
 
 		/**
 		 * Updates the absolute coordinates of the GUI element using the currently assigned relative coordinates and the provided

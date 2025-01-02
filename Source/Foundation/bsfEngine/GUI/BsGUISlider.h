@@ -79,7 +79,7 @@ namespace bs
 		GUISlider(bool horizontal, const String& styleName, const GUISizeConstraints& dimensions);
 		virtual ~GUISlider();
 
-		void UpdateLayoutRecursive(const GUILayoutData& data) override;
+		void UpdateLayoutForChildren() override;
 
 		/**	Triggered when the slider handles moves. */
 		void OnHandleMoved(float newPosition, float newSize);

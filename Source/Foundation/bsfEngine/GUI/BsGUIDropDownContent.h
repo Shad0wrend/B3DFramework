@@ -79,7 +79,7 @@ namespace bs
 		HString GetElementLocalizedName(u32 idx) const;
 
 		Vector2I CalculateUnconstrainedOptimalSize() const override;
-		void UpdateLayoutRecursive(const GUILayoutData& data) override;
+		void UpdateLayoutForChildren() override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 

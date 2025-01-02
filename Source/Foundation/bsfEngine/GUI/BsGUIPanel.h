@@ -91,7 +91,7 @@ namespace bs
 		 */
 		GUIConstrainedSize GetChildElementSizeRange(const GUIElement* element) const;
 
-		void UpdateLayoutRecursive(const GUILayoutData& data) override;
+		void UpdateLayoutForChildren() override;
 
 		/**
 		 * Updates the provided depth range by taking into consideration the depth range of the panel. This depth range
