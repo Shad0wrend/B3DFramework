@@ -189,7 +189,7 @@ namespace bs
 				}
 			}
 
-			std::aligned_storage_t<sizeof(ElementType), alignof(ElementType)> mStackStorage[StackElementCount];
+			std::aligned_storage_t<sizeof(ElementType), std::min(alignof(std::max_align_t), alignof(ElementType))> mStackStorage[StackElementCount];
 			ElementType* mElements = (ElementType*)mStackStorage;
 			typename SecondaryAllocator::template ForElementType<ElementType> mSecondaryAllocator;
 		};

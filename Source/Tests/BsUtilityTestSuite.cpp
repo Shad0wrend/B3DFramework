@@ -14,7 +14,7 @@
 
 using namespace bs;
 
-struct DebugOctreeElem
+struct DebugOctreeElement
 {
 	AABox Box;
 	mutable OctreeElementId OctreeId;
@@ -22,47 +22,35 @@ struct DebugOctreeElem
 
 struct DebugOctreeData
 {
-	Vector<DebugOctreeElem> Elements;
+	Vector<DebugOctreeElement> Elements;
 };
 
 struct DebugOctreeOptions
 {
 	enum
 	{
-		LoosePadding = 16
+		LoosePadding = 16,
+		MinimumElementsPerNode = 8,
+		MaximumElementsPerNode = 16,
+		MaximumDepth = 12
 	};
 
-	enum
-	{
-		MinElementsPerNode = 8
-	};
-
-	enum
-	{
-		MaxElementsPerNode = 16
-	};
-
-	enum
-	{
-		MaxDepth = 12
-	};
-
-	static simd::AABox GetBounds(u32 elem, void* context)
+	static simd::AABox GetBounds(u32 elementIndex, void* context)
 	{
 		DebugOctreeData* octreeData = (DebugOctreeData*)context;
-		return simd::AABox(octreeData->Elements[elem].Box);
+		return simd::AABox(octreeData->Elements[elementIndex].Box);
 	}
 
-	static void SetElementId(u32 elem, const OctreeElementId& id, void* context)
+	static void SetElementId(u32 elementIndex, const OctreeElementId& id, void* context)
 	{
 		DebugOctreeData* octreeData = (DebugOctreeData*)context;
-		octreeData->Elements[elem].OctreeId = id;
+		octreeData->Elements[elementIndex].OctreeId = id;
 	}
 };
 
-typedef Octree<u32, DebugOctreeOptions> DebugOctree;
+typedef TOctree<u32, DebugOctreeOptions> DebugOctree;
 
-struct DebugQuadtreeElem
+struct DebugQuadtreeElement
 {
 	Rect2 Box;
 	mutable QuadtreeElementId QuadtreeId;
@@ -70,29 +58,17 @@ struct DebugQuadtreeElem
 
 struct DebugQuadtreeData
 {
-	Vector<DebugQuadtreeElem> Elements;
+	Vector<DebugQuadtreeElement> Elements;
 };
 
 struct DebugQuadtreeOptions
 {
 	enum
 	{
-		LoosePadding = 8
-	};
-
-	enum
-	{
-		MinElementsPerNode = 4
-	};
-
-	enum
-	{
-		MaxElementsPerNode = 8
-	};
-
-	enum
-	{
-		MaxDepth = 6
+		LoosePadding = 8,
+		MinElementsPerNode = 4,
+		MaxElementsPerNode = 8,
+		MaxDepth = 6,
 	};
 
 	static simd::Rect2 GetBounds(u32 elem, void* context)
@@ -244,7 +220,7 @@ void UtilityTestSuite::TestOctree()
 				types[i].SizeMin + ((rand() / (float)RAND_MAX)) * (types[i].SizeMax - types[i].SizeMin) * 0.5f,
 				types[i].SizeMin + ((rand() / (float)RAND_MAX)) * (types[i].SizeMax - types[i].SizeMin) * 0.5f);
 
-			DebugOctreeElem elem;
+			DebugOctreeElement elem;
 			elem.Box = AABox(position - extents, position + extents);
 
 			u32 elemIdx = (u32)octreeData.Elements.size();
@@ -253,7 +229,7 @@ void UtilityTestSuite::TestOctree()
 		}
 	}
 
-	DebugOctreeElem manualElems[3];
+	DebugOctreeElement manualElems[3];
 	manualElems[0].Box = AABox(Vector3(100.0f, 100.0f, 100.f), Vector3(110.0f, 115.0f, 110.0f));
 	manualElems[1].Box = AABox(Vector3(200.0f, 100.0f, 100.f), Vector3(250.0f, 150.0f, 150.0f));
 	manualElems[2].Box = AABox(Vector3(90.0f, 90.0f, 90.f), Vector3(105.0f, 105.0f, 110.0f));
@@ -651,7 +627,7 @@ void UtilityTestSuite::TestQuadtree()
 				types[i].SizeMin + ((rand() / (float)RAND_MAX)) * (types[i].SizeMax - types[i].SizeMin) * 0.5f,
 				types[i].SizeMin + ((rand() / (float)RAND_MAX)) * (types[i].SizeMax - types[i].SizeMin) * 0.5f);
 
-			DebugQuadtreeElem elem;
+			DebugQuadtreeElement elem;
 			elem.Box = Rect2(position - extents, extents);
 
 			u32 elemIdx = (u32)quadtreeData.Elements.size();
@@ -660,7 +636,7 @@ void UtilityTestSuite::TestQuadtree()
 		}
 	}
 
-	DebugQuadtreeElem manualElems[3];
+	DebugQuadtreeElement manualElems[3];
 	manualElems[0].Box = Rect2(Vector2(100.0f, 100.0f), Vector2(110.0f, 115.0f));
 	manualElems[1].Box = Rect2(Vector2(200.0f, 100.0f), Vector2(250.0f, 150.0f));
 	manualElems[2].Box = Rect2(Vector2(90.0f, 90.0f), Vector2(105.0f, 105.0f));
