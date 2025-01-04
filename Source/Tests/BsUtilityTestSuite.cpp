@@ -66,9 +66,9 @@ struct DebugQuadtreeOptions
 	enum
 	{
 		LoosePadding = 8,
-		MinElementsPerNode = 4,
-		MaxElementsPerNode = 8,
-		MaxDepth = 6,
+		MinimumElementsPerNode = 4,
+		MaximumElementsPerNode = 8,
+		MaximumDepth = 6,
 	};
 
 	static simd::Rect2 GetBounds(u32 elem, void* context)
@@ -84,7 +84,7 @@ struct DebugQuadtreeOptions
 	}
 };
 
-typedef Quadtree<u32, DebugQuadtreeOptions> DebugQuadtree;
+typedef TQuadtree<u32, DebugQuadtreeOptions> DebugQuadtree;
 
 void UtilityTestSuite::StartUp()
 {
@@ -649,7 +649,7 @@ void UtilityTestSuite::TestQuadtree()
 	}
 
 	Rect2 queryBounds = manualElems[0].Box;
-	DebugQuadtree::BoxIntersectIterator interIter(quadtree, queryBounds);
+	DebugQuadtree::AreaIntersectIterator interIter(quadtree, queryBounds);
 
 	Vector<u32> overlapElements;
 	while(interIter.MoveNext())

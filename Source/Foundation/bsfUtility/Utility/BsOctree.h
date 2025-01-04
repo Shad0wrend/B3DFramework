@@ -33,7 +33,7 @@ namespace bs
 	};
 
 	/** Contains a reference to one of the eight child nodes in an octree node. */
-	struct OctreeChildNodeIdentifier
+	struct OctreeChildNodeId
 	{
 		union
 		{
@@ -52,21 +52,21 @@ namespace bs
 			};
 		};
 
-		OctreeChildNodeIdentifier()
+		OctreeChildNodeId()
 			: Empty(true)
 		{}
 
-		OctreeChildNodeIdentifier(u32 x, u32 y, u32 z)
+		OctreeChildNodeId(u32 x, u32 y, u32 z)
 			: X(x), Y(y), Z(z),Empty(false)
 		{}
 
-		OctreeChildNodeIdentifier(u32 index)
+		OctreeChildNodeId(u32 index)
 			: Index(index), Empty2(false)
 		{}
 	};
 
 	/** Contains a range of child nodes in an octree node (any or all of the possible 8 nodes). */
-	struct OctreeChildNodeRange
+	struct OctreeChildNodeIdRange
 	{
 		union
 		{
@@ -90,19 +90,19 @@ namespace bs
 		};
 
 		/** Constructs a range overlapping no nodes. */
-		OctreeChildNodeRange()
+		OctreeChildNodeIdRange()
 			: AllBits(0)
 		{}
 
 		/** Constructs a range overlapping a single node. */
-		OctreeChildNodeRange(OctreeChildNodeIdentifier child)
+		OctreeChildNodeIdRange(OctreeChildNodeId child)
 			: PositiveBits(child.Index), NegativeBits(~child.Index)
 		{}
 
 		/** Checks if the range contains the provided child. */
-		bool Contains(OctreeChildNodeIdentifier child) const
+		bool Contains(OctreeChildNodeId child) const
 		{
-			OctreeChildNodeRange childRange(child);
+			OctreeChildNodeIdRange childRange(child);
 			return (AllBits & childRange.AllBits) == childRange.AllBits;
 		}
 	};
@@ -171,10 +171,10 @@ namespace bs
 			Node(Node* parent): mParent(parent), mElementCountWithChildren(0), mIsLeaf(true) {}
 
 			/** Returns a child node with the specified index. May return null. */
-			Node* GetChild(OctreeChildNodeIdentifier child) const { return mChildren[child.Index]; }
+			Node* GetChild(OctreeChildNodeId child) const { return mChildren[child.Index]; }
 
 			/** Checks has the specified child node been created. */
-			bool HasChild(OctreeChildNodeIdentifier child) const { return mChildren[child.Index] != nullptr; }
+			bool HasChild(OctreeChildNodeId child) const { return mChildren[child.Index] != nullptr; }
 
 		private:
 			friend class ElementIterator;
@@ -209,13 +209,13 @@ namespace bs
 			const simd::AABox& GetBounds() const { return mBounds; }
 
 			/** Attempts to find a child node that can fully contain the provided bounds. */
-			OctreeChildNodeIdentifier FindContainingChild(const simd::AABox& bounds) const;
+			OctreeChildNodeId FindContainingChild(const simd::AABox& bounds) const;
 
 			/** Returns a range of child nodes that intersect the provided bounds. */
-			OctreeChildNodeRange FindIntersectingChildren(const simd::AABox& bounds) const;
+			OctreeChildNodeIdRange FindIntersectingChildren(const simd::AABox& bounds) const;
 
 			/** Calculates bounds for the provided child node. */
-			NodeBounds GetChild(OctreeChildNodeIdentifier child) const;
+			NodeBounds GetChild(OctreeChildNodeId child) const;
 
 		private:
 			simd::AABox mBounds;
@@ -262,7 +262,7 @@ namespace bs
 			bool MoveNext();
 
 			/** Inserts a child of the current node to be iterated over. */
-			void PushChild(const OctreeChildNodeIdentifier& child);
+			void PushChild(const OctreeChildNodeId& child);
 
 		private:
 			NodeTraversalContext mCurrentNodeContext;
@@ -286,13 +286,13 @@ namespace bs
 			bool MoveNext();
 
 			/**
-			 * Returns the bounds of the current element. moveNext() must be called at least once and it must return true
+			 * Returns the bounds of the current element. MoveNext() must be called at least once and it must return true
 			 * prior to attempting to access this data.
 			 */
 			const simd::AABox& GetCurrentBounds() const { return mCurrentElementBoundsBlock->Bounds[mCurrentIndex]; }
 
 			/**
-			 * Returns the contents of the current element. moveNext() must be called at least once and it must return true
+			 * Returns the contents of the current element. MoveNext() must be called at least once and it must return true
 			 * prior to attempting to access this data.
 			 */
 			const ElementType& GetCurrentElement() const { return mCurrentElementBlock->Elements[mCurrentIndex]; }
@@ -315,7 +315,7 @@ namespace bs
 			BoxIntersectIterator(const TOctree& tree, const AABox& bounds);
 
 			/**
-			 * Returns the contents of the current element. moveNext() must be called at least once and it must return true
+			 * Returns the contents of the current element. MoveNext() must be called at least once and it must return true
 			 * prior to attempting to access this data.
 			 */
 			const ElementType& GetElement() const { return mElementIterator.GetCurrentElement(); }
@@ -410,7 +410,7 @@ namespace bs
 	}
 
 	template <class ElementType, class Options>
-	OctreeChildNodeIdentifier TOctree<ElementType, Options>::NodeBounds::FindContainingChild(const simd::AABox& bounds) const
+	OctreeChildNodeId TOctree<ElementType, Options>::NodeBounds::FindContainingChild(const simd::AABox& bounds) const
 	{
 		auto queryCenter = simd::load<simd::float32x4>(&bounds.Center);
 
@@ -428,7 +428,7 @@ namespace bs
 		auto queryExtents = simd::load<simd::float32x4>(&bounds.Extents);
 		auto childExtent = simd::load_splat<simd::float32x4>(&mChildExtent);
 
-		OctreeChildNodeIdentifier output;
+		OctreeChildNodeId output;
 
 		simd::mask_float32x4 mask = simd::cmp_gt(simd::add(queryExtents, diff), childExtent);
 		if(simd::test_bits_any(simd::bit_cast<simd::uint32x4>(mask)) == false)
@@ -454,7 +454,7 @@ namespace bs
 	}
 
 	template <class ElementType, class Options>
-	OctreeChildNodeRange TOctree<ElementType, Options>::NodeBounds::FindIntersectingChildren(const simd::AABox& bounds) const
+	OctreeChildNodeIdRange TOctree<ElementType, Options>::NodeBounds::FindIntersectingChildren(const simd::AABox& bounds) const
 	{
 		auto queryCenter = simd::load<simd::float32x4>(&bounds.Center);
 		auto queryExtents = simd::load<simd::float32x4>(&bounds.Extents);
@@ -472,7 +472,7 @@ namespace bs
 		auto negativeMax = simd::add(negativeCenter, childExtent);
 		auto positiveMin = simd::sub(positiveCenter, childExtent);
 
-		OctreeChildNodeRange output;
+		OctreeChildNodeIdRange output;
 
 		auto ones = simd::make_uint<simd::uint32x4>(1, 1, 1, 1);
 		auto zeroes = simd::make_uint<simd::uint32x4>(0, 0, 0, 0);
@@ -500,7 +500,7 @@ namespace bs
 	}
 
 	template <class ElementType, class Options>
-	typename TOctree<ElementType, Options>::NodeBounds TOctree<ElementType, Options>::NodeBounds::GetChild(OctreeChildNodeIdentifier child) const
+	typename TOctree<ElementType, Options>::NodeBounds TOctree<ElementType, Options>::NodeBounds::GetChild(OctreeChildNodeId child) const
 	{
 		static constexpr const float map[2] = { -1.0f, 1.0f };
 
@@ -522,7 +522,7 @@ namespace bs
 
 	template <class ElementType, class Options>
 	TOctree<ElementType, Options>::NodeIterator::NodeIterator(const Node* node, const NodeBounds& bounds)
-		: mCurrentNodeContext(HNode(node, bounds))
+		: mCurrentNodeContext(NodeTraversalContext(node, bounds))
 	{
 		mNodeStack.Add(mCurrentNodeContext);
 	}
@@ -543,7 +543,7 @@ namespace bs
 	}
 
 	template <class ElementType, class Options>
-	void TOctree<ElementType, Options>::NodeIterator::PushChild(const OctreeChildNodeIdentifier& child)
+	void TOctree<ElementType, Options>::NodeIterator::PushChild(const OctreeChildNodeId& child)
 	{
 		Node* const childNode = mCurrentNodeContext.Node->GetChild(child);
 		NodeBounds childBounds = mCurrentNodeContext.Bounds.GetChild(child);
@@ -609,7 +609,7 @@ namespace bs
 			mElementIterator = ElementIterator(nodeTraversalContext.Node);
 
 			// Add all intersecting child nodes to the iterator
-			OctreeChildNodeRange childRange = nodeTraversalContext.Bounds.FindIntersectingChildren(mBounds);
+			OctreeChildNodeIdRange childRange = nodeTraversalContext.Bounds.FindIntersectingChildren(mBounds);
 			for(u32 i = 0; i < 8; i++)
 			{
 				if(childRange.Contains(i) && nodeTraversalContext.Node->HasChild(i))
@@ -726,7 +726,7 @@ namespace bs
 		else
 		{
 			// Attempt to find a child the element fits into
-			OctreeChildNodeIdentifier child = nodeBounds.FindContainingChild(elementBounds);
+			OctreeChildNodeId child = nodeBounds.FindContainingChild(elementBounds);
 
 			if(child.Empty)
 			{
