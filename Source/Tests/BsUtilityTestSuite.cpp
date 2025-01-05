@@ -2,7 +2,6 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsUtilityTestSuite.h"
 #include "BsFileSystemTestSuite.h"
-#include "Utility/BsOctree.h"
 #include "Utility/BsBitfield.h"
 #include "Utility/BsTArray.h"
 #include "Math/BsComplex.h"
@@ -17,7 +16,7 @@ using namespace bs;
 struct DebugOctreeElement
 {
 	AABox Box;
-	mutable OctreeElementId OctreeId;
+	mutable SpatialTreeElementId OctreeId;
 };
 
 struct DebugOctreeData
@@ -41,14 +40,14 @@ struct DebugOctreeOptions
 		return simd::AABox(octreeData->Elements[elementIndex].Box);
 	}
 
-	static void SetElementId(u32 elementIndex, const OctreeElementId& id, void* context)
+	static void SetElementId(u32 elementIndex, const SpatialTreeElementId& id, void* context)
 	{
 		DebugOctreeData* octreeData = (DebugOctreeData*)context;
 		octreeData->Elements[elementIndex].OctreeId = id;
 	}
 };
 
-typedef TOctree<u32, DebugOctreeOptions> DebugOctree;
+typedef TOctTree<u32, DebugOctreeOptions> DebugOctree;
 
 struct DebugQuadtreeElement
 {
@@ -242,7 +241,7 @@ void UtilityTestSuite::TestOctree()
 	}
 
 	AABox queryBounds = manualElems[0].Box;
-	DebugOctree::BoxIntersectIterator interIter(octree, queryBounds);
+	DebugOctree::AreaIntersectIterator interIter(octree, queryBounds);
 
 	Vector<u32> overlapElements;
 	while(interIter.MoveNext())

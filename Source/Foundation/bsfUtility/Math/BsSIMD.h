@@ -70,7 +70,7 @@ namespace bs
 			}
 
 			/** Returns true if the current bounds object intersects the provided object. */
-			bool Intersects(const AABox& other) const
+			bool Overlaps(const AABox& other) const
 			{
 				auto myCenter = load<float32x4>(&Center);
 				auto otherCenter = load<float32x4>(&other.Center);
