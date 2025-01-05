@@ -14,26 +14,61 @@ namespace bs
 	 *  @{
 	 */
 
-	/** Identifier that may be used for finding an element in the quadtree. */
-	class QuadtreeElementId
+	/** Traits to help with specialization of the spatial tree for different dimensions. */
+	template<int Dimension>
+	struct TSpatialTreeTraits
+	{
+		static_assert(sizeof(TSpatialTreeTraits) == -1, "Unsupported dimension count.");
+	};
+
+	/** Traits for quad-tree. */
+	template<>
+	struct TSpatialTreeTraits<2>
+	{
+		using SIMDBoundsType = simd::Rect2;
+		using ScalarBoundsType = Rect2;
+		using CenterType = Vector2;
+		static constexpr u32 kChildNodeCount = 4;
+	};
+
+	/** Traits for oct-tree. */
+	template<>
+	struct TSpatialTreeTraits<3>
+	{
+		using SIMDBoundsType = simd::AABox;
+		using ScalarBoundsType = AABox;
+		using CenterType = Vector3;
+		static constexpr u32 kChildNodeCount = 8;
+	};
+
+	/** Identifier that may be used for finding an element in the spatial tree. */
+	class SpatialTreeElementId
 	{
 	public:
-		QuadtreeElementId() = default;
+		SpatialTreeElementId() = default;
 
-		QuadtreeElementId(void* node, u32 indexInNode)
+		SpatialTreeElementId(void* node, u32 indexInNode)
 			: Node(node), IndexInNode(indexInNode)
 		{}
 
 	private:
-		template <class, class>
-		friend class TQuadtree;
+		template <typename, typename, u32>
+		friend class TSpatialTree;
 
 		void* Node = nullptr;
 		u32 IndexInNode = 0u;
 	};
 
-	/** Contains a reference to one of the four child nodes in a quadtree node. */
-	struct QuadtreeChildNodeId
+	/** Contains a reference to one child nodes in a spatial tree node. */
+	template<int Dimension>
+	struct TSpatialTreeChildNodeId
+	{
+		static_assert(sizeof(TSpatialTreeChildNodeId) == -1, "Unsupported dimension count.");
+	};
+
+	/** Specialization of TSpatialTreeChildNodeId for a quad-tree. */
+	template<>
+	struct TSpatialTreeChildNodeId<2>
 	{
 		union
 		{
@@ -51,22 +86,66 @@ namespace bs
 			};
 		};
 
-		QuadtreeChildNodeId()
+		TSpatialTreeChildNodeId()
 			: Empty(true)
 		{}
 
-		QuadtreeChildNodeId(u32 x, u32 y)
+		TSpatialTreeChildNodeId(u32 x, u32 y)
 			: X(x), Y(y), Empty(false)
 		{}
 
-		QuadtreeChildNodeId(u32 index)
+		TSpatialTreeChildNodeId(u32 index)
 			: Index(index), Empty2(false)
 		{}
 	};
 
-	/** Contains a range of child nodes in a quadtree node (any or all of the possible 4 nodes). */
-	struct QuadtreeChildNodeIdRange
+	/** Specialization of TSpatialTreeChildNodeId for a oct-tree. */
+	template<>
+	struct TSpatialTreeChildNodeId<3>
 	{
+		union
+		{
+			struct
+			{
+				u32 X : 1;
+				u32 Y : 1;
+				u32 Z : 1;
+				u32 Empty : 1;
+			};
+
+			struct
+			{
+				u32 Index : 3;
+				u32 Empty2 : 1;
+			};
+		};
+
+		TSpatialTreeChildNodeId()
+			: Empty(true)
+		{}
+
+		TSpatialTreeChildNodeId(u32 x, u32 y, u32 z)
+			: X(x), Y(y), Z(z), Empty(false)
+		{}
+
+		TSpatialTreeChildNodeId(u32 index)
+			: Index(index), Empty2(false)
+		{}
+	};
+
+	/** Contains a range of child nodes in a spatial tree node (any or all of the possible child nodes). */
+	template<int Dimension>
+	struct TSpatialTreeChildNodeIdRange
+	{
+		static_assert(sizeof(TSpatialTreeChildNodeIdRange) == -1, "Unsupported dimension count.");
+	};
+
+	/** Specialization of TSpatialTreeChildNodeIdRange for a quad-tree. */
+	template<>
+	struct TSpatialTreeChildNodeIdRange<2>
+	{
+		enum { Dimension = 2};
+
 		union
 		{
 			struct
@@ -87,25 +166,70 @@ namespace bs
 		};
 
 		/** Constructs a range overlapping no nodes. */
-		QuadtreeChildNodeIdRange()
+		TSpatialTreeChildNodeIdRange()
 			: AllBits(0)
 		{}
 
 		/** Constructs a range overlapping a single node. */
-		QuadtreeChildNodeIdRange(QuadtreeChildNodeId child)
+		TSpatialTreeChildNodeIdRange(TSpatialTreeChildNodeId<Dimension> child)
 			: PositiveBits(child.Index), NegativeBits(~child.Index)
 		{}
 
 		/** Checks if the range contains the provided child. */
-		bool Contains(QuadtreeChildNodeId child) const
+		bool Contains(TSpatialTreeChildNodeId<Dimension> child) const
 		{
-			QuadtreeChildNodeIdRange childRange(child);
+			TSpatialTreeChildNodeIdRange childRange(child);
+			return (AllBits & childRange.AllBits) == childRange.AllBits;
+		}
+	};
+
+	/** Specialization of TSpatialTreeChildNodeIdRange for a oct-tree. */
+	template<>
+	struct TSpatialTreeChildNodeIdRange<3>
+	{
+		enum { Dimension = 3};
+
+		union
+		{
+			struct
+			{
+				u32 PositiveX : 1;
+				u32 PositiveY : 1;
+				u32 PositiveZ : 1;
+				u32 NegativeX : 1;
+				u32 NegativeY : 1;
+				u32 NegativeZ : 1;
+			};
+
+			struct
+			{
+				u32 PositiveBits : 3;
+				u32 NegativeBits : 3;
+			};
+
+			u32 AllBits : 6;
+		};
+
+		/** Constructs a range overlapping no nodes. */
+		TSpatialTreeChildNodeIdRange()
+			: AllBits(0)
+		{}
+
+		/** Constructs a range overlapping a single node. */
+		TSpatialTreeChildNodeIdRange(TSpatialTreeChildNodeId<Dimension> child)
+			: PositiveBits(child.Index), NegativeBits(~child.Index)
+		{}
+
+		/** Checks if the range contains the provided child. */
+		bool Contains(TSpatialTreeChildNodeId<Dimension> child) const
+		{
+			TSpatialTreeChildNodeIdRange childRange(child);
 			return (AllBits & childRange.AllBits) == childRange.AllBits;
 		}
 	};
 
 	/**
-	 * Spatial partitioning tree for 2D space.
+	 * Spatial partitioning tree for 1D/2D/3D space (i.e. quadtree for 2D, octree for 3D).
 	 *
 	 * @tparam	ElementType	Type of elements to be stored in the tree.
 	 * @tparam	Options		Class that controls various options of the tree. It must provide the following enums:
@@ -123,14 +247,19 @@ namespace bs
 	 *							- MaximumDepth: Maximum depth of nodes in the tree. Nodes at this depth will not be subdivided
 	 *											even if they element counts go past MaximumElementsPerNode.
 	 *						It must also provide the following methods:
-	 *							- "static simd::Rect2 GetBounds(const ElementType&, void*)"
+	 *							- "static typename TSpatialTreeTraits<Dimension>::SIMDBoundsType GetBounds(const ElementType&, void*)"
 	 *								- Returns the bounds for the provided element
-	 *							- "static void SetElementId(const TQuadtree::ElementId&, void*)"
+	 *							- "static void SetElementId(const TSpatialTree::ElementId&, void*)"
 	 *								- Gets called when element's ID is first assigned or subsequently modified
 	 */
-	template <class ElementType, class Options>
-	class TQuadtree
+	template <typename ElementType, typename Options, u32 Dimension>
+	class TSpatialTree
 	{
+		using SIMDBoundsType = typename TSpatialTreeTraits<Dimension>::SIMDBoundsType;
+		using ScalarBoundsType = typename TSpatialTreeTraits<Dimension>::ScalarBoundsType;
+		using CenterType = typename TSpatialTreeTraits<Dimension>::CenterType;
+		static constexpr u32 kChildNodeCount = TSpatialTreeTraits<Dimension>::kChildNodeCount;
+
 		/**
 		 * A sequential group of elements within a node. If number of elements exceeds the limit of the block multiple
 		 * blocks will be linked together in a linked list fashion.
@@ -147,7 +276,7 @@ namespace bs
 		 */
 		struct NodeElementBoundsSuballocationBlock
 		{
-			simd::Rect2 Bounds[Options::MaximumElementsPerNode];
+			SIMDBoundsType Bounds[Options::MaximumElementsPerNode];
 			NodeElementBoundsSuballocationBlock* NextBlock = nullptr;
 		};
 
@@ -160,7 +289,7 @@ namespace bs
 		};
 
 	public:
-		/** Represents a single quadtree node. */
+		/** Represents a single spatial tree node. */
 		class Node
 		{
 		public:
@@ -168,14 +297,14 @@ namespace bs
 			Node(Node* parent): mParent(parent), mElementCountWithChildren(0), mIsLeaf(true) {}
 
 			/** Returns a child node with the specified index. May return null. */
-			Node* GetChild(QuadtreeChildNodeId child) const { return mChildren[child.Index]; }
+			Node* GetChild(TSpatialTreeChildNodeId<Dimension> child) const { return mChildren[child.Index]; }
 
 			/** Checks has the specified child node been created. */
-			bool HasChild(QuadtreeChildNodeId child) const { return mChildren[child.Index] != nullptr; }
+			bool HasChild(TSpatialTreeChildNodeId<Dimension> child) const { return mChildren[child.Index] != nullptr; }
 
 		private:
 			friend class ElementIterator;
-			friend class TQuadtree;
+			friend class TSpatialTree;
 
 			/**
 			 * Maps an element index within the node to a specific sub-allocation block in which the element is located. Returns pointers
@@ -185,7 +314,7 @@ namespace bs
 
 			NodeElementData mElementData;
 			Node* mParent;
-			Node* mChildren[4] = { nullptr, nullptr, nullptr, nullptr };
+			Node* mChildren[kChildNodeCount] = { };
 			u32 mElementCountWithChildren : 31; /**< Total number of elements including all children of the node. */
 			u32 mIsLeaf : 1;
 		};
@@ -200,27 +329,27 @@ namespace bs
 			NodeBounds() = default;
 
 			/** Initializes a new bounds object using the provided node bounds. */
-			NodeBounds(const simd::Rect2& bounds);
+			NodeBounds(const SIMDBoundsType& bounds);
 
 			/** Returns the bounds of the node this object represents. */
-			const simd::Rect2& GetBounds() const { return mBounds; }
+			const SIMDBoundsType& GetBounds() const { return mBounds; }
 
 			/** Attempts to find a child node that can fully contain the provided bounds. */
-			QuadtreeChildNodeId FindContainingChild(const simd::Rect2& bounds) const;
+			TSpatialTreeChildNodeId<Dimension> FindContainingChild(const SIMDBoundsType& bounds) const;
 
 			/** Returns a range of child nodes that intersect the provided bounds. */
-			QuadtreeChildNodeIdRange FindIntersectingChildren(const simd::Rect2& bounds) const;
+			TSpatialTreeChildNodeIdRange<Dimension> FindIntersectingChildren(const SIMDBoundsType& bounds) const;
 
 			/** Calculates bounds for the provided child node. */
-			NodeBounds GetChild(QuadtreeChildNodeId child) const;
+			NodeBounds GetChild(TSpatialTreeChildNodeId<Dimension> child) const;
 
 		private:
-			simd::Rect2 mBounds;
+			SIMDBoundsType mBounds;
 			float mChildExtent;
 			float mChildOffset;
 		};
 
-		/** Contains a information about a specific quadtree node, to be used during node traversal. */
+		/** Contains information about a specific tree node, to be used during node traversal. */
 		class NodeTraversalContext
 		{
 		public:
@@ -232,15 +361,15 @@ namespace bs
 		};
 
 		/**
-		 * Iterator that iterates over quadtree nodes. By default only the first inserted node will be iterated over and it
+		 * Iterator that iterates over tree nodes. By default only the first inserted node will be iterated over and it
 		 * is up the the user to add new ones using PushChild(). The iterator takes care of updating the node bounds
 		 * accordingly.
 		 */
 		class NodeIterator
 		{
 		public:
-			/** Initializes the iterator, starting with the root quadtree node. */
-			NodeIterator(const TQuadtree& tree);
+			/** Initializes the iterator, starting with the root tree node. */
+			NodeIterator(const TSpatialTree& tree);
 
 			/** Initializes the iterator using a specific node and its bounds. */
 			NodeIterator(const Node* node, const NodeBounds& bounds);
@@ -259,11 +388,11 @@ namespace bs
 			bool MoveNext();
 
 			/** Inserts a child of the current node to be iterated over. */
-			void PushChild(const QuadtreeChildNodeId& child);
+			void PushChild(const TSpatialTreeChildNodeId<Dimension>& child);
 
 		private:
 			NodeTraversalContext mCurrentNodeContext;
-			TInlineArray<NodeTraversalContext, Options::MaximumDepth * 4> mNodeStack;
+			TInlineArray<NodeTraversalContext, Options::MaximumDepth * kChildNodeCount> mNodeStack;
 		};
 
 		/** Iterator that iterates over all elements in a single node. */
@@ -286,7 +415,7 @@ namespace bs
 			 * Returns the bounds of the current element. MoveNext() must be called at least once and it must return true
 			 * prior to attempting to access this data.
 			 */
-			const simd::Rect2& GetCurrentBounds() const { return mCurrentElementBoundsBlock->Bounds[mCurrentIndex]; }
+			const SIMDBoundsType& GetCurrentBounds() const { return mCurrentElementBoundsBlock->Bounds[mCurrentIndex]; }
 
 			/**
 			 * Returns the contents of the current element. MoveNext() must be called at least once and it must return true
@@ -306,7 +435,7 @@ namespace bs
 		{
 		public:
 			/** Constructs an iterator that iterates over all elements in the specified tree that intersect the specified bounds. */
-			AreaIntersectIterator(const TQuadtree& tree, const Rect2& bounds);
+			AreaIntersectIterator(const TSpatialTree& tree, const ScalarBoundsType& bounds);
 
 			/**
 			 * Returns the contents of the current element. MoveNext() must be called at least once and it must return true
@@ -324,25 +453,25 @@ namespace bs
 		private:
 			NodeIterator mNodeIterator;
 			ElementIterator mElementIterator;
-			simd::Rect2 mBounds;
+			SIMDBoundsType mBounds;
 		};
 
 		/**
-		 * Constructs an quadtree with the specified bounds.
+		 * Constructs a spatial tree with the specified bounds.
 		 *
 		 * @param	center		Origin of the root node.
 		 * @param	extent		Extent (half-size) of the root node in all directions;
 		 * @param	context		Optional user context that will be passed along to GetBounds() and SetElementId() methods on the provided Options class.
 		 */
-		TQuadtree(const Vector2& center, float extent, void* context = nullptr);
+		TSpatialTree(const CenterType& center, float extent, void* context = nullptr);
 
-		~TQuadtree() { FreeNode(&mRoot); }
+		~TSpatialTree() { FreeNode(&mRoot); }
 
-		/** Adds a new element to the quadtree. */
+		/** Adds a new element to the tree. */
 		void AddElement(const ElementType& element) { AddElementToNode(element, &mRoot, mRootBounds); }
 
-		/** Removes an existing element from the quadtree. */
-		void RemoveElement(const QuadtreeElementId& elementId);
+		/** Removes an existing element from the tree. */
+		void RemoveElement(const SpatialTreeElementId& elementId);
 
 	private:
 		/**
@@ -355,7 +484,7 @@ namespace bs
 		 * Adds a new element to the node's element list. This method does no additional checks so caller must ensure the node is a leaf node
 		 * and does not need to be subdivided.
 		 */
-		void AddElementToLeafNode(Node* node, const ElementType& element, const simd::Rect2& elementBounds);
+		void AddElementToLeafNode(Node* node, const ElementType& element, const SIMDBoundsType& elementBounds);
 
 		/** Removes the specified element from the node's element list. */
 		void RemoveElementFromLeafNode(Node* node, u32 elementIndexInNode);
@@ -376,8 +505,8 @@ namespace bs
 		PoolAlloc<sizeof(NodeElementBoundsSuballocationBlock), 512, 16> mElementBoundsBlockAllocator;
 	};
 
-	template <class ElementType, class Options>
-	u32 TQuadtree<ElementType, Options>::Node::MapElementIndexToBlock(u32 indexInNode, NodeElementSuballocationBlock** elements, NodeElementBoundsSuballocationBlock** bounds)
+	template <typename ElementType, typename Options, u32 Dimension>
+	u32 TSpatialTree<ElementType, Options, Dimension>::Node::MapElementIndexToBlock(u32 indexInNode, NodeElementSuballocationBlock** elements, NodeElementBoundsSuballocationBlock** bounds)
 	{
 		const u32 groupCount = Math::DivideAndRoundUp(mElementData.ElementCount, (u32)Options::MaximumElementsPerNode);
 		const u32 groupIndex = groupCount - indexInNode / Options::MaximumElementsPerNode - 1;
@@ -393,8 +522,8 @@ namespace bs
 		return indexInNode % Options::MaximumElementsPerNode;
 	}
 
-	template <class ElementType, class Options>
-	TQuadtree<ElementType, Options>::NodeBounds::NodeBounds(const simd::Rect2& bounds)
+	template <typename ElementType, typename Options, u32 Dimension>
+	TSpatialTree<ElementType, Options, Dimension>::NodeBounds::NodeBounds(const SIMDBoundsType& bounds)
 		: mBounds(bounds)
 	{
 		static constexpr float kChildExtentScale = 0.5f * (1.0f + 1.0f / (float)Options::LoosePadding);
@@ -403,8 +532,8 @@ namespace bs
 		mChildOffset = bounds.Extents.X - mChildExtent;
 	}
 
-	template <class ElementType, class Options>
-	QuadtreeChildNodeId TQuadtree<ElementType, Options>::NodeBounds::FindContainingChild(const simd::Rect2& bounds) const
+	template <typename ElementType, typename Options, u32 Dimension>
+	TSpatialTreeChildNodeId<Dimension> TSpatialTree<ElementType, Options, Dimension>::NodeBounds::FindContainingChild(const SIMDBoundsType& bounds) const
 	{
 		auto queryCenter = simd::load<simd::float32x4>(&bounds.Center);
 
@@ -422,7 +551,7 @@ namespace bs
 		auto queryExtents = simd::load<simd::float32x4>(&bounds.Extents);
 		auto childExtent = simd::load_splat<simd::float32x4>(&mChildExtent);
 
-		QuadtreeChildNodeId output;
+		TSpatialTreeChildNodeId<Dimension> output;
 
 		simd::mask_float32x4 mask = simd::cmp_gt(simd::add(queryExtents, diff), childExtent);
 		if(simd::test_bits_any(simd::bit_cast<simd::uint32x4>(mask)) == false)
@@ -438,7 +567,12 @@ namespace bs
 			simd::store(&scalarResult, result);
 
 			output.X = scalarResult.X;
-			output.Y = scalarResult.Y;
+
+			if constexpr(Dimension >= 2)
+				output.Y = scalarResult.Y;
+
+			if constexpr(Dimension >= 3)
+				output.Z = scalarResult.Z;
 
 			output.Empty = false;
 		}
@@ -446,8 +580,8 @@ namespace bs
 		return output;
 	}
 
-	template <class ElementType, class Options>
-	QuadtreeChildNodeIdRange TQuadtree<ElementType, Options>::NodeBounds::FindIntersectingChildren(const simd::Rect2& bounds) const
+	template <typename ElementType, typename Options, u32 Dimension>
+	TSpatialTreeChildNodeIdRange<Dimension> TSpatialTree<ElementType, Options, Dimension>::NodeBounds::FindIntersectingChildren(const SIMDBoundsType& bounds) const
 	{
 		auto queryCenter = simd::load<simd::float32x4>(&bounds.Center);
 		auto queryExtents = simd::load<simd::float32x4>(&bounds.Extents);
@@ -465,7 +599,7 @@ namespace bs
 		auto negativeMax = simd::add(negativeCenter, childExtent);
 		auto positiveMin = simd::sub(positiveCenter, childExtent);
 
-		QuadtreeChildNodeIdRange output;
+		TSpatialTreeChildNodeIdRange<Dimension> output;
 
 		auto ones = simd::make_uint<simd::uint32x4>(1, 1, 1, 1);
 		auto zeroes = simd::make_uint<simd::uint32x4>(0, 0, 0, 0);
@@ -477,7 +611,12 @@ namespace bs
 		simd::store(&scalarResult, result);
 
 		output.PositiveX = scalarResult.X;
-		output.PositiveY = scalarResult.Y;
+
+		if constexpr(Dimension >= 2)
+			output.PositiveY = scalarResult.Y;
+
+		if constexpr(Dimension >= 3)
+			output.PositiveZ = scalarResult.Z;
 
 		mask = simd::cmp_le(queryMin, negativeMax);
 		result = simd::blend(ones, zeroes, mask);
@@ -485,40 +624,58 @@ namespace bs
 		simd::store(&scalarResult, result);
 
 		output.NegativeX = scalarResult.X;
-		output.NegativeY = scalarResult.Y;
+
+		if constexpr(Dimension >= 2)
+			output.NegativeY = scalarResult.Y;
+
+		if constexpr(Dimension >= 3)
+			output.NegativeZ = scalarResult.Z;
 
 		return output;
 	}
 
-	template <class ElementType, class Options>
-	typename TQuadtree<ElementType, Options>::NodeBounds TQuadtree<ElementType, Options>::NodeBounds::GetChild(QuadtreeChildNodeId child) const
+	template <typename ElementType, typename Options, u32 Dimension>
+	typename TSpatialTree<ElementType, Options, Dimension>::NodeBounds TSpatialTree<ElementType, Options, Dimension>::NodeBounds::GetChild(TSpatialTreeChildNodeId<Dimension> child) const
 	{
-		static constexpr const float map[2] = { -1.0f, 1.0f };
+		static constexpr float kMap[2] = { -1.0f, 1.0f };
 
-		return NodeBounds(
-			simd::Rect2(
-				Vector2(
-					mBounds.Center.X + mChildOffset * map[child.X],
-					mBounds.Center.Y + mChildOffset * map[child.Y]),
-				mChildExtent));
+		if constexpr(Dimension == 2)
+		{
+			return NodeBounds(
+				SIMDBoundsType(
+					CenterType(
+						mBounds.Center.X + mChildOffset * kMap[child.X],
+						mBounds.Center.Y + mChildOffset * kMap[child.Y]),
+					mChildExtent));
+		}
+		else if constexpr(Dimension == 3)
+		{
+			return NodeBounds(
+				SIMDBoundsType(
+					CenterType(
+						mBounds.Center.X + mChildOffset * kMap[child.X],
+						mBounds.Center.Y + mChildOffset * kMap[child.Y],
+						mBounds.Center.Z + mChildOffset * kMap[child.Z]),
+					mChildExtent));
+		}
 	}
 
-	template <class ElementType, class Options>
-	TQuadtree<ElementType, Options>::NodeIterator::NodeIterator(const TQuadtree& tree)
+	template <typename ElementType, typename Options, u32 Dimension>
+	TSpatialTree<ElementType, Options, Dimension>::NodeIterator::NodeIterator(const TSpatialTree& tree)
 		: mCurrentNodeContext(NodeTraversalContext(&tree.mRoot, tree.mRootBounds))
 	{
 		mNodeStack.Add(mCurrentNodeContext);
 	}
 
-	template <class ElementType, class Options>
-	TQuadtree<ElementType, Options>::NodeIterator::NodeIterator(const Node* node, const NodeBounds& bounds)
+	template <typename ElementType, typename Options, u32 Dimension>
+	TSpatialTree<ElementType, Options, Dimension>::NodeIterator::NodeIterator(const Node* node, const NodeBounds& bounds)
 		: mCurrentNodeContext(NodeTraversalContext(node, bounds))
 	{
 		mNodeStack.Add(mCurrentNodeContext);
 	}
 
-	template <class ElementType, class Options>
-	bool TQuadtree<ElementType, Options>::NodeIterator::MoveNext()
+	template <typename ElementType, typename Options, u32 Dimension>
+	bool TSpatialTree<ElementType, Options, Dimension>::NodeIterator::MoveNext()
 	{
 		if(mNodeStack.Empty())
 		{
@@ -532,8 +689,8 @@ namespace bs
 		return true;
 	}
 
-	template <class ElementType, class Options>
-	void TQuadtree<ElementType, Options>::NodeIterator::PushChild(const QuadtreeChildNodeId& child)
+	template <typename ElementType, typename Options, u32 Dimension>
+	void TSpatialTree<ElementType, Options, Dimension>::NodeIterator::PushChild(const TSpatialTreeChildNodeId<Dimension>& child)
 	{
 		Node* const childNode = mCurrentNodeContext.Node->GetChild(child);
 		NodeBounds childBounds = mCurrentNodeContext.Bounds.GetChild(child);
@@ -541,8 +698,8 @@ namespace bs
 		mNodeStack.EmplaceBack(childNode, childBounds);
 	}
 
-	template <class ElementType, class Options>
-	TQuadtree<ElementType, Options>::ElementIterator::ElementIterator(const Node* node)
+	template <typename ElementType, typename Options, u32 Dimension>
+	TSpatialTree<ElementType, Options, Dimension>::ElementIterator::ElementIterator(const Node* node)
 		: mCurrentIndex(-1)
 		, mCurrentElementBlock(node->mElementData.ElementsBlock)
 		, mCurrentElementBoundsBlock(node->mElementData.ElementBoundsBlock)
@@ -551,8 +708,8 @@ namespace bs
 		mEndOfGroupElementIndex = node->mElementData.ElementCount - (groupCount - 1) * Options::MaximumElementsPerNode;
 	}
 
-	template <class ElementType, class Options>
-	bool TQuadtree<ElementType, Options>::ElementIterator::MoveNext()
+	template <typename ElementType, typename Options, u32 Dimension>
+	bool TSpatialTree<ElementType, Options, Dimension>::ElementIterator::MoveNext()
 	{
 		if(!mCurrentElementBlock)
 			return false;
@@ -573,20 +730,20 @@ namespace bs
 		return true;
 	}
 
-	template <class ElementType, class Options>
-	TQuadtree<ElementType, Options>::AreaIntersectIterator::AreaIntersectIterator(const TQuadtree& tree, const Rect2& bounds)
-		: mNodeIterator(tree), mBounds(simd::Rect2(bounds))
+	template <typename ElementType, typename Options, u32 Dimension>
+	TSpatialTree<ElementType, Options, Dimension>::AreaIntersectIterator::AreaIntersectIterator(const TSpatialTree& tree, const ScalarBoundsType& bounds)
+		: mNodeIterator(tree), mBounds(SIMDBoundsType(bounds))
 	{}
 
-	template <class ElementType, class Options>
-	bool TQuadtree<ElementType, Options>::AreaIntersectIterator::MoveNext()
+	template <typename ElementType, typename Options, u32 Dimension>
+	bool TSpatialTree<ElementType, Options, Dimension>::AreaIntersectIterator::MoveNext()
 	{
 		while(true)
 		{
 			// First check elements of the current node (if any)
 			while(mElementIterator.MoveNext())
 			{
-				const simd::Rect2& bounds = mElementIterator.GetCurrentBounds();
+				const SIMDBoundsType& bounds = mElementIterator.GetCurrentBounds();
 				if(bounds.Overlaps(mBounds))
 					return true;
 			}
@@ -599,8 +756,8 @@ namespace bs
 			mElementIterator = ElementIterator(nodeTraversalContext.Node);
 
 			// Add all intersecting child nodes to the iterator
-			QuadtreeChildNodeIdRange childRange = nodeTraversalContext.Bounds.FindIntersectingChildren(mBounds);
-			for(u32 i = 0; i < 4; i++)
+			TSpatialTreeChildNodeIdRange<Dimension> childRange = nodeTraversalContext.Bounds.FindIntersectingChildren(mBounds);
+			for(u32 i = 0; i < kChildNodeCount; i++)
 			{
 				if(childRange.Contains(i) && nodeTraversalContext.Node->HasChild(i))
 					mNodeIterator.PushChild(i);
@@ -610,15 +767,15 @@ namespace bs
 		return false;
 	}
 
-	template <class ElementType, class Options>
-	TQuadtree<ElementType, Options>::TQuadtree(const Vector2& center, float extent, void* context)
-		: mRootBounds(simd::Rect2(center, extent))
+	template <typename ElementType, typename Options, u32 Dimension>
+	TSpatialTree<ElementType, Options, Dimension>::TSpatialTree(const CenterType& center, float extent, void* context)
+		: mRootBounds(SIMDBoundsType(center, extent))
 		, mMinimumNodeExtent(extent * std::pow(0.5f * (1.0f + 1.0f / (float)Options::LoosePadding), Options::MaximumDepth))
 		, mContext(context)
 	{ }
 
-	template <class ElementType, class Options>
-	void TQuadtree<ElementType, Options>::RemoveElement(const QuadtreeElementId& elementId)
+	template <typename ElementType, typename Options, u32 Dimension>
+	void TSpatialTree<ElementType, Options, Dimension>::RemoveElement(const SpatialTreeElementId& elementId)
 	{
 		Node* node = (Node*)elementId.Node;
 
@@ -642,7 +799,7 @@ namespace bs
 			// Add all the child node elements to the current node
 			auto fnAddChildElementsRecursive = [this, node](Node* nodeToIterate, auto&& fnAddChilElementsRecursive) -> void
 			{
-				for(u32 i = 0; i < 4; i++)
+				for(u32 i = 0; i < kChildNodeCount; i++)
 				{
 					if(nodeToIterate->HasChild(i))
 					{
@@ -662,7 +819,7 @@ namespace bs
 			node->mIsLeaf = true;
 
 			// Recursively delete all child nodes
-			for(u32 i = 0; i < 4; i++)
+			for(u32 i = 0; i < kChildNodeCount; i++)
 			{
 				if(node->mChildren[i])
 				{
@@ -675,15 +832,15 @@ namespace bs
 		}
 	}
 
-	template <class ElementType, class Options>
-	void TQuadtree<ElementType, Options>::AddElementToNode(const ElementType& element, Node* node, const NodeBounds& nodeBounds)
+	template <typename ElementType, typename Options, u32 Dimension>
+	void TSpatialTree<ElementType, Options, Dimension>::AddElementToNode(const ElementType& element, Node* node, const NodeBounds& nodeBounds)
 	{
-		const simd::Rect2 elementBounds = Options::GetBounds(element, mContext);
+		const SIMDBoundsType elementBounds = Options::GetBounds(element, mContext);
 
 		++node->mElementCountWithChildren;
 		if(node->mIsLeaf)
 		{
-			const simd::Rect2& bounds = nodeBounds.GetBounds();
+			const SIMDBoundsType& bounds = nodeBounds.GetBounds();
 
 			// Check if the node has too many elements and should be broken up
 			if((node->mElementData.ElementCount + 1) > Options::MaximumElementsPerNode && bounds.Extents.X > mMinimumNodeExtent)
@@ -716,7 +873,7 @@ namespace bs
 		else
 		{
 			// Attempt to find a child the element fits into
-			QuadtreeChildNodeId child = nodeBounds.FindContainingChild(elementBounds);
+			TSpatialTreeChildNodeId<Dimension> child = nodeBounds.FindContainingChild(elementBounds);
 
 			if(child.Empty)
 			{
@@ -734,8 +891,8 @@ namespace bs
 		}
 	}
 
-	template <class ElementType, class Options>
-	void TQuadtree<ElementType, Options>::AddElementToLeafNode(Node* node, const ElementType& element, const simd::Rect2& elementBounds)
+	template <typename ElementType, typename Options, u32 Dimension>
+	void TSpatialTree<ElementType, Options, Dimension>::AddElementToLeafNode(Node* node, const ElementType& element, const SIMDBoundsType& elementBounds)
 	{
 		NodeElementData& elementData = node->mElementData;
 
@@ -756,13 +913,13 @@ namespace bs
 		elementData.ElementBoundsBlock->Bounds[freeElementIndex] = elementBounds;
 
 		const u32 elementIndex = elementData.ElementCount;
-		Options::SetElementId(element, QuadtreeElementId(node, elementIndex), mContext);
+		Options::SetElementId(element, SpatialTreeElementId(node, elementIndex), mContext);
 
 		++elementData.ElementCount;
 	}
 
-	template <class ElementType, class Options>
-	void TQuadtree<ElementType, Options>::RemoveElementFromLeafNode(Node* node, u32 elementIndexInNode)
+	template <typename ElementType, typename Options, u32 Dimension>
+	void TSpatialTree<ElementType, Options, Dimension>::RemoveElementFromLeafNode(Node* node, u32 elementIndexInNode)
 	{
 		NodeElementData& elementData = node->mElementData;
 
@@ -779,7 +936,7 @@ namespace bs
 			std::swap(elementsBlock->Elements[elementIndexInNode], lastElementsBlock->Elements[lastElementIdx]);
 			std::swap(elementBoundsBlock->Bounds[elementIndexInNode], lastElementBoundsBlock->Bounds[lastElementIdx]);
 
-			Options::SetElementId(elementsBlock->Elements[elementIndexInNode], QuadtreeElementId(node, elementIndexInNode), mContext);
+			Options::SetElementId(elementsBlock->Elements[elementIndexInNode], SpatialTreeElementId(node, elementIndexInNode), mContext);
 		}
 
 		if(lastElementIdx == 0) // Last element in that group, remove it completely
@@ -794,8 +951,8 @@ namespace bs
 		--elementData.ElementCount;
 	}
 
-	template <class ElementType, class Options>
-	void TQuadtree<ElementType, Options>::FreeElementData(NodeElementData& elementData)
+	template <typename ElementType, typename Options, u32 Dimension>
+	void TSpatialTree<ElementType, Options, Dimension>::FreeElementData(NodeElementData& elementData)
 	{
 		// Free the element and element bounds blocks from this node
 		NodeElementSuballocationBlock* currentElementsBlock = elementData.ElementsBlock;
@@ -821,8 +978,8 @@ namespace bs
 		elementData.ElementCount = 0;
 	}
 
-	template <class ElementType, class Options>
-	void TQuadtree<ElementType, Options>::FreeNode(Node* node)
+	template <typename ElementType, typename Options, u32 Dimension>
+	void TSpatialTree<ElementType, Options, Dimension>::FreeNode(Node* node)
 	{
 		FreeElementData(node->mElementData);
 
@@ -835,6 +992,12 @@ namespace bs
 			}
 		}
 	}
+
+	template<typename ElementType, typename Options>
+	using TOctTree = TSpatialTree<ElementType, Options, 3>;
+
+	template<typename ElementType, typename Options>
+	using TQuadTree = TSpatialTree<ElementType, Options, 2>;
 
 	/** @} */
 } // namespace bs

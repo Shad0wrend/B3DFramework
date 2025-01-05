@@ -53,7 +53,7 @@ typedef TOctree<u32, DebugOctreeOptions> DebugOctree;
 struct DebugQuadtreeElement
 {
 	Rect2 Box;
-	mutable QuadtreeElementId QuadtreeId;
+	mutable SpatialTreeElementId QuadtreeId;
 };
 
 struct DebugQuadtreeData
@@ -77,14 +77,14 @@ struct DebugQuadtreeOptions
 		return simd::Rect2(quadtreeData->Elements[elem].Box);
 	}
 
-	static void SetElementId(u32 elem, const QuadtreeElementId& id, void* context)
+	static void SetElementId(u32 elem, const SpatialTreeElementId& id, void* context)
 	{
 		DebugQuadtreeData* quadtreeData = (DebugQuadtreeData*)context;
 		quadtreeData->Elements[elem].QuadtreeId = id;
 	}
 };
 
-typedef TQuadtree<u32, DebugQuadtreeOptions> DebugQuadtree;
+typedef TQuadTree<u32, DebugQuadtreeOptions> DebugQuadtree;
 
 void UtilityTestSuite::StartUp()
 {
