@@ -136,11 +136,29 @@ namespace bs
 		 */
 		void MarkContentDirty(GUIElement* elem);
 
+		/**
+		 * Marks the element layout as dirty. This means layout for the element and all child elements will be re-calculated.
+		 *
+		 * Note you almost always want to call this method on a parent of the GUI element whose layout needs to update. In particular,
+		 * you want to call it on the top-most parent that doesn't have a fixed size. This is because size changes in a child element
+		 * can affect its siblings as well as parents, if those elements are using automatic layouts.
+		 *
+		 * If @p element is null, then entire widget's layout will be marked as dirty.
+		 */
+		void MarkLayoutDirty(GUIElement* element) { mDirtyLayoutOrAbsoluteCoordinates.insert(element); }
+
+		/**
+		 * Marks the element's absolute coordinates as dirty. This will trigger a recalculation of absolute coordinates for
+		 * all the children of @p element. You should call this when a GUI element moves, or when the area its children
+		 * are viewed through changes (e.g. scroll area is scrolled).
+		 */
+		void MarkAbsoluteCoordinatesDirty(GUIElement* element) { mDirtyLayoutOrAbsoluteCoordinates.insert(element); }
+
 		/**	Updates the layout of all child elements, repositioning and resizing them as needed. */
 		void UpdateLayout();
 
 		/**	Updates the layout of the provided element, and queues content updates. */
-		void UpdateLayout(GUIElement* elem);
+		void UpdateLayout(GUIElement* element);
 
 		/**
 		 * Updates internal transform values from the specified scene object, in case that scene object's transform changed
@@ -201,6 +219,8 @@ namespace bs
 
 		Set<GUIRenderable*> mDirtyContents;
 		Set<GUIRenderable*> mDirtyContentsTemp;
+
+		UnorderedSet<GUIElement*> mDirtyLayoutOrAbsoluteCoordinates;
 
 		mutable u64 mCachedRTId = 0;
 		mutable bool mWidgetIsDirty = false;

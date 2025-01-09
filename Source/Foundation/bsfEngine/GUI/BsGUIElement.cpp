@@ -161,7 +161,7 @@ Rect2I GUIElement::CalculateBoundsRelativeTo(GUIElement* relativeTo)
 	if(relativeTo != nullptr)
 		anchorBounds = relativeTo->GetAbsoluteBounds();
 
-	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsDirty() && mParentWidget != nullptr)
+	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsLayoutDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
 	Rect2I bounds = GetCachedAbsoluteBounds();
@@ -189,7 +189,7 @@ void GUIElement::SetBounds(const Rect2I& bounds)
 
 Rect2I GUIElement::GetAbsoluteBounds() const
 {
-	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsDirty() && mParentWidget != nullptr)
+	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsLayoutDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
 	return GetCachedAbsoluteBounds();
@@ -225,7 +225,8 @@ Rect2I GUIElement::GetScreenBounds() const
 
 void GUIElement::MarkAsClean()
 {
-	mFlags &= ~GUIElem_Dirty;
+	mFlags.Unset(GUIElementInternalStateFlag::LayoutDirty);
+	mFlags.Unset(GUIElementInternalStateFlag::AbsoluteCoordinatesDirty);
 }
 
 void GUIElement::MarkLayoutAsDirty()
@@ -233,10 +234,29 @@ void GUIElement::MarkLayoutAsDirty()
 	if(!IsVisible())
 		return;
 
-	if(mLayoutUpdateParent != nullptr)
-		mLayoutUpdateParent->mFlags |= GUIElem_Dirty;
-	else
-		mFlags |= GUIElem_Dirty;
+	GUIElement* const layoutUpdateParent = mLayoutUpdateParent != nullptr ? mLayoutUpdateParent : GetParent();
+	bool isLayoutDirtyOld = false;
+
+	if(layoutUpdateParent != nullptr)
+	{
+		isLayoutDirtyOld = layoutUpdateParent->mFlags.IsSet(GUIElementInternalStateFlag::LayoutDirty);
+		layoutUpdateParent->mFlags.Set(GUIElementInternalStateFlag::LayoutDirty);
+	}
+
+	if(mParentWidget != nullptr && !isLayoutDirtyOld)
+		mParentWidget->MarkLayoutDirty(layoutUpdateParent);
+}
+
+void GUIElement::MarkAbsoluteCoordinatesAsDirty()
+{
+	if(!IsVisible())
+		return;
+
+	const bool areAbsoluteCoordinatesDirtyOld = mFlags.IsSet(GUIElementInternalStateFlag::AbsoluteCoordinatesDirty);
+	mFlags.Set(GUIElementInternalStateFlag::AbsoluteCoordinatesDirty);
+
+	if(mParentWidget != nullptr && !areAbsoluteCoordinatesDirtyOld)
+		mParentWidget->MarkAbsoluteCoordinatesDirty(this);
 }
 
 void GUIElement::MarkContentAsDirty()
@@ -263,18 +283,18 @@ void GUIElement::SetVisible(bool visible)
 	if(!IsActive())
 		return;
 
-	bool visibleSelf = (mFlags & GUIElem_HiddenSelf) == 0;
+	bool visibleSelf = !mFlags.IsSet(GUIElementInternalStateFlag::HiddenSelf);
 	if(visibleSelf != visible)
 	{
 		// If making an element visible make sure to mark layout as dirty, as we didn't track any dirty flags while the element was inactive
 		if(!visible)
 		{
-			mFlags |= GUIElem_HiddenSelf;
+			mFlags.Set(GUIElementInternalStateFlag::HiddenSelf);
 			SetVisibleRecursive(false);
 		}
 		else
 		{
-			mFlags &= ~GUIElem_HiddenSelf;
+			mFlags.Unset(GUIElementInternalStateFlag::HiddenSelf);
 
 			if(mParent == nullptr || mParent->IsVisible())
 				SetVisibleRecursive(true);
@@ -284,7 +304,7 @@ void GUIElement::SetVisible(bool visible)
 
 void GUIElement::SetVisibleRecursive(bool visible)
 {
-	bool isVisible = (mFlags & GUIElem_Hidden) == 0;
+	bool isVisible = !mFlags.IsSet(GUIElementInternalStateFlag::Hidden);
 	if(isVisible == visible)
 		return;
 
@@ -293,7 +313,7 @@ void GUIElement::SetVisibleRecursive(bool visible)
 		if(mParentWidget)
 			mParentWidget->NotifyElementVisibilityChanged(this, false);
 
-		mFlags |= GUIElem_Hidden;
+		mFlags.Set(GUIElementInternalStateFlag::Hidden);
 		MarkMeshAsDirty();
 
 		for(auto& child : mChildren)
@@ -301,10 +321,10 @@ void GUIElement::SetVisibleRecursive(bool visible)
 	}
 	else
 	{
-		bool childVisibleSelf = (mFlags & GUIElem_HiddenSelf) == 0;
+		bool childVisibleSelf = !mFlags.IsSet(GUIElementInternalStateFlag::HiddenSelf);
 		if(childVisibleSelf)
 		{
-			mFlags &= ~GUIElem_Hidden;
+			mFlags.Unset(GUIElementInternalStateFlag::Hidden);
 
 			if(mParentWidget)
 				mParentWidget->NotifyElementVisibilityChanged(this, true);
@@ -319,9 +339,9 @@ void GUIElement::SetVisibleRecursive(bool visible)
 
 void GUIElement::SetActive(bool active)
 {
-	static const u8 kActiveFlags = GUIElem_InactiveSelf | GUIElem_HiddenSelf;
+	static const GUIElementInternalStateFlags kActiveFlags = GUIElementInternalStateFlag::InactiveSelf | GUIElementInternalStateFlag::HiddenSelf;
 
-	bool activeSelf = (mFlags & GUIElem_InactiveSelf) == 0;
+	bool activeSelf = !mFlags.IsSet(GUIElementInternalStateFlag::InactiveSelf);
 	if(activeSelf != active)
 	{
 		if(!active)
@@ -356,7 +376,7 @@ void GUIElement::SetActive(bool active)
 
 void GUIElement::SetActiveRecursive(bool active)
 {
-	bool isActive = (mFlags & GUIElem_Inactive) == 0;
+	bool isActive = !mFlags.IsSet(GUIElementInternalStateFlag::Inactive);
 	if(isActive == active)
 		return;
 
@@ -364,17 +384,17 @@ void GUIElement::SetActiveRecursive(bool active)
 	{
 		MarkLayoutAsDirty();
 
-		mFlags |= GUIElem_Inactive;
+		mFlags.Set(GUIElementInternalStateFlag::Inactive);
 
 		for(auto& child : mChildren)
 			child->SetActiveRecursive(false);
 	}
 	else
 	{
-		bool childActiveSelf = (mFlags & GUIElem_InactiveSelf) == 0;
+		bool childActiveSelf = !mFlags.IsSet(GUIElementInternalStateFlag::InactiveSelf);
 		if(childActiveSelf)
 		{
-			mFlags &= ~GUIElem_Inactive;
+			mFlags.Unset(GUIElementInternalStateFlag::Inactive);
 			MarkLayoutAsDirty();
 
 			for(auto& child : mChildren)
@@ -385,13 +405,13 @@ void GUIElement::SetActiveRecursive(bool active)
 
 void GUIElement::SetDisabled(bool disabled)
 {
-	bool disabledSelf = (mFlags & GUIElem_DisabledSelf) != 0;
+	bool disabledSelf = mFlags.IsSet(GUIElementInternalStateFlag::DisabledSelf);
 	if(disabledSelf != disabled)
 	{
 		if(!disabled)
-			mFlags &= ~GUIElem_DisabledSelf;
+			mFlags.Unset(GUIElementInternalStateFlag::DisabledSelf);
 		else
-			mFlags |= GUIElem_DisabledSelf;
+			mFlags.Set(GUIElementInternalStateFlag::DisabledSelf);
 
 		SetDisabledRecursive(disabled);
 	}
@@ -399,16 +419,16 @@ void GUIElement::SetDisabled(bool disabled)
 
 void GUIElement::SetDisabledRecursive(bool disabled)
 {
-	bool isDisabled = (mFlags & GUIElem_Disabled) != 0;
+	bool isDisabled = mFlags.IsSet(GUIElementInternalStateFlag::Disabled);
 	if(isDisabled == disabled)
 		return;
 
 	if(!disabled)
 	{
-		bool disabledSelf = (mFlags & GUIElem_DisabledSelf) != 0;
+		bool disabledSelf = mFlags.IsSet(GUIElementInternalStateFlag::DisabledSelf);
 		if(!disabledSelf)
 		{
-			mFlags &= ~GUIElem_Disabled;
+			mFlags.Unset(GUIElementInternalStateFlag::Disabled);
 
 			for(auto& child : mChildren)
 				child->SetDisabledRecursive(false);
@@ -416,7 +436,7 @@ void GUIElement::SetDisabledRecursive(bool disabled)
 	}
 	else
 	{
-		mFlags |= GUIElem_Disabled;
+		mFlags.Set(GUIElementInternalStateFlag::Disabled);
 
 		for(auto& child : mChildren)
 			child->SetDisabledRecursive(true);

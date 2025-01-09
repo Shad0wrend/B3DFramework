@@ -19,6 +19,22 @@ namespace bs
 	 *  @{
 	 */
 
+	/**	Flags that signal the state of the GUI element. */
+	enum class GUIElementInternalStateFlag 
+	{
+		LayoutDirty = 1 << 0, /**< GUI element is requesting layout update. Set if e.g. element's optimal size changes. */
+		Hidden = 1 << 1, /**< GUI element is not visible (but may still take up space in the layout). */
+		Inactive = 1 << 2, /**< GUI element is not active (is not visible and will not take up space in the layout). */
+		HiddenSelf = 1 << 3, /**< Same as Hidden, but set only on the element that was explicitly hidden, while Hidden will also be set on all children of such element. */
+		InactiveSelf = 1 << 4, /**< Same as Inactive, but set only on the element that was explicitly made inactive, while Inactive will also be set on all children of such element. */
+		Disabled = 1 << 5, /**< GUI element is grayed out and cannot be interacted with. */
+		DisabledSelf = 1 << 6, /**< Same as Disabled, but set only on the element that was explicitly disabled, while Disabled will also be set on all children of such element. */
+		AbsoluteCoordinatesDirty = 1 << 7 /**< GUI element is requesting update for absolute coordinates of all its children. Set if e.g. scroll area is scrolled. */
+	};
+
+	using GUIElementInternalStateFlags = Flags<GUIElementInternalStateFlag>;
+	B3D_FLAGS_OPERATORS(GUIElementInternalStateFlag)
+
 	/**
 	 * Contains style sheet rule for a GUI element, along with state rule for the particular state the GUI element is currently in.
 	 * If used for pseudo-elements, also contains the name of the pseudo element the rule is for.
@@ -55,18 +71,6 @@ namespace bs
 		};
 
 	protected:
-		/**	Flags that signal the state of the GUI element. */
-		enum GUIElementFlags
-		{
-			GUIElem_Dirty = 0x01,
-			GUIElem_Hidden = 0x02,
-			GUIElem_Inactive = 0x04,
-			GUIElem_HiddenSelf = 0x08,
-			GUIElem_InactiveSelf = 0x10,
-			GUIElem_Disabled = 0x20,
-			GUIElem_DisabledSelf = 0x40
-		};
-
 	public:
 		GUIElement() = default;
 		GUIElement(const GUISizeConstraints& dimensions);
@@ -265,6 +269,12 @@ namespace bs
 		/**	Return the child element at the specified index.*/
 		GUIElement* GetChild(u32 idx) const { return mChildren[idx]; }
 
+		/**
+		 * Returns all children that can be seen through the parent's visible area (i.e. all elements that are not culled or explicitly made invisible). Note this
+		 * may return all child elements on GUI elements that do not support culling.
+		 */
+		virtual const TInlineArray<GUIElement*, 4>& GetVisibleChildren() const { return mChildren; }
+
 		/**	Calculates the optimal size for the GUI element, ignoring size constraints. */
 		virtual Vector2I CalculateUnconstrainedOptimalSize() const = 0;
 
@@ -310,16 +320,16 @@ namespace bs
 		GUIWidget* GetParentWidget() const { return mParentWidget; }
 
 		/**	Checks if element is visible or hidden. */
-		bool IsVisible() const { return (mFlags & GUIElem_Hidden) == 0; }
+		bool IsVisible() const { return !mFlags.IsSet(GUIElementInternalStateFlag::Hidden); }
 
 		/**
 		 * Checks if element is active or inactive. Inactive elements are not visible, don't take up space
 		 * in their parent layouts, and can't be interacted with.
 		 */
-		bool IsActive() const { return (mFlags & GUIElem_Inactive) == 0; }
+		bool IsActive() const { return !mFlags.IsSet(GUIElementInternalStateFlag::Inactive); }
 
 		/** Checks if element is disabled. Disabled elements cannot be interacted with and have a faded out appearance. */
-		bool IsDisabled() const { return (mFlags & GUIElem_Disabled) != 0; }
+		bool IsDisabled() const { return mFlags.IsSet(GUIElementInternalStateFlag::Disabled); }
 
 		/**
 		 * Internal version of setVisible() that doesn't modify local visibility, instead it is only meant to be called
@@ -359,6 +369,13 @@ namespace bs
 		/**	Marks the element's dimensions as dirty, triggering a layout rebuild. */
 		void MarkLayoutAsDirty();
 
+		/**
+		 * Marks the element's absolute coordinates as dirty. This is usually true when the parent moves but relative
+		 * positions/sizes of children remain unchanged. Or when area through which children are seen changes. Both
+		 * cases are common for scroll areas.
+		 */
+		void MarkAbsoluteCoordinatesAsDirty();
+
 		/**	Marks the element's contents as dirty, which causes the sprite meshes to be recreated from scratch. */
 		void MarkContentAsDirty();
 
@@ -369,8 +386,11 @@ namespace bs
 		 */
 		void MarkMeshAsDirty();
 
-		/**	Returns true if elements contents have changed since last update. */
-		bool IsDirty() const { return (mFlags & GUIElem_Dirty) != 0; }
+		/**	Returns true if the element requires layout update (e.g. if its optimal size has changed). */
+		bool IsLayoutDirty() const { return mFlags.IsSet(GUIElementInternalStateFlag::LayoutDirty); }
+
+		/** Returns true if absolute coordinates of child elements need to be updated (e.g. element is a scroll area and it has been scrolled). */
+		bool AreAbsoluteCoordinatesDirty() const { return mFlags.IsSet(GUIElementInternalStateFlag::AbsoluteCoordinatesDirty); }
 
 		/**	Marks the element contents to be up to date (meaning it's processed by the GUI system). */
 		void MarkAsClean();
@@ -417,7 +437,7 @@ namespace bs
 		GUIElement* mParent = nullptr; /**< Direct parent of this element. */
 		TInlineArray<GUIElement*, 4> mChildren;
 
-		u8 mFlags = GUIElem_Dirty;
+		GUIElementInternalStateFlags mFlags = GUIElementInternalStateFlag::LayoutDirty;
 		bool mIsPendingDestroy = false;
 
 		GUISizeConstraints mSizeConstraints; /**< Constraints on the element size as set by the style, or set explicitly at runtime. */

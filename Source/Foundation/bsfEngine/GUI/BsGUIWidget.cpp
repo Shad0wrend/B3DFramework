@@ -80,6 +80,7 @@ void GUIWidget::DestroyInternal()
 
 	mElements.clear();
 	mDirtyContents.clear();
+	mDirtyLayoutOrAbsoluteCoordinates.clear();
 }
 
 void GUIWidget::SetDepth(u8 depth)
@@ -170,49 +171,104 @@ void GUIWidget::UpdateLayout()
 		}
 	}
 
-	B3DMarkAllocatorFrame();
-
-	// Determine dirty contents and layouts
-	FrameStack<GUIElement*> todo;
-	todo.push(mPanel);
-
-	while(!todo.empty())
+	// Perform layout updates
+	for(auto it = mDirtyLayoutOrAbsoluteCoordinates.begin(); it != mDirtyLayoutOrAbsoluteCoordinates.end(); )
 	{
-		GUIElement* currentElem = todo.top();
-		todo.pop();
+		GUIElement* const element = *it;
 
-		if(currentElem->IsDirty())
+		if(element != nullptr && !element->IsLayoutDirty()) // If not dirty, we likely already updated layout for one of its parents
 		{
-			GUIElement* updateParent = currentElem->GetUpdateParent();
-			B3D_ASSERT(updateParent != nullptr || currentElem == mPanel);
+			it = mDirtyLayoutOrAbsoluteCoordinates.erase(it);
+			continue;
+		}
 
-			if(updateParent != nullptr)
-				UpdateLayout(updateParent);
-			else // Must be root panel
-				UpdateLayout(mPanel);
+		// Check if there are any parents that are also dirty, in which case update those
+		GUIElement* rootDirtyElement = element;
+		if(element != nullptr)
+		{
+			GUIElement* currentElement = element;
+			while(true)
+			{
+				GUIElement* const parent = currentElement->GetParent();
+				if(parent == nullptr)
+					break;
+
+				currentElement = parent;
+
+				if(currentElement->IsLayoutDirty())
+					rootDirtyElement = currentElement;
+			}
 		}
 		else
-		{
-			u32 numChildren = currentElem->GetChildCount();
-			for(u32 i = 0; i < numChildren; i++)
-				todo.push(currentElem->GetChild(i));
-		}
+			rootDirtyElement = mPanel;
+
+		B3D_ASSERT(rootDirtyElement != nullptr || rootDirtyElement == mPanel);
+
+		if(rootDirtyElement != nullptr)
+			UpdateLayout(rootDirtyElement);
+		else // Must be root panel
+			UpdateLayout(mPanel);
+
+		it = mDirtyLayoutOrAbsoluteCoordinates.erase(it);
+		
 	}
 
-	B3DClearAllocatorFrame();
+	// Do another pass or remaining elements, updating absolute coordinates
+	for(auto it = mDirtyLayoutOrAbsoluteCoordinates.begin(); it != mDirtyLayoutOrAbsoluteCoordinates.end(); )
+	{
+		GUIElement* const element = *it;
+
+		if(!element->AreAbsoluteCoordinatesDirty()) // If not dirty, we likely already updated absolute coordinates for one of its parents
+		{
+			it = mDirtyLayoutOrAbsoluteCoordinates.erase(it);
+			continue;
+		}
+
+		// Check if there are any parents that are also dirty, in which case update those
+		GUIElement* rootDirtyElement = element;
+		if(element != nullptr)
+		{
+			GUIElement* currentElement = element;
+			while(true)
+			{
+				GUIElement* const parent = currentElement->GetParent();
+				if(parent == nullptr)
+					break;
+
+				currentElement = parent;
+
+				if(currentElement->AreAbsoluteCoordinatesDirty())
+					rootDirtyElement = currentElement;
+			}
+		}
+		else
+			rootDirtyElement = mPanel;
+
+		B3D_ASSERT(rootDirtyElement != nullptr || rootDirtyElement == mPanel);
+		rootDirtyElement->UpdateAbsoluteCoordinatesForChildren();
+
+		// Mark meshes as dirty (clip bounds could have changed) & clear dirty flags
+		auto fnMarkMeshAsDirtyAndClearDirtyFlags = [this](GUIElement* element, auto&& fnMarkMeshAsDirtyAndClearDirtyFlags) -> void
+		{
+			MarkMeshDirty(element);
+			element->MarkAsClean();
+
+			const TInlineArray<GUIElement*, 4>& visibleChildren = element->GetVisibleChildren();
+			for(const auto child : visibleChildren)
+				fnMarkMeshAsDirtyAndClearDirtyFlags(child, fnMarkMeshAsDirtyAndClearDirtyFlags);
+		};
+
+		fnMarkMeshAsDirtyAndClearDirtyFlags(rootDirtyElement, fnMarkMeshAsDirtyAndClearDirtyFlags);
+		it = mDirtyLayoutOrAbsoluteCoordinates.erase(it);
+	}
 }
 
-void GUIWidget::UpdateLayout(GUIElement* elem)
+void GUIWidget::UpdateLayout(GUIElement* element)
 {
-	GUIElement* parent = elem->GetParent();
-	bool isPanelOptimized = parent != nullptr && parent->GetType() == GUIElement::Type::Panel;
+	GUIElement* const parent = element->GetParent();
+	const bool isPanelOptimized = parent != nullptr && parent->GetType() == GUIElement::Type::Panel;
 
-	GUIElement* updateParent = nullptr;
-
-	if(isPanelOptimized)
-		updateParent = parent;
-	else
-		updateParent = elem;
+	GUIElement* const updateParent = isPanelOptimized ? parent : element;
 
 	// For GUIPanel we can do an optimization and update only the element in question instead
 	// of all the children
@@ -220,7 +276,7 @@ void GUIWidget::UpdateLayout(GUIElement* elem)
 	{
 		GUIPanel* panel = static_cast<GUIPanel*>(updateParent);
 
-		GUIElement* dirtyElement = elem;
+		GUIElement* dirtyElement = element;
 		dirtyElement->UpdateOptimalLayoutSizes();
 
 		GUIConstrainedSize elementSizeRange = panel->GetChildElementSizeRange(dirtyElement);
@@ -242,26 +298,18 @@ void GUIWidget::UpdateLayout(GUIElement* elem)
 		updateParent->UpdateLayout();
 	}
 
-	// Mark dirty contents
-	B3DMarkAllocatorFrame();
+	// Mark dirty contents & clear dirty flags
+	auto fnMarkContentsAsDirtyAndClearDirtyFlags = [this](GUIElement* element, auto&& fnMarkContentsAsDirtyAndClearDirtyFlags) -> void
 	{
-		FrameStack<GUIElement*> todo;
-		todo.push(elem);
+		MarkContentDirty(element);
+		element->MarkAsClean();
 
-		while(!todo.empty())
-		{
-			GUIElement* currentElem = todo.top();
-			todo.pop();
+		const TInlineArray<GUIElement*, 4>& visibleChildren = element->GetVisibleChildren();
+		for(const auto child : visibleChildren)
+			fnMarkContentsAsDirtyAndClearDirtyFlags(child, fnMarkContentsAsDirtyAndClearDirtyFlags);
+	};
 
-			MarkContentDirty(currentElem);
-			currentElem->MarkAsClean();
-
-			u32 numChildren = currentElem->GetChildCount();
-			for(u32 i = 0; i < numChildren; i++)
-				todo.push(currentElem->GetChild(i));
-		}
-	}
-	B3DClearAllocatorFrame();
+	fnMarkContentsAsDirtyAndClearDirtyFlags(element, fnMarkContentsAsDirtyAndClearDirtyFlags);
 }
 
 void GUIWidget::RegisterElement(GUIElement* guiElement)
@@ -272,6 +320,9 @@ void GUIWidget::RegisterElement(GUIElement* guiElement)
 	{
 		mElements.push_back(renderable);
 		mWidgetIsDirty = true;
+
+		if(guiElement->IsLayoutDirty() || guiElement->AreAbsoluteCoordinatesDirty())
+			mDirtyLayoutOrAbsoluteCoordinates.insert(guiElement);
 
 		if(guiElement->IsVisible())
 		{
@@ -296,6 +347,7 @@ void GUIWidget::UnregisterElement(GUIElement* guiElement)
 	if(GUIRenderable* const renderable = B3DRTTICast<GUIRenderable>(guiElement))
 	{
 		mDirtyContents.erase(renderable);
+		mDirtyLayoutOrAbsoluteCoordinates.erase(renderable);
 		mBatches.Remove(renderable);
 	}
 }
