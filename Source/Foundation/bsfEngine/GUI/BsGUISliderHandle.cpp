@@ -393,15 +393,7 @@ i32 GUISliderHandle::GetHandlePositionInPixels() const
 
 u32 GUISliderHandle::GetHandleSizeInPixels() const
 {
-	if(mFlags.IsSet(GUISliderHandleFlag::Resizeable))
-		return Math::Max(kMinimumHandleSize, (u32)(GetTotalLength() * mHandleSizeInPercent));
-
-	const Vector2I optimalSize = CalculateConstrainedSize().Optimal;
-
-	if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
-		return Math::Max(kMinimumHandleSize, (u32)optimalSize.X);
-
-	return Math::Max(kMinimumHandleSize, (u32)optimalSize.Y);
+	return Math::Max(kMinimumHandleSize, (u32)(GetTotalLength() * mHandleSizeInPercent));
 }
 
 void GUISliderHandle::SetHandlePositionInPixels(i32 position)
