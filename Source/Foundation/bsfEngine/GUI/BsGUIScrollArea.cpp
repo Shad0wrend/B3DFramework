@@ -16,7 +16,7 @@ const u32 GUIScrollArea::kScrollBarWidth = 16;
 const u32 GUIScrollArea::kWheelScrollAmount = 50;
 
 GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType, const String& scrollBarStyle, const String& scrollAreaStyle, const GUISizeConstraints& dimensions)
-	: GUIElementContainer(dimensions), mVertBarType(vertBarType), mHorzBarType(horzBarType), mScrollBarStyle(scrollBarStyle), mVertScroll(nullptr), mHorzScroll(nullptr), mVertOffset(0), mHorzOffset(0), mRecalculateVertOffset(false), mRecalculateHorzOffset(false)
+	: GUIElementContainer(dimensions, scrollAreaStyle), mVertBarType(vertBarType), mHorzBarType(horzBarType), mScrollBarStyle(scrollBarStyle), mVertScroll(nullptr), mHorzScroll(nullptr), mVertOffset(0), mHorzOffset(0), mRecalculateVertOffset(false), mRecalculateHorzOffset(false)
 {
 	mContentLayout = GUILayoutY::Create();
 	RegisterChildElement(mContentLayout);
@@ -358,7 +358,7 @@ void GUIScrollArea::VertScrollUpdate(float scrollPos)
 	u32 scrollableHeight = (u32)std::max(0, i32(mContentSize.Y) - i32(mVisibleSize.Y));
 	mVertOffset = scrollableHeight * Math::Clamp01(scrollPos);
 
-	MarkLayoutAsDirty(); // TODO - Don't dirty whole layout. Add a method that marks visible area as dirty, then the widget will take care of updating it
+	MarkAbsoluteCoordinatesAsDirty();
 }
 
 void GUIScrollArea::HorzScrollUpdate(float scrollPos)
@@ -366,7 +366,7 @@ void GUIScrollArea::HorzScrollUpdate(float scrollPos)
 	u32 scrollableWidth = (u32)std::max(0, i32(mContentSize.X) - i32(mVisibleSize.X));
 	mHorzOffset = scrollableWidth * Math::Clamp01(scrollPos);
 
-	MarkLayoutAsDirty(); // TODO - Don't dirty whole layout
+	MarkAbsoluteCoordinatesAsDirty();
 }
 
 void GUIScrollArea::ScrollToVertical(float pct)
@@ -374,7 +374,7 @@ void GUIScrollArea::ScrollToVertical(float pct)
 	mVertScroll->SetScrollPosInternal(pct);
 	mRecalculateVertOffset = true;
 
-	MarkLayoutAsDirty(); // TODO - Don't dirty whole layout
+	MarkAbsoluteCoordinatesAsDirty();
 }
 
 void GUIScrollArea::ScrollToHorizontal(float pct)
@@ -382,7 +382,7 @@ void GUIScrollArea::ScrollToHorizontal(float pct)
 	mHorzScroll->SetScrollPosInternal(pct);
 	mRecalculateHorzOffset = true;
 
-	MarkLayoutAsDirty(); // TODO - Don't dirty whole layout
+	MarkAbsoluteCoordinatesAsDirty();
 }
 
 float GUIScrollArea::GetVerticalScroll() const
