@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUISpace.h"
 
+#include "BsGUIOptions.h"
 #include "Reflection/BsRTTIType.h"
 
 using namespace bs;
@@ -45,6 +46,10 @@ namespace bs
 /** @} */
 /** @endcond */
 
+GUIFixedSpace::GUIFixedSpace(u32 size)
+	: GUIElement(GUISizeConstraints::Create(GUIOptions(GUIOption::FixedWidth(size), GUIOption::FixedHeight(size)))), mSize(size)
+{}
+
 GUIConstrainedSize GUIFixedSpace::CalculateConstrainedSize() const
 {
 	GUIConstrainedSize range;
@@ -68,6 +73,12 @@ RTTIType* GUIFixedSpace::GetRttiStatic()
 RTTIType* GUIFixedSpace::GetRtti() const
 {
 	return GetRttiStatic();
+}
+
+GUIFlexibleSpace::GUIFlexibleSpace()
+	:GUIElement(GUISizeConstraints::Create(GUIOptions(GUIOption::ExpandingWidth(), GUIOption::ExpandingHeight())))
+{
+	
 }
 
 GUIConstrainedSize GUIFlexibleSpace::CalculateConstrainedSize() const

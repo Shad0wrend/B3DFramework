@@ -15,10 +15,7 @@ namespace bs
 	class B3D_EXPORT GUIFixedSpace : public GUIElement
 	{
 	public:
-		GUIFixedSpace(u32 size)
-			: mSize(size)
-		{}
-
+		GUIFixedSpace(u32 size);
 		~GUIFixedSpace() override = default;
 
 		/**	Returns the size of the space in pixels. */
@@ -71,7 +68,7 @@ namespace bs
 	class B3D_EXPORT GUIFlexibleSpace : public GUIElement
 	{
 	public:
-		GUIFlexibleSpace() = default;
+		GUIFlexibleSpace();
 		~GUIFlexibleSpace() override = default;
 
 		/**	Creates a new flexible space GUI element. */

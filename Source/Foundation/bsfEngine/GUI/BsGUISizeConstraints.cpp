@@ -39,11 +39,25 @@ GUISizeConstraints GUISizeConstraints::Create(const TInlineArray<GUIOption, 4>& 
 		case GUIOptionType::FlexibleWidth:
 			dimensions.Flags |= GUISizeConstraintFlag::WidthOverridenAtRuntime;
 			dimensions.Flags.Unset(GUISizeConstraintFlag::FixedWidth);
+			dimensions.Flags.Unset(GUISizeConstraintFlag::ExpandingWidth);
 			dimensions.MinWidth = option.min;
 			dimensions.MaxWidth = option.max;
 			break;
 		case GUIOptionType::FlexibleHeight:
 			dimensions.Flags |= GUISizeConstraintFlag::HeightOverridenAtRuntime;
+			dimensions.Flags.Unset(GUISizeConstraintFlag::FixedHeight);
+			dimensions.Flags.Unset(GUISizeConstraintFlag::ExpandingHeight);
+			dimensions.MinHeight = option.min;
+			dimensions.MaxHeight = option.max;
+			break;
+		case GUIOptionType::ExpandingWidth:
+			dimensions.Flags |= GUISizeConstraintFlag::ExpandingWidth | GUISizeConstraintFlag::WidthOverridenAtRuntime;
+			dimensions.Flags.Unset(GUISizeConstraintFlag::FixedWidth);
+			dimensions.MinWidth = option.min;
+			dimensions.MaxWidth = option.max;
+			break;
+		case GUIOptionType::ExpandingHeight:
+			dimensions.Flags |= GUISizeConstraintFlag::ExpandingHeight | GUISizeConstraintFlag::HeightOverridenAtRuntime;
 			dimensions.Flags.Unset(GUISizeConstraintFlag::FixedHeight);
 			dimensions.MinHeight = option.min;
 			dimensions.MaxHeight = option.max;
@@ -56,8 +70,10 @@ GUISizeConstraints GUISizeConstraints::Create(const TInlineArray<GUIOption, 4>& 
 
 void GUISizeConstraints::UpdateWithStyleSheetRule(const GUIStyleSheetRules& rule)
 {
-	if(!IsWidthOverridenAtRuntime())
+	if(!Flags.IsSet(GUISizeConstraintFlag::WidthOverridenAtRuntime))
 	{
+		Flags.Unset(GUISizeConstraintFlag::ExpandingWidth);
+
 		if(rule.IsPropertySet(GUIStyleSheetPropertyType::Width))
 		{
 			Flags |= GUISizeConstraintFlag::FixedWidth;
@@ -71,8 +87,10 @@ void GUISizeConstraints::UpdateWithStyleSheetRule(const GUIStyleSheetRules& rule
 		}
 	}
 
-	if(!IsHeightOverridenAtRuntime())
+	if(!Flags.IsSet(GUISizeConstraintFlag::HeightOverridenAtRuntime))
 	{
+		Flags.Unset(GUISizeConstraintFlag::ExpandingHeight);
+
 		if(rule.IsPropertySet(GUIStyleSheetPropertyType::Height))
 		{
 			Flags |= GUISizeConstraintFlag::FixedHeight;

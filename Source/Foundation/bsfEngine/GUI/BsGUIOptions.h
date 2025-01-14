@@ -17,7 +17,9 @@ namespace bs
 		FlexibleWidth,
 		FixedHeight,
 		FlexibleHeight,
-		Position
+		ExpandingWidth,
+		ExpandingHeight,
+		Position,
 	};
 
 	/**
@@ -49,6 +51,12 @@ namespace bs
 		static GUIOption FlexibleWidth(u32 min = 0, u32 max = 0);
 
 		/**
+		 * Same as FlexibleWidth, but the width will attempt to expand to the maximum available space, rather than
+		 * using the optimal width.
+		 */
+		static GUIOption ExpandingWidth(u32 min = 0, u32 max = 0);
+
+		/**
 		 * Constructs a GUI option notifying the GUI layout that this element has a fixed height. This will override the
 		 * height property set in element style.
 		 */
@@ -59,6 +67,12 @@ namespace bs
 		 * constraints (value of 0 means no constraint). This will override the height property set in element style.
 		 */
 		static GUIOption FlexibleHeight(u32 min = 0, u32 max = 0);
+
+		/**
+		 * Same as FlexibleHeight, but the height will attempt to expand to the maximum available space, rather than
+		 * using the optimal height.
+		 */
+		static GUIOption ExpandingHeight(u32 min = 0, u32 max = 0);
 
 	private:
 		friend struct GUISizeConstraints;

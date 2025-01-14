@@ -33,6 +33,7 @@ GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarTyp
 
 Vector2I GUIScrollArea::CalculateUnconstrainedOptimalSize() const
 {
+	// TODO - For layouts the function call below actually returns constrained size, despite the name
 	Vector2I optimalSize = mContentLayout->CalculateUnconstrainedOptimalSize();
 
 	// Provide 10x10 in case underlying layout is empty because

@@ -1906,6 +1906,10 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		</enumentry>
 		<enumentry native="FlexibleHeight" script="FlexibleHeight">
 		</enumentry>
+		<enumentry native="ExpandingWidth" script="ExpandingWidth">
+		</enumentry>
+		<enumentry native="ExpandingHeight" script="ExpandingHeight">
+		</enumentry>
 	</enum>
 	<struct native="SkeletonBoneInfoEx" script="BoneInfo">
 		<doc>Contains internal information about a single bone in a Skeleton.</doc>

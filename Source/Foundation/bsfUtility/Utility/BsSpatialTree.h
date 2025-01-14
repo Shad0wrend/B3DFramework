@@ -8,6 +8,7 @@
 #include "Math/BsSIMD.h"
 #include "Allocators/BsPoolAlloc.h"
 
+#if !B3D_CODEGEN
 namespace bs
 {
 	/** @addtogroup General
@@ -1100,3 +1101,4 @@ namespace bs
 
 	/** @} */
 } // namespace bs
+#endif

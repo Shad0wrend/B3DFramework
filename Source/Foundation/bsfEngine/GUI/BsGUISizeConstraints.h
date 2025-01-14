@@ -29,6 +29,8 @@ namespace bs
 		FixedHeight = 1 << 1,
 		WidthOverridenAtRuntime = 1 << 2,
 		HeightOverridenAtRuntime = 1 << 3,
+		ExpandingWidth = 1 << 4,
+		ExpandingHeight = 1 << 5
 	};
 
 	using GUISizeConstraintFlags = Flags<GUISizeConstraintFlag>;
@@ -57,17 +59,17 @@ namespace bs
 		/** Constrains the provided optimal element size based on active constraints. */
 		GUIConstrainedSize CalculateConstrainedSize(const Size2UI& optimalSize) const;
 
-		/**	Checks if the user has overriden the height at runtime. This means that width options set by the style will be ignored. */
-		bool IsHeightOverridenAtRuntime() const { return Flags.IsSet(GUISizeConstraintFlag::HeightOverridenAtRuntime); }
-
-		/**	Checks if the user has overriden the width at runtime. This means that height options set by the style will be ignored. */
-		bool IsWidthOverridenAtRuntime() const { return Flags.IsSet(GUISizeConstraintFlag::WidthOverridenAtRuntime); }
-
-		/**	Checks do the dimensions contain fixed width. */
+		/**	Checks do the constraint contain fixed width. */
 		bool IsWidthFixed() const { return Flags.IsSet(GUISizeConstraintFlag::FixedWidth); }
 
-		/**	Checks do the dimensions contain fixed height. */
+		/**	Checks do the constraint contains fixed height. */
 		bool IsHeightFixed() const { return Flags.IsSet(GUISizeConstraintFlag::FixedHeight); }
+
+		/** Returns true if the GUI element will attempt to expand to fill all available width. */
+		bool IsWidthExpanding() const { return Flags.IsSet(GUISizeConstraintFlag::ExpandingWidth); }
+
+		/** Returns true if the GUI element will attempt to expand to fill all available height. */
+		bool IsHeightExpanding() const { return Flags.IsSet(GUISizeConstraintFlag::ExpandingHeight); }
 
 		i32 X = 0; // TODO - Move position elsewhere
 		i32 Y = 0;
@@ -76,6 +78,8 @@ namespace bs
 		u32 MaxWidth = 0;
 		u32 MinHeight = 0;
 		u32 MaxHeight = 0;
+		float FlexibleWidthWeight = 1.0f;
+		float FlexibleHeightWeight = 1.0f;
 		GUISizeConstraintFlags Flags;
 	};
 

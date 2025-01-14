@@ -36,6 +36,17 @@ GUIOption GUIOption::FlexibleWidth(u32 min, u32 max)
 	return option;
 }
 
+GUIOption GUIOption::ExpandingWidth(u32 min, u32 max)
+{
+	GUIOption option;
+
+	option.min = min;
+	option.max = max;
+	option.type = GUIOptionType::ExpandingWidth;
+
+	return option;
+}
+
 GUIOption GUIOption::FixedHeight(u32 value)
 {
 	GUIOption option;
@@ -53,6 +64,17 @@ GUIOption GUIOption::FlexibleHeight(u32 min, u32 max)
 	option.min = min;
 	option.max = max;
 	option.type = GUIOptionType::FlexibleHeight;
+
+	return option;
+}
+
+GUIOption GUIOption::ExpandingHeight(u32 min, u32 max)
+{
+	GUIOption option;
+
+	option.min = min;
+	option.max = max;
+	option.type = GUIOptionType::ExpandingHeight;
 
 	return option;
 }
