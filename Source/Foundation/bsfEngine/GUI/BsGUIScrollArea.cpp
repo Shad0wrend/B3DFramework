@@ -85,7 +85,7 @@ void GUIScrollArea::UpdateOptimalLayoutSizes()
 	mSizeRange = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize());
 }
 
-void GUIScrollArea::CalculateRelativeElementAreas(const Size2UI& scrollAreaSize,  Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const
+void GUIScrollArea::CalculateRelativeElementAreas(const Size2UI& scrollAreaSize,  Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, Vector2I& outVisibleSize) const
 {
 	B3D_ASSERT(mChildren.size() == elementCount && elementCount == 3);
 
@@ -122,45 +122,43 @@ void GUIScrollArea::CalculateRelativeElementAreas(const Size2UI& scrollAreaSize,
 	u32 layoutWidth = std::max(optimalContentWidth, (u32)scrollAreaSize.Width);
 	u32 layoutHeight = std::max(optimalContentHeight, (u32)scrollAreaSize.Height);
 
-	visibleSize = Vector2I(scrollAreaSize.Width, scrollAreaSize.Height);
+	outVisibleSize = Vector2I(scrollAreaSize.Width, scrollAreaSize.Height);
 
-	bool hasHorzScrollbar = false;
-	bool hasVertScrollbar = false;
-	if(mHorizontalScrollBarType != ScrollBarType::NeverShow)
+	const bool hasHorizontalScrollbar = mHorizontalScrollBarType != ScrollBarType::NeverShow;
+	const bool hasVerticalScrollbar = mVerticalScrollBarType != ScrollBarType::NeverShow;
+	if(hasHorizontalScrollbar)
 	{
 		// Make room for scrollbar
-		visibleSize.Y = (u32)std::max(0, (i32)scrollAreaSize.Height - (i32)kScrollBarWidth);
+		outVisibleSize.Y = (u32)std::max(0, (i32)scrollAreaSize.Height - (i32)kScrollBarWidth);
 		optimalContentHeight = (u32)std::max(0, (i32)optimalContentHeight - (i32)kScrollBarWidth);
 
 		if(sizeRanges[layoutIdx].Min.Y > 0)
 			optimalContentHeight = std::max((u32)sizeRanges[layoutIdx].Min.Y, optimalContentHeight);
 
-		layoutHeight = std::max(optimalContentHeight, (u32)visibleSize.Y); // Never go below optimal size
-		hasHorzScrollbar = true;
+		layoutHeight = std::max(optimalContentHeight, (u32)outVisibleSize.Y); // Never go below optimal size
 	}
 
-	if(mVerticalScrollBarType != ScrollBarType::NeverShow)
+	if(hasVerticalScrollbar)
 	{
 		// Make room for scrollbar
-		visibleSize.X = (u32)std::max(0, (i32)scrollAreaSize.Width - (i32)kScrollBarWidth);
+		outVisibleSize.X = (u32)std::max(0, (i32)scrollAreaSize.Width - (i32)kScrollBarWidth);
 		optimalContentWidth = (u32)std::max(0, (i32)optimalContentWidth - (i32)kScrollBarWidth);
 
 		if(sizeRanges[layoutIdx].Min.X > 0)
 			optimalContentWidth = std::max((u32)sizeRanges[layoutIdx].Min.X, optimalContentWidth);
 
-		layoutWidth = std::max(optimalContentWidth, (u32)visibleSize.X); // Never go below optimal size
-		hasVertScrollbar = true;
+		layoutWidth = std::max(optimalContentWidth, (u32)outVisibleSize.X); // Never go below optimal size
 	}
 
 	outElementSizes[layoutIdx] = Size2UI(layoutWidth, layoutHeight);
 	outElementPositions[layoutIdx] = Vector2I(0, 0);
 
 	// Calculate vertical scrollbar bounds
-	if(hasVertScrollbar)
+	if(hasVerticalScrollbar)
 	{
 		i32 scrollBarOffset = (u32)std::max(0, (i32)scrollAreaSize.Width - (i32)kScrollBarWidth);
 		u32 scrollBarHeight = scrollAreaSize.Height;
-		if(hasHorzScrollbar)
+		if(hasHorizontalScrollbar)
 			scrollBarHeight = (u32)std::max(0, (i32)scrollBarHeight - (i32)kScrollBarWidth);
 
 		outElementSizes[vertScrollIdx] = Size2UI(kScrollBarWidth, scrollBarHeight);
@@ -173,11 +171,11 @@ void GUIScrollArea::CalculateRelativeElementAreas(const Size2UI& scrollAreaSize,
 	}
 
 	// Calculate horizontal scrollbar bounds
-	if(hasHorzScrollbar)
+	if(hasHorizontalScrollbar)
 	{
 		i32 scrollBarOffset = (u32)std::max(0, (i32)scrollAreaSize.Height - (i32)kScrollBarWidth);
 		u32 scrollBarWidth = scrollAreaSize.Width;
-		if(hasVertScrollbar)
+		if(hasVerticalScrollbar)
 			scrollBarWidth = (u32)std::max(0, (i32)scrollBarWidth - (i32)kScrollBarWidth);
 
 		outElementSizes[horzScrollIdx] = Size2UI(scrollBarWidth, kScrollBarWidth);
@@ -220,7 +218,7 @@ void GUIScrollArea::UpdateLayoutForChildren()
 	}
 
 	const Size2UI scrollAreaSize(mLayoutData.Size.Width, mLayoutData.Size.Height);
-	CalculateRelativeElementAreas(scrollAreaSize, elementPositions, elementSizes, elementCount, mChildSizeRanges, mVisibleSize, mContentSize);
+	CalculateRelativeElementAreas(scrollAreaSize, elementPositions, elementSizes, elementCount, mChildSizeRanges, mVisibleSize);
 
 	// Layout
 	if(mContentLayout->IsActive())
@@ -233,11 +231,20 @@ void GUIScrollArea::UpdateLayoutForChildren()
 		mContentLayout->UpdateLayoutForChildren();
 	}
 
+	mContentSize = Vector2I((i32)elementSizes[layoutIdx].Width, (i32)elementSizes[layoutIdx].Height);
+
+	const bool showVerticalScrollBar = mVerticalScrollBarType != ScrollBarType::NeverShow && mContentSize.Y > mVisibleSize.Y;
+	const bool showHorizontalScrollBar = mHorizontalScrollBarType != ScrollBarType::NeverShow && mContentSize.X > mVisibleSize.X;
+
 	// Vertical scrollbar
 	{
 		GUILayoutData layoutData = mLayoutData;
 		layoutData.RelativePosition = elementPositions[vertScrollIdx];
-		layoutData.Size = elementSizes[vertScrollIdx];
+
+		if(showVerticalScrollBar)
+			layoutData.Size = elementSizes[vertScrollIdx];
+		else
+			layoutData.Size = Size2UI(0u, 0u);
 
 		mVerticalScrollBar->SetLayoutData(layoutData);
 		mVerticalScrollBar->UpdateLayoutForChildren();
@@ -257,7 +264,11 @@ void GUIScrollArea::UpdateLayoutForChildren()
 	{
 		GUILayoutData layoutData = mLayoutData;
 		layoutData.RelativePosition = elementPositions[horzScrollIdx];
-		layoutData.Size = elementSizes[horzScrollIdx];
+
+		if(showHorizontalScrollBar)
+			layoutData.Size = elementSizes[horzScrollIdx];
+		else
+			layoutData.Size = Size2UI(0u, 0u);
 
 		mHorizontalScrollBar->SetLayoutData(layoutData);
 		mHorizontalScrollBar->UpdateLayoutForChildren();
