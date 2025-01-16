@@ -238,19 +238,6 @@ namespace bs
 		/** Calls UpdateAbsoluteCoordinates() on all child elements. */
 		virtual void UpdateAbsoluteCoordinatesForChildren();
 
-		/**
-		 * Calculates positions & sizes of all elements in the layout. This method expects a pre-allocated array to store
-		 * the data in.
-		 *
-		 * @param	layoutSize			Size of the parent layout area to position the child elements in.
-		 * @param	outElementPositions	Array to hold output positions. Must be the same size as the number of child elements.
-		 * @param	outElementSizes		Array to hold output areas. Must be the same size as the number of child elements.
-		 * @param	elementCount		Size of the element positions/sizes arrays.
-		 * @param	sizeRanges			Ranges of possible sizes used for the child elements. Array must be same size as elements array.
-		 * @param	mySizeRange			Size range of this element.
-		 */
-		virtual void GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const;
-
 		/** Updates layout data that determines GUI elements relative position, size and depth in the GUI widget. */
 		virtual void SetLayoutData(const GUILayoutData& data) { mLayoutData = data; }
 

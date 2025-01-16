@@ -510,11 +510,6 @@ const RectOffset& GUIElement::GetPadding() const
 	return padding;
 }
 
-void GUIElement::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
-{
-	B3D_ASSERT(mChildren.size() == 0);
-}
-
 void GUIElement::SetParent(GUIElement* parent)
 {
 	if(mParent != parent)

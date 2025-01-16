@@ -19,19 +19,6 @@ namespace bs
 	{
 	public:
 		/**
-		 * Calculates the size of elements in a layout of the specified size.
-		 *
-		 * @param[in]	width				Width of the layout.
-		 * @param[in]	height				Height of the layout.
-		 * @param[in]	layout				Parent layout of the children to calculate the area for.
-		 * @param[in]	updateOptimalSizes	Optimization (doesn't change the results). Set to false if
-		 *									GUIElement::UpdateOptimalLayoutSizes was already called and optimal sizes
-		 *									are up to date to avoid recalculating them. (Normally that is true if this is
-		 *									being called during GUI layout update)
-		 */
-		static Vector2I CalcActualSize(u32 width, u32 height, GUILayout* layout, bool updateOptimalSizes = true);
-
-		/**
 		 * Calculates size of the GUI element area based on the GUI content size. This is just the content area expanded by padding and border provided by the style.
 		 *
 		 * @param	contentSize		Size of the GUI element's content area.
@@ -78,16 +65,6 @@ namespace bs
 		 */
 		B3D_SCRIPT_EXPORT()
 		static Vector2I CalculateTextBounds(const String& text, const HFont& font, float fontSize);
-	private:
-		/**
-		 * Calculates the size of elements in a layout of the specified size. Assumes the layout and all its children
-		 * have updated optimal sizes.
-		 *
-		 * @param[in]	width				Width of the layout.
-		 * @param[in]	height				Height of the layout.
-		 * @param[in]	layout				Parent layout of the children to calculate the area for.
-		 */
-		static Vector2I CalcActualSizeInternal(u32 width, u32 height, GUILayout* layout);
 	};
 
 	/** @} */

@@ -79,7 +79,18 @@ namespace bs
 
 		Type GetType() const override { return GUIElement::Type::Panel; }
 		void UpdateOptimalLayoutSizes() override;
-		void GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const override;
+
+		/**
+		 * Calculates positions & sizes of all elements in the layout. This method expects a pre-allocated array to store
+		 * the data in.
+		 *
+		 * @param	layoutSize			Size of the parent layout area to position the child elements in.
+		 * @param	outElementPositions	Array to hold output positions. Must be the same size as the number of child elements.
+		 * @param	outElementSizes		Array to hold output areas. Must be the same size as the number of child elements.
+		 * @param	elementCount		Size of the element positions/sizes arrays.
+		 * @param	sizeRanges			Ranges of possible sizes used for the child elements. Array must be same size as elements array.
+		 */
+		void GetChildRelativeLayoutAreas(const Size2UI& layoutSize, Vector2I* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges) const;
 
 		/** Calculates the size of the provided child within this layout with the provided dimensions. */
 		Rect2I CalculateRelativeElementArea(const Size2UI& layoutSize, const GUIElement* element, const GUIConstrainedSize& sizeRange) const;
