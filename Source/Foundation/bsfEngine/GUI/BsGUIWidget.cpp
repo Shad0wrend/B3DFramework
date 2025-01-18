@@ -324,7 +324,7 @@ void GUIWidget::RegisterElement(GUIElement* guiElement)
 		if(guiElement->IsLayoutDirty() || guiElement->AreAbsoluteCoordinatesDirty())
 			mDirtyLayoutOrAbsoluteCoordinates.insert(guiElement);
 
-		if(guiElement->IsVisible())
+		if(!guiElement->IsHiddenOrCulled())
 		{
 			mBatches.Add(renderable);
 			mBatches.MarkContentDirty(renderable);
@@ -336,6 +336,7 @@ void GUIWidget::UnregisterElement(GUIElement* guiElement)
 {
 	B3D_ASSERT(guiElement != nullptr);
 
+	// TODO - mElements should be a hash map otherwise this will be a bottleneck with a lot of elements
 	auto iterFind = std::find(begin(mElements), end(mElements), guiElement);
 
 	if(iterFind != mElements.end())
@@ -375,7 +376,7 @@ void GUIWidget::MarkContentDirty(GUIElement* elem)
 {
 	if(GUIRenderable *const renderable = B3DRTTICast<GUIRenderable>(elem))
 	{
-		if(!renderable->IsVisible())
+		if(renderable->IsHiddenOrCulled())
 			return;
 
 		mDirtyContents.insert(renderable);

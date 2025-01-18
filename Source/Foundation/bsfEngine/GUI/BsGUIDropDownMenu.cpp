@@ -300,8 +300,8 @@ Vector<GUIDropDownMenu::DropDownSubMenu::PageInfo> GUIDropDownMenu::DropDownSubM
 void GUIDropDownMenu::DropDownSubMenu::UpdateGuiElements()
 {
 	// Remove all elements from content layout
-	while(ContentLayout->GetNumChildren() > 0)
-		ContentLayout->RemoveElementAt(ContentLayout->GetNumChildren() - 1);
+	while(ContentLayout->GetChildCount() > 0)
+		ContentLayout->RemoveElementAt(ContentLayout->GetChildCount() - 1);
 
 	ContentLayout->AddElement(Content); // Note: Needs to be added first so that size calculations have proper skin to work with
 

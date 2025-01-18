@@ -287,6 +287,11 @@ namespace bs
 			return !operator==(rhs);
 		}
 
+		TSize2<float> ToFloat() const
+		{
+			return TSize2<float>((float)Width, (float)Height);
+		}
+
 		static const TSize2 kZero;
 	};
 

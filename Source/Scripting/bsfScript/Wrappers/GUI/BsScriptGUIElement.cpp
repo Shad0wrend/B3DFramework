@@ -23,8 +23,8 @@ ScriptGUIElement::ScriptGUIElement()
 void ScriptGUIElement::SetupScriptBindings()
 {
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptGUIElement::InternalDestroy);
-	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetVisible", (void*)&ScriptGUIElement::InternalSetVisible);
-	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetVisible", (void*)&ScriptGUIElement::InternalGetVisible);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetHidden", (void*)&ScriptGUIElement::InternalSetHidden);
+	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetHidden", (void*)&ScriptGUIElement::InternalGetHidden);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetActive", (void*)&ScriptGUIElement::InternalSetActive);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetActive", (void*)&ScriptGUIElement::InternalGetActive);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetDisabled", (void*)&ScriptGUIElement::InternalSetDisabled);
@@ -51,12 +51,12 @@ void ScriptGUIElement::InternalDestroy(ScriptGUIElementWrapper* self)
 	self->GetNativeObject()->Destroy();
 }
 
-void ScriptGUIElement::InternalSetVisible(ScriptGUIElementWrapper* self, bool visible)
+void ScriptGUIElement::InternalSetHidden(ScriptGUIElementWrapper* self, bool hidden)
 {
 	if(!self->IsNativeObjectValid())
 		return;
 
-	self->GetNativeObject()->SetVisible(visible);
+	self->GetNativeObject()->SetHidden(hidden);
 }
 
 void ScriptGUIElement::InternalSetActive(ScriptGUIElementWrapper* self, bool enabled)
@@ -75,12 +75,12 @@ void ScriptGUIElement::InternalSetDisabled(ScriptGUIElementWrapper* self, bool d
 	self->GetNativeObject()->SetDisabled(disabled);
 }
 
-bool ScriptGUIElement::InternalGetVisible(ScriptGUIElementWrapper* self)
+bool ScriptGUIElement::InternalGetHidden(ScriptGUIElementWrapper* self)
 {
 	if(!self->IsNativeObjectValid())
 		return false;
 
-	return self->GetNativeObject()->IsVisible();
+	return self->GetNativeObject()->IsHidden();
 }
 
 bool ScriptGUIElement::InternalGetActive(ScriptGUIElementWrapper* self)

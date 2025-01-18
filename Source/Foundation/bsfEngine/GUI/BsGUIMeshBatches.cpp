@@ -655,7 +655,10 @@ void GUIMeshBatches::RebuildMesh(Batch& batch)
 		const GUIRenderable* const guiElement = batchedGuiRenderElement.ParentGUIElement;
 		B3D_ASSERT(guiElement != nullptr);
 
-		if(!guiElement->IsVisible())
+		// Culled elements shouldn't have been part of the batch in the first place. We should do the same for explicitly hidden elements.
+		B3D_ENSURE(!guiElement->IsCulled());
+
+		if(guiElement->IsHidden())
 			continue;
 
 		const TInlineArray<GUIRenderElement, 4>& guiRenderElements = guiElement->GetRenderElements();
@@ -688,7 +691,10 @@ void GUIMeshBatches::RebuildMesh(Batch& batch)
 		const GUIRenderable* const guiElement = batchedGuiRenderElement.ParentGUIElement;
 		B3D_ASSERT(guiElement != nullptr);
 
-		if(!guiElement->IsVisible())
+		// Culled elements shouldn't have been part of the batch in the first place. We should do the same for explicitly hidden elements.
+		B3D_ENSURE(!guiElement->IsCulled());
+
+		if(guiElement->IsHidden())
 			continue;
 
 		const TInlineArray<GUIRenderElement, 4>& guiRenderElements = guiElement->GetRenderElements();
@@ -928,7 +934,10 @@ Rect2I GUIMeshBatches::CalculateBounds(Batch& batch)
 
 	for(auto& entry : batch.RenderElements)
 	{
-		if(!entry.ParentGUIElement->IsVisible())
+		// Culled elements shouldn't have been part of the batch in the first place. We should do the same for explicitly hidden elements.
+		B3D_ENSURE(!entry.ParentGUIElement->IsCulled());
+
+		if(entry.ParentGUIElement->IsHidden())
 			continue;
 
 		Rect2I elementBounds = entry.ParentGUIElement->GetCachedAbsoluteClippedArea();

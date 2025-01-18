@@ -97,7 +97,7 @@ void GUINavGroup::FocusNext(GUIInteractable* anchor)
 			{
 				GUIInteractable* element = iter->second;
 				const bool acceptsKeyFocus = element->GetOptionFlags().IsSet(GUIElementOption::AcceptsKeyFocus);
-				if(!acceptsKeyFocus || !element->IsVisible() || element->IsDisabled())
+				if(!acceptsKeyFocus || element->IsHidden() || element->IsDisabled())
 					continue;
 
 				const Rect2I elemBounds = element->GetCachedAbsoluteClippedArea();
@@ -236,7 +236,7 @@ void GUINavGroup::FocusTopLeft()
 
 		// Ignore elements that are hidden, disabled or just don't accept input focus
 		const bool acceptsKeyFocus = element->GetOptionFlags().IsSet(GUIElementOption::AcceptsKeyFocus);
-		if(!acceptsKeyFocus || !element->IsVisible() || element->IsDisabled())
+		if(!acceptsKeyFocus || element->IsHidden() || element->IsDisabled())
 			continue;
 
 		// Ignore elements that have been fully clipped

@@ -8,6 +8,7 @@
 #include "Math/BsRect2I.h"
 #include "Math/BsVector2I.h"
 #include "Utility/BsRectOffset.h"
+#include "Utility/BsSpatialTree.h"
 
 namespace bs
 {
@@ -29,7 +30,8 @@ namespace bs
 		InactiveSelf = 1 << 4, /**< Same as Inactive, but set only on the element that was explicitly made inactive, while Inactive will also be set on all children of such element. */
 		Disabled = 1 << 5, /**< GUI element is grayed out and cannot be interacted with. */
 		DisabledSelf = 1 << 6, /**< Same as Disabled, but set only on the element that was explicitly disabled, while Disabled will also be set on all children of such element. */
-		AbsoluteCoordinatesDirty = 1 << 7 /**< GUI element is requesting update for absolute coordinates of all its children. Set if e.g. scroll area is scrolled. */
+		AbsoluteCoordinatesDirty = 1 << 7, /**< GUI element is requesting update for absolute coordinates of all its children. Set if e.g. scroll area is scrolled. */
+		Culled = 1 << 8, /**< Element is not visible due to being culled by the parent's visible area. Content/mesh updates will be skipped, absolute coordinate update will be skipped, element won't be rendered. */
 	};
 
 	using GUIElementInternalStateFlags = Flags<GUIElementInternalStateFlag>;
@@ -115,7 +117,7 @@ namespace bs
 		 * Hides or shows this element and recursively applies the same state to all the child elements. This will not
 		 * remove the element from the layout, the room for it will still be reserved but it just won't be visible.
 		 */
-		void SetVisible(bool visible);
+		void SetHidden(bool hidden);
 
 		/**
 		 * Activates or deactives this element and recursively applies the same state to all the child elements. This has
@@ -295,8 +297,8 @@ namespace bs
 		/**	Returns parent GUI widget, can be null. */
 		GUIWidget* GetParentWidget() const { return mParentWidget; }
 
-		/**	Checks if element is visible or hidden. */
-		bool IsVisible() const { return !mFlags.IsSet(GUIElementInternalStateFlag::Hidden); }
+		/**	Checks if element is explicitly hidden. */
+		bool IsHidden() const { return mFlags.IsSet(GUIElementInternalStateFlag::Hidden); }
 
 		/**
 		 * Checks if element is active or inactive. Inactive elements are not visible, don't take up space
@@ -307,11 +309,17 @@ namespace bs
 		/** Checks if element is disabled. Disabled elements cannot be interacted with and have a faded out appearance. */
 		bool IsDisabled() const { return mFlags.IsSet(GUIElementInternalStateFlag::Disabled); }
 
+		/** Returns true if the element is not visible due to being culled by its parent bounds. */
+		bool IsCulled() const { return mFlags.IsSet(GUIElementInternalStateFlag::Culled); }
+
+		/**	Checks if element is invisible. Either due to explicitly being hidden or due to being culled by the parent. */
+		bool IsHiddenOrCulled() const { return mFlags.IsSetAny(GUIElementInternalStateFlag::Hidden | GUIElementInternalStateFlag::Culled); }
+
 		/**
-		 * Internal version of setVisible() that doesn't modify local visibility, instead it is only meant to be called
+		 * Internal version of SetHidden() that doesn't modify local visibility, instead it is only meant to be called
 		 * on child elements of the element whose visibility was modified.
 		 */
-		void SetVisibleRecursive(bool visible);
+		void SetHiddenRecursive(bool hidden);
 
 		/**
 		 * Internal version of setActive() that doesn't modify local state, instead it is only meant to be called
@@ -371,6 +379,12 @@ namespace bs
 		/**	Marks the element contents to be up to date (meaning it's processed by the GUI system). */
 		void MarkAsClean();
 
+		/** ID of the element in a quad-tree managed by its direct parent. Quad-tree can be used for speeding up lookup for elements containing many children. */
+		void SetQuadTreeId(const SpatialTreeElementId& id) { mQuadTreeId = id; }
+
+		/** @copydoc SetQuadTreeId */
+		const SpatialTreeElementId& GetQuadTreeId() const { return mQuadTreeId; }
+
 		/** @} */
 
 	protected:
@@ -420,6 +434,9 @@ namespace bs
 		GUILayoutData mLayoutData; /**< Relative position (to parent), size, depth and other information, calculated during a layout update. */
 		Vector2I mAbsolutePosition; /**< Absolute position of the GUI element (relative to parent GUI widget). Only valid after layout update & absolute coordinate update. */
 		Rect2I mAbsoluteClippedArea; /**< Absolute area of the GUI element as clipped by the parent visible bounds (e.g. if a parent is a scroll area). Only valid after layout update & absolute coordinate update. */
+
+		/** If the parent GUI element maintains a quad tree of its children, this will be ID of the element within the quad-tree. */
+		SpatialTreeElementId mQuadTreeId;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

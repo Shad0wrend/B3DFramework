@@ -46,8 +46,8 @@ public:
 
 			if(!row.Disabled)
 			{
-				row.LabelLayout->SetVisible(false);
-				row.ContentLayout->SetVisible(false);
+				row.LabelLayout->SetHidden(true);
+				row.ContentLayout->SetHidden(true);
 				row.Disabled = true;
 			}
 		}
@@ -74,8 +74,8 @@ public:
 			newRow.AvgTimeSelf = HEString(u8"{0}");
 			newRow.TotalTimeSelf = HEString(u8"{0}");
 
-			newRow.LabelLayout = LabelLayout.InsertNewElement<GUILayoutX>(LabelLayout.GetNumChildren() - 1); // Insert before flexible space
-			newRow.ContentLayout = ContentLayout.InsertNewElement<GUILayoutX>(ContentLayout.GetNumChildren() - 1); // Insert before flexible space
+			newRow.LabelLayout = LabelLayout.InsertNewElement<GUILayoutX>(LabelLayout.GetChildCount() - 1); // Insert before flexible space
+			newRow.ContentLayout = ContentLayout.InsertNewElement<GUILayoutX>(ContentLayout.GetChildCount() - 1); // Insert before flexible space
 
 			newRow.LabelSpace = newRow.LabelLayout->AddNewElement<GUIFixedSpace>(0);
 			newRow.GuiName = newRow.LabelLayout->AddNewElement<GUILabel>(newRow.Name, GUIOptions(GUIOption::FixedWidth(200)));
@@ -115,8 +115,8 @@ public:
 
 		if(row.Disabled)
 		{
-			row.LabelLayout->SetVisible(true);
-			row.ContentLayout->SetVisible(true);
+			row.LabelLayout->SetHidden(false);
+			row.ContentLayout->SetHidden(false);
 			row.Disabled = false;
 		}
 
@@ -146,8 +146,8 @@ public:
 
 			if(!row.Disabled)
 			{
-				row.LabelLayout->SetVisible(false);
-				row.ContentLayout->SetVisible(false);
+				row.LabelLayout->SetHidden(true);
+				row.ContentLayout->SetHidden(true);
 				row.Disabled = true;
 			}
 		}
@@ -174,8 +174,8 @@ public:
 			newRow.AvgCyclesSelf = HEString(u8"{0}");
 			newRow.TotalCyclesSelf = HEString(u8"{0}");
 
-			newRow.LabelLayout = LabelLayout.InsertNewElement<GUILayoutX>(LabelLayout.GetNumChildren() - 1); // Insert before flexible space
-			newRow.ContentLayout = ContentLayout.InsertNewElement<GUILayoutX>(ContentLayout.GetNumChildren() - 1); // Insert before flexible space
+			newRow.LabelLayout = LabelLayout.InsertNewElement<GUILayoutX>(LabelLayout.GetChildCount() - 1); // Insert before flexible space
+			newRow.ContentLayout = ContentLayout.InsertNewElement<GUILayoutX>(ContentLayout.GetChildCount() - 1); // Insert before flexible space
 
 			newRow.LabelSpace = newRow.LabelLayout->AddNewElement<GUIFixedSpace>(0);
 			newRow.GuiName = newRow.LabelLayout->AddNewElement<GUILabel>(newRow.Name, GUIOptions(GUIOption::FixedWidth(200)));
@@ -215,8 +215,8 @@ public:
 
 		if(row.Disabled)
 		{
-			row.LabelLayout->SetVisible(true);
-			row.ContentLayout->SetVisible(true);
+			row.LabelLayout->SetHidden(false);
+			row.ContentLayout->SetHidden(false);
 			row.Disabled = false;
 		}
 
@@ -246,8 +246,8 @@ public:
 
 			if(!row.Disabled)
 			{
-				row.LabelLayout->SetVisible(false);
-				row.ContentLayout->SetVisible(false);
+				row.LabelLayout->SetHidden(true);
+				row.ContentLayout->SetHidden(true);
 				row.Disabled = true;
 			}
 		}
@@ -267,8 +267,8 @@ public:
 			newRow.Name = HEString(u8"{1}");
 			newRow.Time = HEString(u8"{0}");
 
-			newRow.LabelLayout = LabelLayout.InsertNewElement<GUILayoutX>(LabelLayout.GetNumChildren() - 1); // Insert before flexible space
-			newRow.ContentLayout = ContentLayout.InsertNewElement<GUILayoutX>(ContentLayout.GetNumChildren() - 1); // Insert before flexible space
+			newRow.LabelLayout = LabelLayout.InsertNewElement<GUILayoutX>(LabelLayout.GetChildCount() - 1); // Insert before flexible space
+			newRow.ContentLayout = ContentLayout.InsertNewElement<GUILayoutX>(ContentLayout.GetChildCount() - 1); // Insert before flexible space
 
 			newRow.LabelSpace = newRow.LabelLayout->AddNewElement<GUIFixedSpace>(0);
 			newRow.GuiName = newRow.LabelLayout->AddNewElement<GUILabel>(newRow.Name, GUIOptions(GUIOption::FixedWidth(200)));
@@ -287,8 +287,8 @@ public:
 
 		if(row.Disabled)
 		{
-			row.LabelLayout->SetVisible(false);
-			row.ContentLayout->SetVisible(false);
+			row.LabelLayout->SetHidden(true);
+			row.ContentLayout->SetHidden(true);
 			row.Disabled = false;
 		}
 
@@ -490,21 +490,21 @@ void ProfilerOverlay::Show(ProfilerOverlayType type)
 {
 	if(type == ProfilerOverlayType::CPUSamples)
 	{
-		mBasicLayoutLabels->SetVisible(true);
-		mPreciseLayoutLabels->SetVisible(true);
-		mBasicLayoutContents->SetVisible(true);
-		mPreciseLayoutContents->SetVisible(true);
-		mGPULayoutFrameContents->SetVisible(false);
-		mGPULayoutSamples->SetVisible(false);
+		mBasicLayoutLabels->SetHidden(false);
+		mPreciseLayoutLabels->SetHidden(false);
+		mBasicLayoutContents->SetHidden(false);
+		mPreciseLayoutContents->SetHidden(false);
+		mGPULayoutFrameContents->SetHidden(true);
+		mGPULayoutSamples->SetHidden(true);
 	}
 	else
 	{
-		mGPULayoutFrameContents->SetVisible(true);
-		mGPULayoutSamples->SetVisible(true);
-		mBasicLayoutLabels->SetVisible(false);
-		mPreciseLayoutLabels->SetVisible(false);
-		mBasicLayoutContents->SetVisible(false);
-		mPreciseLayoutContents->SetVisible(false);
+		mGPULayoutFrameContents->SetHidden(false);
+		mGPULayoutSamples->SetHidden(false);
+		mBasicLayoutLabels->SetHidden(true);
+		mPreciseLayoutLabels->SetHidden(true);
+		mBasicLayoutContents->SetHidden(true);
+		mPreciseLayoutContents->SetHidden(true);
 	}
 
 	mType = type;
@@ -513,12 +513,12 @@ void ProfilerOverlay::Show(ProfilerOverlayType type)
 
 void ProfilerOverlay::Hide()
 {
-	mBasicLayoutLabels->SetVisible(false);
-	mPreciseLayoutLabels->SetVisible(false);
-	mBasicLayoutContents->SetVisible(false);
-	mPreciseLayoutContents->SetVisible(false);
-	mGPULayoutFrameContents->SetVisible(false);
-	mGPULayoutSamples->SetVisible(false);
+	mBasicLayoutLabels->SetHidden(true);
+	mPreciseLayoutLabels->SetHidden(true);
+	mBasicLayoutContents->SetHidden(true);
+	mPreciseLayoutContents->SetHidden(true);
+	mGPULayoutFrameContents->SetHidden(true);
+	mGPULayoutSamples->SetHidden(true);
 	mIsShown = false;
 }
 

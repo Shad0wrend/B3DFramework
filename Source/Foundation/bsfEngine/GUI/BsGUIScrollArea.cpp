@@ -19,6 +19,7 @@ GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarTyp
 	: GUIElementContainer(dimensions, scrollAreaStyle), mVerticalScrollBarType(vertBarType), mHorizontalScrollBarType(horzBarType), mScrollBarStyle(scrollBarStyle), mVerticalScrollBar(nullptr), mHorizontalScrollBar(nullptr), mVertOffset(0), mHorzOffset(0), mRecalculateVertOffset(false), mRecalculateHorzOffset(false)
 {
 	mContentLayout = GUILayoutY::Create();
+	mContentLayout->SetEnableCulling(true);
 	RegisterChildElement(mContentLayout);
 
 	mHorizontalScrollBar = GUIHorizontalScrollBar::Create(mScrollBarStyle);

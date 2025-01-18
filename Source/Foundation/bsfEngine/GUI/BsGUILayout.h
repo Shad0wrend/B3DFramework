@@ -5,12 +5,40 @@
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIElement.h"
 #include "Math/BsVector2I.h"
+#include "Utility/BsSpatialTree.h"
 
 namespace bs
 {
 	/** @addtogroup Implementation
 	 *  @{
 	 */
+
+	struct GUIQuadTreeOptions
+	{
+		enum
+		{
+			LoosePadding = 16,
+			MinimumElementsPerNode = 16,
+			MaximumElementsPerNode = 64,
+			MaximumDepth = 12
+		};
+
+		static simd::Rect2 GetBounds(GUIElement* element, void* context)
+		{
+			const Vector2 relativePosition = element->GetLayoutData().RelativePosition.ToFloat();
+			const Size2 size = element->GetLayoutData().Size.ToFloat();
+
+			const Rect2 area(relativePosition.X, relativePosition.Y, size.Width, size.Height);
+			return simd::Rect2(area);
+		}
+
+		static void SetElementId(GUIElement* element, const SpatialTreeElementId& id, void* context)
+		{
+			element->SetQuadTreeId(id);
+		}
+	};
+
+	using GUIElementQuadTree = TQuadTree<GUIElement*, GUIQuadTreeOptions>;
 
 	/**
 	 * Base class for layout GUI element. Layout element positions and sizes any child elements according to element styles
@@ -56,8 +84,13 @@ namespace bs
 		/** Removes all child elements and destroys them. */
 		void Clear();
 
-		/**	Returns number of child elements in the layout. */
-		u32 GetNumChildren() const { return (u32)mChildren.size(); }
+		/**
+		 * Enables/disables culling of child elements. If culling is enabled all child elements that are fully outside of the parent visible bounds will be marked as culled.
+		 * Culled elements will never have their contents or mesh updated, their absolute coordinate will not be updated and they wont be drawn
+		 * This is useful for layouts with a large amount of children, but comes with an overhead so it is disabled by default. Note this has no impact on layout update,
+		 * which may still be expensive with many elements.
+		 */
+		void SetEnableCulling(bool enable);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -81,8 +114,21 @@ namespace bs
 		/** @} */
 
 	protected:
+		/** Builds a quad-tree from all child elements and their current relative positions and size. If quad-tree already exists it is rebuilt. */
+		void RebuildQuadTree();
+
+		/** Clears quad-tree IDs from all the child elements. */
+		void ClearQuadTreeElementIds();
+
+		void UpdateAbsoluteCoordinatesForChildren() override;
+
+	protected:
+		static constexpr float kMaximumQuadtreeSize = 50000.0f;
+
 		Vector<GUIConstrainedSize> mChildrenConstrainedSizes;
 		GUIConstrainedSize mConstrainedSize;
+		bool mIsCullingEnabled = false;
+		UPtr<GUIElementQuadTree> mQuadTree;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

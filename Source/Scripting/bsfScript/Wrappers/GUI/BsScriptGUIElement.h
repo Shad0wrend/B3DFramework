@@ -34,8 +34,8 @@ namespace bs
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
 		static void InternalDestroy(ScriptGUIElementWrapper* self);
-		static void InternalSetVisible(ScriptGUIElementWrapper* self, bool visible);
-		static bool InternalGetVisible(ScriptGUIElementWrapper* self);
+		static void InternalSetHidden(ScriptGUIElementWrapper* self, bool visible);
+		static bool InternalGetHidden(ScriptGUIElementWrapper* self);
 		static void InternalSetActive(ScriptGUIElementWrapper* self, bool active);
 		static bool InternalGetActive(ScriptGUIElementWrapper* self);
 		static void InternalSetDisabled(ScriptGUIElementWrapper* self, bool disabled);

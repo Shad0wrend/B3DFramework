@@ -987,6 +987,7 @@ bool GUIManager::FindElementUnderPointer(const Vector2I& pointerScreenPos, bool 
 			GUIWidget* widget = widgetInfo.Widget;
 			if(widgetWindows[widgetIdx] == windowUnderPointer && widget->InBounds(WindowToBridgedCoords(widget->GetTarget()->GetTarget(), windowPos)))
 			{
+				// Note: This should only be checking non-culled element (i.e. GUIElement::GetVisibleElements())
 				const Vector<GUIRenderable*>& elements = widget->GetElements();
 				Vector2I localPos = GetWidgetRelativePos(widget, pointerScreenPos);
 
@@ -997,7 +998,7 @@ bool GUIManager::FindElementUnderPointer(const Vector2I& pointerScreenPos, bool 
 					if(!interactableElement)
 						continue;
 
-					if(interactableElement->IsVisible() && interactableElement->IsInInteractionBounds(localPos))
+					if(!interactableElement->IsHiddenOrCulled() && interactableElement->IsInInteractionBounds(localPos))
 					{
 						ElementInfoUnderPointer elementInfo(interactableElement, widget);
 
@@ -1485,7 +1486,7 @@ void GUIManager::TabFocusFirst()
 				continue;
 
 			const bool acceptsKeyFocus = interactableElement->GetOptionFlags().IsSet(GUIElementOption::AcceptsKeyFocus);
-			if(!acceptsKeyFocus || element->IsDisabled() || !element->IsVisible())
+			if(!acceptsKeyFocus || element->IsDisabled() || element->IsHidden())
 				continue;
 
 			const Rect2I elemBounds = element->GetCachedAbsoluteClippedArea();

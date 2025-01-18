@@ -62,12 +62,14 @@ namespace bs
 			: Node(node), IndexInNode(indexInNode)
 		{}
 
+		bool IsValid() const { return Node != nullptr && IndexInNode != ~0u; }
+
 	private:
 		template <typename, typename, u32>
 		friend class TSpatialTree;
 
 		void* Node = nullptr;
-		u32 IndexInNode = 0u;
+		u32 IndexInNode = ~0u;
 	};
 
 	/** Contains a reference to one child nodes in a spatial tree node. */

@@ -60,10 +60,10 @@ namespace bs
         /// Makes the element hidden or visible. This will not affect the layout as the room for the element will still
         /// be reserved in the parent layout, use <see cref="Active"/> if you need to affect the layout as well.
         /// </summary>
-        public bool Visible
+        public bool Hidden
         {
-            set { Internal_SetVisible(mCachedPtr, value); }
-            get { return Internal_GetVisible(mCachedPtr); }
+            set { Internal_SetHidden(mCachedPtr, value); }
+            get { return Internal_GetHidden(mCachedPtr); }
         }
 
         /// <summary>
@@ -190,10 +190,10 @@ namespace bs
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern bool Internal_GetVisible(IntPtr nativeInstance);
+        private static extern bool Internal_GetHidden(IntPtr nativeInstance);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetVisible(IntPtr nativeInstance, bool visible);
+        private static extern void Internal_SetHidden(IntPtr nativeInstance, bool visible);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern bool Internal_GetActive(IntPtr nativeInstance);

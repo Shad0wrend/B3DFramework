@@ -237,7 +237,7 @@ void GUIElement::MarkAsClean()
 
 void GUIElement::MarkLayoutAsDirty()
 {
-	if(!IsVisible())
+	if(IsHidden())
 		return;
 
 	GUIElement* const layoutUpdateParent = mLayoutUpdateParent != nullptr ? mLayoutUpdateParent : GetParent();
@@ -255,66 +255,66 @@ void GUIElement::MarkLayoutAsDirty()
 
 void GUIElement::MarkAbsoluteCoordinatesAsDirty()
 {
-	if(!IsVisible())
+	if(IsHidden())
 		return;
 
 	const bool areAbsoluteCoordinatesDirtyOld = mFlags.IsSet(GUIElementInternalStateFlag::AbsoluteCoordinatesDirty);
 	mFlags.Set(GUIElementInternalStateFlag::AbsoluteCoordinatesDirty);
 
-	if(mParentWidget != nullptr && !areAbsoluteCoordinatesDirtyOld)
+	if(!IsCulled() && mParentWidget != nullptr && !areAbsoluteCoordinatesDirtyOld)
 		mParentWidget->MarkAbsoluteCoordinatesDirty(this);
 }
 
 void GUIElement::MarkContentAsDirty()
 {
-	if(!IsVisible())
+	if(IsHidden())
 		return;
 
-	if(mParentWidget != nullptr)
+	if(!IsCulled() && mParentWidget != nullptr)
 		mParentWidget->MarkContentDirty(this);
 }
 
 void GUIElement::MarkMeshAsDirty()
 {
-	if(!IsVisible())
+	if(IsHiddenOrCulled())
 		return;
 
 	if(mParentWidget != nullptr)
 		mParentWidget->MarkMeshDirty(this);
 }
 
-void GUIElement::SetVisible(bool visible)
+void GUIElement::SetHidden(bool hidden)
 {
 	// No visibility states matter if object is not active
 	if(!IsActive())
 		return;
 
-	bool visibleSelf = !mFlags.IsSet(GUIElementInternalStateFlag::HiddenSelf);
-	if(visibleSelf != visible)
+	const bool isCurrentlyHiddenSelf = mFlags.IsSet(GUIElementInternalStateFlag::HiddenSelf);
+	if(isCurrentlyHiddenSelf != hidden)
 	{
 		// If making an element visible make sure to mark layout as dirty, as we didn't track any dirty flags while the element was inactive
-		if(!visible)
+		if(hidden)
 		{
 			mFlags.Set(GUIElementInternalStateFlag::HiddenSelf);
-			SetVisibleRecursive(false);
+			SetHiddenRecursive(true);
 		}
 		else
 		{
 			mFlags.Unset(GUIElementInternalStateFlag::HiddenSelf);
 
-			if(mParent == nullptr || mParent->IsVisible())
-				SetVisibleRecursive(true);
+			if(mParent == nullptr || !mParent->IsHidden())
+				SetHiddenRecursive(false);
 		}
 	}
 }
 
-void GUIElement::SetVisibleRecursive(bool visible)
+void GUIElement::SetHiddenRecursive(bool hidden)
 {
-	bool isVisible = !mFlags.IsSet(GUIElementInternalStateFlag::Hidden);
-	if(isVisible == visible)
+	const bool isCurrentlyHidden = mFlags.IsSet(GUIElementInternalStateFlag::Hidden);
+	if(isCurrentlyHidden == hidden)
 		return;
 
-	if(!visible)
+	if(hidden)
 	{
 		if(mParentWidget)
 			mParentWidget->NotifyElementVisibilityChanged(this, false);
@@ -323,12 +323,12 @@ void GUIElement::SetVisibleRecursive(bool visible)
 		MarkMeshAsDirty();
 
 		for(auto& child : mChildren)
-			child->SetVisibleRecursive(false);
+			child->SetHiddenRecursive(true);
 	}
 	else
 	{
-		bool childVisibleSelf = !mFlags.IsSet(GUIElementInternalStateFlag::HiddenSelf);
-		if(childVisibleSelf)
+		const bool isCurrentlyHiddenSelf = mFlags.IsSet(GUIElementInternalStateFlag::HiddenSelf);
+		if(!isCurrentlyHiddenSelf)
 		{
 			mFlags.Unset(GUIElementInternalStateFlag::Hidden);
 
@@ -338,7 +338,7 @@ void GUIElement::SetVisibleRecursive(bool visible)
 			MarkLayoutAsDirty();
 
 			for(auto& child : mChildren)
-				child->SetVisibleRecursive(true);
+				child->SetHiddenRecursive(false);
 		}
 	}
 }
@@ -355,7 +355,7 @@ void GUIElement::SetActive(bool active)
 			mFlags |= kActiveFlags;
 
 			SetActiveRecursive(false);
-			SetVisibleRecursive(false);
+			SetHiddenRecursive(true);
 		}
 		else
 		{
@@ -367,14 +367,14 @@ void GUIElement::SetActive(bool active)
 				{
 					SetActiveRecursive(true);
 
-					if(mParent->IsVisible())
-						SetVisibleRecursive(true);
+					if(!mParent->IsHidden())
+						SetHiddenRecursive(false);
 				}
 			}
 			else
 			{
 				SetActiveRecursive(true);
-				SetVisibleRecursive(true);
+				SetHiddenRecursive(false);
 			}
 		}
 	}
@@ -448,8 +448,7 @@ void GUIElement::SetDisabledRecursive(bool disabled)
 			child->SetDisabledRecursive(true);
 	}
 
-	if(IsVisible())
-		MarkContentAsDirty();
+	MarkContentAsDirty();
 }
 
 void GUIElement::UpdateLayout()
@@ -541,7 +540,7 @@ void GUIElement::RegisterChildElement(GUIElement* element)
 	mChildren.Add(element);
 
 	element->SetActiveRecursive(IsActive());
-	element->SetVisibleRecursive(IsVisible());
+	element->SetHiddenRecursive(IsHidden());
 	element->SetDisabledRecursive(IsDisabled());
 
 	// No need to mark ourselves as dirty. If we're part of the element's update chain, this will do it for us.
