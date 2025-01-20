@@ -19,7 +19,6 @@ GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarTyp
 	: GUIElementContainer(dimensions, scrollAreaStyle), mVerticalScrollBarType(vertBarType), mHorizontalScrollBarType(horzBarType), mScrollBarStyle(scrollBarStyle), mVerticalScrollBar(nullptr), mHorizontalScrollBar(nullptr), mVertOffset(0), mHorzOffset(0), mRecalculateVertOffset(false), mRecalculateHorzOffset(false)
 {
 	mContentLayout = GUILayoutY::Create();
-	mContentLayout->SetEnableCulling(true);
 	RegisterChildElement(mContentLayout);
 
 	mHorizontalScrollBar = GUIHorizontalScrollBar::Create(mScrollBarStyle);
@@ -324,11 +323,6 @@ void GUIScrollArea::UpdateAbsoluteCoordinatesForChildren()
 
 	mHorizontalScrollBar->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
 	mVerticalScrollBar->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
-
-	// TODO - Need to mark elements as culled/not culled and add/remove them from widget draw group. Elements should by default
-	// not be added to the widget draw group on registration
-	// - Skip element if not visible
-	// - Also in various places where we check IsVisible, we need to check IsCulled
 }
 
 void GUIScrollArea::VertScrollUpdate(float scrollPos)

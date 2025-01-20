@@ -41,29 +41,6 @@ void GUILayout::AddElement(GUIElement* element)
 		return;
 
 	RegisterChildElement(element);
-
-	if(mIsCullingEnabled)
-	{
-		B3D_ENSURE(!element->GetQuadTreeId().IsValid());
-		mQuadTree->AddElement(element);
-	}
-}
-
-void GUILayout::RemoveElement(GUIElement* element)
-{
-	if(mIsCullingEnabled)
-	{
-		const SpatialTreeElementId& quadTreeId = element->GetQuadTreeId();
-		if(B3D_ENSURE(quadTreeId.IsValid()))
-		{
-			mQuadTree->RemoveElement(quadTreeId);
-			element->SetQuadTreeId(SpatialTreeElementId());
-		}
-
-		// TODO - Remove from visible list if not culled
-	}
-
-	UnregisterChildElement(element);
 }
 
 void GUILayout::InsertElement(u32 idx, GUIElement* element)
@@ -88,25 +65,14 @@ void GUILayout::InsertElement(u32 idx, GUIElement* element)
 	element->SetDisabledRecursive(IsDisabled());
 
 	if(mIsCullingEnabled)
-	{
-		B3D_ENSURE(!element->GetQuadTreeId().IsValid());
-		mQuadTree->AddElement(element);
-	}
+		RegisterElementForCulling(element);
 
 	MarkLayoutAsDirty();
 }
 
-void GUILayout::Clear()
+void GUILayout::RemoveElement(GUIElement* element)
 {
-	if(mIsCullingEnabled)
-	{
-		ClearQuadTreeElementIds();
-		mQuadTree = B3DMakeUnique<GUIElementQuadTree>(Vector2(-kMaximumQuadtreeSize * 0.5f, -kMaximumQuadtreeSize * 0.5f), kMaximumQuadtreeSize);
-
-		// TODO - Clear Culled flag
-	}
-
-	DestroyChildElements();
+	UnregisterChildElement(element);
 }
 
 void GUILayout::RemoveElementAt(u32 idx)
@@ -120,18 +86,20 @@ void GUILayout::RemoveElementAt(u32 idx)
 	child->SetParent(nullptr);
 
 	if(mIsCullingEnabled)
-	{
-		const SpatialTreeElementId& quadTreeId = child->GetQuadTreeId();
-		if(B3D_ENSURE(quadTreeId.IsValid()))
-		{
-			mQuadTree->RemoveElement(quadTreeId);
-			child->SetQuadTreeId(SpatialTreeElementId());
-		}
-
-		// TODO - Remove from visible list if not culled
-	}
+		UnregisterElementFromCulling(child);
 
 	MarkLayoutAsDirty();
+}
+
+void GUILayout::Clear()
+{
+	if(mIsCullingEnabled)
+	{
+		ClearElementCullInformation();
+		mQuadTree = B3DMakeUnique<GUIElementQuadTree>(Vector2(-kMaximumQuadtreeSize * 0.5f, -kMaximumQuadtreeSize * 0.5f), kMaximumQuadtreeSize);
+	}
+
+	DestroyChildElements();
 }
 
 void GUILayout::SetEnableCulling(bool enable)
@@ -145,10 +113,8 @@ void GUILayout::SetEnableCulling(bool enable)
 		RebuildQuadTree();
 	else
 	{
-		ClearQuadTreeElementIds();
+		ClearElementCullInformation();
 		mQuadTree = nullptr;
-
-		// TODO - Clear Culled flag from GUI elements
 	}
 }
 
@@ -162,7 +128,7 @@ void GUILayout::RebuildQuadTree()
 		mQuadTree->AddElement(child);
 }
 
-void GUILayout::ClearQuadTreeElementIds()
+void GUILayout::ClearElementCullInformation()
 {
 	for(const auto& element : mChildren)
 	{
@@ -170,13 +136,64 @@ void GUILayout::ClearQuadTreeElementIds()
 		if(B3D_ENSURE(quadTreeId.IsValid()))
 		{
 			element->SetQuadTreeId(SpatialTreeElementId());
+			element->SetCulled(false);
 		}
 	}
+
+	mNonCulledElements.clear();
+	mVisibleElements.Clear();
+}
+
+void GUILayout::RegisterElementForCulling(GUIElement* element)
+{
+	B3D_ENSURE(!element->GetQuadTreeId().IsValid());
+	mQuadTree->AddElement(element);
+
+	// All new elements default to culled, but we're guaranteed to run a new culling pass due to MarkLayoutAsDirty before next render, so this will be updated
+	element->SetCulled(true);
+}
+
+void GUILayout::UnregisterElementFromCulling(GUIElement* element)
+{
+	const SpatialTreeElementId& quadTreeId = element->GetQuadTreeId();
+	if(B3D_ENSURE(quadTreeId.IsValid()))
+	{
+		mQuadTree->RemoveElement(quadTreeId);
+		element->SetQuadTreeId(SpatialTreeElementId());
+	}
+
+	if(element->IsCulled())
+	{
+		element->SetCulled(false);
+	}
+	else
+	{
+		B3D_ENSURE(mNonCulledElements.erase(element) == 1);
+
+		if(auto found = std::find(mVisibleElements.Begin(), mVisibleElements.End(), element); B3D_ENSURE(found != mVisibleElements.End()))
+			mVisibleElements.SwapAndErase(found);
+		
+	}
+}
+
+void GUILayout::RegisterChildElement(GUIElement* element)
+{
+	Super::RegisterChildElement(element);
+
+	if(mIsCullingEnabled)
+		RegisterElementForCulling(element);
+}
+
+void GUILayout::UnregisterChildElement(GUIElement* element)
+{
+	if(mIsCullingEnabled)
+		UnregisterElementFromCulling(element);
+
+	Super::UnregisterChildElement(element);
 }
 
 void GUILayout::UpdateAbsoluteCoordinatesForChildren()
 {
-#if 0 // WIP
 	if(mIsCullingEnabled)
 	{
 		Rect2 relativeClippedArea = (Rect2)mAbsoluteClippedArea;
@@ -188,16 +205,48 @@ void GUILayout::UpdateAbsoluteCoordinatesForChildren()
 		{
 			GUIElement* const element = areaIterator.GetElement();
 
-			// TODO - Register visible element, clear culled flag
+			// Element was culled, but is no longer culled
+			if(element->IsCulled())
+			{
+				GUIElementCullInformation cullInformation;
+				cullInformation.LastVisibleQueryIndex = mCullingQueryIndex;
+
+				mNonCulledElements.insert(std::make_pair(element, cullInformation));
+				element->SetCulled(false);
+			}
+			// Was previously visible, mark as still visible
+			else
+			{
+				if(auto found = mNonCulledElements.find(element); B3D_ENSURE(found != mNonCulledElements.end()))
+					found->second.LastVisibleQueryIndex = mCullingQueryIndex;
+			}
 		}
 
-		// TODO - Clear previously visible elements
-		// TODO - Set culled flag on all other elements
-		//  - To avoid iterating over all elements, likely need to keep track of which elements are new and haven't been checked yet (or add them to visible list immediately)
+		// Find entries that were previously not culled but are now culled, populate visible elements
+		mVisibleElements.Clear();
+		for(auto it = mNonCulledElements.begin(); it != mNonCulledElements.end();)
+		{
+			if(it->second.LastVisibleQueryIndex == mCullingQueryIndex)
+			{
+				mVisibleElements.Add(it->first);
+
+				++it;
+				continue;
+			}
+
+			it->first->SetCulled(true);
+			it = mNonCulledElements.erase(it);
+		}
+
+		for(auto& visibleChild : mVisibleElements)
+		{
+			visibleChild->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
+			visibleChild->UpdateAbsoluteCoordinatesForChildren();
+		}
 		
+		mCullingQueryIndex++;
 	}
 	else
-#endif
 	{
 		for(auto& child : mChildren)
 		{

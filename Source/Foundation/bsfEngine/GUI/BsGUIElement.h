@@ -32,6 +32,7 @@ namespace bs
 		DisabledSelf = 1 << 6, /**< Same as Disabled, but set only on the element that was explicitly disabled, while Disabled will also be set on all children of such element. */
 		AbsoluteCoordinatesDirty = 1 << 7, /**< GUI element is requesting update for absolute coordinates of all its children. Set if e.g. scroll area is scrolled. */
 		Culled = 1 << 8, /**< Element is not visible due to being culled by the parent's visible area. Content/mesh updates will be skipped, absolute coordinate update will be skipped, element won't be rendered. */
+		CulledSelf = 1 << 9, /**< Same as Culled, but set only on the element that was explicitly marked as culled, while Culled will also be set on all children on such element. */
 	};
 
 	using GUIElementInternalStateFlags = Flags<GUIElementInternalStateFlag>;
@@ -260,7 +261,7 @@ namespace bs
 
 		/**
 		 * Returns all children that can be seen through the parent's visible area (i.e. all elements that are not culled or explicitly made invisible). Note this
-		 * may return all child elements on GUI elements that do not support culling.
+		 * may return all child elements on GUI elements that do not support culling. Only well defined after layout update.
 		 */
 		virtual const TInlineArray<GUIElement*, 4>& GetVisibleChildren() const { return mChildren; }
 
@@ -322,7 +323,7 @@ namespace bs
 		void SetHiddenRecursive(bool hidden);
 
 		/**
-		 * Internal version of setActive() that doesn't modify local state, instead it is only meant to be called
+		 * Internal version of SetActive() that doesn't modify local state, instead it is only meant to be called
 		 * on child elements of the element whose state was modified.
 		 *
 		 * @copydoc SetActive
@@ -330,12 +331,15 @@ namespace bs
 		void SetActiveRecursive(bool active);
 
 		/**
-		 * Internal version of setDisabled() that doesn't modify local state, instead it is only meant to be called
+		 * Internal version of SetDisabled() that doesn't modify local state, instead it is only meant to be called
 		 * on child elements of the element whose state was modified.
 		 *
 		 * @copydoc SetDisabled
 		 */
 		void SetDisabledRecursive(bool disabled);
+
+		/** Marks the object and all children as culled. */
+		void SetCulled(bool culled);
 
 		/**
 		 * Changes the active GUI element widget. This allows you to move an element to a different viewport, or change
@@ -345,10 +349,10 @@ namespace bs
 		virtual void ChangeParentWidget(GUIWidget* widget);
 
 		/**Registers a new child element. */
-		void RegisterChildElement(GUIElement* element);
+		virtual void RegisterChildElement(GUIElement* element);
 
 		/**	Unregisters an existing child element. */
-		void UnregisterChildElement(GUIElement* element);
+		virtual void UnregisterChildElement(GUIElement* element);
 
 		/**	Marks the element's dimensions as dirty, triggering a layout rebuild. */
 		void MarkLayoutAsDirty();

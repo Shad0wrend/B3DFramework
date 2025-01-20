@@ -285,7 +285,7 @@ void GUIElement::MarkMeshAsDirty()
 
 void GUIElement::SetHidden(bool hidden)
 {
-	// No visibility states matter if object is not active
+	// No visibility states matter if object is not active. And we re-apply visibility flags after object is made active.
 	if(!IsActive())
 		return;
 
@@ -316,11 +316,10 @@ void GUIElement::SetHiddenRecursive(bool hidden)
 
 	if(hidden)
 	{
-		if(mParentWidget)
+		if(mParentWidget && !IsCulled())
 			mParentWidget->NotifyElementVisibilityChanged(this, false);
 
 		mFlags.Set(GUIElementInternalStateFlag::Hidden);
-		MarkMeshAsDirty();
 
 		for(auto& child : mChildren)
 			child->SetHiddenRecursive(true);
@@ -332,9 +331,10 @@ void GUIElement::SetHiddenRecursive(bool hidden)
 		{
 			mFlags.Unset(GUIElementInternalStateFlag::Hidden);
 
-			if(mParentWidget)
+			if(mParentWidget && !IsCulled())
 				mParentWidget->NotifyElementVisibilityChanged(this, true);
 
+			// TODO - Invalidating layout should not be necessary
 			MarkLayoutAsDirty();
 
 			for(auto& child : mChildren)
@@ -451,6 +451,58 @@ void GUIElement::SetDisabledRecursive(bool disabled)
 	MarkContentAsDirty();
 }
 
+void GUIElement::SetCulled(bool culled)
+{
+	auto fnSetCulledRecursive = [](GUIElement* element, bool culled, auto&& fnSetCulledRecursive) -> void
+	{
+		const bool isCurrentlyCulled = element->mFlags.IsSet(GUIElementInternalStateFlag::Culled);
+		if(isCurrentlyCulled == culled)
+			return;
+
+		if(culled)
+		{
+			if(element->mParentWidget && !element->IsHidden())
+				element->mParentWidget->NotifyElementVisibilityChanged(element, false);
+
+			element->mFlags.Set(GUIElementInternalStateFlag::Culled);
+
+			for(auto& child : element->mChildren)
+				fnSetCulledRecursive(child, true, fnSetCulledRecursive);
+		}
+		else
+		{
+			const bool isCurrentlyCulledSelf = element->mFlags.IsSet(GUIElementInternalStateFlag::CulledSelf);
+			if(!isCurrentlyCulledSelf)
+			{
+				element->mFlags.Unset(GUIElementInternalStateFlag::Culled);
+
+				if(element->mParentWidget && !element->IsHidden())
+					element->mParentWidget->NotifyElementVisibilityChanged(element, true);
+
+				for(auto& child : element->mChildren)
+					fnSetCulledRecursive(child, false, fnSetCulledRecursive);
+			}
+		}
+	};
+
+	const bool isCurrentlyCulledSelf = mFlags.IsSet(GUIElementInternalStateFlag::CulledSelf);
+	if(isCurrentlyCulledSelf != culled)
+	{
+		if(culled)
+		{
+			mFlags.Set(GUIElementInternalStateFlag::CulledSelf);
+			fnSetCulledRecursive(this, true, fnSetCulledRecursive);
+		}
+		else
+		{
+			mFlags.Unset(GUIElementInternalStateFlag::CulledSelf);
+
+			if(mParent == nullptr || !mParent->IsCulled())
+				fnSetCulledRecursive(this, false, fnSetCulledRecursive);
+		}
+	}
+}
+
 void GUIElement::UpdateLayout()
 {
 	UpdateOptimalLayoutSizes(); // We calculate optimal sizes of all layouts as a pre-processing step, as they are requested often during update layout
@@ -549,25 +601,24 @@ void GUIElement::RegisterChildElement(GUIElement* element)
 
 void GUIElement::UnregisterChildElement(GUIElement* element)
 {
-	bool foundElem = false;
-	for(auto iter = mChildren.begin(); iter != mChildren.end(); ++iter)
+	bool foundElementToRemove = false;
+	for(auto it = mChildren.begin(); it != mChildren.end(); ++it)
 	{
-		GUIElement* child = *iter;
+		GUIElement* child = *it;
 
 		if(child == element)
 		{
 			element->MarkLayoutAsDirty();
 
-			mChildren.erase(iter);
+			mChildren.erase(it);
 			element->SetParent(nullptr);
-			foundElem = true;
+			foundElementToRemove = true;
 
 			break;
 		}
 	}
 
-	if(!foundElem)
-		B3D_EXCEPT(InvalidParametersException, "Provided element is not a part of this element.");
+	B3D_ENSURE(foundElementToRemove);
 }
 
 void GUIElement::Destroy()

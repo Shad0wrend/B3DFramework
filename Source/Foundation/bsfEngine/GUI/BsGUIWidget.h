@@ -116,7 +116,7 @@ namespace bs
 		 */
 		void UnregisterElement(GUIElement* guiElementBase);
 
-		/** Called when a registered GUI element is hidden or made visible. Only needs to be called if visibility changes after registration. */
+		/** Called when a registered GUI element is hidden, culled or visible. Only needs to be called if visibility changes after registration. */
 		void NotifyElementVisibilityChanged(GUIElement* guiElement, bool isVisible);
 
 		/**

@@ -46,6 +46,13 @@ namespace bs
 	 */
 	class B3D_EXPORT GUILayout : public GUIElement
 	{
+		/** Information about GUI elements for culling purposes. */
+		struct GUIElementCullInformation 
+		{
+			u8 LastVisibleQueryIndex = 255;
+		};
+
+		using Super = GUIElement;
 	public:
 		GUILayout(const GUISizeConstraints& dimensions);
 		GUILayout() = default;
@@ -117,9 +124,18 @@ namespace bs
 		/** Builds a quad-tree from all child elements and their current relative positions and size. If quad-tree already exists it is rebuilt. */
 		void RebuildQuadTree();
 
-		/** Clears quad-tree IDs from all the child elements. */
-		void ClearQuadTreeElementIds();
+		/** Sets up necessary information for culling the provided element. Should be called on every element added to the layout, if culling is enabled. */
+		void RegisterElementForCulling(GUIElement* element);
 
+		/** Removes the element from culling related data structures. Should be called before the element is removed from the layout, if culling is enabled. */
+		void UnregisterElementFromCulling(GUIElement* element);
+
+		/** Clears quad-tree IDs from all the child elements. */
+		void ClearElementCullInformation();
+
+		const TInlineArray<GUIElement*, 4>& GetVisibleChildren() const override { return mIsCullingEnabled ? mVisibleElements : Super::GetVisibleChildren(); }
+		void RegisterChildElement(GUIElement* element) override;
+		void UnregisterChildElement(GUIElement* element) override;
 		void UpdateAbsoluteCoordinatesForChildren() override;
 
 	protected:
@@ -128,7 +144,10 @@ namespace bs
 		Vector<GUIConstrainedSize> mChildrenConstrainedSizes;
 		GUIConstrainedSize mConstrainedSize;
 		bool mIsCullingEnabled = false;
+		u8 mCullingQueryIndex = 0;
 		UPtr<GUIElementQuadTree> mQuadTree;
+		UnorderedMap<GUIElement*, GUIElementCullInformation> mNonCulledElements;
+		TInlineArray<GUIElement*, 4> mVisibleElements;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
