@@ -122,7 +122,7 @@ namespace bs
 	/** Style information for a single border side (left, right, top or bottom). */
 	struct GUIStyleSheetBorderElement
 	{
-		u32 Width = 0; /**< Size of the border in pixels. Zero means no border. */
+		u32 Width = 0; /**< Size of the border in logical pixel units. Zero means no border. */
 		Color Color; /**< Color of the border. */
 		GUIBorderElementStyle Style = GUIBorderElementStyle::Solid; /**< Style how to render the border. */
 
@@ -188,12 +188,12 @@ namespace bs
 	{
 		String PseudoClass; /**< Pseudo-class the rule is applied to, if any. */
 
-		RectOffset Margins; /**< Empty space around the GUI element outside of the border. In pixels.*/
-		RectOffset Padding; /**< Empty space within the GUI element inside the border. In pixels. */
+		RectOffset Margins; /**< Empty space around the GUI element outside of the border. In logical pixel units.*/
+		RectOffset Padding; /**< Empty space within the GUI element inside the border. In logical pixel units. */
 
-		Size2UI Size = Size2UI::kZero; /**< Size of the GUI element contents in pixels. Total size of the GUI element will be determined by content size, padding, border width and margins. */
-		Size2UI MinimumSize = Size2UI::kZero; /**< If non-zero, GUI element size will expand to fill the available area, respecting the minimum and (optionally) maximum size. In pixels. */
-		Size2UI MaximumSize = Size2UI::kZero; /**< If non-zero, GUI element size will expand to fill the available area, respecting the maximum and (optionally) minimum size. In pixels. */
+		Size2UI Size = Size2UI::kZero; /**< Size of the GUI element contents in logical pixel units. Total size of the GUI element will be determined by content size, padding, border width and margins. */
+		Size2UI MinimumSize = Size2UI::kZero; /**< If non-zero, GUI element size will expand to fill the available area, respecting the minimum and (optionally) maximum size. In logical pixel units. */
+		Size2UI MaximumSize = Size2UI::kZero; /**< If non-zero, GUI element size will expand to fill the available area, respecting the maximum and (optionally) minimum size. In logical pixel units. */
 
 		Color BackgroundColor; /**< Color of the GUI element background. */
 		Color Color; /**< Color of the GUI element contents (usually text or icon). */
@@ -207,13 +207,13 @@ namespace bs
 		GUIStyleSheetBorderElement BorderTop; /**< Style information for the top border. */
 		GUIStyleSheetBorderElement BorderBottom; /**< Style information for the bottom border. */
 
-		u32 BorderTopLeftRadius = 0; /**< Radius of the top left border corner, if rounded corners are desired. In pixels. */
-		u32 BorderTopRightRadius = 0; /**< Radius of the top right border corner, if rounded corners are desired. In pixels. */
-		u32 BorderBottomLeftRadius = 0; /**< Radius of the bottom left border corner, if rounded corners are desired. In pixels. */
-		u32 BorderBottomRightRadius = 0; /**< Radius of the bottom right border corner, if rounded corners are desired. In pixels. */
+		u32 BorderTopLeftRadius = 0; /**< Radius of the top left border corner, if rounded corners are desired. In logical pixel units. */
+		u32 BorderTopRightRadius = 0; /**< Radius of the top right border corner, if rounded corners are desired. In logical pixel units. */
+		u32 BorderBottomLeftRadius = 0; /**< Radius of the bottom left border corner, if rounded corners are desired. In logical pixel units. */
+		u32 BorderBottomRightRadius = 0; /**< Radius of the bottom right border corner, if rounded corners are desired. In logical pixel units. */
 
 		HFont Font; /**< Font family to render the text contents of the GUI element with. */
-		float FontSize = 8.0f; /**< Font size to render the text contents of the GUI element with. */
+		float FontSize = 8.0f; /**< Font size to render the text contents of the GUI element with, in logical point units. */
 		GUIHorizontalTextAlignment HorizontalTextAlignment = GUIHorizontalTextAlignment::Left; /**< Determines horizontal alignment of text within the GUI element. */
 		GUIVerticalTextAlignment VerticalTextAlignment = GUIVerticalTextAlignment::Middle; /**< Determines vertical alignment of text within the GUI element. */
 		GUIWordWrapMode WordWrap = GUIWordWrapMode::None; /**< Determines if text wraps when it doesn't fit in a single line. */

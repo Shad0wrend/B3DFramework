@@ -56,8 +56,31 @@ namespace bs
 	};
 
 	/**
-	 * Base class for all GUI elements. Provides general functionality such as element size/position, as well as handling child/parent relationships.
+	 * Location for a GUI element defined in logical pixels. Logical pixels are defined at 1/96th of one logical inch. Logical pixels are transformed
+	 * into physical pixels by scaling it by the display's DPI scale, as well as a potential user-defined scale on the GUI element itself.
+	 * If your display is set to 96 DPI, and GUI element has no user-defined scale, then one logical pixel equals one physical pixel.
+     *
+	 * Logical pixels are used for layouting the GUI, while physical pixels are used for rendering and interacting with GUI elements.
+	 */
+	using GUILogicalPoint = Vector2I; // TODO - Make use of these. Disallow implicit conversion between logical/physical.
 
+	/**
+	 * Location for a GUI element defined in physical pixels. Physical pixels are defined by applying DPI and other forms of scaling to
+	 * a logical pixel.
+     *
+	 * Logical pixels are used for layouting the GUI, while physical pixels are used for rendering and interacting with GUI elements.
+	 */
+	using GUIPhysicalPoint = Vector2I; // TODO - Make use of these. Disallow implicit conversion between logical/physical.
+
+	/** Width/height of a GUI element defined in logical pixels. See GUILogicalPoint. */
+	using GUILogicalSize = Size2UI; // TODO - Make use of these. Disallow implicit conversion between logical/physical.
+
+	/** Width/height of a GUI element defined in physical pixels. See GUIPhysicalPoint. */
+	using GUIPhysicalSize = Size2UI; // TODO - Make use of these. Disallow implicit conversion between logical/physical.
+
+	/**
+	 * Base class for all GUI elements. Provides general functionality such as element size/position, as well as handling child/parent relationships.
+	 *
 	 * @note: Does not provide ability to render and interact with GUI elements - those are implemented by derived classes (i.e. GUIRenderable and GUIInteractable).
 	 */
 	class B3D_EXPORT GUIElement : public IReflectable, public IScriptExportable
@@ -80,39 +103,37 @@ namespace bs
 		virtual ~GUIElement() = default;
 
 		/**
-		 * Sets element position relative to parent GUI panel.
+		 * Sets element position relative to parent GUI panel. Values should be provided in logical pixel units.
 		 *
-		 * @note
-		 * Be aware that this value will be ignored if GUI element is part of a layout since then the layout controls its
-		 * placement.
+		 * Be aware that this value will be ignored if GUI element is part of a layout since then the layout controls its placement.
 		 */
 		void SetPosition(i32 x, i32 y);
 
-		/**	Sets element width in pixels.  */
+		/**	Sets fixed element width. Value should be in logical pixel units. */
 		void SetWidth(u32 width);
 
 		/**
-		 * Sets element width in pixels. Element will be resized according to its contents and parent layout but will
+		 * Sets flexible element width. Element will be resized according to its contents and parent layout but will
 		 * always stay within the provided range. If maximum width is zero, the element is allowed to expand as much as
-		 * it needs.
+		 * it needs. Values should be in logical pixel units.
 		 */
 		void SetFlexibleWidth(u32 minWidth = 0, u32 maxWidth = 0);
 
-		/**	Sets element height in pixels. */
+		/**	Sets fixed element height. Value should be in logical pixel units. */
 		void SetHeight(u32 height);
 
-		/** Sets width and height of a GUI element in pixels. */
-		void SetSize(u32 width, u32 height);
-
 		/**
-		 * Sets element height in pixels. Element will be resized according to its contents and parent layout but will
+		 * Sets flexible element height. Element will be resized according to its contents and parent layout but will
 		 * always stay within the provided range. If maximum height is zero, the element is allowed to expand as much as
-		 * it needs.
+		 * it needs. Values provided should be in logical pixel units.
 		 */
 		void SetFlexibleHeight(u32 minHeight = 0, u32 maxHeight = 0);
 
-		/**	Resets element dimensions to their initial values dictated by the element's style. */
-		virtual void ResetDimensions();
+		/** Sets fixed width and height of a GUI element. Values provided should be in logical pixel units. */
+		void SetSize(u32 width, u32 height);
+
+		/**	Resets element size constraints to their initial values dictated by the element's style. */
+		virtual void ResetSizeConstraints();
 
 		/**
 		 * Hides or shows this element and recursively applies the same state to all the child elements. This will not
@@ -131,65 +152,73 @@ namespace bs
 		void SetDisabled(bool disabled);
 
 		/**
-		 * Returns non-clipped bounds of the GUI element. Relative to a parent GUI panel or the provided parent element.
-		 * The bounds includes the content area, element padding and element border, but excludes element margins.
-
+		 * Returns width/height of the GUI element. This will be the fixed width/height if set by the user, or automatically
+		 * determined by the layout update pass if not fixed. Size is provided in logical pixel units.
 		 *
-		 * @param	relativeTo	Parent panel of the provided element relative to which to return the bounds. If null
-		 *						the bounds relative to the first parent panel are returned. Behavior is undefined if
-		 *						provided panel is not a parent of the element.
-		 *
-		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a re-layouting operation.
+		 * Always returns value calculated by last layout update. This means out of date value may be returned if the
+		 * layout has been dirtied since then.
 		 */
-		Rect2I CalculateBoundsRelativeTo(GUIElement* relativeTo = nullptr);
+		Size2UI GetLayoutCalculatedSize() const { return mLayoutData.Size; }
 
 		/**
-		 * Returns non-clipped bounds of the GUI element. Relative to a parent GUI widget. The bounds includes the content area,
-		 * element padding and element border, but excludes element margins.
+		 * Calculates position of the GUI element, relative to the provided parent element (or parent panel if null).
+		 * The value is provided in logical pixel units.
 		 *
-		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a re-layouting operation.
-		 */
-		Rect2I GetAbsoluteBounds() const;
-
-		/**
-		 * Returns non-clipped bounds of the GUI element in screenspace. The bounds includes the content area,
-		 * element padding and element border, but excludes element margins.
+		 * @param	relativeTo	Parent element of the provided element relative to which to return the position. If null
+		 *						the position relative to parent panel is returned. Behavior is undefined if
+		 *						provided parent is not a parent of the element.
 		 *
-		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a re-layouting operation.
+		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
-		Rect2I GetScreenBounds() const;
-
-		/** Same as GetBounds(), but never triggers a re-layouting pass, and instead always returns values from last layouting pass. */
-		Rect2I GetCachedAbsoluteBounds() const { return Rect2I(mAbsolutePosition, mLayoutData.Size); }
+		Vector2I CalculatePositionRelativeTo(GUIElement* relativeTo = nullptr) const;
 
 		/**
-		 * Returns the position of the GUI element relative to the parent widget.
+		 * Calculates bounds of the GUI element, relative to the provided parent element (or parent panel if null).
+		 * Absolute values represent the final position and size of the GUI element, affected by DPI scale, parent scale
+		 * and self scale. The values are provided in physical pixel units.
 		 *
-		 * @note	This value is only updated during layout and/or absolute coordinate pass, which happens at the end of frame before GUI is drawn.
-		 *			This means this value may contain position that is from the previous frame, unless you manually request a layout update before
-		 *			calling this method.
+		 * @param	relativeTo	Parent element of the provided element relative to which to return the bounds. If null
+		 *						the bounds relative to parent panel are returned. Behavior is undefined if
+		 *						provided parent is not a parent of the element.
+		 *
+		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
-		const Vector2I& GetCachedAbsolutePosition() const { return mAbsolutePosition; }
+		Rect2I CalculateAbsoluteBoundsRelativeTo(GUIElement* relativeTo = nullptr);
 
 		/**
-		 * Returns the position and size of the GUI element, relative to the parent widget. The returned area is clipped by the visible
-		 * area as specified by the parent GUI element (e.g. if the parent is a scroll area or similar, only some or none of the GUI element may
-		 * be visible, if it's scrolled out of view).
-		 * 
-		 * @note	This value is only updated during layout and/or absolute coordinate pass, which happens at the end of frame before GUI is drawn.
-		 *			This means this value may contain position that is from the previous frame, unless you manually request a layout update before
-		 *			calling this method.
+		 * Calculates bounds of the GUI element, relative to the parent GUI widget. Absolute values represent the final
+		 * position and size of the GUI element, affected by DPI scale, parent scale and self scale. The values are
+		 * provided in physical pixel units.
+		 *
+		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
-		const Rect2I& GetCachedAbsoluteClippedArea() const { return mAbsoluteClippedArea; }
-
-		/** Same as GetCachedAbsoluteClippedArea(), except the area is made relative to this GUI element. */
-		Rect2I GetCachedLocalClippedArea() const;
+		Rect2I CalculateAbsoluteBounds() const;
 
 		/**
-		 * Sets the bounds of the GUI element. Relative to a parent GUI panel. Equivalent to calling SetPosition(),
-		 * setWidth() and setHeight().
+		 * Calculates bounds of the GUI element in screen space. 
+		 *
+		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
-		void SetBounds(const Rect2I& bounds);
+		Rect2I CalculateScreenBounds() const;
+
+		/**
+		 * Returns bounds of the GUI element, relative to the parent GUI widget. Absolute values represent the final
+		 * position and size of the GUI element, affected by DPI scale, parent scale and self scale. The values are
+		 * provided in physical pixel units.
+		 *
+		 * Always returns value calculated by last layout update. This means out of date value may be returned if the
+		 * layout has been dirtied since then.
+		 */
+		Rect2I GetAbsoluteBounds() const { return Rect2I(mAbsolutePosition, mAbsoluteSize); }
+
+		/**
+		 * Returns the position of the GUI element, relative to the parent widget. Absolute values represent the final
+		 * position of the GUI element, affected by DPI scale and parent scale. The values are provided in physical pixel units.
+		 *
+		 * Always returns value calculated by last layout update. This means out of date value may be returned if the
+		 * layout has been dirtied since then.
+		 */
+		const Vector2I& GetAbsolutePosition() const { return mAbsolutePosition; }
 
 		/**
 		 * Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be
@@ -234,9 +263,10 @@ namespace bs
 		 * a full layout pass to scroll their children.
 		 * 
 		 * @param parentOrigin			Absolute origin to add to the relative coordinates, in order to determine the absolute element coordinates.
+		 * @param parentScale			Scale of the parent GUI element.
 		 * @param parentVisibleArea		Absolute visible (clipped) area though which this element may be seen. This will be used for culling and clipping.
 		 */
-		virtual void UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea);
+		virtual void UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, float parentScale, const Rect2I& parentVisibleArea);
 
 		/** Calls UpdateAbsoluteCoordinates() on all child elements. */
 		virtual void UpdateAbsoluteCoordinatesForChildren();
@@ -244,8 +274,8 @@ namespace bs
 		/** Updates layout data that determines GUI elements relative position, size and depth in the GUI widget. */
 		virtual void SetLayoutData(const GUILayoutData& data) { mLayoutData = data; }
 
-		/** Resets the absolute clipped area to full width/height of the GUI element. */
-		void ResetAbsoluteClippedArea() { mAbsoluteClippedArea = Rect2I(mAbsolutePosition.X, mAbsolutePosition.Y, mLayoutData.Size.Width, mLayoutData.Size.Height); }
+		/** Resets the absolute size & clipped area to full width/height of the GUI element. */
+		void ResetAbsoluteBounds(float scale = 1.0f);
 
 		/** Retrieves layout data that determines GUI elements relative position, size and depth in the GUI widget. */
 		const GUILayoutData& GetLayoutData() const { return mLayoutData; }
@@ -389,6 +419,19 @@ namespace bs
 		/** @copydoc SetQuadTreeId */
 		const SpatialTreeElementId& GetQuadTreeId() const { return mQuadTreeId; }
 
+		/**
+		 * Returns the position and size of the GUI element, relative to the parent widget. The returned area is clipped by the visible
+		 * area as specified by the parent GUI element (e.g. if the parent is a scroll area or similar, only some or none of the GUI element may
+		 * be visible, if it's scrolled out of view). Provided value is in physical pixel units.
+		 *
+		 * Always returns value calculated by last layout update. This means out of date value may be returned if the
+		 * layout has been dirtied since then.
+		 */
+		const Rect2I& GetAbsoluteClippedArea() const { return mAbsoluteClippedArea; }
+
+		/** Same as GetAbsoluteClippedArea(), except the area is made relative to this GUI element. */
+		Rect2I GetLocalClippedArea() const;
+
 		/** @} */
 
 	protected:
@@ -434,13 +477,21 @@ namespace bs
 		GUIElementInternalStateFlags mFlags = GUIElementInternalStateFlag::LayoutDirty;
 		bool mIsPendingDestroy = false;
 
-		GUISizeConstraints mSizeConstraints; /**< Constraints on the element size as set by the style sheet, or set explicitly at runtime. */
-		GUILayoutData mLayoutData; /**< Relative position (to parent), size, depth and other information, calculated during a layout update. */
-		Vector2I mAbsolutePosition; /**< Absolute position of the GUI element (relative to parent GUI widget). Only valid after layout update & absolute coordinate update. */
-		Rect2I mAbsoluteClippedArea; /**< Absolute area of the GUI element as clipped by the parent visible bounds (e.g. if a parent is a scroll area). Only valid after layout update & absolute coordinate update. */
-
 		/** If the parent GUI element maintains a quad tree of its children, this will be ID of the element within the quad-tree. */
 		SpatialTreeElementId mQuadTreeId;
+
+		// User-defined layouting data
+		GUISizeConstraints mSizeConstraints; /**< Constraints on the element size as set by the style sheet, or set explicitly at runtime. */
+		float mScale = 1.0f; /**< Scale to apply to the GUI element and all children. */
+
+		// Data calculated by layout update pass
+		GUILayoutData mLayoutData; /**< Relative position (to parent), size, depth and other information, calculated during a layout update. */
+
+		// Data calculated by absolute coordinate pass
+		Vector2I mAbsolutePosition; /**< Absolute position of the GUI element (relative to parent GUI widget). Only valid after layout update & absolute coordinate update. */
+		Size2UI mAbsoluteSize; /**< Final size to use for the element. Same as GUILayoutData::Size, scaled by GUI element scale. */
+		float mAbsoluteScale = 1.0f; /**< Combined local and parent scale. */
+		Rect2I mAbsoluteClippedArea; /**< Absolute area of the GUI element as clipped by the parent visible bounds (e.g. if a parent is a scroll area). Only valid after layout update & absolute coordinate update. */
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

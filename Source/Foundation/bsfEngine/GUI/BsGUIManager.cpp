@@ -1375,7 +1375,7 @@ Vector2I GUIManager::WindowToBridgedCoords(const SPtr<RenderTarget>& target, con
 		const Matrix4& worldTfrm = parentWidget->GetWorldTfrm();
 
 		Vector4 vecLocalPos = worldTfrm.Inverse().MultiplyAffine(Vector4((float)windowPos.X, (float)windowPos.Y, 0.0f, 1.0f));
-		Rect2I bridgeBounds = bridgeElement->GetCachedAbsoluteBounds();
+		Rect2I bridgeBounds = bridgeElement->GetAbsoluteBounds();
 
 		// Find coordinates relative to the bridge element
 		float x = vecLocalPos.X - (float)bridgeBounds.X;
@@ -1489,8 +1489,8 @@ void GUIManager::TabFocusFirst()
 			if(!acceptsKeyFocus || element->IsDisabled() || element->IsHidden())
 				continue;
 
-			const Rect2I elemBounds = element->GetCachedAbsoluteClippedArea();
-			const bool isFullyClipped = element->GetCachedAbsoluteClippedArea().Width == 0 || element->GetCachedAbsoluteClippedArea().Height == 0;
+			const Rect2I elemBounds = element->GetAbsoluteClippedArea();
+			const bool isFullyClipped = element->GetAbsoluteClippedArea().Width == 0 || element->GetAbsoluteClippedArea().Height == 0;
 
 			if(isFullyClipped)
 				continue;

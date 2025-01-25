@@ -59,8 +59,8 @@ namespace bs
 	/** Structure used for initializing GUIContentSprites. */
 	struct GUIContentSpriteCreateInformation
 	{
-		GUIContentSpriteCreateInformation(const Size2UI& size, const GUIContent& content, const GUIStyleSheetRules& rules, const Color& tint, u64 batchId)
-			: Content(content), ContentArea(0, 0, size.Width, size.Height), Rules(rules), Tint(tint), BatchId(batchId)
+		GUIContentSpriteCreateInformation(const Size2UI& size, const GUIContent& content, const GUIStyleSheetRules& rules, const Color& tint, float fontScale, u64 batchId)
+			: Content(content), ContentArea(0, 0, size.Width, size.Height), Rules(rules), Tint(tint), BatchId(batchId), FontScale(fontScale)
 		{ }
 
 		GUIContent Content; /**< Image and/or text content to display. */
@@ -69,6 +69,7 @@ namespace bs
 		u32 Depth = 0; /**< Depth at which to render the sprites. Higher depth means a sprite is rendered behind sprites with lower depth. */
 		Color Tint; /**< Runtime color tint to apply to the sprite. */
 		u64 BatchId = 0; /**< ID that specifies if the sprite is allowed to be batched with other sprites. Only sprites with the same batch ID can be batched. */
+		float FontScale = 1.0f; /**< Scale to apply to font size. */
 		bool WordWrap = false; /**< If true, text will wrap to a new line if it exceeds the content area width. If false, the text will be clipped. */
 
 		const GUIStyleSheetRules& Rules; /**< Style sheet rules that determine how to style the sprites. */
@@ -87,7 +88,7 @@ namespace bs
 		void BuildRenderElements(const GUIContentSpriteCreateInformation& createInformation, TInlineArray<GUIRenderElement, 4>& outRenderElements);
 
 		/** Builds a struct used for initializing the text sprite required for rendering the provided contents within the provided bounds. */
-		static TextSpriteInformation BuildTextSpriteInformation(const Rect2I& contentArea, const String& text, const GUIStyleSheetRules& rules, const Color& tint, bool  wordWrap = false);
+		static TextSpriteInformation BuildTextSpriteInformation(const Rect2I& contentArea, const String& text, const GUIStyleSheetRules& rules, const Color& tint, float fontScale = 1.0f, bool wordWrap = false);
 
 		/** Updates the animation start time (in seconds since application start), in case the content image contains an animated sprite. */
 		void SetAnimationStartTime(float time);
@@ -132,7 +133,7 @@ namespace bs
 		static void BuildSpriteRenderElements(GUIInteractable& element, GUIElementState state, const GUIContent& content, GUIContentSprites& sprites, const Vector2I& offset = Vector2I::kZero, u32 depth = 0, bool wordWrap = false);
 
 		/** Builds a struct used for initializing a TextSprite, required for rendering the provided contents from the provided GUI element. */
-		static TextSpriteInformation BuildTextSpriteInformation(const GUIInteractable& element, GUIElementState state, const String& text, bool wordWrap = false);
+		static TextSpriteInformation BuildTextSpriteInformation(const GUIInteractable& element, GUIElementState state, const String& text, float fontScale = 1.0f, bool wordWrap = false);
 	};
 
 	/** @} */

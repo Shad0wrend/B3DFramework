@@ -18,6 +18,12 @@ namespace bs
     {
         public int x, y, width, height;
 
+        /** Returns position of the rectangle. */
+        public Vector2I Position => new Vector2I(x, y);
+
+        /** Returns width/height of the rectangle. */
+        public Size2UI Size => new Size2UI(width, height);
+
         /// <summary>
         /// Creates a new 2D rectangle.
         /// </summary>
@@ -31,6 +37,19 @@ namespace bs
             this.y = y;
             this.width = width;
             this.height = height;
+        }
+
+        /// <summary>
+        /// Creates a new 2D rectangle.
+        /// </summary>
+        /// <param name="position">Position of the top-left corner of the rectangle.</param>
+        /// <param name="size">Width/height of the rectangle.</param>
+        public Rect2I(Vector2I position, Size2UI size)
+        {
+            this.x = position.X;
+            this.y = position.Y;
+            this.width = size.Width;
+            this.height = size.Height;
         }
 
         public static bool operator== (Rect2I lhs, Rect2I rhs)

@@ -205,6 +205,12 @@ namespace bs
 			return X * other.X + Y * other.Y;
 		}
 
+		/** Converts a float into an integer vector. */
+		static TVector2I<T> FromFloat(const Vector2& other)
+		{
+			return TVector2I((T)other.X, (T)other.Y);
+		}
+
 		static const TVector2I kZero;
 	};
 

@@ -315,14 +315,14 @@ void GUIScrollArea::UpdateAbsoluteCoordinatesForChildren()
 
 	if(mContentLayout->IsActive())
 	{
-		const Vector2I contentOrigin(mAbsolutePosition.X - Math::FloorToInt(mHorzOffset), mAbsolutePosition.Y - Math::FloorToInt(mVertOffset));
-		const Rect2I contentVisibleAreaSize(mAbsolutePosition.X, mAbsolutePosition.Y, (u32)mVisibleSize.X, (u32)mVisibleSize.Y); // TODO - Clip visible size by parent clip rectangle?
+		const Vector2I contentOrigin(mAbsolutePosition.X - Math::FloorToInt(mHorzOffset * mAbsoluteScale), mAbsolutePosition.Y - Math::FloorToInt(mVertOffset * mAbsoluteScale));
+		const Rect2I contentVisibleAreaSize(mAbsolutePosition.X, mAbsolutePosition.Y, (u32)mVisibleSize.X * mAbsoluteScale, (u32)mVisibleSize.Y * mAbsoluteScale); // TODO - Clip visible size by parent clip rectangle?
 
-		mContentLayout->UpdateAbsoluteCoordinates(contentOrigin, contentVisibleAreaSize);
+		mContentLayout->UpdateAbsoluteCoordinates(contentOrigin, mAbsoluteScale, contentVisibleAreaSize);
 	}
 
-	mHorizontalScrollBar->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
-	mVerticalScrollBar->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
+	mHorizontalScrollBar->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteScale, mAbsoluteClippedArea);
+	mVerticalScrollBar->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteScale, mAbsoluteClippedArea);
 }
 
 void GUIScrollArea::VertScrollUpdate(float scrollPos)
@@ -375,7 +375,7 @@ float GUIScrollArea::GetHorizontalScroll() const
 
 Rect2I GUIScrollArea::GetContentBounds()
 {
-	Rect2I bounds = CalculateBoundsRelativeTo();
+	Rect2I bounds = CalculateAbsoluteBoundsRelativeTo();
 
 	if(mHorizontalScrollBar)
 		bounds.Height -= kScrollBarWidth;

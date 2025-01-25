@@ -153,10 +153,7 @@ namespace bs
                 this.width = width;
                 this.height = height;
 
-                Rect2I bounds = scrollArea.Bounds;
-                bounds.width = width;
-                bounds.height = height;
-                scrollArea.Bounds = bounds;
+                scrollArea.SetSize(new Size2UI(width, height));
             }
         }
 
@@ -245,7 +242,7 @@ namespace bs
                     // Calculate the new scroll pct (which will be active after we change the top/bottom padding element
                     // sizes). If we use the existing scroll pct instead then the elements will lag one frame behind, which
                     // can be very noticeable on quickly updating lists.
-                    newScrollPct = (scrollPct*scrollArea.Layout.Bounds.height)/totalHeight;
+                    newScrollPct = (scrollPct*scrollArea.Layout.AbsoluteBounds.height)/totalHeight;
                 }
                 else
                     newScrollPct = 1.0f;

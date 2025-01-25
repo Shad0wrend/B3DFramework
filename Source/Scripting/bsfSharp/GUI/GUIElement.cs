@@ -17,21 +17,32 @@ namespace bs
     public abstract class GUIElement : ScriptObject
     {
         /// <summary>
-        /// Gets or sets non-clipped bounds of the GUI element. Relative to a parent GUI panel.
+        /// Returns bounds of the GUI element, relative to the parent GUI widget. Absolute values represent the final
+        /// position and size of the GUI element, affected by DPI scale, parent scale and self scale. The values are
+        /// provided in physical pixel units.
+        ///
+        /// Always returns value calculated by last layout update. This means out of date value may be returned if the
+        /// layout has been dirtied since then. // TODO - This sentence is not true until below is implemented
         /// </summary>
-        public Rect2I Bounds
+        public Rect2I AbsoluteBounds // TODO - Refactor this to always return cached bounds, add CalculateAbsoluteBounds for other use cases
         {
             get
             {
                 Rect2I bounds;
-                Internal_GetBounds(mCachedPtr, out bounds);
+                Internal_CalculateAbsoluteBounds(mCachedPtr, out bounds);
                 return bounds;
             }
-            set { Internal_SetBounds(mCachedPtr, ref value); }
+            set
+            {
+                // TODO - For debugging only
+                SetPosition(value.Position);
+                SetSize(value.Size);
+            }
         }
 
         /// <summary>
-        /// Returns the non-clipped bounds of the GUI element in screen space.
+        /// Calculates bounds of the GUI element in screen space.
+        /// <remarks>This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.</remarks>
         /// </summary>
         public Rect2I ScreenBounds
         {
@@ -44,15 +55,25 @@ namespace bs
         }
 
         /// <summary>
-        /// Returns the non-clipped bounds of the GUI element including the margins. Relative to a parent GUI panel.
+        /// Returns the position of the GUI element relative to the first parent GUI panel. Values are provided in logical pixel units.
         /// </summary>
-        public Rect2I VisibleBounds
+        /// <remarks>This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.</remarks>
+        public Vector2I LayoutCalculatedPositionRelativeToParentPanel => CalculatePositionRelativeTo();
+
+        /// <summary>
+        /// Returns width/height of the GUI element. This will be the fixed width/height if set by the user, or automatically
+        /// determined by the layout update pass if not fixed. Size is provided in logical pixel units.
+        /// 
+        /// Always returns value calculated by last layout update. This means out of date value may be returned if the
+        /// layout has been dirtied since then.
+        /// </summary>
+        public Size2UI LayoutCalculatedSize 
         {
             get
             {
-                Rect2I bounds;
-                Internal_GetVisibleBounds(mCachedPtr, out bounds);
-                return bounds;
+                Size2UI size;
+                Internal_GetLayoutCalculatedSize(mCachedPtr, out size);
+                return size;
             }
         }
 
@@ -108,11 +129,10 @@ namespace bs
         /// <summary>
         /// Sets element position relative to parent GUI panel.
         /// </summary>
-        /// <param name="x">X position of the element in pixels, relative to parent GUI panel.</param>
-        /// <param name="y">Y position of the element in pixels, relative to parent GUI panel.</param>
+        /// <param name="x">X position of the element in logical pixel units, relative to parent GUI panel.</param>
+        /// <param name="y">Y position of the element in logical pixel units, relative to parent GUI panel.</param>
         /// <remarks>
-        /// Be aware that this value will be ignored if GUI element is part of a layout because the layout controls placement
-        /// of child elements.
+        /// Be aware that this value will be ignored if GUI element is part of a layout because the layout controls placement of child elements.
         /// </remarks>
         public void SetPosition(int x, int y)
         {
@@ -120,9 +140,21 @@ namespace bs
         }
 
         /// <summary>
+        /// Sets element position relative to parent GUI panel.
+        /// </summary>
+        /// <param name="position">X/Y position of the element in logical pixel units, relative to parent GUI panel.</param>
+        /// <remarks>
+        /// Be aware that this value will be ignored if GUI element is part of a layout because the layout controls placement of child elements.
+        /// </remarks>
+        public void SetPosition(Vector2I position)
+        {
+            Internal_SetPosition(mCachedPtr, position.X, position.Y);
+        }
+
+        /// <summary>
         /// Sets a fixed element width.
         /// </summary>
-        /// <param name="width">Width in pixels.</param>
+        /// <param name="width">Width in logical pixel units.</param>
         public void SetWidth(int width)
         {
             Internal_SetWidth(mCachedPtr, width);
@@ -132,8 +164,8 @@ namespace bs
         /// Sets a flexible element width. Element will be resized according to its contents and parent layout but will
         /// always stay within the provided range.
         /// </summary>
-        /// <param name="minWidth">Minimum width in pixels. Element will never be smaller than this width.</param>
-        /// <param name="maxWidth">Maximum width in pixels. Element will never be larger than this width. Specify zero for
+        /// <param name="minWidth">Minimum width in logical pixel units. Element will never be smaller than this width.</param>
+        /// <param name="maxWidth">Maximum width in logical pixel units. Element will never be larger than this width. Specify zero for
         ///                        unlimited width.</param>
         public void SetFlexibleWidth(int minWidth, int maxWidth)
         {
@@ -143,7 +175,7 @@ namespace bs
         /// <summary>
         /// Sets a fixed element height.
         /// </summary>
-        /// <param name="height">Height in pixels.</param>
+        /// <param name="height">Height in logical pixel units.</param>
         public void SetHeight(int height)
         {
             Internal_SetHeight(mCachedPtr, height);
@@ -153,8 +185,8 @@ namespace bs
         /// Sets a flexible element height. Element will be resized according to its contents and parent layout but will
         /// always stay within the provided range.
         /// </summary>
-        /// <param name="minHeight">Minimum height in pixels. Element will never be smaller than this height.</param>
-        /// <param name="maxHeight">Maximum height in pixels. Element will never be larger than this height. Specify zero
+        /// <param name="minHeight">Minimum height in logical pixel units. Element will never be smaller than this height.</param>
+        /// <param name="maxHeight">Maximum height in logical pixel units. Element will never be larger than this height. Specify zero
         ///                         for unlimited height.</param>
         public void SetFlexibleHeight(int minHeight, int maxHeight)
         {
@@ -162,30 +194,61 @@ namespace bs
         }
 
         /// <summary>
-        /// Resets element bounds to their initial values dictated by the element's style.
+        /// Sets a fixed element width & height.
         /// </summary>
-        public void ResetDimensions()
+        /// <param name="size">Width/height in logical pixel units.</param>
+        public void SetSize(Size2UI size)
         {
-            Internal_ResetDimensions(mCachedPtr);
+            Internal_SetSize(mCachedPtr, ref size);
         }
 
         /// <summary>
-        /// Calculates the bounds of a GUI element. This is similar to <see cref="GUIElement.Bounds"/> but allows you to
-        /// returns bounds relative to a specific parent GUI element.
+        /// Resets element size constraints to their initial values dictated by the element's style.
         /// </summary>
-        /// <param name="element">Elements to calculate the bounds for.</param>
-        /// <param name="relativeTo">GUI layout the bounds will be relative to. If this is null or the provided element is
-        ///                          not a parent of the provided GUI element, the returned bounds will be relative to the
-        ///                          first GUI panel parent instead.</param>
+        public void ResetSizeConstraints()
+        {
+            Internal_ResetSizeConstraints(mCachedPtr);
+        }
+
+        /// <summary>
+        /// Calculates bounds of the GUI element, relative to the provided parent layout (or parent panel if null). Absolute values represent
+        /// the final position and size of the GUI element, affected by DPI scale, parent scale and self scale. 
+        /// </summary>
+        /// <param name="relativeTo">
+        /// Parent layout of the provided element relative to which to return the bounds. If null the bounds relative to parent panel are
+        /// returned. Behavior is undefined if provided parent is not a parent of the element.
+        /// </param>
         /// <returns>Bounds of a GUI element relative to the provided GUI layout.</returns>
-        public Rect2I CalculateBoundsRelativeTo(GUILayout relativeTo = null)
+        /// <remarks>This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.</remarks>
+        public Rect2I CalculateAbsoluteBoundsRelativeTo(GUILayout relativeTo = null)
         {
             IntPtr relativeToNative = IntPtr.Zero;
             if (relativeTo != null)
                 relativeToNative = relativeTo.GetCachedPtr();
 
             Rect2I output;
-            Internal_CalculateBoundsRelativeTo(GetCachedPtr(), relativeToNative, out output);
+            Internal_CalculateAbsoluteBoundsRelativeTo(GetCachedPtr(), relativeToNative, out output);
+            return output;
+        }
+
+        /// <summary>
+        /// Calculates position of the GUI element, relative to the provided parent layout (or parent panel if null).
+        /// The value is provided in logical pixel units.
+        /// </summary>
+        /// <param name="relativeTo">
+        /// Parent layout of the provided element relative to which to return the position. If null the position relative to parent panel is
+        /// returned. Behavior is undefined if provided parent is not a parent of the element.
+        /// </param>
+        /// <returns>Position of a GUI element relative to the provided GUI layout.</returns>
+        /// <remarks>This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.</remarks>
+        public Vector2I CalculatePositionRelativeTo(GUILayout relativeTo = null)
+        {
+            IntPtr relativeToNative = IntPtr.Zero;
+            if (relativeTo != null)
+                relativeToNative = relativeTo.GetCachedPtr();
+
+            Vector2I output;
+            Internal_CalculatePositionRelativeTo(GetCachedPtr(), relativeToNative, out output);
             return output;
         }
 
@@ -223,16 +286,16 @@ namespace bs
         private static extern void Internal_SetFlexibleHeight(IntPtr nativeInstance, int minHeight, int maxHeight);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_ResetDimensions(IntPtr nativeInstance);
+        private static extern void Internal_SetSize(IntPtr nativeInstance, ref Size2UI size);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_GetBounds(IntPtr nativeInstance, out Rect2I value);
+        private static extern void Internal_ResetSizeConstraints(IntPtr nativeInstance);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_SetBounds(IntPtr nativeInstance, ref Rect2I value);
+        private static extern void Internal_CalculateAbsoluteBounds(IntPtr nativeInstance, out Rect2I value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_GetVisibleBounds(IntPtr nativeInstance, out Rect2I value);
+        private static extern void Internal_GetLayoutCalculatedSize(IntPtr nativeInstance, out Size2UI value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_GetScreenBounds(IntPtr nativeInstance, out Rect2I value);
@@ -244,7 +307,10 @@ namespace bs
         private static extern void Internal_Destroy(IntPtr nativeInstance);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_CalculateBoundsRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out Rect2I output);
+        private static extern void Internal_CalculateAbsoluteBoundsRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out Rect2I output);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_CalculatePositionRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out Vector2I output);
     }
 
     /** @} */

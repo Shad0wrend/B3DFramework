@@ -291,7 +291,7 @@ void GUIWidget::UpdateLayout(GUIElement* element)
 
 		dirtyElement->SetLayoutData(childLayoutData);
 		dirtyElement->UpdateLayoutForChildren();
-		dirtyElement->UpdateAbsoluteCoordinates(panel->GetCachedAbsolutePosition(), panel->GetCachedAbsoluteClippedArea());
+		dirtyElement->UpdateAbsoluteCoordinates(panel->GetAbsolutePosition(), mDPIScale, panel->GetAbsoluteClippedArea());
 	}
 	else
 	{
@@ -474,11 +474,11 @@ bool GUIWidget::InBounds(const Vector2I& position) const
 void GUIWidget::UpdateBounds() const
 {
 	if(!mElements.empty())
-		mBounds = mElements[0]->GetCachedAbsoluteClippedArea();
+		mBounds = mElements[0]->GetAbsoluteClippedArea();
 
 	for(auto& elem : mElements)
 	{
-		Rect2I elemBounds = elem->GetCachedAbsoluteClippedArea();
+		Rect2I elemBounds = elem->GetAbsoluteClippedArea();
 		mBounds.Encapsulate(elemBounds);
 	}
 }
@@ -507,6 +507,6 @@ void GUIWidget::UpdateRootPanel()
 	mPanel->SetHeight(height);
 
 	mPanel->SetLayoutData(layoutData);
-	mPanel->ResetAbsoluteClippedArea();
+	mPanel->ResetAbsoluteBounds(mDPIScale);
 	mPanel->MarkLayoutAsDirty();
 }

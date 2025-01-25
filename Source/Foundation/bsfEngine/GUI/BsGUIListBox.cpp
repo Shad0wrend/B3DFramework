@@ -137,7 +137,7 @@ void GUIListBox::SetElementStates(const Vector<bool>& states)
 
 Rect2I GUIListBox::GetCachedContentBoundsInElementSpace() const
 {
-	const Rect2I& cachedBounds = GetCachedAbsoluteBounds();
+	const Rect2I& cachedBounds = GetAbsoluteBounds();
 
 	Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
 
@@ -160,7 +160,7 @@ Rect2I GUIListBox::GetArrowCachedContentBoundsInElementSpace() const
 	if(!IsUsingStyleSheets() || mStyleSheetRuleInformation.CurrentStateRuleset == nullptr)
 		return output;
 
-	const Rect2I& cachedBounds = GetCachedAbsoluteBounds();
+	const Rect2I& cachedBounds = GetAbsoluteBounds();
 	const Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
 
 	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
@@ -181,7 +181,7 @@ Rect2I GUIListBox::GetArrowCachedContentBoundsInElementSpace() const
 
 Size2UI GUIListBox::GetArrowCachedContentSize() const
 {
-	const Rect2I& cachedBounds = GetCachedAbsoluteBounds();
+	const Rect2I& cachedBounds = GetAbsoluteBounds();
 
 	Size2UI output(0, cachedBounds.Height);
 	if(!IsUsingStyleSheets() || mStyleSheetRuleInformation.CurrentStateRuleset == nullptr)
@@ -330,7 +330,7 @@ void GUIListBox::OpenListBox()
 
 	desc.Camera = widget->GetCamera();
 	desc.StyleSheetCascade = widget->GetStyleSheetCascadeAsShared();
-	desc.Placement = DropDownAreaPlacement::AroundBoundsHorz(GetCachedAbsoluteBounds());
+	desc.Placement = DropDownAreaPlacement::AroundBoundsHorz(GetAbsoluteBounds());
 	desc.DropDownData.States = mElementStates;
 
 	GUIDropDownType type;

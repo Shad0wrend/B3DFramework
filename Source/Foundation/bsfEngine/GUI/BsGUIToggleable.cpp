@@ -223,7 +223,7 @@ void GUIToggleable::UpdateRenderElements()
 	}
 
 	// Otherwise, create the checkmark sprite and offset the parent's contents to make room
-	const Size2UI checkmarkAreaSize = CalculateCheckmarkContentAreaSize(GetCachedAbsoluteBounds().GetSize());
+	const Size2UI checkmarkAreaSize = CalculateCheckmarkContentAreaSize(GetAbsoluteBounds().GetSize());
 
 	// Use user-provided image, if one is provided
 	bool showCheckmarkSprite = false;
@@ -265,7 +265,7 @@ void GUIToggleable::UpdateRenderElements()
 
 	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 
-	GUIContentSpriteCreateInformation contentSpriteCreateInformation(Size2UI::kZero, mContent, styleSheetRules, tint, batchId);
+	GUIContentSpriteCreateInformation contentSpriteCreateInformation(Size2UI::kZero, mContent, styleSheetRules, tint, mAbsoluteScale, batchId);
 
 	const Rect2I& contentAreaBounds = GetCachedContentBoundsInElementSpace();
 	contentSpriteCreateInformation.ContentArea = Rect2I(contentAreaBounds.X + (i32)kCheckmarkContentSpacing + (i32)checkmarkAreaSize.Width, contentAreaBounds.Y,

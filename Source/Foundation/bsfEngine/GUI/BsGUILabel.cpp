@@ -32,8 +32,8 @@ void GUILabel::UpdateRenderElements()
 
 	GUISpriteHelper::BuildSpriteRenderElements(*this, GUIElementState::Normal, mBackgroundSprite);
 
-	mTextSpriteInformation.Width = mLayoutData.Size.Width;
-	mTextSpriteInformation.Height = mLayoutData.Size.Height;
+	mTextSpriteInformation.Width = mAbsoluteSize.Width;
+	mTextSpriteInformation.Height = mAbsoluteSize.Height;
 	mTextSpriteInformation.Text = (String)mContent.Text;
 
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
@@ -42,6 +42,7 @@ void GUILabel::UpdateRenderElements()
 
 		mTextSpriteInformation.InitializeFromStyleSheetRules(styleSheetRules);
 		mTextSpriteInformation.Color *= GetTint();
+		mTextSpriteInformation.FontSize *= mAbsoluteScale;
 	}
 
 	mTextSprite->Update(mTextSpriteInformation, (u64)GetParentWidget());

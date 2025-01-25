@@ -292,6 +292,11 @@ namespace bs
 			return TSize2<float>((float)Width, (float)Height);
 		}
 
+		static TSize2<T> FromFloat(const TSize2<float>& other)
+		{
+			return TSize2<T>((T)other.Width, (T)other.Height);
+		}
+
 		static const TSize2 kZero;
 	};
 

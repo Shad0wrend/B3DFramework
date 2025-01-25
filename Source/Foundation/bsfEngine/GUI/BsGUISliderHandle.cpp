@@ -51,12 +51,12 @@ void GUISliderHandle::UpdateRenderElements()
 	if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 	{
 		size.Width = handleSize;
-		size.Height = mLayoutData.Size.Height;
+		size.Height = mAbsoluteSize.Height;
 		offset.X += GetHandlePositionInPixels();
 	}
 	else
 	{
-		size.Width = mLayoutData.Size.Width;
+		size.Width = mAbsoluteSize.Width;
 		size.Height = handleSize;
 		offset.Y += GetHandlePositionInPixels();
 	}
@@ -408,9 +408,9 @@ void GUISliderHandle::SetHandlePositionInPixels(i32 position)
 
 u32 GUISliderHandle::GetTotalLength() const
 {
-	u32 maxSize = mLayoutData.Size.Height;
+	u32 maxSize = mAbsoluteSize.Height;
 	if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
-		maxSize = mLayoutData.Size.Width;
+		maxSize = mAbsoluteSize.Width;
 
 	return maxSize;
 }

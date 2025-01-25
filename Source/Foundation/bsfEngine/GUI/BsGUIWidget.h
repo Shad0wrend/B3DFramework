@@ -217,6 +217,8 @@ namespace bs
 		Vector3 mScale = Vector3::kOne;
 		Matrix4 mTransform = BsIdentity;
 
+		float mDPIScale = 1.0f;
+
 		Set<GUIRenderable*> mDirtyContents;
 		Set<GUIRenderable*> mDirtyContentsTemp;
 

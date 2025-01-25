@@ -1037,6 +1037,6 @@ void GUIInputBox::PasteText()
 
 TextSpriteInformation GUIInputBox::BuildTextSpriteInformation() const
 {
-	return GUISpriteHelper::BuildTextSpriteInformation(*this, mState, mText, mIsMultiline);
+	return GUISpriteHelper::BuildTextSpriteInformation(*this, mState, mText, mAbsoluteScale, mIsMultiline);
 }
 

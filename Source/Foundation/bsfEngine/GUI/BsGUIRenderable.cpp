@@ -70,7 +70,7 @@ void GUIRenderable::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u
 	const GUIRenderElement& renderElement = mRenderElements[renderElementIndex];
 
 	const Vector2I guiElementOffset = mAbsolutePosition;
-	const Rect2 guiElementClipRectangle = (Rect2)GetCachedLocalClippedArea();
+	const Rect2 guiElementClipRectangle = (Rect2)GetLocalClippedArea();
 
 	// Build the render element bounds to use for clipping
 	Rect2 renderElementClipRectangle = renderElement.ClipRectangle; // In space relative to parent GUI element
@@ -156,7 +156,7 @@ const RectOffset& GUIRenderable::GetPadding() const
 	}
 }
 
-void GUIRenderable::ResetDimensions()
+void GUIRenderable::ResetSizeConstraints()
 {
 	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
@@ -177,7 +177,7 @@ Rect2I GUIRenderable::GetCachedContentBounds() const
 {
 	Rect2I contentArea = GetCachedContentBoundsInElementSpace();
 
-	const Rect2I& cachedBounds = GetCachedAbsoluteBounds();
+	const Rect2I& cachedBounds = GetAbsoluteBounds();
 	contentArea.X += cachedBounds.X;
 	contentArea.Y += cachedBounds.Y;
 
@@ -186,7 +186,7 @@ Rect2I GUIRenderable::GetCachedContentBounds() const
 
 Rect2I GUIRenderable::GetCachedContentBoundsInElementSpace() const
 {
-	const Rect2I& cachedBounds = GetCachedAbsoluteBounds();
+	const Rect2I& cachedBounds = GetAbsoluteBounds();
 	const Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
 
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
@@ -204,7 +204,7 @@ Rect2I GUIRenderable::GetCachedClippedContentBoundsInContentSpace() const
 
 	// Transform into element space so we can clip it using the element clip rectangle
 	Rect2I contentClipRect = localContentBounds;
-	contentClipRect.Clip(GetCachedLocalClippedArea());
+	contentClipRect.Clip(GetLocalClippedArea());
 
 	// Transform into content sprite space
 	contentClipRect.X -= localContentBounds.X;

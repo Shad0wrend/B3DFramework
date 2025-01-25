@@ -144,7 +144,7 @@ void GUIElement::SetFlexibleHeight(u32 minHeight, u32 maxHeight)
 	MarkLayoutAsDirty();
 }
 
-void GUIElement::ResetDimensions()
+void GUIElement::ResetSizeConstraints()
 {
 	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
@@ -158,26 +158,50 @@ void GUIElement::ResetDimensions()
 	MarkLayoutAsDirty();
 }
 
-Rect2I GUIElement::CalculateBoundsRelativeTo(GUIElement* relativeTo)
+Vector2I GUIElement::CalculatePositionRelativeTo(GUIElement* relativeTo) const
+{
+	if(relativeTo == nullptr)
+		relativeTo = mPanelParent;
+
+	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsLayoutDirty() && mParentWidget != nullptr)
+		mParentWidget->UpdateLayout(mLayoutUpdateParent);
+
+	if(relativeTo == nullptr)
+		return mLayoutData.RelativePosition;
+
+	auto fnGetAccumulatedRelativePosition = [relativeTo](const GUIElement* element, auto&& fnGetAccumulatedRelativePosition)
+	{
+		GUIElement* const parent = element->GetParent();
+		if(parent == nullptr || element == relativeTo)
+			return element->GetLayoutData().RelativePosition;
+
+		const Vector2I& parentPosition = fnGetAccumulatedRelativePosition(parent, fnGetAccumulatedRelativePosition);
+		return parentPosition + element->GetLayoutData().RelativePosition;
+	};
+
+	return fnGetAccumulatedRelativePosition(this, fnGetAccumulatedRelativePosition);
+}
+
+Rect2I GUIElement::CalculateAbsoluteBoundsRelativeTo(GUIElement* relativeTo)
 {
 	if(relativeTo == nullptr)
 		relativeTo = mPanelParent;
 
 	Rect2I anchorBounds;
 	if(relativeTo != nullptr)
-		anchorBounds = relativeTo->GetAbsoluteBounds();
+		anchorBounds = relativeTo->CalculateAbsoluteBounds();
 
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsLayoutDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
-	Rect2I bounds = GetCachedAbsoluteBounds();
+	Rect2I bounds = GetAbsoluteBounds();
 	bounds.X -= anchorBounds.X;
 	bounds.Y -= anchorBounds.Y;
 
 	return bounds;
 }
 
-Rect2I GUIElement::GetCachedLocalClippedArea() const
+Rect2I GUIElement::GetLocalClippedArea() const
 {
 	Rect2I localClippedArea = mAbsoluteClippedArea;
 	localClippedArea.X -= mAbsolutePosition.X;
@@ -186,24 +210,17 @@ Rect2I GUIElement::GetCachedLocalClippedArea() const
 	return localClippedArea;
 }
 
-void GUIElement::SetBounds(const Rect2I& bounds)
-{
-	SetPosition(bounds.X, bounds.Y);
-	SetWidth(bounds.Width);
-	SetHeight(bounds.Height);
-}
-
-Rect2I GUIElement::GetAbsoluteBounds() const
+Rect2I GUIElement::CalculateAbsoluteBounds() const
 {
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsLayoutDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
-	return GetCachedAbsoluteBounds();
+	return GetAbsoluteBounds();
 }
 
-Rect2I GUIElement::GetScreenBounds() const
+Rect2I GUIElement::CalculateScreenBounds() const
 {
-	Rect2I area = GetAbsoluteBounds();
+	Rect2I area = CalculateAbsoluteBounds();
 	if(mParentWidget)
 	{
 		const Matrix4& widgetTfrm = mParentWidget->GetWorldTfrm();
@@ -518,12 +535,14 @@ void GUIElement::UpdateOptimalLayoutSizes()
 	}
 }
 
-void GUIElement::UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, const Rect2I& parentVisibleArea)
+void GUIElement::UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, float parentScale, const Rect2I& parentVisibleArea)
 {
-	mAbsolutePosition.X = mLayoutData.RelativePosition.X + parentOrigin.X;
-	mAbsolutePosition.Y = mLayoutData.RelativePosition.Y + parentOrigin.Y;
+	mAbsoluteScale = mScale * parentScale;
 
-	mAbsoluteClippedArea = Rect2I(mAbsolutePosition, mLayoutData.Size);
+	mAbsolutePosition = Vector2I::FromFloat(mLayoutData.RelativePosition.ToFloat() * mAbsoluteScale) + parentOrigin;
+	mAbsoluteSize = Size2UI::FromFloat(mLayoutData.Size.ToFloat() * mAbsoluteScale);
+
+	mAbsoluteClippedArea = Rect2I(mAbsolutePosition, mAbsoluteSize);
 	mAbsoluteClippedArea.Clip(parentVisibleArea);
 
 	UpdateAbsoluteCoordinatesForChildren();
@@ -533,7 +552,7 @@ void GUIElement::UpdateAbsoluteCoordinatesForChildren()
 {
 	for(auto& child : mChildren)
 	{
-		child->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
+		child->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteScale, mAbsoluteClippedArea);
 		child->UpdateAbsoluteCoordinatesForChildren();
 	}
 }
@@ -559,6 +578,13 @@ const RectOffset& GUIElement::GetPadding() const
 {
 	static RectOffset padding;
 	return padding;
+}
+
+void GUIElement::ResetAbsoluteBounds(float scale)
+{
+	mAbsoluteScale = mScale * scale;
+	mAbsoluteSize = Size2UI::FromFloat(mLayoutData.Size.ToFloat() * mAbsoluteScale);
+	mAbsoluteClippedArea = Rect2I(mAbsolutePosition.X, mAbsolutePosition.Y, mAbsoluteSize.Width, mAbsoluteSize.Height);
 }
 
 void GUIElement::SetParent(GUIElement* parent)

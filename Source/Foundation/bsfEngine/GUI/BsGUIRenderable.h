@@ -79,7 +79,7 @@ namespace bs
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Tint))
 		Color GetTint() const;
 
-		void ResetDimensions() override;
+		void ResetSizeConstraints() override;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

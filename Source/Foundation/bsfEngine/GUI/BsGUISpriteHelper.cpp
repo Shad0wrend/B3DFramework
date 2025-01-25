@@ -98,7 +98,7 @@ void GUIContentSprites::BuildRenderElements(const GUIContentSpriteCreateInformat
 	const bool isContentTextAvailable = !createInformation.Content.Text.GetValue().empty();
 	if(isContentTextAvailable)
 	{
-		mContentTextSpriteInformation = BuildTextSpriteInformation(contentArea, createInformation.Content.Text.GetValue(), createInformation.Rules, createInformation.Tint, createInformation.WordWrap);
+		mContentTextSpriteInformation = BuildTextSpriteInformation(contentArea, createInformation.Content.Text.GetValue(), createInformation.Rules, createInformation.Tint, createInformation.FontScale, createInformation.WordWrap);
 
 		mContentTextSprite.Update(mContentTextSpriteInformation, createInformation.BatchId);
 	}
@@ -139,7 +139,7 @@ void GUIContentSprites::BuildRenderElements(const GUIContentSpriteCreateInformat
 		GUIRenderElementHelper::Append({ GUIRenderElementHelper::SpriteInfo(&mContentTextSprite, createInformation.Depth, textOffset, textBounds) }, outRenderElements );
 }
 
-TextSpriteInformation GUIContentSprites::BuildTextSpriteInformation(const Rect2I& contentArea, const String& text, const GUIStyleSheetRules& rules, const Color& tint, bool wordWrap)
+TextSpriteInformation GUIContentSprites::BuildTextSpriteInformation(const Rect2I& contentArea, const String& text, const GUIStyleSheetRules& rules, const Color& tint, float fontScale, bool wordWrap)
 {
 	TextSpriteInformation textSpriteInformation;
 
@@ -150,6 +150,7 @@ TextSpriteInformation GUIContentSprites::BuildTextSpriteInformation(const Rect2I
 
 	textSpriteInformation.InitializeFromStyleSheetRules(rules);
 	textSpriteInformation.Color *= tint;
+	textSpriteInformation.FontSize *= fontScale;
 	
 	return textSpriteInformation;
 }
@@ -241,7 +242,7 @@ void GUIContentSprites::CalculateContentBounds(const Rect2I& contentArea, const 
 
 void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIElementState state, GUIBackgroundSprite& sprite, const Vector2I& offset, u32 depth)
 {
-	const Size2UI size(element.GetLayoutData().Size.Width, element.GetLayoutData().Size.Height);
+	const Size2UI size(element.mAbsoluteSize.Width, element.mAbsoluteSize.Height);
 	const u64 batchId = (u64)element.GetParentWidget();
 	const Color& tint = element.GetTint();
 
@@ -259,7 +260,7 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 
 void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIElementState state, const GUIContent& content, GUIContentSprites& sprites, const Vector2I& offset, u32 depth, bool wordWrap)
 {
-	const Size2UI size(element.GetLayoutData().Size.Width, element.GetLayoutData().Size.Height);
+	const Size2UI size(element.mAbsoluteSize.Width, element.mAbsoluteSize.Height);
 	const u64 batchId = (u64)element.GetParentWidget();
 	const Color& tint = element.GetTint();
 
@@ -267,7 +268,7 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 		return;
 
 	const GUIStyleSheetRules& styleSheetRules = element.mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-	GUIContentSpriteCreateInformation contentSpriteCreateInformation(size, content, styleSheetRules, tint, batchId);
+	GUIContentSpriteCreateInformation contentSpriteCreateInformation(size, content, styleSheetRules, tint, element.mAbsoluteScale, batchId);
 	contentSpriteCreateInformation.Depth = depth;
 	contentSpriteCreateInformation.Offset = offset;
 	contentSpriteCreateInformation.ContentArea = GUIUtility::CalculateContentArea(size, styleSheetRules);
@@ -275,9 +276,9 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 	sprites.BuildRenderElements(contentSpriteCreateInformation, element.mRenderElements);
 }
 
-TextSpriteInformation GUISpriteHelper::BuildTextSpriteInformation(const GUIInteractable& element, GUIElementState state, const String& text, bool wordWrap)
+TextSpriteInformation GUISpriteHelper::BuildTextSpriteInformation(const GUIInteractable& element, GUIElementState state, const String& text, float fontScale, bool wordWrap)
 {
-	const Size2UI size(element.GetLayoutData().Size.Width, element.GetLayoutData().Size.Height);
+	const Size2UI size(element.mAbsoluteSize.Width, element.mAbsoluteSize.Height);
 	const Color& tint = element.GetTint();
 
 	if(element.mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
@@ -285,7 +286,7 @@ TextSpriteInformation GUISpriteHelper::BuildTextSpriteInformation(const GUIInter
 		const GUIStyleSheetRules& styleSheetRules = element.mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 		const Rect2I contentArea = GUIUtility::CalculateContentArea(size, styleSheetRules);
 
-		return GUIContentSprites::BuildTextSpriteInformation(contentArea, text, styleSheetRules, tint, wordWrap);
+		return GUIContentSprites::BuildTextSpriteInformation(contentArea, text, styleSheetRules, tint, fontScale, wordWrap);
 	}
 
 	return TextSpriteInformation();

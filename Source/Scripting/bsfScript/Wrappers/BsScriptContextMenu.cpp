@@ -54,7 +54,7 @@ void ScriptContextMenu::InternalOpen(ScriptContextMenu* self, Vector2I* position
 	if(widget == nullptr)
 		return;
 
-	Rect2I bounds = layout->GetAbsoluteBounds();
+	Rect2I bounds = layout->CalculateAbsoluteBounds();
 	Vector2I windowPosition = *position + Vector2I(bounds.X, bounds.Y);
 
 	SPtr<GUIContextMenu> contextMenu = self->GetNativeObjectAsShared();

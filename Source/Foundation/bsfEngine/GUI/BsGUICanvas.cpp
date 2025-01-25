@@ -218,7 +218,7 @@ void GUICanvas::Clear()
 void GUICanvas::UpdateRenderElements()
 {
 	Vector2 offset((float)mAbsolutePosition.X, (float)mAbsolutePosition.Y);
-	Rect2I clipRect = GetCachedLocalClippedArea();
+	Rect2I clipRect = GetLocalClippedArea();
 	BuildAllTriangleElementsIfDirty(offset, clipRect);
 
 	mRenderElements.Clear();
@@ -323,7 +323,7 @@ void GUICanvas::FillBuffer(
 	u32 indexStride = sizeof(u32);
 
 	Vector2I layoutOffset = Vector2I(mAbsolutePosition.X, mAbsolutePosition.Y) + offset;
-	Rect2I clipRect = GetCachedLocalClippedArea();
+	Rect2I clipRect = GetLocalClippedArea();
 
 	Vector2 floatOffset((float)layoutOffset.X, (float)layoutOffset.Y);
 	BuildAllTriangleElementsIfDirty(floatOffset, clipRect);
@@ -443,7 +443,7 @@ void GUICanvas::BuildImageElement(const CanvasElement& element)
 		textureSize = desc.Image->GetSize();
 	}
 
-	Vector2I destSize(mLayoutData.Size.Width, mLayoutData.Size.Height);
+	Vector2I destSize(mAbsoluteSize.Width, mAbsoluteSize.Height);
 	desc.UvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, element.ScaleMode);
 
 	element.ImageSprite->Update(desc, (u64)GetParentWidget());
@@ -457,7 +457,7 @@ void GUICanvas::BuildTextElement(const CanvasElement& element)
 
 	TextSpriteInformation desc;
 	desc.Font = textData.Font;
-	desc.FontSize = element.Size;
+	desc.FontSize = element.Size * mAbsoluteScale;
 	desc.Text = textData.String;
 	desc.Color = element.Color;
 

@@ -200,6 +200,8 @@ void GUILayout::UpdateAbsoluteCoordinatesForChildren()
 		relativeClippedArea.X -= (float)mAbsolutePosition.X;
 		relativeClippedArea.Y -= (float)mAbsolutePosition.Y;
 
+		// TODO - Need to undo scale
+
 		GUIElementQuadTree::AreaIntersectIterator areaIterator(*mQuadTree, relativeClippedArea);
 		while(areaIterator.MoveNext())
 		{
@@ -240,7 +242,7 @@ void GUILayout::UpdateAbsoluteCoordinatesForChildren()
 
 		for(auto& visibleChild : mVisibleElements)
 		{
-			visibleChild->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
+			visibleChild->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteScale, mAbsoluteClippedArea);
 			visibleChild->UpdateAbsoluteCoordinatesForChildren();
 		}
 		
@@ -250,7 +252,7 @@ void GUILayout::UpdateAbsoluteCoordinatesForChildren()
 	{
 		for(auto& child : mChildren)
 		{
-			child->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteClippedArea);
+			child->UpdateAbsoluteCoordinates(mAbsolutePosition, mAbsoluteScale, mAbsoluteClippedArea);
 			child->UpdateAbsoluteCoordinatesForChildren();
 		}
 	}

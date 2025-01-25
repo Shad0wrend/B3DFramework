@@ -63,7 +63,7 @@ GUIInteractable::GUIInteractable(const char* styleClass, const GUISizeConstraint
 
 bool GUIInteractable::IsInInteractionBounds(const Vector2I& position) const
 {
-	return GetCachedAbsoluteBounds().Contains(position);
+	return GetAbsoluteBounds().Contains(position);
 }
 
 bool GUIInteractable::DoOnMouseEvent(const GUIMouseEvent& event)
