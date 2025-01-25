@@ -8,7 +8,6 @@
 #include "Math/BsSIMD.h"
 #include "Allocators/BsPoolAlloc.h"
 
-#if !B3D_CODEGEN
 namespace bs
 {
 	/** @addtogroup General
@@ -103,7 +102,7 @@ namespace bs
 		{}
 
 		TSpatialTreeChildNodeId(u32 index)
-			: Index(index), Empty(false)
+			: Index(index), Empty2(false)
 		{}
 	};
 
@@ -132,7 +131,7 @@ namespace bs
 		{}
 
 		TSpatialTreeChildNodeId(u32 index)
-			: Index(index), Empty(false)
+			: Index(index), Empty2(false)
 		{}
 	};
 
@@ -162,7 +161,7 @@ namespace bs
 		{}
 
 		TSpatialTreeChildNodeId(u32 index)
-			: Index(index), Empty(false)
+			: Index(index), Empty2(false)
 		{}
 	};
 
@@ -1103,4 +1102,3 @@ namespace bs
 
 	/** @} */
 } // namespace bs
-#endif

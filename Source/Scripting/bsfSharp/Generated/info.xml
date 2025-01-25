@@ -14560,13 +14560,6 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 	</class>
 	<class native="GUIUtility" script="GUIUtility">
 		<doc>Helper class that performs various operations related to GUI.</doc>
-		<method native="CalculateOptimalSize" script="CalculateOptimalSize" static="true">
-			<doc>Calculates optimal size of a GUI element. This is the size that allows the GUI element to properly display all of its content.</doc>
-			<param name="elem" type="GUIElement">
-			</param>
-			<returns type="Vector2I">
-			</returns>
-		</method>
 		<method native="CalculateTextBounds" script="CalculateTextBounds" static="true">
 			<doc>Calculates optimal content size for the provided text using the provided font and size. Size is calculated without word wrap.</doc>
 			<param name="text" type="string">

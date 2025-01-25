@@ -5,7 +5,6 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUtility.h"
 #include "BsScriptTypeDefinition.h"
-#include "GUI/BsGUIElement.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector2I.h"
 
 namespace bs

@@ -8,7 +8,6 @@
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
-#include "Wrappers/GUI/BsScriptGUIElement.h"
 #include "BsScriptTVector2I.generated.h"
 
 namespace bs
@@ -21,6 +20,7 @@ namespace bs
 	void ScriptGUIUtility::SetupScriptBindings()
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_CalculateTextBounds", (void*)&ScriptGUIUtility::InternalCalculateTextBounds);
+
 	}
 
 	void ScriptGUIUtility::InternalCalculateTextBounds(MonoString* text, MonoObject* font, float fontSize, TVector2I<int32_t>* __output)
