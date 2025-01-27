@@ -32,12 +32,6 @@ namespace bs
                 Internal_CalculateAbsoluteBounds(mCachedPtr, out bounds);
                 return bounds;
             }
-            set
-            {
-                // TODO - For debugging only
-                SetPosition(value.Position);
-                SetSize(value.Size);
-            }
         }
 
         /// <summary>

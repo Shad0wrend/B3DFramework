@@ -57,16 +57,14 @@ namespace bs
 
 	/**
 	 * Location for a GUI element defined in logical pixels. Logical pixels are defined at 1/96th of one logical inch. Logical pixels are transformed
-	 * into physical pixels by scaling it by the display's DPI scale, as well as a potential user-defined scale on the GUI element itself.
-	 * If your display is set to 96 DPI, and GUI element has no user-defined scale, then one logical pixel equals one physical pixel.
+	 * into physical pixels by scaling it by the display's DPI scale. If your display is set to 96 DPI, then one logical pixel equals one physical pixel.
      *
 	 * Logical pixels are used for layouting the GUI, while physical pixels are used for rendering and interacting with GUI elements.
 	 */
 	using GUILogicalPoint = Vector2I; // TODO - Make use of these. Disallow implicit conversion between logical/physical.
 
 	/**
-	 * Location for a GUI element defined in physical pixels. Physical pixels are defined by applying DPI and other forms of scaling to
-	 * a logical pixel.
+	 * Location for a GUI element defined in physical pixels. Physical pixels are defined by applying DPI  to a logical pixel.
      *
 	 * Logical pixels are used for layouting the GUI, while physical pixels are used for rendering and interacting with GUI elements.
 	 */
@@ -173,9 +171,8 @@ namespace bs
 		Vector2I CalculatePositionRelativeTo(GUIElement* relativeTo = nullptr) const;
 
 		/**
-		 * Calculates bounds of the GUI element, relative to the provided parent element (or parent panel if null).
-		 * Absolute values represent the final position and size of the GUI element, affected by DPI scale, parent scale
-		 * and self scale. The values are provided in physical pixel units.
+		 * Calculates bounds of the GUI element, relative to the provided parent element (or parent panel if null), with
+		 * scaling applied. The values are provided in physical pixel units.
 		 *
 		 * @param	relativeTo	Parent element of the provided element relative to which to return the bounds. If null
 		 *						the bounds relative to parent panel are returned. Behavior is undefined if
@@ -186,9 +183,8 @@ namespace bs
 		Rect2I CalculateAbsoluteBoundsRelativeTo(GUIElement* relativeTo = nullptr);
 
 		/**
-		 * Calculates bounds of the GUI element, relative to the parent GUI widget. Absolute values represent the final
-		 * position and size of the GUI element, affected by DPI scale, parent scale and self scale. The values are
-		 * provided in physical pixel units.
+		 * Calculates bounds of the GUI element, relative to the parent GUI widget, with scaling applied. 
+		 * The values are provided in physical pixel units.
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
