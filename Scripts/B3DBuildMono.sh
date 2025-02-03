@@ -10,6 +10,7 @@ if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
     echo " - Make sure to install all prerequisites as specified here: https://github.com/dotnet/runtime/blob/main/docs/workflow/requirements/windows-requirements.md"
     echo " - If you receive an error that .NET runtime is in use, shut down all programs that may use it (such as Visual Studio)"
     echo " - If you receive an error that files cannot be created or opened, try running the script at disk root, as long paths can be a problem"
+    echo " - If you receive a ILLinker error during compilation, try running the script again until it succeeds"
     echo ""
     sleep 2
 else
@@ -36,6 +37,7 @@ else
     git clone https://github.com/dotnet/runtime.git DotNetRuntime
     cd DotNetRuntime
     git checkout release/9.0
+	git apply "$CurrentDirectory/Patches/Mono.patch" || exit 1
 fi
 
 # Setup Mono output folders
