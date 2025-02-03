@@ -316,7 +316,7 @@ void GUIScrollArea::UpdateAbsoluteCoordinatesForChildren()
 	if(mContentLayout->IsActive())
 	{
 		const Vector2I contentOrigin(mAbsolutePosition.X - Math::FloorToInt(mHorzOffset * mAbsoluteScale), mAbsolutePosition.Y - Math::FloorToInt(mVertOffset * mAbsoluteScale));
-		const Rect2I contentVisibleAreaSize(mAbsolutePosition.X, mAbsolutePosition.Y, (u32)mVisibleSize.X * mAbsoluteScale, (u32)mVisibleSize.Y * mAbsoluteScale); // TODO - Clip visible size by parent clip rectangle?
+		const Rect2I contentVisibleAreaSize(mAbsolutePosition.X, mAbsolutePosition.Y, (u32)((float)mVisibleSize.X * mAbsoluteScale), (u32)((float)mVisibleSize.Y * mAbsoluteScale)); // TODO - Clip visible size by parent clip rectangle?
 
 		mContentLayout->UpdateAbsoluteCoordinates(contentOrigin, mAbsoluteScale, contentVisibleAreaSize);
 	}

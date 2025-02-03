@@ -159,6 +159,14 @@ namespace bs
 		Size2UI GetLayoutCalculatedSize() const { return mLayoutData.Size; }
 
 		/**
+		 * Returns width/height of the GUI element. This will be the fixed width/height if set by the user, or automatically
+		 * determined by the layout update pass if not fixed. Size is provided in logical pixel units.
+		 *
+		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
+		 */
+		Size2UI CalculateSizeInLayout() const;
+
+		/**
 		 * Calculates position of the GUI element, relative to the provided parent element (or parent panel if null).
 		 * The value is provided in logical pixel units.
 		 *

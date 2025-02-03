@@ -158,6 +158,14 @@ void GUIElement::ResetSizeConstraints()
 	MarkLayoutAsDirty();
 }
 
+Size2UI GUIElement::CalculateSizeInLayout() const
+{
+	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsLayoutDirty() && mParentWidget != nullptr)
+		mParentWidget->UpdateLayout(mLayoutUpdateParent);
+
+	return GetLayoutCalculatedSize();
+}
+
 Vector2I GUIElement::CalculatePositionRelativeTo(GUIElement* relativeTo) const
 {
 	if(relativeTo == nullptr)

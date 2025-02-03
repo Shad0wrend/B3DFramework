@@ -138,7 +138,7 @@ void ScriptGUIElement::InternalGetLayoutCalculatedSize(ScriptGUIElementWrapper* 
 		return;
 	}
 
-	*size = self->GetNativeObject()->GetLayoutCalculatedSize();
+	*size = self->GetNativeObject()->CalculateSizeInLayout();
 }
 
 void ScriptGUIElement::InternalGetScreenBounds(ScriptGUIElementWrapper* self, Rect2I* bounds)
