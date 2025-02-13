@@ -394,10 +394,10 @@ namespace bs
 	template<> const TVector2<i32> TVector2<i32>::kUnitY{0, 1};
 	template<> const TVector2<u32> TVector2<u32>::kUnitY{0u, 1u};
 
-	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector2)) TVector2<float>;
-	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector2D)) TVector2<double>;
-	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector2I)) TVector2<i32>;
-	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector2UI)) TVector2<u32>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TVector2<float>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TVector2<double>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TVector2<i32>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TVector2<u32>;
 
 	/** @} */
 } // namespace bs

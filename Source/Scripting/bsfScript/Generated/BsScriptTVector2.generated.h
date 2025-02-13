@@ -14,55 +14,55 @@
 
 namespace bs
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector2 : public TScriptTypeDefinition<ScriptVector2>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTVector2_float_ : public TScriptTypeDefinition<ScriptTVector2_float_>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Vector2")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TVector2<float>")
 
 		static MonoObject* Box(const TVector2<float>& value);
 		static TVector2<float> Unbox(MonoObject* value);
 
 	private:
-		ScriptVector2();
+		ScriptTVector2_float_();
 
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector2D : public TScriptTypeDefinition<ScriptVector2D>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTVector2_double_ : public TScriptTypeDefinition<ScriptTVector2_double_>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Vector2D")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TVector2<double>")
 
 		static MonoObject* Box(const TVector2<double>& value);
 		static TVector2<double> Unbox(MonoObject* value);
 
 	private:
-		ScriptVector2D();
+		ScriptTVector2_double_();
 
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector2I : public TScriptTypeDefinition<ScriptVector2I>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTVector2_int32_t_ : public TScriptTypeDefinition<ScriptTVector2_int32_t_>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Vector2I")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TVector2<int>")
 
 		static MonoObject* Box(const TVector2<int32_t>& value);
 		static TVector2<int32_t> Unbox(MonoObject* value);
 
 	private:
-		ScriptVector2I();
+		ScriptTVector2_int32_t_();
 
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector2UI : public TScriptTypeDefinition<ScriptVector2UI>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTVector2_uint32_t_ : public TScriptTypeDefinition<ScriptTVector2_uint32_t_>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Vector2UI")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TVector2<int>")
 
 		static MonoObject* Box(const TVector2<uint32_t>& value);
 		static TVector2<uint32_t> Unbox(MonoObject* value);
 
 	private:
-		ScriptVector2UI();
+		ScriptTVector2_uint32_t_();
 
 	};
 }

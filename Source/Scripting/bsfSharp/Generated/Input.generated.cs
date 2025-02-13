@@ -22,11 +22,11 @@ namespace bs
 
 		/// <summary>Returns position of the pointer (for example mouse cursor) relative to the screen.</summary>
 		[NativeWrapper]
-		public static Vector2I PointerPosition
+		public static TVector2<int> PointerPosition
 		{
 			get
 			{
-				Vector2I temp;
+				TVector2<int> temp;
 				Internal_GetPointerPosition(out temp);
 				return temp;
 			}
@@ -34,11 +34,11 @@ namespace bs
 
 		/// <summary>Returns difference between pointer position between current and last frame.</summary>
 		[NativeWrapper]
-		public static Vector2I PointerDelta
+		public static TVector2<int> PointerDelta
 		{
 			get
 			{
-				Vector2I temp;
+				TVector2<int> temp;
 				Internal_GetPointerDelta(out temp);
 				return temp;
 			}
@@ -142,9 +142,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern bool Internal_IsButtonDown(ButtonCode keyCode, int deviceIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetPointerPosition(out Vector2I __output);
+		private static extern void Internal_GetPointerPosition(out TVector2<int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetPointerDelta(out Vector2I __output);
+		private static extern void Internal_GetPointerDelta(out TVector2<int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern bool Internal_IsPointerButtonHeld(PointerEventButton pointerButton);
 		[MethodImpl(MethodImplOptions.InternalCall)]

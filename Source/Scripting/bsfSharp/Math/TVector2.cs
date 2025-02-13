@@ -38,10 +38,33 @@ namespace bs
         {
             return T.Sqrt((T)(value.X * value.X + value.Y + value.Y));
         }
+
+        /// <summary>
+        /// Normalizes the provided vector and returns the normalized copy.
+        /// </summary>
+        public static TVector2<T> Normalize<T>(this TVector2<T> value) where T : IFloatingPointIeee754<T>
+        {
+            T squaredLength = value.SquaredLength;
+            if (squaredLength > T.CreateChecked(1e-04))
+                return value * (T.One / T.Sqrt(squaredLength));
+
+            return value;
+        }
+
+        /// <summary>
+        /// Normalizes the provided vector and returns the normalized copy.
+        /// </summary>
+        public static TVector2<TUnitValue<T, Unit>> Normalize<T, Unit>(this TVector2<TUnitValue<T, Unit>> value) where T : IFloatingPointIeee754<T>
+        {
+            T squaredLength = (T)value.SquaredLength;
+            if (squaredLength > T.CreateChecked(1e-04))
+                return value * (T.One / T.Sqrt(squaredLength));
+
+            return value;
+        }
     }
 
-    [StructLayout(LayoutKind.Sequential), SerializeObject]
-    public struct TVector2<T>(T x, T y)
+    public partial struct TVector2<T>
         : IAdditionOperators<TVector2<T>, TVector2<T>, TVector2<T>>
         , ISubtractionOperators<TVector2<T>, TVector2<T>, TVector2<T>>
         , IMultiplyOperators<TVector2<T>, T, TVector2<T>>
@@ -51,13 +74,21 @@ namespace bs
         , IEqualityOperators<TVector2<T>, TVector2<T>, bool>
         where T : INumber<T>
     {
-        public T X = x;
-        public T Y = y;
+        public static readonly TVector2<T> kZero = new (T.CreateChecked(0), T.CreateChecked(0));
+        public static readonly TVector2<T> kOne = new (T.CreateChecked(1), T.CreateChecked(1));
+        public static readonly TVector2<T> kXAxis = new (T.CreateChecked(1), T.CreateChecked(0));
+        public static readonly TVector2<T> kYAxis = new (T.CreateChecked(0), T.CreateChecked(1));
 
         /// <summary>Initializes the struct with default values.</summary>
         public static TVector2<T> Default()
         {
             return new TVector2<T>();
+        }
+
+        public TVector2(T x, T y)
+        {
+            X = x;
+            Y = y;
         }
 
         public TVector2(T value) : this(value, value)
@@ -105,6 +136,32 @@ namespace bs
         /// </summary>
         public T SquaredLength => X * X + Y * Y;
 
+        /// <summary>
+        /// Scales the components of the vector by specified scale factors.
+        /// </summary>
+        /// <param name="scale">Scale factors to multiply components by.</param>
+        public void Scale(TVector2<T> scale)
+        {
+            X *= scale.X;
+            Y *= scale.Y;
+        }
+
+        /// <summary>
+        /// Calculates the inner product of the two vectors.
+        /// </summary>
+        public static T Dot(TVector2<T> lhs, TVector2<T> rhs)
+        {
+            return lhs.X * rhs.X + lhs.Y * rhs.Y;
+        }
+
+        /// <summary>
+        /// Calculates the cross product of the two vectors.
+        /// </summary>
+        public static T Cross(TVector2<T> lhs, TVector2<T> rhs)
+        {
+            return lhs.X * rhs.Y - lhs.Y * rhs.X;
+        }
+
         public static TVector2<T> operator +(TVector2<T> left, TVector2<T> right) => new (left.X + right.X, left.Y + right.Y);
         public static TVector2<T> operator -(TVector2<T> left, TVector2<T> right) => new (left.X - right.X, left.Y - right.Y);
         public static TVector2<T> operator *(TVector2<T> left, T right) => new (left.X * right, left.Y * right);
@@ -121,6 +178,42 @@ namespace bs
         public static int ManhattanDistance(TVector2<int> a, TVector2<int> b)
         {
             return int.Abs(b.X - a.X) + int.Abs(b.Y - a.Y);
+        }
+
+        /// <summary>
+        /// Calculates the distance between two points.
+        /// </summary>
+        public static float Distance(TVector2<float> lhs, TVector2<float> rhs)
+        {
+            TVector2<float> difference = new TVector2<float>(lhs.X - rhs.X, lhs.Y - rhs.Y);
+            return float.Sqrt(difference.X * difference.X + difference.Y * difference.Y);
+        }
+
+        /// <summary>
+        /// Calculates the distance between two points.
+        /// </summary>
+        public static double Distance(TVector2<double> lhs, TVector2<double> rhs)
+        {
+            TVector2<double> difference = new TVector2<double>(lhs.X - rhs.X, lhs.Y - rhs.Y);
+            return double.Sqrt(difference.X * difference.X + difference.Y * difference.Y);
+        }
+
+        /// <summary>
+        /// Returns the maximum of all the vector components as a new vector.
+        /// </summary>
+        /// <returns>Vector consisting of maximum components of the first and second vector.</returns>
+        public static TVector2<T> Max(TVector2<T> lhs, TVector2<T> rhs)
+        {
+            return new TVector2<T>(T.Max(lhs.X, rhs.X), T.Max(lhs.Y, rhs.Y));
+        }
+
+        /// <summary>
+        /// Returns the minimum of all the vector components as a new vector.
+        /// </summary>
+        /// <returns>Vector consisting of minimum components of the first and second vector.</returns>
+        public static TVector2<T> Min(TVector2<T> lhs, TVector2<T> rhs)
+        {
+            return new TVector2<T>(T.Min(lhs.X, rhs.X), T.Min(lhs.Y, rhs.Y));
         }
 
         public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode() << 2;

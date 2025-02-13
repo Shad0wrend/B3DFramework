@@ -21,8 +21,8 @@ namespace bs
 		public static PointerEvent Default()
 		{
 			PointerEvent value = new PointerEvent();
-			value.ScreenPos = Vector2I.Default();
-			value.Delta = Vector2I.Default();
+			value.ScreenPos = TVector2<int>.Default();
+			value.Delta = TVector2<int>.Default();
 			value.Button = PointerEventButton.Left;
 			value.Type = PointerEventType.CursorMoved;
 			value.Shift = false;
@@ -35,9 +35,9 @@ namespace bs
 		}
 
 		/// <summary>Screen position where the input event occurred.</summary>
-		public Vector2I ScreenPos;
+		public TVector2<int> ScreenPos;
 		/// <summary>Change in movement since last sent event.</summary>
-		public Vector2I Delta;
+		public TVector2<int> Delta;
 		/// <summary>
 		/// Button that triggered the pointer event. Might be irrelevant depending on event type. (for example move events 
 		/// don&apos;t correspond to a button.

@@ -186,11 +186,11 @@ namespace bs
 		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public Vector2 SensorSize
+		public TVector2<float> SensorSize
 		{
 			get
 			{
-				Vector2 temp;
+				TVector2<float> temp;
 				Internal_GetSensorSize(mCachedPtr, out temp);
 				return temp;
 			}
@@ -282,9 +282,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetFocalLength(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetSensorSize(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetSensorSize(IntPtr thisPtr, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetSensorSize(IntPtr thisPtr, ref Vector2 value);
+		private static extern void Internal_SetSensorSize(IntPtr thisPtr, ref TVector2<float> value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern bool Internal_GetBokehOcclusion(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]

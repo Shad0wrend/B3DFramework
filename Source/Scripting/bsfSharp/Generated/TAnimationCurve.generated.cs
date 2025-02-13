@@ -149,9 +149,9 @@ namespace bs
 		/// If true the curve will loop when it goes past the end or beggining. Otherwise the curve value will be clamped.
 		/// </param>
 		/// <returns>Interpolated value from the curve at provided time.</returns>
-		public Vector2 Evaluate(float time, bool loop = true)
+		public TVector2<float> Evaluate(float time, bool loop = true)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_Evaluate(mCachedPtr, time, loop, out temp);
 			return temp;
 		}
@@ -159,7 +159,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TAnimationCurve(Vector2Curve managedInstance, KeyFrameVec2[] keyframes);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Evaluate(IntPtr thisPtr, float time, bool loop, out Vector2 __output);
+		private static extern void Internal_Evaluate(IntPtr thisPtr, float time, bool loop, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern KeyFrameVec2[] Internal_GetKeyFrames(IntPtr thisPtr);
 	}

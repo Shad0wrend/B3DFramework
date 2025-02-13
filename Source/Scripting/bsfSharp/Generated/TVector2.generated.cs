@@ -12,117 +12,12 @@ namespace bs
 
 	/// <summary>A two dimensional vector.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector2
+	public partial struct TVector2<T>
 	{
-		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector2 Default()
-		{
-			Vector2 value = new Vector2();
-			value.X = 0;
-			value.Y = 0;
-
-			return value;
-		}
-
-		public Vector2(float x, float y)
-		{
-			this.X = x;
-			this.Y = y;
-		}
-
-		public float X;
-		public float Y;
+		public T X;
+		public T Y;
 	}
 
 	/** @} */
 
-	/** @addtogroup Math
-	 *  @{
-	 */
-
-	/// <summary>A two dimensional vector.</summary>
-	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector2D
-	{
-		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector2D Default()
-		{
-			Vector2D value = new Vector2D();
-			value.X = 0;
-			value.Y = 0;
-
-			return value;
-		}
-
-		public Vector2D(double x, double y)
-		{
-			this.X = x;
-			this.Y = y;
-		}
-
-		public double X;
-		public double Y;
-	}
-
-	/** @} */
-
-	/** @addtogroup Math
-	 *  @{
-	 */
-
-	/// <summary>A two dimensional vector.</summary>
-	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector2I
-	{
-		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector2I Default()
-		{
-			Vector2I value = new Vector2I();
-			value.X = 0;
-			value.Y = 0;
-
-			return value;
-		}
-
-		public Vector2I(int x, int y)
-		{
-			this.X = x;
-			this.Y = y;
-		}
-
-		public int X;
-		public int Y;
-	}
-
-	/** @} */
-
-	/** @addtogroup Math
-	 *  @{
-	 */
-
-	/// <summary>A two dimensional vector.</summary>
-	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct Vector2UI
-	{
-		/// <summary>Initializes the struct with default values.</summary>
-		public static Vector2UI Default()
-		{
-			Vector2UI value = new Vector2UI();
-			value.X = 0;
-			value.Y = 0;
-
-			return value;
-		}
-
-		public Vector2UI(int x, int y)
-		{
-			this.X = x;
-			this.Y = y;
-		}
-
-		public int X;
-		public int Y;
-	}
-
-	/** @} */
 }

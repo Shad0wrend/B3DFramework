@@ -71,11 +71,11 @@ namespace bs
 	public partial struct KeyFrameVec2
 	{
 		/// <summary>Value of the key.</summary>
-		public Vector2 Value;
+		public TVector2<float> Value;
 		/// <summary>Input tangent (going from the previous key to this one) of the key.</summary>
-		public Vector2 InTangent;
+		public TVector2<float> InTangent;
 		/// <summary>Output tangent (going from this key to next one) of the key.</summary>
-		public Vector2 OutTangent;
+		public TVector2<float> OutTangent;
 		/// <summary>Position of the key along the animation spline.</summary>
 		public float Time;
 	}

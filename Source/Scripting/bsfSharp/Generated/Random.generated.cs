@@ -64,9 +64,9 @@ namespace bs
 		}
 
 		/// <summary>Returns a random unit vector in two dimensions.</summary>
-		public Vector2 GetUnitVector2D()
+		public TVector2<float> GetUnitVector2D()
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_GetUnitVector2D(mCachedPtr, out temp);
 			return temp;
 		}
@@ -93,9 +93,9 @@ namespace bs
 		}
 
 		/// <summary>Returns a random point inside a unit circle.</summary>
-		public Vector2 GetPointInCircle()
+		public TVector2<float> GetPointInCircle()
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_GetPointInCircle(mCachedPtr, out temp);
 			return temp;
 		}
@@ -106,9 +106,9 @@ namespace bs
 		/// within the entire circle surface. Intermediate values represent the shell, which is the surface between two 
 		/// concentric circles.
 		/// </summary>
-		public Vector2 GetPointInCircleShell(float thickness)
+		public TVector2<float> GetPointInCircleShell(float thickness)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_GetPointInCircleShell(mCachedPtr, thickness, out temp);
 			return temp;
 		}
@@ -116,9 +116,9 @@ namespace bs
 		/// <summary>
 		/// Returns a random point on a unit arc with the specified length (angle). Angle of 360 represents a circle.
 		/// </summary>
-		public Vector2 GetPointInArc(Degree angle)
+		public TVector2<float> GetPointInArc(Degree angle)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_GetPointInArc(mCachedPtr, ref angle, out temp);
 			return temp;
 		}
@@ -129,9 +129,9 @@ namespace bs
 		/// edge, while thickness of 1 will generate points on the entire arc &apos;slice&apos;. Intermediate vlaues represent 
 		/// the shell, which is the surface between two concentric circles.
 		/// </summary>
-		public Vector2 GetPointInArcShell(Degree angle, float thickness)
+		public TVector2<float> GetPointInArcShell(Degree angle, float thickness)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_GetPointInArcShell(mCachedPtr, ref angle, thickness, out temp);
 			return temp;
 		}
@@ -161,19 +161,19 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetUnitVector(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetUnitVector2D(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetUnitVector2D(IntPtr thisPtr, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetPointInSphere(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetPointInSphereShell(IntPtr thisPtr, float thickness, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetPointInCircle(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetPointInCircle(IntPtr thisPtr, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetPointInCircleShell(IntPtr thisPtr, float thickness, out Vector2 __output);
+		private static extern void Internal_GetPointInCircleShell(IntPtr thisPtr, float thickness, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetPointInArc(IntPtr thisPtr, ref Degree angle, out Vector2 __output);
+		private static extern void Internal_GetPointInArc(IntPtr thisPtr, ref Degree angle, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetPointInArcShell(IntPtr thisPtr, ref Degree angle, float thickness, out Vector2 __output);
+		private static extern void Internal_GetPointInArcShell(IntPtr thisPtr, ref Degree angle, float thickness, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetBarycentric(IntPtr thisPtr, out Vector3 __output);
 	}

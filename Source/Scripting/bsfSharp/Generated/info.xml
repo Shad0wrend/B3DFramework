@@ -589,7 +589,7 @@
 			<param name="loop" type="bool">
 				<doc>If true the curve will loop when it goes past the end or beggining. Otherwise the curve value will be clamped.</doc>
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 				<doc>Interpolated value from the curve at provided time.</doc>
 			</returns>
 		</method>
@@ -727,7 +727,7 @@
 		<enumentry native="DoubleClick" script="DoubleClick">
 		</enumentry>
 	</enum>
-	<struct native="TVector2&lt;float&gt;" script="Vector2">
+	<struct native="TVector2&lt;float&gt;" script="TVector2&lt;float&gt;">
 		<doc>A two dimensional vector.</doc>
 		<ctor>
 		</ctor>
@@ -742,7 +742,7 @@
 		<field name="Y" type="float">
 		</field>
 	</struct>
-	<struct native="TVector2&lt;double&gt;" script="Vector2D">
+	<struct native="TVector2&lt;double&gt;" script="TVector2&lt;double&gt;">
 		<doc>A two dimensional vector.</doc>
 		<ctor>
 		</ctor>
@@ -757,7 +757,7 @@
 		<field name="Y" type="double">
 		</field>
 	</struct>
-	<struct native="TVector2&lt;int32_t&gt;" script="Vector2I">
+	<struct native="TVector2&lt;int32_t&gt;" script="TVector2&lt;int&gt;">
 		<doc>A two dimensional vector.</doc>
 		<ctor>
 		</ctor>
@@ -772,7 +772,7 @@
 		<field name="Y" type="int">
 		</field>
 	</struct>
-	<struct native="TVector2&lt;uint32_t&gt;" script="Vector2UI">
+	<struct native="TVector2&lt;uint32_t&gt;" script="TVector2&lt;int&gt;">
 		<doc>A two dimensional vector.</doc>
 		<ctor>
 		</ctor>
@@ -1129,7 +1129,7 @@
 		</method>
 		<method native="GetUnitVector2D" script="GetUnitVector2D" static="false">
 			<doc>Returns a random unit vector in two dimensions.</doc>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="GetPointInSphere" script="GetPointInSphere" static="false">
@@ -1146,21 +1146,21 @@
 		</method>
 		<method native="GetPointInCircle" script="GetPointInCircle" static="false">
 			<doc>Returns a random point inside a unit circle.</doc>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="GetPointInCircleShell" script="GetPointInCircleShell" static="false">
 			<doc>Returns a random point inside the specified range in a circle shell of unit radius, with the specified thickness, in range [0, 1]. Thickness of 0 will generate points on the circle edge, while thickness of 1 will generate points within the entire circle surface. Intermediate values represent the shell, which is the surface between two concentric circles.</doc>
 			<param name="thickness" type="float">
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="GetPointInArc" script="GetPointInArc" static="false">
 			<doc>Returns a random point on a unit arc with the specified length (angle). Angle of 360 represents a circle.</doc>
 			<param name="angle" type="Degree">
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="GetPointInArcShell" script="GetPointInArcShell" static="false">
@@ -1169,7 +1169,7 @@
 			</param>
 			<param name="thickness" type="float">
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="GetBarycentric" script="GetBarycentric" static="false">
@@ -1255,7 +1255,7 @@
 		<method native="Blend2D" script="Blend2D" static="false">
 			<param name="info" type="Blend2DInfo">
 			</param>
-			<param name="t" type="Vector2">
+			<param name="t" type="TVector2&lt;float&gt;">
 			</param>
 		</method>
 		<method native="CrossFade" script="CrossFade" static="false">
@@ -2036,13 +2036,13 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	</struct>
 	<struct native="TKeyframe&lt;TVector2&lt;float&gt;&gt;" script="KeyFrameVec2">
 		<doc>Animation keyframe, represented as an endpoint of a cubic hermite spline.</doc>
-		<field name="Value" type="Vector2">
+		<field name="Value" type="TVector2&lt;float&gt;">
 			<doc>Value of the key.</doc>
 		</field>
-		<field name="InTangent" type="Vector2">
+		<field name="InTangent" type="TVector2&lt;float&gt;">
 			<doc>Input tangent (going from the previous key to this one) of the key.</doc>
 		</field>
-		<field name="OutTangent" type="Vector2">
+		<field name="OutTangent" type="TVector2&lt;float&gt;">
 			<doc>Output tangent (going from this key to next one) of the key.</doc>
 		</field>
 		<field name="Time" type="float">
@@ -3795,7 +3795,7 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<field name="Normal" type="Vector3">
 			<doc>Normal to the surface that was hit.</doc>
 		</field>
-		<field name="Uv" type="Vector2">
+		<field name="Uv" type="TVector2&lt;float&gt;">
 			<doc>Barycentric coordinates of the triangle that was hit (only applicable when triangle meshes are hit).</doc>
 		</field>
 		<field name="Distance" type="float">
@@ -4145,13 +4145,13 @@ In range [-1.0f, 1.0f].</doc>
 		<method native="WorldToScreenPoint" script="WorldToScreenPoint" static="false">
 			<param name="worldPoint" type="Vector3">
 			</param>
-			<returns type="Vector2I">
+			<returns type="TVector2&lt;int&gt;">
 			</returns>
 		</method>
 		<method native="WorldToNdcPoint" script="WorldToNdcPoint" static="false">
 			<param name="worldPoint" type="Vector3">
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="WorldToViewPoint" script="WorldToViewPoint" static="false">
@@ -4161,7 +4161,7 @@ In range [-1.0f, 1.0f].</doc>
 			</returns>
 		</method>
 		<method native="ScreenToWorldPoint" script="ScreenToWorldPoint" static="false">
-			<param name="screenPoint" type="Vector2I">
+			<param name="screenPoint" type="TVector2&lt;int&gt;">
 			</param>
 			<param name="depth" type="float">
 			</param>
@@ -4169,7 +4169,7 @@ In range [-1.0f, 1.0f].</doc>
 			</returns>
 		</method>
 		<method native="ScreenToViewPoint" script="ScreenToViewPoint" static="false">
-			<param name="screenPoint" type="Vector2I">
+			<param name="screenPoint" type="TVector2&lt;int&gt;">
 			</param>
 			<param name="depth" type="float">
 			</param>
@@ -4177,9 +4177,9 @@ In range [-1.0f, 1.0f].</doc>
 			</returns>
 		</method>
 		<method native="ScreenToNdcPoint" script="ScreenToNdcPoint" static="false">
-			<param name="screenPoint" type="Vector2I">
+			<param name="screenPoint" type="TVector2&lt;int&gt;">
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="ViewToWorldPoint" script="ViewToWorldPoint" static="false">
@@ -4191,17 +4191,17 @@ In range [-1.0f, 1.0f].</doc>
 		<method native="ViewToScreenPoint" script="ViewToScreenPoint" static="false">
 			<param name="viewPoint" type="Vector3">
 			</param>
-			<returns type="Vector2I">
+			<returns type="TVector2&lt;int&gt;">
 			</returns>
 		</method>
 		<method native="ViewToNdcPoint" script="ViewToNdcPoint" static="false">
 			<param name="viewPoint" type="Vector3">
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="NdcToWorldPoint" script="NdcToWorldPoint" static="false">
-			<param name="ndcPoint" type="Vector2">
+			<param name="ndcPoint" type="TVector2&lt;float&gt;">
 			</param>
 			<param name="depth" type="float">
 			</param>
@@ -4209,7 +4209,7 @@ In range [-1.0f, 1.0f].</doc>
 			</returns>
 		</method>
 		<method native="NdcToViewPoint" script="NdcToViewPoint" static="false">
-			<param name="ndcPoint" type="Vector2">
+			<param name="ndcPoint" type="TVector2&lt;float&gt;">
 			</param>
 			<param name="depth" type="float">
 			</param>
@@ -4217,13 +4217,13 @@ In range [-1.0f, 1.0f].</doc>
 			</returns>
 		</method>
 		<method native="NdcToScreenPoint" script="NdcToScreenPoint" static="false">
-			<param name="ndcPoint" type="Vector2">
+			<param name="ndcPoint" type="TVector2&lt;float&gt;">
 			</param>
-			<returns type="Vector2I">
+			<returns type="TVector2&lt;int&gt;">
 			</returns>
 		</method>
 		<method native="ScreenPointToRay" script="ScreenPointToRay" static="false">
-			<param name="screenPoint" type="Vector2I">
+			<param name="screenPoint" type="TVector2&lt;int&gt;">
 			</param>
 			<returns type="Ray">
 			</returns>
@@ -4337,7 +4337,7 @@ In range [-1.0f, 1.0f].</doc>
 		<property name="FocalLength" type="float" getter="GetFocalLength" setter="SetFocalLength" static="false">
 			<doc>Focal length of the camera&apos;s lens (e.g. 75mm). Only relevant when using Bokeh depth of field.</doc>
 		</property>
-		<property name="SensorSize" type="Vector2" getter="GetSensorSize" setter="SetSensorSize" static="false">
+		<property name="SensorSize" type="TVector2&lt;float&gt;" getter="GetSensorSize" setter="SetSensorSize" static="false">
 			<doc>Camera sensor width and height, in mm. Used for controlling the size of the circle of confusion. Only relevant when using Bokeh depth of field.</doc>
 		</property>
 		<property name="BokehOcclusion" type="bool" getter="GetBokehOcclusion" setter="SetBokehOcclusion" static="false">
@@ -4899,10 +4899,10 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<property name="Colors" type="Color" getter="GetColors" setter="SetColors" static="false">
 			<doc>An array of all vertex colors. Only valid if the vertex layout contains vertex colors.</doc>
 		</property>
-		<property name="UV0" type="Vector2" getter="GetUV0" setter="SetUV0" static="false">
+		<property name="UV0" type="TVector2&lt;float&gt;" getter="GetUV0" setter="SetUV0" static="false">
 			<doc>An array of all vertex texture coordinates in the UV0 channel. Only valid if the vertex layout contains UV0 coordinates.</doc>
 		</property>
-		<property name="UV1" type="Vector2" getter="GetUV1" setter="SetUV1" static="false">
+		<property name="UV1" type="TVector2&lt;float&gt;" getter="GetUV1" setter="SetUV1" static="false">
 			<doc>An array of all vertex texture coordinates in the UV1 channel. Only valid if the vertex layout contains UV1 coordinates.</doc>
 		</property>
 		<property name="BoneWeights" type="BoneWeight" getter="GetBoneWeights" setter="SetBoneWeights" static="false">
@@ -5337,10 +5337,10 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<param name="enabled" type="bool">
 			</param>
 		</method>
-		<property name="PointerPosition" type="Vector2I" getter="GetPointerPosition" setter="" static="false">
+		<property name="PointerPosition" type="TVector2&lt;int&gt;" getter="GetPointerPosition" setter="" static="false">
 			<doc>Returns position of the pointer (for example mouse cursor) relative to the screen.</doc>
 		</property>
-		<property name="PointerDelta" type="Vector2I" getter="GetPointerDelta" setter="" static="false">
+		<property name="PointerDelta" type="TVector2&lt;int&gt;" getter="GetPointerDelta" setter="" static="false">
 			<doc>Returns difference between pointer position between current and last frame.</doc>
 		</property>
 		<event native="OnButtonDown" script="OnButtonDown" static="false">
@@ -5544,7 +5544,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<doc>Wraps Decal as a Component.</doc>
 		<property name="Material" type="RRef&lt;Material&gt;" getter="GetMaterial" setter="SetMaterial" static="false">
 		</property>
-		<property name="Size" type="Vector2" getter="GetSize" setter="SetSize" static="false">
+		<property name="Size" type="TVector2&lt;float&gt;" getter="GetSize" setter="SetSize" static="false">
 		</property>
 		<property name="MaxDistance" type="float" getter="GetMaxDistance" setter="SetMaxDistance" static="false">
 		</property>
@@ -5990,14 +5990,14 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		</ctor>
 		<ctor>
 			<doc>Creates a new distribution that returns a constant value.</doc>
-			<param name="value" type="Vector2">
+			<param name="value" type="TVector2&lt;float&gt;">
 			</param>
 		</ctor>
 		<ctor>
 			<doc>Creates a new distribution that returns a random value in the specified range.</doc>
-			<param name="minValue" type="Vector2">
+			<param name="minValue" type="TVector2&lt;float&gt;">
 			</param>
-			<param name="maxValue" type="Vector2">
+			<param name="maxValue" type="TVector2&lt;float&gt;">
 			</param>
 		</ctor>
 		<ctor>
@@ -6014,12 +6014,12 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		</ctor>
 		<method native="GetMinConstant" script="GetMinConstant" static="false">
 			<doc>Returns the constant value of the distribution, or the minimal value of a constant range. Undefined if the distribution is represented by a curve.</doc>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="GetMaxConstant" script="GetMaxConstant" static="false">
 			<doc>Returns the maximum value of a constant range. Only defined if the distribution represents a non-curve range.</doc>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="GetMinCurve" script="GetMinCurve" static="false">
@@ -6040,7 +6040,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<param name="factor" type="float">
 				<doc>Value in range [0, 1] that determines how to interpolate between min/max value, if the distribution represents a range. Value of 0 will return the minimum value, while value of 1 will return the maximum value, and interpolate the values in-between.</doc>
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 				<doc>Evaluated value.</doc>
 			</returns>
 		</method>
@@ -6052,7 +6052,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<param name="factor" type="Random">
 				<doc>Random number generator that determines the factor. Factor determines how to interpolate between min/max value, if the distribution represents a range.</doc>
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 				<doc>Evaluated value.</doc>
 			</returns>
 		</method>
@@ -6652,7 +6652,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 	</class>
 	<struct native="PARTICLE_RECT_SHAPE_DESC" script="ParticleRectShapeOptions">
 		<doc>Information describing a ParticleEmitterRectShape.</doc>
-		<field name="Extents" type="Vector2">
+		<field name="Extents" type="TVector2&lt;float&gt;">
 			<doc>Extents of the rectangle.</doc>
 		</field>
 	</struct>
@@ -8279,10 +8279,10 @@ Primary purpose of this class is to avoid expensive string compare (axis names),
 		<doc>Event that gets sent out when user interacts with the screen in some way, usually by moving the mouse cursor or using touch input.</doc>
 		<ctor>
 		</ctor>
-		<field name="ScreenPos" type="Vector2I">
+		<field name="ScreenPos" type="TVector2&lt;int&gt;">
 			<doc>Screen position where the input event occurred.</doc>
 		</field>
-		<field name="Delta" type="Vector2I">
+		<field name="Delta" type="TVector2&lt;int&gt;">
 			<doc>Change in movement since last sent event.</doc>
 		</field>
 		<field name="Button" type="PointerEventButton">
@@ -8911,7 +8911,7 @@ Optionally if the parameter is an array you may provide an array index to assign
 Optionally if the parameter is an array you may provide an array index to assign the value to.</doc>
 			<param name="name" type="string">
 			</param>
-			<param name="value" type="Vector2">
+			<param name="value" type="TVector2&lt;float&gt;">
 			</param>
 			<param name="arrayIdx" type="int">
 			</param>
@@ -9003,7 +9003,7 @@ Optionally if the parameter is an array you may provide an array index you which
 			</param>
 			<param name="arrayIdx" type="int">
 			</param>
-			<returns type="Vector2">
+			<returns type="TVector2&lt;float&gt;">
 			</returns>
 		</method>
 		<method native="GetVec3" script="GetVector3" static="false">
@@ -13989,7 +13989,7 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 	<class native="CGUIWidget" script="GUIWidget">
 		<doc>Component wrapper for GUIWidget.</doc>
 		<method native="InBounds" script="InBounds" static="false">
-			<param name="position" type="Vector2I">
+			<param name="position" type="TVector2&lt;int&gt;">
 			</param>
 			<returns type="bool">
 			</returns>
@@ -14563,7 +14563,7 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 			<param name="fontSize" type="float">
 				<doc>Size of individual characters in the font, in points.</doc>
 			</param>
-			<returns type="Vector2I">
+			<returns type="TVector2&lt;int&gt;">
 				<doc>Width/height required to display the text, in pixels.</doc>
 			</returns>
 		</method>
@@ -14572,12 +14572,12 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 		<doc>Allows you to manipulate the platform cursor in various ways.</doc>
 		<method native="SetScreenPosition" script="SetScreenPosition" static="false">
 			<doc>Moves the cursor to the specified screen position.</doc>
-			<param name="screenPos" type="Vector2I">
+			<param name="screenPos" type="TVector2&lt;int&gt;">
 			</param>
 		</method>
 		<method native="GetScreenPosition" script="GetScreenPosition" static="false">
 			<doc>Retrieves the cursor position in screen coordinates.</doc>
-			<returns type="Vector2I">
+			<returns type="TVector2&lt;int&gt;">
 			</returns>
 		</method>
 		<method native="Hide" script="Hide" static="false">
@@ -14613,7 +14613,7 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 			<param name="pixelData" type="PixelData">
 				<doc>Cursor image data.</doc>
 			</param>
-			<param name="hotSpot" type="Vector2I">
+			<param name="hotSpot" type="TVector2&lt;int&gt;">
 				<doc>Offset on the cursor image to where the actual input happens (for example tip of the Arrow cursor).</doc>
 			</param>
 		</method>
@@ -14625,7 +14625,7 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 			<param name="pixelData" type="PixelData">
 				<doc>Cursor image data.</doc>
 			</param>
-			<param name="hotSpot" type="Vector2I">
+			<param name="hotSpot" type="TVector2&lt;int&gt;">
 				<doc>Offset on the cursor image to where the actual input happens (for example tip of the Arrow cursor).</doc>
 			</param>
 		</method>

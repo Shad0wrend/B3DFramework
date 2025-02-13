@@ -163,16 +163,16 @@ namespace bs
 			Internal_NotifyNeedsRedraw(mCachedPtr);
 		}
 
-		public Vector2I WorldToScreenPoint(Vector3 worldPoint)
+		public TVector2<int> WorldToScreenPoint(Vector3 worldPoint)
 		{
-			Vector2I temp;
+			TVector2<int> temp;
 			Internal_WorldToScreenPoint(mCachedPtr, ref worldPoint, out temp);
 			return temp;
 		}
 
-		public Vector2 WorldToNdcPoint(Vector3 worldPoint)
+		public TVector2<float> WorldToNdcPoint(Vector3 worldPoint)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_WorldToNdcPoint(mCachedPtr, ref worldPoint, out temp);
 			return temp;
 		}
@@ -184,23 +184,23 @@ namespace bs
 			return temp;
 		}
 
-		public Vector3 ScreenToWorldPoint(Vector2I screenPoint, float depth = 0.5f)
+		public Vector3 ScreenToWorldPoint(TVector2<int> screenPoint, float depth = 0.5f)
 		{
 			Vector3 temp;
 			Internal_ScreenToWorldPoint(mCachedPtr, ref screenPoint, depth, out temp);
 			return temp;
 		}
 
-		public Vector3 ScreenToViewPoint(Vector2I screenPoint, float depth = 0.5f)
+		public Vector3 ScreenToViewPoint(TVector2<int> screenPoint, float depth = 0.5f)
 		{
 			Vector3 temp;
 			Internal_ScreenToViewPoint(mCachedPtr, ref screenPoint, depth, out temp);
 			return temp;
 		}
 
-		public Vector2 ScreenToNdcPoint(Vector2I screenPoint)
+		public TVector2<float> ScreenToNdcPoint(TVector2<int> screenPoint)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_ScreenToNdcPoint(mCachedPtr, ref screenPoint, out temp);
 			return temp;
 		}
@@ -212,42 +212,42 @@ namespace bs
 			return temp;
 		}
 
-		public Vector2I ViewToScreenPoint(Vector3 viewPoint)
+		public TVector2<int> ViewToScreenPoint(Vector3 viewPoint)
 		{
-			Vector2I temp;
+			TVector2<int> temp;
 			Internal_ViewToScreenPoint(mCachedPtr, ref viewPoint, out temp);
 			return temp;
 		}
 
-		public Vector2 ViewToNdcPoint(Vector3 viewPoint)
+		public TVector2<float> ViewToNdcPoint(Vector3 viewPoint)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_ViewToNdcPoint(mCachedPtr, ref viewPoint, out temp);
 			return temp;
 		}
 
-		public Vector3 NdcToWorldPoint(Vector2 ndcPoint, float depth = 0.5f)
+		public Vector3 NdcToWorldPoint(TVector2<float> ndcPoint, float depth = 0.5f)
 		{
 			Vector3 temp;
 			Internal_NdcToWorldPoint(mCachedPtr, ref ndcPoint, depth, out temp);
 			return temp;
 		}
 
-		public Vector3 NdcToViewPoint(Vector2 ndcPoint, float depth = 0.5f)
+		public Vector3 NdcToViewPoint(TVector2<float> ndcPoint, float depth = 0.5f)
 		{
 			Vector3 temp;
 			Internal_NdcToViewPoint(mCachedPtr, ref ndcPoint, depth, out temp);
 			return temp;
 		}
 
-		public Vector2I NdcToScreenPoint(Vector2 ndcPoint)
+		public TVector2<int> NdcToScreenPoint(TVector2<float> ndcPoint)
 		{
-			Vector2I temp;
+			TVector2<int> temp;
 			Internal_NdcToScreenPoint(mCachedPtr, ref ndcPoint, out temp);
 			return temp;
 		}
 
-		public Ray ScreenPointToRay(Vector2I screenPoint)
+		public Ray ScreenPointToRay(TVector2<int> screenPoint)
 		{
 			Ray temp;
 			Internal_ScreenPointToRay(mCachedPtr, ref screenPoint, out temp);
@@ -325,31 +325,31 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_NotifyNeedsRedraw(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_WorldToScreenPoint(IntPtr thisPtr, ref Vector3 worldPoint, out Vector2I __output);
+		private static extern void Internal_WorldToScreenPoint(IntPtr thisPtr, ref Vector3 worldPoint, out TVector2<int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_WorldToNdcPoint(IntPtr thisPtr, ref Vector3 worldPoint, out Vector2 __output);
+		private static extern void Internal_WorldToNdcPoint(IntPtr thisPtr, ref Vector3 worldPoint, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_WorldToViewPoint(IntPtr thisPtr, ref Vector3 worldPoint, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ScreenToWorldPoint(IntPtr thisPtr, ref Vector2I screenPoint, float depth, out Vector3 __output);
+		private static extern void Internal_ScreenToWorldPoint(IntPtr thisPtr, ref TVector2<int> screenPoint, float depth, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ScreenToViewPoint(IntPtr thisPtr, ref Vector2I screenPoint, float depth, out Vector3 __output);
+		private static extern void Internal_ScreenToViewPoint(IntPtr thisPtr, ref TVector2<int> screenPoint, float depth, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ScreenToNdcPoint(IntPtr thisPtr, ref Vector2I screenPoint, out Vector2 __output);
+		private static extern void Internal_ScreenToNdcPoint(IntPtr thisPtr, ref TVector2<int> screenPoint, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ViewToWorldPoint(IntPtr thisPtr, ref Vector3 viewPoint, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ViewToScreenPoint(IntPtr thisPtr, ref Vector3 viewPoint, out Vector2I __output);
+		private static extern void Internal_ViewToScreenPoint(IntPtr thisPtr, ref Vector3 viewPoint, out TVector2<int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ViewToNdcPoint(IntPtr thisPtr, ref Vector3 viewPoint, out Vector2 __output);
+		private static extern void Internal_ViewToNdcPoint(IntPtr thisPtr, ref Vector3 viewPoint, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_NdcToWorldPoint(IntPtr thisPtr, ref Vector2 ndcPoint, float depth, out Vector3 __output);
+		private static extern void Internal_NdcToWorldPoint(IntPtr thisPtr, ref TVector2<float> ndcPoint, float depth, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_NdcToViewPoint(IntPtr thisPtr, ref Vector2 ndcPoint, float depth, out Vector3 __output);
+		private static extern void Internal_NdcToViewPoint(IntPtr thisPtr, ref TVector2<float> ndcPoint, float depth, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_NdcToScreenPoint(IntPtr thisPtr, ref Vector2 ndcPoint, out Vector2I __output);
+		private static extern void Internal_NdcToScreenPoint(IntPtr thisPtr, ref TVector2<float> ndcPoint, out TVector2<int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ScreenPointToRay(IntPtr thisPtr, ref Vector2I screenPoint, out Ray __output);
+		private static extern void Internal_ScreenPointToRay(IntPtr thisPtr, ref TVector2<int> screenPoint, out Ray __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ProjectPoint(IntPtr thisPtr, ref Vector3 point, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]

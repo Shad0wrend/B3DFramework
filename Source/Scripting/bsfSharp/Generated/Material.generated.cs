@@ -115,7 +115,7 @@ namespace bs
 		///
 		/// Optionally if the parameter is an array you may provide an array index to assign the value to.
 		/// </summary>
-		public void SetVector2(string name, Vector2 value, int arrayIdx = 0)
+		public void SetVector2(string name, TVector2<float> value, int arrayIdx = 0)
 		{
 			Internal_SetVec2(mCachedPtr, name, ref value, arrayIdx);
 		}
@@ -214,9 +214,9 @@ namespace bs
 		///
 		/// Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		/// </summary>
-		public Vector2 GetVector2(string name, int arrayIdx = 0)
+		public TVector2<float> GetVector2(string name, int arrayIdx = 0)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_GetVec2(mCachedPtr, name, arrayIdx, out temp);
 			return temp;
 		}
@@ -299,7 +299,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetColorGradient(IntPtr thisPtr, string name, ColorGradientHDR value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetVec2(IntPtr thisPtr, string name, ref Vector2 value, int arrayIdx);
+		private static extern void Internal_SetVec2(IntPtr thisPtr, string name, ref TVector2<float> value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetVec3(IntPtr thisPtr, string name, ref Vector3 value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -317,7 +317,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern ColorGradientHDR Internal_GetColorGradient(IntPtr thisPtr, string name, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetVec2(IntPtr thisPtr, string name, int arrayIdx, out Vector2 __output);
+		private static extern void Internal_GetVec2(IntPtr thisPtr, string name, int arrayIdx, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetVec3(IntPtr thisPtr, string name, int arrayIdx, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]

@@ -20,7 +20,7 @@ namespace bs
 			PhysicsQueryHit value = new PhysicsQueryHit();
 			value.Point = Vector3.Default();
 			value.Normal = Vector3.Default();
-			value.Uv = Vector2.Default();
+			value.Uv = TVector2<float>.Default();
 			value.Distance = 0f;
 			value.TriangleIdx = 0;
 			value.UnmappedTriangleIdx = 0;
@@ -36,7 +36,7 @@ namespace bs
 		/// <summary>
 		/// Barycentric coordinates of the triangle that was hit (only applicable when triangle meshes are hit).
 		/// </summary>
-		public Vector2 Uv;
+		public TVector2<float> Uv;
 		/// <summary>Distance from the query origin to the hit position.</summary>
 		public float Distance;
 		/// <summary>Index of the triangle that was hit (only applicable when triangle meshes are hit).</summary>

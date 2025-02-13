@@ -18,15 +18,15 @@ namespace bs
 		protected Cursor() { }
 
 		/// <summary>Moves the cursor to the specified screen position.</summary>
-		public static void SetScreenPosition(Vector2I screenPos)
+		public static void SetScreenPosition(TVector2<int> screenPos)
 		{
 			Internal_SetScreenPosition(ref screenPos);
 		}
 
 		/// <summary>Retrieves the cursor position in screen coordinates.</summary>
-		public static Vector2I GetScreenPosition()
+		public static TVector2<int> GetScreenPosition()
 		{
-			Vector2I temp;
+			TVector2<int> temp;
 			Internal_GetScreenPosition(out temp);
 			return temp;
 		}
@@ -74,7 +74,7 @@ namespace bs
 		/// <param name="hotSpot">
 		/// Offset on the cursor image to where the actual input happens (for example tip of the Arrow cursor).
 		/// </param>
-		public static void SetCursorIcon(string name, PixelData pixelData, Vector2I hotSpot)
+		public static void SetCursorIcon(string name, PixelData pixelData, TVector2<int> hotSpot)
 		{
 			Internal_SetCursorIcon(name, pixelData, ref hotSpot);
 		}
@@ -85,7 +85,7 @@ namespace bs
 		/// <param name="hotSpot">
 		/// Offset on the cursor image to where the actual input happens (for example tip of the Arrow cursor).
 		/// </param>
-		public static void SetCursorIcon(CursorType type, PixelData pixelData, Vector2I hotSpot)
+		public static void SetCursorIcon(CursorType type, PixelData pixelData, TVector2<int> hotSpot)
 		{
 			Internal_SetCursorIcon0(type, pixelData, ref hotSpot);
 		}
@@ -106,9 +106,9 @@ namespace bs
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetScreenPosition(ref Vector2I screenPos);
+		private static extern void Internal_SetScreenPosition(ref TVector2<int> screenPos);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetScreenPosition(out Vector2I __output);
+		private static extern void Internal_GetScreenPosition(out TVector2<int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Hide();
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -122,9 +122,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetCursor0(string name);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetCursorIcon(string name, PixelData pixelData, ref Vector2I hotSpot);
+		private static extern void Internal_SetCursorIcon(string name, PixelData pixelData, ref TVector2<int> hotSpot);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetCursorIcon0(CursorType type, PixelData pixelData, ref Vector2I hotSpot);
+		private static extern void Internal_SetCursorIcon0(CursorType type, PixelData pixelData, ref TVector2<int> hotSpot);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ClearCursorIcon(string name);
 		[MethodImpl(MethodImplOptions.InternalCall)]

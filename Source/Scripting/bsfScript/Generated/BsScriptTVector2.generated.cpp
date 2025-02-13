@@ -7,57 +7,57 @@
 
 namespace bs
 {
-	ScriptVector2::ScriptVector2()
+	ScriptTVector2_float_::ScriptTVector2_float_()
 	{ }
 
-	MonoObject* ScriptVector2::Box(const TVector2<float>& value)
+	MonoObject* ScriptTVector2_float_::Box(const TVector2<float>& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	TVector2<float> ScriptVector2::Unbox(MonoObject* value)
+	TVector2<float> ScriptTVector2_float_::Unbox(MonoObject* value)
 	{
 		return *(TVector2<float>*)MonoUtil::Unbox(value);
 	}
 
 
-	ScriptVector2D::ScriptVector2D()
+	ScriptTVector2_double_::ScriptTVector2_double_()
 	{ }
 
-	MonoObject* ScriptVector2D::Box(const TVector2<double>& value)
+	MonoObject* ScriptTVector2_double_::Box(const TVector2<double>& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	TVector2<double> ScriptVector2D::Unbox(MonoObject* value)
+	TVector2<double> ScriptTVector2_double_::Unbox(MonoObject* value)
 	{
 		return *(TVector2<double>*)MonoUtil::Unbox(value);
 	}
 
 
-	ScriptVector2I::ScriptVector2I()
+	ScriptTVector2_int32_t_::ScriptTVector2_int32_t_()
 	{ }
 
-	MonoObject* ScriptVector2I::Box(const TVector2<int32_t>& value)
+	MonoObject* ScriptTVector2_int32_t_::Box(const TVector2<int32_t>& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	TVector2<int32_t> ScriptVector2I::Unbox(MonoObject* value)
+	TVector2<int32_t> ScriptTVector2_int32_t_::Unbox(MonoObject* value)
 	{
 		return *(TVector2<int32_t>*)MonoUtil::Unbox(value);
 	}
 
 
-	ScriptVector2UI::ScriptVector2UI()
+	ScriptTVector2_uint32_t_::ScriptTVector2_uint32_t_()
 	{ }
 
-	MonoObject* ScriptVector2UI::Box(const TVector2<uint32_t>& value)
+	MonoObject* ScriptTVector2_uint32_t_::Box(const TVector2<uint32_t>& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	TVector2<uint32_t> ScriptVector2UI::Unbox(MonoObject* value)
+	TVector2<uint32_t> ScriptTVector2_uint32_t_::Unbox(MonoObject* value)
 	{
 		return *(TVector2<uint32_t>*)MonoUtil::Unbox(value);
 	}

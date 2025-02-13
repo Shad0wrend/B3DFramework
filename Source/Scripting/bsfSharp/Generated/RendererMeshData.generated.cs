@@ -73,7 +73,7 @@ namespace bs
 		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public Vector2[] UV0
+		public TVector2<float>[] UV0
 		{
 			get { return Internal_GetUV0(mCachedPtr); }
 			set { Internal_SetUV0(mCachedPtr, value); }
@@ -85,7 +85,7 @@ namespace bs
 		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public Vector2[] UV1
+		public TVector2<float>[] UV1
 		{
 			get { return Internal_GetUV1(mCachedPtr); }
 			set { Internal_SetUV1(mCachedPtr, value); }
@@ -144,13 +144,13 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetColors(IntPtr thisPtr, Color[] value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector2[] Internal_GetUV0(IntPtr thisPtr);
+		private static extern TVector2<float>[] Internal_GetUV0(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetUV0(IntPtr thisPtr, Vector2[] value);
+		private static extern void Internal_SetUV0(IntPtr thisPtr, TVector2<float>[] value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector2[] Internal_GetUV1(IntPtr thisPtr);
+		private static extern TVector2<float>[] Internal_GetUV1(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetUV1(IntPtr thisPtr, Vector2[] value);
+		private static extern void Internal_SetUV1(IntPtr thisPtr, TVector2<float>[] value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern BoneWeight[] Internal_GetBoneWeights(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]

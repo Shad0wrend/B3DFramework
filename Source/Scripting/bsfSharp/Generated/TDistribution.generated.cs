@@ -309,13 +309,13 @@ namespace bs
 		}
 
 		/// <summary>Creates a new distribution that returns a constant value.</summary>
-		public Vector2Distribution(Vector2 value)
+		public Vector2Distribution(TVector2<float> value)
 		{
 			Internal_TDistribution0(this, ref value);
 		}
 
 		/// <summary>Creates a new distribution that returns a random value in the specified range.</summary>
-		public Vector2Distribution(Vector2 minValue, Vector2 maxValue)
+		public Vector2Distribution(TVector2<float> minValue, TVector2<float> maxValue)
 		{
 			Internal_TDistribution1(this, ref minValue, ref maxValue);
 		}
@@ -343,9 +343,9 @@ namespace bs
 		/// Returns the constant value of the distribution, or the minimal value of a constant range. Undefined if the 
 		/// distribution is represented by a curve.
 		/// </summary>
-		public Vector2 GetMinConstant()
+		public TVector2<float> GetMinConstant()
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_GetMinConstant(mCachedPtr, out temp);
 			return temp;
 		}
@@ -353,9 +353,9 @@ namespace bs
 		/// <summary>
 		/// Returns the maximum value of a constant range. Only defined if the distribution represents a non-curve range.
 		/// </summary>
-		public Vector2 GetMaxConstant()
+		public TVector2<float> GetMaxConstant()
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_GetMaxConstant(mCachedPtr, out temp);
 			return temp;
 		}
@@ -388,9 +388,9 @@ namespace bs
 		/// values in-between.
 		/// </param>
 		/// <returns>Evaluated value.</returns>
-		public Vector2 Evaluate(float t, float factor)
+		public TVector2<float> Evaluate(float t, float factor)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_Evaluate(mCachedPtr, t, factor, out temp);
 			return temp;
 		}
@@ -404,9 +404,9 @@ namespace bs
 		/// the distribution represents a range.
 		/// </param>
 		/// <returns>Evaluated value.</returns>
-		public Vector2 Evaluate(float t, Random factor)
+		public TVector2<float> Evaluate(float t, Random factor)
 		{
-			Vector2 temp;
+			TVector2<float> temp;
 			Internal_Evaluate0(mCachedPtr, t, factor, out temp);
 			return temp;
 		}
@@ -414,9 +414,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TDistribution(Vector2Distribution managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_TDistribution0(Vector2Distribution managedInstance, ref Vector2 value);
+		private static extern void Internal_TDistribution0(Vector2Distribution managedInstance, ref TVector2<float> value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_TDistribution1(Vector2Distribution managedInstance, ref Vector2 minValue, ref Vector2 maxValue);
+		private static extern void Internal_TDistribution1(Vector2Distribution managedInstance, ref TVector2<float> minValue, ref TVector2<float> maxValue);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TDistribution2(Vector2Distribution managedInstance, Vector2Curve curve);
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -424,17 +424,17 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern PropertyDistributionType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetMinConstant(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetMinConstant(IntPtr thisPtr, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetMaxConstant(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetMaxConstant(IntPtr thisPtr, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern Vector2Curve Internal_GetMinCurve(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern Vector2Curve Internal_GetMaxCurve(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Evaluate(IntPtr thisPtr, float t, float factor, out Vector2 __output);
+		private static extern void Internal_Evaluate(IntPtr thisPtr, float t, float factor, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Evaluate0(IntPtr thisPtr, float t, Random factor, out Vector2 __output);
+		private static extern void Internal_Evaluate0(IntPtr thisPtr, float t, Random factor, out TVector2<float> __output);
 	}
 
 	/** @} */

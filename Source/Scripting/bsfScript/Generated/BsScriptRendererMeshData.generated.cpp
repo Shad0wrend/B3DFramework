@@ -239,7 +239,7 @@ namespace bs
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
-		ScriptArray scriptArray__output = ScriptArray::Create<ScriptVector2>(elementCount__output);
+		ScriptArray scriptArray__output = ScriptArray::Create<ScriptTVector2_float_>(elementCount__output);
 		for(int elementIndex = 0; elementIndex < elementCount__output; elementIndex++)
 		{
 			scriptArray__output.Set(elementIndex, nativeArray__output[elementIndex]);
@@ -277,7 +277,7 @@ namespace bs
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
-		ScriptArray scriptArray__output = ScriptArray::Create<ScriptVector2>(elementCount__output);
+		ScriptArray scriptArray__output = ScriptArray::Create<ScriptTVector2_float_>(elementCount__output);
 		for(int elementIndex = 0; elementIndex < elementCount__output; elementIndex++)
 		{
 			scriptArray__output.Set(elementIndex, nativeArray__output[elementIndex]);

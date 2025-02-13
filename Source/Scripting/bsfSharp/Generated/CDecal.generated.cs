@@ -27,11 +27,11 @@ namespace bs
 
 		[ShowInInspector]
 		[NativeWrapper]
-		public Vector2 Size
+		public TVector2<float> Size
 		{
 			get
 			{
-				Vector2 temp;
+				TVector2<float> temp;
 				Internal_GetSize(mCachedPtr, out temp);
 				return temp;
 			}
@@ -67,9 +67,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Material> Internal_GetMaterial(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetSize(IntPtr thisPtr, ref Vector2 size);
+		private static extern void Internal_SetSize(IntPtr thisPtr, ref TVector2<float> size);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetSize(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetSize(IntPtr thisPtr, out TVector2<float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetMaxDistance(IntPtr thisPtr, float distance);
 		[MethodImpl(MethodImplOptions.InternalCall)]

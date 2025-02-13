@@ -118,7 +118,7 @@ namespace bs
 			Internal_Blend1D(mCachedPtr, ref info, t);
 		}
 
-		public void Blend2D(Blend2DInfo info, Vector2 t)
+		public void Blend2D(Blend2DInfo info, TVector2<float> t)
 		{
 			Internal_Blend2D(mCachedPtr, ref info, ref t);
 		}
@@ -184,7 +184,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Blend1D(IntPtr thisPtr, ref Blend1DInfo info, float t);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Blend2D(IntPtr thisPtr, ref Blend2DInfo info, ref Vector2 t);
+		private static extern void Internal_Blend2D(IntPtr thisPtr, ref Blend2DInfo info, ref TVector2<float> t);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_CrossFade(IntPtr thisPtr, RRef<AnimationClip> clip, float fadeLength);
 		[MethodImpl(MethodImplOptions.InternalCall)]
