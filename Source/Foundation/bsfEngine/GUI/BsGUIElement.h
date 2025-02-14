@@ -8,6 +8,7 @@
 #include "Math/BsRect2I.h"
 #include "Utility/BsRectOffset.h"
 #include "Utility/BsSpatialTree.h"
+#include "Math/BsUnitValue.h"
 
 namespace bs
 {
@@ -54,26 +55,17 @@ namespace bs
 		static const GUIStyleSheetRuleInformation kInvalid;
 	};
 
+	/** Location in 2D space in physical pixels. Physical pixels represent actual pixels as displayed on the output monitor. */
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true)) PhysicalPixel { };
+
 	/**
-	 * Location for a GUI element defined in logical pixels. Logical pixels are defined at 1/96th of one logical inch. Logical pixels are transformed
+	 * Location in 2D space in logical pixels. Logical pixels are defined at 1/96th of one logical inch. Logical pixels are transformed
 	 * into physical pixels by scaling it by the display's DPI scale. If your display is set to 96 DPI, then one logical pixel equals one physical pixel.
-     *
-	 * Logical pixels are used for layouting the GUI, while physical pixels are used for rendering and interacting with GUI elements.
 	 */
-	using GUILogicalPoint = Vector2I; // TODO - Make use of these. Disallow implicit conversion between logical/physical.
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true)) LogicalPixel { };
 
-	/**
-	 * Location for a GUI element defined in physical pixels. Physical pixels are defined by applying DPI  to a logical pixel.
-     *
-	 * Logical pixels are used for layouting the GUI, while physical pixels are used for rendering and interacting with GUI elements.
-	 */
-	using GUIPhysicalPoint = Vector2I; // TODO - Make use of these. Disallow implicit conversion between logical/physical.
-
-	/** Width/height of a GUI element defined in logical pixels. See GUILogicalPoint. */
-	using GUILogicalSize = Size2UI; // TODO - Make use of these. Disallow implicit conversion between logical/physical.
-
-	/** Width/height of a GUI element defined in physical pixels. See GUIPhysicalPoint. */
-	using GUIPhysicalSize = Size2UI; // TODO - Make use of these. Disallow implicit conversion between logical/physical.
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TUnitValue<float, PhysicalPixel>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TUnitValue<i32, LogicalPixel>;
 
 	/**
 	 * Base class for all GUI elements. Provides general functionality such as element size/position, as well as handling child/parent relationships.

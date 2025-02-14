@@ -14029,6 +14029,34 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			<doc>Gets drag specific data specified when the drag started. Only valid if drop is in progress. This is only valid for a single frame when a drop happens.</doc>
 		</property>
 	</class>
+	<struct native="PhysicalPixel" script="PhysicalPixel">
+		<doc>Location in 2D space in physical pixels. Physical pixels represent actual pixels as displayed on the output monitor.</doc>
+	</struct>
+	<struct native="LogicalPixel" script="LogicalPixel">
+		<doc>Location in 2D space in logical pixels. Logical pixels are defined at 1/96th of one logical inch. Logical pixels are transformed into physical pixels by scaling it by the display&apos;s DPI scale. If your display is set to 96 DPI, then one logical pixel equals one physical pixel.</doc>
+	</struct>
+	<struct native="TUnitValue&lt;float, PhysicalPixel&gt;" script="TUnitValue&lt;float,PhysicalPixel&gt;">
+		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="value" type="float">
+			</param>
+		</ctor>
+		<field name="Value" type="float">
+		</field>
+	</struct>
+	<struct native="TUnitValue&lt;int32_t, LogicalPixel&gt;" script="TUnitValue&lt;int,LogicalPixel&gt;">
+		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="value" type="int">
+			</param>
+		</ctor>
+		<field name="Value" type="int">
+		</field>
+	</struct>
 	<struct native="GUIOption" script="GUIOption">
 		<doc>Controls GUI element layout options, possibly by overriding the default options specified in GUI element style. These options control GUI element placement and size in a GUI layout.</doc>
 		<ctor>

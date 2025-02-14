@@ -14,11 +14,14 @@ namespace bs
     /// <summary>
     /// Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.
     /// </summary>
-    public readonly struct TUnitValue<T, Unit>(T value)
+    public partial struct TUnitValue<T, Unit>
             : INumber<TUnitValue<T, Unit>>
         where T : INumber<T>
     {
-        public T Value { get; } = value;
+        public TUnitValue(T value)
+        {
+            Value = value;
+        }
 
         public static TUnitValue<T, Unit> AdditiveIdentity => new (T.AdditiveIdentity);
         public static TUnitValue<T, Unit> MultiplicativeIdentity => new (T.MultiplicativeIdentity);
