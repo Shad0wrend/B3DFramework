@@ -190,122 +190,6 @@
 		<enumentry native="ZYX" script="ZYX">
 		</enumentry>
 	</enum>
-	<enum native="DrawOperationType" script="MeshTopology">
-		<doc>Describes operation that will be used for rendering a certain set of vertices.</doc>
-		<enumentry native="DOT_POINT_LIST" script="PointList">
-			<doc>Each vertex represents a point.</doc>
-		</enumentry>
-		<enumentry native="DOT_LINE_STRIP" script="LineStrip">
-			<doc>Each vertex (except the first) forms a line with the previous vertex.</doc>
-		</enumentry>
-		<enumentry native="DOT_LINE_LIST" script="LineList">
-			<doc>Each sequential pair of vertices represent a line.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_STRIP" script="TriangleStrip">
-			<doc>Each vertex (except the first two) form a triangle with the previous two vertices.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_LIST" script="TriangleList">
-			<doc>Each sequential 3-tuple of vertices represent a triangle.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_FAN" script="TriangleFan">
-			<doc>Each vertex (except the first two) form a triangle with the first vertex and previous vertex.</doc>
-		</enumentry>
-	</enum>
-	<class native="Debug" script="Debug">
-		<doc>Utility class providing various debug functionality.</doc>
-		<method native="Log" script="Log" static="false">
-			<doc>Logs a new message.</doc>
-			<param name="message" type="string">
-				<doc>The message describing the log entry.</doc>
-			</param>
-			<param name="verbosity" type="LogVerbosity">
-				<doc>Verbosity of the message, determining its importance.</doc>
-			</param>
-			<param name="categoryName" type="string">
-				<doc>Category of the message, determining which system is it relevant to.</doc>
-			</param>
-		</method>
-		<method native="ClearLog" script="ClearLog" static="false">
-			<doc>Removes all log entries for a specific category and/or verbosity level.</doc>
-			<param name="categoryName" type="string">
-				<doc>Name of the category to clear. Specify null to clear all categories.</doc>
-			</param>
-			<param name="verbosity" type="LogVerbosity">
-				<doc>Verbosity level to clear.</doc>
-			</param>
-		</method>
-		<property name="LogEntries" type="LogEntry" getter="GetLogEntries" setter="" static="false">
-			<doc>Returns all existing log entries.</doc>
-		</property>
-		<event native="OnLogEntryAdded" script="OnLogEntryAdded" static="false">
-			<doc>Triggered when a new entry in the log is added.</doc>
-			<param name="p0" type="LogEntry">
-			</param>
-		</event>
-		<event native="OnLogModified" script="OnLogModified" static="false">
-			<doc>Triggered whenever one or multiple log entries were added or removed. Triggers only once per frame.</doc>
-		</event>
-	</class>
-	<class native="GUIRenderable" script="GUIRenderable">
-		<doc>Represents a GUI element that can be rendered (i.e. has a visual representation). Renderable element can have a particular style, and provides one or multiple render elements to be drawn.</doc>
-		<property name="StyleSheetClass" type="string" getter="GetStyleSheetClass" setter="SetStyleSheetClass" static="false">
-			<doc>Sets new style class to be used by the element.</doc>
-		</property>
-		<property name="Tint" type="Color" getter="GetTint" setter="SetTint" static="false">
-			<doc>Sets the tint of the GUI element.</doc>
-		</property>
-	</class>
-	<struct native="Color" script="Color">
-		<doc>Color represented as 4 components, each being a floating point value ranging from 0 to 1. Color components are red, green, blue and alpha.</doc>
-		<ctor>
-			<param name="red" type="float">
-			</param>
-			<param name="green" type="float">
-			</param>
-			<param name="blue" type="float">
-			</param>
-			<param name="alpha" type="float">
-			</param>
-		</ctor>
-		<field name="R" type="float">
-		</field>
-		<field name="G" type="float">
-		</field>
-		<field name="B" type="float">
-		</field>
-		<field name="A" type="float">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;float&gt;" script="Size2">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="float">
-			</param>
-			<param name="height" type="float">
-			</param>
-		</ctor>
-		<field name="Width" type="float">
-		</field>
-		<field name="Height" type="float">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;uint32_t&gt;" script="Size2UI">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="int">
-			</param>
-			<param name="height" type="int">
-			</param>
-		</ctor>
-		<field name="Width" type="int">
-		</field>
-		<field name="Height" type="int">
-		</field>
-	</struct>
 	<class native="MorphChannel" script="MorphChannel">
 		<doc>A collection of morph shapes that are sequentially blended together. Each shape has a weight in range [0, 1] which determines at what point is that shape blended. As the channel percent moves from 0 to 1, different shapes will be blended with those before or after them, depending on their weight.</doc>
 		<property name="Name" type="string" getter="GetName" setter="" static="false">
@@ -442,6 +326,21 @@
 		<enumentry native="Positive" script="Positive">
 		</enumentry>
 	</enum>
+	<struct native="ColorGradientKey" script="ColorGradientKey">
+		<doc>Single key in a ColorGradient.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="color" type="Color">
+			</param>
+			<param name="time" type="float">
+			</param>
+		</ctor>
+		<field name="Color" type="Color">
+		</field>
+		<field name="Time" type="float">
+		</field>
+	</struct>
 	<struct native="LogEntry" script="LogEntry">
 		<doc>A single log entry, containing a message and a channel the message was recorded on.</doc>
 		<ctor>
@@ -456,19 +355,90 @@
 			<doc>Local time of message</doc>
 		</field>
 	</struct>
-	<struct native="ColorGradientKey" script="ColorGradientKey">
-		<doc>Single key in a ColorGradient.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="color" type="Color">
+	<enum native="DrawOperationType" script="MeshTopology">
+		<doc>Describes operation that will be used for rendering a certain set of vertices.</doc>
+		<enumentry native="DOT_POINT_LIST" script="PointList">
+			<doc>Each vertex represents a point.</doc>
+		</enumentry>
+		<enumentry native="DOT_LINE_STRIP" script="LineStrip">
+			<doc>Each vertex (except the first) forms a line with the previous vertex.</doc>
+		</enumentry>
+		<enumentry native="DOT_LINE_LIST" script="LineList">
+			<doc>Each sequential pair of vertices represent a line.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_STRIP" script="TriangleStrip">
+			<doc>Each vertex (except the first two) form a triangle with the previous two vertices.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_LIST" script="TriangleList">
+			<doc>Each sequential 3-tuple of vertices represent a triangle.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_FAN" script="TriangleFan">
+			<doc>Each vertex (except the first two) form a triangle with the first vertex and previous vertex.</doc>
+		</enumentry>
+	</enum>
+	<class native="Debug" script="Debug">
+		<doc>Utility class providing various debug functionality.</doc>
+		<method native="Log" script="Log" static="false">
+			<doc>Logs a new message.</doc>
+			<param name="message" type="string">
+				<doc>The message describing the log entry.</doc>
 			</param>
-			<param name="time" type="float">
+			<param name="verbosity" type="LogVerbosity">
+				<doc>Verbosity of the message, determining its importance.</doc>
+			</param>
+			<param name="categoryName" type="string">
+				<doc>Category of the message, determining which system is it relevant to.</doc>
+			</param>
+		</method>
+		<method native="ClearLog" script="ClearLog" static="false">
+			<doc>Removes all log entries for a specific category and/or verbosity level.</doc>
+			<param name="categoryName" type="string">
+				<doc>Name of the category to clear. Specify null to clear all categories.</doc>
+			</param>
+			<param name="verbosity" type="LogVerbosity">
+				<doc>Verbosity level to clear.</doc>
+			</param>
+		</method>
+		<property name="LogEntries" type="LogEntry" getter="GetLogEntries" setter="" static="false">
+			<doc>Returns all existing log entries.</doc>
+		</property>
+		<event native="OnLogEntryAdded" script="OnLogEntryAdded" static="false">
+			<doc>Triggered when a new entry in the log is added.</doc>
+			<param name="p0" type="LogEntry">
+			</param>
+		</event>
+		<event native="OnLogModified" script="OnLogModified" static="false">
+			<doc>Triggered whenever one or multiple log entries were added or removed. Triggers only once per frame.</doc>
+		</event>
+	</class>
+	<class native="GUIRenderable" script="GUIRenderable">
+		<doc>Represents a GUI element that can be rendered (i.e. has a visual representation). Renderable element can have a particular style, and provides one or multiple render elements to be drawn.</doc>
+		<property name="StyleSheetClass" type="string" getter="GetStyleSheetClass" setter="SetStyleSheetClass" static="false">
+			<doc>Sets new style class to be used by the element.</doc>
+		</property>
+		<property name="Tint" type="Color" getter="GetTint" setter="SetTint" static="false">
+			<doc>Sets the tint of the GUI element.</doc>
+		</property>
+	</class>
+	<struct native="Color" script="Color">
+		<doc>Color represented as 4 components, each being a floating point value ranging from 0 to 1. Color components are red, green, blue and alpha.</doc>
+		<ctor>
+			<param name="red" type="float">
+			</param>
+			<param name="green" type="float">
+			</param>
+			<param name="blue" type="float">
+			</param>
+			<param name="alpha" type="float">
 			</param>
 		</ctor>
-		<field name="Color" type="Color">
+		<field name="R" type="float">
 		</field>
-		<field name="Time" type="float">
+		<field name="G" type="float">
+		</field>
+		<field name="B" type="float">
+		</field>
+		<field name="A" type="float">
 		</field>
 	</struct>
 	<enum native="ProjectionType" script="ProjectionType">
@@ -716,6 +686,36 @@
 		<property name="Entries" type="SubResource" getter="GetEntries" setter="SetEntries" static="false">
 		</property>
 	</class>
+	<struct native="TSize2&lt;float&gt;" script="Size2">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="float">
+			</param>
+			<param name="height" type="float">
+			</param>
+		</ctor>
+		<field name="Width" type="float">
+		</field>
+		<field name="Height" type="float">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;uint32_t&gt;" script="Size2UI">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="int">
+			</param>
+			<param name="height" type="int">
+			</param>
+		</ctor>
+		<field name="Width" type="int">
+		</field>
+		<field name="Height" type="int">
+		</field>
+	</struct>
 	<enum native="PointerEventType" script="PointerEventType">
 		<doc>Type of pointer event.</doc>
 		<enumentry native="CursorMoved" script="CursorMoved">
@@ -800,6 +800,51 @@
 		<field name="X" type="TUnitValue&lt;int,LogicalPixel&gt;">
 		</field>
 		<field name="Y" type="TUnitValue&lt;int,LogicalPixel&gt;">
+		</field>
+	</struct>
+	<struct native="TVector2&lt;TUnitValue&lt;float, LogicalPixel&gt;&gt;" script="TVector2&lt;TUnitValue&lt;float,LogicalPixel&gt;&gt;">
+		<doc>A two dimensional vector.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="TUnitValue&lt;float,LogicalPixel&gt;">
+			</param>
+			<param name="y" type="TUnitValue&lt;float,LogicalPixel&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="TUnitValue&lt;float,LogicalPixel&gt;">
+		</field>
+		<field name="Y" type="TUnitValue&lt;float,LogicalPixel&gt;">
+		</field>
+	</struct>
+	<struct native="TVector2&lt;TUnitValue&lt;int32_t, PhysicalPixel&gt;&gt;" script="TVector2&lt;TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+		<doc>A two dimensional vector.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+			<param name="y" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+		</field>
+		<field name="Y" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+		</field>
+	</struct>
+	<struct native="TVector2&lt;TUnitValue&lt;float, PhysicalPixel&gt;&gt;" script="TVector2&lt;TUnitValue&lt;float,PhysicalPixel&gt;&gt;">
+		<doc>A two dimensional vector.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+			</param>
+			<param name="y" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+		</field>
+		<field name="Y" type="TUnitValue&lt;float,PhysicalPixel&gt;">
 		</field>
 	</struct>
 	<struct native="TVector3&lt;float&gt;" script="Vector3">
@@ -14050,7 +14095,18 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 	<struct native="LogicalPixel" script="LogicalPixel">
 		<doc>Location in 2D space in logical pixels. Logical pixels are defined at 1/96th of one logical inch. Logical pixels are transformed into physical pixels by scaling it by the display&apos;s DPI scale. If your display is set to 96 DPI, then one logical pixel equals one physical pixel.</doc>
 	</struct>
-	<struct native="TUnitValue&lt;float, PhysicalPixel&gt;" script="TUnitValue&lt;float,PhysicalPixel&gt;">
+	<struct native="TUnitValue&lt;int32_t, LogicalPixel&gt;" script="TUnitValue&lt;int,LogicalPixel&gt;">
+		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="value" type="int">
+			</param>
+		</ctor>
+		<field name="Value" type="int">
+		</field>
+	</struct>
+	<struct native="TUnitValue&lt;float, LogicalPixel&gt;" script="TUnitValue&lt;float,LogicalPixel&gt;">
 		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
 		<ctor>
 		</ctor>
@@ -14061,7 +14117,7 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 		<field name="Value" type="float">
 		</field>
 	</struct>
-	<struct native="TUnitValue&lt;int32_t, LogicalPixel&gt;" script="TUnitValue&lt;int,LogicalPixel&gt;">
+	<struct native="TUnitValue&lt;int32_t, PhysicalPixel&gt;" script="TUnitValue&lt;int,PhysicalPixel&gt;">
 		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
 		<ctor>
 		</ctor>
@@ -14070,6 +14126,17 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			</param>
 		</ctor>
 		<field name="Value" type="int">
+		</field>
+	</struct>
+	<struct native="TUnitValue&lt;float, PhysicalPixel&gt;" script="TUnitValue&lt;float,PhysicalPixel&gt;">
+		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="value" type="float">
+			</param>
+		</ctor>
+		<field name="Value" type="float">
 		</field>
 	</struct>
 	<struct native="GUIOption" script="GUIOption">

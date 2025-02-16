@@ -3,11 +3,13 @@
 #pragma once
 
 #include "BsPrerequisites.h"
+#include "Math/BsSize2.h"
 
 namespace bs
 {
 	class GUIOption;
 	struct GUIStyleSheetRules;
+
 	/** @addtogroup GUI-Internal
 	 *  @{
 	 */

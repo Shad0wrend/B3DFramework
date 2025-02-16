@@ -22,7 +22,7 @@ namespace bs
 
 		B3D_SCRIPT_EXPORT(Exclude(true))
 		constexpr TVector2(BS_ZERO)
-			: X((T)0.0), Y((T)0.0)
+			: X(static_cast<T>(0)), Y(static_cast<T>(0))
 		{}
 
 		constexpr TVector2(T x, T y)
@@ -94,9 +94,9 @@ namespace bs
 
 		TVector2 operator/(const T rhs) const
 		{
-			B3D_ASSERT(rhs != (T)0.0);
+			B3D_ASSERT(rhs != (T)0);
 
-			const T inverseRHS = (T)1.0 / rhs;
+			const T inverseRHS = (T)1 / rhs;
 			return TVector2(X * inverseRHS, Y * inverseRHS);
 		}
 
@@ -196,9 +196,9 @@ namespace bs
 
 		TVector2& operator/=(T rhs)
 		{
-			B3D_ASSERT(rhs != (T)0.0);
+			B3D_ASSERT(rhs != (T)0);
 
-			const T inverseRHS = (T)1.0 / rhs;
+			const T inverseRHS = (T)1 / rhs;
 			X *= inverseRHS;
 			Y *= inverseRHS;
 

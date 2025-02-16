@@ -5,9 +5,6 @@
 
 namespace bs
 {
-	template struct B3D_UTILITY_EXPORT TSize2<float>;
-	template struct B3D_UTILITY_EXPORT TSize2<u32>;
-
 	String Md5(const WString& source)
 	{
 		MD5 md5;

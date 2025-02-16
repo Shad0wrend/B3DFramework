@@ -13,6 +13,15 @@
 #include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "BsScriptObjectWrapper.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "BsScriptObjectWrapper.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "BsScriptObjectWrapper.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
 
 namespace bs
@@ -87,6 +96,69 @@ namespace bs
 
 	private:
 		ScriptTVector2_TUnitValue_int32_t__LogicalPixel__();
+
+	};
+
+	struct __TVector2_TUnitValue_float__LogicalPixel__Interop
+	{
+		TUnitValue<float, LogicalPixel> X;
+		TUnitValue<float, LogicalPixel> Y;
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTVector2_TUnitValue_float__LogicalPixel__ : public TScriptTypeDefinition<ScriptTVector2_TUnitValue_float__LogicalPixel__>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TVector2<bs::TUnitValue<float,bs::LogicalPixel>>")
+
+		static MonoObject* Box(const __TVector2_TUnitValue_float__LogicalPixel__Interop& value);
+		static __TVector2_TUnitValue_float__LogicalPixel__Interop Unbox(MonoObject* value);
+		static TVector2<TUnitValue<float, LogicalPixel>> FromInterop(const __TVector2_TUnitValue_float__LogicalPixel__Interop& value);
+		static __TVector2_TUnitValue_float__LogicalPixel__Interop ToInterop(const TVector2<TUnitValue<float, LogicalPixel>>& value);
+
+	private:
+		ScriptTVector2_TUnitValue_float__LogicalPixel__();
+
+	};
+
+	struct __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop
+	{
+		TUnitValue<int32_t, PhysicalPixel> X;
+		TUnitValue<int32_t, PhysicalPixel> Y;
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__ : public TScriptTypeDefinition<ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TVector2<bs::TUnitValue<int,bs::PhysicalPixel>>")
+
+		static MonoObject* Box(const __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop& value);
+		static __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop Unbox(MonoObject* value);
+		static TVector2<TUnitValue<int32_t, PhysicalPixel>> FromInterop(const __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop& value);
+		static __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop ToInterop(const TVector2<TUnitValue<int32_t, PhysicalPixel>>& value);
+
+	private:
+		ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__();
+
+	};
+
+	struct __TVector2_TUnitValue_float__PhysicalPixel__Interop
+	{
+		TUnitValue<float, PhysicalPixel> X;
+		TUnitValue<float, PhysicalPixel> Y;
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTVector2_TUnitValue_float__PhysicalPixel__ : public TScriptTypeDefinition<ScriptTVector2_TUnitValue_float__PhysicalPixel__>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TVector2<bs::TUnitValue<float,bs::PhysicalPixel>>")
+
+		static MonoObject* Box(const __TVector2_TUnitValue_float__PhysicalPixel__Interop& value);
+		static __TVector2_TUnitValue_float__PhysicalPixel__Interop Unbox(MonoObject* value);
+		static TVector2<TUnitValue<float, PhysicalPixel>> FromInterop(const __TVector2_TUnitValue_float__PhysicalPixel__Interop& value);
+		static __TVector2_TUnitValue_float__PhysicalPixel__Interop ToInterop(const TVector2<TUnitValue<float, PhysicalPixel>>& value);
+
+	private:
+		ScriptTVector2_TUnitValue_float__PhysicalPixel__();
 
 	};
 }

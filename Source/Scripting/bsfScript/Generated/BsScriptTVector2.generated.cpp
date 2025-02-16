@@ -6,6 +6,12 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
 #include "BsScriptTUnitValue.generated.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "BsScriptTUnitValue.generated.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "BsScriptTUnitValue.generated.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "BsScriptTUnitValue.generated.h"
 
 namespace bs
 {
@@ -90,6 +96,102 @@ namespace bs
 	__TVector2_TUnitValue_int32_t__LogicalPixel__Interop ScriptTVector2_TUnitValue_int32_t__LogicalPixel__::ToInterop(const TVector2<TUnitValue<int32_t, LogicalPixel>>& value)
 	{
 		__TVector2_TUnitValue_int32_t__LogicalPixel__Interop output;
+		output.X = value.X;
+		output.Y = value.Y;
+
+		return output;
+	}
+
+
+	ScriptTVector2_TUnitValue_float__LogicalPixel__::ScriptTVector2_TUnitValue_float__LogicalPixel__()
+	{ }
+
+	MonoObject* ScriptTVector2_TUnitValue_float__LogicalPixel__::Box(const __TVector2_TUnitValue_float__LogicalPixel__Interop& value)
+	{
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
+	}
+
+	__TVector2_TUnitValue_float__LogicalPixel__Interop ScriptTVector2_TUnitValue_float__LogicalPixel__::Unbox(MonoObject* value)
+	{
+		return *(__TVector2_TUnitValue_float__LogicalPixel__Interop*)MonoUtil::Unbox(value);
+	}
+
+	TVector2<TUnitValue<float, LogicalPixel>> ScriptTVector2_TUnitValue_float__LogicalPixel__::FromInterop(const __TVector2_TUnitValue_float__LogicalPixel__Interop& value)
+	{
+		TVector2<TUnitValue<float, LogicalPixel>> output;
+		output.X = value.X;
+		output.Y = value.Y;
+
+		return output;
+	}
+
+	__TVector2_TUnitValue_float__LogicalPixel__Interop ScriptTVector2_TUnitValue_float__LogicalPixel__::ToInterop(const TVector2<TUnitValue<float, LogicalPixel>>& value)
+	{
+		__TVector2_TUnitValue_float__LogicalPixel__Interop output;
+		output.X = value.X;
+		output.Y = value.Y;
+
+		return output;
+	}
+
+
+	ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__::ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__()
+	{ }
+
+	MonoObject* ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__::Box(const __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop& value)
+	{
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
+	}
+
+	__TVector2_TUnitValue_int32_t__PhysicalPixel__Interop ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__::Unbox(MonoObject* value)
+	{
+		return *(__TVector2_TUnitValue_int32_t__PhysicalPixel__Interop*)MonoUtil::Unbox(value);
+	}
+
+	TVector2<TUnitValue<int32_t, PhysicalPixel>> ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__::FromInterop(const __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop& value)
+	{
+		TVector2<TUnitValue<int32_t, PhysicalPixel>> output;
+		output.X = value.X;
+		output.Y = value.Y;
+
+		return output;
+	}
+
+	__TVector2_TUnitValue_int32_t__PhysicalPixel__Interop ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__::ToInterop(const TVector2<TUnitValue<int32_t, PhysicalPixel>>& value)
+	{
+		__TVector2_TUnitValue_int32_t__PhysicalPixel__Interop output;
+		output.X = value.X;
+		output.Y = value.Y;
+
+		return output;
+	}
+
+
+	ScriptTVector2_TUnitValue_float__PhysicalPixel__::ScriptTVector2_TUnitValue_float__PhysicalPixel__()
+	{ }
+
+	MonoObject* ScriptTVector2_TUnitValue_float__PhysicalPixel__::Box(const __TVector2_TUnitValue_float__PhysicalPixel__Interop& value)
+	{
+		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
+	}
+
+	__TVector2_TUnitValue_float__PhysicalPixel__Interop ScriptTVector2_TUnitValue_float__PhysicalPixel__::Unbox(MonoObject* value)
+	{
+		return *(__TVector2_TUnitValue_float__PhysicalPixel__Interop*)MonoUtil::Unbox(value);
+	}
+
+	TVector2<TUnitValue<float, PhysicalPixel>> ScriptTVector2_TUnitValue_float__PhysicalPixel__::FromInterop(const __TVector2_TUnitValue_float__PhysicalPixel__Interop& value)
+	{
+		TVector2<TUnitValue<float, PhysicalPixel>> output;
+		output.X = value.X;
+		output.Y = value.Y;
+
+		return output;
+	}
+
+	__TVector2_TUnitValue_float__PhysicalPixel__Interop ScriptTVector2_TUnitValue_float__PhysicalPixel__::ToInterop(const TVector2<TUnitValue<float, PhysicalPixel>>& value)
+	{
+		__TVector2_TUnitValue_float__PhysicalPixel__Interop output;
 		output.X = value.X;
 		output.Y = value.Y;
 

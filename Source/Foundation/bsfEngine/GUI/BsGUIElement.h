@@ -64,10 +64,35 @@ namespace bs
 	 */
 	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true)) LogicalPixel { };
 
-	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TUnitValue<float, PhysicalPixel>;
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TUnitValue<i32, LogicalPixel>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TUnitValue<float, LogicalPixel>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TUnitValue<i32, PhysicalPixel>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TUnitValue<float, PhysicalPixel>;
+
+	template<> const TVector2<TUnitValue<i32, LogicalPixel>> TVector2<TUnitValue<i32, LogicalPixel>>::kZero{BsZero};
+	template<> const TVector2<TUnitValue<float, LogicalPixel>> TVector2<TUnitValue<float, LogicalPixel>>::kZero{BsZero};
+	template<> const TVector2<TUnitValue<i32, PhysicalPixel>> TVector2<TUnitValue<i32, PhysicalPixel>>::kZero{BsZero};
+	template<> const TVector2<TUnitValue<float, PhysicalPixel>> TVector2<TUnitValue<float, PhysicalPixel>>::kZero{BsZero};
+
+	template<> const TVector2<TUnitValue<i32, LogicalPixel>> TVector2<TUnitValue<i32, LogicalPixel>>::kOne{1, 1};
+	template<> const TVector2<TUnitValue<float, LogicalPixel>> TVector2<TUnitValue<float, LogicalPixel>>::kOne{1.0f, 1.0f};
+	template<> const TVector2<TUnitValue<i32, PhysicalPixel>> TVector2<TUnitValue<i32, PhysicalPixel>>::kOne{1, 1};
+	template<> const TVector2<TUnitValue<float, PhysicalPixel>> TVector2<TUnitValue<float, PhysicalPixel>>::kOne{1.0f, 1.0f};
+
+	template<> const TVector2<TUnitValue<i32, LogicalPixel>> TVector2<TUnitValue<i32, LogicalPixel>>::kUnitX{1, 0};
+	template<> const TVector2<TUnitValue<float, LogicalPixel>> TVector2<TUnitValue<float, LogicalPixel>>::kUnitX{1.0f, 0.0f};
+	template<> const TVector2<TUnitValue<i32, PhysicalPixel>> TVector2<TUnitValue<i32, PhysicalPixel>>::kUnitX{1, 0};
+	template<> const TVector2<TUnitValue<float, PhysicalPixel>> TVector2<TUnitValue<float, PhysicalPixel>>::kUnitX{1.0f, 0.0f};
+
+	template<> const TVector2<TUnitValue<i32, LogicalPixel>> TVector2<TUnitValue<i32, LogicalPixel>>::kUnitY{0, 1};
+	template<> const TVector2<TUnitValue<float, LogicalPixel>> TVector2<TUnitValue<float, LogicalPixel>>::kUnitY{0.0f, 1.0f};
+	template<> const TVector2<TUnitValue<i32, PhysicalPixel>> TVector2<TUnitValue<i32, PhysicalPixel>>::kUnitY{0, 1};
+	template<> const TVector2<TUnitValue<float, PhysicalPixel>> TVector2<TUnitValue<float, PhysicalPixel>>::kUnitY{0.0f, 1.0f};
 
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TVector2<TUnitValue<i32, LogicalPixel>>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TVector2<TUnitValue<float, LogicalPixel>>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TVector2<TUnitValue<i32, PhysicalPixel>>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TVector2<TUnitValue<float, PhysicalPixel>>;
 
 	/**
 	 * Base class for all GUI elements. Provides general functionality such as element size/position, as well as handling child/parent relationships.

@@ -4,9 +4,9 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
-#include "../../../Foundation/bsfUtility/Utility/BsUtil.h"
+#include "../../../Foundation/bsfUtility/Math/BsSize2.h"
 #include "BsScriptObjectWrapper.h"
-#include "../../../Foundation/bsfUtility/Utility/BsUtil.h"
+#include "../../../Foundation/bsfUtility/Math/BsSize2.h"
 
 namespace bs
 {

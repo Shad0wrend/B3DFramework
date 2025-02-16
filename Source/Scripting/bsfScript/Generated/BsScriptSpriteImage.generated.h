@@ -4,7 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptResourceWrapper.h"
-#include "../../../Foundation/bsfUtility/Utility/BsUtil.h"
+#include "../../../Foundation/bsfUtility/Math/BsSize2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "Math/BsRect2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"

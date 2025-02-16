@@ -28,6 +28,11 @@ namespace bs
 		bool operator==(const TUnitValue& rhs) const { return Value == rhs.Value; }
 		bool operator!=(const TUnitValue& rhs) const { return Value != rhs.Value; }
 
+		bool operator<(const TUnitValue& rhs) const { return Value < rhs.Value; }
+		bool operator>(const TUnitValue& rhs) const { return Value > rhs.Value; }
+		bool operator<=(const TUnitValue& rhs) const { return Value <= rhs.Value; }
+		bool operator>=(const TUnitValue& rhs) const { return Value >= rhs.Value; }
+
 		TUnitValue operator+(const TUnitValue& rhs) const { return TUnitValue(Value + rhs.Value); }
 		TUnitValue operator-(const TUnitValue& rhs) const { return TUnitValue(Value - rhs.Value); }
 
