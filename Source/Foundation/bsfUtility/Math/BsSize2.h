@@ -50,9 +50,9 @@ namespace bs
 
 		TSize2 operator/(const T rhs) const
 		{
-			B3D_ASSERT(rhs != (T)0.0);
+			B3D_ASSERT(rhs != (T)0);
 
-			const T inverseRHS = (T)1.0 / rhs;
+			const T inverseRHS = (T)1 / rhs;
 			return TSize2(Width * inverseRHS, Height * inverseRHS);
 		}
 
@@ -152,9 +152,9 @@ namespace bs
 
 		TSize2& operator/=(T rhs)
 		{
-			B3D_ASSERT(rhs != (T)0.0);
+			B3D_ASSERT(rhs != (T)0);
 
-			const T inverseRHS = (T)1.0 / rhs;
+			const T inverseRHS = (T)1 / rhs;
 			Width *= inverseRHS;
 			Height *= inverseRHS;
 
@@ -179,11 +179,13 @@ namespace bs
 			return !operator==(rhs);
 		}
 
+		template<typename U = T, typename = std::enable_if_t<std::is_integral_v<U>, i32>>
 		TSize2<float> ToFloat() const
 		{
 			return TSize2<float>((float)Width, (float)Height);
 		}
 
+		template<typename U = T, typename = std::enable_if_t<std::is_integral_v<U>, i32>>
 		static TSize2<T> FromFloat(const TSize2<float>& other)
 		{
 			return TSize2<T>((T)other.Width, (T)other.Height);

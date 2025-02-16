@@ -4,13 +4,13 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "BsScriptTUnitValue.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "BsScriptTUnitValue.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "BsScriptTUnitValue.generated.h"
-#include "../../../Foundation/bsfEngine/GUI/BsGUIElement.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "BsScriptTUnitValue.generated.h"
 
 namespace bs
