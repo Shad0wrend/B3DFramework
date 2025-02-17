@@ -179,16 +179,11 @@ namespace bs
 			return !operator==(rhs);
 		}
 
-		template<typename U = T, typename = std::enable_if_t<std::is_integral_v<U>, i32>>
-		TSize2<float> ToFloat() const
+		/** Converts a size with one underlying type to another. */
+		template<typename T2>
+		TSize2<T2> To() const
 		{
-			return TSize2<float>((float)Width, (float)Height);
-		}
-
-		template<typename U = T, typename = std::enable_if_t<std::is_integral_v<U>, i32>>
-		static TSize2<T> FromFloat(const TSize2<float>& other)
-		{
-			return TSize2<T>((T)other.Width, (T)other.Height);
+			return TSize2<T2>((T2)Width, (T2)Height);
 		}
 
 		static const TSize2 kZero;

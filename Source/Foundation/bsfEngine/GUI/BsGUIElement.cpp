@@ -166,7 +166,7 @@ Size2UI GUIElement::CalculateSizeInLayout() const
 	return GetLayoutCalculatedSize();
 }
 
-Vector2I GUIElement::CalculatePositionRelativeTo(GUIElement* relativeTo) const
+GUILogicalPoint GUIElement::CalculatePositionRelativeTo(GUIElement* relativeTo) const
 {
 	if(relativeTo == nullptr)
 		relativeTo = mPanelParent;
@@ -175,16 +175,16 @@ Vector2I GUIElement::CalculatePositionRelativeTo(GUIElement* relativeTo) const
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
 	if(relativeTo == nullptr)
-		return mLayoutData.RelativePosition;
+		return mLayoutData.RelativePosition.To<GUILogicalUnit>();
 
 	auto fnGetAccumulatedRelativePosition = [relativeTo](const GUIElement* element, auto&& fnGetAccumulatedRelativePosition)
 	{
 		GUIElement* const parent = element->GetParent();
 		if(parent == nullptr || element == relativeTo)
-			return element->GetLayoutData().RelativePosition;
+			return element->GetLayoutData().RelativePosition.To<GUILogicalUnit>();
 
-		const Vector2I& parentPosition = fnGetAccumulatedRelativePosition(parent, fnGetAccumulatedRelativePosition);
-		return parentPosition + element->GetLayoutData().RelativePosition;
+		const GUILogicalPoint& parentPosition = fnGetAccumulatedRelativePosition(parent, fnGetAccumulatedRelativePosition);
+		return parentPosition + element->GetLayoutData().RelativePosition.To<GUILogicalUnit>();
 	};
 
 	return fnGetAccumulatedRelativePosition(this, fnGetAccumulatedRelativePosition);
@@ -548,7 +548,7 @@ void GUIElement::UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, float p
 	mAbsoluteScale = mScale * parentScale;
 
 	mAbsolutePosition = (mLayoutData.RelativePosition.To<float>() * mAbsoluteScale).To<i32>() + parentOrigin;
-	mAbsoluteSize = Size2UI::FromFloat(mLayoutData.Size.ToFloat() * mAbsoluteScale);
+	mAbsoluteSize = (mLayoutData.Size.To<float>() * mAbsoluteScale).To<u32>();
 
 	mAbsoluteClippedArea = Rect2I(mAbsolutePosition, mAbsoluteSize);
 	mAbsoluteClippedArea.Clip(parentVisibleArea);
@@ -591,7 +591,7 @@ const RectOffset& GUIElement::GetPadding() const
 void GUIElement::ResetAbsoluteBounds(float scale)
 {
 	mAbsoluteScale = mScale * scale;
-	mAbsoluteSize = Size2UI::FromFloat(mLayoutData.Size.ToFloat() * mAbsoluteScale);
+	mAbsoluteSize = (mLayoutData.Size.To<float>() * mAbsoluteScale).To<u32>();
 	mAbsoluteClippedArea = Rect2I(mAbsolutePosition.X, mAbsolutePosition.Y, mAbsoluteSize.Width, mAbsoluteSize.Height);
 }
 

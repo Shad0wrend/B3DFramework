@@ -62,5 +62,23 @@ namespace bs
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TSize2<TUnitValue<i32, PhysicalPixel>>;
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TSize2<TUnitValue<float, PhysicalPixel>>;
 
+	using GUIPhysicalUnit = TUnitValue<i32, PhysicalPixel>;
+	using GUIPhysicalUnitF = TUnitValue<float, PhysicalPixel>;
+
+	using GUILogicalUnit = TUnitValue<i32, LogicalPixel>;
+	using GUILogicalUnitF = TUnitValue<float, LogicalPixel>;
+
+	using GUIPhysicalPoint = TVector2<GUIPhysicalUnit>;
+	using GUIPhysicalPointF = TVector2<GUIPhysicalUnitF>;
+
+	using GUILogicalPoint = TVector2<GUILogicalUnit>;
+	using GUILogicalPointF = TVector2<GUILogicalUnitF>;
+
+	using GUIPhysicalSize = TSize2<GUIPhysicalUnit>;
+	using GUIPhysicalSizeF = TSize2<GUIPhysicalUnitF>;
+
+	using GUILogicalSize = TSize2<GUILogicalUnit>;
+	using GUILogicalSizeF = TSize2<GUILogicalUnitF>;
+
 	/** @} */
 } // namespace bs

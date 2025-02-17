@@ -152,11 +152,11 @@ void ScriptGUIElement::InternalGetScreenBounds(ScriptGUIElementWrapper* self, Re
 	*bounds = self->GetNativeObject()->CalculateScreenBounds();
 }
 
-void ScriptGUIElement::InternalCalculatePositionRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, Vector2I* position)
+void ScriptGUIElement::InternalCalculatePositionRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, __TVector2_TUnitValue_int32_t__LogicalPixel__Interop* position)
 {
 	if(!self->IsNativeObjectValid())
 	{
-		*position = Vector2I::kZero;
+		*position = ScriptTVector2_TUnitValue_int32_t__LogicalPixel__::ToInterop(GUILogicalPoint::kZero);
 		return;
 	}
 
@@ -165,14 +165,14 @@ void ScriptGUIElement::InternalCalculatePositionRelativeTo(ScriptGUIElementWrapp
 	{
 		if(!relativeTo->IsNativeObjectValid())
 		{
-			*position = Vector2I::kZero;
+			*position = ScriptTVector2_TUnitValue_int32_t__LogicalPixel__::ToInterop(GUILogicalPoint::kZero);
 			return;
 		}
 
 		relativeToElement = relativeTo->GetNativeObject();
 	}
 
-	*position = self->GetNativeObject()->CalculatePositionRelativeTo(relativeToElement);
+	*position = ScriptTVector2_TUnitValue_int32_t__LogicalPixel__::ToInterop(self->GetNativeObject()->CalculatePositionRelativeTo(relativeToElement));
 }
 
 void ScriptGUIElement::InternalCalculateAbsoluteBoundsRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, Rect2I* bounds)

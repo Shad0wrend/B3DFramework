@@ -216,6 +216,14 @@ namespace bs
             return new TVector2<T>(T.Min(lhs.X, rhs.X), T.Min(lhs.Y, rhs.Y));
         }
 
+        /// <summary>
+        /// Converts a vector with one underlying type to another.
+        /// </summary>
+        public TVector2<T2> To<T2>() where T2 : INumber<T2>
+        {
+            return new TVector2<T2>(T2.CreateChecked(X), T2.CreateChecked(Y));
+        }
+
         public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode() << 2;
 
         public override bool Equals(object other)

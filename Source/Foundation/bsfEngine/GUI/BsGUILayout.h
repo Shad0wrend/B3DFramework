@@ -25,7 +25,7 @@ namespace bs
 		static simd::Rect2 GetBounds(GUIElement* element, void* context)
 		{
 			const Vector2 relativePosition = element->GetLayoutData().RelativePosition.To<float>();
-			const Size2 size = element->GetLayoutData().Size.ToFloat();
+			const Size2 size = element->GetLayoutData().Size.To<float>();
 
 			const Rect2 area(relativePosition.X, relativePosition.Y, size.Width, size.Height);
 			return simd::Rect2(area);

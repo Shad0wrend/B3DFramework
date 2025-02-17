@@ -52,7 +52,7 @@ namespace bs
         /// Returns the position of the GUI element relative to the first parent GUI panel. Values are provided in logical pixel units.
         /// </summary>
         /// <remarks>This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.</remarks>
-        public Vector2I LayoutCalculatedPositionRelativeToParentPanel => CalculatePositionRelativeTo();
+        public GUILogicalPoint LayoutCalculatedPositionRelativeToParentPanel => CalculatePositionRelativeTo();
 
         /// <summary>
         /// Returns width/height of the GUI element. This will be the fixed width/height if set by the user, or automatically
@@ -235,13 +235,13 @@ namespace bs
         /// </param>
         /// <returns>Position of a GUI element relative to the provided GUI layout.</returns>
         /// <remarks>This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.</remarks>
-        public Vector2I CalculatePositionRelativeTo(GUILayout relativeTo = null)
+        public GUILogicalPoint CalculatePositionRelativeTo(GUILayout relativeTo = null)
         {
             IntPtr relativeToNative = IntPtr.Zero;
             if (relativeTo != null)
                 relativeToNative = relativeTo.GetCachedPtr();
 
-            Vector2I output;
+            GUILogicalPoint output;
             Internal_CalculatePositionRelativeTo(GetCachedPtr(), relativeToNative, out output);
             return output;
         }
@@ -304,7 +304,7 @@ namespace bs
         private static extern void Internal_CalculateAbsoluteBoundsRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out Rect2I output);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_CalculatePositionRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out Vector2I output);
+        private static extern void Internal_CalculatePositionRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out TVector2<TUnitValue<int, LogicalPixel>> output);
     }
 
     /** @} */

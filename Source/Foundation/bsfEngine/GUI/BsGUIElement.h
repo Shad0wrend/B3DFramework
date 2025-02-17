@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "BsGUIUnits.h"
 #include "BsPrerequisites.h"
 #include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUILayoutData.h"
@@ -154,7 +155,7 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
-		Vector2I CalculatePositionRelativeTo(GUIElement* relativeTo = nullptr) const;
+		GUILogicalPoint CalculatePositionRelativeTo(GUIElement* relativeTo = nullptr) const;
 
 		/**
 		 * Calculates bounds of the GUI element, relative to the provided parent element (or parent panel if null), with
