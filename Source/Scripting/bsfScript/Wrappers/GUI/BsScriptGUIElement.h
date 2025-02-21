@@ -4,7 +4,6 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptGUIElementWrapper.h"
-#include "BsScriptTVector2.generated.h"
 #include "GUI/BsGUIOptions.h"
 #include "GUI/BsGUIElement.h"
 #include "GUI/BsGUIInteractable.h"
@@ -12,6 +11,7 @@
 namespace bs
 {
 	class ScriptGUILayoutWrapperBase;
+	struct __TVector2_TUnitValue_int32_t__LogicalPixel__Interop;
 }
 
 namespace bs

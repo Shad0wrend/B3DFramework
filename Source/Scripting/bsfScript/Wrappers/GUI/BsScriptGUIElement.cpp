@@ -6,6 +6,7 @@
 #include "BsMonoManager.h"
 #include "BsMonoMethod.h"
 #include "BsMonoUtil.h"
+#include "BsScriptTVector2.generated.h"
 #include "GUI/BsGUIInteractable.h"
 #include "Wrappers/GUI/BsScriptGUILayout.h"
 #include "Wrappers/BsScriptContextMenu.h"

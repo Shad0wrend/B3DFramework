@@ -193,10 +193,15 @@ namespace bs
 	template<> const TSize2<float> TSize2<float>::kZero{BsZero};
 
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TSize2<float>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TSize2<double>;
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TSize2<u32>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TSize2<i32>;
 
 	using Size2UI = TSize2<u32>;
+	using Size2I = TSize2<i32>;
 	using Size2 = TSize2<float>;
+	using Size2F = TSize2<float>;
+	using Size2D = TSize2<double>;
 
 	/** @} */
 } // namespace bs

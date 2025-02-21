@@ -832,7 +832,37 @@
 		<field name="Height" type="float">
 		</field>
 	</struct>
+	<struct native="TSize2&lt;double&gt;" script="TSize2&lt;double&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="double">
+			</param>
+			<param name="height" type="double">
+			</param>
+		</ctor>
+		<field name="Width" type="double">
+		</field>
+		<field name="Height" type="double">
+		</field>
+	</struct>
 	<struct native="TSize2&lt;uint32_t&gt;" script="TSize2&lt;int&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="int">
+			</param>
+			<param name="height" type="int">
+			</param>
+		</ctor>
+		<field name="Width" type="int">
+		</field>
+		<field name="Height" type="int">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;int32_t&gt;" script="TSize2&lt;int&gt;">
 		<doc>Encapsulates width/height in a single structure.</doc>
 		<ctor>
 		</ctor>
@@ -1117,6 +1147,182 @@
 		<field name="Minimum" type="Vector3D">
 		</field>
 		<field name="Maximum" type="Vector3D">
+		</field>
+	</struct>
+	<class native="Texture" script="Texture">
+		<doc>Abstract class representing a texture. Specific render systems have their own Texture implementations. Internally represented as one or more surfaces with pixels in a certain number of dimensions, backed by a hardware buffer.</doc>
+		<method native="ReadData" script="GetGPUPixels" static="false">
+			<doc>Reads internal texture data into a newly allocated buffer.</doc>
+			<param name="face" type="int">
+				<doc>Texture face to read from.</doc>
+			</param>
+			<param name="mipLevel" type="int">
+				<doc>Mipmap level to read from.</doc>
+			</param>
+			<returns type="AsyncOp&lt;PixelData&gt;">
+				<doc>Async operation object that will contain the buffer with the data once the operation completes.</doc>
+			</returns>
+		</method>
+		<ctor>
+			<param name="format" type="PixelFormat">
+			</param>
+			<param name="width" type="int">
+			</param>
+			<param name="height" type="int">
+			</param>
+			<param name="depth" type="int">
+			</param>
+			<param name="texType" type="TextureType">
+			</param>
+			<param name="usage" type="TextureUsage">
+			</param>
+			<param name="numSamples" type="int">
+			</param>
+			<param name="hasMipmaps" type="bool">
+			</param>
+			<param name="gammaCorrection" type="bool">
+			</param>
+		</ctor>
+		<method native="GetPixels" script="GetPixels" static="false">
+			<doc>Returns pixels for the specified mip level &amp; face. Pixels will be read from system memory, which means the texture has to be created with TextureUsage.CPUCached. If the texture was updated from the GPU the pixels retrieved from this method will not reflect that, and you should use GetGPUPixels instead.</doc>
+			<param name="face" type="int">
+				<doc>Face to read the pixels from. Cubemap textures have six faces whose face indices are as specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it&apos;s a cubemap array it has to be a multiple of 6).</doc>
+			</param>
+			<param name="mipLevel" type="int">
+				<doc>Mip level to retrieve pixels for. Top level (0) is the highest quality.</doc>
+			</param>
+			<returns type="PixelData">
+				<doc>A set of pixels for the specified mip level.</doc>
+			</returns>
+		</method>
+		<method native="SetPixels" script="SetPixels" static="false">
+			<doc>Sets pixels for the specified mip level and face.</doc>
+			<param name="data" type="PixelData">
+				<doc>Pixels to assign to the specified mip level. Pixel data must match the mip level size and texture pixel format.</doc>
+			</param>
+			<param name="face" type="int">
+				<doc>Face to write the pixels to. Cubemap textures have six faces whose face indices are as specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it&apos;s a cubemap array it has to be a multiple of 6).</doc>
+			</param>
+			<param name="mipLevel" type="int">
+				<doc>Mip level to set pixels for. Top level (0) is the highest quality.</doc>
+			</param>
+		</method>
+		<method native="SetPixelsArray" script="SetPixels" static="false">
+			<doc>Sets pixels for the specified mip level and face.</doc>
+			<param name="colors" type="Color">
+				<doc>Pixels to assign to the specified mip level. Size of the array must match the mip level dimensions. Data is expected to be laid out row by row. Pixels will be automatically converted to the valid pixel format.</doc>
+			</param>
+			<param name="face" type="int">
+				<doc>Face to write the pixels to. Cubemap textures have six faces whose face indices are as specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it&apos;s a cubemap array it has to be a multiple of 6).</doc>
+			</param>
+			<param name="mipLevel" type="int">
+				<doc>Mip level to set pixels for. Top level (0) is the highest quality.</doc>
+			</param>
+		</method>
+		<property name="PixelFormat" type="PixelFormat" getter="GetPixelFormat" setter="" static="false">
+		</property>
+		<property name="Usage" type="TextureUsage" getter="GetUsage" setter="" static="false">
+		</property>
+		<property name="Type" type="TextureType" getter="GetType" setter="" static="false">
+		</property>
+		<property name="Width" type="int" getter="GetWidth" setter="" static="false">
+		</property>
+		<property name="Height" type="int" getter="GetHeight" setter="" static="false">
+		</property>
+		<property name="Depth" type="int" getter="GetDepth" setter="" static="false">
+		</property>
+		<property name="GammaSpace" type="bool" getter="GetGammaCorrection" setter="" static="false">
+		</property>
+		<property name="SampleCount" type="int" getter="GetSampleCount" setter="" static="false">
+		</property>
+		<property name="MipMapCount" type="int" getter="GetMipmapCount" setter="" static="false">
+		</property>
+	</class>
+	<struct native="TArea2&lt;int32_t, int32_t&gt;" script="TArea2&lt;int,int&gt;">
+		<doc>Represents a 2D area. Area is represented with an origin in top left and width/height.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="int">
+			</param>
+			<param name="y" type="int">
+			</param>
+			<param name="width" type="int">
+			</param>
+			<param name="height" type="int">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="position" type="TVector2&lt;int&gt;">
+			</param>
+			<param name="size" type="TSize2&lt;int&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="int">
+		</field>
+		<field name="Y" type="int">
+		</field>
+		<field name="Width" type="int">
+		</field>
+		<field name="Height" type="int">
+		</field>
+	</struct>
+	<struct native="TArea2&lt;int32_t, uint32_t&gt;" script="TArea2&lt;int,int&gt;">
+		<doc>Represents a 2D area. Area is represented with an origin in top left and width/height.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="int">
+			</param>
+			<param name="y" type="int">
+			</param>
+			<param name="width" type="int">
+			</param>
+			<param name="height" type="int">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="position" type="TVector2&lt;int&gt;">
+			</param>
+			<param name="size" type="TSize2&lt;int&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="int">
+		</field>
+		<field name="Y" type="int">
+		</field>
+		<field name="Width" type="int">
+		</field>
+		<field name="Height" type="int">
+		</field>
+	</struct>
+	<struct native="TArea2&lt;double, double&gt;" script="TArea2&lt;double,double&gt;">
+		<doc>Represents a 2D area. Area is represented with an origin in top left and width/height.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="double">
+			</param>
+			<param name="y" type="double">
+			</param>
+			<param name="width" type="double">
+			</param>
+			<param name="height" type="double">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="position" type="TVector2&lt;double&gt;">
+			</param>
+			<param name="size" type="TSize2&lt;double&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="double">
+		</field>
+		<field name="Y" type="double">
+		</field>
+		<field name="Width" type="double">
+		</field>
+		<field name="Height" type="double">
 		</field>
 	</struct>
 	<struct native="BlendClipInfo" script="BlendClipInfo">
@@ -4013,95 +4219,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Allows the CPU to directly read the texture data buffers from the GPU.</doc>
 		</enumentry>
 	</enum>
-	<class native="Texture" script="Texture">
-		<doc>Abstract class representing a texture. Specific render systems have their own Texture implementations. Internally represented as one or more surfaces with pixels in a certain number of dimensions, backed by a hardware buffer.</doc>
-		<method native="ReadData" script="GetGPUPixels" static="false">
-			<doc>Reads internal texture data into a newly allocated buffer.</doc>
-			<param name="face" type="int">
-				<doc>Texture face to read from.</doc>
-			</param>
-			<param name="mipLevel" type="int">
-				<doc>Mipmap level to read from.</doc>
-			</param>
-			<returns type="AsyncOp&lt;PixelData&gt;">
-				<doc>Async operation object that will contain the buffer with the data once the operation completes.</doc>
-			</returns>
-		</method>
-		<ctor>
-			<param name="format" type="PixelFormat">
-			</param>
-			<param name="width" type="int">
-			</param>
-			<param name="height" type="int">
-			</param>
-			<param name="depth" type="int">
-			</param>
-			<param name="texType" type="TextureType">
-			</param>
-			<param name="usage" type="TextureUsage">
-			</param>
-			<param name="numSamples" type="int">
-			</param>
-			<param name="hasMipmaps" type="bool">
-			</param>
-			<param name="gammaCorrection" type="bool">
-			</param>
-		</ctor>
-		<method native="GetPixels" script="GetPixels" static="false">
-			<doc>Returns pixels for the specified mip level &amp; face. Pixels will be read from system memory, which means the texture has to be created with TextureUsage.CPUCached. If the texture was updated from the GPU the pixels retrieved from this method will not reflect that, and you should use GetGPUPixels instead.</doc>
-			<param name="face" type="int">
-				<doc>Face to read the pixels from. Cubemap textures have six faces whose face indices are as specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it&apos;s a cubemap array it has to be a multiple of 6).</doc>
-			</param>
-			<param name="mipLevel" type="int">
-				<doc>Mip level to retrieve pixels for. Top level (0) is the highest quality.</doc>
-			</param>
-			<returns type="PixelData">
-				<doc>A set of pixels for the specified mip level.</doc>
-			</returns>
-		</method>
-		<method native="SetPixels" script="SetPixels" static="false">
-			<doc>Sets pixels for the specified mip level and face.</doc>
-			<param name="data" type="PixelData">
-				<doc>Pixels to assign to the specified mip level. Pixel data must match the mip level size and texture pixel format.</doc>
-			</param>
-			<param name="face" type="int">
-				<doc>Face to write the pixels to. Cubemap textures have six faces whose face indices are as specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it&apos;s a cubemap array it has to be a multiple of 6).</doc>
-			</param>
-			<param name="mipLevel" type="int">
-				<doc>Mip level to set pixels for. Top level (0) is the highest quality.</doc>
-			</param>
-		</method>
-		<method native="SetPixelsArray" script="SetPixels" static="false">
-			<doc>Sets pixels for the specified mip level and face.</doc>
-			<param name="colors" type="Color">
-				<doc>Pixels to assign to the specified mip level. Size of the array must match the mip level dimensions. Data is expected to be laid out row by row. Pixels will be automatically converted to the valid pixel format.</doc>
-			</param>
-			<param name="face" type="int">
-				<doc>Face to write the pixels to. Cubemap textures have six faces whose face indices are as specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it&apos;s a cubemap array it has to be a multiple of 6).</doc>
-			</param>
-			<param name="mipLevel" type="int">
-				<doc>Mip level to set pixels for. Top level (0) is the highest quality.</doc>
-			</param>
-		</method>
-		<property name="PixelFormat" type="PixelFormat" getter="GetPixelFormat" setter="" static="false">
-		</property>
-		<property name="Usage" type="TextureUsage" getter="GetUsage" setter="" static="false">
-		</property>
-		<property name="Type" type="TextureType" getter="GetType" setter="" static="false">
-		</property>
-		<property name="Width" type="int" getter="GetWidth" setter="" static="false">
-		</property>
-		<property name="Height" type="int" getter="GetHeight" setter="" static="false">
-		</property>
-		<property name="Depth" type="int" getter="GetDepth" setter="" static="false">
-		</property>
-		<property name="GammaSpace" type="bool" getter="GetGammaCorrection" setter="" static="false">
-		</property>
-		<property name="SampleCount" type="int" getter="GetSampleCount" setter="" static="false">
-		</property>
-		<property name="MipMapCount" type="int" getter="GetMipmapCount" setter="" static="false">
-		</property>
-	</class>
 	<class native="AutoExposureSettings" script="AutoExposureSettings">
 		<doc>Settings that control automatic exposure (eye adaptation) post-process.</doc>
 		<ctor>
@@ -14149,6 +14266,56 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			<doc>Gets drag specific data specified when the drag started. Only valid if drop is in progress. This is only valid for a single frame when a drop happens.</doc>
 		</property>
 	</class>
+	<struct native="PhysicalPixel" script="PhysicalPixel">
+		<doc>Location in 2D space in physical pixels. Physical pixels represent actual pixels as displayed on the output monitor.</doc>
+	</struct>
+	<struct native="LogicalPixel" script="LogicalPixel">
+		<doc>Location in 2D space in logical pixels. Logical pixels are defined at 1/96th of one logical inch. Logical pixels are transformed into physical pixels by scaling it by the display&apos;s DPI scale. If your display is set to 96 DPI, then one logical pixel equals one physical pixel.</doc>
+	</struct>
+	<struct native="TUnitValue&lt;int32_t, LogicalPixel&gt;" script="TUnitValue&lt;int,LogicalPixel&gt;">
+		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="value" type="int">
+			</param>
+		</ctor>
+		<field name="Value" type="int">
+		</field>
+	</struct>
+	<struct native="TUnitValue&lt;float, LogicalPixel&gt;" script="TUnitValue&lt;float,LogicalPixel&gt;">
+		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="value" type="float">
+			</param>
+		</ctor>
+		<field name="Value" type="float">
+		</field>
+	</struct>
+	<struct native="TUnitValue&lt;int32_t, PhysicalPixel&gt;" script="TUnitValue&lt;int,PhysicalPixel&gt;">
+		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="value" type="int">
+			</param>
+		</ctor>
+		<field name="Value" type="int">
+		</field>
+	</struct>
+	<struct native="TUnitValue&lt;float, PhysicalPixel&gt;" script="TUnitValue&lt;float,PhysicalPixel&gt;">
+		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="value" type="float">
+			</param>
+		</ctor>
+		<field name="Value" type="float">
+		</field>
+	</struct>
 	<struct native="GUIOption" script="GUIOption">
 		<doc>Controls GUI element layout options, possibly by overriding the default options specified in GUI element style. These options control GUI element placement and size in a GUI layout.</doc>
 		<ctor>
@@ -14670,56 +14837,6 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 			</param>
 		</event>
 	</class>
-	<struct native="PhysicalPixel" script="PhysicalPixel">
-		<doc>Location in 2D space in physical pixels. Physical pixels represent actual pixels as displayed on the output monitor.</doc>
-	</struct>
-	<struct native="LogicalPixel" script="LogicalPixel">
-		<doc>Location in 2D space in logical pixels. Logical pixels are defined at 1/96th of one logical inch. Logical pixels are transformed into physical pixels by scaling it by the display&apos;s DPI scale. If your display is set to 96 DPI, then one logical pixel equals one physical pixel.</doc>
-	</struct>
-	<struct native="TUnitValue&lt;int32_t, LogicalPixel&gt;" script="TUnitValue&lt;int,LogicalPixel&gt;">
-		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="value" type="int">
-			</param>
-		</ctor>
-		<field name="Value" type="int">
-		</field>
-	</struct>
-	<struct native="TUnitValue&lt;float, LogicalPixel&gt;" script="TUnitValue&lt;float,LogicalPixel&gt;">
-		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="value" type="float">
-			</param>
-		</ctor>
-		<field name="Value" type="float">
-		</field>
-	</struct>
-	<struct native="TUnitValue&lt;int32_t, PhysicalPixel&gt;" script="TUnitValue&lt;int,PhysicalPixel&gt;">
-		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="value" type="int">
-			</param>
-		</ctor>
-		<field name="Value" type="int">
-		</field>
-	</struct>
-	<struct native="TUnitValue&lt;float, PhysicalPixel&gt;" script="TUnitValue&lt;float,PhysicalPixel&gt;">
-		<doc>Contains a number value and an associated unit. Used primarily to prevent implicit conversion between numbers of different units.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="value" type="float">
-			</param>
-		</ctor>
-		<field name="Value" type="float">
-		</field>
-	</struct>
 	<class native="GUIUtility" script="GUIUtility">
 		<doc>Helper class that performs various operations related to GUI.</doc>
 		<method native="CalculateTextBounds" script="CalculateTextBounds" static="true">

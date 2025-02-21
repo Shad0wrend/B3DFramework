@@ -8,6 +8,10 @@
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfUtility/Math/BsSize2.h"
 #include "BsScriptObjectWrapper.h"
+#include "../../../Foundation/bsfUtility/Math/BsSize2.h"
+#include "BsScriptObjectWrapper.h"
+#include "../../../Foundation/bsfUtility/Math/BsSize2.h"
+#include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
@@ -35,6 +39,19 @@ namespace bs
 
 	};
 
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTSize2_double_ : public TScriptTypeDefinition<ScriptTSize2_double_>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TSize2<double>")
+
+		static MonoObject* Box(const TSize2<double>& value);
+		static TSize2<double> Unbox(MonoObject* value);
+
+	private:
+		ScriptTSize2_double_();
+
+	};
+
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptTSize2_uint32_t_ : public TScriptTypeDefinition<ScriptTSize2_uint32_t_>
 	{
 	public:
@@ -45,6 +62,19 @@ namespace bs
 
 	private:
 		ScriptTSize2_uint32_t_();
+
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTSize2_int32_t_ : public TScriptTypeDefinition<ScriptTSize2_int32_t_>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TSize2<int>")
+
+		static MonoObject* Box(const TSize2<int32_t>& value);
+		static TSize2<int32_t> Unbox(MonoObject* value);
+
+	private:
+		ScriptTSize2_int32_t_();
 
 	};
 

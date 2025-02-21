@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
+#include "Math/BsSize2.h"
 
 namespace bs
 {
