@@ -25,3 +25,9 @@ global using GUIPhysicalSizeF = bs.TSize2<bs.TUnitValue<float, bs.PhysicalPixel>
 
 global using GUILogicalSize = bs.TSize2<bs.TUnitValue<int, bs.LogicalPixel>>;
 global using GUILogicalSizeF = bs.TSize2<bs.TUnitValue<float, bs.LogicalPixel>>;
+
+global using GUIPhysicalArea = bs.TArea2<bs.TUnitValue<int, bs.PhysicalPixel>, bs.TUnitValue<int, bs.PhysicalPixel>>;
+global using GUIPhysicalAreaF = bs.TArea2<bs.TUnitValue<float, bs.PhysicalPixel>, bs.TUnitValue<float, bs.PhysicalPixel>>;
+
+global using GUILogicalArea = bs.TArea2<bs.TUnitValue<int, bs.LogicalPixel>, bs.TUnitValue<int, bs.LogicalPixel>>;
+global using GUILogicalAreaF = bs.TArea2<bs.TUnitValue<float, bs.LogicalPixel>, bs.TUnitValue<float, bs.LogicalPixel>>;

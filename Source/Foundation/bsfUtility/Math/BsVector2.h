@@ -240,9 +240,10 @@ namespace bs
 		}
 
 		/** Returns the manhattan distance between this and another point. */
+		template<typename U = T, typename = std::enable_if_t<std::is_integral_v<U> || B3DIsUnitValue<U>::value, i32>>
 		T CalculateManhattanDistance(const TVector2& other) const
 		{
-			return (T)std::abs((i32)(other.X - X)) + (T)std::abs((i32)(other.Y - Y));
+			return (T)std::abs((double)(other.X - X)) + (T)std::abs((double)(other.Y - Y));
 		}
 
 		/** Calculates the dot (scalar) product of this vector with another. */

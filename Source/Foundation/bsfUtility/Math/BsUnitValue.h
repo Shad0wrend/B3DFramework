@@ -30,6 +30,9 @@ namespace bs
 		template<typename U = T, typename = std::enable_if_t<!std::is_same_v<U, float>, i32>>
 		explicit operator float() const { return (float)Value; }
 
+		template<typename U = T, typename = std::enable_if_t<!std::is_same_v<U, double>, i32>>
+		explicit operator double() const { return (double)Value; }
+
 		template<typename U = T, typename = std::enable_if_t<!std::is_same_v<U, int>, i32>>
 		explicit operator int() const { return (int)Value; }
 

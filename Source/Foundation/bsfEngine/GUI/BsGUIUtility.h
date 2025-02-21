@@ -91,6 +91,30 @@ namespace bs
 		}
 
 		/**
+		 * Converts a value from logical pixels to physical pixels.
+		 * 
+		 * @param value			Value in logical pixels.
+		 * @param DPIScale		DPI scale applied to physical pixels. This is calculated as DPIScale = DPI / 96.
+		 * @return				Value in physical pixels.
+		 */
+		static GUIPhysicalArea LogicalToPhysical(const GUILogicalArea& value, float DPIScale)
+		{
+			return GUIPhysicalArea(LogicalToPhysical(value.X, DPIScale), LogicalToPhysical(value.Y, DPIScale), LogicalToPhysical(value.Width, DPIScale), LogicalToPhysical(value.Height, DPIScale));
+		}
+
+		/**
+		 * Converts a value from logical pixels to physical pixels.
+		 * 
+		 * @param value			Value in logical pixels.
+		 * @param DPIScale		DPI scale applied to physical pixels. This is calculated as DPIScale = DPI / 96.
+		 * @return				Value in physical pixels.
+		 */
+		static GUIPhysicalAreaF LogicalToPhysical(const GUILogicalAreaF& value, float DPIScale)
+		{
+			return GUIPhysicalAreaF(LogicalToPhysical(value.X, DPIScale), LogicalToPhysical(value.Y, DPIScale), LogicalToPhysical(value.Width, DPIScale), LogicalToPhysical(value.Height, DPIScale));
+		}
+
+		/**
 		 * Converts a value from physical pixels to logical pixels.
 		 * 
 		 * @param value			Value in physical pixels.
@@ -168,6 +192,30 @@ namespace bs
 		static GUILogicalSizeF PhysicalToLogical(const GUIPhysicalSizeF& value, float DPIScale)
 		{
 			return GUILogicalSizeF(PhysicalToLogical(value.Width, DPIScale), PhysicalToLogical(value.Height, DPIScale));
+		}
+
+		/**
+		 * Converts a value from physical pixels to logical pixels.
+		 * 
+		 * @param value			Value in physical pixels.
+		 * @param DPIScale		DPI scale applied to physical pixels. This is calculated as DPIScale = DPI / 96.
+		 * @return				Value in logical pixels.
+		 */
+		static GUILogicalArea PhysicalToLogical(const GUIPhysicalArea& value, float DPIScale)
+		{
+			return GUILogicalArea(PhysicalToLogical(value.X, DPIScale), PhysicalToLogical(value.Y, DPIScale), PhysicalToLogical(value.Width, DPIScale), PhysicalToLogical(value.Height, DPIScale));
+		}
+
+		/**
+		 * Converts a value from physical pixels to logical pixels.
+		 * 
+		 * @param value			Value in physical pixels.
+		 * @param DPIScale		DPI scale applied to physical pixels. This is calculated as DPIScale = DPI / 96.
+		 * @return				Value in logical pixels.
+		 */
+		static GUILogicalAreaF PhysicalToLogical(const GUIPhysicalAreaF& value, float DPIScale)
+		{
+			return GUILogicalAreaF(PhysicalToLogical(value.X, DPIScale), PhysicalToLogical(value.Y, DPIScale), PhysicalToLogical(value.Width, DPIScale), PhysicalToLogical(value.Height, DPIScale));
 		}
 
 		/**

@@ -218,6 +218,11 @@ namespace bs
 	using RangeF = TRange<float>;
 	using RangeD = TRange<double>;
 
+	/** Checks is the provided type a TUnitValue<T, Unit> */
+	template <typename T>
+	struct B3DIsUnitValue : std::false_type
+	{};
+
 	/** @} */
 } // namespace bs
 

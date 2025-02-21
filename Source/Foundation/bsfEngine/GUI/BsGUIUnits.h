@@ -6,6 +6,7 @@
 #include "Math/BsUnitValue.h"
 #include "Math/BsSize2.h"
 #include "Math/BsVector2.h"
+#include "Math/BsArea2.h"
 
 namespace bs
 {
@@ -62,6 +63,11 @@ namespace bs
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TSize2<TUnitValue<i32, PhysicalPixel>>;
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TSize2<TUnitValue<float, PhysicalPixel>>;
 
+	template<> const TArea2<TUnitValue<i32, LogicalPixel>> TArea2<TUnitValue<i32, LogicalPixel>>::kEmpty;
+	template<> const TArea2<TUnitValue<float, LogicalPixel>> TArea2<TUnitValue<float, LogicalPixel>>::kEmpty;
+	template<> const TArea2<TUnitValue<i32, PhysicalPixel>> TArea2<TUnitValue<i32, PhysicalPixel>>::kEmpty;
+	template<> const TArea2<TUnitValue<float, PhysicalPixel>> TArea2<TUnitValue<float, PhysicalPixel>>::kEmpty;
+
 	using GUIPhysicalUnit = TUnitValue<i32, PhysicalPixel>;
 	using GUIPhysicalUnitF = TUnitValue<float, PhysicalPixel>;
 
@@ -79,6 +85,18 @@ namespace bs
 
 	using GUILogicalSize = TSize2<GUILogicalUnit>;
 	using GUILogicalSizeF = TSize2<GUILogicalUnitF>;
+
+	using GUIPhysicalArea = TArea2<GUIPhysicalUnit>;
+	using GUIPhysicalAreaF = TArea2<GUIPhysicalUnitF>;
+
+	using GUILogicalArea = TArea2<GUILogicalUnit>;
+	using GUILogicalAreaF = TArea2<GUILogicalUnitF>;
+
+	template <typename T>
+	struct B3DIsUnitValue<TUnitValue<T, PhysicalPixel>> : std::true_type {};
+
+	template <typename T>
+	struct B3DIsUnitValue<TUnitValue<T, LogicalPixel>> : std::true_type {};
 
 	/** @} */
 } // namespace bs

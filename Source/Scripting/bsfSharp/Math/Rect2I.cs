@@ -13,7 +13,7 @@ namespace bs
     /// Represents a 2D rectangle using integer values. Rectangle is represented with an origin in top left and
     /// width/height.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential), SerializeObject]
+    [StructLayout(LayoutKind.Sequential), SerializeObject] // TODO - Deprecated. To be replaced with TArea2
     public struct Rect2I
     {
         public int x, y, width, height;
