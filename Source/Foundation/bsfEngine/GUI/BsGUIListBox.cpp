@@ -139,32 +139,32 @@ Rect2I GUIListBox::GetCachedContentBoundsInElementSpace() const
 {
 	const Rect2I& cachedBounds = GetAbsoluteBounds();
 
-	Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
+	GUILogicalSize layoutSize((i32)cachedBounds.Width, (i32)cachedBounds.Height);
 
-	const u32 arrowAreaWidth = GetArrowCachedContentSize().Width;
-	layoutSize.Width = (u32)Math::Max(0, (i32)layoutSize.Width - (i32)arrowAreaWidth);
+	const GUILogicalUnit arrowAreaWidth = GetArrowCachedContentSize().Width;
+	layoutSize.Width = Math::Max(layoutSize.Width - arrowAreaWidth, 0);
 
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		return GUIUtility::CalculateContentArea(layoutSize, styleSheetRules);
+		return GUIUtility::CalculateContentArea(layoutSize, styleSheetRules).ToRect2I();
 	}
 
-	return Rect2I(0, 0, layoutSize.Width, layoutSize.Height);
+	return Rect2I(0, 0, (u32)layoutSize.Width, (u32)layoutSize.Height);
 }
 
-Rect2I GUIListBox::GetArrowCachedContentBoundsInElementSpace() const
+GUILogicalArea GUIListBox::GetArrowCachedContentBoundsInElementSpace() const
 {
-	Rect2I output = Rect2I::kEmpty;
+	GUILogicalArea output = GUILogicalArea::kEmpty;
 
 	if(!IsUsingStyleSheets() || mStyleSheetRuleInformation.CurrentStateRuleset == nullptr)
 		return output;
 
 	const Rect2I& cachedBounds = GetAbsoluteBounds();
-	const Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
+	const GUILogicalSize layoutSize((i32)cachedBounds.Width, (i32)cachedBounds.Height);
 
 	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-	const Rect2I& fullContentArea = GUIUtility::CalculateContentArea(layoutSize, styleSheetRules);
+	const GUILogicalArea& fullContentArea = GUIUtility::CalculateContentArea(layoutSize, styleSheetRules);
 
 	const GUIStyleSheetRuleInformation& arrowRuleInformation = GetPseudoElementStyleSheetRuleInformation(mArrowPseudoElementIndex);
 	if(arrowRuleInformation.CurrentStateRuleset != nullptr)
@@ -172,18 +172,18 @@ Rect2I GUIListBox::GetArrowCachedContentBoundsInElementSpace() const
 		const GUIStyleSheetRules& arrowRules = arrowRuleInformation.CurrentStateRuleset->Rules;
 		output = GUIUtility::CalculateContentArea(GetArrowCachedContentSize(), arrowRules);
 
-		const i32 arrowAreaOffset = Math::Max(0, (i32)fullContentArea.Width - (i32)(output.Width + arrowRules.Padding.Right + arrowRules.BorderRight.GetVisibleWidth()));
+		const GUILogicalUnit arrowAreaOffset = Math::Max(fullContentArea.Width - (output.Width + arrowRules.Padding.Right + (i32)arrowRules.BorderRight.GetVisibleWidth()), 0);
 		output.X += fullContentArea.X + arrowAreaOffset;
 	}
 
 	return output;
 }
 
-Size2UI GUIListBox::GetArrowCachedContentSize() const
+GUILogicalSize GUIListBox::GetArrowCachedContentSize() const
 {
 	const Rect2I& cachedBounds = GetAbsoluteBounds();
 
-	Size2UI output(0, cachedBounds.Height);
+	GUILogicalSize output(0, cachedBounds.Height);
 	if(!IsUsingStyleSheets() || mStyleSheetRuleInformation.CurrentStateRuleset == nullptr)
 		return output;
 	
@@ -191,9 +191,9 @@ Size2UI GUIListBox::GetArrowCachedContentSize() const
 	if(arrowRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& arrowRules = arrowRuleInformation.CurrentStateRuleset->Rules;
-		output.Width = arrowRules.Size.Width +
+		output.Width = (i32)arrowRules.Size.Width +
 			arrowRules.Padding.Left + arrowRules.Padding.Right +
-			arrowRules.BorderLeft.GetVisibleWidth() + arrowRules.BorderRight.GetVisibleWidth();
+			(i32)arrowRules.BorderLeft.GetVisibleWidth() + (i32)arrowRules.BorderRight.GetVisibleWidth();
 	}
 
 	return output;
@@ -213,10 +213,10 @@ void GUIListBox::UpdateRenderElements()
 		return;
 
 	const GUIStyleSheetRules& arrowStyleSheetRules = ruleInformation.CurrentStateRuleset->Rules;
-	const Rect2I arrowBounds = GetArrowCachedContentBoundsInElementSpace();
+	const GUILogicalArea arrowBounds = GetArrowCachedContentBoundsInElementSpace();
 
-	mArrowSpriteInformation.Width = arrowBounds.Width;
-	mArrowSpriteInformation.Height = arrowBounds.Height;
+	mArrowSpriteInformation.Width = (u32)arrowBounds.Width;
+	mArrowSpriteInformation.Height = (u32)arrowBounds.Height;
 
 	if(mArrowPathBuilder)
 	{
@@ -238,7 +238,7 @@ void GUIListBox::UpdateRenderElements()
 	{
 		using T = GUIRenderElementHelper;
 
-		T::Append({ T::SpriteInfo(mArrowSprite, 0, (Rect2)arrowBounds) }, mRenderElements);
+		T::Append({ T::SpriteInfo(mArrowSprite, 0, arrowBounds.ToRect2()) }, mRenderElements);
 	}
 }
 

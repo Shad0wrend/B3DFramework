@@ -17,9 +17,9 @@ GUIElementContainer::GUIElementContainer(const GUISizeConstraints& dimensions, c
 	mOptionFlags.Set(GUIElementOption::ClickThrough);
 }
 
-Vector2I GUIElementContainer::CalculateUnconstrainedOptimalSize() const
+GUILogicalSize GUIElementContainer::CalculateUnconstrainedOptimalSize() const
 {
-	return Vector2I(BsZero);
+	return GUILogicalSize(BsZero);
 }
 
 void GUIElementContainer::SetFocus(bool enabled, bool clear)

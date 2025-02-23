@@ -4,77 +4,77 @@
 
 using namespace bs;
 
-GUIOption GUIOption::Position(i32 x, i32 y)
+GUIOption GUIOption::Position(GUILogicalUnit x, GUILogicalUnit y)
 {
 	GUIOption option;
 
-	option.min = (u32)x;
-	option.max = (u32)y;
-	option.type = GUIOptionType::Position;
+	option.mMinimum = x;
+	option.mMaximum = y;
+	option.mType = GUIOptionType::Position;
 
 	return option;
 }
 
-GUIOption GUIOption::FixedWidth(u32 value)
+GUIOption GUIOption::FixedWidth(GUILogicalUnit value)
 {
 	GUIOption option;
 
-	option.min = option.max = value;
-	option.type = GUIOptionType::FixedWidth;
+	option.mMinimum = option.mMaximum = Math::Max(value, 0);
+	option.mType = GUIOptionType::FixedWidth;
 
 	return option;
 }
 
-GUIOption GUIOption::FlexibleWidth(u32 min, u32 max)
+GUIOption GUIOption::FlexibleWidth(GUILogicalUnit minimum, GUILogicalUnit maximum)
 {
 	GUIOption option;
 
-	option.min = min;
-	option.max = max;
-	option.type = GUIOptionType::FlexibleWidth;
+	option.mMinimum = Math::Max(minimum, 0);
+	option.mMaximum = Math::Max(maximum, 0);
+	option.mType = GUIOptionType::FlexibleWidth;
 
 	return option;
 }
 
-GUIOption GUIOption::ExpandingWidth(u32 min, u32 max)
+GUIOption GUIOption::ExpandingWidth(GUILogicalUnit minimum, GUILogicalUnit maximum)
 {
 	GUIOption option;
 
-	option.min = min;
-	option.max = max;
-	option.type = GUIOptionType::ExpandingWidth;
+	option.mMinimum = Math::Max(minimum, 0);
+	option.mMaximum = Math::Max(maximum, 0);
+	option.mType = GUIOptionType::ExpandingWidth;
 
 	return option;
 }
 
-GUIOption GUIOption::FixedHeight(u32 value)
+GUIOption GUIOption::FixedHeight(GUILogicalUnit value)
 {
 	GUIOption option;
 
-	option.min = option.max = value;
-	option.type = GUIOptionType::FixedHeight;
+	option.mMinimum = option.mMaximum = Math::Max(value, 0);
+	option.mType = GUIOptionType::FixedHeight;
 
 	return option;
 }
 
-GUIOption GUIOption::FlexibleHeight(u32 min, u32 max)
+GUIOption GUIOption::FlexibleHeight(GUILogicalUnit minimum, GUILogicalUnit maximum)
 {
 	GUIOption option;
 
-	option.min = min;
-	option.max = max;
-	option.type = GUIOptionType::FlexibleHeight;
+	option.mMinimum = Math::Max(minimum, 0);
+	option.mMaximum = Math::Max(maximum, 0);
+	option.mType = GUIOptionType::FlexibleHeight;
 
 	return option;
 }
 
-GUIOption GUIOption::ExpandingHeight(u32 min, u32 max)
+GUIOption GUIOption::ExpandingHeight(GUILogicalUnit minimum, GUILogicalUnit maximum)
 {
 	GUIOption option;
 
-	option.min = min;
-	option.max = max;
-	option.type = GUIOptionType::ExpandingHeight;
+	option.mMinimum = Math::Max(minimum, 0);
+	option.mMaximum = Math::Max(maximum, 0);
+	option.mType = GUIOptionType::ExpandingHeight;
 
 	return option;
 }

@@ -187,15 +187,15 @@ Rect2I GUIRenderable::GetCachedContentBounds() const
 Rect2I GUIRenderable::GetCachedContentBoundsInElementSpace() const
 {
 	const Rect2I& cachedBounds = GetAbsoluteBounds();
-	const Size2UI layoutSize(cachedBounds.Width, cachedBounds.Height);
+	const GUILogicalSize layoutSize((i32)cachedBounds.Width, (i32)cachedBounds.Height);
 
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		return GUIUtility::CalculateContentArea(layoutSize, styleSheetRules);
+		return GUIUtility::CalculateContentArea(layoutSize, styleSheetRules).ToRect2I();
 	}
 
-	return Rect2I(0, 0, layoutSize.Width, layoutSize.Height);
+	return Rect2I(0, 0, (u32)layoutSize.Width, (u32)layoutSize.Height);
 }
 
 Rect2I GUIRenderable::GetCachedClippedContentBoundsInContentSpace() const

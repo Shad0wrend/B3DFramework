@@ -94,7 +94,7 @@ public:
 
 		ProfilerOverlay::BasicRow& row = Rows[CurIdx];
 
-		row.LabelSpace->SetSize(depth * 20);
+		row.LabelSpace->SetSize(GUILogicalUnit(20) * (i32)depth);
 		row.Name.SetParameter(0, name);
 		row.PctOfParent.SetParameter(0, ToString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
 		row.NumCalls.SetParameter(0, ToString(numCalls));
@@ -194,7 +194,7 @@ public:
 
 		ProfilerOverlay::PreciseRow& row = Rows[CurIdx];
 
-		row.LabelSpace->SetSize(depth * 20);
+		row.LabelSpace->SetSize(GUILogicalUnit(20) * (i32)depth);
 		row.Name.SetParameter(0, name);
 		row.PctOfParent.SetParameter(0, ToString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
 		row.NumCalls.SetParameter(0, ToString(numCalls));
@@ -280,7 +280,7 @@ public:
 
 		ProfilerOverlay::GPUSampleRow& row = Rows[CurIdx];
 
-		row.LabelSpace->SetSize(depth * 20);
+		row.LabelSpace->SetSize(GUILogicalUnit(20) * (i32)depth);
 		row.Name.SetParameter(0, name);
 		row.Time.SetParameter(0, ToString(timeMs));
 

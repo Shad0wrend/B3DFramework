@@ -156,9 +156,9 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 	MarkLayoutAsDirty();
 }
 
-u32 GUIDropDownContent::GetElementHeight(u32 idx) const
+GUILogicalUnit GUIDropDownContent::GetElementHeight(u32 idx) const
 {
-	static constexpr u32 kDefaultHeight = 16; // Height to use when no style available
+	static constexpr GUILogicalUnit kDefaultHeight = 16; // Height to use when no style available
 
 	GUIWidget* const widget = GetParentWidget();
 	if(widget == nullptr)
@@ -175,7 +175,7 @@ u32 GUIDropDownContent::GetElementHeight(u32 idx) const
 		rules = styleSheetCascade.BuildRules("button", elementClass);
 	}
 
-	return rules.Size.Height;
+	return GUILogicalUnit((i32)rules.Size.Height);
 }
 
 HString GUIDropDownContent::GetElementLocalizedName(u32 idx) const
@@ -368,19 +368,19 @@ void GUIDropDownContent::SelectPrevious(u32 startIdx)
 	}
 }
 
-Vector2I GUIDropDownContent::CalculateUnconstrainedOptimalSize() const
+GUILogicalSize GUIDropDownContent::CalculateUnconstrainedOptimalSize() const
 {
-	Vector2I optimalSize(BsZero);
+	GUILogicalSize optimalSize(BsZero);
 	for(auto& visibleElement : mVisibleElements)
 	{
 		const GUIDropDownDataEntry& element = mDropDownData.Entries[visibleElement.SequentialIndex];
 
-		optimalSize.Y += (i32)GetElementHeight(visibleElement.SequentialIndex);
+		optimalSize.Height += GetElementHeight(visibleElement.SequentialIndex);
 
 		if(element.IsSeparator())
-			optimalSize.X = std::max(optimalSize.X, visibleElement.Separator->CalculateUnconstrainedOptimalSize().X);
+			optimalSize.Width = Math::Max(optimalSize.Width, visibleElement.Separator->CalculateUnconstrainedOptimalSize().Width);
 		else
-			optimalSize.X = std::max(optimalSize.X, visibleElement.Layout->CalculateUnconstrainedOptimalSize().X);
+			optimalSize.Width = Math::Max(optimalSize.Width, visibleElement.Layout->CalculateUnconstrainedOptimalSize().Width);
 	}
 
 	return optimalSize;
@@ -396,7 +396,7 @@ void GUIDropDownContent::UpdateLayoutForChildren()
 		const GUIDropDownDataEntry& element = mDropDownData.Entries[visibleElement.SequentialIndex];
 
 		childData.RelativePosition = GUILogicalPoint(0, yOffset);
-		childData.Size.Height = GetElementHeight(visibleElement.SequentialIndex);
+		childData.Size.Height = (u32)GetElementHeight(visibleElement.SequentialIndex);
 
 		yOffset += (i32)childData.Size.Height;
 

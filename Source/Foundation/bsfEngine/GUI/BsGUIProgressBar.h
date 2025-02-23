@@ -43,7 +43,7 @@ namespace bs
 		struct PrivatelyConstruct {};
 		GUIProgressBar(PrivatelyConstruct, const String& styleName, const GUISizeConstraints& sizeConstraints);
 
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:

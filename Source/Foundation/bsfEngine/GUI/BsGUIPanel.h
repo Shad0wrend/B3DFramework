@@ -90,10 +90,10 @@ namespace bs
 		 * @param	elementCount		Size of the element positions/sizes arrays.
 		 * @param	sizeRanges			Ranges of possible sizes used for the child elements. Array must be same size as elements array.
 		 */
-		void GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogicalPoint* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges) const;
+		void GetChildRelativeLayoutAreas(const GUILogicalSize& layoutSize, GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges) const;
 
 		/** Calculates the size of the provided child within this layout with the provided dimensions. */
-		Rect2I CalculateRelativeElementArea(const Size2UI& layoutSize, const GUIElement* element, const GUIConstrainedSize& sizeRange) const;
+		GUILogicalArea CalculateRelativeElementArea(const GUILogicalSize& layoutSize, const GUIElement* element, const GUIConstrainedSize& sizeRange) const;
 
 		/**
 		 * Calculates an element size range for the provided child of the GUI panel. Will return cached bounds so make sure

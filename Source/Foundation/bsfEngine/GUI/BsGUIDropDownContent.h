@@ -59,7 +59,7 @@ namespace bs
 		void SetRange(u32 start, u32 end);
 
 		/**	Returns height of a menu element at the specified index, in pixels. */
-		u32 GetElementHeight(u32 idx) const;
+		GUILogicalUnit GetElementHeight(u32 idx) const;
 
 		/**
 		 * Enables or disables keyboard focus. When keyboard focus is enabled the contents will respond to keyboard events.
@@ -78,7 +78,7 @@ namespace bs
 		/**	Get localized name of a menu item element with the specified index. */
 		HString GetElementLocalizedName(u32 idx) const;
 
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		void UpdateLayoutForChildren() override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;

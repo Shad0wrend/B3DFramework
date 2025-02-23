@@ -15,14 +15,14 @@ namespace bs
 	class B3D_EXPORT GUIFixedSpace : public GUIElement
 	{
 	public:
-		GUIFixedSpace(u32 size);
+		GUIFixedSpace(GUILogicalUnit size);
 		~GUIFixedSpace() override = default;
 
 		/**	Returns the size of the space in pixels. */
-		u32 GetSize() const { return mSize; }
+		GUILogicalUnit GetSize() const { return mSize; }
 
 		/**	Changes the size of the space to the specified value, in pixels. */
-		void SetSize(u32 size)
+		void SetSize(GUILogicalUnit size)
 		{
 			if(mSize != size)
 			{
@@ -32,7 +32,7 @@ namespace bs
 		}
 
 		/**	Creates a new fixed space GUI element. */
-		static GUIFixedSpace* Create(u32 size);
+		static GUIFixedSpace* Create(GUILogicalUnit size);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -40,12 +40,12 @@ namespace bs
 		 */
 
 		Type GetType() const override { return GUIElement::Type::FixedSpace; }
-		Vector2I CalculateUnconstrainedOptimalSize() const override { return Vector2I(GetSize(), GetSize()); }
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return GUILogicalSize(GetSize(), GetSize()); }
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 
 		/** @} */
 	protected:
-		u32 mSize;
+		GUILogicalUnit mSize;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -80,7 +80,7 @@ namespace bs
 		 */
 
 		Type GetType() const override { return GUIElement::Type::FlexibleSpace; }
-		Vector2I CalculateUnconstrainedOptimalSize() const override { return Vector2I(0, 0); }
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return GUILogicalSize(0, 0); }
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 
 		/** @} */

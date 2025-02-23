@@ -30,12 +30,12 @@ MonoObject* ScriptGUIFixedSpace::CreateScriptObject(bool construct)
 
 void ScriptGUIFixedSpace::InternalCreateInstance(MonoObject* instance, u32 size)
 {
-	GUIFixedSpace* space = GUIFixedSpace::Create(size);
+	GUIFixedSpace* space = GUIFixedSpace::Create((GUILogicalUnit)(i32)size);
 
 	ScriptObjectWrapper::Create<ScriptGUIFixedSpace>(space, instance);
 }
 
 void ScriptGUIFixedSpace::InternalSetSize(ScriptGUIFixedSpace* self, u32 size)
 {
-	self->GetNativeObject()->SetSize(size);
+	self->GetNativeObject()->SetSize((i32)size);
 }

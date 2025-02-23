@@ -46,7 +46,7 @@ namespace bs
 /** @} */
 /** @endcond */
 
-GUIFixedSpace::GUIFixedSpace(u32 size)
+GUIFixedSpace::GUIFixedSpace(GUILogicalUnit size)
 	: GUIElement(GUISizeConstraints::Create(GUIOptions(GUIOption::FixedWidth(size), GUIOption::FixedHeight(size)))), mSize(size)
 {}
 
@@ -54,13 +54,13 @@ GUIConstrainedSize GUIFixedSpace::CalculateConstrainedSize() const
 {
 	GUIConstrainedSize range;
 	range.Optimal = CalculateUnconstrainedOptimalSize();
-	range.Min = range.Optimal;
-	range.Max = range.Optimal;
+	range.Minimum = range.Optimal;
+	range.Maximum = range.Optimal;
 
 	return range;
 }
 
-GUIFixedSpace* GUIFixedSpace::Create(u32 size)
+GUIFixedSpace* GUIFixedSpace::Create(GUILogicalUnit size)
 {
 	return B3DNew<GUIFixedSpace>(size);
 }
@@ -85,8 +85,8 @@ GUIConstrainedSize GUIFlexibleSpace::CalculateConstrainedSize() const
 {
 	GUIConstrainedSize range;
 	range.Optimal = CalculateUnconstrainedOptimalSize();
-	range.Min = range.Optimal;
-	range.Max = range.Optimal;
+	range.Minimum = range.Optimal;
+	range.Maximum = range.Optimal;
 
 	return range;
 }

@@ -32,9 +32,9 @@ GUIViewport* GUIViewport::Create(const GUIOptions& options, const HCamera& camer
 	return new(B3DAllocate<GUIViewport>()) GUIViewport(GetStyleClass<GUIViewport>(styleName), camera, aspectRatio, fieldOfView, GUISizeConstraints::Create(options));
 }
 
-Vector2I GUIViewport::CalculateUnconstrainedOptimalSize() const
+GUILogicalSize GUIViewport::CalculateUnconstrainedOptimalSize() const
 {
-	return Vector2I(0, 0);
+	return GUILogicalSize(0, 0);
 }
 
 void GUIViewport::FillBuffer(

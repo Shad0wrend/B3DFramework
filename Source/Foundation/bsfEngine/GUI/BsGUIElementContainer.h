@@ -25,7 +25,7 @@ namespace bs
 		GUIElementContainer(const GUISizeConstraints& dimensions, const String& style = StringUtil::kBlank, GUIElementOptions options = GUIElementOptions(0));
 		virtual ~GUIElementContainer() = default;
 
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
 
 		GUIInteractable* mFocusElement = nullptr;

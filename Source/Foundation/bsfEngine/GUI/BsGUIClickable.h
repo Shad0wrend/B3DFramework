@@ -61,7 +61,7 @@ namespace bs
 		/**	Change the internal button state, changing the button look depending on set style. */
 		void SetStateInternal(GUIElementState state);
 
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		u32 GetRenderElementDepthRange() const override;
 		const char* GetStyleSheetElement() const override { return kElementType; }
 

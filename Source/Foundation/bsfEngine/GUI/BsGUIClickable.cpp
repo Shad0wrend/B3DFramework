@@ -20,14 +20,14 @@ GUIClickable::GUIClickable(const String& styleName, const GUIContent& content, c
 
 void GUIClickable::SetContent(const GUIContent& content)
 {
-	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 	mContent = content;
 
 	mContentSprites.SetAnimationStartTime(GetTime().GetRealTimeInSeconds());
 
-	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
-	if(origSize != newSize)
+	if(originalSize != newSize)
 		MarkLayoutAsDirty();
 	else
 		MarkContentAsDirty();
@@ -60,15 +60,13 @@ void GUIClickable::UpdateRenderElements()
 	GUIInteractable::UpdateRenderElements();
 }
 
-Vector2I GUIClickable::CalculateUnconstrainedOptimalSize() const
+GUILogicalSize GUIClickable::CalculateUnconstrainedOptimalSize() const
 {
 	if(mStyleSheetRuleInformation.CurrentStateRuleset == nullptr)
-		return Vector2I::kZero;
+		return GUILogicalSize::kZero;
 
 	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-	const Size2UI contentSize = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, styleSheetRules, GetSizeConstraints().MaxWidth);
-	
-	return Vector2I((i32)contentSize.Width, (i32)contentSize.Height);
+	return GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(mContent, styleSheetRules, GetSizeConstraints().MaximumWidth);
 }
 
 u32 GUIClickable::GetRenderElementDepthRange() const
@@ -199,16 +197,16 @@ void GUIClickable::NotifyStyleChanged()
 
 void GUIClickable::SetStateInternal(GUIElementState state)
 {
-	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 	if(mActiveState != state)
 		mBackgroundSprite.SetAnimationStartTime(GetTime().GetRealTimeInSeconds());
 
 	mActiveState = state;
 
-	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
-	if(origSize != newSize)
+	if(originalSize != newSize)
 		MarkLayoutAsDirty();
 	else
 		MarkContentAsDirty();

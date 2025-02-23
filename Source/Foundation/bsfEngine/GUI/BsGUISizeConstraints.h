@@ -18,9 +18,9 @@ namespace bs
 	/**	Contains valid size range for a GUI element, based on element's optimal size and size constraints. */
 	struct B3D_EXPORT GUIConstrainedSize
 	{
-		Vector2I Optimal{BsZero}; /**< Optimal GUI element size, constrained by the size constraints. */
-		Vector2I Min{BsZero}; /**< In case of flexible size, minimum allowed size. Equivalent to Optimal if size is fixed. */
-		Vector2I Max{BsZero}; /**< In case of flexible size, maximum allowed size. Equivalent to Optimal if size is fixed. If 0, the dimension has no maximum limit. */
+		GUILogicalSize Optimal{BsZero}; /**< Optimal GUI element size, constrained by the size constraints. */
+		GUILogicalSize Minimum{BsZero}; /**< In case of flexible size, minimum allowed size. Equivalent to Optimal if size is fixed. */
+		GUILogicalSize Maximum{BsZero}; /**< In case of flexible size, maximum allowed size. Equivalent to Optimal if size is fixed. If 0, the dimension has no maximum limit. */
 	};
 
 	/**	Flags that identify the type of data stored in a GUIDimensions structure. */
@@ -56,10 +56,7 @@ namespace bs
 		void UpdateWithStyleSheetRule(const GUIStyleSheetRules& rule);
 
 		/** Constrains the provided optimal element size based on active constraints. */
-		GUIConstrainedSize CalculateConstrainedSize(const Vector2I& optimalSize) const;
-
-		/** Constrains the provided optimal element size based on active constraints. */
-		GUIConstrainedSize CalculateConstrainedSize(const Size2UI& optimalSize) const;
+		GUIConstrainedSize CalculateConstrainedSize(const GUILogicalSize& unconstrainedOptimalSize) const;
 
 		/**	Checks do the constraint contain fixed width. */
 		bool IsWidthFixed() const { return Flags.IsSet(GUISizeConstraintFlag::FixedWidth); }
@@ -75,10 +72,10 @@ namespace bs
 
 		GUILogicalPoint ExplicitPosition; // TODO - Move position elsewhere
 
-		u32 MinWidth = 0;
-		u32 MaxWidth = 0;
-		u32 MinHeight = 0;
-		u32 MaxHeight = 0;
+		GUILogicalUnit MinimumWidth = 0;
+		GUILogicalUnit MaximumWidth = 0;
+		GUILogicalUnit MinimumHeight = 0;
+		GUILogicalUnit MaximumHeight = 0;
 		float FlexibleWidthWeight = 1.0f;
 		float FlexibleHeightWeight = 1.0f;
 		GUISizeConstraintFlags Flags;

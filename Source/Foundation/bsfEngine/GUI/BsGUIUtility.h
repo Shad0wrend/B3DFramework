@@ -225,7 +225,7 @@ namespace bs
 		 * @param	styleSheetRule	Style to use when rendering the GUI element.
 		 * @return					Size of the GUI element (including the border).
 		 */
-		static Size2UI CalculateSizeWithPaddingAndBorder(const Size2UI& contentSize, const GUIStyleSheetRules& styleSheetRule);
+		static GUILogicalSize CalculateSizeWithPaddingAndBorder(const GUILogicalSize& contentSize, const GUIStyleSheetRules& styleSheetRule);
 
 		/**
 		 * Calculates optimal size for displaying particular GUI contents.
@@ -236,7 +236,7 @@ namespace bs
 		 *							if the contents contain text.
 		 * @return					Optimal size of the GUI element, including content size, style padding and border width.
 		 */
-		static Size2UI CalculateOptimalContentSizeWithPaddingAndBorder(const GUIContent& content, const GUIStyleSheetRules& styleSheetRule, u32 wordWrapWidth = 0);
+		static GUILogicalSize CalculateOptimalContentSizeWithPaddingAndBorder(const GUIContent& content, const GUIStyleSheetRules& styleSheetRule, GUILogicalUnit wordWrapWidth = 0);
 
 		/**
 		 * Calculates optimal size for displaying text.
@@ -246,13 +246,13 @@ namespace bs
 		 * @param	wordWrapWidth	If non-zero, the width at which to perform word wrap. If not provided, all the text will be placed in a single line.
 		 * @return					Optimal size of the GUI element, including content size and the style padding (area within GUI elements border).
 		 */
-		static Size2UI CalculateOptimalContentSizeWithPaddingAndBorder(const String& text, const GUIStyleSheetRules& styleSheetRule, u32 wordWrapWidth = 0);
+		static GUILogicalSize CalculateOptimalContentSizeWithPaddingAndBorder(const String& text, const GUIStyleSheetRules& styleSheetRule, GUILogicalUnit wordWrapWidth = 0);
 
 		/**
 		 * Calculates the content area based on the total element size (i.e. size as calculated by the layout). This is the layout area potentially
 		 * offset/reduced by border/padding as specified in the style sheet rules.
 		 */
-		static Rect2I CalculateContentArea(const Size2UI& layoutSize, const GUIStyleSheetRules& styleSheetRules);
+		static GUILogicalArea CalculateContentArea(const GUILogicalSize& layoutSize, const GUIStyleSheetRules& styleSheetRules);
 
 		/**
 		 * Calculates optimal content size for the provided text using the provided font and size. Size is calculated

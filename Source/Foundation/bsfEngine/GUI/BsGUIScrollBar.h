@@ -73,7 +73,7 @@ namespace bs
 		 */
 		void SetScrollPosInternal(float pct);
 
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		void UpdateLayoutForChildren() override;
 
 		/** @} */

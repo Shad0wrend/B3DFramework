@@ -58,8 +58,8 @@ void GUIElement::SetSize(u32 width, u32 height)
 	mSizeConstraints.Flags |= GUISizeConstraintFlag::FixedWidth | GUISizeConstraintFlag::WidthOverridenAtRuntime | GUISizeConstraintFlag::FixedHeight | GUISizeConstraintFlag::HeightOverridenAtRuntime;
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::ExpandingWidth);
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::ExpandingHeight);
-	mSizeConstraints.MinWidth = mSizeConstraints.MaxWidth = width;
-	mSizeConstraints.MinHeight = mSizeConstraints.MaxHeight = height;
+	mSizeConstraints.MinimumWidth = mSizeConstraints.MaximumWidth = GUILogicalUnit((i32)width);
+	mSizeConstraints.MinimumHeight = mSizeConstraints.MaximumHeight = GUILogicalUnit((i32)height);
 
 	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
@@ -75,7 +75,7 @@ void GUIElement::SetWidth(GUILogicalUnit width)
 
 	mSizeConstraints.Flags |= GUISizeConstraintFlag::FixedWidth | GUISizeConstraintFlag::WidthOverridenAtRuntime;
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::ExpandingWidth);
-	mSizeConstraints.MinWidth = mSizeConstraints.MaxWidth = (u32)width.To<u32>();
+	mSizeConstraints.MinimumWidth = mSizeConstraints.MaximumWidth = width;
 
 	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
@@ -95,8 +95,8 @@ void GUIElement::SetFlexibleWidth(u32 minWidth, u32 maxWidth)
 	mSizeConstraints.Flags |= GUISizeConstraintFlag::WidthOverridenAtRuntime;
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::FixedWidth);
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::ExpandingWidth);
-	mSizeConstraints.MinWidth = minWidth;
-	mSizeConstraints.MaxWidth = maxWidth;
+	mSizeConstraints.MinimumWidth = minWidth;
+	mSizeConstraints.MaximumWidth = maxWidth;
 
 	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
@@ -112,7 +112,7 @@ void GUIElement::SetHeight(GUILogicalUnit height)
 
 	mSizeConstraints.Flags |= GUISizeConstraintFlag::FixedHeight | GUISizeConstraintFlag::HeightOverridenAtRuntime;
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::ExpandingHeight);
-	mSizeConstraints.MinHeight = mSizeConstraints.MaxHeight = (u32)height.To<u32>();
+	mSizeConstraints.MinimumHeight = mSizeConstraints.MaximumHeight = (u32)height.To<u32>();
 
 	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
@@ -132,8 +132,8 @@ void GUIElement::SetFlexibleHeight(u32 minHeight, u32 maxHeight)
 	mSizeConstraints.Flags |= GUISizeConstraintFlag::HeightOverridenAtRuntime;
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::FixedHeight);
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::ExpandingHeight);
-	mSizeConstraints.MinHeight = minHeight;
-	mSizeConstraints.MaxHeight = maxHeight;
+	mSizeConstraints.MinimumHeight = minHeight;
+	mSizeConstraints.MaximumHeight = maxHeight;
 
 	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 

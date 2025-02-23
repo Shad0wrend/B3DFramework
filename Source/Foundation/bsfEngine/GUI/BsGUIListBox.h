@@ -98,10 +98,10 @@ namespace bs
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
 
 		/** Returns the area in which the arrow box will be placed, local to the GUI element space. */
-		Rect2I GetArrowCachedContentBoundsInElementSpace() const;
+		GUILogicalArea GetArrowCachedContentBoundsInElementSpace() const;
 
 		/** Returns the width/height of the arrow box. */
-		Size2UI GetArrowCachedContentSize() const;
+		GUILogicalSize GetArrowCachedContentSize() const;
 
 		/**	Triggered when user clicks on an element. */
 		void ElementSelected(u32 idx);

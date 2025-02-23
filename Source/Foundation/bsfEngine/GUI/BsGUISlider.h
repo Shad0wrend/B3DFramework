@@ -72,7 +72,7 @@ namespace bs
 		 */
 
 		const char* GetStyleSheetElement() const override { return "slider"; }
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:

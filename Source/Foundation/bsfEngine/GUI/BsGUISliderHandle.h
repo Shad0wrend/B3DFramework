@@ -128,13 +128,13 @@ namespace bs
 		/**	Sets the position of the slider handle, in pixels. Relative to this object. */
 		void SetHandlePositionInPixels(GUIPhysicalUnit position);
 
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:
 		void UpdateRenderElements() override;
 
-		static constexpr GUIPhysicalUnit kMinimumHandleSize = 1;
+		static constexpr GUILogicalUnit kMinimumHandleSize = 1;
 	private:
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 

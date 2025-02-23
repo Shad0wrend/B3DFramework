@@ -279,14 +279,14 @@ void GUIWidget::UpdateLayout(GUIElement* element)
 		dirtyElement->UpdateOptimalLayoutSizes();
 
 		GUIConstrainedSize elementSizeRange = panel->GetChildElementSizeRange(dirtyElement);
-		const Rect2I relativeElementArea = panel->CalculateRelativeElementArea(panel->GetLayoutData().Size, dirtyElement, elementSizeRange);
+		const GUILogicalArea relativeElementArea = panel->CalculateRelativeElementArea(panel->GetLayoutData().Size.To<GUILogicalUnit>(), dirtyElement, elementSizeRange);
 
 		const GUILayoutData parentPanelLayoutData = panel->GetLayoutData();
 		GUILayoutData childLayoutData = parentPanelLayoutData;
 		panel->UpdateDepthRangeInternal(childLayoutData);
 
 		childLayoutData.RelativePosition = GUILogicalPoint(relativeElementArea.X, relativeElementArea.Y);
-		childLayoutData.Size = Size2UI(relativeElementArea.Width, relativeElementArea.Height);
+		childLayoutData.Size = Size2UI((u32)relativeElementArea.Width, (u32)relativeElementArea.Height);
 
 		dirtyElement->SetLayoutData(childLayoutData);
 		dirtyElement->UpdateLayoutForChildren();

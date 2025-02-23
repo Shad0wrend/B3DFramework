@@ -11,28 +11,28 @@
 
 using namespace bs;
 
-Size2UI GUIUtility::CalculateSizeWithPaddingAndBorder(const Size2UI& contentSize, const GUIStyleSheetRules& styleSheetRule)
+GUILogicalSize GUIUtility::CalculateSizeWithPaddingAndBorder(const GUILogicalSize& contentSize, const GUIStyleSheetRules& styleSheetRule)
 {
-	const u32 paddingWidth = styleSheetRule.Padding.Left + styleSheetRule.Padding.Right;
-	const u32 paddingHeight = styleSheetRule.Padding.Top + styleSheetRule.Padding.Bottom;
+	const GUILogicalUnit paddingWidth = styleSheetRule.Padding.Left + styleSheetRule.Padding.Right;
+	const GUILogicalUnit paddingHeight = styleSheetRule.Padding.Top + styleSheetRule.Padding.Bottom;
 
-	const u32 borderWidth = styleSheetRule.BorderLeft.GetVisibleWidth() + styleSheetRule.BorderRight.GetVisibleWidth();
-	const u32 borderHeight = styleSheetRule.BorderTop.GetVisibleWidth() + styleSheetRule.BorderBottom.GetVisibleWidth();
+	const GUILogicalUnit borderWidth = (i32)styleSheetRule.BorderLeft.GetVisibleWidth() + (i32)styleSheetRule.BorderRight.GetVisibleWidth();
+	const GUILogicalUnit borderHeight = (i32)styleSheetRule.BorderTop.GetVisibleWidth() + (i32)styleSheetRule.BorderBottom.GetVisibleWidth();
 
-	return Size2UI(contentSize.Width + paddingWidth + borderWidth, contentSize.Height + paddingHeight + borderHeight);
+	return GUILogicalSize(contentSize.Width + paddingWidth + borderWidth, contentSize.Height + paddingHeight + borderHeight);
 }
 
-Size2UI GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(const GUIContent& content, const GUIStyleSheetRules& styleSheetRule, u32 wordWrapWidth)
+GUILogicalSize GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(const GUIContent& content, const GUIStyleSheetRules& styleSheetRule, GUILogicalUnit wordWrapWidth)
 {
-	Size2UI contentBounds = CalculateOptimalContentSizeWithPaddingAndBorder((const String&)content.Text, styleSheetRule, wordWrapWidth);
+	GUILogicalSize contentBounds = CalculateOptimalContentSizeWithPaddingAndBorder((const String&)content.Text, styleSheetRule, wordWrapWidth);
 
 	const HSpriteImage& image = content.GetImage(GUIElementState::Normal);
 	if(SpriteImage::CheckIsLoaded(image))
 	{
-		const u32 paddingHeight = styleSheetRule.Padding.Top + styleSheetRule.Padding.Bottom;
-		const u32 borderHeight = styleSheetRule.BorderTop.GetVisibleWidth() + styleSheetRule.BorderBottom.GetVisibleWidth();
+		const GUILogicalUnit paddingHeight = styleSheetRule.Padding.Top + styleSheetRule.Padding.Bottom;
+		const GUILogicalUnit borderHeight = (i32)styleSheetRule.BorderTop.GetVisibleWidth() + (i32)styleSheetRule.BorderBottom.GetVisibleWidth();
 
-		const Size2UI& imageSize = image->GetSize();
+		const GUILogicalSize& imageSize = image->GetSize().To<GUILogicalUnit>();
 		contentBounds.Width += imageSize.Width + GUIContent::kImageTextSpacing;
 		contentBounds.Height = std::max(imageSize.Height + paddingHeight + borderHeight, contentBounds.Height);
 	}
@@ -40,9 +40,9 @@ Size2UI GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(const GUICon
 	return contentBounds;
 }
 
-Size2UI GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(const String& text, const GUIStyleSheetRules& styleSheetRule, u32 wordWrapWidth)
+GUILogicalSize GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(const String& text, const GUIStyleSheetRules& styleSheetRule, GUILogicalUnit wordWrapWidth)
 {
-	Size2UI contentSize(BsZero);
+	GUILogicalSize contentSize(BsZero);
 
 	if(styleSheetRule.WordWrap != GUIWordWrapMode::WrapWord)
 		wordWrapWidth = 0;
@@ -53,10 +53,10 @@ Size2UI GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(const String
 		B3DMarkAllocatorFrame();
 
 		const U32String utf32text = UTF8::ToUtF32(text);
-		TTextGeometry<FrameAllocatorTag> textData(utf32text, font, styleSheetRule.FontSize, wordWrapWidth, 0, styleSheetRule.WordWrap == GUIWordWrapMode::WrapWord);
+		TTextGeometry<FrameAllocatorTag> textData(utf32text, font, styleSheetRule.FontSize, (u32)wordWrapWidth, 0, styleSheetRule.WordWrap == GUIWordWrapMode::WrapWord);
 
-		contentSize.Width += Math::RoundToU32(textData.GetWidth());
-		contentSize.Height += Math::RoundToU32((float)textData.GetLineCount() * textData.GetLineHeight());
+		contentSize.Width += Math::RoundToI32(textData.GetWidth());
+		contentSize.Height += Math::RoundToI32((float)textData.GetLineCount() * textData.GetLineHeight());
 
 		B3DClearAllocatorFrame();
 	}
@@ -64,21 +64,21 @@ Size2UI GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(const String
 	return CalculateSizeWithPaddingAndBorder(contentSize, styleSheetRule);
 }
 
-Rect2I GUIUtility::CalculateContentArea(const Size2UI& layoutSize, const GUIStyleSheetRules& styleSheetRules)
+GUILogicalArea GUIUtility::CalculateContentArea(const GUILogicalSize& layoutSize, const GUIStyleSheetRules& styleSheetRules)
 {
 	const RectOffset& padding = styleSheetRules.Padding;
-	const u32 paddingWidth = padding.Left + padding.Right;
-	const u32 paddingHeight = padding.Top + padding.Bottom;
+	const GUILogicalUnit paddingWidth = padding.Left + padding.Right;
+	const GUILogicalUnit paddingHeight = padding.Top + padding.Bottom;
 
-	const u32 borderWidth = styleSheetRules.BorderLeft.GetVisibleWidth() + styleSheetRules.BorderRight.GetVisibleWidth();
-	const u32 borderHeight = styleSheetRules.BorderTop.GetVisibleWidth() + styleSheetRules.BorderBottom.GetVisibleWidth();
+	const GUILogicalUnit borderWidth = (i32)styleSheetRules.BorderLeft.GetVisibleWidth() + (i32)styleSheetRules.BorderRight.GetVisibleWidth();
+	const GUILogicalUnit borderHeight = (i32)styleSheetRules.BorderTop.GetVisibleWidth() + (i32)styleSheetRules.BorderBottom.GetVisibleWidth();
 
-	Rect2I bounds(0, 0, layoutSize.Width, layoutSize.Height);
-	const u32 nonContentWidth = Math::Min(bounds.Width, paddingWidth + borderWidth);
-	const u32 nonContentHeight = Math::Min(bounds.Height, paddingHeight + borderHeight);
+	GUILogicalArea bounds(0, 0, layoutSize.Width, layoutSize.Height);
+	const GUILogicalUnit nonContentWidth = Math::Min(bounds.Width, paddingWidth + borderWidth);
+	const GUILogicalUnit nonContentHeight = Math::Min(bounds.Height, paddingHeight + borderHeight);
 
-	bounds.X += (i32)Math::Min(bounds.Width, padding.Left + styleSheetRules.BorderLeft.GetVisibleWidth());
-	bounds.Y += (i32)Math::Min(bounds.Height, padding.Top + styleSheetRules.BorderTop.GetVisibleWidth());
+	bounds.X += Math::Min(bounds.Width, padding.Left + (i32)styleSheetRules.BorderLeft.GetVisibleWidth());
+	bounds.Y += Math::Min(bounds.Height, padding.Top + (i32)styleSheetRules.BorderTop.GetVisibleWidth());
 	bounds.Width -= nonContentWidth;
 	bounds.Height -= nonContentHeight;
 

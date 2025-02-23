@@ -190,8 +190,8 @@ void GUIContentSprites::CalculateContentBounds(const Rect2I& contentArea, const 
 {
 	if(imageSize.Width > 0 && imageSize.Height > 0)
 	{
-		i32 imageXOffset = 0;
-		i32 textImageSpacing = 0;
+		GUILogicalUnit imageXOffset = 0;
+		GUILogicalUnit textImageSpacing = 0;
 
 		if(textSize.Width == 0)
 		{
@@ -208,17 +208,17 @@ void GUIContentSprites::CalculateContentBounds(const Rect2I& contentArea, const 
 			outTextBounds.X = (float)contentArea.X;
 			outTextBounds.Width = (float)Math::Max(0, (i32)contentArea.Width - imageReservedWidth);
 
-			outImageBounds.X = (float)(contentArea.X + textSize.Width + imageXOffset + textImageSpacing);
-			outImageBounds.Width = (float)Math::Max(0, imageReservedWidth - imageXOffset);
+			outImageBounds.X = (float)(contentArea.X + (i32)textSize.Width + (i32)imageXOffset + (i32)textImageSpacing);
+			outImageBounds.Width = (float)Math::Max(0, imageReservedWidth - (i32)imageXOffset);
 		}
 		else
 		{
-			const i32 imageReservedWidth = (i32)imageSize.Width + imageXOffset;
+			const i32 imageReservedWidth = (i32)imageSize.Width + (i32)imageXOffset;
 
-			outImageBounds.X = (float)(contentArea.X + imageXOffset);
-			outImageBounds.Width = (float)Math::Min(imageReservedWidth - imageXOffset, (i32)contentArea.Width);
+			outImageBounds.X = (float)(contentArea.X + (i32)imageXOffset);
+			outImageBounds.Width = (float)Math::Min(imageReservedWidth - (i32)imageXOffset, (i32)contentArea.Width);
 
-			outTextBounds.X = (float)(contentArea.X + imageReservedWidth + textImageSpacing);
+			outTextBounds.X = (float)(contentArea.X + imageReservedWidth + (i32)textImageSpacing);
 			outTextBounds.Width = (float)Math::Max(0, (i32)contentArea.Width - imageReservedWidth);
 		}
 
@@ -271,7 +271,7 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 	GUIContentSpriteCreateInformation contentSpriteCreateInformation(size, content, styleSheetRules, tint, element.mAbsoluteScale, batchId);
 	contentSpriteCreateInformation.Depth = depth;
 	contentSpriteCreateInformation.Offset = offset;
-	contentSpriteCreateInformation.ContentArea = GUIUtility::CalculateContentArea(size, styleSheetRules);
+	contentSpriteCreateInformation.ContentArea = GUIUtility::CalculateContentArea(size.To<GUILogicalUnit>(), styleSheetRules).ToRect2I();
 
 	sprites.BuildRenderElements(contentSpriteCreateInformation, element.mRenderElements);
 }
@@ -284,7 +284,7 @@ TextSpriteInformation GUISpriteHelper::BuildTextSpriteInformation(const GUIInter
 	if(element.mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = element.mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		const Rect2I contentArea = GUIUtility::CalculateContentArea(size, styleSheetRules);
+		const Rect2I contentArea = GUIUtility::CalculateContentArea(size.To<GUILogicalUnit>(), styleSheetRules).ToRect2I();
 
 		return GUIContentSprites::BuildTextSpriteInformation(contentArea, text, styleSheetRules, tint, fontScale, wordWrap);
 	}

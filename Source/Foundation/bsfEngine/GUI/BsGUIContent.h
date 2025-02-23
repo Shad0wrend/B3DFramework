@@ -1,7 +1,9 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
+
 #include "BsPrerequisites.h"
+#include "BsGUIUnits.h"
 
 namespace bs
 {
@@ -98,7 +100,7 @@ namespace bs
 		const HSpriteImage& GetImage(GUIElementState state = GUIElementState::Normal) const;
 
 		/**	Determines the spacing between text and image content in pixels. */
-		static const u32 kImageTextSpacing;
+		static const GUILogicalUnit kImageTextSpacing;
 
 		HString Text;
 		GUIContentImages Images;

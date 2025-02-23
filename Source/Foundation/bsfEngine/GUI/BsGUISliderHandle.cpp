@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUISliderHandle.h"
 
+#include "BsGUIUtility.h"
 #include "BsGUIVectorPaths.h"
 #include "Image/BsSpriteTexture.h"
 #include "GUI/BsGUISizeConstraints.h"
@@ -77,9 +78,9 @@ void GUISliderHandle::UpdateRenderElements()
 	GUIInteractable::UpdateRenderElements();
 }
 
-Vector2I GUISliderHandle::CalculateUnconstrainedOptimalSize() const
+GUILogicalSize GUISliderHandle::CalculateUnconstrainedOptimalSize() const
 {
-	return Vector2I((i32)kMinimumHandleSize, (i32)kMinimumHandleSize);
+	return GUILogicalSize(kMinimumHandleSize, kMinimumHandleSize);
 }
 
 bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
@@ -210,6 +211,8 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 			}
 			else // Resizing
 			{
+				const GUIPhysicalUnit physicalMinimumHandleSize = GUIUtility::LogicalToPhysical(kMinimumHandleSize, GetAbsoluteScale());
+
 				GUIPhysicalUnit clickPosPx;
 				if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 					clickPosPx = ev.GetPosition().X - mAbsolutePosition.X;
@@ -227,7 +230,7 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 					GUIPhysicalUnit right = left + handleSize;
 					newLeft = Math::Clamp(newLeft, GUIPhysicalUnit(0), right);
 
-					newHandleSize = Math::Max(kMinimumHandleSize, right - newLeft);
+					newHandleSize = Math::Max(physicalMinimumHandleSize, right - newLeft);
 					newLeft = right - newHandleSize;
 
 					float scrollableSize = (float)(maxSize - newHandleSize);
@@ -239,7 +242,7 @@ bool GUISliderHandle::DoOnMouseEvent(const GUIMouseEvent& ev)
 				else // Right resize
 				{
 					GUIPhysicalUnit newRight = clickPosPx;
-					newHandleSize = Math::Max(kMinimumHandleSize, Math::Min(newRight, maxSize) - left);
+					newHandleSize = Math::Max(physicalMinimumHandleSize, Math::Min(newRight, maxSize) - left);
 
 					float scrollableSize = (float)(maxSize - newHandleSize);
 					if(scrollableSize > 0.0f)
@@ -393,7 +396,9 @@ GUIPhysicalUnit GUISliderHandle::GetHandlePositionInPixels() const
 
 GUIPhysicalUnit GUISliderHandle::GetHandleSizeInPixels() const
 {
-	return Math::Max(kMinimumHandleSize, GUIPhysicalUnit((i32)((float)GetTotalLength() * mHandleSizeInPercent)));
+	const GUIPhysicalUnit physicalMinimumHandleSize = GUIUtility::LogicalToPhysical(kMinimumHandleSize, GetAbsoluteScale());
+
+	return Math::Max(physicalMinimumHandleSize, GUIPhysicalUnit((i32)((float)GetTotalLength() * mHandleSizeInPercent)));
 }
 
 void GUISliderHandle::SetHandlePositionInPixels(GUIPhysicalUnit position)

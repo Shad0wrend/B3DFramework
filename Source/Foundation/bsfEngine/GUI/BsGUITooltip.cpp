@@ -38,7 +38,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	const GUIStyleSheetRules backgroundStyleSheetRules = styleSheetCascade.BuildRules(GUITexture::kElementType, kBackgroundStyleClass);
 
 	GUISizeConstraints dimensions = GUISizeConstraints::Create(GUIOptions(GUIOption::FixedWidth(kTooltipWidth)));
-	Size2UI size = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(text, multiLineLabelStyleSheetRules, dimensions.MaxWidth);
+	GUILogicalSize size = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(text, multiLineLabelStyleSheetRules, dimensions.MaximumWidth);
 
 	size.Width += backgroundStyleSheetRules.Padding.Left + backgroundStyleSheetRules.Padding.Right;
 	size.Height += backgroundStyleSheetRules.Padding.Top + backgroundStyleSheetRules.Padding.Bottom;
@@ -75,7 +75,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	DropDownAreaPlacement::HorzDir horzDir;
 	DropDownAreaPlacement::VertDir vertDir;
 	DropDownAreaPlacement placement = DropDownAreaPlacement::AroundBounds(positionBounds);
-	Rect2I placementBounds = placement.GetOptimalBounds(size.Width, size.Height, availableBounds, horzDir, vertDir);
+	Rect2I placementBounds = placement.GetOptimalBounds((u32)size.Width, (u32)size.Height, availableBounds, horzDir, vertDir);
 
 	backgroundPanel->SetPosition(placementBounds.X, placementBounds.Y);
 	contentPanel->SetPosition(placementBounds.X + contentOffsetX, placementBounds.Y + contentOffsetY);

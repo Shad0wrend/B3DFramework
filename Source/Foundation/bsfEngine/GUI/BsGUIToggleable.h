@@ -58,7 +58,7 @@ namespace bs
 		/** Checks or unchecks the toggle, and optionally triggers the OnToggled event. */
 		virtual void SetIsToggled(bool isToggled, bool triggerEvent);
 
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:
@@ -76,9 +76,9 @@ namespace bs
 		 * @param	elementOptimalSize		Unconstrained optimal size for the GUI element. Will be used to derive checkmark area
 		 *									size if explicit size is not provided in the style sheet.
 		 */
-		Size2UI CalculateCheckmarkContentAreaSize(const Size2UI& elementOptimalSize) const;
+		GUILogicalSize CalculateCheckmarkContentAreaSize(const GUILogicalSize& elementOptimalSize) const;
 
-		static constexpr i32 kCheckmarkContentSpacing = 3; /**< Spacing between the checkmark and contents, in pixels. */
+		static constexpr GUILogicalUnit kCheckmarkContentSpacing = 3; /**< Spacing between the checkmark and contents, in pixels. */
 	protected:
 		ImageSprite* mCheckmarkSprite = nullptr;
 		ImageSpriteInformation mCheckmarkSpriteInformation;

@@ -21,13 +21,13 @@ GUIProgressBar::GUIProgressBar(PrivatelyConstruct, const String& styleName, cons
 	RegisterChildElement(mBackground);
 }
 
-Vector2I GUIProgressBar::CalculateUnconstrainedOptimalSize() const
+GUILogicalSize GUIProgressBar::CalculateUnconstrainedOptimalSize() const
 {
-	Vector2I optimalSize = mBar->CalculateConstrainedSize().Optimal;
+	GUILogicalSize optimalSize = mBar->CalculateConstrainedSize().Optimal;
 
-	Vector2I backgroundSize = mBackground->CalculateConstrainedSize().Optimal;
-	optimalSize.X = std::max(optimalSize.X, backgroundSize.X);
-	optimalSize.Y = std::max(optimalSize.Y, backgroundSize.Y);
+	GUILogicalSize backgroundSize = mBackground->CalculateConstrainedSize().Optimal;
+	optimalSize.Width = Math::Max(optimalSize.Width, backgroundSize.Width);
+	optimalSize.Height = Math::Max(optimalSize.Height, backgroundSize.Height);
 
 	return optimalSize;
 }

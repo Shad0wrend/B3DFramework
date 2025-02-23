@@ -26,14 +26,10 @@ GUITexture::GUITexture(PrivatelyConstruct, const GUITextureContents& contents, c
 	if(SpriteImage::CheckIsLoaded(mActiveImage))
 	{
 		const Size2UI& animationFrameSize = mActiveImage->GetAnimationFrameSize();
-		mActiveImageWidth = animationFrameSize.Width;
-		mActiveImageHeight = animationFrameSize.Height;
+		mActiveImageSize = animationFrameSize.To<GUILogicalUnit>();
 	}
 	else
-	{
-		mActiveImageWidth = 0;
-		mActiveImageHeight = 0;
-	}
+		mActiveImageSize = GUILogicalSize::kZero;
 }
 
 GUITexture::~GUITexture()
@@ -43,27 +39,23 @@ GUITexture::~GUITexture()
 
 void GUITexture::SetImage(const HSpriteImage& image)
 {
-	Vector2I origSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 
 	mActiveImage = image;
 
 	if(SpriteImage::CheckIsLoaded(mActiveImage))
 	{
 		const Size2UI& animationFrameSize = mActiveImage->GetAnimationFrameSize();
-		mActiveImageWidth = animationFrameSize.Width;
-		mActiveImageHeight = animationFrameSize.Height;
+		mActiveImageSize = GUILogicalSize(animationFrameSize.Width, animationFrameSize.Height);
 	}
 	else
-	{
-		mActiveImageWidth = 0;
-		mActiveImageHeight = 0;
-	}
+		mActiveImageSize = GUILogicalSize::kZero;
 
 	mUsingStyleTexture = false;
 	mDesc.AnimationStartTime = GetTime().GetRealTimeInSeconds();
 
-	Vector2I newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
-	if(origSize != newSize)
+	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	if(originalSize != newSize)
 		MarkLayoutAsDirty();
 	else
 		MarkContentAsDirty();
@@ -155,56 +147,52 @@ void GUITexture::NotifyStyleChanged()
 		if(SpriteImage::CheckIsLoaded(mActiveImage))
 		{
 			const Size2UI& animationFrameSize = mActiveImage->GetAnimationFrameSize();
-			mActiveImageWidth = animationFrameSize.Width;
-			mActiveImageHeight = animationFrameSize.Height;
+			mActiveImageSize = GUILogicalSize(animationFrameSize.Width, animationFrameSize.Height);
 		}
 		else
-		{
-			mActiveImageWidth = 0;
-			mActiveImageHeight = 0;
-		}
+			mActiveImageSize = GUILogicalSize::kZero;
 	}
 }
 
-Vector2I GUITexture::CalculateUnconstrainedOptimalSize() const
+GUILogicalSize GUITexture::CalculateUnconstrainedOptimalSize() const
 {
 	const bool isUsingStyleSheets = IsUsingStyleSheets();
 	if(isUsingStyleSheets)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		const Size2UI contentSize = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(GUIContent(mActiveImage), styleSheetRules, GetSizeConstraints().MaxWidth);
+		const GUILogicalSize contentSize = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(GUIContent(mActiveImage), styleSheetRules, GetSizeConstraints().MaximumWidth);
 		
-		const i32 contentWidth = std::max(0, (i32)contentSize.Width);
-		const i32 contentHeight = std::max(0, (i32)contentSize.Height);
+		const GUILogicalUnit contentWidth = Math::Max(contentSize.Width, 0);
+		const GUILogicalUnit contentHeight = Math::Max(contentSize.Height, 0);
 
-		return Vector2I(contentWidth, contentHeight);
+		return GUILogicalSize(contentWidth, contentHeight);
 	}
 
 	// TODO - Accounting for style dimensions might be redundant here, I'm pretty sure we do that on higher level anyway
-	Vector2I optimalSize;
+	GUILogicalSize optimalSize;
 
 	// Note: We use cached texture size here. This is because we use this method for checking we a layout update is
 	// needed (size change is detected). Sprite texture could change without us knowing and by storing the size we can
 	// safely detect this. (In short, don't do mActiveTexture->getFrameWidth/Height() here)
 
 	if(GetSizeConstraints().IsWidthFixed())
-		optimalSize.X = GetSizeConstraints().MinWidth;
+		optimalSize.Width = GetSizeConstraints().MinimumWidth;
 	else
 	{
 		if(SpriteImage::CheckIsLoaded(mActiveImage))
-			optimalSize.X = mActiveImageWidth;
+			optimalSize.Width = mActiveImageSize.Width;
 		else
-			optimalSize.X = GetSizeConstraints().MaxWidth;
+			optimalSize.Width = GetSizeConstraints().MaximumWidth;
 	}
 
 	if(GetSizeConstraints().IsHeightFixed())
-		optimalSize.Y = GetSizeConstraints().MinHeight;
+		optimalSize.Height = GetSizeConstraints().MinimumHeight;
 	else
 	{
 		if(SpriteImage::CheckIsLoaded(mActiveImage))
-			optimalSize.Y = mActiveImageHeight;
+			optimalSize.Height = mActiveImageSize.Height;
 		else
-			optimalSize.Y = GetSizeConstraints().MaxHeight;
+			optimalSize.Height = GetSizeConstraints().MaximumHeight;
 	}
 
 	return optimalSize;

@@ -70,16 +70,16 @@ namespace bs
 		GUILayoutY& GetLayout() const { return *mContentLayout; }
 
 		/**	Scrolls the area up by specified amount of pixels, if possible. */
-		void ScrollUpPixels(u32 pixels);
+		void ScrollUpPixels(GUIPhysicalUnit pixels);
 
 		/**	Scrolls the area down by specified amount of pixels, if possible. */
-		void ScrollDownPixels(u32 pixels);
+		void ScrollDownPixels(GUIPhysicalUnit pixels);
 
 		/**	Scrolls the area left by specified amount of pixels, if possible. */
-		void ScrollLeftPixels(u32 pixels);
+		void ScrollLeftPixels(GUIPhysicalUnit pixels);
 
 		/**	Scrolls the area right by specified amount of pixels, if possible. */
-		void ScrollRightPixels(u32 pixels);
+		void ScrollRightPixels(GUIPhysicalUnit pixels);
 
 		/**	Scrolls the area up by specified percentage (ranging [0, 1]), if possible. */
 		void ScrollUpPercent(float percent);
@@ -142,7 +142,7 @@ namespace bs
 		GUIConstrainedSize GetConstrainedSize() const override;
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 		void UpdateOptimalLayoutSizes() override;
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 
 	private:
 		GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType, const String& scrollBarStyle, const String& scrollAreaStyle, const GUISizeConstraints& dimensions);
@@ -167,7 +167,7 @@ namespace bs
 		void UpdateAbsoluteCoordinatesForChildren() override;
 
 		/** Calculates the position and size of the scroll area child layout and the scroll bars. */
-		void CalculateRelativeElementAreas(const Size2UI& scrollAreaSize, GUILogicalPoint* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, Vector2I& outVisibleSize) const;
+		void CalculateRelativeElementAreas(const GUILogicalSize& scrollAreaSize, GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, GUILogicalSize& outVisibleSize) const;
 
 		ScrollBarType mVerticalScrollBarType;
 		ScrollBarType mHorizontalScrollBarType;
@@ -182,8 +182,8 @@ namespace bs
 		bool mRecalculateVertOffset;
 		bool mRecalculateHorzOffset;
 
-		Vector2I mVisibleSize{BsZero};
-		Vector2I mContentSize{BsZero};
+		GUILogicalSize mVisibleSize{BsZero};
+		GUILogicalSize mContentSize{BsZero};
 
 		Vector<GUIConstrainedSize> mChildSizeRanges;
 		GUIConstrainedSize mSizeRange;

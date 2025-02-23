@@ -223,6 +223,9 @@ namespace bs
 		 */
 		const Vector2I& GetAbsolutePosition() const { return mAbsolutePosition; }
 
+		/** Combined local and parent scale. */
+		float GetAbsoluteScale() const { return mAbsoluteScale; }
+
 		/**
 		 * Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be
 		 * released delayed, next frame.
@@ -299,7 +302,7 @@ namespace bs
 		virtual const TInlineArray<GUIElement*, 4>& GetVisibleChildren() const { return mChildren; }
 
 		/**	Calculates the optimal size for the GUI element, ignoring size constraints. */
-		virtual Vector2I CalculateUnconstrainedOptimalSize() const = 0;
+		virtual GUILogicalSize CalculateUnconstrainedOptimalSize() const = 0;
 
 		/**	Returns size constraints that determine how is the GUI element allowed to be resized by the layout. */
 		const GUISizeConstraints& GetSizeConstraints() const { return mSizeConstraints; }

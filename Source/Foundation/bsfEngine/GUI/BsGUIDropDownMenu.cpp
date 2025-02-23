@@ -208,7 +208,7 @@ GUIDropDownMenu::DropDownSubMenu::DropDownSubMenu(GUIDropDownMenu* owner, DropDo
 	u32 maxNeededHeight = backgroundFramePadding.Top + backgroundFramePadding.Bottom;
 	u32 numElements = (u32)dropDownData.Entries.size();
 	for(u32 i = 0; i < numElements; i++)
-		maxNeededHeight += Content->GetElementHeight(i);
+		maxNeededHeight += (u32)Content->GetElementHeight(i);
 
 	DropDownAreaPlacement::HorzDir horzDir;
 	DropDownAreaPlacement::VertDir vertDir;
@@ -264,7 +264,7 @@ Vector<GUIDropDownMenu::DropDownSubMenu::PageInfo> GUIDropDownMenu::DropDownSubM
 	Vector<PageInfo> pageInfos;
 	for(i32 i = 0; i < numElements; i++)
 	{
-		curPageInfo.Height += Content->GetElementHeight((u32)i);
+		curPageInfo.Height += (u32)Content->GetElementHeight((u32)i);
 		curPageInfo.End++;
 
 		if(curPageInfo.Height > Height)
@@ -272,7 +272,7 @@ Vector<GUIDropDownMenu::DropDownSubMenu::PageInfo> GUIDropDownMenu::DropDownSubM
 			// Remove last few elements until we fit again
 			while(curPageInfo.Height > Height && i >= 0)
 			{
-				curPageInfo.Height -= Content->GetElementHeight((u32)i);
+				curPageInfo.Height -= (u32)Content->GetElementHeight((u32)i);
 				curPageInfo.End--;
 
 				i--;

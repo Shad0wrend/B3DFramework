@@ -4,6 +4,8 @@
 
 #include "Prerequisites/BsPrerequisitesUtil.h"
 #include "Math/BsSize2.h"
+#include "Math/BsRect2.h"
+#include "Math/BsRect2I.h"
 
 namespace bs
 {
@@ -31,6 +33,9 @@ namespace bs
 		/** Converts a unit with one underlying type to another. */
 		template<typename PositionType2, typename SizeType2 = PositionType2>
 		TArea2<PositionType2, SizeType2> To() const { return TArea2<PositionType2, SizeType2>((PositionType2)X, (PositionType2)Y, (SizeType2)Width, (SizeType2)Height); }
+
+		Rect2 ToRect2() const { return Rect2((float)X, (float)Y, (float)Width, (float)Height); } // TODO - Temporary
+		Rect2I ToRect2I() const { return Rect2I((i32)X, (i32)Y, (u32)Width, (u32)Height); } // TODO - Temporary
 
 		/** Returns true if the area covered is 0. */
 		bool IsEmpty() const { return Width == 0 || Height == 0; }

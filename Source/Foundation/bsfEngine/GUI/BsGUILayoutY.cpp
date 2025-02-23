@@ -20,8 +20,8 @@ void GUILayoutY::UpdateOptimalLayoutSizes()
 	if(mChildren.size() != mChildrenConstrainedSizes.size())
 		mChildrenConstrainedSizes.resize(mChildren.size());
 
-	Vector2I optimalSize(BsZero);
-	Vector2I minSize(BsZero);
+	GUILogicalSize optimalSize(BsZero);
+	GUILogicalSize minSize(BsZero);
 
 	u32 childIdx = 0;
 	for(auto& child : mChildren)
@@ -33,18 +33,18 @@ void GUILayoutY::UpdateOptimalLayoutSizes()
 			childSizeRange = child->GetConstrainedSize();
 			if(B3DRTTIIsOfType<GUIFixedSpace>(child))
 			{
-				childSizeRange.Optimal.X = 0;
-				childSizeRange.Min.X = 0;
+				childSizeRange.Optimal.Width = 0;
+				childSizeRange.Minimum.Width = 0;
 			}
 
-			const u32 marginsX = child->GetMargins().Left + child->GetMargins().Right;
-			const u32 marginsY = child->GetMargins().Top + child->GetMargins().Bottom;
+			const GUILogicalUnit marginsX = child->GetMargins().Left + child->GetMargins().Right;
+			const GUILogicalUnit marginsY = child->GetMargins().Top + child->GetMargins().Bottom;
 
-			optimalSize.Y += childSizeRange.Optimal.Y + marginsY;
-			optimalSize.X = std::max((u32)optimalSize.X, childSizeRange.Optimal.X + marginsX);
+			optimalSize.Height += childSizeRange.Optimal.Height + marginsY;
+			optimalSize.Width = Math::Max(optimalSize.Width, childSizeRange.Optimal.Width + marginsX);
 
-			minSize.Y += childSizeRange.Min.Y + marginsY;
-			minSize.X = std::max((u32)minSize.X, childSizeRange.Min.X + marginsX);
+			minSize.Height += childSizeRange.Minimum.Height + marginsY;
+			minSize.Width = Math::Max(minSize.Width, childSizeRange.Minimum.Width + marginsX);
 		}
 		else
 			childSizeRange = GUIConstrainedSize();
@@ -53,15 +53,15 @@ void GUILayoutY::UpdateOptimalLayoutSizes()
 	}
 
 	mConstrainedSize = GetSizeConstraints().CalculateConstrainedSize(optimalSize);
-	mConstrainedSize.Min.X = std::max(mConstrainedSize.Min.X, minSize.X);
-	mConstrainedSize.Min.Y = std::max(mConstrainedSize.Min.Y, minSize.Y);
+	mConstrainedSize.Minimum.Width = std::max(mConstrainedSize.Minimum.Width, minSize.Width);
+	mConstrainedSize.Minimum.Height = std::max(mConstrainedSize.Minimum.Height, minSize.Height);
 }
 
-void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogicalPoint* outElementPositions, Size2UI* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
+void GUILayoutY::GetChildRelativeLayoutAreas(const GUILogicalSize& layoutSize, GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
 {
 	B3D_ASSERT(mChildren.size() == elementCount);
 
-	u32 totalOptimalSize = mySizeRange.Optimal.Y;
+	GUILogicalUnit totalOptimalSize = mySizeRange.Optimal.Height;
 	float weightedNonClampedSize = 0.0f;
 	u32 flexibleElementCount = 0;
 	u32 expandingElementCount = 0;
@@ -82,7 +82,7 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 	u32 childIndex = 0;
 	for(auto& child : mChildren)
 	{
-		outElementSizes[childIndex].Height = sizeRanges[childIndex].Optimal.Y;
+		outElementSizes[childIndex].Height = sizeRanges[childIndex].Optimal.Height;
 
 		const GUISizeConstraints& sizeConstraints = child->GetSizeConstraints();
 		if(sizeConstraints.IsHeightFixed() || !child->IsActive())
@@ -108,15 +108,15 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 	}
 
 	// If there is some room left, calculate flexible space sizes (since they will fill up all that extra room)
-	if((u32)layoutSize.Height > totalOptimalSize)
+	if(layoutSize.Height > totalOptimalSize)
 	{
-		u32 extraSize = layoutSize.Height - totalOptimalSize;
-		u32 remainingSize = extraSize;
+		GUILogicalUnit extraSize = layoutSize.Height - totalOptimalSize;
+		GUILogicalUnit remainingSize = extraSize;
 
 		// Expanding elements expand to fill up all unused space
 		if(expandingElementCount > 0)
 		{
-			float avgSize = remainingSize / (float)expandingElementCount;
+			const float averageSize = (float)remainingSize / (float)expandingElementCount;
 
 			childIndex = 0;
 			for(auto& child : mChildren)
@@ -127,8 +127,8 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 					continue;
 				}
 
-				u32 extraHeight = std::min((u32)Math::CeilToInt(avgSize), remainingSize);
-				u32 elementHeight = outElementSizes[childIndex].Height + extraHeight;
+				const GUILogicalUnit extraHeight = Math::Min(remainingSize, GUILogicalUnit(Math::CeilToInt(averageSize)));
+				const GUILogicalUnit elementHeight = outElementSizes[childIndex].Height + extraHeight;
 
 				// Clamp if needed
 				if(child->GetSizeConstraints().IsHeightExpanding())
@@ -137,7 +137,7 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 					flexibleElementCount--;
 					outElementSizes[childIndex].Height = elementHeight;
 
-					remainingSize = (u32)std::max(0, (i32)remainingSize - (i32)extraHeight);
+					remainingSize = Math::Max(remainingSize - extraHeight, 0);
 				}
 
 				childIndex++;
@@ -166,15 +166,15 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 	}
 
 	// Our optimal size is larger than maximum allowed, so we need to reduce size of some elements
-	if(totalOptimalSize > (u32)layoutSize.Height)
+	if(totalOptimalSize > layoutSize.Height)
 	{
-		u32 remainingExcessSize = totalOptimalSize - layoutSize.Height;
+		GUILogicalUnit remainingExcessSize = totalOptimalSize - layoutSize.Height;
 
 		// Iterate until we reduce everything so it fits, while maintaining
 		// equal average sizes using the weights we calculated earlier
 		while(remainingExcessSize > 0 && flexibleElementCount > 0)
 		{
-			const u32 remainingExcessSizeForIteration = remainingExcessSize;
+			const GUILogicalUnit remainingExcessSizeForIteration = remainingExcessSize;
 
 			childIndex = 0;
 			for(auto& child : mChildren)
@@ -187,8 +187,8 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 
 				const float averageSize = (float)remainingExcessSizeForIteration * elementScaleWeights[childIndex];
 
-				const u32 elementExcessHeight = std::min((u32)Math::CeilToInt(averageSize), remainingExcessSize);
-				u32 elementHeight = (u32)std::max(0, (i32)outElementSizes[childIndex].Height - (i32)elementExcessHeight);
+				const GUILogicalUnit elementExcessHeight = Math::Min(remainingExcessSize, GUILogicalUnit(Math::CeilToInt(averageSize)));
+				GUILogicalUnit elementHeight = Math::Max(outElementSizes[childIndex].Height - elementExcessHeight, 0);
 
 				// Clamp if needed
 				const GUIConstrainedSize& childSizeRange = sizeRanges[childIndex];
@@ -198,17 +198,17 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 					processedElements[childIndex] = true;
 					flexibleElementCount--;
 				}
-				else if(childSizeRange.Min.Y > 0 && (i32)elementHeight < childSizeRange.Min.Y)
+				else if(childSizeRange.Minimum.Height > 0 && elementHeight < childSizeRange.Minimum.Height)
 				{
-					elementHeight = childSizeRange.Min.Y;
+					elementHeight = childSizeRange.Minimum.Height;
 
 					processedElements[childIndex] = true;
 					flexibleElementCount--;
 				}
 
-				const u32 reducedHeight = outElementSizes[childIndex].Height - elementHeight;
+				const GUILogicalUnit reducedHeight = outElementSizes[childIndex].Height - elementHeight;
 				outElementSizes[childIndex].Height = elementHeight;
-				remainingExcessSize = (u32)std::max(0, (i32)remainingExcessSize - (i32)reducedHeight);
+				remainingExcessSize = Math::Max(remainingExcessSize - reducedHeight, 0);
 
 				childIndex++;
 			}
@@ -216,13 +216,13 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 	}
 	else // We are smaller than the allowed maximum, so try to expand some elements
 	{
-		u32 remainingExtraSize = layoutSize.Height - totalOptimalSize;
+		GUILogicalUnit remainingExtraSize = layoutSize.Height - totalOptimalSize;
 
 		// Iterate until we reduce everything so it fits, while maintaining
 		// equal average sizes using the weights we calculated earlier
 		while(remainingExtraSize > 0 && flexibleElementCount > 0)
 		{
-			const u32 remainingExtraSizeForIteration = remainingExtraSize;
+			const GUILogicalUnit remainingExtraSizeForIteration = remainingExtraSize;
 
 			childIndex = 0;
 			for(auto& child : mChildren)
@@ -235,8 +235,8 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 
 				const float averageSize = (float)remainingExtraSizeForIteration * elementScaleWeights[childIndex];
 
-				const u32 elementExtraHeight = std::min((u32)Math::CeilToInt(averageSize), remainingExtraSize);
-				u32 elementHeight = outElementSizes[childIndex].Height + elementExtraHeight;
+				const GUILogicalUnit elementExtraHeight = Math::Min(GUILogicalUnit(Math::CeilToInt(averageSize)), remainingExtraSize);
+				GUILogicalUnit elementHeight = outElementSizes[childIndex].Height + elementExtraHeight;
 
 				// Clamp if needed
 				const GUIConstrainedSize& childSizeRange = sizeRanges[childIndex];
@@ -246,17 +246,17 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 					processedElements[childIndex] = true;
 					flexibleElementCount--;
 				}
-				else if(childSizeRange.Max.Y > 0 && (i32)elementHeight > childSizeRange.Max.Y)
+				else if(childSizeRange.Maximum.Height > 0 && elementHeight > childSizeRange.Maximum.Height)
 				{
-					elementHeight = childSizeRange.Max.Y;
+					elementHeight = childSizeRange.Maximum.Height;
 
 					processedElements[childIndex] = true;
 					flexibleElementCount--;
 				}
 
-				const u32 increasedHeight = elementHeight - outElementSizes[childIndex].Height;
+				const GUILogicalUnit increasedHeight = elementHeight - outElementSizes[childIndex].Height;
 				outElementSizes[childIndex].Height = elementHeight;
-				remainingExtraSize = (u32)std::max(0, (i32)remainingExtraSize - (i32)increasedHeight);
+				remainingExtraSize = Math::Max(remainingExtraSize - increasedHeight, 0);
 
 				childIndex++;
 			}
@@ -270,34 +270,34 @@ void GUILayoutY::GetChildRelativeLayoutAreas(const Size2UI& layoutSize, GUILogic
 		B3DStackFree(processedElements);
 
 	// Compute offsets and width
-	u32 yOffset = 0;
+	GUILogicalUnit yOffset = 0;
 	childIndex = 0;
 
 	for(auto& child : mChildren)
 	{
-		u32 elemHeight = outElementSizes[childIndex].Height;
+		GUILogicalUnit elemHeight = outElementSizes[childIndex].Height;
 		yOffset += child->GetMargins().Top;
 
 		const GUIConstrainedSize& sizeRange = sizeRanges[childIndex];
-		u32 elemWidth = (u32)sizeRanges[childIndex].Optimal.X;
+		GUILogicalUnit elemWidth = sizeRanges[childIndex].Optimal.Width;
 		const GUISizeConstraints& dimensions = child->GetSizeConstraints();
 		if(!dimensions.IsWidthFixed())
 		{
 			elemWidth = layoutSize.Width;
-			if(sizeRange.Min.X > 0 && elemWidth < (u32)sizeRange.Min.X)
-				elemWidth = (u32)sizeRange.Min.X;
+			if(sizeRange.Minimum.Width > 0 && elemWidth < sizeRange.Minimum.Width)
+				elemWidth = sizeRange.Minimum.Width;
 
-			if(sizeRange.Max.X > 0 && elemWidth > (u32)sizeRange.Max.X)
-				elemWidth = (u32)sizeRange.Max.X;
+			if(sizeRange.Maximum.Width > 0 && elemWidth > (u32)sizeRange.Maximum.Width)
+				elemWidth = sizeRange.Maximum.Width;
 		}
 
 		outElementSizes[childIndex].Width = elemWidth;
 
 		if(GUIInteractable* const element = B3DRTTICast<GUIInteractable>(child))
 		{
-			u32 xPadding = element->GetMargins().Left + element->GetMargins().Right;
-			i32 xOffset = Math::CeilToInt((i32)(layoutSize.Width - (i32)(elemWidth + xPadding)) * 0.5f);
-			xOffset = std::max(0, xOffset);
+			GUILogicalUnit xPadding = element->GetMargins().Left + element->GetMargins().Right;
+			GUILogicalUnit xOffset = Math::CeilToInt((float)((i32)(layoutSize.Width - (i32)(elemWidth + xPadding))) * 0.5f);
+			xOffset = Math::Max(xOffset, 0);
 
 			outElementPositions[childIndex].X = xOffset;
 			outElementPositions[childIndex].Y = yOffset;
@@ -317,15 +317,15 @@ void GUILayoutY::UpdateLayoutForChildren()
 {
 	const u32 elementCount = (u32)mChildren.size();
 	GUILogicalPoint* elementPositions = nullptr;
-	Size2UI* elementSizes = nullptr;
+	GUILogicalSize* elementSizes = nullptr;
 
 	if(elementCount > 0)
 	{
 		elementPositions = B3DStackNew<GUILogicalPoint>(elementCount);
-		elementSizes = B3DStackNew<Size2UI>(elementCount);
+		elementSizes = B3DStackNew<GUILogicalSize>(elementCount);
 	}
 
-	GetChildRelativeLayoutAreas(mLayoutData.Size, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
+	GetChildRelativeLayoutAreas(mLayoutData.Size.To<GUILogicalUnit>(), elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
 
 	// Now that we have all the areas, actually assign them
 	u32 childIdx = 0;
@@ -336,7 +336,7 @@ void GUILayoutY::UpdateLayoutForChildren()
 		if(child->IsActive())
 		{
 			childData.RelativePosition = elementPositions[childIdx];
-			childData.Size = elementSizes[childIdx];
+			childData.Size = elementSizes[childIdx].To<u32>();
 
 			child->SetLayoutData(childData);
 			child->UpdateLayoutForChildren();

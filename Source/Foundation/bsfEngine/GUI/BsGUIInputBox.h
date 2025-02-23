@@ -69,7 +69,7 @@ namespace bs
 		GUIInputBox(PrivatelyConstruct, const GUIInputBoxContent& content, const String& styleName, const GUISizeConstraints& sizeConstraints);
 
 		ElementType GetElementType() const override { return ElementType::InputBox; }
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */
 	protected:

@@ -304,9 +304,9 @@ void GUICanvas::UpdateRenderElements()
 	GUIInteractable::UpdateRenderElements();
 }
 
-Vector2I GUICanvas::CalculateUnconstrainedOptimalSize() const
+GUILogicalSize GUICanvas::CalculateUnconstrainedOptimalSize() const
 {
-	return Vector2I(10, 10);
+	return GUILogicalSize(10, 10);
 }
 
 void GUICanvas::FillBuffer(

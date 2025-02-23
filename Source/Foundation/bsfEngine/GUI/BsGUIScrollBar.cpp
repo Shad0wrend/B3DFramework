@@ -83,7 +83,7 @@ void GUIScrollBar::UpdateRenderElements()
 	GUIInteractable::UpdateRenderElements();
 }
 
-Vector2I GUIScrollBar::CalculateUnconstrainedOptimalSize() const
+GUILogicalSize GUIScrollBar::CalculateUnconstrainedOptimalSize() const
 {
 	return mLayout->CalculateUnconstrainedOptimalSize();
 }

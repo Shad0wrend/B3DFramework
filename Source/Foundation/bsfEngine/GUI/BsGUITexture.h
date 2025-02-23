@@ -50,7 +50,7 @@ namespace bs
 		GUITexture(PrivatelyConstruct, const GUITextureContents& contents, const String& styleName, const GUISizeConstraints& dimensions);
 
 		ElementType GetElementType() const override { return ElementType::Texture; }
-		Vector2I CalculateUnconstrainedOptimalSize() const override;
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		const char* GetStyleSheetElement() const override { return kElementType; }
 
 		/** @} */
@@ -63,8 +63,7 @@ namespace bs
 		GUIBackgroundSprite mBackgroundSprite;
 		ImageSprite* mImageSprite;
 		HSpriteImage mActiveImage;
-		u32 mActiveImageWidth = 0;
-		u32 mActiveImageHeight = 0;
+		GUILogicalSize mActiveImageSize{BsZero};
 		ImageSpriteInformation mDesc;
 		TextureScaleMode mScaleMode;
 		bool mTransparent;
