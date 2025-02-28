@@ -4,6 +4,7 @@
 
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIInteractable.h"
+#include "GUI/BsGUIConstructionMethods.h"
 #include "2D/BsImageSprite.h"
 #include "2D/BsTextSprite.h"
 
@@ -17,29 +18,11 @@ namespace bs
 	 * A GUI element that allows the user to draw custom graphics. All drawn elements relative to the canvas, to its origin
 	 * in the top left corner.
 	 */
-	class B3D_EXPORT GUICanvas : public GUIInteractable
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUICanvas : public GUIInteractable, public TGUIConstructionMethodsWithoutContent<GUICanvas>
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
 		static const String& GetGuiTypeName();
-
-		/**
-		 * Creates a new GUI canvas element.
-		 *
-		 * @param[in]	options			Options that allow you to control how is the element positioned and sized. This will
-		 *								override any similar options set by style.
-		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *								GUIWidget the element is used on. If not specified default style is used.
-		 */
-		static GUICanvas* Create(const GUIOptions& options, const String& styleName = StringUtil::kBlank);
-
-		/**
-		 * Creates a new GUI canvas element.
-		 *
-		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
-		 *								GUIWidget the element is used on. If not specified default style is used.
-		 */
-		static GUICanvas* Create(const String& styleName = StringUtil::kBlank);
 
 		/**
 		 * Draws a line going from @p a to @p b.
@@ -51,7 +34,8 @@ namespace bs
 		 *						Additionally elements of the same type (triangle or line) will be drawn in order they are
 		 *						submitted if they share the same depth.
 		 */
-		void DrawLine(const Vector2I& a, const Vector2I& b, const Color& color = Color::kWhite, u8 depth = 128);
+		B3D_SCRIPT_EXPORT()
+		void DrawLine(const GUILogicalPoint& a, const GUILogicalPoint& b, const Color& color, u8 depth = 128);
 
 		/**
 		 * Draws multiple lines following the path by the provided vertices. First vertex connects to the second vertex,
@@ -64,7 +48,8 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawPolyLine(const Vector<Vector2I>& vertices, const Color& color = Color::kWhite, u8 depth = 128);
+		B3D_SCRIPT_EXPORT()
+		void DrawPolyLine(const Vector<GUILogicalPoint>& vertices, const Color& color, u8 depth = 128);
 
 		/**
 		 * Draws a quad with a the provided image displayed.
@@ -72,14 +57,15 @@ namespace bs
 		 * @param[in]	image		Image to draw.
 		 * @param[in]	area		Position and size of the texture to draw. Position is relative to the canvas origin
 		 *							(top-left). If size is zero, the default texture size will be used.
+		 * @param[in]	color		Color to tint the drawn texture with.
 		 * @param[in]	scaleMode	Scale mode to use when sizing the texture. Only relevant if the provided quad size
 		 *							doesn't match the texture size.
-		 * @param[in]	color		Color to tint the drawn texture with.
 		 * @param[in]	depth		Depth at which to draw the element. Elements with higher depth will be drawn before
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawImage(const HSpriteImage& image, const Rect2I& area, TextureScaleMode scaleMode = TextureScaleMode::StretchToFit, const Color& color = Color::kWhite, u8 depth = 128);
+		B3D_SCRIPT_EXPORT()
+		void DrawImage(const HSpriteImage& image, const GUILogicalArea& area, const Color& color, TextureScaleMode scaleMode = TextureScaleMode::StretchToFit, u8 depth = 128);
 
 		/**
 		 * Draws a triangle strip. First three vertices are used to form the initial triangle, and every next vertex will
@@ -92,7 +78,8 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawTriangleStrip(const Vector<Vector2I>& vertices, const Color& color = Color::kWhite, u8 depth = 128);
+		B3D_SCRIPT_EXPORT()
+		void DrawTriangleStrip(const Vector<GUILogicalPoint>& vertices, const Color& color, u8 depth = 128);
 
 		/**
 		 * Draws a triangle list. Every three vertices in the list represent a unique triangle.
@@ -104,7 +91,8 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawTriangleList(const Vector<Vector2I>& vertices, const Color& color = Color::kWhite, u8 depth = 128);
+		B3D_SCRIPT_EXPORT()
+		void DrawTriangleList(const Vector<GUILogicalPoint>& vertices, const Color& color, u8 depth = 128);
 
 		/**
 		 * Draws a piece of text with the wanted font. The text will be aligned to the top-left corner of the provided
@@ -120,15 +108,20 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawText(const String& text, const Vector2I& position, const HFont& font, float size = 10.0f, const Color& color = Color::kWhite, u8 depth = 128);
+		B3D_SCRIPT_EXPORT()
+		void DrawText(const String& text, const GUILogicalPoint& position, const HFont& font, float size, const Color& color, u8 depth = 128);
 
 		/** Clears the canvas, removing any previously drawn elements. */
+		B3D_SCRIPT_EXPORT()
 		void Clear();
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
 		 */
+
+		struct PrivatelyConstruct { };
+		GUICanvas(PrivatelyConstruct, const String& styleName, const GUISizeConstraints& sizeConstraints);
 
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		u32 GetRenderElementDepthRange() const override { return mDepthRange; }
@@ -184,14 +177,14 @@ namespace bs
 		{
 			String String;
 			HFont Font;
-			Vector2I Position;
+			GUILogicalPoint Position;
 		};
 
 		/** Information required for drawing an image canvas element. */
 		struct ImageElementData
 		{
 			HSpriteImage Image;
-			Rect2I Area;
+			GUILogicalArea Area;
 		};
 
 		/** Information required for drawing an arbitrary triangle canvas element. */
@@ -200,7 +193,6 @@ namespace bs
 			SpriteMaterialInfo MaterialInfo;
 		};
 
-		GUICanvas(const String& styleName, const GUISizeConstraints& dimensions);
 		virtual ~GUICanvas();
 
 		void FillBuffer(u8* vertices, u32* indices, u32 vertexOffset, u32 indexOffset, const Vector2I& offset, u32 maxNumVerts, u32 maxNumIndices, u32 renderElementIdx) const override;
@@ -213,13 +205,13 @@ namespace bs
 		void BuildTextElement(const CanvasElement& element);
 
 		/** Build a set of clipped triangles from the source triangles provided by the canvas element. */
-		void BuildTriangleElement(const CanvasElement& element, const Vector2& offset, const Rect2I& clipRect) const;
+		void BuildTriangleElement(const CanvasElement& element, const Vector2& offset, float scale, const Rect2I& clipRect) const;
 
 		/**
 		 * Rebuilds all triangle elements on the canvas, by constructing a set of clipped and offset triangles from the
 		 * triangles provided by the canvas elements.
 		 */
-		void BuildAllTriangleElementsIfDirty(const Vector2& offset, const Rect2I& clipRect) const;
+		void BuildAllTriangleElementsIfDirty(const Vector2& offset, float scale, const Rect2I& clipRect) const;
 
 		/** Finds the canvas element that contains the render element with the specified index. */
 		const CanvasElement& FindElement(u32 renderElementIdx) const;
@@ -230,7 +222,7 @@ namespace bs
 		Vector<ImageElementData> mImageData;
 		Vector<TextElementData> mTextData;
 		mutable Vector<TriangleElementData> mTriangleElementData;
-		Vector<Vector2> mVertexData;
+		Vector<GUILogicalPointF> mVertexData;
 
 		mutable Vector<Vector2> mClippedVertices;
 		mutable Vector<Vector2> mClippedLineVertices;

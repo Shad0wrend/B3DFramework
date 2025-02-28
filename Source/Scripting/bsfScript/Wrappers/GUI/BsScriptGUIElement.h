@@ -12,6 +12,11 @@ namespace bs
 {
 	class ScriptGUILayoutWrapperBase;
 	struct __TVector2_TUnitValue_int32_t__LogicalPixel__Interop;
+	struct __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop;
+	struct __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop;
+	struct __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop;
+	struct __TUnitValue_int32_t__LogicalPixel_Interop;
+	struct __TSize2_TUnitValue_int32_t__LogicalPixel__Interop;
 }
 
 namespace bs
@@ -48,12 +53,20 @@ namespace bs
 		static void InternalCalculatePositionRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, __TVector2_TUnitValue_int32_t__LogicalPixel__Interop* position);
 		static void InternalCalculateAbsoluteBoundsRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, Rect2I* bounds);
 		static void InternalSetPosition(ScriptGUIElementWrapper* self, i32 x, i32 y);
+		static void InternalSetPosition2(ScriptGUIElementWrapper* self, __TVector2_TUnitValue_int32_t__LogicalPixel__Interop* position);
 		static void InternalSetWidth(ScriptGUIElementWrapper* self, u32 width);
+		static void InternalSetWidth2(ScriptGUIElementWrapper* self, GUILogicalUnit* width);
 		static void InternalSetHeight(ScriptGUIElementWrapper* self, u32 height);
+		static void InternalSetHeight2(ScriptGUIElementWrapper* self, GUILogicalUnit* height);
 		static void InternalSetSize(ScriptGUIElementWrapper* self, Size2UI* size);
+		static void InternalSetSize2(ScriptGUIElementWrapper* self, __TSize2_TUnitValue_int32_t__LogicalPixel__Interop* size);
 		static void InternalSetFlexibleWidth(ScriptGUIElementWrapper* self, u32 minWidth, u32 maxWidth);
 		static void InternalSetFlexibleHeight(ScriptGUIElementWrapper* self, u32 minHeight, u32 maxHeight);
 		static void InternalResetSizeConstraints(ScriptGUIElementWrapper* self);
+		static void InternalWidgetToElementSpace0(ScriptGUIElementWrapper* self, __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop* position, __TVector2_TUnitValue_int32_t__LogicalPixel__Interop* outPosition);
+		static void InternalElementToWidgetSpace0(ScriptGUIElementWrapper* self, __TVector2_TUnitValue_int32_t__LogicalPixel__Interop* position, __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop* outPosition);
+		static void InternalWidgetToElementSpace1(ScriptGUIElementWrapper* self, __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop* area, __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop* outArea);
+		static void InternalElementToWidgetSpace1(ScriptGUIElementWrapper* self, __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop* area, __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop* outArea);
 	};
 
 	/** @} */

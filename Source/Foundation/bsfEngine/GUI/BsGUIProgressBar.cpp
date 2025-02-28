@@ -44,10 +44,10 @@ void GUIProgressBar::UpdateLayoutForChildren()
 	GUILayoutData barLayoutData = mLayoutData;
 	barLayoutData.RelativePosition = GUILogicalPoint(margins.Left, margins.Top);
 
-	u32 maxProgressBarWidth = std::max((u32)0, (u32)(mLayoutData.Size.Width - margins.Left - margins.Right));
-	u32 progressBarHeight = std::max((u32)0, (u32)(mLayoutData.Size.Height - margins.Top - margins.Bottom));
+	GUILogicalUnit maxProgressBarWidth = Math::Max(mLayoutData.Size.Width - margins.Left - margins.Right, 0);
+	GUILogicalUnit progressBarHeight = Math::Max(mLayoutData.Size.Height - margins.Top - margins.Bottom, 0);
 
-	barLayoutData.Size.Width = (u32)Math::FloorToInt(maxProgressBarWidth * mPercent);
+	barLayoutData.Size.Width = GUILogicalUnit(Math::FloorToInt((float)maxProgressBarWidth * mPercent));
 	barLayoutData.Size.Height = progressBarHeight;
 
 	mBar->SetLayoutData(barLayoutData);

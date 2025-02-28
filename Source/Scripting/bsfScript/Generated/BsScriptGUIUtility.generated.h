@@ -19,6 +19,6 @@ namespace bs
 		static void SetupScriptBindings();
 
 	private:
-		static void InternalCalculateTextBounds(MonoString* text, MonoObject* font, float fontSize, TVector2<int32_t>* __output);
+		static void InternalCalculateTextBounds(MonoString* text, MonoObject* font, float fontSize, TSize2<int32_t>* __output);
 	};
 }

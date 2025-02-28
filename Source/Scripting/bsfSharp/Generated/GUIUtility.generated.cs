@@ -25,15 +25,15 @@ namespace bs
 		/// <param name="font">Font to use for rendering the text.</param>
 		/// <param name="fontSize">Size of individual characters in the font, in points.</param>
 		/// <returns>Width/height required to display the text, in pixels.</returns>
-		public static TVector2<int> CalculateTextBounds(string text, RRef<Font> font, float fontSize)
+		public static TSize2<int> CalculateTextBounds(string text, RRef<Font> font, float fontSize)
 		{
-			TVector2<int> temp;
+			TSize2<int> temp;
 			Internal_CalculateTextBounds(text, font, fontSize, out temp);
 			return temp;
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_CalculateTextBounds(string text, RRef<Font> font, float fontSize, out TVector2<int> __output);
+		private static extern void Internal_CalculateTextBounds(string text, RRef<Font> font, float fontSize, out TSize2<int> __output);
 	}
 
 	/** @} */

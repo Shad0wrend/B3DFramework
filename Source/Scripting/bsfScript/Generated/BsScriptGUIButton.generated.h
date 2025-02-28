@@ -11,6 +11,7 @@
 
 namespace bs { class GUIButton; }
 namespace bs { struct __GUIContentInterop; }
+namespace bs { struct __GUIOptionInterop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIButton : public TScriptGUIElementWrapper<GUIButton, ScriptGUIButton, ScriptGUIClickableWrapperBase>

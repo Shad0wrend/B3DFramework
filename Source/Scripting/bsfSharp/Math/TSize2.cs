@@ -53,13 +53,19 @@ namespace bs
         public static bool operator ==(TSize2<T> lhs, TSize2<T> rhs) => lhs.Width.Equals(rhs.Width) && lhs.Height.Equals(rhs.Height);
         public static bool operator !=(TSize2<T> lhs, TSize2<T> rhs) => !(lhs == rhs);
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Converts a size with one underlying type to another.
+        /// </summary>
+        public TSize2<T2> To<T2>() where T2 : INumber<T2>
+        {
+            return new TSize2<T2>(T2.CreateChecked(Width), T2.CreateChecked(Height));
+        }
+
         public override int GetHashCode()
         {
             return Width.GetHashCode() ^ Height.GetHashCode() << 2;
         }
 
-        /// <inheritdoc/>
         public override bool Equals(object other)
         {
             if (!(other is TSize2<T>))

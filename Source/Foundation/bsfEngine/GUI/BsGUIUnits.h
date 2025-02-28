@@ -92,11 +92,22 @@ namespace bs
 	using GUILogicalArea = TArea2<GUILogicalUnit>;
 	using GUILogicalAreaF = TArea2<GUILogicalUnitF>;
 
-	template <typename T>
-	struct B3DIsUnitValue<TUnitValue<T, PhysicalPixel>> : std::true_type {};
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TArea2<TUnitValue<i32, LogicalPixel>>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TArea2<TUnitValue<float, LogicalPixel>>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TArea2<TUnitValue<i32, PhysicalPixel>>;
+	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(GUI), ExportAsStruct(true)) TArea2<TUnitValue<float, PhysicalPixel>>;
 
 	template <typename T>
-	struct B3DIsUnitValue<TUnitValue<T, LogicalPixel>> : std::true_type {};
+	struct B3DIsUnitValue<TUnitValue<T, PhysicalPixel>> : std::true_type
+	{
+		using UnderlyingType = T;
+	};
+
+	template <typename T>
+	struct B3DIsUnitValue<TUnitValue<T, LogicalPixel>> : std::true_type
+	{
+		using UnderlyingType = T;
+	};
 
 	/** @} */
 } // namespace bs

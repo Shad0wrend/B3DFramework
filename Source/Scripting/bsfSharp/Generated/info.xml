@@ -1325,6 +1325,122 @@
 		<field name="Height" type="float">
 		</field>
 	</struct>
+	<struct native="TArea2&lt;TUnitValue&lt;int32_t, LogicalPixel&gt;, TUnitValue&lt;int32_t, LogicalPixel&gt;&gt;" script="TArea2&lt;TUnitValue&lt;int,LogicalPixel&gt;,TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+		<doc>Represents a 2D area. Area is represented with an origin in top left and width/height.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="y" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="width" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="height" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="position" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+			</param>
+			<param name="size" type="TSize2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="TUnitValue&lt;int,LogicalPixel&gt;">
+		</field>
+		<field name="Y" type="TUnitValue&lt;int,LogicalPixel&gt;">
+		</field>
+		<field name="Width" type="TUnitValue&lt;int,LogicalPixel&gt;">
+		</field>
+		<field name="Height" type="TUnitValue&lt;int,LogicalPixel&gt;">
+		</field>
+	</struct>
+	<struct native="TArea2&lt;TUnitValue&lt;float, LogicalPixel&gt;, TUnitValue&lt;float, LogicalPixel&gt;&gt;" script="TArea2&lt;TUnitValue&lt;float,LogicalPixel&gt;,TUnitValue&lt;float,LogicalPixel&gt;&gt;">
+		<doc>Represents a 2D area. Area is represented with an origin in top left and width/height.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="TUnitValue&lt;float,LogicalPixel&gt;">
+			</param>
+			<param name="y" type="TUnitValue&lt;float,LogicalPixel&gt;">
+			</param>
+			<param name="width" type="TUnitValue&lt;float,LogicalPixel&gt;">
+			</param>
+			<param name="height" type="TUnitValue&lt;float,LogicalPixel&gt;">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="position" type="TVector2&lt;TUnitValue&lt;float,LogicalPixel&gt;&gt;">
+			</param>
+			<param name="size" type="TSize2&lt;TUnitValue&lt;float,LogicalPixel&gt;&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="TUnitValue&lt;float,LogicalPixel&gt;">
+		</field>
+		<field name="Y" type="TUnitValue&lt;float,LogicalPixel&gt;">
+		</field>
+		<field name="Width" type="TUnitValue&lt;float,LogicalPixel&gt;">
+		</field>
+		<field name="Height" type="TUnitValue&lt;float,LogicalPixel&gt;">
+		</field>
+	</struct>
+	<struct native="TArea2&lt;TUnitValue&lt;int32_t, PhysicalPixel&gt;, TUnitValue&lt;int32_t, PhysicalPixel&gt;&gt;" script="TArea2&lt;TUnitValue&lt;int,PhysicalPixel&gt;,TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+		<doc>Represents a 2D area. Area is represented with an origin in top left and width/height.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+			<param name="y" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+			<param name="width" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+			<param name="height" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="position" type="TVector2&lt;TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+			</param>
+			<param name="size" type="TSize2&lt;TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+		</field>
+		<field name="Y" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+		</field>
+		<field name="Width" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+		</field>
+		<field name="Height" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+		</field>
+	</struct>
+	<struct native="TArea2&lt;TUnitValue&lt;float, PhysicalPixel&gt;, TUnitValue&lt;float, PhysicalPixel&gt;&gt;" script="TArea2&lt;TUnitValue&lt;float,PhysicalPixel&gt;,TUnitValue&lt;float,PhysicalPixel&gt;&gt;">
+		<doc>Represents a 2D area. Area is represented with an origin in top left and width/height.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="x" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+			</param>
+			<param name="y" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+			</param>
+			<param name="width" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+			</param>
+			<param name="height" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+			</param>
+		</ctor>
+		<ctor>
+			<param name="position" type="TVector2&lt;TUnitValue&lt;float,PhysicalPixel&gt;&gt;">
+			</param>
+			<param name="size" type="TSize2&lt;TUnitValue&lt;float,PhysicalPixel&gt;&gt;">
+			</param>
+		</ctor>
+		<field name="X" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+		</field>
+		<field name="Y" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+		</field>
+		<field name="Width" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+		</field>
+		<field name="Height" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+		</field>
+	</struct>
 	<struct native="BlendClipInfo" script="BlendClipInfo">
 		<doc>Represents an animation clip used in 1D blending. Each clip has a position on the number line.</doc>
 		<ctor>
@@ -8457,6 +8573,117 @@ Primary purpose of this class is to avoid expensive string compare (axis names),
 			<doc>Queues GPU command capture of the next frame, if a frame capture is set up.</doc>
 		</method>
 	</class>
+	<class native="GUICanvas" script="GUICanvas">
+		<doc>A GUI element that allows the user to draw custom graphics. All drawn elements relative to the canvas, to its origin in the top left corner.</doc>
+		<method native="DrawLine" script="DrawLine" static="false">
+			<doc>Draws a line going from <paramref name="a"/> to <paramref name="b"/>.</doc>
+			<param name="a" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Starting point of the line, relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="b" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Ending point of the line, relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the line.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawPolyLine" script="DrawPolyLine" static="false">
+			<doc>Draws multiple lines following the path by the provided vertices. First vertex connects to the second vertex, and every following vertex connects to the previous vertex.</doc>
+			<param name="vertices" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Points to use for drawing the line. Must have at least two elements. All points are relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the line.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawImage" script="DrawImage" static="false">
+			<doc>Draws a quad with a the provided image displayed.</doc>
+			<param name="image" type="RRef&lt;SpriteImage&gt;">
+				<doc>Image to draw.</doc>
+			</param>
+			<param name="area" type="TArea2&lt;TUnitValue&lt;int,LogicalPixel&gt;,TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Position and size of the texture to draw. Position is relative to the canvas origin (top-left). If size is zero, the default texture size will be used.</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color to tint the drawn texture with.</doc>
+			</param>
+			<param name="scaleMode" type="TextureScaleMode">
+				<doc>Scale mode to use when sizing the texture. Only relevant if the provided quad size doesn&apos;t match the texture size.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawTriangleStrip" script="DrawTriangleStrip" static="false">
+			<doc>Draws a triangle strip. First three vertices are used to form the initial triangle, and every next vertex will form a triangle with the previous two.</doc>
+			<param name="vertices" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>A set of points defining the triangles. Must have at least three elements. All points are relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the triangles.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawTriangleList" script="DrawTriangleList" static="false">
+			<doc>Draws a triangle list. Every three vertices in the list represent a unique triangle.</doc>
+			<param name="vertices" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>A set of points defining the triangles. Must have at least three elements, and its size must be a multiple of three.</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the triangles.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawText" script="DrawText" static="false">
+			<doc>Draws a piece of text with the wanted font. The text will be aligned to the top-left corner of the provided position, and will not be word wrapped.</doc>
+			<param name="text" type="string">
+				<doc>Text to draw.</doc>
+			</param>
+			<param name="position" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Position of the text to draw. This represents the top-left corner of the text. It is relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="font" type="RRef&lt;Font&gt;">
+				<doc>Font to draw the text with.</doc>
+			</param>
+			<param name="size" type="float">
+				<doc>Size of the font.</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the text.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="Clear" script="Clear" static="false">
+			<doc>Clears the canvas, removing any previously drawn elements.</doc>
+		</method>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+	</class>
 	<class native="TextureImportOptions" script="TextureImportOptions">
 		<doc>Contains import options you may use to control how is a texture imported.</doc>
 		<ctor>
@@ -14320,11 +14547,11 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 		<doc>Controls GUI element layout options, possibly by overriding the default options specified in GUI element style. These options control GUI element placement and size in a GUI layout.</doc>
 		<ctor>
 		</ctor>
-		<field name="min" type="int">
+		<field name="mMinimum" type="TUnitValue&lt;int,LogicalPixel&gt;">
 		</field>
-		<field name="max" type="int">
+		<field name="mMaximum" type="TUnitValue&lt;int,LogicalPixel&gt;">
 		</field>
-		<field name="type" type="GUIOptionType">
+		<field name="mType" type="GUIOptionType">
 		</field>
 	</struct>
 	<enum native="GUIElementOption" script="GUIElementOption">

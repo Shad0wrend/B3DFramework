@@ -9,6 +9,7 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 
 namespace bs { class GUIVerticalSlider; }
+namespace bs { struct __GUIOptionInterop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIVerticalSlider : public TScriptGUIElementWrapper<GUIVerticalSlider, ScriptGUIVerticalSlider, ScriptGUISliderWrapperBase>

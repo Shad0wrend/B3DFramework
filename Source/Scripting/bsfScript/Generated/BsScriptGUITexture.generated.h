@@ -11,6 +11,7 @@
 
 namespace bs { class GUITexture; }
 namespace bs { struct __GUITextureContentsInterop; }
+namespace bs { struct __GUIOptionInterop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUITexture : public TScriptGUIElementWrapper<GUITexture, ScriptGUITexture, ScriptGUIInteractableWrapperBase>

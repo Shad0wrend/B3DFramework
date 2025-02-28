@@ -77,6 +77,7 @@ namespace bs
 
 	private:
 		friend struct GUISizeConstraints;
+		friend class ScriptGUIOption;
 
 		GUILogicalUnit mMinimum = 0;
 		GUILogicalUnit mMaximum = 0;

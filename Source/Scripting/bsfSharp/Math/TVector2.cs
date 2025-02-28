@@ -175,9 +175,9 @@ namespace bs
         /// <summary>
         /// Returns the Manhattan distance between two points.
         /// </summary>
-        public static int ManhattanDistance(TVector2<int> a, TVector2<int> b)
+        public static T ManhattanDistance(TVector2<T> a, TVector2<T> b)
         {
-            return int.Abs(b.X - a.X) + int.Abs(b.Y - a.Y);
+            return T.Abs(b.X - a.X) + T.Abs(b.Y - a.Y);
         }
 
         /// <summary>

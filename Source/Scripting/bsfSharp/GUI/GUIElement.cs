@@ -146,12 +146,47 @@ namespace bs
         }
 
         /// <summary>
+        /// Sets element position relative to parent GUI panel.
+        /// </summary>
+        /// <param name="x">X position of the element in logical pixel units, relative to parent GUI panel.</param>
+        /// <param name="y">Y position of the element in logical pixel units, relative to parent GUI panel.</param>
+        /// <remarks>
+        /// Be aware that this value will be ignored if GUI element is part of a layout because the layout controls placement of child elements.
+        /// </remarks>
+        public void SetPosition(GUILogicalUnit x, GUILogicalUnit y)
+        {
+            GUILogicalPoint point = new GUILogicalPoint(x, y);
+            Internal_SetPosition2(mCachedPtr, ref point);
+        }
+
+        /// <summary>
+        /// Sets element position relative to parent GUI panel.
+        /// </summary>
+        /// <param name="position">X/Y position of the element in logical pixel units, relative to parent GUI panel.</param>
+        /// <remarks>
+        /// Be aware that this value will be ignored if GUI element is part of a layout because the layout controls placement of child elements.
+        /// </remarks>
+        public void SetPosition(GUILogicalPoint position)
+        {
+            Internal_SetPosition2(mCachedPtr, ref position);
+        }
+
+        /// <summary>
         /// Sets a fixed element width.
         /// </summary>
         /// <param name="width">Width in logical pixel units.</param>
         public void SetWidth(int width)
         {
             Internal_SetWidth(mCachedPtr, width);
+        }
+
+        /// <summary>
+        /// Sets a fixed element width.
+        /// </summary>
+        /// <param name="width">Width in logical pixel units.</param>
+        public void SetWidth(GUILogicalUnit width)
+        {
+            Internal_SetWidth2(mCachedPtr, width);
         }
 
         /// <summary>
@@ -176,6 +211,15 @@ namespace bs
         }
 
         /// <summary>
+        /// Sets a fixed element height.
+        /// </summary>
+        /// <param name="height">Height in logical pixel units.</param>
+        public void SetHeight(GUILogicalUnit height)
+        {
+            Internal_SetHeight2(mCachedPtr, height);
+        }
+
+        /// <summary>
         /// Sets a flexible element height. Element will be resized according to its contents and parent layout but will
         /// always stay within the provided range.
         /// </summary>
@@ -194,6 +238,15 @@ namespace bs
         public void SetSize(Size2UI size)
         {
             Internal_SetSize(mCachedPtr, ref size);
+        }
+
+        /// <summary>
+        /// Sets a fixed element width & height.
+        /// </summary>
+        /// <param name="size">Width/height in logical pixel units.</param>
+        public void SetSize(GUILogicalSize size)
+        {
+            Internal_SetSize2(mCachedPtr, ref size);
         }
 
         /// <summary>
@@ -246,6 +299,50 @@ namespace bs
             return output;
         }
 
+        /// <summary>
+        /// Converts a point relative to the parent widget, into a point relative to this element.
+        /// </summary>
+        public GUILogicalPoint WidgetToElementSpace(GUIPhysicalPoint position)
+        {
+            GUILogicalPoint output;
+            Internal_WidgetToElementSpace0(GetCachedPtr(), ref position, out output);
+
+            return output;
+        }
+
+        /// <summary>
+        /// Converts a point relative to this element, into a point relative to the parent widget.
+        /// </summary>
+        public GUIPhysicalPoint ElementToWidgetSpace(GUILogicalPoint position)
+        {
+            GUIPhysicalPoint output;
+            Internal_ElementToWidgetSpace0(GetCachedPtr(), ref position, out output);
+
+            return output;
+        }
+
+        /// <summary>
+        /// Converts an area relative to the parent widget, into an area relative to this element.
+        /// </summary>
+        public GUILogicalArea WidgetToElementSpace(GUIPhysicalArea area)
+        {
+            GUILogicalArea output;
+            Internal_WidgetToElementSpace1(GetCachedPtr(), ref area, out output);
+
+            return output;
+        }
+
+        /// <summary>
+        /// Converts an area relative to this element, into an area relative to the parent widget.
+        /// </summary>
+        public GUIPhysicalArea ElementToWidgetSpace(GUILogicalArea area)
+        {
+            GUIPhysicalArea output;
+            Internal_ElementToWidgetSpace1(GetCachedPtr(), ref area, out output);
+
+            return output;
+        }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern bool Internal_GetHidden(IntPtr nativeInstance);
 
@@ -268,7 +365,13 @@ namespace bs
         private static extern void Internal_SetPosition(IntPtr nativeInstance, int x, int y);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetPosition2(IntPtr nativeInstance, ref GUILogicalPoint position);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetWidth(IntPtr nativeInstance, int width);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetWidth2(IntPtr nativeInstance, GUILogicalUnit width);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetFlexibleWidth(IntPtr nativeInstance, int minWidth, int maxWidth);
@@ -277,10 +380,16 @@ namespace bs
         private static extern void Internal_SetHeight(IntPtr nativeInstance, int height);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetHeight2(IntPtr nativeInstance, GUILogicalUnit height);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetFlexibleHeight(IntPtr nativeInstance, int minHeight, int maxHeight);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetSize(IntPtr nativeInstance, ref Size2UI size);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetSize2(IntPtr nativeInstance, ref GUILogicalSize size);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_ResetSizeConstraints(IntPtr nativeInstance);
@@ -305,6 +414,18 @@ namespace bs
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_CalculatePositionRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out TVector2<TUnitValue<int, LogicalPixel>> output);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_WidgetToElementSpace0(IntPtr nativeInstance, ref TVector2<TUnitValue<int, PhysicalPixel>> position, out TVector2<TUnitValue<int, LogicalPixel>> outPosition);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_ElementToWidgetSpace0(IntPtr nativeInstance, ref TVector2<TUnitValue<int, LogicalPixel>> position, out TVector2<TUnitValue<int, PhysicalPixel>> outPosition);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_WidgetToElementSpace1(IntPtr nativeInstance, ref TArea2<TUnitValue<int, PhysicalPixel>, TUnitValue<int, PhysicalPixel>> area, out TArea2<TUnitValue<int, LogicalPixel>, TUnitValue<int, LogicalPixel>> outArea);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_ElementToWidgetSpace1(IntPtr nativeInstance, ref TArea2<TUnitValue<int, LogicalPixel>, TUnitValue<int, LogicalPixel>> area, out TArea2<TUnitValue<int, PhysicalPixel>, TUnitValue<int, PhysicalPixel>> outArea);
     }
 
     /** @} */

@@ -85,9 +85,9 @@ GUILogicalArea GUIUtility::CalculateContentArea(const GUILogicalSize& layoutSize
 	return bounds;
 }
 
-Vector2I GUIUtility::CalculateTextBounds(const String& text, const HFont& font, float fontSize)
+Size2I GUIUtility::CalculateTextBounds(const String& text, const HFont& font, float fontSize)
 {
-	Vector2I size{BsZero};
+	Size2I size{BsZero};
 	if(font != nullptr)
 	{
 		B3DMarkAllocatorFrame();
@@ -95,8 +95,8 @@ Vector2I GUIUtility::CalculateTextBounds(const String& text, const HFont& font, 
 		const U32String utf32text = UTF8::ToUtF32(text);
 		TTextGeometry<FrameAllocatorTag> textData(utf32text, font, fontSize, 0, 0, false);
 
-		size.X = Math::RoundToI32(textData.GetWidth());
-		size.Y = Math::RoundToI32((float)textData.GetLineCount() * textData.GetLineHeight());
+		size.Width = Math::RoundToI32(textData.GetWidth());
+		size.Height = Math::RoundToI32((float)textData.GetLineCount() * textData.GetLineHeight());
 
 		B3DClearAllocatorFrame();
 	}

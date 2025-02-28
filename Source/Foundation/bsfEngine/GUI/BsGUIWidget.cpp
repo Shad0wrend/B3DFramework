@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIWidget.h"
+
+#include "BsGUIUtility.h"
 #include "GUI/BsGUIManager.h"
 #include "GUI/BsGUILabel.h"
 #include "GUI/BsGUIPanel.h"
@@ -159,11 +161,13 @@ void GUIWidget::UpdateLayout()
 	if(target != nullptr)
 	{
 		Rect2I area = target->GetPixelArea();
-		u32 width = area.Width;
-		u32 height = area.Height;
 
-		const Size2UI& panelSize = mPanel->GetLayoutData().Size;
-		if(panelSize.Width != width || panelSize.Height != height)
+		const GUIPhysicalSize physicalSize((i32)area.Width, (i32)area.Height);
+		const GUILogicalSize widgetSize = GUIUtility::PhysicalToLogical(physicalSize, mDPIScale);
+
+		const GUILogicalSize& panelSize = mPanel->GetLayoutData().Size;
+
+		if(panelSize.Width != widgetSize.Width || panelSize.Height != widgetSize.Height)
 		{
 			UpdateRootPanel();
 			OnOwnerTargetResized();
@@ -286,7 +290,7 @@ void GUIWidget::UpdateLayout(GUIElement* element)
 		panel->UpdateDepthRangeInternal(childLayoutData);
 
 		childLayoutData.RelativePosition = GUILogicalPoint(relativeElementArea.X, relativeElementArea.Y);
-		childLayoutData.Size = Size2UI((u32)relativeElementArea.Width, (u32)relativeElementArea.Height);
+		childLayoutData.Size = GUILogicalSize(relativeElementArea.Width, relativeElementArea.Height);
 
 		dirtyElement->SetLayoutData(childLayoutData);
 		dirtyElement->UpdateLayoutForChildren();
@@ -494,16 +498,17 @@ void GUIWidget::UpdateRootPanel()
 		return;
 
 	Rect2I area = target->GetPixelArea();
-	u32 width = area.Width;
-	u32 height = area.Height;
+
+	const GUIPhysicalSize physicalSize((i32)area.Width, (i32)area.Height);
+	const GUILogicalSize size = GUIUtility::PhysicalToLogical(physicalSize, mDPIScale);
 
 	GUILayoutData layoutData;
 	layoutData.RelativePosition = GUILogicalPoint::kZero;
-	layoutData.Size = Size2UI(width, height);
+	layoutData.Size = size;
 	layoutData.SetWidgetDepth(mDepth);
 
-	mPanel->SetWidth(width);
-	mPanel->SetHeight(height);
+	mPanel->SetWidth(size.Width);
+	mPanel->SetHeight(size.Height);
 
 	mPanel->SetLayoutData(layoutData);
 	mPanel->ResetAbsoluteBounds(mDPIScale);

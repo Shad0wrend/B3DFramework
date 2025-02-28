@@ -9,6 +9,7 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 
 namespace bs { class GUIResizableHorizontalScrollBar; }
+namespace bs { struct __GUIOptionInterop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIResizableHorizontalScrollBar : public TScriptGUIElementWrapper<GUIResizableHorizontalScrollBar, ScriptGUIResizableHorizontalScrollBar, ScriptGUIScrollBarWrapperBase>

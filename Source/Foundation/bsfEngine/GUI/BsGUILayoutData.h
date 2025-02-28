@@ -49,7 +49,7 @@ namespace bs
 		}
 
 		GUILogicalPoint RelativePosition{BsZero}; /**< Coordinates relative to the parent GUI element. Set during UpdateLayout pass. */
-		Size2UI Size; /**< Size of the GUI element in pixels. */
+		GUILogicalSize Size{BsZero}; /**< Size of the GUI element in pixels. */
 		u32 Depth = 0;
 		u16 DepthRangeMin = -1;
 		u16 DepthRangeMax = -1;

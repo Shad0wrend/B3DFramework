@@ -12,6 +12,7 @@
 
 namespace bs { class GUIListBox; }
 namespace bs { struct __GUIListBoxContentInterop; }
+namespace bs { struct __GUIOptionInterop; }
 namespace bs
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIListBox : public TScriptGUIElementWrapper<GUIListBox, ScriptGUIListBox, ScriptGUIClickableWrapperBase>

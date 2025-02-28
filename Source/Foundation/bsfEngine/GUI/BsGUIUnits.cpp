@@ -18,3 +18,8 @@ template struct B3D_EXPORT TSize2<TUnitValue<i32, LogicalPixel>>;
 template struct B3D_EXPORT TSize2<TUnitValue<float, LogicalPixel>>;
 template struct B3D_EXPORT TSize2<TUnitValue<i32, PhysicalPixel>>;
 template struct B3D_EXPORT TSize2<TUnitValue<float, PhysicalPixel>>;
+
+template struct B3D_EXPORT TArea2<TUnitValue<i32, LogicalPixel>>;
+template struct B3D_EXPORT TArea2<TUnitValue<float, LogicalPixel>>;
+template struct B3D_EXPORT TArea2<TUnitValue<i32, PhysicalPixel>>;
+template struct B3D_EXPORT TArea2<TUnitValue<float, PhysicalPixel>>;

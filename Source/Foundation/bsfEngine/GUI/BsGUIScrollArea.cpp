@@ -217,7 +217,7 @@ void GUIScrollArea::UpdateLayoutForChildren()
 			vertScrollIdx = i;
 	}
 
-	const GUILogicalSize scrollAreaSize((i32)mLayoutData.Size.Width, (i32)mLayoutData.Size.Height);
+	const GUILogicalSize scrollAreaSize = mLayoutData.Size;
 	CalculateRelativeElementAreas(scrollAreaSize, elementPositions, elementSizes, elementCount, mChildSizeRanges, mVisibleSize);
 
 	// Layout
@@ -225,7 +225,7 @@ void GUIScrollArea::UpdateLayoutForChildren()
 	{
 		GUILayoutData layoutData = mLayoutData;
 		layoutData.RelativePosition = elementPositions[layoutIdx];
-		layoutData.Size = elementSizes[layoutIdx].To<u32>();
+		layoutData.Size = elementSizes[layoutIdx];
 
 		mContentLayout->SetLayoutData(layoutData);
 		mContentLayout->UpdateLayoutForChildren();
@@ -242,15 +242,15 @@ void GUIScrollArea::UpdateLayoutForChildren()
 		layoutData.RelativePosition = elementPositions[vertScrollIdx];
 
 		if(showVerticalScrollBar)
-			layoutData.Size = elementSizes[vertScrollIdx].To<u32>();
+			layoutData.Size = elementSizes[vertScrollIdx];
 		else
-			layoutData.Size = Size2UI(0u, 0u);
+			layoutData.Size = GUILogicalSize(0, 0);
 
 		mVerticalScrollBar->SetLayoutData(layoutData);
 		mVerticalScrollBar->UpdateLayoutForChildren();
 
 		// Set new handle size and update position to match the new size
-		GUILogicalUnit scrollableHeight = Math::Max(mContentSize.Height - GUILogicalUnit((i32)layoutData.Size.Height), 0);
+		GUILogicalUnit scrollableHeight = Math::Max(mContentSize.Height - layoutData.Size.Height, 0);
 		float newScrollPct = 0.0f;
 
 		if(scrollableHeight > 0)
@@ -266,15 +266,15 @@ void GUIScrollArea::UpdateLayoutForChildren()
 		layoutData.RelativePosition = elementPositions[horzScrollIdx];
 
 		if(showHorizontalScrollBar)
-			layoutData.Size = elementSizes[horzScrollIdx].To<u32>();
+			layoutData.Size = elementSizes[horzScrollIdx];
 		else
-			layoutData.Size = Size2UI(0u, 0u);
+			layoutData.Size = GUILogicalSize(0, 0);
 
 		mHorizontalScrollBar->SetLayoutData(layoutData);
 		mHorizontalScrollBar->UpdateLayoutForChildren();
 
 		// Set new handle size and update position to match the new size
-		GUILogicalUnit scrollableWidth = Math::Max(mContentSize.Width - GUILogicalUnit((i32)layoutData.Size.Width), 0);
+		GUILogicalUnit scrollableWidth = Math::Max(mContentSize.Width - layoutData.Size.Width, 0);
 		float newScrollPct = 0.0f;
 
 		if(scrollableWidth > 0)

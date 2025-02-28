@@ -221,7 +221,9 @@ namespace bs
 	/** Checks is the provided type a TUnitValue<T, Unit> */
 	template <typename T>
 	struct B3DIsUnitValue : std::false_type
-	{};
+	{
+		using UnderlyingType = T;
+	};
 
 	/** @} */
 } // namespace bs

@@ -18,12 +18,12 @@ namespace bs
         /// <param name="x">Horizontal offset from the parent GUI panel origin, in pixels.</param>
         /// <param name="y">Vertical offset from the parent GUI panel origin, in pixels.</param>
         /// <returns>New option object that can be used for initializing a GUI element.</returns>
-        public static GUIOption Position(int x, int y)
+        public static GUIOption Position(GUILogicalUnit x, GUILogicalUnit y)
         {
             GUIOption option = new GUIOption();
-            option.min = x;
-            option.max = y;
-            option.type = GUIOptionType.Position;
+            option.mMinimum = x;
+            option.mMaximum = y;
+            option.mType = GUIOptionType.Position;
 
             return option;
         }
@@ -34,11 +34,11 @@ namespace bs
         /// </summary>
         /// <param name="width">Width in pixels.</param>
         /// <returns>New option object that can be used for initializing a GUI element.</returns>
-        public static GUIOption FixedWidth(int width)
+        public static GUIOption FixedWidth(GUILogicalUnit width)
         {
             GUIOption option = new GUIOption();
-            option.min = option.max = width;
-            option.type = GUIOptionType.FixedWidth;
+            option.mMinimum = option.mMaximum = width;
+            option.mType = GUIOptionType.FixedWidth;
 
             return option;
         }
@@ -49,11 +49,11 @@ namespace bs
         /// </summary>
         /// <param name="height">Height in pixels.</param>
         /// <returns>New option object that can be used for initializing a GUI element.</returns>
-        public static GUIOption FixedHeight(int height)
+        public static GUIOption FixedHeight(GUILogicalUnit height)
         {
             GUIOption option = new GUIOption();
-            option.min = option.max = height;
-            option.type = GUIOptionType.FixedHeight;
+            option.mMinimum = option.mMaximum = height;
+            option.mType = GUIOptionType.FixedHeight;
 
             return option;
         }
@@ -67,12 +67,12 @@ namespace bs
         /// <param name="maxWidth">Maximum width in pixels. Element will never be larger than this width. Specify zero for
         ///                        unlimited width.</param>
         /// <returns>New option object that can be used for initializing a GUI element.</returns>
-        public static GUIOption FlexibleWidth(int minWidth = 0, int maxWidth = 0)
+        public static GUIOption FlexibleWidth(GUILogicalUnit minWidth = new GUILogicalUnit(), GUILogicalUnit maxWidth = new GUILogicalUnit())
         {
             GUIOption option = new GUIOption();
-            option.min = minWidth;
-            option.max = maxWidth;
-            option.type = GUIOptionType.FlexibleWidth;
+            option.mMinimum = minWidth;
+            option.mMaximum = maxWidth;
+            option.mType = GUIOptionType.FlexibleWidth;
 
             return option;
         }
@@ -86,12 +86,12 @@ namespace bs
         /// <param name="maxHeight">Maximum height in pixels. Element will never be larger than this height. Specify zero for
         ///                          unlimited height.</param>
         /// <returns>New option object that can be used for initializing a GUI element.</returns>
-        public static GUIOption FlexibleHeight(int minHeight = 0, int maxHeight = 0)
+        public static GUIOption FlexibleHeight(GUILogicalUnit minHeight = new GUILogicalUnit(), GUILogicalUnit maxHeight = new GUILogicalUnit())
         {
             GUIOption option = new GUIOption();
-            option.min = minHeight;
-            option.max = maxHeight;
-            option.type = GUIOptionType.FlexibleHeight;
+            option.mMinimum = minHeight;
+            option.mMaximum = maxHeight;
+            option.mType = GUIOptionType.FlexibleHeight;
 
             return option;
         }
@@ -103,12 +103,12 @@ namespace bs
         /// <param name="minWidth">Minimum height in width. Element will never be smaller than this width.</param>
         /// <param name="maxWidth">Maximum height in width. Element will never be larger than this width. Specify zero for unlimited width.</param>
         /// <returns>New option object that can be used for initializing a GUI element.</returns>
-        public static GUIOption ExpandableWidth(int minWidth = 0, int maxWidth = 0)
+        public static GUIOption ExpandableWidth(GUILogicalUnit minWidth = new GUILogicalUnit(), GUILogicalUnit maxWidth = new GUILogicalUnit())
         {
             GUIOption option = new GUIOption();
-            option.min = minWidth;
-            option.max = maxWidth;
-            option.type = GUIOptionType.ExpandingWidth;
+            option.mMinimum = minWidth;
+            option.mMaximum = maxWidth;
+            option.mType = GUIOptionType.ExpandingWidth;
 
             return option;
         }
@@ -120,12 +120,12 @@ namespace bs
         /// <param name="minHeight">Minimum height in pixels. Element will never be smaller than this height.</param>
         /// <param name="maxHeight">Maximum height in pixels. Element will never be larger than this height. Specify zero for unlimited height.</param>
         /// <returns>New option object that can be used for initializing a GUI element.</returns>
-        public static GUIOption ExpandableHeight(int minHeight = 0, int maxHeight = 0)
+        public static GUIOption ExpandableHeight(GUILogicalUnit minHeight = new GUILogicalUnit(), GUILogicalUnit maxHeight = new GUILogicalUnit())
         {
             GUIOption option = new GUIOption();
-            option.min = minHeight;
-            option.max = maxHeight;
-            option.type = GUIOptionType.ExpandingHeight;
+            option.mMinimum = minHeight;
+            option.mMaximum = maxHeight;
+            option.mType = GUIOptionType.ExpandingHeight;
 
             return option;
         }

@@ -4,20 +4,42 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
+#include "BsScriptTUnitValue.generated.h"
 
 namespace bs
 {
 	ScriptGUIOption::ScriptGUIOption()
 	{ }
 
-	MonoObject* ScriptGUIOption::Box(const GUIOption& value)
+	MonoObject* ScriptGUIOption::Box(const __GUIOptionInterop& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	GUIOption ScriptGUIOption::Unbox(MonoObject* value)
+	__GUIOptionInterop ScriptGUIOption::Unbox(MonoObject* value)
 	{
-		return *(GUIOption*)MonoUtil::Unbox(value);
+		return *(__GUIOptionInterop*)MonoUtil::Unbox(value);
+	}
+
+	GUIOption ScriptGUIOption::FromInterop(const __GUIOptionInterop& value)
+	{
+		GUIOption output;
+		output.mMinimum = value.mMinimum;
+		output.mMaximum = value.mMaximum;
+		output.mType = value.mType;
+
+		return output;
+	}
+
+	__GUIOptionInterop ScriptGUIOption::ToInterop(const GUIOption& value)
+	{
+		__GUIOptionInterop output;
+		output.mMinimum = value.mMinimum;
+		output.mMaximum = value.mMaximum;
+		output.mType = value.mType;
+
+		return output;
 	}
 
 }

@@ -60,7 +60,7 @@ namespace bs
 			nativeArrayoptions.resize(scriptArrayoptions.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayoptions.Size(); elementIndex++)
 			{
-				nativeArrayoptions[elementIndex] = scriptArrayoptions.Get<GUIOption>(elementIndex);
+				nativeArrayoptions[elementIndex] = ScriptGUIOption::FromInterop(scriptArrayoptions.Get<__GUIOptionInterop>(elementIndex));
 			}
 		}
 		GUILabel* nativeObject = GUILabel::Create(tmpcontents, tmpstyleClass, nativeArrayoptions);
@@ -78,7 +78,7 @@ namespace bs
 			nativeArrayoptions.resize(scriptArrayoptions.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayoptions.Size(); elementIndex++)
 			{
-				nativeArrayoptions[elementIndex] = scriptArrayoptions.Get<GUIOption>(elementIndex);
+				nativeArrayoptions[elementIndex] = ScriptGUIOption::FromInterop(scriptArrayoptions.Get<__GUIOptionInterop>(elementIndex));
 			}
 		}
 		GUILabel* nativeObject = GUILabel::Create(tmpcontents, nativeArrayoptions);
@@ -96,7 +96,7 @@ namespace bs
 			nativeArrayoptions.resize(scriptArrayoptions.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayoptions.Size(); elementIndex++)
 			{
-				nativeArrayoptions[elementIndex] = scriptArrayoptions.Get<GUIOption>(elementIndex);
+				nativeArrayoptions[elementIndex] = ScriptGUIOption::FromInterop(scriptArrayoptions.Get<__GUIOptionInterop>(elementIndex));
 			}
 		}
 		GUILabel* nativeObject = GUILabel::Create(tmpstyleClass, nativeArrayoptions);
@@ -112,7 +112,7 @@ namespace bs
 			nativeArrayoptions.resize(scriptArrayoptions.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayoptions.Size(); elementIndex++)
 			{
-				nativeArrayoptions[elementIndex] = scriptArrayoptions.Get<GUIOption>(elementIndex);
+				nativeArrayoptions[elementIndex] = ScriptGUIOption::FromInterop(scriptArrayoptions.Get<__GUIOptionInterop>(elementIndex));
 			}
 		}
 		GUILabel* nativeObject = GUILabel::Create(nativeArrayoptions);

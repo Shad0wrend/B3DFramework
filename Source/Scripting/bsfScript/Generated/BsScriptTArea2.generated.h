@@ -9,6 +9,18 @@
 #include "../../../Foundation/bsfUtility/Math/BsArea2.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfUtility/Math/BsArea2.h"
+#include "BsScriptObjectWrapper.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
+#include "BsScriptObjectWrapper.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
+#include "BsScriptObjectWrapper.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
+#include "BsScriptObjectWrapper.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 
 namespace bs
 {
@@ -48,6 +60,98 @@ namespace bs
 
 	private:
 		ScriptTArea2_float__float_();
+
+	};
+
+	struct __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop
+	{
+		TUnitValue<int32_t, LogicalPixel> X;
+		TUnitValue<int32_t, LogicalPixel> Y;
+		TUnitValue<int32_t, LogicalPixel> Width;
+		TUnitValue<int32_t, LogicalPixel> Height;
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__ : public TScriptTypeDefinition<ScriptTArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<bs::TUnitValue<int,bs::LogicalPixel>,bs::TUnitValue<int,bs::LogicalPixel>>")
+
+		static MonoObject* Box(const __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop& value);
+		static __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop Unbox(MonoObject* value);
+		static TArea2<TUnitValue<int32_t, LogicalPixel>, TUnitValue<int32_t, LogicalPixel>> FromInterop(const __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop& value);
+		static __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop ToInterop(const TArea2<TUnitValue<int32_t, LogicalPixel>, TUnitValue<int32_t, LogicalPixel>>& value);
+
+	private:
+		ScriptTArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__();
+
+	};
+
+	struct __TArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__Interop
+	{
+		TUnitValue<float, LogicalPixel> X;
+		TUnitValue<float, LogicalPixel> Y;
+		TUnitValue<float, LogicalPixel> Width;
+		TUnitValue<float, LogicalPixel> Height;
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__ : public TScriptTypeDefinition<ScriptTArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<bs::TUnitValue<float,bs::LogicalPixel>,bs::TUnitValue<float,bs::LogicalPixel>>")
+
+		static MonoObject* Box(const __TArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__Interop& value);
+		static __TArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__Interop Unbox(MonoObject* value);
+		static TArea2<TUnitValue<float, LogicalPixel>, TUnitValue<float, LogicalPixel>> FromInterop(const __TArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__Interop& value);
+		static __TArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__Interop ToInterop(const TArea2<TUnitValue<float, LogicalPixel>, TUnitValue<float, LogicalPixel>>& value);
+
+	private:
+		ScriptTArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__();
+
+	};
+
+	struct __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop
+	{
+		TUnitValue<int32_t, PhysicalPixel> X;
+		TUnitValue<int32_t, PhysicalPixel> Y;
+		TUnitValue<int32_t, PhysicalPixel> Width;
+		TUnitValue<int32_t, PhysicalPixel> Height;
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__ : public TScriptTypeDefinition<ScriptTArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<bs::TUnitValue<int,bs::PhysicalPixel>,bs::TUnitValue<int,bs::PhysicalPixel>>")
+
+		static MonoObject* Box(const __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop& value);
+		static __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop Unbox(MonoObject* value);
+		static TArea2<TUnitValue<int32_t, PhysicalPixel>, TUnitValue<int32_t, PhysicalPixel>> FromInterop(const __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop& value);
+		static __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop ToInterop(const TArea2<TUnitValue<int32_t, PhysicalPixel>, TUnitValue<int32_t, PhysicalPixel>>& value);
+
+	private:
+		ScriptTArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__();
+
+	};
+
+	struct __TArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__Interop
+	{
+		TUnitValue<float, PhysicalPixel> X;
+		TUnitValue<float, PhysicalPixel> Y;
+		TUnitValue<float, PhysicalPixel> Width;
+		TUnitValue<float, PhysicalPixel> Height;
+	};
+
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__ : public TScriptTypeDefinition<ScriptTArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__>
+	{
+	public:
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<bs::TUnitValue<float,bs::PhysicalPixel>,bs::TUnitValue<float,bs::PhysicalPixel>>")
+
+		static MonoObject* Box(const __TArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__Interop& value);
+		static __TArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__Interop Unbox(MonoObject* value);
+		static TArea2<TUnitValue<float, PhysicalPixel>, TUnitValue<float, PhysicalPixel>> FromInterop(const __TArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__Interop& value);
+		static __TArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__Interop ToInterop(const TArea2<TUnitValue<float, PhysicalPixel>, TUnitValue<float, PhysicalPixel>>& value);
+
+	private:
+		ScriptTArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__();
 
 	};
 }

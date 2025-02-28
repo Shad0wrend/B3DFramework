@@ -325,7 +325,7 @@ void GUILayoutY::UpdateLayoutForChildren()
 		elementSizes = B3DStackNew<GUILogicalSize>(elementCount);
 	}
 
-	GetChildRelativeLayoutAreas(mLayoutData.Size.To<GUILogicalUnit>(), elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
+	GetChildRelativeLayoutAreas(mLayoutData.Size, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
 
 	// Now that we have all the areas, actually assign them
 	u32 childIdx = 0;
@@ -336,7 +336,7 @@ void GUILayoutY::UpdateLayoutForChildren()
 		if(child->IsActive())
 		{
 			childData.RelativePosition = elementPositions[childIdx];
-			childData.Size = elementSizes[childIdx].To<u32>();
+			childData.Size = elementSizes[childIdx];
 
 			child->SetLayoutData(childData);
 			child->UpdateLayoutForChildren();

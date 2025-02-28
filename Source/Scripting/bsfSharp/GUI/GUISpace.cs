@@ -26,6 +26,17 @@ namespace bs
         }
 
         /// <summary>
+        /// Creates a new fixed space.
+        /// </summary>
+        /// <param name="size">Size of the space in pixels. This will represent either width or height depending whether the
+        ///                    layout is vertical or horizontal.</param>
+        public GUIFixedSpace(GUILogicalUnit size)
+        {
+            size = GUILogicalUnit.Max(0, size);
+            Internal_CreateInstance1(this, ref size);
+        }
+
+        /// <summary>
         /// Changes the size of the space.
         /// </summary>
         /// <param name="size">Size of the space in pixels. This will represent either width or height depending whether the
@@ -36,11 +47,28 @@ namespace bs
             Internal_SetSize(mCachedPtr, size);
         }
 
+        /// <summary>
+        /// Changes the size of the space.
+        /// </summary>
+        /// <param name="size">Size of the space in pixels. This will represent either width or height depending whether the
+        /// layout is vertical or horizontal.</param>
+        public void SetSize(GUILogicalUnit size)
+        {
+            size = GUILogicalUnit.Max(0, size);
+            Internal_SetSize1(mCachedPtr, ref size);
+        }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_CreateInstance(GUIFixedSpace instance, int size);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_CreateInstance1(GUIFixedSpace instance, ref GUILogicalUnit size);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_SetSize(IntPtr nativeInstance, int size);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern void Internal_SetSize1(IntPtr nativeInstance, ref GUILogicalUnit size);
     }
 
     /// <summary>

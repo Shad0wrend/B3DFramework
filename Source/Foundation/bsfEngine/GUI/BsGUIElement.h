@@ -127,7 +127,10 @@ namespace bs
 		void SetFlexibleHeight(u32 minHeight = 0, u32 maxHeight = 0);
 
 		/** Sets fixed width and height of a GUI element. Values provided should be in logical pixel units. */
-		void SetSize(u32 width, u32 height);
+		void SetSize(u32 width, u32 height); // TODO - Deprecated
+
+		/** Sets fixed width and height of a GUI element. Values provided should be in logical pixel units. */
+		void SetSize(const GUILogicalSize& size);
 
 		/**	Resets element size constraints to their initial values dictated by the element's style. */
 		virtual void ResetSizeConstraints();
@@ -155,7 +158,7 @@ namespace bs
 		 * Always returns value calculated by last layout update. This means out of date value may be returned if the
 		 * layout has been dirtied since then.
 		 */
-		Size2UI GetLayoutCalculatedSize() const { return mLayoutData.Size; }
+		const GUILogicalSize& GetLayoutCalculatedSize() const { return mLayoutData.Size; }
 
 		/**
 		 * Returns width/height of the GUI element. This will be the fixed width/height if set by the user, or automatically
@@ -213,6 +216,18 @@ namespace bs
 		 * layout has been dirtied since then.
 		 */
 		Rect2I GetAbsoluteBounds() const { return Rect2I(mAbsolutePosition, mAbsoluteSize); }
+
+		/** Converts a point relative to the parent widget, into a point relative to this element. */
+		GUILogicalPoint WidgetToElementSpace(const GUIPhysicalPoint& point) const;
+
+		/** Converts a point relative to this element, into a point relative to the parent widget. */
+		GUIPhysicalPoint ElementToWidgetSpace(const GUILogicalPoint& point) const;
+
+		/** Converts an area relative to the parent widget, into an area relative to this element. */
+		GUILogicalArea WidgetToElementSpace(const GUIPhysicalArea& area) const;
+
+		/** Converts an area relative to this element, into an area relative to the parent widget. */
+		GUIPhysicalArea ElementToWidgetSpace(const GUILogicalArea& area) const;
 
 		/**
 		 * Returns the position of the GUI element, relative to the parent widget. Absolute values represent the final

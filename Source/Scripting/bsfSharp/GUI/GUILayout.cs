@@ -134,6 +134,20 @@ namespace bs
         /// <param name="size">Size of the space in pixels. This will represent either width or height depending whether the
         ///                    layout is vertical or horizontal.</param>
         /// <returns>Newly created fixed space.</returns>
+        public GUIFixedSpace AddSpace(GUILogicalUnit size)
+        {
+            GUIFixedSpace space = new GUIFixedSpace(size);
+            AddElement(space);
+            return space;
+        }
+
+        /// <summary>
+        /// Adds a new fixed space object. Fixed space inserts a blank space with specific
+        /// width or height (depending on layout type) in the layout. Space is inserted after all existing elements.
+        /// </summary>
+        /// <param name="size">Size of the space in pixels. This will represent either width or height depending whether the
+        ///                    layout is vertical or horizontal.</param>
+        /// <returns>Newly created fixed space.</returns>
         public GUIFixedSpace AddSpace(int size)
         {
             GUIFixedSpace space = new GUIFixedSpace(size);

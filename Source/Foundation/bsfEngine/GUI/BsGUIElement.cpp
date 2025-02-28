@@ -8,6 +8,7 @@
 #include "Error/BsException.h"
 #include "GUI/BsGUIWidget.h"
 #include "BsGUIManager.h"
+#include "BsGUIUtility.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 #include "Reflection/BsRTTIType.h"
 
@@ -53,13 +54,18 @@ void GUIElement::SetPosition(const GUILogicalPoint& position)
 
 void GUIElement::SetSize(u32 width, u32 height)
 {
+	SetSize(GUILogicalSize(width, height));
+}
+
+void GUIElement::SetSize(const GUILogicalSize& size)
+{
 	const bool isFixedBefore = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
 	mSizeConstraints.Flags |= GUISizeConstraintFlag::FixedWidth | GUISizeConstraintFlag::WidthOverridenAtRuntime | GUISizeConstraintFlag::FixedHeight | GUISizeConstraintFlag::HeightOverridenAtRuntime;
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::ExpandingWidth);
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::ExpandingHeight);
-	mSizeConstraints.MinimumWidth = mSizeConstraints.MaximumWidth = GUILogicalUnit((i32)width);
-	mSizeConstraints.MinimumHeight = mSizeConstraints.MaximumHeight = GUILogicalUnit((i32)height);
+	mSizeConstraints.MinimumWidth = mSizeConstraints.MaximumWidth = size.Width;
+	mSizeConstraints.MinimumHeight = mSizeConstraints.MaximumHeight = size.Height;
 
 	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
@@ -162,7 +168,7 @@ Size2UI GUIElement::CalculateSizeInLayout() const
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsLayoutDirty() && mParentWidget != nullptr)
 		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 
-	return GetLayoutCalculatedSize();
+	return GetLayoutCalculatedSize().To<u32>();
 }
 
 GUILogicalPoint GUIElement::CalculatePositionRelativeTo(GUIElement* relativeTo) const
@@ -251,6 +257,34 @@ Rect2I GUIElement::CalculateScreenBounds() const
 	}
 
 	return area;
+}
+
+GUILogicalPoint GUIElement::WidgetToElementSpace(const GUIPhysicalPoint& point) const
+{
+	const GUIPhysicalPoint physicalRelativePoint = point - GetAbsolutePosition().To<GUIPhysicalUnit>();
+	return GUIUtility::PhysicalToLogical(physicalRelativePoint, GetAbsoluteScale());
+}
+
+GUIPhysicalPoint GUIElement::ElementToWidgetSpace(const GUILogicalPoint& point) const
+{
+	const GUIPhysicalPoint physicalRelativePoint = GUIUtility::LogicalToPhysical(point, GetAbsoluteScale());
+	return GetAbsolutePosition().To<GUIPhysicalUnit>() + physicalRelativePoint;
+}
+
+GUILogicalArea GUIElement::WidgetToElementSpace(const GUIPhysicalArea& area) const
+{
+	const GUIPhysicalPoint point = area.GetPosition();
+	const GUIPhysicalSize size = area.GetSize();
+
+	return GUILogicalArea(WidgetToElementSpace(point), GUIUtility::PhysicalToLogical(size, GetAbsoluteScale()));
+}
+
+GUIPhysicalArea GUIElement::ElementToWidgetSpace(const GUILogicalArea& area) const
+{
+	const GUILogicalPoint point = area.GetPosition();
+	const GUILogicalSize size = area.GetSize();
+
+	return GUIPhysicalArea(ElementToWidgetSpace(point), GUIUtility::LogicalToPhysical(size, GetAbsoluteScale()));
 }
 
 void GUIElement::MarkAsClean()
@@ -546,7 +580,7 @@ void GUIElement::UpdateAbsoluteCoordinates(const Vector2I& parentOrigin, float p
 {
 	mAbsoluteScale = mScale * parentScale;
 
-	mAbsolutePosition = (mLayoutData.RelativePosition.To<i32>().To<float>() * mAbsoluteScale).To<i32>() + parentOrigin;
+	mAbsolutePosition = (mLayoutData.RelativePosition.To<i32>().To<float>() * parentScale).To<i32>() + parentOrigin;
 	mAbsoluteSize = (mLayoutData.Size.To<float>() * mAbsoluteScale).To<u32>();
 
 	mAbsoluteClippedArea = Rect2I(mAbsolutePosition, mAbsoluteSize);

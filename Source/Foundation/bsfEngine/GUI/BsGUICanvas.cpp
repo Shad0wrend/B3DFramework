@@ -19,8 +19,8 @@ const String& GUICanvas::GetGuiTypeName()
 	return name;
 }
 
-GUICanvas::GUICanvas(const String& styleName, const GUISizeConstraints& dimensions)
-	: GUIInteractable(styleName, dimensions)
+GUICanvas::GUICanvas(PrivatelyConstruct, const String& styleName, const GUISizeConstraints& sizeConstraints)
+	: GUIInteractable(styleName, sizeConstraints)
 {}
 
 GUICanvas::~GUICanvas()
@@ -28,22 +28,12 @@ GUICanvas::~GUICanvas()
 	Clear();
 }
 
-GUICanvas* GUICanvas::Create(const GUIOptions& options, const String& styleName)
-{
-	return new(B3DAllocate<GUICanvas>()) GUICanvas(GetStyleClass<GUICanvas>(styleName), GUISizeConstraints::Create(options));
-}
-
-GUICanvas* GUICanvas::Create(const String& styleName)
-{
-	return new(B3DAllocate<GUICanvas>()) GUICanvas(GetStyleClass<GUICanvas>(styleName), GUISizeConstraints::Create());
-}
-
-void GUICanvas::DrawLine(const Vector2I& a, const Vector2I& b, const Color& color, u8 depth)
+void GUICanvas::DrawLine(const GUILogicalPoint& a, const GUILogicalPoint& b, const Color& color, u8 depth)
 {
 	DrawPolyLine({ a, b }, color, depth);
 }
 
-void GUICanvas::DrawPolyLine(const Vector<Vector2I>& vertices, const Color& color, u8 depth)
+void GUICanvas::DrawPolyLine(const Vector<GUILogicalPoint>& vertices, const Color& color, u8 depth)
 {
 	if(vertices.size() < 2)
 		return;
@@ -67,8 +57,8 @@ void GUICanvas::DrawPolyLine(const Vector<Vector2I>& vertices, const Color& colo
 
 	for(auto& vertex : vertices)
 	{
-		Vector2 point = Vector2((float)vertex.X, (float)vertex.Y);
-		point += Vector2(0.5f, 0.5f); // Offset to the middle of the pixel
+		GUILogicalPointF point = GUILogicalPointF((float)vertex.X, (float)vertex.Y);
+		point += GUILogicalPointF(0.5f, 0.5f); // Offset to the middle of the pixel
 
 		mVertexData.push_back(point);
 	}
@@ -77,7 +67,7 @@ void GUICanvas::DrawPolyLine(const Vector<Vector2I>& vertices, const Color& colo
 	MarkContentAsDirty();
 }
 
-void GUICanvas::DrawImage(const HSpriteImage& image, const Rect2I& area, TextureScaleMode scaleMode, const Color& color, u8 depth)
+void GUICanvas::DrawImage(const HSpriteImage& image, const GUILogicalArea& area, const Color& color, TextureScaleMode scaleMode, u8 depth)
 {
 	mElements.push_back(CanvasElement());
 	CanvasElement& element = mElements.back();
@@ -95,7 +85,7 @@ void GUICanvas::DrawImage(const HSpriteImage& image, const Rect2I& area, Texture
 	MarkContentAsDirty();
 }
 
-void GUICanvas::DrawTriangleStrip(const Vector<Vector2I>& vertices, const Color& color, u8 depth)
+void GUICanvas::DrawTriangleStrip(const Vector<GUILogicalPoint>& vertices, const Color& color, u8 depth)
 {
 	if(vertices.size() < 3)
 	{
@@ -120,15 +110,15 @@ void GUICanvas::DrawTriangleStrip(const Vector<Vector2I>& vertices, const Color&
 	{
 		if(i % 2 == 0)
 		{
-			mVertexData.push_back(Vector2((float)vertices[i - 2].X + 0.5f, (float)vertices[i - 2].Y + 0.5f));
-			mVertexData.push_back(Vector2((float)vertices[i - 1].X + 0.5f, (float)vertices[i - 1].Y + 0.5f));
-			mVertexData.push_back(Vector2((float)vertices[i - 0].X + 0.5f, (float)vertices[i - 0].Y + 0.5f));
+			mVertexData.push_back(GUILogicalPointF((float)vertices[i - 2].X + 0.5f, (float)vertices[i - 2].Y + 0.5f));
+			mVertexData.push_back(GUILogicalPointF((float)vertices[i - 1].X + 0.5f, (float)vertices[i - 1].Y + 0.5f));
+			mVertexData.push_back(GUILogicalPointF((float)vertices[i - 0].X + 0.5f, (float)vertices[i - 0].Y + 0.5f));
 		}
 		else
 		{
-			mVertexData.push_back(Vector2((float)vertices[i - 0].X + 0.5f, (float)vertices[i - 0].Y + 0.5f));
-			mVertexData.push_back(Vector2((float)vertices[i - 1].X + 0.5f, (float)vertices[i - 1].Y + 0.5f));
-			mVertexData.push_back(Vector2((float)vertices[i - 2].X + 0.5f, (float)vertices[i - 2].Y + 0.5f));
+			mVertexData.push_back(GUILogicalPointF((float)vertices[i - 0].X + 0.5f, (float)vertices[i - 0].Y + 0.5f));
+			mVertexData.push_back(GUILogicalPointF((float)vertices[i - 1].X + 0.5f, (float)vertices[i - 1].Y + 0.5f));
+			mVertexData.push_back(GUILogicalPointF((float)vertices[i - 2].X + 0.5f, (float)vertices[i - 2].Y + 0.5f));
 		}
 	}
 
@@ -141,7 +131,7 @@ void GUICanvas::DrawTriangleStrip(const Vector<Vector2I>& vertices, const Color&
 	MarkContentAsDirty();
 }
 
-void GUICanvas::DrawTriangleList(const Vector<Vector2I>& vertices, const Color& color, u8 depth)
+void GUICanvas::DrawTriangleList(const Vector<GUILogicalPoint>& vertices, const Color& color, u8 depth)
 {
 	if(vertices.size() < 3 || vertices.size() % 3 != 0)
 	{
@@ -162,7 +152,7 @@ void GUICanvas::DrawTriangleList(const Vector<Vector2I>& vertices, const Color& 
 	mDepthRange = std::max(mDepthRange, (u8)(depth + 1));
 
 	for(auto& vertex : vertices)
-		mVertexData.push_back(Vector2((float)vertex.X + 0.5f, (float)vertex.Y + 0.5f));
+		mVertexData.push_back(GUILogicalPointF((float)vertex.X + 0.5f, (float)vertex.Y + 0.5f));
 
 	mTriangleElementData.push_back(TriangleElementData());
 	TriangleElementData& elemData = mTriangleElementData.back();
@@ -173,7 +163,7 @@ void GUICanvas::DrawTriangleList(const Vector<Vector2I>& vertices, const Color& 
 	MarkContentAsDirty();
 }
 
-void GUICanvas::DrawText(const String& text, const Vector2I& position, const HFont& font, float size, const Color& color, u8 depth)
+void GUICanvas::DrawText(const String& text, const GUILogicalPoint& position, const HFont& font, float size, const Color& color, u8 depth)
 {
 	mElements.push_back(CanvasElement());
 	CanvasElement& element = mElements.back();
@@ -219,7 +209,7 @@ void GUICanvas::UpdateRenderElements()
 {
 	Vector2 offset((float)mAbsolutePosition.X, (float)mAbsolutePosition.Y);
 	Rect2I clipRect = GetLocalClippedArea();
-	BuildAllTriangleElementsIfDirty(offset, clipRect);
+	BuildAllTriangleElementsIfDirty(offset, mAbsoluteScale, clipRect);
 
 	mRenderElements.Clear();
 	for(auto& element : mElements)
@@ -326,7 +316,7 @@ void GUICanvas::FillBuffer(
 	Rect2I clipRect = GetLocalClippedArea();
 
 	Vector2 floatOffset((float)layoutOffset.X, (float)layoutOffset.Y);
-	BuildAllTriangleElementsIfDirty(floatOffset, clipRect);
+	BuildAllTriangleElementsIfDirty(floatOffset, mAbsoluteScale, clipRect);
 
 	const CanvasElement& element = FindElement(renderElementIdx);
 	renderElementIdx -= element.RenderElemStart;
@@ -336,12 +326,12 @@ void GUICanvas::FillBuffer(
 	case CanvasElementType::Image:
 		{
 			u32 vertexStride = sizeof(Vector2) * 2;
-			const Rect2I& area = mImageData[element.DataId].Area;
+			const GUILogicalArea& area = mImageData[element.DataId].Area;
 
-			layoutOffset.X += area.X;
-			layoutOffset.Y += area.Y;
-			clipRect.X -= area.X;
-			clipRect.Y -= area.Y;
+			layoutOffset.X += (i32)area.X;
+			layoutOffset.Y += (i32)area.Y;
+			clipRect.X -= (i32)area.X;
+			clipRect.Y -= (i32)area.Y;
 
 			element.ImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, renderElementIdx, layoutOffset, clipRect);
 		}
@@ -349,10 +339,10 @@ void GUICanvas::FillBuffer(
 	case CanvasElementType::Text:
 		{
 			u32 vertexStride = sizeof(Vector2) * 2;
-			const Vector2I& position = mTextData[element.DataId].Position;
-			layoutOffset += position;
-			clipRect.X -= position.X;
-			clipRect.Y -= position.Y;
+			const GUILogicalPoint& position = mTextData[element.DataId].Position;
+			layoutOffset += position.To<i32>();
+			clipRect.X -= (i32)position.X;
+			clipRect.Y -= (i32)position.Y;
 
 			element.TextSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride, indexStride, renderElementIdx, layoutOffset, clipRect);
 		}
@@ -429,8 +419,8 @@ void GUICanvas::BuildImageElement(const CanvasElement& element)
 	const ImageElementData& imageData = mImageData[element.DataId];
 
 	ImageSpriteInformation desc;
-	desc.Width = imageData.Area.Width;
-	desc.Height = imageData.Area.Height;
+	desc.Width = (u32)imageData.Area.Width;
+	desc.Height = (u32)imageData.Area.Height;
 
 	desc.Transparent = true;
 	desc.Color = element.Color;
@@ -464,7 +454,7 @@ void GUICanvas::BuildTextElement(const CanvasElement& element)
 	element.TextSprite->Update(desc, (u64)GetParentWidget());
 }
 
-void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2& offset, const Rect2I& clipRect) const
+void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2& offset, float scale, const Rect2I& clipRect) const
 {
 	B3D_ASSERT(element.Type == CanvasElementType::Triangle || element.Type == CanvasElementType::Line);
 
@@ -476,7 +466,7 @@ void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2
 		auto writeCallback = [&](Vector2* vertices, Vector2* uvs, u32 count)
 		{
 			for(u32 i = 0; i < count; i++)
-				mClippedVertices.push_back(vertices[i] + offset);
+				mClippedVertices.push_back((vertices[i] * scale) + offset);
 
 			element.ClippedVertexCount += count;
 		};
@@ -489,7 +479,7 @@ void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2
 	else
 	{
 		u32 numLines = element.VertexCount - 1;
-		const Vector2* linePoints = &mVertexData[element.VertexStart];
+		const GUILogicalPointF* linePoints = &mVertexData[element.VertexStart];
 
 		struct Plane2D
 		{
@@ -511,15 +501,15 @@ void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2
 
 		for(u32 i = 0; i < numLines; i++)
 		{
-			Vector2 a = linePoints[i];
-			Vector2 b = linePoints[i + 1];
+			GUILogicalPointF a = linePoints[i];
+			GUILogicalPointF b = linePoints[i + 1];
 
 			bool isVisible = true;
 			for(u32 j = 0; j < (u32)clipPlanes.size(); j++)
 			{
 				const Plane2D& plane = clipPlanes[j];
-				float d0 = plane.Normal.Dot(a) - plane.D;
-				float d1 = plane.Normal.Dot(b) - plane.D;
+				float d0 = plane.Normal.Dot(a.To<float>()) - plane.D;
+				float d1 = plane.Normal.Dot(b.To<float>()) - plane.D;
 
 				// Line not visible
 				if(d0 <= 0 && d1 <= 0)
@@ -534,7 +524,7 @@ void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2
 
 				// The line is split by the plane, compute the point of intersection.
 				float t = d0 / (d0 - d1);
-				Vector2 intersectPt = (1 - t) * a + t * b;
+				GUILogicalPointF intersectPt = (1 - t) * a + t * b;
 
 				if(d0 > 0)
 					b = intersectPt;
@@ -545,15 +535,15 @@ void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2
 			if(!isVisible)
 				continue;
 
-			mClippedLineVertices.push_back(a + offset);
-			mClippedLineVertices.push_back(b + offset);
+			mClippedLineVertices.push_back(a.To<float>() * scale + offset);
+			mClippedLineVertices.push_back(b.To<float>() * scale + offset);
 
 			element.ClippedVertexCount += 2;
 		}
 	}
 }
 
-void GUICanvas::BuildAllTriangleElementsIfDirty(const Vector2& offset, const Rect2I& clipRect) const
+void GUICanvas::BuildAllTriangleElementsIfDirty(const Vector2& offset, float scale, const Rect2I& clipRect) const
 {
 	// We need to rebuild if new triangle element(s) were added, or if offset or clip rectangle changed
 	bool isDirty = mForceTriangleBuild || (mLastOffset != offset) || (mLastClipRect != clipRect);
@@ -567,7 +557,7 @@ void GUICanvas::BuildAllTriangleElementsIfDirty(const Vector2& offset, const Rec
 		if(element.Type != CanvasElementType::Triangle && element.Type != CanvasElementType::Line)
 			continue;
 
-		BuildTriangleElement(element, offset, clipRect);
+		BuildTriangleElement(element, offset, scale, clipRect);
 	}
 
 	mLastOffset = offset;

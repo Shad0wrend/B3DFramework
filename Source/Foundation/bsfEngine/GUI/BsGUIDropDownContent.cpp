@@ -389,16 +389,16 @@ GUILogicalSize GUIDropDownContent::CalculateUnconstrainedOptimalSize() const
 void GUIDropDownContent::UpdateLayoutForChildren()
 {
 	GUILayoutData childData = mLayoutData;
-	i32 yOffset = 0;
+	GUILogicalUnit yOffset = 0;
 
 	for(auto& visibleElement : mVisibleElements)
 	{
 		const GUIDropDownDataEntry& element = mDropDownData.Entries[visibleElement.SequentialIndex];
 
 		childData.RelativePosition = GUILogicalPoint(0, yOffset);
-		childData.Size.Height = (u32)GetElementHeight(visibleElement.SequentialIndex);
+		childData.Size.Height = GetElementHeight(visibleElement.SequentialIndex);
 
-		yOffset += (i32)childData.Size.Height;
+		yOffset += childData.Size.Height;
 
 		if(element.IsSeparator())
 		{

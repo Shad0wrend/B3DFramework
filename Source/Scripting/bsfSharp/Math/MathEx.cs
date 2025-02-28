@@ -1,6 +1,7 @@
 ﻿//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 using System;
+using System.Numerics;
 
 namespace bs
 {
@@ -532,25 +533,7 @@ namespace bs
         /// <param name="max">Maximum value of the range to clamp. Must be higher than <paramref name="min"/></param>
         /// <returns>Returns unchanged value if it is in valid range, otherwise returns value clamped to the range
         /// extremes. </returns>
-        public static float Clamp(float value, float min, float max)
-        {
-            if (value < min)
-                value = min;
-            else if (value > max)
-                value = max;
-
-            return value;
-        }
-
-        /// <summary>
-        /// Clamps a value between two other values.
-        /// </summary>
-        /// <param name="value">Value to clamp.</param>
-        /// <param name="min">Minimum value of the range to clamp. Must be lower than <paramref name="max"/></param>
-        /// <param name="max">Maximum value of the range to clamp. Must be higher than <paramref name="min"/></param>
-        /// <returns>Returns unchanged value if it is in valid range, otherwise returns value clamped to the range
-        /// extremes. </returns>
-        public static int Clamp(int value, int min, int max)
+        public static T Clamp<T>(T value, T min, T max) where T : INumber<T>
         {
             if (value < min)
                 value = min;

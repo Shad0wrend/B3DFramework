@@ -21,16 +21,16 @@ namespace bs
 		public static GUIOption Default()
 		{
 			GUIOption value = new GUIOption();
-			value.min = 0;
-			value.max = 0;
-			value.type = GUIOptionType.FixedWidth;
+			value.mMinimum = new TUnitValue<int,LogicalPixel>(0);
+			value.mMaximum = new TUnitValue<int,LogicalPixel>(0);
+			value.mType = GUIOptionType.FixedWidth;
 
 			return value;
 		}
 
-		public int min;
-		public int max;
-		public GUIOptionType type;
+		public TUnitValue<int,LogicalPixel> mMinimum;
+		public TUnitValue<int,LogicalPixel> mMaximum;
+		public GUIOptionType mType;
 	}
 
 	/** @} */

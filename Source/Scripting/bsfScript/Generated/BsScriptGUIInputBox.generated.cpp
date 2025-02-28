@@ -96,7 +96,7 @@ namespace bs
 			nativeArrayoptions.resize(scriptArrayoptions.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayoptions.Size(); elementIndex++)
 			{
-				nativeArrayoptions[elementIndex] = scriptArrayoptions.Get<GUIOption>(elementIndex);
+				nativeArrayoptions[elementIndex] = ScriptGUIOption::FromInterop(scriptArrayoptions.Get<__GUIOptionInterop>(elementIndex));
 			}
 		}
 		GUIInputBox* nativeObject = GUIInputBox::Create(*contents, tmpstyleClass, nativeArrayoptions);
@@ -112,7 +112,7 @@ namespace bs
 			nativeArrayoptions.resize(scriptArrayoptions.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayoptions.Size(); elementIndex++)
 			{
-				nativeArrayoptions[elementIndex] = scriptArrayoptions.Get<GUIOption>(elementIndex);
+				nativeArrayoptions[elementIndex] = ScriptGUIOption::FromInterop(scriptArrayoptions.Get<__GUIOptionInterop>(elementIndex));
 			}
 		}
 		GUIInputBox* nativeObject = GUIInputBox::Create(*contents, nativeArrayoptions);
@@ -130,7 +130,7 @@ namespace bs
 			nativeArrayoptions.resize(scriptArrayoptions.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayoptions.Size(); elementIndex++)
 			{
-				nativeArrayoptions[elementIndex] = scriptArrayoptions.Get<GUIOption>(elementIndex);
+				nativeArrayoptions[elementIndex] = ScriptGUIOption::FromInterop(scriptArrayoptions.Get<__GUIOptionInterop>(elementIndex));
 			}
 		}
 		GUIInputBox* nativeObject = GUIInputBox::Create(tmpstyleClass, nativeArrayoptions);
@@ -146,7 +146,7 @@ namespace bs
 			nativeArrayoptions.resize(scriptArrayoptions.Size());
 			for(int elementIndex = 0; elementIndex < (int)scriptArrayoptions.Size(); elementIndex++)
 			{
-				nativeArrayoptions[elementIndex] = scriptArrayoptions.Get<GUIOption>(elementIndex);
+				nativeArrayoptions[elementIndex] = ScriptGUIOption::FromInterop(scriptArrayoptions.Get<__GUIOptionInterop>(elementIndex));
 			}
 		}
 		GUIInputBox* nativeObject = GUIInputBox::Create(nativeArrayoptions);

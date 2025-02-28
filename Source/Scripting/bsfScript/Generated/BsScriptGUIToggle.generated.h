@@ -9,6 +9,7 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIToggleable.h"
 
+namespace bs { struct __GUIOptionInterop; }
 namespace bs { class GUIToggle; }
 namespace bs { struct __GUIToggleContentInterop; }
 namespace bs

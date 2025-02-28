@@ -5,16 +5,27 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 
 namespace bs
 {
+	struct __GUIOptionInterop
+	{
+		TUnitValue<int32_t, LogicalPixel> mMinimum;
+		TUnitValue<int32_t, LogicalPixel> mMaximum;
+		GUIOptionType mType;
+	};
+
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIOption : public TScriptTypeDefinition<ScriptGUIOption>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "GUIOption")
 
-		static MonoObject* Box(const GUIOption& value);
-		static GUIOption Unbox(MonoObject* value);
+		static MonoObject* Box(const __GUIOptionInterop& value);
+		static __GUIOptionInterop Unbox(MonoObject* value);
+		static GUIOption FromInterop(const __GUIOptionInterop& value);
+		static __GUIOptionInterop ToInterop(const GUIOption& value);
 
 	private:
 		ScriptGUIOption();

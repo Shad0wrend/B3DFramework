@@ -220,7 +220,7 @@ void GUIPanel::UpdateLayoutForChildren()
 		elementSizes = B3DStackNew<GUILogicalSize>(elementCount);
 	}
 
-	GetChildRelativeLayoutAreas(mLayoutData.Size.To<GUILogicalUnit>(), elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes);
+	GetChildRelativeLayoutAreas(mLayoutData.Size, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes);
 
 	u32 childIdx = 0;
 
@@ -229,7 +229,7 @@ void GUIPanel::UpdateLayoutForChildren()
 		if(child->IsActive())
 		{
 			childData.RelativePosition = elementPositions[childIdx];
-			childData.Size = elementSizes[childIdx].To<u32>();
+			childData.Size = elementSizes[childIdx];
 
 			child->SetLayoutData(childData);
 			child->UpdateLayoutForChildren();

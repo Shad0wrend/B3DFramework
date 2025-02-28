@@ -23,7 +23,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIUtility::InternalCalculateTextBounds(MonoString* text, MonoObject* font, float fontSize, TVector2<int32_t>* __output)
+	void ScriptGUIUtility::InternalCalculateTextBounds(MonoString* text, MonoObject* font, float fontSize, TSize2<int32_t>* __output)
 	{
 		String tmptext;
 		tmptext = MonoUtil::MonoToString(text);
@@ -32,7 +32,7 @@ namespace bs
 		scriptObjectWrapperfont = ScriptRRefBase::GetScriptObjectWrapper(font);
 		if(scriptObjectWrapperfont != nullptr)
 			tmpfont = B3DStaticResourceCast<Font>(scriptObjectWrapperfont->GetNativeObject());
-		TVector2<int32_t> tmp__output;
+		TSize2<int32_t> tmp__output;
 		tmp__output = GUIUtility::CalculateTextBounds(tmptext, tmpfont, fontSize);
 
 		*__output = tmp__output;

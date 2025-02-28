@@ -164,6 +164,9 @@ namespace bs
         public static TUnitValue<T, Unit> MinMagnitude(TUnitValue<T, Unit> x, TUnitValue<T, Unit> y) => new(T.MinMagnitude(x.Value, y.Value));
         public static TUnitValue<T, Unit> MinMagnitudeNumber(TUnitValue<T, Unit> x, TUnitValue<T, Unit> y) => new(T.MinMagnitudeNumber(x.Value, y.Value));
 
+        public static TUnitValue<T, Unit> Max(TUnitValue<T, Unit> x, TUnitValue<T, Unit> y) => new(T.Max(x.Value, y.Value));
+        public static TUnitValue<T, Unit> Min(TUnitValue<T, Unit> x, TUnitValue<T, Unit> y) => new(T.Min(x.Value, y.Value));
+
         public static bool TryConvertFromChecked<TOther>(TOther value, out TUnitValue<T, Unit> result) where TOther : INumberBase<TOther>
         {
             bool returnValue;
