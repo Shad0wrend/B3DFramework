@@ -19,10 +19,10 @@ GUIInputCaret::~GUIInputCaret()
 	B3DDelete(mCaretSprite);
 }
 
-Rect2I GUIInputCaret::GetBounds() const
+Area2I GUIInputCaret::GetBounds() const
 {
 	const GUIPhysicalPoint caretPosition = GetCaretPosition();
-	return Rect2I((i32)caretPosition.X, (i32)caretPosition.Y, 1, (i32)GetCaretHeight());
+	return Area2I((i32)caretPosition.X, (i32)caretPosition.Y, 1, (i32)GetCaretHeight());
 }
 
 void GUIInputCaret::UpdateSprite()
@@ -117,7 +117,7 @@ void GUIInputCaret::MoveCaretToPos(const GUIPhysicalPoint& pos)
 
 	if(charIdx != -1)
 	{
-		Rect2I charRect = GetCharacterBounds(charIdx);
+		Area2I charRect = GetCharacterBounds(charIdx);
 
 		float xCenter = (float)charRect.X + (float)charRect.Width * 0.5f;
 		if((float)pos.X <= xCenter)
@@ -233,7 +233,7 @@ GUIPhysicalPoint GUIInputCaret::GetCaretPosition() const
 
 		charIdx = std::min((u32)(mNumChars - 1), charIdx);
 
-		Rect2I charRect = GetCharacterBounds(charIdx);
+		Area2I charRect = GetCharacterBounds(charIdx);
 		u32 lineIdx = GetLineForChar(charIdx);
 		u32 yOffset = GetLineDesc(lineIdx).GetLineYStart();
 

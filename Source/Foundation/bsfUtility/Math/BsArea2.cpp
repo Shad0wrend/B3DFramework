@@ -54,6 +54,6 @@ template B3D_UTILITY_EXPORT void TArea2<i32>::AddUnique(const TArea2&, FrameVect
 template B3D_UTILITY_EXPORT void TArea2<i32, u32>::AddUnique(const TArea2&, FrameVector<TArea2>&);
 template B3D_UTILITY_EXPORT void TArea2<float>::AddUnique(const TArea2&, FrameVector<TArea2>&);
 
-template B3D_UTILITY_EXPORT TArea2<i32>;
-template B3D_UTILITY_EXPORT TArea2<i32, u32>;
-template B3D_UTILITY_EXPORT TArea2<float>;
+template struct B3D_UTILITY_EXPORT TArea2<i32>;
+template struct B3D_UTILITY_EXPORT TArea2<i32, u32>;
+template struct B3D_UTILITY_EXPORT TArea2<float>;

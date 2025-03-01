@@ -105,7 +105,7 @@ namespace bs
         /// <param name="value">Value in physical pixels.</param>
         /// <param name="DPIScale">DPI scale applied to physical pixels. This is calculated as DPIScale = DPI / 96.</param>
         /// <returns>Value in logical pixels.</returns>
-        public static Rect2I PhysicalToLogicalPixels(Rect2I value, float DPIScale) // DEPRECATED
+        public static Area2I PhysicalToLogicalPixels(Area2I value, float DPIScale) // DEPRECATED
         {
             // TODO - This should be returning float
 
@@ -113,8 +113,8 @@ namespace bs
                 return value;
 
             float inverseDPIScale = 1.0f / DPIScale;
-            return new Rect2I((int)(value.x * inverseDPIScale), (int)(value.y * inverseDPIScale),
-                (int)(value.width * inverseDPIScale), (int)(value.height * inverseDPIScale));
+            return new Area2I((int)(value.X * inverseDPIScale), (int)(value.Y * inverseDPIScale),
+                (int)(value.Width * inverseDPIScale), (int)(value.Height * inverseDPIScale));
         }
 
         /// <summary>
@@ -123,12 +123,12 @@ namespace bs
         /// <param name="value">Value in logical pixels.</param>
         /// <param name="DPIScale">DPI scale applied to physical pixels. This is calculated as DPIScale = DPI / 96.</param>
         /// <returns>Value in physical pixels.</returns>
-        public static Rect2I LogicalToPhysicalPixels(Rect2I value, float DPIScale) // DEPRECATED
+        public static Area2I LogicalToPhysicalPixels(Area2I value, float DPIScale) // DEPRECATED
         {
             // TODO - This should be returning float
 
-            return new Rect2I((int)(value.x * DPIScale), (int)(value.y * DPIScale),
-                (int)(value.width * DPIScale), (int)(value.height * DPIScale));
+            return new Area2I((int)(value.X * DPIScale), (int)(value.Y * DPIScale),
+                (int)(value.Width * DPIScale), (int)(value.Height * DPIScale));
         }
 
         /// <summary>

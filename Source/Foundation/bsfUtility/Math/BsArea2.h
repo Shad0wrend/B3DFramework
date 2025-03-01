@@ -6,7 +6,6 @@
 #include "Math/BsSize2.h"
 #include "Math/BsVector2.h"
 #include "Math/BsRect2.h"
-#include "Math/BsRect2I.h"
 #include "Math/BsVector4.h"
 #include "BsMatrix4.h"
 
@@ -38,7 +37,6 @@ namespace bs
 		TArea2<PositionType2, SizeType2> To() const { return TArea2<PositionType2, SizeType2>((PositionType2)X, (PositionType2)Y, (SizeType2)Width, (SizeType2)Height); }
 
 		Rect2 ToRect2() const { return Rect2((float)X, (float)Y, (float)Width, (float)Height); } // TODO - Temporary
-		Rect2I ToRect2I() const { return Rect2I((i32)X, (i32)Y, (u32)Width, (u32)Height); } // TODO - Temporary
 
 		/** Returns true if the area covered is 0. */
 		bool IsEmpty() const { return Width == 0 || Height == 0; }
@@ -367,6 +365,9 @@ namespace bs
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TArea2<i32>;
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TArea2<i32, u32>;
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TArea2<float>;
+
+	using Area2 = TArea2<float>;
+	using Area2I = TArea2<i32, u32>;
 
 	/** @} */
 }

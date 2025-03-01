@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "Math/BsVector3.h"
 #include "Math/BsQuaternion.h"
 #include "Math/BsMatrix4.h"

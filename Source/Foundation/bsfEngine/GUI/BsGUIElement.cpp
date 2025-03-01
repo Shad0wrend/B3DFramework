@@ -231,9 +231,9 @@ GUIPhysicalArea GUIElement::CalculateAbsoluteBounds() const
 	return GetAbsoluteBounds();
 }
 
-Rect2I GUIElement::CalculateScreenBounds() const
+Area2I GUIElement::CalculateScreenBounds() const
 {
-	Rect2I area = CalculateAbsoluteBounds().ToRect2I();
+	Area2I area = CalculateAbsoluteBounds().To<i32, u32>();
 	if(mParentWidget)
 	{
 		const Matrix4& widgetTfrm = mParentWidget->GetWorldTfrm();

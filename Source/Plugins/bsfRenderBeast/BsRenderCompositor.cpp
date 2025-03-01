@@ -1627,7 +1627,7 @@ void RCNodeFinalResolve::Render(const RenderCompositorNodeInputs& inputs)
 	commandBuffer.SetRenderTarget(target);
 	commandBuffer.SetViewport(viewProps.Target.NrmViewRect);
 
-	GetRendererUtility().Blit(commandBuffer, input, Rect2I::kEmpty, viewProps.FlipView);
+	GetRendererUtility().Blit(commandBuffer, input, Area2I::kEmpty, viewProps.FlipView);
 
 	if(viewProps.EncodeDepth)
 	{
@@ -2398,7 +2398,7 @@ void RCNodeResolvedSceneDepth::Render(const RenderCompositorNodeInputs& inputs)
 		GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 		commandBuffer.SetRenderTarget(Output->RenderTexture);
 		commandBuffer.ClearRenderTarget(FBT_STENCIL);
-		GetRendererUtility().Blit(*inputs.ActiveCommandBuffer, sceneDepthNode->DepthTex->Texture, Rect2I::kEmpty, false, true);
+		GetRendererUtility().Blit(*inputs.ActiveCommandBuffer, sceneDepthNode->DepthTex->Texture, Area2I::kEmpty, false, true);
 	}
 	else
 		Output = sceneDepthNode->DepthTex;
@@ -2468,7 +2468,7 @@ void RCNodeHiZ::Render(const RenderCompositorNodeInputs& inputs)
 		commandBuffer.SetRenderTarget(rt);
 		commandBuffer.SetViewport(destRect);
 
-		Rect2I srcAreaInt;
+		Area2I srcAreaInt;
 		srcAreaInt.X = (i32)(srcRect.X * viewProps.Target.ViewRect.Width);
 		srcAreaInt.Y = (i32)(srcRect.Y * viewProps.Target.ViewRect.Height);
 		srcAreaInt.Width = (u32)(srcRect.Width * viewProps.Target.ViewRect.Width);

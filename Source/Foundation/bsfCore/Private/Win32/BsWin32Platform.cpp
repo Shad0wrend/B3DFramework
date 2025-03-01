@@ -192,7 +192,7 @@ void Platform::ClipCursorToWindow(const RenderWindow& window)
 		ApplyClipping(mData);
 }
 
-void Platform::ClipCursorToRect(const Rect2I& screenRect)
+void Platform::ClipCursorToRect(const Area2I& screenRect)
 {
 	mData->CursorClipping = true;
 	mData->ClipWindow = 0;
@@ -280,7 +280,7 @@ void Platform::SetIcon(const PixelData& pixelData)
 	PostMessage((HWND)hwnd, WM_SETICON, WPARAM(ICON_BIG), (LPARAM)icon);
 }
 
-void Platform::SetCaptionNonClientAreas(const RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
+void Platform::SetCaptionNonClientAreas(const RenderWindow& window, const Vector<Area2I>& nonClientAreas)
 {
 	Lock lock(mData->Sync);
 
@@ -772,7 +772,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 					return TranslateNonClientAreaType(area.Type);
 			}
 
-			Vector<Rect2I>& moveAreasPerWindow = iterFind->second.MoveAreas;
+			Vector<Area2I>& moveAreasPerWindow = iterFind->second.MoveAreas;
 			for(auto area : moveAreasPerWindow)
 			{
 				if(area.Contains(mousePosInt))

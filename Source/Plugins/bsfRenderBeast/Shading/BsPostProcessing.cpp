@@ -1941,7 +1941,7 @@ void SSRStencilMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView&
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	const RendererViewProperties& viewProps = view.GetProperties();
-	const Rect2I& viewRect = viewProps.Target.ViewRect;
+	const Area2I& viewRect = viewProps.Target.ViewRect;
 	Bind(commandBuffer);
 
 	if(viewProps.Target.NumSamples > 1)
@@ -2003,7 +2003,7 @@ void SSRTraceMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& v
 	mSceneColorTexture.Set(sceneColor);
 	mHiZTexture.Set(hiZ);
 
-	Rect2I viewRect = viewProps.Target.ViewRect;
+	Area2I viewRect = viewProps.Target.ViewRect;
 
 	// Maps from NDC to UV [0, 1]
 	Vector4 ndcToHiZUV;
@@ -2271,7 +2271,7 @@ void TemporalFilteringMat::Execute(GpuCommandBuffer& commandBuffer, const Render
 	commandBuffer.SetRenderTarget(destination);
 
 	const RendererViewProperties& viewProps = view.GetProperties();
-	const Rect2I& viewRect = viewProps.Target.ViewRect;
+	const Area2I& viewRect = viewProps.Target.ViewRect;
 
 	Bind(commandBuffer);
 
@@ -2362,7 +2362,7 @@ void MSAACoverageMat::Execute(GpuCommandBuffer& commandBuffer, const RendererVie
 
 	mGBufferParams.Bind(gbuffer);
 
-	const Rect2I& viewRect = view.GetProperties().Target.ViewRect;
+	const Area2I& viewRect = view.GetProperties().Target.ViewRect;
 	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
@@ -2393,7 +2393,7 @@ void MSAACoverageStencilMat::Execute(GpuCommandBuffer& commandBuffer, const Rend
 {
 	BS_RENMAT_PROFILE_BLOCK
 
-	const Rect2I& viewRect = view.GetProperties().Target.ViewRect;
+	const Area2I& viewRect = view.GetProperties().Target.ViewRect;
 	mCoverageTexParam.Set(coverage);
 
 	Bind(commandBuffer);

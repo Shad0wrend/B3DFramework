@@ -23,12 +23,12 @@ void ViewportBase::SetArea(const Rect2& area)
 	MarkRenderProxyDataDirtyInternal();
 }
 
-Rect2I ViewportBase::GetPixelArea() const
+Area2I ViewportBase::GetPixelArea() const
 {
 	float width = (float)GetTargetWidth();
 	float height = (float)GetTargetHeight();
 
-	Rect2I area;
+	Area2I area;
 	area.X = (int)(mNormArea.X * width);
 	area.Y = (int)(mNormArea.Y * height);
 	area.Width = (int)(mNormArea.Width * width);

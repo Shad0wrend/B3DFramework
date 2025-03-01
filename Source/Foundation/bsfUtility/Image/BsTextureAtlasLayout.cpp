@@ -223,7 +223,7 @@ Optional<TreeTextureAtlasLayout::Allocation> TreeTextureAtlasLayout::AddElement(
 	if(bestFreeNodeId == ~0u)
 		return {};
 
-	const Rect2I allocatedArea(mNodes[bestFreeNodeId].Area.X, mNodes[bestFreeNodeId].Area.Y, alignedSize.Width, alignedSize.Height);
+	const Area2I allocatedArea(mNodes[bestFreeNodeId].Area.X, mNodes[bestFreeNodeId].Area.Y, alignedSize.Width, alignedSize.Height);
 	const NodeSplitResult splitResult = Split(mNodes[bestFreeNodeId], alignedSize);
 	const NodeOrientation bestFreeNodeFlippedOrientation = mNodes[bestFreeNodeId].Orientation == NodeOrientation::Horizontal ? NodeOrientation::Vertical : NodeOrientation::Horizontal;
 
@@ -481,7 +481,7 @@ void TreeTextureAtlasLayout::Grow(const Size2UI& newSize)
 			}
 			else
 			{
-				Rect2I newArea;
+				Area2I newArea;
 
 				if(mNodes[page.RootNodeId].Orientation == NodeOrientation::Horizontal)
 				{
@@ -522,7 +522,7 @@ void TreeTextureAtlasLayout::Grow(const Size2UI& newSize)
 
 			const NodeOrientation newRootOrientation = mNodes[page.RootNodeId].Orientation == NodeOrientation::Horizontal ? NodeOrientation::Vertical : NodeOrientation::Horizontal;
 
-			Rect2I newArea;
+			Area2I newArea;
 			if(newRootOrientation == NodeOrientation::Horizontal)
 			{
 				newArea.X = (i32)oldSize.Width;
@@ -546,7 +546,7 @@ void TreeTextureAtlasLayout::Grow(const Size2UI& newSize)
 
 			Node& newRootNode = mNodes[newRootNodeId];
 			newRootNode.NextSiblingId = freeNodeId;
-			newRootNode.Area = Rect2I::kEmpty;
+			newRootNode.Area = Area2I::kEmpty;
 			newRootNode.State = NodeState::Container;
 			newRootNode.Orientation = newRootOrientation;
 
@@ -675,13 +675,13 @@ TreeTextureAtlasLayout::NodeSplitResult TreeTextureAtlasLayout::Split(const Node
 		return result;
 	}
 
-	const Rect2I rightLeftoverArea(
+	const Area2I rightLeftoverArea(
 		nodeToSplit.Area.X + (i32)requiredSize.Width,
 		nodeToSplit.Area.Y,
 		nodeToSplit.Area.Width - requiredSize.Width,
 		requiredSize.Height);
 
-	const Rect2I bottomLeftoverArea(
+	const Area2I bottomLeftoverArea(
 		nodeToSplit.Area.X,
 		nodeToSplit.Area.Y + (i32)requiredSize.Height,
 		requiredSize.Width,
@@ -787,7 +787,7 @@ TreeTextureAtlasLayout::Page TreeTextureAtlasLayout::AllocatePage()
 
 	Node& rootNode = mNodes[page.RootNodeId];
 	rootNode = Node();
-	rootNode.Area = Rect2I(0, 0, mSettings.Size.Width, mSettings.Size.Height);
+	rootNode.Area = Area2I(0, 0, mSettings.Size.Width, mSettings.Size.Height);
 	rootNode.State = NodeState::Free;
 
 	FreeNodeBucket& rootNodeBucket = page.FreeNodeBuckets[GetFreeNodeBucketForSize(page, mSettings.Size)];

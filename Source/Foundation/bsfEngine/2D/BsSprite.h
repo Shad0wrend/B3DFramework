@@ -4,7 +4,7 @@
 
 #include "BsPrerequisites.h"
 #include "2D/BsSpriteMaterial.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "Image/BsColor.h"
 #include "Math/BsRect2.h"
 
@@ -85,7 +85,7 @@ namespace bs
 		 *
 		 * @return				Clipped sprite bounds.
 		 */
-		Rect2I GetBounds(const Vector2I& offset, const Rect2I& clipRect) const;
+		Area2I GetBounds(const Vector2I& offset, const Area2I& clipRect) const;
 
 		/**
 		 * Returns the number of separate render elements in the sprite. Normally this is 1, but some sprites may consist
@@ -126,7 +126,7 @@ namespace bs
 		 * @see		getNumRenderElements()
 		 * @see		getNumQuads()
 		 */
-		u32 FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32 indexOffset, u32 maxNumVerts, u32 maxNumIndices, u32 vertexStride, u32 indexStride, u32 renderElementIdx, const Vector2I& offset, const Rect2I& clipRect, bool clip = true) const; // DEPRECATED
+		u32 FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32 indexOffset, u32 maxNumVerts, u32 maxNumIndices, u32 vertexStride, u32 indexStride, u32 renderElementIdx, const Vector2I& offset, const Area2I& clipRect, bool clip = true) const; // DEPRECATED
 
 		/**
 		 * Clips the provided 2D vertices to the provided clip rectangle. The vertices must form axis aligned quads.
@@ -139,7 +139,7 @@ namespace bs
 		 *								buffer).
 		 * @param[in]		clipRect	Rectangle to clip the geometry to.
 		 */
-		static void ClipQuadsToRect(u8* vertices, u8* uv, u32 numQuads, u32 vertStride, const Rect2I& clipRect);
+		static void ClipQuadsToRect(u8* vertices, u8* uv, u32 numQuads, u32 vertStride, const Area2I& clipRect);
 
 		/**
 		 * Clips the provided 2D vertices to the provided clip rectangle. The vertices must form axis aligned quads.
@@ -167,7 +167,7 @@ namespace bs
 		 *								generated and need to be stored. Vertices are always generate in tuples of three,
 		 *								forming a single triangle.
 		 */
-		static void ClipTrianglesToRect(u8* vertices, u8* uv, u32 numTris, u32 vertStride, const Rect2I& clipRect, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
+		static void ClipTrianglesToRect(u8* vertices, u8* uv, u32 numTris, u32 vertStride, const Area2I& clipRect, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
 
 	protected:
 		/**	Returns the offset needed to move the sprite in order for it to respect the provided anchor. */
@@ -183,7 +183,7 @@ namespace bs
 			SpriteMaterialInfo MaterialInformation;
 		};
 
-		mutable Rect2I mBounds;
+		mutable Area2I mBounds;
 		mutable TInlineArray<RenderElementData, 2> mCachedRenderElements;
 	};
 

@@ -62,9 +62,9 @@ u32 SpriteRenderElement::GetVertexAndIndexData(u32 vertexOffset, u32 indexOffset
 	return quadCount;
 }
 
-Rect2I Sprite::GetBounds(const Vector2I& offset, const Rect2I& clipRect) const
+Area2I Sprite::GetBounds(const Vector2I& offset, const Area2I& clipRect) const
 {
-	Rect2I bounds = mBounds;
+	Area2I bounds = mBounds;
 
 	if(clipRect.Width > 0 && clipRect.Height > 0)
 		bounds.Clip(clipRect);
@@ -75,7 +75,7 @@ Rect2I Sprite::GetBounds(const Vector2I& offset, const Rect2I& clipRect) const
 	return bounds;
 }
 
-u32 Sprite::FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32 indexOffset, u32 maxNumVerts, u32 maxNumIndices, u32 vertexStride, u32 indexStride, u32 renderElementIdx, const Vector2I& offset, const Rect2I& clipRect, bool clip) const
+u32 Sprite::FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32 indexOffset, u32 maxNumVerts, u32 maxNumIndices, u32 vertexStride, u32 indexStride, u32 renderElementIdx, const Vector2I& offset, const Area2I& clipRect, bool clip) const
 {
 	const RenderElementData& renderElementData = mCachedRenderElements[renderElementIdx];
 	const SpriteRenderElement& renderElement = renderElementData.RenderElement;
@@ -252,7 +252,7 @@ void Sprite::UpdateBounds() const
 
 	if(!foundStartingPoint)
 	{
-		mBounds = Rect2I(0, 0, 0, 0);
+		mBounds = Area2I(0, 0, 0, 0);
 		return;
 	}
 
@@ -272,13 +272,13 @@ void Sprite::UpdateBounds() const
 		}
 	}
 
-	mBounds = Rect2I((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y));
+	mBounds = Area2I((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y));
 }
 
 // This will only properly clip an array of quads
 // Vertices in the quad must be in a specific order: top left, top right, bottom left, bottom right
 // (0, 0) represents top left of the screen
-void Sprite::ClipQuadsToRect(u8* vertices, u8* uv, u32 numQuads, u32 vertStride, const Rect2I& clipRect)
+void Sprite::ClipQuadsToRect(u8* vertices, u8* uv, u32 numQuads, u32 vertStride, const Area2I& clipRect)
 {
 	float left = (float)clipRect.X;
 	float right = (float)clipRect.X + clipRect.Width;
@@ -427,7 +427,7 @@ void Sprite::ClipQuadsToRectangle(DataRange& vertices, DataRange& uv, u32 quadCo
 	}
 }
 
-void Sprite::ClipTrianglesToRect(u8* vertices, u8* uv, u32 numTris, u32 vertStride, const Rect2I& clipRect, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
+void Sprite::ClipTrianglesToRect(u8* vertices, u8* uv, u32 numTris, u32 vertStride, const Area2I& clipRect, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
 {
 	Vector<Plane> clipPlanes = {
 		Plane(Vector3(1.0f, 0.0f, 0.0f), (float)clipRect.X),

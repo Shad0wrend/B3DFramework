@@ -44,7 +44,7 @@ namespace bs
 		}
 
 		/// <summary>Limit cursor movement to specific area on the screen.</summary>
-		public static void ClipToRect(Rect2I screenRect)
+		public static void ClipToRect(TArea2<int,int> screenRect)
 		{
 			Internal_ClipToRect(ref screenRect);
 		}
@@ -114,7 +114,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Show();
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ClipToRect(ref Rect2I screenRect);
+		private static extern void Internal_ClipToRect(ref TArea2<int,int> screenRect);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ClipDisable();
 		[MethodImpl(MethodImplOptions.InternalCall)]

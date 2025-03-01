@@ -57,7 +57,7 @@ namespace bs
 
 		/**	Limit cursor movement to specific area on the screen. */
 		B3D_SCRIPT_EXPORT()
-		void ClipToRect(const Rect2I& screenRect);
+		void ClipToRect(const Area2I& screenRect);
 
 		/**	Disables cursor clipping that was set using any of the clipTo* methods. */
 		B3D_SCRIPT_EXPORT()

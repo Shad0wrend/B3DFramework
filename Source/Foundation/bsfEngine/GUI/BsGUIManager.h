@@ -466,8 +466,8 @@ namespace bs
 			{
 				Vector<GUIWidgetRenderData> WidgetRenderData;
 				SPtr<RenderTexture> CachedRenderTexture;
-				Vector<Rect2I> DirtyRegions;
-				Vector<Rect2I> LastFrameDirtyDebugDrawRegions;
+				Vector<Area2I> DirtyRegions;
+				Vector<Area2I> LastFrameDirtyDebugDrawRegions;
 			};
 
 			UnorderedMap<const Camera*, GUICameraRenderData> mPerCameraData;

@@ -4,7 +4,7 @@
 
 #include "BsPrerequisites.h"
 #include "GUI/BsCGUIWidget.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "GUI/BsDropDownAreaPlacement.h"
 #include "Utility/BsRectOffset.h"
 
@@ -30,7 +30,7 @@ namespace bs
 		GUIDropDownData DropDownData; /**< Data to use for initializing menu items of the drop down box. */
 		SPtr<const GUIStyleSheetCascade> StyleSheetCascade; /**< Style sheets to apply to drop down box GUI elements. */
 		/** Additional bounds that control what is considered the inside or the outside of the drop down box. */
-		Vector<Rect2I> AdditionalBounds;
+		Vector<Area2I> AdditionalBounds;
 	};
 
 	/**	Represents a single entry in a drop down box. */
@@ -131,7 +131,7 @@ namespace bs
 			 *								hierarchy to be in front of lower levels, so you should increase this value for
 			 *								each level of the sub-menu hierarchy.
 			 */
-			DropDownSubMenu(GUIDropDownMenu* owner, DropDownSubMenu* parent, const DropDownAreaPlacement& placement, const Rect2I& availableBounds, const GUIDropDownData& dropDownData, GUIDropDownType type, u32 depthOffset);
+			DropDownSubMenu(GUIDropDownMenu* owner, DropDownSubMenu* parent, const DropDownAreaPlacement& placement, const Area2I& availableBounds, const GUIDropDownData& dropDownData, GUIDropDownType type, u32 depthOffset);
 			~DropDownSubMenu();
 
 			/**	Recreates all internal GUI elements for the entries of the current sub-menu page. */
@@ -178,7 +178,7 @@ namespace bs
 			GUIDropDownType GetType() const { return Type; }
 
 			/**	Returns actual visible bounds of the sub-menu. */
-			Rect2I GetVisibleBounds() const { return MVisibleBounds; }
+			Area2I GetVisibleBounds() const { return MVisibleBounds; }
 
 			/**	Returns the drop box object that owns this sub-menu. */
 			GUIDropDownMenu* GetOwner() const { return Owner; }
@@ -190,8 +190,8 @@ namespace bs
 			u32 Page;
 			i32 X, Y;
 			u32 Width, Height;
-			Rect2I MVisibleBounds;
-			Rect2I MAvailableBounds;
+			Area2I MVisibleBounds;
+			Area2I MAvailableBounds;
 			u32 DepthOffset;
 			bool IsOpenedUpward;
 
@@ -243,7 +243,7 @@ namespace bs
 		// the drop down to lose focus and close, but if the button still processes the mouse click it will be immediately opened again)
 		GUIDropDownHitBox* mCaptureHitBox;
 
-		Vector<Rect2I> mAdditionalCaptureBounds;
+		Vector<Area2I> mAdditionalCaptureBounds;
 	};
 
 	/** @} */

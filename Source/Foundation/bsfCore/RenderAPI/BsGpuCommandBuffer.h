@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Image/BsColor.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "Threading/BsSingleConsumerQueue.h"
 
 namespace bs
@@ -310,7 +310,7 @@ namespace bs
 			 * Allows you to set up a region in which rendering can take place. Coordinates are in pixels. No rendering will be
 			 * done to render target pixels outside of the provided region.
 			 */
-			virtual void EnableScissorTest(const Rect2I& area) { EnableScissorTest(area.X, area.Y, area.X + area.Width, area.Y + area.Height); }
+			virtual void EnableScissorTest(const Area2I& area) { EnableScissorTest(area.X, area.Y, area.X + area.Width, area.Y + area.Height); }
 
 			/** Disables scissor test set via EnableScissorTest(). */
 			virtual void DisableScissorTest() = 0;

@@ -7,7 +7,7 @@
 
 using namespace bs;
 
-DropTarget::DropTarget(const RenderWindow* ownerWindow, const Rect2I& area)
+DropTarget::DropTarget(const RenderWindow* ownerWindow, const Area2I& area)
 	: mArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)
 {
 	Win32Platform::RegisterDropTarget(this);
@@ -20,7 +20,7 @@ DropTarget::~DropTarget()
 	ClearInternal();
 }
 
-void DropTarget::SetArea(const Rect2I& area)
+void DropTarget::SetArea(const Area2I& area)
 {
 	mArea = area;
 }

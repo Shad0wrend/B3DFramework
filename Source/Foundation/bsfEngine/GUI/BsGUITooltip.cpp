@@ -30,7 +30,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	SPtr<Camera> camera = overlaidWidget.GetCamera();
 	SPtr<Viewport> viewport = camera->GetViewport();
 
-	Rect2I availableBounds = viewport->GetPixelArea();
+	Area2I availableBounds = viewport->GetPixelArea();
 
 	const GUIStyleSheetCascade& styleSheetCascade = GetStyleSheetCascade();
 
@@ -66,7 +66,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	GUILayout* contentLayout = contentPanel->AddNewElement<GUILayoutY>();
 	contentLayout->AddNewElement<GUILabel>(HString(text), BuiltinResources::kMultiLineLabelStyle, GUIOptions(GUIOption::FixedWidth(kTooltipWidth), GUIOption::FlexibleHeight()));
 
-	Rect2I positionBounds;
+	Area2I positionBounds;
 	positionBounds.X = position.X;
 	positionBounds.Y = position.Y;
 	positionBounds.Width = kCursorSize;
@@ -75,7 +75,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	DropDownAreaPlacement::HorzDir horzDir;
 	DropDownAreaPlacement::VertDir vertDir;
 	DropDownAreaPlacement placement = DropDownAreaPlacement::AroundBounds(positionBounds);
-	Rect2I placementBounds = placement.GetOptimalBounds((u32)size.Width, (u32)size.Height, availableBounds, horzDir, vertDir);
+	Area2I placementBounds = placement.GetOptimalBounds((u32)size.Width, (u32)size.Height, availableBounds, horzDir, vertDir);
 
 	backgroundPanel->SetPosition(placementBounds.X, placementBounds.Y);
 	contentPanel->SetPosition(placementBounds.X + contentOffsetX, placementBounds.Y + contentOffsetY);

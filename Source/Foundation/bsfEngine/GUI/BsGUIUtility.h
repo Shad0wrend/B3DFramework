@@ -4,7 +4,7 @@
 
 #include "BsGUIUnits.h"
 #include "BsPrerequisites.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 
 namespace bs
 {

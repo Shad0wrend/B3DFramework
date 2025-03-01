@@ -130,15 +130,15 @@ MonoObject* ScriptGUIElement::InternalGetParent(ScriptGUIElementWrapper* self)
 	return parentScriptObjectWrapper->GetScriptObject();
 }
 
-void ScriptGUIElement::InternalCalculateAbsoluteBounds(ScriptGUIElementWrapper* self, Rect2I* bounds)
+void ScriptGUIElement::InternalCalculateAbsoluteBounds(ScriptGUIElementWrapper* self, Area2I* bounds)
 {
 	if(!self->IsNativeObjectValid())
 	{
-		*bounds = Rect2I();
+		*bounds = Area2I();
 		return;
 	}
 
-	*bounds = self->GetNativeObject()->CalculateAbsoluteBoundsRelativeTo().ToRect2I();
+	*bounds = self->GetNativeObject()->CalculateAbsoluteBoundsRelativeTo().To<i32, u32>();
 }
 
 void ScriptGUIElement::InternalGetLayoutCalculatedSize(ScriptGUIElementWrapper* self, Size2UI* size)
@@ -152,11 +152,11 @@ void ScriptGUIElement::InternalGetLayoutCalculatedSize(ScriptGUIElementWrapper* 
 	*size = self->GetNativeObject()->CalculateSizeInLayout();
 }
 
-void ScriptGUIElement::InternalGetScreenBounds(ScriptGUIElementWrapper* self, Rect2I* bounds)
+void ScriptGUIElement::InternalGetScreenBounds(ScriptGUIElementWrapper* self, Area2I* bounds)
 {
 	if(!self->IsNativeObjectValid())
 	{
-		*bounds = Rect2I();
+		*bounds = Area2I();
 		return;
 	}
 
@@ -186,11 +186,11 @@ void ScriptGUIElement::InternalCalculatePositionRelativeTo(ScriptGUIElementWrapp
 	*position = ScriptTVector2_TUnitValue_int32_t__LogicalPixel__::ToInterop(self->GetNativeObject()->CalculatePositionRelativeTo(relativeToElement));
 }
 
-void ScriptGUIElement::InternalCalculateAbsoluteBoundsRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, Rect2I* bounds)
+void ScriptGUIElement::InternalCalculateAbsoluteBoundsRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, Area2I* bounds)
 {
 	if(!self->IsNativeObjectValid())
 	{
-		*bounds = Rect2I();
+		*bounds = Area2I();
 		return;
 	}
 
@@ -199,14 +199,14 @@ void ScriptGUIElement::InternalCalculateAbsoluteBoundsRelativeTo(ScriptGUIElemen
 	{
 		if(!relativeTo->IsNativeObjectValid())
 		{
-			*bounds = Rect2I();
+			*bounds = Area2I();
 			return;
 		}
 
 		relativeToElement = relativeTo->GetNativeObject();
 	}
 
-	*bounds = self->GetNativeObject()->CalculateAbsoluteBoundsRelativeTo(relativeToElement).ToRect2I();
+	*bounds = self->GetNativeObject()->CalculateAbsoluteBoundsRelativeTo(relativeToElement).To<i32, u32>();
 }
 
 void ScriptGUIElement::InternalSetPosition(ScriptGUIElementWrapper* self, i32 x, i32 y)

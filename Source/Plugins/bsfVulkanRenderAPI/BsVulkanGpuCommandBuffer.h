@@ -8,7 +8,7 @@
 #include "BsVulkanGpuPipelineState.h"
 #include "BsVulkanGpuDevice.h"
 #include "Math/BsRect2.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
 #include "Utility/BsDenseMap.h"
 
@@ -613,7 +613,7 @@ namespace bs
 			 * Clears the specified area of the currently bound render target. If in the middle of the render pass this will issue a clear command,
 			 * but if render pass has not begun yet it will instead attempt to perform the clear at the next render pass start.
 			 */
-			void ClearViewport(const Rect2I& area, u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask);
+			void ClearViewport(const Area2I& area, u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask);
 
 			/**
 			 * Executes a clear command in the command buffer.
@@ -622,7 +622,7 @@ namespace bs
 			 * @param clearMask		Mask specifying which surfaces of the currently bound render target to clear.
 			 * @param clearValues	Values used for clearing attachments.
 			 */
-			void ExecuteClearCommand(const Rect2I& area, RenderSurfaceMask clearMask, const Array<VkClearValue, B3D_MAXIMUM_RENDER_TARGET_COUNT + 1>& clearValues);
+			void ExecuteClearCommand(const Area2I& area, RenderSurfaceMask clearMask, const Array<VkClearValue, B3D_MAXIMUM_RENDER_TARGET_COUNT + 1>& clearValues);
 
 			/** Starts and ends a render pass, intended only for a clear operation. */
 			void ExecuteClearPass();
@@ -683,10 +683,10 @@ namespace bs
 			RenderSurfaceMask GetFramebufferReadMask();
 
 			/** Returns the current viewport area in pixels. This depends on the currently bound framebuffer and normalized viewport area. */
-			Rect2I GetViewportArea() const;
+			Area2I GetViewportArea() const;
 
 			/** Returns the current area of the render pass in pixels. This depends on the currently bound framebuffer. */
-			Rect2I GetRenderPassArea() const;
+			Area2I GetRenderPassArea() const;
 
 			/** Notifies the active render target that a rendering command was queued that will potentially change its contents. */
 			void NotifyRenderTargetModified();
@@ -734,7 +734,7 @@ namespace bs
 			SPtr<VulkanGpuBuffer> mIndexBuffer;
 			Vector<SPtr<VulkanGpuBuffer>> mVertexBuffers;
 			Rect2 mNormalizedViewportArea{ 0.0f, 0.0f, 1.0f, 1.0f };
-			Rect2I mScissor{ 0, 0, 0, 0 };
+			Area2I mScissor{ 0, 0, 0, 0 };
 			bool mIsScissorTestEnabled = false;
 			u32 mStencilRef = 0;
 			DrawOperationType mDrawOp = DOT_TRIANGLE_LIST;
@@ -754,7 +754,7 @@ namespace bs
 
 			std::array<VkClearValue, B3D_MAXIMUM_RENDER_TARGET_COUNT + 1> mClearValues{};
 			RenderSurfaceMask mClearMask;
-			Rect2I mClearArea;
+			Area2I mClearArea;
 
 			VkBuffer mVertexBuffersTemp[BS_MAX_BOUND_VERTEX_BUFFERS]{};
 			VkDeviceSize mVertexBufferOffsetsTemp[BS_MAX_BOUND_VERTEX_BUFFERS]{};

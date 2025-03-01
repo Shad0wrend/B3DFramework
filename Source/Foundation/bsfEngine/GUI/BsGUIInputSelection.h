@@ -23,7 +23,7 @@ namespace bs
 		const Vector<ImageSprite*>& GetSprites() const { return mSprites; }
 
 		/** Returns the bounds of the particular selection sprite, relative to the current parent GUI element. */
-		Rect2I GetBounds(u32 spriteIndex) const;
+		Area2I GetBounds(u32 spriteIndex) const;
 
 		/**	Recreates the selection clip sprites. */
 		void UpdateSprite();
@@ -76,7 +76,7 @@ namespace bs
 
 	private:
 		/** Returns rectangles describing the currently selected areas. Rectangles are relative to parent GUI element. */
-		Vector<Rect2I> GetSelectionRects() const;
+		Vector<Area2I> GetSelectionRects() const;
 
 	private:
 		u32 mSelectionStart = 0;
@@ -84,7 +84,7 @@ namespace bs
 		u32 mSelectionAnchor = 0;
 		u32 mSelectionDragAnchor = 0;
 
-		Vector<Rect2I> mSelectionRects;
+		Vector<Area2I> mSelectionRects;
 		Vector<ImageSprite*> mSprites;
 	};
 

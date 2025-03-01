@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "BsGUIUnits.h"
 
 namespace bs
@@ -64,21 +64,21 @@ namespace bs
 		 * provided bounds. Vertically system prefers placing the box at the bottom of the bounds, but may choose to align
 		 * it with the top of the bounds if it offers more space for the contents.
 		 */
-		static DropDownAreaPlacement AroundBoundsVert(const Rect2I& bounds); // TODO - Deprecated
+		static DropDownAreaPlacement AroundBoundsVert(const Area2I& bounds); // TODO - Deprecated
 
 		/**
 		 * Drop down box will be placed at the specified bounds. Box will be vertically aligned to the top of the provided
 		 * bounds. Horizontally system prefers placing the box at the right of the bounds, but may choose to align it with
 		 * the left of the bounds if it offers more space for the contents.
 		 */
-		static DropDownAreaPlacement AroundBoundsHorz(const Rect2I& bounds); // TODO - Deprecated
+		static DropDownAreaPlacement AroundBoundsHorz(const Area2I& bounds); // TODO - Deprecated
 
 		/**
 		 * Drop down box will be placed at the specified bounds. Box will be vertically aligned to the top or bottom of the
 		 * provided bounds, with bottom being preferred. Horizontally system prefers placing the box at the right of the
 		 * bounds, but may choose to align it with the left of the bounds if it offers more space for the contents.
 		 */
-		static DropDownAreaPlacement AroundBounds(const Rect2I& bounds); // TODO - Deprecated
+		static DropDownAreaPlacement AroundBounds(const Area2I& bounds); // TODO - Deprecated
 
 		/**
 		 * Drop down box will be placed at the specified position. By default the system prefers the top left corner of the
@@ -112,7 +112,7 @@ namespace bs
 		Type GetType() const { return mType; }
 
 		/** Returns bounds around which to position the drop down box if one of the bounds positioning types is used. */
-		const Rect2I& GetBounds() const { return mBounds; }
+		const Area2I& GetBounds() const { return mBounds; }
 
 		/**	Returns position around which to position the drop down box if position positioning type is used. */
 		const Vector2I& GetPosition() const { return mPosition; }
@@ -129,11 +129,11 @@ namespace bs
 		 * @param[in]	vertDir			Output parameter that signals the preferred vertical direction of the bounds
 		 *								(up or down).
 		 */
-		Rect2I GetOptimalBounds(u32 width, u32 height, const Rect2I& availableArea, HorzDir& horzDir, VertDir& vertDir) const;
+		Area2I GetOptimalBounds(u32 width, u32 height, const Area2I& availableArea, HorzDir& horzDir, VertDir& vertDir) const;
 
 	private:
 		Type mType;
-		Rect2I mBounds;
+		Area2I mBounds;
 		Vector2I mPosition{BsZero};
 	};
 

@@ -284,7 +284,7 @@ void RendererUtility::DrawMorph(GpuCommandBuffer& commandBuffer, const SPtr<Mesh
 	mesh->NotifyUsedOnGPU();
 }
 
-void RendererUtility::Blit(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& texture, const Rect2I& area, bool flipUV, bool isDepth, bool isFiltered)
+void RendererUtility::Blit(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& texture, const Area2I& area, bool flipUV, bool isDepth, bool isFiltered)
 {
 	auto& texProps = texture->GetProperties();
 

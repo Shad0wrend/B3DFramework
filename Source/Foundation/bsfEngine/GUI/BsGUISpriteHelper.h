@@ -65,7 +65,7 @@ namespace bs
 
 		GUIContent Content; /**< Image and/or text content to display. */
 		Vector2I Offset = Vector2I::kZero; /**< Offset relative to the parent GUI element's content area to place the sprite at. */
-		Rect2I ContentArea = Rect2I::kEmpty; /**< Area relative to parent GUI element, in which to place the contents. Any sprite elements outside of this area will be clipped. */
+		Area2I ContentArea = Area2I::kEmpty; /**< Area relative to parent GUI element, in which to place the contents. Any sprite elements outside of this area will be clipped. */
 		u32 Depth = 0; /**< Depth at which to render the sprites. Higher depth means a sprite is rendered behind sprites with lower depth. */
 		Color Tint; /**< Runtime color tint to apply to the sprite. */
 		u64 BatchId = 0; /**< ID that specifies if the sprite is allowed to be batched with other sprites. Only sprites with the same batch ID can be batched. */
@@ -88,7 +88,7 @@ namespace bs
 		void BuildRenderElements(const GUIContentSpriteCreateInformation& createInformation, TInlineArray<GUIRenderElement, 4>& outRenderElements);
 
 		/** Builds a struct used for initializing the text sprite required for rendering the provided contents within the provided bounds. */
-		static TextSpriteInformation BuildTextSpriteInformation(const Rect2I& contentArea, const String& text, const GUIStyleSheetRules& rules, const Color& tint, float fontScale = 1.0f, bool wordWrap = false);
+		static TextSpriteInformation BuildTextSpriteInformation(const Area2I& contentArea, const String& text, const GUIStyleSheetRules& rules, const Color& tint, float fontScale = 1.0f, bool wordWrap = false);
 
 		/** Updates the animation start time (in seconds since application start), in case the content image contains an animated sprite. */
 		void SetAnimationStartTime(float time);
@@ -113,7 +113,7 @@ namespace bs
 		 * @param	outTextBounds	Position of the text sprite, relative to the GUI element.
 		 * @param	outImageBounds	Position of the image sprite, relative to the GUI element.
 		 */
-		static void CalculateContentBounds(const Rect2I& contentArea, const Size2UI& imageSize, const Size2UI& textSize, GUIImagePosition imagePosition, Rect2& outTextBounds, Rect2& outImageBounds);
+		static void CalculateContentBounds(const Area2I& contentArea, const Size2UI& imageSize, const Size2UI& textSize, GUIImagePosition imagePosition, Rect2& outTextBounds, Rect2& outImageBounds);
 
 		ImageSprite mContentImageSprite;
 		TextSprite mContentTextSprite;

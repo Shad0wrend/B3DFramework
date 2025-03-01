@@ -686,6 +686,126 @@
 		<property name="Entries" type="SubResource" getter="GetEntries" setter="SetEntries" static="false">
 		</property>
 	</class>
+	<struct native="TSize2&lt;float&gt;" script="TSize2&lt;float&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="float">
+			</param>
+			<param name="height" type="float">
+			</param>
+		</ctor>
+		<field name="Width" type="float">
+		</field>
+		<field name="Height" type="float">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;double&gt;" script="TSize2&lt;double&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="double">
+			</param>
+			<param name="height" type="double">
+			</param>
+		</ctor>
+		<field name="Width" type="double">
+		</field>
+		<field name="Height" type="double">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;uint32_t&gt;" script="TSize2&lt;int&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="int">
+			</param>
+			<param name="height" type="int">
+			</param>
+		</ctor>
+		<field name="Width" type="int">
+		</field>
+		<field name="Height" type="int">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;int32_t&gt;" script="TSize2&lt;int&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="int">
+			</param>
+			<param name="height" type="int">
+			</param>
+		</ctor>
+		<field name="Width" type="int">
+		</field>
+		<field name="Height" type="int">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;TUnitValue&lt;int32_t, LogicalPixel&gt;&gt;" script="TSize2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="height" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</ctor>
+		<field name="Width" type="TUnitValue&lt;int,LogicalPixel&gt;">
+		</field>
+		<field name="Height" type="TUnitValue&lt;int,LogicalPixel&gt;">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;TUnitValue&lt;float, LogicalPixel&gt;&gt;" script="TSize2&lt;TUnitValue&lt;float,LogicalPixel&gt;&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="TUnitValue&lt;float,LogicalPixel&gt;">
+			</param>
+			<param name="height" type="TUnitValue&lt;float,LogicalPixel&gt;">
+			</param>
+		</ctor>
+		<field name="Width" type="TUnitValue&lt;float,LogicalPixel&gt;">
+		</field>
+		<field name="Height" type="TUnitValue&lt;float,LogicalPixel&gt;">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;TUnitValue&lt;int32_t, PhysicalPixel&gt;&gt;" script="TSize2&lt;TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+			<param name="height" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+		</ctor>
+		<field name="Width" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+		</field>
+		<field name="Height" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+		</field>
+	</struct>
+	<struct native="TSize2&lt;TUnitValue&lt;float, PhysicalPixel&gt;&gt;" script="TSize2&lt;TUnitValue&lt;float,PhysicalPixel&gt;&gt;">
+		<doc>Encapsulates width/height in a single structure.</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="width" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+			</param>
+			<param name="height" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+			</param>
+		</ctor>
+		<field name="Width" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+		</field>
+		<field name="Height" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+		</field>
+	</struct>
 	<enum native="PointerEventType" script="PointerEventType">
 		<doc>Type of pointer event.</doc>
 		<enumentry native="CursorMoved" script="CursorMoved">
@@ -815,126 +935,6 @@
 		<field name="X" type="TUnitValue&lt;float,PhysicalPixel&gt;">
 		</field>
 		<field name="Y" type="TUnitValue&lt;float,PhysicalPixel&gt;">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;float&gt;" script="TSize2&lt;float&gt;">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="float">
-			</param>
-			<param name="height" type="float">
-			</param>
-		</ctor>
-		<field name="Width" type="float">
-		</field>
-		<field name="Height" type="float">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;double&gt;" script="TSize2&lt;double&gt;">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="double">
-			</param>
-			<param name="height" type="double">
-			</param>
-		</ctor>
-		<field name="Width" type="double">
-		</field>
-		<field name="Height" type="double">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;uint32_t&gt;" script="TSize2&lt;int&gt;">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="int">
-			</param>
-			<param name="height" type="int">
-			</param>
-		</ctor>
-		<field name="Width" type="int">
-		</field>
-		<field name="Height" type="int">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;int32_t&gt;" script="TSize2&lt;int&gt;">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="int">
-			</param>
-			<param name="height" type="int">
-			</param>
-		</ctor>
-		<field name="Width" type="int">
-		</field>
-		<field name="Height" type="int">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;TUnitValue&lt;int32_t, LogicalPixel&gt;&gt;" script="TSize2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="TUnitValue&lt;int,LogicalPixel&gt;">
-			</param>
-			<param name="height" type="TUnitValue&lt;int,LogicalPixel&gt;">
-			</param>
-		</ctor>
-		<field name="Width" type="TUnitValue&lt;int,LogicalPixel&gt;">
-		</field>
-		<field name="Height" type="TUnitValue&lt;int,LogicalPixel&gt;">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;TUnitValue&lt;float, LogicalPixel&gt;&gt;" script="TSize2&lt;TUnitValue&lt;float,LogicalPixel&gt;&gt;">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="TUnitValue&lt;float,LogicalPixel&gt;">
-			</param>
-			<param name="height" type="TUnitValue&lt;float,LogicalPixel&gt;">
-			</param>
-		</ctor>
-		<field name="Width" type="TUnitValue&lt;float,LogicalPixel&gt;">
-		</field>
-		<field name="Height" type="TUnitValue&lt;float,LogicalPixel&gt;">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;TUnitValue&lt;int32_t, PhysicalPixel&gt;&gt;" script="TSize2&lt;TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="TUnitValue&lt;int,PhysicalPixel&gt;">
-			</param>
-			<param name="height" type="TUnitValue&lt;int,PhysicalPixel&gt;">
-			</param>
-		</ctor>
-		<field name="Width" type="TUnitValue&lt;int,PhysicalPixel&gt;">
-		</field>
-		<field name="Height" type="TUnitValue&lt;int,PhysicalPixel&gt;">
-		</field>
-	</struct>
-	<struct native="TSize2&lt;TUnitValue&lt;float, PhysicalPixel&gt;&gt;" script="TSize2&lt;TUnitValue&lt;float,PhysicalPixel&gt;&gt;">
-		<doc>Encapsulates width/height in a single structure.</doc>
-		<ctor>
-		</ctor>
-		<ctor>
-			<param name="width" type="TUnitValue&lt;float,PhysicalPixel&gt;">
-			</param>
-			<param name="height" type="TUnitValue&lt;float,PhysicalPixel&gt;">
-			</param>
-		</ctor>
-		<field name="Width" type="TUnitValue&lt;float,PhysicalPixel&gt;">
-		</field>
-		<field name="Height" type="TUnitValue&lt;float,PhysicalPixel&gt;">
 		</field>
 	</struct>
 	<struct native="TVector3&lt;float&gt;" script="Vector3">
@@ -1122,31 +1122,6 @@
 		<field name="Normal" type="Vector3D">
 		</field>
 		<field name="D" type="double">
-		</field>
-	</struct>
-	<enum native="TangentType" script="TangentType">
-		<doc>Type of tangent on a keyframe in an animation curve.</doc>
-		<enumentry native="In" script="In">
-		</enumentry>
-		<enumentry native="Out" script="Out">
-		</enumentry>
-	</enum>
-	<struct native="TAABox&lt;float&gt;" script="AABox">
-		<doc>Axis aligned box represented by minimum and maximum point.</doc>
-		<ctor>
-		</ctor>
-		<field name="Minimum" type="Vector3">
-		</field>
-		<field name="Maximum" type="Vector3">
-		</field>
-	</struct>
-	<struct native="TAABox&lt;double&gt;" script="AABoxD">
-		<doc>Axis aligned box represented by minimum and maximum point.</doc>
-		<ctor>
-		</ctor>
-		<field name="Minimum" type="Vector3D">
-		</field>
-		<field name="Maximum" type="Vector3D">
 		</field>
 	</struct>
 	<class native="Texture" script="Texture">
@@ -1439,6 +1414,31 @@
 		<field name="Width" type="TUnitValue&lt;float,PhysicalPixel&gt;">
 		</field>
 		<field name="Height" type="TUnitValue&lt;float,PhysicalPixel&gt;">
+		</field>
+	</struct>
+	<enum native="TangentType" script="TangentType">
+		<doc>Type of tangent on a keyframe in an animation curve.</doc>
+		<enumentry native="In" script="In">
+		</enumentry>
+		<enumentry native="Out" script="Out">
+		</enumentry>
+	</enum>
+	<struct native="TAABox&lt;float&gt;" script="AABox">
+		<doc>Axis aligned box represented by minimum and maximum point.</doc>
+		<ctor>
+		</ctor>
+		<field name="Minimum" type="Vector3">
+		</field>
+		<field name="Maximum" type="Vector3">
+		</field>
+	</struct>
+	<struct native="TAABox&lt;double&gt;" script="AABoxD">
+		<doc>Axis aligned box represented by minimum and maximum point.</doc>
+		<ctor>
+		</ctor>
+		<field name="Minimum" type="Vector3D">
+		</field>
+		<field name="Maximum" type="Vector3D">
 		</field>
 	</struct>
 	<struct native="BlendClipInfo" script="BlendClipInfo">
@@ -3748,7 +3748,7 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<property name="Area" type="Rect2" getter="GetArea" setter="SetArea" static="false">
 			<doc>Determines the area that the viewport covers. Coordinates are in normalized [0, 1] range.</doc>
 		</property>
-		<property name="PixelArea" type="Rect2I" getter="GetPixelArea" setter="" static="false">
+		<property name="PixelArea" type="TArea2&lt;int,int&gt;" getter="GetPixelArea" setter="" static="false">
 			<doc>Returns the area of the render target covered by the viewport, in pixels.</doc>
 		</property>
 		<property name="ClearFlags" type="ClearFlags" getter="GetClearFlags" setter="SetClearFlags" static="false">
@@ -15102,7 +15102,7 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 		</method>
 		<method native="ClipToRect" script="ClipToRect" static="false">
 			<doc>Limit cursor movement to specific area on the screen.</doc>
-			<param name="screenRect" type="Rect2I">
+			<param name="screenRect" type="TArea2&lt;int,int&gt;">
 			</param>
 		</method>
 		<method native="ClipDisable" script="ClipDisable" static="false">

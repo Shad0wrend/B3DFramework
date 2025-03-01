@@ -53,9 +53,9 @@ void GUIInputSelection::UpdateSprite()
 	}
 }
 
-Vector<Rect2I> GUIInputSelection::GetSelectionRects() const
+Vector<Area2I> GUIInputSelection::GetSelectionRects() const
 {
-	Vector<Rect2I> selectionRects;
+	Vector<Area2I> selectionRects;
 
 	if(mSelectionStart == mSelectionEnd)
 		return selectionRects;
@@ -81,10 +81,10 @@ Vector<Rect2I> GUIInputSelection::GetSelectionRects() const
 
 		if(!IsNewlineChar(startCharIdx) && !IsNewlineChar(endCharIdx))
 		{
-			Rect2I startChar = GetCharacterBounds(startCharIdx);
-			Rect2I endChar = GetCharacterBounds(endCharIdx);
+			Area2I startChar = GetCharacterBounds(startCharIdx);
+			Area2I endChar = GetCharacterBounds(endCharIdx);
 
-			Rect2I selectionRect;
+			Area2I selectionRect;
 			selectionRect.X = startChar.X;
 			selectionRect.Y = lineDesc.GetLineYStart();
 			selectionRect.Height = lineDesc.GetLineHeight();
@@ -104,10 +104,10 @@ Vector<Rect2I> GUIInputSelection::GetSelectionRects() const
 		if(endCharIdx > 0)
 			endCharIdx = endCharIdx - 1;
 
-		Rect2I startChar = GetCharacterBounds(lineDesc.GetStartChar());
-		Rect2I endChar = GetCharacterBounds(endCharIdx);
+		Area2I startChar = GetCharacterBounds(lineDesc.GetStartChar());
+		Area2I endChar = GetCharacterBounds(endCharIdx);
 
-		Rect2I selectionRect;
+		Area2I selectionRect;
 		selectionRect.X = startChar.X;
 		selectionRect.Y = lineDesc.GetLineYStart();
 		selectionRect.Height = lineDesc.GetLineHeight();
@@ -126,10 +126,10 @@ Vector<Rect2I> GUIInputSelection::GetSelectionRects() const
 
 			if(!IsNewlineChar(endCharIdx))
 			{
-				Rect2I startChar = GetCharacterBounds(lineDesc.GetStartChar());
-				Rect2I endChar = GetCharacterBounds(endCharIdx);
+				Area2I startChar = GetCharacterBounds(lineDesc.GetStartChar());
+				Area2I endChar = GetCharacterBounds(endCharIdx);
 
-				Rect2I selectionRect;
+				Area2I selectionRect;
 				selectionRect.X = startChar.X;
 				selectionRect.Y = lineDesc.GetLineYStart();
 				selectionRect.Height = lineDesc.GetLineHeight();
@@ -143,7 +143,7 @@ Vector<Rect2I> GUIInputSelection::GetSelectionRects() const
 	return selectionRects;
 }
 
-Rect2I GUIInputSelection::GetBounds(u32 selectionIndex) const
+Area2I GUIInputSelection::GetBounds(u32 selectionIndex) const
 {
 	return mSelectionRects[selectionIndex];
 }

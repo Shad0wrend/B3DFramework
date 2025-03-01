@@ -18,7 +18,7 @@ DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsVertical(const GUIPhysi
 {
 	DropDownAreaPlacement instance;
 	instance.mType = Type::BoundsVert;
-	instance.mBounds = bounds.ToRect2I();
+	instance.mBounds = bounds.To<i32, u32>();
 
 	return instance;
 }
@@ -27,7 +27,7 @@ DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsHorizontal(const GUIPhy
 {
 	DropDownAreaPlacement instance;
 	instance.mType = Type::BoundsHorz;
-	instance.mBounds = bounds.ToRect2I();
+	instance.mBounds = bounds.To<i32, u32>();
 
 	return instance;
 }
@@ -36,7 +36,7 @@ DropDownAreaPlacement DropDownAreaPlacement::AroundBounds(const GUIPhysicalArea&
 {
 	DropDownAreaPlacement instance;
 	instance.mType = Type::BoundsAll;
-	instance.mBounds = bounds.ToRect2I();
+	instance.mBounds = bounds.To<i32, u32>();
 
 	return instance;
 }
@@ -50,7 +50,7 @@ DropDownAreaPlacement DropDownAreaPlacement::AroundPosition(const Vector2I& posi
 	return instance;
 }
 
-DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsVert(const Rect2I& bounds)
+DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsVert(const Area2I& bounds)
 {
 	DropDownAreaPlacement instance;
 	instance.mType = Type::BoundsVert;
@@ -59,7 +59,7 @@ DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsVert(const Rect2I& boun
 	return instance;
 }
 
-DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsHorz(const Rect2I& bounds)
+DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsHorz(const Area2I& bounds)
 {
 	DropDownAreaPlacement instance;
 	instance.mType = Type::BoundsHorz;
@@ -68,7 +68,7 @@ DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsHorz(const Rect2I& boun
 	return instance;
 }
 
-DropDownAreaPlacement DropDownAreaPlacement::AroundBounds(const Rect2I& bounds)
+DropDownAreaPlacement DropDownAreaPlacement::AroundBounds(const Area2I& bounds)
 {
 	DropDownAreaPlacement instance;
 	instance.mType = Type::BoundsAll;
@@ -77,9 +77,9 @@ DropDownAreaPlacement DropDownAreaPlacement::AroundBounds(const Rect2I& bounds)
 	return instance;
 }
 
-Rect2I DropDownAreaPlacement::GetOptimalBounds(u32 width, u32 height, const Rect2I& availableArea, HorzDir& horzDir, VertDir& vertDir) const
+Area2I DropDownAreaPlacement::GetOptimalBounds(u32 width, u32 height, const Area2I& availableArea, HorzDir& horzDir, VertDir& vertDir) const
 {
-	Rect2I output;
+	Area2I output;
 
 	int potentialLeftStart = 0;
 	int potentialRightStart = 0;

@@ -787,7 +787,7 @@ void RendererView::UpdatePerViewBuffer()
 	Vector2 nearFar(mProperties.NearPlane, mProperties.FarPlane);
 	gPerCameraParamDef.gNearFar.Set(mParamBuffer, nearFar);
 
-	const Rect2I& viewRect = mProperties.Target.ViewRect;
+	const Area2I& viewRect = mProperties.Target.ViewRect;
 
 	Vector4I viewportRect;
 	viewportRect[0] = viewRect.X;
@@ -817,7 +817,7 @@ Vector4 RendererView::GetNdcToUv() const
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	const GpuDeviceCapabilities& caps = gpuDevice->GetCapabilities();
-	const Rect2I& viewRect = mProperties.Target.ViewRect;
+	const Area2I& viewRect = mProperties.Target.ViewRect;
 
 	float halfWidth = viewRect.Width * 0.5f;
 	float halfHeight = viewRect.Height * 0.5f;

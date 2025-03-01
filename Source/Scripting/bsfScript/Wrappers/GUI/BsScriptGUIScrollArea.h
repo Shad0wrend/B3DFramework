@@ -33,7 +33,7 @@ namespace bs
 		/************************************************************************/
 		static void InternalCreateInstance(MonoObject* instance, ScrollBarType vertBarType, ScrollBarType horzBarType, MonoString* scrollBarStyle, MonoString* scrollAreaStyle, MonoArray* guiOptions);
 		static MonoObject* InternalGetLayout(ScriptGUIScrollArea* self);
-		static void InternalGetContentBounds(ScriptGUIScrollArea* self, Rect2I* bounds);
+		static void InternalGetContentBounds(ScriptGUIScrollArea* self, Area2I* bounds);
 		static float InternalGetHorzScroll(ScriptGUIScrollArea* self);
 		static void InternalSetHorzScroll(ScriptGUIScrollArea* self, float value);
 		static float InternalGetVertScroll(ScriptGUIScrollArea* self);

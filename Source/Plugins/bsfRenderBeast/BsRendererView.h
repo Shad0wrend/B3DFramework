@@ -156,7 +156,7 @@ namespace bs
 		{
 			SPtr<RenderTarget> Target;
 
-			Rect2I ViewRect;
+			Area2I ViewRect;
 			Rect2 NrmViewRect;
 			u32 TargetWidth;
 			u32 TargetHeight;

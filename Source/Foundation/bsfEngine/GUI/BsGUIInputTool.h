@@ -92,7 +92,7 @@ namespace bs
 		u32 GetLineForChar(u32 charIdx, bool newlineCountsOnNextLine = false) const;
 
 		/** Returns a rectangle containing position and size of the character with the provided index, relative to parent GUI element. */
-		Rect2I GetCharacterBounds(u32 characterIndex) const;
+		Area2I GetCharacterBounds(u32 characterIndex) const;
 
 		/** Returns character index nearest to the specified position. Position should be relative to parent GUI element. */
 		i32 GetCharIdxAtPos(const GUIPhysicalPoint& pos) const;

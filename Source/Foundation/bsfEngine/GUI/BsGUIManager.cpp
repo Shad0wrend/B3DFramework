@@ -12,7 +12,7 @@
 #include "Mesh/BsMesh.h"
 #include "Managers/BsRenderWindowManager.h"
 #include "Platform/BsPlatform.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "BsCoreApplication.h"
 #include "Error/BsException.h"
 #include "Input/BsInput.h"
@@ -1689,19 +1689,19 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 				if(renderTargetElem.LastUpdateCount != renderTargetElem.Target->GetUpdateCount())
 				{
 					renderTargetElem.LastUpdateCount = renderTargetElem.Target->GetUpdateCount();
-					Rect2I::AddUnique(renderTargetElem.Area, cameraRenderData.DirtyRegions);
+					Area2I::AddUnique(renderTargetElem.Area, cameraRenderData.DirtyRegions);
 				}
 			}
 		}
 	}
 
-	auto fnDrawRegions = [this, &widgetRenderData, &commandBuffer, renderTargetWidth, renderTargetHeight, viewflipYFlip, rebuildCachedRenderTexture](const Vector<Rect2I>& regions, bool useDebugMaterial)
+	auto fnDrawRegions = [this, &widgetRenderData, &commandBuffer, renderTargetWidth, renderTargetHeight, viewflipYFlip, rebuildCachedRenderTexture](const Vector<Area2I>& regions, bool useDebugMaterial)
 	{
-		const Rect2I clipRectangle(0, 0, renderTargetWidth, renderTargetHeight);
+		const Area2I clipRectangle(0, 0, renderTargetWidth, renderTargetHeight);
 
 		// Find and draw all GUI meshes overlapping dirty regions
 		// Note: Could use quad-tree here for faster search
-		for(Rect2I region : regions)
+		for(Area2I region : regions)
 		{
 			region.Clip(clipRectangle);
 
@@ -1777,7 +1777,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 	}
 	else
 	{
-		fnDrawRegions({ Rect2I(0, 0, renderTargetWidth, renderTargetHeight) }, true);
+		fnDrawRegions({ Area2I(0, 0, renderTargetWidth, renderTargetHeight) }, true);
 	}
 
 	cameraRenderData.LastFrameDirtyDebugDrawRegions.clear();
@@ -1854,8 +1854,8 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 
 	widget->WorldTransform = worldTransform;
 
-	for(const Rect2I& dirtyRegion : data.DirtyRegions)
-		Rect2I::AddUnique(dirtyRegion, cameraRenderData.DirtyRegions);
+	for(const Area2I& dirtyRegion : data.DirtyRegions)
+		Area2I::AddUnique(dirtyRegion, cameraRenderData.DirtyRegions);
 
 	if(widget->WidgetDepth != widgetDepth)
 	{
@@ -1882,7 +1882,7 @@ void GUIRenderer::ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId)
 		return;
 
 	for(const auto& drawGroup : iterFind2->DrawGroups)
-		Rect2I::AddUnique(drawGroup.Bounds, iterFind->second.DirtyRegions);
+		Area2I::AddUnique(drawGroup.Bounds, iterFind->second.DirtyRegions);
 
 	widgetData.erase(iterFind2);
 

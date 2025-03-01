@@ -367,7 +367,7 @@ namespace bs
 			void UpdateNormArea(u32 atlasSize);
 
 			u32 LightIdx; /**< Index of the light casting this shadow. */
-			Rect2I Area; /**< Area of the shadow map in pixels, relative to its source texture. */
+			Area2I Area; /**< Area of the shadow map in pixels, relative to its source texture. */
 			Rect2 NormArea; /**< Normalized shadow map area in [0, 1] range. */
 			u32 TextureIdx; /**< Index of the texture the shadow map is stored in. */
 
@@ -407,7 +407,7 @@ namespace bs
 			 * Registers a new map in the shadow map atlas. Returns true if the map fits in the atlas, or false otherwise.
 			 * Resets the last used counter to zero.
 			 */
-			bool AddMap(u32 size, Rect2I& area, u32 border = 4);
+			bool AddMap(u32 size, Area2I& area, u32 border = 4);
 
 			/** Clears all shadow maps from the atlas. Increments the last used counter.*/
 			void Clear();

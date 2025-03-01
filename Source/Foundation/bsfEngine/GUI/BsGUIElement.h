@@ -5,7 +5,7 @@
 #include "BsPrerequisites.h"
 #include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUILayoutData.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "Utility/BsRectOffset.h"
 #include "Utility/BsSpatialTree.h"
 #include "BsGUIUnits.h"
@@ -205,7 +205,7 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
-		Rect2I CalculateScreenBounds() const;
+		Area2I CalculateScreenBounds() const;
 
 		/**
 		 * Returns bounds of the GUI element, relative to the parent GUI widget. Absolute values represent the final

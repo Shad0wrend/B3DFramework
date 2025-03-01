@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "Prerequisites/BsPrerequisitesUtil.h"
 #include "Math/BsVector2.h"
 
@@ -139,7 +139,7 @@ namespace bs
 			u32 PreviousSiblingId = ~0u;
 			NodeState State = NodeState::Unused;
 			NodeOrientation Orientation = NodeOrientation::Vertical;
-			Rect2I Area;
+			Area2I Area;
 		};
 
 		/** Contains a list of free nodes for a particular size. */
@@ -158,8 +158,8 @@ namespace bs
 		/** Result of a node split operation. */
 		struct NodeSplitResult
 		{
-			Rect2I SmallerLeftoverArea;
-			Rect2I LargerLeftoverArea;
+			Area2I SmallerLeftoverArea;
+			Area2I LargerLeftoverArea;
 
 			/**
 			 * If horizontal, larger rectangle is placed to the right of the requested area (which is always in the top right of the node), and smaller

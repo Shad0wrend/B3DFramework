@@ -93,8 +93,8 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCr
 
 	SPtr<Viewport> viewport = desc.Camera->GetViewport();
 
-	Rect2I targetBounds(0, 0, viewport->GetPixelArea().Width, viewport->GetPixelArea().Height);
-	Vector<Rect2I> captureBounds;
+	Area2I targetBounds(0, 0, viewport->GetPixelArea().Width, viewport->GetPixelArea().Height);
+	Vector<Area2I> captureBounds;
 	targetBounds.Cut(desc.AdditionalBounds, captureBounds);
 
 	mCaptureHitBox = GUIDropDownHitBox::Create(true, false);
@@ -109,7 +109,7 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCr
 
 	mAdditionalCaptureBounds = desc.AdditionalBounds;
 
-	Rect2I availableBounds = viewport->GetPixelArea();
+	Area2I availableBounds = viewport->GetPixelArea();
 	mRootMenu = B3DNew<DropDownSubMenu>(this, nullptr, desc.Placement, availableBounds, desc.DropDownData, type, 0);
 }
 
@@ -136,7 +136,7 @@ void GUIDropDownMenu::DropDownFocusLost()
 
 void GUIDropDownMenu::NotifySubMenuOpened(DropDownSubMenu* subMenu)
 {
-	Vector<Rect2I> bounds;
+	Vector<Area2I> bounds;
 	while(subMenu != nullptr)
 	{
 		bounds.push_back(subMenu->GetVisibleBounds());
@@ -154,7 +154,7 @@ void GUIDropDownMenu::NotifySubMenuOpened(DropDownSubMenu* subMenu)
 
 void GUIDropDownMenu::NotifySubMenuClosed(DropDownSubMenu* subMenu)
 {
-	Vector<Rect2I> bounds;
+	Vector<Area2I> bounds;
 	while(subMenu != nullptr)
 	{
 		bounds.push_back(subMenu->GetVisibleBounds());
@@ -170,7 +170,7 @@ void GUIDropDownMenu::NotifySubMenuClosed(DropDownSubMenu* subMenu)
 	mFrontHitBox->SetBounds(bounds);
 }
 
-GUIDropDownMenu::DropDownSubMenu::DropDownSubMenu(GUIDropDownMenu* owner, DropDownSubMenu* parent, const DropDownAreaPlacement& placement, const Rect2I& availableBounds, const GUIDropDownData& dropDownData, GUIDropDownType type, u32 depthOffset)
+GUIDropDownMenu::DropDownSubMenu::DropDownSubMenu(GUIDropDownMenu* owner, DropDownSubMenu* parent, const DropDownAreaPlacement& placement, const Area2I& availableBounds, const GUIDropDownData& dropDownData, GUIDropDownType type, u32 depthOffset)
 	: Owner(owner), Type(type), Data(dropDownData), Page(0), X(0), Y(0), Width(0), Height(0), DepthOffset(depthOffset), IsOpenedUpward(false), Content(nullptr), BackgroundFrame(nullptr), BackgroundPanel(nullptr), ContentPanel(nullptr), ContentLayout(nullptr), SidebarPanel(nullptr), ParentSubMenu(parent), ActiveChildSubMenu(nullptr)
 {
 	MAvailableBounds = availableBounds;
@@ -212,7 +212,7 @@ GUIDropDownMenu::DropDownSubMenu::DropDownSubMenu(GUIDropDownMenu* owner, DropDo
 
 	DropDownAreaPlacement::HorzDir horzDir;
 	DropDownAreaPlacement::VertDir vertDir;
-	Rect2I placementBounds = placement.GetOptimalBounds(dropDownBoxWidth, maxNeededHeight, availableBounds, horzDir, vertDir);
+	Area2I placementBounds = placement.GetOptimalBounds(dropDownBoxWidth, maxNeededHeight, availableBounds, horzDir, vertDir);
 
 	IsOpenedUpward = vertDir == DropDownAreaPlacement::VertDir::Up;
 
@@ -397,7 +397,7 @@ void GUIDropDownMenu::DropDownSubMenu::UpdateGuiElements()
 	BackgroundPanel->SetHeight(pageHeight);
 	BackgroundPanel->SetPosition(X + contentOffset, actualY);
 
-	MVisibleBounds = Rect2I(X, actualY, Width, pageHeight);
+	MVisibleBounds = Area2I(X, actualY, Width, pageHeight);
 
 	u32 contentWidth = (u32)std::max(0, (i32)Width - (i32)backgroundFramePadding.Left - (i32)backgroundFramePadding.Right - (i32)contentOffset);
 	u32 contentHeight = (u32)std::max(0, (i32)pageHeight - (i32)backgroundFramePadding.Top - (i32)backgroundFramePadding.Bottom);

@@ -39,7 +39,7 @@ void Cursor::ClipToWindow(const RenderWindow& window)
 	Platform::ClipCursorToWindow(window);
 }
 
-void Cursor::ClipToRect(const Rect2I& screenRect)
+void Cursor::ClipToRect(const Area2I& screenRect)
 {
 	Platform::ClipCursorToRect(screenRect);
 }

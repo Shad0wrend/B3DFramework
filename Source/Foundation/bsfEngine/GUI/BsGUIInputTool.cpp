@@ -67,14 +67,14 @@ void GUIInputTool::UpdateText(const GUIInteractable* element, const TextSpriteIn
 	B3DClearAllocatorFrame();
 }
 
-Rect2I GUIInputTool::GetCharacterBounds(u32 characterIndex) const
+Area2I GUIInputTool::GetCharacterBounds(u32 characterIndex) const
 {
 	u32 lineIdx = GetLineForChar(characterIndex);
 
 	// If char is newline we don't have any geometry to return
 	const GUIInputLineDesc& lineDesc = GetLineDesc(lineIdx);
 	if(lineDesc.IsNewline(characterIndex))
-		return Rect2I();
+		return Area2I();
 
 	u32 numNewlineChars = 0;
 	for(u32 i = 0; i < lineIdx; i++)
@@ -85,7 +85,7 @@ Rect2I GUIInputTool::GetCharacterBounds(u32 characterIndex) const
 	{
 		u32 vertIdx = quadIdx * 4;
 
-		Rect2I charRect;
+		Area2I charRect;
 		charRect.X = Math::RoundToI32(mQuads[vertIdx + 0].X);
 		charRect.Y = Math::RoundToI32(mQuads[vertIdx + 0].Y);
 		charRect.Width = Math::RoundToI32(mQuads[vertIdx + 3].X - charRect.X);
@@ -95,7 +95,7 @@ Rect2I GUIInputTool::GetCharacterBounds(u32 characterIndex) const
 	}
 
 	B3D_LOG(Error, GUI, "Invalid character index: {0}", characterIndex);
-	return Rect2I();
+	return Area2I();
 }
 
 i32 GUIInputTool::GetCharIdxAtPos(const GUIPhysicalPoint& pos) const

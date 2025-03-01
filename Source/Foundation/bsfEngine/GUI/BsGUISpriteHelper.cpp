@@ -92,7 +92,7 @@ void GUIBackgroundSprite::SetAnimationStartTime(float time)
 
 void GUIContentSprites::BuildRenderElements(const GUIContentSpriteCreateInformation& createInformation, TInlineArray<GUIRenderElement, 4>& outRenderElements)
 {
-	const Rect2I contentArea = createInformation.ContentArea;
+	const Area2I contentArea = createInformation.ContentArea;
 	const Size2UI contentAreaSize(contentArea.Width, contentArea.Height);
 
 	const bool isContentTextAvailable = !createInformation.Content.Text.GetValue().empty();
@@ -124,8 +124,8 @@ void GUIContentSprites::BuildRenderElements(const GUIContentSpriteCreateInformat
 	Rect2 textBounds;
 	Rect2 imageBounds;
 
-	Rect2I textSpriteBounds = isContentTextAvailable ? mContentTextSprite.GetBounds(Vector2I(BsZero), Rect2I()) : Rect2I();
-	Rect2I contentImageSpriteBounds = isContentImageAvailable ? mContentImageSprite.GetBounds(Vector2I(BsZero), Rect2I()) : Rect2I();
+	Area2I textSpriteBounds = isContentTextAvailable ? mContentTextSprite.GetBounds(Vector2I(BsZero), Area2I()) : Area2I();
+	Area2I contentImageSpriteBounds = isContentImageAvailable ? mContentImageSprite.GetBounds(Vector2I(BsZero), Area2I()) : Area2I();
 
 	CalculateContentBounds(contentArea, Size2UI(contentImageSpriteBounds.Width, contentImageSpriteBounds.Height), Size2UI(textSpriteBounds.Width, textSpriteBounds.Height), GUIImagePosition::Left, textBounds, imageBounds);
 
@@ -139,7 +139,7 @@ void GUIContentSprites::BuildRenderElements(const GUIContentSpriteCreateInformat
 		GUIRenderElementHelper::Append({ GUIRenderElementHelper::SpriteInfo(&mContentTextSprite, createInformation.Depth, textOffset, textBounds) }, outRenderElements );
 }
 
-TextSpriteInformation GUIContentSprites::BuildTextSpriteInformation(const Rect2I& contentArea, const String& text, const GUIStyleSheetRules& rules, const Color& tint, float fontScale, bool wordWrap)
+TextSpriteInformation GUIContentSprites::BuildTextSpriteInformation(const Area2I& contentArea, const String& text, const GUIStyleSheetRules& rules, const Color& tint, float fontScale, bool wordWrap)
 {
 	TextSpriteInformation textSpriteInformation;
 
@@ -186,7 +186,7 @@ Size2UI GUIContentSprites::CalculateScaledImageSize(const HSpriteImage& image, c
 	return Size2UI(contentWidth, contentHeight);
 }
 
-void GUIContentSprites::CalculateContentBounds(const Rect2I& contentArea, const Size2UI& imageSize, const Size2UI& textSize, GUIImagePosition imagePosition, Rect2& outTextBounds, Rect2& outImageBounds)
+void GUIContentSprites::CalculateContentBounds(const Area2I& contentArea, const Size2UI& imageSize, const Size2UI& textSize, GUIImagePosition imagePosition, Rect2& outTextBounds, Rect2& outImageBounds)
 {
 	if(imageSize.Width > 0 && imageSize.Height > 0)
 	{
@@ -271,7 +271,7 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 	GUIContentSpriteCreateInformation contentSpriteCreateInformation(size, content, styleSheetRules, tint, element.mAbsoluteScale, batchId);
 	contentSpriteCreateInformation.Depth = depth;
 	contentSpriteCreateInformation.Offset = offset;
-	contentSpriteCreateInformation.ContentArea = GUIUtility::CalculateContentArea(size.To<GUILogicalUnit>(), styleSheetRules).ToRect2I();
+	contentSpriteCreateInformation.ContentArea = GUIUtility::CalculateContentArea(size.To<GUILogicalUnit>(), styleSheetRules).To<i32, u32>();
 
 	sprites.BuildRenderElements(contentSpriteCreateInformation, element.mRenderElements);
 }
@@ -284,7 +284,7 @@ TextSpriteInformation GUISpriteHelper::BuildTextSpriteInformation(const GUIInter
 	if(element.mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = element.mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		const Rect2I contentArea = GUIUtility::CalculateContentArea(size.To<GUILogicalUnit>(), styleSheetRules).ToRect2I();
+		const Area2I contentArea = GUIUtility::CalculateContentArea(size.To<GUILogicalUnit>(), styleSheetRules).To<i32, u32>();
 
 		return GUIContentSprites::BuildTextSpriteInformation(contentArea, text, styleSheetRules, tint, fontScale, wordWrap);
 	}

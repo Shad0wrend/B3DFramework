@@ -361,7 +361,7 @@ namespace bs::ct
 	}
 
 	/** Populates the per-view uniform buffer that is shared by all path elements of a single VectorPath object. */
-	static void PopulateNVGViewUniformBuffer(const SPtr<ct::GpuBuffer>& uniformBuffer, const Rect2I& viewRegion)
+	static void PopulateNVGViewUniformBuffer(const SPtr<ct::GpuBuffer>& uniformBuffer, const Area2I& viewRegion)
 	{
 		ct::gVectorGraphicsViewUniforms.gViewportOffset.Set(uniformBuffer, Vector2(-(float)viewRegion.X, -(float)viewRegion.Y));
 		ct::gVectorGraphicsViewUniforms.gInverseViewportHalfSize.Set(uniformBuffer, Vector2(1.0f / ((float)viewRegion.Width * 0.5f), 1.0f / ((float)viewRegion.Height * 0.5f)));
@@ -783,7 +783,7 @@ namespace bs::ct
 		renderBuffers.RenderUniformBuffer->Unlock();
 
 		renderBuffers.ViewUniformBuffer = ct::gVectorGraphicsViewUniforms.CreateBuffer();
-		PopulateNVGViewUniformBuffer(renderBuffers.ViewUniformBuffer, Rect2I(0, 0, Math::RoundToU32(mSettings.Size.Width), Math::RoundToU32(mSettings.Size.Height)));
+		PopulateNVGViewUniformBuffer(renderBuffers.ViewUniformBuffer, Area2I(0, 0, Math::RoundToU32(mSettings.Size.Width), Math::RoundToU32(mSettings.Size.Height)));
 
 		return renderBuffers;
 	}

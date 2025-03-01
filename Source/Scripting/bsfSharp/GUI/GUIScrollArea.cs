@@ -58,11 +58,11 @@ namespace bs
         /// Returns the bounds of the scroll area not including the scroll bars (only the portion that contains the
         /// contents).
         /// </summary>
-        public Rect2I ContentBounds
+        public Area2I ContentBounds
         {
             get
             {
-                Rect2I bounds;
+                Area2I bounds;
                 Internal_GetContentBounds(mCachedPtr, out bounds);
                 return bounds;
             }
@@ -167,7 +167,7 @@ namespace bs
         private static extern GUILayoutY Internal_GetLayout(IntPtr nativeInstance);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_GetContentBounds(IntPtr nativeInstance, out Rect2I value);
+        private static extern void Internal_GetContentBounds(IntPtr nativeInstance, out Area2I value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern float Internal_GetHorzScroll(IntPtr nativeInstance);

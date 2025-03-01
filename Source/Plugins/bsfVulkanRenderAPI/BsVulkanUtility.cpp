@@ -4,7 +4,7 @@
 #include "BsVulkanGpuDevice.h"
 #include "Error/BsException.h"
 #include "Image/BsTexture.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "RenderAPI/BsGpuParameters.h"
 
 using namespace bs;
@@ -641,7 +641,7 @@ VkPipelineStageFlags VulkanUtility::ShaderToPipelineStage(VkShaderStageFlags sha
 	return output;
 }
 
-VkRect2D VulkanUtility::ToVulkanRect(const Rect2I& input)
+VkRect2D VulkanUtility::ToVulkanRect(const Area2I& input)
 {
 	VkRect2D output;
 	output.offset.x = input.X;
@@ -652,7 +652,7 @@ VkRect2D VulkanUtility::ToVulkanRect(const Rect2I& input)
 	return output;
 }
 
-VkViewport VulkanUtility::ToVulkanViewport(const Rect2I& input, float minDepth, float maxDepth)
+VkViewport VulkanUtility::ToVulkanViewport(const Area2I& input, float minDepth, float maxDepth)
 {
 	VkViewport output;
 	output.x = (float)input.X;

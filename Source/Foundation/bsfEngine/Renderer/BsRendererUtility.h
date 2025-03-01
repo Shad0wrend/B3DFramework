@@ -5,7 +5,7 @@
 #include "BsPrerequisites.h"
 #include "Utility/BsModule.h"
 #include "Math/BsRect2.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "RenderAPI/BsGpuDevice.h"
 #include "Mesh/BsMeshBase.h"
 #include "Renderer/BsRendererMaterial.h"
@@ -266,7 +266,7 @@ namespace bs
 			 * @param	isFiltered		True if to apply bilinear filtering to the sampled texture. Only relevant for color
 			 *							textures with no multiple samples.
 			 */
-			void Blit(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& texture, const Rect2I& area = Rect2I::kEmpty, bool flipUV = false, bool isDepth = false, bool isFiltered = false);
+			void Blit(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& texture, const Area2I& area = Area2I::kEmpty, bool flipUV = false, bool isDepth = false, bool isFiltered = false);
 
 			/**
 			 * Draws a quad over the entire viewport in normalized device coordinates.

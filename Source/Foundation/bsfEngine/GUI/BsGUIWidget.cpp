@@ -160,7 +160,7 @@ void GUIWidget::UpdateLayout()
 	Viewport* target = GetTarget();
 	if(target != nullptr)
 	{
-		Rect2I area = target->GetPixelArea();
+		Area2I area = target->GetPixelArea();
 
 		const GUIPhysicalSize physicalSize((i32)area.Width, (i32)area.Height);
 		const GUILogicalSize widgetSize = GUIUtility::PhysicalToLogical(physicalSize, mDPIScale);
@@ -497,7 +497,7 @@ void GUIWidget::UpdateRootPanel()
 	if(target == nullptr)
 		return;
 
-	Rect2I area = target->GetPixelArea();
+	Area2I area = target->GetPixelArea();
 
 	const GUIPhysicalSize physicalSize((i32)area.Width, (i32)area.Height);
 	const GUILogicalSize size = GUIUtility::PhysicalToLogical(physicalSize, mDPIScale);

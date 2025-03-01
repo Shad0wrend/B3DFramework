@@ -205,13 +205,13 @@ namespace bs
 		void BuildTextElement(const CanvasElement& element);
 
 		/** Build a set of clipped triangles from the source triangles provided by the canvas element. */
-		void BuildTriangleElement(const CanvasElement& element, const Vector2& offset, float scale, const Rect2I& clipRect) const;
+		void BuildTriangleElement(const CanvasElement& element, const Vector2& offset, float scale, const Area2I& clipRect) const;
 
 		/**
 		 * Rebuilds all triangle elements on the canvas, by constructing a set of clipped and offset triangles from the
 		 * triangles provided by the canvas elements.
 		 */
-		void BuildAllTriangleElementsIfDirty(const Vector2& offset, float scale, const Rect2I& clipRect) const;
+		void BuildAllTriangleElementsIfDirty(const Vector2& offset, float scale, const Area2I& clipRect) const;
 
 		/** Finds the canvas element that contains the render element with the specified index. */
 		const CanvasElement& FindElement(u32 renderElementIdx) const;
@@ -227,7 +227,7 @@ namespace bs
 		mutable Vector<Vector2> mClippedVertices;
 		mutable Vector<Vector2> mClippedLineVertices;
 		mutable Vector2 mLastOffset = BsZero;
-		mutable Rect2I mLastClipRect;
+		mutable Area2I mLastClipRect;
 		mutable bool mForceTriangleBuild = false;
 
 		static const float kLineSmoothBorderWidth;

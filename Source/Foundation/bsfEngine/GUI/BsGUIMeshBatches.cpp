@@ -57,7 +57,7 @@ void GUIMeshBatches::Add(GUIRenderable* guiElement)
 
 	BatchedGUIElement& batchedGuiElement = mElements[guiElement];
 	batchedGuiElement.GUIElement = guiElement;
-	batchedGuiElement.Bounds = guiElement->GetAbsoluteClippedArea().ToRect2I();
+	batchedGuiElement.Bounds = guiElement->GetAbsoluteClippedArea().To<i32, u32>();
 	batchedGuiElement.BatchPerRenderElement.Resize(guiRenderElements.Size(), ~0u);
 
 	for(u32 renderElementIndex = 0; renderElementIndex < (u32)guiRenderElements.Size(); renderElementIndex++)
@@ -278,7 +278,7 @@ GUIMeshBatches::Batch* GUIMeshBatches::Add(BatchedGUIElement& batchedGuiElement,
 
 	B3D_ASSERT(batchedGuiRenderElement.ParentGUIElement != nullptr);
 
-	const Rect2I bounds = batchedGuiRenderElement.ParentGUIElement->GetAbsoluteClippedArea().ToRect2I();
+	const Area2I bounds = batchedGuiRenderElement.ParentGUIElement->GetAbsoluteClippedArea().To<i32, u32>();
 	foundBatch->Bounds.Encapsulate(bounds);
 
 	MarkBoundsDirty(batchedGuiElement, foundBatch->Id);
@@ -342,7 +342,7 @@ void GUIMeshBatches::Remove(BatchedGUIElement& batchedGuiElement, u32 renderElem
 			batch.IsBoundsDirty = true;
 			batch.IsMeshDirty = true;
 
-			Rect2I::AddUnique(batchedGuiElement.Bounds, batch.DirtyRegions);
+			Area2I::AddUnique(batchedGuiElement.Bounds, batch.DirtyRegions);
 
 			itRenderElement = batch.RenderElements.erase(itRenderElement);
 			hasFoundElementToRemove = true;
@@ -363,7 +363,7 @@ void GUIMeshBatches::Remove(BatchedGUIElement& batchedGuiElement, u32 renderElem
 			if(*itBatchId == batchId)
 			{
 				for(const auto& dirtyRegion : batch.DirtyRegions)
-					Rect2I::AddUnique(dirtyRegion, mDirtyRegionsForRemovedBatches);
+					Area2I::AddUnique(dirtyRegion, mDirtyRegionsForRemovedBatches);
 
 				FreeBatchId(batch.Id);
 
@@ -418,7 +418,7 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 			}
 
 			// If bounds changed, rebuild the bounds of the draw groups
-			Rect2I bounds = guiElement->GetAbsoluteClippedArea().ToRect2I();
+			Area2I bounds = guiElement->GetAbsoluteClippedArea().To<i32, u32>();
 			if(batchedGuiElement.Bounds != bounds)
 			{
 				MarkBoundsDirty(batchedGuiElement);
@@ -543,14 +543,14 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 
 			Batch& batch = itFoundBatch->second;
 			for(const auto& dirtyRegion : batch.DirtyRegions)
-				Rect2I::AddUnique(dirtyRegion, output.DirtyRegions);
+				Area2I::AddUnique(dirtyRegion, output.DirtyRegions);
 
 			batch.DirtyRegions.clear();
 		}
 	}
 
 	for(const auto& dirtyRegion : mDirtyRegionsForRemovedBatches)
-		Rect2I::AddUnique(dirtyRegion, output.DirtyRegions);
+		Area2I::AddUnique(dirtyRegion, output.DirtyRegions);
 
 	mDirtyRegionsForRemovedBatches.clear();
 
@@ -592,7 +592,7 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 					if(batchRenderData.Id != batchId)
 						continue;
 
-					batchRenderData.RenderTargetElements.emplace_back(GUIRenderTargetRenderData(B3DGetRenderProxy(target), element->GetAbsoluteClippedArea().ToRect2I()));
+					batchRenderData.RenderTargetElements.emplace_back(GUIRenderTargetRenderData(B3DGetRenderProxy(target), element->GetAbsoluteClippedArea().To<i32, u32>()));
 				}
 			}
 		}
@@ -627,7 +627,7 @@ void GUIMeshBatches::MarkBoundsDirty(const BatchedGUIElement& element)
 
 		Batch& batch = itFoundBatch->second;
 
-		Rect2I::AddUnique(element.Bounds, batch.DirtyRegions);
+		Area2I::AddUnique(element.Bounds, batch.DirtyRegions);
 		previousBatchId = batchId;
 	}
 }
@@ -639,7 +639,7 @@ void GUIMeshBatches::MarkBoundsDirty(const BatchedGUIElement& element, u32 batch
 		return;
 
 	Batch& batch = itFoundBatch->second;
-	Rect2I::AddUnique(element.Bounds, batch.DirtyRegions);
+	Area2I::AddUnique(element.Bounds, batch.DirtyRegions);
 }
 
 void GUIMeshBatches::RebuildMesh(Batch& batch)
@@ -791,7 +791,7 @@ u32 GUIMeshBatches::SplitDepthRange(u32 depthRangeIndex, u32 depth)
 					continue;
 
 				itFoundGuiElement->second.BatchPerRenderElement[batchedGuiRenderElement.RenderElementIndex] = newBatch.Id;
-				Rect2I::AddUnique(itFoundGuiElement->second.Bounds, newBatch.DirtyRegions);
+				Area2I::AddUnique(itFoundGuiElement->second.Bounds, newBatch.DirtyRegions);
 			}
 
 			mBatches[newBatch.Id] = newBatch;
@@ -860,15 +860,15 @@ bool GUIMeshBatches::CollapseDepthRange(u32 depthRangeIndex)
 			if(foundGuiElement != mElements.end())
 				foundGuiElement->second.BatchPerRenderElement[entry.RenderElementIndex] = batch->Id;
 
-			Rect2I::AddUnique(foundGuiElement->second.Bounds, batch->DirtyRegions);
+			Area2I::AddUnique(foundGuiElement->second.Bounds, batch->DirtyRegions);
 			batch->IsBoundsDirty = true;
 			batch->IsMeshDirty = true;
 		}
 
 		batch->RenderElements.insert(batch->RenderElements.begin(), nextBatch->RenderElements.begin(), nextBatch->RenderElements.end());
 
-		for(const Rect2I& dirtyRegion : nextBatch->DirtyRegions)
-			Rect2I::AddUnique(dirtyRegion, batch->DirtyRegions);
+		for(const Area2I& dirtyRegion : nextBatch->DirtyRegions)
+			Area2I::AddUnique(dirtyRegion, batch->DirtyRegions);
 
 		mBatches.erase(nextBatch->Id);
 	}
@@ -926,9 +926,9 @@ GUIBatchRenderData GUIMeshBatches::GetRenderData(const Batch& batch)
 	return batchRenderData;
 }
 
-Rect2I GUIMeshBatches::CalculateBounds(Batch& batch)
+Area2I GUIMeshBatches::CalculateBounds(Batch& batch)
 {
-	Rect2I bounds = Rect2I();
+	Area2I bounds = Area2I();
 	bool boundsSet = false;
 
 	for(auto& entry : batch.RenderElements)
@@ -939,7 +939,7 @@ Rect2I GUIMeshBatches::CalculateBounds(Batch& batch)
 		if(entry.ParentGUIElement->IsHidden())
 			continue;
 
-		Rect2I elementBounds = entry.ParentGUIElement->GetAbsoluteClippedArea().ToRect2I();
+		Area2I elementBounds = entry.ParentGUIElement->GetAbsoluteClippedArea().To<i32, u32>();
 		if(!boundsSet)
 		{
 			bounds = elementBounds;

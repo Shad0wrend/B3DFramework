@@ -95,7 +95,7 @@ void GUIInputBox::UpdateRenderElements()
 	Optional<TextSpriteInformation> textSpriteInformation;
 
 	ImageSprite* caretSprite = nullptr;
-	Rect2I caretBounds;
+	Area2I caretBounds;
 	if(mCaretShown && GetGUIManager().GetCaretBlinkState())
 	{
 		textSpriteInformation = BuildTextSpriteInformation();
@@ -119,7 +119,7 @@ void GUIInputBox::UpdateRenderElements()
 	// When text bounds are reduced the scroll needs to be adjusted so that
 	// input box isn't filled with mostly empty space.
 	Vector2I offset = mAbsolutePosition.To<i32>();
-	ClampScrollToBounds(mTextSprite.GetTextSprite().GetBounds(offset, Rect2I()));
+	ClampScrollToBounds(mTextSprite.GetTextSprite().GetBounds(offset, Area2I()));
 
 	const GUIPhysicalArea scaledContentBounds = GetScaledContentBounds();
 
@@ -137,7 +137,7 @@ void GUIInputBox::UpdateRenderElements()
 			for(u32 selectionSpriteIndex = 0; selectionSpriteIndex < (u32)sprites.size(); ++selectionSpriteIndex)
 			{
 				ImageSprite* const sprite = sprites[selectionSpriteIndex];
-				const Rect2 selectionBounds = (Rect2)selection->GetBounds(selectionSpriteIndex);
+				const Rect2 selectionBounds = selection->GetBounds(selectionSpriteIndex).ToRect2();
 
 				for(u32 renderElementIndex = 0; renderElementIndex < sprite->GetRenderElementCount(); renderElementIndex++)
 				{
@@ -826,7 +826,7 @@ void GUIInputBox::ScrollTextToCaret()
 	GetGUIManager().GetInputSelectionTool()->UpdateText(this, textSpriteInformation);
 }
 
-void GUIInputBox::ClampScrollToBounds(Rect2I unclippedTextBounds)
+void GUIInputBox::ClampScrollToBounds(Area2I unclippedTextBounds)
 {
 	const TextSpriteInformation textSpriteInformation = BuildTextSpriteInformation();
 

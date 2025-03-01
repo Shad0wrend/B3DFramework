@@ -185,7 +185,6 @@ namespace bs
 	class Matrix3;
 	class Matrix4;
 	class Capsule;
-	class Rect2I;
 	class Rect2;
 	class Rect3;
 	class Color;

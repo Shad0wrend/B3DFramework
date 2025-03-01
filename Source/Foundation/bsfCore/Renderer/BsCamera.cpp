@@ -518,7 +518,7 @@ Vector3 CameraBase::ScreenToViewPoint(const Vector2I& screenPoint, float depth) 
 
 Vector2 CameraBase::ScreenToNdcPoint(const Vector2I& screenPoint) const
 {
-	Rect2I viewport = GetViewportRect();
+	Area2I viewport = GetViewportRect();
 
 	Vector2 ndcPoint;
 	ndcPoint.X = (float)(((screenPoint.X - viewport.X) / (float)viewport.Width) * 2.0f - 1.0f);
@@ -565,7 +565,7 @@ Vector3 CameraBase::NdcToViewPoint(const Vector2& ndcPoint, float depth) const
 
 Vector2I CameraBase::NdcToScreenPoint(const Vector2& ndcPoint) const
 {
-	Rect2I viewport = GetViewportRect();
+	Area2I viewport = GetViewportRect();
 
 	Vector2I screenPoint;
 	screenPoint.X = Math::RoundToI32(viewport.X + ((ndcPoint.X + 1.0f) * 0.5f) * viewport.Width);
@@ -732,7 +732,7 @@ void Camera::SetMain(bool main)
 	GetSceneManager().NotifyMainCameraStateChangedInternal(std::static_pointer_cast<Camera>(GetShared()));
 }
 
-Rect2I Camera::GetViewportRect() const
+Area2I Camera::GetViewportRect() const
 {
 	return mViewport->GetPixelArea();
 }
@@ -838,7 +838,7 @@ void Camera::Initialize()
 	RenderProxy::Initialize();
 }
 
-Rect2I Camera::GetViewportRect() const
+Area2I Camera::GetViewportRect() const
 {
 	return mViewport->GetPixelArea();
 }

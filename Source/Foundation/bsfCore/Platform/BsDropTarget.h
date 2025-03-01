@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Utility/BsEvent.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 
 namespace bs
 {
@@ -32,10 +32,10 @@ namespace bs
 		~DropTarget();
 
 		/**	Sets the drop target area, in local window coordinates. */
-		void SetArea(const Rect2I& area);
+		void SetArea(const Area2I& area);
 
 		/** Returns the drop target area, in local window coordinates. */
-		const Rect2I& GetArea() const { return mArea; }
+		const Area2I& GetArea() const { return mArea; }
 
 		/**	Gets the type of drop that this drop target is looking for. Only valid after a drop has been triggered. */
 		DropTargetType GetDropType() const { return mDropType; }
@@ -53,7 +53,7 @@ namespace bs
 		 * @param[in]	area		Area, relative to the window, in which the drop events are allowed.
 		 * @return					Newly created drop target.
 		 */
-		static SPtr<DropTarget> Create(const RenderWindow* window, const Rect2I& area);
+		static SPtr<DropTarget> Create(const RenderWindow* window, const Area2I& area);
 
 		/**
 		 * Triggered when a pointer is being dragged over the drop area. Provides window coordinates of the pointer position.
@@ -100,9 +100,9 @@ namespace bs
 	protected:
 		friend class Platform;
 
-		DropTarget(const RenderWindow* ownerWindow, const Rect2I& area);
+		DropTarget(const RenderWindow* ownerWindow, const Area2I& area);
 
-		Rect2I mArea;
+		Area2I mArea;
 		bool mActive;
 		const RenderWindow* mOwnerWindow;
 

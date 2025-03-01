@@ -4,6 +4,7 @@
 
 #include "BsVulkanPrerequisites.h"
 #include "Image/BsPixelUtility.h"
+#include "Math/BsArea2.h"
 #include "RenderAPI/BsVertexDescription.h"
 
 namespace bs
@@ -79,10 +80,10 @@ namespace bs
 			static VkPipelineStageFlags ShaderToPipelineStage(VkShaderStageFlags shaderStageFlags);
 
 			/** Converts the engine rectangle into a VkRect2D. */
-			static VkRect2D ToVulkanRect(const Rect2I& input);
+			static VkRect2D ToVulkanRect(const Area2I& input);
 
 			/** Converts the engine rectangle into a VkViewport. */
-			static VkViewport ToVulkanViewport(const Rect2I& input, float minDepth, float maxDepth);
+			static VkViewport ToVulkanViewport(const Area2I& input, float minDepth, float maxDepth);
 
 			/**
 			 * Subdivides an image subresource range by cutting it with another range. If the ranges don't overlap, or the

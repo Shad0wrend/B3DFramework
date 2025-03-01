@@ -52,11 +52,11 @@ namespace bs
 
 		/// <summary>Returns the area of the render target covered by the viewport, in pixels.</summary>
 		[NativeWrapper]
-		public Rect2I PixelArea
+		public TArea2<int,int> PixelArea
 		{
 			get
 			{
-				Rect2I temp;
+				TArea2<int,int> temp;
 				Internal_GetPixelArea(mCachedPtr, out temp);
 				return temp;
 			}
@@ -114,7 +114,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetArea(IntPtr thisPtr, out Rect2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetPixelArea(IntPtr thisPtr, out Rect2I __output);
+		private static extern void Internal_GetPixelArea(IntPtr thisPtr, out TArea2<int,int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetClearFlags(IntPtr thisPtr, ClearFlags flags);
 		[MethodImpl(MethodImplOptions.InternalCall)]

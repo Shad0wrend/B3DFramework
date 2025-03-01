@@ -126,7 +126,7 @@ namespace bs
 		void ScrollTextToCaret();
 
 		/** Clamps the text offset (scroll)	so that the text fits in the provided bounds nicely with minimal white space. */
-		void ClampScrollToBounds(Rect2I unclippedTextBounds);
+		void ClampScrollToBounds(Area2I unclippedTextBounds);
 
 		/**	Returns offset at which to render the text. Relative to parent widget. */
 		GUIPhysicalPoint GetTextOffset() const;

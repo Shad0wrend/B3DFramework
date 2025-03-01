@@ -5,6 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/Platform/BsCursor.h"
+#include "BsScriptTArea2.generated.h"
 #include "BsScriptTVector2.generated.h"
 #include "BsScriptPixelData.generated.h"
 #include "BsScriptTVector2.generated.h"
@@ -60,7 +61,7 @@ namespace bs
 		Cursor::Instance().Show();
 	}
 
-	void ScriptCursor::InternalClipToRect(Rect2I* screenRect)
+	void ScriptCursor::InternalClipToRect(TArea2<int32_t, uint32_t>* screenRect)
 	{
 		Cursor::Instance().ClipToRect(*screenRect);
 	}

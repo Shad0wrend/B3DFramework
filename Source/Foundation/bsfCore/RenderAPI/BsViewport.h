@@ -7,7 +7,7 @@
 #include "Reflection/BsIReflectable.h"
 #include "CoreObject/BsCoreObject.h"
 #include "Image/BsColor.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "Math/BsRect2.h"
 #include "Script/BsIScriptExportable.h"
 #include "Utility/BsEvent.h"
@@ -46,7 +46,7 @@ namespace bs
 
 		/**	Returns the area of the render target covered by the viewport, in pixels. */
 		B3D_SCRIPT_EXPORT(ExportName(PixelArea), Property(Getter))
-		Rect2I GetPixelArea() const;
+		Area2I GetPixelArea() const;
 
 		/** Determines which portions of the render target should be cleared before rendering to this viewport is performed. */
 		B3D_SCRIPT_EXPORT(ExportName(ClearFlags), Property(Setter))

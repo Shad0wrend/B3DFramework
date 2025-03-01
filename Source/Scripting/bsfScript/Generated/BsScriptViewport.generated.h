@@ -7,7 +7,7 @@
 #include "../../../Foundation/bsfCore/RenderAPI/BsViewport.h"
 #include "../../../Foundation/bsfUtility/Image/BsColor.h"
 #include "Math/BsRect2.h"
-#include "Math/BsRect2I.h"
+#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsViewport.h"
 
 namespace bs { class Viewport; }
@@ -29,7 +29,7 @@ namespace bs
 		static MonoObject* InternalGetTarget(ScriptViewport* self);
 		static void InternalSetArea(ScriptViewport* self, Rect2* area);
 		static void InternalGetArea(ScriptViewport* self, Rect2* __output);
-		static void InternalGetPixelArea(ScriptViewport* self, Rect2I* __output);
+		static void InternalGetPixelArea(ScriptViewport* self, TArea2<int32_t, uint32_t>* __output);
 		static void InternalSetClearFlags(ScriptViewport* self, ClearFlagBits flags);
 		static ClearFlagBits InternalGetClearFlags(ScriptViewport* self);
 		static void InternalSetClearColorValue(ScriptViewport* self, Color* color);

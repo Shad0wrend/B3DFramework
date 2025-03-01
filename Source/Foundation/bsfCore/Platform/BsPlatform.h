@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Input/BsInputFwd.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "Utility/BsEvent.h"
 
 namespace bs
@@ -75,14 +75,14 @@ namespace bs
 	struct B3D_CORE_EXPORT NonClientResizeArea
 	{
 		NonClientAreaBorderType Type;
-		Rect2I Area;
+		Area2I Area;
 	};
 
 	/** Contains a list of window move and resize non client areas. */
 	struct B3D_CORE_EXPORT WindowNonClientAreaData
 	{
 		Vector<NonClientResizeArea> ResizeAreas;
-		Vector<Rect2I> MoveAreas;
+		Vector<Area2I> MoveAreas;
 	};
 
 	/**	Provides access to various operating system functions, including the main message pump. */
@@ -141,7 +141,7 @@ namespace bs
 		 * @note	Thread safe.
 		 */
 
-		static void ClipCursorToRect(const Rect2I& screenRect);
+		static void ClipCursorToRect(const Area2I& screenRect);
 
 		/**
 		 * Disables cursor clipping.
@@ -202,7 +202,7 @@ namespace bs
 		 * All provided areas are relative to the specified window. Mostly useful for frameless windows that don't have
 		 * typical caption bar.
 		 */
-		static void SetCaptionNonClientAreas(const RenderWindow& window, const Vector<Rect2I>& nonClientAreas);
+		static void SetCaptionNonClientAreas(const RenderWindow& window, const Vector<Area2I>& nonClientAreas);
 
 		/**
 		 * Sets custom non client areas for the specified window. Using custom client areas will override window resize

@@ -11,6 +11,7 @@
 #include "Math/BsQuaternion.h"
 #include "Math/BsRay.h"
 #include "CoreObject/BsCoreObject.h"
+#include "Math/BsArea2.h"
 #include "Math/BsConvexVolume.h"
 #include "Renderer/BsRenderSettings.h"
 #include "Scene/BsSceneActor.h"
@@ -432,7 +433,7 @@ namespace bs
 		virtual void InvalidateFrustum() const;
 
 		/**	Returns a rectangle that defines the viewport position and size, in pixels. */
-		virtual Rect2I GetViewportRect() const = 0;
+		virtual Area2I GetViewportRect() const = 0;
 
 	protected:
 		u64 mLayers = 0xFFFFFFFFFFFFFFFF; /**< Bitfield that can be used for filtering what objects the camera sees. */
@@ -545,7 +546,7 @@ namespace bs
 		friend class ct::Camera;
 
 		/** @copydoc CameraBase */
-		Rect2I GetViewportRect() const override;
+		Area2I GetViewportRect() const override;
 
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
@@ -590,7 +591,7 @@ namespace bs
 			Camera(const SPtr<Viewport>& viewport);
 
 			void Initialize() override;
-			Rect2I GetViewportRect() const override;
+			Area2I GetViewportRect() const override;
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			u32 mRendererId;

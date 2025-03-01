@@ -274,7 +274,7 @@ void GUIToggleable::UpdateRenderElements()
 		scaledContentAreaBounds.Width - physicalCheckmarkContentSpacing - checkmarkAreaSize.Width,
 		scaledContentAreaBounds.Height);
 
-	contentSpriteCreateInformation.ContentArea = contentArea.ToRect2I();
+	contentSpriteCreateInformation.ContentArea = contentArea.To<i32, u32>();
 
 	// Offset to center the checkmark sprite within the checkmark content area
 	const Vector2 checkmarkCenterOffset = Vector2(

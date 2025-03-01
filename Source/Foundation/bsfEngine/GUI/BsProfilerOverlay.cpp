@@ -555,7 +555,7 @@ void ProfilerOverlay::UpdateCpuSampleAreaSizes()
 	static const GUILogicalUnit kPadding = 10;
 	static const float kLabelsContentRatio = 0.3f;
 
-	const Rect2I pixelArea = mTarget->GetPixelArea();
+	const Area2I pixelArea = mTarget->GetPixelArea();
 	const GUIPhysicalSize physicalSize(Math::Max(0, (i32)pixelArea.Width), Math::Max(0, (i32)pixelArea.Height));
 	const GUILogicalSize logicalSize = GUIUtility::PhysicalToLogical(physicalSize, mDPIScale);
 
@@ -590,7 +590,7 @@ void ProfilerOverlay::UpdateGpuSampleAreaSizes()
 	static const i32 kNumColumns = 3;
 	static const i32 kHeightPerEntry = 15;
 
-	const Rect2I pixelArea = mTarget->GetPixelArea();
+	const Area2I pixelArea = mTarget->GetPixelArea();
 	const GUIPhysicalSize physicalSize(Math::Max(0, (i32)pixelArea.Width), Math::Max(0, (i32)pixelArea.Height));
 	const GUILogicalSize logicalSize = GUIUtility::PhysicalToLogical(physicalSize, mDPIScale);
 

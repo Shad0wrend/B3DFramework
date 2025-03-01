@@ -7,6 +7,7 @@
 #include "Reflection/BsRTTIType.h"
 #include "BsScriptColor.generated.h"
 #include "BsScriptRenderTarget.generated.h"
+#include "BsScriptTArea2.generated.h"
 #include "BsScriptViewport.generated.h"
 
 namespace bs
@@ -95,7 +96,7 @@ namespace bs
 		*__output = tmp__output;
 	}
 
-	void ScriptViewport::InternalGetPixelArea(ScriptViewport* self, Rect2I* __output)
+	void ScriptViewport::InternalGetPixelArea(ScriptViewport* self, TArea2<int32_t, uint32_t>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -103,7 +104,7 @@ namespace bs
 			return;
 		}
 
-		Rect2I tmp__output;
+		TArea2<int32_t, uint32_t> tmp__output;
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetPixelArea();
 
 		*__output = tmp__output;

@@ -47,11 +47,11 @@ namespace bs
 		static void InternalSetDisabled(ScriptGUIElementWrapper* self, bool disabled);
 		static bool InternalGetDisabled(ScriptGUIElementWrapper* self);
 		static MonoObject* InternalGetParent(ScriptGUIElementWrapper* self);
-		static void InternalCalculateAbsoluteBounds(ScriptGUIElementWrapper* self, Rect2I* bounds);
+		static void InternalCalculateAbsoluteBounds(ScriptGUIElementWrapper* self, Area2I* bounds);
 		static void InternalGetLayoutCalculatedSize(ScriptGUIElementWrapper* self, Size2UI* size);
-		static void InternalGetScreenBounds(ScriptGUIElementWrapper* self, Rect2I* bounds);
+		static void InternalGetScreenBounds(ScriptGUIElementWrapper* self, Area2I* bounds);
 		static void InternalCalculatePositionRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, __TVector2_TUnitValue_int32_t__LogicalPixel__Interop* position);
-		static void InternalCalculateAbsoluteBoundsRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, Rect2I* bounds);
+		static void InternalCalculateAbsoluteBoundsRelativeTo(ScriptGUIElementWrapper* self, ScriptGUIElementWrapper* relativeTo, Area2I* bounds);
 		static void InternalSetPosition(ScriptGUIElementWrapper* self, i32 x, i32 y);
 		static void InternalSetPosition2(ScriptGUIElementWrapper* self, __TVector2_TUnitValue_int32_t__LogicalPixel__Interop* position);
 		static void InternalSetWidth(ScriptGUIElementWrapper* self, u32 width);

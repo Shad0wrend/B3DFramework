@@ -8,6 +8,9 @@ global using Size2 = bs.TSize2<float>;
 global using Size2F = bs.TSize2<float>;
 global using Size2UI = bs.TSize2<int>;
 
+global using Area2 = bs.TArea2<float, float>;
+global using Area2I = bs.TArea2<int, int>;
+
 global using GUIPhysicalUnit = bs.TUnitValue<int, bs.PhysicalPixel>;
 global using GUIPhysicalUnitF = bs.TUnitValue<float, bs.PhysicalPixel>;
 

@@ -121,7 +121,7 @@ namespace bs
 		 * Returns the bounds of the scroll area not including the scroll bars (meaning only the portion that contains the
 		 * contents).
 		 */
-		Rect2I GetContentBounds();
+		Area2I GetContentBounds();
 
 		/**
 		 * Number of pixels the scroll bar will occupy when active. This is width for vertical scrollbar, and height for

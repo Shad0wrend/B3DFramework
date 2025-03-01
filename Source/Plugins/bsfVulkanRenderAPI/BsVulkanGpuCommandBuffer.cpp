@@ -478,7 +478,7 @@ void VulkanGpuCommandBuffer::ClearRenderTarget(u32 buffers, const Color& color, 
 {
 	EnsureValidThread();
 
-	Rect2I area(0, 0, mFramebuffer->GetWidth(), mFramebuffer->GetHeight());
+	Area2I area(0, 0, mFramebuffer->GetWidth(), mFramebuffer->GetHeight());
 	ClearViewport(area, buffers, color, depth, stencil, targetMask);
 
 	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
@@ -488,7 +488,7 @@ void VulkanGpuCommandBuffer::ClearViewport(u32 buffers, const Color& color, floa
 {
 	EnsureValidThread();
 
-	const Rect2I viewportArea = GetViewportArea();
+	const Area2I viewportArea = GetViewportArea();
 	ClearViewport(viewportArea, buffers, color, depth, stencil, targetMask);
 
 	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
@@ -596,7 +596,7 @@ void VulkanGpuCommandBuffer::EnableScissorTest(u32 left, u32 top, u32 right, u32
 {
 	EnsureValidThread();
 
-	const Rect2I area(left, top, right - left, bottom - top);
+	const Area2I area(left, top, right - left, bottom - top);
 
 	if(mIsScissorTestEnabled && mScissor == area)
 		return;
@@ -932,7 +932,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass()
 		return;
 	}
 
-	const Rect2I renderArea = GetRenderPassArea();
+	const Area2I renderArea = GetRenderPassArea();
 
 	const RenderSurfaceMask readMask = GetFramebufferReadMask();
 	RenderSurfaceMask loadMask = mRenderTargetLoadMask;
@@ -1500,7 +1500,7 @@ void VulkanGpuCommandBuffer::Reset()
 	mSyncMask = 0;
 }
 
-void VulkanGpuCommandBuffer::ClearViewport(const Rect2I& area, u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
+void VulkanGpuCommandBuffer::ClearViewport(const Area2I& area, u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 {
 	if(buffers == 0 || mFramebuffer == nullptr)
 		return;
@@ -1573,7 +1573,7 @@ void VulkanGpuCommandBuffer::ClearViewport(const Rect2I& area, u32 buffers, cons
 	NotifyRenderTargetModified();
 }
 
-void VulkanGpuCommandBuffer::ExecuteClearCommand(const Rect2I& area, RenderSurfaceMask clearMask, const Array<VkClearValue, B3D_MAXIMUM_RENDER_TARGET_COUNT + 1>& clearValues)
+void VulkanGpuCommandBuffer::ExecuteClearCommand(const Area2I& area, RenderSurfaceMask clearMask, const Array<VkClearValue, B3D_MAXIMUM_RENDER_TARGET_COUNT + 1>& clearValues)
 {
 	if(clearMask == RT_NONE || mFramebuffer == nullptr)
 		return;
@@ -3039,9 +3039,9 @@ RenderSurfaceMask VulkanGpuCommandBuffer::GetFramebufferReadMask()
 	return readMask;
 }
 
-Rect2I VulkanGpuCommandBuffer::GetViewportArea() const
+Area2I VulkanGpuCommandBuffer::GetViewportArea() const
 {
-	Rect2I area;
+	Area2I area;
 	area.X = (i32)Math::Round(mNormalizedViewportArea.X * (float)mFramebuffer->GetWidth());
 	area.Y = (i32)Math::Round(mNormalizedViewportArea.Y * (float)mFramebuffer->GetHeight());
 	area.Width = (u32)Math::Round(mNormalizedViewportArea.Width * (float)mFramebuffer->GetWidth());
@@ -3055,9 +3055,9 @@ Rect2I VulkanGpuCommandBuffer::GetViewportArea() const
 	return area;
 }
 
-Rect2I VulkanGpuCommandBuffer::GetRenderPassArea() const
+Area2I VulkanGpuCommandBuffer::GetRenderPassArea() const
 {
-	Rect2I area;
+	Area2I area;
 	area.X = 0;
 	area.Y = 0;
 	area.Width = mFramebuffer != nullptr ? (i32)mFramebuffer->GetWidth() : 0;

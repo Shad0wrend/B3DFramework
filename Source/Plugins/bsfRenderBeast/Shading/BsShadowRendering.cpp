@@ -341,7 +341,7 @@ ShadowMapAtlas::ShadowMapAtlas(u32 size)
 		POOLED_RenderTextureCreateInformation::Create2D(kShadowMapFormat, size, size, TU_DEPTHSTENCIL));
 }
 
-bool ShadowMapAtlas::AddMap(u32 size, Rect2I& area, u32 border)
+bool ShadowMapAtlas::AddMap(u32 size, Area2I& area, u32 border)
 {
 	u32 sizeWithBorder = size + border * 2;
 
@@ -1216,7 +1216,7 @@ void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, 
 	shadowInfo.TextureIdx = -1;
 
 	u32 mapSize = std::min(mShadowMapSize, kMaxAtlasSize);
-	shadowInfo.Area = Rect2I(0, 0, mapSize, mapSize);
+	shadowInfo.Area = Area2I(0, 0, mapSize, mapSize);
 	shadowInfo.UpdateNormArea(mapSize);
 
 	u32 numCascades = view.GetRenderSettings().ShadowSettings.NumCascades;
@@ -1435,7 +1435,7 @@ void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, con
 	mapInfo.TextureIdx = -1;
 	mapInfo.FadePerView = options.FadePercents;
 	mapInfo.CascadeIdx = -1;
-	mapInfo.Area = Rect2I(0, 0, options.MapSize, options.MapSize);
+	mapInfo.Area = Area2I(0, 0, options.MapSize, options.MapSize);
 	mapInfo.UpdateNormArea(options.MapSize);
 
 	for(u32 i = 0; i < (u32)mShadowCubemaps.size(); i++)

@@ -4,7 +4,7 @@
 
 #include "BsPrerequisites.h"
 #include "Scene/BsComponent.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "GUI/BsGUIWidget.h"
 
 namespace bs

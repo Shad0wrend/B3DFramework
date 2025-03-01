@@ -30,13 +30,13 @@ GUIDropDownHitBox::GUIDropDownHitBox(bool captureMouseOver, bool captureMousePre
 	mOptionFlags.Set(GUIElementOption::ClickThrough);
 }
 
-void GUIDropDownHitBox::SetBounds(const Rect2I& bounds)
+void GUIDropDownHitBox::SetBounds(const Area2I& bounds)
 {
 	mBounds.clear();
 	mBounds.push_back(bounds);
 }
 
-void GUIDropDownHitBox::SetBounds(const Vector<Rect2I>& bounds)
+void GUIDropDownHitBox::SetBounds(const Vector<Area2I>& bounds)
 {
 	mBounds = bounds;
 }

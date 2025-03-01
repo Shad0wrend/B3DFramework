@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPrerequisites.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "2D/BsSpriteMaterial.h"
 #include "RenderAPI/BsSubMesh.h"
 
@@ -22,7 +22,7 @@ namespace bs
 		SubMesh SubMesh;
 		SpriteMaterial* Material;
 		ct::SpriteMaterialInfo MaterialInformation;
-		Rect2I Bounds;
+		Area2I Bounds;
 
 		u32 UniformBufferIndex;
 	};
@@ -32,20 +32,20 @@ namespace bs
 	{
 		GUIRenderTargetRenderData() = default;
 
-		GUIRenderTargetRenderData(SPtr<ct::RenderTarget> target, const Rect2I& area)
+		GUIRenderTargetRenderData(SPtr<ct::RenderTarget> target, const Area2I& area)
 			: Target(std::move(target)), Area(area)
 		{}
 
 		SPtr<ct::RenderTarget> Target;
 		u64 LastUpdateCount = (u64)-1;
-		Rect2I Area;
+		Area2I Area;
 	};
 
 	/** Data required for rendering a single batch of GUI elements. */
 	struct GUIBatchRenderData
 	{
 		u32 Id = 0;
-		Rect2I Bounds;
+		Area2I Bounds;
 
 		Vector<GUIMeshRenderData> Elements;
 		Vector<GUIRenderTargetRenderData> RenderTargetElements;
@@ -58,7 +58,7 @@ namespace bs
 	struct GUIDrawGroupRenderDataUpdate
 	{
 		Vector<GUIBatchRenderData> NewBatches;
-		Vector<Rect2I> DirtyRegions;
+		Vector<Area2I> DirtyRegions;
 	};
 
 	/**
@@ -135,7 +135,7 @@ namespace bs
 		{
 			GUIRenderable* GUIElement = nullptr;
 			TInlineArray<u32, 4> BatchPerRenderElement;
-			Rect2I Bounds;
+			Area2I Bounds;
 		};
 
 		/**
@@ -149,11 +149,11 @@ namespace bs
 
 			BatchedMaterial Material;
 			Vector<BatchedGUIRenderElement> RenderElements;
-			Vector<Rect2I> DirtyRegions;
+			Vector<Area2I> DirtyRegions;
 
 			// Bounds
 			bool IsBoundsDirty = true;
-			Rect2I Bounds;
+			Area2I Bounds;
 
 			// Mesh
 			u32 IndexCount = 0;
@@ -233,7 +233,7 @@ namespace bs
 		static GUIBatchRenderData GetRenderData(const Batch& batch);
 
 		/** Calculates the bounds of all elements in all the batches in the provided batch. */
-		static Rect2I CalculateBounds(Batch& batche);
+		static Area2I CalculateBounds(Batch& batche);
 
 		/** Creates information about a material for the provided render element. */
 		static BatchedMaterial CreateBatchedMaterial(const BatchedGUIRenderElement& batchedGuiRenderElement);
@@ -246,7 +246,7 @@ namespace bs
 
 		UnorderedMap<GUIRenderable*, BatchedGUIElement> mElements;
 		UnorderedMap<GUIRenderable*, u32> mDirtyElements;
-		Vector<Rect2I> mDirtyRegionsForRemovedBatches;
+		Vector<Area2I> mDirtyRegionsForRemovedBatches;
 		bool mBatchesOutOfDateInRenderer = true;
 		GUIWidget* mWidget;
 

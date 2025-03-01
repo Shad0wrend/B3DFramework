@@ -208,7 +208,7 @@ void GUICanvas::Clear()
 void GUICanvas::UpdateRenderElements()
 {
 	Vector2 offset = mAbsolutePosition.To<float>();
-	Rect2I clipRect = GetLocalClippedArea().ToRect2I();
+	Area2I clipRect = GetLocalClippedArea().To<i32, u32>();
 	BuildAllTriangleElementsIfDirty(offset, mAbsoluteScale, clipRect);
 
 	mRenderElements.Clear();
@@ -313,7 +313,7 @@ void GUICanvas::FillBuffer(
 	u32 indexStride = sizeof(u32);
 
 	Vector2I layoutOffset = mAbsolutePosition.To<i32>() + offset;
-	Rect2I clipRect = GetLocalClippedArea().ToRect2I();
+	Area2I clipRect = GetLocalClippedArea().To<i32, u32>();
 
 	Vector2 floatOffset((float)layoutOffset.X, (float)layoutOffset.Y);
 	BuildAllTriangleElementsIfDirty(floatOffset, mAbsoluteScale, clipRect);
@@ -454,7 +454,7 @@ void GUICanvas::BuildTextElement(const CanvasElement& element)
 	element.TextSprite->Update(desc, (u64)GetParentWidget());
 }
 
-void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2& offset, float scale, const Rect2I& clipRect) const
+void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2& offset, float scale, const Area2I& clipRect) const
 {
 	B3D_ASSERT(element.Type == CanvasElementType::Triangle || element.Type == CanvasElementType::Line);
 
@@ -543,7 +543,7 @@ void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2
 	}
 }
 
-void GUICanvas::BuildAllTriangleElementsIfDirty(const Vector2& offset, float scale, const Rect2I& clipRect) const
+void GUICanvas::BuildAllTriangleElementsIfDirty(const Vector2& offset, float scale, const Area2I& clipRect) const
 {
 	// We need to rebuild if new triangle element(s) were added, or if offset or clip rectangle changed
 	bool isDirty = mForceTriangleBuild || (mLastOffset != offset) || (mLastClipRect != clipRect);

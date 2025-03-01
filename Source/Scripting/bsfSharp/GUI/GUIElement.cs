@@ -24,11 +24,11 @@ namespace bs
         /// Always returns value calculated by last layout update. This means out of date value may be returned if the
         /// layout has been dirtied since then. // TODO - This sentence is not true until below is implemented
         /// </summary>
-        public Rect2I AbsoluteBounds // TODO - Refactor this to always return cached bounds, add CalculateAbsoluteBounds for other use cases
+        public Area2I AbsoluteBounds // TODO - Refactor this to always return cached bounds, add CalculateAbsoluteBounds for other use cases
         {
             get
             {
-                Rect2I bounds;
+                Area2I bounds;
                 Internal_CalculateAbsoluteBounds(mCachedPtr, out bounds);
                 return bounds;
             }
@@ -38,11 +38,11 @@ namespace bs
         /// Calculates bounds of the GUI element in screen space.
         /// <remarks>This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.</remarks>
         /// </summary>
-        public Rect2I ScreenBounds
+        public Area2I ScreenBounds
         {
             get
             {
-                Rect2I bounds;
+                Area2I bounds;
                 Internal_GetScreenBounds(mCachedPtr, out bounds);
                 return bounds;
             }
@@ -267,13 +267,13 @@ namespace bs
         /// </param>
         /// <returns>Bounds of a GUI element relative to the provided GUI layout.</returns>
         /// <remarks>This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.</remarks>
-        public Rect2I CalculateAbsoluteBoundsRelativeTo(GUILayout relativeTo = null)
+        public Area2I CalculateAbsoluteBoundsRelativeTo(GUILayout relativeTo = null)
         {
             IntPtr relativeToNative = IntPtr.Zero;
             if (relativeTo != null)
                 relativeToNative = relativeTo.GetCachedPtr();
 
-            Rect2I output;
+            Area2I output;
             Internal_CalculateAbsoluteBoundsRelativeTo(GetCachedPtr(), relativeToNative, out output);
             return output;
         }
@@ -395,13 +395,13 @@ namespace bs
         private static extern void Internal_ResetSizeConstraints(IntPtr nativeInstance);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_CalculateAbsoluteBounds(IntPtr nativeInstance, out Rect2I value);
+        private static extern void Internal_CalculateAbsoluteBounds(IntPtr nativeInstance, out Area2I value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_GetLayoutCalculatedSize(IntPtr nativeInstance, out Size2UI value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_GetScreenBounds(IntPtr nativeInstance, out Rect2I value);
+        private static extern void Internal_GetScreenBounds(IntPtr nativeInstance, out Area2I value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern GUILayout Internal_GetParent(IntPtr nativeInstance);
@@ -410,7 +410,7 @@ namespace bs
         private static extern void Internal_Destroy(IntPtr nativeInstance);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_CalculateAbsoluteBoundsRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out Rect2I output);
+        private static extern void Internal_CalculateAbsoluteBoundsRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out Area2I output);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_CalculatePositionRelativeTo(IntPtr nativeInstance, IntPtr relativeTo, out TVector2<TUnitValue<int, LogicalPixel>> output);

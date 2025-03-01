@@ -62,10 +62,10 @@ MonoObject* ScriptGUIScrollArea::InternalGetLayout(ScriptGUIScrollArea* self)
 	return ScriptGUILayoutY::GetOrCreateScriptObject(&self->GetNativeObject()->GetLayout());
 }
 
-void ScriptGUIScrollArea::InternalGetContentBounds(ScriptGUIScrollArea* self, Rect2I* bounds)
+void ScriptGUIScrollArea::InternalGetContentBounds(ScriptGUIScrollArea* self, Area2I* bounds)
 {
 	if(!self->IsNativeObjectValid())
-		*bounds = Rect2I::kEmpty;
+		*bounds = Area2I::kEmpty;
 
 	*bounds = self->GetNativeObject()->GetContentBounds();
 }

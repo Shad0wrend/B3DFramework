@@ -5,7 +5,7 @@
 #include "BsPrerequisites.h"
 #include "GUI/BsGUIElement.h"
 #include "2D/BsSprite.h"
-#include "Math/BsRect2I.h"
+#include "Math/BsArea2.h"
 #include "Image/BsColor.h"
 
 namespace bs
