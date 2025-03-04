@@ -4,6 +4,8 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
+#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
+#include "BsScriptTArea2.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
 

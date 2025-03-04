@@ -5,8 +5,8 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
+#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
-#include "Math/BsArea2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 
 namespace bs
@@ -14,7 +14,7 @@ namespace bs
 	struct __SpriteTextureCreateInformationInterop
 	{
 		MonoObject* AtlasTexture;
-		Area2 UVRange;
+		TArea2<float, float> UVRange;
 		SpriteAnimationPlayback AnimationPlayback;
 		SpriteSheetGridAnimation Animation;
 	};

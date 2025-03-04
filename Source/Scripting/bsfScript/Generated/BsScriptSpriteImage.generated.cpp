@@ -9,6 +9,7 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "BsScriptTSize2.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
+#include "BsScriptTArea2.generated.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
 
 namespace bs
@@ -96,7 +97,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptSpriteImage::InternalSetUVRange(ScriptSpriteImageWrapperBase* self, Area2* uvRange)
+	void ScriptSpriteImage::InternalSetUVRange(ScriptSpriteImageWrapperBase* self, TArea2<float, float>* uvRange)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
@@ -104,7 +105,7 @@ namespace bs
 		static_cast<SpriteImage*>(self->GetNativeObject())->SetUVRange(*uvRange);
 	}
 
-	void ScriptSpriteImage::InternalGetUVRange(ScriptSpriteImageWrapperBase* self, Area2* __output)
+	void ScriptSpriteImage::InternalGetUVRange(ScriptSpriteImageWrapperBase* self, TArea2<float, float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -112,7 +113,7 @@ namespace bs
 			return;
 		}
 
-		Area2 tmp__output;
+		TArea2<float, float> tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetUVRange();
 
 		*__output = tmp__output;

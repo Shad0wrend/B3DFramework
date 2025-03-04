@@ -69,11 +69,11 @@ namespace bs
 		/// <summary>Determines the UV range that the image is referencing.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public Area2 UVRange
+		public TArea2<float,float> UVRange
 		{
 			get
 			{
-				Area2 temp;
+				TArea2<float,float> temp;
 				Internal_GetUVRange(mCachedPtr, out temp);
 				return temp;
 			}
@@ -124,9 +124,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Texture> Internal_GetAtlasTexture(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetUVRange(IntPtr thisPtr, ref Area2 uvRange);
+		private static extern void Internal_SetUVRange(IntPtr thisPtr, ref TArea2<float,float> uvRange);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetUVRange(IntPtr thisPtr, out Area2 __output);
+		private static extern void Internal_GetUVRange(IntPtr thisPtr, out TArea2<float,float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetAnimation(IntPtr thisPtr, ref SpriteSheetGridAnimation animation);
 		[MethodImpl(MethodImplOptions.InternalCall)]

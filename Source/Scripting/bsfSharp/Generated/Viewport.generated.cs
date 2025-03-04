@@ -39,11 +39,11 @@ namespace bs
 		/// <summary>Determines the area that the viewport covers. Coordinates are in normalized [0, 1] range.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public Area2 Area
+		public TArea2<float,float> Area
 		{
 			get
 			{
-				Area2 temp;
+				TArea2<float,float> temp;
 				Internal_GetArea(mCachedPtr, out temp);
 				return temp;
 			}
@@ -110,9 +110,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RenderTarget Internal_GetTarget(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetArea(IntPtr thisPtr, ref Area2 area);
+		private static extern void Internal_SetArea(IntPtr thisPtr, ref TArea2<float,float> area);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetArea(IntPtr thisPtr, out Area2 __output);
+		private static extern void Internal_GetArea(IntPtr thisPtr, out TArea2<float,float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetPixelArea(IntPtr thisPtr, out TArea2<int,int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]

@@ -5,8 +5,8 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfUtility/Math/BsSize2.h"
+#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
-#include "Math/BsArea2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 
 namespace bs { class SpriteImage; }
@@ -36,8 +36,8 @@ namespace bs
 		static void InternalGetSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output);
 		static void InternalGetAnimationFrameSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output);
 		static MonoObject* InternalGetAtlasTexture(ScriptSpriteImageWrapperBase* self);
-		static void InternalSetUVRange(ScriptSpriteImageWrapperBase* self, Area2* uvRange);
-		static void InternalGetUVRange(ScriptSpriteImageWrapperBase* self, Area2* __output);
+		static void InternalSetUVRange(ScriptSpriteImageWrapperBase* self, TArea2<float, float>* uvRange);
+		static void InternalGetUVRange(ScriptSpriteImageWrapperBase* self, TArea2<float, float>* __output);
 		static void InternalSetAnimation(ScriptSpriteImageWrapperBase* self, SpriteSheetGridAnimation* animation);
 		static void InternalGetAnimation(ScriptSpriteImageWrapperBase* self, SpriteSheetGridAnimation* __output);
 		static void InternalSetAnimationPlayback(ScriptSpriteImageWrapperBase* self, SpriteAnimationPlayback playback);

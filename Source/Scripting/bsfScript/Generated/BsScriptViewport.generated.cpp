@@ -8,6 +8,7 @@
 #include "BsScriptColor.generated.h"
 #include "BsScriptRenderTarget.generated.h"
 #include "BsScriptTArea2.generated.h"
+#include "BsScriptTArea2.generated.h"
 #include "BsScriptViewport.generated.h"
 
 namespace bs
@@ -74,7 +75,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptViewport::InternalSetArea(ScriptViewport* self, Area2* area)
+	void ScriptViewport::InternalSetArea(ScriptViewport* self, TArea2<float, float>* area)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
@@ -82,7 +83,7 @@ namespace bs
 		static_cast<Viewport*>(self->GetNativeObject())->SetArea(*area);
 	}
 
-	void ScriptViewport::InternalGetArea(ScriptViewport* self, Area2* __output)
+	void ScriptViewport::InternalGetArea(ScriptViewport* self, TArea2<float, float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -90,7 +91,7 @@ namespace bs
 			return;
 		}
 
-		Area2 tmp__output;
+		TArea2<float, float> tmp__output;
 		tmp__output = static_cast<Viewport*>(self->GetNativeObject())->GetArea();
 
 		*__output = tmp__output;

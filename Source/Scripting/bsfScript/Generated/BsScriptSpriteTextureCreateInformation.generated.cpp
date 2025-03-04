@@ -8,6 +8,8 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
 #include "BsScriptTexture.generated.h"
+#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
+#include "BsScriptTArea2.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
 

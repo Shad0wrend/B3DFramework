@@ -21,7 +21,7 @@ namespace bs
 			value.VectorPath = null;
 			value.Size = TSize2<int>.Default();
 			value.ScalingMode = VectorGraphicsRasterizationScaling.StretchToFit;
-			value.UVRange = new Area2(0f, 0f, 1f, 1f);
+			value.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
 			value.AnimationPlayback = SpriteAnimationPlayback.None;
 			value.Animation = SpriteSheetGridAnimation.Default();
 
@@ -33,7 +33,7 @@ namespace bs
 			this.VectorPath = vectorPath;
 			this.Size = size;
 			this.ScalingMode = VectorGraphicsRasterizationScaling.StretchToFit;
-			this.UVRange = new Area2(0f, 0f, 1f, 1f);
+			this.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
 			this.AnimationPlayback = SpriteAnimationPlayback.None;
 			this.Animation = SpriteSheetGridAnimation.Default();
 		}
@@ -68,7 +68,7 @@ namespace bs
 		/// <summary>How to scale the path canvas onto the rasterized destination.</summary>
 		public VectorGraphicsRasterizationScaling ScalingMode;
 		/// <summary>Range in the atlas texture that the image maps to.</summary>
-		public Area2 UVRange;
+		public TArea2<float,float> UVRange;
 		/// <summary>Determines if animation is enabled and how should it play.</summary>
 		public SpriteAnimationPlayback AnimationPlayback;
 		/// <summary>Describes the sprite sheet grid used for animation, if animation is used.</summary>

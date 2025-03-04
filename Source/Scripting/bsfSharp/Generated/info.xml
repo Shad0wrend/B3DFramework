@@ -3745,7 +3745,7 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<property name="Target" type="RenderTarget" getter="GetTarget" setter="SetTarget" static="false">
 			<doc>Determines the render target the viewport is associated with.</doc>
 		</property>
-		<property name="Area" type="Rect2" getter="GetArea" setter="SetArea" static="false">
+		<property name="Area" type="TArea2&lt;float,float&gt;" getter="GetArea" setter="SetArea" static="false">
 			<doc>Determines the area that the viewport covers. Coordinates are in normalized [0, 1] range.</doc>
 		</property>
 		<property name="PixelArea" type="TArea2&lt;int,int&gt;" getter="GetPixelArea" setter="" static="false">
@@ -5104,7 +5104,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<property name="Texture" type="RRef&lt;Texture&gt;" getter="GetAtlasTexture" setter="" static="false">
 			<doc>Retrieves the atlas texture where the image is stored.</doc>
 		</property>
-		<property name="UVRange" type="Rect2" getter="GetUVRange" setter="SetUVRange" static="false">
+		<property name="UVRange" type="TArea2&lt;float,float&gt;" getter="GetUVRange" setter="SetUVRange" static="false">
 			<doc>Determines the UV range that the image is referencing.</doc>
 		</property>
 		<property name="Animation" type="SpriteSheetGridAnimation" getter="GetAnimation" setter="SetAnimation" static="false">
@@ -6771,7 +6771,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<field name="AtlasTexture" type="RRef&lt;Texture&gt;">
 			<doc>Texture used as the atlas.</doc>
 		</field>
-		<field name="UVRange" type="Rect2">
+		<field name="UVRange" type="TArea2&lt;float,float&gt;">
 			<doc>Range in the atlas texture that the image maps to.</doc>
 		</field>
 		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
@@ -7614,7 +7614,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<doc>Information about a SpriteImage.</doc>
 		<ctor>
 		</ctor>
-		<field name="UVRange" type="Rect2">
+		<field name="UVRange" type="TArea2&lt;float,float&gt;">
 			<doc>Range in the atlas texture that the image maps to.</doc>
 		</field>
 		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
@@ -7632,7 +7632,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<param name="other" type="SpriteImageInformation">
 			</param>
 		</ctor>
-		<field name="UVRange" type="Rect2">
+		<field name="UVRange" type="TArea2&lt;float,float&gt;">
 			<doc>Range in the atlas texture that the image maps to.</doc>
 		</field>
 		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
@@ -7665,7 +7665,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<field name="Size" type="float">
 			<doc>Size of the glyph in points.</doc>
 		</field>
-		<field name="UVRange" type="Rect2">
+		<field name="UVRange" type="TArea2&lt;float,float&gt;">
 			<doc>Range in the atlas texture that the image maps to.</doc>
 		</field>
 		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
@@ -7804,7 +7804,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<field name="ScalingMode" type="VectorGraphicsRasterizationScaling">
 			<doc>How to scale the path canvas onto the rasterized destination.</doc>
 		</field>
-		<field name="UVRange" type="Rect2">
+		<field name="UVRange" type="TArea2&lt;float,float&gt;">
 			<doc>Range in the atlas texture that the image maps to.</doc>
 		</field>
 		<field name="AnimationPlayback" type="SpriteAnimationPlayback">

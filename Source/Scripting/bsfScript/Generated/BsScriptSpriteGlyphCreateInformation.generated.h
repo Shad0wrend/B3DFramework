@@ -5,8 +5,8 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteGlyph.h"
+#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
-#include "Math/BsArea2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 
 namespace bs
@@ -16,7 +16,7 @@ namespace bs
 		MonoObject* Font;
 		uint32_t Glyph;
 		float Size;
-		Area2 UVRange;
+		TArea2<float, float> UVRange;
 		SpriteAnimationPlayback AnimationPlayback;
 		SpriteSheetGridAnimation Animation;
 	};
