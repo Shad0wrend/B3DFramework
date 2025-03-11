@@ -3,9 +3,9 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/GUI/BsScriptGUIElement.h"
 #include "GUI/BsGUIScrollArea.h"
 
+#include "Generated/BsScriptGUIElement.generated.h"
 #include "Generated/BsScriptGUIInteractable.generated.h"
 
 namespace bs

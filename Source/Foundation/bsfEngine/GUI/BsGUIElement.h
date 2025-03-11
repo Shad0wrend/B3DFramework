@@ -60,7 +60,7 @@ namespace bs
 	 *
 	 * @note: Does not provide ability to render and interact with GUI elements - those are implemented by derived classes (i.e. GUIRenderable and GUIInteractable).
 	 */
-	class B3D_EXPORT /*B3D_SCRIPT_EXPORT(DocumentationGroup(GUI))*/ GUIElement : public IReflectable, public IScriptExportable
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIElement : public IReflectable, public IScriptExportable
 	{
 	public:
 		/**	Valid types of GUI base elements. */
@@ -99,12 +99,14 @@ namespace bs
 		 *
 		 * Be aware that this value will be ignored if GUI element is part of a layout since then the layout controls its placement.
 		 */
+		B3D_SCRIPT_EXPORT()
 		void SetPosition(const GUILogicalPoint& position);
 
 		/**	Sets fixed element width. Value should be in logical pixel units. */
 		void SetWidth(u32 width) { SetWidth(GUILogicalUnit((i32)width)); } // TODO - Deprecated
 
 		/**	Sets fixed element width. Value should be in logical pixel units. */
+		B3D_SCRIPT_EXPORT()
 		void SetWidth(GUILogicalUnit width);
 
 		/**
@@ -112,12 +114,14 @@ namespace bs
 		 * always stay within the provided range. If maximum width is zero, the element is allowed to expand as much as
 		 * it needs. Values should be in logical pixel units.
 		 */
-		void SetFlexibleWidth(u32 minWidth = 0, u32 maxWidth = 0);
+		B3D_SCRIPT_EXPORT()
+		void SetFlexibleWidth(GUILogicalUnit minWidth = 0, GUILogicalUnit maxWidth = 0);
 
 		/**	Sets fixed element height. Value should be in logical pixel units. */
 		void SetHeight(u32 height) { SetHeight(GUILogicalUnit((i32)height)); } // TODO - Deprecated
 
 		/**	Sets fixed element height. Value should be in logical pixel units. */
+		B3D_SCRIPT_EXPORT()
 		void SetHeight(GUILogicalUnit height);
 
 		/**
@@ -125,21 +129,25 @@ namespace bs
 		 * always stay within the provided range. If maximum height is zero, the element is allowed to expand as much as
 		 * it needs. Values provided should be in logical pixel units.
 		 */
-		void SetFlexibleHeight(u32 minHeight = 0, u32 maxHeight = 0);
+		B3D_SCRIPT_EXPORT()
+		void SetFlexibleHeight(GUILogicalUnit minHeight = 0, GUILogicalUnit maxHeight = 0);
 
 		/** Sets fixed width and height of a GUI element. Values provided should be in logical pixel units. */
 		void SetSize(u32 width, u32 height); // TODO - Deprecated
 
 		/** Sets fixed width and height of a GUI element. Values provided should be in logical pixel units. */
+		B3D_SCRIPT_EXPORT()
 		void SetSize(const GUILogicalSize& size);
 
 		/**	Resets element size constraints to their initial values dictated by the element's style. */
+		B3D_SCRIPT_EXPORT()
 		virtual void ResetSizeConstraints();
 
 		/**
 		 * Hides or shows this element and recursively applies the same state to all the child elements. This will not
 		 * remove the element from the layout, the room for it will still be reserved but it just won't be visible.
 		 */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Hidden))
 		void SetHidden(bool hidden);
 
 		/**
@@ -147,9 +155,11 @@ namespace bs
 		 * the same effect as setVisible(), but when disabled it will also remove the element from the layout, essentially
 		 * having the same effect is if you destroyed the element.
 		 */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Active))
 		void SetActive(bool active);
 
 		/** Disables or enables the element. Disabled elements cannot be interacted with and have a faded out appearance. */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Disabled))
 		void SetDisabled(bool disabled);
 
 		/**
@@ -167,6 +177,7 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(LayoutCalculatedSize))
 		GUILogicalSize CalculateSizeInLayout() const;
 
 		/**
@@ -179,6 +190,7 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
+		B3D_SCRIPT_EXPORT()
 		GUILogicalPoint CalculatePositionRelativeTo(GUIElement* relativeTo = nullptr) const;
 
 		/**
@@ -191,6 +203,7 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
+		B3D_SCRIPT_EXPORT()
 		GUIPhysicalArea CalculateAbsoluteBoundsRelativeTo(GUIElement* relativeTo = nullptr);
 
 		/**
@@ -199,6 +212,7 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(AbsoluteBounds))
 		GUIPhysicalArea CalculateAbsoluteBounds() const;
 
 		/**
@@ -206,6 +220,7 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty, as it can trigger a layout update operation.
 		 */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(ScreenBounds))
 		Area2I CalculateScreenBounds() const;
 
 		/**
@@ -219,15 +234,19 @@ namespace bs
 		GUIPhysicalArea GetAbsoluteBounds() const { return GUIPhysicalArea(mAbsolutePosition, mAbsoluteSize); }
 
 		/** Converts a point relative to the parent widget, into a point relative to this element. */
+		B3D_SCRIPT_EXPORT()
 		GUILogicalPoint WidgetToElementSpace(const GUIPhysicalPoint& point) const;
 
 		/** Converts a point relative to this element, into a point relative to the parent widget. */
+		B3D_SCRIPT_EXPORT()
 		GUIPhysicalPoint ElementToWidgetSpace(const GUILogicalPoint& point) const;
 
 		/** Converts an area relative to the parent widget, into an area relative to this element. */
+		B3D_SCRIPT_EXPORT()
 		GUILogicalArea WidgetToElementSpace(const GUIPhysicalArea& area) const;
 
 		/** Converts an area relative to this element, into an area relative to the parent widget. */
+		B3D_SCRIPT_EXPORT()
 		GUIPhysicalArea ElementToWidgetSpace(const GUILogicalArea& area) const;
 
 		/**
@@ -246,6 +265,7 @@ namespace bs
 		 * Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be
 		 * released delayed, next frame.
 		 */
+		B3D_SCRIPT_EXPORT()
 		virtual void Destroy();
 
 		/** Checks if element is queued for deletion. */
@@ -345,21 +365,25 @@ namespace bs
 		virtual Type GetType() const = 0;
 
 		/**	Returns parent GUI base element. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Parent))
 		GUIElement* GetParent() const { return mParent; }
 
 		/**	Returns parent GUI widget, can be null. */
 		GUIWidget* GetParentWidget() const { return mParentWidget; }
 
 		/**	Checks if element is explicitly hidden. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Hidden))
 		bool IsHidden() const { return mFlags.IsSet(GUIElementInternalStateFlag::Hidden); }
 
 		/**
 		 * Checks if element is active or inactive. Inactive elements are not visible, don't take up space
 		 * in their parent layouts, and can't be interacted with.
 		 */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Active))
 		bool IsActive() const { return !mFlags.IsSet(GUIElementInternalStateFlag::Inactive); }
 
 		/** Checks if element is disabled. Disabled elements cannot be interacted with and have a faded out appearance. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Disabled))
 		bool IsDisabled() const { return mFlags.IsSet(GUIElementInternalStateFlag::Disabled); }
 
 		/** Returns true if the element is not visible due to being culled by its parent bounds. */

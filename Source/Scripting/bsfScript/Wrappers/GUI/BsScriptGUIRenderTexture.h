@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
-#include "Wrappers/GUI/BsScriptGUIElement.h"
+#include "Generated/BsScriptGUIElement.generated.h"
 #include "GUI/BsGUIRenderTexture.h"
 
 #include "Generated/BsScriptGUIInteractable.generated.h"

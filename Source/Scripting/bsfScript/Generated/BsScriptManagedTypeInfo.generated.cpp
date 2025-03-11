@@ -68,7 +68,7 @@ namespace bs
 
 	MonoReflectionType* ScriptManagedTypeInfo::InternalGetReflectionType(ScriptManagedTypeInfoWrapperBase* self)
 	{
-		_MonoReflectionType* tmp__output;
+		_MonoReflectionType* tmp__output = nullptr;
 		if(!self->IsNativeObjectValid())
 			return {};
 

@@ -37,7 +37,7 @@ namespace bs
 	MonoObject* ScriptManagedTypeUtility::InternalGetTypeInfo(MonoReflectionType* objectType)
 	{
 		SPtr<ManagedTypeInfo> tmp__output;
-		_MonoReflectionType* tmpobjectType;
+		_MonoReflectionType* tmpobjectType = nullptr;
 		tmpobjectType = objectType;
 		tmp__output = ManagedTypeUtility::GetTypeInfo(tmpobjectType);
 
@@ -50,7 +50,7 @@ namespace bs
 	MonoObject* ScriptManagedTypeUtility::InternalGetSerializableObjectInfo(MonoReflectionType* objectType)
 	{
 		SPtr<ManagedObjectInfo> tmp__output;
-		_MonoReflectionType* tmpobjectType;
+		_MonoReflectionType* tmpobjectType = nullptr;
 		tmpobjectType = objectType;
 		tmp__output = ManagedTypeUtility::GetSerializableObjectInfo(tmpobjectType);
 
@@ -63,7 +63,7 @@ namespace bs
 	uint32_t ScriptManagedTypeUtility::InternalGetRTTITypeId(MonoReflectionType* objectType)
 	{
 		uint32_t tmp__output;
-		_MonoReflectionType* tmpobjectType;
+		_MonoReflectionType* tmpobjectType = nullptr;
 		tmpobjectType = objectType;
 		tmp__output = ManagedTypeUtility::GetRTTITypeId(tmpobjectType);
 
@@ -75,7 +75,7 @@ namespace bs
 
 	MonoObject* ScriptManagedTypeUtility::InternalCreateSerializableObject(MonoObject* typeInfo)
 	{
-		_MonoObject* tmp__output;
+		_MonoObject* tmp__output = nullptr;
 		SPtr<ManagedTypeInfoObject> tmptypeInfo;
 		ScriptManagedTypeInfoObject* scriptObjectWrappertypeInfo;
 		scriptObjectWrappertypeInfo = ScriptManagedTypeInfoObject::GetScriptObjectWrapper(typeInfo);
@@ -91,7 +91,7 @@ namespace bs
 
 	MonoObject* ScriptManagedTypeUtility::InternalCreateArray(MonoObject* typeInfo, MonoArray* arraySizes)
 	{
-		_MonoObject* tmp__output;
+		_MonoObject* tmp__output = nullptr;
 		SPtr<ManagedTypeInfoArray> tmptypeInfo;
 		ScriptManagedTypeInfoArray* scriptObjectWrappertypeInfo;
 		scriptObjectWrappertypeInfo = ScriptManagedTypeInfoArray::GetScriptObjectWrapper(typeInfo);
@@ -117,7 +117,7 @@ namespace bs
 
 	MonoObject* ScriptManagedTypeUtility::InternalCreateList(MonoObject* typeInfo, uint32_t size)
 	{
-		_MonoObject* tmp__output;
+		_MonoObject* tmp__output = nullptr;
 		SPtr<ManagedTypeInfoList> tmptypeInfo;
 		ScriptManagedTypeInfoList* scriptObjectWrappertypeInfo;
 		scriptObjectWrappertypeInfo = ScriptManagedTypeInfoList::GetScriptObjectWrapper(typeInfo);
@@ -133,7 +133,7 @@ namespace bs
 
 	MonoObject* ScriptManagedTypeUtility::InternalCreateDictionary(MonoObject* typeInfo)
 	{
-		_MonoObject* tmp__output;
+		_MonoObject* tmp__output = nullptr;
 		SPtr<ManagedTypeInfoDictionary> tmptypeInfo;
 		ScriptManagedTypeInfoDictionary* scriptObjectWrappertypeInfo;
 		scriptObjectWrappertypeInfo = ScriptManagedTypeInfoDictionary::GetScriptObjectWrapper(typeInfo);
@@ -149,8 +149,8 @@ namespace bs
 
 	MonoObject* ScriptManagedTypeUtility::InternalCloneObject(MonoObject* original)
 	{
-		_MonoObject* tmp__output;
-		_MonoObject* tmporiginal;
+		_MonoObject* tmp__output = nullptr;
+		_MonoObject* tmporiginal = nullptr;
 		tmporiginal = original;
 		tmp__output = ManagedTypeUtility::CloneObject(tmporiginal);
 
@@ -162,8 +162,8 @@ namespace bs
 
 	MonoObject* ScriptManagedTypeUtility::InternalCreateObjectOfType(MonoReflectionType* type)
 	{
-		_MonoObject* tmp__output;
-		_MonoReflectionType* tmptype;
+		_MonoObject* tmp__output = nullptr;
+		_MonoReflectionType* tmptype = nullptr;
 		tmptype = type;
 		tmp__output = ManagedTypeUtility::CreateObjectOfType(tmptype);
 

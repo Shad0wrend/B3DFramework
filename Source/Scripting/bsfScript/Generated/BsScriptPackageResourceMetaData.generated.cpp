@@ -67,7 +67,7 @@ namespace bs
 
 	MonoReflectionType* ScriptPackageResourceMetaData::InternalGetResourceType(ScriptPackageResourceMetaData* self)
 	{
-		_MonoReflectionType* tmp__output;
+		_MonoReflectionType* tmp__output = nullptr;
 		if(!self->IsNativeObjectValid())
 			return {};
 

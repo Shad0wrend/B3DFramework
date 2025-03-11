@@ -39,7 +39,7 @@ namespace bs
 	}
 	MonoObject* ScriptGUIWidget::InternalGetPanel(ScriptGUIWidget* self)
 	{
-		GUIPanel* tmp__output;
+		GUIPanel* tmp__output = nullptr;
 		if(!self->IsNativeObjectValid())
 			return {};
 

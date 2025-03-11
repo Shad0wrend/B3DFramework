@@ -91,7 +91,7 @@ void GUIElement::SetWidth(GUILogicalUnit width)
 	MarkLayoutAsDirty();
 }
 
-void GUIElement::SetFlexibleWidth(u32 minWidth, u32 maxWidth)
+void GUIElement::SetFlexibleWidth(GUILogicalUnit minWidth, GUILogicalUnit maxWidth)
 {
 	if(maxWidth < minWidth)
 		std::swap(minWidth, maxWidth);
@@ -118,7 +118,7 @@ void GUIElement::SetHeight(GUILogicalUnit height)
 
 	mSizeConstraints.Flags |= GUISizeConstraintFlag::FixedHeight | GUISizeConstraintFlag::HeightOverridenAtRuntime;
 	mSizeConstraints.Flags.Unset(GUISizeConstraintFlag::ExpandingHeight);
-	mSizeConstraints.MinimumHeight = mSizeConstraints.MaximumHeight = (u32)height.To<u32>();
+	mSizeConstraints.MinimumHeight = mSizeConstraints.MaximumHeight = height;
 
 	const bool isFixedAfter = mSizeConstraints.IsWidthFixed() && mSizeConstraints.IsHeightFixed();
 
@@ -128,7 +128,7 @@ void GUIElement::SetHeight(GUILogicalUnit height)
 	MarkLayoutAsDirty();
 }
 
-void GUIElement::SetFlexibleHeight(u32 minHeight, u32 maxHeight)
+void GUIElement::SetFlexibleHeight(GUILogicalUnit minHeight, GUILogicalUnit maxHeight)
 {
 	if(maxHeight < minHeight)
 		std::swap(minHeight, maxHeight);

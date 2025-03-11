@@ -73,11 +73,11 @@ namespace bs
 
 	MonoObject* ScriptManagedMemberInfo::InternalGetValue(ScriptManagedMemberInfoWrapperBase* self, MonoObject* instance)
 	{
-		_MonoObject* tmp__output;
+		_MonoObject* tmp__output = nullptr;
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		_MonoObject* tmpinstance;
+		_MonoObject* tmpinstance = nullptr;
 		tmpinstance = instance;
 		tmp__output = static_cast<ManagedMemberInfo*>(self->GetNativeObject())->GetValue(tmpinstance);
 
@@ -92,9 +92,9 @@ namespace bs
 		if(!self->IsNativeObjectValid())
 			return;
 
-		_MonoObject* tmpinstance;
+		_MonoObject* tmpinstance = nullptr;
 		tmpinstance = instance;
-		_MonoObject* tmpvalue;
+		_MonoObject* tmpvalue = nullptr;
 		tmpvalue = value;
 		static_cast<ManagedMemberInfo*>(self->GetNativeObject())->SetValue(tmpinstance, tmpvalue);
 	}

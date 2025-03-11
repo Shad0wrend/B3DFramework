@@ -495,6 +495,151 @@
 			<doc>Returns the number of color keys in the gradient.</doc>
 		</property>
 	</class>
+	<class native="GUIElement" script="GUIElement">
+		<doc>Base class for all GUI elements. Provides general functionality such as element size/position, as well as handling child/parent relationships.</doc>
+		<method native="SetPosition" script="SetPosition" static="false">
+			<doc>Sets element position relative to parent GUI panel. Values should be provided in logical pixel units.
+Be aware that this value will be ignored if GUI element is part of a layout since then the layout controls its placement.</doc>
+			<param name="x" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="y" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</method>
+		<method native="SetPosition" script="SetPosition" static="false">
+			<doc>Sets element position relative to parent GUI panel. Values should be provided in logical pixel units.
+Be aware that this value will be ignored if GUI element is part of a layout since then the layout controls its placement.</doc>
+			<param name="position" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+			</param>
+		</method>
+		<method native="SetWidth" script="SetWidth" static="false">
+			<doc>Sets fixed element width. Value should be in logical pixel units.</doc>
+			<param name="width" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</method>
+		<method native="SetFlexibleWidth" script="SetFlexibleWidth" static="false">
+			<doc>Sets flexible element width. Element will be resized according to its contents and parent layout but will always stay within the provided range. If maximum width is zero, the element is allowed to expand as much as it needs. Values should be in logical pixel units.</doc>
+			<param name="minWidth" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="maxWidth" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</method>
+		<method native="SetHeight" script="SetHeight" static="false">
+			<doc>Sets fixed element height. Value should be in logical pixel units.</doc>
+			<param name="height" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</method>
+		<method native="SetFlexibleHeight" script="SetFlexibleHeight" static="false">
+			<doc>Sets flexible element height. Element will be resized according to its contents and parent layout but will always stay within the provided range. If maximum height is zero, the element is allowed to expand as much as it needs. Values provided should be in logical pixel units.</doc>
+			<param name="minHeight" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="maxHeight" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</method>
+		<method native="SetSize" script="SetSize" static="false">
+			<doc>Sets fixed width and height of a GUI element. Values provided should be in logical pixel units.</doc>
+			<param name="size" type="TSize2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+			</param>
+		</method>
+		<method native="ResetSizeConstraints" script="ResetSizeConstraints" static="false">
+			<doc>Resets element size constraints to their initial values dictated by the element&apos;s style.</doc>
+		</method>
+		<method native="CalculatePositionRelativeTo" script="CalculatePositionRelativeTo" static="false">
+			<doc>Calculates position of the GUI element, relative to the provided parent element (or parent panel if null). The value is provided in logical pixel units.</doc>
+			<param name="relativeTo" type="GUIElement">
+				<doc>Parent element of the provided element relative to which to return the position. If null the position relative to parent panel is returned. Behavior is undefined if provided parent is not a parent of the element.</doc>
+			</param>
+			<returns type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+			</returns>
+		</method>
+		<method native="CalculateAbsoluteBoundsRelativeTo" script="CalculateAbsoluteBoundsRelativeTo" static="false">
+			<doc>Calculates bounds of the GUI element, relative to the provided parent element (or parent panel if null), with scaling applied. The values are provided in physical pixel units.</doc>
+			<param name="relativeTo" type="GUIElement">
+				<doc>Parent element of the provided element relative to which to return the bounds. If null the bounds relative to parent panel are returned. Behavior is undefined if provided parent is not a parent of the element.</doc>
+			</param>
+			<returns type="TArea2&lt;TUnitValue&lt;int,PhysicalPixel&gt;,TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+			</returns>
+		</method>
+		<method native="WidgetToElementSpace" script="WidgetToElementSpace" static="false">
+			<doc>Converts a point relative to the parent widget, into a point relative to this element.</doc>
+			<param name="point" type="TVector2&lt;TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+			</param>
+			<returns type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+			</returns>
+		</method>
+		<method native="ElementToWidgetSpace" script="ElementToWidgetSpace" static="false">
+			<doc>Converts a point relative to this element, into a point relative to the parent widget.</doc>
+			<param name="point" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+			</param>
+			<returns type="TVector2&lt;TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+			</returns>
+		</method>
+		<method native="WidgetToElementSpace" script="WidgetToElementSpace" static="false">
+			<doc>Converts an area relative to the parent widget, into an area relative to this element.</doc>
+			<param name="area" type="TArea2&lt;TUnitValue&lt;int,PhysicalPixel&gt;,TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+			</param>
+			<returns type="TArea2&lt;TUnitValue&lt;int,LogicalPixel&gt;,TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+			</returns>
+		</method>
+		<method native="ElementToWidgetSpace" script="ElementToWidgetSpace" static="false">
+			<doc>Converts an area relative to this element, into an area relative to the parent widget.</doc>
+			<param name="area" type="TArea2&lt;TUnitValue&lt;int,LogicalPixel&gt;,TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+			</param>
+			<returns type="TArea2&lt;TUnitValue&lt;int,PhysicalPixel&gt;,TUnitValue&lt;int,PhysicalPixel&gt;&gt;">
+			</returns>
+		</method>
+		<method native="Destroy" script="Destroy" static="false">
+			<doc>Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be released delayed, next frame.</doc>
+		</method>
+		<method native="SetFlexibleWidth" script="SetFlexibleWidth" static="false">
+			<doc>Sets flexible element width. Element will be resized according to its contents and parent layout but will always stay within the provided range. If maximum width is zero, the element is allowed to expand as much as it needs. Values should be in logical pixel units.</doc>
+			<param name="minWidth" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="maxWidth" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</method>
+		<method native="SetFlexibleWidth" script="SetFlexibleWidth" static="false">
+			<doc>Sets flexible element width. Element will be resized according to its contents and parent layout but will always stay within the provided range. If maximum width is zero, the element is allowed to expand as much as it needs. Values should be in logical pixel units.</doc>
+			<param name="minWidth" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="maxWidth" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</method>
+		<method native="SetFlexibleHeight" script="SetFlexibleHeight" static="false">
+			<doc>Sets flexible element height. Element will be resized according to its contents and parent layout but will always stay within the provided range. If maximum height is zero, the element is allowed to expand as much as it needs. Values provided should be in logical pixel units.</doc>
+			<param name="minHeight" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="maxHeight" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</method>
+		<method native="SetFlexibleHeight" script="SetFlexibleHeight" static="false">
+			<doc>Sets flexible element height. Element will be resized according to its contents and parent layout but will always stay within the provided range. If maximum height is zero, the element is allowed to expand as much as it needs. Values provided should be in logical pixel units.</doc>
+			<param name="minHeight" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+			<param name="maxHeight" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</method>
+		<property name="Hidden" type="bool" getter="IsHidden" setter="SetHidden" static="false">
+			<doc>Hides or shows this element and recursively applies the same state to all the child elements. This will not remove the element from the layout, the room for it will still be reserved but it just won&apos;t be visible.</doc>
+		</property>
+		<property name="Active" type="bool" getter="IsActive" setter="SetActive" static="false">
+			<doc>Activates or deactives this element and recursively applies the same state to all the child elements. This has the same effect as setVisible(), but when disabled it will also remove the element from the layout, essentially having the same effect is if you destroyed the element.</doc>
+		</property>
+		<property name="Disabled" type="bool" getter="IsDisabled" setter="SetDisabled" static="false">
+			<doc>Disables or enables the element. Disabled elements cannot be interacted with and have a faded out appearance.</doc>
+		</property>
+		<property name="LayoutCalculatedSize" type="TSize2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;" getter="CalculateSizeInLayout" setter="" static="false">
+			<doc>Returns width/height of the GUI element. This will be the fixed width/height if set by the user, or automatically determined by the layout update pass if not fixed. Size is provided in logical pixel units.</doc>
+		</property>
+		<property name="AbsoluteBounds" type="TArea2&lt;TUnitValue&lt;int,PhysicalPixel&gt;,TUnitValue&lt;int,PhysicalPixel&gt;&gt;" getter="CalculateAbsoluteBounds" setter="" static="false">
+			<doc>Calculates bounds of the GUI element, relative to the parent GUI widget, with scaling applied.  The values are provided in physical pixel units.</doc>
+		</property>
+		<property name="ScreenBounds" type="TArea2&lt;int,int&gt;" getter="CalculateScreenBounds" setter="" static="false">
+			<doc>Calculates bounds of the GUI element in screen space.</doc>
+		</property>
+		<property name="Parent" type="GUIElement" getter="GetParent" setter="" static="false">
+			<doc>Returns parent GUI base element.</doc>
+		</property>
+	</class>
 	<class native="TAnimationCurve&lt;float&gt;" script="AnimationCurve">
 		<doc>Animation spline represented by a set of keyframes, each representing an endpoint of a cubic hermite curve. The spline can be evaluated at any time, and uses caching to speed up multiple sequential evaluations.</doc>
 		<ctor>
