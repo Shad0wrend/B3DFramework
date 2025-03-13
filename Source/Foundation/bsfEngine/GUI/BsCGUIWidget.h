@@ -45,6 +45,9 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		const GUIPhysicalArea& GetBounds() const;
 
+		/** @copydoc GUIWidget::GetDPIScale() */
+		float GetDPIScale() const;
+
 		/** @copydoc GUIWidget::GetTarget */
 		Viewport* GetTarget() const;
 

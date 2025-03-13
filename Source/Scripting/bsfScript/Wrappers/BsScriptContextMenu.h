@@ -8,6 +8,8 @@
 namespace bs
 {
 	class ScriptGUILayoutWrapperBase;
+	struct __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop;
+
 
 	/** @addtogroup ScriptInteropEngine
 	 *  @{
@@ -40,7 +42,7 @@ namespace bs
 		static OnEntryTriggeredThunkDef onEntryTriggered;
 
 		static void InternalCreateInstance(MonoObject* scriptObject);
-		static void InternalOpen(ScriptContextMenu* self, Vector2I* position, ScriptGUILayoutWrapperBase* layoutPtr);
+		static void InternalOpen(ScriptContextMenu* self, __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop* position, ScriptGUILayoutWrapperBase* layoutPtr);
 		static void InternalAddItem(ScriptContextMenu* self, MonoString* path, u32 callbackIdx, ShortcutKey* shortcut);
 		static void InternalAddSeparator(ScriptContextMenu* self, MonoString* path);
 		static void InternalSetLocalizedName(ScriptContextMenu* self, MonoString* label, ScriptLocString* name);

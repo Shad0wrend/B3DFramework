@@ -11,12 +11,12 @@ GUIContextMenu::~GUIContextMenu()
 	Close();
 }
 
-void GUIContextMenu::Open(const Vector2I& position, GUIWidget& widget)
+void GUIContextMenu::Open(const GUIPhysicalPoint& position, GUIWidget& widget)
 {
 	DropDownBoxCreateInformation desc;
 	desc.Camera = widget.GetCamera();
 	desc.StyleSheetCascade = widget.GetStyleSheetCascadeAsShared();
-	desc.Placement = DropDownAreaPlacement::AroundPosition(position);
+	desc.Placement = TDropDownAreaPlacement<GUIPhysicalUnit>::AroundPosition(position);
 	desc.DropDownData = GetDropDownData();
 
 	GameObjectHandle<GUIDropDownMenu> dropDownBox = GUIDropDownBoxManager::Instance().OpenDropDownBox(

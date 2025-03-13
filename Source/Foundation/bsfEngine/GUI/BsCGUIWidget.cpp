@@ -64,6 +64,11 @@ const GUIPhysicalArea& CGUIWidget::GetBounds() const
 	return mInternal->GetBounds();
 }
 
+float CGUIWidget::GetDPIScale() const
+{
+	return mInternal->GetDPIScale();
+}
+
 Viewport* CGUIWidget::GetTarget() const
 {
 	return mInternal->GetTarget();

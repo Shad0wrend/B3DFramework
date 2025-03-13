@@ -22,7 +22,7 @@ namespace bs
 		~GUIContextMenu();
 
 		/** Opens a context menu at the specified position relative to the provided widget. */
-		void Open(const Vector2I& position, GUIWidget& widget);
+		void Open(const GUIPhysicalPoint& position, GUIWidget& widget);
 
 	private:
 		/**	Closes the context menu if open. */

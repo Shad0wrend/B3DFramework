@@ -5,167 +5,139 @@
 
 using namespace bs;
 
-DropDownAreaPlacement DropDownAreaPlacement::AroundPosition(const GUIPhysicalPoint& position)
+template<typename PositionType, typename SizeType>
+TDropDownAreaPlacement<PositionType, SizeType> TDropDownAreaPlacement<PositionType, SizeType>::AroundPosition(const TVector2<PositionType>& position)
 {
-	DropDownAreaPlacement instance;
-	instance.mType = Type::Position;
-	instance.mPosition = position.To<i32>();
-
-	return instance;
-}
-
-DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsVertical(const GUIPhysicalArea& bounds)
-{
-	DropDownAreaPlacement instance;
-	instance.mType = Type::BoundsVert;
-	instance.mBounds = bounds.To<i32, u32>();
-
-	return instance;
-}
-
-DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsHorizontal(const GUIPhysicalArea& bounds)
-{
-	DropDownAreaPlacement instance;
-	instance.mType = Type::BoundsHorz;
-	instance.mBounds = bounds.To<i32, u32>();
-
-	return instance;
-}
-
-DropDownAreaPlacement DropDownAreaPlacement::AroundBounds(const GUIPhysicalArea& bounds)
-{
-	DropDownAreaPlacement instance;
-	instance.mType = Type::BoundsAll;
-	instance.mBounds = bounds.To<i32, u32>();
-
-	return instance;
-}
-
-DropDownAreaPlacement DropDownAreaPlacement::AroundPosition(const Vector2I& position)
-{
-	DropDownAreaPlacement instance;
+	TDropDownAreaPlacement instance;
 	instance.mType = Type::Position;
 	instance.mPosition = position;
 
 	return instance;
 }
 
-DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsVert(const Area2I& bounds)
+template<typename PositionType, typename SizeType>
+TDropDownAreaPlacement<PositionType, SizeType> TDropDownAreaPlacement<PositionType, SizeType>::AroundBoundsVertical(const TArea2<PositionType, SizeType>& bounds)
 {
-	DropDownAreaPlacement instance;
-	instance.mType = Type::BoundsVert;
+	TDropDownAreaPlacement instance;
+	instance.mType = Type::BoundsVertical;
 	instance.mBounds = bounds;
 
 	return instance;
 }
 
-DropDownAreaPlacement DropDownAreaPlacement::AroundBoundsHorz(const Area2I& bounds)
+template<typename PositionType, typename SizeType>
+TDropDownAreaPlacement<PositionType, SizeType> TDropDownAreaPlacement<PositionType, SizeType>::AroundBoundsHorizontal(const TArea2<PositionType, SizeType>& bounds)
 {
-	DropDownAreaPlacement instance;
-	instance.mType = Type::BoundsHorz;
+	TDropDownAreaPlacement instance;
+	instance.mType = Type::BoundsHorizontal;
 	instance.mBounds = bounds;
 
 	return instance;
 }
 
-DropDownAreaPlacement DropDownAreaPlacement::AroundBounds(const Area2I& bounds)
+template<typename PositionType, typename SizeType>
+TDropDownAreaPlacement<PositionType, SizeType> TDropDownAreaPlacement<PositionType, SizeType>::AroundBounds(const TArea2<PositionType, SizeType>& bounds)
 {
-	DropDownAreaPlacement instance;
+	TDropDownAreaPlacement instance;
 	instance.mType = Type::BoundsAll;
 	instance.mBounds = bounds;
 
 	return instance;
 }
 
-Area2I DropDownAreaPlacement::GetOptimalBounds(u32 width, u32 height, const Area2I& availableArea, HorzDir& horzDir, VertDir& vertDir) const
+template<typename PositionType, typename SizeType>
+TArea2<PositionType, SizeType> TDropDownAreaPlacement<PositionType, SizeType>::GetOptimalBounds(const TSize2<SizeType>& size, const TArea2<PositionType, SizeType>& availableArea, HorizontalDirection& outHorizontalDirection, VerticalDirection& outVerticalDirection) const
 {
-	Area2I output;
+	TArea2<PositionType, SizeType> output;
 
-	int potentialLeftStart = 0;
-	int potentialRightStart = 0;
-	int potentialTopStart = 0;
-	int potentialBottomStart = 0;
+	PositionType potentialLeftStart = 0;
+	PositionType potentialRightStart = 0;
+	PositionType potentialTopStart = 0;
+	PositionType potentialBottomStart = 0;
 
 	switch(GetType())
 	{
-	case DropDownAreaPlacement::Type::Position:
+	case TDropDownAreaPlacement::Type::Position:
 		potentialLeftStart = potentialRightStart = GetPosition().X;
 		potentialTopStart = potentialBottomStart = GetPosition().Y;
 		break;
-	case DropDownAreaPlacement::Type::BoundsHorz:
+	case TDropDownAreaPlacement::Type::BoundsHorizontal:
 		potentialRightStart = GetBounds().X;
-		potentialLeftStart = GetBounds().X + GetBounds().Width;
-		potentialBottomStart = GetBounds().Y + GetBounds().Height;
+		potentialLeftStart = GetBounds().X + (PositionType)GetBounds().Width;
+		potentialBottomStart = GetBounds().Y + (PositionType)GetBounds().Height;
 		potentialTopStart = GetBounds().Y;
 		break;
-	case DropDownAreaPlacement::Type::BoundsVert:
-		potentialRightStart = GetBounds().X + GetBounds().Width;
+	case TDropDownAreaPlacement::Type::BoundsVertical:
+		potentialRightStart = GetBounds().X + (PositionType)GetBounds().Width;
 		potentialLeftStart = GetBounds().X;
 		potentialBottomStart = GetBounds().Y;
-		potentialTopStart = GetBounds().Y + GetBounds().Height;
+		potentialTopStart = GetBounds().Y + (PositionType)GetBounds().Height;
 		break;
-	case DropDownAreaPlacement::Type::BoundsAll:
-		potentialRightStart = GetBounds().X + GetBounds().Width;
+	case TDropDownAreaPlacement::Type::BoundsAll:
+		potentialRightStart = GetBounds().X + (PositionType)GetBounds().Width;
 		potentialLeftStart = GetBounds().X;
-		potentialBottomStart = GetBounds().Y + GetBounds().Height;
+		potentialBottomStart = GetBounds().Y + (PositionType)GetBounds().Height;
 		potentialTopStart = GetBounds().Y;
 		break;
 	}
 
 	// Determine x position and whether to align to left or right side of the drop down list
-	u32 availableRightwardWidth = (u32)std::max(0, (availableArea.X + (i32)availableArea.Width) - potentialRightStart);
-	u32 availableLeftwardWidth = (u32)std::max(0, potentialLeftStart - availableArea.X);
+	SizeType availableRightwardWidth = (SizeType)Math::Max((availableArea.X + (PositionType)availableArea.Width) - potentialRightStart, 0);
+	SizeType availableLeftwardWidth = (SizeType)Math::Max(potentialLeftStart - availableArea.X, 0);
 
 	//// Prefer right if possible
-	if(width <= availableRightwardWidth)
+	if(size.Width <= availableRightwardWidth)
 	{
 		output.X = potentialRightStart;
-		output.Width = width;
-		horzDir = HorzDir::Right;
+		output.Width = size.Width;
+		outHorizontalDirection = HorizontalDirection::Right;
 	}
 	else
 	{
 		if(availableRightwardWidth >= availableLeftwardWidth)
 		{
 			output.X = potentialRightStart;
-			output.Width = std::min(width, availableRightwardWidth);
-			horzDir = HorzDir::Right;
+			output.Width = Math::Min(size.Width, availableRightwardWidth);
+			outHorizontalDirection = HorizontalDirection::Right;
 		}
 		else
 		{
-			output.X = potentialLeftStart - std::min(width, availableLeftwardWidth);
-			output.Width = std::min(width, availableLeftwardWidth);
-			horzDir = HorzDir::Left;
+			output.X = potentialLeftStart - Math::Min(size.Width, availableLeftwardWidth);
+			output.Width = Math::Min(size.Width, availableLeftwardWidth);
+			outHorizontalDirection = HorizontalDirection::Left;
 		}
 	}
 
 	// Determine y position and whether to open upward or downward
-	u32 availableDownwardHeight = (u32)std::max(0, (availableArea.Y + (i32)availableArea.Height) - potentialBottomStart);
-	u32 availableUpwardHeight = (u32)std::max(0, potentialTopStart - availableArea.Y);
+	SizeType availableDownwardHeight = (SizeType)Math::Max((availableArea.Y + (PositionType)availableArea.Height) - potentialBottomStart, 0);
+	SizeType availableUpwardHeight = (SizeType)Math::Max(potentialTopStart - availableArea.Y, 0);
 
 	//// Prefer down if possible
-	if(height <= availableDownwardHeight)
+	if(size.Height <= availableDownwardHeight)
 	{
 		output.Y = potentialBottomStart;
-		output.Height = height;
-		vertDir = VertDir::Down;
+		output.Height = size.Height;
+		outVerticalDirection = VerticalDirection::Down;
 	}
 	else
 	{
 		if(availableDownwardHeight >= availableUpwardHeight)
 		{
 			output.Y = potentialBottomStart;
-			output.Height = std::min(height, availableDownwardHeight);
-			;
-			vertDir = VertDir::Down;
+			output.Height = Math::Min(size.Height, availableDownwardHeight);
+			outVerticalDirection = VerticalDirection::Down;
 		}
 		else
 		{
-			output.Y = potentialTopStart - (i32)std::min(height, availableUpwardHeight);
-			output.Height = std::min(height, availableUpwardHeight);
-			vertDir = VertDir::Up;
+			output.Y = potentialTopStart - (PositionType)Math::Min(size.Height, availableUpwardHeight);
+			output.Height = Math::Min(size.Height, availableUpwardHeight);
+			outVerticalDirection = VerticalDirection::Up;
 		}
 	}
 
 	return output;
 }
+
+template class B3D_UTILITY_EXPORT TDropDownAreaPlacement<i32, u32>;
+template class B3D_UTILITY_EXPORT TDropDownAreaPlacement<GUIPhysicalUnit>;
+template class B3D_UTILITY_EXPORT TDropDownAreaPlacement<GUILogicalUnit>;

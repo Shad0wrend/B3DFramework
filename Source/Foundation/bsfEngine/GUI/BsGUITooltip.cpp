@@ -18,10 +18,10 @@ using namespace std::placeholders;
 
 using namespace bs;
 
-const u32 GUITooltip::kTooltipWidth = 200;
-const u32 GUITooltip::kCursorSize = 16;
+const GUILogicalUnit GUITooltip::kTooltipWidth = 200;
+const GUILogicalUnit GUITooltip::kCursorSize = 16;
 
-GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidget, const Vector2I& position, const String& text)
+GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidget, const GUIPhysicalPoint& position, const String& text)
 	: CGUIWidget(parent, overlaidWidget.GetCamera())
 {
 	SetDepth(0); // Needs to be in front of everything
@@ -30,7 +30,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	SPtr<Camera> camera = overlaidWidget.GetCamera();
 	SPtr<Viewport> viewport = camera->GetViewport();
 
-	Area2I availableBounds = viewport->GetPixelArea();
+	const GUIPhysicalArea availableBounds = viewport->GetPixelArea().To<GUIPhysicalUnit>();
 
 	const GUIStyleSheetCascade& styleSheetCascade = GetStyleSheetCascade();
 
@@ -43,8 +43,8 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	size.Width += backgroundStyleSheetRules.Padding.Left + backgroundStyleSheetRules.Padding.Right;
 	size.Height += backgroundStyleSheetRules.Padding.Top + backgroundStyleSheetRules.Padding.Bottom;
 
-	i32 contentOffsetX = backgroundStyleSheetRules.Padding.Left;
-	i32 contentOffsetY = backgroundStyleSheetRules.Padding.Top;
+	GUILogicalUnit contentOffsetX = backgroundStyleSheetRules.Padding.Left;
+	GUILogicalUnit contentOffsetY = backgroundStyleSheetRules.Padding.Top;
 
 	// Content area
 	GUIPanel* contentPanel = GetPanel()->AddNewElement<GUIPanel>();
@@ -66,16 +66,19 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	GUILayout* contentLayout = contentPanel->AddNewElement<GUILayoutY>();
 	contentLayout->AddNewElement<GUILabel>(HString(text), BuiltinResources::kMultiLineLabelStyle, GUIOptions(GUIOption::FixedWidth(kTooltipWidth), GUIOption::FlexibleHeight()));
 
-	Area2I positionBounds;
-	positionBounds.X = position.X;
-	positionBounds.Y = position.Y;
+	const GUILogicalPoint logicalPosition = GUIUtility::PhysicalToLogical(position, GetDPIScale());
+	const GUILogicalArea logicalAvailableBounds = GUIUtility::PhysicalToLogical(availableBounds, GetDPIScale());
+
+	GUILogicalArea positionBounds;
+	positionBounds.X = logicalPosition.X;
+	positionBounds.Y = logicalPosition.Y;
 	positionBounds.Width = kCursorSize;
 	positionBounds.Height = kCursorSize;
 
-	DropDownAreaPlacement::HorzDir horzDir;
-	DropDownAreaPlacement::VertDir vertDir;
-	DropDownAreaPlacement placement = DropDownAreaPlacement::AroundBounds(positionBounds);
-	Area2I placementBounds = placement.GetOptimalBounds((u32)size.Width, (u32)size.Height, availableBounds, horzDir, vertDir);
+	TDropDownAreaPlacement<GUILogicalUnit>::HorizontalDirection horzDir;
+	TDropDownAreaPlacement<GUILogicalUnit>::VerticalDirection vertDir;
+	TDropDownAreaPlacement<GUILogicalUnit> placement = TDropDownAreaPlacement<GUILogicalUnit>::AroundBounds(positionBounds);
+	GUILogicalArea placementBounds = placement.GetOptimalBounds(size, logicalAvailableBounds, horzDir, vertDir);
 
 	backgroundPanel->SetPosition(placementBounds.X, placementBounds.Y);
 	contentPanel->SetPosition(placementBounds.X + contentOffsetX, placementBounds.Y + contentOffsetY);

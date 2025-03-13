@@ -323,7 +323,7 @@ void GUIListBox::OpenListBox()
 
 	createInformation.Camera = widget->GetCamera();
 	createInformation.StyleSheetCascade = widget->GetStyleSheetCascadeAsShared();
-	createInformation.Placement = DropDownAreaPlacement::AroundBoundsHorizontal(GetAbsoluteBounds());
+	createInformation.Placement = TDropDownAreaPlacement<GUIPhysicalUnit>::AroundBoundsHorizontal(GetAbsoluteBounds());
 	createInformation.DropDownData.States = mElementStates;
 
 	GUIDropDownType type;

@@ -36,7 +36,7 @@ namespace bs
         /// <param name="position">Position relative to the <paramref name="parent"/>.</param>
         /// <param name="parent">GUI layout over which to open the context menu. Context menu can be opened outside of the
         ///                      area of the layout, as long as the area belongs to the same window.</param>
-        public void Open(Vector2I position, GUILayout parent)
+        public void Open(GUIPhysicalPoint position, GUILayout parent)
         {
             if (parent == null)
                 return;
@@ -140,7 +140,7 @@ namespace bs
         private static extern void Internal_CreateInstance(ContextMenu instance);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_Open(IntPtr instance, ref Vector2I position, IntPtr layoutPtr);
+        private static extern void Internal_Open(IntPtr instance, ref GUIPhysicalPoint position, IntPtr layoutPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern void Internal_AddItem(IntPtr instance, string path, int callbackIdx, ref ShortcutKey shortcut);

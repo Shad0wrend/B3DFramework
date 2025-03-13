@@ -6,6 +6,7 @@
 #include "BsMonoManager.h"
 #include "BsMonoMethod.h"
 #include "BsMonoUtil.h"
+#include "BsScriptTVector2.generated.h"
 #include "GUI/BsGUIContextMenu.h"
 #include "Wrappers/GUI/BsScriptGUILayout.h"
 #include "GUI/BsGUILayout.h"
@@ -43,7 +44,7 @@ void ScriptContextMenu::InternalCreateInstance(MonoObject* scriptObject)
 	ScriptObjectWrapper::Create<ScriptContextMenu>(nativeObject, scriptObject);
 }
 
-void ScriptContextMenu::InternalOpen(ScriptContextMenu* self, Vector2I* position, ScriptGUILayoutWrapperBase* layoutPtr)
+void ScriptContextMenu::InternalOpen(ScriptContextMenu* self, __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop* position, ScriptGUILayoutWrapperBase* layoutPtr)
 {
 	if(!self->IsNativeObjectValid())
 		return;
@@ -55,7 +56,7 @@ void ScriptContextMenu::InternalOpen(ScriptContextMenu* self, Vector2I* position
 		return;
 
 	GUIPhysicalArea bounds = layout->CalculateAbsoluteBounds();
-	Vector2I windowPosition = *position + bounds.GetPosition().To<i32>();
+	GUIPhysicalPoint windowPosition = ScriptTVector2_TUnitValue_int32_t__PhysicalPixel__::FromInterop(*position) + bounds.GetPosition();
 
 	SPtr<GUIContextMenu> contextMenu = self->GetNativeObjectAsShared();
 	contextMenu->Open(windowPosition, *widget);

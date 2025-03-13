@@ -43,10 +43,10 @@ namespace bs
 		static GUIDropDownHitBox* Create(bool captureMouseOver, bool captureMousePresses, const GUIOptions& options);
 
 		/** Sets a single rectangle bounds in which the hitbox will capture mouse events. */
-		void SetBounds(const Area2I& bounds);
+		void SetBounds(const GUIPhysicalArea& bounds);
 
 		/** Sets complex bounds consisting of multiple rectangles in which the hitbox will capture mouse events. */
-		void SetBounds(const Vector<Area2I>& bounds);
+		void SetBounds(const Vector<GUIPhysicalArea>& bounds);
 
 		/** Triggered when hit box loses focus (for example user clicks outside of its bounds). */
 		Event<void()> OnFocusLost;
@@ -61,7 +61,7 @@ namespace bs
 		bool DoOnMouseEvent(const GUIMouseEvent& ev) override;
 		bool IsInInteractionBounds(const GUIPhysicalPoint& position) const override;
 
-		Vector<Area2I> mBounds;
+		Vector<GUIPhysicalArea> mBounds;
 		bool mCaptureMouseOver;
 		bool mCaptureMousePresses;
 	};

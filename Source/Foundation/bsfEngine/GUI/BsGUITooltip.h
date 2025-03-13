@@ -23,13 +23,13 @@ namespace bs
 		 * @param[in]	position		Position of the tooltip, relative to the overlaid widget position.
 		 * @param[in]	text			Text to display in the tooltip.
 		 */
-		GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidget, const Vector2I& position, const String& text);
+		GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidget, const GUIPhysicalPoint& position, const String& text);
 		~GUITooltip() = default;
 
 	private:
 		static constexpr const char* kBackgroundStyleClass = "TooltipFrame";
-		static const u32 kTooltipWidth;
-		static const u32 kCursorSize;
+		static const GUILogicalUnit kTooltipWidth;
+		static const GUILogicalUnit kCursorSize;
 	};
 
 	/** @} */

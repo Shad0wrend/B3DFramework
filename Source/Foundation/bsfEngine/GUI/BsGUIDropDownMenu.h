@@ -26,11 +26,11 @@ namespace bs
 	struct DropDownBoxCreateInformation
 	{
 		SPtr<Camera> Camera; /**< Camera on which to open the drop down box. */
-		DropDownAreaPlacement Placement; /**< Determines how is the drop down box positioned in the visible area. */
+		TDropDownAreaPlacement<GUIPhysicalUnit> Placement; /**< Determines how is the drop down box positioned in the visible area. */
 		GUIDropDownData DropDownData; /**< Data to use for initializing menu items of the drop down box. */
 		SPtr<const GUIStyleSheetCascade> StyleSheetCascade; /**< Style sheets to apply to drop down box GUI elements. */
 		/** Additional bounds that control what is considered the inside or the outside of the drop down box. */
-		Vector<Area2I> AdditionalBounds;
+		Vector<GUIPhysicalArea> AdditionalBounds;
 	};
 
 	/**	Represents a single entry in a drop down box. */
@@ -98,10 +98,10 @@ namespace bs
 		 * Creates a new drop down box widget.
 		 *
 		 * @param[in]	parent	Parent scene object to attach the drop down box to.
-		 * @param[in]	desc	Various parameters that control the drop down menu features and content.
+		 * @param[in]	createInformation	Various parameters that control the drop down menu features and content.
 		 * @param[in]	type	Specific type of drop down box to display.
 		 */
-		GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCreateInformation& desc, GUIDropDownType type);
+		GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCreateInformation& createInformation, GUIDropDownType type);
 		~GUIDropDownMenu();
 
 	private:
@@ -114,7 +114,7 @@ namespace bs
 				u32 Idx;
 				u32 Start;
 				u32 End;
-				u32 Height;
+				GUILogicalUnit Height;
 			};
 
 		public:
@@ -131,7 +131,7 @@ namespace bs
 			 *								hierarchy to be in front of lower levels, so you should increase this value for
 			 *								each level of the sub-menu hierarchy.
 			 */
-			DropDownSubMenu(GUIDropDownMenu* owner, DropDownSubMenu* parent, const DropDownAreaPlacement& placement, const Area2I& availableBounds, const GUIDropDownData& dropDownData, GUIDropDownType type, u32 depthOffset);
+			DropDownSubMenu(GUIDropDownMenu* owner, DropDownSubMenu* parent, const TDropDownAreaPlacement<GUIPhysicalUnit>& placement, const GUIPhysicalArea& availableBounds, const GUIDropDownData& dropDownData, GUIDropDownType type, u32 depthOffset);
 			~DropDownSubMenu();
 
 			/**	Recreates all internal GUI elements for the entries of the current sub-menu page. */
@@ -178,7 +178,7 @@ namespace bs
 			GUIDropDownType GetType() const { return Type; }
 
 			/**	Returns actual visible bounds of the sub-menu. */
-			Area2I GetVisibleBounds() const { return MVisibleBounds; }
+			GUIPhysicalArea GetVisibleBounds() const { return VisibleBounds; }
 
 			/**	Returns the drop box object that owns this sub-menu. */
 			GUIDropDownMenu* GetOwner() const { return Owner; }
@@ -188,18 +188,18 @@ namespace bs
 			GUIDropDownType Type;
 			GUIDropDownData Data;
 			u32 Page;
-			i32 X, Y;
-			u32 Width, Height;
-			Area2I MVisibleBounds;
-			Area2I MAvailableBounds;
+			GUILogicalPoint Position{BsZero};
+			GUILogicalSize Size{BsZero};
+			GUIPhysicalArea VisibleBounds;
+			GUIPhysicalArea AvailableBounds;
 			u32 DepthOffset;
 			bool IsOpenedUpward;
 
 			GUIDropDownContent* Content;
 			GUITexture* BackgroundFrame;
-			GUIButton* MScrollUpBtn;
-			GUIButton* MScrollDownBtn;
-			GUITexture* MHandle;
+			GUIButton* ScrollUpBtn;
+			GUIButton* ScrollDownBtn;
+			GUITexture* Handle;
 
 			GUIPanel* BackgroundPanel;
 			GUIPanel* ContentPanel;
@@ -225,15 +225,15 @@ namespace bs
 		void OnDestroyed() override;
 
 	private:
-		static const u32 kDropDownBoxWidth;
+		static const GUILogicalUnit kDropDownBoxWidth;
 		static constexpr const char* kBackgroundFrameStyleClass = "GUIDropDownBackgroundFrame";
 		static constexpr const char* kScrollbarBackgroundStyleClass = "GUIDropDownScrollbarBackground";
 		static constexpr const char* kScrollbarButtonStyleClass = "GUIDropDownScrollbarButton";
 		static constexpr const char* kScrollbarHandleStyleClass = "GUIDropDownScrollbarHandle";
 
 		RectOffset mBackgroundFramePadding;
-		u32 mScrollbarWidth = 0;
-		u32 mScrollButtonHeight = 0;
+		GUILogicalUnit mScrollbarWidth = 0;
+		GUILogicalUnit mScrollButtonHeight = 0;
 		DropDownSubMenu* mRootMenu;
 		GUIDropDownHitBox* mFrontHitBox;
 		GUIDropDownHitBox* mBackHitBox;
@@ -243,7 +243,7 @@ namespace bs
 		// the drop down to lose focus and close, but if the button still processes the mouse click it will be immediately opened again)
 		GUIDropDownHitBox* mCaptureHitBox;
 
-		Vector<Area2I> mAdditionalCaptureBounds;
+		Vector<GUIPhysicalArea> mAdditionalCaptureBounds;
 	};
 
 	/** @} */

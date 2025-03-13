@@ -30,13 +30,13 @@ GUIDropDownHitBox::GUIDropDownHitBox(bool captureMouseOver, bool captureMousePre
 	mOptionFlags.Set(GUIElementOption::ClickThrough);
 }
 
-void GUIDropDownHitBox::SetBounds(const Area2I& bounds)
+void GUIDropDownHitBox::SetBounds(const GUIPhysicalArea& bounds)
 {
 	mBounds.clear();
 	mBounds.push_back(bounds);
 }
 
-void GUIDropDownHitBox::SetBounds(const Vector<Area2I>& bounds)
+void GUIDropDownHitBox::SetBounds(const Vector<GUIPhysicalArea>& bounds)
 {
 	mBounds = bounds;
 }
@@ -106,7 +106,7 @@ bool GUIDropDownHitBox::IsInInteractionBounds(const GUIPhysicalPoint& position) 
 {
 	for(auto& bound : mBounds)
 	{
-		if(bound.Contains(position.To<i32>()))
+		if(bound.Contains(position))
 			return true;
 	}
 

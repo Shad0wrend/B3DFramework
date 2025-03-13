@@ -22,11 +22,11 @@ namespace bs
 		 * Opens a new drop down box at the specified location, look and elements. This will close any previously open drop
 		 * down box.
 		 *
-		 * @param[in]	desc				Various parameters for initializing the drop down box.
+		 * @param[in]	createInformation				Various parameters for initializing the drop down box.
 		 * @param[in]	type				Specific type of drop down box to display.
 		 * @param[in]	onClosedCallback	Callback triggered when drop down box is closed.
 		 */
-		GameObjectHandle<GUIDropDownMenu> OpenDropDownBox(const DropDownBoxCreateInformation& desc, GUIDropDownType type, std::function<void()> onClosedCallback);
+		GameObjectHandle<GUIDropDownMenu> OpenDropDownBox(const DropDownBoxCreateInformation& createInformation, GUIDropDownType type, std::function<void()> onClosedCallback);
 
 		/**	Closes the currently active drop down box (if any). */
 		void CloseDropDownBox();

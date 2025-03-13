@@ -199,7 +199,7 @@ void GUIManager::Update()
 					const RenderWindow* window = GetWidgetWindow(*parentWidget);
 					if(window != nullptr)
 					{
-						Vector2I windowPos = window->ScreenToWindowPosition(GetInput().GetPointerPosition());
+						GUIPhysicalPoint windowPos = window->ScreenToWindowPosition(GetInput().GetPointerPosition()).To<GUIPhysicalUnit>();
 
 						GUITooltipManager::Instance().Show(*parentWidget, windowPos, tooltipText);
 						break;
@@ -804,7 +804,7 @@ void GUIManager::OnPointerPressed(const PointerEvent& event)
 				const RenderWindow* window = GetWidgetWindow(*elementInfo.Widget);
 				if(window != nullptr)
 				{
-					Vector2I windowPos = window->ScreenToWindowPosition(event.ScreenPos);
+					const GUIPhysicalPoint windowPos = window->ScreenToWindowPosition(event.ScreenPos).To<GUIPhysicalUnit>();
 
 					menu->Open(windowPos, *elementInfo.Widget);
 					event.IsUsed = true;

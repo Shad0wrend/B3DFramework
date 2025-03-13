@@ -19,15 +19,16 @@ namespace bs
 	 * @note	For example, list boxes usually want drop down boxes to be placed above or below them, while
 	 * 			context menus may want to have them placed around a single point in any direction.
 	 */
-	class B3D_EXPORT DropDownAreaPlacement
+	template<typename PositionType, typename SizeType = PositionType>
+	class B3D_EXPORT TDropDownAreaPlacement
 	{
 	public:
 		/**	Determines how will the drop down box be positioned. */
 		enum class Type
 		{
 			Position,
-			BoundsVert,
-			BoundsHorz,
+			BoundsVertical,
+			BoundsHorizontal,
 			BoundsAll
 		};
 
@@ -35,7 +36,7 @@ namespace bs
 		 * Preferred horizontal direction of the placement bounds, either to the left or to the right of the wanted
 		 * position/bounds.
 		 */
-		enum class HorzDir
+		enum class HorizontalDirection
 		{
 			Left,
 			Right
@@ -44,97 +45,66 @@ namespace bs
 		/**
 		 * Preferred horizontal direction of the placement bounds, either upward or downward of the wanted position/bounds.
 		 */
-		enum class VertDir
+		enum class VerticalDirection
 		{
 			Up,
 			Down
 		};
 
-		DropDownAreaPlacement() = default;
+		TDropDownAreaPlacement() = default;
 
 		/**
 		 * Drop down box will be placed at the specified position. By default the system prefers the top left corner of the
 		 * box to correspond to the position, but if other corners offer more space for the contents, those will be used
 		 * instead.
 		 */
-		static DropDownAreaPlacement AroundPosition(const Vector2I& position); // TODO - Deprecated
+		static TDropDownAreaPlacement AroundPosition(const TVector2<PositionType>& position);
 
 		/**
 		 * Drop down box will be placed at the specified bounds. Box will be horizontally aligned to the left of the
 		 * provided bounds. Vertically system prefers placing the box at the bottom of the bounds, but may choose to align
 		 * it with the top of the bounds if it offers more space for the contents.
 		 */
-		static DropDownAreaPlacement AroundBoundsVert(const Area2I& bounds); // TODO - Deprecated
+		static TDropDownAreaPlacement AroundBoundsVertical(const TArea2<PositionType, SizeType>& bounds);
 
 		/**
 		 * Drop down box will be placed at the specified bounds. Box will be vertically aligned to the top of the provided
 		 * bounds. Horizontally system prefers placing the box at the right of the bounds, but may choose to align it with
 		 * the left of the bounds if it offers more space for the contents.
 		 */
-		static DropDownAreaPlacement AroundBoundsHorz(const Area2I& bounds); // TODO - Deprecated
+		static TDropDownAreaPlacement AroundBoundsHorizontal(const TArea2<PositionType, SizeType>& bounds);
 
 		/**
 		 * Drop down box will be placed at the specified bounds. Box will be vertically aligned to the top or bottom of the
 		 * provided bounds, with bottom being preferred. Horizontally system prefers placing the box at the right of the
 		 * bounds, but may choose to align it with the left of the bounds if it offers more space for the contents.
 		 */
-		static DropDownAreaPlacement AroundBounds(const Area2I& bounds); // TODO - Deprecated
-
-		/**
-		 * Drop down box will be placed at the specified position. By default the system prefers the top left corner of the
-		 * box to correspond to the position, but if other corners offer more space for the contents, those will be used
-		 * instead.
-		 */
-		static DropDownAreaPlacement AroundPosition(const GUIPhysicalPoint& position);
-
-		/**
-		 * Drop down box will be placed at the specified bounds. Box will be horizontally aligned to the left of the
-		 * provided bounds. Vertically system prefers placing the box at the bottom of the bounds, but may choose to align
-		 * it with the top of the bounds if it offers more space for the contents.
-		 */
-		static DropDownAreaPlacement AroundBoundsVertical(const GUIPhysicalArea& bounds);
-
-		/**
-		 * Drop down box will be placed at the specified bounds. Box will be vertically aligned to the top of the provided
-		 * bounds. Horizontally system prefers placing the box at the right of the bounds, but may choose to align it with
-		 * the left of the bounds if it offers more space for the contents.
-		 */
-		static DropDownAreaPlacement AroundBoundsHorizontal(const GUIPhysicalArea& bounds);
-
-		/**
-		 * Drop down box will be placed at the specified bounds. Box will be vertically aligned to the top or bottom of the
-		 * provided bounds, with bottom being preferred. Horizontally system prefers placing the box at the right of the
-		 * bounds, but may choose to align it with the left of the bounds if it offers more space for the contents.
-		 */
-		static DropDownAreaPlacement AroundBounds(const GUIPhysicalArea& bounds);
+		static TDropDownAreaPlacement AroundBounds(const TArea2<PositionType, SizeType>& bounds);
 
 		/**	Returns drop down box positioning type. */
 		Type GetType() const { return mType; }
 
 		/** Returns bounds around which to position the drop down box if one of the bounds positioning types is used. */
-		const Area2I& GetBounds() const { return mBounds; }
+		const TArea2<PositionType, SizeType>& GetBounds() const { return mBounds; }
 
 		/**	Returns position around which to position the drop down box if position positioning type is used. */
-		const Vector2I& GetPosition() const { return mPosition; }
+		const TVector2<PositionType>& GetPosition() const { return mPosition; }
 
 		/**
 		 * Calculates the optimal bounds to place an element of the specified size, within the available area using the
 		 * internal data as a guide.
 		 *
-		 * @param[in]	width			Width of the element to try to position, in pixels.
-		 * @param[in]	height			Height of the element to try to position, in pixels.
-		 * @param[in]	availableArea	Available area to try to position the element in, in pixels.
-		 * @param[in]	horzDir			Output parameter that signals the preferred horizontal direction of the bounds
-		 *								(left or right).
-		 * @param[in]	vertDir			Output parameter that signals the preferred vertical direction of the bounds
-		 *								(up or down).
+		 * @param	size							Size of the element to try to position, in pixels.
+		 * @param	availableArea					Available area to try to position the element in, in pixels.
+		 * @param	outHorizontalDirection			Output parameter that signals the preferred horizontal direction of the bounds (left or right).
+		 * @param	outVerticalDirection			Output parameter that signals the preferred vertical direction of the bounds (up or down).
 		 */
-		Area2I GetOptimalBounds(u32 width, u32 height, const Area2I& availableArea, HorzDir& horzDir, VertDir& vertDir) const;
+		TArea2<PositionType, SizeType> GetOptimalBounds(const TSize2<SizeType>& size, const TArea2<PositionType, SizeType>& availableArea, HorizontalDirection& outHorizontalDirection, VerticalDirection& outVerticalDirection) const;
 
 	private:
 		Type mType;
-		Area2I mBounds;
-		Vector2I mPosition{BsZero};
+		TArea2<PositionType, SizeType> mBounds;
+		TVector2<PositionType> mPosition{BsZero};
 	};
 
 	/** @} */

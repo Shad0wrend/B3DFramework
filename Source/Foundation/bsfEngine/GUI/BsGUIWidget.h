@@ -57,6 +57,13 @@ namespace bs
 		void SetDepth(u8 depth);
 
 		/**
+		 * Returns currently set DPI scale. Scale of 1.0 corresponds to 96 DPI.
+		 *  physical pixel = logical pixel * DPI scale
+		 *  logical pixel = physical pixel / DPI ccale;
+		 */
+		float GetDPIScale() const { return mDPIScale; }
+
+		/**
 		 * Checks are the specified coordinates within widget bounds. Coordinates should be relative to the parent window.
 		 */
 		bool InBounds(const GUIPhysicalPoint& position) const;
@@ -218,7 +225,7 @@ namespace bs
 		Vector3 mScale = Vector3::kOne;
 		Matrix4 mTransform = BsIdentity;
 
-		float mDPIScale = 1.0f;
+		float mDPIScale = 1.0f; // TODO - This should be grabbed from the destination render target
 
 		Set<GUIRenderable*> mDirtyContents;
 		Set<GUIRenderable*> mDirtyContentsTemp;
