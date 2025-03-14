@@ -3,7 +3,6 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "Utility/BsModule.h"
 #include "Localization/BsStringTable.h"
 
 namespace bs
@@ -27,7 +26,6 @@ namespace bs
 
 		/** @copydoc SetActiveLanguage() */
 		B3D_SCRIPT_EXPORT(ExportName(ActiveLanguage), Property(Getter))
-
 		Language GetActiveLanguage() const { return mActiveLanguage; }
 
 		/**

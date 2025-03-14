@@ -7,16 +7,11 @@
 using namespace bs;
 
 HString::HString()
-{
-	mStringData = StringTableManager::Instance().GetTable(0)->GetStringData(u8"");
-
-	if(mStringData->NumParameters > 0)
-		mParameters = B3DNewMultiple<String>(mStringData->NumParameters);
-}
+{ }
 
 HString::HString(u32 stringTableId)
 {
-	mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(u8"");
+	mStringData = GetStringTableManager().GetTable(stringTableId)->GetStringData(u8"");
 
 	if(mStringData->NumParameters > 0)
 		mParameters = B3DNewMultiple<String>(mStringData->NumParameters);
@@ -24,7 +19,7 @@ HString::HString(u32 stringTableId)
 
 HString::HString(const String& identifierString, u32 stringTableId)
 {
-	mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(identifierString);
+	mStringData = GetStringTableManager().GetTable(stringTableId)->GetStringData(identifierString);
 
 	if(mStringData->NumParameters > 0)
 		mParameters = B3DNewMultiple<String>(mStringData->NumParameters);
@@ -32,7 +27,7 @@ HString::HString(const String& identifierString, u32 stringTableId)
 
 HString::HString(const String& identifierString, const String& defaultString, u32 stringTableId)
 {
-	HStringTable table = StringTableManager::Instance().GetTable(stringTableId);
+	HStringTable table = GetStringTableManager().GetTable(stringTableId);
 	table->SetString(identifierString, StringTable::kDefaultLanguage, defaultString);
 
 	mStringData = table->GetStringData(identifierString);
@@ -47,7 +42,7 @@ HString::HString(const HString& copy)
 	mIsDirty = copy.mIsDirty;
 	mCachedString = copy.mCachedString;
 
-	if(copy.mStringData->NumParameters > 0)
+	if(copy.mStringData != nullptr && copy.mStringData->NumParameters > 0)
 	{
 		mParameters = B3DNewMultiple<String>(mStringData->NumParameters);
 		if(copy.mParameters != nullptr)
@@ -61,7 +56,9 @@ HString::HString(const HString& copy)
 	else
 	{
 		mParameters = nullptr;
-		mStringPtr = &mStringData->String;
+
+		if(mStringData != nullptr)
+			mStringPtr = &mStringData->String;
 	}
 }
 
@@ -88,7 +85,7 @@ HString& HString::operator=(const HString& rhs)
 	mIsDirty = rhs.mIsDirty;
 	mCachedString = rhs.mCachedString;
 
-	if(rhs.mStringData->NumParameters > 0)
+	if(rhs.mStringData != nullptr && rhs.mStringData->NumParameters > 0)
 	{
 		mParameters = B3DNewMultiple<String>(mStringData->NumParameters);
 		if(rhs.mParameters != nullptr)
@@ -102,7 +99,9 @@ HString& HString::operator=(const HString& rhs)
 	else
 	{
 		mParameters = nullptr;
-		mStringPtr = &mStringData->String;
+
+		if(mStringData != nullptr)
+			mStringPtr = &mStringData->String;
 	}
 
 	return *this;
@@ -117,20 +116,28 @@ const String& HString::GetValue() const
 			mStringData->ConcatenateString(mCachedString, mParameters, mStringData->NumParameters);
 			mStringPtr = &mCachedString;
 		}
-		else
+		else if(mStringData != nullptr)
 		{
 			mStringPtr = &mStringData->String;
+		}
+		else
+		{
+			mStringPtr = nullptr;
 		}
 
 		mIsDirty = false;
 	}
 
-	return *mStringPtr;
+	static const String kEmptyString;
+	if(mStringPtr != nullptr)
+		return *mStringPtr;
+
+	return kEmptyString;
 }
 
 void HString::SetParameter(u32 idx, const String& value)
 {
-	if(idx >= mStringData->NumParameters)
+	if(mStringData == nullptr || idx >= mStringData->NumParameters)
 		return;
 
 	mParameters[idx] = value;

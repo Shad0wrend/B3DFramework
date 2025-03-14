@@ -265,17 +265,16 @@ SPtr<LocalizedStringData> StringTable::GetStringData(const String& identifier, L
 
 HStringTable StringTable::Create()
 {
-	return B3DStaticResourceCast<StringTable>(GetResources().CreateResourceHandle(CreatePtrInternal()));
+	return B3DStaticResourceCast<StringTable>(GetResources().CreateResourceHandle(CreateShared()));
 }
 
-SPtr<StringTable> StringTable::CreatePtrInternal()
+SPtr<StringTable> StringTable::CreateShared()
 {
-	SPtr<StringTable> scriptCodePtr = B3DMakeSharedFromExisting<StringTable>(
-		new(B3DAllocate<StringTable>()) StringTable());
-	scriptCodePtr->SetShared(scriptCodePtr);
-	scriptCodePtr->Initialize();
+	SPtr<StringTable> stringTable = B3DMakeSharedFromExisting<StringTable>(new(B3DAllocate<StringTable>()) StringTable());
+	stringTable->SetShared(stringTable);
+	stringTable->Initialize();
 
-	return scriptCodePtr;
+	return stringTable;
 }
 
 RTTIType* StringTable::GetRttiStatic()

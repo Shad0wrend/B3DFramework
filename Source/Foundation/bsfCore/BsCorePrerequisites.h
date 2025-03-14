@@ -733,6 +733,7 @@ namespace bs
 		TID_MainEditorWindow = 1257,
 		TID_ModalWindow = 1258,
 		TID_DockableEditorWindow = 1259,
+		TID_DropDownWindow = 1260,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,

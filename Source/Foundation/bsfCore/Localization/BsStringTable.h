@@ -327,7 +327,7 @@ namespace bs
 		 *
 		 * @note	Internal method. Use create() for normal use.
 		 */
-		static SPtr<StringTable> CreatePtrInternal();
+		static SPtr<StringTable> CreateShared();
 
 		/** @} */
 	private:

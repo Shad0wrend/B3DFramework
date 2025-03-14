@@ -40,7 +40,10 @@ void StringTableManager::SetTable(u32 id, const HStringTable& table)
 		table->SetActiveLanguage(mActiveLanguage);
 }
 
-StringTableManager& GetStringTableManager()
+namespace bs
 {
-	return StringTableManager::Instance();
+	B3D_CORE_EXPORT StringTableManager& GetStringTableManager()
+	{
+		return StringTableManager::Instance();
+	}
 }

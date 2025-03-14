@@ -45,7 +45,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return StringTable::CreatePtrInternal();
+			return StringTable::CreateShared();
 		}
 	};
 
