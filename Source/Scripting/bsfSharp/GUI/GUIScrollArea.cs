@@ -58,11 +58,11 @@ namespace bs
         /// Returns the bounds of the scroll area not including the scroll bars (only the portion that contains the
         /// contents).
         /// </summary>
-        public Area2I ContentBounds
+        public GUIPhysicalArea ContentBounds
         {
             get
             {
-                Area2I bounds;
+                GUIPhysicalArea bounds;
                 Internal_GetContentBounds(mCachedPtr, out bounds);
                 return bounds;
             }
@@ -72,9 +72,14 @@ namespace bs
         /// Number of pixels the scroll bar will occupy when active. This is width for vertical scrollbar, and height for
         /// horizontal scrollbar.
         /// </summary>
-        public int ScrollBarWidth
+        public GUILogicalUnit ScrollBarWidth
         {
-            get { return Internal_GetScrollBarWidth(mCachedPtr); }
+            get
+            {
+                GUILogicalUnit width;
+                Internal_GetScrollBarWidth(mCachedPtr, out width);
+                return width;
+            }
         }
 
         /// <summary>
@@ -167,7 +172,7 @@ namespace bs
         private static extern GUILayoutY Internal_GetLayout(IntPtr nativeInstance);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_GetContentBounds(IntPtr nativeInstance, out Area2I value);
+        private static extern void Internal_GetContentBounds(IntPtr nativeInstance, out GUIPhysicalArea value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern float Internal_GetHorzScroll(IntPtr nativeInstance);
@@ -182,7 +187,7 @@ namespace bs
         private static extern void Internal_SetVertScroll(IntPtr nativeInstance, float value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern int Internal_GetScrollBarWidth(IntPtr nativeInstance);
+        private static extern void Internal_GetScrollBarWidth(IntPtr nativeInstance, out GUILogicalUnit value);
     }
 
     /** @} */

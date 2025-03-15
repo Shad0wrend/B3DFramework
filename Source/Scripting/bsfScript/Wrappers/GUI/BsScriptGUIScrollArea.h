@@ -10,6 +10,8 @@
 
 namespace bs
 {
+	struct __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop; 
+
 	/** @addtogroup ScriptInteropEngine
 	 *  @{
 	 */
@@ -33,12 +35,12 @@ namespace bs
 		/************************************************************************/
 		static void InternalCreateInstance(MonoObject* instance, ScrollBarType vertBarType, ScrollBarType horzBarType, MonoString* scrollBarStyle, MonoString* scrollAreaStyle, MonoArray* guiOptions);
 		static MonoObject* InternalGetLayout(ScriptGUIScrollArea* self);
-		static void InternalGetContentBounds(ScriptGUIScrollArea* self, Area2I* bounds);
+		static void InternalGetContentBounds(ScriptGUIScrollArea* self, __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop* bounds);
 		static float InternalGetHorzScroll(ScriptGUIScrollArea* self);
 		static void InternalSetHorzScroll(ScriptGUIScrollArea* self, float value);
 		static float InternalGetVertScroll(ScriptGUIScrollArea* self);
 		static void InternalSetVertScroll(ScriptGUIScrollArea* self, float value);
-		static int InternalGetScrollBarWidth(ScriptGUIScrollArea* self);
+		static void InternalGetScrollBarWidth(ScriptGUIScrollArea* self, GUILogicalUnit* width);
 	};
 
 	/** @} */

@@ -373,7 +373,7 @@ float GUIScrollArea::GetHorizontalScroll() const
 	return 0.0f;
 }
 
-Area2I GUIScrollArea::GetContentBounds()
+GUIPhysicalArea GUIScrollArea::GetContentBounds()
 {
 	GUIPhysicalArea bounds = CalculateAbsoluteBoundsRelativeTo();
 	const GUIPhysicalUnit physicalScrollBarWidth = GUIUtility::LogicalToPhysical(kScrollBarWidth, GetAbsoluteScale());
@@ -384,7 +384,7 @@ Area2I GUIScrollArea::GetContentBounds()
 	if(mVerticalScrollBar)
 		bounds.Width -= physicalScrollBarWidth;
 
-	return bounds.To<i32, u32>();
+	return bounds;
 }
 
 void GUIScrollArea::ScrollUpPixels(GUIPhysicalUnit pixels)

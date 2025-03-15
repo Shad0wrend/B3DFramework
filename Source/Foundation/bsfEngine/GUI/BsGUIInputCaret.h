@@ -31,7 +31,7 @@ namespace bs
 		ImageSprite* GetSprite() const { return mCaretSprite; }
 
 		/** Returns the bounds of the caret, relative to the current parent GUI element. */
-		Area2I GetBounds() const;
+		GUIPhysicalArea GetBounds() const;
 
 		/**	Rebuilts internal caret sprite using current properties. */
 		void UpdateSprite();

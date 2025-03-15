@@ -95,7 +95,7 @@ void GUIInputBox::UpdateRenderElements()
 	Optional<TextSpriteInformation> textSpriteInformation;
 
 	ImageSprite* caretSprite = nullptr;
-	Area2I caretBounds;
+	GUIPhysicalArea caretBounds;
 	if(mCaretShown && GetGUIManager().GetCaretBlinkState())
 	{
 		textSpriteInformation = BuildTextSpriteInformation();
@@ -119,12 +119,12 @@ void GUIInputBox::UpdateRenderElements()
 	// When text bounds are reduced the scroll needs to be adjusted so that
 	// input box isn't filled with mostly empty space.
 	Vector2I offset = mAbsolutePosition.To<i32>();
-	ClampScrollToBounds(mTextSprite.GetTextSprite().GetBounds(offset, Area2I()));
+	ClampScrollToBounds(mTextSprite.GetTextSprite().GetBounds(offset, Area2I()).To<GUIPhysicalUnit>());
 
 	const GUIPhysicalArea scaledContentBounds = GetScaledContentBounds();
 
 	const GUIPhysicalPoint textOffset = mTextOffset + scaledContentBounds.GetPosition();
-	const GUIPhysicalPoint caretOffset = GUIPhysicalPoint(caretBounds.X, caretBounds.Y) + textOffset;
+	const GUIPhysicalPoint caretOffset = caretBounds.GetPosition() + textOffset;
 
 	// Populate GUI render elements from the sprites
 	{
@@ -826,13 +826,13 @@ void GUIInputBox::ScrollTextToCaret()
 	GetGUIManager().GetInputSelectionTool()->UpdateText(this, textSpriteInformation);
 }
 
-void GUIInputBox::ClampScrollToBounds(Area2I unclippedTextBounds)
+void GUIInputBox::ClampScrollToBounds(const GUIPhysicalArea& unclippedTextBounds)
 {
 	const TextSpriteInformation textSpriteInformation = BuildTextSpriteInformation();
 
 	GUIPhysicalPoint newTextOffset;
-	GUIPhysicalUnit maxScrollableWidth = std::max(0, (i32)unclippedTextBounds.Width - (i32)textSpriteInformation.Width);
-	GUIPhysicalUnit maxScrollableHeight = std::max(0, (i32)unclippedTextBounds.Height - (i32)textSpriteInformation.Height);
+	GUIPhysicalUnit maxScrollableWidth = Math::Max(unclippedTextBounds.Width - (GUIPhysicalUnit)textSpriteInformation.Width, 0);
+	GUIPhysicalUnit maxScrollableHeight = Math::Max(unclippedTextBounds.Height - (GUIPhysicalUnit)textSpriteInformation.Height, 0);
 	newTextOffset.X = Math::Clamp(mTextOffset.X, -maxScrollableWidth, GUIPhysicalUnit(0));
 	newTextOffset.Y = Math::Clamp(mTextOffset.Y, -maxScrollableHeight, GUIPhysicalUnit(0));
 

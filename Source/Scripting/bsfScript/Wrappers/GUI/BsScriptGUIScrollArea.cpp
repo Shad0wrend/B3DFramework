@@ -6,6 +6,7 @@
 #include "BsMonoManager.h"
 #include "Image/BsSpriteTexture.h"
 #include "BsMonoUtil.h"
+#include "BsScriptTArea2.generated.h"
 #include "GUI/BsGUILayoutY.h"
 #include "GUI/BsGUIScrollArea.h"
 #include "GUI/BsGUIOptions.h"
@@ -62,12 +63,12 @@ MonoObject* ScriptGUIScrollArea::InternalGetLayout(ScriptGUIScrollArea* self)
 	return ScriptGUILayoutY::GetOrCreateScriptObject(&self->GetNativeObject()->GetLayout());
 }
 
-void ScriptGUIScrollArea::InternalGetContentBounds(ScriptGUIScrollArea* self, Area2I* bounds)
+void ScriptGUIScrollArea::InternalGetContentBounds(ScriptGUIScrollArea* self, __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop* bounds)
 {
 	if(!self->IsNativeObjectValid())
-		*bounds = Area2I::kEmpty;
+		*bounds = ScriptTArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__::ToInterop(GUIPhysicalArea::kEmpty);
 
-	*bounds = self->GetNativeObject()->GetContentBounds();
+	*bounds = ScriptTArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__::ToInterop(self->GetNativeObject()->GetContentBounds());
 }
 
 float ScriptGUIScrollArea::InternalGetHorzScroll(ScriptGUIScrollArea* self)
@@ -102,7 +103,7 @@ void ScriptGUIScrollArea::InternalSetVertScroll(ScriptGUIScrollArea* self, float
 	self->GetNativeObject()->ScrollToVertical(value);
 }
 
-int ScriptGUIScrollArea::InternalGetScrollBarWidth(ScriptGUIScrollArea* self)
+void ScriptGUIScrollArea::InternalGetScrollBarWidth(ScriptGUIScrollArea* self, GUILogicalUnit* width)
 {
-	return (int)GUIScrollArea::kScrollBarWidth;
+	*width = GUIScrollArea::kScrollBarWidth;
 }

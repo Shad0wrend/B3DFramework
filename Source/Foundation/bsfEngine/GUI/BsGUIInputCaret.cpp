@@ -19,10 +19,10 @@ GUIInputCaret::~GUIInputCaret()
 	B3DDelete(mCaretSprite);
 }
 
-Area2I GUIInputCaret::GetBounds() const
+GUIPhysicalArea GUIInputCaret::GetBounds() const
 {
 	const GUIPhysicalPoint caretPosition = GetCaretPosition();
-	return Area2I((i32)caretPosition.X, (i32)caretPosition.Y, 1, (i32)GetCaretHeight());
+	return GUIPhysicalArea(caretPosition.X, caretPosition.Y, 1, GetCaretHeight());
 }
 
 void GUIInputCaret::UpdateSprite()
