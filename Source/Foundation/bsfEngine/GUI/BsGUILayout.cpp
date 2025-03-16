@@ -196,11 +196,7 @@ void GUILayout::UpdateAbsoluteCoordinatesForChildren()
 {
 	if(mIsCullingEnabled)
 	{
-		Area2 relativeClippedArea = mAbsoluteClippedArea.To<float>();
-		relativeClippedArea.X -= (float)mAbsolutePosition.X;
-		relativeClippedArea.Y -= (float)mAbsolutePosition.Y;
-
-		// TODO - Need to undo scale
+		const Area2 relativeClippedArea = WidgetToElementSpace(mAbsoluteClippedArea).To<float>();
 
 		GUIElementQuadTree::AreaIntersectIterator areaIterator(*mQuadTree, relativeClippedArea);
 		while(areaIterator.MoveNext())

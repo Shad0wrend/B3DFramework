@@ -44,6 +44,7 @@ namespace bs
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_WidgetToElementSpace0", (void*)&ScriptGUIElement::InternalWidgetToElementSpace0);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ElementToWidgetSpace0", (void*)&ScriptGUIElement::InternalElementToWidgetSpace0);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptGUIElement::InternalDestroy);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_UpdateLayoutIfDirty", (void*)&ScriptGUIElement::InternalUpdateLayoutIfDirty);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetParent", (void*)&ScriptGUIElement::InternalGetParent);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsHidden", (void*)&ScriptGUIElement::InternalIsHidden);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsActive", (void*)&ScriptGUIElement::InternalIsActive);
@@ -321,6 +322,14 @@ namespace bs
 			return;
 
 		static_cast<GUIElement*>(self->GetNativeObject())->Destroy();
+	}
+
+	void ScriptGUIElement::InternalUpdateLayoutIfDirty(ScriptGUIElement* self)
+	{
+		if(!self->IsNativeObjectValid())
+			return;
+
+		static_cast<GUIElement*>(self->GetNativeObject())->UpdateLayoutIfDirty();
 	}
 
 	MonoObject* ScriptGUIElement::InternalGetParent(ScriptGUIElement* self)

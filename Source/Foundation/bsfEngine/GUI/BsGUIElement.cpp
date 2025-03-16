@@ -209,7 +209,7 @@ GUIPhysicalArea GUIElement::CalculateAbsoluteBoundsRelativeTo(GUIElement* relati
 	return bounds;
 }
 
-GUIPhysicalArea GUIElement::GetLocalClippedArea() const
+GUIPhysicalArea GUIElement::GetClippedAreaTranslatedRelativeToParent() const
 {
 	GUIPhysicalArea localClippedArea = mAbsoluteClippedArea;
 	localClippedArea.X -= mAbsolutePosition.X;
@@ -561,6 +561,12 @@ void GUIElement::UpdateLayout()
 	UpdateOptimalLayoutSizes(); // We calculate optimal sizes of all layouts as a pre-processing step, as they are requested often during update layout
 	UpdateLayoutForChildren();
 	UpdateAbsoluteCoordinatesForChildren();
+}
+
+void GUIElement::UpdateLayoutIfDirty()
+{
+	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsLayoutDirty() && mParentWidget != nullptr)
+		mParentWidget->UpdateLayout(mLayoutUpdateParent);
 }
 
 void GUIElement::UpdateOptimalLayoutSizes()

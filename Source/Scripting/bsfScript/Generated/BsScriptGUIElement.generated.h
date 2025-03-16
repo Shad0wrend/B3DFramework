@@ -53,6 +53,7 @@ namespace bs
 		static void InternalWidgetToElementSpace0(ScriptGUIElement* self, __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop* area, __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop* __output);
 		static void InternalElementToWidgetSpace0(ScriptGUIElement* self, __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop* area, __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop* __output);
 		static void InternalDestroy(ScriptGUIElement* self);
+		static void InternalUpdateLayoutIfDirty(ScriptGUIElement* self);
 		static MonoObject* InternalGetParent(ScriptGUIElement* self);
 		static bool InternalIsHidden(ScriptGUIElement* self);
 		static bool InternalIsActive(ScriptGUIElement* self);

@@ -281,6 +281,10 @@ namespace bs
 		/** Calculates sizes and relative positions for all child elements. Should be preceded with a call to UpdateOptimalLayoutSizes(). */
 		virtual void UpdateLayoutForChildren() { }
 
+		/** Triggers a layout update immediately if the layout has been dirtied. */
+		B3D_SCRIPT_EXPORT()
+		void UpdateLayoutIfDirty();
+
 		/**
 		 * Updates the absolute coordinates of the GUI element using the currently assigned relative coordinates and the provided
 		 * @p parentOrigin. Also calculates the visible area clip rectangle and marks culled elements if they have no visible area.
@@ -465,8 +469,8 @@ namespace bs
 		/** Similar to GetAbsoluteClippedArea(), but contains floating point data that is not rounded, useful primarily for calculating child absolute coordinates without losing precision. */
 		const GUIPhysicalAreaF& GetIntermediateAbsoluteClippedArea() const { return mIntermediateAbsoluteClippedArea; }
 
-		/** Same as GetAbsoluteClippedArea(), except the area is made relative to this GUI element. */
-		GUIPhysicalArea GetLocalClippedArea() const;
+		/** Same as GetAbsoluteClippedArea(), except the area position is made relative to this GUI element. */
+		GUIPhysicalArea GetClippedAreaTranslatedRelativeToParent() const;
 
 		/** @} */
 

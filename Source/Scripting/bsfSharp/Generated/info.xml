@@ -590,6 +590,9 @@ Be aware that this value will be ignored if GUI element is part of a layout sinc
 		<method native="Destroy" script="Destroy" static="false">
 			<doc>Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be released delayed, next frame.</doc>
 		</method>
+		<method native="UpdateLayoutIfDirty" script="UpdateLayoutIfDirty" static="false">
+			<doc>Triggers a layout update immediately if the layout has been dirtied.</doc>
+		</method>
 		<method native="SetFlexibleWidth" script="SetFlexibleWidth" static="false">
 			<doc>Sets flexible element width. Element will be resized according to its contents and parent layout but will always stay within the provided range. If maximum width is zero, the element is allowed to expand as much as it needs. Values should be in logical pixel units.</doc>
 			<param name="minWidth" type="TUnitValue&lt;int,LogicalPixel&gt;">

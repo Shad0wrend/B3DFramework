@@ -242,6 +242,12 @@ namespace bs
 			Internal_Destroy(mCachedPtr);
 		}
 
+		/// <summary>Triggers a layout update immediately if the layout has been dirtied.</summary>
+		public void UpdateLayoutIfDirty()
+		{
+			Internal_UpdateLayoutIfDirty(mCachedPtr);
+		}
+
 		/// <summary>
 		/// Sets flexible element width. Element will be resized according to its contents and parent layout but will always stay 
 		/// within the provided range. If maximum width is zero, the element is allowed to expand as much as it needs. Values 
@@ -330,6 +336,8 @@ namespace bs
 		private static extern void Internal_ElementToWidgetSpace0(IntPtr thisPtr, ref TArea2<TUnitValue<int,LogicalPixel>,TUnitValue<int,LogicalPixel>> area, out TArea2<TUnitValue<int,PhysicalPixel>,TUnitValue<int,PhysicalPixel>> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Destroy(IntPtr thisPtr);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_UpdateLayoutIfDirty(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern GUIElement Internal_GetParent(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]

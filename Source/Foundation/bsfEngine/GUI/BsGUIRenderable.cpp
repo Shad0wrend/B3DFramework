@@ -70,7 +70,7 @@ void GUIRenderable::GetRenderElementVertexAndIndexData(u32 renderElementIndex, u
 	const GUIRenderElement& renderElement = mRenderElements[renderElementIndex];
 
 	const GUIPhysicalPoint guiElementOffset = mAbsolutePosition;
-	const Area2 guiElementClipRectangle = GetLocalClippedArea().To<float>();
+	const Area2 guiElementClipRectangle = GetClippedAreaTranslatedRelativeToParent().To<float>();
 
 	// Build the render element bounds to use for clipping
 	Area2 renderElementClipRectangle = renderElement.ClipRectangle; // In space relative to parent GUI element
