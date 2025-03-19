@@ -158,6 +158,16 @@ void GUIElement::ResetSizeConstraints()
 	MarkLayoutAsDirty();
 }
 
+void GUIElement::SetScale(float scale)
+{
+	if(mScale == scale)
+		return;
+
+	// Don't allow zero scale
+	mScale = Math::Max(scale, 0.01f);
+	MarkAbsoluteCoordinatesAsDirty();
+}
+
 GUILogicalSize GUIElement::CalculateSizeInLayout() const
 {
 	if(mLayoutUpdateParent != nullptr && mLayoutUpdateParent->IsLayoutDirty() && mParentWidget != nullptr)
@@ -584,7 +594,7 @@ void GUIElement::UpdateAbsoluteCoordinates(const GUIPhysicalPointF& parentOrigin
 	// Keep intermediates in floating point not to lose precision as we go deeper in the hierarchy. We also need to cache these as layout update
 	// can occur from anywhere in the hierarchy.
 	mIntermediateAbsolutePosition = (mLayoutData.RelativePosition.To<float>() * parentScale).To<GUIPhysicalUnitF>() + parentOrigin;
-	const GUIPhysicalSizeF intermediateAbsoluteSize = (mLayoutData.Size.To<float>() * mAbsoluteScale).To<GUIPhysicalUnitF>();
+	const GUIPhysicalSizeF intermediateAbsoluteSize = (mLayoutData.Size.To<float>() * parentScale).To<GUIPhysicalUnitF>();
 
 	mIntermediateAbsoluteClippedArea = GUIPhysicalAreaF(mIntermediateAbsolutePosition, intermediateAbsoluteSize);
 	mIntermediateAbsoluteClippedArea.Clip(parentVisibleArea);
@@ -627,11 +637,11 @@ const RectOffset& GUIElement::GetPadding() const
 	return padding;
 }
 
-void GUIElement::ResetAbsoluteBounds(float scale)
+void GUIElement::ResetAbsoluteBounds()
 {
-	mAbsoluteScale = mScale * scale;
+	mAbsoluteScale = mScale;
 
-	const GUIPhysicalSizeF intermediateAbsoluteSize = (mLayoutData.Size.To<float>() * mAbsoluteScale).To<GUIPhysicalUnitF>();
+	const GUIPhysicalSizeF intermediateAbsoluteSize = (mLayoutData.Size.To<float>()).To<GUIPhysicalUnitF>();
 
 	mAbsoluteSize = (mLayoutData.Size.To<float>() * mAbsoluteScale).To<GUIPhysicalUnit>();
 	mIntermediateAbsoluteClippedArea = GUIPhysicalAreaF(mIntermediateAbsolutePosition, intermediateAbsoluteSize);

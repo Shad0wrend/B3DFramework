@@ -47,6 +47,7 @@ namespace bs
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 
 		void DoOnWindowMovedOrResized() override;
+		void DoOnDPIScaleChanged() override;
 
 	private:
 		Win32Window* mWindow = nullptr;

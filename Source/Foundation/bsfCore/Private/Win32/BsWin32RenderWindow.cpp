@@ -26,11 +26,9 @@ void Win32RenderWindow::Initialize()
 	windowCreateInformation.AllowResize = mCreateInformation.AllowResize;
 	windowCreateInformation.EnableDoubleClick = true;
 	windowCreateInformation.Fullscreen = mCreateInformation.Fullscreen;
-	windowCreateInformation.Width = mCreateInformation.VideoMode.Width;
-	windowCreateInformation.Height = mCreateInformation.VideoMode.Height;
+	windowCreateInformation.Size = Size2I((i32)mCreateInformation.VideoMode.Width, (i32)mCreateInformation.VideoMode.Height);
 	windowCreateInformation.Hidden = mCreateInformation.Hidden || mCreateInformation.HideUntilSwap;
-	windowCreateInformation.Left = mCreateInformation.Left;
-	windowCreateInformation.Top = mCreateInformation.Top;
+	windowCreateInformation.Position = Vector2I(mCreateInformation.Left, mCreateInformation.Top);
 	windowCreateInformation.OuterDimensions = false;
 	windowCreateInformation.Title = mCreateInformation.Title;
 	windowCreateInformation.ToolWindow = mCreateInformation.ToolWindow;
@@ -73,13 +71,16 @@ void Win32RenderWindow::Initialize()
 	mDisplayFrequency = Math::RoundToI32(mCreateInformation.VideoMode.RefreshRate);
 
 	// Update local properties
-	mRenderTargetProperties.Width = mWindow->GetWidth();
-	mRenderTargetProperties.Height = mWindow->GetHeight();
+	const Area2I& clientArea = mWindow->GetClientArea();
+
+	mRenderTargetProperties.Width = clientArea.Width;
+	mRenderTargetProperties.Height = clientArea.Height;
 	mRenderTargetProperties.HwGamma = mCreateInformation.Gamma;
 	mRenderTargetProperties.MultisampleCount = 1;
+	mRenderTargetProperties.DPIScale = (float)mWindow->GetDPI() / (float)USER_DEFAULT_SCREEN_DPI;
 	mRenderWindowProperties.IsFullScreen = mCreateInformation.Fullscreen && !mIsChild;
-	mRenderWindowProperties.Top = mWindow->GetTop();
-	mRenderWindowProperties.Left = mWindow->GetLeft();
+	mRenderWindowProperties.Left = clientArea.X;
+	mRenderWindowProperties.Top = clientArea.Y;
 
 	// Make the window full screen if required
 	if(!windowCreateInformation.External)
@@ -159,10 +160,10 @@ void Win32RenderWindow::Move(i32 left, i32 top)
 {
 	if(!mRenderWindowProperties.IsFullScreen)
 	{
-		mWindow->Move(left, top);
+		mWindow->Move(Vector2I(left, top));
 
-		mRenderWindowProperties.Top = mWindow->GetTop();
-		mRenderWindowProperties.Left = mWindow->GetLeft();
+		mRenderWindowProperties.Left = mWindow->GetClientArea().X;
+		mRenderWindowProperties.Top = mWindow->GetClientArea().Y;
 
 		MarkRenderProxyDataDirty();
 	}
@@ -172,10 +173,10 @@ void Win32RenderWindow::Resize(u32 width, u32 height)
 {
 	if(!mRenderWindowProperties.IsFullScreen)
 	{
-		mWindow->Resize(width, height);
+		mWindow->Resize(Size2I((i32)width, (i32)height));
 
-		mRenderTargetProperties.Width = mWindow->GetWidth();
-		mRenderTargetProperties.Height = mWindow->GetHeight();
+		mRenderTargetProperties.Width = mWindow->GetClientArea().Width;
+		mRenderTargetProperties.Height = mWindow->GetClientArea().Height;
 
 		MarkRenderProxyDataDirty();
 	}
@@ -214,8 +215,8 @@ void Win32RenderWindow::Maximize()
 	mRenderWindowProperties.IsMaximized = true;
 	mRenderWindowProperties.IsMinimized = true;
 
-	mRenderTargetProperties.Width = mWindow->GetWidth();
-	mRenderTargetProperties.Height = mWindow->GetHeight();
+	mRenderTargetProperties.Width = mWindow->GetClientArea().Width;
+	mRenderTargetProperties.Height = mWindow->GetClientArea().Height;
 
 	MarkRenderProxyDataDirty();
 }
@@ -227,8 +228,8 @@ void Win32RenderWindow::Restore()
 	mRenderWindowProperties.IsMaximized = false;
 	mRenderWindowProperties.IsMinimized = false;
 
-	mRenderTargetProperties.Width = mWindow->GetWidth();
-	mRenderTargetProperties.Height = mWindow->GetHeight();
+	mRenderTargetProperties.Width = mWindow->GetClientArea().Width;
+	mRenderTargetProperties.Height = mWindow->GetClientArea().Height;
 
 	MarkRenderProxyDataDirty();
 }
@@ -301,7 +302,9 @@ void Win32RenderWindow::SetWindowed(u32 width, u32 height)
 	RECT rect;
 	SetRect(&rect, 0, 0, winWidth, winHeight);
 
-	AdjustWindowRect(&rect, mWindow->GetStyle(), false);
+	UINT DPI = mWindow->GetDPI();
+
+	AdjustWindowRectExForDpi(&rect, mWindow->GetStyle(), false, mWindow->GetStyleEx(), DPI);
 	winWidth = rect.right - rect.left;
 	winHeight = rect.bottom - rect.top;
 
@@ -361,14 +364,24 @@ void Win32RenderWindow::DoOnWindowMovedOrResized()
 	// This will update internal window properties that we're about to retrieve below
 	mWindow->DoOnWindowMovedOrResized();
 
-	mRenderWindowProperties.Top = mWindow->GetTop();
-	mRenderWindowProperties.Left = mWindow->GetLeft();
-	mRenderTargetProperties.Width = mWindow->GetWidth();
-	mRenderTargetProperties.Height = mWindow->GetHeight();
+	const Area2I& clientArea = mWindow->GetClientArea();
+
+	mRenderWindowProperties.Left = clientArea.X;
+	mRenderWindowProperties.Top = clientArea.Y;
+	mRenderTargetProperties.Width = clientArea.Width;
+	mRenderTargetProperties.Height = clientArea.Height;
 
 	MarkRenderProxyDataDirty();
 
 	Super::DoOnWindowMovedOrResized();
+}
+
+void Win32RenderWindow::DoOnDPIScaleChanged()
+{
+	const UINT DPI = mWindow->GetDPI();
+	mRenderTargetProperties.DPIScale = (float)DPI / (float)USER_DEFAULT_SCREEN_DPI;
+
+	Super::DoOnDPIScaleChanged();
 }
 
 namespace bs::ct

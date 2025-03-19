@@ -127,6 +127,9 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		virtual void ResetSizeConstraints();
 
+		/** Sets the scale of the GUI element. Note that scale will not affect the size of this GUI element, but will rather scale all of its contents. */
+		void SetScale(float scale);
+
 		/**
 		 * Hides or shows this element and recursively applies the same state to all the child elements. This will not
 		 * remove the element from the layout, the room for it will still be reserved but it just won't be visible.
@@ -305,7 +308,7 @@ namespace bs
 		virtual void SetLayoutData(const GUILayoutData& data) { mLayoutData = data; }
 
 		/** Resets the absolute size & clipped area to full width/height of the GUI element. */
-		void ResetAbsoluteBounds(float scale = 1.0f);
+		void ResetAbsoluteBounds();
 
 		/** Retrieves layout data that determines GUI elements relative position, size and depth in the GUI widget. */
 		const GUILayoutData& GetLayoutData() const { return mLayoutData; }

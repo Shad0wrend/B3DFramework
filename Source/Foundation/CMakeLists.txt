@@ -141,7 +141,7 @@ endif()
 ## OS libs
 if(WIN32)
 	target_link_libraries(bsf PRIVATE Winmm dinput8 xinput9_1_0 dxguid.lib)
-	target_link_libraries(bsf PRIVATE DbgHelp IPHLPAPI Rpcrt4)
+	target_link_libraries(bsf PRIVATE DbgHelp IPHLPAPI Rpcrt4 User32 Shcore)
 elseif(LINUX)
 	target_link_libraries(bsf PRIVATE dl pthread)
 elseif(APPLE) # MacOS

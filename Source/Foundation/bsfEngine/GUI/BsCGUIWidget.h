@@ -48,6 +48,9 @@ namespace bs
 		/** @copydoc GUIWidget::GetDPIScale() */
 		float GetDPIScale() const;
 
+		/** @copydoc GUIWidget::SetDPIScale() */
+		void SetDPIScale(float dpiScale);
+
 		/** @copydoc GUIWidget::GetTarget */
 		Viewport* GetTarget() const;
 

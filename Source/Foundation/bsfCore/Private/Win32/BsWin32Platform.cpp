@@ -9,9 +9,10 @@
 #include "Platform/BsDropTarget.h"
 #include "Private/Win32/BsWin32DropTarget.h"
 #include "Private/Win32/BsWin32PlatformUtility.h"
+#include "String/BsUnicode.h"
 #include "TimeAPI.h"
 #include <shellapi.h>
-#include "String/BsUnicode.h"
+#include <WinUser.h>
 
 using namespace bs;
 
@@ -451,6 +452,10 @@ void Platform::StartUpInternal()
 								  "in performance for waiting threads.");
 	}
 
+#if 0 // Disabled for now
+	SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+#endif
+
 	mData->RequiresStartUp = true;
 }
 
@@ -743,6 +748,11 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			((MINMAXINFO*)lParam)->ptMaxSize.y = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
 		}
 		break;
+	case WM_DPICHANGED:
+		{
+			win->NotifyWindowEvent(WindowEventType::DPIScaleChanged);
+			break;
+		}
 	case WM_CLOSE:
 		{
 			win->NotifyWindowEvent(WindowEventType::CloseRequested);

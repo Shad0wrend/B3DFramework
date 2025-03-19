@@ -4,6 +4,9 @@
 
 #include "Prerequisites/BsPrerequisitesUtil.h"
 #include "windows.h"
+#include "Math/BsSize2.h"
+#include "Math/BsVector2.h"
+#include "Math/BsArea2.h"
 
 namespace bs
 {
@@ -25,12 +28,10 @@ namespace bs
 		HWND Parent = nullptr; /**< Optional handle to the parent window if this window is to be a child of an existing window. */
 		HWND External = nullptr; /**< Optional external window handle if the window was created externally. */
 		void* CreationParams = nullptr; /**< Parameter that will be passed through the WM_CREATE message. */
-		u32 Width = 0; /**< Width of the window in pixels. */
-		u32 Height = 0; /**< Height of the window in pixels. */
+		Size2I Size{BsZero}; /**< Size of the window area in pixels. This is client area if OuterDimensions if false, otherwise full window area. */
 		bool Fullscreen = false; /**< Should the window be opened in fullscreen mode. */
 		bool Hidden = false; /**< Should the window be hidden initially. */
-		i32 Left = -1; /**< Window origin on X axis in pixels. -1 == screen center. Relative to provided monitor. */
-		i32 Top = -1; /**< Window origin on Y axis in pixels. -1 == screen center. Relative to provided monitor. */
+		Vector2I Position{-1, -1}; /**< Position of the top-left corner of the window in pixels. -1 == screen center. Relative to provided monitor. This is position of the client area if OuterDimensions is false, otherwise position of the full window area. */
 		String Title; /**< Title of the window. */
 		bool ShowTitleBar = true; /**< Determines if the title-bar should be shown or not. */
 		bool ShowBorder = true; /**< Determines if the window border should be shown or not. */
@@ -61,17 +62,14 @@ namespace bs
 		/** Initializes the window. To be called right after construction. */
 		void Initialize();
 
-		/**	Returns position of the left-most border of the window, relative to the screen. */
-		i32 GetLeft() const;
+		/**	Returns the area of the window relative to the screen. This includes the title-bar and border. */
+		const Area2I& GetWindowArea() const;
 
-		/**	Returns position of the top-most border of the window, relative to the screen. */
-		i32 GetTop() const;
+		/**	Returns the area of the window's client area relative to the screen. This doesn't include the title-bar and border. */
+		const Area2I& GetClientArea() const;
 
-		/**	Returns width of the window in pixels. */
-		u32 GetWidth() const;
-
-		/**	Returns height of the window in pixels. */
-		u32 GetHeight() const;
+		/** Returns currently set DPI for the window. */
+		UINT GetDPI() const;
 
 		/**	Returns the native window handle. */
 		HWND GetHWnd() const;
@@ -91,17 +89,17 @@ namespace bs
 		/**	Restores the window to original position and size if it is minimized or maximized. */
 		void Restore();
 
-		/**	Change the size of the window. */
-		void Resize(u32 width, u32 height);
+		/** Change the size of the window. Note the dimensions represent the dimension of the client area. */
+		void Resize(const Size2I& size);
 
-		/**	Reposition the window. */
-		void Move(i32 left, i32 top);
+		/**	Reposition the window. Note the coordinates represent the top-left corner of the window, not the client area. */
+		void Move(const Vector2I& position);
 
 		/**	Converts screen position into window local position. */
-		Vector2I ScreenToWindowPos(const Vector2I& screenPos) const;
+		Vector2I ScreenToWindowPosition(const Vector2I& screenPos) const;
 
 		/**	Converts window local position to screen position. */
-		Vector2I WindowToScreenPos(const Vector2I& windowPos) const;
+		Vector2I WindowToScreenPosition(const Vector2I& windowPos) const;
 
 		/**	Returns the window style flags used for creating it. */
 		DWORD GetStyle() const;

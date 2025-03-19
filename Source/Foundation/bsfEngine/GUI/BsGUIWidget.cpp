@@ -38,7 +38,10 @@ void GUIWidget::Construct(const SPtr<Camera>& camera)
 		SPtr<RenderTarget> target = mCamera->GetViewport()->GetTarget();
 
 		if(target != nullptr)
+		{
 			mCachedRTId = target->GetInternalId();
+			mDPIScale = target->GetProperties().DPIScale;
+		}
 	}
 
 	mDefaultNavGroup = GUINavGroup::Create();
@@ -92,6 +95,17 @@ void GUIWidget::SetDepth(u8 depth)
 	UpdateRootPanel();
 }
 
+void GUIWidget::SetDPIScale(float dpiScale)
+{
+	if(mDPIScale == dpiScale)
+		return;
+
+	mDPIScale = dpiScale;
+	mWidgetIsDirty = true;
+
+	UpdateRootPanel();
+}
+
 Viewport* GUIWidget::GetTarget() const
 {
 	if(mCamera != nullptr)
@@ -100,7 +114,7 @@ Viewport* GUIWidget::GetTarget() const
 	return nullptr;
 }
 
-void GUIWidget::UpdateTransformInternal(const HSceneObject& parent)
+void GUIWidget::UpdateTransform(const HSceneObject& parent)
 {
 	// If the widgets parent scene object moved, we need to mark it as dirty
 	// as the GUIManager batching relies on object positions, so it needs to be updated.
@@ -133,7 +147,7 @@ void GUIWidget::UpdateTransformInternal(const HSceneObject& parent)
 	mTransform = parent->GetWorldMatrix();
 }
 
-void GUIWidget::UpdateRTInternal()
+void GUIWidget::UpdateRenderTarget()
 {
 	SPtr<RenderTarget> rt;
 	u64 newRTId = 0;
@@ -141,7 +155,10 @@ void GUIWidget::UpdateRTInternal()
 	{
 		rt = mCamera->GetViewport()->GetTarget();
 		if(rt != nullptr)
+		{
 			newRTId = rt->GetInternalId();
+			mDPIScale = rt->GetProperties().DPIScale;
+		}
 	}
 
 	if(mCachedRTId != newRTId)
@@ -511,6 +528,7 @@ void GUIWidget::UpdateRootPanel()
 	mPanel->SetHeight(size.Height);
 
 	mPanel->SetLayoutData(layoutData);
-	mPanel->ResetAbsoluteBounds(mDPIScale);
+	mPanel->SetScale(mDPIScale);
+	mPanel->ResetAbsoluteBounds();
 	mPanel->MarkLayoutAsDirty();
 }

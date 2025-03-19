@@ -69,6 +69,11 @@ float CGUIWidget::GetDPIScale() const
 	return mInternal->GetDPIScale();
 }
 
+void CGUIWidget::SetDPIScale(float dpiScale)
+{
+	mInternal->SetDPIScale(dpiScale);
+}
+
 Viewport* CGUIWidget::GetTarget() const
 {
 	return mInternal->GetTarget();
@@ -91,14 +96,14 @@ void CGUIWidget::Update()
 	u32 curHash = parent->GetTransformHash();
 	if(curHash != mParentHash)
 	{
-		mInternal->UpdateTransformInternal(parent);
+		mInternal->UpdateTransform(parent);
 		mParentHash = curHash;
 	}
 
 	if(GetEnabled() != mInternal->GetIsActive())
 		mInternal->SetIsActive(GetEnabled());
 
-	mInternal->UpdateRTInternal();
+	mInternal->UpdateRenderTarget();
 }
 
 void CGUIWidget::OnDestroyed()

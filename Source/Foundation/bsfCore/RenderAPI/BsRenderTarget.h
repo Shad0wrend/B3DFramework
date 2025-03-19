@@ -76,6 +76,13 @@ namespace bs
 		 */
 		i32 Priority = 0;
 
+		/**
+		 * Returns currently set DPI scale. Scale of 1.0 corresponds to 96 DPI.
+		 *  physical pixel = logical pixel * DPI scale
+		 *  logical pixel = physical pixel / DPI scale;
+		 */
+		float DPIScale = 1.0f;
+
 		/** True if pixels written to the render target will be gamma corrected. */
 		bool HwGamma = false;
 
@@ -111,6 +118,9 @@ namespace bs
 
 		/** Event that gets triggered whenever the render target is resized. */
 		mutable Event<void()> OnResized;
+
+		/** Triggered when the DPI scale changes. */
+		mutable Event<void()> OnDPIScaleChanged;
 
 	protected:
 		friend class ct::RenderTarget;

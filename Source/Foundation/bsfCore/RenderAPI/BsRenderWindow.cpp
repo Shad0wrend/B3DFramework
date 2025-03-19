@@ -93,6 +93,13 @@ void RenderWindow::NotifyWindowEvent(WindowEventType type)
 
 			break;
 		}
+	case WindowEventType::DPIScaleChanged:
+		{
+			DoOnDPIScaleChanged();
+			OnDPIScaleChanged();
+
+			break;
+		}
 	case WindowEventType::FocusReceived:
 		{
 			mRenderWindowProperties.HasFocus = true;

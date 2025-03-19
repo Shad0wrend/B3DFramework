@@ -5,6 +5,8 @@
 #include "Math/BsVector2.h"
 #include "Private/Win32/BsWin32PlatformUtility.h"
 
+#include <ShellScalingApi.h>
+
 using namespace bs;
 
 Vector<Win32Window*> Win32Window::sAllWindows;
@@ -14,10 +16,8 @@ Mutex Win32Window::sWindowsMutex;
 struct Win32Window::Pimpl
 {
 	HWND HWnd = nullptr;
-	i32 Left = 0;
-	i32 Top = 0;
-	u32 Width = 0;
-	u32 Height = 0;
+	Area2I ClientArea;
+	Area2I WindowArea;
 	bool IsExternal = false;
 	bool IsModal = false;
 	bool IsHidden = false;
@@ -32,21 +32,18 @@ Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 	m->IsHidden = createInformation.Hidden;
 
 	HMONITOR hMonitor = createInformation.Monitor;
+
 	if(!createInformation.External)
 	{
 		m->Style = WS_CLIPCHILDREN;
 
-		i32 left = createInformation.Left;
-		i32 top = createInformation.Top;
-
-		// If we didn't specified the adapter index, or if we didn't find it
+		// If we didn't specify the adapter index, deduce monitor from coordinates
 		if(hMonitor == nullptr)
 		{
+			// Note: This may be window or client area coordinates, but we don't care at this point
 			POINT windowAnchorPoint;
-
-			// Fill in anchor point.
-			windowAnchorPoint.x = left;
-			windowAnchorPoint.y = top;
+			windowAnchorPoint.x = (createInformation.Position.X >= 0 ? createInformation.Position.X : 0) + createInformation.Size.Width/2;
+			windowAnchorPoint.y = (createInformation.Position.Y >= 0 ? createInformation.Position.Y : 0) + createInformation.Size.Height/2;
 
 			// Get the nearest monitor to this window.
 			hMonitor = MonitorFromPoint(windowAnchorPoint, MONITOR_DEFAULTTOPRIMARY);
@@ -58,35 +55,16 @@ Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 		monitorInfo.cbSize = sizeof(MONITORINFO);
 		GetMonitorInfo(hMonitor, &monitorInfo);
 
-		u32 width = createInformation.Width;
-		u32 height = createInformation.Height;
-
-		// No specified top left -> Center the window in the middle of the monitor
-		if(left == -1 || top == -1)
+		// Get monitor DPI
+		UINT dpiX, dpiY;
+		HRESULT hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+		if (hr != S_OK)
 		{
-			int screenw = monitorInfo.rcWork.right - monitorInfo.rcWork.left;
-			int screenh = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
-
-			// clamp window dimensions to screen size
-			int outerw = (int(width) < screenw) ? int(width) : screenw;
-			int outerh = (int(height) < screenh) ? int(height) : screenh;
-
-			if(left == -1)
-				left = monitorInfo.rcWork.left + (screenw - outerw) / 2;
-			else if(hMonitor != nullptr)
-				left += monitorInfo.rcWork.left;
-
-			if(top == -1)
-				top = monitorInfo.rcWork.top + (screenh - outerh) / 2;
-			else if(hMonitor != nullptr)
-				top += monitorInfo.rcWork.top;
-		}
-		else if(hMonitor != nullptr)
-		{
-			left += monitorInfo.rcWork.left;
-			top += monitorInfo.rcWork.top;
+			dpiX = 96;
+			dpiY = 96;
 		}
 
+		// Determine window style
 		if(!createInformation.Fullscreen)
 		{
 			if(createInformation.Parent)
@@ -120,40 +98,60 @@ Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 				}
 			}
 
-			if(!createInformation.OuterDimensions)
-			{
-				// Calculate window dimensions required to get the requested client area
-				RECT rect;
-				SetRect(&rect, 0, 0, width, height);
-				AdjustWindowRect(&rect, m->Style, false);
-				width = rect.right - rect.left;
-				height = rect.bottom - rect.top;
-
-				// Clamp width and height to the desktop dimensions
-				int screenw = GetSystemMetrics(SM_CXSCREEN);
-				int screenh = GetSystemMetrics(SM_CYSCREEN);
-
-				if((int)width > screenw)
-					width = screenw;
-
-				if((int)height > screenh)
-					height = screenh;
-
-				if(left < 0)
-					left = (screenw - width) / 2;
-
-				if(top < 0)
-					top = (screenh - height) / 2;
-			}
-
 			if(createInformation.BackgroundPixels != nullptr)
 				m->StyleEx |= WS_EX_LAYERED;
 		}
 		else
-		{
 			m->Style |= WS_POPUP;
-			top = 0;
-			left = 0;
+
+		// Calculate window size
+		if(!createInformation.OuterDimensions)
+		{
+			RECT clientAreaRect;
+			SetRect(&clientAreaRect,
+				createInformation.Position.X >= 0 ? createInformation.Position.X : 0,
+				createInformation.Position.Y >= 0 ? createInformation.Position.Y : 0,
+				createInformation.Size.Width,
+				createInformation.Size.Height);
+
+			AdjustWindowRectExForDpi(&clientAreaRect, m->Style, false, m->StyleEx, dpiX);
+			m->WindowArea.X = clientAreaRect.left;
+			m->WindowArea.Y = clientAreaRect.top;
+			m->WindowArea.Width = (u32)(clientAreaRect.right - clientAreaRect.left);
+			m->WindowArea.Height = (u32)(clientAreaRect.bottom - clientAreaRect.top);
+		}
+		else
+		{
+			m->WindowArea = Area2I(
+				createInformation.Position.X >= 0 ? createInformation.Position.X : 0,
+				createInformation.Position.Y >= 0 ? createInformation.Position.Y : 0,
+				(u32)createInformation.Size.Width,
+				(u32)createInformation.Size.Height);
+		}
+
+		const i32 screenWidth = monitorInfo.rcWork.right - monitorInfo.rcWork.left;
+		const i32 screenHeight = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
+
+		// Clamp window dimensions the monitor dimensions
+		m->WindowArea.Width = std::min(m->WindowArea.Width, (u32)screenWidth);
+		m->WindowArea.Height = std::min(m->WindowArea.Height, (u32)screenHeight);
+
+		// No specified top or left -> Center the window in the middle of the monitor
+		if(createInformation.Position.X < 0)
+			m->WindowArea.X = monitorInfo.rcWork.left + (screenWidth - (i32)m->WindowArea.Width) / 2;
+		else if(hMonitor != nullptr)
+			m->WindowArea.X += monitorInfo.rcWork.left;
+
+		if(createInformation.Position.Y < 0)
+			m->WindowArea.Y = monitorInfo.rcWork.top + (screenHeight - (i32)m->WindowArea.Height) / 2;
+		else if(hMonitor != nullptr)
+			m->WindowArea.Y += monitorInfo.rcWork.top;
+
+		if(createInformation.Fullscreen)
+		{
+			m->WindowArea.X = 0;
+			m->WindowArea.Y = 0;
+			m->ClientArea = m->WindowArea;
 		}
 
 		UINT classStyle = 0;
@@ -168,23 +166,24 @@ Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 		RegisterClass(&wc);
 
 		// Create main window
-		m->HWnd = CreateWindowEx(m->StyleEx, "Win32Wnd", createInformation.Title.c_str(), m->Style, left, top, width, height, createInformation.Parent, nullptr, createInformation.Module, createInformation.CreationParams);
+		m->HWnd = CreateWindowEx(m->StyleEx, "Win32Wnd", createInformation.Title.c_str(), m->Style,
+			m->WindowArea.X, m->WindowArea.Y, (i32)m->WindowArea.Width, (i32)m->WindowArea.Height, createInformation.Parent,
+			nullptr, createInformation.Module, createInformation.CreationParams);
 		m->IsExternal = false;
 	}
 	else
 	{
 		m->HWnd = createInformation.External;
+
+		RECT windowRect;
+		GetWindowRect(m->HWnd, &windowRect);
+		m->WindowArea = Area2I(windowRect.left, windowRect.top, (u32)(windowRect.right - windowRect.left), (u32)(windowRect.bottom - windowRect.top));
 		m->IsExternal = true;
 	}
 
-	RECT rect;
-	GetWindowRect(m->HWnd, &rect);
-	m->Top = rect.top;
-	m->Left = rect.left;
-
-	GetClientRect(m->HWnd, &rect);
-	m->Width = rect.right;
-	m->Height = rect.bottom;
+	RECT clientRect;
+	GetClientRect(m->HWnd, &clientRect);
+	m->ClientArea = Area2I(clientRect.left, clientRect.top, (u32)(clientRect.right - clientRect.left), (u32)(clientRect.bottom - clientRect.top));
 
 	// Set background, if any
 	if(createInformation.BackgroundPixels != nullptr)
@@ -201,17 +200,9 @@ Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 		blend.SourceConstantAlpha = 255;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 
-		POINT origin;
-		origin.x = m->Left;
-		origin.y = m->Top;
-
-		SIZE size;
-		size.cx = m->Width;
-		size.cy = m->Height;
-
 		POINT zero = { 0 };
 
-		UpdateLayeredWindow(m->HWnd, hdcScreen, &origin, &size, hdcMem, &zero, RGB(0, 0, 0), &blend, createInformation.AlphaBlending ? ULW_ALPHA : ULW_OPAQUE);
+		UpdateLayeredWindow(m->HWnd, hdcScreen, NULL, NULL, hdcMem, &zero, RGB(0, 0, 0), &blend, createInformation.AlphaBlending ? ULW_ALPHA : ULW_OPAQUE);
 
 		SelectObject(hdcMem, hOldBitmap);
 		DeleteDC(hdcMem);
@@ -346,31 +337,38 @@ Win32Window::~Win32Window()
 	B3DDelete(m);
 }
 
-void Win32Window::Move(i32 left, i32 top)
+void Win32Window::Move(const Vector2I& position)
 {
 	if(!m->HWnd)
 		return;
 
-	m->Top = top;
-	m->Left = left;
+	m->WindowArea.X = position.X;
+	m->WindowArea.Y = position.Y;
 
-	SetWindowPos(m->HWnd, HWND_TOP, left, top, m->Width, m->Height, SWP_NOSIZE);
+	SetWindowPos(m->HWnd, HWND_TOP, position.X, position.Y, 0, 0, SWP_NOSIZE);
+
+	RECT clientRect;
+	GetClientRect(m->HWnd, &clientRect);
+	m->ClientArea = Area2I(clientRect.left, clientRect.top, (i32)m->ClientArea.Width, (i32)m->ClientArea.Height);
 }
 
-void Win32Window::Resize(u32 width, u32 height)
+void Win32Window::Resize(const Size2I& size)
 {
 	if(!m->HWnd)
 		return;
 
-	RECT rc = { 0, 0, (LONG)width, (LONG)height };
-	AdjustWindowRect(&rc, GetWindowLong(m->HWnd, GWL_STYLE), false);
-	width = rc.right - rc.left;
-	height = rc.bottom - rc.top;
+	m->ClientArea.Width = (u32)size.Width;
+	m->ClientArea.Height = (u32)size.Height;
 
-	m->Width = width;
-	m->Height = height;
+	const UINT DPI = GetDPI();
 
-	SetWindowPos(m->HWnd, HWND_TOP, m->Left, m->Top, width, height, SWP_NOMOVE);
+	RECT clientRect = { m->ClientArea.X, m->ClientArea.Y, m->ClientArea.X + (i32)size.Width, m->ClientArea.Y + size.Height };
+	AdjustWindowRectExForDpi(&clientRect, GetWindowLong(m->HWnd, GWL_STYLE), false, GetWindowLong(m->HWnd, GWL_EXSTYLE), DPI);
+
+	m->WindowArea.Width = (u32)(clientRect.right - clientRect.left);
+	m->WindowArea.Height = (u32)(clientRect.bottom - clientRect.top);
+
+	SetWindowPos(m->HWnd, HWND_TOP, 0, 0, (i32)m->WindowArea.Width, (i32)m->WindowArea.Height, SWP_NOMOVE);
 }
 
 void Win32Window::SetActive(bool state)
@@ -446,17 +444,16 @@ void Win32Window::DoOnWindowMovedOrResized()
 	if(!m->HWnd || IsIconic(m->HWnd))
 		return;
 
-	RECT rc;
-	GetWindowRect(m->HWnd, &rc);
-	m->Top = rc.top;
-	m->Left = rc.left;
+	RECT windowRect;
+	GetWindowRect(m->HWnd, &windowRect);
+	m->WindowArea = Area2I(windowRect.left, windowRect.top, (u32)(windowRect.right - windowRect.left), (u32)(windowRect.bottom - windowRect.top));
 
-	GetClientRect(m->HWnd, &rc);
-	m->Width = rc.right - rc.left;
-	m->Height = rc.bottom - rc.top;
+	RECT clientRect;
+	GetClientRect(m->HWnd, &clientRect);
+	m->ClientArea = Area2I(clientRect.left, clientRect.top, (u32)(clientRect.right - clientRect.left), (u32)(clientRect.bottom - clientRect.top));
 }
 
-Vector2I Win32Window::ScreenToWindowPos(const Vector2I& screenPos) const
+Vector2I Win32Window::ScreenToWindowPosition(const Vector2I& screenPos) const
 {
 	POINT pos;
 	pos.x = screenPos.X;
@@ -466,7 +463,7 @@ Vector2I Win32Window::ScreenToWindowPos(const Vector2I& screenPos) const
 	return Vector2I(pos.x, pos.y);
 }
 
-Vector2I Win32Window::WindowToScreenPos(const Vector2I& windowPos) const
+Vector2I Win32Window::WindowToScreenPosition(const Vector2I& windowPos) const
 {
 	POINT pos;
 	pos.x = windowPos.X;
@@ -476,24 +473,19 @@ Vector2I Win32Window::WindowToScreenPos(const Vector2I& windowPos) const
 	return Vector2I(pos.x, pos.y);
 }
 
-i32 Win32Window::GetLeft() const
+const Area2I& Win32Window::GetWindowArea() const
 {
-	return m->Left;
+	return m->WindowArea;
 }
 
-i32 Win32Window::GetTop() const
+const Area2I& Win32Window::GetClientArea() const
 {
-	return m->Top;
+	return m->ClientArea;
 }
 
-u32 Win32Window::GetWidth() const
+UINT Win32Window::GetDPI() const
 {
-	return m->Width;
-}
-
-u32 Win32Window::GetHeight() const
-{
-	return m->Height;
+	return GetDpiForWindow(m->HWnd);
 }
 
 HWND Win32Window::GetHWnd() const

@@ -21,6 +21,8 @@ namespace bs
 		Resized,
 		/** Triggered when window position changes. */
 		Moved,
+		/** Window DPI scale changed. */
+		DPIScaleChanged,
 		/** Triggered when window receives input focus. */
 		FocusReceived,
 		/** Triggered when window loses input focus. */
@@ -46,7 +48,7 @@ namespace bs
 	/** Structure that is used for initializing a render window. */
 	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(RenderAPI), ExportAsStruct(true), API(Framework)) RenderWindowCreateInformation
 	{
-		/** Output monitor, frame buffer resize and refresh rate. */
+		/** Output monitor, frame buffer resize and refresh rate. This is the size of the window's client area (which means actual window may be larger due to title bar and border. */
 		VideoMode VideoMode;
 
 		/** Should the window be opened in fullscreen mode. */
@@ -159,13 +161,6 @@ namespace bs
 	public:
 		virtual ~RenderWindow() = default;
 
-		/**
-		 * Returns currently set DPI scale. Scale of 1.0 corresponds to 96 DPI.
-		 *  physical pixel = logical pixel * DPI scale
-		 *  logical pixel = physical pixel / DPI ccale;
-		 */
-		virtual float GetDPIScale() const { return 1.0f; } // TODO - Implement this
-
 		/**	Converts screen position into window local position. */
 		virtual Vector2I ScreenToWindowPosition(const Vector2I& screenPosition) const = 0;
 
@@ -268,6 +263,9 @@ namespace bs
 
 		/** Method that triggers whenever the window changes size or position. */
 		virtual void DoOnWindowMovedOrResized() {}
+
+		/** Method that triggers whenever the DPI scale changes. */
+		virtual void DoOnDPIScaleChanged() {}
 
 		/** @} */
 

@@ -63,6 +63,9 @@ namespace bs
 		 */
 		float GetDPIScale() const { return mDPIScale; }
 
+		/** Changes the DPI scale of all the GUI elements in the widget. Triggers a full GUI rebuild. */
+		void SetDPIScale(float dpiScale);
+
 		/**
 		 * Checks are the specified coordinates within widget bounds. Coordinates should be relative to the parent window.
 		 */
@@ -174,13 +177,13 @@ namespace bs
 		 *
 		 * @note	Assumes the same scene object will be provided every time.
 		 */
-		void UpdateTransformInternal(const HSceneObject& parent);
+		void UpdateTransform(const HSceneObject& parent);
 
 		/**
 		 * Checks if the render target of the destination camera changed, and updates the widget with new information if
 		 * it has. Should be called every frame.
 		 */
-		void UpdateRTInternal();
+		void UpdateRenderTarget();
 
 		/** Destroys the GUI widget and all child GUI elements. This is called automatically when GUIWidget is deleted. */
 		void DestroyInternal();
