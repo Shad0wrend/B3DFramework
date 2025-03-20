@@ -162,6 +162,12 @@ void GUIManager::UnregisterWidget(GUIWidget* widget)
 			entry.Widget = nullptr;
 	}
 
+	for(auto& entry : mNewElementsUnderPointer)
+	{
+		if(entry.Widget == widget)
+			entry.Widget = nullptr;
+	}
+
 	for(auto& entry : mActiveElements)
 	{
 		if(entry.Widget == widget)
