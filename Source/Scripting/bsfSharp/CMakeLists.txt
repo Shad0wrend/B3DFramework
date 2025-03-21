@@ -44,11 +44,18 @@ add_custom_command(
 		COMMAND ${CMAKE_COMMAND} -E make_directory $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>
 		COMMAND ${CMAKE_COMMAND}
 		ARGS    -E copy_if_different "$<TARGET_FILE:${assemblyName}>" $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>
-		COMMAND ${CMAKE_COMMAND}
-		ARGS    -E copy_if_different "$<TARGET_PDB_FILE:${assemblyName}>" $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>
-		COMMENT "Copying $<TARGET_FILE:${assemblyName}> to $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>\n"
 		COMMAND_EXPAND_LISTS
 )
+
+if(NOT USE_DOTNETCORE)
+	add_custom_command(
+			TARGET ${assemblyName} POST_BUILD
+			COMMAND ${CMAKE_COMMAND}
+			ARGS    -E copy_if_different "$<TARGET_PDB_FILE:${assemblyName}>" $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>
+			COMMENT "Copying $<TARGET_FILE:${assemblyName}> to $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>\n"
+			COMMAND_EXPAND_LISTS
+	)
+endif()
 
 # Convert PDB to MDB
 if(WIN32 AND NOT USE_DOTNETCORE)
