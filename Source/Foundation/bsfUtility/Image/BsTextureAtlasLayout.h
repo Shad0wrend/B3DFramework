@@ -108,6 +108,7 @@ namespace bs
 		u32 SmallSizeLimit = 32; /**< Free nodes with rectangles under this size are treated as small and will be placed in a separate bucket for faster lookup. */
 		u32 LargeSizeLimit = 256; /**< Free nodes with rectangles over this size are treated as large and will be placed in a separate bucket for faster lookup. */
 		u32 MaximumPageCount = 0; /**< Maximum number of pages to allocated. If 0 it will be unlimited. */
+		u32 Padding = 0; /**< Padding in pixels to apply to left/right/top/bottom of each image in the atlas. */
 	};
 
 	/**
@@ -219,6 +220,9 @@ namespace bs
 
 		/** Aligns the provided size to the alignment requested in layout settings. */
 		Size2UI AlignSize(const Size2UI& size) const;
+
+		/** Applies padding to the size as requested in layout settings. */
+		Size2UI PadSize(const Size2UI& size) const;
 
 		/** Splits a node and returns leftover rectangles, if there are any. */
 		NodeSplitResult Split(const Node& nodeToSplit, const Size2UI& requiredSize) const;

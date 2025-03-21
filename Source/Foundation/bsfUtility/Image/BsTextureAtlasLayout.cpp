@@ -189,7 +189,8 @@ Optional<TreeTextureAtlasLayout::Allocation> TreeTextureAtlasLayout::AddElement(
 	if(size.Width == 0 || size.Height == 0)
 		return {};
 
-	const Size2UI alignedSize = AlignSize(size);
+	const Size2UI paddedSize = PadSize(size);
+	const Size2UI alignedSize = AlignSize(paddedSize);
 	if(alignedSize.Width > mSettings.Size.Width || alignedSize.Height > mSettings.Size.Height)
 		return {};
 
@@ -352,7 +353,7 @@ Optional<TreeTextureAtlasLayout::Allocation> TreeTextureAtlasLayout::AddElement(
 	Allocation output;
 	output.PageId = freePageIndex;
 	output.NodeId = allocatedNodeId;
-	output.Position = Vector2I(mNodes[bestFreeNodeId].Area.X, mNodes[bestFreeNodeId].Area.Y);
+	output.Position = Vector2I(mNodes[bestFreeNodeId].Area.X + (i32)mSettings.Padding, mNodes[bestFreeNodeId].Area.Y + (i32)mSettings.Padding);
 
 	return output;
 }
@@ -643,6 +644,15 @@ Size2UI TreeTextureAtlasLayout::AlignSize(const Size2UI& size) const
 	Size2UI output;
 	output.Width = Math::CeilToMultiple(size.Width, mSettings.Alignment.Width);
 	output.Height = Math::CeilToMultiple(size.Height, mSettings.Alignment.Height);
+
+	return output;
+}
+
+Size2UI TreeTextureAtlasLayout::PadSize(const Size2UI& size) const
+{
+	Size2UI output;
+	output.Width = size.Width + mSettings.Padding * 2;
+	output.Height = size.Height + mSettings.Padding * 2;
 
 	return output;
 }
