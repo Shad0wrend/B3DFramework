@@ -38,7 +38,7 @@ namespace bs
 			tmpFont = B3DStaticResourceCast<Font>(scriptObjectWrapperFont->GetNativeObject());
 		output.Font = tmpFont;
 		output.Glyph = value.Glyph;
-		output.Size = value.Size;
+		output.DefaultSize = value.DefaultSize;
 		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
 		output.Animation = value.Animation;
@@ -58,7 +58,7 @@ namespace bs
 			tmpFont = nullptr;
 		output.Font = tmpFont;
 		output.Glyph = value.Glyph;
-		output.Size = value.Size;
+		output.DefaultSize = value.DefaultSize;
 		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
 		output.Animation = value.Animation;

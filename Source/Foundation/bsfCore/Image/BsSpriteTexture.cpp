@@ -24,26 +24,12 @@ SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInforma
 	mAtlasTexture = createInformation.AtlasTexture;
 }
 
-bool SpriteTexture::CheckIsLoaded(const HSpriteTexture& texture)
-{
-	return texture != nullptr && texture.IsLoaded(false) && texture->GetAtlasTexture() != nullptr && texture->GetAtlasTexture().IsLoaded(false);
-}
-
-void SpriteTexture::SetAtlasTexture(const HTexture& texture)
-{
-	RemoveResourceDependency(mAtlasTexture);
-	mAtlasTexture = texture;
-	AddResourceDependency(mAtlasTexture);
-
-	MarkDependenciesDirty();
-	MarkRenderProxyDataDirtyInternal();
-}
-
 void SpriteTexture::Initialize()
 {
+	mDefaultAllocatedImage = B3DMakeShared<SpriteImageAllocation>(std::static_pointer_cast<SpriteTexture>(GetShared()), mAtlasTexture, mInformation.UVRange);
 	AddResourceDependency(mAtlasTexture);
 
-	Resource::Initialize();
+	SpriteImage::Initialize();
 }
 
 SPtr<ct::RenderProxy> SpriteTexture::CreateRenderProxy() const

@@ -20,10 +20,10 @@ GUITexture::GUITexture(PrivatelyConstruct, const GUITextureContents& contents, c
 	: GUIInteractable(styleName, dimensions), mScaleMode(contents.ScaleMode), mTransparent(contents.IsTransparent), mUsingStyleTexture(contents.Image == nullptr)
 {
 	mImageSprite = B3DNew<ImageSprite>();
-	mDesc.AnimationStartTime = GetTime().GetRealTimeInSeconds();
+	mImageSpriteInformation.AnimationStartTime = GetTime().GetRealTimeInSeconds();
 	mActiveImage = contents.Image;
 
-	if(SpriteImage::CheckIsLoaded(mActiveImage))
+	if(mActiveImage.IsLoaded())
 	{
 		const Size2UI& animationFrameSize = mActiveImage->GetAnimationFrameSize();
 		mActiveImageSize = animationFrameSize.To<GUILogicalUnit>();
@@ -43,7 +43,7 @@ void GUITexture::SetImage(const HSpriteImage& image)
 
 	mActiveImage = image;
 
-	if(SpriteImage::CheckIsLoaded(mActiveImage))
+	if(mActiveImage.IsLoaded())
 	{
 		const Size2UI& animationFrameSize = mActiveImage->GetAnimationFrameSize();
 		mActiveImageSize = GUILogicalSize(animationFrameSize.Width, animationFrameSize.Height);
@@ -52,7 +52,7 @@ void GUITexture::SetImage(const HSpriteImage& image)
 		mActiveImageSize = GUILogicalSize::kZero;
 
 	mUsingStyleTexture = false;
-	mDesc.AnimationStartTime = GetTime().GetRealTimeInSeconds();
+	mImageSpriteInformation.AnimationStartTime = GetTime().GetRealTimeInSeconds();
 
 	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
 	if(originalSize != newSize)
@@ -67,10 +67,10 @@ void GUITexture::UpdateRenderElements()
 	GUISpriteHelper::BuildSpriteRenderElements(*this, GUIElementState::Normal, mBackgroundSprite);
 
 	Size2I textureSize(BsZero);
-	if(SpriteImage::CheckIsLoaded(mActiveImage))
+	if(mActiveImage.IsLoaded())
 	{
-		mDesc.Image = mActiveImage;
-		textureSize = mDesc.Image->GetAnimationFrameSize().To<i32>();
+		mImageSpriteInformation.Image = mActiveImage;
+		textureSize = mImageSpriteInformation.Image->GetAnimationFrameSize().To<i32>();
 	}
 
 	Size2I destSize = mAbsoluteSize.To<i32>();
@@ -104,28 +104,27 @@ void GUITexture::UpdateRenderElements()
 	else
 		imageSpriteOffset = Vector2I(BsZero);
 
-	mDesc.Width = (u32)destSize.Width;
-	mDesc.Height = (u32)destSize.Height;
-	mDesc.Transparent = mTransparent;
-	mDesc.Color = GetTint();
+	mImageSpriteInformation.Size = destSize;
+	mImageSpriteInformation.Transparent = mTransparent;
+	mImageSpriteInformation.Color = GetTint();
 
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 
-		mDesc.Color.A *= styleSheetRules.Opacity;
+		mImageSpriteInformation.Color.A *= styleSheetRules.Opacity;
 	}
 
 	if(mScaleMode != TextureScaleMode::ScaleToFit)
-		mDesc.UvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, mScaleMode);
+		mImageSpriteInformation.UvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, mScaleMode);
 	else
-		mDesc.UvScale = Vector2::kOne;
+		mImageSpriteInformation.UvScale = Vector2::kOne;
 
-	mImageSprite->Update(mDesc, (u64)GetParentWidget());
+	mImageSprite->Update(mImageSpriteInformation, (u64)GetParentWidget());
 
 	const Area2 imageSpriteBounds(
 		(float)imageSpriteOffset.X, (float)imageSpriteOffset.Y,
-		(float)mDesc.Width, (float)mDesc.Height);
+		(float)mImageSpriteInformation.Size.Width, (float)mImageSpriteInformation.Size.Height);
 
 	// Populate GUI render elements from the sprites
 	{
@@ -143,9 +142,9 @@ void GUITexture::NotifyStyleChanged()
 		if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 			mActiveImage = mStyleSheetRuleInformation.CurrentStateRuleset->Rules.BackgroundImage;
 
-		mDesc.AnimationStartTime = GetTime().GetRealTimeInSeconds();
+		mImageSpriteInformation.AnimationStartTime = GetTime().GetRealTimeInSeconds();
 
-		if(SpriteImage::CheckIsLoaded(mActiveImage))
+		if(mActiveImage.IsLoaded())
 		{
 			const Size2UI& animationFrameSize = mActiveImage->GetAnimationFrameSize();
 			mActiveImageSize = GUILogicalSize(animationFrameSize.Width, animationFrameSize.Height);
@@ -180,7 +179,7 @@ GUILogicalSize GUITexture::CalculateUnconstrainedOptimalSize() const
 		optimalSize.Width = GetSizeConstraints().MinimumWidth;
 	else
 	{
-		if(SpriteImage::CheckIsLoaded(mActiveImage))
+		if(mActiveImage.IsLoaded())
 			optimalSize.Width = mActiveImageSize.Width;
 		else
 			optimalSize.Width = GetSizeConstraints().MaximumWidth;
@@ -190,7 +189,7 @@ GUILogicalSize GUITexture::CalculateUnconstrainedOptimalSize() const
 		optimalSize.Height = GetSizeConstraints().MinimumHeight;
 	else
 	{
-		if(SpriteImage::CheckIsLoaded(mActiveImage))
+		if(mActiveImage.IsLoaded())
 			optimalSize.Height = mActiveImageSize.Height;
 		else
 			optimalSize.Height = GetSizeConstraints().MaximumHeight;

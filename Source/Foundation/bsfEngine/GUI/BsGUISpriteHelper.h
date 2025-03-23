@@ -101,7 +101,7 @@ namespace bs
 
 	private:
 		/** Calculates the size of the provided image so it fits in the provided @p size, while preserving aspect ratio of the image. */
-		static Size2UI CalculateScaledImageSize(const HSpriteImage& image, const Size2UI& size);
+		static Size2I CalculateScaledImageSize(const HSpriteImage& image, const Size2I& size);
 
 		/**
 		 * Calculates the bounds at which to place text and/or image sprites.

@@ -23,7 +23,6 @@ namespace bs
 	void ScriptSpriteImage::SetupScriptBindings()
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteImage::InternalGetRef);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetSize", (void*)&ScriptSpriteImage::InternalGetSize);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAnimationFrameSize", (void*)&ScriptSpriteImage::InternalGetAnimationFrameSize);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAtlasTexture", (void*)&ScriptSpriteImage::InternalGetAtlasTexture);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetUVRange", (void*)&ScriptSpriteImage::InternalSetUVRange);
@@ -48,20 +47,6 @@ namespace bs
 	MonoObject* ScriptSpriteImage::InternalGetRef(ScriptSpriteImageWrapperBase* self)
 	{
 		return self->GetOrCreateResourceReference(self->GetBaseNativeObjectAsHandle(), SpriteImage::GetRttiStatic()->GetRttiId());
-	}
-
-	void ScriptSpriteImage::InternalGetSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output)
-	{
-		if(!self->IsNativeObjectValid())
-		{
-			*__output = {};
-			return;
-		}
-
-		TSize2<uint32_t> tmp__output;
-		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetSize();
-
-		*__output = tmp__output;
 	}
 
 	void ScriptSpriteImage::InternalGetAnimationFrameSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output)

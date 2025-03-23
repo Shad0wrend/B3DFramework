@@ -252,7 +252,7 @@ namespace bs
 		 * Calculates the content area based on the total element size (i.e. size as calculated by the layout). This is the layout area potentially
 		 * offset/reduced by border/padding as specified in the style sheet rules.
 		 */
-		static GUILogicalArea CalculateContentArea(const GUILogicalSize& layoutSize, const GUIStyleSheetRules& styleSheetRules);
+		static GUILogicalArea RemovePaddingAndBorder(const GUILogicalSize& layoutSize, const GUIStyleSheetRules& styleSheetRules);
 
 		/**
 		 * Calculates optimal content size for the provided text using the provided font and size. Size is calculated

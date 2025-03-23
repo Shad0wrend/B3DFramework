@@ -44,16 +44,8 @@ namespace bs
 				return null;
 		}
 
-		/// <summary>Sets the atlas texture to utilize.</summary>
-		public void SetAtlasTexture(RRef<Texture> texture)
-		{
-			Internal_SetAtlasTexture(mCachedPtr, texture);
-		}
-
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<SpriteTexture> Internal_GetRef(IntPtr thisPtr);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetAtlasTexture(IntPtr thisPtr, RRef<Texture> texture);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Create(SpriteTexture managedInstance, RRef<Texture> texture);
 		[MethodImpl(MethodImplOptions.InternalCall)]

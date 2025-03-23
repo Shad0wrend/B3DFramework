@@ -9,6 +9,7 @@
 
 namespace bs
 {
+	class SpriteImageBase;
 	/** @addtogroup Image
 	 *  @{
 	 */
@@ -67,14 +68,58 @@ namespace bs
 	/** Information about a SpriteImage. */
 	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Rendering)) SpriteImageInformation
 	{
-		/** Range in the atlas texture that the image maps to. */
-		Area2 UVRange = Area2(0.0f, 0.0f, 1.0f, 1.0f);
+		/** Range in the atlas texture that the image is to be read from, in [0, 1] range. */
+		Area2 UVRange = Area2(0.0f, 0.0f, 1.0f, 1.0f); // TODO - Move to SpriteTexture
 
 		/** Determines if animation is enabled and how should it play. */
-		SpriteAnimationPlayback AnimationPlayback = SpriteAnimationPlayback::None;
+		SpriteAnimationPlayback AnimationPlayback = SpriteAnimationPlayback::None; // TODO - Move to SpriteTexture
 
 		/** Describes the sprite sheet grid used for animation, if animation is used. */
-		SpriteSheetGridAnimation Animation;
+		SpriteSheetGridAnimation Animation; // TODO - Move to SpriteTexture
+	};
+
+	/**
+	 * Provides information about a sprite image rendered into a texture. Also tracks lifetime of such allocations.
+	 * One sprite image may have one or multiple such allocations, resulting from different scale/size requirements.
+	 */
+	template<bool IsRenderProxy>
+	struct B3D_CORE_EXPORT TSpriteImageAllocation
+	{
+		using SpriteImageType = CoreVariantType<SpriteImage, IsRenderProxy>;
+		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
+
+		TSpriteImageAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange)
+			:mOwner(owner), mTexture(atlasTexture), mUVRange(uvRange)
+		{ }
+
+		/** Retrieves the texture where the image is stored. */
+		const TextureType& GetTexture() const { return mTexture; }
+
+		/**	Returns the pixel size of the UV subrange covered in the texture atlas. If the image includes animation, this will return the size of the entire animation grid. */
+		Size2I GetSize() const;
+
+		/** Determines the UV range that the image is referencing. */
+		Area2 GetUVRange() const { return mUVRange; }
+
+		/** Transforms local UV coordinates into atlas UV coordinates. */
+		Vector2 TransformUV(const Vector2& uv) const { return Vector2(mUVRange.X + uv.X * mUVRange.Width, mUVRange.Y + uv.Y * mUVRange.Height); }
+
+	protected:
+		/** Owner sprite image that this allocation is a part of. */
+		WeakSPtr<SpriteImageType> mOwner;
+
+		/** Texture within which the image is allocated. */
+		TextureType mTexture;
+
+		/** Range in the atlas texture that the image is to be read from, in [0, 1] range. */
+		Area2 mUVRange = Area2(0.0f, 0.0f, 1.0f, 1.0f);
+	};
+
+	/** @copydoc TSpriteImageAllocation. */
+	struct SpriteImageAllocation : TSpriteImageAllocation<false>, std::enable_shared_from_this<SpriteImageAllocation>
+	{
+		virtual ~SpriteImageAllocation();
+		using TSpriteImageAllocation::TSpriteImageAllocation;
 	};
 
 	/** Descriptor structure used for initialization of a SpriteImage. */
@@ -97,7 +142,7 @@ namespace bs
 
 		/** Determines the UV range that the image is referencing. */
 		B3D_SCRIPT_EXPORT(ExportName(UVRange), Property(Setter))
-		void SetUVRange(const Area2& uvRange)
+		void SetUVRange(const Area2& uvRange) // TODO - Move to SpriteTexture
 		{
 			mInformation.UVRange = uvRange;
 			MarkRenderProxyDataDirtyInternal();
@@ -105,10 +150,7 @@ namespace bs
 
 		/** Determines the UV range that the image is referencing. */
 		B3D_SCRIPT_EXPORT(ExportName(UVRange), Property(Getter))
-		const Area2& GetUVRange() const { return mInformation.UVRange; }
-
-		/** Transforms local UV coordinates into atlas UV coordinates. */
-		Vector2 TransformUV(const Vector2& uv) const { return Vector2(mInformation.UVRange.X + uv.X * mInformation.UVRange.Width, mInformation.UVRange.Y + uv.Y * mInformation.UVRange.Height); }
+		const Area2& GetUVRange() const { return mInformation.UVRange; } // TODO - Move to SpriteTexture
 
 		/**
 		 * Evaluates the UV coordinate offset and size to use at the specified animation time. If the sprite texture doesn't
@@ -160,26 +202,32 @@ namespace bs
 	{
 	public:
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
+		using SpriteImageAllocationType = CoreVariantType<SpriteImageAllocation, IsRenderProxy>;
 
 		TSpriteImage(const SpriteImageCreateInformation& createInformation)
 			:SpriteImageBase(createInformation)
 		{ }
 		~TSpriteImage() override = default;
 
-		/**	Returns the pixel size of the UV subrange covered in the texture atlas. If the image includes animation, this will return the size of the entire animation grid. */
-		B3D_SCRIPT_EXPORT(ExportName(Size), Property(Getter))
-		Size2UI GetSize() const;
+		/** Returns the default (unscaled) image allocation, using the image size as provided on the sprite image construction. */
+		const SpriteImageAllocationType& GetDefaultAllocatedImage() const { return *mDefaultAllocatedImage; }
 
-		/** Returns the size of a single animation frame in pixels. If the texture has no animation this is the same as GetWidth(). */
+		/** Returns the default (unscaled) image allocation, using the image size as provided on the sprite image construction. */
+		SPtr<SpriteImageAllocationType> GetDefaultAllocatedImageAsShared() const { return mDefaultAllocatedImage; }
+
+		/** Returns the size of a single animation frame in logical pixel units. If the texture has no animation this is the same as GetLogicalSize(). */
 		B3D_SCRIPT_EXPORT(ExportName(AnimationFrameSize), Property(Getter))
 		Size2UI GetAnimationFrameSize() const;
 
 		/** Retrieves the atlas texture where the image is stored. */
 		B3D_SCRIPT_EXPORT(ExportName(Texture), Property(Getter))
-		const TextureType& GetAtlasTexture() const { return mAtlasTexture; }
+		const TextureType& GetAtlasTexture() const { return mAtlasTexture; } // TODO - Remove and rely on SpriteImageAtlasAllocation instead
 
 	protected:
-		TextureType mAtlasTexture;
+		TextureType mAtlasTexture; // TODO - Move to SpriteTexture
+
+		SPtr<SpriteImageAllocationType> mDefaultAllocatedImage;
+		TInlineArray<SpriteImageAllocationType*, 2> mScaledAllocatedImages;
 	};
 
 	/**
@@ -193,8 +241,42 @@ namespace bs
 	public:
 		struct SyncPacket;
 
-		/**	Checks if the sprite image and its atlas texture have been loaded. */
-		static bool CheckIsLoaded(const HSpriteImage& image); // TODO - Can we get rid of this?
+		/**
+		 * Attempts to allocate a new image that is of appropriate quality to fit into the provided area. This is mostly used by vector shapes, which will
+		 * usually want to re-render themselves to fit the requested size and achieve the best possible quality.
+		 *
+		 * The image will be scaled uniformly until one or both dimensions of the image match the provided size. One dimension may be smaller than the
+		 * provided size.
+		 *
+		 * Implementations may choose to avoid re-rendering and just return the default allocated image instead, in which case its up to the caller
+		 * to scale the image appropriately (e.g. using bilinear filtering or scale9grid).
+		 *
+		 * If an existing allocation for the provided size already exists, it will be returned and a new allocation will not be made alive. Allocated
+		 * portion of the texture will remain alive as long as there is at least a single reference to the returned SpriteImageAllocation.
+		 *
+		 * @param	size		Requested size of the allocation, in physical pixel units.
+		 * @return 				Allocation structure that provides information about the allocation and used for tracking allocation lifetime.
+		 */
+		virtual SPtr<SpriteImageAllocation> FindOrAllocateImageToFitArea(const Size2I& size) = 0;
+
+		/**
+		 * Attempts to allocate a new image that is of appropriate quality for a scaled version of the default image. This is mostly used by vector shapes,
+		 * which will usually want to re-render themselves to fit the requested scale and achieve the best possible quality (e.g. scale may change when
+		 * display DPI changes, or when user zooms in/out).
+		 *
+		 * Implementations may choose to avoid re-rendering and just return the default allocated image instead, in which case its up to the caller
+		 * to scale the image appropriately (e.g. using bilinear filtering or scale9grid).
+		 *
+		 * If an existing allocation for the provided size already exists, it will be returned and a new allocation will not be made alive. Allocated
+		 * portion of the texture will remain alive as long as there is at least a single reference to the returned SpriteImageAllocation.
+		 * 
+		 * @param scale			Scale to apply.
+		 * @return 				Allocation structure that provides information about the allocation and used for tracking allocation lifetime.
+		 */
+		virtual SPtr<SpriteImageAllocation> FindOrAllocateScaledImage(float scale) = 0;
+
+		/** Frees any data associated with the provided allocation. */
+		virtual void DeallocateImage(SpriteImageAllocation* allocation);
 
 		/** @name Internal
 		 *  @{
@@ -210,6 +292,7 @@ namespace bs
 			: TSpriteImage(createInformation)
 		{ }
 
+		void Destroy() override;
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
@@ -229,6 +312,12 @@ namespace bs
 		/** @addtogroup RenderThread
 		 *  @{
 		 */
+
+		/** @copydoc TSpriteImageAllocation. */
+		struct SpriteImageAllocation : TSpriteImageAllocation<true>
+		{
+			using TSpriteImageAllocation::TSpriteImageAllocation;
+		};
 
 		/**
 		 * Render proxy counterpart of a bs::SpriteImage.

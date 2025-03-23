@@ -27,12 +27,12 @@ GUILogicalSize GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(const
 	GUILogicalSize contentBounds = CalculateOptimalContentSizeWithPaddingAndBorder((const String&)content.Text, styleSheetRule, wordWrapWidth);
 
 	const HSpriteImage& image = content.GetImage(GUIElementState::Normal);
-	if(SpriteImage::CheckIsLoaded(image))
+	if(image.IsLoaded())
 	{
 		const GUILogicalUnit paddingHeight = styleSheetRule.Padding.Top + styleSheetRule.Padding.Bottom;
 		const GUILogicalUnit borderHeight = (i32)styleSheetRule.BorderTop.GetVisibleWidth() + (i32)styleSheetRule.BorderBottom.GetVisibleWidth();
 
-		const GUILogicalSize& imageSize = image->GetSize().To<GUILogicalUnit>();
+		const GUILogicalSize& imageSize = image->GetDefaultAllocatedImage().GetSize().To<GUILogicalUnit>();
 		contentBounds.Width += imageSize.Width + GUIContent::kImageTextSpacing;
 		contentBounds.Height = std::max(imageSize.Height + paddingHeight + borderHeight, contentBounds.Height);
 	}
@@ -64,7 +64,7 @@ GUILogicalSize GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(const
 	return CalculateSizeWithPaddingAndBorder(contentSize, styleSheetRule);
 }
 
-GUILogicalArea GUIUtility::CalculateContentArea(const GUILogicalSize& layoutSize, const GUIStyleSheetRules& styleSheetRules)
+GUILogicalArea GUIUtility::RemovePaddingAndBorder(const GUILogicalSize& layoutSize, const GUIStyleSheetRules& styleSheetRules)
 {
 	const RectOffset& padding = styleSheetRules.Padding;
 	const GUILogicalUnit paddingWidth = padding.Left + padding.Right;

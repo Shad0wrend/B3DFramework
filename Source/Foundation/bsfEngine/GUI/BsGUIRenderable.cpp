@@ -189,7 +189,7 @@ GUILogicalArea GUIRenderable::GetContentBounds() const
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		return GUIUtility::CalculateContentArea(mLayoutData.Size, styleSheetRules);
+		return GUIUtility::RemovePaddingAndBorder(mLayoutData.Size, styleSheetRules);
 	}
 
 	return GUILogicalArea(GUILogicalPoint(0, 0), mLayoutData.Size);

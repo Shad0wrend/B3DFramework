@@ -5,6 +5,7 @@
 #include "BsCorePrerequisites.h"
 #include "Image/BsSpriteImage.h"
 #include "VectorGraphics/BsVectorGraphics.h"
+#include "VectorGraphics/BsVectorSpriteAtlas.h"
 
 namespace bs
 {
@@ -17,13 +18,42 @@ namespace bs
 	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Rendering)) SpriteVectorPathCreateInformation : SpriteImageInformation
 	{
 		SpriteVectorPathCreateInformation() = default;
-		SpriteVectorPathCreateInformation(const SpriteImageInformation& spriteImageInformation, const HVectorPath& vectorPath, const Size2UI& size)
-			: SpriteImageInformation(spriteImageInformation), VectorPath(vectorPath), Size(size)
+		SpriteVectorPathCreateInformation(const SpriteImageInformation& spriteImageInformation, const HVectorPath& vectorPath, const Size2I& defaultSize)
+			: SpriteImageInformation(spriteImageInformation), VectorPath(vectorPath), DefaultSize(defaultSize)
 		{ }
 
 		HVectorPath VectorPath; /**< Vector path to render on the sprite. */
-		Size2UI Size; /**< Size of the rasterized path, in pixels. */
+		Size2I DefaultSize; /**< Size of the unscaled rasterized path, in pixels. Actual rendered size might be different depending on DPI scale or other scale factors. */
 		VectorGraphicsRasterizationScaling ScalingMode = VectorGraphicsRasterizationScaling::StretchToFit; /**< How to scale the path canvas onto the rasterized destination. */
+	};
+
+	/** Provides information about a particular sprite vector path image allocated within a texture atlas. */
+	template<bool IsRenderProxy>
+	struct TSpriteVectorPathAllocation : CoreVariantType<SpriteImageAllocation, IsRenderProxy>
+	{
+		using SpriteImageType = CoreVariantType<SpriteImage, IsRenderProxy>;
+		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
+
+		using CoreVariantType<SpriteImageAllocation, IsRenderProxy>::SpriteImageAllocation;
+
+	private:
+		friend class SpriteVectorPath;
+
+	};
+
+	/** @copydoc TSpriteVectorPathAllocation. */
+	struct SpriteVectorPathAllocation : TSpriteVectorPathAllocation<false>
+	{
+		using TSpriteVectorPathAllocation::TSpriteVectorPathAllocation;
+
+		SpriteVectorPathAllocation(const WeakSPtr<SpriteImageType>& owner, const SPtr<GUIVectorSpriteAtlasAllocation>& vectorSpriteAtlasAllocation)
+			:TSpriteVectorPathAllocation(owner, vectorSpriteAtlasAllocation ? vectorSpriteAtlasAllocation->AtlasTexture : nullptr, vectorSpriteAtlasAllocation ? vectorSpriteAtlasAllocation->UVRange : Area2(0.0f, 0.0f, 1.0f, 1.0f)), mVectorSpriteAtlasAllocation(vectorSpriteAtlasAllocation)
+		{ }
+
+
+	private:
+		/** Allocation handle in the vector path atlas. */
+		SPtr<GUIVectorSpriteAtlasAllocation> mVectorSpriteAtlasAllocation; // Note: This is kept on the main thread only, but is deallocated with a one frame delay, so its important the render proxy doesn't attempt to use this allocation any later. We might want a better system down the line.
 	};
 
 	/** @} */
@@ -61,20 +91,19 @@ namespace bs
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteVectorPath : public CoreVariantType<SpriteImage, false>
 	{
 	public:
-		/**	Sets the vector path to render. */
-		B3D_SCRIPT_EXPORT()
-		void SetVectorPath(const HVectorPath& vectorPath);
+		SPtr<SpriteImageAllocation> FindOrAllocateImageToFitArea(const Size2I& size) override;
+		SPtr<SpriteImageAllocation> FindOrAllocateScaledImage(float scale) override;
 
 		/**	Creates a new sprite vector path. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteVectorPath))
-		static HSpriteVectorPath Create(const HVectorPath& vectorPath, const Size2UI& size);
+		static HSpriteVectorPath Create(const HVectorPath& vectorPath, const Size2I& defaultSize);
 
 		/**	Creates a new sprite vector path. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteVectorPath))
 		static HSpriteVectorPath Create(const SpriteVectorPathCreateInformation& createInformation);
 
 		/** Creates a new SpriteVectorPath without a resource handle. Use Create() for normal use. */
-		static SPtr<SpriteVectorPath> CreateShared(const HVectorPath& vectorPath, const Size2UI& size);
+		static SPtr<SpriteVectorPath> CreateShared(const HVectorPath& vectorPath, const Size2I& defaultSize);
 
 		/** Creates a new SpriteVectorPath without a resource handle. Use Create() for normal use. */
 		static SPtr<SpriteVectorPath> CreateShared(const SpriteVectorPathCreateInformation& createInformation);
@@ -86,18 +115,17 @@ namespace bs
 
 		SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation);
 
+		/** Allocates a sprite image using the provided size. */
+		SPtr<SpriteVectorPathAllocation> AllocateImage(const Size2I& size);
+
 		void Initialize() override;
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
-		/** Renders the vector path into the atlas texture. Should be called any time after the vector path changes. */
-		void RenderVectorPath();
-
 		HVectorPath mVectorPath;
-		Size2UI mSize;
+		Size2I mDefaultSize{BsZero};
 		VectorGraphicsRasterizationScaling mScalingMode = VectorGraphicsRasterizationScaling::StretchToFit;
-		SPtr<GUIVectorSpriteAtlasAllocation> mSpriteAtlasAllocation;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -119,6 +147,12 @@ namespace bs
 		/** @addtogroup RenderThread
 		 *  @{
 		 */
+
+		/** @copydoc TSpriteVectorPathAllocation. */
+		struct SpriteVectorPathAllocation : TSpriteVectorPathAllocation<true>
+		{
+			using TSpriteVectorPathAllocation::TSpriteVectorPathAllocation;
+		};
 
 		/**
 		 * Render proxy counterpart of a bs::SpriteVectorPath.

@@ -19,7 +19,7 @@ namespace bs
 		{
 			SpriteVectorPathCreateInformation value = new SpriteVectorPathCreateInformation();
 			value.VectorPath = null;
-			value.Size = TSize2<int>.Default();
+			value.DefaultSize = TSize2<int>.Default();
 			value.ScalingMode = VectorGraphicsRasterizationScaling.StretchToFit;
 			value.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
 			value.AnimationPlayback = SpriteAnimationPlayback.None;
@@ -28,10 +28,10 @@ namespace bs
 			return value;
 		}
 
-		public SpriteVectorPathCreateInformation(SpriteImageInformation spriteImageInformation, RRef<VectorPath> vectorPath, TSize2<int> size)
+		public SpriteVectorPathCreateInformation(SpriteImageInformation spriteImageInformation, RRef<VectorPath> vectorPath, TSize2<int> defaultSize)
 		{
 			this.VectorPath = vectorPath;
-			this.Size = size;
+			this.DefaultSize = defaultSize;
 			this.ScalingMode = VectorGraphicsRasterizationScaling.StretchToFit;
 			this.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
 			this.AnimationPlayback = SpriteAnimationPlayback.None;
@@ -63,11 +63,14 @@ namespace bs
 
 		/// <summary>Vector path to render on the sprite.</summary>
 		public RRef<VectorPath> VectorPath;
-		/// <summary>Size of the rasterized path, in pixels.</summary>
-		public TSize2<int> Size;
+		/// <summary>
+		/// Size of the unscaled rasterized path, in pixels. Actual rendered size might be different depending on DPI scale or 
+		/// other scale factors.
+		/// </summary>
+		public TSize2<int> DefaultSize;
 		/// <summary>How to scale the path canvas onto the rasterized destination.</summary>
 		public VectorGraphicsRasterizationScaling ScalingMode;
-		/// <summary>Range in the atlas texture that the image maps to.</summary>
+		/// <summary>Range in the atlas texture that the image is to be read from, in [0, 1] range.</summary>
 		public TArea2<float,float> UVRange;
 		/// <summary>Determines if animation is enabled and how should it play.</summary>
 		public SpriteAnimationPlayback AnimationPlayback;

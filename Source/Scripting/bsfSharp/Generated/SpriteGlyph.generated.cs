@@ -44,32 +44,8 @@ namespace bs
 				return null;
 		}
 
-		/// <summary>Sets the font to render the glyph from.</summary>
-		public void SetFont(RRef<Font> font)
-		{
-			Internal_SetFont(mCachedPtr, font);
-		}
-
-		/// <summary>Sets the unicode code of the glyph to render.</summary>
-		public void SetGlyph(int glyph)
-		{
-			Internal_SetGlyph(mCachedPtr, glyph);
-		}
-
-		/// <summary>Sets the size of the glyph in points.</summary>
-		public void SetGlyphSize(float size)
-		{
-			Internal_SetGlyphSize(mCachedPtr, size);
-		}
-
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<SpriteGlyph> Internal_GetRef(IntPtr thisPtr);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetFont(IntPtr thisPtr, RRef<Font> font);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetGlyph(IntPtr thisPtr, int glyph);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetGlyphSize(IntPtr thisPtr, float size);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Create(SpriteGlyph managedInstance, RRef<Font> font, int glyph, float size);
 		[MethodImpl(MethodImplOptions.InternalCall)]

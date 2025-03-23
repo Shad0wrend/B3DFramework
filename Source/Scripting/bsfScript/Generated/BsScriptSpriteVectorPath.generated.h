@@ -26,8 +26,7 @@ namespace bs
 	private:
 		static MonoObject* InternalGetRef(ScriptSpriteVectorPath* self);
 
-		static void InternalSetVectorPath(ScriptSpriteVectorPath* self, MonoObject* vectorPath);
-		static void InternalCreate(MonoObject* scriptObject, MonoObject* vectorPath, TSize2<uint32_t>* size);
+		static void InternalCreate(MonoObject* scriptObject, MonoObject* vectorPath, TSize2<int32_t>* defaultSize);
 		static void InternalCreate0(MonoObject* scriptObject, __SpriteVectorPathCreateInformationInterop* createInformation);
 	};
 }

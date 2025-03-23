@@ -7,9 +7,9 @@
 #include "../../../Foundation/bsfCore/Image/BsSpriteGlyph.h"
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
+#include "../../../Foundation/bsfCore/Image/BsSpriteGlyph.h"
 #include "BsScriptSpriteGlyphCreateInformation.generated.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
-#include "../../../Foundation/bsfCore/Image/BsSpriteGlyph.h"
 
 namespace bs
 {
@@ -22,9 +22,6 @@ namespace bs
 	void ScriptSpriteGlyph::SetupScriptBindings()
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteGlyph::InternalGetRef);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetFont", (void*)&ScriptSpriteGlyph::InternalSetFont);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetGlyph", (void*)&ScriptSpriteGlyph::InternalSetGlyph);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetGlyphSize", (void*)&ScriptSpriteGlyph::InternalSetGlyphSize);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteGlyph::InternalCreate);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteGlyph::InternalCreate0);
 
@@ -43,35 +40,6 @@ namespace bs
 	MonoObject* ScriptSpriteGlyph::InternalGetRef(ScriptSpriteGlyph* self)
 	{
 		return self->GetOrCreateResourceReference();
-	}
-
-	void ScriptSpriteGlyph::InternalSetFont(ScriptSpriteGlyph* self, MonoObject* font)
-	{
-		if(!self->IsNativeObjectValid())
-			return;
-
-		TResourceHandle<Font> tmpfont;
-		ScriptRRefBase* scriptObjectWrapperfont;
-		scriptObjectWrapperfont = ScriptRRefBase::GetScriptObjectWrapper(font);
-		if(scriptObjectWrapperfont != nullptr)
-			tmpfont = B3DStaticResourceCast<Font>(scriptObjectWrapperfont->GetNativeObject());
-		static_cast<SpriteGlyph*>(self->GetNativeObject())->SetFont(tmpfont);
-	}
-
-	void ScriptSpriteGlyph::InternalSetGlyph(ScriptSpriteGlyph* self, uint32_t glyph)
-	{
-		if(!self->IsNativeObjectValid())
-			return;
-
-		static_cast<SpriteGlyph*>(self->GetNativeObject())->SetGlyph(glyph);
-	}
-
-	void ScriptSpriteGlyph::InternalSetGlyphSize(ScriptSpriteGlyph* self, float size)
-	{
-		if(!self->IsNativeObjectValid())
-			return;
-
-		static_cast<SpriteGlyph*>(self->GetNativeObject())->SetGlyphSize(size);
 	}
 
 	void ScriptSpriteGlyph::InternalCreate(MonoObject* scriptObject, MonoObject* font, uint32_t glyph, float size)

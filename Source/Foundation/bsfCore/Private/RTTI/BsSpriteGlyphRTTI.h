@@ -22,7 +22,7 @@ namespace bs
 			B3D_RTTI_MEMBER(mAtlasTexture, 0)
 			B3D_RTTI_MEMBER(mFont, 1)
 			B3D_RTTI_MEMBER(mGlyph, 2)
-			B3D_RTTI_MEMBER(mGlyphSize, 3)
+			B3D_RTTI_MEMBER(mDefaultGlyphSize, 3)
 		B3D_RTTI_END_MEMBERS
 
 	public:

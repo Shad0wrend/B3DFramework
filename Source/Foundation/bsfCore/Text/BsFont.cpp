@@ -511,6 +511,96 @@ float Font::GetClosestSize(float size) const
 	return bestSize;
 }
 
+float Font::GetPointSizeForGlyphPixelWidth(u32 glyphId, i32 width) const
+{
+	const float widthInPoints = ((float)width * 72.0f) / (float)mInformation.DPI;
+	if(mImplementation->Face == nullptr)
+	{
+		B3D_LOG(Error, Font, "Failed to get glyph size. Font renderer is not initialized.");
+		return widthInPoints;
+	}
+
+	const FT_Face& face = mImplementation->Face;
+	FT_Error error = FT_Set_Char_Size(face, ConvertFloatToFixed26Dot6(widthInPoints), 0, mInformation.DPI, mInformation.DPI);
+	if (error)
+	{
+		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to set character size.");
+		return widthInPoints;
+	}
+
+	const FT_Int32 loadFlags = ConvertFontRenderModeToLoadFlags(mInformation.RenderMode);
+	error = FT_Load_Char(face, (FT_ULong)glyphId, loadFlags);
+	if (error)
+	{
+		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to load character.");
+		return widthInPoints;
+	}
+
+	const FT_GlyphSlot slot = face->glyph;
+	const float actualWidth = ConvertFixed26Dot6ToFloat(slot->metrics.width);
+
+	return widthInPoints * (float)width / actualWidth;
+}
+
+Size2I Font::GetGlyphSize(u32 glyphId, float pointSize) const
+{
+	if(mImplementation->Face == nullptr)
+	{
+		B3D_LOG(Error, Font, "Failed to get glyph size. Font renderer is not initialized.");
+		return Size2I::kZero;
+	}
+
+	const FT_Face& face = mImplementation->Face;
+	FT_Error error = FT_Set_Char_Size(face, ConvertFloatToFixed26Dot6(pointSize), 0, mInformation.DPI, mInformation.DPI);
+	if (error)
+	{
+		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to set character size.");
+		return Size2I::kZero;
+	}
+
+	const FT_Int32 loadFlags = ConvertFontRenderModeToLoadFlags(mInformation.RenderMode);
+	error = FT_Load_Char(face, (FT_ULong)glyphId, loadFlags);
+	if (error)
+	{
+		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to load character.");
+		return Size2I::kZero;
+	}
+
+	const FT_GlyphSlot slot = face->glyph;
+	return Size2I(Math::RoundToI32(ConvertFixed26Dot6ToFloat(slot->metrics.width)), Math::RoundToI32(ConvertFixed26Dot6ToFloat(slot->metrics.height)));
+}
+
+float Font::GetPointSizeForGlyphPixelHeight(u32 glyphId, i32 height) const
+{
+	const float heightInPoints = (height * 72.0f) / (float)mInformation.DPI;
+	if(mImplementation->Face == nullptr)
+	{
+		B3D_LOG(Error, Font, "Failed to get glyph size. Font renderer is not initialized.");
+		return heightInPoints;
+	}
+
+	const FT_Face& face = mImplementation->Face;
+	FT_Error error = FT_Set_Char_Size(face, ConvertFloatToFixed26Dot6(heightInPoints), 0, mInformation.DPI, mInformation.DPI);
+	if (error)
+	{
+		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to set character size.");
+		return heightInPoints;
+	}
+
+	const FT_Int32 loadFlags = ConvertFontRenderModeToLoadFlags(mInformation.RenderMode);
+	error = FT_Load_Char(face, (FT_ULong)glyphId, loadFlags);
+	if (error)
+	{
+		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to load character.");
+		return heightInPoints;
+	}
+
+	const FT_GlyphSlot slot = face->glyph;
+	const float actualHeight = ConvertFixed26Dot6ToFloat(slot->metrics.height);
+
+	return heightInPoints * (float)height / actualHeight;
+}
+
 void Font::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 {
 	for(auto& fontDataEntry : mFontBitmaps)

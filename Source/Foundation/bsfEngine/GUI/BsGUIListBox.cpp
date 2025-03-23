@@ -145,7 +145,7 @@ GUILogicalArea GUIListBox::GetContentBounds() const
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		return GUIUtility::CalculateContentArea(layoutSize, styleSheetRules);
+		return GUIUtility::RemovePaddingAndBorder(layoutSize, styleSheetRules);
 	}
 
 	return GUILogicalArea(GUILogicalPoint(0, 0), mLayoutData.Size);
@@ -157,14 +157,14 @@ GUIPhysicalArea GUIListBox::GetArrowCachedContentBoundsInElementSpace() const
 		return GUIPhysicalArea::kEmpty;
 
 	const GUIStyleSheetRules& styleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-	const GUILogicalArea& fullContentArea = GUIUtility::CalculateContentArea(mLayoutData.Size, styleSheetRules);
+	const GUILogicalArea& fullContentArea = GUIUtility::RemovePaddingAndBorder(mLayoutData.Size, styleSheetRules);
 
 	const GUIStyleSheetRuleInformation& arrowRuleInformation = GetPseudoElementStyleSheetRuleInformation(mArrowPseudoElementIndex);
 	GUILogicalArea logicalArea = GUILogicalArea::kEmpty;
 	if(arrowRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& arrowRules = arrowRuleInformation.CurrentStateRuleset->Rules;
-		logicalArea = GUIUtility::CalculateContentArea(GetArrowCachedContentSize(), arrowRules);
+		logicalArea = GUIUtility::RemovePaddingAndBorder(GetArrowCachedContentSize(), arrowRules);
 
 		const GUILogicalUnit arrowAreaOffset = Math::Max(fullContentArea.Width - (logicalArea.Width + arrowRules.Padding.Right + (i32)arrowRules.BorderRight.GetVisibleWidth()), 0);
 		logicalArea.X += fullContentArea.X + arrowAreaOffset;
@@ -207,14 +207,13 @@ void GUIListBox::UpdateRenderElements()
 	const GUIStyleSheetRules& arrowStyleSheetRules = ruleInformation.CurrentStateRuleset->Rules;
 	const GUIPhysicalArea arrowBounds = GetArrowCachedContentBoundsInElementSpace();
 
-	mArrowSpriteInformation.Width = (u32)arrowBounds.Width;
-	mArrowSpriteInformation.Height = (u32)arrowBounds.Height;
+	mArrowSpriteInformation.Size = arrowBounds.GetSize().To<i32>();
 
 	if(mArrowPathBuilder)
 	{
 		SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
-		spriteVectorPathCreateInformation.Size = Size2UI(mArrowSpriteInformation.Width, mArrowSpriteInformation.Height);
-		spriteVectorPathCreateInformation.VectorPath = mArrowPathBuilder->BuildPath(spriteVectorPathCreateInformation.Size, arrowStyleSheetRules);
+		spriteVectorPathCreateInformation.DefaultSize = mArrowSpriteInformation.Size;
+		spriteVectorPathCreateInformation.VectorPath = mArrowPathBuilder->BuildPath(spriteVectorPathCreateInformation.DefaultSize, arrowStyleSheetRules);
 
 		mArrowSpriteInformation.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
 	}

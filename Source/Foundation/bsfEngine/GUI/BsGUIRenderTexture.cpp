@@ -58,8 +58,8 @@ void GUIRenderTexture::SetRenderTexture(const SPtr<RenderTexture>& texture)
 	{
 		if(mSourceTexture->GetProperties().RequiresTextureFlipping)
 		{
-			mDesc.UvOffset = Vector2(0.0f, 1.0f);
-			mDesc.UvScale = Vector2(1.0f, -1.0f);
+			mImageSpriteInformation.UvOffset = Vector2(0.0f, 1.0f);
+			mImageSpriteInformation.UvScale = Vector2(1.0f, -1.0f);
 		}
 
 		SetImage((HSpriteImage)SpriteTexture::Create(texture->GetColorTexture(0)));
@@ -77,14 +77,13 @@ void GUIRenderTexture::SetRenderTexture(const SPtr<RenderTexture>& texture)
 void GUIRenderTexture::UpdateRenderElements()
 {
 	if(mActiveImage != nullptr && mActiveImage.IsLoaded())
-		mDesc.Image = mActiveImage;
+		mImageSpriteInformation.Image = mActiveImage;
 
-	mDesc.Width = (u32)mAbsoluteSize.Width;
-	mDesc.Height = (u32)mAbsoluteSize.Height;
-	mDesc.Transparent = mTransparent;
-	mDesc.Color = GetTint();
+	mImageSpriteInformation.Size = mAbsoluteSize.To<i32>();
+	mImageSpriteInformation.Transparent = mTransparent;
+	mImageSpriteInformation.Color = GetTint();
 
-	mImageSprite->Update(mDesc, (u64)GetParentWidget());
+	mImageSprite->Update(mImageSpriteInformation, (u64)GetParentWidget());
 
 	const Area2 imageBounds(
 		0.0f, 0.0f,

@@ -8,6 +8,31 @@
 
 using namespace bs;
 
+template<bool IsRenderProxy>
+Size2I TSpriteImageAllocation<IsRenderProxy>::GetSize() const
+{
+	if(!IsValid(mTexture))
+		return Size2I::kZero;
+
+	const TextureProperties& atlasTextureProperties = mTexture->GetProperties();
+
+	return Size2I(
+		Math::RoundToI32((float)atlasTextureProperties.Width * mUVRange.Width),
+		Math::RoundToI32((float)atlasTextureProperties.Height * mUVRange.Height));
+}
+
+SpriteImageAllocation::~SpriteImageAllocation()
+{
+	SPtr<SpriteImage> owner = mOwner.lock();
+	if(!B3D_ENSURE(owner != nullptr))
+		return;
+
+	owner->DeallocateImage(this);
+}
+
+template B3D_CORE_EXPORT struct TSpriteImageAllocation<true>;
+template B3D_CORE_EXPORT struct TSpriteImageAllocation<false>;
+
 Area2 SpriteImageBase::EvaluateAnimation(float t) const
 {
 	if(mInformation.AnimationPlayback == SpriteAnimationPlayback::None)
@@ -69,20 +94,9 @@ void SpriteImageBase::GetAnimationFrame(float t, u32& outRow, u32& outColumn) co
 }
 
 template<bool IsRenderProxy>
-Size2UI TSpriteImage<IsRenderProxy>::GetSize() const
-{
-	const TextureType& atlasTexture = GetAtlasTexture();
-	const TextureProperties& atlasTextureProperties = atlasTexture->GetProperties();
-
-	return Size2UI(
-		Math::RoundToI32(atlasTextureProperties.Width * mInformation.UVRange.Width),
-		Math::RoundToI32(atlasTextureProperties.Height * mInformation.UVRange.Height));
-}
-
-template<bool IsRenderProxy>
 Size2UI TSpriteImage<IsRenderProxy>::GetAnimationFrameSize() const
 {
-	const Size2UI size = GetSize();
+	const Size2I size = GetDefaultAllocatedImage().GetSize();
 
 	return Size2UI(
 		size.Width / Math::Max(1U, mInformation.Animation.ColumnCount),
@@ -99,9 +113,18 @@ namespace bs
 	B3D_SYNC_BLOCK_END
 }
 
-bool SpriteImage::CheckIsLoaded(const HSpriteImage& image)
+void SpriteImage::Destroy()
 {
-	return image != nullptr && image.IsLoaded(false) && image->GetAtlasTexture() != nullptr && image->GetAtlasTexture().IsLoaded(false);
+	mDefaultAllocatedImage = nullptr;
+
+	Resource::Destroy();
+}
+
+void SpriteImage::DeallocateImage(SpriteImageAllocation* allocation)
+{
+	auto found = std::find(mScaledAllocatedImages.begin(), mScaledAllocatedImages.end(), allocation);
+	if(found != mScaledAllocatedImages.end())
+		mScaledAllocatedImages.SwapAndErase(found);
 }
 
 void SpriteImage::MarkRenderProxyDataDirtyInternal()

@@ -286,5 +286,6 @@ namespace bs
 		TID_SerializedMapDelta = 92,
 		TID_SerializedMapEntryDelta = 93,
 		TID_U32String = 94,
+		TID_Size2I = 95,
 	};
 } // namespace bs

@@ -17,7 +17,7 @@ ImageSprite::~ImageSprite()
 
 void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 {
-	if(!SpriteImage::CheckIsLoaded(information.Image))
+	if(!information.Image.IsLoaded())
 	{
 		ClearMesh();
 		return;
@@ -33,6 +33,20 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 	u32 quadCount = 1;
 	if(useScale9Grid)
 		quadCount = 9;
+
+	// If not using scale9grid attempt to allocate a sprite image of the exact size
+	const SPtr<SpriteImageAllocation> spriteAllocation = useScale9Grid
+		? information.Image->GetDefaultAllocatedImageAsShared()
+		: information.Image->FindOrAllocateImageToFitArea(information.Size);
+
+	if(spriteAllocation == nullptr)
+	{
+		ClearMesh();
+		return;
+	}
+
+	// TODO - spriteAllocation needs to be kept alive while the texture is being used. This means passing it to the render thread, making the deallocation thread safe, and
+	// making sure that sprite image is alive on the render thread while the allocation is live as well
 
 	RenderElementData& renderElementData = mCachedRenderElements[0];
 	SpriteRenderElement& renderElement = renderElementData.RenderElement;
@@ -52,7 +66,7 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 			renderElement.Indices = B3DNewMultiple<u32>(renderElement.IndexCount);
 		}
 
-		const HTexture& texture = information.Image->GetAtlasTexture();
+		const HTexture& texture = spriteAllocation->GetTexture();
 
 		SpriteMaterialInfo& materialInformation = renderElementData.MaterialInformation;
 		materialInformation.GroupId = groupId;
@@ -87,7 +101,7 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		renderElement.Indices[i * 6 + 5] = i * 4 + 2;
 	}
 
-	Vector2I offset = GetAnchorOffset(information.Anchor, information.Width, information.Height);
+	Vector2I offset = GetAnchorOffset(information.Anchor, information.Size.Width, information.Size.Height);
 	Vector2 uvOffset = information.UvOffset;
 	Vector2 uvScale = information.UvScale;
 
@@ -98,8 +112,8 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		u32 topBorder = information.BorderTop;
 		u32 bottomBorder = information.BorderBottom;
 
-		float centerWidth = (float)std::max((i32)0, (i32)information.Width - (i32)leftBorder - (i32)rightBorder);
-		float centerHeight = (float)std::max((i32)0, (i32)information.Height - (i32)topBorder - (i32)bottomBorder);
+		float centerWidth = (float)std::max(0, information.Size.Width - (i32)leftBorder - (i32)rightBorder);
+		float centerHeight = (float)std::max(0, information.Size.Height - (i32)topBorder - (i32)bottomBorder);
 
 		float topCenterStart = (float)(offset.X + leftBorder);
 		float topRightStart = (float)(topCenterStart + centerWidth);
@@ -161,8 +175,9 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		renderElement.VertexPositions[34] = Vector2(topRightStart, bottomStart + bottomBorder);
 		renderElement.VertexPositions[35] = Vector2(topRightStart + rightBorder, bottomStart + bottomBorder);
 
-		float invWidth = 1.0f / (float)information.Image->GetSize().Width;
-		float invHeight = 1.0f / (float)information.Image->GetSize().Height;
+		const Size2I& imageSize = spriteAllocation->GetSize();
+		float invWidth = 1.0f / (float)imageSize.Width;
+		float invHeight = 1.0f / (float)imageSize.Height;
 
 		float uvLeftBorder = information.BorderLeft * invWidth;
 		float uvRightBorder = information.BorderRight * invWidth;
@@ -179,70 +194,70 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		float uvBottomStart = uvMiddleStart + uvCenterHeight;
 
 		// UV - Top left
-		renderElement.VertexUVs[0] = information.Image->TransformUV(Vector2(uvOffset.X, uvOffset.Y));
-		renderElement.VertexUVs[1] = information.Image->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvOffset.Y));
-		renderElement.VertexUVs[2] = information.Image->TransformUV(Vector2(uvOffset.X, uvOffset.Y + uvTopBorder));
-		renderElement.VertexUVs[3] = information.Image->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvOffset.Y + uvTopBorder));
+		renderElement.VertexUVs[0] = spriteAllocation->TransformUV(Vector2(uvOffset.X, uvOffset.Y));
+		renderElement.VertexUVs[1] = spriteAllocation->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvOffset.Y));
+		renderElement.VertexUVs[2] = spriteAllocation->TransformUV(Vector2(uvOffset.X, uvOffset.Y + uvTopBorder));
+		renderElement.VertexUVs[3] = spriteAllocation->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvOffset.Y + uvTopBorder));
 
 		// UV - Top center
-		renderElement.VertexUVs[4] = information.Image->TransformUV(Vector2(uvTopCenterStart, uvOffset.Y));
-		renderElement.VertexUVs[5] = information.Image->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvOffset.Y));
-		renderElement.VertexUVs[6] = information.Image->TransformUV(Vector2(uvTopCenterStart, uvOffset.Y + uvTopBorder));
-		renderElement.VertexUVs[7] = information.Image->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvOffset.Y + uvTopBorder));
+		renderElement.VertexUVs[4] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart, uvOffset.Y));
+		renderElement.VertexUVs[5] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvOffset.Y));
+		renderElement.VertexUVs[6] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart, uvOffset.Y + uvTopBorder));
+		renderElement.VertexUVs[7] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvOffset.Y + uvTopBorder));
 
 		// UV - Top right
-		renderElement.VertexUVs[8] = information.Image->TransformUV(Vector2(uvTopRightStart, uvOffset.Y));
-		renderElement.VertexUVs[9] = information.Image->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvOffset.Y));
-		renderElement.VertexUVs[10] = information.Image->TransformUV(Vector2(uvTopRightStart, uvOffset.Y + uvTopBorder));
-		renderElement.VertexUVs[11] = information.Image->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvOffset.Y + uvTopBorder));
+		renderElement.VertexUVs[8] = spriteAllocation->TransformUV(Vector2(uvTopRightStart, uvOffset.Y));
+		renderElement.VertexUVs[9] = spriteAllocation->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvOffset.Y));
+		renderElement.VertexUVs[10] = spriteAllocation->TransformUV(Vector2(uvTopRightStart, uvOffset.Y + uvTopBorder));
+		renderElement.VertexUVs[11] = spriteAllocation->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvOffset.Y + uvTopBorder));
 
 		// UV - Middle left
-		renderElement.VertexUVs[12] = information.Image->TransformUV(Vector2(uvOffset.X, uvMiddleStart));
-		renderElement.VertexUVs[13] = information.Image->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvMiddleStart));
-		renderElement.VertexUVs[14] = information.Image->TransformUV(Vector2(uvOffset.X, uvMiddleStart + uvCenterHeight));
-		renderElement.VertexUVs[15] = information.Image->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvMiddleStart + uvCenterHeight));
+		renderElement.VertexUVs[12] = spriteAllocation->TransformUV(Vector2(uvOffset.X, uvMiddleStart));
+		renderElement.VertexUVs[13] = spriteAllocation->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvMiddleStart));
+		renderElement.VertexUVs[14] = spriteAllocation->TransformUV(Vector2(uvOffset.X, uvMiddleStart + uvCenterHeight));
+		renderElement.VertexUVs[15] = spriteAllocation->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvMiddleStart + uvCenterHeight));
 
 		// UV - Middle center
-		renderElement.VertexUVs[16] = information.Image->TransformUV(Vector2(uvTopCenterStart, uvMiddleStart));
-		renderElement.VertexUVs[17] = information.Image->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvMiddleStart));
-		renderElement.VertexUVs[18] = information.Image->TransformUV(Vector2(uvTopCenterStart, uvMiddleStart + uvCenterHeight));
-		renderElement.VertexUVs[19] = information.Image->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvMiddleStart + uvCenterHeight));
+		renderElement.VertexUVs[16] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart, uvMiddleStart));
+		renderElement.VertexUVs[17] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvMiddleStart));
+		renderElement.VertexUVs[18] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart, uvMiddleStart + uvCenterHeight));
+		renderElement.VertexUVs[19] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvMiddleStart + uvCenterHeight));
 
 		// UV - Middle right
-		renderElement.VertexUVs[20] = information.Image->TransformUV(Vector2(uvTopRightStart, uvMiddleStart));
-		renderElement.VertexUVs[21] = information.Image->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvMiddleStart));
-		renderElement.VertexUVs[22] = information.Image->TransformUV(Vector2(uvTopRightStart, uvMiddleStart + uvCenterHeight));
-		renderElement.VertexUVs[23] = information.Image->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvMiddleStart + uvCenterHeight));
+		renderElement.VertexUVs[20] = spriteAllocation->TransformUV(Vector2(uvTopRightStart, uvMiddleStart));
+		renderElement.VertexUVs[21] = spriteAllocation->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvMiddleStart));
+		renderElement.VertexUVs[22] = spriteAllocation->TransformUV(Vector2(uvTopRightStart, uvMiddleStart + uvCenterHeight));
+		renderElement.VertexUVs[23] = spriteAllocation->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvMiddleStart + uvCenterHeight));
 
 		// UV - Bottom left
-		renderElement.VertexUVs[24] = information.Image->TransformUV(Vector2(uvOffset.X, uvBottomStart));
-		renderElement.VertexUVs[25] = information.Image->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvBottomStart));
-		renderElement.VertexUVs[26] = information.Image->TransformUV(Vector2(uvOffset.X, uvBottomStart + uvBottomBorder));
-		renderElement.VertexUVs[27] = information.Image->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvBottomStart + uvBottomBorder));
+		renderElement.VertexUVs[24] = spriteAllocation->TransformUV(Vector2(uvOffset.X, uvBottomStart));
+		renderElement.VertexUVs[25] = spriteAllocation->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvBottomStart));
+		renderElement.VertexUVs[26] = spriteAllocation->TransformUV(Vector2(uvOffset.X, uvBottomStart + uvBottomBorder));
+		renderElement.VertexUVs[27] = spriteAllocation->TransformUV(Vector2(uvOffset.X + uvLeftBorder, uvBottomStart + uvBottomBorder));
 
 		// UV - Bottom center
-		renderElement.VertexUVs[28] = information.Image->TransformUV(Vector2(uvTopCenterStart, uvBottomStart));
-		renderElement.VertexUVs[29] = information.Image->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvBottomStart));
-		renderElement.VertexUVs[30] = information.Image->TransformUV(Vector2(uvTopCenterStart, uvBottomStart + uvBottomBorder));
-		renderElement.VertexUVs[31] = information.Image->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvBottomStart + uvBottomBorder));
+		renderElement.VertexUVs[28] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart, uvBottomStart));
+		renderElement.VertexUVs[29] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvBottomStart));
+		renderElement.VertexUVs[30] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart, uvBottomStart + uvBottomBorder));
+		renderElement.VertexUVs[31] = spriteAllocation->TransformUV(Vector2(uvTopCenterStart + uvCenterWidth, uvBottomStart + uvBottomBorder));
 
 		// UV - Bottom right
-		renderElement.VertexUVs[32] = information.Image->TransformUV(Vector2(uvTopRightStart, uvBottomStart));
-		renderElement.VertexUVs[33] = information.Image->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvBottomStart));
-		renderElement.VertexUVs[34] = information.Image->TransformUV(Vector2(uvTopRightStart, uvBottomStart + uvBottomBorder));
-		renderElement.VertexUVs[35] = information.Image->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvBottomStart + uvBottomBorder));
+		renderElement.VertexUVs[32] = spriteAllocation->TransformUV(Vector2(uvTopRightStart, uvBottomStart));
+		renderElement.VertexUVs[33] = spriteAllocation->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvBottomStart));
+		renderElement.VertexUVs[34] = spriteAllocation->TransformUV(Vector2(uvTopRightStart, uvBottomStart + uvBottomBorder));
+		renderElement.VertexUVs[35] = spriteAllocation->TransformUV(Vector2(uvTopRightStart + uvRightBorder, uvBottomStart + uvBottomBorder));
 	}
 	else
 	{
 		renderElement.VertexPositions[0] = Vector2((float)offset.X, (float)offset.Y);
-		renderElement.VertexPositions[1] = Vector2((float)offset.X + information.Width, (float)offset.Y);
-		renderElement.VertexPositions[2] = Vector2((float)offset.X, (float)offset.Y + information.Height);
-		renderElement.VertexPositions[3] = Vector2((float)offset.X + information.Width, (float)offset.Y + information.Height);
+		renderElement.VertexPositions[1] = Vector2((float)offset.X + information.Size.Width, (float)offset.Y);
+		renderElement.VertexPositions[2] = Vector2((float)offset.X, (float)offset.Y + information.Size.Height);
+		renderElement.VertexPositions[3] = Vector2((float)offset.X + information.Size.Width, (float)offset.Y + information.Size.Height);
 
-		renderElement.VertexUVs[0] = information.Image->TransformUV(Vector2(uvOffset.X, uvOffset.Y));
-		renderElement.VertexUVs[1] = information.Image->TransformUV(Vector2(uvOffset.X + uvScale.X, uvOffset.Y));
-		renderElement.VertexUVs[2] = information.Image->TransformUV(Vector2(uvOffset.X, uvOffset.Y + uvScale.Y));
-		renderElement.VertexUVs[3] = information.Image->TransformUV(Vector2(uvOffset.X + uvScale.X, uvOffset.Y + uvScale.Y));
+		renderElement.VertexUVs[0] = spriteAllocation->TransformUV(Vector2(uvOffset.X, uvOffset.Y));
+		renderElement.VertexUVs[1] = spriteAllocation->TransformUV(Vector2(uvOffset.X + uvScale.X, uvOffset.Y));
+		renderElement.VertexUVs[2] = spriteAllocation->TransformUV(Vector2(uvOffset.X, uvOffset.Y + uvScale.Y));
+		renderElement.VertexUVs[3] = spriteAllocation->TransformUV(Vector2(uvOffset.X + uvScale.X, uvOffset.Y + uvScale.Y));
 	}
 
 	UpdateBounds();

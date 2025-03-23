@@ -42,7 +42,10 @@ namespace bs
 			return value;
 		}
 
-		/// <summary>Output monitor, frame buffer resize and refresh rate.</summary>
+		/// <summary>
+		/// Output monitor, frame buffer resize and refresh rate. This is the size of the window&apos;s client area (which means 
+		/// actual window may be larger due to title bar and border.
+		/// </summary>
 		public VideoMode VideoMode;
 		/// <summary>Should the window be opened in fullscreen mode.</summary>
 		public bool Fullscreen;

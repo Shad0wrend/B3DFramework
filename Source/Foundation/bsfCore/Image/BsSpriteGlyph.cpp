@@ -19,69 +19,72 @@ namespace bs
 }
 
 SpriteGlyph::SpriteGlyph(const SpriteGlyphCreateInformation& createInformation)
-	: SpriteImage(createInformation), mFont(createInformation.Font), mGlyph(createInformation.Glyph), mGlyphSize(createInformation.Size)
+	: SpriteImage(createInformation), mFont(createInformation.Font), mGlyph(createInformation.Glyph), mDefaultGlyphSize(Font::GetQuantizedFontSize(createInformation.DefaultSize))
 {
 }
 
-void SpriteGlyph::SetFont(const HFont& font)
+SPtr<SpriteImageAllocation> SpriteGlyph::FindOrAllocateImageToFitArea(const Size2I& size)
 {
-	if(mFont == font)
-		return;
-
-	RemoveResourceDependency(mFont);
-	mFont = font;
-	AddResourceDependency(mFont);
-
-	UpdateGlyphAtlasInformation();
-}
-
-void SpriteGlyph::SetGlyph(u32 glyph)
-{
-	if(mGlyph == glyph)
-		return;
-
-	mGlyph = glyph;
-	UpdateGlyphAtlasInformation();
-}
-
-void SpriteGlyph::SetGlyphSize(float size)
-{
-	if(mGlyphSize == size)
-		return;
-
-	mGlyphSize = size;
-	UpdateGlyphAtlasInformation();
-}
-
-void SpriteGlyph::UpdateGlyphAtlasInformation()
-{
-	mAtlasTexture = nullptr;
-	mInformation.UVRange = Area2::kEmpty;
-
 	if(!mFont.IsLoaded(false))
-		return;
+		return nullptr;
 
+	const float sizeInPoints = Font::GetQuantizedFontSize(Math::Min(
+		mFont->GetPointSizeForGlyphPixelWidth(mGlyph, size.Width),
+		mFont->GetPointSizeForGlyphPixelHeight(mGlyph, size.Height)));
+
+	auto foundImage = std::find_if(mScaledAllocatedImages.begin(), mScaledAllocatedImages.end(), [sizeInPoints](const SpriteImageAllocation* allocation) {
+		return static_cast<const SpriteGlyphAllocation*>(allocation)->GetSizeInPoints() == sizeInPoints;
+	});
+
+	if(foundImage != mScaledAllocatedImages.end())
+		return (*foundImage)->shared_from_this();
+	
+	return AllocateImage(sizeInPoints);
+}
+
+SPtr<SpriteImageAllocation> SpriteGlyph::FindOrAllocateScaledImage(float scale)
+{
+	const float sizeInPoints = Font::GetQuantizedFontSize(mDefaultGlyphSize * scale);
+	auto foundImage = std::find_if(mScaledAllocatedImages.begin(), mScaledAllocatedImages.end(), [sizeInPoints](const SpriteImageAllocation* allocation) {
+		return static_cast<const SpriteGlyphAllocation*>(allocation)->GetSizeInPoints() == sizeInPoints;
+	});
+
+	if(foundImage != mScaledAllocatedImages.end())
+		return (*foundImage)->shared_from_this();
+
+	return AllocateImage(sizeInPoints);
+}
+
+SPtr<SpriteGlyphAllocation> SpriteGlyph::AllocateImage(float sizeInPoints)
+{
 	TInlineArray<u32, 1> glyphs = { mGlyph };
-	mFont->RenderGlyphs(mGlyphSize, glyphs);
+	mFont->RenderGlyphs(sizeInPoints, glyphs);
 
-	SPtr<FontBitmapInformation> bitmapInformation = mFont->GetBitmap(mGlyphSize);
+	SPtr<FontBitmapInformation> bitmapInformation = mFont->GetBitmap(sizeInPoints);
 	if(!bitmapInformation)
-		return;
+		return nullptr;
+
+	HTexture atlasTexture;
+	Area2 uvRange;
 
 	auto found = bitmapInformation->Characters.find(mGlyph);
 	if(found != bitmapInformation->Characters.end())
 	{
-		mAtlasTexture = bitmapInformation->TexturePages[found->second.Page].Texture;
-		mInformation.UVRange = Area2(found->second.UvX, found->second.UvY, found->second.UvWidth, found->second.UvHeight);
+		atlasTexture = bitmapInformation->TexturePages[found->second.Page].Texture;
+		uvRange = Area2(found->second.UvX, found->second.UvY, found->second.UvWidth, found->second.UvHeight);
 	}
 
-	MarkDependenciesDirty();
-	MarkRenderProxyDataDirtyInternal();
+	SPtr<SpriteGlyphAllocation> allocation = B3DMakeShared<SpriteGlyphAllocation>(std::static_pointer_cast<SpriteGlyph>(GetShared()), atlasTexture, uvRange, sizeInPoints);
+	mScaledAllocatedImages.Add(allocation.get());
+
+	// TODO - We should have the ability to release glyphs from the font when no longer needed
+
+	return allocation;
 }
 
 void SpriteGlyph::Initialize()
 {
-	UpdateGlyphAtlasInformation();
+	mDefaultAllocatedImage = AllocateImage(mDefaultGlyphSize);
 	AddResourceDependency(mFont);
 
 	Resource::Initialize();
@@ -134,7 +137,7 @@ SPtr<SpriteGlyph> SpriteGlyph::CreateShared(const HFont& font, u32 glyph, float 
 	SpriteGlyphCreateInformation createInformation;
 	createInformation.Font = font;
 	createInformation.Glyph = glyph;
-	createInformation.Size = size;
+	createInformation.DefaultSize = size;
 
 	return CreateShared(createInformation);
 }

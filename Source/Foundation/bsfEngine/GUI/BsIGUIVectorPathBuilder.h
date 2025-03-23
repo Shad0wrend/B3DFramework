@@ -26,7 +26,7 @@ namespace bs
 		 * @param		rule		Current style sheet rule used by the GUI element.
 		 * @return					New vector path.
 		 */
-		virtual HVectorPath BuildPath(const Size2UI& size, const GUIStyleSheetRules& rule) const = 0;
+		virtual HVectorPath BuildPath(const Size2I& size, const GUIStyleSheetRules& rule) const = 0;
 	};
 
 	/** @} */

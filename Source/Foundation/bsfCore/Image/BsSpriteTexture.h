@@ -61,9 +61,8 @@ namespace bs
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteTexture : public CoreVariantType<SpriteImage, false>
 	{
 	public:
-		/**	Sets the atlas texture to utilize. */
-		B3D_SCRIPT_EXPORT()
-		void SetAtlasTexture(const TextureType& texture);
+		SPtr<SpriteImageAllocation> FindOrAllocateImageToFitArea(const Size2I& size) override { return mDefaultAllocatedImage; }
+		SPtr<SpriteImageAllocation> FindOrAllocateScaledImage(float scale) override { return mDefaultAllocatedImage; }
 
 		/**	Creates a new sprite texture that references the entire area of the provided texture. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteTexture))
@@ -79,9 +78,6 @@ namespace bs
 		/** Creates a new SpriteTexture without a resource handle. Use Create() for normal use. */
 		static SPtr<SpriteTexture> CreateShared(const SpriteTextureCreateInformation& createInformation);
 
-		/**	Checks if the sprite texture and its internal texture have been loaded. */
-		static bool CheckIsLoaded(const HSpriteTexture& texture); // TODO - Can this be removed?
-
 	private:
 		friend class SpriteTextureRTTI;
 		friend class ct::SpriteTexture;
@@ -90,6 +86,7 @@ namespace bs
 		SpriteTexture(const SpriteTextureCreateInformation& createInformation);
 
 		void Initialize() override;
+
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;

@@ -792,14 +792,14 @@ void GUIInputBox::ScrollTextToCaret()
 	GUIPhysicalUnit left = textOffset.X - mTextOffset.X;
 	// Include caret width here because we don't want to scroll if just the caret is outside the bounds
 	// (Possible if the text width is exactly the maximum width)
-	GUIPhysicalUnit right = left + (i32)textSpriteInformation.Width + caretWidth;
+	GUIPhysicalUnit right = left + textSpriteInformation.Size.Width + caretWidth;
 	GUIPhysicalUnit top = textOffset.Y - mTextOffset.Y;
-	GUIPhysicalUnit bottom = top + (i32)textSpriteInformation.Height;
+	GUIPhysicalUnit bottom = top + textSpriteInformation.Size.Height;
 
 	// If caret is too high to display we don't want the offset to keep adjusting itself
 	caretHeight = Math::Min(caretHeight, bottom - top);
-	GUIPhysicalUnit caretRight = caretPos.X + (i32)caretWidth;
-	GUIPhysicalUnit caretBottom = caretPos.Y + (i32)caretHeight;
+	GUIPhysicalUnit caretRight = caretPos.X + caretWidth;
+	GUIPhysicalUnit caretBottom = caretPos.Y + caretHeight;
 
 	GUIPhysicalPoint offset{BsZero};
 	if(caretPos.X < left)
@@ -831,8 +831,8 @@ void GUIInputBox::ClampScrollToBounds(const GUIPhysicalArea& unclippedTextBounds
 	const TextSpriteInformation textSpriteInformation = BuildTextSpriteInformation();
 
 	GUIPhysicalPoint newTextOffset;
-	GUIPhysicalUnit maxScrollableWidth = Math::Max(unclippedTextBounds.Width - (GUIPhysicalUnit)textSpriteInformation.Width, 0);
-	GUIPhysicalUnit maxScrollableHeight = Math::Max(unclippedTextBounds.Height - (GUIPhysicalUnit)textSpriteInformation.Height, 0);
+	GUIPhysicalUnit maxScrollableWidth = Math::Max(unclippedTextBounds.Width - (GUIPhysicalUnit)textSpriteInformation.Size.Width, 0);
+	GUIPhysicalUnit maxScrollableHeight = Math::Max(unclippedTextBounds.Height - (GUIPhysicalUnit)textSpriteInformation.Size.Height, 0);
 	newTextOffset.X = Math::Clamp(mTextOffset.X, -maxScrollableWidth, GUIPhysicalUnit(0));
 	newTextOffset.Y = Math::Clamp(mTextOffset.Y, -maxScrollableHeight, GUIPhysicalUnit(0));
 

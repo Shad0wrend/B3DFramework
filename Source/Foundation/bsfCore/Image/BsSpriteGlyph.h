@@ -15,13 +15,37 @@ namespace bs
 	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Rendering)) SpriteGlyphCreateInformation : SpriteImageInformation
 	{
 		SpriteGlyphCreateInformation() = default;
-		SpriteGlyphCreateInformation(const SpriteImageInformation& spriteImageInformation, const HFont& font, u32 glyph, float size)
-			: SpriteImageInformation(spriteImageInformation), Font(font), Glyph(glyph), Size(size)
+		SpriteGlyphCreateInformation(const SpriteImageInformation& spriteImageInformation, const HFont& font, u32 glyph, float defaultSize)
+			: SpriteImageInformation(spriteImageInformation), Font(font), Glyph(glyph), DefaultSize(defaultSize)
 		{ }
 
 		HFont Font; /**< Font from which to render the glyph from. */
 		u32 Glyph = 0; /**< Unicode code for the glyph to render. */
-		float Size = 8.0f; /**< Size of the glyph in points. */
+		float DefaultSize = 8.0f; /**< Size of the unscaled glyph in points. Actual rendered size might be different depending on DPI scale or other scale factors. */
+	};
+
+	/** Provides information about a particular glyph image allocated within a texture atlas. */
+	template<bool IsRenderProxy>
+	struct TSpriteGlyphAllocation : CoreVariantType<SpriteImageAllocation, IsRenderProxy>
+	{
+		using SpriteImageType = CoreVariantType<SpriteImage, IsRenderProxy>;
+		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
+
+		TSpriteGlyphAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& texture, const Area2& uvRange, float sizeInPoints)
+			:CoreVariantType<SpriteImageAllocation, IsRenderProxy>(owner, texture, uvRange), mSizeInPoints(sizeInPoints)
+		{ }
+
+		/** Size of the allocated glyph in points. */
+		float GetSizeInPoints() const { return mSizeInPoints; }
+
+	private:
+		float mSizeInPoints;
+	};
+
+	/** @copydoc TSpriteGlyphAllocation. */
+	struct SpriteGlyphAllocation : TSpriteGlyphAllocation<false>
+	{
+		using TSpriteGlyphAllocation::TSpriteGlyphAllocation;
 	};
 
 	/** @} */
@@ -59,17 +83,8 @@ namespace bs
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteGlyph : public CoreVariantType<SpriteImage, false>
 	{
 	public:
-		/**	Sets the font to render the glyph from. */
-		B3D_SCRIPT_EXPORT()
-		void SetFont(const HFont& font);
-
-		/**	Sets the unicode code of the glyph to render. */
-		B3D_SCRIPT_EXPORT()
-		void SetGlyph(u32 glyph);
-
-		/**	Sets the size of the glyph in points. */
-		B3D_SCRIPT_EXPORT()
-		void SetGlyphSize(float size);
+		SPtr<SpriteImageAllocation> FindOrAllocateImageToFitArea(const Size2I& size) override;
+		SPtr<SpriteImageAllocation> FindOrAllocateScaledImage(float scale) override;
 
 		/**	Creates a new sprite glyph. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteGlyph))
@@ -92,8 +107,8 @@ namespace bs
 
 		SpriteGlyph(const SpriteGlyphCreateInformation& createInformation);
 
-		/** Updates information about the atlas the glyph is stored in. Call this after glyph, font or size of the glyph changes. */
-		void UpdateGlyphAtlasInformation();
+		/** Allocates a sprite image using the provided size in points. */
+		SPtr<SpriteGlyphAllocation> AllocateImage(float sizeInPoints);
 
 		void Initialize() override;
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
@@ -102,7 +117,7 @@ namespace bs
 
 		HFont mFont;
 		u32 mGlyph = 0;
-		float mGlyphSize = 8.0f;
+		float mDefaultGlyphSize = 8.0f;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -124,6 +139,12 @@ namespace bs
 		/** @addtogroup RenderThread
 		 *  @{
 		 */
+
+		/** @copydoc TSpriteGlyphAllocation. */
+		struct SpriteGlyphAllocation : TSpriteGlyphAllocation<true>
+		{
+			using TSpriteGlyphAllocation::TSpriteGlyphAllocation;
+		};
 
 		/**
 		 * Render proxy counterpart of a bs::SpriteGlyph.

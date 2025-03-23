@@ -15,7 +15,7 @@ namespace bs
 	{
 		MonoObject* Font;
 		uint32_t Glyph;
-		float Size;
+		float DefaultSize;
 		TArea2<float, float> UVRange;
 		SpriteAnimationPlayback AnimationPlayback;
 		SpriteSheetGridAnimation Animation;

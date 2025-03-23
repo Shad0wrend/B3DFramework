@@ -8,10 +8,10 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/VectorGraphics/BsVectorGraphics.h"
 #include "BsScriptVectorPath.generated.h"
-#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
-#include "BsScriptTArea2.generated.h"
 #include "../../../Foundation/bsfUtility/Math/BsSize2.h"
 #include "BsScriptTSize2.generated.h"
+#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
+#include "BsScriptTArea2.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
 
@@ -39,7 +39,7 @@ namespace bs
 		if(scriptObjectWrapperVectorPath != nullptr)
 			tmpVectorPath = B3DStaticResourceCast<VectorPath>(scriptObjectWrapperVectorPath->GetNativeObject());
 		output.VectorPath = tmpVectorPath;
-		output.Size = value.Size;
+		output.DefaultSize = value.DefaultSize;
 		output.ScalingMode = value.ScalingMode;
 		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
@@ -59,7 +59,7 @@ namespace bs
 		else
 			tmpVectorPath = nullptr;
 		output.VectorPath = tmpVectorPath;
-		output.Size = value.Size;
+		output.DefaultSize = value.DefaultSize;
 		output.ScalingMode = value.ScalingMode;
 		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;

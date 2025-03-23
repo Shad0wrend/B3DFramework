@@ -20,7 +20,7 @@ void GUIInputTool::UpdateText(const GUIInteractable* element, const TextSpriteIn
 	B3DMarkAllocatorFrame();
 	{
 		const U32String utf32text = UTF8::ToUtF32(mTextDesc.Text);
-		TTextGeometry<FrameAllocatorTag> textGeometry(utf32text, mTextDesc.Font, mTextDesc.FontSize, mTextDesc.Width, mTextDesc.Height, mTextDesc.WordWrap, mTextDesc.WordBreak);
+		TTextGeometry<FrameAllocatorTag> textGeometry(utf32text, mTextDesc.Font, mTextDesc.FontSize, (u32)mTextDesc.Size.Width, (u32)mTextDesc.Size.Height, mTextDesc.WordWrap, mTextDesc.WordBreak);
 
 		u32 numLines = textGeometry.GetLineCount();
 		u32 numPages = textGeometry.GetPageCount();
@@ -34,14 +34,14 @@ void GUIInputTool::UpdateText(const GUIInteractable* element, const TextSpriteIn
 
 		mQuads = B3DNewMultiple<Vector2>(mNumQuads * 4);
 
-		TextSprite::BuildTextQuads(textGeometry, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, mTextDesc.Anchor, mQuads, nullptr, nullptr, mNumQuads);
+		TextSprite::BuildTextQuads(textGeometry, (u32)mTextDesc.Size.Width, (u32)mTextDesc.Size.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, mTextDesc.Anchor, mQuads, nullptr, nullptr, mNumQuads);
 
 		// Store cached line data
 		u32 curCharIdx = 0;
 		u32 curLineIdx = 0;
 
 		Vector2I* alignmentOffsets = B3DFrameNew<Vector2I>(numLines);
-		TextSprite::GetAlignmentOffsets(textGeometry, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, alignmentOffsets);
+		TextSprite::GetAlignmentOffsets(textGeometry, (u32)mTextDesc.Size.Width, (u32)mTextDesc.Size.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, alignmentOffsets);
 
 		for(u32 i = 0; i < numLines; i++)
 		{

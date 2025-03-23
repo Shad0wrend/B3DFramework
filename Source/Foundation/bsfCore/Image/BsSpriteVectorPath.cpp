@@ -22,53 +22,60 @@ namespace bs
 }
 
 SpriteVectorPath::SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation)
-	: SpriteImage(createInformation), mVectorPath(createInformation.VectorPath), mSize(createInformation.Size), mScalingMode(createInformation.ScalingMode)
+	: SpriteImage(createInformation), mVectorPath(createInformation.VectorPath), mDefaultSize(createInformation.DefaultSize), mScalingMode(createInformation.ScalingMode)
 {
 }
 
-void SpriteVectorPath::SetVectorPath(const HVectorPath& vectorPath)
+SPtr<SpriteImageAllocation> SpriteVectorPath::FindOrAllocateImageToFitArea(const Size2I& size)
 {
-	if(mVectorPath == vectorPath)
-		return;
-
-	RemoveResourceDependency(mVectorPath);
-	mVectorPath = vectorPath;
-	AddResourceDependency(mVectorPath);
-
-	RenderVectorPath();
-}
-
-void SpriteVectorPath::RenderVectorPath()
-{
-	mAtlasTexture = nullptr;
-	mInformation.UVRange = Area2::kEmpty;
-
 	if(!mVectorPath.IsLoaded(false))
-		return;
+		return nullptr;
 
-	if(mSize.Width == 0 || mSize.Height == 0)
-		return;
+	if(mDefaultSize.Width == 0 || mDefaultSize.Height == 0)
+		return nullptr;
 
+	auto foundImage = std::find_if(mScaledAllocatedImages.begin(), mScaledAllocatedImages.end(), [&size](const SpriteImageAllocation* allocation) {
+		return allocation->GetSize() == size;
+	});
+
+	if(foundImage != mScaledAllocatedImages.end())
+		return (*foundImage)->shared_from_this();
+
+	SPtr<SpriteVectorPathAllocation> allocation = AllocateImage(size);
+	mScaledAllocatedImages.Add(allocation.get());
+
+	return allocation;
+}
+
+SPtr<SpriteImageAllocation> SpriteVectorPath::FindOrAllocateScaledImage(float scale)
+{
+	const Size2I scaledSize(
+		Math::RoundToI32((float)mDefaultSize.Width * scale),
+		Math::RoundToI32((float)mDefaultSize.Height * scale)
+		);
+
+	return FindOrAllocateImageToFitArea(scaledSize);
+}
+
+SPtr<SpriteVectorPathAllocation> SpriteVectorPath::AllocateImage(const Size2I& size)
+{
 	VectorGraphicsSettings vectorGraphicsSettings;
-	vectorGraphicsSettings.Size = Size2((float)mSize.Width, (float)mSize.Height);
+	vectorGraphicsSettings.Size = Size2((float)size.Width, (float)size.Height);
 	vectorGraphicsSettings.ScalingMode = mScalingMode;
 
-	GUIVectorSpriteAtlas& vectorSpriteAtlas = GetGUIManager().GetVectorSpriteAtlas();
+	SPtr<GUIVectorSpriteAtlasAllocation> spriteAtlasAllocation;
+	if(size.Width != 0 && size.Height != 0)
+	{
+		GUIVectorSpriteAtlas& vectorSpriteAtlas = GetGUIManager().GetVectorSpriteAtlas();
+		spriteAtlasAllocation = vectorSpriteAtlas.Allocate(*mVectorPath, vectorGraphicsSettings);
+	}
 
-	mSpriteAtlasAllocation = vectorSpriteAtlas.Allocate(*mVectorPath, vectorGraphicsSettings);
-	if(!B3D_ENSURE(mSpriteAtlasAllocation))
-		return;
-
-	mAtlasTexture = mSpriteAtlasAllocation->AtlasTexture;
-	mInformation.UVRange = mSpriteAtlasAllocation->UVRange;
-
-	MarkDependenciesDirty();
-	MarkRenderProxyDataDirtyInternal();
+	return B3DMakeShared<SpriteVectorPathAllocation>(std::static_pointer_cast<SpriteVectorPath>(GetShared()), spriteAtlasAllocation);
 }
 
 void SpriteVectorPath::Initialize()
 {
-	RenderVectorPath();
+	mDefaultAllocatedImage = AllocateImage(mDefaultSize);
 	AddResourceDependency(mVectorPath);
 
 	Resource::Initialize();
@@ -102,9 +109,9 @@ void SpriteVectorPath::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 		dependencies.push_back(mAtlasTexture.Get());
 }
 
-HSpriteVectorPath SpriteVectorPath::Create(const HVectorPath& vectorPath, const Size2UI& size)
+HSpriteVectorPath SpriteVectorPath::Create(const HVectorPath& vectorPath, const Size2I& defaultSize)
 {
-	SPtr<SpriteVectorPath> spriteVectorPath = CreateShared(vectorPath, size);
+	SPtr<SpriteVectorPath> spriteVectorPath = CreateShared(vectorPath, defaultSize);
 
 	return B3DStaticResourceCast<SpriteVectorPath>(GetResources().CreateResourceHandle(spriteVectorPath));
 }
@@ -116,11 +123,11 @@ HSpriteVectorPath SpriteVectorPath::Create(const SpriteVectorPathCreateInformati
 	return B3DStaticResourceCast<SpriteVectorPath>(GetResources().CreateResourceHandle(spriteVectorPath));
 }
 
-SPtr<SpriteVectorPath> SpriteVectorPath::CreateShared(const HVectorPath& vectorPath, const Size2UI& size)
+SPtr<SpriteVectorPath> SpriteVectorPath::CreateShared(const HVectorPath& vectorPath, const Size2I& defaultSize)
 {
 	SpriteVectorPathCreateInformation createInformation;
 	createInformation.VectorPath = vectorPath;
-	createInformation.Size = size;
+	createInformation.DefaultSize = defaultSize;
 
 	return CreateShared(createInformation);
 }

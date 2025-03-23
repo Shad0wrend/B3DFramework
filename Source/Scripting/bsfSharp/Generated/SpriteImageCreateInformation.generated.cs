@@ -55,7 +55,7 @@ namespace bs
 			Animation = value.Animation;
 		}
 
-		/// <summary>Range in the atlas texture that the image maps to.</summary>
+		/// <summary>Range in the atlas texture that the image is to be read from, in [0, 1] range.</summary>
 		public TArea2<float,float> UVRange;
 		/// <summary>Determines if animation is enabled and how should it play.</summary>
 		public SpriteAnimationPlayback AnimationPlayback;

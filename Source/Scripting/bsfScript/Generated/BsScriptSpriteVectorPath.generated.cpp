@@ -7,8 +7,8 @@
 #include "../../../Foundation/bsfCore/Image/BsSpriteVectorPath.h"
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
-#include "../../../Foundation/bsfCore/VectorGraphics/BsVectorGraphics.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteVectorPath.h"
+#include "../../../Foundation/bsfCore/VectorGraphics/BsVectorGraphics.h"
 #include "BsScriptTSize2.generated.h"
 #include "BsScriptSpriteVectorPathCreateInformation.generated.h"
 
@@ -23,7 +23,6 @@ namespace bs
 	void ScriptSpriteVectorPath::SetupScriptBindings()
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteVectorPath::InternalGetRef);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetVectorPath", (void*)&ScriptSpriteVectorPath::InternalSetVectorPath);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteVectorPath::InternalCreate);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteVectorPath::InternalCreate0);
 
@@ -44,27 +43,14 @@ namespace bs
 		return self->GetOrCreateResourceReference();
 	}
 
-	void ScriptSpriteVectorPath::InternalSetVectorPath(ScriptSpriteVectorPath* self, MonoObject* vectorPath)
-	{
-		if(!self->IsNativeObjectValid())
-			return;
-
-		TResourceHandle<VectorPath> tmpvectorPath;
-		ScriptRRefBase* scriptObjectWrappervectorPath;
-		scriptObjectWrappervectorPath = ScriptRRefBase::GetScriptObjectWrapper(vectorPath);
-		if(scriptObjectWrappervectorPath != nullptr)
-			tmpvectorPath = B3DStaticResourceCast<VectorPath>(scriptObjectWrappervectorPath->GetNativeObject());
-		static_cast<SpriteVectorPath*>(self->GetNativeObject())->SetVectorPath(tmpvectorPath);
-	}
-
-	void ScriptSpriteVectorPath::InternalCreate(MonoObject* scriptObject, MonoObject* vectorPath, TSize2<uint32_t>* size)
+	void ScriptSpriteVectorPath::InternalCreate(MonoObject* scriptObject, MonoObject* vectorPath, TSize2<int32_t>* defaultSize)
 	{
 		TResourceHandle<VectorPath> tmpvectorPath;
 		ScriptRRefBase* scriptObjectWrappervectorPath;
 		scriptObjectWrappervectorPath = ScriptRRefBase::GetScriptObjectWrapper(vectorPath);
 		if(scriptObjectWrappervectorPath != nullptr)
 			tmpvectorPath = B3DStaticResourceCast<VectorPath>(scriptObjectWrappervectorPath->GetNativeObject());
-		TResourceHandle<SpriteVectorPath> nativeObject = SpriteVectorPath::Create(tmpvectorPath, *size);
+		TResourceHandle<SpriteVectorPath> nativeObject = SpriteVectorPath::Create(tmpvectorPath, *defaultSize);
 		ScriptObjectWrapper::Create<ScriptSpriteVectorPath>(nativeObject, scriptObject);
 	}
 

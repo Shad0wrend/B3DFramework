@@ -6,7 +6,7 @@
 
 using namespace bs;
 
-HVectorPath GUIBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+HVectorPath GUIBackgroundVectorPathBuilder::BuildPath(const Size2I& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	HVectorPath path = VectorPath::Create(Size2((float)size.Width, (float)size.Height));
 
@@ -190,7 +190,7 @@ HVectorPath GUIBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, const
 	return path;
 }
 
-HVectorPath GUICheckmarkVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+HVectorPath GUICheckmarkVectorPathBuilder::BuildPath(const Size2I& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	HVectorPath path = VectorPath::Create(Size2(512.0f, 512.0f));
 
@@ -208,7 +208,7 @@ HVectorPath GUICheckmarkVectorPathBuilder::BuildPath(const Size2UI& size, const 
 	return path;
 }
 
-HVectorPath GUITabBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+HVectorPath GUITabBackgroundVectorPathBuilder::BuildPath(const Size2I& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	HVectorPath path = VectorPath::Create(Size2(135.0f, 27.0f));
 
@@ -232,7 +232,7 @@ HVectorPath GUITabBackgroundVectorPathBuilder::BuildPath(const Size2UI& size, co
 	return path;
 }
 
-HVectorPath GUIDropDownArrowVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+HVectorPath GUIDropDownArrowVectorPathBuilder::BuildPath(const Size2I& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	constexpr float kCanvasSize = 100.0f;
 	constexpr float kArrowSize = kCanvasSize * 0.75f;
@@ -253,7 +253,7 @@ HVectorPath GUIDropDownArrowVectorPathBuilder::BuildPath(const Size2UI& size, co
 	return path;
 }
 
-HVectorPath GUIScrollArrowVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+HVectorPath GUIScrollArrowVectorPathBuilder::BuildPath(const Size2I& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	HVectorPath path = VectorPath::Create(Size2(100.0f, 75.0f));
 
@@ -276,7 +276,7 @@ HVectorPath GUIScrollArrowVectorPathBuilder::BuildPath(const Size2UI& size, cons
 	return path;
 }
 
-HVectorPath GUIScrollHandleVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+HVectorPath GUIScrollHandleVectorPathBuilder::BuildPath(const Size2I& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	constexpr u32 kReferenceRasterSize = 13; // Reference size of the handle in pixels, both width and height
 	constexpr float kReferenceCanvasSize = 100.0f; // Reference size of the vector path canvas
@@ -312,7 +312,7 @@ HVectorPath GUIScrollHandleVectorPathBuilder::BuildPath(const Size2UI& size, con
 	return path;
 }
 
-HVectorPath GUIResizableVerticalScrollHandleVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+HVectorPath GUIResizableVerticalScrollHandleVectorPathBuilder::BuildPath(const Size2I& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	const Size2 constrainedSize(
 		Math::Max(1.0f, (float)size.Width),
@@ -330,7 +330,7 @@ HVectorPath GUIResizableVerticalScrollHandleVectorPathBuilder::BuildPath(const S
 	return path;
 }
 
-HVectorPath GUIResizableHorizontalScrollHandleVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+HVectorPath GUIResizableHorizontalScrollHandleVectorPathBuilder::BuildPath(const Size2I& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	const Size2 constrainedSize(
 		Math::Max(kResizableHandlePadding * 2.0f + kResizableHandleSize * 3.0f, (float)size.Width),
@@ -348,7 +348,7 @@ HVectorPath GUIResizableHorizontalScrollHandleVectorPathBuilder::BuildPath(const
 	return path;
 }
 
-HVectorPath GUISeparatorVectorPathBuilder::BuildPath(const Size2UI& size, const GUIStyleSheetRules& styleSheetRule) const
+HVectorPath GUISeparatorVectorPathBuilder::BuildPath(const Size2I& size, const GUIStyleSheetRules& styleSheetRule) const
 {
 	HVectorPath path = VectorPath::Create(Size2((float)size.Width, (float)size.Height));
 

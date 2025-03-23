@@ -5,5 +5,7 @@
 namespace bs
 {
 	template struct B3D_UTILITY_EXPORT TSize2<float>;
+	template struct B3D_UTILITY_EXPORT TSize2<double>;
 	template struct B3D_UTILITY_EXPORT TSize2<u32>;
+	template struct B3D_UTILITY_EXPORT TSize2<i32>;
 } // namespace bs

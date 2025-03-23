@@ -32,8 +32,7 @@ void GUILabel::UpdateRenderElements()
 
 	GUISpriteHelper::BuildSpriteRenderElements(*this, GUIElementState::Normal, mBackgroundSprite);
 
-	mTextSpriteInformation.Width = (u32)mAbsoluteSize.Width;
-	mTextSpriteInformation.Height = (u32)mAbsoluteSize.Height;
+	mTextSpriteInformation.Size = mAbsoluteSize.To<i32>();
 	mTextSpriteInformation.Text = (String)mContent.Text;
 
 	if(mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)

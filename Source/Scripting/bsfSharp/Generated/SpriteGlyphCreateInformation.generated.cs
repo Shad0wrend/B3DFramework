@@ -20,7 +20,7 @@ namespace bs
 			SpriteGlyphCreateInformation value = new SpriteGlyphCreateInformation();
 			value.Font = null;
 			value.Glyph = 0;
-			value.Size = 8f;
+			value.DefaultSize = 8f;
 			value.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
 			value.AnimationPlayback = SpriteAnimationPlayback.None;
 			value.Animation = SpriteSheetGridAnimation.Default();
@@ -28,11 +28,11 @@ namespace bs
 			return value;
 		}
 
-		public SpriteGlyphCreateInformation(SpriteImageInformation spriteImageInformation, RRef<Font> font, int glyph, float size)
+		public SpriteGlyphCreateInformation(SpriteImageInformation spriteImageInformation, RRef<Font> font, int glyph, float defaultSize)
 		{
 			this.Font = font;
 			this.Glyph = glyph;
-			this.Size = size;
+			this.DefaultSize = defaultSize;
 			this.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
 			this.AnimationPlayback = SpriteAnimationPlayback.None;
 			this.Animation = SpriteSheetGridAnimation.Default();
@@ -65,9 +65,12 @@ namespace bs
 		public RRef<Font> Font;
 		/// <summary>Unicode code for the glyph to render.</summary>
 		public int Glyph;
-		/// <summary>Size of the glyph in points.</summary>
-		public float Size;
-		/// <summary>Range in the atlas texture that the image maps to.</summary>
+		/// <summary>
+		/// Size of the unscaled glyph in points. Actual rendered size might be different depending on DPI scale or other scale 
+		/// factors.
+		/// </summary>
+		public float DefaultSize;
+		/// <summary>Range in the atlas texture that the image is to be read from, in [0, 1] range.</summary>
 		public TArea2<float,float> UVRange;
 		/// <summary>Determines if animation is enabled and how should it play.</summary>
 		public SpriteAnimationPlayback AnimationPlayback;

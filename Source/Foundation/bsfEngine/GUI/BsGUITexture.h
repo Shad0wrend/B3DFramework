@@ -64,7 +64,7 @@ namespace bs
 		ImageSprite* mImageSprite;
 		HSpriteImage mActiveImage;
 		GUILogicalSize mActiveImageSize{BsZero};
-		ImageSpriteInformation mDesc;
+		ImageSpriteInformation mImageSpriteInformation;
 		TextureScaleMode mScaleMode;
 		bool mTransparent;
 		bool mUsingStyleTexture;

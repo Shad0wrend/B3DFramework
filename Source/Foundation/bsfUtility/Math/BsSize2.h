@@ -190,7 +190,9 @@ namespace bs
 	};
 
 	template<> const TSize2<u32> TSize2<u32>::kZero{BsZero};
+	template<> const TSize2<i32> TSize2<i32>::kZero{BsZero};
 	template<> const TSize2<float> TSize2<float>::kZero{BsZero};
+	template<> const TSize2<double> TSize2<double>::kZero{BsZero};
 
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TSize2<float>;
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TSize2<double>;

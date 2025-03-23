@@ -39,7 +39,7 @@ void GUIBackgroundSprite::BuildRenderElements(const GUIBackgroundSpriteCreateInf
 	const u32 scale9GridBorderTop = (u32)Math::Max(borderTopLeftRadius, borderTopRightRadius) + createInformation.Rules.BorderTop.GetVisibleWidth();
 	const u32 scale9GridBorderBottom = (u32)Math::Max(borderBottomLeftRadius, borderBottomRightRadius) + createInformation.Rules.BorderBottom.GetVisibleWidth();
 
-	Size2UI vectorShapeSize = createInformation.Size;
+	Size2I vectorShapeSize = createInformation.Size.To<i32>();
 
 	// Note: If I support gradients, this also needs to check if using gradients for the center, as we cannot use the approach in that case.
 	const bool canUseScale9Grid = (scale9GridBorderLeft + scale9GridBorderRight) < createInformation.Size.Width && (scale9GridBorderBottom + scale9GridBorderTop) < createInformation.Size.Height && mBackgroundPathBuilder == GUIBackgroundVectorPathBuilder::Get();
@@ -50,17 +50,16 @@ void GUIBackgroundSprite::BuildRenderElements(const GUIBackgroundSpriteCreateInf
 		mBackgroundSpriteInformation.BorderTop = scale9GridBorderTop;
 		mBackgroundSpriteInformation.BorderBottom = scale9GridBorderBottom;
 
-		vectorShapeSize.Width = scale9GridBorderLeft + scale9GridBorderRight + 1;
-		vectorShapeSize.Height = scale9GridBorderTop + scale9GridBorderBottom + 1;
+		vectorShapeSize.Width = (i32)scale9GridBorderLeft + (i32)scale9GridBorderRight + 1;
+		vectorShapeSize.Height = (i32)scale9GridBorderTop + (i32)scale9GridBorderBottom + 1;
 	}
 
-	mBackgroundSpriteInformation.Width = createInformation.Size.Width;
-	mBackgroundSpriteInformation.Height = createInformation.Size.Height;
+	mBackgroundSpriteInformation.Size = createInformation.Size.To<i32>();
 
 	if(mBackgroundPathBuilder)
 	{
 		SpriteVectorPathCreateInformation spriteVectorPathCreateInformation;
-		spriteVectorPathCreateInformation.Size = vectorShapeSize;
+		spriteVectorPathCreateInformation.DefaultSize = vectorShapeSize;
 		spriteVectorPathCreateInformation.VectorPath = mBackgroundPathBuilder->BuildPath(vectorShapeSize, createInformation.Rules);
 
 		mBackgroundSpriteInformation.Image = SpriteVectorPath::Create(spriteVectorPathCreateInformation);
@@ -93,7 +92,7 @@ void GUIBackgroundSprite::SetAnimationStartTime(float time)
 void GUIContentSprites::BuildRenderElements(const GUIContentSpriteCreateInformation& createInformation, TInlineArray<GUIRenderElement, 4>& outRenderElements)
 {
 	const Area2I contentArea = createInformation.ContentArea;
-	const Size2UI contentAreaSize(contentArea.Width, contentArea.Height);
+	const Size2I contentAreaSize = contentArea.GetSize().To<i32>();
 
 	const bool isContentTextAvailable = !createInformation.Content.Text.GetValue().empty();
 	if(isContentTextAvailable)
@@ -107,11 +106,12 @@ void GUIContentSprites::BuildRenderElements(const GUIContentSpriteCreateInformat
 	const bool isContentImageAvailable = contentImage.IsLoaded(false);
 	if(isContentImageAvailable)
 	{
-		const Size2UI scaledImageSize = CalculateScaledImageSize(contentImage, contentAreaSize);
+		// Note: We always scale content to fill the available area, without stretching or cropping. We might want to give the user an option on which approach to use,
+		// e.g. scale by scale/DPI, stretch to fit, crop to fit
+		const Size2I scaledImageSize = CalculateScaledImageSize(contentImage, contentAreaSize);
 
 		mContentImageSpriteInformation.Image = contentImage;
-		mContentImageSpriteInformation.Width = scaledImageSize.Width;
-		mContentImageSpriteInformation.Height = scaledImageSize.Height;
+		mContentImageSpriteInformation.Size = scaledImageSize;
 		mContentImageSpriteInformation.Color = createInformation.Tint;
 
 		mContentImageSpriteInformation.Color *= createInformation.Rules.Color;
@@ -144,8 +144,7 @@ TextSpriteInformation GUIContentSprites::BuildTextSpriteInformation(const Area2I
 	TextSpriteInformation textSpriteInformation;
 
 	textSpriteInformation.Text = text;
-	textSpriteInformation.Width = contentArea.Width;
-	textSpriteInformation.Height = contentArea.Height;
+	textSpriteInformation.Size = Size2I((i32)contentArea.Width, (i32)contentArea.Height);
 	textSpriteInformation.WordWrap = wordWrap;
 
 	textSpriteInformation.InitializeFromStyleSheetRules(rules);
@@ -160,17 +159,17 @@ void GUIContentSprites::SetAnimationStartTime(float time)
 	mContentImageSpriteInformation.AnimationStartTime = time;
 }
 
-Size2UI GUIContentSprites::CalculateScaledImageSize(const HSpriteImage& image, const Size2UI& size)
+Size2I GUIContentSprites::CalculateScaledImageSize(const HSpriteImage& image, const Size2I& size)
 {
-	const Size2UI& imageSize = image->GetSize();
-	u32 contentWidth = imageSize.Width;
-	u32 contentHeight = imageSize.Height;
+	const Size2I& imageSize = image->GetDefaultAllocatedImage().GetSize();
+	i32 contentWidth = imageSize.Width;
+	i32 contentHeight = imageSize.Height;
 
-	const u32 contentMaxWidth = Math::Min(size.Width, contentWidth);
-	const u32 contentMaxHeight = Math::Min(size.Height, contentHeight);
+	const i32 contentMaxWidth = size.Width;
+	const i32 contentMaxHeight = size.Height;
 
-	float horzRatio = contentMaxWidth / (float)contentWidth;
-	float vertRatio = contentMaxHeight / (float)contentHeight;
+	float horzRatio = (float)contentMaxWidth / (float)contentWidth;
+	float vertRatio = (float)contentMaxHeight / (float)contentHeight;
 
 	if(horzRatio < vertRatio)
 	{
@@ -183,7 +182,7 @@ Size2UI GUIContentSprites::CalculateScaledImageSize(const HSpriteImage& image, c
 		contentHeight = Math::RoundToI32(contentHeight * vertRatio);
 	}
 
-	return Size2UI(contentWidth, contentHeight);
+	return Size2I(contentWidth, contentHeight);
 }
 
 void GUIContentSprites::CalculateContentBounds(const Area2I& contentArea, const Size2UI& imageSize, const Size2UI& textSize, GUIImagePosition imagePosition, Area2& outTextBounds, Area2& outImageBounds)
@@ -260,7 +259,8 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 
 void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIElementState state, const GUIContent& content, GUIContentSprites& sprites, const Vector2I& offset, u32 depth, bool wordWrap)
 {
-	const Size2UI size = element.mAbsoluteSize.To<u32>();
+	const GUILogicalSize& logicalSize = element.GetLayoutData().Size;
+	const Size2UI physicalSize = element.mAbsoluteSize.To<u32>();
 	const u64 batchId = (u64)element.GetParentWidget();
 	const Color& tint = element.GetTint();
 
@@ -268,25 +268,29 @@ void GUISpriteHelper::BuildSpriteRenderElements(GUIInteractable& element, GUIEle
 		return;
 
 	const GUIStyleSheetRules& styleSheetRules = element.mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-	GUIContentSpriteCreateInformation contentSpriteCreateInformation(size, content, styleSheetRules, tint, element.mAbsoluteScale, batchId);
+	const GUILogicalArea logicalContentArea = GUIUtility::RemovePaddingAndBorder(logicalSize, styleSheetRules);
+	const GUIPhysicalArea physicalContentArea = GUIUtility::LogicalToPhysical(logicalContentArea, element.GetAbsoluteScale());
+
+	GUIContentSpriteCreateInformation contentSpriteCreateInformation(physicalSize, content, styleSheetRules, tint, element.mAbsoluteScale, batchId);
 	contentSpriteCreateInformation.Depth = depth;
 	contentSpriteCreateInformation.Offset = offset;
-	contentSpriteCreateInformation.ContentArea = GUIUtility::CalculateContentArea(size.To<GUILogicalUnit>(), styleSheetRules).To<i32, u32>();
+	contentSpriteCreateInformation.ContentArea = physicalContentArea.To<i32, u32>();
 
 	sprites.BuildRenderElements(contentSpriteCreateInformation, element.mRenderElements);
 }
 
 TextSpriteInformation GUISpriteHelper::BuildTextSpriteInformation(const GUIInteractable& element, GUIElementState state, const String& text, float fontScale, bool wordWrap)
 {
-	const Size2UI size = element.mAbsoluteSize.To<u32>();
+	const GUILogicalSize& logicalSize = element.GetLayoutData().Size;
 	const Color& tint = element.GetTint();
 
 	if(element.mStyleSheetRuleInformation.CurrentStateRuleset != nullptr)
 	{
 		const GUIStyleSheetRules& styleSheetRules = element.mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
-		const Area2I contentArea = GUIUtility::CalculateContentArea(size.To<GUILogicalUnit>(), styleSheetRules).To<i32, u32>();
+		const GUILogicalArea logicalContentArea = GUIUtility::RemovePaddingAndBorder(logicalSize, styleSheetRules);
+		const GUIPhysicalArea physicalContentArea = GUIUtility::LogicalToPhysical(logicalContentArea, element.GetAbsoluteScale());
 
-		return GUIContentSprites::BuildTextSpriteInformation(contentArea, text, styleSheetRules, tint, fontScale, wordWrap);
+		return GUIContentSprites::BuildTextSpriteInformation(physicalContentArea.To<i32, u32>(), text, styleSheetRules, tint, fontScale, wordWrap);
 	}
 
 	return TextSpriteInformation();

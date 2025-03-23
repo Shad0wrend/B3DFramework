@@ -7,8 +7,8 @@
 #include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
-#include "../../../Foundation/bsfCore/Image/BsTexture.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
+#include "../../../Foundation/bsfCore/Image/BsTexture.h"
 #include "BsScriptSpriteTextureCreateInformation.generated.h"
 
 namespace bs
@@ -22,7 +22,6 @@ namespace bs
 	void ScriptSpriteTexture::SetupScriptBindings()
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteTexture::InternalGetRef);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAtlasTexture", (void*)&ScriptSpriteTexture::InternalSetAtlasTexture);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteTexture::InternalCreate);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteTexture::InternalCreate0);
 
@@ -41,19 +40,6 @@ namespace bs
 	MonoObject* ScriptSpriteTexture::InternalGetRef(ScriptSpriteTexture* self)
 	{
 		return self->GetOrCreateResourceReference();
-	}
-
-	void ScriptSpriteTexture::InternalSetAtlasTexture(ScriptSpriteTexture* self, MonoObject* texture)
-	{
-		if(!self->IsNativeObjectValid())
-			return;
-
-		TResourceHandle<Texture> tmptexture;
-		ScriptRRefBase* scriptObjectWrappertexture;
-		scriptObjectWrappertexture = ScriptRRefBase::GetScriptObjectWrapper(texture);
-		if(scriptObjectWrappertexture != nullptr)
-			tmptexture = B3DStaticResourceCast<Texture>(scriptObjectWrappertexture->GetNativeObject());
-		static_cast<SpriteTexture*>(self->GetNativeObject())->SetAtlasTexture(tmptexture);
 	}
 
 	void ScriptSpriteTexture::InternalCreate(MonoObject* scriptObject, MonoObject* texture)

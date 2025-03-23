@@ -27,16 +27,15 @@ GUIPhysicalArea GUIInputCaret::GetBounds() const
 
 void GUIInputCaret::UpdateSprite()
 {
-	ImageSpriteInformation mCaretDesc;
-	mCaretDesc.Width = 1;
-	mCaretDesc.Height = (i32)GetCaretHeight();
-	mCaretDesc.Image = GUIManager::Instance().GetCaretTexture();
+	ImageSpriteInformation createSpriteInformation;
+	createSpriteInformation.Size = Size2I(1, (i32)GetCaretHeight());
+	createSpriteInformation.Image = GUIManager::Instance().GetCaretTexture();
 
 	GUIWidget* widget = nullptr;
 	if(mElement != nullptr)
 		widget = mElement->GetParentWidget();
 
-	mCaretSprite->Update(mCaretDesc, (u64)widget);
+	mCaretSprite->Update(createSpriteInformation, (u64)widget);
 }
 
 void GUIInputCaret::MoveCaretToStart()

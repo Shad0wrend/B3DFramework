@@ -418,25 +418,24 @@ void GUICanvas::BuildImageElement(const CanvasElement& element)
 
 	const ImageElementData& imageData = mImageData[element.DataId];
 
-	ImageSpriteInformation desc;
-	desc.Width = (u32)imageData.Area.Width;
-	desc.Height = (u32)imageData.Area.Height;
+	ImageSpriteInformation imageSpriteInformation;
+	imageSpriteInformation.Size = imageData.Area.GetSize().To<i32>();
 
-	desc.Transparent = true;
-	desc.Color = element.Color;
+	imageSpriteInformation.Transparent = true;
+	imageSpriteInformation.Color = element.Color;
 
 	Size2I textureSize(BsZero);
-	if(SpriteImage::CheckIsLoaded(imageData.Image))
+	if(imageData.Image.IsLoaded())
 	{
-		desc.Image = imageData.Image;
+		imageSpriteInformation.Image = imageData.Image;
 
-		textureSize = desc.Image->GetSize().To<i32>();
+		textureSize = imageSpriteInformation.Image->GetDefaultAllocatedImage().GetSize();
 	}
 
 	Size2I destSize = mAbsoluteSize.To<i32>();
-	desc.UvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, element.ScaleMode);
+	imageSpriteInformation.UvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, element.ScaleMode);
 
-	element.ImageSprite->Update(desc, (u64)GetParentWidget());
+	element.ImageSprite->Update(imageSpriteInformation, (u64)GetParentWidget());
 }
 
 void GUICanvas::BuildTextElement(const CanvasElement& element)

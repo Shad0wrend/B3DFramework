@@ -63,8 +63,7 @@ namespace bs
 	/** Common information for all sprite types. */
 	struct SpriteInformation
 	{
-		u32 Width = 0; /**< Width of the sprite in pixels. */
-		u32 Height = 0; /**< Height of the sprite in pixels. */
+		Size2I Size{BsZero}; /**< Size of the sprite in pixels. */
 		bool Transparent = true; /**< Should the sprite be rendered with transparency. */
 		Color Color; /**< Color tint to apply to the sprite. */
 	};

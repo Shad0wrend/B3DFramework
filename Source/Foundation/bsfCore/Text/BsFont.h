@@ -167,6 +167,15 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		float GetClosestSize(float size) const;
 
+		/** Calculates the required font size (in points) in order to render a glyph that has width of @p width pixels. */
+		float GetPointSizeForGlyphPixelWidth(u32 glyphId, i32 width) const;
+
+		/** Calculates the required font size (in points) in order to render a glyph that has height of @p height pixels. */
+		float GetPointSizeForGlyphPixelHeight(u32 glyphId, i32 height) const;
+
+		/** Returns the size of a glyph in pixels, depending on a specific point size. */
+		Size2I GetGlyphSize(u32 glyphId, float pointSize) const;
+
 		/**
 		 * Renders glyphs for particular characters as a particular size (in points). The rendered glyphs will be added to the first
 		 * free texture page, or new texture page(s) will be allocated. Returns true if successful.
@@ -199,6 +208,9 @@ namespace bs
 		/** Creates a Font without initializing it. */
 		static SPtr<Font> CreateEmpty();
 
+		/** Retrieves font size that is quantized in a way we can use it to perform bitmap lookup. */
+		static float GetQuantizedFontSize(float size);
+
 		/** @} */
 
 	protected:
@@ -219,9 +231,6 @@ namespace bs
 		SPtr<FontBitmapInformation> GetOrCreateBitmapInformationForSize(float size);
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
-
-		/** Retrieves font size that is quantized in a way we can use it to perform bitmap lookup. */
-		static float GetQuantizedFontSize(float size);
 
 		static constexpr u32 kFontPageSize = 1024;
 		static constexpr u32 kFontQuantizeAmount = 100; // Font sizes with 2 decimal places or lower are treated as unique size bitmaps

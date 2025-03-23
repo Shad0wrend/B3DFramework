@@ -25,9 +25,6 @@ namespace bs
 	private:
 		static MonoObject* InternalGetRef(ScriptSpriteGlyph* self);
 
-		static void InternalSetFont(ScriptSpriteGlyph* self, MonoObject* font);
-		static void InternalSetGlyph(ScriptSpriteGlyph* self, uint32_t glyph);
-		static void InternalSetGlyphSize(ScriptSpriteGlyph* self, float size);
 		static void InternalCreate(MonoObject* scriptObject, MonoObject* font, uint32_t glyph, float size);
 		static void InternalCreate0(MonoObject* scriptObject, __SpriteGlyphCreateInformationInterop* createInformation);
 	};

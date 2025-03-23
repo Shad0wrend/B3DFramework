@@ -33,7 +33,6 @@ namespace bs
 	private:
 		static MonoObject* InternalGetRef(ScriptSpriteImageWrapperBase* self);
 
-		static void InternalGetSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output);
 		static void InternalGetAnimationFrameSize(ScriptSpriteImageWrapperBase* self, TSize2<uint32_t>* __output);
 		static MonoObject* InternalGetAtlasTexture(ScriptSpriteImageWrapperBase* self);
 		static void InternalSetUVRange(ScriptSpriteImageWrapperBase* self, TArea2<float, float>* uvRange);

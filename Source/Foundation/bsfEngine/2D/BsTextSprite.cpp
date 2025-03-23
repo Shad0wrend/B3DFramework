@@ -29,7 +29,7 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 	B3DMarkAllocatorFrame();
 	{
 		const U32String utf32text = UTF8::ToUtF32(information.Text);
-		TTextGeometry<FrameAllocatorTag> textGeometry(utf32text, information.Font, information.FontSize, information.Width, information.Height, information.WordWrap, information.WordBreak);
+		TTextGeometry<FrameAllocatorTag> textGeometry(utf32text, information.Font, information.FontSize, (u32)information.Size.Width, (u32)information.Size.Height, information.WordWrap, information.WordBreak);
 
 		const u32 pageCount = textGeometry.GetPageCount();
 
@@ -83,7 +83,7 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 			SpriteRenderElement& renderElement = mCachedRenderElements[pageIndex].RenderElement;
 
 			const u32 quadCount = renderElement.VertexCount / 4;
-			BuildTextQuads(pageIndex, textGeometry, information.Width, information.Height, information.HorzAlign, information.VertAlign, information.Anchor, renderElement.VertexPositions, renderElement.VertexUVs, renderElement.Indices, quadCount);
+			BuildTextQuads(pageIndex, textGeometry, (u32)information.Size.Width, (u32)information.Size.Height, information.HorzAlign, information.VertAlign, information.Anchor, renderElement.VertexPositions, renderElement.VertexUVs, renderElement.Indices, quadCount);
 		}
 	}
 

@@ -30,23 +30,8 @@ namespace bs
 		}
 
 		/// <summary>
-		/// Returns the pixel size of the UV subrange covered in the texture atlas. If the image includes animation, this will 
-		/// return the size of the entire animation grid.
-		/// </summary>
-		[NativeWrapper]
-		public TSize2<int> Size
-		{
-			get
-			{
-				TSize2<int> temp;
-				Internal_GetSize(mCachedPtr, out temp);
-				return temp;
-			}
-		}
-
-		/// <summary>
-		/// Returns the size of a single animation frame in pixels. If the texture has no animation this is the same as 
-		/// GetWidth().
+		/// Returns the size of a single animation frame in logical pixel units. If the texture has no animation this is the same 
+		/// as GetLogicalSize().
 		/// </summary>
 		[NativeWrapper]
 		public TSize2<int> AnimationFrameSize
@@ -117,8 +102,6 @@ namespace bs
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<SpriteImage> Internal_GetRef(IntPtr thisPtr);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetSize(IntPtr thisPtr, out TSize2<int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetAnimationFrameSize(IntPtr thisPtr, out TSize2<int> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]

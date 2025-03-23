@@ -915,6 +915,18 @@ namespace bs
 	template <class T, bool IsRenderProxy>
 	using CoreVariantHandleType = typename CoreVariantHandle<T, IsRenderProxy>::Type;
 
+	/** Checks if the object is not null. */
+	template<class T>
+	bool IsValid(const SPtr<T>& object) { return object != nullptr; }
+
+	/** Checks if the object is not null. */
+	template<class T>
+	bool IsValid(const TResourceHandle<T>& object) { return object.IsValid(); }
+
+	/** Checks if the object is not null. */
+	template<class T>
+	bool IsValid(const GameObjectHandle<T>& object) { return object.IsValid(); }
+
 	/** Flags that are provided to the serialization system to control serialization/deserialization. */
 	enum SerializationFlags
 	{
