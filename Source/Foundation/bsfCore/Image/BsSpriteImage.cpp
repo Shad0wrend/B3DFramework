@@ -30,8 +30,42 @@ SpriteImageAllocation::~SpriteImageAllocation()
 	owner->DeallocateImage(this);
 }
 
-template B3D_CORE_EXPORT struct TSpriteImageAllocation<true>;
-template B3D_CORE_EXPORT struct TSpriteImageAllocation<false>;
+template class TSpriteImageAllocation<true>;
+template class TSpriteImageAllocation<false>;
+
+namespace bs
+{
+	B3D_SYNC_BLOCK_BEGIN(SpriteImageAllocation, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mOwner)
+		B3D_SYNC_BLOCK_ENTRY(mTexture)
+		B3D_SYNC_BLOCK_ENTRY(mUVRange)
+	B3D_SYNC_BLOCK_END
+}
+
+SPtr<SpriteImageAllocation> SpriteImageAllocation::Create(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange)
+{
+	SpriteImageAllocation* allocation = new(B3DAllocate<SpriteImageAllocation>()) SpriteImageAllocation(owner, atlasTexture, uvRange);
+	SPtr<SpriteImageAllocation> allocationShared = B3DMakeSharedFromExisting<SpriteImageAllocation>(allocation);
+	allocationShared->SetShared(allocationShared);
+	allocationShared->Initialize();
+
+	return allocationShared;
+}
+
+SPtr<ct::RenderProxy> SpriteImageAllocation::CreateRenderProxy() const
+{
+	ct::SpriteImageAllocation* const renderProxy = new(B3DAllocate<ct::SpriteImageAllocation>()) ct::SpriteImageAllocation();
+
+	SPtr<ct::SpriteImageAllocation> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteImageAllocation>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
+
+	return renderProxyShared;
+}
+
+RenderProxySyncPacket* SpriteImageAllocation::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
+{
+	return allocator.Construct<SyncPacket>(*this, allocator, flags);
+}
 
 void SpriteImageBase::GetAnimationFrame(float t, u32& outRow, u32& outColumn) const
 {
@@ -162,6 +196,15 @@ RTTIType* SpriteImage::GetRtti() const
 
 namespace bs { namespace ct
 {
+void SpriteImageAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
+{
+	auto* const syncPacket = data.GetSyncPacket<bs::SpriteImageAllocation::SyncPacket>();
+	if(!syncPacket)
+		return;
+
+	syncPacket->ApplySyncData(this);
+}
+
 void SpriteImage::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<bs::SpriteImage::SyncPacket>();

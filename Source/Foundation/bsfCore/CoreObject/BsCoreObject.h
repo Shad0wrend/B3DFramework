@@ -225,6 +225,22 @@ namespace bs
 
 	/** Returns associated render proxy object, or null if the object is null or has no render proxy. */
 	template<class Type>
+	WeakSPtr<CoreVariantType<Type, true>> B3DGetRenderProxy(const WeakSPtr<Type>& object)
+	{
+		SPtr<Type> strongObject = object.lock();
+		return B3DGetRenderProxy(strongObject);
+	}
+
+	/** Returns associated render proxy object, or null if the object is null or has no render proxy. */
+	template<class Type>
+	WeakSPtr<CoreVariantType<Type, true>> B3DGetRenderProxy(const WeakSPtr<const Type>& object)
+	{
+		SPtr<const Type> strongObject = object.lock();
+		return B3DGetRenderProxy(strongObject);
+	}
+
+	/** Returns associated render proxy object, or null if the object is null or has no render proxy. */
+	template<class Type>
 	SPtr<CoreVariantType<Type, true>> B3DGetRenderProxy(const TResourceHandle<Type>& object)
 	{
 		return !object.IsLoaded(false) ? nullptr : std::static_pointer_cast<CoreVariantType<Type, true>>(object->GetRenderProxy());

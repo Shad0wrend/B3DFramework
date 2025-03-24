@@ -28,15 +28,27 @@ namespace bs
 	};
 
 	/** Provides information about a particular sprite vector path image allocated within a texture atlas. */
-	struct SpriteVectorPathAllocation : SpriteImageAllocation
+	class SpriteVectorPathAllocation : public SpriteImageAllocation
 	{
+	public:
+		struct SyncPacket;
+
+		/** Creates a new sprite vector path allocation. */
+		static SPtr<SpriteVectorPathAllocation> Create(const WeakSPtr<SpriteImageType>& owner, const GUIVectorSpriteAtlasAllocation& vectorSpriteAtlasAllocation);
+
+	protected:
+		friend class ct::SpriteVectorPathAllocation;
+
 		SpriteVectorPathAllocation(const WeakSPtr<SpriteImageType>& owner, const GUIVectorSpriteAtlasAllocation& vectorSpriteAtlasAllocation)
 			:SpriteImageAllocation(owner, vectorSpriteAtlasAllocation.AtlasTexture, vectorSpriteAtlasAllocation.UVRange), mVectorSpriteAtlasAllocationHandle(vectorSpriteAtlasAllocation.AllocationHandle)
 		{ }
 
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
+
 	private:
 		/** Allocation handle in the vector path atlas. */
-		SPtr<GUIVectorSpriteAtlasAllocationHandle> mVectorSpriteAtlasAllocationHandle; 
+		SPtr<GUIVectorSpriteAtlasAllocationHandle> mVectorSpriteAtlasAllocationHandle;
 	};
 
 	/** @} */
@@ -128,9 +140,18 @@ namespace bs
 		 */
 
 		/** @copydoc bs::SpriteVectorPathAllocation. */
-		struct SpriteVectorPathAllocation : SpriteImageAllocation
+		class SpriteVectorPathAllocation : public SpriteImageAllocation
 		{
-			using SpriteImageAllocation::SpriteImageAllocation;
+		public:
+			SpriteVectorPathAllocation() = default;
+
+		private:
+			friend class bs::SpriteVectorPathAllocation;
+
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
+
+			/** Allocation handle in the vector path atlas. */
+			SPtr<GUIVectorSpriteAtlasAllocationHandle> mVectorSpriteAtlasAllocationHandle;
 		};
 
 		/**
@@ -140,7 +161,6 @@ namespace bs
 		 */
 		class B3D_CORE_EXPORT SpriteVectorPath : public CoreVariantType<SpriteImage, true>
 		{
-		public:
 		private:
 			friend class bs::SpriteVectorPath;
 

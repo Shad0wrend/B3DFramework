@@ -15,6 +15,43 @@ using namespace bs;
 
 namespace bs
 {
+	B3D_SYNC_BLOCK_BEGIN(SpriteVectorPathAllocation, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mVectorSpriteAtlasAllocationHandle)
+		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImageAllocation, SpriteImageSyncPacket)
+	B3D_SYNC_BLOCK_END
+}
+
+SPtr<SpriteVectorPathAllocation> SpriteVectorPathAllocation::Create(const WeakSPtr<SpriteImageType>& owner, const GUIVectorSpriteAtlasAllocation& vectorSpriteAtlasAllocation)
+{
+	SpriteVectorPathAllocation* allocation = new(B3DAllocate<SpriteVectorPathAllocation>()) SpriteVectorPathAllocation(owner, vectorSpriteAtlasAllocation);
+	SPtr<SpriteVectorPathAllocation> allocationShared = B3DMakeSharedFromExisting<SpriteVectorPathAllocation>(allocation);
+	allocationShared->SetShared(allocationShared);
+	allocationShared->Initialize();
+
+	return allocationShared;
+}
+
+SPtr<ct::RenderProxy> SpriteVectorPathAllocation::CreateRenderProxy() const
+{
+	ct::SpriteVectorPathAllocation* const renderProxy = new(B3DAllocate<ct::SpriteVectorPathAllocation>()) ct::SpriteVectorPathAllocation();
+
+	SPtr<ct::SpriteVectorPathAllocation> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteVectorPathAllocation>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
+
+	return renderProxyShared;
+}
+
+RenderProxySyncPacket* SpriteVectorPathAllocation::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
+{
+	auto syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	if(B3D_ENSURE(syncPacket))
+		syncPacket->SpriteImageSyncPacket = SpriteImageAllocation::CreateRenderProxySyncPacket(allocator, flags);
+
+	return syncPacket;
+}
+
+namespace bs
+{
 	B3D_SYNC_BLOCK_BEGIN(SpriteVectorPath, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImage, SpriteImageSyncPacket)
 	B3D_SYNC_BLOCK_END
@@ -38,7 +75,7 @@ SPtr<SpriteImageAllocation> SpriteVectorPath::FindOrAllocateImageToFitArea(const
 	});
 
 	if(foundImage != mScaledAllocatedImages.end())
-		return (*foundImage)->shared_from_this();
+		return std::static_pointer_cast<SpriteImageAllocation>((*foundImage)->GetShared());
 
 	SPtr<SpriteVectorPathAllocation> allocation = AllocateImage(size);
 	mScaledAllocatedImages.Add(allocation.get());
@@ -69,7 +106,7 @@ SPtr<SpriteVectorPathAllocation> SpriteVectorPath::AllocateImage(const Size2I& s
 		spriteAtlasAllocation = vectorSpriteAtlas.Allocate(*mVectorPath, vectorGraphicsSettings);
 	}
 
-	return B3DMakeShared<SpriteVectorPathAllocation>(std::static_pointer_cast<SpriteVectorPath>(GetShared()), spriteAtlasAllocation);
+	return SpriteVectorPathAllocation::Create(std::static_pointer_cast<SpriteVectorPath>(GetShared()), spriteAtlasAllocation);
 }
 
 void SpriteVectorPath::Initialize()
@@ -153,6 +190,15 @@ RTTIType* SpriteVectorPath::GetRtti() const
 
 namespace bs { namespace ct
 {
+void SpriteVectorPathAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
+{
+	auto* const syncPacket = data.GetSyncPacket<bs::SpriteVectorPathAllocation::SyncPacket>();
+	if(!syncPacket)
+		return;
+
+	syncPacket->ApplySyncData(this);
+}
+
 SpriteVectorPath::SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation)
 	: SpriteImage(createInformation)
 {

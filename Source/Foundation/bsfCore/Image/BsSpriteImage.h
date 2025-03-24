@@ -80,14 +80,13 @@ namespace bs
 	 * One sprite image may have one or multiple such allocations, resulting from different scale/size requirements.
 	 */
 	template<bool IsRenderProxy>
-	struct B3D_CORE_EXPORT TSpriteImageAllocation
+	class B3D_CORE_EXPORT TSpriteImageAllocation
 	{
+	public:
 		using SpriteImageType = CoreVariantType<SpriteImage, IsRenderProxy>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 
-		TSpriteImageAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange)
-			:mOwner(owner), mTexture(atlasTexture), mUVRange(uvRange)
-		{ }
+		virtual ~TSpriteImageAllocation() = default;
 
 		/** Retrieves the texture where the image is stored. */
 		const TextureType& GetTexture() const { return mTexture; }
@@ -102,6 +101,11 @@ namespace bs
 		Vector2 TransformUV(const Vector2& uv) const { return Vector2(mUVRange.X + uv.X * mUVRange.Width, mUVRange.Y + uv.Y * mUVRange.Height); }
 
 	protected:
+		TSpriteImageAllocation() = default;
+		TSpriteImageAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange)
+			:mOwner(owner), mTexture(atlasTexture), mUVRange(uvRange)
+		{ }
+
 		/** Owner sprite image that this allocation is a part of. */
 		WeakSPtr<SpriteImageType> mOwner;
 
@@ -113,10 +117,23 @@ namespace bs
 	};
 
 	/** @copydoc TSpriteImageAllocation. */
-	struct SpriteImageAllocation : TSpriteImageAllocation<false>, std::enable_shared_from_this<SpriteImageAllocation>
+	class SpriteImageAllocation : public CoreObject, public TSpriteImageAllocation<false>
 	{
+	public:
+		struct SyncPacket;
+
 		virtual ~SpriteImageAllocation();
+
+		/** Creates a new sprite image allocation. */
+		static SPtr<SpriteImageAllocation> Create(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange);
+
+	protected:
+		friend class ct::SpriteImageAllocation;
+
 		using TSpriteImageAllocation::TSpriteImageAllocation;
+
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 	};
 
 	/** Descriptor structure used for initialization of a SpriteImage. */
@@ -303,9 +320,13 @@ namespace bs
 		 */
 
 		/** @copydoc TSpriteImageAllocation. */
-		struct SpriteImageAllocation : TSpriteImageAllocation<true>
+		class SpriteImageAllocation : public RenderProxy, public TSpriteImageAllocation<true>
 		{
-			using TSpriteImageAllocation::TSpriteImageAllocation;
+		protected:
+			friend class bs::SpriteImageAllocation;
+
+			SpriteImageAllocation() = default;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/**

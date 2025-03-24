@@ -28,7 +28,7 @@ SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInforma
 
 void SpriteTexture::Initialize()
 {
-	mDefaultAllocatedImage = B3DMakeShared<SpriteImageAllocation>(std::static_pointer_cast<SpriteTexture>(GetShared()), mAtlasTexture, mUVRange);
+	mDefaultAllocatedImage = SpriteImageAllocation::Create(std::static_pointer_cast<SpriteTexture>(GetShared()), mAtlasTexture, mUVRange);
 	AddResourceDependency(mAtlasTexture);
 
 	SpriteImage::Initialize();

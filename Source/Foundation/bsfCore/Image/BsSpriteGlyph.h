@@ -26,26 +26,42 @@ namespace bs
 
 	/** Provides information about a particular glyph image allocated within a texture atlas. */
 	template<bool IsRenderProxy>
-	struct TSpriteGlyphAllocation : CoreVariantType<SpriteImageAllocation, IsRenderProxy>
+	class TSpriteGlyphAllocation : public CoreVariantType<SpriteImageAllocation, IsRenderProxy>
 	{
+	public:
 		using SpriteImageType = CoreVariantType<SpriteImage, IsRenderProxy>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 
+		/** Size of the allocated glyph in points. */
+		float GetSizeInPoints() const { return mSizeInPoints; }
+
+	protected:
+		TSpriteGlyphAllocation() = default;
 		TSpriteGlyphAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& texture, const Area2& uvRange, float sizeInPoints)
 			:CoreVariantType<SpriteImageAllocation, IsRenderProxy>(owner, texture, uvRange), mSizeInPoints(sizeInPoints)
 		{ }
 
-		/** Size of the allocated glyph in points. */
-		float GetSizeInPoints() const { return mSizeInPoints; }
 
 	private:
 		float mSizeInPoints;
 	};
 
 	/** @copydoc TSpriteGlyphAllocation. */
-	struct SpriteGlyphAllocation : TSpriteGlyphAllocation<false>
+	class SpriteGlyphAllocation : public TSpriteGlyphAllocation<false>
 	{
+	public:
+		struct SyncPacket;
+
+		/** Creates a new sprite glyph allocation. */
+		static SPtr<SpriteGlyphAllocation> Create(const WeakSPtr<SpriteImageType>& owner, const TextureType& texture, const Area2& uvRange, float sizeInPoints);
+
+	protected:
+		friend class ct::SpriteGlyphAllocation;
+
 		using TSpriteGlyphAllocation::TSpriteGlyphAllocation;
+
+		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 	};
 
 	/** @} */
@@ -137,9 +153,13 @@ namespace bs
 		 */
 
 		/** @copydoc TSpriteGlyphAllocation. */
-		struct SpriteGlyphAllocation : TSpriteGlyphAllocation<true>
+		class SpriteGlyphAllocation : public TSpriteGlyphAllocation<true>
 		{
-			using TSpriteGlyphAllocation::TSpriteGlyphAllocation;
+		protected:
+			friend class bs::SpriteGlyphAllocation;
+
+			SpriteGlyphAllocation() = default;
+			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/**

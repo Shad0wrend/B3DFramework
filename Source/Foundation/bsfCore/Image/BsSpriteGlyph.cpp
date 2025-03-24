@@ -12,6 +12,43 @@ using namespace bs;
 
 namespace bs
 {
+	B3D_SYNC_BLOCK_BEGIN(SpriteGlyphAllocation, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImageAllocation, SpriteImageSyncPacket)
+	B3D_SYNC_BLOCK_END
+}
+
+SPtr<SpriteGlyphAllocation> SpriteGlyphAllocation::Create(const WeakSPtr<SpriteImageType>& owner, const TextureType& texture, const Area2& uvRange, float sizeInPoints)
+{
+	SpriteGlyphAllocation* allocation = new(B3DAllocate<SpriteGlyphAllocation>()) SpriteGlyphAllocation(owner, texture, uvRange, sizeInPoints);
+	SPtr<SpriteGlyphAllocation> allocationShared = B3DMakeSharedFromExisting<SpriteGlyphAllocation>(allocation);
+	allocationShared->SetShared(allocationShared);
+	allocationShared->Initialize();
+
+	return allocationShared;
+}
+
+
+SPtr<ct::RenderProxy> SpriteGlyphAllocation::CreateRenderProxy() const
+{
+	ct::SpriteGlyphAllocation* const renderProxy = new(B3DAllocate<ct::SpriteGlyphAllocation>()) ct::SpriteGlyphAllocation();
+
+	SPtr<ct::SpriteGlyphAllocation> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteGlyphAllocation>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
+
+	return renderProxyShared;
+}
+
+RenderProxySyncPacket* SpriteGlyphAllocation::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
+{
+	auto syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	if(B3D_ENSURE(syncPacket))
+		syncPacket->SpriteImageSyncPacket = SpriteImageAllocation::CreateRenderProxySyncPacket(allocator, flags);
+
+	return syncPacket;
+}
+
+namespace bs
+{
 	B3D_SYNC_BLOCK_BEGIN(SpriteGlyph, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImage, SpriteImageSyncPacket)
 	B3D_SYNC_BLOCK_END
@@ -36,7 +73,7 @@ SPtr<SpriteImageAllocation> SpriteGlyph::FindOrAllocateImageToFitArea(const Size
 	});
 
 	if(foundImage != mScaledAllocatedImages.end())
-		return (*foundImage)->shared_from_this();
+		return std::static_pointer_cast<SpriteImageAllocation>((*foundImage)->GetShared());
 	
 	return AllocateImage(sizeInPoints);
 }
@@ -49,7 +86,7 @@ SPtr<SpriteImageAllocation> SpriteGlyph::FindOrAllocateScaledImage(float scale)
 	});
 
 	if(foundImage != mScaledAllocatedImages.end())
-		return (*foundImage)->shared_from_this();
+		return std::static_pointer_cast<SpriteImageAllocation>((*foundImage)->GetShared());
 
 	return AllocateImage(sizeInPoints);
 }
@@ -73,7 +110,7 @@ SPtr<SpriteGlyphAllocation> SpriteGlyph::AllocateImage(float sizeInPoints)
 		uvRange = Area2(found->second.UvX, found->second.UvY, found->second.UvWidth, found->second.UvHeight);
 	}
 
-	SPtr<SpriteGlyphAllocation> allocation = B3DMakeShared<SpriteGlyphAllocation>(std::static_pointer_cast<SpriteGlyph>(GetShared()), atlasTexture, uvRange, sizeInPoints);
+	SPtr<SpriteGlyphAllocation> allocation = SpriteGlyphAllocation::Create(std::static_pointer_cast<SpriteGlyph>(GetShared()), atlasTexture, uvRange, sizeInPoints);
 	mScaledAllocatedImages.Add(allocation.get());
 
 	// TODO - We should have the ability to release glyphs from the font when no longer needed
@@ -163,6 +200,15 @@ RTTIType* SpriteGlyph::GetRtti() const
 
 namespace bs { namespace ct
 {
+void SpriteGlyphAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
+{
+	auto* const syncPacket = data.GetSyncPacket<bs::SpriteGlyphAllocation::SyncPacket>();
+	if(!syncPacket)
+		return;
+
+	syncPacket->ApplySyncData(this);
+}
+
 SpriteGlyph::SpriteGlyph(const SpriteGlyphCreateInformation& createInformation)
 	: SpriteImage(createInformation)
 { }

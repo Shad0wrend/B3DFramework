@@ -64,21 +64,21 @@ namespace bs
 
 	/** Pass non-shared-pointers as is, they aren't core objects. */
 	template <class T>
-	T&& GetRenderProxy(T&& value, std::enable_if_t<!B3DIsSharedPointer<std::decay_t<T>>::value>* = 0)
+	T&& GetRenderProxy(T&& value, std::enable_if_t<!B3DIsSharedPointer<std::decay_t<T>>::value && !B3DIsWeakSharedPointer<std::decay_t<T>>::value>* = 0)
 	{
 		return std::forward<T>(value);
 	}
 
 	/** Pass shared-pointers to non-classes as is, they aren't core objects. */
 	template <class T>
-	T&& GetRenderProxy(T&& value, std::enable_if_t<B3DIsSharedPointer<std::decay_t<T>>::value && !std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value>* = 0)
+	T&& GetRenderProxy(T&& value, std::enable_if_t<(B3DIsSharedPointer<std::decay_t<T>>::value || B3DIsWeakSharedPointer<std::decay_t<T>>::value) && !std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value>* = 0)
 	{
 		return std::forward<T>(value);
 	}
 
 	/** Pass shared-pointers to classes that don't derive from CoreObject as is, they aren't core objects. */
 	template <class T>
-	T&& GetRenderProxy(T&& value, std::enable_if_t<B3DIsSharedPointer<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && !std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
+	T&& GetRenderProxy(T&& value, std::enable_if_t<(B3DIsSharedPointer<std::decay_t<T>>::value || B3DIsWeakSharedPointer<std::decay_t<T>>::value) && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && !std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
 	{
 		return std::forward<T>(value);
 	}
@@ -92,6 +92,14 @@ namespace bs
 			return B3DGetRenderProxy(value);
 
 		return nullptr;
+	}
+
+	/** Convert shared-pointers with classes that derive from CoreObject to their RenderProxy variants. */
+	template <class T>
+	decltype(B3DGetRenderProxy(std::declval<T>()))
+	GetRenderProxy(T&& value, std::enable_if_t<(B3DIsWeakSharedPointer<std::decay_t<T>>::value) && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
+	{
+		return B3DGetRenderProxy(value);
 	}
 
 	/** @} */

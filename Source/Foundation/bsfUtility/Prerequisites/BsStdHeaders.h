@@ -154,6 +154,13 @@ namespace bs
 	template <typename T>
 	struct B3DIsSharedPointer<SPtr<T>> : std::true_type {};
 
+	// Checks is the provided type a weak shared pointer
+	template <typename T>
+	struct B3DIsWeakSharedPointer : std::false_type {};
+
+	template <typename T>
+	struct B3DIsWeakSharedPointer<WeakSPtr<T>> : std::true_type {};
+
 	/** Checks does the provided type define iterator type. */
 	template <typename T, typename = void>
 	struct B3DHasIterator : std::false_type { };
