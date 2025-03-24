@@ -24,6 +24,7 @@ namespace bs
 
 		/** Texture used as the atlas. */
 		TextureType AtlasTexture;
+		Area2 UVRange = Area2(0.0f, 0.0f, 1.0f, 1.0f); /**< Range in the atlas texture that the image is to be read from, in [0, 1] range. */
 	};
 
 	/** Descriptor structure used for initialization of a SpriteTexture. */
@@ -64,6 +65,14 @@ namespace bs
 		SPtr<SpriteImageAllocation> FindOrAllocateImageToFitArea(const Size2I& size) override { return mDefaultAllocatedImage; }
 		SPtr<SpriteImageAllocation> FindOrAllocateScaledImage(float scale) override { return mDefaultAllocatedImage; }
 
+		/** Retrieves the atlas texture where the image is stored. */
+		B3D_SCRIPT_EXPORT(ExportName(Texture), Property(Getter))
+		const TextureType& GetAtlasTexture() const { return mAtlasTexture; }
+
+		/** Determines the UV range that the image is referencing. */
+		B3D_SCRIPT_EXPORT(ExportName(UVRange), Property(Getter))
+		const Area2& GetUVRange() const { return mUVRange; }
+
 		/**	Creates a new sprite texture that references the entire area of the provided texture. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteTexture))
 		static HSpriteTexture Create(const HTexture& texture);
@@ -90,6 +99,9 @@ namespace bs
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
+
+		TextureType mAtlasTexture;
+		Area2 mUVRange = Area2(0.0f, 0.0f, 1.0f, 1.0f); /**< Range in the atlas texture that the image is to be read from, in [0, 1] range. */
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -129,6 +141,9 @@ namespace bs
 			SpriteTexture(const SpriteTextureCreateInformation& createInformation);
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
+
+			TextureType mAtlasTexture;
+			Area2 mUVRange = Area2(0.0f, 0.0f, 1.0f, 1.0f); /**< Range in the atlas texture that the image is to be read from, in [0, 1] range. */
 		};
 
 		/** @} */

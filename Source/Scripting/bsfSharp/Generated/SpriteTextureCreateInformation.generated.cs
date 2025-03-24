@@ -19,7 +19,7 @@ namespace bs
 		{
 			SpriteTextureCreateInformation value = new SpriteTextureCreateInformation();
 			value.AtlasTexture = null;
-			value.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
+			value.UVRange = TArea2<float,float>.Default();
 			value.AnimationPlayback = SpriteAnimationPlayback.None;
 			value.Animation = SpriteSheetGridAnimation.Default();
 

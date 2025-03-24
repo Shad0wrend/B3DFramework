@@ -68,14 +68,11 @@ namespace bs
 	/** Information about a SpriteImage. */
 	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Rendering)) SpriteImageInformation
 	{
-		/** Range in the atlas texture that the image is to be read from, in [0, 1] range. */
-		Area2 UVRange = Area2(0.0f, 0.0f, 1.0f, 1.0f); // TODO - Move to SpriteTexture
-
 		/** Determines if animation is enabled and how should it play. */
-		SpriteAnimationPlayback AnimationPlayback = SpriteAnimationPlayback::None; // TODO - Move to SpriteTexture
+		SpriteAnimationPlayback AnimationPlayback = SpriteAnimationPlayback::None;
 
 		/** Describes the sprite sheet grid used for animation, if animation is used. */
-		SpriteSheetGridAnimation Animation; // TODO - Move to SpriteTexture
+		SpriteSheetGridAnimation Animation;
 	};
 
 	/**
@@ -140,26 +137,13 @@ namespace bs
 		{ }
 		virtual ~SpriteImageBase() = default;
 
-		/** Determines the UV range that the image is referencing. */
-		B3D_SCRIPT_EXPORT(ExportName(UVRange), Property(Setter))
-		void SetUVRange(const Area2& uvRange) // TODO - Move to SpriteTexture
-		{
-			mInformation.UVRange = uvRange;
-			MarkRenderProxyDataDirtyInternal();
-		}
-
-		/** Determines the UV range that the image is referencing. */
-		B3D_SCRIPT_EXPORT(ExportName(UVRange), Property(Getter))
-		const Area2& GetUVRange() const { return mInformation.UVRange; } // TODO - Move to SpriteTexture
-
 		/**
-		 * Evaluates the UV coordinate offset and size to use at the specified animation time. If the sprite texture doesn't
-		 * have animation playback enabled then just the default offset and size will be provided, otherwise the
-		 * animation will be evaluated and appropriate UV returned.
+		 * Returns the row and column of the current animation frame for time @p t.
+		 * 
+		 * @param t				Time to evaluate the animation at.
+		 * @param outRow		Row containing the animation frame at time @p t.
+		 * @param outColumn		Column containing the animation frame at time @p t.
 		 */
-		Area2 EvaluateAnimation(float t) const;
-
-		/** Returns the row and column of the current animation frame for time @p t. */
 		void GetAnimationFrame(float t, u32& outRow, u32& outColumn) const;
 
 		/**
@@ -209,6 +193,17 @@ namespace bs
 		{ }
 		~TSpriteImage() override = default;
 
+		/**
+		 * Evaluates the UV coordinate offset and size to use at the specified animation time. If the sprite texture doesn't
+		 * have animation playback enabled then just the default offset and size will be provided, otherwise the
+		 * animation will be evaluated and appropriate UV returned.
+		 *
+		 * @param allocation	Image allocation to evaluate animation for. Must be owned by this sprite image.
+		 * @param t				Time to evaluate the animation at.
+		 * @return 				UV range of the animation frame at the specified time.
+		 */
+		Area2 EvaluateAnimation(const SpriteImageAllocationType& allocation, float t) const;
+
 		/** Returns the default (unscaled) image allocation, using the image size as provided on the sprite image construction. */
 		const SpriteImageAllocationType& GetDefaultAllocatedImage() const { return *mDefaultAllocatedImage; }
 
@@ -219,13 +214,7 @@ namespace bs
 		B3D_SCRIPT_EXPORT(ExportName(AnimationFrameSize), Property(Getter))
 		Size2UI GetAnimationFrameSize() const;
 
-		/** Retrieves the atlas texture where the image is stored. */
-		B3D_SCRIPT_EXPORT(ExportName(Texture), Property(Getter))
-		const TextureType& GetAtlasTexture() const { return mAtlasTexture; } // TODO - Remove and rely on SpriteImageAtlasAllocation instead
-
 	protected:
-		TextureType mAtlasTexture; // TODO - Move to SpriteTexture
-
 		SPtr<SpriteImageAllocationType> mDefaultAllocatedImage;
 		TInlineArray<SpriteImageAllocationType*, 2> mScaledAllocatedImages;
 	};

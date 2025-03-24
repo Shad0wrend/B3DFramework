@@ -4,8 +4,6 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
-#include "BsScriptTArea2.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
 
@@ -27,7 +25,6 @@ namespace bs
 	SpriteImageCreateInformation ScriptSpriteImageCreateInformation::FromInterop(const __SpriteImageCreateInformationInterop& value)
 	{
 		SpriteImageCreateInformation output;
-		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
 		output.Animation = value.Animation;
 
@@ -37,7 +34,6 @@ namespace bs
 	__SpriteImageCreateInformationInterop ScriptSpriteImageCreateInformation::ToInterop(const SpriteImageCreateInformation& value)
 	{
 		__SpriteImageCreateInformationInterop output;
-		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
 		output.Animation = value.Animation;
 

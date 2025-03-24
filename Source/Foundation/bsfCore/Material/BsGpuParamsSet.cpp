@@ -1056,7 +1056,7 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 					u32 writeOffset = paramInfo.Offset * sizeof(u32);
 					Area2 uv = Area2(0.0f, 0.0f, 1.0f, 1.0f);
 					if(spriteImage != nullptr)
-						uv = spriteImage->EvaluateAnimation(t);
+						uv = spriteImage->EvaluateAnimation(spriteImage->GetDefaultAllocatedImage(), t);
 
 					paramBlock->WriteCached(writeOffset, paramSize, &uv);
 

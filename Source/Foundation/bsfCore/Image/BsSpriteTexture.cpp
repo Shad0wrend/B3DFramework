@@ -14,6 +14,7 @@ namespace bs
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteTexture, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mAtlasTexture)
+		B3D_SYNC_BLOCK_ENTRY(mUVRange)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImage, SpriteImageSyncPacket)
 	B3D_SYNC_BLOCK_END
 }
@@ -22,11 +23,12 @@ SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInforma
 	: SpriteImage(createInformation)
 {
 	mAtlasTexture = createInformation.AtlasTexture;
+	mUVRange = createInformation.UVRange;
 }
 
 void SpriteTexture::Initialize()
 {
-	mDefaultAllocatedImage = B3DMakeShared<SpriteImageAllocation>(std::static_pointer_cast<SpriteTexture>(GetShared()), mAtlasTexture, mInformation.UVRange);
+	mDefaultAllocatedImage = B3DMakeShared<SpriteImageAllocation>(std::static_pointer_cast<SpriteTexture>(GetShared()), mAtlasTexture, mUVRange);
 	AddResourceDependency(mAtlasTexture);
 
 	SpriteImage::Initialize();
@@ -116,6 +118,7 @@ SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInforma
 	: SpriteImage(createInformation)
 {
 	mAtlasTexture = createInformation.AtlasTexture;
+	mUVRange = createInformation.UVRange;
 }
 
 void SpriteTexture::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)

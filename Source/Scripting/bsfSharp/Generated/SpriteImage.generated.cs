@@ -44,27 +44,6 @@ namespace bs
 			}
 		}
 
-		/// <summary>Retrieves the atlas texture where the image is stored.</summary>
-		[NativeWrapper]
-		public RRef<Texture> Texture
-		{
-			get { return Internal_GetAtlasTexture(mCachedPtr); }
-		}
-
-		/// <summary>Determines the UV range that the image is referencing.</summary>
-		[ShowInInspector]
-		[NativeWrapper]
-		public TArea2<float,float> UVRange
-		{
-			get
-			{
-				TArea2<float,float> temp;
-				Internal_GetUVRange(mCachedPtr, out temp);
-				return temp;
-			}
-			set { Internal_SetUVRange(mCachedPtr, ref value); }
-		}
-
 		/// <summary>
 		/// Sets properties describing sprite animation. The animation splits the sprite area into a grid of sub-images which can 
 		/// be evaluated over time. In order to view the animation you must also enable playback through setAnimationPlayback().
@@ -104,12 +83,6 @@ namespace bs
 		private static extern RRef<SpriteImage> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetAnimationFrameSize(IntPtr thisPtr, out TSize2<int> __output);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Texture> Internal_GetAtlasTexture(IntPtr thisPtr);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetUVRange(IntPtr thisPtr, ref TArea2<float,float> uvRange);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetUVRange(IntPtr thisPtr, out TArea2<float,float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetAnimation(IntPtr thisPtr, ref SpriteSheetGridAnimation animation);
 		[MethodImpl(MethodImplOptions.InternalCall)]

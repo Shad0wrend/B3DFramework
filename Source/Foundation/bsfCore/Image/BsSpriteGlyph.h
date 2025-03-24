@@ -64,12 +64,9 @@ namespace bs
 		struct SpriteGlyphCreateInformation : SpriteImageInformation
 		{
 			SpriteGlyphCreateInformation() = default;
-			SpriteGlyphCreateInformation(const SpriteImageInformation& spriteImageInformation, const SPtr<Texture>& atlasTexture)
-				: SpriteImageInformation(spriteImageInformation), AtlasTexture(atlasTexture)
+			SpriteGlyphCreateInformation(const SpriteImageInformation& spriteImageInformation)
+				: SpriteImageInformation(spriteImageInformation)
 			{ }
-
-			/** Texture used as the atlas. */
-			SPtr<Texture> AtlasTexture;
 		};
 
 		/** @} */
@@ -113,7 +110,6 @@ namespace bs
 		void Initialize() override;
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
-		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		HFont mFont;
 		u32 mGlyph = 0;

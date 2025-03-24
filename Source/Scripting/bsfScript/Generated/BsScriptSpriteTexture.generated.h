@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptResourceWrapper.h"
 #include "BsScriptSpriteImage.generated.h"
+#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
 
 namespace bs { class SpriteTexture; }
@@ -25,6 +26,8 @@ namespace bs
 	private:
 		static MonoObject* InternalGetRef(ScriptSpriteTexture* self);
 
+		static MonoObject* InternalGetAtlasTexture(ScriptSpriteTexture* self);
+		static void InternalGetUVRange(ScriptSpriteTexture* self, TArea2<float, float>* __output);
 		static void InternalCreate(MonoObject* scriptObject, MonoObject* texture);
 		static void InternalCreate0(MonoObject* scriptObject, __SpriteTextureCreateInformationInterop* createInformation);
 	};

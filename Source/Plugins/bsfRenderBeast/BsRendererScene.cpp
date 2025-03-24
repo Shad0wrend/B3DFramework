@@ -750,7 +750,7 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 
 	if(spriteImage)
 	{
-		const Area2 UVRange = spriteImage->GetUVRange();
+		const Area2 UVRange = spriteImage->GetDefaultAllocatedImage().GetUVRange();
 		gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, UVRange.GetPosition());
 		gParticlesParamDef.gUVScale.Set(particlesParamBuffer, Vector2(UVRange.Width, UVRange.Height));
 
@@ -917,7 +917,7 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 		// Write sprite animation curve
 		if(spriteImage)
 		{
-			const Area2 UVRange = spriteImage->GetUVRange();
+			const Area2 UVRange = spriteImage->GetDefaultAllocatedImage().GetUVRange();
 			gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, UVRange.GetPosition());
 			gParticlesParamDef.gUVScale.Set(particlesParamBuffer, Vector2(UVRange.Width, UVRange.Height));
 

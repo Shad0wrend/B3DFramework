@@ -8,8 +8,6 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 #include "BsScriptFont.generated.h"
-#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
-#include "BsScriptTArea2.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
 
@@ -39,7 +37,6 @@ namespace bs
 		output.Font = tmpFont;
 		output.Glyph = value.Glyph;
 		output.DefaultSize = value.DefaultSize;
-		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
 		output.Animation = value.Animation;
 
@@ -59,7 +56,6 @@ namespace bs
 		output.Font = tmpFont;
 		output.Glyph = value.Glyph;
 		output.DefaultSize = value.DefaultSize;
-		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
 		output.Animation = value.Animation;
 

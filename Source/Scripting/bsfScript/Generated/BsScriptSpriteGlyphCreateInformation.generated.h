@@ -5,7 +5,6 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteGlyph.h"
-#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 
@@ -16,7 +15,6 @@ namespace bs
 		MonoObject* Font;
 		uint32_t Glyph;
 		float DefaultSize;
-		TArea2<float, float> UVRange;
 		SpriteAnimationPlayback AnimationPlayback;
 		SpriteSheetGridAnimation Animation;
 	};

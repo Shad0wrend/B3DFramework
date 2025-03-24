@@ -35,6 +35,25 @@ namespace bs
 			get { return Internal_GetRef(mCachedPtr); }
 		}
 
+		/// <summary>Retrieves the atlas texture where the image is stored.</summary>
+		[NativeWrapper]
+		public RRef<Texture> Texture
+		{
+			get { return Internal_GetAtlasTexture(mCachedPtr); }
+		}
+
+		/// <summary>Determines the UV range that the image is referencing.</summary>
+		[NativeWrapper]
+		public TArea2<float,float> UVRange
+		{
+			get
+			{
+				TArea2<float,float> temp;
+				Internal_GetUVRange(mCachedPtr, out temp);
+				return temp;
+			}
+		}
+
 		/// <summary>Returns a reference wrapper for this resource.</summary>
 		public static implicit operator RRef<SpriteTexture>(SpriteTexture x)
 		{
@@ -46,6 +65,10 @@ namespace bs
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<SpriteTexture> Internal_GetRef(IntPtr thisPtr);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern RRef<Texture> Internal_GetAtlasTexture(IntPtr thisPtr);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_GetUVRange(IntPtr thisPtr, out TArea2<float,float> __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Create(SpriteTexture managedInstance, RRef<Texture> texture);
 		[MethodImpl(MethodImplOptions.InternalCall)]

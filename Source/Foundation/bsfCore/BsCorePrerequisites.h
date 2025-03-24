@@ -308,6 +308,7 @@ namespace bs
 	B3D_CORE_OBJECT_FORWARD_DECLARE_STRUCT(RenderSettings)
 	B3D_CORE_OBJECT_FORWARD_DECLARE_STRUCT(ShaderInformation)
 	B3D_CORE_OBJECT_FORWARD_DECLARE_STRUCT(ShaderCreateInformation)
+	B3D_CORE_OBJECT_FORWARD_DECLARE_STRUCT(SpriteImageAllocation)
 
 	class Collider;
 	class SamplerState;

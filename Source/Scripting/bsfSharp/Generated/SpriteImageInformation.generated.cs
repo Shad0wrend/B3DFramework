@@ -18,15 +18,12 @@ namespace bs
 		public static SpriteImageInformation Default()
 		{
 			SpriteImageInformation value = new SpriteImageInformation();
-			value.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
 			value.AnimationPlayback = SpriteAnimationPlayback.None;
 			value.Animation = SpriteSheetGridAnimation.Default();
 
 			return value;
 		}
 
-		/// <summary>Range in the atlas texture that the image is to be read from, in [0, 1] range.</summary>
-		public TArea2<float,float> UVRange;
 		/// <summary>Determines if animation is enabled and how should it play.</summary>
 		public SpriteAnimationPlayback AnimationPlayback;
 		/// <summary>Describes the sprite sheet grid used for animation, if animation is used.</summary>

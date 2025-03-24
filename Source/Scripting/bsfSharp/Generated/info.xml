@@ -5241,12 +5241,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<property name="AnimationFrameSize" type="TSize2&lt;int&gt;" getter="GetAnimationFrameSize" setter="" static="false">
 			<doc>Returns the size of a single animation frame in logical pixel units. If the texture has no animation this is the same as GetLogicalSize().</doc>
 		</property>
-		<property name="Texture" type="RRef&lt;Texture&gt;" getter="GetAtlasTexture" setter="" static="false">
-			<doc>Retrieves the atlas texture where the image is stored.</doc>
-		</property>
-		<property name="UVRange" type="TArea2&lt;float,float&gt;" getter="GetUVRange" setter="SetUVRange" static="false">
-			<doc>Determines the UV range that the image is referencing.</doc>
-		</property>
 		<property name="Animation" type="SpriteSheetGridAnimation" getter="GetAnimation" setter="SetAnimation" static="false">
 			<doc>Sets properties describing sprite animation. The animation splits the sprite area into a grid of sub-images which can be evaluated over time. In order to view the animation you must also enable playback through setAnimationPlayback().</doc>
 		</property>
@@ -7754,9 +7748,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<doc>Information about a SpriteImage.</doc>
 		<ctor>
 		</ctor>
-		<field name="UVRange" type="TArea2&lt;float,float&gt;">
-			<doc>Range in the atlas texture that the image is to be read from, in [0, 1] range.</doc>
-		</field>
 		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
 			<doc>Determines if animation is enabled and how should it play.</doc>
 		</field>
@@ -7772,9 +7763,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<param name="other" type="SpriteImageInformation">
 			</param>
 		</ctor>
-		<field name="UVRange" type="TArea2&lt;float,float&gt;">
-			<doc>Range in the atlas texture that the image is to be read from, in [0, 1] range.</doc>
-		</field>
 		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
 			<doc>Determines if animation is enabled and how should it play.</doc>
 		</field>
@@ -7804,9 +7792,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		</field>
 		<field name="DefaultSize" type="float">
 			<doc>Size of the unscaled glyph in points. Actual rendered size might be different depending on DPI scale or other scale factors.</doc>
-		</field>
-		<field name="UVRange" type="TArea2&lt;float,float&gt;">
-			<doc>Range in the atlas texture that the image is to be read from, in [0, 1] range.</doc>
 		</field>
 		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
 			<doc>Determines if animation is enabled and how should it play.</doc>
@@ -7844,6 +7829,12 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<param name="createInformation" type="SpriteTextureCreateInformation">
 			</param>
 		</ctor>
+		<property name="Texture" type="RRef&lt;Texture&gt;" getter="GetAtlasTexture" setter="" static="false">
+			<doc>Retrieves the atlas texture where the image is stored.</doc>
+		</property>
+		<property name="UVRange" type="TArea2&lt;float,float&gt;" getter="GetUVRange" setter="" static="false">
+			<doc>Determines the UV range that the image is referencing.</doc>
+		</property>
 	</class>
 	<struct native="ShaderParameter" script="ShaderParameter">
 		<doc>Contains information about a single shader parameter.</doc>
@@ -7923,9 +7914,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		</field>
 		<field name="ScalingMode" type="VectorGraphicsRasterizationScaling">
 			<doc>How to scale the path canvas onto the rasterized destination.</doc>
-		</field>
-		<field name="UVRange" type="TArea2&lt;float,float&gt;">
-			<doc>Range in the atlas texture that the image is to be read from, in [0, 1] range.</doc>
 		</field>
 		<field name="AnimationPlayback" type="SpriteAnimationPlayback">
 			<doc>Determines if animation is enabled and how should it play.</doc>

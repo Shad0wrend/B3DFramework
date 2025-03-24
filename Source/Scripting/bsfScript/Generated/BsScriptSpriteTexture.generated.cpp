@@ -7,8 +7,9 @@
 #include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
 #include "BsScriptResourceManager.h"
 #include "Wrappers/BsScriptRRefBase.h"
-#include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
+#include "BsScriptTArea2.generated.h"
+#include "../../../Foundation/bsfCore/Image/BsSpriteTexture.h"
 #include "BsScriptSpriteTextureCreateInformation.generated.h"
 
 namespace bs
@@ -22,6 +23,8 @@ namespace bs
 	void ScriptSpriteTexture::SetupScriptBindings()
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteTexture::InternalGetRef);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAtlasTexture", (void*)&ScriptSpriteTexture::InternalGetAtlasTexture);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetUVRange", (void*)&ScriptSpriteTexture::InternalGetUVRange);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteTexture::InternalCreate);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteTexture::InternalCreate0);
 
@@ -40,6 +43,39 @@ namespace bs
 	MonoObject* ScriptSpriteTexture::InternalGetRef(ScriptSpriteTexture* self)
 	{
 		return self->GetOrCreateResourceReference();
+	}
+
+	MonoObject* ScriptSpriteTexture::InternalGetAtlasTexture(ScriptSpriteTexture* self)
+	{
+		TResourceHandle<Texture> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
+		tmp__output = static_cast<SpriteTexture*>(self->GetNativeObject())->GetAtlasTexture();
+
+		MonoObject* __output;
+		ScriptRRefBase* script__output;
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
+		if(script__output != nullptr)
+			__output = script__output->GetScriptObject();
+		else
+			__output = nullptr;
+
+		return __output;
+	}
+
+	void ScriptSpriteTexture::InternalGetUVRange(ScriptSpriteTexture* self, TArea2<float, float>* __output)
+	{
+		if(!self->IsNativeObjectValid())
+		{
+			*__output = {};
+			return;
+		}
+
+		TArea2<float, float> tmp__output;
+		tmp__output = static_cast<SpriteTexture*>(self->GetNativeObject())->GetUVRange();
+
+		*__output = tmp__output;
 	}
 
 	void ScriptSpriteTexture::InternalCreate(MonoObject* scriptObject, MonoObject* texture)

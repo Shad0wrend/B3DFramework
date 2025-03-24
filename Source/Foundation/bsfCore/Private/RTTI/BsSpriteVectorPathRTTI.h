@@ -19,7 +19,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mAtlasTexture, 0)
+			//B3D_RTTI_MEMBER(mAtlasTexture, 0)
 			B3D_RTTI_MEMBER(mVectorPath, 1)
 			B3D_RTTI_MEMBER(mDefaultSize, 2)
 			B3D_RTTI_MEMBER(mScalingMode, 3)

@@ -16,7 +16,6 @@ using namespace bs;
 namespace bs
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteVectorPath, SyncPacket)
-		B3D_SYNC_BLOCK_ENTRY(mAtlasTexture)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImage, SpriteImageSyncPacket)
 	B3D_SYNC_BLOCK_END
 }
@@ -83,9 +82,7 @@ void SpriteVectorPath::Initialize()
 
 SPtr<ct::RenderProxy> SpriteVectorPath::CreateRenderProxy() const
 {
-	SPtr<ct::Texture> atlasRenderProxy = B3DGetRenderProxy(mAtlasTexture);
-
-	ct::SpriteVectorPathCreateInformation createInformation(mInformation, std::move(atlasRenderProxy));
+	ct::SpriteVectorPathCreateInformation createInformation(mInformation);
 	ct::SpriteVectorPath* const renderProxy = new(B3DAllocate<ct::SpriteVectorPath>()) ct::SpriteVectorPath(createInformation);
 
 	SPtr<ct::SpriteVectorPath> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteVectorPath>(renderProxy);
@@ -101,12 +98,6 @@ RenderProxySyncPacket* SpriteVectorPath::CreateRenderProxySyncPacket(FrameAlloca
 		syncPacket->SpriteImageSyncPacket = SpriteImage::CreateRenderProxySyncPacket(allocator, flags);
 
 	return syncPacket;
-}
-
-void SpriteVectorPath::GetCoreDependencies(Vector<CoreObject*>& dependencies)
-{
-	if(mAtlasTexture.IsLoaded())
-		dependencies.push_back(mAtlasTexture.Get());
 }
 
 HSpriteVectorPath SpriteVectorPath::Create(const HVectorPath& vectorPath, const Size2I& defaultSize)
@@ -165,7 +156,6 @@ namespace bs { namespace ct
 SpriteVectorPath::SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation)
 	: SpriteImage(createInformation)
 {
-	mAtlasTexture = createInformation.AtlasTexture;
 }
 
 void SpriteVectorPath::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)

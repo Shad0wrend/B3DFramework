@@ -17,7 +17,7 @@ using namespace bs;
 SPtr<ct::Texture> GetSpriteImageAtlas(const SPtr<ct::SpriteImage>& spriteImage)
 {
 	if(spriteImage)
-		return spriteImage->GetAtlasTexture();
+		return spriteImage->GetDefaultAllocatedImage().GetTexture();
 
 	return nullptr;
 }
@@ -25,7 +25,7 @@ SPtr<ct::Texture> GetSpriteImageAtlas(const SPtr<ct::SpriteImage>& spriteImage)
 HTexture GetSpriteImageAtlas(const HSpriteImage& spriteImage)
 {
 	if(spriteImage.IsLoaded())
-		return spriteImage->GetAtlasTexture();
+		return spriteImage->GetDefaultAllocatedImage().GetTexture();
 
 	return HTexture();
 }

@@ -28,28 +28,11 @@ namespace bs
 	};
 
 	/** Provides information about a particular sprite vector path image allocated within a texture atlas. */
-	template<bool IsRenderProxy>
-	struct TSpriteVectorPathAllocation : CoreVariantType<SpriteImageAllocation, IsRenderProxy>
+	struct SpriteVectorPathAllocation : SpriteImageAllocation
 	{
-		using SpriteImageType = CoreVariantType<SpriteImage, IsRenderProxy>;
-		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
-
-		using CoreVariantType<SpriteImageAllocation, IsRenderProxy>::SpriteImageAllocation;
-
-	private:
-		friend class SpriteVectorPath;
-
-	};
-
-	/** @copydoc TSpriteVectorPathAllocation. */
-	struct SpriteVectorPathAllocation : TSpriteVectorPathAllocation<false>
-	{
-		using TSpriteVectorPathAllocation::TSpriteVectorPathAllocation;
-
 		SpriteVectorPathAllocation(const WeakSPtr<SpriteImageType>& owner, const SPtr<GUIVectorSpriteAtlasAllocation>& vectorSpriteAtlasAllocation)
-			:TSpriteVectorPathAllocation(owner, vectorSpriteAtlasAllocation ? vectorSpriteAtlasAllocation->AtlasTexture : nullptr, vectorSpriteAtlasAllocation ? vectorSpriteAtlasAllocation->UVRange : Area2(0.0f, 0.0f, 1.0f, 1.0f)), mVectorSpriteAtlasAllocation(vectorSpriteAtlasAllocation)
+			:SpriteImageAllocation(owner, vectorSpriteAtlasAllocation ? vectorSpriteAtlasAllocation->AtlasTexture : nullptr, vectorSpriteAtlasAllocation ? vectorSpriteAtlasAllocation->UVRange : Area2(0.0f, 0.0f, 1.0f, 1.0f)), mVectorSpriteAtlasAllocation(vectorSpriteAtlasAllocation)
 		{ }
-
 
 	private:
 		/** Allocation handle in the vector path atlas. */
@@ -72,12 +55,9 @@ namespace bs
 		struct SpriteVectorPathCreateInformation : SpriteImageInformation
 		{
 			SpriteVectorPathCreateInformation() = default;
-			SpriteVectorPathCreateInformation(const SpriteImageInformation& spriteImageInformation, const SPtr<Texture>& atlasTexture)
-				: SpriteImageInformation(spriteImageInformation), AtlasTexture(atlasTexture)
+			SpriteVectorPathCreateInformation(const SpriteImageInformation& spriteImageInformation)
+				: SpriteImageInformation(spriteImageInformation)
 			{ }
-
-			/** Texture used as the atlas. */
-			SPtr<Texture> AtlasTexture;
 		};
 
 		/** @} */
@@ -121,7 +101,6 @@ namespace bs
 		void Initialize() override;
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
-		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		HVectorPath mVectorPath;
 		Size2I mDefaultSize{BsZero};
@@ -148,10 +127,10 @@ namespace bs
 		 *  @{
 		 */
 
-		/** @copydoc TSpriteVectorPathAllocation. */
-		struct SpriteVectorPathAllocation : TSpriteVectorPathAllocation<true>
+		/** @copydoc bs::SpriteVectorPathAllocation. */
+		struct SpriteVectorPathAllocation : SpriteImageAllocation
 		{
-			using TSpriteVectorPathAllocation::TSpriteVectorPathAllocation;
+			using SpriteImageAllocation::SpriteImageAllocation;
 		};
 
 		/**

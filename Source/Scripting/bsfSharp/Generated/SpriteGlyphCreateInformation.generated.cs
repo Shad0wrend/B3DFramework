@@ -21,7 +21,6 @@ namespace bs
 			value.Font = null;
 			value.Glyph = 0;
 			value.DefaultSize = 8f;
-			value.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
 			value.AnimationPlayback = SpriteAnimationPlayback.None;
 			value.Animation = SpriteSheetGridAnimation.Default();
 
@@ -33,7 +32,6 @@ namespace bs
 			this.Font = font;
 			this.Glyph = glyph;
 			this.DefaultSize = defaultSize;
-			this.UVRange = new TArea2<float,float>(0f, 0f, 1f, 1f);
 			this.AnimationPlayback = SpriteAnimationPlayback.None;
 			this.Animation = SpriteSheetGridAnimation.Default();
 		}
@@ -44,7 +42,6 @@ namespace bs
 		public SpriteImageInformation GetBase()
 		{
 			SpriteImageInformation value;
-			value.UVRange = UVRange;
 			value.AnimationPlayback = AnimationPlayback;
 			value.Animation = Animation;
 			return value;
@@ -56,7 +53,6 @@ namespace bs
 		///</summary>
 		public void SetBase(SpriteImageInformation value)
 		{
-			UVRange = value.UVRange;
 			AnimationPlayback = value.AnimationPlayback;
 			Animation = value.Animation;
 		}
@@ -70,8 +66,6 @@ namespace bs
 		/// factors.
 		/// </summary>
 		public float DefaultSize;
-		/// <summary>Range in the atlas texture that the image is to be read from, in [0, 1] range.</summary>
-		public TArea2<float,float> UVRange;
 		/// <summary>Determines if animation is enabled and how should it play.</summary>
 		public SpriteAnimationPlayback AnimationPlayback;
 		/// <summary>Describes the sprite sheet grid used for animation, if animation is used.</summary>

@@ -5,11 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
-#include "BsScriptResourceManager.h"
-#include "Wrappers/BsScriptRRefBase.h"
 #include "BsScriptTSize2.generated.h"
-#include "../../../Foundation/bsfCore/Image/BsTexture.h"
-#include "BsScriptTArea2.generated.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
 
 namespace bs
@@ -24,9 +20,6 @@ namespace bs
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteImage::InternalGetRef);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAnimationFrameSize", (void*)&ScriptSpriteImage::InternalGetAnimationFrameSize);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAtlasTexture", (void*)&ScriptSpriteImage::InternalGetAtlasTexture);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetUVRange", (void*)&ScriptSpriteImage::InternalSetUVRange);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetUVRange", (void*)&ScriptSpriteImage::InternalGetUVRange);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAnimation", (void*)&ScriptSpriteImage::InternalSetAnimation);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAnimation", (void*)&ScriptSpriteImage::InternalGetAnimation);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAnimationPlayback", (void*)&ScriptSpriteImage::InternalSetAnimationPlayback);
@@ -59,47 +52,6 @@ namespace bs
 
 		TSize2<uint32_t> tmp__output;
 		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAnimationFrameSize();
-
-		*__output = tmp__output;
-	}
-
-	MonoObject* ScriptSpriteImage::InternalGetAtlasTexture(ScriptSpriteImageWrapperBase* self)
-	{
-		TResourceHandle<Texture> tmp__output;
-		if(!self->IsNativeObjectValid())
-			return {};
-
-		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetAtlasTexture();
-
-		MonoObject* __output;
-		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
-		if(script__output != nullptr)
-			__output = script__output->GetScriptObject();
-		else
-			__output = nullptr;
-
-		return __output;
-	}
-
-	void ScriptSpriteImage::InternalSetUVRange(ScriptSpriteImageWrapperBase* self, TArea2<float, float>* uvRange)
-	{
-		if(!self->IsNativeObjectValid())
-			return;
-
-		static_cast<SpriteImage*>(self->GetNativeObject())->SetUVRange(*uvRange);
-	}
-
-	void ScriptSpriteImage::InternalGetUVRange(ScriptSpriteImageWrapperBase* self, TArea2<float, float>* __output)
-	{
-		if(!self->IsNativeObjectValid())
-		{
-			*__output = {};
-			return;
-		}
-
-		TArea2<float, float> tmp__output;
-		tmp__output = static_cast<SpriteImage*>(self->GetNativeObject())->GetUVRange();
 
 		*__output = tmp__output;
 	}

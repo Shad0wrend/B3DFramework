@@ -8,12 +8,10 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/VectorGraphics/BsVectorGraphics.h"
 #include "BsScriptVectorPath.generated.h"
-#include "../../../Foundation/bsfUtility/Math/BsSize2.h"
-#include "BsScriptTSize2.generated.h"
-#include "../../../Foundation/bsfUtility/Math/BsArea2.h"
-#include "BsScriptTArea2.generated.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteImage.h"
 #include "BsScriptSpriteSheetGridAnimation.generated.h"
+#include "../../../Foundation/bsfUtility/Math/BsSize2.h"
+#include "BsScriptTSize2.generated.h"
 
 namespace bs
 {
@@ -41,7 +39,6 @@ namespace bs
 		output.VectorPath = tmpVectorPath;
 		output.DefaultSize = value.DefaultSize;
 		output.ScalingMode = value.ScalingMode;
-		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
 		output.Animation = value.Animation;
 
@@ -61,7 +58,6 @@ namespace bs
 		output.VectorPath = tmpVectorPath;
 		output.DefaultSize = value.DefaultSize;
 		output.ScalingMode = value.ScalingMode;
-		output.UVRange = value.UVRange;
 		output.AnimationPlayback = value.AnimationPlayback;
 		output.Animation = value.Animation;
 

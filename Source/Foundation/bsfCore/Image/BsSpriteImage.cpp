@@ -33,27 +33,6 @@ SpriteImageAllocation::~SpriteImageAllocation()
 template B3D_CORE_EXPORT struct TSpriteImageAllocation<true>;
 template B3D_CORE_EXPORT struct TSpriteImageAllocation<false>;
 
-Area2 SpriteImageBase::EvaluateAnimation(float t) const
-{
-	if(mInformation.AnimationPlayback == SpriteAnimationPlayback::None)
-		return mInformation.UVRange;
-
-	u32 row;
-	u32 column;
-	GetAnimationFrame(t, row, column);
-
-	Area2 output;
-
-	// Note: These could be pre-calculated
-	output.Width = mInformation.UVRange.Width / (float)mInformation.Animation.ColumnCount;
-	output.Height = mInformation.UVRange.Height / (float)mInformation.Animation.RowCount;
-
-	output.X = mInformation.UVRange.X + (float)column * output.Width;
-	output.Y = mInformation.UVRange.Y + (float)row * output.Height;
-
-	return output;
-}
-
 void SpriteImageBase::GetAnimationFrame(float t, u32& outRow, u32& outColumn) const
 {
 	if(mInformation.AnimationPlayback == SpriteAnimationPlayback::None)
@@ -91,6 +70,30 @@ void SpriteImageBase::GetAnimationFrame(float t, u32& outRow, u32& outColumn) co
 
 	outRow = frame / mInformation.Animation.ColumnCount;
 	outColumn = frame % mInformation.Animation.ColumnCount;
+}
+
+template<bool IsRenderProxy>
+Area2 TSpriteImage<IsRenderProxy>::EvaluateAnimation(const SpriteImageAllocationType& allocation, float t) const
+{
+	const Area2& uvRange = allocation.GetUVRange();
+
+	if(mInformation.AnimationPlayback == SpriteAnimationPlayback::None)
+		return uvRange;
+
+	u32 row;
+	u32 column;
+	GetAnimationFrame(t, row, column);
+
+	Area2 output;
+
+	// Note: These could be pre-calculated
+	output.Width = uvRange.Width / (float)mInformation.Animation.ColumnCount;
+	output.Height = uvRange.Height / (float)mInformation.Animation.RowCount;
+
+	output.X = uvRange.X + (float)column * output.Width;
+	output.Y = uvRange.Y + (float)row * output.Height;
+
+	return output;
 }
 
 template<bool IsRenderProxy>

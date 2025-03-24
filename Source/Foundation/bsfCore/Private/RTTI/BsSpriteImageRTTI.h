@@ -19,7 +19,6 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_NAMED(UVRange, mInformation.UVRange, 0)
 			B3D_RTTI_MEMBER_NAMED(Animation, mInformation.Animation, 1)
 			B3D_RTTI_MEMBER_NAMED(AnimationPlayback, mInformation.AnimationPlayback, 2)
 		B3D_RTTI_END_MEMBERS

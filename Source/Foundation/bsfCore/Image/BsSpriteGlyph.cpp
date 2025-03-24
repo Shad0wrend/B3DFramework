@@ -13,7 +13,6 @@ using namespace bs;
 namespace bs
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteGlyph, SyncPacket)
-		B3D_SYNC_BLOCK_ENTRY(mAtlasTexture)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImage, SpriteImageSyncPacket)
 	B3D_SYNC_BLOCK_END
 }
@@ -92,9 +91,7 @@ void SpriteGlyph::Initialize()
 
 SPtr<ct::RenderProxy> SpriteGlyph::CreateRenderProxy() const
 {
-	SPtr<ct::Texture> atlasRenderProxy = B3DGetRenderProxy(mAtlasTexture);
-
-	ct::SpriteGlyphCreateInformation createInformation(mInformation, std::move(atlasRenderProxy));
+	ct::SpriteGlyphCreateInformation createInformation(mInformation);
 	ct::SpriteGlyph* const renderProxy = new(B3DAllocate<ct::SpriteGlyph>()) ct::SpriteGlyph(createInformation);
 
 	SPtr<ct::SpriteGlyph> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteGlyph>(renderProxy);
@@ -110,12 +107,6 @@ RenderProxySyncPacket* SpriteGlyph::CreateRenderProxySyncPacket(FrameAllocator& 
 		syncPacket->SpriteImageSyncPacket = SpriteImage::CreateRenderProxySyncPacket(allocator, flags);
 
 	return syncPacket;
-}
-
-void SpriteGlyph::GetCoreDependencies(Vector<CoreObject*>& dependencies)
-{
-	if(mAtlasTexture.IsLoaded())
-		dependencies.push_back(mAtlasTexture.Get());
 }
 
 HSpriteGlyph SpriteGlyph::Create(const HFont& font, u32 glyph, float size)
@@ -174,9 +165,7 @@ namespace bs { namespace ct
 {
 SpriteGlyph::SpriteGlyph(const SpriteGlyphCreateInformation& createInformation)
 	: SpriteImage(createInformation)
-{
-	mAtlasTexture = createInformation.AtlasTexture;
-}
+{ }
 
 void SpriteGlyph::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
