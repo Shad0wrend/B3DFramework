@@ -30,13 +30,13 @@ namespace bs
 	/** Provides information about a particular sprite vector path image allocated within a texture atlas. */
 	struct SpriteVectorPathAllocation : SpriteImageAllocation
 	{
-		SpriteVectorPathAllocation(const WeakSPtr<SpriteImageType>& owner, const SPtr<GUIVectorSpriteAtlasAllocation>& vectorSpriteAtlasAllocation)
-			:SpriteImageAllocation(owner, vectorSpriteAtlasAllocation ? vectorSpriteAtlasAllocation->AtlasTexture : nullptr, vectorSpriteAtlasAllocation ? vectorSpriteAtlasAllocation->UVRange : Area2(0.0f, 0.0f, 1.0f, 1.0f)), mVectorSpriteAtlasAllocation(vectorSpriteAtlasAllocation)
+		SpriteVectorPathAllocation(const WeakSPtr<SpriteImageType>& owner, const GUIVectorSpriteAtlasAllocation& vectorSpriteAtlasAllocation)
+			:SpriteImageAllocation(owner, vectorSpriteAtlasAllocation.AtlasTexture, vectorSpriteAtlasAllocation.UVRange), mVectorSpriteAtlasAllocationHandle(vectorSpriteAtlasAllocation.AllocationHandle)
 		{ }
 
 	private:
 		/** Allocation handle in the vector path atlas. */
-		SPtr<GUIVectorSpriteAtlasAllocation> mVectorSpriteAtlasAllocation; // Note: This is kept on the main thread only, but is deallocated with a one frame delay, so its important the render proxy doesn't attempt to use this allocation any later. We might want a better system down the line.
+		SPtr<GUIVectorSpriteAtlasAllocationHandle> mVectorSpriteAtlasAllocationHandle; 
 	};
 
 	/** @} */

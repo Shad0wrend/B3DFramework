@@ -34,18 +34,22 @@ GUIVectorSpriteAtlas::~GUIVectorSpriteAtlas()
 	DestroyPendingReleasedAllocations();
 }
 
-SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const VectorPath& vectorPath, const VectorGraphicsSettings& settings)
+GUIVectorSpriteAtlasAllocation GUIVectorSpriteAtlas::Allocate(const VectorPath& vectorPath, const VectorGraphicsSettings& settings)
 {
 	if(!EnsureMainThread())
-		return nullptr;
+		return GUIVectorSpriteAtlasAllocation();
 
-	GUIVectorSpriteAtlasAllocation::Key key(vectorPath, settings);
+	GUIVectorSpriteAtlasAllocationHandle::Key key(vectorPath, settings);
 
 	{
 		Lock lock(mAllocationsMutex);
 
 		if(auto found = mAllocations.find(key); found != mAllocations.end())
-			return found->second->shared_from_this();
+		{
+			const AllocationInformation& allocationInformation = found->second;
+
+			return GUIVectorSpriteAtlasAllocation(allocationInformation.AtlasTexture, allocationInformation.UVRange, allocationInformation.AllocationHandle->shared_from_this());
+		}
 	}
 
 	const Size2UI requestedSize = Size2UI((u32)settings.Size.Width, (u32)settings.Size.Height);
@@ -70,7 +74,7 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 	{
 		layoutAllocation = mAtlasLayout.AddElement(requestedSize);
 		if(!layoutAllocation)
-			return nullptr;
+			return GUIVectorSpriteAtlasAllocation();
 
 		const Size2UI& atlasPageSize = mAtlasLayout.GetSize();
 
@@ -95,17 +99,17 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 		uvRange = Area2(uvOffset, uvSize);
 	}
 
-	GUIVectorSpriteAtlasAllocation* const allocation = B3DNew<GUIVectorSpriteAtlasAllocation>(this, key.VectorPathId, atlasTexture, uvRange, layoutAllocation, textureId, renderable);
-	SPtr<GUIVectorSpriteAtlasAllocation> allocationShared = B3DMakeSharedFromExisting<GUIVectorSpriteAtlasAllocation>(allocation,
-		[](GUIVectorSpriteAtlasAllocation* allocation)
+	GUIVectorSpriteAtlasAllocationHandle* const allocationHandle = B3DNew<GUIVectorSpriteAtlasAllocationHandle>(this, key.VectorPathId, layoutAllocation, textureId, renderable);
+	SPtr<GUIVectorSpriteAtlasAllocationHandle> allocationHandleShared = B3DMakeSharedFromExisting<GUIVectorSpriteAtlasAllocationHandle>(allocationHandle,
+		[](GUIVectorSpriteAtlasAllocationHandle* allocationHandle)
 		{
-			GUIVectorSpriteAtlas* owner = allocation->GetOwner();
-			owner->NotifyAllocationReleased(allocation);
+			GUIVectorSpriteAtlas* owner = allocationHandle->GetOwner();
+			owner->NotifyAllocationReleased(allocationHandle);
 	});
 
 	{
 		Lock lock(mAllocationsMutex);
-		mAllocations[key] = allocation;
+		mAllocations[key] = AllocationInformation(atlasTexture, uvRange, allocationHandle);
 	}
 
 	DirtySpriteInformation dirtySpriteInformation;
@@ -117,15 +121,19 @@ SPtr<GUIVectorSpriteAtlasAllocation> GUIVectorSpriteAtlas::Allocate(const Vector
 	B3D_ASSERT(dirtySpriteInformation.Size.Width > 0 && dirtySpriteInformation.Size.Height > 0);
 
 	mDirtySpriteBuffers[mDirtySpriteWriteBufferIndex].push_back(dirtySpriteInformation);
-	return allocationShared;
+	return GUIVectorSpriteAtlasAllocation(atlasTexture, uvRange, allocationHandleShared);
 }
 
-void GUIVectorSpriteAtlas::NotifyAllocationReleased(GUIVectorSpriteAtlasAllocation* allocation)
+void GUIVectorSpriteAtlas::NotifyAllocationReleased(GUIVectorSpriteAtlasAllocationHandle* allocationHandle)
 {
 	Lock lock(mAllocationsMutex);
-	mFreeAllocations.push_back(allocation);
-			
-	B3D_ENSURE(mAllocations.erase(allocation->GetKey()) == 1);
+
+	auto found = mAllocations.find(allocationHandle->GetKey());
+	if(!B3D_ENSURE(found != mAllocations.end()))
+		return;
+
+	mFreeAllocations.push_back(found->second);
+	mAllocations.erase(found);
 }
 
 void GUIVectorSpriteAtlas::Update()
@@ -167,26 +175,26 @@ void GUIVectorSpriteAtlas::DestroyPendingReleasedAllocations()
 	{
 		for(const auto& entry : mFreeAllocationsTemp)
 		{
-			if(entry->mLayoutAllocation)
+			if(entry.AllocationHandle->mLayoutAllocation)
 			{
-				const TreeTextureAtlasLayout::Allocation& layoutAllocation = entry->mLayoutAllocation.value();
+				const TreeTextureAtlasLayout::Allocation& layoutAllocation = entry.AllocationHandle->mLayoutAllocation.value();
 				mAtlasLayout.RemoveElement(layoutAllocation.PageId, layoutAllocation.NodeId);
 
 				if(mAtlasLayout.IsPageEmpty(layoutAllocation.PageId))
 				{
 					mAtlasLayoutTextures.erase(layoutAllocation.PageId);
-					ReleaseTexture(entry->AtlasTexture);
+					ReleaseTexture(entry.AtlasTexture);
 				}
 			}
 			else
 			{
-				ReleaseTexture(entry->AtlasTexture);
-				ReleaseTextureId(entry->mTextureId);
+				ReleaseTexture(entry.AtlasTexture);
+				ReleaseTextureId(entry.AllocationHandle->mTextureId);
 
-				mUniqueTextures.erase(entry->mTextureId);
+				mUniqueTextures.erase(entry.AllocationHandle->mTextureId);
 			}
 
-			B3DDelete(entry);
+			B3DDelete(entry.AllocationHandle);
 		}
 
 		mFreeAllocationsTemp.clear();
@@ -322,7 +330,7 @@ size_t GUIVectorSpriteAtlas::FreeTextureInformation::Key::Hash::operator()(const
 	return hash;
 }
 
-size_t GUIVectorSpriteAtlasAllocation::Key::Hash::operator()(const Key& value) const
+size_t GUIVectorSpriteAtlasAllocationHandle::Key::Hash::operator()(const Key& value) const
 {
 	size_t hash = 0;
 	B3DCombineHash(hash, value.VectorPathId);
@@ -331,7 +339,7 @@ size_t GUIVectorSpriteAtlasAllocation::Key::Hash::operator()(const Key& value) c
 	return hash;
 }
 
-GUIVectorSpriteAtlasAllocation::Key GUIVectorSpriteAtlasAllocation::GetKey() const
+GUIVectorSpriteAtlasAllocationHandle::Key GUIVectorSpriteAtlasAllocationHandle::GetKey() const
 {
 	return Key(mVectorPathId, mRenderable->GetSettings());
 }

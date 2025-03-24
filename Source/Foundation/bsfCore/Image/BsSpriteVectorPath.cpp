@@ -62,7 +62,7 @@ SPtr<SpriteVectorPathAllocation> SpriteVectorPath::AllocateImage(const Size2I& s
 	vectorGraphicsSettings.Size = Size2((float)size.Width, (float)size.Height);
 	vectorGraphicsSettings.ScalingMode = mScalingMode;
 
-	SPtr<GUIVectorSpriteAtlasAllocation> spriteAtlasAllocation;
+	GUIVectorSpriteAtlasAllocation spriteAtlasAllocation;
 	if(size.Width != 0 && size.Height != 0)
 	{
 		GUIVectorSpriteAtlas& vectorSpriteAtlas = GetGUIManager().GetVectorSpriteAtlas();

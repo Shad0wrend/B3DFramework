@@ -22,16 +22,12 @@ namespace bs
 
 	class GUIVectorSpriteAtlas;
 
-	/** Represents a single allocation in a GUIVectorSpriteAtlas. */
-	class B3D_CORE_EXPORT GUIVectorSpriteAtlasAllocation : public std::enable_shared_from_this<GUIVectorSpriteAtlasAllocation>
+	/** Manages lifetime of an allocation in a sprite atlas. When this object goes out of scope the atlas will be notified so it may free the allocation. */
+	struct B3D_CORE_EXPORT GUIVectorSpriteAtlasAllocationHandle : public std::enable_shared_from_this<GUIVectorSpriteAtlasAllocationHandle>
 	{
-	public:
-		GUIVectorSpriteAtlasAllocation(GUIVectorSpriteAtlas* owner, u64 vectorPathId, const HTexture& atlasTexture, const Area2& uvRange, const Optional<TreeTextureAtlasLayout::Allocation>& layoutAllocation, u32 textureId, const SPtr<ct::VectorPathRenderable>& renderable)
-			: AtlasTexture(atlasTexture), UVRange(uvRange), mVectorPathId(vectorPathId), mOwner(owner), mLayoutAllocation(layoutAllocation), mTextureId(textureId), mRenderable(renderable)
+		GUIVectorSpriteAtlasAllocationHandle(GUIVectorSpriteAtlas* owner, u64 vectorPathId, const Optional<TreeTextureAtlasLayout::Allocation>& layoutAllocation, u32 textureId, const SPtr<ct::VectorPathRenderable>& renderable)
+			: mVectorPathId(vectorPathId), mOwner(owner), mLayoutAllocation(layoutAllocation), mTextureId(textureId), mRenderable(renderable)
 		{ }
-
-		const HTexture AtlasTexture;
-		const Area2 UVRange;
 
 	private:
 		friend GUIVectorSpriteAtlas;
@@ -67,6 +63,20 @@ namespace bs
 		const SPtr<ct::VectorPathRenderable> mRenderable;
 	};
 
+	/** Represents a single allocation in a GUIVectorSpriteAtlas. */
+	class B3D_CORE_EXPORT GUIVectorSpriteAtlasAllocation : public std::enable_shared_from_this<GUIVectorSpriteAtlasAllocation>
+	{
+	public:
+		GUIVectorSpriteAtlasAllocation() = default;
+		GUIVectorSpriteAtlasAllocation(const HTexture& atlasTexture, const Area2& uvRange, const SPtr<GUIVectorSpriteAtlasAllocationHandle>& allocationHandle)
+			: AtlasTexture(atlasTexture), UVRange(uvRange), AllocationHandle(allocationHandle)
+		{ }
+
+		HTexture AtlasTexture;
+		Area2 UVRange;
+		SPtr<GUIVectorSpriteAtlasAllocationHandle> AllocationHandle;
+	};
+
 	/** Settings used for initializing GUIVectorSpriteAtlas. */
 	struct GUIVectorSpriteAtlasSettings
 	{
@@ -87,7 +97,7 @@ namespace bs
 		 * will be returned instead. Note that before using the texture that is part of the allocation you must call RenderDirtySprites() on the
 		 * render thread.
 		 */
-		SPtr<GUIVectorSpriteAtlasAllocation> Allocate(const VectorPath& vectorPath, const VectorGraphicsSettings& settings);
+		GUIVectorSpriteAtlasAllocation Allocate(const VectorPath& vectorPath, const VectorGraphicsSettings& settings);
 
 		/** To be called once per frame on the main thread. */
 		void Update();
@@ -96,10 +106,10 @@ namespace bs
 		void RenderDirtySprites(u32 bufferIndex);
 		
 	private:
-		friend class GUIVectorSpriteAtlasAllocation;
+		friend struct GUIVectorSpriteAtlasAllocationHandle;
 
 		/** Triggered by the GUIVectorSpriteAtlasAllocation deleter. */
-		void NotifyAllocationReleased(GUIVectorSpriteAtlasAllocation* allocation);
+		void NotifyAllocationReleased(GUIVectorSpriteAtlasAllocationHandle* allocationHandle);
 
 		/** Attempts to find an existing unused texture matching the requested size, or creates a new texture. */
 		HTexture CreateOrFindTexture(Size2UI size) const;
@@ -148,16 +158,31 @@ namespace bs
 			Size2UI Size = Size2UI::kZero;
 		};
 
+		/** Represents a single allocation in the atlas. */
+		class AllocationInformation
+		{
+		public:
+			AllocationInformation() = default;
+			AllocationInformation(const HTexture& atlasTexture, const Area2& uvRange, GUIVectorSpriteAtlasAllocationHandle* allocationHandle)
+				: AtlasTexture(atlasTexture), UVRange(uvRange), AllocationHandle(allocationHandle)
+			{ }
+
+			HTexture AtlasTexture;
+			Area2 UVRange;
+			GUIVectorSpriteAtlasAllocationHandle* AllocationHandle = nullptr;
+		};
+
+
 		const GUIVectorSpriteAtlasSettings mSettings;
 		TreeTextureAtlasLayout mAtlasLayout;
-		UnorderedMap<GUIVectorSpriteAtlasAllocation::Key, GUIVectorSpriteAtlasAllocation*, GUIVectorSpriteAtlasAllocation::Key::Hash> mAllocations;
+		UnorderedMap<GUIVectorSpriteAtlasAllocationHandle::Key, AllocationInformation, GUIVectorSpriteAtlasAllocationHandle::Key::Hash> mAllocations;
 
 		UnorderedMap<u32, HTexture> mAtlasLayoutTextures;
 		UnorderedMap<u32, HTexture> mUniqueTextures;
 
 		Mutex mAllocationsMutex;
-		Vector<GUIVectorSpriteAtlasAllocation*> mFreeAllocations; // Allocations recorded here in a thread safe manner
-		Vector<GUIVectorSpriteAtlasAllocation*> mFreeAllocationsTemp; // Temporary buffer when iterating over the array on the main thread
+		Vector<AllocationInformation> mFreeAllocations; // Allocations recorded here in a thread safe manner
+		Vector<AllocationInformation> mFreeAllocationsTemp; // Temporary buffer when iterating over the array on the main thread
 
 		u32 mDirtySpriteWriteBufferIndex = 0;
 		Vector<DirtySpriteInformation> mDirtySpriteBuffers[RenderThread::kSyncBufferCount + 1];// Dirty sprites recorded here in a thread safe manner
