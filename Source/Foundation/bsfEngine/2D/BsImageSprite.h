@@ -66,6 +66,8 @@ namespace bs
 	private:
 		/**	Clears internal geometry buffers. */
 		void ClearMesh();
+
+		SPtr<SpriteImageAllocation> mSpriteImageAllocations;
 	};
 
 	/** @} */

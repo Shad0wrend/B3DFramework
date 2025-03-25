@@ -45,8 +45,7 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		return;
 	}
 
-	// TODO - spriteAllocation needs to be kept alive while the texture is being used. This means passing it to the render thread, making the deallocation thread safe, and
-	// making sure that sprite image is alive on the render thread while the allocation is live as well
+	mSpriteImageAllocations = spriteAllocation;
 
 	RenderElementData& renderElementData = mCachedRenderElements[0];
 	SpriteRenderElement& renderElement = renderElementData.RenderElement;
@@ -71,6 +70,7 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		SpriteMaterialInfo& materialInformation = renderElementData.MaterialInformation;
 		materialInformation.GroupId = groupId;
 		materialInformation.Texture = texture;
+		materialInformation.SpriteImageAllocation = B3DGetRenderProxy(spriteAllocation);
 		materialInformation.Tint = information.Color;
 		materialInformation.AnimationStartTime = information.AnimationStartTime;
 
@@ -288,6 +288,7 @@ void ImageSprite::ClearMesh()
 	}
 
 	mCachedRenderElements.clear();
+	mSpriteImageAllocations = nullptr;
 	UpdateBounds();
 }
 

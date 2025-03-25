@@ -24,7 +24,7 @@ Size2I TSpriteImageAllocation<IsRenderProxy>::GetSize() const
 SpriteImageAllocation::~SpriteImageAllocation()
 {
 	SPtr<SpriteImage> owner = mOwner.lock();
-	if(!B3D_ENSURE(owner != nullptr))
+	if(owner == nullptr)
 		return;
 
 	owner->DeallocateImage(this);

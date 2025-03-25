@@ -74,7 +74,8 @@ namespace bs
 
 		u64 GroupId = 0;
 		TextureType Texture;
-		SpriteImageType SpriteImage;
+		SpriteImageType SpriteImage; /**< Sprite image used to generate the sprite. Used for animation only. */
+		SPtr<ct::SpriteImageAllocation> SpriteImageAllocation; /**< Allocation handle to keep the sprite image alive as long as needed. */
 		Color Tint;
 		float AnimationStartTime = 0.0f;
 		SPtr<SpriteMaterialExtraInfo> AdditionalData;
@@ -94,7 +95,7 @@ namespace bs
 		virtual ~SpriteMaterial();
 
 		/** Returns the unique ID of the sprite material. */
-		u32 GetId() const { return mId; };
+		u32 GetId() const { return mId; }
 
 		/** Determines is this material allowed to be batched with other materials with the same merge hash. */
 		bool AllowBatching() const { return mAllowBatching; }
