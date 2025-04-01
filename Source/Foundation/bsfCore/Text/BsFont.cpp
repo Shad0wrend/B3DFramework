@@ -33,6 +33,18 @@ static FT_Pos ConvertFloatToFixed26Dot6(float value)
 	return FT_Pos(value * 64.0f);
 }
 
+/** Converts a 26.6 fixed point format to integer. */
+static i32 ConvertFixed26Dot6ToI32(i32 value)
+{
+	return value >> 6;
+}
+
+/** Converts a integer to 26.6 fixed point format. */
+static FT_Pos ConvertI32ToFixed26Dot6(i32 value)
+{
+	return FT_Pos(value << 6);
+}
+
 /** Converts font render mode into FreeType load flags. */
 static FT_Int32 ConvertFontRenderModeToLoadFlags(FontRenderMode renderMode)
 {
@@ -96,13 +108,10 @@ Font::~Font()
 
 void Font::Initialize()
 {
-	for(const auto& it : mFontBitmaps)
+	for(const auto& page : mFontPages)
 	{
-		for(auto& page : it.second->TexturePages)
-		{
-			if(page.Texture != nullptr)
-				AddResourceDependency(page.Texture);
-		}
+		if(page.Texture != nullptr)
+			AddResourceDependency(page.Texture);
 	}
 
 	if(mInformation.FontData != nullptr)
@@ -166,38 +175,86 @@ void Font::DestroyFontRenderer()
 	mImplementation->Face = nullptr;
 }
 
-bool Font::RenderGlyphs(float size, const TArrayView<u32>& characterIds)
+bool Font::RenderGlyphs(const FontSizeRequest& sizeRequest, const TArrayView<u32>& characterIds, bool bake)
 {
-	const float quantizedFontSize = GetQuantizedFontSize(size);
-
-	SPtr<FontBitmapInformation> bitmapInformation = GetOrCreateBitmapInformationForSize(size);
-	if(!bitmapInformation)
-	{
-		B3D_LOG(Error, Font, "Failed to render font glyphs. Unable to create bitmap information for requested font size.");
-		return false;
-	}
-
 	if(mImplementation->Face == nullptr)
 	{
 		B3D_LOG(Error, Font, "Failed to render font glyphs. Font renderer is not initialized.");
 		return nullptr;
 	}
 
-	if(!B3D_ENSURE(FT_Set_Char_Size(mImplementation->Face, ConvertFloatToFixed26Dot6(quantizedFontSize), 0, mInformation.DPI, mInformation.DPI) == 0))
-	{
-		B3D_LOG(Error, Font, "Failed to render font glyphs. Failed to set character size.");
-		return nullptr;
-	}
-
+	const float quantizedFontSizeInPoints = GetQuantizedFontSize(sizeRequest.FontSizeInPoints);
 	Vector<GlyphBitmap> glyphBitmaps;
 
 	const FT_Int32 loadFlags = ConvertFontRenderModeToLoadFlags(mInformation.RenderMode);
 	const FT_Face& face = mImplementation->Face;
+
+	const bool fontSizeIsInPoints = sizeRequest.FontSizeInPoints > 0.0f;
+	SPtr<FontBitmapInformation> bitmapInformation;
+	if(fontSizeIsInPoints)
+	{
+		if(!B3D_ENSURE(FT_Set_Char_Size(mImplementation->Face, ConvertFloatToFixed26Dot6(quantizedFontSizeInPoints), 0, mInformation.DPI, mInformation.DPI) == 0))
+		{
+			B3D_LOG(Error, Font, "Failed to render font glyphs. Failed to set character size.");
+			return nullptr;
+		}
+
+		auto found = mCharactersByPointSize.find(quantizedFontSizeInPoints);
+		if(found != mCharactersByPointSize.end())
+			bitmapInformation = found->second;
+
+		if(bitmapInformation == nullptr)
+		{
+			bitmapInformation = B3DMakeShared<FontBitmapInformation>();
+
+			const FT_Size_Metrics& faceMetrics = mImplementation->Face->size->metrics;
+
+			bitmapInformation->Size = quantizedFontSizeInPoints;
+			bitmapInformation->LineHeight = ConvertFixed26Dot6ToFloat(faceMetrics.height);
+			bitmapInformation->BaselineOffset = ConvertFixed26Dot6ToFloat(faceMetrics.height + faceMetrics.descender);
+
+			constexpr FT_ULong kSpaceCharacterId = 32;
+			FT_Load_Char(mImplementation->Face, kSpaceCharacterId, loadFlags);
+
+			const FT_GlyphSlot& glyph = mImplementation->Face->glyph;
+			bitmapInformation->SpaceWidth = ConvertFixed26Dot6ToFloat(glyph->advance.x);
+
+			mCharactersByPointSize[quantizedFontSizeInPoints] = bitmapInformation;
+
+			u32 kMissingGlyphId[] = { 0 };
+			RenderGlyphs(sizeRequest.FontSizeInPoints, TArrayView(kMissingGlyphId, 1));
+
+			auto foundCharacter = bitmapInformation->Characters.find(0);
+			if(B3D_ENSURE(foundCharacter != bitmapInformation->Characters.end()))
+				bitmapInformation->MissingGlyph = foundCharacter->second;
+		}
+	}
+	else
+	{
+		if(!B3D_ENSURE(FT_Set_Pixel_Sizes(mImplementation->Face, sizeRequest.FontSizeInPixels.Width, sizeRequest.FontSizeInPixels.Height) == 0))
+		{
+			B3D_LOG(Error, Font, "Failed to render font glyphs. Failed to set character size.");
+			return nullptr;
+		}
+	}
+
 	for(const auto& characterId : characterIds)
 	{
-		auto it = bitmapInformation->Characters.find(characterId);
-		if(it != bitmapInformation->Characters.end())
-			continue;
+		if(fontSizeIsInPoints)
+		{
+			if(auto found = bitmapInformation->Characters.find(characterId); found != bitmapInformation->Characters.end())
+				continue;
+		}
+		else
+		{
+			CharacterInformation lookupCharacterInformation;
+			lookupCharacterInformation.CharId = characterId;
+			lookupCharacterInformation.Width = (float)sizeRequest.FontSizeInPixels.Width;
+			lookupCharacterInformation.Height = (float)sizeRequest.FontSizeInPixels.Height;
+
+			if(auto found = mCharactersByPixelSize.find(lookupCharacterInformation); found != mCharactersByPixelSize.end())
+				continue;
+		}
 
 		FT_Error error = FT_Load_Char(face, (FT_ULong)characterId, loadFlags);
 
@@ -225,36 +282,40 @@ bool Font::RenderGlyphs(float size, const TArrayView<u32>& characterIds)
 		characterInformation.YOffset = ConvertFixed26Dot6ToFloat(glyph->metrics.horiBearingY);
 		characterInformation.XAdvance = ConvertFixed26Dot6ToFloat(glyph->metrics.horiAdvance);
 		characterInformation.YAdvance = ConvertFixed26Dot6ToFloat(glyph->advance.y);
+		characterInformation.PointSize = 0.0f;
 
-		// Parse kerning
-		for(auto& keyValuePair : bitmapInformation->Characters)
+		if(fontSizeIsInPoints)
 		{
-			const u32 otherCharacterId = keyValuePair.first;
-			CharacterInformation& otherCharacterInformation = keyValuePair.second;
+			// Parse kerning
+			for(auto& keyValuePair : bitmapInformation->Characters)
+			{
+				const u32 otherCharacterId = keyValuePair.first;
+				CharacterInformation& otherCharacterInformation = keyValuePair.second;
 
-			auto fnAddKerning = [this, &face](CharacterInformation& leftCharacterInformation, u32 rightCharacterId) {
-				FT_Vector kerning;
+				auto fnAddKerning = [this, &face](CharacterInformation& leftCharacterInformation, u32 rightCharacterId) {
+					FT_Vector kerning;
 
-				const FT_Error error = FT_Get_Kerning(face, leftCharacterInformation.CharId, rightCharacterId, FT_KERNING_UNFITTED, &kerning);
-				if(error)
-				{
-					B3D_LOG(Error, Font, "Failed to get kerning information for glyphs '{0}', '{1}'.",  leftCharacterInformation.CharId, rightCharacterId);
-					return;
-				}
+					const FT_Error error = FT_Get_Kerning(face, leftCharacterInformation.CharId, rightCharacterId, FT_KERNING_UNFITTED, &kerning);
+					if(error)
+					{
+						B3D_LOG(Error, Font, "Failed to get kerning information for glyphs '{0}', '{1}'.",  leftCharacterInformation.CharId, rightCharacterId);
+						return;
+					}
 
-				const float kerningX = ConvertFixed26Dot6ToFloat(kerning.x); // Y kerning is ignored because it is so rare
-				if(kerningX != 0.0f) // We don't store 0 kerning, this is assumed default
-				{
-					KerningPair kerningPair;
-					kerningPair.Amount = kerningX;
-					kerningPair.OtherCharId = rightCharacterId;
+					const float kerningX = ConvertFixed26Dot6ToFloat(kerning.x); // Y kerning is ignored because it is so rare
+					if(kerningX != 0.0f) // We don't store 0 kerning, this is assumed default
+					{
+						KerningPair kerningPair;
+						kerningPair.Amount = kerningX;
+						kerningPair.OtherCharId = rightCharacterId;
 
-					leftCharacterInformation.KerningPairs.push_back(kerningPair);
-				}
-			};
+						leftCharacterInformation.KerningPairs.push_back(kerningPair);
+					}
+				};
 
-			fnAddKerning(characterInformation, otherCharacterId);
-			fnAddKerning(otherCharacterInformation, characterId);
+				fnAddKerning(characterInformation, otherCharacterId);
+				fnAddKerning(otherCharacterInformation, characterId);
+			}
 		}
 
 		// Read pixels
@@ -315,21 +376,15 @@ bool Font::RenderGlyphs(float size, const TArrayView<u32>& characterIds)
 
 		texture->WriteData(destinationPixelData);
 
-		u32 firstDynamicPageIndex = 0;
-		for(const auto& page : bitmapInformation->TexturePages)
-		{
-			if(page.IsDynamic)
-				break;
-
-			firstDynamicPageIndex++;
-		}
-
 		u32 targetPageIndex = ~0u;
 		Optional<TreeTextureAtlasLayout::Allocation> layoutAllocation;
-		for(u32 pageIndex = firstDynamicPageIndex; pageIndex < (u32)bitmapInformation->TexturePages.size(); ++pageIndex)
+		for(u32 pageIndex = 0; pageIndex < (u32)mFontPages.size(); ++pageIndex)
 		{
-			FontBitmapPage& page = bitmapInformation->TexturePages[pageIndex];
-			if(!B3D_ENSURE(page.IsDynamic))
+			FontBitmapPage& page = mFontPages[pageIndex];
+			if(bake && page.Type != FontBitmapPageType::Baked)
+				continue;
+
+			if(!bake && page.Type != FontBitmapPageType::Runtime)
 				continue;
 
 			layoutAllocation = page.Layout.AddElement(bitmapSize);
@@ -342,14 +397,13 @@ bool Font::RenderGlyphs(float size, const TArrayView<u32>& characterIds)
 
 		if(!layoutAllocation.has_value())
 		{
-			targetPageIndex = (u32)bitmapInformation->TexturePages.size();
+			targetPageIndex = (u32)mFontPages.size();
 
 			FontBitmapPage newPage;
-			newPage.IsDynamic = true;
+			newPage.Type = bake ? FontBitmapPageType::Baked : FontBitmapPageType::Runtime;
 
-			// TODO - These textures should be shared between fonts. Its wasteful to allocate a 1024x1024 texture for each font+font size combination
 			TextureCreateInformation pageTextureCreateInformation;
-			pageTextureCreateInformation.Name = StringUtil::Format("Font Page Font: {0}, Size: {1}, Index:{2}", GetName(), bitmapInformation->Size, targetPageIndex);
+			pageTextureCreateInformation.Name = StringUtil::Format("Font Page: {0} #{1}", GetName(), targetPageIndex);
 			pageTextureCreateInformation.Width = kFontPageSize;
 			pageTextureCreateInformation.Height = kFontPageSize;
 			pageTextureCreateInformation.Format = PF_R8;
@@ -364,7 +418,7 @@ bool Font::RenderGlyphs(float size, const TArrayView<u32>& characterIds)
 			newPage.Layout = TreeTextureAtlasLayout(atlasLayoutSettings);
 			layoutAllocation = newPage.Layout.AddElement(bitmapSize);
 
-			bitmapInformation->TexturePages.push_back(newPage);
+			mFontPages.push_back(newPage);
 		}
 
 		if(!layoutAllocation || !B3D_ENSURE(targetPageIndex != ~0u))
@@ -375,7 +429,7 @@ bool Font::RenderGlyphs(float size, const TArrayView<u32>& characterIds)
 
 		B3D_ASSERT(layoutAllocation->PageId == 0);
 
-		FontBitmapPage& page = bitmapInformation->TexturePages[targetPageIndex];
+		FontBitmapPage& page = mFontPages[targetPageIndex];
 
 		GlyphBitmap glyphBitmap;
 		glyphBitmap.GlyphTexture = B3DGetRenderProxy(texture);
@@ -391,8 +445,13 @@ bool Font::RenderGlyphs(float size, const TArrayView<u32>& characterIds)
 		characterInformation.UvY = inversePageHeight * (float)glyphBitmap.PositionInAtlas.Y;
 		characterInformation.UvWidth = inversePageWidth * (float)glyphBitmap.Size.Width;
 		characterInformation.UvHeight = inversePageHeight * (float)glyphBitmap.Size.Height;
+		characterInformation.DynamicLayoutAllocation = layoutAllocation;
 
-		bitmapInformation->Characters[characterId] = std::move(characterInformation);
+		if(fontSizeIsInPoints)
+			bitmapInformation->Characters[characterId] = std::move(characterInformation);
+		else
+			mCharactersByPixelSize.insert(std::move(characterInformation));
+
 		glyphBitmaps.push_back(std::move(glyphBitmap));
 	}
 
@@ -400,91 +459,165 @@ bool Font::RenderGlyphs(float size, const TArrayView<u32>& characterIds)
 	return false;
 }
 
-void Font::Bake(bool clearFontData)
+void Font::ClearGlyphs(FontBitmapInformation& bitmapInformation, bool onlyRuntime)
 {
-	for(const auto& bitmapInformationPair : mFontBitmaps)
+	for(auto it = bitmapInformation.Characters.begin(); it != bitmapInformation.Characters.end();)
 	{
-		if(!B3D_ENSURE(bitmapInformationPair.second))
-			continue;
+		const CharacterInformation& characterInformation = it->second;
+		FontBitmapPage& fontBitmapPage = mFontPages[characterInformation.Page];
 
-		for(auto& page : bitmapInformationPair.second->TexturePages)
+		const bool isBakedOrLoaded = fontBitmapPage.Type == FontBitmapPageType::Baked || fontBitmapPage.Type == FontBitmapPageType::Loaded;
+		if(isBakedOrLoaded && onlyRuntime)
 		{
-			page.IsDynamic = false;
-			page.Layout.Clear();
+			++it;
+			continue;
 		}
-	}
 
-	if(clearFontData)
-	{
-		DestroyFontRenderer();
-		mInformation.FontData = nullptr;
+		if(characterInformation.DynamicLayoutAllocation.has_value())
+		{
+			fontBitmapPage.Layout.RemoveElement(characterInformation.DynamicLayoutAllocation->PageId, characterInformation.DynamicLayoutAllocation->NodeId);
+
+			if(fontBitmapPage.Layout.IsEmpty())
+				RemovePage(characterInformation.Page);
+		}
+
+		it = bitmapInformation.Characters.erase(it);
 	}
 }
 
-SPtr<FontBitmapInformation> Font::GetOrCreateBitmapInformationForSize(float size)
+void Font::ClearGlyphs(float size, bool onlyRuntime)
 {
 	const float quantizedFontSize = GetQuantizedFontSize(size);
 
-	auto itFontBitmap = mFontBitmaps.find(quantizedFontSize);
-	if(itFontBitmap != mFontBitmaps.end())
-		return itFontBitmap->second;
+	SPtr<FontBitmapInformation> bitmapInformation;
+	if(auto found = mCharactersByPointSize.find(quantizedFontSize); found != mCharactersByPointSize.end())
+		bitmapInformation = found->second;
 
-	if(mImplementation->Face == nullptr)
+	if(bitmapInformation == nullptr)
 	{
-		B3D_LOG(Error, Font, "Cannot create font bitmap information. Font renderer is not initialized.");
-		return nullptr;
+		mCharactersByPointSize.erase(quantizedFontSize);
+		return;
 	}
 
-	if(!B3D_ENSURE(FT_Set_Char_Size(mImplementation->Face, ConvertFloatToFixed26Dot6(quantizedFontSize), 0, mInformation.DPI, mInformation.DPI) == 0))
+	ClearGlyphs(*bitmapInformation, onlyRuntime);
+
+	if(bitmapInformation->Characters.empty())
+		mCharactersByPointSize.erase(quantizedFontSize);
+}
+
+void Font::ClearGlyphs(bool onlyRuntime)
+{
+	for(auto it = mCharactersByPointSize.begin(); it != mCharactersByPointSize.end();)
 	{
-		B3D_LOG(Error, Font, "Cannot create font bitmap information. Failed to set character size.");
-		return nullptr;
+		SPtr<FontBitmapInformation> bitmapInformation = it->second;
+
+		if(bitmapInformation == nullptr)
+		{
+			it = mCharactersByPointSize.erase(it);
+			continue;
+		}
+
+		ClearGlyphs(*bitmapInformation);
+
+		if(bitmapInformation->Characters.empty())
+			it = mCharactersByPointSize.erase(it);
+		
+		++it;
 	}
 
-	SPtr<FontBitmapInformation> newBitmapInformation = B3DMakeShared<FontBitmapInformation>();
-	const FT_Int32 loadFlags = ConvertFontRenderModeToLoadFlags(mInformation.RenderMode);
+	for(auto it = mCharactersByPixelSize.begin(); it != mCharactersByPixelSize.end();)
+	{
+		const CharacterInformation& characterInformation = *it;
+		FontBitmapPage& fontBitmapPage = mFontPages[characterInformation.Page];
 
-	const FT_Size_Metrics& faceMetrics = mImplementation->Face->size->metrics;
+		const bool isBakedOrLoaded = fontBitmapPage.Type == FontBitmapPageType::Baked || fontBitmapPage.Type == FontBitmapPageType::Loaded;
+		if(isBakedOrLoaded && onlyRuntime)
+		{
+			++it;
+			continue;
+		}
 
-	newBitmapInformation->Size = quantizedFontSize;
-	newBitmapInformation->LineHeight = ConvertFixed26Dot6ToFloat(faceMetrics.height);
-	newBitmapInformation->BaselineOffset = ConvertFixed26Dot6ToFloat(faceMetrics.height + faceMetrics.descender);
+		if(characterInformation.DynamicLayoutAllocation.has_value())
+		{
+			fontBitmapPage.Layout.RemoveElement(characterInformation.DynamicLayoutAllocation->PageId, characterInformation.DynamicLayoutAllocation->NodeId);
 
-	constexpr FT_ULong kSpaceCharacterId = 32;
-	FT_Load_Char(mImplementation->Face, kSpaceCharacterId, loadFlags);
+			if(fontBitmapPage.Layout.IsEmpty())
+				RemovePage(characterInformation.Page);
+		}
 
-	const FT_GlyphSlot& glyph = mImplementation->Face->glyph;
-	newBitmapInformation->SpaceWidth = ConvertFixed26Dot6ToFloat(glyph->advance.x);
+		it = mCharactersByPixelSize.erase(it);
+	}
+}
 
-	mFontBitmaps[quantizedFontSize] = newBitmapInformation;
+void Font::RemovePage(u32 pageIndex)
+{
+	if(pageIndex >= (u32)mFontPages.size())
+		return;
 
-	u32 kMissingGlyphId[] = { 0 };
-	RenderGlyphs(size, TArrayView(kMissingGlyphId, 1));
+	mFontPages.erase(mFontPages.begin() + pageIndex);
 
-	auto found = newBitmapInformation->Characters.find(0);
-	if(B3D_ENSURE(found != newBitmapInformation->Characters.end()))
-		newBitmapInformation->MissingGlyph = found->second;
+	for(const auto& bitmapPair : mCharactersByPointSize)
+	{
+		const SPtr<FontBitmapInformation>& bitmapInformation = bitmapPair.second;
+		if(!B3D_ENSURE(bitmapInformation != nullptr))
+			continue;
 
-	return newBitmapInformation;
+		for(auto& characterPair : bitmapInformation->Characters)
+		{
+			CharacterInformation& characterInformation = characterPair.second;
+
+			// Caller must make sure to remove characters referencing this page, before calling this method
+			B3D_ENSURE(characterInformation.Page != pageIndex);
+
+			if(characterInformation.Page > pageIndex)
+				characterInformation.Page--;
+		}
+	}
+
+	{
+		FrameScope frameAllocatorScope;
+		FrameVector<CharacterInformation> replacedEntries;
+		for(auto it = mCharactersByPixelSize.begin(); it != mCharactersByPixelSize.end();)
+		{
+			const CharacterInformation& characterInformation = *it;
+
+			// Caller must make sure to remove characters referencing this page, before calling this method
+			B3D_ENSURE(characterInformation.Page != pageIndex);
+
+			if(characterInformation.Page > pageIndex)
+			{
+				CharacterInformation characterInformationCopy = characterInformation;
+				characterInformationCopy.Page--;
+
+				replacedEntries.push_back(characterInformationCopy);
+
+				it = mCharactersByPixelSize.erase(it);
+			}
+			else
+				++it;
+		}
+
+		for(const auto& entry : replacedEntries)
+			mCharactersByPixelSize.insert(entry);
+	}
 }
 
 SPtr<FontBitmapInformation> Font::GetBitmap(float size) const
 {
 	const float quantizedFontSize = GetQuantizedFontSize(size);
-	auto itFound = mFontBitmaps.find(quantizedFontSize);
 
-	if(itFound == mFontBitmaps.end())
-		return nullptr;
+	if(auto found = mCharactersByPointSize.find(quantizedFontSize); found != mCharactersByPointSize.end())
+		return found->second;
 
-	return itFound->second;
+	return nullptr;
 }
 
-float Font::GetClosestSize(float size) const
+float Font::GetClosestExistingBitmapSize(float size) const
 {
 	float minDiff = std::numeric_limits<float>::max();
 	float bestSize = size;
 
-	for(auto iter = mFontBitmaps.begin(); iter != mFontBitmaps.end(); ++iter)
+	for(auto iter = mCharactersByPointSize.begin(); iter != mCharactersByPointSize.end(); ++iter)
 	{
 		if(iter->first == size)
 			return size;
@@ -511,105 +644,12 @@ float Font::GetClosestSize(float size) const
 	return bestSize;
 }
 
-float Font::GetPointSizeForGlyphPixelWidth(u32 glyphId, i32 width) const
-{
-	const float widthInPoints = ((float)width * 72.0f) / (float)mInformation.DPI;
-	if(mImplementation->Face == nullptr)
-	{
-		B3D_LOG(Error, Font, "Failed to get glyph size. Font renderer is not initialized.");
-		return widthInPoints;
-	}
-
-	const FT_Face& face = mImplementation->Face;
-	FT_Error error = FT_Set_Char_Size(face, ConvertFloatToFixed26Dot6(widthInPoints), 0, mInformation.DPI, mInformation.DPI);
-	if (error)
-	{
-		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to set character size.");
-		return widthInPoints;
-	}
-
-	const FT_Int32 loadFlags = ConvertFontRenderModeToLoadFlags(mInformation.RenderMode);
-	error = FT_Load_Char(face, (FT_ULong)glyphId, loadFlags);
-	if (error)
-	{
-		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to load character.");
-		return widthInPoints;
-	}
-
-	const FT_GlyphSlot slot = face->glyph;
-	const float actualWidth = ConvertFixed26Dot6ToFloat(slot->metrics.width);
-
-	return widthInPoints * (float)width / actualWidth;
-}
-
-Size2I Font::GetGlyphSize(u32 glyphId, float pointSize) const
-{
-	if(mImplementation->Face == nullptr)
-	{
-		B3D_LOG(Error, Font, "Failed to get glyph size. Font renderer is not initialized.");
-		return Size2I::kZero;
-	}
-
-	const FT_Face& face = mImplementation->Face;
-	FT_Error error = FT_Set_Char_Size(face, ConvertFloatToFixed26Dot6(pointSize), 0, mInformation.DPI, mInformation.DPI);
-	if (error)
-	{
-		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to set character size.");
-		return Size2I::kZero;
-	}
-
-	const FT_Int32 loadFlags = ConvertFontRenderModeToLoadFlags(mInformation.RenderMode);
-	error = FT_Load_Char(face, (FT_ULong)glyphId, loadFlags);
-	if (error)
-	{
-		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to load character.");
-		return Size2I::kZero;
-	}
-
-	const FT_GlyphSlot slot = face->glyph;
-	return Size2I(Math::RoundToI32(ConvertFixed26Dot6ToFloat(slot->metrics.width)), Math::RoundToI32(ConvertFixed26Dot6ToFloat(slot->metrics.height)));
-}
-
-float Font::GetPointSizeForGlyphPixelHeight(u32 glyphId, i32 height) const
-{
-	const float heightInPoints = (height * 72.0f) / (float)mInformation.DPI;
-	if(mImplementation->Face == nullptr)
-	{
-		B3D_LOG(Error, Font, "Failed to get glyph size. Font renderer is not initialized.");
-		return heightInPoints;
-	}
-
-	const FT_Face& face = mImplementation->Face;
-	FT_Error error = FT_Set_Char_Size(face, ConvertFloatToFixed26Dot6(heightInPoints), 0, mInformation.DPI, mInformation.DPI);
-	if (error)
-	{
-		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to set character size.");
-		return heightInPoints;
-	}
-
-	const FT_Int32 loadFlags = ConvertFontRenderModeToLoadFlags(mInformation.RenderMode);
-	error = FT_Load_Char(face, (FT_ULong)glyphId, loadFlags);
-	if (error)
-	{
-		B3D_LOG(Error, Font, "Failed to get glyph size. Failed to load character.");
-		return heightInPoints;
-	}
-
-	const FT_GlyphSlot slot = face->glyph;
-	const float actualHeight = ConvertFixed26Dot6ToFloat(slot->metrics.height);
-
-	return heightInPoints * (float)height / actualHeight;
-}
-
 void Font::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 {
-	for(auto& fontDataEntry : mFontBitmaps)
+	for(auto& page : mFontPages)
 	{
-		for(auto& page : fontDataEntry.second->TexturePages)
-		{
-			if(page.Texture.IsLoaded())
-				dependencies.push_back(page.Texture.Get());
-		}
+		if(page.Texture.IsLoaded())
+			dependencies.push_back(page.Texture.Get());
 	}
 }
 

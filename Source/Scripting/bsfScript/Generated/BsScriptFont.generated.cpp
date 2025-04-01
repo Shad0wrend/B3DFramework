@@ -58,7 +58,7 @@ namespace bs
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<Font*>(self->GetNativeObject())->GetClosestSize(size);
+		tmp__output = static_cast<Font*>(self->GetNativeObject())->GetClosestExistingBitmapSize(size);
 
 		float __output;
 		__output = tmp__output;

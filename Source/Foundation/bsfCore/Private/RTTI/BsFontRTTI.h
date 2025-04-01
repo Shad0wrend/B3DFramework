@@ -47,6 +47,7 @@ namespace bs
 				size += B3DRTTIWrite(data.XAdvance, stream);
 				size += B3DRTTIWrite(data.YAdvance, stream);
 				size += B3DRTTIWrite(data.KerningPairs, stream);
+				size += B3DRTTIWrite(data.PointSize, stream);
 
 				return size; });
 		}
@@ -68,13 +69,14 @@ namespace bs
 			B3DRTTIRead(data.XAdvance, stream);
 			B3DRTTIRead(data.YAdvance, stream);
 			B3DRTTIRead(data.KerningPairs, stream);
+			B3DRTTIRead(data.PointSize, stream);
 
 			return size;
 		}
 
 		static BitLength GetSize(const CharacterInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = B3DRTTISize(data.CharId) + B3DRTTISize(data.Page) + B3DRTTISize(data.UvX) + B3DRTTISize(data.UvY) + B3DRTTISize(data.UvWidth) + B3DRTTISize(data.UvHeight) + B3DRTTISize(data.Width) + B3DRTTISize(data.Height) + B3DRTTISize(data.XOffset) + B3DRTTISize(data.YOffset) + B3DRTTISize(data.XAdvance) + B3DRTTISize(data.YAdvance) + B3DRTTISize(data.KerningPairs);
+			BitLength dataSize = B3DRTTISize(data.CharId) + B3DRTTISize(data.Page) + B3DRTTISize(data.UvX) + B3DRTTISize(data.UvY) + B3DRTTISize(data.UvWidth) + B3DRTTISize(data.UvHeight) + B3DRTTISize(data.Width) + B3DRTTISize(data.Height) + B3DRTTISize(data.XOffset) + B3DRTTISize(data.YOffset) + B3DRTTISize(data.XAdvance) + B3DRTTISize(data.YAdvance) + B3DRTTISize(data.KerningPairs) + B3DRTTISize(data.PointSize);
 
 			B3DRTTIAddHeaderSize(dataSize, compress);
 			return dataSize;
@@ -86,7 +88,7 @@ namespace bs
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Texture, 0)
-			B3D_RTTI_MEMBER(IsDynamic, 1)
+			B3D_RTTI_MEMBER(Type, 1)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -110,8 +112,6 @@ namespace bs
 	class B3D_CORE_EXPORT FontBitmapInformationRTTI : public TRTTIType<FontBitmapInformation, IReflectable, FontBitmapInformationRTTI>
 	{
 	private:
-		Vector<FontBitmapPage> mBakedPages;
-
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(Size, 0)
 			B3D_RTTI_MEMBER(BaselineOffset, 1)
@@ -119,7 +119,6 @@ namespace bs
 			B3D_RTTI_MEMBER(MissingGlyph, 3)
 			B3D_RTTI_MEMBER(SpaceWidth, 4)
 			B3D_RTTI_MEMBER(Characters, 6)
-			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mBakedPages, 5)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -140,42 +139,21 @@ namespace bs
 		}
 
 	protected:
-		void OnOperationStarted(FontBitmapInformation& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
-		{
-			if(operationType.IsSet(RTTIOperationType::ReadBit))
-			{
-				for(const auto& entry : object.TexturePages)
-				{
-					if(entry.IsDynamic)
-						break;
-
-					mBakedPages.push_back(entry);
-				}
-			}
-		}
-
-		void OnOperationEnded(FontBitmapInformation& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
-		{
-			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
-			{
-				const u32 bakedPageCount = (u32)mBakedPages.size();
-
-				object.TexturePages.reserve(bakedPageCount);
-				for(u32 pageIndex = 0; pageIndex < bakedPageCount; ++pageIndex)
-				{
-					object.TexturePages.push_back(mBakedPages[pageIndex]);
-				}
-			}
-		}
 	};
 
 	class B3D_CORE_EXPORT FontRTTI : public TRTTIType<Font, Resource, FontRTTI>
 	{
 	private:
+		Vector<FontBitmapPage> mBakedPages;
+		UnorderedMap<float, SPtr<FontBitmapInformation>> mCharactersByPointSize;
+		UnorderedSet<CharacterInformation, CharacterInformation::LookupByPixelSizeEquals, CharacterInformation::LookupByPixelSizeHash> mCharactersByPixelSize;
+
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_NAMED(RenderMode, mInformation.RenderMode, 2)
 			B3D_RTTI_MEMBER_NAMED(DPI, mInformation.DPI, 3)
-			B3D_RTTI_MEMBER_CONTAINER(mFontBitmaps, 4)
+			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mCharactersByPointSize, 4)
+			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mCharactersByPixelSize, 5)
+			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mBakedPages, 6)
 		B3D_RTTI_END_MEMBERS
 
 		SPtr<DataStream> GetFontData(Font* obj, u32& outSize)
@@ -201,7 +179,6 @@ namespace bs
 	public:
 		FontRTTI()
 		{
-			//AddReflectableArrayField("mBitmaps", 0, &FontRTTI::GetBitmap, &FontRTTI::GetBitmapCount, &FontRTTI::SetBitmap, &FontRTTI::SetBitmapCount);
 			AddDataBlockField("mFontData", 1, &FontRTTI::GetFontData, &FontRTTI::SetFontData);
 		}
 
@@ -222,10 +199,83 @@ namespace bs
 		}
 
 	protected:
+		void OnOperationStarted(Font& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::ReadBit))
+			{
+				// Only serialize non-runtime characters and pages
+				Vector<u32> pageIndexRemapping(object.mFontPages.size());
+				for(u32 pageIndex = 0; pageIndex < (u32)object.mFontPages.size(); ++pageIndex)
+				{
+					FontBitmapPage& page = object.mFontPages[pageIndex];
+					if(page.Type == FontBitmapPageType::Runtime)
+					{
+						pageIndexRemapping[pageIndex] = ~0u;
+						continue;
+					}
+
+					pageIndexRemapping[pageIndex] = (u32)mBakedPages.size();
+
+					FontBitmapPage pageCopy = page;
+					pageCopy.Type = FontBitmapPageType::Loaded;
+
+					mBakedPages.push_back(pageCopy);
+				}
+
+				for(const auto& bitmapPair : object.mCharactersByPointSize)
+				{
+					const SPtr<FontBitmapInformation>& bitmapInformation = bitmapPair.second;
+					if(!B3D_ENSURE(bitmapInformation != nullptr))
+						continue;
+
+					SPtr<FontBitmapInformation> bitmapInformationCopy = B3DMakeShared<FontBitmapInformation>();
+					*bitmapInformationCopy = *bitmapInformation;
+					bitmapInformationCopy->Characters.clear();
+
+					for(auto& characterPair : bitmapInformation->Characters)
+					{
+						FontBitmapPage& page = object.mFontPages[characterPair.second.Page];
+						if(page.Type == FontBitmapPageType::Runtime)
+							continue;
+
+						CharacterInformation characterInformation = characterPair.second;
+						characterInformation.Page = pageIndexRemapping[characterInformation.Page];
+
+						bitmapInformationCopy->Characters.insert(std::make_pair(characterPair.first, characterInformation));
+					}
+				}
+
+				for(const auto& characterInformation : object.mCharactersByPixelSize)
+				{
+					FontBitmapPage& page = object.mFontPages[characterInformation.Page];
+					if(page.Type == FontBitmapPageType::Runtime)
+						continue;
+
+					CharacterInformation characterInformationCopy = characterInformation;
+					characterInformationCopy.Page = pageIndexRemapping[characterInformationCopy.Page];
+					mCharactersByPixelSize.insert(characterInformationCopy);
+				}
+			}
+		}
+
 		void OnOperationEnded(Font& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
+			{
+				const u32 bakedPageCount = (u32)mBakedPages.size();
+
+				object.mFontPages.reserve(bakedPageCount);
+				for(u32 pageIndex = 0; pageIndex < bakedPageCount; ++pageIndex)
+					object.mFontPages.push_back(mBakedPages[pageIndex]);
+
+				for(const auto& entry : mCharactersByPointSize)
+					object.mCharactersByPointSize.insert(entry);
+
+				for(const auto& entry : mCharactersByPixelSize)
+					object.mCharactersByPixelSize.insert(entry);
+
 				object.Initialize();
+			}
 		}
 	};
 

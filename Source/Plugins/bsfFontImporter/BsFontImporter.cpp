@@ -72,11 +72,10 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 			for(u32 characterIndex = characterIndexRange.Start; characterIndex <= characterIndexRange.End; ++characterIndex)
 				charactersToRender.push_back(characterIndex);
 
-			font->RenderGlyphs(fontSizes[sizeIndex], charactersToRender);
+			font->RenderGlyphs(fontSizes[sizeIndex], charactersToRender, true);
 			charactersToRender.clear();
 		}
 	}
 
-	font->Bake(false);
 	return font;
 }
