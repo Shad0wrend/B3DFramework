@@ -105,7 +105,6 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 	Vector2 uvOffset = information.UvOffset;
 	Vector2 uvScale = information.UvScale;
 
-	const Size2I& imageSize = spriteAllocation->GetSize();
 	if(useScale9Grid)
 	{
 		u32 leftBorder = information.BorderLeft;
@@ -176,6 +175,7 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		renderElement.VertexPositions[34] = Vector2(topRightStart, bottomStart + bottomBorder);
 		renderElement.VertexPositions[35] = Vector2(topRightStart + rightBorder, bottomStart + bottomBorder);
 
+		const Size2I& imageSize = spriteAllocation->GetSize();
 		float invWidth = 1.0f / (float)imageSize.Width;
 		float invHeight = 1.0f / (float)imageSize.Height;
 
@@ -250,9 +250,9 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 	else
 	{
 		renderElement.VertexPositions[0] = Vector2((float)offset.X, (float)offset.Y);
-		renderElement.VertexPositions[1] = Vector2((float)offset.X + (float)imageSize.Width, (float)offset.Y);
-		renderElement.VertexPositions[2] = Vector2((float)offset.X, (float)offset.Y + (float)imageSize.Height);
-		renderElement.VertexPositions[3] = Vector2((float)offset.X + (float)imageSize.Width, (float)offset.Y + (float)imageSize.Height);
+		renderElement.VertexPositions[1] = Vector2((float)offset.X + (float)information.Size.Width, (float)offset.Y);
+		renderElement.VertexPositions[2] = Vector2((float)offset.X, (float)offset.Y + (float)information.Size.Height);
+		renderElement.VertexPositions[3] = Vector2((float)offset.X + (float)information.Size.Width, (float)offset.Y + (float)information.Size.Height);
 
 		renderElement.VertexUVs[0] = spriteAllocation->TransformUV(Vector2(uvOffset.X, uvOffset.Y));
 		renderElement.VertexUVs[1] = spriteAllocation->TransformUV(Vector2(uvOffset.X + uvScale.X, uvOffset.Y));

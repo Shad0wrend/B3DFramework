@@ -224,7 +224,7 @@ void GUIContentSprites::CalculateContentBounds(const Area2I& contentArea, const 
 		outTextBounds.Y = (float)contentArea.Y;
 		outTextBounds.Height = (float)contentArea.Height;
 
-		const float imageYOffset = Math::Max(0, (float)contentArea.Height - (float)imageSize.Height) / 2.0f;
+		const float imageYOffset = Math::Max(0, Math::Round(((float)contentArea.Height - (float)imageSize.Height) / 2.0f));
 		outImageBounds.Y = (float)contentArea.Y + (float)imageYOffset;
 		outImageBounds.Height = (float)contentArea.Height - imageYOffset;
 	}

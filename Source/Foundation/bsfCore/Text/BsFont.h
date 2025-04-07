@@ -44,42 +44,7 @@ namespace bs
 
 		B3D_SCRIPT_EXPORT(Exclude(true))
 		Optional<TreeTextureAtlasLayout::Allocation> DynamicLayoutAllocation; /**< Handle to the character allocation in the texture atlas. Can be used for freeing the allocation. */
-
-		struct LookupByPixelSizeEquals { bool operator()(const CharacterInformation& lhs, const CharacterInformation& rhs) const; };
-		struct LookupByPixelSizeHash { size_t operator()(const CharacterInformation& value) const; };
-
-		struct LookupByPointSizeEquals { bool operator()(const CharacterInformation& lhs, const CharacterInformation& rhs) const; };
-		struct LookupByPointSizeHash { size_t operator()(const CharacterInformation& value) const; };
 	};
-
-	inline bool CharacterInformation::LookupByPixelSizeEquals::operator()(const CharacterInformation& lhs, const CharacterInformation& rhs) const
-	{
-		return lhs.CharId == rhs.CharId && lhs.Width == rhs.Width && lhs.Height == rhs.Height;
-	}
-
-	inline size_t CharacterInformation::LookupByPixelSizeHash::operator()(const CharacterInformation& value) const
-	{
-		size_t hash = 0;
-		B3DCombineHash(hash, value.CharId);
-		B3DCombineHash(hash, value.Width);
-		B3DCombineHash(hash, value.Height);
-
-		return hash;
-	}
-
-	inline bool CharacterInformation::LookupByPointSizeEquals::operator()(const CharacterInformation& lhs, const CharacterInformation& rhs) const
-	{
-		return lhs.CharId == rhs.CharId && lhs.PointSize == rhs.PointSize;
-	}
-
-	inline size_t CharacterInformation::LookupByPointSizeHash::operator()(const CharacterInformation& value) const
-	{
-		size_t hash = 0;
-		B3DCombineHash(hash, value.CharId);
-		B3DCombineHash(hash, value.PointSize);
-
-		return hash;
-	}
 
 	/** Available types of FontBitmapPage. */
 	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Text)) FontBitmapPageType
@@ -174,21 +139,6 @@ namespace bs
 		SPtr<MemoryDataStream> FontData;
 	};
 
-	/** Requests a font size in either points or pixels. Only one of the fields in the structure must be set. */
-	struct FontSizeRequest
-	{
-		FontSizeRequest(float sizeInPoints = 0.0f)
-			: FontSizeInPoints(sizeInPoints)
-		{ }
-
-		FontSizeRequest(const Size2I& fontSizeInPixels)
-			: FontSizeInPixels(fontSizeInPixels)
-		{ }
-
-		float FontSizeInPoints = 0.0f; /**< Font size in points. If zero, FontSizeInPixels is used instead. */
-		Size2I FontSizeInPixels { BsZero }; /**< Font size in pixels. Must be non-zero if FontSizeInPoints is zero. */
-	};
-
 	/** Descriptor structure used for initialization of a Font. */
 	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Text)) FontCreateInformation : FontInformation 
 	{
@@ -225,14 +175,8 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		float GetClosestExistingBitmapSize(float size) const;
 
-		/** Calculates the required font size (in points) in order to render a glyph that has width of @p width pixels. */
-		float GetPointSizeForGlyphPixelWidth(u32 glyphId, i32 width) const;
-
-		/** Calculates the required font size (in points) in order to render a glyph that has height of @p height pixels. */
-		float GetPointSizeForGlyphPixelHeight(u32 glyphId, i32 height) const;
-
-		/** Attempts to find information about a character with the specified id and size. Returns null if character was not yet rendered via RenderGlyphs. */
-		const CharacterInformation* FindCharacterInformation(u32 characterId, const Size2I& sizeInPixels) const;
+		/** Calculates the required font size (in points) in order to render a glyph that fits within an area of @p size pixels, without stretching or cropping. */
+		float GetPointSizeForGlyphThatFitsArea(u32 glyphId, const Size2I& size) const;
 
 		/** Attempts to find information about a character with the specified id and size. Returns null if character was not yet rendered via RenderGlyphs. */
 		const CharacterInformation* FindCharacterInformation(u32 characterId, float sizeInPoints) const;
@@ -241,18 +185,15 @@ namespace bs
 		const FontBitmapPage& GetPage(u32 pageIndex) const;
 
 		/**
-		 * Renders glyphs for particular characters in a particular size (in either points or pixels). The rendered glyphs will be
-		 * added to the first free texture page, or new texture page(s) will be allocated. Returns true if successful. 
+		 * Renders glyphs for particular characters in a particular size. The rendered glyphs will be added to the first free texture page,
+		 * or new texture page(s) will be allocated. Returns true if successful. 
 		 *
-		 * @param	sizeRequest		Size of the requested character(s). This can be in points (preferred) or in pixels if you need
-		 *							the character to be a specific size in the bitmap. Note that characters that are rendered
-		 *							using pixel size have limited functionality and should not be used for text as they don't support
-		 *							kerning. They are mostly useful for symbols and icons.
+		 * @param	sizeInPoints	Size of the glyph in points.
 		 * @param	characterIds	UTF32 character identifiers of the characters to render.
 		 * @param	bake			If true the rendered glyph will be saved with the font the next time it is serialized, so it doesn't
 		 *							need to be re-rendered the next time its loaded. 
 		 */
-		bool RenderGlyphs(const FontSizeRequest& sizeRequest, const TArrayView<u32>& characterIds, bool bake = false);
+		bool RenderGlyphs(float sizeInPoints, const TArrayView<u32>& characterIds, bool bake = false);
 
 		/**
 		 * Clears all the rendered glyph information.
@@ -326,10 +267,7 @@ namespace bs
 	private:
 		FontInformation mInformation;
 
-		// Note: Ideally there would be one map shared across both types of character sizes, but we cant deduce font size from pixel size at the moment
 		UnorderedMap<float, SPtr<FontBitmapInformation>> mCharactersByPointSize;
-		UnorderedSet<CharacterInformation, CharacterInformation::LookupByPixelSizeHash, CharacterInformation::LookupByPixelSizeEquals> mCharactersByPixelSize;
-
 		Vector<FontBitmapPage> mFontPages;
 
 		struct Implementation;

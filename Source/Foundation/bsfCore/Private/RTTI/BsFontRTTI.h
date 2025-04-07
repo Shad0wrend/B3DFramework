@@ -146,13 +146,11 @@ namespace bs
 	private:
 		Vector<FontBitmapPage> mBakedPages;
 		UnorderedMap<float, SPtr<FontBitmapInformation>> mCharactersByPointSize;
-		UnorderedSet<CharacterInformation, CharacterInformation::LookupByPixelSizeHash, CharacterInformation::LookupByPixelSizeEquals> mCharactersByPixelSize;
 
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_NAMED(RenderMode, mInformation.RenderMode, 2)
 			B3D_RTTI_MEMBER_NAMED(DPI, mInformation.DPI, 3)
 			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mCharactersByPointSize, 4)
-			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mCharactersByPixelSize, 5)
 			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mBakedPages, 6)
 		B3D_RTTI_END_MEMBERS
 
@@ -244,17 +242,6 @@ namespace bs
 						bitmapInformationCopy->Characters.insert(std::make_pair(characterPair.first, characterInformation));
 					}
 				}
-
-				for(const auto& characterInformation : object.mCharactersByPixelSize)
-				{
-					FontBitmapPage& page = object.mFontPages[characterInformation.Page];
-					if(page.Type == FontBitmapPageType::Runtime)
-						continue;
-
-					CharacterInformation characterInformationCopy = characterInformation;
-					characterInformationCopy.Page = pageIndexRemapping[characterInformationCopy.Page];
-					mCharactersByPixelSize.insert(characterInformationCopy);
-				}
 			}
 		}
 
@@ -270,9 +257,6 @@ namespace bs
 
 				for(const auto& entry : mCharactersByPointSize)
 					object.mCharactersByPointSize.insert(entry);
-
-				for(const auto& entry : mCharactersByPixelSize)
-					object.mCharactersByPixelSize.insert(entry);
 
 				object.Initialize();
 			}
