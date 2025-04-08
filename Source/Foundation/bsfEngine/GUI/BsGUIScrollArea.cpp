@@ -316,7 +316,8 @@ void GUIScrollArea::UpdateAbsoluteCoordinatesForChildren()
 	if(mContentLayout->IsActive())
 	{
 		const GUIPhysicalPointF contentOrigin(mIntermediateAbsolutePosition.X - mHorzOffset * mAbsoluteScale, mIntermediateAbsolutePosition.Y - mVertOffset * mAbsoluteScale);
-		const GUIPhysicalAreaF contentVisibleAreaSize(mIntermediateAbsolutePosition, mVisibleSize.To<GUIPhysicalUnitF>() * mAbsoluteScale); // TODO - Clip visible size by parent clip rectangle?
+		GUIPhysicalAreaF contentVisibleAreaSize(mIntermediateAbsolutePosition, mVisibleSize.To<GUIPhysicalUnitF>() * mAbsoluteScale);
+		contentVisibleAreaSize.Clip(mIntermediateAbsoluteClippedArea);
 
 		mContentLayout->UpdateAbsoluteCoordinates(contentOrigin, mAbsoluteScale, contentVisibleAreaSize);
 	}
