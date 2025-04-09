@@ -27,6 +27,7 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		void SetContent(const GUIContent& content);
 
+		static constexpr const char* kStyleSheetElementType = "label";
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
@@ -37,7 +38,7 @@ namespace bs
 
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		ElementType GetElementType() const override { return ElementType::Label; }
-		const char* GetStyleSheetElement() const override { return "label"; }
+		const char* GetStyleSheetElement() const override { return kStyleSheetElementType; }
 
 		/** @} */
 	protected:

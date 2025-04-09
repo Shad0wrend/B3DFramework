@@ -40,7 +40,7 @@ namespace bs
 		B3D_SCRIPT_EXPORT()
 		void SetImage(const HSpriteImage& image);
 
-		static constexpr const char* kElementType = "texture";
+		static constexpr const char* kStyleSheetElementType = "texture";
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
@@ -51,7 +51,7 @@ namespace bs
 
 		ElementType GetElementType() const override { return ElementType::Texture; }
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
-		const char* GetStyleSheetElement() const override { return kElementType; }
+		const char* GetStyleSheetElement() const override { return kStyleSheetElementType; }
 
 		/** @} */
 	protected:

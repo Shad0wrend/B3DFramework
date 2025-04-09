@@ -34,14 +34,11 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 
 	const GUIStyleSheetCascade& styleSheetCascade = GetStyleSheetCascade();
 
-	GUIStyleSheetRules multiLineLabelStyleSheetRules = styleSheetCascade.BuildRules(GUILabel::GetGuiTypeName(), BuiltinResources::kMultiLineLabelStyle);
-	const GUIStyleSheetRules backgroundStyleSheetRules = styleSheetCascade.BuildRules(GUITexture::kElementType, kBackgroundStyleClass);
+	GUIStyleSheetRules multiLineLabelStyleSheetRules = styleSheetCascade.BuildRules(GUILabel::kStyleSheetElementType, BuiltinResources::kMultiLineLabelStyle);
+	const GUIStyleSheetRules backgroundStyleSheetRules = styleSheetCascade.BuildRules(GUITexture::kStyleSheetElementType, kBackgroundStyleClass);
 
 	GUISizeConstraints dimensions = GUISizeConstraints::Create(GUIOptions(GUIOption::FixedWidth(kTooltipWidth)));
 	GUILogicalSize size = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(text, multiLineLabelStyleSheetRules, dimensions.MaximumWidth);
-
-	size.Width += backgroundStyleSheetRules.Padding.Left + backgroundStyleSheetRules.Padding.Right;
-	size.Height += backgroundStyleSheetRules.Padding.Top + backgroundStyleSheetRules.Padding.Bottom;
 
 	GUILogicalUnit contentOffsetX = backgroundStyleSheetRules.Padding.Left;
 	GUILogicalUnit contentOffsetY = backgroundStyleSheetRules.Padding.Top;
@@ -53,6 +50,9 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	contentPanel->SetDepthRange(-1);
 
 	// Background frame
+	size.Width += backgroundStyleSheetRules.Padding.Left + backgroundStyleSheetRules.Padding.Right;
+	size.Height += backgroundStyleSheetRules.Padding.Top + backgroundStyleSheetRules.Padding.Bottom;
+
 	GUIPanel* backgroundPanel = GetPanel()->AddNewElement<GUIPanel>();
 	backgroundPanel->SetWidth(size.Width);
 	backgroundPanel->SetHeight(size.Height);

@@ -64,10 +64,10 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCr
 	SetDepth(0); // Needs to be in front of everything
 	SetStyleSheetCascade(createInformation.StyleSheetCascade);
 
-	const GUIStyleSheetRules frameStyleSheetRules = GetStyleSheetCascade().BuildRules(GUITexture::kElementType, kBackgroundFrameStyleClass);
+	const GUIStyleSheetRules frameStyleSheetRules = GetStyleSheetCascade().BuildRules(GUITexture::kStyleSheetElementType, kBackgroundFrameStyleClass);
 	mBackgroundFramePadding = frameStyleSheetRules.Padding;
 
-	const GUIStyleSheetRules scrollbarBackgroundStyleSheetRules = GetStyleSheetCascade().BuildRules(GUITexture::kElementType, kScrollbarBackgroundStyleClass);
+	const GUIStyleSheetRules scrollbarBackgroundStyleSheetRules = GetStyleSheetCascade().BuildRules(GUITexture::kStyleSheetElementType, kScrollbarBackgroundStyleClass);
 	mScrollbarWidth = scrollbarBackgroundStyleSheetRules.Size.Width;
 
 	const GUIStyleSheetRules scrollbarButtonStyleSheetRules = GetStyleSheetCascade().BuildRules(GUIButton::kElementType, kScrollbarButtonStyleClass);
