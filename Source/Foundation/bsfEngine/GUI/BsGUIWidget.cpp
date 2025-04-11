@@ -286,7 +286,7 @@ void GUIWidget::UpdateLayout()
 void GUIWidget::UpdateLayout(GUIElement* element)
 {
 	GUIElement* const parent = element->GetParent();
-	const bool isPanelOptimized = parent != nullptr && parent->GetType() == GUIElement::Type::Panel;
+	const bool isPanelOptimized = parent != nullptr && parent->Is<GUIPanel>();
 
 	GUIElement* const updateParent = isPanelOptimized ? parent : element;
 

@@ -77,7 +77,6 @@ namespace bs
 		 *  @{
 		 */
 
-		Type GetType() const override { return GUIElement::Type::Panel; }
 		void UpdateOptimalLayoutSizes() override;
 
 		/**

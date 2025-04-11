@@ -49,7 +49,7 @@ void GUIPanel::SetDepthRange(i16 depth, u16 depthRangeMin, u16 depthRangeMax)
 
 GUIConstrainedSize GUIPanel::GetChildElementSizeRange(const GUIElement* element) const
 {
-	if(element->GetType() == GUIElement::Type::FixedSpace || element->GetType() == GUIElement::Type::FlexibleSpace)
+	if(element->Is<GUIFixedSpace>() || element->Is<GUIFlexibleSpace>())
 	{
 		GUIConstrainedSize sizeRange = element->GetConstrainedSize();
 		sizeRange.Optimal.Width = 0;

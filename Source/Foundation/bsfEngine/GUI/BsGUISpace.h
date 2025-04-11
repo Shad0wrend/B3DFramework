@@ -39,7 +39,6 @@ namespace bs
 		 *  @{
 		 */
 
-		Type GetType() const override { return GUIElement::Type::FixedSpace; }
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return GUILogicalSize(GetSize(), GetSize()); }
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 
@@ -79,7 +78,6 @@ namespace bs
 		 *  @{
 		 */
 
-		Type GetType() const override { return GUIElement::Type::FlexibleSpace; }
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return GUILogicalSize(0, 0); }
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 

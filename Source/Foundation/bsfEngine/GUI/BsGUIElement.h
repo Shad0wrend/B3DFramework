@@ -63,18 +63,6 @@ namespace bs
 	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIElement : public IReflectable, public IScriptExportable
 	{
 	public:
-		/**	Valid types of GUI base elements. */
-		enum class Type
-		{
-			Layout,
-			Interactable,
-			FixedSpace,
-			FlexibleSpace,
-			Panel
-		};
-
-	protected:
-	public:
 		GUIElement() = default;
 		GUIElement(const GUISizeConstraints& dimensions);
 		virtual ~GUIElement() = default;
@@ -348,9 +336,6 @@ namespace bs
 		 * between GUI element border and contents.
 		 */
 		virtual const RectOffset& GetPadding() const;
-
-		/**	Returns specific sub-type of this object. */
-		virtual Type GetType() const = 0;
 
 		/**	Returns parent GUI base element. */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Parent))
