@@ -49,7 +49,6 @@ namespace bs
 		struct PrivatelyConstruct {};
 		GUITexture(PrivatelyConstruct, const GUITextureContents& contents, const String& styleName, const GUISizeConstraints& dimensions);
 
-		ElementType GetElementType() const override { return ElementType::Texture; }
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		const char* GetStyleSheetElement() const override { return kStyleSheetElementType; }
 

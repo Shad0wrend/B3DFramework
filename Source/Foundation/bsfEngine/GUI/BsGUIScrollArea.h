@@ -66,6 +66,8 @@ namespace bs
 		 */
 		static GUIScrollArea* Create(const GUIOptions& options, const String& scrollBarStyle = StringUtil::kBlank, const String& scrollAreaStyle = StringUtil::kBlank);
 
+		~GUIScrollArea() = default;
+
 		/**	Returns the scroll area layout that you may use to add elements inside the scroll area. */
 		GUILayoutY& GetLayout() const { return *mContentLayout; }
 
@@ -136,17 +138,7 @@ namespace bs
 		 * horizontal scrollbar.
 		 */
 		static const GUILogicalUnit kScrollBarWidth;
-
-		/** @name Internal
-		 *  @{
-		 */
-
-		ElementType GetElementType() const override { return ElementType::ScrollArea; }
-
-		/** @} */
 	protected:
-		~GUIScrollArea() = default;
-
 		GUIConstrainedSize GetConstrainedSize() const override;
 		GUIConstrainedSize CalculateConstrainedSize() const override;
 		void UpdateOptimalLayoutSizes() override;
@@ -198,6 +190,14 @@ namespace bs
 
 		static const u32 kMinHandleSize;
 		static const u32 kWheelScrollAmount;
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class GUIScrollAreaRTTI;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

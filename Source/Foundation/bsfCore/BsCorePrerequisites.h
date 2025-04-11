@@ -738,6 +738,8 @@ namespace bs
 		TID_ModalWindow = 1258,
 		TID_DockableEditorWindow = 1259,
 		TID_DropDownWindow = 1260,
+		TID_GUIElementContainer = 1261,
+		TID_GUIScrollArea = 1262,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,

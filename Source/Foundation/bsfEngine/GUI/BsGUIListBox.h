@@ -84,7 +84,6 @@ namespace bs
 		struct PrivatelyConstruct { };
 		GUIListBox(PrivatelyConstruct, const GUIListBoxContent& content, const String& styleName, const GUISizeConstraints& sizeConstraints);
 
-		ElementType GetElementType() const override { return ElementType::ListBox; }
 		const char* GetStyleSheetElement() const override { return kElementType; }
 
 		/** @} */

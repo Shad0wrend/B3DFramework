@@ -37,7 +37,6 @@ namespace bs
 		GUILabel(PrivatelyConstruct, const GUIContent& content, const String& styleClass, const GUISizeConstraints& dimensions);
 
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
-		ElementType GetElementType() const override { return ElementType::Label; }
 		const char* GetStyleSheetElement() const override { return kStyleSheetElementType; }
 
 		/** @} */

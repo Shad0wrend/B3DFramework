@@ -44,21 +44,6 @@ namespace bs
 	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIInteractable : public GUIRenderable
 	{
 	public:
-		/**	Different sub-types of GUI elements. */
-		enum class ElementType
-		{
-			Label,
-			Button,
-			Toggle,
-			Texture,
-			InputBox,
-			ListBox,
-			ScrollArea,
-			Layout,
-			Undefined
-		};
-
-	public:
 		GUIInteractable(String styleClass, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOptions(0));
 		GUIInteractable(const char* styleClass, const GUISizeConstraints& dimensions, GUIElementOptions options = GUIElementOptions(0));
 		~GUIInteractable() override = default;
@@ -124,9 +109,6 @@ namespace bs
 		/** @name Internal
 		 *  @{
 		 */
-
-		/** Gets internal element style representing the exact type of GUI element in this object. */
-		virtual ElementType GetElementType() const { return ElementType::Undefined; } // TODO - Deprecated
 
 		/**
 		 * Called when a mouse event is received on any GUI element the mouse is interacting with. Return true if you have

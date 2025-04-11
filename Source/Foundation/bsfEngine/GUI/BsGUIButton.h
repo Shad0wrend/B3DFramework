@@ -30,8 +30,6 @@ namespace bs
 		struct PrivatelyConstruct { };
 		GUIButton(PrivatelyConstruct, const GUIContent& content, const String& styleClass, const GUISizeConstraints& dimensions);
 
-		ElementType GetElementType() const override { return ElementType::Button; }
-
 		/** @} */
 	private:
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;

@@ -68,7 +68,6 @@ namespace bs
 		struct PrivatelyConstruct { };
 		GUIInputBox(PrivatelyConstruct, const GUIInputBoxContent& content, const String& styleName, const GUISizeConstraints& sizeConstraints);
 
-		ElementType GetElementType() const override { return ElementType::InputBox; }
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 
 		/** @} */

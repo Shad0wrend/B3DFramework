@@ -15,6 +15,8 @@ namespace bs
 	class B3D_EXPORT GUIElementContainer : public GUIInteractable
 	{
 	public:
+		virtual ~GUIElementContainer() = default;
+
 		/** @copydoc GUIElement::SetFocus */
 		void SetFocus(bool enabled, bool clear = false);
 
@@ -23,12 +25,20 @@ namespace bs
 	protected:
 		GUIElementContainer(const GUISizeConstraints& dimensions, const char* style, GUIElementOptions options = GUIElementOptions(0));
 		GUIElementContainer(const GUISizeConstraints& dimensions, const String& style = StringUtil::kBlank, GUIElementOptions options = GUIElementOptions(0));
-		virtual ~GUIElementContainer() = default;
 
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;
 
 		GUIInteractable* mFocusElement = nullptr;
+
+		/************************************************************************/
+		/* 								RTTI		                     		*/
+		/************************************************************************/
+	public:
+		friend class GUIElementContainerRTTI;
+
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

@@ -12,6 +12,29 @@ using namespace std::placeholders;
 
 using namespace bs;
 
+/** @cond RTTI */
+/** @addtogroup RTTI-Impl-Engine
+ *  @{
+ */
+
+namespace bs
+{
+	class B3D_EXPORT GUIScrollAreaRTTI : public TRTTIType<GUIScrollArea, GUIElementContainer, GUIScrollAreaRTTI>
+	{
+	public:
+		const String& GetRttiName()
+		{
+			static String name = "GUIScrollArea";
+			return name;
+		}
+
+		u32 GetRttiId() const override { return TID_GUIScrollArea; }
+
+		SPtr<IReflectable> NewRttiObject() { return nullptr; }
+	};
+} // namespace bs
+
+
 const GUILogicalUnit GUIScrollArea::kScrollBarWidth = 16;
 const u32 GUIScrollArea::kWheelScrollAmount = 50;
 
@@ -520,4 +543,14 @@ const String& GUIScrollArea::GetGuiTypeName()
 {
 	static String typeName = "ScrollArea";
 	return typeName;
+}
+
+RTTIType* GUIScrollArea::GetRttiStatic()
+{
+	return GUIScrollAreaRTTI::Instance();
+}
+
+RTTIType* GUIScrollArea::GetRtti() const
+{
+	return GetRttiStatic();
 }

@@ -5,6 +5,28 @@
 
 using namespace bs;
 
+/** @cond RTTI */
+/** @addtogroup RTTI-Impl-Engine
+ *  @{
+ */
+
+namespace bs
+{
+	class B3D_EXPORT GUIElementContainerRTTI : public TRTTIType<GUIElementContainer, GUIInteractable, GUIElementContainerRTTI>
+	{
+	public:
+		const String& GetRttiName()
+		{
+			static String name = "GUIElementContainer";
+			return name;
+		}
+
+		u32 GetRttiId() const override { return TID_GUIElementContainer; }
+
+		SPtr<IReflectable> NewRttiObject() { return nullptr; }
+	};
+} // namespace bs
+
 GUIElementContainer::GUIElementContainer(const GUISizeConstraints& dimensions, const char* style, GUIElementOptions options)
 	: GUIInteractable(style, dimensions, options)
 {
@@ -39,4 +61,14 @@ bool GUIElementContainer::DoOnCommandEvent(const GUICommandEvent& ev)
 		return false;
 
 	return GUIInteractable::DoOnCommandEvent(ev);
+}
+
+RTTIType* GUIElementContainer::GetRttiStatic()
+{
+	return GUIElementContainerRTTI::Instance();
+}
+
+RTTIType* GUIElementContainer::GetRtti() const
+{
+	return GetRttiStatic();
 }
