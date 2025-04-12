@@ -4,6 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObjectWrapper.h"
+#include "Serialization/BsScriptAssemblyManager.h"
 
 namespace bs
 {
@@ -52,12 +53,18 @@ namespace bs
 		 * Creates a new script object and a script object wrapper of @p SelfType, and associates them with the provided native object. Should not be called if @p nativeObject
 		 * already has an associated script object.
 		 */
-		static MonoObject* CreateScriptObjectAndWrapper(NativeType* nativeObject)
+		static MonoObject* CreateScriptObjectAndWrapper(GUIElement* nativeObject)
 		{
 			MonoObject* const scriptObject = SelfType::CreateScriptObject(false);
-			ScriptObjectWrapper::Create<SelfType>(nativeObject, scriptObject);
+			ScriptObjectWrapper::Create<SelfType>(B3DRTTICast<NativeType>(nativeObject), scriptObject);
 
 			return scriptObject;
+		}
+
+		/** Casts the reflectable object to script exportable. */
+		static IScriptExportable* GetScriptExportable(IReflectable* nativeObject)
+		{
+			return (IScriptExportable*)(NativeType*)nativeObject;
 		}
 
 		/**
@@ -72,7 +79,29 @@ namespace bs
 			if(ScriptObjectWrapper* const scriptObjectWrapper = (ScriptObjectWrapper*)nativeObject->GetScriptObjectWrapper())
 				return scriptObjectWrapper->GetScriptObject();
 
+			// TODO: Could skip expensive lookup if the type has no derived classes (should be most cases). In that case the code-gen could generate
+			// code that calls a streamlined version of this method, with no lookup.
+			const ScriptTypeMetaData* metaData = ScriptAssemblyManager::Instance().GetScriptWrapperMetaData(nativeObject->GetTypeId());
+
+			// Meta-data must be present for native object of type NativeType, but derived classes might not have it as they might not be script exported
+			B3D_ENSURE(metaData != nullptr || (NativeType::GetRttiStatic()->GetRttiId() != nativeObject->GetTypeId()));
+			if(metaData != nullptr)
+				return metaData->GUIElementCreateCallback(nativeObject);
+
 			return CreateScriptObjectAndWrapper(nativeObject);
+		}
+
+	protected:
+		friend class TScriptObjectWrapper<SelfType, BaseType>;
+		friend class TScriptTypeDefinition<SelfType>;
+
+		/** Initialize RTTI type ID and callback used to create the script object/script object wrapper. */
+		static void InitializeAdditionalMetaData(ScriptTypeMetaData& metaData)
+		{
+			metaData.TypeId = NativeType::GetRttiStatic()->GetRttiId();
+			metaData.GUIElementCreateCallback = &CreateScriptObjectAndWrapper;
+			metaData.CreateCallbackType = ScriptWrapperCreateCallbackType::GUIElement;
+			metaData.GetScriptExportable = &GetScriptExportable;
 		}
 	};
 

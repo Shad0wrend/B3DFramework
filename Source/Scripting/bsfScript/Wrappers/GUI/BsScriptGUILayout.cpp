@@ -4,7 +4,6 @@
 #include "BsMonoField.h"
 #include "BsMonoClass.h"
 #include "BsMonoManager.h"
-#include "Wrappers/GUI/BsScriptGUIScrollArea.h"
 #include "GUI/BsGUILayout.h"
 #include "GUI/BsGUILayoutX.h"
 #include "GUI/BsGUILayoutY.h"

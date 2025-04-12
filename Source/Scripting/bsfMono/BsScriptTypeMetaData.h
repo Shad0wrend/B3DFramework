@@ -53,6 +53,7 @@ namespace bs
 		Reflectable,
 		Resource,
 		GameObject,
+		GUIElement,
 	};
 
 
@@ -73,6 +74,7 @@ namespace bs
 			MonoObject* (*ReflectableCreateCallback)(const SPtr<IReflectable>&) = nullptr;
 			MonoObject* (*ResourceCreateCallback)(const HResource&);
 			MonoObject* (*GameObjectCreateCallback)(const HGameObject&);
+			MonoObject* (*GUIElementCreateCallback)(GUIElement*);
 		};
 
 		IScriptExportable* (*GetScriptExportable)(IReflectable*) = nullptr; /** Casts the IReflectable type to IScriptExportable. */
