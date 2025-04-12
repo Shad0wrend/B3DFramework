@@ -450,6 +450,103 @@
 			<doc>Projection type that emulates human vision. Objects farther away appear smaller.</doc>
 		</enumentry>
 	</enum>
+	<class native="GUIScrollArea" script="GUIScrollArea">
+		<doc>A GUI element container with support for vertical &amp; horizontal scrolling.</doc>
+		<method native="ScrollUp" script="ScrollUp" static="false">
+			<doc>Scrolls the area up by specified amount of pixels, if possible.</doc>
+			<param name="pixels" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+		</method>
+		<method native="ScrollDown" script="ScrollDown" static="false">
+			<doc>Scrolls the area down by specified amount of pixels, if possible.</doc>
+			<param name="pixels" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+		</method>
+		<method native="ScrollLeft" script="ScrollLeft" static="false">
+			<doc>Scrolls the area left by specified amount of pixels, if possible.</doc>
+			<param name="pixels" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+		</method>
+		<method native="ScrollRight" script="ScrollRight" static="false">
+			<doc>Scrolls the area right by specified amount of pixels, if possible.</doc>
+			<param name="pixels" type="TUnitValue&lt;int,PhysicalPixel&gt;">
+			</param>
+		</method>
+		<method native="ScrollUp" script="ScrollUp" static="false">
+			<doc>Scrolls the area up by specified percentage (ranging [0, 1]), if possible.</doc>
+			<param name="percent" type="float">
+			</param>
+		</method>
+		<method native="ScrollDown" script="ScrollDown" static="false">
+			<doc>Scrolls the area down by specified percentage (ranging [0, 1]), if possible.</doc>
+			<param name="percent" type="float">
+			</param>
+		</method>
+		<method native="ScrollLeft" script="ScrollLeft" static="false">
+			<doc>Scrolls the area left by specified percentage (ranging [0, 1]), if possible.</doc>
+			<param name="percent" type="float">
+			</param>
+		</method>
+		<method native="ScrollRight" script="ScrollRight" static="false">
+			<doc>Scrolls the area right by specified percentage (ranging [0, 1]), if possible.</doc>
+			<param name="percent" type="float">
+			</param>
+		</method>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIScrollAreaContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIScrollAreaContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<property name="Layout" type="GUILayoutY" getter="GetLayout" setter="" static="false">
+			<doc>Returns the scroll area layout that you may use to add elements inside the scroll area.</doc>
+		</property>
+		<property name="VerticalScroll" type="float" getter="GetVerticalScroll" setter="ScrollToVertical" static="false">
+			<doc>Scrolls the contents to the specified position (0 meaning top-most part of the content is visible, and 1 meaning bottom-most part is visible).</doc>
+		</property>
+		<property name="HorizontalScroll" type="float" getter="GetHorizontalScroll" setter="ScrollToHorizontal" static="false">
+			<doc>Scrolls the contents to the specified position (0 meaning left-most part of the content is visible, and 1 meaning right-most part is visible)</doc>
+		</property>
+		<property name="ContentBounds" type="TArea2&lt;TUnitValue&lt;int,PhysicalPixel&gt;,TUnitValue&lt;int,PhysicalPixel&gt;&gt;" getter="GetContentBounds" setter="" static="false">
+			<doc>Returns the bounds of the scroll area not including the scroll bars (meaning only the portion that contains the contents).</doc>
+		</property>
+		<property name="EnableCulling" type="bool" getter="" setter="SetEnableCulling" static="false">
+			<doc>Enables/disables culling of child elements. If culling is enabled all child elements that are fully outside of the parent visible bounds will be marked as culled. Culled elements will never have their contents or mesh updated, their absolute coordinate will not be updated and they wont be drawn This is useful for layouts with a large amount of children, but comes with an overhead so it is disabled by default. Note this has no impact on layout update, which may still be expensive with many elements.</doc>
+		</property>
+		<property name="ScrollBarSize" type="TUnitValue&lt;int,LogicalPixel&gt;" getter="GetScrollBarSize" setter="" static="false">
+			<doc>Returns the width or height of the scrollbar.</doc>
+		</property>
+	</class>
 	<class native="ColorGradient" script="ColorGradient">
 		<doc>Represents a range of color values over some parameters, similar to a curve. Internally represented as a set of keys that get interpolated between. Stores colors as 32-bit integers, and is therefor unable to represent a color range outside of [0, 1] - see ColorGradientHDR for an alternative.</doc>
 		<ctor>
@@ -4017,14 +4114,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>If true the window render surface will be created, which internally provides a swap chain and allows the GPU to render to the window.</doc>
 		</field>
 	</struct>
-	<enum native="PackageResourceFlag" script="PackageResourceFlag">
-		<doc>Flags that can be set per-resource package meta-data.</doc>
-		<enumentry native="None" script="None">
-		</enumentry>
-		<enumentry native="Folder" script="Folder">
-			<doc>Resource entry represents a folder and has no associated resource data.</doc>
-		</enumentry>
-	</enum>
 	<class native="MeshImportOptions" script="MeshImportOptions">
 		<doc>Contains import options you may use to control how is a mesh imported from some external format into engine format.</doc>
 		<ctor>
@@ -4067,6 +4156,14 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Set of events that will be added to the animation clip, if animation import is enabled.</doc>
 		</property>
 	</class>
+	<enum native="PackageResourceFlag" script="PackageResourceFlag">
+		<doc>Flags that can be set per-resource package meta-data.</doc>
+		<enumentry native="None" script="None">
+		</enumentry>
+		<enumentry native="Folder" script="Folder">
+			<doc>Resource entry represents a folder and has no associated resource data.</doc>
+		</enumentry>
+	</enum>
 	<class native="PackageResourceMetaData" script="PackageResourceMetaData">
 		<doc>Contains meta-data for a resource stored in a Package.</doc>
 		<property name="ResourceName" type="string" getter="GetResourceName" setter="" static="false">
@@ -14796,6 +14893,23 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			<doc>Same as FocusedHover, if the element is also in the &quot;on&quot; state.</doc>
 		</enumentry>
 	</enum>
+	<struct native="GUIScrollAreaContent" script="GUIScrollAreaContent">
+		<doc>Structure describing contents of a GUIScrollArea element.</doc>
+		<ctor>
+			<param name="verticalScrollBarType" type="ScrollBarType">
+			</param>
+			<param name="horizontalScrollBarType" type="ScrollBarType">
+			</param>
+			<param name="layoutType" type="ScrollAreaLayoutType">
+			</param>
+		</ctor>
+		<field name="VerticalScrollBarType" type="ScrollBarType">
+		</field>
+		<field name="HorizontalScrollBarType" type="ScrollBarType">
+		</field>
+		<field name="LayoutType" type="ScrollAreaLayoutType">
+		</field>
+	</struct>
 	<struct native="GUIContent" script="GUIContent">
 		<doc>Holds data used for displaying content in a GUIElement. Content can consist of a string, image, a tooltip or none of those.</doc>
 		<ctor>
@@ -15116,6 +15230,27 @@ Primary purpose of this class is to avoid expensive string compare, and instead 
 			</param>
 		</ctor>
 	</class>
+	<enum native="ScrollBarType" script="ScrollBarType">
+		<doc>Determines when and if to display a scroll bar on the scroll area.</doc>
+		<enumentry native="ShowIfDoesntFit" script="ShowIfDoesntFit">
+		</enumentry>
+		<enumentry native="AlwaysShow" script="AlwaysShow">
+		</enumentry>
+		<enumentry native="NeverShow" script="NeverShow">
+		</enumentry>
+	</enum>
+	<enum native="ScrollAreaLayoutType" script="ScrollAreaLayoutType">
+		<doc>Determines how are elements positioned in a scroll area.</doc>
+		<enumentry native="Vertical" script="Vertical">
+			<doc>GUI elements will be placed below/above each other (e.g. as in GUILayoutY). This is the standard scroll area.</doc>
+		</enumentry>
+		<enumentry native="Horizontal" script="Horizontal">
+			<doc>GUI elements will be placed left/right to each other (e.g. as in GUILayoutX).</doc>
+		</enumentry>
+		<enumentry native="Panel" script="Panel">
+			<doc>GUI elements must be explicitly positioned (e.g. as in GUIPanel).</doc>
+		</enumentry>
+	</enum>
 	<class native="GUIVerticalSlider" script="GUIVerticalSlider">
 		<doc>A vertical slider with a draggable handle.</doc>
 		<ctor>

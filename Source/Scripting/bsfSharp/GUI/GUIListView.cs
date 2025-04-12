@@ -67,7 +67,7 @@ namespace bs
         /// <param name="layout">GUI layout into which the list view will be placed into.</param>
         protected GUIListViewBase(GUILogicalSize size, GUILogicalUnit entryHeight, GUILayout layout)
         {
-            scrollArea = new GUIScrollArea(ScrollBarType.ShowIfDoesntFit, ScrollBarType.NeverShow,
+            scrollArea = new GUIScrollArea(new GUIScrollAreaContent(ScrollBarType.ShowIfDoesntFit),
                 GUIOption.FixedWidth(size.Width), GUIOption.FixedHeight(size.Height));
             layout.AddElement(scrollArea);
 

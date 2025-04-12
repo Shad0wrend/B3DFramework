@@ -1,6 +1,9 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIScrollArea.h"
+
+#include "BsGUILayoutX.h"
+#include "BsGUIPanel.h"
 #include "GUI/BsGUISizeConstraints.h"
 #include "GUI/BsGUILayoutY.h"
 #include "GUI/BsGUIVerticalScrollBar.h"
@@ -46,9 +49,23 @@ const GUILogicalUnit GUIScrollArea::kScrollBarWidth = 16;
 const u32 GUIScrollArea::kWheelScrollAmount = 50;
 
 GUIScrollArea::GUIScrollArea(PrivatelyConstruct, const GUIScrollAreaContent& content, const String& styleClass, const GUISizeConstraints& sizeConstraints)
-	: GUIElementContainer(sizeConstraints, styleClass), mContent(content), mVerticalScrollBar(nullptr), mHorizontalScrollBar(nullptr), mVertOffset(0), mHorzOffset(0), mRecalculateVertOffset(false), mRecalculateHorzOffset(false)
+	: GUIElementContainer(sizeConstraints, styleClass), mContent(content)
 {
-	mContentLayout = GUILayoutY::Create();
+	switch(content.LayoutType)
+	{
+	default:
+	case ScrollAreaLayoutType::Vertical:
+		mContentLayout = GUILayoutY::Create();
+		break;
+#if 0 // Disabled until we can fix script export for GUILayout
+	case ScrollAreaLayoutType::Horizontal:
+		mContentLayout = GUILayoutX::Create();
+		break;
+	case ScrollAreaLayoutType::Panel:
+		mContentLayout = GUIPanel::Create();
+		break;
+#endif
+	}
 	RegisterChildElement(mContentLayout);
 
 	mHorizontalScrollBar = GUIHorizontalScrollBar::Create();
@@ -57,8 +74,8 @@ GUIScrollArea::GUIScrollArea(PrivatelyConstruct, const GUIScrollAreaContent& con
 	RegisterChildElement(mHorizontalScrollBar);
 	RegisterChildElement(mVerticalScrollBar);
 
-	mHorizontalScrollBar->OnScrollOrResize.Connect(std::bind(&GUIScrollArea::HorzScrollUpdate, this, _1));
-	mVerticalScrollBar->OnScrollOrResize.Connect(std::bind(&GUIScrollArea::VertScrollUpdate, this, _1));
+	mHorizontalScrollBar->OnScrollOrResize.Connect([this](float scrollHandlePosition, float) { DoOnHorizontalScrollUpdate(scrollHandlePosition); });
+	mVerticalScrollBar->OnScrollOrResize.Connect([this](float scrollHandlePosition, float) { DoOnVerticalScrollUpdate(scrollHandlePosition); });
 }
 
 GUILogicalSize GUIScrollArea::CalculateUnconstrainedOptimalSize() const
@@ -284,7 +301,7 @@ void GUIScrollArea::UpdateLayoutForChildren()
 		float newScrollPct = 0.0f;
 
 		if(scrollableHeight > 0)
-			newScrollPct = mVertOffset / (float)scrollableHeight;
+			newScrollPct = mVerticalOffset / (float)scrollableHeight;
 
 		mVerticalScrollBar->SetHandleSizeInternal((float)layoutData.Size.Height / (float)mContentSize.Height);
 		mVerticalScrollBar->SetScrollPosInternal(newScrollPct);
@@ -308,7 +325,7 @@ void GUIScrollArea::UpdateLayoutForChildren()
 		float newScrollPct = 0.0f;
 
 		if(scrollableWidth > 0)
-			newScrollPct = mHorzOffset / (float)scrollableWidth;
+			newScrollPct = mHorizontalOffset / (float)scrollableWidth;
 
 		mHorizontalScrollBar->SetHandleSizeInternal((float)layoutData.Size.Width / (float)mContentSize.Width);
 		mHorizontalScrollBar->SetScrollPosInternal(newScrollPct);
@@ -326,26 +343,26 @@ void GUIScrollArea::UpdateAbsoluteCoordinatesForChildren()
 	// Recalculate offsets in case scroll percent got updated externally (this needs to be delayed to this point because
 	// at the time of the update content and visible sizes might be out of date).
 	GUILogicalUnit scrollableHeight = Math::Max(mContentSize.Height - mVisibleSize.Height, 0);
-	if(mRecalculateVertOffset)
+	if(mRecalculateVerticalOffset)
 	{
-		mVertOffset = (float)scrollableHeight * Math::Clamp01(mVerticalScrollBar->GetScrollHandlePosition());
-		mRecalculateVertOffset = false;
+		mVerticalOffset = (float)scrollableHeight * Math::Clamp01(mVerticalScrollBar->GetScrollHandlePosition());
+		mRecalculateVerticalOffset = false;
 	}
 
 	GUILogicalUnit scrollableWidth = Math::Max(mContentSize.Width - mVisibleSize.Width, 0);
-	if(mRecalculateHorzOffset)
+	if(mRecalculateHorizontalOffset)
 	{
-		mHorzOffset = (float)scrollableWidth * Math::Clamp01(mHorizontalScrollBar->GetScrollHandlePosition());
-		mRecalculateHorzOffset = false;
+		mHorizontalOffset = (float)scrollableWidth * Math::Clamp01(mHorizontalScrollBar->GetScrollHandlePosition());
+		mRecalculateHorizontalOffset = false;
 	}
 
 	// Reset offset in case layout size changed so everything fits
-	mVertOffset = Math::Clamp(mVertOffset, 0.0f, (float)scrollableHeight);
-	mHorzOffset = Math::Clamp(mHorzOffset, 0.0f, (float)scrollableWidth);
+	mVerticalOffset = Math::Clamp(mVerticalOffset, 0.0f, (float)scrollableHeight);
+	mHorizontalOffset = Math::Clamp(mHorizontalOffset, 0.0f, (float)scrollableWidth);
 
 	if(mContentLayout->IsActive())
 	{
-		const GUIPhysicalPointF contentOrigin(mIntermediateAbsolutePosition.X - mHorzOffset * mAbsoluteScale, mIntermediateAbsolutePosition.Y - mVertOffset * mAbsoluteScale);
+		const GUIPhysicalPointF contentOrigin(mIntermediateAbsolutePosition.X - mHorizontalOffset * mAbsoluteScale, mIntermediateAbsolutePosition.Y - mVerticalOffset * mAbsoluteScale);
 		GUIPhysicalAreaF contentVisibleAreaSize(mIntermediateAbsolutePosition, mVisibleSize.To<GUIPhysicalUnitF>() * mAbsoluteScale);
 		contentVisibleAreaSize.Clip(mIntermediateAbsoluteClippedArea);
 
@@ -356,18 +373,18 @@ void GUIScrollArea::UpdateAbsoluteCoordinatesForChildren()
 	mVerticalScrollBar->UpdateAbsoluteCoordinates(mIntermediateAbsolutePosition, mAbsoluteScale, mIntermediateAbsoluteClippedArea);
 }
 
-void GUIScrollArea::VertScrollUpdate(float scrollPos)
+void GUIScrollArea::DoOnVerticalScrollUpdate(float scrollPos)
 {
 	GUILogicalUnit scrollableHeight = Math::Max(mContentSize.Height - mVisibleSize.Height, 0);
-	mVertOffset = (float)scrollableHeight * Math::Clamp01(scrollPos);
+	mVerticalOffset = (float)scrollableHeight * Math::Clamp01(scrollPos);
 
 	MarkAbsoluteCoordinatesAsDirty();
 }
 
-void GUIScrollArea::HorzScrollUpdate(float scrollPos)
+void GUIScrollArea::DoOnHorizontalScrollUpdate(float scrollPos)
 {
 	GUILogicalUnit scrollableWidth = Math::Max(mContentSize.Width - mVisibleSize.Width, 0);
-	mHorzOffset = (float)scrollableWidth * Math::Clamp01(scrollPos);
+	mHorizontalOffset = (float)scrollableWidth * Math::Clamp01(scrollPos);
 
 	MarkAbsoluteCoordinatesAsDirty();
 }
@@ -375,7 +392,7 @@ void GUIScrollArea::HorzScrollUpdate(float scrollPos)
 void GUIScrollArea::ScrollToVertical(float pct)
 {
 	mVerticalScrollBar->SetScrollPosInternal(pct);
-	mRecalculateVertOffset = true;
+	mRecalculateVerticalOffset = true;
 
 	MarkAbsoluteCoordinatesAsDirty();
 }
@@ -383,7 +400,7 @@ void GUIScrollArea::ScrollToVertical(float pct)
 void GUIScrollArea::ScrollToHorizontal(float pct)
 {
 	mHorizontalScrollBar->SetScrollPosInternal(pct);
-	mRecalculateHorzOffset = true;
+	mRecalculateHorizontalOffset = true;
 
 	MarkAbsoluteCoordinatesAsDirty();
 }
@@ -424,7 +441,7 @@ void GUIScrollArea::SetEnableCulling(bool enable)
 		mContentLayout->SetEnableCulling(enable);
 }
 
-void GUIScrollArea::ScrollUpPixels(GUIPhysicalUnit pixels)
+void GUIScrollArea::ScrollUp(GUIPhysicalUnit pixels)
 {
 	if(mVerticalScrollBar != nullptr)
 	{
@@ -439,7 +456,7 @@ void GUIScrollArea::ScrollUpPixels(GUIPhysicalUnit pixels)
 	}
 }
 
-void GUIScrollArea::ScrollDownPixels(GUIPhysicalUnit pixels)
+void GUIScrollArea::ScrollDown(GUIPhysicalUnit pixels)
 {
 	if(mVerticalScrollBar != nullptr)
 	{
@@ -454,7 +471,7 @@ void GUIScrollArea::ScrollDownPixels(GUIPhysicalUnit pixels)
 	}
 }
 
-void GUIScrollArea::ScrollLeftPixels(GUIPhysicalUnit pixels)
+void GUIScrollArea::ScrollLeft(GUIPhysicalUnit pixels)
 {
 	if(mHorizontalScrollBar != nullptr)
 	{
@@ -469,7 +486,7 @@ void GUIScrollArea::ScrollLeftPixels(GUIPhysicalUnit pixels)
 	}
 }
 
-void GUIScrollArea::ScrollRightPixels(GUIPhysicalUnit pixels)
+void GUIScrollArea::ScrollRight(GUIPhysicalUnit pixels)
 {
 	if(mHorizontalScrollBar != nullptr)
 	{
@@ -484,25 +501,25 @@ void GUIScrollArea::ScrollRightPixels(GUIPhysicalUnit pixels)
 	}
 }
 
-void GUIScrollArea::ScrollUpPercent(float percent)
+void GUIScrollArea::ScrollUp(float percent)
 {
 	if(mVerticalScrollBar != nullptr)
 		mVerticalScrollBar->Scroll(percent);
 }
 
-void GUIScrollArea::ScrollDownPercent(float percent)
+void GUIScrollArea::ScrollDown(float percent)
 {
 	if(mVerticalScrollBar != nullptr)
 		mVerticalScrollBar->Scroll(-percent);
 }
 
-void GUIScrollArea::ScrollLeftPercent(float percent)
+void GUIScrollArea::ScrollLeft(float percent)
 {
 	if(mHorizontalScrollBar != nullptr)
 		mHorizontalScrollBar->Scroll(percent);
 }
 
-void GUIScrollArea::ScrollRightPercent(float percent)
+void GUIScrollArea::ScrollRight(float percent)
 {
 	if(mHorizontalScrollBar != nullptr)
 		mHorizontalScrollBar->Scroll(-percent);
