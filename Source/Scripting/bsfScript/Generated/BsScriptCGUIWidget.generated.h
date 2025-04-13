@@ -4,7 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptComponent.h"
-#include "GUI/BsGUIPanel.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIPanel.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 

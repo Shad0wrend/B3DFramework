@@ -5,7 +5,7 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfEngine/GUI/BsCGUIWidget.h"
-#include "Wrappers/GUI/BsScriptGUILayout.h"
+#include "BsScriptGUIPanel.generated.h"
 #include "BsScriptTVector2.generated.h"
 #include "BsScriptTArea2.generated.h"
 

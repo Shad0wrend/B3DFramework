@@ -2235,6 +2235,45 @@ Be aware that this value will be ignored if GUI element is part of a layout sinc
 		<enumentry native="FailedNotFound" script="FailedNotFound">
 		</enumentry>
 	</enum>
+	<class native="GUIPanel" script="GUIPanel">
+		<doc>Represents a GUI panel that you can use for free placement of GUI elements within its bounds.</doc>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIPanelContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="contents" type="GUIPanelContent">
+				<doc>Structure describing the contents of the GUI element to create.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+	</class>
 	<class native="HString" script="LocString">
 		<doc>String handle. Provides a wrapper around an Unicode string, primarily for localization purposes.
 Actual value for this string is looked up in a global string table based on the provided identifier string and currently active language. If such value doesn&apos;t exist then the identifier is used as is.
@@ -10510,6 +10549,26 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			<doc>Width of a space in pixels.</doc>
 		</property>
 	</class>
+	<struct native="GUIPanelContent" script="GUIPanelContent">
+		<doc>Structure describing contents of a GUIPanel element.</doc>
+		<ctor>
+			<param name="depth" type="short">
+			</param>
+			<param name="depthRangeMinimum" type="ushort">
+			</param>
+			<param name="depthRangeMaximum" type="ushort">
+			</param>
+		</ctor>
+		<field name="Depth" type="short">
+			<doc>Determines rendering order of the GUI panel. Panels with lower depth will be rendered in front of panels with higher depth. Provided depth is relative to depth of the parent GUI panel (if any).</doc>
+		</field>
+		<field name="DepthRangeMinimum" type="ushort">
+			<doc>Minimum range of depths that children of this GUI panel can have. If any panel has depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will be clamped to nearest extreme. Value of 65535 means infinite range.</doc>
+		</field>
+		<field name="DepthRangeMaximum" type="ushort">
+			<doc>Maximum range of depths that children of this GUI panel can have. If any panel has depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will be clamped to nearest extreme. Value of 65535 means infinite range.</doc>
+		</field>
+	</struct>
 	<class native="Font" script="Font">
 		<doc>Font resource containing data about textual characters and how to render text. Contains one or multiple font bitmaps, each for a specific size.</doc>
 		<method native="GetBitmap" script="GetBitmap" static="false">

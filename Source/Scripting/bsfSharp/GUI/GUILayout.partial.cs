@@ -63,7 +63,7 @@ namespace bs
         public GUIPanel AddPanel(Int16 depth = 0, ushort depthRangeMin = ushort.MaxValue,
             ushort depthRangeMax = ushort.MaxValue, params GUIOption[] options)
         {
-            GUIPanel layout = new GUIPanel(depth, depthRangeMin, depthRangeMax, options);
+            GUIPanel layout = new GUIPanel(new GUIPanelContent(depth, depthRangeMin, depthRangeMax), options);
             AddElement(layout);
             return layout;
         }
@@ -165,7 +165,7 @@ namespace bs
         public GUIPanel InsertPanel(int idx, Int16 depth = 0, ushort depthRangeMin = ushort.MaxValue,
             ushort depthRangeMax = ushort.MaxValue, params GUIOption[] options)
         {
-            GUIPanel layout = new GUIPanel(depth, depthRangeMin, depthRangeMax, options);
+            GUIPanel layout = new GUIPanel(new GUIPanelContent(depth, depthRangeMin, depthRangeMax), options);
             InsertElement(idx, layout);
             return layout;
         }

@@ -34,9 +34,15 @@ namespace bs
 /** @} */
 /** @endcond */
 
-GUIPanel::GUIPanel(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUISizeConstraints& sizeConstraints)
-	: GUILayout(StringUtil::kBlank, sizeConstraints), mDepthOffset(depth), mDepthRangeMin(depthRangeMin), mDepthRangeMax(depthRangeMax)
+GUIPanel::GUIPanel(PrivatelyConstruct, const GUIPanelContent& content, const String& styleClass, const GUISizeConstraints& sizeConstraints)
+	: GUILayout(styleClass, sizeConstraints), mDepthOffset(content.Depth), mDepthRangeMin(content.DepthRangeMaximum), mDepthRangeMax(content.DepthRangeMaximum)
 {}
+
+const String& GUIPanel::GetGuiTypeName()
+{
+	static String kName = "GUIPanel";
+	return kName;
+}
 
 void GUIPanel::SetDepthRange(i16 depth, u16 depthRangeMin, u16 depthRangeMax)
 {
@@ -246,21 +252,6 @@ void GUIPanel::UpdateLayoutForChildren()
 
 	if(mCulling != nullptr)
 		mCulling->RebuildQuadTree(mChildren);
-}
-
-GUIPanel* GUIPanel::Create(i16 depth, u16 depthRangeMin, u16 depthRangeMax)
-{
-	return B3DNew<GUIPanel>(depth, depthRangeMin, depthRangeMax, GUISizeConstraints::Create());
-}
-
-GUIPanel* GUIPanel::Create(const GUIOptions& options)
-{
-	return B3DNew<GUIPanel>(0, -1, -1, GUISizeConstraints::Create(options));
-}
-
-GUIPanel* GUIPanel::Create(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUIOptions& options)
-{
-	return B3DNew<GUIPanel>(depth, depthRangeMin, depthRangeMax, GUISizeConstraints::Create(options));
 }
 
 RTTIType* GUIPanel::GetRttiStatic()

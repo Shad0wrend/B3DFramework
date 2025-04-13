@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "BsGUIConstructionMethods.h"
 #include "BsPrerequisites.h"
 #include "GUI/BsGUILayout.h"
 
@@ -11,12 +12,42 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Structure describing contents of a GUIPanel element. */
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIPanelContent
+	{
+		GUIPanelContent(i16 depth = 0, u16 depthRangeMinimum = 65535, u16 depthRangeMaximum = 65535)
+			: Depth(depth), DepthRangeMinimum(depthRangeMinimum), DepthRangeMaximum(depthRangeMaximum)
+		{ }
+
+		/**
+		 * Determines rendering order of the GUI panel. Panels with lower depth will be rendered in front of panels
+		 * with higher depth. Provided depth is relative to depth of the parent GUI panel (if any).
+		 */
+		i16 Depth;
+
+		/**
+		 * Minimum range of depths that children of this GUI panel can have. If any panel has depth outside of the
+		 * range [depth - depthRangeMin, depth + depthRangeMax] it will be clamped to nearest extreme. Value
+		 * of 65535 means infinite range.
+		 */
+		u16 DepthRangeMinimum;
+
+		/**
+		 * Maximum range of depths that children of this GUI panel can have. If any panel has depth outside of the
+		 * range [depth - depthRangeMin, depth + depthRangeMax] it will be clamped to nearest extreme. Value
+		 * of 65535 means infinite range.
+		 */
+		u16 DepthRangeMaximum;
+	};
+
 	/**	Represents a GUI panel that you can use for free placement of GUI elements within its bounds. */
-	class B3D_EXPORT GUIPanel final : public GUILayout
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIPanel final : public GUILayout, public TGUIConstructionMethods<GUIPanel, GUIPanelContent>
 	{
 	public:
+		struct PrivatelyConstruct { };
+
 		GUIPanel() = default;
-		GUIPanel(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUISizeConstraints& sizeConstraints);
+		GUIPanel(PrivatelyConstruct, const GUIPanelContent& content, const String& styleClass, const GUISizeConstraints& sizeConstraints);
 		~GUIPanel() = default;
 
 		/**
@@ -34,44 +65,8 @@ namespace bs
 		 */
 		void SetDepthRange(i16 depth = 0, u16 depthRangeMin = -1, u16 depthRangeMax = -1);
 
-		/**
-		 * Creates a new GUI panel.
-		 *
-		 * @param[in]	depth			Determines rendering order of the GUI panel. Panels with lower depth will be
-		 *								rendered in front of panels with higher depth. Provided depth is relative to depth
-		 *								of the parent GUI panel (if any).
-		 * @param[in]	depthRangeMin	Minimum range of depths that children of this GUI panel can have. If any panel has
-		 *								depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will
-		 *								be clamped to nearest extreme. Value of -1 means infinite range.
-		 * @param[in]	depthRangeMax	Maximum range of depths that children of this GUI panel can have. If any panel has
-		 *								depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will
-		 *								be clamped to nearest extreme. Value of -1 means infinite range.
-		 */
-		static GUIPanel* Create(i16 depth = 0, u16 depthRangeMin = -1, u16 depthRangeMax = -1);
-
-		/**
-		 * Creates a new GUI panel.
-		 *
-		 * @param[in]	options			Options that allow you to control how is the element positioned and sized.
-		 */
-		static GUIPanel* Create(const GUIOptions& options);
-
-		/**
-		 * Creates a new GUI panel.
-		 *
-		 * @param[in]	depth			Determines rendering order of the GUI panel. Panels with lower depth will be
-		 *								rendered in front of panels with higher depth. Provided depth is relative to depth
-		 *								of the parent GUI panel (if any).
-		 * @param[in]	depthRangeMin	Minimum range of depths that children of this GUI panel can have. If any panel has
-		 *								depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will be
-		 *								clamped to nearest extreme. Value of -1 means infinite range.
-		 * @param[in]	depthRangeMax	Maximum range of depths that children of this GUI panel can have. If any panel has
-		 *								depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will be
-		 *								clamped to nearest extreme. Value of -1 means infinite range.
-		 * @param[in]	options			Options that allow you to control how is the element positioned and sized.
-		 */
-		static GUIPanel* Create(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUIOptions& options);
-
+		/** Returns type name of the GUI element used for finding GUI element styles. */
+		static const String& GetGuiTypeName();
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
