@@ -1458,6 +1458,17 @@ Be aware that this value will be ignored if GUI element is part of a layout sinc
 		<property name="MipMapCount" type="int" getter="GetMipmapCount" setter="" static="false">
 		</property>
 	</class>
+	<class native="GUIFixedSpace" script="GUIFixedSpace">
+		<doc>GUI element that may be inserted into layouts in order to make a space of a fixed size.</doc>
+		<ctor>
+			<doc>Creates a new fixed space GUI element.</doc>
+			<param name="size" type="TUnitValue&lt;int,LogicalPixel&gt;">
+			</param>
+		</ctor>
+		<property name="Size" type="TUnitValue&lt;int,LogicalPixel&gt;" getter="GetSize" setter="SetSize" static="false">
+			<doc>Changes the size of the space to the specified value, in pixels.</doc>
+		</property>
+	</class>
 	<struct native="TArea2&lt;int32_t, int32_t&gt;" script="TArea2&lt;int,int&gt;">
 		<doc>Represents a 2D area. Area is represented with an origin in top left and width/height.</doc>
 		<ctor>
@@ -5575,6 +5586,12 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Body the joint is attached to (if any).</doc>
 		</enumentry>
 	</enum>
+	<class native="GUIFlexibleSpace" script="GUIFlexibleSpace">
+		<doc>GUI element that may be inserted into layouts to make a space of a flexible size. The space will expand only if there is room and other elements are not squished because of it. If multiple flexible spaces are in a layout, their sizes will be shared equally.</doc>
+		<ctor>
+			<doc>Creates a new flexible space GUI element.</doc>
+		</ctor>
+	</class>
 	<class native="GUIProgressBar" script="GUIProgressBar">
 		<doc>GUI element containing a background image and a fill image that is scaled depending on the percentage set by the caller.</doc>
 		<ctor>

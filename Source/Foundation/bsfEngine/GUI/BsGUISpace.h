@@ -12,16 +12,18 @@ namespace bs
 	 */
 
 	/** GUI element that may be inserted into layouts in order to make a space of a fixed size. */
-	class B3D_EXPORT GUIFixedSpace : public GUIElement
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIFixedSpace : public GUIElement
 	{
 	public:
 		GUIFixedSpace(GUILogicalUnit size);
 		~GUIFixedSpace() override = default;
 
 		/**	Returns the size of the space in pixels. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Size))
 		GUILogicalUnit GetSize() const { return mSize; }
 
 		/**	Changes the size of the space to the specified value, in pixels. */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Size))
 		void SetSize(GUILogicalUnit size)
 		{
 			if(mSize != size)
@@ -32,6 +34,7 @@ namespace bs
 		}
 
 		/**	Creates a new fixed space GUI element. */
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(GUIFixedSpace))
 		static GUIFixedSpace* Create(GUILogicalUnit size);
 
 	public: // ***** INTERNAL ******
@@ -64,13 +67,14 @@ namespace bs
 	 * For example if you had a horizontal layout with a button, and you wanted to align that button to the right of the
 	 * layout, you would insert a flexible space before the button in the layout.
 	 */
-	class B3D_EXPORT GUIFlexibleSpace : public GUIElement
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIFlexibleSpace : public GUIElement
 	{
 	public:
 		GUIFlexibleSpace();
 		~GUIFlexibleSpace() override = default;
 
 		/**	Creates a new flexible space GUI element. */
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(GUIFlexibleSpace))
 		static GUIFlexibleSpace* Create();
 
 	public: // ***** INTERNAL ******
