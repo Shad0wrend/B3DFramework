@@ -47,7 +47,7 @@ add_custom_command(
 		COMMAND_EXPAND_LISTS
 )
 
-if(NOT USE_DOTNETCORE)
+if(NOT B3D_USE_DOTNETCORE)
 	add_custom_command(
 			TARGET ${assemblyName} POST_BUILD
 			COMMAND ${CMAKE_COMMAND}
@@ -58,7 +58,7 @@ if(NOT USE_DOTNETCORE)
 endif()
 
 # Convert PDB to MDB
-if(WIN32 AND NOT USE_DOTNETCORE)
+if(WIN32 AND NOT B3D_USE_DOTNETCORE)
 	add_custom_command(
 			TARGET ${assemblyName} POST_BUILD
 			COMMAND cmd /c $ENV{MONO_INSTALL_DIR}/bin/pdb2mdb.bat
