@@ -50,9 +50,9 @@ GUIFixedSpace::GUIFixedSpace(GUILogicalUnit size)
 	: GUIElement(GUISizeConstraints::Create(GUIOptions(GUIOption::FixedWidth(size), GUIOption::FixedHeight(size)))), mSize(size)
 {}
 
-GUIConstrainedSize GUIFixedSpace::CalculateConstrainedSize() const
+GUIConstrainedSizeRange GUIFixedSpace::CalculateConstrainedSizeRange() const
 {
-	GUIConstrainedSize range;
+	GUIConstrainedSizeRange range;
 	range.Optimal = CalculateUnconstrainedOptimalSize();
 	range.Minimum = range.Optimal;
 	range.Maximum = range.Optimal;
@@ -81,9 +81,9 @@ GUIFlexibleSpace::GUIFlexibleSpace()
 	
 }
 
-GUIConstrainedSize GUIFlexibleSpace::CalculateConstrainedSize() const
+GUIConstrainedSizeRange GUIFlexibleSpace::CalculateConstrainedSizeRange() const
 {
-	GUIConstrainedSize range;
+	GUIConstrainedSizeRange range;
 	range.Optimal = CalculateUnconstrainedOptimalSize();
 	range.Minimum = range.Optimal;
 	range.Maximum = range.Optimal;

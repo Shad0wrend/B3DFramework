@@ -151,8 +151,8 @@ namespace bs
 		/** @} */
 
 	protected:
-		GUIConstrainedSize GetConstrainedSize() const override;
-		GUIConstrainedSize CalculateConstrainedSize() const override;
+		GUIConstrainedSizeRange GetConstrainedSizeRange() const override;
+		GUIConstrainedSizeRange CalculateConstrainedSizeRange() const override;
 		void UpdateOptimalLayoutSizes() override;
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 
@@ -177,7 +177,7 @@ namespace bs
 		void UpdateAbsoluteCoordinatesForChildren() override;
 
 		/** Calculates the position and size of the scroll area child layout and the scroll bars. */
-		void CalculateRelativeElementAreas(const GUILogicalSize& scrollAreaSize, GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, GUILogicalSize& outVisibleSize) const;
+		void CalculateRelativeElementAreas(const GUILogicalSize& scrollAreaSize, GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSizeRange>& sizeRanges, GUILogicalSize& outVisibleSize) const;
 
 		GUIScrollAreaContent mContent;
 
@@ -196,8 +196,8 @@ namespace bs
 		GUILogicalSize mVisibleSize{BsZero};
 		GUILogicalSize mContentSize{BsZero};
 
-		Vector<GUIConstrainedSize> mChildSizeRanges;
-		GUIConstrainedSize mSizeRange;
+		Vector<GUIConstrainedSizeRange> mChildSizeRanges;
+		GUIConstrainedSizeRange mSizeRange;
 
 		static const u32 kMinHandleSize;
 		static const u32 kWheelScrollAmount;

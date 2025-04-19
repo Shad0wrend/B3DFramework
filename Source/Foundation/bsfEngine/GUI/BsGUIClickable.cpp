@@ -20,12 +20,12 @@ GUIClickable::GUIClickable(const String& styleName, const GUIContent& content, c
 
 void GUIClickable::SetContent(const GUIContent& content)
 {
-	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 	mContent = content;
 
 	mContentSprites.SetAnimationStartTime(GetTime().GetRealTimeInSeconds());
 
-	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 	if(originalSize != newSize)
 		MarkLayoutAsDirty();
@@ -197,14 +197,14 @@ void GUIClickable::NotifyStyleChanged()
 
 void GUIClickable::SetStateInternal(GUIElementState state)
 {
-	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 	if(mActiveState != state)
 		mBackgroundSprite.SetAnimationStartTime(GetTime().GetRealTimeInSeconds());
 
 	mActiveState = state;
 
-	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 	if(originalSize != newSize)
 		MarkLayoutAsDirty();

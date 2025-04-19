@@ -96,15 +96,15 @@ GUILogicalSize GUIScrollArea::CalculateUnconstrainedOptimalSize() const
 	return optimalSize;
 }
 
-GUIConstrainedSize GUIScrollArea::CalculateConstrainedSize() const
+GUIConstrainedSizeRange GUIScrollArea::CalculateConstrainedSizeRange() const
 {
 	if(mContentLayout->IsActive())
-		return mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize());
+		return mSizeConstraints.CalculateConstrainedSizeRange(CalculateUnconstrainedOptimalSize());
 
-	return mSizeConstraints.CalculateConstrainedSize(GUILogicalSize(BsZero));
+	return mSizeConstraints.CalculateConstrainedSizeRange(GUILogicalSize(BsZero));
 }
 
-GUIConstrainedSize GUIScrollArea::GetConstrainedSize() const
+GUIConstrainedSizeRange GUIScrollArea::GetConstrainedSizeRange() const
 {
 	return mSizeRange;
 }
@@ -121,17 +121,17 @@ void GUIScrollArea::UpdateOptimalLayoutSizes()
 	for(auto& child : mChildren)
 	{
 		if(child->IsActive())
-			mChildSizeRanges[childIdx] = child->GetConstrainedSize();
+			mChildSizeRanges[childIdx] = child->GetConstrainedSizeRange();
 		else
-			mChildSizeRanges[childIdx] = GUIConstrainedSize();
+			mChildSizeRanges[childIdx] = GUIConstrainedSizeRange();
 
 		childIdx++;
 	}
 
-	mSizeRange = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize());
+	mSizeRange = mSizeConstraints.CalculateConstrainedSizeRange(CalculateUnconstrainedOptimalSize());
 }
 
-void GUIScrollArea::CalculateRelativeElementAreas(const GUILogicalSize& scrollAreaSize,  GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, GUILogicalSize& outVisibleSize) const
+void GUIScrollArea::CalculateRelativeElementAreas(const GUILogicalSize& scrollAreaSize,  GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSizeRange>& sizeRanges, GUILogicalSize& outVisibleSize) const
 {
 	B3D_ASSERT(mChildren.size() == elementCount && elementCount == 3);
 

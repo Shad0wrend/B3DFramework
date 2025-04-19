@@ -49,7 +49,7 @@ void GUIInputBox::SetText(const String& text)
 
 	if(filterOkay)
 	{
-		const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+		const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 		mText = text;
 		mNumChars = UTF8::Count(mText);
@@ -72,7 +72,7 @@ void GUIInputBox::SetText(const String& text)
 			ScrollTextToCaret();
 		}
 
-		const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+		const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 		if(originalSize != newSize)
 			MarkLayoutAsDirty();
 		else
@@ -194,9 +194,9 @@ bool GUIInputBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 			{
 				AddStateFlags(GUIElementStateFlag::Hover);
 
-				const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+				const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 				mState = GUIElementState::Hover;
-				const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+				const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 				if(originalSize != newSize)
 					MarkLayoutAsDirty();
@@ -217,9 +217,9 @@ bool GUIInputBox::DoOnMouseEvent(const GUIMouseEvent& ev)
 
 			if(!mHasFocus)
 			{
-				const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+				const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 				mState = GUIElementState::Normal;
-				const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+				const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 				if(originalSize != newSize)
 					MarkLayoutAsDirty();
@@ -337,7 +337,7 @@ bool GUIInputBox::DoOnTextInputEvent(const GUITextInputEvent& ev)
 	if(IsDisabled())
 		return false;
 
-	const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 	if(mSelectionShown)
 		DeleteSelectedText(true);
@@ -366,7 +366,7 @@ bool GUIInputBox::DoOnTextInputEvent(const GUITextInputEvent& ev)
 			OnValueChanged(mText);
 	}
 
-	const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 	if(originalSize != newSize)
 		MarkLayoutAsDirty();
 	else
@@ -392,7 +392,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	{
 		AddStateFlags(GUIElementStateFlag::Focus);
 
-		const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+		const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 		mState = GUIElementState::Focused;
 
 		ShowSelection(0);
@@ -401,7 +401,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 		mHasFocus = true;
 		mFocusGainedFrame = GetTime().GetCurrentFrameIndex();
 
-		const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+		const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 		if(originalSize != newSize)
 			MarkLayoutAsDirty();
 		else
@@ -414,7 +414,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	{
 		RemoveStateFlags(GUIElementStateFlag::Focus);
 
-		const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+		const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 		mState = GUIElementState::Normal;
 
 		HideCaret();
@@ -422,7 +422,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 
 		mHasFocus = false;
 
-		const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+		const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 		if(originalSize != newSize)
 			MarkLayoutAsDirty();
 		else
@@ -435,7 +435,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	{
 		if(mNumChars > 0)
 		{
-			const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+			const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 			if(mSelectionShown)
 			{
 				DeleteSelectedText();
@@ -478,7 +478,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 				}
 			}
 
-			const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+			const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 			if(originalSize != newSize)
 				MarkLayoutAsDirty();
 			else
@@ -492,7 +492,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	{
 		if(mNumChars > 0)
 		{
-			const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+			const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 			if(mSelectionShown)
 			{
 				DeleteSelectedText();
@@ -530,7 +530,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 				}
 			}
 
-			const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+			const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 			if(originalSize != newSize)
 				MarkLayoutAsDirty();
 			else
@@ -673,7 +673,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 	{
 		if(mIsMultiline)
 		{
-			const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+			const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 			if(mSelectionShown)
 				DeleteSelectedText();
@@ -701,7 +701,7 @@ bool GUIInputBox::DoOnCommandEvent(const GUICommandEvent& ev)
 					OnValueChanged(mText);
 			}
 
-			const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+			const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 			if(originalSize != newSize)
 				MarkLayoutAsDirty();
 			else
@@ -975,12 +975,12 @@ SPtr<GUIContextMenu> GUIInputBox::GetContextMenu() const
 
 void GUIInputBox::CutText()
 {
-	const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 	CopyText();
 	DeleteSelectedText();
 
-	const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 	if(originalSize != newSize)
 		MarkLayoutAsDirty();
 	else
@@ -1012,7 +1012,7 @@ void GUIInputBox::PasteText()
 
 	if(filterOkay)
 	{
-		const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+		const GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 		InsertString(charIdx, textInClipboard);
 
 		u32 numChars = UTF8::Count(textInClipboard);
@@ -1021,7 +1021,7 @@ void GUIInputBox::PasteText()
 
 		ScrollTextToCaret();
 
-		const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+		const GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 		if(originalSize != newSize)
 			MarkLayoutAsDirty();
 		else

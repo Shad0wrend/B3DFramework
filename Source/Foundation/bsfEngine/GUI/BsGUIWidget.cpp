@@ -299,7 +299,7 @@ void GUIWidget::UpdateLayout(GUIElement* element)
 		GUIElement* dirtyElement = element;
 		dirtyElement->UpdateOptimalLayoutSizes();
 
-		GUIConstrainedSize elementSizeRange = panel->GetChildElementSizeRange(dirtyElement);
+		GUIConstrainedSizeRange elementSizeRange = panel->GetChildConstrainedSizeRange(dirtyElement);
 		const GUILogicalArea relativeElementArea = panel->CalculateRelativeElementArea(panel->GetLayoutData().Size.To<GUILogicalUnit>(), dirtyElement, elementSizeRange);
 
 		const GUILayoutData parentPanelLayoutData = panel->GetLayoutData();

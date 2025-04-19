@@ -16,11 +16,20 @@ namespace bs
 	 */
 
 	/**	Contains valid size range for a GUI element, based on element's optimal size and size constraints. */
-	struct B3D_EXPORT GUIConstrainedSize
+	struct B3D_EXPORT GUIConstrainedSizeRange
 	{
 		GUILogicalSize Optimal{BsZero}; /**< Optimal GUI element size, constrained by the size constraints. */
 		GUILogicalSize Minimum{BsZero}; /**< In case of flexible size, minimum allowed size. Equivalent to Optimal if size is fixed. */
 		GUILogicalSize Maximum{BsZero}; /**< In case of flexible size, maximum allowed size. Equivalent to Optimal if size is fixed. If 0, the dimension has no maximum limit. */
+
+		/**
+		 * Calculates GUI element size constrained by parent size. For example, if a GUI element optimal width is 100 units, but parent is only 50 units wide, then the optimal
+		 * size may be reduced to 50 units, if the constraints permit it.
+		 *
+		 * @param	sizeConstraints	Size constrains this size range was originally created with. New size will respect these constraints (e.g. if width is fixed, parent width will have no impact).
+		 * @param	parentSize		Size of the parent element to constrain the current size within.
+		 */
+		GUILogicalSize CalculateSizeConstrainedByParentSize(const GUISizeConstraints& sizeConstraints, const GUILogicalSize& parentSize) const;
 	};
 
 	/**	Flags that identify the type of data stored in a GUIDimensions structure. */
@@ -56,7 +65,10 @@ namespace bs
 		void UpdateWithStyleSheetRule(const GUIStyleSheetRules& rule);
 
 		/** Constrains the provided optimal element size based on active constraints. */
-		GUIConstrainedSize CalculateConstrainedSize(const GUILogicalSize& unconstrainedOptimalSize) const;
+		GUILogicalSize CalculateConstrainedOptimalSize(const GUILogicalSize& unconstrainedOptimalSize) const;
+
+		/** Constrains the provided optimal element size based on active constraints. */
+		GUIConstrainedSizeRange CalculateConstrainedSizeRange(const GUILogicalSize& unconstrainedOptimalSize) const;
 
 		/**	Checks do the constraint contain fixed width. */
 		bool IsWidthFixed() const { return Flags.IsSet(GUISizeConstraintFlag::FixedWidth); }

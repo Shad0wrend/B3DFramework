@@ -43,7 +43,7 @@ namespace bs
 		 */
 
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return GUILogicalSize(GetSize(), GetSize()); }
-		GUIConstrainedSize CalculateConstrainedSize() const override;
+		GUIConstrainedSizeRange CalculateConstrainedSizeRange() const override;
 
 		/** @} */
 	protected:
@@ -83,7 +83,7 @@ namespace bs
 		 */
 
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return GUILogicalSize(0, 0); }
-		GUIConstrainedSize CalculateConstrainedSize() const override;
+		GUIConstrainedSizeRange CalculateConstrainedSizeRange() const override;
 
 		/** @} */
 

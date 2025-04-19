@@ -23,9 +23,9 @@ GUIProgressBar::GUIProgressBar(PrivatelyConstruct, const String& styleName, cons
 
 GUILogicalSize GUIProgressBar::CalculateUnconstrainedOptimalSize() const
 {
-	GUILogicalSize optimalSize = mBar->CalculateConstrainedSize().Optimal;
+	GUILogicalSize optimalSize = mBar->CalculateConstrainedOptimalSize();
 
-	GUILogicalSize backgroundSize = mBackground->CalculateConstrainedSize().Optimal;
+	GUILogicalSize backgroundSize = mBackground->CalculateConstrainedOptimalSize();
 	optimalSize.Width = Math::Max(optimalSize.Width, backgroundSize.Width);
 	optimalSize.Height = Math::Max(optimalSize.Height, backgroundSize.Height);
 

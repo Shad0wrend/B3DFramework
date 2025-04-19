@@ -616,15 +616,15 @@ void GUIElement::UpdateAbsoluteCoordinatesForChildren()
 	}
 }
 
-GUIConstrainedSize GUIElement::CalculateConstrainedSize() const
+GUIConstrainedSizeRange GUIElement::CalculateConstrainedSizeRange() const
 {
 	const GUISizeConstraints& sizeConstraints = GetSizeConstraints();
-	return sizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize());
+	return sizeConstraints.CalculateConstrainedSizeRange(CalculateUnconstrainedOptimalSize());
 }
 
-GUIConstrainedSize GUIElement::GetConstrainedSize() const
+GUIConstrainedSizeRange GUIElement::GetConstrainedSizeRange() const
 {
-	return CalculateConstrainedSize();
+	return CalculateConstrainedSizeRange();
 }
 
 const RectOffset& GUIElement::GetMargins() const

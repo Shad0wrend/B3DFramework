@@ -6,6 +6,50 @@
 
 using namespace bs;
 
+GUILogicalSize GUIConstrainedSizeRange::CalculateSizeConstrainedByParentSize(const GUISizeConstraints& sizeConstraints, const GUILogicalSize& parentSize) const
+{
+	GUILogicalSize size;
+
+	if(sizeConstraints.IsWidthFixed())
+		size.Width = Optimal.Width;
+	else
+	{
+		size.Width = parentSize.Width;
+
+		if(size.Width > Optimal.Width)
+		{
+			if(Maximum.Width > 0)
+				size.Width = Math::Min(size.Width, Maximum.Width);
+		}
+		else if(size.Width < Optimal.Width)
+		{
+			if(Minimum.Width > 0)
+				size.Width = Math::Max(size.Width, Minimum.Width);
+		}
+	}
+
+	if(sizeConstraints.IsHeightFixed())
+		size.Height = Optimal.Height;
+	else
+	{
+		size.Height = parentSize.Height;
+
+		if(size.Height > Optimal.Height)
+		{
+			if(Maximum.Height > 0)
+				size.Height = Math::Min(size.Height, Maximum.Height);
+		}
+		else if(size.Height < Optimal.Height)
+		{
+			if(Minimum.Height > 0)
+				size.Height = Math::Max(size.Height, Minimum.Height);
+		}
+	}
+
+	return size;
+}
+
+
 GUISizeConstraints GUISizeConstraints::Create()
 {
 	return GUISizeConstraints();
@@ -104,9 +148,42 @@ void GUISizeConstraints::UpdateWithStyleSheetRule(const GUIStyleSheetRules& rule
 	}
 }
 
-GUIConstrainedSize GUISizeConstraints::CalculateConstrainedSize(const GUILogicalSize& unconstrainedOptimalSize) const
+GUILogicalSize GUISizeConstraints::CalculateConstrainedOptimalSize(const GUILogicalSize& unconstrainedOptimalSize) const
 {
-	GUIConstrainedSize sizeRange;
+	GUILogicalSize constrainedOptimalSize;
+
+	if(IsHeightFixed())
+		constrainedOptimalSize.Height = Math::Max(MinimumHeight, 0);
+	else
+	{
+		constrainedOptimalSize.Height = unconstrainedOptimalSize.Height;
+
+		if(MinimumHeight > 0)
+			constrainedOptimalSize.Height = Math::Max(Math::Max(MinimumHeight, 0), constrainedOptimalSize.Height);
+
+		if(MaximumHeight > 0)
+			constrainedOptimalSize.Height = Math::Min(Math::Max(MaximumHeight, 0), constrainedOptimalSize.Height);
+	}
+
+	if(IsWidthFixed())
+		constrainedOptimalSize.Width = Math::Max(MinimumWidth, 0);
+	else
+	{
+		constrainedOptimalSize.Width = unconstrainedOptimalSize.Width;
+
+		if(MinimumWidth > 0)
+			constrainedOptimalSize.Width = Math::Max(Math::Max(MinimumWidth, 0), constrainedOptimalSize.Width);
+
+		if(MaximumWidth > 0)
+			constrainedOptimalSize.Width = Math::Min(Math::Max(MaximumWidth, 0), constrainedOptimalSize.Width);
+	}
+
+	return constrainedOptimalSize;
+}
+
+GUIConstrainedSizeRange GUISizeConstraints::CalculateConstrainedSizeRange(const GUILogicalSize& unconstrainedOptimalSize) const
+{
+	GUIConstrainedSizeRange sizeRange;
 
 	if(IsHeightFixed())
 	{

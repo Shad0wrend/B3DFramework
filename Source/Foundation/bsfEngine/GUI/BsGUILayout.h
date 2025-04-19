@@ -84,18 +84,15 @@ namespace bs
 		 *  @{
 		 */
 
-		GUIConstrainedSize GetConstrainedSize() const override { return GetCachedConstrainedSize(); }
-
-		/** Returns a size range that was cached during the last GUIElementBase::_updateOptimalLayoutSizes call. */
-		GUIConstrainedSize GetCachedConstrainedSize() const { return mConstrainedSize; }
+		GUIConstrainedSizeRange GetConstrainedSizeRange() const override { return mConstrainedSizeRange; }
 
 		/**
 		 * Returns a size ranges for all children that was cached during the last GUIElementBase::_updateOptimalLayoutSizes
 		 * call.
 		 */
-		const Vector<GUIConstrainedSize>& GetChildrenConstrainedSizes() const { return mChildrenConstrainedSizes; }
+		const Vector<GUIConstrainedSizeRange>& GetChildrenConstrainedSizes() const { return mChildConstrainedSizeRanges; }
 
-		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return mConstrainedSize.Optimal; }
+		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return mConstrainedSizeRange.Optimal; }
 		void UpdateAbsoluteCoordinates(const GUIPhysicalPointF& parentOrigin, float parentScale, const GUIPhysicalAreaF& parentVisibleArea) override;
 		const TInlineArray<GUIElement*, 4>& GetVisibleChildren() const override { return mCulling != nullptr ? mCulling->GetVisibleElements() : Super::GetVisibleChildren(); }
 
@@ -107,8 +104,8 @@ namespace bs
 		void UpdateAbsoluteCoordinatesForChildren() override;
 
 	protected:
-		Vector<GUIConstrainedSize> mChildrenConstrainedSizes;
-		GUIConstrainedSize mConstrainedSize;
+		Vector<GUIConstrainedSizeRange> mChildConstrainedSizeRanges;
+		GUIConstrainedSizeRange mConstrainedSizeRange;
 		UPtr<GUICulling> mCulling;
 
 		/************************************************************************/

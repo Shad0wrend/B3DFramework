@@ -316,14 +316,17 @@ namespace bs
 		/**	Calculates the optimal size for the GUI element, ignoring size constraints. */
 		virtual GUILogicalSize CalculateUnconstrainedOptimalSize() const = 0;
 
+		/**	Returns the result of CalculateUnconstrainedOptimalSize() with size constrains applied. */
+		GUILogicalSize CalculateConstrainedOptimalSize() const { return mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize()); }
+
 		/**	Returns size constraints that determine how is the GUI element allowed to be resized by the layout. */
 		const GUISizeConstraints& GetSizeConstraints() const { return mSizeConstraints; }
 
 		/**	Calculates element size based on its optimal size constrained by its size constraint options. */
-		virtual GUIConstrainedSize CalculateConstrainedSize() const;
+		virtual GUIConstrainedSizeRange CalculateConstrainedSizeRange() const;
 
 		/** Returns element size constrained by its size constraints. This is different from CalculateConstrainedSize() because this method may return cached size. */
-		virtual GUIConstrainedSize GetConstrainedSize() const;
+		virtual GUIConstrainedSizeRange GetConstrainedSizeRange() const;
 
 		/**
 		 * Returns GUI element margins. Margins are modified by changing element style and determines minimum distance

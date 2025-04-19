@@ -24,8 +24,8 @@ void GUILayoutX::UpdateOptimalLayoutSizes()
 	// Update all children first, otherwise we can't determine our own optimal size
 	GUIElement::UpdateOptimalLayoutSizes();
 
-	if(mChildren.size() != mChildrenConstrainedSizes.size())
-		mChildrenConstrainedSizes.resize(mChildren.size());
+	if(mChildren.size() != mChildConstrainedSizeRanges.size())
+		mChildConstrainedSizeRanges.resize(mChildren.size());
 
 	GUILogicalSize optimalSize(BsZero);
 	GUILogicalSize minSize(BsZero);
@@ -33,11 +33,11 @@ void GUILayoutX::UpdateOptimalLayoutSizes()
 	u32 childIdx = 0;
 	for(auto& child : mChildren)
 	{
-		GUIConstrainedSize& childSizeRange = mChildrenConstrainedSizes[childIdx];
+		GUIConstrainedSizeRange& childSizeRange = mChildConstrainedSizeRanges[childIdx];
 
 		if(child->IsActive())
 		{
-			childSizeRange = child->GetConstrainedSize();
+			childSizeRange = child->GetConstrainedSizeRange();
 			if(B3DRTTIIsOfType<GUIFixedSpace>(child))
 			{
 				childSizeRange.Optimal.Height = 0;
@@ -54,21 +54,21 @@ void GUILayoutX::UpdateOptimalLayoutSizes()
 			minSize.Height = Math::Max(minSize.Height, childSizeRange.Minimum.Height + marginsY);
 		}
 		else
-			childSizeRange = GUIConstrainedSize();
+			childSizeRange = GUIConstrainedSizeRange();
 
 		childIdx++;
 	}
 
-	mConstrainedSize = GetSizeConstraints().CalculateConstrainedSize(optimalSize);
-	mConstrainedSize.Minimum.Width = std::max(mConstrainedSize.Minimum.Width, minSize.Width);
-	mConstrainedSize.Minimum.Height = std::max(mConstrainedSize.Minimum.Height, minSize.Height);
+	mConstrainedSizeRange = GetSizeConstraints().CalculateConstrainedSizeRange(optimalSize);
+	mConstrainedSizeRange.Minimum.Width = std::max(mConstrainedSizeRange.Minimum.Width, minSize.Width);
+	mConstrainedSizeRange.Minimum.Height = std::max(mConstrainedSizeRange.Minimum.Height, minSize.Height);
 }
 
-void GUILayoutX::GetChildRelativeLayoutAreas(const GUILogicalSize& layoutSize, GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const
+void GUILayoutX::GetChildRelativeLayoutAreas(const GUILogicalSize& layoutSize, GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSizeRange>& sizeRanges, const GUILogicalSize& myOptimalSize) const
 {
 	B3D_ASSERT(mChildren.size() == elementCount);
 
-	GUILogicalUnit totalOptimalSize = mySizeRange.Optimal.Width;
+	GUILogicalUnit totalOptimalSize = myOptimalSize.Width;
 	float weightedNonClampedSize = 0.0f;
 	u32 flexibleElementCount = 0;
 	u32 expandingElementCount = 0;
@@ -198,7 +198,7 @@ void GUILayoutX::GetChildRelativeLayoutAreas(const GUILogicalSize& layoutSize, G
 				GUILogicalUnit elementWidth = Math::Max(outElementSizes[childIndex].Width - elementExcessWidth, 0);
 
 				// Clamp if needed
-				const GUIConstrainedSize& childSizeRange = sizeRanges[childIndex];
+				const GUIConstrainedSizeRange& childSizeRange = sizeRanges[childIndex];
 
 				if(elementWidth == 0)
 				{
@@ -246,7 +246,7 @@ void GUILayoutX::GetChildRelativeLayoutAreas(const GUILogicalSize& layoutSize, G
 				GUILogicalUnit elementWidth = outElementSizes[childIndex].Width + elementExtraWidth;
 
 				// Clamp if needed
-				const GUIConstrainedSize& childSizeRange = sizeRanges[childIndex];
+				const GUIConstrainedSizeRange& childSizeRange = sizeRanges[childIndex];
 
 				if(elementWidth == 0)
 				{
@@ -285,7 +285,7 @@ void GUILayoutX::GetChildRelativeLayoutAreas(const GUILogicalSize& layoutSize, G
 		GUILogicalUnit elemWidth = outElementSizes[childIndex].Width;
 		xOffset += child->GetMargins().Left;
 
-		const GUIConstrainedSize& sizeRange = sizeRanges[childIndex];
+		const GUIConstrainedSizeRange& sizeRange = sizeRanges[childIndex];
 		GUILogicalUnit elemHeight = sizeRange.Optimal.Height;
 		const GUISizeConstraints& dimensions = child->GetSizeConstraints();
 		if(!dimensions.IsHeightFixed())
@@ -331,7 +331,7 @@ void GUILayoutX::UpdateLayoutForChildren()
 		elementSizes = B3DStackNew<GUILogicalSize>(elementCount);
 	}
 
-	GetChildRelativeLayoutAreas(mLayoutData.Size, elementPositions, elementSizes, elementCount, mChildrenConstrainedSizes, mConstrainedSize);
+	GetChildRelativeLayoutAreas(mLayoutData.Size, elementPositions, elementSizes, elementCount, mChildConstrainedSizeRanges, mConstrainedSizeRange.Optimal);
 
 	// Now that we have all the areas, actually assign them
 	u32 childIdx = 0;

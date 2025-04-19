@@ -133,7 +133,7 @@ GUILogicalSize GUIToggleable::CalculateCheckmarkContentAreaSize(const GUILogical
 	const GUISizeConstraints& elementSizeConstraints = GetSizeConstraints();
 	const GUIStyleSheetRules& elementStyleSheetRules = mStyleSheetRuleInformation.CurrentStateRuleset->Rules;
 
-	const GUILogicalSize elementConstrainedOptimalSize = elementSizeConstraints.CalculateConstrainedSize(elementOptimalSize).Optimal;
+	const GUILogicalSize elementConstrainedOptimalSize = elementSizeConstraints.CalculateConstrainedOptimalSize(elementOptimalSize);
 	const GUILogicalArea elementContentArea = GUIUtility::RemovePaddingAndBorder(elementConstrainedOptimalSize, elementStyleSheetRules);
 
 	// Determine the size of the area in which to fit the checkmark. Actual checkmark will be scaled to fit (without cropping/stretching) in this area
@@ -170,7 +170,7 @@ GUILogicalSize GUIToggleable::CalculateCheckmarkContentAreaSize(const GUILogical
 		}
 	}
 
-	return mCheckmarkSizeConstraints.CalculateConstrainedSize(checkmarkAreaSize).Optimal;
+	return mCheckmarkSizeConstraints.CalculateConstrainedOptimalSize(checkmarkAreaSize);
 }
 
 GUILogicalSize GUIToggleable::CalculateUnconstrainedOptimalSize() const

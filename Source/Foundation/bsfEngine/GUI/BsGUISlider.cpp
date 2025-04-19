@@ -39,9 +39,9 @@ GUISlider::~GUISlider()
 
 GUILogicalSize GUISlider::CalculateUnconstrainedOptimalSize() const
 {
-	GUILogicalSize optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
+	GUILogicalSize optimalSize = mSliderHandle->CalculateConstrainedOptimalSize();
 
-	GUILogicalSize backgroundSize = mBackground->CalculateConstrainedSize().Optimal;
+	GUILogicalSize backgroundSize = mBackground->CalculateConstrainedOptimalSize();
 	optimalSize.Width = std::max(optimalSize.Width, backgroundSize.Width);
 	optimalSize.Height = std::max(optimalSize.Height, backgroundSize.Height);
 
@@ -57,13 +57,13 @@ void GUISlider::UpdateLayoutForChildren()
 
 	if(mHorizontal)
 	{
-		GUILogicalSize optimalSize = mBackground->CalculateConstrainedSize().Optimal;
+		GUILogicalSize optimalSize = mBackground->CalculateConstrainedOptimalSize();
 		childData.Size.Height = optimalSize.Height;
 		childData.RelativePosition = GUILogicalPoint(0, (i32)((float)(mLayoutData.Size.Height - childData.Size.Height) * 0.5f));
 
 		mBackground->SetLayoutData(childData);
 
-		optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
+		optimalSize = mSliderHandle->CalculateConstrainedOptimalSize();
 		childData.Size.Height = optimalSize.Height;
 		childData.RelativePosition = GUILogicalPoint(0, (i32)((float)(mLayoutData.Size.Height - childData.Size.Height) * 0.5f));
 
@@ -71,7 +71,7 @@ void GUISlider::UpdateLayoutForChildren()
 
 		GUILogicalUnit handleWidth = optimalSize.Width;
 
-		optimalSize = mFillBackground->CalculateConstrainedSize().Optimal;
+		optimalSize = mFillBackground->CalculateConstrainedOptimalSize();
 		childData.Size = GUILogicalSize(handlePosition + handleWidth / 2, optimalSize.Height);
 		childData.RelativePosition = GUILogicalPoint(0, (i32)((float)(mLayoutData.Size.Height - childData.Size.Height) * 0.5f));
 
@@ -79,20 +79,20 @@ void GUISlider::UpdateLayoutForChildren()
 	}
 	else
 	{
-		GUILogicalSize optimalSize = mBackground->CalculateConstrainedSize().Optimal;
+		GUILogicalSize optimalSize = mBackground->CalculateConstrainedOptimalSize();
 		childData.Size.Width = optimalSize.Width;
 		childData.RelativePosition = GUILogicalPoint((i32)((float)(mLayoutData.Size.Width - childData.Size.Width) * 0.5f), 0);
 
 		mBackground->SetLayoutData(childData);
 
-		optimalSize = mSliderHandle->CalculateConstrainedSize().Optimal;
+		optimalSize = mSliderHandle->CalculateConstrainedOptimalSize();
 		childData.Size.Width = optimalSize.Width;
 		childData.RelativePosition = GUILogicalPoint((i32)((float)(mLayoutData.Size.Width - childData.Size.Width) * 0.5f), 0);
 
 		mSliderHandle->SetLayoutData(childData);
 		GUILogicalUnit handleHeight = optimalSize.Height;
 
-		optimalSize = mFillBackground->CalculateConstrainedSize().Optimal;
+		optimalSize = mFillBackground->CalculateConstrainedOptimalSize();
 		childData.Size = GUILogicalSize(optimalSize.Width, handlePosition + handleHeight / 2);
 		childData.RelativePosition = GUILogicalPoint((i32)((float)(mLayoutData.Size.Width - childData.Size.Width) * 0.5f), 0);
 

@@ -39,7 +39,7 @@ GUITexture::~GUITexture()
 
 void GUITexture::SetImage(const HSpriteImage& image)
 {
-	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 	mActiveImage = image;
 
@@ -54,7 +54,7 @@ void GUITexture::SetImage(const HSpriteImage& image)
 	mUsingStyleTexture = false;
 	mImageSpriteInformation.AnimationStartTime = GetTime().GetRealTimeInSeconds();
 
-	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 	if(originalSize != newSize)
 		MarkLayoutAsDirty();
 	else

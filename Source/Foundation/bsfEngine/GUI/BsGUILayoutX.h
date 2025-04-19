@@ -46,9 +46,9 @@ namespace bs
 		 * @param	outElementSizes		Array to hold output areas. Must be the same size as the number of child elements.
 		 * @param	elementCount		Size of the element positions/sizes arrays.
 		 * @param	sizeRanges			Ranges of possible sizes used for the child elements. Array must be same size as elements array.
-		 * @param	mySizeRange			Size range of this element.
+		 * @param	myOptimalSize		Optimal size of this element with all the child elements.
 		 */
-		void GetChildRelativeLayoutAreas(const GUILogicalSize& layoutSize, GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSize>& sizeRanges, const GUIConstrainedSize& mySizeRange) const;
+		void GetChildRelativeLayoutAreas(const GUILogicalSize& layoutSize, GUILogicalPoint* outElementPositions, GUILogicalSize* outElementSizes, u32 elementCount, const Vector<GUIConstrainedSizeRange>& sizeRanges, const GUILogicalSize& myOptimalSize) const;
 	};
 
 	/** @} */

@@ -73,9 +73,9 @@ GUILogicalSize GUILabel::CalculateUnconstrainedOptimalSize() const
 
 void GUILabel::SetContent(const GUIContent& content)
 {
-	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize originalSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 	mContent = content;
-	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedSize(CalculateUnconstrainedOptimalSize()).Optimal;
+	GUILogicalSize newSize = mSizeConstraints.CalculateConstrainedOptimalSize(CalculateUnconstrainedOptimalSize());
 
 	if(originalSize != newSize)
 		MarkLayoutAsDirty();
