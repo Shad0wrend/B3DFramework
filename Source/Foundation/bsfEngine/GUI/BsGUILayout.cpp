@@ -133,6 +133,15 @@ void GUILayout::UnregisterChildElement(GUIElement* element)
 	Super::UnregisterChildElement(element);
 }
 
+void GUILayout::UpdateAbsoluteCoordinates(const GUIPhysicalPointF& parentOrigin, float parentScale, const GUIPhysicalAreaF& parentVisibleArea)
+{
+	// Account for the fact that the content size may be larger than the calculated layout size (e.g. a scroll area with more elements than it can display)
+	const GUILogicalSize optimalContentSize = CalculateConstrainedSize().Optimal;
+	const GUILogicalSize contentSize(Math::Max(optimalContentSize.Width, mLayoutData.Size.Width), Math::Max(optimalContentSize.Height, mLayoutData.Size.Height));
+
+	UpdateAbsoluteCoordinatesWithExplicitContentSize(parentOrigin, parentScale, parentVisibleArea, contentSize);
+}
+
 void GUILayout::UpdateAbsoluteCoordinatesForChildren()
 {
 	if(mCulling != nullptr)

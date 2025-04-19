@@ -586,16 +586,17 @@ void GUIElement::UpdateOptimalLayoutSizes()
 
 void GUIElement::UpdateAbsoluteCoordinates(const GUIPhysicalPointF& parentOrigin, float parentScale, const GUIPhysicalAreaF& parentVisibleArea)
 {
+	UpdateAbsoluteCoordinatesWithExplicitContentSize(parentOrigin, parentScale, parentVisibleArea, mLayoutData.Size);
+}
+
+void GUIElement::UpdateAbsoluteCoordinatesWithExplicitContentSize(const GUIPhysicalPointF& parentOrigin, float parentScale, const GUIPhysicalAreaF& parentVisibleArea, const GUILogicalSize& contentSize)
+{
 	mAbsoluteScale = mScale * parentScale;
 
 	// Keep intermediates in floating point not to lose precision as we go deeper in the hierarchy. We also need to cache these as layout update
 	// can occur from anywhere in the hierarchy.
 	mIntermediateAbsolutePosition = (mLayoutData.RelativePosition.To<float>() * parentScale).To<GUIPhysicalUnitF>() + parentOrigin;
 	const GUIPhysicalSizeF intermediateAbsoluteSize = (mLayoutData.Size.To<float>() * parentScale).To<GUIPhysicalUnitF>();
-
-	// Account for the fact that the content size may be larger than the calculated layout size (e.g. a scroll area with more elements than it can display)
-	const GUILogicalSize optimalContentSize = CalculateConstrainedSize().Optimal; // TODO - Avoid this call
-	const GUILogicalSize contentSize(Math::Max(optimalContentSize.Width, mLayoutData.Size.Width), Math::Max(optimalContentSize.Height, mLayoutData.Size.Height));
 
 	mIntermediateAbsoluteClippedArea = GUIPhysicalAreaF(mIntermediateAbsolutePosition, (contentSize.To<float>() * parentScale).To<GUIPhysicalUnitF>());
 	mIntermediateAbsoluteClippedArea.Clip(parentVisibleArea);

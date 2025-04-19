@@ -462,6 +462,12 @@ namespace bs
 	protected:
 		friend class GUISpriteHelper;
 
+		/**
+		 * Same as UpdateAbsoluteCoordinates, but allows the user to provide explicit size of this GUI element's contents. This is useful for e.g. scroll areas where the content size may be
+		 * larger than the layout calculated area used by default.
+		 */
+		void UpdateAbsoluteCoordinatesWithExplicitContentSize(const GUIPhysicalPointF& parentOrigin, float parentScale, const GUIPhysicalAreaF& parentVisibleArea, const GUILogicalSize& contentSize);
+
 		/**	Finds anchor and update parents and recursively assigns them to all children. */
 		void UpdatePanelAndLayoutUpdateParents();
 

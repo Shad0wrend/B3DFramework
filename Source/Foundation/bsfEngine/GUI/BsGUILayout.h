@@ -96,6 +96,7 @@ namespace bs
 		const Vector<GUIConstrainedSize>& GetChildrenConstrainedSizes() const { return mChildrenConstrainedSizes; }
 
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return mConstrainedSize.Optimal; }
+		void UpdateAbsoluteCoordinates(const GUIPhysicalPointF& parentOrigin, float parentScale, const GUIPhysicalAreaF& parentVisibleArea) override;
 
 		/** @} */
 
