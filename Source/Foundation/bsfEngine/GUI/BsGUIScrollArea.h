@@ -189,6 +189,9 @@ namespace bs
 		float mHorizontalOffset = 0.0f;
 		bool mRecalculateVerticalOffset = false;
 		bool mRecalculateHorizontalOffset = false;
+		bool mDragInProgress = false;
+		GUIPhysicalPoint mDragStartPosition{BsZero};
+		GUIPhysicalPoint mDragStartOffset{BsZero};
 
 		GUILogicalSize mVisibleSize{BsZero};
 		GUILogicalSize mContentSize{BsZero};

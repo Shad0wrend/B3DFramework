@@ -339,25 +339,29 @@ void GUIScrollArea::UpdateLayoutForChildren()
 
 void GUIScrollArea::UpdateAbsoluteCoordinatesForChildren()
 {
-	// Recalculate offsets in case scroll percent got updated externally (this needs to be delayed to this point because
-	// at the time of the update content and visible sizes might be out of date).
-	GUILogicalUnit scrollableHeight = Math::Max(mContentSize.Height - mVisibleSize.Height, 0);
-	if(mRecalculateVerticalOffset)
+	// Panel has infinite scroll area
+	if(mContent.LayoutType != ScrollAreaLayoutType::Panel)
 	{
-		mVerticalOffset = (float)scrollableHeight * Math::Clamp01(mVerticalScrollBar->GetScrollHandlePosition());
-		mRecalculateVerticalOffset = false;
-	}
+		// Recalculate offsets in case scroll percent got updated externally (this needs to be delayed to this point because
+		// at the time of the update content and visible sizes might be out of date).
+		GUILogicalUnit scrollableHeight = Math::Max(mContentSize.Height - mVisibleSize.Height, 0);
+		if(mRecalculateVerticalOffset)
+		{
+			mVerticalOffset = (float)scrollableHeight * Math::Clamp01(mVerticalScrollBar->GetScrollHandlePosition());
+			mRecalculateVerticalOffset = false;
+		}
 
-	GUILogicalUnit scrollableWidth = Math::Max(mContentSize.Width - mVisibleSize.Width, 0);
-	if(mRecalculateHorizontalOffset)
-	{
-		mHorizontalOffset = (float)scrollableWidth * Math::Clamp01(mHorizontalScrollBar->GetScrollHandlePosition());
-		mRecalculateHorizontalOffset = false;
-	}
+		GUILogicalUnit scrollableWidth = Math::Max(mContentSize.Width - mVisibleSize.Width, 0);
+		if(mRecalculateHorizontalOffset)
+		{
+			mHorizontalOffset = (float)scrollableWidth * Math::Clamp01(mHorizontalScrollBar->GetScrollHandlePosition());
+			mRecalculateHorizontalOffset = false;
+		}
 
-	// Reset offset in case layout size changed so everything fits
-	mVerticalOffset = Math::Clamp(mVerticalOffset, 0.0f, (float)scrollableHeight);
-	mHorizontalOffset = Math::Clamp(mHorizontalOffset, 0.0f, (float)scrollableWidth);
+		// Reset offset in case layout size changed so everything fits
+		mVerticalOffset = Math::Clamp(mVerticalOffset, 0.0f, (float)scrollableHeight);
+		mHorizontalOffset = Math::Clamp(mHorizontalOffset, 0.0f, (float)scrollableWidth);
+	}
 
 	if(mContentLayout->IsActive())
 	{
@@ -536,6 +540,28 @@ bool GUIScrollArea::DoOnMouseEvent(const GUIMouseEvent& ev)
 
 			mVerticalScrollBar->Scroll(additionalScroll * ev.GetWheelScrollAmount());
 			return true;
+		}
+	}
+
+	if(mContent.LayoutType == ScrollAreaLayoutType::Panel)
+	{
+		if(ev.GetType() == GUIMouseEventType::MouseDragStart)
+		{
+			mDragStartPosition = ev.GetPosition();
+			mDragStartOffset = GUIPhysicalPoint(Math::RoundToI32(mHorizontalOffset), Math::RoundToI32(mVerticalOffset));
+			mDragInProgress = true;
+		}
+		else if(ev.GetType() == GUIMouseEventType::MouseDragEnd)
+			mDragInProgress = false;
+		else if(ev.GetType() == GUIMouseEventType::MouseDrag)
+		{
+			const GUIPhysicalPoint dragAmount = ev.GetPosition() - mDragStartPosition;
+			const GUILogicalPoint logicalDragAmount = GUIUtility::PhysicalToLogical(dragAmount, GetAbsoluteScale());
+
+			mHorizontalOffset = (float)mDragStartOffset.X + (float)logicalDragAmount.X;
+			mVerticalOffset = (float)mDragStartOffset.Y + (float)logicalDragAmount.Y;
+
+			MarkAbsoluteCoordinatesAsDirty();
 		}
 	}
 
