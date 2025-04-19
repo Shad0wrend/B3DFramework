@@ -547,13 +547,32 @@ bool GUIScrollArea::DoOnMouseEvent(const GUIMouseEvent& ev)
 	{
 		if(ev.GetType() == GUIMouseEventType::MouseDragStart)
 		{
-			mDragStartPosition = ev.GetPosition();
-			mDragStartOffset = GUIPhysicalPoint(Math::RoundToI32(mHorizontalOffset), Math::RoundToI32(mVerticalOffset));
-			mDragInProgress = true;
+			const GUIPhysicalPoint& dragStartPosition = ev.GetDragStartPosition();
+
+			bool isOverAnyElement = false;
+			const TInlineArray<GUIElement*, 4>& visibleChildren = mContentLayout->GetVisibleChildren();
+			for(const auto& visibleChild : visibleChildren)
+			{
+				if(GUIInteractable* interactableVisibleChild = B3DRTTICast<GUIInteractable>(visibleChild); interactableVisibleChild != nullptr)
+				{
+					if(interactableVisibleChild->IsInInteractionBounds(dragStartPosition))
+					{
+						isOverAnyElement = true;
+						break;
+					}
+				}
+			}
+
+			if(!isOverAnyElement)
+			{
+				mDragStartPosition = ev.GetDragStartPosition();
+				mDragStartOffset = GUIPhysicalPoint(Math::RoundToI32(mHorizontalOffset), Math::RoundToI32(mVerticalOffset));
+				mDragInProgress = true;
+			}
 		}
 		else if(ev.GetType() == GUIMouseEventType::MouseDragEnd)
 			mDragInProgress = false;
-		else if(ev.GetType() == GUIMouseEventType::MouseDrag)
+		else if(mDragInProgress && ev.GetType() == GUIMouseEventType::MouseDrag)
 		{
 			const GUIPhysicalPoint dragAmount = ev.GetPosition() - mDragStartPosition;
 			const GUILogicalPoint logicalDragAmount = GUIUtility::PhysicalToLogical(dragAmount, GetAbsoluteScale());

@@ -97,11 +97,11 @@ namespace bs
 
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override { return mConstrainedSize.Optimal; }
 		void UpdateAbsoluteCoordinates(const GUIPhysicalPointF& parentOrigin, float parentScale, const GUIPhysicalAreaF& parentVisibleArea) override;
+		const TInlineArray<GUIElement*, 4>& GetVisibleChildren() const override { return mCulling != nullptr ? mCulling->GetVisibleElements() : Super::GetVisibleChildren(); }
 
 		/** @} */
 
 	protected:
-		const TInlineArray<GUIElement*, 4>& GetVisibleChildren() const override { return mCulling != nullptr ? mCulling->GetVisibleElements() : Super::GetVisibleChildren(); }
 		void RegisterChildElement(GUIElement* element) override;
 		void UnregisterChildElement(GUIElement* element) override;
 		void UpdateAbsoluteCoordinatesForChildren() override;
