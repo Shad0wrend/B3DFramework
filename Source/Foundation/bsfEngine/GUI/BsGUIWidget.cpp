@@ -196,9 +196,9 @@ void GUIWidget::UpdateLayout()
 	{
 		GUIElement* const element = *it;
 
-		if(element != nullptr && !element->IsLayoutDirty()) // If not dirty, we likely already updated layout for one of its parents
+		if(element != nullptr && !element->IsLayoutDirty()) // If not dirty, we likely already updated layout for one of its parents, or we just need to update absolute coordinates
 		{
-			it = mDirtyLayoutOrAbsoluteCoordinates.erase(it);
+			++it;
 			continue;
 		}
 
