@@ -1816,8 +1816,6 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 	if(iterFind == mPerCameraData.end())
 		mReferencedCameras.insert(camera);
 
-	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
-
 	GUICameraRenderData& cameraRenderData = mPerCameraData[camera.get()];
 	Vector<GUIWidgetRenderData>& widgets = cameraRenderData.WidgetRenderData;
 	GUIWidgetRenderData* widget;

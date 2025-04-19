@@ -451,9 +451,6 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 				continue;
 
 			BatchesInDepthRange& depthRange = *itFoundDepthRange;
-			if(dirtyBounds)
-				batch.IsBoundsDirty = dirtyBounds;
-
 			bool isGroupChangeRequired = false;
 
 			if((entry.second & DirtyMesh) != 0)
@@ -498,8 +495,26 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 			}
 			else
 			{
-				MarkBoundsDirty(batchedGuiElement, batchId);
+				if((entry.second & DirtyContent) != 0) // If content is dirty we already checked for dirty bounds
+					MarkBoundsDirty(batchedGuiElement, batchId);
+				else
+				{
+					// Clip area could have changed even if contents did not change
+					Area2I bounds = guiElement->GetAbsoluteClippedArea().To<i32, u32>();
+					if(batchedGuiElement.Bounds != bounds)
+					{
+						MarkBoundsDirty(batchedGuiElement);
+
+						dirtyBounds = true;
+						batchedGuiElement.Bounds = bounds;
+
+						MarkBoundsDirty(batchedGuiElement);
+					}
+				}
 			}
+
+			if(dirtyBounds)
+				batch.IsBoundsDirty = dirtyBounds;
 		}
 	}
 	
