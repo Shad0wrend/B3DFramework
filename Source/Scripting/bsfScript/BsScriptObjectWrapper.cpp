@@ -144,7 +144,7 @@ void ScriptObjectWrapper::TransitionToStrongScriptObjectHandle()
 	if(scriptObject == nullptr)
 		return;
 
-	const u32 strongHandle = MonoUtil::NewGcHandle(scriptObject);
+	const u32 strongHandle = MonoUtil::NewGcHandle(scriptObject, false);
 	MonoUtil::FreeGcHandle(mScriptObjectHandle);
 
 	mScriptObjectHandle = strongHandle;

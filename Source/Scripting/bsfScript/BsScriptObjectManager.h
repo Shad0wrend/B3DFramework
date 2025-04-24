@@ -68,18 +68,24 @@ namespace bs
 		void ProcessFinalizedObjects(bool assemblyRefresh = false);
 
 		/**
-		 * Triggered right after a domain was reloaded. This signals the outside world that they should update any kept Mono
-		 * references as the old ones will no longer be valid.
-		 */
-		Event<void()> OnRefreshDomainLoaded;
-
-		/**
 		 * Triggered just before the assembly refresh starts. At this point all managed objects are still valid, but are
-		 * about to be destroyed.
+		 * about to be destroyed. You should release any relevant object references at this point.
 		 */
 		Event<void()> OnRefreshStarted;
 
-		/**	Triggered after the assembly refresh ends. New assemblies should be loaded at this point. */
+		/**
+		 * Triggered when all non-persistent objects were destroyed during assembly refresh, just before managed assemblies will be unloaded.
+		 * You should clear any assembly information at this point.
+		 */
+		Event<void()> OnRefreshWillUnloadAssemblies;
+
+		/**
+		 * Triggered right after a domain was reloaded. This signals the outside world that they should update any kept Mono
+		 * references as the old ones will no longer be valid. You should reload assembly information at this point.
+		 */
+		Event<void()> OnRefreshAssembliesLoaded;
+
+		/**	Triggered after the assembly refresh ends. Persistent objects will be restored at this point. Use this to create new object handles if necessary. */
 		Event<void()> OnRefreshComplete;
 
 	private:

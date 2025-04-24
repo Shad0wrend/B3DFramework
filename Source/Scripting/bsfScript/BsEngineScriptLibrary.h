@@ -74,7 +74,7 @@ namespace bs
 		MonoMethod* mUpdateMethod = nullptr;
 		MonoAssembly* mEngineAssembly = nullptr;
 
-		HEvent mOnDomainReloadedConnection;
+		HEvent mOnAssemblyRefreshAssembliesLoadedConnection;
 		HEvent mOnAssemblyRefreshDoneConnection;
 	};
 

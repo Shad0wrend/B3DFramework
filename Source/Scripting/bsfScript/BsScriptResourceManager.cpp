@@ -4,6 +4,7 @@
 #include "BsMonoManager.h"
 #include "BsMonoAssembly.h"
 #include "BsMonoClass.h"
+#include "BsScriptObjectManager.h"
 #include "Resources/BsResources.h"
 #include "Reflection/BsRTTIType.h"
 #include "Resources/BsResource.h"
@@ -16,12 +17,12 @@ using namespace bs;
 ScriptResourceManager::ScriptResourceManager()
 {
 	mResourceDestroyedConn = GetResources().OnResourceDestroyed.Connect(std::bind(&ScriptResourceManager::OnResourceDestroyed, this, _1));
-	mDomainUnloadedConn = MonoManager::Instance().OnDomainUnload.Connect(std::bind(&ScriptResourceManager::ClearRRefs, this));
+	mRefreshWillUnloadAssembliesConnection = ScriptObjectManager::Instance().OnRefreshWillUnloadAssemblies.Connect(std::bind(&ScriptResourceManager::ClearRRefs, this));
 }
 
 ScriptResourceManager::~ScriptResourceManager()
 {
-	mDomainUnloadedConn.Disconnect();
+	mRefreshWillUnloadAssembliesConnection.Disconnect();
 	mResourceDestroyedConn.Disconnect();
 }
 

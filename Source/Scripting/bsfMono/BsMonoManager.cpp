@@ -101,6 +101,28 @@ namespace bs
 MonoManager::MonoManager()
 	: mScriptDomain(nullptr), mRootDomain(nullptr), mCorlibAssembly(nullptr)
 {
+#if B3D_USE_DOTNETCORE
+	MonoLoader::StartUp();
+#endif
+
+	LoadMonoLibrary();
+}
+
+MonoManager::~MonoManager()
+{
+	UnloadMonoLibrary();
+
+	// Make sure to explicitly clear this meta-data, as it contains structures allocated from other dynamic libraries,
+	// which will likely get unloaded right after shutdown
+	GetScriptWrapperTypeInformation().clear();
+
+#if B3D_USE_DOTNETCORE
+	MonoLoader::ShutDown();
+#endif
+}
+
+void MonoManager::LoadMonoLibrary()
+{
 #if !B3D_USE_DOTNETCORE
 	Path libDir = Paths::FindPath(kMonoLibDir);
 	Path etcDir = GetMonoEtcFolder();
@@ -109,7 +131,6 @@ MonoManager::MonoManager()
 	mono_set_dirs(libDir.ToString().c_str(), etcDir.ToString().c_str());
 	mono_set_assemblies_path(assembliesDir.ToString().c_str());
 #else
-	MonoLoader::StartUp();
 	MonoLoader::Instance().Load();
 
 	const Path assembliesFolder = GetFrameworkAssembliesFolder();
@@ -165,13 +186,12 @@ MonoManager::MonoManager()
 	mAssemblies["corlib"] = mCorlibAssembly;
 }
 
-MonoManager::~MonoManager()
+void MonoManager::UnloadMonoLibrary()
 {
 	UnloadAll();
 
 #if B3D_USE_DOTNETCORE
 	MonoLoader::Instance().Unload();
-	MonoLoader::ShutDown();
 #endif
 }
 
@@ -249,10 +269,23 @@ void MonoManager::RefreshScriptTypeMetaDataAndBindings(MonoAssembly& assembly)
 
 void MonoManager::UnloadAll()
 {
+	mono_gc_collect(mono_gc_max_generation());
+
 	for(auto& entry : mAssemblies)
+	{
 		B3DDelete(entry.second);
 
+		// Metas hold references to various assembly objects that were just deleted, so clear them
+		Vector<RegisteredScriptWrapperTypeInformation>& typeMetas = GetScriptWrapperTypeInformation()[entry.first];
+		for(auto& entry : typeMetas)
+		{
+			entry.MetaData->ScriptClass = nullptr;
+			entry.MetaData->ScriptObjectWrapperPointerField = nullptr;
+		}
+	}
+
 	mAssemblies.clear();
+	mCorlibAssembly = nullptr;
 
 	UnloadScriptDomain();
 
@@ -261,10 +294,6 @@ void MonoManager::UnloadAll()
 		mono_jit_cleanup(mRootDomain);
 		mRootDomain = nullptr;
 	}
-
-	// Make sure to explicitly clear this meta-data, as it contains structures allocated from other dynamic libraries,
-	// which will likely get unloaded right after shutdown
-	GetScriptWrapperTypeInformation().clear();
 }
 
 bs::MonoAssembly* MonoManager::GetAssembly(const String& name) const
@@ -356,10 +385,11 @@ bs::MonoClass* MonoManager::FindClass(::MonoClass* rawMonoClass)
 
 void MonoManager::UnloadScriptDomain()
 {
+#if B3D_USE_DOTNETCORE
+	mScriptDomain = nullptr;
+#else
 	if(mScriptDomain != nullptr)
 	{
-		OnDomainUnload();
-
 		mono_domain_set(mono_get_root_domain(), true);
 
 		MonoObject* exception = nullptr;
@@ -370,6 +400,7 @@ void MonoManager::UnloadScriptDomain()
 
 		mScriptDomain = nullptr;
 	}
+#endif
 
 	for(auto& assemblyEntry : mAssemblies)
 	{
@@ -390,7 +421,9 @@ void MonoManager::UnloadScriptDomain()
 	}
 
 	mAssemblies.clear();
-	mAssemblies["corlib"] = mCorlibAssembly;
+
+	if(mCorlibAssembly != nullptr)
+		mAssemblies["corlib"] = mCorlibAssembly;
 }
 
 Path MonoManager::GetFrameworkAssembliesFolder() const

@@ -38,7 +38,7 @@ void EngineScriptLibrary::Initialize()
 	ScriptAssemblyManager::Instance().LoadAssemblyInfo(kEngineAssembly);
 	LoadMonoTypes();
 
-	mOnDomainReloadedConnection = ScriptObjectManager::Instance().OnRefreshDomainLoaded.Connect(std::bind(&EngineScriptLibrary::LoadMonoTypes, this));
+	mOnAssemblyRefreshAssembliesLoadedConnection = ScriptObjectManager::Instance().OnRefreshAssembliesLoaded.Connect(std::bind(&EngineScriptLibrary::LoadMonoTypes, this));
 	mOnAssemblyRefreshDoneConnection = ScriptObjectManager::Instance().OnRefreshComplete.Connect(std::bind(&EngineScriptLibrary::OnAssemblyRefreshComplete, this));
 
 	TriggerOnInitialize();

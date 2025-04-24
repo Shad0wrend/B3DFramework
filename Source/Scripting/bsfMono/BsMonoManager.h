@@ -32,6 +32,14 @@ namespace bs
 		MonoManager();
 		~MonoManager();
 
+#if B3D_USE_DOTNETCORE
+		/** Loads the Mono library and sets up the relevant function pointers, if not loaded already. Must be called before performing any other actions in this class. */
+		void LoadMonoLibrary();
+
+		/** Unloads the Mono library if loaded. Caller must make sure to release all Mono objects before calling this method. */
+		void UnloadMonoLibrary();
+#endif
+
 		/**
 		 * Loads a new assembly from the provided path.
 		 *
@@ -93,9 +101,6 @@ namespace bs
 			static UnorderedMap<String, Vector<RegisteredScriptWrapperTypeInformation>> sRegisteredScriptWrapperTypes;
 			return sRegisteredScriptWrapperTypes;
 		}
-
-		/** Triggered when the assembly domain and all relevant assemblies are about to be unloaded. */
-		Event<void()> OnDomainUnload;
 
 	private:
 		/**

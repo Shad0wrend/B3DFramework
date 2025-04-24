@@ -60,7 +60,7 @@ namespace bs
 		UnorderedMap<::MonoClass*, UnorderedMap<UUID, ScriptRRefBase*>> mScriptRRefsPerType;
 
 		HEvent mResourceDestroyedConn;
-		HEvent mDomainUnloadedConn;
+		HEvent mRefreshWillUnloadAssembliesConnection;
 	};
 
 	/** @} */

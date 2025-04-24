@@ -25,12 +25,6 @@ void ScriptObjectManager::UnregisterScriptObjectWrapper(ScriptObjectWrapper* scr
 
 void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& assemblies)
 {
-#if B3D_USE_DOTNETCORE
-	// Assembly reload is not supported with .NET Core at the moment, as it's relying on application domains which are no longer part of the core.
-	// Instead we need to re-implement this. Likely be uninitializaing and re-initializing the mono runtime.
-	return;
-#endif
-
 	UnorderedMap<IScriptObjectWrapper*, ScriptObjectReloadPersistentData> reloadPeristentDataMap;
 
 	OnRefreshStarted();
@@ -54,7 +48,15 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 	for(auto& scriptObjectWrapper : mScriptObjectWrappers)
 		scriptObjectWrapper->ReleaseScriptObjectHandle();
 
+	PerformGarbageCollection();
+
+	OnRefreshWillUnloadAssemblies();
+
+#if B3D_USE_DOTNETCORE
+	MonoManager::Instance().UnloadMonoLibrary();
+#else
 	MonoManager::Instance().UnloadScriptDomain();
+#endif
 
 	// Unload script domain should trigger finalizers on everything, but since we usually delay
 	// their processing we need to manually trigger it here.
@@ -64,6 +66,10 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 		B3D_ENSURE(scriptObjectWrapper->ShouldPersistScriptReload());
 
 	ScriptAssemblyManager::Instance().ClearAssemblyInfo();
+
+#if B3D_USE_DOTNETCORE
+	MonoManager::Instance().LoadMonoLibrary();
+#endif
 
 	for(auto& entry : assemblies)
 	{
@@ -77,7 +83,7 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 	for(const auto& scriptObjectWrapper : mScriptObjectWrappers)
 		scriptObjectWrappersToRestore.Add(scriptObjectWrapper);
 
-	OnRefreshDomainLoaded();
+	OnRefreshAssembliesLoaded();
 
 	for(auto& scriptObjectWrapper : scriptObjectWrappersToRestore)
 		scriptObjectWrapper->RecreateScriptObjectAfterScriptReload();
