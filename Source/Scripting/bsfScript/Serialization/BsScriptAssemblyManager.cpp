@@ -94,7 +94,7 @@ void ScriptAssemblyManager::LoadAssemblyInfo(const String& assemblyName)
 			if(scriptWrapperObjectMetaData != nullptr)
 				typeInfo->TypeRTTIId = scriptWrapperObjectMetaData->TypeId;
 			else
-				typeInfo->TypeRTTIId = 0;
+				typeInfo->TypeRTTIId = ~0u;
 
 			SPtr<ManagedObjectInfo> objInfo = B3DMakeShared<ManagedObjectInfo>();
 
@@ -946,7 +946,7 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 			return nullptr;
 		}
 
-		if(objInfo->TypeInfo->TypeRTTIId != 0)
+		if(objInfo->TypeInfo->TypeRTTIId != ~0u)
 		{
 			::MonoClass* monoClass = MonoUtil::GetClass(value);
 			::MonoReflectionType* monoType = MonoUtil::GetType(monoClass);

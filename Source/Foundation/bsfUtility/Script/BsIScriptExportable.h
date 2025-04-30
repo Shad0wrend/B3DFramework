@@ -72,8 +72,9 @@ namespace bs
 		/**
 		 * Called on all script objects after script assemblies have been reloaded. This needs to recreate the internal script object using the new assemblies,
 		 * as the old one will have been destroyed during the reload. Only relevant for script objects that persist script reload (i.e. ShouldPersistScriptReload() returns true).
+		 * Returns true if the script object was created, otherwise the responsibility will fall to the script object wrapper.
 		 */
-		virtual void RecreateScriptObjectAfterScriptReload() { }
+		virtual bool RecreateScriptObjectAfterScriptReload() { return false; }
 
 		/**
 		 * Called on all script objects after script objects have been created in RecreateScriptObjectAfterScriptReload(). Allows you to restore data backed up

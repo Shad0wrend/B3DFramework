@@ -5,6 +5,7 @@
 #include "Serialization/BsScriptAssemblyManager.h"
 #include "Scene/BsGameObjectManager.h"
 #include "BsMonoAssembly.h"
+#include "BsMonoUtil.h"
 #include "BsScriptObjectWrapper.h"
 
 using namespace bs;
@@ -48,22 +49,35 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 	for(auto& scriptObjectWrapper : mScriptObjectWrappers)
 		scriptObjectWrapper->ReleaseScriptObjectHandle();
 
-	PerformGarbageCollection();
-
 	OnRefreshWillUnloadAssemblies();
 
-#if B3D_USE_DOTNETCORE
-	MonoManager::Instance().UnloadMonoLibrary();
-#else
+	// Unload the domain which GCs all the script objects and triggers their finalizers
 	MonoManager::Instance().UnloadScriptDomain();
-#endif
 
 	// Unload script domain should trigger finalizers on everything, but since we usually delay
 	// their processing we need to manually trigger it here.
 	ProcessFinalizedObjects(true);
 
-	for(auto& scriptObjectWrapper : mScriptObjectWrappers)
+	for(auto it = mScriptObjectWrappers.begin(); it != mScriptObjectWrappers.end();)
+	{
+		ScriptObjectWrapper* const scriptObjectWrapper = *it;
+#if !B3D_USE_DOTNETCORE
 		B3D_ENSURE(scriptObjectWrapper->ShouldPersistScriptReload());
+		++it;
+#else
+		if(!B3D_ENSURE(scriptObjectWrapper->ShouldPersistScriptReload()))
+		{
+			it = mScriptObjectWrappers.erase(it);
+			scriptObjectWrapper->NotifyScriptObjectDestroyed(true);
+		}
+		else
+			++it;
+#endif
+	}
+
+#if B3D_USE_DOTNETCORE
+	MonoManager::Instance().UnloadMonoLibrary();
+#endif
 
 	ScriptAssemblyManager::Instance().ClearAssemblyInfo();
 

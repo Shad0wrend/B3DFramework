@@ -169,7 +169,7 @@ void MonoManager::LoadMonoLibrary()
 	mono_config_parse(nullptr);
 
 #if B3D_USE_DOTNETCORE
-	mRootDomain = mono_jit_init("bsfMono");
+	mScriptDomain = mRootDomain = mono_jit_init("bsfMono");
 #else
 	mRootDomain = mono_jit_init_version("bsfMono", kMonoVersionData[(int)kMonoVersion].Version.c_str());
 #endif
@@ -269,8 +269,6 @@ void MonoManager::RefreshScriptTypeMetaDataAndBindings(MonoAssembly& assembly)
 
 void MonoManager::UnloadAll()
 {
-	mono_gc_collect(mono_gc_max_generation());
-
 	for(auto& entry : mAssemblies)
 	{
 		B3DDelete(entry.second);
@@ -386,7 +384,11 @@ bs::MonoClass* MonoManager::FindClass(::MonoClass* rawMonoClass)
 void MonoManager::UnloadScriptDomain()
 {
 #if B3D_USE_DOTNETCORE
-	mScriptDomain = nullptr;
+	if(mScriptDomain != nullptr)
+	{
+		mono_domain_finalize(mScriptDomain, ~0u);
+		mScriptDomain = nullptr;
+	}
 #else
 	if(mScriptDomain != nullptr)
 	{

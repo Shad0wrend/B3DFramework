@@ -217,6 +217,10 @@ namespace bs
 
 		void RecreateScriptObjectAfterScriptReload() override
 		{
+			// Try to create the object via the native object and fall back to default implementation otherwise
+			if(mNativeObject != nullptr && mNativeObject->RecreateScriptObjectAfterScriptReload())
+				return;
+
 			MonoObject* const scriptObject = SelfType::CreateScriptObject(true);
 
 			if(B3D_ENSURE(scriptObject != nullptr))

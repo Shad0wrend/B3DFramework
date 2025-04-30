@@ -157,6 +157,7 @@ void ScriptObjectWrapper::ReleaseScriptObjectHandle()
 	{
 		MonoUtil::FreeGcHandle(mScriptObjectHandle);
 		mScriptObjectHandle = ~0u;
+		mHoldsStrongScriptObjectHandle = false;
 	}
 }
 
