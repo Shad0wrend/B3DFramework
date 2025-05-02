@@ -24,5 +24,7 @@ namespace bs
 		void TestVarInt();
 		void TestBitStream();
 		void TestRTTIIterator();
+		void TestMPSCQueue();
+		void TestSPSCQueue();
 	};
 } // namespace bs

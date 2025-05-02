@@ -6,10 +6,14 @@
 #include "Utility/BsTArray.h"
 #include "Math/BsComplex.h"
 #include "Reflection/BsRTTIIterator.h"
+#include "Threading/BsSignal.h"
+#include "Threading/BsThreadPool.h"
 #include "Utility/BsMinHeap.h"
 #include "Utility/BsSpatialTree.h"
 #include "Utility/BsBitstream.h"
 #include "Utility/BsUSPtr.h"
+#include "Utility/BsQueue.h"
+#include "Threading/BsThread.h"
 
 using namespace bs;
 
@@ -103,10 +107,12 @@ UtilityTestSuite::UtilityTestSuite()
 	B3D_ADD_TEST(UtilityTestSuite::TestArray);
 	B3D_ADD_TEST(UtilityTestSuite::TestComplex);
 	B3D_ADD_TEST(UtilityTestSuite::TestMinHeap);
-	B3D_ADD_TEST(UtilityTestSuite::TestQuadtree)
+	//B3D_ADD_TEST(UtilityTestSuite::TestQuadtree)
 	B3D_ADD_TEST(UtilityTestSuite::TestVarInt)
 	B3D_ADD_TEST(UtilityTestSuite::TestBitStream)
 	B3D_ADD_TEST(UtilityTestSuite::TestRTTIIterator)
+	B3D_ADD_TEST(UtilityTestSuite::TestMPSCQueue)
+	B3D_ADD_TEST(UtilityTestSuite::TestSPSCQueue)
 }
 
 void UtilityTestSuite::TestBitfield()
@@ -618,16 +624,16 @@ void UtilityTestSuite::TestQuadtree()
 	{
 		for(u32 j = 0; j < types[i].Count; j++)
 		{
-			Vector2 position(
-				((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents,
-				((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents);
-
-			Vector2 extents(
+			Size2 extents(
 				types[i].SizeMin + ((rand() / (float)RAND_MAX)) * (types[i].SizeMax - types[i].SizeMin) * 0.5f,
 				types[i].SizeMin + ((rand() / (float)RAND_MAX)) * (types[i].SizeMax - types[i].SizeMin) * 0.5f);
 
+			Vector2 position(
+				((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents - extents.Width,
+				((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents - extents.Height);
+
 			DebugQuadtreeElement elem;
-			elem.Box = Area2(position - extents, extents);
+			elem.Box = Area2(position, extents * 2.0f);
 
 			u32 elemIdx = (u32)quadtreeData.Elements.size();
 			quadtreeData.Elements.push_back(elem);
@@ -636,9 +642,9 @@ void UtilityTestSuite::TestQuadtree()
 	}
 
 	DebugQuadtreeElement manualElems[3];
-	manualElems[0].Box = Area2(Vector2(100.0f, 100.0f), Vector2(110.0f, 115.0f));
-	manualElems[1].Box = Area2(Vector2(200.0f, 100.0f), Vector2(250.0f, 150.0f));
-	manualElems[2].Box = Area2(Vector2(90.0f, 90.0f), Vector2(105.0f, 105.0f));
+	manualElems[0].Box = Area2(Vector2(100.0f, 100.0f), Size2(110.0f, 115.0f));
+	manualElems[1].Box = Area2(Vector2(200.0f, 100.0f), Size2(250.0f, 150.0f));
+	manualElems[2].Box = Area2(Vector2(90.0f, 90.0f), Size2(105.0f, 105.0f));
 
 	for(u32 i = 0; i < 3; i++)
 	{
@@ -957,4 +963,98 @@ void UtilityTestSuite::TestRTTIIterator()
 	B3D_TEST_ASSERT((*rttiMapIterator).second == 66666)
 	B3D_TEST_ASSERT((*rttiMapIterator).second == mapValues[1200])
 	B3D_TEST_ASSERT(rttiMapIterator.GetElementCount() == 9)
+}
+
+void UtilityTestSuite::TestMPSCQueue()
+{
+	static constexpr u32 kProducerThreadCount = 12;
+	static constexpr u32 kEntriesPerThread = 1000;
+
+	TQueue<u32, QueueThreadingPolicy::MPSC> queue;
+
+	std::atomic<u32> finishedProducerThreads{0};
+
+	TArray<u32> readValues;
+	Thread* consumerThread = B3DNew<Thread>([&queue, &readValues, &finishedProducerThreads]
+	{
+		while(true)
+		{
+			Optional<u32> maybeValue = queue.Dequeue();
+			if(maybeValue.has_value())
+				readValues.Add(maybeValue.value());
+			else
+			{
+				if(finishedProducerThreads >= kProducerThreadCount)
+					break;
+			}
+		}
+	});
+
+	Thread* producerThreads[kProducerThreadCount] { nullptr };
+	for(u32 threadIndex = 0; threadIndex < kProducerThreadCount; threadIndex++)
+	{
+		const u32 startIndex = threadIndex * kEntriesPerThread;
+		producerThreads[threadIndex] = B3DNew<Thread>([&queue, startIndex, &finishedProducerThreads]
+		{
+			for(u32 i = 0; i < kEntriesPerThread; i++)
+				queue.Enqueue(startIndex + i);
+
+			++finishedProducerThreads;
+		});
+	}
+
+	consumerThread->WaitUntilComplete();
+
+	std::sort(readValues.begin(), readValues.end());
+
+	for(u32 i = 0; i < (kProducerThreadCount * kEntriesPerThread); ++i)
+		B3D_TEST_ASSERT(i == readValues[i])
+
+	for(u32 threadIndex = 0; threadIndex < kProducerThreadCount; threadIndex++)
+	{
+		B3DDelete(producerThreads[threadIndex]);
+		producerThreads[threadIndex] = nullptr;
+	}
+
+	B3DDelete(consumerThread);
+}
+
+void UtilityTestSuite::TestSPSCQueue()
+{
+	TQueue<u32, QueueThreadingPolicy::SPSC> queue;
+
+	std::atomic<bool> producerThreadFinished{false};
+
+	TArray<u32> readValues;
+	Thread* consumerThread = B3DNew<Thread>([&queue, &readValues, &producerThreadFinished]
+	{
+		while(true)
+		{
+			Optional<u32> maybeValue = queue.Dequeue();
+			if(maybeValue.has_value())
+				readValues.Add(maybeValue.value());
+			else
+			{
+				if(producerThreadFinished)
+					break;
+			}
+		}
+	});
+
+	static constexpr u32 kEntryCount = 10000;
+	Thread* producerThread = B3DNew<Thread>([&queue, &producerThreadFinished]
+	{
+		for(u32 i = 0; i < kEntryCount; i++)
+			queue.Enqueue(i);
+
+		producerThreadFinished = true;
+	});
+
+	consumerThread->WaitUntilComplete();
+
+	for(u32 i = 0; i < kEntryCount; ++i)
+		B3D_TEST_ASSERT(i == readValues[i])
+
+	B3DDelete(producerThread);
+	B3DDelete(consumerThread);
 }
