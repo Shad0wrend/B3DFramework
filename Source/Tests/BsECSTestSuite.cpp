@@ -16,7 +16,79 @@ ECSTestSuite::ECSTestSuite()
 
 void ECSTestSuite::TestEntitySparseSet()
 {
-	TEntitySparseSet EntitySparseSet;
-	EntitySparseSet.Add(Entity());
+	const TArray<Entity> kEntities = {
+		Entity(0, 0),
+		Entity(1, 0),
+		Entity(2, 0),
+		Entity(3, 0),
+		Entity(5000, 0),
+		Entity(50000, 0),
+		Entity(50001, 0) };
+
+	auto fnTestSparseSet = [this, kEntities](auto&& entitySparseSet)
+	{
+		for(const auto& entity : kEntities)
+			entitySparseSet.Add(entity);
+
+		for(const auto& entity : kEntities)
+		{
+			B3D_TEST_ASSERT(entitySparseSet.Contains(entity))
+		}
+
+		u32 foundEntityCount = 0;
+		for(const auto entity : entitySparseSet)
+		{
+			auto found = std::find(kEntities.begin(), kEntities.end(), entity);
+			B3D_TEST_ASSERT(found != kEntities.end())
+			if(found != kEntities.end())
+				foundEntityCount++;
+		}
+
+		B3D_TEST_ASSERT(foundEntityCount == (u32)kEntities.Size())
+
+		auto foundEntry3 = entitySparseSet.Find(kEntities[3]);
+		B3D_TEST_ASSERT(foundEntry3 != entitySparseSet.End())
+
+		if(foundEntry3 != entitySparseSet.End())
+		{
+			entitySparseSet.Erase(foundEntry3);
+			B3D_TEST_ASSERT(entitySparseSet.Find(kEntities[3]) == entitySparseSet.End())
+		}
+
+		auto foundEntry6 = entitySparseSet.Find(kEntities[6]);
+		B3D_TEST_ASSERT(foundEntry6 != entitySparseSet.End())
+
+		if(foundEntry6 != entitySparseSet.End())
+		{
+			entitySparseSet.Erase(foundEntry6);
+			B3D_TEST_ASSERT(entitySparseSet.Find(kEntities[6]) == entitySparseSet.End())
+		}
+
+		foundEntityCount = 0;
+		for(const auto entity : entitySparseSet)
+		{
+			auto found = std::find(kEntities.begin(), kEntities.end(), entity);
+			if(found != kEntities.end())
+				foundEntityCount++;
+		}
+
+		B3D_TEST_ASSERT(foundEntityCount == (u32)(kEntities.Size() - 2u))
+
+		entitySparseSet.ClearDeleted();
+
+		const u32 expectedEntityCount = entitySparseSet.GetDeletePolicy() == EntitySparseSetDeletePolicy::SwapOnly
+			? (u32)kEntities.Size()
+			: (u32)(kEntities.Size() - 2u);
+		B3D_TEST_ASSERT(entitySparseSet.Size() == expectedEntityCount)
+	};
+
+	TEntitySparseSet<EntitySparseSetDeletePolicy::SwapAndErase> swapAndEraseSparseSet;
+	fnTestSparseSet(swapAndEraseSparseSet);
+
+	TEntitySparseSet<EntitySparseSetDeletePolicy::SwapOnly> swapOnlySparseSet;
+	fnTestSparseSet(swapOnlySparseSet);
+
+	TEntitySparseSet<EntitySparseSetDeletePolicy::InPlace> inPlaceDeleteSparseSet;
+	fnTestSparseSet(inPlaceDeleteSparseSet);
 
 }

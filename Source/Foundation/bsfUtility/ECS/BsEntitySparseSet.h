@@ -31,8 +31,10 @@ namespace bs::ecs
 		using IdentifierType = u32;
 		using VersionType = u16;
 
-		static constexpr StorageType kIdentifierMask = 0xFFFFF;
-		static constexpr StorageType kVersionMask = 0xFFF;
+		static constexpr u32 kIdentifierBitCount = 20;
+		static constexpr u32 kVersionBitCount  = 12;
+		static constexpr StorageType kIdentifierMask = (1 << kIdentifierBitCount) - 1;
+		static constexpr StorageType kVersionMask = (1 << kVersionBitCount) - 1;
 	};
 
 	template<>
@@ -42,31 +44,43 @@ namespace bs::ecs
 		using IdentifierType = u64;
 		using VersionType = u32;
 
-		static constexpr StorageType kIdentifierMask = 0xFFFFFFFF;
-		static constexpr StorageType kVersionMask = 0xFFFFFFFF;
+		static constexpr u32 kIdentifierBitCount = 32;
+		static constexpr u32 kVersionBitCount  = 32;
 	};
 
 	template<typename Type>
 	struct TEntity
 	{
 		using Traits = TEntityTypeTraits<Type>;
+		using StorageType = typename Traits::StorageType;
 		using IdentifierType = typename Traits::IdentifierType;
 		using VersionType = typename Traits::VersionType;
 
-		static constexpr u32 kIdentifierMaskBitCount = CountBits(Traits::kIdentifierMask);
+		static constexpr StorageType kIdentifierMask = (1 << Traits::kIdentifierBitCount) - 1;
+		static constexpr StorageType kVersionMask = (1 << Traits::kVersionBitCount) - 1;
 
 		constexpr TEntity() = default;
 		constexpr TEntity(IdentifierType identifier, VersionType version)
 		{
 			if constexpr(Traits::kVersionMask == 0u)
-				CombinedIdentifierAndVersion = (Type)(identifier & Traits::kIdentifierMask);
+				IdentifierAndVersion = (Type)(identifier & Traits::kIdentifierMask);
 			else
-				CombinedIdentifierAndVersion = ((Type)(identifier & Traits::kIdentifierMask)) | (((Type)(version & Traits::kVersionMask)) << kIdentifierMaskBitCount);
+				IdentifierAndVersion = ((Type)(identifier & Traits::kIdentifierMask)) | (((Type)(version & Traits::kVersionMask)) << Traits::kIdentifierBitCount);
+		}
+
+		bool operator==(TEntity other) const
+		{
+			return IdentifierAndVersion == other.IdentifierAndVersion;
+		}
+
+		bool operator!=(TEntity other) const
+		{
+			return IdentifierAndVersion != other.IdentifierAndVersion;
 		}
 
 		constexpr IdentifierType GetIdentifier() const
 		{
-			return (IdentifierType)(CombinedIdentifierAndVersion) & Traits::kIdentifierMask;
+			return (IdentifierType)(IdentifierAndVersion) & Traits::kIdentifierMask;
 		}
 
 		constexpr VersionType GetVersion() const
@@ -74,7 +88,7 @@ namespace bs::ecs
 			if constexpr(Traits::kVersionMask == 0u)
 				return VersionType{};
 
-			return (Traits::VersionType)(CombinedIdentifierAndVersion >> kIdentifierMaskBitCount) & Traits::kVersionMask;
+			return (Traits::VersionType)(IdentifierAndVersion >> Traits::kIdentifierBitCount) & Traits::kVersionMask;
 		}
 
 		constexpr TEntity GetAsNextVersion() const
@@ -82,7 +96,16 @@ namespace bs::ecs
 			return TEntity(GetIdentifier(), GetVersion() + 1);
 		}
 		
-		typename Traits::StorageType CombinedIdentifierAndVersion{};
+		union
+		{
+			struct
+			{
+				StorageType Identifier : Traits::kIdentifierBitCount;
+				StorageType Version : Traits::kVersionBitCount;
+			};
+
+			StorageType IdentifierAndVersion;
+		};
 	};
 
 #define B3D_ECS_64BIT_ENTITIES 0
@@ -92,51 +115,6 @@ namespace bs::ecs
 #else
 	using Entity = TEntity<u32>;
 #endif
-
-
-
-
-	//// TODO - Doc
-	//template<typename Type>
-	//class TEntitySparseSetTraits
-	//{
-	//	using EntityTypeTraits = TEntityTypeTraits<Type>;
-
-	//public:
-	//	using EntityType = typename EntityTypeTraits::IdentifierType;
-	//	using VersionType = typename EntityTypeTraits::VersionType;
-
-	//	static constexpr EntityType kEntityMask = EntityTypeTraits::ValueMask;
-	//	static constexpr EntityType kVersionMask = EntityTypeTraits::VersionMask;
-	//	static constexpr u32 kEntityMaskBitCount = CountBits(EntityTypeTraits::EntityMask);
-
-	//	static constexpr EntityType ToEntity(Type value)
-	//	{
-	//		return static_cast<EntityType>(value) & kEntityMask;
-	//	}
-
-	//	static constexpr VersionType ToVersion(Type value)
-	//	{
-	//		if constexpr(kVersionMask == 0u)
-	//			return VersionType{};
-
-	//		return (VersionType)(value >> kEntityMaskBitCount) & kVersionMask;
-	//	}
-
-	//	static constexpr Type BumpVersion(const Type value)
-	//	{
-	//		const VersionType nextVersion = ToVersion(value) + 1;
-	//		return PackEntityAndVersion(value, (VersionType)(nextVersion + (nextVersion == kVersionMask)));
-	//	}
-
-	//	static constexpr Type PackEntityAndVersion(EntityType value, VersionType version)
-	//	{
-	//		if constexpr(EntityTypeTraits::kVersionMask == 0u)
-	//			return StorageType(value & kEntityMask);
-
-	//		return StorageType((value & kEntityMask) | ((EntityType)(version & kVersionMask) << kEntityMaskBitCount));
-	//	}
-	//};
 
 	// TODO - Doc
 	struct NullEntity
@@ -244,7 +222,7 @@ namespace bs::ecs
 		using iterator_category = std::random_access_iterator_tag;
 
 		TEntitySparseSetIterator() = default;
-		TEntitySparseSetIterator(const ContainerType& container, i64 index)
+		TEntitySparseSetIterator(const ContainerType& container, u64 index)
 			: mContainer(&container), mIndex(index) { }
 
 		TEntitySparseSetIterator& operator++()
@@ -255,42 +233,47 @@ namespace bs::ecs
 
 		TEntitySparseSetIterator& operator--()
 		{
+			B3D_ENSURE(mIndex > 0);
+
 			--mIndex;
 			return *this;
 		}
 
-		TEntitySparseSetIterator& operator+=(i64 value)
+		TEntitySparseSetIterator& operator+=(u64 value)
 		{
 			mIndex += value;
 			return *this;
 		}
 
-		TEntitySparseSetIterator& operator-=(i64 value)
+		TEntitySparseSetIterator& operator-=(u64 value)
 		{
+			B3D_ENSURE(mIndex >= value);
+
 			mIndex -= value;
 			return *this;
 		}
 
-		TEntitySparseSetIterator operator+(i64 value) const
+		TEntitySparseSetIterator operator+(u64 value) const
 		{
 			TEntitySparseSetIterator copy = *this;
 			return (copy += value);
 		}
 
-		TEntitySparseSetIterator operator-(i64 value) const
+		TEntitySparseSetIterator operator-(u64 value) const
 		{
-			return (*this + -value);
+			TEntitySparseSetIterator copy = *this;
+			return (copy -= value);
 		}
 
-		const_reference operator[](i64 value) const { return (*mContainer)[mIndex + value]; }
+		const_reference operator[](u64 value) const { return (*mContainer)[mIndex + value]; }
 		const_pointer operator->() const { return std::addressof(operator[](0)); }
 		const_reference operator*() const { return operator[](0); }
 
-		i64 Index() const { return mIndex; }
+		u64 Index() const { return mIndex; }
 
 	private:
 		const ContainerType* mContainer = nullptr;
-		i64 mIndex = 0;
+		u64 mIndex = 0;
 	};
 
 	template<typename ContainerType>
@@ -366,13 +349,13 @@ namespace bs::ecs
 
 		Entity operator[](u64 index)
 		{
-			return mPacked[index];
+			return mPackedEntities[index];
 		}
 
 		void Add(Entity entity, bool forceAddAtEnd = false)
 		{
 			Entity& sparseSetEntry = GetOrCreateSparseEntryReference(entity);
-			u64 packedEntryIndex = mPacked.Size();
+			u64 packedEntryIndex = mPackedEntities.Size();
 
 			if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::InPlace)
 			{
@@ -382,17 +365,17 @@ namespace bs::ecs
 				{
 					packedEntryIndex = mFreeListHead;
 					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(mFreeListHead), entity.GetVersion());
-					mFreeListHead = (u64)(std::exchange(mPacked[packedEntryIndex], entity).GetIdentifier());
+					mFreeListHead = (u64)(std::exchange(mPackedEntities[packedEntryIndex], entity).GetIdentifier());
 				}
 				else
 				{
-					mPacked.Add(entity);
+					mPackedEntities.Add(entity);
 					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
 				}
 			}
 			else if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::SwapAndErase)
 			{
-				mPacked.Add(entity);
+				mPackedEntities.Add(entity);
 				B3D_ENSURE(sparseSetEntry == kNullEntity);
 				sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
 			}
@@ -400,7 +383,7 @@ namespace bs::ecs
 			{
 				if(sparseSetEntry == kNullEntity)
 				{
-					mPacked.Add(entity);
+					mPackedEntities.Add(entity);
 					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
 				}
 				else
@@ -410,7 +393,7 @@ namespace bs::ecs
 				}
 
 				packedEntryIndex = mFreeListHead++;
-				SwapEntriesAtPackedIndices(sparseSetEntry.GetIdentifier(), packedEntryIndex);
+				SwapEntries(sparseSetEntry.GetIdentifier(), packedEntryIndex);
 			}
 		}
 
@@ -421,21 +404,20 @@ namespace bs::ecs
 			{
 				// Sparse entry is set to a null value, while packed entry points to the next free packed entry, and its marked as invalid via its version
 				const u64 packedEntryIndex = std::exchange(GetSparseEntryReference(entity), kNullEntity).GetIdentifier();
-				mPacked[packedEntryIndex] = Entity(GetPackedIndexAsEntryIdentifier(std::exchange(mFreeListHead, packedEntryIndex)), ((Entity)kInvalidEntity).GetVersion());
+				mPackedEntities[packedEntryIndex] = Entity(GetPackedIndexAsEntryIdentifier(std::exchange(mFreeListHead, packedEntryIndex)), ((Entity)kInvalidEntity).GetVersion());
 			}
 			else if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::SwapAndErase)
 			{
 				// Set last sparse entry so it points to the packed index of the entry that was removed, swap packed entries
 				Entity& sparseEntryToRemove = GetSparseEntryReference(entity);
-				Entity& lastSparseEntry = GetSparseEntryReference(mPacked.Back());
+				Entity& lastSparseEntry = GetSparseEntryReference(mPackedEntities.Back());
 
 				const u64 packedEntryToRemoveIndex = sparseEntryToRemove.GetIdentifier();
-				lastSparseEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryToRemoveIndex), mPacked.Back().GetVersion());
-				mPacked[packedEntryToRemoveIndex] = mPacked.Back();
+				lastSparseEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryToRemoveIndex), mPackedEntities.Back().GetVersion());
+				mPackedEntities[packedEntryToRemoveIndex] = mPackedEntities.Back();
 
-				B3D_ENSURE(mPacked.Back() == kNullEntity);
 				sparseEntryToRemove = kNullEntity;
-				mPacked.Pop();
+				mPackedEntities.Pop();
 			}
 			else
 			{
@@ -443,7 +425,7 @@ namespace bs::ecs
 				UpdateVersion(entity.GetAsNextVersion());
 
 				mFreeListHead -= (packedEntryIndex < mFreeListHead);
-				SwapEntriesAtPackedIndices(packedEntryIndex, mFreeListHead);
+				SwapEntries(packedEntryIndex, mFreeListHead);
 			}
 		}
 
@@ -461,30 +443,8 @@ namespace bs::ecs
 
 		void Clear()
 		{
-			//if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::InPlace)
-			//{
-			//	if(mFreeListHead != kMaximumEntryCount)
-			//	{
-			//		for(auto&& entity : mPacked)
-			//		{
-			//			if(entity != kInvalidEntity)
-			//				GetSparseEntryReference(entity) = kNullEntity;
-			//		}
-			//	}
-			//	else
-			//	{
-			//		for(auto&& entity : mPacked)
-			//			GetSparseEntryReference(entity) = kNullEntity;
-			//	}
-			//}
-			//else
-			//{
-			//	for(auto&& entity : mPacked)
-			//		GetSparseEntryReference(entity) = kNullEntity;
-			//}
-
 			FreeSparsePages();
-			mPacked.Clear();
+			mPackedEntities.Clear();
 			mFreeListHead = DeletePolicy != EntitySparseSetDeletePolicy::SwapOnly ? kMaximumEntryCount : 0;
 		}
 
@@ -493,26 +453,41 @@ namespace bs::ecs
 			if constexpr(DeletePolicy != EntitySparseSetDeletePolicy::InPlace)
 				return;
 
-			u64 validPackedEntryIndex = mPacked.Size();
+			u64 validPackedEntryIndex = mPackedEntities.Size();
 			u64 freePackedEntryIndex = std::exchange(mFreeListHead, kMaximumEntryCount);
 
 			// Find first valid entry
-			for(; validPackedEntryIndex > 0 && mPacked[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
+			for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
 
 			while(freePackedEntryIndex != kMaximumEntryCount)
 			{
-				B3D_ENSURE(freePackedEntryIndex < validPackedEntryIndex);
+				if(freePackedEntryIndex < validPackedEntryIndex)
+				{
+					--validPackedEntryIndex;
 
-				// Move the free entries to the back
-				--validPackedEntryIndex;
-				SwapEntriesAtPackedIndices(freePackedEntryIndex, validPackedEntryIndex);
+					// Move the free entry to the back
+					Entity& fromPackedEntry = mPackedEntities[validPackedEntryIndex];
+					Entity& toPackedEntry = mPackedEntities[freePackedEntryIndex];
 
-				// Find next free entry
-				freePackedEntryIndex = mPacked[freePackedEntryIndex];
+					GetSparseEntryReference(fromPackedEntry) = Entity((Entity::Traits::IdentifierType)freePackedEntryIndex, toPackedEntry.GetVersion());
 
-				// Find next valid entry
-				for(; validPackedEntryIndex > 0 && mPacked[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
+					// Find next free entry
+					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
+
+					toPackedEntry = fromPackedEntry;
+
+					// Find next valid entry
+					for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
+				}
+				// Already at the end
+				else
+				{
+					// Find next free entry
+					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
+				}
 			}
+
+			mPackedEntities.Erase(mPackedEntities.begin() + validPackedEntryIndex, mPackedEntities.end());
 		}
 
 		Entity::VersionType GetVersion(Entity entity) const
@@ -530,7 +505,7 @@ namespace bs::ecs
 			sparseEntry = Entity(sparseEntry.GetIdentifier(), entity.GetVersion());
 
 			const u64 packedEntryIndex = sparseEntry.GetIdentifier();
-			mPacked[packedEntryIndex] = entity;
+			mPackedEntities[packedEntryIndex] = entity;
 		}
 
 		Iterator Find(Entity entity) const
@@ -550,13 +525,15 @@ namespace bs::ecs
 			return true;
 		}
 
-		//u64 Size() const { return mPacked.Size(); } // Size is not valid for in-place deletion, it's just an estimate
-		bool IsEmpty() const { return mPacked.Empty(); }
+		// Note: For in-place deletion, this will also return deleted entries
+		u64 Size() const { return mPackedEntities.Size(); }
+		bool IsEmpty() const { return mPackedEntities.Empty(); }
+		EntitySparseSetDeletePolicy GetDeletePolicy() const { return DeletePolicy; }
 
-		Iterator Begin() const { return Iterator(mPacked, 0); }
+		Iterator Begin() const { return Iterator(mPackedEntities, 0); }
 		ConstIterator Cbegin() const { return Begin(); }
 
-		Iterator End() const { return Iterator(mPacked, mPacked.Size()); }
+		Iterator End() const { return Iterator(mPackedEntities, mPackedEntities.Size()); }
 		ConstIterator Cend() const { return End(); }
 
 		ReverseIterator Rbegin() const { return std::make_reverse_iterator(end()); }
@@ -584,10 +561,10 @@ namespace bs::ecs
 		const_reverse_iterator crend() const { return Crend(); }
 
 	private:
-		void SwapEntriesAtPackedIndices(u64 lhsPackedIndex, u64 rhsPackedIndex)
+		void SwapEntries(u64 lhsPackedIndex, u64 rhsPackedIndex)
 		{
-			Entity& lhsPackedEntry = mPacked[lhsPackedIndex];
-			Entity& rhsPackedEntry = mPacked[rhsPackedIndex];
+			Entity& lhsPackedEntry = mPackedEntities[lhsPackedIndex];
+			Entity& rhsPackedEntry = mPackedEntities[rhsPackedIndex];
 
 			Entity& lhsSparseEntry = GetSparseEntryReference(lhsPackedEntry);
 			Entity& rhsSparseEntry = GetSparseEntryReference(rhsPackedEntry);
@@ -603,22 +580,22 @@ namespace bs::ecs
 			const u64 entityIdentifier = entity.GetIdentifier();
 			const u64 sparsePage = GetSparsePage(entityIdentifier);
 
-			if(sparsePage >= mSparse.Size())
-				mSparse.Resize(sparsePage + 1);
+			if(sparsePage >= mSparseIndices.Size())
+				mSparseIndices.Resize(sparsePage + 1);
 
-			if(mSparse[sparsePage] == nullptr)
+			if(mSparseIndices[sparsePage] == nullptr)
 			{
-				mSparse[sparsePage] = B3DAllocateMultiple<Entity>(SparsePageSize);
-				std::uninitialized_fill(mSparse[sparsePage], mSparse[sparsePage] + SparsePageSize, kNullEntity);
+				mSparseIndices[sparsePage] = B3DAllocateMultiple<Entity>(SparsePageSize);
+				std::uninitialized_fill(mSparseIndices[sparsePage], mSparseIndices[sparsePage] + SparsePageSize, kNullEntity);
 			}
 
-			return *(mSparse[sparsePage] + GetSparseIndexWithinPage(entityIdentifier));
+			return *(mSparseIndices[sparsePage] + GetSparseIndexWithinPage(entityIdentifier));
 		}
 
 		Entity& GetSparseEntryReference(Entity value) const
 		{
 			const u64 entityIdentifier = value.GetIdentifier();
-			return mSparse[GetSparsePage(entityIdentifier)][GetSparseIndexWithinPage(entityIdentifier)];
+			return mSparseIndices[GetSparsePage(entityIdentifier)][GetSparseIndexWithinPage(entityIdentifier)];
 		}
 
 		Entity* GetSparseEntryPointer(Entity value) const
@@ -626,15 +603,15 @@ namespace bs::ecs
 			const u64 entityIdentifier = value.GetIdentifier();
 			const u64 sparsePage = GetSparsePage(entityIdentifier);
 
-			if(sparsePage < mSparse.Size() && mSparse[sparsePage] != nullptr)
-				return mSparse[sparsePage][GetSparseIndexWithinPage(entityIdentifier)];
+			if(sparsePage < mSparseIndices.Size() && mSparseIndices[sparsePage] != nullptr)
+				return &mSparseIndices[sparsePage][GetSparseIndexWithinPage(entityIdentifier)];
 
 			return nullptr;
 		}
 
-		Iterator GetIterator(Entity entity)
+		Iterator GetIterator(Entity entity) const
 		{
-			return Iterator(mPacked, (i64)GetPackedIndex(entity));
+			return Iterator(mPackedEntities, (i64)GetPackedIndex(entity));
 		}
 
 		u64 GetPackedIndex(Entity entity) const
@@ -644,7 +621,7 @@ namespace bs::ecs
 
 		void FreeSparsePages()
 		{
-			for(auto&& page : mSparse)
+			for(auto&& page : mSparseIndices)
 			{
 				if(page != nullptr)
 				{
@@ -653,7 +630,7 @@ namespace bs::ecs
 					page = nullptr;
 				}
 			}
-			mSparse.Clear();
+			mSparseIndices.Clear();
 		}
 
 		static constexpr Entity::IdentifierType GetPackedIndexAsEntryIdentifier(u64 packedIndex)
@@ -671,8 +648,8 @@ namespace bs::ecs
 			return entityIdentifier / SparsePageSize;
 		}
 
-		SparseContainerType mSparse;
-		PackedContainerType mPacked; // TODO - Might consider paging this. It won't be continous anymore, making it harder to iterate, but adding entries might prevent expensive resizes if there's a lot of entries
+		SparseContainerType mSparseIndices; // Entity identifiers are actually indexes into the packed array
+		PackedContainerType mPackedEntities; // TODO - Might consider paging this. It won't be continous anymore, making it harder to iterate, but adding entries might prevent expensive resizes if there's a lot of entries
 
 		/**
 		 * For in-place delete policy points to first free entry, or kMaximumEntryCount if no free entries.
