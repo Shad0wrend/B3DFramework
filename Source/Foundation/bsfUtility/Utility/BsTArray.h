@@ -405,6 +405,12 @@ namespace bs
 			mSize = size;
 		}
 
+		void Shrink()
+		{
+			if(mSize != mCapacity)
+				Resize(mSize);
+		}
+
 		bool SwapAndErase(Iterator iter)
 		{
 			B3D_ASSERT(!Empty());

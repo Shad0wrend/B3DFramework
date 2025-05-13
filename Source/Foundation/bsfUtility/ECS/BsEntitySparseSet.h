@@ -211,7 +211,7 @@ namespace bs::ecs
 	inline constexpr InvalidEntity kInvalidEntity;
 
 	template<typename ContainerType>
-	struct TEntitySparseSetIterator final
+	struct TContiguousContainerIterator final
 	{
 		using value_type = typename ContainerType::value_type;
 		using pointer = typename ContainerType::const_pointer;
@@ -221,17 +221,17 @@ namespace bs::ecs
 		using const_reference = typename ContainerType::const_reference;
 		using iterator_category = std::random_access_iterator_tag;
 
-		TEntitySparseSetIterator() = default;
-		TEntitySparseSetIterator(const ContainerType& container, u64 index)
+		TContiguousContainerIterator() = default;
+		TContiguousContainerIterator(const ContainerType& container, u64 index)
 			: mContainer(&container), mIndex(index) { }
 
-		TEntitySparseSetIterator& operator++()
+		TContiguousContainerIterator& operator++()
 		{
 			++mIndex;
 			return *this;
 		}
 
-		TEntitySparseSetIterator& operator--()
+		TContiguousContainerIterator& operator--()
 		{
 			B3D_ENSURE(mIndex > 0);
 
@@ -239,13 +239,13 @@ namespace bs::ecs
 			return *this;
 		}
 
-		TEntitySparseSetIterator& operator+=(u64 value)
+		TContiguousContainerIterator& operator+=(u64 value)
 		{
 			mIndex += value;
 			return *this;
 		}
 
-		TEntitySparseSetIterator& operator-=(u64 value)
+		TContiguousContainerIterator& operator-=(u64 value)
 		{
 			B3D_ENSURE(mIndex >= value);
 
@@ -253,15 +253,15 @@ namespace bs::ecs
 			return *this;
 		}
 
-		TEntitySparseSetIterator operator+(u64 value) const
+		TContiguousContainerIterator operator+(u64 value) const
 		{
-			TEntitySparseSetIterator copy = *this;
+			TContiguousContainerIterator copy = *this;
 			return (copy += value);
 		}
 
-		TEntitySparseSetIterator operator-(u64 value) const
+		TContiguousContainerIterator operator-(u64 value) const
 		{
-			TEntitySparseSetIterator copy = *this;
+			TContiguousContainerIterator copy = *this;
 			return (copy -= value);
 		}
 
@@ -277,43 +277,43 @@ namespace bs::ecs
 	};
 
 	template<typename ContainerType>
-	i64 operator-(const TEntitySparseSetIterator<ContainerType>& lhs, const TEntitySparseSetIterator<ContainerType>& rhs)
+	i64 operator-(const TContiguousContainerIterator<ContainerType>& lhs, const TContiguousContainerIterator<ContainerType>& rhs)
 	{
 		return rhs.Index() - lhs.Index();
 	}
 
 	template<typename ContainerType>
-	bool operator==(const TEntitySparseSetIterator<ContainerType>& lhs, const TEntitySparseSetIterator<ContainerType>& rhs)
+	bool operator==(const TContiguousContainerIterator<ContainerType>& lhs, const TContiguousContainerIterator<ContainerType>& rhs)
 	{
 		return lhs.Index() == rhs.Index();
 	}
 
 	template<typename ContainerType>
-	bool operator!=(const TEntitySparseSetIterator<ContainerType>& lhs, const TEntitySparseSetIterator<ContainerType>& rhs)
+	bool operator!=(const TContiguousContainerIterator<ContainerType>& lhs, const TContiguousContainerIterator<ContainerType>& rhs)
 	{
 		return !(lhs == rhs);
 	}
 
 	template<typename ContainerType>
-	bool operator<(const TEntitySparseSetIterator<ContainerType>& lhs, const TEntitySparseSetIterator<ContainerType>& rhs)
+	bool operator<(const TContiguousContainerIterator<ContainerType>& lhs, const TContiguousContainerIterator<ContainerType>& rhs)
 	{
 		return lhs.index() > rhs.index();
 	}
 
 	template<typename ContainerType>
-	bool operator>(const TEntitySparseSetIterator<ContainerType>& lhs, const TEntitySparseSetIterator<ContainerType>& rhs)
+	bool operator>(const TContiguousContainerIterator<ContainerType>& lhs, const TContiguousContainerIterator<ContainerType>& rhs)
 	{
 		return rhs < lhs;
 	}
 
 	template<typename ContainerType>
-	bool operator<=(const TEntitySparseSetIterator<ContainerType>& lhs, const TEntitySparseSetIterator<ContainerType>& rhs)
+	bool operator<=(const TContiguousContainerIterator<ContainerType>& lhs, const TContiguousContainerIterator<ContainerType>& rhs)
 	{
 		return !(lhs > rhs);
 	}
 
 	template<typename ContainerType>
-	bool operator>=(const TEntitySparseSetIterator<ContainerType>& lhs, const TEntitySparseSetIterator<ContainerType>& rhs)
+	bool operator>=(const TContiguousContainerIterator<ContainerType>& lhs, const TContiguousContainerIterator<ContainerType>& rhs)
 	{
 		return !(lhs < rhs);
 	}
@@ -336,7 +336,7 @@ namespace bs::ecs
 
 		static constexpr u64 kMaximumEntryCount = Entity::Traits::kIdentifierMask;
 	public:
-		using Iterator = TEntitySparseSetIterator<PackedContainerType>;
+		using Iterator = TContiguousContainerIterator<PackedContainerType>;
 		using ConstIterator = Iterator;
 		using ReverseIterator = std::reverse_iterator<Iterator>;
 		using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
@@ -352,7 +352,264 @@ namespace bs::ecs
 			return mPackedEntities[index];
 		}
 
-		void Add(Entity entity, bool forceAddAtEnd = false)
+		Iterator Add(Entity entity)
+		{
+			return Add(entity, false);
+		}
+
+		Iterator Add(Iterator first, Iterator last)
+		{
+			Iterator iterator = End();
+			for(; first != last; ++first)
+				iterator = Add(*first);
+
+			return iterator;
+		}
+
+		void Erase(Entity entity)
+		{
+			if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::InPlace)
+			{
+				// Sparse entry is set to a null value, while packed entry points to the next free packed entry, and its marked as invalid via its version
+				const u64 packedEntryIndex = std::exchange(GetSparseEntryReference(entity), kNullEntity).GetIdentifier();
+				mPackedEntities[packedEntryIndex] = Entity(GetPackedIndexAsEntryIdentifier(std::exchange(mFreeListHead, packedEntryIndex)), ((Entity)kInvalidEntity).GetVersion());
+			}
+			else if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::SwapAndErase)
+			{
+				// Set last sparse entry so it points to the packed index of the entry that was removed, swap packed entries
+				Entity& sparseEntryToRemove = GetSparseEntryReference(entity);
+				Entity& lastSparseEntry = GetSparseEntryReference(mPackedEntities.Back());
+
+				const u64 packedEntryToRemoveIndex = sparseEntryToRemove.GetIdentifier();
+				lastSparseEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryToRemoveIndex), mPackedEntities.Back().GetVersion());
+				mPackedEntities[packedEntryToRemoveIndex] = mPackedEntities.Back();
+
+				sparseEntryToRemove = kNullEntity;
+				mPackedEntities.Pop();
+			}
+			else
+			{
+				const u64 packedEntryIndex = GetPackedIndex(entity);
+				UpdateVersion(entity.GetAsNextVersion());
+
+				mFreeListHead -= (packedEntryIndex < mFreeListHead);
+				SwapEntries(packedEntryIndex, mFreeListHead);
+			}
+		}
+
+		void Erase(Iterator first, Iterator last)
+		{
+			for(; first != last; ++first)
+				Erase(*first);
+		}
+
+		bool EraseValid(Entity entity)
+		{
+			if(Contains(entity))
+			{
+				Erase(entity);
+				return true;
+			}
+
+			return false;
+		}
+
+		u64 EraseValid(Iterator first, Iterator last)
+		{
+			u64 removedEntryCount = 0;
+
+			while(first != last)
+			{
+				while(first != last && !Contains(*first))
+					++first;
+
+				const auto iterator = first;
+
+				while(first != last && Contains(*first))
+					++first;
+
+				removedEntryCount += (u64)std::distance(iterator, first);
+				Erase(iterator, first);
+			}
+
+			return removedEntryCount;
+		}
+
+		void Clear()
+		{
+			FreeSparsePages();
+			mPackedEntities.Clear();
+			mFreeListHead = DeletePolicy != EntitySparseSetDeletePolicy::SwapOnly ? kMaximumEntryCount : 0;
+		}
+
+		void ClearInvalid()
+		{
+			if constexpr(DeletePolicy != EntitySparseSetDeletePolicy::InPlace)
+				return;
+
+			u64 validPackedEntryIndex = mPackedEntities.Size();
+			u64 freePackedEntryIndex = std::exchange(mFreeListHead, kMaximumEntryCount);
+
+			// Find first valid entry
+			for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
+
+			while(freePackedEntryIndex != kMaximumEntryCount)
+			{
+				if(freePackedEntryIndex < validPackedEntryIndex)
+				{
+					--validPackedEntryIndex;
+
+					// Move the free entry to the back
+					Entity& fromPackedEntry = mPackedEntities[validPackedEntryIndex];
+					Entity& toPackedEntry = mPackedEntities[freePackedEntryIndex];
+
+					GetSparseEntryReference(fromPackedEntry) = Entity((Entity::Traits::IdentifierType)freePackedEntryIndex, toPackedEntry.GetVersion());
+
+					// Find next free entry
+					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
+
+					toPackedEntry = fromPackedEntry;
+
+					// Find next valid entry
+					for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
+				}
+				// Already at the end
+				else
+				{
+					// Find next free entry
+					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
+				}
+			}
+
+			mPackedEntities.Erase(mPackedEntities.begin() + validPackedEntryIndex, mPackedEntities.end());
+		}
+
+		void Shrink()
+		{
+			const u64 maximumPageCount = (u64)mSparseIndices.Size();
+			u64 createdPageCount = 0;
+
+			SparseContainerType newSparseIndices;
+			newSparseIndices.Reserve(maximumPageCount);
+
+			for(const auto& entity : mPackedEntities)
+			{
+				if(entity == kInvalidEntity)
+					continue;
+
+				const u64 entityIdentifier = entity.GetIdentifier();
+				const u64 sparsePage = GetSparsePage(entityIdentifier);
+
+				if(mSparseIndices[sparsePage] == nullptr)
+					continue;
+
+				if(sparsePage >= (u64)newSparseIndices.Size())
+					newSparseIndices.Resize(sparsePage + 1, nullptr);
+
+				newSparseIndices[sparsePage] = std::exchange(mSparseIndices[sparsePage], nullptr);
+				createdPageCount++;
+
+				// Early exit
+				if(createdPageCount == maximumPageCount)
+					break;
+			}
+
+			FreeSparsePages();
+			mSparseIndices = std::move(newSparseIndices);
+
+			mSparseIndices.Shrink();
+			mPackedEntities.Shrink();
+		}
+
+		void Reserve(u64 capacity)
+		{
+			if(capacity == 0)
+				return;
+
+			const u64 requiredPageCapacity = GetSparsePage(capacity - 1) + 1;
+			if(requiredPageCapacity > (u64)mSparseIndices.Size())
+				mSparseIndices.Resize(requiredPageCapacity, nullptr);
+
+			mPackedEntities.Reserve(capacity);
+		}
+
+		Entity::VersionType GetVersion(Entity entity) const
+		{
+			Entity* const sparseEntry = GetSparseEntryPointer(entity);
+			if(sparseEntry == nullptr)
+				return ((Entity)kInvalidEntity).GetVersion();
+			
+			return sparseEntry->GetVersion();
+		}
+
+		void UpdateVersion(Entity entity)
+		{
+			Entity& sparseEntry = GetSparseEntryReference(entity);
+			sparseEntry = Entity(sparseEntry.GetIdentifier(), entity.GetVersion());
+
+			const u64 packedEntryIndex = sparseEntry.GetIdentifier();
+			mPackedEntities[packedEntryIndex] = entity;
+		}
+
+		Iterator Find(Entity entity) const
+		{
+			return Contains(entity) ? GetIterator(entity) : End();
+		}
+
+		bool Contains(Entity entity) const
+		{
+			Entity* const sparseEntry = GetSparseEntryPointer(entity);
+			if(sparseEntry == nullptr)
+				return false;
+
+			if(sparseEntry->GetVersion() != entity.GetVersion())
+				return false;
+
+			return true;
+		}
+
+		u64 GetPackedIndex(Entity entity) const
+		{
+			return GetSparseEntryReference(entity).GetIdentifier();
+		}
+
+		// Note: For in-place deletion, this will also return deleted entries
+		u64 Size() const { return mPackedEntities.Size(); }
+		bool IsEmpty() const { return mPackedEntities.Empty(); }
+		EntitySparseSetDeletePolicy GetDeletePolicy() const { return DeletePolicy; }
+
+		Iterator Begin() const { return Iterator(mPackedEntities, 0); }
+		ConstIterator Cbegin() const { return Begin(); }
+
+		Iterator End() const { return Iterator(mPackedEntities, Size()); }
+		ConstIterator Cend() const { return End(); }
+
+		ReverseIterator Rbegin() const { return std::make_reverse_iterator(End()); }
+		ConstReverseIterator Crbegin() const { return Rbegin(); }
+
+		ReverseIterator Rend() const { return std::make_reverse_iterator(Begin()); }
+		ConstReverseIterator Crend() const { return Rend(); }
+
+		// For std compatibility
+		using iterator = Iterator;
+		using const_iterator = ConstIterator;
+		using reverse_iterator = ReverseIterator;
+		using const_reverse_iterator = ConstReverseIterator;
+
+		iterator begin() const { return Begin(); }
+		const_iterator cbegin() const { return Cbegin(); }
+
+		iterator end() const { return End(); }
+		const_iterator cend() const { return Cend(); }
+
+		reverse_iterator rbegin() const { return Rend(); }
+		const_reverse_iterator crbegin() const { return Crbegin(); }
+
+		reverse_iterator rend() const { return Rend(); }
+		const_reverse_iterator crend() const { return Crend(); }
+
+	protected:
+		Iterator Add(Entity entity, bool forceAddAtEnd)
 		{
 			Entity& sparseSetEntry = GetOrCreateSparseEntryReference(entity);
 			u64 packedEntryIndex = mPackedEntities.Size();
@@ -395,172 +652,10 @@ namespace bs::ecs
 				packedEntryIndex = mFreeListHead++;
 				SwapEntries(sparseSetEntry.GetIdentifier(), packedEntryIndex);
 			}
+
+			return Begin() + packedEntryIndex;
 		}
 
-		void Erase(Iterator iterator)
-		{
-			const Entity entity = *iterator;
-			if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::InPlace)
-			{
-				// Sparse entry is set to a null value, while packed entry points to the next free packed entry, and its marked as invalid via its version
-				const u64 packedEntryIndex = std::exchange(GetSparseEntryReference(entity), kNullEntity).GetIdentifier();
-				mPackedEntities[packedEntryIndex] = Entity(GetPackedIndexAsEntryIdentifier(std::exchange(mFreeListHead, packedEntryIndex)), ((Entity)kInvalidEntity).GetVersion());
-			}
-			else if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::SwapAndErase)
-			{
-				// Set last sparse entry so it points to the packed index of the entry that was removed, swap packed entries
-				Entity& sparseEntryToRemove = GetSparseEntryReference(entity);
-				Entity& lastSparseEntry = GetSparseEntryReference(mPackedEntities.Back());
-
-				const u64 packedEntryToRemoveIndex = sparseEntryToRemove.GetIdentifier();
-				lastSparseEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryToRemoveIndex), mPackedEntities.Back().GetVersion());
-				mPackedEntities[packedEntryToRemoveIndex] = mPackedEntities.Back();
-
-				sparseEntryToRemove = kNullEntity;
-				mPackedEntities.Pop();
-			}
-			else
-			{
-				const u64 packedEntryIndex = GetPackedIndex(entity);
-				UpdateVersion(entity.GetAsNextVersion());
-
-				mFreeListHead -= (packedEntryIndex < mFreeListHead);
-				SwapEntries(packedEntryIndex, mFreeListHead);
-			}
-		}
-
-		void Erase(Iterator first, Iterator last)
-		{
-			for(; first != last; ++first)
-				Erase(first);
-		}
-
-		void Remove(Entity entity)
-		{
-			if(Contains(entity))
-				Erase(GetIterator(entity));
-		}
-
-		void Clear()
-		{
-			FreeSparsePages();
-			mPackedEntities.Clear();
-			mFreeListHead = DeletePolicy != EntitySparseSetDeletePolicy::SwapOnly ? kMaximumEntryCount : 0;
-		}
-
-		void ClearDeleted()
-		{
-			if constexpr(DeletePolicy != EntitySparseSetDeletePolicy::InPlace)
-				return;
-
-			u64 validPackedEntryIndex = mPackedEntities.Size();
-			u64 freePackedEntryIndex = std::exchange(mFreeListHead, kMaximumEntryCount);
-
-			// Find first valid entry
-			for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
-
-			while(freePackedEntryIndex != kMaximumEntryCount)
-			{
-				if(freePackedEntryIndex < validPackedEntryIndex)
-				{
-					--validPackedEntryIndex;
-
-					// Move the free entry to the back
-					Entity& fromPackedEntry = mPackedEntities[validPackedEntryIndex];
-					Entity& toPackedEntry = mPackedEntities[freePackedEntryIndex];
-
-					GetSparseEntryReference(fromPackedEntry) = Entity((Entity::Traits::IdentifierType)freePackedEntryIndex, toPackedEntry.GetVersion());
-
-					// Find next free entry
-					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
-
-					toPackedEntry = fromPackedEntry;
-
-					// Find next valid entry
-					for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
-				}
-				// Already at the end
-				else
-				{
-					// Find next free entry
-					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
-				}
-			}
-
-			mPackedEntities.Erase(mPackedEntities.begin() + validPackedEntryIndex, mPackedEntities.end());
-		}
-
-		Entity::VersionType GetVersion(Entity entity) const
-		{
-			Entity* const sparseEntry = GetSparseEntryPointer(entity);
-			if(sparseEntry == nullptr)
-				return ((Entity)kInvalidEntity).GetVersion();
-			
-			return sparseEntry->GetVersion();
-		}
-
-		void UpdateVersion(Entity entity)
-		{
-			Entity& sparseEntry = GetSparseEntryReference(entity);
-			sparseEntry = Entity(sparseEntry.GetIdentifier(), entity.GetVersion());
-
-			const u64 packedEntryIndex = sparseEntry.GetIdentifier();
-			mPackedEntities[packedEntryIndex] = entity;
-		}
-
-		Iterator Find(Entity entity) const
-		{
-			return Contains(entity) ? GetIterator(entity) : End();
-		}
-
-		bool Contains(Entity entity) const
-		{
-			Entity* const sparseEntry = GetSparseEntryPointer(entity);
-			if(sparseEntry == nullptr)
-				return false;
-
-			if(sparseEntry->GetVersion() != entity.GetVersion())
-				return false;
-
-			return true;
-		}
-
-		// Note: For in-place deletion, this will also return deleted entries
-		u64 Size() const { return mPackedEntities.Size(); }
-		bool IsEmpty() const { return mPackedEntities.Empty(); }
-		EntitySparseSetDeletePolicy GetDeletePolicy() const { return DeletePolicy; }
-
-		Iterator Begin() const { return Iterator(mPackedEntities, 0); }
-		ConstIterator Cbegin() const { return Begin(); }
-
-		Iterator End() const { return Iterator(mPackedEntities, mPackedEntities.Size()); }
-		ConstIterator Cend() const { return End(); }
-
-		ReverseIterator Rbegin() const { return std::make_reverse_iterator(end()); }
-		ConstReverseIterator Crbegin() const { return Rbegin(); }
-
-		ReverseIterator Rend() const { return std::make_reverse_iterator(Begin()); }
-		ConstReverseIterator Crend() const { return Rend(); }
-
-		// For std compatibility
-		using iterator = Iterator;
-		using const_iterator = ConstIterator;
-		using reverse_iterator = ReverseIterator;
-		using const_reverse_iterator = ConstReverseIterator;
-
-		iterator begin() const { return Begin(); }
-		const_iterator cbegin() const { return Cbegin(); }
-
-		iterator end() const { return End(); }
-		const_iterator cend() const { return Cend(); }
-
-		reverse_iterator rbegin() const { return Rend(); }
-		const_reverse_iterator crbegin() const { return Crbegin(); }
-
-		reverse_iterator rend() const { return Rend(); }
-		const_reverse_iterator crend() const { return Crend(); }
-
-	private:
 		void SwapEntries(u64 lhsPackedIndex, u64 rhsPackedIndex)
 		{
 			Entity& lhsPackedEntry = mPackedEntities[lhsPackedIndex];
@@ -581,7 +676,7 @@ namespace bs::ecs
 			const u64 sparsePage = GetSparsePage(entityIdentifier);
 
 			if(sparsePage >= mSparseIndices.Size())
-				mSparseIndices.Resize(sparsePage + 1);
+				mSparseIndices.Resize(sparsePage + 1, nullptr);
 
 			if(mSparseIndices[sparsePage] == nullptr)
 			{
@@ -614,11 +709,7 @@ namespace bs::ecs
 			return Iterator(mPackedEntities, (i64)GetPackedIndex(entity));
 		}
 
-		u64 GetPackedIndex(Entity entity) const
-		{
-			return GetSparseEntryReference(entity).GetIdentifier();
-		}
-
+	private:
 		void FreeSparsePages()
 		{
 			for(auto&& page : mSparseIndices)
@@ -657,6 +748,296 @@ namespace bs::ecs
 		 * For swap-and-erase delete policy this value is not used.
 		 */
 		u64 mFreeListHead = DeletePolicy != EntitySparseSetDeletePolicy::SwapOnly ? kMaximumEntryCount : 0;
+	};
+
+ 	template<typename ContainerType, u32 PageSize>
+	struct TPagedContainerIterator final
+	{
+		using value_type = typename ContainerType::value_type;
+		using pointer = typename ContainerType::pointer;
+		using reference = typename ContainerType::reference;
+		using difference_type = typename ContainerType::difference_type;
+		using iterator_category = std::random_access_iterator_tag;
+
+		TPagedContainerIterator() = default;
+		TPagedContainerIterator(ContainerType& container, u64 index)
+			: mContainer(&container), mIndex(index) { }
+
+		TPagedContainerIterator& operator++()
+		{
+			++mIndex;
+			return *this;
+		}
+
+		TPagedContainerIterator& operator--()
+		{
+			B3D_ENSURE(mIndex > 0);
+
+			--mIndex;
+			return *this;
+		}
+
+		TPagedContainerIterator& operator+=(u64 value)
+		{
+			mIndex += value;
+			return *this;
+		}
+
+		TPagedContainerIterator& operator-=(u64 value)
+		{
+			B3D_ENSURE(mIndex >= value);
+
+			mIndex -= value;
+			return *this;
+		}
+
+		TPagedContainerIterator operator+(u64 value) const
+		{
+			TPagedContainerIterator copy = *this;
+			return (copy += value);
+		}
+
+		TPagedContainerIterator operator-(u64 value) const
+		{
+			TPagedContainerIterator copy = *this;
+			return (copy -= value);
+		}
+
+		reference operator[](u64 value) const
+		{
+			const u64 index = mIndex + value;
+			return (*mContainer)[index / PageSize][index & (PageSize - 1)];
+		}
+		pointer operator->() const { return std::addressof(operator[](0)); }
+		reference operator*() const { return operator[](0); }
+
+		u64 Index() const { return mIndex; }
+
+	private:
+		ContainerType* mContainer = nullptr;
+		u64 mIndex = 0;
+	};
+
+	template<typename ContainerType, u32 PageSize>
+	i64 operator-(const TPagedContainerIterator<ContainerType, PageSize>& lhs, const TPagedContainerIterator<ContainerType, PageSize>& rhs)
+	{
+		return rhs.Index() - lhs.Index();
+	}
+
+	template<typename ContainerType, u32 PageSize>
+	bool operator==(const TPagedContainerIterator<ContainerType, PageSize>& lhs, const TPagedContainerIterator<ContainerType, PageSize>& rhs)
+	{
+		return lhs.Index() == rhs.Index();
+	}
+
+	template<typename ContainerType, u32 PageSize>
+	bool operator!=(const TPagedContainerIterator<ContainerType, PageSize>& lhs, const TPagedContainerIterator<ContainerType, PageSize>& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
+	template<typename ContainerType, u32 PageSize>
+	bool operator<(const TPagedContainerIterator<ContainerType, PageSize>& lhs, const TPagedContainerIterator<ContainerType, PageSize>& rhs)
+	{
+		return lhs.index() > rhs.index();
+	}
+
+	template<typename ContainerType, u32 PageSize>
+	bool operator>(const TPagedContainerIterator<ContainerType, PageSize>& lhs, const TPagedContainerIterator<ContainerType, PageSize>& rhs)
+	{
+		return rhs < lhs;
+	}
+
+	template<typename ContainerType, u32 PageSize>
+	bool operator<=(const TPagedContainerIterator<ContainerType, PageSize>& lhs, const TPagedContainerIterator<ContainerType, PageSize>& rhs)
+	{
+		return !(lhs > rhs);
+	}
+
+	template<typename ContainerType, u32 PageSize>
+	bool operator>=(const TPagedContainerIterator<ContainerType, PageSize>& lhs, const TPagedContainerIterator<ContainerType, PageSize>& rhs)
+	{
+		return !(lhs < rhs);
+	}
+
+	template<typename ComponentType, bool InPlaceDelete = false, u64 PackedPageSize = 1024, u64 SparsePageSize = 4096>
+	class TComponentSparseSet : public TEntitySparseSet<InPlaceDelete ? EntitySparseSetDeletePolicy::InPlace : EntitySparseSetDeletePolicy::SwapAndErase, SparsePageSize>
+	{
+		using ComponentContainerType = TArray<ComponentType*>;
+
+	public:
+		using Super = TEntitySparseSet<InPlaceDelete ? EntitySparseSetDeletePolicy::InPlace : EntitySparseSetDeletePolicy::SwapAndErase, SparsePageSize>;
+		using Iterator = TPagedContainerIterator<ComponentContainerType, PackedPageSize>;
+		using ConstIterator = TPagedContainerIterator<const ComponentContainerType, PackedPageSize>;
+		using ReverseIterator = std::reverse_iterator<Iterator>;
+		using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
+
+		template<typename... Arguments>
+		ComponentType& Add(Entity entity, Arguments&&... arguments)
+		{
+			auto iterator = Add(entity, false, std::forward<Arguments>(arguments)...);
+			return GetComponentReference(iterator.Index());
+		}
+
+		ComponentType& Get(Entity entity)
+		{
+			const u64 packedEntryIndex = Super::GetPackedIndex(entity);
+			return GetComponentReference(packedEntryIndex);
+		}
+
+		const ComponentType& Get(Entity entity) const
+		{
+			const u64 packedEntryIndex = Super::GetPackedIndex(entity);
+			return GetComponentReference(packedEntryIndex);
+		}
+
+		void Erase(Entity entity)
+		{
+			const u64 packedIndex = Super::GetPackedIndex(entity);
+			ComponentType& component = GetComponentReference(packedIndex);
+
+			if constexpr(InPlaceDelete)
+			{
+				Super::Erase(entity);
+				component.~ComponentType();
+			}
+			else // SwapAndErase
+			{
+				ComponentType& otherComponent = GetComponentReference(Super::Size() - 1);
+				component = std::move(otherComponent);
+				otherComponent.~ComponentType();
+
+				Super::Erase(entity);
+			}
+		}
+
+		//void Erase(UnderlyingIterator first, UnderlyingIterator last)
+		//{
+		//	for(; first != last; ++first)
+		//		Erase(first);
+		//}
+
+		void EraseValid(Entity entity)
+		{
+			if(Super::Contains(entity))
+				Erase(Super::GetIterator(entity));
+		}
+
+		// TODO - EraseValid with range
+
+		void Clear()
+		{
+			if constexpr(InPlaceDelete)
+			{
+				for(auto it = Super::Begin(); it != Super::End(); ++it)
+				{
+					if(*it != kInvalidEntity)
+					{
+						ComponentType& component = GetComponentReference(GetPackedIndex(*it));
+						component.~ComponentType();
+					}
+				}
+			}
+			else
+			{
+				for(auto it = Super::Begin(); it != Super::End(); ++it)
+				{
+					ComponentType& component = GetComponentReference(GetPackedIndex(*it));
+					component.~ComponentType();
+				}
+			}
+
+			Super::Clear();
+		}
+
+		ConstIterator Cbegin() const { return ConstIterator(mComponents, 0); }
+		ConstIterator Begin() const { return Cbegin(); }
+		Iterator Begin() { return Iterator(mComponents, 0); }
+
+		ConstIterator Cend() const { return ConstIterator(mComponents, Super::Size()); }
+		ConstIterator End() const { return Cend(); }
+		Iterator End() { return Iterator(mComponents, Super::Size()); }
+
+		ConstReverseIterator Crbegin() const { return std::make_reverse_iterator(Cend()); }
+		ConstReverseIterator Rbegin() const { return Crbegin(); }
+		ReverseIterator Rbegin() { return std::make_reverse_iterator(End()); }
+
+		ConstReverseIterator Crend() const { return std::make_reverse_iterator(Cbegin()); }
+		ConstReverseIterator Rend() const { return Crend(); }
+		ReverseIterator Rend() { return std::make_reverse_iterator(Begin()); }
+
+		// For std compatibility
+		using iterator = Iterator;
+		using const_iterator = ConstIterator;
+		using reverse_iterator = ReverseIterator;
+		using const_reverse_iterator = ConstReverseIterator;
+
+		const_iterator cbegin() const { return Cbegin(); }
+		const_iterator begin() const { return Begin(); }
+		iterator begin() { return Begin(); }
+
+		const_iterator cend() const { return Cend(); }
+		const_iterator end() const { return End(); }
+		iterator end() { return End(); }
+
+		const_reverse_iterator crbegin() const { return Crbegin(); }
+		const_reverse_iterator rbegin() const { return Rbegin(); }
+		reverse_iterator rbegin() { return Rend(); }
+
+		const_reverse_iterator crend() const { return Crend(); }
+		const_reverse_iterator rend() const { return Rend(); }
+		reverse_iterator rend() { return Rend(); }
+
+	private:
+		using UnderlyingIterator = typename Super::Iterator;
+
+		template<typename... Arguments>
+		UnderlyingIterator Add(Entity entity, bool forceAddAtEnd, Arguments&&... arguments)
+		{
+			auto iterator = Super::Add(entity, forceAddAtEnd);
+			ComponentType* component = GetOrCreateComponentPointer(iterator.Index());
+			new(component) ComponentType(std::forward<Arguments>(arguments)...);
+
+			return iterator;
+		}
+
+		ComponentType* GetOrCreateComponentPointer(u64 packedComponentIndex)
+		{
+			const u64 page = GetComponentPage(packedComponentIndex);
+
+			if(page >= mComponents.Size())
+				mComponents.Resize(page + 1, nullptr);
+
+			if(mComponents[page] == nullptr)
+			{
+				mComponents[page] = B3DAllocateMultiple<ComponentType>(PackedPageSize);
+				std::uninitialized_fill(mComponents[page], mComponents[page] + PackedPageSize, nullptr);
+			}
+
+			return mComponents[page] + GetComponentIndexWithinPage(packedComponentIndex);
+		}
+
+		ComponentType& GetComponentReference(u64 packedComponentIndex)
+		{
+			return mComponents[GetComponentPage(packedComponentIndex)][GetComponentIndexWithinPage(packedComponentIndex)];
+		}
+
+		const ComponentType& GetComponentReference(u64 packedComponentIndex) const
+		{
+			return mComponents[GetComponentPage(packedComponentIndex)][GetComponentIndexWithinPage(packedComponentIndex)];
+		}
+
+		static constexpr u64 GetComponentIndexWithinPage(u64 packedComponentIndex)
+		{
+			return packedComponentIndex & (PackedPageSize - 1);
+		}
+
+		static constexpr u64 GetComponentPage(u64 packedComponentIndex)
+		{
+			return packedComponentIndex / PackedPageSize;
+		}
+
+		ComponentContainerType mComponents;
 	};
 
 	/** @} */

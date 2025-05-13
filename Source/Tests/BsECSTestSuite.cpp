@@ -51,7 +51,7 @@ void ECSTestSuite::TestEntitySparseSet()
 
 		if(foundEntry3 != entitySparseSet.End())
 		{
-			entitySparseSet.Erase(foundEntry3);
+			entitySparseSet.Erase(*foundEntry3);
 			B3D_TEST_ASSERT(entitySparseSet.Find(kEntities[3]) == entitySparseSet.End())
 		}
 
@@ -60,7 +60,7 @@ void ECSTestSuite::TestEntitySparseSet()
 
 		if(foundEntry6 != entitySparseSet.End())
 		{
-			entitySparseSet.Erase(foundEntry6);
+			entitySparseSet.Erase(*foundEntry6);
 			B3D_TEST_ASSERT(entitySparseSet.Find(kEntities[6]) == entitySparseSet.End())
 		}
 
@@ -74,7 +74,7 @@ void ECSTestSuite::TestEntitySparseSet()
 
 		B3D_TEST_ASSERT(foundEntityCount == (u32)(kEntities.Size() - 2u))
 
-		entitySparseSet.ClearDeleted();
+		entitySparseSet.ClearInvalid();
 
 		const u32 expectedEntityCount = entitySparseSet.GetDeletePolicy() == EntitySparseSetDeletePolicy::SwapOnly
 			? (u32)kEntities.Size()
