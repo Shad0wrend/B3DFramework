@@ -342,7 +342,7 @@ namespace bs::ecs
 		using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
 
 		TEntitySparseSet() = default;
-		~TEntitySparseSet()
+		virtual ~TEntitySparseSet()
 		{
 			FreeSparsePages();
 		}
@@ -354,53 +354,27 @@ namespace bs::ecs
 
 		Iterator Add(Entity entity)
 		{
-			return Add(entity, false);
+			return AddInternal(entity, false);
 		}
 
 		Iterator Add(Iterator first, Iterator last)
 		{
 			Iterator iterator = End();
 			for(; first != last; ++first)
-				iterator = Add(*first);
+				iterator = AddInternal(*first, true);
 
 			return iterator;
 		}
 
 		void Erase(Entity entity)
 		{
-			if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::InPlace)
-			{
-				// Sparse entry is set to a null value, while packed entry points to the next free packed entry, and its marked as invalid via its version
-				const u64 packedEntryIndex = std::exchange(GetSparseEntryReference(entity), kNullEntity).GetIdentifier();
-				mPackedEntities[packedEntryIndex] = Entity(GetPackedIndexAsEntryIdentifier(std::exchange(mFreeListHead, packedEntryIndex)), ((Entity)kInvalidEntity).GetVersion());
-			}
-			else if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::SwapAndErase)
-			{
-				// Set last sparse entry so it points to the packed index of the entry that was removed, swap packed entries
-				Entity& sparseEntryToRemove = GetSparseEntryReference(entity);
-				Entity& lastSparseEntry = GetSparseEntryReference(mPackedEntities.Back());
-
-				const u64 packedEntryToRemoveIndex = sparseEntryToRemove.GetIdentifier();
-				lastSparseEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryToRemoveIndex), mPackedEntities.Back().GetVersion());
-				mPackedEntities[packedEntryToRemoveIndex] = mPackedEntities.Back();
-
-				sparseEntryToRemove = kNullEntity;
-				mPackedEntities.Pop();
-			}
-			else
-			{
-				const u64 packedEntryIndex = GetPackedIndex(entity);
-				UpdateVersion(entity.GetAsNextVersion());
-
-				mFreeListHead -= (packedEntryIndex < mFreeListHead);
-				SwapEntries(packedEntryIndex, mFreeListHead);
-			}
+			EraseInternal(entity);
 		}
 
 		void Erase(Iterator first, Iterator last)
 		{
 			for(; first != last; ++first)
-				Erase(*first);
+				EraseInternal(*first);
 		}
 
 		bool EraseValid(Entity entity)
@@ -435,56 +409,20 @@ namespace bs::ecs
 			return removedEntryCount;
 		}
 
-		void Clear()
+		virtual void Clear()
 		{
 			FreeSparsePages();
 			mPackedEntities.Clear();
 			mFreeListHead = DeletePolicy != EntitySparseSetDeletePolicy::SwapOnly ? kMaximumEntryCount : 0;
 		}
 
-		void ClearInvalid()
+		virtual void ClearInvalid()
 		{
-			if constexpr(DeletePolicy != EntitySparseSetDeletePolicy::InPlace)
-				return;
-
-			u64 validPackedEntryIndex = mPackedEntities.Size();
-			u64 freePackedEntryIndex = std::exchange(mFreeListHead, kMaximumEntryCount);
-
-			// Find first valid entry
-			for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
-
-			while(freePackedEntryIndex != kMaximumEntryCount)
-			{
-				if(freePackedEntryIndex < validPackedEntryIndex)
-				{
-					--validPackedEntryIndex;
-
-					// Move the free entry to the back
-					Entity& fromPackedEntry = mPackedEntities[validPackedEntryIndex];
-					Entity& toPackedEntry = mPackedEntities[freePackedEntryIndex];
-
-					GetSparseEntryReference(fromPackedEntry) = Entity((Entity::Traits::IdentifierType)freePackedEntryIndex, toPackedEntry.GetVersion());
-
-					// Find next free entry
-					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
-
-					toPackedEntry = fromPackedEntry;
-
-					// Find next valid entry
-					for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
-				}
-				// Already at the end
-				else
-				{
-					// Find next free entry
-					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
-				}
-			}
-
-			mPackedEntities.Erase(mPackedEntities.begin() + validPackedEntryIndex, mPackedEntities.end());
+			auto fnMoveOrSwap = [](u64, u64) { };
+			ClearInvalidInternal<TEntitySparseSet, &TEntitySparseSet::MoveOrSwapPayload>();
 		}
 
-		void Shrink()
+		virtual void Shrink()
 		{
 			const u64 maximumPageCount = (u64)mSparseIndices.Size();
 			u64 createdPageCount = 0;
@@ -521,7 +459,7 @@ namespace bs::ecs
 			mPackedEntities.Shrink();
 		}
 
-		void Reserve(u64 capacity)
+		virtual void Reserve(u64 capacity)
 		{
 			if(capacity == 0)
 				return;
@@ -531,6 +469,11 @@ namespace bs::ecs
 				mSparseIndices.Resize(requiredPageCapacity, nullptr);
 
 			mPackedEntities.Reserve(capacity);
+		}
+
+		virtual u64 Capacity() const
+		{
+			return mPackedEntities.Capacity();
 		}
 
 		Entity::VersionType GetVersion(Entity entity) const
@@ -609,7 +552,7 @@ namespace bs::ecs
 		const_reverse_iterator crend() const { return Crend(); }
 
 	protected:
-		Iterator Add(Entity entity, bool forceAddAtEnd)
+		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd)
 		{
 			Entity& sparseSetEntry = GetOrCreateSparseEntryReference(entity);
 			u64 packedEntryIndex = mPackedEntities.Size();
@@ -650,13 +593,89 @@ namespace bs::ecs
 				}
 
 				packedEntryIndex = mFreeListHead++;
-				SwapEntries(sparseSetEntry.GetIdentifier(), packedEntryIndex);
+				SwapEntities(sparseSetEntry.GetIdentifier(), packedEntryIndex);
 			}
 
 			return Begin() + packedEntryIndex;
 		}
 
-		void SwapEntries(u64 lhsPackedIndex, u64 rhsPackedIndex)
+		virtual void EraseInternal(Entity entity)
+		{
+			if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::InPlace)
+			{
+				// Sparse entry is set to a null value, while packed entry points to the next free packed entry, and its marked as invalid via its version
+				const u64 packedEntryIndex = std::exchange(GetSparseEntryReference(entity), kNullEntity).GetIdentifier();
+				mPackedEntities[packedEntryIndex] = Entity(GetPackedIndexAsEntryIdentifier(std::exchange(mFreeListHead, packedEntryIndex)), ((Entity)kInvalidEntity).GetVersion());
+			}
+			else if constexpr(DeletePolicy == EntitySparseSetDeletePolicy::SwapAndErase)
+			{
+				// Set last sparse entry so it points to the packed index of the entry that was removed, swap packed entries
+				Entity& sparseEntryToRemove = GetSparseEntryReference(entity);
+				Entity& lastSparseEntry = GetSparseEntryReference(mPackedEntities.Back());
+
+				const u64 packedEntryToRemoveIndex = sparseEntryToRemove.GetIdentifier();
+				lastSparseEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryToRemoveIndex), mPackedEntities.Back().GetVersion());
+				mPackedEntities[packedEntryToRemoveIndex] = mPackedEntities.Back();
+
+				sparseEntryToRemove = kNullEntity;
+				mPackedEntities.Pop();
+			}
+			else
+			{
+				const u64 packedEntryIndex = GetPackedIndex(entity);
+				UpdateVersion(entity.GetAsNextVersion());
+
+				mFreeListHead -= (packedEntryIndex < mFreeListHead);
+				SwapEntities(packedEntryIndex, mFreeListHead);
+			}
+		}
+
+		typedef void(*MoveOrSwapPredicate)(u64, u64);
+		template<typename T, void(T::*MoveOrSwap)(u64, u64)>
+		void ClearInvalidInternal()
+		{
+			if constexpr(DeletePolicy != EntitySparseSetDeletePolicy::InPlace)
+				return;
+
+			u64 validPackedEntryIndex = mPackedEntities.Size();
+			u64 freePackedEntryIndex = std::exchange(mFreeListHead, kMaximumEntryCount);
+
+			// Find first valid entry
+			for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
+
+			while(freePackedEntryIndex != kMaximumEntryCount)
+			{
+				if(freePackedEntryIndex < validPackedEntryIndex)
+				{
+					--validPackedEntryIndex;
+
+					// Move the free entry to the back
+					Entity& fromPackedEntry = mPackedEntities[validPackedEntryIndex];
+					Entity& toPackedEntry = mPackedEntities[freePackedEntryIndex];
+
+					(((T*)this)->*MoveOrSwap)(validPackedEntryIndex, freePackedEntryIndex);
+					GetSparseEntryReference(fromPackedEntry) = Entity((Entity::Traits::IdentifierType)freePackedEntryIndex, toPackedEntry.GetVersion());
+
+					// Find next free entry
+					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
+
+					toPackedEntry = fromPackedEntry;
+
+					// Find next valid entry
+					for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
+				}
+				// Already at the end
+				else
+				{
+					// Find next free entry
+					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
+				}
+			}
+
+			mPackedEntities.Erase(mPackedEntities.begin() + validPackedEntryIndex, mPackedEntities.end());
+		}
+
+		void SwapEntities(u64 lhsPackedIndex, u64 rhsPackedIndex)
 		{
 			Entity& lhsPackedEntry = mPackedEntities[lhsPackedIndex];
 			Entity& rhsPackedEntry = mPackedEntities[rhsPackedIndex];
@@ -722,6 +741,11 @@ namespace bs::ecs
 				}
 			}
 			mSparseIndices.Clear();
+		}
+
+		void MoveOrSwapPayload(u64, u64)
+		{
+			// Do nothing
 		}
 
 		static constexpr Entity::IdentifierType GetPackedIndexAsEntryIdentifier(u64 packedIndex)
@@ -872,10 +896,15 @@ namespace bs::ecs
 		using ReverseIterator = std::reverse_iterator<Iterator>;
 		using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
 
+		~TComponentSparseSet()
+		{
+			ShrinkComponentArray(0);
+		}
+
 		template<typename... Arguments>
 		ComponentType& Add(Entity entity, Arguments&&... arguments)
 		{
-			auto iterator = Add(entity, false, std::forward<Arguments>(arguments)...);
+			auto iterator = AddInternal(entity, false, std::forward<Arguments>(arguments)...);
 			return GetComponentReference(iterator.Index());
 		}
 
@@ -891,41 +920,7 @@ namespace bs::ecs
 			return GetComponentReference(packedEntryIndex);
 		}
 
-		void Erase(Entity entity)
-		{
-			const u64 packedIndex = Super::GetPackedIndex(entity);
-			ComponentType& component = GetComponentReference(packedIndex);
-
-			if constexpr(InPlaceDelete)
-			{
-				Super::Erase(entity);
-				component.~ComponentType();
-			}
-			else // SwapAndErase
-			{
-				ComponentType& otherComponent = GetComponentReference(Super::Size() - 1);
-				component = std::move(otherComponent);
-				otherComponent.~ComponentType();
-
-				Super::Erase(entity);
-			}
-		}
-
-		//void Erase(UnderlyingIterator first, UnderlyingIterator last)
-		//{
-		//	for(; first != last; ++first)
-		//		Erase(first);
-		//}
-
-		void EraseValid(Entity entity)
-		{
-			if(Super::Contains(entity))
-				Erase(Super::GetIterator(entity));
-		}
-
-		// TODO - EraseValid with range
-
-		void Clear()
+		void Clear() override
 		{
 			if constexpr(InPlaceDelete)
 			{
@@ -949,6 +944,33 @@ namespace bs::ecs
 
 			Super::Clear();
 		}
+
+		void ClearInvalid() override
+		{
+			Super::template ClearInvalidInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload>();
+		}
+
+		void Reserve(u64 capacity) override
+		{
+			if(capacity > 0)
+			{
+				Super::Reserve(capacity);
+				GetOrCreateComponentPageFor(capacity - 1u);
+			}
+		}
+
+		u64 Capacity() const override
+		{
+			return mComponents.Size() * PackedPageSize;
+		}
+
+		void Shrink() override
+		{
+			Super::Shrink();
+			ShrinkComponentArray(Super::Size());
+		}
+
+		// TODO - Sort functions should use same pattern as ClearInvalid
 
 		ConstIterator Cbegin() const { return ConstIterator(mComponents, 0); }
 		ConstIterator Begin() const { return Cbegin(); }
@@ -992,16 +1014,79 @@ namespace bs::ecs
 		using UnderlyingIterator = typename Super::Iterator;
 
 		template<typename... Arguments>
-		UnderlyingIterator Add(Entity entity, bool forceAddAtEnd, Arguments&&... arguments)
+		UnderlyingIterator AddInternal(Entity entity, bool forceAddAtEnd, Arguments&&... arguments)
 		{
-			auto iterator = Super::Add(entity, forceAddAtEnd);
+			auto iterator = Super::AddInternal(entity, forceAddAtEnd);
 			ComponentType* component = GetOrCreateComponentPointer(iterator.Index());
 			new(component) ComponentType(std::forward<Arguments>(arguments)...);
 
 			return iterator;
 		}
 
-		ComponentType* GetOrCreateComponentPointer(u64 packedComponentIndex)
+		void EraseInternal(Entity entity) override
+		{
+			const u64 packedIndex = Super::GetPackedIndex(entity);
+			ComponentType& component = GetComponentReference(packedIndex);
+
+			if constexpr(InPlaceDelete)
+			{
+				Super::EraseInternal(entity);
+				component.~ComponentType();
+			}
+			else // SwapAndErase
+			{
+				ComponentType& otherComponent = GetComponentReference(Super::Size() - 1);
+				component = std::move(otherComponent);
+				otherComponent.~ComponentType();
+
+				Super::EraseInternal(entity);
+			}
+		}
+
+		void MoveOrSwapPayload(u64 fromPackedIndex, u64 toPackedIndex)
+		{
+			if constexpr(InPlaceDelete)
+			{
+				if(Super::operator[](toPackedIndex) == kInvalidEntity)
+				{
+					ComponentType& componentToMove = GetComponentReference(fromPackedIndex);
+
+					ComponentType* destinationComponent = GetOrCreateComponentPointer(toPackedIndex);
+					new(destinationComponent) ComponentType(std::move(componentToMove));
+
+					componentToMove.~ComponentType();
+				}
+				else
+					std::swap(GetComponentReference(fromPackedIndex), GetComponentReference(toPackedIndex));
+			}
+			else
+				std::swap(GetComponentReference(fromPackedIndex), GetComponentReference(toPackedIndex));
+		}
+
+		void ShrinkComponentArray(u64 newComponentCount)
+		{
+			const u64 oldComponentCount = Super::Size();
+			for(u64 packedComponentIndex = newComponentCount; packedComponentIndex < oldComponentCount; ++packedComponentIndex)
+			{
+				if constexpr(InPlaceDelete)
+				{
+					if(Super::mPackedEntities[packedComponentIndex] != kInvalidEntity)
+						GetComponentReference(packedComponentIndex).~ComponentType();
+				}
+				else
+					GetComponentReference(packedComponentIndex).~ComponentType();
+			}
+
+			const auto newPageCount = (newComponentCount + PackedPageSize - 1u) / PackedPageSize;
+			const u64 oldPageCount = mComponents.Size();
+			for(u64 page = newPageCount; page < oldPageCount; ++page)
+				B3DFree(mComponents[page]);
+
+			mComponents.Resize(newPageCount);
+			mComponents.Shrink();
+		}
+
+		ComponentType* GetOrCreateComponentPageFor(u64 packedComponentIndex)
 		{
 			const u64 page = GetComponentPage(packedComponentIndex);
 
@@ -1014,7 +1099,12 @@ namespace bs::ecs
 				std::uninitialized_fill(mComponents[page], mComponents[page] + PackedPageSize, nullptr);
 			}
 
-			return mComponents[page] + GetComponentIndexWithinPage(packedComponentIndex);
+			return mComponents[page];
+		}
+
+		ComponentType* GetOrCreateComponentPointer(u64 packedComponentIndex)
+		{
+			return GetOrCreateComponentPageFor(packedComponentIndex) + GetComponentIndexWithinPage(packedComponentIndex);
 		}
 
 		ComponentType& GetComponentReference(u64 packedComponentIndex)
