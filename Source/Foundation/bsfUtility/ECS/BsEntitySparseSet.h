@@ -21,6 +21,25 @@ namespace bs::ecs
 	{
 		return value ? ((u32)(value & 1) + CountBits(static_cast<Type>(value >> 1))) : 0;
 	}
+
+	// TODO - Move to utility library
+	using typeidfn_t = void(*)();
+	using typeid_t = u64;
+
+	//template <typename T>
+	//static typeid_t type_id() noexcept
+	//{
+	//  return (typeid_t)(typeidfn_t(type_id<T>));
+	//}
+
+	template <typename T>
+	typeid_t type_id() noexcept
+	{
+	  static char const type_id = 0;
+
+	  return (u64)&type_id;
+	}
+
 	template<typename>
 	struct TEntityTypeTraits;
 
@@ -109,6 +128,7 @@ namespace bs::ecs
 	};
 
 #define B3D_ECS_64BIT_ENTITIES 0
+#define B3D_ECS_SPARSE_SET_PAGE_SIZE 4096
 
 #if B3D_ECS_64BIT_ENTITIES
 	using Entity = TEntity<u64>;
@@ -326,23 +346,24 @@ namespace bs::ecs
 		SwapOnly
 	};
 
-	template<SparseSetDeletePolicy DeletePolicy = SparseSetDeletePolicy::SwapAndErase, u64 SparsePageSize = 4096>
-	class TSparseSet
+	class SparseSet
 	{
 		using SparseContainerType = TArray<Entity*>;
 		using PackedContainerType = TArray<Entity>;
+		static constexpr u32 SparsePageSize = B3D_ECS_SPARSE_SET_PAGE_SIZE;
 
-		static_assert(SparsePageSize && (SparsePageSize & SparsePageSize - 1) == 0, "SparsePageSize must be a power of two value.");
+		static_assert(SparsePageSize > 0 && (SparsePageSize & SparsePageSize - 1) == 0, "SparsePageSize must be a power of two value.");
 
-		static constexpr u64 kMaximumEntryCount = Entity::Traits::kIdentifierMask;
 	public:
 		using Iterator = TContiguousContainerIterator<PackedContainerType>;
 		using ConstIterator = Iterator;
 		using ReverseIterator = std::reverse_iterator<Iterator>;
 		using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
 
-		TSparseSet() = default;
-		virtual ~TSparseSet()
+		static constexpr u64 kMaximumEntryCount = Entity::Traits::kIdentifierMask;
+
+		SparseSet() = default;
+		virtual ~SparseSet()
 		{
 			FreeSparsePages();
 		}
@@ -377,7 +398,7 @@ namespace bs::ecs
 				EraseInternal(*first);
 		}
 
-		bool EraseValid(Entity entity)
+		bool EraseIfValid(Entity entity)
 		{
 			if(Contains(entity))
 			{
@@ -388,7 +409,7 @@ namespace bs::ecs
 			return false;
 		}
 
-		u64 EraseValid(Iterator first, Iterator last)
+		u64 EraseIfValid(Iterator first, Iterator last)
 		{
 			u64 removedEntryCount = 0;
 
@@ -413,13 +434,10 @@ namespace bs::ecs
 		{
 			FreeSparsePages();
 			mPackedEntities.Clear();
-			mFreeListHead = DeletePolicy != SparseSetDeletePolicy::SwapOnly ? kMaximumEntryCount : 0;
 		}
 
 		virtual void ClearInvalid()
 		{
-			auto fnMoveOrSwap = [](u64, u64) { };
-			ClearInvalidInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload>();
 		}
 
 		virtual void Shrink()
@@ -519,7 +537,6 @@ namespace bs::ecs
 		// Note: For in-place deletion, this will also return deleted entries
 		u64 Size() const { return mPackedEntities.Size(); }
 		bool IsEmpty() const { return mPackedEntities.Empty(); }
-		SparseSetDeletePolicy GetDeletePolicy() const { return DeletePolicy; }
 
 		Iterator Begin() const { return Iterator(mPackedEntities, 0); }
 		ConstIterator Cbegin() const { return Begin(); }
@@ -552,128 +569,8 @@ namespace bs::ecs
 		const_reverse_iterator crend() const { return Crend(); }
 
 	protected:
-		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd)
-		{
-			Entity& sparseSetEntry = GetOrCreateSparseEntryReference(entity);
-			u64 packedEntryIndex = mPackedEntities.Size();
-
-			if constexpr(DeletePolicy == SparseSetDeletePolicy::InPlace)
-			{
-				B3D_ENSURE(sparseSetEntry == kNullEntity);
-
-				if(mFreeListHead != kMaximumEntryCount && !forceAddAtEnd)
-				{
-					packedEntryIndex = mFreeListHead;
-					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(mFreeListHead), entity.GetVersion());
-					mFreeListHead = (u64)(std::exchange(mPackedEntities[packedEntryIndex], entity).GetIdentifier());
-				}
-				else
-				{
-					mPackedEntities.Add(entity);
-					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
-				}
-			}
-			else if constexpr(DeletePolicy == SparseSetDeletePolicy::SwapAndErase)
-			{
-				mPackedEntities.Add(entity);
-				B3D_ENSURE(sparseSetEntry == kNullEntity);
-				sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
-			}
-			else
-			{
-				if(sparseSetEntry == kNullEntity)
-				{
-					mPackedEntities.Add(entity);
-					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
-				}
-				else
-				{
-					B3D_ENSURE(!(sparseSetEntry.GetIdentifier() < mFreeListHead));
-					sparseSetEntry = sparseSetEntry.GetAsNextVersion();
-				}
-
-				packedEntryIndex = mFreeListHead++;
-				SwapEntities(sparseSetEntry.GetIdentifier(), packedEntryIndex);
-			}
-
-			return Begin() + packedEntryIndex;
-		}
-
-		virtual void EraseInternal(Entity entity)
-		{
-			if constexpr(DeletePolicy == SparseSetDeletePolicy::InPlace)
-			{
-				// Sparse entry is set to a null value, while packed entry points to the next free packed entry, and its marked as invalid via its version
-				const u64 packedEntryIndex = std::exchange(GetSparseEntryReference(entity), kNullEntity).GetIdentifier();
-				mPackedEntities[packedEntryIndex] = Entity(GetPackedIndexAsEntryIdentifier(std::exchange(mFreeListHead, packedEntryIndex)), ((Entity)kInvalidEntity).GetVersion());
-			}
-			else if constexpr(DeletePolicy == SparseSetDeletePolicy::SwapAndErase)
-			{
-				// Set last sparse entry so it points to the packed index of the entry that was removed, swap packed entries
-				Entity& sparseEntryToRemove = GetSparseEntryReference(entity);
-				Entity& lastSparseEntry = GetSparseEntryReference(mPackedEntities.Back());
-
-				const u64 packedEntryToRemoveIndex = sparseEntryToRemove.GetIdentifier();
-				lastSparseEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryToRemoveIndex), mPackedEntities.Back().GetVersion());
-				mPackedEntities[packedEntryToRemoveIndex] = mPackedEntities.Back();
-
-				sparseEntryToRemove = kNullEntity;
-				mPackedEntities.Pop();
-			}
-			else
-			{
-				const u64 packedEntryIndex = GetPackedIndex(entity);
-				UpdateVersion(entity.GetAsNextVersion());
-
-				mFreeListHead -= (packedEntryIndex < mFreeListHead);
-				SwapEntities(packedEntryIndex, mFreeListHead);
-			}
-		}
-
-		typedef void(*MoveOrSwapPredicate)(u64, u64);
-		template<typename T, void(T::*MoveOrSwap)(u64, u64)>
-		void ClearInvalidInternal()
-		{
-			if constexpr(DeletePolicy != SparseSetDeletePolicy::InPlace)
-				return;
-
-			u64 validPackedEntryIndex = mPackedEntities.Size();
-			u64 freePackedEntryIndex = std::exchange(mFreeListHead, kMaximumEntryCount);
-
-			// Find first valid entry
-			for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
-
-			while(freePackedEntryIndex != kMaximumEntryCount)
-			{
-				if(freePackedEntryIndex < validPackedEntryIndex)
-				{
-					--validPackedEntryIndex;
-
-					// Move the free entry to the back
-					Entity& fromPackedEntry = mPackedEntities[validPackedEntryIndex];
-					Entity& toPackedEntry = mPackedEntities[freePackedEntryIndex];
-
-					(((T*)this)->*MoveOrSwap)(validPackedEntryIndex, freePackedEntryIndex);
-					GetSparseEntryReference(fromPackedEntry) = Entity((Entity::Traits::IdentifierType)freePackedEntryIndex, toPackedEntry.GetVersion());
-
-					// Find next free entry
-					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
-
-					toPackedEntry = fromPackedEntry;
-
-					// Find next valid entry
-					for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
-				}
-				// Already at the end
-				else
-				{
-					// Find next free entry
-					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
-				}
-			}
-
-			mPackedEntities.Erase(mPackedEntities.begin() + validPackedEntryIndex, mPackedEntities.end());
-		}
+		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd) = 0;
+		virtual void EraseInternal(Entity entity) = 0;
 
 		void SwapEntities(u64 lhsPackedIndex, u64 rhsPackedIndex)
 		{
@@ -728,7 +625,6 @@ namespace bs::ecs
 			return Iterator(mPackedEntities, (i64)GetPackedIndex(entity));
 		}
 
-	private:
 		void FreeSparsePages()
 		{
 			for(auto&& page : mSparseIndices)
@@ -741,11 +637,6 @@ namespace bs::ecs
 				}
 			}
 			mSparseIndices.Clear();
-		}
-
-		void MoveOrSwapPayload(u64, u64)
-		{
-			// Do nothing
 		}
 
 		static constexpr Entity::IdentifierType GetPackedIndexAsEntryIdentifier(u64 packedIndex)
@@ -765,13 +656,266 @@ namespace bs::ecs
 
 		SparseContainerType mSparseIndices; // Entity identifiers are actually indexes into the packed array
 		PackedContainerType mPackedEntities; // TODO - Might consider paging this. It won't be continous anymore, making it harder to iterate, but adding entries might prevent expensive resizes if there's a lot of entries
+	};
+
+	template<SparseSetDeletePolicy DeletePolicy>
+	class TSparseSet : public SparseSet
+	{
+		using Super = SparseSet;
+	public:
+		TSparseSet() = default;
+		~TSparseSet() override = default;
+
+		void Clear() override
+		{
+			Super::Clear();
+			mFreeListHead = DeletePolicy != SparseSetDeletePolicy::SwapOnly ? Super::kMaximumEntryCount : 0;
+		}
+
+		void ClearInvalid() override
+		{
+			ClearInvalidInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload>();
+		}
+
+		template<typename It>
+		Iterator SortAs(It first, It last)
+		{
+			return SortAsInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload>(first, last);
+		}
+
+		template<typename ComparisonFunction = std::less<>>
+		void SortN(u64 count)
+		{
+			return SortNInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload, ComparisonFunction>(count);
+		}
+
+		template<typename ComparisonFunction = std::less<>>
+		void Sort()
+		{
+			return SortInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload, ComparisonFunction>();
+		}
+
+		SparseSetDeletePolicy GetDeletePolicy() const { return DeletePolicy; }
+		u64 GetFreeListHead() const { return mFreeListHead; }
+
+	protected:
+		Iterator AddInternal(Entity entity, bool forceAddAtEnd) override
+		{
+			Entity& sparseSetEntry = GetOrCreateSparseEntryReference(entity);
+			u64 packedEntryIndex = mPackedEntities.Size();
+
+			if constexpr(DeletePolicy == SparseSetDeletePolicy::InPlace)
+			{
+				B3D_ENSURE(sparseSetEntry == kNullEntity);
+
+				if(mFreeListHead != kMaximumEntryCount && !forceAddAtEnd)
+				{
+					packedEntryIndex = mFreeListHead;
+					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(mFreeListHead), entity.GetVersion());
+					mFreeListHead = (u64)(std::exchange(mPackedEntities[packedEntryIndex], entity).GetIdentifier());
+				}
+				else
+				{
+					mPackedEntities.Add(entity);
+					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
+				}
+			}
+			else if constexpr(DeletePolicy == SparseSetDeletePolicy::SwapAndErase)
+			{
+				mPackedEntities.Add(entity);
+				B3D_ENSURE(sparseSetEntry == kNullEntity);
+				sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
+			}
+			else
+			{
+				if(sparseSetEntry == kNullEntity)
+				{
+					mPackedEntities.Add(entity);
+					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
+				}
+				else
+				{
+					B3D_ENSURE(!(sparseSetEntry.GetIdentifier() < mFreeListHead));
+					sparseSetEntry = sparseSetEntry.GetAsNextVersion();
+				}
+
+				packedEntryIndex = mFreeListHead++;
+				SwapEntities(sparseSetEntry.GetIdentifier(), packedEntryIndex);
+			}
+
+			return Begin() + packedEntryIndex;
+		}
+
+		void EraseInternal(Entity entity) override
+		{
+			if constexpr(DeletePolicy == SparseSetDeletePolicy::InPlace)
+			{
+				// Sparse entry is set to a null value, while packed entry points to the next free packed entry, and its marked as invalid via its version
+				const u64 packedEntryIndex = std::exchange(GetSparseEntryReference(entity), kNullEntity).GetIdentifier();
+				mPackedEntities[packedEntryIndex] = Entity(GetPackedIndexAsEntryIdentifier(std::exchange(mFreeListHead, packedEntryIndex)), ((Entity)kInvalidEntity).GetVersion());
+			}
+			else if constexpr(DeletePolicy == SparseSetDeletePolicy::SwapAndErase)
+			{
+				// Set last sparse entry so it points to the packed index of the entry that was removed, swap packed entries
+				Entity& sparseEntryToRemove = GetSparseEntryReference(entity);
+				Entity& lastSparseEntry = GetSparseEntryReference(mPackedEntities.Back());
+
+				const u64 packedEntryToRemoveIndex = sparseEntryToRemove.GetIdentifier();
+				lastSparseEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryToRemoveIndex), mPackedEntities.Back().GetVersion());
+				mPackedEntities[packedEntryToRemoveIndex] = mPackedEntities.Back();
+
+				sparseEntryToRemove = kNullEntity;
+				mPackedEntities.Pop();
+			}
+			else
+			{
+				const u64 packedEntryIndex = GetPackedIndex(entity);
+				UpdateVersion(entity.GetAsNextVersion());
+
+				mFreeListHead -= (packedEntryIndex < mFreeListHead);
+				SwapEntities(packedEntryIndex, mFreeListHead);
+			}
+		}
+
+		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64)>
+		void ClearInvalidInternal()
+		{
+			if constexpr(DeletePolicy != SparseSetDeletePolicy::InPlace)
+				return;
+
+			u64 validPackedEntryIndex = mPackedEntities.Size();
+			u64 freePackedEntryIndex = std::exchange(mFreeListHead, kMaximumEntryCount);
+
+			// Find first valid entry
+			for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
+
+			while(freePackedEntryIndex != kMaximumEntryCount)
+			{
+				if(freePackedEntryIndex < validPackedEntryIndex)
+				{
+					--validPackedEntryIndex;
+
+					// Move the free entry to the back
+					Entity& fromPackedEntry = mPackedEntities[validPackedEntryIndex];
+					Entity& toPackedEntry = mPackedEntities[freePackedEntryIndex];
+
+					(((T*)this)->*MoveOrSwapPayload)(validPackedEntryIndex, freePackedEntryIndex);
+					GetSparseEntryReference(fromPackedEntry) = Entity((Entity::Traits::IdentifierType)freePackedEntryIndex, toPackedEntry.GetVersion());
+
+					// Find next free entry
+					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
+
+					toPackedEntry = fromPackedEntry;
+
+					// Find next valid entry
+					for(; validPackedEntryIndex > 0 && mPackedEntities[validPackedEntryIndex - 1] == kInvalidEntity; --validPackedEntryIndex) { }
+				}
+				// Already at the end
+				else
+				{
+					// Find next free entry
+					freePackedEntryIndex = mPackedEntities[freePackedEntryIndex].GetIdentifier();
+				}
+			}
+
+			mPackedEntities.Erase(mPackedEntities.begin() + validPackedEntryIndex, mPackedEntities.end());
+		}
+
+		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64), typename It>
+		Iterator SortAsInternal(It first, It last)
+		{
+			if(!B3D_ENSURE(GetDeletePolicy() != SparseSetDeletePolicy::InPlace || mFreeListHead == Super::kMaximumEntryCount))
+				return Begin();
+
+			auto localIterator = Begin();
+			const u64 validPackedEntryCount = (GetDeletePolicy() == SparseSetDeletePolicy::SwapOnly) ? mFreeListHead : mPackedEntities.size();
+
+			for(const auto localLast = Begin() + validPackedEntryCount; (localIterator != localLast) && (first != last); ++first)
+			{
+				if(auto entity = *first; Contains(entity))
+				{
+					if(auto localEntity = *localIterator; localEntity != entity)
+					{
+						const u64 packedIndexFrom = GetPackedIndex(localEntity);
+						const u64 packedIndexTo = GetPackedIndex(entity);
+
+						(((T*)this)->*MoveOrSwapPayload)(packedIndexFrom, packedIndexTo);
+						SwapEntities(packedIndexFrom, packedIndexTo);
+					}
+
+					++localIterator;
+				}
+			}
+
+			return localIterator;
+		}
+
+		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64), typename ComparisonFunction = std::less<>>
+		void SortNInternal(u64 count, ComparisonFunction predicate = ComparisonFunction{})
+		{
+			if(!B3D_ENSURE(GetDeletePolicy() != SparseSetDeletePolicy::InPlace || mFreeListHead == Super::kMaximumEntryCount))
+				return;
+
+			if(!B3D_ENSURE(count <= mPackedEntities.Size()))
+				return;
+
+			std::sort(mPackedEntities.Begin(), mPackedEntities.End(), std::move(predicate));
+
+			for(u64 arrayIndex = 0; arrayIndex < count; ++arrayIndex)
+			{
+				u64 packedIndexToCheck = arrayIndex;
+				u64 originalPackedIndex = GetPackedIndex(mPackedEntities[packedIndexToCheck]);
+				while(packedIndexToCheck != originalPackedIndex)
+				{
+					// If the next index just points back to indexToCheck, this is just a simple swap, otherwise we need to follow the chain
+					const u64 nextPackedIndex = GetPackedIndex(mPackedEntities[originalPackedIndex]);
+					const Entity entity = mPackedEntities[packedIndexToCheck];
+
+					GetSparseEntryReference(entity) = Entity(GetPackedIndexAsEntryIdentifier(packedIndexToCheck), entity.GetVersion());
+					(((T*)this)->*MoveOrSwapPayload)(originalPackedIndex, nextPackedIndex);
+
+					packedIndexToCheck = std::exchange(originalPackedIndex, nextPackedIndex);
+				}
+			}
+
+			//for(u64 rootPackedIndexToCheck = 0; rootPackedIndexToCheck < count; ++rootPackedIndexToCheck)
+			//{
+			//	u64 packedIndexToCheck = rootPackedIndexToCheck;
+			//	const u64 originalPackedIndex = GetPackedIndex(mPackedEntities[packedIndexToCheck]);
+
+			//	while(packedIndexToCheck != originalPackedIndex)
+			//	{
+			//		const u64 nextPackedIndex = GetPackedIndex(mPackedEntities[originalPackedIndex]);
+			//		const Entity entity = mPackedEntities[packedIndexToCheck];
+
+			//		(((T*)this)->*MoveOrSwapPayload)(originalPackedIndex, nextPackedIndex);
+
+			//		// Make sure the sparse entry points to the new index
+			//		GetSparseEntryReference(entity) = Entity(GetPackedIndexAsEntryIdentifier(packedIndexToCheck), mPackedEntities[packedIndexToCheck].GetVersion());
+			//		packedIndexToCheck = std::exchange(originalPackedIndex, nextPackedIndex);
+			//	}
+			//}
+		}
+
+		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64), typename ComparisonFunction = std::less<>>
+		void SortInternal(ComparisonFunction predicate = ComparisonFunction{})
+		{
+			const u64 validPackedEntryCount = (GetDeletePolicy() == SparseSetDeletePolicy::SwapOnly) ? mFreeListHead : mPackedEntities.size();
+			SortNInternal<T, MoveOrSwapPayload>(validPackedEntryCount, std::move(predicate));
+		}
+
+	private:
+		void MoveOrSwapPayload(u64, u64)
+		{
+			// Do nothing
+		}
 
 		/**
 		 * For in-place delete policy points to first free entry, or kMaximumEntryCount if no free entries.
 		 * For swap-only delete policy points to the first free entry, where all other elements are sequentially following the first free element. This value corresponds to valid entry count.
 		 * For swap-and-erase delete policy this value is not used.
 		 */
-		u64 mFreeListHead = DeletePolicy != SparseSetDeletePolicy::SwapOnly ? kMaximumEntryCount : 0;
+		u64 mFreeListHead = DeletePolicy != SparseSetDeletePolicy::SwapOnly ? Super::kMaximumEntryCount : 0;
 	};
 
  	template<typename ContainerType, u32 PageSize>
@@ -884,13 +1028,13 @@ namespace bs::ecs
 		return !(lhs < rhs);
 	}
 
-	template<typename ComponentType, bool InPlaceDelete = false, u64 PackedPageSize = 1024, u64 SparsePageSize = 4096>
-	class TComponentSparseSet : public TSparseSet<InPlaceDelete ? SparseSetDeletePolicy::InPlace : SparseSetDeletePolicy::SwapAndErase, SparsePageSize>
+	template<typename ComponentType, bool InPlaceDelete = false, u64 PackedPageSize = 1024>
+	class TComponentSparseSet : public TSparseSet<InPlaceDelete ? SparseSetDeletePolicy::InPlace : SparseSetDeletePolicy::SwapAndErase>
 	{
 		using ComponentContainerType = TArray<ComponentType*>;
 
 	public:
-		using Super = TSparseSet<InPlaceDelete ? SparseSetDeletePolicy::InPlace : SparseSetDeletePolicy::SwapAndErase, SparsePageSize>;
+		using Super = TSparseSet<InPlaceDelete ? SparseSetDeletePolicy::InPlace : SparseSetDeletePolicy::SwapAndErase>;
 		using Iterator = TPagedContainerIterator<ComponentContainerType, PackedPageSize>;
 		using ConstIterator = TPagedContainerIterator<const ComponentContainerType, PackedPageSize>;
 		using ReverseIterator = std::reverse_iterator<Iterator>;
@@ -950,6 +1094,24 @@ namespace bs::ecs
 			Super::template ClearInvalidInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload>();
 		}
 
+		template<typename It>
+		Iterator SortAs(It first, It last)
+		{
+			return Super::template SortAsInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload>(first, last);
+		}
+
+		template<typename ComparisonFunction = std::less<>>
+		void SortN(u64 count)
+		{
+			return Super::template SortNInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload, ComparisonFunction>(count);
+		}
+
+		template<typename ComparisonFunction = std::less<>>
+		void Sort()
+		{
+			return Super::template SortInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload, ComparisonFunction>();
+		}
+
 		void Reserve(u64 capacity) override
 		{
 			if(capacity > 0)
@@ -969,8 +1131,6 @@ namespace bs::ecs
 			Super::Shrink();
 			ShrinkComponentArray(Super::Size());
 		}
-
-		// TODO - Sort functions should use same pattern as ClearInvalid
 
 		ConstIterator Cbegin() const { return ConstIterator(mComponents, 0); }
 		ConstIterator Begin() const { return Cbegin(); }
@@ -1130,11 +1290,11 @@ namespace bs::ecs
 		ComponentContainerType mComponents;
 	};
 
-	template<typename TagType, bool InPlaceDelete = false, u64 SparsePageSize = 4096>
-	class TTagSparseSet : public TSparseSet<InPlaceDelete ? SparseSetDeletePolicy::InPlace : SparseSetDeletePolicy::SwapAndErase, SparsePageSize>
+	template<typename TagType>
+	class TTagSparseSet : public TSparseSet<SparseSetDeletePolicy::SwapAndErase>
 	{
 	public:
-		using Super = TSparseSet<InPlaceDelete ? SparseSetDeletePolicy::InPlace : SparseSetDeletePolicy::SwapAndErase, SparsePageSize>;
+		using Super = TSparseSet<SparseSetDeletePolicy::SwapAndErase>;
 
 		~TTagSparseSet() override = default;
 
@@ -1144,39 +1304,38 @@ namespace bs::ecs
 		}
 	};
 
-	template<u64 SparsePageSize = 4096>
-	class TEntitySparseSet : public TSparseSet<SparseSetDeletePolicy::SwapOnly, SparsePageSize>
+	class EntitySparseSet : public TSparseSet<SparseSetDeletePolicy::SwapOnly>
 	{
 	public:
-		using Super = TSparseSet<SparseSetDeletePolicy::SwapOnly, SparsePageSize>;
+		using Super = TSparseSet<SparseSetDeletePolicy::SwapOnly>;
 
-		~TEntitySparseSet() override = default;
+		~EntitySparseSet() override = default;
 
-		Entity Generate()
+		Entity Create()
 		{
-			if(Super::Size() == Super::mFreeListHead)
+			if(Size() == GetFreeListHead())
 				return CreateEntity();
 
-			Entity entity = Super::mPackedEntities[Super::mFreeListHead];
-			return *AddInternal(entity);
+			Entity entity = mPackedEntities[GetFreeListHead()];
+			return *AddInternal(entity, false);
 		}
 
-		Entity Generate(Entity hint)
+		Entity Create(Entity hint)
 		{
 			if(hint != kInvalidEntity && hint != kNullEntity)
 			{
-				Entity entity(hint.GetIdentifier(), Super::GetVersion(hint));
-				if(entity == kInvalidEntity || Super::GetPackedIndex(entity) >= Super::mFreeListHead)
+				Entity entity(hint.GetIdentifier(), GetVersion(hint));
+				if(entity == kInvalidEntity || GetPackedIndex(entity) >= GetFreeListHead())
 					return *Super::AddInternal(entity, false);
 			}
 
-			return Generate();
+			return Create();
 		}
 
 		void Clear() override
 		{
 			Super::Clear();
-			mNextEntityId = 0;
+			mNextEntityId = 0u;
 		}
 
 	private:
@@ -1184,14 +1343,14 @@ namespace bs::ecs
 
 		UnderlyingIterator AddInternal(Entity hint, bool forceAddAtEnd) override
 		{
-			return Super::Find(Generate(hint));
+			return Super::Find(Create(hint));
 		}
 
 		Entity CreateEntity()
 		{
 			auto fnGetEntityChecked = [this]()
 			{
-				Entity entity(mNextEntityId, 0);
+				Entity entity(mNextEntityId, 0u);
 				if(B3D_ENSURE(entity != kNullEntity))
 					mNextEntityId++;
 
@@ -1205,7 +1364,157 @@ namespace bs::ecs
 			return entity;
 		}
 
-		u64 mNextEntityId = 0;
+		Entity::IdentifierType mNextEntityId = 0u;
+	};
+
+	template<typename Type, typename = void>
+	struct StorageForType;
+
+	template<typename Type, typename>
+	struct StorageForType
+	{
+		using StorageType = TComponentSparseSet<Type>;
+	};
+
+	template<typename Type>
+	struct StorageForType<Type, std::enable_if_t<std::is_empty_v<Type>>>
+	{
+		using StorageType = TTagSparseSet<Type>;
+	};
+
+	template<>
+	struct StorageForType<Entity>
+	{
+		using StorageType = EntitySparseSet;
+	};
+
+	template<typename Type>
+	using StorageType = typename StorageForType<Type>::StorageType;
+
+	class Registry
+	{
+	public:
+		const SparseSet* TryGetStorage(typeid_t typeId) const
+		{
+			if(auto found = mComponentStorage.find(typeId); found != mComponentStorage.end())
+				return found->second.get();
+
+			return nullptr;
+		}
+
+		SparseSet* TryGetStorage(typeid_t typeId)
+		{
+			return const_cast<SparseSet*>(std::as_const(*this).TryGetStorage(typeId));
+		}
+
+		template<typename Type>
+		const SparseSet* TryGetStorage() const
+		{
+			if constexpr(std::is_same_v<Type, Entity>())
+				return &mEntityStorage;
+
+			const typeid_t typeId = type_id<Type>();
+			if(auto found = mComponentStorage.find(typeId); found != mComponentStorage.end())
+				return found->second.get();
+
+			return nullptr;
+		}
+
+		template<typename Type>
+		SparseSet* TryGetStorage()
+		{
+			return const_cast<SparseSet*>(std::as_const(*this).TryGetStorage<Type>());
+		}
+
+		bool ResetStorage(typeid_t typeId)
+		{
+			return mComponentStorage.erase(typeId) > 0;
+		}
+
+		template<typename Type>
+		bool ResetStorage()
+		{
+			const typeid_t typeId = type_id<Type>();
+			return ResetStorage(typeId);
+		}
+
+		bool IsEntityValid(Entity entity) const
+		{
+			if(auto found = mEntityStorage.Find(entity); found != mEntityStorage.End())
+				return found.Index() < mEntityStorage.GetFreeListHead();
+
+			return false;
+		}
+
+		Entity::VersionType GetEntityVersion(Entity entity) const
+		{
+			return mEntityStorage.GetVersion(entity);
+		}
+
+		Entity CreateEntity()
+		{
+			return mEntityStorage.Create();
+		}
+
+		Entity CreateEntity(Entity hint)
+		{
+			return mEntityStorage.Create(hint);
+		}
+
+		Entity::VersionType DestroyEntity(Entity entity) // TODO - Inconsistent naming erase vs. delete
+		{
+			for(auto& entry : mComponentStorage)
+				entry.second->EraseIfValid(entity);
+
+			mEntityStorage.EraseIfValid(entity);
+			return mEntityStorage.GetVersion(entity);
+		}
+
+		Entity::VersionType DestroyEntity(Entity entity, Entity::VersionType newVersion)
+		{
+			DestroyEntity(entity);
+
+			Entity destroyedEntity(entity.GetIdentifier(), newVersion);
+			if(destroyedEntity == kInvalidEntity)
+				destroyedEntity = destroyedEntity.GetAsNextVersion();
+
+			mEntityStorage.UpdateVersion(destroyedEntity);
+			return destroyedEntity.GetVersion();
+		}
+
+		template<typename Type, typename... Arguments>
+		Type& AddComponent(Entity entity, Arguments&&... arguments)
+		{
+			return GetOrCreateStorage<Type>().AddComponent(entity, std::forward<Arguments>(arguments)...);
+		}
+
+	private:
+		template<typename Type>
+		StorageType<Type>& GetOrCreateStorage()
+		{
+			if constexpr(std::is_same_v<Type, Entity>())
+				return static_cast<StorageType<Type>&>(mEntityStorage);
+
+			const typeid_t typeId = type_id<Type>();
+			if(auto found = mComponentStorage.find(typeId); found != mComponentStorage.end())
+				return static_cast<StorageType<Type>&>(*found->second);
+
+			SPtr<SparseSet> componentStorage;
+			if constexpr(std::is_empty_v<Type>())
+				componentStorage = B3DMakeShared<TTagSparseSet<Type>>();
+			else
+			{
+				static constexpr bool isTypeMovable = std::is_move_constructible_v<Type>() && std::is_move_assignable_v<Type>();
+				componentStorage = B3DMakeShared<TComponentSparseSet<Type, !isTypeMovable>>();
+			}
+
+			mComponentStorage[typeId] = componentStorage;
+			return static_cast<StorageType<Type>&>(*componentStorage);
+		}
+
+		EntitySparseSet mEntityStorage;
+		UnorderedMap<typeid_t, SPtr<SparseSet>> mComponentStorage;
+
 	};
 
 	/** @} */
