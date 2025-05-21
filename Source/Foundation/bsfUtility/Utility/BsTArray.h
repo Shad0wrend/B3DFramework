@@ -99,7 +99,7 @@ namespace bs
 					Clear();
 					mySize = 0;
 
-					Grow(otherSize);
+					ChangeCapacity(otherSize);
 				}
 				else if(mySize > 0)
 					std::copy(other.Begin(), other.Begin() + mySize, Begin());
@@ -152,7 +152,7 @@ namespace bs
 					Clear();
 					mySize = 0;
 
-					Grow(otherSize);
+					ChangeCapacity(otherSize);
 				}
 				else if(mySize > 0)
 					std::copy(list.begin(), list.begin() + mySize, Begin());
@@ -262,7 +262,7 @@ namespace bs
 		void Add(const Type& element)
 		{
 			if(mSize == mCapacity)
-				Grow(std::max((u64)1u, mCapacity << 1));
+				ChangeCapacity(std::max((u64)1u, mCapacity << 1));
 
 			new(&mAllocator.GetElements()[mSize++]) Type(element);
 		}
@@ -270,7 +270,7 @@ namespace bs
 		void Add(Type&& element)
 		{
 			if(mSize == mCapacity)
-				Grow(std::max((u64)1u, mCapacity << 1));
+				ChangeCapacity(std::max((u64)1u, mCapacity << 1));
 
 			new(&mAllocator.GetElements()[mSize++]) Type(std::move(element));
 		}
@@ -283,7 +283,7 @@ namespace bs
 			const u64 count = (u64)std::distance(start, end);
 
 			if((Size() + count) > Capacity())
-				this->Grow(Size() + count);
+				this->ChangeCapacity(Size() + count);
 
 			std::uninitialized_copy(start, end, this->End());
 			mSize += count;
@@ -292,7 +292,7 @@ namespace bs
 		void Append(u64 count, const Type& element)
 		{
 			if((Size() + count) > Capacity())
-				this->Grow(Size() + count);
+				this->ChangeCapacity(Size() + count);
 
 			std::uninitialized_fill_n(End(), count, element);
 			mSize += count;
@@ -383,13 +383,13 @@ namespace bs
 		void Reserve(u64 capacity)
 		{
 			if(capacity > mCapacity)
-				Grow(capacity);
+				ChangeCapacity(capacity);
 		}
 
 		void Resize(u64 size, const Type& value = Type())
 		{
 			if(size > mCapacity)
-				Grow(size);
+				ChangeCapacity(size);
 
 			if(size > mSize)
 			{
@@ -408,7 +408,7 @@ namespace bs
 		void Shrink()
 		{
 			if(mSize != mCapacity)
-				Resize(mSize);
+				ChangeCapacity(mSize);
 		}
 
 		bool SwapAndErase(Iterator iter)
@@ -432,7 +432,7 @@ namespace bs
 		void EmplaceBack(Args&&... args)
 		{
 			if(mSize == mCapacity)
-				Grow(std::max((u64)1u, mCapacity << 1));
+				ChangeCapacity(std::max((u64)1u, mCapacity << 1));
 
 			new(&mAllocator.GetElements()[mSize++]) Type(std::forward<Args>(args)...);
 		}
@@ -444,7 +444,7 @@ namespace bs
 			DifferenceType offset = mutableIterator - Begin();
 
 			if(mSize == mCapacity)
-				Grow(std::max((u64)1u, mCapacity << 1));
+				ChangeCapacity(std::max((u64)1u, mCapacity << 1));
 
 			new(&mAllocator.GetElements()[mSize++]) Type(std::forward<Args>(args)...);
 			std::rotate(Begin() + offset, End() - 1, End());
@@ -458,7 +458,7 @@ namespace bs
 			DifferenceType offset = mutableIterator - Begin();
 
 			if(mSize == mCapacity)
-				Grow(std::max((u64)1u, mCapacity << 1));
+				ChangeCapacity(std::max((u64)1u, mCapacity << 1));
 
 			new(&mAllocator.GetElements()[mSize++]) Type(element);
 			std::rotate(Begin() + offset, End() - 1, End());
@@ -472,7 +472,7 @@ namespace bs
 			DifferenceType offset = mutableIterator - Begin();
 
 			if(mSize == mCapacity)
-				Grow(std::max((u64)1u, mCapacity << 1));
+				ChangeCapacity(std::max((u64)1u, mCapacity << 1));
 
 			new(&mAllocator.GetElements()[mSize++]) Type(std::move(element));
 			std::rotate(Begin() + offset, End() - 1, End());
@@ -489,7 +489,7 @@ namespace bs
 				return Begin() + offset;
 
 			if(Size() + count > Capacity())
-				Grow((Size() + count) * 2);
+				ChangeCapacity((Size() + count) * 2);
 
 			u32 remainingCount = count;
 			while(remainingCount--)
@@ -507,7 +507,7 @@ namespace bs
 			const u64 elementCountToInsert = (u64)(last - first);
 
 			if(Size() + elementCountToInsert > Capacity())
-				Grow((Size() + elementCountToInsert) * 2);
+				ChangeCapacity((Size() + elementCountToInsert) * 2);
 
 			while(first != last)
 				new(&mAllocator.GetElements()[mSize++]) Type(*first++);
@@ -525,7 +525,7 @@ namespace bs
 				return Begin() + offset;
 
 			if(Size() + elementCountToInsert > Capacity())
-				Grow((Size() + elementCountToInsert) * 2);
+				ChangeCapacity((Size() + elementCountToInsert) * 2);
 
 			for(auto& entry : list)
 				new(&mAllocator.GetElements()[mSize++]) Type(entry);
@@ -575,7 +575,7 @@ namespace bs
 		void resize(u64 size, const Type& value = Type()) { Resize(size, value); } // NOLINT
 
 	private:
-		void Grow(u64 capacity)
+		void ChangeCapacity(u64 capacity)
 		{
 			mAllocator.Resize(mSize, capacity);
 			mCapacity = std::max(capacity, mAllocator.GetMinimumCapacity());
