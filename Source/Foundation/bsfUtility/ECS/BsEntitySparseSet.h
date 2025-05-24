@@ -542,6 +542,8 @@ namespace bs::ecs
 		// Note: For in-place deletion, this will also return deleted entries
 		u64 Size() const { return mPackedEntities.Size(); }
 		bool IsEmpty() const { return mPackedEntities.Empty(); }
+		virtual SparseSetDeletePolicy GetDeletePolicy() const { return SparseSetDeletePolicy::SwapAndErase; }
+		virtual u64 GetFreeListHead() const { return kMaximumEntryCount; }
 
 		Iterator Begin() const { return Iterator(mPackedEntities, 0); }
 		ConstIterator Cbegin() const { return Begin(); }
@@ -574,8 +576,8 @@ namespace bs::ecs
 		const_reverse_iterator crend() const { return Crend(); }
 
 	protected:
-		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd) = 0;
-		virtual void EraseInternal(Entity entity) = 0;
+		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd) { }
+		virtual void EraseInternal(Entity entity) { }
 
 		void SwapEntities(u64 lhsPackedIndex, u64 rhsPackedIndex)
 		{
@@ -700,8 +702,8 @@ namespace bs::ecs
 			return SortInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload, ComparisonFunction>();
 		}
 
-		SparseSetDeletePolicy GetDeletePolicy() const { return DeletePolicy; }
-		u64 GetFreeListHead() const { return mFreeListHead; }
+		SparseSetDeletePolicy GetDeletePolicy() const override { return DeletePolicy; }
+		u64 GetFreeListHead() const override { return mFreeListHead; }
 
 	protected:
 		Iterator AddInternal(Entity entity, bool forceAddAtEnd) override
@@ -1396,6 +1398,281 @@ namespace bs::ecs
 
 	template<typename Type>
 	using StorageType = typename StorageForType<Type>::StorageType;
+
+	template<typename It>
+	static bool IsEntityPartOfAll(It first, It last, Entity entity)
+	{
+		while(first != last && (*first)->Contains(entity))
+			++first;
+
+		return first == last;
+	}
+
+	template<typename It>
+	static bool IsEntityPartOfAny(It first, It last, Entity entity)
+	{
+		while(first != last && !(*first)->Contains(entity))
+			++first;
+
+		return first != last;
+	}
+
+	template<u32 IncludedTypeCount, u32 ExcludedTypeCount, bool StorageMayContainInvalidEntities>
+	static bool DoesEntityMatchFilter(Entity entity, const std::array<const SparseSet*, IncludedTypeCount>& includedTypeStorage, const std::array<const SparseSet*, ExcludedTypeCount>& excludedTypeStorage, u32 leadingTypeIndex)
+	{
+		// Must not be deleted entity (only relevant for in-place deletion), must be contained in all the included type storages, and must not be part of any excluded type storages
+		return (!StorageMayContainInvalidEntities || entity != kInvalidEntity)
+			&& ((IncludedTypeCount == 1u) || (IsEntityPartOfAll(includedTypeStorage.begin(), includedTypeStorage.begin() + leadingTypeIndex, entity) && IsEntityPartOfAll(includedTypeStorage.begin() + leadingTypeIndex + 1, includedTypeStorage.end(), entity)))
+			&& ((ExcludedTypeCount == 0u) || (!IsEntityPartOfAny(excludedTypeStorage.begin(), excludedTypeStorage.end(), entity)));
+	}
+
+	template<u32 IncludedTypeCount, u32 ExcludedTypeCount, bool InPlaceDelete>
+	struct TViewIterator final
+	{
+	private:
+		using UnderlyingIterator = SparseSet::ConstIterator;
+
+	public:
+		using value_type = std::iterator_traits<UnderlyingIterator>::value_type;
+		using pointer = std::iterator_traits<UnderlyingIterator>::pointer;
+		using reference = std::iterator_traits<UnderlyingIterator>::reference;
+		using difference_type = std::iterator_traits<UnderlyingIterator>::difference_type;
+		using iterator_category = std::forward_iterator_tag;
+
+		TViewIterator() = default;
+		TViewIterator(UnderlyingIterator underlyingIterator, std::array<const SparseSet*, IncludedTypeCount> includedTypeStorage, std::array<const SparseSet*, ExcludedTypeCount> excludedTypeStorage, u32 leadingTypeIndex)
+			: mUnderlyingIterator(underlyingIterator), mIncludedTypeStorage(std::move(includedTypeStorage)), mExcludedTypeStorage(std::move(excludedTypeStorage)), mLeadingTypeIndex(leadingTypeIndex)
+		{
+			SeekToNextValidEntry();
+		}
+
+		TViewIterator& operator++()
+		{
+			++mUnderlyingIterator;
+			SeekToNextValidEntry();
+
+			return *this;
+		}
+
+		pointer operator->() const
+		{
+			return &*mUnderlyingIterator;
+		}
+
+		reference operator*() const
+		{
+			return *mUnderlyingIterator;
+		}
+
+		friend constexpr bool operator==(const TViewIterator& lhs, const TViewIterator& rhs) noexcept;
+
+	private:
+		void SeekToNextValidEntry()
+		{
+			// Iterate until the find next matching entity
+			while(mUnderlyingIterator != mIncludedTypeStorage[mLeadingTypeIndex]->End() && !DoesEntityMatchFilter<IncludedTypeCount, ExcludedTypeCount, InPlaceDelete>(*mUnderlyingIterator, mIncludedTypeStorage, mExcludedTypeStorage, mLeadingTypeIndex))
+				++mUnderlyingIterator;
+		}
+
+		UnderlyingIterator mUnderlyingIterator;
+		std::array<const SparseSet*, IncludedTypeCount> mIncludedTypeStorage;
+		std::array<const SparseSet*, ExcludedTypeCount> mExcludedTypeStorage;
+		u32 mLeadingTypeIndex = 0;
+	};
+
+	template<u32 IncludedTypeCount, u32 ExcludedTypeCount, bool InPlaceDelete>
+	constexpr bool operator==(const TViewIterator<IncludedTypeCount, ExcludedTypeCount, InPlaceDelete>& lhs, const TViewIterator<IncludedTypeCount, ExcludedTypeCount, InPlaceDelete>& rhs) noexcept
+	{
+		return lhs.mUnderlyingIterator == rhs.mUnderlyingIterator;
+	}
+
+	template<u32 IncludedTypeCount, u32 ExcludedTypeCount, bool InPlaceDelete>
+	constexpr bool operator!=(const TViewIterator<IncludedTypeCount, ExcludedTypeCount, InPlaceDelete>& lhs, const TViewIterator<IncludedTypeCount, ExcludedTypeCount, InPlaceDelete>& rhs) noexcept
+	{
+		return !(lhs.mUnderlyingIterator == rhs.mUnderlyingIterator);
+	}
+
+	template<u32 IncludedTypeCount, u32 ExcludedTypeCount, bool InPlaceDelete>
+	class TViewCommon
+	{
+	public:
+		using Iterator = TViewIterator<IncludedTypeCount, ExcludedTypeCount, InPlaceDelete>;
+
+		const SparseSet* GetLeadingTypeStorage() const
+		{
+			if(mLeadingTypeIndex == IncludedTypeCount)
+				return nullptr;
+
+			return mIncludedTypeStorage[mLeadingTypeIndex];
+		}
+
+		u64 GetSizeEstimate() const
+		{
+			if(mLeadingTypeIndex == IncludedTypeCount)
+				return 0u;
+
+			return GetLeadingTypeStorageSize();
+		}
+
+		Iterator Begin() const
+		{
+			return mLeadingTypeIndex != IncludedTypeCount ? Iterator(mIncludedTypeStorage[mLeadingTypeIndex]->Begin(), mIncludedTypeStorage, mExcludedTypeStorage, mLeadingTypeIndex) : Iterator();
+		}
+
+		Iterator End() const
+		{
+			return mLeadingTypeIndex != IncludedTypeCount ? Iterator(mIncludedTypeStorage[mLeadingTypeIndex]->Begin() + GetLeadingTypeStorageSize(), mIncludedTypeStorage, mExcludedTypeStorage, mLeadingTypeIndex) : Iterator();
+		}
+
+		Entity Front() const
+		{
+			auto it = Begin();
+			return  it != End() ? *it : kNullEntity;
+		}
+
+		Entity Back() const
+		{
+			if(mLeadingTypeIndex == IncludedTypeCount)
+				return kNullEntity;
+
+			auto it = mIncludedTypeStorage[mLeadingTypeIndex]->Rbegin();
+			const auto last = it + GetLeadingTypeStorageSize();
+
+			while (it != last && !DoesEntityMatchViewFilter(*it))
+				++it;
+
+			return it != last() ? *it : kNullEntity;
+		}
+
+		Iterator Find(Entity entity)
+		{
+			if(Contains(entity))
+				return Iterator(mIncludedTypeStorage[mLeadingTypeIndex]->Find(entity), mIncludedTypeStorage, mExcludedTypeStorage, mLeadingTypeIndex);
+
+			return End();
+		}
+
+		bool Contains(Entity entity)
+		{
+			if(mLeadingTypeIndex == IncludedTypeCount)
+				return false;
+
+			return IsEntityPartOfAll(mIncludedTypeStorage.begin(), mIncludedTypeStorage.end(), entity)
+				&& !IsEntityPartOfAny(mExcludedTypeStorage.begin(), mExcludedTypeStorage.end(), entity)
+				&& (mIncludedTypeStorage[mLeadingTypeIndex]->GetPackedIndex(entity) < GetLeadingTypeStorageSize());
+		}
+
+		bool IsValid()
+		{
+			if(mLeadingTypeIndex == IncludedTypeCount)
+				return false;
+
+			for(const auto& entry : mExcludedTypeStorage)
+			{
+				if(entry == GetPlaceholderStorage())
+					return false;
+			}
+
+			return true;
+		}
+
+	protected:
+		TViewCommon()
+		{
+			for(auto& entry : mExcludedTypeStorage)
+				entry = GetPlaceholderStorage();
+		}
+
+		TViewCommon(std::array<const SparseSet*, IncludedTypeCount>& includedTypeStorage, std::array<const SparseSet*, ExcludedTypeCount> excludedTypeStorage)
+			:mIncludedTypeStorage(includedTypeStorage), mExcludedTypeStorage(excludedTypeStorage), mLeadingTypeIndex(IncludedTypeCount)
+		{
+			RefreshLeadingTypeIndex();
+		}
+
+		void RefreshLeadingTypeIndex()
+		{
+			mLeadingTypeIndex = 0;
+
+			if constexpr(IncludedTypeCount > 0)
+			{
+				for(u32 typeIndex = 1; typeIndex < IncludedTypeCount; ++typeIndex)
+				{
+					if(mIncludedTypeStorage[typeIndex]->Size() < mIncludedTypeStorage[mLeadingTypeIndex]->Size())
+						mLeadingTypeIndex = typeIndex;
+				}
+			}
+		}
+
+		void RefreshLeadingTypeIndexIfNeeded()
+		{
+			if(mLeadingTypeIndex == IncludedTypeCount)
+			{
+				u32 count = 0;
+				for(; count < IncludedTypeCount; ++count)
+				{
+					if(mIncludedTypeStorage[count] == nullptr)
+						break;
+				}
+
+				// If all storage types are assigned
+				if(count == IncludedTypeCount)
+					RefreshLeadingTypeIndex();
+			}
+			else
+				RefreshLeadingTypeIndex();
+		}
+
+		const SparseSet* GetIncludedTypeStorage(u32 index)
+		{
+			return mIncludedTypeStorage[index];
+		}
+
+		void SetIncludedTypeStorage(u32 index, const SparseSet* storage)
+		{
+			B3D_ASSERT(storage != nullptr);
+
+			mIncludedTypeStorage[index] = storage;
+			RefreshLeadingTypeIndexIfNeeded();
+		}
+
+		const SparseSet* GetExcludedTypeStorage(u32 index)
+		{
+			return mExcludedTypeStorage[index] == GetPlaceholderStorage() ? nullptr : mExcludedTypeStorage[index];
+		}
+
+		void SetExcludedTypeStorage(u32 index, const SparseSet* storage)
+		{
+			B3D_ASSERT(storage != nullptr);
+
+			mExcludedTypeStorage[index] = storage;
+		}
+
+		void SetExplicitLeadingTypeIndex(u32 index)
+		{
+			// Must assign all storage types before doing this, as refreshing type index during storage
+			// assignment relies on mLeadingTypeIndex == IncludedTypeCount until all storage is assigned
+			B3D_ASSERT(mLeadingTypeIndex != IncludedTypeCount);
+
+			mLeadingTypeIndex = index;
+		}
+
+		u64 GetLeadingTypeStorageSize() const
+		{
+			B3D_ASSERT(mLeadingTypeIndex != IncludedTypeCount);
+			return mIncludedTypeStorage[mLeadingTypeIndex]->GetDeletePolicy() == SparseSetDeletePolicy::SwapOnly ? mIncludedTypeStorage[mLeadingTypeIndex]->GetFreeListHead() : mIncludedTypeStorage[mLeadingTypeIndex]->Size();
+		}
+
+		static const SparseSet* GetPlaceholderStorage()
+		{
+			static const SparseSet kPlaceholder;
+			return &kPlaceholder;
+		}
+
+	private:
+		std::array<const SparseSet*, IncludedTypeCount> mIncludedTypeStorage;
+		std::array<const SparseSet*, ExcludedTypeCount> mExcludedTypeStorage;
+		u32 mLeadingTypeIndex = 0;
+	};
 
 	class Registry
 	{
