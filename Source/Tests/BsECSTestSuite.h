@@ -16,5 +16,7 @@ namespace bs
 	private:
 		void TestSparseSet();
 		void TestComponentSparseSet();
+		void TestRegistry();
+		void TestViews();
 	};
 } // namespace bs

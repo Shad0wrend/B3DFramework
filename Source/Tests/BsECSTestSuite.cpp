@@ -3,6 +3,7 @@
 #include "BsECSTestSuite.h"
 #include "ECS/BsEntitySparseSet.h"
 #include "Scene/BsComponent.h"
+#include "Utility/BsShared.h"
 
 using namespace bs;
 using namespace bs::ecs;
@@ -16,17 +17,94 @@ static const TArray<Entity> kEntities = {
 	Entity(50000, 0),
 	Entity(50001, 0) };
 
+namespace test
+{
+	struct Position
+	{
+		Position() = default;
+		Position(float x, float y, float z)
+			:X(x), Y(y), Z(z)
+		{ }
+
+		bool operator==(const Position& other) const
+		{
+			return X == other.X && Y == other.Y && Z == other.Z;
+		}
+
+		bool operator<(const Position& other) const
+		{
+			return X < other.X;
+		}
+
+		float X = 0.0f;
+		float Y = 0.0f;
+		float Z = 0.0f;
+	};
+
+	struct NonMovablePosition 
+	{
+		NonMovablePosition() = default;
+		NonMovablePosition(float x, float y, float z)
+			:X(x), Y(y), Z(z)
+		{ }
+
+		NonMovablePosition(NonMovablePosition&& other) = delete;
+
+		bool operator==(const NonMovablePosition& other) const
+		{
+			return X == other.X && Y == other.Y && Z == other.Z;
+		}
+
+		bool operator<(const NonMovablePosition& other) const
+		{
+			return X < other.X;
+		}
+
+		float X = 0.0f;
+		float Y = 0.0f;
+		float Z = 0.0f;
+	};
+
+	struct Velocity 
+	{
+		Velocity() = default;
+		Velocity(float x, float y, float z)
+			:X(x), Y(y), Z(z)
+		{ }
+
+		bool operator==(const Velocity& other) const
+		{
+			return X == other.X && Y == other.Y && Z == other.Z;
+		}
+
+		bool operator<(const Velocity& other) const
+		{
+			return X < other.X;
+		}
+
+		float X = 0.0f;
+		float Y = 0.0f;
+		float Z = 0.0f;
+	};
+
+	struct IsEnemyTag { };
+}
+
 void ECSTestSuite::StartUp() { }
 void ECSTestSuite::ShutDown() { }
 
 ECSTestSuite::ECSTestSuite()
 {
 	B3D_ADD_TEST(ECSTestSuite::TestSparseSet)
+	B3D_ADD_TEST(ECSTestSuite::TestRegistry)
 	B3D_ADD_TEST(ECSTestSuite::TestComponentSparseSet)
+	B3D_ADD_TEST(ECSTestSuite::TestViews)
 }
 
 void ECSTestSuite::TestSparseSet()
 {
+	TShared<int> a = TShared<int>(new int);
+
 	auto fnTestSparseSet = [this](auto&& entitySparseSet)
 	{
 		for(const auto& entity : kEntities)
@@ -201,53 +279,7 @@ static void RunComponentTests(ECSTestSuite& testSuite)
 
 void ECSTestSuite::TestComponentSparseSet()
 {
-	struct Position
-	{
-		Position() = default;
-		Position(float x, float y, float z)
-			:X(x), Y(y), Z(z)
-		{ }
-
-		bool operator==(const Position& other) const
-		{
-			return X == other.X && Y == other.Y && Z == other.Z;
-		}
-
-		bool operator<(const Position& other) const
-		{
-			return X < other.X;
-		}
-
-		float X = 0.0f;
-		float Y = 0.0f;
-		float Z = 0.0f;
-	};
-
-	struct NonMovablePosition 
-	{
-		NonMovablePosition() = default;
-		NonMovablePosition(float x, float y, float z)
-			:X(x), Y(y), Z(z)
-		{ }
-
-		NonMovablePosition(NonMovablePosition&& other) = delete;
-
-		bool operator==(const NonMovablePosition& other) const
-		{
-			return X == other.X && Y == other.Y && Z == other.Z;
-		}
-
-		bool operator<(const NonMovablePosition& other) const
-		{
-			return X < other.X;
-		}
-
-		float X = 0.0f;
-		float Y = 0.0f;
-		float Z = 0.0f;
-	};
-
-	struct IsEnemyTag { };
+	using namespace test;
 
 	static_assert(std::is_move_constructible_v<Position> && std::is_move_assignable_v<Position>);
 	static_assert(std::is_same_v<StorageType<Position>, TComponentSparseSet<Position>>, "Invalid storage type");
@@ -303,5 +335,55 @@ void ECSTestSuite::TestComponentSparseSet()
 
 	entitySparseSet.Shrink();
 	B3D_TEST_ASSERT(entitySparseSet.Capacity() == 0)
+
+}
+
+void ECSTestSuite::TestRegistry()
+{
+#define COMMA ,
+	Registry registry;
+
+	static constexpr u32 kEntityCount = 20;
+	static constexpr u32 kEntityWithVelocityCount = 20;
+	std::array<Entity, kEntityCount> entities;
+
+	for(u32 i = 0; i < kEntityCount; ++i)
+	{
+		entities[i] = registry.CreateEntity();
+		registry.AddComponent<test::Position>(entities[i], 1.0f, 2.0f, 3.0f);
+	}
+
+	registry.AddComponents(entities.begin(), entities.begin() + kEntityWithVelocityCount, test::Velocity(5.0f, 5.0f, 5.0f));
+
+	for(u32 i = 0; i < kEntityCount; ++i)
+	{
+		B3D_TEST_ASSERT(registry.IsEntityValid(entities[i]))
+		B3D_TEST_ASSERT(registry.HasAnyOf<test::Position COMMA test::Velocity>(entities[i]));
+
+		if(i < kEntityWithVelocityCount)
+		{
+			B3D_TEST_ASSERT(registry.HasAllOf<test::Position COMMA test::Velocity>(entities[i]))
+		}
+		else
+		{
+			B3D_TEST_ASSERT(registry.HasAllOf<test::Position>(entities[i]))
+		}
+
+		// TODO - HasEntityAnyComponents
+		// TODO - GetEntityVersion
+	}
+
+	// TODO
+	// - GetComponent(s)
+	// - DestroyEntity
+	// - RemoveComponent(s)
+	// - Shink
+	// - ClearStorage
+	// - TryGetStorage
+	// - RemoveStorage
+}
+
+void ECSTestSuite::TestViews()
+{
 
 }

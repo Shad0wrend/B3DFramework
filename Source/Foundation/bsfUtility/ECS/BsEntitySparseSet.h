@@ -576,7 +576,7 @@ namespace bs::ecs
 		const_reverse_iterator crend() const { return Crend(); }
 
 	protected:
-		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd) { }
+		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd) { return End(); }
 		virtual void EraseInternal(Entity entity) { }
 
 		void SwapEntities(u64 lhsPackedIndex, u64 rhsPackedIndex)
@@ -1054,6 +1054,13 @@ namespace bs::ecs
 			return GetComponentReference(iterator.Index());
 		}
 
+		template<typename It>
+		void Add(It first, It last, const ComponentType& value)
+		{
+			for(It it = first; it != last; ++it)
+				AddInternal(*it, true, value);
+		}
+
 		ComponentType& Get(Entity entity)
 		{
 			const u64 packedEntryIndex = Super::GetPackedIndex(entity);
@@ -1306,6 +1313,13 @@ namespace bs::ecs
 		void Add(Entity entity)
 		{
 			Super::AddInternal(entity, false);
+		}
+
+		template<typename It>
+		void Add(It first, It last)
+		{
+			for(It it = first; it != last; ++it)
+				Super::AddInternal(*it, true);
 		}
 	};
 
@@ -1674,6 +1688,168 @@ namespace bs::ecs
 		u32 mLeadingTypeIndex = 0;
 	};
 
+	// TODO - Move to utility header
+	template<typename... Types>
+	struct TTypeList
+	{
+		using Type = TTypeList;
+
+		static constexpr u32 Size = sizeof...(Types);
+	};
+
+	template<typename, typename>
+	struct TTypeListIndexOfHelper;
+
+	template<typename Type, typename First, typename... Other>
+	struct TTypeListIndexOfHelper<Type, TTypeList<First, Other...>>
+	{
+		static constexpr u32 Value = 1u + TTypeListIndexOfHelper<Type, TTypeList<Other...>>::value;
+	};
+
+	template<typename Type, typename... Other>
+	struct TTypeListIndexOfHelper<Type, TTypeList<Type, Other...>>
+	{
+		static constexpr u32 Value = 0u;
+	};
+
+	template<typename Type>
+	struct TTypeListIndexOfHelper<Type, TTypeList<>>
+	{
+		static constexpr u32 Value = 0u;
+	};
+
+	template<typename Type, typename TypeList>
+	using TTypeListIndexOf = typename TTypeListIndexOfHelper<Type, TypeList>::Value;
+
+	template<u32, typename>
+	struct TTypeListElementAtHelper;
+
+	template<u32 Index, typename First, typename... Other>
+	struct TTypeListElementAtHelper<Index, TTypeList<First, Other...>> : TTypeListElementAtHelper<Index - 1u, TTypeList<Other...>>
+	{ };
+
+	template<typename First, typename... Other>
+	struct TTypeListElementAtHelper<0u, TTypeList<First, Other...>>
+	{
+		using Type = First;
+	};
+
+	template<u32 Index, typename List>
+	using TTypeListElementAt = typename TTypeListElementAtHelper<Index, List>::Type;
+
+
+	template<typename... Types>
+	struct TIncludedTypes : TTypeList<Types...>
+	{
+		explicit constexpr TIncludedTypes() = default;
+	};
+
+	template<typename... Types>
+	struct TExcludedTypes : TTypeList<Types...>
+	{
+		explicit constexpr TExcludedTypes() = default;
+	};
+
+	template<typename... Type>
+	static constexpr bool TAllTypesSupportInPlaceDelete = ((sizeof...(Type) == 1u) && ... && (Type::SupportInPlaceDelete));
+
+	template<typename, typename, typename = void>
+	class TView;
+
+	template<typename... IncludedType, typename... ExcludedType>
+	class TView<TIncludedTypes<IncludedType...>, TExcludedTypes<ExcludedType...>, std::enable_if<(sizeof...(IncludedType) != 0u)>> : public TViewCommon<sizeof...(IncludedType), sizeof...(ExcludedType), TAllTypesSupportInPlaceDelete<IncludedType...>>
+	{
+		using Super = TViewCommon<sizeof...(IncludedType), sizeof...(ExcludedType), TAllTypesSupportInPlaceDelete<IncludedType...>>;
+
+		template<u32 Index>
+		using TElementAt = TTypeListElementAt<Index, TTypeList<IncludedType..., ExcludedType...>>;
+
+		template<typename Type>
+		using TIndexOf = TTypeListIndexOf<Type, TTypeList<IncludedType..., ExcludedType...>>;
+		
+	public:
+		TView() = default;
+		TView(IncludedType... includedType, ExcludedType... excludedType)
+			:Super::Super({includedType...}, {excludedType...})
+		{ }
+
+		TView(std::tuple<IncludedType&...> includedTypes, std::tuple<ExcludedType&...> excludedTypes)
+			:TView(std::make_from_tuple<TView>(std::tuple_cat(includedTypes, excludedTypes)))
+		{ }
+
+		template<typename Type>
+		void SetLeadingType()
+		{
+			SetLeadingType<TIndexOf<Type>>();
+		}
+
+		template<u32 Index>
+		void SetLeadingType()
+		{
+			Super::SetExplicitLeadingTypeIndex(Index);
+		}
+
+		template<typename Type>
+		auto* GetStorage() const
+		{
+			return GetStorage<TIndexOf<Type>>();
+		}
+
+		template<u32 Index>
+		auto* GetStorage() const
+		{
+			static_assert(Index < (sizeof...(IncludedType) + sizeof...(ExcludedType)), "Index out of range.");
+
+			if constexpr(Index < sizeof...(IncludedType))
+				return static_cast<TElementAt<Index>*>(Super::GetIncludedTypeStorage(Index));
+
+			return static_cast<TElementAt<Index>*>(Super::GetExcludedTypeStorage(Index - sizeof...(IncludedType)));
+		}
+
+		template<typename Type>
+		void SetStorage(Type& storage)
+		{
+			SetStorage<TIndexOf<Type>>(storage);
+		}
+
+		template<u32 Index, typename Type>
+		void SetStorage(Type& storage)
+		{
+			static_assert(Index < (sizeof...(IncludedType) + sizeof...(ExcludedType)), "Index out of range.");
+			static_assert(std::is_convertible_v<Type, TElementAt<Index>>, "Unsupported type.");
+
+			if constexpr(Index < sizeof...(IncludedType))
+				Super::SetIncludedTypeStorage(Index, &storage);
+			else
+				Super::SetExcludedTypeStorage(Index - sizeof...(IncludedType), &storage);
+		}
+
+		decltype(auto) operator[](Entity entity) const
+		{
+			return Get(entity);
+		}
+
+		template<typename Type, typename... Other>
+		decltype(auto) Get(Entity entity) const
+		{
+			return Get<TIndexOf<Type>, TIndexOf<Other>...>(entity);
+		}
+
+		template<u32... Index>
+		decltype(auto) Get(Entity entity) const
+		{
+			if constexpr(sizeof...(Index) == 0)
+				return std::tuple_cat(std::forward_as_tuple(GetStorage<IncludedType>().Get(entity))...);
+			else if constexpr(sizeof...(Index) == 1)
+				return (GetStorage<Index>().Get(entity), ...);
+			else
+				return std::tuple_cat(std::forward_as_tuple(GetStorage<Index>().Get(entity))...);
+		}
+	};
+
+	// TODO - TView specialization for a single type
+
+
 	class Registry
 	{
 	public:
@@ -1693,7 +1869,7 @@ namespace bs::ecs
 		template<typename Type>
 		const StorageType<Type>* TryGetStorage() const
 		{
-			if constexpr(std::is_same_v<Type, Entity>())
+			if constexpr(std::is_same_v<Type, Entity>)
 				return static_cast<StorageType<Type>*>(&mEntityStorage);
 
 			const typeid_t typeId = type_id<Type>();
@@ -1932,20 +2108,20 @@ namespace bs::ecs
 				return storage != nullptr && storage->Contains(entity);
 			}
 			else
-				return (HasAllOf<ComponentType> && ...);
+				return (HasAllOf<ComponentType>(entity) && ...);
 		}
 
 		template<typename... ComponentType>
 		bool HasAnyOf(Entity entity) const
 		{
-			return (HasAllOf<ComponentType> || ...);
+			return (HasAllOf<ComponentType>(entity) || ...);
 		}
 
 	private:
 		template<typename Type>
 		StorageType<Type>& GetOrCreateStorage()
 		{
-			if constexpr(std::is_same_v<Type, Entity>())
+			if constexpr(std::is_same_v<Type, Entity>)
 				return static_cast<StorageType<Type>&>(mEntityStorage);
 
 			const typeid_t typeId = type_id<Type>();
@@ -1953,11 +2129,11 @@ namespace bs::ecs
 				return static_cast<StorageType<Type>&>(*found->second);
 
 			SPtr<SparseSet> componentStorage;
-			if constexpr(std::is_empty_v<Type>())
+			if constexpr(std::is_empty_v<Type>)
 				componentStorage = B3DMakeShared<TTagSparseSet<Type>>();
 			else
 			{
-				static constexpr bool isTypeMovable = std::is_move_constructible_v<Type>() && std::is_move_assignable_v<Type>();
+				static constexpr bool isTypeMovable = std::is_move_constructible_v<Type> && std::is_move_assignable_v<Type>;
 				componentStorage = B3DMakeShared<TComponentSparseSet<Type, !isTypeMovable>>();
 			}
 
