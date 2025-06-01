@@ -670,6 +670,8 @@ namespace bs::ecs
 	{
 		using Super = SparseSet;
 	public:
+		static constexpr SparseSetDeletePolicy kDeletePolicy = DeletePolicy;
+
 		TSparseSet() = default;
 		~TSparseSet() override = default;
 
@@ -1036,6 +1038,7 @@ namespace bs::ecs
 		using ComponentContainerType = TArray<TArrayView<ComponentType>>;
 
 	public:
+		using ElementType = ComponentType;
 		using Super = TSparseSet<InPlaceDelete ? SparseSetDeletePolicy::InPlace : SparseSetDeletePolicy::SwapAndErase>;
 		using Iterator = TPagedContainerIterator<ComponentContainerType, PackedPageSize>;
 		using ConstIterator = TPagedContainerIterator<const ComponentContainerType, PackedPageSize>;
@@ -1306,6 +1309,7 @@ namespace bs::ecs
 	class TTagSparseSet : public TSparseSet<SparseSetDeletePolicy::SwapAndErase>
 	{
 	public:
+		using ElementType = TagType;
 		using Super = TSparseSet<SparseSetDeletePolicy::SwapAndErase>;
 
 		~TTagSparseSet() override = default;
@@ -1326,6 +1330,7 @@ namespace bs::ecs
 	class EntitySparseSet : public TSparseSet<SparseSetDeletePolicy::SwapOnly>
 	{
 	public:
+		using ElementType = Entity;
 		using Super = TSparseSet<SparseSetDeletePolicy::SwapOnly>;
 
 		~EntitySparseSet() override = default;
@@ -1333,7 +1338,7 @@ namespace bs::ecs
 		Entity Create()
 		{
 			Entity entity = Size() == GetFreeListHead() ? CreateEntity() : mPackedEntities[GetFreeListHead()];
-			return *AddInternal(entity, false);
+			return *Super::AddInternal(entity, false);
 		}
 
 		Entity Create(Entity hint)
@@ -1387,15 +1392,15 @@ namespace bs::ecs
 	struct StorageForType;
 
 	template<typename Type>
-	struct StorageForType<Type, std::enable_if_t<std::conjunction_v<std::is_move_constructible<Type>, std::is_move_assignable<Type>, std::negation<std::is_empty<Type>>>>>
+	struct StorageForType<Type, std::enable_if_t<std::conjunction_v<std::is_move_constructible<std::remove_const_t<Type>>, std::is_move_assignable<std::remove_const_t<Type>>, std::negation<std::is_empty<Type>>>>>
 	{
-		using StorageType = TComponentSparseSet<Type>;
+		using StorageType = TComponentSparseSet<std::remove_const_t<Type>>;
 	};
 
 	template<typename Type>
-	struct StorageForType<Type, std::enable_if_t<std::conjunction_v<std::disjunction<std::negation<std::is_move_constructible<Type>>, std::negation<std::is_move_assignable<Type>>>, std::negation<std::is_empty<Type>>>>>
+	struct StorageForType<Type, std::enable_if_t<std::conjunction_v<std::disjunction<std::negation<std::is_move_constructible<std::remove_const_t<Type>>>, std::negation<std::is_move_assignable<std::remove_const_t<Type>>>>, std::negation<std::is_empty<Type>>>>>
 	{
-		using StorageType = TComponentSparseSet<Type, true>;
+		using StorageType = TComponentSparseSet<std::remove_const_t<Type>, true>;
 	};
 
 	template<typename Type>
@@ -1411,7 +1416,7 @@ namespace bs::ecs
 	};
 
 	template<typename Type>
-	using StorageType = typename StorageForType<Type>::StorageType;
+	using TStorageType = typename StorageForType<Type>::StorageType;
 
 	template<typename It>
 	static bool IsEntityPartOfAll(It first, It last, Entity entity)
@@ -1479,6 +1484,7 @@ namespace bs::ecs
 		}
 
 		friend constexpr bool operator==(const TViewIterator& lhs, const TViewIterator& rhs) noexcept;
+		friend constexpr bool operator!=(const TViewIterator& lhs, const TViewIterator& rhs) noexcept;
 
 	private:
 		void SeekToNextValidEntry()
@@ -1590,6 +1596,12 @@ namespace bs::ecs
 			return true;
 		}
 
+		// For std compatibility
+		using iterator = Iterator;
+
+		iterator begin() { return Begin(); }
+		iterator end() { return End(); }
+
 	protected:
 		TViewCommon()
 		{
@@ -1636,7 +1648,7 @@ namespace bs::ecs
 				RefreshLeadingTypeIndex();
 		}
 
-		const SparseSet* GetIncludedTypeStorage(u32 index)
+		const SparseSet* GetIncludedTypeStorage(u32 index) const
 		{
 			return mIncludedTypeStorage[index];
 		}
@@ -1649,7 +1661,7 @@ namespace bs::ecs
 			RefreshLeadingTypeIndexIfNeeded();
 		}
 
-		const SparseSet* GetExcludedTypeStorage(u32 index)
+		const SparseSet* GetExcludedTypeStorage(u32 index) const
 		{
 			return mExcludedTypeStorage[index] == GetPlaceholderStorage() ? nullptr : mExcludedTypeStorage[index];
 		}
@@ -1703,7 +1715,7 @@ namespace bs::ecs
 	template<typename Type, typename First, typename... Other>
 	struct TTypeListIndexOfHelper<Type, TTypeList<First, Other...>>
 	{
-		static constexpr u32 Value = 1u + TTypeListIndexOfHelper<Type, TTypeList<Other...>>::value;
+		static constexpr u32 Value = 1u + TTypeListIndexOfHelper<Type, TTypeList<Other...>>::Value;
 	};
 
 	template<typename Type, typename... Other>
@@ -1719,7 +1731,7 @@ namespace bs::ecs
 	};
 
 	template<typename Type, typename TypeList>
-	using TTypeListIndexOf = typename TTypeListIndexOfHelper<Type, TypeList>::Value;
+	constexpr bool TTypeListIndexOf = TTypeListIndexOfHelper<Type, TypeList>::Value;
 
 	template<u32, typename>
 	struct TTypeListElementAtHelper;
@@ -1750,22 +1762,37 @@ namespace bs::ecs
 		explicit constexpr TExcludedTypes() = default;
 	};
 
+	template<typename T, typename From>
+	struct TInheritConstFromHelper
+	{
+		using Type = std::remove_const_t<T>;
+	};
+
+	template<typename T, typename From>
+	struct TInheritConstFromHelper<T, const From>
+	{
+		using Type = const T;
+	};
+
+	template<typename T, typename From>
+	using TInheritConstFrom = typename TInheritConstFromHelper<T, From>::Type;
+
 	template<typename... Type>
-	static constexpr bool TAllTypesSupportInPlaceDelete = ((sizeof...(Type) == 1u) && ... && (Type::SupportInPlaceDelete));
+	static constexpr bool TAllTypesUseInPlaceDelete = ((sizeof...(Type) == 1u) && ... && (Type::kDeletePolicy == SparseSetDeletePolicy::InPlace));
 
 	template<typename, typename, typename = void>
 	class TView;
 
 	template<typename... IncludedType, typename... ExcludedType>
-	class TView<TIncludedTypes<IncludedType...>, TExcludedTypes<ExcludedType...>, std::enable_if<(sizeof...(IncludedType) != 0u)>> : public TViewCommon<sizeof...(IncludedType), sizeof...(ExcludedType), TAllTypesSupportInPlaceDelete<IncludedType...>>
+	class TView<TIncludedTypes<IncludedType...>, TExcludedTypes<ExcludedType...>, std::enable_if_t<(sizeof...(IncludedType) != 0u)>> : public TViewCommon<sizeof...(IncludedType), sizeof...(ExcludedType), TAllTypesUseInPlaceDelete<IncludedType...>>
 	{
-		using Super = TViewCommon<sizeof...(IncludedType), sizeof...(ExcludedType), TAllTypesSupportInPlaceDelete<IncludedType...>>;
+		using Super = TViewCommon<sizeof...(IncludedType), sizeof...(ExcludedType), TAllTypesUseInPlaceDelete<IncludedType...>>;
 
 		template<u32 Index>
 		using TElementAt = TTypeListElementAt<Index, TTypeList<IncludedType..., ExcludedType...>>;
 
 		template<typename Type>
-		using TIndexOf = TTypeListIndexOf<Type, TTypeList<IncludedType..., ExcludedType...>>;
+		static constexpr bool TIndexOf = TTypeListIndexOf<std::remove_const_t<Type>, TTypeList<typename IncludedType::ElementType..., typename ExcludedType::ElementType...>>;
 		
 	public:
 		TView() = default;
@@ -1801,15 +1828,15 @@ namespace bs::ecs
 			static_assert(Index < (sizeof...(IncludedType) + sizeof...(ExcludedType)), "Index out of range.");
 
 			if constexpr(Index < sizeof...(IncludedType))
-				return static_cast<TElementAt<Index>*>(Super::GetIncludedTypeStorage(Index));
-
-			return static_cast<TElementAt<Index>*>(Super::GetExcludedTypeStorage(Index - sizeof...(IncludedType)));
+				return static_cast<TElementAt<Index>*>(const_cast<TInheritConstFrom<SparseSet, TElementAt<Index>>*>(Super::GetIncludedTypeStorage(Index)));
+			else
+				return static_cast<TElementAt<Index>*>(const_cast<TInheritConstFrom<SparseSet, TElementAt<Index>>*>(Super::GetExcludedTypeStorage(Index - sizeof...(IncludedType))));
 		}
 
 		template<typename Type>
 		void SetStorage(Type& storage)
 		{
-			SetStorage<TIndexOf<Type>>(storage);
+			SetStorage<TIndexOf<typename Type::ElementType>>(storage);
 		}
 
 		template<u32 Index, typename Type>
@@ -1839,11 +1866,11 @@ namespace bs::ecs
 		decltype(auto) Get(Entity entity) const
 		{
 			if constexpr(sizeof...(Index) == 0)
-				return std::tuple_cat(std::forward_as_tuple(GetStorage<IncludedType>().Get(entity))...);
+				return std::tuple_cat(std::forward_as_tuple(GetStorage<IncludedType::ElementType>()->Get(entity))...);
 			else if constexpr(sizeof...(Index) == 1)
-				return (GetStorage<Index>().Get(entity), ...);
+				return (GetStorage<Index>()->Get(entity), ...);
 			else
-				return std::tuple_cat(std::forward_as_tuple(GetStorage<Index>().Get(entity))...);
+				return std::tuple_cat(std::forward_as_tuple(GetStorage<Index>()->Get(entity))...);
 		}
 	};
 
@@ -1867,22 +1894,22 @@ namespace bs::ecs
 		}
 
 		template<typename Type>
-		const StorageType<Type>* TryGetStorage() const
+		const TStorageType<Type>* TryGetStorage() const
 		{
 			if constexpr(std::is_same_v<Type, Entity>)
-				return static_cast<StorageType<Type>*>(&mEntityStorage);
+				return static_cast<const TStorageType<Type>*>(&mEntityStorage);
 
 			const typeid_t typeId = type_id<Type>();
 			if(auto found = mComponentStorage.find(typeId); found != mComponentStorage.end())
-				return static_cast<StorageType<Type>*>(found->second.get());
+				return static_cast<const TStorageType<Type>*>(found->second.get());
 
 			return nullptr;
 		}
 
 		template<typename Type>
-		StorageType<Type>* TryGetStorage()
+		TStorageType<Type>* TryGetStorage()
 		{
-			return const_cast<StorageType<Type>*>(std::as_const(*this).TryGetStorage<Type>());
+			return const_cast<TStorageType<Type>*>(std::as_const(*this).TryGetStorage<Type>());
 		}
 
 		bool RemoveStorage(typeid_t typeId)
@@ -2072,6 +2099,33 @@ namespace bs::ecs
 			return storage.Contains(entity) ? storage.Get(entity) : storage.Add(entity, std::forward<Arguments>(arguments)...);
 		}
 
+		template<typename FirstIncludedType, typename... OtherIncludedType, typename... ExcludedType>
+		TView<TIncludedTypes<TStorageType<const FirstIncludedType>, TStorageType<const OtherIncludedType>...>, TExcludedTypes<TStorageType<const ExcludedType>...>>
+		CreateView(TExcludedTypes<ExcludedType...> = TExcludedTypes<ExcludedType...>{}) const
+		{
+			TView<TIncludedTypes<TStorageType<const FirstIncludedType>, TStorageType<const OtherIncludedType>...>, TExcludedTypes<TStorageType<const ExcludedType>...>> view;
+
+			[&view](const auto*... storage)
+			{
+				((storage != nullptr ? view.SetStorage(*storage) : void()), ...);
+			}(TryGetStorage<std::remove_const_t<FirstIncludedType>>(), TryGetStorage<std::remove_const_t<OtherIncludedType>>()..., TryGetStorage<std::remove_const_t<ExcludedType>>()...);
+
+			return view;
+		}
+
+		template<typename FirstIncludedType, typename... OtherIncludedType, typename... ExcludedType>
+		TView<TIncludedTypes<TStorageType<FirstIncludedType>, TStorageType<OtherIncludedType>...>, TExcludedTypes<TStorageType<ExcludedType>...>>
+		CreateView(TExcludedTypes<ExcludedType...> = TExcludedTypes<ExcludedType...>{}) 
+		{
+			TView<TIncludedTypes<TStorageType<FirstIncludedType>, TStorageType<OtherIncludedType>...>, TExcludedTypes<TStorageType<ExcludedType>...>> view;
+
+			view.SetStorage(GetOrCreateStorage<std::remove_const_t<FirstIncludedType>>());
+			(view.SetStorage(GetOrCreateStorage<std::remove_const_t<OtherIncludedType>>()), ...);
+			(view.SetStorage(GetOrCreateStorage<std::remove_const_t<ExcludedType>>()), ...);
+
+			return view;
+		}
+
 		template<typename Type, typename ComparisonFunction = std::less<>>
 		void Sort()
 		{
@@ -2119,14 +2173,14 @@ namespace bs::ecs
 
 	private:
 		template<typename Type>
-		StorageType<Type>& GetOrCreateStorage()
+		TStorageType<Type>& GetOrCreateStorage()
 		{
 			if constexpr(std::is_same_v<Type, Entity>)
-				return static_cast<StorageType<Type>&>(mEntityStorage);
+				return static_cast<TStorageType<Type>&>(mEntityStorage);
 
 			const typeid_t typeId = type_id<Type>();
 			if(auto found = mComponentStorage.find(typeId); found != mComponentStorage.end())
-				return static_cast<StorageType<Type>&>(*found->second);
+				return static_cast<TStorageType<Type>&>(*found->second);
 
 			SPtr<SparseSet> componentStorage;
 			if constexpr(std::is_empty_v<Type>)
@@ -2138,7 +2192,7 @@ namespace bs::ecs
 			}
 
 			mComponentStorage[typeId] = componentStorage;
-			return static_cast<StorageType<Type>&>(*componentStorage);
+			return static_cast<TStorageType<Type>&>(*componentStorage);
 		}
 
 		EntitySparseSet mEntityStorage;

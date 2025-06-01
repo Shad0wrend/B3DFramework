@@ -259,7 +259,7 @@ namespace bs
 	}
 
 	/** Frees all the bytes allocated at the specified location. */
-	template <class AllocatorTag>
+	template <class AllocatorTag = DefaultAllocatorTag>
 	void B3DFree(void* ptr)
 	{
 		MemoryAllocator<AllocatorTag>::Free(ptr);

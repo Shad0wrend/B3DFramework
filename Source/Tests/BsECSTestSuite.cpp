@@ -179,7 +179,7 @@ static void RunComponentTests(ECSTestSuite& testSuite)
 	static constexpr bool kIsTypeMovable = std::is_move_constructible_v<ComponentType> && std::is_move_assignable_v<ComponentType>;
 	static constexpr bool kIsTypeEmpty = std::is_empty_v<ComponentType>;
 
-	StorageType<ComponentType> componentSparseSet;
+	TStorageType<ComponentType> componentSparseSet;
 	componentSparseSet.Reserve(10);
 
 	u32 index = 0;
@@ -282,10 +282,10 @@ void ECSTestSuite::TestComponentSparseSet()
 	using namespace test;
 
 	static_assert(std::is_move_constructible_v<Position> && std::is_move_assignable_v<Position>);
-	static_assert(std::is_same_v<StorageType<Position>, TComponentSparseSet<Position>>, "Invalid storage type");
-	static_assert(std::is_same_v<StorageType<NonMovablePosition>, TComponentSparseSet<NonMovablePosition, true>>, "Invalid storage type");
-	static_assert(std::is_same_v<StorageType<IsEnemyTag>, TTagSparseSet<IsEnemyTag>>, "Invalid storage type");
-	static_assert(std::is_same_v<StorageType<Entity>, EntitySparseSet>, "Invalid storage type");
+	static_assert(std::is_same_v<TStorageType<Position>, TComponentSparseSet<Position>>, "Invalid storage type");
+	static_assert(std::is_same_v<TStorageType<NonMovablePosition>, TComponentSparseSet<NonMovablePosition, true>>, "Invalid storage type");
+	static_assert(std::is_same_v<TStorageType<IsEnemyTag>, TTagSparseSet<IsEnemyTag>>, "Invalid storage type");
+	static_assert(std::is_same_v<TStorageType<Entity>, EntitySparseSet>, "Invalid storage type");
 
 	RunComponentTests<Position>(*this);
 	RunComponentTests<NonMovablePosition>(*this);
@@ -343,14 +343,19 @@ void ECSTestSuite::TestRegistry()
 #define COMMA ,
 	Registry registry;
 
-	static constexpr u32 kEntityCount = 20;
-	static constexpr u32 kEntityWithVelocityCount = 20;
+	static constexpr u32 kEntityCount = 30;
+	static constexpr u32 kEntityWithPositionCount = 20;
+	static constexpr u32 kEntityWithVelocityCount = 10;
 	std::array<Entity, kEntityCount> entities;
 
 	for(u32 i = 0; i < kEntityCount; ++i)
 	{
 		entities[i] = registry.CreateEntity();
-		registry.AddComponent<test::Position>(entities[i], 1.0f, 2.0f, 3.0f);
+	}
+
+	for(u32 i = 0; i < kEntityWithPositionCount; ++i)
+	{
+		registry.AddComponent<test::Position>(entities[i], (float)i + 1.0f, (float)i + 2.0f, (float)i + 3.0f);
 	}
 
 	registry.AddComponents(entities.begin(), entities.begin() + kEntityWithVelocityCount, test::Velocity(5.0f, 5.0f, 5.0f));
@@ -358,32 +363,158 @@ void ECSTestSuite::TestRegistry()
 	for(u32 i = 0; i < kEntityCount; ++i)
 	{
 		B3D_TEST_ASSERT(registry.IsEntityValid(entities[i]))
-		B3D_TEST_ASSERT(registry.HasAnyOf<test::Position COMMA test::Velocity>(entities[i]));
+		B3D_TEST_ASSERT(registry.GetEntityVersion(entities[i]) == 0)
+
+		if(i < kEntityWithPositionCount)
+		{
+			B3D_TEST_ASSERT(registry.HasEntityAnyComponents(entities[i]));
+			B3D_TEST_ASSERT(registry.HasAnyOf<test::Position COMMA test::Velocity>(entities[i]));
+
+			const test::Position& position = registry.GetComponents<const test::Position>(entities[i]);
+			B3D_TEST_ASSERT(position == test::Position((float)i + 1.0f, (float)i + 2.0f, (float)i + 3.0f));
+		}
 
 		if(i < kEntityWithVelocityCount)
+		{
+			B3D_TEST_ASSERT(registry.HasAllOf<test::Position COMMA test::Velocity>(entities[i]))
+		}
+	}
+
+	registry.RemoveComponents<test::Velocity>(&entities[5], &entities[10]);
+
+	for(u32 i = 0; i < kEntityWithVelocityCount; ++i)
+	{
+		if(i < 5)
 		{
 			B3D_TEST_ASSERT(registry.HasAllOf<test::Position COMMA test::Velocity>(entities[i]))
 		}
 		else
 		{
 			B3D_TEST_ASSERT(registry.HasAllOf<test::Position>(entities[i]))
+			B3D_TEST_ASSERT(!registry.HasAllOf<test::Velocity>(entities[i]))
 		}
-
-		// TODO - HasEntityAnyComponents
-		// TODO - GetEntityVersion
 	}
 
-	// TODO
-	// - GetComponent(s)
-	// - DestroyEntity
-	// - RemoveComponent(s)
-	// - Shink
-	// - ClearStorage
-	// - TryGetStorage
-	// - RemoveStorage
+	registry.DestroyEntities(&entities[8], &entities[12]);
+
+	for(u32 i = 0; i < kEntityCount; ++i)
+	{
+		if(i < 8 || i >= 12)
+		{
+			B3D_TEST_ASSERT(registry.IsEntityValid(entities[i]))
+		}
+		else
+		{
+			B3D_TEST_ASSERT(!registry.IsEntityValid(entities[i]))
+		}
+	}
+
+	const Entity oldEntity10 = entities[10];
+	const Entity oldEntity11 = entities[11];
+
+	entities[10] = registry.CreateEntity(oldEntity10);
+	registry.Shrink();
+
+	entities[11] = registry.CreateEntity(oldEntity11);
+
+	B3D_TEST_ASSERT(!registry.IsEntityValid(oldEntity10))
+	B3D_TEST_ASSERT(!registry.IsEntityValid(oldEntity11))
+
+	B3D_TEST_ASSERT(registry.IsEntityValid(entities[10]))
+	B3D_TEST_ASSERT(registry.IsEntityValid(entities[11]))
+
+	B3D_TEST_ASSERT(registry.GetEntityVersion(entities[10]) == 1)
+	B3D_TEST_ASSERT(registry.GetEntityVersion(entities[11]) == 1)
+
+	B3D_TEST_ASSERT(!registry.HasEntityAnyComponents(entities[10]))
+	B3D_TEST_ASSERT(!registry.HasEntityAnyComponents(entities[11]))
+
+	registry.ClearStorage<test::Velocity>();
+
+	TComponentSparseSet<test::Velocity>* velocityStorage = registry.TryGetStorage<test::Velocity>();
+	B3D_TEST_ASSERT(velocityStorage != nullptr)
+	B3D_TEST_ASSERT(velocityStorage->Size() == 0)
+
+	TComponentSparseSet<test::Position>* positionStorage = registry.TryGetStorage<test::Position>();
+	B3D_TEST_ASSERT(positionStorage != nullptr)
+	B3D_TEST_ASSERT(positionStorage->Size() == 16)
+
+	for(u32 i = 0; i < kEntityWithPositionCount; ++i)
+	{
+		if(i < 8 || i >= 12)
+		{
+			B3D_TEST_ASSERT(!registry.HasAnyOf<test::Velocity>(entities[i]))
+			B3D_TEST_ASSERT(registry.HasAnyOf<test::Position>(entities[i]))
+		}
+	}
+
+	registry.RemoveStorage<test::Velocity>();
+	B3D_TEST_ASSERT(registry.TryGetStorage<test::Velocity>() == nullptr)
+
+	registry.RemoveStorage<test::Position>();
+	for(u32 i = 0; i < kEntityCount; ++i)
+	{
+		if(i < 8 || i >= 10)
+		{
+			B3D_TEST_ASSERT(!registry.HasAnyOf<test::Velocity COMMA test::Position>(entities[i]))
+		}
+	}
+
+	const EntitySparseSet* entityStorage = registry.TryGetStorage<Entity>();
+	B3D_TEST_ASSERT(entityStorage != nullptr)
+	B3D_TEST_ASSERT(entityStorage->Size() == 30)
+
+	registry.Clear();
+	registry.Shrink<Entity>();
+	B3D_TEST_ASSERT(entityStorage->Size() == 0)
 }
+
+//template<typename... Type>
+//TView(Type &...storage) -> TView<TIncludedTypes<Type...>, TExcludedTypes<>>;
+//
+//template<typename... Get, typename... Exclude>
+//TView(std::tuple<Get &...>, std::tuple<Exclude &...> = {}) -> TView<TIncludedTypes<Get...>, TExcludedTypes<Exclude...>>;
 
 void ECSTestSuite::TestViews()
 {
+	using TestTypeList = TTypeList<test::Position, test::Velocity>;
+	static_assert(TTypeListIndexOf<test::Position, TestTypeList> == 0);
+	static_assert(TTypeListIndexOf<test::Velocity, TestTypeList> == 1);
+	static_assert(std::is_same_v<TTypeListElementAt<0, TestTypeList>, test::Position>);
+	static_assert(std::is_same_v<TTypeListElementAt<1, TestTypeList>, test::Velocity>);
 
+	Registry registry;
+
+	static constexpr u32 kEntityCount = 30;
+	static constexpr u32 kEntityWithPositionCount = 20;
+	static constexpr u32 kEntityWithVelocityCount = 10;
+	std::array<Entity, kEntityCount> entities;
+
+	for(u32 i = 0; i < kEntityCount; ++i)
+	{
+		entities[i] = registry.CreateEntity();
+	}
+
+	for(u32 i = 0; i < kEntityWithPositionCount; ++i)
+	{
+		registry.AddComponent<test::Position>(entities[i], (float)i + 1.0f, (float)i + 2.0f, (float)i + 3.0f);
+	}
+
+	registry.AddComponents(entities.begin(), entities.begin() + kEntityWithVelocityCount, test::Velocity(5.0f, 5.0f, 5.0f));
+
+	const Registry& constRegistry = registry;
+	auto positionVelocityView = constRegistry.CreateView<test::Position, test::Velocity>();
+
+	for(const auto& entity : positionVelocityView)
+	{
+		auto tuple = positionVelocityView.Get<test::Position, test::Velocity>(entity);
+		auto tuple2 = positionVelocityView.Get(entity);
+
+		test::Position& position3 = positionVelocityView.GetStorage<test::Position>()->Get(entity);
+		test::Position& position2 = positionVelocityView.GetStorage<0>()->Get(entity);
+		test::Position& position1 = positionVelocityView.Get<test::Position>(entity);
+		test::Position& position = std::get<0>(tuple);
+		test::Position& position4 = std::get<0>(tuple2);
+		test::Velocity& velocity = std::get<1>(tuple);
+	}
 }
