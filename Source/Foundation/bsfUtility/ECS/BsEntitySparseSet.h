@@ -1561,7 +1561,7 @@ namespace bs::ecs
 			while (it != last && !DoesEntityMatchViewFilter(*it))
 				++it;
 
-			return it != last() ? *it : kNullEntity;
+			return it != last ? *it : kNullEntity;
 		}
 
 		Iterator Find(Entity entity)
@@ -1800,7 +1800,7 @@ namespace bs::ecs
 			:Super::Super({includedType...}, {excludedType...})
 		{ }
 
-		TView(std::tuple<IncludedStorageType&...> includedTypes, std::tuple<ExcludedStorageType&...> excludedTypes)
+		TView(std::tuple<IncludedStorageType&...> includedTypes, std::tuple<ExcludedStorageType&...> excludedTypes = {})
 			:TView(std::make_from_tuple<TView>(std::tuple_cat(includedTypes, excludedTypes)))
 		{ }
 
@@ -1874,8 +1874,202 @@ namespace bs::ecs
 		}
 	};
 
-	// TODO - TView specialization for a single type
+	template<typename StorageType>
+	class TSingleStorageViewCommon
+	{
+	public:
+		using Iterator = std::conditional_t<StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace, TViewIterator<1u, 0u, true>, typename StorageType::Iterator>;
+		using ReverseIterator = std::conditional_t<StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace, void, typename StorageType::ReverseIterator>;
 
+		const StorageType* GetLeadingTypeStorage() const
+		{
+			return mStorage;
+		}
+
+		u64 GetSizeEstimate() const
+		{
+			if(mStorage == nullptr)
+				return 0;
+
+			return StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapOnly ? mStorage->GetFreeListHead() : mStorage->Size();
+		}
+
+		Iterator Begin() const
+		{
+			if(mStorage == nullptr)
+				return Iterator();
+
+			if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace)
+				return Iterator(mStorage->Begin(), { mStorage }, { }, 0);
+			else
+				return mStorage->Begin();
+		}
+
+		Iterator End() const
+		{
+			if(mStorage == nullptr)
+				return Iterator();
+
+			if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapAndErase)
+				return mStorage->End();
+			else if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace)
+				return Iterator(mStorage->End(), { mStorage }, { }, 0);
+			else
+				return mStorage->Begin() + mStorage->GetFreeListHead();
+		}
+
+		template<SparseSetDeletePolicy DeletePolicy = StorageType::kDeletePolicy>
+		std::enable_if_t<DeletePolicy != SparseSetDeletePolicy::InPlace, ReverseIterator> Rbegin() const
+		{
+			return mStorage != nullptr ? mStorage->Rbegin() : ReverseIterator();
+		}
+
+		template<SparseSetDeletePolicy DeletePolicy = StorageType::kDeletePolicy>
+		std::enable_if_t<DeletePolicy != SparseSetDeletePolicy::InPlace, ReverseIterator> Rend() const
+		{
+			if(mStorage == nullptr)
+				return Iterator();
+
+			if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapAndErase)
+				return mStorage->Rend();
+			else
+				return mStorage != nullptr ? mStorage->Rbegin() + mStorage->GetFreeListHead() : ReverseIterator();
+		}
+
+		Entity Front() const
+		{
+			auto it = Begin();
+			return  it != End() ? *it : kNullEntity;
+		}
+
+		Entity Back() const
+		{
+			if(mStorage == nullptr)
+				return kNullEntity;
+
+			auto it = mStorage->Rbegin();
+			const auto last = it + GetSizeEstimate();
+
+			while (it != last && *it == kInvalidEntity)
+				++it;
+
+			return it != last ? *it : kNullEntity;
+		}
+
+		Iterator Find(Entity entity)
+		{
+			if(mStorage == nullptr)
+				return End();
+
+			if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapAndErase)
+				return mStorage->Find(entity);
+			else if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapOnly)
+			{
+				auto it = mStorage->Find(entity);
+				return it->Index() < mStorage->GetFreeListHead() ? *it : End();
+			}
+			else
+				return Iterator(mStorage->Find(entity), { mStorage }, {}, 0);
+		}
+
+		bool Contains(Entity entity)
+		{
+			if(mStorage == nullptr)
+				return false;
+
+			if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapAndErase || StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace)
+				return mStorage->Contains(entity);
+			else
+				return mStorage->Contains(entity) && mStorage->GetPackedIndex(entity) < mStorage->GetFreeListHead();
+		}
+
+		bool IsValid()
+		{
+			return mStorage != nullptr;
+		}
+
+		// For std compatibility
+		using iterator = Iterator;
+		using reverse_iterator = ReverseIterator;
+
+		iterator begin() { return Begin(); }
+		iterator end() { return End(); }
+		reverse_iterator rbegin() { return Rbegin(); }
+		reverse_iterator rend() { return Rend(); }
+
+	protected:
+		TSingleStorageViewCommon() = default;
+		TSingleStorageViewCommon(const StorageType* storage)
+			:mStorage(storage)
+		{ }
+
+	protected:
+		const StorageType* mStorage = nullptr;
+	};
+
+	template<typename StorageType>
+	class TView<TIncludedTypes<StorageType>, TExcludedTypes<>> : public TSingleStorageViewCommon<StorageType>
+	{
+		using Super = TSingleStorageViewCommon<StorageType>;
+
+	public:
+		TView() = default;
+		TView(StorageType& storage)
+			:Super::Super(&storage)
+		{ }
+
+		TView(std::tuple<StorageType&> includedTypes, std::tuple<> excludedTypes = {})
+			:TView(std::get<0>(includedTypes))
+		{ }
+
+		template<typename ElementType = typename StorageType::ElementType>
+		auto* GetStorage() const
+		{
+			return GetStorage<0>();
+		}
+
+		template<u32 Index>
+		auto* GetStorage() const
+		{
+			static_assert(Index == 0, "Index out of range.");
+
+			return static_cast<StorageType*>(const_cast<TInheritConstFrom<SparseSet, StorageType>*>(Super::GetLeadingTypeStorage()));
+		}
+
+		void SetStorage(StorageType& storage)
+		{
+			SetStorage<0>(storage);
+		}
+
+		template<u32 Index>
+		void SetStorage(StorageType& storage)
+		{
+			static_assert(Index == 0, "Index out of range.");
+
+			this->mStorage = &storage;
+		}
+
+		decltype(auto) operator[](Entity entity) const
+		{
+			return GetStorage()->Get(entity);
+		}
+
+		template<typename ElementType>
+		decltype(auto) Get(Entity entity) const
+		{
+			static_assert(std::is_same_v<std::remove_const_t<ElementType>, typename StorageType::ElementType>, "Invalid element type.");
+			return Get<0>(entity);
+		}
+
+		template<u32... Index>
+		decltype(auto) Get(Entity entity) const
+		{
+			if constexpr(sizeof...(Index) == 0)
+				return std::forward_as_tuple(GetStorage()->Get(entity));
+			else
+				return GetStorage<Index...>()->Get(entity);
+		}
+	};
 
 	class Registry
 	{
