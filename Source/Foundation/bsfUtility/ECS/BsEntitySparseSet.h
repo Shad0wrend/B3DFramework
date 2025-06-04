@@ -16,13 +16,7 @@ namespace bs::ecs
 	// Note: Based on EnTT (https://github.com/skypjack/entt)
 
 	// TODO - Move to utility library
-	template<typename Type>
-	constexpr std::enable_if_t<std::is_unsigned_v<Type>, u32> CountBits(Type value)
-	{
-		return value ? ((u32)(value & 1) + CountBits(static_cast<Type>(value >> 1))) : 0;
-	}
-
-	// TODO - Move to utility library
+	// TODO - Needs fixing to work on a cross-dll boundary
 	using typeidfn_t = void(*)();
 	using typeid_t = u64;
 
@@ -40,6 +34,7 @@ namespace bs::ecs
 	  return (u64)&type_id;
 	}
 
+	/** Provides information about a backing type for an Entity. */
 	template<typename>
 	struct TEntityTypeTraits;
 
@@ -52,8 +47,6 @@ namespace bs::ecs
 
 		static constexpr u32 kIdentifierBitCount = 20;
 		static constexpr u32 kVersionBitCount  = 12;
-		static constexpr StorageType kIdentifierMask = (1 << kIdentifierBitCount) - 1;
-		static constexpr StorageType kVersionMask = (1 << kVersionBitCount) - 1;
 	};
 
 	template<>
@@ -67,6 +60,12 @@ namespace bs::ecs
 		static constexpr u32 kVersionBitCount  = 32;
 	};
 
+	/**
+	 * Represents a single entity in the ECS system. Each entity can have zero or multiple components associated with it. Each entity has a unique
+	 * identifier and a version field. Version field gets incremented if an entity is destroyed and then its identifier gets re-used.
+	 *
+	 * @tparam		Type Backing type for the entity, normally 32-bit or 64-bit unsigned integer. Use a larger integer if you require larger number of entities.
+	 */
 	template<typename Type>
 	struct TEntity
 	{
@@ -75,16 +74,19 @@ namespace bs::ecs
 		using IdentifierType = typename Traits::IdentifierType;
 		using VersionType = typename Traits::VersionType;
 
+		/** Masks the bits for the identifier portion of the entity. Identifier is guaranteed to start at the lowest bit. */
 		static constexpr StorageType kIdentifierMask = (1 << Traits::kIdentifierBitCount) - 1;
+
+		/** Masks the bits for the version portion of the entity. Version is guaranteed to start after the highest identifier bit. */
 		static constexpr StorageType kVersionMask = (1 << Traits::kVersionBitCount) - 1;
 
 		constexpr TEntity() = default;
 		constexpr TEntity(IdentifierType identifier, VersionType version)
 		{
-			if constexpr(Traits::kVersionMask == 0u)
-				IdentifierAndVersion = (Type)(identifier & Traits::kIdentifierMask);
+			if constexpr(kVersionMask == 0u)
+				IdentifierAndVersion = (Type)(identifier & kIdentifierMask);
 			else
-				IdentifierAndVersion = ((Type)(identifier & Traits::kIdentifierMask)) | (((Type)(version & Traits::kVersionMask)) << Traits::kIdentifierBitCount);
+				IdentifierAndVersion = ((Type)(identifier & kIdentifierMask)) | (((Type)(version & kVersionMask)) << Traits::kIdentifierBitCount);
 		}
 
 		bool operator==(TEntity other) const
@@ -102,19 +104,22 @@ namespace bs::ecs
 			return Identifier < other.Identifier;
 		}
 
+		/** Returns the unique identifier of the entity. */
 		constexpr IdentifierType GetIdentifier() const
 		{
-			return (IdentifierType)(IdentifierAndVersion) & Traits::kIdentifierMask;
+			return (IdentifierType)(IdentifierAndVersion) & kIdentifierMask;
 		}
 
+		/** Returns the current version of the entity. This will be incremented each time an entity is destroyed and its identifier gets re-used. */
 		constexpr VersionType GetVersion() const
 		{
-			if constexpr(Traits::kVersionMask == 0u)
+			if constexpr(kVersionMask == 0u)
 				return VersionType{};
 
-			return (Traits::VersionType)(IdentifierAndVersion >> Traits::kIdentifierBitCount) & Traits::kVersionMask;
+			return (Traits::VersionType)(IdentifierAndVersion >> Traits::kIdentifierBitCount) & kVersionMask;
 		}
 
+		/** Returns the entity with the same identifier, but with the version incremented by one. */
 		constexpr TEntity GetAsNextVersion() const
 		{
 			return TEntity(GetIdentifier(), GetVersion() + 1);
@@ -141,13 +146,16 @@ namespace bs::ecs
 	using Entity = TEntity<u32>;
 #endif
 
-	// TODO - Doc
+	/**
+	 * Helper structure that represents a null Entity. Null entity is any entity with the highest allowed identifier value.
+	 * Version is ignored when comparing against a null entity.
+	 */
 	struct NullEntity
 	{
 		template<typename Type>
 		constexpr operator TEntity<Type>() const
 		{
-			return TEntity<Type>(TEntity<Type>::Traits::kIdentifierMask, TEntity<Type>::Traits::kVersionMask);
+			return TEntity<Type>(TEntity<Type>::kIdentifierMask, TEntity<Type>::kVersionMask);
 		}
 
 		constexpr bool operator==(NullEntity) const
@@ -185,13 +193,16 @@ namespace bs::ecs
 		return !(rhs == lhs);
 	}
 
-	// TODO - Doc
+	/**
+	 * Helper structure that represents an invalid (usually deleted) Entity. Invalid entity is any entity with the highest allowed version value.
+	 * Identifier is ignored when comparing against an invalid entity.
+	 */
 	struct InvalidEntity
 	{
 		template<typename Type>
 		constexpr operator TEntity<Type>() const
 		{
-			return TEntity<Type>(TEntity<Type>::Traits::kIdentifierMask, TEntity<Type>::Traits::kVersionMask);
+			return TEntity<Type>(TEntity<Type>::kIdentifierMask, TEntity<Type>::kVersionMask);
 		}
 
 		constexpr bool operator==(InvalidEntity) const
@@ -207,7 +218,7 @@ namespace bs::ecs
 		template<typename Type>
 		constexpr bool operator==(TEntity<Type> value) const
 		{
-			if constexpr(TEntityTypeTraits<Type>::kVersionMask == 0u)
+			if constexpr(TEntity<Type>::kVersionMask == 0u)
 				return false;
 
 			return value.GetVersion() == ((TEntity<Type>)*this).GetVersion();
@@ -232,9 +243,13 @@ namespace bs::ecs
 		return !(rhs == lhs);
 	}
 
+	/** @copydoc NullEntity */
 	inline constexpr NullEntity kNullEntity;
+
+	/** @copydoc InvalidEntity */
 	inline constexpr InvalidEntity kInvalidEntity;
 
+	/** Iterator that allows iteration over a container whose contents are contiguous in memory. */
 	template<typename ContainerType>
 	struct TContiguousContainerIterator final
 	{
@@ -343,15 +358,46 @@ namespace bs::ecs
 		return !(lhs < rhs);
 	}
 
-	// TODO - Doc
+	/** Determines how are entries treated when they are removed from a sparse set. */
 	enum class SparseSetDeletePolicy
 	{
+		/**
+		 * Entry will be deleted in place. Its value will be replaced with an invalid entity. Next time a new entry is allocated the entry may be re-used,
+		 * in which case its entity version will be incremented. This policy is usually not suggested as it prevents fast iteration over the contents
+		 * (as checks need to be made for deleted entries), but may be required in case the stored object does not support move operations.
+		 */
 		InPlace,
+
+		/**
+		 * Entry will be swapped with the last entry in the container, and then removed form the container. Entries will never be re-used.
+		 * This is usually used for component storage.
+		 */
 		SwapAndErase,
+
+		/**
+		 * Entry will be swapped with the last entry in the container. This results in all valid entries being stored in the first part of the container,
+		 * and all invalid entries stored in the last part of the container. When iterating such a container you need to retrieve the number of valid
+		 * entries and only iterate up to that point, rather than the whole container. Deleted entries may be re-used, in which case the entity
+		 * version will be incremented. This is usually used for entity storage.
+		 */
 		SwapOnly
 	};
 
-	class SparseSet
+	/**
+	 * Similar to an array, but saves memory by not allocating data if there are large gaps in the stored indices. i.e. while a regular array would
+	 * require you to allocate an array of size 100 000 to store an entry at index 99 999, sparse set will only allocate a single page of data.
+	 *
+	 * Internally the set works by allocating two arrays:
+	 *  - Sparse: Stores lookup from the user-provided index to the internal packed array index. Uses pages to avoid allocating memory for unused index ranges.
+	 *  - Packed: Stores all the data in one contiguous array.
+	 *
+	 * Packed array can be iterated as efficiently as a regular array, while lookups based on index come with a cost of an additional layer of
+	 * indirection (packed[sparse[index]]), as well as some arithmetic for page calculation.
+	 *
+	 * @note	Page size is defined by B3D_ECS_SPARSE_SET_PAGE_SIZE. If you are storing indices that are close in page set size increments
+	 *			note that memory use may be high. You may reduce memory usage by reducing the page size.
+	 */
+	class SparseSet // TODO - This should be generalized for Type rather than Entity
 	{
 		using SparseContainerType = TArray<TArrayView<Entity>>;
 		using PackedContainerType = TArray<Entity>;
@@ -365,7 +411,7 @@ namespace bs::ecs
 		using ReverseIterator = std::reverse_iterator<Iterator>;
 		using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
 
-		static constexpr u64 kMaximumEntryCount = Entity::Traits::kIdentifierMask;
+		static constexpr u64 kMaximumEntryCount = Entity::kIdentifierMask;
 
 		SparseSet() = default;
 		virtual ~SparseSet()
@@ -378,12 +424,20 @@ namespace bs::ecs
 			return mPackedEntities[index];
 		}
 
-		Iterator Add(Entity entity) // TODO - Make protected?
+		/**
+		 * Adds a new entity to the set and returns an iterator of the added entity.
+		 * Caller must ensure not to add an entity with an index that's already in the set.
+		 */
+		Iterator Add(Entity entity)
 		{
 			return AddInternal(entity, false);
 		}
 
-		Iterator Add(Iterator first, Iterator last) // TODO - Make protected?
+		/**
+		 * Adds all entities from the provided iterator range to the set, and returns a pointer to the last added entity.
+		 * Caller must ensure not to add an entity with an index that's already in the set.
+		 */
+		Iterator Add(Iterator first, Iterator last)
 		{
 			Iterator iterator = End();
 			for(; first != last; ++first)
@@ -392,17 +446,20 @@ namespace bs::ecs
 			return iterator;
 		}
 
+		/** Removes an entity from the set. Caller must ensure that entity is actually part of the set. */
 		void Erase(Entity entity)
 		{
 			EraseInternal(entity);
 		}
 
+		/** Removes all entities from the provided iterator range from the set. Caller must ensure that entity is actually part of the set. */
 		void Erase(Iterator first, Iterator last)
 		{
 			for(; first != last; ++first)
 				EraseInternal(*first);
 		}
 
+		/** Removes an entity from the set if it exists, otherwise does nothing. Returns true if entity was removed. */
 		bool EraseIfValid(Entity entity)
 		{
 			if(Contains(entity))
@@ -414,6 +471,10 @@ namespace bs::ecs
 			return false;
 		}
 
+		/**
+		 * Removes all existing entities from the provided iterator range from the set. Ignores entities that are not part of the set.
+		 * Returns number of entities that were removed.
+		 */
 		u64 EraseIfValid(Iterator first, Iterator last)
 		{
 			u64 removedEntryCount = 0;
@@ -435,16 +496,19 @@ namespace bs::ecs
 			return removedEntryCount;
 		}
 
+		/** Removes everything from the set and clears the internal arrays. */
 		virtual void Clear()
 		{
 			FreeSparsePages();
 			mPackedEntities.Clear();
 		}
 
+		/** Removes all invalid entities from the set. Only relevant for sets using in-place deletion policy. */
 		virtual void ClearInvalid()
 		{
 		}
 
+		/** Shrinks the memory use of the set to accomodate the currently assigned entries, without any reserve for new entries. */
 		virtual void Shrink()
 		{
 			const u64 maximumPageCount = (u64)mSparseIndices.Size();
@@ -482,23 +546,19 @@ namespace bs::ecs
 			mPackedEntities.Shrink();
 		}
 
+		/** Reserves internal memory in order to fit @p capacity entries. */
 		virtual void Reserve(u64 capacity)
 		{
-			if(capacity == 0)
-				return;
-
-			const u64 requiredPageCapacity = GetSparsePage(capacity - 1) + 1;
-			if(requiredPageCapacity > (u64)mSparseIndices.Size())
-				mSparseIndices.Resize(requiredPageCapacity);
-
 			mPackedEntities.Reserve(capacity);
 		}
 
+		/** Returns how many entries can fit into the internal memory. */
 		virtual u64 Capacity() const
 		{
 			return mPackedEntities.Capacity();
 		}
 
+		/** Returns the current version of the provided entity, or invalid version if entity is not part of this set. */
 		Entity::VersionType GetVersion(Entity entity) const
 		{
 			Entity* const sparseEntry = GetSparseEntryPointer(entity);
@@ -508,6 +568,7 @@ namespace bs::ecs
 			return sparseEntry->GetVersion();
 		}
 
+		/** Updates the version for the entity with identifier as specified by @p entity. New version is taken from the provided @p entity parameter. */
 		void UpdateVersion(Entity entity)
 		{
 			Entity& sparseEntry = GetSparseEntryReference(entity);
@@ -517,11 +578,13 @@ namespace bs::ecs
 			mPackedEntities[packedEntryIndex] = entity;
 		}
 
+		/** Returns the iterator to an entity with the provided identifier and version. Returns an iterator past the edge of the set if no entity is found. */
 		Iterator Find(Entity entity) const
 		{
 			return Contains(entity) ? GetIterator(entity) : End();
 		}
 
+		/** Returns true if the set contains an entity with the provided identifier and version. */
 		bool Contains(Entity entity) const
 		{
 			Entity* const sparseEntry = GetSparseEntryPointer(entity);
@@ -534,26 +597,41 @@ namespace bs::ecs
 			return true;
 		}
 
+		/** Returns an index of an entity in the internal packed array. If the entity is not part of the set, behaviour is undefined. */
 		u64 GetPackedIndex(Entity entity) const
 		{
 			return GetSparseEntryReference(entity).GetIdentifier();
 		}
 
-		// Note: For in-place deletion, this will also return deleted entries
+		/** Returns the number of entities in the set. Note for in-place and swap-only deletion policies this will also count the number of invalid entries. */
 		u64 Size() const { return mPackedEntities.Size(); }
-		bool IsEmpty() const { return mPackedEntities.Empty(); }
-		virtual SparseSetDeletePolicy GetDeletePolicy() const { return SparseSetDeletePolicy::SwapAndErase; }
-		virtual u64 GetFreeListHead() const { return kMaximumEntryCount; }
 
+		/** Returns true if no entries are stored in the set. */
+		bool IsEmpty() const { return mPackedEntities.Empty(); }
+
+		/** Returns the current delete policy. See SparseSetDeletePolicy. */
+		virtual SparseSetDeletePolicy GetDeletePolicy() const { return SparseSetDeletePolicy::SwapAndErase; }
+
+		/**
+		 * Returns the packed index of the first free (invalid) element. Only relevant if swap-only or in-place delete policy is used by the set.
+		 * For swap-only delete policy it is guaranteed that all valid entries are before this index, and all invalid entries are at index equal or
+		 * higher than this index. If returned index is equal to maximum entity identifier, then no free elements exist.
+		 */
+		virtual u64 GetFirstFreeElementPackedIndex() const { return kMaximumEntryCount; }
+
+		/** Returns an iterator to the start of the internal packed entity array. */
 		Iterator Begin() const { return Iterator(mPackedEntities, 0); }
 		ConstIterator Cbegin() const { return Begin(); }
 
+		/** Returns an iterator to the past the end of the internal packed entity array. */
 		Iterator End() const { return Iterator(mPackedEntities, Size()); }
 		ConstIterator Cend() const { return End(); }
 
+		/** Returns a reverse iterator to the last element of the internal packed entity array. */
 		ReverseIterator Rbegin() const { return std::make_reverse_iterator(End()); }
 		ConstReverseIterator Crbegin() const { return Rbegin(); }
 
+		/** Returns a reverse iterator before the first element of the internal packed entity array. */
 		ReverseIterator Rend() const { return std::make_reverse_iterator(Begin()); }
 		ConstReverseIterator Crend() const { return Rend(); }
 
@@ -576,9 +654,18 @@ namespace bs::ecs
 		const_reverse_iterator crend() const { return Crend(); }
 
 	protected:
+		/** Adds a new entity to the sparse set and returns an iterator to the added entity. */
 		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd) { return End(); }
+
+		/** Removed an entity from the sparse set. Entity must be a part of the sparse set. */
 		virtual void EraseInternal(Entity entity) { }
 
+		/**
+		 * Swaps the location of two entities.
+		 * 
+		 * @param lhsPackedIndex		Index within the packed array of the first element to swap.
+		 * @param rhsPackedIndex		Index within the packed array of the second element to swap.
+		 */
 		void SwapEntities(u64 lhsPackedIndex, u64 rhsPackedIndex)
 		{
 			Entity& lhsPackedEntry = mPackedEntities[lhsPackedIndex];
@@ -593,6 +680,10 @@ namespace bs::ecs
 			std::swap(lhsPackedEntry, rhsPackedEntry);
 		}
 
+		/**
+		 * Retrieves an existing entry from the sparse array, or adds a new entry if one doesn't already exist. Note that returned entity
+		 * is not a regular entity, but rather its identifier is an index into the packed array.
+		 */
 		Entity& GetOrCreateSparseEntryReference(Entity entity)
 		{
 			const u64 entityIdentifier = entity.GetIdentifier();
@@ -610,12 +701,20 @@ namespace bs::ecs
 			return mSparseIndices[sparsePage][GetSparseIndexWithinPage(entityIdentifier)];
 		}
 
+		/**
+		 * Retrieves an existing entry from the sparse array. Note that returned entity is not a regular entity, but rather its
+		 * identifier is an index into the packed array. Caller must ensure the entity is part of the set before calling.
+		 */
 		Entity& GetSparseEntryReference(Entity value) const
 		{
 			const u64 entityIdentifier = value.GetIdentifier();
 			return const_cast<Entity&>(mSparseIndices[GetSparsePage(entityIdentifier)][GetSparseIndexWithinPage(entityIdentifier)]);
 		}
 
+		/**
+		 * Attempts to retrieve an existing entry from the sparse array, or null if one cannot be found. Note that returned entity
+		 * is not a regular entity, but rather its identifier is an index into the packed array. 
+		 */
 		Entity* GetSparseEntryPointer(Entity value) const
 		{
 			const u64 entityIdentifier = value.GetIdentifier();
@@ -627,11 +726,13 @@ namespace bs::ecs
 			return nullptr;
 		}
 
+		/** Returns an iterator to the provided entity. Caller must ensure the entity is part of the set before calling. */
 		Iterator GetIterator(Entity entity) const
 		{
 			return Iterator(mPackedEntities, (i64)GetPackedIndex(entity));
 		}
 
+		/** Frees any sparse pages that don't contain any entries. */
 		void FreeSparsePages()
 		{
 			for(auto&& page : mSparseIndices)
@@ -646,23 +747,28 @@ namespace bs::ecs
 			mSparseIndices.Clear();
 		}
 
+		/** Converts an index into the packed array into an entity identifier. */
 		static constexpr Entity::IdentifierType GetPackedIndexAsEntryIdentifier(u64 packedIndex)
 		{
 			return (Entity::IdentifierType)packedIndex;
 		}
 
+		/** Calculates an index within a page, for an entity with the provided identifier. */
 		static constexpr u64 GetSparseIndexWithinPage(u64 entityIdentifier)
 		{
 			return entityIdentifier & (SparsePageSize - 1);
 		}
 
+		/** Calculates the page at which to store the entity with the provided identifier. */
 		static constexpr u64 GetSparsePage(u64 entityIdentifier)
 		{
 			return entityIdentifier / SparsePageSize;
 		}
 
-		SparseContainerType mSparseIndices; // Entity identifiers are actually indexes into the packed array
-		PackedContainerType mPackedEntities; // TODO - Might consider paging this. It won't be continous anymore, making it harder to iterate, but adding entries might prevent expensive resizes if there's a lot of entries
+		SparseContainerType mSparseIndices; /**< List of pages that map entity identifier into packed array indices. */
+
+		// Note: Might consider paging this. It won't be continous anymore, making it harder to iterate, but adding entries might prevent expensive resizes if there's a lot of entries
+		PackedContainerType mPackedEntities; /**< Packed array of entities. */
 	};
 
 	template<SparseSetDeletePolicy DeletePolicy>
@@ -705,7 +811,7 @@ namespace bs::ecs
 		}
 
 		SparseSetDeletePolicy GetDeletePolicy() const override { return DeletePolicy; }
-		u64 GetFreeListHead() const override { return mFreeListHead; }
+		u64 GetFirstFreeElementPackedIndex() const override { return mFreeListHead; }
 
 	protected:
 		Iterator AddInternal(Entity entity, bool forceAddAtEnd) override
@@ -1462,7 +1568,7 @@ namespace bs::ecs
 
 		Entity Create()
 		{
-			Entity entity = Size() == GetFreeListHead() ? CreateEntity() : mPackedEntities[GetFreeListHead()];
+			Entity entity = Size() == GetFirstFreeElementPackedIndex() ? CreateEntity() : mPackedEntities[GetFirstFreeElementPackedIndex()];
 			return *Super::AddInternal(entity, false);
 		}
 
@@ -1471,7 +1577,7 @@ namespace bs::ecs
 			if(hint != kInvalidEntity && hint != kNullEntity)
 			{
 				Entity entity(hint.GetIdentifier(), GetVersion(hint));
-				if(entity == kInvalidEntity || GetPackedIndex(entity) >= GetFreeListHead())
+				if(entity == kInvalidEntity || GetPackedIndex(entity) >= GetFirstFreeElementPackedIndex())
 					return *Super::AddInternal(entity, false);
 			}
 
@@ -1484,11 +1590,11 @@ namespace bs::ecs
 			mNextEntityId = 0u;
 		}
 
-		IteratorRange Each() { return IteratorRange({ Begin() }, { Begin() + GetFreeListHead() }); }
-		ConstIteratorRange Each() const { return ConstIteratorRange({ Cbegin() }, { Cbegin() + GetFreeListHead() }); }
+		IteratorRange Each() { return IteratorRange({ Begin() }, { Begin() + GetFirstFreeElementPackedIndex() }); }
+		ConstIteratorRange Each() const { return ConstIteratorRange({ Cbegin() }, { Cbegin() + GetFirstFreeElementPackedIndex() }); }
 
-		ReverseIteratorRange ReverseEach() { return ReverseIteratorRange({ Rbegin() }, { Rbegin() + (ReverseIterator::difference_type)GetFreeListHead() }); }
-		ConstReverseIteratorRange ReverseEach() const { return ConstReverseIteratorRange({ Crbegin() }, { Crbegin() + (ReverseIterator::difference_type)GetFreeListHead() }); }
+		ReverseIteratorRange ReverseEach() { return ReverseIteratorRange({ Rbegin() }, { Rbegin() + (ReverseIterator::difference_type)GetFirstFreeElementPackedIndex() }); }
+		ConstReverseIteratorRange ReverseEach() const { return ConstReverseIteratorRange({ Crbegin() }, { Crbegin() + (ReverseIterator::difference_type)GetFirstFreeElementPackedIndex() }); }
 
 	private:
 		using UnderlyingIterator = typename Super::Iterator;
@@ -1895,7 +2001,7 @@ namespace bs::ecs
 		u64 GetLeadingTypeStorageSize() const
 		{
 			B3D_ASSERT(mLeadingTypeIndex != IncludedTypeCount);
-			return mIncludedTypeStorage[mLeadingTypeIndex]->GetDeletePolicy() == SparseSetDeletePolicy::SwapOnly ? mIncludedTypeStorage[mLeadingTypeIndex]->GetFreeListHead() : mIncludedTypeStorage[mLeadingTypeIndex]->Size();
+			return mIncludedTypeStorage[mLeadingTypeIndex]->GetDeletePolicy() == SparseSetDeletePolicy::SwapOnly ? mIncludedTypeStorage[mLeadingTypeIndex]->GetFirstFreeElementPackedIndex() : mIncludedTypeStorage[mLeadingTypeIndex]->Size();
 		}
 
 		static const SparseSet* GetPlaceholderStorage()
@@ -1904,7 +2010,6 @@ namespace bs::ecs
 			return &kPlaceholder;
 		}
 
-	private:
 		std::array<const SparseSet*, IncludedTypeCount> mIncludedTypeStorage;
 		std::array<const SparseSet*, ExcludedTypeCount> mExcludedTypeStorage;
 		u32 mLeadingTypeIndex = 0;
@@ -2086,6 +2191,65 @@ namespace bs::ecs
 		{
 			return IteratorRange(Super::Begin(), Super::End());
 		}
+
+		/**
+		 * Calls @p function for each entry in the view. Valid signatures for @p function are:
+		 *  (Entity, ComponentType&, ...) - Passes both entity and the component(s) to the function.
+		 *  (ComponentType&, ...) - Passes only component(s) to the function.
+		 */
+		template<typename Function>
+		void DoForEach(Function& function)
+		{
+			FindLeadingStorageIndexAndCallFunctionForEachEntity(function, std::index_sequence_for<IncludedStorageType...>());
+		}
+
+	private:
+		/**
+		 * Returns @p leadingEntry argument if LeadingTypeindex == OtherTypeIndex, otherwise uses the Entity
+		 * from @p leadingEntry to look up the entry in the relevant storage for @p OtherTypeIndex.
+		 */
+		template<u32 LeadingTypeIndex, u32 OtherTypeIndex, typename LeadingElementType>
+		auto GetElementFromStorageOrArgument(const std::tuple<Entity, LeadingElementType>& leadingEntry)
+		{
+			if constexpr(LeadingTypeIndex == OtherTypeIndex)
+				return std::forward_as_tuple(std::get<1>(leadingEntry));
+			else
+				return std::forward_as_tuple(GetStorage<OtherTypeIndex>()->Get(std::get<0>(leadingEntry)));
+		}
+
+		/** Calls @p function for each entry contained in the storage at @p LeadingTypeIndex. */
+		template<u32 LeadingTypeIndex, typename Function, size_t... TypeIndex>
+		void CallFunctionForEachEntity(Function& function, std::index_sequence<TypeIndex...>)
+		{
+			for(const auto entry : GetStorage<LeadingTypeIndex>()->Each())
+			{
+				const auto entity = std::get<0>(entry);
+				if((!TAllTypesUseInPlaceDelete<IncludedStorageType...> || entity != kInvalidEntity) // Check if invalid entities, if using in-place delete
+					&& ((LeadingTypeIndex == TypeIndex || Super::GetIncludedTypeStorage(TypeIndex).Contains(entity)) && ...) // Ensure all the included storages contain the entity (for leading type we just check the index as its guaranteed)
+					&& !IsEntityPartOfAny(this->mExcludedTypeStorage.begin(), this->mExcludedTypeStorage.end(), entity)) // Ensure none of the excluded storages contain the entity
+				{
+					// Check for (Entity, Type&, ...) signature
+					if constexpr(TIsInvocableWithTupleArguments<Function, decltype(std::tuple_cat(std::tuple<Entity>{}, std::declval<TView>.Get({})))>)
+						std::apply(function, std::tuple_cat(entity, GetElementFromStorageOrArgument<LeadingTypeIndex, TypeIndex>(entry)...));
+					else // Check for (Type&, ...) signature
+					{
+						static_assert(TIsInvocableWithTupleArguments<Function, decltype(std::declval<TView>.Get({}))>, "Invalid function signature.");
+						std::apply(function, std::tuple_cat(GetElementFromStorageOrArgument<LeadingTypeIndex, TypeIndex>(entry)...));
+					}
+				}
+			}
+		}
+
+		/** Find the index of leading type storage and calls the appropriate instantiation of CallFunctionForEachEntity. */
+		template<typename Function, size_t... TypeIndex>
+		void FindLeadingStorageIndexAndCallFunctionForEachEntity(Function& function, std::index_sequence<TypeIndex...> sequence)
+		{
+			auto leadingStorage = Super::GetLeadingTypeStorage();
+			if(leadingStorage == nullptr)
+				return;
+
+			((GetStorage<TypeIndex>() == leadingStorage ? CallFunctionForEachEntity<TypeIndex>(function, sequence) : void()), ...);
+		}
 	};
 
 	template<typename StorageType>
@@ -2105,7 +2269,7 @@ namespace bs::ecs
 			if(mStorage == nullptr)
 				return 0;
 
-			return StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapOnly ? mStorage->GetFreeListHead() : mStorage->Size();
+			return StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapOnly ? mStorage->GetFirstFreeElementPackedIndex() : mStorage->Size();
 		}
 
 		Iterator Begin() const
@@ -2129,7 +2293,7 @@ namespace bs::ecs
 			else if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace)
 				return Iterator(mStorage->End(), { mStorage }, { }, 0);
 			else
-				return mStorage->Begin() + mStorage->GetFreeListHead();
+				return mStorage->Begin() + mStorage->GetFirstFreeElementPackedIndex();
 		}
 
 		template<SparseSetDeletePolicy DeletePolicy = StorageType::kDeletePolicy>
@@ -2147,7 +2311,7 @@ namespace bs::ecs
 			if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapAndErase)
 				return mStorage->Rend();
 			else
-				return mStorage != nullptr ? mStorage->Rbegin() + mStorage->GetFreeListHead() : ReverseIterator();
+				return mStorage != nullptr ? mStorage->Rbegin() + mStorage->GetFirstFreeElementPackedIndex() : ReverseIterator();
 		}
 
 		Entity Front() const
@@ -2180,7 +2344,7 @@ namespace bs::ecs
 			else if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapOnly)
 			{
 				auto it = mStorage->Find(entity);
-				return it->Index() < mStorage->GetFreeListHead() ? *it : End();
+				return it->Index() < mStorage->GetFirstFreeElementPackedIndex() ? *it : End();
 			}
 			else
 				return Iterator(mStorage->Find(entity), { mStorage }, {}, 0);
@@ -2194,7 +2358,7 @@ namespace bs::ecs
 			if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapAndErase || StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace)
 				return mStorage->Contains(entity);
 			else
-				return mStorage->Contains(entity) && mStorage->GetPackedIndex(entity) < mStorage->GetFreeListHead();
+				return mStorage->Contains(entity) && mStorage->GetPackedIndex(entity) < mStorage->GetFirstFreeElementPackedIndex();
 		}
 
 		bool IsValid()
@@ -2290,6 +2454,53 @@ namespace bs::ecs
 		{
 			return IteratorRange(Super::Begin(), Super::End());
 		}
+
+		/**
+		 * Calls @p function for each entry in the view. Valid signatures for @p function are:
+		 *  (Entity, ComponentType&) - Passes both entity and the component to the function
+		 *  (ComponentType&) - Passes only component to the function. Allows for fast iteration with as it only needs to iterate over the packed component storage.
+		 *  () - Only allowed signature for iteration of storages containing empty types.
+		 */
+		template<typename Function>
+		void DoForEach(Function& function)
+		{
+			// Check for (Entity, Type&) signature, have to take the slow path in this case
+			if constexpr(TIsInvocableWithTupleArguments<Function, decltype(std::tuple_cat(std::tuple<Entity>{}, std::declval<TView>.Get({})))>)
+			{
+				for(const auto entry : Super::GetLeadingTypeStorage()->Each())
+					std::apply(function, entry);
+			}
+			// Check for (Type&) signature and try to use the fast path
+			else
+			{
+				static_assert(TIsInvocableWithTupleArguments<Function, decltype(std::declval<TView>.Get({}))>, "Invalid function signature.");
+
+				// Use fast path for swap-and-erase and swap-only
+				if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapAndErase || StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapOnly)
+				{
+					// For empty types no need to access the contents
+					if constexpr(std::is_void_v<typename StorageType::ValueType>())
+					{
+						for(u64 index = 0; index < Super::GetSizeEstimate(); ++index)
+							function();
+					}
+					// For non-empty types iterate over the packaged storage directly
+					else
+					{
+						auto first = GetStorage().Begin();
+						auto last = GetStorage().Begin() + Super::GetSizeEstimate();
+						for(; first != last; ++first)
+							function(*first);
+					}
+				}
+				// For in-place delete we need the slow path as we need to check tombstones as we iterate
+				else
+				{
+					for(const auto entry : Super::GetLeadingTypeStorage()->Each())
+						std::apply(function, std::get<1>(entry));
+				}
+			}
+		}
 	};
 
 	class Registry
@@ -2359,7 +2570,7 @@ namespace bs::ecs
 		bool IsEntityValid(Entity entity) const
 		{
 			if(auto found = mEntityStorage.Find(entity); found != mEntityStorage.End())
-				return found.Index() < mEntityStorage.GetFreeListHead();
+				return found.Index() < mEntityStorage.GetFirstFreeElementPackedIndex();
 
 			return false;
 		}
