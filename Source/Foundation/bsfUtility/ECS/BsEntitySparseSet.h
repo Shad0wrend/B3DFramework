@@ -397,7 +397,7 @@ namespace bs::ecs
 	 * @note	Page size is defined by B3D_ECS_SPARSE_SET_PAGE_SIZE. If you are storing indices that are close in page set size increments
 	 *			note that memory use may be high. You may reduce memory usage by reducing the page size.
 	 */
-	class SparseSet // TODO - This should be generalized for Type rather than Entity
+	class SparseSet
 	{
 		using SparseContainerType = TArray<TArrayView<Entity>>;
 		using PackedContainerType = TArray<Entity>;
@@ -1031,10 +1031,17 @@ namespace bs::ecs
  	template<typename ContainerType, u32 PageSize>
 	struct TPagedContainerIterator final
 	{
-		using value_type = typename ContainerType::value_type;
-		using pointer = typename std::pointer_traits<typename ContainerType::value_type>::element_type*;
-		using reference = typename std::pointer_traits<typename ContainerType::value_type>::element_type&;
-		using difference_type = typename std::pointer_traits<typename ContainerType::value_type>::difference_type;
+ 	private:
+		using iterator_traits = std::iterator_traits<std::conditional_t<
+			std::is_const_v<ContainerType>,
+			const typename std::pointer_traits<typename std::remove_const_t<ContainerType>::value_type>::element_type*,
+			typename std::pointer_traits<typename std::remove_const_t<ContainerType>::value_type>::element_type*>>;
+
+ 	public:
+		using value_type = typename iterator_traits::value_type;
+		using pointer = typename iterator_traits::pointer;
+		using reference = typename iterator_traits::reference;
+		using difference_type = typename iterator_traits::difference_type;
 		using iterator_category = std::random_access_iterator_tag;
 
 		TPagedContainerIterator() = default;
@@ -1207,7 +1214,7 @@ namespace bs::ecs
 	template <typename... LeftIteratorTypes, typename... RightIteratorTypes>
 	constexpr bool operator==(const TMultiIteratorAdapter<LeftIteratorTypes...>& lhs, const TMultiIteratorAdapter<RightIteratorTypes...>& rhs)
 	{
-		return lhs.GetBaseIterator() == rhs.GetBaseIteratorType();
+		return lhs.GetBaseIterator() == rhs.GetBaseIterator();
 	}
 
 	template <typename... LeftIteratorTypes, typename... RightIteratorTypes>
@@ -1541,10 +1548,15 @@ namespace bs::ecs
 		}
 
 		template<typename It>
-		void Add(It first, It last)
+		void Add(It first, It last, const TagType&)
 		{
 			for(It it = first; it != last; ++it)
 				Super::AddInternal(*it, true);
+		}
+
+		void Get(Entity entity) const
+		{
+			B3D_ASSERT(false && "This method is only available for type deduction purposes and should not be called.");
 		}
 
 		IteratorRange Each() { return IteratorRange({ Begin() }, { End() }); }
@@ -1559,10 +1571,10 @@ namespace bs::ecs
 	public:
 		using ElementType = Entity;
 		using Super = TSparseSet<SparseSetDeletePolicy::SwapOnly>;
-		using IteratorRange = TIteratorRange<TMultiIteratorAdapter<Iterator>>;
-		using ConstIteratorRange = TIteratorRange<TMultiIteratorAdapter<ConstIterator>>;
-		using ReverseIteratorRange = TIteratorRange<TMultiIteratorAdapter<ReverseIterator>>;
-		using ConstReverseIteratorRange = TIteratorRange<TMultiIteratorAdapter<ConstReverseIterator>>;
+		using IteratorRange = TIteratorRange<Iterator>;
+		using ConstIteratorRange = TIteratorRange<ConstIterator>;
+		using ReverseIteratorRange = TIteratorRange<ReverseIterator>;
+		using ConstReverseIteratorRange = TIteratorRange<ConstReverseIterator>;
 
 		~EntitySparseSet() override = default;
 
@@ -1625,36 +1637,6 @@ namespace bs::ecs
 		Entity::IdentifierType mNextEntityId = 0u;
 	};
 
-	template<typename Type, typename = void>
-	struct StorageForType;
-
-	template<typename Type>
-	struct StorageForType<Type, std::enable_if_t<std::conjunction_v<std::is_move_constructible<std::remove_const_t<Type>>, std::is_move_assignable<std::remove_const_t<Type>>, std::negation<std::is_empty<Type>>>>>
-	{
-		using StorageType = TComponentSparseSet<std::remove_const_t<Type>>;
-	};
-
-	template<typename Type>
-	struct StorageForType<Type, std::enable_if_t<std::conjunction_v<std::disjunction<std::negation<std::is_move_constructible<std::remove_const_t<Type>>>, std::negation<std::is_move_assignable<std::remove_const_t<Type>>>>, std::negation<std::is_empty<Type>>>>>
-	{
-		using StorageType = TComponentSparseSet<std::remove_const_t<Type>, true>;
-	};
-
-	template<typename Type>
-	struct StorageForType<Type, std::enable_if_t<std::is_empty_v<Type>>>
-	{
-		using StorageType = TTagSparseSet<Type>;
-	};
-
-	template<>
-	struct StorageForType<Entity>
-	{
-		using StorageType = EntitySparseSet;
-	};
-
-	template<typename Type>
-	using TStorageType = typename StorageForType<Type>::StorageType;
-
 	template<typename T, typename From>
 	struct TInheritConstFromHelper
 	{
@@ -1669,6 +1651,37 @@ namespace bs::ecs
 
 	template<typename T, typename From>
 	using TInheritConstFrom = typename TInheritConstFromHelper<T, From>::Type;
+
+
+	template<typename Type, typename = void>
+	struct StorageForType;
+
+	template<typename Type>
+	struct StorageForType<Type, std::enable_if_t<std::conjunction_v<std::is_move_constructible<std::remove_const_t<Type>>, std::is_move_assignable<std::remove_const_t<Type>>, std::negation<std::is_empty<Type>>>>>
+	{
+		using StorageType = TInheritConstFrom<TComponentSparseSet<std::remove_const_t<Type>>, Type>;
+	};
+
+	template<typename Type>
+	struct StorageForType<Type, std::enable_if_t<std::conjunction_v<std::disjunction<std::negation<std::is_move_constructible<std::remove_const_t<Type>>>, std::negation<std::is_move_assignable<std::remove_const_t<Type>>>>, std::negation<std::is_empty<Type>>>>>
+	{
+		using StorageType = TInheritConstFrom<TComponentSparseSet<std::remove_const_t<Type>, true>, Type>;
+	};
+
+	template<typename Type>
+	struct StorageForType<Type, std::enable_if_t<std::is_empty_v<Type>>>
+	{
+		using StorageType = TInheritConstFrom<TTagSparseSet<std::remove_const_t<Type>>, Type>;
+	};
+
+	template<>
+	struct StorageForType<Entity>
+	{
+		using StorageType = EntitySparseSet;
+	};
+
+	template<typename Type>
+	using TStorageType = typename StorageForType<Type>::StorageType;
 
 	template<typename It>
 	static bool IsEntityPartOfAll(It first, It last, Entity entity)
@@ -1735,11 +1748,14 @@ namespace bs::ecs
 			return *mUnderlyingIterator;
 		}
 
-		std::array<const SparseSet*, IncludedTypeCount>& GetIncludedTypeStorage() { return mIncludedTypeStorage; };
-		const std::array<const SparseSet*, IncludedTypeCount>& GetIncludedTypeStorage() const { return mIncludedTypeStorage; };
+		std::array<const SparseSet*, IncludedTypeCount>& GetIncludedTypeStorage() { return mIncludedTypeStorage; }
+		const std::array<const SparseSet*, IncludedTypeCount>& GetIncludedTypeStorage() const { return mIncludedTypeStorage; }
 
-		friend constexpr bool operator==(const TViewIterator& lhs, const TViewIterator& rhs) noexcept;
-		friend constexpr bool operator!=(const TViewIterator& lhs, const TViewIterator& rhs) noexcept;
+		template<u32 IncludedTypeCount2, u32 ExcludedTypeCount2, bool InPlaceDelete2>
+		friend constexpr bool operator==(const TViewIterator<IncludedTypeCount2, ExcludedTypeCount2, InPlaceDelete2>& lhs, const TViewIterator<IncludedTypeCount2, ExcludedTypeCount2, InPlaceDelete2>& rhs) noexcept;
+
+		template<u32 IncludedTypeCount2, u32 ExcludedTypeCount2, bool InPlaceDelete2>
+		friend constexpr bool operator!=(const TViewIterator<IncludedTypeCount2, ExcludedTypeCount2, InPlaceDelete2>& lhs, const TViewIterator<IncludedTypeCount2, ExcludedTypeCount2, InPlaceDelete2>& rhs) noexcept;
 
 	private:
 		void SeekToNextValidEntry()
@@ -1767,14 +1783,24 @@ namespace bs::ecs
 		return !(lhs.mUnderlyingIterator == rhs.mUnderlyingIterator);
 	}
 
+	template<typename StorageType>
+	constexpr auto GetAsTuple(StorageType* storage, Entity entity)
+	{
+		if constexpr(std::is_void_v<decltype(std::declval<StorageType>().Get(entity))>)
+			return std::tuple<>();
+		else
+			return std::forward_as_tuple(storage->Get(entity));
+	}
+
 	template<typename IteratorType, typename... IncludedStorageType>
 	struct TViewIteratorAdapter
 	{
 	public:
 		using iterator_type = IteratorType;
-		using value_type = decltype(std::tuple_cat(std::make_tuple(*std::declval<IteratorType>()), std::forward_as_tuple(std::declval<IncludedStorageType>().Get({}))...));
+		using value_type = decltype(std::tuple_cat(std::make_tuple(*std::declval<IteratorType>()), GetAsTuple<IncludedStorageType>(nullptr, {})...));
 		using pointer = TPointerToTemporary<value_type>;
 		using reference = value_type;
+		using difference_type = typename std::iterator_traits<IteratorType>::difference_type;
 		using iterator_category = std::input_iterator_tag;
 
 		constexpr TViewIteratorAdapter() = default;
@@ -1788,12 +1814,12 @@ namespace bs::ecs
 			return *this;
 		}
 
-		constexpr pointer operator->() const noexcept
+		constexpr pointer operator->() const
 		{
 			return operator*();
 		}
 
-		constexpr reference operator*() const noexcept
+		constexpr reference operator*() const
 		{
 			return GetTuple(std::index_sequence_for<IncludedStorageType...>());
 		}
@@ -1808,22 +1834,22 @@ namespace bs::ecs
 
 	private:
 		template<size_t... Index>
-		reference GetTuple(std::index_sequence<Index...>)
+		reference GetTuple(std::index_sequence<Index...>) const
 		{
-			return std::tuple_cat(std::make_tuple(*mIterator), std::forward_as_tuple(static_cast<IncludedStorageType *>(std::get<Index>(mIterator.GetIncludedTypeStorage()))->Get(*mIterator))...);
+			return std::tuple_cat(std::make_tuple(*mIterator), GetAsTuple(static_cast<IncludedStorageType *>(std::get<Index>(mIterator.GetIncludedTypeStorage())), *mIterator)...);
 		}
 
 		IteratorType mIterator;
 	};
 
 	template <typename... LeftIteratorTypes, typename... RightIteratorTypes>
-	constexpr bool operator==(const TViewIteratorAdapter<LeftIteratorTypes...>& lhs, const TViewIteratorAdapter<RightIteratorTypes...>& rhs) noexcept
+	constexpr bool operator==(const TViewIteratorAdapter<LeftIteratorTypes...>& lhs, const TViewIteratorAdapter<RightIteratorTypes...>& rhs)
 	{
 		return lhs.GetEntityIterator() == rhs.GetEntityIterator();
 	}
 
 	template <typename... LeftIteratorTypes, typename... RightIteratorTypes>
-	constexpr bool operator!=(const TViewIteratorAdapter<LeftIteratorTypes...>& lhs, const TViewIteratorAdapter<RightIteratorTypes...>& rhs) noexcept
+	constexpr bool operator!=(const TViewIteratorAdapter<LeftIteratorTypes...>& lhs, const TViewIteratorAdapter<RightIteratorTypes...>& rhs)
 	{
 		return !(lhs == rhs);
 	}
@@ -2046,7 +2072,7 @@ namespace bs::ecs
 	};
 
 	template<typename Type, typename TypeList>
-	constexpr bool TTypeListIndexOf = TTypeListIndexOfHelper<Type, TypeList>::Value;
+	constexpr u32 TTypeListIndexOf = TTypeListIndexOfHelper<Type, TypeList>::Value;
 
 	template<u32, typename>
 	struct TTypeListElementAtHelper;
@@ -2104,7 +2130,7 @@ namespace bs::ecs
 		using TStorageTypeAt = TTypeListElementAt<Index, TTypeList<IncludedStorageType..., ExcludedStorageType...>>;
 
 		template<typename ElementType>
-		static constexpr bool TIndexOfElementType = TTypeListIndexOf<std::remove_const_t<ElementType>, TTypeList<typename IncludedStorageType::ElementType..., typename ExcludedStorageType::ElementType...>>;
+		static constexpr u32 TIndexOfElementType = TTypeListIndexOf<std::remove_const_t<ElementType>, TTypeList<typename IncludedStorageType::ElementType..., typename ExcludedStorageType::ElementType...>>;
 		
 	public:
 		using IteratorRange = TIteratorRange<TViewIteratorAdapter<typename Super::Iterator, IncludedStorageType...>>;
@@ -2180,11 +2206,11 @@ namespace bs::ecs
 		decltype(auto) Get(Entity entity) const
 		{
 			if constexpr(sizeof...(Index) == 0)
-				return std::tuple_cat(std::forward_as_tuple(GetStorage<IncludedStorageType::ElementType>()->Get(entity))...);
+				return std::tuple_cat(GetAsTuple(GetStorage<IncludedStorageType::ElementType>(), entity)...);
 			else if constexpr(sizeof...(Index) == 1)
 				return (GetStorage<Index>()->Get(entity), ...);
 			else
-				return std::tuple_cat(std::forward_as_tuple(GetStorage<Index>()->Get(entity))...);
+				return std::tuple_cat(GetAsTuple(GetStorage<Index>(), entity)...);
 		}
 
 		IteratorRange Each() const
@@ -2198,9 +2224,9 @@ namespace bs::ecs
 		 *  (ComponentType&, ...) - Passes only component(s) to the function.
 		 */
 		template<typename Function>
-		void DoForEach(Function& function)
+		void DoForEach(Function&& function)
 		{
-			FindLeadingStorageIndexAndCallFunctionForEachEntity(function, std::index_sequence_for<IncludedStorageType...>());
+			FindLeadingStorageIndexAndCallFunctionForEachEntity(std::forward<Function>(function), std::index_sequence_for<IncludedStorageType...>());
 		}
 
 	private:
@@ -2208,32 +2234,32 @@ namespace bs::ecs
 		 * Returns @p leadingEntry argument if LeadingTypeindex == OtherTypeIndex, otherwise uses the Entity
 		 * from @p leadingEntry to look up the entry in the relevant storage for @p OtherTypeIndex.
 		 */
-		template<u32 LeadingTypeIndex, u32 OtherTypeIndex, typename LeadingElementType>
-		auto GetElementFromStorageOrArgument(const std::tuple<Entity, LeadingElementType>& leadingEntry)
+		template<u32 LeadingTypeIndex, u32 OtherTypeIndex, typename... Arguments>
+		auto GetElementFromStorageOrArgument(const std::tuple<Entity, Arguments...>& leadingEntry)
 		{
 			if constexpr(LeadingTypeIndex == OtherTypeIndex)
-				return std::forward_as_tuple(std::get<1>(leadingEntry));
+				return std::forward_as_tuple(std::get<Arguments>(leadingEntry)...);
 			else
-				return std::forward_as_tuple(GetStorage<OtherTypeIndex>()->Get(std::get<0>(leadingEntry)));
+				return GetAsTuple(GetStorage<OtherTypeIndex>(), std::get<0>(leadingEntry));
 		}
 
 		/** Calls @p function for each entry contained in the storage at @p LeadingTypeIndex. */
 		template<u32 LeadingTypeIndex, typename Function, size_t... TypeIndex>
-		void CallFunctionForEachEntity(Function& function, std::index_sequence<TypeIndex...>)
+		void CallFunctionForEachEntity(const Function& function, std::index_sequence<TypeIndex...>)
 		{
 			for(const auto entry : GetStorage<LeadingTypeIndex>()->Each())
 			{
 				const auto entity = std::get<0>(entry);
 				if((!TAllTypesUseInPlaceDelete<IncludedStorageType...> || entity != kInvalidEntity) // Check if invalid entities, if using in-place delete
-					&& ((LeadingTypeIndex == TypeIndex || Super::GetIncludedTypeStorage(TypeIndex).Contains(entity)) && ...) // Ensure all the included storages contain the entity (for leading type we just check the index as its guaranteed)
+					&& ((LeadingTypeIndex == TypeIndex || Super::GetIncludedTypeStorage(TypeIndex)->Contains(entity)) && ...) // Ensure all the included storages contain the entity (for leading type we just check the index as its guaranteed)
 					&& !IsEntityPartOfAny(this->mExcludedTypeStorage.begin(), this->mExcludedTypeStorage.end(), entity)) // Ensure none of the excluded storages contain the entity
 				{
 					// Check for (Entity, Type&, ...) signature
-					if constexpr(TIsInvocableWithTupleArguments<Function, decltype(std::tuple_cat(std::tuple<Entity>{}, std::declval<TView>.Get({})))>)
-						std::apply(function, std::tuple_cat(entity, GetElementFromStorageOrArgument<LeadingTypeIndex, TypeIndex>(entry)...));
+					if constexpr(TIsInvocableWithTupleArguments<Function, decltype(std::tuple_cat(std::tuple<Entity>{}, std::declval<TView>().Get({})))>)
+						std::apply(function, std::tuple_cat(std::forward_as_tuple(entity), GetElementFromStorageOrArgument<LeadingTypeIndex, TypeIndex>(entry)...));
 					else // Check for (Type&, ...) signature
 					{
-						static_assert(TIsInvocableWithTupleArguments<Function, decltype(std::declval<TView>.Get({}))>, "Invalid function signature.");
+						static_assert(TIsInvocableWithTupleArguments<Function, decltype(std::declval<TView>().Get({}))>, "Invalid function signature.");
 						std::apply(function, std::tuple_cat(GetElementFromStorageOrArgument<LeadingTypeIndex, TypeIndex>(entry)...));
 					}
 				}
@@ -2242,7 +2268,7 @@ namespace bs::ecs
 
 		/** Find the index of leading type storage and calls the appropriate instantiation of CallFunctionForEachEntity. */
 		template<typename Function, size_t... TypeIndex>
-		void FindLeadingStorageIndexAndCallFunctionForEachEntity(Function& function, std::index_sequence<TypeIndex...> sequence)
+		void FindLeadingStorageIndexAndCallFunctionForEachEntity(const Function& function, std::index_sequence<TypeIndex...> sequence)
 		{
 			auto leadingStorage = Super::GetLeadingTypeStorage();
 			if(leadingStorage == nullptr)
@@ -2391,7 +2417,7 @@ namespace bs::ecs
 		using Super = TSingleStorageViewCommon<StorageType>;
 
 	public:
-		using IteratorRange = std::conditional_t<StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace, TIteratorRange<TViewIteratorAdapter<typename Super::Iterator, StorageType>>, typename StorageType::IteratorRange>;
+		using IteratorRange = std::conditional_t<StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace, TIteratorRange<TViewIteratorAdapter<typename Super::Iterator, StorageType>>, decltype(std::declval<StorageType>().Each())>;
 
 		TView() = default;
 		TView(StorageType& storage)
@@ -2413,7 +2439,7 @@ namespace bs::ecs
 		{
 			static_assert(Index == 0, "Index out of range.");
 
-			return static_cast<StorageType*>(const_cast<TInheritConstFrom<SparseSet, StorageType>*>(Super::GetLeadingTypeStorage()));
+			return const_cast<StorageType*>(Super::GetLeadingTypeStorage());
 		}
 
 		void SetStorage(StorageType& storage)
@@ -2445,14 +2471,17 @@ namespace bs::ecs
 		decltype(auto) Get(Entity entity) const
 		{
 			if constexpr(sizeof...(Index) == 0)
-				return std::forward_as_tuple(GetStorage()->Get(entity));
+				return GetAsTuple(GetStorage(), entity);
 			else
 				return GetStorage<Index...>()->Get(entity);
 		}
 
 		IteratorRange Each() const
 		{
-			return IteratorRange(Super::Begin(), Super::End());
+			if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace)
+				return IteratorRange(Super::Begin(), Super::End());
+			else
+				return GetStorage() != nullptr ? GetStorage()->Each() : IteratorRange();
 		}
 
 		/**
@@ -2462,10 +2491,10 @@ namespace bs::ecs
 		 *  () - Only allowed signature for iteration of storages containing empty types.
 		 */
 		template<typename Function>
-		void DoForEach(Function& function)
+		void DoForEach(const Function& function)
 		{
 			// Check for (Entity, Type&) signature, have to take the slow path in this case
-			if constexpr(TIsInvocableWithTupleArguments<Function, decltype(std::tuple_cat(std::tuple<Entity>{}, std::declval<TView>.Get({})))>)
+			if constexpr(TIsInvocableWithTupleArguments<Function, decltype(std::tuple_cat(std::tuple<Entity>{}, std::declval<TView>().Get({})))>)
 			{
 				for(const auto entry : Super::GetLeadingTypeStorage()->Each())
 					std::apply(function, entry);
@@ -2473,13 +2502,13 @@ namespace bs::ecs
 			// Check for (Type&) signature and try to use the fast path
 			else
 			{
-				static_assert(TIsInvocableWithTupleArguments<Function, decltype(std::declval<TView>.Get({}))>, "Invalid function signature.");
+				static_assert(TIsInvocableWithTupleArguments<Function, decltype(std::declval<TView>().Get({}))>, "Invalid function signature.");
 
 				// Use fast path for swap-and-erase and swap-only
 				if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapAndErase || StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapOnly)
 				{
 					// For empty types no need to access the contents
-					if constexpr(std::is_void_v<typename StorageType::ValueType>())
+					if constexpr(std::is_void_v<typename StorageType::ElementType>)
 					{
 						for(u64 index = 0; index < Super::GetSizeEstimate(); ++index)
 							function();
@@ -2487,8 +2516,8 @@ namespace bs::ecs
 					// For non-empty types iterate over the packaged storage directly
 					else
 					{
-						auto first = GetStorage().Begin();
-						auto last = GetStorage().Begin() + Super::GetSizeEstimate();
+						auto first = GetStorage()->Begin();
+						auto last = GetStorage()->Begin() + Super::GetSizeEstimate();
 						for(; first != last; ++first)
 							function(*first);
 					}
