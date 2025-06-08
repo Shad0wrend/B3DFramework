@@ -45,13 +45,13 @@ void PhysXMeshCollider::ApplyGeometry()
 		return;
 	}
 
-	FPhysXMesh* physxMesh = static_cast<FPhysXMesh*>(mMesh->GetInternalInternal());
+	FPhysXMesh* physxMesh = static_cast<FPhysXMesh*>(mMesh->GetInternal());
 
 	if(mMesh->GetType() == PhysicsMeshType::Convex)
 	{
 		PxConvexMeshGeometry geometry;
 		geometry.scale = PxMeshScale(ToPxVector(GetScale()), PxIdentity);
-		geometry.convexMesh = physxMesh->GetConvexInternal();
+		geometry.convexMesh = physxMesh->GetPxConvexMesh();
 
 		SetGeometry(geometry);
 	}
@@ -59,7 +59,7 @@ void PhysXMeshCollider::ApplyGeometry()
 	{
 		PxTriangleMeshGeometry geometry;
 		geometry.scale = PxMeshScale(ToPxVector(GetScale()), PxIdentity);
-		geometry.triangleMesh = physxMesh->GetTriangleInternal();
+		geometry.triangleMesh = physxMesh->GetPxTriangleMesh();
 
 		SetGeometry(geometry);
 	}

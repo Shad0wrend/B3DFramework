@@ -124,17 +124,6 @@ namespace bs
 		bool GetIsTrigger() const { return mIsTrigger; }
 
 		/**
-		 * Determines if continuous collision detection is enabled or disabled. When disabled it prevents fast moving objects from
-		 * passing through obstacles, at the cost of extra performance.
-		 */
-		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(ContinuousCollisionDetection))
-		virtual void SetContinuousCollisionDetection(bool value) { mContinuousCollisionDetectionEnabled = value; }
-
-		/** @copydoc SetContinuousCollisionDetection() */
-		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(ContinuousCollisionDetection))
-		bool GetContinuousCollisionDetection() const { return mContinuousCollisionDetectionEnabled; }
-
-		/**
 		 * Determines the mass of the collider shape. Only relevant if the parent collider is part of a rigidbody. Ultimately this will
 		 * determine the total mass, center of mass and inertia tensors of the parent rigidbody (if they're being calculated
 		 * automatically).
@@ -282,6 +271,15 @@ namespace bs
 
 		/** @copydoc SetShapeIndexInParent */
 		u32 GetShapeIndexInParent() const { return mShapeIndexInParent; }
+
+		/**
+		 * Determines if continuous collision detection is enabled or disabled. When disabled it prevents fast moving objects from
+		 * passing through obstacles, at the cost of extra performance.
+		 */
+		virtual void SetContinuousCollisionDetection(bool value) { mContinuousCollisionDetectionEnabled = value; }
+
+		/** @copydoc SetContinuousCollisionDetection() */
+		bool GetContinuousCollisionDetection() const { return mContinuousCollisionDetectionEnabled; }
 
 		/** @} */
 

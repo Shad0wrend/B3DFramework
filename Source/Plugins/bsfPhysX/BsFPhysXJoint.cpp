@@ -53,7 +53,7 @@ void FPhysXJoint::SetBody(JointBody body, Rigidbody* value)
 
 	PxRigidActor* actor = nullptr;
 	if(value != nullptr)
-		actor = static_cast<PhysXRigidbody*>(value)->GetInternalInternal();
+		actor = static_cast<PhysXRigidbody*>(value)->GetPxRigidDynamic();
 
 	if(body == JointBody::Target)
 		actorA = actor;

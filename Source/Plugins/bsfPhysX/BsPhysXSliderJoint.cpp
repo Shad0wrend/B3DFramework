@@ -25,11 +25,11 @@ PhysXSliderJoint::PhysXSliderJoint(PxPhysics* physx, const SLIDER_JOINT_DESC& de
 {
 	PxRigidActor* actor0 = nullptr;
 	if(desc.Bodies[0].Body != nullptr)
-		actor0 = static_cast<PhysXRigidbody*>(desc.Bodies[0].Body)->GetInternalInternal();
+		actor0 = static_cast<PhysXRigidbody*>(desc.Bodies[0].Body)->GetPxRigidDynamic();
 
 	PxRigidActor* actor1 = nullptr;
 	if(desc.Bodies[1].Body != nullptr)
-		actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
+		actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetPxRigidDynamic();
 
 	PxTransform tfrm0 = ToPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
 	PxTransform tfrm1 = ToPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);

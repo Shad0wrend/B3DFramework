@@ -44,7 +44,7 @@ namespace bs
 		 */
 
 		/** Returns the internal implementation of the physics mesh. */
-		virtual FPhysicsMesh* GetInternalInternal() { return mInternal.get(); }
+		virtual FPhysicsMesh* GetInternal() { return mInternal.get(); }
 
 		/**
 		 * @copydoc Create()

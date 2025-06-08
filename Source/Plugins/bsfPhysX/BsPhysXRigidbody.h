@@ -67,7 +67,7 @@ namespace bs
 		void UpdateMassDistribution() override;
 
 		/** Returns the internal PhysX dynamic actor. */
-		physx::PxRigidDynamic* GetInternalInternal() const { return mInternal; }
+		physx::PxRigidDynamic* GetPxRigidDynamic() const { return mInternal; }
 
 	private:
 		physx::PxRigidDynamic* mInternal;

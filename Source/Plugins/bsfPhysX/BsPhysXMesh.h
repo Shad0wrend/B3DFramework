@@ -39,7 +39,7 @@ namespace bs
 		 * Returns the internal PhysX representation of a triangle mesh. Caller must ensure the physics mesh type is
 		 * triangle.
 		 */
-		physx::PxTriangleMesh* GetTriangleInternal() const
+		physx::PxTriangleMesh* GetPxTriangleMesh() const
 		{
 			B3D_ASSERT(mType == PhysicsMeshType::Triangle);
 			return mTriangleMesh;
@@ -49,7 +49,7 @@ namespace bs
 		 * Returns the internal PhysX representation of a convex mesh. Caller must ensure the physics mesh type is
 		 * convex.
 		 */
-		physx::PxConvexMesh* GetConvexInternal() const
+		physx::PxConvexMesh* GetPxConvexMesh() const
 		{
 			B3D_ASSERT(mType == PhysicsMeshType::Convex);
 			return mConvexMesh;

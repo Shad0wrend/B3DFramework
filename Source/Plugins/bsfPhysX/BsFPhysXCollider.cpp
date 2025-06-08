@@ -164,7 +164,7 @@ void FPhysXCollider::SetMaterial(const HPhysicsMaterial& material)
 
 	PxMaterial* materials[1];
 	if(physXmaterial != nullptr)
-		materials[0] = physXmaterial->GetInternalInternal();
+		materials[0] = physXmaterial->GetPxMaterial();
 	else
 		materials[0] = GetPhysX().GetDefaultMaterial();
 

@@ -21,6 +21,7 @@
 #include "BsPhysXCharacterController.h"
 #include "Components/BsCCollider.h"
 #include "BsFPhysXCollider.h"
+#include "BsPhysXColliderShape.h"
 #include "Utility/BsTime.h"
 #include "Math/BsVector3.h"
 #include "Math/BsAABox.h"
@@ -720,8 +721,7 @@ SPtr<PhysicsScene> PhysX::CreatePhysicsScene()
 
 SPtr<ColliderShape> PhysX::CreateColliderShape()
 {
-	// TODO
-	return nullptr;
+	return B3DMakeShared<PhysXColliderShape>();
 }
 
 void PhysX::NotifySceneDestroyedInternal(PhysXScene* scene)
