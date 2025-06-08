@@ -62,6 +62,7 @@ namespace bs
 		SPtr<PhysicsMaterial> CreateMaterial(float staticFriction, float dynamicFriction, float restitution) override;
 		SPtr<PhysicsMesh> CreateMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type) override;
 		SPtr<PhysicsScene> CreatePhysicsScene() override;
+		SPtr<ColliderShape> CreateColliderShape() override;
 		void SetPaused(bool paused) override;
 
 		/** Triggered by the PhysX simulation when an interaction between two colliders is found. */

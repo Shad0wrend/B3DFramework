@@ -177,7 +177,6 @@ namespace bs
 		GameObjectTransientFlags mTransientGameObjectFlags;
 		GameObjectPersistentFlags mPersistentGameObjectFlags;
 
-
 		Any mRTTIData; // RTTI only
 	private:
 		friend class Prefab;

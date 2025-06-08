@@ -4,6 +4,7 @@
 
 #include <cfloat>
 
+#include "BsColliderShape.h"
 #include "BsCorePrerequisites.h"
 #include "Physics/BsPhysicsCommon.h"
 #include "Utility/BsModule.h"
@@ -96,6 +97,9 @@ namespace bs
 
 		/** Creates an object representing the physics scene. Must be manually released via destroyPhysicsScene(). */
 		virtual SPtr<PhysicsScene> CreatePhysicsScene() = 0;
+
+		/** Creates a new empty collider shape. Note you must set the shape information after creation. */
+		virtual SPtr<ColliderShape> CreateColliderShape() = 0;
 
 		/**
 		 * Updates the physics simulation. In order to maintain stability of the physics calculations this method should

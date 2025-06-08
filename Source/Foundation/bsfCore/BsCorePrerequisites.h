@@ -740,6 +740,13 @@ namespace bs
 		TID_DropDownWindow = 1260,
 		TID_GUIElementContainer = 1261,
 		TID_GUIScrollArea = 1262,
+		TID_ColliderShape = 1263,
+		TID_ColliderShapeInformation = 1264,
+		TID_PlaneColliderShape = 1265,
+		TID_BoxColliderShape = 1266,
+		TID_SphereColliderShape = 1267,
+		TID_CapsuleColliderShape = 1268,
+		TID_MeshColliderShape = 1269,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,

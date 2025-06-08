@@ -718,6 +718,12 @@ SPtr<PhysicsScene> PhysX::CreatePhysicsScene()
 	return scene;
 }
 
+SPtr<ColliderShape> PhysX::CreateColliderShape()
+{
+	// TODO
+	return nullptr;
+}
+
 void PhysX::NotifySceneDestroyedInternal(PhysXScene* scene)
 {
 	auto iterFind = std::find(mScenes.begin(), mScenes.end(), scene);
