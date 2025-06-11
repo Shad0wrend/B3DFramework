@@ -17,7 +17,7 @@ namespace bs
 	class PhysXSphericalJoint : public SphericalJoint
 	{
 	public:
-		PhysXSphericalJoint(physx::PxPhysics* physx, const SPHERICAL_JOINT_DESC& desc);
+		PhysXSphericalJoint(physx::PxPhysics* physx, const SphericalJointCreateInformation& desc);
 		~PhysXSphericalJoint();
 
 		LimitConeRange GetLimit() const override;

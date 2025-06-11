@@ -476,14 +476,14 @@ namespace bs
 	struct RenderTextureCreateInformation;
 	struct RenderWindowCreateInformation;
 	struct FONT_DESC;
-	struct CHAR_CONTROLLER_DESC;
+	struct CharacterControllerCreateInformation;
 	struct JOINT_DESC;
-	struct FIXED_JOINT_DESC;
-	struct DISTANCE_JOINT_DESC;
-	struct HINGE_JOINT_DESC;
-	struct SLIDER_JOINT_DESC;
-	struct SPHERICAL_JOINT_DESC;
-	struct D6_JOINT_DESC;
+	struct FixedJointCreateInformation;
+	struct DistanceJointCreateInformation;
+	struct HingeJointCreateInformation;
+	struct SliderJointCreateInformation;
+	struct SphericalJointCreateInformation;
+	struct D6JointCreateInformation;
 	struct AUDIO_CLIP_DESC;
 
 	namespace ct

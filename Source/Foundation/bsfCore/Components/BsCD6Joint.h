@@ -115,7 +115,7 @@ namespace bs
 
 		SPtr<Joint> CreateInternal() override;
 
-		D6_JOINT_DESC mDesc;
+		D6JointCreateInformation mDesc;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

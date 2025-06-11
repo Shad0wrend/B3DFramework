@@ -19,7 +19,7 @@ namespace bs
 	 *  @{
 	 */
 
-	struct PHYSICS_INIT_DESC;
+	struct PhysicsCreateInformation;
 	class PhysicsScene;
 
 	/** Flags for controlling physics behaviour globally. */
@@ -60,7 +60,7 @@ namespace bs
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) Physics : public Module<Physics>
 	{
 	public:
-		Physics(const PHYSICS_INIT_DESC& init);
+		Physics(const PhysicsCreateInformation& init);
 		virtual ~Physics() = default;
 
 		/******************************************************************************************************************/
@@ -116,20 +116,31 @@ namespace bs
 
 		/** Checks is the physics simulation update currently in progress. */
 		B3D_SCRIPT_EXPORT(ExportName(IsUpdateInProgress), Property(Getter))
-
 		bool IsUpdateInProgress() const { return mUpdateInProgress; }
 
 		/**
-		 * Checks does the ray hit the provided collider.
+		 * Checks does the ray hit the provided collider shape.
 		 *
-		 * @param[in]	origin		Origin of the ray to check.
-		 * @param[in]	unitDir		Unit direction of the ray to check.
-		 * @param[in]	collider	Collider to check for hit.
-		 * @param[out]	hit			Information about the hit. Valid only if the method returns true.
-		 * @param[in]	maxDist		Maximum distance from the ray origin to search for hits.
-		 * @return					True if the ray has hit the collider.
+		 * @param	origin				Origin of the ray to check.
+		 * @param	unitDirection		Unit direction of the ray to check.
+		 * @param	colliderShape		Collider shape to check for hit.
+		 * @param	hit					Information about the hit. Valid only if the method returns true.
+		 * @param	maximumDistance		Maximum distance from the ray origin to search for hits.
+		 * @return						True if the ray has hit the collider.
 		 */
-		virtual bool RayCast(const Vector3& origin, const Vector3& unitDir, const Collider& collider, PhysicsQueryHit& hit, float maxDist = FLT_MAX) const = 0;
+		virtual bool RayCast(const Vector3& origin, const Vector3& unitDirection, const ColliderShape& colliderShape, PhysicsQueryHit& hit, float maximumDistance = FLT_MAX) const = 0;
+
+		/**
+		 * Checks does the ray hit any of the shapes on the provided collider.
+		 *
+		 * @param	origin				Origin of the ray to check.
+		 * @param	unitDirection		Unit direction of the ray to check.
+		 * @param	collider			Collider to check for hit.
+		 * @param	hit					Information about the hit. Valid only if the method returns true.
+		 * @param	maximumDistance		Maximum distance from the ray origin to search for hits.
+		 * @return						True if the ray has hit the collider.
+		 */
+		virtual bool RayCast(const Vector3& origin, const Vector3& unitDirection, const Collider& collider, PhysicsQueryHit& hit, float maximumDistance = FLT_MAX) const = 0;
 
 		/** @} */
 
@@ -148,7 +159,7 @@ namespace bs
 	B3D_CORE_EXPORT Physics& GetPhysics();
 
 	/** Contains parameters used for initializing the physics system. */
-	struct PHYSICS_INIT_DESC
+	struct PhysicsCreateInformation
 	{
 		float TypicalLength = 1.0f; /**< Typical length of an object in the scene. */
 		float TypicalSpeed = 9.81f; /**< Typical speed of an object in the scene. */
@@ -589,99 +600,26 @@ namespace bs
 		 */
 		virtual SPtr<Collider> CreateCollider(const Vector3& position, const Quaternion& rotation, const Vector3& scale) = 0;
 
-		/**
-		 * Creates a new box collider.
-		 *
-		 * @param[in]	extents		Extents (half size) of the box.
-		 * @param[in]	position	Center of the box.
-		 * @param[in]	rotation	Rotation of the box.
-		 */
-		virtual SPtr<BoxCollider> CreateBoxCollider(const Vector3& extents, const Vector3& position, const Quaternion& rotation) = 0;
+		/** Creates a new fixed joint. */
+		virtual SPtr<FixedJoint> CreateFixedJoint(const FixedJointCreateInformation& createInformation) = 0;
 
-		/**
-		 * Creates a new sphere collider.
-		 *
-		 * @param[in]	radius		Radius of the sphere geometry.
-		 * @param[in]	position	Position of the collider.
-		 * @param[in]	rotation	Rotation of the collider.
-		 */
-		virtual SPtr<SphereCollider> CreateSphereCollider(float radius, const Vector3& position, const Quaternion& rotation) = 0;
+		/** Creates a new distance joint. */
+		virtual SPtr<DistanceJoint> CreateDistanceJoint(const DistanceJointCreateInformation& createInformation) = 0;
 
-		/**
-		 * Creates a new plane collider.
-		 *
-		 * @param[in]	position	Position of the collider.
-		 * @param[in]	rotation	Rotation of the collider.
-		 */
-		virtual SPtr<PlaneCollider> CreatePlaneCollider(const Vector3& position, const Quaternion& rotation) = 0;
+		/** Creates a new hinge joint. */
+		virtual SPtr<HingeJoint> CreateHingeJoint(const HingeJointCreateInformation& createInformation) = 0;
 
-		/**
-		 * Creates a new capsule collider.
-		 *
-		 * @param[in]	radius		Radius of the capsule.
-		 * @param[in]	halfHeight	Half height of the capsule, from the origin to one of the hemispherical centers, along
-		 *							the normal vector.
-		 * @param[in]	position	Center of the box.
-		 * @param[in]	rotation	Rotation of the box.
-		 */
-		virtual SPtr<CapsuleCollider> CreateCapsuleCollider(float radius, float halfHeight, const Vector3& position, const Quaternion& rotation) = 0;
+		/** Creates a new spherical joint. */
+		virtual SPtr<SphericalJoint> CreateSphericalJoint(const SphericalJointCreateInformation& createInformation) = 0;
 
-		/**
-		 * Creates a new mesh collider.
-		 *
-		 * @param[in]	position	Position of the collider.
-		 * @param[in]	rotation	Rotation of the collider.
-		 */
-		virtual SPtr<MeshCollider> CreateMeshCollider(const Vector3& position, const Quaternion& rotation) = 0;
+		/** Creates a new spherical joint. */
+		virtual SPtr<SliderJoint> CreateSliderJoint(const SliderJointCreateInformation& createInformation) = 0;
 
-		/**
-		 * Creates a new fixed joint.
-		 *
-		 * @param[in]	desc		Settings describing the joint.
-		 */
-		virtual SPtr<FixedJoint> CreateFixedJoint(const FIXED_JOINT_DESC& desc) = 0;
+		/** Creates a new D6 joint. */
+		virtual SPtr<D6Joint> CreateD6Joint(const D6JointCreateInformation& createInformation) = 0;
 
-		/**
-		 * Creates a new distance joint.
-		 *
-		 * @param[in]	desc		Settings describing the joint.
-		 */
-		virtual SPtr<DistanceJoint> CreateDistanceJoint(const DISTANCE_JOINT_DESC& desc) = 0;
-
-		/**
-		 * Creates a new hinge joint.
-		 *
-		 * @param[in]	desc		Settings describing the joint.
-		 */
-		virtual SPtr<HingeJoint> CreateHingeJoint(const HINGE_JOINT_DESC& desc) = 0;
-
-		/**
-		 * Creates a new spherical joint.
-		 *
-		 * @param[in]	desc		Settings describing the joint.
-		 */
-		virtual SPtr<SphericalJoint> CreateSphericalJoint(const SPHERICAL_JOINT_DESC& desc) = 0;
-
-		/**
-		 * Creates a new spherical joint.
-		 *
-		 * @param[in]	desc		Settings describing the joint.
-		 */
-		virtual SPtr<SliderJoint> CreateSliderJoint(const SLIDER_JOINT_DESC& desc) = 0;
-
-		/**
-		 * Creates a new D6 joint.
-		 *
-		 * @param[in]	desc		Settings describing the joint.
-		 */
-		virtual SPtr<D6Joint> CreateD6Joint(const D6_JOINT_DESC& desc) = 0;
-
-		/**
-		 * Creates a new character controller.
-		 *
-		 * @param[in]	desc		Describes controller geometry and movement.
-		 */
-		virtual SPtr<CharacterController> CreateCharacterController(const CHAR_CONTROLLER_DESC& desc) = 0;
+		/** Creates a new character controller. */
+		virtual SPtr<CharacterController> CreateCharacterController(const CharacterControllerCreateInformation& createInformation) = 0;
 
 		/** @copydoc PhysicsScene::BoxOverlap() */
 		virtual Vector<ColliderShape*> BoxOverlapInternal(const AABox& box, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;

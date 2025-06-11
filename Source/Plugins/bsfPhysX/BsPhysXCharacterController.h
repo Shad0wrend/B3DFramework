@@ -17,7 +17,7 @@ namespace bs
 	class PhysXCharacterController : public CharacterController, physx::PxUserControllerHitReport, physx::PxQueryFilterCallback, physx::PxControllerFilterCallback
 	{
 	public:
-		PhysXCharacterController(physx::PxControllerManager* manager, const CHAR_CONTROLLER_DESC& desc);
+		PhysXCharacterController(physx::PxControllerManager* manager, const CharacterControllerCreateInformation& desc);
 		~PhysXCharacterController();
 
 		CharacterCollisionFlags Move(const Vector3& displacement) override;

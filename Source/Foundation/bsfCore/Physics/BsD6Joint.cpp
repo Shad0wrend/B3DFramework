@@ -16,7 +16,7 @@ RTTIType* D6JointDrive::GetRtti() const
 	return GetRttiStatic();
 }
 
-SPtr<D6Joint> D6Joint::Create(PhysicsScene& scene, const D6_JOINT_DESC& desc)
+SPtr<D6Joint> D6Joint::Create(PhysicsScene& scene, const D6JointCreateInformation& desc)
 {
 	return scene.CreateD6Joint(desc);
 }

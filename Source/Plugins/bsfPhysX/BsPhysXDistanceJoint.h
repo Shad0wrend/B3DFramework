@@ -17,7 +17,7 @@ namespace bs
 	class PhysXDistanceJoint : public DistanceJoint
 	{
 	public:
-		PhysXDistanceJoint(physx::PxPhysics* physx, const DISTANCE_JOINT_DESC& desc);
+		PhysXDistanceJoint(physx::PxPhysics* physx, const DistanceJointCreateInformation& desc);
 		~PhysXDistanceJoint() override;
 
 		float GetDistance() const override;

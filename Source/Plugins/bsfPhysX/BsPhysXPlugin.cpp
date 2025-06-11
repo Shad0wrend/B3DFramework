@@ -11,7 +11,7 @@ class B3D_PLUGIN_EXPORT PhysXFactory : public PhysicsFactory
 public:
 	void StartUp(bool cooking)
 	{
-		PHYSICS_INIT_DESC desc;
+		PhysicsCreateInformation desc;
 		desc.InitCooking = cooking;
 
 		Physics::StartUp<PhysX>(desc);

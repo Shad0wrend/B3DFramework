@@ -12,7 +12,7 @@ namespace bs
 	 *  @{
 	 */
 
-	struct HINGE_JOINT_DESC;
+	struct HingeJointCreateInformation;
 
 	/** Flags that control hinge joint options. */
 	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) HingeJointFlag
@@ -53,7 +53,7 @@ namespace bs
 	class B3D_CORE_EXPORT HingeJoint : public Joint
 	{
 	public:
-		HingeJoint(const HINGE_JOINT_DESC& desc) {}
+		HingeJoint(const HingeJointCreateInformation& desc) {}
 
 		virtual ~HingeJoint() = default;
 
@@ -97,11 +97,11 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<HingeJoint> Create(PhysicsScene& scene, const HINGE_JOINT_DESC& desc);
+		static SPtr<HingeJoint> Create(PhysicsScene& scene, const HingeJointCreateInformation& desc);
 	};
 
 	/** Structure used for initializing a new HingeJoint. */
-	struct HINGE_JOINT_DESC : JOINT_DESC
+	struct HingeJointCreateInformation : JOINT_DESC
 	{
 		HingeJointDrive Drive;
 		LimitAngularRange Limit;

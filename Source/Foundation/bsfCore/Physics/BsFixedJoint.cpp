@@ -5,7 +5,7 @@
 
 using namespace bs;
 
-SPtr<FixedJoint> FixedJoint::Create(PhysicsScene& scene, const FIXED_JOINT_DESC& desc)
+SPtr<FixedJoint> FixedJoint::Create(PhysicsScene& scene, const FixedJointCreateInformation& desc)
 {
 	return scene.CreateFixedJoint(desc);
 }

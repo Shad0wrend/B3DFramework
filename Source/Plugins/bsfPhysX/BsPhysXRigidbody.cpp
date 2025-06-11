@@ -2,7 +2,6 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsPhysXRigidbody.h"
 #include "Physics/BsCollider.h"
-#include "BsFPhysXCollider.h"
 #include "Scene/BsSceneObject.h"
 #include "Physics/BsPhysics.h"
 #include "PxRigidDynamic.h"
@@ -302,14 +301,14 @@ void PhysXRigidbody::SetFlags(RigidbodyFlag flags)
 
 		// Enable/disable CCD on shapes so the filter can handle them properly
 		u32 numShapes = mInternal->getNbShapes();
-		PxShape** shapes = (PxShape**)B3DStackAllocate(sizeof(PxShape*) * numShapes);
+		StackMemory<PxShape*> shapes = B3DManagedStackAllocate<PxShape*>(numShapes);
 
 		mInternal->getShapes(shapes, sizeof(PxShape*) * numShapes);
 
 		for(u32 i = 0; i < numShapes; i++)
 		{
-			Collider* collider = (Collider*)shapes[i]->userData;
-			collider->GetInternalInternal()->SetCCDInternal(ccdEnabledNew);
+			ColliderShape* const colliderShape = (ColliderShape*)shapes[i]->userData;
+			colliderShape->SetContinuousCollisionDetection(ccdEnabledNew);
 		}
 	}
 
@@ -366,63 +365,20 @@ void PhysXRigidbody::UpdateMassDistribution()
 	}
 	else
 	{
-		u32 numShapes = mInternal->getNbShapes();
-		if(numShapes == 0)
+		const u32 shapeCount = mInternal->getNbShapes();
+		if(shapeCount == 0)
 		{
 			PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, mInternal->getMass());
 			return;
 		}
 
-		PxShape** shapes = (PxShape**)B3DStackAllocate(sizeof(PxShape*) * numShapes);
-		mInternal->getShapes(shapes, numShapes);
+		StackMemory<PxShape*> shapes = B3DManagedStackAllocate<PxShape*>(shapeCount);
+		mInternal->getShapes(shapes, shapeCount);
 
-		float* masses = (float*)B3DStackAllocate(sizeof(float) * numShapes);
-		for(u32 i = 0; i < numShapes; i++)
-			masses[i] = ((Collider*)shapes[i]->userData)->GetMass();
+		StackMemory<float> masses = B3DManagedStackAllocate<float>(shapeCount);
+		for(u32 shapeIndex = 0; shapeIndex < shapeCount; shapeIndex++)
+			masses[shapeIndex] = ((ColliderShape*)shapes[shapeIndex]->userData)->GetMass();
 
-		PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, masses, numShapes);
-
-		B3DStackFree(masses);
-		B3DStackFree(shapes);
+		PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, masses, shapeCount);
 	}
-}
-
-void PhysXRigidbody::AddCollider(Collider* collider)
-{
-	if(collider == nullptr)
-		return;
-
-	FPhysXCollider* physxCollider = static_cast<FPhysXCollider*>(collider->GetInternalInternal());
-	physxCollider->SetCCDInternal(((u32)mFlags & (u32)RigidbodyFlag::CCD) != 0);
-
-	mInternal->attachShape(*physxCollider->GetShapeInternal());
-}
-
-void PhysXRigidbody::RemoveCollider(Collider* collider)
-{
-	if(collider == nullptr)
-		return;
-
-	FPhysXCollider* physxCollider = static_cast<FPhysXCollider*>(collider->GetInternalInternal());
-	physxCollider->SetCCDInternal(false);
-
-	mInternal->detachShape(*physxCollider->GetShapeInternal());
-}
-
-void PhysXRigidbody::RemoveColliders()
-{
-	u32 numShapes = mInternal->getNbShapes();
-	PxShape** shapes = (PxShape**)B3DStackAllocate(sizeof(PxShape*) * numShapes);
-
-	mInternal->getShapes(shapes, sizeof(PxShape*) * numShapes);
-
-	for(u32 i = 0; i < numShapes; i++)
-	{
-		Collider* collider = (Collider*)shapes[i]->userData;
-		collider->GetInternalInternal()->SetCCDInternal(false);
-
-		mInternal->detachShape(*shapes[i]);
-	}
-
-	B3DStackFree(shapes);
 }

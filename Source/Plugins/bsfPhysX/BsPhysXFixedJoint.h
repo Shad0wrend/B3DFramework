@@ -16,7 +16,7 @@ namespace bs
 	class PhysXFixedJoint : public FixedJoint
 	{
 	public:
-		PhysXFixedJoint(physx::PxPhysics* physx, const FIXED_JOINT_DESC& desc);
+		PhysXFixedJoint(physx::PxPhysics* physx, const FixedJointCreateInformation& desc);
 		~PhysXFixedJoint();
 	};
 

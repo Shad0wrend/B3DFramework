@@ -12,7 +12,7 @@ namespace bs
 	 *  @{
 	 */
 
-	struct D6_JOINT_DESC;
+	struct D6JointCreateInformation;
 
 	/** Specifies axes that the D6 joint can constrain motion on. */
 	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) D6JointAxis
@@ -105,7 +105,7 @@ namespace bs
 	class B3D_CORE_EXPORT D6Joint : public Joint
 	{
 	public:
-		D6Joint(const D6_JOINT_DESC& desc) {}
+		D6Joint(const D6JointCreateInformation& desc) {}
 
 		virtual ~D6Joint() {}
 
@@ -195,13 +195,13 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<D6Joint> Create(PhysicsScene& scene, const D6_JOINT_DESC& desc);
+		static SPtr<D6Joint> Create(PhysicsScene& scene, const D6JointCreateInformation& desc);
 	};
 
 	/** Structure used for initializing a new D6Joint. */
-	struct D6_JOINT_DESC : JOINT_DESC
+	struct D6JointCreateInformation : JOINT_DESC
 	{
-		D6_JOINT_DESC()
+		D6JointCreateInformation()
 		{
 			Motion.Resize((u32)D6JointAxis::Count);
 			Drive.Resize((u32)D6JointDriveType::Count);

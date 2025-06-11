@@ -83,7 +83,7 @@ namespace bs
 
 		SPtr<Joint> CreateInternal() override;
 
-		DISTANCE_JOINT_DESC mDesc;
+		DistanceJointCreateInformation mDesc;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

@@ -17,7 +17,7 @@ namespace bs
 	class PhysXSliderJoint : public SliderJoint
 	{
 	public:
-		PhysXSliderJoint(physx::PxPhysics* physx, const SLIDER_JOINT_DESC& desc);
+		PhysXSliderJoint(physx::PxPhysics* physx, const SliderJointCreateInformation& desc);
 		~PhysXSliderJoint();
 
 		float GetPosition() const override;

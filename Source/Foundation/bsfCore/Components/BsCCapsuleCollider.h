@@ -3,7 +3,6 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "Physics/BsCapsuleCollider.h"
 #include "Components/BsCCollider.h"
 
 namespace bs

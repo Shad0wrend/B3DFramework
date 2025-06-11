@@ -303,7 +303,6 @@ void CRigidbody::UpdateColliders()
 				mChildren.push_back(entry);
 
 				collider->SetRigidbody(mInternal.get());
-				mInternal->AddCollider(collider);
 			}
 		}
 
@@ -326,32 +325,19 @@ void CRigidbody::ClearColliders()
 		collider->SetRigidbody(HRigidbody(), true);
 
 	mChildren.clear();
-
-	if(mInternal != nullptr)
-		mInternal->RemoveColliders();
 }
 
 void CRigidbody::AddCollider(const HCollider& collider)
 {
-	if(mInternal == nullptr)
-		return;
-
 	mChildren.push_back(collider);
-	mInternal->AddCollider(collider->GetInternalInternal());
 }
 
 void CRigidbody::RemoveCollider(const HCollider& collider)
 {
-	if(mInternal == nullptr)
-		return;
-
 	auto iterFind = std::find(mChildren.begin(), mChildren.end(), collider);
 
 	if(iterFind != mChildren.end())
-	{
-		mInternal->RemoveCollider(collider->GetInternalInternal());
 		mChildren.erase(iterFind);
-	}
 }
 
 void CRigidbody::CheckForNestedRigibody()

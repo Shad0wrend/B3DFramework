@@ -17,7 +17,7 @@ namespace bs
 	class PhysXD6Joint : public D6Joint
 	{
 	public:
-		PhysXD6Joint(physx::PxPhysics* physx, const D6_JOINT_DESC& desc);
+		PhysXD6Joint(physx::PxPhysics* physx, const D6JointCreateInformation& desc);
 		~PhysXD6Joint();
 
 		D6JointMotion GetMotion(D6JointAxis axis) const override;

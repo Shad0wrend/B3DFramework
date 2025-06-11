@@ -5,7 +5,7 @@
 
 using namespace bs;
 
-SPtr<SliderJoint> SliderJoint::Create(PhysicsScene& scene, const SLIDER_JOINT_DESC& desc)
+SPtr<SliderJoint> SliderJoint::Create(PhysicsScene& scene, const SliderJointCreateInformation& desc)
 {
 	return scene.CreateSliderJoint(desc);
 }

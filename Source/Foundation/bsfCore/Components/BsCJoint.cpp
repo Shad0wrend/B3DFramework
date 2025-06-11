@@ -61,7 +61,7 @@ void CJoint::SetBody(JointBody body, const HRigidbody& value)
 		{
 			Rigidbody* rigidbody = nullptr;
 			if(value != nullptr)
-				rigidbody = value->GetInternalInternal();
+				rigidbody = value->GetInternal();
 
 			mInternal->SetBody(body, rigidbody);
 			UpdateTransform(body);
@@ -196,12 +196,12 @@ void CJoint::OnTransformChanged(TransformChangedFlags flags)
 void CJoint::RestoreInternal()
 {
 	if(mBodies[0] != nullptr)
-		mDesc.Bodies[0].Body = mBodies[0]->GetInternalInternal();
+		mDesc.Bodies[0].Body = mBodies[0]->GetInternal();
 	else
 		mDesc.Bodies[0].Body = nullptr;
 
 	if(mBodies[1] != nullptr)
-		mDesc.Bodies[1].Body = mBodies[1]->GetInternalInternal();
+		mDesc.Bodies[1].Body = mBodies[1]->GetInternal();
 	else
 		mDesc.Bodies[1].Body = nullptr;
 
@@ -245,7 +245,7 @@ bool CJoint::IsBodyValid(const HRigidbody& body)
 	if(body == nullptr)
 		return false;
 
-	if(body->GetInternalInternal() == nullptr)
+	if(body->GetInternal() == nullptr)
 		return false;
 
 	return true;

@@ -165,21 +165,21 @@ void CCollider::SetRigidbody(const HRigidbody& rigidbody, bool internal)
 	if(rigidbody == mParent)
 		return;
 
+	if(mParent != nullptr && !internal)
+		mParent->RemoveCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
+
 	if(mInternal != nullptr && !internal)
 	{
-		if(mParent != nullptr)
-			mParent->RemoveCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
-
 		Rigidbody* rigidBodyPtr = nullptr;
 
 		if(rigidbody != nullptr)
-			rigidBodyPtr = rigidbody->GetInternalInternal();
+			rigidBodyPtr = rigidbody->GetInternal();
 
 		mInternal->SetRigidbody(rigidBodyPtr);
-
-		if(rigidbody != nullptr)
-			rigidbody->AddCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
 	}
+
+	if(rigidbody != nullptr && !internal)
+		rigidbody->AddCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
 
 	mParent = rigidbody;
 	UpdateCollisionReportMode();

@@ -21,7 +21,7 @@ PxRevoluteJointFlag::Enum ToPxFlag(HingeJointFlag flag)
 	}
 }
 
-PhysXHingeJoint::PhysXHingeJoint(PxPhysics* physx, const HINGE_JOINT_DESC& desc)
+PhysXHingeJoint::PhysXHingeJoint(PxPhysics* physx, const HingeJointCreateInformation& desc)
 	: HingeJoint(desc)
 {
 	PxRigidActor* actor0 = nullptr;

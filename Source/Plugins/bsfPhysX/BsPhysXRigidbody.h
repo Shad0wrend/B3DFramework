@@ -61,9 +61,6 @@ namespace bs
 		void AddTorque(const Vector3& torque, ForceMode mode = ForceMode::Force) override;
 		void AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode = PointForceMode::Force) override;
 		Vector3 GetVelocityAtPoint(const Vector3& point) const override;
-		void AddCollider(Collider* collider) override;
-		void RemoveCollider(Collider* collider) override;
-		void RemoveColliders() override;
 		void UpdateMassDistribution() override;
 
 		/** Returns the internal PhysX dynamic actor. */

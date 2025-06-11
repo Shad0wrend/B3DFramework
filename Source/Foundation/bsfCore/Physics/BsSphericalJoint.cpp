@@ -5,7 +5,7 @@
 
 using namespace bs;
 
-SPtr<SphericalJoint> SphericalJoint::Create(PhysicsScene& scene, const SPHERICAL_JOINT_DESC& desc)
+SPtr<SphericalJoint> SphericalJoint::Create(PhysicsScene& scene, const SphericalJointCreateInformation& desc)
 {
 	return scene.CreateSphericalJoint(desc);
 }

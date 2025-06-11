@@ -55,7 +55,7 @@ namespace bs
 
 		SPtr<Joint> CreateInternal() override;
 
-		SPHERICAL_JOINT_DESC mDesc;
+		SphericalJointCreateInformation mDesc;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

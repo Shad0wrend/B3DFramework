@@ -10,7 +10,7 @@ using namespace physx;
 
 using namespace bs;
 
-PhysXFixedJoint::PhysXFixedJoint(PxPhysics* physx, const FIXED_JOINT_DESC& desc)
+PhysXFixedJoint::PhysXFixedJoint(PxPhysics* physx, const FixedJointCreateInformation& desc)
 	: FixedJoint(desc)
 {
 	PxRigidActor* actor0 = nullptr;

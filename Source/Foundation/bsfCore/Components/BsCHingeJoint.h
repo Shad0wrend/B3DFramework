@@ -71,7 +71,7 @@ namespace bs
 
 		SPtr<Joint> CreateInternal() override;
 
-		HINGE_JOINT_DESC mDesc;
+		HingeJointCreateInformation mDesc;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

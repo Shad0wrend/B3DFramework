@@ -66,13 +66,13 @@ SPtr<Collider> CPlaneCollider::CreateInternal()
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
 	const Transform& transform = SO()->GetTransform();
 
-	SPtr<ColliderShape> colliderShape = ColliderShape::CreatePlane();
+	SPtr<ColliderShape> colliderShape = ColliderShape::CreatePlane(PlaneColliderShapeInformation());
 	colliderShape->SetPosition(mLocalPosition);
 	colliderShape->SetRotation(mLocalRotation);
 
 	SPtr<Collider> collider = Collider::Create(*scene->GetPhysicsScene(), transform.GetPosition(), transform.GetRotation(), transform.GetScale());
 	collider->SetOwner(PhysicsOwnerType::Component, this);
-	collider->SetShapes({ colliderShape });
+	collider->SetShapes(TArray{ colliderShape });
 
 	return collider;
 }

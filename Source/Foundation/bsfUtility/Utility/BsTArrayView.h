@@ -61,7 +61,7 @@ namespace bs
 			: TArrayView(other.data(), other.size())
 		{ }
 
-		template<typename U, std::enable_if_t<!std::is_rvalue_reference_v<U&&>, i32> = 0>
+		template<typename U>
 		TArrayView(U&& other) : TArrayView(other.data(), other.size())
 		{ }
 

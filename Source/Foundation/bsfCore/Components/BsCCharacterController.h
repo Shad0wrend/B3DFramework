@@ -168,7 +168,7 @@ namespace bs
 		void TriggerOnControllerHit(const ControllerControllerCollision& value);
 
 		SPtr<CharacterController> mInternal;
-		CHAR_CONTROLLER_DESC mDesc;
+		CharacterControllerCreateInformation mDesc;
 		u64 mLayer = 1;
 
 		/************************************************************************/

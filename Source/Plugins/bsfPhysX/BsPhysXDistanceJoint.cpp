@@ -23,7 +23,7 @@ PxDistanceJointFlag::Enum ToPxFlag(DistanceJointFlag flag)
 	}
 }
 
-PhysXDistanceJoint::PhysXDistanceJoint(PxPhysics* physx, const DISTANCE_JOINT_DESC& desc)
+PhysXDistanceJoint::PhysXDistanceJoint(PxPhysics* physx, const DistanceJointCreateInformation& desc)
 	: DistanceJoint(desc)
 {
 	PxRigidActor* actor0 = nullptr;

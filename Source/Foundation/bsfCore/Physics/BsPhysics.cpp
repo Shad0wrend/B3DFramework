@@ -7,7 +7,7 @@
 
 using namespace bs;
 
-Physics::Physics(const PHYSICS_INIT_DESC& init)
+Physics::Physics(const PhysicsCreateInformation& init)
 {
 	memset(mCollisionMap, 1, kCollisionMapSize * kCollisionMapSize * sizeof(bool));
 }

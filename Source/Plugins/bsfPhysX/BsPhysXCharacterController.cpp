@@ -48,7 +48,7 @@ CharacterNonWalkableMode FromPxEnum(PxControllerNonWalkableMode::Enum value)
 		: CharacterNonWalkableMode::PreventAndSlide;
 }
 
-PxCapsuleControllerDesc ToPxDesc(const CHAR_CONTROLLER_DESC& desc)
+PxCapsuleControllerDesc ToPxDesc(const CharacterControllerCreateInformation& desc)
 {
 	PxCapsuleControllerDesc output;
 	output.climbingMode = ToPxEnum(desc.ClimbingMode);
@@ -64,7 +64,7 @@ PxCapsuleControllerDesc ToPxDesc(const CHAR_CONTROLLER_DESC& desc)
 	return output;
 }
 
-PhysXCharacterController::PhysXCharacterController(PxControllerManager* manager, const CHAR_CONTROLLER_DESC& desc)
+PhysXCharacterController::PhysXCharacterController(PxControllerManager* manager, const CharacterControllerCreateInformation& desc)
 	: CharacterController(desc)
 {
 	PxCapsuleControllerDesc pxDesc = ToPxDesc(desc);

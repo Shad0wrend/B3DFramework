@@ -12,7 +12,7 @@ namespace bs
 	 *  @{
 	 */
 
-	struct SPHERICAL_JOINT_DESC;
+	struct SphericalJointCreateInformation;
 
 	/** Flags that control options for the spherical joint */
 	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) SphericalJointFlag
@@ -28,7 +28,7 @@ namespace bs
 	class B3D_CORE_EXPORT SphericalJoint : public Joint
 	{
 	public:
-		SphericalJoint(const SPHERICAL_JOINT_DESC& desc) {}
+		SphericalJoint(const SphericalJointCreateInformation& desc) {}
 
 		virtual ~SphericalJoint() = default;
 
@@ -53,11 +53,11 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<SphericalJoint> Create(PhysicsScene& scene, const SPHERICAL_JOINT_DESC& desc);
+		static SPtr<SphericalJoint> Create(PhysicsScene& scene, const SphericalJointCreateInformation& desc);
 	};
 
 	/** Structure used for initializing a new SphericalJoint. */
-	struct SPHERICAL_JOINT_DESC : JOINT_DESC
+	struct SphericalJointCreateInformation : JOINT_DESC
 	{
 		LimitConeRange Limit;
 		SphericalJointFlag Flag = (SphericalJointFlag)0;

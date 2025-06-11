@@ -20,7 +20,7 @@ PxPrismaticJointFlag::Enum ToPxFlag(SliderJointFlag flag)
 	}
 }
 
-PhysXSliderJoint::PhysXSliderJoint(PxPhysics* physx, const SLIDER_JOINT_DESC& desc)
+PhysXSliderJoint::PhysXSliderJoint(PxPhysics* physx, const SliderJointCreateInformation& desc)
 	: SliderJoint(desc)
 {
 	PxRigidActor* actor0 = nullptr;

@@ -208,7 +208,7 @@ namespace bs
 		 */
 
 		/** Returns the Rigidbody implementation wrapped by this component. */
-		Rigidbody* GetInternalInternal() const { return mInternal.get(); }
+		Rigidbody* GetInternal() const { return mInternal.get(); }
 
 		/** Sets that joint that this rigidbody is attached to. Allows the rigidbody to notify the joint when it moves. */
 		void SetJointInternal(const HJoint& joint) { mParentJoint = joint; }

@@ -12,13 +12,13 @@ namespace bs
 	 *  @{
 	 */
 
-	struct FIXED_JOINT_DESC;
+	struct FixedJointCreateInformation;
 
 	/** Physics joint that will maintain a fixed distance and orientation between its two attached bodies. */
 	class B3D_CORE_EXPORT FixedJoint : public Joint
 	{
 	public:
-		FixedJoint(const FIXED_JOINT_DESC& desc) {}
+		FixedJoint(const FixedJointCreateInformation& desc) {}
 
 		virtual ~FixedJoint() = default;
 
@@ -28,11 +28,11 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<FixedJoint> Create(PhysicsScene& scene, const FIXED_JOINT_DESC& desc);
+		static SPtr<FixedJoint> Create(PhysicsScene& scene, const FixedJointCreateInformation& desc);
 	};
 
 	/** Structure used for initializing a new FixedJoint. */
-	struct FIXED_JOINT_DESC : JOINT_DESC
+	struct FixedJointCreateInformation : JOINT_DESC
 	{};
 
 	/** @} */

@@ -17,7 +17,7 @@ namespace bs
 	class PhysXHingeJoint : public HingeJoint
 	{
 	public:
-		PhysXHingeJoint(physx::PxPhysics* physx, const HINGE_JOINT_DESC& desc);
+		PhysXHingeJoint(physx::PxPhysics* physx, const HingeJointCreateInformation& desc);
 		~PhysXHingeJoint() override;
 
 		Radian GetAngle() const override;

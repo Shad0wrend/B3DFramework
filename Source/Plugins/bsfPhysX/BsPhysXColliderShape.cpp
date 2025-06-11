@@ -188,7 +188,7 @@ void PhysXColliderShape::SetGeometry(const physx::PxGeometry& geometry)
 		PxShape* const newShape = GetPhysX().GetPhysX()->createShape(geometry, *underlyingMaterial, true);
 		newShape->userData = this;
 
-		if(B3D_ENSURE(newShape != nullptr))
+		if(mShape != nullptr)
 		{
 			newShape->setLocalPose(mShape->getLocalPose());
 			newShape->setFlags(mShape->getFlags());

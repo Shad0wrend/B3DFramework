@@ -249,15 +249,6 @@ namespace bs
 		 */
 		virtual Vector3 GetVelocityAtPoint(const Vector3& point) const = 0;
 
-		/** Registers a new collider as a child of this rigidbody. */
-		virtual void AddCollider(Collider* collider) = 0;
-
-		/** Removes a collider from the child list of this rigidbody. */
-		virtual void RemoveCollider(Collider* collider) = 0;
-
-		/** Removes all colliders from the child list of this rigidbody. */
-		virtual void RemoveColliders() = 0;
-
 		/**
 		 * Recalculates rigidbody's mass, inertia tensors and center of mass depending on the currently set child colliders.
 		 * This should be called whenever relevant child collider properties change (like mass or shape).

@@ -12,7 +12,7 @@ namespace bs
 	 *  @{
 	 */
 
-	struct DISTANCE_JOINT_DESC;
+	struct DistanceJointCreateInformation;
 
 	/** Controls distance joint options. */
 	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) DistanceJointFlag
@@ -26,7 +26,7 @@ namespace bs
 	class B3D_CORE_EXPORT DistanceJoint : public Joint
 	{
 	public:
-		DistanceJoint(const DISTANCE_JOINT_DESC& desc) {}
+		DistanceJoint(const DistanceJointCreateInformation& desc) {}
 
 		virtual ~DistanceJoint() = default;
 
@@ -83,11 +83,11 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<DistanceJoint> Create(PhysicsScene& scene, const DISTANCE_JOINT_DESC& desc);
+		static SPtr<DistanceJoint> Create(PhysicsScene& scene, const DistanceJointCreateInformation& desc);
 	};
 
 	/** Structure used for initializing a new DistanceJoint. */
-	struct DISTANCE_JOINT_DESC : JOINT_DESC
+	struct DistanceJointCreateInformation : JOINT_DESC
 	{
 		float MinDistance = 0.0f;
 		float MaxDistance = 0.0f;

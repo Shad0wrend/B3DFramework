@@ -19,7 +19,7 @@ PxSphericalJointFlag::Enum ToPxFlag(SphericalJointFlag flag)
 	}
 }
 
-PhysXSphericalJoint::PhysXSphericalJoint(PxPhysics* physx, const SPHERICAL_JOINT_DESC& desc)
+PhysXSphericalJoint::PhysXSphericalJoint(PxPhysics* physx, const SphericalJointCreateInformation& desc)
 	: SphericalJoint(desc)
 {
 	PxRigidActor* actor0 = nullptr;

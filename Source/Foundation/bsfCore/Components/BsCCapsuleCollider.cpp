@@ -104,7 +104,7 @@ SPtr<Collider> CCapsuleCollider::CreateInternal()
 
 	SPtr<Collider> collider = Collider::Create(*scene->GetPhysicsScene(), transform.GetPosition(), transform.GetRotation(), transform.GetScale());
 	collider->SetOwner(PhysicsOwnerType::Component, this);
-	collider->SetShapes({ colliderShape });
+	collider->SetShapes(TArray{ colliderShape });
 
 	return collider;
 }

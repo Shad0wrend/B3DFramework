@@ -98,7 +98,7 @@ D6JointDriveType FromPxDrive(PxD6Drive::Enum drive)
 	}
 }
 
-PhysXD6Joint::PhysXD6Joint(PxPhysics* physx, const D6_JOINT_DESC& desc)
+PhysXD6Joint::PhysXD6Joint(PxPhysics* physx, const D6JointCreateInformation& desc)
 	: D6Joint(desc)
 {
 	PxRigidActor* actor0 = nullptr;

@@ -44,7 +44,7 @@ namespace bs
 	typedef Flags<CharacterCollisionFlag> CharacterCollisionFlags;
 	B3D_FLAGS_OPERATORS(CharacterCollisionFlag)
 
-	struct CHAR_CONTROLLER_DESC;
+	struct CharacterControllerCreateInformation;
 	struct ControllerColliderCollision;
 	struct ControllerControllerCollision;
 
@@ -56,7 +56,7 @@ namespace bs
 	class B3D_CORE_EXPORT CharacterController
 	{
 	public:
-		CharacterController(const CHAR_CONTROLLER_DESC& desc) {}
+		CharacterController(const CharacterControllerCreateInformation& desc) {}
 
 		virtual ~CharacterController() {}
 
@@ -152,7 +152,7 @@ namespace bs
 		 * @param[in]	scene		Scene to add the controller to.
 		 * @param[in]	desc		Describes controller geometry and movement.
 		 */
-		static SPtr<CharacterController> Create(PhysicsScene& scene, const CHAR_CONTROLLER_DESC& desc);
+		static SPtr<CharacterController> Create(PhysicsScene& scene, const CharacterControllerCreateInformation& desc);
 
 		/** Triggered when the controller hits a collider. */
 		Event<void(const ControllerColliderCollision&)> OnColliderHit;
@@ -187,7 +187,7 @@ namespace bs
 	};
 
 	/** Contains all the information required for initializing a character controller. */
-	struct CHAR_CONTROLLER_DESC
+	struct CharacterControllerCreateInformation
 	{
 		/** Center of the controller capsule */
 		Vector3 Position = Vector3::kZero;

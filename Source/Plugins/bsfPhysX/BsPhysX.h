@@ -54,7 +54,7 @@ namespace bs
 		};
 
 	public:
-		PhysX(const PHYSICS_INIT_DESC& input);
+		PhysX(const PhysicsCreateInformation& input);
 		~PhysX();
 
 		void FixedUpdate(float step) override;
@@ -74,7 +74,8 @@ namespace bs
 		/** Triggered by the PhysX simulation when a joint breaks. */
 		void ReportJointBreakEventInternal(const JointBreakEvent& event);
 
-		bool RayCast(const Vector3& origin, const Vector3& unitDir, const Collider& collider, PhysicsQueryHit& hit, float maxDist = FLT_MAX) const override;
+		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const ColliderShape& colliderShape, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;
+		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const Collider& collider, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;
 
 		/** Notifies the system that at physics scene is about to be destroyed. */
 		void NotifySceneDestroyedInternal(PhysXScene* scene);
@@ -97,7 +98,7 @@ namespace bs
 		/** Sends out all events recorded during simulation to the necessary physics objects. */
 		void TriggerEvents();
 
-		PHYSICS_INIT_DESC mInitDesc;
+		PhysicsCreateInformation mInitDesc;
 		bool mPaused = false;
 
 		Vector<TriggerEvent> mTriggerEvents;
@@ -119,7 +120,7 @@ namespace bs
 	class PhysXScene : public PhysicsScene
 	{
 	public:
-		PhysXScene(physx::PxPhysics* physics, const PHYSICS_INIT_DESC& input, const physx::PxTolerancesScale& scale);
+		PhysXScene(physx::PxPhysics* physics, const PhysicsCreateInformation& input, const physx::PxTolerancesScale& scale);
 		~PhysXScene();
 
 		/** Returns the underlying PhysX scene. */
@@ -127,18 +128,13 @@ namespace bs
 
 		SPtr<Rigidbody> CreateRigidbody(const HSceneObject& linkedSO) override;
 		SPtr<Collider> CreateCollider(const Vector3& position, const Quaternion& rotation, const Vector3& scale) override;
-		SPtr<BoxCollider> CreateBoxCollider(const Vector3& extents, const Vector3& position, const Quaternion& rotation) override;
-		SPtr<SphereCollider> CreateSphereCollider(float radius, const Vector3& position, const Quaternion& rotation) override;
-		SPtr<PlaneCollider> CreatePlaneCollider(const Vector3& position, const Quaternion& rotation) override;
-		SPtr<CapsuleCollider> CreateCapsuleCollider(float radius, float halfHeight, const Vector3& position, const Quaternion& rotation) override;
-		SPtr<MeshCollider> CreateMeshCollider(const Vector3& position, const Quaternion& rotation) override;
-		SPtr<FixedJoint> CreateFixedJoint(const FIXED_JOINT_DESC& desc) override;
-		SPtr<DistanceJoint> CreateDistanceJoint(const DISTANCE_JOINT_DESC& desc) override;
-		SPtr<HingeJoint> CreateHingeJoint(const HINGE_JOINT_DESC& desc) override;
-		SPtr<SphericalJoint> CreateSphericalJoint(const SPHERICAL_JOINT_DESC& desc) override;
-		SPtr<SliderJoint> CreateSliderJoint(const SLIDER_JOINT_DESC& desc) override;
-		SPtr<D6Joint> CreateD6Joint(const D6_JOINT_DESC& desc) override;
-		SPtr<CharacterController> CreateCharacterController(const CHAR_CONTROLLER_DESC& desc) override;
+		SPtr<FixedJoint> CreateFixedJoint(const FixedJointCreateInformation& desc) override;
+		SPtr<DistanceJoint> CreateDistanceJoint(const DistanceJointCreateInformation& desc) override;
+		SPtr<HingeJoint> CreateHingeJoint(const HingeJointCreateInformation& desc) override;
+		SPtr<SphericalJoint> CreateSphericalJoint(const SphericalJointCreateInformation& desc) override;
+		SPtr<SliderJoint> CreateSliderJoint(const SliderJointCreateInformation& desc) override;
+		SPtr<D6Joint> CreateD6Joint(const D6JointCreateInformation& desc) override;
+		SPtr<CharacterController> CreateCharacterController(const CharacterControllerCreateInformation& desc) override;
 
 		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override;
 		bool BoxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override;

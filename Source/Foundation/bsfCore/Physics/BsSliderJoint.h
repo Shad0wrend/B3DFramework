@@ -12,7 +12,7 @@ namespace bs
 	 *  @{
 	 */
 
-	struct SLIDER_JOINT_DESC;
+	struct SliderJointCreateInformation;
 
 	/** Flag that controls slider joint's behaviour. */
 	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) SliderJointFlag
@@ -26,7 +26,7 @@ namespace bs
 	class B3D_CORE_EXPORT SliderJoint : public Joint
 	{
 	public:
-		SliderJoint(const SLIDER_JOINT_DESC& desc) {}
+		SliderJoint(const SliderJointCreateInformation& desc) {}
 
 		virtual ~SliderJoint() = default;
 
@@ -59,11 +59,11 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<SliderJoint> Create(PhysicsScene& scene, const SLIDER_JOINT_DESC& desc);
+		static SPtr<SliderJoint> Create(PhysicsScene& scene, const SliderJointCreateInformation& desc);
 	};
 
 	/** Structure used for initializing a new SliderJoint. */
-	struct SLIDER_JOINT_DESC : JOINT_DESC
+	struct SliderJointCreateInformation : JOINT_DESC
 	{
 		LimitLinearRange Limit;
 		SliderJointFlag Flag = (SliderJointFlag)0;

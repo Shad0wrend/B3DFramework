@@ -39,6 +39,9 @@ namespace bs
 		void SetShape(const CapsuleColliderShapeInformation& information) override;
 		void SetShape(const MeshColliderShapeInformation& information) override;
 
+		/** Returns the underlying PhysX shape object. */
+		physx::PxShape* GetPxShape() const { return mShape; }
+
 	protected:
 		/**
 		 * Changes the underlying shape geometry. A new shape will be created if it doesn't already exist. If shape exists

@@ -7,11 +7,6 @@
 #include "BsPhysXMaterial.h"
 #include "BsPhysXMesh.h"
 #include "BsPhysXRigidbody.h"
-#include "BsPhysXBoxCollider.h"
-#include "BsPhysXSphereCollider.h"
-#include "BsPhysXPlaneCollider.h"
-#include "BsPhysXCapsuleCollider.h"
-#include "BsPhysXMeshCollider.h"
 #include "BsPhysXFixedJoint.h"
 #include "BsPhysXDistanceJoint.h"
 #include "BsPhysXHingeJoint.h"
@@ -20,7 +15,6 @@
 #include "BsPhysXD6Joint.h"
 #include "BsPhysXCharacterController.h"
 #include "Components/BsCCollider.h"
-#include "BsFPhysXCollider.h"
 #include "BsPhysXCollider.h"
 #include "BsPhysXColliderShape.h"
 #include "Utility/BsTime.h"
@@ -504,7 +498,7 @@ static PhysXBroadPhaseCallback gPhysXBroadphaseCallback;
 static const u32 kSize16K = 1 << 14;
 const u32 PhysX::kScratchBufferSize = kSize16K * 64; // 1MB by default
 
-PhysX::PhysX(const PHYSICS_INIT_DESC& input)
+PhysX::PhysX(const PhysicsCreateInformation& input)
 	: Physics(input), mInitDesc(input)
 {
 	mScale.length = input.TypicalLength;
@@ -752,26 +746,60 @@ void PhysX::SetPaused(bool paused)
 	mPaused = paused;
 }
 
-bool PhysX::RayCast(const Vector3& origin, const Vector3& unitDir, const Collider& collider, PhysicsQueryHit& hit, float maxDist) const
+bool PhysX::RayCast(const Vector3& origin, const Vector3& unitDirection, const ColliderShape& colliderShape, PhysicsQueryHit& hit, float maxDistance) const
 {
-	FPhysXCollider* physxCollider = static_cast<FPhysXCollider*>(collider.GetInternalInternal());
-	PxShape* shape = physxCollider->GetShapeInternal();
+	const PhysXColliderShape& physxColliderShape = static_cast<const PhysXColliderShape&>(colliderShape);
+	PxShape* const pxShape = physxColliderShape.GetPxShape();
 
-	PxTransform transform = ToPxTransform(collider.GetPosition(), collider.GetRotation());
+	const PxTransform transform = ToPxTransform(colliderShape.GetPosition(), colliderShape.GetRotation());
 
 	PxRaycastHit hitInfo;
 	PxU32 maxHits = 1;
 	bool anyHit = false;
 	PxHitFlags hitFlags = PxHitFlag::eDEFAULT | PxHitFlag::eUV;
-	PxU32 hitCount = PxGeometryQuery::raycast(ToPxVector(origin), ToPxVector(unitDir), shape->getGeometry().any(), transform, maxDist, hitFlags, maxHits, &hitInfo, anyHit);
+	PxU32 hitCount = PxGeometryQuery::raycast(ToPxVector(origin), ToPxVector(unitDirection), pxShape->getGeometry().any(), transform, maxDistance, hitFlags, maxHits, &hitInfo, anyHit);
 
 	if(hitCount > 0)
-		ParseHit(hitInfo, hit, shape); // We have to provide a hint for the tested shape, as it is not contained in single-geometry raycast hit results
+		ParseHit(hitInfo, hit, pxShape); // We have to provide a hint for the tested shape, as it is not contained in single-geometry raycast hit results
 
 	return hitCount > 0;
 }
 
-PhysXScene::PhysXScene(PxPhysics* physics, const PHYSICS_INIT_DESC& input, const physx::PxTolerancesScale& scale)
+bool PhysX::RayCast(const Vector3& origin, const Vector3& unitDirection, const Collider& collider, PhysicsQueryHit& hit, float maxDistance) const
+{
+	float nearestHitDistance = FLT_MIN;
+	bool isAnythingHit = false;
+
+	const PxTransform colliderTransform = ToPxTransform(collider.GetPosition(), collider.GetRotation());
+
+	const TInlineArray<SPtr<ColliderShape>, 1>& shapes = collider.GetShapes();
+	for(const auto& entry : shapes)
+	{
+		const PhysXColliderShape& physxColliderShape = static_cast<const PhysXColliderShape&>(*entry);
+		PxShape* const pxShape = physxColliderShape.GetPxShape();
+
+		const PxTransform shapeTransform = ToPxTransform(entry->GetPosition(), entry->GetRotation());
+		const PxTransform combinedTransform = colliderTransform.transform(shapeTransform);
+
+		PxRaycastHit hitInfo;
+		PxU32 maxHits = 1;
+		bool anyHit = false;
+		PxHitFlags hitFlags = PxHitFlag::eDEFAULT | PxHitFlag::eUV;
+		PxU32 hitCount = PxGeometryQuery::raycast(ToPxVector(origin), ToPxVector(unitDirection), pxShape->getGeometry().any(), combinedTransform, maxDistance, hitFlags, maxHits, &hitInfo, anyHit);
+
+		if(hitCount > 0 && hitInfo.distance < nearestHitDistance)
+		{
+			ParseHit(hitInfo, hit, pxShape);
+
+			nearestHitDistance = hitInfo.distance;
+			isAnythingHit = true;
+		}
+	}
+
+	return isAnythingHit;
+}
+
+PhysXScene::PhysXScene(PxPhysics* physics, const PhysicsCreateInformation& input, const physx::PxTolerancesScale& scale)
 	: mPhysics(physics)
 {
 	PxSceneDesc sceneDesc(scale); // TODO - Test out various other parameters provided by scene desc
@@ -814,63 +842,37 @@ SPtr<Collider> PhysXScene::CreateCollider(const Vector3& position, const Quatern
 	return B3DMakeShared<PhysXCollider>(*this, position, rotation, scale);
 }
 
-
-SPtr<BoxCollider> PhysXScene::CreateBoxCollider(const Vector3& extents, const Vector3& position, const Quaternion& rotation)
-{
-	return B3DMakeShared<PhysXBoxCollider>(mPhysics, mScene, position, rotation, extents);
-}
-
-SPtr<SphereCollider> PhysXScene::CreateSphereCollider(float radius, const Vector3& position, const Quaternion& rotation)
-{
-	return B3DMakeShared<PhysXSphereCollider>(mPhysics, mScene, position, rotation, radius);
-}
-
-SPtr<PlaneCollider> PhysXScene::CreatePlaneCollider(const Vector3& position, const Quaternion& rotation)
-{
-	return B3DMakeShared<PhysXPlaneCollider>(mPhysics, mScene, position, rotation);
-}
-
-SPtr<CapsuleCollider> PhysXScene::CreateCapsuleCollider(float radius, float halfHeight, const Vector3& position, const Quaternion& rotation)
-{
-	return B3DMakeShared<PhysXCapsuleCollider>(mPhysics, mScene, position, rotation, radius, halfHeight);
-}
-
-SPtr<MeshCollider> PhysXScene::CreateMeshCollider(const Vector3& position, const Quaternion& rotation)
-{
-	return B3DMakeShared<PhysXMeshCollider>(mPhysics, mScene, position, rotation);
-}
-
-SPtr<FixedJoint> PhysXScene::CreateFixedJoint(const FIXED_JOINT_DESC& desc)
+SPtr<FixedJoint> PhysXScene::CreateFixedJoint(const FixedJointCreateInformation& desc)
 {
 	return B3DMakeShared<PhysXFixedJoint>(mPhysics, desc);
 }
 
-SPtr<DistanceJoint> PhysXScene::CreateDistanceJoint(const DISTANCE_JOINT_DESC& desc)
+SPtr<DistanceJoint> PhysXScene::CreateDistanceJoint(const DistanceJointCreateInformation& desc)
 {
 	return B3DMakeShared<PhysXDistanceJoint>(mPhysics, desc);
 }
 
-SPtr<HingeJoint> PhysXScene::CreateHingeJoint(const HINGE_JOINT_DESC& desc)
+SPtr<HingeJoint> PhysXScene::CreateHingeJoint(const HingeJointCreateInformation& desc)
 {
 	return B3DMakeShared<PhysXHingeJoint>(mPhysics, desc);
 }
 
-SPtr<SphericalJoint> PhysXScene::CreateSphericalJoint(const SPHERICAL_JOINT_DESC& desc)
+SPtr<SphericalJoint> PhysXScene::CreateSphericalJoint(const SphericalJointCreateInformation& desc)
 {
 	return B3DMakeShared<PhysXSphericalJoint>(mPhysics, desc);
 }
 
-SPtr<SliderJoint> PhysXScene::CreateSliderJoint(const SLIDER_JOINT_DESC& desc)
+SPtr<SliderJoint> PhysXScene::CreateSliderJoint(const SliderJointCreateInformation& desc)
 {
 	return B3DMakeShared<PhysXSliderJoint>(mPhysics, desc);
 }
 
-SPtr<D6Joint> PhysXScene::CreateD6Joint(const D6_JOINT_DESC& desc)
+SPtr<D6Joint> PhysXScene::CreateD6Joint(const D6JointCreateInformation& desc)
 {
 	return B3DMakeShared<PhysXD6Joint>(mPhysics, desc);
 }
 
-SPtr<CharacterController> PhysXScene::CreateCharacterController(const CHAR_CONTROLLER_DESC& desc)
+SPtr<CharacterController> PhysXScene::CreateCharacterController(const CharacterControllerCreateInformation& desc)
 {
 	return B3DMakeShared<PhysXCharacterController>(mCharManager, desc);
 }
@@ -1053,7 +1055,7 @@ bool PhysXScene::ConvexCastAny(const HPhysicsMesh& mesh, const Vector3& position
 	return SweepAny(geometry, transform, unitDir, layer, max);
 }
 
-Vector<Collider*> PhysXScene::BoxOverlapInternal(const AABox& box, const Quaternion& rotation, u64 layer) const
+Vector<ColliderShape*> PhysXScene::BoxOverlapInternal(const AABox& box, const Quaternion& rotation, u64 layer) const
 {
 	PxBoxGeometry geometry(ToPxVector(box.GetHalfSize()));
 	PxTransform transform = ToPxTransform(box.GetCenter(), rotation);
@@ -1061,7 +1063,7 @@ Vector<Collider*> PhysXScene::BoxOverlapInternal(const AABox& box, const Quatern
 	return Overlap(geometry, transform, layer);
 }
 
-Vector<Collider*> PhysXScene::SphereOverlapInternal(const Sphere& sphere, u64 layer) const
+Vector<ColliderShape*> PhysXScene::SphereOverlapInternal(const Sphere& sphere, u64 layer) const
 {
 	PxSphereGeometry geometry(sphere.Radius);
 	PxTransform transform = ToPxTransform(sphere.Center, Quaternion::kIdentity);
@@ -1069,7 +1071,7 @@ Vector<Collider*> PhysXScene::SphereOverlapInternal(const Sphere& sphere, u64 la
 	return Overlap(geometry, transform, layer);
 }
 
-Vector<Collider*> PhysXScene::CapsuleOverlapInternal(const Capsule& capsule, const Quaternion& rotation, u64 layer) const
+Vector<ColliderShape*> PhysXScene::CapsuleOverlapInternal(const Capsule& capsule, const Quaternion& rotation, u64 layer) const
 {
 	PxCapsuleGeometry geometry(capsule.GetRadius(), capsule.GetHeight() * 0.5f);
 	PxTransform transform = ToPxTransform(capsule.GetCenter(), Quaternion::kIdentity);
@@ -1077,13 +1079,13 @@ Vector<Collider*> PhysXScene::CapsuleOverlapInternal(const Capsule& capsule, con
 	return Overlap(geometry, transform, layer);
 }
 
-Vector<Collider*> PhysXScene::ConvexOverlapInternal(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, u64 layer) const
+Vector<ColliderShape*> PhysXScene::ConvexOverlapInternal(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, u64 layer) const
 {
 	if(mesh == nullptr)
-		return Vector<Collider*>(0);
+		return {};
 
 	if(mesh->GetType() != PhysicsMeshType::Convex)
-		return Vector<Collider*>(0);
+		return {};
 
 	FPhysXMesh* physxMesh = static_cast<FPhysXMesh*>(mesh->GetInternal());
 	PxConvexMeshGeometry geometry(physxMesh->GetPxConvexMesh());
