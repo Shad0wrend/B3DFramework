@@ -38,7 +38,7 @@ function(B3DRegisterCodeGenTarget)
 		"-I${PROJECT_BINARY_DIR}/Generated/bsfUtility/")
 
 	set(B3D_CODEGEN_HEADER_FILES
-		"${BSF_SOURCE_DIR}/Foundation/bsfUtility/Prerequisites/BsPrerequisitesUtil.h"
+		"${BSF_SOURCE_DIR}/Foundation/bsfUtility/BsUtilityPrerequisites.h"
 		${B3D_CODEGEN_HEADER_FILES})
 
 	list(REMOVE_DUPLICATES B3D_CODEGEN_HEADER_FOLDERS)

@@ -25,6 +25,7 @@ namespace bs
 			value.TriangleIdx = 0;
 			value.UnmappedTriangleIdx = 0;
 			value.Collider = null;
+			value.ColliderShape = null;
 
 			return value;
 		}
@@ -53,6 +54,8 @@ namespace bs
 		/// refer to #colliderRaw.
 		/// </summary>
 		public Collider Collider;
+		/// <summary>Collider shape that was hit.</summary>
+		public ColliderShape ColliderShape;
 	}
 
 	/** @} */

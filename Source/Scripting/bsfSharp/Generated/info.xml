@@ -1740,6 +1740,109 @@ Be aware that this value will be ignored if GUI element is part of a layout sinc
 		<field name="Center" type="Vector3D">
 		</field>
 	</struct>
+	<class native="ColliderShape" script="ColliderShape">
+		<doc>Represents a single collider shape that can be assigned to a collider.</doc>
+		<method native="SetShape" script="SetShape" static="false">
+			<doc>Changes or sets the collider shape to a plane.</doc>
+			<param name="information" type="PlaneColliderShapeInformation">
+			</param>
+		</method>
+		<method native="SetShape" script="SetShape" static="false">
+			<doc>Changes or sets the collider shape to a box.</doc>
+			<param name="information" type="BoxColliderShapeInformation">
+			</param>
+		</method>
+		<method native="SetShape" script="SetShape" static="false">
+			<doc>Changes or sets the collider shape to a sphere.</doc>
+			<param name="information" type="SphereColliderShapeInformation">
+			</param>
+		</method>
+		<method native="SetShape" script="SetShape" static="false">
+			<doc>Changes or sets the collider shape to a capsule.</doc>
+			<param name="information" type="CapsuleColliderShapeInformation">
+			</param>
+		</method>
+		<method native="SetShape" script="SetShape" static="false">
+			<doc>Changes or sets the collider shape to a mesh.</doc>
+			<param name="information" type="MeshColliderShapeInformation">
+			</param>
+		</method>
+		<ctor>
+			<doc>Creates a new plane collider shape.</doc>
+			<param name="information" type="PlaneColliderShapeInformation">
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new box collider shape.</doc>
+			<param name="information" type="BoxColliderShapeInformation">
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new sphere collider shape.</doc>
+			<param name="information" type="SphereColliderShapeInformation">
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new capsule collider shape.</doc>
+			<param name="information" type="CapsuleColliderShapeInformation">
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new mesh collider shape.</doc>
+			<param name="information" type="MeshColliderShapeInformation">
+			</param>
+		</ctor>
+		<property name="Type" type="ColliderShapeType" getter="GetType" setter="" static="false">
+			<doc>Returns the type of the collider shape.</doc>
+		</property>
+		<property name="Position" type="Vector3" getter="GetPosition" setter="SetPosition" static="false">
+			<doc>Position of the collider shape, relative to the parent collider.</doc>
+		</property>
+		<property name="Rotation" type="Quaternion" getter="GetRotation" setter="SetRotation" static="false">
+			<doc>Rotation of the collider shape, relative to the parent collider.</doc>
+		</property>
+		<property name="Scale" type="Vector3" getter="GetScale" setter="SetScale" static="false">
+			<doc>Scale of the collider shape, relative to the parent collider.</doc>
+		</property>
+		<property name="IsTrigger" type="bool" getter="GetIsTrigger" setter="SetIsTrigger" static="false">
+			<doc>Enables/disables a collider as a trigger. A trigger will not be used for collisions (objects will pass through it), but collision events will still be reported.</doc>
+		</property>
+		<property name="Mass" type="float" getter="GetMass" setter="SetMass" static="false">
+			<doc>Determines the mass of the collider shape. Only relevant if the parent collider is part of a rigidbody. Ultimately this will determine the total mass, center of mass and inertia tensors of the parent rigidbody (if they&apos;re being calculated automatically).</doc>
+		</property>
+		<property name="Material" type="RRef&lt;PhysicsMaterial&gt;" getter="GetMaterial" setter="SetMaterial" static="false">
+			<doc>Determines the physical material of the collider shape. The material determines how objects hitting the collider shape.</doc>
+		</property>
+		<property name="ContactOffset" type="float" getter="GetContactOffset" setter="SetContactOffset" static="false">
+			<doc>Determines how far apart do two shapes need to be away from each other before the physics runtime starts generating repelling impulse for them. This distance will be the sum of contact offsets of the two interacting objects. If objects are moving fast you can increase this value to start generating the impulse earlier and potentially prevent the objects from interpenetrating. This value is in meters. Must be positive and greater than rest offset.
+Also see SetRestOffset().</doc>
+		</property>
+		<property name="RestOffset" type="float" getter="GetRestOffset" setter="SetRestOffset" static="false">
+			<doc>Determines at what distance should two objects resting on one another come to an equilibrium. The value used in the runtime will be the sum of rest offsets for both interacting objects. This value is in meters. Cannot be larger than contact offset.
+Also see SetContactOffset().</doc>
+		</property>
+		<property name="Layer" type="ulong" getter="GetLayer" setter="SetLayer" static="false">
+			<doc>Determines the layer of the collider shape. Layer controls with which shapes will this shape collide.</doc>
+		</property>
+		<property name="CollisionReportMode" type="CollisionReportMode" getter="" setter="SetCollisionReportMode" static="false">
+			<doc>Determines which (if any) collision events are reported.</doc>
+		</property>
+		<property name="PlaneShapeInformation" type="PlaneColliderShapeInformation" getter="GetPlaneShapeInformation" setter="" static="false">
+			<doc>Returns information about the plane shape. Will return default shape information if the current shape is not a plane.</doc>
+		</property>
+		<property name="BoxShapeInformation" type="BoxColliderShapeInformation" getter="GetBoxShapeInformation" setter="" static="false">
+			<doc>Returns information about the box shape. Will return default shape information if the current shape is not a box.</doc>
+		</property>
+		<property name="SphereShapeInformation" type="SphereColliderShapeInformation" getter="GetSphereShapeInformation" setter="" static="false">
+			<doc>Returns information about the sphere shape. Will return default shape information if the current shape is not a sphere.</doc>
+		</property>
+		<property name="CapsuleShapeInformation" type="CapsuleColliderShapeInformation" getter="GetCapsuleShapeInformation" setter="" static="false">
+			<doc>Returns information about the capsule shape. Will return default shape information if the current shape is not a capsule.</doc>
+		</property>
+		<property name="MeshShapeInformation" type="MeshColliderShapeInformation" getter="GetMeshShapeInformation" setter="" static="false">
+			<doc>Returns information about the mesh shape. Will return default shape information if the current shape is not a mesh.</doc>
+		</property>
+	</class>
 	<class native="GUILabel" script="GUILabel">
 		<doc>GUI element that displays text and optionally a content image.</doc>
 		<method native="SetContent" script="SetContent" static="false">
@@ -3233,11 +3336,11 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<enumentry native="DontSave" script="DontSave">
 			<doc>Object will be skipped when saving the scene hierarchy or a prefab.</doc>
 		</enumentry>
+		<enumentry native="RuntimePersistent" script="RuntimePersistent">
+			<doc>Object will remain in the scene even after scene clear, unless destroyed directly. This only works with top-level objects. Runtime persistent objects cannot be saved.</doc>
+		</enumentry>
 		<enumentry native="Internal" script="Internal">
 			<doc>Provides a hint to external systems that his object is used by engine internals. For example, those systems might not want to display those objects together with the user created ones.</doc>
-		</enumentry>
-		<enumentry native="Persistent" script="Persistent">
-			<doc>Object will remain in the scene even after scene clear, unless destroyed directly. This only works with top-level objects.</doc>
 		</enumentry>
 	</enum>
 	<class native="GUIInteractable" script="GUIInteractable">
@@ -4054,6 +4157,11 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Determines the value to clear the stencil buffer to before rendering, if stencil clear is enabled.</doc>
 		</property>
 	</class>
+	<struct native="PlaneColliderShapeInformation" script="PlaneColliderShapeInformation">
+		<doc>Information describing a plane collider shape that extends infinitely in the X/Z axes.</doc>
+		<ctor>
+		</ctor>
+	</struct>
 	<class native="RenderTarget" script="RenderTarget">
 		<doc>Render target is a frame buffer or a texture that the render system renders the scene to.</doc>
 		<property name="Width" type="int" getter="GetWidth" setter="" static="false">
@@ -4428,6 +4536,9 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<field name="Collider" type="Collider">
 			<doc>Components of the colliders that have collided.</doc>
 		</field>
+		<field name="ColliderShapes" type="ColliderShape">
+			<doc>Shapes of that have collided.</doc>
+		</field>
 		<field name="ContactPoints" type="ContactPoint">
 			<doc>Information about all the contact points for the hit.</doc>
 		</field>
@@ -4541,6 +4652,86 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		</field>
 		<field name="Collider" type="Collider">
 			<doc>Component of the collider that was hit. This may be null if the hit collider has no owner component, in which case refer to #colliderRaw.</doc>
+		</field>
+		<field name="ColliderShape" type="ColliderShape">
+			<doc>Collider shape that was hit.</doc>
+		</field>
+	</struct>
+	<enum native="ColliderShapeType" script="ColliderShapeType">
+		<doc>Supported collider shapes.</doc>
+		<enumentry native="Plane" script="Plane">
+		</enumentry>
+		<enumentry native="Box" script="Box">
+		</enumentry>
+		<enumentry native="Sphere" script="Sphere">
+		</enumentry>
+		<enumentry native="Mesh" script="Mesh">
+		</enumentry>
+		<enumentry native="Capsule" script="Capsule">
+		</enumentry>
+	</enum>
+	<struct native="ControllerColliderCollision" script="ControllerColliderCollision">
+		<doc>Contains data about a collision of a character controller and a collider.</doc>
+		<field name="Collider" type="Collider">
+			<doc>Component of the controller that was touched. Can be null if the controller has no component parent, in which case check #colliderRaw.</doc>
+		</field>
+		<field name="TriangleIndex" type="int">
+			<doc>Touched triangle index for mesh colliders.</doc>
+		</field>
+		<field name="Position" type="Vector3">
+			<doc>Contact position.</doc>
+		</field>
+		<field name="Normal" type="Vector3">
+			<doc>Contact normal.</doc>
+		</field>
+		<field name="MotionDir" type="Vector3">
+			<doc>Direction of motion after the hit.</doc>
+		</field>
+		<field name="MotionAmount" type="float">
+			<doc>Magnitude of motion after the hit.</doc>
+		</field>
+	</struct>
+	<struct native="BoxColliderShapeInformation" script="BoxColliderShapeInformation">
+		<doc>Information describing box collider shape defined by its extents (half-size).</doc>
+		<ctor>
+		</ctor>
+		<ctor>
+			<param name="extents" type="Vector3">
+			</param>
+		</ctor>
+		<field name="Extents" type="Vector3">
+			<doc>Half-size of the box (Distance from center to one side of the box).</doc>
+		</field>
+	</struct>
+	<struct native="SphereColliderShapeInformation" script="SphereColliderShapeInformation">
+		<doc>Information describing a sphere collider shape defined by is radius.</doc>
+		<ctor>
+			<param name="radius" type="float">
+			</param>
+		</ctor>
+		<field name="Radius" type="float">
+		</field>
+	</struct>
+	<struct native="CapsuleColliderShapeInformation" script="CapsuleColliderShapeInformation">
+		<doc>Information describing a capsule collider shape defined by its radius and half-height.</doc>
+		<ctor>
+			<param name="radius" type="float">
+			</param>
+			<param name="halfHeight" type="float">
+			</param>
+		</ctor>
+		<field name="Radius" type="float">
+		</field>
+		<field name="HalfHeight" type="float">
+		</field>
+	</struct>
+	<struct native="MeshColliderShapeInformation" script="MeshColliderShapeInformation">
+		<doc>Information describing a mesh collider shape.</doc>
+		<ctor>
+			<param name="mesh" type="RRef&lt;PhysicsMesh&gt;">
+			</param>
+		</ctor>
+		<field name="Mesh" type="RRef&lt;PhysicsMesh&gt;">
 		</field>
 	</struct>
 	<class native="CCollider" script="Collider">
@@ -5468,27 +5659,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<field name="ActiveOn" type="SpriteImage">
 		</field>
 		<field name="FocusedOn" type="SpriteImage">
-		</field>
-	</struct>
-	<struct native="ControllerColliderCollision" script="ControllerColliderCollision">
-		<doc>Contains data about a collision of a character controller and a collider.</doc>
-		<field name="Collider" type="Collider">
-			<doc>Component of the controller that was touched. Can be null if the controller has no component parent, in which case check #colliderRaw.</doc>
-		</field>
-		<field name="TriangleIndex" type="int">
-			<doc>Touched triangle index for mesh colliders.</doc>
-		</field>
-		<field name="Position" type="Vector3">
-			<doc>Contact position.</doc>
-		</field>
-		<field name="Normal" type="Vector3">
-			<doc>Contact normal.</doc>
-		</field>
-		<field name="MotionDir" type="Vector3">
-			<doc>Direction of motion after the hit.</doc>
-		</field>
-		<field name="MotionAmount" type="float">
-			<doc>Magnitude of motion after the hit.</doc>
 		</field>
 	</struct>
 	<enum native="SpriteAnimationPlayback" script="SpriteAnimationPlayback">
@@ -6776,6 +6946,7 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Physical representation of the scene, as assigned by the physics sub-system. Exact implementation depends on the physics plugin used.</doc>
 		</property>
 		<property name="AssociatedResourceId" type="UUID" getter="GetAssociatedResourceId" setter="" static="false">
+			<doc>Returns the ID of the resource that the scene instance is associated with (e.g. resource the scene was loaded from.).</doc>
 		</property>
 	</class>
 	<class native="ParticleOrbit" script="ParticleOrbit">
@@ -9856,7 +10027,7 @@ Optionally if the parameter is an array you may provide an array index you which
 			<returns type="bool">
 			</returns>
 		</method>
-		<property name="IsUpdateInProgress" type="bool" getter="IsUpdateInProgressInternal" setter="" static="false">
+		<property name="IsUpdateInProgress" type="bool" getter="IsUpdateInProgress" setter="" static="false">
 			<doc>Checks is the physics simulation update currently in progress.</doc>
 		</property>
 	</class>

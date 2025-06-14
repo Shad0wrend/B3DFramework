@@ -10,16 +10,18 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>Information about a collision between two physics objects.</summary>
+	/// <summary>Information describing a capsule collider shape defined by its radius and half-height.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct CollisionData
+	public partial struct CapsuleColliderShapeInformation
 	{
-		/// <summary>Components of the colliders that have collided.</summary>
-		public Collider[] Collider;
-		/// <summary>Shapes of that have collided.</summary>
-		public ColliderShape[] ColliderShapes;
-		/// <summary>Information about all the contact points for the hit.</summary>
-		public ContactPoint[] ContactPoints;
+		public CapsuleColliderShapeInformation(float radius = 0.5f, float halfHeight = 0.5f)
+		{
+			this.Radius = radius;
+			this.HalfHeight = halfHeight;
+		}
+
+		public float Radius;
+		public float HalfHeight;
 	}
 
 	/** @} */

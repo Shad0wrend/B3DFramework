@@ -19,6 +19,7 @@ namespace bs
 		uint32_t TriangleIdx;
 		uint32_t UnmappedTriangleIdx;
 		MonoObject* Collider;
+		MonoObject* ColliderShape;
 	};
 
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsQueryHit : public TScriptTypeDefinition<ScriptPhysicsQueryHit>

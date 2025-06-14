@@ -12,14 +12,14 @@ namespace bs
 		/// <summary>Object will be skipped when saving the scene hierarchy or a prefab.</summary>
 		DontSave = 1,
 		/// <summary>
+		/// Object will remain in the scene even after scene clear, unless destroyed directly. This only works with top-level 
+		/// objects. Runtime persistent objects cannot be saved.
+		/// </summary>
+		RuntimePersistent = 2,
+		/// <summary>
 		/// Provides a hint to external systems that his object is used by engine internals. For example, those systems might not 
 		/// want to display those objects together with the user created ones.
 		/// </summary>
-		Internal = 4,
-		/// <summary>
-		/// Object will remain in the scene even after scene clear, unless destroyed directly. This only works with top-level 
-		/// objects.
-		/// </summary>
-		Persistent = 2
+		Internal = 4
 	}
 }

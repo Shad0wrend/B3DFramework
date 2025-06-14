@@ -17,7 +17,7 @@ namespace bs
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ToggleCollision", (void*)&ScriptPhysics::InternalToggleCollision);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsCollisionEnabled", (void*)&ScriptPhysics::InternalIsCollisionEnabled);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsUpdateInProgressInternal", (void*)&ScriptPhysics::InternalIsUpdateInProgressInternal);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsUpdateInProgress", (void*)&ScriptPhysics::InternalIsUpdateInProgress);
 
 	}
 
@@ -37,7 +37,7 @@ namespace bs
 		return __output;
 	}
 
-	bool ScriptPhysics::InternalIsUpdateInProgressInternal()
+	bool ScriptPhysics::InternalIsUpdateInProgress()
 	{
 		bool tmp__output;
 		tmp__output = Physics::Instance().IsUpdateInProgress();

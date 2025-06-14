@@ -10,16 +10,16 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>Information about a collision between two physics objects.</summary>
+	/// <summary>Information describing a mesh collider shape.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct CollisionData
+	public partial struct MeshColliderShapeInformation
 	{
-		/// <summary>Components of the colliders that have collided.</summary>
-		public Collider[] Collider;
-		/// <summary>Shapes of that have collided.</summary>
-		public ColliderShape[] ColliderShapes;
-		/// <summary>Information about all the contact points for the hit.</summary>
-		public ContactPoint[] ContactPoints;
+		public MeshColliderShapeInformation(RRef<PhysicsMesh> mesh = null)
+		{
+			this.Mesh = mesh;
+		}
+
+		public RRef<PhysicsMesh> Mesh;
 	}
 
 	/** @} */

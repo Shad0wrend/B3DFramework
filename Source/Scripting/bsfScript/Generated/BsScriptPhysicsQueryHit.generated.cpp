@@ -6,6 +6,8 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "BsScriptTVector3.generated.h"
+#include "../../../Foundation/bsfCore/Physics/BsColliderShape.h"
+#include "BsScriptColliderShape.generated.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 #include "BsScriptTVector2.generated.h"
 #include "../../../Foundation/bsfCore/Components/BsCCollider.h"
@@ -41,6 +43,12 @@ namespace bs
 		if(scriptObjectWrapperCollider != nullptr)
 			tmpCollider = B3DStaticGameObjectCast<CCollider>(scriptObjectWrapperCollider->GetBaseNativeObjectAsHandle());
 		output.Collider = tmpCollider;
+		SPtr<ColliderShape> tmpColliderShape;
+		ScriptColliderShape* scriptObjectWrapperColliderShape;
+		scriptObjectWrapperColliderShape = ScriptColliderShape::GetScriptObjectWrapper(value.ColliderShape);
+		if(scriptObjectWrapperColliderShape != nullptr)
+			tmpColliderShape = std::static_pointer_cast<ColliderShape>(scriptObjectWrapperColliderShape->GetBaseNativeObjectAsShared());
+		output.ColliderShape = tmpColliderShape;
 
 		return output;
 	}
@@ -60,6 +68,9 @@ namespace bs
 			temptmpCollider = ScriptComponent::GetOrCreateScriptObject(value.Collider);
 		tmpCollider = temptmpCollider;
 		output.Collider = tmpCollider;
+		MonoObject* tmpColliderShape;
+		tmpColliderShape = ScriptColliderShape::GetOrCreateScriptObject(value.ColliderShape);
+		output.ColliderShape = tmpColliderShape;
 
 		return output;
 	}

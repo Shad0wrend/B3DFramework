@@ -62,6 +62,9 @@ namespace bs
 			get { return Internal_GetPhysicsScene(mCachedPtr); }
 		}
 
+		/// <summary>
+		/// Returns the ID of the resource that the scene instance is associated with (e.g. resource the scene was loaded from.).
+		/// </summary>
 		[NativeWrapper]
 		public UUID AssociatedResourceId
 		{

@@ -21,7 +21,7 @@ namespace bs
 		[NativeWrapper]
 		public static bool IsUpdateInProgress
 		{
-			get { return Internal_IsUpdateInProgressInternal(); }
+			get { return Internal_IsUpdateInProgress(); }
 		}
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern bool Internal_IsCollisionEnabled(ulong groupA, ulong groupB);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_IsUpdateInProgressInternal();
+		private static extern bool Internal_IsUpdateInProgress();
 	}
 
 	/** @} */

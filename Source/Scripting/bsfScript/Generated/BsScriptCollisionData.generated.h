@@ -13,6 +13,7 @@ namespace bs
 	struct __CollisionDataInterop
 	{
 		MonoArray* Collider;
+		MonoArray* ColliderShapes;
 		MonoArray* ContactPoints;
 	};
 

@@ -6,6 +6,8 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Components/BsCCollider.h"
 #include "BsScriptCCollider.generated.h"
+#include "../../../Foundation/bsfCore/Physics/BsColliderShape.h"
+#include "BsScriptColliderShape.generated.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "BsScriptContactPoint.generated.h"
 
@@ -46,6 +48,25 @@ namespace bs
 		auto tmpCollider = vecCollider;
 		for(int i = 0; i < 2; ++i)
 			output.Collider[i] = tmpCollider[i];
+		SPtr<ColliderShape> vecColliderShapes[2];
+		if(value.ColliderShapes != nullptr)
+		{
+			ScriptArray scriptArrayColliderShapes(value.ColliderShapes);
+			for(int elementIndex = 0; elementIndex < (int)scriptArrayColliderShapes.Size(); elementIndex++)
+			{
+				SPtr<ColliderShape> arrayElementPointerColliderShapes;
+				ScriptColliderShape* scriptObjectWrapperColliderShapes;
+				scriptObjectWrapperColliderShapes = ScriptColliderShape::GetScriptObjectWrapper(scriptArrayColliderShapes.Get<MonoObject*>(elementIndex));
+				if(scriptObjectWrapperColliderShapes != nullptr)
+				{
+					arrayElementPointerColliderShapes = std::static_pointer_cast<ColliderShape>(scriptObjectWrapperColliderShapes->GetBaseNativeObjectAsShared());
+					vecColliderShapes[elementIndex] = arrayElementPointerColliderShapes;
+				}
+			}
+		}
+		auto tmpColliderShapes = vecColliderShapes;
+		for(int i = 0; i < 2; ++i)
+			output.ColliderShapes[i] = tmpColliderShapes[i];
 		Vector<ContactPoint> vecContactPoints;
 		if(value.ContactPoints != nullptr)
 		{
@@ -76,6 +97,18 @@ namespace bs
 		}
 		vecCollider = scriptArrayCollider.GetInternal();
 		output.Collider = vecCollider;
+		int elementCountColliderShapes = 2;
+		MonoArray* vecColliderShapes;
+		ScriptArray scriptArrayColliderShapes = ScriptArray::Create<ScriptColliderShape>(elementCountColliderShapes);
+		for(int elementIndex = 0; elementIndex < elementCountColliderShapes; elementIndex++)
+		{
+			SPtr<ColliderShape> arrayElementPointerColliderShapes = value.ColliderShapes[elementIndex];
+			MonoObject* arrayElementColliderShapes;
+			arrayElementColliderShapes = ScriptColliderShape::GetOrCreateScriptObject(arrayElementPointerColliderShapes);
+			scriptArrayColliderShapes.Set(elementIndex, arrayElementColliderShapes);
+		}
+		vecColliderShapes = scriptArrayColliderShapes.GetInternal();
+		output.ColliderShapes = vecColliderShapes;
 		int elementCountContactPoints = (int)value.ContactPoints.size();
 		MonoArray* vecContactPoints;
 		ScriptArray scriptArrayContactPoints = ScriptArray::Create<ScriptContactPoint>(elementCountContactPoints);

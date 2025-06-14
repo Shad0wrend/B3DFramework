@@ -10,16 +10,18 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>Information about a collision between two physics objects.</summary>
+	/// <summary>Information describing a plane collider shape that extends infinitely in the X/Z axes.</summary>
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
-	public partial struct CollisionData
+	public partial struct PlaneColliderShapeInformation
 	{
-		/// <summary>Components of the colliders that have collided.</summary>
-		public Collider[] Collider;
-		/// <summary>Shapes of that have collided.</summary>
-		public ColliderShape[] ColliderShapes;
-		/// <summary>Information about all the contact points for the hit.</summary>
-		public ContactPoint[] ContactPoints;
+		/// <summary>Initializes the struct with default values.</summary>
+		public static PlaneColliderShapeInformation Default()
+		{
+			PlaneColliderShapeInformation value = new PlaneColliderShapeInformation();
+
+			return value;
+		}
+
 	}
 
 	/** @} */

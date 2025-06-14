@@ -262,7 +262,7 @@ namespace bs
         internal SceneObject(string name, bool isInternal)
         {
             if(isInternal)
-                Internal_CreateInstance(this, name, (int)(SceneObjectFlag.DontSave | SceneObjectFlag.Internal | SceneObjectFlag.Persistent));
+                Internal_CreateInstance(this, name, (int)(SceneObjectFlag.Internal | SceneObjectFlag.RuntimePersistent));
             else
                 Internal_CreateInstance(this, name, 0);
         }
