@@ -14,7 +14,7 @@ GameObjectHandle<GUIDropDownMenu> GUIDropDownBoxManager::OpenDropDownBox(const D
 {
 	CloseDropDownBox();
 
-	mDropDownSO = SceneObject::Create("DropDownBox", SceneObjectFlag::Internal | SceneObjectFlag::Persistent | SceneObjectFlag::DontSave);
+	mDropDownSO = SceneObject::Create("DropDownBox", SceneObjectFlag::Internal | SceneObjectFlag::RuntimePersistent);
 	mDropDownBox = mDropDownSO->AddComponent<GUIDropDownMenu>(createInformation, type);
 	mOnClosedCallback = onClosedCallback;
 

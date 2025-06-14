@@ -15,7 +15,7 @@ void GUITooltipManager::Show(const GUIWidget& widget, const GUIPhysicalPoint& po
 {
 	Hide();
 
-	mTooltipSO = SceneObject::Create("Tooltip", SceneObjectFlag::Internal | SceneObjectFlag::Persistent | SceneObjectFlag::DontSave);
+	mTooltipSO = SceneObject::Create("Tooltip", SceneObjectFlag::Internal | SceneObjectFlag::RuntimePersistent);
 	GameObjectHandle<GUITooltip> tooltip = mTooltipSO->AddComponent<GUITooltip>(widget, position, text);
 }
 

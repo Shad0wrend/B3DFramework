@@ -296,7 +296,7 @@ void SceneObjectHierarchyDelta::GenerateHierarchyDelta(const HSceneObject& origi
 		{
 			const HSceneObject& originalChild = original->GetChild(originalChildIndex);
 
-			if(originalChild->HasFlag(SceneObjectFlag::DontSave))
+			if(originalChild->HasFlag(SceneObjectFlag::DontSave) || originalChild->HasFlag(SceneObjectFlag::RuntimePersistent))
 				continue;
 
 			// Process children first
@@ -320,7 +320,7 @@ void SceneObjectHierarchyDelta::GenerateHierarchyDelta(const HSceneObject& origi
 		{
 			const HSceneObject& modifiedChild = modified->GetChild(modifiedChildIndex);
 
-			if(modifiedChild->HasFlag(SceneObjectFlag::DontSave))
+			if(modifiedChild->HasFlag(SceneObjectFlag::DontSave) || modifiedChild->HasFlag(SceneObjectFlag::RuntimePersistent))
 				continue;
 
 			// Process children first

@@ -52,6 +52,15 @@ void SceneInstance::SetRoot(const HSceneObject& newRoot)
 		return;
 
 	HSceneObject oldRoot = mRoot;
+	SPtr<GameObjectCollection> oldGameObjectCollection = mGameObjectCollection;
+
+	// Must be set before mRoot->SetScene, as it will retrieve the game object collection from the scene instance
+	mGameObjectCollection = newRoot->GetOwnerCollection().lock();
+
+	mRoot = newRoot;
+	mRoot->ClearParent();
+	mRoot->SetScene(shared_from_this());
+
 	const u32 childCount = oldRoot->GetChildCount();
 
 	// Make sure to keep persistent objects
@@ -62,7 +71,7 @@ void SceneInstance::SetRoot(const HSceneObject& newRoot)
 		{
 			HSceneObject child = oldRoot->GetChild(i);
 
-			if(child->HasFlag(SceneObjectFlag::Persistent))
+			if(child->HasFlag(SceneObjectFlag::RuntimePersistent))
 				toMove.push_back(child);
 		}
 
@@ -71,12 +80,8 @@ void SceneInstance::SetRoot(const HSceneObject& newRoot)
 	}
 
 	oldRoot->Destroy();
-	mGameObjectCollection->DestroyQueuedObjects();
+	oldGameObjectCollection->DestroyQueuedObjects();
 
-	mRoot = newRoot;
-	mRoot->ClearParent();
-	mRoot->SetScene(shared_from_this());
-	mGameObjectCollection = newRoot->GetOwnerCollection().lock();
 }
 
 HSceneObject SceneInstance::CreateSceneObject(const String& name)
@@ -151,7 +156,7 @@ void SceneManager::ClearMainScene(bool forceAll)
 	{
 		HSceneObject child = mMainScene->mRoot->GetChild(childIndex);
 
-		if(forceAll || !child->HasFlag(SceneObjectFlag::Persistent))
+		if(forceAll || !child->HasFlag(SceneObjectFlag::RuntimePersistent))
 			child->Destroy();
 		else
 			childIndex++;

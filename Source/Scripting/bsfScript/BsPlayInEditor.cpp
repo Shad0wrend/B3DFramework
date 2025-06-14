@@ -151,7 +151,7 @@ void PlayInEditor::SaveSceneInMemory()
 		HSceneObject current = todo.top();
 		todo.pop();
 
-		if(current->HasFlag(SceneObjectFlag::DontSave))
+		if(current->HasFlag(SceneObjectFlag::DontSave) || current->HasFlag(SceneObjectFlag::RuntimePersistent))
 			current->Destroy();
 		else
 		{
@@ -160,6 +160,8 @@ void PlayInEditor::SaveSceneInMemory()
 				todo.push(current->GetChild(i));
 		}
 	}
+
+	mSavedSceneGameObjectCollection->DestroyQueuedObjects();
 }
 
 void PlayInEditor::SetSystemsPauseState(bool paused)
