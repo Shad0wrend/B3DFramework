@@ -10651,7 +10651,7 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 		<doc>Keeps track of all active SceneObject%s and their components. Keeps track of component state and triggers their events. Updates the transforms of objects as SceneObject%s move.</doc>
 		<method native="LoadMainScene" script="LoadMainScene" static="false">
 			<doc>Instantiates a new scene and makes it active. All non-persistent objects that are part of the current scene will be destroyed.</doc>
-			<param name="scene" type="Prefab">
+			<param name="scene" type="Scene">
 			</param>
 		</method>
 		<property name="MainScene" type="SceneInstance" getter="GetMainScene" setter="" static="false">

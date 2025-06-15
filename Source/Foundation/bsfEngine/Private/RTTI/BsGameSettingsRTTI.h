@@ -19,7 +19,7 @@ namespace bs
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(MainSceneUuid, 0)
+			B3D_RTTI_MEMBER(MainSceneId, 0)
 			B3D_RTTI_MEMBER(Fullscreen, 1)
 			B3D_RTTI_MEMBER(UseDesktopResolution, 2)
 			B3D_RTTI_MEMBER(ResolutionWidth, 3)

@@ -10,7 +10,7 @@ namespace bs
      */
     public partial class SceneManager
     {
-        private static RRef<Prefab> activateOnLoadScene;
+        private static RRef<Scene> activateOnLoadScene;
 
         /// <summary>
         /// Returns the main camera that controls the final render surface that is displayed to the user. If the current
@@ -34,11 +34,11 @@ namespace bs
         /// </summary>
         /// <param name="path">Path to the prefab to load.</param>
         /// <returns>Handle to the prefab of the scene at the provided path.</returns>
-        public static RRef<Prefab> LoadMainSceneAsync(string path)
+        public static RRef<Scene> LoadMainSceneAsync(string path)
         {
             ClearMainScene();
 
-            activateOnLoadScene = Resources.LoadAsReference<Prefab>(path);
+            activateOnLoadScene = Resources.LoadAsReference<Scene>(path);
 
             if (activateOnLoadScene != null && activateOnLoadScene.IsLoaded)
             {
@@ -76,18 +76,11 @@ namespace bs
         /// Makes the provided scene resource the current main scene instance.
         /// </summary>
         /// <param name="scene">Previously loaded scene resource.</param>
-        private static void SetActiveMainScene(Prefab scene)
+        private static void SetActiveMainScene(Scene scene)
         {
             if(scene != null)
             {
-                // If scene replace current root node, otherwise just append to the current root node
-                if(scene.IsScene)
-                    LoadMainScene(scene);
-                else
-                {
-                    ClearMainScene();
-                    scene.Instantiate();
-                }
+                LoadMainScene(scene);
             }
             else
             {

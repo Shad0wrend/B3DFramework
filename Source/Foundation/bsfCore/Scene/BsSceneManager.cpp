@@ -3,6 +3,7 @@
 #include "Scene/BsSceneManager.h"
 
 #include "BsGameObjectCollection.h"
+#include "BsScene.h"
 #include "Scene/BsSceneObject.h"
 #include "Scene/BsComponent.h"
 #include "Renderer/BsRenderable.h"
@@ -175,12 +176,9 @@ void SceneManager::ClearMainScene(bool forceAll)
 	OnMainSceneUnloaded(oldMainSceneResourceId);
 }
 
-void SceneManager::LoadMainScene(const HPrefab& scene)
+void SceneManager::LoadMainScene(const HScene& scene)
 {
-	HSceneObject root = scene->Instantiate(mMainScene, true);
-	// TODO - Scene::Instantiate calls these two below automatically
-	mMainScene->SetRoot(root);
-	mMainScene->SetAssociatedResourceId(scene->GetId());
+	HSceneObject root = scene->Instantiate(mMainScene);
 
 	OnMainSceneLoaded(scene->GetId());
 }

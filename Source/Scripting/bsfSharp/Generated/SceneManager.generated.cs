@@ -33,7 +33,7 @@ namespace bs
 		/// Instantiates a new scene and makes it active. All non-persistent objects that are part of the current scene will be 
 		/// destroyed.
 		/// </summary>
-		public static void LoadMainScene(Prefab scene)
+		public static void LoadMainScene(Scene scene)
 		{
 			Internal_LoadMainScene(scene);
 		}
@@ -43,7 +43,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ClearMainScene(bool forceAll);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_LoadMainScene(Prefab scene);
+		private static extern void Internal_LoadMainScene(Scene scene);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern SceneObject Internal_GetMainCameraSceneObject();
 		private static void Internal_OnMainSceneLoaded(ref UUID p0)

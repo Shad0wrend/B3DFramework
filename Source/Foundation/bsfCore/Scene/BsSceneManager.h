@@ -146,7 +146,7 @@ namespace bs
 		 * be destroyed.
 		 */
 		B3D_SCRIPT_EXPORT()
-		void LoadMainScene(B3D_NO_RREF const HPrefab& scene);
+		void LoadMainScene(B3D_NO_RREF const HScene& scene);
 
 		/**
 		 * Changes the component state that globally determines which component callbacks are activated. Only affects

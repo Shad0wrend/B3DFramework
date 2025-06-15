@@ -7,7 +7,7 @@
 #include "../../../Foundation/bsfCore/Scene/BsSceneManager.h"
 #include "Wrappers/BsScriptSceneObject.h"
 #include "BsScriptSceneInstance.generated.h"
-#include "Wrappers/BsScriptPrefab.h"
+#include "BsScriptScene.generated.h"
 #include "BsScriptResourceWrapper.h"
 
 namespace bs
@@ -77,11 +77,11 @@ namespace bs
 
 	void ScriptSceneManager::InternalLoadMainScene(MonoObject* scene)
 	{
-		TResourceHandle<Prefab> tmpscene;
-		ScriptPrefab* scriptObjectWrapperscene;
-		scriptObjectWrapperscene = ScriptPrefab::GetScriptObjectWrapper(scene);
+		TResourceHandle<Scene> tmpscene;
+		ScriptScene* scriptObjectWrapperscene;
+		scriptObjectWrapperscene = ScriptScene::GetScriptObjectWrapper(scene);
 		if(scriptObjectWrapperscene != nullptr)
-			tmpscene = B3DStaticResourceCast<Prefab>(scriptObjectWrapperscene->GetBaseNativeObjectAsHandle());
+			tmpscene = B3DStaticResourceCast<Scene>(scriptObjectWrapperscene->GetBaseNativeObjectAsHandle());
 		SceneManager::Instance().LoadMainScene(tmpscene);
 	}
 
