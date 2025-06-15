@@ -35,28 +35,18 @@ namespace bs
 	 * original prefab they were created from, allowing you to update them to latest version if the prefab changes.
 	 * Prefabs can also be nested within each-other, as long as there are no circular dependencies.
 	 */
-	class B3D_CORE_EXPORT Prefab : public Resource
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Scene)) Prefab : public Resource
 	{
 	public:
 		Prefab();
 		~Prefab();
 
 		/**
-		 * Creates a new prefab from the provided scene object. If the scene object has an existing prefab link it will
-		 * be broken. After the prefab is created the scene object will be automatically linked to it.
-		 *
-		 * @param[in]	sceneObject		Scene object to create the prefab from.
-		 * @param[in]	isScene			Determines if the prefab represents a scene or just a generic group of objects.
-		 *								@see isScene().
-		 */
-		static HPrefab Create(const HSceneObject& sceneObject, bool isScene = true);
-
-		/**
 		 * Instantiates a prefab by creating an instance of the prefab's scene object hierarchy. The returned hierarchy
 		 * will be parented to the provided scene instance root.
 		 *
 		 * @param	sceneInstance	Scene instance into which to instantiate the prefab instance in. If null, prefab will be instantiated
-		 *							in a brand new scene instance.
+		 *							in a brand new scene instance. TODO - Null value here should not be supported
 		 * @return					Instantiated clone of the prefab's scene object hierarchy.
 		 */
 		HSceneObject Instantiate(const SPtr<SceneInstance>& sceneInstance) const;
@@ -67,7 +57,7 @@ namespace bs
 		 *
 		 * @return					Newly created scene instance.
 		 */
-		SPtr<SceneInstance> Instantiate() const;
+		SPtr<SceneInstance> Instantiate() const; // TODO - Doesn't belong on a Prefab, should be Scene only
 
 		/**
 		 * Returns a version value that gets updated every time the prefab contents update. Can be used for detecting if a prefab instance
@@ -75,10 +65,14 @@ namespace bs
 		 */
 		UUID GetPrefabVersion() const { return mPrefabVersion; }
 
-		/** Determines if the prefab represents a scene or just a generic group of objects. */
-		bool IsScene() const { return mIsScene; }
-
 		bool AllowAsyncLoading() const override { return false; }
+
+		/**
+		 * Creates a new prefab from the provided scene object. If the scene object has an existing prefab link it will
+		 * be broken. After the prefab is created the scene object will be automatically linked to it.
+		 */
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Prefab))
+		static HPrefab Create(const HSceneObject& sceneObject);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -100,13 +94,9 @@ namespace bs
 		 * @param	cloneOwnerCollection	Collection into which to place the cloned scene objects. If @p preserveIds is true
 		 *									this must be a different collection that the prefab's internal collection,
 		 *									otherwise IDs would conflict.
-		 * @param	preserveIds				If false, each cloned game object will be assigned a brand new ID. Otherwise
-		 *									the ID of the original game objects will be preserved. Note that two instantiated
-		 *									scene objects should never have the same ID, so if preserving ID's make sure
-		 *									the original is destroyed before instantiating.
 		 * @return							Clone of the prefab's scene object hierarchy.
 		 */
-		HSceneObject Clone(const SPtr<GameObjectCollection>& cloneOwnerCollection, bool preserveIds = false) const;
+		HSceneObject Clone(const SPtr<GameObjectCollection>& cloneOwnerCollection) const;
 
 		/**
 		 * Instantiates a prefab by creating an instance of the prefab's scene object hierarchy. The returned hierarchy
@@ -114,13 +104,9 @@ namespace bs
 		 *
 		 * @param	inOutSceneInstance	Scene instance into which to instantiate the prefab instance in. If null, new
 		 *								scene instance will be created and output through this parameter.
-		 * @param	preserveIds			If false, each cloned game object will be assigned a brand new UUID. Otherwise
-		 *								the UUID of the original game objects will be preserved. Note that two instantiated
-		 *								scene objects should never have the same UUID, so if preserving UUID's make sure
-		 *								the original is destroyed before instantiating.
 		 * @return						Instantiated clone of the prefab's scene object hierarchy.
 		 */
-		HSceneObject Instantiate(SPtr<SceneInstance>& inOutSceneInstance, bool preserveIds) const; // TODO - preserveIds is always false for prefabs
+		HSceneObject Instantiate(SPtr<SceneInstance>& inOutSceneInstance) const;
 
 		/**
 		 * Replaces the contents of this prefab with new contents from the provided object. Returns a map of @p sceneObject IDs
@@ -146,7 +132,6 @@ namespace bs
 		HSceneObject mRoot;
 		UUID mPrefabVersion = UUID::kEmpty;
 		UUID mUUID;
-		bool mIsScene = true;
 		SPtr<GameObjectCollection> mGameObjectCollection; /**< Collection owning the internal hierarchy. */
 
 		/************************************************************************/

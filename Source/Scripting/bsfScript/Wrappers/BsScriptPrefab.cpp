@@ -17,7 +17,6 @@ void ScriptPrefab::SetupScriptBindings()
 {
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptPrefab::InternalCreateInstance);
 	sInteropMetaData.ScriptClass->AddInternalCall("Internal_Instantiate", (void*)&ScriptPrefab::InternalInstantiate);
-	sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsScene", (void*)&ScriptPrefab::InternalIsScene);
 }
 
 MonoObject* ScriptPrefab::CreateScriptObject(bool construct)
@@ -30,9 +29,9 @@ Prefab* ScriptPrefab::GetNativeObject() const
 	return static_cast<Prefab*>(TScriptResourceWrapper::GetNativeObject());
 }
 
-void ScriptPrefab::InternalCreateInstance(MonoObject* scriptObject, ScriptSceneObject* so, bool isScene)
+void ScriptPrefab::InternalCreateInstance(MonoObject* scriptObject, ScriptSceneObject* so)
 {
-	HPrefab prefab = Prefab::Create(so->GetNativeObjectAsHandle(), isScene);
+	HPrefab prefab = Prefab::Create(so->GetNativeObjectAsHandle());
 	ScriptObjectWrapper::Create<ScriptPrefab>(prefab, scriptObject);
 }
 
@@ -43,12 +42,4 @@ MonoObject* ScriptPrefab::InternalInstantiate(ScriptPrefab* self)
 
 	HSceneObject instance = self->GetNativeObject()->Instantiate(GetSceneManager().GetMainScene());
 	return ScriptSceneObject::GetOrCreateScriptObject(instance);
-}
-
-bool ScriptPrefab::InternalIsScene(ScriptPrefab* self)
-{
-	if(!self->IsNativeObjectValid())
-		return false;
-
-	return self->GetNativeObject()->IsScene();
 }

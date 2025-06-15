@@ -20,17 +20,11 @@ namespace bs
 
 void PrefabManager::RegisterPrefab(Prefab& prefab)
 {
-	if(prefab.IsScene()) // Not keeping track of scenes
-		return;
-
 	B3D_ENSURE(mLivePrefabs.insert(&prefab).second);
 }
 
 void PrefabManager::UnregisterPrefab(Prefab* prefab)
 {
-	if(prefab->IsScene()) // Not keeping track of scenes
-		return;
-
 	auto found = mLivePrefabs.find(prefab);
 	if(B3D_ENSURE(found != mLivePrefabs.end()))
 		mLivePrefabs.erase(found);
@@ -47,10 +41,9 @@ Prefab::~Prefab()
 		mRoot->Destroy(true);
 }
 
-HPrefab Prefab::Create(const HSceneObject& sceneObject, bool isScene)
+HPrefab Prefab::Create(const HSceneObject& sceneObject)
 {
 	SPtr<Prefab> newPrefab = CreateEmpty();
-	newPrefab->mIsScene = isScene;
 	newPrefab->mUUID = UUIDGenerator::GenerateRandom(); // TODO - This should be done automatically on resource creation
 
 	const UnorderedMap<UUID, UUID>& remappingTable = newPrefab->ReplaceInternalHierarchy(sceneObject);
@@ -132,18 +125,18 @@ UnorderedMap<UUID, UUID> Prefab::ReplaceInternalHierarchy(const HSceneObject& sc
 HSceneObject Prefab::Instantiate(const SPtr<SceneInstance>& sceneInstance) const
 {
 	SPtr<SceneInstance> sceneInstanceMutableShared = sceneInstance;
-	return Instantiate(sceneInstanceMutableShared, false);
+	return Instantiate(sceneInstanceMutableShared);
 }
 
 SPtr<SceneInstance> Prefab::Instantiate() const
 {
 	SPtr<SceneInstance> sceneInstance;
-	Instantiate(sceneInstance, false);
+	Instantiate(sceneInstance);
 
 	return sceneInstance;
 }
 
-HSceneObject Prefab::Instantiate(SPtr<SceneInstance>& inOutSceneInstance, bool preserveIds) const
+HSceneObject Prefab::Instantiate(SPtr<SceneInstance>& inOutSceneInstance) const
 {
 	if(mRoot == nullptr)
 		return HSceneObject();
@@ -154,7 +147,7 @@ HSceneObject Prefab::Instantiate(SPtr<SceneInstance>& inOutSceneInstance, bool p
 	else
 		gameObjectCollection = GameObjectCollection::Create();
 
-	HSceneObject clone = Clone(gameObjectCollection, preserveIds);
+	HSceneObject clone = Clone(gameObjectCollection);
 	PrefabUtility::AssignPrefabInstanceIds(clone, mRoot, mUUID);
 
 	if(inOutSceneInstance != nullptr)
@@ -166,13 +159,13 @@ HSceneObject Prefab::Instantiate(SPtr<SceneInstance>& inOutSceneInstance, bool p
 	return clone;
 }
 
-HSceneObject Prefab::Clone(const SPtr<GameObjectCollection>& cloneOwnerCollection, bool preserveIds) const
+HSceneObject Prefab::Clone(const SPtr<GameObjectCollection>& cloneOwnerCollection) const
 {
 	if(mRoot == nullptr)
 		return HSceneObject();
 
 	mRoot->SetPrefabVersion(mPrefabVersion); // TODO - Might make sense to assign this to the entire hierarchy. Also for internal hierarchy, it should be set when internal hierarchy is updated.
-	return mRoot->Clone(cloneOwnerCollection, preserveIds);
+	return mRoot->Clone(cloneOwnerCollection, false);
 }
 
 void Prefab::TickPrefabVersion()

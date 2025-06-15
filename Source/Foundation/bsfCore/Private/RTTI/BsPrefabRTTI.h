@@ -25,7 +25,7 @@ namespace bs
 			B3D_RTTI_MEMBER(mPrefabVersion, 1)
 			// B3D_RTTI_MEMBER_PLAIN(mNextLinkId, 2)
 			B3D_RTTI_MEMBER(mUUID, 3)
-			B3D_RTTI_MEMBER(mIsScene, 4)
+			//B3D_RTTI_MEMBER(mIsScene, 4)
 		B3D_RTTI_END_MEMBERS
 
 	public:

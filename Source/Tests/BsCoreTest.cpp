@@ -776,7 +776,7 @@ void CoreTestSuite::TestPrefabScenario1()
 	mScene = UnitTestSceneB::PopulateParent(sceneRoot);
 
 	// Construct the prefab from Prefab #1 Instance Root in the scene hierarchy
-	mPrefabTestInformation[0].Prefab = Prefab::Create(mScene.Root, false);
+	mPrefabTestInformation[0].Prefab = Prefab::Create(mScene.Root);
 	mPrefabTestInformation[0].PrefabInternalsScene = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[0].Prefab->GetRoot());
 
 	// Update scene information used for checks
@@ -850,7 +850,7 @@ void CoreTestSuite::TestPrefabScenario3()
 
 	// Create prefab 2
 	HSceneObject prefab2NewHierarchy = UnitTestSceneB::PopulateNewSceneInstance("Prefab #2 Scene Instance");
-	mPrefabTestInformation[1].Prefab = Prefab::Create(prefab2NewHierarchy, false);
+	mPrefabTestInformation[1].Prefab = Prefab::Create(prefab2NewHierarchy);
 	mPrefabTestInformation[1].PrefabInternalsScene = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[1].Prefab->GetRoot());
 	prefab2NewHierarchy->Destroy();
 
@@ -1064,7 +1064,7 @@ void CoreTestSuite::TestPrefabScenario7()
 
 	// Create prefab 3
 	HSceneObject prefab3NewHierarchy = UnitTestSceneB::PopulateNewSceneInstance("Prefab #3 Scene Instance");
-	mPrefabTestInformation[2].Prefab = Prefab::Create(prefab3NewHierarchy, false);
+	mPrefabTestInformation[2].Prefab = Prefab::Create(prefab3NewHierarchy);
 	mPrefabTestInformation[2].PrefabInternalsScene = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[2].Prefab->GetRoot());
 	prefab3NewHierarchy->Destroy();
 
@@ -1129,7 +1129,7 @@ void CoreTestSuite::TestPrefabScenario8()
 
 	// Create prefab 4
 	HSceneObject prefab4NewHierarchy = UnitTestSceneB::PopulateNewSceneInstance("Prefab #4 Scene Instance");
-	mPrefabTestInformation[3].Prefab = Prefab::Create(prefab4NewHierarchy, false);
+	mPrefabTestInformation[3].Prefab = Prefab::Create(prefab4NewHierarchy);
 	mPrefabTestInformation[3].PrefabInternalsScene = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[3].Prefab->GetRoot());
 	prefab4NewHierarchy->Destroy();
 

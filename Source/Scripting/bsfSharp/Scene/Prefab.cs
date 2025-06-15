@@ -26,12 +26,10 @@ namespace bs
         /// be broken. After the prefab is created the scene object will be automatically linked to it.
         /// </summary>
         /// <param name="so">Scene object to generate the prefab for.</param>
-        /// <param name="isScene">Determines if the prefab represents a scene or just a generic group of objects.
-        ///                       <see cref="IsScene"/></param>
-        public Prefab(SceneObject so, bool isScene = true)
+        public Prefab(SceneObject so)
         {
             IntPtr soPtr = so.GetCachedPtr();
-            Internal_CreateInstance(this, soPtr, isScene);
+            Internal_CreateInstance(this, soPtr);
         }
 
         /// <summary>
@@ -44,25 +42,11 @@ namespace bs
             return Internal_Instantiate(mCachedPtr);
         }
 
-        /// <summary>
-        /// Determines if the prefab represents a scene or just a generic group of objects. The only difference between the
-        /// two is the way root object is handled: scenes are assumed to be saved with the scene root object (which is
-        /// hidden), while object group root is a normal scene object (not hidden). This is relevant when when prefabs are
-        /// loaded, so the systems knows to append the root object to non-scene prefabs.
-        /// </summary>
-        public bool IsScene
-        {
-            get { return Internal_IsScene(mCachedPtr); }
-        }
-
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern void Internal_CreateInstance(Prefab instance, IntPtr so, bool isScene);
+        private static extern void Internal_CreateInstance(Prefab instance, IntPtr so);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern SceneObject Internal_Instantiate(IntPtr thisPtr);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern bool Internal_IsScene(IntPtr thisPtr);
     }
 
     /** @} */

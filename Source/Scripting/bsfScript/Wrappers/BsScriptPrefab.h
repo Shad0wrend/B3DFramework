@@ -30,9 +30,8 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void InternalCreateInstance(MonoObject* scriptObject, ScriptSceneObject* so, bool isScene);
+		static void InternalCreateInstance(MonoObject* scriptObject, ScriptSceneObject* so);
 		static MonoObject* InternalInstantiate(ScriptPrefab* self);
-		static bool InternalIsScene(ScriptPrefab* self);
 	};
 
 	/** @} */
