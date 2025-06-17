@@ -51,6 +51,7 @@ namespace bs
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetLayer", (void*)&ScriptColliderShape::InternalSetLayer);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetLayer", (void*)&ScriptColliderShape::InternalGetLayer);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetCollisionReportMode", (void*)&ScriptColliderShape::InternalSetCollisionReportMode);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetCollisionReportMode", (void*)&ScriptColliderShape::InternalGetCollisionReportMode);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetShape", (void*)&ScriptColliderShape::InternalSetShape);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetShape0", (void*)&ScriptColliderShape::InternalSetShape0);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetShape1", (void*)&ScriptColliderShape::InternalSetShape1);
@@ -307,6 +308,20 @@ namespace bs
 			return;
 
 		static_cast<ColliderShape*>(self->GetNativeObject())->SetCollisionReportMode(mode);
+	}
+
+	CollisionReportMode ScriptColliderShape::InternalGetCollisionReportMode(ScriptColliderShape* self)
+	{
+		CollisionReportMode tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
+		tmp__output = static_cast<ColliderShape*>(self->GetNativeObject())->GetCollisionReportMode();
+
+		CollisionReportMode __output;
+		__output = tmp__output;
+
+		return __output;
 	}
 
 	void ScriptColliderShape::InternalSetShape(ScriptColliderShape* self, PlaneColliderShapeInformation* information)

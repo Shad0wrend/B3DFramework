@@ -176,6 +176,7 @@ namespace bs
 		[NativeWrapper]
 		public CollisionReportMode CollisionReportMode
 		{
+			get { return Internal_GetCollisionReportMode(mCachedPtr); }
 			set { Internal_SetCollisionReportMode(mCachedPtr, value); }
 		}
 
@@ -321,6 +322,8 @@ namespace bs
 		private static extern ulong Internal_GetLayer(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetCollisionReportMode(IntPtr thisPtr, CollisionReportMode mode);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern CollisionReportMode Internal_GetCollisionReportMode(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetShape(IntPtr thisPtr, ref PlaneColliderShapeInformation information);
 		[MethodImpl(MethodImplOptions.InternalCall)]

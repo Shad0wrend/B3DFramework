@@ -53,6 +53,7 @@ namespace bs
 		static void InternalSetLayer(ScriptColliderShape* self, uint64_t layer);
 		static uint64_t InternalGetLayer(ScriptColliderShape* self);
 		static void InternalSetCollisionReportMode(ScriptColliderShape* self, CollisionReportMode mode);
+		static CollisionReportMode InternalGetCollisionReportMode(ScriptColliderShape* self);
 		static void InternalSetShape(ScriptColliderShape* self, PlaneColliderShapeInformation* information);
 		static void InternalSetShape0(ScriptColliderShape* self, __BoxColliderShapeInformationInterop* information);
 		static void InternalSetShape1(ScriptColliderShape* self, SphereColliderShapeInformation* information);
