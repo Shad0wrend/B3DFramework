@@ -75,6 +75,12 @@ namespace bs
 		/** @copydoc SetMobility */
 		ObjectMobility GetMobility() const { return mMobility; }
 
+		/** Determines the scene that the actor is a part of. */
+		virtual void SetSceneInstance(const SPtr<SceneInstance>& instance);
+
+		/** @copydoc SetSceneInstance */
+		const SPtr<SceneInstance>& GetSceneInstance() const { return mSceneInstance; }
+
 		/**
 		 * @name Internal
 		 * @{
@@ -106,7 +112,7 @@ namespace bs
 		 * Marks the main thread object as dirty and notifies the system its data should be synced with its render
 		 * thread counterpart.
 		 */
-		virtual void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) {}
+		virtual void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag = ActorDirtyFlag::Everything) {}
 
 	protected:
 		friend class SceneManager;
@@ -115,6 +121,7 @@ namespace bs
 		ObjectMobility mMobility = ObjectMobility::Movable;
 		bool mActive = true;
 		u32 mHash = 0;
+		SPtr<SceneInstance> mSceneInstance;
 	};
 	/** @} */
 } // namespace bs

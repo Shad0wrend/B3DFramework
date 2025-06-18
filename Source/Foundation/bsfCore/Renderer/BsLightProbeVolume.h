@@ -201,7 +201,7 @@ namespace bs
 		void UpdateCoefficients();
 
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
-		void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag dirtFlags = ActorDirtyFlag::Everything) override;
+		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag dirtFlags = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**	Creates a light volume with without initializing it. Used for serialization. */

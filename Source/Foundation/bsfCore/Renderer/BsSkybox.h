@@ -39,7 +39,7 @@ namespace bs
 		void SetBrightness(float brightness)
 		{
 			mBrightness = brightness;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 		}
 
 		/** @copydoc SetBrightness */
@@ -103,7 +103,7 @@ namespace bs
 		void FilterTexture();
 
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
-		void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
+		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		SPtr<Texture> mFilteredRadiance;

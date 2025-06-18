@@ -28,7 +28,7 @@ void LightBase::SetUseAutoAttenuation(bool enabled)
 	if(enabled)
 		UpdateAttenuationRange();
 
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void LightBase::SetAttenuationRadius(float radius)
@@ -37,7 +37,7 @@ void LightBase::SetAttenuationRadius(float radius)
 		return;
 
 	mAttRadius = radius;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 	UpdateBounds();
 }
 
@@ -48,7 +48,7 @@ void LightBase::SetSourceRadius(float radius)
 	if(mAutoAttenuation)
 		UpdateAttenuationRange();
 
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void LightBase::SetIntensity(float intensity)
@@ -58,7 +58,7 @@ void LightBase::SetIntensity(float intensity)
 	if(mAutoAttenuation)
 		UpdateAttenuationRange();
 
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 float LightBase::GetLuminance() const
@@ -237,7 +237,7 @@ RenderProxySyncPacket* Light::CreateRenderProxySyncPacket(FrameAllocator& alloca
 	return syncPacket;
 }
 
-void Light::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag)
+void Light::MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag)
 {
 	MarkRenderProxyDataDirty((u32)flag);
 }

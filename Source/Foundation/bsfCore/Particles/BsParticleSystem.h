@@ -615,7 +615,7 @@ namespace bs
 		void PostSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset);
 
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
-		void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
+		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 

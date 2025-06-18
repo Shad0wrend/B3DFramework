@@ -27,7 +27,7 @@ namespace bs
 		void SetSize(const Vector2& size)
 		{
 			mSize = Vector2::Max(Vector2::kZero, size);
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 			UpdateBounds();
 		}
 
@@ -44,7 +44,7 @@ namespace bs
 		void SetMaxDistance(float distance)
 		{
 			mMaxDistance = Math::Max(0.0f, distance);
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 			UpdateBounds();
 		}
 
@@ -62,7 +62,7 @@ namespace bs
 		void SetLayerMask(u32 mask)
 		{
 			mLayerMask = mask;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 		}
 
 		/** @copydoc SetLayerMask */
@@ -124,7 +124,7 @@ namespace bs
 		void SetMaterial(const MaterialType& material)
 		{
 			mMaterial = material;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 		}
 
 		/** @copydoc SetMaterial */
@@ -170,7 +170,7 @@ namespace bs
 
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
-		void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
+		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**	Creates the object with without initializing it. Used for serialization. */

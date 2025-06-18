@@ -54,7 +54,7 @@ void TRenderable<IsRenderProxy>::SetTransform(const Transform& transform)
 	mTfrmMatrix = transform.GetMatrix();
 	mTfrmMatrixNoScale = Matrix4::TRS(transform.GetPosition(), transform.GetRotation(), Vector3::kOne);
 
-	MarkRenderProxyDataDirtyInternal(ActorDirtyFlag::Transform);
+	MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag::Transform);
 }
 
 template <bool IsRenderProxy>
@@ -72,7 +72,7 @@ void TRenderable<IsRenderProxy>::SetMesh(const MeshType& mesh)
 
 	MarkDependenciesDirtyInternal();
 	MarkResourcesDirtyInternal();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 template <bool IsRenderProxy>
@@ -85,7 +85,7 @@ void TRenderable<IsRenderProxy>::SetMaterial(u32 idx, const MaterialType& materi
 
 	MarkDependenciesDirtyInternal();
 	MarkResourcesDirtyInternal();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 template <bool IsRenderProxy>
@@ -102,7 +102,7 @@ void TRenderable<IsRenderProxy>::SetMaterials(const Vector<MaterialType>& materi
 
 	MarkDependenciesDirtyInternal();
 	MarkResourcesDirtyInternal();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 template <bool IsRenderProxy>
@@ -132,7 +132,7 @@ void TRenderable<IsRenderProxy>::SetLayer(u64 layer)
 	}
 
 	mLayer = layer;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 template <bool IsRenderProxy>
@@ -141,7 +141,7 @@ void TRenderable<IsRenderProxy>::SetOverrideBounds(const AABox& bounds)
 	mOverrideBounds = bounds;
 
 	if(mUseOverrideBounds)
-		MarkRenderProxyDataDirtyInternal();
+		MarkSceneActorRenderProxyDataDirty();
 }
 
 template <bool IsRenderProxy>
@@ -151,7 +151,7 @@ void TRenderable<IsRenderProxy>::SetUseOverrideBounds(bool enable)
 		return;
 
 	mUseOverrideBounds = enable;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 template <bool IsRenderProxy>
@@ -161,7 +161,7 @@ void TRenderable<IsRenderProxy>::SetWriteVelocity(bool enable)
 		return;
 
 	mWriteVelocity = enable;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 template <bool IsRenderProxy>
@@ -169,7 +169,7 @@ void TRenderable<IsRenderProxy>::SetCullDistanceFactor(float factor)
 {
 	mCullDistanceFactor = factor;
 
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 template class TRenderable<false>;
@@ -181,7 +181,7 @@ void Renderable::Initialize()
 
 	// Since we don't pass any information along to the render thread object on its construction, make sure the data
 	// sync executes
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 
 	// If any resources were deserialized before initialization, make sure the listener is notified
 	MarkResourcesDirtyInternal();
@@ -192,7 +192,7 @@ void Renderable::SetAnimation(const SPtr<Animation>& animation)
 	mAnimation = animation;
 	RefreshAnimation();
 
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 Bounds Renderable::GetBounds() const
@@ -307,7 +307,7 @@ void Renderable::UpdateStateInternal(const SceneObject& so, bool force)
 	SceneActor::UpdateStateInternal(so, force);
 }
 
-void Renderable::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag)
+void Renderable::MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag)
 {
 	MarkRenderProxyDataDirty((u32)flag);
 }

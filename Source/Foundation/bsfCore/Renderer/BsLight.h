@@ -49,7 +49,7 @@ namespace bs
 		void SetType(LightType type)
 		{
 			mType = type;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 			UpdateBounds();
 		}
 
@@ -57,7 +57,7 @@ namespace bs
 		void SetCastsShadow(bool castsShadow)
 		{
 			mCastsShadows = castsShadow;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 		}
 
 		/** @copydoc SetCastsShadow */
@@ -76,7 +76,7 @@ namespace bs
 		void SetShadowBias(float bias)
 		{
 			mShadowBias = bias;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 		}
 
 		/** @copydoc SetShadowBias() */
@@ -86,7 +86,7 @@ namespace bs
 		void SetColor(const Color& color)
 		{
 			mColor = color;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 		}
 
 		/** @copydoc SetColor() */
@@ -141,7 +141,7 @@ namespace bs
 		void SetSpotAngle(const Degree& spotAngle)
 		{
 			mSpotAngle = spotAngle;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 			UpdateBounds();
 		}
 
@@ -155,7 +155,7 @@ namespace bs
 		void SetSpotFalloffAngle(const Degree& spotFallofAngle)
 		{
 			mSpotFalloffAngle = spotFallofAngle;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 			UpdateBounds();
 		}
 
@@ -232,7 +232,7 @@ namespace bs
 		Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
-		void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
+		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**	Creates a light with without initializing it. Used for serialization. */

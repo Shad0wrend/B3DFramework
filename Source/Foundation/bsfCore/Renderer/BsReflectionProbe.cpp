@@ -214,7 +214,7 @@ RenderProxySyncPacket* ReflectionProbe::CreateRenderProxySyncPacket(FrameAllocat
 	return syncPacket;
 }
 
-void ReflectionProbe::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flags)
+void ReflectionProbe::MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flags)
 {
 	MarkRenderProxyDataDirty((u32)flags);
 }

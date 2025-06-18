@@ -121,7 +121,7 @@ void Skybox::SetTexture(const HTexture& texture)
 	if(mTexture.IsLoaded())
 		FilterTexture();
 
-	MarkRenderProxyDataDirtyInternal((ActorDirtyFlag)SkyboxDirtyFlag::Texture);
+	MarkSceneActorRenderProxyDataDirty((ActorDirtyFlag)SkyboxDirtyFlag::Texture);
 }
 
 SPtr<Skybox> Skybox::CreateEmpty()
@@ -163,7 +163,7 @@ RenderProxySyncPacket* Skybox::CreateRenderProxySyncPacket(FrameAllocator& alloc
 	return syncPacket;
 }
 
-void Skybox::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flags)
+void Skybox::MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flags)
 {
 	MarkRenderProxyDataDirty((u32)flags);
 }

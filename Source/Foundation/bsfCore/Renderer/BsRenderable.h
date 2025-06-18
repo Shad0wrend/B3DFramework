@@ -200,7 +200,7 @@ namespace bs
 		/** Updates animation properties depending on the current mesh. */
 		void RefreshAnimation();
 
-		void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
+		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void MarkDependenciesDirtyInternal() override;

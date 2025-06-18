@@ -52,7 +52,7 @@ namespace bs
 		void SetType(ReflectionProbeType type)
 		{
 			mType = type;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 			UpdateBounds();
 		}
 
@@ -63,7 +63,7 @@ namespace bs
 		void SetRadius(float radius)
 		{
 			mRadius = radius;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 			UpdateBounds();
 		}
 
@@ -74,7 +74,7 @@ namespace bs
 		void SetExtents(const Vector3& extents)
 		{
 			mExtents = extents;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 			UpdateBounds();
 		}
 
@@ -194,7 +194,7 @@ namespace bs
 		ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents);
 
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
-		void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
+		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/**

@@ -32,7 +32,7 @@ void DecalBase::SetLayer(u64 layer)
 	}
 
 	mLayer = layer;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void DecalBase::SetTransform(const Transform& transform)
@@ -44,7 +44,7 @@ void DecalBase::SetTransform(const Transform& transform)
 	mTfrmMatrix = transform.GetMatrix();
 	mTfrmMatrixNoScale = Matrix4::TRS(transform.GetPosition(), transform.GetRotation(), Vector3::kOne);
 
-	MarkRenderProxyDataDirtyInternal(ActorDirtyFlag::Transform);
+	MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag::Transform);
 }
 
 void DecalBase::UpdateBounds()
@@ -125,7 +125,7 @@ RenderProxySyncPacket* Decal::CreateRenderProxySyncPacket(FrameAllocator& alloca
 	return syncPacket;
 }
 
-void Decal::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flags)
+void Decal::MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flags)
 {
 	MarkRenderProxyDataDirty((u32)flags);
 }

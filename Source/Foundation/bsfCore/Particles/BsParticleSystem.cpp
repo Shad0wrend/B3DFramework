@@ -164,14 +164,14 @@ void ParticleSystem::SetSettings(const ParticleSystemSettings& settings)
 		mParticleSet->Clear(settings.MaxParticles);
 
 	mSettings = settings;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 	MarkDependenciesDirty();
 }
 
 void ParticleSystem::SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings)
 {
 	mGpuSimulationSettings = settings;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void ParticleSystem::SetLayer(u64 layer)
@@ -185,13 +185,13 @@ void ParticleSystem::SetLayer(u64 layer)
 	}
 
 	mLayer = layer;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void ParticleSystem::SetEmitters(const Vector<SPtr<ParticleEmitter>>& emitters)
 {
 	mEmitters = emitters;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void ParticleSystem::SetEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers)
@@ -208,7 +208,7 @@ void ParticleSystem::SetEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers)
 			else
 				return priorityA > priorityB; });
 
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void ParticleSystem::Play()
@@ -427,7 +427,7 @@ SPtr<ct::RenderProxy> ParticleSystem::CreateRenderProxy() const
 	return renderProxyShared;
 }
 
-void ParticleSystem::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag)
+void ParticleSystem::MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag)
 {
 	MarkRenderProxyDataDirty((u32)flag);
 }
@@ -510,7 +510,7 @@ void ParticleSystem::SetLayer(u64 layer)
 	}
 
 	mLayer = layer;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void ParticleSystem::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)

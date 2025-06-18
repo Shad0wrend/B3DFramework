@@ -32,21 +32,21 @@ CameraBase::CameraBase()
 void CameraBase::SetFlags(CameraFlags flags)
 {
 	mCameraFlags = flags;
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void CameraBase::SetHorzFov(const Radian& fov)
 {
 	mHorzFOV = fov;
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void CameraBase::SetFarClipDistance(float farPlane)
 {
 	mFarDist = farPlane;
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void CameraBase::SetNearClipDistance(float nearPlane)
@@ -59,7 +59,7 @@ void CameraBase::SetNearClipDistance(float nearPlane)
 
 	mNearDist = nearPlane;
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 const Matrix4& CameraBase::GetProjectionMatrix() const
@@ -345,7 +345,7 @@ void CameraBase::SetAspectRatio(float r)
 {
 	mAspect = r;
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 const AABox& CameraBase::GetBoundingBox() const
@@ -359,7 +359,7 @@ void CameraBase::SetProjectionType(ProjectionType pt)
 {
 	mProjType = pt;
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 ProjectionType CameraBase::GetProjectionType() const
@@ -376,7 +376,7 @@ void CameraBase::SetCustomViewMatrix(bool enable, const Matrix4& viewMatrix)
 		mViewMatrixInv = mViewMatrix.InverseAffine();
 	}
 
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void CameraBase::SetCustomProjectionMatrix(bool enable, const Matrix4& projMatrix)
@@ -387,7 +387,7 @@ void CameraBase::SetCustomProjectionMatrix(bool enable, const Matrix4& projMatri
 		mProjMatrix = projMatrix;
 
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void CameraBase::SetOrthoWindow(float w, float h)
@@ -396,7 +396,7 @@ void CameraBase::SetOrthoWindow(float w, float h)
 	mAspect = w / h;
 
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void CameraBase::SetOrthoWindowHeight(float h)
@@ -404,7 +404,7 @@ void CameraBase::SetOrthoWindowHeight(float h)
 	mOrthoHeight = h;
 
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void CameraBase::SetOrthoWindowWidth(float w)
@@ -412,7 +412,7 @@ void CameraBase::SetOrthoWindowWidth(float w)
 	mOrthoHeight = w / mAspect;
 
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 float CameraBase::GetOrthoWindowHeight() const
@@ -434,7 +434,7 @@ void CameraBase::SetFrustumExtents(float left, float right, float top, float bot
 	mBottom = bottom;
 
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void CameraBase::ResetFrustumExtents()
@@ -442,7 +442,7 @@ void CameraBase::ResetFrustumExtents()
 	mFrustumExtentsManuallySet = false;
 
 	InvalidateFrustum();
-	MarkRenderProxyDataDirtyInternal();
+	MarkSceneActorRenderProxyDataDirty();
 }
 
 void CameraBase::GetFrustumExtents(float& outleft, float& outright, float& outtop, float& outbottom) const
@@ -797,7 +797,7 @@ void Camera::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	dependencies.push_back(mViewport.get());
 }
 
-void Camera::MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag)
+void Camera::MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag)
 {
 	MarkRenderProxyDataDirty((u32)flag);
 }

@@ -225,7 +225,7 @@ namespace bs
 		void SetPriority(i32 priority)
 		{
 			mPriority = priority;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 		}
 
 		/** @copydoc SetPriority() */
@@ -235,7 +235,7 @@ namespace bs
 		void SetLayers(u64 layers)
 		{
 			mLayers = layers;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 		}
 
 		/** @copydoc SetLayers() */
@@ -248,7 +248,7 @@ namespace bs
 		void SetMsaaCount(u32 count)
 		{
 			mMSAA = count;
-			MarkRenderProxyDataDirtyInternal();
+			MarkSceneActorRenderProxyDataDirty();
 		}
 
 		/** @copydoc SetMsaaCount() */
@@ -258,7 +258,7 @@ namespace bs
 		 * Notifies a on-demand camera that it should re-draw its contents on the next frame. Ignored for a camera
 		 * that isn't on-demand.
 		 */
-		void NotifyNeedsRedraw() { MarkRenderProxyDataDirtyInternal((ActorDirtyFlag)CameraDirtyFlag::Redraw); }
+		void NotifyNeedsRedraw() { MarkSceneActorRenderProxyDataDirty((ActorDirtyFlag)CameraDirtyFlag::Redraw); }
 
 		/**
 		 * Converts a point in world space to screen coordinates.
@@ -490,7 +490,7 @@ namespace bs
 		void SetRenderSettings(const SPtr<RenderSettingsType>& settings)
 		{
 			mRenderSettings = settings;
-			MarkRenderProxyDataDirtyInternal((ActorDirtyFlag)CameraDirtyFlag::RenderSettings);
+			MarkSceneActorRenderProxyDataDirty((ActorDirtyFlag)CameraDirtyFlag::RenderSettings);
 		}
 
 		/** @copydoc SetRenderSettings() */
@@ -549,7 +549,7 @@ namespace bs
 		Area2I GetViewportRect() const override;
 
 		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
-		void MarkRenderProxyDataDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
+		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;

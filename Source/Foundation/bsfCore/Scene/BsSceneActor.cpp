@@ -29,20 +29,36 @@ void SceneActor::SetTransform(const Transform& transform)
 		return;
 
 	mTransform = transform;
-	MarkRenderProxyDataDirtyInternal(ActorDirtyFlag::Transform);
+	MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag::Transform);
 }
 
 void SceneActor::SetMobility(ObjectMobility mobility)
 {
+	if(mMobility == mobility)
+		return;
+
 	mMobility = mobility;
-	MarkRenderProxyDataDirtyInternal(ActorDirtyFlag::Mobility);
+	MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag::Mobility);
 }
 
 void SceneActor::SetActive(bool active)
 {
+	if(mActive == active)
+		return;
+
 	mActive = active;
-	MarkRenderProxyDataDirtyInternal(ActorDirtyFlag::Active);
+	MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag::Active);
 }
+
+void SceneActor::SetSceneInstance(const SPtr<SceneInstance>& instance)
+{
+	if(mSceneInstance == instance)
+		return;
+
+	mSceneInstance = instance;
+	MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag::Everything);
+}
+
 
 void SceneActor::UpdateStateInternal(const SceneObject& so, bool force)
 {
@@ -59,6 +75,10 @@ void SceneActor::UpdateStateInternal(const SceneObject& so, bool force)
 
 	if(so.GetMobility() != mMobility || force)
 		SetMobility(so.GetMobility());
+
+	const SPtr<SceneInstance>& sceneInstance = so.GetScene();
+	if(mSceneInstance != sceneInstance || force)
+		SetSceneInstance(sceneInstance);
 }
 
 RenderProxySyncPacket* SceneActor::CreateSceneActorRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
