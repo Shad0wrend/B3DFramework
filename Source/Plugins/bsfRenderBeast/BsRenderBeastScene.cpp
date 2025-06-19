@@ -161,13 +161,13 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 	}
 }
 
-RendererScene::RendererScene(GpuDevice& gpuDevice, const SPtr<RenderBeastOptions>& options)
+RenderBeastScene::RenderBeastScene(GpuDevice& gpuDevice, const SPtr<RenderBeastOptions>& options)
 	: mGpuDevice(gpuDevice), mOptions(options)
 {
 	mPerFrameParamBuffer = gPerFrameParamDef.CreateBuffer();
 }
 
-RendererScene::~RendererScene()
+RenderBeastScene::~RenderBeastScene()
 {
 	for(auto& entry : mInfo.Renderables)
 		B3DDelete(entry);
@@ -178,7 +178,7 @@ RendererScene::~RendererScene()
 	B3D_ASSERT(mSamplerOverrides.empty());
 }
 
-void RendererScene::RegisterCamera(Camera* camera)
+void RenderBeastScene::RegisterCamera(Camera* camera)
 {
 	RENDERER_VIEW_DESC viewDesc = CreateViewDesc(camera);
 
@@ -195,7 +195,7 @@ void RendererScene::RegisterCamera(Camera* camera)
 	UpdateCameraRenderTargets(camera);
 }
 
-void RendererScene::UpdateCamera(Camera* camera, u32 updateFlag)
+void RenderBeastScene::UpdateCamera(Camera* camera, u32 updateFlag)
 {
 	u32 cameraId = camera->GetRendererId();
 	RendererView* view = mInfo.Views[cameraId];
@@ -231,7 +231,7 @@ void RendererScene::UpdateCamera(Camera* camera, u32 updateFlag)
 	view->UpdatePerViewBuffer();
 }
 
-void RendererScene::UnregisterCamera(Camera* camera)
+void RenderBeastScene::UnregisterCamera(Camera* camera)
 {
 	u32 cameraId = camera->GetRendererId();
 
@@ -260,7 +260,7 @@ void RendererScene::UnregisterCamera(Camera* camera)
 	UpdateCameraRenderTargets(camera, true);
 }
 
-void RendererScene::RegisterLight(Light* light)
+void RenderBeastScene::RegisterLight(Light* light)
 {
 	if(light->GetType() == LightType::Directional)
 	{
@@ -290,7 +290,7 @@ void RendererScene::RegisterLight(Light* light)
 	}
 }
 
-void RendererScene::UpdateLight(Light* light)
+void RenderBeastScene::UpdateLight(Light* light)
 {
 	u32 lightId = light->GetRendererId();
 
@@ -300,7 +300,7 @@ void RendererScene::UpdateLight(Light* light)
 		mInfo.SpotLightWorldBounds[lightId] = light->GetBounds();
 }
 
-void RendererScene::UnregisterLight(Light* light)
+void RenderBeastScene::UnregisterLight(Light* light)
 {
 	u32 lightId = light->GetRendererId();
 	if(light->GetType() == LightType::Directional)
@@ -359,7 +359,7 @@ void RendererScene::UnregisterLight(Light* light)
 	}
 }
 
-void RendererScene::RegisterRenderable(Renderable* renderable)
+void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 {
 	u32 renderableId = (u32)mInfo.Renderables.size();
 
@@ -493,7 +493,7 @@ void RendererScene::RegisterRenderable(Renderable* renderable)
 	}
 }
 
-void RendererScene::UpdateRenderable(Renderable* renderable)
+void RenderBeastScene::UpdateRenderable(Renderable* renderable)
 {
 	u32 renderableId = renderable->GetRendererId();
 
@@ -510,7 +510,7 @@ void RendererScene::UpdateRenderable(Renderable* renderable)
 	mInfo.RenderableCullInfos[renderableId].CullDistanceFactor = renderable->GetCullDistanceFactor();
 }
 
-void RendererScene::UnregisterRenderable(Renderable* renderable)
+void RenderBeastScene::UnregisterRenderable(Renderable* renderable)
 {
 	u32 renderableId = renderable->GetRendererId();
 	Renderable* lastRenerable = mInfo.Renderables.back()->Renderable;
@@ -540,7 +540,7 @@ void RendererScene::UnregisterRenderable(Renderable* renderable)
 	B3DDelete(rendererRenderable);
 }
 
-void RendererScene::RegisterReflectionProbe(ReflectionProbe* probe)
+void RenderBeastScene::RegisterReflectionProbe(ReflectionProbe* probe)
 {
 	u32 probeId = (u32)mInfo.ReflProbes.size();
 	probe->SetRendererId(probeId);
@@ -576,7 +576,7 @@ void RendererScene::RegisterReflectionProbe(ReflectionProbe* probe)
 	}
 }
 
-void RendererScene::UpdateReflectionProbe(ReflectionProbe* probe, bool texture)
+void RenderBeastScene::UpdateReflectionProbe(ReflectionProbe* probe, bool texture)
 {
 	// Should only get called if transform changes, any other major changes and ReflProbeInfo entry gets rebuild
 	u32 probeId = probe->GetRendererId();
@@ -589,7 +589,7 @@ void RendererScene::UpdateReflectionProbe(ReflectionProbe* probe, bool texture)
 	}
 }
 
-void RendererScene::UnregisterReflectionProbe(ReflectionProbe* probe)
+void RenderBeastScene::UnregisterReflectionProbe(ReflectionProbe* probe)
 {
 	u32 probeId = probe->GetRendererId();
 	u32 arrayIdx = mInfo.ReflProbes[probeId].ArrayIdx;
@@ -614,7 +614,7 @@ void RendererScene::UnregisterReflectionProbe(ReflectionProbe* probe)
 	mInfo.ReflProbeWorldBounds.erase(mInfo.ReflProbeWorldBounds.end() - 1);
 }
 
-void RendererScene::SetReflectionProbeArrayIndex(u32 probeIdx, u32 arrayIdx, bool markAsClean)
+void RenderBeastScene::SetReflectionProbeArrayIndex(u32 probeIdx, u32 arrayIdx, bool markAsClean)
 {
 	RendererReflectionProbe* probe = &mInfo.ReflProbes[probeIdx];
 	probe->ArrayIdx = arrayIdx;
@@ -623,38 +623,38 @@ void RendererScene::SetReflectionProbeArrayIndex(u32 probeIdx, u32 arrayIdx, boo
 		probe->ArrayDirty = false;
 }
 
-void RendererScene::RegisterLightProbeVolume(LightProbeVolume* volume)
+void RenderBeastScene::RegisterLightProbeVolume(LightProbeVolume* volume)
 {
 	mInfo.LightProbes.NotifyAdded(volume);
 }
 
-void RendererScene::UpdateLightProbeVolume(LightProbeVolume* volume)
+void RenderBeastScene::UpdateLightProbeVolume(LightProbeVolume* volume)
 {
 	mInfo.LightProbes.NotifyDirty(volume);
 }
 
-void RendererScene::UnregisterLightProbeVolume(LightProbeVolume* volume)
+void RenderBeastScene::UnregisterLightProbeVolume(LightProbeVolume* volume)
 {
 	mInfo.LightProbes.NotifyRemoved(volume);
 }
 
-void RendererScene::UpdateLightProbes(GpuCommandBuffer& commandBuffer)
+void RenderBeastScene::UpdateLightProbes(GpuCommandBuffer& commandBuffer)
 {
 	mInfo.LightProbes.UpdateProbes(commandBuffer);
 }
 
-void RendererScene::RegisterSkybox(Skybox* skybox)
+void RenderBeastScene::RegisterSkybox(Skybox* skybox)
 {
 	mInfo.Skybox = skybox;
 }
 
-void RendererScene::UnregisterSkybox(Skybox* skybox)
+void RenderBeastScene::UnregisterSkybox(Skybox* skybox)
 {
 	if(mInfo.Skybox == skybox)
 		mInfo.Skybox = nullptr;
 }
 
-void RendererScene::RegisterParticleSystem(ParticleSystem* particleSystem)
+void RenderBeastScene::RegisterParticleSystem(ParticleSystem* particleSystem)
 {
 	const auto rendererId = (u32)mInfo.ParticleSystems.size();
 	particleSystem->SetRendererId(rendererId);
@@ -671,7 +671,7 @@ void RendererScene::RegisterParticleSystem(ParticleSystem* particleSystem)
 	rendererParticles.PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 }
 
-void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly)
+void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly)
 {
 	const u32 rendererId = particleSystem->GetRendererId();
 	RendererParticles& rendererParticles = mInfo.ParticleSystems[rendererId];
@@ -943,7 +943,7 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 	}
 }
 
-void RendererScene::UnregisterParticleSystem(ParticleSystem* particleSystem)
+void RenderBeastScene::UnregisterParticleSystem(ParticleSystem* particleSystem)
 {
 	const u32 rendererId = particleSystem->GetRendererId();
 	RendererParticles& rendererParticles = mInfo.ParticleSystems[rendererId];
@@ -976,7 +976,7 @@ void RendererScene::UnregisterParticleSystem(ParticleSystem* particleSystem)
 	mInfo.ParticleSystemCullInfos.erase(mInfo.ParticleSystemCullInfos.end() - 1);
 }
 
-void RendererScene::RegisterDecal(Decal* decal)
+void RenderBeastScene::RegisterDecal(Decal* decal)
 {
 	const auto renderableId = (u32)mInfo.Decals.size();
 	decal->SetRendererId(renderableId);
@@ -1051,7 +1051,7 @@ void RendererScene::RegisterDecal(Decal* decal)
 		gpuParams->GetSampledTextureParameter("gMaskTex", renElement.MaskInputTexture);
 }
 
-void RendererScene::UpdateDecal(Decal* decal)
+void RenderBeastScene::UpdateDecal(Decal* decal)
 {
 	const u32 rendererId = decal->GetRendererId();
 
@@ -1059,7 +1059,7 @@ void RendererScene::UpdateDecal(Decal* decal)
 	mInfo.DecalCullInfos[rendererId].Bounds = decal->GetBounds();
 }
 
-void RendererScene::UnregisterDecal(Decal* decal)
+void RenderBeastScene::UnregisterDecal(Decal* decal)
 {
 	const u32 rendererId = decal->GetRendererId();
 	Decal* lastDecal = mInfo.Decals.back().Decal;
@@ -1086,7 +1086,7 @@ void RendererScene::UnregisterDecal(Decal* decal)
 	mInfo.DecalCullInfos.erase(mInfo.DecalCullInfos.end() - 1);
 }
 
-void RendererScene::SetOptions(const SPtr<RenderBeastOptions>& options)
+void RenderBeastScene::SetOptions(const SPtr<RenderBeastOptions>& options)
 {
 	mOptions = options;
 
@@ -1094,7 +1094,7 @@ void RendererScene::SetOptions(const SPtr<RenderBeastOptions>& options)
 		entry->SetStateReductionMode(mOptions->StateReductionMode);
 }
 
-RENDERER_VIEW_DESC RendererScene::CreateViewDesc(Camera* camera) const
+RENDERER_VIEW_DESC RenderBeastScene::CreateViewDesc(Camera* camera) const
 {
 	SPtr<Viewport> viewport = camera->GetViewport();
 	ClearFlags clearFlags = viewport->GetClearFlags();
@@ -1156,7 +1156,7 @@ RENDERER_VIEW_DESC RendererScene::CreateViewDesc(Camera* camera) const
 	return viewDesc;
 }
 
-void RendererScene::UpdateCameraRenderTargets(Camera* camera, bool remove)
+void RenderBeastScene::UpdateCameraRenderTargets(Camera* camera, bool remove)
 {
 	SPtr<RenderTarget> renderTarget = camera->GetViewport()->GetTarget();
 
@@ -1231,7 +1231,7 @@ void RendererScene::UpdateCameraRenderTargets(Camera* camera, bool remove)
 	}
 }
 
-void RendererScene::RefreshSamplerOverrides(bool force)
+void RenderBeastScene::RefreshSamplerOverrides(bool force)
 {
 	bool anyDirty = false;
 	for(auto& entry : mSamplerOverrides)
@@ -1306,12 +1306,12 @@ void RendererScene::RefreshSamplerOverrides(bool force)
 		entry.second->IsDirty = false;
 }
 
-void RendererScene::SetParamFrameParams(float time)
+void RenderBeastScene::SetParamFrameParams(float time)
 {
 	gPerFrameParamDef.gTime.Set(mPerFrameParamBuffer, time);
 }
 
-void RendererScene::PrepareRenderable(u32 idx, const FrameInfo& frameInfo)
+void RenderBeastScene::PrepareRenderable(u32 idx, const FrameInfo& frameInfo)
 {
 	RendererRenderable* rendererRenderable = mInfo.Renderables[idx];
 
@@ -1334,7 +1334,7 @@ void RendererScene::PrepareRenderable(u32 idx, const FrameInfo& frameInfo)
 	}
 }
 
-void RendererScene::PrepareVisibleRenderable(u32 idx, const FrameInfo& frameInfo)
+void RenderBeastScene::PrepareVisibleRenderable(u32 idx, const FrameInfo& frameInfo)
 {
 	if(mInfo.RenderableReady[idx])
 		return;
@@ -1354,7 +1354,7 @@ void RendererScene::PrepareVisibleRenderable(u32 idx, const FrameInfo& frameInfo
 	mInfo.RenderableReady[idx] = true;
 }
 
-void RendererScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo)
+void RenderBeastScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo)
 {
 	RendererParticles& rendererParticles = mInfo.ParticleSystems[idx];
 
@@ -1376,7 +1376,7 @@ void RendererScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo)
 	mInfo.ParticleSystems[idx].PerObjectParamBuffer->FlushCache();
 }
 
-void RendererScene::PrepareDecal(u32 idx, const FrameInfo& frameInfo)
+void RenderBeastScene::PrepareDecal(u32 idx, const FrameInfo& frameInfo)
 {
 	DecalRenderElement& renElement = mInfo.Decals[idx].RenderElement;
 	renElement.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
@@ -1385,7 +1385,7 @@ void RendererScene::PrepareDecal(u32 idx, const FrameInfo& frameInfo)
 	mInfo.Decals[idx].PerObjectParamBuffer->FlushCache();
 }
 
-void RendererScene::UpdateParticleSystemBounds(const ParticlePerFrameData* particleRenderData)
+void RenderBeastScene::UpdateParticleSystemBounds(const ParticlePerFrameData* particleRenderData)
 {
 	// Note: Avoid updating bounds for deterministic particle systems every frame. Also see if this can be copied
 	// over in a faster way (or ideally just assigned)
@@ -1410,7 +1410,7 @@ void RendererScene::UpdateParticleSystemBounds(const ParticlePerFrameData* parti
 	}
 }
 
-MaterialSamplerOverrides* RendererScene::AllocSamplerStateOverrides(RenderElement& elem)
+MaterialSamplerOverrides* RenderBeastScene::AllocSamplerStateOverrides(RenderElement& elem)
 {
 	SamplerOverrideKey samplerKey(elem.Material, elem.DefaultTechniqueIdx);
 	auto iterFind = mSamplerOverrides.find(samplerKey);
@@ -1431,7 +1431,7 @@ MaterialSamplerOverrides* RendererScene::AllocSamplerStateOverrides(RenderElemen
 	}
 }
 
-void RendererScene::FreeSamplerStateOverrides(RenderElement& elem)
+void RenderBeastScene::FreeSamplerStateOverrides(RenderElement& elem)
 {
 	SamplerOverrideKey samplerKey(elem.Material, elem.DefaultTechniqueIdx);
 

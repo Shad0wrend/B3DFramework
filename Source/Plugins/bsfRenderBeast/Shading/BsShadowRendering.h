@@ -18,7 +18,7 @@ namespace b3d
 	{
 		struct FrameInfo;
 		class RendererLight;
-		class RendererScene;
+		class RenderBeastScene;
 		struct ShadowInfo;
 
 		/** @addtogroup RenderBeast
@@ -541,7 +541,7 @@ namespace b3d
 			ShadowRendering(u32 shadowMapSize);
 
 			/** For each visible shadow casting light, renders a shadow map from its point of view. */
-			void RenderShadowMaps(GpuCommandBuffer& commandBuffer, RendererScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
+			void RenderShadowMaps(GpuCommandBuffer& commandBuffer, RenderBeastScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
 
 			/**
 			 * Renders shadow occlusion values for the specified light, through the provided view, into the currently bound
@@ -554,13 +554,13 @@ namespace b3d
 
 		private:
 			/** Renders cascaded shadow maps for the provided directional light viewed from the provided view. */
-			void RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, const RendererView& view, u32 lightIdx, RendererScene& scene, const FrameInfo& frameInfo);
+			void RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, const RendererView& view, u32 lightIdx, RenderBeastScene& scene, const FrameInfo& frameInfo);
 
 			/** Renders shadow maps for the provided spot light. */
-			void RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& light, const ShadowMapOptions& options, RendererScene& scene, const FrameInfo& frameInfo);
+			void RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& light, const ShadowMapOptions& options, RenderBeastScene& scene, const FrameInfo& frameInfo);
 
 			/** Renders shadow maps for the provided radial light. */
-			void RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& light, const ShadowMapOptions& options, RendererScene& scene, const FrameInfo& frameInfo);
+			void RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& light, const ShadowMapOptions& options, RenderBeastScene& scene, const FrameInfo& frameInfo);
 
 			/**
 			 * Calculates optimal shadow map size, taking into account all views in the scene. Also calculates a fade value

@@ -139,7 +139,7 @@ namespace b3d
 			bool mIsFrameCaptureRequested = false;
 
 			// Scene data
-			SPtr<RendererScene> mScene;
+			SPtr<RenderBeastScene> mScene;
 
 			SPtr<RenderBeastOptions> mRenderThreadOptions;
 

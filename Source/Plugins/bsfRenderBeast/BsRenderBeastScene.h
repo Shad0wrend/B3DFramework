@@ -72,11 +72,11 @@ namespace b3d
 		};
 
 		/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
-		class RendererScene
+		class RenderBeastScene
 		{
 		public:
-			RendererScene(GpuDevice& gpuDevice, const SPtr<RenderBeastOptions>& options);
-			~RendererScene();
+			RenderBeastScene(GpuDevice& gpuDevice, const SPtr<RenderBeastOptions>& options);
+			~RenderBeastScene();
 
 			/** Registers a new camera in the scene. */
 			void RegisterCamera(Camera* camera);

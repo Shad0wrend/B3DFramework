@@ -448,7 +448,7 @@ public:
 	};
 
 	template <class Options>
-	static void Execute(GpuCommandBuffer& commandBuffer, RendererScene& scene, const FrameInfo& frameInfo, const Options& opt)
+	static void Execute(GpuCommandBuffer& commandBuffer, RenderBeastScene& scene, const FrameInfo& frameInfo, const Options& opt)
 	{
 		static_assert((u32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
 
@@ -761,7 +761,7 @@ void ShadowRendering::SetShadowMapSize(u32 size)
 	mShadowMapSize = size;
 }
 
-void ShadowRendering::RenderShadowMaps(GpuCommandBuffer& commandBuffer, RendererScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo)
+void ShadowRendering::RenderShadowMaps(GpuCommandBuffer& commandBuffer, RenderBeastScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo)
 {
 	// Note: Currently all shadows are dynamic and are rebuilt every frame. I should later added support for static
 	// shadow maps which can be used for immovable lights. Such a light can then maintain a set of shadow maps,
@@ -1185,7 +1185,7 @@ void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, con
 	}
 }
 
-void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, const RendererView& view, u32 lightIdx, RendererScene& scene, const FrameInfo& frameInfo)
+void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, const RendererView& view, u32 lightIdx, RenderBeastScene& scene, const FrameInfo& frameInfo)
 {
 	u32 viewIdx = view.GetViewIdx();
 	LightShadows& lightShadows = mDirectionalLightShadows[lightIdx].ViewShadows[viewIdx];
@@ -1327,7 +1327,7 @@ void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, 
 	lightShadows.NumShadows = 1;
 }
 
-void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RendererScene& scene, const FrameInfo& frameInfo)
+void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RenderBeastScene& scene, const FrameInfo& frameInfo)
 {
 	Light* light = rendererLight.Internal;
 
@@ -1424,7 +1424,7 @@ void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const
 	lightShadows.NumShadows++;
 }
 
-void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RendererScene& scene, const FrameInfo& frameInfo)
+void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RenderBeastScene& scene, const FrameInfo& frameInfo)
 {
 	Light* light = rendererLight.Internal;
 

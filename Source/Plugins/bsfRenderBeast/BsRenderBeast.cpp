@@ -96,7 +96,7 @@ void RenderBeast::InitializeOnRenderThread(const LoadedRendererTextures& rendere
 	RendererTextures::StartUp(rendererTextures);
 
 	mRenderThreadOptions = B3DMakeShared<RenderBeastOptions>();
-	mScene = B3DMakeShared<RendererScene>(*mDevice, mRenderThreadOptions);
+	mScene = B3DMakeShared<RenderBeastScene>(*mDevice, mRenderThreadOptions);
 
 	mMainViewGroup = B3DNew<RendererViewGroup>(nullptr, 0, true);
 
