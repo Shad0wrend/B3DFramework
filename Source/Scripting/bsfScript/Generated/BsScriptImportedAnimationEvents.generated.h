@@ -7,8 +7,8 @@
 #include "../../../Foundation/bsfCore/Importer/BsMeshImportOptions.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationClip.h"
 
-namespace b3d { struct ImportedAnimationEvents; }
 namespace b3d { struct __AnimationEventInterop; }
+namespace b3d { struct ImportedAnimationEvents; }
 namespace b3d
 {
 #if !B3D_IS_ENGINE

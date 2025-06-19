@@ -9,8 +9,8 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIContent.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 
-namespace b3d { class GUIButton; }
 namespace b3d { struct __GUIContentInterop; }
+namespace b3d { class GUIButton; }
 namespace b3d { struct __GUIOptionInterop; }
 namespace b3d
 {

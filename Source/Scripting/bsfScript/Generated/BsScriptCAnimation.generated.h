@@ -11,10 +11,10 @@
 #include "../../../Foundation/bsfCore/Animation/BsAnimation.h"
 #include "../../../Foundation/bsfUtility/Math/BsAABox.h"
 
-namespace b3d { struct __Blend2DInfoInterop; }
+namespace b3d { struct __TAABox_float_Interop; }
 namespace b3d { class CAnimation; }
 namespace b3d { struct __Blend1DInfoInterop; }
-namespace b3d { struct __TAABox_float_Interop; }
+namespace b3d { struct __Blend2DInfoInterop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimation : public TScriptGameObjectWrapper<CAnimation, ScriptAnimation>

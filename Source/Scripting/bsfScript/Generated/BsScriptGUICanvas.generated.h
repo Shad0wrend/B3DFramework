@@ -13,8 +13,8 @@
 #include "../../../Foundation/bsfEngine/Utility/BsEnums.h"
 
 namespace b3d { class GUICanvas; }
-namespace b3d { struct __GUIOptionInterop; }
 namespace b3d { struct __TVector2_TUnitValue_int32_t__LogicalPixel__Interop; }
+namespace b3d { struct __GUIOptionInterop; }
 namespace b3d { struct __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop; }
 namespace b3d
 {

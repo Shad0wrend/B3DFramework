@@ -7,8 +7,8 @@
 #include "../../../Foundation/bsfCore/Particles/BsVectorField.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
-namespace b3d { class VectorField; }
 namespace b3d { struct __VECTOR_FIELD_DESCInterop; }
+namespace b3d { class VectorField; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorField : public TScriptResourceWrapper<VectorField, ScriptVectorField>

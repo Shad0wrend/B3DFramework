@@ -10,8 +10,8 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUITexture.h"
 
 namespace b3d { class GUITexture; }
-namespace b3d { struct __GUITextureContentsInterop; }
 namespace b3d { struct __GUIOptionInterop; }
+namespace b3d { struct __GUITextureContentsInterop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUITexture : public TScriptGUIElementWrapper<GUITexture, ScriptGUITexture, ScriptGUIInteractableWrapperBase>

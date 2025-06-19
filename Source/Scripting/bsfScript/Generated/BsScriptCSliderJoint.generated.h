@@ -8,8 +8,8 @@
 #include "../../../Foundation/bsfCore/Physics/BsSliderJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 
-namespace b3d { struct __LimitLinearRangeInterop; }
 namespace b3d { class CSliderJoint; }
+namespace b3d { struct __LimitLinearRangeInterop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptSliderJoint : public TScriptGameObjectWrapper<CSliderJoint, ScriptSliderJoint, ScriptJointWrapperBase>

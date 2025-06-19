@@ -8,8 +8,8 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIVerticalScrollBar.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 
-namespace b3d { class GUIVerticalScrollBar; }
 namespace b3d { struct __GUIOptionInterop; }
+namespace b3d { class GUIVerticalScrollBar; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIVerticalScrollBar : public TScriptGUIElementWrapper<GUIVerticalScrollBar, ScriptGUIVerticalScrollBar, ScriptGUIScrollBarWrapperBase>

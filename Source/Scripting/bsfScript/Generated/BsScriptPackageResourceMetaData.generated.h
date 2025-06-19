@@ -9,8 +9,8 @@
 #include "../../../Foundation/bsfUtility/Utility/BsCompression.h"
 #include "../../../Foundation/bsfCore/Resources/BsPackage.h"
 
-namespace b3d { class PackageResourceMetaData; }
 namespace b3d { class PackageResourceMetaDataExtension; }
+namespace b3d { class PackageResourceMetaData; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptPackageResourceMetaData : public TScriptReflectableWrapper<PackageResourceMetaData, ScriptPackageResourceMetaData>

@@ -13,10 +13,10 @@
 #include "../../../Foundation/bsfUtility/Math/BsSphere.h"
 #include "Math/BsCapsule.h"
 
-namespace b3d { struct __TRay_float_Interop; }
-namespace b3d { struct __TSphere_float_Interop; }
-namespace b3d { struct __PhysicsQueryHitInterop; }
 namespace b3d { struct __TAABox_float_Interop; }
+namespace b3d { struct __TRay_float_Interop; }
+namespace b3d { struct __PhysicsQueryHitInterop; }
+namespace b3d { struct __TSphere_float_Interop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsScene : public TScriptNonReflectableWrapper<PhysicsScene, ScriptPhysicsScene>

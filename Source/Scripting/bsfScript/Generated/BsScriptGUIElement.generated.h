@@ -12,12 +12,12 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 
-namespace b3d { struct __TSize2_TUnitValue_int32_t__LogicalPixel__Interop; }
+namespace b3d { struct __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop; }
 namespace b3d { class GUIElement; }
+namespace b3d { struct __TSize2_TUnitValue_int32_t__LogicalPixel__Interop; }
 namespace b3d { struct __TVector2_TUnitValue_int32_t__LogicalPixel__Interop; }
 namespace b3d { struct __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop; }
 namespace b3d { struct __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop; }
-namespace b3d { struct __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIElement : public TScriptGUIElementWrapper<GUIElement, ScriptGUIElement>

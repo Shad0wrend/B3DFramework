@@ -12,8 +12,8 @@
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
 
-namespace b3d { struct __TNamedAnimationCurve_float_Interop; }
 namespace b3d { class AnimationCurvesEx; }
+namespace b3d { struct __TNamedAnimationCurve_float_Interop; }
 namespace b3d { struct __TNamedAnimationCurve_TVector3_float__Interop; }
 namespace b3d { struct __TNamedAnimationCurve_TQuaternion_float__Interop; }
 namespace b3d

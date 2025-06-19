@@ -7,8 +7,8 @@
 #include "BsScriptGUIInteractable.generated.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIContent.h"
 
-namespace b3d { class GUIClickable; }
 namespace b3d { struct __GUIContentInterop; }
+namespace b3d { class GUIClickable; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIClickableWrapperBase : public ScriptGUIInteractableWrapperBase

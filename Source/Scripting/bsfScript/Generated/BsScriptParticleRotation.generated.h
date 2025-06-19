@@ -8,8 +8,8 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 
-namespace b3d { struct __PARTICLE_ROTATION_DESCInterop; }
 namespace b3d { class ParticleRotation; }
+namespace b3d { struct __PARTICLE_ROTATION_DESCInterop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleRotation : public TScriptReflectableWrapper<ParticleRotation, ScriptParticleRotation, ScriptParticleEvolverWrapperBase>

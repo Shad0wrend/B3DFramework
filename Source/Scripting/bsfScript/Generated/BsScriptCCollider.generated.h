@@ -7,8 +7,8 @@
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 
-namespace b3d { struct __CollisionDataInterop; }
 namespace b3d { class CCollider; }
+namespace b3d { struct __CollisionDataInterop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptColliderWrapperBase : public ScriptGameObjectWrapper

@@ -10,9 +10,9 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
 
+namespace b3d { struct __GUIOptionInterop; }
 namespace b3d { class GUIListBox; }
 namespace b3d { struct __GUIListBoxContentInterop; }
-namespace b3d { struct __GUIOptionInterop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIListBox : public TScriptGUIElementWrapper<GUIListBox, ScriptGUIListBox, ScriptGUIClickableWrapperBase>

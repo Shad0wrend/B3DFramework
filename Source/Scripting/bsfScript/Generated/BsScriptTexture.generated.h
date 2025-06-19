@@ -9,8 +9,8 @@
 #include "../../../Foundation/bsfCore/Image/BsPixelData.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
 
-namespace b3d { class TextureEx; }
 namespace b3d { class Texture; }
+namespace b3d { class TextureEx; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptTexture : public TScriptResourceWrapper<Texture, ScriptTexture>

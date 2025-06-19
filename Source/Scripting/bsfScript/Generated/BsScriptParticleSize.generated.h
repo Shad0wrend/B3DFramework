@@ -8,8 +8,8 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 
-namespace b3d { struct __PARTICLE_SIZE_DESCInterop; }
 namespace b3d { class ParticleSize; }
+namespace b3d { struct __PARTICLE_SIZE_DESCInterop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleSize : public TScriptReflectableWrapper<ParticleSize, ScriptParticleSize, ScriptParticleEvolverWrapperBase>

@@ -15,8 +15,8 @@
 #include "../../../Foundation/bsfCore/Physics/BsColliderShape.h"
 #include "../../../Foundation/bsfCore/Physics/BsColliderShape.h"
 
-namespace b3d { class ColliderShape; }
 namespace b3d { struct __BoxColliderShapeInformationInterop; }
+namespace b3d { class ColliderShape; }
 namespace b3d { struct __MeshColliderShapeInformationInterop; }
 namespace b3d
 {

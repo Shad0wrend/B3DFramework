@@ -7,9 +7,9 @@
 #include "../../../Foundation/bsfCore/Animation/BsSkeleton.h"
 #include "../Extensions/BsSkeletonEx.h"
 
-namespace b3d { class Skeleton; }
-namespace b3d { class SkeletonEx; }
 namespace b3d { struct __SkeletonBoneInfoExInterop; }
+namespace b3d { class SkeletonEx; }
+namespace b3d { class Skeleton; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptSkeleton : public TScriptReflectableWrapper<Skeleton, ScriptSkeleton>

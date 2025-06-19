@@ -8,8 +8,8 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 
-namespace b3d { struct __PARTICLE_CIRCLE_SHAPE_DESCInterop; }
 namespace b3d { class ParticleEmitterCircleShape; }
+namespace b3d { struct __PARTICLE_CIRCLE_SHAPE_DESCInterop; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleEmitterCircleShape : public TScriptReflectableWrapper<ParticleEmitterCircleShape, ScriptParticleEmitterCircleShape, ScriptParticleEmitterShapeWrapperBase>
