@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsMonoManager.h"
 #include "BsScriptTypeMetaData.h"
@@ -20,7 +20,7 @@
 #include <mono/metadata/appdomain.h>
 #endif
 
-using namespace bs;
+using namespace b3d;
 
 const String kMonoCompilerDir = "bin/Mono/compiler/";
 
@@ -42,7 +42,7 @@ static const MonoVersionData kMonoVersionData[1] = {
 };
 #endif
 
-namespace bs
+namespace b3d
 {
 	void MonoLogCallback(const char* logDomain, const char* logLevel, const char* message, mono_bool fatal, void* userData)
 	{
@@ -96,7 +96,7 @@ namespace bs
 	{
 		B3D_LOG(Error, Script, "Mono error: {0}", string);
 	}
-} // namespace bs
+} // namespace b3d
 
 MonoManager::MonoManager()
 	: mScriptDomain(nullptr), mRootDomain(nullptr), mCorlibAssembly(nullptr)
@@ -195,7 +195,7 @@ void MonoManager::UnloadMonoLibrary()
 #endif
 }
 
-bs::MonoAssembly& MonoManager::LoadAssembly(const Path& path, const String& name)
+b3d::MonoAssembly& MonoManager::LoadAssembly(const Path& path, const String& name)
 {
 	MonoAssembly* assembly = nullptr;
 
@@ -294,7 +294,7 @@ void MonoManager::UnloadAll()
 	}
 }
 
-bs::MonoAssembly* MonoManager::GetAssembly(const String& name) const
+b3d::MonoAssembly* MonoManager::GetAssembly(const String& name) const
 {
 	auto iterFind = mAssemblies.find(name);
 
@@ -310,7 +310,7 @@ void MonoManager::RegisterScriptType(ScriptTypeMetaData* metaData, const ScriptT
 	mMetas.push_back({ metaData, localMetaData });
 }
 
-bs::MonoClass* MonoManager::FindClass(const MonoTypeIdentifier& typeIdentifier)
+b3d::MonoClass* MonoManager::FindClass(const MonoTypeIdentifier& typeIdentifier)
 {
 	auto fnFindClass = [this](const String& assemblyName, const String& nameSpace, const String& typeName) -> MonoClass*
 	{
@@ -355,7 +355,7 @@ bs::MonoClass* MonoManager::FindClass(const MonoTypeIdentifier& typeIdentifier)
 	return assembly->GetClass(typeIdentifier.Namespace, typeIdentifier.GetTypeName(false), internalClass);
 }
 
-bs::MonoClass* MonoManager::FindClass(const String& ns, const String& typeName)
+b3d::MonoClass* MonoManager::FindClass(const String& ns, const String& typeName)
 {
 	MonoClass* monoClass = nullptr;
 	for(auto& assembly : mAssemblies)
@@ -368,7 +368,7 @@ bs::MonoClass* MonoManager::FindClass(const String& ns, const String& typeName)
 	return nullptr;
 }
 
-bs::MonoClass* MonoManager::FindClass(::MonoClass* rawMonoClass)
+b3d::MonoClass* MonoManager::FindClass(::MonoClass* rawMonoClass)
 {
 	MonoClass* monoClass = nullptr;
 	for(auto& assembly : mAssemblies)

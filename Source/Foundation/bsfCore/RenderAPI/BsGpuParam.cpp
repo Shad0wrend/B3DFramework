@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsGpuParam.h"
 
@@ -11,7 +11,7 @@
 #include "Debug/BsDebug.h"
 #include "Error/BsException.h"
 
-using namespace bs;
+using namespace b3d;
 
 template <class T, bool IsRenderProxy>
 TGpuParameterPrimitive<T, IsRenderProxy>::TGpuParameterPrimitive()
@@ -39,7 +39,7 @@ void TGpuParameterPrimitive<T, IsRenderProxy>::Set(const T& value, u32 arrayIdx)
 	}
 #endif
 
-	const GpuDataParameterTypeInformation& typeInformation = bs::GpuParameters::kParamSizes.Lookup[mParameterInformation->Type];
+	const GpuDataParameterTypeInformation& typeInformation = b3d::GpuParameters::kParamSizes.Lookup[mParameterInformation->Type];
 
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	const GpuBackendConventions& gpuBackendConventions = gpuDevice->GetCapabilities().Conventions;

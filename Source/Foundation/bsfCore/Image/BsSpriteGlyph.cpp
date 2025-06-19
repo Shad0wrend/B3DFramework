@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Image/BsSpriteGlyph.h"
 #include "Private/RTTI/BsSpriteGlyphRTTI.h"
@@ -8,9 +8,9 @@
 #include "CoreObject/BsCoreObjectSync.h"
 #include "Text/BsFont.h"
 
-using namespace bs;
+using namespace b3d;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteGlyphAllocation, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImageAllocation, SpriteImageSyncPacket)
@@ -46,7 +46,7 @@ RenderProxySyncPacket* SpriteGlyphAllocation::CreateRenderProxySyncPacket(FrameA
 	return syncPacket;
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteGlyph, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImage, SpriteImageSyncPacket)
@@ -195,11 +195,11 @@ RTTIType* SpriteGlyph::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 void SpriteGlyphAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::SpriteGlyphAllocation::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteGlyphAllocation::SyncPacket>();
 	if(!syncPacket)
 		return;
 
@@ -212,7 +212,7 @@ SpriteGlyph::SpriteGlyph(const SpriteGlyphCreateInformation& createInformation)
 
 void SpriteGlyph::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::SpriteGlyph::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteGlyph::SyncPacket>();
 	if(!syncPacket)
 		return;
 

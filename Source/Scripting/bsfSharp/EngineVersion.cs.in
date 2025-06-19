@@ -2,7 +2,7 @@
 
 using System;
 
-namespace bs
+namespace b3d
 {
     /// <summary>
     /// Provides version information about the engine/editor.

@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptTArea2.generated.h"
 #include "BsMonoMethod.h"
@@ -13,7 +13,7 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "BsScriptTUnitValue.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptTArea2_int32_t__int32_t_::ScriptTArea2_int32_t__int32_t_()
 	{ }

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -10,7 +10,7 @@
 #include "Math/BsMatrix4.h"
 #include "BsParticleDistribution.h"
 
-namespace bs
+namespace b3d
 {
 	class Random;
 	class ParticleSet;
@@ -1080,4 +1080,4 @@ namespace bs
 
 	/** @} */
 
-} // namespace bs
+} // namespace b3d

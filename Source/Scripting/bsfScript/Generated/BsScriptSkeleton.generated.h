@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,10 +7,10 @@
 #include "../../../Foundation/bsfCore/Animation/BsSkeleton.h"
 #include "../Extensions/BsSkeletonEx.h"
 
-namespace bs { class Skeleton; }
-namespace bs { class SkeletonEx; }
-namespace bs { struct __SkeletonBoneInfoExInterop; }
-namespace bs
+namespace b3d { class Skeleton; }
+namespace b3d { class SkeletonEx; }
+namespace b3d { struct __SkeletonBoneInfoExInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptSkeleton : public TScriptReflectableWrapper<Skeleton, ScriptSkeleton>
 	{

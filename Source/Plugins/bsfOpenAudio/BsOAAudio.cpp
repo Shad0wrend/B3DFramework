@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsOAAudio.h"
 
@@ -11,7 +11,7 @@
 #include "AL/al.h"
 #include "Threading/BsSignalEvent.h"
 
-using namespace bs;
+using namespace b3d;
 
 OAAudio::OAAudio()
 	:mStreamingTaskSignal(SignalEvent::Mode::ManuallyReset, true)
@@ -449,9 +449,9 @@ void OAAudio::WriteToOpenALBufferInternal(u32 bufferId, u8* samples, const Audio
 	}
 }
 
-namespace bs {
+namespace b3d {
 OAAudio& GetOAAudio()
 {
 	return static_cast<OAAudio&>(OAAudio::Instance());
 }
-} // namespace bs
+} // namespace b3d

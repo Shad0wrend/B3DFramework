@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #	include "Win32/BsWin32GLSupport.h"
 #	include "Win32/BsWin32VideoModeInfo.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -23,13 +23,13 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d
 
 #elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
 
 #	include "Linux/BsLinuxGLSupport.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -45,13 +45,13 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d
 
 #elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
 
 #	include "MacOS/BsMacOSGLSupport.h"
 
-namespace bs::ct
+namespace b3d::ct
 {
 	/** @addtogroup GL
 	 *  @{
@@ -64,5 +64,5 @@ namespace bs::ct
 	}
 
 	/** @} */
-} // namespace bs::ct
+} // namespace b3d::ct
 #endif

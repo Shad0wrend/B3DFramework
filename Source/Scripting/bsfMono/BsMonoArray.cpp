@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsMonoArray.h"
 #include "BsMonoManager.h"
@@ -13,7 +13,7 @@
 #include <mono/metadata/class.h>
 #endif
 
-namespace bs { namespace Detail {
+namespace b3d { namespace Detail {
 template <>
 String ScriptArrayGet<String>(MonoArray* array, u32 idx)
 {
@@ -59,9 +59,9 @@ void ScriptArraySet<std::nullptr_t>(MonoArray* array, u32 idx, const std::nullpt
 	void** item = (void**)ScriptArray::GetArrayAddrInternal(array, sizeof(void*), idx);
 	*item = nullptr;
 }
-}} // namespace bs::Detail
+}} // namespace b3d::Detail
 
-using namespace bs;
+using namespace b3d;
 
 ScriptArray::ScriptArray(MonoArray* existingArray)
 	: mInternal(existingArray)

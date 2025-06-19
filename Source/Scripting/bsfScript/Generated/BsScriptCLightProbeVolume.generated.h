@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,10 +9,10 @@
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "../../../Foundation/bsfUtility/Math/BsAABox.h"
 
-namespace bs { class CLightProbeVolume; }
-namespace bs { struct __LightProbeInfoInterop; }
-namespace bs { struct __TAABox_float_Interop; }
-namespace bs
+namespace b3d { class CLightProbeVolume; }
+namespace b3d { struct __LightProbeInfoInterop; }
+namespace b3d { struct __TAABox_float_Interop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptLightProbeVolume : public TScriptGameObjectWrapper<CLightProbeVolume, ScriptLightProbeVolume>
 	{

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsCorePrerequisites.h"
 #include "Scene/BsGameObject.h"
@@ -6,7 +6,7 @@
 #include "Scene/BsGameObject.h"
 #include "Private/RTTI/BsGameObjectHandleRTTI.h"
 
-using namespace bs;
+using namespace b3d;
 
 GameObjectHandleBase::GameObjectHandleBase(const SPtr<GameObject>& object)
 {

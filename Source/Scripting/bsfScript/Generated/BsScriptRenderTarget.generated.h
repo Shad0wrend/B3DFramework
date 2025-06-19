@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,9 +6,9 @@
 #include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsRenderTarget.h"
 
-namespace bs { class RenderTarget; }
-namespace bs { class RenderTargetEx; }
-namespace bs
+namespace b3d { class RenderTarget; }
+namespace b3d { class RenderTargetEx; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderTargetWrapperBase : public ScriptReflectableWrapper
 	{

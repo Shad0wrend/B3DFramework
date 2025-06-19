@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -22,7 +22,7 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 
-namespace bs
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptTArea2_int32_t__int32_t_ : public TScriptTypeDefinition<ScriptTArea2_int32_t__int32_t_>
 	{
@@ -74,7 +74,7 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptTArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__ : public TScriptTypeDefinition<ScriptTArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<bs::TUnitValue<int,bs::LogicalPixel>,bs::TUnitValue<int,bs::LogicalPixel>>")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<b3d::TUnitValue<int,b3d::LogicalPixel>,b3d::TUnitValue<int,b3d::LogicalPixel>>")
 
 		static MonoObject* Box(const __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop& value);
 		static __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop Unbox(MonoObject* value);
@@ -97,7 +97,7 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptTArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__ : public TScriptTypeDefinition<ScriptTArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<bs::TUnitValue<float,bs::LogicalPixel>,bs::TUnitValue<float,bs::LogicalPixel>>")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<b3d::TUnitValue<float,b3d::LogicalPixel>,b3d::TUnitValue<float,b3d::LogicalPixel>>")
 
 		static MonoObject* Box(const __TArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__Interop& value);
 		static __TArea2_TUnitValue_float__LogicalPixel___TUnitValue_float__LogicalPixel__Interop Unbox(MonoObject* value);
@@ -120,7 +120,7 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptTArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__ : public TScriptTypeDefinition<ScriptTArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<bs::TUnitValue<int,bs::PhysicalPixel>,bs::TUnitValue<int,bs::PhysicalPixel>>")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<b3d::TUnitValue<int,b3d::PhysicalPixel>,b3d::TUnitValue<int,b3d::PhysicalPixel>>")
 
 		static MonoObject* Box(const __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop& value);
 		static __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop Unbox(MonoObject* value);
@@ -143,7 +143,7 @@ namespace bs
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptTArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__ : public TScriptTypeDefinition<ScriptTArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__>
 	{
 	public:
-		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<bs::TUnitValue<float,bs::PhysicalPixel>,bs::TUnitValue<float,bs::PhysicalPixel>>")
+		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "TArea2<b3d::TUnitValue<float,b3d::PhysicalPixel>,b3d::TUnitValue<float,b3d::PhysicalPixel>>")
 
 		static MonoObject* Box(const __TArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__Interop& value);
 		static __TArea2_TUnitValue_float__PhysicalPixel___TUnitValue_float__PhysicalPixel__Interop Unbox(MonoObject* value);

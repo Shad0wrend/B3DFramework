@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "Allocators/BsMemoryAllocator.h"
 #include <string>
 
-namespace bs
+namespace b3d
 {
 	enum class LogVerbosity;
 	struct UUID;
@@ -162,7 +162,7 @@ namespace bs
 	B3D_UTILITY_EXPORT WString ToWString(const Color& val);
 
 	/** Converts a vector of strings into a single string where the substrings are delimited by spaces. */
-	B3D_UTILITY_EXPORT WString ToWString(const Vector<bs::WString>& val);
+	B3D_UTILITY_EXPORT WString ToWString(const Vector<b3d::WString>& val);
 
 	/** Converts a wide string to a narrow string. */
 	B3D_UTILITY_EXPORT String ToString(const WString& source);
@@ -294,7 +294,7 @@ namespace bs
 	/**
 	 * Converts a vector of strings into a single string where the substrings are delimited by spaces.
 	 */
-	B3D_UTILITY_EXPORT String ToString(const Vector<bs::String>& val);
+	B3D_UTILITY_EXPORT String ToString(const Vector<b3d::String>& val);
 
 	/**
 	 * Converts a String to a float.
@@ -391,11 +391,11 @@ namespace bs
 	B3D_UTILITY_EXPORT bool IsNumber(const WString& val);
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 #include "String/BsStringFormat.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup String
 	 *  @{
@@ -835,7 +835,7 @@ namespace bs
 
 	/** @} */
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -843,9 +843,9 @@ namespace std
 {
 	/** Hash value generator for String. */
 	template <>
-	struct hash<bs::String>
+	struct hash<b3d::String>
 	{
-		size_t operator()(const bs::String& string) const
+		size_t operator()(const b3d::String& string) const
 		{
 			size_t hash = 0;
 			for(size_t i = 0; i < string.size(); i++)
@@ -856,9 +856,9 @@ namespace std
 
 	/**	Hash value generator for WString. */
 	template <>
-	struct hash<bs::WString>
+	struct hash<b3d::WString>
 	{
-		size_t operator()(const bs::WString& string) const
+		size_t operator()(const b3d::WString& string) const
 		{
 			size_t hash = 0;
 			for(size_t i = 0; i < string.size(); i++)

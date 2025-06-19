@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include <Debug/BsDebug.h>
 #include "BsUtilityPrerequisites.h"
 #include "Error/BsException.h"
 #include "String/BsUnicode.h"
 
-using namespace bs;
+using namespace b3d;
 
 const Path Path::kBlank = Path();
 
@@ -380,7 +380,7 @@ const String& Path::GetDirectory(u32 idx) const
 {
 	if(idx >= (u32)mDirectories.size())
 	{
-		B3D_EXCEPT(InvalidParametersException, "Index out of range: " + bs::ToString(idx) + ". Valid range: [0, " + bs::ToString((u32)mDirectories.size() - 1) + "]");
+		B3D_EXCEPT(InvalidParametersException, "Index out of range: " + b3d::ToString(idx) + ". Valid range: [0, " + b3d::ToString((u32)mDirectories.size() - 1) + "]");
 	}
 
 	return mDirectories[idx];
@@ -583,12 +583,12 @@ void Path::PopDirectory()
 size_t PathHashFunction<true>::operator()(const Path& path) const
 {
 	size_t hash = 0;
-	bs::B3DCombineHash(hash, path.mFilename);
-	bs::B3DCombineHash(hash, path.mDevice);
-	bs::B3DCombineHash(hash, path.mNode);
+	b3d::B3DCombineHash(hash, path.mFilename);
+	b3d::B3DCombineHash(hash, path.mDevice);
+	b3d::B3DCombineHash(hash, path.mNode);
 
 	for(auto& directory : path.mDirectories)
-		bs::B3DCombineHash(hash, directory);
+		b3d::B3DCombineHash(hash, directory);
 
 	return hash;
 }
@@ -597,12 +597,12 @@ size_t PathHashFunction<true>::operator()(const Path& path) const
 size_t PathHashFunction<false>::operator()(const Path& path) const
 {
 	size_t hash = 0;
-	bs::B3DCombineHash(hash, UTF8::ToLower(path.mFilename));
-	bs::B3DCombineHash(hash, UTF8::ToLower(path.mDevice));
-	bs::B3DCombineHash(hash, UTF8::ToLower(path.mNode));
+	b3d::B3DCombineHash(hash, UTF8::ToLower(path.mFilename));
+	b3d::B3DCombineHash(hash, UTF8::ToLower(path.mDevice));
+	b3d::B3DCombineHash(hash, UTF8::ToLower(path.mNode));
 
 	for(auto& directory : path.mDirectories)
-		bs::B3DCombineHash(hash, UTF8::ToLower(directory));
+		b3d::B3DCombineHash(hash, UTF8::ToLower(directory));
 
 	return hash;
 }

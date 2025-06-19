@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Filesystem
 	 *  @{
@@ -177,9 +177,9 @@ namespace bs
 		 * Returns a lock object that immediately locks access (same as lock()), and then calls unlock() when it goes
 		 * out of scope.
 		 */
-		static ::bs::Lock GetLock(const Path& path)
+		static ::b3d::Lock GetLock(const Path& path)
 		{
-			return bs::Lock(mMutex);
+			return b3d::Lock(mMutex);
 		}
 
 	private:
@@ -187,4 +187,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

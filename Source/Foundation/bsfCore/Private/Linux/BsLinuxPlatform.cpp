@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Image/BsPixelData.h"
 #include "Image/BsPixelUtil.h"
@@ -17,7 +17,7 @@
 #include <X11/extensions/XInput2.h>
 #include <pwd.h>
 
-using namespace bs;
+using namespace b3d;
 
 Event<void(const Vector2I&, const OSPointerButtonStates&)> Platform::onCursorMoved;
 Event<void(const Vector2I&, OSMouseButton button, const OSPointerButtonStates&)> Platform::onCursorButtonPressed;
@@ -373,7 +373,7 @@ void Platform::clipCursorDisable()
 {
 	Lock lock(mData->lock);
 
-	bs::clipCursorDisable(mData);
+	b3d::clipCursorDisable(mData);
 }
 
 void Platform::setCursor(PixelData& pixelData, const Vector2I& hotSpot)
@@ -1438,7 +1438,7 @@ void LinuxPlatform::UnregisterWindowInternal(::Window xWindow)
 	if(iterFind != mData->windowMap.end())
 	{
 		if(mData->cursorClipEnabled && mData->cursorClipWindow == iterFind->second)
-			bs::clipCursorDisable(mData);
+			b3d::clipCursorDisable(mData);
 
 		mData->windowMap.erase(iterFind);
 	}

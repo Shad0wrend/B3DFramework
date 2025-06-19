@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "RenderAPI/BsTextureView.h"
 #include "Math/BsVector3I.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Resources
 	 *  @{
@@ -346,7 +346,7 @@ namespace bs
 		 */
 
 		/**
-		 * Render thread counterpart of a bs::Texture.
+		 * Render thread counterpart of a b3d::Texture.
 		 *
 		 * @note	Render thread.
 		 */
@@ -525,4 +525,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

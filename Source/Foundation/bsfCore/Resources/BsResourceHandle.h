@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "Threading/BsSignal.h"
 #include "Utility/BsUUID.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Implementation
 	 *  @{
@@ -504,7 +504,7 @@ namespace bs
 	}
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -512,12 +512,12 @@ namespace std
 {
 /** Hash value generator for TResourceHandle<T>. */
 template<class T>
-struct hash<bs::TResourceHandle<T>>
+struct hash<b3d::TResourceHandle<T>>
 {
-	size_t operator()(const bs::TResourceHandle<T>& value) const
+	size_t operator()(const b3d::TResourceHandle<T>& value) const
 	{
 		size_t hash = 0;
-		bs::B3DCombineHash(hash, value.GetHandleData());
+		b3d::B3DCombineHash(hash, value.GetHandleData());
 
 		return hash;
 	}

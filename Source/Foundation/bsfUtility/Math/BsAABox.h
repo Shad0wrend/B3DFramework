@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "Math/BsVector3.h"
 #include "Math/BsMatrix4.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Math
 	 *  @{
@@ -232,4 +232,4 @@ namespace bs
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(AABoxD)) TAABox<double>;
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

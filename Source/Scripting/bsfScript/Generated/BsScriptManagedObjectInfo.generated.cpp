@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptManagedObjectInfo.generated.h"
 #include "BsMonoMethod.h"
@@ -9,7 +9,7 @@
 #include "BsScriptManagedTypeInfoObject.generated.h"
 #include "BsScriptManagedMemberInfo.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptManagedObjectInfo::ScriptManagedObjectInfo(const SPtr<ManagedObjectInfo>& nativeObject)
 		:TScriptReflectableWrapper(nativeObject)

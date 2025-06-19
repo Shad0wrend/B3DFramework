@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Debug/BsDebugDraw.h"
 #include "Mesh/BsMesh.h"
@@ -19,7 +19,7 @@
 
 using namespace std::placeholders;
 
-using namespace bs;
+using namespace b3d;
 
 DebugDraw::DebugDraw()
 {
@@ -139,7 +139,7 @@ void DebugDraw::UpdateInternal()
 	GetRenderThread().PostCommand(std::bind(&ct::DebugDrawRenderer::UpdateData, renderer, proxyData), "DebugDrawRenderer::UpdateData");
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 
 DebugDrawParamsDef gDebugDrawParamsDef;

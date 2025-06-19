@@ -4,13 +4,13 @@ title: Drawing
 
 With all the objects from the previous chapters bound to the pipeline we are almost ready to draw an object. When drawing you must ensure a pipeline state of **GraphicsPipelineState** type is bound, instead of **ComputePipelineState**.
 
-Next you need to specify what type of primitives you wish to draw by calling @bs::ct::RenderAPI::setDrawOperation, which accepts any of the types defined in @bs::DrawOperationType. This determines how are contents of the index buffer interpreted (or vertex buffer if index isn't available). The available draw types are:
- - @bs::DOT_POINT_LIST - Each vertex represents a point.
- - @bs::DOT_LINE_LIST - Each sequential pair of vertices represent a line.
- - @bs::DOT_LINE_STRIP - Each vertex (except the first) forms a line with the previous vertex.
- - @bs::DOT_TRIANGLE_LIST - Each sequential 3-tuple of vertices represent a triangle.
- - @bs::DOT_TRIANGLE_STRIP - Each vertex (except the first two) form a triangle with the previous two vertices.
- - @bs::DOT_TRIANGLE_FAN - Each vertex (except the first two) forms a triangle with the first vertex and previous vertex.
+Next you need to specify what type of primitives you wish to draw by calling @b3d::ct::RenderAPI::setDrawOperation, which accepts any of the types defined in @b3d::DrawOperationType. This determines how are contents of the index buffer interpreted (or vertex buffer if index isn't available). The available draw types are:
+ - @b3d::DOT_POINT_LIST - Each vertex represents a point.
+ - @b3d::DOT_LINE_LIST - Each sequential pair of vertices represent a line.
+ - @b3d::DOT_LINE_STRIP - Each vertex (except the first) forms a line with the previous vertex.
+ - @b3d::DOT_TRIANGLE_LIST - Each sequential 3-tuple of vertices represent a triangle.
+ - @b3d::DOT_TRIANGLE_STRIP - Each vertex (except the first two) form a triangle with the previous two vertices.
+ - @b3d::DOT_TRIANGLE_FAN - Each vertex (except the first two) forms a triangle with the first vertex and previous vertex.
 
 ~~~~~~~~~~~~~{.cpp}
 // We're drawing a triangle list
@@ -19,7 +19,7 @@ rapi.setDrawOperation(DOT_TRIANGLE_LIST);
 ~~~~~~~~~~~~~
 
 # Indexed drawing
-Finally you can now draw the object by calling @bs::ct::RenderAPI::drawIndexed(). It requires the following parameters:
+Finally you can now draw the object by calling @b3d::ct::RenderAPI::drawIndexed(). It requires the following parameters:
  - `startIndex` - Offset into the bound index buffer to start drawing from. In most cases this will be zero.
  - `indexCount` - Number of indices to draw. Specify total number of indices in the index buffer to draw them all (most common case).
  - `vertexOffset` - Offset to append to each index in the index buffer. Allows you to draw different set of vertices using the same index buffer. In most cases this will be zero.
@@ -37,7 +37,7 @@ rapi.drawIndexed(0, numIndices, 0, numVertices);
 ~~~~~~~~~~~~~
 
 # Non-indexed drawing
-If drawing without an index buffer you can call @bs::ct::RenderAPI::draw() instead. It requires only the `vertexOffset` and `vertexCount` parameters, with same meaning as above (except `vertexCount` in this case does affect the rendering).
+If drawing without an index buffer you can call @b3d::ct::RenderAPI::draw() instead. It requires only the `vertexOffset` and `vertexCount` parameters, with same meaning as above (except `vertexCount` in this case does affect the rendering).
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<VertexBuffer> vb = ...;
@@ -93,7 +93,7 @@ rapi.setVertexBuffers(0, { perVertexVB, perInstanceVB });
 ~~~~~~~~~~~~~
 
 # Drawing helper
-As a way of making drawing easier you can also use @bs::ct::RendererUtility::draw helper method, accessible globally through @bs::ct::GetRendererUtility(). This method accepts a **ct::Mesh** as input and will automatically:
+As a way of making drawing easier you can also use @b3d::ct::RendererUtility::draw helper method, accessible globally through @b3d::ct::GetRendererUtility(). This method accepts a **ct::Mesh** as input and will automatically:
  - Bind vertex & index buffer
  - Bind vertex declaration
  - Set draw operation type

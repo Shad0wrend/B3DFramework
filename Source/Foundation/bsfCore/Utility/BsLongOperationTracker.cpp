@@ -2,7 +2,7 @@
 //**************** Copyright (c) 2024 Marko Pintera (marko.pintera@gmail.com). All rights reserved. **********************//
 #include "BsLongOperationTracker.h"
 
-using namespace bs;
+using namespace b3d;
 
 LongOperationTracker::LongOperationTracker(String name, LongOperationFlags flags, String description, String category)
 	: mName(std::move(name)), mDescription(std::move(description)), mCategory(std::move(category)), mFlags(flags)

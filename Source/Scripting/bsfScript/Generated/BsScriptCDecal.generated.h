@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,8 +6,8 @@
 #include "Wrappers/BsScriptComponent.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 
-namespace bs { class CDecal; }
-namespace bs
+namespace b3d { class CDecal; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptDecal : public TScriptGameObjectWrapper<CDecal, ScriptDecal>
 	{

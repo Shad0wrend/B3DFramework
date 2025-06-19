@@ -2,7 +2,7 @@
 title: Renderable object
 ---
 
-As the name implies, the renderable object allows you to display an object in the scene. It is represeted by the @bs::CRenderable component. The component requires you to assign a **Mesh** to render, as well as a **Material** to render the mesh with. Both of these are resources, and we'll explain them in the following chapters.
+As the name implies, the renderable object allows you to display an object in the scene. It is represeted by the @b3d::CRenderable component. The component requires you to assign a **Mesh** to render, as well as a **Material** to render the mesh with. Both of these are resources, and we'll explain them in the following chapters.
 
 # Creating a renderable
 **Renderable** is created as any component, and requires no additional parameters.
@@ -13,7 +13,7 @@ HRenderable renderable = renderableSO->addComponent<CRenderable>();
 ~~~~~~~~~~~~~
 
 # Setting it up
-Once created you must assign it a **Mesh** to render, and a **Material** to render it with. Use @bs::CRenderable::setMesh and @bs::CRenderable::setMaterial.
+Once created you must assign it a **Mesh** to render, and a **Material** to render it with. Use @b3d::CRenderable::setMesh and @b3d::CRenderable::setMaterial.
 
 ~~~~~~~~~~~~~{.cpp}
 // Create a standard PBR material
@@ -48,7 +48,7 @@ In the example above we use a single material for a single mesh, but it can some
 
 It is up to the artist (creator of the mesh) to specify the regions of the mesh that will use separate materials. Upon mesh import those regions will be recognized as sub-meshes.
 
-You can assign a different material to a sub-mesh by calling a @bs::CRenderable::setMaterial(UINT32, HMaterial) overload which accepts an additional index parameter, specifying which sub-mesh to apply the material on.
+You can assign a different material to a sub-mesh by calling a @b3d::CRenderable::setMaterial(UINT32, HMaterial) overload which accepts an additional index parameter, specifying which sub-mesh to apply the material on.
 
 ~~~~~~~~~~~~~{.cpp}
 HMesh mesh = GetImporter().import<Mesh>("myMesh.fbx");

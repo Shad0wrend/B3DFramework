@@ -3,7 +3,7 @@
 #pragma once
 #include "BsUtilityPrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup General
 	 *  @{
@@ -31,4 +31,4 @@ namespace bs
 #define B3D_SCOPE_CLEANUP(x) auto B3D_CONCAT(scopeGuard_, __LINE__) = ScopeGuard([&] { x; })
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

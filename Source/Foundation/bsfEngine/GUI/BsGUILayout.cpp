@@ -1,17 +1,17 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUILayout.h"
 #include "GUI/BsGUIInteractable.h"
 #include "Reflection/BsRTTIType.h"
 
-using namespace bs;
+using namespace b3d;
 
 /** @cond RTTI */
 /** @addtogroup RTTI-Impl-Engine
  *  @{
  */
 
-namespace bs
+namespace b3d
 {
 	class B3D_EXPORT GUILayoutRTTI : public TRTTIType<GUILayout, GUIElement, GUILayoutRTTI>
 	{
@@ -26,7 +26,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() { return nullptr; }
 	};
-} // namespace bs
+} // namespace b3d
 
 /** @} */
 /** @endcond */

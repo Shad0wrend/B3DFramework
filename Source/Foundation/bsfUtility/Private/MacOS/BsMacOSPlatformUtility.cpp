@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Prerequisites/BsPrerequisitesUtil.h"
 #include "Utility/BsPlatformUtility.h"
 #include <uuid/uuid.h>
 #include <sys/sysctl.h>
 
-using namespace bs;
+using namespace b3d;
 
 GPUInfo PlatformUtility::sGPUInfo;
 
@@ -79,7 +79,7 @@ UUID PlatformUtility::generateUUID()
 		*(u32*)&nativeUUID[12]);
 }
 
-String PlatformUtility::convertCaseUTF8(const bs::String& input, bool toUpper)
+String PlatformUtility::convertCaseUTF8(const b3d::String& input, bool toUpper)
 {
 	CFMutableStringRef mutableString = CFStringCreateMutable(nullptr, 0);
 	CFStringAppendCString(mutableString, input.c_str(), kCFStringEncodingUTF8);

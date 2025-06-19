@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsD3D11RenderAPI.h"
 #include "BsD3D11DriverList.h"
@@ -34,8 +34,8 @@
 #include "BsD3D11CommandBufferManager.h"
 #include "BsD3D11RenderWindow.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 const StringID& D3D11RenderAPI::GetName() const
 {
@@ -99,15 +99,15 @@ void D3D11RenderAPI::Initialize()
 	CommandBufferManager::StartUp<D3D11CommandBufferManager>();
 
 	// Create the texture manager for use by others
-	bs::TextureManager::StartUp<bs::D3D11TextureManager>();
+	b3d::TextureManager::StartUp<b3d::D3D11TextureManager>();
 	TextureManager::StartUp<D3D11TextureManager>();
 
 	// Create hardware buffer manager
-	bs::HardwareBufferManager::StartUp();
+	b3d::HardwareBufferManager::StartUp();
 	HardwareBufferManager::StartUp<D3D11HardwareBufferManager>(std::ref(*mDevice));
 
 	// Create render window manager
-	bs::RenderWindowManager::StartUp<bs::D3D11RenderWindowManager>(this);
+	b3d::RenderWindowManager::StartUp<b3d::D3D11RenderWindowManager>(this);
 	RenderWindowManager::StartUp();
 
 	// Create & register HLSL factory
@@ -177,11 +177,11 @@ void D3D11RenderAPI::DestroyCore()
 
 	RenderStateManager::ShutDown();
 	RenderWindowManager::ShutDown();
-	bs::RenderWindowManager::ShutDown();
+	b3d::RenderWindowManager::ShutDown();
 	HardwareBufferManager::ShutDown();
-	bs::HardwareBufferManager::ShutDown();
+	b3d::HardwareBufferManager::ShutDown();
 	TextureManager::ShutDown();
-	bs::TextureManager::ShutDown();
+	b3d::TextureManager::ShutDown();
 	CommandBufferManager::ShutDown();
 
 	SAFE_RELEASE(mDXGIFactory);
@@ -1315,7 +1315,7 @@ GpuDataParameterBlockInformation D3D11RenderAPI::GenerateParamBlockDesc(const St
 
 	for(auto& param : params)
 	{
-		const GpuDataParameterTypeInformation& typeInfo = bs::GpuParameters::kParamSizes.Lookup[param.Type];
+		const GpuDataParameterTypeInformation& typeInfo = b3d::GpuParameters::kParamSizes.Lookup[param.Type];
 
 		if(param.ArraySize > 1)
 		{

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Mesh/BsMeshBase.h"
 
@@ -6,7 +6,7 @@
 #include "Private/RTTI/BsMeshBaseRTTI.h"
 #include "CoreObject/BsRenderThread.h"
 
-using namespace bs;
+using namespace b3d;
 
 MeshProperties::MeshProperties()
 	: VertexCount(0), IndexCount(0)
@@ -37,7 +37,7 @@ MeshBase::MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMe
 MeshBase::~MeshBase()
 {}
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(MeshBase, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Bounds, Bounds)
@@ -66,7 +66,7 @@ RTTIType* MeshBase::GetRtti() const
 	return MeshBase::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 MeshBase::MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMeshes)
 	: mProperties(vertexCount, indexCount, subMeshes)
@@ -74,7 +74,7 @@ MeshBase::MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMe
 
 void MeshBase::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	const auto* const syncPacket = data.GetSyncPacket<bs::MeshBase::SyncPacket>();
+	const auto* const syncPacket = data.GetSyncPacket<b3d::MeshBase::SyncPacket>();
 	if(!syncPacket)
 		return;
 

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Managers/BsVulkanDescriptorManager.h"
 #include "BsVulkanDescriptorLayout.h"
@@ -7,8 +7,8 @@
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanResource.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 VulkanLayoutKey::VulkanLayoutKey(VkDescriptorSetLayoutBinding* bindings, u32 numBindings)
 	: NumBindings(numBindings), Bindings(bindings)

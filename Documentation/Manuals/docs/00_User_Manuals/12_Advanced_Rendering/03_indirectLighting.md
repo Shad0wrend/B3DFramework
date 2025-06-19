@@ -12,7 +12,7 @@ If you have set up a **Skybox** and enabled indirect lighting your scene will im
 Note that you might want to tweak the HDR texture used by the skybox so it doesn't overpower normal lighting. This can happen because some cameras might record HDR values in non-physical units in which case sky might appear too bright or too dark, in which case analytical lights might appear over- or underpowered.
 
 # Light probes
-When it comes to indoors you must follow a similar approach as with reflection probes. Again you don't want indoors to receive indirect lighting from the sky, and must therefore set up an additional component. This is done through @bs::CLightProbeVolume. 
+When it comes to indoors you must follow a similar approach as with reflection probes. Again you don't want indoors to receive indirect lighting from the sky, and must therefore set up an additional component. This is done through @b3d::CLightProbeVolume. 
 
 ~~~~~~~~~~~~~{.cpp}
 // Set up a light probe volume
@@ -25,7 +25,7 @@ HLightProbeVolume lightProbeVolume = lightProbeVolumeSO->addComponent<CLightProb
 ## Placing probes
 You generally want to place light probes wherever there is a major change in lighting. The probes are fairly cheap performance-wise, and dozens can be used per a single room. 
 
-To add a probe to the volume call @bs::CLightProbeVolume::addProbe. The method only requires you to provide a position at which to place the probe at. The position is relative to the **SceneObject** the volume is attached to. 
+To add a probe to the volume call @b3d::CLightProbeVolume::addProbe. The method only requires you to provide a position at which to place the probe at. The position is relative to the **SceneObject** the volume is attached to. 
 
 ~~~~~~~~~~~~~{.cpp}
 // Register a couple of probes
@@ -34,7 +34,7 @@ lightProbeVolume->addProbe(Vector3(5.0f, 1.0f, 0.0f)));
 ~~~~~~~~~~~~~
 
 ## Generic probe positioning
-Note that when first created the volume will contain eight probes placed on the corners of a unit box, at the volume's location. You can call @bs::CLightProbeVolume::resize() to change the size of the box for the eight probes. You can also increase the density in which case the probes will also be placed in-between the box corners, as a uniform grid. This is particularily useful if you do not feel like placing probes manually.
+Note that when first created the volume will contain eight probes placed on the corners of a unit box, at the volume's location. You can call @b3d::CLightProbeVolume::resize() to change the size of the box for the eight probes. You can also increase the density in which case the probes will also be placed in-between the box corners, as a uniform grid. This is particularily useful if you do not feel like placing probes manually.
 
 ~~~~~~~~~~~~~{.cpp}
 // Set up a probe volume using a uniform grid distribution of probes with a total of 50 probes
@@ -45,7 +45,7 @@ lightProbeVolume->resize(area, probeCount);
 ~~~~~~~~~~~~~
 
 ## Rendering probes
-Once you have positioned the probes, you need to render them by calling @bs::CLightProbeVolume::renderProbes. This will update the lighting information for all probes in a volume. You will want to do this any time you add/remove or move probes, or when the lighting environment changes.
+Once you have positioned the probes, you need to render them by calling @b3d::CLightProbeVolume::renderProbes. This will update the lighting information for all probes in a volume. You will want to do this any time you add/remove or move probes, or when the lighting environment changes.
 
 ~~~~~~~~~~~~~{.cpp}
 // Update probes based on current scene

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "VectorGraphics/BsVectorGraphics.h"
 #include "VectorGraphics/BsVectorSpriteAtlas.h"
 
-namespace bs
+namespace b3d
 {
 	class GUIVectorSpriteAtlasAllocation;
 	/** @addtogroup Image
@@ -60,7 +60,7 @@ namespace bs
 		 */
 
 		/**
-		 * Render proxy counterpart of a bs::SpriteVectorPathCreateInformation.
+		 * Render proxy counterpart of a b3d::SpriteVectorPathCreateInformation.
 		 *
 		 * @note	Render thread.
 		 */
@@ -139,14 +139,14 @@ namespace bs
 		 *  @{
 		 */
 
-		/** @copydoc bs::SpriteVectorPathAllocation. */
+		/** @copydoc b3d::SpriteVectorPathAllocation. */
 		class SpriteVectorPathAllocation : public SpriteImageAllocation
 		{
 		public:
 			SpriteVectorPathAllocation() = default;
 
 		private:
-			friend class bs::SpriteVectorPathAllocation;
+			friend class b3d::SpriteVectorPathAllocation;
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
@@ -155,14 +155,14 @@ namespace bs
 		};
 
 		/**
-		 * Render proxy counterpart of a bs::SpriteVectorPath.
+		 * Render proxy counterpart of a b3d::SpriteVectorPath.
 		 *
 		 * @note	Render thread.
 		 */
 		class B3D_CORE_EXPORT SpriteVectorPath : public CoreVariantType<SpriteImage, true>
 		{
 		private:
-			friend class bs::SpriteVectorPath;
+			friend class b3d::SpriteVectorPath;
 
 			SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation);
 
@@ -171,4 +171,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

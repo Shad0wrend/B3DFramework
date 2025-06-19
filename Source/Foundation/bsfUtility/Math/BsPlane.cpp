@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Math/BsPlane.h"
 #include "Math/BsMatrix3.h"
@@ -7,7 +7,7 @@
 #include "Math/BsRay.h"
 #include "Math/BsMath.h"
 
-using namespace bs;
+using namespace b3d;
 
 template<typename T>
 TPlane<T>::TPlane(const TVector3<T>& point0, const TVector3<T>& point1, const TVector3<T>& point2)

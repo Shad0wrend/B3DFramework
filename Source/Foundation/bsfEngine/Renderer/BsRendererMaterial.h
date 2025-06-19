@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -28,7 +28,7 @@ B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(RendererMaterial, Log)
 public:                                                                          \
 	static void InitMetaDataInternal()                                           \
 	{                                                                            \
-		bs::RendererMaterialManager::RegisterMaterial(&mMetaData, path);		 \
+		b3d::RendererMaterialManager::RegisterMaterial(&mMetaData, path);		 \
 	};
 
 /**
@@ -41,13 +41,13 @@ public:                                                                         
 	static void InitMetaDataInternal()                                           \
 	{                                                                            \
 		InitDefinesInternal(mMetaData.Defines);                                  \
-		bs::RendererMaterialManager::RegisterMaterial(&mMetaData, path);		 \
+		b3d::RendererMaterialManager::RegisterMaterial(&mMetaData, path);		 \
 	};                                                                           \
 	static void InitDefinesInternal(ShaderDefines& defines);
 
 /** @} */
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -146,7 +146,7 @@ namespace bs
 			void BindParameters(GpuCommandBuffer& commandBuffer) const;
 
 		protected:
-			friend class bs::RendererMaterialManager;
+			friend class b3d::RendererMaterialManager;
 
 			SPtr<GpuParameters> mGPUParameters;
 			SPtr<GpuGraphicsPipelineState> mGraphicsPipeline;
@@ -218,7 +218,7 @@ namespace bs
 			/** Compiles a particular shader variation. */
 			static void CompileShaderVariation(u32 variationIndex);
 
-			friend class bs::RendererMaterialManager;
+			friend class b3d::RendererMaterialManager;
 
 			static RendererMaterialMetaData mMetaData;
 			static InitRendererMaterialStart<T> mInitOnStart;
@@ -541,4 +541,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

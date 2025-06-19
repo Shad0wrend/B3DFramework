@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -12,7 +12,7 @@
 #include "Scene/BsTransform.h"
 #include "Script/BsIScriptExportable.h"
 
-namespace bs
+namespace b3d
 {
 	class SceneInstance;
 
@@ -519,7 +519,7 @@ namespace bs
 		template <class T, class... Args>
 		GameObjectHandle<T> AddComponent(Args&&... args)
 		{
-			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
+			static_assert((std::is_base_of<b3d::Component, T>::value), "Specified type is not a valid Component.");
 
 			SPtr<T> component(new(B3DAllocate<T>()) T(GetHandle(), std::forward<Args>(args)...), &B3DDelete<T>, StdAlloc<T>());
 			component->SetId(UUIDGenerator::GenerateRandom());
@@ -549,7 +549,7 @@ namespace bs
 		template <typename T>
 		GameObjectHandle<T> GetComponent()
 		{
-			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
+			static_assert((std::is_base_of<b3d::Component, T>::value), "Specified type is not a valid Component.");
 
 			return B3DStaticGameObjectCast<T>(GetComponent(T::GetRttiStatic()));
 		}
@@ -567,7 +567,7 @@ namespace bs
 		template <typename T>
 		Vector<GameObjectHandle<T>> GetComponents()
 		{
-			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
+			static_assert((std::is_base_of<b3d::Component, T>::value), "Specified type is not a valid Component.");
 
 			Vector<GameObjectHandle<T>> output;
 
@@ -591,7 +591,7 @@ namespace bs
 		template <typename T>
 		bool HasComponent()
 		{
-			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
+			static_assert((std::is_base_of<b3d::Component, T>::value), "Specified type is not a valid Component.");
 
 			for(auto entry : mComponents)
 			{
@@ -622,7 +622,7 @@ namespace bs
 		template <typename T>
 		static SPtr<T> CreateEmptyComponent()
 		{
-			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
+			static_assert((std::is_base_of<b3d::Component, T>::value), "Specified type is not a valid Component.");
 
 			T* rawPtr = new(B3DAllocate<T>()) T();
 			SPtr<T> gameObject(rawPtr, &B3DDelete<T>, StdAlloc<T>());
@@ -669,4 +669,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

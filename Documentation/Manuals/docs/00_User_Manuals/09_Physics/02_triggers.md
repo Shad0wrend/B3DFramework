@@ -8,16 +8,16 @@ Aside from participating in collisions with other physical objects, colliders ca
  - Collision is in progress
  
 This is handled through the following events:
- - @bs::CCollider::onCollisionBegin - Triggered whenever the collider starts colliding with another object.
- - @bs::CCollider::onCollisionEnd - Triggered whenever the collider no longer collides (touches) an object.
- - @bs::CCollider::onCollisionStay - Triggered every frame while the collider is in collision with (is touching) an object.
+ - @b3d::CCollider::onCollisionBegin - Triggered whenever the collider starts colliding with another object.
+ - @b3d::CCollider::onCollisionEnd - Triggered whenever the collider no longer collides (touches) an object.
+ - @b3d::CCollider::onCollisionStay - Triggered every frame while the collider is in collision with (is touching) an object.
  
-By default those events will not be triggered until they are enabled by calling @bs::CCollider::setCollisionReportMode, with the parameter of type @bs::CollisionReportMode. It can have one of the following values:
+By default those events will not be triggered until they are enabled by calling @b3d::CCollider::setCollisionReportMode, with the parameter of type @b3d::CollisionReportMode. It can have one of the following values:
  - **CollisionReportMode::None** - None of the events will trigger.
  - **CollisionReportMode::Report** - Only begin and end events will trigger.
  - **CollisionReportMode::ReportPersistent** - Begin/end events will trigger, as well as the *stay* event.
  
-Each of the event callbacks will provide as a parameter a @bs::CollisionData structure, which contains various relevant information about the collision. It contains:
+Each of the event callbacks will provide as a parameter a @b3d::CollisionData structure, which contains various relevant information about the collision. It contains:
  - References to components of the colliders that interacted
  - A set of contact points at which the collider shapes are touching
   - Each contact point provides a position & normal, impulse applied during collision and distance between the objects
@@ -42,7 +42,7 @@ collider->onCollisionBegin.connect(collisionStarted);
 # Pure triggers
 In some cases you might only be interested in trigger events reported by a collider, without requiring the collider to be an actual physical object. This way you can set up "invisible" triggers within game levels that start executing code when player enters their bounds or interacts with them in some other way. Physical objects will go through such colliders as if they are not there - but the events will be reported just the same.
 
-To do this call @bs::CCollider::setIsTrigger().
+To do this call @b3d::CCollider::setIsTrigger().
 
 ~~~~~~~~~~~~~{.cpp}
 collider->setIsTrigger(true);

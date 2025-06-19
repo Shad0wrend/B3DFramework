@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsApplication.h"
 #include "GUI/BsGUIManager.h"
@@ -26,7 +26,7 @@
 #include "GUI/BsProfilerOverlay.h"
 #include "Text/BsStockIcons.h"
 
-using namespace bs;
+using namespace b3d;
 
 Application::Application(const START_UP_DESC& desc)
 	: CoreApplication(desc)
@@ -175,10 +175,10 @@ SPtr<IShaderIncludeHandler> Application::GetShaderIncludeHandler() const
 	return B3DMakeShared<EngineShaderIncludeHandler>();
 }
 
-namespace bs
+namespace b3d
 {
 Application& GetApplication()
 {
 	return static_cast<Application&>(Application::Instance());
 }
-} // namespace bs
+} // namespace b3d

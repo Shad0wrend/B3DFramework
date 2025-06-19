@@ -325,7 +325,7 @@ subshader DeferredDirectLighting
 
 The meaning of the parametes is the same across all three functions, and they can be implemented similarily to **getLuminanceRadial**. 
 
-Once the shader is created you need to apply it for rendering. Because the deferred pipeline performs lighting in a separate stage from normal rendering, you cannot simply assign this material to a **Renderable**. The shader must instead be applied by calling @bs::ct::Renderer::setGlobalShaderOverride. As the name implies this will apply the shader globally, meaning it will effect lighting of all objects using the deferred pipeline. 
+Once the shader is created you need to apply it for rendering. Because the deferred pipeline performs lighting in a separate stage from normal rendering, you cannot simply assign this material to a **Renderable**. The shader must instead be applied by calling @b3d::ct::Renderer::setGlobalShaderOverride. As the name implies this will apply the shader globally, meaning it will effect lighting of all objects using the deferred pipeline. 
 
 ~~~~~~~~~~~~~
 SPtr<Shader> customShader = ...; // Import the shader we created above

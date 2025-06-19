@@ -84,12 +84,12 @@ class APIDocLinkParser extends CommonMark\Inline\Parser\AbstractInlineParser
     {
         $names = preg_split('/::/', $typeName);
 
-        // Clear the bs:: namespace
+        // Clear the b3d:: namespace
         $prefix = "";
         if(!empty($names))
         {
-            if($names[0] == "bs") {
-                $prefix = "bs::";
+            if($names[0] == "b3d") {
+                $prefix = "b3d::";
                 array_shift($names);
             }
         }
@@ -515,21 +515,21 @@ class APIDocLinkParser extends CommonMark\Inline\Parser\AbstractInlineParser
                 \Todaymade\Daux\Daux::write(PHP_EOL . "    [WARNING] Unable to find script mapping for type '$typeName'.");
         }
 
-        // Add bs:: prefix if not specified, and not in some other namespace
+        // Add b3d:: prefix if not specified, and not in some other namespace
         $prefixAdded = false;
-        if(substr($typeName, 0, 4) != 'bs::')
+        if(substr($typeName, 0, 4) != 'b3d::')
         {
             $hasNs = strpos($typeName, '::');
 
             if($hasNs === FALSE) {
-                $typeName = 'bs::' . $typeName;
+                $typeName = 'b3d::' . $typeName;
                 $prefixAdded = true;
             }
             else
             {
                 $ns = substr($typeName, 0, $hasNs);
                 if($ns === 'ct') {
-                    $typeName = 'bs::' . $typeName;
+                    $typeName = 'b3d::' . $typeName;
                     $prefixAdded = true;
                 }
             }
@@ -541,7 +541,7 @@ class APIDocLinkParser extends CommonMark\Inline\Parser\AbstractInlineParser
             return false;
         }
 
-        // Try without the bs:: prefix, if we added it
+        // Try without the b3d:: prefix, if we added it
         if($linkFile === "" and $prefixAdded)
         {
             $typeName = substr($typeName, 4);
@@ -566,7 +566,7 @@ class APIDocLinkParser extends CommonMark\Inline\Parser\AbstractInlineParser
         if($linkHash !== "")
             $linkUrl .= '#' . $linkHash;
 
-        $readableName = str_replace("bs::","", $typeName);
+        $readableName = str_replace("b3d::","", $typeName);
         if($isFunction)
             $readableName .= '()';
 

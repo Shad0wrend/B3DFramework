@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptCLight.generated.h"
 #include "BsMonoMethod.h"
@@ -8,7 +8,7 @@
 #include "BsScriptColor.generated.h"
 #include "BsScriptTSphere.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptLight::ScriptLight(const GameObjectHandle<CLight>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)

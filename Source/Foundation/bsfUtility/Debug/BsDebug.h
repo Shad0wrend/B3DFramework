@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 #include "Debug/BsLog.h"
 
-namespace bs
+namespace b3d
 {
 	class Log;
 
@@ -136,7 +136,7 @@ namespace bs
 
 /** Defines a new log category to use with B3D_LOG. A matching call to B3D_LOG_CATEGORY must be done in the implementation file. */
 #define B3D_LOG_CATEGORY_EXTERN(Name, DefaultRunTimeVerbosity)											\
-	extern struct LogCategory##Name : public bs::LogCategory<bs::LogVerbosity::DefaultRunTimeVerbosity> \
+	extern struct LogCategory##Name : public b3d::LogCategory<b3d::LogVerbosity::DefaultRunTimeVerbosity> \
 	{																									\
 		B3D_FORCEINLINE LogCategory##Name()																\
 			: LogCategory(#Name) {}																		\
@@ -147,7 +147,7 @@ namespace bs
 
 /** Defines a new log category to use with B3D_LOG. Can only be used in implementation files. Category is only valid for a single implementation file. */
 #define B3D_LOG_CATEGORY_STATIC(Name, DefaultRunTimeVerbosity)												\
-	static  struct LogCategory##Name : public bs::LogCategory<bs::LogVerbosity::DefaultRunTimeVerbosity>	\
+	static  struct LogCategory##Name : public b3d::LogCategory<b3d::LogVerbosity::DefaultRunTimeVerbosity>	\
 	{																										\
 		B3D_FORCEINLINE LogCategory##Name()																	\
 			: LogCategory(#Name) {}																			\
@@ -156,7 +156,7 @@ namespace bs
 #define B3D_LOG(Verbosity, Category, Message, ...)                                                                                                                                                                           \
 	do                                                                                                                                                                                                                       \
 	{                                                                                                                                                                                                                        \
-		using namespace ::bs;                                                                                                                                                                                                \
+		using namespace ::b3d;                                                                                                                                                                                                \
 		if((i32)LogVerbosity::Verbosity <= (i32)LogCategory##Category::kCompileTimeVerbosity && !LogCategory##Category##Instance.IsVerbositySupressed(LogVerbosity::Verbosity))                                              \
 		{                                                                                                                                                                                                                    \
 			GetDebug().Log(StringUtil::Format(Message "\n\t\t in ", ##__VA_ARGS__) + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::Verbosity, LogCategory##Category##Instance.GetName());	 \
@@ -168,7 +168,7 @@ namespace bs
 #define B3D_LOG_STRING(Verbosity, Category, Message, ...)                                                                                                                                                                           \
 	do                                                                                                                                                                                                                       \
 	{                                                                                                                                                                                                                        \
-		using namespace ::bs;                                                                                                                                                                                                \
+		using namespace ::b3d;                                                                                                                                                                                                \
 		if((i32)LogVerbosity::Verbosity <= (i32)LogCategory##Category::kCompileTimeVerbosity && !LogCategory##Category##Instance.IsVerbositySupressed(LogVerbosity::Verbosity))                                              \
 		{                                                                                                                                                                                                                    \
 			GetDebug().Log(StringUtil::Format(Message + "\n\t\t in ", ##__VA_ARGS__) + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::Verbosity, LogCategory##Category##Instance.GetName());	 \
@@ -209,4 +209,4 @@ namespace bs
 
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

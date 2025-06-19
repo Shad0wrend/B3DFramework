@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanTexture.h"
 #include "BsVulkanGpuDevice.h"
@@ -12,8 +12,8 @@
 #include "Profiling/BsRenderStats.h"
 #include "Math/BsMath.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 static VulkanImageCreateInformation BuildImageCreateInformation(VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props)
 {

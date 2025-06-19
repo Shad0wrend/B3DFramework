@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,9 +9,9 @@
 #include "Math/BsDegree.h"
 #include "../../../Foundation/bsfUtility/Math/BsSphere.h"
 
-namespace bs { class CLight; }
-namespace bs { struct __TSphere_float_Interop; }
-namespace bs
+namespace b3d { class CLight; }
+namespace b3d { struct __TSphere_float_Interop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptLight : public TScriptGameObjectWrapper<CLight, ScriptLight>
 	{

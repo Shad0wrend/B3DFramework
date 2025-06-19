@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,9 +8,9 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 
-namespace bs { class ParticleVelocity; }
-namespace bs { struct __PARTICLE_VELOCITY_DESCInterop; }
-namespace bs
+namespace b3d { class ParticleVelocity; }
+namespace b3d { struct __PARTICLE_VELOCITY_DESCInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleVelocity : public TScriptReflectableWrapper<ParticleVelocity, ScriptParticleVelocity, ScriptParticleEvolverWrapperBase>
 	{

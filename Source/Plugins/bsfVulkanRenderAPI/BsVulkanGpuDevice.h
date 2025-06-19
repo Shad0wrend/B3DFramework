@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "RenderAPI/BsGpuDevice.h"
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
 
-namespace bs
+namespace b3d
 {
 	class VulkanGpuBackend;
 
@@ -211,7 +211,7 @@ namespace bs
 
 		private:
 			friend class VulkanRenderAPI;
-			friend class bs::VulkanGpuBackend;
+			friend class b3d::VulkanGpuBackend;
 
 			static constexpr u32 kQueueUsageCombinationCount = 8; // 3^2, as there are three usage types in CommandBufferUsageFlag
 
@@ -254,4 +254,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

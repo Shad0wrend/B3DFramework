@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsPrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	/** Allows capturing a range of GPU commands for analysis by external tools (such as RenderDoc, nSight). */
 	class GpuFrameCapture
@@ -19,4 +19,4 @@ namespace bs
 		/** Stops capture started by Start() and makes the captured commands ready for analysis. */
 		virtual void Stop() = 0;
 	};
-} // namespace bs
+} // namespace b3d

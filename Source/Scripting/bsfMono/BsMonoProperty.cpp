@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsMonoProperty.h"
 #include "BsMonoMethod.h"
@@ -14,7 +14,7 @@
 #include <mono/metadata/reflection.h>
 #endif
 
-namespace bs {
+namespace b3d {
 MonoProperty::MonoProperty(::MonoProperty* monoProp)
 	: mProperty(monoProp), mReturnType(nullptr), mIsIndexed(false), mIsFullyInitialized(false)
 {
@@ -163,4 +163,4 @@ void MonoProperty::InitializeDeferred() const
 
 	mIsFullyInitialized = true;
 }
-} // namespace bs
+} // namespace b3d

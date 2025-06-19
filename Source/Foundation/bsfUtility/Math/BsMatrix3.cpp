@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Math/BsMatrix3.h"
 #include "Math/BsQuaternion.h"
 #include "Math/BsMath.h"
 
-using namespace bs;
+using namespace b3d;
 
 const Matrix3 Matrix3::kZero{ BS_ZERO() };
 const Matrix3 Matrix3::kIdentity{ BS_IDENTITY() };
@@ -1001,7 +1001,7 @@ void Matrix3::EigenSolveSymmetric(float eigenValues[3], Vector3 eigenVectors[3])
 	}
 }
 
-namespace bs
+namespace b3d
 {
 	Matrix3 operator*(float lhs, const Matrix3& rhs)
 	{

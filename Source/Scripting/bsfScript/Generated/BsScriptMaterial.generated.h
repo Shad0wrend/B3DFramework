@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -14,9 +14,9 @@
 #include "../../../Foundation/bsfUtility/Math/BsVector4.h"
 #include "Math/BsMatrix3.h"
 
-namespace bs { class Material; }
-namespace bs { class MaterialEx; }
-namespace bs
+namespace b3d { class Material; }
+namespace b3d { class MaterialEx; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptMaterial : public TScriptResourceWrapper<Material, ScriptMaterial>
 	{

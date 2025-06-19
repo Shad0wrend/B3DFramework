@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,8 +7,8 @@
 #include "BsScriptNonReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Importer/BsImporter.h"
 
-namespace bs { struct __SubResourceInterop; }
-namespace bs
+namespace b3d { struct __SubResourceInterop; }
+namespace b3d
 {
 #if !B3D_IS_ENGINE
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptMultiResource : public TScriptNonReflectableWrapper<MultiResource, ScriptMultiResource>

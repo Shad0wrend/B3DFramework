@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -43,7 +43,7 @@
 
 /** @} */
 
-namespace bs
+namespace b3d
 {
 	class MonoManager;
 	class MonoAssembly;
@@ -84,7 +84,7 @@ namespace bs
 		ProtectedInternal,
 		Public
 	};
-} // namespace bs
+} // namespace b3d
 
 #if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
 #	define B3D_THUNKCALL B3D_STDCALL

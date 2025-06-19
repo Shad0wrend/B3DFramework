@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptParticleColor.generated.h"
 #include "BsMonoMethod.h"
@@ -7,7 +7,7 @@
 #include "BsScriptPARTICLE_COLOR_DESC.generated.h"
 #include "BsScriptParticleColor.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptParticleColor::ScriptParticleColor(const SPtr<ParticleColor>& nativeObject)
 		:TScriptReflectableWrapper(nativeObject)

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsUnitTestPrefabUpdateHelper.h"
 #include "BsUnitTestScenes.h"
@@ -6,7 +6,7 @@
 #include "Scene/BsSceneObject.h"
 #include "Scene/BsPrefab.h"
 
-namespace bs
+namespace b3d
 {
 	template <typename SceneWrapperType>
 	void UnitTestPrefabUpdateHelper::TestAssertPrefabLinkValid(TestSuite& testSuite, SceneWrapperType& instanceWrapper, SceneWrapperType& prefabWrapper, const UUID& prefabResourceId)
@@ -105,4 +105,4 @@ namespace bs
 	}
 
 	template void UnitTestPrefabUpdateHelper::TestAssetRootPrefabLinkValid(TestSuite& testSuite, UnitTestSceneB& prefabWrapper, const UUID& prefabId);
-} // namespace bs
+} // namespace b3d

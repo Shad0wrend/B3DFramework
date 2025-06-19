@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsMaterial.h"
 #include "Material/BsShader.h"
@@ -17,7 +17,7 @@
 #include "Serialization/BsBinarySerializer.h"
 #include "FileSystem/BsDataStream.h"
 
-using namespace bs;
+using namespace b3d;
 
 enum MaterialLoadFlags
 {
@@ -665,7 +665,7 @@ SPtr<ct::RenderProxy> Material::CreateRenderProxy() const
 	return renderProxyShared;
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Material, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mShader)
@@ -1004,7 +1004,7 @@ RTTIType* Material::GetRtti() const
 	return Material::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 Material::Material(const SPtr<Shader>& shader, const ShaderVariationParameters& variation)
 {
@@ -1034,7 +1034,7 @@ void Material::SetVariation(const ShaderVariationParameters& variation)
 
 void Material::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* syncPacket = data.GetSyncPacket<bs::Material::SyncPacket>();
+	auto* syncPacket = data.GetSyncPacket<b3d::Material::SyncPacket>();
 	if(!syncPacket)
 		return;
 

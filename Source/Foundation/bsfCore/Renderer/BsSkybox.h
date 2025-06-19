@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "CoreObject/BsCoreObject.h"
 #include "Scene/BsSceneActor.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -114,7 +114,7 @@ namespace bs
 
 	namespace ct
 	{
-		/** Render thread counterpart of a bs::Skybox */
+		/** Render thread counterpart of a b3d::Skybox */
 		class B3D_CORE_EXPORT Skybox : public RenderProxy, public TSkybox<true>
 		{
 		public:
@@ -132,7 +132,7 @@ namespace bs
 			SPtr<Texture> GetIrradiance() const { return mIrradiance; }
 
 		protected:
-			friend class bs::Skybox;
+			friend class b3d::Skybox;
 
 			Skybox(const SPtr<Texture>& radiance, const SPtr<Texture>& filteredRadiance, const SPtr<Texture>& irradiance);
 
@@ -145,4 +145,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

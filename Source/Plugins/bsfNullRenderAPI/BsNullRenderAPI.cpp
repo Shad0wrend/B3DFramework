@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsNullRenderAPI.h"
 #include "CoreThread/BsCoreThread.h"
@@ -13,8 +13,8 @@
 #include "BsNullRenderStates.h"
 #include "BsNullQueries.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 const StringID& NullRenderAPI::GetName() const
 {
@@ -35,15 +35,15 @@ void NullRenderAPI::Initialize()
 
 	CommandBufferManager::StartUp<NullCommandBufferManager>();
 
-	bs::TextureManager::StartUp<bs::NullTextureManager>();
+	b3d::TextureManager::StartUp<b3d::NullTextureManager>();
 	TextureManager::StartUp<NullTextureManager>();
 
 	// Create hardware buffer manager
-	bs::HardwareBufferManager::StartUp();
+	b3d::HardwareBufferManager::StartUp();
 	HardwareBufferManager::StartUp<NullHardwareBufferManager>();
 
 	// Create render window manager
-	bs::RenderWindowManager::StartUp<bs::NullRenderWindowManager>();
+	b3d::RenderWindowManager::StartUp<b3d::NullRenderWindowManager>();
 	RenderWindowManager::StartUp();
 
 	// Create render state manager
@@ -84,11 +84,11 @@ void NullRenderAPI::DestroyCore()
 	QueryManager::ShutDown();
 	RenderStateManager::ShutDown();
 	RenderWindowManager::ShutDown();
-	bs::RenderWindowManager::ShutDown();
+	b3d::RenderWindowManager::ShutDown();
 	HardwareBufferManager::ShutDown();
-	bs::HardwareBufferManager::ShutDown();
+	b3d::HardwareBufferManager::ShutDown();
 	TextureManager::ShutDown();
-	bs::TextureManager::ShutDown();
+	b3d::TextureManager::ShutDown();
 	CommandBufferManager::ShutDown();
 
 	RenderAPI::DestroyCore();
@@ -110,7 +110,7 @@ GpuDataParameterBlockInformation NullRenderAPI::GenerateParamBlockDesc(const Str
 
 	for(auto& param : params)
 	{
-		const GpuDataParameterTypeInformation& typeInfo = bs::GpuParameters::kParamSizes.Lookup[param.Type];
+		const GpuDataParameterTypeInformation& typeInfo = b3d::GpuParameters::kParamSizes.Lookup[param.Type];
 
 		if(param.ArraySize > 1)
 		{

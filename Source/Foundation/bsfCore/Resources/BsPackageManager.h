@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include "Utility/BsModule.h"
 
-namespace bs
+namespace b3d
 {
 	class PackageResourceMetaData;
 	class Package;
@@ -288,4 +288,4 @@ namespace bs
 	B3D_CORE_EXPORT PackageManager& GetPackageManager();
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

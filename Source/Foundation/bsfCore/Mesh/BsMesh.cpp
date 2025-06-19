@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Mesh/BsMesh.h"
 #include "Private/RTTI/BsMeshRTTI.h"
@@ -12,7 +12,7 @@
 #include "RenderAPI/BsVertexDescription.h"
 #include "Resources/BsResources.h"
 
-using namespace bs;
+using namespace b3d;
 
 const MeshCreateInformation MeshCreateInformation::kDefault = MeshCreateInformation();
 
@@ -248,7 +248,7 @@ SPtr<Mesh> Mesh::CreateEmptyShared()
 	return mesh;
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation)
 	: MeshBase(meshCreateInformation.VertexCount, meshCreateInformation.IndexCount, meshCreateInformation.SubMeshes), mVertexData(nullptr), mIndexBuffer(nullptr), mVertexDescription(meshCreateInformation.VertexDescription), mUsage(meshCreateInformation.Usage), mIndexType(meshCreateInformation.IndexType), mTempInitialMeshData(initialMeshData), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)
@@ -358,7 +358,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 	const GpuBufferInformation& indexBufferInformation = mIndexBuffer->GetInformation();
 
 	B3D_ENSURE(indexBufferInformation.Type == GpuBufferType::Index);
-	const u32 indexBufferIndexSize = bs::GpuBuffer::GetIndexSize(indexBufferInformation.Index.Type);
+	const u32 indexBufferIndexSize = b3d::GpuBuffer::GetIndexSize(indexBufferInformation.Index.Type);
 
 	u32 indicesSize = meshData.GetIndexBufferSize();
 	u8* srcIdxData = meshData.GetIndexData();
@@ -428,7 +428,7 @@ void Mesh::ReadData(MeshData& meshData, const SPtr<GpuCommandBuffer>& commandBuf
 	if(mIndexBuffer)
 		indexType = indexBufferInformation.Index.Type;
 
-	const u32 indexBufferIndexSize = bs::GpuBuffer::GetIndexSize(indexType);
+	const u32 indexBufferIndexSize = b3d::GpuBuffer::GetIndexSize(indexType);
 
 	if(mIndexBuffer)
 	{

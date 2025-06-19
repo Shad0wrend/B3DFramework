@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRenderBeast.h"
 #include "BsCoreApplication.h"
@@ -40,7 +40,7 @@
 
 using namespace std::placeholders;
 
-namespace bs {
+namespace b3d {
 namespace ct {
 
 RenderBeast::RenderBeast()
@@ -313,7 +313,7 @@ void RenderBeast::RenderAll(PerFrameData perFrameData)
 
 	if(mOptionsDirty)
 	{
-		GetRenderThread().PostCommand(std::bind(&::bs::ct::RenderBeast::SyncOptions, this, *mOptions), "RenderBeast::SyncOptions");
+		GetRenderThread().PostCommand(std::bind(&::b3d::ct::RenderBeast::SyncOptions, this, *mOptions), "RenderBeast::SyncOptions");
 		mOptionsDirty = false;
 	}
 
@@ -322,7 +322,7 @@ void RenderBeast::RenderAll(PerFrameData perFrameData)
 	timings.TimeDelta = GetTime().GetFrameDelta();
 	timings.FrameIdx = GetTime().GetCurrentFrameIndex();
 
-	GetRenderThread().PostCommand(std::bind(&::bs::ct::RenderBeast::RenderThreadRenderAll, this, timings, perFrameData), "RenderBeast::RenderAll");
+	GetRenderThread().PostCommand(std::bind(&::b3d::ct::RenderBeast::RenderThreadRenderAll, this, timings, perFrameData), "RenderBeast::RenderAll");
 }
 
 void RenderBeast::RenderThreadRenderAll(FrameTimings timings, PerFrameData perFrameData)
@@ -863,4 +863,4 @@ SPtr<RenderBeast> GetRenderBeast()
 {
 	return std::static_pointer_cast<RenderBeast>(RendererManager::Instance().GetActive());
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

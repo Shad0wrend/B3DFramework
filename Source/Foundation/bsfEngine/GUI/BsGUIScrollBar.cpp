@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIScrollBar.h"
 #include "Image/BsSpriteTexture.h"
@@ -12,7 +12,7 @@
 
 using namespace std::placeholders;
 
-using namespace bs;
+using namespace b3d;
 
 const GUIPhysicalUnit GUIScrollBar::kButtonScrollAmount = 10;
 
@@ -62,10 +62,10 @@ GUIScrollBar::GUIScrollBar(bool horizontal, bool resizable, const String& styleN
 	mLayout->AddElement(mDownBtn);
 	mLayout->AddNewElement<GUIFixedSpace>(2);
 
-	mHandleBtn->OnHandleMovedOrResized.Connect(std::bind(&::bs::GUIScrollBar::HandleMoved, this, _1, _2));
+	mHandleBtn->OnHandleMovedOrResized.Connect(std::bind(&::b3d::GUIScrollBar::HandleMoved, this, _1, _2));
 
-	mUpBtn->OnClick.Connect(std::bind(&::bs::GUIScrollBar::UpButtonClicked, this));
-	mDownBtn->OnClick.Connect(std::bind(&::bs::GUIScrollBar::DownButtonClicked, this));
+	mUpBtn->OnClick.Connect(std::bind(&::b3d::GUIScrollBar::UpButtonClicked, this));
+	mDownBtn->OnClick.Connect(std::bind(&::b3d::GUIScrollBar::DownButtonClicked, this));
 }
 
 GUIScrollBar::~GUIScrollBar()

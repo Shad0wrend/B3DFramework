@@ -10,7 +10,7 @@ Previously we have shown how to define RTTI member fields by using the B3D_RTTI_
 We can do this by manually defining fields. In order to manually register fields the systems supports a several sets of `add*Field` methods, each expecting a unique name/id, and a pair of getter/setter methods. The getter/setter methods can then be used for any more advanced processing.
 
 ## Plain fields
-You register plain fields by calling @bs::RTTIType::addPlainField. The getter/setter methods must return/accept a reference to the value of the field.
+You register plain fields by calling @b3d::RTTIType::addPlainField. The getter/setter methods must return/accept a reference to the value of the field.
 
 ~~~~~~~~~~~~~{.cpp}
 class MyComponent : public Component
@@ -40,7 +40,7 @@ public:
 ~~~~~~~~~~~~~
 
 ## Reflectable fields
-The reflectable field getter/setter signature is similar to the plain field one, only the @bs::RTTIType::addReflectableField method is used for registration instead. 
+The reflectable field getter/setter signature is similar to the plain field one, only the @b3d::RTTIType::addReflectableField method is used for registration instead. 
 
 ~~~~~~~~~~~~~{.cpp}
 class MyComponent : public Component
@@ -69,7 +69,7 @@ public:
 ~~~~~~~~~~~~~
 
 ## Reflectable pointer fields
-Reflectable pointer getter/setter methods must return shared pointers to the instance, and they're registered with @bs::RTTIType::addReflectablePtrField.
+Reflectable pointer getter/setter methods must return shared pointers to the instance, and they're registered with @b3d::RTTIType::addReflectablePtrField.
 ~~~~~~~~~~~~~{.cpp}
 class MyClass : public IReflectable
 {
@@ -105,9 +105,9 @@ public:
 Each of the valid field types (plain/reflectable/reflectable pointer), also come in array form. The array form requires two additional getter/setter methods that get/set array size, and normal getter/setter methods require an additional index parameter. 
 
 Methods for registering array fields are:
- - @bs::RTTIType::addPlainArrayField
- - @bs::RTTIType::addReflectableArrayField
- - @bs::RTTIType::addReflectablePtrArrayField
+ - @b3d::RTTIType::addPlainArrayField
+ - @b3d::RTTIType::addReflectableArrayField
+ - @b3d::RTTIType::addReflectablePtrArrayField
  
 ~~~~~~~~~~~~~{.cpp}
 class MyComponent : public Component
@@ -144,7 +144,7 @@ public:
 > By using this form of field definitions you are also no longer limited to arrays only contained with the **Vector** container.
 
 # Advanced plain fields
-Although plain fields are primarily intended for simple built-in types, sometimes they also need to be used on complex types. For example a **std::string** is often used as a field type, but it is not a simple built-in type, nor can we make it derive from **IReflectable**. For these purposes you can use @bs::RTTIPlainType<T>. This is a templated class you can specialize for your specific type. 
+Although plain fields are primarily intended for simple built-in types, sometimes they also need to be used on complex types. For example a **std::string** is often used as a field type, but it is not a simple built-in type, nor can we make it derive from **IReflectable**. For these purposes you can use @b3d::RTTIPlainType<T>. This is a templated class you can specialize for your specific type. 
 
 Once you specialize the class for your type, implementing all the required methods, you will then be able to use your type on plain fields in the RTTI class. Without this specialization the system will refuse to compile the RTTI type.
 
@@ -195,10 +195,10 @@ Each specialization must implement all three **toMemory()**, **fromMemory()** an
 
 Both **toMemory()**, **fromMemory()** have a similar signature:
  - **data** - Object that is to be written (**toMemory()**) or object that will receive the results of a read (**fromMemory()**)
- - **stream** - @bs::Bitstream object that is used for writing or reading the serialized data.
+ - **stream** - @b3d::Bitstream object that is used for writing or reading the serialized data.
  - **info** - Additional optional information about the field being serialized.
  - **compress** - If true you are allowed to provide a more space efficient encoding for your type. This is generally used for serializing for networking where data sizes are important. When false all written/read data sizes must be in multiples of a byte. If true, data sizes are allowed to be sub-byte sized (e.g. a boolean is allowed to be encoded as a single bit).
- - **return** - The total size of the data that was written or read as a @bs::BitLength struct that contains the number of full bytes and any used bits in the last byte.
+ - **return** - The total size of the data that was written or read as a @b3d::BitLength struct that contains the number of full bytes and any used bits in the last byte.
  
 **getSize()** accepts similar parameters, without the **stream** parameter. It should calculate the size of the data and return it as **BitLength**.
 
@@ -209,7 +209,7 @@ After the specialization is implemented you will be able to use the type in gett
 ## Dynamic size 
 If your structure has dynamic size or is fixed size that is more than 256 bytes you must set the **hasDynamicSize** flag to 1. The size of the structure should be returned from the **getSize()** method. If the size is dynamic you must also encode the size as the first four bytes in a call to **toMemory()**.
 
-For example, you should use **hasDynamicSize** with **String** as each instance will have a different size depending on the string stored. Fields with dynamic size must write the actual size as a header before all encoded data. You can use the helper methods @bs::B3DRTTIWriteWithSizeHeader to write the data with a header, @bs::B3DRTTIReadSizeHeader to read the size from the header and @bs::B3DRTTIAddHeaderSize to calculate the header size.
+For example, you should use **hasDynamicSize** with **String** as each instance will have a different size depending on the string stored. Fields with dynamic size must write the actual size as a header before all encoded data. You can use the helper methods @b3d::B3DRTTIWriteWithSizeHeader to write the data with a header, @b3d::B3DRTTIReadSizeHeader to read the size from the header and @b3d::B3DRTTIAddHeaderSize to calculate the header size.
 
 For example if we wanted to serialize a string:
 ~~~~~~~~~~~~~{.cpp}
@@ -265,12 +265,12 @@ B3D_ALLOW_MEMCPY_SERIALIZATION(SimpleData)
 
 ## Helper methods
 **RTTIPlainType** specializations can also be used as a more traditional form of serialization in case you find the RTTI system an overkill. For example if you needed to transfer data over a network and don't require advanced versioning features. The system provides helper methods that allow you to easily work with plain types in such a case:
- - @bs::B3DRTTIRead - Deserializes an object from the provided stream, advances the stream cursor and returns number of bytes/bits read
- - @bs::B3DRTTIWrite - Serializes an object into the provided stream, advances the stream cursor and returns number of bytes/bits written
- - @bs::B3DRTTISize - Returns a size an object as **BitLength**
+ - @b3d::B3DRTTIRead - Deserializes an object from the provided stream, advances the stream cursor and returns number of bytes/bits read
+ - @b3d::B3DRTTIWrite - Serializes an object into the provided stream, advances the stream cursor and returns number of bytes/bits written
+ - @b3d::B3DRTTISize - Returns a size an object as **BitLength**
  
 ~~~~~~~~~~~~~{.cpp}
-// Assuming Vector has a RTTIPlainType<T> specialization (which it has, bs::f provides it by default)
+// Assuming Vector has a RTTIPlainType<T> specialization (which it has, b3d::f provides it by default)
 
 Vector<SimpleData> myData;
 // fill out myData
@@ -291,17 +291,17 @@ B3DRTTIRead(myDataCopy, stream);
 You can manually query the class hierarchy and well as class members from the RTTI type object.
 
 **RTTIType** queries:
- - @bs::RTTITypeBase::getBaseClass - Returns the **RTTIType** object of the base class
- - @bs::RTTITypeBase::getDerivedClasses - Returns a list of **RTTIType** objects for all derived classes
- - @bs::RTTITypeBase::getNumFields - Returns the number of member fields
- - @bs::RTTITypeBase::getField - Returns information about a field from its sequential index, in the form of @bs::RTTIField
- - @bs::RTTITypeBase::findField - Searches for a field with a specific name and returns information about it in form of **RTTIField**
+ - @b3d::RTTITypeBase::getBaseClass - Returns the **RTTIType** object of the base class
+ - @b3d::RTTITypeBase::getDerivedClasses - Returns a list of **RTTIType** objects for all derived classes
+ - @b3d::RTTITypeBase::getNumFields - Returns the number of member fields
+ - @b3d::RTTITypeBase::getField - Returns information about a field from its sequential index, in the form of @b3d::RTTIField
+ - @b3d::RTTITypeBase::findField - Searches for a field with a specific name and returns information about it in form of **RTTIField**
  
 **RTTIField** queries:
- - @bs::RTTIField::isPlainType - Checks if field contains a plain data type. **RTTIField** can then be cast to @bs::RTTIPlainFieldBase for more operations.
- - @bs::RTTIField::isReflectableType - Checks if field contains an **IReflectable** data type. **RTTIField** can then be cast to @bs::RTTIReflectableFieldBase for more operations.
- - @bs::RTTIField::isReflectablePtrType - Checks if field contains an **IReflectable** pointer data type. **RTTIField** can then be cast to @bs::RTTIReflectablePtrFieldBase for more operations.
- - @bs::RTTIField::isArray - Checks if the field contains an array or a single value
+ - @b3d::RTTIField::isPlainType - Checks if field contains a plain data type. **RTTIField** can then be cast to @b3d::RTTIPlainFieldBase for more operations.
+ - @b3d::RTTIField::isReflectableType - Checks if field contains an **IReflectable** data type. **RTTIField** can then be cast to @b3d::RTTIReflectableFieldBase for more operations.
+ - @b3d::RTTIField::isReflectablePtrType - Checks if field contains an **IReflectable** pointer data type. **RTTIField** can then be cast to @b3d::RTTIReflectablePtrFieldBase for more operations.
+ - @b3d::RTTIField::isArray - Checks if the field contains an array or a single value
  
 ~~~~~~~~~~~~~{.cpp}
 IReflectable* myObject = ...;
@@ -331,10 +331,10 @@ Once you have an instance of a **RTTIField** object, you can also use it to dire
 
 # Advanced serialization
 When implementing **RTTIType<Type, BaseType, MyRTTIType>** can optionally override any of these methods, for additional functionality:
- - @bs::RTTIType::onSerializationStarted
- - @bs::RTTIType::onSerializationEnded
- - @bs::RTTIType::onDeserializationStarted
- - @bs::RTTIType::onDeserializationEnded
+ - @b3d::RTTIType::onSerializationStarted
+ - @b3d::RTTIType::onSerializationEnded
+ - @b3d::RTTIType::onDeserializationStarted
+ - @b3d::RTTIType::onDeserializationEnded
  
 As their names imply they will get called during serialization/deserialization and allow you to do any pre- or post-processing of the data. Each of those methods accepts an **IReflectable** pointer to the object currently being processed. 
 

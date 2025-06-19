@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Text/BsFont.h"
 #include "Resources/BsResources.h"
@@ -19,7 +19,7 @@
 
 B3D_LOG_CATEGORY_STATIC(Font, Log)
 
-using namespace bs;
+using namespace b3d;
 
 /** Converts a 26.6 fixed point format to float. */
 static float ConvertFixed26Dot6ToFloat(i32 value)

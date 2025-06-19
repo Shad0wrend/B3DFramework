@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Particles/BsParticleSystem.h"
 #include "Particles/BsParticleManager.h"
@@ -16,11 +16,11 @@
 #include "CoreObject/BsCoreObjectSync.h"
 #include "Scene/BsSceneManager.h"
 
-using namespace bs;
+using namespace b3d;
 
 static constexpr u32 kInitialParticleCapacity = 1000;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(ParticleSystemSettings, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(GpuSimulation)
@@ -49,7 +49,7 @@ RTTIType* ParticleSystemSettings::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(ParticleVectorFieldSettings, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(Intensity)
@@ -75,7 +75,7 @@ RTTIType* ParticleVectorFieldSettings::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(ParticleDepthCollisionSettings, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(Enabled)
@@ -95,7 +95,7 @@ RTTIType* ParticleDepthCollisionSettings::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(ParticleGpuSimulationSettings, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(ColorOverLifetime)
@@ -432,7 +432,7 @@ void ParticleSystem::MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag)
 	MarkRenderProxyDataDirty((u32)flag);
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(ParticleSystem, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_FIELD(mSettings, SyncPacket)
@@ -486,7 +486,7 @@ RTTIType* ParticleSystem::GetRtti() const
 	return ParticleSystem::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 ParticleSystem::~ParticleSystem()
 {
@@ -515,7 +515,7 @@ void ParticleSystem::SetLayer(u64 layer)
 
 void ParticleSystem::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::ParticleSystem::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::ParticleSystem::SyncPacket>();
 	if(!syncPacket)
 		return;
 

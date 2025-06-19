@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Platform/BsFolderMonitor.h"
 #include "FileSystem/BsFileSystem.h"
@@ -8,12 +8,12 @@
 #include "String/BsUnicode.h"
 #include "Threading/BsThread.h"
 
-namespace bs
+namespace b3d
 {
 	class Thread;
 }
 
-using namespace bs;
+using namespace b3d;
 
 enum class MonitorState
 {

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -14,7 +14,7 @@
 #define WM_BS_SETCAPTURE WM_USER + 101
 #define WM_BS_RELEASECAPTURE WM_USER + 102
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Platform-Internal
 	 *  @{
@@ -35,4 +35,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

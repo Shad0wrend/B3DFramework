@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "Resources/BsIResourceListener.h"
 #include "Math/BsMatrixNxM.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Implementation
 	 *  @{
@@ -585,7 +585,7 @@ namespace bs
 		 */
 
 		/**
-		 * Render thread version of bs::GpuParameters.
+		 * Render thread version of b3d::GpuParameters.
 		 *
 		 * @note	Render thread only.
 		 */
@@ -595,7 +595,7 @@ namespace bs
 			virtual ~GpuParameters() = default;
 
 		protected:
-			friend class bs::GpuParameters;
+			friend class b3d::GpuParameters;
 
 			GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout);
 
@@ -605,4 +605,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

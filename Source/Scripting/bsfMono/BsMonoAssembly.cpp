@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsMonoAssembly.h"
 #include "BsMonoClass.h"
@@ -21,7 +21,7 @@
 #include <mono/metadata/object.h>
 #endif
 
-namespace bs {
+namespace b3d {
 size_t MonoAssembly::ClassId::Hash::operator()(const MonoAssembly::ClassId& v) const
 {
 	size_t genInstanceAddr = (size_t)v.GenericInstance;
@@ -343,4 +343,4 @@ bool MonoAssembly::IsGenericClass(const String& name) const
 
 	return iterFind != name.rend();
 }
-} // namespace bs
+} // namespace b3d

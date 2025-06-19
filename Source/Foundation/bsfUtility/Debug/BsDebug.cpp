@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Debug/BsDebug.h"
 #include "Debug/BsLog.h"
@@ -18,11 +18,11 @@
 
 #	undef GetMessage
 
-static void LogToIdeConsole(const bs::String& message, const char* channel)
+static void LogToIdeConsole(const b3d::String& message, const char* channel)
 {
-	static bs::Mutex mutex;
+	static b3d::Mutex mutex;
 
-	bs::Lock lock(mutex);
+	b3d::Lock lock(mutex);
 	OutputDebugString("[");
 	OutputDebugString(channel);
 	OutputDebugString("] ");
@@ -33,13 +33,13 @@ static void LogToIdeConsole(const bs::String& message, const char* channel)
 	std::cout << "[" << channel << "] " << message << std::endl;
 }
 #else
-static void LogToIdeConsole(const bs::String& message, const char* channel)
+static void LogToIdeConsole(const b3d::String& message, const char* channel)
 {
 	std::cout << "[" << channel << "] " << message << std::endl;
 }
 #endif
 
-namespace bs
+namespace b3d
 {
 	B3D_LOG_CATEGORY(Uncategorized)
 	B3D_LOG_CATEGORY(FileSystem)
@@ -48,9 +48,9 @@ namespace bs
 	B3D_LOG_CATEGORY(Platform)
 	B3D_LOG_CATEGORY(Serialization)
 	B3D_LOG_CATEGORY(UnitTest)
-} // namespace bs
+} // namespace b3d
 
-using namespace bs;
+using namespace b3d;
 
 static void LogToIdeConsole(const String& message, LogVerbosity verbosity)
 {
@@ -251,7 +251,7 @@ table td
 #else
 	static const char* htmlPostStyleHeader =
 		R"(</style>
-<title>bs::framework Log</title>
+<title>B3D Framework Log</title>
 </head>
 <body>
 )";
@@ -283,13 +283,13 @@ table td
 #if B3D_IS_ENGINE
 	stream << "<h1>Banshee Engine Log</h1>\n";
 #else
-	stream << "<h1>bs::framework Log</h1>\n";
+	stream << "<h1>B3D Framework Log</h1>\n";
 #endif
 
 	stream << "<h2>System information</h2>\n";
 
 	// Write header information
-	stream << "<p>bs::framework version: " << B3D_FRAMEWORK_VERSION_MAJOR << "." << B3D_FRAMEWORK_VERSION_MINOR << "." << B3D_FRAMEWORK_VERSION_PATCH << "</p>\n";
+	stream << "<p>B3D Framework version: " << B3D_FRAMEWORK_VERSION_MAJOR << "." << B3D_FRAMEWORK_VERSION_MINOR << "." << B3D_FRAMEWORK_VERSION_PATCH << "</p>\n";
 
 	if(Time::IsStarted())
 		stream << "<p>Started on: " << GetTime().GetAppStartUpDateString(false) << "</p>\n";
@@ -382,9 +382,9 @@ void Debug::SaveTextLog(const Path& path) const
 {
 #if B3D_IS_ENGINE
 	static const char* engineHeader = "This is Banshee Engine ";
-	static const char* bsfBasedHeader = "Based on bs::framework ";
+	static const char* bsfBasedHeader = "Based on B3D Framework ";
 #else
-	static const char* bsfOnlyHeader = "This is bs::framework ";
+	static const char* bsfOnlyHeader = "This is B3D Framework ";
 #endif
 
 	StringStream stream;
@@ -478,11 +478,11 @@ void Debug::SaveTextLog(const Path& path) const
 	fileStream->WriteString(stream.str());
 }
 
-namespace bs
+namespace b3d
 {
 B3D_UTILITY_EXPORT Debug& GetDebug()
 {
 	static Debug debug;
 	return debug;
 }
-} // namespace bs
+} // namespace b3d

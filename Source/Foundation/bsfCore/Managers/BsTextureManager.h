@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "RenderAPI/BsRenderTexture.h"
 #include "Utility/BsModule.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Resources-Internal
 	 *  @{
@@ -75,12 +75,12 @@ namespace bs
 			void OnShutDown() override;
 
 			/**
-			 * @copydoc bs::TextureManager::CreateRenderTexture(const RenderTextureCreateInformation&)
+			 * @copydoc b3d::TextureManager::CreateRenderTexture(const RenderTextureCreateInformation&)
 			 */
 			SPtr<RenderTexture> CreateRenderTexture(const RenderTextureCreateInformation& desc);
 
 		protected:
-			friend class bs::RenderTexture;
+			friend class b3d::RenderTexture;
 
 			/** @copydoc CreateRenderTexture */
 			virtual SPtr<RenderTexture> CreateRenderTextureInternal(const RenderTextureCreateInformation& desc) = 0;
@@ -90,4 +90,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

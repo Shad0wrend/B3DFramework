@@ -1,8 +1,8 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Utility/BsMessageHandler.h"
 
-using namespace bs;
+using namespace b3d;
 
 Map<String, u32> MessageId::UniqueMessageIds;
 u32 MessageId::NextMessageId = 0;
@@ -74,10 +74,10 @@ void MessageHandler::Unsubscribe(u32 handleId)
 	mHandlerIdToMessageMap.erase(handleId);
 }
 
-namespace bs
+namespace b3d
 {
 void SendMessage(MessageId message)
 {
 	MessageHandler::Instance().Send(message);
 }
-} // namespace bs
+} // namespace b3d

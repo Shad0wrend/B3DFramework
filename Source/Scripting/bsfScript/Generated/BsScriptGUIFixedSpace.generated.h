@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,8 +7,8 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIUnits.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUISpace.h"
 
-namespace bs { class GUIFixedSpace; }
-namespace bs
+namespace b3d { class GUIFixedSpace; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIFixedSpace : public TScriptGUIElementWrapper<GUIFixedSpace, ScriptGUIFixedSpace>
 	{

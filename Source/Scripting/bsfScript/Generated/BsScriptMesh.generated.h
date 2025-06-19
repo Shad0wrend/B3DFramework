@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -12,11 +12,11 @@
 #include "../../../Foundation/bsfUtility/Math/BsAABox.h"
 #include "../../../Foundation/bsfUtility/Math/BsSphere.h"
 
-namespace bs { class Mesh; }
-namespace bs { class MeshEx; }
-namespace bs { struct __TAABox_float_Interop; }
-namespace bs { struct __TSphere_float_Interop; }
-namespace bs
+namespace b3d { class Mesh; }
+namespace b3d { class MeshEx; }
+namespace b3d { struct __TAABox_float_Interop; }
+namespace b3d { struct __TSphere_float_Interop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptMesh : public TScriptResourceWrapper<Mesh, ScriptMesh>
 	{

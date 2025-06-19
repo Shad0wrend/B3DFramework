@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "String/BsString.h"
 #include "Utility/BsUtil.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Filesystem
 	 *  @{
@@ -462,7 +462,7 @@ namespace bs
 
 	private:
 		friend struct RTTIPlainType<Path>; // For serialization
-		friend struct ::std::hash<bs::Path>;
+		friend struct ::std::hash<b3d::Path>;
 		friend class PathHashFunction<false>;
 		friend class PathHashFunction<true>;
 
@@ -501,7 +501,7 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -509,11 +509,11 @@ namespace std
 {
 	/** Hash value generator for Path. */
 	template <>
-	struct hash<bs::Path>
+	struct hash<b3d::Path>
 	{
-		size_t operator()(const bs::Path& path) const
+		size_t operator()(const b3d::Path& path) const
 		{
-			return bs::PathHashFunction<false>()(path);
+			return b3d::PathHashFunction<false>()(path);
 		}
 	};
 } // namespace std

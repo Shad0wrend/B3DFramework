@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "Renderer/BsRendererFactory.h"
 #include "Renderer/BsIBLUtility.h"
 
-namespace bs
+namespace b3d
 {
 	/** Renderer factory implementation that creates and initializes the null renderer. Used by the RendererManager. */
 	class NullRendererFactory : public RendererFactory
@@ -53,4 +53,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

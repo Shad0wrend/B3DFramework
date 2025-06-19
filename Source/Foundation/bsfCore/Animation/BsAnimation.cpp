@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Animation/BsAnimation.h"
 #include "Animation/BsAnimationManager.h"
@@ -7,7 +7,7 @@
 #include "Scene/BsSceneObject.h"
 #include "Animation/BsMorphShapes.h"
 
-using namespace bs;
+using namespace b3d;
 
 AnimationClipInfo::AnimationClipInfo(const HAnimationClip& clip)
 	: Clip(clip)
@@ -96,7 +96,7 @@ void AnimationProxy::Clear()
 	NumGenericCurves = 0;
 }
 
-void AnimationProxy::Rebuild(const SPtr<bs::Skeleton>& skeleton, const bs::SkeletonMask& mask, Vector<AnimationClipInfo>& clipInfos, const Vector<AnimatedSceneObject>& sceneObjects, const SPtr<MorphShapes>& morphShapes)
+void AnimationProxy::Rebuild(const SPtr<b3d::Skeleton>& skeleton, const b3d::SkeletonMask& mask, Vector<AnimationClipInfo>& clipInfos, const Vector<AnimatedSceneObject>& sceneObjects, const SPtr<MorphShapes>& morphShapes)
 {
 	this->Skeleton = skeleton;
 	this->SkeletonMask = mask;

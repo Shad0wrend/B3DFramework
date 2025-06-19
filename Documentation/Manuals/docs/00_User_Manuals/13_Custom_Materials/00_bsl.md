@@ -2,7 +2,7 @@
 title: BSL syntax
 ---
 
-All shaders in bs::f are written in BSL (bs::f Shading Language). The core of the language is based on HLSL (High Level Shading Language), with various extensions to make development easier. In this manual we will not cover HLSL syntax, nor talk about shaders in general, and will instead focus on the functionality specific to BSL. If you are not familiar with the concept of a shader, or HLSL syntax, it is suggested you learn about them before continuing.
+All shaders in b3d::f are written in BSL (b3d::f Shading Language). The core of the language is based on HLSL (High Level Shading Language), with various extensions to make development easier. In this manual we will not cover HLSL syntax, nor talk about shaders in general, and will instead focus on the functionality specific to BSL. If you are not familiar with the concept of a shader, or HLSL syntax, it is suggested you learn about them before continuing.
 
 # Basics
 
@@ -113,39 +113,39 @@ Let's cover all available options for each block type.
 
 Name                 | Valid values				   | Reference
 ---------------------|---------------------------- |----------
-fill    	  	     | wire, solid (See @bs::PolygonMode)			   | @bs::RASTERIZER_STATE_DESC::polygonMode
-cull    	  	     | cw, ccw, none (See @bs::CullingMode)			   | @bs::RASTERIZER_STATE_DESC::cullMode
-scissor				 | true, false				   | @bs::RASTERIZER_STATE_DESC::scissorEnable
-multisample			 | true, false				   | @bs::RASTERIZER_STATE_DESC::multisampleEnable
-lineaa				 | true, false				   | @bs::RASTERIZER_STATE_DESC::antialiasedLineEnable
+fill    	  	     | wire, solid (See @b3d::PolygonMode)			   | @b3d::RASTERIZER_STATE_DESC::polygonMode
+cull    	  	     | cw, ccw, none (See @b3d::CullingMode)			   | @b3d::RASTERIZER_STATE_DESC::cullMode
+scissor				 | true, false				   | @b3d::RASTERIZER_STATE_DESC::scissorEnable
+multisample			 | true, false				   | @b3d::RASTERIZER_STATE_DESC::multisampleEnable
+lineaa				 | true, false				   | @b3d::RASTERIZER_STATE_DESC::antialiasedLineEnable
 
 ## depth
 Name                 | Valid values				   | Reference
 ---------------------|---------------------------- |----------
-read    	  	     | true, false				   | @bs::DEPTH_STENCIL_STATE_DESC::depthReadEnable
-write    	  	     | true, false				   | @bs::DEPTH_STENCIL_STATE_DESC::depthWriteEnable
-compare    	  	     | never, always, lt, lte, eq, neq, gte, gt (See @bs::CompareFunction)				   | @bs::DEPTH_STENCIL_STATE_DESC::depthComparisonFunc
-bias    	  	     | float				   | @bs::RASTERIZER_STATE_DESC::depthBias
-scaledBias    	  	 | float				   | @bs::RASTERIZER_STATE_DESC::slopeScaledDepthBias
-clip    	  	     | true, false				   | @bs::RASTERIZER_STATE_DESC::depthClipEnable
+read    	  	     | true, false				   | @b3d::DEPTH_STENCIL_STATE_DESC::depthReadEnable
+write    	  	     | true, false				   | @b3d::DEPTH_STENCIL_STATE_DESC::depthWriteEnable
+compare    	  	     | never, always, lt, lte, eq, neq, gte, gt (See @b3d::CompareFunction)				   | @b3d::DEPTH_STENCIL_STATE_DESC::depthComparisonFunc
+bias    	  	     | float				   | @b3d::RASTERIZER_STATE_DESC::depthBias
+scaledBias    	  	 | float				   | @b3d::RASTERIZER_STATE_DESC::slopeScaledDepthBias
+clip    	  	     | true, false				   | @b3d::RASTERIZER_STATE_DESC::depthClipEnable
 
 ## stencil
 Name                 | Valid values				   | Reference
 ---------------------|---------------------------- |----------
 reference    	  	 | integer			           | Reference value to use for stencil compare operations.
-enabled    	  	     | true, false				   | @bs::DEPTH_STENCIL_STATE_DESC::stencilEnable
-readmask    	  	 | integer in [0, 255] range   | @bs::DEPTH_STENCIL_STATE_DESC::stencilReadMask
-writemask    	  	 | integer in [0, 255] range   | @bs::DEPTH_STENCIL_STATE_DESC::stencilWriteMask
+enabled    	  	     | true, false				   | @b3d::DEPTH_STENCIL_STATE_DESC::stencilEnable
+readmask    	  	 | integer in [0, 255] range   | @b3d::DEPTH_STENCIL_STATE_DESC::stencilReadMask
+writemask    	  	 | integer in [0, 255] range   | @b3d::DEPTH_STENCIL_STATE_DESC::stencilWriteMask
 front				 | StencilOp block			   | Stencil operations and compare function for front facing geometry
 back				 | StencilOp block			   | Stencil operations and compare function for back facing geometry
  
 **front** and **back** options are blocks themselves, and they accept the following options:
 Name                 | Valid values				   | Reference
 ---------------------|---------------------------- |----------
-fail    	  	 	| keep, zero, replace, inc, dec, incwrap, decwrap, inverse (See @bs::StencilOperation)			           | @bs::DEPTH_STENCIL_STATE_DESC::frontStencilFailOp & @bs::DEPTH_STENCIL_STATE_DESC::backStencilFailOp
-zfail    	  	 	| keep, zero, replace, inc, dec, incwrap, decwrap, inverse (See @bs::StencilOperation)			           | @bs::DEPTH_STENCIL_STATE_DESC::frontStencilZFailOp & @bs::DEPTH_STENCIL_STATE_DESC::backStencilZFailOp
-pass    	  	 	| keep, zero, replace, inc, dec, incwrap, decwrap, inverse (See @bs::StencilOperation)			           | @bs::DEPTH_STENCIL_STATE_DESC::frontStencilPassOp & @bs::DEPTH_STENCIL_STATE_DESC::backStencilPassOp
-compare				| never, always, lt, lte, eq, neq, gte, gt (See @bs::CompareFunction) | @bs::DEPTH_STENCIL_STATE_DESC::frontStencilComparisonFunc & @bs::DEPTH_STENCIL_STATE_DESC::backStencilComparisonFunc
+fail    	  	 	| keep, zero, replace, inc, dec, incwrap, decwrap, inverse (See @b3d::StencilOperation)			           | @b3d::DEPTH_STENCIL_STATE_DESC::frontStencilFailOp & @b3d::DEPTH_STENCIL_STATE_DESC::backStencilFailOp
+zfail    	  	 	| keep, zero, replace, inc, dec, incwrap, decwrap, inverse (See @b3d::StencilOperation)			           | @b3d::DEPTH_STENCIL_STATE_DESC::frontStencilZFailOp & @b3d::DEPTH_STENCIL_STATE_DESC::backStencilZFailOp
+pass    	  	 	| keep, zero, replace, inc, dec, incwrap, decwrap, inverse (See @b3d::StencilOperation)			           | @b3d::DEPTH_STENCIL_STATE_DESC::frontStencilPassOp & @b3d::DEPTH_STENCIL_STATE_DESC::backStencilPassOp
+compare				| never, always, lt, lte, eq, neq, gte, gt (See @b3d::CompareFunction) | @b3d::DEPTH_STENCIL_STATE_DESC::frontStencilComparisonFunc & @b3d::DEPTH_STENCIL_STATE_DESC::backStencilComparisonFunc
 
 An example of a stencil block:
 ~~~~~~~~~~~~~~
@@ -181,25 +181,25 @@ shader MyShader
 ## blend
 Name                 | Valid values				   | Reference
 ---------------------|---------------------------- |----------
-dither    	  	 | true, false			           | @bs::BLEND_STATE_DESC::alphaToCoverageEnable
-independant    	 | true, false			           | @bs::BLEND_STATE_DESC::independantBlendEnable
+dither    	  	 | true, false			           | @b3d::BLEND_STATE_DESC::alphaToCoverageEnable
+independant    	 | true, false			           | @b3d::BLEND_STATE_DESC::independantBlendEnable
 target			 | Target block					   | Blend operations for a specific render target. Multiple Target blocks can exist under a single blend block.
 
 **Target** block accepts the following options:
 Name                 | Valid values				   | Reference
 ---------------------|---------------------------- |----------
 index    	  	     | positive integer		       | Index of the render target these options are applied to. If not specified the index is derived from the order in which Target blocks are defined.
-enabled				 | true, false				   | @bs::RENDER_TARGET_BLEND_STATE_DESC::blendEnable
-writemask		     | R, G, B, A or any combination (e.g. RG, RBA, RGBA). "empty" for zero mask.					   | @bs::RENDER_TARGET_BLEND_STATE_DESC::renderTargetWriteMask
+enabled				 | true, false				   | @b3d::RENDER_TARGET_BLEND_STATE_DESC::blendEnable
+writemask		     | R, G, B, A or any combination (e.g. RG, RBA, RGBA). "empty" for zero mask.					   | @b3d::RENDER_TARGET_BLEND_STATE_DESC::renderTargetWriteMask
 color    	  	     | BlendOp block	       	   | Represents the blend operation to execute on the color channels.
 alpha				 | BlendOp block			   | Represents the blend operation to execute on the alpha channel. Only relevant if independant blend is enabled.
 
 **BlendOp** block accepts the following options:
 Name                 | Valid values				   | Reference
 ---------------------|---------------------------- |----------
-source    	  	     | one, zero, dstRGB, srcRGB, dstIRGB, srcIRGB, dstA, srcA, dstIA, srcIA (See @bs::BlendFactor)		       | @bs::RENDER_TARGET_BLEND_STATE_DESC::srcBlend, @bs::RENDER_TARGET_BLEND_STATE_DESC::srcBlendAlpha
-dest    	  	     | one, zero, dstRGB, srcRGB, dstIRGB, srcIRGB, dstA, srcA, dstIA, srcIA (See @bs::BlendFactor)		       | @bs::RENDER_TARGET_BLEND_STATE_DESC::dstBlend, @bs::RENDER_TARGET_BLEND_STATE_DESC::dstBlendAlpha
-op    	  	     | add, sub, rsub, min, max (See @bs::BlendOperation)		       | @bs::RENDER_TARGET_BLEND_STATE_DESC::blendOp, @bs::RENDER_TARGET_BLEND_STATE_DESC::blendOpAlpha
+source    	  	     | one, zero, dstRGB, srcRGB, dstIRGB, srcIRGB, dstA, srcA, dstIA, srcIA (See @b3d::BlendFactor)		       | @b3d::RENDER_TARGET_BLEND_STATE_DESC::srcBlend, @b3d::RENDER_TARGET_BLEND_STATE_DESC::srcBlendAlpha
+dest    	  	     | one, zero, dstRGB, srcRGB, dstIRGB, srcIRGB, dstA, srcA, dstIA, srcIA (See @b3d::BlendFactor)		       | @b3d::RENDER_TARGET_BLEND_STATE_DESC::dstBlend, @b3d::RENDER_TARGET_BLEND_STATE_DESC::dstBlendAlpha
+op    	  	     | add, sub, rsub, min, max (See @b3d::BlendOperation)		       | @b3d::RENDER_TARGET_BLEND_STATE_DESC::blendOp, @b3d::RENDER_TARGET_BLEND_STATE_DESC::blendOpAlpha
 
 An example of a **blend** block:
 ~~~~~~~~~~~~~~
@@ -439,16 +439,16 @@ shader MyShader
 Valid values within the sampler state block are:
 Name                 | Valid values				   				  | Reference
 ---------------------|--------------------------------------------|----------
-AddressU			 | WRAP, MIRROR, CLAMP, BORDER, MIRROR_ONCE   | @bs::SAMPLER_STATE_DESC::addressMode
-AddressV			 | WRAP, MIRROR, CLAMP, BORDER, MIRROR_ONCE   | @bs::SAMPLER_STATE_DESC::addressMode
-AddressW			 | WRAP, MIRROR, CLAMP, BORDER, MIRROR_ONCE   | @bs::SAMPLER_STATE_DESC::addressMode
-BorderColor			 | float4									  | @bs::SAMPLER_STATE_DESC::borderColor
-Filter				 | See table below							  | @bs::SAMPLER_STATE_DESC::minFilter, @bs::SAMPLER_STATE_DESC::magFilter, @bs::SAMPLER_STATE_DESC::mipFilter
-MaxAnisotropy		 | uint										  | @bs::SAMPLER_STATE_DESC::maxAniso
-MaxLOD				 | float									  | @bs::SAMPLER_STATE_DESC::mipMax
-MinLOD				 | float									  | @bs::SAMPLER_STATE_DESC::mipMin
-MipLODBias			 | float									  | @bs::SAMPLER_STATE_DESC::mipmapBias
-ComparisonFunc		 | NEVER, LESS, EQUAL, LESS_EQUAL, GREATER, NOT_EQUAL, GREATER_EQUAL, ALWAYS | @bs::SAMPLER_STATE_DESC::comparisonFunc
+AddressU			 | WRAP, MIRROR, CLAMP, BORDER, MIRROR_ONCE   | @b3d::SAMPLER_STATE_DESC::addressMode
+AddressV			 | WRAP, MIRROR, CLAMP, BORDER, MIRROR_ONCE   | @b3d::SAMPLER_STATE_DESC::addressMode
+AddressW			 | WRAP, MIRROR, CLAMP, BORDER, MIRROR_ONCE   | @b3d::SAMPLER_STATE_DESC::addressMode
+BorderColor			 | float4									  | @b3d::SAMPLER_STATE_DESC::borderColor
+Filter				 | See table below							  | @b3d::SAMPLER_STATE_DESC::minFilter, @b3d::SAMPLER_STATE_DESC::magFilter, @b3d::SAMPLER_STATE_DESC::mipFilter
+MaxAnisotropy		 | uint										  | @b3d::SAMPLER_STATE_DESC::maxAniso
+MaxLOD				 | float									  | @b3d::SAMPLER_STATE_DESC::mipMax
+MinLOD				 | float									  | @b3d::SAMPLER_STATE_DESC::mipMin
+MipLODBias			 | float									  | @b3d::SAMPLER_STATE_DESC::mipmapBias
+ComparisonFunc		 | NEVER, LESS, EQUAL, LESS_EQUAL, GREATER, NOT_EQUAL, GREATER_EQUAL, ALWAYS | @b3d::SAMPLER_STATE_DESC::comparisonFunc
 
 Filter valid values:
 - MIN_MAG_MIP_POINT

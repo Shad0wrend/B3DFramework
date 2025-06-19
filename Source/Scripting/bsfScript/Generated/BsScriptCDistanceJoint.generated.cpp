@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptCDistanceJoint.generated.h"
 #include "BsMonoMethod.h"
@@ -7,7 +7,7 @@
 #include "../../../Foundation/bsfCore/Components/BsCDistanceJoint.h"
 #include "BsScriptSpring.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptDistanceJoint::ScriptDistanceJoint(const GameObjectHandle<CDistanceJoint>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)

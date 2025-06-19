@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #define BS_COCOA_INTERNALS 1
 #define GL_SILENCE_DEPRECATION 1
@@ -12,36 +12,36 @@
 
 #import <QuartzCore/CAMetalLayer.h>
 
-using namespace bs;
+using namespace b3d;
 
 /** Converts a keycode reported by Cocoa into a potential input command. */
-static bool keyCodeToInputCommand(uint32_t keyCode, bool shift, bs::InputCommandType& inputCommand)
+static bool keyCodeToInputCommand(uint32_t keyCode, bool shift, b3d::InputCommandType& inputCommand)
 {
 	switch(keyCode)
 	{
 		case 36: // Return
-			inputCommand = shift ? bs::InputCommandType::Return : bs::InputCommandType::Confirm;
+			inputCommand = shift ? b3d::InputCommandType::Return : b3d::InputCommandType::Confirm;
 			return true;
 		case 51: // Backspace
-			inputCommand = bs::InputCommandType::Backspace;
+			inputCommand = b3d::InputCommandType::Backspace;
 			return true;
 		case 53: // Escape
-			inputCommand = bs::InputCommandType::Escape;
+			inputCommand = b3d::InputCommandType::Escape;
 			return true;
 		case 117: // Delete
-			inputCommand = bs::InputCommandType::Delete;
+			inputCommand = b3d::InputCommandType::Delete;
 			return true;
 		case 123: // Left
-			inputCommand = shift ? bs::InputCommandType::SelectLeft : bs::InputCommandType::CursorMoveLeft;
+			inputCommand = shift ? b3d::InputCommandType::SelectLeft : b3d::InputCommandType::CursorMoveLeft;
 			return true;
 		case 124: // Right
-			inputCommand = shift ? bs::InputCommandType::SelectRight : bs::InputCommandType::CursorMoveRight;
+			inputCommand = shift ? b3d::InputCommandType::SelectRight : b3d::InputCommandType::CursorMoveRight;
 			return true;
 		case 125: // Down
-			inputCommand = shift ? bs::InputCommandType::SelectDown : bs::InputCommandType::CursorMoveDown;
+			inputCommand = shift ? b3d::InputCommandType::SelectDown : b3d::InputCommandType::CursorMoveDown;
 			return true;
 		case 126: // Up
-			inputCommand = shift ? bs::InputCommandType::SelectUp : bs::InputCommandType::CursorMoveUp;
+			inputCommand = shift ? b3d::InputCommandType::SelectUp : b3d::InputCommandType::CursorMoveUp;
 			return true;
 	}
 
@@ -90,7 +90,7 @@ static bool keyCodeToInputCommand(uint32_t keyCode, bool shift, bs::InputCommand
 {
 	[super resetCursorRects];
 
-	[self addCursorRect:[self bounds] cursor:bs::MacOSPlatform::_getCurrentCursor()];
+	[self addCursorRect:[self bounds] cursor:b3d::MacOSPlatform::_getCurrentCursor()];
 }
 
 -(void)updateTrackingAreas
@@ -162,7 +162,7 @@ enum class MouseEventType
 @property (atomic, strong) NSArray* dragAreas;
 
 // Mouse
--(void) handleMouseEvent:(NSEvent *) event type:(MouseEventType) type button:(bs::OSMouseButton) button;
+-(void) handleMouseEvent:(NSEvent *) event type:(MouseEventType) type button:(b3d::OSMouseButton) button;
 -(void) mouseDown:(NSEvent *) event;
 -(void) rightMouseDown:(NSEvent *) event;
 -(void) otherMouseDown:(NSEvent *) event;
@@ -219,13 +219,13 @@ enum class MouseEventType
 	return self;
 }
 
-- (void)handleMouseEvent:(NSEvent*) event type:(MouseEventType) type button:(bs::OSMouseButton) button
+- (void)handleMouseEvent:(NSEvent*) event type:(MouseEventType) type button:(b3d::OSMouseButton) button
 {
 	NSPoint screenPos = NSEvent.mouseLocation;
 	NSUInteger modifierFlags = NSEvent.modifierFlags;
 	uint32_t pressedButtons = (uint32_t)NSEvent.pressedMouseButtons;
 
-	bs::OSPointerButtonStates buttonStates;
+	b3d::OSPointerButtonStates buttonStates;
 	buttonStates.ctrl = (modifierFlags & NSEventModifierFlagControl) != 0;
 	buttonStates.shift = (modifierFlags & NSEventModifierFlagShift) != 0;
 	buttonStates.mouseButtons[0] = (pressedButtons & (1 << 0)) != 0;
@@ -235,17 +235,17 @@ enum class MouseEventType
 	NSWindow* window = [event window];
 	NSScreen* screen = window ? [window screen] : [NSScreen mainScreen];
 
-	bs::flipY(screen, screenPos);
-	bs::Vector2I pos((int32_t)screenPos.x, (int32_t)screenPos.y);
+	b3d::flipY(screen, screenPos);
+	b3d::Vector2I pos((int32_t)screenPos.x, (int32_t)screenPos.y);
 
 	if(type == MouseEventType::ButtonDown)
-		bs::MacOSPlatform::sendPointerButtonPressedEvent(pos, button, buttonStates);
+		b3d::MacOSPlatform::sendPointerButtonPressedEvent(pos, button, buttonStates);
 	else // ButtonUp
 	{
-		if([event clickCount] == 2 && button == bs::OSMouseButton::Left)
-			bs::MacOSPlatform::sendPointerDoubleClickEvent(pos, buttonStates);
+		if([event clickCount] == 2 && button == b3d::OSMouseButton::Left)
+			b3d::MacOSPlatform::sendPointerDoubleClickEvent(pos, buttonStates);
 		else
-			bs::MacOSPlatform::sendPointerButtonReleasedEvent(pos, button, buttonStates);
+			b3d::MacOSPlatform::sendPointerButtonReleasedEvent(pos, button, buttonStates);
 	}
 }
 
@@ -266,7 +266,7 @@ enum class MouseEventType
 
 		for (NSUInteger i = 0; i < [dragAreas count]; i++)
 		{
-			bs::Rect2I rect;
+			b3d::Rect2I rect;
 			[dragAreas[i] getValue:&rect];
 
 			if(point.x >= rect.x && point.x < (rect.x + rect.width) &&
@@ -280,32 +280,32 @@ enum class MouseEventType
 	}
 
 	if(!isManualDrag)
-		[self handleMouseEvent:event type:MouseEventType::ButtonDown button:bs::OSMouseButton::Left];
+		[self handleMouseEvent:event type:MouseEventType::ButtonDown button:b3d::OSMouseButton::Left];
 }
 
 - (void)rightMouseDown:(NSEvent *)event
 {
-	[self handleMouseEvent:event type:MouseEventType::ButtonDown button:bs::OSMouseButton::Right];
+	[self handleMouseEvent:event type:MouseEventType::ButtonDown button:b3d::OSMouseButton::Right];
 }
 
 - (void)otherMouseDown:(NSEvent *)event
 {
-	[self handleMouseEvent:event type:MouseEventType::ButtonDown button:bs::OSMouseButton::Middle];
+	[self handleMouseEvent:event type:MouseEventType::ButtonDown button:b3d::OSMouseButton::Middle];
 }
 
 - (void)mouseUp:(NSEvent *)event
 {
-	[self handleMouseEvent:event type:MouseEventType::ButtonUp button:bs::OSMouseButton::Left];
+	[self handleMouseEvent:event type:MouseEventType::ButtonUp button:b3d::OSMouseButton::Left];
 }
 
 - (void)rightMouseUp:(NSEvent *)event
 {
-	[self handleMouseEvent:event type:MouseEventType::ButtonUp button:bs::OSMouseButton::Right];
+	[self handleMouseEvent:event type:MouseEventType::ButtonUp button:b3d::OSMouseButton::Right];
 }
 
 - (void)otherMouseUp:(NSEvent *)event
 {
-	[self handleMouseEvent:event type:MouseEventType::ButtonUp button:bs::OSMouseButton::Middle];
+	[self handleMouseEvent:event type:MouseEventType::ButtonUp button:b3d::OSMouseButton::Middle];
 }
 
 - (void)mouseMoved:(NSEvent *)event
@@ -326,25 +326,25 @@ enum class MouseEventType
 	else
 		screen = NSScreen.mainScreen;
 
-	bs::flipY(screen, point);
+	b3d::flipY(screen, point);
 
-	bs::Vector2I pos;
+	b3d::Vector2I pos;
 	pos.x = (int32_t)point.x;
 	pos.y = (int32_t)point.y;
 
-	if(bs::MacOSPlatform::_clipCursor(pos))
-		bs::MacOSPlatform::_setCursorPosition(pos);
+	if(b3d::MacOSPlatform::_clipCursor(pos))
+		b3d::MacOSPlatform::_setCursorPosition(pos);
 
 	NSUInteger modifierFlags = NSEvent.modifierFlags;
 
-	bs::OSPointerButtonStates buttonStates;
+	b3d::OSPointerButtonStates buttonStates;
 	buttonStates.ctrl = (modifierFlags & NSEventModifierFlagControl) != 0;
 	buttonStates.shift = (modifierFlags & NSEventModifierFlagShift) != 0;
 	buttonStates.mouseButtons[0] = (pressedButtons & (1 << 0)) != 0;
 	buttonStates.mouseButtons[1] = (pressedButtons & (1 << 1)) != 0;
 	buttonStates.mouseButtons[2] = (pressedButtons & (1 << 2)) != 0;
 
-	bs::MacOSPlatform::sendPointerMovedEvent(pos, buttonStates);
+	b3d::MacOSPlatform::sendPointerMovedEvent(pos, buttonStates);
 }
 
 - (void)mouseDragged:(NSEvent *)event
@@ -366,7 +366,7 @@ enum class MouseEventType
 {
 	float y = (float)[event deltaY];
 
-	bs::MacOSPlatform::sendMouseWheelScrollEvent((float)y);
+	b3d::MacOSPlatform::sendMouseWheelScrollEvent((float)y);
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -381,18 +381,18 @@ enum class MouseEventType
 
 	if(!control && !command)
 	{
-		bs::InputCommandType ict;
+		b3d::InputCommandType ict;
 		if (keyCodeToInputCommand(keyCode, shift, ict))
-			bs::MacOSPlatform::sendInputCommandEvent(ict);
+			b3d::MacOSPlatform::sendInputCommandEvent(ict);
 		else
 		{
 			const char* chars = [string UTF8String];
 
-			bs::String utf8String(chars);
-			bs::U32String utf32String = bs::UTF8::toUTF32(utf8String);
+			b3d::String utf8String(chars);
+			b3d::U32String utf32String = b3d::UTF8::toUTF32(utf8String);
 
 			for (size_t i = 0; i < utf32String.length(); i++)
-				bs::MacOSPlatform::sendCharInputEvent(utf32String[i]);
+				b3d::MacOSPlatform::sendCharInputEvent(utf32String[i]);
 		}
 	}
 }
@@ -411,7 +411,7 @@ enum class MouseEventType
 /** Converts a point from coordinates relative to window's frame, into coordinates relative to window's content rectangle. */
 NSPoint frameToContentRect(NSWindow* window, NSPoint framePoint)
 {
-	bs::flipYWindow(window, framePoint);
+	b3d::flipYWindow(window, framePoint);
 
 	NSRect frameRect = [window frame];
 	NSRect contentRect = [window contentRectForFrameRect:frameRect];
@@ -466,7 +466,7 @@ NSPoint frameToContentRect(NSWindow* window, NSPoint framePoint)
 - (void)windowDidResize:(NSNotification*)notification
 {
 	if([[notification object] isKindOfClass:[NSWindow class]])
-		bs::MacOSPlatform::_updateClipBounds([notification object]);
+		b3d::MacOSPlatform::_updateClipBounds([notification object]);
 
 	MacOSPlatform::notifyWindowEvent(WindowEventType::Resized, mWindow.WindowId);
 }
@@ -525,8 +525,8 @@ NSPoint frameToContentRect(NSWindow* window, NSPoint framePoint)
 	NSPoint point = [sender draggingLocation];
 	point = frameToContentRect(mWindow, point);
 
-	bs::Vector2I position((int32_t)point.x, (int32_t)point.y);
-	if(bs::CocoaDragAndDrop::_notifyDragEntered(mWindow.WindowId, position))
+	b3d::Vector2I position((int32_t)point.x, (int32_t)point.y);
+	if(b3d::CocoaDragAndDrop::_notifyDragEntered(mWindow.WindowId, position))
 		return NSDragOperationLink;
 
 	return NSDragOperationNone;
@@ -537,8 +537,8 @@ NSPoint frameToContentRect(NSWindow* window, NSPoint framePoint)
 	NSPoint point = [sender draggingLocation];
 	point = frameToContentRect(mWindow, point);
 
-	bs::Vector2I position((int32_t)point.x, (int32_t)point.y);
-	if(bs::CocoaDragAndDrop::_notifyDragMoved(mWindow.WindowId, position))
+	b3d::Vector2I position((int32_t)point.x, (int32_t)point.y);
+	if(b3d::CocoaDragAndDrop::_notifyDragMoved(mWindow.WindowId, position))
 		return NSDragOperationLink;
 
 	return NSDragOperationNone;
@@ -546,7 +546,7 @@ NSPoint frameToContentRect(NSWindow* window, NSPoint framePoint)
 
 - (void)draggingExited:(nullable id <NSDraggingInfo>)sender
 {
-	bs::CocoaDragAndDrop::_notifyDragLeft(mWindow.WindowId);
+	b3d::CocoaDragAndDrop::_notifyDragLeft(mWindow.WindowId);
 }
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
@@ -556,19 +556,19 @@ NSPoint frameToContentRect(NSWindow* window, NSPoint framePoint)
 	{
 		NSArray* entries = [pasteboard propertyListForType:NSFilenamesPboardType];
 
-		bs::Vector<bs::Path> paths;
+		b3d::Vector<b3d::Path> paths;
 		for(NSString* path in entries)
 		{
 			const char* pathChars = [path UTF8String];
-			paths.push_back(bs::Path(pathChars));
+			paths.push_back(b3d::Path(pathChars));
 		}
 
 		NSPoint point = [sender draggingLocation];
 		point = frameToContentRect(mWindow, point);
 
-		bs::Vector2I position((int32_t)point.x, (int32_t)point.y);
+		b3d::Vector2I position((int32_t)point.x, (int32_t)point.y);
 
-		if(bs::CocoaDragAndDrop::_notifyDragDropped(mWindow.WindowId, position, paths))
+		if(b3d::CocoaDragAndDrop::_notifyDragDropped(mWindow.WindowId, position, paths))
 			return YES;
 	}
 
@@ -576,7 +576,7 @@ NSPoint frameToContentRect(NSWindow* window, NSPoint framePoint)
 }
 @end
 
-namespace bs
+namespace b3d
 {
 	std::atomic<UINT32> gNextWindowId(1);
 

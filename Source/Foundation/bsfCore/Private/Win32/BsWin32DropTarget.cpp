@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Private/Win32/BsWin32DropTarget.h"
 #include "Private/Win32/BsWin32Platform.h"
 #include "Platform/BsDropTarget.h"
 #include "String/BsUnicode.h"
 
-using namespace bs;
+using namespace b3d;
 
 DropTarget::DropTarget(const RenderWindow* ownerWindow, const Area2I& area)
 	: mArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)

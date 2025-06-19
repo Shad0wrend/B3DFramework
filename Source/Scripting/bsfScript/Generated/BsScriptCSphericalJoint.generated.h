@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,9 +8,9 @@
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsSphericalJoint.h"
 
-namespace bs { struct __LimitConeRangeInterop; }
-namespace bs { class CSphericalJoint; }
-namespace bs
+namespace b3d { struct __LimitConeRangeInterop; }
+namespace b3d { class CSphericalJoint; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptSphericalJoint : public TScriptGameObjectWrapper<CSphericalJoint, ScriptSphericalJoint, ScriptJointWrapperBase>
 	{

@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsPlayInEditor.h"
 #include "Utility/BsTime.h"
@@ -10,7 +10,7 @@
 #include "Animation/BsAnimationManager.h"
 #include "Scene/BsGameObjectCollection.h"
 
-using namespace bs;
+using namespace b3d;
 PlayInEditor::PlayInEditor()
 	: mState(PlayInEditorState::Stopped), mNextState(PlayInEditorState::Stopped), mFrameStepActive(false), mScheduledStateChange(false)
 {

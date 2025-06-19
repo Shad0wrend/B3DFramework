@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRendererParticles.h"
 #include "Particles/BsParticleManager.h"
@@ -12,7 +12,7 @@
 #include "Mesh/BsMeshUtility.h"
 #include "RenderAPI/BsGpuCommandBuffer.h"
 
-namespace bs {
+namespace b3d {
 namespace ct {
 
 template <bool LOCK_Y, bool GPU, bool IS_3D, ParticleForwardLightingType FWD>
@@ -479,4 +479,4 @@ void ParticleRenderer::SortByDistance(const Vector3& refPoint, const PixelData& 
 	}
 	B3DClearAllocatorFrame();
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

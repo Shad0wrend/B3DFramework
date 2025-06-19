@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsMaterialParam.h"
 #include "Material/BsMaterialParams.h"
 #include "Material/BsMaterial.h"
 #include "Image/BsColorGradient.h"
 
-using namespace bs;
+using namespace b3d;
 
 template <int DATA_TYPE, bool IsRenderProxy>
 TMaterialDataCommon<DATA_TYPE, IsRenderProxy>::TMaterialDataCommon(const String& name, const MaterialPtrType& material)

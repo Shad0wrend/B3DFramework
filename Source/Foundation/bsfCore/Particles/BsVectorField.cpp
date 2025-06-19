@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Particles/BsVectorField.h"
 #include "Private/RTTI/BsVectorFieldRTTI.h"
@@ -7,13 +7,13 @@
 #include "FileSystem/BsFileSystem.h"
 #include "FileSystem/BsDataStream.h"
 
-namespace bs
+namespace b3d
 {
 	template class TVectorField<false>;
 	template class TVectorField<true>;
 }
 
-using namespace bs;
+using namespace b3d;
 
 VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values)
 	: TVectorField(desc)
@@ -119,7 +119,7 @@ SPtr<VectorField> VectorField::CreateEmptyInternal()
 	return vectorFieldPtr;
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const SPtr<Texture>& texture)
 	: TVectorField(desc)

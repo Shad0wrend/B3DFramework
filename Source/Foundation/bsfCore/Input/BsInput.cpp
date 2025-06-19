@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Input/BsInput.h"
 #include "Input/BsMouse.h"
@@ -11,7 +11,7 @@
 
 using namespace std::placeholders;
 
-using namespace bs;
+using namespace b3d;
 
 // Note: Input polling methods for button/axis could be re-written so their query immediate state
 // instead of returning cached state from event callbacks. This /might/ result in even less input lag?
@@ -636,10 +636,10 @@ float Input::SmoothMouse(float value, u32 idx)
 	return value;
 }
 
-namespace bs
+namespace b3d
 {
 Input& GetInput()
 {
 	return Input::Instance();
 }
-} // namespace bs
+} // namespace b3d

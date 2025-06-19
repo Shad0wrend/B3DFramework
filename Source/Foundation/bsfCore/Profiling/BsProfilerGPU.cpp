@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Profiling/BsProfilerGPU.h"
 
@@ -9,7 +9,7 @@
 #include "Error/BsException.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-using namespace bs;
+using namespace b3d;
 
 const u32 ProfilerGPU::kMaxQueueElements = 5;
 
@@ -355,10 +355,10 @@ SPtr<ct::OcclusionQuery> ProfilerGPU::GetOcclusionQuery() const
 	return gpuDevice->CreateOcclusionQuery(false);
 }
 
-namespace bs
+namespace b3d
 {
 ProfilerGPU& GetProfilerGPU()
 {
 	return ProfilerGPU::Instance();
 }
-} // namespace bs
+} // namespace b3d

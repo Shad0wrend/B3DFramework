@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "BsThreadPool.h"
 #include "Debug/BsDebug.h"
 
-namespace bs
+namespace b3d
 {
 	namespace detail
 	{
@@ -79,4 +79,4 @@ namespace bs
 	{
 		return detail::RunOnNewThreadHelper<decltype(f(args...))>::Run(std::forward<F>(f), std::forward<Args>(args)...);
 	}
-}  // namespace bs
+}  // namespace b3d

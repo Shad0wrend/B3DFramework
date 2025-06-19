@@ -1,16 +1,16 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsD3D11RenderTexture.h"
 #include "BsD3D11TextureView.h"
 
-using namespace bs;
+using namespace b3d;
 
 D3D11RenderTexture::D3D11RenderTexture(const RENDER_TEXTURE_DESC& desc)
 	: RenderTexture(desc), mProperties(desc, false)
 {
 }
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 D3D11RenderTexture::D3D11RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 	: RenderTexture(desc, deviceIdx), mProperties(desc, false)
 {
@@ -72,4 +72,4 @@ void D3D11RenderTexture::GetCustomAttribute(const String& name, void* data) cons
 		*dsv = depthStencilView->GetDsv(false, true);
 	}
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

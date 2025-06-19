@@ -82,12 +82,12 @@ class OSFiber {
 
   // createFiberFromCurrentThread() returns a fiber created from the current
   // thread.
-  MARL_NO_EXPORT static inline bs::UPtr<OSFiber> createFiberFromCurrentThread();
+  MARL_NO_EXPORT static inline b3d::UPtr<OSFiber> createFiberFromCurrentThread();
 
   // createFiber() returns a new fiber with the given stack size that will
   // call func when switched to. func() must end by switching back to another
   // fiber, and must not return.
-  MARL_NO_EXPORT static inline bs::UPtr<OSFiber> createFiber(
+  MARL_NO_EXPORT static inline b3d::UPtr<OSFiber> createFiber(
       size_t stackSize,
       const std::function<void()>& func);
 
@@ -108,25 +108,25 @@ OSFiber::OSFiber() {}
 
 OSFiber::~OSFiber() {
   if (stack != nullptr) {
-    bs::B3DFreeAligned16(stack);
+    b3d::B3DFreeAligned16(stack);
   }
 }
 
-bs::UPtr<OSFiber> OSFiber::createFiberFromCurrentThread() {
-  auto out = bs::B3DMakeUnique<OSFiber>();
+b3d::UPtr<OSFiber> OSFiber::createFiberFromCurrentThread() {
+  auto out = b3d::B3DMakeUnique<OSFiber>();
   out->context = {};
   marl_main_fiber_init(&out->context);
   return out;
 }
 
-bs::UPtr<OSFiber> OSFiber::createFiber(
+b3d::UPtr<OSFiber> OSFiber::createFiber(
     size_t stackSize,
     const std::function<void()>& func) {
 
-  auto out = bs::B3DMakeUnique<OSFiber>();
+  auto out = b3d::B3DMakeUnique<OSFiber>();
   out->context = {};
   out->target = func;
-  out->stack = bs::B3DAllocateAligned16(stackSize);
+  out->stack = b3d::B3DAllocateAligned16(stackSize);
   marl_fiber_set_target(
       &out->context, out->stack, static_cast<uint32_t>(stackSize),
       reinterpret_cast<void (*)(void*)>(&OSFiber::run), out.get());

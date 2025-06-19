@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Win32/BsWin32GLSupport.h"
 #include "BsGLTexture.h"
@@ -10,10 +10,10 @@
 #include "GL/wglew.h"
 #include <algorithm>
 
-GLenum __stdcall WglewContextInit(bs::ct::GLSupport* glSupport);
+GLenum __stdcall WglewContextInit(b3d::ct::GLSupport* glSupport);
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 template <class C>
 void RemoveDuplicates(C& c)
@@ -28,7 +28,7 @@ Win32GLSupport::Win32GLSupport()
 	InitialiseWgl();
 }
 
-SPtr<bs::RenderWindow> Win32GLSupport::NewWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<bs::RenderWindow> parentWindow)
+SPtr<b3d::RenderWindow> Win32GLSupport::NewWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<b3d::RenderWindow> parentWindow)
 {
 	if(parentWindow != nullptr)
 	{
@@ -37,8 +37,8 @@ SPtr<bs::RenderWindow> Win32GLSupport::NewWindow(RENDER_WINDOW_DESC& desc, u32 w
 		desc.PlatformSpecific["parentWindowHandle"] = ToString(hWnd);
 	}
 
-	bs::Win32RenderWindow* window = new(B3DAllocate<bs::Win32RenderWindow>()) bs::Win32RenderWindow(desc, windowId, *this);
-	return SPtr<bs::RenderWindow>(window, &bs::CoreObject::DeleteInternal<bs::Win32RenderWindow, DefaultAllocatorTag>);
+	b3d::Win32RenderWindow* window = new(B3DAllocate<b3d::Win32RenderWindow>()) b3d::Win32RenderWindow(desc, windowId, *this);
+	return SPtr<b3d::RenderWindow>(window, &b3d::CoreObject::DeleteInternal<b3d::Win32RenderWindow, DefaultAllocatorTag>);
 }
 
 void Win32GLSupport::NotifyWindowCreatedInternal(Win32RenderWindow* window)
@@ -342,7 +342,7 @@ SPtr<VideoModeInfo> Win32GLSupport::GetVideoModeInfo() const
 	return B3DMakeShared<Win32VideoModeInfo>();
 }
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 String TranslateWglError()
 {
 	int winError = GetLastError();
@@ -359,4 +359,4 @@ String TranslateWglError()
 
 	return String(errDesc);
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

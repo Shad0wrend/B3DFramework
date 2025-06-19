@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Private/Linux/BsLinuxPlatform.h"
 #include "Linux/BsLinuxGLSupport.h"
@@ -7,8 +7,8 @@
 #include "Linux/BsLinuxVideoModeInfo.h"
 #include "BsGLRenderAPI.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 bool extGLX_ARB_multisample = false;
 bool extGLX_ARB_framebuffer_sRGB = false;
@@ -82,7 +82,7 @@ static GLExtension gExtensionMap[] = {
 LinuxGLSupport::LinuxGLSupport()
 {}
 
-SPtr<bs::RenderWindow> LinuxGLSupport::newWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<bs::RenderWindow> parentWindow)
+SPtr<b3d::RenderWindow> LinuxGLSupport::newWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<b3d::RenderWindow> parentWindow)
 {
 	if(parentWindow != nullptr)
 	{
@@ -91,8 +91,8 @@ SPtr<bs::RenderWindow> LinuxGLSupport::newWindow(RENDER_WINDOW_DESC& desc, u32 w
 		desc.platformSpecific["parentWindowHandle"] = toString((u64)x11window);
 	}
 
-	bs::LinuxRenderWindow* window = new(B3DAllocate<bs::LinuxRenderWindow>()) bs::LinuxRenderWindow(desc, windowId, *this);
-	return SPtr<bs::RenderWindow>(window, &bs::CoreObject::_delete<bs::LinuxRenderWindow, DefaultAllocatorTag>);
+	b3d::LinuxRenderWindow* window = new(B3DAllocate<b3d::LinuxRenderWindow>()) b3d::LinuxRenderWindow(desc, windowId, *this);
+	return SPtr<b3d::RenderWindow>(window, &b3d::CoreObject::_delete<b3d::LinuxRenderWindow, DefaultAllocatorTag>);
 }
 
 void LinuxGLSupport::start()

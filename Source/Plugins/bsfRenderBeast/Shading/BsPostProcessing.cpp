@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsPostProcessing.h"
 #include "RenderAPI/BsRenderTexture.h"
@@ -14,7 +14,7 @@
 #include "Utility/BsRendererTextures.h"
 #include "RenderAPI/BsVertexDescription.h"
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 
 void SetSamplerState(const SPtr<GpuParameters>& params, const String& name, const String& secondaryName, const SPtr<SamplerState>& samplerState, bool optional = false)
 {

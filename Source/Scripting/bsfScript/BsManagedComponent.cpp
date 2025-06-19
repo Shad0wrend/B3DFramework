@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsManagedComponent.h"
 #include "RTTI/BsManagedComponentRTTI.h"
@@ -16,7 +16,7 @@
 #include "FileSystem/BsDataStream.h"
 #include "Scene/BsGameObjectCollection.h"
 
-using namespace bs;
+using namespace b3d;
 ManagedComponent::ManagedComponent(const HSceneObject& parent, MonoReflectionType* runtimeType)
 	: Component(parent), mRuntimeType(runtimeType)
 {

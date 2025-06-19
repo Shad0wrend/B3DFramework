@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -10,10 +10,10 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIListBox.h"
 
-namespace bs { class GUIListBox; }
-namespace bs { struct __GUIListBoxContentInterop; }
-namespace bs { struct __GUIOptionInterop; }
-namespace bs
+namespace b3d { class GUIListBox; }
+namespace b3d { struct __GUIListBoxContentInterop; }
+namespace b3d { struct __GUIOptionInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIListBox : public TScriptGUIElementWrapper<GUIListBox, ScriptGUIListBox, ScriptGUIClickableWrapperBase>
 	{

@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Animation/BsAnimationUtility.h"
 #include "Math/BsVector3.h"
 #include "Math/BsQuaternion.h"
 
-using namespace bs;
+using namespace b3d;
 
 void SetStepTangent(const TKeyframe<Vector3>& lhsIn, const TKeyframe<Vector3>& rhsIn, TKeyframe<Quaternion>& lhsOut, TKeyframe<Quaternion>& rhsOut)
 {

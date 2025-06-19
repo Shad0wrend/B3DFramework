@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsSamplerOverrides.h"
 #include "BsRenderBeastOptions.h"
@@ -10,7 +10,7 @@
 #include "RenderAPI/BsSamplerState.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-namespace bs {
+namespace b3d {
 namespace ct {
 
 MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDevice& gpuDevice, const SPtr<Shader>& shader, const SPtr<MaterialParams>& params, const SPtr<GpuParamsSet>& paramsSet, const SPtr<RenderBeastOptions>& options)
@@ -273,4 +273,4 @@ SPtr<SamplerState> SamplerOverrideUtility::GenerateSamplerOverride(GpuDevice& gp
 
 	return gpuDevice.FindOrCreateSamplerState(samplerStateCreateInformation);
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

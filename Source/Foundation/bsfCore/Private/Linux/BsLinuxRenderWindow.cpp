@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "CoreThread/BsCoreThread.h"
 #include "Private/Linux/BsLinuxPlatform.h"
@@ -12,7 +12,7 @@
 #define XRANDR_ROTATION_LEFT (1 << 1)
 #define XRANDR_ROTATION_RIGHT (1 << 3)
 
-using namespace bs;
+using namespace b3d;
 
 LinuxRenderWindow::LinuxRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, parentWindow)
@@ -476,7 +476,7 @@ void LinuxRenderWindow::DoOnWindowMovedOrResized()
 	Super::DoOnWindowMovedOrResized();
 }
 
-using namespace bs::ct;
+using namespace b3d::ct;
 
 LinuxRenderWindow::LinuxRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 platformWindowHandle, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, platformWindowHandle, parentWindow)

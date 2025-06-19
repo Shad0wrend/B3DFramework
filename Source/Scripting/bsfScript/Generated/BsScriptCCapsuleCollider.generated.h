@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,8 +7,8 @@
 #include "BsScriptCCollider.generated.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
-namespace bs { class CCapsuleCollider; }
-namespace bs
+namespace b3d { class CCapsuleCollider; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptCapsuleCollider : public TScriptGameObjectWrapper<CCapsuleCollider, ScriptCapsuleCollider, ScriptColliderWrapperBase>
 	{

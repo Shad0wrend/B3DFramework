@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Image/BsSpriteTexture.h"
 #include "Private/RTTI/BsSpriteTextureRTTI.h"
@@ -8,9 +8,9 @@
 #include "CoreObject/BsCoreObjectSync.h"
 #include "Text/BsFont.h"
 
-using namespace bs;
+using namespace b3d;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteTexture, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mAtlasTexture)
@@ -112,7 +112,7 @@ RTTIType* SpriteTexture::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInformation)
 	: SpriteImage(createInformation)
@@ -123,7 +123,7 @@ SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInforma
 
 void SpriteTexture::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::SpriteTexture::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteTexture::SyncPacket>();
 	if(!syncPacket)
 		return;
 

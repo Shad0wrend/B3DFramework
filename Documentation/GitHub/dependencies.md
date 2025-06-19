@@ -1,11 +1,11 @@
 # Compiling dependencies manually
 
-Below you will find a list of dependencies that bs::framework relies on, as well as links to their source code and/or binaries. If a dependency isn't provided in binary form you will have to manually compile it (this is the case for the large majority or them). Make sure to compile the exact version of the dependency listed below. Newer versions *might* work, but haven't been tested. 
+Below you will find a list of dependencies that B3D Framework relies on, as well as links to their source code and/or binaries. If a dependency isn't provided in binary form you will have to manually compile it (this is the case for the large majority or them). Make sure to compile the exact version of the dependency listed below. Newer versions *might* work, but haven't been tested. 
 
-Once you have the dependency development files (headers and binaries) you will need to make sure they placed in the appropriate folders so bs::framework can find them during the build process. 
+Once you have the dependency development files (headers and binaries) you will need to make sure they placed in the appropriate folders so B3D Framework can find them during the build process. 
 
 The dependencies are searched for in these locations:
-- The `/Dependency` folder within bs::f's source. See below for the exact breakdown of how this folder is supposed to look. Usually you want to put all your dependencies here.
+- The `/Dependency` folder within b3d::f's source. See below for the exact breakdown of how this folder is supposed to look. Usually you want to put all your dependencies here.
 - If dependency cannot be found in the `/Dependency` folder, its default install path is searched for instead. For example `usr/local` on Linux/macOS or default install path if the dependency comes with an installer. 
 
 Note that on Windows most dependencies do not have default install paths and should therefore be placed in the `/Dependency` folder. In order to avoid problems with dependency versions this should be the preferred behaviour on Linux/macOS as well. 
@@ -25,7 +25,7 @@ Note that on Windows most dependencies do not have default install paths and sho
   - Place in (bsfSource)/Dependencies/tools/(DepName)  
   
 Legend:
-- (bsfSource) - root directory of bs::framework
+- (bsfSource) - root directory of B3D Framework
 - (DepName) - name of the dependency (title of each dependency shown below)
 - (Platform) - x86 for 32-bit builds, x64 for 64-bit builds
 - (Configuration) - Debug, RelWithDebInfo, MinSizeRel, or Release  
@@ -97,7 +97,7 @@ Additionally, if the dependency structure still isn't clear, download one of the
 - https://xiph.org/downloads/
 - Required by bsfOpenAudio and bsfFMOD
 - Compile as a static library
-  - Switch runtime library to dynamic to avoid linker warnings when adding it to bs::f
+  - Switch runtime library to dynamic to avoid linker warnings when adding it to b3d::f
   - This is also required when compiling libvorbis and libflac (below). See readme files included with those libraries.
   
 **libvorbis**

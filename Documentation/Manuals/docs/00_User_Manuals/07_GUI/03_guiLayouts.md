@@ -5,17 +5,17 @@ title: GUI layouts
 In previous chapter we talked about how **GUIPanel** is a special type of a GUI element called a "layout". Layouts serve as containers for GUI elements (including other layouts), and they may also control how are elements within them positioned and sized.
 
 There are three types of layouts:
- - @bs::GUIPanel - Does no automatic positioning and sizing of child GUI elements, instead user can set positions and sizes manually, as we have already seen. Each panel can be placed at a different depth, allowing GUI elements to overlay each other.
- - @bs::GUILayoutX - Automatically positions and sizes child GUI elements horizontally one next to each other, left to right. User is able to request minimum/maximum allowed size, but is unable to manually position elements in the layout.
- - @bs::GUILayoutY - Same as **GUILayoutX** only elements are positioned vertically, top to bottom.
+ - @b3d::GUIPanel - Does no automatic positioning and sizing of child GUI elements, instead user can set positions and sizes manually, as we have already seen. Each panel can be placed at a different depth, allowing GUI elements to overlay each other.
+ - @b3d::GUILayoutX - Automatically positions and sizes child GUI elements horizontally one next to each other, left to right. User is able to request minimum/maximum allowed size, but is unable to manually position elements in the layout.
+ - @b3d::GUILayoutY - Same as **GUILayoutX** only elements are positioned vertically, top to bottom.
 
 You will find that vertical and horizontal layouts come in handy when you need to design GUI that needs to scale across various screen sizes/resolutions. By adding your GUI elements to such layouts instead of manually positioning them, ensures the GUI system can always keep them at optimal position and size, regardless of the available screen area.
 
 # Adding/removing elements
 In the previous chapter we have already seen how to add a GUI element to a layout (a panel, more specifically). Here is the entire interface for dealing with element addition/removal, shared by all layout types:
- - @bs::GUILayout::addNewElement<T> - Creates a new element of type *T* and adds it to the end of the layout's element list.
- - @bs::GUILayout::insertNewElement<T> - Creates a new element of type *T* and inserts it at a specific position in the layout's element list.
- - @bs::GUILayout::removeElement - Removes a GUI element from the layout's element list.
+ - @b3d::GUILayout::addNewElement<T> - Creates a new element of type *T* and adds it to the end of the layout's element list.
+ - @b3d::GUILayout::insertNewElement<T> - Creates a new element of type *T* and inserts it at a specific position in the layout's element list.
+ - @b3d::GUILayout::removeElement - Removes a GUI element from the layout's element list.
 
 Here's an example of retrieving the GUI widget's primary panel and adding some elements to it: 
  
@@ -32,8 +32,8 @@ layout->addNewElement<GUIButton>(HString("Click me"));
 ~~~~~~~~~~~~~ 
 
 GUI elements can also be created separately and then added to layouts later using these methods:
- - @bs::GUILayout::addElement - Adds an existing GUI element at the end of the layout's element list.
- - @bs::GUILayout::insertElement - Inserts an existing GUI elements at a specific position in the layout's element list.
+ - @b3d::GUILayout::addElement - Adds an existing GUI element at the end of the layout's element list.
+ - @b3d::GUILayout::insertElement - Inserts an existing GUI elements at a specific position in the layout's element list.
 
 Same result as above, only written differently:
  
@@ -93,12 +93,12 @@ for(int i = 0; i < 5; i++)
 ![Vertical layout](../../Images/layoutVertical.png) 
 
 # Customizing automatic layouts
-Even though vertical & horizontal layouts are automatic, bs::f provides a variety of mechanisms that allow you to customize the position and size of GUI elements in such layouts.
+Even though vertical & horizontal layouts are automatic, b3d::f provides a variety of mechanisms that allow you to customize the position and size of GUI elements in such layouts.
 
 ## Flexible size
 Each GUI element can have a flexible size that determines its minimum & maximum allowed width/height. This is in contrast to the fixed size we were setting in the previous examples.
 
-When a flexible size is set a GUI layout is allowed to resize the element to best fit the layout area, within the provided size range. Flexible size can be set by calling @bs::GUIElement::setFlexibleWidth and @bs::GUIElement::setFlexibleHeight.
+When a flexible size is set a GUI layout is allowed to resize the element to best fit the layout area, within the provided size range. Flexible size can be set by calling @b3d::GUIElement::setFlexibleWidth and @b3d::GUIElement::setFlexibleHeight.
 
 ~~~~~~~~~~~~~{.cpp}
 // Add five GUI buttons laid out horizontally, with flexible sizes
@@ -127,7 +127,7 @@ When a GUI element is a part of a vertical or a horizontal layout, you can no lo
 
 You can however control positioning by some extent by inserting spaces between layout elements. There are two types of spaces: fixed and flexible.
 
-@bs::GUIFixedSpace - Inserts a space of X pixels at the position in the layout it is added to. As a parameter it takes the number of pixels it will take up. Essentially it acts like an invisible GUI element of a certain width or height.
+@b3d::GUIFixedSpace - Inserts a space of X pixels at the position in the layout it is added to. As a parameter it takes the number of pixels it will take up. Essentially it acts like an invisible GUI element of a certain width or height.
 
 ~~~~~~~~~~~~~{.cpp}
 // Add five GUI buttons laid out horizontally, with 10 pixels spacing between them
@@ -147,7 +147,7 @@ for(int i = 0; i < 5; i++)
 
 ![Layout with fixed spacing](../../Images/layoutFixedSpace.png) 
 
-@bs::GUIFlexibleSpace inserts a space that will resize itself to fill all available area in the layout. If normal GUI elements already fill the layout area then the flexible space will be of size 0. If there are multiple flexible spaces in a layout, the available size will be spread out equally between them.
+@b3d::GUIFlexibleSpace inserts a space that will resize itself to fill all available area in the layout. If normal GUI elements already fill the layout area then the flexible space will be of size 0. If there are multiple flexible spaces in a layout, the available size will be spread out equally between them.
 
 Flexible spaces can be used for centering and justifying GUI elements.
 

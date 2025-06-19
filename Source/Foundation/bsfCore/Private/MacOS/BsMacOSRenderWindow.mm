@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #define BS_COCOA_INTERNALS
 
@@ -12,7 +12,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-using namespace bs;
+using namespace b3d;
 MacOSRenderWindow::MacOSRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow)
 		:RenderWindow(createInformation, windowId, parentWindow)
 { }
@@ -345,7 +345,7 @@ void MacOSRenderWindow::DoOnWindowMovedOrResized()
 	Super::DoOnWindowMovedOrResized();
 }
 
-using namespace bs::ct;
+using namespace b3d::ct;
 
 MacOSRenderWindow::MacOSRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 platformWindowHandle, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, platformWindowHandle, parentWindow)

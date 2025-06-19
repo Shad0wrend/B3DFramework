@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,9 +7,9 @@
 #include "../../../Foundation/bsfCore/Particles/BsVectorField.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
-namespace bs { class VectorField; }
-namespace bs { struct __VECTOR_FIELD_DESCInterop; }
-namespace bs
+namespace b3d { class VectorField; }
+namespace b3d { struct __VECTOR_FIELD_DESCInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorField : public TScriptResourceWrapper<VectorField, ScriptVectorField>
 	{

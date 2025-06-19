@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "Math/BsMath.h"
 #include "Math/BsVector3.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Math
 	 *  @{
@@ -418,18 +418,18 @@ namespace bs
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(QuaternionD)) TQuaternion<double>;
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond SPECIALIZATIONS */
 namespace std
 {
 	template <>
-	class numeric_limits<bs::TQuaternion<float>>
+	class numeric_limits<b3d::TQuaternion<float>>
 	{
 	public:
-		constexpr static bs::TQuaternion<float> infinity() // NOLINT
+		constexpr static b3d::TQuaternion<float> infinity() // NOLINT
 		{
-			return bs::TQuaternion<float>(
+			return b3d::TQuaternion<float>(
 				std::numeric_limits<float>::infinity(),
 				std::numeric_limits<float>::infinity(),
 				std::numeric_limits<float>::infinity(),
@@ -438,12 +438,12 @@ namespace std
 	};
 
 	template <>
-	class numeric_limits<bs::TQuaternion<double>>
+	class numeric_limits<b3d::TQuaternion<double>>
 	{
 	public:
-		constexpr static bs::TQuaternion<double> infinity() // NOLINT
+		constexpr static b3d::TQuaternion<double> infinity() // NOLINT
 		{
-			return bs::TQuaternion<double>(
+			return b3d::TQuaternion<double>(
 				std::numeric_limits<double>::infinity(),
 				std::numeric_limits<double>::infinity(),
 				std::numeric_limits<double>::infinity(),

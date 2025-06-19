@@ -1,5 +1,5 @@
 
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "Math/BsMath.h"
 #include "Utility/BsBitwise.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Implementation
 	 *  @{
@@ -474,7 +474,7 @@ namespace bs
 		u64 mNumBits = 0;
 	};
 
-} // namespace bs
+} // namespace b3d
 
 /** @cond SPECIALIZATIONS */
 /** @addtogroup Implementation
@@ -484,14 +484,14 @@ namespace bs
 namespace std
 {
 	template <>
-	inline void swap(bs::BitReference& lhs, bs::BitReference& rhs)
+	inline void swap(b3d::BitReference& lhs, b3d::BitReference& rhs)
 	{
 		const bool temp = lhs;
 		lhs = rhs;
 		rhs = temp;
 	}
 
-	inline void Swap(bs::BitReference&& lhs, bs::BitReference&& rhs)
+	inline void Swap(b3d::BitReference&& lhs, b3d::BitReference&& rhs)
 	{
 		const bool temp = lhs;
 		lhs = rhs;

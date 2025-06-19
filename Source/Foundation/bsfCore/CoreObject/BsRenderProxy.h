@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "BsRenderThread.h"
 #include "Threading/BsAsyncOp.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -86,8 +86,8 @@ namespace bs
 
 		protected:
 			friend class CoreObjectManager;
-			friend class bs::CoreObjectManager;
-			friend class bs::CoreObject;
+			friend class b3d::CoreObjectManager;
+			friend class b3d::CoreObject;
 
 			/**
 			 * Update internal data from provided memory buffer that was populated with data from the owning CoreObject.
@@ -114,4 +114,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

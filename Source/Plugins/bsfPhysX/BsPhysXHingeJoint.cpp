@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsPhysXHingeJoint.h"
 #include "BsFPhysXJoint.h"
@@ -7,7 +7,7 @@
 
 using namespace physx;
 
-using namespace bs;
+using namespace b3d;
 
 PxRevoluteJointFlag::Enum ToPxFlag(HingeJointFlag flag)
 {

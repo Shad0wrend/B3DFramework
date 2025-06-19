@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsVulkanPrerequisites.h"
 #include "BsVulkanDescriptorLayout.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -38,7 +38,7 @@ namespace bs
 			VulkanDescriptorLayout** Layouts;
 		};
 	} // namespace ct
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 /** @addtogroup Vulkan
@@ -49,22 +49,22 @@ namespace std
 {
 	/**	Hash value generator for VulkanLayoutKey. */
 	template <>
-	struct hash<bs::ct::VulkanLayoutKey>
+	struct hash<b3d::ct::VulkanLayoutKey>
 	{
-		size_t operator()(const bs::ct::VulkanLayoutKey& value) const
+		size_t operator()(const b3d::ct::VulkanLayoutKey& value) const
 		{
 			if(value.Layout != nullptr)
 				return value.Layout->GetHash();
 
-			return bs::ct::VulkanDescriptorLayout::CalculateHash(value.Bindings, value.NumBindings);
+			return b3d::ct::VulkanDescriptorLayout::CalculateHash(value.Bindings, value.NumBindings);
 		}
 	};
 
 	/**	Hash value generator for VulkanPipelineLayoutKey. */
 	template <>
-	struct hash<bs::ct::VulkanPipelineLayoutKey>
+	struct hash<b3d::ct::VulkanPipelineLayoutKey>
 	{
-		size_t operator()(const bs::ct::VulkanPipelineLayoutKey& value) const
+		size_t operator()(const b3d::ct::VulkanPipelineLayoutKey& value) const
 		{
 			return value.CalculateHash();
 		}
@@ -74,7 +74,7 @@ namespace std
 /** @} */
 /** @endcond */
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -108,4 +108,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

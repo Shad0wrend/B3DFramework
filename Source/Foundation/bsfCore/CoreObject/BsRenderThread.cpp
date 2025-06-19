@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "CoreObject/BsRenderThread.h"
 #include "Threading/BsThreadPool.h"
@@ -6,7 +6,7 @@
 
 using namespace std::placeholders;
 
-using namespace bs;
+using namespace b3d;
 
 #if B3D_SWAP_RENDER_AND_MAIN_THREAD
 bool RenderThread::sAppStarted = false;
@@ -86,7 +86,7 @@ void RenderThread::PostCommand(std::function<void()>&& commandCallback, const ch
 	mCommandQueue.PostCommand(std::move(commandCallback), debugName, waitUntilComplete, extraDebugInformation);
 }
 
-namespace bs
+namespace b3d
 {
 RenderThread& GetRenderThread()
 {
@@ -104,4 +104,4 @@ void AssertIfRenderThread()
 	if(B3D_CURRENT_THREAD_ID == RenderThread::Instance().GetThreadId())
 		B3D_EXCEPT(InternalErrorException, "This method cannot be accessed from the render thread.");
 }
-} // namespace bs
+} // namespace b3d

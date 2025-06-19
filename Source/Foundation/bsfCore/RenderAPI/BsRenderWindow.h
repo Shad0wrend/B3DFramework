@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "RenderAPI/BsRenderTarget.h"
 #include "RenderAPI/BsVideoModeInfo.h"
 
-namespace bs
+namespace b3d
 {
 	class RenderWindowManager;
 
@@ -301,7 +301,7 @@ namespace bs
 
 		class IRenderWindowSurface;
 
-		/** Render thread counterpart of bs::RenderWindow. */
+		/** Render thread counterpart of b3d::RenderWindow. */
 		class B3D_CORE_EXPORT RenderWindow : public RenderTarget
 		{
 			using Super = RenderTarget;
@@ -334,9 +334,9 @@ namespace bs
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 		protected:
-			friend class bs::RenderWindow;
+			friend class b3d::RenderWindow;
 			friend class RenderWindowManager;
-			friend class bs::RenderWindowManager;
+			friend class b3d::RenderWindowManager;
 
 			RenderWindowCreateInformation mCreateInformation;
 			RenderWindowProperties mRenderWindowProperties;
@@ -380,4 +380,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

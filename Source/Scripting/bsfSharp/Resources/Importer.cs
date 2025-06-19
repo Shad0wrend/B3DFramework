@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 #if !IS_B3D
-namespace bs
+namespace b3d
 {
     partial class Importer
     {

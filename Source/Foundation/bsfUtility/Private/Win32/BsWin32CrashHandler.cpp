@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsUtilityPrerequisites.h"
 #include "Debug/BsDebug.h"
@@ -15,7 +15,7 @@
 
 static const char* sMiniDumpName = "minidump.dmp";
 
-using namespace bs;
+using namespace b3d;
 
 CrashHandler::CrashHandler(const CrashHandlerSettings& settings)
 	: mSettings(settings)
@@ -452,7 +452,7 @@ void Win32PopupErrorMessageBox(const WString& msg, const Path& folder)
 #if B3D_IS_ENGINE
 	MessageBoxW(nullptr, simpleErrorMessage.c_str(), L"Banshee fatal error!", MB_OK);
 #else
-	MessageBoxW(nullptr, simpleErrorMessage.c_str(), L"bs::framework fatal error!", MB_OK);
+	MessageBoxW(nullptr, simpleErrorMessage.c_str(), L"B3D Framework fatal error!", MB_OK);
 #endif
 }
 

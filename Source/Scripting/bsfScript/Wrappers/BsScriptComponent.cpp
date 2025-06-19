@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Wrappers/BsScriptComponent.h"
 #include "Serialization/BsScriptAssemblyManager.h"
@@ -10,7 +10,7 @@
 #include "Scene/BsSceneObject.h"
 #include "BsMonoUtil.h"
 
-using namespace bs;
+using namespace b3d;
 
 ScriptComponent::ScriptComponent(const HComponent& nativeObject)
 	: TScriptGameObjectWrapper(nativeObject)

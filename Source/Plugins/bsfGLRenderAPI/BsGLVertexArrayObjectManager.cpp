@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsGLVertexArrayObjectManager.h"
 #include "BsGLVertexBuffer.h"
@@ -9,8 +9,8 @@
 
 #define VBO_BUFFER_OFFSET(i) ((char*)NULL + (i))
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 GLVertexArrayObject::GLVertexArrayObject(GLuint handle, u64 vertexProgramId, GLVertexBuffer** attachedBuffers, u32 numBuffers)
 	: mHandle(handle), mVertProgId(vertexProgramId), mAttachedBuffers(attachedBuffers), mNumBuffers(numBuffers)

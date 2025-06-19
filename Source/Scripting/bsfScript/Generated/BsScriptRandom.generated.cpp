@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptRandom.generated.h"
 #include "BsMonoMethod.h"
@@ -8,7 +8,7 @@
 #include "BsScriptTVector3.generated.h"
 #include "BsScriptTVector2.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptRandom::ScriptRandom(const SPtr<Random>& nativeObject)
 		:TScriptNonReflectableWrapper(nativeObject)

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsGpuBuffer.h"
 #include "BsCoreApplication.h"
@@ -6,7 +6,7 @@
 #include "BsGpuDeviceCapabilities.h"
 #include "CoreObject/BsCoreObjectSync.h"
 
-using namespace bs;
+using namespace b3d;
 
 static u32 CalculateUnalignedGpuBufferSize(const GpuBufferInformation& information)
 {
@@ -114,7 +114,7 @@ SPtr<ct::RenderProxy> GpuBuffer::CreateRenderProxy() const
 	return gpuDevice->CreateGpuBuffer(createInformation, true);
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(GpuBuffer, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(u32, BufferSize)
@@ -238,7 +238,7 @@ u32 GpuBuffer::CalculateTotalBufferSize(const GpuBufferInformation& information,
 	return stride * Math::Max(1u, information.SuballocationCount);
 }
 
-namespace bs::ct
+namespace b3d::ct
 {
 	GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& createInformation, u32 suballocationSize)
 		: mInformation(createInformation), mSuballocationSize(suballocationSize), mTotalSize(createInformation.SuballocationCount * mSuballocationSize)
@@ -323,7 +323,7 @@ namespace bs::ct
 
 	void GpuBuffer::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 	{
-		auto* const syncPacket = data.GetSyncPacket<bs::GpuBuffer::SyncPacket>();
+		auto* const syncPacket = data.GetSyncPacket<b3d::GpuBuffer::SyncPacket>();
 		if(!syncPacket)
 			return;
 

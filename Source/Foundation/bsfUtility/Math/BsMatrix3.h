@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 #include "Math/BsVector3.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Math
 	 *  @{
@@ -286,7 +286,7 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -294,11 +294,11 @@ namespace std
 {
 /** Hash value generator for Matrix3. */
 template<>
-struct hash<bs::Matrix3>
+struct hash<b3d::Matrix3>
 {
-	size_t operator()(const bs::Matrix3& value) const
+	size_t operator()(const b3d::Matrix3& value) const
 	{
-		using namespace bs;
+		using namespace b3d;
 
 		size_t hash = 0;
 

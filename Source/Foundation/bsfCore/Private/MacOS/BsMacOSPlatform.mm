@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #define BS_COCOA_INTERNALS 1
 #include "Private/MacOS/BsMacOSPlatform.h"
@@ -22,7 +22,7 @@
 @implementation BSApplication
 -(void)terminate:(nullable id)sender
 {
-	bs::gCoreApplication().quitRequested();
+	b3d::gCoreApplication().quitRequested();
 }
 
 -(void)sendEvent:(NSEvent *)event
@@ -32,13 +32,13 @@
 	{
 		if([event keyCode] == 53) // Escape key
 		{
-			bs::InputCommandType ic = bs::InputCommandType::Escape;
-			bs::MacOSPlatform::sendInputCommandEvent(ic);
+			b3d::InputCommandType ic = b3d::InputCommandType::Escape;
+			b3d::MacOSPlatform::sendInputCommandEvent(ic);
 		}
 		else if([event keyCode] == 48) // Tab key
 		{
-			bs::InputCommandType ic = bs::InputCommandType::Tab;
-			bs::MacOSPlatform::sendInputCommandEvent(ic);
+			b3d::InputCommandType ic = b3d::InputCommandType::Tab;
+			b3d::MacOSPlatform::sendInputCommandEvent(ic);
 		}
 	}
 
@@ -60,7 +60,7 @@
 @class BSCursor;
 @class BSFPlatform;
 
-namespace bs
+namespace b3d
 {
 	/** Contains information about a modal window session. */
 	struct ModalWindowInfo
@@ -101,10 +101,10 @@ namespace bs
 @interface BSCursor : NSObject
 @property NSCursor* currentCursor;
 
--(BSCursor*) initWithPlatformData:(bs::Platform::Pimpl*)platformData;
--(bs::Vector2I) getPosition;
--(void) setPosition:(const bs::Vector2I&) position;
--(BOOL) clipCursor:(bs::Vector2I&) position;
+-(BSCursor*) initWithPlatformData:(b3d::Platform::Pimpl*)platformData;
+-(b3d::Vector2I) getPosition;
+-(void) setPosition:(const b3d::Vector2I&) position;
+-(BOOL) clipCursor:(b3d::Vector2I&) position;
 -(void) updateClipBounds:(NSWindow*) window;
 -(void) clipCursorToWindow:(NSValue*) windowValue;
 -(void) clipCursorToRect:(NSValue*) rectValue;
@@ -115,14 +115,14 @@ namespace bs
 
 @implementation BSCursor
 {
-	bs::Platform::Pimpl* platformData;
+	b3d::Platform::Pimpl* platformData;
 
 	bool cursorClipEnabled;
-	bs::Rect2I cursorClipRect;
+	b3d::Rect2I cursorClipRect;
 	NSWindow* cursorClipWindow;
 }
 
-- (BSCursor*)initWithPlatformData:(bs::Platform::Pimpl*)data
+- (BSCursor*)initWithPlatformData:(b3d::Platform::Pimpl*)data
 {
 	self = [super init];
 
@@ -130,7 +130,7 @@ namespace bs
 	return self;
 }
 
-- (bs::Vector2I)getPosition
+- (b3d::Vector2I)getPosition
 {
 	NSPoint point = [NSEvent mouseLocation];
 
@@ -138,26 +138,26 @@ namespace bs
 	{
 		NSRect frame = [screen frame];
 		if (NSMouseInRect(point, frame, NO))
-			bs::flipY(screen, point);
+			b3d::flipY(screen, point);
 	}
 
-	bs::Vector2I output;
+	b3d::Vector2I output;
 	output.x = (int32_t)point.x;
 	output.y = (int32_t)point.y;
 
 	return output;
 }
 
-- (void)setPosition:(const bs::Vector2I&)position
+- (void)setPosition:(const b3d::Vector2I&)position
 {
 	NSPoint point = NSMakePoint(position.x, position.y);
 	CGWarpMouseCursorPosition(point);
 
-	bs::Lock lock(platformData->cursorMutex);
+	b3d::Lock lock(platformData->cursorMutex);
 	platformData->cursorPos = position;
 }
 
-- (BOOL)clipCursor:(bs::Vector2I&)position
+- (BOOL)clipCursor:(b3d::Vector2I&)position
 {
 	if(!cursorClipEnabled)
 		return false;
@@ -195,7 +195,7 @@ namespace bs
 		return;
 
 	NSRect rect = [window contentRectForFrameRect:[window frame]];
-	bs::flipY([window screen], rect);
+	b3d::flipY([window screen], rect);
 
 	cursorClipRect.x = (int32_t)rect.origin.x;
 	cursorClipRect.y = (int32_t)rect.origin.y;
@@ -205,7 +205,7 @@ namespace bs
 
 - (void)clipCursorToWindow:(NSValue*)windowValue
 {
-	bs::CocoaWindow* window;
+	b3d::CocoaWindow* window;
 	[windowValue getValue:&window];
 
 	cursorClipEnabled = true;
@@ -213,7 +213,7 @@ namespace bs
 
 	[self updateClipBounds:cursorClipWindow];
 
-	bs::Vector2I pos = [self getPosition];
+	b3d::Vector2I pos = [self getPosition];
 
 	if([self clipCursor:pos])
 		[self setPosition:pos];
@@ -221,14 +221,14 @@ namespace bs
 
 - (void)clipCursorToRect:(NSValue*)rectValue
 {
-	bs::Rect2I rect;
+	b3d::Rect2I rect;
 	[rectValue getValue:&rect];
 
 	cursorClipEnabled = true;
 	cursorClipRect = rect;
 	cursorClipWindow = nullptr;
 
-	bs::Vector2I pos = [self getPosition];
+	b3d::Vector2I pos = [self getPosition];
 
 	if([self clipCursor:pos])
 		[self setPosition:pos];
@@ -267,7 +267,7 @@ namespace bs
 
 /** Contains platform specific functionality that is meant to be delayed executed from the sim thread, through Platform. */
 @interface BSFPlatform : NSObject
--(BSFPlatform*) initWithPlatformData:(bs::Platform::Pimpl*)platformData;
+-(BSFPlatform*) initWithPlatformData:(b3d::Platform::Pimpl*)platformData;
 -(void) setCaptionNonClientAreas:(NSArray*) params;
 -(void) resetNonClientAreas:(NSValue*) windowIdValue;
 -(void) openFolder:(NSURL*) url;
@@ -278,10 +278,10 @@ namespace bs
 
 @implementation BSFPlatform
 {
-	bs::Platform::Pimpl* mPlatformData;
+	b3d::Platform::Pimpl* mPlatformData;
 }
 
-- (BSFPlatform*)initWithPlatformData:(bs::Platform::Pimpl*)platformData
+- (BSFPlatform*)initWithPlatformData:(b3d::Platform::Pimpl*)platformData
 {
 	self = [super init];
 
@@ -293,23 +293,23 @@ namespace bs
 {
 	NSValue* windowIdValue = params[0];
 
-	bs::UINT32 windowId;
+	b3d::UINT32 windowId;
 	[windowIdValue getValue:&windowId];
 
 	auto iterFind = mPlatformData->allWindows.find(windowId);
 	if(iterFind == mPlatformData->allWindows.end())
 		return;
 
-	bs::CocoaWindow* window = iterFind->second;
+	b3d::CocoaWindow* window = iterFind->second;
 
 	NSUInteger numEntries = [params count] - 1;
 
-	bs::Vector<bs::Rect2I> areas;
+	b3d::Vector<b3d::Rect2I> areas;
 	for(NSUInteger i = 0; i < numEntries; i++)
 	{
 		NSValue* value = params[i + 1];
 
-		bs::Rect2I area;
+		b3d::Rect2I area;
 		[value getValue:&area];
 
 		areas.push_back(area);
@@ -320,14 +320,14 @@ namespace bs
 
 - (void)resetNonClientAreas:(NSValue*) windowIdValue
 {
-	bs::UINT32 windowId;
+	b3d::UINT32 windowId;
 	[windowIdValue getValue:&windowId];
 
 	auto iterFind = mPlatformData->allWindows.find(windowId);
 	if(iterFind == mPlatformData->allWindows.end())
 		return;
 
-	bs::CocoaWindow* window = iterFind->second;
+	b3d::CocoaWindow* window = iterFind->second;
 	window->_setDragZones({});
 }
 
@@ -364,9 +364,9 @@ namespace bs
 
 @end
 
-namespace bs
+namespace b3d
 {
-	// Maps macOS keycodes to bs button codes
+	// Maps macOS keycodes to b3d button codes
 	static constexpr ButtonCode KeyCodeMapping[] =
 	{
 		/*   0 */   BC_A,
@@ -761,7 +761,7 @@ namespace bs
 
 		[params addObject:windowIdValue];
 		for(auto& entry : nonClientAreas)
-			[params addObject:[NSValue value:&entry withObjCType:@encode(bs::Rect2I)]];
+			[params addObject:[NSValue value:&entry withObjCType:@encode(b3d::Rect2I)]];
 
 		[mData->platformManager
 			performSelectorOnMainThread:@selector(setCaptionNonClientAreas:)
@@ -986,7 +986,7 @@ namespace bs
 		// Shut down app when the main window is closed
 		if(mData->mainWindow == window)
 		{
-			bs::gCoreApplication().quitRequested();
+			b3d::gCoreApplication().quitRequested();
 			mData->mainWindow = nullptr;
 		}
 	}
@@ -1090,7 +1090,7 @@ namespace bs
 		onMouseWheelScrolled(delta);
 	}
 
-	void MacOSPlatform::notifyWindowEvent(bs::WindowEventType type, bs::UINT32 windowId)
+	void MacOSPlatform::notifyWindowEvent(b3d::WindowEventType type, b3d::UINT32 windowId)
 	{
 		CocoaWindow* window = nullptr;
 		{

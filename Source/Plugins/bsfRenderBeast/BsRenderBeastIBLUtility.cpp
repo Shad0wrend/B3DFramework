@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRenderBeastIBLUtility.h"
 #include "Image/BsTexture.h"
@@ -8,7 +8,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsRenderTexture.h"
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 
 ReflectionCubeDownsampleParamDef gReflectionCubeDownsampleParamDef;
 
@@ -633,4 +633,4 @@ void RenderBeastIBLUtility::FilterCubemapForIrradianceNonCompute(GpuCommandBuffe
 		shAccumCube->Execute(commandBuffer, downsampleInput->Texture, 0, outputOffset, coeff, output);
 	}
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

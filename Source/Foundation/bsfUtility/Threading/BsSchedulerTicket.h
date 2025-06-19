@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "BsSignal.h"
 #include "Allocators/BsPoolAlloc.h"
 
-namespace bs
+namespace b3d
 {
 	struct SchedulerTicketQueueData;
 	struct SchedulerTicketData;
@@ -109,4 +109,4 @@ namespace bs
 	};
 
 	B3D_IMPLEMENT_GLOBAL_POOL(SchedulerTicketData, 512)
-}  // namespace bs
+}  // namespace b3d

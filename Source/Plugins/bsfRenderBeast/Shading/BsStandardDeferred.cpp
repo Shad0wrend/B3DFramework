@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsStandardDeferred.h"
 #include "Material/BsGpuParamsSet.h"
@@ -9,7 +9,7 @@
 #include "BsRenderBeastScene.h"
 #include "BsRendererView.h"
 
-namespace bs {
+namespace b3d {
 namespace ct {
 
 PerLightParamDef gPerLightParamDef;
@@ -370,4 +370,4 @@ void StandardDeferred::RenderReflProbe(GpuCommandBuffer& commandBuffer, const Re
 		GetRendererUtility().Draw(commandBuffer, stencilMesh);
 	}
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIDropDownMenu.h"
 
@@ -24,7 +24,7 @@
 
 using namespace std::placeholders;
 
-using namespace bs;
+using namespace b3d;
 
 const GUILogicalUnit GUIDropDownMenu::kDropDownBoxWidth = 250;
 
@@ -349,7 +349,7 @@ void GUIDropDownMenu::DropDownSubMenu::UpdateGuiElements()
 			ScrollUpBtn->SetOptionFlags(scrollUpBtnOptions);
 
 			ScrollDownBtn = GUIButton::Create(GUIContent(StockIcons::Instance().GetIcon(StockIcon::FontAwesomeCaretDown)), kScrollbarButtonStyleClass);
-			ScrollDownBtn->OnClick.Connect(std::bind(&::bs::GUIDropDownMenu::DropDownSubMenu::ScrollDown, this));
+			ScrollDownBtn->OnClick.Connect(std::bind(&::b3d::GUIDropDownMenu::DropDownSubMenu::ScrollDown, this));
 
 			GUIElementOptions scrollDownBtnOptions = ScrollDownBtn->GetOptionFlags();
 			scrollDownBtnOptions.Unset(GUIElementOption::AcceptsKeyFocus);

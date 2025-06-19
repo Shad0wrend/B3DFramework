@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsRenderable.h"
 
@@ -18,7 +18,7 @@
 #include "RenderAPI/BsGpuBuffer.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-using namespace bs;
+using namespace b3d;
 
 template <class T>
 bool IsMeshValid(const T& mesh)
@@ -322,7 +322,7 @@ void Renderable::MarkResourcesDirtyInternal()
 	MarkListenerResourcesDirty();
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Renderable, FullSyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mLayer)
@@ -443,7 +443,7 @@ RTTIType* Renderable::GetRtti() const
 	return Renderable::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 Renderable::Renderable()
 	: mRendererId(0), mAnimationId((u64)-1), mMorphShapeVersion(0)

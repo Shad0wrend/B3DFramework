@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptCD6Joint.generated.h"
 #include "BsMonoMethod.h"
@@ -12,7 +12,7 @@
 #include "BsScriptTVector3.generated.h"
 #include "BsScriptTQuaternion.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptD6Joint::ScriptD6Joint(const GameObjectHandle<CD6Joint>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)

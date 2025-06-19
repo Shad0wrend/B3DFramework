@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Scene/BsSceneManager.h"
 
@@ -17,7 +17,7 @@
 #include "Scene/BsPrefab.h"
 #include "Physics/BsPhysics.h"
 
-using namespace bs;
+using namespace b3d;
 
 enum ListType
 {
@@ -659,10 +659,10 @@ void SceneManager::OnMainRenderTargetResized()
 		entry->SetAspectRatio(aspect);
 }
 
-namespace bs
+namespace b3d
 {
 SceneManager& GetSceneManager()
 {
 	return SceneManager::Instance();
 }
-} // namespace bs
+} // namespace b3d

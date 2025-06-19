@@ -22,7 +22,7 @@
 #include <windows.h>
 #endif
 
-using namespace bs;
+using namespace b3d;
 
 static constexpr const char* kTimestampName = u8"Timestamp.asset";
 static constexpr const char* kManifestName = u8"ResourceManifest.asset";
@@ -37,7 +37,7 @@ void ProcessAssets(bool, bool, time_t);
 
 int main(int argc, char* argv[])
 {
-	using namespace bs;
+	using namespace b3d;
 
 #if B3DIMPORTTOOL_WAIT_FOR_DEBUGGER
 	while (!::IsDebuggerPresent())
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-using namespace bs;
+using namespace b3d;
 
 void GenerateTextures()
 {
@@ -173,7 +173,7 @@ void GenerateTextures()
 
 	auto fnSaveTexture = [](const Path& folder, const String& name, const SPtr<Texture>& texture, const String& uuid)
 	{
-		HResource textureResource = GetResources().CreateResourceHandle(texture, bs::UUID(uuid));
+		HResource textureResource = GetResources().CreateResourceHandle(texture, b3d::UUID(uuid));
 		GetResources().SaveAsSinglePackage(textureResource, folder, name);
 	};
 
@@ -252,7 +252,7 @@ void GenerateMeshes()
 
 	auto fnSaveMesh = [](const Path& folder, const String& name, const SPtr<Mesh>& mesh, const String& uuid)
 	{
-		HResource meshResource = GetResources().CreateResourceHandle(mesh, bs::UUID(uuid));
+		HResource meshResource = GetResources().CreateResourceHandle(mesh, b3d::UUID(uuid));
 		GetResources().SaveAsSinglePackage(meshResource, folder, name);
 	};
 
@@ -588,7 +588,7 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 				}
 
 				String inputName(path.data(), path.size());
-				bs::UUID UUID(String(uuidStr.data(), uuidStr.size()));
+				b3d::UUID UUID(String(uuidStr.data(), uuidStr.size()));
 
 				const Path fontSourcePath = rawFontsFolder + inputName;
 

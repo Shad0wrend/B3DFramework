@@ -2,21 +2,21 @@
 title: Physics meshes
 ---
 
-Physics meshes are represented using the @bs::PhysicsMesh class. They are resources, meaning they can be imported, saved and loaded as any other resource.
+Physics meshes are represented using the @b3d::PhysicsMesh class. They are resources, meaning they can be imported, saved and loaded as any other resource.
 
 ![Physics mesh](../../Images/MeshCollider.png)  
 
 # Import
-The import process is slightly different from other resources because physics meshes are imported from the same file types as normal meshes. We must first create **MeshImportOptions** object, and specify that we wish to import a physics mesh along with a normal mesh by setting @bs::MeshImportOptions::collisionMeshType.
+The import process is slightly different from other resources because physics meshes are imported from the same file types as normal meshes. We must first create **MeshImportOptions** object, and specify that we wish to import a physics mesh along with a normal mesh by setting @b3d::MeshImportOptions::collisionMeshType.
 
 ~~~~~~~~~~~~~{.cpp}
 auto importOptions = MeshImportOptions::create();
 importOptions->collisionMeshType = CollisionMeshType::Normal;
 ~~~~~~~~~~~~~
 
-Then in order to perform actual import we call @bs::Importer::importAll, instead of **Importer::import<T>()** we have been calling so far. **Importer::importAll()** should be used when import operation can return more than one resource (since **Importer::import<T>()** will only return the default resource, i.e. a **Mesh**).
+Then in order to perform actual import we call @b3d::Importer::importAll, instead of **Importer::import<T>()** we have been calling so far. **Importer::importAll()** should be used when import operation can return more than one resource (since **Importer::import<T>()** will only return the default resource, i.e. a **Mesh**).
 
-**Importer::importAll()** will return an array of resources as @bs::SubResource objects. In our case there are two sub resources, first one is the normal **Mesh**, and the second one will be the physics mesh we requested.
+**Importer::importAll()** will return an array of resources as @b3d::SubResource objects. In our case there are two sub resources, first one is the normal **Mesh**, and the second one will be the physics mesh we requested.
 
 ~~~~~~~~~~~~~{.cpp}
 auto resources = GetImporter().importAll("dragon.fbx", importOptions);
@@ -30,7 +30,7 @@ HPhysicsMesh physicsMesh = static_resource_cast<PhysicsMesh>(resources[1].value)
 Note that performing physics tests is expensive and you should always strive to minimize the amount of triangles in a physics mesh. Using a render mesh for physics is almost never a good idea. Instead strive to have a few dozen triangles in your physics mesh, with a few hundred for the most complex geometry. Whenever possible use the basic collider shapes like box/sphere instead of physics meshes.
 
 # Physics mesh types
-During import when setting **MeshImportOptions::collisionMeshType** we provided a @bs::CollisionMeshType enum to specify we want a mesh imported. It has two possible values:
+During import when setting **MeshImportOptions::collisionMeshType** we provided a @b3d::CollisionMeshType enum to specify we want a mesh imported. It has two possible values:
  - **CollisionMeshType::Normal**
  - **CollisionMeshType::Convex**
  

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanGpuProgram.h"
 #include "BsVulkanGpuDevice.h"
@@ -15,8 +15,8 @@
 #	include <MoltenVK/vk_mvk_moltenvk.h>
 #endif
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 VulkanShaderModule::VulkanShaderModule(VulkanResourceManager* owner, VkShaderModule module, const StringView& name)
 	: VulkanResource(owner, true, name), mModule(module)

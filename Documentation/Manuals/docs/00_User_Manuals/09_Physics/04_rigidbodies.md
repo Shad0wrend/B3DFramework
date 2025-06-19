@@ -2,7 +2,7 @@
 title: Dynamic objects
 ---
 
-So far we have only talked about static physical objects (colliders). Now it's time to discuss objects that can be moved in a physically realistic way, while interacting with other physical objects (whether static or dynamic). Such dynamic objects are known as rigid bodies and are represented with the @bs::CRigidbody component. 
+So far we have only talked about static physical objects (colliders). Now it's time to discuss objects that can be moved in a physically realistic way, while interacting with other physical objects (whether static or dynamic). Such dynamic objects are known as rigid bodies and are represented with the @b3d::CRigidbody component. 
 
 ~~~~~~~~~~~~~{.cpp}
 HSceneObject rigidbodySO = SceneObject::create("Rigidbody");
@@ -36,20 +36,20 @@ sphereCollider->setRadius(1.0f);
 ~~~~~~~~~~~~~
 
 # Mass
-Aside from a shape, rigidbody also requires mass. Mass will determine how easy is the object to move and how easily will the object move others as it collides with them. Objects with zero mass are considered immovable (similar to static colliders). To change object's mass you can call @bs::CRigidbody::setMass.
+Aside from a shape, rigidbody also requires mass. Mass will determine how easy is the object to move and how easily will the object move others as it collides with them. Objects with zero mass are considered immovable (similar to static colliders). To change object's mass you can call @b3d::CRigidbody::setMass.
 
 ~~~~~~~~~~~~~{.cpp}
 rigidbody->setMass(10.0f); // 10 units (e.g. kilograms)
 ~~~~~~~~~~~~~
 
-This mass is considered to be uniformly distributed over all of rigidbody's shapes. If your rigidbody contains multiple shapes each with different density, you can instead set mass on a per-collider basis by calling @bs::CCollider::setMass. 
+This mass is considered to be uniformly distributed over all of rigidbody's shapes. If your rigidbody contains multiple shapes each with different density, you can instead set mass on a per-collider basis by calling @b3d::CCollider::setMass. 
 
 ~~~~~~~~~~~~~{.cpp}
 boxCollider->setMass(8.0); // Box shape is much heavier than the sphere shape
 sphereCollider->setMass(2.0f);
 ~~~~~~~~~~~~~
 
-To make sure the rigidbody uses the mass from its child colliders, you must call @bs::CRigidbody::setFlags with both **Rigidbody::Flag::AutoTensors** and @bs::RigidbodyFlag::AutoMass flags set. **RigidbodyFlag::AutoMass** enables mass calculation based on child shapes, and we'll talk about **RigidbodyFlag::AutoTensors** later - for now it's enough to know that automatic mass calculation doesn't work without it.
+To make sure the rigidbody uses the mass from its child colliders, you must call @b3d::CRigidbody::setFlags with both **Rigidbody::Flag::AutoTensors** and @b3d::RigidbodyFlag::AutoMass flags set. **RigidbodyFlag::AutoMass** enables mass calculation based on child shapes, and we'll talk about **RigidbodyFlag::AutoTensors** later - for now it's enough to know that automatic mass calculation doesn't work without it.
 
 ~~~~~~~~~~~~~{.cpp}
 rigidbody->setFlags(RigidbodyFlag::AutoTensors);
@@ -64,14 +64,14 @@ A rigidbody will not move until we apply some forces to it. Forces can be applie
 ## Gravity
 The most basic force you can apply to a rigidbody is that of gravity.
 
-You can enable gravity on a rigidbody by calling @bs::CRigidbody::setUseGravity(). This is enabled by default, but it can be disabled if gravity is not required.
+You can enable gravity on a rigidbody by calling @b3d::CRigidbody::setUseGravity(). This is enabled by default, but it can be disabled if gravity is not required.
 
 ~~~~~~~~~~~~~{.cpp}
 // Disable gravity for this object
 rigidbody->setUseGravity(false);
 ~~~~~~~~~~~~~
 
-You can also change the strength of gravity by changing its acceleration factor. This can be done through the **PhysicsScene**. Call @bs::PhysicsScene::setGravity to change gravity.
+You can also change the strength of gravity by changing its acceleration factor. This can be done through the **PhysicsScene**. Call @b3d::PhysicsScene::setGravity to change gravity.
 
 ~~~~~~~~~~~~~{.cpp}
 // Set gravity of the main scene to the value on the Moon
@@ -84,21 +84,21 @@ You can also apply forces manually. There are two types of forces:
  - Force which produces linear momentum (moves the object)
  - Torque which produces angular momentum (rotates the object)
 
-Force can be applied by calling @bs::CRigidbody::addForce(). This force is always applied to the object's center of mass (talked about later), which means it will never cause angular momentum (i.e. object will just move, and not rotate).
+Force can be applied by calling @b3d::CRigidbody::addForce(). This force is always applied to the object's center of mass (talked about later), which means it will never cause angular momentum (i.e. object will just move, and not rotate).
  
 ~~~~~~~~~~~~~{.cpp}
 // Add 10 units of force in the up direction (e.g. make the object jump)
 rigidbody->addForce(Vector3(0.0f, 10.0f, 0.0f));
 ~~~~~~~~~~~~~ 
 
-Torque can be applied by calling @bs::CRigidbody::addTorque(). Torque will cause the object to rotate (but not move).
+Torque can be applied by calling @b3d::CRigidbody::addTorque(). Torque will cause the object to rotate (but not move).
 
 ~~~~~~~~~~~~~{.cpp}
 // Add 10 units of torque in the right direction (e.g. make a wheel spin)
 rigidbody->addTorque(Vector3(10.0f, 0.0f, 0.0f));
 ~~~~~~~~~~~~~ 
  
-You can also choose to apply force to an arbitrary point on an object. This will generally cause the object to both move and rotate. Apply force to a specific point by calling @bs::CRigidbody::addForceAtPoint.
+You can also choose to apply force to an arbitrary point on an object. This will generally cause the object to both move and rotate. Apply force to a specific point by calling @b3d::CRigidbody::addForceAtPoint.
 
 ~~~~~~~~~~~~~{.cpp}
 // Apply force to center of an edge of a box (assuming we're using the box/sphere shape defined above). This will cause the object both to move, and rotate around the Y axis
@@ -106,16 +106,16 @@ rigidbody->addForceAtPoint(Vector3(10.0f, 0.0f, 0.0f), Vector3(0.5f, 0.0f, 0.5f)
 ~~~~~~~~~~~~~ 
 
 ### Force modes
-When applying forces using **CRigidbody::addForce()** or **CRigidbody::addTorque()** you can specify an additional @bs::ForceMode parameter. This parameter determines how is your "force" value interpreted. The supported values are:
+When applying forces using **CRigidbody::addForce()** or **CRigidbody::addTorque()** you can specify an additional @b3d::ForceMode parameter. This parameter determines how is your "force" value interpreted. The supported values are:
  - **ForceMode::Force** - The default value. Your value is interpreted as normal force which will be applied during current frame and then cause the object's position/velocity/acceleratation to change during the next few frames.
  - **ForceMode::Impulse** - The value is interpreted as an impulse and the force is calculated from it. The impulse is an instantenous change to the object's linear or angular momentum. This is the change in momentum that would happen during a single frame of physics calculation.
  - **ForceMode::Velocity** - The value will be applied as a change in velocity, and force derived from that. This is similar to impulse but it also ignores the object's mass.
  - **ForceMode::Acceleration** - The value will be applied as a change in acceleration, and force derived from that. This is similar to applying force normally, but it ignores the object's mass.
  
-When calling **CRigidbody::addForceAtPoint()** you can also specify force modes using the @bs::PointForceMode enum, which supports just **Force** and **Impulse** modes, which have the same meaning as described above.
+When calling **CRigidbody::addForceAtPoint()** you can also specify force modes using the @b3d::PointForceMode enum, which supports just **Force** and **Impulse** modes, which have the same meaning as described above.
 
 ## Setting velocity
-Finally, you can directly change object's linear or angular velocity by calling @bs::CRigidbody::setVelocity and @bs::CRigidbody::setAngularVelocity, respectively. You can use this if you need exact control over velocity, instead of controlling it through forces.
+Finally, you can directly change object's linear or angular velocity by calling @b3d::CRigidbody::setVelocity and @b3d::CRigidbody::setAngularVelocity, respectively. You can use this if you need exact control over velocity, instead of controlling it through forces.
 
 ~~~~~~~~~~~~~{.cpp}
 // Make the object move 50 units per second (e.g. 50km/h) in the forward direction
@@ -129,7 +129,7 @@ Each object has two types of drag properties:
  
 When drag is set to a higher value the object will be harder (require more force) to move (linear drag) or rotate (angular drag).
 
-Use @bs::CRigidbody::setDrag() to change the linear drag, and @bs::CRigidbody::setAngularDrag() to change the angular drag.
+Use @b3d::CRigidbody::setDrag() to change the linear drag, and @b3d::CRigidbody::setAngularDrag() to change the angular drag.
 
 ~~~~~~~~~~~~~{.cpp}
 // Make the object harder to move/rotate (e.g. as if it was in a denser fluid)
@@ -140,7 +140,7 @@ rigidbody->setAngularDrag(3.0f);
 Note that you generally don't want to increase these values in order to simulate friction when colliding with other physical objects. That is better done using physical materials, which we'll talk about later. Properties above are more useful when simulating interaction with fluids like air or water (which aren't represented as physical objects).
 
 # Kinematic rigidbodies
-Kinematic mode can be enabled on a rigidbody by calling @bs::CRigidbody::setIsKinematic(). A rigidbody in kinematic mode has two major differences compared to normal rigidbodies:
+Kinematic mode can be enabled on a rigidbody by calling @b3d::CRigidbody::setIsKinematic(). A rigidbody in kinematic mode has two major differences compared to normal rigidbodies:
  - Such rigidbody cannot be moved by other physical objects
  - Its position and orientation can be changed directly instead of through forces
  
@@ -148,7 +148,7 @@ This is very similar to a collider, which also cannot be moved by other physical
 
 Such rigidbodies are especially useful for simulating user or AI controlled characters, as their movement is generally difficult to handle using forces.
 
-Once kinematic mode is enabled you can move a rigidbody using @bs::CRigidbody::move, or rotate it using @bs::CRigidbody::rotate.
+Once kinematic mode is enabled you can move a rigidbody using @b3d::CRigidbody::move, or rotate it using @b3d::CRigidbody::rotate.
 
 ~~~~~~~~~~~~~{.cpp}
 // Move 10 units forward and rotate 90 degrees around Y axis
@@ -161,7 +161,7 @@ Note that you should not move/rotate such rigidbody by using its scene object (e
 ## Continous collision detection
 When moving a rigid object you should be careful not to move it too much in a single frame. If you move too much the object might move beyond an obstacle it shouldn't have been able to move through. Generally you want to call **CRigibody::move()** and **CRigidbody::rotate()** every frame, in small increments.
 
-In case you are making a fast-paced game, where movement in a single-frame is very high (e.g. a racing game), and want to prevent rigidbodies "tunneling" through obstacles, you can enable continous collision detection by calling @bs::CRigidbody::setFlags with @bs::RigidbodyFlag::CCD flag.
+In case you are making a fast-paced game, where movement in a single-frame is very high (e.g. a racing game), and want to prevent rigidbodies "tunneling" through obstacles, you can enable continous collision detection by calling @b3d::CRigidbody::setFlags with @b3d::RigidbodyFlag::CCD flag.
 
 ~~~~~~~~~~~~~{.cpp}
 rigidbody->setFlags(RigidbodyFlag::CCD);
@@ -174,19 +174,19 @@ Tensors allow you to fine tune how does force and torque affect your rigidbody. 
  - Center of mass - Determines the point the object rotates around. Also determines how much rotation vs. movement is applied to an object resulting from a force applied to a specific point.
  - Inertia tensor - Determines how the object rotates. Objects with different shapes and densities will rotate more easily in certain directions than others.
  
-In most cases you want both of these properties to be calculated automatically. In which case you should provide the @bs::RigidbodyFlag::AutoTensors flag to **CRigidbody::setFlags**. This will ensure these values are calculated from child collider shapes and mass.
+In most cases you want both of these properties to be calculated automatically. In which case you should provide the @b3d::RigidbodyFlag::AutoTensors flag to **CRigidbody::setFlags**. This will ensure these values are calculated from child collider shapes and mass.
 
 ~~~~~~~~~~~~~{.cpp}
 rigidbody->setFlags(RigidbodyFlag::AutoTensors);
 ~~~~~~~~~~~~~
 
-If you wish to set them manually, you can instead call @bs::CRigidbody::setCenterOfMassPosition and @bs::CRigidbody::setInertiaTensor.
+If you wish to set them manually, you can instead call @b3d::CRigidbody::setCenterOfMassPosition and @b3d::CRigidbody::setInertiaTensor.
 
 # Sleep
 For performance reasons, objects that are not moving or are barely moving will be put to sleep. This allows the physics system to avoid those objects in its calculations. Such objects will be automatically woken up when other objects interact with them, or you move them from code.
 
 In general this process is automatic and isn't something you need to worry about, but in some cases it can be useful to perform it manually. For this reason rigidbodies contain a set of methods for manipulating and checking the sleep state:
- - @bs::CRigidbody::isSleeping - Checks is rigidbody currently sleeping.
- - @bs::CRigidbody::sleep - Forces the object to sleep.
- - @bs::CRigidbody::wakeUp - Forces the object to wake up.
- - @bs::CRigidbody::setSleepThreshold - Changes the required amount of kinetic energy the object needs to be affected by in order to stay awake. Once kinetic energy drops below this limit, object will be put to sleep.
+ - @b3d::CRigidbody::isSleeping - Checks is rigidbody currently sleeping.
+ - @b3d::CRigidbody::sleep - Forces the object to sleep.
+ - @b3d::CRigidbody::wakeUp - Forces the object to wake up.
+ - @b3d::CRigidbody::setSleepThreshold - Changes the required amount of kinetic energy the object needs to be affected by in order to stay awake. Once kinetic energy drops below this limit, object will be put to sleep.

@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2024 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2024 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptObjectWrapper.h"
 
@@ -6,7 +6,7 @@
 #include "BsScriptObjectManager.h"
 #include "Script/BsIScriptExportable.h"
 
-using namespace bs;
+using namespace b3d;
 
 ScriptObjectWrapper::ScriptObjectWrapper(IScriptExportable* nativeObject)
 	:IScriptObjectWrapper(nativeObject)

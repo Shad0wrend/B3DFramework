@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsDecal.h"
 #include "Private/RTTI/BsDecalRTTI.h"
@@ -8,7 +8,7 @@
 #include "Material/BsMaterial.h"
 #include "CoreObject/BsCoreObjectSync.h"
 
-using namespace bs;
+using namespace b3d;
 
 template<bool IsRenderProxy>
 TDecal<IsRenderProxy>::TDecal()
@@ -65,7 +65,7 @@ void TDecal<IsRenderProxy>::UpdateBounds()
 	mBounds = Bounds(localAABB, Sphere(localAABB.GetCenter(), localAABB.GetRadius()));
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Decal, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mSize)
@@ -148,7 +148,7 @@ RTTIType* Decal::GetRtti() const
 template class TDecal<true>;
 template class TDecal<false>;
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 Decal::Decal(const SPtr<Material>& material, const Vector2& size, float maxDistance)
 	: TDecal(material, size, maxDistance)
@@ -169,7 +169,7 @@ void Decal::Initialize()
 
 void Decal::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::Decal::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::Decal::SyncPacket>();
 	if(!syncPacket)
 		return;
 

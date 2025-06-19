@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2014 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2014 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "Math/BsSIMD.h"
 #include "Allocators/BsPoolAlloc.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup General
 	 *  @{
@@ -1187,4 +1187,4 @@ namespace bs
 	using TQuadTree = TSpatialTree<ElementType, Options, 2>;
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

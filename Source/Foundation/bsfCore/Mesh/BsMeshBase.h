@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "Math/BsBounds.h"
 #include "RenderAPI/BsSubMesh.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -123,7 +123,7 @@ namespace bs
 		/**
 		 * Render proxy  used as a basis for all implemenations of meshes.
 		 *
-		 * @see		bs::MeshBase
+		 * @see		b3d::MeshBase
 		 *
 		 * @note	Render thread.
 		 */
@@ -170,7 +170,7 @@ namespace bs
 			const MeshProperties& GetProperties() const { return mProperties; }
 
 		protected:
-			friend class bs::MeshBase;
+			friend class b3d::MeshBase;
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
@@ -179,4 +179,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

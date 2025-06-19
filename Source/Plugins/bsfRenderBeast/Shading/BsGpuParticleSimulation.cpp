@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsGpuParticleSimulation.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
@@ -16,7 +16,7 @@
 #include "RenderAPI/BsRenderTexture.h"
 #include "Utility/BsGpuSort.h"
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 
 B3D_PARAM_BLOCK_BEGIN(GpuParticleTileVertexParamsDef)
 	B3D_PARAM_BLOCK_ENTRY(Vector4, gUVToNDC)
@@ -704,7 +704,7 @@ void GpuParticleSystem::AdvanceTime(float dt)
 	const ParticleSystemSettings& settings = mParent->GetSettings();
 
 	float timeStep;
-	mTime = bs::ParticleSystem::AdvanceTimeInternal(mTime, dt, settings.Duration, settings.IsLooping, timeStep);
+	mTime = b3d::ParticleSystem::AdvanceTimeInternal(mTime, dt, settings.Duration, settings.IsLooping, timeStep);
 }
 
 AABox GpuParticleSystem::GetBounds() const

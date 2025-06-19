@@ -2,16 +2,16 @@
 title: Materials
 ---
 
-Materials are resources that control how are meshes rendered. They are represented using the @bs::Material class. Each material must have one @bs::Shader object, and zero or more parameters.
+Materials are resources that control how are meshes rendered. They are represented using the @b3d::Material class. Each material must have one @b3d::Shader object, and zero or more parameters.
 
 A shader is a set of GPU programs and render states that tell the GPU how is a mesh meant to be rendered. Generally these GPU programs have parameters that can control what they output (for example, which texture to use). A material allows you to set those parameters. You can think of shaders as templates, and materials as instances of shaders - similar as you would think of a *class* vs. *object* relationship in a programming language.
 
 # Retrieving a shader
-Before we can create a material we first need to pick a shader to use as a basis. bs::f allows you to create fully custom shaders, but this is an advanced topic and is left for a later chapter. For the majority of purposes when rendering 3D geometry you can use either of the following two shaders:
+Before we can create a material we first need to pick a shader to use as a basis. b3d::f allows you to create fully custom shaders, but this is an advanced topic and is left for a later chapter. For the majority of purposes when rendering 3D geometry you can use either of the following two shaders:
  - Standard - Physically based shader for opaque 3D geometry
  - Transparent - Physically based shader for transparent 3D geometry
 
-Both of those shaders can be accessed through @bs::BuiltinResources::getBuiltinShader using the values @bs::BuiltinShader::Standard and @bs::BuiltinShader::Transparent respectively.
+Both of those shaders can be accessed through @b3d::BuiltinResources::getBuiltinShader using the values @b3d::BuiltinShader::Standard and @b3d::BuiltinShader::Transparent respectively.
 
 ~~~~~~~~~~~~~{.cpp}
 // Get the standard PBR shader
@@ -31,7 +31,7 @@ Both of these shaders provide physically based shading and expect four different
 At minimum you need to provide the albedo texture, while others can be left as default (or be assigned pure white, or pure black textures) if not required. 
  
 # Material creation
-To create a material use the @bs::Material::create method, which expects a **Shader** as a parameter.
+To create a material use the @b3d::Material::create method, which expects a **Shader** as a parameter.
 
 ~~~~~~~~~~~~~{.cpp}
 // Create a material based on the shader we retrieved above
@@ -50,7 +50,7 @@ material->setTexture("gAlbedoTex", texture);
 
 After the texture has been set, anything rendered with that material will now have that particular texture applied. Different shaders will accept different parameters of different types.
 
-In this particular example we have a parameter named "gAlbedoTex" that accepts a **Texture** resource. We set such a parameter by calling @bs::Material::setTexture. There are other parameter types like floats, ints, colors, as well as multi-dimensional types like vectors and matrices which can be set by calling @bs::Material::setFloat, @bs::Material::setColor, @bs::Material::setVec4 and similar.
+In this particular example we have a parameter named "gAlbedoTex" that accepts a **Texture** resource. We set such a parameter by calling @b3d::Material::setTexture. There are other parameter types like floats, ints, colors, as well as multi-dimensional types like vectors and matrices which can be set by calling @b3d::Material::setFloat, @b3d::Material::setColor, @b3d::Material::setVec4 and similar.
 
 ~~~~~~~~~~~~~{.cpp}
 // Assuming our material has some more parameters, for purposes of the example
@@ -62,9 +62,9 @@ material->setMat4("someTransform", Matrix4::IDENTITY);
 
 ## Animated parameters
 Certain material parameters can be animated, meaning they will change as time passes. The types of animable parameters are:
- - **float** - Instead of calling **Material::setFloat()** call @bs::Material::setFloatCurve and pass a @bs::TAnimationCurve<float> object as the parameter. Animation curve consists of a set of key-frames that get interpolated between depending on the time the curve gets sampled at. 
- - **Color** - Instead of calling **Material::setColor()** call @bs::Material::setColorGradient and pass a @bs::ColorGradient object as the parameter. Similarly to animation curves the **ColorGradient** contains a set of key-frames, each containing a color, which then get interpolated between depending on the time that's used to evaluate them.
- - **Texture** - Instead of calling **Material::setTexture()** call @bs::Material::setSpriteTexture, which accepts a **SpriteTexture** object. Sprite textures allow you to provide texture animation and as time passes different frames of texture animation will be presented to the user. Sprite textures are explained in more detail later on.
+ - **float** - Instead of calling **Material::setFloat()** call @b3d::Material::setFloatCurve and pass a @b3d::TAnimationCurve<float> object as the parameter. Animation curve consists of a set of key-frames that get interpolated between depending on the time the curve gets sampled at. 
+ - **Color** - Instead of calling **Material::setColor()** call @b3d::Material::setColorGradient and pass a @b3d::ColorGradient object as the parameter. Similarly to animation curves the **ColorGradient** contains a set of key-frames, each containing a color, which then get interpolated between depending on the time that's used to evaluate them.
+ - **Texture** - Instead of calling **Material::setTexture()** call @b3d::Material::setSpriteTexture, which accepts a **SpriteTexture** object. Sprite textures allow you to provide texture animation and as time passes different frames of texture animation will be presented to the user. Sprite textures are explained in more detail later on.
  
 An example using all three types of animated parameters: 
  
@@ -119,9 +119,9 @@ material->setSpriteTexture("gAlbedoTex", spriteTexture);
 ~~~~~~~~~~~~~
  
 ## Sampler states
-Sampler states are a special type of parameters that can be set by calling @bs::Material::setSamplerState. These states are used to control how is a texture read in a shader. For example they control what type of filtering to use, how to handle out of range texture coordinates and similar. In most cases you don't need to set sampler states as the default one should be adequate. 
+Sampler states are a special type of parameters that can be set by calling @b3d::Material::setSamplerState. These states are used to control how is a texture read in a shader. For example they control what type of filtering to use, how to handle out of range texture coordinates and similar. In most cases you don't need to set sampler states as the default one should be adequate. 
 
-Sampler states are created by calling @bs::SamplerState::create, while previously filling out the @bs::SAMPLER_STATE_DESC structure.
+Sampler states are created by calling @b3d::SamplerState::create, while previously filling out the @b3d::SAMPLER_STATE_DESC structure.
 
 As an example, lets set up a sampler state that enables trilinear filtering for a texture using it, and then assign it to a material. 
 

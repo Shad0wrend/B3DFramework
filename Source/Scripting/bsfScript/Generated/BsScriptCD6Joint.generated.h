@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -16,12 +16,12 @@
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "../../../Foundation/bsfUtility/Math/BsQuaternion.h"
 
-namespace bs { struct __LimitConeRangeInterop; }
-namespace bs { struct __LimitAngularRangeInterop; }
-namespace bs { class CD6Joint; }
-namespace bs { struct __LimitLinearInterop; }
-namespace bs { struct __D6JointDriveInterop; }
-namespace bs
+namespace b3d { struct __LimitConeRangeInterop; }
+namespace b3d { struct __LimitAngularRangeInterop; }
+namespace b3d { class CD6Joint; }
+namespace b3d { struct __LimitLinearInterop; }
+namespace b3d { struct __D6JointDriveInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptD6Joint : public TScriptGameObjectWrapper<CD6Joint, ScriptD6Joint, ScriptJointWrapperBase>
 	{

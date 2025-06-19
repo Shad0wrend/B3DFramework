@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 #include "Math/BsVector3.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Math
 	 *  @{
@@ -83,4 +83,4 @@ namespace bs
 	typedef MatrixNxM<4, 3> Matrix4x3;
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

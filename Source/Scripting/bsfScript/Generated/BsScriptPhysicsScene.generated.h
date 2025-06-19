@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -13,11 +13,11 @@
 #include "../../../Foundation/bsfUtility/Math/BsSphere.h"
 #include "Math/BsCapsule.h"
 
-namespace bs { struct __TRay_float_Interop; }
-namespace bs { struct __TSphere_float_Interop; }
-namespace bs { struct __PhysicsQueryHitInterop; }
-namespace bs { struct __TAABox_float_Interop; }
-namespace bs
+namespace b3d { struct __TRay_float_Interop; }
+namespace b3d { struct __TSphere_float_Interop; }
+namespace b3d { struct __PhysicsQueryHitInterop; }
+namespace b3d { struct __TAABox_float_Interop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsScene : public TScriptNonReflectableWrapper<PhysicsScene, ScriptPhysicsScene>
 	{

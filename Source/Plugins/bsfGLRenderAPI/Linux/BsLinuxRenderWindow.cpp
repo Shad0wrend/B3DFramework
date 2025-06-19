@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "CoreThread/BsCoreThread.h"
 #include "Private/Linux/BsLinuxPlatform.h"
@@ -14,7 +14,7 @@
 #define XRANDR_ROTATION_LEFT (1 << 1)
 #define XRANDR_ROTATION_RIGHT (1 << 3)
 
-using namespace bs;
+using namespace b3d;
 
 LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, ct::LinuxGLSupport& glSupport)
 	: RenderWindow(desc, windowId), mGLSupport(glSupport), mProperties(desc)
@@ -71,7 +71,7 @@ void LinuxRenderWindow::syncProperties()
 	ScopedSpinLock lock(getCore()->GetPropertiesLockInternal());
 	mProperties = getCore()->mSyncedProperties;
 }
-using namespace bs::ct;
+using namespace b3d::ct;
 
 LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, LinuxGLSupport& glsupport)
 	: RenderWindow(desc, windowId), mWindow(nullptr), mGLSupport(glsupport), mContext(nullptr), mProperties(desc), mSyncedProperties(desc), mIsChild(false), mShowOnSwap(false)
@@ -173,7 +173,7 @@ void LinuxRenderWindow::Initialize()
 		mSyncedProperties = props;
 	}
 
-	bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().notifySyncDataDirty(this);
 	RenderWindow::Initialize();
 }
 
@@ -361,8 +361,8 @@ void LinuxRenderWindow::setFullscreen(const VideoMode& mode)
 		mSyncedProperties.height = props.height;
 	}
 
-	bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-	bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
+	b3d::RenderWindowManager::Instance().notifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().notifyMovedOrResized(this);
 }
 
 void LinuxRenderWindow::setWindowed(u32 width, u32 height)
@@ -411,8 +411,8 @@ void LinuxRenderWindow::setWindowed(u32 width, u32 height)
 		mSyncedProperties.height = props.height;
 	}
 
-	bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-	bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
+	b3d::RenderWindowManager::Instance().notifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().notifyMovedOrResized(this);
 }
 
 void LinuxRenderWindow::move(i32 left, i32 top)
@@ -435,7 +435,7 @@ void LinuxRenderWindow::move(i32 left, i32 top)
 			mSyncedProperties.left = props.left;
 		}
 
-		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+		b3d::RenderWindowManager::Instance().notifySyncDataDirty(this);
 	}
 }
 
@@ -459,7 +459,7 @@ void LinuxRenderWindow::resize(u32 width, u32 height)
 			mSyncedProperties.height = props.height;
 		}
 
-		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+		b3d::RenderWindowManager::Instance().notifySyncDataDirty(this);
 	}
 }
 
@@ -517,7 +517,7 @@ void LinuxRenderWindow::setVSync(bool enabled, u32 interval)
 		mSyncedProperties.vsyncInterval = interval;
 	}
 
-	bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().notifySyncDataDirty(this);
 }
 
 void LinuxRenderWindow::swapBuffers(u32 syncMask)

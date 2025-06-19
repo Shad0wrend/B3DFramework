@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -11,7 +11,7 @@
 #include "CoreObject/BsCoreObject.h"
 #include "Scene/BsSceneActor.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Renderer-Internal
 	 *  @{
@@ -252,7 +252,7 @@ namespace bs
 
 	namespace ct
 	{
-		/** Render thread counterpart of bs::Light. */
+		/** Render thread counterpart of b3d::Light. */
 		class B3D_CORE_EXPORT Light : public RenderProxy, public TLight<true>
 		{
 		public:
@@ -268,7 +268,7 @@ namespace bs
 			static const u32 kLightConeNumSlices;
 
 		protected:
-			friend class bs::Light;
+			friend class b3d::Light;
 
 			Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
@@ -280,4 +280,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

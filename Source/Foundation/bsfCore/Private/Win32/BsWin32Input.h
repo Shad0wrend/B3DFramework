@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -16,7 +16,7 @@
 #include <wbemidl.h>
 #include <oleauto.h>
 
-namespace bs
+namespace b3d
 {
 	/** Information about a gamepad from DirectInput. */
 	struct GamepadInfo
@@ -47,4 +47,4 @@ namespace bs
 #define DI_BUFFER_SIZE_KEYBOARD 17
 #define DI_BUFFER_SIZE_MOUSE 128
 #define DI_BUFFER_SIZE_GAMEPAD 129
-} // namespace bs
+} // namespace b3d

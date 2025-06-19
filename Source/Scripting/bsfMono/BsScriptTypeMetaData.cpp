@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptTypeMetaData.h"
 #include "BsMonoManager.h"
 #include "BsMonoClass.h"
 #include "BsMonoField.h"
 
-using namespace bs;
+using namespace b3d;
 
 ScriptTypeMetaData::ScriptTypeMetaData(const char* assembly, const char* nameSpace, const char* typeName, std::function<void()> setupScriptBindingsCallback)
 	: SetupScriptBindingsCallback(std::move(setupScriptBindingsCallback))

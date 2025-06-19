@@ -6,7 +6,7 @@ We discussed textures in detail previously, but we haven't yet mentioned load-st
 
 They are also known as unordered-access textures, storage textures or random write textures. In HLSL these textures have a *RW* prefix, e.g. *RWTexture2D*, and in GLSL they have an *image* prefix, e.g. *image2D*.
 
-Creation of a load-store texture is essentially the same as for normal textures, except for the addition of the @bs::TU_LOADSTORE usage flag.
+Creation of a load-store texture is essentially the same as for normal textures, except for the addition of the @b3d::TU_LOADSTORE usage flag.
 
 ~~~~~~~~~~~~~{.cpp}
 // Creates a 2D load-store texture, 128x128 with a 4-component 32-bit floating point format
@@ -20,14 +20,14 @@ desc.usage = TU_LOADSTORE;
 SPtr<Texture> texture = Texture::create(desc);
 ~~~~~~~~~~~~~ 
 
-You can then bind a load-store texture to a GPU program by calling @bs::ct::GpuParams::setLoadStoreTexture(GpuProgramType, const String&, const TextureType&, const TextureSurface&) as was described in an earlier chapter.
+You can then bind a load-store texture to a GPU program by calling @b3d::ct::GpuParams::setLoadStoreTexture(GpuProgramType, const String&, const TextureType&, const TextureSurface&) as was described in an earlier chapter.
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<GpuParams> params = ...;
 params->setLoadStoreTexture(GPT_COMPUTE_PROGRAM, "myLoadStoreTex", texture);
 ~~~~~~~~~~~~~ 
 
-Load-store textures do not support sampling using sampler states, you can only read-write their pixels directly. They also do not support mip-maps, and if your texture has multiple mip-maps you must provide a @bs::TextureSurface struct to **ct::GpuParams::setLoadStoreTexture()** in order to specify which mip-level to bind (by default it is the first).
+Load-store textures do not support sampling using sampler states, you can only read-write their pixels directly. They also do not support mip-maps, and if your texture has multiple mip-maps you must provide a @b3d::TextureSurface struct to **ct::GpuParams::setLoadStoreTexture()** in order to specify which mip-level to bind (by default it is the first).
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<GpuParams> params = ...;

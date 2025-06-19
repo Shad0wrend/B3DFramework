@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "Physics/BsPhysicsCommon.h"
 #include "Math/BsVector3.h"
 
-namespace bs
+namespace b3d
 {
 	class PhysicsScene;
 
@@ -259,7 +259,7 @@ namespace bs
 		HCollider Collider;
 
 		B3D_SCRIPT_EXPORT(Exclude(true))
-		bs::ColliderShape* ColliderShape; /**< Collider that was touched. */
+		b3d::ColliderShape* ColliderShape; /**< Collider that was touched. */
 		u32 TriangleIndex; /**< Touched triangle index for mesh colliders. */
 	};
 
@@ -277,4 +277,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

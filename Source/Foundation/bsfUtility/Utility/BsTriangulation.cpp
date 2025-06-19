@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Utility/BsTriangulation.h"
 #include "Math/BsVector3.h"
@@ -6,7 +6,7 @@
 // Third party
 #include "TetGen/tetgen.h"
 
-using namespace bs;
+using namespace b3d;
 
 TetrahedronVolume Triangulation::Tetrahedralize(const Vector<Vector3>& points)
 {

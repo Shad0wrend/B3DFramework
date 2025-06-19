@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 #include "BsUtilityPrerequisites.h"
 #include "Serialization/BsSerializedObject.h"
 #include "BsRTTIIterator.h"
 
-namespace bs::RTTIObjectWrapper
+namespace b3d::RTTIObjectWrapper
 {
 	/** Helper class that wraps either an IReflectable or a SerializedObject object instance, and allows iteration over all of its fields and values. */
 	template <bool IsIReflectable>

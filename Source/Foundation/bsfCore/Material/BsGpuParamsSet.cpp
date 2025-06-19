@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsGpuParamsSet.h"
 
@@ -16,7 +16,7 @@
 #include "RenderAPI/BsGpuDevice.h"
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
 
-using namespace bs;
+using namespace b3d;
 
 /** Uniquely identifies a GPU parameter. */
 struct ValidParamKey
@@ -50,8 +50,8 @@ struct hash<ValidParamKey>
 	size_t operator()(const ValidParamKey& key) const
 	{
 		size_t hash = 0;
-		bs::B3DCombineHash(hash, key.Name);
-		bs::B3DCombineHash(hash, key.Type);
+		b3d::B3DCombineHash(hash, key.Name);
+		b3d::B3DCombineHash(hash, key.Type);
 
 		return hash;
 	}
@@ -60,7 +60,7 @@ struct hash<ValidParamKey>
 
 /** @endcond */
 
-using namespace bs;
+using namespace b3d;
 
 struct ShaderBlockDesc
 {

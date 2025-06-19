@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "Prerequisites/BsTypes.h"
 #include "Utility/BsUtil.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Utility-Core
 	 *  @{
@@ -84,7 +84,7 @@ namespace bs
 
 	/** @} */
 
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 /** @addtogroup Utility
@@ -95,15 +95,15 @@ namespace std
 {
 	/**	Hash value generator for UUID. */
 	template <>
-	struct hash<bs::UUID>
+	struct hash<b3d::UUID>
 	{
-		size_t operator()(const bs::UUID& value) const
+		size_t operator()(const b3d::UUID& value) const
 		{
 			size_t hash = 0;
-			bs::B3DCombineHash(hash, value.mData[0]);
-			bs::B3DCombineHash(hash, value.mData[1]);
-			bs::B3DCombineHash(hash, value.mData[2]);
-			bs::B3DCombineHash(hash, value.mData[3]);
+			b3d::B3DCombineHash(hash, value.mData[0]);
+			b3d::B3DCombineHash(hash, value.mData[1]);
+			b3d::B3DCombineHash(hash, value.mData[2]);
+			b3d::B3DCombineHash(hash, value.mData[3]);
 
 			return hash;
 		}

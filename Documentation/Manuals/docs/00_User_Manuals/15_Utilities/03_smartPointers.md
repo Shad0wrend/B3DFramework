@@ -7,7 +7,7 @@ Smart pointers allow the user to allocate objects dynamically, but without havin
 # Unique pointers
 Unique pointers hold ownership of a dynamically allocated object, and automatically free it when they go out of scope. As their name implies they cannot be copied - in other words, only one pointer to that object can exist. They are mostly useful for temporary allocations, or for places where object ownership is clearly defined to a single owner.
 
-In bs::f type're represented with @bs::UPtr, which is just a wrapper for the standard library's *std::unique_ptr*. Use @bs::B3DMakeUnique to create a unique pointer pointing to a new instance of T, or @bs::B3DMakeUniqueFromExisting to create one from an existing instance. 
+In b3d::f type're represented with @b3d::UPtr, which is just a wrapper for the standard library's *std::unique_ptr*. Use @b3d::B3DMakeUnique to create a unique pointer pointing to a new instance of T, or @b3d::B3DMakeUniqueFromExisting to create one from an existing instance. 
 
 ~~~~~~~~~~~~~{.cpp}
 // Helper structure
@@ -42,9 +42,9 @@ UPtr<MyStruct> ptrOther = std::move(ptr);
 # Shared pointers
 Shared pointers are similar to unique pointers, as they also don't require the object to be explicitly freed after creation. However, unlike unique pointers they can be copied (therefore their name "shared"). This means multiple entities can hold a shared pointer to a single object. Only once ALL such entities lose their shared pointers will the pointed-to object be destroyed.
 
-In bs::f they are represented with @bs::SPtr, which is just a wrapper for the standard library's *std::shared_ptr*. Use @bs::B3DMakeShared to create a shared pointer pointing to a new instance of T, or @bs::B3DMakeSharedFromExisting to create one from an existing instance. 
+In b3d::f they are represented with @b3d::SPtr, which is just a wrapper for the standard library's *std::shared_ptr*. Use @b3d::B3DMakeShared to create a shared pointer pointing to a new instance of T, or @b3d::B3DMakeSharedFromExisting to create one from an existing instance. 
 
-You will find bs::f uses shared pointers commonly all around its codebase.
+You will find b3d::f uses shared pointers commonly all around its codebase.
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<MyStruct> ptr = B3DMakeShared<MyStruct>(123, false);

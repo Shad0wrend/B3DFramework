@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 
 #define GL_DEPTH24_STENCIL8_EXT 0x88F0
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup GL
 	 *  @{
@@ -51,7 +51,7 @@ namespace bs
 			void GetCustomAttribute(const String& name, void* data) const override;
 
 		protected:
-			friend class bs::GLRenderTexture;
+			friend class b3d::GLRenderTexture;
 
 			void Initialize() override;
 			const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
@@ -122,4 +122,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

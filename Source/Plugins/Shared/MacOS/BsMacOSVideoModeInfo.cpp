@@ -1,9 +1,9 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "MacOS/BsMacOSVideoModeInfo.h"
 #include <IOKit/graphics/IOGraphicsLib.h>
 
-namespace bs::ct
+namespace b3d::ct
 {
 MacOSVideoModeInfo::MacOSVideoModeInfo()
 {

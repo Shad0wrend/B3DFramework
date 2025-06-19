@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "RenderAPI/BsVertexDescription.h"
 #include "Threading/BsWaitGroup.h"
 
-namespace bs
+namespace b3d
 {
 	struct AnimationProxy;
 
@@ -148,4 +148,4 @@ namespace bs
 	B3D_CORE_EXPORT AnimationManager& GetAnimationManager();
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

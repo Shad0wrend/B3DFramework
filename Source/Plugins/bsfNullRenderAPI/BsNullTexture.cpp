@@ -1,9 +1,9 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsNullTexture.h"
 #include "BsNullRenderTargets.h"
 
-using namespace bs;
+using namespace b3d;
 
 SPtr<RenderTexture> NullTextureManager::CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc)
 {
@@ -15,7 +15,7 @@ PixelFormat NullTextureManager::GetNativeFormat(TextureType ttype, PixelFormat f
 	return format;
 }
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 SPtr<Texture> NullTextureManager::CreateTextureInternal(const TextureCreateInformation& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask)
 {
 	SPtr<NullTexture> texPtr = B3DMakeShared<NullTexture>(desc, initialData, deviceMask);
@@ -61,4 +61,4 @@ void NullTexture::UnlockInternal()
 	B3DDelete(mMappedBuffer);
 	mMappedBuffer = nullptr;
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

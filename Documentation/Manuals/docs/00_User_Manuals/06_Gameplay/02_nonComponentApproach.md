@@ -2,10 +2,10 @@
 title: Non-component approach
 ---
 
-bs::f provides an alternate API to its scene-object/component model. It provides a more traditional way of dealing with gameplay logic at the cost of more complexity, but with potentially more freedom. Note that this is a fully optional approach and just another way of doing what we have described so far.
+b3d::f provides an alternate API to its scene-object/component model. It provides a more traditional way of dealing with gameplay logic at the cost of more complexity, but with potentially more freedom. Note that this is a fully optional approach and just another way of doing what we have described so far.
 
 # Scene actors
-Each **Component** class has a corresponding @bs::SceneActor, which shares the same name as the component without the "C" prefix (e.g. @bs::Renderable scene actor vs. **CRenderable** component)). 
+Each **Component** class has a corresponding @b3d::SceneActor, which shares the same name as the component without the "C" prefix (e.g. @b3d::Renderable scene actor vs. **CRenderable** component)). 
 
 > Note that throughout this manual we have often referred to components without using the "C" prefix, but in this manual we are referring to the scene actor.
 
@@ -28,7 +28,7 @@ renderable->setMaterial(material);
 ~~~~~~~~~~~~~
 
 ## Transform
-Each scene actor has a **Transform** object you can use to position and orient it in the scene. The transform can be accessed through @bs::SceneActor::getTransform() and @bs::SceneActor::setTransform(). It can be manipulated the same as you would a **Transform** on a **SceneObject**. 
+Each scene actor has a **Transform** object you can use to position and orient it in the scene. The transform can be accessed through @b3d::SceneActor::getTransform() and @b3d::SceneActor::setTransform(). It can be manipulated the same as you would a **Transform** on a **SceneObject**. 
 
 ~~~~~~~~~~~~~{.cpp}
 Transform tfrm = renderable->getTransform();
@@ -40,10 +40,10 @@ renderable->setTransform(tfrm);
 When you use scene objects and components to set up your scene, you do so before calling the main loop. During the main loop the system will call various callbacks in which you can implement your game logic. But without components we need a different way of executing gameplay logic.
 
 To do this we need to change how we start the application. You will need to create your own version of the **Application** class by deriving from it. Once derived you can override any of the following methods:
- - @bs::Application::onStartUp - Called when the application is first starting up.
- - @bs::Application::preUpdate - Called every frame, just before component and plugin updates are triggered.
- - @bs::Application::postUpdate - Called every frame, after component and plugin updates are triggered.
- - @bs::Application::onShutDown - Called just before the application is about to shut down.
+ - @b3d::Application::onStartUp - Called when the application is first starting up.
+ - @b3d::Application::preUpdate - Called every frame, just before component and plugin updates are triggered.
+ - @b3d::Application::postUpdate - Called every frame, after component and plugin updates are triggered.
+ - @b3d::Application::onShutDown - Called just before the application is about to shut down.
  
 ~~~~~~~~~~~~~{.cpp}
 class MyApplication : public Application
@@ -78,7 +78,7 @@ private:
 };
 ~~~~~~~~~~~~~
 
-Once you have your own application override, you can now start the application by calling @bs::Application::startUp<T> with the template parameter being your application override class. Everything else regarding start-up remains the same.
+Once you have your own application override, you can now start the application by calling @b3d::Application::startUp<T> with the template parameter being your application override class. Everything else regarding start-up remains the same.
 
 ~~~~~~~~~~~~~{.cpp}
 Application::startUp<MyApplication>(VideoMode(1280, 720), "My app", false);

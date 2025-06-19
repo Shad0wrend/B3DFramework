@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "Win32/BsWin32Prerequisites.h"
 #include "Renderapi/BsRenderWindow.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup GL
 	 *  @{
@@ -98,7 +98,7 @@ namespace bs
 			void SyncProperties() override;
 
 		protected:
-			friend class bs::Win32RenderWindow;
+			friend class b3d::Win32RenderWindow;
 
 			Win32Window* mWindow;
 			Win32GLSupport& mGLSupport;
@@ -114,4 +114,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

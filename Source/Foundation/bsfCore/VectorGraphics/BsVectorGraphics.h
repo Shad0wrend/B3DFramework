@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "Math/BsArea2.h"
 #include "Resources/BsResource.h"
 
-namespace bs
+namespace b3d
 {
 	class VectorPathRenderableRTTI;
 
@@ -652,7 +652,7 @@ namespace bs
 		class B3D_CORE_EXPORT VectorPathRenderable : public IReflectable
 		{
 		public:
-			VectorPathRenderable(const bs::VectorPath& vectorPath, const VectorGraphicsSettings& settings)
+			VectorPathRenderable(const b3d::VectorPath& vectorPath, const VectorGraphicsSettings& settings)
 				: mSettings(settings)
 			{ }
 			~VectorPathRenderable() override = default;
@@ -675,7 +675,7 @@ namespace bs
 		public:
 			VectorPathRenderable() = default; // Deserialization only
 
-			friend class bs::VectorPathRenderableRTTI;
+			friend class b3d::VectorPathRenderableRTTI;
 			static RTTIType* GetRttiStatic();
 			RTTIType* GetRtti() const override;
 		};
@@ -683,7 +683,7 @@ namespace bs
 
 	/** @} */
 
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -691,17 +691,17 @@ namespace std
 {
 /** Hash value generator for ValidParamKey. */
 template <>
-struct hash<bs::VectorGraphicsSettings>
+struct hash<b3d::VectorGraphicsSettings>
 {
-	size_t operator()(const bs::VectorGraphicsSettings& value) const
+	size_t operator()(const b3d::VectorGraphicsSettings& value) const
 	{
 		size_t hash = 0;
-		bs::B3DCombineHash(hash, value.Size);
-		bs::B3DCombineHash(hash, value.ScalingMode);
-		bs::B3DCombineHash(hash, value.Transform);
-		bs::B3DCombineHash(hash, value.UseAntialiasing);
-		bs::B3DCombineHash(hash, value.StencilStrokes);
-		bs::B3DCombineHash(hash, value.DevicePixelRatio);
+		b3d::B3DCombineHash(hash, value.Size);
+		b3d::B3DCombineHash(hash, value.ScalingMode);
+		b3d::B3DCombineHash(hash, value.Transform);
+		b3d::B3DCombineHash(hash, value.UseAntialiasing);
+		b3d::B3DCombineHash(hash, value.StencilStrokes);
+		b3d::B3DCombineHash(hash, value.DevicePixelRatio);
 
 		return hash;
 	}

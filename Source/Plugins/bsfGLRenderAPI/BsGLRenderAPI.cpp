@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsGLRenderAPI.h"
 #include "RenderAPI/BsRenderAPI.h"
@@ -30,12 +30,12 @@
 #include "BsGLTextureView.h"
 #include "GLSL/BsGLSLParamParser.h"
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 const char* MODULE_NAME = "bsfGLRenderAPI.dll";
-}} // namespace bs::ct
+}} // namespace b3d::ct
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 const char* B3DGetOpenGLErrorString(GLenum errorCode)
 {
@@ -113,7 +113,7 @@ void GLRenderAPI::Initialize()
 	mVideoModeInfo = mGLSupport->GetVideoModeInfo();
 
 	CommandBufferManager::StartUp<GLCommandBufferManager>();
-	bs::RenderWindowManager::StartUp<bs::GLRenderWindowManager>(this);
+	b3d::RenderWindowManager::StartUp<b3d::GLRenderWindowManager>(this);
 	RenderWindowManager::StartUp();
 
 	RenderStateManager::StartUp();
@@ -192,7 +192,7 @@ void GLRenderAPI::DestroyCore()
 
 	// Deleting the hardware buffer manager.  Has to be done before the mGLSupport->stop().
 	HardwareBufferManager::ShutDown();
-	bs::HardwareBufferManager::ShutDown();
+	b3d::HardwareBufferManager::ShutDown();
 	GLRTTManager::ShutDown();
 
 	for(u32 i = 0; i < kMaxVbCount; i++)
@@ -213,10 +213,10 @@ void GLRenderAPI::DestroyCore()
 		mGLSupport->Stop();
 
 	TextureManager::ShutDown();
-	bs::TextureManager::ShutDown();
+	b3d::TextureManager::ShutDown();
 	QueryManager::ShutDown();
 	RenderWindowManager::ShutDown();
-	bs::RenderWindowManager::ShutDown();
+	b3d::RenderWindowManager::ShutDown();
 	RenderStateManager::ShutDown();
 	GLVertexArrayObjectManager::ShutDown(); // Note: Needs to be after QueryManager shutdown as some resources might be waiting for queries to complete
 	CommandBufferManager::ShutDown();
@@ -2319,7 +2319,7 @@ void GLRenderAPI::InitFromCaps(GpuDeviceCapabilities* caps)
 	}
 #endif
 
-	bs::HardwareBufferManager::StartUp();
+	b3d::HardwareBufferManager::StartUp();
 	HardwareBufferManager::StartUp<GLHardwareBufferManager>();
 
 	// GPU Program Manager setup
@@ -2335,7 +2335,7 @@ void GLRenderAPI::InitFromCaps(GpuDeviceCapabilities* caps)
 	mNumTextureUnits = caps->NumCombinedTextureUnits;
 	mTextureInfos = B3DNewMultiple<TextureInfo>(mNumTextureUnits);
 
-	bs::TextureManager::StartUp<bs::GLTextureManager>(std::ref(*mGLSupport));
+	b3d::TextureManager::StartUp<b3d::GLTextureManager>(std::ref(*mGLSupport));
 	TextureManager::StartUp<GLTextureManager>(std::ref(*mGLSupport));
 }
 

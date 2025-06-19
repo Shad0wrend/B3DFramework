@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -14,7 +14,7 @@
 #include "Reflection/BsRTTITypeMacros.h"
 #include "Serialization/BsBinaryDelta.h"
 
-namespace bs
+namespace b3d
 {
 	/**
 	 * @addtogroup RTTI
@@ -486,7 +486,7 @@ namespace bs
 	template <class T>
 	bool B3DRTTIIsOfType(IReflectable* object)
 	{
-		static_assert((std::is_base_of<bs::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of<b3d::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from b3d::IReflectable.");
 
 		return object->GetTypeId() == T::GetRttiStatic()->GetRttiId();
 	}
@@ -495,7 +495,7 @@ namespace bs
 	template <class T>
 	bool B3DRTTIIsOfType(SPtr<IReflectable> object)
 	{
-		static_assert((std::is_base_of<bs::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of<b3d::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from b3d::IReflectable.");
 
 		return object->GetTypeId() == T::GetRttiStatic()->GetRttiId();
 	}
@@ -507,7 +507,7 @@ namespace bs
 	template <class T>
 	bool B3DRTTIIsSubclass(const IReflectable* object)
 	{
-		static_assert((std::is_base_of<bs::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of<b3d::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from b3d::IReflectable.");
 
 		return object && object->IsDerivedFrom(T::GetRttiStatic());
 	}
@@ -516,7 +516,7 @@ namespace bs
 	template <class T>
 	bool B3DRTTIIsSubclass(const SPtr<IReflectable>& object)
 	{
-		static_assert((std::is_base_of<bs::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of<b3d::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from b3d::IReflectable.");
 
 		return object && object->IsDerivedFrom(T::GetRttiStatic());
 	}
@@ -542,4 +542,4 @@ namespace bs
 	}
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

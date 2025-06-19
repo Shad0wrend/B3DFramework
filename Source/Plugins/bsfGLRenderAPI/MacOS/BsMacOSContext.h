@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsGLPrerequisites.h"
 #include "BsGLContext.h"
 
-namespace bs::ct
+namespace b3d::ct
 {
 	/** @addtogroup GL
 	 *  @{
@@ -61,4 +61,4 @@ namespace bs::ct
 	};
 
 	/** @} */
-} // namespace bs::ct
+} // namespace b3d::ct

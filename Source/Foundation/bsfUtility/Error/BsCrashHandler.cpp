@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsUtilityPrerequisites.h"
 #include "Debug/BsDebug.h"
 #include "FileSystem/BsFileSystem.h"
 #include "FileSystem/BsPath.h"
 
-using namespace bs;
+using namespace b3d;
 
 const String CrashHandler::kSCrashReportFolder = "CrashReports";
 const String CrashHandler::kSCrashLogName = u8"log.html";
@@ -53,10 +53,10 @@ void CrashHandler::SaveCrashLog() const
 	GetDebug().SaveLog(GetCrashFolder() + kSCrashLogName, SavedLogType::HTML);
 }
 
-namespace bs
+namespace b3d
 {
 CrashHandler& GetCrashHandler()
 {
 	return CrashHandler::Instance();
 }
-} // namespace bs
+} // namespace b3d

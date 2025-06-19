@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,8 +6,8 @@
 #include "BsScriptGUIElementWrapper.h"
 #include "../../../Foundation/bsfUtility/Image/BsColor.h"
 
-namespace bs { class GUIRenderable; }
-namespace bs
+namespace b3d { class GUIRenderable; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIRenderableWrapperBase : public ScriptGUIElementWrapper
 	{

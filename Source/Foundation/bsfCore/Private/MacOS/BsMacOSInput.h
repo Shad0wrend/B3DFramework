@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include <IOKit/hid/IOHIDLib.h>
 
-namespace bs
+namespace b3d
 {
 	static constexpr u32 HID_NUM_MOUSE_AXES = 3;
 	static constexpr u32 HID_NUM_GAMEPAD_AXES = 24;
@@ -107,4 +107,4 @@ namespace bs
 		Vector<GamepadInfo> gamepadInfos;
 		HIDManager* gamepadHIDManager;
 	};
-} // namespace bs
+} // namespace b3d

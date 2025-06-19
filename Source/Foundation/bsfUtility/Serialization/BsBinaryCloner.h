@@ -1,15 +1,15 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	struct RTTIOperationContext;
 }
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Serialization
 	 *  @{
@@ -85,7 +85,7 @@ namespace bs
 	template <class T>
 	SPtr<T> B3DRTTIClone(const T* const object, bool shallow = false)
 	{
-		static_assert((std::is_base_of_v<IReflectable, T>), "Cannot clone object. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of_v<IReflectable, T>), "Cannot clone object. It needs to derive from b3d::IReflectable.");
 
 		if(object == nullptr)
 			return nullptr;
@@ -98,7 +98,7 @@ namespace bs
 	template <class T>
 	SPtr<T> B3DRTTIClone(const SPtr<T>& object, bool shallow = false)
 	{
-		static_assert((std::is_base_of_v<IReflectable, T>), "Cannot clone object. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of_v<IReflectable, T>), "Cannot clone object. It needs to derive from b3d::IReflectable.");
 
 		if(object == nullptr)
 			return nullptr;
@@ -108,4 +108,4 @@ namespace bs
 	}
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -12,7 +12,7 @@
 #include "Script/BsIScriptExportable.h"
 #include "Utility/BsEvent.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Implementation
 	 *  @{
@@ -192,7 +192,7 @@ namespace bs
 		 *  @{
 		 */
 
-		/** @copydoc bs::Viewport */
+		/** @copydoc b3d::Viewport */
 		class B3D_CORE_EXPORT Viewport : public RenderProxy, public TViewport<true>
 		{
 		public:
@@ -202,11 +202,11 @@ namespace bs
 			/**	Sets the render target the viewport will be associated with. */
 			void SetTarget(const SPtr<RenderTarget>& target) { mTarget = target; }
 
-			/** @copydoc bs::Viewport::Create() */
+			/** @copydoc b3d::Viewport::Create() */
 			static SPtr<Viewport> Create(const SPtr<RenderTarget>& target, float x = 0.0f, float y = 0.0f, float width = 1.0f, float height = 1.0f);
 
 		protected:
-			friend class bs::Viewport;
+			friend class b3d::Viewport;
 
 			Viewport(const SPtr<RenderTarget>& target, float x = 0.0f, float y = 0.0f, float width = 1.0f, float height = 1.0f);
 
@@ -218,4 +218,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

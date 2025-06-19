@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "Resources/BsResource.h"
 #include "Math/BsVector2.h"
 
-namespace bs
+namespace b3d
 {
 	class SpriteImageBase;
 	/** @addtogroup Image
@@ -323,21 +323,21 @@ namespace bs
 		class SpriteImageAllocation : public RenderProxy, public TSpriteImageAllocation<true>
 		{
 		protected:
-			friend class bs::SpriteImageAllocation;
+			friend class b3d::SpriteImageAllocation;
 
 			SpriteImageAllocation() = default;
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/**
-		 * Render proxy counterpart of a bs::SpriteImage.
+		 * Render proxy counterpart of a b3d::SpriteImage.
 		 *
 		 * @note	Render thread.
 		 */
 		class B3D_CORE_EXPORT SpriteImage : public RenderProxy, public TSpriteImage<true>
 		{
 		protected:
-			friend class bs::SpriteImage;
+			friend class b3d::SpriteImage;
 
 			SpriteImage(const SpriteImageCreateInformation& createInformation)
 				: TSpriteImage(createInformation)
@@ -348,4 +348,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

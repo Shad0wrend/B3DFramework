@@ -1,9 +1,9 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Utility/BsDynamicLibraryManager.h"
 #include "Utility/BsDynamicLibrary.h"
 
-namespace bs
+namespace b3d
 {
 static bool operator<(const UPtr<DynamicLibrary>& lhs, const String& rhs)
 {
@@ -19,9 +19,9 @@ static bool operator<(const UPtr<DynamicLibrary>& lhs, const UPtr<DynamicLibrary
 {
 	return lhs->GetName() < rhs->GetName();
 }
-} // namespace bs
+} // namespace b3d
 
-using namespace bs;
+using namespace b3d;
 
 DynamicLibrary* DynamicLibraryManager::Load(String filename)
 {
@@ -61,10 +61,10 @@ void DynamicLibraryManager::Unload(DynamicLibrary* lib)
 		B3DDelete(lib);
 }
 
-namespace bs
+namespace b3d
 {
 DynamicLibraryManager& GetDynamicLibraryManager()
 {
 	return DynamicLibraryManager::Instance();
 }
-} // namespace bs
+} // namespace b3d

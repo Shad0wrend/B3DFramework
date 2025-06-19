@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptBuiltinResources.generated.h"
 #include "BsMonoMethod.h"
@@ -13,7 +13,7 @@
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
 #include "BsScriptMesh.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptBuiltinResources::ScriptBuiltinResources()
 		:TScriptTypeDefinition()

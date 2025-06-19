@@ -8,10 +8,10 @@ This approach uses the event system, on which you can read more on [here](../Uti
 
 # Button presses
 You can subscribe to the following events that report when the user interacted with a button:
- - @bs::Input::onButtonDown - Triggered whenever a button has been pressed.
- - @bs::Input::onButtonUp - Triggered whenever a button has been released.
+ - @b3d::Input::onButtonDown - Triggered whenever a button has been pressed.
+ - @b3d::Input::onButtonUp - Triggered whenever a button has been released.
  
-Both of these events supply the @bs::ButtonEvent structure, containing the code of the button that was pressed, along with some other information.
+Both of these events supply the @b3d::ButtonEvent structure, containing the code of the button that was pressed, along with some other information.
 
 ~~~~~~~~~~~~~{.cpp}
 Vector3 position(BsZero);
@@ -29,7 +29,7 @@ GetInput().onButtonDown.connect(handleButtonDown);
 ~~~~~~~~~~~~~
 
 # Mouse/touch input
-Use @bs::Input::onPointerMoved to track whenever the user moves the mouse or his finger on a touch device. The event supplies the @bs::PointerEvent structure, containing information like screen position of the event, delta from the last frame, state of all the mouse buttons, scroll wheel movement and more.
+Use @b3d::Input::onPointerMoved to track whenever the user moves the mouse or his finger on a touch device. The event supplies the @b3d::PointerEvent structure, containing information like screen position of the event, delta from the last frame, state of all the mouse buttons, scroll wheel movement and more.
 
 ~~~~~~~~~~~~~{.cpp}
 Vector3 position(BsZero);
@@ -53,9 +53,9 @@ GetInput().onPointerMoved.connect(handlePointerMove);
 ~~~~~~~~~~~~~
 
 Pointers may also receive specialized button down/up events, similar to *Input::onButtonDown* and *Input::onButtonUp*. They trigger at the same time, but provide *PointerEvent* structure instead of *ButtonEvent* - which may be more useful in certain situations. These methods are:
- - @bs::Input::onPointerPressed - Triggered whenever a pointer button has been pressed or screen touch began.
- - @bs::Input::onPointerReleased - Triggered whenever a pointer button has been released or screen touch ended.
- - @bs::Input::onPointerDoubleClick - Triggered when the user quickly clicks the pointer buttons or taps the screen in succession.
+ - @b3d::Input::onPointerPressed - Triggered whenever a pointer button has been pressed or screen touch began.
+ - @b3d::Input::onPointerReleased - Triggered whenever a pointer button has been released or screen touch ended.
+ - @b3d::Input::onPointerDoubleClick - Triggered when the user quickly clicks the pointer buttons or taps the screen in succession.
  
 ~~~~~~~~~~~~~{.cpp}
 Vector3 position(BsZero);
@@ -72,7 +72,7 @@ GetInput().onPointerDoubleClick.connect(handleDoubleClick);
 ~~~~~~~~~~~~~
 
 # Text input
-If user is typing text (using a physical or a touch keyboard) you may subscribe to @bs::Input::onCharInput to receive individual characters as the user inputs them. 
+If user is typing text (using a physical or a touch keyboard) you may subscribe to @b3d::Input::onCharInput to receive individual characters as the user inputs them. 
 
 ~~~~~~~~~~~~~{.cpp}
 StringStream inputString;

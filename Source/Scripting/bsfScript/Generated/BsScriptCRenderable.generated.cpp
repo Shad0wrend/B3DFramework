@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptCRenderable.generated.h"
 #include "BsMonoMethod.h"
@@ -10,7 +10,7 @@
 #include "../../../Foundation/bsfCore/Mesh/BsMesh.h"
 #include "../../../Foundation/bsfCore/Material/BsMaterial.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptRenderable::ScriptRenderable(const GameObjectHandle<CRenderable>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)

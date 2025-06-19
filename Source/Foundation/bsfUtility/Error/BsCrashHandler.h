@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #define B3D_MAX_STACKTRACE_DEPTH 200
 #define B3D_MAX_STACKTRACE_NAME_BYTES 1024
 
-namespace bs
+namespace b3d
 {
 	/** Struct for holding crash handler settings */
 	struct CrashHandlerSettings
@@ -141,4 +141,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-} // namespace bs
+} // namespace b3d

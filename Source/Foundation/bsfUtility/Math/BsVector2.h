@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 #include "Math/BsMath.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Math
 	 *  @{
@@ -400,7 +400,7 @@ namespace bs
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) TVector2<u32>;
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -408,13 +408,13 @@ namespace std
 {
 /** Hash value generator for TVector2<T>. */
 template<class T>
-struct hash<bs::TVector2<T>>
+struct hash<b3d::TVector2<T>>
 {
-	size_t operator()(const bs::TVector2<T>& value) const
+	size_t operator()(const b3d::TVector2<T>& value) const
 	{
 		size_t hash = 0;
-		bs::B3DCombineHash(hash, value.X);
-		bs::B3DCombineHash(hash, value.Y);
+		b3d::B3DCombineHash(hash, value.X);
+		b3d::B3DCombineHash(hash, value.Y);
 
 		return hash;
 	}

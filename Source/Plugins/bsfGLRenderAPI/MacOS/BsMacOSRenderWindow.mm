@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #define BS_COCOA_INTERNALS
 #include "MacOS/BsMacOSVideoModeInfo.h"
@@ -11,7 +11,7 @@
 #include "BsGLRenderWindowManager.h"
 #include "BsGLPixelFormat.h"
 
-namespace bs
+namespace b3d
 {
 	MacOSRenderWindow::MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, ct::MacOSGLSupport& glSupport)
 			:RenderWindow(desc, windowId), mProperties(desc), mGLSupport(glSupport)
@@ -441,7 +441,7 @@ namespace bs
 				mSyncedProperties.vsyncInterval = interval;
 			}
 
-			bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+			b3d::RenderWindowManager::instance().notifySyncDataDirty(this);
 		}
 
 		void MacOSRenderWindow::swapBuffers(UINT32 syncMask)

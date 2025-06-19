@@ -7,7 +7,7 @@
 #include "Components/BsCSkybox.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
 
-namespace bs
+namespace b3d
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Engine
@@ -41,4 +41,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-} // namespace bs
+} // namespace b3d

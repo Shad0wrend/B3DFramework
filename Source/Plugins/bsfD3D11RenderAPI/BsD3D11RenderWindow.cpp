@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsD3D11RenderWindow.h"
 #include "CoreThread/BsCoreThread.h"
@@ -18,7 +18,7 @@
 #include "Math/BsMath.h"
 #include "Private/Win32/BsWin32Window.h"
 
-using namespace bs;
+using namespace b3d;
 
 D3D11RenderWindow::D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
 	: RenderWindow(desc, windowId), mProperties(desc)
@@ -85,7 +85,7 @@ SPtr<ct::CoreObject> D3D11RenderWindow::CreateCore() const
 	return coreObj;
 }
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 D3D11RenderWindow::D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, D3D11Device& device, IDXGIFactory1* DXGIFactory)
 	: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc), mDevice(device), mDXGIFactory(DXGIFactory)
 {}
@@ -212,7 +212,7 @@ void D3D11RenderWindow::Initialize()
 		mSyncedProperties = props;
 	}
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 	RenderWindow::Initialize();
 }
 
@@ -251,7 +251,7 @@ void D3D11RenderWindow::Move(i32 left, i32 top)
 			mSyncedProperties.Left = props.Left;
 		}
 
-		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+		b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 	}
 }
 
@@ -274,7 +274,7 @@ void D3D11RenderWindow::Resize(u32 width, u32 height)
 			mSyncedProperties.Height = props.Height;
 		}
 
-		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+		b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 	}
 }
 
@@ -373,8 +373,8 @@ void D3D11RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, 
 		mSyncedProperties.Height = mProperties.Height;
 	}
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-	bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
+	b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 }
 
 void D3D11RenderWindow::SetFullscreen(const VideoMode& mode)
@@ -415,8 +415,8 @@ void D3D11RenderWindow::SetFullscreen(const VideoMode& mode)
 		mSyncedProperties.Height = mProperties.Height;
 	}
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-	bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
+	b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 }
 
 void D3D11RenderWindow::SetWindowed(u32 width, u32 height)
@@ -453,8 +453,8 @@ void D3D11RenderWindow::SetWindowed(u32 width, u32 height)
 		mSyncedProperties.Height = mProperties.Height;
 	}
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-	bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
+	b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 }
 
 void D3D11RenderWindow::SetVSync(bool enabled, u32 interval)
@@ -468,7 +468,7 @@ void D3D11RenderWindow::SetVSync(bool enabled, u32 interval)
 		mSyncedProperties.VsyncInterval = interval;
 	}
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 }
 
 HWND D3D11RenderWindow::GetWindowHandleInternal() const
@@ -800,4 +800,4 @@ void D3D11RenderWindow::SyncProperties()
 	ScopedSpinLock lock(mLock);
 	mProperties = mSyncedProperties;
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

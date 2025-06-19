@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Testing
 	 *  @{
@@ -51,7 +51,7 @@ namespace bs
 		template <class T>
 		static SPtr<TestSuite> Create()
 		{
-			static_assert((std::is_base_of<TestSuite, T>::value), "Invalid test suite type. It needs to derive from bs::TestSuite.");
+			static_assert((std::is_base_of<TestSuite, T>::value), "Invalid test suite type. It needs to derive from b3d::TestSuite.");
 
 			return std::static_pointer_cast<TestSuite>(B3DMakeShared<T>());
 		}
@@ -102,4 +102,4 @@ namespace bs
 #define B3D_ADD_TEST(func) AddTest(static_cast<Func>(&func), #func);
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

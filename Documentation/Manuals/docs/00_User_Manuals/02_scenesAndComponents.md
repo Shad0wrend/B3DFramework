@@ -2,7 +2,7 @@
 title: Scene objects and components
 ---
 
-All scenes in bs::f are constructed from scene objects. Each scene object is a part of the scene hierarchy, and can have a parent scene object and zero or multiple child scene objects. Each scene object can also be positioned, oriented and scaled within the scene.
+All scenes in b3d::f are constructed from scene objects. Each scene object is a part of the scene hierarchy, and can have a parent scene object and zero or multiple child scene objects. Each scene object can also be positioned, oriented and scaled within the scene.
 
 Components can be attached to scene objects - each scene object can have zero or multiple components attached to it. Components provide various functionality and contain the logic for your game. For example there is a **Camera** component that lets the user see into the scene, or a **Renderable** component that represents a single 3D mesh in the scene. 
 
@@ -22,7 +22,7 @@ so->setPosition(Vector3(0, 30, 0));
 HRenderable renderable = so->addComponent<CRenderable>();
 ~~~~~~~~~~~~~
 
-> As a convention, almost all complex classes in bs::f use the static **create** method as a way to create new objects. More simple classes and structures, like **Vector3**, use the traditional constructors instead.
+> As a convention, almost all complex classes in b3d::f use the static **create** method as a way to create new objects. More simple classes and structures, like **Vector3**, use the traditional constructors instead.
 
 # Handles
 Whenever you wish to keep a reference to a scene object or a component you do so via a handle. They are represented with classes prefixed with an "H", as you might have noticed in the example above. 
@@ -32,9 +32,9 @@ Scene objects are always referenced using the **HSceneObject** handle, while com
 You may treat the handles as pointers, using "->" to access their members, comparing them for equality or with *nullptr* to check their validity. 
 
 # Scene object creation and destruction
-We have already shown how to use @bs::SceneObject::create to create a new scene object. 
+We have already shown how to use @b3d::SceneObject::create to create a new scene object. 
 
-If you wish to destroy a scene object call @bs::SceneObject::destroy. Note that destroying a scene object will destroy all of the components attached to it, as well as any child scene objects.
+If you wish to destroy a scene object call @b3d::SceneObject::destroy. Note that destroying a scene object will destroy all of the components attached to it, as well as any child scene objects.
 
 ~~~~~~~~~~~~~{.cpp}
 // Create a scene object
@@ -45,7 +45,7 @@ so->destroy();
 ~~~~~~~~~~~~~
 
 # Transforming scene objects
-You can change scene object position, orientation and scale using @bs::SceneObject::setPosition, @bs::SceneObject::setRotation and @bs::SceneObject::setScale.
+You can change scene object position, orientation and scale using @b3d::SceneObject::setPosition, @b3d::SceneObject::setRotation and @b3d::SceneObject::setScale.
 
 Components attached to scene objects will reflect the scene object transform. For example, moving a scene object with a **Renderable** component will make the 3D mesh referenced by **Renderable** display in a different location in the scene.
 
@@ -62,14 +62,14 @@ so->setRotation(Quaternion(Degree(0), Degree(90), Degree(0)));
 so->setScale(Vector3(2.0f, 2.0f, 2.0f));
 ~~~~~~~~~~~~~
 
-Internally these methods manipulate a @bs::Transform object. You can also retrieve the transform from a scene object and manipulate it directly for greater control. To retrieve the world-space transform call @bs::SceneObject::getTransform().
+Internally these methods manipulate a @b3d::Transform object. You can also retrieve the transform from a scene object and manipulate it directly for greater control. To retrieve the world-space transform call @b3d::SceneObject::getTransform().
 
-There also other useful methods when it comes to dealing with scene object positions and orientations, like @bs::SceneObject::move, @bs::SceneObject::lookAt. See the @bs::SceneObject API reference for a full overview.
+There also other useful methods when it comes to dealing with scene object positions and orientations, like @b3d::SceneObject::move, @b3d::SceneObject::lookAt. See the @b3d::SceneObject API reference for a full overview.
 
 # Scene object hierarchy
 As mentioned, scene objects can be arranged in a hierarchy. Hierarchies allow you to transform multiple scene objects at once, since any transforms applied to a parent will also be applied to a child.
 
-All newly created scene objects are parented to the scene root by default. Use @bs::SceneObject::setParent to change their parents.
+All newly created scene objects are parented to the scene root by default. Use @b3d::SceneObject::setParent to change their parents.
 
 ~~~~~~~~~~~~~{.cpp}
 HSceneObject parent = SceneObject::create("Parent");
@@ -97,14 +97,14 @@ childB->setParent(parent);
 parent->setPosition(Vector3(30, 0, 0));
 ~~~~~~~~~~~~~
 
-You may query for parent and children of a scene object using methods like @bs::SceneObject::getParent, @bs::SceneObject::getNumChildren, @bs::SceneObject::getChild or @bs::SceneObject::findChild. See the @bs::SceneObject API reference for a full overview.
+You may query for parent and children of a scene object using methods like @b3d::SceneObject::getParent, @b3d::SceneObject::getNumChildren, @b3d::SceneObject::getChild or @b3d::SceneObject::findChild. See the @b3d::SceneObject API reference for a full overview.
 
 # Components
-You may add components to a scene object using the @bs::SceneObject::addComponent<T> method. 
+You may add components to a scene object using the @b3d::SceneObject::addComponent<T> method. 
 
-You may retrieve existing components by calling @bs::SceneObject::getComponent<T>.
+You may retrieve existing components by calling @b3d::SceneObject::getComponent<T>.
 
-Components can be removed by calling the @bs::Component::destroy method on the component.
+Components can be removed by calling the @b3d::Component::destroy method on the component.
 
 ~~~~~~~~~~~~~{.cpp}
 HSceneObject so = SceneObject::create("My object");

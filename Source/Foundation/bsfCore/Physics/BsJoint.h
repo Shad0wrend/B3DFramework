@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "Physics/BsPhysicsCommon.h"
 #include "Physics/BsFJoint.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Physics
 	 *  @{
@@ -193,7 +193,7 @@ namespace bs
 		 *						non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy)
 		 *						collision. Must be in [0, 1] range.
 		 */
-		LimitLinearRange(float lower, float upper, const bs::Spring& spring, float restitution = 0.0f)
+		LimitLinearRange(float lower, float upper, const b3d::Spring& spring, float restitution = 0.0f)
 			: LimitCommon(spring, restitution), Lower(lower), Upper(upper)
 		{}
 
@@ -238,7 +238,7 @@ namespace bs
 		 *						non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy)
 		 *						collision. Must be in [0, 1] range.
 		 */
-		LimitLinear(float extent, const bs::Spring& spring, float restitution = 0.0f)
+		LimitLinear(float extent, const b3d::Spring& spring, float restitution = 0.0f)
 			: LimitCommon(spring, restitution), Extent(extent)
 		{}
 
@@ -282,7 +282,7 @@ namespace bs
 		 *						non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy)
 		 *						collision. Must be in [0, 1] range.
 		 */
-		LimitAngularRange(Radian lower, Radian upper, const bs::Spring& spring, float restitution = 0.0f)
+		LimitAngularRange(Radian lower, Radian upper, const b3d::Spring& spring, float restitution = 0.0f)
 			: LimitCommon(spring, restitution), Lower(lower), Upper(upper)
 		{}
 
@@ -332,7 +332,7 @@ namespace bs
 		 *						non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy)
 		 *						collision. Must be in [0, 1] range.
 		 */
-		LimitConeRange(Radian yLimitAngle, Radian zLimitAngle, const bs::Spring& spring, float restitution = 0.0f)
+		LimitConeRange(Radian yLimitAngle, Radian zLimitAngle, const b3d::Spring& spring, float restitution = 0.0f)
 			: LimitCommon(spring, restitution), YLimitAngle(yLimitAngle), ZLimitAngle(zLimitAngle)
 		{}
 
@@ -352,4 +352,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

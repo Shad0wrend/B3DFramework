@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Linux/BsLinuxVideoModeInfo.h"
 #include "Private/Linux/BsLinuxPlatform.h"
@@ -7,8 +7,8 @@
 #define XRANDR_ROTATION_LEFT (1 << 1)
 #define XRANDR_ROTATION_RIGHT (1 << 3)
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 LinuxVideoModeInfo::LinuxVideoModeInfo()
 {

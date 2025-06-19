@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2025 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsPhysXCollider.h"
 #include "BsPhysX.h"
@@ -7,7 +7,7 @@
 #include "PxScene.h"
 
 using namespace physx;
-using namespace bs;
+using namespace b3d;
 
 PhysXCollider::PhysXCollider(PhysXScene& physicsScene, const Vector3& position, const Quaternion& rotation, const Vector3& scale)
 	: Collider(physicsScene, position, rotation, scale)

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Prerequisites/BsPrerequisitesUtil.h"
 
@@ -7,7 +7,7 @@
 #include <dlfcn.h>
 #include <csignal>
 
-using namespace bs;
+using namespace b3d;
 
 i32 SIGNALS[] = { SIGFPE, SIGILL, SIGSEGV, SIGTERM };
 struct sigaction gSavedSignals[4];

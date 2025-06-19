@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include <codecvt>
 #include <locale>
@@ -15,7 +15,7 @@
 #include "Error/BsException.h"
 #include "Debug/BsLog.h"
 
-using namespace bs;
+using namespace b3d;
 
 const String StringUtil::kBlank;
 const WString StringUtil::kWblank;
@@ -192,7 +192,7 @@ String StringUtil::StripExtension(const String& input)
 /* 						VARIOUS TO STRING CONVERSIONS                   */
 /************************************************************************/
 
-namespace bs
+namespace b3d
 {
 WString ToWString(const String& source)
 {
@@ -406,10 +406,10 @@ WString ToWString(const Color& val)
 	return stream.str();
 }
 
-WString ToWString(const Vector<bs::WString>& val)
+WString ToWString(const Vector<b3d::WString>& val)
 {
 	WStringStream stream;
-	Vector<bs::WString>::const_iterator i, iend, ibegin;
+	Vector<b3d::WString>::const_iterator i, iend, ibegin;
 	ibegin = val.begin();
 	iend = val.end();
 	for(i = ibegin; i != iend; ++i)
@@ -622,10 +622,10 @@ String ToString(const Path& val)
 	return val.ToString();
 }
 
-String ToString(const Vector<bs::String>& val)
+String ToString(const Vector<b3d::String>& val)
 {
 	StringStream stream;
-	Vector<bs::String>::const_iterator i, iend, ibegin;
+	Vector<b3d::String>::const_iterator i, iend, ibegin;
 	ibegin = val.begin();
 	iend = val.end();
 	for(i = ibegin; i != iend; ++i)
@@ -829,4 +829,4 @@ void StringThrowDataOverflowException()
 {
 	B3D_EXCEPT(InternalErrorException, "Data overflow! Size doesn't fit into 32 bits.");
 }
-} // namespace bs
+} // namespace b3d

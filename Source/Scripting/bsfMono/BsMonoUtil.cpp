@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsMonoUtil.h"
 #include "Debug/BsDebug.h"
@@ -18,9 +18,9 @@
 #include <mono/metadata/mono-debug.h>
 #endif
 
-using namespace bs;
+using namespace b3d;
 static bool sGenericHelpersInitialized = false;
-static bs::MonoProperty* sGenericParamsProp = nullptr;
+static b3d::MonoProperty* sGenericParamsProp = nullptr;
 
 WString MonoUtil::MonoToWString(MonoString* str)
 {

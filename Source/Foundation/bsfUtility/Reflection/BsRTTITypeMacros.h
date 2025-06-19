@@ -1,8 +1,8 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup RTTI
 	 *  @{
@@ -61,7 +61,7 @@ namespace bs
  * The type of the member must be a plain, reflectable and reflectable pointer type. Each field must specify
  * a unique ID for @p id.
  */
-#define B3D_RTTI_MEMBER(name, id) B3D_RTTI_MEMBER_FULL(name, name, id, bs::RTTIFieldInfo::DEFAULT)
+#define B3D_RTTI_MEMBER(name, id) B3D_RTTI_MEMBER_FULL(name, name, id, b3d::RTTIFieldInfo::DEFAULT)
 
 /** Same as B3D_RTTI_MEMBER, but allows you to specify separate names for the field name and the member variable. */
 #define B3D_RTTI_MEMBER_NAMED(name, field, id) B3D_RTTI_MEMBER_FULL(name, field, id, RTTIFieldInfo::DEFAULT)
@@ -79,7 +79,7 @@ namespace bs
  * The type of the member must be a valid container type (e.g. vector or map). The container is allowed to contain
  * plain, reflectable and reflectable pointer types. Each field must specify a unique ID for @p id.
  */
-#define B3D_RTTI_MEMBER_CONTAINER(name, id) B3D_RTTI_MEMBER_CONTAINER_FULL(name, name, id, bs::RTTIFieldInfo::DEFAULT)
+#define B3D_RTTI_MEMBER_CONTAINER(name, id) B3D_RTTI_MEMBER_CONTAINER_FULL(name, name, id, b3d::RTTIFieldInfo::DEFAULT)
 
 /** Same as B3D_RTTI_MEMBER_CONTAINER, but allows you to specify separate names for the field name and the member variable. */
 #define B3D_RTTI_MEMBER_CONTAINER_NAMED(name, field, id) B3D_RTTI_MEMBER_CONTAINER_FULL(name, field, id, RTTIFieldInfo::DEFAULT)
@@ -122,7 +122,7 @@ namespace bs
  * Same as B3D_RTTI_MEMBER, but the field is looked up on the RTTIType class itself. These fields should be manually
  * populated after RTTI operation starts, and manually applied before it ends.
  */
-#define B3D_RTTI_GENERATED_MEMBER(name, id) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, bs::RTTIFieldInfo::DEFAULT, false)
+#define B3D_RTTI_GENERATED_MEMBER(name, id) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, b3d::RTTIFieldInfo::DEFAULT, false)
 
 /** Same as B3D_RTTI_GENERATED_MEMBER, but allows you to specify an info structure that further describes the field. */
 #define B3D_RTTI_GENERATED_MEMBER_INFO(name, id, info) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, info, false)
@@ -131,7 +131,7 @@ namespace bs
  * Same as B3D_RTTI_MEMBER_CONTAINER, but the field is looked up on the RTTIType class itself. These fields should be manually
  * populated after RTTI operation starts, and manually applied before it ends.
  */
-#define B3D_RTTI_GENERATED_MEMBER_CONTAINER(name, id) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, bs::RTTIFieldInfo::DEFAULT, true)
+#define B3D_RTTI_GENERATED_MEMBER_CONTAINER(name, id) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, b3d::RTTIFieldInfo::DEFAULT, true)
 
 /** Same as B3D_RTTI_GENERATED_MEMBER_CONTAINER, but allows you to specify an info structure that further describes the field. */
 #define B3D_RTTI_GENERATED_MEMBER_CONTAINER_INFO(name, id, info) B3D_RTTI_GENERATED_MEMBER_IMPL(name, name, id, info, true)
@@ -156,4 +156,4 @@ namespace bs
 	META_InitAllMembers mInitMembers{ this };
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

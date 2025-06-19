@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsPhysX.h"
 
@@ -25,7 +25,7 @@
 
 using namespace physx;
 
-namespace bs {
+namespace b3d {
 class PhysXAllocator : public PxAllocatorCallback
 {
 public:
@@ -313,9 +313,9 @@ class PhysXBroadPhaseCallback : public PxBroadPhaseCallback
 	{ /* Do nothing */
 	}
 };
-} // namespace bs
+} // namespace b3d
 
-using namespace bs;
+using namespace b3d;
 
 PxFilterFlags PhysXFilterShader(PxFilterObjectAttributes attr0, PxFilterData data0, PxFilterObjectAttributes attr1, PxFilterData data1, PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
@@ -1228,9 +1228,9 @@ void PhysXScene::ClearBroadPhaseRegions()
 	mBroadPhaseRegionHandles.clear();
 }
 
-namespace bs {
+namespace b3d {
 PhysX& GetPhysX()
 {
 	return static_cast<PhysX&>(PhysX::Instance());
 }
-} // namespace bs
+} // namespace b3d

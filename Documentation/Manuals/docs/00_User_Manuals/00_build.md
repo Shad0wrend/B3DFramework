@@ -2,7 +2,7 @@
 title: Setting up a project
 ---
 
-This manual will explain how to set up your own project and link it with bs::framework. We'll explore two options:
+This manual will explain how to set up your own project and link it with B3D Framework. We'll explore two options:
  - **Link with binaries** - Either download the precompiled set of binaries or compile them yourself. Then create a project that links with the binaries. If you do not wish to compile `bsf` yourself, this is the best approach to follow.
  - **Link with source** - Grab the source code and include it as part of your own project. Requires you to go through the same steps as if you were compiling `bsf` from scratch, but allows you to easily recompile the framework from latest source, or due to your own modifications. If you plan on making changes to the framework, or want to frequently update to the latest version, this is the best approach. Linux users should also prefer this approach as binary incompatibilities between different Linux distributions might make the provided binaries incompatible with your particular distribution.
 
@@ -79,7 +79,7 @@ The CMake file above references `Main.cpp` file. The most basic file that runs t
 
 int bs_main(int argc, char* argv[])
 {
-	using namespace bs;
+	using namespace b3d;
 
 	VideoMode videoMode(1280, 720);
 	Application::startUp(videoMode, "Example", false);
@@ -170,7 +170,7 @@ The CMake file above references `Main.cpp` file. The most basic file that runs t
 
 int bs_main(int argc, char* argv[])
 {
-	using namespace bs;
+	using namespace b3d;
 
 	VideoMode videoMode(1280, 720);
 	Application::startUp(videoMode, "Example", false);

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsRenderWindow.h"
 
@@ -9,7 +9,7 @@
 #include "Platform/BsPlatform.h"
 #include "Private/RTTI/BsRenderTargetRTTI.h"
 
-using namespace bs;
+using namespace b3d;
 
 static RenderWindowProperties CreateRenderWindowProperties(const RenderWindowCreateInformation& createInformation)
 {
@@ -40,7 +40,7 @@ static RenderTargetProperties CreateRenderTargetProperties(const RenderWindowCre
 	return output;
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(RenderWindow, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mRenderTargetProperties)
@@ -178,7 +178,7 @@ RTTIType* RenderWindow::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 RenderWindow::RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 platformWindowHandle, const SPtr<RenderWindow>& parentWindow)
 	:  mCreateInformation(createInformation), mWindowId(windowId), mPlatformWindowHandle(platformWindowHandle), mParentWindow(parentWindow), mRenderWindowProperties(CreateRenderWindowProperties(createInformation))
@@ -199,7 +199,7 @@ void RenderWindow::Initialize()
 		renderWindowSurfaceCreateInformation.VSync = mCreateInformation.Vsync;
 		renderWindowSurfaceCreateInformation.PlatformWindowHandle = mPlatformWindowHandle;
 
-		mRenderWindowSurface = bs::RenderWindowManager::Instance().CreateRenderWindowSurface(renderWindowSurfaceCreateInformation);
+		mRenderWindowSurface = b3d::RenderWindowManager::Instance().CreateRenderWindowSurface(renderWindowSurfaceCreateInformation);
 	}
 
 	Super::Initialize();
@@ -220,7 +220,7 @@ void RenderWindow::NotifySwapBuffersRequested()
 {
 	if(mShowOnSwap)
 	{
-		bs::RenderWindowManager::Instance().RequestShowWindow(mWindowId, true);
+		b3d::RenderWindowManager::Instance().RequestShowWindow(mWindowId, true);
 		mShowOnSwap = false;
 	}
 }
@@ -242,7 +242,7 @@ void RenderWindow::DoOnSwapChainPropertiesModified()
 
 void RenderWindow::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::RenderWindow::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::RenderWindow::SyncPacket>();
 	if(syncPacket == nullptr)
 		return;
 

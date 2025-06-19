@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -10,7 +10,7 @@
 #include "Renderer/BsRendererExtension.h"
 #include "Renderer/BsRendererMaterial.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -219,7 +219,7 @@ namespace bs
 		/** Performs rendering of meshes provided by DebugDraw. */
 		class DebugDrawRenderer : public RendererExtension
 		{
-			friend class bs::DebugDraw;
+			friend class b3d::DebugDraw;
 
 		public:
 			DebugDrawRenderer();
@@ -243,4 +243,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

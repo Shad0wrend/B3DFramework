@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
-	<Type Name="bs::GameObjectHandle&lt;*&gt;">
+	<Type Name="b3d::GameObjectHandle&lt;*&gt;">
 		<DisplayString Condition="mSharedHandleData._Ptr->InstanceData._Ptr == 0 || mSharedHandleData._Ptr->InstanceData._Ptr->Object._Ptr == 0">Empty</DisplayString>
 		<DisplayString>Name = {mSharedHandleData._Ptr->InstanceData._Ptr->Object._Ptr->mName}, Id = {mSharedHandleData._Ptr->Id}</DisplayString>
 		<Expand>
@@ -9,7 +9,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="bs::TResourceHandle&lt;*&gt;">
+	<Type Name="b3d::TResourceHandle&lt;*&gt;">
 		<DisplayString Condition="mData == 0 || mData->Object._Ptr == 0">Empty</DisplayString>
 		<DisplayString>Name = Unknown, Id = {mData->Id}</DisplayString>
 		<Expand>
@@ -27,16 +27,16 @@
 		</Expand>
 	</Type>
 
-	<Type Name="bs::UUID">
+	<Type Name="b3d::UUID">
 		<DisplayString>{mData[0],nvoXb}-{mData[1],nvoXb}-{mData[2],nvoXb}-{mData[3],nvoXb}</DisplayString>
 	</Type>
 
-	<Type Name="bs::HString">
+	<Type Name="b3d::HString">
 		<DisplayString Condition="mStringData._Ptr == 0">Empty</DisplayString>
 		<DisplayString>Value = {mStringData._Ptr->String}</DisplayString>
 	</Type>
 
-	<Type Name="bs::Matrix4">
+	<Type Name="b3d::Matrix4">
 		<DisplayString>Matrix [4x4]</DisplayString>
 		<Expand>
 			<Synthetic Name="Row[0]">
@@ -54,7 +54,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="bs::Matrix3">
+	<Type Name="b3d::Matrix3">
 		<DisplayString>Matrix [3x3]</DisplayString>
 		<Expand>
 			<Synthetic Name="Row[0]">
@@ -69,7 +69,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="bs::TVector3&lt;*&gt;">
+	<Type Name="b3d::TVector3&lt;*&gt;">
 		<DisplayString>Vector3 {{{X}, {Y}, {Z}}}</DisplayString>
 		<Expand>
 			<Item Name="X">X</Item>
@@ -78,7 +78,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="bs::TVector4&lt;*&gt;">
+	<Type Name="b3d::TVector4&lt;*&gt;">
 		<DisplayString>Vector4 {{{X}, {Y}, {Z}, {W}}}</DisplayString>
 		<Expand>
 			<Item Name="X">X</Item>
@@ -88,7 +88,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="bs::Quaternion">
+	<Type Name="b3d::Quaternion">
 		<DisplayString>Quaternion {{{X}, {Y}, {Z}, {W}}}</DisplayString>
 		<Expand>
 			<Item Name="X">X</Item>
@@ -98,7 +98,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="bs::TArray&lt;*&gt;">
+	<Type Name="b3d::TArray&lt;*&gt;">
 		<DisplayString>{{ size={mSize} }}</DisplayString>
 		<Expand>
 			<Item Name="[size]" ExcludeView="simple">mSize</Item>
@@ -110,7 +110,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="bs::TArrayView&lt;*&gt;">
+	<Type Name="b3d::TArrayView&lt;*&gt;">
 		<DisplayString>{{ size={mSize} }}</DisplayString>
 		<Expand>
 			<Item Name="[size]" ExcludeView="simple">mSize</Item>
@@ -121,7 +121,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="bs::TBitfield&lt;*&gt;">
+	<Type Name="b3d::TBitfield&lt;*&gt;">
 		<DisplayString>{{ size={mNumBits} }}</DisplayString>
 		<Expand>
 			<Item Name="[size]" ExcludeView="simple">mNumBits</Item>

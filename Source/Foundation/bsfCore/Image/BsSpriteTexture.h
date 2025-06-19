@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include "Image/BsSpriteImage.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Image
 	 *  @{
@@ -42,7 +42,7 @@ namespace bs
 		 */
 
 		/**
-		 * Render proxy counterpart of a bs::SpriteTextureCreateInformation.
+		 * Render proxy counterpart of a b3d::SpriteTextureCreateInformation.
 		 *
 		 * @note	Render thread.
 		 */
@@ -125,7 +125,7 @@ namespace bs
 		 */
 
 		/**
-		 * Render proxy counterpart of a bs::SpriteTexture.
+		 * Render proxy counterpart of a b3d::SpriteTexture.
 		 *
 		 * @note	Render thread.
 		 */
@@ -136,7 +136,7 @@ namespace bs
 			void SetAtlasTexture(const SPtr<Texture>& texture) { mAtlasTexture = texture; }
 
 		private:
-			friend class bs::SpriteTexture;
+			friend class b3d::SpriteTexture;
 
 			SpriteTexture(const SpriteTextureCreateInformation& createInformation);
 
@@ -148,4 +148,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

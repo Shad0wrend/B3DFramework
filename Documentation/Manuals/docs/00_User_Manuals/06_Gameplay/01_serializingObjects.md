@@ -8,7 +8,7 @@ Often components will have data you will want to persist across application sess
 
 In order to make an object serializable you need to set up a RTTI interface that allows the system to query information about the object, retrieve and set its data. In this example we talk primarily about components, but the same interface can be used for resources and normal objects.
 
-Any object that is serializable (and therefore provides RTTI information) must implement the @bs::IReflectable interface. If you are creating custom components or resources, **Component** and **Resource** base classes already derive from this interface so you don't need to specify it manually. The interface is simple, requiring you to implement two methods:
+Any object that is serializable (and therefore provides RTTI information) must implement the @b3d::IReflectable interface. If you are creating custom components or resources, **Component** and **Resource** base classes already derive from this interface so you don't need to specify it manually. The interface is simple, requiring you to implement two methods:
  - RTTITypeBase* getRTTI() const;
  - static RTTITypeBase* getRTTIStatic();
  
@@ -46,7 +46,7 @@ class MyClass : public IReflectable
 ~~~~~~~~~~~~~
 
 # Creating the RTTI type
-All RTTI objects must implement the @bs::RTTIType<Type, BaseType, MyRTTIType> interface. The interface accepts three template parameters:
+All RTTI objects must implement the @b3d::RTTIType<Type, BaseType, MyRTTIType> interface. The interface accepts three template parameters:
  - *Type* - Class of the object we're creating RTTI for (e.g. *MyClass* or *MyComponent* from example above)
  - *BaseType* - Base type of the object we're creating RTTI for (e.g. *IReflectable* or *Component* from example above)
  - *MyRTTIType* - Name of the RTTI class itself
@@ -64,9 +64,9 @@ class MyComponentRTTI : public RTTIType<MyComponent, Component, MyComponentRTTI>
 ~~~~~~~~~~~~~
 
 The RTTI object must at least implement the following methods:
- - @bs::RTTITypeBase::getRTTIName() - Returns the name of the class the RTTI describes
- - @bs::RTTITypeBase::getRTTIId() - Returns an identifier that uniquely identifies the class. This should be a unique integer equal or larger than 200000 (in order to avoid conflict with built-in types).
- - @bs::RTTITypeBase::newRTTIObject() - Creates a new empty instance of the class the RTTI describes
+ - @b3d::RTTITypeBase::getRTTIName() - Returns the name of the class the RTTI describes
+ - @b3d::RTTITypeBase::getRTTIId() - Returns an identifier that uniquely identifies the class. This should be a unique integer equal or larger than 200000 (in order to avoid conflict with built-in types).
+ - @b3d::RTTITypeBase::newRTTIObject() - Creates a new empty instance of the class the RTTI describes
  
 ~~~~~~~~~~~~~{.cpp}
 enum TypeIds
@@ -236,7 +236,7 @@ Once the RTTI type class has been created, in most cases it will be used automat
 
 ## Manually serializing
 
-To manually serialize an object you can use the @bs::FileEncoder class. Create the file encoder with a path to the output file, followed by a call to @bs::FileEncoder::encode with the object to encode as the parameter. The system will encode the provided object, as well as any other referenced **IReflectable** objects. 
+To manually serialize an object you can use the @b3d::FileEncoder class. Create the file encoder with a path to the output file, followed by a call to @b3d::FileEncoder::encode with the object to encode as the parameter. The system will encode the provided object, as well as any other referenced **IReflectable** objects. 
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<IReflectable> myObject = B3DMakeShared<MyClass>();
@@ -245,14 +245,14 @@ FileEncoder fe("Path\To\My\File.asset");
 fe.encode(myObject.get());
 ~~~~~~~~~~~~~
 
-Once ready to decode, create a @bs::FileDecoder with the same file path. Then call @bs::FileDecoder::decode.
+Once ready to decode, create a @b3d::FileDecoder with the same file path. Then call @b3d::FileDecoder::decode.
 
 ~~~~~~~~~~~~~{.cpp}
 FileDecoder fd("Path\To\My\File.asset");
 SPtr<IReflectable> myObjectCopy = fd.decode();
 ~~~~~~~~~~~~~
 
-You can also encode/decode to/from memory by using @bs::BinarySerializer.
+You can also encode/decode to/from memory by using @b3d::BinarySerializer.
 ~~~~~~~~~~~~~{.cpp}
 SPtr<IReflectable> myObject = B3DMakeShared<MyClass>();
 
@@ -268,14 +268,14 @@ SPtr<IReflectable> myObjectCopy2 = bs.decode(stream, stream->size());
 Aside from using RTTI for serialization, you can also use it to manually query various information about objects, as well as create and cast object instances. 
 
 Global queries:
- - @bs::B3DRTTIIsOfType - Checks is a specific object of type *T*
- - @bs::B3DRTTIIsSubclass - Checks is a specific object derived from type *T*
- - @bs::B3DRTTICreate - Creates a new object from its type ID
- - @bs::B3DRTTICast - Casts an object to the specified type if the cast is valid, or returns null otherwise
+ - @b3d::B3DRTTIIsOfType - Checks is a specific object of type *T*
+ - @b3d::B3DRTTIIsSubclass - Checks is a specific object derived from type *T*
+ - @b3d::B3DRTTICreate - Creates a new object from its type ID
+ - @b3d::B3DRTTICast - Casts an object to the specified type if the cast is valid, or returns null otherwise
  
 **IReflectable** queries:
- - @bs::IReflectable::getTypeName - Gets the name of the object's type
- - @bs::IReflectable::getTypeId - Gets the type ID of the object's type
+ - @b3d::IReflectable::getTypeName - Gets the name of the object's type
+ - @b3d::IReflectable::getTypeId - Gets the type ID of the object's type
 
 ~~~~~~~~~~~~~{.cpp}
 IReflectable* myObject = ...;

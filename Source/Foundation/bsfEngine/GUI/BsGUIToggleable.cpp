@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIToggleable.h"
 #include "GUI/BsGUISizeConstraints.h"
@@ -10,7 +10,7 @@
 #include "Image/BsSpriteVectorPath.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 
-using namespace bs;
+using namespace b3d;
 
 GUIToggleable::GUIToggleable(const GUIToggleContent& contents, const String& styleName, const GUISizeConstraints& dimensions)
 	: GUIClickable(styleName, contents.GeneralContent, dimensions), mToggleGroup(nullptr), mIsToggled(false)

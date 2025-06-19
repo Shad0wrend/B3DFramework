@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanRenderTexture.h"
 #include "BsVulkanFramebuffer.h"
@@ -7,14 +7,14 @@
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanRenderPass.h"
 
-using namespace bs;
+using namespace b3d;
 
 VulkanRenderTexture::VulkanRenderTexture(const RenderTextureCreateInformation& createInformation)
 	: RenderTexture(createInformation)
 {
 }
 
-namespace bs {
+namespace b3d {
 namespace ct {
 VulkanRenderTexture::VulkanRenderTexture(VulkanGpuDevice& gpuDevice, const RenderTextureCreateInformation& createInformation)
 	: RenderTexture(createInformation), mGpuDevice(gpuDevice), mFramebuffer(nullptr)
@@ -141,4 +141,4 @@ void VulkanRenderTexture::Initialize()
 	mFramebuffer = VulkanFramebufferCache::Instance().FindOrCreateFramebuffer(mGpuDevice, framebufferInformation, renderPassInformation);
 }
 
-}} // namespace bs::ct
+}} // namespace b3d::ct

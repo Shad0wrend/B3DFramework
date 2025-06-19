@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsGpuParameters.h"
 
@@ -17,7 +17,7 @@
 #include "Math/BsMatrixNxM.h"
 #include "CoreObject/BsCoreObjectSync.h"
 
-using namespace bs;
+using namespace b3d;
 
 const TextureSurface TextureSurface::kComplete = TextureSurface(0, 0, 0, 0);
 
@@ -503,7 +503,7 @@ template B3D_CORE_EXPORT void TGpuParams<true>::GetParameter<Matrix4>(const Stri
 template B3D_CORE_EXPORT void TGpuParams<true>::GetParameter<Matrix4x2>(const String&, TGpuParameterPrimitive<Matrix4x2, true>&) const;
 template B3D_CORE_EXPORT void TGpuParams<true>::GetParameter<Matrix4x3>(const String&, TGpuParameterPrimitive<Matrix4x3, true>&) const;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(GpuParameters, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<HTexture>, SampledTextures)
@@ -640,7 +640,7 @@ void GpuParameters::GetListenerResources(Vector<HResource>& resources)
 	}
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
 	: TGpuParams(parameterLayout)
@@ -654,7 +654,7 @@ SPtr<GpuParameters> GpuParameters::GetThisPtrInternal() const
 
 void GpuParameters::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::GpuParameters::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::GpuParameters::SyncPacket>();
 	if(!syncPacket)
 		return;
 

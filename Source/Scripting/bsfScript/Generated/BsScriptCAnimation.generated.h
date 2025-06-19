@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -11,11 +11,11 @@
 #include "../../../Foundation/bsfCore/Animation/BsAnimation.h"
 #include "../../../Foundation/bsfUtility/Math/BsAABox.h"
 
-namespace bs { struct __Blend2DInfoInterop; }
-namespace bs { class CAnimation; }
-namespace bs { struct __Blend1DInfoInterop; }
-namespace bs { struct __TAABox_float_Interop; }
-namespace bs
+namespace b3d { struct __Blend2DInfoInterop; }
+namespace b3d { class CAnimation; }
+namespace b3d { struct __Blend1DInfoInterop; }
+namespace b3d { struct __TAABox_float_Interop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimation : public TScriptGameObjectWrapper<CAnimation, ScriptAnimation>
 	{

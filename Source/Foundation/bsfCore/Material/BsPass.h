@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "CoreObject/BsCoreObject.h"
 #include "RenderAPI/BsGpuPipelineState.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Material
 	 *  @{
@@ -141,7 +141,7 @@ namespace bs
 		 */
 
 		/**
-		 * Render thread counterpart of bs::Pass.
+		 * Render thread counterpart of b3d::Pass.
 		 *
 		 * @note	Render thread.
 		 */
@@ -156,11 +156,11 @@ namespace bs
 			/**	Creates a new empty pass. */
 			static SPtr<Pass> CreateEmpty();
 
-			/** @copydoc bs::Pass::Compile */
+			/** @copydoc b3d::Pass::Compile */
 			void Compile();
 
 		protected:
-			friend class bs::Pass;
+			friend class b3d::Pass;
 			friend class Technique;
 
 			Pass() = default;
@@ -172,11 +172,11 @@ namespace bs
 			/* 								RTTI		                     		*/
 			/************************************************************************/
 		public:
-			friend class bs::PassRenderProxyRTTI;
+			friend class b3d::PassRenderProxyRTTI;
 			static RTTIType* GetRttiStatic();
 			RTTIType* GetRtti() const override;
 		};
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

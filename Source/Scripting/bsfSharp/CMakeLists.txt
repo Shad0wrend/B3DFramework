@@ -25,11 +25,11 @@ if(B3D_USE_DOTNETCORE)
 	set_target_properties(${assemblyName} PROPERTIES
 			DOTNET_SDK "Microsoft.NET.Sdk"
 			DOTNET_TARGET_FRAMEWORK "net9.0"
-			VS_GLOBAL_ROOTNAMESPACE bs)
+			VS_GLOBAL_ROOTnamespace b3d)
 else()
 	set_target_properties(${assemblyName} PROPERTIES
 			DOTNET_TARGET_FRAMEWORK_VERSION "v4.5"
-			VS_GLOBAL_ROOTNAMESPACE bs
+			VS_GLOBAL_ROOTnamespace b3d
 			VS_DOTNET_REFERENCES "System;System.Core")
 endif()
 

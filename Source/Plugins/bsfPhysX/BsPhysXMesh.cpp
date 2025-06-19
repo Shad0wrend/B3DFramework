@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsPhysXMesh.h"
 #include "RTTI/BsPhysXMeshRTTI.h"
@@ -14,7 +14,7 @@
 
 using namespace physx;
 
-using namespace bs;
+using namespace b3d;
 
 /**
  * Attempts to cook a convex mesh from the provided mesh data. Assumes the mesh data is not null and contains vertex

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "MacOS/BsMacOSGLSupport.h"
 #include "MacOS/BsMacOSContext.h"
@@ -7,15 +7,15 @@
 #include "BsGLRenderAPI.h"
 #include <dlfcn.h>
 
-namespace bs::ct
+namespace b3d::ct
 {
-SPtr<bs::RenderWindow> MacOSGLSupport::newWindow(
+SPtr<b3d::RenderWindow> MacOSGLSupport::newWindow(
 	RENDER_WINDOW_DESC& desc,
 	u32 windowId,
-	SPtr<bs::RenderWindow> parentWindow)
+	SPtr<b3d::RenderWindow> parentWindow)
 {
-	bs::MacOSRenderWindow* window = new(B3DAllocate<bs::MacOSRenderWindow>()) bs::MacOSRenderWindow(desc, windowId, *this);
-	return SPtr<bs::RenderWindow>(window, &bs::CoreObject::_delete<bs::MacOSRenderWindow, DefaultAllocatorTag>);
+	b3d::MacOSRenderWindow* window = new(B3DAllocate<b3d::MacOSRenderWindow>()) b3d::MacOSRenderWindow(desc, windowId, *this);
+	return SPtr<b3d::RenderWindow>(window, &b3d::CoreObject::_delete<b3d::MacOSRenderWindow, DefaultAllocatorTag>);
 }
 
 void MacOSGLSupport::start()

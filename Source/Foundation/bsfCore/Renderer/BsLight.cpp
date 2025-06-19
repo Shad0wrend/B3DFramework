@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsLight.h"
 #include "Private/RTTI/BsLightRTTI.h"
@@ -7,7 +7,7 @@
 #include "Mesh/BsMesh.h"
 #include "CoreObject/BsCoreObjectSync.h"
 
-using namespace bs;
+using namespace b3d;
 
 template<bool IsRenderProxy>
 TLight<IsRenderProxy>::TLight()
@@ -186,7 +186,7 @@ void TLight<IsRenderProxy>::SetTransform(const Transform& transform)
 template class TLight<true>;
 template class TLight<false>;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Light, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mType)
@@ -265,7 +265,7 @@ RTTIType* Light::GetRtti() const
 	return Light::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 const u32 Light::kLightConeNumSides = 20;
 const u32 Light::kLightConeNumSlices = 10;
@@ -290,7 +290,7 @@ void Light::Initialize()
 
 void Light::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::Light::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::Light::SyncPacket>();
 	if(!syncPacket)
 		return;
 

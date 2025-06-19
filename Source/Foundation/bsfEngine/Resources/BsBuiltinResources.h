@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 
 #include "ThirdParty/json.hpp"
 
-namespace bs
+namespace b3d
 {
 	class GUIStyleSheetCascade;
 	class GUIStyleSheet;
@@ -309,7 +309,7 @@ namespace bs
 			SPtr<Texture> BlackTexture3D;
 
 		private:
-			friend class bs::BuiltinResources;
+			friend class b3d::BuiltinResources;
 		};
 	} // namespace ct
 
@@ -317,4 +317,4 @@ namespace bs
 	B3D_EXPORT BuiltinResources& GetBuiltinResources();
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

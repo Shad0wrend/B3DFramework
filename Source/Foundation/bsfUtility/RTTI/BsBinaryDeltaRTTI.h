@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 #include "BsUtilityPrerequisites.h"
@@ -6,7 +6,7 @@
 #include "Serialization/BsBinaryDelta.h"
 #include "RTTI/BsSerializedObjectRTTI.h"
 
-namespace bs
+namespace b3d
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Utility
@@ -169,4 +169,4 @@ namespace bs
 	};
 	/** @} */
 	/** @endcond */
-} // namespace bs
+} // namespace b3d

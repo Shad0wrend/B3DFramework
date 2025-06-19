@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "Image/BsTexture.h"
 #include "RenderAPI/BsRenderTarget.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup RenderAPI
 	 *  @{
@@ -95,14 +95,14 @@ namespace bs
 		 *  @{
 		 */
 
-		/** @copydoc bs::RenderTextureInformation */
+		/** @copydoc b3d::RenderTextureInformation */
 		struct B3D_CORE_EXPORT RenderTextureInformation
 		{
 			RenderSurfaceInformation ColorSurfaces[B3D_MAXIMUM_RENDER_TARGET_COUNT];
 			RenderSurfaceInformation DepthStencilSurface;
 		};
 
-		/** @copydoc bs::RenderTextureCreateInformation */
+		/** @copydoc b3d::RenderTextureCreateInformation */
 		struct B3D_CORE_EXPORT RenderTextureCreateInformation : RenderTextureInformation 
 		{
 			RenderTextureCreateInformation() = default;
@@ -149,7 +149,7 @@ namespace bs
 			void ThrowIfBuffersDontMatch() const;
 
 		protected:
-			friend class bs::RenderTexture;
+			friend class b3d::RenderTexture;
 
 			SPtr<TextureView> mColorSurfaces[B3D_MAXIMUM_RENDER_TARGET_COUNT];
 			SPtr<TextureView> mDepthStencilSurface;
@@ -159,4 +159,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRendererDecal.h"
 #include "BsRendererRenderable.h"
@@ -6,7 +6,7 @@
 #include "Mesh/BsMesh.h"
 #include "Renderer/BsRendererUtility.h"
 
-namespace bs {
+namespace b3d {
 namespace ct {
 
 DecalParamDef gDecalParamDef;
@@ -72,4 +72,4 @@ void RendererDecal::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush) con
 	if(flush)
 		PerCallParamBuffer->FlushCache();
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -16,7 +16,7 @@
 #include "Renderer/BsRenderSettings.h"
 #include "Scene/BsSceneActor.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Renderer
 	 *  @{
@@ -577,13 +577,13 @@ namespace bs
 
 	namespace ct
 	{
-		/** @copydoc bs::Camera */
+		/** @copydoc b3d::Camera */
 		class B3D_CORE_EXPORT Camera : public RenderProxy, public TCamera<true>
 		{
 		public:
 			~Camera();
 
-			/** @copydoc bs::Camera::setMain() */
+			/** @copydoc b3d::Camera::setMain() */
 			bool IsMain() const { return mMain; }
 
 			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
@@ -593,7 +593,7 @@ namespace bs
 			u32 GetRendererId() const { return mRendererId; }
 
 		protected:
-			friend class bs::Camera;
+			friend class b3d::Camera;
 
 			Camera(SPtr<RenderTarget> target = nullptr, float left = 0.0f, float top = 0.0f, float width = 1.0f, float height = 1.0f);
 
@@ -608,4 +608,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

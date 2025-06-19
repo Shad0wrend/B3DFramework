@@ -1,9 +1,9 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Profiling/BsProfilingManager.h"
 #include "Math/BsMath.h"
 
-using namespace bs;
+using namespace b3d;
 
 const u32 ProfilingManager::kNumSavedFrames = 200;
 
@@ -67,10 +67,10 @@ const ProfilerReport& ProfilingManager::GetReport(ProfiledThread thread, u32 idx
 	}
 }
 
-namespace bs
+namespace b3d
 {
 ProfilingManager& GetProfiler()
 {
 	return ProfilingManager::Instance();
 }
-} // namespace bs
+} // namespace b3d

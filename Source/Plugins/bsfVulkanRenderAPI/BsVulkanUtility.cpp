@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanUtility.h"
 #include "BsVulkanGpuDevice.h"
@@ -7,8 +7,8 @@
 #include "Math/BsArea2.h"
 #include "RenderAPI/BsGpuParameters.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice& device, PixelFormat format, TextureType texType, int usage, bool optimalTiling, bool hwGamma)
 {
@@ -812,7 +812,7 @@ bool VulkanUtility::RangeOverlaps(const VkImageSubresourceRange& a, const VkImag
 
 u32 VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(GpuDataParameterType type, u32 arraySize, u32& offset)
 {
-	const GpuDataParameterTypeInformation& typeInfo = bs::GpuParameters::kParamSizes.Lookup[type];
+	const GpuDataParameterTypeInformation& typeInfo = b3d::GpuParameters::kParamSizes.Lookup[type];
 	u32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
 	u32 alignment = typeInfo.Alignment / 4;
 

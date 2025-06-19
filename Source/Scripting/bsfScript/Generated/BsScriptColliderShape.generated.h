@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -15,10 +15,10 @@
 #include "../../../Foundation/bsfCore/Physics/BsColliderShape.h"
 #include "../../../Foundation/bsfCore/Physics/BsColliderShape.h"
 
-namespace bs { class ColliderShape; }
-namespace bs { struct __BoxColliderShapeInformationInterop; }
-namespace bs { struct __MeshColliderShapeInformationInterop; }
-namespace bs
+namespace b3d { class ColliderShape; }
+namespace b3d { struct __BoxColliderShapeInformationInterop; }
+namespace b3d { struct __MeshColliderShapeInformationInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptColliderShape : public TScriptReflectableWrapper<ColliderShape, ScriptColliderShape>
 	{

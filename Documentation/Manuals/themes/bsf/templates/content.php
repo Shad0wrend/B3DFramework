@@ -3,7 +3,7 @@
 
     <div class="Page__header">
         <div class="outdated">
-            This documents an old version of bs::framework.
+            This documents an old version of B3D Framework.
             <a style="color:white" href="http://docs.bsframework.io/latest/index.html">
                 Click here to see the latest release.
             </a>

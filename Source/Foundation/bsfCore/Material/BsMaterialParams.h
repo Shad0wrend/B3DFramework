@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "RenderAPI/BsGpuParameters.h"
 #include "Allocators/BsPoolAlloc.h"
 
-namespace bs
+namespace b3d
 {
 	template <class T>
 	class TAnimationCurve;
@@ -846,19 +846,19 @@ namespace bs
 		{
 		public:
 			/** Initializes the render proxy its main thread counterpart. */
-			MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::MaterialParams>& params);
+			MaterialParams(const SPtr<Shader>& shader, const SPtr<b3d::MaterialParams>& params);
 
 			/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, u64) */
 			MaterialParams(const SPtr<Shader>& shader, u64 initialParamVersion = 1);
 
 			/**
 			 * Updates the stored parameters from the provided sync packet, allowing changes to be transfered between core objects and
-			 * render proxies. Packet must be retrieved from bs::MaterialParams::CreateSyncPacket(). Sync packet is destroyed
+			 * render proxies. Packet must be retrieved from b3d::MaterialParams::CreateSyncPacket(). Sync packet is destroyed
 			 * using the provided allocator after it has been applied.
 			 */
-			void ApplyAndDestroySyncPacket(FrameAllocator& allocator, const bs::MaterialParams::SyncPacket& syncPacket);
+			void ApplyAndDestroySyncPacket(FrameAllocator& allocator, const b3d::MaterialParams::SyncPacket& syncPacket);
 		};
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

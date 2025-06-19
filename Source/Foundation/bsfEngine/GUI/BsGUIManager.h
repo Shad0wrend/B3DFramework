@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -18,7 +18,7 @@
 #include "GUI/BsGUIWidget.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-namespace bs
+namespace b3d
 {
 	class GUIVectorSpriteAtlas;
 	/** @addtogroup GUI-Internal
@@ -430,7 +430,7 @@ namespace bs
 		/**	Handles GUI rendering on the render thread. */
 		class B3D_EXPORT GUIRenderer : public RendererExtension
 		{
-			friend class bs::GUIManager;
+			friend class b3d::GUIManager;
 
 		public:
 			GUIRenderer();
@@ -481,4 +481,4 @@ namespace bs
 	B3D_EXPORT GUIManager& GetGUIManager();
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

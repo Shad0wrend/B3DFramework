@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Resources/BsBuiltinResourcesHelper.h"
 #include "FileSystem/BsFileSystem.h"
@@ -22,7 +22,7 @@
 
 using json = nlohmann::json;
 
-using namespace bs;
+using namespace b3d;
 
 void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const Vector<bool>& importFlags, const Path& inputFolder, const Path& outputFolder, AssetType mode, bool compress, bool mipmap)
 {

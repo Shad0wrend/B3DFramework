@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include <cstdint>
 
 /**	Commonly used types. */
-namespace bs
+namespace b3d
 {
 	using std::int16_t;
 	using std::int32_t;
@@ -24,4 +24,4 @@ namespace bs
 	using u32 = uint32_t;
 	using i64 = int64_t;
 	using u64 = uint64_t;
-} // namespace bs
+} // namespace b3d

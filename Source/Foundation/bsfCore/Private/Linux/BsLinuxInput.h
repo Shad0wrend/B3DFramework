@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include "Input/BsInputFwd.h"
 
-namespace bs
+namespace b3d
 {
 	/** Infomation about an analog axis that's part of a gamepad. */
 	struct AxisInfo
@@ -52,4 +52,4 @@ namespace bs
 	};
 
 #define BUFFER_SIZE_GAMEPAD 64
-} // namespace bs
+} // namespace b3d

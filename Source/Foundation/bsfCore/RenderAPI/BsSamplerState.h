@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "Reflection/BsIReflectable.h"
 #include "CoreObject/BsCoreObject.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup RenderAPI
 	 *  @{
@@ -96,7 +96,7 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 /** @addtogroup RenderAPI
@@ -107,21 +107,21 @@ namespace std
 {
 	/**	Hash value generator for SamplerStateInformation. */
 	template <>
-	struct hash<bs::SamplerStateInformation>
+	struct hash<b3d::SamplerStateInformation>
 	{
-		size_t operator()(const bs::SamplerStateInformation& value) const
+		size_t operator()(const b3d::SamplerStateInformation& value) const
 		{
-			return (size_t)bs::SamplerState::GenerateHash(value);
+			return (size_t)b3d::SamplerState::GenerateHash(value);
 		}
 	};
 
 	/**	Hash value generator for SamplerStateCreateInformation. */
 	template <>
-	struct hash<bs::SamplerStateCreateInformation>
+	struct hash<b3d::SamplerStateCreateInformation>
 	{
-		size_t operator()(const bs::SamplerStateCreateInformation& value) const
+		size_t operator()(const b3d::SamplerStateCreateInformation& value) const
 		{
-			return (size_t)bs::SamplerState::GenerateHash(value);
+			return (size_t)b3d::SamplerState::GenerateHash(value);
 		}
 	};
 } // namespace std

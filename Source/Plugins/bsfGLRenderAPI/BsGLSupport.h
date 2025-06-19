@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "BsGLRenderAPI.h"
 #include "RenderAPI/BsRenderWindow.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -33,7 +33,7 @@ namespace bs
 			 *								window cannot have a parent.
 			 * @return						Returns newly created window.
 			 */
-			virtual SPtr<bs::RenderWindow> NewWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<bs::RenderWindow> parentWindow) = 0;
+			virtual SPtr<b3d::RenderWindow> NewWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<b3d::RenderWindow> parentWindow) = 0;
 
 			/**	Called when OpenGL is being initialized. */
 			virtual void Start() = 0;
@@ -74,4 +74,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

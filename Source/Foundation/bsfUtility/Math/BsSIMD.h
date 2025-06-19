@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -24,7 +24,7 @@
 #	pragma warning(default : 4244)
 #endif
 
-namespace bs
+namespace b3d
 {
 	namespace simd
 	{
@@ -35,7 +35,7 @@ namespace bs
 		 */
 
 		/**
-		 * Version of bs::AABox suitable for SIMD use. Takes up a bit more memory than standard AABox and is always 16-byte
+		 * Version of b3d::AABox suitable for SIMD use. Takes up a bit more memory than standard AABox and is always 16-byte
 		 * aligned.
 		 */
 		struct AABox
@@ -51,7 +51,7 @@ namespace bs
 			AABox() = default;
 
 			/** Initializes bounds from an AABox. */
-			AABox(const bs::AABox& box)
+			AABox(const b3d::AABox& box)
 			{
 				Center = Vector4(box.GetCenter());
 				Extents = Vector4(box.GetHalfSize());
@@ -90,7 +90,7 @@ namespace bs
 			}
 		};
 
-		/** Version of bs::Area2 suitable for SIMD use. */
+		/** Version of b3d::Area2 suitable for SIMD use. */
 		struct Area2
 		{
 			/** Center of the bounds. Z and W component unused.*/
@@ -104,7 +104,7 @@ namespace bs
 			Area2() = default;
 
 			/** Initializes bounds from an Area2. */
-			Area2(const bs::Area2& area)
+			Area2(const b3d::Area2& area)
 			{
 				const Size2 halfSize = area.GetSize() * 0.5f;
 
@@ -136,7 +136,7 @@ namespace bs
 			}
 		};
 
-		/** Version of bs::Range suitable for SIMD use. */
+		/** Version of b3d::Range suitable for SIMD use. */
 		struct Range
 		{
 			/** Center of the bounds. Y, Z and W component unused.*/
@@ -150,7 +150,7 @@ namespace bs
 			Range() = default;
 
 			/** Initializes bounds from an Area2. */
-			Range(const bs::Range& range)
+			Range(const b3d::Range& range)
 			{
 				Center = Vector4(range.Center, 0.0f, 0.0f, 0.0f);
 				Extents = Vector4(range.Extent, 0.0f, 0.0f, 0.0f);
@@ -182,4 +182,4 @@ namespace bs
 
 		/** @} */
 	} // namespace simd
-} // namespace bs
+} // namespace b3d

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Profiling/BsProfilerCPU.h"
 #include "Debug/BsDebug.h"
@@ -23,7 +23,7 @@
 
 using namespace std::chrono;
 
-using namespace bs;
+using namespace b3d;
 
 ProfilerCPU::Timer::Timer()
 {
@@ -999,10 +999,10 @@ void ProfilerCPU::EstimateTimerOverhead()
 	}
 }
 
-namespace bs
+namespace b3d
 {
 ProfilerCPU& GetProfilerCPU()
 {
 	return ProfilerCPU::Instance();
 }
-} // namespace bs
+} // namespace b3d

@@ -1,4 +1,4 @@
-bs::framework Documentation						{#mainpage}
+B3D Framework Documentation						{#mainpage}
 ===============
 
 # API Reference # {#mainpage_a}

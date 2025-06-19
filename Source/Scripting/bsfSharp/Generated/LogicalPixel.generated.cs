@@ -1,10 +1,10 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace bs
+namespace b3d
 {
 	/// <summary>
 	/// Location in 2D space in logical pixels. Logical pixels are defined at 1/96th of one logical inch. Logical pixels are 

@@ -2,7 +2,7 @@
 title: GUI setup
 ---
 
-All GUI elements in bs::f are handled by a @bs::CGUIWidget component. Each such component must have an attached **Camera** component, which determines where will the rendered GUI elements be output. 
+All GUI elements in b3d::f are handled by a @b3d::CGUIWidget component. Each such component must have an attached **Camera** component, which determines where will the rendered GUI elements be output. 
 
 The camera is created in the same way as we shown before, and you can in-fact use the same camera you use for normal scene rendering. GUI elements will not be affected by camera's position, orientation or projection properties - they might however be affected by the size of the camera's render target.
 
@@ -71,9 +71,9 @@ guiCamera->setRenderSettings(rs);
 
 Now our camera will render just overlay objects (GUI and sprites), and nothing else. 
 
-Next, we want to prevent the camera from clearing the render target. By default cameras will set all the pixels in the render target to some default value before they start rendering, every frame. We want our GUI camera to just render on top of anything rendered by the scene camera, so we disable that functionality by retrieving a @bs::Viewport from the camera. 
+Next, we want to prevent the camera from clearing the render target. By default cameras will set all the pixels in the render target to some default value before they start rendering, every frame. We want our GUI camera to just render on top of anything rendered by the scene camera, so we disable that functionality by retrieving a @b3d::Viewport from the camera. 
 
-**Viewport** is retrieved by calling @bs::CCamera::getViewport. It allows you to set if the render target is cleared through @bs::Viewport::setClearFlags by providing the @bs::ClearFlagBits::Empty flag. 
+**Viewport** is retrieved by calling @b3d::CCamera::getViewport. It allows you to set if the render target is cleared through @b3d::Viewport::setClearFlags by providing the @b3d::ClearFlagBits::Empty flag. 
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<Viewport> viewport = guiCamera->getViewport();
@@ -82,6 +82,6 @@ SPtr<Viewport> viewport = guiCamera->getViewport();
 viewport->setClearFlags(ClearFlagBits::Empty);
 ~~~~~~~~~~~~~
 
-You can also use the viewport to control onto which portion of the render target should the camera render to. By default it will output to the entire render target but you can change the area by calling @bs::Viewport::setArea.
+You can also use the viewport to control onto which portion of the render target should the camera render to. By default it will output to the entire render target but you can change the area by calling @b3d::Viewport::setArea.
 
 At this point you can use the camera to create a **GUIWidget** and use the GUI as normal.

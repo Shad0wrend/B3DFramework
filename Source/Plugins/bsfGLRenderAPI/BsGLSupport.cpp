@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsGLSupport.h"
 #include "BsGLTexture.h"
@@ -6,11 +6,11 @@
 #if B3D_PLATFORM != B3D_PLATFORM_ID_MACOS
 #	include "GL/glew.h"
 
-GLenum GlewContextInit(bs::ct::GLSupport* glSupport);
+GLenum GlewContextInit(b3d::ct::GLSupport* glSupport);
 #endif
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 void GLSupport::InitializeExtensions()
 {

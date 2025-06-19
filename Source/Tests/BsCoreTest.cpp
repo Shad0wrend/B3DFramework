@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Testing/BsConsoleTestOutput.h"
 #include "Testing/BsTestSuite.h"
@@ -20,7 +20,7 @@
 #include "Resources/BsResources.h"
 #include "Scene/BsPrefabUtility.h"
 
-using namespace bs;
+using namespace b3d;
 
 static float EvaluatePosition(float acceleration, float velocity, float time)
 {
@@ -1332,7 +1332,7 @@ void CoreTestSuite::TestPrefabScenario10()
 //   enter editing mode for that nested prefab only, and editor limits the operations to that prefab only. When done, user applies the changes to that prefab.
 //  - But this doesn't really work. How to even perform instance changes at all then?
 
-using namespace bs;
+using namespace b3d;
 
 int main()
 {

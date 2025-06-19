@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptParticleCollisions.generated.h"
 #include "BsMonoMethod.h"
@@ -9,7 +9,7 @@
 #include "BsScriptPARTICLE_COLLISIONS_DESC.generated.h"
 #include "BsScriptParticleCollisions.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptParticleCollisions::ScriptParticleCollisions(const SPtr<ParticleCollisions>& nativeObject)
 		:TScriptReflectableWrapper(nativeObject)

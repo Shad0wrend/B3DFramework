@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsMonoMethod.h"
 #include "BsMonoManager.h"
@@ -15,7 +15,7 @@
 #include <mono/metadata/reflection.h>
 #endif
 
-namespace bs {
+namespace b3d {
 MonoMethod::MonoMethod(::MonoMethod* method)
 	: mMethod(method), mCachedReturnType(nullptr), mCachedParameters(nullptr), mCachedNumParameters(0), mIsStatic(false), mHasCachedSignature(false)
 {
@@ -177,4 +177,4 @@ void MonoMethod::CacheSignature() const
 	mIsStatic = !mono_signature_is_instance(methodSignature);
 	mHasCachedSignature = true;
 }
-} // namespace bs
+} // namespace b3d

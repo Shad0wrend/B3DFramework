@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanGpuBuffer.h"
 #include "BsVulkanGpuDevice.h"
@@ -7,8 +7,8 @@
 #include "BsVulkanTexture.h"
 #include "BsVulkanGpuBackend.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 VulkanBuffer::VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VmaAllocation allocation, u32 rowPitch, u32 slicePitch, const StringView& name)
 	: VulkanResource(owner, false, name), mType(type), mFlags(flags), mBuffer(buffer), mAllocation(allocation), mRowPitch(rowPitch)
@@ -132,7 +132,7 @@ VkAccessFlags VulkanBuffer::GetAccessFlags() const
 }
 
 VulkanGpuBuffer::VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation)
-	: GpuBuffer(createInformation, bs::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mDevice(device), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU)), mIsMapped(false)
+	: GpuBuffer(createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mDevice(device), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU)), mIsMapped(false)
 	{ }
 
 VulkanGpuBuffer::~VulkanGpuBuffer()

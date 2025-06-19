@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include "Resources/BsResource.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Localization
 	 *  @{
@@ -235,8 +235,8 @@ namespace bs
 		u32 NumParameters = 0;
 		ParamOffset* ParameterOffsets = nullptr;
 
-		void ConcatenateString(bs::String& outputString, bs::String* parameters, u32 numParameterValues) const;
-		void UpdateString(const bs::String& string);
+		void ConcatenateString(b3d::String& outputString, b3d::String* parameters, u32 numParameterValues) const;
+		void UpdateString(const b3d::String& string);
 	};
 
 	/** Data for a single language in the string table. */
@@ -358,4 +358,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

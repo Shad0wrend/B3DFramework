@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsPass.h"
 
@@ -11,7 +11,7 @@
 #include "CoreObject/BsCoreObjectSync.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-using namespace bs;
+using namespace b3d;
 
 template <bool IsRenderProxy>
 TPass<IsRenderProxy>::TPass()
@@ -47,7 +47,7 @@ bool TPass<IsRenderProxy>::HasBlending() const
 }
 
 template <bool IsRenderProxy>
-const GpuProgramCreateInformation& TPass<IsRenderProxy>::GetGpuProgramCreateInformation(bs::GpuProgramType type) const
+const GpuProgramCreateInformation& TPass<IsRenderProxy>::GetGpuProgramCreateInformation(b3d::GpuProgramType type) const
 {
 	switch(type)
 	{
@@ -109,7 +109,7 @@ void TPass<IsRenderProxy>::CreatePipelineState()
 template class TPass<false>;
 template class TPass<true>;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Pass, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mGraphicsPipelineState)
@@ -181,7 +181,7 @@ RTTIType* Pass::GetRtti() const
 	return Pass::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 Pass::Pass(const PassCreateInformation& desc)
 	: TPass(desc)

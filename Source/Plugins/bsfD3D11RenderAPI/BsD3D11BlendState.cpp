@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsD3D11BlendState.h"
 #include "BsD3D11Mappings.h"
@@ -6,8 +6,8 @@
 #include "BsD3D11Device.h"
 #include "Profiling/BsRenderStats.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 D3D11BlendState::D3D11BlendState(const BlendStateInformation& desc, u32 id)
 	: BlendState(desc, id)

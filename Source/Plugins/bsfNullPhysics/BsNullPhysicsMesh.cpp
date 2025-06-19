@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsNullPhysicsMesh.h"
 #include "RTTI/BsNullPhysicsMeshRTTI.h"
@@ -7,7 +7,7 @@
 #include "BsNullPhysics.h"
 #include "Math/BsAABox.h"
 
-using namespace bs;
+using namespace b3d;
 
 NullPhysicsMesh::NullPhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
 	: PhysicsMesh(meshData, type)

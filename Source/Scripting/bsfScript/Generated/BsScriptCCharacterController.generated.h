@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -12,10 +12,10 @@
 #include "Math/BsRadian.h"
 #include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
 
-namespace bs { class CCharacterController; }
-namespace bs { struct __ControllerColliderCollisionInterop; }
-namespace bs { struct __ControllerControllerCollisionInterop; }
-namespace bs
+namespace b3d { class CCharacterController; }
+namespace b3d { struct __ControllerColliderCollisionInterop; }
+namespace b3d { struct __ControllerControllerCollisionInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptCharacterController : public TScriptGameObjectWrapper<CCharacterController, ScriptCharacterController>
 	{

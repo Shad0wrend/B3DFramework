@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 #include "BsSignal.h"
 
-namespace bs
+namespace b3d
 {
 	/** Event that can be waited on until signalled. */
 	class SignalEvent : INonCopyable
@@ -116,4 +116,4 @@ namespace bs
 
 		return true;
 	}
-}  // namespace bs
+}  // namespace b3d

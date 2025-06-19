@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -15,7 +15,7 @@
 #include "Math/BsMatrix3.h"
 #include "Math/BsMatrix4.h"
 
-namespace bs
+namespace b3d
 {
 	template <class T>
 	class TAnimationCurve;
@@ -834,7 +834,7 @@ namespace bs
 		public:
 			~Material() = default;
 
-			/** @copydoc bs::Material::SetShader */
+			/** @copydoc b3d::Material::SetShader */
 			void SetShader(const SPtr<Shader>& shader);
 
 			/**
@@ -849,7 +849,7 @@ namespace bs
 			static SPtr<Material> Create(const SPtr<Shader>& shader);
 
 		private:
-			friend class bs::Material;
+			friend class b3d::Material;
 
 			Material() = default;
 			Material(const SPtr<Shader>& shader, const ShaderVariationParameters& variation);
@@ -860,4 +860,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

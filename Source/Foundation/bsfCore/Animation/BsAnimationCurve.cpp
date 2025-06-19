@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Animation/BsAnimationCurve.h"
 #include "Private/RTTI/BsAnimationCurveRTTI.h"
@@ -8,9 +8,9 @@
 #include "Math/BsMath.h"
 #include "Animation/BsAnimationUtility.h"
 
-using namespace bs;
+using namespace b3d;
 
-namespace bs
+namespace b3d
 {
 /**
  * Checks if any components of the keyframes are constant (step) functions and updates the hermite curve coefficients
@@ -606,7 +606,7 @@ static void CalcMinMaxIntegratedDouble(std::pair<i32, i32>& minmax, float start,
 {
 	B3D_ASSERT(false && "Not implemented");
 }
-} // namespace bs
+} // namespace b3d
 
 template <class T>
 const u32 TAnimationCurve<T>::kCacheLookahead = 3;
@@ -913,7 +913,7 @@ u32 TAnimationCurve<T>::FindKey(float time)
 template <class T>
 TKeyframe<T> TAnimationCurve<T>::EvaluateKey(const KeyFrame& lhs, const KeyFrame& rhs, float time) const
 {
-	return bs::EvaluateKey(lhs, rhs, time);
+	return b3d::EvaluateKey(lhs, rhs, time);
 }
 
 template <class T>

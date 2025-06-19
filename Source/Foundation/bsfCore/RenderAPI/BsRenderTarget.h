@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "CoreObject/BsCoreObject.h"
 #include "Utility/BsEvent.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup RenderAPI
 	 *  @{
@@ -37,7 +37,7 @@ namespace bs
 
 	namespace ct
 	{
-		/** @copydoc bs::RenderSurfaceInformation */
+		/** @copydoc b3d::RenderSurfaceInformation */
 		struct B3D_CORE_EXPORT RenderSurfaceInformation
 		{
 			RenderSurfaceInformation() = default;
@@ -189,7 +189,7 @@ namespace bs
 
 			/** @} */
 		protected:
-			friend class bs::RenderTarget;
+			friend class b3d::RenderTarget;
 
 			u64 mUpdateCount = 0;
 			RenderTargetProperties mRenderTargetProperties;
@@ -197,4 +197,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

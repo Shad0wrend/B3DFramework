@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIListBox.h"
 
@@ -12,7 +12,7 @@
 #include "Image/BsSpriteVectorPath.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 
-using namespace bs;
+using namespace b3d;
 
 const String& GUIListBox::GetGuiTypeName()
 {

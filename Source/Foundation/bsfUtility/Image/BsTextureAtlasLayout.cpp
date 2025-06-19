@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Image/BsTextureAtlasLayout.h"
 #include "Debug/BsDebug.h"
 #include "Utility/BsBitwise.h"
 
-using namespace bs;
+using namespace b3d;
 
 bool StaticTextureAtlasLayout::AddElement(u32 width, u32 height, u32& x, u32& y)
 {

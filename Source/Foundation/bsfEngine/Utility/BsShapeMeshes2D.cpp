@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Utility/BsShapeMeshes2D.h"
 #include "Math/BsArea2.h"
@@ -8,7 +8,7 @@
 #include "Material/BsPass.h"
 #include "RenderAPI/BsVertexDescription.h"
 
-using namespace bs;
+using namespace b3d;
 
 const u32 ShapeMeshes2D::kNumVerticesAaLine = 4;
 const u32 ShapeMeshes2D::kNumIndicesAaLine = 6;

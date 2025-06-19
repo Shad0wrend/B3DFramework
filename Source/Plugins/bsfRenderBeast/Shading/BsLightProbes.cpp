@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsLightProbes.h"
 #include "Renderer/BsLightProbeVolume.h"
@@ -13,7 +13,7 @@
 #include "Renderer/BsSkybox.h"
 #include "Utility/BsRendererTextures.h"
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 
 TetrahedraRenderParamDef gTetrahedraRenderParamDef;
 
@@ -190,8 +190,8 @@ struct pair_hash
 	size_t operator()(const std::pair<i32, i32>& key) const
 	{
 		size_t hash = 0;
-		bs::B3DCombineHash(hash, key.first);
-		bs::B3DCombineHash(hash, key.second);
+		b3d::B3DCombineHash(hash, key.first);
+		b3d::B3DCombineHash(hash, key.second);
 
 		return hash;
 	}

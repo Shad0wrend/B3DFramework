@@ -7,7 +7,7 @@
 #include "Allocators/BsPoolAlloc.h"
 #include "Threading/BsSignal.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Resources
 	 *  @{
@@ -522,4 +522,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

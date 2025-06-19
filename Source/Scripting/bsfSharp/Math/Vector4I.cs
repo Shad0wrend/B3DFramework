@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace bs
+namespace b3d
 {
     /** @addtogroup Math
      *  @{

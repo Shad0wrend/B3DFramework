@@ -2,7 +2,7 @@
 title: Localization
 ---
 
-So far we haven't mentioned why all GUI elements use the @bs::HString type for holding string information, instead of the raw **String** or **WString** types.
+So far we haven't mentioned why all GUI elements use the @b3d::HString type for holding string information, instead of the raw **String** or **WString** types.
 
 **HString** is a localizable string, meaning the actual value of the string can be changed by changing the active language. This ensures you can easily create translations for GUI elements.
 
@@ -13,13 +13,13 @@ When creating a **HString** it takes an identifier as input, which must be uniqu
 HString myLocalizedString("_myStringId");
 ~~~~~~~~~~~~~
 
-You can then assign values to that identifier through a @bs::StringTable resource. You create a **StringTable** by calling @bs::StringTable::create.
+You can then assign values to that identifier through a @b3d::StringTable resource. You create a **StringTable** by calling @b3d::StringTable::create.
 
 ~~~~~~~~~~~~~{.cpp}
 HStringTable stringTable = StringTable::create();
 ~~~~~~~~~~~~~
 
-You can then use the string table to assign actual language strings for your localized string. This is done by calling @bs::StringTable::setString. 
+You can then use the string table to assign actual language strings for your localized string. This is done by calling @b3d::StringTable::setString. 
 
 ~~~~~~~~~~~~~{.cpp}
 stringTable->setString("_myStringId", Language::EnglishUS, "Hello!");
@@ -27,7 +27,7 @@ stringTable->setString("_myStringId", Language::German, "Hallo!");
 stringTable->setString("_myStringId", Language::Spanish, "!Hola!");
 ~~~~~~~~~~~~~
 
-Finally, you need to register the string table with @bs::StringTableManager by calling @bs::StringTableManager::setTable. **StringTableManager** is accessible globally through @bs::GetStringTableManager.
+Finally, you need to register the string table with @b3d::StringTableManager by calling @b3d::StringTableManager::setTable. **StringTableManager** is accessible globally through @b3d::GetStringTableManager.
 
 ~~~~~~~~~~~~~{.cpp}
 GetStringTableManager().setTable(0, stringTable);
@@ -35,7 +35,7 @@ GetStringTableManager().setTable(0, stringTable);
 
 > Note: Multiple string tables are supported by giving them different identifiers. By default all **HString**%s will use the 0th string table, so it is suggest to always set that one for most common localizations.
 
-After the string table is set you can call @bs::StringTableManager::setActiveLanguage to change the current language. If the string table has a localization for the specified language, it will be used by any GUI elements referencing the localized string. The default language is English.
+After the string table is set you can call @b3d::StringTableManager::setActiveLanguage to change the current language. If the string table has a localization for the specified language, it will be used by any GUI elements referencing the localized string. The default language is English.
 
 ~~~~~~~~~~~~~{.cpp}
 GetStringTableManager().setActiveLanguage(Language::German);
@@ -57,7 +57,7 @@ Localized strings can use parameters as placeholders to insert other data. This 
 HString myLocalizedString("Hello my name is {0}, and I am {1} years old.");
 ~~~~~~~~~~~~~
 
-Parameters can then be assigned by calling @bs::HString::setParameter.
+Parameters can then be assigned by calling @b3d::HString::setParameter.
 
 ~~~~~~~~~~~~~{.cpp}
 myLocalizedString.setParameter(0, "John");

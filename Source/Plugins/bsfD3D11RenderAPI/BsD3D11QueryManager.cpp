@@ -1,12 +1,12 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsD3D11QueryManager.h"
 #include "BsD3D11EventQuery.h"
 #include "BsD3D11TimerQuery.h"
 #include "BsD3D11OcclusionQuery.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 SPtr<EventQuery> D3D11QueryManager::CreateEventQuery(u32 deviceIdx) const
 {

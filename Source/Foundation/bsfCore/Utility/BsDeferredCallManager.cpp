@@ -1,8 +1,8 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Utility/BsDeferredCallManager.h"
 
-using namespace bs;
+using namespace b3d;
 
 void DeferredCallManager::QueueDeferredCall(std::function<void()> func)
 {
@@ -24,11 +24,11 @@ void DeferredCallManager::UpdateInternal()
 	}
 }
 
-namespace bs
+namespace b3d
 {
 // Declared in BsPrerequisites.h
 void DeferredCall(std::function<void()> callback)
 {
 	DeferredCallManager::Instance().QueueDeferredCall(callback);
 }
-} // namespace bs
+} // namespace b3d

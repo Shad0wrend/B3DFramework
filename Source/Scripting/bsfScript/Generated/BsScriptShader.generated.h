@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,11 +7,11 @@
 #include "../../../Foundation/bsfCore/Material/BsShader.h"
 #include "../Extensions/BsShaderEx.h"
 
-namespace bs { class Shader; }
-namespace bs { struct __ShaderVariationParameterInformationInterop; }
-namespace bs { class ShaderEx; }
-namespace bs { struct __ShaderParameterInterop; }
-namespace bs
+namespace b3d { class Shader; }
+namespace b3d { struct __ShaderVariationParameterInformationInterop; }
+namespace b3d { class ShaderEx; }
+namespace b3d { struct __ShaderParameterInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptShader : public TScriptResourceWrapper<Shader, ScriptShader>
 	{

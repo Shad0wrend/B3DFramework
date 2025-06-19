@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUICanvas.h"
 #include "Image/BsSpriteTexture.h"
@@ -9,7 +9,7 @@
 #include "Mesh/BsMeshUtility.h"
 #include "Error/BsException.h"
 
-using namespace bs;
+using namespace b3d;
 
 const float GUICanvas::kLineSmoothBorderWidth = 3.0f;
 

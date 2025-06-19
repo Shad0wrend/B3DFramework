@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 // TODO - Surround if an #if so this can be included from non-Vulkan render backends (all other Vulkan specific code too)
 #include <vulkan/vulkan.h>
 
-namespace bs
+namespace b3d
 {
 	/** Captures GPU commands for the RenderDoc tool. */
 	class RenderDocFrameCapture : public GpuFrameCapture
@@ -30,4 +30,4 @@ namespace bs
 		bool mIsCaptureInProgress = false;
 
 	};
-} // namespace bs
+} // namespace b3d

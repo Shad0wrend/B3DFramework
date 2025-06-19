@@ -1,8 +1,8 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup General
 	 *  @{
@@ -261,7 +261,7 @@ namespace bs
 	}
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -269,9 +269,9 @@ namespace std
 {
 	/** Hash value generator for Flags<Enum, Storage>. */
 	template <class Enum, class Storage>
-	struct hash<bs::Flags<Enum, Storage>>
+	struct hash<b3d::Flags<Enum, Storage>>
 	{
-		size_t operator()(const bs::Flags<Enum, Storage>& key) const
+		size_t operator()(const b3d::Flags<Enum, Storage>& key) const
 		{
 			return (Storage)key;
 		}

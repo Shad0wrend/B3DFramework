@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "BsGLSupport.h"
 #include "BsGLRenderAPI.h"
 
-namespace bs::ct
+namespace b3d::ct
 {
 	class MacOSContext;
 
@@ -19,7 +19,7 @@ namespace bs::ct
 	{
 	public:
 		/** @copydoc GLSupport::newWindow */
-		SPtr<bs::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
+		SPtr<b3d::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<b3d::RenderWindow> parentWindow) override;
 
 		/** @copydoc GLSupport::start */
 		void start() override;
@@ -38,4 +38,4 @@ namespace bs::ct
 	};
 
 	/** @} */
-} // namespace bs::ct
+} // namespace b3d::ct

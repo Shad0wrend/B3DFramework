@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Localization/BsStringTable.h"
 #include "Error/BsException.h"
 #include "Resources/BsResources.h"
 #include "Private/RTTI/BsStringTableRTTI.h"
 
-using namespace bs;
+using namespace b3d;
 
 const Language StringTable::kDefaultLanguage = Language::EnglishUS;
 
@@ -15,7 +15,7 @@ LocalizedStringData::~LocalizedStringData()
 		B3DDeleteMultiple(ParameterOffsets, NumParameters);
 }
 
-void LocalizedStringData::ConcatenateString(bs::String& outputString, bs::String* parameters, u32 numParameterValues) const
+void LocalizedStringData::ConcatenateString(b3d::String& outputString, b3d::String* parameters, u32 numParameterValues) const
 {
 	// A safeguard in case translated strings have different number of parameters
 	u32 actualNumParameters = std::min(numParameterValues, NumParameters);
@@ -44,7 +44,7 @@ void LocalizedStringData::ConcatenateString(bs::String& outputString, bs::String
 			memcpy(strData, &String[prevIdx], strSize * sizeof(char));
 			strData += strSize;
 
-			bs::String& param = parameters[ParameterOffsets[i].ParamIdx];
+			b3d::String& param = parameters[ParameterOffsets[i].ParamIdx];
 			memcpy(strData, &param[0], param.size() * sizeof(char));
 			strData += param.size();
 
@@ -62,7 +62,7 @@ void LocalizedStringData::ConcatenateString(bs::String& outputString, bs::String
 	}
 }
 
-void LocalizedStringData::UpdateString(const bs::String& _string)
+void LocalizedStringData::UpdateString(const b3d::String& _string)
 {
 	if(ParameterOffsets != nullptr)
 		B3DDeleteMultiple(ParameterOffsets, NumParameters);

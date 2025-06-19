@@ -46,7 +46,7 @@ public:
 
 # Subscribing to events
 
-An external object can register itself with an event by calling @bs::Event<RetType(Args...)>::connect(). 
+An external object can register itself with an event by calling @b3d::Event<RetType(Args...)>::connect(). 
 ~~~~~~~~~~~~~{.cpp}
 // Define a couple of methods that trigger when events are triggered
 auto playerJumpedCallback = [&]()
@@ -68,7 +68,7 @@ playerController.onPlayerCollectedCoins.connect(&playerCollectedCoinsCallback);
 // ... run player logic every frame ...
 ~~~~~~~~~~~~~
 
-Subscribing to an event will return an @bs::HEvent handle. You can use this handle to manually disconnect from the event by calling @bs::HEvent::disconnect. For example:
+Subscribing to an event will return an @b3d::HEvent handle. You can use this handle to manually disconnect from the event by calling @b3d::HEvent::disconnect. For example:
 
 ~~~~~~~~~~~~~{.cpp}
 HEvent eventHandle = playerController.onPlayerJumped.connect(&playerJumpedCallback);

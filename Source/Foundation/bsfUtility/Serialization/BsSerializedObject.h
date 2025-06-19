@@ -1,16 +1,16 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 #include "Reflection/BsIReflectable.h"
 
-namespace bs
+namespace b3d
 {
 	struct RTTIOperationContext;
 }
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Serialization
 	 *  @{
@@ -56,9 +56,9 @@ namespace std
 {
 	/** Hash value generator for SPtr<ISerialized>. */
 	template <>
-	struct hash<bs::SPtr<bs::ISerialized>>
+	struct hash<b3d::SPtr<b3d::ISerialized>>
 	{
-		size_t operator()(const bs::SPtr<bs::ISerialized>& value) const
+		size_t operator()(const b3d::SPtr<b3d::ISerialized>& value) const
 		{
 			if(value == nullptr)
 				return 0;
@@ -69,18 +69,18 @@ namespace std
 
 	/** Equality operator for SPtr<ISerialized>. */
 	template <>
-	struct equal_to<bs::SPtr<bs::ISerialized>>
+	struct equal_to<b3d::SPtr<b3d::ISerialized>>
 	{
-		bool operator()(const bs::SPtr<bs::ISerialized>& lhs, const bs::SPtr<bs::ISerialized>& rhs) const
+		bool operator()(const b3d::SPtr<b3d::ISerialized>& lhs, const b3d::SPtr<b3d::ISerialized>& rhs) const
 		{
-			return bs::Equals(lhs, rhs);
+			return b3d::Equals(lhs, rhs);
 		}
 	};
 } // namespace std
 
 /** @endcond */
 
-namespace bs
+namespace b3d
 {
 	/** Contains data for fields or container entries that are made up of more than one type (e.g. std::pair<K, V>). */
 	struct B3D_UTILITY_EXPORT SerializedTuple : ISerialized
@@ -288,4 +288,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

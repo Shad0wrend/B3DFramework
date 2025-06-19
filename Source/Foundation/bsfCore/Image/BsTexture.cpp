@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Image/BsTexture.h"
 
@@ -14,7 +14,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-using namespace bs;
+using namespace b3d;
 
 TextureCreateInformation::TextureCreateInformation(const SPtr<PixelData>& initialData)
 	:InitialData(initialData)
@@ -337,7 +337,7 @@ SPtr<Texture> Texture::CreateEmpty()
 	return shared;
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 SPtr<Texture> Texture::kWhite;
 SPtr<Texture> Texture::kBlack;

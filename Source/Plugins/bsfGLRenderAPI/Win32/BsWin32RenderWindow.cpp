@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #ifndef _WIN32_WINNT
 #	define _WIN32_WINNT 0x0500
@@ -18,9 +18,9 @@
 #include "Private/Win32/BsWin32Window.h"
 #include "Math/BsMath.h"
 
-GLenum GLEWAPIENTRY WglewContextInit(bs::ct::GLSupport* glSupport);
+GLenum GLEWAPIENTRY WglewContextInit(b3d::ct::GLSupport* glSupport);
 
-using namespace bs;
+using namespace b3d;
 
 #define _MAX_CLASS_NAME_ 128
 
@@ -90,7 +90,7 @@ HWND Win32RenderWindow::GetHWnd() const
 	return GetCore()->GetHWndInternal();
 }
 
-namespace bs {
+namespace b3d {
 namespace ct {
 Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, Win32GLSupport& glsupport)
 	: RenderWindow(desc, windowId), mWindow(nullptr), mGLSupport(glsupport), mHDC(nullptr), mIsChild(false), mDeviceName(nullptr), mDisplayFrequency(0), mShowOnSwap(false), mContext(nullptr), mProperties(desc), mSyncedProperties(desc)
@@ -264,7 +264,7 @@ void Win32RenderWindow::Initialize()
 		mSyncedProperties = props;
 	}
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 	RenderWindow::Initialize();
 }
 
@@ -330,8 +330,8 @@ void Win32RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, 
 		mSyncedProperties.Height = props.Height;
 	}
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-	bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
+	b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 }
 
 void Win32RenderWindow::SetFullscreen(const VideoMode& mode)
@@ -394,8 +394,8 @@ void Win32RenderWindow::SetWindowed(u32 width, u32 height)
 		mSyncedProperties.Height = props.Height;
 	}
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-	bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
+	b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 }
 
 void Win32RenderWindow::Move(i32 left, i32 top)
@@ -416,7 +416,7 @@ void Win32RenderWindow::Move(i32 left, i32 top)
 			mSyncedProperties.Left = props.Left;
 		}
 
-		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+		b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 	}
 }
 
@@ -438,7 +438,7 @@ void Win32RenderWindow::Resize(u32 width, u32 height)
 			mSyncedProperties.Height = props.Height;
 		}
 
-		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+		b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 	}
 }
 
@@ -477,7 +477,7 @@ void Win32RenderWindow::SetVSync(bool enabled, u32 interval)
 		mSyncedProperties.VsyncInterval = interval;
 	}
 
-	bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+	b3d::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 }
 
 void Win32RenderWindow::SwapBuffers(u32 syncMask)
@@ -609,4 +609,4 @@ void Win32RenderWindow::SyncProperties()
 	ScopedSpinLock lock(mLock);
 	mProperties = mSyncedProperties;
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

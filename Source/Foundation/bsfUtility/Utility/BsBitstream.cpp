@@ -1,6 +1,6 @@
 #include "BsBitstream.h"
 
-using namespace bs;
+using namespace b3d;
 
 constexpr uint32_t Bitstream::kBytesPerQuant;
 constexpr uint32_t Bitstream::kBitsPerQuant;

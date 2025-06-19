@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -10,7 +10,7 @@
 #include "Math/BsAABox.h"
 #include "Scene/BsSceneActor.h"
 
-namespace bs
+namespace b3d
 {
 	struct EvaluatedAnimationData;
 
@@ -274,7 +274,7 @@ namespace bs
 			const SPtr<VertexDescription>& GetMorphVertexDescription() const { return mMorphVertexDescription; }
 
 		protected:
-			friend class bs::Renderable;
+			friend class b3d::Renderable;
 
 			Renderable();
 
@@ -296,4 +296,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

@@ -2,7 +2,7 @@
 //**************** Copyright (c) 2024 Marko Pintera (marko.pintera@gmail.com). All rights reserved. **********************//
 #include "BsFolderMonitor.h"
 
-using namespace bs;
+using namespace b3d;
 
 void FolderMonitorManager::Update()
 {

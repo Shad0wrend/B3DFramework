@@ -1,8 +1,8 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup General
 	 *  @{
@@ -242,7 +242,7 @@ namespace bs
 #endif
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -250,14 +250,14 @@ namespace std
 {
 /** Hash value generator for TSize3<T>. */
 template<class T>
-struct hash<bs::TSize3<T>>
+struct hash<b3d::TSize3<T>>
 {
-	size_t operator()(const bs::TSize3<T>& value) const
+	size_t operator()(const b3d::TSize3<T>& value) const
 	{
 		size_t hash = 0;
-		bs::B3DCombineHash(hash, value.Width);
-		bs::B3DCombineHash(hash, value.Height);
-		bs::B3DCombineHash(hash, value.Depth);
+		b3d::B3DCombineHash(hash, value.Width);
+		b3d::B3DCombineHash(hash, value.Height);
+		b3d::B3DCombineHash(hash, value.Depth);
 
 		return hash;
 	}

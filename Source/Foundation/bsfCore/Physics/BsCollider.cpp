@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Physics/BsCollider.h"
 #include "Math/BsRay.h"
 #include "Physics/BsPhysics.h"
 
-using namespace bs;
+using namespace b3d;
 
 Collider::Collider(PhysicsScene& physicsScene, const Vector3& position, const Quaternion& rotation, const Vector3& scale)
 	:mPosition(position), mRotation(rotation), mScale(scale), mPhysicsScene(physicsScene)

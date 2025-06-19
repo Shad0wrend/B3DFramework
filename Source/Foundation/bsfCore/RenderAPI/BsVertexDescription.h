@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup RenderAPI
 	 *  @{
@@ -203,7 +203,7 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -211,17 +211,17 @@ namespace std
 {
 /** Hash value generator for VertexElement. */
 template <>
-struct hash<bs::VertexElement>
+struct hash<b3d::VertexElement>
 {
-	size_t operator()(const bs::VertexElement& value) const
+	size_t operator()(const b3d::VertexElement& value) const
 	{
 		size_t hash = 0;
-		bs::B3DCombineHash(hash, value.GetType());
-		bs::B3DCombineHash(hash, value.GetSemantic());
-		bs::B3DCombineHash(hash, value.GetSemanticIndex());
-		bs::B3DCombineHash(hash, value.GetStreamIndex());
-		bs::B3DCombineHash(hash, value.GetInstanceStepRate());
-		bs::B3DCombineHash(hash, value.GetOffset());
+		b3d::B3DCombineHash(hash, value.GetType());
+		b3d::B3DCombineHash(hash, value.GetSemantic());
+		b3d::B3DCombineHash(hash, value.GetSemanticIndex());
+		b3d::B3DCombineHash(hash, value.GetStreamIndex());
+		b3d::B3DCombineHash(hash, value.GetInstanceStepRate());
+		b3d::B3DCombineHash(hash, value.GetOffset());
 
 		return hash;
 	}
@@ -229,14 +229,14 @@ struct hash<bs::VertexElement>
 
 /** Hash value generator for VertexDescription. */
 template <>
-struct hash<bs::VertexDescription>
+struct hash<b3d::VertexDescription>
 {
-	size_t operator()(const bs::VertexDescription& value) const
+	size_t operator()(const b3d::VertexDescription& value) const
 	{
 		size_t hash = 0;
 
 		for(const auto& element : value.GetElements())
-			bs::B3DCombineHash(hash, element);
+			b3d::B3DCombineHash(hash, element);
 
 		return hash;
 	}

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2022 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2022 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "Threading/BsSignal.h"
 #include "Threading/BsSingleConsumerQueue.h"
 
-namespace bs::ct
+namespace b3d::ct
 {
 	/** @addtogroup Vulkan
 	 *  @{
@@ -82,4 +82,4 @@ namespace bs::ct
 	void AssertIfNotVulkanSubmitThread();
 
 	/** @} */
-} // namespace bs::ct
+} // namespace b3d::ct

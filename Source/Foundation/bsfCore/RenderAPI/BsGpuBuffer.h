@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "CoreObject/BsCoreObject.h"
 #include "CoreObject/BsRenderProxy.h"
 
-namespace bs
+namespace b3d
 {
 	class GpuQueue;
 	/** @addtogroup RenderAPI-Internal
@@ -313,7 +313,7 @@ namespace bs
 	};
 }
 
-namespace bs::ct
+namespace b3d::ct
 {
 	/** Defines a buffer that can be used for operations on the GPU. */
 	class B3D_CORE_EXPORT GpuBuffer : public RenderProxy
@@ -468,8 +468,8 @@ namespace bs::ct
 		bool IsLocked() const { return mIsLocked; }
 
 	protected:
-		friend class bs::GpuDevice;
-		friend class bs::GpuBuffer;
+		friend class b3d::GpuDevice;
+		friend class b3d::GpuBuffer;
 
 		/** Constructs a new GPU buffer. */
 		GpuBuffer(const GpuBufferCreateInformation& createInformation, u32 suballocationSize);
@@ -492,6 +492,6 @@ namespace bs::ct
 
 		bool mIsLocked = false;
 	};
-} // namespace bs::ct
+} // namespace b3d::ct
 
 /** @} */

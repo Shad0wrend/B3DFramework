@@ -28,12 +28,12 @@ class OSFiber {
 
   // createFiberFromCurrentThread() returns a fiber created from the current
   // thread.
-  static inline bs::UPtr<OSFiber> createFiberFromCurrentThread();
+  static inline b3d::UPtr<OSFiber> createFiberFromCurrentThread();
 
   // createFiber() returns a new fiber with the given stack size that will
   // call func when switched to. func() must end by switching back to another
   // fiber, and must not return.
-  static inline bs::UPtr<OSFiber> createFiber(
+  static inline b3d::UPtr<OSFiber> createFiber(
       size_t stackSize,
       const std::function<void()>& func);
 
@@ -58,18 +58,18 @@ OSFiber::~OSFiber() {
   }
 }
 
-bs::UPtr<OSFiber> OSFiber::createFiberFromCurrentThread() {
-  auto out = bs::B3DMakeUnique<OSFiber>();
+b3d::UPtr<OSFiber> OSFiber::createFiberFromCurrentThread() {
+  auto out = b3d::B3DMakeUnique<OSFiber>();
   out->fiber = ConvertThreadToFiberEx(nullptr, FIBER_FLAG_FLOAT_SWITCH);
   out->isFiberFromThread = true;
   B3D_ASSERT(out->fiber != nullptr && "ConvertThreadToFiberEx() failed.");
   return out;
 }
 
-bs::UPtr<OSFiber> OSFiber::createFiber(
+b3d::UPtr<OSFiber> OSFiber::createFiber(
     size_t stackSize,
     const std::function<void()>& func) {
-  auto out = bs::B3DMakeUnique<OSFiber>();
+  auto out = b3d::B3DMakeUnique<OSFiber>();
   // stackSize is rounded up to the system's allocation granularity (typically
   // 64 KB).
   out->fiber = CreateFiberEx(stackSize - 1, stackSize, FIBER_FLAG_FLOAT_SWITCH,

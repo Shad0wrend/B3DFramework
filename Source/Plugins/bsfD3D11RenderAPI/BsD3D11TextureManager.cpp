@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsD3D11TextureManager.h"
 #include "BsD3D11Texture.h"
@@ -6,7 +6,7 @@
 #include "BsD3D11Mappings.h"
 #include "BsD3D11RenderAPI.h"
 
-using namespace bs;
+using namespace b3d;
 SPtr<RenderTexture> D3D11TextureManager::CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc)
 {
 	D3D11RenderTexture* tex = new(B3DAllocate<D3D11RenderTexture>()) D3D11RenderTexture(desc);
@@ -22,7 +22,7 @@ PixelFormat D3D11TextureManager::GetNativeFormat(TextureType ttype, PixelFormat 
 	return ct::D3D11Mappings::GetPf(d3dPF);
 }
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 SPtr<Texture> D3D11TextureManager::CreateTextureInternal(const TextureCreateInformation& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask)
 {
 	D3D11Texture* tex = new(B3DAllocate<D3D11Texture>()) D3D11Texture(desc, initialData, deviceMask);
@@ -40,4 +40,4 @@ SPtr<RenderTexture> D3D11TextureManager::CreateRenderTextureInternal(const RENDE
 
 	return texPtr;
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -232,7 +232,7 @@
 #include "Localization/BsHString.h"
 #include "String/BsStringID.h"
 
-namespace bs
+namespace b3d
 {
 	// Core objects
 	template <class T>
@@ -502,12 +502,12 @@ namespace bs
 		class RenderWindowManager;
 		class GpuBuffer;
 	} // namespace ct
-} // namespace bs
+} // namespace b3d
 
 /************************************************************************/
 /* 									RTTI                      			*/
 /************************************************************************/
-namespace bs
+namespace b3d
 {
 	enum TypeID_Core
 	{
@@ -760,7 +760,7 @@ namespace bs
 		TID_Light = 30011,
 		TID_CLight = 30012,
 	};
-} // namespace bs
+} // namespace b3d
 
 /************************************************************************/
 /* 							Resource references                   		*/
@@ -768,7 +768,7 @@ namespace bs
 
 #include "Resources/BsResourceHandle.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Resources
 	 *  @{
@@ -796,11 +796,11 @@ namespace bs
 	typedef TResourceHandle<VectorPath> HVectorPath;
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 #include "Scene/BsGameObjectHandle.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Scene
 	 *  @{
@@ -839,9 +839,9 @@ namespace bs
 	typedef GameObjectHandle<CDecal> HDecal;
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
-namespace bs
+namespace b3d
 {
 	/**
 	 * Defers function execution until the next frame. If this function is called within another deferred call, then it will
@@ -1020,6 +1020,6 @@ namespace bs
 	B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(Script, Log)
 	B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(Importer, Log)
 	B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(Network, Log)
-} // namespace bs
+} // namespace b3d
 
 #include "Utility/BsCommonTypes.h"

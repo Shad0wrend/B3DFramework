@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,12 +6,12 @@
 #include "BsUtilityPrerequisites.h"
 #include "Threading/BsSignal.h"
 
-namespace bs
+namespace b3d
 {
 	class Fiber;
 }
 
-namespace bs
+namespace b3d
 {
 	/**
 	 * @name Threading
@@ -101,4 +101,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

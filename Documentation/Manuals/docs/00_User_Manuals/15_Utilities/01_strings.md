@@ -2,7 +2,7 @@
 title: Strings
 ---
 
-Strings are represented with @bs::String and @bs::WString types. These are wrappers for the standard C++ strings and have the same interface and behaviour.
+Strings are represented with @b3d::String and @b3d::WString types. These are wrappers for the standard C++ strings and have the same interface and behaviour.
 
 ~~~~~~~~~~~~~{.cpp}
 String narrow = "NarrowString";
@@ -18,21 +18,21 @@ String narrow = "NarrowString";
 
 // On Windows this will not be encoded properly as these characters are unlikely to all be present
 // in the current locale
-String invalidNarrow = "Š¶¤ÞÐ";
+String invalidNarrow = "ï¿½ï¿½ï¿½ï¿½ï¿½";
 ~~~~~~~~~~~~~
 
 Therefore if you need to support a whole range of Unicode characters make sure to either use **WString** and "L" prefix, or even better **String** and "u8" prefix. Otherwise you risk that your character wont be encoded properly for all platforms.
 
 ~~~~~~~~~~~~~{.cpp}
 // Wide strings will always properly encode Unicode, but use unnecessarily large 32-bit UTF32 on Linux/macOS
-WString validWide = L"Š¶¤ÞÐ";
+WString validWide = L"ï¿½ï¿½ï¿½ï¿½ï¿½";
 
 // Best option is to use narrow strings and force UTF8 encoding
-String validNarrow = u8"Š¶¤ÞÐ";
+String validNarrow = u8"ï¿½ï¿½ï¿½ï¿½ï¿½";
 ~~~~~~~~~~~~~
 
 # Converting between encodings
-bs::f provides a variety of methods to convert between most common string encodings. This functionality is provided in the @bs::UTF8 class. For example use @bs::UTF8::fromANSI to convert from locale-specific encoding to UTF8, and @bs::UTF8::toANSI for other way around. Conversions for UTF-16 and UTF-32 are also provided.
+b3d::f provides a variety of methods to convert between most common string encodings. This functionality is provided in the @b3d::UTF8 class. For example use @b3d::UTF8::fromANSI to convert from locale-specific encoding to UTF8, and @b3d::UTF8::toANSI for other way around. Conversions for UTF-16 and UTF-32 are also provided.
 
 ~~~~~~~~~~~~~{.cpp}
 // Assuming Windows platform
@@ -48,7 +48,7 @@ strANSI = UTF8::toANSI(strUTF8);
 ~~~~~~~~~~~~~
 
 # Converting data types
-You can convert most primitive data types to strings by using the @bs::toString or @bs::toWString functions.
+You can convert most primitive data types to strings by using the @b3d::toString or @b3d::toWString functions.
 
 ~~~~~~~~~~~~~{.cpp}
 bool v1 = false;
@@ -71,7 +71,7 @@ int v2 = parseINT32(str2, 0);
 If the system cannot properly parse the string, it will instead assign the default value provided.
 
 # Manipulating strings
-Various forms of string manipulations can be performed via @bs::StringUtil, including but not limited to: making a string upper or lower case, replacing string elements, matching string elements, splitting strings based on delimiters and more.
+Various forms of string manipulations can be performed via @b3d::StringUtil, including but not limited to: making a string upper or lower case, replacing string elements, matching string elements, splitting strings based on delimiters and more.
 
 ~~~~~~~~~~~~~{.cpp}
 String string = "124,355,banana,954";
@@ -84,11 +84,11 @@ string = StringUtil::replaceAll(string, "banana", "643");
 ~~~~~~~~~~~~~
 
 # Formatting strings
-Often you need to construct larger strings from other strings. Use @bs::StringUtil::format to construct such strings by providing a template string, which contains special identifiers for inserting other strings. The identifiers are represented like "{0}, {1}" in the source string, where the number represents the position of the parameter that will be used for replacing the identifier.
+Often you need to construct larger strings from other strings. Use @b3d::StringUtil::format to construct such strings by providing a template string, which contains special identifiers for inserting other strings. The identifiers are represented like "{0}, {1}" in the source string, where the number represents the position of the parameter that will be used for replacing the identifier.
 
 ~~~~~~~~~~~~~{.cpp}
 String templateStr = "Hello, my name is {0}.";
-String str = StringUtil::format(templateStr, "bs::f");
+String str = StringUtil::format(templateStr, "b3d::f");
 
-// str now contains the string "Hello, my name is bs::f."
+// str now contains the string "Hello, my name is b3d::f."
 ~~~~~~~~~~~~~

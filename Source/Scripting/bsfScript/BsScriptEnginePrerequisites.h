@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -55,7 +55,7 @@
 /** @} */
 /** @} */
 
-namespace bs
+namespace b3d
 {
 #if !B3D_IS_ENGINE
 	constexpr const char* ENGINE_ASSEMBLY = "bsfSharpCore";
@@ -63,7 +63,7 @@ namespace bs
 	constexpr const char* kEngineAssembly = "MBansheeEngine";
 	constexpr const char* kScriptGameAssembly = "MScriptGame";
 #endif
-	constexpr const char* kEngineNs = "bs";
+	constexpr const char* kEngineNs = "b3d";
 
 	class ScriptObjectBase;
 	class ScriptResourceManager;
@@ -213,4 +213,4 @@ namespace bs
 		Undefined = 0
 	};
 
-} // namespace bs
+} // namespace b3d

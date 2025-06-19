@@ -1,8 +1,8 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Internal-Utility
 	 *  @{
@@ -195,7 +195,7 @@ namespace bs
 		template <class T>
 		static String ToString(const T& param)
 		{
-			return bs::ToString(param);
+			return b3d::ToString(param);
 		}
 
 		/**	Helper method that "converts" a narrow string to a narrow string (simply a pass through). */
@@ -231,7 +231,7 @@ namespace bs
 		template <class T>
 		static WString ToWString(const T& param)
 		{
-			return bs::toWString(param);
+			return b3d::toWString(param);
 		}
 
 		/**	Helper method that "converts" a wide string to a wide string (simply a pass through). */
@@ -318,4 +318,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-} // namespace bs
+} // namespace b3d

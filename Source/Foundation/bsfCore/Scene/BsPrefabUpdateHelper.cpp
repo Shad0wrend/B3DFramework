@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Scene/BsPrefabUpdateHelper.h"
 
@@ -9,7 +9,7 @@
 #include "Scene/BsSceneObject.h"
 #include "Resources/BsResources.h"
 
-using namespace bs;
+using namespace b3d;
 
 /** Contains a reference to a scene object representing a prefab instance root, and a prefab resource associated with that root. */
 struct PrefabInstanceRoot

@@ -1,11 +1,11 @@
-//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptTypeDefinition.h"
 
-namespace bs
+namespace b3d
 {
 	/**	Interop class between C++ & CLR for the Category attribute. */
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptCategory : public TScriptTypeDefinition<ScriptCategory>
@@ -22,4 +22,4 @@ namespace bs
 	private:
 		static MonoField* sNameField;
 	};
-} // namespace bs
+} // namespace b3d

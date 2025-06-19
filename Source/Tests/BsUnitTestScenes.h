@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 #include "BsUtilityPrerequisites.h"
@@ -7,7 +7,7 @@
 #include "BsUnitTestComponents.h"
 #include "Scene/BsPrefabUtility.h"
 
-namespace bs
+namespace b3d
 {
 	/** Wrapper for easier scene creation and object access. */
 	struct UnitTestSceneA
@@ -211,4 +211,4 @@ namespace bs
 		HSceneObject OptionalSceneObject_2;
 		HComponent OptionalComponent_2;
 	};
-} // namespace bs
+} // namespace b3d

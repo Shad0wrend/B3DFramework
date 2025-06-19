@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsPrerequisites.h"
 #include "GUI/BsIGUIVectorPathBuilder.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup GUI
 	 *  @{
@@ -145,4 +145,4 @@ namespace bs
 
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanGpuPipelineState.h"
 #include "BsVulkanGpuDevice.h"
@@ -10,8 +10,8 @@
 #include "Profiling/BsRenderStats.h"
 #include "BsVulkanRenderPass.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 VulkanPipeline::VulkanPipeline(VulkanResourceManager* owner, VkPipeline pipeline, const std::array<bool, B3D_MAXIMUM_RENDER_TARGET_COUNT>& colorReadOnly, bool depthStencilReadOnly, u32 vertexBufferBindingCount, const StringView& name)
 	: VulkanResource(owner, true, name), mPipeline(pipeline), mReadOnlyColor(colorReadOnly), mReadOnlyDepth(depthStencilReadOnly), mVertexBufferBindingCount(vertexBufferBindingCount)

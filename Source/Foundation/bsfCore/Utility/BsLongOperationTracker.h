@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	class IProjectLibraryEventNotifier;
 	class ProjectLibraryDatabase;
@@ -137,4 +137,4 @@ namespace bs
 	}
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

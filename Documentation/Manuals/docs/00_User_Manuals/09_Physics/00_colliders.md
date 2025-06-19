@@ -18,7 +18,7 @@ There are five collider types, that differ in the way how is their surface descr
  - Mesh - The surface is represented by custom geometry using a triangle mesh
   
 # Plane collider
-Represented by @bs::CPlaneCollider component. Use @bs::CPlaneCollider::setNormal to provide the direction in which the plane is oriented in, and @bs::CPlaneCollider::setDistance to provide an offset along that direction. Using these two properties you can position and orient a plane anywhere in the scene.
+Represented by @b3d::CPlaneCollider component. Use @b3d::CPlaneCollider::setNormal to provide the direction in which the plane is oriented in, and @b3d::CPlaneCollider::setDistance to provide an offset along that direction. Using these two properties you can position and orient a plane anywhere in the scene.
 
 ~~~~~~~~~~~~~{.cpp}
 HSceneObject colliderSO = SceneObject::create("Collider");
@@ -34,7 +34,7 @@ collider->setDistance(-10.0f);
 ![Plane collider](../../Images/PlaneCollider.png)  
 
 # Box collider
-Represented by @bs::CBoxCollider component. Use @bs::CBoxCollider::setExtents to provide the extents (half size) of the box. Use @bs::CBoxCollider::setCenter to offset the box relative to the scene object.
+Represented by @b3d::CBoxCollider component. Use @b3d::CBoxCollider::setExtents to provide the extents (half size) of the box. Use @b3d::CBoxCollider::setCenter to offset the box relative to the scene object.
 
 ~~~~~~~~~~~~~{.cpp}
 HSceneObject colliderSO = SceneObject::create("Collider");
@@ -48,7 +48,7 @@ collider->setCenter(Vector3(0.0f, 0.0f, 0.0f));
 ![Box collider](../../Images/BoxCollider.png)  
 
 # Sphere collider
-Represented by @bs::CSphereCollider component. Use @bs::CSphereCollider::setRadius to provide the radius of the sphere.
+Represented by @b3d::CSphereCollider component. Use @b3d::CSphereCollider::setRadius to provide the radius of the sphere.
 
 ~~~~~~~~~~~~~{.cpp}
 HSceneObject colliderSO = SceneObject::create("Collider");
@@ -61,7 +61,7 @@ collider->setRadius(1.0f);
 ![Sphere collider](../../Images/SphereCollider.png)  
 
 # Capsule collider
-Represented by @bs::CCapsuleCollider component. Capsule is defined using a height, and a radius which represents a distance from every point on the line at the capsule center (the line being the length as defined by "height"). Use @bs::CCapsuleCollider::setHalfHeight to set the half-height, and @bs::CCapsuleCollider::setRadius to set the radius.
+Represented by @b3d::CCapsuleCollider component. Capsule is defined using a height, and a radius which represents a distance from every point on the line at the capsule center (the line being the length as defined by "height"). Use @b3d::CCapsuleCollider::setHalfHeight to set the half-height, and @b3d::CCapsuleCollider::setRadius to set the radius.
 
 ~~~~~~~~~~~~~{.cpp}
 HSceneObject colliderSO = SceneObject::create("Collider");
@@ -75,11 +75,11 @@ collider->setRadius(0.5f);
 ![Capsule collider](../../Images/CapsuleCollider.png)  
 
 # Mesh collider
-Mesh colliders represent the most complex collider types. They're repesented with the @bs::CMeshCollider component and they require a **PhysicsMesh** resource to operate. The physics mesh allows you to represent complex surfaces using triangles (similar to how a mesh used for rendering works) when basic shapes like boxes and spheres don't cut it.
+Mesh colliders represent the most complex collider types. They're repesented with the @b3d::CMeshCollider component and they require a **PhysicsMesh** resource to operate. The physics mesh allows you to represent complex surfaces using triangles (similar to how a mesh used for rendering works) when basic shapes like boxes and spheres don't cut it.
 
 We'll show how to import physics meshes in the next chapter.
 
-You can assign a physics mesh by calling @bs::CMeshCollider::setMesh.
+You can assign a physics mesh by calling @b3d::CMeshCollider::setMesh.
 
 ~~~~~~~~~~~~~{.cpp}
 HSceneObject colliderSO = SceneObject::create("Collider");

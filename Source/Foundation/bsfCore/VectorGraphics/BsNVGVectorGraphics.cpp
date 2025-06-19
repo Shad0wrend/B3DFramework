@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsNVGVectorGraphics.h"
 #include "Mesh/BsMesh.h"
@@ -6,9 +6,9 @@
 #include "RenderAPI/BsGpuPipelineParameterLayout.h"
 #include "Private/RTTI/BsNVGVectorGraphicsRTTI.h"
 
-using namespace bs;
+using namespace b3d;
 
-namespace bs::ct
+namespace b3d::ct
 {
 	/** Converts a NanoVG composite operation into a B3D enum representing the operation. */
 	static VectorGraphicsBlendMode NVGCompositeOperationToBlendMode(const NVGcompositeOperationState& compositeOperationState)
@@ -154,7 +154,7 @@ namespace bs::ct
 	}
 
 	/** Executes the NanoVG path commands in the provided path. Command output will be recorded to the provided context object. */
-	static void ApplyPathCommands(NVGcontext& context, const bs::VectorPath& path, const VectorGraphicsSettings& settings)
+	static void ApplyPathCommands(NVGcontext& context, const b3d::VectorPath& path, const VectorGraphicsSettings& settings)
 	{
 		nvgBeginPath(&context);
 
@@ -390,7 +390,7 @@ namespace bs::ct
 			}));
 	}
 
-	NVGVectorPathRenderable::NVGVectorPathRenderable(const bs::VectorPath& vectorPath, const VectorGraphicsSettings& settings)
+	NVGVectorPathRenderable::NVGVectorPathRenderable(const b3d::VectorPath& vectorPath, const VectorGraphicsSettings& settings)
 		:VectorPathRenderable(vectorPath, settings), mRawRenderData(PlaybackPathCommands(vectorPath, settings))
 	{ }
 
@@ -593,7 +593,7 @@ namespace bs::ct
 		outputRenderData.RenderCommands.push_back(renderCommand);
 	}
 
-	NVGPathRenderData NVGVectorPathRenderable::PlaybackPathCommands(const bs::VectorPath& vectorPath, const VectorGraphicsSettings& settings)
+	NVGPathRenderData NVGVectorPathRenderable::PlaybackPathCommands(const b3d::VectorPath& vectorPath, const VectorGraphicsSettings& settings)
 	{
 		NVGRenderContext userContext;
 		userContext.Settings = settings;

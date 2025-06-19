@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsMaterialParams.h"
 #include "Private/RTTI/BsMaterialParamsRTTI.h"
@@ -12,7 +12,7 @@
 #include "Allocators/BsPoolAlloc.h"
 #include "CoreObject/BsCoreObjectSync.h"
 
-using namespace bs;
+using namespace b3d;
 
 SPtr<ct::Texture> GetSpriteImageAtlas(const SPtr<ct::SpriteImage>& spriteImage)
 {
@@ -790,7 +790,7 @@ void TMaterialParams<IsRenderProxy>::GetDefaultSamplerState(const ParamData& par
 template class TMaterialParams<true>;
 template class TMaterialParams<false>;
 
-namespace bs
+namespace b3d
 {
 	struct MaterialParametersDataParameter
 	{
@@ -1028,13 +1028,13 @@ RTTIType* MaterialParams::GetRtti() const
 	return MaterialParams::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 MaterialParams::MaterialParams(const SPtr<Shader>& shader, u64 initialParamVersion)
 	: TMaterialParams(shader, initialParamVersion)
 {}
 
-MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::MaterialParams>& params)
+MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<b3d::MaterialParams>& params)
 	: TMaterialParams(shader, 1)
 {
 	memcpy(mDataParamsBuffer, params->mDataParamsBuffer, mDataSize);
@@ -1076,7 +1076,7 @@ MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::Materi
 			break;
 		case ParamType::Buffer:
 			{
-				SPtr<bs::GpuBuffer> buffer = params->mBufferParameters[param.Index].Value;
+				SPtr<b3d::GpuBuffer> buffer = params->mBufferParameters[param.Index].Value;
 				mBufferParameters[param.Index].Value = B3DGetRenderProxy(buffer);
 			}
 			break;
@@ -1092,7 +1092,7 @@ MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::Materi
 	}
 }
 
-void MaterialParams::ApplyAndDestroySyncPacket(FrameAllocator& allocator, const bs::MaterialParams::SyncPacket& syncPacket)
+void MaterialParams::ApplyAndDestroySyncPacket(FrameAllocator& allocator, const b3d::MaterialParams::SyncPacket& syncPacket)
 {
 	mParamVersion++;
 
@@ -1119,7 +1119,7 @@ void MaterialParams::ApplyAndDestroySyncPacket(FrameAllocator& allocator, const 
 		}
 		else
 		{
-			const GpuDataParameterTypeInformation& typeInfo = bs::GpuParameters::kParamSizes.Lookup[(int)parameterData.DataType];
+			const GpuDataParameterTypeInformation& typeInfo = b3d::GpuParameters::kParamSizes.Lookup[(int)parameterData.DataType];
 			const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			const DataParamInfo& parameterInformation = mDataParameterMetaData[parameterData.Index];

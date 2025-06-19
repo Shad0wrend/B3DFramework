@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Resources/BsBuiltinResources.h"
 #include "GUI/BsGUILabel.h"
@@ -20,7 +20,7 @@
 
 using json = nlohmann::json;
 
-using namespace bs;
+using namespace b3d;
 
 constexpr const char* BuiltinResources::kIconTextureName;
 constexpr const char* BuiltinResources::kMultiLineLabelStyle;
@@ -484,10 +484,10 @@ HMaterial BuiltinResources::CreateSpriteLineMaterial() const
 	return Material::Create(mShaderSpriteLine);
 }
 
-namespace bs
+namespace b3d
 {
 BuiltinResources& GetBuiltinResources()
 {
 	return BuiltinResources::Instance();
 }
-} // namespace bs
+} // namespace b3d

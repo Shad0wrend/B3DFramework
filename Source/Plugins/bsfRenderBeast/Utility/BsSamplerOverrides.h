@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsRenderBeastPrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -89,7 +89,7 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -97,13 +97,13 @@ namespace std
 {
 	/** Hash value generator for SamplerOverrideKey. */
 	template <>
-	struct hash<bs::ct::SamplerOverrideKey>
+	struct hash<b3d::ct::SamplerOverrideKey>
 	{
-		size_t operator()(const bs::ct::SamplerOverrideKey& key) const
+		size_t operator()(const b3d::ct::SamplerOverrideKey& key) const
 		{
 			size_t hash = 0;
-			bs::B3DCombineHash(hash, key.Material);
-			bs::B3DCombineHash(hash, key.TechniqueIdx);
+			b3d::B3DCombineHash(hash, key.Material);
+			b3d::B3DCombineHash(hash, key.TechniqueIdx);
 
 			return hash;
 		}

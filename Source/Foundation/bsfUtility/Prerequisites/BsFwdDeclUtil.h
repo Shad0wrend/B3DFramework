@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 // Contains forward declares used as a convenience
 
-namespace bs
+namespace b3d
 {
 	// Script binding defines
 
@@ -288,4 +288,4 @@ namespace bs
 		TID_U32String = 94,
 		TID_Size2I = 95,
 	};
-} // namespace bs
+} // namespace b3d

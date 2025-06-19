@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptGUIInputBox.generated.h"
 #include "BsMonoMethod.h"
@@ -9,7 +9,7 @@
 #include "BsScriptGUIInputBoxContent.generated.h"
 #include "BsScriptGUIOption.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptGUIInputBox::OnValueChangedThunkDefinition ScriptGUIInputBox::OnValueChangedThunk; 
 	ScriptGUIInputBox::OnConfirmThunkDefinition ScriptGUIInputBox::OnConfirmThunk; 

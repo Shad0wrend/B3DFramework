@@ -2,7 +2,7 @@
 title: Quick reference
 ---
 
-Here are some common conventions used throughout bs::f:
+Here are some common conventions used throughout b3d::f:
  - It uses right handed coordinate system
  - Camera is looking towards the negative z axis
  - Screen/window space origin is located in the top left corner

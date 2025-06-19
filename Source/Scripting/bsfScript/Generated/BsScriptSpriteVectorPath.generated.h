@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,9 +8,9 @@
 #include "../../../Foundation/bsfUtility/Math/BsSize2.h"
 #include "../../../Foundation/bsfCore/Image/BsSpriteVectorPath.h"
 
-namespace bs { class SpriteVectorPath; }
-namespace bs { struct __SpriteVectorPathCreateInformationInterop; }
-namespace bs
+namespace b3d { class SpriteVectorPath; }
+namespace b3d { struct __SpriteVectorPathCreateInformationInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteVectorPath : public TScriptResourceWrapper<SpriteVectorPath, ScriptSpriteVectorPath, ScriptSpriteImageWrapperBase>
 	{

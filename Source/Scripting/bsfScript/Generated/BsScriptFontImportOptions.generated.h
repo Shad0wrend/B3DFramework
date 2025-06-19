@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,8 +9,8 @@
 #include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 
-namespace bs { class FontImportOptions; }
-namespace bs
+namespace b3d { class FontImportOptions; }
+namespace b3d
 {
 #if !B3D_IS_ENGINE
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontImportOptions : public TScriptReflectableWrapper<FontImportOptions, ScriptFontImportOptions, ScriptImportOptionsWrapperBase>

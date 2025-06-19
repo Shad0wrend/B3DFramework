@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 #include "RTTI/BsStringRTTI.h"
 #include "Scene/BsSceneObject.h"
 
-namespace bs
+namespace b3d
 {
 	class UnitTestComponentARTTI : public TRTTIType<UnitTestComponentA, Component, UnitTestComponentARTTI>
 	{
@@ -58,4 +58,4 @@ namespace bs
 			return SceneObject::CreateEmptyComponent<UnitTestComponentB>();
 		}
 	};
-} // namespace bs
+} // namespace b3d

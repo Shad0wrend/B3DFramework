@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -12,8 +12,8 @@
 #include "../../../Foundation/bsfCore/Input/BsInputFwd.h"
 #include "../../../Foundation/bsfCore/Input/BsInputFwd.h"
 
-namespace bs { struct __PointerEventInterop; }
-namespace bs
+namespace b3d { struct __PointerEventInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptInput : public TScriptTypeDefinition<ScriptInput>
 	{

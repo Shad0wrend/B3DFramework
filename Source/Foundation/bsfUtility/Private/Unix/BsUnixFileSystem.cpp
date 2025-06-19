@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "FileSystem/BsFileSystem.h"
 
@@ -21,7 +21,7 @@
 #define HANDLE_PATH_ERROR(path__, errno__) \
 	B3D_LOG(Error, FileSystem, (String(__FUNCTION__) + ": " + (path__) + ": " + (strerror(errno__))));
 
-using namespace bs;
+using namespace b3d;
 
 bool unix_pathExists(const String& path)
 {

@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanResource.h"
 #include "BsVulkanGpuCommandBuffer.h"
 #include "CoreObject/BsRenderThread.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 VulkanResource::VulkanResource(VulkanResourceManager* owner, bool concurrency, const StringView& name)
 #if B3D_BUILD_TYPE == B3D_BUILD_TYPE_DEVELOPMENT

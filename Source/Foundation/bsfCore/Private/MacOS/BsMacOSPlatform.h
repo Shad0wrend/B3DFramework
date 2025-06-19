@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -10,7 +10,7 @@
 #	include <Cocoa/Cocoa.h>
 #endif
 
-namespace bs
+namespace b3d
 {
 	// Forward declare Cocoa types for SBGen purposes, since we didn't include Cocoa.h above
 #if B3D_CODEGEN
@@ -113,4 +113,4 @@ namespace bs
 	void flipYWindow(NSWindow* window, NSPoint& point);
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

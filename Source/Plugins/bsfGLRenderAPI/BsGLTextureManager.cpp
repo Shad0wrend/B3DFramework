@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsGLTextureManager.h"
 #include "RenderAPI/BsRenderAPI.h"
 #include "BsGLRenderTexture.h"
 #include "BsGLPixelFormat.h"
 
-using namespace bs;
+using namespace b3d;
 
 GLTextureManager::GLTextureManager(ct::GLSupport& support)
 	: TextureManager(), mGLSupport(support)
@@ -28,7 +28,7 @@ PixelFormat GLTextureManager::GetNativeFormat(TextureType ttype, PixelFormat for
 	return ct::GLPixelUtil::GetClosestSupportedPf(format, ttype, usage);
 }
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 GLTextureManager::GLTextureManager(GLSupport& support)
 	: mGLSupport(support)
 {}
@@ -50,4 +50,4 @@ SPtr<RenderTexture> GLTextureManager::CreateRenderTextureInternal(const RENDER_T
 
 	return texPtr;
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

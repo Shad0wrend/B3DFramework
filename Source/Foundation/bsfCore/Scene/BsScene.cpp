@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2025 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Scene/BsScene.h"
 #include "Private/RTTI/BsSceneRTTI.h"
@@ -9,7 +9,7 @@
 #include "BsGameObjectCollection.h"
 #include "BsSceneManager.h"
 
-using namespace bs;
+using namespace b3d;
 
 Scene::Scene()
 	: Resource(false), mGameObjectCollection(GameObjectCollection::Create())

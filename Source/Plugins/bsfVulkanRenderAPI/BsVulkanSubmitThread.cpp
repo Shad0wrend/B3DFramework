@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2022 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2022 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanSubmitThread.h"
 #include "BsCoreApplication.h"
@@ -9,8 +9,8 @@
 #include "Threading/BsBlockingCall.h"
 #include "Threading/BsScheduler.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 static constexpr bool kEnableSubmitThread = true;
 
@@ -182,7 +182,7 @@ u32 VulkanSubmitThread::GetThreadId() const
 	return mCommandQueue.GetThreadId();
 }
 
-namespace bs::ct {
+namespace b3d::ct {
 	VulkanSubmitThread& GetVulkanSubmitThread()
 	{
 		return VulkanSubmitThread::Instance();
@@ -198,4 +198,4 @@ namespace bs::ct {
 
 		B3D_ASSERT((currentThreadId == submitThreadId) && "This method can only be accessed from the submit thread.");
 	}
-} // namespace bs::ct
+} // namespace b3d::ct

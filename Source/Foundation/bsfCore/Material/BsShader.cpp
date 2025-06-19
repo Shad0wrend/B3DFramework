@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsShader.h"
 
@@ -16,7 +16,7 @@
 #include "Resources/BsBuiltinResources.h"
 #include "ThirdParty/CityHash/city.h"
 
-using namespace bs;
+using namespace b3d;
 
 ShaderInformationBase::ShaderInformationBase()
 	: QueueSortType(QueueSortType::None), QueuePriority(0), SeparablePasses(false), Flags(0)
@@ -269,7 +269,7 @@ RTTIType* ShaderInformation::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace bs::ct {
+namespace b3d::ct {
 RTTIType* ShaderInformation::GetRttiStatic()
 {
 	return ShaderInformationRenderProxyRTTI::Instance();
@@ -700,7 +700,7 @@ RTTIType* ShaderMetaData::GetRtti() const
 	return ShaderMetaData::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 std::atomic<u32> Shader::mNextShaderId;
 

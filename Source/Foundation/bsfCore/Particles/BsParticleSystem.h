@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -14,7 +14,7 @@
 #include "Particles/BsParticleEvolver.h"
 #include "Particles/BsParticleEmitter.h"
 
-namespace bs
+namespace b3d
 {
 	struct EvaluatedAnimationData;
 	class SkeletonMask;
@@ -343,10 +343,10 @@ namespace bs
 
 	namespace ct
 	{
-		/** Render thread counterpart of bs::ParticleVectorFieldSettings. */
+		/** Render thread counterpart of b3d::ParticleVectorFieldSettings. */
 		struct ParticleVectorFieldSettings : TParticleVectorFieldSettings<true>
 		{
-			friend struct bs::ParticleVectorFieldSettings;
+			friend struct b3d::ParticleVectorFieldSettings;
 		};
 	} // namespace ct
 
@@ -435,16 +435,16 @@ namespace bs
 	{
 		class VectorField;
 
-		/** Render  thread counterpart of bs::ParticleSystemSettings. */
+		/** Render  thread counterpart of b3d::ParticleSystemSettings. */
 		struct ParticleSystemSettings : TParticleSystemSettings<true>
 		{
-			friend struct bs::ParticleSystemSettings;
+			friend struct b3d::ParticleSystemSettings;
 		};
 
-		/** Render  thread counterpart of bs::ParticleVectorFieldSettings. */
+		/** Render  thread counterpart of b3d::ParticleVectorFieldSettings. */
 		struct ParticleGpuSimulationSettings : TParticleGpuSimulationSettings<true>
 		{
-			friend struct bs::ParticleGpuSimulationSettings;
+			friend struct b3d::ParticleGpuSimulationSettings;
 		};
 	} // namespace ct
 
@@ -656,16 +656,16 @@ namespace bs
 
 	namespace ct
 	{
-		/** Render  thread counterpart of bs::ParticleSystem. */
+		/** Render  thread counterpart of b3d::ParticleSystem. */
 		class B3D_CORE_EXPORT ParticleSystem final : public RenderProxy, public SceneActor, public INonCopyable
 		{
 		public:
 			~ParticleSystem();
 
-			/** @copydoc bs::ParticleSystem::SetSettings */
+			/** @copydoc b3d::ParticleSystem::SetSettings */
 			const ParticleSystemSettings& GetSettings() const { return mSettings; }
 
-			/** @copydoc bs::ParticleSystem::SetGpuSimulationSettings */
+			/** @copydoc b3d::ParticleSystem::SetGpuSimulationSettings */
 			const ParticleGpuSimulationSettings& GetGpuSimulationSettings() const { return mGpuSimulationSettings; }
 
 			/**
@@ -692,7 +692,7 @@ namespace bs
 			void Initialize() override;
 
 		private:
-			friend class bs::ParticleSystem;
+			friend class b3d::ParticleSystem;
 
 			ParticleSystem(u32 id)
 				: mId(id)
@@ -710,4 +710,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

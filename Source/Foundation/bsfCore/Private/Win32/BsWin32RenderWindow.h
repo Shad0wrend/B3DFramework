@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include "RenderAPI/BsRenderWindow.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -57,7 +57,7 @@ namespace bs
 
 	namespace ct
 	{
-		/** Render thread proxy for bs::Win32RenderWindow. */
+		/** Render thread proxy for b3d::Win32RenderWindow. */
 		class B3D_CORE_EXPORT Win32RenderWindow : public RenderWindow
 		{
 			using Super = RenderWindow;
@@ -65,9 +65,9 @@ namespace bs
 			Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 hWnd, const SPtr<RenderWindow>& parentWindow);
 
 		protected:
-			friend class bs::Win32RenderWindow;
+			friend class b3d::Win32RenderWindow;
 		};
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

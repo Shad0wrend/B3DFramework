@@ -1,13 +1,13 @@
-﻿//********************************* bs::framework - Copyright 2025 Marko Pintera ************************************//
+﻿//********************************* B3D Framework - Copyright 2025 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-//global using Vector2F = bs.TVector2<float>;
-//global using Vector2I = bs.TVector2<int>;
+//global using Vector2F = b3d.TVector2<float>;
+//global using Vector2I = b3d.TVector2<int>;
 
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace bs
+namespace b3d
 {
     /** @addtogroup Math
      *  @{

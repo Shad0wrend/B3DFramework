@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.IO;
-using bs;
+using b3d;
 
-namespace bs
+namespace b3d
 {
     /// <summary>
     /// Provides various functionality for running the application.

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "ThirdParty/marl/src/osfiber.h"  // Must come first. See osfiber_ucontext.h.
 #include "Threading/BsScheduler.h"
@@ -7,13 +7,13 @@
 #include "BsThreadPool.h"
 #include "Debug/BsDebug.h"
 
-using namespace bs;
+using namespace b3d;
 
 #if defined(_WIN32)
 #include <intrin.h>  // __nop()
 #endif
 
-using namespace bs;
+using namespace b3d;
 
 // Implementation based on Marl Scheduler (See ThirdParty/Marl)
 
@@ -57,7 +57,7 @@ UPtr<Fiber> Fiber::Create(u32 id, size_t stackSize, const std::function<void()>&
 
 UPtr<Fiber> Fiber::CreateFromCurrentThread(u32 id)
 {
-	return bs::B3DMakeUnique<Fiber>(marl::OSFiber::createFiberFromCurrentThread(), id);
+	return b3d::B3DMakeUnique<Fiber>(marl::OSFiber::createFiberFromCurrentThread(), id);
 }
 
 static void nop()
@@ -589,7 +589,7 @@ void Scheduler::BindToCurrentThread()
 		Lock lock(mSingleThreadWorkerMutex);
 		B3D_ASSERT(mSingleThreadWorker == nullptr);
 
-		SPtr<SchedulerThread> schedulerThread = bs::B3DMakeShared<SchedulerThread>(this, SchedulerThread::Mode::SingleThreaded, ~0u);
+		SPtr<SchedulerThread> schedulerThread = b3d::B3DMakeShared<SchedulerThread>(this, SchedulerThread::Mode::SingleThreaded, ~0u);
 		schedulerThread->Start();
 
 		mSingleThreadWorkerThreadId = std::this_thread::get_id();

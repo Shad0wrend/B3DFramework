@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -10,7 +10,7 @@
 #include "Math/BsSphere.h"
 #include "Scene/BsSceneActor.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Renderer-Internal
 	 *  @{
@@ -209,7 +209,7 @@ namespace bs
 
 	namespace ct
 	{
-		/** Render thread counterpart of a bs::ReflectionProbe */
+		/** Render thread counterpart of a b3d::ReflectionProbe */
 		class B3D_CORE_EXPORT ReflectionProbe : public RenderProxy, public TReflectionProbe<true>
 		{
 		public:
@@ -222,7 +222,7 @@ namespace bs
 			u32 GetRendererId() const { return mRendererId; }
 
 		protected:
-			friend class bs::ReflectionProbe;
+			friend class b3d::ReflectionProbe;
 
 			ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents, const SPtr<Texture>& filteredTexture);
 
@@ -234,4 +234,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

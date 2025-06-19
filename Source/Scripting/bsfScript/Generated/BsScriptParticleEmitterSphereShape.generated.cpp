@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptParticleEmitterSphereShape.generated.h"
 #include "BsMonoMethod.h"
@@ -7,7 +7,7 @@
 #include "BsScriptPARTICLE_SPHERE_SHAPE_DESC.generated.h"
 #include "BsScriptParticleEmitterSphereShape.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptParticleEmitterSphereShape::ScriptParticleEmitterSphereShape(const SPtr<ParticleEmitterSphereShape>& nativeObject)
 		:TScriptReflectableWrapper(nativeObject)

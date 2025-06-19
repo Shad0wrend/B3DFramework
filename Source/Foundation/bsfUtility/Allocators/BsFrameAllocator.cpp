@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsUtilityPrerequisites.h"
 #include "Allocators/BsFrameAllocator.h"
 #include "Error/BsException.h"
 
-using namespace bs;
+using namespace b3d;
 
 u8* FrameAllocator::MemBlock::Alloc(u32 amount)
 {
@@ -276,7 +276,7 @@ void FrameAllocator::DeallocBlock(MemBlock* block)
 	B3DFreeAligned16(block);
 }
 
-namespace bs
+namespace b3d
 {
 B3D_THREADLOCAL FrameAllocator* _GlobalFrameAlloc = nullptr;
 
@@ -321,4 +321,4 @@ B3D_UTILITY_EXPORT void B3DClearAllocatorFrame()
 {
 	GetFrameAllocator().Clear();
 }
-} // namespace bs
+} // namespace b3d

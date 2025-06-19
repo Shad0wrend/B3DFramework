@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -13,7 +13,7 @@
 
 #define BS_MAX_BOUND_VERTEX_BUFFERS 16
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup RenderAPI-Internal
 	 *  @{
@@ -102,7 +102,7 @@ namespace bs
 		/** Parses a string in the major.minor.release.build format and stores the version numbers. */
 		void FromString(const String& versionString)
 		{
-			Vector<bs::String> tokens = StringUtil::Split(versionString, ".");
+			Vector<b3d::String> tokens = StringUtil::Split(versionString, ".");
 			if(!tokens.empty())
 			{
 				Major = Parsei32(tokens[0]);
@@ -253,4 +253,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

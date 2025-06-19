@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "GUI/BsGUIScrollArea.h"
 
@@ -13,14 +13,14 @@
 
 using namespace std::placeholders;
 
-using namespace bs;
+using namespace b3d;
 
 /** @cond RTTI */
 /** @addtogroup RTTI-Impl-Engine
  *  @{
  */
 
-namespace bs
+namespace b3d
 {
 	class B3D_EXPORT GUIScrollAreaRTTI : public TRTTIType<GUIScrollArea, GUIElementContainer, GUIScrollAreaRTTI>
 	{
@@ -35,7 +35,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() { return nullptr; }
 	};
-} // namespace bs
+} // namespace b3d
 
 // TODO
 // [x] Add a GUIContent structure for initializing and remove the explicit create methods

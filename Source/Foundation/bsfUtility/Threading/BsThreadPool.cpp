@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Threading/BsThreadPool.h"
 
@@ -16,7 +16,7 @@
 
 #endif // B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
 
-using namespace bs;
+using namespace b3d;
 
 /** The thread pool will check for unused threads every UNUSED_CHECK_PERIOD getThread() calls*/
 static constexpr int kUnusedCheckPeriod = 32;

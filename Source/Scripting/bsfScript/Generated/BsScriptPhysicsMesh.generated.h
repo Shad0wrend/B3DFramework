@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,9 +6,9 @@
 #include "BsScriptResourceWrapper.h"
 #include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 
-namespace bs { class PhysicsMesh; }
-namespace bs { class PhysicsMeshEx; }
-namespace bs
+namespace b3d { class PhysicsMesh; }
+namespace b3d { class PhysicsMeshEx; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsMesh : public TScriptResourceWrapper<PhysicsMesh, ScriptPhysicsMesh>
 	{

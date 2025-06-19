@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include "Utility/BsModule.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Profiling
 	 *  @{
@@ -418,10 +418,10 @@ namespace bs
 	/** Shortcut for profiling a single function call. */
 #define PROFILE_CALL(call, name)              \
 	{                                         \
-		bs::GetProfilerCPU().BeginSample(name); \
+		b3d::GetProfilerCPU().BeginSample(name); \
 		call;                                 \
-		bs::GetProfilerCPU().EndSample(name);   \
+		b3d::GetProfilerCPU().EndSample(name);   \
 	}
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

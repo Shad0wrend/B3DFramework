@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Wrappers/BsScriptSceneObject.h"
 #include "BsMonoField.h"
@@ -11,7 +11,7 @@
 
 #include "Generated/BsScriptSceneInstance.generated.h"
 
-using namespace bs;
+using namespace b3d;
 ScriptSceneObject::ScriptSceneObject(const HSceneObject& nativeObject)
 	: TScriptGameObjectWrapper(nativeObject)
 { }
@@ -121,7 +121,7 @@ bool ScriptSceneObject::InternalGetActive(ScriptSceneObject* self)
 	return self->GetNativeObject()->GetActive(true);
 }
 
-bool ScriptSceneObject::InternalHasFlag(ScriptSceneObject* self, bs::u32 flag)
+bool ScriptSceneObject::InternalHasFlag(ScriptSceneObject* self, b3d::u32 flag)
 {
 	if(!self->IsNativeObjectValid())
 		return false;

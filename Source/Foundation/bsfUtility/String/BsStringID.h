@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 #include "Threading/BsSpinLock.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup String
 	 *  @{
@@ -138,7 +138,7 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 /** @addtogroup String
@@ -149,9 +149,9 @@ namespace std
 {
 	/**	Hash value generator for StringID. */
 	template <>
-	struct hash<bs::StringID>
+	struct hash<b3d::StringID>
 	{
-		size_t operator()(const bs::StringID& value) const
+		size_t operator()(const b3d::StringID& value) const
 		{
 			return (size_t)value.Id();
 		}

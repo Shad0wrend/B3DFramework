@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRendererTextures.h"
 
@@ -12,7 +12,7 @@
 #include "Renderer/BsIBLUtility.h"
 #include "Image/BsColorGradient.h"
 
-namespace bs {
+namespace b3d {
 namespace ct {
 
 SPtr<ct::Texture> Generate4x4RandomizationTexture()
@@ -332,4 +332,4 @@ void RendererTextures::ShutDown()
 	bokehFlare = nullptr;
 	chromaticAberrationFringe = nullptr;
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

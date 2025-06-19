@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Animation/BsSkeleton.h"
 #include "Animation/BsAnimationClip.h"
 #include "Animation/BsSkeletonMask.h"
 #include "Private/RTTI/BsSkeletonRTTI.h"
 
-using namespace bs;
+using namespace b3d;
 
 LocalSkeletonPose::LocalSkeletonPose(u32 numBones, bool individualOverride)
 	: NumBones(numBones)

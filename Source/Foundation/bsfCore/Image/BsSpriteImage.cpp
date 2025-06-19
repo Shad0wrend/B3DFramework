@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Image/BsSpriteImage.h"
 #include "Private/RTTI/BsSpriteImageRTTI.h"
@@ -6,7 +6,7 @@
 #include "Resources/BsBuiltinResources.h"
 #include "CoreObject/BsCoreObjectSync.h"
 
-using namespace bs;
+using namespace b3d;
 
 template<bool IsRenderProxy>
 Size2I TSpriteImageAllocation<IsRenderProxy>::GetSize() const
@@ -33,7 +33,7 @@ SpriteImageAllocation::~SpriteImageAllocation()
 template class TSpriteImageAllocation<true>;
 template class TSpriteImageAllocation<false>;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteImageAllocation, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mOwner)
@@ -143,7 +143,7 @@ Size2UI TSpriteImage<IsRenderProxy>::GetAnimationFrameSize() const
 template class TSpriteImage<true>;
 template class TSpriteImage<false>;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteImage, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mInformation)
@@ -194,11 +194,11 @@ RTTIType* SpriteImage::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 void SpriteImageAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::SpriteImageAllocation::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteImageAllocation::SyncPacket>();
 	if(!syncPacket)
 		return;
 
@@ -207,7 +207,7 @@ void SpriteImageAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAl
 
 void SpriteImage::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::SpriteImage::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteImage::SyncPacket>();
 	if(!syncPacket)
 		return;
 

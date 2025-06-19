@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include "Scene/BsTransform.h"
 
-namespace bs
+namespace b3d
 {namespace ct
 	{
 		class SceneActor;
@@ -175,16 +175,16 @@ namespace bs
 
 	namespace ct
 	{
-		/** @copydoc bs::SceneActor */
+		/** @copydoc b3d::SceneActor */
 		class B3D_CORE_EXPORT SceneActor : public TSceneActor<true>
 		{
 		public:
 			SceneActor() = default;
 
 		private:
-			friend class bs::SceneActor;
+			friend class b3d::SceneActor;
 		};
 	}
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

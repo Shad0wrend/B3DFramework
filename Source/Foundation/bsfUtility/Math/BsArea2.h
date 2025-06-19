@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2025 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "Math/BsVector4.h"
 #include "BsMatrix4.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Math
 	 *  @{
@@ -375,15 +375,15 @@ namespace std
 {
 	/** Hash value generator for TArea2<T>. */
 	template<typename PositionType, typename SizeType>
-	struct hash<bs::TArea2<PositionType, SizeType>>
+	struct hash<b3d::TArea2<PositionType, SizeType>>
 	{
-		size_t operator()(const bs::TArea2<PositionType, SizeType>& value) const
+		size_t operator()(const b3d::TArea2<PositionType, SizeType>& value) const
 		{
 			size_t hash = 0;
-			bs::B3DCombineHash(hash, value.X);
-			bs::B3DCombineHash(hash, value.Y);
-			bs::B3DCombineHash(hash, value.Width);
-			bs::B3DCombineHash(hash, value.Height);
+			b3d::B3DCombineHash(hash, value.X);
+			b3d::B3DCombineHash(hash, value.Y);
+			b3d::B3DCombineHash(hash, value.Width);
+			b3d::B3DCombineHash(hash, value.Height);
 
 			return hash;
 		}

@@ -2,14 +2,14 @@
 title: Script objects
 ---
 
-What we have shown in the previous manual is enough to expose an object to C# and communicate with it. However bs::f provides another API built on top of that functionality in the form of script objects. This API handles some of the boilerplate code required for exposing an object to C#, provides a common interface all script objects need to implement, handles assembly refresh (due to script hot-swap) and gracefully handles managed object lifetime and destruction.
+What we have shown in the previous manual is enough to expose an object to C# and communicate with it. However b3d::f provides another API built on top of that functionality in the form of script objects. This API handles some of the boilerplate code required for exposing an object to C#, provides a common interface all script objects need to implement, handles assembly refresh (due to script hot-swap) and gracefully handles managed object lifetime and destruction.
 
 To implement the script object interface for a particular type you need two classes:
  - A native interop class (C++)
  - Managed wrapper class for the type (C#)
 
 # Native interop class
-This class is intended as a wrapper for the C++ class you're exposing to the scripting API. It will contain all the code needed for C++/C# interop. All such native interop objects must implement the @bs::ScriptObject<T> interface. The template parameter should be the type of the interop class itself. The implementation of the class must begin with @SCRIPT_OBJ macro. The macro accepts (in order): 
+This class is intended as a wrapper for the C++ class you're exposing to the scripting API. It will contain all the code needed for C++/C# interop. All such native interop objects must implement the @b3d::ScriptObject<T> interface. The template parameter should be the type of the interop class itself. The implementation of the class must begin with @SCRIPT_OBJ macro. The macro accepts (in order): 
  - the name of the assembly (.dll) the managed wrapper class is in, this is usually `ENGINE_ASSEMBLY` or `EDITOR_ASSEMBLY`
  - the namespace the managed wrapper class
  - the name of the managed wrapper class
@@ -30,7 +30,7 @@ public:
 
 **SCRIPT_OBJ** macro defines a static **initRuntimeData()** method you need to implement. In this method you want to take care of hooking up managed internal methods to C++ functions. It gets called automatically on startup and whenever the assembly containing the related managed class is loaded. 
 
-Every **ScriptObject** provides a static @bs::ScriptObject::getMetaData structure you can use for retrieving the **MonoClass** of the related managed class. You can use that **MonoClass** to register internal methods to it (as described earlier). 
+Every **ScriptObject** provides a static @b3d::ScriptObject::getMetaData structure you can use for retrieving the **MonoClass** of the related managed class. You can use that **MonoClass** to register internal methods to it (as described earlier). 
 ~~~~~~~~~~~~~{.cpp}
 class ScriptMyObject : public ScriptObject <ScriptMyObject>
 {
@@ -75,7 +75,7 @@ MonoObject* ScriptMyObject::create()
 }
 ~~~~~~~~~~~~~
 	
-If you ever receive a **MonoObject** of the type you know that has a **ScriptObject** implemented, you can retrieve it by calling @bs::ScriptObject::toNative(MonoObject*) static method. 
+If you ever receive a **MonoObject** of the type you know that has a **ScriptObject** implemented, you can retrieve it by calling @b3d::ScriptObject::toNative(MonoObject*) static method. 
 ~~~~~~~~~~~~~{.cpp}
 void ScriptMyObject::internal_SetSomeObject(MonoObject* obj)
 {
@@ -84,7 +84,7 @@ void ScriptMyObject::internal_SetSomeObject(MonoObject* obj)
 ~~~~~~~~~~~~~
 
 ## Destroying script object instances ###
-When the managed object is destroyed (e.g. goes out of scope and gets garbage collected) the system will automatically take care of freeing the related **ScriptObject**. If you need to add onto or replace that functionality you can override @bs::ScriptObjectBase::_onManagedInstanceDeleted method. This is useful if you need to perform some additional cleanup.
+When the managed object is destroyed (e.g. goes out of scope and gets garbage collected) the system will automatically take care of freeing the related **ScriptObject**. If you need to add onto or replace that functionality you can override @b3d::ScriptObjectBase::_onManagedInstanceDeleted method. This is useful if you need to perform some additional cleanup.
 
 # Managed wrapper object ##
 Creating the script interop class is one half of the job done. You also need to create the managed counterpart, however that is significantly simpler.
@@ -151,7 +151,7 @@ Assembly refresh is the process that happens when managed code is recompiled and
 
 By default any script objects of such managed objects are destroyed as well. In many cases this is okay, for example GUI elements don't persist refresh, because they're just rebuilt from the managed code every time the refresh happens. However objects like resources, scene objects and components are persistent - we don't wish to reload the entire scene and all resources every time assembly refresh happens.
 
-In order to make your script objects persist through refresh you need to inherit from a variation of **ScriptObject** that as its second template parameter takes a @bs::PersistentScriptObjectBase.
+In order to make your script objects persist through refresh you need to inherit from a variation of **ScriptObject** that as its second template parameter takes a @b3d::PersistentScriptObjectBase.
 
 ~~~~~~~~~~~~~{.cpp}
 class MyScriptObject : public ScriptObject<MyScriptObject, PersistentScriptObjectBase>
@@ -161,10 +161,10 @@ class MyScriptObject : public ScriptObject<MyScriptObject, PersistentScriptObjec
 ~~~~~~~~~~~~~	
 	
 This ensures that your object is treated properly during assembly refresh. Persistent object then needs to handle four different actions, represented by overrideable methods. These methods are called in order specified, during assembly refresh.
- - @bs::ScriptObjectBase::beginRefresh() - Called just before the refresh starts. The object is still alive here and you can use this time to save the contents of the managed object before it is destroyed.
- - @bs::ScriptObjectBase::_onManagedInstanceDeleted - Called after assembly unload happened and the managed object was destroyed. You should override this to prevent the **ScriptObject** itself from being deleted if the assembly refresh is in progress. If assembly refresh is not in progress this method should delete the **ScriptObject** as it likely got called due to standard reasons (managed object went out of scope).
- - @bs::ScriptObject::_createManagedInstance - Creates the managed instance after new assemblies are loaded. You should override this if your managed class is constructed using a constructor with parameters. By default this will call **MonoClass::createInstance()** using the parameterless constructor.
- - @bs::ScriptObjectBase::endRefresh() - Called after all assemblies are loaded, and after all script interop objects were either destroyed (non-persistent) or had their managed instances re-created (persistent). If you stored any data during **ScriptObject::beginRefresh()**, you should restore it here.
+ - @b3d::ScriptObjectBase::beginRefresh() - Called just before the refresh starts. The object is still alive here and you can use this time to save the contents of the managed object before it is destroyed.
+ - @b3d::ScriptObjectBase::_onManagedInstanceDeleted - Called after assembly unload happened and the managed object was destroyed. You should override this to prevent the **ScriptObject** itself from being deleted if the assembly refresh is in progress. If assembly refresh is not in progress this method should delete the **ScriptObject** as it likely got called due to standard reasons (managed object went out of scope).
+ - @b3d::ScriptObject::_createManagedInstance - Creates the managed instance after new assemblies are loaded. You should override this if your managed class is constructed using a constructor with parameters. By default this will call **MonoClass::createInstance()** using the parameterless constructor.
+ - @b3d::ScriptObjectBase::endRefresh() - Called after all assemblies are loaded, and after all script interop objects were either destroyed (non-persistent) or had their managed instances re-created (persistent). If you stored any data during **ScriptObject::beginRefresh()**, you should restore it here.
  
 # Deriving from ScriptObject
 Sometimes script objects are polymorphic. For example a **GUIElement** is derived from **ScriptObject** in managed code, and **GUIButton** is derived from **GUIElement**, however they both have script interop objects of their own.
@@ -181,7 +181,7 @@ public:
 	
 But what would it be for **GUIButton**? It also needs to implement **ScriptObject** with its own **SCRIPT_OBJ** macro so we cannot just inherit from **ScriptGUIElement** directly as it would clash.
 
-The solution is to create a third class that will serve as a base for both. This third class will be a base class for **ScriptObject** (its second template parameter allows us to override its default **ScriptObjectBase** base class). The third class will need to inherit @bs::ScriptObjectBase and can implement any functionality common to all GUI elements (e.g. it might store a pointer to a native **GUIElement**).
+The solution is to create a third class that will serve as a base for both. This third class will be a base class for **ScriptObject** (its second template parameter allows us to override its default **ScriptObjectBase** base class). The third class will need to inherit @b3d::ScriptObjectBase and can implement any functionality common to all GUI elements (e.g. it might store a pointer to a native **GUIElement**).
 
 Provided our common base class is defined as such:
 ~~~~~~~~~~~~~{.cpp}

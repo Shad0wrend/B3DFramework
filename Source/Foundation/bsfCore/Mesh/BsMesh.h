@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "RenderAPI/BsSubMesh.h"
 #include "Math/BsBounds.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Resources
 	 *  @{
@@ -258,7 +258,7 @@ namespace bs
 		 */
 
 		/**
-		 * Render thread portion of a bs::Mesh.
+		 * Render thread portion of a b3d::Mesh.
 		 *
 		 * @note	Render thread.
 		 */
@@ -352,7 +352,7 @@ namespace bs
 			static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, int usage = MU_STATIC, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
 
 		protected:
-			friend class bs::Mesh;
+			friend class b3d::Mesh;
 
 			/** Updates bounds by calculating them from the vertices in the provided mesh data object. */
 			void UpdateBounds(const MeshData& meshData);
@@ -370,4 +370,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

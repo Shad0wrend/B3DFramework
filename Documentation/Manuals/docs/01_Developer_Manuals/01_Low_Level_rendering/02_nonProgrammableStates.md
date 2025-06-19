@@ -15,14 +15,14 @@ SPtr<GraphicsPipelineState> graphicsPipeline = GraphicsPipelineState::create(des
 ~~~~~~~~~~~~~
 
 There are three non-programmable state objects in total:
- - @bs::ct::RasterizerState
- - @bs::ct::DepthStencilState
- - @bs::ct::BlendState
+ - @b3d::ct::RasterizerState
+ - @b3d::ct::DepthStencilState
+ - @b3d::ct::BlendState
  
-> If using bs::f Shading Language you can specify these states directly in a BSL file and should have no need to create them manually. 
+> If using b3d::f Shading Language you can specify these states directly in a BSL file and should have no need to create them manually. 
  
 # Rasterizer state
-Rasterizer state allows you to control how are 3D polygons, lines or points converted to 2D pixels. You can create it by filling out the @bs::RASTERIZER_STATE_DESC structure and passing it to @bs::ct::RasterizerState::create.
+Rasterizer state allows you to control how are 3D polygons, lines or points converted to 2D pixels. You can create it by filling out the @b3d::RASTERIZER_STATE_DESC structure and passing it to @b3d::ct::RasterizerState::create.
 
 ~~~~~~~~~~~~~{.cpp}
 // Draw wireframe geometry with no backface culling
@@ -34,7 +34,7 @@ SPtr<RasterizerState> rasterizerState = RasterizerState::create(desc);
 ~~~~~~~~~~~~~
 
 # Depth-stencil state
-Depth-stencil state allows you to control how are depth and/or stencil buffers modified during rendering. You can create it by filling out the @bs::DEPTH_STENCIL_STATE_DESC structure and passing it to @bs::ct::DepthStencilState::create.
+Depth-stencil state allows you to control how are depth and/or stencil buffers modified during rendering. You can create it by filling out the @b3d::DEPTH_STENCIL_STATE_DESC structure and passing it to @b3d::ct::DepthStencilState::create.
 
 ~~~~~~~~~~~~~{.cpp}
 // Draw with no depth testing or writing, and with a stencil operation that writes 1 for each sample written
@@ -49,7 +49,7 @@ SPtr<DepthStencilState> depthStencilState = DepthStencilState::create(desc);
 ~~~~~~~~~~~~~
 
 # Blend state
-Blend state allows to you to control how is a rendered pixel blended with any previously rendered pixels. You can create it by filling out the @bs::BLEND_STATE_DESC structure and passing it to @bs::ct::BlendState::create. Most of blend state options can be controlled individually for up to 8 render targets.
+Blend state allows to you to control how is a rendered pixel blended with any previously rendered pixels. You can create it by filling out the @b3d::BLEND_STATE_DESC structure and passing it to @b3d::ct::BlendState::create. Most of blend state options can be controlled individually for up to 8 render targets.
 
 ~~~~~~~~~~~~~{.cpp}
 // Set up blending (e.g. for transparent rendering) for the first render target

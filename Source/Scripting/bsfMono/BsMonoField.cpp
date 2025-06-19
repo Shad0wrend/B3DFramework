@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsMonoField.h"
 #include "BsMonoClass.h"
@@ -14,7 +14,7 @@
 #include <mono/metadata/reflection.h>
 #endif
 
-using namespace bs;
+using namespace b3d;
 
 MonoField::MonoField(MonoClassField* field)
 	: mField(field), mFieldType(nullptr)
@@ -22,7 +22,7 @@ MonoField::MonoField(MonoClassField* field)
 	mName = mono_field_get_name(mField);
 }
 
-bs::MonoClass* MonoField::GetType()
+b3d::MonoClass* MonoField::GetType()
 {
 	if(mFieldType != nullptr)
 		return mFieldType;

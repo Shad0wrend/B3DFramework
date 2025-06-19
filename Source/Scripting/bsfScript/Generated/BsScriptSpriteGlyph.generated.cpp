@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptSpriteGlyph.generated.h"
 #include "BsMonoMethod.h"
@@ -11,7 +11,7 @@
 #include "BsScriptSpriteGlyphCreateInformation.generated.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptSpriteGlyph::ScriptSpriteGlyph(const TResourceHandle<SpriteGlyph>& nativeObject)
 		:TScriptResourceWrapper(nativeObject)

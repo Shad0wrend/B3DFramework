@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsCoreApplication.h"
 
@@ -48,7 +48,7 @@
 #include "Text/BsFont.h"
 #include "Threading/BsScheduler.h"
 
-namespace bs
+namespace b3d
 {
 	B3D_LOG_CATEGORY(RenderThread)
 	B3D_LOG_CATEGORY(Renderer)
@@ -69,9 +69,9 @@ namespace bs
 	B3D_LOG_CATEGORY(FreeImageImporter)
 	B3D_LOG_CATEGORY(Script)
 	B3D_LOG_CATEGORY(Importer)
-} // namespace bs
+} // namespace b3d
 
-using namespace bs;
+using namespace b3d;
 
 CoreApplication::CoreApplication(START_UP_DESC desc)
 	: mPrimaryWindow(nullptr), mStartUpDesc(desc), mFrameRenderingFinishedSignal(SignalEvent::Mode::AutomaticallyReset, true), mSimThreadId(B3D_CURRENT_THREAD_ID), mRunMainLoop(false), mMainThreadScheduler(SchedulerCreateInformation())
@@ -492,7 +492,7 @@ SPtr<IShaderIncludeHandler> CoreApplication::GetShaderIncludeHandler() const
 	return B3DMakeShared<DefaultShaderIncludeHandler>();
 }
 
-namespace bs
+namespace b3d
 {
 CoreApplication& GetCoreApplication()
 {

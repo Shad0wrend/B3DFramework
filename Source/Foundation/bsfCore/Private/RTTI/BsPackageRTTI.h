@@ -12,7 +12,7 @@
 #include "RTTI/BsStdRTTI.h"
 #include "RTTI/BsStringRTTI.h"
 
-namespace bs
+namespace b3d
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Core
@@ -150,4 +150,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-} // namespace bs
+} // namespace b3d

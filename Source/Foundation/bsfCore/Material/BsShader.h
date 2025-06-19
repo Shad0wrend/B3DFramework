@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -10,7 +10,7 @@
 #include "RenderAPI/BsGpuBuffer.h"
 #include "RenderAPI/BsSamplerState.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Implementation
 	 *  @{
@@ -362,7 +362,7 @@ namespace bs
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	public:
-		friend class bs::ShaderInformationRenderProxyRTTI;
+		friend class b3d::ShaderInformationRenderProxyRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const override;
 	};
@@ -711,7 +711,7 @@ namespace bs
 		class B3D_CORE_EXPORT Shader : public IReflectable, public RenderProxy, public TShader<true>
 		{
 		public:
-			/** @copydoc bs::Shader::Create */
+			/** @copydoc b3d::Shader::Create */
 			static SPtr<Shader> Create(const String& name, const ShaderCreateInformation& createInformation);
 
 			/** Creates an empty shader. */
@@ -721,7 +721,7 @@ namespace bs
 			String GetShaderName() const { return mName; }
 
 		protected:
-			friend class bs::Shader;
+			friend class b3d::Shader;
 
 			Shader(const String& name, const ShaderCreateInformation& createInformation, u32 id);
 
@@ -742,4 +742,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

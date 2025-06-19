@@ -12,7 +12,7 @@
 #include "Utility/BsScopeGuard.h"
 #include "Utility/BsUtility.h"
 
-using namespace bs;
+using namespace b3d;
 
 /** Resource header serialized within the serialized package, letting us know where in the serialized data stream to find the resource data. */
 struct SerializedResourceHeader

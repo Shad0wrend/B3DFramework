@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include "Image/BsSpriteImage.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Image
 	 *  @{
@@ -72,7 +72,7 @@ namespace bs
 		 */
 
 		/**
-		 * Render proxy counterpart of a bs::SpriteGlyphCreateInformation.
+		 * Render proxy counterpart of a b3d::SpriteGlyphCreateInformation.
 		 *
 		 * @note	Render thread.
 		 */
@@ -155,14 +155,14 @@ namespace bs
 		class SpriteGlyphAllocation : public TSpriteGlyphAllocation<true>
 		{
 		protected:
-			friend class bs::SpriteGlyphAllocation;
+			friend class b3d::SpriteGlyphAllocation;
 
 			SpriteGlyphAllocation() = default;
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
 		/**
-		 * Render proxy counterpart of a bs::SpriteGlyph.
+		 * Render proxy counterpart of a b3d::SpriteGlyph.
 		 *
 		 * @note	Render thread.
 		 */
@@ -170,7 +170,7 @@ namespace bs
 		{
 		public:
 		private:
-			friend class bs::SpriteGlyph;
+			friend class b3d::SpriteGlyph;
 
 			SpriteGlyph(const SpriteGlyphCreateInformation& createInformation);
 
@@ -179,4 +179,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

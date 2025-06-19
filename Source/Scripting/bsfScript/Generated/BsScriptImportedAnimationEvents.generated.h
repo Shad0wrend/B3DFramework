@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,9 +7,9 @@
 #include "../../../Foundation/bsfCore/Importer/BsMeshImportOptions.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationClip.h"
 
-namespace bs { struct ImportedAnimationEvents; }
-namespace bs { struct __AnimationEventInterop; }
-namespace bs
+namespace b3d { struct ImportedAnimationEvents; }
+namespace b3d { struct __AnimationEventInterop; }
+namespace b3d
 {
 #if !B3D_IS_ENGINE
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptImportedAnimationEvents : public TScriptReflectableWrapper<ImportedAnimationEvents, ScriptImportedAnimationEvents>

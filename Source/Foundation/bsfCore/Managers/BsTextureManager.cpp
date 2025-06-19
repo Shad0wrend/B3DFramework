@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Managers/BsTextureManager.h"
 
@@ -7,7 +7,7 @@
 #include "Image/BsPixelUtility.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-using namespace bs;
+using namespace b3d;
 
 SPtr<RenderTexture> TextureManager::CreateRenderTexture(const TextureCreateInformation& colorDesc, bool createDepth, PixelFormat depthStencilFormat)
 {
@@ -52,7 +52,7 @@ SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RenderTextureCreat
 	return newRT;
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 void TextureManager::OnStartUp()
 {

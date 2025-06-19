@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsPrerequisites.h"
 #include "GUI/BsCGUIWidget.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup GUI-Internal
 	 *  @{
@@ -33,4 +33,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

@@ -4,11 +4,11 @@ title: GPU profiling
 
 GPU operations cannot be profiled using the CPU profiler as they are executed asynchronously. This means when you call a method that executes on the GPU (such as those on **RenderAPI**, as well as GPU resource read/write operations) it will return almost immediately, meaning the timing information reported by the CPU profiler will not be representative of the time it actually took to execute the operation. 
 
-Therefore GPU profiling is instead handled by @bs::ProfilerGPU, globally accessible from @bs::GetProfilerGPU. It allows you to track execution times of GPU operations, as well as other helpful information.
+Therefore GPU profiling is instead handled by @b3d::ProfilerGPU, globally accessible from @b3d::GetProfilerGPU. It allows you to track execution times of GPU operations, as well as other helpful information.
 
 # Sampling
 
-Similar to CPU profiling, you issue sampling calls using @bs::ProfilerGPU::beginSample and @bs::ProfilerGPU::endSample. Any GPU commands executed between these two calls will be measured.
+Similar to CPU profiling, you issue sampling calls using @b3d::ProfilerGPU::beginSample and @b3d::ProfilerGPU::endSample. Any GPU commands executed between these two calls will be measured.
 
 ~~~~~~~~~~~~~{.cpp}
 RenderAPI& rapi = RenderAPI::instance();
@@ -23,11 +23,11 @@ gGPUProfiler().endSample("mySample");
 
 Each GPU sample will measure the time to took the execute the command on the GPU, but will also measure various resource usage stats. For example it will measure number of draw calls, number of vertices/primitives drawn, render state switches, and similar.
 
-All **ProfilerGPU::beginSample()** and **ProfilerGPU::endSample()** calls need to be placed in-between @bs::ProfilerGPU::beginFrame and @bs::ProfilerGPU::endFrame. As their name implies you should only call these methods once per frame. If working with the default renderer, they will be called for you by the renderer.
+All **ProfilerGPU::beginSample()** and **ProfilerGPU::endSample()** calls need to be placed in-between @b3d::ProfilerGPU::beginFrame and @b3d::ProfilerGPU::endFrame. As their name implies you should only call these methods once per frame. If working with the default renderer, they will be called for you by the renderer.
 
 # Reporting
 
-GPU profiler will generate a single report per **ProfilerGPU::beginFrame()** / **ProfilerGPU::endFrame()** pair. Since GPU is executing asynchronously the report might not be available as soon as you call **ProfilerGPU::endFrame()**. Instead you should call @bs::ProfilerGPU::getNumAvailableReports() to check if there is a report available. If there is one you can then call @bs::ProfilerGPU::getNextReport to retrieve the report. Report information is contained in a @bs::GPUProfilerReport structure.
+GPU profiler will generate a single report per **ProfilerGPU::beginFrame()** / **ProfilerGPU::endFrame()** pair. Since GPU is executing asynchronously the report might not be available as soon as you call **ProfilerGPU::endFrame()**. Instead you should call @b3d::ProfilerGPU::getNumAvailableReports() to check if there is a report available. If there is one you can then call @b3d::ProfilerGPU::getNextReport to retrieve the report. Report information is contained in a @b3d::GPUProfilerReport structure.
 
 ~~~~~~~~~~~~~{.cpp}
 if(ProfilerGPU::instance().getNumAvailableReports() > 0)

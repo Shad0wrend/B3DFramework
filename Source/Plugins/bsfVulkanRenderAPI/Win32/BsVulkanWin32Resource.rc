@@ -15,9 +15,9 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName",            "Marko Pintera and contributors"
-            VALUE "FileDescription",        "Vulkan-based RenderAPI plugin for bs::framework"
+            VALUE "FileDescription",        "Vulkan-based RenderAPI plugin for B3D Framework"
             VALUE "FileVersion",            B3D_FRAMEWORK_VERSION_STRING
-            VALUE "ProductName",            "bs::framework"
+            VALUE "ProductName",            "B3D Framework"
             VALUE "Licence",                "Released under the MIT License"
             VALUE "LegalCopyright",         "Copyright (c) 2014-" _MKSTR(B3D_FRAMEWORK_CURRENT_RELEASE_YEAR) " Marko Pintera and contributors"
             VALUE "Info",                   "https://bsframework.io"

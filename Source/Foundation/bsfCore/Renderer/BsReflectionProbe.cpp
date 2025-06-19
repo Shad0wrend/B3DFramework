@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsReflectionProbe.h"
 
@@ -14,7 +14,7 @@
 #include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-using namespace bs;
+using namespace b3d;
 
 template<bool IsRenderProxy>
 TReflectionProbe<IsRenderProxy>::TReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents)
@@ -45,7 +45,7 @@ void TReflectionProbe<IsRenderProxy>::UpdateBounds()
 	}
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(ReflectionProbe, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mType)
@@ -235,7 +235,7 @@ RTTIType* ReflectionProbe::GetRtti() const
 template class TReflectionProbe<true>;
 template class TReflectionProbe<false>;
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 ReflectionProbe::ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents, const SPtr<Texture>& filteredTexture)
 	: TReflectionProbe(type, radius, extents), mRendererId(0)
@@ -258,7 +258,7 @@ void ReflectionProbe::Initialize()
 
 void ReflectionProbe::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::ReflectionProbe::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::ReflectionProbe::SyncPacket>();
 	if(!syncPacket)
 		return;
 

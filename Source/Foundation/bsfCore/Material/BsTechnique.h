@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "Material/BsShaderVariation.h"
 #include "String/BsStringID.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Implementation
 	 *  @{
@@ -183,20 +183,20 @@ namespace bs
 		 *  @{
 		 */
 
-		/** Render thread version of bs::Technique. */
+		/** Render thread version of b3d::Technique. */
 		class B3D_CORE_EXPORT Technique : public IReflectable, public RenderProxy, public TTechnique<true>
 		{
 		public:
 			Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData);
 
-			/** @copydoc bs::Technique::Create(const WeakSPtr<Shader>&, const String&, const ShaderVariationParameters&, const Optional<PrecompiledVariationData>&) */
+			/** @copydoc b3d::Technique::Create(const WeakSPtr<Shader>&, const String&, const ShaderVariationParameters&, const Optional<PrecompiledVariationData>&) */
 			static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData = {});
 
 			/**	Creates a new empty technique. */
 			static SPtr<Technique> CreateEmpty();
 
 		protected:
-			friend class bs::Technique;
+			friend class b3d::Technique;
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 			SPtr<Technique> GetSelf() override { return std::static_pointer_cast<Technique>(GetShared()); }
@@ -210,11 +210,11 @@ namespace bs
 			Technique();
 
 		public:
-			friend class bs::TechniqueRenderProxyRTTI;
+			friend class b3d::TechniqueRenderProxyRTTI;
 			static RTTIType* GetRttiStatic();
 			RTTIType* GetRtti() const override;
 		};
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

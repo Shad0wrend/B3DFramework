@@ -4,14 +4,14 @@ title: Startup and main loop
 
 # Preparation
 
-Start by including *BsEntry.h* header into your project. It contains the definition for the main entry point `bs_main`, as well as the @bs::Application class which is used for starting up and running `bsf`.
+Start by including *BsEntry.h* header into your project. It contains the definition for the main entry point `bs_main`, as well as the @b3d::Application class which is used for starting up and running `bsf`.
 
-Entirety of `bsf` API is contained in the **bs** namespace, so you will also likely want to add a `using namespace bs;` directive.
+Entirety of `bsf` API is contained in the **b3d** namespace, so you will also likely want to add a `using namespace b3d;` directive.
 
 ~~~~~~~~~~~~~{.cpp}
 #include "BsEntry.h"
 
-using namespace bs;
+using namespace b3d;
 
 int bs_main(int argc, char* argv[])
 {
@@ -25,7 +25,7 @@ The entry method must have the identical signature to `int bs_main(int argc, cha
 
 # Start up
 
-The framework can then be started by calling @bs::Application::startUp. By default `bsf` always creates a single window on start-up, and the method expects you to provide the initial resolution of the window, window title and an optional fullscreen flag.
+The framework can then be started by calling @b3d::Application::startUp. By default `bsf` always creates a single window on start-up, and the method expects you to provide the initial resolution of the window, window title and an optional fullscreen flag.
 
 ~~~~~~~~~~~~~{.cpp}
 // Start an application in windowed mode using 1280x720 resolution
@@ -55,15 +55,15 @@ sceneCameraSO->lookAt(Vector3(0, 0, 0));
 
 # Running the main loop
 
-Once your scene has been set up, you need to start running the main loop by calling @bs::Application::runMainLoop. The main loop will trigger updates on all the components you have set up, allowing you to execute game-logic.
+Once your scene has been set up, you need to start running the main loop by calling @b3d::Application::runMainLoop. The main loop will trigger updates on all the components you have set up, allowing you to execute game-logic.
 
 # Stopping the main loop
 
-The main loop runs indefinitely until terminated by the user. You may call @bs::Application::stopMainLoop to exit the loop.
+The main loop runs indefinitely until terminated by the user. You may call @b3d::Application::stopMainLoop to exit the loop.
 
 # Shutting down
 
-Once the main loop has been stopped, you will want to clean up any allocated resources by calling @bs::Application::shutDown.
+Once the main loop has been stopped, you will want to clean up any allocated resources by calling @b3d::Application::shutDown.
 
 # Complete example
 
@@ -74,7 +74,7 @@ Here's a complete code of what we have so far. The code doesn't do much - it ope
 #include "Scene/BsSceneObject.h"
 #include "Components/BsCCamera.h"
 
-using namespace bs;
+using namespace b3d;
 int bs_main(int argc, char* argv[])
 {
 	Application::startUp(VideoMode(1280, 720), "My app", false);

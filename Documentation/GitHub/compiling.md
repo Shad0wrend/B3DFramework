@@ -1,7 +1,7 @@
 # Compiling
 
 ## Quick start
-Use the guide below to get bs::framework up and running as quickly as possible. Scroll further below for advanced build options that allow for more customization.
+Use the guide below to get B3D Framework up and running as quickly as possible. Scroll further below for advanced build options that allow for more customization.
 
 - Install git (https://git-scm.com) and CMake 3.12.4 or higher (https://cmake.org)
   - Ensure they are added to your *PATH* environment variable
@@ -54,12 +54,12 @@ You can choose to use a different *CMake* generator than those specified above, 
 	- Apple LLVM 9.0.0 (XCode 9)
 	
 ### <a name="dependencies"></a>Third party dependencies
-bs::framework relies on a variety of third party dependencies. A set of pre-compiled dependencies are provided for every supported platform/compiler and these will be fetched automatically by the build process. If required, the dependencies can also be compiled manually by following [this guide](dependencies.md). This can be required if the pre-compiled dependencies don't work with your platform (e.g. unsupported Linux distro) or if you wish to update to a newer dependency version.
+B3D Framework relies on a variety of third party dependencies. A set of pre-compiled dependencies are provided for every supported platform/compiler and these will be fetched automatically by the build process. If required, the dependencies can also be compiled manually by following [this guide](dependencies.md). This can be required if the pre-compiled dependencies don't work with your platform (e.g. unsupported Linux distro) or if you wish to update to a newer dependency version.
 
 Note that prebuilt dependencies only come as 64-bit, if you wish to build as 32-bit you will need to compile them manually.
 
 ## <a name="otherDeps"></a>Other dependencies
-The following dependencies will need to be installed manually. Which ones are required depend on the selected *CMake* options and your usage of bs::framework (check text of each entry below).
+The following dependencies will need to be installed manually. Which ones are required depend on the selected *CMake* options and your usage of B3D Framework (check text of each entry below).
 
 **Windows**
   - **DirectX SDK** (Required by default on Windows 7 or earlier)
@@ -119,5 +119,5 @@ The following dependencies will need to be installed manually. Which ones are re
     - Only needed if you selected the FMOD audio module during build configuration
     - http://www.fmod.org/download/
     - If CMake complains it cannot find FMOD, manually set the FMOD_INSTALL_DIRS to your installation directory 
-    - Copy the dynamic libraries (.dll) from {INSTALLDIR}/api/lowlevel/lib into /bin folder in bs::framework source code folder
+    - Copy the dynamic libraries (.dll) from {INSTALLDIR}/api/lowlevel/lib into /bin folder in B3D Framework source code folder
       - Use logging libraries for the Debug builds, and non-logging for RelWithDebInfo and Release builds

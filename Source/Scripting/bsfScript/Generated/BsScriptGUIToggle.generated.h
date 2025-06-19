@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,10 +9,10 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIOptions.h"
 #include "../../../Foundation/bsfEngine/GUI/BsGUIToggleable.h"
 
-namespace bs { struct __GUIOptionInterop; }
-namespace bs { class GUIToggle; }
-namespace bs { struct __GUIToggleContentInterop; }
-namespace bs
+namespace b3d { struct __GUIOptionInterop; }
+namespace b3d { class GUIToggle; }
+namespace b3d { struct __GUIToggleContentInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggle : public TScriptGUIElementWrapper<GUIToggle, ScriptGUIToggle, ScriptGUIToggleableWrapperBase>
 	{

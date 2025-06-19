@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -20,7 +20,7 @@
 #endif
 
 /** Maximum number of GPU queues that may exist at once. */
-#define BS_MAX_UNIQUE_QUEUES BS_MAX_QUEUES_PER_TYPE* bs::GQT_COUNT // Must fit within 4 bytes
+#define BS_MAX_UNIQUE_QUEUES BS_MAX_QUEUES_PER_TYPE* b3d::GQT_COUNT // Must fit within 4 bytes
 
 #include "vulkan/vulkan.h"
 #undef MemoryBarrier // Conflicting define from winnt.h
@@ -38,7 +38,7 @@
 
 /** @} */
 
-namespace bs
+namespace b3d
 {
 	extern VkAllocationCallbacks* gVulkanAllocator;
 
@@ -96,7 +96,7 @@ namespace bs
 			u32 SliceHeight = 0;
 		};
 	} // namespace ct
-} // namespace bs
+} // namespace b3d
 
 /** Macro to get a procedure address based on a Vulkan instance. */
 #define GET_INSTANCE_PROC_ADDR(instance, name) \

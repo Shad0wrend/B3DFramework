@@ -4,14 +4,14 @@ title: Physics material
 
 Physics material is a type of object that can be applied to a **Collider** to control the physical properties of its surface. In particular it can be used to control friction coefficients that determine how much damping is there when two objects are touching and moving laterally. As well as a restitution coefficient that determines how ellastic are collisions between two objects.
 
-It is represented by @bs::PhysicsMaterial and created by calling @bs::PhysicsMaterial::create. It is a resource, and as such can be saved and loaded as described as any other resource.
+It is represented by @b3d::PhysicsMaterial and created by calling @b3d::PhysicsMaterial::create. It is a resource, and as such can be saved and loaded as described as any other resource.
 
 ~~~~~~~~~~~~~{.cpp}
 // Create physics material with default properties
 HPhysicsMaterial material = PhysicsMaterial::create();
 ~~~~~~~~~~~~~
 
-Once created it can be applied to a collider by calling @bs::CCollider::setMaterial.
+Once created it can be applied to a collider by calling @b3d::CCollider::setMaterial.
 
 ~~~~~~~~~~~~~{.cpp}
 HSceneObject colliderSO = SceneObject::create("Collider");
@@ -28,7 +28,7 @@ There are two types of friction coefficients:
  - Dynamic
  
 ## Static friction
-Static friction coefficient determines how hard is to get an object moving from a stand-still, if it is touching another object. Use @bs::PhysicsMaterial::setStaticFriction to set the coefficient.
+Static friction coefficient determines how hard is to get an object moving from a stand-still, if it is touching another object. Use @b3d::PhysicsMaterial::setStaticFriction to set the coefficient.
 
 ~~~~~~~~~~~~~{.cpp}
 // No static friction (e.g. ice)
@@ -39,7 +39,7 @@ material->setStaticFriction(1);
 ~~~~~~~~~~~~~
 
 ## Dynamic friction
-Dynamic friction coefficient determines how much will a moving object be slowed down, when it is touching another object. Use @bs::PhysicsMaterial::setDynamicFriction to set the coefficient.
+Dynamic friction coefficient determines how much will a moving object be slowed down, when it is touching another object. Use @b3d::PhysicsMaterial::setDynamicFriction to set the coefficient.
 
 ~~~~~~~~~~~~~{.cpp}
 // No dynamic friction (e.g. ice)
@@ -50,7 +50,7 @@ material->setDynamicFriction(1);
 ~~~~~~~~~~~~~
 
 # Restitution
-Resitution coefficient controls the elasticity of collisions between two objects (i.e. how "bouncy" they are). Coefficient of 0 means the collisions are non-elastic, and coefficient of 1 means the collisions are fully elastic. Use @bs::PhysicsMaterial::setRestitutionCoefficient to set the coefficient.
+Resitution coefficient controls the elasticity of collisions between two objects (i.e. how "bouncy" they are). Coefficient of 0 means the collisions are non-elastic, and coefficient of 1 means the collisions are fully elastic. Use @b3d::PhysicsMaterial::setRestitutionCoefficient to set the coefficient.
 
 ~~~~~~~~~~~~~{.cpp}
 // Barely elastic collisions (e.g. metal ball)
@@ -78,7 +78,7 @@ When set to a too low value then the opposite may happen and the objects might s
 
 It is generally a matter of tweaking the value to what looks best. Faster moving objects generally need larger contact offset values if inter-penetration is not acceptable. Smaller objects might need smaller contact offset values to avoid collision area much larger than the object.
 
-Use @bs::CCollider::setContactOffset to change the offset.
+Use @b3d::CCollider::setContactOffset to change the offset.
  
 ~~~~~~~~~~~~~{.cpp}
 // Contact offset of 0.01 units (e.g. one centimeter)

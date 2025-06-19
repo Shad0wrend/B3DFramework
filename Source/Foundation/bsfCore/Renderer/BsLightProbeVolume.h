@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -10,7 +10,7 @@
 #include "Math/BsVector3I.h"
 #include "Scene/BsSceneActor.h"
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{
@@ -242,7 +242,7 @@ namespace bs
 			u32 BufferIdx;
 		};
 
-		/** Render thread counterpart of bs::LightProbeVolume. */
+		/** Render thread counterpart of b3d::LightProbeVolume. */
 		class B3D_CORE_EXPORT LightProbeVolume : public RenderProxy, public SceneActor
 		{
 		public:
@@ -273,9 +273,9 @@ namespace bs
 			SPtr<Texture> GetCoefficientsTexture() const { return mCoefficients; }
 
 		protected:
-			friend class bs::LightProbeVolume;
+			friend class b3d::LightProbeVolume;
 
-			LightProbeVolume(const UnorderedMap<u32, bs::LightProbeVolume::ProbeInfo>& probes);
+			LightProbeVolume(const UnorderedMap<u32, b3d::LightProbeVolume::ProbeInfo>& probes);
 
 			void Initialize() override;
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
@@ -313,4 +313,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

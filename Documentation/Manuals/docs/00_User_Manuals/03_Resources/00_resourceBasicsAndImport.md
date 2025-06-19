@@ -7,7 +7,7 @@ Resources represent data that you can load from disk and use in your application
 # Import
 Before you can use such resources in the engine, you must first import them, converting them from their original format (e.g. ".jpg") into an engine object (e.g. a **Texture**).
 
-You can import resources from its source format (e.g. ".jpg") into engine by using the @bs::Importer module, accessible globally through @bs::GetImporter(). Lets see an example of importing a **Texture** resource:
+You can import resources from its source format (e.g. ".jpg") into engine by using the @b3d::Importer module, accessible globally through @b3d::GetImporter(). Lets see an example of importing a **Texture** resource:
 
 ~~~~~~~~~~~~~{.cpp}
 // Import a texture named "myTexture.jpg" from the disk
@@ -22,7 +22,7 @@ Similar to scene objects and components, resources are also represented using ha
 You may treat the handles as pointers, using "->" to access their members, comparing them for equality or with *nullptr* to check their validity. 
 
 # Customizing import
-Sometimes you need more control over import. In which case you can provide an additional **ImportOptions** object to the @bs::Importer::import method. See the example below on how we change the texture format on import, using **TextureImportOptions**.
+Sometimes you need more control over import. In which case you can provide an additional **ImportOptions** object to the @b3d::Importer::import method. See the example below on how we change the texture format on import, using **TextureImportOptions**.
 
 ~~~~~~~~~~~~~{.cpp}
 // Create an import options object specific to textures

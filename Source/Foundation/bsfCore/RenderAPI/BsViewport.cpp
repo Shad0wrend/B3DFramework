@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsViewport.h"
 #include "Private/RTTI/BsViewportRTTI.h"
@@ -7,7 +7,7 @@
 #include "Math/BsMath.h"
 #include "CoreObject/BsCoreObjectSync.h"
 
-using namespace bs;
+using namespace b3d;
 
 const Color ViewportBase::kDefaultClearColor = Color(0.0f, 0.3685f, 0.7969f);
 
@@ -74,7 +74,7 @@ void ViewportBase::SetClearStencilValue(u16 value)
 	MarkRenderProxyDataDirtyInternal();
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Viewport, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mNormArea)
@@ -173,7 +173,7 @@ RTTIType* Viewport::GetRtti() const
 	return Viewport::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 Viewport::Viewport(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
 	: TViewport(target, x, y, width, height)
@@ -208,7 +208,7 @@ u32 Viewport::GetTargetHeight() const
 
 void Viewport::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::Viewport::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::Viewport::SyncPacket>();
 	if(!syncPacket)
 		return;
 

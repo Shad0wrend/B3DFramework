@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 #include "Testing/BsConsoleTestOutput.h"
 #include "Scene/BsComponent.h"
 
-namespace bs
+namespace b3d
 {
 	class UnitTestComponentA : public Component
 	{
@@ -63,4 +63,4 @@ namespace bs
 
 	using HUnitTestComponentA = GameObjectHandle<UnitTestComponentA>;
 	using HUnitTestComponentB = GameObjectHandle<UnitTestComponentB>;
-} // namespace bs
+} // namespace b3d

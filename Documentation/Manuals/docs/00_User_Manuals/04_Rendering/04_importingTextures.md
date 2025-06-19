@@ -2,7 +2,7 @@
 title: Textures
 ---
 
-Textures are images that are applied to meshes in order to achieve greater surface detail. In bs::f they are represented with the @bs::Texture class. A texture is a resource, meaning it can be imported, saved and loaded as any other resource.
+Textures are images that are applied to meshes in order to achieve greater surface detail. In b3d::f they are represented with the @b3d::Texture class. A texture is a resource, meaning it can be imported, saved and loaded as any other resource.
 
 # Importing a texture
 Textures can be imported from various third party formats, using the importer.
@@ -30,7 +30,7 @@ Supported formats are:
 Textures can also be created manually, which we cover later in the [creating textures](../Advanced_Rendering/advancedTextures) manual.
    
 # Texture properties
-Once a texture has been imported, you can retrieve its properties like width, height and format by calling @bs::Texture::getProperties, which returns a @bs::TextureProperties object.
+Once a texture has been imported, you can retrieve its properties like width, height and format by calling @b3d::Texture::getProperties, which returns a @b3d::TextureProperties object.
 
 ~~~~~~~~~~~~~{.cpp}
 // Retrieve and print out various texture properties
@@ -43,7 +43,7 @@ GetDebug().logDebug("Num. mip maps: " + toString(props.getNumMipmaps()));
 ~~~~~~~~~~~~~
 
 # Customizing import
-Texture import can be customized by providing a @bs::TextureImportOptions object to the importer.
+Texture import can be customized by providing a @b3d::TextureImportOptions object to the importer.
 
 ~~~~~~~~~~~~~{.cpp}
 auto importOptions = TextureImportOptions::create();
@@ -55,7 +55,7 @@ HTexture texture = GetImporter().import<Texture>("myTexture.jpg", importOptions)
 A variety of properties can be customized on import, the most important of which being image format, mip-map generation, sRGB state and caching.
 
 ## Image format
-@bs::TextureImportOptions::format allows you to specify which format should the texture pixels be in after import. Any of the formats provided in @bs::PixelFormat are supported.
+@b3d::TextureImportOptions::format allows you to specify which format should the texture pixels be in after import. Any of the formats provided in @b3d::PixelFormat are supported.
 
 ~~~~~~~~~~~~~{.cpp}
 // Set format as uncompressed RGB with an alpha channel
@@ -74,7 +74,7 @@ Some of most common formats are:
  - PF_BC5 - Compressed 2-channel format. 
  
 ## Mip-maps
-@bs::TextureImportOptions::generateMips allows you to specify should mip-maps for the texture be generated. Mipmaps ensure that textures applied to 3D surfaces look good when they're viewed from far away (i.e. when the pixel size they take up on screen is considerably less than the actual texture resolution).
+@b3d::TextureImportOptions::generateMips allows you to specify should mip-maps for the texture be generated. Mipmaps ensure that textures applied to 3D surfaces look good when they're viewed from far away (i.e. when the pixel size they take up on screen is considerably less than the actual texture resolution).
 
 Enabling mip-maps will increase the memory use of the texture by 33%, but it is pretty much essential for any texture applied on a 3D object. It should not be enabled for textures used on 2D elements like GUI or sprites, as it will have no benefit.
 
@@ -88,7 +88,7 @@ Most images output by modern cameras and image editing software will be stored i
 
 However game engines don't like their data in gamma space, because it's not linear which means that all lighting and similar operations don't operate exactly as they should. Essentially the image ends up looking more "washed-out" than it should.
 
-For this reason bs::f provides @bs::TextureImportOptions::sRGB toggle, which you can set for images in gamma (sRGB) space. The engine will then know to convert to linear space before performing any relevant operations, ensuring the final rendering looks good.
+For this reason b3d::f provides @b3d::TextureImportOptions::sRGB toggle, which you can set for images in gamma (sRGB) space. The engine will then know to convert to linear space before performing any relevant operations, ensuring the final rendering looks good.
 
 ~~~~~~~~~~~~~{.cpp}
 // Tell the engine this image is in gamma space
@@ -98,9 +98,9 @@ importOptions->sRGB = true;
 > How do you know when an image is in gamma space and when in linear space? As a general rule an albedo (diffuse) images are in gamma space, and normal maps are in linear space. For other types of images you need to consult the tool you use to create/save them, but in most cases they will be in gamma space.
 
 ## Caching
-Sometimes you need to import a texture you don't want to only use for rendering, but rather for manually reading its contents. When that's the case you can enable the @bs::TextureImportOptions::cpuCached option.
+Sometimes you need to import a texture you don't want to only use for rendering, but rather for manually reading its contents. When that's the case you can enable the @b3d::TextureImportOptions::cpuCached option.
 
-This will allow you to call @bs::Texture::readCachedData and to manually read individual pixels of the texture.
+This will allow you to call @b3d::Texture::readCachedData and to manually read individual pixels of the texture.
 
 Note that caching a texture means its data will be available in system memory, essentially doubling its memory usage.
 

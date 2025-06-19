@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "Math/BsRadian.h"
 #include "BsMath.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Math
 	 *  @{
@@ -454,18 +454,18 @@ namespace bs
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Vector3D)) TVector3<double>;
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond SPECIALIZATIONS */
 namespace std
 {
 	template <>
-	class numeric_limits<bs::TVector3<float>>
+	class numeric_limits<b3d::TVector3<float>>
 	{
 	public:
-		constexpr static bs::TVector3<float> infinity() // NOLINT
+		constexpr static b3d::TVector3<float> infinity() // NOLINT
 		{
-			return bs::TVector3<float>(
+			return b3d::TVector3<float>(
 				std::numeric_limits<float>::infinity(),
 				std::numeric_limits<float>::infinity(),
 				std::numeric_limits<float>::infinity());
@@ -473,12 +473,12 @@ namespace std
 	};
 
 	template <>
-	class numeric_limits<bs::TVector3<double>>
+	class numeric_limits<b3d::TVector3<double>>
 	{
 	public:
-		constexpr static bs::TVector3<double> infinity() // NOLINT
+		constexpr static b3d::TVector3<double> infinity() // NOLINT
 		{
-			return bs::TVector3<double>(
+			return b3d::TVector3<double>(
 				std::numeric_limits<double>::infinity(),
 				std::numeric_limits<double>::infinity(),
 				std::numeric_limits<double>::infinity());
@@ -487,14 +487,14 @@ namespace std
 
 	/** Hash value generator for TVector3<T>. */
 	template<class T>
-	struct hash<bs::TVector3<T>>
+	struct hash<b3d::TVector3<T>>
 	{
-		size_t operator()(const bs::TVector3<T>& value) const
+		size_t operator()(const b3d::TVector3<T>& value) const
 		{
 			size_t hash = 0;
-			bs::B3DCombineHash(hash, value.X);
-			bs::B3DCombineHash(hash, value.Y);
-			bs::B3DCombineHash(hash, value.Z);
+			b3d::B3DCombineHash(hash, value.X);
+			b3d::B3DCombineHash(hash, value.Y);
+			b3d::B3DCombineHash(hash, value.Z);
 
 			return hash;
 		}

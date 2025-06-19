@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRendererRenderable.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Mesh/BsMesh.h"
 #include "Utility/BsBitwise.h"
 
-namespace bs {
+namespace b3d {
 namespace ct {
 
 PerObjectParamDef gPerObjectParamDef;
@@ -53,4 +53,4 @@ void RendererRenderable::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush
 	if(flush)
 		PerCallParamBuffer->FlushCache();
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsCamera.h"
 
@@ -19,7 +19,7 @@
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
 #include "BsRenderSettings.implementation.h"
 
-using namespace bs;
+using namespace b3d;
 
 const float CameraBase::kInfiniteFarPlaneAdjust = 0.00001f;
 
@@ -760,7 +760,7 @@ Area2I Camera::GetViewportRect() const
 	return mViewport->GetPixelArea();
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Camera, FullSyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mLayers)
@@ -835,7 +835,7 @@ RTTIType* Camera::GetRtti() const
 	return Camera::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 Camera::~Camera()
 {
@@ -878,7 +878,7 @@ void Camera::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& alloca
 	{
 		if(syncPacket->Flags != (u32)ActorDirtyFlag::Transform)
 		{
-			auto* const fullSyncPacket = static_cast<bs::Camera::FullSyncPacket*>(syncPacket);
+			auto* const fullSyncPacket = static_cast<b3d::Camera::FullSyncPacket*>(syncPacket);
 			fullSyncPacket->RenderSettingsPacket->ApplySyncData(mRenderSettings.get());
 
 			allocator.Destruct(fullSyncPacket->RenderSettingsPacket);

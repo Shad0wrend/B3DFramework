@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsSkybox.h"
 
@@ -13,9 +13,9 @@
 #include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-using namespace bs;
+using namespace b3d;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Skybox, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mBrightness)
@@ -181,7 +181,7 @@ RTTIType* Skybox::GetRtti() const
 	return Skybox::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 Skybox::Skybox(const SPtr<Texture>& radiance, const SPtr<Texture>& filteredRadiance, const SPtr<Texture>& irradiance)
 	: mFilteredRadiance(filteredRadiance), mIrradiance(irradiance)
@@ -203,7 +203,7 @@ void Skybox::Initialize()
 
 void Skybox::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::Skybox::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::Skybox::SyncPacket>();
 	if(!syncPacket)
 		return;
 

@@ -1,8 +1,8 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-namespace bs
+namespace b3d
 {
 	struct RenderProxySyncPacket;
 	// Undefine defines from other libs, that conflict with enums below
@@ -764,22 +764,22 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
 namespace std {
 
 template <>
-struct hash<bs::TextureSurface>
+struct hash<b3d::TextureSurface>
 {
-	size_t operator()(const bs::TextureSurface& value) const
+	size_t operator()(const b3d::TextureSurface& value) const
 	{
 		size_t hash = 0;
-		bs::B3DCombineHash(hash, value.MipLevel);
-		bs::B3DCombineHash(hash, value.MipLevelCount);
-		bs::B3DCombineHash(hash, value.Face);
-		bs::B3DCombineHash(hash, value.FaceCount);
+		b3d::B3DCombineHash(hash, value.MipLevel);
+		b3d::B3DCombineHash(hash, value.MipLevelCount);
+		b3d::B3DCombineHash(hash, value.Face);
+		b3d::B3DCombineHash(hash, value.FaceCount);
 
 		return hash;
 	}

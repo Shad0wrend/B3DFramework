@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2025 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -55,7 +55,7 @@
 		mono_gc_wbarrier_arrayref_copy (__p, __s, (count));	\
 	} while (0)
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Mono
 	 *  @{
@@ -73,4 +73,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

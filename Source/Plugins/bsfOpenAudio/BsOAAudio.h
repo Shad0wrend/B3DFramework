@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "AL/alc.h"
 #include "Threading/BsSignalEvent.h"
 
-namespace bs
+namespace b3d
 {
 	class SignalEvent;
 	/** @addtogroup OpenAudio
@@ -135,4 +135,4 @@ namespace bs
 	OAAudio& GetOAAudio();
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

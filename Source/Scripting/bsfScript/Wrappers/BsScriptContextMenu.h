@@ -1,11 +1,11 @@
-//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptNonReflectableWrapper.h"
 
-namespace bs
+namespace b3d
 {
 	class ScriptGUILayoutWrapperBase;
 	struct __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop;
@@ -49,4 +49,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

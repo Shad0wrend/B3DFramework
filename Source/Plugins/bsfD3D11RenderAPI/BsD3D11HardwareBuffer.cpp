@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsD3D11HardwareBuffer.h"
 #include "BsD3D11Mappings.h"
@@ -7,8 +7,8 @@
 #include "Debug/BsDebug.h"
 #include "BsD3D11CommandBuffer.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 D3D11HardwareBuffer::D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage, u32 elementCount, u32 elementSize, D3D11Device& device, bool useSystemMem, bool streamOut)
 	: GpuBuffer(elementCount * elementSize, usage, GDF_DEFAULT)

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Importer/BsImporter.h"
 
@@ -16,7 +16,7 @@
 #include "Threading/BsSingleConsumerQueue.h"
 #include "Threading/BsThreadPool.h"
 
-using namespace bs;
+using namespace b3d;
 
 Importer::Importer()
 {
@@ -336,10 +336,10 @@ SpecificImporter* Importer::GetImporterForFile(const Path& inputFilePath) const
 	return nullptr;
 }
 
-namespace bs
+namespace b3d
 {
 B3D_CORE_EXPORT Importer& GetImporter()
 {
 	return Importer::Instance();
 }
-} // namespace bs
+} // namespace b3d

@@ -1,36 +1,36 @@
-global using Vector2 = bs.TVector2<float>;
-global using Vector2F = bs.TVector2<float>;
-global using Vector2D = bs.TVector2<double>;
-global using Vector2I = bs.TVector2<int>;
-global using Vector2UI = bs.TVector2<uint>;
+global using Vector2 = b3d.TVector2<float>;
+global using Vector2F = b3d.TVector2<float>;
+global using Vector2D = b3d.TVector2<double>;
+global using Vector2I = b3d.TVector2<int>;
+global using Vector2UI = b3d.TVector2<uint>;
 
-global using Size2 = bs.TSize2<float>;
-global using Size2F = bs.TSize2<float>;
-global using Size2UI = bs.TSize2<int>;
+global using Size2 = b3d.TSize2<float>;
+global using Size2F = b3d.TSize2<float>;
+global using Size2UI = b3d.TSize2<int>;
 
-global using Area2 = bs.TArea2<float, float>;
-global using Area2I = bs.TArea2<int, int>;
+global using Area2 = b3d.TArea2<float, float>;
+global using Area2I = b3d.TArea2<int, int>;
 
-global using GUIPhysicalUnit = bs.TUnitValue<int, bs.PhysicalPixel>;
-global using GUIPhysicalUnitF = bs.TUnitValue<float, bs.PhysicalPixel>;
+global using GUIPhysicalUnit = b3d.TUnitValue<int, b3d.PhysicalPixel>;
+global using GUIPhysicalUnitF = b3d.TUnitValue<float, b3d.PhysicalPixel>;
 
-global using GUILogicalUnit = bs.TUnitValue<int, bs.LogicalPixel>;
-global using GUILogicalUnitF = bs.TUnitValue<float, bs.LogicalPixel>;
+global using GUILogicalUnit = b3d.TUnitValue<int, b3d.LogicalPixel>;
+global using GUILogicalUnitF = b3d.TUnitValue<float, b3d.LogicalPixel>;
 
-global using GUIPhysicalPoint = bs.TVector2<bs.TUnitValue<int, bs.PhysicalPixel>>;
-global using GUIPhysicalPointF = bs.TVector2<bs.TUnitValue<float, bs.PhysicalPixel>>;
+global using GUIPhysicalPoint = b3d.TVector2<b3d.TUnitValue<int, b3d.PhysicalPixel>>;
+global using GUIPhysicalPointF = b3d.TVector2<b3d.TUnitValue<float, b3d.PhysicalPixel>>;
 
-global using GUILogicalPoint = bs.TVector2<bs.TUnitValue<int, bs.LogicalPixel>>;
-global using GUILogicalPointF = bs.TVector2<bs.TUnitValue<float, bs.LogicalPixel>>;
+global using GUILogicalPoint = b3d.TVector2<b3d.TUnitValue<int, b3d.LogicalPixel>>;
+global using GUILogicalPointF = b3d.TVector2<b3d.TUnitValue<float, b3d.LogicalPixel>>;
 
-global using GUIPhysicalSize = bs.TSize2<bs.TUnitValue<int, bs.PhysicalPixel>>;
-global using GUIPhysicalSizeF = bs.TSize2<bs.TUnitValue<float, bs.PhysicalPixel>>;
+global using GUIPhysicalSize = b3d.TSize2<b3d.TUnitValue<int, b3d.PhysicalPixel>>;
+global using GUIPhysicalSizeF = b3d.TSize2<b3d.TUnitValue<float, b3d.PhysicalPixel>>;
 
-global using GUILogicalSize = bs.TSize2<bs.TUnitValue<int, bs.LogicalPixel>>;
-global using GUILogicalSizeF = bs.TSize2<bs.TUnitValue<float, bs.LogicalPixel>>;
+global using GUILogicalSize = b3d.TSize2<b3d.TUnitValue<int, b3d.LogicalPixel>>;
+global using GUILogicalSizeF = b3d.TSize2<b3d.TUnitValue<float, b3d.LogicalPixel>>;
 
-global using GUIPhysicalArea = bs.TArea2<bs.TUnitValue<int, bs.PhysicalPixel>, bs.TUnitValue<int, bs.PhysicalPixel>>;
-global using GUIPhysicalAreaF = bs.TArea2<bs.TUnitValue<float, bs.PhysicalPixel>, bs.TUnitValue<float, bs.PhysicalPixel>>;
+global using GUIPhysicalArea = b3d.TArea2<b3d.TUnitValue<int, b3d.PhysicalPixel>, b3d.TUnitValue<int, b3d.PhysicalPixel>>;
+global using GUIPhysicalAreaF = b3d.TArea2<b3d.TUnitValue<float, b3d.PhysicalPixel>, b3d.TUnitValue<float, b3d.PhysicalPixel>>;
 
-global using GUILogicalArea = bs.TArea2<bs.TUnitValue<int, bs.LogicalPixel>, bs.TUnitValue<int, bs.LogicalPixel>>;
-global using GUILogicalAreaF = bs.TArea2<bs.TUnitValue<float, bs.LogicalPixel>, bs.TUnitValue<float, bs.LogicalPixel>>;
+global using GUILogicalArea = b3d.TArea2<b3d.TUnitValue<int, b3d.LogicalPixel>, b3d.TUnitValue<int, b3d.LogicalPixel>>;
+global using GUILogicalAreaF = b3d.TArea2<b3d.TUnitValue<float, b3d.LogicalPixel>, b3d.TUnitValue<float, b3d.LogicalPixel>>;

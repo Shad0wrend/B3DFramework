@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #ifdef _WIN32
 #	define _CRT_SECURE_NO_WARNINGS 1
@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
 	strcat(assembliesDir, ASSEMBLIES_DIR);
 
 #if B3D_USE_DOTNETCORE
-	bs::MonoLoader::StartUp();
-	bs::MonoLoader::Instance().Load();
+	b3d::MonoLoader::StartUp();
+	b3d::MonoLoader::Instance().Load();
 #endif
 
 	mono_set_dirs(libDir, etcDir);
@@ -72,8 +72,8 @@ int main(int argc, char* argv[])
 	mono_jit_cleanup(domain);
 
 #if B3D_USE_DOTNETCORE
-	bs::MonoLoader::Instance().Unload();
-	bs::MonoLoader::ShutDown();
+	b3d::MonoLoader::Instance().Unload();
+	b3d::MonoLoader::ShutDown();
 #endif
 
 	return returnVal;

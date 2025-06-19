@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "2D/BsSprite.h"
 #include "CoreObject/BsCoreObjectManager.h"
@@ -11,7 +11,7 @@
 #include "CoreObject/BsRenderThread.h"
 #include "Image/BsSpriteTexture.h"
 
-using namespace bs;
+using namespace b3d;
 
 SpriteMaterial::SpriteMaterial(u32 id, const HMaterial& material, ShaderVariationParameters variation, bool allowBatching)
 	: mId(id), mAllowBatching(allowBatching), mMaterialStored(false), mParamBufferIdx(-1)
@@ -114,7 +114,7 @@ void SpriteMaterial::Render(ct::GpuCommandBuffer& commandBuffer, const SPtr<ct::
 	ct::GetRendererUtility().Draw(commandBuffer, mesh, subMesh);
 }
 
-namespace bs
+namespace b3d
 {
 	namespace ct
 	{

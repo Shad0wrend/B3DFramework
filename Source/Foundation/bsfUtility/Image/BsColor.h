@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Image
 	 *  @{
@@ -282,7 +282,7 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond SPECIALIZATIONS */
 
@@ -290,15 +290,15 @@ namespace std
 {
 	/** Hash value generator for Color. */
 	template <>
-	struct hash<bs::Color>
+	struct hash<b3d::Color>
 	{
-		size_t operator()(const bs::Color& color) const
+		size_t operator()(const b3d::Color& color) const
 		{
 			size_t hash = 0;
-			bs::B3DCombineHash(hash, color.R);
-			bs::B3DCombineHash(hash, color.G);
-			bs::B3DCombineHash(hash, color.B);
-			bs::B3DCombineHash(hash, color.A);
+			b3d::B3DCombineHash(hash, color.R);
+			b3d::B3DCombineHash(hash, color.G);
+			b3d::B3DCombineHash(hash, color.B);
+			b3d::B3DCombineHash(hash, color.A);
 
 			return hash;
 		}

@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,8 +6,8 @@
 #include "BsScriptReflectableWrapper.h"
 #include "../../../Foundation/bsfCore/Resources/BsResourceMetaData.h"
 
-namespace bs { class ResourceMetaData; }
-namespace bs
+namespace b3d { class ResourceMetaData; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptResourceMetaDataWrapperBase : public ScriptReflectableWrapper
 	{

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsRenderTarget.h"
 #include "RenderAPI/BsViewport.h"
@@ -6,7 +6,7 @@
 #include "Error/BsException.h"
 #include "CoreObject/BsRenderThread.h"
 
-using namespace bs;
+using namespace b3d;
 
 RenderTarget::RenderTarget()
 {
@@ -39,7 +39,7 @@ RTTIType* RenderTarget::GetRtti() const
 	return RenderTarget::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 RenderTarget::RenderTarget()
 {

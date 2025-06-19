@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,8 +8,8 @@
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsDistanceJoint.h"
 
-namespace bs { class CDistanceJoint; }
-namespace bs
+namespace b3d { class CDistanceJoint; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptDistanceJoint : public TScriptGameObjectWrapper<CDistanceJoint, ScriptDistanceJoint, ScriptJointWrapperBase>
 	{

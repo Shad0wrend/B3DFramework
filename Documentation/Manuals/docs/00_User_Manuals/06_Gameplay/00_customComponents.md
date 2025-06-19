@@ -2,10 +2,10 @@
 title: Creating components
 ---
 
-So far we have talked about using built-in components like @bs::CCamera and @bs::CRenderable, but another major way you'll be using components is to create your own. Components serve as the main place to put your gameplay logic in, and this is where you'll be adding a majority of your custom code when creating a game.
+So far we have talked about using built-in components like @b3d::CCamera and @b3d::CRenderable, but another major way you'll be using components is to create your own. Components serve as the main place to put your gameplay logic in, and this is where you'll be adding a majority of your custom code when creating a game.
 
 # Creation
-To create your own component simply implement the @bs::Component interface by deriving from it. Component's constructor must always accept a handle to a **SceneObject**, which represents the scene object the component is part of.
+To create your own component simply implement the @b3d::Component interface by deriving from it. Component's constructor must always accept a handle to a **SceneObject**, which represents the scene object the component is part of.
 
 ~~~~~~~~~~~~~{.cpp}
 // A simple component that does nothing
@@ -21,7 +21,7 @@ public:
 # Run-time type information (RTTI)
 It's important your component provides some meta-data about itself. This allows features such as dynamic casting and serialization to work properly. This information is provided by the run-time type information (RTTI) system. We'll talk about run-time type information in detail in the following manual, and for now we just provide a minimal working example.
 
-RTTI requires you to create a specialization of the @bs::RTTIType<Type, BaseType, MyRTTIType> interface, which contains information about your class, including its name, id and a helper creation method (at minimum).
+RTTI requires you to create a specialization of the @b3d::RTTIType<Type, BaseType, MyRTTIType> interface, which contains information about your class, including its name, id and a helper creation method (at minimum).
 
 ~~~~~~~~~~~~~{.cpp}
 class CCameraFlyerRTTI : public RTTIType<CCameraFlyer, Component, CCameraFlyerRTTI>
@@ -58,10 +58,10 @@ This is the base template you can use for all components, but in the following c
 
 # Logic
 Each component implementation can override any of the three primary methods for introducing gameplay logic:
- - @bs::Component::onInitialized - Called once when the component is first instantiated. You should use this instead of the constructor for initialization.
- - @bs::Component::update - Called every frame while the game is running and the component is enabled.
- - @bs::Component::fixedUpdate - Similar to `update()` except it gets called at a fixed time interval (e.g. 60 times per second, instead of every frame). Normally you want to use this method for physics-related functionality, which requires fixed time increments in order to ensure stability of calculations.
- - @bs::Component::onDestroyed - Called just before the component is destroyed. Use this instead of the destructor for cleanup.
+ - @b3d::Component::onInitialized - Called once when the component is first instantiated. You should use this instead of the constructor for initialization.
+ - @b3d::Component::update - Called every frame while the game is running and the component is enabled.
+ - @b3d::Component::fixedUpdate - Similar to `update()` except it gets called at a fixed time interval (e.g. 60 times per second, instead of every frame). Normally you want to use this method for physics-related functionality, which requires fixed time increments in order to ensure stability of calculations.
+ - @b3d::Component::onDestroyed - Called just before the component is destroyed. Use this instead of the destructor for cleanup.
 		
 Here is a simple implementation of a component using a few of these methods to implement basic camera movement.
 ~~~~~~~~~~~~~{.cpp}
@@ -129,12 +129,12 @@ private:
 };
 ~~~~~~~~~~~~~
 
-> Use @bs::Component::SO() to access the scene object the component is attached to.
+> Use @b3d::Component::SO() to access the scene object the component is attached to.
 		
 > **GetTime()** method provides access to a variety of timing related functionality, and is explained later in the [timing manual](../Utilities/time).
 		
 # Component handle
-You will also likely want to declare a handle you can use to easily access the component, same as **HCamera** or **HRenderable**. This is done by simply creating a *typedef* of a @bs::GameObjectHandle<T>.
+You will also likely want to declare a handle you can use to easily access the component, same as **HCamera** or **HRenderable**. This is done by simply creating a *typedef* of a @b3d::GameObjectHandle<T>.
 
 ~~~~~~~~~~~~~{.cpp}
 typedef GameObjectHandle<CCameraFlyer> HCameraFlyer;
@@ -155,9 +155,9 @@ HCameraFlyer = cameraSO->addComponent<CCameraFlyer>();
 ~~~~~~~~~~~~~
 
 # Activating/deactivating a scene object
-Any scene object can be temporarily de-activated and reactivated by calling @bs::SceneObject::setActive. When a scene object is deactivated its components will not have **Component::update()** called.
+Any scene object can be temporarily de-activated and reactivated by calling @b3d::SceneObject::setActive. When a scene object is deactivated its components will not have **Component::update()** called.
 
-Your component can also be notified at the exact moment when activation/deactivation happens. This way you can perform additional functionality if needed. Override @bs::Component::onEnabled and @bs::Component::onDisabled to get notified every time a component is activated and deactivated, respectively.
+Your component can also be notified at the exact moment when activation/deactivation happens. This way you can perform additional functionality if needed. Override @b3d::Component::onEnabled and @b3d::Component::onDisabled to get notified every time a component is activated and deactivated, respectively.
 		
 ~~~~~~~~~~~~~{.cpp}
 // We're just extending the component we defined above
@@ -180,7 +180,7 @@ class CCameraFlyer : public Component
 ~~~~~~~~~~~~~
 		
 # Getting notified on scene object change
-Sometimes you want to get notified when the scene object the component is attached to moves or changes parents. You can do this by overriding the @bs::Component::onTransformChanged method.
+Sometimes you want to get notified when the scene object the component is attached to moves or changes parents. You can do this by overriding the @b3d::Component::onTransformChanged method.
 
 ~~~~~~~~~~~~~{.cpp}
 // We're just extending the component we defined above
@@ -201,9 +201,9 @@ class CCameraFlyer : public Component
 };
 ~~~~~~~~~~~~~
 
-@bs::TransformChangedFlags parameter will notify you whether the scene object moved, has changed parents, or both.
+@b3d::TransformChangedFlags parameter will notify you whether the scene object moved, has changed parents, or both.
 
-Note that **Component::onTransformChanged** will never trigger by default. You must first enable it by calling @bs::Component::setNotifyFlags. It accepts the same **TransformChangedFlags** parameter which tells the system in which cases should it trigger **Component::onTransformChanged**.
+Note that **Component::onTransformChanged** will never trigger by default. You must first enable it by calling @b3d::Component::setNotifyFlags. It accepts the same **TransformChangedFlags** parameter which tells the system in which cases should it trigger **Component::onTransformChanged**.
 
 ~~~~~~~~~~~~~{.cpp}
 // We're just extending the component we defined above

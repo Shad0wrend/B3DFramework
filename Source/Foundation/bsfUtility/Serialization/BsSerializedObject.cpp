@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Serialization/BsSerializedObject.h"
 #include "Serialization/BsIntermediateSerializer.h"
@@ -6,9 +6,9 @@
 
 #include "ThirdParty/CityHash/city.h"
 
-using namespace bs;
+using namespace b3d;
 
-namespace bs
+namespace b3d
 {
 	bool Equals(const SPtr<ISerialized>& lhs, const SPtr<ISerialized>& rhs)
 	{
@@ -20,7 +20,7 @@ namespace bs
 
 		return lhs->Equals(rhs);
 	}
-} // namespace bs
+} // namespace b3d
 
 SPtr<SerializedObject> SerializedObject::Create(IReflectable& object, SerializedObjectEncodeFlags flags)
 {

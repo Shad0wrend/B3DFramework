@@ -1,8 +1,8 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsUnicode.h"
 
-using namespace bs;
+using namespace b3d;
 
 /** Converts an UTF-8 encoded character (possibly multibyte) into an UTF-32 character. */
 template <typename T>

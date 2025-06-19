@@ -2,7 +2,7 @@
 title: Unit tests
 ---
 
-All unit tests are implemented as a part of a @bs::TestSuite class. You can create your own test suites, or add tests to the existing ones. 
+All unit tests are implemented as a part of a @b3d::TestSuite class. You can create your own test suites, or add tests to the existing ones. 
 
 To register new tests call @B3D_ADD_TEST in the test suite's constructor. The test method must not accept any parameters or return any values. To report test failure call @B3D_TEST_ASSERT or @B3D_TEST_ASSERT_MSG. If neither of those trigger, test is assumed to be successful.
 
@@ -29,4 +29,4 @@ SPtr<TestSuite> tests = MyTestSuite::create<MyTestSuite>();
 tests->run(ExceptionTestOutput());
 ~~~~~~~~~~~~~
 
-When running the test we provide @bs::ExceptionTestOutput which tells the test runner to terminate the application when a test fails. You can implement your own @bs::TestOutput class to handle test failure more gracefully.
+When running the test we provide @b3d::ExceptionTestOutput which tells the test runner to terminate the application when a test fails. You can implement your own @b3d::TestOutput class to handle test failure more gracefully.

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCCapsuleCollider.h"
 #include "Scene/BsSceneObject.h"
@@ -6,7 +6,7 @@
 #include "Private/RTTI/BsCCapsuleColliderRTTI.h"
 #include "Scene/BsSceneManager.h"
 
-using namespace bs;
+using namespace b3d;
 
 CCapsuleCollider::CCapsuleCollider()
 {
@@ -28,7 +28,7 @@ void CCapsuleCollider::SetNormal(const Vector3& normal)
 	if(mNormal == normal)
 		return;
 
-	mNormal = bs::Vector3::Normalize(normal);
+	mNormal = b3d::Vector3::Normalize(normal);
 	mLocalRotation = Quaternion::GetRotationFromTo(Vector3::kUnitX, mNormal);
 
 	if(mInternal != nullptr)

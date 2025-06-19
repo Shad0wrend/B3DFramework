@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Private/Win32/BsWin32Platform.h"
 #include "RenderAPI/BsRenderWindow.h"
@@ -14,7 +14,7 @@
 #include <shellapi.h>
 #include <WinUser.h>
 
-using namespace bs;
+using namespace b3d;
 
 /** Encapsulate native cursor data so we can avoid including windows.h as it pollutes the global namespace. */
 struct B3D_CORE_EXPORT NativeCursorData

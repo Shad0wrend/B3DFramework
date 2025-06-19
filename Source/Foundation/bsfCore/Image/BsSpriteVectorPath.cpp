@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Image/BsSpriteVectorPath.h"
 
@@ -11,9 +11,9 @@
 #include "VectorGraphics/BsVectorGraphics.h"
 #include "VectorGraphics/BsVectorSpriteAtlas.h"
 
-using namespace bs;
+using namespace b3d;
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteVectorPathAllocation, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mVectorSpriteAtlasAllocationHandle)
@@ -50,7 +50,7 @@ RenderProxySyncPacket* SpriteVectorPathAllocation::CreateRenderProxySyncPacket(F
 	return syncPacket;
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(SpriteVectorPath, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(SpriteImage, SpriteImageSyncPacket)
@@ -188,11 +188,11 @@ RTTIType* SpriteVectorPath::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 void SpriteVectorPathAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::SpriteVectorPathAllocation::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteVectorPathAllocation::SyncPacket>();
 	if(!syncPacket)
 		return;
 
@@ -206,7 +206,7 @@ SpriteVectorPath::SpriteVectorPath(const SpriteVectorPathCreateInformation& crea
 
 void SpriteVectorPath::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::SpriteVectorPath::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteVectorPath::SyncPacket>();
 	if(!syncPacket)
 		return;
 

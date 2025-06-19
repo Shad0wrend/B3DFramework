@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsFMODAudio.h"
 #include "BsFMODAudioClip.h"
@@ -6,7 +6,7 @@
 #include "BsFMODAudioListener.h"
 #include "Math/BsMath.h"
 
-using namespace bs;
+using namespace b3d;
 
 void* F_CALLBACK FMODAlloc(unsigned int size, FMOD_MEMORY_TYPE type, const char* sourcestr)
 {
@@ -191,9 +191,9 @@ void FMODAudio::UnregisterSourceInternal(FMODAudioSource* source)
 	mSources.erase(source);
 }
 
-namespace bs {
+namespace b3d {
 FMODAudio& GetFMODAudio()
 {
 	return static_cast<FMODAudio&>(FMODAudio::Instance());
 }
-} // namespace bs
+} // namespace b3d

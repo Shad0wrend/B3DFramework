@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsTechnique.h"
 
@@ -13,7 +13,7 @@
 #include "RenderAPI/BsGpuDevice.h"
 #include "Utility/BsPersistentCache.h"
 
-using namespace bs;
+using namespace b3d;
 
 TechniqueBase::TechniqueBase(const String& language, const ShaderVariationParameters& variationParameters)
 	: mLanguage(language), mVariationParameters(variationParameters)
@@ -218,7 +218,7 @@ void Technique::SyncToRenderProxy()
 	CoreObject::SyncToRenderProxy();
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Technique, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mPasses)
@@ -268,7 +268,7 @@ RTTIType* Technique::GetRtti() const
 	return Technique::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 Technique::Technique()
 	: TTechnique(WeakSPtr<Shader>(), StringUtil::kBlank, ShaderVariationParameters(), {})
@@ -300,7 +300,7 @@ SPtr<Technique> Technique::CreateEmpty()
 
 void Technique::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::Technique::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::Technique::SyncPacket>();
 	if(!syncPacket)
 		return;
 

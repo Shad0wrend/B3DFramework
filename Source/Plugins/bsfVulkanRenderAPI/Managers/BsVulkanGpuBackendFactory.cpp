@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Managers/BsVulkanGpuBackendFactory.h"
 #include "BsVulkanGpuBackend.h"
 #include "CoreObject/BsRenderThread.h"
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 constexpr const char* VulkanGpuBackendFactory::SystemName;
 

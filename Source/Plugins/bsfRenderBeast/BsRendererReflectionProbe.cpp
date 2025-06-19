@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRendererReflectionProbe.h"
 #include "Material/BsMaterial.h"
@@ -7,7 +7,7 @@
 #include "Renderer/BsRendererUtility.h"
 #include "Renderer/BsSkybox.h"
 
-namespace bs { namespace ct {
+namespace b3d { namespace ct {
 
 static const u32 kReflProbeBufferIncrement = 16 * sizeof(ReflProbeData);
 
@@ -174,4 +174,4 @@ void ReflProbeParamBuffer::Populate(const Skybox* sky, u32 numProbes, const SPtr
 }
 
 ReflProbesParamDef gReflProbesParamDef;
-}} // namespace bs::ct
+}} // namespace b3d::ct

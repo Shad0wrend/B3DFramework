@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptPackageResourceMetaData.generated.h"
 #include "BsMonoMethod.h"
@@ -10,7 +10,7 @@
 #include "BsScriptResourceMetaData.generated.h"
 #include "../Extensions/BsPackageResourceMetaDataExtension.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptPackageResourceMetaData::ScriptPackageResourceMetaData(const SPtr<PackageResourceMetaData>& nativeObject)
 		:TScriptReflectableWrapper(nativeObject)

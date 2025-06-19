@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsLightProbeVolume.h"
 
@@ -14,7 +14,7 @@
 #include "RenderAPI/BsGpuDevice.h"
 #include "RenderAPI/BsGpuPipelineState.h"
 
-using namespace bs;
+using namespace b3d;
 
 LightProbeVolume::LightProbeVolume(const AABox& volume, const Vector3I& cellCount)
 	: mVolume(volume), mCellCount(cellCount)
@@ -302,7 +302,7 @@ SPtr<ct::RenderProxy> LightProbeVolume::CreateRenderProxy() const
 	return renderProxyShared;
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(LightProbeVolume, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<u32>, RemovedProbes)
@@ -351,9 +351,9 @@ RTTIType* LightProbeVolume::GetRtti() const
 	return LightProbeVolume::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
-LightProbeVolume::LightProbeVolume(const UnorderedMap<u32, bs::LightProbeVolume::ProbeInfo>& probes)
+LightProbeVolume::LightProbeVolume(const UnorderedMap<u32, b3d::LightProbeVolume::ProbeInfo>& probes)
 {
 	mInitCoefficients.resize(probes.size());
 	mProbePositions.resize(probes.size());
@@ -481,7 +481,7 @@ bool LightProbeVolume::RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProb
 
 void LightProbeVolume::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::LightProbeVolume::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::LightProbeVolume::SyncPacket>();
 	if(!syncPacket)
 		return;
 

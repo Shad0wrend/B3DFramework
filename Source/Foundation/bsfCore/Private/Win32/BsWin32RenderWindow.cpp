@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsWin32RenderWindow.h"
 
@@ -11,7 +11,7 @@
 #include "Math/BsMath.h"
 #include "RenderAPI/BsGpuDevice.h"
 
-using namespace bs;
+using namespace b3d;
 
 Win32RenderWindow::Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, parentWindow)
@@ -394,9 +394,9 @@ void Win32RenderWindow::DoOnDPIScaleChanged()
 		Resize(Math::RoundToI32(mRenderTargetProperties.Width * scaleRatio), Math::RoundToI32(mRenderTargetProperties.Height * scaleRatio));
 }
 
-namespace bs::ct
+namespace b3d::ct
 {
 Win32RenderWindow::Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 hWnd, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, hWnd, parentWindow)
 { }
-} // namespace bs::ct
+} // namespace b3d::ct

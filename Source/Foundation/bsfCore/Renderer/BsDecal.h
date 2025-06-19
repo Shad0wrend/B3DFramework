@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "Scene/BsSceneActor.h"
 #include "Math/BsBounds.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Implementation
 	 *  @{
@@ -176,7 +176,7 @@ namespace bs
 
 	namespace ct
 	{
-		/** Render thread counterpart of a bs::Decal */
+		/** Render thread counterpart of a b3d::Decal */
 		class B3D_CORE_EXPORT Decal : public RenderProxy, public TDecal<true>
 		{
 		public:
@@ -189,7 +189,7 @@ namespace bs
 			u32 GetRendererId() const { return mRendererId; }
 
 		protected:
-			friend class bs::Decal;
+			friend class b3d::Decal;
 
 			Decal(const SPtr<Material>& material, const Vector2& size, float maxDistance);
 
@@ -201,4 +201,4 @@ namespace bs
 	} // namespace ct
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanGpuBackend.h"
 #include "BsVulkanGpuDevice.h"
@@ -33,7 +33,7 @@ static_assert(false, "Other platform includes go here.");
 #	define B3D_BUILD_WITH_VULKAN_VALIDATION_LAYERS 0
 #endif
 
-namespace bs {
+namespace b3d {
 VkAllocationCallbacks* gVulkanAllocator = nullptr;
 
 PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT = nullptr;
@@ -70,10 +70,10 @@ static const bool kEnableVulkanDebugLabels = B3D_DEBUG;
 /** If specified, allows you to select which is the primary GPU to use. If ~0u system will pick the best GPU according to other options. */
 static const u32 kPreferredGPUIndex = ~0u;
 
-} // namespace bs
+} // namespace b3d
 
-using namespace bs;
-using namespace bs::ct;
+using namespace b3d;
+using namespace b3d::ct;
 
 /** Converts a Vulkan object type into its string representation. */
 static const char* GetVulkanObjectTypeName(VkObjectType objectType)
@@ -210,9 +210,9 @@ void VulkanGpuBackend::OnStartUp()
 	VkApplicationInfo appInfo;
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pNext = nullptr;
-	appInfo.pApplicationName = "bs::framework app";
+	appInfo.pApplicationName = "B3D Framework app";
 	appInfo.applicationVersion = 1;
-	appInfo.pEngineName = "bs::framework";
+	appInfo.pEngineName = "B3D Framework";
 	appInfo.engineVersion = (B3D_FRAMEWORK_VERSION_MAJOR << 24) | (B3D_FRAMEWORK_VERSION_MINOR << 16) | B3D_FRAMEWORK_VERSION_PATCH;
 
 	// MoltenVK doesn't support 1.1, but we don't need it since the only feature we use from it right now is SPIR-V 1.3,
@@ -476,9 +476,9 @@ void VulkanGpuBackend::OnShutDown()
 	Super::OnShutDown();
 }
 
-namespace bs {
+namespace b3d {
 VulkanGpuBackend& GetVulkanGpuBackend()
 {
 	return static_cast<VulkanGpuBackend&>(VulkanGpuBackend::Instance());
 }
-} // namespace bs
+} // namespace b3d

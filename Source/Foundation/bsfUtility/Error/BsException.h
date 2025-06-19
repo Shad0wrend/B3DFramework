@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Error
 	 *  @{
@@ -54,7 +54,7 @@ namespace bs
 			{
 				StringStream desc;
 
-				desc << "bs::framework EXCEPTION(" << mTypeName << "): "
+				desc << "B3D Framework EXCEPTION(" << mTypeName << "): "
 					 << mDescription
 					 << " in " << mSource;
 
@@ -171,12 +171,12 @@ namespace bs
 #ifndef B3D_EXCEPT
 #	define B3D_EXCEPT(type, desc)                                                                                                  \
 		{                                                                                                                          \
-			static_assert((std::is_base_of<bs::Exception, type>::value), "Invalid exception type (" #type ") for B3D_EXCEPT macro." \
-																		 " It needs to derive from bs::Exception.");               \
+			static_assert((std::is_base_of<b3d::Exception, type>::value), "Invalid exception type (" #type ") for B3D_EXCEPT macro." \
+																		 " It needs to derive from b3d::Exception.");               \
 			GetCrashHandler().ReportCrash(#type, desc, __PRETTY_FUNCTION__, __FILE__, __LINE__);                                     \
 			PlatformUtility::Terminate(true);                                                                                      \
 		}
 #endif
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

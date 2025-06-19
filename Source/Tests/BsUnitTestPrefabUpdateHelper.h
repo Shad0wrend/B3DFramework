@@ -1,9 +1,9 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 #include "BsCorePrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	struct UnitTestSceneB;
 
@@ -20,4 +20,4 @@ namespace bs
 		/** Checks if prefab instance matches the object and resource IDs in the internal prefab hierarchy. */
 		static void TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(TestSuite& testSuite, UnitTestSceneB& instanceScene, const SPtr<UnitTestSceneB>& parentPrefabScene, const UUID& parentPrefabId, const UnorderedMap<UUID, SPtr<UnitTestSceneB>>& prefabSceneLookup);
 	};
-} // namespace bs
+} // namespace b3d

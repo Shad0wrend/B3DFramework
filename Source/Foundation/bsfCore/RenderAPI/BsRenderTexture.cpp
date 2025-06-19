@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsRenderTexture.h"
 #include "Error/BsException.h"
@@ -10,7 +10,7 @@
 
 #include "CoreObject/BsCoreObjectSync.h"
 
-using namespace bs;
+using namespace b3d;
 
 static RenderTargetProperties CreateRenderTextureProperties(const TextureProperties& textureProperties, u32 sliceCount, u32 mipLevel, bool requiresFlipping, bool hwGamma)
 {
@@ -145,7 +145,7 @@ SPtr<ct::RenderProxy> RenderTexture::CreateRenderProxy() const
 	return ct::TextureManager::Instance().CreateRenderTextureInternal(renderProxyCreateInformation);
 }
 
-namespace bs
+namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(RenderTexture, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mRenderTargetProperties)
@@ -171,7 +171,7 @@ RTTIType* RenderTexture::GetRtti() const
 	return RenderTexture::GetRttiStatic();
 }
 
-namespace bs { namespace ct
+namespace b3d { namespace ct
 {
 RenderTexture::RenderTexture(const RenderTextureCreateInformation& createInformation)
 	: mInformation(createInformation)
@@ -218,7 +218,7 @@ SPtr<RenderTexture> RenderTexture::Create(const RenderTextureCreateInformation& 
 
 void RenderTexture::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<bs::RenderTexture::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::RenderTexture::SyncPacket>();
 	if(!syncPacket)
 		return;
 

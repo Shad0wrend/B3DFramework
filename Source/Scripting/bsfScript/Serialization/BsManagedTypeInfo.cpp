@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2019 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2019 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Serialization/BsManagedTypeInfo.h"
 #include "RTTI/BsManagedTypeInfoRTTI.h"
@@ -15,7 +15,7 @@
 #include "Wrappers/BsScriptOrder.h"
 #include "Wrappers/BsScriptRRefBase.h"
 
-using namespace bs;
+using namespace b3d;
 RTTIType* ManagedAssemblyInfo::GetRttiStatic()
 {
 	return ManagedAssemblyInfoRTTI::Instance();

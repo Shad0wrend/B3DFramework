@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "Math/BsRadian.h"
 #include "Math/BsUnitValue.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Implementation
 	 *  @{
@@ -710,14 +710,14 @@ namespace bs
 		template <typename A, typename B>
 		static std::common_type_t<A, B> Min(const A& a, const B& b)
 		{
-			return bs::Min(a, b);
+			return b3d::Min(a, b);
 		}
 
 		/** Returns the minimum value of all the values provided. */
 		template <typename A, typename B, typename... Args>
 		static std::common_type_t<A, B, Args...> Min(const A& a, const B& b, const Args&... args)
 		{
-			return bs::Min(a, b, args...);
+			return b3d::Min(a, b, args...);
 		}
 
 		/** Returns the minimum value of the two provided. */
@@ -731,14 +731,14 @@ namespace bs
 		template <typename A, typename B>
 		static std::common_type_t<A, B> Max(const A& a, const B& b)
 		{
-			return bs::Max(a, b);
+			return b3d::Max(a, b);
 		}
 
 		/** Returns the maximum value of all the values provided. */
 		template <typename A, typename B, typename... Args>
 		static std::common_type_t<A, B, Args...> Max(const A& a, const B& b, const Args&... args)
 		{
-			return bs::Max(a, b, args...);
+			return b3d::Max(a, b, args...);
 		}
 
 		/** Returns the maximum value of the two provided. */
@@ -752,14 +752,14 @@ namespace bs
 		template <typename A, typename B>
 		static std::common_type_t<A, B> Gcd(const A& a, const B& b)
 		{
-			return bs::Gcd(a, b);
+			return b3d::Gcd(a, b);
 		}
 
 		/** Return the least common multiple between two values. */
 		template <typename A, typename B>
 		static std::common_type_t<A, B> Lcm(const A& a, const B& b)
 		{
-			return bs::Lcm(a, b);
+			return b3d::Lcm(a, b);
 		}
 
 		/**
@@ -1192,4 +1192,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

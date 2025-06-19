@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsScriptGUIHorizontalSlider.generated.h"
 #include "BsMonoMethod.h"
@@ -8,7 +8,7 @@
 #include "BsScriptGUIHorizontalSlider.generated.h"
 #include "BsScriptGUIOption.generated.h"
 
-namespace bs
+namespace b3d
 {
 	ScriptGUIHorizontalSlider::ScriptGUIHorizontalSlider(GUIHorizontalSlider* nativeObject)
 		:TScriptGUIElementWrapper(nativeObject)

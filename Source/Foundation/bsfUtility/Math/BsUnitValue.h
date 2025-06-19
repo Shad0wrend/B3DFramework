@@ -1,10 +1,10 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsUtilityPrerequisites.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Math
 	 *  @{
@@ -78,7 +78,7 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d
 
 /** @cond STDLIB */
 
@@ -86,12 +86,12 @@ namespace std
 {
 /** Hash value generator for TUnitValue<T, Unit>. */
 template<typename T, typename Unit>
-struct hash<bs::TUnitValue<T, Unit>>
+struct hash<b3d::TUnitValue<T, Unit>>
 {
-	size_t operator()(const bs::TUnitValue<T, Unit>& value) const
+	size_t operator()(const b3d::TUnitValue<T, Unit>& value) const
 	{
 		size_t hash = 0;
-		bs::B3DCombineHash(hash, value.Value);
+		b3d::B3DCombineHash(hash, value.Value);
 
 		return hash;
 	}

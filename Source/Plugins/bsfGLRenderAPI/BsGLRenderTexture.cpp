@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsGLRenderTexture.h"
 #include "BsGLPixelFormat.h"
 #include "BsGLPixelBuffer.h"
 #include "RenderAPI/BsTextureView.h"
 
-using namespace bs;
+using namespace b3d;
 
 #define PROBE_SIZE 16
 
@@ -24,7 +24,7 @@ GLRenderTexture::GLRenderTexture(const RENDER_TEXTURE_DESC& desc)
 {
 }
 
-namespace bs {
+namespace b3d {
 namespace ct {
 GLRenderTexture::GLRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 	: RenderTexture(desc, deviceIdx), mProperties(desc, true), mFB(nullptr)
@@ -444,4 +444,4 @@ PixelFormat GLRTTManager::GetSupportedAlternative(PixelFormat format)
 	// If none at all, return to default
 	return PF_RGBA8;
 }
-}} // namespace bs::ct
+}} // namespace b3d::ct

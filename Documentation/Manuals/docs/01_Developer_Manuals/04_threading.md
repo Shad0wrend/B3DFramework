@@ -82,7 +82,7 @@ The previous sections covered all the primitives, but there is some more useful 
  - @B3D_THREAD_SLEEP - Pauses the current thread for a set number of milliseconds.
 
 # Thread pool
-Instead of using **Thread** as described in the previous section, you can instead use the @bs::ThreadPool module for running threads. It allows you to re-use threads and avoid paying the cost of thread creation and destruction. It keeps any thread that was retired in idle state, and will re-use it when user requests a new thread.
+Instead of using **Thread** as described in the previous section, you can instead use the @b3d::ThreadPool module for running threads. It allows you to re-use threads and avoid paying the cost of thread creation and destruction. It keeps any thread that was retired in idle state, and will re-use it when user requests a new thread.
 
 An example:
 ~~~~~~~~~~~~~{.cpp}
@@ -95,11 +95,11 @@ ThreadPool::instance().run("MyThread", &workerFunc);
 ~~~~~~~~~~~~~
 
 # Task scheduler
-@bs::TaskScheduler module allows even more fine grained control over threads. It ensures there are only as many threads as the number of logical CPU cores. This ensures good thread distribution accross the cores, so that multiple threads don't fight for resources on the same core.
+@b3d::TaskScheduler module allows even more fine grained control over threads. It ensures there are only as many threads as the number of logical CPU cores. This ensures good thread distribution accross the cores, so that multiple threads don't fight for resources on the same core.
 
-It accomplishes that by storing each worker function as a @bs::Task, which it then dispatches to threads that are free. This ensure you can just queue up as many tasks as required without needing to worry about efficiently utilizing CPU cores.
+It accomplishes that by storing each worker function as a @b3d::Task, which it then dispatches to threads that are free. This ensure you can just queue up as many tasks as required without needing to worry about efficiently utilizing CPU cores.
 
-To create a task call @bs::Task::create with a task name, and a function pointer that will execute the task code.
+To create a task call @b3d::Task::create with a task name, and a function pointer that will execute the task code.
 
 ~~~~~~~~~~~~~{.cpp}
 void workerFunc()
@@ -110,7 +110,7 @@ void workerFunc()
 SPtr<Task> task = Task::create("MyTask", &workerFunc);
 ~~~~~~~~~~~~~
 
-Then run the task by calling @bs::TaskScheduler::addTask().
+Then run the task by calling @b3d::TaskScheduler::addTask().
 
 ~~~~~~~~~~~~~{.cpp}
 TaskScheduler::instance().addTask(task);
@@ -143,13 +143,13 @@ TaskScheduler::instance().addTask(dependency);
 TaskScheduler::instance().addTask(task);
 ~~~~~~~~~~~~~
 
-You can cancel a task by calling @bs::Task::cancel(). Note this will only cancel it if it hasn't started executing already.
+You can cancel a task by calling @b3d::Task::cancel(). Note this will only cancel it if it hasn't started executing already.
 
 ~~~~~~~~~~~~~{.cpp}
 task->cancel();
 ~~~~~~~~~~~~~
 
-Finally, you can block the current thread until a task finished by calling @bs::Task::wait.
+Finally, you can block the current thread until a task finished by calling @b3d::Task::wait.
 
 ~~~~~~~~~~~~~{.cpp}
 task->wait();

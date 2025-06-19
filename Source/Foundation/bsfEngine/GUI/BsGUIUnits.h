@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2025 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "Math/BsVector2.h"
 #include "Math/BsArea2.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup GUI
 	 *  @{
@@ -110,4 +110,4 @@ namespace bs
 	};
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

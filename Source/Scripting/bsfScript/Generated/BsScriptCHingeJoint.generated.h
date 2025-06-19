@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -10,9 +10,9 @@
 #include "../../../Foundation/bsfCore/Physics/BsHingeJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsHingeJoint.h"
 
-namespace bs { class CHingeJoint; }
-namespace bs { struct __LimitAngularRangeInterop; }
-namespace bs
+namespace b3d { class CHingeJoint; }
+namespace b3d { struct __LimitAngularRangeInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptHingeJoint : public TScriptGameObjectWrapper<CHingeJoint, ScriptHingeJoint, ScriptJointWrapperBase>
 	{

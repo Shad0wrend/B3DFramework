@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRenderDocFrameCapture.h"
 #include "Utility/BsDynamicLibraryManager.h"
 #include "Utility/BsDynamicLibrary.h"
 #include <RenderDoc/renderdoc_app.h>
 
-using namespace bs;
+using namespace b3d;
 
 RenderDocFrameCapture::RenderDocFrameCapture(VkInstance vulkanInstance) :
 	mVulkanInstance(vulkanInstance), mRenderDocLibrary(nullptr)

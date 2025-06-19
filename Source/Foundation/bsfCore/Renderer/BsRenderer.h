@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "Material/BsShaderVariation.h"
 #include "RenderAPI/BsGpuCommandBuffer.h"
 
-namespace bs
+namespace b3d
 {
 	class RendererExtension;
 	class LightProbeVolume;
@@ -499,4 +499,4 @@ namespace bs
 
 		/** @} */
 	} // namespace ct
-} // namespace bs
+} // namespace b3d

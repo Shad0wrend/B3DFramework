@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanRenderWindowSurface.h"
 #include "BsVulkanGpuBackend.h"
@@ -6,7 +6,7 @@
 #include "BsVulkanSubmitThread.h"
 #include "BsVulkanSwapChain.h"
 
-using namespace bs::ct;
+using namespace b3d::ct;
 
 VulkanRenderWindowSurface::VulkanRenderWindowSurface(const RenderWindowSurfaceCreateInformation& createInformation)
 	:mPlatformWindowHandle(createInformation.PlatformWindowHandle)

@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "BsCorePrerequisites.h"
 #include "Localization/BsStringTable.h"
 
-namespace bs
+namespace b3d
 {
 	/** @addtogroup Localization
 	 *  @{
@@ -63,4 +63,4 @@ namespace bs
 	B3D_CORE_EXPORT StringTableManager& GetStringTableManager();
 
 	/** @} */
-} // namespace bs
+} // namespace b3d

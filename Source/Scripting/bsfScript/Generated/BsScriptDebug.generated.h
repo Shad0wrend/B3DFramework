@@ -1,4 +1,4 @@
-//********************************* bs::framework - Copyright 2018-2022 Marko Pintera ************************************//
+//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -8,8 +8,8 @@
 #include "../../../Foundation/bsfUtility/Debug/BsLog.h"
 #include "../../../Foundation/bsfUtility/Debug/BsLog.h"
 
-namespace bs { struct __LogEntryInterop; }
-namespace bs
+namespace b3d { struct __LogEntryInterop; }
+namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptDebug : public TScriptTypeDefinition<ScriptDebug>
 	{

@@ -1,4 +1,4 @@
-//************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsMonoManager.h"
 #include "BsMonoAssembly.h"
@@ -19,7 +19,7 @@ int CALLBACK WinMain(
 int main(int __argc, char* __argv[])
 #endif
 {
-	using namespace bs;
+	using namespace b3d;
 
 	// No assembly to run, or Mono directory not provided
 	if(__argc < 2)
@@ -37,8 +37,8 @@ int main(int __argc, char* __argv[])
 	Path engineAssemblyPath = library->GetEngineAssemblyPath();
 
 	auto& monoManager = MonoManager::Instance();
-	bs::MonoAssembly& bsfAssembly = monoManager.loadAssembly(engineAssemblyPath, ENGINE_ASSEMBLY);
-	bs::MonoAssembly& gameAssembly = monoManager.loadAssembly(Path(__argv[1]), __argv[1]);
+	b3d::MonoAssembly& bsfAssembly = monoManager.loadAssembly(engineAssemblyPath, ENGINE_ASSEMBLY);
+	b3d::MonoAssembly& gameAssembly = monoManager.loadAssembly(Path(__argv[1]), __argv[1]);
 	gameAssembly.invoke("Program::Start");
 
 	MonoManager::ShutDown();

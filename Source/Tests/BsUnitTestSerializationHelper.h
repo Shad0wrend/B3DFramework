@@ -1,11 +1,11 @@
-//************************************ bs::framework - Copyright 2024 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2024 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 #include "BsCorePrerequisites.h"
 #include "BsUnitTestSerializableObjects.h"
 #include "Testing/BsTestSuite.h"
 
-namespace bs
+namespace b3d
 {
 	struct UnitTestSerializationHelpers
 	{
@@ -24,4 +24,4 @@ namespace bs
 		/** Asserts that provided maps contain an exact match set of keys (and no other), and all element's match (based on their equality operators). Values are assumed to be pointers and will be dereferenced before comparison. */
 		static void TestAssertObjectsMatch(TestSuite& testSuite, const SPtr<UnitTestSerializationObjectA>& lhs, const SPtr<UnitTestSerializationObjectA>& rhs, bool isDelta);
 	};
-} // namespace bs
+} // namespace b3d
