@@ -6,7 +6,7 @@
 #include "Renderer/BsSkybox.h"
 #include "Renderer/BsReflectionProbe.h"
 #include "Renderer/BsRendererUtility.h"
-#include "BsRendererScene.h"
+#include "BsRenderBeastScene.h"
 #include "BsRendererView.h"
 
 namespace bs {

@@ -6,7 +6,7 @@
 #include "Renderer/BsRenderer.h"
 #include "Renderer/BsRendererMaterial.h"
 #include "BsRendererView.h"
-#include "BsRendererScene.h"
+#include "BsRenderBeastScene.h"
 
 namespace bs
 {

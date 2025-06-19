@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsShadowRendering.h"
 #include "BsRendererView.h"
-#include "BsRendererScene.h"
+#include "BsRenderBeastScene.h"
 #include "Renderer/BsLight.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Material/BsGpuParamsSet.h"

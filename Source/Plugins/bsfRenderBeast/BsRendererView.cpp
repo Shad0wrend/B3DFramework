@@ -8,7 +8,7 @@
 #include "Material/BsShader.h"
 #include "Material/BsGpuParamsSet.h"
 #include "BsRendererLight.h"
-#include "BsRendererScene.h"
+#include "BsRenderBeastScene.h"
 #include "BsRenderBeast.h"
 #include "BsRendererDecal.h"
 #include "Animation/BsAnimationManager.h"

@@ -10,7 +10,7 @@
 #include "Particles/BsParticleDistribution.h"
 #include "Math/BsVector3.h"
 #include "BsRendererParticles.h"
-#include "BsRendererScene.h"
+#include "BsRenderBeastScene.h"
 #include "BsRenderBeast.h"
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsRenderTexture.h"

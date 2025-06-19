@@ -18,7 +18,7 @@
 #include "Shading/BsLightGrid.h"
 #include "BsRendererView.h"
 #include "BsRenderBeastOptions.h"
-#include "BsRendererScene.h"
+#include "BsRenderBeastScene.h"
 #include "BsRenderBeast.h"
 #include "Particles/BsParticleManager.h"
 #include "Particles/BsParticleSystem.h"
