@@ -13,7 +13,7 @@
 #include <regex>
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 u32 D3D11GpuProgram::GlobalProgramId = 0;
 

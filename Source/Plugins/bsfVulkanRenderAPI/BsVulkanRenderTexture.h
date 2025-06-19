@@ -28,7 +28,7 @@ namespace b3d
 		VulkanRenderTexture(const RenderTextureCreateInformation& createInformation);
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**
 		 * Vulkan implementation of a render texture.
@@ -51,7 +51,7 @@ namespace b3d
 			VulkanFramebuffer* mFramebuffer;
 		};
 
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

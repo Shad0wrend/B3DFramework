@@ -7,7 +7,7 @@
 #include "Profiling/BsRenderStats.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanOcclusionQuery::VulkanOcclusionQuery(VulkanGpuDevice& device, bool binary)
 	: OcclusionQuery(binary), mDevice(device), mQueryEndCalled(false), mQueryFinalized(false)

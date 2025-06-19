@@ -12,7 +12,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		struct RendererParticles;
 		class GpuParticleSimulateMat;
@@ -356,10 +356,10 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 namespace b3d
 {
-	B3D_IMPLEMENT_GLOBAL_POOL(ct::GpuParticleSystem, 32)
+	B3D_IMPLEMENT_GLOBAL_POOL(render::GpuParticleSystem, 32)
 }

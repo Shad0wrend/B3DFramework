@@ -4,7 +4,7 @@
 #include "BsVulkanGpuDevice.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanDescriptorLayout::VulkanDescriptorLayout(VulkanGpuDevice& device, VkDescriptorSetLayoutBinding* bindings, u32 numBindings)
 	: mDevice(device)

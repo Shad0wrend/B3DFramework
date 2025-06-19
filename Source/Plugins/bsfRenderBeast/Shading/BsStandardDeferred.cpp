@@ -10,7 +10,7 @@
 #include "BsRendererView.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 PerLightParamDef gPerLightParamDef;
 
@@ -370,4 +370,4 @@ void StandardDeferred::RenderReflProbe(GpuCommandBuffer& commandBuffer, const Re
 		GetRendererUtility().Draw(commandBuffer, stencilMesh);
 	}
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

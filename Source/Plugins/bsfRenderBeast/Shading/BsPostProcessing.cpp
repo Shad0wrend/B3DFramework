@@ -14,7 +14,7 @@
 #include "Utility/BsRendererTextures.h"
 #include "RenderAPI/BsVertexDescription.h"
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 
 void SetSamplerState(const SPtr<GpuParameters>& params, const String& name, const String& secondaryName, const SPtr<SamplerState>& samplerState, bool optional = false)
 {

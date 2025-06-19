@@ -16,7 +16,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderBeast
 		 *  @{
@@ -83,5 +83,5 @@ namespace b3d
 		class RenderTargets;
 		class RendererView;
 		struct LightData;
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

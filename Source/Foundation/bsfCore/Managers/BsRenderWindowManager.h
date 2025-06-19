@@ -24,7 +24,7 @@ namespace b3d
 		SPtr<RenderWindow> CreateRenderWindow(const RenderWindowCreateInformation& createInformation, const SPtr<RenderWindow>& parentWindow);
 
 		/** Creates a render window surface that is appropriate for the currently active platform & GPU backend combination. Thread safe. */
-		virtual SPtr<ct::IRenderWindowSurface> CreateRenderWindowSurface(const ct::RenderWindowSurfaceCreateInformation& createInformation) = 0;
+		virtual SPtr<render::IRenderWindowSurface> CreateRenderWindowSurface(const render::RenderWindowSurfaceCreateInformation& createInformation) = 0;
 
 		/** Called once per frame. Dispatches events. */
 		void Update();

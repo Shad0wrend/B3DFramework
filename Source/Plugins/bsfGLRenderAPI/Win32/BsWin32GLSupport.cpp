@@ -10,10 +10,10 @@
 #include "GL/wglew.h"
 #include <algorithm>
 
-GLenum __stdcall WglewContextInit(b3d::ct::GLSupport* glSupport);
+GLenum __stdcall WglewContextInit(b3d::render::GLSupport* glSupport);
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 template <class C>
 void RemoveDuplicates(C& c)
@@ -342,7 +342,7 @@ SPtr<VideoModeInfo> Win32GLSupport::GetVideoModeInfo() const
 	return B3DMakeShared<Win32VideoModeInfo>();
 }
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 String TranslateWglError()
 {
 	int winError = GetLastError();
@@ -359,4 +359,4 @@ String TranslateWglError()
 
 	return String(errDesc);
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

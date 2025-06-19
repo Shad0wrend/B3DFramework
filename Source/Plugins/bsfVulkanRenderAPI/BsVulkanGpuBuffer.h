@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Vulkan
 		 *  @{
@@ -157,10 +157,10 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 namespace b3d
 {
-	B3D_IMPLEMENT_GLOBAL_POOL(ct::VulkanGpuBuffer, 32)
+	B3D_IMPLEMENT_GLOBAL_POOL(render::VulkanGpuBuffer, 32)
 }

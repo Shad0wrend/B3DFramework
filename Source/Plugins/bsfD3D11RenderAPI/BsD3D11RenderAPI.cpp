@@ -35,7 +35,7 @@
 #include "BsD3D11RenderWindow.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 const StringID& D3D11RenderAPI::GetName() const
 {

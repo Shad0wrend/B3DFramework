@@ -10,20 +10,20 @@ Previously we have shown to how to set **Material** parameters by calling method
 As an alternative you can also set materials through material parameter handles. Once a material handle is retrieved it allows you to set material parameters much more efficiently than by calling the methods above directly. 
 
 To retrieve the handles call any of the following methods, depending on material parameter type:
- - @b3d::ct::Material::getParamTexture - Outputs a @b3d::TMaterialParamTexture<Core> handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamLoadStoreTexture - Outputs a @b3d::TMaterialParamLoadStoreTexture<Core> handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamBuffer - Outputs a @b3d::TMaterialParamBuffer<Core> handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamSamplerState - Outputs a @b3d::TMaterialParamSampState<Core> handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamFloat - Outputs a @MaterialParamFloat handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamVec2 - Outputs a @MaterialParamVec2 handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamVec3 - Outputs a @MaterialParamVec3 handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamVec4 - Outputs a @MaterialParamVec4 handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamColor - Outputs a @MaterialParamColor handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamMat3 - Outputs a @MaterialParamMat3 handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamMat4 - Outputs a @MaterialParamMat4 handle that can be used for reading & writing the parameter value.
- - @b3d::ct::Material::getParamFloatCurve - Outputs a @MaterialParamFloatCurve handle that can be used for assigning an animation curve to a *float* parameter. This can be used as an alternative to **ct::Material::getParamFloat()** in that the value will now be animated over the range of the curve, instead of being just a static value.
- - @b3d::ct::Material::getParamColorGradient - Outputs a @b3d::TMaterialColorGradientParam<Core> handle that can be used for assigning a color gradient to a *Color* parameter. This can be used as an alternative to **ct::Material::getParamColor()** in that the value will now be animated over the range of the gradient, instead of being just a static value.
- - @b3d::ct::Material::getParamSpriteTexture - Outputs a @b3d::TMaterialParamSpriteTexture<Core> handle that can be used for assigning a sprite texture to a *texture* parameter. This can be used as an alternative to **ct::Material::getParamTexture()** in that the sprite texture can be animated while a normal texture is always static.
+ - @b3d::render::Material::getParamTexture - Outputs a @b3d::TMaterialParamTexture<Core> handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamLoadStoreTexture - Outputs a @b3d::TMaterialParamLoadStoreTexture<Core> handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamBuffer - Outputs a @b3d::TMaterialParamBuffer<Core> handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamSamplerState - Outputs a @b3d::TMaterialParamSampState<Core> handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamFloat - Outputs a @MaterialParamFloat handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamVec2 - Outputs a @MaterialParamVec2 handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamVec3 - Outputs a @MaterialParamVec3 handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamVec4 - Outputs a @MaterialParamVec4 handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamColor - Outputs a @MaterialParamColor handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamMat3 - Outputs a @MaterialParamMat3 handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamMat4 - Outputs a @MaterialParamMat4 handle that can be used for reading & writing the parameter value.
+ - @b3d::render::Material::getParamFloatCurve - Outputs a @MaterialParamFloatCurve handle that can be used for assigning an animation curve to a *float* parameter. This can be used as an alternative to **render::Material::getParamFloat()** in that the value will now be animated over the range of the curve, instead of being just a static value.
+ - @b3d::render::Material::getParamColorGradient - Outputs a @b3d::TMaterialColorGradientParam<Core> handle that can be used for assigning a color gradient to a *Color* parameter. This can be used as an alternative to **render::Material::getParamColor()** in that the value will now be animated over the range of the gradient, instead of being just a static value.
+ - @b3d::render::Material::getParamSpriteTexture - Outputs a @b3d::TMaterialParamSpriteTexture<Core> handle that can be used for assigning a sprite texture to a *texture* parameter. This can be used as an alternative to **render::Material::getParamTexture()** in that the sprite texture can be animated while a normal texture is always static.
  
 Handles provide **set()** and **get()** methods that can be used for writing and reading the parameter values. 
  
@@ -198,7 +198,7 @@ RenderAPI& rapi = RenderAPI::instance();
 rapi.setGraphicsPipeline(pass->getGraphicsPipelineState());
 ~~~~~~~~~~~~~
 
-Alternatively you can use the helper methods @b3d::ct::RendererUtility::setPass or @b3d::ct::RendererUtility::setComputePass.
+Alternatively you can use the helper methods @b3d::render::RendererUtility::setPass or @b3d::render::RendererUtility::setComputePass.
 
 ## Binding material parameters
 In order to bind material parameters we need to somehow get access to a **GpuParams** object from the material. This is done through an intermediate class @b3d::GpuParamsSet, created by a call to @b3d::Material::createParamsSet(), which as a parameter takes a technique index.

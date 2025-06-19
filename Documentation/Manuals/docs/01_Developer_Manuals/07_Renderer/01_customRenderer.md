@@ -12,7 +12,7 @@ Renderer isn't actually aware of scene objects and components, and instead opera
 All such lower level objects used by the renderer are also **CoreObject**%s, meaning they have both a simulation and a core thread counterparts. 
  
 # Renderer plugin interface
-To create your own renderer you must implement the @b3d::ct::Renderer interface. Renderer executes on the core thread, although there are a few simulation thread methods we'll note specifically.
+To create your own renderer you must implement the @b3d::render::Renderer interface. Renderer executes on the core thread, although there are a few simulation thread methods we'll note specifically.
 
 ## Scene state notifications
 Majority of the renderer interface consists of methods that notify the renderer when certain objects are added, updated or removed from the scene. The types of objects that the renderer cares about are:
@@ -26,36 +26,36 @@ Majority of the renderer interface consists of methods that notify the renderer 
  - @b3d::Decal
   
 Whenever such objects are created, destroyed or some property on them is updated, one of the following methods is called:
- - @b3d::ct::Renderer::notifyCameraAdded - Called when a new **Camera** is created (e.g. when a **CCamera** component is added to the scene).
- - @b3d::ct::Renderer::notifyCameraUpdated - Called when **Camera** position, rotation or scale changes.
- - @b3d::ct::Renderer::notifyCameraRemoved - Called when a **Camera** is destroyed.
- - @b3d::ct::Renderer::notifyRenderableAdded - Called when a new **Renderable** is created (e.g. when a **CRenderable** component is added to the scene).
- - @b3d::ct::Renderer::notifyRenderableUpdated - Called when **Renderable** position, rotation or scale changes.
- - @b3d::ct::Renderer::notifyRenderableRemoved - Called when a **Renderable** is destroyed.
- - @b3d::ct::Renderer::notifyLightAdded - Called when a new **Light** is created (e.g. when a **CLight** component is added to the scene).
- - @b3d::ct::Renderer::notifyLightUpdated - Called when **Light** position, rotation or scale changes.
- - @b3d::ct::Renderer::notifyLightRemoved - Called when a **Light** is destroyed.
- - @b3d::ct::Renderer::notifyReflectionProbeAdded - Called when a new **ReflectionProbe** is created (e.g. when a **CReflectionProbe** component is added to the scene).
- - @b3d::ct::Renderer::notifyReflectionProbeUpdated - Called when **ReflectionProbe** position, rotation or scale changes.
- - @b3d::ct::Renderer::notifyReflectionProbeRemoved - Called when a **ReflectionProbe** is destroyed.
- - @b3d::ct::Renderer::notifySkyboxAdded - Called when a new **Skybox** is created (e.g. when a **CSkybox** component is added to the scene).
- - @b3d::ct::Renderer::notifySkyboxRemoved - Called when a **Skybox** is destroyed. 
- - @b3d::ct::Renderer::notifyLightProbeVolumeAdded - Called when a new **LightProbeVolume** is created (e.g. when a **CLightProbeVolume** component is added to the scene).
- - @b3d::ct::Renderer::notifyLightProbeVolumeUpdated - Called when probes are added or modified in a **LightProbeVolume**. 
- - @b3d::ct::Renderer::notifyLightProbeVolumeRemoved - Called when a **LightProbeVolume** is destroyed.
- - @b3d::ct::Renderer::notifyParticleSystemAdded - Called when a new **ParticleSystem** is created (e.g. when a **CParticleSystem** component is added to the scene).
- - @b3d::ct::Renderer::notifyParticleSystemUpdated - Called when particle system transform changes or when its settings are modified. 
- - @b3d::ct::Renderer::notifyParticleSystemRemoved - Called when a **ParticleSystem** is destroyed.
- - @b3d::ct::Renderer::notifyDecalAdded - Called when a new **Decal** is created (e.g. when a **CDecal** component is added to the scene).
- - @b3d::ct::Renderer::notifyDecalUpdated - Called when decal position, rotation or scale changes.
- - @b3d::ct::Renderer::notifyDecalRemoved - Called when a **Decal** is destroyed.
+ - @b3d::render::Renderer::notifyCameraAdded - Called when a new **Camera** is created (e.g. when a **CCamera** component is added to the scene).
+ - @b3d::render::Renderer::notifyCameraUpdated - Called when **Camera** position, rotation or scale changes.
+ - @b3d::render::Renderer::notifyCameraRemoved - Called when a **Camera** is destroyed.
+ - @b3d::render::Renderer::notifyRenderableAdded - Called when a new **Renderable** is created (e.g. when a **CRenderable** component is added to the scene).
+ - @b3d::render::Renderer::notifyRenderableUpdated - Called when **Renderable** position, rotation or scale changes.
+ - @b3d::render::Renderer::notifyRenderableRemoved - Called when a **Renderable** is destroyed.
+ - @b3d::render::Renderer::notifyLightAdded - Called when a new **Light** is created (e.g. when a **CLight** component is added to the scene).
+ - @b3d::render::Renderer::notifyLightUpdated - Called when **Light** position, rotation or scale changes.
+ - @b3d::render::Renderer::notifyLightRemoved - Called when a **Light** is destroyed.
+ - @b3d::render::Renderer::notifyReflectionProbeAdded - Called when a new **ReflectionProbe** is created (e.g. when a **CReflectionProbe** component is added to the scene).
+ - @b3d::render::Renderer::notifyReflectionProbeUpdated - Called when **ReflectionProbe** position, rotation or scale changes.
+ - @b3d::render::Renderer::notifyReflectionProbeRemoved - Called when a **ReflectionProbe** is destroyed.
+ - @b3d::render::Renderer::notifySkyboxAdded - Called when a new **Skybox** is created (e.g. when a **CSkybox** component is added to the scene).
+ - @b3d::render::Renderer::notifySkyboxRemoved - Called when a **Skybox** is destroyed. 
+ - @b3d::render::Renderer::notifyLightProbeVolumeAdded - Called when a new **LightProbeVolume** is created (e.g. when a **CLightProbeVolume** component is added to the scene).
+ - @b3d::render::Renderer::notifyLightProbeVolumeUpdated - Called when probes are added or modified in a **LightProbeVolume**. 
+ - @b3d::render::Renderer::notifyLightProbeVolumeRemoved - Called when a **LightProbeVolume** is destroyed.
+ - @b3d::render::Renderer::notifyParticleSystemAdded - Called when a new **ParticleSystem** is created (e.g. when a **CParticleSystem** component is added to the scene).
+ - @b3d::render::Renderer::notifyParticleSystemUpdated - Called when particle system transform changes or when its settings are modified. 
+ - @b3d::render::Renderer::notifyParticleSystemRemoved - Called when a **ParticleSystem** is destroyed.
+ - @b3d::render::Renderer::notifyDecalAdded - Called when a new **Decal** is created (e.g. when a **CDecal** component is added to the scene).
+ - @b3d::render::Renderer::notifyDecalUpdated - Called when decal position, rotation or scale changes.
+ - @b3d::render::Renderer::notifyDecalRemoved - Called when a **Decal** is destroyed.
  
 Your renderer implementation can choose to implement some or all of those methods. By implementing these methods your renderer implementation is expected to keep track of the scene state, and then use that scene state for rendering. For example most renderers will at least need to keep track of all active cameras and renderable objects.
  
-Note that *Added/*Removed methods don't only get called on object creation/destruction. If some major property of the object changes (e.g. a mesh or a material on a **Renderable**), the system will call **ct::Renderer::notifyRenderableRemoved()** followed by a call to **ct::Renderer::notifyRenderableAdded()**.
+Note that *Added/*Removed methods don't only get called on object creation/destruction. If some major property of the object changes (e.g. a mesh or a material on a **Renderable**), the system will call **render::Renderer::notifyRenderableRemoved()** followed by a call to **render::Renderer::notifyRenderableAdded()**.
  
 ## Rendering
-Aside from keeping track of the state of the scene your renderer must also implement @b3d::ct::Renderer::renderAll. This method will be called every frame and it is the starting point for all rendering. Note that this method gets called from the simulation thread, and you are expected to manually launch rendering on the core thread.
+Aside from keeping track of the state of the scene your renderer must also implement @b3d::render::Renderer::renderAll. This method will be called every frame and it is the starting point for all rendering. Note that this method gets called from the simulation thread, and you are expected to manually launch rendering on the core thread.
 
 ~~~~~~~~~~~~~{.cpp}
 class MyRenderer : public Renderer
@@ -80,7 +80,7 @@ class MyRenderer : public Renderer
 The implementation of your rendering method should iterate over all renderable objects, cameras, lights or other provided objects (depending on what kind of rendering you wish to do). The rendering happens through the low-level rendering API as described in earlier manuals. At the end of rendering, every render target in every active camera should be filled with an image of the rendered scene. During rendering you should consider mesh and material set on renderable objects, and optionally apply lighting, special or post-processing effects as needed. 
 
 ## Name
-You are required to give your renderer a name by overriding @b3d::ct::Renderer::getName. 
+You are required to give your renderer a name by overriding @b3d::render::Renderer::getName. 
 
 ~~~~~~~~~~~~~{.cpp}
 class MyRenderer : public Renderer
@@ -133,12 +133,12 @@ class MyRenderer : public Renderer
 While what we have shown so far is enough to create a custom renderer, there are also a variety of utilities that can help out in the process. These systems aren't critical for renderer creation, but instead provide an easier way to perform commonly required functions.
 
 ## RendererUtility
-@b3d::ct::RendererUtility provides some commonly required functionality for rendering. For the most part it provides methods that are wrappers around various **RenderAPI** methods described previously. It can be accessed globally through @b3d::ct::GetRendererUtility() and the relevant methods are:
- - @b3d::ct::RendererUtility::setPass - Binds a pass from a specific **Material** for rendering. Any further draw calls will be rendered using this pass.
- - @b3d::ct::RendererUtility::setPassParams - Binds parameters (textures, samplers, etc.) from a **Material**, in the form of **GpuParamsSet**. Any further draw calls will be rendered using these parameters.
- - @b3d::ct::RendererUtility::draw - Draws a specific sub-mesh of the provided **ct::Mesh**, using the currently bound pass.
- - @b3d::ct::RendererUtility::blit - Copies the contents of the provided texture into the currently bound render target.
- - @b3d::ct::RendererUtility::drawScreenQuad - Draws a quad covering the screen using the currently bound pass.
+@b3d::render::RendererUtility provides some commonly required functionality for rendering. For the most part it provides methods that are wrappers around various **RenderAPI** methods described previously. It can be accessed globally through @b3d::render::GetRendererUtility() and the relevant methods are:
+ - @b3d::render::RendererUtility::setPass - Binds a pass from a specific **Material** for rendering. Any further draw calls will be rendered using this pass.
+ - @b3d::render::RendererUtility::setPassParams - Binds parameters (textures, samplers, etc.) from a **Material**, in the form of **GpuParamsSet**. Any further draw calls will be rendered using these parameters.
+ - @b3d::render::RendererUtility::draw - Draws a specific sub-mesh of the provided **render::Mesh**, using the currently bound pass.
+ - @b3d::render::RendererUtility::blit - Copies the contents of the provided texture into the currently bound render target.
+ - @b3d::render::RendererUtility::drawScreenQuad - Draws a quad covering the screen using the currently bound pass.
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<Material> material = ...;
@@ -152,16 +152,16 @@ GetRendererUtility().draw(mesh, mesh->getProperties().getSubMesh(0));
 ~~~~~~~~~~~~~
 
 ## Render queue
-@b3d::ct::RenderQueue allows you to sort and group scene objects for rendering. For example transparent objects might need to be sorted back to front based on their distance from the camera. It is also often useful to group objects if they share the same material, to reduce state switching which can improve performance.
+@b3d::render::RenderQueue allows you to sort and group scene objects for rendering. For example transparent objects might need to be sorted back to front based on their distance from the camera. It is also often useful to group objects if they share the same material, to reduce state switching which can improve performance.
 
-Use @b3d::ct::RenderQueue::add to add new objects to the queue. It expects a @b3d::ct::RenderableElement which you can create from information provided by **Renderable** when **ct::Renderer::notifyRenderableAdded()** is called. Normally you wish to have a single **ct::RenderableElement** for each sub-mesh present in the renderable object's mesh.
+Use @b3d::render::RenderQueue::add to add new objects to the queue. It expects a @b3d::render::RenderableElement which you can create from information provided by **Renderable** when **render::Renderer::notifyRenderableAdded()** is called. Normally you wish to have a single **render::RenderableElement** for each sub-mesh present in the renderable object's mesh.
 
-Once all elements are in the queue, you can call @b3d::ct::RenderQueue::setStateReduction to select how to sort the objects:
- - @b3d::ct::StateReduction::None - Elements will be sorted by distance but no state reduction by material will occurr.
- - @b3d::ct::StateReduction::Material - Elements will be sorted by material first, then by distance.
- - @b3d::ct::StateReduction::Distance - Elements will be sorted by distance first, then by material.
+Once all elements are in the queue, you can call @b3d::render::RenderQueue::setStateReduction to select how to sort the objects:
+ - @b3d::render::StateReduction::None - Elements will be sorted by distance but no state reduction by material will occurr.
+ - @b3d::render::StateReduction::Material - Elements will be sorted by material first, then by distance.
+ - @b3d::render::StateReduction::Distance - Elements will be sorted by distance first, then by material.
  
-Once the state reduction mode is set call @b3d::ct::RenderQueue::sort, and then @b3d::ct::RenderQueue::getSortedElements to retrieve a sorted list of render elements. The returned list contains a list of @b3d::ct::RenderQueueElement which lets you know exactly which render element to render using which pass, and also tells you when a new pass needs to be applied.
+Once the state reduction mode is set call @b3d::render::RenderQueue::sort, and then @b3d::render::RenderQueue::getSortedElements to retrieve a sorted list of render elements. The returned list contains a list of @b3d::render::RenderQueueElement which lets you know exactly which render element to render using which pass, and also tells you when a new pass needs to be applied.
 
 For example:
 ~~~~~~~~~~~~~{.cpp}
@@ -180,7 +180,7 @@ const Vector<RenderQueueElement>& sortedElements = queue->getSortedElements();
 ~~~~~~~~~~~~~
 
 ## Renderer material
-Often the renderer needs to use special shaders for various effects (e.g. resolving lighting for a deferred renderer or post-processing effects like FXAA). Unlike shaders and materials used by renderable objects, these shaders are built into the engine. Since we know they'll always be there we can make it easier for the renderer to load and use them by implementing the @b3d::ct::RendererMaterial interface. 
+Often the renderer needs to use special shaders for various effects (e.g. resolving lighting for a deferred renderer or post-processing effects like FXAA). Unlike shaders and materials used by renderable objects, these shaders are built into the engine. Since we know they'll always be there we can make it easier for the renderer to load and use them by implementing the @b3d::render::RendererMaterial interface. 
 
 The template parameter must be name of your material implementation class. The class must contain a @RMAT_DEF macro which contains the filename of the shader the renderer material uses. The shader file should be present in the "Data/Raw/Engine/Shaders/" folder. 
 
@@ -193,7 +193,7 @@ class DownsampleMat : public RendererMaterial<DownsampleMat>
 };
 ~~~~~~~~~~~~~
 
-Once defined the renderer material can be accessed through the static @b3d::ct::RendererMaterial::get<T>() method.
+Once defined the renderer material can be accessed through the static @b3d::render::RendererMaterial::get<T>() method.
 
 ~~~~~~~~~~~~~{.cpp}
 DownsampleMat* renderMat = DownsampleMat::get():
@@ -239,7 +239,7 @@ class DownsampleMat : public RendererMaterial<DownsampleMat>
 };
 ~~~~~~~~~~~~~
 
-Note that a helper method @b3d::ct::RendererMaterial::bind() is provided, which will bind both the GPU pipeline and parameters.
+Note that a helper method @b3d::render::RendererMaterial::bind() is provided, which will bind both the GPU pipeline and parameters.
 
 ~~~~~~~~~~~~~{.cpp}
 // External code wanting to run the material
@@ -251,7 +251,7 @@ renderMat->execute(inputTex);
 
 ### Variations
 
-If your BSL file contains shader variations, then you can call @b3d::ct::RendererMaterial::get<T>(const ShaderVariation&) to retrieve a specific variation. Variations were explained in more detail in the BSL manual.
+If your BSL file contains shader variations, then you can call @b3d::render::RendererMaterial::get<T>(const ShaderVariation&) to retrieve a specific variation. Variations were explained in more detail in the BSL manual.
 
 ~~~~~~~~~~~~~{.cpp}
 // External code wanting to run a specific variation of the material
@@ -417,15 +417,15 @@ for (auto& entry : texParams)
 ~~~~~~~~~~~~~
 
 ## GpuResourcePool
-Although you can create textures and buffers manually as described in the low level rendering API manual, @b3d::ct::GpuResourcePool provides a simpler and more efficient way of doing it. It will keep alive any referenced textures and buffers, so that other systems may re-use them if their size/formats match. This can improve performance when using many temporary/intermediary render textures (like in post-processing) or load-store buffers.
+Although you can create textures and buffers manually as described in the low level rendering API manual, @b3d::render::GpuResourcePool provides a simpler and more efficient way of doing it. It will keep alive any referenced textures and buffers, so that other systems may re-use them if their size/formats match. This can improve performance when using many temporary/intermediary render textures (like in post-processing) or load-store buffers.
 
-To request a render texture, first populate the @b3d::ct::POOLED_RENDER_TEXTURE_DESC descriptor, by calling any of @b3d::ct::POOLED_RENDER_TEXTURE_DESC::create2D, @b3d::ct::POOLED_RENDER_TEXTURE_DESC::create3D or @b3d::ct::POOLED_RENDER_TEXTURE_DESC::createCube.
+To request a render texture, first populate the @b3d::render::POOLED_RENDER_TEXTURE_DESC descriptor, by calling any of @b3d::render::POOLED_RENDER_TEXTURE_DESC::create2D, @b3d::render::POOLED_RENDER_TEXTURE_DESC::create3D or @b3d::render::POOLED_RENDER_TEXTURE_DESC::createCube.
 
-To request a buffer, populate the @b3d::ct::POOLED_STORAGE_BUFFER_DESC descriptor by calling either @b3d::ct::POOLED_STORAGE_BUFFER_DESC::createStandard or @b3d::ct::POOLED_STORAGE_BUFFER_DESC::createStructured.
+To request a buffer, populate the @b3d::render::POOLED_STORAGE_BUFFER_DESC descriptor by calling either @b3d::render::POOLED_STORAGE_BUFFER_DESC::createStandard or @b3d::render::POOLED_STORAGE_BUFFER_DESC::createStructured.
 
-Then call @b3d::ct::GpuResourcePool::get with the provided descriptor. This will either create a new render texture/buffer, or return one from the pool. The returned object is @b3d::ct::PooledRenderTexture for textures and @b3d::ct::PooledStorageBuffer for buffers.
+Then call @b3d::render::GpuResourcePool::get with the provided descriptor. This will either create a new render texture/buffer, or return one from the pool. The returned object is @b3d::render::PooledRenderTexture for textures and @b3d::render::PooledStorageBuffer for buffers.
 
-Once you are done using the texture or buffer, call @b3d::ct::GpuResourcePool::release to return the object to the pool, and make it available for other systems. If you plan on using this object again, make sure to keep a reference to the **ct::PooledRenderTexture** / **ct::PooledStorageBuffer** object. This will prevent the pool from fully destroying the object so it may be reused.
+Once you are done using the texture or buffer, call @b3d::render::GpuResourcePool::release to return the object to the pool, and make it available for other systems. If you plan on using this object again, make sure to keep a reference to the **render::PooledRenderTexture** / **render::PooledStorageBuffer** object. This will prevent the pool from fully destroying the object so it may be reused.
 
 ~~~~~~~~~~~~~{.cpp}
 // An example creating a pooled render texture
@@ -439,6 +439,6 @@ GpuResourcePool::instance().release(pooledRT);
 ~~~~~~~~~~~~~
 
 ## Renderer options
-You can customize your rendering at runtime by implementing the @b3d::ct::RendererOptions class. Your **ct::RendererOptions** implementation can then be assigned to the renderer by calling @b3d::ct::Renderer::setOptions, and accessed within the renderer via the **Renderer::mOptions** field. No default options are provided and it's up to your renderer to decide what it requires.
+You can customize your rendering at runtime by implementing the @b3d::render::RendererOptions class. Your **render::RendererOptions** implementation can then be assigned to the renderer by calling @b3d::render::Renderer::setOptions, and accessed within the renderer via the **Renderer::mOptions** field. No default options are provided and it's up to your renderer to decide what it requires.
 
 Be aware that options are set from the simulation thread, and if you want to use them on the core thread you need to either properly synchronize the access, or send a copy of the options to the core thread.

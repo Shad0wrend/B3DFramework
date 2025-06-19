@@ -8,7 +8,7 @@ namespace b3d
 {
 	class RendererExtension;
 
-	namespace ct
+	namespace render
 	{
 		struct SceneInfo;
 		class RendererViewGroup;
@@ -781,5 +781,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

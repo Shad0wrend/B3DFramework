@@ -137,7 +137,7 @@ namespace b3d
 		/**
 		 * Scissor rectangle allows you to cull all pixels outside of the scissor rectangle.
 		 *
-		 * @see		ct::RenderAPI::setScissorRect
+		 * @see		render::RenderAPI::setScissorRect
 		 */
 		bool ScissorEnable = false;
 

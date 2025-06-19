@@ -10,7 +10,7 @@
 #include "Shading/BsStandardDeferred.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 static const u32 kLightDataBufferIncrement = 16 * sizeof(LightData);
 
@@ -378,4 +378,4 @@ void VisibleLightData::GatherInfluencingLights(const Bounds& bounds, const Light
 
 LightsParamDef gLightsParamDef;
 LightAndReflProbeParamsParamDef gLightAndReflProbeParamsParamDef;
-}} // namespace b3d::ct
+}} // namespace b3d::render

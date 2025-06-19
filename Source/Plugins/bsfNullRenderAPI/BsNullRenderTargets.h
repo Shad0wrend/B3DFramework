@@ -8,7 +8,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class NullRenderWindow;
 	}
@@ -52,23 +52,23 @@ namespace b3d
 		void GetCustomAttribute(const String& name, void* pData) const override;
 
 		/** @copydoc RenderWindow::GetCore */
-		SPtr<ct::NullRenderWindow> GetCore() const;
+		SPtr<render::NullRenderWindow> GetCore() const;
 
 	protected:
 		friend class NullRenderWindowManager;
-		friend class ct::NullRenderWindow;
+		friend class render::NullRenderWindow;
 
 		NullRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
 
 		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 		void SyncProperties() override;
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<render::CoreObject> CreateCore() const override;
 
 	private:
 		RenderWindowProperties mProperties;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Null implementation of a render texture. */
 		class NullRenderTexture : public RenderTexture
@@ -108,7 +108,7 @@ namespace b3d
 			RenderWindowProperties mProperties;
 			RenderWindowProperties mSyncedProperties;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

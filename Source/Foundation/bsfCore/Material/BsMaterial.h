@@ -782,12 +782,12 @@ namespace b3d
 		/** @} */
 	private:
 		struct SyncPacket;
-		friend class ct::Material;
+		friend class render::Material;
 
 		Material();
 		Material(const HShader& shader, const ShaderVariationParameters& variation);
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
@@ -822,7 +822,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Material-Internal
 		 *  @{
@@ -859,5 +859,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

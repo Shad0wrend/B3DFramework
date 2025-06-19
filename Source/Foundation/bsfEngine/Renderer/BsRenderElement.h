@@ -7,7 +7,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Renderer-Engine-Internal
 		 *  @{
@@ -46,5 +46,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

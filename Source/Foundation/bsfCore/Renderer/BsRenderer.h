@@ -23,7 +23,7 @@ namespace b3d
 		const ParticlePerFrameData* Particles = nullptr;
 	};
 
-	namespace ct
+	namespace render
 	{
 		class GpuCommandBufferPool;
 		class RendererTask;
@@ -498,5 +498,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

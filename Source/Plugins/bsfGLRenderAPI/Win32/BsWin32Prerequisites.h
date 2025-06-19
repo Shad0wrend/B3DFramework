@@ -7,7 +7,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup GL
 		 *  @{
@@ -21,5 +21,5 @@ namespace b3d
 		String TranslateWglError();
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

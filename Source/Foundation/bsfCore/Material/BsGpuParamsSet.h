@@ -187,7 +187,7 @@ namespace b3d
 		{}
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread version of TGpuParamsSet<IsRenderProxy>. */
 		class B3D_CORE_EXPORT GpuParamsSet : public TGpuParamsSet<true>
@@ -199,7 +199,7 @@ namespace b3d
 				: TGpuParamsSet(technique, shader, params)
 			{}
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

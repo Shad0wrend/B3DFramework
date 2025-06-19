@@ -10,7 +10,7 @@
 #include "Threading/BsScheduler.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 static constexpr bool kEnableSubmitThread = true;
 
@@ -182,7 +182,7 @@ u32 VulkanSubmitThread::GetThreadId() const
 	return mCommandQueue.GetThreadId();
 }
 
-namespace b3d::ct {
+namespace b3d::render {
 	VulkanSubmitThread& GetVulkanSubmitThread()
 	{
 		return VulkanSubmitThread::Instance();
@@ -198,4 +198,4 @@ namespace b3d::ct {
 
 		B3D_ASSERT((currentThreadId == submitThreadId) && "This method can only be accessed from the submit thread.");
 	}
-} // namespace b3d::ct
+} // namespace b3d::render

@@ -8,7 +8,7 @@
 #include "BsVulkanGpuBackend.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanBuffer::VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VmaAllocation allocation, u32 rowPitch, u32 slicePitch, const StringView& name)
 	: VulkanResource(owner, false, name), mType(type), mFlags(flags), mBuffer(buffer), mAllocation(allocation), mRowPitch(rowPitch)

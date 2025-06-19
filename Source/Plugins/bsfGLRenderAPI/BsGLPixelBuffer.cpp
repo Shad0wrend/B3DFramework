@@ -11,7 +11,7 @@
 #include "Math/BsMath.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 GLPixelBuffer::GLPixelBuffer(u32 inWidth, u32 inHeight, u32 inDepth, PixelFormat inFormat, GpuBufferUsage usage)
 	: mUsage(usage), mWidth(inWidth), mHeight(inHeight), mDepth(inDepth), mFormat(inFormat), mBuffer(inWidth, inHeight, inDepth, inFormat)

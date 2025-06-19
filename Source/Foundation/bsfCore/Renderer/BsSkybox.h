@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class RendererTask;
 	}
@@ -63,7 +63,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		class Skybox;
 	}
@@ -81,7 +81,7 @@ namespace b3d
 		static SPtr<Skybox> Create();
 	
 	protected:
-		friend class ct::Skybox;
+		friend class render::Skybox;
 		struct SyncPacket;
 
 		Skybox();
@@ -92,13 +92,13 @@ namespace b3d
 		 */
 		void FilterTexture();
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		SPtr<Texture> mFilteredRadiance;
 		SPtr<Texture> mIrradiance;
-		SPtr<ct::RendererTask> mRendererTask;
+		SPtr<render::RendererTask> mRendererTask;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -112,7 +112,7 @@ namespace b3d
 		static SPtr<Skybox> CreateEmpty();
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread counterpart of a b3d::Skybox */
 		class B3D_CORE_EXPORT Skybox : public RenderProxy, public TSkybox<true>
@@ -142,7 +142,7 @@ namespace b3d
 			SPtr<Texture> mFilteredRadiance;
 			SPtr<Texture> mIrradiance;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

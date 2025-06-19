@@ -13,7 +13,7 @@
 #include "Math/BsMath.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 static VulkanImageCreateInformation BuildImageCreateInformation(VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props)
 {

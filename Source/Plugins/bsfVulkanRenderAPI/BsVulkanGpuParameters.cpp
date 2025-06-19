@@ -14,7 +14,7 @@
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 static bool EnsureImageViewValidForShader(const VulkanImageView& view, const GpuParameterObjectType expectedType)
 {

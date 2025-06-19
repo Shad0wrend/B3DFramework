@@ -62,13 +62,13 @@ static RenderTargetProperties CreateRenderTextureProperties(const RenderTextureC
 	return RenderTargetProperties();
 }
 
-static RenderTargetProperties CreateRenderTextureProperties(const ct::RenderTextureCreateInformation& createInformation, bool requiresFlipping)
+static RenderTargetProperties CreateRenderTextureProperties(const render::RenderTextureCreateInformation& createInformation, bool requiresFlipping)
 {
 	u32 firstIndex = ~0u;
 	bool useHardwareSRGB = false;
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 	{
-		SPtr<ct::Texture> texture = createInformation.ColorSurfaces[i].Texture;
+		SPtr<render::Texture> texture = createInformation.ColorSurfaces[i].Texture;
 
 		if(texture == nullptr)
 			continue;
@@ -81,7 +81,7 @@ static RenderTargetProperties CreateRenderTextureProperties(const ct::RenderText
 
 	if(firstIndex == ~0u)
 	{
-		SPtr<ct::Texture> texture = createInformation.DepthStencilSurface.Texture;
+		SPtr<render::Texture> texture = createInformation.DepthStencilSurface.Texture;
 		if(texture != nullptr)
 		{
 			return CreateRenderTextureProperties(texture->GetProperties(), createInformation.DepthStencilSurface.FaceCount, createInformation.DepthStencilSurface.MipLevel, requiresFlipping, false);
@@ -89,7 +89,7 @@ static RenderTargetProperties CreateRenderTextureProperties(const ct::RenderText
 	}
 	else
 	{
-		SPtr<ct::Texture> texture = createInformation.ColorSurfaces[firstIndex].Texture;
+		SPtr<render::Texture> texture = createInformation.ColorSurfaces[firstIndex].Texture;
 
 		return CreateRenderTextureProperties(texture->GetProperties(), createInformation.ColorSurfaces[firstIndex].FaceCount, createInformation.ColorSurfaces[firstIndex].MipLevel, requiresFlipping, useHardwareSRGB);
 	}
@@ -122,13 +122,13 @@ RenderTexture::RenderTexture(const RenderTextureCreateInformation& createInforma
 	mRenderTargetProperties = CreateRenderTextureProperties(createInformation, false);
 }
 
-SPtr<ct::RenderProxy> RenderTexture::CreateRenderProxy() const
+SPtr<render::RenderProxy> RenderTexture::CreateRenderProxy() const
 {
-	ct::RenderTextureCreateInformation renderProxyCreateInformation;
+	render::RenderTextureCreateInformation renderProxyCreateInformation;
 
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 	{
-		ct::RenderSurfaceInformation surfaceInformation;
+		render::RenderSurfaceInformation surfaceInformation;
 		surfaceInformation.Texture = B3DGetRenderProxy(mInformation.ColorSurfaces[i].Texture);
 		surfaceInformation.Face = mInformation.ColorSurfaces[i].Face;
 		surfaceInformation.FaceCount = mInformation.ColorSurfaces[i].FaceCount;
@@ -142,7 +142,7 @@ SPtr<ct::RenderProxy> RenderTexture::CreateRenderProxy() const
 	renderProxyCreateInformation.DepthStencilSurface.FaceCount = mInformation.DepthStencilSurface.FaceCount;
 	renderProxyCreateInformation.DepthStencilSurface.MipLevel = mInformation.DepthStencilSurface.MipLevel;
 
-	return ct::TextureManager::Instance().CreateRenderTextureInternal(renderProxyCreateInformation);
+	return render::TextureManager::Instance().CreateRenderTextureInternal(renderProxyCreateInformation);
 }
 
 namespace b3d
@@ -171,7 +171,7 @@ RTTIType* RenderTexture::GetRtti() const
 	return RenderTexture::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 RenderTexture::RenderTexture(const RenderTextureCreateInformation& createInformation)
 	: mInformation(createInformation)

@@ -121,11 +121,11 @@ Pass::Pass(const PassCreateInformation& createInformation)
 	: TPass(createInformation)
 {}
 
-SPtr<ct::RenderProxy> Pass::CreateRenderProxy() const
+SPtr<render::RenderProxy> Pass::CreateRenderProxy() const
 {
-	ct::Pass* renderProxy = new(B3DAllocate<ct::Pass>()) ct::Pass(mData);
+	render::Pass* renderProxy = new(B3DAllocate<render::Pass>()) render::Pass(mData);
 
-	SPtr<ct::Pass> renderProxyShared = B3DMakeSharedFromExisting(renderProxy);
+	SPtr<render::Pass> renderProxyShared = B3DMakeSharedFromExisting(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -181,7 +181,7 @@ RTTIType* Pass::GetRtti() const
 	return Pass::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Pass::Pass(const PassCreateInformation& desc)
 	: TPass(desc)

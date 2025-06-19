@@ -10,7 +10,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 static const u32 kCellXySize = 64;
 static const u32 kNumZSubdivides = 32;
@@ -305,4 +305,4 @@ LightGridOutputs LightGrid::GetOutputs() const
 
 	return outputs;
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

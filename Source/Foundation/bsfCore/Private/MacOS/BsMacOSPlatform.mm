@@ -750,7 +750,7 @@ namespace b3d
 		[NSApp performSelectorOnMainThread:@selector(setApplicationIconImage:) withObject:image waitUntilDone:NO];
 	}}
 
-	void Platform::setCaptionNonClientAreas(const ct::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
+	void Platform::setCaptionNonClientAreas(const render::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
 	{ @autoreleasepool {
 		NSMutableArray* params = [[NSMutableArray alloc] init];
 

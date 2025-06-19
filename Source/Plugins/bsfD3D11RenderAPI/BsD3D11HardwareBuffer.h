@@ -8,7 +8,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup D3D11
 		 *  @{
@@ -67,10 +67,10 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 namespace b3d
 {
-	B3D_IMPLEMENT_GLOBAL_POOL(ct::D3D11HardwareBuffer, 32)
+	B3D_IMPLEMENT_GLOBAL_POOL(render::D3D11HardwareBuffer, 32)
 }

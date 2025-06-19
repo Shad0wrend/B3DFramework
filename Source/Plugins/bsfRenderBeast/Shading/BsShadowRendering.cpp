@@ -15,7 +15,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsRenderTexture.h"
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 
 ShadowParamsDef gShadowParamsDef;
 

@@ -8,7 +8,7 @@
 #include "Math/BsMath.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11OcclusionQuery::D3D11OcclusionQuery(bool binary, u32 deviceIdx)
 	: OcclusionQuery(binary)

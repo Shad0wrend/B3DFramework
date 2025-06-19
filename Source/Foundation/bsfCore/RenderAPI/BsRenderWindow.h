@@ -271,7 +271,7 @@ namespace b3d
 
 	protected:
 		friend class RenderWindowManager;
-		friend class ct::RenderWindow;
+		friend class render::RenderWindow;
 
 		RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, const SPtr<RenderWindow>& parentWindow);
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
@@ -293,7 +293,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderAPI-Internal
 		 *  @{
@@ -379,5 +379,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

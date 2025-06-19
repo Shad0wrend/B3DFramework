@@ -6,7 +6,7 @@
 #include "Renderer/BsRendererUtility.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 static constexpr u32 kBitCount = 32;
 static constexpr u32 kRadixNumBits = 4;
@@ -807,4 +807,4 @@ void RunSortTest()
 	// Ensure everything is actually sorted
 	B3D_ASSERT(std::is_sorted(sortedKeys.begin(), sortedKeys.end()));
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

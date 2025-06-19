@@ -10,12 +10,12 @@ namespace b3d
 	class LinuxWindow;
 	class LinuxRenderWindow;
 
-	namespace ct
+	namespace render
 	{
 		class LinuxGLSupport;
 		class LinuxContext;
 		class LinuxRenderWindow;
-	} // namespace ct
+	} // namespace render
 
 	/** @addtogroup GL
 	 *  @{
@@ -41,14 +41,14 @@ namespace b3d
 		Vector2I windowToScreenPos(const Vector2I& windowPos) const override;
 
 		/** @copydoc RenderWindow::getCore */
-		SPtr<ct::LinuxRenderWindow> getCore() const;
+		SPtr<render::LinuxRenderWindow> getCore() const;
 
 	protected:
 		friend class GLRenderWindowManager;
-		friend class ct::LinuxGLSupport;
-		friend class ct::LinuxRenderWindow;
+		friend class render::LinuxGLSupport;
+		friend class render::LinuxRenderWindow;
 
-		LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, ct::LinuxGLSupport& glSupport);
+		LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, render::LinuxGLSupport& glSupport);
 
 		/** @copydoc RenderWindow::getProperties */
 		const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }
@@ -57,14 +57,14 @@ namespace b3d
 		void syncProperties() override;
 
 		/** @copydoc RenderWindow::createCore() */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<render::CoreObject> createCore() const override;
 
 	private:
-		ct::LinuxGLSupport& mGLSupport;
+		render::LinuxGLSupport& mGLSupport;
 		RenderWindowProperties mProperties;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**
 		 * Render window implementation for Linux.
@@ -162,7 +162,7 @@ namespace b3d
 			bool mIsChild;
 			bool mShowOnSwap;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

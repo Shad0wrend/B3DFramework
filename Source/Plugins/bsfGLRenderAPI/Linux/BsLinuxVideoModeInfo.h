@@ -6,7 +6,7 @@
 #include "RenderAPI/BsVideoModeInfo.h"
 #include <X11/extensions/Xrandr.h>
 
-namespace b3d::ct
+namespace b3d::render
 {
 	/** @addtogroup GL
 	 *  @{
@@ -53,4 +53,4 @@ namespace b3d::ct
 	};
 
 	/** @} */
-} // namespace b3d::ct
+} // namespace b3d::render

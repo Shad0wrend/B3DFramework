@@ -8,7 +8,7 @@
 #define XRANDR_ROTATION_RIGHT (1 << 3)
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 LinuxVideoModeInfo::LinuxVideoModeInfo()
 {

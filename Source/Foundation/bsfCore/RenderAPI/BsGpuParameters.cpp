@@ -529,7 +529,7 @@ SPtr<GpuParameters> GpuParameters::GetThisPtrInternal() const
 	return std::static_pointer_cast<GpuParameters>(GetShared());
 }
 
-SPtr<ct::RenderProxy> GpuParameters::CreateRenderProxy() const
+SPtr<render::RenderProxy> GpuParameters::CreateRenderProxy() const
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if(!gpuDevice)
@@ -640,7 +640,7 @@ void GpuParameters::GetListenerResources(Vector<HResource>& resources)
 	}
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
 	: TGpuParams(parameterLayout)

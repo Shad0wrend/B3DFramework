@@ -56,7 +56,7 @@ namespace b3d
 		virtual SPtr<RenderTexture> CreateRenderTextureImpl(const RenderTextureCreateInformation& desc) = 0;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**
 		 * Defines interface for creation of textures. Render systems provide their own implementations.
@@ -87,7 +87,7 @@ namespace b3d
 
 			GpuDevice& mGpuDevice;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

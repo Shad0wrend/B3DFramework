@@ -37,13 +37,13 @@ namespace b3d
 		static SPtr<SpriteVectorPathAllocation> Create(const WeakSPtr<SpriteImageType>& owner, const GUIVectorSpriteAtlasAllocation& vectorSpriteAtlasAllocation);
 
 	protected:
-		friend class ct::SpriteVectorPathAllocation;
+		friend class render::SpriteVectorPathAllocation;
 
 		SpriteVectorPathAllocation(const WeakSPtr<SpriteImageType>& owner, const GUIVectorSpriteAtlasAllocation& vectorSpriteAtlasAllocation)
 			:SpriteImageAllocation(owner, vectorSpriteAtlasAllocation.AtlasTexture, vectorSpriteAtlasAllocation.UVRange), mVectorSpriteAtlasAllocationHandle(vectorSpriteAtlasAllocation.AllocationHandle)
 		{ }
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 	private:
@@ -53,7 +53,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderThread
 		 *  @{
@@ -73,7 +73,7 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 
 	/** @addtogroup Image
 	 *  @{
@@ -102,7 +102,7 @@ namespace b3d
 
 	private:
 		friend class SpriteVectorPathRTTI;
-		friend class ct::SpriteVectorPath;
+		friend class render::SpriteVectorPath;
 		struct SyncPacket;
 
 		SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation);
@@ -111,7 +111,7 @@ namespace b3d
 		SPtr<SpriteVectorPathAllocation> AllocateImage(const Size2I& size);
 
 		void Initialize() override;
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		HVectorPath mVectorPath;
@@ -133,7 +133,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderThread
 		 *  @{
@@ -170,5 +170,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

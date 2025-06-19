@@ -73,7 +73,7 @@ static const u32 kPreferredGPUIndex = ~0u;
 } // namespace b3d
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 /** Converts a Vulkan object type into its string representation. */
 static const char* GetVulkanObjectTypeName(VkObjectType objectType)
@@ -423,7 +423,7 @@ void VulkanGpuBackend::OnStartUp()
 
 	// Create the texture manager for use by others
 	TextureManager::StartUp<VulkanTextureManager>();
-	ct::TextureManager::StartUp<ct::VulkanTextureManager>(*mDevices[0]);
+	render::TextureManager::StartUp<render::VulkanTextureManager>(*mDevices[0]);
 
 	// Create the render pass manager
 	VulkanRenderPassCache::StartUp();
@@ -458,7 +458,7 @@ void VulkanGpuBackend::OnShutDown()
 	RenderWindowManager::ShutDown();
 	VulkanFramebufferCache::ShutDown();
 	VulkanRenderPassCache::ShutDown();
-	ct::TextureManager::ShutDown();
+	render::TextureManager::ShutDown();
 	TextureManager::ShutDown();
 	GLSLToSPIRV::ShutDown();
 

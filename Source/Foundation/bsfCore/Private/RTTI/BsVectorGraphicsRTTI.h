@@ -181,7 +181,7 @@ namespace b3d
 		}
 	};
 
-	class B3D_CORE_EXPORT VectorPathRenderableRTTI : public TRTTIType<ct::VectorPathRenderable, IReflectable, VectorPathRenderableRTTI>
+	class B3D_CORE_EXPORT VectorPathRenderableRTTI : public TRTTIType<render::VectorPathRenderable, IReflectable, VectorPathRenderableRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS

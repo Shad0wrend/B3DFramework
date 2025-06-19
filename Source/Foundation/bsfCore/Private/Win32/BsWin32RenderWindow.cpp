@@ -49,12 +49,12 @@ void Win32RenderWindow::Initialize()
 			windowCreateInformation.Parent = (HWND)parentWindow->GetPlatformWindowHandle();
 	}
 
-	const ct::Win32VideoModeInfo& videoModeInfo = static_cast<const ct::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
+	const render::Win32VideoModeInfo& videoModeInfo = static_cast<const render::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
 	u32 outputCount = videoModeInfo.GetOutputCount();
 	if(outputCount > 0)
 	{
 		u32 actualMonitorIdx = std::min(mCreateInformation.VideoMode.OutputIdx, outputCount - 1);
-		const ct::Win32VideoOutputInfo& outputInfo = static_cast<const ct::Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
+		const render::Win32VideoOutputInfo& outputInfo = static_cast<const render::Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 		windowCreateInformation.Monitor = outputInfo.GetMonitorHandle();
 	}
 
@@ -240,13 +240,13 @@ void Win32RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, 
 	if(mIsChild)
 		return;
 
-	const ct::Win32VideoModeInfo& videoModeInfo = static_cast<const ct::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
+	const render::Win32VideoModeInfo& videoModeInfo = static_cast<const render::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
 	const u32 outputCount = videoModeInfo.GetOutputCount();
 	if(outputCount == 0)
 		return;
 
 	u32 actualMonitorIdx = std::min(monitorIdx, outputCount - 1);
-	const ct::Win32VideoOutputInfo& outputInfo = static_cast<const ct::Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
+	const render::Win32VideoOutputInfo& outputInfo = static_cast<const render::Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 
 	mDisplayFrequency = Math::RoundToI32(refreshRate);
 	mRenderWindowProperties.IsFullScreen = true;
@@ -344,13 +344,13 @@ u64 Win32RenderWindow::GetPlatformWindowHandle() const
 	return (u64)mWindow->GetHWnd();
 }
 
-SPtr<ct::RenderProxy> Win32RenderWindow::CreateRenderProxy() const
+SPtr<render::RenderProxy> Win32RenderWindow::CreateRenderProxy() const
 {
 	SPtr<RenderWindow> parentWindow = mParentWindow.lock();
 	B3D_ENSURE(B3DIsWeakUnassigned(mParentWindow) || !mParentWindow.expired()); // If parent window is assigned, it must not be expired
 
 	RenderWindowCreateInformation createInformation = mCreateInformation;
-	SPtr<ct::RenderProxy> renderProxy = B3DMakeShared<ct::Win32RenderWindow>(createInformation, mWindowId, GetPlatformWindowHandle(), B3DGetRenderProxy(parentWindow));
+	SPtr<render::RenderProxy> renderProxy = B3DMakeShared<render::Win32RenderWindow>(createInformation, mWindowId, GetPlatformWindowHandle(), B3DGetRenderProxy(parentWindow));
 	renderProxy->SetShared(renderProxy);
 
 	return renderProxy;
@@ -394,9 +394,9 @@ void Win32RenderWindow::DoOnDPIScaleChanged()
 		Resize(Math::RoundToI32(mRenderTargetProperties.Width * scaleRatio), Math::RoundToI32(mRenderTargetProperties.Height * scaleRatio));
 }
 
-namespace b3d::ct
+namespace b3d::render
 {
 Win32RenderWindow::Win32RenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 hWnd, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, hWnd, parentWindow)
 { }
-} // namespace b3d::ct
+} // namespace b3d::render

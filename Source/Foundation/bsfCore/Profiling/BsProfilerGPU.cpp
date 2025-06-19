@@ -69,7 +69,7 @@ void ProfilerGPU::EndFrame(bool discard)
 	mIsFrameActive = false;
 }
 
-void ProfilerGPU::BeginView(ct::GpuCommandBuffer& commandBuffer, u64 id, ProfilerString title)
+void ProfilerGPU::BeginView(render::GpuCommandBuffer& commandBuffer, u64 id, ProfilerString title)
 {
 	if(!mIsFrameActive)
 	{
@@ -92,7 +92,7 @@ void ProfilerGPU::BeginView(ct::GpuCommandBuffer& commandBuffer, u64 id, Profile
 	mIsViewActive = true;
 }
 
-void ProfilerGPU::EndView(ct::GpuCommandBuffer& commandBuffer)
+void ProfilerGPU::EndView(render::GpuCommandBuffer& commandBuffer)
 {
 	if(!mActiveSamples.empty())
 	{
@@ -107,7 +107,7 @@ void ProfilerGPU::EndView(ct::GpuCommandBuffer& commandBuffer)
 	mIsViewActive = false;
 }
 
-void ProfilerGPU::BeginSample(ct::GpuCommandBuffer& commandBuffer, ProfilerString name)
+void ProfilerGPU::BeginSample(render::GpuCommandBuffer& commandBuffer, ProfilerString name)
 {
 	if(!mIsFrameActive)
 		return;
@@ -132,7 +132,7 @@ void ProfilerGPU::BeginSample(ct::GpuCommandBuffer& commandBuffer, ProfilerStrin
 	mActiveSamples.push(sample);
 }
 
-void ProfilerGPU::EndSample(ct::GpuCommandBuffer& commandBuffer, const ProfilerString& name)
+void ProfilerGPU::EndSample(render::GpuCommandBuffer& commandBuffer, const ProfilerString& name)
 {
 	if(mActiveSamples.empty())
 		return;
@@ -298,7 +298,7 @@ void ProfilerGPU::ResolveSample(const ProfiledSample& sample, GPUProfileSample& 
 	}
 }
 
-void ProfilerGPU::BeginSampleInternal(ProfiledSample& sample, ct::GpuCommandBuffer& commandBuffer, bool issueOcclusion)
+void ProfilerGPU::BeginSampleInternal(ProfiledSample& sample, render::GpuCommandBuffer& commandBuffer, bool issueOcclusion)
 {
 	sample.StartStats = RenderStats::Instance().GetData();
 	sample.ActiveTimeQuery = GetTimerQuery();
@@ -311,7 +311,7 @@ void ProfilerGPU::BeginSampleInternal(ProfiledSample& sample, ct::GpuCommandBuff
 	}
 }
 
-void ProfilerGPU::EndSampleInternal(ProfiledSample& sample, ct::GpuCommandBuffer& commandBuffer)
+void ProfilerGPU::EndSampleInternal(ProfiledSample& sample, render::GpuCommandBuffer& commandBuffer)
 {
 	sample.EndStats = RenderStats::Instance().GetData();
 
@@ -321,11 +321,11 @@ void ProfilerGPU::EndSampleInternal(ProfiledSample& sample, ct::GpuCommandBuffer
 	sample.ActiveTimeQuery->End(commandBuffer);
 }
 
-SPtr<ct::TimerQuery> ProfilerGPU::GetTimerQuery() const
+SPtr<render::TimerQuery> ProfilerGPU::GetTimerQuery() const
 {
 	if(!mFreeTimerQueries.empty())
 	{
-		SPtr<ct::TimerQuery> timerQuery = mFreeTimerQueries.top();
+		SPtr<render::TimerQuery> timerQuery = mFreeTimerQueries.top();
 		mFreeTimerQueries.pop();
 
 		return timerQuery;
@@ -338,11 +338,11 @@ SPtr<ct::TimerQuery> ProfilerGPU::GetTimerQuery() const
 	return gpuDevice->CreateTimerQuery();
 }
 
-SPtr<ct::OcclusionQuery> ProfilerGPU::GetOcclusionQuery() const
+SPtr<render::OcclusionQuery> ProfilerGPU::GetOcclusionQuery() const
 {
 	if(!mFreeOcclusionQueries.empty())
 	{
-		SPtr<ct::OcclusionQuery> occlusionQuery = mFreeOcclusionQueries.top();
+		SPtr<render::OcclusionQuery> occlusionQuery = mFreeOcclusionQueries.top();
 		mFreeOcclusionQueries.pop();
 
 		return occlusionQuery;

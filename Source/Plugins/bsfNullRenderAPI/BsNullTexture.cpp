@@ -15,7 +15,7 @@ PixelFormat NullTextureManager::GetNativeFormat(TextureType ttype, PixelFormat f
 	return format;
 }
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 SPtr<Texture> NullTextureManager::CreateTextureInternal(const TextureCreateInformation& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask)
 {
 	SPtr<NullTexture> texPtr = B3DMakeShared<NullTexture>(desc, initialData, deviceMask);
@@ -61,4 +61,4 @@ void NullTexture::UnlockInternal()
 	B3DDelete(mMappedBuffer);
 	mMappedBuffer = nullptr;
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

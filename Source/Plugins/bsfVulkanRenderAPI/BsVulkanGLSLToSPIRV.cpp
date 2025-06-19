@@ -17,7 +17,7 @@
 #include "Utility/BsScopeGuard.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 const TBuiltInResource DefaultTBuiltInResource = {
 	/* .MaxLights = */ 32,

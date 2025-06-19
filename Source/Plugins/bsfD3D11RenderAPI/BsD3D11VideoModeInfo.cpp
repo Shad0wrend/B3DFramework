@@ -5,7 +5,7 @@
 #include "String/BsUnicode.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11VideoModeInfo::D3D11VideoModeInfo(IDXGIAdapter* dxgiAdapter)
 {

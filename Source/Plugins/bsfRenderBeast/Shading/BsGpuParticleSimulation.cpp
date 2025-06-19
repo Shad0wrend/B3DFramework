@@ -16,7 +16,7 @@
 #include "RenderAPI/BsRenderTexture.h"
 #include "Utility/BsGpuSort.h"
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 
 B3D_PARAM_BLOCK_BEGIN(GpuParticleTileVertexParamsDef)
 	B3D_PARAM_BLOCK_ENTRY(Vector4, gUVToNDC)

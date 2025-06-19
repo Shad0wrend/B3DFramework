@@ -10,7 +10,7 @@
 #include "Error/BsException.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 static void DeleteHardwareBuffer(GpuBuffer* buffer)
 {

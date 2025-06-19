@@ -10,7 +10,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class GLCommandBuffer;
 
@@ -368,5 +368,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

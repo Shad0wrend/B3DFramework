@@ -6,7 +6,7 @@
 #include "Threading/BsSignal.h"
 #include "Threading/BsSingleConsumerQueue.h"
 
-namespace b3d::ct
+namespace b3d::render
 {
 	/** @addtogroup Vulkan
 	 *  @{
@@ -82,4 +82,4 @@ namespace b3d::ct
 	void AssertIfNotVulkanSubmitThread();
 
 	/** @} */
-} // namespace b3d::ct
+} // namespace b3d::render

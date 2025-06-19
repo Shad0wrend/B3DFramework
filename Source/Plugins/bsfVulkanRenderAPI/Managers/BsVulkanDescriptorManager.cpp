@@ -8,7 +8,7 @@
 #include "BsVulkanResource.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanLayoutKey::VulkanLayoutKey(VkDescriptorSetLayoutBinding* bindings, u32 numBindings)
 	: NumBindings(numBindings), Bindings(bindings)

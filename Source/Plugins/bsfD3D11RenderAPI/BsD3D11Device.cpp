@@ -4,7 +4,7 @@
 #include "Error/BsException.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11Device::D3D11Device(ID3D11Device* device)
 	: mD3D11Device(device)

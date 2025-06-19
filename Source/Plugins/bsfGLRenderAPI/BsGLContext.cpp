@@ -3,7 +3,7 @@
 #include "BsGLContext.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 void GLContext::EndCurrent()
 {}

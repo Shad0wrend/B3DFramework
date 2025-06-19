@@ -14,7 +14,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		struct FrameInfo;
 		class RendererLight;
@@ -693,5 +693,5 @@ namespace b3d
 		};
 
 		/* @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

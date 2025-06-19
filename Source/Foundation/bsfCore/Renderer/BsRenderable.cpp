@@ -33,7 +33,7 @@ bool IsMeshValid(const HMesh& mesh)
 }
 
 template <>
-bool IsMeshValid(const SPtr<ct::Mesh>& mesh)
+bool IsMeshValid(const SPtr<render::Mesh>& mesh)
 {
 	return mesh != nullptr;
 }
@@ -227,10 +227,10 @@ Bounds Renderable::GetBounds() const
 	}
 }
 
-SPtr<ct::RenderProxy> Renderable::CreateRenderProxy() const
+SPtr<render::RenderProxy> Renderable::CreateRenderProxy() const
 {
-	ct::Renderable* renderProxy = new(B3DAllocate<ct::Renderable>()) ct::Renderable();
-	SPtr<ct::Renderable> renderProxyShared = B3DMakeSharedFromExisting<ct::Renderable>(renderProxy);
+	render::Renderable* renderProxy = new(B3DAllocate<render::Renderable>()) render::Renderable();
+	SPtr<render::Renderable> renderProxyShared = B3DMakeSharedFromExisting<render::Renderable>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -443,7 +443,7 @@ RTTIType* Renderable::GetRtti() const
 	return Renderable::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Renderable::Renderable()
 	: mRendererId(0), mAnimationId((u64)-1), mMorphShapeVersion(0)

@@ -132,7 +132,7 @@ namespace b3d
 		/**	Updates bounds by calculating them from the vertices in the provided mesh data object. */
 		void UpdateBounds(const MeshData& meshData);
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 		/**
 		 * Creates buffers used for caching of CPU mesh data.
@@ -251,7 +251,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Resources-Internal
 		 *  @{
@@ -369,5 +369,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

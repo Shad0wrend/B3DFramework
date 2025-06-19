@@ -64,11 +64,11 @@ VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& v
 	mTexture = Texture::CreateShared(pixelData);
 }
 
-SPtr<ct::RenderProxy> VectorField::CreateRenderProxy() const
+SPtr<render::RenderProxy> VectorField::CreateRenderProxy() const
 {
-	ct::VectorField* renderProxy = new(B3DAllocate<ct::VectorField>()) ct::VectorField(mDesc, B3DGetRenderProxy(mTexture));
+	render::VectorField* renderProxy = new(B3DAllocate<render::VectorField>()) render::VectorField(mDesc, B3DGetRenderProxy(mTexture));
 
-	SPtr<ct::VectorField> renderProxyShared = B3DMakeSharedFromExisting<ct::VectorField>(renderProxy);
+	SPtr<render::VectorField> renderProxyShared = B3DMakeSharedFromExisting<render::VectorField>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -119,7 +119,7 @@ SPtr<VectorField> VectorField::CreateEmptyInternal()
 	return vectorFieldPtr;
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const SPtr<Texture>& texture)
 	: TVectorField(desc)

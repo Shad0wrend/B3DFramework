@@ -9,7 +9,7 @@ namespace b3d
 {
 	class CocoaWindow;
 
-	namespace ct
+	namespace render
 	{
 		class MacOSRenderWindow;
 	}
@@ -44,9 +44,9 @@ namespace b3d
 		u64 GetPlatformWindowHandle() const override;
 
 	protected:
-		friend class ct::MacOSRenderWindow;
+		friend class render::MacOSRenderWindow;
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void DoOnWindowMovedOrResized() override;
 
 		/** Changes the display mode (resolution, refresh rate) of the specified output device. */
@@ -57,7 +57,7 @@ namespace b3d
 		bool mIsChild = false;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread proxy for b3d::MacOSRenderWindow. */
 		class MacOSRenderWindow : public RenderWindow
@@ -68,7 +68,7 @@ namespace b3d
 		protected:
 			friend class b3d::MacOSRenderWindow;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

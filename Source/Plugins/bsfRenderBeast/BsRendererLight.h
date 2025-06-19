@@ -12,7 +12,7 @@ namespace b3d
 {
 	class Bounds;
 
-	namespace ct
+	namespace render
 	{
 		struct SceneInfo;
 		class RendererViewGroup;
@@ -215,5 +215,5 @@ namespace b3d
 		extern LightAndReflProbeParamsParamDef gLightAndReflProbeParamsParamDef;
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

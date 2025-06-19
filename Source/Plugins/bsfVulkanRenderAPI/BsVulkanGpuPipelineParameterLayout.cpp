@@ -6,7 +6,7 @@
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanGpuPipelineParameterLayout::VulkanGpuPipelineParameterLayout(VulkanGpuDevice& gpuDevice, const GpuPipelineParameterLayoutCreateInformation& createInformation)
 	: GpuPipelineParameterLayout(createInformation), mGpuDevice(gpuDevice), mLayouts(), mLayoutInfos()

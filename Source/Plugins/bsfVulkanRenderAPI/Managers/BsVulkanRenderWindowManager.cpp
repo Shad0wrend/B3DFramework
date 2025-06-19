@@ -5,8 +5,8 @@
 
 using namespace b3d;
 
-SPtr<ct::IRenderWindowSurface> VulkanRenderWindowManager::CreateRenderWindowSurface(const ct::RenderWindowSurfaceCreateInformation& createInformation)
+SPtr<render::IRenderWindowSurface> VulkanRenderWindowManager::CreateRenderWindowSurface(const render::RenderWindowSurfaceCreateInformation& createInformation)
 {
-	return B3DMakeShared<ct::VulkanRenderWindowSurface>(createInformation);
+	return B3DMakeShared<render::VulkanRenderWindowSurface>(createInformation);
 }
 

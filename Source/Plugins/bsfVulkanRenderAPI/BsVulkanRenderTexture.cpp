@@ -15,7 +15,7 @@ VulkanRenderTexture::VulkanRenderTexture(const RenderTextureCreateInformation& c
 }
 
 namespace b3d {
-namespace ct {
+namespace render {
 VulkanRenderTexture::VulkanRenderTexture(VulkanGpuDevice& gpuDevice, const RenderTextureCreateInformation& createInformation)
 	: RenderTexture(createInformation), mGpuDevice(gpuDevice), mFramebuffer(nullptr)
 {
@@ -141,4 +141,4 @@ void VulkanRenderTexture::Initialize()
 	mFramebuffer = VulkanFramebufferCache::Instance().FindOrCreateFramebuffer(mGpuDevice, framebufferInformation, renderPassInformation);
 }
 
-}} // namespace b3d::ct
+}} // namespace b3d::render

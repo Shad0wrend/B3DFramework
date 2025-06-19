@@ -7,7 +7,7 @@
 #include "BsGLRenderAPI.h"
 #include <dlfcn.h>
 
-namespace b3d::ct
+namespace b3d::render
 {
 SPtr<b3d::RenderWindow> MacOSGLSupport::newWindow(
 	RENDER_WINDOW_DESC& desc,
@@ -58,4 +58,4 @@ void* MacOSGLSupport::getProcAddress(const String& procname)
 SPtr<VideoModeInfo> MacOSGLSupport::getVideoModeInfo() const
 {
 	return B3DMakeShared<MacOSVideoModeInfo>();
-}::ct
+}

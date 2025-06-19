@@ -52,11 +52,11 @@ SPtr<SpriteImageAllocation> SpriteImageAllocation::Create(const WeakSPtr<SpriteI
 	return allocationShared;
 }
 
-SPtr<ct::RenderProxy> SpriteImageAllocation::CreateRenderProxy() const
+SPtr<render::RenderProxy> SpriteImageAllocation::CreateRenderProxy() const
 {
-	ct::SpriteImageAllocation* const renderProxy = new(B3DAllocate<ct::SpriteImageAllocation>()) ct::SpriteImageAllocation();
+	render::SpriteImageAllocation* const renderProxy = new(B3DAllocate<render::SpriteImageAllocation>()) render::SpriteImageAllocation();
 
-	SPtr<ct::SpriteImageAllocation> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteImageAllocation>(renderProxy);
+	SPtr<render::SpriteImageAllocation> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteImageAllocation>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -169,11 +169,11 @@ void SpriteImage::MarkRenderProxyDataDirtyInternal()
 	MarkRenderProxyDataDirty();
 }
 
-SPtr<ct::RenderProxy> SpriteImage::CreateRenderProxy() const
+SPtr<render::RenderProxy> SpriteImage::CreateRenderProxy() const
 {
-	ct::SpriteImage* const renderProxy = new(B3DAllocate<ct::SpriteImage>()) ct::SpriteImage(mInformation);
+	render::SpriteImage* const renderProxy = new(B3DAllocate<render::SpriteImage>()) render::SpriteImage(mInformation);
 
-	SPtr<ct::SpriteImage> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteImage>(renderProxy);
+	SPtr<render::SpriteImage> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteImage>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -194,7 +194,7 @@ RTTIType* SpriteImage::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 void SpriteImageAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {

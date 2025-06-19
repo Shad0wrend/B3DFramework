@@ -8,7 +8,7 @@
 #include "Debug/BsDebug.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11TimerQuery::D3D11TimerQuery(u32 deviceIdx)
 {

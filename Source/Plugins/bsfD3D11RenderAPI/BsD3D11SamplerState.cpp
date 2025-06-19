@@ -7,7 +7,7 @@
 #include "Profiling/BsRenderStats.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11SamplerState::D3D11SamplerState(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask)
 	: SamplerState(desc, deviceMask)

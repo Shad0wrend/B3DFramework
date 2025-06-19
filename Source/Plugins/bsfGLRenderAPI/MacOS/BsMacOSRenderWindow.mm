@@ -13,7 +13,7 @@
 
 namespace b3d
 {
-	MacOSRenderWindow::MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, ct::MacOSGLSupport& glSupport)
+	MacOSRenderWindow::MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, render::MacOSGLSupport& glSupport)
 			:RenderWindow(desc, windowId), mProperties(desc), mGLSupport(glSupport)
 	{ }
 
@@ -69,7 +69,7 @@ namespace b3d
 			getCore()->mSyncedProperties = props;
 		}
 
-		ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+		render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 
 		// New windows always receive focus, but we don't receive an initial event from the OS, so trigger one manually
 		RenderWindowManager::instance().notifyFocusReceived(getCore().get());
@@ -90,10 +90,10 @@ namespace b3d
 		RenderWindow::destroy();
 	}
 
-	SPtr<ct::CoreObject> MacOSRenderWindow::createCore() const
+	SPtr<render::CoreObject> MacOSRenderWindow::createCore() const
 	{
 		RENDER_WINDOW_DESC desc = mDesc;
-		SPtr<ct::CoreObject> obj = B3DMakeShared<ct::MacOSRenderWindow>(
+		SPtr<render::CoreObject> obj = B3DMakeShared<render::MacOSRenderWindow>(
 				desc, mWindowId, mWindow->_getWindowId(), mContext);
 		obj->_setThisPtr(obj);
 		return obj;
@@ -116,7 +116,7 @@ namespace b3d
 				getCore()->getSyncedProperties().height = height;
 			}
 
-			ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+			render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 		}
 	}
 
@@ -137,7 +137,7 @@ namespace b3d
 				getCore()->getSyncedProperties().left = props.left;
 			}
 
-			ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+			render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 		}
 	}
 
@@ -149,7 +149,7 @@ namespace b3d
 			getCore()->getSyncedProperties().isHidden = true;
 		}
 
-		ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+		render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 		mWindow->hide();
 	}
 
@@ -161,7 +161,7 @@ namespace b3d
 			getCore()->getSyncedProperties().isHidden = false;
 		}
 
-		ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+		render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 		mWindow->show();
 	}
 
@@ -174,7 +174,7 @@ namespace b3d
 			getCore()->getSyncedProperties().isMaximized = false;
 		}
 
-		ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+		render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 		mWindow->minimize();
 	}
 
@@ -187,7 +187,7 @@ namespace b3d
 			getCore()->getSyncedProperties().isMaximized = true;
 		}
 
-		ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+		render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 		mWindow->maximize();
 	}
 
@@ -200,7 +200,7 @@ namespace b3d
 			getCore()->getSyncedProperties().isMaximized = false;
 		}
 
-		ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+		render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 		mWindow->restore();
 	}
 
@@ -215,7 +215,7 @@ namespace b3d
 		if (mIsChild)
 			return;
 
-		const VideoModeInfo& videoModeInfo = ct::RenderAPI::instance().getVideoModeInfo();
+		const VideoModeInfo& videoModeInfo = render::RenderAPI::instance().getVideoModeInfo();
 
 		UINT32 outputIdx = videoMode.outputIdx;
 		if(outputIdx >= videoModeInfo.getNumOutputs())
@@ -273,7 +273,7 @@ namespace b3d
 			getCore()->getSyncedProperties().height = props.height;
 		}
 
-		ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+		render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 		_windowMovedOrResized();
 	}
 
@@ -285,7 +285,7 @@ namespace b3d
 			return;
 
 		// Restore original display mode
-		const VideoModeInfo& videoModeInfo = ct::RenderAPI::instance().getVideoModeInfo();
+		const VideoModeInfo& videoModeInfo = render::RenderAPI::instance().getVideoModeInfo();
 
 		UINT32 outputIdx = 0; // 0 is always primary
 		if(outputIdx >= videoModeInfo.getNumOutputs())
@@ -309,7 +309,7 @@ namespace b3d
 			getCore()->getSyncedProperties().height = props.height;
 		}
 
-		ct::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
+		render::RenderWindowManager::instance().notifySyncDataDirty(getCore().get());
 		_windowMovedOrResized();
 	}
 
@@ -319,8 +319,8 @@ namespace b3d
 		if (CGAcquireDisplayFadeReservation(5.0f, &fadeToken))
 			CGDisplayFade(fadeToken, 0.3f, kCGDisplayBlendNormal, kCGDisplayBlendSolidColor, 0, 0, 0, TRUE);
 
-		auto& destOutput = static_cast<const ct::MacOSVideoOutputInfo&>(output);
-		auto& newMode = static_cast<const ct::MacOSVideoMode&>(mode);
+		auto& destOutput = static_cast<const render::MacOSVideoOutputInfo&>(output);
+		auto& newMode = static_cast<const render::MacOSVideoMode&>(mode);
 
 		// Note: An alternative to changing display resolution would be to only change the back-buffer size. But that doesn't
 		// account for refresh rate, so it's questionable how useful it would be.
@@ -359,9 +359,9 @@ namespace b3d
 		return mWindow->windowToScreenPos(windowPos);
 	}
 
-	SPtr<ct::MacOSRenderWindow> MacOSRenderWindow::getCore() const
+	SPtr<render::MacOSRenderWindow> MacOSRenderWindow::getCore() const
 	{
-		return std::static_pointer_cast<ct::MacOSRenderWindow>(mCoreSpecific);
+		return std::static_pointer_cast<render::MacOSRenderWindow>(mCoreSpecific);
 	}
 
 	void MacOSRenderWindow::_windowMovedOrResized()
@@ -397,7 +397,7 @@ namespace b3d
 		mProperties = getCore()->mSyncedProperties;
 	}
 
-	namespace ct
+	namespace render
 	{
 		MacOSRenderWindow::MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 renderWindowId, UINT32 cocoaWindowId,
 			const SPtr<MacOSContext>& context)

@@ -21,7 +21,7 @@ void RendererManager::SetActive(const String& name)
 	{
 		if((*iter)->Name() == name)
 		{
-			SPtr<ct::Renderer> newRenderer = (*iter)->Create();
+			SPtr<render::Renderer> newRenderer = (*iter)->Create();
 			if(newRenderer != nullptr)
 			{
 				if(mActiveRenderer != nullptr)

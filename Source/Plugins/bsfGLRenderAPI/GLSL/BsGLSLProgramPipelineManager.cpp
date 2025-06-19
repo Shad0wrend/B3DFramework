@@ -5,7 +5,7 @@
 #include "Profiling/BsRenderStats.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 ::std::size_t GLSLProgramPipelineManager::ProgramPipelineKeyHashFunction::operator()(const GLSLProgramPipelineManager::ProgramPipelineKey& key) const
 {

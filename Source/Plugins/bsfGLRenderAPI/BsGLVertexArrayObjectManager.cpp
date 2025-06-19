@@ -10,7 +10,7 @@
 #define VBO_BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 GLVertexArrayObject::GLVertexArrayObject(GLuint handle, u64 vertexProgramId, GLVertexBuffer** attachedBuffers, u32 numBuffers)
 	: mHandle(handle), mVertProgId(vertexProgramId), mAttachedBuffers(attachedBuffers), mNumBuffers(numBuffers)

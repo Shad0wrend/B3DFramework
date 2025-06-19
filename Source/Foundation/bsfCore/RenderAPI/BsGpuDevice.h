@@ -11,7 +11,7 @@ namespace b3d
 	struct SamplerStateCreateInformation;
 	struct TextureCreateInformation;
 
-	namespace ct
+	namespace render
 	{
 		struct GpuCommandBufferPoolCreateInformation;
 		class GpuCommandBufferPool;
@@ -57,7 +57,7 @@ namespace b3d
 		 *							execute sequentially in the order they are submitted. Otherwise, if there is a
 		 *							dependency you must make state it explicitly here.
 		 */
-		void SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF);
+		void SubmitCommandBuffer(const SPtr<render::GpuCommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF);
 
 		/**
 		 * Presents the back-buffer image from the provided window onto the window, using the appropriate queue that supports present operations.
@@ -67,14 +67,14 @@ namespace b3d
 		 *								depends on any command buffers submitted on other queues. You may use
 		 *								CommandSyncMask class to generate a mask.
 		 */
-		virtual void PresentRenderWindow(const SPtr<ct::RenderWindow>& renderWindow, u32 syncMask = 0xFFFFFFFF) = 0;
+		virtual void PresentRenderWindow(const SPtr<render::RenderWindow>& renderWindow, u32 syncMask = 0xFFFFFFFF) = 0;
 
 		/**
 		 * Returns a command buffer that is to be used for transfer operations when user doesn't provide an explicit command buffer.
 		 * Transfer command buffers on all queues should be submitted before any regular explicit command buffer submission, or at the end of frame.
 		 * Each thread calling this method will retrieve a separate command buffer.
 		 */
-		virtual SPtr<ct::GpuCommandBuffer> GetOrCreateTransferCommandBuffer();
+		virtual SPtr<render::GpuCommandBuffer> GetOrCreateTransferCommandBuffer();
 
 		/** Submits the active transfer command buffer for the current thread. Existing command buffer is invalidated.  If @p wait is true, calling thread will wait until the command buffer finishes executing on the GPU. */
 		virtual void SubmitTransferCommandBuffer(bool wait);
@@ -85,14 +85,14 @@ namespace b3d
 		/** Information about a transfer command buffer associated with a particular thread. */
 		struct PerThreadTransferCommandBufferInformation
 		{
-			SPtr<ct::GpuCommandBufferPool> CommandBufferPool; /**< Pool for allocating the command buffers. */
-			SPtr<ct::GpuCommandBuffer> CurrentTransferCommandBuffer; /**< Currently active transfer buffer, if any. */
+			SPtr<render::GpuCommandBufferPool> CommandBufferPool; /**< Pool for allocating the command buffers. */
+			SPtr<render::GpuCommandBuffer> CurrentTransferCommandBuffer; /**< Currently active transfer buffer, if any. */
 		};
 
 		GpuQueue(GpuDevice& gpuDevice, GpuQueueUsage usage, u32 index);
 
-		/** Provides the same functionality as SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>&, u32), but makes the command buffer flush optional. */
-		virtual void SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask, bool flushTransferCommandBuffer) = 0;
+		/** Provides the same functionality as SubmitCommandBuffer(const SPtr<render::GpuCommandBuffer>&, u32), but makes the command buffer flush optional. */
+		virtual void SubmitCommandBuffer(const SPtr<render::GpuCommandBuffer>& commandBuffer, u32 syncMask, bool flushTransferCommandBuffer) = 0;
 
 		GpuDevice& mGpuDevice;
 		GpuQueueUsage mUsage;
@@ -145,7 +145,7 @@ namespace b3d
 		 * @param	queueIndex		In case there are multiple queues supported with the command buffer's usage,
 		 *							this determines which one to execute on.
 		 */
-		virtual void SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF, u32 queueIndex = 0);
+		virtual void SubmitCommandBuffer(const SPtr<render::GpuCommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF, u32 queueIndex = 0);
 
 		/** Submits all non-empty transfer command buffers on all queues, for the current thread. Optionally waits until the GPU is done processing them. */
 		virtual void SubmitTransferCommandBuffers(bool wait = false) = 0;
@@ -158,7 +158,7 @@ namespace b3d
 		 *								depends on any command buffers submitted on other queues. You may use
 		 *								CommandSyncMask class to generate a mask.
 		 */
-		virtual void PresentRenderWindow(const SPtr<ct::RenderWindow>& renderWindow, u32 syncMask = 0xFFFFFFFF) = 0;
+		virtual void PresentRenderWindow(const SPtr<render::RenderWindow>& renderWindow, u32 syncMask = 0xFFFFFFFF) = 0;
 
 		/** Blocks the calling thread until all operations on the device finish. */
 		virtual void WaitUntilIdle() = 0;
@@ -175,7 +175,7 @@ namespace b3d
 		virtual SPtr<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const = 0;
 
 		/** Creates a command buffer pool that may be used for allocating command buffers. */
-		virtual SPtr<ct::GpuCommandBufferPool> CreateGpuCommandBufferPool(const ct::GpuCommandBufferPoolCreateInformation& createInformation) = 0;
+		virtual SPtr<render::GpuCommandBufferPool> CreateGpuCommandBufferPool(const render::GpuCommandBufferPoolCreateInformation& createInformation) = 0;
 
 		/**
 		 * Creates a new GPU texture.
@@ -183,7 +183,7 @@ namespace b3d
 		 * @param	createInformation		Object describing the texture to create.
 		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
 		 */
-		virtual SPtr<ct::Texture> CreateTexture(const TextureCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+		virtual SPtr<render::Texture> CreateTexture(const TextureCreateInformation& createInformation, bool deferredInitialize = false) = 0;
 
 		/**
 		 * Creates a new GPU buffer.
@@ -191,7 +191,7 @@ namespace b3d
 		 * @param	createInformation		Object describing the buffer to create.
 		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
 		 */
-		virtual SPtr<ct::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+		virtual SPtr<render::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize = false) = 0;
 
 		/**
 		 * Creates a new sampler state, or returns an existing one if one with the same create information was already created.
@@ -209,10 +209,10 @@ namespace b3d
 		virtual SPtr<SamplerState> CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize = false) = 0;
 
 		/** Create a new event query. */
-		virtual SPtr<ct::EventQuery> CreateEventQuery() = 0;
+		virtual SPtr<render::EventQuery> CreateEventQuery() = 0;
 
 		/** Creates a new timer query. */
-		virtual SPtr<ct::TimerQuery> CreateTimerQuery() = 0;
+		virtual SPtr<render::TimerQuery> CreateTimerQuery() = 0;
 
 		/**
 		 * Creates a new occlusion query.
@@ -222,7 +222,7 @@ namespace b3d
 		 *						rendered). Binary queries can return sooner as they potentially do not need to wait
 		 *						until all of the geometry is rendered.
 		 */
-		virtual SPtr<ct::OcclusionQuery> CreateOcclusionQuery(bool isBinary) = 0;
+		virtual SPtr<render::OcclusionQuery> CreateOcclusionQuery(bool isBinary) = 0;
 
 		/**
 		 * Creates a new GPU program using the provided source code. If compilation fails or program is not supported
@@ -239,7 +239,7 @@ namespace b3d
 		 * @param	parameterLayout			Layout that describes the GPU parameters, as retrieved from the GPU pipeline.
 		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
 		 */
-		virtual SPtr<ct::GpuParameters> CreateGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, bool deferredInitialize = false) = 0;
+		virtual SPtr<render::GpuParameters> CreateGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, bool deferredInitialize = false) = 0;
 
 		/**
 		 * Creates a graphics pipeline.

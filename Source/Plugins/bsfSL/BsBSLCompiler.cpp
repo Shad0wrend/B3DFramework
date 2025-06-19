@@ -32,9 +32,9 @@ static SPtr<Shader> CreateShader(const String& name, const ShaderCreateInformati
 	return shader;
 }
 
-static SPtr<ct::Shader> CreateShader(const String& name, const ct::ShaderCreateInformation& shaderCreateInformation, const Vector<String>& includes)
+static SPtr<render::Shader> CreateShader(const String& name, const render::ShaderCreateInformation& shaderCreateInformation, const Vector<String>& includes)
 {
-	SPtr<ct::Shader> shader = ct::Shader::Create(name, shaderCreateInformation);
+	SPtr<render::Shader> shader = render::Shader::Create(name, shaderCreateInformation);
 
 	const SPtr<ShaderCompilerMetaData> compilerMetaData = shaderCreateInformation.CompilerMetaData;
 	if(compilerMetaData != nullptr)

@@ -9,13 +9,13 @@
 using namespace std::placeholders;
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 constexpr const char* NullRendererFactory::SystemName;
 
-SPtr<ct::Renderer> NullRendererFactory::Create()
+SPtr<render::Renderer> NullRendererFactory::Create()
 {
-	return B3DMakeShared<ct::NullRenderer>();
+	return B3DMakeShared<render::NullRenderer>();
 }
 
 const String& NullRendererFactory::Name() const

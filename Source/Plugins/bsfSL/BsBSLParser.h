@@ -92,7 +92,7 @@ namespace b3d
 		}
 
 		/** @copydoc ParseMetaData(const String&, const UnorderedMap<String, String>&, ShaderCreateInformation&, BSLParsedShaderMetaData&, Vector<String>&). */
-		static ShaderCompilerResult ParseMetaData(const String& source, const UnorderedMap<String, String>& defines, ct::ShaderCreateInformation& inOutShaderInformation, BSLParsedShaderMetaData& outShaderMetaData, Vector<String>& outIncludes)
+		static ShaderCompilerResult ParseMetaData(const String& source, const UnorderedMap<String, String>& defines, render::ShaderCreateInformation& inOutShaderInformation, BSLParsedShaderMetaData& outShaderMetaData, Vector<String>& outIncludes)
 		{
 			return TParseMetaData<true>(source, defines, inOutShaderInformation, outShaderMetaData, outIncludes);
 		}

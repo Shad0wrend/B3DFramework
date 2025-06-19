@@ -13,7 +13,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 template <bool LOCK_Y, bool GPU, bool IS_3D, ParticleForwardLightingType FWD>
 const ShaderVariationParameters& GetParticleShaderVariationInternal(ParticleOrientation orient)
@@ -479,4 +479,4 @@ void ParticleRenderer::SortByDistance(const Vector3& refPoint, const PixelData& 
 	}
 	B3DClearAllocatorFrame();
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

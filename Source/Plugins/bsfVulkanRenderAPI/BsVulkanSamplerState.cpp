@@ -5,7 +5,7 @@
 #include "BsVulkanUtility.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanSampler::VulkanSampler(VulkanResourceManager* owner, VkSampler sampler, const StringView& name)
 	: VulkanResource(owner, true, name), mSampler(sampler)

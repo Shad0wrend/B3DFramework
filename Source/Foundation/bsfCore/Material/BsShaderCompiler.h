@@ -87,7 +87,7 @@ namespace b3d
 		virtual ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, SPtr<Shader>& outShader) = 0;
 
 		/** @copydoc Compile(const String&, const String&, const UnorderedMap<String, String>&, ShadingLanguageFlags, bool, SPtr<Shader>&) */
-		virtual ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, SPtr<ct::Shader>& outShader) = 0;
+		virtual ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, SPtr<render::Shader>& outShader) = 0;
 
 		/**
 		 * Compiles a particular shader variation.
@@ -101,7 +101,7 @@ namespace b3d
 		virtual ShaderCompilerResult CompileVariation(const Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, Technique& inOutVariation) = 0;
 
 		/** @copydoc CompileVariation(const Shader&, const ShaderVariationParameters&, ShadingLanguageFlag, ShaderCompilerMetaData, Technique&) */
-		virtual ShaderCompilerResult CompileVariation(const ct::Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, ct::Technique& inOutVariation) = 0;
+		virtual ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, render::Technique& inOutVariation) = 0;
 	};
 
 	/** Keeps track of all available shader compilers. */

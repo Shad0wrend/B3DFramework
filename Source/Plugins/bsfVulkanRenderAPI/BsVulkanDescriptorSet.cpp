@@ -4,7 +4,7 @@
 #include "BsVulkanGpuDevice.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanDescriptorSet::VulkanDescriptorSet(VulkanResourceManager* owner, VkDescriptorSet set, VkDescriptorPool pool, const StringView& name)
 	: VulkanResource(owner, true, name), mSet(set), mPool(pool)

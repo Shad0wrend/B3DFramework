@@ -36,7 +36,7 @@ static_assert(false, "Other platform includes go here.");
 #include "Utility/BsBitwise.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 	: mPhysicalDevice(device), mQueueInfos(), mBuiltinResources(*this)
@@ -477,12 +477,12 @@ SPtr<GpuQueue> VulkanGpuDevice::GetQueue(GpuQueueUsage usage, u32 index) const
 	return mQueueInfos[(u32)usage].Queues[index];
 }
 
-SPtr<GpuCommandBufferPool> VulkanGpuDevice::CreateGpuCommandBufferPool(const ct::GpuCommandBufferPoolCreateInformation& createInformation)
+SPtr<GpuCommandBufferPool> VulkanGpuDevice::CreateGpuCommandBufferPool(const render::GpuCommandBufferPoolCreateInformation& createInformation)
 {
 	return B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuCommandBufferPool>()) VulkanGpuCommandBufferPool(*this, createInformation));
 }
 
-SPtr<ct::Texture> VulkanGpuDevice::CreateTexture(const TextureCreateInformation& createInformation, bool deferredInitialize)
+SPtr<render::Texture> VulkanGpuDevice::CreateTexture(const TextureCreateInformation& createInformation, bool deferredInitialize)
 {
 	SPtr<Texture> output = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanTexture>()) VulkanTexture(*this, createInformation));
 	output->SetShared(output);
@@ -493,7 +493,7 @@ SPtr<ct::Texture> VulkanGpuDevice::CreateTexture(const TextureCreateInformation&
 	return output;
 }
 
-SPtr<ct::GpuBuffer> VulkanGpuDevice::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize)
+SPtr<render::GpuBuffer> VulkanGpuDevice::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize)
 {
 	SPtr<GpuBuffer> output = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuBuffer>()) VulkanGpuBuffer(*this, createInformation));
 	output->SetShared(output);
@@ -539,7 +539,7 @@ SPtr<GpuProgram> VulkanGpuDevice::CreateGpuProgram(const GpuProgramCreateInforma
 	return output;
 }
 
-SPtr<ct::GpuParameters> VulkanGpuDevice::CreateGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, bool deferredInitialize)
+SPtr<render::GpuParameters> VulkanGpuDevice::CreateGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, bool deferredInitialize)
 {
 	SPtr<GpuParameters> output = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuParameters>()) VulkanGpuParameters(*this, parameterLayout));
 	output->SetShared(output);
@@ -609,7 +609,7 @@ void VulkanGpuDevice::SubmitTransferCommandBuffers(bool wait)
 	}
 }
 
-void VulkanGpuDevice::PresentRenderWindow(const SPtr<ct::RenderWindow>& renderWindow, u32 syncMask)
+void VulkanGpuDevice::PresentRenderWindow(const SPtr<render::RenderWindow>& renderWindow, u32 syncMask)
 {
 	SPtr<GpuQueue> queue = GetQueue(GQT_GRAPHICS, 0);
 	if (!B3D_ENSURE(queue))

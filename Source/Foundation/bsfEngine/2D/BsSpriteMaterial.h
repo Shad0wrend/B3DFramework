@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class MeshBase;
 		struct SpriteMaterialInfo;
@@ -75,7 +75,7 @@ namespace b3d
 		u64 GroupId = 0;
 		TextureType Texture;
 		SpriteImageType SpriteImage; /**< Sprite image used to generate the sprite. Used for animation only. */
-		SPtr<ct::SpriteImageAllocation> SpriteImageAllocation; /**< Allocation handle to keep the sprite image alive as long as needed. */
+		SPtr<render::SpriteImageAllocation> SpriteImageAllocation; /**< Allocation handle to keep the sprite image alive as long as needed. */
 		Color Tint;
 		float AnimationStartTime = 0.0f;
 		SPtr<SpriteMaterialExtraInfo> AdditionalData;
@@ -129,30 +129,30 @@ namespace b3d
 		 * @param	paramBuffer		Buffer containing data GPU parameters.
 		 * @param	additionalData	Optional additional data that might be required by the renderer.
 		 */
-		virtual void Render(ct::GpuCommandBuffer& commandBuffer, const SPtr<ct::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<ct::Texture>& texture, const SPtr<SamplerState>& sampler, const SPtr<ct::GpuBuffer>& paramBuffer, const SPtr<SpriteMaterialExtraInfo>& additionalData) const;
+		virtual void Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::Texture>& texture, const SPtr<SamplerState>& sampler, const SPtr<render::GpuBuffer>& paramBuffer, const SPtr<SpriteMaterialExtraInfo>& additionalData) const;
 
 	protected:
 		/** Perform initialization of render-thread specific objects. */
 		virtual void Initialize();
 
 		/** Destroys the render thread material. */
-		static void Destroy(const SPtr<ct::Material>& material, const SPtr<ct::GpuParamsSet>& params);
+		static void Destroy(const SPtr<render::Material>& material, const SPtr<render::GpuParamsSet>& params);
 
 		u32 mId;
 		bool mAllowBatching;
 
 		// Render thread only (everything below)
-		SPtr<ct::Material> mMaterial;
+		SPtr<render::Material> mMaterial;
 		u32 mTechnique;
 		std::atomic<bool> mMaterialStored;
 
-		SPtr<ct::GpuParamsSet> mParams;
+		SPtr<render::GpuParamsSet> mParams;
 		u32 mParamBufferIdx;
-		mutable ct::MaterialParameterSampledTexture mTextureParam;
-		mutable ct::MaterialParameterSampler mSamplerParam;
+		mutable render::MaterialParameterSampledTexture mTextureParam;
+		mutable render::MaterialParameterSampler mSamplerParam;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** @copydoc b3d::SpriteMaterialInfo */
 		struct SpriteMaterialInfo : TSpriteMaterialInfo<true>
@@ -162,7 +162,7 @@ namespace b3d
 			/** Initializes the object from the main thread variant. */
 			SpriteMaterialInfo(const TSpriteMaterialInfo<false>& other);
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

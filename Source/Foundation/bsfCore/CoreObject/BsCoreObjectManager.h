@@ -34,11 +34,11 @@ namespace b3d
 				: InternalId(0)
 			{}
 
-			PerObjectSyncData(const SPtr<ct::RenderProxy> destObj, u64 internalId, const CoreSyncData& syncData)
+			PerObjectSyncData(const SPtr<render::RenderProxy> destObj, u64 internalId, const CoreSyncData& syncData)
 				: RenderProxy(destObj), SyncData(syncData), InternalId(internalId)
 			{}
 
-			SPtr<ct::RenderProxy> RenderProxy;
+			SPtr<render::RenderProxy> RenderProxy;
 			CoreSyncData SyncData;
 			u64 InternalId;
 		};
@@ -51,7 +51,7 @@ namespace b3d
 		{
 			FrameAllocator* Allocator = nullptr;
 			Vector<PerObjectSyncData> Entries;
-			Vector<SPtr<ct::RenderProxy>> DestroyedObjects;
+			Vector<SPtr<render::RenderProxy>> DestroyedObjects;
 		};
 
 		/** Contains information about a dirty CoreObject that requires syncing to the render thread. */

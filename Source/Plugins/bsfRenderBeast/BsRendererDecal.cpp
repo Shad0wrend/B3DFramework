@@ -7,7 +7,7 @@
 #include "Renderer/BsRendererUtility.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 DecalParamDef gDecalParamDef;
 
@@ -72,4 +72,4 @@ void RendererDecal::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush) con
 	if(flush)
 		PerCallParamBuffer->FlushCache();
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

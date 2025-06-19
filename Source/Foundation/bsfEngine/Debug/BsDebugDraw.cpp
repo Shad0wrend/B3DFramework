@@ -24,7 +24,7 @@ using namespace b3d;
 DebugDraw::DebugDraw()
 {
 	mDrawHelper = B3DNew<DrawHelper>();
-	mRenderer = RendererExtension::Create<ct::DebugDrawRenderer>(nullptr);
+	mRenderer = RendererExtension::Create<render::DebugDrawRenderer>(nullptr);
 }
 
 DebugDraw::~DebugDraw()
@@ -135,11 +135,11 @@ void DebugDraw::UpdateInternal()
 
 	Vector<MeshRenderData> proxyData = CreateMeshProxyData(mActiveMeshes);
 
-	ct::DebugDrawRenderer* renderer = mRenderer.get();
-	GetRenderThread().PostCommand(std::bind(&ct::DebugDrawRenderer::UpdateData, renderer, proxyData), "DebugDrawRenderer::UpdateData");
+	render::DebugDrawRenderer* renderer = mRenderer.get();
+	GetRenderThread().PostCommand(std::bind(&render::DebugDrawRenderer::UpdateData, renderer, proxyData), "DebugDrawRenderer::UpdateData");
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 
 DebugDrawParamsDef gDebugDrawParamsDef;

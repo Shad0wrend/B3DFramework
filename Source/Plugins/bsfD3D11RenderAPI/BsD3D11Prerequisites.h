@@ -38,7 +38,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class D3D11RenderAPI;
 		class D3D11Driver;
@@ -70,5 +70,5 @@ namespace b3d
 		};
 
 		typedef Vector<char*> HLSLMicroCode;
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

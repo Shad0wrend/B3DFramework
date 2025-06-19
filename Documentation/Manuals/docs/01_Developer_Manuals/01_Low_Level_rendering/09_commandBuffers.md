@@ -2,14 +2,14 @@
 title: Command buffers
 ---
 
-Rendering can be a very CPU heavy operation even though GPU does all the rendering - but CPU is still the one submitting all those commands. For this purpose b3d::f provides a @b3d::ct::CommandBuffer object. This object allows you to queue low-level rendering commands on different threads, allowing you to better distribute the CPU usage. Normally rendering commands are only allowed to be submitted from the core thread, but when using command buffers you are allowed to use a different thread for each command buffer.
+Rendering can be a very CPU heavy operation even though GPU does all the rendering - but CPU is still the one submitting all those commands. For this purpose b3d::f provides a @b3d::render::CommandBuffer object. This object allows you to queue low-level rendering commands on different threads, allowing you to better distribute the CPU usage. Normally rendering commands are only allowed to be submitted from the core thread, but when using command buffers you are allowed to use a different thread for each command buffer.
 
 Almost every method on **RenderAPI** accepts a **CommandBuffer** as its last parameter. If you don't provide one the system will instead use its primary internal command buffer. When you do you can use **RenderAPI** from different threads safely.
 
 > Note: At this point command buffers are only natively supported by the Vulkan render API and will be emulated on others. This means there will be no performance benefit on non-Vulkan render APIs.
 
 # Creation
-To create a **CommandBuffer** call @b3d::ct::CommandBuffer::create with @b3d::GpuQueueType as the parameter. **GpuQueueType** can be:
+To create a **CommandBuffer** call @b3d::render::CommandBuffer::create with @b3d::GpuQueueType as the parameter. **GpuQueueType** can be:
  - @b3d::GQT_GRAPHICS - This is the default command buffer type that supports all type of operations.
  - @b3d::GQT_COMPUTE - Command buffer type that only supports compute operations.
 
@@ -30,7 +30,7 @@ rapi.drawIndexed(0, numIndices, 0, numVertices, 1 cmds);
 ~~~~~~~~~~~~~
 
 # Submitting
-Commands queued on a command buffer will only get executed after the command buffer is submitted. Submission is done by calling @b3d::ct::RenderAPI::submitCommandBuffer.
+Commands queued on a command buffer will only get executed after the command buffer is submitted. Submission is done by calling @b3d::render::RenderAPI::submitCommandBuffer.
 
 ~~~~~~~~~~~~~{.cpp}
 RenderAPI& rapi = RenderAPI::instance();
@@ -39,4 +39,4 @@ rapi.submitCommandBuffer(cmds);
 
 The default command buffer (one used when you provide no command buffer to **RenderAPI**) is automatically submitted on a call to **RenderAPI::swapBuffers()**.
 
-Note that even though command buffers can be populated with commands on various threads, **ct::RenderAPI::submitCommandBuffer()** must only be called from the core thread. You must also externally synchronize access to **CommandBuffer** when passing it between threads, as it is not thread safe.
+Note that even though command buffers can be populated with commands on various threads, **render::RenderAPI::submitCommandBuffer()** must only be called from the core thread. You must also externally synchronize access to **CommandBuffer** when passing it between threads, as it is not thread safe.

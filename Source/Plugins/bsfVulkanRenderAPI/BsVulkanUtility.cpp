@@ -8,7 +8,7 @@
 #include "RenderAPI/BsGpuParameters.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice& device, PixelFormat format, TextureType texType, int usage, bool optimalTiling, bool hwGamma)
 {

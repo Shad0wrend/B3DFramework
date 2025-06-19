@@ -26,28 +26,28 @@ namespace b3d
 		Vector2I WindowToScreenPos(const Vector2I& windowPos) const override;
 
 		/** @copydoc RenderWindow::GetCore */
-		SPtr<ct::Win32RenderWindow> GetCore() const;
+		SPtr<render::Win32RenderWindow> GetCore() const;
 
 	protected:
 		friend class GLRenderWindowManager;
-		friend class ct::Win32GLSupport;
-		friend class ct::Win32RenderWindow;
+		friend class render::Win32GLSupport;
+		friend class render::Win32RenderWindow;
 
-		Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, ct::Win32GLSupport& glsupport);
+		Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, render::Win32GLSupport& glsupport);
 
 		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 		void SyncProperties() override;
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<render::CoreObject> CreateCore() const override;
 
 		/**	Retrieves internal window handle. */
 		HWND GetHWnd() const;
 
 	private:
-		ct::Win32GLSupport& mGLSupport;
+		render::Win32GLSupport& mGLSupport;
 		RenderWindowProperties mProperties;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**
 		 * Render window implementation for Windows.
@@ -111,7 +111,7 @@ namespace b3d
 			RenderWindowProperties mProperties;
 			RenderWindowProperties mSyncedProperties;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

@@ -14,7 +14,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class VulkanOcclusionQuery;
 		class VulkanTimerQuery;
@@ -773,5 +773,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

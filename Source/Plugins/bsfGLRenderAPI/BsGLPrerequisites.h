@@ -70,7 +70,7 @@ WGLEWContext* wglewGetContext();
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** Translated an OpenGL error code enum to an error code string. */
 		const char* B3DGetOpenGLErrorString(GLenum errorCode);
@@ -113,5 +113,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

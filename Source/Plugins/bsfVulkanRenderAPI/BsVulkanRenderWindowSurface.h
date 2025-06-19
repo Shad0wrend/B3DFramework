@@ -5,7 +5,7 @@
 #include "BsVulkanPrerequisites.h"
 #include "RenderAPI/BsRenderWindow.h"
 
-namespace b3d::ct
+namespace b3d::render
 {
 	/** @addtogroup Vulkan
 	 *  @{
@@ -40,4 +40,4 @@ namespace b3d::ct
 	};
 
 	/** @} */
-} // namespace b3d::ct
+} // namespace b3d::render

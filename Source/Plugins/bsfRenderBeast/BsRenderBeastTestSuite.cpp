@@ -22,7 +22,7 @@ RenderBeastTestSuite::RenderBeastTestSuite()
 
 void RenderBeastTestSuite::TestTextureRowAllocator()
 {
-	ct::TextureRowAllocator<128, 128> alloc;
+	render::TextureRowAllocator<128, 128> alloc;
 
 	auto a0 = alloc.Alloc(16);
 	B3D_TEST_ASSERT(a0.X == 0 && a0.Y == 0 && a0.Length == 16);

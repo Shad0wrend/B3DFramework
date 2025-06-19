@@ -294,7 +294,7 @@ namespace b3d
 
 	private:
 		friend class Mesh;
-		friend class ct::Mesh;
+		friend class render::Mesh;
 
 		u32 mDescBuilding;
 

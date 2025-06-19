@@ -25,7 +25,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		class GUIRenderer;
 	}
@@ -222,7 +222,7 @@ namespace b3d
 		const RenderWindow* GetWidgetWindow(const GUIWidget& widget) const;
 
 	private:
-		friend class ct::GUIRenderer;
+		friend class render::GUIRenderer;
 
 		/**	Recreates the input caret texture. */
 		void UpdateCaretTexture();
@@ -235,7 +235,7 @@ namespace b3d
 		 *
 		 * @param[in]	renderer	Previously constructed render thread GUI manager instance.
 		 */
-		void DestroyRenderer(ct::GUIRenderer* renderer);
+		void DestroyRenderer(render::GUIRenderer* renderer);
 
 		/**
 		 * Destroys any elements or widgets queued for destruction.
@@ -345,7 +345,7 @@ namespace b3d
 		static const u32 kMeshHeapInitialNumIndices;
 
 		Vector<WidgetInfo> mWidgets;
-		SPtr<ct::GUIRenderer> mRenderer;
+		SPtr<render::GUIRenderer> mRenderer;
 
 		Stack<GUIElement*> mScheduledForDestruction;
 
@@ -413,7 +413,7 @@ namespace b3d
 		HEvent mMouseLeftWindowConn;
 	};
 
-	namespace ct
+	namespace render
 	{
 		B3D_PARAM_BLOCK_BEGIN(GUISpriteParamBlockDef)
 			B3D_PARAM_BLOCK_ENTRY(Matrix4, gWorldTransform)
@@ -475,7 +475,7 @@ namespace b3d
 			SPtr<SamplerState> mSamplerState;
 			float mTime = 0.0f;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** Provides easier access to GUIManager. */
 	B3D_EXPORT GUIManager& GetGUIManager();

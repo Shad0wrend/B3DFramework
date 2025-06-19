@@ -7,7 +7,7 @@
 #include "Private/MacOS/BsMacOSPlatform.h"
 #import <AppKit/AppKit.h>
 
-namespace b3d::ct
+namespace b3d::render
 {
 	struct MacOSContext::Pimpl
 	{

@@ -10,7 +10,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		struct SkyInfo;
 		struct SceneInfo;
@@ -136,5 +136,5 @@ namespace b3d
 		extern ReflProbesParamDef gReflProbesParamDef;
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

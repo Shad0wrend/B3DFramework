@@ -27,15 +27,15 @@ namespace b3d
 		VkInstance GetVkInstance() const { return mInstance; }
 
 		/** Returns a Vulkan device at the specified index. Must be in range [0, GetDeviceCount()) */
-		const SPtr<ct::VulkanGpuDevice>& GetVulkanDevice(u32 index) const { return mDevices[index]; }
+		const SPtr<render::VulkanGpuDevice>& GetVulkanDevice(u32 index) const { return mDevices[index]; }
 
 		/** Returns the primary device that supports swap chain present operations. */
-		const SPtr<ct::VulkanGpuDevice>& GetPresentDevice() const { return mPresentDevice; }
+		const SPtr<render::VulkanGpuDevice>& GetPresentDevice() const { return mPresentDevice; }
 	private:
 		VkInstance mInstance = nullptr;
 
-		TInlineArray<SPtr<ct::VulkanGpuDevice>, 2> mDevices;
-		SPtr<ct::VulkanGpuDevice> mPresentDevice;
+		TInlineArray<SPtr<render::VulkanGpuDevice>, 2> mDevices;
+		SPtr<render::VulkanGpuDevice> mPresentDevice;
 
 		VkDebugReportCallbackEXT mDebugReportCallback = nullptr;
 		VkDebugUtilsMessengerEXT mDebugUtilsMessenger = nullptr;

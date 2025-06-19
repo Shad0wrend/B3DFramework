@@ -275,7 +275,7 @@ void LinuxRenderWindow::SetFullscreen(const VideoMode& mode)
 	if(mIsChild)
 		return;
 
-	const ct::Win32VideoModeInfo& videoModeInfo = static_cast<const ct::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
+	const render::Win32VideoModeInfo& videoModeInfo = static_cast<const render::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
 	const u32 outputCount = videoModeInfo.GetOutputCount();
 
 	u32 outputIdx = mode.outputIdx;
@@ -399,7 +399,7 @@ void LinuxRenderWindow::SetWindowed(u32 width, u32 height)
 		return;
 
 	// Restore old screen config
-	const ct::Win32VideoModeInfo& videoModeInfo = static_cast<const ct::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
+	const render::Win32VideoModeInfo& videoModeInfo = static_cast<const render::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
 	const u32 outputCount = videoModeInfo.GetOutputCount();
 
 	u32 outputIdx = 0; // 0 is always primary
@@ -445,13 +445,13 @@ u64 LinuxRenderWindow::GetPlatformWindowHandle() const
 	return (u64)mWindow->GetXWindowInternal();
 }
 
-SPtr<ct::RenderProxy> LinuxRenderWindow::CreateRenderProxy() const
+SPtr<render::RenderProxy> LinuxRenderWindow::CreateRenderProxy() const
 {
 	SPtr<RenderWindow> parentWindow = mParentWindow.lock();
 	B3D_ENSURE(B3DIsWeakUnassigned(mParentWindow) || !mParentWindow.expired()); // If parent window is assigned, it must not be expired
 
 	RenderWindowCreateInformation createInformation = mCreateInformation;
-	SPtr<ct::RenderProxy> renderProxy = B3DMakeShared<ct::LinuxRenderWindow>(createInformation, mWindowId, GetPlatformWindowHandle(), B3DGetRenderProxy(parentWindow));
+	SPtr<render::RenderProxy> renderProxy = B3DMakeShared<render::LinuxRenderWindow>(createInformation, mWindowId, GetPlatformWindowHandle(), B3DGetRenderProxy(parentWindow));
 	renderProxy->SetShared(renderProxy);
 
 	return renderProxy;
@@ -476,7 +476,7 @@ void LinuxRenderWindow::DoOnWindowMovedOrResized()
 	Super::DoOnWindowMovedOrResized();
 }
 
-using namespace b3d::ct;
+using namespace b3d::render;
 
 LinuxRenderWindow::LinuxRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 platformWindowHandle, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, platformWindowHandle, parentWindow)

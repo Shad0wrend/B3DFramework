@@ -13,9 +13,9 @@
 #include "Image/BsColorGradient.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
-SPtr<ct::Texture> Generate4x4RandomizationTexture()
+SPtr<render::Texture> Generate4x4RandomizationTexture()
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if (!gpuDevice)
@@ -92,7 +92,7 @@ float CalcMicrofacetShadowingSmithGgx(float roughness4, float NoV, float NoL)
 	return 1.0f / (g1V * g1L);
 }
 
-SPtr<ct::Texture> GeneratePreintegratedEnvBrdf()
+SPtr<render::Texture> GeneratePreintegratedEnvBrdf()
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if (!gpuDevice)
@@ -105,7 +105,7 @@ SPtr<ct::Texture> GeneratePreintegratedEnvBrdf()
 	createInformation.Width = 128;
 	createInformation.Height = 32;
 
-	SPtr<ct::Texture> texture = gpuDevice->CreateTexture(createInformation);
+	SPtr<render::Texture> texture = gpuDevice->CreateTexture(createInformation);
 	const SPtr<PixelData> pixelData = texture->GetProperties().AllocBuffer(0, 0);
 
 	for(u32 y = 0; y < createInformation.Height; y++)
@@ -187,7 +187,7 @@ SPtr<ct::Texture> GeneratePreintegratedEnvBrdf()
 	return texture;
 }
 
-SPtr<ct::Texture> GenerateDefaultIndirect()
+SPtr<render::Texture> GenerateDefaultIndirect()
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if (!gpuDevice)
@@ -209,7 +209,7 @@ SPtr<ct::Texture> GenerateDefaultIndirect()
 	// Note: Eventually replace this with a time of day model
 	float intensity = 1.0f;
 	Color skyColor = Color::kWhite * intensity;
-	SPtr<ct::Texture> skyTexture = gpuDevice->CreateTexture(dummySkyDesc);
+	SPtr<render::Texture> skyTexture = gpuDevice->CreateTexture(dummySkyDesc);
 
 	u32 sides[] = { CF_PositiveX, CF_NegativeX, CF_PositiveZ, CF_NegativeZ };
 	for(u32 i = 0; i < 4; ++i)
@@ -255,7 +255,7 @@ SPtr<ct::Texture> GenerateDefaultIndirect()
 	irradianceCubemapDesc.MipMapCount = 0;
 	irradianceCubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
-	SPtr<ct::Texture> irradiance = gpuDevice->CreateTexture(irradianceCubemapDesc);
+	SPtr<render::Texture> irradiance = gpuDevice->CreateTexture(irradianceCubemapDesc);
 	GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyTexture, irradiance);
 
 	gpuDevice->SubmitCommandBuffer(commandBuffer);
@@ -263,7 +263,7 @@ SPtr<ct::Texture> GenerateDefaultIndirect()
 	return irradiance;
 }
 
-SPtr<ct::Texture> GenerateLensFlareGradientTint()
+SPtr<render::Texture> GenerateLensFlareGradientTint()
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if (!gpuDevice)
@@ -292,7 +292,7 @@ SPtr<ct::Texture> GenerateLensFlareGradientTint()
 	return gpuDevice->CreateTexture(pixels);
 }
 
-SPtr<ct::Texture> GenerateChromaticAberrationFringe()
+SPtr<render::Texture> GenerateChromaticAberrationFringe()
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if (!gpuDevice)
@@ -306,12 +306,12 @@ SPtr<ct::Texture> GenerateChromaticAberrationFringe()
 	return gpuDevice->CreateTexture(pixels);
 }
 
-SPtr<ct::Texture> RendererTextures::preintegratedEnvGF;
-SPtr<ct::Texture> RendererTextures::ssaoRandomization4x4;
-SPtr<ct::Texture> RendererTextures::defaultIndirect;
-SPtr<ct::Texture> RendererTextures::lensFlareGradient;
-SPtr<ct::Texture> RendererTextures::bokehFlare;
-SPtr<ct::Texture> RendererTextures::chromaticAberrationFringe;
+SPtr<render::Texture> RendererTextures::preintegratedEnvGF;
+SPtr<render::Texture> RendererTextures::ssaoRandomization4x4;
+SPtr<render::Texture> RendererTextures::defaultIndirect;
+SPtr<render::Texture> RendererTextures::lensFlareGradient;
+SPtr<render::Texture> RendererTextures::bokehFlare;
+SPtr<render::Texture> RendererTextures::chromaticAberrationFringe;
 
 void RendererTextures::StartUp(const LoadedRendererTextures& textures)
 {
@@ -332,4 +332,4 @@ void RendererTextures::ShutDown()
 	bokehFlare = nullptr;
 	chromaticAberrationFringe = nullptr;
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

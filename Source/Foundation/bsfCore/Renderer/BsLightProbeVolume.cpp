@@ -228,10 +228,10 @@ void LightProbeVolume::RunRenderProbeTask()
 		mRendererTask = nullptr;
 	};
 
-	SPtr<ct::LightProbeVolume> renderProxy = B3DGetRenderProxy(this);
-	auto renderProbes = [renderProxy](ct::GpuCommandBufferPool& commandBufferPool)
+	SPtr<render::LightProbeVolume> renderProxy = B3DGetRenderProxy(this);
+	auto renderProbes = [renderProxy](render::GpuCommandBufferPool& commandBufferPool)
 	{
-		SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("LightProbeRendering"));
+		SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("LightProbeRendering"));
 		GetProfilerGPU().BeginSample(*commandBuffer, "LightProbeRendering");
 		const bool isDone = renderProxy->RenderProbes(*commandBuffer, 3);
 		GetProfilerGPU().EndSample(*commandBuffer, "LightProbeRendering");
@@ -242,10 +242,10 @@ void LightProbeVolume::RunRenderProbeTask()
 		return isDone;
 	};
 
-	mRendererTask = ct::RendererTask::Create("RenderLightProbes", renderProbes);
+	mRendererTask = render::RendererTask::Create("RenderLightProbes", renderProbes);
 
 	mRendererTask->OnComplete.Connect(renderComplete);
-	ct::GetRenderer()->AddTask(mRendererTask);
+	render::GetRenderer()->AddTask(mRendererTask);
 }
 
 void LightProbeVolume::UpdateCoefficients()
@@ -254,7 +254,7 @@ void LightProbeVolume::UpdateCoefficients()
 	if(mRendererTask)
 		mRendererTask->Wait();
 
-	ct::LightProbeVolume* renderProxy = B3DGetRenderProxy(this).get();
+	render::LightProbeVolume* renderProxy = B3DGetRenderProxy(this).get();
 
 	Vector<LightProbeCoefficientInfo> coeffInfo;
 	auto getSaveData = [renderProxy, &coeffInfo]()
@@ -293,10 +293,10 @@ SPtr<LightProbeVolume> LightProbeVolume::CreateEmpty()
 	return probleVolumePtr;
 }
 
-SPtr<ct::RenderProxy> LightProbeVolume::CreateRenderProxy() const
+SPtr<render::RenderProxy> LightProbeVolume::CreateRenderProxy() const
 {
-	ct::LightProbeVolume* renderProxy = new(B3DAllocate<ct::LightProbeVolume>()) ct::LightProbeVolume(mProbes);
-	SPtr<ct::LightProbeVolume> renderProxyShared = B3DMakeSharedFromExisting<ct::LightProbeVolume>(renderProxy);
+	render::LightProbeVolume* renderProxy = new(B3DAllocate<render::LightProbeVolume>()) render::LightProbeVolume(mProbes);
+	SPtr<render::LightProbeVolume> renderProxyShared = B3DMakeSharedFromExisting<render::LightProbeVolume>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -351,7 +351,7 @@ RTTIType* LightProbeVolume::GetRtti() const
 	return LightProbeVolume::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 LightProbeVolume::LightProbeVolume(const UnorderedMap<u32, b3d::LightProbeVolume::ProbeInfo>& probes)
 {

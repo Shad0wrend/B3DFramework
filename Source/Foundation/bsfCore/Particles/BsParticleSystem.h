@@ -23,7 +23,7 @@ namespace b3d
 	class ParticleEvolver;
 	class ParticleSet;
 
-	namespace ct
+	namespace render
 	{
 		class ParticleSystem;
 	}
@@ -328,7 +328,7 @@ namespace b3d
 	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
 	ParticleVectorFieldSettings : TParticleVectorFieldSettings<false>, IReflectable, IScriptExportable
 	{
-		friend struct ct::ParticleVectorFieldSettings;
+		friend struct render::ParticleVectorFieldSettings;
 		struct SyncPacket;
 
 		/************************************************************************/
@@ -341,14 +341,14 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread counterpart of b3d::ParticleVectorFieldSettings. */
 		struct ParticleVectorFieldSettings : TParticleVectorFieldSettings<true>
 		{
 			friend struct b3d::ParticleVectorFieldSettings;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 	/** @addtogroup Implementation
@@ -396,7 +396,7 @@ namespace b3d
 	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
 	ParticleSystemSettings : TParticleSystemSettings<false>, IReflectable, IScriptExportable
 	{
-		friend struct ct::ParticleSystemSettings;
+		friend struct render::ParticleSystemSettings;
 		struct SyncPacket;
 
 		/************************************************************************/
@@ -412,7 +412,7 @@ namespace b3d
 	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
 	ParticleGpuSimulationSettings : TParticleGpuSimulationSettings<false>, IReflectable, IScriptExportable
 	{
-		friend struct ct::ParticleGpuSimulationSettings;
+		friend struct render::ParticleGpuSimulationSettings;
 		struct SyncPacket;
 
 		/************************************************************************/
@@ -431,7 +431,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		class VectorField;
 
@@ -446,7 +446,7 @@ namespace b3d
 		{
 			friend struct b3d::ParticleGpuSimulationSettings;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 
@@ -554,7 +554,7 @@ namespace b3d
 		friend class ParticleManager;
 		friend class ParticleSystemRTTI;
 		friend class ParticleEmitter;
-		friend class ct::ParticleSystem;
+		friend class render::ParticleSystem;
 		struct SyncPacket;
 
 		/** States the particle system can be in. */
@@ -614,7 +614,7 @@ namespace b3d
 		 */
 		void PostSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset);
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
@@ -654,7 +654,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		/** Render  thread counterpart of b3d::ParticleSystem. */
 		class B3D_CORE_EXPORT ParticleSystem final : public RenderProxy, public SceneActor, public INonCopyable
@@ -707,7 +707,7 @@ namespace b3d
 			ParticleGpuSimulationSettings mGpuSimulationSettings;
 			u64 mLayer = 1;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

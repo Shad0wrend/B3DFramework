@@ -31,11 +31,11 @@ SPtr<SpriteVectorPathAllocation> SpriteVectorPathAllocation::Create(const WeakSP
 	return allocationShared;
 }
 
-SPtr<ct::RenderProxy> SpriteVectorPathAllocation::CreateRenderProxy() const
+SPtr<render::RenderProxy> SpriteVectorPathAllocation::CreateRenderProxy() const
 {
-	ct::SpriteVectorPathAllocation* const renderProxy = new(B3DAllocate<ct::SpriteVectorPathAllocation>()) ct::SpriteVectorPathAllocation();
+	render::SpriteVectorPathAllocation* const renderProxy = new(B3DAllocate<render::SpriteVectorPathAllocation>()) render::SpriteVectorPathAllocation();
 
-	SPtr<ct::SpriteVectorPathAllocation> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteVectorPathAllocation>(renderProxy);
+	SPtr<render::SpriteVectorPathAllocation> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteVectorPathAllocation>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -117,12 +117,12 @@ void SpriteVectorPath::Initialize()
 	Resource::Initialize();
 }
 
-SPtr<ct::RenderProxy> SpriteVectorPath::CreateRenderProxy() const
+SPtr<render::RenderProxy> SpriteVectorPath::CreateRenderProxy() const
 {
-	ct::SpriteVectorPathCreateInformation createInformation(mInformation);
-	ct::SpriteVectorPath* const renderProxy = new(B3DAllocate<ct::SpriteVectorPath>()) ct::SpriteVectorPath(createInformation);
+	render::SpriteVectorPathCreateInformation createInformation(mInformation);
+	render::SpriteVectorPath* const renderProxy = new(B3DAllocate<render::SpriteVectorPath>()) render::SpriteVectorPath(createInformation);
 
-	SPtr<ct::SpriteVectorPath> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteVectorPath>(renderProxy);
+	SPtr<render::SpriteVectorPath> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteVectorPath>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -188,7 +188,7 @@ RTTIType* SpriteVectorPath::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 void SpriteVectorPathAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {

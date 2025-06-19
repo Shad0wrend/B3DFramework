@@ -57,7 +57,7 @@ namespace b3d
 		}
 	};
 
-	class B3D_CORE_EXPORT PassRenderProxyRTTI : public TRTTIType<ct::Pass, IReflectable, PassRenderProxyRTTI>
+	class B3D_CORE_EXPORT PassRenderProxyRTTI : public TRTTIType<render::Pass, IReflectable, PassRenderProxyRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -75,7 +75,7 @@ namespace b3d
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnOperationEnded(ct::Pass& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		void OnOperationEnded(render::Pass& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
 				object.Initialize();
@@ -94,7 +94,7 @@ namespace b3d
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return ct::Pass::CreateEmpty();
+			return render::Pass::CreateEmpty();
 		}
 	};
 

@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup GL
 		 *  @{
@@ -25,7 +25,7 @@ namespace b3d
 
 			void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) override;
 			void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) override;
-			void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr) override;
+			void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<render::CommandBuffer>& commandBuffer = nullptr) override;
 
 			/**	Returns internal OpenGL buffer ID. */
 			GLuint GetGlBufferId() const { return mBufferId; }
@@ -41,10 +41,10 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 namespace b3d
 {
-	B3D_IMPLEMENT_GLOBAL_POOL(ct::GLHardwareBuffer, 32)
+	B3D_IMPLEMENT_GLOBAL_POOL(render::GLHardwareBuffer, 32)
 }

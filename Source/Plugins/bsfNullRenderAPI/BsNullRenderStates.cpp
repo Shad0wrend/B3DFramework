@@ -3,7 +3,7 @@
 #include "BsNullRenderStates.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 SPtr<SamplerState> NullRenderStateManager::CreateSamplerStateInternalInternal(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask) const
 {
@@ -13,7 +13,7 @@ SPtr<SamplerState> NullRenderStateManager::CreateSamplerStateInternalInternal(co
 	return ret;
 }
 
-SPtr<ct::BlendState> NullRenderStateManager::CreateBlendStateInternalInternal(const BlendStateInformation& desc, u32 id) const
+SPtr<render::BlendState> NullRenderStateManager::CreateBlendStateInternalInternal(const BlendStateInformation& desc, u32 id) const
 {
 	SPtr<NullBlendState> ret = B3DMakeShared<NullBlendState>(desc, id);
 	ret->SetShared(ret);
@@ -21,7 +21,7 @@ SPtr<ct::BlendState> NullRenderStateManager::CreateBlendStateInternalInternal(co
 	return ret;
 }
 
-SPtr<ct::RasterizerState> NullRenderStateManager::CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, u32 id) const
+SPtr<render::RasterizerState> NullRenderStateManager::CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, u32 id) const
 {
 	SPtr<NullRasterizerState> ret = B3DMakeShared<NullRasterizerState>(desc, id);
 	ret->SetShared(ret);
@@ -29,7 +29,7 @@ SPtr<ct::RasterizerState> NullRenderStateManager::CreateRasterizerStateInternalI
 	return ret;
 }
 
-SPtr<ct::DepthStencilState> NullRenderStateManager::CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, u32 id) const
+SPtr<render::DepthStencilState> NullRenderStateManager::CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, u32 id) const
 {
 	SPtr<NullDepthStencilState> ret = B3DMakeShared<NullDepthStencilState>(desc, id);
 	ret->SetShared(ret);

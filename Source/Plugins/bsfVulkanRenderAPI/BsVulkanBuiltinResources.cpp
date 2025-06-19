@@ -5,7 +5,7 @@
 #include "BsVulkanGpuBuffer.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanBuiltinResources::VulkanBuiltinResources(VulkanGpuDevice& gpuDevice)
 	:mGpuDevice(gpuDevice)

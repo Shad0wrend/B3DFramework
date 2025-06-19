@@ -37,7 +37,7 @@ namespace b3d
 		void RequestFrameCapture();
 
 		/**	Returns the currently active renderer. Null if no renderer is active. */
-		SPtr<ct::Renderer> GetActive() { return mActiveRenderer; }
+		SPtr<render::Renderer> GetActive() { return mActiveRenderer; }
 
 		/**
 		 * Registers a new renderer factory. Any renderer you try to make active with setActive() you will need to have
@@ -48,7 +48,7 @@ namespace b3d
 	private:
 		Vector<SPtr<RendererFactory>> mAvailableFactories;
 
-		SPtr<ct::Renderer> mActiveRenderer;
+		SPtr<render::Renderer> mActiveRenderer;
 	};
 
 	/** @} */

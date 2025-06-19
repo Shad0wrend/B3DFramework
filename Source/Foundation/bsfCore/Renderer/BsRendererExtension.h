@@ -6,7 +6,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		struct RendererViewContext;
 	}
@@ -113,7 +113,7 @@ namespace b3d
 		virtual void Destroy() {}
 
 		/** Returns true if the render() method should be called for the provided camera. */
-		virtual RendererExtensionRequest Check(const ct::Camera& camera) = 0;
+		virtual RendererExtensionRequest Check(const render::Camera& camera) = 0;
 
 		/**
 		 * Called at the point at which rendering should be performed for the provided camera. Relevant render targets
@@ -123,7 +123,7 @@ namespace b3d
 		 * @param[in]	camera			Camera through which the renderer is currently rendering.
 		 * @param[in]	viewContext		Additional information about the currently rendered view.
 		 */
-		virtual void Render(const ct::Camera& camera, const ct::RendererViewContext& viewContext) = 0;
+		virtual void Render(const render::Camera& camera, const render::RendererViewContext& viewContext) = 0;
 
 		/**
 		 * Determines when will the render() method execute, compared to other plugins using the same RenderLocation.

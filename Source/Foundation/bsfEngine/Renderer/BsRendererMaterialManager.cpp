@@ -18,7 +18,7 @@ RendererMaterialManager::~RendererMaterialManager()
 	GetRenderThread().PostCommand(std::bind(&RendererMaterialManager::DestroyOnRenderThread), "RendererMaterialManager::Destroy");
 }
 
-void RendererMaterialManager::RegisterMaterial(ct::RendererMaterialMetaData* metaData, const char* shaderPath)
+void RendererMaterialManager::RegisterMaterial(render::RendererMaterialMetaData* metaData, const char* shaderPath)
 {
 	Lock lock(GetMutex());
 

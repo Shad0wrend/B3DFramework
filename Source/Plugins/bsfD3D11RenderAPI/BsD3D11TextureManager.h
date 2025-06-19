@@ -21,7 +21,7 @@ namespace b3d
 		SPtr<RenderTexture> CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**	Handles creation of DirectX 11 textures. */
 		class D3D11TextureManager : public TextureManager
@@ -30,7 +30,7 @@ namespace b3d
 			SPtr<Texture> CreateTextureInternal(const TextureCreateInformation& desc, const SPtr<PixelData>& initialData = nullptr, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<RenderTexture> CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx = 0) override;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

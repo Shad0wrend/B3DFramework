@@ -7,7 +7,7 @@
 #include "Profiling/BsRenderStats.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11DepthStencilState::D3D11DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, u32 id)
 	: DepthStencilState(desc, id)

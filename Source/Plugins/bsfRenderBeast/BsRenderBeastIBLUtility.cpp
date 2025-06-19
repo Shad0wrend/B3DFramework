@@ -8,7 +8,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsRenderTexture.h"
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 
 ReflectionCubeDownsampleParamDef gReflectionCubeDownsampleParamDef;
 
@@ -633,4 +633,4 @@ void RenderBeastIBLUtility::FilterCubemapForIrradianceNonCompute(GpuCommandBuffe
 		shAccumCube->Execute(commandBuffer, downsampleInput->Texture, 0, outputOffset, coeff, output);
 	}
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

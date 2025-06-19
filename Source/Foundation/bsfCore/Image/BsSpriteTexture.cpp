@@ -34,14 +34,14 @@ void SpriteTexture::Initialize()
 	SpriteImage::Initialize();
 }
 
-SPtr<ct::RenderProxy> SpriteTexture::CreateRenderProxy() const
+SPtr<render::RenderProxy> SpriteTexture::CreateRenderProxy() const
 {
-	SPtr<ct::Texture> atlasRenderProxy = B3DGetRenderProxy(mAtlasTexture);
+	SPtr<render::Texture> atlasRenderProxy = B3DGetRenderProxy(mAtlasTexture);
 
-	ct::SpriteTextureCreateInformation createInformation(mInformation, std::move(atlasRenderProxy));
-	ct::SpriteTexture* const renderProxy = new(B3DAllocate<ct::SpriteTexture>()) ct::SpriteTexture(createInformation);
+	render::SpriteTextureCreateInformation createInformation(mInformation, std::move(atlasRenderProxy));
+	render::SpriteTexture* const renderProxy = new(B3DAllocate<render::SpriteTexture>()) render::SpriteTexture(createInformation);
 
-	SPtr<ct::SpriteTexture> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteTexture>(renderProxy);
+	SPtr<render::SpriteTexture> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteTexture>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -112,7 +112,7 @@ RTTIType* SpriteTexture::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInformation)
 	: SpriteImage(createInformation)

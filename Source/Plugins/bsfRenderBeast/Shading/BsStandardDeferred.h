@@ -10,7 +10,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class RendererLight;
 
@@ -310,5 +310,5 @@ namespace b3d
 		private:
 			SPtr<GpuBuffer> mPerLightBuffer;
 		};
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

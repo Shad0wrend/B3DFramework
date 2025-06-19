@@ -563,12 +563,12 @@ namespace b3d
 		/** @} */
 	protected:
 		struct SyncPacket;
-		friend class ct::GpuParameters;
+		friend class render::GpuParameters;
 
 		GpuParameters(const SPtr<GpuPipelineParameterLayout>& paramInfo);
 
 		SPtr<GpuParameters> GetThisPtrInternal() const override;
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		void GetListenerResources(Vector<HResource>& resources) override;
@@ -578,7 +578,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderAPI-Internal
 		 *  @{
@@ -604,5 +604,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

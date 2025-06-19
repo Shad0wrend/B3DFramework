@@ -23,7 +23,7 @@ namespace b3d
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class GpuParticleSystem;
 		class GpuParticleResources;
@@ -377,5 +377,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

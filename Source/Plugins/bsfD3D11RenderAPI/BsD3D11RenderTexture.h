@@ -32,7 +32,7 @@ namespace b3d
 		RenderTextureProperties mProperties;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**
 		 * DirectX 11 implementation of a render texture.
@@ -53,7 +53,7 @@ namespace b3d
 
 			RenderTextureProperties mProperties;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

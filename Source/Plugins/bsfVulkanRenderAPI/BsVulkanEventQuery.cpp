@@ -6,7 +6,7 @@
 #include "Profiling/BsRenderStats.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanEvent::VulkanEvent(VulkanResourceManager* owner, const StringView& name)
 	: VulkanResource(owner, false, name)

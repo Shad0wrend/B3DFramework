@@ -39,7 +39,7 @@ public:
  
 Finally the implementation needs to implement the following methods:
  - @b3d::RendererExtension::check() - Called every frame for every camera in the scene. The methods accepts a camera as a parameter and returns @b3d::RendererExtensionRequest that signals the renderer if and under which circumstances should **RendererExtension::render()** be called.
- - @b3d::RendererExtension::render() - Called every frame for every camera that the **ct::RendererExtension::check()** method returned true for. This is the method where you place the bulk of extension code and perform actual rendering. The rendering is performed using the low level rendering API as described previously. Note that this is the only method in the extension that you should be rendering from.
+ - @b3d::RendererExtension::render() - Called every frame for every camera that the **render::RendererExtension::check()** method returned true for. This is the method where you place the bulk of extension code and perform actual rendering. The rendering is performed using the low level rendering API as described previously. Note that this is the only method in the extension that you should be rendering from.
  
 ~~~~~~~~~~~~~{.cpp}
 // Renderer extension with check() and render() methods
@@ -75,7 +75,7 @@ Note that while extensions are executed on the core thread, they are started fro
 
 ~~~~~~~~~~~~~{.cpp}
 // Calling from sim thread
-SPtr<ct::MyRendererExtension> rendererExt = RendererExtension::create<ct::MyRendererExtension>(nullptr);
+SPtr<render::MyRendererExtension> rendererExt = RendererExtension::create<render::MyRendererExtension>(nullptr);
 ~~~~~~~~~~~~~
 
 # Initialization
@@ -90,7 +90,7 @@ struct MyInitData
 {
 	int a;
 	float b;
-	SPtr<ct::Texture> c;
+	SPtr<render::Texture> c;
 }
 
 // Core thread
@@ -114,7 +114,7 @@ initData.a = 5;
 initData.b = 30.0f;
 initData.c = tex->getCore(); // Get version of texture usable on core thread
 
-SPtr<ct::MyRendererExtension> rendererExt = RendererExtension::create<ct::MyRendererExtension>(initData);
+SPtr<render::MyRendererExtension> rendererExt = RendererExtension::create<render::MyRendererExtension>(initData);
 ~~~~~~~~~~~~~
 
 # Destruction
@@ -147,7 +147,7 @@ public:
 }
 
 // Sim thread
-ct::MyRendererExtension myExtension = ...;
+render::MyRendererExtension myExtension = ...;
 float newValue = 15.0f;
 
 auto executeOnCore = [&]()

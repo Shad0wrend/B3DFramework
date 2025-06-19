@@ -10,7 +10,7 @@ namespace b3d
 {
 	class GUIVectorSpriteAtlasAllocation;
 
-	namespace ct
+	namespace render
 	{
 		class VectorPathRenderable;
 	}
@@ -25,7 +25,7 @@ namespace b3d
 	/** Manages lifetime of an allocation in a sprite atlas. When this object goes out of scope the atlas will be notified so it may free the allocation. */
 	struct B3D_CORE_EXPORT GUIVectorSpriteAtlasAllocationHandle : public std::enable_shared_from_this<GUIVectorSpriteAtlasAllocationHandle>
 	{
-		GUIVectorSpriteAtlasAllocationHandle(GUIVectorSpriteAtlas* owner, u64 vectorPathId, const Optional<TreeTextureAtlasLayout::Allocation>& layoutAllocation, u32 textureId, const SPtr<ct::VectorPathRenderable>& renderable)
+		GUIVectorSpriteAtlasAllocationHandle(GUIVectorSpriteAtlas* owner, u64 vectorPathId, const Optional<TreeTextureAtlasLayout::Allocation>& layoutAllocation, u32 textureId, const SPtr<render::VectorPathRenderable>& renderable)
 			: mVectorPathId(vectorPathId), mOwner(owner), mLayoutAllocation(layoutAllocation), mTextureId(textureId), mRenderable(renderable)
 		{ }
 
@@ -60,7 +60,7 @@ namespace b3d
 		u64 mVectorPathId = 0;
 		const Optional<TreeTextureAtlasLayout::Allocation> mLayoutAllocation; /**< Allocation in the texture atlas layout, if allocated in the atlas. If null, sprite is allocated as a unique texture. */
 		const u32 mTextureId = ~0u;
-		const SPtr<ct::VectorPathRenderable> mRenderable;
+		const SPtr<render::VectorPathRenderable> mRenderable;
 	};
 
 	/** Represents a single allocation in a GUIVectorSpriteAtlas. */
@@ -152,8 +152,8 @@ namespace b3d
 		/** Information about a vector path that should be re-rendered. */
 		struct DirtySpriteInformation
 		{
-			SPtr<ct::VectorPathRenderable> Renderable;
-			SPtr<ct::Texture> Texture;
+			SPtr<render::VectorPathRenderable> Renderable;
+			SPtr<render::Texture> Texture;
 			Area2 UVRegion = Area2::kEmpty;
 			Size2UI Size = Size2UI::kZero;
 		};

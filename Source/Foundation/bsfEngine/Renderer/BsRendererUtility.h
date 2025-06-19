@@ -13,7 +13,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Renderer-Engine-Internal
 		 *  @{
@@ -341,5 +341,5 @@ namespace b3d
 		B3D_EXPORT RendererUtility& GetRendererUtility();
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

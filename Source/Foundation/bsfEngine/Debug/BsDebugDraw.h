@@ -12,7 +12,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class DebugDrawRenderer;
 	}
@@ -151,16 +151,16 @@ namespace b3d
 		void UpdateInternal();
 
 	private:
-		friend class ct::DebugDrawRenderer;
+		friend class render::DebugDrawRenderer;
 
 		/** Data about a mesh rendered by the draw manager. */
 		struct MeshRenderData
 		{
-			MeshRenderData(const SPtr<ct::Mesh>& mesh, const SubMesh& subMesh, DebugDrawMaterial type)
+			MeshRenderData(const SPtr<render::Mesh>& mesh, const SubMesh& subMesh, DebugDrawMaterial type)
 				: Mesh(mesh), SubMesh(subMesh), Type(type)
 			{}
 
-			SPtr<ct::Mesh> Mesh;
+			SPtr<render::Mesh> Mesh;
 			SubMesh SubMesh;
 			DebugDrawMaterial Type;
 		};
@@ -171,12 +171,12 @@ namespace b3d
 		DrawHelper* mDrawHelper = nullptr;
 		Vector<DrawHelper::ShapeMeshData> mActiveMeshes;
 
-		SPtr<ct::DebugDrawRenderer> mRenderer;
+		SPtr<render::DebugDrawRenderer> mRenderer;
 	};
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Utility-Engine-Internal
 		 *  @{
@@ -226,7 +226,7 @@ namespace b3d
 
 		private:
 			void Initialize(const Any& data) override;
-			RendererExtensionRequest Check(const ct::Camera& camera) override;
+			RendererExtensionRequest Check(const render::Camera& camera) override;
 			void Render(const Camera& camera, const RendererViewContext& viewContext) override;
 
 			/**
@@ -242,5 +242,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

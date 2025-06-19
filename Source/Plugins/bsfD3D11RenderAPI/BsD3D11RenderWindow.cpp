@@ -55,9 +55,9 @@ Vector2I D3D11RenderWindow::WindowToScreenPos(const Vector2I& windowPos) const
 	return Vector2I(pos.x, pos.y);
 }
 
-SPtr<ct::D3D11RenderWindow> D3D11RenderWindow::GetCore() const
+SPtr<render::D3D11RenderWindow> D3D11RenderWindow::GetCore() const
 {
-	return std::static_pointer_cast<ct::D3D11RenderWindow>(mCoreSpecific);
+	return std::static_pointer_cast<render::D3D11RenderWindow>(mCoreSpecific);
 }
 
 HWND D3D11RenderWindow::GetHWnd() const
@@ -72,20 +72,20 @@ void D3D11RenderWindow::SyncProperties()
 	mProperties = GetCore()->mSyncedProperties;
 }
 
-SPtr<ct::CoreObject> D3D11RenderWindow::CreateCore() const
+SPtr<render::CoreObject> D3D11RenderWindow::CreateCore() const
 {
-	ct::RenderAPI* rs = ct::RenderAPI::InstancePtr();
-	auto d3d11rs = static_cast<ct::D3D11RenderAPI*>(rs);
+	render::RenderAPI* rs = render::RenderAPI::InstancePtr();
+	auto d3d11rs = static_cast<render::D3D11RenderAPI*>(rs);
 
 	// Create the window
 	RENDER_WINDOW_DESC desc = mDesc;
-	SPtr<ct::CoreObject> coreObj = B3DMakeShared<ct::D3D11RenderWindow>(desc, mWindowId, d3d11rs->GetPrimaryDevice(), d3d11rs->GetDxgiFactory());
+	SPtr<render::CoreObject> coreObj = B3DMakeShared<render::D3D11RenderWindow>(desc, mWindowId, d3d11rs->GetPrimaryDevice(), d3d11rs->GetDxgiFactory());
 	coreObj->SetShared(coreObj);
 
 	return coreObj;
 }
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 D3D11RenderWindow::D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, D3D11Device& device, IDXGIFactory1* DXGIFactory)
 	: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc), mDevice(device), mDXGIFactory(DXGIFactory)
 {}
@@ -800,4 +800,4 @@ void D3D11RenderWindow::SyncProperties()
 	ScopedSpinLock lock(mLock);
 	mProperties = mSyncedProperties;
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

@@ -20,14 +20,14 @@ desc.usage = TU_LOADSTORE;
 SPtr<Texture> texture = Texture::create(desc);
 ~~~~~~~~~~~~~ 
 
-You can then bind a load-store texture to a GPU program by calling @b3d::ct::GpuParams::setLoadStoreTexture(GpuProgramType, const String&, const TextureType&, const TextureSurface&) as was described in an earlier chapter.
+You can then bind a load-store texture to a GPU program by calling @b3d::render::GpuParams::setLoadStoreTexture(GpuProgramType, const String&, const TextureType&, const TextureSurface&) as was described in an earlier chapter.
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<GpuParams> params = ...;
 params->setLoadStoreTexture(GPT_COMPUTE_PROGRAM, "myLoadStoreTex", texture);
 ~~~~~~~~~~~~~ 
 
-Load-store textures do not support sampling using sampler states, you can only read-write their pixels directly. They also do not support mip-maps, and if your texture has multiple mip-maps you must provide a @b3d::TextureSurface struct to **ct::GpuParams::setLoadStoreTexture()** in order to specify which mip-level to bind (by default it is the first).
+Load-store textures do not support sampling using sampler states, you can only read-write their pixels directly. They also do not support mip-maps, and if your texture has multiple mip-maps you must provide a @b3d::TextureSurface struct to **render::GpuParams::setLoadStoreTexture()** in order to specify which mip-level to bind (by default it is the first).
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<GpuParams> params = ...;

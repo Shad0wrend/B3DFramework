@@ -11,7 +11,7 @@ namespace b3d
 	class LinuxWindow;
 	class LinuxRenderWindow;
 
-	namespace ct
+	namespace render
 	{
 		class LinuxRenderWindow;
 	}
@@ -46,12 +46,12 @@ namespace b3d
 		u64 GetPlatformWindowHandle() const override;
 
 	protected:
-		friend class ct::LinuxRenderWindow;
+		friend class render::LinuxRenderWindow;
 
 		/** Changes the video mode to the specified RandR mode on the specified output device. */
 		void SetVideoMode(i32 screen, RROutput output, RRMode mode);
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void DoOnWindowMovedOrResized() override;
 
 	private:
@@ -60,7 +60,7 @@ namespace b3d
 		i32 mDisplayFrequency = 0;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread proxy for b3d::LinuxRenderWindow. */
 		class B3D_CORE_EXPORT LinuxRenderWindow : public RenderWindow
@@ -68,7 +68,7 @@ namespace b3d
 		public:
 			LinuxRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 x11WindowHandle, const SPtr<RenderWindow>& parentWindow);
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

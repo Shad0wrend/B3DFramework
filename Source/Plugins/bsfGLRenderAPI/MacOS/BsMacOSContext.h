@@ -5,7 +5,7 @@
 #include "BsGLPrerequisites.h"
 #include "BsGLContext.h"
 
-namespace b3d::ct
+namespace b3d::render
 {
 	/** @addtogroup GL
 	 *  @{
@@ -61,4 +61,4 @@ namespace b3d::ct
 	};
 
 	/** @} */
-} // namespace b3d::ct
+} // namespace b3d::render

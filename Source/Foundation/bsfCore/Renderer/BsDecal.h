@@ -125,7 +125,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		class Decal;
 	}
@@ -149,12 +149,12 @@ namespace b3d
 		static SPtr<Decal> Create(const HMaterial& material, const Vector2& size = Vector2::kOne, float maxDistance = 10.0f);
 
 	protected:
-		friend ct::Decal;
+		friend render::Decal;
 		struct SyncPacket;
 
 		Decal(const HMaterial& material, const Vector2& size, float maxDistance);
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
@@ -174,7 +174,7 @@ namespace b3d
 		Decal() = default; // Serialization only
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread counterpart of a b3d::Decal */
 		class B3D_CORE_EXPORT Decal : public RenderProxy, public TDecal<true>
@@ -198,7 +198,7 @@ namespace b3d
 
 			u32 mRendererId = 0;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

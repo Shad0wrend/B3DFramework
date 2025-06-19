@@ -170,7 +170,7 @@ namespace b3d
 	{
 	private:
 		friend class GpuParameters;
-		friend class ct::GpuParameters;
+		friend class render::GpuParameters;
 
 		using GpuParamsType = SPtr<CoreVariantType<GpuParameters, IsRenderProxy>>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
@@ -202,7 +202,7 @@ namespace b3d
 	{
 	private:
 		friend class GpuParameters;
-		friend class ct::GpuParameters;
+		friend class render::GpuParameters;
 
 		using GpuParamsType = SPtr<CoreVariantType<GpuParameters, IsRenderProxy>>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
@@ -234,7 +234,7 @@ namespace b3d
 	{
 	private:
 		friend class GpuParameters;
-		friend class ct::GpuParameters;
+		friend class render::GpuParameters;
 
 		using GpuParamsType = SPtr<CoreVariantType<GpuParameters, IsRenderProxy>>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
@@ -266,7 +266,7 @@ namespace b3d
 	{
 	private:
 		friend class GpuParameters;
-		friend class ct::GpuParameters;
+		friend class render::GpuParameters;
 
 		using GpuParamsType = SPtr<CoreVariantType<GpuParameters, IsRenderProxy>>;
 
@@ -320,7 +320,7 @@ namespace b3d
 	typedef TGpuParameterSampledTexture<false> GpuParameterSampledTexture;
 	typedef TGpuParameterStorageTexture<false> GpuParameterStorageTexture;
 
-	namespace ct
+	namespace render
 	{
 		typedef TGpuParameterPrimitive<float, true> GpuParameterFloat;
 		typedef TGpuParameterPrimitive<double, true> GpuParameterDouble;
@@ -344,7 +344,7 @@ namespace b3d
 		typedef TGpuParameterSampler<true> GpuParameterSampler;
 		typedef TGpuParameterSampledTexture<true> GpuParameterSampledTexture;
 		typedef TGpuParameterStorageTexture<true> GpuParameterStorageTexture;
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

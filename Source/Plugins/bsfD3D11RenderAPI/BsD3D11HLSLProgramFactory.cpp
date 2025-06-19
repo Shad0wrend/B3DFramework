@@ -8,9 +8,9 @@
 #include <regex>
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
-SPtr<ct::GpuProgram> D3D11HLSLProgramFactory::Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
+SPtr<render::GpuProgram> D3D11HLSLProgramFactory::Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	SPtr<GpuProgram> gpuProg;
 
@@ -48,7 +48,7 @@ SPtr<ct::GpuProgram> D3D11HLSLProgramFactory::Create(const GpuProgramCreateInfor
 	return gpuProg;
 }
 
-SPtr<ct::GpuProgram> D3D11HLSLProgramFactory::Create(GpuProgramType type, GpuDeviceFlags deviceMask)
+SPtr<render::GpuProgram> D3D11HLSLProgramFactory::Create(GpuProgramType type, GpuDeviceFlags deviceMask)
 {
 	SPtr<GpuProgram> gpuProg;
 

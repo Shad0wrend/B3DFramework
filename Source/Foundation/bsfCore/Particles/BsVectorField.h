@@ -10,7 +10,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class VectorField;
 	}
@@ -109,7 +109,7 @@ namespace b3d
 	protected:
 		VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values);
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -124,7 +124,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Particles-Internal
 		 *  @{
@@ -138,7 +138,7 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 
 	/** @addtogroup Particles-Internal
 	 *  @{

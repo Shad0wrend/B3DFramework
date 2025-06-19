@@ -3,7 +3,7 @@
 #include "BsNullCommandBuffer.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 SPtr<CommandBuffer> NullCommandBufferManager::CreateInternal(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
 {

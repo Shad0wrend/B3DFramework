@@ -7,7 +7,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class Win32RenderWindow;
 	}
@@ -42,9 +42,9 @@ namespace b3d
 		u64 GetPlatformWindowHandle() const override;
 
 	protected:
-		friend class ct::Win32RenderWindow;
+		friend class render::Win32RenderWindow;
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 		void DoOnWindowMovedOrResized() override;
 		void DoOnDPIScaleChanged() override;
@@ -55,7 +55,7 @@ namespace b3d
 		i32 mDisplayFrequency = 0;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread proxy for b3d::Win32RenderWindow. */
 		class B3D_CORE_EXPORT Win32RenderWindow : public RenderWindow
@@ -67,7 +67,7 @@ namespace b3d
 		protected:
 			friend class b3d::Win32RenderWindow;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

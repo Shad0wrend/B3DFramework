@@ -4,7 +4,7 @@ title: Drawing
 
 With all the objects from the previous chapters bound to the pipeline we are almost ready to draw an object. When drawing you must ensure a pipeline state of **GraphicsPipelineState** type is bound, instead of **ComputePipelineState**.
 
-Next you need to specify what type of primitives you wish to draw by calling @b3d::ct::RenderAPI::setDrawOperation, which accepts any of the types defined in @b3d::DrawOperationType. This determines how are contents of the index buffer interpreted (or vertex buffer if index isn't available). The available draw types are:
+Next you need to specify what type of primitives you wish to draw by calling @b3d::render::RenderAPI::setDrawOperation, which accepts any of the types defined in @b3d::DrawOperationType. This determines how are contents of the index buffer interpreted (or vertex buffer if index isn't available). The available draw types are:
  - @b3d::DOT_POINT_LIST - Each vertex represents a point.
  - @b3d::DOT_LINE_LIST - Each sequential pair of vertices represent a line.
  - @b3d::DOT_LINE_STRIP - Each vertex (except the first) forms a line with the previous vertex.
@@ -19,7 +19,7 @@ rapi.setDrawOperation(DOT_TRIANGLE_LIST);
 ~~~~~~~~~~~~~
 
 # Indexed drawing
-Finally you can now draw the object by calling @b3d::ct::RenderAPI::drawIndexed(). It requires the following parameters:
+Finally you can now draw the object by calling @b3d::render::RenderAPI::drawIndexed(). It requires the following parameters:
  - `startIndex` - Offset into the bound index buffer to start drawing from. In most cases this will be zero.
  - `indexCount` - Number of indices to draw. Specify total number of indices in the index buffer to draw them all (most common case).
  - `vertexOffset` - Offset to append to each index in the index buffer. Allows you to draw different set of vertices using the same index buffer. In most cases this will be zero.
@@ -37,7 +37,7 @@ rapi.drawIndexed(0, numIndices, 0, numVertices);
 ~~~~~~~~~~~~~
 
 # Non-indexed drawing
-If drawing without an index buffer you can call @b3d::ct::RenderAPI::draw() instead. It requires only the `vertexOffset` and `vertexCount` parameters, with same meaning as above (except `vertexCount` in this case does affect the rendering).
+If drawing without an index buffer you can call @b3d::render::RenderAPI::draw() instead. It requires only the `vertexOffset` and `vertexCount` parameters, with same meaning as above (except `vertexCount` in this case does affect the rendering).
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<VertexBuffer> vb = ...;
@@ -48,7 +48,7 @@ rapi.draw(0, numVertices);
 ~~~~~~~~~~~~~
 
 # Instanced drawing
-Both **ct::RenderAPI::draw()** and **ct::RenderAPI::drawIndexed()** support drawing multiple instances of the same object using the `instanceCount` parameter. This can be used as an alternative for issuing multiple **draw** calls, as they may have a significant CPU overhead. Using instanced drawing you can draw the same geometry multiple times with almost no additional CPU overhead.
+Both **render::RenderAPI::draw()** and **render::RenderAPI::drawIndexed()** support drawing multiple instances of the same object using the `instanceCount` parameter. This can be used as an alternative for issuing multiple **draw** calls, as they may have a significant CPU overhead. Using instanced drawing you can draw the same geometry multiple times with almost no additional CPU overhead.
 
 ~~~~~~~~~~~~~{.cpp}
 // Draw 5 instances of the currently bound geometry
@@ -93,7 +93,7 @@ rapi.setVertexBuffers(0, { perVertexVB, perInstanceVB });
 ~~~~~~~~~~~~~
 
 # Drawing helper
-As a way of making drawing easier you can also use @b3d::ct::RendererUtility::draw helper method, accessible globally through @b3d::ct::GetRendererUtility(). This method accepts a **ct::Mesh** as input and will automatically:
+As a way of making drawing easier you can also use @b3d::render::RendererUtility::draw helper method, accessible globally through @b3d::render::GetRendererUtility(). This method accepts a **render::Mesh** as input and will automatically:
  - Bind vertex & index buffer
  - Bind vertex declaration
  - Set draw operation type

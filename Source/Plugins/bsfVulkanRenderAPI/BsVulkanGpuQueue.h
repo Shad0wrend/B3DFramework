@@ -7,7 +7,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		struct GpuCommandBufferSubmitInformation;
 		/** @addtogroup Vulkan
@@ -150,5 +150,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

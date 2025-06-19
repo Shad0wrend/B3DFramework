@@ -107,7 +107,7 @@ void Texture::Initialize()
 	Resource::Initialize();
 }
 
-SPtr<ct::RenderProxy> Texture::CreateRenderProxy() const
+SPtr<render::RenderProxy> Texture::CreateRenderProxy() const
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if(!gpuDevice)
@@ -127,8 +127,8 @@ TAsyncOp<void> Texture::WriteData(const SPtr<PixelData>& data, u32 face, u32 mip
 
 	data->LockInternal();
 
-	std::function<void(const SPtr<ct::Texture>&, u32, u32, const SPtr<PixelData>&, bool, TAsyncOp<void>&)> func =
-		[&](const SPtr<ct::Texture>& texture, u32 _face, u32 _mipLevel, const SPtr<PixelData>& _pixData,
+	std::function<void(const SPtr<render::Texture>&, u32, u32, const SPtr<PixelData>&, bool, TAsyncOp<void>&)> func =
+		[&](const SPtr<render::Texture>& texture, u32 _face, u32 _mipLevel, const SPtr<PixelData>& _pixData,
 			bool _discardEntireBuffer, TAsyncOp<void>& asyncOp)
 	{
 		texture->WriteData(*_pixData, _mipLevel, _face, _discardEntireBuffer);
@@ -146,8 +146,8 @@ TAsyncOp<void> Texture::ReadData(const SPtr<PixelData>& data, u32 face, u32 mipL
 {
 	data->LockInternal();
 
-	std::function<void(const SPtr<ct::Texture>&, u32, u32, const SPtr<PixelData>&, TAsyncOp<void>&)> func =
-		[&](const SPtr<ct::Texture>& texture, u32 _face, u32 _mipLevel, const SPtr<PixelData>& _pixData,
+	std::function<void(const SPtr<render::Texture>&, u32, u32, const SPtr<PixelData>&, TAsyncOp<void>&)> func =
+		[&](const SPtr<render::Texture>& texture, u32 _face, u32 _mipLevel, const SPtr<PixelData>& _pixData,
 			TAsyncOp<void>& asyncOp)
 	{
 		// TODO - Transfer buffers should be handled by the Renderer
@@ -337,7 +337,7 @@ SPtr<Texture> Texture::CreateEmpty()
 	return shared;
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 SPtr<Texture> Texture::kWhite;
 SPtr<Texture> Texture::kBlack;

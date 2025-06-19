@@ -7,7 +7,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** Used as a key in a hash map containing VulkanDescriptorLayout%s. */
 		struct VulkanLayoutKey
@@ -37,7 +37,7 @@ namespace b3d
 			u32 NumLayouts;
 			VulkanDescriptorLayout** Layouts;
 		};
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 /** @cond STDLIB */
@@ -49,22 +49,22 @@ namespace std
 {
 	/**	Hash value generator for VulkanLayoutKey. */
 	template <>
-	struct hash<b3d::ct::VulkanLayoutKey>
+	struct hash<b3d::render::VulkanLayoutKey>
 	{
-		size_t operator()(const b3d::ct::VulkanLayoutKey& value) const
+		size_t operator()(const b3d::render::VulkanLayoutKey& value) const
 		{
 			if(value.Layout != nullptr)
 				return value.Layout->GetHash();
 
-			return b3d::ct::VulkanDescriptorLayout::CalculateHash(value.Bindings, value.NumBindings);
+			return b3d::render::VulkanDescriptorLayout::CalculateHash(value.Bindings, value.NumBindings);
 		}
 	};
 
 	/**	Hash value generator for VulkanPipelineLayoutKey. */
 	template <>
-	struct hash<b3d::ct::VulkanPipelineLayoutKey>
+	struct hash<b3d::render::VulkanPipelineLayoutKey>
 	{
-		size_t operator()(const b3d::ct::VulkanPipelineLayoutKey& value) const
+		size_t operator()(const b3d::render::VulkanPipelineLayoutKey& value) const
 		{
 			return value.CalculateHash();
 		}
@@ -76,7 +76,7 @@ namespace std
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Vulkan
 		 *  @{
@@ -107,5 +107,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

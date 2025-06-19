@@ -4,7 +4,7 @@
 #include "Math/BsMath.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 BOOL CALLBACK MonitorEnumCallback(HMONITOR hMonitor, HDC hdc, LPRECT rect, LPARAM lParam)
 {

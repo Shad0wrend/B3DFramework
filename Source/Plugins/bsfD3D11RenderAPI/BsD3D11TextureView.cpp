@@ -9,7 +9,7 @@
 #include "Error/BsException.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11TextureView::D3D11TextureView(const D3D11Texture* texture, const TextureViewInformation& desc)
 	: TextureView(desc)

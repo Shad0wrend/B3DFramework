@@ -107,7 +107,7 @@ namespace b3d
 	private:
 		friend class SceneManager;
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 		String mName;
 		HSceneObject mRoot;
@@ -117,7 +117,7 @@ namespace b3d
 		SPtr<GameObjectCollection> mGameObjectCollection;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** @copydoc SceneInstance */
 		class B3D_CORE_EXPORT SceneInstance : public RenderProxy
@@ -127,7 +127,7 @@ namespace b3d
 
 			SceneInstance() = default;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/**
 	 * Keeps track of all active SceneObject%s and their components. Keeps track of component state and triggers their

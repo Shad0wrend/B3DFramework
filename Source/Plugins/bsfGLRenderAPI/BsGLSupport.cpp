@@ -6,11 +6,11 @@
 #if B3D_PLATFORM != B3D_PLATFORM_ID_MACOS
 #	include "GL/glew.h"
 
-GLenum GlewContextInit(b3d::ct::GLSupport* glSupport);
+GLenum GlewContextInit(b3d::render::GLSupport* glSupport);
 #endif
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 void GLSupport::InitializeExtensions()
 {

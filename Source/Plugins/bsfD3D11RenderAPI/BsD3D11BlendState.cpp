@@ -7,7 +7,7 @@
 #include "Profiling/BsRenderStats.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11BlendState::D3D11BlendState(const BlendStateInformation& desc, u32 id)
 	: BlendState(desc, id)

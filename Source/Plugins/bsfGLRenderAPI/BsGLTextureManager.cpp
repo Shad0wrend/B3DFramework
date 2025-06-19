@@ -7,7 +7,7 @@
 
 using namespace b3d;
 
-GLTextureManager::GLTextureManager(ct::GLSupport& support)
+GLTextureManager::GLTextureManager(render::GLSupport& support)
 	: TextureManager(), mGLSupport(support)
 {
 }
@@ -23,12 +23,12 @@ PixelFormat GLTextureManager::GetNativeFormat(TextureType ttype, PixelFormat for
 {
 	// Check if this is a valid rendertarget format
 	if(usage & TU_RENDERTARGET)
-		return ct::GLRTTManager::Instance().GetSupportedAlternative(format);
+		return render::GLRTTManager::Instance().GetSupportedAlternative(format);
 
-	return ct::GLPixelUtil::GetClosestSupportedPf(format, ttype, usage);
+	return render::GLPixelUtil::GetClosestSupportedPf(format, ttype, usage);
 }
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 GLTextureManager::GLTextureManager(GLSupport& support)
 	: mGLSupport(support)
 {}
@@ -50,4 +50,4 @@ SPtr<RenderTexture> GLTextureManager::CreateRenderTextureInternal(const RENDER_T
 
 	return texPtr;
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

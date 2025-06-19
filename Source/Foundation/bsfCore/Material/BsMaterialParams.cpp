@@ -14,7 +14,7 @@
 
 using namespace b3d;
 
-SPtr<ct::Texture> GetSpriteImageAtlas(const SPtr<ct::SpriteImage>& spriteImage)
+SPtr<render::Texture> GetSpriteImageAtlas(const SPtr<render::SpriteImage>& spriteImage)
 {
 	if(spriteImage)
 		return spriteImage->GetDefaultAllocatedImage().GetTexture();
@@ -809,8 +809,8 @@ namespace b3d
 	struct MaterialParametersTextureParameter
 	{
 		u32 ParameterIndex = ~0u;
-		SPtr<ct::Texture> Texture;
-		SPtr<ct::SpriteImage> SpriteImage;
+		SPtr<render::Texture> Texture;
+		SPtr<render::SpriteImage> SpriteImage;
 		bool IsLoadStore;
 		TextureSurface Surface;
 	};
@@ -818,7 +818,7 @@ namespace b3d
 	struct MaterialParametersBufferParameter
 	{
 		u32 ParameterIndex = ~0u;
-		SPtr<ct::GpuBuffer> Buffer;
+		SPtr<render::GpuBuffer> Buffer;
 	};
 
 	struct MaterialParametersSamplerStateParameter
@@ -1028,7 +1028,7 @@ RTTIType* MaterialParams::GetRtti() const
 	return MaterialParams::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 MaterialParams::MaterialParams(const SPtr<Shader>& shader, u64 initialParamVersion)
 	: TMaterialParams(shader, initialParamVersion)

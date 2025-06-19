@@ -74,7 +74,7 @@ namespace b3d
 		FillSimple, /**< Simple fill shader used for convex shapes and non-antialiased strokes. */
 	};
 
-	namespace ct
+	namespace render
 	{
 		B3D_PARAM_BLOCK_BEGIN(VectorGraphicsRenderUniformDefinition)
 			B3D_PARAM_BLOCK_ENTRY(Matrix4, gScissorMatrix)

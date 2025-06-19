@@ -80,7 +80,7 @@ GUIManager::GUIManager()
 	DeferredCall(std::bind(&GUIManager::UpdateTextSelectionTexture, this));
 
 	mVectorSpriteAtlas = B3DMakeUnique<GUIVectorSpriteAtlas>(GUIVectorSpriteAtlasSettings());
-	mRenderer = RendererExtension::Create<ct::GUIRenderer>(nullptr);
+	mRenderer = RendererExtension::Create<render::GUIRenderer>(nullptr);
 }
 
 GUIManager::~GUIManager()
@@ -117,7 +117,7 @@ GUIManager::~GUIManager()
 	B3DDelete(mInputSelection);
 }
 
-void GUIManager::DestroyRenderer(ct::GUIRenderer* renderer)
+void GUIManager::DestroyRenderer(render::GUIRenderer* renderer)
 {
 	B3DDelete(renderer);
 }
@@ -1585,7 +1585,7 @@ namespace b3d
 }
 } // namespace b3d
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 	GUISpriteParamBlockDef gGUISpriteParamBlockDef;
 

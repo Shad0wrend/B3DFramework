@@ -20,7 +20,7 @@
 #include "Renderer/BsDecal.h"
 #include "Renderer/BsRendererUtility.h"
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 
 PerFrameParamDef gPerFrameParamDef;
 

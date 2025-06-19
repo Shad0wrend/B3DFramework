@@ -109,14 +109,14 @@ namespace b3d
 
 	protected:
 		friend class Technique;
-		friend class ct::Pass;
+		friend class render::Pass;
 		struct SyncPacket;
 
 		Pass() = default;
 		Pass(const PassCreateInformation& createInformation);
 
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 		/**	Creates a new empty pass but doesn't initialize it. */
 		static SPtr<Pass> CreateEmpty();
@@ -134,7 +134,7 @@ namespace b3d
 
 	class PassRenderProxyRTTI;
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Material-Internal
 		 *  @{
@@ -178,5 +178,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

@@ -11,11 +11,11 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		class RendererMaterialBase;
 		struct RendererMaterialMetaData;
-	} // namespace ct
+	} // namespace render
 
 	/**	Initializes and handles all renderer materials. */
 	class B3D_EXPORT RendererMaterialManager : public Module<RendererMaterialManager>
@@ -23,7 +23,7 @@ namespace b3d
 		/**	Information used for initializing a renderer material managed by this module. */
 		struct RendererMaterialData
 		{
-			ct::RendererMaterialMetaData* MetaData;
+			render::RendererMaterialMetaData* MetaData;
 			const Path ShaderPath;
 		};
 
@@ -32,7 +32,7 @@ namespace b3d
 		~RendererMaterialManager();
 
 		/**	Registers a new material that should be initialized on module start-up. */
-		static void RegisterMaterial(ct::RendererMaterialMetaData* metaData, const char* shaderPath);
+		static void RegisterMaterial(render::RendererMaterialMetaData* metaData, const char* shaderPath);
 
 		/** Returns a set of defines to be used when importing the shader. */
 		static ShaderDefines GetDefinesInternal(const Path& shaderPath);
@@ -40,7 +40,7 @@ namespace b3d
 	private:
 		template <class T>
 		friend class RendererMaterial;
-		friend class ct::RendererMaterialBase;
+		friend class render::RendererMaterialBase;
 
 		/**	Initializes the manager on the render thread. */
 		static void InitOnRenderThread();

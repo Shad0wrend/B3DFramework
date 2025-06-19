@@ -25,7 +25,7 @@ GLRenderTexture::GLRenderTexture(const RENDER_TEXTURE_DESC& desc)
 }
 
 namespace b3d {
-namespace ct {
+namespace render {
 GLRenderTexture::GLRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 	: RenderTexture(desc, deviceIdx), mProperties(desc, true), mFB(nullptr)
 {
@@ -444,4 +444,4 @@ PixelFormat GLRTTManager::GetSupportedAlternative(PixelFormat format)
 	// If none at all, return to default
 	return PF_RGBA8;
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

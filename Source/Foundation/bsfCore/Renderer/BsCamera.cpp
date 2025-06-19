@@ -723,10 +723,10 @@ SPtr<Camera> Camera::CreateEmpty()
 	return cameraShared;
 }
 
-SPtr<ct::RenderProxy> Camera::CreateRenderProxy() const
+SPtr<render::RenderProxy> Camera::CreateRenderProxy() const
 {
-	ct::Camera* renderProxy = new(B3DAllocate<ct::Camera>()) ct::Camera(B3DGetRenderProxy(mViewport));
-	SPtr<ct::Camera> renderProxyShared = B3DMakeSharedFromExisting<ct::Camera>(renderProxy);
+	render::Camera* renderProxy = new(B3DAllocate<render::Camera>()) render::Camera(B3DGetRenderProxy(mViewport));
+	SPtr<render::Camera> renderProxyShared = B3DMakeSharedFromExisting<render::Camera>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -835,7 +835,7 @@ RTTIType* Camera::GetRtti() const
 	return Camera::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Camera::~Camera()
 {

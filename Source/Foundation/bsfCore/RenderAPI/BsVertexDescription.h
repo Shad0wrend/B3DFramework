@@ -176,7 +176,7 @@ namespace b3d
 
 	private:
 		friend class Mesh;
-		friend class ct::Mesh;
+		friend class render::Mesh;
 
 		VertexDescription() = default;
 

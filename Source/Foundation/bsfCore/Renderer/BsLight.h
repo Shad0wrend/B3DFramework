@@ -201,7 +201,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		class Light;
 	}
@@ -226,12 +226,12 @@ namespace b3d
 		static SPtr<Light> Create(LightType type = LightType::Radial, Color color = Color::kWhite, float intensity = 100.0f, float attRadius = 10.0f, bool castsShadows = false, Degree spotAngle = Degree(45), Degree spotFalloffAngle = Degree(40));
 
 	protected:
-		friend class ct::Light;
+		friend class render::Light;
 		struct SyncPacket;
 
 		Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
@@ -250,7 +250,7 @@ namespace b3d
 		Light() = default; // Serialization only
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread counterpart of b3d::Light. */
 		class B3D_CORE_EXPORT Light : public RenderProxy, public TLight<true>
@@ -277,7 +277,7 @@ namespace b3d
 
 			u32 mRendererId;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

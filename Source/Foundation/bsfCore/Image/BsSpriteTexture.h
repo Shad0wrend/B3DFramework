@@ -35,7 +35,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderThread
 		 *  @{
@@ -52,7 +52,7 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 
 	/** @addtogroup Image
 	 *  @{
@@ -89,14 +89,14 @@ namespace b3d
 
 	private:
 		friend class SpriteTextureRTTI;
-		friend class ct::SpriteTexture;
+		friend class render::SpriteTexture;
 		struct SyncPacket;
 
 		SpriteTexture(const SpriteTextureCreateInformation& createInformation);
 
 		void Initialize() override;
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
@@ -118,7 +118,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderThread
 		 *  @{
@@ -147,5 +147,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

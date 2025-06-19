@@ -5,7 +5,7 @@
 
 using namespace b3d;
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Signal RenderProxy::mRenderProxyInitializedCondition;
 Mutex RenderProxy::mRenderProxyInitializedMutex;

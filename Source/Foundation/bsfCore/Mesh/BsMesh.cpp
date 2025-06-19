@@ -36,8 +36,8 @@ TAsyncOp<void> Mesh::WriteData(const SPtr<MeshData>& data, bool discardEntireBuf
 
 	data->LockInternal();
 
-	std::function<void(const SPtr<ct::Mesh>&, const SPtr<MeshData>&, bool, TAsyncOp<void>&)> func =
-		[&](const SPtr<ct::Mesh>& mesh, const SPtr<MeshData>& _meshData, bool _discardEntireBuffer, TAsyncOp<void>& asyncOp)
+	std::function<void(const SPtr<render::Mesh>&, const SPtr<MeshData>&, bool, TAsyncOp<void>&)> func =
+		[&](const SPtr<render::Mesh>& mesh, const SPtr<MeshData>& _meshData, bool _discardEntireBuffer, TAsyncOp<void>& asyncOp)
 	{
 		mesh->WriteData(*_meshData, _discardEntireBuffer, false);
 		_meshData->UnlockInternal();
@@ -54,8 +54,8 @@ TAsyncOp<void> Mesh::ReadData(const SPtr<MeshData>& data)
 {
 	data->LockInternal();
 
-	std::function<void(const SPtr<ct::Mesh>&, const SPtr<MeshData>&, TAsyncOp<void>&)> func =
-		[&](const SPtr<ct::Mesh>& mesh, const SPtr<MeshData>& _meshData, TAsyncOp<void>& asyncOp)
+	std::function<void(const SPtr<render::Mesh>&, const SPtr<MeshData>&, TAsyncOp<void>&)> func =
+		[&](const SPtr<render::Mesh>& mesh, const SPtr<MeshData>& _meshData, TAsyncOp<void>& asyncOp)
 	{
 		// TODO - Transfer buffers should be handled by the Renderer
 		const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
@@ -97,7 +97,7 @@ void Mesh::UpdateBounds(const MeshData& meshData)
 	MarkRenderProxyDataDirty();
 }
 
-SPtr<ct::RenderProxy> Mesh::CreateRenderProxy() const
+SPtr<render::RenderProxy> Mesh::CreateRenderProxy() const
 {
 	MeshCreateInformation meshCreateInformation;
 	meshCreateInformation.VertexCount = mProperties.VertexCount;
@@ -109,9 +109,9 @@ SPtr<ct::RenderProxy> Mesh::CreateRenderProxy() const
 	meshCreateInformation.Skeleton = mSkeleton;
 	meshCreateInformation.MorphShapes = mMorphShapes;
 
-	ct::Mesh* renderProxy = new(B3DAllocate<ct::Mesh>()) ct::Mesh(mCPUData, meshCreateInformation);
+	render::Mesh* renderProxy = new(B3DAllocate<render::Mesh>()) render::Mesh(mCPUData, meshCreateInformation);
 
-	SPtr<ct::RenderProxy> renderProxyShared = B3DMakeSharedFromExisting<ct::Mesh>(renderProxy);
+	SPtr<render::RenderProxy> renderProxyShared = B3DMakeSharedFromExisting<render::Mesh>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	if((mUsage & MU_CPUCACHED) == 0)
@@ -248,7 +248,7 @@ SPtr<Mesh> Mesh::CreateEmptyShared()
 	return mesh;
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation)
 	: MeshBase(meshCreateInformation.VertexCount, meshCreateInformation.IndexCount, meshCreateInformation.SubMeshes), mVertexData(nullptr), mIndexBuffer(nullptr), mVertexDescription(meshCreateInformation.VertexDescription), mUsage(meshCreateInformation.Usage), mIndexType(meshCreateInformation.IndexType), mTempInitialMeshData(initialMeshData), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)

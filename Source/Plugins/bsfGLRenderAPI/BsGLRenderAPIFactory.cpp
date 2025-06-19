@@ -4,7 +4,7 @@
 #include "BsGLRenderAPI.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 constexpr const char* GLRenderAPIFactory::kSystemName;
 

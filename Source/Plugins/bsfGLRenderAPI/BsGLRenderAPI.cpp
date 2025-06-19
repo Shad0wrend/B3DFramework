@@ -30,12 +30,12 @@
 #include "BsGLTextureView.h"
 #include "GLSL/BsGLSLParamParser.h"
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 const char* MODULE_NAME = "bsfGLRenderAPI.dll";
-}} // namespace b3d::ct
+}} // namespace b3d::render
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 const char* B3DGetOpenGLErrorString(GLenum errorCode)
 {
@@ -83,7 +83,7 @@ void OpenGlErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 GLRenderAPI::GLRenderAPI()
 {
 	// Get our GLSupport
-	mGLSupport = ct::GetGlSupport();
+	mGLSupport = render::GetGlSupport();
 
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 		mColorWrite[i][0] = mColorWrite[i][1] = mColorWrite[i][2] = mColorWrite[i][3] = true;

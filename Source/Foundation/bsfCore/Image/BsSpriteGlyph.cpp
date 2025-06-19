@@ -27,11 +27,11 @@ SPtr<SpriteGlyphAllocation> SpriteGlyphAllocation::Create(const WeakSPtr<SpriteI
 	return allocationShared;
 }
 
-SPtr<ct::RenderProxy> SpriteGlyphAllocation::CreateRenderProxy() const
+SPtr<render::RenderProxy> SpriteGlyphAllocation::CreateRenderProxy() const
 {
-	ct::SpriteGlyphAllocation* const renderProxy = new(B3DAllocate<ct::SpriteGlyphAllocation>()) ct::SpriteGlyphAllocation();
+	render::SpriteGlyphAllocation* const renderProxy = new(B3DAllocate<render::SpriteGlyphAllocation>()) render::SpriteGlyphAllocation();
 
-	SPtr<ct::SpriteGlyphAllocation> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteGlyphAllocation>(renderProxy);
+	SPtr<render::SpriteGlyphAllocation> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteGlyphAllocation>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -123,12 +123,12 @@ void SpriteGlyph::Initialize()
 	Resource::Initialize();
 }
 
-SPtr<ct::RenderProxy> SpriteGlyph::CreateRenderProxy() const
+SPtr<render::RenderProxy> SpriteGlyph::CreateRenderProxy() const
 {
-	ct::SpriteGlyphCreateInformation createInformation(mInformation);
-	ct::SpriteGlyph* const renderProxy = new(B3DAllocate<ct::SpriteGlyph>()) ct::SpriteGlyph(createInformation);
+	render::SpriteGlyphCreateInformation createInformation(mInformation);
+	render::SpriteGlyph* const renderProxy = new(B3DAllocate<render::SpriteGlyph>()) render::SpriteGlyph(createInformation);
 
-	SPtr<ct::SpriteGlyph> renderProxyShared = B3DMakeSharedFromExisting<ct::SpriteGlyph>(renderProxy);
+	SPtr<render::SpriteGlyph> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteGlyph>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -195,7 +195,7 @@ RTTIType* SpriteGlyph::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 void SpriteGlyphAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {

@@ -18,13 +18,13 @@
 #include "Private/Win32/BsWin32Window.h"
 #include "Math/BsMath.h"
 
-GLenum GLEWAPIENTRY WglewContextInit(b3d::ct::GLSupport* glSupport);
+GLenum GLEWAPIENTRY WglewContextInit(b3d::render::GLSupport* glSupport);
 
 using namespace b3d;
 
 #define _MAX_CLASS_NAME_ 128
 
-Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, ct::Win32GLSupport& glsupport)
+Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, render::Win32GLSupport& glsupport)
 	: RenderWindow(desc, windowId), mGLSupport(glsupport), mProperties(desc)
 {
 }
@@ -63,15 +63,15 @@ Vector2I Win32RenderWindow::WindowToScreenPos(const Vector2I& windowPos) const
 	return Vector2I(pos.x, pos.y);
 }
 
-SPtr<ct::Win32RenderWindow> Win32RenderWindow::GetCore() const
+SPtr<render::Win32RenderWindow> Win32RenderWindow::GetCore() const
 {
-	return std::static_pointer_cast<ct::Win32RenderWindow>(mCoreSpecific);
+	return std::static_pointer_cast<render::Win32RenderWindow>(mCoreSpecific);
 }
 
-SPtr<ct::CoreObject> Win32RenderWindow::CreateCore() const
+SPtr<render::CoreObject> Win32RenderWindow::CreateCore() const
 {
 	RENDER_WINDOW_DESC desc = mDesc;
-	SPtr<ct::Win32RenderWindow> coreObj = B3DMakeShared<ct::Win32RenderWindow>(desc, mWindowId, mGLSupport);
+	SPtr<render::Win32RenderWindow> coreObj = B3DMakeShared<render::Win32RenderWindow>(desc, mWindowId, mGLSupport);
 	coreObj->SetShared(coreObj);
 
 	mGLSupport.NotifyWindowCreatedInternal(coreObj.get());
@@ -91,7 +91,7 @@ HWND Win32RenderWindow::GetHWnd() const
 }
 
 namespace b3d {
-namespace ct {
+namespace render {
 Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, Win32GLSupport& glsupport)
 	: RenderWindow(desc, windowId), mWindow(nullptr), mGLSupport(glsupport), mHDC(nullptr), mIsChild(false), mDeviceName(nullptr), mDisplayFrequency(0), mShowOnSwap(false), mContext(nullptr), mProperties(desc), mSyncedProperties(desc)
 {}
@@ -609,4 +609,4 @@ void Win32RenderWindow::SyncProperties()
 	ScopedSpinLock lock(mLock);
 	mProperties = mSyncedProperties;
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

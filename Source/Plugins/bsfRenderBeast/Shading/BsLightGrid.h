@@ -8,7 +8,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class VisibleReflProbeData;
 		class VisibleLightData;
@@ -172,5 +172,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

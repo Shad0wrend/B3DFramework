@@ -104,12 +104,12 @@ SPtr<Decal> Decal::CreateEmpty()
 	return decalPtr;
 }
 
-SPtr<ct::RenderProxy> Decal::CreateRenderProxy() const
+SPtr<render::RenderProxy> Decal::CreateRenderProxy() const
 {
-	SPtr<ct::Material> material = B3DGetRenderProxy(mMaterial);
+	SPtr<render::Material> material = B3DGetRenderProxy(mMaterial);
 
-	ct::Decal* renderProxy = new(B3DAllocate<ct::Decal>()) ct::Decal(material, mSize, mMaxDistance);
-	SPtr<ct::Decal> renderProxyShared = B3DMakeSharedFromExisting<ct::Decal>(renderProxy);
+	render::Decal* renderProxy = new(B3DAllocate<render::Decal>()) render::Decal(material, mSize, mMaxDistance);
+	SPtr<render::Decal> renderProxyShared = B3DMakeSharedFromExisting<render::Decal>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -148,7 +148,7 @@ RTTIType* Decal::GetRtti() const
 template class TDecal<true>;
 template class TDecal<false>;
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Decal::Decal(const SPtr<Material>& material, const Vector2& size, float maxDistance)
 	: TDecal(material, size, maxDistance)

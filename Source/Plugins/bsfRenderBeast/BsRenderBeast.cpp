@@ -41,7 +41,7 @@
 using namespace std::placeholders;
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 RenderBeast::RenderBeast()
 {
@@ -313,7 +313,7 @@ void RenderBeast::RenderAll(PerFrameData perFrameData)
 
 	if(mOptionsDirty)
 	{
-		GetRenderThread().PostCommand(std::bind(&::b3d::ct::RenderBeast::SyncOptions, this, *mOptions), "RenderBeast::SyncOptions");
+		GetRenderThread().PostCommand(std::bind(&::b3d::render::RenderBeast::SyncOptions, this, *mOptions), "RenderBeast::SyncOptions");
 		mOptionsDirty = false;
 	}
 
@@ -322,7 +322,7 @@ void RenderBeast::RenderAll(PerFrameData perFrameData)
 	timings.TimeDelta = GetTime().GetFrameDelta();
 	timings.FrameIdx = GetTime().GetCurrentFrameIndex();
 
-	GetRenderThread().PostCommand(std::bind(&::b3d::ct::RenderBeast::RenderThreadRenderAll, this, timings, perFrameData), "RenderBeast::RenderAll");
+	GetRenderThread().PostCommand(std::bind(&::b3d::render::RenderBeast::RenderThreadRenderAll, this, timings, perFrameData), "RenderBeast::RenderAll");
 }
 
 void RenderBeast::RenderThreadRenderAll(FrameTimings timings, PerFrameData perFrameData)
@@ -336,7 +336,7 @@ void RenderBeast::RenderThreadRenderAll(FrameTimings timings, PerFrameData perFr
 	const SceneInfo& sceneInfo = mScene->GetSceneInfo();
 
 	// Note: I'm iterating over all sampler states every frame. If this ends up being a performance
-	// issue consider handling this internally in ct::Material which can only do it when sampler states
+	// issue consider handling this internally in render::Material which can only do it when sampler states
 	// are actually modified after sync
 	mScene->RefreshSamplerOverrides();
 
@@ -863,4 +863,4 @@ SPtr<RenderBeast> GetRenderBeast()
 {
 	return std::static_pointer_cast<RenderBeast>(RendererManager::Instance().GetActive());
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

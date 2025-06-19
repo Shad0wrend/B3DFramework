@@ -16,13 +16,13 @@ SPtr<RenderTexture> D3D11TextureManager::CreateRenderTextureImpl(const RENDER_TE
 
 PixelFormat D3D11TextureManager::GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma)
 {
-	DXGI_FORMAT d3dPF = ct::D3D11Mappings::GetPf(
-		ct::D3D11Mappings::GetClosestSupportedPf(format, ttype, usage), hwGamma);
+	DXGI_FORMAT d3dPF = render::D3D11Mappings::GetPf(
+		render::D3D11Mappings::GetClosestSupportedPf(format, ttype, usage), hwGamma);
 
-	return ct::D3D11Mappings::GetPf(d3dPF);
+	return render::D3D11Mappings::GetPf(d3dPF);
 }
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 SPtr<Texture> D3D11TextureManager::CreateTextureInternal(const TextureCreateInformation& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask)
 {
 	D3D11Texture* tex = new(B3DAllocate<D3D11Texture>()) D3D11Texture(desc, initialData, deviceMask);
@@ -40,4 +40,4 @@ SPtr<RenderTexture> D3D11TextureManager::CreateRenderTextureInternal(const RENDE
 
 	return texPtr;
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

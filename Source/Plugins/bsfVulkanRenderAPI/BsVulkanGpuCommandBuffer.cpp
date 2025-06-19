@@ -22,7 +22,7 @@
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanSemaphore::VulkanSemaphore(VulkanResourceManager* owner, const StringView& name)
 	: VulkanResource(owner, true, name)

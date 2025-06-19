@@ -306,7 +306,7 @@ namespace b3d
 		Texture(const TextureCreateInformation& createInformation);
 
 		void Initialize() override;
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 		/** Calculates the size of the texture, in bytes. */
 		u32 CalculateSize() const;
@@ -339,7 +339,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Resources-Internal
 		 *  @{
@@ -524,5 +524,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

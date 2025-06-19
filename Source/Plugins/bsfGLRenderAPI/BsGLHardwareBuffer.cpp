@@ -6,7 +6,7 @@
 #include "BsGLCommandBuffer.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 GLHardwareBuffer::GLHardwareBuffer(GLenum target, u32 size, GpuBufferUsage usage)
 	: GpuBuffer(size, usage, GDF_DEFAULT), mTarget(target)
@@ -121,7 +121,7 @@ void GLHardwareBuffer::WriteData(u32 offset, u32 length, const void* source, Buf
 	Unlock();
 }
 
-void GLHardwareBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<ct::CommandBuffer>& commandBuffer)
+void GLHardwareBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<render::CommandBuffer>& commandBuffer)
 {
 	if(mBufferId == 0)
 		return;

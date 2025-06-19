@@ -62,13 +62,13 @@
 #  define GLEW_CONTEXT_ARG_DEF_LIST GLEWContext* ctx
 #else /* GLEW_MX */
 // BANSHEE SPECIFIC START
-#  define GLEW_CONTEXT_ARG_DEF_INIT b3d::ct::GLSupport *glSupport
+#  define GLEW_CONTEXT_ARG_DEF_INIT b3d::render::GLSupport *glSupport
 #  define GLEW_CONTEXT_ARG_VAR_INIT glSupport
-#  define GLEW_CONTEXT_ARG_DEF_LIST b3d::ct::GLSupport *glSupport
-#  define WGLEW_CONTEXT_ARG_DEF_INIT b3d::ct::GLSupport *glSupport
-#  define WGLEW_CONTEXT_ARG_DEF_LIST b3d::ct::GLSupport *glSupport
-#  define GLXEW_CONTEXT_ARG_DEF_INIT b3d::ct::GLSupport *glSupport
-#  define GLXEW_CONTEXT_ARG_DEF_LIST b3d::ct::GLSupport *glSupport
+#  define GLEW_CONTEXT_ARG_DEF_LIST b3d::render::GLSupport *glSupport
+#  define WGLEW_CONTEXT_ARG_DEF_INIT b3d::render::GLSupport *glSupport
+#  define WGLEW_CONTEXT_ARG_DEF_LIST b3d::render::GLSupport *glSupport
+#  define GLXEW_CONTEXT_ARG_DEF_INIT b3d::render::GLSupport *glSupport
+#  define GLXEW_CONTEXT_ARG_DEF_LIST b3d::render::GLSupport *glSupport
 // BANSHEE SPECIFIC END
 #endif /* GLEW_MX */
 

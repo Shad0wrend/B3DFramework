@@ -38,7 +38,7 @@ namespace b3d
 	};
 
 	using PrecompiledVariationData = TPrecompiledVariationData<false>;
-	namespace ct { using PrecompiledVariationData = TPrecompiledVariationData<true>; }
+	namespace render { using PrecompiledVariationData = TPrecompiledVariationData<true>; }
 
 	/** Base class that is used for implementing both main and render thread versions of Technique. */
 	class B3D_CORE_EXPORT TechniqueBase
@@ -145,7 +145,7 @@ namespace b3d
 		static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData = {});
 
 	protected:
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		void MarkRenderProxyDirty(ShaderVariationDirtyFlags flag) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
@@ -158,7 +158,7 @@ namespace b3d
 
 	private:
 		struct SyncPacket;
-		friend class ct::Technique;
+		friend class render::Technique;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -177,7 +177,7 @@ namespace b3d
 
 	class TechniqueRenderProxyRTTI;
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Material-Internal
 		 *  @{
@@ -216,5 +216,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

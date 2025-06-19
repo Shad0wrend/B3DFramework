@@ -10,7 +10,7 @@ D3D11RenderTexture::D3D11RenderTexture(const RENDER_TEXTURE_DESC& desc)
 {
 }
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 D3D11RenderTexture::D3D11RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 	: RenderTexture(desc, deviceIdx), mProperties(desc, false)
 {
@@ -72,4 +72,4 @@ void D3D11RenderTexture::GetCustomAttribute(const String& name, void* data) cons
 		*dsv = depthStencilView->GetDsv(false, true);
 	}
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

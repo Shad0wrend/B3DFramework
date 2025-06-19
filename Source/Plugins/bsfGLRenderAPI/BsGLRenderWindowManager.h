@@ -15,13 +15,13 @@ namespace b3d
 	class GLRenderWindowManager : public RenderWindowManager
 	{
 	public:
-		GLRenderWindowManager(ct::GLRenderAPI* renderSystem);
+		GLRenderWindowManager(render::GLRenderAPI* renderSystem);
 
 	protected:
 		SPtr<RenderWindow> CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId, const SPtr<RenderWindow>& parentWindow) override;
 
 	private:
-		ct::GLRenderAPI* mRenderSystem;
+		render::GLRenderAPI* mRenderSystem;
 	};
 
 	/** @} */

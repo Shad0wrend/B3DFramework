@@ -17,7 +17,7 @@ namespace b3d
 	class GLTextureManager : public TextureManager
 	{
 	public:
-		GLTextureManager(ct::GLSupport& support);
+		GLTextureManager(render::GLSupport& support);
 		virtual ~GLTextureManager() = default;
 
 		/**
@@ -28,10 +28,10 @@ namespace b3d
 	protected:
 		SPtr<RenderTexture> CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
 
-		ct::GLSupport& mGLSupport;
+		render::GLSupport& mGLSupport;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Handles creation of OpenGL textures. */
 		class GLTextureManager : public TextureManager
@@ -45,7 +45,7 @@ namespace b3d
 
 			GLSupport& mGLSupport;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

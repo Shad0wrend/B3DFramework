@@ -194,7 +194,7 @@ void MacOSRenderWindow::SetFullscreen(const VideoMode& videoMode)
 	if (mIsChild)
 		return;
 
-	const ct::Win32VideoModeInfo& videoModeInfo = static_cast<const ct::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
+	const render::Win32VideoModeInfo& videoModeInfo = static_cast<const render::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
 	const u32 outputCount = videoModeInfo.GetOutputCount();
 
 	u32 outputIdx = videoMode.outputIdx;
@@ -254,7 +254,7 @@ void MacOSRenderWindow::SetWindowed(UINT32 width, UINT32 height)
 		return;
 
 	// Restore original display mode
-	const ct::Win32VideoModeInfo& videoModeInfo = static_cast<const ct::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
+	const render::Win32VideoModeInfo& videoModeInfo = static_cast<const render::Win32VideoModeInfo&>(GetCoreApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
 	const u32 outputCount = videoModeInfo.GetOutputCount();
 
 	u32 outputIdx = 0; // 0 is always primary
@@ -283,8 +283,8 @@ void MacOSRenderWindow::SetDisplayMode(const VideoOutputInfo& output, const Vide
 	if (CGAcquireDisplayFadeReservation(5.0f, &fadeToken))
 		CGDisplayFade(fadeToken, 0.3f, kCGDisplayBlendNormal, kCGDisplayBlendSolidColor, 0, 0, 0, TRUE);
 
-	auto& destOutput = static_cast<const ct::MacOSVideoOutputInfo&>(output);
-	auto& newMode = static_cast<const ct::MacOSVideoMode&>(mode);
+	auto& destOutput = static_cast<const render::MacOSVideoOutputInfo&>(output);
+	auto& newMode = static_cast<const render::MacOSVideoMode&>(mode);
 
 	// Note: An alternative to changing display resolution would be to only change the back-buffer size. But that doesn't
 	// account for refresh rate, so it's questionable how useful it would be.
@@ -314,13 +314,13 @@ u64 MacOSRenderWindow::GetPlatformWindowHandle() const
 	return mWindow->_getWindowId();
 }
 
-SPtr<ct::RenderProxy> MacOSRenderWindow::CreateRenderProxy() const
+SPtr<render::RenderProxy> MacOSRenderWindow::CreateRenderProxy() const
 {
 	SPtr<RenderWindow> parentWindow = mParentWindow.lock();
 	B3D_ENSURE(B3DIsWeakUnassigned(mParentWindow) || !mParentWindow.expired()); // If parent window is assigned, it must not be expired
 
 	RenderWindowCreateInformation createInformation = mCreateInformation;
-	SPtr<ct::RenderProxy> renderProxy = B3DMakeShared<ct::MacOSRenderWindow>(createInformation, mWindowId, GetPlatformWindowHandle(), B3DGetRenderProxy(parentWindow));
+	SPtr<render::RenderProxy> renderProxy = B3DMakeShared<render::MacOSRenderWindow>(createInformation, mWindowId, GetPlatformWindowHandle(), B3DGetRenderProxy(parentWindow));
 	renderProxy->SetShared(renderProxy);
 
 	return renderProxy;
@@ -345,7 +345,7 @@ void MacOSRenderWindow::DoOnWindowMovedOrResized()
 	Super::DoOnWindowMovedOrResized();
 }
 
-using namespace b3d::ct;
+using namespace b3d::render;
 
 MacOSRenderWindow::MacOSRenderWindow(const RenderWindowCreateInformation& createInformation, u32 windowId, u64 platformWindowHandle, const SPtr<RenderWindow>& parentWindow)
 	: RenderWindow(createInformation, windowId, platformWindowHandle, parentWindow)

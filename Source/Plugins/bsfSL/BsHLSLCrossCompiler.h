@@ -51,7 +51,7 @@ namespace b3d
 		}
 
 		/** @copydoc Reflect(const String&, ShaderCreateInformation&, SmallVector<GpuProgramType, 2>&) */
-		static ShaderCompilerResult Reflect(const String& hlsl, ct::ShaderCreateInformation& outShaderCreateInformation, TInlineArray<GpuProgramType, 2>& outEntryPoints)
+		static ShaderCompilerResult Reflect(const String& hlsl, render::ShaderCreateInformation& outShaderCreateInformation, TInlineArray<GpuProgramType, 2>& outEntryPoints)
 		{
 			return TReflect<true>(hlsl, outShaderCreateInformation, outEntryPoints);
 		}

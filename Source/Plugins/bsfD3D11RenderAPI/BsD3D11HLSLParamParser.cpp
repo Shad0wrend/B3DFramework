@@ -8,7 +8,7 @@
 #include "Math/BsMath.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuProgramParameterDescription& desc, Vector<VertexElement>* inputParams)
 {

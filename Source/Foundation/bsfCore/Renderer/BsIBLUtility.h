@@ -7,7 +7,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Renderer-Internal
 		 *  @{
@@ -81,5 +81,5 @@ namespace b3d
 		B3D_CORE_EXPORT const IBLUtility& GetIBLUtility();
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

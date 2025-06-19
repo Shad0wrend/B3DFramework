@@ -13,7 +13,7 @@ namespace b3d
 {
 	class VectorPathRenderableRTTI;
 
-	namespace ct
+	namespace render
 	{
 		class VectorPathRenderable;
 	}
@@ -617,7 +617,7 @@ namespace b3d
 		const Vector<VectorPathState>& GetCommandStates() const { return mCommandStates; }
 
 		/** Creates a renderable object that can be used for rasterizing the vector path into pixels. */
-		SPtr<ct::VectorPathRenderable> CreateRenderable(const VectorGraphicsSettings& settings) const;
+		SPtr<render::VectorPathRenderable> CreateRenderable(const VectorGraphicsSettings& settings) const;
 
 		/**
 		 * Creates a new empty vector path.
@@ -646,7 +646,7 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Allows a vector path to be rasterized into pixels. */
 		class B3D_CORE_EXPORT VectorPathRenderable : public IReflectable
@@ -679,7 +679,7 @@ namespace b3d
 			static RTTIType* GetRttiStatic();
 			RTTIType* GetRtti() const override;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 

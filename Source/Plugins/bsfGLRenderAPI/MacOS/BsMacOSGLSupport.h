@@ -6,7 +6,7 @@
 #include "BsGLSupport.h"
 #include "BsGLRenderAPI.h"
 
-namespace b3d::ct
+namespace b3d::render
 {
 	class MacOSContext;
 
@@ -38,4 +38,4 @@ namespace b3d::ct
 	};
 
 	/** @} */
-} // namespace b3d::ct
+} // namespace b3d::render

@@ -10,7 +10,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup NullRenderAPI
 		 *  @{
@@ -88,10 +88,10 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 namespace b3d
 {
-	B3D_IMPLEMENT_GLOBAL_POOL(ct::NullHardwareBuffer, 32)
+	B3D_IMPLEMENT_GLOBAL_POOL(render::NullHardwareBuffer, 32)
 }

@@ -5,7 +5,7 @@
 #include "BsD3D11EventQuery.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11CommandBuffer::D3D11CommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
 	: CommandBuffer(type, deviceIdx, queueIdx, secondary)

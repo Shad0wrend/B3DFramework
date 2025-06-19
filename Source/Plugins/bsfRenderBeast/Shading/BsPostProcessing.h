@@ -11,7 +11,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		struct RendererViewTargetData;
 
@@ -1548,5 +1548,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

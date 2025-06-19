@@ -14,7 +14,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		class SpriteImage;
 	}
@@ -128,11 +128,11 @@ namespace b3d
 		static SPtr<SpriteImageAllocation> Create(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange);
 
 	protected:
-		friend class ct::SpriteImageAllocation;
+		friend class render::SpriteImageAllocation;
 
 		using TSpriteImageAllocation::TSpriteImageAllocation;
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 	};
 
@@ -292,14 +292,14 @@ namespace b3d
 
 		/** @} */
 	protected:
-		friend class ct::SpriteImage;
+		friend class render::SpriteImage;
 
 		SpriteImage(const SpriteImageCreateInformation& createInformation)
 			: TSpriteImage(createInformation)
 		{ }
 
 		void Destroy() override;
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/************************************************************************/
@@ -313,7 +313,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderThread
 		 *  @{
@@ -347,5 +347,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

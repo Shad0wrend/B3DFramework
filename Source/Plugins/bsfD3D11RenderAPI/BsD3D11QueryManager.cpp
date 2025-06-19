@@ -6,7 +6,7 @@
 #include "BsD3D11OcclusionQuery.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 SPtr<EventQuery> D3D11QueryManager::CreateEventQuery(u32 deviceIdx) const
 {

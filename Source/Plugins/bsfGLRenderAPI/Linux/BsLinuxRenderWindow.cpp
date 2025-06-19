@@ -16,7 +16,7 @@
 
 using namespace b3d;
 
-LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, ct::LinuxGLSupport& glSupport)
+LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, render::LinuxGLSupport& glSupport)
 	: RenderWindow(desc, windowId), mGLSupport(glSupport), mProperties(desc)
 {}
 
@@ -52,15 +52,15 @@ Vector2I LinuxRenderWindow::windowToScreenPos(const Vector2I& windowPos) const
 	return pos;
 }
 
-SPtr<ct::LinuxRenderWindow> LinuxRenderWindow::getCore() const
+SPtr<render::LinuxRenderWindow> LinuxRenderWindow::getCore() const
 {
-	return std::static_pointer_cast<ct::LinuxRenderWindow>(mCoreSpecific);
+	return std::static_pointer_cast<render::LinuxRenderWindow>(mCoreSpecific);
 }
 
-SPtr<ct::CoreObject> LinuxRenderWindow::createCore() const
+SPtr<render::CoreObject> LinuxRenderWindow::createCore() const
 {
 	RENDER_WINDOW_DESC desc = mDesc;
-	SPtr<ct::CoreObject> coreObj = B3DMakeShared<ct::LinuxRenderWindow>(desc, mWindowId, mGLSupport);
+	SPtr<render::CoreObject> coreObj = B3DMakeShared<render::LinuxRenderWindow>(desc, mWindowId, mGLSupport);
 	coreObj->SetThisPtrInternal(coreObj);
 
 	return coreObj;
@@ -71,7 +71,7 @@ void LinuxRenderWindow::syncProperties()
 	ScopedSpinLock lock(getCore()->GetPropertiesLockInternal());
 	mProperties = getCore()->mSyncedProperties;
 }
-using namespace b3d::ct;
+using namespace b3d::render;
 
 LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, LinuxGLSupport& glsupport)
 	: RenderWindow(desc, windowId), mWindow(nullptr), mGLSupport(glsupport), mContext(nullptr), mProperties(desc), mSyncedProperties(desc), mIsChild(false), mShowOnSwap(false)

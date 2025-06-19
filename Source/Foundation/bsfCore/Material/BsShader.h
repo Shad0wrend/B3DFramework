@@ -19,7 +19,7 @@ namespace b3d
 	class Shader;
 	struct ShaderCompilerMetaData;
 
-	namespace ct
+	namespace render
 	{
 		class Shader;
 	}
@@ -349,7 +349,7 @@ namespace b3d
 
 	class ShaderInformationRenderProxyRTTI;
 
-	namespace ct
+	namespace render
 	{
 	struct B3D_CORE_EXPORT ShaderInformation : ShaderInformationBase
 	{
@@ -375,14 +375,14 @@ namespace b3d
 			:ShaderInformation(other)
 		{ }
 	};
-	} // namespace ct
+	} // namespace render
 
 	struct B3D_CORE_EXPORT ShaderInformation : ShaderInformationBase 
 	{
 		ShaderInformation() = default;
 
 		/** Converts object to the render thread variant. */
-		static ct::ShaderInformation ConvertToRenderProxy(const ShaderInformation& other);
+		static render::ShaderInformation ConvertToRenderProxy(const ShaderInformation& other);
 
 		/** Techniques to initialize the shader with. */
 		Vector<SPtr<Technique>> Techniques;
@@ -662,7 +662,7 @@ namespace b3d
 		Shader(const String& name, const ShaderCreateInformation& createInformation, u32 id);
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 	private:
 		/************************************************************************/
@@ -701,7 +701,7 @@ namespace b3d
 
 	class ShaderRenderProxyRTTI;
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Material-Internal
 		 *  @{
@@ -741,5 +741,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

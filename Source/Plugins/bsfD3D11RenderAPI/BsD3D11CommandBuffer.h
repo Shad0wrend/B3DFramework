@@ -8,7 +8,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class D3D11EventQuery;
 
@@ -47,5 +47,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

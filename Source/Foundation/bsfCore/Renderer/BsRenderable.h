@@ -189,11 +189,11 @@ namespace b3d
 
 		/** @} */
 	protected:
-		friend class ct::Renderable;
+		friend class render::Renderable;
 		struct FullSyncPacket;
 		struct ActorSyncPacket;
 		
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 		void OnMeshChanged() override;
 
@@ -226,7 +226,7 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** @copydoc TRenderable */
 		class B3D_CORE_EXPORT Renderable : public RenderProxy, public TRenderable<true>
@@ -293,7 +293,7 @@ namespace b3d
 			SPtr<GpuBuffer> mMorphShapeBuffer;
 			SPtr<VertexDescription> mMorphVertexDescription;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

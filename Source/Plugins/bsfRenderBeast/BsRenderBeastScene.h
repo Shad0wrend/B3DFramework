@@ -14,7 +14,7 @@ namespace b3d
 	struct EvaluatedAnimationData;
 	struct ParticlePerFrameData;
 
-	namespace ct
+	namespace render
 	{
 		struct RendererDecal;
 		class Decal;
@@ -255,5 +255,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

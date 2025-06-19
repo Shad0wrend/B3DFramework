@@ -11,7 +11,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class Decal;
 
@@ -116,5 +116,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

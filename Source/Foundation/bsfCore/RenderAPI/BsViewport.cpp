@@ -120,14 +120,14 @@ u32 Viewport::GetTargetHeight() const
 	return 0;
 }
 
-SPtr<ct::RenderProxy> Viewport::CreateRenderProxy() const
+SPtr<render::RenderProxy> Viewport::CreateRenderProxy() const
 {
-	SPtr<ct::RenderTarget> targetRenderProxy = B3DGetRenderProxy(mTarget);
+	SPtr<render::RenderTarget> targetRenderProxy = B3DGetRenderProxy(mTarget);
 
-	ct::Viewport* renderProxy = new(B3DAllocate<ct::Viewport>())
-		ct::Viewport(targetRenderProxy, mNormArea.X, mNormArea.Y, mNormArea.Width, mNormArea.Height);
+	render::Viewport* renderProxy = new(B3DAllocate<render::Viewport>())
+		render::Viewport(targetRenderProxy, mNormArea.X, mNormArea.Y, mNormArea.Width, mNormArea.Height);
 
-	SPtr<ct::Viewport> renderProxyShared = B3DMakeSharedFromExisting<ct::Viewport>(renderProxy);
+	SPtr<render::Viewport> renderProxyShared = B3DMakeSharedFromExisting<render::Viewport>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -173,7 +173,7 @@ RTTIType* Viewport::GetRtti() const
 	return Viewport::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Viewport::Viewport(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
 	: TViewport(target, x, y, width, height)

@@ -8,7 +8,7 @@
 #include "Resources/BsResource.h"
 
 namespace b3d
-{namespace ct
+{namespace render
 	{
 		class GpuCommandBufferPool;
 	}
@@ -285,8 +285,8 @@ namespace b3d
 	/** Contains a rendered bitmap for a single glyph. */
 	struct GlyphBitmap
 	{
-		SPtr<ct::Texture> GlyphTexture;
-		SPtr<ct::Texture> AtlasTexture;
+		SPtr<render::Texture> GlyphTexture;
+		SPtr<render::Texture> AtlasTexture;
 		Size2UI Size;
 		Vector2I PositionInAtlas;
 	};
@@ -307,7 +307,7 @@ namespace b3d
 		void BlitGlyphs(Vector<GlyphBitmap> glyphBitmaps);
 		
 	private:
-		SPtr<ct::GpuCommandBufferPool> mCommandBufferPool;
+		SPtr<render::GpuCommandBufferPool> mCommandBufferPool;
 	};
 
 	/** @} */

@@ -528,7 +528,7 @@ class APIDocLinkParser extends CommonMark\Inline\Parser\AbstractInlineParser
             else
             {
                 $ns = substr($typeName, 0, $hasNs);
-                if($ns === 'ct') {
+                if($ns === 'render') {
                     $typeName = 'b3d::' . $typeName;
                     $prefixAdded = true;
                 }

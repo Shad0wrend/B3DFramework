@@ -55,8 +55,8 @@ void Skybox::FilterTexture()
 		cubemapDesc.Name = "Skybox filtered radiance cubemap";
 		cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
 		cubemapDesc.Format = PF_RG11B10F;
-		cubemapDesc.Width = ct::IBLUtility::kReflectionCubemapSize;
-		cubemapDesc.Height = ct::IBLUtility::kReflectionCubemapSize;
+		cubemapDesc.Width = render::IBLUtility::kReflectionCubemapSize;
+		cubemapDesc.Height = render::IBLUtility::kReflectionCubemapSize;
 		cubemapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
 		cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
@@ -68,8 +68,8 @@ void Skybox::FilterTexture()
 		irradianceCubemapDesc.Name = "Skybox irradiance cubemap";
 		irradianceCubemapDesc.Type = TEX_TYPE_CUBE_MAP;
 		irradianceCubemapDesc.Format = PF_RG11B10F;
-		irradianceCubemapDesc.Width = ct::IBLUtility::kIrradianceCubemapSize;
-		irradianceCubemapDesc.Height = ct::IBLUtility::kIrradianceCubemapSize;
+		irradianceCubemapDesc.Width = render::IBLUtility::kIrradianceCubemapSize;
+		irradianceCubemapDesc.Height = render::IBLUtility::kIrradianceCubemapSize;
 		irradianceCubemapDesc.MipMapCount = 0;
 		irradianceCubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
@@ -81,24 +81,24 @@ void Skybox::FilterTexture()
 		mRendererTask = nullptr;
 	};
 
-	SPtr<ct::Skybox> skyboxRenderProxy = B3DGetRenderProxy(this);
-	SPtr<ct::Texture> filteredRadianceRenderProxy = B3DGetRenderProxy(mFilteredRadiance);
-	SPtr<ct::Texture> irradianceRenderProxy = B3DGetRenderProxy(mIrradiance);
+	SPtr<render::Skybox> skyboxRenderProxy = B3DGetRenderProxy(this);
+	SPtr<render::Texture> filteredRadianceRenderProxy = B3DGetRenderProxy(mFilteredRadiance);
+	SPtr<render::Texture> irradianceRenderProxy = B3DGetRenderProxy(mIrradiance);
 
-	auto filterSkybox = [filteredRadianceRenderProxy, irradianceRenderProxy, skyboxRenderProxy](ct::GpuCommandBufferPool& commandBufferPool)
+	auto filterSkybox = [filteredRadianceRenderProxy, irradianceRenderProxy, skyboxRenderProxy](render::GpuCommandBufferPool& commandBufferPool)
 	{
-		const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("FilterSkybox"));
+		const SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("FilterSkybox"));
 
 		GetProfilerGPU().BeginSample(*commandBuffer, "FilterSkybox");
 
 		// Filter radiance
-		ct::GetIBLUtility().ScaleCubemap(*commandBuffer, skyboxRenderProxy->GetTexture(), 0, filteredRadianceRenderProxy, 0);
-		ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, filteredRadianceRenderProxy, nullptr);
+		render::GetIBLUtility().ScaleCubemap(*commandBuffer, skyboxRenderProxy->GetTexture(), 0, filteredRadianceRenderProxy, 0);
+		render::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, filteredRadianceRenderProxy, nullptr);
 
 		skyboxRenderProxy->mFilteredRadiance = filteredRadianceRenderProxy;
 
 		// Generate irradiance
-		ct::GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyboxRenderProxy->GetTexture(), irradianceRenderProxy);
+		render::GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyboxRenderProxy->GetTexture(), irradianceRenderProxy);
 		skyboxRenderProxy->mIrradiance = irradianceRenderProxy;
 
 		GetProfilerGPU().EndSample(*commandBuffer, "FilterSkybox");
@@ -108,10 +108,10 @@ void Skybox::FilterTexture()
 		return true;
 	};
 
-	mRendererTask = ct::RendererTask::Create("SkyboxFilter", filterSkybox);
+	mRendererTask = render::RendererTask::Create("SkyboxFilter", filterSkybox);
 
 	mRendererTask->OnComplete.Connect(renderComplete);
-	ct::GetRenderer()->AddTask(mRendererTask);
+	render::GetRenderer()->AddTask(mRendererTask);
 }
 
 void Skybox::SetTexture(const HTexture& texture)
@@ -144,14 +144,14 @@ SPtr<Skybox> Skybox::Create()
 	return skybox;
 }
 
-SPtr<ct::RenderProxy> Skybox::CreateRenderProxy() const
+SPtr<render::RenderProxy> Skybox::CreateRenderProxy() const
 {
-	SPtr<ct::Texture> radiance = B3DGetRenderProxy(mTexture);
-	SPtr<ct::Texture> filteredRadiance = B3DGetRenderProxy(mFilteredRadiance);
-	SPtr<ct::Texture> irradiance = B3DGetRenderProxy(mIrradiance);
+	SPtr<render::Texture> radiance = B3DGetRenderProxy(mTexture);
+	SPtr<render::Texture> filteredRadiance = B3DGetRenderProxy(mFilteredRadiance);
+	SPtr<render::Texture> irradiance = B3DGetRenderProxy(mIrradiance);
 
-	ct::Skybox* renderProxy = new(B3DAllocate<ct::Skybox>()) ct::Skybox(radiance, filteredRadiance, irradiance);
-	SPtr<ct::Skybox> renderProxyShared = B3DMakeSharedFromExisting<ct::Skybox>(renderProxy);
+	render::Skybox* renderProxy = new(B3DAllocate<render::Skybox>()) render::Skybox(radiance, filteredRadiance, irradiance);
+	SPtr<render::Skybox> renderProxyShared = B3DMakeSharedFromExisting<render::Skybox>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -181,7 +181,7 @@ RTTIType* Skybox::GetRtti() const
 	return Skybox::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Skybox::Skybox(const SPtr<Texture>& radiance, const SPtr<Texture>& filteredRadiance, const SPtr<Texture>& irradiance)
 	: mFilteredRadiance(filteredRadiance), mIrradiance(irradiance)

@@ -12,7 +12,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class RendererTask;
 	}
@@ -36,7 +36,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		class LightProbeVolume;
 	}
@@ -186,7 +186,7 @@ namespace b3d
 		static SPtr<LightProbeVolume> Create(const AABox& volume = AABox::kUnitBox, const Vector3I& cellCount = Vector3I(1, 1, 1));
 
 	protected:
-		friend class ct::LightProbeVolume;
+		friend class render::LightProbeVolume;
 		struct SyncPacket;
 
 		LightProbeVolume(const AABox& volume, const Vector3I& cellCount);
@@ -200,7 +200,7 @@ namespace b3d
 		 */
 		void UpdateCoefficients();
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag dirtFlags = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
@@ -213,7 +213,7 @@ namespace b3d
 		Vector3I mCellCount = { 1, 1, 1 };
 
 		u32 mNextProbeId = 0;
-		SPtr<ct::RendererTask> mRendererTask;
+		SPtr<render::RendererTask> mRendererTask;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -227,7 +227,7 @@ namespace b3d
 		LightProbeVolume() = default; // Serialization only
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Information about a single light probe in a light probe volume. */
 		struct LightProbeInfo
@@ -310,7 +310,7 @@ namespace b3d
 			// Temporary until initialization
 			Vector<LightProbeSHCoefficients> mInitCoefficients;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

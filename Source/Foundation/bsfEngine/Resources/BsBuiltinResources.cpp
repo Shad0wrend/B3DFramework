@@ -86,7 +86,7 @@ BuiltinResources::~BuiltinResources()
 	mCursorSizeWE = nullptr;
 	mFrameworkIcon = nullptr;
 
-	GetRenderThread().PostCommand([]() { ct::BuiltinResources::ShutDown(); }, "Shutting down builtin resources");
+	GetRenderThread().PostCommand([]() { render::BuiltinResources::ShutDown(); }, "Shutting down builtin resources");
 }
 
 void BuiltinResources::OnStartUp()
@@ -140,8 +140,8 @@ void BuiltinResources::OnStartUp()
 	auto fnInitializeBuiltinResourceRenderProxies = [whiteTexture2D = B3DGetRenderProxy(whiteTexture2D), blackTexture2D = B3DGetRenderProxy(blackTexture2D), normalTexture = B3DGetRenderProxy(normalTexture), whiteTexture3D = B3DGetRenderProxy(whiteTexture3D), blackTexture3D = B3DGetRenderProxy(blackTexture3D)]()
 
 	{
-		ct::BuiltinResources::StartUp();
-		ct::BuiltinResources& renderThreadBuiltinResources = ct::BuiltinResources::Instance();
+		render::BuiltinResources::StartUp();
+		render::BuiltinResources& renderThreadBuiltinResources = render::BuiltinResources::Instance();
 		renderThreadBuiltinResources.WhiteTexture2D = whiteTexture2D;
 		renderThreadBuiltinResources.BlackTexture2D = blackTexture2D;
 		renderThreadBuiltinResources.NormalTexture2D = normalTexture;

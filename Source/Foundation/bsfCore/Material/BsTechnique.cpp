@@ -184,19 +184,19 @@ Technique::Technique()
 	: TTechnique()
 {}
 
-SPtr<ct::RenderProxy> Technique::CreateRenderProxy() const
+SPtr<render::RenderProxy> Technique::CreateRenderProxy() const
 {
 	const SPtr<Shader> owner = mOwner.lock();
-	const WeakSPtr<ct::Shader> ownerRenderProxy = B3DGetRenderProxy(owner);
+	const WeakSPtr<render::Shader> ownerRenderProxy = B3DGetRenderProxy(owner);
 
-	TInlineArray<SPtr<ct::Pass>, 1> passRenderProxies;
+	TInlineArray<SPtr<render::Pass>, 1> passRenderProxies;
 	for(auto& pass : mPasses)
 		passRenderProxies.Add(B3DGetRenderProxy(pass));
 
-	Optional<ct::PrecompiledVariationData> precompiledDataRenderProxy = mHasPassData ? ct::PrecompiledVariationData(passRenderProxies) : Optional<ct::PrecompiledVariationData>{};
+	Optional<render::PrecompiledVariationData> precompiledDataRenderProxy = mHasPassData ? render::PrecompiledVariationData(passRenderProxies) : Optional<render::PrecompiledVariationData>{};
 
-	ct::Technique* const renderProxy = new(B3DAllocate<ct::Technique>()) ct::Technique(ownerRenderProxy, mLanguage, mVariationParameters, precompiledDataRenderProxy);
-	const SPtr<ct::Technique> renderProxyShared = B3DMakeSharedFromExisting<ct::Technique>(renderProxy);
+	render::Technique* const renderProxy = new(B3DAllocate<render::Technique>()) render::Technique(ownerRenderProxy, mLanguage, mVariationParameters, precompiledDataRenderProxy);
+	const SPtr<render::Technique> renderProxyShared = B3DMakeSharedFromExisting<render::Technique>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -268,7 +268,7 @@ RTTIType* Technique::GetRtti() const
 	return Technique::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Technique::Technique()
 	: TTechnique(WeakSPtr<Shader>(), StringUtil::kBlank, ShaderVariationParameters(), {})

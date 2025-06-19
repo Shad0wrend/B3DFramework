@@ -8,7 +8,7 @@
 #include "Error/BsException.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 Win32Context::Win32Context(HDC hdc, HGLRC glrc, bool ownsContext)
 	: mHDC(hdc), mGlrc(glrc), mOwnsContext(ownsContext)

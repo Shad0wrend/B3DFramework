@@ -52,7 +52,7 @@ SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RenderTextureCreat
 	return newRT;
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 void TextureManager::OnStartUp()
 {

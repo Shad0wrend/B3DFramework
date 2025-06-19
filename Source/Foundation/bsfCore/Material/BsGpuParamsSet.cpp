@@ -112,7 +112,7 @@ Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT> GatherParameterDescriptio
 	return parameterDescriptions;
 }
 
-Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT> GatherParameterDescriptions(const SPtr<ct::Pass>& pass)
+Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT> GatherParameterDescriptions(const SPtr<render::Pass>& pass)
 {
 	Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT> parameterDescriptions;
 
@@ -451,7 +451,7 @@ SPtr<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& gpuBufferCreat
 }
 
 template<>
-SPtr<ct::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& gpuBufferCreateInformation)
+SPtr<render::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& gpuBufferCreateInformation)
 {
 	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
 	return device->CreateGpuBuffer(gpuBufferCreateInformation);
@@ -470,7 +470,7 @@ SPtr<GpuParameters> CreateGpuParameters<false>(const SPtr<GpuPipelineParameterLa
 }
 
 template <>
-SPtr<ct::GpuParameters> CreateGpuParameters<true>(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
+SPtr<render::GpuParameters> CreateGpuParameters<true>(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
 {
 	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
 	return device->CreateGpuParameters(parameterLayout);

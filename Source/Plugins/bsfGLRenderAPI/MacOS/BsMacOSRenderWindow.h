@@ -9,12 +9,12 @@ namespace b3d
 	class CocoaWindow;
 	class MacOSRenderWindow;
 
-	namespace ct
+	namespace render
 	{
 		class MacOSGLSupport;
 		class MacOSContext;
 		class MacOSRenderWindow;
-	} // namespace ct
+	} // namespace render
 
 	/** @addtogroup GL
 	 *  @{
@@ -70,17 +70,17 @@ namespace b3d
 		void setWindowed(u32 width, u32 height) override;
 
 		/** @copydoc RenderWindow::getCore */
-		SPtr<ct::MacOSRenderWindow> getCore() const;
+		SPtr<render::MacOSRenderWindow> getCore() const;
 
 		/** Called when window is moved or resized. */
 		void WindowMovedOrResizedInternal() override;
 
 	protected:
 		friend class GLRenderWindowManager;
-		friend class ct::MacOSGLSupport;
-		friend class ct::MacOSRenderWindow;
+		friend class render::MacOSGLSupport;
+		friend class render::MacOSRenderWindow;
 
-		MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, ct::MacOSGLSupport& glSupport);
+		MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, render::MacOSGLSupport& glSupport);
 
 		/** Changes the display mode (resolution, refresh rate) of the specified output device. */
 		void setDisplayMode(const VideoOutputInfo& output, const VideoMode& mode);
@@ -98,18 +98,18 @@ namespace b3d
 		void Destroy() override;
 
 		/** @copydoc RenderTarget::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<render::CoreObject> createCore() const override;
 
 	private:
 		CocoaWindow* mWindow = nullptr;
-		SPtr<ct::MacOSContext> mContext;
+		SPtr<render::MacOSContext> mContext;
 		bool mIsChild = false;
 
 		RenderWindowProperties mProperties;
-		ct::MacOSGLSupport& mGLSupport;
+		render::MacOSGLSupport& mGLSupport;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**
 		 * Render window implementation for MacOS.
@@ -173,7 +173,7 @@ namespace b3d
 			RenderWindowProperties mProperties;
 			RenderWindowProperties mSyncedProperties;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

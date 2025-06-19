@@ -35,7 +35,7 @@ namespace b3d
 		RenderTextureProperties mProperties;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**
 		 * OpenGL implementation of a render texture.
@@ -119,7 +119,7 @@ namespace b3d
 			GLuint mBlitReadFBO;
 			GLuint mBlitWriteFBO;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

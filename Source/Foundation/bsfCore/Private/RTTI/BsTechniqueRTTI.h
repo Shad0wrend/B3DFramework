@@ -50,7 +50,7 @@ namespace b3d
 		}
 	};
 
-	class B3D_CORE_EXPORT TechniqueRenderProxyRTTI : public TRTTIType<ct::Technique, IReflectable, TechniqueRenderProxyRTTI>
+	class B3D_CORE_EXPORT TechniqueRenderProxyRTTI : public TRTTIType<render::Technique, IReflectable, TechniqueRenderProxyRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -61,7 +61,7 @@ namespace b3d
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnOperationEnded(ct::Technique& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		void OnOperationEnded(render::Technique& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
 				object.Initialize();
@@ -80,7 +80,7 @@ namespace b3d
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return ct::Technique::CreateEmpty();
+			return render::Technique::CreateEmpty();
 		}
 	};
 

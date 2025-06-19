@@ -126,10 +126,10 @@ SPtr<SceneInstance> SceneInstance::Create(const String& name, const HSceneObject
 	return sceneInstance;
 }
 
-SPtr<ct::RenderProxy> SceneInstance::CreateRenderProxy() const
+SPtr<render::RenderProxy> SceneInstance::CreateRenderProxy() const
 {
-	ct::SceneInstance* renderProxy = new(B3DAllocate<ct::SceneInstance>()) ct::SceneInstance();
-	SPtr<ct::SceneInstance> renderProxyShared = B3DMakeSharedFromExisting<ct::SceneInstance>(renderProxy);
+	render::SceneInstance* renderProxy = new(B3DAllocate<render::SceneInstance>()) render::SceneInstance();
+	SPtr<render::SceneInstance> renderProxyShared = B3DMakeSharedFromExisting<render::SceneInstance>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;

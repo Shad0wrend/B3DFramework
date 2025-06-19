@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup GL
 		 *  @{
@@ -22,7 +22,7 @@ namespace b3d
 		}
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 #elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
@@ -31,7 +31,7 @@ namespace b3d
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup GL
 		 *  @{
@@ -44,14 +44,14 @@ namespace b3d
 		}
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 #elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
 
 #	include "MacOS/BsMacOSGLSupport.h"
 
-namespace b3d::ct
+namespace b3d::render
 {
 	/** @addtogroup GL
 	 *  @{
@@ -64,5 +64,5 @@ namespace b3d::ct
 	}
 
 	/** @} */
-} // namespace b3d::ct
+} // namespace b3d::render
 #endif

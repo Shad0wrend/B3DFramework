@@ -11,7 +11,7 @@
 #include "RenderAPI/BsGpuDevice.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDevice& gpuDevice, const SPtr<Shader>& shader, const SPtr<MaterialParams>& params, const SPtr<GpuParamsSet>& paramsSet, const SPtr<RenderBeastOptions>& options)
 {
@@ -273,4 +273,4 @@ SPtr<SamplerState> SamplerOverrideUtility::GenerateSamplerOverride(GpuDevice& gp
 
 	return gpuDevice.FindOrCreateSamplerState(samplerStateCreateInformation);
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

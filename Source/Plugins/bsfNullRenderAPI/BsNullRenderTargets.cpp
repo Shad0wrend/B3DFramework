@@ -22,9 +22,9 @@ NullRenderWindow::NullRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
 	: RenderWindow(desc, windowId), mProperties(desc)
 {}
 
-SPtr<ct::NullRenderWindow> NullRenderWindow::GetCore() const
+SPtr<render::NullRenderWindow> NullRenderWindow::GetCore() const
 {
-	return std::static_pointer_cast<ct::NullRenderWindow>(mCoreSpecific);
+	return std::static_pointer_cast<render::NullRenderWindow>(mCoreSpecific);
 }
 
 void NullRenderWindow::SyncProperties()
@@ -33,10 +33,10 @@ void NullRenderWindow::SyncProperties()
 	mProperties = GetCore()->mSyncedProperties;
 }
 
-SPtr<ct::CoreObject> NullRenderWindow::CreateCore() const
+SPtr<render::CoreObject> NullRenderWindow::CreateCore() const
 {
 	RENDER_WINDOW_DESC desc = mDesc;
-	SPtr<ct::CoreObject> coreObj = B3DMakeShared<ct::NullRenderWindow>(desc, mWindowId);
+	SPtr<render::CoreObject> coreObj = B3DMakeShared<render::NullRenderWindow>(desc, mWindowId);
 	coreObj->SetShared(coreObj);
 
 	return coreObj;
@@ -54,7 +54,7 @@ void NullRenderWindow::GetCustomAttribute(const String& name, void* pData) const
 	RenderWindow::GetCustomAttribute(name, pData);
 }
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 NullRenderWindow::NullRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
 	: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc)
 {}
@@ -76,4 +76,4 @@ void NullRenderWindow::GetCustomAttribute(const String& name, void* pData) const
 
 	RenderWindow::GetCustomAttribute(name, pData);
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

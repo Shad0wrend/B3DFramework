@@ -7,7 +7,7 @@
 #include "Renderer/BsRendererUtility.h"
 #include "Renderer/BsSkybox.h"
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 
 static const u32 kReflProbeBufferIncrement = 16 * sizeof(ReflProbeData);
 
@@ -174,4 +174,4 @@ void ReflProbeParamBuffer::Populate(const Skybox* sky, u32 numProbes, const SPtr
 }
 
 ReflProbesParamDef gReflProbesParamDef;
-}} // namespace b3d::ct
+}} // namespace b3d::render

@@ -8,7 +8,7 @@
 #include "BsGLRenderAPI.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 bool extGLX_ARB_multisample = false;
 bool extGLX_ARB_framebuffer_sRGB = false;

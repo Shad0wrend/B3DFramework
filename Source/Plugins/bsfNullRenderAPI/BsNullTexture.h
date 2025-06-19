@@ -22,7 +22,7 @@ namespace b3d
 		SPtr<RenderTexture> CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**	Handles creation of null textures. */
 		class NullTextureManager : public TextureManager
@@ -49,7 +49,7 @@ namespace b3d
 		protected:
 			PixelData* mMappedBuffer = nullptr;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

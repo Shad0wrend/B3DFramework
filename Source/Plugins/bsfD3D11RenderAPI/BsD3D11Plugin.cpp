@@ -7,5 +7,5 @@ using namespace b3d;
 
 extern "C" B3D_PLUGIN_EXPORT const char* GetPluginName()
 {
-	return ct::D3D11RenderAPIFactory::SystemName;
+	return render::D3D11RenderAPIFactory::SystemName;
 }

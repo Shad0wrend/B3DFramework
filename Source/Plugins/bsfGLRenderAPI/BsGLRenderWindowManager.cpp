@@ -7,7 +7,7 @@
 
 using namespace b3d;
 
-GLRenderWindowManager::GLRenderWindowManager(ct::GLRenderAPI* renderSystem)
+GLRenderWindowManager::GLRenderWindowManager(render::GLRenderAPI* renderSystem)
 	: mRenderSystem(renderSystem)
 {
 	B3D_ASSERT(mRenderSystem != nullptr);
@@ -15,7 +15,7 @@ GLRenderWindowManager::GLRenderWindowManager(ct::GLRenderAPI* renderSystem)
 
 SPtr<RenderWindow> GLRenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId, const SPtr<RenderWindow>& parentWindow)
 {
-	ct::GLSupport* glSupport = mRenderSystem->GetGlSupport();
+	render::GLSupport* glSupport = mRenderSystem->GetGlSupport();
 
 	// Create the window
 	return glSupport->NewWindow(desc, windowId, parentWindow);

@@ -15,13 +15,13 @@ namespace b3d
 	class D3D11RenderWindowManager : public RenderWindowManager
 	{
 	public:
-		D3D11RenderWindowManager(ct::D3D11RenderAPI* renderSystem);
+		D3D11RenderWindowManager(render::D3D11RenderAPI* renderSystem);
 
 	protected:
 		SPtr<RenderWindow> CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId, const SPtr<RenderWindow>& parentWindow) override;
 
 	private:
-		ct::D3D11RenderAPI* mRenderSystem;
+		render::D3D11RenderAPI* mRenderSystem;
 	};
 
 	/** @} */

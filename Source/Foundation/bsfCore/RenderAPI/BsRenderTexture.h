@@ -28,7 +28,7 @@ namespace b3d
 		{ }
 	};
 
-	namespace ct
+	namespace render
 	{
 		struct RenderTextureCreateInformation;
 	}
@@ -64,12 +64,12 @@ namespace b3d
 
 	protected:
 		friend class TextureManager;
-		friend class ct::RenderTexture;
+		friend class render::RenderTexture;
 		struct SyncPacket;
 
 		RenderTexture(const RenderTextureCreateInformation& createInformation);
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 	protected:
@@ -89,7 +89,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderAPI-Internal
 		 *  @{
@@ -158,5 +158,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

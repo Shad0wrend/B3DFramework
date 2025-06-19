@@ -8,7 +8,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 TiledLightingParamDef gTiledLightingParamDef;
 
@@ -398,4 +398,4 @@ TiledDeferredImageBasedLightingMat* TiledDeferredImageBasedLightingMat::GetVaria
 		return Get(GetVariation<8>());
 	}
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

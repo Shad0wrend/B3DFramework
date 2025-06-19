@@ -34,7 +34,7 @@ namespace b3d
 		Sprite
 	};
 
-	/** Common functionality for MaterialParams and ct::MaterialParams. */
+	/** Common functionality for MaterialParams and render::MaterialParams. */
 	class B3D_CORE_EXPORT MaterialParamsBase
 	{
 	public:
@@ -422,8 +422,8 @@ namespace b3d
 	class B3D_CORE_EXPORT MaterialParamTextureDataRenderProxy
 	{
 	public:
-		SPtr<ct::Texture> Texture;
-		SPtr<ct::SpriteImage> SpriteImage;
+		SPtr<render::Texture> Texture;
+		SPtr<render::SpriteImage> SpriteImage;
 		bool IsLoadStore;
 		TextureSurface Surface;
 	};
@@ -446,7 +446,7 @@ namespace b3d
 	class B3D_CORE_EXPORT MaterialParamBufferDataRenderProxy
 	{
 	public:
-		SPtr<ct::GpuBuffer> Value;
+		SPtr<render::GpuBuffer> Value;
 	};
 
 	/** Data for a single buffer parameter. */
@@ -499,7 +499,7 @@ namespace b3d
 		typedef MaterialParamSamplerStateDataRenderProxy SamplerStateParamDataType;
 	};
 
-	/** Common code that may be specialized for both MaterialParams and ct::MaterialParams. */
+	/** Common code that may be specialized for both MaterialParams and render::MaterialParams. */
 	template <bool IsRenderProxy>
 	class B3D_CORE_EXPORT TMaterialParams : public MaterialParamsBase
 	{
@@ -824,7 +824,7 @@ namespace b3d
 		void GetCoreObjectDependencies(Vector<CoreObject*>& coreObjects);
 
 	private:
-		friend class ct::MaterialParams;
+		friend class render::MaterialParams;
 
 		mutable u64 mLastSyncVersion;
 
@@ -839,7 +839,7 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread version of MaterialParams. */
 		class B3D_CORE_EXPORT MaterialParams : public TMaterialParams<true>
@@ -858,7 +858,7 @@ namespace b3d
 			 */
 			void ApplyAndDestroySyncPacket(FrameAllocator& allocator, const b3d::MaterialParams::SyncPacket& syncPacket);
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

@@ -4,7 +4,7 @@
 
 using namespace b3d;
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 const u32 IBLUtility::kReflectionCubemapSize = 256;
 const u32 IBLUtility::kIrradianceCubemapSize = 32;

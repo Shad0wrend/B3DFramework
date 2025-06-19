@@ -66,7 +66,7 @@ RTTIType* MeshBase::GetRtti() const
 	return MeshBase::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 MeshBase::MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMeshes)
 	: mProperties(vertexCount, indexCount, subMeshes)

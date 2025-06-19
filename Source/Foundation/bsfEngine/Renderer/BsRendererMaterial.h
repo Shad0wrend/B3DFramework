@@ -49,7 +49,7 @@ public:                                                                         
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup Renderer-Engine-Internal
 		 *  @{
@@ -89,7 +89,7 @@ namespace b3d
 			Path ShaderPath;
 			SPtr<Shader> Shader;
 			std::atomic<RendererMaterialShaderState> ShaderState = RendererMaterialShaderState::NotInitialized;
-			TAsyncOp<SPtr<ct::Shader>> ShaderInitializeOperation{ AsyncOpEmpty() };
+			TAsyncOp<SPtr<render::Shader>> ShaderInitializeOperation{ AsyncOpEmpty() };
 
 			ShaderVariations VariationParameterSet;
 			ShaderDefines Defines;
@@ -540,5 +540,5 @@ namespace b3d
 		RendererMaterialMetaData RendererMaterial<T>::mMetaData;
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

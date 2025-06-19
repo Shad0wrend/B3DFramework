@@ -8,7 +8,7 @@
 #include "BsD3D11CommandBuffer.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11HardwareBuffer::D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage, u32 elementCount, u32 elementSize, D3D11Device& device, bool useSystemMem, bool streamOut)
 	: GpuBuffer(elementCount * elementSize, usage, GDF_DEFAULT)
@@ -253,7 +253,7 @@ void D3D11HardwareBuffer::Unmap()
 	}
 }
 
-void D3D11HardwareBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<ct::CommandBuffer>& commandBuffer)
+void D3D11HardwareBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<render::CommandBuffer>& commandBuffer)
 {
 	auto executeRef = [this](GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length)
 	{

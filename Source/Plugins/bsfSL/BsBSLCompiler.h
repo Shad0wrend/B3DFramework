@@ -24,7 +24,7 @@ namespace b3d
 			return TCompile<false>(name, source, defines, languages, compileVariations, outShader);
 		}
 
-		ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, SPtr<ct::Shader>& outShader) override
+		ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, SPtr<render::Shader>& outShader) override
 		{
 			return TCompile<true>(name, source, defines, languages, compileVariations, outShader);
 		}
@@ -34,7 +34,7 @@ namespace b3d
 			return TCompileVariation<false>(shader, variationParameters, language, inOutVariation);
 		}
 
-		ShaderCompilerResult CompileVariation(const ct::Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, ct::Technique& inOutVariation) override
+		ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, render::Technique& inOutVariation) override
 		{
 			return TCompileVariation<true>(shader, variationParameters, language, inOutVariation);
 		}

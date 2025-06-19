@@ -552,12 +552,12 @@ namespace b3d
 		struct RedrawSyncPacket;
 		struct TransformSyncPacket;
 
-		friend class ct::Camera;
+		friend class render::Camera;
 
 		/** @copydoc CameraBase */
 		Area2I GetViewportRect() const override;
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
@@ -575,7 +575,7 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** @copydoc b3d::Camera */
 		class B3D_CORE_EXPORT Camera : public RenderProxy, public TCamera<true>
@@ -605,7 +605,7 @@ namespace b3d
 
 			u32 mRendererId;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

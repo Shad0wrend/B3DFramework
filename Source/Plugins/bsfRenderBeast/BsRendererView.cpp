@@ -15,7 +15,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 PerCameraParamDef gPerCameraParamDef;
 SkyboxParamDef gSkyboxParamDef;
@@ -958,4 +958,4 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 		}
 	}
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

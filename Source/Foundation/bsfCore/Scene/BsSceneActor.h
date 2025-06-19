@@ -6,7 +6,7 @@
 #include "Scene/BsTransform.h"
 
 namespace b3d
-{namespace ct
+{namespace render
 	{
 		class SceneActor;
 	}
@@ -170,10 +170,10 @@ namespace b3d
 
 		/** @} */
 	private:
-		friend class ct::SceneActor;
+		friend class render::SceneActor;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** @copydoc b3d::SceneActor */
 		class B3D_CORE_EXPORT SceneActor : public TSceneActor<true>

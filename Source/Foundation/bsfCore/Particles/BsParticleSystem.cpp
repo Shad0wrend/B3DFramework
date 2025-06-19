@@ -418,10 +418,10 @@ float ParticleSystem::AdvanceTimeInternal(float time, float timeDelta, float dur
 	return newTime;
 }
 
-SPtr<ct::RenderProxy> ParticleSystem::CreateRenderProxy() const
+SPtr<render::RenderProxy> ParticleSystem::CreateRenderProxy() const
 {
-	ct::ParticleSystem* renderProxy = new(B3DAllocate<ct::ParticleSystem>()) ct::ParticleSystem(mId);
-	SPtr<ct::ParticleSystem> renderProxyShared = B3DMakeSharedFromExisting<ct::ParticleSystem>(renderProxy);
+	render::ParticleSystem* renderProxy = new(B3DAllocate<render::ParticleSystem>()) render::ParticleSystem(mId);
+	SPtr<render::ParticleSystem> renderProxyShared = B3DMakeSharedFromExisting<render::ParticleSystem>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -486,7 +486,7 @@ RTTIType* ParticleSystem::GetRtti() const
 	return ParticleSystem::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 ParticleSystem::~ParticleSystem()
 {

@@ -6,7 +6,7 @@
 #include "Math/BsMath.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11_TEXTURE_ADDRESS_MODE D3D11Mappings::Get(TextureAddressingMode tam)
 {

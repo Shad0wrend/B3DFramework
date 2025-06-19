@@ -6,7 +6,7 @@
 #include "RenderAPI/BsVertexDescription.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanVertexInput::VulkanVertexInput(u32 id, const VkPipelineVertexInputStateCreateInfo& createInfo, u32 bindingCount)
 	: mId(id), mBindingCount(bindingCount), mCreateInfo(createInfo)

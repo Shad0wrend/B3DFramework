@@ -13,7 +13,7 @@
 #include "Renderer/BsSkybox.h"
 #include "Utility/BsRendererTextures.h"
 
-namespace b3d { namespace ct {
+namespace b3d { namespace render {
 
 TetrahedraRenderParamDef gTetrahedraRenderParamDef;
 

@@ -41,7 +41,7 @@ void SpriteMaterial::Initialize()
 
 	auto fnPrepareTechnique = [this](const u32 techniqueIndex)
 	{
-		const SPtr<ct::Technique> technique = mMaterial->GetTechnique(techniqueIndex);
+		const SPtr<render::Technique> technique = mMaterial->GetTechnique(techniqueIndex);
 		B3D_ASSERT(technique != nullptr);
 
 		if(!technique->IsCompiled())
@@ -53,14 +53,14 @@ void SpriteMaterial::Initialize()
 
 	fnPrepareTechnique(mTechnique);
 
-	const SPtr<ct::Pass>& pass = mMaterial->GetPass(0, mTechnique);
+	const SPtr<render::Pass>& pass = mMaterial->GetPass(0, mTechnique);
 
 	if(pass)
 		pass->Compile();
 
 	mParams = mMaterial->CreateParamsSet(mTechnique);
 
-	SPtr<ct::Shader> shader = mMaterial->GetShader();
+	SPtr<render::Shader> shader = mMaterial->GetShader();
 	if(shader->HasTextureParam("gMainTexture"))
 	{
 		mTextureParam = mMaterial->GetParamTexture("gMainTexture");
@@ -73,7 +73,7 @@ void SpriteMaterial::Initialize()
 		B3D_LOG(Error, GUI, "Sprite material shader missing \"GUIParams\" block.");
 }
 
-void SpriteMaterial::Destroy(const SPtr<ct::Material>& material, const SPtr<ct::GpuParamsSet>& params)
+void SpriteMaterial::Destroy(const SPtr<render::Material>& material, const SPtr<render::GpuParamsSet>& params)
 {
 	// Do nothing, we just need to make sure the material pointer's last reference is lost while on the render thread
 }
@@ -93,13 +93,13 @@ u64 SpriteMaterial::GetMergeHash(const SpriteMaterialInfo& info) const
 	return (u64)hash;
 }
 
-void SpriteMaterial::Render(ct::GpuCommandBuffer& commandBuffer, const SPtr<ct::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<ct::Texture>& texture, const SPtr<SamplerState>& sampler, const SPtr<ct::GpuBuffer>& paramBuffer, const SPtr<SpriteMaterialExtraInfo>& additionalData) const
+void SpriteMaterial::Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::Texture>& texture, const SPtr<SamplerState>& sampler, const SPtr<render::GpuBuffer>& paramBuffer, const SPtr<SpriteMaterialExtraInfo>& additionalData) const
 {
-	SPtr<ct::Texture> spriteTexture;
+	SPtr<render::Texture> spriteTexture;
 	if(texture != nullptr)
 		spriteTexture = texture;
 	else
-		spriteTexture = ct::Texture::kWhite;
+		spriteTexture = render::Texture::kWhite;
 
 	mTextureParam.Set(spriteTexture);
 	mSamplerParam.Set(sampler);
@@ -108,15 +108,15 @@ void SpriteMaterial::Render(ct::GpuCommandBuffer& commandBuffer, const SPtr<ct::
 		mParams->SetParamBlockBuffer(mParamBufferIdx, paramBuffer, true);
 
 	mMaterial->UpdateParamsSet(mParams);
-	ct::GetRendererUtility().SetPass(commandBuffer, mMaterial, 0, mTechnique);
-	ct::GetRendererUtility().SetPassParams(commandBuffer, mParams);
+	render::GetRendererUtility().SetPass(commandBuffer, mMaterial, 0, mTechnique);
+	render::GetRendererUtility().SetPassParams(commandBuffer, mParams);
 
-	ct::GetRendererUtility().Draw(commandBuffer, mesh, subMesh);
+	render::GetRendererUtility().Draw(commandBuffer, mesh, subMesh);
 }
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		SpriteMaterialInfo::SpriteMaterialInfo(const TSpriteMaterialInfo<false>& other)
 		{
@@ -127,7 +127,7 @@ namespace b3d
 			AnimationStartTime = other.AnimationStartTime;
 			AdditionalData = other.AdditionalData;
 		}
-	} // namespace ct
+	} // namespace render
 }
 
 

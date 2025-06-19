@@ -26,17 +26,17 @@ namespace b3d
 		Vector2I WindowToScreenPos(const Vector2I& windowPos) const override;
 
 		/** @copydoc RenderWindow::GetCore */
-		SPtr<ct::D3D11RenderWindow> GetCore() const;
+		SPtr<render::D3D11RenderWindow> GetCore() const;
 
 	protected:
 		friend class D3D11RenderWindowManager;
-		friend class ct::D3D11RenderWindow;
+		friend class render::D3D11RenderWindow;
 
 		D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
 
 		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 		void SyncProperties() override;
-		SPtr<ct::CoreObject> CreateCore() const override;
+		SPtr<render::CoreObject> CreateCore() const override;
 
 		/**	Retrieves internal window handle. */
 		HWND GetHWnd() const;
@@ -45,7 +45,7 @@ namespace b3d
 		RenderWindowProperties mProperties;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**
 		 * Render window implementation for Windows and DirectX 11.
@@ -136,5 +136,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

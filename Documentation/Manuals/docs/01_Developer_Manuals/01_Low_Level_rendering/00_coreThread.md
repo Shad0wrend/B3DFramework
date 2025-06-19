@@ -107,16 +107,16 @@ For example, a @b3d::Mesh is a core object because we want to allow the user to 
 
 Every core object is split into two interfaces:
  - @b3d::CoreObject - Implementations of this interface represents the simulation thread counterpart of the object.
- - @b3d::ct::CoreObject - Implementations of this interface represents the core thread counterpart of the object.
+ - @b3d::render::CoreObject - Implementations of this interface represents the core thread counterpart of the object.
   
-When a **CoreObject** is created it internally queues the creation of its **ct::CoreObject** counterpart on the command queue. Similar thing happens when it is destroyed, a destroy operation is queued and sent to the core thread. 
+When a **CoreObject** is created it internally queues the creation of its **render::CoreObject** counterpart on the command queue. Similar thing happens when it is destroyed, a destroy operation is queued and sent to the core thread. 
 
-Aside from initialization/destruction, core objects also support synchronization of data between the two threads (e.g. a @b3d::Light is a core object, and when the user changes light radius, it is automatically synchronized to its core thread counterpart @b3d::ct::Light). We talk more about this later.
+Aside from initialization/destruction, core objects also support synchronization of data between the two threads (e.g. a @b3d::Light is a core object, and when the user changes light radius, it is automatically synchronized to its core thread counterpart @b3d::render::Light). We talk more about this later.
 
-Both core thread counterpart class objects have the same name (e.g. **Mesh** or **Light**), but the core-thread counterpart is in the *ct* namespace. In fact, most classes meant to be used on the core thread (core objects or not), will be in the *ct* namespace.
+Both core thread counterpart class objects have the same name (e.g. **Mesh** or **Light**), but the core-thread counterpart is in the *render* namespace. In fact, most classes meant to be used on the core thread (core objects or not), will be in the *ct* namespace.
 
 ## Creating your own core objects
-To create a custom core object, you need to implement the **CoreObject** class, and its core thread counterpart **ct::CoreObject**.
+To create a custom core object, you need to implement the **CoreObject** class, and its core thread counterpart **render::CoreObject**.
 
 ~~~~~~~~~~~~~{.cpp}
 class MyCoreObject : public CoreObject
@@ -124,7 +124,7 @@ class MyCoreObject : public CoreObject
 	// ...
 };
 
-namespace ct
+namespace render
 {
 	class MyCoreObject : public CoreObject
 	{
@@ -140,9 +140,9 @@ At minimum the **CoreThread** implementation requires an implementation of the @
 ~~~~~~~~~~~~~{.cpp}
 class MyCoreObject : public CoreObject
 {
-	SPtr<ct::CoreObject> createCore() override const 
+	SPtr<render::CoreObject> createCore() override const 
 	{ 
-		SPtr<ct::MyCoreObject> ptr = B3DMakeShared<ct::MyCoreObject>();
+		SPtr<render::MyCoreObject> ptr = B3DMakeShared<render::MyCoreObject>();
 		ptr->_setThisPtr(ptr);
 		
 		return ptr; 
@@ -150,7 +150,7 @@ class MyCoreObject : public CoreObject
 };
 ~~~~~~~~~~~~~
 
-When creating your core object it's important to note they require specific initialization steps. As seen in the example, **ct::CoreObject** implementation needs to be created as a normal shared pointer, and the pointer instance must be assigned after creation by calling @b3d::ct::CoreObject::_setThisPtr.
+When creating your core object it's important to note they require specific initialization steps. As seen in the example, **render::CoreObject** implementation needs to be created as a normal shared pointer, and the pointer instance must be assigned after creation by calling @b3d::render::CoreObject::_setThisPtr.
 
 For **CoreObject** implementation additional rules apply. Its shared pointer must be created using @b3d::B3DMakeCoreFromExisting<T> method, followed by a call to @b3d::CoreObject::_setThisPtr and finally a call to @b3d::CoreObject::initialize. Due to the complex initialization procedure it is always suggested that you create a static `create` method that does these steps automatically. In fact **CoreObject** constructor is by default protected so you cannot accidently create it incorrectly.
 
@@ -170,15 +170,15 @@ SPtr<MyCoreObject> MyCoreObject::create()
 
 Once a core object is created you can use it as a normal object, while you can retrieve its core thread counterpart by calling @b3d::CoreObject::getCore, which you can use on the core thread (e.g. when calling **CoreThread::queueCommand()**). Object creation/destruction will happen automatically on the valid thread, and you also get the ability to synchronize information between the two (see below).
 
-### ct::CoreObject initialization
-When creating the core thread counterpart object **ct::CoreObject** it is important to perform any initialization in the @b3d::CoreObject::initialize method instead of the constructor. This is because the constructor will be executed on the simulation thread, but **CoreObject::initialize()** will be executed on the core thread.
+### render::CoreObject initialization
+When creating the core thread counterpart object **render::CoreObject** it is important to perform any initialization in the @b3d::CoreObject::initialize method instead of the constructor. This is because the constructor will be executed on the simulation thread, but **CoreObject::initialize()** will be executed on the core thread.
 
-The destructor is always assumed to be executed on the core thread. For this reason you must ensure never to store references to **ct::CoreObject** on the simulation thread, because if they go out of scope there it will trigger an error. Similar rule applies to **CoreObject** as it shouldn't be stored on the core thread.
+The destructor is always assumed to be executed on the core thread. For this reason you must ensure never to store references to **render::CoreObject** on the simulation thread, because if they go out of scope there it will trigger an error. Similar rule applies to **CoreObject** as it shouldn't be stored on the core thread.
 
 ### Synchronization
-Earlier we mentioned that aside from handling construction/destruction the core objects also provide a way to synchronize between the two threads. The synchronization is always one way, from **CoreObject** to **ct::CoreObject**. 
+Earlier we mentioned that aside from handling construction/destruction the core objects also provide a way to synchronize between the two threads. The synchronization is always one way, from **CoreObject** to **render::CoreObject**. 
 
-Synchronization should happen whenever some property on the **CoreObject** changes, that you would wish to make available on the core thread (e.g. a radius of a light source). To synchronize implement the @b3d::CoreObject::syncToCore(FrameAlloc*) method, which generates the data for synchronization, and @b3d::ct::CoreObject::syncToCore which accepts it.
+Synchronization should happen whenever some property on the **CoreObject** changes, that you would wish to make available on the core thread (e.g. a radius of a light source). To synchronize implement the @b3d::CoreObject::syncToCore(FrameAlloc*) method, which generates the data for synchronization, and @b3d::render::CoreObject::syncToCore which accepts it.
 
 The synchronized data is transfered between the objects in the form of raw bytes, within the @b3d::CoreSyncData structure. For convenience you can use @b3d::B3DRTTISize and @b3d::B3DRTTIWrite to encode fields into raw memory, and @b3d::B3DRTTIRead to decode them. These are explained in more detail in the [advanced RTTI manual](../../User_Manuals/advancedRtti).
 
@@ -200,7 +200,7 @@ CoreSyncData MyCoreObject::syncToCore(FrameAlloc* allocator)
 	return CoreSyncData(buffer, size);
 }
 
-// ct::CoreObject (receives the synchronization data)
+// render::CoreObject (receives the synchronization data)
 void MyCoreObject::syncToCore(const CoreSyncData& data) 
 {
 	Bitstream stream(data.getBuffer(), data.getBufferSize());

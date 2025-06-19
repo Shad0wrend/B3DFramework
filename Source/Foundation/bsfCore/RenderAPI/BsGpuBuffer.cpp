@@ -104,7 +104,7 @@ void GpuBuffer::ReadCached(u32 offset, u32 length, void* destination)
 	memcpy(destination, mCache + offset, length);
 }
 
-SPtr<ct::RenderProxy> GpuBuffer::CreateRenderProxy() const
+SPtr<render::RenderProxy> GpuBuffer::CreateRenderProxy() const
 {
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	if(!gpuDevice)
@@ -238,7 +238,7 @@ u32 GpuBuffer::CalculateTotalBufferSize(const GpuBufferInformation& information,
 	return stride * Math::Max(1u, information.SuballocationCount);
 }
 
-namespace b3d::ct
+namespace b3d::render
 {
 	GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& createInformation, u32 suballocationSize)
 		: mInformation(createInformation), mSuballocationSize(suballocationSize), mTotalSize(createInformation.SuballocationCount * mSuballocationSize)

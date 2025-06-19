@@ -8,7 +8,7 @@
 #include "Error/BsException.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 D3D11EventQuery::D3D11EventQuery(u32 deviceIdx)
 {

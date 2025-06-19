@@ -21,7 +21,7 @@ namespace b3d
 		SPtr<RenderTexture> CreateRenderTextureImpl(const RenderTextureCreateInformation& desc) override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**	Handles creation of Vulkan textures. */
 		class VulkanTextureManager : public TextureManager
@@ -48,7 +48,7 @@ namespace b3d
 			SPtr<VulkanTexture> mDummyReadTextures[7];
 			SPtr<VulkanTexture> mDummyStorageTextures[7];
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

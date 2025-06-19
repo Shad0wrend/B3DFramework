@@ -6,7 +6,7 @@
 #include "BsVulkanGpuDevice.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanRenderPass::VariantKey::VariantKey(RenderSurfaceMask loadMask, RenderSurfaceMask readMask, RenderSurfaceMask clearMask)
 	: LoadMask(loadMask), ReadMask(readMask), ClearMask(clearMask)

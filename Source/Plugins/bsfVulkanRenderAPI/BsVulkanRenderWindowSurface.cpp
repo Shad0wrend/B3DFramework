@@ -6,7 +6,7 @@
 #include "BsVulkanSubmitThread.h"
 #include "BsVulkanSwapChain.h"
 
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanRenderWindowSurface::VulkanRenderWindowSurface(const RenderWindowSurfaceCreateInformation& createInformation)
 	:mPlatformWindowHandle(createInformation.PlatformWindowHandle)

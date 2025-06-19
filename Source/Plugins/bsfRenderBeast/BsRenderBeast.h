@@ -12,7 +12,7 @@ namespace b3d
 {
 	struct EvaluatedAnimationData;
 
-	namespace ct
+	namespace render
 	{
 		class LightGrid;
 		struct LoadedRendererTextures;
@@ -158,5 +158,5 @@ namespace b3d
 		SPtr<RenderBeast> GetRenderBeast();
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

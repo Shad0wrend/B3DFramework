@@ -296,7 +296,7 @@ namespace b3d
 		static const String kShaderSpriteLineFile;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**	Built-in engine resources available to the render thread. */
 		class B3D_EXPORT BuiltinResources : public Module<BuiltinResources>
@@ -311,7 +311,7 @@ namespace b3d
 		private:
 			friend class b3d::BuiltinResources;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/**	Provides easy access to BuiltinResources. */
 	B3D_EXPORT BuiltinResources& GetBuiltinResources();

@@ -2,10 +2,10 @@
 title: GPU Buffers
 ---
 
-GPU buffers (also known as generic buffers) allow you to provide data to a **GpuProgram** similar as a texture. In particular they are very similar to a one-dimensional texture. They aren't constrained by size limitations like a texture, and allow each entry in the buffer to be more complex than just a primitive data type. This allows you to provide your GPU programs with complex data easily. In b3d::f they are represented using the @b3d::ct::GpuBuffer type. 
+GPU buffers (also known as generic buffers) allow you to provide data to a **GpuProgram** similar as a texture. In particular they are very similar to a one-dimensional texture. They aren't constrained by size limitations like a texture, and allow each entry in the buffer to be more complex than just a primitive data type. This allows you to provide your GPU programs with complex data easily. In b3d::f they are represented using the @b3d::render::GpuBuffer type. 
 
 # Creation
-To create a **ct::GpuBuffer** you must fill out a @b3d::GPU_BUFFER_DESC structure and call the @b3d::ct::GpuBuffer::create method. At minimum you need to provide:
+To create a **render::GpuBuffer** you must fill out a @b3d::GPU_BUFFER_DESC structure and call the @b3d::render::GpuBuffer::create method. At minimum you need to provide:
  - @b3d::GPU_BUFFER_DESC::type - This can be @b3d::GBT_STANDARD or @b3d::GBT_STRUCTURED. See below for explanation of each.
  - @b3d::GPU_BUFFER_DESC::elementCount - Number of elements in the buffer.
  - @b3d::GPU_BUFFER_DESC::format - Format of each individual element in the buffer as @b3d::GpuBufferFormat. Only relevant for buffers with type **GBT_STANDARD**.
@@ -45,7 +45,7 @@ SPtr<GpuBuffer> buffer = GpuBuffer::create(desc);
 Reading or writing to a GPU buffer uses the same approach as other types of buffers, like index or vertex buffers. Refer back to the [geometry](geometry) manual to see how.
 
 # Binding
-Once created buffer can be bound to a GPU program through **GpuParams** by calling @b3d::ct::GpuParams::setBuffer(GpuProgramType, const String&, const BufferType&).
+Once created buffer can be bound to a GPU program through **GpuParams** by calling @b3d::render::GpuParams::setBuffer(GpuProgramType, const String&, const BufferType&).
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<GpuParams> params = ...;

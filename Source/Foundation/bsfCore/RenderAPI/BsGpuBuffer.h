@@ -297,13 +297,13 @@ namespace b3d
 
 	protected:
 		struct SyncPacket;
-		friend class ct::GpuBuffer;
+		friend class render::GpuBuffer;
 
 		GpuBuffer(const GpuBufferCreateInformation& createInformation);
 
 		void Initialize() override;
 		void Destroy() override;
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		GpuBufferInformation mInformation;
@@ -313,7 +313,7 @@ namespace b3d
 	};
 }
 
-namespace b3d::ct
+namespace b3d::render
 {
 	/** Defines a buffer that can be used for operations on the GPU. */
 	class B3D_CORE_EXPORT GpuBuffer : public RenderProxy
@@ -411,7 +411,7 @@ namespace b3d::ct
 		 * @param[in]	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is
 		 *									used.
 		 */
-		virtual void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<ct::GpuCommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<render::GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Copy data from the provided buffer into this buffer. If buffers are not the same size, smaller size will be used.
@@ -419,7 +419,7 @@ namespace b3d::ct
 		 * @param	source			Hardware buffer to copy from.
 		 * @param	commandBuffer	Command buffer to queue the copy operation on. If null, main command buffer is used.
 		 */
-		virtual void CopyData(GpuBuffer& source, const SPtr<ct::GpuCommandBuffer>& commandBuffer = nullptr)
+		virtual void CopyData(GpuBuffer& source, const SPtr<render::GpuCommandBuffer>& commandBuffer = nullptr)
 		{
 			const u32 sizeToCopy = std::min(GetTotalSize(), source.GetTotalSize());
 			CopyData(source, 0, 0, sizeToCopy, true, commandBuffer);
@@ -492,6 +492,6 @@ namespace b3d::ct
 
 		bool mIsLocked = false;
 	};
-} // namespace b3d::ct
+} // namespace b3d::render
 
 /** @} */

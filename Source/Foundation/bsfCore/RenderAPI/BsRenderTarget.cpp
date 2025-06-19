@@ -16,8 +16,8 @@ RenderTarget::RenderTarget()
 
 void RenderTarget::SetPriority(i32 priority)
 {
-	std::function<void(SPtr<ct::RenderTarget>, i32)> windowedFunc =
-		[](SPtr<ct::RenderTarget> renderTarget, i32 priority)
+	std::function<void(SPtr<render::RenderTarget>, i32)> windowedFunc =
+		[](SPtr<render::RenderTarget> renderTarget, i32 priority)
 	{
 		renderTarget->SetPriority(priority);
 	};
@@ -39,7 +39,7 @@ RTTIType* RenderTarget::GetRtti() const
 	return RenderTarget::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 RenderTarget::RenderTarget()
 {

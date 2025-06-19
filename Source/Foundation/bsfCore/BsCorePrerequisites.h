@@ -243,26 +243,26 @@ namespace b3d
 
 #define B3D_CORE_OBJECT_FORWARD_DECLARE(TYPE) \
 	class TYPE;                           \
-	namespace ct                          \
+	namespace render                          \
 	{                                     \
 		class TYPE;                       \
 	}                                     \
 	template <>                           \
 	struct RenderThreadType<TYPE>           \
 	{                                     \
-		typedef ct::TYPE Type;            \
+		typedef render::TYPE Type;            \
 	};
 
 #define B3D_CORE_OBJECT_FORWARD_DECLARE_STRUCT(TYPE) \
 	struct TYPE;                                 \
-	namespace ct                                 \
+	namespace render                                 \
 	{                                            \
 		struct TYPE;                             \
 	}                                            \
 	template <>                                  \
 	struct RenderThreadType<TYPE>                  \
 	{                                            \
-		typedef ct::TYPE Type;                   \
+		typedef render::TYPE Type;                   \
 	};
 
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Pass)
@@ -488,7 +488,7 @@ namespace b3d
 	struct D6JointCreateInformation;
 	struct AUDIO_CLIP_DESC;
 
-	namespace ct
+	namespace render
 	{
 		class Renderer;
 		class VertexData;
@@ -501,7 +501,7 @@ namespace b3d
 		class RenderElement;
 		class RenderWindowManager;
 		class GpuBuffer;
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 /************************************************************************/

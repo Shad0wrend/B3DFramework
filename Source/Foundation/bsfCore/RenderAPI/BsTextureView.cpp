@@ -5,7 +5,7 @@
 
 using namespace b3d;
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 size_t TextureView::HashFunction::operator()(const TextureViewInformation &key) const
 {

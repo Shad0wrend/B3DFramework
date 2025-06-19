@@ -6,7 +6,7 @@
 #include "Debug/BsDebug.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 PixelFormat GLPixelUtil::GetClosestSupportedPf(PixelFormat format, TextureType texType, int usage)
 {

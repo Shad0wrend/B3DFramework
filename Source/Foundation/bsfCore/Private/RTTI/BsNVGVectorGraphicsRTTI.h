@@ -53,10 +53,10 @@ namespace b3d
 	};
 
 	template<>
-	struct RTTIPlainType<ct::NVGPathRenderData> : RTTIPlainTypeHelper<ct::NVGPathRenderData, TID_NVGPathRenderData, 0>
+	struct RTTIPlainType<render::NVGPathRenderData> : RTTIPlainTypeHelper<render::NVGPathRenderData, TID_NVGPathRenderData, 0>
 	{
 		template <class Processor>
-		static void RTTIEnumerateFields(ct::NVGPathRenderData& object, Processor& processor, u8 version)
+		static void RTTIEnumerateFields(render::NVGPathRenderData& object, Processor& processor, u8 version)
 		{
 			processor(object.Vertices);
 			processor(object.Indices);
@@ -65,7 +65,7 @@ namespace b3d
 		}
 	};
 
-	class B3D_CORE_EXPORT NVGVectorPathRenderableRTTI : public TRTTIType<ct::NVGVectorPathRenderable, ct::VectorPathRenderable, NVGVectorPathRenderableRTTI>
+	class B3D_CORE_EXPORT NVGVectorPathRenderableRTTI : public TRTTIType<render::NVGVectorPathRenderable, render::VectorPathRenderable, NVGVectorPathRenderableRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -86,7 +86,7 @@ namespace b3d
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return B3DMakeShared<ct::NVGVectorPathRenderable>();
+			return B3DMakeShared<render::NVGVectorPathRenderable>();
 		}
 	};
 

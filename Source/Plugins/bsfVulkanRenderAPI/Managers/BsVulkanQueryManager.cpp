@@ -8,7 +8,7 @@
 #include "BsVulkanGpuCommandBuffer.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanQueryPool::VulkanQueryPool(VulkanGpuDevice& device)
 	: mDevice(device)

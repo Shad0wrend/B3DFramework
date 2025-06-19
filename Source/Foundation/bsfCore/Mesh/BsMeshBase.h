@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		class MeshBase;
 	}
@@ -99,7 +99,7 @@ namespace b3d
 		const MeshProperties& GetProperties() const { return mProperties; }
 
 	protected:
-		friend class ct::MeshBase;
+		friend class render::MeshBase;
 		struct SyncPacket;
 
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
@@ -118,7 +118,7 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/**
 		 * Render proxy  used as a basis for all implemenations of meshes.
@@ -176,7 +176,7 @@ namespace b3d
 
 			MeshProperties mProperties;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

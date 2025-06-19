@@ -117,11 +117,11 @@ namespace b3d
 	 *  @{
 	 */
 
-	namespace ct
+	namespace render
 	{
 		class RendererTask;
 		class ReflectionProbe;
-	} // namespace ct
+	} // namespace render
 
 	/**
 	 * Specifies a location at which a pre-computed texture containing scene radiance will be generated. This texture will
@@ -174,12 +174,12 @@ namespace b3d
 		static SPtr<ReflectionProbe> CreateBox(const Vector3& extents);
 
 	protected:
-		friend class ct::ReflectionProbe;
+		friend class render::ReflectionProbe;
 		struct SyncPacket;
 
 		ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents);
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void MarkSceneActorRenderProxyDataDirty(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
@@ -193,7 +193,7 @@ namespace b3d
 		static SPtr<ReflectionProbe> CreateEmpty();
 
 		HTexture mCustomTexture;
-		SPtr<ct::RendererTask> mRendererTask;
+		SPtr<render::RendererTask> mRendererTask;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -207,7 +207,7 @@ namespace b3d
 		ReflectionProbe() = default; // Serialization only
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread counterpart of a b3d::ReflectionProbe */
 		class B3D_CORE_EXPORT ReflectionProbe : public RenderProxy, public TReflectionProbe<true>
@@ -231,7 +231,7 @@ namespace b3d
 
 			u32 mRendererId;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

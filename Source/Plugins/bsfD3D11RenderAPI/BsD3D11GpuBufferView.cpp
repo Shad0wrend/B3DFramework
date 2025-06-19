@@ -9,7 +9,7 @@
 #include "BsD3D11Mappings.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 size_t GpuBufferView::HashFunction::operator()(const GPU_BUFFER_VIEW_DESC& key) const
 {

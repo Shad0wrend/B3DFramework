@@ -4,7 +4,7 @@
 
 using namespace b3d;
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 u32 CommandSyncMask::GetGlobalQueueMask(GpuQueueUsage type, u32 queueIdx)
 {

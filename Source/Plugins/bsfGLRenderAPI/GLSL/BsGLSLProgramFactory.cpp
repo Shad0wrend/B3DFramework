@@ -4,9 +4,9 @@
 #include "GLSL/BsGLSLGpuProgram.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
-SPtr<ct::GpuProgram> GLSLProgramFactory::Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
+SPtr<render::GpuProgram> GLSLProgramFactory::Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	GLSLGpuProgram* prog = new(B3DAllocate<GLSLGpuProgram>()) GLSLGpuProgram(desc, deviceMask);
 
@@ -16,7 +16,7 @@ SPtr<ct::GpuProgram> GLSLProgramFactory::Create(const GpuProgramCreateInformatio
 	return gpuProg;
 }
 
-SPtr<ct::GpuProgram> GLSLProgramFactory::Create(GpuProgramType type, GpuDeviceFlags deviceMask)
+SPtr<render::GpuProgram> GLSLProgramFactory::Create(GpuProgramType type, GpuDeviceFlags deviceMask)
 {
 	GpuProgramCreateInformation desc;
 	desc.Type = type;

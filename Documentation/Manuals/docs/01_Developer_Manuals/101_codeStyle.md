@@ -27,7 +27,7 @@ When making changes or additions that you plan on contributing to `bsf`, you mus
  - Static non-constant variables should be prefixed with an `s`, followed by a capital first letter (e.g. `bool sIsInitialized;`).
  - Static constant variables should be written in all caps with underscores separating the words (e.g. `int NUM_ELEMENTS = 5;`).
  - Everything needs to be part of the `b3d` namespace
-   - Types used primarily on the core thread should be part of the `b3d::ct` namespace
+   - Types used primarily on the core thread should be part of the `b3d::render` namespace
  - Use `Base` suffix to mark base classes unless a more generalized name is more appropriate (e.g. `MeshBase`)
  - Prefix templated base classes/structs with a `T` unless a more generalized name is more appropriate (e.g. `TAsyncOp<...>`)
  - Use `C` prefix for component implementations (e.g. `CMyComponent`)

@@ -7,7 +7,7 @@
 
 using namespace b3d;
 
-D3D11RenderWindowManager::D3D11RenderWindowManager(ct::D3D11RenderAPI* renderSystem)
+D3D11RenderWindowManager::D3D11RenderWindowManager(render::D3D11RenderAPI* renderSystem)
 	: mRenderSystem(renderSystem)
 {
 	B3D_ASSERT(mRenderSystem != nullptr);
@@ -15,8 +15,8 @@ D3D11RenderWindowManager::D3D11RenderWindowManager(ct::D3D11RenderAPI* renderSys
 
 SPtr<RenderWindow> D3D11RenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId, const SPtr<RenderWindow>& parentWindow)
 {
-	ct::RenderAPI* rs = ct::RenderAPI::InstancePtr();
-	ct::D3D11RenderAPI* d3d11rs = static_cast<ct::D3D11RenderAPI*>(rs);
+	render::RenderAPI* rs = render::RenderAPI::InstancePtr();
+	render::D3D11RenderAPI* d3d11rs = static_cast<render::D3D11RenderAPI*>(rs);
 
 	if(parentWindow != nullptr)
 	{

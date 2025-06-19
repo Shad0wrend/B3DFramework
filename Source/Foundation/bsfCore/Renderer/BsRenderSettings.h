@@ -478,14 +478,14 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread variant of DepthOfFieldSettings. */
 		struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() DepthOfFieldSettings : TDepthOfFieldSettings<true>
 		{
 			DepthOfFieldSettings() = default;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** Determines which parts of the scene will trigger motion blur. */
 	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MotionBlurDomain
@@ -898,14 +898,14 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread variant of ChromaticAberrationSettings. */
 		struct B3D_CORE_EXPORT ChromaticAberrationSettings : TChromaticAberrationSettings<true>
 		{
 			ChromaticAberrationSettings() = default;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** Settings that control the film grain effect. Film grains adds a time-varying noise effect over the entire image. */
 	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) FilmGrainSettings : IReflectable, IScriptExportable
@@ -1186,7 +1186,7 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** Render thread variant of RenderSettings. */
 		struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderSettings : TRenderSettings<true>
@@ -1194,7 +1194,7 @@ namespace b3d
 			RenderSettings() = default;
 			virtual ~RenderSettings() = default;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

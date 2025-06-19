@@ -244,9 +244,9 @@ namespace b3d
 		return *this;
 	}
 
-	SPtr<ct::VectorPathRenderable> VectorPath::CreateRenderable(const VectorGraphicsSettings& settings) const
+	SPtr<render::VectorPathRenderable> VectorPath::CreateRenderable(const VectorGraphicsSettings& settings) const
 	{
-		return B3DMakeShared<ct::NVGVectorPathRenderable>(*this, settings);
+		return B3DMakeShared<render::NVGVectorPathRenderable>(*this, settings);
 	}
 
 	SPtr<VectorPath> VectorPath::CreateShared(const Size2& canvasSize)
@@ -275,7 +275,7 @@ namespace b3d
 		return GetRttiStatic();
 	}
 
-	namespace ct
+	namespace render
 	{
 		RTTIType* VectorPathRenderable::GetRttiStatic()
 		{
@@ -286,6 +286,6 @@ namespace b3d
 		{
 			return GetRttiStatic();
 		}
-	} // namespace ct
+	} // namespace render
 
 } // namespace b3d

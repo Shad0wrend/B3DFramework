@@ -55,17 +55,17 @@ namespace b3d
 		static SPtr<SpriteGlyphAllocation> Create(const WeakSPtr<SpriteImageType>& owner, const TextureType& texture, const Area2& uvRange, float sizeInPoints);
 
 	protected:
-		friend class ct::SpriteGlyphAllocation;
+		friend class render::SpriteGlyphAllocation;
 
 		using TSpriteGlyphAllocation::TSpriteGlyphAllocation;
 
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 	};
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderThread
 		 *  @{
@@ -85,7 +85,7 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 
 	/** @addtogroup Image
 	 *  @{
@@ -114,7 +114,7 @@ namespace b3d
 
 	private:
 		friend class SpriteGlyphRTTI;
-		friend class ct::SpriteGlyph;
+		friend class render::SpriteGlyph;
 		struct SyncPacket;
 
 		SpriteGlyph(const SpriteGlyphCreateInformation& createInformation);
@@ -123,7 +123,7 @@ namespace b3d
 		SPtr<SpriteGlyphAllocation> AllocateImage(float sizeInPoints);
 
 		void Initialize() override;
-		SPtr<ct::RenderProxy> CreateRenderProxy() const override;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		HFont mFont;
@@ -145,7 +145,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderThread
 		 *  @{
@@ -178,5 +178,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

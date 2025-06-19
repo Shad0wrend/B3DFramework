@@ -16,11 +16,11 @@ namespace b3d
 	public:
 		static constexpr const char* SystemName = "bsfNullRenderer";
 
-		SPtr<ct::Renderer> Create() override;
+		SPtr<render::Renderer> Create() override;
 		const String& Name() const override;
 	};
 
-	namespace ct
+	namespace render
 	{
 
 		/** @addtogroup NullRenderer
@@ -52,5 +52,5 @@ namespace b3d
 		SPtr<NullRenderer> GetNullRenderer();
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

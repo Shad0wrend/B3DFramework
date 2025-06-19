@@ -5,7 +5,7 @@
 
 using namespace b3d;
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 void VertexData::SetBuffer(u32 index, SPtr<GpuBuffer> buffer)
 {

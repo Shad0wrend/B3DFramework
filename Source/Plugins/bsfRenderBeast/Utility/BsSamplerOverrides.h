@@ -6,7 +6,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderBeast
 		 *  @{
@@ -88,7 +88,7 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 /** @cond STDLIB */
@@ -97,9 +97,9 @@ namespace std
 {
 	/** Hash value generator for SamplerOverrideKey. */
 	template <>
-	struct hash<b3d::ct::SamplerOverrideKey>
+	struct hash<b3d::render::SamplerOverrideKey>
 	{
-		size_t operator()(const b3d::ct::SamplerOverrideKey& key) const
+		size_t operator()(const b3d::render::SamplerOverrideKey& key) const
 		{
 			size_t hash = 0;
 			b3d::B3DCombineHash(hash, key.Material);

@@ -41,7 +41,7 @@ PixelFormat VulkanTextureManager::GetNativeFormat(TextureType ttype, PixelFormat
 {
 	PixelUtility::CheckFormat(format, ttype, usage);
 
-	if(ct::VulkanUtility::GetPixelFormat(format, hwGamma) == VK_FORMAT_UNDEFINED)
+	if(render::VulkanUtility::GetPixelFormat(format, hwGamma) == VK_FORMAT_UNDEFINED)
 		return PF_RGBA8;
 
 	return format;
@@ -49,7 +49,7 @@ PixelFormat VulkanTextureManager::GetNativeFormat(TextureType ttype, PixelFormat
 
 
 namespace b3d {
-namespace ct {
+namespace render {
 void VulkanTextureManager::OnStartUp()
 {
 	TextureManager::OnStartUp();
@@ -180,4 +180,4 @@ SPtr<RenderTexture> VulkanTextureManager::CreateRenderTextureInternal(const Rend
 
 	return texPtr;
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

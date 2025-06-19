@@ -53,7 +53,7 @@ All color surfaces and the depth/stencil surface (if present) must have the same
 Render textures can be created with support for multiple samples per pixel. This allows affects such as multi-sampled antialiasing and similar. To create a multi-sampled render texture simply create a **Texture** with its `multisampleCount` parameter larger than one, which you then use to initialize a render texture. Make sure that all surfaces (including depth-stencil) in a render texture have the same number of samples.
 
 Multisampled textures cannot be used directly by materials or sampled in shaders. This means that before you can use such a texture for normal rendering you must first resolve its multi-sampled contents into a non-multisampled texture. You may do this in two ways:
- - Call @b3d::ct::Texture::copy with the source texture being your multisampled texture, and the destination being a texture of same dimensions and format, but with a single sample per pixel. Note this is a core-thread only method - we talk more about the core thread later.
+ - Call @b3d::render::Texture::copy with the source texture being your multisampled texture, and the destination being a texture of same dimensions and format, but with a single sample per pixel. Note this is a core-thread only method - we talk more about the core thread later.
  - Write a custom shader that manually reads samples from the texture and outputs pixels (out of the scope of this manual)
 
 # Rendering to textures

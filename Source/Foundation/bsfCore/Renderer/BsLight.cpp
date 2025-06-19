@@ -231,11 +231,11 @@ SPtr<Light> Light::CreateEmpty()
 	return lightShared;
 }
 
-SPtr<ct::RenderProxy> Light::CreateRenderProxy() const
+SPtr<render::RenderProxy> Light::CreateRenderProxy() const
 {
-	ct::Light* renderProxy = new(B3DAllocate<ct::Light>())
-		ct::Light(mType, mColor, mIntensity, mAttRadius, mSourceRadius, mCastsShadows, mSpotAngle, mSpotFalloffAngle);
-	SPtr<ct::Light> renderProxyShared = B3DMakeSharedFromExisting<ct::Light>(renderProxy);
+	render::Light* renderProxy = new(B3DAllocate<render::Light>())
+		render::Light(mType, mColor, mIntensity, mAttRadius, mSourceRadius, mCastsShadows, mSpotAngle, mSpotFalloffAngle);
+	SPtr<render::Light> renderProxyShared = B3DMakeSharedFromExisting<render::Light>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -265,7 +265,7 @@ RTTIType* Light::GetRtti() const
 	return Light::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 const u32 Light::kLightConeNumSides = 20;
 const u32 Light::kLightConeNumSlices = 10;

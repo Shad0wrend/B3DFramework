@@ -19,7 +19,7 @@
 
 using namespace b3d;
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 RendererUtility::RendererUtility()
 {

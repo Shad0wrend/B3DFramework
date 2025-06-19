@@ -306,7 +306,7 @@ namespace b3d
 	typedef TMaterialParameterColorGradient<false> MaterialParameterColorGradient;
 	typedef TMaterialParamSpriteImage<false> MaterialParameterSpriteTexture;
 
-	namespace ct
+	namespace render
 	{
 		typedef TMaterialParameterPrimitive<float, true> MaterialParameterFloat;
 		typedef TMaterialParameterPrimitive<double, true> MaterialParameterDouble;
@@ -334,7 +334,7 @@ namespace b3d
 		typedef TMaterialParameterCurve<float, true> MaterialParameterFloatCurve;
 		typedef TMaterialParameterColorGradient<true> MaterialParameterColorGradient;
 		typedef TMaterialParamSpriteImage<true> MaterialParameterSpriteTexture;
-	} // namespace ct
+	} // namespace render
 
 	/** @} */
 } // namespace b3d

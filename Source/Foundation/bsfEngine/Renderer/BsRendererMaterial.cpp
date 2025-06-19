@@ -5,7 +5,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 
 using namespace b3d;
-using namespace ct;
+using namespace render;
 
 B3D_LOG_CATEGORY(RendererMaterial)
 

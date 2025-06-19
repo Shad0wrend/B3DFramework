@@ -460,7 +460,7 @@ namespace b3d
 		}
 	};
 
-	class B3D_CORE_EXPORT ShaderInformationRenderProxyRTTI : public TRTTIType<ct::ShaderInformation, ShaderInformationBase, ShaderInformationRenderProxyRTTI>
+	class B3D_CORE_EXPORT ShaderInformationRenderProxyRTTI : public TRTTIType<render::ShaderInformation, ShaderInformationBase, ShaderInformationRenderProxyRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -481,7 +481,7 @@ namespace b3d
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return B3DMakeShared<ct::ShaderInformation>();
+			return B3DMakeShared<render::ShaderInformation>();
 		}
 	};
 
@@ -524,7 +524,7 @@ namespace b3d
 		}
 	};
 
-	class B3D_CORE_EXPORT ShaderRenderProxyRTTI : public TRTTIType<ct::Shader, IReflectable, ShaderRenderProxyRTTI>
+	class B3D_CORE_EXPORT ShaderRenderProxyRTTI : public TRTTIType<render::Shader, IReflectable, ShaderRenderProxyRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -533,12 +533,12 @@ namespace b3d
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnOperationEnded(ct::Shader& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		void OnOperationEnded(render::Shader& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
 			{
 				for(const auto& technique : object.mInformation.Techniques)
-					technique->SetOwner(std::static_pointer_cast<ct::Shader>(object.GetShared()));
+					technique->SetOwner(std::static_pointer_cast<render::Shader>(object.GetShared()));
 
 				object.Initialize();
 			}
@@ -557,7 +557,7 @@ namespace b3d
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return ct::Shader::CreateEmpty();
+			return render::Shader::CreateEmpty();
 		}
 	};
 

@@ -39,7 +39,7 @@ bool IsShaderValid(const HShader& shader)
 }
 
 template <>
-bool IsShaderValid(const SPtr<ct::Shader>& shader)
+bool IsShaderValid(const SPtr<render::Shader>& shader)
 {
 	return shader != nullptr;
 }
@@ -638,28 +638,28 @@ void Material::MarkResourcesDirtyInternal()
 	MarkListenerResourcesDirty();
 }
 
-SPtr<ct::RenderProxy> Material::CreateRenderProxy() const
+SPtr<render::RenderProxy> Material::CreateRenderProxy() const
 {
-	ct::Material* renderProxy = nullptr;
+	render::Material* renderProxy = nullptr;
 
-	SPtr<ct::Shader> shader;
+	SPtr<render::Shader> shader;
 	if(mShader.IsLoaded())
 	{
 		shader = B3DGetRenderProxy(mShader);
 
-		Vector<SPtr<ct::Technique>> variations(mTechniques.size());
+		Vector<SPtr<render::Technique>> variations(mTechniques.size());
 		for(u32 i = 0; i < (u32)mTechniques.size(); i++)
 			variations[i] = B3DGetRenderProxy(mTechniques[i]);
 
-		SPtr<ct::MaterialParams> materialParams = B3DMakeShared<ct::MaterialParams>(shader, mParams);
+		SPtr<render::MaterialParams> materialParams = B3DMakeShared<render::MaterialParams>(shader, mParams);
 
-		renderProxy = new(B3DAllocate<ct::Material>()) ct::Material(shader, variations, materialParams, mVariation);
+		renderProxy = new(B3DAllocate<render::Material>()) render::Material(shader, variations, materialParams, mVariation);
 	}
 
 	if(renderProxy == nullptr)
-		renderProxy = new(B3DAllocate<ct::Material>()) ct::Material(shader, mVariation);
+		renderProxy = new(B3DAllocate<render::Material>()) render::Material(shader, mVariation);
 
-	SPtr<ct::Material> renderProxyShared = B3DMakeSharedFromExisting<ct::Material>(renderProxy);
+	SPtr<render::Material> renderProxyShared = B3DMakeSharedFromExisting<render::Material>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -1004,7 +1004,7 @@ RTTIType* Material::GetRtti() const
 	return Material::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 Material::Material(const SPtr<Shader>& shader, const ShaderVariationParameters& variation)
 {

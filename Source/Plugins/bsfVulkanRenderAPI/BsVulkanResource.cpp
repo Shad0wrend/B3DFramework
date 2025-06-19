@@ -5,7 +5,7 @@
 #include "CoreObject/BsRenderThread.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanResource::VulkanResource(VulkanResourceManager* owner, bool concurrency, const StringView& name)
 #if B3D_BUILD_TYPE == B3D_BUILD_TYPE_DEVELOPMENT

@@ -16,7 +16,7 @@
 #endif
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 VulkanShaderModule::VulkanShaderModule(VulkanResourceManager* owner, VkShaderModule module, const StringView& name)
 	: VulkanResource(owner, true, name), mModule(module)

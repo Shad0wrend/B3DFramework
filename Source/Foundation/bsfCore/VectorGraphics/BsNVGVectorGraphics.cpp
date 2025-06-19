@@ -8,7 +8,7 @@
 
 using namespace b3d;
 
-namespace b3d::ct
+namespace b3d::render
 {
 	/** Converts a NanoVG composite operation into a B3D enum representing the operation. */
 	static VectorGraphicsBlendMode NVGCompositeOperationToBlendMode(const NVGcompositeOperationState& compositeOperationState)
@@ -361,10 +361,10 @@ namespace b3d::ct
 	}
 
 	/** Populates the per-view uniform buffer that is shared by all path elements of a single VectorPath object. */
-	static void PopulateNVGViewUniformBuffer(const SPtr<ct::GpuBuffer>& uniformBuffer, const Area2I& viewRegion)
+	static void PopulateNVGViewUniformBuffer(const SPtr<render::GpuBuffer>& uniformBuffer, const Area2I& viewRegion)
 	{
-		ct::gVectorGraphicsViewUniforms.gViewportOffset.Set(uniformBuffer, Vector2(-(float)viewRegion.X, -(float)viewRegion.Y));
-		ct::gVectorGraphicsViewUniforms.gInverseViewportHalfSize.Set(uniformBuffer, Vector2(1.0f / ((float)viewRegion.Width * 0.5f), 1.0f / ((float)viewRegion.Height * 0.5f)));
+		render::gVectorGraphicsViewUniforms.gViewportOffset.Set(uniformBuffer, Vector2(-(float)viewRegion.X, -(float)viewRegion.Y));
+		render::gVectorGraphicsViewUniforms.gInverseViewportHalfSize.Set(uniformBuffer, Vector2(1.0f / ((float)viewRegion.Width * 0.5f), 1.0f / ((float)viewRegion.Height * 0.5f)));
 
 		bool viewportYFlip = true;
 		const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
@@ -374,7 +374,7 @@ namespace b3d::ct
 			viewportYFlip = gpuBackendConventions.NdcYAxis == GpuBackendConventions::Axis::Down;
 		}
 
-		ct::gVectorGraphicsViewUniforms.gViewportYFlip.Set(uniformBuffer, viewportYFlip ? -1.0f : 1.0f);
+		render::gVectorGraphicsViewUniforms.gViewportYFlip.Set(uniformBuffer, viewportYFlip ? -1.0f : 1.0f);
 	}
 
 	VectorGraphicsRenderUniformDefinition gVectorGraphicsRenderUniforms;
@@ -743,7 +743,7 @@ namespace b3d::ct
 
 		// Create uniform buffers
 		renderBuffers.RenderUniformBuffer = gVectorGraphicsRenderUniforms.CreateBuffer(uniformBlockCount);
-		B3D_ASSERT(ct::gVectorGraphicsRenderUniforms.GetSize() == sizeof(NVGRenderUniforms)); // TODO - I need a way to assign parameter block entries into a particular uniform block, so I don't just do a memcpy (it might not work everywhere)
+		B3D_ASSERT(render::gVectorGraphicsRenderUniforms.GetSize() == sizeof(NVGRenderUniforms)); // TODO - I need a way to assign parameter block entries into a particular uniform block, so I don't just do a memcpy (it might not work everywhere)
 
 		NVGRenderUniforms simplePassUniforms;
 		B3DZeroOut(simplePassUniforms);
@@ -782,7 +782,7 @@ namespace b3d::ct
 
 		renderBuffers.RenderUniformBuffer->Unlock();
 
-		renderBuffers.ViewUniformBuffer = ct::gVectorGraphicsViewUniforms.CreateBuffer();
+		renderBuffers.ViewUniformBuffer = render::gVectorGraphicsViewUniforms.CreateBuffer();
 		PopulateNVGViewUniformBuffer(renderBuffers.ViewUniformBuffer, Area2I(0, 0, Math::RoundToU32(mSettings.Size.Width), Math::RoundToU32(mSettings.Size.Height)));
 
 		return renderBuffers;
@@ -805,7 +805,7 @@ namespace b3d::ct
 		commandBuffer.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 		// Note: The parameter layout for all variations must match
-		const SPtr<ct::GpuParameters> gpuParameters = ct::VectorGraphicsMaterial::Get()->GetParams();
+		const SPtr<render::GpuParameters> gpuParameters = render::VectorGraphicsMaterial::Get()->GetParams();
 		gpuParameters->SetUniformBuffer("RenderUniforms", mRenderBuffers.RenderUniformBuffer);
 		gpuParameters->SetUniformBuffer("ViewUniforms", mRenderBuffers.ViewUniformBuffer);
 
@@ -833,7 +833,7 @@ namespace b3d::ct
 					commandBuffer.SetDynamicBufferOffset(renderUniformBufferDynamicIndex, uniformBlockIndex * uniformBlockStride);
 					uniformBlockIndex++;
 
-					ct::VectorGraphicsMaterial* const fillShapeStencilMaterial = ct::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillShapeStencil, command.BlendMode, mSettings.UseAntialiasing);
+					render::VectorGraphicsMaterial* const fillShapeStencilMaterial = render::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillShapeStencil, command.BlendMode, mSettings.UseAntialiasing);
 					if(B3D_ENSURE(fillShapeStencilMaterial))
 					{
 						commandBuffer.SetGpuGraphicsPipelineState(fillShapeStencilMaterial->GetGraphicsPipeline());
@@ -846,7 +846,7 @@ namespace b3d::ct
 
 					if(mSettings.UseAntialiasing)
 					{
-						ct::VectorGraphicsMaterial* const fillAAMaterial = ct::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillAA, command.BlendMode, mSettings.UseAntialiasing);
+						render::VectorGraphicsMaterial* const fillAAMaterial = render::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillAA, command.BlendMode, mSettings.UseAntialiasing);
 						if(B3D_ENSURE(fillAAMaterial))
 						{
 							commandBuffer.SetGpuGraphicsPipelineState(fillAAMaterial->GetGraphicsPipeline());
@@ -855,7 +855,7 @@ namespace b3d::ct
 					}
 
 					const SubMesh& quadSubmesh = mRawRenderData.Submeshes[submeshIndex++];
-					ct::VectorGraphicsMaterial* const fillDrawMaterial = ct::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillDraw, command.BlendMode, mSettings.UseAntialiasing);
+					render::VectorGraphicsMaterial* const fillDrawMaterial = render::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillDraw, command.BlendMode, mSettings.UseAntialiasing);
 					if(B3D_ENSURE(fillDrawMaterial))
 					{
 						commandBuffer.SetGpuGraphicsPipelineState(fillDrawMaterial->GetGraphicsPipeline());
@@ -866,7 +866,7 @@ namespace b3d::ct
 			case NVGRenderCommandType::ConvexFill:
 			{
 				const SubMesh& fillAndStrokeSubmesh = mRawRenderData.Submeshes[submeshIndex++];
-				ct::VectorGraphicsMaterial* const simpleFillMaterial = ct::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillSimple, command.BlendMode, mSettings.UseAntialiasing);
+				render::VectorGraphicsMaterial* const simpleFillMaterial = render::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillSimple, command.BlendMode, mSettings.UseAntialiasing);
 				if(B3D_ENSURE(simpleFillMaterial))
 				{
 					commandBuffer.SetDynamicBufferOffset(renderUniformBufferDynamicIndex, uniformBlockIndex * uniformBlockStride);
@@ -886,7 +886,7 @@ namespace b3d::ct
 
 					if(mSettings.StencilStrokes)
 					{
-						ct::VectorGraphicsMaterial* const strokeStencilMaterial = ct::VectorGraphicsMaterial::GetVariation(NVGDrawMode::StrokeStencil, command.BlendMode, mSettings.UseAntialiasing);
+						render::VectorGraphicsMaterial* const strokeStencilMaterial = render::VectorGraphicsMaterial::GetVariation(NVGDrawMode::StrokeStencil, command.BlendMode, mSettings.UseAntialiasing);
 						if(B3D_ENSURE(strokeStencilMaterial))
 						{
 							commandBuffer.SetGpuGraphicsPipelineState(strokeStencilMaterial->GetGraphicsPipeline());
@@ -896,14 +896,14 @@ namespace b3d::ct
 						commandBuffer.SetDynamicBufferOffset(renderUniformBufferDynamicIndex, uniformBlockIndex * uniformBlockStride);
 						uniformBlockIndex++;
 
-						ct::VectorGraphicsMaterial* const strokeAAMaterial = ct::VectorGraphicsMaterial::GetVariation(NVGDrawMode::StrokeAA, command.BlendMode, mSettings.UseAntialiasing);
+						render::VectorGraphicsMaterial* const strokeAAMaterial = render::VectorGraphicsMaterial::GetVariation(NVGDrawMode::StrokeAA, command.BlendMode, mSettings.UseAntialiasing);
 						if(B3D_ENSURE(strokeAAMaterial))
 						{
 							commandBuffer.SetGpuGraphicsPipelineState(strokeAAMaterial->GetGraphicsPipeline());
 							commandBuffer.DrawIndexed(strokeSubmesh.IndexOffset, strokeSubmesh.IndexCount, 0, vertexCount, 1);
 						}
 
-						ct::VectorGraphicsMaterial* const clearStencilMaterial = ct::VectorGraphicsMaterial::GetVariation(NVGDrawMode::ClearStencil, command.BlendMode, mSettings.UseAntialiasing);
+						render::VectorGraphicsMaterial* const clearStencilMaterial = render::VectorGraphicsMaterial::GetVariation(NVGDrawMode::ClearStencil, command.BlendMode, mSettings.UseAntialiasing);
 						if(B3D_ENSURE(clearStencilMaterial))
 						{
 							commandBuffer.SetGpuGraphicsPipelineState(clearStencilMaterial->GetGraphicsPipeline());
@@ -912,7 +912,7 @@ namespace b3d::ct
 					}
 					else
 					{
-						ct::VectorGraphicsMaterial* const simpleFillMaterial = ct::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillSimple, command.BlendMode, mSettings.UseAntialiasing);
+						render::VectorGraphicsMaterial* const simpleFillMaterial = render::VectorGraphicsMaterial::GetVariation(NVGDrawMode::FillSimple, command.BlendMode, mSettings.UseAntialiasing);
 						if(B3D_ENSURE(simpleFillMaterial))
 						{
 							commandBuffer.SetGpuGraphicsPipelineState(simpleFillMaterial->GetGraphicsPipeline());

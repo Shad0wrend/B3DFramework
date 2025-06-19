@@ -221,7 +221,7 @@ namespace b3d
 		static SPtr<MeshData> Convert(const SPtr<MeshData>& meshData);
 
 	private:
-		friend class ct::Renderer;
+		friend class render::Renderer;
 
 		RendererMeshData(u32 numVertices, u32 numIndices, VertexLayout layout, IndexType indexType = IT_32BIT);
 		RendererMeshData(const SPtr<MeshData>& meshData);

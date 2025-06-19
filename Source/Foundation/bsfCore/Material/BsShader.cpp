@@ -226,9 +226,9 @@ RTTIType* ShaderInformationBase::GetRtti() const
 	return GetRttiStatic();
 }
 
-ct::ShaderInformation ShaderInformation::ConvertToRenderProxy(const ShaderInformation& value)
+render::ShaderInformation ShaderInformation::ConvertToRenderProxy(const ShaderInformation& value)
 {
-	ct::ShaderInformation output;
+	render::ShaderInformation output;
 	output.DataParameters = value.DataParameters;
 	output.TextureParameters = value.TextureParameters;
 	output.SamplerParameters = value.SamplerParameters;
@@ -269,7 +269,7 @@ RTTIType* ShaderInformation::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace b3d::ct {
+namespace b3d::render {
 RTTIType* ShaderInformation::GetRttiStatic()
 {
 	return ShaderInformationRenderProxyRTTI::Instance();
@@ -279,7 +279,7 @@ RTTIType* ShaderInformation::GetRtti() const
 {
 	return GetRttiStatic();
 }
-} // namespace ct
+} // namespace render
 
 template <bool IsRenderProxy>
 CoreVariantHandleType<Texture, IsRenderProxy> GetBuiltin2DTexture(ShaderDefaultTextureType texture);
@@ -288,11 +288,11 @@ template <>
 CoreVariantHandleType<Texture, true> GetBuiltin2DTexture<true>(ShaderDefaultTextureType texture)
 {
 	if(texture == ShaderDefaultTextureType::White)
-		return ct::BuiltinResources::Instance().WhiteTexture2D;
+		return render::BuiltinResources::Instance().WhiteTexture2D;
 	else if(texture == ShaderDefaultTextureType::Black)
-		return ct::BuiltinResources::Instance().BlackTexture2D;
+		return render::BuiltinResources::Instance().BlackTexture2D;
 	else if(texture == ShaderDefaultTextureType::Normal)
-		return ct::BuiltinResources::Instance().NormalTexture2D;
+		return render::BuiltinResources::Instance().NormalTexture2D;
 
 	return nullptr;
 }
@@ -317,9 +317,9 @@ template <>
 CoreVariantHandleType<Texture, true> GetBuiltin3DTexture<true>(ShaderDefaultTextureType texture)
 {
 	if(texture == ShaderDefaultTextureType::White)
-		return ct::BuiltinResources::Instance().WhiteTexture3D;
+		return render::BuiltinResources::Instance().WhiteTexture3D;
 	else if(texture == ShaderDefaultTextureType::Black)
-		return ct::BuiltinResources::Instance().BlackTexture3D;
+		return render::BuiltinResources::Instance().BlackTexture3D;
 
 	return nullptr;
 }
@@ -536,14 +536,14 @@ void Shader::SetIncludeFiles(const Vector<String>& includes)
 	meta->Includes = includes;
 }
 
-SPtr<ct::RenderProxy> Shader::CreateRenderProxy() const
+SPtr<render::RenderProxy> Shader::CreateRenderProxy() const
 {
-	Vector<SPtr<ct::Technique>> techniques;
+	Vector<SPtr<render::Technique>> techniques;
 	for(auto& technique : mInformation.Techniques)
 		techniques.push_back(B3DGetRenderProxy(technique));
 
-	ct::Shader* renderProxy = new(B3DAllocate<ct::Shader>()) ct::Shader(mName, ShaderInformation::ConvertToRenderProxy(mInformation), mShaderId);
-	SPtr<ct::Shader> renderProxyShared = B3DMakeSharedFromExisting<ct::Shader>(renderProxy);
+	render::Shader* renderProxy = new(B3DAllocate<render::Shader>()) render::Shader(mName, ShaderInformation::ConvertToRenderProxy(mInformation), mShaderId);
+	SPtr<render::Shader> renderProxyShared = B3DMakeSharedFromExisting<render::Shader>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
@@ -644,7 +644,7 @@ HShader Shader::Create(const String& name, const ShaderCreateInformation& create
 
 SPtr<Shader> Shader::CreateShared(const String& name, const ShaderCreateInformation& createInformation)
 {
-	u32 id = ct::Shader::mNextShaderId.fetch_add(1, std::memory_order_relaxed);
+	u32 id = render::Shader::mNextShaderId.fetch_add(1, std::memory_order_relaxed);
 	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
 	SPtr<Shader> newShader = B3DMakeSharedFromExisting<Shader>(new(B3DAllocate<Shader>()) Shader(name, createInformation, id));
@@ -656,7 +656,7 @@ SPtr<Shader> Shader::CreateShared(const String& name, const ShaderCreateInformat
 
 SPtr<Shader> Shader::CreateEmpty()
 {
-	u32 id = ct::Shader::mNextShaderId.fetch_add(1, std::memory_order_relaxed);
+	u32 id = render::Shader::mNextShaderId.fetch_add(1, std::memory_order_relaxed);
 	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
 	SPtr<Shader> newShader = B3DMakeSharedFromExisting<Shader>(new(B3DAllocate<Shader>()) Shader(id));
@@ -700,7 +700,7 @@ RTTIType* ShaderMetaData::GetRtti() const
 	return ShaderMetaData::GetRttiStatic();
 }
 
-namespace b3d { namespace ct
+namespace b3d { namespace render
 {
 std::atomic<u32> Shader::mNextShaderId;
 

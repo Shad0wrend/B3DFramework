@@ -35,14 +35,14 @@ GpuQueue::~GpuQueue()
 	waitGroup.Wait();
 }
 
-SPtr<ct::GpuCommandBuffer> GpuQueue::GetOrCreateTransferCommandBuffer()
+SPtr<render::GpuCommandBuffer> GpuQueue::GetOrCreateTransferCommandBuffer()
 {
 	Lock lock(mMutex);
 
 	PerThreadTransferCommandBufferInformation& transferCommandBufferInformation = mTransferCommandBuffers[B3D_CURRENT_THREAD_ID];
 	if(transferCommandBufferInformation.CommandBufferPool == nullptr)
 	{
-		ct::GpuCommandBufferPoolCreateInformation poolCreateInformation;
+		render::GpuCommandBufferPoolCreateInformation poolCreateInformation;
 		poolCreateInformation.Thread = B3D_CURRENT_THREAD_ID;
 		poolCreateInformation.Usage = mUsage;
 
@@ -51,7 +51,7 @@ SPtr<ct::GpuCommandBuffer> GpuQueue::GetOrCreateTransferCommandBuffer()
 
 	if(transferCommandBufferInformation.CurrentTransferCommandBuffer == nullptr)
 	{
-		ct::GpuCommandBufferCreateInformation commandBufferCreateInformation;
+		render::GpuCommandBufferCreateInformation commandBufferCreateInformation;
 		commandBufferCreateInformation.Name = "Transfer";
 
 		transferCommandBufferInformation.CurrentTransferCommandBuffer = transferCommandBufferInformation.CommandBufferPool->Create(commandBufferCreateInformation);
@@ -60,7 +60,7 @@ SPtr<ct::GpuCommandBuffer> GpuQueue::GetOrCreateTransferCommandBuffer()
 	return transferCommandBufferInformation.CurrentTransferCommandBuffer;
 }
 
-void GpuDevice::SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask, u32 queueIndex)
+void GpuDevice::SubmitCommandBuffer(const SPtr<render::GpuCommandBuffer>& commandBuffer, u32 syncMask, u32 queueIndex)
 {
 	if (!B3D_ENSURE(commandBuffer))
 		return;
@@ -93,14 +93,14 @@ SPtr<SamplerState> GpuDevice::FindOrCreateSamplerState(const SamplerStateCreateI
 	return newSamplerState;
 }
 
-void GpuQueue::SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask)
+void GpuQueue::SubmitCommandBuffer(const SPtr<render::GpuCommandBuffer>& commandBuffer, u32 syncMask)
 {
 	SubmitCommandBuffer(commandBuffer, syncMask, true);
 }
 
 void GpuQueue::SubmitTransferCommandBuffer(bool wait)
 {
-	SPtr<ct::GpuCommandBuffer> commandBufferToSubmit;
+	SPtr<render::GpuCommandBuffer> commandBufferToSubmit;
 
 	{
 		Lock lock(mMutex);

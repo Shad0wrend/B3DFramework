@@ -35,7 +35,7 @@ namespace b3d
 		u32 MipLevel = 0;
 	};
 
-	namespace ct
+	namespace render
 	{
 		/** @copydoc b3d::RenderSurfaceInformation */
 		struct B3D_CORE_EXPORT RenderSurfaceInformation
@@ -56,7 +56,7 @@ namespace b3d
 			/** If the texture has multiple mips, which one to bind (only one can be bound for rendering). */
 			u32 MipLevel = 0;
 		};
-	} // namespace ct
+	} // namespace render
 
 	/** Contains various properties that describe a render target. */
 	class B3D_CORE_EXPORT RenderTargetProperties
@@ -107,7 +107,7 @@ namespace b3d
 		virtual ~RenderTarget() = default;
 
 		/**
-		 * @copydoc ct::RenderTarget::SetPriority
+		 * @copydoc render::RenderTarget::SetPriority
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
@@ -123,7 +123,7 @@ namespace b3d
 		mutable Event<void()> OnDPIScaleChanged;
 
 	protected:
-		friend class ct::RenderTarget;
+		friend class render::RenderTarget;
 
 		RenderTargetProperties mRenderTargetProperties;
 
@@ -138,7 +138,7 @@ namespace b3d
 
 	/** @} */
 
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup RenderAPI-Internal
 		 *  @{
@@ -196,5 +196,5 @@ namespace b3d
 		};
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

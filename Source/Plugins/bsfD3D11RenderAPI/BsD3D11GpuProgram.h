@@ -7,7 +7,7 @@
 
 namespace b3d
 {
-	namespace ct
+	namespace render
 	{
 		/** @addtogroup D3D11
 		 *  @{
@@ -163,5 +163,5 @@ namespace b3d
 		static constexpr const char* DIRECTX_COMPILER_ID = "DirectX11";
 
 		/** @} */
-	} // namespace ct
+	} // namespace render
 } // namespace b3d

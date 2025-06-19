@@ -9,7 +9,7 @@
 #include "RenderAPI/BsGpuParameters.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 u32 GLSLGpuProgram::sVertexShaderCount = 0;
 u32 GLSLGpuProgram::sFragmentShaderCount = 0;

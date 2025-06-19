@@ -55,7 +55,7 @@ GUIVectorSpriteAtlasAllocation GUIVectorSpriteAtlas::Allocate(const VectorPath& 
 	const Size2UI requestedSize = Size2UI((u32)settings.Size.Width, (u32)settings.Size.Height);
 	const bool useUniqueTexture = requestedSize.Width >= mSettings.UniqueAllocationSize || requestedSize.Height >= mSettings.UniqueAllocationSize;
 
-	const SPtr<ct::VectorPathRenderable> renderable = vectorPath.CreateRenderable(settings);
+	const SPtr<render::VectorPathRenderable> renderable = vectorPath.CreateRenderable(settings);
 
 	HTexture atlasTexture;
 	Area2 uvRange;
@@ -214,11 +214,11 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 	const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 
 	// Create a command buffer
-	const SPtr<ct::GpuCommandBufferPool>& commandBufferPool = RendererManager::Instance().GetActive()->GetCommandBufferPool();
-	SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool->Create(ct::GpuCommandBufferCreateInformation::Create("GUIVectorSpriteAtlas"));
+	const SPtr<render::GpuCommandBufferPool>& commandBufferPool = RendererManager::Instance().GetActive()->GetCommandBufferPool();
+	SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool->Create(render::GpuCommandBufferCreateInformation::Create("GUIVectorSpriteAtlas"));
 
 	FrameScope frameScope;
-	FrameUnorderedMap<ct::Texture*, SPtr<ct::RenderTexture>> atlasRenderTextures;
+	FrameUnorderedMap<render::Texture*, SPtr<render::RenderTexture>> atlasRenderTextures;
 
 	for(const auto& entry : dirtySprites)
 	{
@@ -228,7 +228,7 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 		colorTextureCreateInformation.Format = PF_RGBA8;
 		colorTextureCreateInformation.Usage = TU_RENDERTARGET;
 
-		const SPtr<ct::Texture> colorTexture = gpuDevice->CreateTexture(colorTextureCreateInformation);
+		const SPtr<render::Texture> colorTexture = gpuDevice->CreateTexture(colorTextureCreateInformation);
 
 		TextureCreateInformation stencilTextureCreateInformation;
 		stencilTextureCreateInformation.Width = entry.Size.Width;
@@ -236,13 +236,13 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 		stencilTextureCreateInformation.Format = PF_D32_S8X24;
 		stencilTextureCreateInformation.Usage = TU_DEPTHSTENCIL;
 
-		const SPtr<ct::Texture> stencilTexture = gpuDevice->CreateTexture(stencilTextureCreateInformation);
+		const SPtr<render::Texture> stencilTexture = gpuDevice->CreateTexture(stencilTextureCreateInformation);
 
-		ct::RenderTextureCreateInformation renderTextureCreateInformation;
+		render::RenderTextureCreateInformation renderTextureCreateInformation;
 		renderTextureCreateInformation.ColorSurfaces[0].Texture = colorTexture;
 		renderTextureCreateInformation.DepthStencilSurface.Texture = stencilTexture;
 
-		SPtr<ct::RenderTexture> renderTarget = ct::RenderTexture::Create(renderTextureCreateInformation);
+		SPtr<render::RenderTexture> renderTarget = render::RenderTexture::Create(renderTextureCreateInformation);
 		
 		// Bind render surface & clear it
 		commandBuffer->SetRenderTarget(renderTarget, 0, RT_NONE);
@@ -251,23 +251,23 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 
 		entry.Renderable->Render(*commandBuffer);
 
-		SPtr<ct::RenderTexture> atlasRenderTexture;
+		SPtr<render::RenderTexture> atlasRenderTexture;
 		if(auto found = atlasRenderTextures.find(entry.Texture.get()); found != atlasRenderTextures.end())
 		{
 			atlasRenderTexture = found->second;
 		}
 		else
 		{
-			ct::RenderTextureCreateInformation atlasTextureCreateInformation;
+			render::RenderTextureCreateInformation atlasTextureCreateInformation;
 			atlasTextureCreateInformation.ColorSurfaces[0].Texture = entry.Texture;
 
-			atlasRenderTexture = ct::RenderTexture::Create(atlasTextureCreateInformation);
+			atlasRenderTexture = render::RenderTexture::Create(atlasTextureCreateInformation);
 			atlasRenderTextures[entry.Texture.get()] = atlasRenderTexture;
 		}
 
 		commandBuffer->SetRenderTarget(atlasRenderTexture, 0, RT_COLOR0);
 		commandBuffer->SetViewport(entry.UVRegion);
-		ct::GetRendererUtility().Blit(*commandBuffer, colorTexture);
+		render::GetRendererUtility().Blit(*commandBuffer, colorTexture);
 	}
 
 	gpuDevice->SubmitCommandBuffer(commandBuffer);

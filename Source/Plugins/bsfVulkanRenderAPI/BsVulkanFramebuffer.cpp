@@ -7,7 +7,7 @@
 #include "BsVulkanRenderPass.h"
 
 using namespace b3d;
-using namespace b3d::ct;
+using namespace b3d::render;
 
 u32 VulkanFramebuffer::sNextValidId = 1;
 

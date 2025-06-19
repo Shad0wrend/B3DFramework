@@ -76,7 +76,7 @@ namespace b3d
 		 *
 		 * @note	Thread safe to retrieve, but its data is only valid on the render thread.
 		 */
-		SPtr<ct::RenderProxy> GetRenderProxy() const { return mRenderProxy; }
+		SPtr<render::RenderProxy> GetRenderProxy() const { return mRenderProxy; }
 
 		/**
 		 * Ensures all dirty syncable data is send to the render proxy (if any).
@@ -142,7 +142,7 @@ namespace b3d
 		 * Creates an object that contains render thread specific data and methods for this object. Can be null if such
 		 * object is not required.
 		 */
-		virtual SPtr<ct::RenderProxy> CreateRenderProxy() const { return nullptr; }
+		virtual SPtr<render::RenderProxy> CreateRenderProxy() const { return nullptr; }
 
 		/**
 		 * Marks the render proxy data as dirty. This causes the SyncToRenderProxy() method to trigger the next time objects are synced
@@ -197,7 +197,7 @@ namespace b3d
 		}
 
 	protected:
-		SPtr<ct::RenderProxy> mRenderProxy;
+		SPtr<render::RenderProxy> mRenderProxy;
 
 		/** @} */
 	};

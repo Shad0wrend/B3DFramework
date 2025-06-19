@@ -42,7 +42,7 @@ namespace b3d
 {
 	extern VkAllocationCallbacks* gVulkanAllocator;
 
-	namespace ct
+	namespace render
 	{
 		class Win32RenderWindow;
 		class VulkanTexture;
@@ -95,7 +95,7 @@ namespace b3d
 			/** Number of block columns before advancing to the next slice. For non-compressed formats this is equal to the number of pixels. For compressed it depends on the block size. */
 			u32 SliceHeight = 0;
 		};
-	} // namespace ct
+	} // namespace render
 } // namespace b3d
 
 /** Macro to get a procedure address based on a Vulkan instance. */

@@ -683,7 +683,7 @@ void FontAtlasRenderer::OnStartUp()
 
 	auto fnCreateCommandBufferPool = [this, gpuDevice]()
 	{
-		ct::GpuCommandBufferPoolCreateInformation poolCreateInformation;
+		render::GpuCommandBufferPoolCreateInformation poolCreateInformation;
 		poolCreateInformation.Thread = B3D_CURRENT_THREAD_ID;
 		poolCreateInformation.Usage = GQT_GRAPHICS;
 
@@ -710,7 +710,7 @@ void FontAtlasRenderer::BlitGlyphs(Vector<GlyphBitmap> glyphBitmaps)
 		if (!B3D_ENSURE(mCommandBufferPool))
 			return;
 
-		const SPtr<ct::GpuCommandBuffer> commandBuffer = mCommandBufferPool->Create(ct::GpuCommandBufferCreateInformation::Create("BlitGlyphBitmaps"));
+		const SPtr<render::GpuCommandBuffer> commandBuffer = mCommandBufferPool->Create(render::GpuCommandBufferCreateInformation::Create("BlitGlyphBitmaps"));
 
 		for(const auto& entry : glyphBitmaps)
 		{

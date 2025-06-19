@@ -6,7 +6,7 @@
 #include "Utility/BsBitwise.h"
 
 namespace b3d {
-namespace ct {
+namespace render {
 
 PerObjectParamDef gPerObjectParamDef;
 PerCallParamDef gPerCallParamDef;
@@ -53,4 +53,4 @@ void RendererRenderable::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush
 	if(flush)
 		PerCallParamBuffer->FlushCache();
 }
-}} // namespace b3d::ct
+}} // namespace b3d::render

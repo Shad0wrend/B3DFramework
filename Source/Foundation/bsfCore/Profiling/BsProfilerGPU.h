@@ -69,8 +69,8 @@ namespace b3d
 			ProfilerString Name;
 			RenderStatsData StartStats;
 			RenderStatsData EndStats;
-			SPtr<ct::TimerQuery> ActiveTimeQuery;
-			SPtr<ct::OcclusionQuery> ActiveOcclusionQuery;
+			SPtr<render::TimerQuery> ActiveTimeQuery;
+			SPtr<render::OcclusionQuery> ActiveOcclusionQuery;
 
 			Vector<ProfiledSample*> Children;
 		};
@@ -114,14 +114,14 @@ namespace b3d
 		 * @param	id				Identifier that can be used to uniquely identify the view.
 		 * @param	title			Title describing the view.
 		 */
-		void BeginView(ct::GpuCommandBuffer& commandBuffer, u64 id, ProfilerString title);
+		void BeginView(render::GpuCommandBuffer& commandBuffer, u64 id, ProfilerString title);
 
 		/**
 		 * Signals the end of rendering for a particular view. Must match the corresponding beginView() call.
 		 *
 		 * @param	commandBuffer	Command buffer to record the view sample on. Must match the buffer provided in BeginView().
 		 */
-		void EndView(ct::GpuCommandBuffer& commandBuffer);
+		void EndView(render::GpuCommandBuffer& commandBuffer);
 
 		/**
 		 * Begins sample measurement. Must be followed by endSample().
@@ -131,7 +131,7 @@ namespace b3d
 		 *
 		 * @note	Must be called between beginFrame()/endFrame() calls.
 		 */
-		void BeginSample(ct::GpuCommandBuffer& commandBuffer, ProfilerString name);
+		void BeginSample(render::GpuCommandBuffer& commandBuffer, ProfilerString name);
 
 		/**
 		 * Ends sample measurement.
@@ -143,7 +143,7 @@ namespace b3d
 		 * Unique name is primarily needed to more easily identify mismatched begin/end sample pairs. Otherwise the name in
 		 * BeginSample() would be enough. Must be called between BeginFrame()/EndFrame() calls.
 		 */
-		void EndSample(ct::GpuCommandBuffer& commandBuffer, const ProfilerString& name);
+		void EndSample(render::GpuCommandBuffer& commandBuffer, const ProfilerString& name);
 
 		/**
 		 * Returns number of profiling reports that are ready but haven't been retrieved yet.
@@ -179,16 +179,16 @@ namespace b3d
 
 	private:
 		/** Assigns start values for the provided sample. */
-		void BeginSampleInternal(ProfiledSample& sample, ct::GpuCommandBuffer& commandBuffer, bool issueOcclusion);
+		void BeginSampleInternal(ProfiledSample& sample, render::GpuCommandBuffer& commandBuffer, bool issueOcclusion);
 
 		/**	Assigns end values for the provided sample. */
-		void EndSampleInternal(ProfiledSample& sample, ct::GpuCommandBuffer& commandBuffer);
+		void EndSampleInternal(ProfiledSample& sample, render::GpuCommandBuffer& commandBuffer);
 
 		/**	Creates a new timer query or returns an existing free query. */
-		SPtr<ct::TimerQuery> GetTimerQuery() const;
+		SPtr<render::TimerQuery> GetTimerQuery() const;
 
 		/**	Creates a new occlusion query or returns an existing free query. */
-		SPtr<ct::OcclusionQuery> GetOcclusionQuery() const;
+		SPtr<render::OcclusionQuery> GetOcclusionQuery() const;
 
 		/** Frees the memory used by all the child samples. */
 		void FreeSample(ProfiledSample& sample);
@@ -215,8 +215,8 @@ namespace b3d
 		PoolAlloc<sizeof(ProfiledViewSample), 16> mViewSamplePool;
 		PoolAlloc<sizeof(ProfiledSample), 256> mSamplePool;
 
-		mutable Stack<SPtr<ct::TimerQuery>> mFreeTimerQueries;
-		mutable Stack<SPtr<ct::OcclusionQuery>> mFreeOcclusionQueries;
+		mutable Stack<SPtr<render::TimerQuery>> mFreeTimerQueries;
+		mutable Stack<SPtr<render::OcclusionQuery>> mFreeOcclusionQueries;
 
 		Mutex mMutex;
 	};
@@ -240,7 +240,7 @@ namespace b3d
 	struct ProfileGPUBlock
 	{
 #if B3D_PROFILING_ENABLED
-		ProfileGPUBlock(ct::GpuCommandBuffer& commandBuffer, ProfilerString name)
+		ProfileGPUBlock(render::GpuCommandBuffer& commandBuffer, ProfilerString name)
 			:mCommandBuffer(commandBuffer)
 		{
 			mSampleName = std::move(name);
@@ -261,7 +261,7 @@ namespace b3d
 	private:
 #if B3D_PROFILING_ENABLED
 		ProfilerString mSampleName;
-		ct::GpuCommandBuffer& mCommandBuffer;
+		render::GpuCommandBuffer& mCommandBuffer;
 #endif
 	};
 
