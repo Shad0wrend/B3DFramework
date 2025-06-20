@@ -3,6 +3,7 @@
 #include "Renderer/BsCamera.h"
 
 #include "BsCoreApplication.h"
+#include "BsRendererScene.h"
 #include "Private/RTTI/BsCameraRTTI.h"
 #include "Math/BsMath.h"
 #include "Math/BsMatrix3.h"
@@ -839,7 +840,8 @@ namespace b3d { namespace render
 {
 Camera::~Camera()
 {
-	RendererManager::Instance().GetActive()->NotifyCameraRemoved(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UnregisterCamera(this);
 }
 
 Camera::Camera(SPtr<RenderTarget> target, float left, float top, float width, float height)
@@ -856,7 +858,8 @@ Camera::Camera(const SPtr<Viewport>& viewport)
 
 void Camera::Initialize()
 {
-	RendererManager::Instance().GetActive()->NotifyCameraAdded(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterCamera(this);
 
 	RenderProxy::Initialize();
 }
@@ -890,6 +893,7 @@ void Camera::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& alloca
 		mRecalcView = true;
 	}
 
-	RendererManager::Instance().GetActive()->NotifyCameraUpdated(this, (u32)syncPacket->Flags);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UpdateCamera(this, (u32)syncPacket->Flags);
 }
 }}

@@ -16,6 +16,7 @@
 #include "Scene/BsSceneActor.h"
 #include "Scene/BsPrefab.h"
 #include "Physics/BsPhysics.h"
+#include "Renderer/BsRendererScene.h"
 
 using namespace b3d;
 
@@ -38,8 +39,8 @@ private:
 	bool& val;
 };
 
-SceneInstance::SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const UUID& associatedResourceId, const SPtr<PhysicsScene>& physicsScene)
-	: mName(name), mRoot(root), mAssociatedResourceId(associatedResourceId), mPhysicsScene(physicsScene), mGameObjectCollection(root->GetOwnerCollection())
+SceneInstance::SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const UUID& associatedResourceId, const SPtr<PhysicsScene>& physicsScene, const SPtr<RendererScene>& rendererScene)
+	: mName(name), mRoot(root), mAssociatedResourceId(associatedResourceId), mPhysicsScene(physicsScene), mRendererScene(rendererScene), mGameObjectCollection(root->GetOwnerCollection())
 {}
 
 SceneInstance::~SceneInstance()
@@ -99,11 +100,14 @@ SPtr<SceneInstance> SceneInstance::Create(const String& name)
 	const SPtr<GameObjectCollection>& gameObjectCollection = GameObjectCollection::Create();
 	HSceneObject root = SceneObject::CreateInternal(gameObjectCollection, "Root");
 
-	SPtr<SceneInstance> sceneInstance = B3DMakeShared<SceneInstance>(ConstructPrivately(), name, root, UUID::kEmpty, GetPhysics().CreatePhysicsScene());
+	SPtr<SceneInstance> sceneInstance = B3DMakeShared<SceneInstance>(ConstructPrivately(), name, root, UUID::kEmpty, GetPhysics().CreatePhysicsScene(), RendererScene::Create());
 	root->SetScene(sceneInstance, false);
 
 	SceneManager::Instance().NotifySceneInstanceCreated(sceneInstance);
 	root->Initialize();
+
+	sceneInstance->SetShared(sceneInstance);
+	sceneInstance->Initialize();
 
 	return sceneInstance;
 }
@@ -119,16 +123,22 @@ SPtr<SceneInstance> SceneInstance::Create(const String& name, const HSceneObject
 	if(!B3D_ENSURE(gameObjectCollection != nullptr))
 		return nullptr;
 
-	SPtr<SceneInstance> sceneInstance = B3DMakeShared<SceneInstance>(ConstructPrivately(), name, root, associatedResourceId, GetPhysics().CreatePhysicsScene());
+	SPtr<SceneInstance> sceneInstance = B3DMakeShared<SceneInstance>(ConstructPrivately(), name, root, associatedResourceId, GetPhysics().CreatePhysicsScene(), RendererScene::Create());
 	root->SetScene(sceneInstance, true);
 
 	SceneManager::Instance().NotifySceneInstanceCreated(sceneInstance);
+
+	sceneInstance->SetShared(sceneInstance);
+	sceneInstance->Initialize();
+
 	return sceneInstance;
 }
 
 SPtr<render::RenderProxy> SceneInstance::CreateRenderProxy() const
 {
-	render::SceneInstance* renderProxy = new(B3DAllocate<render::SceneInstance>()) render::SceneInstance();
+	const SPtr<render::RendererScene>& rendererSceneProxy = B3DGetRenderProxy(mRendererScene);
+
+	render::SceneInstance* renderProxy = new(B3DAllocate<render::SceneInstance>()) render::SceneInstance(rendererSceneProxy);
 	SPtr<render::SceneInstance> renderProxyShared = B3DMakeSharedFromExisting<render::SceneInstance>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 

@@ -9,6 +9,7 @@
 
 namespace b3d
 {
+	class RendererScene;
 	class LightProbeVolume;
 	class PhysicsScene;
 
@@ -44,7 +45,7 @@ namespace b3d
 		{};
 
 	public:
-		SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const UUID& associatedResourceId, const SPtr<PhysicsScene>& physicsScene);
+		SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const UUID& associatedResourceId, const SPtr<PhysicsScene>& physicsScene, const SPtr<RendererScene>& rendererScene);
 		~SceneInstance();
 
 		/** Name of the scene. */
@@ -60,11 +61,17 @@ namespace b3d
 		bool IsActive() const { return mIsActive; }
 
 		/**
-		 * Physical representation of the scene, as assigned by the physics sub-system. Exact implementation depends on the
-		 * physics plugin used.
+		 * Representation of the scene used by the physics sub-system. Contains all the objects that can be physically interacted with.
+		 * Exact implementation depends on the physics plugin used.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(Physics), Property(Getter))
 		const SPtr<PhysicsScene>& GetPhysicsScene() const { return mPhysicsScene; }
+
+		/**
+		 * Representation of the scene used by the renderer. Contains all the objects that need to be rendered.
+		 * Exact implementation depends on the renderer plugin used.
+		 */
+		const SPtr<RendererScene>& GetRendererScene() const { return mRendererScene; }
 
 		/** Returns the ID of the resource that the scene instance is associated with (e.g. resource the scene was loaded from.). */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(AssociatedResourceId))
@@ -114,18 +121,32 @@ namespace b3d
 		UUID mAssociatedResourceId; /**< ID of the resource the scene was loaded from, if any. */
 		bool mIsActive = true;
 		SPtr<PhysicsScene> mPhysicsScene;
+		SPtr<RendererScene> mRendererScene;
 		SPtr<GameObjectCollection> mGameObjectCollection;
 	};
 
 	namespace render
 	{
+		class RendererScene;
+
 		/** @copydoc SceneInstance */
 		class B3D_CORE_EXPORT SceneInstance : public RenderProxy
 		{
+		public:
+			/**
+			 * Representation of the scene used by the renderer. Contains all the objects that need to be rendered.
+			 * Exact implementation depends on the renderer plugin used.
+			 */
+			const SPtr<RendererScene>& GetRendererScene() const { return mRendererScene; }
+
 		protected:
 			friend class b3d::SceneInstance;
 
-			SceneInstance() = default;
+			SceneInstance(const SPtr<RendererScene>& rendererScene)
+				:mRendererScene(rendererScene)
+			{ }
+
+			SPtr<RendererScene> mRendererScene;
 		};
 	} // namespace render
 

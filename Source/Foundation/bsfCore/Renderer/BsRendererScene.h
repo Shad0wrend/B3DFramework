@@ -1,0 +1,122 @@
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+
+#include "BsCorePrerequisites.h"
+#include "CoreObject/BsCoreObject.h"
+#include "CoreObject/BsRenderProxy.h"
+
+namespace b3d
+{
+	namespace render
+	{
+		class RendererScene;
+	}
+
+	/** @addtogroup Renderere
+	 *  @{
+	 */
+
+	/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
+	class RendererScene : public CoreObject
+	{
+	public:
+		~RendererScene() override = default;
+
+		/** Creates a new renderer scene. */
+		static SPtr<RendererScene> Create();
+	protected:
+		friend class render::RendererScene;
+		SPtr<render::RenderProxy> CreateRenderProxy() const override;
+	};
+
+	/** @} */
+
+	namespace render
+	{
+		/** @addtogroup Renderere
+		 *  @{
+		 */
+
+		/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
+		class RendererScene : public RenderProxy
+		{
+		public:
+			virtual ~RendererScene() = default;
+
+			/** Registers a new camera in the scene. */
+			virtual void RegisterCamera(Camera* camera) = 0;
+
+			/** Updates information about a previously registered camera. */
+			virtual void UpdateCamera(Camera* camera, u32 updateFlag) = 0;
+
+			/** Removes a camera from the scene. */
+			virtual void UnregisterCamera(Camera* camera) = 0;
+
+			/** Registers a new light in the scene. */
+			virtual void RegisterLight(Light* light) = 0;
+
+			/** Updates information about a previously registered light. */
+			virtual void UpdateLight(Light* light) = 0;
+
+			/** Removes a light from the scene. */
+			virtual void UnregisterLight(Light* light) = 0;
+
+			/** Registers a new renderable object in the scene. */
+			virtual void RegisterRenderable(Renderable* renderable) = 0;
+
+			/** Updates information about a previously registered renderable object. */
+			virtual void UpdateRenderable(Renderable* renderable) = 0;
+
+			/** Removes a renderable object from the scene. */
+			virtual void UnregisterRenderable(Renderable* renderable) = 0;
+
+			/** Registers a new reflection probe in the scene. */
+			virtual void RegisterReflectionProbe(ReflectionProbe* probe) = 0;
+
+			/** Updates information about a previously registered reflection probe. */
+			virtual void UpdateReflectionProbe(ReflectionProbe* probe, bool texture) = 0;
+
+			/** Removes a reflection probe from the scene. */
+			virtual void UnregisterReflectionProbe(ReflectionProbe* probe) = 0;
+
+			/** Registers a new light probe volume in the scene. */
+			virtual void RegisterLightProbeVolume(LightProbeVolume* volume) = 0;
+
+			/** Updates information about a previously registered light probe volume. */
+			virtual void UpdateLightProbeVolume(LightProbeVolume* volume) = 0;
+
+			/** Removes a light probe volume from the scene. */
+			virtual void UnregisterLightProbeVolume(LightProbeVolume* volume) = 0;
+
+			/** Registers a new sky texture in the scene. */
+			virtual void RegisterSkybox(Skybox* skybox) = 0;
+
+			/** Removes a skybox from the scene. */
+			virtual void UnregisterSkybox(Skybox* skybox) = 0;
+
+			/** Registers a new particle system in the scene. */
+			virtual void RegisterParticleSystem(ParticleSystem* particleSystem) = 0;
+
+			/** Updates information about a previously registered particle system. */
+			virtual void UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly) = 0;
+
+			/** Removes a particle system from the scene. */
+			virtual void UnregisterParticleSystem(ParticleSystem* particleSystem) = 0;
+
+			/** Registers a new decal object in the scene. */
+			virtual void RegisterDecal(Decal* decal) = 0;
+
+			/** Updates information about a previously registered decal object. */
+			virtual void UpdateDecal(Decal* decal) = 0;
+
+			/** Removes a decal object from the scene. */
+			virtual void UnregisterDecal(Decal* decal) = 0;
+
+		protected:
+			friend class b3d::RendererScene;
+		};
+
+		/** @} */
+	} // namespace render
+} // namespace b3d

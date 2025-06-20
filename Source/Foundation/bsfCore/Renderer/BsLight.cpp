@@ -1,11 +1,14 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsLight.h"
+
+#include "BsRendererScene.h"
 #include "Private/RTTI/BsLightRTTI.h"
 #include "Renderer/BsRenderer.h"
 #include "Scene/BsSceneObject.h"
 #include "Mesh/BsMesh.h"
 #include "CoreObject/BsCoreObjectSync.h"
+#include "Scene/BsSceneManager.h"
 
 using namespace b3d;
 
@@ -277,13 +280,16 @@ Light::Light(LightType type, Color color, float intensity, float attRadius, floa
 
 Light::~Light()
 {
-	GetRenderer()->NotifyLightRemoved(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UnregisterLight(this);
 }
 
 void Light::Initialize()
 {
 	UpdateBounds();
-	GetRenderer()->NotifyLightAdded(this);
+
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterLight(this);
 
 	RenderProxy::Initialize();
 }
@@ -301,18 +307,20 @@ void Light::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocat
 
 	UpdateBounds();
 
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+
 	const u32 flags = syncPacket->Flags;
 	if((flags & ((u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active)) != 0)
 	{
 		if(oldIsActive != mActive)
 		{
 			if(mActive)
-				GetRenderer()->NotifyLightAdded(this);
+				rendererScene->RegisterLight(this);
 			else
 			{
 				LightType newType = mType;
 				mType = oldType;
-				GetRenderer()->NotifyLightRemoved(this);
+				rendererScene->UnregisterLight(this);
 				mType = newType;
 			}
 		}
@@ -320,21 +328,21 @@ void Light::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocat
 		{
 			LightType newType = mType;
 			mType = oldType;
-			GetRenderer()->NotifyLightRemoved(this);
+			rendererScene->UnregisterLight(this);
 			mType = newType;
 
-			GetRenderer()->NotifyLightAdded(this);
+			rendererScene->RegisterLight(this);
 		}
 	}
 	else if((flags & (u32)ActorDirtyFlag::Mobility) != 0)
 	{
-		GetRenderer()->NotifyLightRemoved(this);
-		GetRenderer()->NotifyLightAdded(this);
+		rendererScene->UnregisterLight(this);
+		rendererScene->RegisterLight(this);
 	}
 	else if((flags & (u32)ActorDirtyFlag::Transform) != 0)
 	{
 		if(mActive)
-			GetRenderer()->NotifyLightUpdated(this);
+			rendererScene->UpdateLight(this);
 	}
 }
 }}

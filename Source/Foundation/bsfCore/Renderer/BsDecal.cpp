@@ -1,12 +1,15 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsDecal.h"
+
+#include "BsRendererScene.h"
 #include "Private/RTTI/BsDecalRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 #include "Scene/BsSceneObject.h"
 #include "Renderer/BsRenderer.h"
 #include "Material/BsMaterial.h"
 #include "CoreObject/BsCoreObjectSync.h"
+#include "Scene/BsSceneManager.h"
 
 using namespace b3d;
 
@@ -156,13 +159,16 @@ Decal::Decal(const SPtr<Material>& material, const Vector2& size, float maxDista
 
 Decal::~Decal()
 {
-	GetRenderer()->NotifyDecalRemoved(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UnregisterDecal(this);
 }
 
 void Decal::Initialize()
 {
 	UpdateBounds();
-	GetRenderer()->NotifyDecalAdded(this);
+
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterDecal(this);
 
 	RenderProxy::Initialize();
 }
@@ -181,24 +187,25 @@ void Decal::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocat
 
 	UpdateBounds();
 
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
 	if(syncPacket->Flags == (u32)ActorDirtyFlag::Transform)
 	{
 		if(mActive)
-			GetRenderer()->NotifyDecalUpdated(this);
+			rendererScene->UpdateDecal(this);
 	}
 	else
 	{
 		if(oldIsActive != mActive)
 		{
 			if(mActive)
-				GetRenderer()->NotifyDecalAdded(this);
+				rendererScene->RegisterDecal(this);
 			else
-				GetRenderer()->NotifyDecalRemoved(this);
+				rendererScene->UnregisterDecal(this);
 		}
 		else
 		{
-			GetRenderer()->NotifyDecalRemoved(this);
-			GetRenderer()->NotifyDecalAdded(this);
+			rendererScene->UnregisterDecal(this);
+			rendererScene->RegisterDecal(this);
 		}
 	}
 }

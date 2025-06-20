@@ -61,32 +61,9 @@ namespace b3d
 			void Destroy() override;
 			void CaptureSceneCubeMap(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) override;
 			void RequestFrameCapture() override { mIsFrameCaptureRequested = true; }
+			SPtr<RendererScene> CreateScene() override;
 
 		private:
-			void NotifyCameraAdded(Camera* camera) override;
-			void NotifyCameraUpdated(Camera* camera, u32 updateFlag) override;
-			void NotifyCameraRemoved(Camera* camera) override;
-			void NotifyLightAdded(Light* light) override;
-			void NotifyLightUpdated(Light* light) override;
-			void NotifyLightRemoved(Light* light) override;
-			void NotifyRenderableAdded(Renderable* renderable) override;
-			void NotifyRenderableUpdated(Renderable* renderable) override;
-			void NotifyRenderableRemoved(Renderable* renderable) override;
-			void NotifyReflectionProbeAdded(ReflectionProbe* probe) override;
-			void NotifyReflectionProbeUpdated(ReflectionProbe* probe, bool texture) override;
-			void NotifyReflectionProbeRemoved(ReflectionProbe* probe) override;
-			void NotifyLightProbeVolumeAdded(LightProbeVolume* volume) override;
-			void NotifyLightProbeVolumeUpdated(LightProbeVolume* volume) override;
-			void NotifyLightProbeVolumeRemoved(LightProbeVolume* volume) override;
-			void NotifySkyboxAdded(Skybox* skybox) override;
-			void NotifySkyboxRemoved(Skybox* skybox) override;
-			void NotifyParticleSystemAdded(ParticleSystem* particleSystem) override;
-			void NotifyParticleSystemUpdated(ParticleSystem* particleSystem, bool tfrmOnly) override;
-			void NotifyParticleSystemRemoved(ParticleSystem* particleSystem) override;
-			void NotifyDecalAdded(Decal* decal) override;
-			void NotifyDecalUpdated(Decal* decal) override;
-			void NotifyDecalRemoved(Decal* decal) override;
-
 			/**
 			 * Updates the render options on the render thread.
 			 *

@@ -3,6 +3,7 @@
 #include "Renderer/BsRenderable.h"
 
 #include "BsCoreApplication.h"
+#include "BsRendererScene.h"
 #include "Private/RTTI/BsRenderableRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 #include "Scene/BsSceneObject.h"
@@ -453,12 +454,16 @@ Renderable::Renderable()
 Renderable::~Renderable()
 {
 	if(mActive)
-		GetRenderer()->NotifyRenderableRemoved(this);
+	{
+		const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+		rendererScene->UnregisterRenderable(this);
+	}
 }
 
 void Renderable::Initialize()
 {
-	GetRenderer()->NotifyRenderableAdded(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterRenderable(this);
 
 	RenderProxy::Initialize();
 }
@@ -657,6 +662,8 @@ void Renderable::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& al
 	mTfrmMatrix = mTransform.GetMatrix();
 	mTfrmMatrixNoScale = Matrix4::TRS(mTransform.GetPosition(), mTransform.GetRotation(), Vector3::kOne);
 
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+
 	const u32 flags = syncPacket->Flags;
 	const u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active | (u32)ActorDirtyFlag::Dependency;
 	if((flags & updateEverythingFlag) != 0)
@@ -678,25 +685,25 @@ void Renderable::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& al
 		if(oldIsActive != mActive)
 		{
 			if(mActive)
-				GetRenderer()->NotifyRenderableAdded(this);
+				rendererScene->RegisterRenderable(this);
 			else
-				GetRenderer()->NotifyRenderableRemoved(this);
+				rendererScene->UnregisterRenderable(this);
 		}
 		else
 		{
-			GetRenderer()->NotifyRenderableRemoved(this);
-			GetRenderer()->NotifyRenderableAdded(this);
+			rendererScene->UnregisterRenderable(this);
+			rendererScene->RegisterRenderable(this);
 		}
 	}
 	else if((flags & (u32)ActorDirtyFlag::Mobility) != 0)
 	{
-		GetRenderer()->NotifyRenderableRemoved(this);
-		GetRenderer()->NotifyRenderableAdded(this);
+		rendererScene->UnregisterRenderable(this);
+		rendererScene->RegisterRenderable(this);
 	}
 	else if((flags & (u32)ActorDirtyFlag::Transform) != 0)
 	{
 		if(mActive)
-			GetRenderer()->NotifyRenderableUpdated(this);
+			rendererScene->UpdateRenderable(this);
 	}
 }
 }}

@@ -1,0 +1,22 @@
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#include "Renderer/BsRendererScene.h"
+#include "BsRenderer.h"
+
+namespace b3d
+{
+	SPtr<RendererScene> RendererScene::Create()
+	{
+		RendererScene* rendererScene = new (B3DAllocate<RendererScene>()) RendererScene();
+		SPtr<RendererScene> rendererSceneShared = B3DMakeSharedFromExisting(rendererScene);
+		rendererSceneShared->SetShared(rendererSceneShared);
+		rendererSceneShared->Initialize();
+
+		return rendererSceneShared;
+	}
+
+	SPtr<render::RenderProxy> RendererScene::CreateRenderProxy() const
+	{
+		return render::GetRenderer()->CreateScene();
+	}
+}

@@ -3,6 +3,7 @@
 #include "Renderer/BsReflectionProbe.h"
 
 #include "BsCoreApplication.h"
+#include "BsRendererScene.h"
 #include "Private/RTTI/BsReflectionProbeRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 #include "Scene/BsSceneObject.h"
@@ -13,6 +14,7 @@
 #include "CoreObject/BsCoreObjectSync.h"
 #include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsGpuDevice.h"
+#include "Scene/BsSceneManager.h"
 
 using namespace b3d;
 
@@ -112,9 +114,10 @@ void ReflectionProbe::CaptureAndFilter()
 	SPtr<render::ReflectionProbe> probeRenderProxy = B3DGetRenderProxy(this);
 	SPtr<render::Texture> textureRenderProxy = B3DGetRenderProxy(mFilteredTexture);
 
+	const SPtr<render::RendererScene> rendererScene = B3DGetRenderProxy(mSceneInstance->GetRendererScene());
 	if(mCustomTexture == nullptr)
 	{
-		auto renderReflProbe = [textureRenderProxy, probeRenderProxy](render::GpuCommandBufferPool& commandBufferPool)
+		auto renderReflProbe = [textureRenderProxy, probeRenderProxy, rendererScene](render::GpuCommandBufferPool& commandBufferPool)
 		{
 			const SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("RenderAndFilterReflectionProbe"));
 			GetProfilerGPU().BeginSample(*commandBuffer, "RenderAndFilterReflectionProbe");
@@ -129,7 +132,7 @@ void ReflectionProbe::CaptureAndFilter()
 			render::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, textureRenderProxy, nullptr);
 
 			probeRenderProxy->mFilteredTexture = textureRenderProxy;
-			render::GetRenderer()->NotifyReflectionProbeUpdated(probeRenderProxy.get(), true);
+			rendererScene->UpdateReflectionProbe(probeRenderProxy.get(), true);
 			GetProfilerGPU().EndSample(*commandBuffer, "RenderAndFilterReflectionProbe");
 
 			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
@@ -143,7 +146,7 @@ void ReflectionProbe::CaptureAndFilter()
 	else
 	{
 		SPtr<render::Texture> customTextureRenderProxy = B3DGetRenderProxy(mCustomTexture);
-		auto filterReflProbe = [customTextureRenderProxy, textureRenderProxy, probeRenderProxy](render::GpuCommandBufferPool& commandBufferPool)
+		auto filterReflProbe = [customTextureRenderProxy, textureRenderProxy, probeRenderProxy, rendererScene](render::GpuCommandBufferPool& commandBufferPool)
 		{
 			const SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("FilterReflectionProbe"));
 			GetProfilerGPU().BeginSample(*commandBuffer, "FilterReflectionProbe");
@@ -152,7 +155,7 @@ void ReflectionProbe::CaptureAndFilter()
 			render::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, textureRenderProxy, nullptr);
 
 			probeRenderProxy->mFilteredTexture = textureRenderProxy;
-			render::GetRenderer()->NotifyReflectionProbeUpdated(probeRenderProxy.get(), true);
+			rendererScene->UpdateReflectionProbe(probeRenderProxy.get(), true);
 			GetProfilerGPU().EndSample(*commandBuffer, "FilterReflectionProbe");
 
 			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
@@ -245,13 +248,16 @@ ReflectionProbe::ReflectionProbe(ReflectionProbeType type, float radius, const V
 
 ReflectionProbe::~ReflectionProbe()
 {
-	GetRenderer()->NotifyReflectionProbeRemoved(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UnregisterReflectionProbe(this);
 }
 
 void ReflectionProbe::Initialize()
 {
 	UpdateBounds();
-	GetRenderer()->NotifyReflectionProbeAdded(this);
+
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterReflectionProbe(this);
 
 	RenderProxy::Initialize();
 }
@@ -269,22 +275,23 @@ void ReflectionProbe::SyncFromCoreObject(const CoreSyncData& data, FrameAllocato
 
 	UpdateBounds();
 
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
 	if(syncPacket->Flags == (u32)ActorDirtyFlag::Transform)
 	{
 		if(mActive)
-			GetRenderer()->NotifyReflectionProbeUpdated(this, false);
+			rendererScene->UpdateReflectionProbe(this, false);
 	}
 	else
 	{
 		if(oldIsActive != mActive)
 		{
 			if(mActive)
-				GetRenderer()->NotifyReflectionProbeAdded(this);
+				rendererScene->RegisterReflectionProbe(this);
 			else
 			{
 				ReflectionProbeType newType = mType;
 				mType = oldType;
-				GetRenderer()->NotifyReflectionProbeRemoved(this);
+				rendererScene->UnregisterReflectionProbe(this);
 				mType = newType;
 			}
 		}
@@ -292,10 +299,10 @@ void ReflectionProbe::SyncFromCoreObject(const CoreSyncData& data, FrameAllocato
 		{
 			ReflectionProbeType newType = mType;
 			mType = oldType;
-			GetRenderer()->NotifyReflectionProbeRemoved(this);
+			rendererScene->UnregisterReflectionProbe(this);
 			mType = newType;
 
-			GetRenderer()->NotifyReflectionProbeAdded(this);
+			rendererScene->RegisterReflectionProbe(this);
 		}
 	}
 }

@@ -163,121 +163,6 @@ void RenderBeast::DestroyOnRenderThread()
 	Renderer::DestroyOnRenderThread();
 }
 
-void RenderBeast::NotifyRenderableAdded(Renderable* renderable)
-{
-	mScene->RegisterRenderable(renderable);
-}
-
-void RenderBeast::NotifyRenderableRemoved(Renderable* renderable)
-{
-	mScene->UnregisterRenderable(renderable);
-}
-
-void RenderBeast::NotifyRenderableUpdated(Renderable* renderable)
-{
-	mScene->UpdateRenderable(renderable);
-}
-
-void RenderBeast::NotifyLightAdded(Light* light)
-{
-	mScene->RegisterLight(light);
-}
-
-void RenderBeast::NotifyLightUpdated(Light* light)
-{
-	mScene->UpdateLight(light);
-}
-
-void RenderBeast::NotifyLightRemoved(Light* light)
-{
-	mScene->UnregisterLight(light);
-}
-
-void RenderBeast::NotifyCameraAdded(Camera* camera)
-{
-	mScene->RegisterCamera(camera);
-}
-
-void RenderBeast::NotifyCameraUpdated(Camera* camera, u32 updateFlag)
-{
-	mScene->UpdateCamera(camera, updateFlag);
-}
-
-void RenderBeast::NotifyCameraRemoved(Camera* camera)
-{
-	mScene->UnregisterCamera(camera);
-}
-
-void RenderBeast::NotifyReflectionProbeAdded(ReflectionProbe* probe)
-{
-	mScene->RegisterReflectionProbe(probe);
-}
-
-void RenderBeast::NotifyReflectionProbeUpdated(ReflectionProbe* probe, bool texture)
-{
-	mScene->UpdateReflectionProbe(probe, texture);
-}
-
-void RenderBeast::NotifyReflectionProbeRemoved(ReflectionProbe* probe)
-{
-	mScene->UnregisterReflectionProbe(probe);
-}
-
-void RenderBeast::NotifyLightProbeVolumeAdded(LightProbeVolume* volume)
-{
-	mScene->RegisterLightProbeVolume(volume);
-}
-
-void RenderBeast::NotifyLightProbeVolumeUpdated(LightProbeVolume* volume)
-{
-	mScene->UpdateLightProbeVolume(volume);
-}
-
-void RenderBeast::NotifyLightProbeVolumeRemoved(LightProbeVolume* volume)
-{
-	mScene->UnregisterLightProbeVolume(volume);
-}
-
-void RenderBeast::NotifySkyboxAdded(Skybox* skybox)
-{
-	mScene->RegisterSkybox(skybox);
-}
-
-void RenderBeast::NotifySkyboxRemoved(Skybox* skybox)
-{
-	mScene->UnregisterSkybox(skybox);
-}
-
-void RenderBeast::NotifyParticleSystemAdded(ParticleSystem* particleSystem)
-{
-	mScene->RegisterParticleSystem(particleSystem);
-}
-
-void RenderBeast::NotifyParticleSystemUpdated(ParticleSystem* particleSystem, bool tfrmOnly)
-{
-	mScene->UpdateParticleSystem(particleSystem, tfrmOnly);
-}
-
-void RenderBeast::NotifyParticleSystemRemoved(ParticleSystem* particleSystem)
-{
-	mScene->UnregisterParticleSystem(particleSystem);
-}
-
-void RenderBeast::NotifyDecalAdded(Decal* decal)
-{
-	mScene->RegisterDecal(decal);
-}
-
-void RenderBeast::NotifyDecalRemoved(Decal* decal)
-{
-	mScene->UnregisterDecal(decal);
-}
-
-void RenderBeast::NotifyDecalUpdated(Decal* decal)
-{
-	mScene->UpdateDecal(decal);
-}
-
 void RenderBeast::SetOptions(const SPtr<RendererOptions>& options)
 {
 	mOptions = std::static_pointer_cast<RenderBeastOptions>(options);
@@ -857,6 +742,15 @@ void RenderBeast::CaptureSceneCubeMap(GpuCommandBuffer& commandBuffer, const SPt
 
 	// Make sure the render texture is available for reads
 	commandBuffer.SetRenderTarget(nullptr);
+}
+
+SPtr<RendererScene> RenderBeast::CreateScene()
+{
+	SPtr<RenderBeastScene> scene = B3DMakeShared<RenderBeastScene>(*mDevice, mRenderThreadOptions);
+	scene->SetShared(scene);
+	scene->Initialize();
+
+	return scene;
 }
 
 SPtr<RenderBeast> GetRenderBeast()

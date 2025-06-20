@@ -3,6 +3,7 @@
 #include "Renderer/BsLightProbeVolume.h"
 
 #include "BsCoreApplication.h"
+#include "BsRendererScene.h"
 #include "Private/RTTI/BsLightProbeVolumeRTTI.h"
 #include "Renderer/BsRenderer.h"
 #include "Renderer/BsLight.h"
@@ -13,6 +14,7 @@
 #include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsGpuDevice.h"
 #include "RenderAPI/BsGpuPipelineState.h"
+#include "Scene/BsSceneManager.h"
 
 using namespace b3d;
 
@@ -379,7 +381,8 @@ LightProbeVolume::LightProbeVolume(const UnorderedMap<u32, b3d::LightProbeVolume
 
 LightProbeVolume::~LightProbeVolume()
 {
-	GetRenderer()->NotifyLightProbeVolumeRemoved(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UnregisterLightProbeVolume(this);
 }
 
 void LightProbeVolume::Initialize()
@@ -419,7 +422,8 @@ void LightProbeVolume::Initialize()
 	mCoefficients->WriteData(*coeffData, 0, 0, true);
 	mInitCoefficients.clear();
 
-	GetRenderer()->NotifyLightProbeVolumeAdded(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterLightProbeVolume(this);
 	RenderProxy::Initialize();
 }
 
@@ -474,7 +478,8 @@ bool LightProbeVolume::RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProb
 			break;
 	}
 
-	GetRenderer()->NotifyLightProbeVolumeUpdated(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UpdateLightProbeVolume(this);
 
 	return mFirstDirtyProbe == (u32)mProbeInfos.size();
 }
@@ -582,10 +587,11 @@ void LightProbeVolume::SyncFromCoreObject(const CoreSyncData& data, FrameAllocat
 
 	if(oldIsActive != mActive)
 	{
+		const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
 		if(mActive)
-			GetRenderer()->NotifyLightProbeVolumeAdded(this);
+			rendererScene->RegisterLightProbeVolume(this);
 		else
-			GetRenderer()->NotifyLightProbeVolumeRemoved(this);
+			rendererScene->UnregisterLightProbeVolume(this);
 	}
 }
 

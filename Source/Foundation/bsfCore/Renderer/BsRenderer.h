@@ -25,6 +25,7 @@ namespace b3d
 
 	namespace render
 	{
+		class RendererScene;
 		class GpuCommandBufferPool;
 		class RendererTask;
 		class LightProbeVolume;
@@ -161,170 +162,6 @@ namespace b3d
 			virtual void RenderAll(PerFrameData perFrameData) = 0;
 
 			/**
-			 * Called whenever a new camera is created.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyCameraAdded(Camera* camera) {}
-
-			/**
-			 * Called whenever a camera's position or rotation is updated.
-			 *
-			 * @param[in]	camera		Camera that was updated.
-			 * @param[in]	updateFlag	Optional flag that allows the camera to signal to the renderer exactly what was updated.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyCameraUpdated(Camera* camera, u32 updateFlag) {}
-
-			/**
-			 * Called whenever a camera is destroyed.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyCameraRemoved(Camera* camera) {}
-
-			/**
-			 * Called whenever a new renderable is created.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyRenderableAdded(Renderable* renderable) {}
-
-			/**
-			 * Called whenever a renderable is updated.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyRenderableUpdated(Renderable* renderable) {}
-
-			/**
-			 * Called whenever a renderable is destroyed.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyRenderableRemoved(Renderable* renderable) {}
-
-			/**
-			 * Called whenever a new light is created.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyLightAdded(Light* light) {}
-
-			/**
-			 * Called whenever a light is updated.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyLightUpdated(Light* light) {}
-
-			/**
-			 * Called whenever a light is destroyed.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyLightRemoved(Light* light) {}
-
-			/**
-			 * Called whenever a new reflection probe is created.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyReflectionProbeAdded(ReflectionProbe* probe) {}
-
-			/**
-			 * Called whenever a reflection probe is updated.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyReflectionProbeUpdated(ReflectionProbe* probe, bool texture) {}
-
-			/**
-			 * Called whenever a reflection probe is destroyed.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyReflectionProbeRemoved(ReflectionProbe* probe) {}
-
-			/**
-			 * Called whenever a new light probe volume is created.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyLightProbeVolumeAdded(LightProbeVolume* volume) {}
-
-			/**
-			 * Called whenever a light probe volume is updated.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyLightProbeVolumeUpdated(LightProbeVolume* volume) {}
-
-			/**
-			 * Called whenever a light probe volume is destroyed.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyLightProbeVolumeRemoved(LightProbeVolume* volume) {}
-
-			/**
-			 * Called whenever a skybox is created.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifySkyboxAdded(Skybox* skybox) {}
-
-			/**
-			 * Called whenever a skybox is destroyed.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifySkyboxRemoved(Skybox* skybox) {}
-
-			/**
-			 * Called whenever a new particle system is created.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyParticleSystemAdded(ParticleSystem* particleSystem) {}
-
-			/**
-			 * Called whenever a particle system is updated.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyParticleSystemUpdated(ParticleSystem* particleSystem, bool tfrmOnly) {}
-
-			/**
-			 * Called whenever a particle system is destroyed.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyParticleSystemRemoved(ParticleSystem* particleSystem) {}
-
-			/**
-			 * Called whenever a new decal is created.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyDecalAdded(Decal* decal) {}
-
-			/**
-			 * Called whenever a decal is updated.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyDecalUpdated(Decal* decal) {}
-
-			/**
-			 * Called whenever a decal is destroyed.
-			 *
-			 * @note	Render thread.
-			 */
-			virtual void NotifyDecalRemoved(Decal* decal) {}
-
-			/**
 			 * Captures the scene at the specified location into a cubemap.
 			 *
 			 * @param	commandBuffer	Command buffer on which to encode the capture.
@@ -335,6 +172,9 @@ namespace b3d
 			 * @note	Render thread.
 			 */
 			virtual void CaptureSceneCubeMap(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) = 0;
+
+			/** Creates a new renderer scene. */
+			virtual SPtr<RendererScene> CreateScene() = 0;
 
 			/**
 			 * Creates a new empty renderer mesh data.

@@ -6,6 +6,7 @@
 #include "BsRendererLight.h"
 #include "BsRendererView.h"
 #include "BsRendererParticles.h"
+#include "Renderer/BsRendererScene.h"
 #include "Shading/BsLightProbes.h"
 #include "Utility/BsSamplerOverrides.h"
 
@@ -72,89 +73,51 @@ namespace b3d
 		};
 
 		/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
-		class RenderBeastScene
+		class RenderBeastScene : public RendererScene
 		{
 		public:
 			RenderBeastScene(GpuDevice& gpuDevice, const SPtr<RenderBeastOptions>& options);
 			~RenderBeastScene();
 
-			/** Registers a new camera in the scene. */
-			void RegisterCamera(Camera* camera);
+			void RegisterCamera(Camera* camera) override;
+			void UpdateCamera(Camera* camera, u32 updateFlag) override;
+			void UnregisterCamera(Camera* camera) override;
 
-			/** Updates information about a previously registered camera. */
-			void UpdateCamera(Camera* camera, u32 updateFlag);
+			void RegisterLight(Light* light) override;
+			void UpdateLight(Light* light) override;
+			void UnregisterLight(Light* light) override;
 
-			/** Removes a camera from the scene. */
-			void UnregisterCamera(Camera* camera);
+			void RegisterRenderable(Renderable* renderable) override;
+			void UpdateRenderable(Renderable* renderable) override;
+			void UnregisterRenderable(Renderable* renderable) override;
 
-			/** Registers a new light in the scene. */
-			void RegisterLight(Light* light);
+			void RegisterReflectionProbe(ReflectionProbe* probe) override;
+			void UpdateReflectionProbe(ReflectionProbe* probe, bool texture) override;
+			void UnregisterReflectionProbe(ReflectionProbe* probe) override;
 
-			/** Updates information about a previously registered light. */
-			void UpdateLight(Light* light);
+			void RegisterLightProbeVolume(LightProbeVolume* volume) override;
+			void UpdateLightProbeVolume(LightProbeVolume* volume) override;
+			void UnregisterLightProbeVolume(LightProbeVolume* volume) override;
 
-			/** Removes a light from the scene. */
-			void UnregisterLight(Light* light);
+			void RegisterSkybox(Skybox* skybox) override;
+			void UnregisterSkybox(Skybox* skybox) override;
 
-			/** Registers a new renderable object in the scene. */
-			void RegisterRenderable(Renderable* renderable);
+			void RegisterParticleSystem(ParticleSystem* particleSystem) override;
+			void UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly) override;
+			void UnregisterParticleSystem(ParticleSystem* particleSystem) override;
 
-			/** Updates information about a previously registered renderable object. */
-			void UpdateRenderable(Renderable* renderable);
-
-			/** Removes a renderable object from the scene. */
-			void UnregisterRenderable(Renderable* renderable);
-
-			/** Registers a new reflection probe in the scene. */
-			void RegisterReflectionProbe(ReflectionProbe* probe);
-
-			/** Updates information about a previously registered reflection probe. */
-			void UpdateReflectionProbe(ReflectionProbe* probe, bool texture);
-
-			/** Removes a reflection probe from the scene. */
-			void UnregisterReflectionProbe(ReflectionProbe* probe);
+			void RegisterDecal(Decal* decal) override;
+			void UpdateDecal(Decal* decal) override;
+			void UnregisterDecal(Decal* decal) override;
 
 			/** Updates the index at which the reflection probe's texture is stored at, in the global array. */
 			void SetReflectionProbeArrayIndex(u32 probeIdx, u32 arrayIdx, bool markAsClean);
-
-			/** Registers a new light probe volume in the scene. */
-			void RegisterLightProbeVolume(LightProbeVolume* volume);
-
-			/** Updates information about a previously registered light probe volume. */
-			void UpdateLightProbeVolume(LightProbeVolume* volume);
-
-			/** Removes a light probe volume from the scene. */
-			void UnregisterLightProbeVolume(LightProbeVolume* volume);
 
 			/**
 			 * Rebuilds any light probe related information. Should be called once immediately before rendering. If no change
 			 * is detected since the last call, the call does nothing.
 			 */
 			void UpdateLightProbes(GpuCommandBuffer& commandBuffer);
-
-			/** Registers a new sky texture in the scene. */
-			void RegisterSkybox(Skybox* skybox);
-
-			/** Removes a skybox from the scene. */
-			void UnregisterSkybox(Skybox* skybox);
-
-			/** Registers a new particle system in the scene. */
-			void RegisterParticleSystem(ParticleSystem* particleSystem);
-
-			/** Updates information about a previously registered particle system. */
-			void UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly);
-
-			/** Removes a particle system from the scene. */
-			void UnregisterParticleSystem(ParticleSystem* particleSystem);
-
-			/** Registers a new decal object in the scene. */
-			void RegisterDecal(Decal* decal);
-
-			/** Updates information about a previously registered decal object. */
-			void UpdateDecal(Decal* decal);
-
-			/** Removes a decal object from the scene. */
-			void UnregisterDecal(Decal* decal);
 
 			/** Returns a container with all relevant scene objects. */
 			const SceneInfo& GetSceneInfo() const { return mInfo; }

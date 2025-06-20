@@ -14,6 +14,7 @@
 #include "Particles/BsVectorField.h"
 #include "Mesh/BsMesh.h"
 #include "CoreObject/BsCoreObjectSync.h"
+#include "Renderer/BsRendererScene.h"
 #include "Scene/BsSceneManager.h"
 
 using namespace b3d;
@@ -491,12 +492,16 @@ namespace b3d { namespace render
 ParticleSystem::~ParticleSystem()
 {
 	if(mActive)
-		GetRenderer()->NotifyParticleSystemRemoved(this);
+	{
+		const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+		rendererScene->UnregisterParticleSystem(this);
+	}
 }
 
 void ParticleSystem::Initialize()
 {
-	GetRenderer()->NotifyParticleSystemAdded(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterParticleSystem(this);
 }
 
 void ParticleSystem::SetLayer(u64 layer)
@@ -524,22 +529,23 @@ void ParticleSystem::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator
 
 	constexpr u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active | (u32)ActorDirtyFlag::Dependency;
 
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
 	if((syncPacket->Flags & updateEverythingFlag) != 0)
 	{
 		if(oldIsActive != mActive)
 		{
 			if(mActive)
-				GetRenderer()->NotifyParticleSystemAdded(this);
+				rendererScene->RegisterParticleSystem(this);
 			else
-				GetRenderer()->NotifyParticleSystemRemoved(this);
+				rendererScene->UnregisterParticleSystem(this);
 		}
 		else
 		{
 			if(mActive)
-				GetRenderer()->NotifyParticleSystemUpdated(this, false);
+				rendererScene->UpdateParticleSystem(this, false);
 		}
 	}
 	else if((syncPacket->Flags & ((u32)ActorDirtyFlag::Mobility | (u32)ActorDirtyFlag::Transform)) != 0)
-		GetRenderer()->NotifyParticleSystemUpdated(this, true);
+		rendererScene->UpdateParticleSystem(this, true);
 }
 }}

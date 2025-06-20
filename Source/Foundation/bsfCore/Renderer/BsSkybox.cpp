@@ -3,6 +3,7 @@
 #include "Renderer/BsSkybox.h"
 
 #include "BsCoreApplication.h"
+#include "BsRendererScene.h"
 #include "Private/RTTI/BsSkyboxRTTI.h"
 #include "Scene/BsSceneObject.h"
 #include "Image/BsTexture.h"
@@ -12,6 +13,7 @@
 #include "CoreObject/BsCoreObjectSync.h"
 #include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsGpuDevice.h"
+#include "Scene/BsSceneManager.h"
 
 using namespace b3d;
 
@@ -191,12 +193,14 @@ Skybox::Skybox(const SPtr<Texture>& radiance, const SPtr<Texture>& filteredRadia
 
 Skybox::~Skybox()
 {
-	GetRenderer()->NotifySkyboxRemoved(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UnregisterSkybox(this);
 }
 
 void Skybox::Initialize()
 {
-	GetRenderer()->NotifySkyboxAdded(this);
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterSkybox(this);
 
 	RenderProxy::Initialize();
 }
@@ -212,19 +216,20 @@ void Skybox::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& alloca
 
 	const SkyboxDirtyFlag dirtyFlags = (SkyboxDirtyFlag)syncPacket->Flags;
 
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
 	if(oldIsActive != mActive)
 	{
 		if(mActive)
-			GetRenderer()->NotifySkyboxAdded(this);
+			rendererScene->RegisterSkybox(this);
 		else
-			GetRenderer()->NotifySkyboxRemoved(this);
+			rendererScene->UnregisterSkybox(this);
 	}
 	else
 	{
 		if(dirtyFlags != SkyboxDirtyFlag::Texture)
 		{
-			GetRenderer()->NotifySkyboxRemoved(this);
-			GetRenderer()->NotifySkyboxAdded(this);
+			rendererScene->UnregisterSkybox(this);
+			rendererScene->RegisterSkybox(this);
 		}
 	}
 }
