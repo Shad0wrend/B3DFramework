@@ -60,6 +60,7 @@ void Application::OnStartUp()
 	BuiltinResources::StartUp();
 	RendererMaterialManager::StartUp();
 	RendererManager::Instance().Initialize(GetPrimaryGpuDevice());
+	SceneManager::StartUp(); // Must be initialized after the renderer
 	SpriteManager::StartUp();
 	GUIManager::StartUp();
 	ShortcutManager::StartUp();
@@ -79,6 +80,7 @@ void Application::OnShutDown()
 	// Need to clear all objects before I unload any plugins, as they
 	// could have allocated parts or all of those objects.
 	SceneManager::Instance().ClearMainScene(true);
+	SceneManager::ShutDown();
 
 	// Resources too (Prefabs especially, since they hold the same data as a scene)
 	Resources::Instance().UnloadAll();

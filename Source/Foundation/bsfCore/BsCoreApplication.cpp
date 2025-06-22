@@ -93,7 +93,6 @@ CoreApplication::~CoreApplication()
 	MeshManager::ShutDown();
 	ProfilerGPU::ShutDown();
 
-	SceneManager::ShutDown();
 	PrefabManager::ShutDown();
 
 	Input::ShutDown();
@@ -205,7 +204,6 @@ void CoreApplication::OnStartUp()
 	// Must be initialized before the scene manager, as game scene creation triggers physics scene creation
 	PhysicsManager::StartUp(mStartUpDesc.Physics, mStartUpDesc.PhysicsCooking);
 	PrefabManager::StartUp();
-	SceneManager::StartUp();
 	RendererManager::Instance().SetActive(mStartUpDesc.Renderer);
 	StartUpRenderer();
 
@@ -400,11 +398,6 @@ void CoreApplication::SetFpsLimit(u32 limit)
 void CoreApplication::FrameRenderingFinishedCallback()
 {
 	mFrameRenderingFinishedSignal.Signal();
-}
-
-void CoreApplication::StartUpRenderer()
-{
-	RendererManager::Instance().Initialize(GetPrimaryGpuDevice());
 }
 
 void CoreApplication::BeginRenderThreadProfiling()

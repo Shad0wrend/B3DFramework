@@ -144,7 +144,7 @@ void RenderBeast::DestroyOnRenderThread()
 
 	while(!mScenes.empty())
 	{
-		SPtr<RenderBeastScene> scene = mScenes.back().lock();
+		RenderBeastScene* const scene = mScenes.back();
 		scene->Destroy();
 	}
 
@@ -165,16 +165,16 @@ void RenderBeast::DestroyOnRenderThread()
 	Renderer::DestroyOnRenderThread();
 }
 
-void RenderBeast::NotifySceneCreated(const WeakSPtr<RenderBeastScene>& scene)
+void RenderBeast::NotifySceneCreated(const SPtr<RenderBeastScene>& scene)
 {
-	mScenes.push_back(scene);
+	mScenes.push_back(scene.get());
 }
 
 void RenderBeast::NotifySceneDestroyed(const RenderBeastScene* scene)
 {
-	auto found = std::find_if(mScenes.begin(), mScenes.end(), [scene](const WeakSPtr<RenderBeastScene>& otherScene)
+	auto found = std::find_if(mScenes.begin(), mScenes.end(), [scene](const RenderBeastScene* otherScene)
 	{
-		return otherScene.lock().get() == scene;
+		return otherScene == scene;
 	});
 	
 	if(B3D_ENSURE(found != mScenes.end()))
@@ -201,19 +201,13 @@ void RenderBeast::SyncOptions(const RenderBeastOptions& options)
 	if(filteringChanged)
 	{
 		for(const auto& entry : mScenes)
-		{
-			const SPtr<RenderBeastScene>& scene = entry.lock();
-			scene->RefreshSamplerOverrides(true);
-		}
+			entry->RefreshSamplerOverrides(true);
 	}
 
 	*mRenderThreadOptions = options;
 
 	for(const auto& entry : mScenes)
-	{
-		const SPtr<RenderBeastScene>& scene = entry.lock();
-		scene->SetOptions(mRenderThreadOptions);
-	}
+		entry->SetOptions(mRenderThreadOptions);
 
 	ShadowRendering& shadowRenderer = mMainViewGroup->GetShadowRenderer();
 	shadowRenderer.SetShadowMapSize(mRenderThreadOptions->ShadowMapSize);
@@ -250,10 +244,7 @@ void RenderBeast::RenderAllScenes(FrameTimings timings, PerFrameData perFrameDat
 
 	FrameInfo frameInfo(timings, perFrameData);
 	for(auto& entry : mScenes)
-	{
-		const SPtr<RenderBeastScene>& scene = entry.lock();
-		RenderScene(*scene, frameInfo);
-	}
+		RenderScene(*entry, frameInfo);
 
 	mDevice->EndFrame();
 
@@ -348,6 +339,8 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 			anythingDrawnForScene = true;
 		}
 	}
+
+	mDevice->SubmitCommandBuffer(commandBuffer);
 
 	return anythingDrawnForScene;
 }
@@ -699,9 +692,8 @@ void RenderBeast::CaptureSceneCubeMap(RendererScene& scene, GpuCommandBuffer& co
 
 SPtr<RendererScene> RenderBeast::CreateScene()
 {
-	SPtr<RenderBeastScene> scene = B3DMakeShared<RenderBeastScene>(*mDevice, mRenderThreadOptions);
+	SPtr<RenderBeastScene> scene = B3DMakeShared<RenderBeastScene>(mOptions);
 	scene->SetShared(scene);
-	scene->Initialize();
 
 	return scene;
 }

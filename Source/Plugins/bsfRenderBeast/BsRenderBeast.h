@@ -61,6 +61,7 @@ namespace b3d
 			void Destroy() override;
 			void CaptureSceneCubeMap(RendererScene& scene, GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) override;
 			void RequestFrameCapture() override { mIsFrameCaptureRequested = true; }
+			SPtr<GpuDevice> GetGpuDevice() const { return mDevice; }
 			SPtr<RendererScene> CreateScene() override;
 
 		private:
@@ -118,7 +119,7 @@ namespace b3d
 			void DestroyOnRenderThread() override;
 
 			/** Called right after a renderer scene has been created. */
-			void NotifySceneCreated(const WeakSPtr<RenderBeastScene>& scene);
+			void NotifySceneCreated(const SPtr<RenderBeastScene>& scene);
 
 			/** Called just before a renderer scene is destroyed. */
 			void NotifySceneDestroyed(const RenderBeastScene* scene);
@@ -128,7 +129,7 @@ namespace b3d
 			bool mIsFrameCaptureRequested = false;
 
 			// Scene data
-			Vector<WeakSPtr<RenderBeastScene>> mScenes;
+			Vector<RenderBeastScene*> mScenes;
 
 			SPtr<RenderBeastOptions> mRenderThreadOptions;
 

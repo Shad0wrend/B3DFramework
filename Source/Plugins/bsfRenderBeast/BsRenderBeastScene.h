@@ -76,7 +76,7 @@ namespace b3d
 		class RenderBeastScene : public RendererScene
 		{
 		public:
-			RenderBeastScene(GpuDevice& gpuDevice, const SPtr<RenderBeastOptions>& options);
+			RenderBeastScene(const SPtr<RenderBeastOptions>& options);
 
 			void RegisterCamera(Camera* camera) override;
 			void UpdateCamera(Camera* camera, u32 updateFlag) override;
@@ -202,7 +202,7 @@ namespace b3d
 			/** Frees sampler state overrides previously allocated with allocSamplerStateOverrides(). */
 			void FreeSamplerStateOverrides(RenderElement& elem);
 
-			GpuDevice& mGpuDevice;
+			SPtr<GpuDevice> mGpuDevice;
 			SceneInfo mInfo;
 			SPtr<GpuBuffer> mPerFrameParamBuffer;
 			UnorderedMap<SamplerOverrideKey, MaterialSamplerOverrides*> mSamplerOverrides;

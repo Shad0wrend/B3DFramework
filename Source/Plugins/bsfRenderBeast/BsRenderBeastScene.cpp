@@ -162,8 +162,8 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 	}
 }
 
-RenderBeastScene::RenderBeastScene(GpuDevice& gpuDevice, const SPtr<RenderBeastOptions>& options)
-	: mGpuDevice(gpuDevice), mOptions(options)
+RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
+	: mOptions(options)
 {
 	mPerFrameParamBuffer = gPerFrameParamDef.CreateBuffer();
 }
@@ -628,7 +628,7 @@ void RenderBeastScene::UpdateReflectionProbes(GpuCommandBuffer& commandBuffer)
 			cubeMapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubeMapDesc.Width, cubeMapDesc.Height, 1, cubeMapDesc.Format);
 			cubeMapDesc.ArraySliceCount = std::min(kMaxReflectionCubemaps, probeCount + 4); // Keep a few empty entries
 
-			sceneInfo.ReflProbeCubemapsTex = mGpuDevice.CreateTexture(cubeMapDesc);
+			sceneInfo.ReflProbeCubemapsTex = mGpuDevice->CreateTexture(cubeMapDesc);
 
 			forceArrayUpdate = true;
 		}
@@ -1168,6 +1168,7 @@ void RenderBeastScene::Initialize()
 {
 	GetRenderBeast()->NotifySceneCreated(std::static_pointer_cast<RenderBeastScene>(GetShared()));
 
+	mGpuDevice = GetRenderBeast()->GetGpuDevice();
 	RendererScene::Initialize();
 }
 
@@ -1353,9 +1354,9 @@ void RenderBeastScene::RefreshSamplerOverrides(bool force)
 			if(hash != override.OriginalStateHash || force)
 			{
 				if(samplerState != nullptr)
-					override.State = SamplerOverrideUtility::GenerateSamplerOverride(mGpuDevice, samplerState, mOptions);
+					override.State = SamplerOverrideUtility::GenerateSamplerOverride(*mGpuDevice, samplerState, mOptions);
 				else
-					override.State = SamplerOverrideUtility::GenerateSamplerOverride(mGpuDevice, mGpuDevice.FindOrCreateSamplerState(SamplerStateCreateInformation()), mOptions);
+					override.State = SamplerOverrideUtility::GenerateSamplerOverride(*mGpuDevice, mGpuDevice->FindOrCreateSamplerState(SamplerStateCreateInformation()), mOptions);
 
 				override.OriginalStateHash = B3DHash(override.State->GetInformation());
 				materialOverrides->IsDirty = true;
@@ -1521,7 +1522,7 @@ MaterialSamplerOverrides* RenderBeastScene::AllocSamplerStateOverrides(RenderEle
 	else
 	{
 		SPtr<Shader> shader = elem.Material->GetShader();
-		MaterialSamplerOverrides* samplerOverrides = SamplerOverrideUtility::GenerateSamplerOverrides(mGpuDevice, shader, elem.Material->GetInternalParamsInternal(), elem.Params, mOptions);
+		MaterialSamplerOverrides* samplerOverrides = SamplerOverrideUtility::GenerateSamplerOverrides(*mGpuDevice, shader, elem.Material->GetInternalParamsInternal(), elem.Params, mOptions);
 
 		mSamplerOverrides[samplerKey] = samplerOverrides;
 

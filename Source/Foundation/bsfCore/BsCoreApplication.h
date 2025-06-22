@@ -157,7 +157,7 @@ namespace b3d
 		virtual void FixedUpdate();
 
 		/**	Initializes the renderer specified during construction. Called during initialization. */
-		virtual void StartUpRenderer();
+		virtual void StartUpRenderer() { }
 
 		/**	Returns a handler that is used for resolving shader include file paths. */
 		virtual SPtr<IShaderIncludeHandler> GetShaderIncludeHandler() const;
