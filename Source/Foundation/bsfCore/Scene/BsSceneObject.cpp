@@ -33,14 +33,7 @@ SceneObject::~SceneObject()
 HSceneObject SceneObject::Create(const String& name, u32 flags)
 {
 	const SPtr<SceneInstance>& mainScene = SceneManager::Instance().GetMainScene();
-	const SPtr<GameObjectCollection>& sceneGameObjectCollection = mainScene->GetGameObjectCollection();
-
-	HSceneObject newObject = CreateInternal(sceneGameObjectCollection, name, flags);
-
-	GetSceneManager().AddToMainScene(newObject);
-	newObject->Initialize();
-
-	return newObject;
+	return mainScene->CreateSceneObject(name, flags);
 }
 
 HSceneObject SceneObject::CreateInternal(const SPtr<GameObjectCollection>& ownerCollection, const String& name, u32 flags)

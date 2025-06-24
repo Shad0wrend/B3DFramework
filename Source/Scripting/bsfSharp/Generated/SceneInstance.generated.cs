@@ -53,8 +53,8 @@ namespace b3d
 		}
 
 		/// <summary>
-		/// Physical representation of the scene, as assigned by the physics sub-system. Exact implementation depends on the 
-		/// physics plugin used.
+		/// Representation of the scene used by the physics sub-system. Contains all the objects that can be physically 
+		/// interacted with. Exact implementation depends on the physics plugin used.
 		/// </summary>
 		[NativeWrapper]
 		public PhysicsScene Physics
@@ -76,10 +76,26 @@ namespace b3d
 			}
 		}
 
-		/// <summary>Creates a new scene object in the scene instance.</summary>
-		public SceneObject CreateSceneObject(string name)
+		/// <summary>Returns the main camera component. See GetMainCamera().</summary>
+		[NativeWrapper]
+		public Camera MainCamera
 		{
-			return Internal_CreateSceneObject(mCachedPtr, name);
+			get { return Internal_GetMainCameraComponent(mCachedPtr); }
+		}
+
+		/// <summary>Checks are the components currently in the Running state.</summary>
+		[NativeWrapper]
+		public bool IsRunning
+		{
+			get { return Internal_IsRunning(mCachedPtr); }
+		}
+
+		/// <summary>Creates a new scene object in the scene instance.</summary>
+		/// <param name="name">Name of the scene object.</param>
+		/// <param name="flags">Optional flags that control object behavior. See SceneObjectFlags.</param>
+		public SceneObject CreateSceneObject(string name, int flags = 0)
+		{
+			return Internal_CreateSceneObject(mCachedPtr, name, flags);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -93,7 +109,11 @@ namespace b3d
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetAssociatedResourceId(IntPtr thisPtr, out UUID __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern SceneObject Internal_CreateSceneObject(IntPtr thisPtr, string name);
+		private static extern Camera Internal_GetMainCameraComponent(IntPtr thisPtr);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern SceneObject Internal_CreateSceneObject(IntPtr thisPtr, string name, int flags);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern bool Internal_IsRunning(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Create(SceneInstance managedInstance, string name);
 		[MethodImpl(MethodImplOptions.InternalCall)]

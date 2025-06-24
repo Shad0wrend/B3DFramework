@@ -46,7 +46,7 @@ void CRenderable::OnBeginPlay()
 	else
 		mInternal = Renderable::Create(scene);
 
-	GetSceneManager().BindActorInternal(mInternal, SceneObject());
+	scene->BindActor(mInternal, SceneObject());
 
 	mAnimation = SO()->GetComponent<CAnimation>();
 	if(mAnimation != nullptr)
@@ -106,7 +106,8 @@ void CRenderable::OnDestroyed()
 	if(mAnimation != nullptr)
 		mAnimation->UnregisterRenderableInternal();
 
-	GetSceneManager().UnbindActorInternal(mInternal);
+	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	scene->UnbindActor(mInternal);
 	mInternal->Destroy();
 }
 

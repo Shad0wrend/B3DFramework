@@ -242,7 +242,7 @@ void PrefabUpdateHelper::UpdatePrefab(const HPrefab& prefabToUpdate, const HScen
 	PrefabCache prefabCache;
 	prefabCache.AddToCache(prefabToUpdate);
 
-	const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& sceneInstances = GetSceneManager().GetAllSceneInstances();
+	const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& sceneInstances = GetSceneManager().GetAllScenes();
 	for(const auto& pair : sceneInstances)
 	{
 		SPtr<SceneInstance> scene = pair.second.lock();

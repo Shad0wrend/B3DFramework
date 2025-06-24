@@ -6917,6 +6917,10 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<method native="CreateSceneObject" script="CreateSceneObject" static="false">
 			<doc>Creates a new scene object in the scene instance.</doc>
 			<param name="name" type="string">
+				<doc>Name of the scene object.</doc>
+			</param>
+			<param name="flags" type="int">
+				<doc>Optional flags that control object behavior. See SceneObjectFlags.</doc>
 			</param>
 			<returns type="SceneObject">
 			</returns>
@@ -6943,10 +6947,16 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Checks is the scene currently active. IF inactive the scene properties aside from the name are undefined.</doc>
 		</property>
 		<property name="Physics" type="PhysicsScene" getter="GetPhysicsScene" setter="" static="false">
-			<doc>Physical representation of the scene, as assigned by the physics sub-system. Exact implementation depends on the physics plugin used.</doc>
+			<doc>Representation of the scene used by the physics sub-system. Contains all the objects that can be physically interacted with. Exact implementation depends on the physics plugin used.</doc>
 		</property>
 		<property name="AssociatedResourceId" type="UUID" getter="GetAssociatedResourceId" setter="" static="false">
 			<doc>Returns the ID of the resource that the scene instance is associated with (e.g. resource the scene was loaded from.).</doc>
+		</property>
+		<property name="MainCamera" type="Camera" getter="GetMainCameraComponent" setter="" static="false">
+			<doc>Returns the main camera component. See GetMainCamera().</doc>
+		</property>
+		<property name="IsRunning" type="bool" getter="IsRunning" setter="" static="false">
+			<doc>Checks are the components currently in the Running state.</doc>
 		</property>
 	</class>
 	<class native="ParticleOrbit" script="ParticleOrbit">
@@ -10683,7 +10693,7 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 			</param>
 		</method>
 		<property name="MainScene" type="SceneInstance" getter="GetMainScene" setter="" static="false">
-			<doc>Returns the object that represents the main scene.</doc>
+			<doc>Returns the object that represents the main scene. This is the scene that is always available, and the scene that will be running in a standalone game.</doc>
 		</property>
 		<event native="OnMainSceneLoaded" script="OnMainSceneLoaded" static="false">
 			<doc>Called when a new main scene has been loaded and is active.</doc>

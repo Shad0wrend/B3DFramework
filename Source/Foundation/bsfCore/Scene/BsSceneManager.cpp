@@ -17,6 +17,7 @@
 #include "Scene/BsPrefab.h"
 #include "Physics/BsPhysics.h"
 #include "Renderer/BsRendererScene.h"
+#include "Components/BsCCamera.h"
 
 using namespace b3d;
 
@@ -385,6 +386,32 @@ void SceneInstance::Update()
 	mGameObjectCollection->DestroyQueuedObjects();
 }
 
+void SceneInstance::BindActor(const SPtr<SceneActor>& actor, const HSceneObject& so)
+{
+	mBoundActors[actor.get()] = BoundActorData(actor, so);
+	actor->UpdateStateFromSceneObject(*so, true);
+}
+
+void SceneInstance::UnbindActor(const SPtr<SceneActor>& actor)
+{
+	mBoundActors.erase(actor.get());
+}
+
+HSceneObject SceneInstance::GetLinkedActorSceneObject(const SPtr<SceneActor>& actor) const
+{
+	auto iterFind = mBoundActors.find(actor.get());
+	if(iterFind != mBoundActors.end())
+		return iterFind->second.So;
+
+	return HSceneObject();
+}
+
+void SceneInstance::UpdateLinkedSceneActorTransforms()
+{
+	for(auto& entry : mBoundActors)
+		entry.second.Actor->UpdateStateFromSceneObject(*entry.second.So);
+}
+
 void SceneInstance::SetRoot(const HSceneObject& newRoot)
 {
 	if(newRoot == nullptr)
@@ -420,12 +447,106 @@ void SceneInstance::SetRoot(const HSceneObject& newRoot)
 
 	oldRoot->Destroy();
 	oldGameObjectCollection->DestroyQueuedObjects();
-
 }
 
-HSceneObject SceneInstance::CreateSceneObject(const String& name)
+void SceneInstance::RegisterCamera(const SPtr<Camera>& camera)
 {
-	HSceneObject newSceneObject = SceneObject::CreateInternal(mGameObjectCollection, name);
+	mCameras[camera.get()] = camera;
+}
+
+void SceneInstance::UnregisterCamera(const SPtr<Camera>& camera)
+{
+	mCameras.erase(camera.get());
+
+	auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const SPtr<Camera>& x)
+								 { return x == camera; });
+
+	if(iterFind != mMainCameras.end())
+		mMainCameras.erase(iterFind);
+}
+
+void SceneInstance::NotifyMainCameraStateChanged(const SPtr<Camera>& camera)
+{
+	auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const SPtr<Camera>& entry)
+								 { return entry == camera; });
+
+	SPtr<Viewport> viewport = camera->GetViewport();
+	if(camera->IsMain())
+	{
+		if(iterFind == mMainCameras.end())
+			mMainCameras.push_back(mCameras[camera.get()]);
+
+		viewport->SetTarget(mPrimaryRenderTarget);
+	}
+	else
+	{
+		if(iterFind != mMainCameras.end())
+			mMainCameras.erase(iterFind);
+
+		if(viewport->GetTarget() == mPrimaryRenderTarget)
+			viewport->SetTarget(nullptr);
+	}
+}
+
+SPtr<Camera> SceneInstance::GetMainCamera() const
+{
+	if(mMainCameras.size() > 0)
+		return mMainCameras[0];
+
+	return nullptr;
+}
+
+HCamera SceneInstance::GetMainCameraComponent() const
+{
+	SPtr<Camera> camera = GetMainCamera();
+	if(camera == nullptr)
+		return HCamera();
+
+	const HSceneObject sceneObject = GetLinkedActorSceneObject(camera);
+	if(!sceneObject.IsValid())
+		return HCamera();
+
+	return sceneObject->GetComponent<CCamera>();
+}
+
+void SceneInstance::SetMainCameraRenderTarget(const SPtr<RenderTarget>& renderTarget)
+{
+	if(mPrimaryRenderTarget == renderTarget)
+		return;
+
+	mMainRenderTargetResizedHandle.Disconnect();
+
+	if(renderTarget != nullptr)
+		mMainRenderTargetResizedHandle = renderTarget->OnResized.Connect([this]() { OnMainRenderTargetResized(); });
+
+	mPrimaryRenderTarget = renderTarget;
+
+	float aspect = 1.0f;
+	if(renderTarget != nullptr)
+	{
+		auto& rtProps = renderTarget->GetProperties();
+		aspect = rtProps.Width / (float)rtProps.Height;
+	}
+
+	for(auto& entry : mMainCameras)
+	{
+		entry->GetViewport()->SetTarget(renderTarget);
+		entry->SetAspectRatio(aspect);
+	}
+}
+
+void SceneInstance::OnMainRenderTargetResized()
+{
+	auto& rtProps = mPrimaryRenderTarget->GetProperties();
+	float aspect = rtProps.Width / (float)rtProps.Height;
+
+	for(auto& entry : mMainCameras)
+		entry->SetAspectRatio(aspect);
+}
+
+HSceneObject SceneInstance::CreateSceneObject(const String& name, u32 flags)
+{
+	HSceneObject newSceneObject = SceneObject::CreateInternal(mGameObjectCollection, name, flags);
 	newSceneObject->SetParent(mRoot, false);
 	newSceneObject->Initialize();
 
@@ -535,86 +656,13 @@ void SceneManager::LoadMainScene(const HScene& scene)
 	OnMainSceneLoaded(scene->GetId());
 }
 
-void SceneManager::BindActorInternal(const SPtr<SceneActor>& actor, const HSceneObject& so)
+void SceneManager::UpdateLinkedSceneActorTransforms()
 {
-	mBoundActors[actor.get()] = BoundActorData(actor, so);
-	actor->UpdateStateFromSceneObject(*so, true);
-}
-
-void SceneManager::UnbindActorInternal(const SPtr<SceneActor>& actor)
-{
-	mBoundActors.erase(actor.get());
-}
-
-HSceneObject SceneManager::GetActorSOInternal(const SPtr<SceneActor>& actor) const
-{
-	auto iterFind = mBoundActors.find(actor.get());
-	if(iterFind != mBoundActors.end())
-		return iterFind->second.So;
-
-	return HSceneObject();
-}
-
-void SceneManager::RegisterCameraInternal(const SPtr<Camera>& camera)
-{
-	mCameras[camera.get()] = camera;
-}
-
-void SceneManager::UnregisterCameraInternal(const SPtr<Camera>& camera)
-{
-	mCameras.erase(camera.get());
-
-	auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const SPtr<Camera>& x)
-								 { return x == camera; });
-
-	if(iterFind != mMainCameras.end())
-		mMainCameras.erase(iterFind);
-}
-
-void SceneManager::NotifyMainCameraStateChangedInternal(const SPtr<Camera>& camera)
-{
-	auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const SPtr<Camera>& entry)
-								 { return entry == camera; });
-
-	SPtr<Viewport> viewport = camera->GetViewport();
-	if(camera->IsMain())
+	for(auto& entry : mSceneInstances)
 	{
-		if(iterFind == mMainCameras.end())
-			mMainCameras.push_back(mCameras[camera.get()]);
-
-		viewport->SetTarget(mMainRT);
+		const SPtr<SceneInstance>& scene = entry.second.lock();
+		scene->UpdateLinkedSceneActorTransforms();
 	}
-	else
-	{
-		if(iterFind != mMainCameras.end())
-			mMainCameras.erase(iterFind);
-
-		if(viewport->GetTarget() == mMainRT)
-			viewport->SetTarget(nullptr);
-	}
-}
-
-void SceneManager::UpdateCoreObjectTransformsInternal()
-{
-	for(auto& entry : mBoundActors)
-		entry.second.Actor->UpdateStateFromSceneObject(*entry.second.So);
-}
-
-SPtr<Camera> SceneManager::GetMainCamera() const
-{
-	if(mMainCameras.size() > 0)
-		return mMainCameras[0];
-
-	return nullptr;
-}
-
-HSceneObject SceneManager::GetMainCameraSceneObject() const
-{
-	SPtr<Camera> camera = GetMainCamera();
-	if(camera == nullptr)
-		return HSceneObject();
-
-	return GetActorSOInternal(camera);
 }
 
 void SceneManager::SetComponentState(ComponentState state)
@@ -626,31 +674,15 @@ void SceneManager::SetComponentState(ComponentState state)
 	}
 }
 
-void SceneManager::SetMainRenderTarget(const SPtr<RenderTarget>& rt)
+void SceneManager::SetMainCameraRenderTarget(const SPtr<RenderTarget>& renderTarget)
 {
-	if(mMainRT == rt)
-		return;
-
-	mMainRTResizedConn.Disconnect();
-
-	if(rt != nullptr)
-		mMainRTResizedConn = rt->OnResized.Connect(std::bind(&SceneManager::OnMainRenderTargetResized, this));
-
-	mMainRT = rt;
-
-	float aspect = 1.0f;
-	if(rt != nullptr)
+	for(auto& entry : mSceneInstances)
 	{
-		auto& rtProps = rt->GetProperties();
-		aspect = rtProps.Width / (float)rtProps.Height;
-	}
-
-	for(auto& entry : mMainCameras)
-	{
-		entry->GetViewport()->SetTarget(rt);
-		entry->SetAspectRatio(aspect);
+		const SPtr<SceneInstance>& scene = entry.second.lock();
+		scene->SetMainCameraRenderTarget(renderTarget);
 	}
 }
+
 void SceneManager::NotifySceneInstanceCreated(const SPtr<SceneInstance>& sceneInstance)
 {
 	if(!B3D_ENSURE(sceneInstance != nullptr))
@@ -682,21 +714,6 @@ void SceneManager::FixedUpdate()
 		const SPtr<SceneInstance>& scene = entry.second.lock();
 		scene->Update();
 	}
-}
-
-void SceneManager::AddToMainScene(const HSceneObject& node)
-{
-	if(mMainScene->GetRoot())
-		node->SetParent(mMainScene->GetRoot());
-}
-
-void SceneManager::OnMainRenderTargetResized()
-{
-	auto& rtProps = mMainRT->GetProperties();
-	float aspect = rtProps.Width / (float)rtProps.Height;
-
-	for(auto& entry : mMainCameras)
-		entry->SetAspectRatio(aspect);
 }
 
 namespace b3d

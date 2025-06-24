@@ -87,7 +87,10 @@ const EvaluatedAnimationData* AnimationManager::Update(bool async)
 	// Build frustums for culling
 	mCullFrustums.clear();
 
-	auto& allCameras = GetSceneManager().GetAllCameras();
+	// TODO - AnimationManager should be renamed AnimationScene, and only be associated with a particular scene instance
+	const SPtr<SceneInstance>& mainScene = GetSceneManager().GetMainScene();
+
+	auto& allCameras = mainScene->GetAllCameras();
 	for(auto& entry : allCameras)
 	{
 		// Note: This should also check on-demand cameras as there's no point in updating them if they wont render this frame

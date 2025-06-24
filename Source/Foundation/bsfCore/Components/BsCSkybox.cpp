@@ -41,12 +41,13 @@ void CSkybox::OnBeginPlay()
 		mInternal = Skybox::Create(scene);
 	}
 
-	GetSceneManager().BindActorInternal(mInternal, SceneObject());
+	scene->BindActor(mInternal, SceneObject());
 }
 
 void CSkybox::OnDestroyed()
 {
-	GetSceneManager().UnbindActorInternal(mInternal);
+	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	scene->UnbindActor(mInternal);
 }
 
 RTTIType* CSkybox::GetRttiStatic()

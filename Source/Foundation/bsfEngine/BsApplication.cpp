@@ -69,7 +69,7 @@ void Application::OnStartUp()
 	Cursor::Instance().SetCursor(CursorType::Arrow);
 	Platform::SetIcon(BuiltinResources::Instance().GetFrameworkIcon());
 
-	SceneManager::Instance().SetMainRenderTarget(GetPrimaryWindow());
+	SceneManager::Instance().SetMainCameraRenderTarget(GetPrimaryWindow());
 	DebugDraw::StartUp();
 
 	StartUpScriptManager();
@@ -115,7 +115,8 @@ void Application::PostUpdate()
 
 void Application::ShowProfilerOverlay(ProfilerOverlayType type, const SPtr<Camera>& camera)
 {
-	const SPtr<Camera>& overlayCamera = camera ? camera : GetSceneManager().GetMainCamera();
+	const SPtr<SceneInstance>& mainScene = GetSceneManager().GetMainScene();
+	const SPtr<Camera>& overlayCamera = camera ? camera : mainScene->GetMainCamera();
 	if(!overlayCamera)
 		return;
 

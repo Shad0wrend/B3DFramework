@@ -9,6 +9,8 @@
 #include "Wrappers/BsScriptSceneObject.h"
 #include "BsScriptResourceWrapper.h"
 #include "BsScriptPhysicsScene.generated.h"
+#include "../../../Foundation/bsfCore/Components/BsCCamera.h"
+#include "BsScriptCCamera.generated.h"
 
 namespace b3d
 {
@@ -30,7 +32,9 @@ namespace b3d
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsActive", (void*)&ScriptSceneInstance::InternalIsActive);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPhysicsScene", (void*)&ScriptSceneInstance::InternalGetPhysicsScene);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAssociatedResourceId", (void*)&ScriptSceneInstance::InternalGetAssociatedResourceId);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMainCameraComponent", (void*)&ScriptSceneInstance::InternalGetMainCameraComponent);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateSceneObject", (void*)&ScriptSceneInstance::InternalCreateSceneObject);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsRunning", (void*)&ScriptSceneInstance::InternalIsRunning);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSceneInstance::InternalCreate);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSceneInstance::InternalCreate0);
 
@@ -119,7 +123,24 @@ namespace b3d
 		*__output = tmp__output;
 	}
 
-	MonoObject* ScriptSceneInstance::InternalCreateSceneObject(ScriptSceneInstance* self, MonoString* name)
+	MonoObject* ScriptSceneInstance::InternalGetMainCameraComponent(ScriptSceneInstance* self)
+	{
+		GameObjectHandle<CCamera> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
+		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->GetMainCameraComponent();
+
+		MonoObject* __output;
+		MonoObject* temp__output = nullptr;
+		if(tmp__output)
+			temp__output = ScriptComponent::GetOrCreateScriptObject(tmp__output);
+		__output = temp__output;
+
+		return __output;
+	}
+
+	MonoObject* ScriptSceneInstance::InternalCreateSceneObject(ScriptSceneInstance* self, MonoString* name, uint32_t flags)
 	{
 		GameObjectHandle<SceneObject> tmp__output;
 		if(!self->IsNativeObjectValid())
@@ -127,13 +148,27 @@ namespace b3d
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->CreateSceneObject(tmpname);
+		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->CreateSceneObject(tmpname, flags);
 
 		MonoObject* __output;
 		MonoObject* temp__output = nullptr;
 		if(tmp__output)
 		temp__output = ScriptSceneObject::GetOrCreateScriptObject(tmp__output);
 		__output = temp__output;
+
+		return __output;
+	}
+
+	bool ScriptSceneInstance::InternalIsRunning(ScriptSceneInstance* self)
+	{
+		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
+		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->IsRunning();
+
+		bool __output;
+		__output = tmp__output;
 
 		return __output;
 	}

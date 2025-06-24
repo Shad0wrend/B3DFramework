@@ -66,15 +66,17 @@ void CCamera::Initialize()
 
 void CCamera::OnBeginPlay()
 {
-	GetSceneManager().BindActorInternal(mInternal, SO());
+	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	scene->BindActor(mInternal, SO());
 
 	// Make sure primary RT gets applied if camera gets deserialized with main camera state
-	GetSceneManager().NotifyMainCameraStateChangedInternal(mInternal);
+	scene->NotifyMainCameraStateChanged(mInternal);
 }
 
 void CCamera::OnDestroyed()
 {
-	GetSceneManager().UnbindActorInternal(mInternal);
+	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	scene->UnbindActor(mInternal);
 
 	mInternal->Destroy();
 }

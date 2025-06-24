@@ -212,9 +212,27 @@ namespace b3d
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(AssociatedResourceId))
 		const UUID& GetAssociatedResourceId() const { return mAssociatedResourceId; }
 
-		/** Creates a new scene object in the scene instance. */
+		/** Returns all cameras in the scene. */
+		const UnorderedMap<Camera*, SPtr<Camera>>& GetAllCameras() const { return mCameras; }
+
+		/**
+		 * Returns the camera in the scene marked as main. Main camera controls the final render surface that is displayed
+		 * to the user. If there are multiple main cameras, the first one found returned.
+		 */
+		SPtr<Camera> GetMainCamera() const;
+
+		/** Returns the main camera component. See GetMainCamera(). */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(MainCamera))
+		HCamera GetMainCameraComponent() const;
+
+		/**
+		 * Creates a new scene object in the scene instance.
+		 * 
+		 * @param	name	Name of the scene object.
+		 * @param	flags	Optional flags that control object behavior. See SceneObjectFlags.
+		 */
 		B3D_SCRIPT_EXPORT()
-		HSceneObject CreateSceneObject(const String& name);
+		HSceneObject CreateSceneObject(const String& name, u32 flags = 0);
 
 		/** Creates a new empty scene instance. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SceneInstance))
@@ -247,12 +265,45 @@ namespace b3d
 		/** Called every frame. Calls update methods on all active components. */
 		void Update();
 
+		/**
+		 * Binds a scene actor with a scene object. Every frame the scene object's transform will be monitored for
+		 * changes and those changes will be automatically transfered to the actor.
+		 */
+		void BindActor(const SPtr<SceneActor>& actor, const HSceneObject& so);
+
+		/** Unbinds an actor that was previously bound using bindActor(). */
+		void UnbindActor(const SPtr<SceneActor>& actor);
+
+		/**	Notifies the scene instance that a new camera was created. */
+		void RegisterCamera(const SPtr<Camera>& camera);
+
+		/**	Notifies the scene instance that a camera was removed. */
+		void UnregisterCamera(const SPtr<Camera>& camera);
+
+		/**	Notifies the scene instance that a camera either became the main camera, or has stopped being main camera. */
+		void NotifyMainCameraStateChanged(const SPtr<Camera>& camera);
+
+		/** Returns a scene object bound to the provided actor, if any. */
+		HSceneObject GetLinkedActorSceneObject(const SPtr<SceneActor>& actor) const;
+
+		/** Updates dirty transforms on any scene actors that are linked with scene objects. */
+		void UpdateLinkedSceneActorTransforms();
+
+		/**
+		 * Sets the render target that the main camera in the scene (if any) will render its view to. This generally means
+		 * the main game window when running standalone, or the Game viewport when running in editor.
+		 */
+		void SetMainCameraRenderTarget(const SPtr<RenderTarget>& renderTarget);
+
 		/** @} */
 
 	private:
 		friend class SceneManager;
 
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
+
+		/**	Callback that is triggered when the main render target size is changed. */
+		void OnMainRenderTargetResized();
 
 		String mName;
 		HSceneObject mRoot;
@@ -261,6 +312,14 @@ namespace b3d
 		SPtr<PhysicsScene> mPhysicsScene;
 		SPtr<RendererScene> mRendererScene;
 		SPtr<GameObjectCollection> mGameObjectCollection;
+
+		UnorderedMap<SceneActor*, BoundActorData> mBoundActors;
+
+		UnorderedMap<Camera*, SPtr<Camera>> mCameras;
+		Vector<SPtr<Camera>> mMainCameras;
+
+		SPtr<RenderTarget> mPrimaryRenderTarget;
+		HEvent mMainRenderTargetResizedHandle;
 	};
 
 	namespace render
@@ -300,12 +359,15 @@ namespace b3d
 
 		void OnStartUp() override;
 
-		/** Returns the object that represents the main scene. */
+		/**
+		 * Returns the object that represents the main scene. This is the scene that is always available, and the scene that will be running
+		 * in a standalone game.
+		 */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(MainScene))
-		const SPtr<SceneInstance>& GetMainScene() const { return mMainScene; } // TODO - Concept of main scene should be removed
+		const SPtr<SceneInstance>& GetMainScene() const { return mMainScene; }
 
 		/** Returns all live scene instances. */
-		const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& GetAllSceneInstances() const { return mSceneInstances; }
+		const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& GetAllScenes() const { return mSceneInstances; }
 
 		/**
 		 * Destroys all scene objects in the scene.
@@ -322,19 +384,6 @@ namespace b3d
 		B3D_SCRIPT_EXPORT()
 		void LoadMainScene(B3D_NO_RREF const HScene& scene);
 
-		/** Returns all cameras in the scene. */
-		const UnorderedMap<Camera*, SPtr<Camera>>& GetAllCameras() const { return mCameras; }
-
-		/**
-		 * Returns the camera in the scene marked as main. Main camera controls the final render surface that is displayed
-		 * to the user. If there are multiple main cameras, the first one found returned.
-		 */
-		SPtr<Camera> GetMainCamera() const;
-
-		/** Returns the main camera component. See GetMainCamera(). */
-		B3D_SCRIPT_EXPORT(InteropOnly(true))
-		HSceneObject GetMainCameraSceneObject() const;
-
 		/**
 		 * Changes the component state that globally determines which component callbacks are activated. Only affects
 		 * components that don't have the ComponentFlag::AlwaysRun flag set.
@@ -345,28 +394,7 @@ namespace b3d
 		 * Sets the render target that the main camera in the scene (if any) will render its view to. This generally means
 		 * the main game window when running standalone, or the Game viewport when running in editor.
 		 */
-		void SetMainRenderTarget(const SPtr<RenderTarget>& rt);
-
-		/**
-		 * Binds a scene actor with a scene object. Every frame the scene object's transform will be monitored for
-		 * changes and those changes will be automatically transfered to the actor.
-		 */
-		void BindActorInternal(const SPtr<SceneActor>& actor, const HSceneObject& so);
-
-		/** Unbinds an actor that was previously bound using bindActor(). */
-		void UnbindActorInternal(const SPtr<SceneActor>& actor);
-
-		/** Returns a scene object bound to the provided actor, if any. */
-		HSceneObject GetActorSOInternal(const SPtr<SceneActor>& actor) const;
-
-		/**	Notifies the scene manager that a new camera was created. */
-		void RegisterCameraInternal(const SPtr<Camera>& camera);
-
-		/**	Notifies the scene manager that a camera was removed. */
-		void UnregisterCameraInternal(const SPtr<Camera>& camera);
-
-		/**	Notifies the scene manager that a camera either became the main camera, or has stopped being main camera. */
-		void NotifyMainCameraStateChangedInternal(const SPtr<Camera>& camera);
+		void SetMainCameraRenderTarget(const SPtr<RenderTarget>& renderTarget);
 
 		/** Called every frame. Calls update methods on all scene objects and their components. */
 		void Update();
@@ -374,8 +402,8 @@ namespace b3d
 		/** Called at fixed time internals. Calls the fixed update method on all active components. */
 		void FixedUpdate();
 
-		/** Updates dirty transforms on any core objects that may be tied with scene objects. */
-		void UpdateCoreObjectTransformsInternal();
+		/** Updates dirty transforms on any scene actors that are linked with scene objects. */
+		void UpdateLinkedSceneActorTransforms();
 
 		/** Notifies the manager that a new scene instance was created. */
 		void NotifySceneInstanceCreated(const SPtr<SceneInstance>& sceneInstance);
@@ -394,32 +422,8 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		/**
-		 * Register a new node in the scene manager, on the top-most level of the hierarchy.
-		 *
-		 * @param[in]	node	Node you wish to add. It's your responsibility not to add duplicate or null nodes. This
-		 *						method won't check.
-		 *
-		 * @note
-		 * After you add a node in the scene manager, it takes ownership of its memory and is responsible for releasing it.
-		 * Do NOT add nodes that have already been added (if you just want to change their parent). Normally this
-		 * method will only be called by SceneObject.
-		 */
-		void AddToMainScene(const HSceneObject& node); // TODO - Deprecated
-
-		/**	Callback that is triggered when the main render target size is changed. */
-		void OnMainRenderTargetResized();
-
-	protected:
 		SPtr<SceneInstance> mMainScene;
 		UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>> mSceneInstances;
-
-		UnorderedMap<SceneActor*, BoundActorData> mBoundActors;
-		UnorderedMap<Camera*, SPtr<Camera>> mCameras;
-		Vector<SPtr<Camera>> mMainCameras;
-
-		SPtr<RenderTarget> mMainRT;
-		HEvent mMainRTResizedConn;
 	};
 
 	/**	Provides easy access to the SceneManager. */

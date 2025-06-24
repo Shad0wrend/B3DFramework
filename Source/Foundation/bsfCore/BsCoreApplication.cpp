@@ -337,7 +337,7 @@ void CoreApplication::RunMainLoopFrame()
 	// a chance to respond to the callback).
 	RendererManager::Instance().GetActive()->Update();
 
-	GetSceneManager().UpdateCoreObjectTransformsInternal();
+	GetSceneManager().UpdateLinkedSceneActorTransforms();
 
 	// Render and main thread run in lockstep. This will result in a larger input latency than if I was
 	// running just a single thread. Latency becomes worse if the render thread takes longer than main

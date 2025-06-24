@@ -5,7 +5,6 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Scene/BsSceneManager.h"
-#include "Wrappers/BsScriptSceneObject.h"
 #include "BsScriptSceneInstance.generated.h"
 #include "BsScriptScene.generated.h"
 #include "BsScriptResourceWrapper.h"
@@ -28,7 +27,6 @@ namespace b3d
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMainScene", (void*)&ScriptSceneManager::InternalGetMainScene);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ClearMainScene", (void*)&ScriptSceneManager::InternalClearMainScene);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_LoadMainScene", (void*)&ScriptSceneManager::InternalLoadMainScene);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMainCameraSceneObject", (void*)&ScriptSceneManager::InternalGetMainCameraSceneObject);
 
 		OnMainSceneLoadedThunk = (OnMainSceneLoadedThunkDefinition)sInteropMetaData.ScriptClass->GetMethodExact("Internal_OnMainSceneLoaded", "UUID&")->GetThunk();
 		OnMainSceneUnloadedThunk = (OnMainSceneUnloadedThunkDefinition)sInteropMetaData.ScriptClass->GetMethodExact("Internal_OnMainSceneUnloaded", "UUID&")->GetThunk();
@@ -83,19 +81,5 @@ namespace b3d
 		if(scriptObjectWrapperscene != nullptr)
 			tmpscene = B3DStaticResourceCast<Scene>(scriptObjectWrapperscene->GetBaseNativeObjectAsHandle());
 		SceneManager::Instance().LoadMainScene(tmpscene);
-	}
-
-	MonoObject* ScriptSceneManager::InternalGetMainCameraSceneObject()
-	{
-		GameObjectHandle<SceneObject> tmp__output;
-		tmp__output = SceneManager::Instance().GetMainCameraSceneObject();
-
-		MonoObject* __output;
-		MonoObject* temp__output = nullptr;
-		if(tmp__output)
-		temp__output = ScriptSceneObject::GetOrCreateScriptObject(tmp__output);
-		__output = temp__output;
-
-		return __output;
 	}
 }

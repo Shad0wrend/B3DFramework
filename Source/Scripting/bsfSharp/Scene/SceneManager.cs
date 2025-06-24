@@ -13,23 +13,6 @@ namespace b3d
         private static RRef<Scene> activateOnLoadScene;
 
         /// <summary>
-        /// Returns the main camera that controls the final render surface that is displayed to the user. If the current
-        /// scene has no main camera null is returned.
-        /// </summary>
-        public static Camera Camera
-        {
-            get
-            {
-                SceneObject so = Internal_GetMainCameraSceneObject();
-
-                if (so == null)
-                    return null;
-
-                return so.GetComponent<Camera>();
-            }
-        }
-
-        /// <summary>
         /// Loads a new scene asynchronously.
         /// </summary>
         /// <param name="path">Path to the prefab to load.</param>

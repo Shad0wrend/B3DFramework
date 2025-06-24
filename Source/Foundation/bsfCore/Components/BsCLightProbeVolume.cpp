@@ -65,12 +65,13 @@ void CLightProbeVolume::OnBeginPlay()
 	else
 		mInternal = LightProbeVolume::Create(scene, mVolume, mCellCount);
 
-	GetSceneManager().BindActorInternal(mInternal, SceneObject());
+	scene->BindActor(mInternal, SceneObject());
 }
 
 void CLightProbeVolume::OnDestroyed()
 {
-	GetSceneManager().UnbindActorInternal(mInternal);
+	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	scene->UnbindActor(mInternal);
 }
 
 RTTIType* CLightProbeVolume::GetRttiStatic()

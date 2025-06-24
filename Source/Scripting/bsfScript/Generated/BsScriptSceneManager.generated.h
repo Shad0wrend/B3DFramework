@@ -36,6 +36,5 @@ namespace b3d
 		static MonoObject* InternalGetMainScene();
 		static void InternalClearMainScene(bool forceAll);
 		static void InternalLoadMainScene(MonoObject* scene);
-		static MonoObject* InternalGetMainCameraSceneObject();
 	};
 }

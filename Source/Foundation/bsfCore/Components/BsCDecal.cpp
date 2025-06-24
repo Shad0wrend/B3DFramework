@@ -38,12 +38,13 @@ void CDecal::OnBeginPlay()
 	else
 		mInternal = Decal::Create(scene, HMaterial());
 
-	GetSceneManager().BindActorInternal(mInternal, SceneObject());
+	scene->BindActor(mInternal, SceneObject());
 }
 
 void CDecal::OnDestroyed()
 {
-	GetSceneManager().UnbindActorInternal(mInternal);
+	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	scene->UnbindActor(mInternal);
 }
 
 RTTIType* CDecal::GetRttiStatic()

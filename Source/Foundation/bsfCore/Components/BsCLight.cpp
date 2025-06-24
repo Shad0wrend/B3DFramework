@@ -53,12 +53,14 @@ void CLight::OnBeginPlay()
 			mSpotFalloffAngle);
 	}
 
-	GetSceneManager().BindActorInternal(mInternal, SceneObject());
+	scene->BindActor(mInternal, SceneObject());
 }
 
 void CLight::OnDestroyed()
 {
-	GetSceneManager().UnbindActorInternal(mInternal);
+	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	scene->UnbindActor(mInternal);
+
 	mInternal->Destroy();
 }
 

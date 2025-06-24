@@ -749,13 +749,13 @@ void Camera::Initialize()
 
 	CoreObject::Initialize();
 
-	GetSceneManager().RegisterCameraInternal(std::static_pointer_cast<Camera>(GetShared()));
+	mSceneInstance->RegisterCamera(std::static_pointer_cast<Camera>(GetShared()));
 }
 
 void Camera::Destroy()
 {
 	if(IsInitialized())
-		GetSceneManager().UnregisterCameraInternal(std::static_pointer_cast<Camera>(GetShared()));
+		mSceneInstance->UnregisterCamera(std::static_pointer_cast<Camera>(GetShared()));
 
 	CoreObject::Destroy();
 }
@@ -763,7 +763,7 @@ void Camera::Destroy()
 void Camera::SetMain(bool main)
 {
 	mMain = main;
-	GetSceneManager().NotifyMainCameraStateChangedInternal(std::static_pointer_cast<Camera>(GetShared()));
+	mSceneInstance->NotifyMainCameraStateChanged(std::static_pointer_cast<Camera>(GetShared()));
 }
 
 Area2I Camera::GetViewportRect() const

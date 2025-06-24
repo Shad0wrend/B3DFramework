@@ -16,7 +16,10 @@ namespace b3d
 		private SceneManager(bool __dummy0) { }
 		protected SceneManager() { }
 
-		/// <summary>Returns the object that represents the main scene.</summary>
+		/// <summary>
+		/// Returns the object that represents the main scene. This is the scene that is always available, and the scene that 
+		/// will be running in a standalone game.
+		/// </summary>
 		[NativeWrapper]
 		public static SceneInstance MainScene
 		{
@@ -44,8 +47,6 @@ namespace b3d
 		private static extern void Internal_ClearMainScene(bool forceAll);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_LoadMainScene(Scene scene);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern SceneObject Internal_GetMainCameraSceneObject();
 		private static void Internal_OnMainSceneLoaded(ref UUID p0)
 		{
 			OnMainSceneLoaded?.Invoke(p0);
