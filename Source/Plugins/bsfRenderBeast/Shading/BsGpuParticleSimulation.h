@@ -5,7 +5,7 @@
 #include "BsRenderBeastPrerequisites.h"
 #include "Utility/BsBitfield.h"
 #include "Utility/BsModule.h"
-#include "Particles/BsParticleManager.h"
+#include "Particles/BsParticleScene.h"
 #include "Allocators/BsPoolAlloc.h"
 #include "Utility/BsTextureRowAllocator.h"
 #include "Utility/BsGpuSort.h"
@@ -160,7 +160,7 @@ namespace b3d
 			 * @param	gbuffer		Populated GBuffer with depths and normals.
 			 * @param	dt			Time step to advance the simulation by.
 			 */
-			void Simulate(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const ParticlePerFrameData* simData, const SPtr<GpuBuffer>& viewParams, const GBufferTextures& gbuffer, float dt);
+			void Simulate(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const EvaluatedParticleData* simData, const SPtr<GpuBuffer>& viewParams, const GBufferTextures& gbuffer, float dt);
 
 			/**
 			 * Sorts the particle systems for the provided view. Only sorts systems using distance based sorting and only

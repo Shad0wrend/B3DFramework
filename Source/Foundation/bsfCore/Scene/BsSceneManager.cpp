@@ -18,6 +18,7 @@
 #include "Physics/BsPhysics.h"
 #include "Renderer/BsRendererScene.h"
 #include "Components/BsCCamera.h"
+#include "Particles/BsParticleScene.h"
 
 using namespace b3d;
 
@@ -372,7 +373,7 @@ bool SceneInstanceComponents::IsComponentOfType(const HComponent& component, u32
 }
 
 SceneInstance::SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const UUID& associatedResourceId)
-	: mName(name), mRoot(root), mAssociatedResourceId(associatedResourceId), mPhysicsScene(GetPhysics().CreatePhysicsScene()), mRendererScene(RendererScene::Create()), mAnimationScene(AnimationScene::Create()), mGameObjectCollection(root->GetOwnerCollection())
+	: mName(name), mRoot(root), mAssociatedResourceId(associatedResourceId), mPhysicsScene(GetPhysics().CreatePhysicsScene()), mRendererScene(RendererScene::Create()), mAnimationScene(AnimationScene::Create()), mParticleScene(ParticleScene::Create()), mGameObjectCollection(root->GetOwnerCollection())
 {}
 
 SceneInstance::~SceneInstance()
@@ -596,7 +597,7 @@ SPtr<render::RenderProxy> SceneInstance::CreateRenderProxy() const
 {
 	const SPtr<render::RendererScene>& rendererSceneProxy = B3DGetRenderProxy(mRendererScene);
 
-	render::SceneInstance* renderProxy = new(B3DAllocate<render::SceneInstance>()) render::SceneInstance(rendererSceneProxy);
+	render::SceneInstance* renderProxy = new(B3DAllocate<render::SceneInstance>()) render::SceneInstance(GetInternalId(), rendererSceneProxy);
 	SPtr<render::SceneInstance> renderProxyShared = B3DMakeSharedFromExisting<render::SceneInstance>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 

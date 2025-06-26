@@ -39,11 +39,12 @@
 #include "Managers/BsGpuBackendManager.h"
 #include "Material/BsShaderCompiler.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
-#include "Particles/BsParticleManager.h"
+#include "Particles/BsParticleScene.h"
 #include "Particles/BsVectorField.h"
 #include "Platform/BsFolderMonitor.h"
 #include "RenderAPI/BsGpuBackend.h"
 #include "RenderAPI/BsGpuDevice.h"
+#include "Renderer/BsRendererScene.h"
 #include "Scene/BsPrefab.h"
 #include "Text/BsFont.h"
 #include "Threading/BsScheduler.h"
@@ -108,7 +109,6 @@ CoreApplication::~CoreApplication()
 	// destroyed since they implement the IResourceListener interface
 	AudioManager::ShutDown();
 	ResourceListenerManager::ShutDown();
-	ParticleManager::ShutDown();
 
 	// This must be done after all resources are released since it will unload the physics plugin, and some resources
 	// might be instances of types from that plugin.
@@ -210,7 +210,6 @@ void CoreApplication::OnStartUp()
 	MeshManager::StartUp();
 	Importer::StartUp();
 	AudioManager::StartUp(mStartUpDesc.Audio);
-	ParticleManager::StartUp();
 	FolderMonitorManager::StartUp();
 
 	for(auto& importerName : mStartUpDesc.Importers)
@@ -323,10 +322,21 @@ void CoreApplication::RunMainLoopFrame()
 
 	PerFrameData perFrameData;
 
-	// Evaluate animation after scene and plugin updates because the renderer will just now be displaying the
-	// animation we sent on the previous frame, and we want the scene information to match to what is displayed.
-	perFrameData.Animation = GetSceneManager().EvaluateAnimation(mStartUpDesc.AsyncAnimation);
-	perFrameData.Particles = ParticleManager::Instance().Update(*perFrameData.Animation);
+	const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& allScenes = GetSceneManager().GetAllScenes();
+	for(const auto& entry : allScenes)
+	{
+		const SPtr<SceneInstance>& scene = entry.second.lock();
+		render::RendererScene* const rendererSceneProxy = B3DGetRenderProxy(scene->GetRendererScene()).get();
+
+		// Evaluate animation after scene and plugin updates because the renderer will just now be displaying the
+		// animation we sent on the previous frame, and we want the scene information to match to what is displayed.
+
+		PerSceneFrameData perSceneFrameData;
+		perSceneFrameData.Animation = scene->GetAnimationScene()->Update(mStartUpDesc.AsyncAnimation);
+		perSceneFrameData.Particles = scene->GetParticleScene()->Update(*perSceneFrameData.Animation);
+
+		perFrameData.PerSceneData[rendererSceneProxy] = std::move(perSceneFrameData);
+	}
 
 	// Send out resource events in case any were loaded/destroyed/modified
 	ResourceListenerManager::Instance().Update();

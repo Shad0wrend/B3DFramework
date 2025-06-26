@@ -6,7 +6,7 @@
 #include "Renderer/BsSkybox.h"
 #include "Renderer/BsReflectionProbe.h"
 #include "Renderer/BsRenderer.h"
-#include "Particles/BsParticleManager.h"
+#include "Particles/BsParticleScene.h"
 #include "Mesh/BsMesh.h"
 #include "Material/BsPass.h"
 #include "Material/BsGpuParamsSet.h"
@@ -1418,7 +1418,7 @@ void RenderBeastScene::PrepareRenderable(u32 idx, const FrameInfo& frameInfo)
 	for(auto& element : rendererRenderable->Elements)
 		element.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
 
-	if(frameInfo.PerFrameData.Animation != nullptr)
+	if(frameInfo.PerSceneFrameData.Animation != nullptr)
 		rendererRenderable->Renderable->UpdatePrevFrameAnimationBuffers();
 
 	if(rendererRenderable->PrevFrameDirtyState != PrevFrameDirtyState::Clean)
@@ -1442,8 +1442,8 @@ void RenderBeastScene::PrepareVisibleRenderable(u32 idx, const FrameInfo& frameI
 	RendererRenderable* rendererRenderable = mInfo.Renderables[idx];
 
 	// Note: Before uploading bone matrices perhaps check if they has actually been changed since last frame
-	if(frameInfo.PerFrameData.Animation != nullptr)
-		rendererRenderable->Renderable->UpdateAnimationBuffers(*frameInfo.PerFrameData.Animation);
+	if(frameInfo.PerSceneFrameData.Animation != nullptr)
+		rendererRenderable->Renderable->UpdateAnimationBuffers(*frameInfo.PerSceneFrameData.Animation);
 
 	// Note: Could this step be moved in notifyRenderableUpdated, so it only triggers when material actually gets
 	// changed? Although it shouldn't matter much because if the internal versions keeping track of dirty params.
@@ -1485,7 +1485,7 @@ void RenderBeastScene::PrepareDecal(u32 idx, const FrameInfo& frameInfo)
 	mInfo.Decals[idx].PerObjectParamBuffer->FlushCache();
 }
 
-void RenderBeastScene::UpdateParticleSystemBounds(const ParticlePerFrameData* particleRenderData)
+void RenderBeastScene::UpdateParticleSystemBounds(const EvaluatedParticleData* particleRenderData)
 {
 	// Note: Avoid updating bounds for deterministic particle systems every frame. Also see if this can be copied
 	// over in a faster way (or ideally just assigned)

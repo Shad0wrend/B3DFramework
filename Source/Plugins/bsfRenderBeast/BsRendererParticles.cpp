@@ -1,7 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRendererParticles.h"
-#include "Particles/BsParticleManager.h"
+#include "Particles/BsParticleScene.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Mesh/BsMeshData.h"
 #include "Mesh/BsMesh.h"

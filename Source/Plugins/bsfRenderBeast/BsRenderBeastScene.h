@@ -13,7 +13,7 @@
 namespace b3d
 {
 	struct EvaluatedAnimationData;
-	struct ParticlePerFrameData;
+	struct EvaluatedParticleData;
 
 	namespace render
 	{
@@ -178,7 +178,7 @@ namespace b3d
 			void PrepareDecal(u32 idx, const FrameInfo& frameInfo);
 
 			/** Updates the bounds for all the particle systems from the provided object. */
-			void UpdateParticleSystemBounds(const ParticlePerFrameData* particleRenderData);
+			void UpdateParticleSystemBounds(const EvaluatedParticleData* particleRenderData);
 
 			/** Returns a modifiable version of SceneInfo. Only to be used by friends who know what they are doing. */
 			SceneInfo& GetSceneInfo() { return mInfo; }

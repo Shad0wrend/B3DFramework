@@ -73,7 +73,7 @@ namespace b3d
 		{
 			float Time = 0.0f;
 			float TimeDelta = 0.0f;
-			u64 FrameIdx = 0;
+			u64 FrameIndex = 0;
 		};
 
 		/** @} */

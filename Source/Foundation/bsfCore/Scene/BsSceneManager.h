@@ -10,6 +10,7 @@
 
 namespace b3d
 {
+	class ParticleScene;
 	class RendererScene;
 	class LightProbeVolume;
 	class PhysicsScene;
@@ -212,6 +213,9 @@ namespace b3d
 		/** Returns the object responsible for updating animations in this scene. */
 		const SPtr<AnimationScene>& GetAnimationScene() const { return mAnimationScene; }
 
+		/** Returns the object responsible for updating particles in this scene. */
+		const SPtr<ParticleScene>& GetParticleScene() const { return mParticleScene; }
+
 		/** Returns the ID of the resource that the scene instance is associated with (e.g. resource the scene was loaded from.). */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(AssociatedResourceId))
 		const UUID& GetAssociatedResourceId() const { return mAssociatedResourceId; }
@@ -316,6 +320,7 @@ namespace b3d
 		SPtr<PhysicsScene> mPhysicsScene;
 		SPtr<RendererScene> mRendererScene;
 		SPtr<AnimationScene> mAnimationScene;
+		SPtr<ParticleScene> mParticleScene;
 		SPtr<GameObjectCollection> mGameObjectCollection;
 
 		UnorderedMap<SceneActor*, BoundActorData> mBoundActors;
@@ -344,10 +349,11 @@ namespace b3d
 		protected:
 			friend class b3d::SceneInstance;
 
-			SceneInstance(const SPtr<RendererScene>& rendererScene)
-				:mRendererScene(rendererScene)
+			SceneInstance(u64 id, const SPtr<RendererScene>& rendererScene)
+				: mId(id), mRendererScene(rendererScene)
 			{ }
 
+			u64 mId = ~0u;
 			SPtr<RendererScene> mRendererScene;
 		};
 	} // namespace render

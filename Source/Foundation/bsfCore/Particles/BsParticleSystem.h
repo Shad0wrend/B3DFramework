@@ -551,7 +551,7 @@ namespace b3d
 
 		/** @} */
 	private:
-		friend class ParticleManager;
+		friend class ParticleScene;
 		friend class ParticleSystemRTTI;
 		friend class ParticleEmitter;
 		friend class render::ParticleSystem;

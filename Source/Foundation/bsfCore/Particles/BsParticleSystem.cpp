@@ -1,7 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Particles/BsParticleSystem.h"
-#include "Particles/BsParticleManager.h"
+#include "Particles/BsParticleScene.h"
 #include "Particles/BsParticleEmitter.h"
 #include "Particles/BsParticleEvolver.h"
 #include "Private/Particles/BsParticleSet.h"
@@ -121,7 +121,8 @@ RTTIType* ParticleGpuSimulationSettings::GetRtti() const
 ParticleSystem::ParticleSystem(const SPtr<SceneInstance>& scene)
 	:SceneActor(scene)
 {
-	mId = ParticleManager::Instance().RegisterParticleSystem(this);
+	const SPtr<ParticleScene>& particleScene = scene->GetParticleScene();
+	mId = particleScene->RegisterParticleSystem(this);
 	mSeed = rand();
 
 	auto emitter = B3DMakeShared<ParticleEmitter>();
@@ -140,7 +141,8 @@ ParticleSystem::ParticleSystem()
 
 ParticleSystem::~ParticleSystem()
 {
-	ParticleManager::Instance().UnregisterParticleSystem(this);
+	const SPtr<ParticleScene>& particleScene = mSceneInstance->GetParticleScene();
+	particleScene->UnregisterParticleSystem(this);
 
 	if(mParticleSet)
 		B3DDelete(mParticleSet);

@@ -13,7 +13,7 @@
 #include "Profiling/BsProfilerCPU.h"
 #include "Profiling/BsProfilerGPU.h"
 #include "Utility/BsTime.h"
-#include "Animation/BsAnimationManager.h"
+#include "Animation/BsAnimationScene.h"
 #include "Animation/BsSkeleton.h"
 #include "Renderer/BsLight.h"
 #include "Renderer/BsRendererExtension.h"
@@ -227,7 +227,7 @@ void RenderBeast::RenderAll(PerFrameData perFrameData)
 	FrameTimings timings;
 	timings.Time = GetTime().GetRealTimeInSeconds();
 	timings.TimeDelta = GetTime().GetFrameDelta();
-	timings.FrameIdx = GetTime().GetCurrentFrameIndex();
+	timings.FrameIndex = GetTime().GetCurrentFrameIndex();
 
 	GetRenderThread().PostCommand([this, timings, perFrameData]() { RenderAllScenes(timings, perFrameData); }, "RenderBeast::RenderAll");
 }
@@ -240,11 +240,25 @@ void RenderBeast::RenderAllScenes(FrameTimings timings, PerFrameData perFrameDat
 	GetProfilerCPU().BeginSample("Render");
 
 	// Make sure any renderer tasks finish first, as rendering might depend on them
-	ProcessTasks(false, timings.FrameIdx);
+	ProcessTasks(false, timings.FrameIndex);
 
-	FrameInfo frameInfo(timings, perFrameData);
 	for(auto& entry : mScenes)
-		RenderScene(*entry, frameInfo);
+	{
+		RendererScene* const rendererScene = entry;
+
+		if(auto foundSceneData = perFrameData.PerSceneData.find(rendererScene); foundSceneData != perFrameData.PerSceneData.end())
+		{
+			const bool asynchronousAnimationEvaluation = foundSceneData->second.Animation != nullptr ? foundSceneData->second.Animation->AsynchronousEvaluation : false;
+
+			FrameInfo frameInfo(timings, asynchronousAnimationEvaluation, foundSceneData->second);
+			RenderScene(*entry, frameInfo);
+		}
+		else
+		{
+			FrameInfo frameInfo(timings, false, PerSceneFrameData());
+			RenderScene(*entry, frameInfo);
+		}
+	}
 
 	mDevice->EndFrame();
 
@@ -277,8 +291,8 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 	scene.SetParamFrameParams(frameInfo.Timings.Time);
 
 	// Update bounds for all particle systems
-	if(frameInfo.PerFrameData.Particles)
-		PROFILE_CALL(scene.UpdateParticleSystemBounds(frameInfo.PerFrameData.Particles), "Particle bounds")
+	if(frameInfo.PerSceneFrameData.Particles)
+		PROFILE_CALL(scene.UpdateParticleSystemBounds(frameInfo.PerSceneFrameData.Particles), "Particle bounds")
 
 	sceneInfo.RenderableReady.resize(sceneInfo.Renderables.size(), false);
 	sceneInfo.RenderableReady.assign(sceneInfo.Renderables.size(), false);
@@ -683,7 +697,7 @@ void RenderBeast::CaptureSceneCubeMap(RendererScene& scene, GpuCommandBuffer& co
 	RendererViewGroup viewGroup(viewPtrs, 6, false, mRenderThreadOptions->ShadowMapSize);
 	viewGroup.DetermineVisibility(commandBuffer, sceneInfo);
 
-	FrameInfo frameInfo({ 0.0f, 1.0f / 60.0f, 0 }, PerFrameData());
+	FrameInfo frameInfo({ 0.0f, 1.0f / 60.0f, 0 }, false, PerSceneFrameData());
 	RenderViews(commandBuffer, renderBeastScene, viewGroup, frameInfo);
 
 	// Make sure the render texture is available for reads

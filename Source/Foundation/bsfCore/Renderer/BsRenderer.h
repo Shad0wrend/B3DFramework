@@ -14,13 +14,19 @@ namespace b3d
 	class LightProbeVolume;
 	struct RenderSettings;
 	struct EvaluatedAnimationData;
-	struct ParticlePerFrameData;
+	struct EvaluatedParticleData;
 
-	/** Contains various data evaluated by external systems on a per-frame basis that is to be used by the renderer. */
-	struct PerFrameData
+	/** Contains various data evaluated by external systems on a per-frame basis, for a particular scene. */
+	struct PerSceneFrameData
 	{
 		const EvaluatedAnimationData* Animation = nullptr;
-		const ParticlePerFrameData* Particles = nullptr;
+		const EvaluatedParticleData* Particles = nullptr;
+	};
+
+	/** Contains per-frame data for all scenes. See @p PerSceneFrameData. */
+	struct PerFrameData
+	{
+		UnorderedMap<render::RendererScene*, PerSceneFrameData> PerSceneData;
 	};
 
 	namespace render
@@ -174,7 +180,6 @@ namespace b3d
 			 */
 			virtual void CaptureSceneCubeMap(RendererScene& scene, GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) = 0;
 
-			/** Creates a new renderer scene. */
 			virtual SPtr<RendererScene> CreateScene() = 0;
 
 			/**

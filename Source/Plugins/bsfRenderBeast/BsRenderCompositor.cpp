@@ -20,7 +20,7 @@
 #include "BsRenderBeastOptions.h"
 #include "BsRenderBeastScene.h"
 #include "BsRenderBeast.h"
-#include "Particles/BsParticleManager.h"
+#include "Particles/BsParticleScene.h"
 #include "Particles/BsParticleSystem.h"
 #include "Profiling/BsProfilerGPU.h"
 #include "Shading/BsGpuParticleSimulation.h"
@@ -352,7 +352,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	}
 
 	//// Prepare particle systems
-	const ParticlePerFrameData* particleData = inputs.FrameInfo.PerFrameData.Particles;
+	const EvaluatedParticleData* particleData = inputs.FrameInfo.PerSceneFrameData.Particles;
 	if(particleData)
 	{
 		const auto numParticleSystems = (u32)inputs.Scene.ParticleSystems.size();
@@ -643,7 +643,7 @@ void RCNodeParticleSimulate::Render(const RenderCompositorNodeInputs& inputs)
 		gbuffer.RoughMetal = gbufferNode->RoughMetalTex->Texture;
 		gbuffer.Depth = sceneDepthNode->DepthTex->Texture;
 
-		GpuParticleSimulation::Instance().Simulate(*inputs.ActiveCommandBuffer, inputs.Scene, inputs.FrameInfo.PerFrameData.Particles, inputs.View.GetPerViewBuffer(), gbuffer, inputs.FrameInfo.Timings.TimeDelta);
+		GpuParticleSimulation::Instance().Simulate(*inputs.ActiveCommandBuffer, inputs.Scene, inputs.FrameInfo.PerSceneFrameData.Particles, inputs.View.GetPerViewBuffer(), gbuffer, inputs.FrameInfo.Timings.TimeDelta);
 	}
 
 	GpuParticleSimulation::Instance().Sort(*inputs.ActiveCommandBuffer, inputs.View);
@@ -661,7 +661,7 @@ TInlineArray<StringID, 4> RCNodeParticleSimulate::GetDependencies(const Renderer
 
 void RCNodeParticleSort::Render(const RenderCompositorNodeInputs& inputs)
 {
-	const ParticlePerFrameData* particleData = inputs.FrameInfo.PerFrameData.Particles;
+	const EvaluatedParticleData* particleData = inputs.FrameInfo.PerSceneFrameData.Particles;
 	if(!particleData)
 		return;
 
@@ -1461,7 +1461,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	}
 
 	//// Particle systems
-	const ParticlePerFrameData* particleData = inputs.FrameInfo.PerFrameData.Particles;
+	const EvaluatedParticleData* particleData = inputs.FrameInfo.PerSceneFrameData.Particles;
 	if(particleData)
 	{
 		const auto numParticleSystems = (u32)inputs.Scene.ParticleSystems.size();
@@ -1825,7 +1825,7 @@ void RCNodeEyeAdaptation::Render(const RenderCompositorNodeInputs& inputs)
 		const RendererView& view = inputs.View;
 
 		// Notify the view eye adaptation value will change
-		view.NotifyLuminanceUpdated(inputs.FrameInfo.Timings.FrameIdx, inputs.ActiveCommandBuffer, Output);
+		view.NotifyLuminanceUpdated(inputs.FrameInfo.Timings.FrameIndex, inputs.ActiveCommandBuffer, Output);
 	}
 	else
 	{

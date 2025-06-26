@@ -24,12 +24,13 @@ namespace b3d
 		/** Contains information global to an entire frame. */
 		struct FrameInfo
 		{
-			FrameInfo(const FrameTimings& timings, PerFrameData perFrameData)
-				: Timings(timings), PerFrameData(perFrameData)
+			FrameInfo(const FrameTimings& timings, bool isUsingAsynchronousAnimation, PerSceneFrameData perSceneFrameData)
+				: Timings(timings), PerSceneFrameData(perSceneFrameData), IsUsingAsynchronousAnimation(isUsingAsynchronousAnimation)
 			{}
 
 			FrameTimings Timings;
-			PerFrameData PerFrameData;
+			PerSceneFrameData PerSceneFrameData;
+			bool IsUsingAsynchronousAnimation;
 		};
 
 		/**

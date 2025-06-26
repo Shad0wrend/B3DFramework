@@ -220,14 +220,14 @@ void RendererView::BeginFrame(const FrameInfo& frameInfo)
 	gPerCameraParamDef.gNDCToPrevNDC.Set(mParamBuffer, NDCToPrevNDC);
 
 	mFrameTimings = frameInfo.Timings;
-	mAsyncAnim = frameInfo.PerFrameData.Animation ? frameInfo.PerFrameData.Animation->AsynchronousEvaluation : false;
+	mAsyncAnim = frameInfo.IsUsingAsynchronousAnimation;
 
 	// Account for auto-exposure taking multiple frames
 	if(mRedrawThisFrame)
 	{
 		// Note: Doing this here instead of _notifyNeedsRedraw because we need an up-to-date frame index
 		if(mRenderSettings->EnableHdr && mRenderSettings->EnableAutoExposure)
-			mWaitingOnAutoExposureFrame = mFrameTimings.FrameIdx;
+			mWaitingOnAutoExposureFrame = mFrameTimings.FrameIndex;
 		else
 			mWaitingOnAutoExposureFrame = std::numeric_limits<u64>::max();
 	}
