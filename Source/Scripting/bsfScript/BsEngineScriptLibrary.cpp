@@ -27,7 +27,6 @@ void EngineScriptLibrary::Initialize()
 	MonoAssembly& engineAssembly = MonoManager::Instance().LoadAssembly(engineAssemblyPath.ToString(), kEngineAssembly);
 #endif
 
-	PlayInEditor::StartUp();
 	ScriptDebug::StartUp();
 	ScriptObjectManager::StartUp();
 	ScriptAssemblyManager::StartUp();
@@ -52,7 +51,6 @@ void EngineScriptLibrary::Update()
 {
 	mUpdateMethod->Invoke(nullptr, nullptr);
 
-	PlayInEditor::Instance().Update();
 	ScriptObjectManager::Instance().Update();
 }
 
@@ -116,7 +114,6 @@ void EngineScriptLibrary::ShutdownModules()
 	ScriptAssemblyManager::ShutDown();
 	ScriptObjectManager::ShutDown();
 	ScriptDebug::ShutDown();
-	PlayInEditor::ShutDown();
 
 	// Make sure all GUI elements are actually destroyed
 	GUIManager::Instance().ProcessDestroyQueue();

@@ -666,15 +666,6 @@ void SceneManager::UpdateLinkedSceneActorTransforms()
 	}
 }
 
-void SceneManager::SetComponentState(ComponentState state)
-{
-	for(auto& entry : mSceneInstances)
-	{
-		const SPtr<SceneInstance>& scene = entry.second.lock();
-		scene->SetComponentState(state);
-	}
-}
-
 void SceneManager::SetMainCameraRenderTarget(const SPtr<RenderTarget>& renderTarget)
 {
 	for(auto& entry : mSceneInstances)

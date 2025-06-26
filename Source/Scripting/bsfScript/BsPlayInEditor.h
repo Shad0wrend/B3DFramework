@@ -20,10 +20,10 @@ namespace b3d
 	};
 
 	/** Handles functionality specific to running the game in editor. */
-	class B3D_SCRIPT_INTEROP_EXPORT B3D_SCRIPT_EXPORT(API(Editor), DocumentationGroup(Editor - General)) PlayInEditor : public Module<PlayInEditor>
+	class B3D_SCRIPT_INTEROP_EXPORT B3D_SCRIPT_EXPORT(API(Editor), DocumentationGroup(Editor - General)) PlayInEditor : public IScriptExportable
 	{
 	public:
-		PlayInEditor();
+		PlayInEditor(const SPtr<SceneInstance>& sceneInstance);
 
 		/**	Returns the current play state of the game. */
 		B3D_SCRIPT_EXPORT(InteropOnly(true))
@@ -40,6 +40,10 @@ namespace b3d
 		/**	Runs the game for a single frame and then pauses it. */
 		B3D_SCRIPT_EXPORT()
 		void FrameStep();
+
+		/** Creates a new play in editor object associated with the provided scene instance. */
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(PlayInEditor))
+		static SPtr<PlayInEditor> Create(const SPtr<SceneInstance>& sceneInstance) { return B3DMakeShared<PlayInEditor>(sceneInstance); }
 
 		/** Triggered right after the play mode is entered. */
 		B3D_SCRIPT_EXPORT()
@@ -62,6 +66,7 @@ namespace b3d
 		 */
 
 		/** Called once per frame. */
+		B3D_SCRIPT_EXPORT()
 		void Update();
 
 		/** @} */
@@ -78,6 +83,8 @@ namespace b3d
 
 		/** Pauses or unpauses all pausable engine systems. */
 		void SetSystemsPauseState(bool paused);
+
+		SPtr<SceneInstance> mAssociatedScene;
 
 		PlayInEditorState mState;
 		PlayInEditorState mNextState;

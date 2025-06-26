@@ -396,12 +396,6 @@ namespace b3d
 		void LoadMainScene(B3D_NO_RREF const HScene& scene);
 
 		/**
-		 * Changes the component state that globally determines which component callbacks are activated. Only affects
-		 * components that don't have the ComponentFlag::AlwaysRun flag set.
-		 */
-		void SetComponentState(ComponentState state); // TODO - Deprecate this and call this on a per-SceneInstance basis
-
-		/**
 		 * Sets the render target that the main camera in the scene (if any) will render its view to. This generally means
 		 * the main game window when running standalone, or the Game viewport when running in editor.
 		 */

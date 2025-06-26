@@ -11,8 +11,8 @@
 #include "Scene/BsGameObjectCollection.h"
 
 using namespace b3d;
-PlayInEditor::PlayInEditor()
-	: mState(PlayInEditorState::Stopped), mNextState(PlayInEditorState::Stopped), mFrameStepActive(false), mScheduledStateChange(false)
+PlayInEditor::PlayInEditor(const SPtr<SceneInstance>& scene)
+	: mAssociatedScene(scene), mState(PlayInEditorState::Stopped), mNextState(PlayInEditorState::Stopped), mFrameStepActive(false), mScheduledStateChange(false)
 {
 	if(!GetApplication().IsEditor())
 		mState = PlayInEditorState::Playing;
@@ -20,7 +20,7 @@ PlayInEditor::PlayInEditor()
 	{
 		SetSystemsPauseState(true);
 		GetTime().ResetSimulationTime();
-		GetSceneManager().SetComponentState(ComponentState::Stopped);
+		mAssociatedScene->SetComponentState(ComponentState::Stopped);
 	}
 }
 
@@ -52,7 +52,7 @@ void PlayInEditor::SetStateImmediate(PlayInEditorState state)
 			SetSystemsPauseState(true);
 			GetTime().ResetSimulationTime();
 
-			GetSceneManager().SetComponentState(ComponentState::Stopped);
+			mAssociatedScene->SetComponentState(ComponentState::Stopped);
 
 			const SPtr<SceneInstance>& mainScene = GetSceneManager().GetMainScene();
 			mainScene->SetRoot(mSavedScene);
@@ -69,12 +69,10 @@ void PlayInEditor::SetStateImmediate(PlayInEditorState state)
 			if(oldState == PlayInEditorState::Stopped)
 				SaveSceneInMemory();
 
-			GetSceneManager().SetComponentState(ComponentState::Running);
+			mAssociatedScene->SetComponentState(ComponentState::Running);
 			SetSystemsPauseState(false);
 
-			// TODO - PlayInEditor should be associated with a particular scene
-			const SPtr<SceneInstance>& scene = GetSceneManager().GetMainScene();
-			scene->GetAnimationScene()->SetPaused(false);
+			mAssociatedScene->GetAnimationScene()->SetPaused(false);
 
 			if(oldState == PlayInEditorState::Stopped)
 				OnPlay();
@@ -87,14 +85,12 @@ void PlayInEditor::SetStateImmediate(PlayInEditorState state)
 			mFrameStepActive = false;
 			SetSystemsPauseState(true);
 
-			// TODO - PlayInEditor should be associated with a particular scene
-			const SPtr<SceneInstance>& scene = GetSceneManager().GetMainScene();
-			scene->GetAnimationScene()->SetPaused(true);
+			mAssociatedScene->GetAnimationScene()->SetPaused(true);
 
 			if(oldState == PlayInEditorState::Stopped)
 				SaveSceneInMemory();
 
-			GetSceneManager().SetComponentState(ComponentState::Paused);
+			mAssociatedScene->SetComponentState(ComponentState::Paused);
 
 			if(oldState == PlayInEditorState::Stopped)
 				OnPlay();
@@ -142,11 +138,9 @@ void PlayInEditor::Update()
 
 void PlayInEditor::SaveSceneInMemory()
 {
-	const SPtr<SceneInstance>& mainScene = SceneManager::Instance().GetMainScene();
-
 	mSavedSceneGameObjectCollection = GameObjectCollection::Create();
-	mSavedScene = mainScene->GetRoot()->Clone(mSavedSceneGameObjectCollection, true);
-	mSavedSceneResourceId = mainScene->GetAssociatedResourceId();
+	mSavedScene = mAssociatedScene->GetRoot()->Clone(mSavedSceneGameObjectCollection, true);
+	mSavedSceneResourceId = mAssociatedScene->GetAssociatedResourceId();
 
 	// Remove objects with "dont save" flag
 	Stack<HSceneObject> todo;
