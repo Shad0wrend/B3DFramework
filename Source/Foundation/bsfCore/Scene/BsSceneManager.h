@@ -240,6 +240,10 @@ namespace b3d
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(MainCamera))
 		HCamera GetMainCameraComponent() const;
 
+		/** Removes all scene objects from the scene, except for persistent objects. If @p forceAll is true, removes even the persistent objects. */
+		B3D_SCRIPT_EXPORT()
+		void Clear(bool forceAll = false);
+
 		/**
 		 * Creates a new scene object in the scene instance.
 		 * 
@@ -383,29 +387,19 @@ namespace b3d
 		void OnStartUp() override;
 
 		/**
-		 * Returns the object that represents the main scene. This is the scene that is always available, and the scene that will be running
-		 * in a standalone game.
+		 * In a standalone game this represents the scene that is playing. In editor this represents the primary scene being edited.
+		 * When creating scene objects and no scene is provided, the object will be created in the main scene. If null main scene is set, new empty main
+		 * scene will be created internally, as the main scene must always exist.
 		 */
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(MainScene))
+		void SetMainScene(const SPtr<SceneInstance>& scene);
+
+		/** @copydoc SetMainScene */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(MainScene))
 		const SPtr<SceneInstance>& GetMainScene() const { return mMainScene; }
 
 		/** Returns all live scene instances. */
 		const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>>& GetAllScenes() const { return mSceneInstances; }
-
-		/**
-		 * Destroys all scene objects in the scene.
-		 *
-		 * @param[in]	forceAll	If true, then even the persistent objects will be unloaded.
-		 */
-		B3D_SCRIPT_EXPORT(InteropOnly(true))
-		void ClearMainScene(bool forceAll = false);
-
-		/**
-		 * Instantiates a new scene and makes it active. All non-persistent objects that are part of the current scene will
-		 * be destroyed.
-		 */
-		B3D_SCRIPT_EXPORT()
-		void LoadMainScene(B3D_NO_RREF const HScene& scene);
 
 		/**
 		 * Sets the render target that the main camera in the scene (if any) will render its view to. This generally means
@@ -421,14 +415,6 @@ namespace b3d
 
 		/** Notifies the manager that a scene instance was destroyed. */
 		void NotifySceneInstanceDestroyed(SceneInstance* sceneInstance);
-
-		/** Called when a new main scene has been loaded and is active. */
-		B3D_SCRIPT_EXPORT()
-		Event<void(UUID)> OnMainSceneLoaded;
-
-		/** Called when the main scene has been cleared or unloaded. */
-		B3D_SCRIPT_EXPORT()
-		Event<void(UUID)> OnMainSceneUnloaded;
 
 	protected:
 		friend class SceneObject;

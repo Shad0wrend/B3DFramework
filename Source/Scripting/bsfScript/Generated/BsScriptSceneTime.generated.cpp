@@ -26,7 +26,6 @@ namespace b3d
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetScale", (void*)&ScriptSceneTime::InternalGetScale);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Reset", (void*)&ScriptSceneTime::InternalReset);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetPaused", (void*)&ScriptSceneTime::InternalSetPaused);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetFrameDelta", (void*)&ScriptSceneTime::InternalGetFrameDelta);
 
 	}
 
@@ -90,19 +89,5 @@ namespace b3d
 			return;
 
 		static_cast<SceneTime*>(self->GetNativeObject())->SetPaused(paused);
-	}
-
-	float ScriptSceneTime::InternalGetFrameDelta(ScriptSceneTime* self)
-	{
-		float tmp__output;
-		if(!self->IsNativeObjectValid())
-			return {};
-
-		tmp__output = static_cast<SceneTime*>(self->GetNativeObject())->GetFrameDelta();
-
-		float __output;
-		__output = tmp__output;
-
-		return __output;
 	}
 }

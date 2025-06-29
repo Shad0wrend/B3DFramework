@@ -190,109 +190,6 @@
 		<enumentry native="ZYX" script="ZYX">
 		</enumentry>
 	</enum>
-	<class native="MorphChannel" script="MorphChannel">
-		<doc>A collection of morph shapes that are sequentially blended together. Each shape has a weight in range [0, 1] which determines at what point is that shape blended. As the channel percent moves from 0 to 1, different shapes will be blended with those before or after them, depending on their weight.</doc>
-		<property name="Name" type="string" getter="GetName" setter="" static="false">
-			<doc>Returns the unique name of the channel.</doc>
-		</property>
-		<property name="Shapes" type="MorphShape" getter="GetShapes" setter="" static="false">
-			<doc>Returns all morph shapes within this channel, in order from lowest to highest.</doc>
-		</property>
-	</class>
-	<struct native="Result" script="Result">
-		<doc>Same as TResult, but with no output object.</doc>
-		<ctor>
-		</ctor>
-		<field name="Status" type="ResultStatus">
-		</field>
-		<field name="ErrorMessage" type="string">
-		</field>
-		<field name="AdditionalErrorMessage" type="string">
-		</field>
-	</struct>
-	<class native="MeshData" script="MeshData">
-		<doc>Contains mesh vertex and index data used for initializing, updating and reading mesh data from Mesh.</doc>
-	</class>
-	<struct native="PARTICLE_STATIC_MESH_SHAPE_DESC" script="ParticleStaticMeshShapeOptions">
-		<doc>Information describing a ParticleEmitterStaticMeshShape.</doc>
-		<ctor>
-		</ctor>
-		<field name="Type" type="ParticleEmitterMeshType">
-			<doc>Determines from which portion of the mesh are the particles emitted from.</doc>
-		</field>
-		<field name="Sequential" type="bool">
-			<doc>When enabled the particles will be emitted sequentially from mesh vertices in the order they are defined. Only relevant for the Vertex emit mode.</doc>
-		</field>
-		<field name="Mesh" type="RRef&lt;Mesh&gt;">
-			<doc>Mesh to spawn particles on. Must at least contain per-vertex position data encoded as 3D float vectors. Can optionally contain per-vertex normals encoded as 3D float vectors or as 4-byte unsigned-normalized format.</doc>
-		</field>
-	</struct>
-	<class native="Time" script="Time">
-		<doc>Manages global time related functionality.</doc>
-		<property name="RealTimeInSeconds" type="float" getter="GetRealTimeInSeconds" setter="" static="false">
-			<doc>Gets the time elapsed since application start. Only gets updated once per frame.</doc>
-		</property>
-		<property name="RealTimeInMilliseconds" type="ulong" getter="GetRealTimeInMilliseconds" setter="" static="false">
-			<doc>Gets the time elapsed since application start. Only gets updated once per frame.</doc>
-		</property>
-		<property name="FrameDelta" type="float" getter="GetFrameDelta" setter="" static="false">
-			<doc>Gets the time since last frame was executed. Only gets updated once per frame.</doc>
-		</property>
-		<property name="CurrentFrameIndex" type="ulong" getter="GetCurrentFrameIndex" setter="" static="false">
-			<doc>Returns the sequential index of the current frame. First frame is 0.</doc>
-		</property>
-		<property name="TimePrecise" type="ulong" getter="GetTimePrecise" setter="" static="false">
-			<doc>Returns the precise time since application start, in microseconds. Unlike other time methods this is not only updated every frame, but will return exact time at the moment it is called.</doc>
-		</property>
-	</class>
-	<class native="SceneTime" script="SceneTime">
-		<doc>Manages simulation time for a particular scene. This time runs only while scene is simulating.</doc>
-		<method native="Reset" script="Reset" static="false">
-			<doc>Resets the simulation time to zero. Primarily used for editor purposes for resetting the time when ending play in editor.</doc>
-		</method>
-		<method native="SetPaused" script="SetPaused" static="false">
-			<doc>Pauses or unpauses the simulation time. This is equivalent to setting the time scale to 0.</doc>
-			<param name="paused" type="bool">
-			</param>
-		</method>
-		<property name="TimeInSeconds" type="float" getter="GetTimeInSeconds" setter="" static="false">
-			<doc>Gets the time since the simulation started playing, multiplied by the time scale factor. In editor this will reset to zero every time you start playing in editor, and in a standalone application this will be similar to GetRealTimeInSeconds(), except simulation time can be sped up/down, or stopped entirely by setting the time scale.</doc>
-		</property>
-		<property name="Scale" type="float" getter="GetScale" setter="SetScale" static="false">
-			<doc>Allows you to speed time up or down, or completely pause it by providing zero. Must be zero or larger.</doc>
-		</property>
-		<property name="FrameDelta" type="float" getter="GetFrameDelta" setter="" static="false">
-			<doc>Gets the time since last frame was executed. Only gets updated once per frame.</doc>
-		</property>
-	</class>
-	<class native="CCollider" script="Collider">
-		<property name="Trigger" type="bool" getter="GetIsTrigger" setter="SetIsTrigger" static="false">
-		</property>
-		<property name="Mass" type="float" getter="GetMass" setter="SetMass" static="false">
-		</property>
-		<property name="Material" type="RRef&lt;PhysicsMaterial&gt;" getter="GetMaterial" setter="SetMaterial" static="false">
-		</property>
-		<property name="ContactOffset" type="float" getter="GetContactOffset" setter="SetContactOffset" static="false">
-		</property>
-		<property name="RestOffset" type="float" getter="GetRestOffset" setter="SetRestOffset" static="false">
-		</property>
-		<property name="Layer" type="ulong" getter="GetLayer" setter="SetLayer" static="false">
-		</property>
-		<property name="CollisionReportMode" type="CollisionReportMode" getter="GetCollisionReportMode" setter="SetCollisionReportMode" static="false">
-		</property>
-		<event native="OnCollisionBegin" script="OnCollisionBegin" static="false">
-			<param name="p0" type="CollisionData">
-			</param>
-		</event>
-		<event native="OnCollisionStay" script="OnCollisionStay" static="false">
-			<param name="p0" type="CollisionData">
-			</param>
-		</event>
-		<event native="OnCollisionEnd" script="OnCollisionEnd" static="false">
-			<param name="p0" type="CollisionData">
-			</param>
-		</event>
-	</class>
 	<class native="Skeleton" script="Skeleton">
 		<doc>Contains information about bones required for skeletal animation.</doc>
 		<method native="GetBoneInfo" script="GetBoneInfo" static="false">
@@ -360,106 +257,6 @@
 		<enumentry native="Positive" script="Positive">
 		</enumentry>
 	</enum>
-	<struct native="LogEntry" script="LogEntry">
-		<doc>A single log entry, containing a message and a channel the message was recorded on.</doc>
-		<ctor>
-		</ctor>
-		<field name="Message" type="string">
-		</field>
-		<field name="Verbosity" type="LogVerbosity">
-		</field>
-		<field name="CategoryName" type="string">
-		</field>
-		<field name="LocalTime" type="ulong">
-			<doc>Local time of message</doc>
-		</field>
-	</struct>
-	<enum native="DrawOperationType" script="MeshTopology">
-		<doc>Describes operation that will be used for rendering a certain set of vertices.</doc>
-		<enumentry native="DOT_POINT_LIST" script="PointList">
-			<doc>Each vertex represents a point.</doc>
-		</enumentry>
-		<enumentry native="DOT_LINE_STRIP" script="LineStrip">
-			<doc>Each vertex (except the first) forms a line with the previous vertex.</doc>
-		</enumentry>
-		<enumentry native="DOT_LINE_LIST" script="LineList">
-			<doc>Each sequential pair of vertices represent a line.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_STRIP" script="TriangleStrip">
-			<doc>Each vertex (except the first two) form a triangle with the previous two vertices.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_LIST" script="TriangleList">
-			<doc>Each sequential 3-tuple of vertices represent a triangle.</doc>
-		</enumentry>
-		<enumentry native="DOT_TRIANGLE_FAN" script="TriangleFan">
-			<doc>Each vertex (except the first two) form a triangle with the first vertex and previous vertex.</doc>
-		</enumentry>
-	</enum>
-	<class native="Debug" script="Debug">
-		<doc>Utility class providing various debug functionality.</doc>
-		<method native="Log" script="Log" static="false">
-			<doc>Logs a new message.</doc>
-			<param name="message" type="string">
-				<doc>The message describing the log entry.</doc>
-			</param>
-			<param name="verbosity" type="LogVerbosity">
-				<doc>Verbosity of the message, determining its importance.</doc>
-			</param>
-			<param name="categoryName" type="string">
-				<doc>Category of the message, determining which system is it relevant to.</doc>
-			</param>
-		</method>
-		<method native="ClearLog" script="ClearLog" static="false">
-			<doc>Removes all log entries for a specific category and/or verbosity level.</doc>
-			<param name="categoryName" type="string">
-				<doc>Name of the category to clear. Specify null to clear all categories.</doc>
-			</param>
-			<param name="verbosity" type="LogVerbosity">
-				<doc>Verbosity level to clear.</doc>
-			</param>
-		</method>
-		<property name="LogEntries" type="LogEntry" getter="GetLogEntries" setter="" static="false">
-			<doc>Returns all existing log entries.</doc>
-		</property>
-		<event native="OnLogEntryAdded" script="OnLogEntryAdded" static="false">
-			<doc>Triggered when a new entry in the log is added.</doc>
-			<param name="p0" type="LogEntry">
-			</param>
-		</event>
-		<event native="OnLogModified" script="OnLogModified" static="false">
-			<doc>Triggered whenever one or multiple log entries were added or removed. Triggers only once per frame.</doc>
-		</event>
-	</class>
-	<class native="GUIRenderable" script="GUIRenderable">
-		<doc>Represents a GUI element that can be rendered (i.e. has a visual representation). Renderable element can have a particular style, and provides one or multiple render elements to be drawn.</doc>
-		<property name="StyleSheetClass" type="string" getter="GetStyleSheetClass" setter="SetStyleSheetClass" static="false">
-			<doc>Sets new style class to be used by the element.</doc>
-		</property>
-		<property name="Tint" type="Color" getter="GetTint" setter="SetTint" static="false">
-			<doc>Sets the tint of the GUI element.</doc>
-		</property>
-	</class>
-	<struct native="Color" script="Color">
-		<doc>Color represented as 4 components, each being a floating point value ranging from 0 to 1. Color components are red, green, blue and alpha.</doc>
-		<ctor>
-			<param name="red" type="float">
-			</param>
-			<param name="green" type="float">
-			</param>
-			<param name="blue" type="float">
-			</param>
-			<param name="alpha" type="float">
-			</param>
-		</ctor>
-		<field name="R" type="float">
-		</field>
-		<field name="G" type="float">
-		</field>
-		<field name="B" type="float">
-		</field>
-		<field name="A" type="float">
-		</field>
-	</struct>
 	<struct native="ColorGradientKey" script="ColorGradientKey">
 		<doc>Single key in a ColorGradient.</doc>
 		<ctor>
@@ -473,6 +270,20 @@
 		<field name="Color" type="Color">
 		</field>
 		<field name="Time" type="float">
+		</field>
+	</struct>
+	<struct native="LogEntry" script="LogEntry">
+		<doc>A single log entry, containing a message and a channel the message was recorded on.</doc>
+		<ctor>
+		</ctor>
+		<field name="Message" type="string">
+		</field>
+		<field name="Verbosity" type="LogVerbosity">
+		</field>
+		<field name="CategoryName" type="string">
+		</field>
+		<field name="LocalTime" type="ulong">
+			<doc>Local time of message</doc>
 		</field>
 	</struct>
 	<enum native="ProjectionType" script="ProjectionType">
@@ -774,6 +585,92 @@ Be aware that this value will be ignored if GUI element is part of a layout sinc
 			<doc>Returns parent GUI base element.</doc>
 		</property>
 	</class>
+	<enum native="DrawOperationType" script="MeshTopology">
+		<doc>Describes operation that will be used for rendering a certain set of vertices.</doc>
+		<enumentry native="DOT_POINT_LIST" script="PointList">
+			<doc>Each vertex represents a point.</doc>
+		</enumentry>
+		<enumentry native="DOT_LINE_STRIP" script="LineStrip">
+			<doc>Each vertex (except the first) forms a line with the previous vertex.</doc>
+		</enumentry>
+		<enumentry native="DOT_LINE_LIST" script="LineList">
+			<doc>Each sequential pair of vertices represent a line.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_STRIP" script="TriangleStrip">
+			<doc>Each vertex (except the first two) form a triangle with the previous two vertices.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_LIST" script="TriangleList">
+			<doc>Each sequential 3-tuple of vertices represent a triangle.</doc>
+		</enumentry>
+		<enumentry native="DOT_TRIANGLE_FAN" script="TriangleFan">
+			<doc>Each vertex (except the first two) form a triangle with the first vertex and previous vertex.</doc>
+		</enumentry>
+	</enum>
+	<class native="Debug" script="Debug">
+		<doc>Utility class providing various debug functionality.</doc>
+		<method native="Log" script="Log" static="false">
+			<doc>Logs a new message.</doc>
+			<param name="message" type="string">
+				<doc>The message describing the log entry.</doc>
+			</param>
+			<param name="verbosity" type="LogVerbosity">
+				<doc>Verbosity of the message, determining its importance.</doc>
+			</param>
+			<param name="categoryName" type="string">
+				<doc>Category of the message, determining which system is it relevant to.</doc>
+			</param>
+		</method>
+		<method native="ClearLog" script="ClearLog" static="false">
+			<doc>Removes all log entries for a specific category and/or verbosity level.</doc>
+			<param name="categoryName" type="string">
+				<doc>Name of the category to clear. Specify null to clear all categories.</doc>
+			</param>
+			<param name="verbosity" type="LogVerbosity">
+				<doc>Verbosity level to clear.</doc>
+			</param>
+		</method>
+		<property name="LogEntries" type="LogEntry" getter="GetLogEntries" setter="" static="false">
+			<doc>Returns all existing log entries.</doc>
+		</property>
+		<event native="OnLogEntryAdded" script="OnLogEntryAdded" static="false">
+			<doc>Triggered when a new entry in the log is added.</doc>
+			<param name="p0" type="LogEntry">
+			</param>
+		</event>
+		<event native="OnLogModified" script="OnLogModified" static="false">
+			<doc>Triggered whenever one or multiple log entries were added or removed. Triggers only once per frame.</doc>
+		</event>
+	</class>
+	<class native="GUIRenderable" script="GUIRenderable">
+		<doc>Represents a GUI element that can be rendered (i.e. has a visual representation). Renderable element can have a particular style, and provides one or multiple render elements to be drawn.</doc>
+		<property name="StyleSheetClass" type="string" getter="GetStyleSheetClass" setter="SetStyleSheetClass" static="false">
+			<doc>Sets new style class to be used by the element.</doc>
+		</property>
+		<property name="Tint" type="Color" getter="GetTint" setter="SetTint" static="false">
+			<doc>Sets the tint of the GUI element.</doc>
+		</property>
+	</class>
+	<struct native="Color" script="Color">
+		<doc>Color represented as 4 components, each being a floating point value ranging from 0 to 1. Color components are red, green, blue and alpha.</doc>
+		<ctor>
+			<param name="red" type="float">
+			</param>
+			<param name="green" type="float">
+			</param>
+			<param name="blue" type="float">
+			</param>
+			<param name="alpha" type="float">
+			</param>
+		</ctor>
+		<field name="R" type="float">
+		</field>
+		<field name="G" type="float">
+		</field>
+		<field name="B" type="float">
+		</field>
+		<field name="A" type="float">
+		</field>
+	</struct>
 	<class native="TAnimationCurve&lt;float&gt;" script="AnimationCurve">
 		<doc>Animation spline represented by a set of keyframes, each representing an endpoint of a cubic hermite curve. The spline can be evaluated at any time, and uses caching to speed up multiple sequential evaluations.</doc>
 		<ctor>
@@ -2421,6 +2318,106 @@ Also see SetContactOffset().</doc>
 				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
 			</param>
 		</ctor>
+	</class>
+	<class native="MorphChannel" script="MorphChannel">
+		<doc>A collection of morph shapes that are sequentially blended together. Each shape has a weight in range [0, 1] which determines at what point is that shape blended. As the channel percent moves from 0 to 1, different shapes will be blended with those before or after them, depending on their weight.</doc>
+		<property name="Name" type="string" getter="GetName" setter="" static="false">
+			<doc>Returns the unique name of the channel.</doc>
+		</property>
+		<property name="Shapes" type="MorphShape" getter="GetShapes" setter="" static="false">
+			<doc>Returns all morph shapes within this channel, in order from lowest to highest.</doc>
+		</property>
+	</class>
+	<struct native="Result" script="Result">
+		<doc>Same as TResult, but with no output object.</doc>
+		<ctor>
+		</ctor>
+		<field name="Status" type="ResultStatus">
+		</field>
+		<field name="ErrorMessage" type="string">
+		</field>
+		<field name="AdditionalErrorMessage" type="string">
+		</field>
+	</struct>
+	<class native="MeshData" script="MeshData">
+		<doc>Contains mesh vertex and index data used for initializing, updating and reading mesh data from Mesh.</doc>
+	</class>
+	<struct native="PARTICLE_STATIC_MESH_SHAPE_DESC" script="ParticleStaticMeshShapeOptions">
+		<doc>Information describing a ParticleEmitterStaticMeshShape.</doc>
+		<ctor>
+		</ctor>
+		<field name="Type" type="ParticleEmitterMeshType">
+			<doc>Determines from which portion of the mesh are the particles emitted from.</doc>
+		</field>
+		<field name="Sequential" type="bool">
+			<doc>When enabled the particles will be emitted sequentially from mesh vertices in the order they are defined. Only relevant for the Vertex emit mode.</doc>
+		</field>
+		<field name="Mesh" type="RRef&lt;Mesh&gt;">
+			<doc>Mesh to spawn particles on. Must at least contain per-vertex position data encoded as 3D float vectors. Can optionally contain per-vertex normals encoded as 3D float vectors or as 4-byte unsigned-normalized format.</doc>
+		</field>
+	</struct>
+	<class native="Time" script="Time">
+		<doc>Manages global time related functionality.</doc>
+		<property name="RealTimeInSeconds" type="float" getter="GetRealTimeInSeconds" setter="" static="false">
+			<doc>Gets the time elapsed since application start. Only gets updated once per frame.</doc>
+		</property>
+		<property name="RealTimeInMilliseconds" type="ulong" getter="GetRealTimeInMilliseconds" setter="" static="false">
+			<doc>Gets the time elapsed since application start. Only gets updated once per frame.</doc>
+		</property>
+		<property name="FrameDelta" type="float" getter="GetFrameDelta" setter="" static="false">
+			<doc>Gets the time since last frame was executed. Only gets updated once per frame.</doc>
+		</property>
+		<property name="CurrentFrameIndex" type="ulong" getter="GetCurrentFrameIndex" setter="" static="false">
+			<doc>Returns the sequential index of the current frame. First frame is 0.</doc>
+		</property>
+		<property name="TimePrecise" type="ulong" getter="GetTimePrecise" setter="" static="false">
+			<doc>Returns the precise time since application start, in microseconds. Unlike other time methods this is not only updated every frame, but will return exact time at the moment it is called.</doc>
+		</property>
+	</class>
+	<class native="SceneTime" script="SceneTime">
+		<doc>Manages simulation time for a particular scene. This time runs only while scene is simulating.</doc>
+		<method native="Reset" script="Reset" static="false">
+			<doc>Resets the simulation time to zero. Primarily used for editor purposes for resetting the time when ending play in editor.</doc>
+		</method>
+		<method native="SetPaused" script="SetPaused" static="false">
+			<doc>Pauses or unpauses the simulation time. This is equivalent to setting the time scale to 0.</doc>
+			<param name="paused" type="bool">
+			</param>
+		</method>
+		<property name="TimeInSeconds" type="float" getter="GetTimeInSeconds" setter="" static="false">
+			<doc>Gets the time since the simulation started playing, multiplied by the time scale factor. In editor this will reset to zero every time you start playing in editor, and in a standalone application this will be similar to GetRealTimeInSeconds(), except simulation time can be sped up/down, or stopped entirely by setting the time scale.</doc>
+		</property>
+		<property name="Scale" type="float" getter="GetScale" setter="SetScale" static="false">
+			<doc>Allows you to speed time up or down, or completely pause it by providing zero. Must be zero or larger.</doc>
+		</property>
+	</class>
+	<class native="CCollider" script="Collider">
+		<property name="Trigger" type="bool" getter="GetIsTrigger" setter="SetIsTrigger" static="false">
+		</property>
+		<property name="Mass" type="float" getter="GetMass" setter="SetMass" static="false">
+		</property>
+		<property name="Material" type="RRef&lt;PhysicsMaterial&gt;" getter="GetMaterial" setter="SetMaterial" static="false">
+		</property>
+		<property name="ContactOffset" type="float" getter="GetContactOffset" setter="SetContactOffset" static="false">
+		</property>
+		<property name="RestOffset" type="float" getter="GetRestOffset" setter="SetRestOffset" static="false">
+		</property>
+		<property name="Layer" type="ulong" getter="GetLayer" setter="SetLayer" static="false">
+		</property>
+		<property name="CollisionReportMode" type="CollisionReportMode" getter="GetCollisionReportMode" setter="SetCollisionReportMode" static="false">
+		</property>
+		<event native="OnCollisionBegin" script="OnCollisionBegin" static="false">
+			<param name="p0" type="CollisionData">
+			</param>
+		</event>
+		<event native="OnCollisionStay" script="OnCollisionStay" static="false">
+			<param name="p0" type="CollisionData">
+			</param>
+		</event>
+		<event native="OnCollisionEnd" script="OnCollisionEnd" static="false">
+			<param name="p0" type="CollisionData">
+			</param>
+		</event>
 	</class>
 	<class native="HString" script="LocString">
 		<doc>String handle. Provides a wrapper around an Unicode string, primarily for localization purposes.
@@ -6920,6 +6917,11 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 	</struct>
 	<class native="SceneInstance" script="SceneInstance">
 		<doc>Contains information about an instantiated scene.</doc>
+		<method native="Clear" script="Clear" static="false">
+			<doc>Removes all scene objects from the scene, except for persistent objects. If <paramref name="forceAll"/> is true, removes even the persistent objects.</doc>
+			<param name="forceAll" type="bool">
+			</param>
+		</method>
 		<method native="CreateSceneObject" script="CreateSceneObject" static="false">
 			<doc>Creates a new scene object in the scene instance.</doc>
 			<param name="name" type="string">
@@ -10690,24 +10692,9 @@ Alternatively you can also skip manually calling ReleaseInternalReference() and 
 	</class>
 	<class native="SceneManager" script="SceneManager">
 		<doc>Keeps track of all active SceneObject%s and their components. Keeps track of component state and triggers their events. Updates the transforms of objects as SceneObject%s move.</doc>
-		<method native="LoadMainScene" script="LoadMainScene" static="false">
-			<doc>Instantiates a new scene and makes it active. All non-persistent objects that are part of the current scene will be destroyed.</doc>
-			<param name="scene" type="Scene">
-			</param>
-		</method>
-		<property name="MainScene" type="SceneInstance" getter="GetMainScene" setter="" static="false">
-			<doc>Returns the object that represents the main scene. This is the scene that is always available, and the scene that will be running in a standalone game.</doc>
+		<property name="MainScene" type="SceneInstance" getter="GetMainScene" setter="SetMainScene" static="false">
+			<doc>In a standalone game this represents the scene that is playing. In editor this represents the primary scene being edited. When creating scene objects and no scene is provided, the object will be created in the main scene. If null main scene is set, new empty main scene will be created internally, as the main scene must always exist.</doc>
 		</property>
-		<event native="OnMainSceneLoaded" script="OnMainSceneLoaded" static="false">
-			<doc>Called when a new main scene has been loaded and is active.</doc>
-			<param name="p0" type="UUID">
-			</param>
-		</event>
-		<event native="OnMainSceneUnloaded" script="OnMainSceneUnloaded" static="false">
-			<doc>Called when the main scene has been cleared or unloaded.</doc>
-			<param name="p0" type="UUID">
-			</param>
-		</event>
 	</class>
 	<struct native="CharacterInformation" script="CharacterInformation">
 		<doc>Describes a single character in a font of a specific size.</doc>

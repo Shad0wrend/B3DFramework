@@ -17,43 +17,21 @@ namespace b3d
 		protected SceneManager() { }
 
 		/// <summary>
-		/// Returns the object that represents the main scene. This is the scene that is always available, and the scene that 
-		/// will be running in a standalone game.
+		/// In a standalone game this represents the scene that is playing. In editor this represents the primary scene being 
+		/// edited. When creating scene objects and no scene is provided, the object will be created in the main scene. If null 
+		/// main scene is set, new empty main scene will be created internally, as the main scene must always exist.
 		/// </summary>
+		[ShowInInspector]
 		[NativeWrapper]
 		public static SceneInstance MainScene
 		{
 			get { return Internal_GetMainScene(); }
+			set { Internal_SetMainScene(value); }
 		}
 
-		/// <summary>Called when a new main scene has been loaded and is active.</summary>
-		public static event Action<UUID> OnMainSceneLoaded;
-
-		/// <summary>Called when the main scene has been cleared or unloaded.</summary>
-		public static event Action<UUID> OnMainSceneUnloaded;
-
-		/// <summary>
-		/// Instantiates a new scene and makes it active. All non-persistent objects that are part of the current scene will be 
-		/// destroyed.
-		/// </summary>
-		public static void LoadMainScene(Scene scene)
-		{
-			Internal_LoadMainScene(scene);
-		}
-
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_SetMainScene(SceneInstance scene);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern SceneInstance Internal_GetMainScene();
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_ClearMainScene(bool forceAll);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_LoadMainScene(Scene scene);
-		private static void Internal_OnMainSceneLoaded(ref UUID p0)
-		{
-			OnMainSceneLoaded?.Invoke(p0);
-		}
-		private static void Internal_OnMainSceneUnloaded(ref UUID p0)
-		{
-			OnMainSceneUnloaded?.Invoke(p0);
-		}
 	}
 }

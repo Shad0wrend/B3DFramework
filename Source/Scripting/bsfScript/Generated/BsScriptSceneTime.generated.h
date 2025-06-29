@@ -26,6 +26,5 @@ namespace b3d
 		static float InternalGetScale(ScriptSceneTime* self);
 		static void InternalReset(ScriptSceneTime* self);
 		static void InternalSetPaused(ScriptSceneTime* self, bool paused);
-		static float InternalGetFrameDelta(ScriptSceneTime* self);
 	};
 }

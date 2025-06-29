@@ -25,7 +25,6 @@ namespace b3d
         /// </summary>
         internal static void OnUpdate()
         {
-            SceneManager.Update();
         }
 
         /// <summary>

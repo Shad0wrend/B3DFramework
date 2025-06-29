@@ -90,6 +90,15 @@ namespace b3d
 			get { return Internal_IsRunning(mCachedPtr); }
 		}
 
+		/// <summary>
+		/// Removes all scene objects from the scene, except for persistent objects. If <paramref name="forceAll"/> is true, 
+		/// removes even the persistent objects.
+		/// </summary>
+		public void Clear(bool forceAll = false)
+		{
+			Internal_Clear(mCachedPtr, forceAll);
+		}
+
 		/// <summary>Creates a new scene object in the scene instance.</summary>
 		/// <param name="name">Name of the scene object.</param>
 		/// <param name="flags">Optional flags that control object behavior. See SceneObjectFlags.</param>
@@ -110,6 +119,8 @@ namespace b3d
 		private static extern void Internal_GetAssociatedResourceId(IntPtr thisPtr, out UUID __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern Camera Internal_GetMainCameraComponent(IntPtr thisPtr);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_Clear(IntPtr thisPtr, bool forceAll);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern SceneObject Internal_CreateSceneObject(IntPtr thisPtr, string name, int flags);
 		[MethodImpl(MethodImplOptions.InternalCall)]

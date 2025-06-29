@@ -33,6 +33,7 @@ namespace b3d
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPhysicsScene", (void*)&ScriptSceneInstance::InternalGetPhysicsScene);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAssociatedResourceId", (void*)&ScriptSceneInstance::InternalGetAssociatedResourceId);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMainCameraComponent", (void*)&ScriptSceneInstance::InternalGetMainCameraComponent);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Clear", (void*)&ScriptSceneInstance::InternalClear);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateSceneObject", (void*)&ScriptSceneInstance::InternalCreateSceneObject);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsRunning", (void*)&ScriptSceneInstance::InternalIsRunning);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSceneInstance::InternalCreate);
@@ -138,6 +139,14 @@ namespace b3d
 		__output = temp__output;
 
 		return __output;
+	}
+
+	void ScriptSceneInstance::InternalClear(ScriptSceneInstance* self, bool forceAll)
+	{
+		if(!self->IsNativeObjectValid())
+			return;
+
+		static_cast<SceneInstance*>(self->GetNativeObject())->Clear(forceAll);
 	}
 
 	MonoObject* ScriptSceneInstance::InternalCreateSceneObject(ScriptSceneInstance* self, MonoString* name, uint32_t flags)

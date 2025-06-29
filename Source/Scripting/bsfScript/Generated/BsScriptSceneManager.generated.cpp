@@ -6,17 +6,9 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Scene/BsSceneManager.h"
 #include "BsScriptSceneInstance.generated.h"
-#include "BsScriptScene.generated.h"
-#include "BsScriptResourceWrapper.h"
 
 namespace b3d
 {
-	ScriptSceneManager::OnMainSceneLoadedThunkDefinition ScriptSceneManager::OnMainSceneLoadedThunk; 
-	ScriptSceneManager::OnMainSceneUnloadedThunkDefinition ScriptSceneManager::OnMainSceneUnloadedThunk; 
-
-	HEvent ScriptSceneManager::OnMainSceneLoadedConnection;
-	HEvent ScriptSceneManager::OnMainSceneUnloadedConnection;
-
 	ScriptSceneManager::ScriptSceneManager()
 		:TScriptTypeDefinition()
 	{
@@ -24,37 +16,19 @@ namespace b3d
 
 	void ScriptSceneManager::SetupScriptBindings()
 	{
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetMainScene", (void*)&ScriptSceneManager::InternalSetMainScene);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMainScene", (void*)&ScriptSceneManager::InternalGetMainScene);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ClearMainScene", (void*)&ScriptSceneManager::InternalClearMainScene);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_LoadMainScene", (void*)&ScriptSceneManager::InternalLoadMainScene);
 
-		OnMainSceneLoadedThunk = (OnMainSceneLoadedThunkDefinition)sInteropMetaData.ScriptClass->GetMethodExact("Internal_OnMainSceneLoaded", "UUID&")->GetThunk();
-		OnMainSceneUnloadedThunk = (OnMainSceneUnloadedThunkDefinition)sInteropMetaData.ScriptClass->GetMethodExact("Internal_OnMainSceneUnloaded", "UUID&")->GetThunk();
 	}
 
-	void ScriptSceneManager::StartUp()
+	void ScriptSceneManager::InternalSetMainScene(MonoObject* scene)
 	{
-		OnMainSceneLoadedConnection = SceneManager::Instance().OnMainSceneLoaded.Connect(&ScriptSceneManager::OnMainSceneLoaded);
-		OnMainSceneUnloadedConnection = SceneManager::Instance().OnMainSceneUnloaded.Connect(&ScriptSceneManager::OnMainSceneUnloaded);
-	}
-	void ScriptSceneManager::ShutDown()
-	{
-		OnMainSceneLoadedConnection.Disconnect();
-		OnMainSceneUnloadedConnection.Disconnect();
-	}
-
-	void ScriptSceneManager::OnMainSceneLoaded(UUID p0)
-	{
-		MonoObject* tmpp0;
-		tmpp0 = ScriptUUID::Box(p0);
-		MonoUtil::InvokeThunk(OnMainSceneLoadedThunk, tmpp0);
-	}
-
-	void ScriptSceneManager::OnMainSceneUnloaded(UUID p0)
-	{
-		MonoObject* tmpp0;
-		tmpp0 = ScriptUUID::Box(p0);
-		MonoUtil::InvokeThunk(OnMainSceneUnloadedThunk, tmpp0);
+		SPtr<SceneInstance> tmpscene;
+		ScriptSceneInstance* scriptObjectWrapperscene;
+		scriptObjectWrapperscene = ScriptSceneInstance::GetScriptObjectWrapper(scene);
+		if(scriptObjectWrapperscene != nullptr)
+			tmpscene = std::static_pointer_cast<SceneInstance>(scriptObjectWrapperscene->GetBaseNativeObjectAsShared());
+		SceneManager::Instance().SetMainScene(tmpscene);
 	}
 
 	MonoObject* ScriptSceneManager::InternalGetMainScene()
@@ -66,20 +40,5 @@ namespace b3d
 		__output = ScriptSceneInstance::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
-	}
-
-	void ScriptSceneManager::InternalClearMainScene(bool forceAll)
-	{
-		SceneManager::Instance().ClearMainScene(forceAll);
-	}
-
-	void ScriptSceneManager::InternalLoadMainScene(MonoObject* scene)
-	{
-		TResourceHandle<Scene> tmpscene;
-		ScriptScene* scriptObjectWrapperscene;
-		scriptObjectWrapperscene = ScriptScene::GetScriptObjectWrapper(scene);
-		if(scriptObjectWrapperscene != nullptr)
-			tmpscene = B3DStaticResourceCast<Scene>(scriptObjectWrapperscene->GetBaseNativeObjectAsHandle());
-		SceneManager::Instance().LoadMainScene(tmpscene);
 	}
 }

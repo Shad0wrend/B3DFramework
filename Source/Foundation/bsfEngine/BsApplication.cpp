@@ -79,7 +79,15 @@ void Application::OnShutDown()
 {
 	// Need to clear all objects before I unload any plugins, as they
 	// could have allocated parts or all of those objects.
-	SceneManager::Instance().ClearMainScene(true);
+	const UnorderedMap<SceneInstance*, WeakSPtr<SceneInstance>> allScenes = GetSceneManager().GetAllScenes();
+	for(const auto& entry : allScenes)
+	{
+		const SPtr<SceneInstance>& scene = entry.second.lock();
+		if(scene == nullptr)
+			continue;
+
+		scene->Clear(true);
+	}
 
 	// Resources too (Prefabs especially, since they hold the same data as a scene)
 	Resources::Instance().UnloadAll();

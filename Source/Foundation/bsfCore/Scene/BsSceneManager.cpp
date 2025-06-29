@@ -476,6 +476,30 @@ void SceneInstance::SetRoot(const HSceneObject& newRoot)
 	oldGameObjectCollection->DestroyQueuedObjects();
 }
 
+void SceneInstance::Clear(bool forceAll)
+{
+	const u32 childCount = mRoot->GetChildCount();
+
+	u32 childIndex = 0;
+	for(u32 i = 0; i < childCount; i++)
+	{
+		HSceneObject child = mRoot->GetChild(childIndex);
+
+		if(forceAll || !child->HasFlag(SceneObjectFlag::RuntimePersistent))
+			child->Destroy();
+		else
+			childIndex++;
+	}
+
+	const SPtr<GameObjectCollection>& gameObjectCollection = GetGameObjectCollection();
+	if(B3D_ENSURE(gameObjectCollection != nullptr))
+		gameObjectCollection->DestroyQueuedObjects();
+
+	HSceneObject newRoot = SceneObject::CreateInternal(gameObjectCollection, "SceneRoot");
+	SetRoot(newRoot);
+	SetAssociatedResourceId(UUID::kEmpty);
+}
+
 void SceneInstance::RegisterCamera(const SPtr<Camera>& camera)
 {
 	mCameras[camera.get()] = camera;
@@ -644,43 +668,18 @@ SceneManager::~SceneManager()
 
 void SceneManager::OnStartUp()
 {
-	mMainScene = SceneInstance::Create("Main");
-	mMainScene->mRoot->SetScene(mMainScene);
+	SetMainScene(nullptr); // Forces creation of an empty main scene
 }
 
-void SceneManager::ClearMainScene(bool forceAll)
+void SceneManager::SetMainScene(const SPtr<SceneInstance>& scene)
 {
-	const u32 childCount = mMainScene->mRoot->GetChildCount();
-
-	u32 childIndex = 0;
-	for(u32 i = 0; i < childCount; i++)
+	if(scene == nullptr)
 	{
-		HSceneObject child = mMainScene->mRoot->GetChild(childIndex);
-
-		if(forceAll || !child->HasFlag(SceneObjectFlag::RuntimePersistent))
-			child->Destroy();
-		else
-			childIndex++;
+		mMainScene = SceneInstance::Create("Main");
+		mMainScene->mRoot->SetScene(mMainScene);
 	}
-
-	const SPtr<GameObjectCollection>& gameObjectCollection = mMainScene->GetGameObjectCollection();
-	if(B3D_ENSURE(gameObjectCollection != nullptr))
-		gameObjectCollection->DestroyQueuedObjects();
-
-	UUID oldMainSceneResourceId = mMainScene->GetAssociatedResourceId();
-
-	HSceneObject newRoot = SceneObject::CreateInternal(gameObjectCollection, "SceneRoot");
-	mMainScene->SetRoot(newRoot);
-	mMainScene->SetAssociatedResourceId(UUID::kEmpty);
-
-	OnMainSceneUnloaded(oldMainSceneResourceId);
-}
-
-void SceneManager::LoadMainScene(const HScene& scene)
-{
-	HSceneObject root = scene->Instantiate(mMainScene);
-
-	OnMainSceneLoaded(scene->GetId());
+	else
+		mMainScene = scene;
 }
 
 void SceneManager::UpdateLinkedSceneActorTransforms()

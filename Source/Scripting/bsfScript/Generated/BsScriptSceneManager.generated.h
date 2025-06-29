@@ -5,7 +5,6 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "../../../Foundation/bsfCore/Scene/BsSceneManager.h"
 #include "BsScriptTypeDefinition.h"
-#include "Utility/BsUUID.h"
 
 namespace b3d
 {
@@ -18,23 +17,8 @@ namespace b3d
 
 		static void SetupScriptBindings();
 
-		static void StartUp();
-		static void ShutDown();
-
 	private:
-		static void OnMainSceneLoaded(UUID p0);
-		static void OnMainSceneUnloaded(UUID p0);
-
-		typedef void(B3D_THUNKCALL *OnMainSceneLoadedThunkDefinition) (MonoObject* p0, MonoException**);
-		static OnMainSceneLoadedThunkDefinition OnMainSceneLoadedThunk;
-		typedef void(B3D_THUNKCALL *OnMainSceneUnloadedThunkDefinition) (MonoObject* p0, MonoException**);
-		static OnMainSceneUnloadedThunkDefinition OnMainSceneUnloadedThunk;
-
-		static HEvent OnMainSceneLoadedConnection;
-		static HEvent OnMainSceneUnloadedConnection;
-
+		static void InternalSetMainScene(MonoObject* scene);
 		static MonoObject* InternalGetMainScene();
-		static void InternalClearMainScene(bool forceAll);
-		static void InternalLoadMainScene(MonoObject* scene);
 	};
 }

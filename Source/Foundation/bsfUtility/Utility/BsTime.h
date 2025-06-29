@@ -45,7 +45,7 @@ namespace b3d
 		 * @return	Time since last frame was executed, in seconds.
 		 */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(FrameDelta))
-		float GetFrameDelta() const { return mFrameDelta; } // TODO - Deprecated, use SceneTime
+		float GetFrameDelta() const { return mFrameDelta; }
 
 		/** Returns the time (in seconds) the latest frame has started. */
 		float GetLastFrameTime() const { return (float)(mLastFrameTime * kMicrosecToSec); }
@@ -182,19 +182,8 @@ namespace b3d
 		B3D_SCRIPT_EXPORT()
 		void SetPaused(bool paused) { mIsTimePaused = paused;}
 
-		/**
-		 * Gets the time since last frame was executed. Only gets updated once per frame.
-		 *
-		 * @return	Time since last frame was executed, in seconds.
-		 */
-		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(FrameDelta))
-		float GetFrameDelta() const { return mFrameDelta; }
-
 		/** Returns the step (in seconds) between fixed frame updates. */
 		float GetFixedFrameDelta() const { return (float)(mFixedStep * Time::kMicrosecToSec); }
-
-		/** Returns the time (in seconds) the latest frame has started. */
-		float GetLastFrameTime() const { return (float)(mLastFrameTime * Time::kMicrosecToSec); }
 
 		/** Returns the time (in seconds) the latest fixed update has started. */
 		float GetLastFixedUpdateTime() const { return (float)(mLastFixedUpdateTime * Time::kMicrosecToSec); }

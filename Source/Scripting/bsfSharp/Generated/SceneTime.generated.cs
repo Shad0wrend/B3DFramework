@@ -40,14 +40,6 @@ namespace b3d
 			set { Internal_SetScale(mCachedPtr, value); }
 		}
 
-		/// <summary>Gets the time since last frame was executed. Only gets updated once per frame.</summary>
-		/// <returns>Time since last frame was executed, in seconds.</returns>
-		[NativeWrapper]
-		public float FrameDelta
-		{
-			get { return Internal_GetFrameDelta(mCachedPtr); }
-		}
-
 		/// <summary>
 		/// Resets the simulation time to zero. Primarily used for editor purposes for resetting the time when ending play in 
 		/// editor.
@@ -73,8 +65,6 @@ namespace b3d
 		private static extern void Internal_Reset(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetPaused(IntPtr thisPtr, bool paused);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetFrameDelta(IntPtr thisPtr);
 	}
 
 	/** @} */
