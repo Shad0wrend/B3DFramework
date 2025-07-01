@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "BsRendererExtension.h"
 #include "CoreObject/BsCoreObject.h"
 #include "CoreObject/BsRenderProxy.h"
 
@@ -39,7 +40,7 @@ namespace b3d
 		 */
 
 		/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
-		class RendererScene : public RenderProxy
+		class B3D_CORE_EXPORT RendererScene : public RenderProxy
 		{
 		public:
 			virtual ~RendererScene() = default;
@@ -113,8 +114,34 @@ namespace b3d
 			/** Removes a decal object from the scene. */
 			virtual void UnregisterDecal(Decal* decal) = 0;
 
+			/**
+			 * Registers an extension object that will be called every frame, for view in this scene. Allows external code to perform
+			 * custom rendering interleaved with the renderer's output.
+			 */
+			void AddExtension(RendererExtension* extension) { mRendererExtensions.insert(extension); mCombinedRendererExtensionsDirty = true; }
+
+			/** Unregisters an extension registered with AddRendererExtension(). */
+			void RemoveExtension(RendererExtension* extension) { mRendererExtensions.erase(extension); mCombinedRendererExtensionsDirty = true; }
+
+			/**
+			 * Updates the combined extension list if required. Combined extension list contains extensions specific to the scene and global renderer ones. This will rebuild
+			 * the internal list if the per-scene extensions have changed since the last call, or if @p forceUpdate is true. @p forceUpdate should be true if @p globalRendererExtensions
+			 * has changed since the last time this method was called.
+			 */
+			void UpdateCombinedRendererExtensionsIfNeeded(const Set<RendererExtension*, RendererExtension::SortFunction>& globalRendererExtensions, bool forceUpdate = false);
+
+			/**
+			 * Returns a list of renderer extensions that includes both the global renderer extensions, and the per-scene extensions.
+			 * Make sure to call UpdateCombinedRendererExtensionsIfNeeded() before this method, if extension list has been modified.
+			 */
+			const Set<RendererExtension*, RendererExtension::SortFunction>& GetCombinedRendererExtensions() const { return mCombinedRendererExtensions; }
+
 		protected:
 			friend class b3d::RendererScene;
+
+			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
+			Set<RendererExtension*, RendererExtension::SortFunction> mCombinedRendererExtensions; /**< Transient set of per-scene and global renderer extensions. */
+			bool mCombinedRendererExtensionsDirty = true;
 		};
 
 		/** @} */

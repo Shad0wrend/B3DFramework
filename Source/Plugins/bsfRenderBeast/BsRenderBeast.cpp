@@ -275,12 +275,16 @@ void RenderBeast::RenderAllScenes(FrameTimings timings, PerFrameData perFrameDat
 
 		mIsFrameCaptureRequested = false;
 	}
+
+	mRendererExtensionsDirty = false;
 }
 
 bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInfo)
 {
 	SPtr<GpuCommandBuffer> commandBuffer = mCommandBufferPool->Create(GpuCommandBufferCreateInformation::Create("Main"));
 	const SceneInfo& sceneInfo = scene.GetSceneInfo();
+
+	scene.UpdateCombinedRendererExtensionsIfNeeded(mRendererExtensions, mRendererExtensionsDirty);
 
 	// Note: I'm iterating over all sampler states every frame. If this ends up being a performance
 	// issue consider handling this internally in render::Material which can only do it when sampler states
@@ -413,7 +417,7 @@ bool RenderBeast::RenderViews(GpuCommandBuffer& commandBuffer, RenderBeastScene&
 		const RenderSettings& settings = view->GetRenderSettings();
 		if(settings.OverlayOnly)
 		{
-			if(RenderOverlay(commandBuffer, *view, frameInfo))
+			if(RenderOverlay(commandBuffer, scene, *view, frameInfo))
 				anythingDrawn = true;
 		}
 		else
@@ -451,7 +455,7 @@ void RenderBeast::RenderView(GpuCommandBuffer& commandBuffer, RenderBeastScene& 
 	if(viewProps.TriggerCallbacks)
 	{
 		const Camera* camera = view.GetSceneCamera();
-		for(auto& extension : mCallbacks)
+		for(auto& extension : scene.GetCombinedRendererExtensions())
 		{
 			RenderLocation location = extension->GetLocation();
 			RendererExtensionRequest request = extension->Check(*camera);
@@ -490,7 +494,7 @@ void RenderBeast::RenderView(GpuCommandBuffer& commandBuffer, RenderBeastScene& 
 	GetProfilerCPU().EndSample("Render view");
 }
 
-bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RendererView& view, const FrameInfo& frameInfo)
+bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RenderBeastScene& scene, RendererView& view, const FrameInfo& frameInfo)
 {
 	GetProfilerCPU().BeginSample("Render overlay");
 
@@ -523,15 +527,17 @@ bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RendererView& v
 
 	commandBuffer.SetViewport(viewport->GetArea());
 
+	const Set<RendererExtension*, RendererExtension::SortFunction>& rendererExtensions = scene.GetCombinedRendererExtensions();
+
 	// Trigger overlay callbacks
 	bool needsRedraw = false;
-	if(!mCallbacks.empty())
+	if(!rendererExtensions.empty())
 	{
 		view.NotifyCompositorTargetChangedInternal(target);
 
 		mOverlayExtensions.clear();
 
-		for(auto& entry : mCallbacks)
+		for(auto& entry : rendererExtensions)
 		{
 			if(entry->GetLocation() != RenderLocation::Overlay)
 				continue;

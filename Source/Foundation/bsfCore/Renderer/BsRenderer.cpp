@@ -19,7 +19,6 @@ using namespace b3d;
 namespace b3d { namespace render
 {
 Renderer::Renderer()
-	: mCallbacks(&CompareCallback)
 {}
 
 void Renderer::Initialize(const SPtr<GpuDevice>& gpuDevice)
@@ -47,20 +46,6 @@ SPtr<RendererMeshData> Renderer::CreateMeshDataInternal(const SPtr<MeshData>& me
 {
 	return B3DMakeSharedFromExisting<RendererMeshData>(new(B3DAllocate<RendererMeshData>())
 											   RendererMeshData(meshData));
-}
-
-bool Renderer::CompareCallback(const RendererExtension* a, const RendererExtension* b)
-{
-	// Sort by alpha setting first, then by cull mode, then by index
-	if(a->GetLocation() == b->GetLocation())
-	{
-		if(a->GetPriority() == b->GetPriority())
-			return a > b; // Use address, at this point it doesn't matter, but std::set requires us to differentiate
-		else
-			return a->GetPriority() > b->GetPriority();
-	}
-	else
-		return (u32)a->GetLocation() < (u32)b->GetLocation();
 }
 
 void Renderer::Update()

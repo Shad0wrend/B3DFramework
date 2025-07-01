@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "BsRendererExtension.h"
 #include "String/BsStringID.h"
 #include "Renderer/BsRendererMeshData.h"
 #include "Material/BsShaderVariation.h"
@@ -204,19 +205,19 @@ namespace b3d
 			virtual void RequestFrameCapture() { }
 
 			/**
-			 * Registers an extension object that will be called every frame by the renderer. Allows external code to perform
+			 * Registers an extension object that will be called every frame, for each scene and view. Allows external code to perform
 			 * custom rendering interleaved with the renderer's output.
 			 *
 			 * @note	Render thread.
 			 */
-			void AddPlugin(RendererExtension* plugin) { mCallbacks.insert(plugin); }
+			void AddExtension(RendererExtension* extension) { mRendererExtensions.insert(extension); mRendererExtensionsDirty = true; }
 
 			/**
-			 * Unregisters an extension registered with addPlugin().
+			 * Unregisters an extension registered with AddRendererExtension().
 			 *
 			 * @note	Render thread.
 			 */
-			void RemovePlugin(RendererExtension* plugin) { mCallbacks.erase(plugin); }
+			void RemoveExtension(RendererExtension* extension) { mRendererExtensions.erase(extension); mRendererExtensionsDirty = true; }
 
 			/**
 			 * Registers a new task for execution on the render thread.
@@ -272,13 +273,11 @@ namespace b3d
 			 */
 			void ProcessTask(RendererTask& task, bool forceAll);
 
-			/** Callback to trigger when comparing the order in which renderer extensions are called. */
-			static bool CompareCallback(const RendererExtension* a, const RendererExtension* b);
-
 			SPtr<GpuDevice> mDevice;
 			SPtr<GpuCommandBufferPool> mCommandBufferPool;
 
-			Set<RendererExtension*, std::function<bool(const RendererExtension*, const RendererExtension*)>> mCallbacks;
+			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
+			bool mRendererExtensionsDirty = true;
 
 			Vector<RendererTaskQueuedInfo> mQueuedTasks; // Main & render thread
 			Vector<SPtr<RendererTask>> mUnresolvedTasks; // Main thread

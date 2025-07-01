@@ -19,4 +19,23 @@ namespace b3d
 	{
 		return render::GetRenderer()->CreateScene();
 	}
+
+	namespace render
+	{
+		void RendererScene::UpdateCombinedRendererExtensionsIfNeeded(const Set<RendererExtension*, RendererExtension::SortFunction>& globalRendererExtensions, bool forceUpdate)
+		{
+			if(!forceUpdate && !mCombinedRendererExtensionsDirty)
+				return;
+
+			mCombinedRendererExtensions.clear();
+
+			for(const auto& entry : globalRendererExtensions)
+				mCombinedRendererExtensions.insert(entry);
+
+			for(const auto& entry : mRendererExtensions)
+				mCombinedRendererExtensions.insert(entry);
+
+			mCombinedRendererExtensionsDirty = false;
+		}
+	}
 }

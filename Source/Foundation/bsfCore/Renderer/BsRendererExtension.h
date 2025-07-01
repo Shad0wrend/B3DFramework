@@ -95,15 +95,18 @@ namespace b3d
 		 * object on the render thread and registers it with the renderer. Destruction will be queued on the render thread when
 		 * the object goes out of scope.
 		 *
+		 * If @p scene is non-null, the extension will be associated only with that particular scene. Otherwise it will be associated with
+		 * all scenes.
+		 *
 		 * @note	Main thread.
 		 */
 		template <class T>
-		static SPtr<T> Create(const Any& data)
+		static SPtr<T> Create(const Any& data, const SPtr<RendererScene>& scene = nullptr)
 		{
-			T* ext = new(B3DAllocate<T>()) T();
-			InitializerInternal(ext, data);
+			T* extension = new(B3DAllocate<T>()) T();
+			QueueInitializeOnRenderThread(extension, data, scene);
 
-			return SPtr<T>(ext, &RendererExtension::DeleterInternal);
+			return SPtr<T>(extension, &RendererExtension::QueueDeleteOnRenderThread);
 		}
 
 		/** Called when the renderer extension is first initialized. */
@@ -138,6 +141,12 @@ namespace b3d
 		 */
 		RenderLocation GetLocation() const { return mLocation; }
 
+		/**	Used for sorting renderer extensions in the order they should be executed. */
+		struct SortFunction
+		{
+			bool operator()(const RendererExtension* lhs, const RendererExtension* rhs) const;
+		};
+
 	protected:
 		RendererExtension(RenderLocation location, u32 priority)
 			: mLocation(location), mPriority(priority)
@@ -147,13 +156,14 @@ namespace b3d
 
 	private:
 		/** Initializer that triggers when a renderer extension is first constructed. */
-		static void InitializerInternal(RendererExtension* obj, const Any& data);
+		static void QueueInitializeOnRenderThread(RendererExtension* extension, const Any& data, const SPtr<RendererScene>& scene);
 
 		/** Deleter that triggers when a renderer extension object goes out of scope. */
-		static void DeleterInternal(RendererExtension* obj);
+		static void QueueDeleteOnRenderThread(RendererExtension* extension);
 
 		RenderLocation mLocation;
 		u32 mPriority;
+		WeakSPtr<render::RendererScene> mAssociatedScene;
 	};
 
 	/** @} */

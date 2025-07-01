@@ -111,7 +111,7 @@ namespace b3d
 			 *
 			 * @note	Render thread only.
 			 */
-			bool RenderOverlay(GpuCommandBuffer& commandBuffer, RendererView& view, const FrameInfo& frameInfo);
+			bool RenderOverlay(GpuCommandBuffer& commandBuffer, RenderBeastScene& scene, RendererView& view, const FrameInfo& frameInfo);
 
 			/**	Creates data used by the renderer on the render thread. */
 			void InitializeOnRenderThread(const LoadedRendererTextures& rendererTextures);
