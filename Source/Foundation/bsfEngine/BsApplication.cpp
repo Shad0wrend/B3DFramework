@@ -24,6 +24,7 @@
 #include "Resources/BsResources.h"
 #include "BsEngineConfig.h"
 #include "GUI/BsProfilerOverlay.h"
+#include "Renderer/BsCamera.h"
 #include "Text/BsStockIcons.h"
 
 using namespace b3d;
@@ -123,8 +124,8 @@ void Application::PostUpdate()
 
 void Application::ShowProfilerOverlay(ProfilerOverlayType type, const SPtr<Camera>& camera)
 {
-	const SPtr<SceneInstance>& mainScene = GetSceneManager().GetMainScene();
-	const SPtr<Camera>& overlayCamera = camera ? camera : mainScene->GetMainCamera();
+	const SPtr<SceneInstance>& scene = camera ? camera->GetSceneInstance() : GetSceneManager().GetMainScene();
+	const SPtr<Camera>& overlayCamera = camera ? camera : scene->GetMainCamera();
 	if(!overlayCamera)
 		return;
 
