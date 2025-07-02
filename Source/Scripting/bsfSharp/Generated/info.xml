@@ -7411,15 +7411,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Triggered when button is clicked twice in rapid succession.</doc>
 		</event>
 	</class>
-	<class native="Shader" script="Shader">
-		<doc>Contains definitions of GPU programs used for rendering, as well as a set of global parameters to control those programs.</doc>
-		<property name="VariationParams" type="ShaderVariationParameterInformation" getter="GetVariationParams" setter="" static="false">
-			<doc>Returns the list of all variation parameters supported by this shader, possible values of each parameter and other meta-data.</doc>
-		</property>
-		<property name="Parameters" type="ShaderParameter" getter="GetParameters" setter="" static="false">
-			<doc>Returns information about all parameters available in the shader.</doc>
-		</property>
-	</class>
 	<enum native="ParticleEmitterBoxType" script="ParticleEmitterBoxType">
 		<doc>Determines the emission type for the cone particle emitter shape.</doc>
 		<enumentry native="Volume" script="Volume">
@@ -7432,6 +7423,15 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Particles will be emitted only from box surface.</doc>
 		</enumentry>
 	</enum>
+	<class native="Shader" script="Shader">
+		<doc>Contains definitions of GPU programs used for rendering, as well as a set of global parameters to control those programs.</doc>
+		<property name="VariationParams" type="ShaderVariationParameterInformation" getter="GetVariationParams" setter="" static="false">
+			<doc>Returns the list of all variation parameters supported by this shader, possible values of each parameter and other meta-data.</doc>
+		</property>
+		<property name="Parameters" type="ShaderParameter" getter="GetParameters" setter="" static="false">
+			<doc>Returns information about all parameters available in the shader.</doc>
+		</property>
+	</class>
 	<struct native="PARTICLE_BOX_SHAPE_DESC" script="ParticleBoxShapeOptions">
 		<doc>Information describing a ParticleEmitterBoxShape.</doc>
 		<ctor>
