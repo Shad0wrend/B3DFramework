@@ -14,7 +14,7 @@ namespace b3d
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Order")
 
 		ScriptOrder();
-		void SetupScriptBindings();
+		static void SetupScriptBindings();
 
 		static MonoField* GetIndexField() { return sIndexField; }
 
