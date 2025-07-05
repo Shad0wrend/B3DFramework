@@ -97,7 +97,7 @@ namespace b3d::ecs
 			if constexpr(kVersionMask == 0u)
 				return VersionType{};
 
-			return (Traits::VersionType)(IdentifierAndVersion >> Traits::kIdentifierBitCount) & kVersionMask;
+			return (typename Traits::VersionType)(IdentifierAndVersion >> Traits::kIdentifierBitCount) & kVersionMask;
 		}
 
 		/** Returns the entity with the same identifier, but with the version incremented by one. */
