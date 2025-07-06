@@ -447,7 +447,7 @@ namespace b3d
 			void UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32 widgetDepth, const Matrix4& worldTransform, const GUIDrawGroupRenderDataUpdate& data);
 
 			/** Clears all draw groups from the specified widget. */
-			void ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId);
+			void ClearDrawGroups(u64 widgetId);
 
 			/** Updates the parameter block buffer for the specified mesh. */
 			void UpdateParamBlockBuffer(const SPtr<GpuBuffer>& buffer, const Vector2I& viewportOffset, float invViewportWidth, float invViewportHeight, bool flipY, const Matrix4& transform, const GUIMeshRenderData& renderData) const;
@@ -471,7 +471,7 @@ namespace b3d
 			};
 
 			UnorderedMap<const Camera*, GUICameraRenderData> mPerCameraData;
-			Set<SPtr<Camera>> mReferencedCameras;
+			UnorderedMap<u64, SPtr<Camera>> mWidgetToCameraMap;
 			SPtr<SamplerState> mSamplerState;
 			float mTime = 0.0f;
 		};

@@ -174,15 +174,10 @@ void GUIManager::UnregisterWidget(GUIWidget* widget)
 			entry.Widget = nullptr;
 	}
 
-	SPtr<Camera> camera = widget->GetCamera();
-	if(camera != nullptr)
-	{
-		auto widgetId = (u64)widget;
-		GetRenderThread().PostCommand([renderer = mRenderer.get(),
-									camera = B3DGetRenderProxy(camera),
-									widgetId]()
-								   { renderer->ClearDrawGroups(camera, widgetId); }, "GUIRenderer::ClearDrawGroups");
-	}
+	auto widgetId = (u64)widget;
+	GetRenderThread().PostCommand([renderer = mRenderer.get(),
+								widgetId]()
+							   { renderer->ClearDrawGroups(widgetId); }, "GUIRenderer::ClearDrawGroups");
 }
 
 void GUIManager::Update()
@@ -1812,9 +1807,8 @@ void GUIRenderer::Update(float time)
 
 void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32 widgetDepth, const Matrix4& worldTransform, const GUIDrawGroupRenderDataUpdate& data)
 {
-	auto iterFind = mPerCameraData.find(camera.get());
-	if(iterFind == mPerCameraData.end())
-		mReferencedCameras.insert(camera);
+	if(auto found = mPerCameraData.find(camera.get()); found == mPerCameraData.end())
+		mWidgetToCameraMap[widgetId] = camera;
 
 	GUICameraRenderData& cameraRenderData = mPerCameraData[camera.get()];
 	Vector<GUIWidgetRenderData>& widgets = cameraRenderData.WidgetRenderData;
@@ -1872,10 +1866,11 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 	}
 }
 
-void GUIRenderer::ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId)
+void GUIRenderer::ClearDrawGroups(u64 widgetId)
 {
-	if(!B3D_ENSURE(camera != nullptr))
-		return;
+	SPtr<Camera> camera;
+	if(auto found = mWidgetToCameraMap.find(widgetId); found != mWidgetToCameraMap.end())
+		camera = found->second;
 
 	auto iterFind = mPerCameraData.find(camera.get());
 	if(iterFind == mPerCameraData.end())
@@ -1895,7 +1890,7 @@ void GUIRenderer::ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId)
 	if(widgetData.empty())
 	{
 		mPerCameraData.erase(iterFind);
-		mReferencedCameras.erase(camera);
+		mWidgetToCameraMap.erase(widgetId);
 	}
 }
 
