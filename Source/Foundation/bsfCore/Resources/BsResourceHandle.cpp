@@ -66,6 +66,14 @@ void ResourceHandle::BlockUntilLoaded(bool waitForDependencies) const
 	}
 }
 
+void ResourceHandle::Destroy() const
+{
+	if(mData == nullptr || !mData->IsCreated)
+		return;
+
+	mData->DestroyManagedResource();
+}
+
 void ResourceHandle::ReleaseInternalReference()
 {
 	GetResources().ReleaseInternalReference(*this);

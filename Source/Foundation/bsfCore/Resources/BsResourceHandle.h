@@ -114,6 +114,9 @@ namespace b3d
 		 */
 		void BlockUntilLoaded(bool waitForDependencies = true) const;
 
+		/** Forces the resource to be unloaded and destroyed, regardless of reference count. */
+		void Destroy() const;
+
 		/**
 		 * Releases an internal reference to this resource held by the resources system, if there is one.
 		 *

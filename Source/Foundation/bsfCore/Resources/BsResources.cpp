@@ -694,9 +694,14 @@ HResource Resources::CreateResourceHandle(const SPtr<Resource>& resource, const 
 
 		if(resource)
 		{
-			resource->SetHandle(newHandle.GetWeak());
-
 			Lock lock(mLoadedResourceMutex);
+
+			// Ensure no handles with the same ID already exist
+			auto found = mLoadedResourceInformation.find(resourceId);
+			if(!B3D_ENSURE(found == mLoadedResourceInformation.end()))
+				return {};
+
+			resource->SetHandle(newHandle.GetWeak());
 
 			UPtr<LoadedResourceInformation> loadedResourceInformation = B3DMakeUnique<LoadedResourceInformation>();
 			loadedResourceInformation->ResourceHandle = newHandle.GetWeak();
