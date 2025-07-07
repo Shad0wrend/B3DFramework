@@ -198,8 +198,8 @@ namespace b3d
             if(typeInfo == null)
                 throw new Exception("Attempting to retrieve object information from a member whose type is not serializable.");
 
-            if(!(typeInfo is ManagedTypeInfoObject))
-                throw new Exception("Attempting to retrieve object information from a member that does not contain an object.");
+            if(!(typeInfo is ManagedTypeInfoObject || typeInfo is ManagedTypeInfoReference))
+                throw new Exception("Attempting to retrieve object information from a member that does not contain an object. Actual type is " + typeInfo.GetType() + " (" + typeInfo.GetReflectionType() + ").");
 
             // Get the most-derived type so the serializable object lists the exact fields
             object obj = GetValue<object>();
