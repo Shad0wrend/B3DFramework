@@ -291,6 +291,7 @@ HTexture GUIVectorSpriteAtlas::CreateOrFindTexture(Size2UI size) const
 		textureCreateInformation.Height = size.Height;
 		textureCreateInformation.Format = PF_RGBA8;
 		textureCreateInformation.Usage = TU_RENDERTARGET;
+		textureCreateInformation.Name = "VectorPathAtlas";
 
 		HTexture texture = Texture::Create(textureCreateInformation);
 		B3D_ENSURE(texture != nullptr);
@@ -301,6 +302,10 @@ HTexture GUIVectorSpriteAtlas::CreateOrFindTexture(Size2UI size) const
 
 void GUIVectorSpriteAtlas::ReleaseTexture(const HTexture& texture)
 {
+	// Skip invalid textures, should only be happening at shutdown
+	if(!texture.IsValid())
+		return;
+
 	const TextureProperties& properties = texture->GetProperties();
 	const FreeTextureInformation::Key key(Size2UI(properties.Width, properties.Height));
 
