@@ -1888,10 +1888,9 @@ void GUIRenderer::ClearDrawGroups(u64 widgetId)
 	widgetData.erase(iterFind2);
 
 	if(widgetData.empty())
-	{
 		mPerCameraData.erase(iterFind);
-		mWidgetToCameraMap.erase(widgetId);
-	}
+
+	mWidgetToCameraMap.erase(widgetId);
 }
 
 void GUIRenderer::UpdateParamBlockBuffer(const SPtr<GpuBuffer>& buffer, const Vector2I& viewportOffset, float invViewportWidth, float invViewportHeight, bool flipY, const Matrix4& transform, const GUIMeshRenderData& renderData) const
