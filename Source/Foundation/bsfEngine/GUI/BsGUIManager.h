@@ -444,7 +444,7 @@ namespace b3d
 			void Update(float time);
 
 			/** Updates the data required for rendering draw groups on the specified widget. */
-			void UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32 widgetDepth, const Matrix4& worldTransform, const GUIDrawGroupRenderDataUpdate& data);
+			void UpdateDrawGroups(const Camera* camera, u64 widgetId, u32 widgetDepth, const Matrix4& worldTransform, const GUIDrawGroupRenderDataUpdate& data);
 
 			/** Clears all draw groups from the specified widget. */
 			void ClearDrawGroups(u64 widgetId);
@@ -471,7 +471,7 @@ namespace b3d
 			};
 
 			UnorderedMap<const Camera*, GUICameraRenderData> mPerCameraData;
-			UnorderedMap<u64, SPtr<Camera>> mWidgetToCameraMap;
+			UnorderedMap<u64, const Camera*> mWidgetToCameraMap;
 			SPtr<SamplerState> mSamplerState;
 			float mTime = 0.0f;
 		};

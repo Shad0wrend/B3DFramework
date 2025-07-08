@@ -357,7 +357,7 @@ void GUIManager::Update()
 		auto widgetId = (u64)widget;
 		GetRenderThread().PostCommand([renderer = mRenderer.get(),
 									updateData = std::move(updateData),
-									camera = B3DGetRenderProxy(camera),
+									camera = B3DGetRenderProxy(camera).get(),
 									widgetId,
 									widgetDepth = widget->GetDepth(),
 									worldTransform = widget->GetWorldTfrm()]()
@@ -1805,12 +1805,11 @@ void GUIRenderer::Update(float time)
 	mTime = time;
 }
 
-void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32 widgetDepth, const Matrix4& worldTransform, const GUIDrawGroupRenderDataUpdate& data)
+void GUIRenderer::UpdateDrawGroups(const Camera* camera, u64 widgetId, u32 widgetDepth, const Matrix4& worldTransform, const GUIDrawGroupRenderDataUpdate& data)
 {
-	if(auto found = mPerCameraData.find(camera.get()); found == mPerCameraData.end())
-		mWidgetToCameraMap[widgetId] = camera;
+	mWidgetToCameraMap[widgetId] = camera;
 
-	GUICameraRenderData& cameraRenderData = mPerCameraData[camera.get()];
+	GUICameraRenderData& cameraRenderData = mPerCameraData[camera];
 	Vector<GUIWidgetRenderData>& widgets = cameraRenderData.WidgetRenderData;
 	GUIWidgetRenderData* widget;
 
@@ -1868,11 +1867,11 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 
 void GUIRenderer::ClearDrawGroups(u64 widgetId)
 {
-	SPtr<Camera> camera;
+	const Camera* camera = nullptr;
 	if(auto found = mWidgetToCameraMap.find(widgetId); found != mWidgetToCameraMap.end())
 		camera = found->second;
 
-	auto iterFind = mPerCameraData.find(camera.get());
+	auto iterFind = mPerCameraData.find(camera);
 	if(iterFind == mPerCameraData.end())
 		return;
 
