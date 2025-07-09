@@ -1024,6 +1024,7 @@ namespace b3d
 	B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(Script, Log)
 	B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(Importer, Log)
 	B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(Network, Log)
+	B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(LogInput, Log)
 } // namespace b3d
 
 #include "Utility/BsCommonTypes.h"

@@ -204,7 +204,7 @@ namespace b3d
 		InputPrivateData* GetPrivateDataInternal() const { return mPlatformData; }
 
 		/** Returns a handle to the window that is currently receiving input. */
-		u64 GetWindowHandleInternal() const { return mWindowHandle; }
+		u64 GetWindowHandle() const { return mWindowHandle; }
 
 		/** Called by Mouse when mouse movement is detected. */
 		void NotifyMouseMovedInternal(i32 relX, i32 relY, i32 relZ);

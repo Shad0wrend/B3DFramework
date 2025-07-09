@@ -5,7 +5,7 @@
 using namespace std::placeholders;
 
 using namespace b3d;
-void ApplicationEx::StartUp(const START_UP_DESC& desc)
+void ApplicationEx::StartUp(const ApplicationCreateInformation& desc)
 {
 	Application::StartUp(desc);
 }

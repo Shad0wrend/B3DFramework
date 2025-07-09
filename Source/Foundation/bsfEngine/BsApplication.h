@@ -15,28 +15,21 @@ namespace b3d
 	/**	Primary entry point for the framework. Handles startup and shutdown. */
 	class B3D_EXPORT B3D_SCRIPT_EXPORT() Application : public CoreApplication
 	{
-	private:
-		/**
-		 * Builds the start-up descriptor structure, filling out the provided parameters and using the default values
-		 * for the rest.
-		 */
-		static START_UP_DESC BuildStartUpDesc(VideoMode videoMode, const String& title, bool fullscreen);
-
 	public:
-		Application(const START_UP_DESC& desc);
+		Application(const ApplicationCreateInformation& desc);
 		virtual ~Application();
 
 		/** Starts the framework. If using a custom Application system, provide it as a template parameter. */
 		template <class T = Application>
 		static void StartUp(VideoMode videoMode, const String& title, bool fullscreen)
 		{
-			START_UP_DESC desc = BuildStartUpDesc(videoMode, title, fullscreen);
+			ApplicationCreateInformation desc = BuildCreateInformation(videoMode, title, fullscreen);
 			CoreApplication::StartUp<T>(desc);
 		}
 
 		/** Starts the framework. If using a custom Application system, provide it as a template parameter. */
 		template <class T = Application>
-		static void StartUp(const START_UP_DESC& desc)
+		static void StartUp(const ApplicationCreateInformation& desc)
 		{
 			CoreApplication::StartUp<T>(desc);
 		}
@@ -51,6 +44,12 @@ namespace b3d
 
 		/** Hides the profiler overlay. */
 		void HideProfilerOverlay();
+
+		/**
+		 * Builds the start-up descriptor structure, filling out the provided parameters and using the default values
+		 * for the rest.
+		 */
+		static ApplicationCreateInformation BuildCreateInformation(VideoMode videoMode, const String& title, bool fullscreen);
 
 	protected:
 		void OnStartUp() override;

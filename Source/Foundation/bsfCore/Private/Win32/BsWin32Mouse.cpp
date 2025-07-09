@@ -29,21 +29,40 @@ void InitializeDirectInput(Mouse::Pimpl* m, HWND hWnd)
 	dipdw.diph.dwHow = DIPH_DEVICE;
 	dipdw.dwData = DI_BUFFER_SIZE_MOUSE;
 
-	if(FAILED(m->DirectInput->CreateDevice(GUID_SysMouse, &m->Mouse, nullptr)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to create device.");
+	HRESULT result = m->DirectInput->CreateDevice(GUID_SysMouse, &m->Mouse, nullptr);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput mouse init: Failed to create device. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	if(FAILED(m->Mouse->SetDataFormat(&c_dfDIMouse2)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set format.");
+	result = m->Mouse->SetDataFormat(&c_dfDIMouse2);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput mouse init: Failed to set format. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	if(FAILED(m->Mouse->SetCooperativeLevel(hWnd, m->CoopSettings)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set coop level.");
+	result = m->Mouse->SetCooperativeLevel(hWnd, m->CoopSettings);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput mouse init: Failed to set coop level. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	if(FAILED(m->Mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set property.");
+	result = m->Mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput mouse init: Failed to set property. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	HRESULT hr = m->Mouse->Acquire();
-	if(FAILED(hr) && hr != DIERR_OTHERAPPHASPRIO)
-		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to acquire device.");
+	result = m->Mouse->Acquire();
+	if(FAILED(result) && result != DIERR_OTHERAPPHASPRIO)
+	{
+		B3D_LOG(Error, LogInput, "DirectInput mouse init: Failed to acquire device. Error code: {0}.", (u64)result);
+		return;
+	}
 
 	m->HWnd = hWnd;
 }
@@ -78,7 +97,7 @@ Mouse::Mouse(const String& name, Input* owner)
 	m->CoopSettings = pvtData->MouseSettings;
 	m->Mouse = nullptr;
 
-	InitializeDirectInput(m, (HWND)owner->GetWindowHandleInternal());
+	InitializeDirectInput(m, (HWND)owner->GetWindowHandle());
 }
 
 Mouse::~Mouse()

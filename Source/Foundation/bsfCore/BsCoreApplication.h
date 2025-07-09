@@ -18,7 +18,7 @@ namespace b3d
 	 */
 
 	/**	Structure containing parameters for starting the application. */
-	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Application), ExportAsStruct(true), API(Framework)) START_UP_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Application), ExportAsStruct(true), API(Framework)) ApplicationCreateInformation
 	{
 		String RenderApi; /**< Name of the render system plugin to use. */
 		String Renderer; /**< Name of the renderer plugin to use. */
@@ -41,7 +41,7 @@ namespace b3d
 		 */
 		bool AsyncAnimation = true;
 
-		RenderWindowCreateInformation PrimaryWindowDesc; /**< Describes the window to create during start-up. */
+		RenderWindowCreateInformation PrimaryWindow; /**< Describes the window to create during start-up. */
 
 		Vector<String> Importers; /**< A list of importer plugins to load. */
 
@@ -66,7 +66,7 @@ namespace b3d
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() CoreApplication : public Module<CoreApplication>
 	{
 	public:
-		CoreApplication(START_UP_DESC desc);
+		CoreApplication(ApplicationCreateInformation desc);
 		virtual ~CoreApplication();
 
 		/**
@@ -184,7 +184,7 @@ namespace b3d
 		SPtr<GpuDevice> mPrimaryGpu;
 		Scheduler mMainThreadScheduler;
 		SPtr<Scheduler> mTaskScheduler;
-		START_UP_DESC mStartUpDesc;
+		ApplicationCreateInformation mStartUpDesc;
 
 		// Frame limiting
 		u64 mFrameStep = 16666; // 60 times a second in microseconds

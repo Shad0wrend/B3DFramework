@@ -17,7 +17,7 @@ namespace b3d
 	{
 	public:
 		B3D_SCRIPT_EXPORT()
-		static void StartUp(const START_UP_DESC& desc);
+		static void StartUp(const ApplicationCreateInformation& desc);
 
 		B3D_SCRIPT_EXPORT()
 		static void StartUp(VideoMode videoMode, const String& title, bool fullscreen);

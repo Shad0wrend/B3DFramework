@@ -71,11 +71,12 @@ namespace b3d
 	B3D_LOG_CATEGORY(FreeImageImporter)
 	B3D_LOG_CATEGORY(Script)
 	B3D_LOG_CATEGORY(Importer)
+	B3D_LOG_CATEGORY(LogInput)
 } // namespace b3d
 
 using namespace b3d;
 
-CoreApplication::CoreApplication(START_UP_DESC desc)
+CoreApplication::CoreApplication(ApplicationCreateInformation desc)
 	: mPrimaryWindow(nullptr), mStartUpDesc(desc), mFrameRenderingFinishedSignal(SignalEvent::Mode::AutomaticallyReset, true), mSimThreadId(B3D_CURRENT_THREAD_ID), mRunMainLoop(false), mMainThreadScheduler(SchedulerCreateInformation())
 {
 	// Ensure all errors are reported properly
@@ -192,7 +193,7 @@ void CoreApplication::OnStartUp()
 	mPrimaryGpu = GpuBackend::Instance().GetDevice(0);
 	mPrimaryGpu->Initialize();
 
-	mPrimaryWindow = RenderWindow::Create(mStartUpDesc.PrimaryWindowDesc, nullptr);
+	mPrimaryWindow = RenderWindow::Create(mStartUpDesc.PrimaryWindow, nullptr);
 
 	render::GpuDataParameterBlockManager::StartUp();
 	FontAtlasRenderer::StartUp();

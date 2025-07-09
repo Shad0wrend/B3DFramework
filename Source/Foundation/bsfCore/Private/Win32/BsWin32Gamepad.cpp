@@ -44,21 +44,40 @@ void InitializeDirectInput(Gamepad::Pimpl* m, HWND hWnd)
 	dipdw.diph.dwHow = DIPH_DEVICE;
 	dipdw.dwData = DI_BUFFER_SIZE_GAMEPAD;
 
-	if(FAILED(m->DirectInput->CreateDevice(m->Info.GuidInstance, &m->Gamepad, nullptr)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to create device.");
+	HRESULT result = m->DirectInput->CreateDevice(m->Info.GuidInstance, &m->Gamepad, nullptr);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput gamepad init: Failed to create device. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	if(FAILED(m->Gamepad->SetDataFormat(&c_dfDIJoystick2)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to set format.");
+	result = m->Gamepad->SetDataFormat(&c_dfDIJoystick2);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput gamepad init: Failed to set format. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	if(FAILED(m->Gamepad->SetCooperativeLevel(hWnd, m->CoopSettings)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to set coop level.");
+	result = m->Gamepad->SetCooperativeLevel(hWnd, m->CoopSettings);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput gamepad init: Failed to set coop level. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	if(FAILED(m->Gamepad->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to set property.");
+	result = m->Gamepad->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput gamepad init: Failed to set property. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	HRESULT hr = m->Gamepad->Acquire();
-	if(FAILED(hr) && hr != DIERR_OTHERAPPHASPRIO)
-		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to acquire device.");
+	result = m->Gamepad->Acquire();
+	if(FAILED(result) && result != DIERR_OTHERAPPHASPRIO)
+	{
+		B3D_LOG(Error, LogInput, "DirectInput gamepad init: Failed to acquire device. Error code: {0}.", (u64)result);
+		return;
+	}
 
 	m->HWnd = hWnd;
 }
@@ -204,7 +223,7 @@ Gamepad::Gamepad(const String& name, const GamepadInfo& gamepadInfo, Input* owne
 	m->CoopSettings = pvtData->MouseSettings;
 	m->Info = gamepadInfo;
 	m->Gamepad = nullptr;
-	m->HWnd = (HWND)owner->GetWindowHandleInternal();
+	m->HWnd = (HWND)owner->GetWindowHandle();
 	B3DZeroOut(m->PovState);
 	B3DZeroOut(m->AxisState);
 	B3DZeroOut(m->ButtonState);

@@ -269,12 +269,12 @@ void RendererView::NotifyNeedsRedraw()
 
 bool RendererView::ShouldDraw() const
 {
-	if(!mProperties.OnDemand)
+	//if(!mProperties.OnDemand)
 		return true;
 
 	if(mRenderSettings->EnableHdr && mRenderSettings->EnableAutoExposure)
 	{
-		constexpr float AUTO_EXPOSURE_TOLERANCE = 0.01f;
+		constexpr float kAutoExposureTolerance = 0.01f;
 
 		// The view was redrawn but we still haven't received the eye adaptation results from the GPU, so
 		// we keep redrawing until we do
@@ -283,7 +283,7 @@ bool RendererView::ShouldDraw() const
 
 		// Need to render until the auto-exposure reaches the target exposure
 		float eyeAdaptationDiff = Math::Abs(mCurrentEyeAdaptation - mPreviousEyeAdaptation);
-		if(eyeAdaptationDiff > AUTO_EXPOSURE_TOLERANCE)
+		if(eyeAdaptationDiff > kAutoExposureTolerance)
 			return true;
 	}
 

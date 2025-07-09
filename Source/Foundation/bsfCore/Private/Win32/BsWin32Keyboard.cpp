@@ -31,21 +31,40 @@ void InitializeDirectInput(Keyboard::Pimpl* m, HWND hWnd)
 	dipdw.diph.dwHow = DIPH_DEVICE;
 	dipdw.dwData = DI_BUFFER_SIZE_KEYBOARD;
 
-	if(FAILED(m->DirectInput->CreateDevice(GUID_SysKeyboard, &m->Keyboard, nullptr)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to create device.");
+	HRESULT result = m->DirectInput->CreateDevice(GUID_SysKeyboard, &m->Keyboard, nullptr);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput keyboard init: Failed to create device. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	if(FAILED(m->Keyboard->SetDataFormat(&c_dfDIKeyboard)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to set format.");
+	result = m->Keyboard->SetDataFormat(&c_dfDIKeyboard);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput keyboard init: Failed to set format. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	if(FAILED(m->Keyboard->SetCooperativeLevel(hWnd, m->CoopSettings)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to set coop level.");
+	result = m->Keyboard->SetCooperativeLevel(hWnd, m->CoopSettings);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput keyboard init: Failed to set coop level. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	if(FAILED(m->Keyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
-		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to set property.");
+	result = m->Keyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+	if(FAILED(result))
+	{
+		B3D_LOG(Error, LogInput, "DirectInput keyboard init: Failed to set property. Error code: {0}.", (u64)result);
+		return;
+	}
 
-	HRESULT hr = m->Keyboard->Acquire();
-	if(FAILED(hr) && hr != DIERR_OTHERAPPHASPRIO)
-		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to acquire device.");
+	result = m->Keyboard->Acquire();
+	if(FAILED(result) && result != DIERR_OTHERAPPHASPRIO)
+	{
+		B3D_LOG(Error, LogInput, "DirectInput keyboard init: Failed to acquire device. Error code: {0}.", (u64)result);
+		return;
+	}
 
 	m->HWnd = hWnd;
 }
@@ -72,7 +91,7 @@ Keyboard::Keyboard(const String& name, Input* owner)
 	m->Keyboard = nullptr;
 	B3DZeroOut(m->KeyBuffer);
 
-	InitializeDirectInput(m, (HWND)owner->GetWindowHandleInternal());
+	InitializeDirectInput(m, (HWND)owner->GetWindowHandle());
 }
 
 Keyboard::~Keyboard()

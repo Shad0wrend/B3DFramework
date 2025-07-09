@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 	if(argc < 3)
 		return 2;
 
-	START_UP_DESC desc;
+	ApplicationCreateInformation desc;
 	desc.RenderApi = B3D_RENDER_BACKEND;
 	desc.Renderer = B3D_RENDERER;
 	desc.Audio = B3D_AUDIO_BACKEND;
@@ -61,10 +61,10 @@ int main(int argc, char* argv[])
 	desc.Importers.push_back("bsfFontImporter");
 	desc.Importers.push_back("bsfSL");
 
-	desc.PrimaryWindowDesc.VideoMode = VideoMode(64, 64);
-	desc.PrimaryWindowDesc.Fullscreen = false;
-	desc.PrimaryWindowDesc.Title = "bsf importer";
-	desc.PrimaryWindowDesc.Hidden = true;
+	desc.PrimaryWindow.VideoMode = VideoMode(64, 64);
+	desc.PrimaryWindow.Fullscreen = false;
+	desc.PrimaryWindow.Title = "bsf importer";
+	desc.PrimaryWindow.Hidden = true;
 
 	Application::StartUp(desc);
 

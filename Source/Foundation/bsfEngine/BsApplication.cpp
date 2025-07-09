@@ -30,7 +30,7 @@
 
 using namespace b3d;
 
-Application::Application(const START_UP_DESC& desc)
+Application::Application(const ApplicationCreateInformation& desc)
 	: CoreApplication(desc)
 {}
 
@@ -161,9 +161,9 @@ void Application::UpdateScriptManager()
 	ScriptManager::Instance().Update();
 }
 
-START_UP_DESC Application::BuildStartUpDesc(VideoMode videoMode, const String& title, bool fullscreen)
+ApplicationCreateInformation Application::BuildCreateInformation(VideoMode videoMode, const String& title, bool fullscreen)
 {
-	START_UP_DESC desc;
+	ApplicationCreateInformation desc;
 
 	// Set up default plugins
 	desc.RenderApi = B3D_RENDER_BACKEND;
@@ -176,9 +176,9 @@ START_UP_DESC Application::BuildStartUpDesc(VideoMode videoMode, const String& t
 	desc.Importers.push_back("bsfFontImporter");
 	desc.Importers.push_back("bsfSL");
 
-	desc.PrimaryWindowDesc.VideoMode = videoMode;
-	desc.PrimaryWindowDesc.Fullscreen = fullscreen;
-	desc.PrimaryWindowDesc.Title = title;
+	desc.PrimaryWindow.VideoMode = videoMode;
+	desc.PrimaryWindow.Fullscreen = fullscreen;
+	desc.PrimaryWindow.Title = title;
 
 	return desc;
 }
