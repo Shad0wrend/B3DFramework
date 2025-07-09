@@ -67,39 +67,28 @@ Win32Window::Win32Window(const WindowCreateInformation& createInformation)
 		// Determine window style
 		if(!createInformation.Fullscreen)
 		{
-			if(createInformation.Parent)
+			if(createInformation.ShowTitleBar)
 			{
-				if(createInformation.ToolWindow)
-					m->StyleEx = WS_EX_TOOLWINDOW;
+				if(createInformation.ShowBorder || createInformation.AllowResize)
+					m->Style |= WS_OVERLAPPEDWINDOW; // Floating 'normal' window (with title, borders, min/max/close buttons)
 				else
-					m->Style |= WS_CHILD;
+					m->Style |= WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX; // As above, minus border
 			}
 			else
 			{
-				if(createInformation.ToolWindow)
-					m->StyleEx = WS_EX_TOOLWINDOW;
-			}
-
-			if(!createInformation.Parent || createInformation.ToolWindow)
-			{
-				if(createInformation.ShowTitleBar)
-				{
-					if(createInformation.ShowBorder || createInformation.AllowResize)
-						m->Style |= WS_OVERLAPPEDWINDOW;
-					else
-						m->Style |= WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
-				}
+				if(createInformation.ShowBorder || createInformation.AllowResize)
+					m->Style |= WS_POPUP | WS_BORDER; // As below, but with a border
 				else
-				{
-					if(createInformation.ShowBorder || createInformation.AllowResize)
-						m->Style |= WS_POPUP | WS_BORDER;
-					else
-						m->Style |= WS_POPUP;
-				}
+					m->Style |= WS_POPUP; // Floating window with no additional elements (title, borders, min/max/close buttons)
 			}
 
 			if(createInformation.BackgroundPixels != nullptr)
 				m->StyleEx |= WS_EX_LAYERED;
+
+			if(createInformation.ToolWindow) // Makes the window not show up as a separate entry in the taskbar. Also makes the title bar smaller if present.
+				m->StyleEx = WS_EX_TOOLWINDOW;
+			else if(createInformation.Parent != 0)
+				m->StyleEx = WS_EX_APPWINDOW; // Forces a child window to appear in the taskbar
 		}
 		else
 			m->Style |= WS_POPUP;
