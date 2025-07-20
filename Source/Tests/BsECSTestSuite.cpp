@@ -1,7 +1,7 @@
 //************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsECSTestSuite.h"
-#include "ECS/BsEntitySparseSet.h"
+#include "ECS/BsRegistry.h"
 #include "Scene/BsComponent.h"
 #include "Utility/BsShared.h"
 
