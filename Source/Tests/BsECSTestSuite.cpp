@@ -239,14 +239,14 @@ static void RunComponentTests(ECSTestSuite& testSuite)
 		count = 0;
 		for(const auto& [entity, component] : componentSparseSet.Each())
 		{
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, componentSparseSet.Get(entity) == component)
-			count++;
+			if(kIsTypeMovable || entity != kInvalidEntity)
+			{
+				B3D_TEST_ASSERT_EXTERNAL(testSuite, componentSparseSet.Get(entity) == component)
+				count++;
+			}
 		}
 
-		if constexpr(kIsTypeMovable)
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, count == (kEntities.Size() - 3))
-		else
-			B3D_TEST_ASSERT_EXTERNAL(testSuite, count == kEntities.Size())
+		B3D_TEST_ASSERT_EXTERNAL(testSuite, count == (kEntities.Size() - 3))
 	}
 
 	if constexpr(!kIsTypeEmpty)

@@ -362,9 +362,9 @@ namespace b3d::ecs
 			return &kPlaceholder;
 		}
 
-		std::array<const SparseSet*, IncludedTypeCount> mIncludedTypeStorage;
-		std::array<const SparseSet*, ExcludedTypeCount> mExcludedTypeStorage;
-		u32 mLeadingTypeIndex = 0;
+		std::array<const SparseSet*, IncludedTypeCount> mIncludedTypeStorage { };
+		std::array<const SparseSet*, ExcludedTypeCount> mExcludedTypeStorage { };
+		u32 mLeadingTypeIndex = IncludedTypeCount;
 	};
 
 	template<typename, typename, typename = void>
