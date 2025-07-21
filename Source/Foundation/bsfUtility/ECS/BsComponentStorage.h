@@ -213,6 +213,11 @@ namespace b3d::ecs
 			Super::template ClearInvalidInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload>();
 		}
 
+		void Swap(Entity lhs, Entity rhs) override
+		{
+			Super::template SwapInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload>(lhs, rhs);
+		}
+
 		template<typename It>
 		Iterator SortAs(It first, It last)
 		{

@@ -377,6 +377,9 @@ namespace b3d::ecs
 		/** Returns true if no entries are stored in the set. */
 		bool IsEmpty() const { return mPackedEntities.Empty(); }
 
+		/** Swaps the location of the provided entities, as well as the relevant payload (data associated with the entities), if any. */
+		virtual void Swap(Entity lhs, Entity rhs) = 0;
+
 		/** Returns the current delete policy. See SparseSetDeletePolicy. */
 		virtual SparseSetDeletePolicy GetDeletePolicy() const { return SparseSetDeletePolicy::SwapAndErase; }
 
@@ -558,6 +561,11 @@ namespace b3d::ecs
 		void ClearInvalid() override
 		{
 			ClearInvalidInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload>();
+		}
+
+		void Swap(Entity lhs, Entity rhs) override
+		{
+			SwapInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload>(lhs, rhs);
 		}
 
 		template<typename It>
@@ -780,6 +788,16 @@ namespace b3d::ecs
 		{
 			const u64 validPackedEntryCount = (GetDeletePolicy() == SparseSetDeletePolicy::SwapOnly) ? mFreeListHead : mPackedEntities.size();
 			SortNInternal<T, MoveOrSwapPayload>(validPackedEntryCount, std::move(predicate));
+		}
+
+		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64)>
+		void SwapInternal(Entity lhs, Entity rhs)
+		{
+			const u64 packedIndexLhs = GetPackedIndex(lhs);
+			const u64 packedIndexRhs = GetPackedIndex(rhs);
+
+			(((T*)this)->*MoveOrSwapPayload)(packedIndexLhs, packedIndexRhs);
+			SwapEntities(packedIndexLhs, packedIndexRhs);
 		}
 
 	private:

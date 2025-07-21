@@ -358,7 +358,7 @@ namespace b3d::ecs
 
 		static const SparseSet* GetPlaceholderStorage()
 		{
-			static const SparseSet kPlaceholder;
+			static const EntitySparseSet kPlaceholder;
 			return &kPlaceholder;
 		}
 
