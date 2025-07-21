@@ -202,6 +202,12 @@ namespace b3d::ecs
 		explicit constexpr TExcludedTypes() = default;
 	};
 
+	template<typename... Types>
+	struct TOwnedTypes : TTypeList<Types...>
+	{
+		explicit constexpr TOwnedTypes() = default;
+	};
+
 	template<typename Function, typename... Arguments>
 	struct TIsInvocableWithTupleArgumentsHelper : std::false_type { };
 
