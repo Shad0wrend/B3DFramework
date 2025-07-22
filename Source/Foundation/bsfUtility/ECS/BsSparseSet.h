@@ -198,7 +198,9 @@ namespace b3d::ecs
 		 */
 		Iterator Add(Entity entity)
 		{
-			return AddInternal(entity, false);
+			Iterator iterator = AddInternal(entity, false);
+			OnWasAdded(*iterator);
+			return iterator;
 		}
 
 		/**
@@ -209,7 +211,10 @@ namespace b3d::ecs
 		{
 			Iterator iterator = End();
 			for(; first != last; ++first)
+			{
 				iterator = AddInternal(*first, true);
+				OnWasAdded(*iterator);
+			}
 
 			return iterator;
 		}
@@ -217,6 +222,7 @@ namespace b3d::ecs
 		/** Removes an entity from the set. Caller must ensure that entity is actually part of the set. */
 		void Erase(Entity entity)
 		{
+			OnWillRemove(entity);
 			EraseInternal(entity);
 		}
 
@@ -224,7 +230,10 @@ namespace b3d::ecs
 		void Erase(Iterator first, Iterator last)
 		{
 			for(; first != last; ++first)
+			{
+				OnWillRemove(*first);
 				EraseInternal(*first);
+			}
 		}
 
 		/** Removes an entity from the set if it exists, otherwise does nothing. Returns true if entity was removed. */
@@ -267,8 +276,7 @@ namespace b3d::ecs
 		/** Removes everything from the set and clears the internal arrays. */
 		virtual void Clear()
 		{
-			FreeSparsePages();
-			mPackedEntities.Clear();
+			ClearInternal();
 		}
 
 		/** Removes all invalid entities from the set. Only relevant for sets using in-place deletion policy. */
@@ -424,12 +432,22 @@ namespace b3d::ecs
 		reverse_iterator rend() const { return Rend(); }
 		const_reverse_iterator crend() const { return Crend(); }
 
+		// TODO - Instead of events, just notify the parent Registry and/or Group directly
+		Event<void(Entity)> OnWasAdded; /**< Triggers any time a new entity is added to the set. */
+		Event<void(Entity)> OnWillRemove; /**< Triggers right before an entity is removed from the set. */
 	protected:
 		/** Adds a new entity to the sparse set and returns an iterator to the added entity. */
 		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd) { return End(); }
 
 		/** Removed an entity from the sparse set. Entity must be a part of the sparse set. */
 		virtual void EraseInternal(Entity entity) { }
+
+		/** Removes everything from the set and clears the internal arrays. */
+		void ClearInternal()
+		{
+			FreeSparsePages();
+			mPackedEntities.Clear();
+		}
 
 		/**
 		 * Swaps the location of two entities.
@@ -554,8 +572,28 @@ namespace b3d::ecs
 
 		void Clear() override
 		{
-			Super::Clear();
-			mFreeListHead = DeletePolicy != SparseSetDeletePolicy::SwapOnly ? Super::kMaximumEntryCount : 0;
+			if constexpr(DeletePolicy == SparseSetDeletePolicy::InPlace)
+			{
+				for(auto it = Super::Begin(); it != Super::End(); ++it)
+				{
+					if(*it != kInvalidEntity)
+						Super::OnWillRemove(*it);
+				}
+			}
+			else if constexpr(DeletePolicy == SparseSetDeletePolicy::SwapOnly)
+			{
+				const Iterator end = Super::Begin() + GetFirstFreeElementPackedIndex();
+				for(auto it = Super::Begin(); it != end; ++it)
+					Super::OnWillRemove(*it);
+				
+			}
+			else
+			{
+				for(auto it = Super::Begin(); it != Super::End(); ++it)
+					Super::OnWillRemove(*it);
+			}
+
+			ClearInternal();
 		}
 
 		void ClearInvalid() override
@@ -666,6 +704,12 @@ namespace b3d::ecs
 				mFreeListHead -= (packedEntryIndex < mFreeListHead);
 				SwapEntities(packedEntryIndex, mFreeListHead);
 			}
+		}
+
+		void ClearInternal()
+		{
+			Super::ClearInternal();
+			mFreeListHead = DeletePolicy != SparseSetDeletePolicy::SwapOnly ? Super::kMaximumEntryCount : 0;
 		}
 
 		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64)>

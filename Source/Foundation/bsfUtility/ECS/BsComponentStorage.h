@@ -191,6 +191,8 @@ namespace b3d::ecs
 				{
 					if(*it != kInvalidEntity)
 					{
+						Super::OnWillRemove(*it);
+
 						ComponentType& component = GetComponentReference(this->GetPackedIndex(*it));
 						component.~ComponentType();
 					}
@@ -200,12 +202,14 @@ namespace b3d::ecs
 			{
 				for(auto it = Super::Begin(); it != Super::End(); ++it)
 				{
+					Super::OnWillRemove(*it);
+
 					ComponentType& component = GetComponentReference(this->GetPackedIndex(*it));
 					component.~ComponentType();
 				}
 			}
 
-			Super::Clear();
+			Super::ClearInternal();
 		}
 
 		void ClearInvalid() override
@@ -310,6 +314,7 @@ namespace b3d::ecs
 			ComponentType* component = GetOrCreateComponentPointer(iterator.Index());
 			new(component) ComponentType(std::forward<Arguments>(arguments)...);
 
+			Super::OnWasAdded(*iterator);
 			return iterator;
 		}
 

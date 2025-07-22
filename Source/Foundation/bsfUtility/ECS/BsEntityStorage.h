@@ -33,7 +33,10 @@ namespace b3d::ecs
 		Entity Create()
 		{
 			Entity entity = Size() == GetFirstFreeElementPackedIndex() ? CreateEntity() : mPackedEntities[GetFirstFreeElementPackedIndex()];
-			return *Super::AddInternal(entity, false);
+			Iterator iterator = Super::AddInternal(entity, false);
+
+			OnWasAdded(*iterator);
+			return *iterator;
 		}
 
 		Entity Create(Entity hint)
@@ -42,7 +45,12 @@ namespace b3d::ecs
 			{
 				Entity entity(hint.GetIdentifier(), GetVersion(hint));
 				if(entity == kInvalidEntity || GetPackedIndex(entity) >= GetFirstFreeElementPackedIndex())
-					return *Super::AddInternal(entity, false);
+				{
+					Iterator iterator = Super::AddInternal(entity, false);
+					OnWasAdded(*iterator);
+
+					return *iterator;
+				}
 			}
 
 			return Create();
@@ -50,7 +58,11 @@ namespace b3d::ecs
 
 		void Clear() override
 		{
-			Super::Clear();
+			Iterator end = Super::Begin() + GetFirstFreeElementPackedIndex();
+			for(auto it = Super::Begin(); it != end; ++it)
+				OnWillRemove(*it);
+
+			Super::ClearInternal();
 			mNextEntityId = 0u;
 		}
 

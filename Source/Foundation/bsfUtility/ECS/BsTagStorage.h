@@ -33,14 +33,18 @@ namespace b3d::ecs
 
 		void Add(Entity entity)
 		{
-			Super::AddInternal(entity, false);
+			Iterator iterator = Super::AddInternal(entity, false);
+			OnWasAdded(*iterator);
 		}
 
 		template<typename It>
 		void Add(It first, It last, const TagType&)
 		{
 			for(It it = first; it != last; ++it)
-				Super::AddInternal(*it, true);
+			{
+				Iterator newEntityIterator = Super::AddInternal(*it, true);
+				OnWasAdded(*newEntityIterator);
+			}
 		}
 
 		void Get(Entity entity) const
