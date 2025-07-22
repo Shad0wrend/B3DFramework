@@ -26,5 +26,6 @@ namespace b3d
 		void TestRTTIIterator();
 		void TestMPSCQueue();
 		void TestSPSCQueue();
+		void TestHashedString();
 	};
 } // namespace b3d

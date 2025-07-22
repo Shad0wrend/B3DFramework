@@ -8,6 +8,7 @@
 #include "Utility/BsTArray.h"
 #include "Math/BsComplex.h"
 #include "Reflection/BsRTTIIterator.h"
+#include "String/BsHashedString.h"
 #include "Threading/BsSignal.h"
 #include "Threading/BsThreadPool.h"
 #include "Utility/BsMinHeap.h"
@@ -117,6 +118,7 @@ UtilityTestSuite::UtilityTestSuite()
 	B3D_ADD_TEST(UtilityTestSuite::TestRTTIIterator)
 	B3D_ADD_TEST(UtilityTestSuite::TestMPSCQueue)
 	B3D_ADD_TEST(UtilityTestSuite::TestSPSCQueue)
+	B3D_ADD_TEST(UtilityTestSuite::TestHashedString)
 }
 
 void UtilityTestSuite::TestBitfield()
@@ -1061,4 +1063,19 @@ void UtilityTestSuite::TestSPSCQueue()
 
 	B3DDelete(producerThread);
 	B3DDelete(consumerThread);
+}
+
+void UtilityTestSuite::TestHashedString()
+{
+	HashedString a = "Test string";
+	HashedString b = "Test string";
+	HashedString c = "Different test string";
+
+	B3D_TEST_ASSERT(a == b)
+	B3D_TEST_ASSERT(a != c)
+	B3D_TEST_ASSERT(strcmp(a.GetCharacters(), "Test string") == 0)
+	B3D_TEST_ASSERT(strlen(a.GetCharacters()) == 11)
+	B3D_TEST_ASSERT(a.GetLength() == 12)
+
+	
 }
