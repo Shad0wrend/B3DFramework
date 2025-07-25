@@ -385,6 +385,9 @@ namespace b3d::ecs
 		/** Returns true if no entries are stored in the set. */
 		bool IsEmpty() const { return mPackedEntities.Empty(); }
 
+		/** Returns raw pointer to the internal packed entity array. */
+		const Entity* Data() const { return mPackedEntities.Data(); }
+
 		/** Swaps the location of the provided entities, as well as the relevant payload (data associated with the entities), if any. */
 		virtual void Swap(Entity lhs, Entity rhs) = 0;
 
@@ -426,7 +429,7 @@ namespace b3d::ecs
 		iterator end() const { return End(); }
 		const_iterator cend() const { return Cend(); }
 
-		reverse_iterator rbegin() const { return Rend(); }
+		reverse_iterator rbegin() const { return Rbegin(); }
 		const_reverse_iterator crbegin() const { return Crbegin(); }
 
 		reverse_iterator rend() const { return Rend(); }

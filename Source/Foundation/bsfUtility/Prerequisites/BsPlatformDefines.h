@@ -81,6 +81,16 @@
 #	pragma error "No known compiler. "
 #endif
 
+#if defined(__clang__) || defined(__GNUC__) || defined(__INTEL_COMPILER)
+#	define B3D_PRETTY_FUNCTION __PRETTYFUNCTION__
+#	define B3D_PRETTY_FUNCTION_PREFIX '='
+#	define B3D_PRETTY_FUNCTION_SUFFIX ']'
+#elif defined(_MSC_VER)
+#	define B3D_PRETTY_FUNCTION __FUNCSIG__
+#	define B3D_PRETTY_FUNCTION_PREFIX '<'
+#	define B3D_PRETTY_FUNCTION_SUFFIX '<'
+#endif
+
 #if B3D_BUILD_TYPE != B3D_BUILD_TYPE_SHIPPING
 #	define B3D_DISABLE_OPTIMIZATION _B3D_DISABLE_OPTIMIZATION
 #	define B3D_ENABLE_OPTIMIZATION _B3D_ENABLE_OPTIMIZATION
