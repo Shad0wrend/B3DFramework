@@ -7,12 +7,9 @@
 #include "ECS/BsEntity.h"
 #include "ECS/BsUtility.h"
 #include "ECS/BsSparseSet.h"
+#include "ECS/BsEntityStorage.h"
 #include "BsUtility.h"
-
-#include <iterator>
-
-#include "BsEntityStorage.h"
-#include "String/BsHashedString.h"
+#include "Utility/BsTypeId.h"
 
 namespace b3d::ecs
 {
@@ -263,21 +260,6 @@ namespace b3d::ecs
 		std::array<HEvent, (IncludedTypeCount + ExcludedTypeCount) * 2> mEventHandles;
 		EntitySparseSet mGroupEntities;
 	};
-
-	// TODO - Move to utility
-	constexpr std::string_view B3DGetTypeNameFromPrettyFunction()
-	{
-		const std::string_view prettyFunctionString(B3D_PRETTY_FUNCTION);
-		auto typeNameStart = prettyFunctionString.find_first_not_of(' ', prettyFunctionString.find_first_of(B3D_PRETTY_FUNCTION_PREFIX) + 1);
-		return prettyFunctionString.substr(typeNameStart, prettyFunctionString.find_last_of(B3D_PRETTY_FUNCTION_SUFFIX) - typeNameStart);
-	}
-
-	template<typename HashType = u64>
-	constexpr HashType B3DGetCurrentTypeHash()
-	{
-		constexpr std::string_view typeName = B3DGetTypeNameFromPrettyFunction();
-		return THashedString<char, HashType>::CalculateHash(typeName);
-	}
 
 	template<typename, typename, typename>
 	class TGroup;
