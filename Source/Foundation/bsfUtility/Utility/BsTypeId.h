@@ -4,6 +4,7 @@
 
 #include "BsUtilityPrerequisites.h"
 #include "String/BsHashedString.h"
+#include "Reflection/BsRTTIType.h"
 
 namespace b3d
 {
@@ -14,29 +15,29 @@ namespace b3d
 	using TypeId = u64;
 	using TypeHash = u64;
 
-	/** Returns a unique type identifier for the provided type. Note the identifiers will NOT remain constant across application runs. */
-#if 0 // Note: This doesn't work if the type gets defined in a plugin
-#if B3D_UTILITY_EXPORTS
+	/**
+	 * Returns a unique type identifier for the provided type. Note the identifiers may not remain constant across application runs.
+	 *
+	 * @note
+	 * For consistent behaviour across plugins, make sure your type either inherits from IReflectable or provides a RTTIPlainType specialization, with a unique ID.
+	 * Otherwise a runtime ID will be generated, which may be different for the same class across different dynamic libraries. This can also be worked around
+	 * by explicitly specializing this method and correctly exporting it for the use by the dynamic libraries.
+	 */
 	template <typename T>
-	B3D_UTILITY_EXPORT TypeId B3DGetRuntimeTypeId() noexcept
+	TypeId B3DGetRuntimeTypeId()
 	{
-		static char const kTypeId = 0;
-
-		return (u64)&kTypeId;
+		if constexpr(std::is_base_of_v<IReflectable, std::remove_reference_t<std::remove_cv_t<T>>>)
+			return (TypeId)T::GetRttiStatic()->GetRttiId();
+		else if constexpr(B3DHasRTTIPlainTypeSpecialization<std::remove_reference_t<std::remove_cv_t<T>>>::value)
+			return (TypeId)RTTIPlainType<T>::id;
+		else
+		{
+			// Note: This will generate different IDs for the same type if called from dynamic libraries. In that case you must make
+			// sure to export the specialization, so that each plugin doesn't try to create their own.
+			static char const kTypeId = 0;
+			return (u64)&kTypeId;
+		}
 	}
-#else
-	template <typename T>
-	B3D_UTILITY_EXPORT TypeId B3DGetRuntimeTypeId() noexcept;
-#endif
-#else // Note: This will report different type IDs across plugins
-	template <typename T>
-	TypeId B3DGetRuntimeTypeId() noexcept
-	{
-		static char const kTypeId = 0;
-
-		return (u64)&kTypeId;
-	}
-#endif
 
 	/** Returns the type name for the class from which this function is called from, using the 'pretty function' macro provided by many compilers. */
 	constexpr std::string_view B3DGetTypeNameFromPrettyFunction()
