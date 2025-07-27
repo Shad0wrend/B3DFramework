@@ -17,7 +17,7 @@ namespace b3d
 	{
 		enum
 		{
-			id = 20
+			id = TID_String
 		};
 
 		enum

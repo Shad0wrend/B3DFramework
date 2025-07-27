@@ -13,7 +13,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(Color);
+	B3D_ALLOW_MEMCPY_SERIALIZATION(Color, TID_Color);
 
 	/** @} */
 	/** @endcond */

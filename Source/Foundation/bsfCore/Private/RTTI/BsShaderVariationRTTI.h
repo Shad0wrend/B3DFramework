@@ -21,7 +21,7 @@ namespace b3d
 	{
 		enum
 		{
-			id = TID_ShaderVariationParam
+			id = TID_ShaderVariationParameter
 		};
 
 		enum

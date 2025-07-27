@@ -7,6 +7,7 @@
 #include "Reflection/BsRTTIPlain.h"
 #include "Mesh/BsMeshBase.h"
 #include "Error/BsException.h"
+#include "Private/RTTI/BsSubMeshRTTI.h"
 
 namespace b3d
 {
@@ -15,7 +16,6 @@ namespace b3d
 	 *  @{
 	 */
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(SubMesh);
 
 	class MeshBaseRTTI : public TRTTIType<MeshBase, Resource, MeshBaseRTTI>
 	{

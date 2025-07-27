@@ -13,7 +13,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(UUID)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(UUID, TID_UUID)
 
 	/** @} */
 	/** @endcond */

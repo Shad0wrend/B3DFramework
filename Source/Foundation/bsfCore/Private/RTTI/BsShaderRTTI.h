@@ -26,7 +26,7 @@ namespace b3d
 	{
 		enum
 		{
-			id = TID_SHADER_DATA_PARAM_DESC
+			id = TID_ShaderDataParameterInformation
 		};
 
 		enum
@@ -104,7 +104,7 @@ namespace b3d
 	{
 		enum
 		{
-			id = TID_SHADER_OBJECT_PARAM_DESC
+			id = TID_ShaderObjectParameterInformation
 		};
 
 		enum
@@ -175,7 +175,7 @@ namespace b3d
 	{
 		enum
 		{
-			id = TID_SHADER_PARAM_BLOCK_DESC
+			id = TID_ShaderParameterBlockInformation
 		};
 
 		enum
@@ -224,7 +224,7 @@ namespace b3d
 	{
 		enum
 		{
-			id = TID_SHADER_PARAM_ATTRIBUTE
+			id = TID_ShaderParameterAttribute
 		};
 
 		enum
@@ -285,7 +285,7 @@ namespace b3d
 	{
 		enum
 		{
-			id = TID_ShaderVariationParamValue
+			id = TID_ShaderVariationParameterValue
 		};
 
 		enum
@@ -338,7 +338,7 @@ namespace b3d
 	{
 		enum
 		{
-			id = TID_ShaderVariationParamInfo
+			id = TID_ShaderVariationParameterInfo
 		};
 
 		enum

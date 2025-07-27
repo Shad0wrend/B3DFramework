@@ -13,7 +13,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(RenderTargetBlendStateInformation)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(RenderTargetBlendStateInformation, TID_RenderTargetBlendStateInformation)
 	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_SIZE_HEADER(BlendStateInformation, TID_BlendStateInformation)
 	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_SIZE_HEADER(RasterizerStateInformation, TID_RasterizerStateInformation);
 	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_SIZE_HEADER(DepthStencilStateInformation, TID_DepthStencilStateInformation);

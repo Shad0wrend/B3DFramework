@@ -189,7 +189,7 @@ namespace b3d
 		}
 	};
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(LocalizedStringData::ParamOffset);
+	B3D_ALLOW_MEMCPY_SERIALIZATION(LocalizedStringData::ParamOffset, TID_LocalizedStringParameterOffset);
 
 	/** @} */
 	/** @endcond */

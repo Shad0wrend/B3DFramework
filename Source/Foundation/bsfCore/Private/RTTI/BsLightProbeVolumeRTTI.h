@@ -19,7 +19,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(LightProbeSHCoefficients)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(LightProbeSHCoefficients, TID_LightProbeSHCoefficient)
 
 	/** Serializable information about a single light probe. */
 	struct SavedLightProbeInfo

@@ -93,7 +93,7 @@ namespace b3d
 		}
 	};
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(MorphVertex);
+	B3D_ALLOW_MEMCPY_SERIALIZATION(MorphVertex, TID_MorphVertex);
 
 	/** @} */
 	/** @endcond */

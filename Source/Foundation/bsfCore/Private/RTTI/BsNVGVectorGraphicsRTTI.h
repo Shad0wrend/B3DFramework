@@ -17,7 +17,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(NVGVertex)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(NVGVertex, TID_NVGVertex)
 
 	template<>
 	struct RTTIPlainType<NVGRenderUniforms> : RTTIPlainTypeHelper<NVGRenderUniforms, TID_NVGRenderUniforms, 0>

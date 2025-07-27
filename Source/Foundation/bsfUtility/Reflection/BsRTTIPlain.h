@@ -464,7 +464,7 @@ namespace b3d
 	 *
 	 * @see		RTTIPlainType<T>
 	 */
-#define B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_ID(Type, TypeId)														      \
+#define B3D_ALLOW_MEMCPY_SERIALIZATION(Type, TypeId)																  \
 	static_assert(std::is_trivially_copyable<Type>() == true, #Type " is not trivially copyable");                    \
 	static_assert(sizeof(Type) <= 256, #Type " doesn't fit. Use memcpy variant with size header.");					  \
 	template <>                                                                                                       \
@@ -491,9 +491,6 @@ namespace b3d
 			return sizeof(Type);                                                                                      \
 		}                                                                                                             \
 	};
-
-	/** DEPRECATED: Use B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_ID() */
-#define B3D_ALLOW_MEMCPY_SERIALIZATION(type) B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_ID(type, 0)
 
 #define B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_SIZE_HEADER(Type, Id)                                                     \
 	static_assert(std::is_trivially_copyable<Type>() == true, #Type " is not trivially copyable");                    \
@@ -585,12 +582,12 @@ namespace b3d
 		}                                                                                                             \
 	};
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_ID(float, TID_Float)
-	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_ID(double, TID_Double)
-	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_ID(u8, TID_UInt8)
-	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_ID(i8, TID_Int8)
-	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_ID(u16, TID_UInt16)
-	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_ID(i16, TID_Int16)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(float, TID_Float)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(double, TID_Double)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(u8, TID_UInt8)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(i8, TID_Int8)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(u16, TID_UInt16)
+	B3D_ALLOW_MEMCPY_SERIALIZATION(i16, TID_Int16)
 	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_VAR_INT(u32, TID_UInt32)
 	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_VAR_INT(i32, TID_Int32)
 	B3D_ALLOW_MEMCPY_SERIALIZATION_WITH_VAR_INT(u64, TID_UInt64)
