@@ -179,7 +179,7 @@ namespace b3d::ecs
 		void TryRemoveFromGroup(Entity entity)
 		{
 			if(mIncludedTypeStorage[0]->Contains(entity) && mIncludedTypeStorage[0]->GetPackedIndex(entity) < mNextIndex)
-				SwapEntry(mNextIndex--, entity);
+				SwapEntry(--mNextIndex, entity);
 		}
 
 		std::array<SparseSet*, OwnedTypeCount + IncludedTypeCount> mIncludedTypeStorage { };
@@ -397,7 +397,7 @@ namespace b3d::ecs
 
 			if constexpr(sizeof...(Indices) == 0)
 			{
-				static_assert(TIsInvocableWithTupleArguments<ComparisonFunction, const Entity, const Entity>, "Invalid comparison function");
+				static_assert(std::is_invocable_v<ComparisonFunction, const Entity, const Entity>, "Invalid comparison function");
 				mInternals->GetGroupStorage().Sort(std::move(predicate));
 			}
 			else
@@ -436,7 +436,7 @@ namespace b3d::ecs
 
 		static u64 TypeId()
 		{
-			return B3DGetCurrentTypeHash<u64>();
+			return B3DGetTypeHash<TGroup<TOwnedTypes<>, TIncludedTypes<IncludedStorageTypes...>, TExcludedTypes<ExcludedStorageTypes...>>, u64>();
 		}
 
 		// For std compatibility
@@ -590,8 +590,8 @@ namespace b3d::ecs
 			const auto ownedAndIncludedTypeStorage = GetOwnedAndIncludedStoragesAsTuple(std::index_sequence_for<OwnedStorageTypes...>{}, std::index_sequence_for<IncludedStorageTypes...>{});
 			if constexpr(sizeof...(Indices) == 0)
 			{
-				static_assert(TIsInvocableWithTupleArguments<ComparisonFunction, const Entity, const Entity>, "Invalid comparison function");
-				GetStorage<0>->SortN(mInternals->Size(), std::move(predicate));
+				static_assert(std::is_invocable_v<ComparisonFunction, const Entity, const Entity>, "Invalid comparison function");
+				GetStorage<0>()->SortN(mInternals->Size(), std::move(predicate));
 			}
 			else
 			{
@@ -603,7 +603,7 @@ namespace b3d::ecs
 						return predicate(std::forward_as_tuple(std::get<Indices>(ownedAndIncludedTypeStorage)->Get(lhs)...), std::forward_as_tuple(std::get<Indices>(ownedAndIncludedTypeStorage)->Get(rhs)...));
 				};
 
-				GetStorage<0>->SortN(mInternals->Size(), std::move(fnCompareElements));
+				GetStorage<0>()->SortN(mInternals->Size(), std::move(fnCompareElements));
 			}
 
 			// Sort all other owned storages in the same order as leading storage
@@ -633,7 +633,7 @@ namespace b3d::ecs
 
 		static u64 TypeId()
 		{
-			return B3DGetCurrentTypeHash<u64>();
+			return B3DGetTypeHash<TGroup<TOwnedTypes<OwnedStorageTypes...>, TIncludedTypes<IncludedStorageTypes...>, TExcludedTypes<ExcludedStorageTypes...>>, u64>();
 		}
 
 		// For std compatibility

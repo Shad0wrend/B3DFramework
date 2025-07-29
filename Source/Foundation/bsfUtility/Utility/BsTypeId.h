@@ -39,7 +39,8 @@ namespace b3d
 		}
 	}
 
-	/** Returns the type name for the class from which this function is called from, using the 'pretty function' macro provided by many compilers. */
+	/** Returns the type name for the class @p Type, using the 'pretty function' macro provided by many compilers. */
+	template<typename Type>
 	constexpr std::string_view B3DGetTypeNameFromPrettyFunction()
 	{
 		const std::string_view prettyFunctionString(B3D_PRETTY_FUNCTION);
@@ -48,10 +49,10 @@ namespace b3d
 	}
 
 	/** Computes a hash value for the current class name. Uses B3DGetTypeNameFromPrettyFunction() to compute the hash from. */
-	template<typename HashType = TypeHash>
-	constexpr HashType B3DGetCurrentTypeHash()
+	template<typename Type, typename HashType = TypeHash>
+	constexpr HashType B3DGetTypeHash()
 	{
-		constexpr std::string_view typeName = B3DGetTypeNameFromPrettyFunction();
+		constexpr std::string_view typeName = B3DGetTypeNameFromPrettyFunction<Type>();
 		return THashedString<char, HashType>::CalculateHash(typeName);
 	}
 

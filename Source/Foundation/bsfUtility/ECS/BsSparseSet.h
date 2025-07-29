@@ -615,15 +615,15 @@ namespace b3d::ecs
 		}
 
 		template<typename ComparisonFunction = std::less<>>
-		void SortN(u64 count)
+		void SortN(u64 count, ComparisonFunction predicate = ComparisonFunction{})
 		{
-			return SortNInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload, ComparisonFunction>(count);
+			return SortNInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload, ComparisonFunction>(count, std::move(predicate));
 		}
 
 		template<typename ComparisonFunction = std::less<>>
-		void Sort()
+		void Sort(ComparisonFunction predicate = ComparisonFunction{})
 		{
-			return SortInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload, ComparisonFunction>();
+			return SortInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload, ComparisonFunction>(std::move(predicate));
 		}
 
 		SparseSetDeletePolicy GetDeletePolicy() const override { return DeletePolicy; }
@@ -796,7 +796,7 @@ namespace b3d::ecs
 			if(!B3D_ENSURE(count <= mPackedEntities.Size()))
 				return;
 
-			std::sort(mPackedEntities.Begin(), mPackedEntities.End(), std::move(predicate));
+			std::sort(mPackedEntities.Begin(), mPackedEntities.Begin() + count, std::move(predicate));
 
 			//for(u64 packedIndex = 0; packedIndex < count; ++packedIndex)
 			//{

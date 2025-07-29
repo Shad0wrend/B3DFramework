@@ -755,8 +755,77 @@ void ECSTestSuite::TestOwningGroup()
 
 	B3D_TEST_ASSERT(index == kEntityWithVelocityCount)
 
+	// Remove position from entities at index >=10 (means 8 velocity entries got removed)
+	for(u32 i = 0; i < kEntityWithVelocityCount; ++i)
+		registry.RemoveComponents<test::Velocity>(&entities[10], &entities[10 + kEntityWithVelocityCount]);
 
-	// TODO - Add/remove some entries, ensure group is still valid and tightly packed (can just use DoForEach above)
+	// Ensure we sort by entity index so we can assert by index below
+	positionVelocityOwningGroup.Sort();
+
+	index = 0;
+	positionVelocityOwningGroup.DoForEach([&index, this](const test::Position& position, const test::Velocity& velocity)
+	{
+		// Indices 0, 2, 4, 6, 8, 26, 28
+		const u32 adjustedIndex = (index < 5 ? index : index + 8) * 2;
+
+		B3D_TEST_ASSERT(position == test::Position((float)adjustedIndex + 1.0f, (float)adjustedIndex + 2.0f, (float)adjustedIndex + 3.0f))
+		B3D_TEST_ASSERT(velocity == test::Velocity(5.0f, 5.0f, 5.0f))
+		index++;
+	});
+
+	B3D_TEST_ASSERT(index == (kEntityWithVelocityCount - 8))
+
+	// Add velocity entries from the first 10 elements, offset by 1 (means 5 velocity entries got added)
+	for(u32 i = 0; i < 5; ++i)
+		registry.AddComponent<test::Velocity>(entities[i * 2 + 1], 5.0f, 5.0f, 5.0f);
+
+	// Ensure we sort by entity index so we can assert by index below
+	positionVelocityOwningGroup.Sort();
+
+	index = 0;
+	positionVelocityOwningGroup.DoForEach([&index, this](const test::Position& position, const test::Velocity& velocity)
+	{
+		// Indices 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 26, 28
+		const u32 adjustedIndex = index < 10 ? index : (index + 3) * 2;
+
+		B3D_TEST_ASSERT(position == test::Position((float)adjustedIndex + 1.0f, (float)adjustedIndex + 2.0f, (float)adjustedIndex + 3.0f))
+		B3D_TEST_ASSERT(velocity == test::Velocity(5.0f, 5.0f, 5.0f))
+		index++;
+	});
+
+	B3D_TEST_ASSERT(index == (kEntityWithVelocityCount - 3))
+
+	// Add 6 brand new entities, some with velocity some without (2 new entries matching the group filter)
+	for(u32 i = 0; i < 6; ++i)
+	{
+		const u32 adjustedIndex = kEntityCount + i;
+
+		const Entity entity = registry.CreateEntity();
+
+		if(i < 3)
+			registry.AddComponent<test::Position>(entity, (float)adjustedIndex + 1.0f, (float)adjustedIndex + 2.0f, (float)adjustedIndex + 3.0f);
+
+		if(i % 2 == 0)
+			registry.AddComponent<test::Velocity>(entity, 5.0f, 5.0f, 5.0f);
+	}
+
+	index = 0;
+	positionVelocityOwningGroup.DoForEach([&index, this](const test::Position& position, const test::Velocity& velocity)
+	{
+		//const u32 adjustedIndex = index < 12 ? ((index < 10 ? index : (index + 3) * 2)) : (kEntityCount + (index - 12)) * 2;
+		const u32 adjustedIndex = (index < 10 ? index : (index + 3) * 2);
+
+		B3D_TEST_ASSERT(position == test::Position((float)adjustedIndex + 1.0f, (float)adjustedIndex + 2.0f, (float)adjustedIndex + 3.0f))
+		B3D_TEST_ASSERT(velocity == test::Velocity(5.0f, 5.0f, 5.0f))
+		index++;
+	});
+
+	B3D_TEST_ASSERT(index == (kEntityWithVelocityCount - 1))
+
+	// Attempting to create a group with the same owned type should result in a null group
+	//auto positionOnlyGroup = registry.GetOrCreateGroup<test::Position>();
+	//B3D_TEST_ASSERT(positionOnlyGroup.GetSize() == 0);
+
 	// TODO - Test that adding multiple groups with same owned types triggers a warning
 	// TODO - Test a group with a non-owning entry (ideally, also make use of tags)
 	// TODO - Test exclude

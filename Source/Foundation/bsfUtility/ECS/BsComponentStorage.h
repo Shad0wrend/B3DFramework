@@ -229,15 +229,15 @@ namespace b3d::ecs
 		}
 
 		template<typename ComparisonFunction = std::less<>>
-		void SortN(u64 count)
+		void SortN(u64 count, ComparisonFunction predicate = ComparisonFunction{})
 		{
-			return Super::template SortNInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload, ComparisonFunction>(count);
+			return Super::template SortNInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload, ComparisonFunction>(count, std::move(predicate));
 		}
 
 		template<typename ComparisonFunction = std::less<>>
-		void Sort()
+		void Sort(ComparisonFunction predicate = ComparisonFunction{})
 		{
-			return Super::template SortInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload, ComparisonFunction>();
+			return Super::template SortInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload, ComparisonFunction>(std::move(predicate));
 		}
 
 		void Reserve(u64 capacity) override
