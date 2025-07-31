@@ -511,29 +511,30 @@ Bounds Renderable::GetBounds() const
 	}
 }
 
-SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 numBones)
+SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 boneCount)
 {
 	GpuBufferCreateInformation bufferCreateInformation;
 	bufferCreateInformation.Type = GpuBufferType::SimpleStorage;
 	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
-	bufferCreateInformation.SimpleStorage.Count = numBones * 3;
+	bufferCreateInformation.SimpleStorage.Count = boneCount * 3;
 	bufferCreateInformation.SimpleStorage.Format = BF_32X4F;
 
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	SPtr<GpuBuffer> buffer = gpuDevice->CreateGpuBuffer(bufferCreateInformation);
 
-	const u32 bufferSize = numBones * 3 * sizeof(Vector4);
-	u8* dest = (u8*)B3DStackAllocate(bufferSize);
+	const u32 bufferSize = boneCount * 3 * sizeof(Vector4);
+	u8* const temporaryBuffer = (u8*)B3DStackAllocate(bufferSize);
+	u8* currentWriteOffset = temporaryBuffer;
 
 	// Initialize bone transforms to identity, so the object renders properly even if no animation is animating it
-	for(u32 i = 0; i < numBones; i++)
+	for(u32 i = 0; i < boneCount; i++)
 	{
-		memcpy(dest, &Matrix4::kIdentity, 12 * sizeof(float)); // Assuming row-major format
-		dest += 12 * sizeof(float);
+		memcpy(currentWriteOffset, &Matrix4::kIdentity, 12 * sizeof(float)); // Assuming row-major format
+		currentWriteOffset += 12 * sizeof(float);
 	}
 
-	buffer->WriteData(0, bufferSize, dest, BWT_DISCARD);
-	B3DStackFree(dest);
+	buffer->WriteData(0, bufferSize, temporaryBuffer, BWT_DISCARD);
+	B3DStackFree(temporaryBuffer);
 
 	return buffer;
 }
@@ -543,7 +544,7 @@ void Renderable::CreateAnimationBuffers()
 	if(mAnimType == RenderableAnimType::Skinned || mAnimType == RenderableAnimType::SkinnedMorph)
 	{
 		SPtr<Skeleton> skeleton = mMesh->GetSkeleton();
-		u32 numBones = skeleton != nullptr ? skeleton->GetNumBones() : 0;
+		u32 numBones = skeleton != nullptr ? skeleton->GetBoneCount() : 0;
 
 		if(numBones > 0)
 		{
@@ -623,7 +624,8 @@ void Renderable::UpdateAnimationBuffers(const EvaluatedAnimationData& animData)
 		// Note: If multiple elements are using the same animation (not possible atm), this buffer should be shared by
 		// all such elements
 		const u32 bufferSize = poseInfo.BoneCount * 3 * sizeof(Vector4);
-		u8* dest = (u8*)B3DStackAllocate(bufferSize);
+		u8* const temporaryBuffer = (u8*)B3DStackAllocate(bufferSize);
+		u8* dest = temporaryBuffer;
 		for(u32 j = 0; j < poseInfo.BoneCount; j++)
 		{
 			const Matrix4& transform = animData.Transforms[poseInfo.BoneStartIndex + j];
@@ -632,8 +634,8 @@ void Renderable::UpdateAnimationBuffers(const EvaluatedAnimationData& animData)
 			dest += 12 * sizeof(float);
 		}
 
-		mBoneMatrixBuffer->WriteData(0, bufferSize, dest, BWT_DISCARD);
-		B3DStackFree(dest);
+		mBoneMatrixBuffer->WriteData(0, bufferSize, temporaryBuffer, BWT_DISCARD);
+		B3DStackFree(temporaryBuffer);
 	}
 
 	if(mAnimType == RenderableAnimType::Morph || mAnimType == RenderableAnimType::SkinnedMorph)
