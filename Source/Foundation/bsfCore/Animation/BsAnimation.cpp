@@ -64,7 +64,7 @@ void AnimationProxy::Clear()
 
 			if(Skeleton != nullptr)
 			{
-				u32 numBones = Skeleton->GetNumBones();
+				u32 numBones = Skeleton->GetBoneCount();
 				for(u32 k = 0; k < numBones; k++)
 					state.BoneToCurveMapping[k].~AnimationCurveMapping();
 			}
@@ -105,7 +105,7 @@ void AnimationProxy::Rebuild(const SPtr<b3d::Skeleton>& skeleton, const b3d::Ske
 	// Note: I could avoid having a separate allocation for LocalSkeletonPoses and use the same buffer as the rest
 	// of AnimationProxy
 	if(skeleton != nullptr)
-		SkeletonPose = LocalSkeletonPose(skeleton->GetNumBones());
+		SkeletonPose = LocalSkeletonPose(skeleton->GetBoneCount());
 
 	NumSceneObjects = (u32)sceneObjects.size();
 	if(NumSceneObjects > 0)
@@ -159,7 +159,7 @@ void AnimationProxy::Rebuild(Vector<AnimationClipInfo>& clipInfos, const Vector<
 		u32 numBones;
 
 		if(Skeleton != nullptr)
-			numBones = Skeleton->GetNumBones();
+			numBones = Skeleton->GetBoneCount();
 		else
 			numBones = 0;
 

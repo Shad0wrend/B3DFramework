@@ -107,7 +107,7 @@ const EvaluatedAnimationData* AnimationScene::Update(bool async)
 	for(auto& anim : mProxies)
 	{
 		if(anim->Skeleton != nullptr)
-			totalNumBones += anim->Skeleton->GetNumBones();
+			totalNumBones += anim->Skeleton->GetBoneCount();
 	}
 
 	// Prepare the write buffer
@@ -135,7 +135,7 @@ const EvaluatedAnimationData* AnimationScene::Update(bool async)
 		GetCoreApplication().GetTaskScheduler().Post(SchedulerTask(evaluateAnimWorker, "AnimWorker"));
 
 		if(anim->Skeleton != nullptr)
-			curBoneIdx += anim->Skeleton->GetNumBones();
+			curBoneIdx += anim->Skeleton->GetBoneCount();
 	}
 
 	// Wait for tasks to complete
@@ -199,7 +199,7 @@ void AnimationScene::EvaluateAnimation(AnimationProxy* anim, u32& curBoneIdx)
 	// Evaluate skeletal animation
 	if(anim->Skeleton != nullptr)
 	{
-		u32 numBones = anim->Skeleton->GetNumBones();
+		u32 numBones = anim->Skeleton->GetBoneCount();
 
 		EvaluatedAnimationData::PoseInfo& poseInfo = animInfo.PoseInfo;
 		poseInfo.AnimationId = anim->Id;

@@ -153,7 +153,7 @@ namespace b3d
 		/** Returns the total number of bones in the skeleton. */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(NumBones))
 
-		u32 GetNumBones() const { return mNumBones; }
+		u32 GetBoneCount() const { return mNumBones; }
 
 		/** Returns information about a bone at the provided index. */
 		const SkeletonBoneInfo& GetBoneInfo(u32 idx) const { return mBoneInfo[idx]; }

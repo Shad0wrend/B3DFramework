@@ -258,7 +258,7 @@ void CAnimation::Update()
 						if(!entry.IsMappedToBone || entry.Bone == nullptr)
 							continue;
 
-						const u32 numBones = skeleton->GetNumBones();
+						const u32 numBones = skeleton->GetBoneCount();
 						for(u32 j = 0; j < numBones; j++)
 						{
 							if(skeleton->GetBoneInfo(j).Name == entry.Bone->GetBoneName())

@@ -18,12 +18,12 @@ bool SkeletonMask::IsEnabled(u32 boneIdx) const
 }
 
 SkeletonMaskBuilder::SkeletonMaskBuilder(const SPtr<Skeleton>& skeleton)
-	: mSkeleton(skeleton), mMask(skeleton->GetNumBones())
+	: mSkeleton(skeleton), mMask(skeleton->GetBoneCount())
 {}
 
 void SkeletonMaskBuilder::SetBoneState(const String& name, bool enabled)
 {
-	u32 numBones = mSkeleton->GetNumBones();
+	u32 numBones = mSkeleton->GetBoneCount();
 	for(u32 i = 0; i < numBones; i++)
 	{
 		if(mSkeleton->GetBoneInfo(i).Name == name)

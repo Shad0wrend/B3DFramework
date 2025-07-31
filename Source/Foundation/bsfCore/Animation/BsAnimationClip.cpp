@@ -237,7 +237,7 @@ void AnimationClip::Initialize()
 
 void AnimationClip::GetBoneMapping(const Skeleton& skeleton, AnimationCurveMapping* mapping) const
 {
-	u32 numBones = skeleton.GetNumBones();
+	u32 numBones = skeleton.GetBoneCount();
 	for(u32 i = 0; i < numBones; i++)
 	{
 		const SkeletonBoneInfo& boneInfo = skeleton.GetBoneInfo(i);
