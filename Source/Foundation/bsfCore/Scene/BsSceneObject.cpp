@@ -322,7 +322,7 @@ void SceneObject::SetWorldScale(const Vector3& scale)
 
 const Transform& SceneObject::GetTransform() const
 {
-	if(!IsCachedWorldTfrmUpToDate())
+	if(!IsCachedWorldTransformUpToDate())
 		UpdateWorldTfrm();
 
 	return mWorldTfrm;
@@ -341,7 +341,7 @@ void SceneObject::LookAt(const Vector3& location, const Vector3& up)
 
 const Matrix4& SceneObject::GetWorldMatrix() const
 {
-	if(!IsCachedWorldTfrmUpToDate())
+	if(!IsCachedWorldTransformUpToDate())
 		UpdateWorldTfrm();
 
 	return mCachedWorldTfrm;
@@ -349,7 +349,7 @@ const Matrix4& SceneObject::GetWorldMatrix() const
 
 Matrix4 SceneObject::GetInvWorldMatrix() const
 {
-	if(!IsCachedWorldTfrmUpToDate())
+	if(!IsCachedWorldTransformUpToDate())
 		UpdateWorldTfrm();
 
 	Matrix4 worldToLocal = mWorldTfrm.GetInvMatrix();
@@ -358,7 +358,7 @@ Matrix4 SceneObject::GetInvWorldMatrix() const
 
 const Matrix4& SceneObject::GetLocalMatrix() const
 {
-	if(!IsCachedLocalTfrmUpToDate())
+	if(!IsCachedLocalTransformUpToDate())
 		UpdateLocalTfrm();
 
 	return mCachedLocalTfrm;
@@ -438,10 +438,10 @@ void SceneObject::SetForward(const Vector3& forwardDir)
 
 void SceneObject::UpdateTransformsIfDirty()
 {
-	if(!IsCachedLocalTfrmUpToDate())
+	if(!IsCachedLocalTransformUpToDate())
 		UpdateLocalTfrm();
 
-	if(!IsCachedWorldTfrmUpToDate())
+	if(!IsCachedWorldTransformUpToDate())
 		UpdateWorldTfrm();
 }
 
@@ -453,7 +453,7 @@ void SceneObject::NotifyTransformChanged(TransformChangedFlags flags) const
 		componentFlags = (TransformChangedFlags)(componentFlags & ~TCF_Transform);
 	else
 	{
-		mDirtyFlags |= DirtyFlags::LocalTfrmDirty | DirtyFlags::WorldTfrmDirty;
+		mDirtyFlags |= DirtyFlags::LocalTransformDirty | DirtyFlags::WorldTransformDirty;
 		mDirtyHash++;
 	}
 
@@ -497,13 +497,13 @@ void SceneObject::UpdateWorldTfrm() const
 		mCachedWorldTfrm = GetLocalMatrix();
 	}
 
-	mDirtyFlags &= ~DirtyFlags::WorldTfrmDirty;
+	mDirtyFlags &= ~DirtyFlags::WorldTransformDirty;
 }
 
 void SceneObject::UpdateLocalTfrm() const
 {
 	mCachedLocalTfrm = mLocalTfrm.GetMatrix();
-	mDirtyFlags &= ~DirtyFlags::LocalTfrmDirty;
+	mDirtyFlags &= ~DirtyFlags::LocalTransformDirty;
 }
 
 /************************************************************************/

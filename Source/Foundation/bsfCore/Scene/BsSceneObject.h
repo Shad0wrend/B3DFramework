@@ -48,8 +48,8 @@ namespace b3d
 		/**	Flags that signify which part of the SceneObject needs updating. */
 		enum DirtyFlags
 		{
-			LocalTfrmDirty = 0x01,
-			WorldTfrmDirty = 0x02
+			LocalTransformDirty = 0x01,
+			WorldTransformDirty = 0x02
 		};
 
 		friend class SceneManager;
@@ -323,10 +323,10 @@ namespace b3d
 		void UpdateWorldTfrm() const;
 
 		/**	Checks if cached local transform needs updating. */
-		bool IsCachedLocalTfrmUpToDate() const { return (mDirtyFlags & DirtyFlags::LocalTfrmDirty) == 0; }
+		bool IsCachedLocalTransformUpToDate() const { return (mDirtyFlags & DirtyFlags::LocalTransformDirty) == 0; }
 
 		/**	Checks if cached world transform needs updating. */
-		bool IsCachedWorldTfrmUpToDate() const { return (mDirtyFlags & DirtyFlags::WorldTfrmDirty) == 0; }
+		bool IsCachedWorldTransformUpToDate() const { return (mDirtyFlags & DirtyFlags::WorldTransformDirty) == 0; }
 
 		/************************************************************************/
 		/* 								Hierarchy	                     		*/
