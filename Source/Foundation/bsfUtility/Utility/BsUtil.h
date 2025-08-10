@@ -225,6 +225,9 @@ namespace b3d
 		using UnderlyingType = T;
 	};
 
+	/** Empty base class. */
+	struct EmptyBase { };
+
 	/** @} */
 } // namespace b3d
 

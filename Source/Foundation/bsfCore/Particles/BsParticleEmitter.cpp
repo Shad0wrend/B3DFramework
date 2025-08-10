@@ -1034,7 +1034,7 @@ void ParticleEmitterStaticMeshShape::CalcBounds(AABox& shape, AABox& velocity) c
 	if(mInfo.Mesh.IsLoaded(false))
 		shape = mInfo.Mesh->GetProperties().Bounds.GetBox();
 	else
-		shape = AABox::kBoxEmpty;
+		shape = AABox::kEmpty;
 
 	velocity.Minimum = -Vector3::kOne;
 	velocity.Maximum = Vector3::kOne;
@@ -1192,7 +1192,7 @@ void ParticleEmitterSkinnedMeshShape::CalcBounds(AABox& shape, AABox& velocity) 
 		{
 			// No culling, make the box infinite
 			if(!animation->GetCulling())
-				shape = AABox::kInfBox;
+				shape = AABox::kInfinite;
 			else
 				shape = animation->GetBounds();
 		}
@@ -1202,11 +1202,11 @@ void ParticleEmitterSkinnedMeshShape::CalcBounds(AABox& shape, AABox& velocity) 
 			if(mesh.IsLoaded(false))
 				shape = mesh->GetProperties().Bounds.GetBox();
 			else
-				shape = AABox::kBoxEmpty;
+				shape = AABox::kEmpty;
 		}
 	}
 	else
-		shape = AABox::kBoxEmpty;
+		shape = AABox::kEmpty;
 
 	velocity.Minimum = -Vector3::kOne;
 	velocity.Maximum = Vector3::kOne;

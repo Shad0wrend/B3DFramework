@@ -398,7 +398,7 @@ AABox ParticleSystem::CalculateBoundsInternal() const
 
 	const u32 particleCount = mParticleSet->GetParticleCount();
 	if(particleCount == 0)
-		return AABox::kBoxEmpty;
+		return AABox::kEmpty;
 
 	const ParticleSetData& particles = mParticleSet->GetParticles();
 	AABox bounds(Vector3::kInf, -Vector3::kInf);

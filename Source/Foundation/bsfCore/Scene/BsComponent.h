@@ -23,6 +23,25 @@ namespace b3d
 		AlwaysRun = 1
 	};
 
+	/**	Signals which portion of a component is dirty. */
+	enum class ComponentDirtyFlag
+	{
+		/** Component transform has changed. Sync the transform to the render thread and perform appropriate actions. */
+		Transform = 1 << 0,
+
+		/** Component active state has changed. Sync the active state to the render thread and perform appropriate actions. */
+		Active = 1 << 1,
+
+		/**
+		 * Some undetermined property on the component has changed. Sync all properties to the render thread and perform appropriate actions. This can always be used
+		 * as a catch-all, but prefer more specific dirty flags as they are faster.
+		 */
+		Everything = 1 << 2,
+
+		/** Some component dependency was marked dirty. */
+		Dependency = kDirtyDependencyMask
+	};
+
 	typedef Flags<ComponentFlag> ComponentFlags;
 	B3D_FLAGS_OPERATORS(ComponentFlag)
 

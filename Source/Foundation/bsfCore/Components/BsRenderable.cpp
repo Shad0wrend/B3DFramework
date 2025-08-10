@@ -219,12 +219,12 @@ void Renderable::OnBeginPlay()
 
 void Renderable::OnEnabled()
 {
-	MarkRenderProxyDataDirty();
+	MarkRenderProxyDataDirty(ComponentDirtyFlag::Active);
 }
 
 void Renderable::OnDisabled()
 {
-	MarkRenderProxyDataDirty();
+	MarkRenderProxyDataDirty(ComponentDirtyFlag::Active);
 }
 
 void Renderable::OnDestroyed()
@@ -232,7 +232,6 @@ void Renderable::OnDestroyed()
 	if(mAnimation != nullptr)
 		mAnimation->UnregisterRenderableInternal();
 
-	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 	CoreObject::Destroy();
 }
 
@@ -661,7 +660,6 @@ void Renderable::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& al
 		return;
 
 	bool oldIsActive = mActive;
-
 	syncPacket->ApplySyncData(this);
 
 	mWorldTransformMatrix = mTransform.GetMatrix();
@@ -670,7 +668,7 @@ void Renderable::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& al
 	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
 
 	const u32 flags = syncPacket->Flags;
-	const u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active | (u32)ActorDirtyFlag::Dependency;
+	const u32 updateEverythingFlag = ~(u32)ComponentDirtyFlag::Transform;
 	if((flags & updateEverythingFlag) != 0)
 	{
 		CreateAnimationBuffers();
@@ -700,12 +698,7 @@ void Renderable::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& al
 			rendererScene->RegisterRenderable(this);
 		}
 	}
-	else if((flags & (u32)ActorDirtyFlag::Mobility) != 0)
-	{
-		rendererScene->UnregisterRenderable(this);
-		rendererScene->RegisterRenderable(this);
-	}
-	else if((flags & (u32)ActorDirtyFlag::Transform) != 0)
+	else
 	{
 		if(mActive)
 			rendererScene->UpdateRenderable(this);

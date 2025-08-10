@@ -6378,19 +6378,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Options describing the evolver.</doc>
 		</property>
 	</class>
-	<class native="CDecal" script="Decal">
-		<doc>Wraps Decal as a Component.</doc>
-		<property name="Material" type="RRef&lt;Material&gt;" getter="GetMaterial" setter="SetMaterial" static="false">
-		</property>
-		<property name="Size" type="TVector2&lt;float&gt;" getter="GetSize" setter="SetSize" static="false">
-		</property>
-		<property name="MaxDistance" type="float" getter="GetMaxDistance" setter="SetMaxDistance" static="false">
-		</property>
-		<property name="Layer" type="ulong" getter="GetLayer" setter="SetLayer" static="false">
-		</property>
-		<property name="LayerMask" type="int" getter="GetLayerMask" setter="SetLayerMask" static="false">
-		</property>
-	</class>
 	<enum native="DistanceJointFlag" script="DistanceJointFlag">
 		<doc>Controls distance joint options.</doc>
 		<enumentry native="MinDistance" script="MinDistance">
@@ -8083,7 +8070,26 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<field name="KeepInternalReference" type="bool">
 		</field>
 	</struct>
+	<class native="Decal" script="Decal">
+		<doc>Wraps Decal as a Component.</doc>
+		<property name="Size" type="TVector2&lt;float&gt;" getter="GetSize" setter="SetSize" static="false">
+			<doc>Width and height of the decal.</doc>
+		</property>
+		<property name="Material" type="RRef&lt;Material&gt;" getter="GetMaterial" setter="SetMaterial" static="false">
+			<doc>Determines the material to use when rendering the decal.</doc>
+		</property>
+		<property name="MaxDistance" type="float" getter="GetMaxDistance" setter="SetMaxDistance" static="false">
+			<doc>Determines the maximum distance (from its origin) at which the decal is displayed.</doc>
+		</property>
+		<property name="LayerMask" type="int" getter="GetLayerMask" setter="SetLayerMask" static="false">
+			<doc>Bitfield that allows you to mask on which objects will the decal be projected onto. Only objects with the matching layers will be projected onto. Note that decal layer mask only supports 32-bits and objects with layers in bits &gt;= 32 will always be projected onto.</doc>
+		</property>
+		<property name="Layer" type="ulong" getter="GetLayer" setter="SetLayer" static="false">
+			<doc>Determines the layer that controls whether a system is considered visible in a specific camera. Layer must match camera layer bitfield in order for the camera to render the decal.</doc>
+		</property>
+	</class>
 	<class native="Renderable" script="Renderable">
+		<doc>Renderable represents any visible object in the scene. It has a mesh, bounds and a set of materials. Renderer will render any Renderable objects visible by a camera.</doc>
 		<method native="SetMaterial" script="SetMaterial" static="false">
 			<doc>Sets a material that will be used for rendering a sub-mesh with the specified index. If a sub-mesh doesn&apos;t have a specific material set then the primary material will be used.</doc>
 			<param name="index" type="int">

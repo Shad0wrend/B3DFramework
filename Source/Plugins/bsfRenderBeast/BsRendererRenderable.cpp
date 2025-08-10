@@ -39,7 +39,7 @@ RendererRenderable::RendererRenderable()
 
 void RendererRenderable::UpdatePerObjectBuffer()
 {
-	const Matrix4 worldNoScaleTransform = Renderable->GetMatrixNoScale();
+	const Matrix4 worldNoScaleTransform = Renderable->GetWorldTransformMatrixWithoutScale();
 	const u32 layer = Bitwise::MostSignificantBit(Renderable->GetLayer());
 
 	PerObjectBuffer::Update(PerObjectParamBuffer, WorldTfrm, worldNoScaleTransform, PrevWorldTfrm, layer);
@@ -47,7 +47,7 @@ void RendererRenderable::UpdatePerObjectBuffer()
 
 void RendererRenderable::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush)
 {
-	const Matrix4 worldViewProjMatrix = viewProj * Renderable->GetMatrix();
+	const Matrix4 worldViewProjMatrix = viewProj * Renderable->GetWorldTransformMatrix();
 
 	gPerCallParamDef.gMatWorldViewProj.Set(PerCallParamBuffer, worldViewProjMatrix);
 

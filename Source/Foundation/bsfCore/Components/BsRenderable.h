@@ -28,18 +28,6 @@ namespace b3d
 		Count // Keep at end
 	};
 
-	/**	Signals which portion of a component is dirty. */
-	enum class ComponentDirtyFlag // TODO - Move to some common header
-	{
-		Transform = 1 << 0,
-		Mobility = 1 << 1,
-		Active = 1 << 2,
-		Everything = 1 << 3,
-		Dependency = kDirtyDependencyMask
-	};
-
-	struct EmptyBase { };
-
 	/** Common code used both by main and render thread variants of Renderable. */
 	template <bool IsRenderProxy>
 	class B3D_CORE_EXPORT TRenderable : public CoreVariantType<CoreObject, IsRenderProxy>, public std::conditional_t<IsRenderProxy, EmptyBase, IResourceListener>
@@ -141,25 +129,22 @@ namespace b3d
 		u64 GetLayer() const { return mLayer; }
 
 		/**	Returns the transform matrix that is applied to the object when its being rendered. */
-		Matrix4 GetMatrix() const { return mWorldTransformMatrix; }
+		Matrix4 GetWorldTransformMatrix() const { return mWorldTransformMatrix; }
 
 		/**
 		 * Returns the transform matrix that is applied to the object when its being rendered. This transform matrix does
 		 * not include scale values.
 		 */
-		Matrix4 GetMatrixNoScale() const { return mWorldTransformMatrixWithoutScale; }
+		Matrix4 GetWorldTransformMatrixWithoutScale() const { return mWorldTransformMatrixWithoutScale; }
 
 	protected:
+		/** @copydoc CoreObject::MarkRenderProxyDataDirty */
 		void MarkRenderProxyDataDirty(ComponentDirtyFlag flag = ComponentDirtyFlag::Everything);
 
-		/**
-		 * Notifies the core object manager that this object is dependant on some other CoreObject(s), and the dependencies
-		 * changed since the last call to this method. This will trigger a call to GetCoreDependencies() to collect the
-		 * new dependencies.
-		 */
+		/** @copydoc CoreObject::MarkDependenciesDirty */
 		void MarkCoreObjectDependenciesDirty();
 
-		/**	Marks the resource dependencies list as dirty and schedules it for rebuild. */
+		/** @copydoc IResourceListener::MarkListenerResourcesDirty */
 		void MarkReferencedResourcesDirty();
 
 		/** Triggered whenever the renderable's mesh changes. */
@@ -178,11 +163,10 @@ namespace b3d
 	};
 
 	/**
-	 * @copydoc	Renderable
-	 *
-	 * @note	Wraps a Renderable as a Component.
+	 * Renderable represents any visible object in the scene. It has a mesh, bounds and a set of materials. Renderer will
+	 * render any Renderable objects visible by a camera.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Renderable)) Renderable : public Component, public TRenderable<false>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Renderable : public Component, public TRenderable<false>
 	{
 	public:
 		/**
@@ -327,7 +311,6 @@ namespace b3d
 			SPtr<GpuBuffer> mMorphShapeBuffer;
 			SPtr<VertexDescription> mMorphVertexDescription;
 
-			// TODO - Common for all component types?
 			Transform mTransform;
 			bool mActive = true;
 			SPtr<SceneInstance> mSceneInstance;

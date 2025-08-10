@@ -17,7 +17,7 @@
 #include "Image/BsSpriteTexture.h"
 #include "RenderAPI/BsVertexDescription.h"
 #include "Shading/BsGpuParticleSimulation.h"
-#include "Renderer/BsDecal.h"
+#include "Components/BsDecal.h"
 #include "Renderer/BsIBLUtility.h"
 #include "Renderer/BsRendererUtility.h"
 
@@ -360,7 +360,7 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 
 	RendererRenderable* rendererRenderable = mInfo.Renderables.back();
 	rendererRenderable->Renderable = renderable;
-	rendererRenderable->WorldTfrm = renderable->GetMatrix();
+	rendererRenderable->WorldTfrm = renderable->GetWorldTransformMatrix();
 	rendererRenderable->PrevWorldTfrm = rendererRenderable->WorldTfrm;
 	rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 	rendererRenderable->UpdatePerObjectBuffer();
@@ -490,7 +490,7 @@ void RenderBeastScene::UpdateRenderable(Renderable* renderable)
 	if(rendererRenderable->PrevFrameDirtyState != PrevFrameDirtyState::Updated)
 		rendererRenderable->PrevWorldTfrm = rendererRenderable->WorldTfrm;
 
-	rendererRenderable->WorldTfrm = renderable->GetMatrix();
+	rendererRenderable->WorldTfrm = renderable->GetWorldTransformMatrix();
 	rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Updated;
 
 	mInfo.Renderables[renderableId]->UpdatePerObjectBuffer();
@@ -1510,7 +1510,7 @@ void RenderBeastScene::UpdateParticleSystemBounds(const EvaluatedParticleData* p
 	{
 		const u32 rendererId = entry.ParticleSystem->GetRendererId();
 
-		AABox worldAABox = AABox::kInfBox;
+		AABox worldAABox = AABox::kInfinite;
 		const auto iterFind = particleRenderData->CpuData.find(entry.ParticleSystem->GetId());
 		if(iterFind != particleRenderData->CpuData.end())
 			worldAABox = iterFind->second->Bounds;

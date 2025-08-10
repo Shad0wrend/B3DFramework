@@ -60,10 +60,22 @@ namespace b3d
 		 */
 		void TransformAffine(const TMatrix4<T>& matrix);
 
+		static const TBounds<T> kEmpty;
+		static const TBounds<T> kUnit;
+		static const TBounds<T> kInfinite;
 	protected:
 		TAABox<T> mBox;
 		TSphere<T> mSphere;
 	};
+
+	template<> const TBounds<float> TBounds<float>::kEmpty = TBounds(TAABox<float>::kEmpty, TSphere<float>::kEmpty);
+	template<> const TBounds<double> TBounds<double>::kEmpty = TBounds(TAABox<double>::kEmpty, TSphere<double>::kEmpty);
+
+	template<> const TBounds<float> TBounds<float>::kUnit = TBounds(TAABox<float>::kUnit, TSphere<float>::kUnit);
+	template<> const TBounds<double> TBounds<double>::kUnit = TBounds(TAABox<double>::kUnit, TSphere<double>::kUnit);
+
+	template<> const TBounds<float> TBounds<float>::kInfinite = TBounds(TAABox<float>::kEmpty, TSphere<float>::kInfinite);
+	template<> const TBounds<double> TBounds<double>::kInfinite = TBounds(TAABox<double>::kEmpty, TSphere<double>::kInfinite);
 
 	/** @} */
 } // namespace b3d

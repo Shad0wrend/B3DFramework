@@ -10,6 +10,10 @@ namespace b3d
 	 *  @{
 	 */
 
+	/// <summary>
+	/// Renderable represents any visible object in the scene. It has a mesh, bounds and a set of materials. Renderer will 
+	/// render any Renderable objects visible by a camera.
+	/// </summary>
 	[ShowInInspector]
 	public partial class Renderable : Component
 	{

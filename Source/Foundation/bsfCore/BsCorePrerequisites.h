@@ -292,6 +292,7 @@ namespace b3d
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Light)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Camera)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Renderable)
+	B3D_CORE_OBJECT_FORWARD_DECLARE(Decal)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(ReflectionProbe)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(ParticleSystem)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Texture)
@@ -302,7 +303,6 @@ namespace b3d
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Mesh)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(VectorField)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Skybox)
-	B3D_CORE_OBJECT_FORWARD_DECLARE(Decal)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(AnimationClip)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Animation)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(StringTable)
@@ -386,7 +386,6 @@ namespace b3d
 	B3D_COMPONENT_FORWARD_DECLARE(Skybox)
 	B3D_COMPONENT_FORWARD_DECLARE(LightProbeVolume)
 	B3D_COMPONENT_FORWARD_DECLARE(ParticleSystem)
-	B3D_COMPONENT_FORWARD_DECLARE(Decal)
 
 	class Color;
 	class GpuProgramManager;
@@ -680,8 +679,8 @@ namespace b3d
 		TID_ParticleSize = 1188,
 		TID_ParticleColor = 1189,
 		TID_ParticleRotation = 1190,
-		TID_Decal = 1191,
-		TID_CDecal = 1192,
+		//TID_Decal = 1191,
+		TID_Decal = 1192,
 		TID_RenderTarget = 1193,
 		TID_RenderTexture = 1194,
 		TID_RenderWindow = 1195,
@@ -848,7 +847,7 @@ namespace b3d
 	typedef GameObjectHandle<CAudioSource> HAudioSource;
 	typedef GameObjectHandle<CAudioListener> HAudioListener;
 	typedef GameObjectHandle<CParticleSystem> HParticleSystem;
-	typedef GameObjectHandle<CDecal> HDecal;
+	typedef GameObjectHandle<Decal> HDecal;
 
 	/** @} */
 } // namespace b3d

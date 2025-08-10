@@ -20,7 +20,7 @@ namespace b3d
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(LightProbeVolume)) CLightProbeVolume : public Component
 	{
 	public:
-		CLightProbeVolume(const HSceneObject& parent, const AABox& volume = AABox::kUnitBox, const Vector3I& cellCount = Vector3I(1, 1, 1));
+		CLightProbeVolume(const HSceneObject& parent, const AABox& volume = AABox::kUnit, const Vector3I& cellCount = Vector3I(1, 1, 1));
 		virtual ~CLightProbeVolume();
 
 		/** @copydoc LightProbeVolume::AddProbe() */

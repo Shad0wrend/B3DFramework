@@ -543,7 +543,7 @@ u32 GroupRaycast(const PhysicsScene& physicsScene, LineSegment3* segments, Parti
 		return 0;
 
 	// Calculate bounds of all rays
-	AABox groupBounds = AABox::kInfBox;
+	AABox groupBounds = AABox::kInfinite;
 	for(u32 i = 0; i < numRays; i++)
 	{
 		groupBounds.Merge(segments[i].Start);

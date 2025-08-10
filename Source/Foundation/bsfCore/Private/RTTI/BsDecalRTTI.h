@@ -4,8 +4,9 @@
 
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
-#include "Renderer/BsDecal.h"
-#include "Renderer/BsRenderer.h"
+#include "Components/BsDecal.h"
+#include "RTTI/BsMathRTTI.h"
+#include "Private/RTTI/BsGameObjectRTTI.h"
 
 namespace b3d
 {
@@ -14,19 +15,17 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT DecalRTTI : public TRTTIType<Decal, IReflectable, DecalRTTI>
+	class B3D_CORE_EXPORT DecalRTTI : public TRTTIType<Decal, Component, DecalRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mTransform, 0)
-			B3D_RTTI_MEMBER(mActive, 1)
-			B3D_RTTI_MEMBER(mMobility, 2)
-			B3D_RTTI_MEMBER(mSize, 3)
-			B3D_RTTI_MEMBER(mMaxDistance, 4)
-			B3D_RTTI_MEMBER(mMaterial, 5)
-			B3D_RTTI_MEMBER(mLayer, 6)
-			B3D_RTTI_MEMBER(mLayerMask, 7)
+			B3D_RTTI_MEMBER(mSize, 0)
+			B3D_RTTI_MEMBER(mMaxDistance, 1)
+			B3D_RTTI_MEMBER(mMaterial, 2)
+			B3D_RTTI_MEMBER(mLayer, 3)
+			B3D_RTTI_MEMBER(mLayerMask, 4)
 		B3D_RTTI_END_MEMBERS
+
 	public:
 		const String& GetRttiName() override
 		{
@@ -39,9 +38,9 @@ namespace b3d
 			return TID_Decal;
 		}
 
-		SPtr<IReflectable> NewRttiObject()
+		SPtr<IReflectable> NewRttiObject() override
 		{
-			return Decal::CreateEmpty();
+			return SceneObject::CreateEmptyComponent<Decal>();
 		}
 	};
 

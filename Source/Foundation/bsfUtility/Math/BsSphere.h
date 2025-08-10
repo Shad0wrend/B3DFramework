@@ -57,7 +57,26 @@ namespace b3d
 		 * 								is located within the sphere.
 		 */
 		std::pair<bool, T> Intersects(const TRay<T>& ray, bool discardInside = true) const;
+
+		static const TSphere<T> kEmpty;
+		static const TSphere<T> kUnit;
+		static const TSphere<T> kInfinite;
+
+		/**
+		 * Indices that can be used for rendering a box constructed from 8 corner vertices, using AABox::Corner for
+		 * mapping.
+		 */
+		static const u32 kCubeIndices[36];
 	};
+
+	template<> const TSphere<float> TSphere<float>::kEmpty = TSphere(TVector3<float>(0.0f, 0.0f, 0.0f), 0.0f);
+	template<> const TSphere<double> TSphere<double>::kEmpty = TSphere(TVector3<double>(0.0, 0.0, 0.0), 0.0);
+
+	template<> const TSphere<float> TSphere<float>::kUnit = TSphere(TVector3<float>(0.0f, 0.0f, 0.0f), 0.5f);
+	template<> const TSphere<double> TSphere<double>::kUnit = TSphere(TVector3<double>(0.0, 0.0, 0.0), 0.5);
+
+	template<> const TSphere<float> TSphere<float>::kInfinite = TSphere(TVector3<float>(0.0f, 0.0f, 0.0f), std::numeric_limits<float>::infinity());
+	template<> const TSphere<double> TSphere<double>::kInfinite = TSphere(TVector3<double>(0.0, 0.0, 0.0), std::numeric_limits<double>::infinity());
 
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(Sphere)) TSphere<float>;
 	extern template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true), ExportName(SphereD)) TSphere<double>;

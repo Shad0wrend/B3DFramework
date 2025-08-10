@@ -32,7 +32,7 @@ namespace b3d
 		u32 CountZ = 1;
 
 		/** Spatial bounds of the vector field. */
-		AABox Bounds = AABox::kBoxEmpty;
+		AABox Bounds = AABox::kEmpty;
 	};
 
 	/** @} */
