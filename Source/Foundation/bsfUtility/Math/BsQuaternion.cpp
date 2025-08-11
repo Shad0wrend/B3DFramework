@@ -316,7 +316,7 @@ void TQuaternion<T>::LookRotation(const TVector3<T>& forwardDir, const TVector3<
 	TVector3<T> forward = TVector3<T>::Normalize(forwardDir);
 	TVector3<T> up = TVector3<T>::Normalize(upDir);
 
-	if(Math::ApproxEquals(TVector3<T>::Dot(forward, up), (T)1.0))
+	if(Math::ApproxEquals(Math::Abs(TVector3<T>::Dot(forward, up)), (T)1.0))
 	{
 		LookRotation(forward);
 		return;
