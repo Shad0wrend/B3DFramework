@@ -155,49 +155,37 @@ shader Surface
 	
 		Texture2D gOpacityTex = white;
 	
-		#if BLEND_MODE == 3
-			[alias(gEmissiveMaskTex)]
-			SamplerState gEmissiveMaskSamp;	
+		[alias(gEmissiveMaskTex)]
+		SamplerState gEmissiveMaskSamp;	
+		Texture2D gEmissiveMaskTex = black;
 		
-			Texture2D gEmissiveMaskTex = black;
-		#endif
-		
-		#if BLEND_MODE != 3
-			[alias(gNormalTex)]
-			SamplerState gNormalSamp;
-			
-			Texture2D gNormalTex = normal;
-		#endif
+		[alias(gNormalTex)]
+		SamplerState gNormalSamp;
+		Texture2D gNormalTex = normal;
 	
-		#if BLEND_MODE == 0 || BLEND_MODE == 1
-			[alias(gAlbedoTex)]
-			SamplerState gAlbedoSamp;
+		[alias(gAlbedoTex)]
+		SamplerState gAlbedoSamp;
+	
+		[alias(gRoughnessTex)]
+		SamplerState gRoughnessSamp;
 		
-			[alias(gRoughnessTex)]
-			SamplerState gRoughnessSamp;
-			
-			[alias(gMetalnessTex)]
-			SamplerState gMetalnessSamp;
-		
-			Texture2D gAlbedoTex = white;
-			Texture2D gRoughnessTex = white;
-			Texture2D gMetalnessTex = black;
-		#endif
+		[alias(gMetalnessTex)]
+		SamplerState gMetalnessSamp;
+	
+		Texture2D gAlbedoTex = white;
+		Texture2D gRoughnessTex = white;
+		Texture2D gMetalnessTex = black;
 
 		cbuffer MaterialParams
 		{
 			float2 gUVOffset = { 0.0f, 0.0f };
 			float2 gUVTile = { 1.0f, 1.0f };
 			
-			#if BLEND_MODE == 3
-				[color][hdr]
-				float3 gEmissiveColor = { 1.0f, 1.0f, 1.0f };
-			#endif
+			[color][hdr]
+			float3 gEmissiveColor = { 1.0f, 1.0f, 1.0f };
 			
-			#if BLEND_MODE == 0 || BLEND_MODE == 1
-				[spriteuv(gAlbedoTex)]
-				float4 gSpriteUV;
-			#endif
+			[spriteuv(gAlbedoTex)]
+			float4 gSpriteUV;
 		};
 	
 		[internal]
