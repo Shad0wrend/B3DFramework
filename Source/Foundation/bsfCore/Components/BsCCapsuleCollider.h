@@ -11,11 +11,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	/**
-	 * @copydoc	CapsuleCollider
-	 *
-	 * @note Wraps CapsuleCollider as a Component.
-	 */
+	/** Collider with a capsule geometry. */
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(CapsuleCollider)) CCapsuleCollider : public CCollider
 	{
 	public:
@@ -37,19 +33,19 @@ namespace b3d
 		B3D_SCRIPT_EXPORT(ExportName(Center), Property(Getter))
 		Vector3 GetCenter() const { return mShapeLocalPosition; }
 
-		/** @copydoc CapsuleCollider::SetHalfHeight() */
+		/** Determines the half height of the capsule, from the origin to one of the hemispherical centers, along the normal vector. */
 		B3D_SCRIPT_EXPORT(ExportName(HalfHeight), Property(Setter))
 		void SetHalfHeight(float halfHeight);
 
-		/** @copydoc CapsuleCollider::GetHalfHeight() */
+		/** @copydoc SetHalfHeight() */
 		B3D_SCRIPT_EXPORT(ExportName(HalfHeight), Property(Getter))
 		float GetHalfHeight() const { return mHalfHeight; }
 
-		/** @copydoc CapsuleCollider::SetRadius() */
+		/** Determines the radius of the capsule. */
 		B3D_SCRIPT_EXPORT(ExportName(Radius), Property(Setter))
 		void SetRadius(float radius);
 
-		/** @copydoc CapsuleCollider::GetRadius() */
+		/** @copydoc SetRadius() */
 		B3D_SCRIPT_EXPORT(ExportName(Radius), Property(Getter))
 		float GetRadius() const { return mRadius; }
 
@@ -59,9 +55,11 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Collider> CreateInternal() override;
+		void OnCreated() override;
 
 	protected:
+		Vector3 mShapeLocalPosition = Vector3::kZero;
+		Quaternion mShapeLocalRotation = Quaternion::kIdentity;
 		Vector3 mNormal = Vector3::kUnitY;
 		float mRadius = 1.0f;
 		float mHalfHeight = 0.5f;

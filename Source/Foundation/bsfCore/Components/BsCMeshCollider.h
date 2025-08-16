@@ -11,21 +11,20 @@ namespace b3d
 	 *  @{
 	 */
 
-	/**
-	 * @copydoc	MeshCollider
-	 *
-	 * @note Wraps MeshCollider as a Component.
-	 */
+	/** A collider represented by an arbitrary mesh. */
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(MeshCollider)) CMeshCollider : public CCollider
 	{
 	public:
 		CMeshCollider(const HSceneObject& parent);
 
-		/** @copydoc MeshCollider::SetMesh */
+		/**
+		 * Determines a mesh that represents the collider geometry. This can be a generic triangle mesh, or and convex mesh.
+		 * Triangle meshes are not supported as triggers, nor are they supported for colliders that are parts of a non-kinematic rigidbody.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(Mesh), Property(Setter))
 		void SetMesh(const HPhysicsMesh& mesh);
 
-		/** @copydoc MeshCollider::GetMesh */
+		/** @copydoc SetMesh */
 		B3D_SCRIPT_EXPORT(ExportName(Mesh), Property(Getter))
 		HPhysicsMesh GetMesh() const { return mMesh; }
 
@@ -35,7 +34,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Collider> CreateInternal() override;
+		void OnCreated() override;
 		bool IsValidParent(const HRigidbody& parent) const override;
 
 	protected:

@@ -3,6 +3,7 @@
 #include "Components/BsCCollider.h"
 #include "Scene/BsSceneObject.h"
 #include "Components/BsCRigidbody.h"
+#include "Math/BsRay.h"
 #include "Physics/BsPhysics.h"
 #include "Private/RTTI/BsCColliderRTTI.h"
 #include "Scene/BsSceneInstance.h"
@@ -11,20 +12,17 @@ using namespace std::placeholders;
 
 using namespace b3d;
 
-CCollider::CCollider()
-{
-	SetName("Collider");
-
-	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
-}
-
 CCollider::CCollider(const HSceneObject& parent)
 	: Component(parent)
 {
 	SetName("Collider");
 
-	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
+	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform | TCF_NotifyStopped);
 }
+
+CCollider::CCollider()
+	:CCollider(nullptr)
+{ }
 
 void CCollider::SetIsTrigger(bool value)
 {
@@ -33,13 +31,11 @@ void CCollider::SetIsTrigger(bool value)
 
 	mIsTrigger = value;
 
-	if(mInternal != nullptr)
-	{
-		mInternal->SetIsTrigger(value);
+	for(auto& shape : mShapes)
+		shape->SetIsTrigger(value);
 
-		UpdateParentRigidbody();
-		UpdateTransform();
-	}
+	// Triggers don't support parent rigidbody, so refresh
+	RefreshParentRigidbody();
 }
 
 void CCollider::SetMass(float mass)
@@ -49,29 +45,19 @@ void CCollider::SetMass(float mass)
 
 	mMass = mass;
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
+	for(auto& entry : mShapes)
+		entry->SetMass(mass);
 
-		for(auto& entry : shapes)
-			entry->SetMass(mass);
-
-		if(mRigidbody != nullptr)
-			mRigidbody->UpdateMassDistribution();
-	}
+	if(mParentDynamicRigidbody != nullptr)
+		mParentDynamicRigidbody->UpdateMassDistribution();
 }
 
 void CCollider::SetMaterial(const HPhysicsMaterial& material)
 {
 	mMaterial = material;
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-
-		for(auto& entry : shapes)
-			entry->SetMaterial(material);
-	}
+	for(auto& entry : mShapes)
+		entry->SetMaterial(material);
 }
 
 void CCollider::SetContactOffset(float value)
@@ -80,13 +66,8 @@ void CCollider::SetContactOffset(float value)
 
 	mContactOffset = value;
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-
-		for(auto& entry : shapes)
-			entry->SetContactOffset(value);
-	}
+	for(auto& entry : mShapes)
+		entry->SetContactOffset(value);
 }
 
 void CCollider::SetRestOffset(float value)
@@ -95,53 +76,120 @@ void CCollider::SetRestOffset(float value)
 
 	mRestOffset = value;
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-
-		for(auto& entry : shapes)
-			entry->SetRestOffset(value);
-	}
+	for(auto& entry : mShapes)
+		entry->SetRestOffset(value);
 }
 
 void CCollider::SetLayer(u64 layer)
 {
 	mLayer = layer;
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-
-		for(auto& entry : shapes)
-			entry->SetLayer(layer);
-	}
+	for(auto& entry : mShapes)
+		entry->SetLayer(layer);
 }
 
 void CCollider::SetCollisionReportMode(CollisionReportMode mode)
 {
 	mCollisionReportMode = mode;
 
-	if(mInternal != nullptr)
-		UpdateCollisionReportMode();
+	UpdateCollisionReportMode();
 }
 
-void CCollider::OnBeginPlay()
+void CCollider::OnCreated()
 {
+	const Vector3& scale = SceneObject()->GetTransform().GetScale();
+
+	if(!RefreshParentRigidbody())
+	{
+		const bool updateShapeTransforms = false; // No need as we update them below. Avoid double work.
+		UpdateTransform(updateShapeTransforms); // Perform initial transform update, unless the parent rigidbody transform already did it. This needs to happen before shape UpdateTransform below
+	}
+
+	u32 shapeIndex = 0;
+	for(auto& entry : mShapes)
+	{
+		entry->SetParentCollider(this);
+		entry->SetShapeIndexInParent(shapeIndex++);
+		entry->SetIsTrigger(mIsTrigger);
+		entry->SetScale(scale);
+		// entry->UpdateTransform(); called implicitly by SetScale
+	}
+
+	B3D_ASSERT(mStaticRigidbody == nullptr);
+
+	Rigidbody* const dynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
+	if(dynamicRigidbody == nullptr)
+	{
+		const Transform& transform = SO()->GetTransform();
+
+		mStaticRigidbody = GetPhysics().CreateStaticRigidbody();
+		mStaticRigidbody->SetTransform(transform.GetPosition(), transform.GetRotation());
+
+		for (const auto& shape : mShapes)
+			mStaticRigidbody->AttachShape(shape);
+	}
+	else
+	{
+		// For dynamic rigidbodies we add/remove shapes when the collider is enabled/disabled. This is because we can't just add/remove
+		// the rigidbody from the scene, as we can do with a static one, as we own that one.
+	}
 }
 
 void CCollider::OnDestroyed()
 {
-	DestroyInternal();
-}
+	Rigidbody* const dynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
+	if(dynamicRigidbody == nullptr)
+	{
+		for (const auto& existingShape : mShapes)
+		{
+			if (existingShape == nullptr)
+				continue;
 
-void CCollider::OnDisabled()
-{
-	DestroyInternal();
+			mStaticRigidbody->DetachShape(existingShape);
+		}
+
+		mStaticRigidbody->RemoveFromScene();
+		mStaticRigidbody = nullptr;
+	}
+	else
+	{
+		mParentDynamicRigidbody->RemoveCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
+		mParentDynamicRigidbody = nullptr;
+	}
+
+	B3D_ASSERT(mStaticRigidbody == nullptr);
 }
 
 void CCollider::OnEnabled()
 {
-	RestoreInternal();
+	Rigidbody* const dynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
+	if(dynamicRigidbody != nullptr)
+	{
+		for (const auto& shape : mShapes)
+			dynamicRigidbody->AttachShape(shape);
+	}
+	else
+	{
+		const SPtr<SceneInstance>& sceneInstance = SceneObject()->GetScene();
+		mStaticRigidbody->AddToScene(*sceneInstance->GetPhysicsScene());
+	}
+}
+
+void CCollider::OnDisabled()
+{
+	Rigidbody* const dynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
+	if(dynamicRigidbody != nullptr)
+	{
+		for (const auto& existingShape : mShapes)
+		{
+			if (existingShape == nullptr)
+				continue;
+
+			dynamicRigidbody->DetachShape(existingShape);
+		}
+	}
+	else
+		mStaticRigidbody->RemoveFromScene();
 }
 
 void CCollider::OnTransformChanged(TransformChangedFlags flags)
@@ -150,7 +198,7 @@ void CCollider::OnTransformChanged(TransformChangedFlags flags)
 		return;
 
 	if((flags & TCF_Parent) != 0)
-		UpdateParentRigidbody();
+		RefreshParentRigidbody();
 
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 	const SPtr<PhysicsScene>& physicsScene = scene->GetPhysicsScene();
@@ -164,100 +212,86 @@ void CCollider::OnTransformChanged(TransformChangedFlags flags)
 		UpdateTransform();
 }
 
-void CCollider::SetRigidbody(const HRigidbody& rigidbody)
+bool CCollider::SetDynamicRigidbody(const HRigidbody& rigidbody)
 {
-	if(rigidbody == mRigidbody)
-		return;
+	if(rigidbody == mParentDynamicRigidbody)
+		return false;
 
-	if(mRigidbody != nullptr)
-		mRigidbody->RemoveCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
+	// Detach shapes from original body, destroy static body if needed
+	if(mParentDynamicRigidbody != nullptr)
+		mParentDynamicRigidbody->RemoveCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
 
-	if(mInternal != nullptr)
+	Rigidbody* const originalDynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
+	if(originalDynamicRigidbody != nullptr)
 	{
-		Rigidbody* rigidBodyPtr = nullptr;
+		if(GetEnabled()) // If not enabled, shapes won't be part of the dynamic rigidbody
+		{
+			for(auto& entry : mShapes)
+				originalDynamicRigidbody->DetachShape(entry);
+		}
+	}
+	else
+	{
+		for(auto& entry : mShapes)
+			mStaticRigidbody->DetachShape(entry);
 
-		if(rigidbody != nullptr)
-			rigidBodyPtr = rigidbody->GetInternal();
+		if(GetEnabled()) // If not enabled, body won't be part of the scene
+			mStaticRigidbody->RemoveFromScene();
 
-		mInternal->SetRigidbody(rigidBodyPtr);
+		mStaticRigidbody = nullptr;
+	}
+
+	// Attach shapes to the new body, create static body if needed
+	Rigidbody* const newDynamicRigidbody = rigidbody.IsValid() ? rigidbody->GetInternal() : nullptr;
+	if(newDynamicRigidbody)
+	{
+		if(GetEnabled())
+		{
+			for(auto& entry : mShapes)
+				newDynamicRigidbody->AttachShape(entry);
+		}
+	}
+	else
+	{
+		B3D_ASSERT(mStaticRigidbody == nullptr);
+
+		const Transform& transform = SceneObject()->GetTransform();
+		const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+
+		mStaticRigidbody = GetPhysics().CreateStaticRigidbody();
+		mStaticRigidbody->SetTransform(transform.GetPosition(), transform.GetRotation());
+
+		for(auto& entry : mShapes)
+			mStaticRigidbody->AttachShape(entry);
+
+		if(GetEnabled())
+			mStaticRigidbody->AddToScene(*scene->GetPhysicsScene());
 	}
 
 	if(rigidbody != nullptr)
 		rigidbody->AddCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
 
-	mRigidbody = rigidbody;
+	mParentDynamicRigidbody = rigidbody;
 	UpdateCollisionReportMode();
 	UpdateTransform();
+
+	return true;
 }
 
-bool CCollider::RayCast(const Ray& ray, PhysicsQueryHit& hit, float maxDist) const
+bool CCollider::RayCast(const Ray& ray, PhysicsQueryHit& outHit, float maximumDistance) const
 {
-	if(mInternal == nullptr)
-		return false;
-
-	return mInternal->RayCast(ray, hit, maxDist);
+	return GetPhysics().RayCast(ray.Origin, ray.Direction, *this, outHit, maximumDistance);
 }
 
-bool CCollider::RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, float maxDist) const
+bool CCollider::RayCast(const Vector3& origin, const Vector3& direction, PhysicsQueryHit& outHit, float maximumDistance) const
 {
-	if(mInternal == nullptr)
-		return false;
-
-	return mInternal->RayCast(origin, unitDir, hit, maxDist);
+	return GetPhysics().RayCast(origin, direction, *this, outHit, maximumDistance);
 }
 
-void CCollider::RestoreInternal()
-{
-	if(mInternal == nullptr)
-	{
-		mInternal = CreateInternal();
-
-		mInternal->OnCollisionBegin.Connect(std::bind(&CCollider::TriggerOnCollisionBegin, this, _1));
-		mInternal->OnCollisionStay.Connect(std::bind(&CCollider::TriggerOnCollisionStay, this, _1));
-		mInternal->OnCollisionEnd.Connect(std::bind(&CCollider::TriggerOnCollisionEnd, this, _1));
-	}
-
-	// Note: Merge into one call to avoid many virtual function calls
-	mInternal->SetIsTrigger(mIsTrigger);
-
-	TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-
-	for(auto& entry : shapes)
-	{
-		entry->SetMass(mMass);
-		entry->SetMaterial(mMaterial);
-		entry->SetContactOffset(mContactOffset);
-		entry->SetRestOffset(mRestOffset);
-		entry->SetLayer(mLayer);
-	}
-
-	UpdateParentRigidbody();
-	UpdateTransform();
-	UpdateCollisionReportMode();
-}
-
-void CCollider::DestroyInternal()
-{
-	if(mRigidbody != nullptr)
-		mRigidbody->RemoveCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
-
-	mRigidbody = nullptr;
-
-	// This should release the last reference and destroy the internal collider
-	if(mInternal)
-	{
-		mInternal->SetOwner(PhysicsOwnerType::None, nullptr);
-		mInternal = nullptr;
-	}
-}
-
-void CCollider::UpdateParentRigidbody()
+bool CCollider::RefreshParentRigidbody()
 {
 	if(mIsTrigger)
-	{
-		SetRigidbody(HRigidbody());
-		return;
-	}
+		return SetDynamicRigidbody(HRigidbody());
 
 	HSceneObject currentSO = SO();
 	while(currentSO != nullptr)
@@ -266,27 +300,25 @@ void CCollider::UpdateParentRigidbody()
 		if(parent != nullptr)
 		{
 			if(parent->GetEnabled() && IsValidParent(parent))
-				SetRigidbody(parent);
+				return SetDynamicRigidbody(parent);
 			else
-				SetRigidbody(HRigidbody());
-
-			return;
+				return SetDynamicRigidbody(HRigidbody());
 		}
 
 		currentSO = currentSO->GetParent();
 	}
 
 	// Not found
-	SetRigidbody(HRigidbody());
+	return SetDynamicRigidbody(HRigidbody());
 }
 
-void CCollider::UpdateTransform()
+void CCollider::UpdateTransform(bool updateShapeTransforms)
 {
 	const Transform& transform = SO()->GetTransform();
 
-	if(mRigidbody != nullptr)
+	if(mParentDynamicRigidbody != nullptr)
 	{
-		const Transform& parentTransform = mRigidbody->SO()->GetTransform();
+		const Transform& parentTransform = mParentDynamicRigidbody->SO()->GetTransform();
 		const Vector3& parentPosition = parentTransform.GetPosition();
 		const Quaternion& parentRotation = parentTransform.GetRotation();
 
@@ -301,53 +333,37 @@ void CCollider::UpdateTransform()
 
 		const Quaternion& inverseRotation = parentRotation.Inverse();
 
-		const Vector3& relativePosition = inverseRotation.Rotate(myPosition - parentPosition) * inverseScale;
-		const Quaternion& relativeRotation = inverseRotation * myRotation;
+		mAdjustedPosition = inverseRotation.Rotate(myPosition - parentPosition) * inverseScale;
+		mAdjustedRotation = inverseRotation * myRotation;
 
-		if(mInternal)
-			mInternal->SetTransform(relativePosition, relativeRotation);
-
-		mRigidbody->UpdateMassDistribution();
+		mParentDynamicRigidbody->UpdateMassDistribution();
 	}
 	else
 	{
-		if(mInternal)
-			mInternal->SetTransform(transform.GetPosition(), transform.GetRotation());
+		mAdjustedPosition = transform.GetPosition();
+		mAdjustedRotation = transform.GetRotation();
+
+		// This can be null only when updating transform during creation (at that point we don't know if the parent is a dynamic rigidbody and if we need a static body)
+		if(mStaticRigidbody != nullptr)
+			mStaticRigidbody->SetTransform(transform.GetPosition(), transform.GetRotation());
 	}
 
-	if(mInternal)
-		mInternal->SetScale(transform.GetScale());
+	if(updateShapeTransforms)
+	{
+		for(auto& entry : mShapes)
+			entry->UpdateTransform();
+	}
 }
 
 void CCollider::UpdateCollisionReportMode()
 {
 	CollisionReportMode mode = mCollisionReportMode;
 
-	if(mRigidbody != nullptr)
-		mode = mRigidbody->GetCollisionReportMode();
+	if(mParentDynamicRigidbody != nullptr)
+		mode = mParentDynamicRigidbody->GetCollisionReportMode();
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-
-		for(auto& entry : shapes)
-			entry->SetCollisionReportMode(mode);
-	}
-}
-
-void CCollider::TriggerOnCollisionBegin(const CollisionDataRaw& data)
-{
-	OnCollisionBegin(PopulateCollisionData(data));
-}
-
-void CCollider::TriggerOnCollisionStay(const CollisionDataRaw& data)
-{
-	OnCollisionStay(PopulateCollisionData(data));
-}
-
-void CCollider::TriggerOnCollisionEnd(const CollisionDataRaw& data)
-{
-	OnCollisionEnd(PopulateCollisionData(data));
+	for(auto& entry : mShapes)
+		entry->SetCollisionReportMode(mode);
 }
 
 CollisionData CCollider::PopulateCollisionData(const CollisionDataRaw& data)
@@ -359,7 +375,7 @@ CollisionData CCollider::PopulateCollisionData(const CollisionDataRaw& data)
 	ColliderShape* const myColliderShape = data.ColliderShapes[0];
 	if(myColliderShape != nullptr)
 	{
-		Collider* const myCollider = myColliderShape->GetCollider();
+		CCollider* const myCollider = myColliderShape->GetParentCollider();
 		if(B3D_ENSURE(myCollider != nullptr))
 			hit.ColliderShapes[0] = myCollider->GetShapes()[myColliderShape->GetShapeIndexInParent()];
 	}
@@ -367,11 +383,10 @@ CollisionData CCollider::PopulateCollisionData(const CollisionDataRaw& data)
 	ColliderShape* const otherColliderShape = data.ColliderShapes[1];
 	if(otherColliderShape != nullptr)
 	{
-		Collider* const otherCollider = otherColliderShape->GetCollider();
+		CCollider* const otherCollider = otherColliderShape->GetParentCollider();
 		if(B3D_ENSURE(otherCollider != nullptr))
 		{
-			CCollider* other = (CCollider*)otherCollider->GetOwner(PhysicsOwnerType::Component);
-			hit.Collider[1] = B3DStaticGameObjectCast<CCollider>(other->GetHandle());
+			hit.Collider[1] = B3DStaticGameObjectCast<CCollider>(otherCollider->GetHandle());
 			hit.ColliderShapes[1] = otherCollider->GetShapes()[otherColliderShape->GetShapeIndexInParent()];
 		}
 	}

@@ -9,15 +9,23 @@
 
 using namespace b3d;
 
-CMeshCollider::CMeshCollider()
-{
-	SetName("MeshCollider");
-}
-
 CMeshCollider::CMeshCollider(const HSceneObject& parent)
 	: CCollider(parent)
 {
 	SetName("MeshCollider");
+}
+
+CMeshCollider::CMeshCollider()
+	: CMeshCollider(nullptr)
+{ }
+
+void CMeshCollider::OnCreated()
+{
+	SPtr<ColliderShape> colliderShape = ColliderShape::CreateMesh(mMesh);
+
+	mShapes = { colliderShape };
+
+	CCollider::OnCreated();
 }
 
 void CMeshCollider::SetMesh(const HPhysicsMesh& mesh)
@@ -33,38 +41,18 @@ void CMeshCollider::SetMesh(const HPhysicsMesh& mesh)
 
 	mMesh = mesh;
 
-	if(mInternal != nullptr)
+	if(B3D_ENSURE(mShapes.Size() == 1))
+		mShapes[0]->SetShape(MeshColliderShapeInformation(mesh));
+
+	if(mParentDynamicRigidbody != nullptr)
 	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-		if(B3D_ENSURE(shapes.Size() == 1))
-			shapes[0]->SetShape(MeshColliderShapeInformation(mesh));
-
-		if(mRigidbody != nullptr)
-		{
-			// If triangle mesh its possible the parent can no longer use this collider (they're not supported for
-			// non-kinematic rigidbodies)
-			if(mMesh.IsLoaded() && mMesh->GetType() == PhysicsMeshType::Triangle)
-				UpdateParentRigidbody();
-			else
-				mRigidbody->UpdateMassDistribution();
-		}
+		// If triangle mesh its possible the parent can no longer use this collider (they're not supported for
+		// non-kinematic rigidbodies)
+		if(mMesh.IsLoaded() && mMesh->GetType() == PhysicsMeshType::Triangle)
+			RefreshParentRigidbody();
+		else
+			mParentDynamicRigidbody->UpdateMassDistribution();
 	}
-}
-
-SPtr<Collider> CMeshCollider::CreateInternal()
-{
-	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	const Transform& transform = SO()->GetTransform();
-
-	SPtr<ColliderShape> colliderShape = ColliderShape::CreateMesh(mMesh);
-	colliderShape->SetPosition(mShapeLocalPosition);
-	colliderShape->SetRotation(mShapeLocalRotation);
-
-	SPtr<Collider> collider = Collider::Create(*scene->GetPhysicsScene(), transform.GetPosition(), transform.GetRotation(), transform.GetScale());
-	collider->SetOwner(PhysicsOwnerType::Component, this);
-	collider->SetShapes(TArray{ colliderShape });
-
-	return collider;
 }
 
 bool CMeshCollider::IsValidParent(const HRigidbody& parent) const

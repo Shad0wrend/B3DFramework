@@ -185,6 +185,12 @@ namespace b3d
 			mSharedHandleData = B3DMakeShared<GameObjectHandleData>();
 		}
 
+		/**	Constructs a new empty handle. */
+		GameObjectHandle(std::nullptr_t)
+		{
+			mSharedHandleData = B3DMakeShared<GameObjectHandleData>();
+		}
+
 		/**	Copy constructor from another handle of the same type. */
 		GameObjectHandle(const GameObjectHandle<T>& other) = default;
 

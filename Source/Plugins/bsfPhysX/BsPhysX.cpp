@@ -17,11 +17,13 @@
 #include "Components/BsCCollider.h"
 #include "BsPhysXCollider.h"
 #include "BsPhysXColliderShape.h"
+#include "Components/BsCRigidbody.h"
 #include "Utility/BsTime.h"
 #include "Math/BsVector3.h"
 #include "Math/BsAABox.h"
 #include "Math/BsCapsule.h"
 #include "foundation/PxTransform.h"
+#include "Scene/BsSceneObject.h"
 
 using namespace physx;
 
@@ -377,11 +379,9 @@ void ParseHit(const PxRaycastHit& input, PhysicsQueryHit& output, PxShape* shape
 
 	if(colliderShape != nullptr)
 	{
-		Collider* const collider = colliderShape->GetCollider();
-
-		CCollider* component = (CCollider*)collider->GetOwner(PhysicsOwnerType::Component);
-		if(component != nullptr)
-			output.Collider = B3DStaticGameObjectCast<CCollider>(component->GetHandle());
+		CCollider* const collider = colliderShape->GetParentCollider();
+		if(collider != nullptr)
+			output.Collider = B3DStaticGameObjectCast<CCollider>(collider->GetHandle());
 
 		output.ColliderShape = collider->GetShapes()[colliderShape->GetShapeIndexInParent()];
 	}
@@ -402,11 +402,9 @@ void ParseHit(const PxSweepHit& input, PhysicsQueryHit& output, PxShape* shapeHi
 
 	if(colliderShape != nullptr)
 	{
-		Collider* const collider = colliderShape->GetCollider();
-
-		CCollider* component = (CCollider*)collider->GetOwner(PhysicsOwnerType::Component);
-		if(component != nullptr)
-			output.Collider = B3DStaticGameObjectCast<CCollider>(component->GetHandle());
+		CCollider* const collider = colliderShape->GetParentCollider();
+		if(collider != nullptr)
+			output.Collider = B3DStaticGameObjectCast<CCollider>(collider->GetHandle());
 
 		output.ColliderShape = collider->GetShapes()[colliderShape->GetShapeIndexInParent()];
 	}
@@ -540,6 +538,11 @@ SPtr<ColliderShape> PhysX::CreateColliderShape()
 	return B3DMakeShared<PhysXColliderShape>();
 }
 
+SPtr<StaticRigidbody> PhysX::CreateStaticRigidbody()
+{
+	return B3DMakeShared<PhysXStaticRigidbody>();
+}
+
 void PhysX::NotifySceneDestroyedInternal(PhysXScene* scene)
 {
 	auto iterFind = std::find(mScenes.begin(), mScenes.end(), scene);
@@ -567,12 +570,13 @@ bool PhysX::RayCast(const Vector3& origin, const Vector3& unitDirection, const C
 	return hitCount > 0;
 }
 
-bool PhysX::RayCast(const Vector3& origin, const Vector3& unitDirection, const Collider& collider, PhysicsQueryHit& hit, float maxDistance) const
+bool PhysX::RayCast(const Vector3& origin, const Vector3& unitDirection, const CCollider& collider, PhysicsQueryHit& hit, float maxDistance) const
 {
 	float nearestHitDistance = FLT_MIN;
 	bool isAnythingHit = false;
 
-	const PxTransform colliderTransform = ToPxTransform(collider.GetPosition(), collider.GetRotation());
+	const Transform& transform = collider.SceneObject()->GetTransform();
+	const PxTransform colliderTransform = ToPxTransform(transform.GetPosition(), transform.GetRotation());
 
 	const TInlineArray<SPtr<ColliderShape>, 1>& shapes = collider.GetShapes();
 	for(const auto& entry : shapes)
@@ -698,11 +702,6 @@ void PhysXScene::SetPaused(bool paused)
 SPtr<Rigidbody> PhysXScene::CreateRigidbody(const HSceneObject& linkedSO)
 {
 	return B3DMakeShared<PhysXRigidbody>(mPhysics, mScene, linkedSO);
-}
-
-SPtr<Collider> PhysXScene::CreateCollider(const Vector3& position, const Quaternion& rotation, const Vector3& scale)
-{
-	return B3DMakeShared<PhysXCollider>(*this, position, rotation, scale);
 }
 
 SPtr<FixedJoint> PhysXScene::CreateFixedJoint(const FixedJointCreateInformation& desc)
@@ -1115,18 +1114,18 @@ void PhysXScene::TriggerEvents()
 		data.ColliderShapes[0] = entry.Trigger;
 		data.ColliderShapes[1] = entry.Other;
 
-		Collider* const triggerCollider = entry.Trigger->GetCollider();
+		CCollider* const triggerCollider = entry.Trigger->GetParentCollider();
 
 		switch(entry.Type)
 		{
 		case ContactEventType::ContactBegin:
-			triggerCollider->OnCollisionBegin(data);
+			triggerCollider->OnCollisionBegin(triggerCollider->PopulateCollisionData(data));
 			break;
 		case ContactEventType::ContactStay:
-			triggerCollider->OnCollisionStay(data);
+			triggerCollider->OnCollisionStay(triggerCollider->PopulateCollisionData(data));
 			break;
 		case ContactEventType::ContactEnd:
-			triggerCollider->OnCollisionEnd(data);
+			triggerCollider->OnCollisionEnd(triggerCollider->PopulateCollisionData(data));
 			break;
 		}
 	}
@@ -1143,8 +1142,8 @@ void PhysXScene::TriggerEvents()
 				point.Normal = -point.Normal;
 		}
 
-		Collider* const colliderA = colliderShapeA->GetCollider();
-		Rigidbody* rigidbody = colliderA->GetRigidbody();
+		CCollider* const colliderA = colliderShapeA->GetParentCollider();
+		Rigidbody* rigidbody = colliderA->GetRigidbody().IsValid() ? colliderA->GetRigidbody()->GetInternal() : nullptr;
 		if(rigidbody != nullptr)
 		{
 			switch(type)
@@ -1165,13 +1164,13 @@ void PhysXScene::TriggerEvents()
 			switch(type)
 			{
 			case ContactEventType::ContactBegin:
-				colliderA->OnCollisionBegin(data);
+				colliderA->OnCollisionBegin(colliderA->PopulateCollisionData(data));
 				break;
 			case ContactEventType::ContactStay:
-				colliderA->OnCollisionStay(data);
+				colliderA->OnCollisionStay(colliderA->PopulateCollisionData(data));
 				break;
 			case ContactEventType::ContactEnd:
-				colliderA->OnCollisionEnd(data);
+				colliderA->OnCollisionEnd(colliderA->PopulateCollisionData(data));
 				break;
 			}
 		}

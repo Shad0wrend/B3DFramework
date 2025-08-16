@@ -11,23 +11,18 @@ namespace b3d
 	 *  @{
 	 */
 
-	/**
-	 * @copydoc	SphereCollider
-	 *
-	 * @note Wraps SphereCollider as a Component.
-	 */
+	/** A collider with sphere geometry. */
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SphereCollider)) CSphereCollider : public CCollider
 	{
 	public:
 		CSphereCollider(const HSceneObject& parent, float radius = 1.0f);
 
-		/** @copydoc SphereCollider::SetRadius */
+		/** Determines the radius of the sphere geometry. */
 		B3D_SCRIPT_EXPORT(ExportName(Radius), Property(Setter))
 		void SetRadius(float radius);
 
-		/** @copydoc SphereCollider::GetRadius */
+		/** @copydoc GetRadius */
 		B3D_SCRIPT_EXPORT(ExportName(Radius), Property(Getter))
-
 		float GetRadius() const { return mRadius; }
 
 		/** Determines position of the sphere shape, relative to the component's scene object. */
@@ -36,7 +31,6 @@ namespace b3d
 
 		/** @copydoc SetCenter() */
 		B3D_SCRIPT_EXPORT(ExportName(Center), Property(Getter))
-
 		Vector3 GetCenter() const { return mShapeLocalPosition; }
 
 		/************************************************************************/
@@ -45,9 +39,10 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Collider> CreateInternal() override;
+		void OnCreated() override;
 
 	protected:
+		Vector3 mShapeLocalPosition = Vector3::kZero;
 		float mRadius = 1.0f;
 
 		/************************************************************************/

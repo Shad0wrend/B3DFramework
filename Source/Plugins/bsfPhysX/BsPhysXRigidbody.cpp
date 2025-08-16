@@ -8,6 +8,7 @@
 #include "PxScene.h"
 #include "extensions/PxRigidBodyExt.h"
 #include "BsPhysX.h"
+#include "BsPhysXColliderShape.h"
 
 using namespace physx;
 
@@ -381,4 +382,27 @@ void PhysXRigidbody::UpdateMassDistribution()
 
 		PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, masses, shapeCount);
 	}
+}
+
+void PhysXRigidbody::AttachShape(const SPtr<ColliderShape>& shape)
+{
+	if(!B3D_ENSURE(shape != nullptr))
+		return;
+
+	const u32 rigidbodyFlags = (u32)GetFlags();
+	shape->SetContinuousCollisionDetection((rigidbodyFlags & (u32)RigidbodyFlag::CCD) != 0);
+
+	const PhysXColliderShape& physxShape = static_cast<const PhysXColliderShape&>(*shape);
+	mInternal->attachShape(*physxShape.GetPxShape());
+}
+
+void PhysXRigidbody::DetachShape(const SPtr<ColliderShape>& shape)
+{
+	if(!B3D_ENSURE(shape != nullptr))
+		return;
+
+	shape->SetContinuousCollisionDetection(false);
+
+	const PhysXColliderShape& physxShape = static_cast<const PhysXColliderShape&>(*shape);
+	mInternal->detachShape(*physxShape.GetPxShape());
 }

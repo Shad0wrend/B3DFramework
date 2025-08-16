@@ -62,6 +62,8 @@ namespace b3d
 		void AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode = PointForceMode::Force) override;
 		Vector3 GetVelocityAtPoint(const Vector3& point) const override;
 		void UpdateMassDistribution() override;
+		void AttachShape(const SPtr<ColliderShape>& shape) override;
+		void DetachShape(const SPtr<ColliderShape>& shape) override;
 
 		/** Returns the internal PhysX dynamic actor. */
 		physx::PxRigidDynamic* GetPxRigidDynamic() const { return mInternal; }

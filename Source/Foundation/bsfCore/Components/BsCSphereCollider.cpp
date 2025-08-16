@@ -8,15 +8,24 @@
 
 using namespace b3d;
 
-CSphereCollider::CSphereCollider()
-{
-	SetName("SphereCollider");
-}
-
 CSphereCollider::CSphereCollider(const HSceneObject& parent, float radius)
 	: CCollider(parent), mRadius(radius)
 {
 	SetName("SphereCollider");
+}
+
+CSphereCollider::CSphereCollider()
+	: CSphereCollider(nullptr)
+{ }
+
+void CSphereCollider::OnCreated()
+{
+	SPtr<ColliderShape> colliderShape = ColliderShape::CreateSphere(mRadius);
+	colliderShape->SetPosition(mShapeLocalPosition);
+
+	mShapes = { colliderShape };
+
+	CCollider::OnCreated();
 }
 
 void CSphereCollider::SetRadius(float radius)
@@ -27,15 +36,11 @@ void CSphereCollider::SetRadius(float radius)
 
 	mRadius = clampedRadius;
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-		if(B3D_ENSURE(shapes.Size() == 1))
-			shapes[0]->SetShape(SphereColliderShapeInformation(clampedRadius));
+	if(B3D_ENSURE(mShapes.Size() == 1))
+		mShapes[0]->SetShape(SphereColliderShapeInformation(clampedRadius));
 
-		if(mRigidbody != nullptr)
-			mRigidbody->UpdateMassDistribution();
-	}
+	if(mParentDynamicRigidbody != nullptr)
+		mParentDynamicRigidbody->UpdateMassDistribution();
 }
 
 void CSphereCollider::SetCenter(const Vector3& center)
@@ -45,28 +50,8 @@ void CSphereCollider::SetCenter(const Vector3& center)
 
 	mShapeLocalPosition = center;
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-		if(B3D_ENSURE(shapes.Size() == 1))
-			shapes[0]->SetPosition(mShapeLocalPosition);
-	}
-}
-
-SPtr<Collider> CSphereCollider::CreateInternal()
-{
-	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	const Transform& transform = SO()->GetTransform();
-
-	SPtr<ColliderShape> colliderShape = ColliderShape::CreateSphere(mRadius);
-	colliderShape->SetPosition(mShapeLocalPosition);
-	colliderShape->SetRotation(mShapeLocalRotation);
-
-	SPtr<Collider> collider = Collider::Create(*scene->GetPhysicsScene(), transform.GetPosition(), transform.GetRotation(), transform.GetScale());
-	collider->SetOwner(PhysicsOwnerType::Component, this);
-	collider->SetShapes(TArray{ colliderShape });
-
-	return collider;
+	if(B3D_ENSURE(mShapes.Size() == 1))
+		mShapes[0]->SetPosition(mShapeLocalPosition);
 }
 
 RTTIType* CSphereCollider::GetRttiStatic()

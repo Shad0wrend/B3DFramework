@@ -22,6 +22,8 @@ namespace b3d
 			B3D_RTTI_MEMBER(mNormal, 0)
 			B3D_RTTI_MEMBER(mRadius, 1)
 			B3D_RTTI_MEMBER(mHalfHeight, 2)
+			B3D_RTTI_MEMBER(mShapeLocalPosition, 3)
+			B3D_RTTI_MEMBER(mShapeLocalRotation, 4)
 		B3D_RTTI_END_MEMBERS
 	public:
 		const String& GetRttiName() override

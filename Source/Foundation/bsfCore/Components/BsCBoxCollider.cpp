@@ -8,15 +8,24 @@
 
 using namespace b3d;
 
-CBoxCollider::CBoxCollider()
-{
-	SetName("BoxCollider");
-}
-
 CBoxCollider::CBoxCollider(const HSceneObject& parent, const Vector3& extents)
 	: CCollider(parent), mExtents(extents)
 {
 	SetName("BoxCollider");
+}
+
+CBoxCollider::CBoxCollider()
+	: CBoxCollider(nullptr)
+{ }
+
+void CBoxCollider::OnCreated()
+{
+	SPtr<ColliderShape> colliderShape = ColliderShape::CreateBox(mExtents);
+	colliderShape->SetPosition(mShapeLocalPosition);
+
+	mShapes = { colliderShape };
+
+	CCollider::OnCreated();
 }
 
 void CBoxCollider::SetExtents(const Vector3& extents)
@@ -28,15 +37,11 @@ void CBoxCollider::SetExtents(const Vector3& extents)
 
 	mExtents = clampedExtents;
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-		if(B3D_ENSURE(shapes.Size() == 1))
-			shapes[0]->SetShape(BoxColliderShapeInformation(clampedExtents));
+	if(B3D_ENSURE(mShapes.Size() == 1))
+		mShapes[0]->SetShape(BoxColliderShapeInformation(clampedExtents));
 
-		if(mRigidbody != nullptr)
-			mRigidbody->UpdateMassDistribution();
-	}
+	if(mParentDynamicRigidbody != nullptr)
+		mParentDynamicRigidbody->UpdateMassDistribution();
 }
 
 void CBoxCollider::SetCenter(const Vector3& center)
@@ -46,28 +51,8 @@ void CBoxCollider::SetCenter(const Vector3& center)
 
 	mShapeLocalPosition = center;
 
-	if(mInternal != nullptr)
-	{
-		TInlineArray<SPtr<ColliderShape>, 1> shapes = mInternal->GetShapes();
-		if(B3D_ENSURE(shapes.Size() == 1))
-			shapes[0]->SetPosition(mShapeLocalPosition);
-	}
-}
-
-SPtr<Collider> CBoxCollider::CreateInternal()
-{
-	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	const Transform& transform = SO()->GetTransform();
-
-	SPtr<ColliderShape> colliderShape = ColliderShape::CreateBox(mExtents);
-	colliderShape->SetPosition(mShapeLocalPosition);
-	colliderShape->SetRotation(mShapeLocalRotation);
-
-	SPtr<Collider> collider = Collider::Create(*scene->GetPhysicsScene(), transform.GetPosition(), transform.GetRotation(), transform.GetScale());
-	collider->SetOwner(PhysicsOwnerType::Component, this);
-	collider->SetShapes(TArray{ colliderShape });
-
-	return collider;
+	if(B3D_ENSURE(mShapes.Size() == 1))
+		mShapes[0]->SetPosition(mShapeLocalPosition);
 }
 
 RTTIType* CBoxCollider::GetRttiStatic()

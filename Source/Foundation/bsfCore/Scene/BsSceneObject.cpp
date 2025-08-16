@@ -465,8 +465,8 @@ void SceneObject::NotifyTransformChanged(TransformChangedFlags flags) const
 		{
 			if(entry->SupportsNotify(flags))
 			{
-				bool alwaysRun = entry->HasFlag(ComponentFlag::AlwaysRun);
-				if(alwaysRun || scene->IsRunning())
+				const bool alwaysRun = entry->HasFlag(ComponentFlag::AlwaysRun);
+				if(alwaysRun || scene->IsRunning() || (flags & TCF_NotifyStopped) != 0)
 					entry->OnTransformChanged(componentFlags);
 			}
 		}

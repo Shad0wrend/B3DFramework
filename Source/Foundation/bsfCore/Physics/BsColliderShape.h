@@ -257,14 +257,11 @@ namespace b3d
 		 * @{
 		 */
 
-		/** Attaches the shape to the provided collider. Shape must be previously detached from the existing parent collider, if any. */
-		virtual void AttachToCollider(Collider& collider) = 0;
-
-		/** Detached the shape from the parent collider, if any. */
-		virtual void DetachFromCollider() = 0;
+		/** Notifies the shape that the provided colliders owns it. */
+		void SetParentCollider(CCollider* collider) { mParentCollider = collider; }
 
 		/** Returns the collider the shape is currently attached to, if any. */
-		Collider* GetCollider() const { return mParentCollider; }
+		CCollider* GetParentCollider() const { return mParentCollider; }
 
 		/** Index of the shape in the parent collider. */
 		void SetShapeIndexInParent(u32 index) { mShapeIndexInParent = index; }
@@ -284,9 +281,9 @@ namespace b3d
 		/** @} */
 
 	protected:
-		friend class Collider;
+		friend class CCollider;
 
-		/** Updates the local shape transform based on the requested local transform values, and the actor the shape is currently attached to. */
+		/** Updates the local shape transform based on the requested local transform values, and the object the shape is currently attached to. */
 		virtual void UpdateTransform() = 0;
 
 		Vector3 mPosition = Vector3::kZero;
@@ -294,7 +291,7 @@ namespace b3d
 		Vector3 mScale = Vector3::kOne;
 
 		u32 mShapeIndexInParent = ~0u;
-		Collider* mParentCollider = nullptr;
+		CCollider* mParentCollider = nullptr;
 
 		HPhysicsMaterial mMaterial;
 

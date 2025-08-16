@@ -59,8 +59,6 @@ namespace b3d
 		void DestroyShape();
 
 		void UpdateTransform() override;
-		void AttachToCollider(Collider& collider) override;
-		void DetachFromCollider() override;
 
 		physx::PxShape* mShape = nullptr;
 		ColliderShapeType mShapeType = ColliderShapeType::Plane;

@@ -6,6 +6,7 @@
 #include "Particles/BsVectorField.h"
 #include "Image/BsSpriteTexture.h"
 #include "BsParticleSystem.h"
+#include "Components/BsCCollider.h"
 #include "Material/BsMaterial.h"
 #include "Math/BsRay.h"
 #include "Physics/BsPhysics.h"
@@ -573,7 +574,7 @@ u32 GroupRaycast(const PhysicsScene& physicsScene, LineSegment3* segments, Parti
 
 		for(auto& colliderShape : hitColliderShapes)
 		{
-			Collider* const collider = colliderShape->GetCollider();
+			CCollider* const collider = colliderShape->GetParentCollider();
 
 			PhysicsQueryHit queryHit;
 			if(collider->RayCast(ray, queryHit, length))

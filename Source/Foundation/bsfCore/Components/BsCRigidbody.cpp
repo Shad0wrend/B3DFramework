@@ -299,7 +299,7 @@ void CRigidbody::UpdateColliders()
 				if(!entry->IsValidParent(B3DStaticGameObjectCast<CRigidbody>(mThisHandle)))
 					continue;
 
-				entry->SetRigidbody(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));
+				entry->SetDynamicRigidbody(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));
 				mChildren.push_back(entry);
 			}
 		}
@@ -323,7 +323,7 @@ void CRigidbody::ClearColliders()
 	mChildren.clear();
 
 	for(auto& collider : children)
-		collider->SetRigidbody(HRigidbody());
+		collider->SetDynamicRigidbody(HRigidbody());
 }
 
 void CRigidbody::AddCollider(const HCollider& collider)
@@ -364,18 +364,16 @@ void CRigidbody::ProcessCollisionData(const CollisionDataRaw& data, CollisionDat
 	ColliderShape* const myColliderShape = data.ColliderShapes[0];
 	if(myColliderShape != nullptr)
 	{
-		Collider* myCollider = myColliderShape->GetCollider();
-		CCollider* myColliderComponent = (CCollider*)myCollider->GetOwner(PhysicsOwnerType::Component);
-		output.Collider[0] = B3DStaticGameObjectCast<CCollider>(myColliderComponent->GetHandle());
+		CCollider* const myCollider = myColliderShape->GetParentCollider();
+		output.Collider[0] = B3DStaticGameObjectCast<CCollider>(myCollider->GetHandle());
 		output.ColliderShapes[0] = myCollider->GetShapes()[myColliderShape->GetShapeIndexInParent()];
 	}
 
 	ColliderShape* const otherColliderShape = data.ColliderShapes[1];
 	if(otherColliderShape != nullptr)
 	{
-		Collider* otherCollider = otherColliderShape->GetCollider();
-		CCollider* otherColliderComponent = (CCollider*)otherCollider->GetOwner(PhysicsOwnerType::Component);
-		output.Collider[1] = B3DStaticGameObjectCast<CCollider>(otherColliderComponent->GetHandle());
+		CCollider* const otherCollider = otherColliderShape->GetParentCollider();
+		output.Collider[1] = B3DStaticGameObjectCast<CCollider>(otherCollider->GetHandle());
 		output.ColliderShapes[1] = otherCollider->GetShapes()[otherColliderShape->GetShapeIndexInParent()];
 	}
 }

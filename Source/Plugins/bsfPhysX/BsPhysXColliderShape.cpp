@@ -11,9 +11,11 @@
 #include "BsPhysXMesh.h"
 #include "PxScene.h"
 #include "PxShape.h"
-#include "Physics/BsCollider.h"
 #include "Physics/BsPhysicsMesh.h"
 #include "Scene/BsTransform.h"
+#include "Components/BsCCollider.h"
+#include "Components/BsCRigidbody.h"
+#include "Scene/BsSceneObject.h"
 
 using namespace physx;
 using namespace b3d;
@@ -235,17 +237,20 @@ void PhysXColliderShape::UpdateTransform()
 
 	if (mParentCollider != nullptr)
 	{
-		const Rigidbody* const rigidbody = mParentCollider->GetRigidbody();
+		const HRigidbody& rigidbody = mParentCollider->GetRigidbody();
+		const Rigidbody* const rigidbodyActor = rigidbody.IsValid() ? rigidbody->GetInternal() : nullptr;
 
-		if (rigidbody != nullptr)
+		const Transform& parentTransform = mParentCollider->SceneObject()->GetTransform();
+		if (rigidbodyActor != nullptr)
 		{
-			const Transform parentTransform(mParentCollider->GetPosition(), mParentCollider->GetRotation(), mParentCollider->GetScale());
-			relativeTransform.MakeWorld(parentTransform);
+			// Note: Is this right? Why aren't rigidbody shapes relative?
+			const Transform adjustedParentTransform(mParentCollider->GetAdjustedPosition(), mParentCollider->GetAdjustedRotation(), parentTransform.GetScale());
+			relativeTransform.MakeWorld(adjustedParentTransform);
 		}
 		else
 		{
-			const Transform parentTransform(Vector3::kZero, Quaternion::kIdentity, mParentCollider->GetScale());
-			relativeTransform.MakeWorld(parentTransform);
+			const Transform adjustedParentTransform(Vector3::kZero, Quaternion::kIdentity, parentTransform.GetScale());
+			relativeTransform.MakeWorld(adjustedParentTransform);
 		}
 	}
 
@@ -318,58 +323,4 @@ void PhysXColliderShape::DestroyShape()
 	mShape->userData = nullptr;
 	mShape->release();
 	mShape = nullptr;
-}
-
-void PhysXColliderShape::AttachToCollider(Collider& collider)
-{
-	if(!B3D_ENSURE(mParentCollider == nullptr))
-		return;
-
-	const Rigidbody* const rigidbody = collider.GetRigidbody();
-	if (rigidbody != nullptr)
-	{
-		const PhysXRigidbody* const physxRigidbody = static_cast<const PhysXRigidbody*>(rigidbody);
-		PxRigidDynamic* const dynamicBody = physxRigidbody->GetPxRigidDynamic();
-
-		const u32 rigidbodyFlags = (u32)rigidbody->GetFlags();
-		SetContinuousCollisionDetection((rigidbodyFlags & (u32)RigidbodyFlag::CCD) != 0);
-
-		dynamicBody->attachShape(*mShape);
-	}
-	else
-	{
-		const PhysXCollider& physxCollider = static_cast<PhysXCollider&>(collider);
-		PxRigidStatic* const staticBody = physxCollider.GetPxRigidStatic();
-
-		staticBody->attachShape(*mShape);
-	}
-
-	mParentCollider = &collider;
-	UpdateTransform();
-}
-
-void PhysXColliderShape::DetachFromCollider()
-{
-	if(mParentCollider == nullptr)
-		return;
-
-	const Rigidbody* const rigidbody = mParentCollider->GetRigidbody();
-	if (rigidbody != nullptr)
-	{
-		const PhysXRigidbody* const physxRigidbody = static_cast<const PhysXRigidbody*>(rigidbody);
-		PxRigidDynamic* const dynamicBody = physxRigidbody->GetPxRigidDynamic();
-
-		SetContinuousCollisionDetection(false);
-		dynamicBody->detachShape(*mShape);
-	}
-	else
-	{
-		const PhysXCollider& physxCollider = static_cast<const PhysXCollider&>(*mParentCollider);
-		PxRigidStatic* const staticBody = physxCollider.GetPxRigidStatic();
-
-		staticBody->detachShape(*mShape);
-	}
-
-	mParentCollider = nullptr;
-	UpdateTransform();
 }

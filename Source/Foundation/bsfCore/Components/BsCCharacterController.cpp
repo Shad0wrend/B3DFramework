@@ -207,9 +207,8 @@ void CCharacterController::TriggerOnColliderHit(const ControllerColliderCollisio
 
 	if(hit.ColliderShape)
 	{
-		Collider* const collider = hit.ColliderShape->GetCollider();
-		const auto colliderComponent = (CCollider*)collider->GetOwner(PhysicsOwnerType::Component);
-		hit.Collider = B3DStaticGameObjectCast<CCollider>(colliderComponent->GetHandle());
+		CCollider* const collider = hit.ColliderShape->GetParentCollider();
+		hit.Collider = B3DStaticGameObjectCast<CCollider>(collider->GetHandle());
 	}
 
 	OnColliderHit(hit);

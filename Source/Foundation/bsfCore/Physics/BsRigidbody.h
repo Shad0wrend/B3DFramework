@@ -311,6 +311,12 @@ namespace b3d
 		 */
 		void* GetOwnerInternal(PhysicsOwnerType type) const { return mOwner.Type == type ? mOwner.OwnerData : nullptr; }
 
+		/** Assigns a new child shape to the collider. */
+		virtual void AttachShape(const SPtr<ColliderShape>& shape) = 0;
+
+		/** Removes a shape that was previously attached to the collider. */
+		virtual void DetachShape(const SPtr<ColliderShape>& shape) = 0;
+
 		/** @} */
 
 	protected:

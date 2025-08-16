@@ -161,7 +161,8 @@ namespace b3d
 
 		/**
 		 * Called once when the component first leaves the Stopped state. This includes component creation if requirements
-		 * for leaving Stopped state are met, in which case it is called after OnCreated.
+		 * for leaving Stopped state are met, in which case it is called after OnCreated. Note this is called even if
+		 * the component is in disabled state.
 		 */
 		virtual void OnBeginPlay() {}
 
@@ -171,13 +172,13 @@ namespace b3d
 		/**
 		 * Called every time a component is placed into the Stopped state. This includes component destruction if component
 		 * wasn't already in Stopped state during destruction. When called during destruction it is called before
-		 * onDestroyed.
+		 * OnDestroyed.
 		 */
 		virtual void OnDisabled() {}
 
 		/**
-		 * Called every time a component leaves the Stopped state. This includes component creation if requirements
-		 * for leaving the Stopped state are met. When called during creation it is called after onInitialized.
+		 * Called every time a component leaves the Stopped state, if the component is enabled. This includes component creation
+		 * if requirements for leaving the Stopped state are met. When called during creation it is called after OnBeginPlay.
 		 */
 		virtual void OnEnabled() {}
 

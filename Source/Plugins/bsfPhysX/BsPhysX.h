@@ -14,6 +14,7 @@
 
 namespace b3d
 {
+	class StaticRigidbody;
 	/** @addtogroup PhysX
 	 *  @{
 	 */
@@ -31,9 +32,10 @@ namespace b3d
 		SPtr<PhysicsMesh> CreateMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type) override;
 		SPtr<PhysicsScene> CreatePhysicsScene() override;
 		SPtr<ColliderShape> CreateColliderShape() override;
+		SPtr<StaticRigidbody> CreateStaticRigidbody() override;
 
 		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const ColliderShape& colliderShape, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;
-		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const Collider& collider, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;
+		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const CCollider& collider, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;
 
 		/** Notifies the system that at physics scene is about to be destroyed. */
 		void NotifySceneDestroyedInternal(PhysXScene* scene);
@@ -130,7 +132,6 @@ namespace b3d
 		physx::PxScene& GetPxScene() const { return *mScene; }
 
 		SPtr<Rigidbody> CreateRigidbody(const HSceneObject& linkedSO) override;
-		SPtr<Collider> CreateCollider(const Vector3& position, const Quaternion& rotation, const Vector3& scale) override;
 		SPtr<FixedJoint> CreateFixedJoint(const FixedJointCreateInformation& desc) override;
 		SPtr<DistanceJoint> CreateDistanceJoint(const DistanceJointCreateInformation& desc) override;
 		SPtr<HingeJoint> CreateHingeJoint(const HingeJointCreateInformation& desc) override;

@@ -11,11 +11,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	/**
-	 * @copydoc	PlaneCollider
-	 *
-	 * @note Wraps PlaneCollider as a Component.
-	 */
+	/** A collider with plane geometry. Plane colliders cannot be a part of non-kinematic rigidbodies. */
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(PlaneCollider)) CPlaneCollider : public CCollider
 	{
 	public:
@@ -43,10 +39,12 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Collider> CreateInternal() override;
+		void OnCreated() override;
 		bool IsValidParent(const HRigidbody& parent) const override;
 
 	protected:
+		Vector3 mShapeLocalPosition = Vector3::kZero;
+		Quaternion mShapeLocalRotation = Quaternion::kIdentity;
 		Vector3 mNormal = Vector3::kUnitY;
 		float mDistance = 0.0f;
 

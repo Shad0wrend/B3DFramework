@@ -24,7 +24,7 @@ namespace b3d
 	};
 
 	/** Information about a collision between two physics objects. */
-	struct CollisionDataRaw
+	struct CollisionDataRaw // TODO - Remove
 	{
 		ColliderShape* ColliderShapes[2]; /**< Collider shapes involved in the collision. */
 
@@ -46,7 +46,7 @@ namespace b3d
 	};
 
 	/** Determines what parent, if any, owns a physics object. */
-	enum class PhysicsOwnerType
+	enum class PhysicsOwnerType // TODO - Remove
 	{
 		None, /** No parent, object is used directly. */
 		Component, /** Object is used by a C++ Component. */
@@ -54,7 +54,7 @@ namespace b3d
 	};
 
 	/** Contains information about a parent for a physics object. */
-	struct PhysicsObjectOwner
+	struct PhysicsObjectOwner // TODO - Remove
 	{
 		PhysicsOwnerType Type = PhysicsOwnerType::None; /**< Type of owner. */
 		void* OwnerData = nullptr; /**< Data managed by the owner. */

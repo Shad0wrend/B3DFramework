@@ -61,12 +61,11 @@ Vector<HCollider> RawToComponent(const Vector<ColliderShape*>& raw)
 		if(entry == nullptr)
 			continue;
 
-		Collider* const collider = entry->GetCollider();
-		CCollider* component = (CCollider*)collider->GetOwner(PhysicsOwnerType::Component);
-		if(component == nullptr)
+		CCollider* const collider = entry->GetParentCollider();
+		if(collider == nullptr)
 			continue;
 
-		output.push_back(B3DStaticGameObjectCast<CCollider>(component->GetHandle()));
+		output.push_back(B3DStaticGameObjectCast<CCollider>(collider->GetHandle()));
 	}
 
 	return output;

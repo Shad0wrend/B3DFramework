@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsPhysXCollider.h"
 #include "BsPhysX.h"
+#include "BsPhysXColliderShape.h"
 #include "BsPhysXRigidbody.h"
 #include "BsPhysXMaterial.h"
 #include "PxScene.h"
@@ -9,92 +10,58 @@
 using namespace physx;
 using namespace b3d;
 
-PhysXCollider::PhysXCollider(PhysXScene& physicsScene, const Vector3& position, const Quaternion& rotation, const Vector3& scale)
-	: Collider(physicsScene, position, rotation, scale)
+PhysXStaticRigidbody::PhysXStaticRigidbody()
 {
-	CreateStaticBody();
+	mPxRigidStatic = GetPhysX().GetPhysX()->createRigidStatic(PxTransform(PxIdentity));
 }
 
-PhysXCollider::~PhysXCollider()
+PhysXStaticRigidbody::~PhysXStaticRigidbody()
 {
-	for(auto& entry : mShapes)
-		entry->DetachFromCollider();
+	if(mPxScene != nullptr)
+		PhysXStaticRigidbody::RemoveFromScene();
 
-	DestroyStaticBody();
+	mPxRigidStatic->release();
 }
 
-void PhysXCollider::SetShapes(const TArrayView<SPtr<ColliderShape>>& shapes)
+void PhysXStaticRigidbody::AddToScene(PhysicsScene& scene)
 {
-	PhysXScene& physXScene = static_cast<PhysXScene&>(mPhysicsScene);
-	PxScene& pxScene = physXScene.GetPxScene();
-
-	if(mStaticBody != nullptr)
-		pxScene.removeActor(*mStaticBody);
-
-	Collider::SetShapes(shapes);
-	
-	if(mStaticBody != nullptr)
-		pxScene.addActor(*mStaticBody);
-}
-
-void PhysXCollider::SetRigidbody(Rigidbody* rigidbody)
-{
-	if(mRigidbody == rigidbody)
+	if(!B3D_ENSURE(mPxScene == nullptr))
 		return;
 
-	for(auto& entry : mShapes)
-		entry->DetachFromCollider();
+	const PhysXScene& physxScene = static_cast<PhysXScene&>(scene);
+	mPxScene = &physxScene.GetPxScene();
 
-	if(rigidbody != nullptr)
-		DestroyStaticBody();
-	else
-	{
-		if(mStaticBody == nullptr)
-			CreateStaticBody();
-	}
-
-	mRigidbody = rigidbody;
-	
-	for(auto& entry : mShapes)
-		entry->AttachToCollider(*this);
-
-	if(mStaticBody != nullptr)
-	{
-		// Add body to scene after adding the shapes
-		PhysXScene& physXScene = static_cast<PhysXScene&>(mPhysicsScene);
-		PxScene& pxScene = physXScene.GetPxScene();
-
-		pxScene.addActor(*mStaticBody);
-	}
+	mPxScene->addActor(*mPxRigidStatic);
 }
 
-void PhysXCollider::UpdateTransform()
+void PhysXStaticRigidbody::RemoveFromScene()
 {
-	Collider::UpdateTransform();
-
-	if(mStaticBody != nullptr)
-		mStaticBody->setGlobalPose(ToPxTransform(mPosition, mRotation));
-}
-
-void PhysXCollider::CreateStaticBody()
-{
-	if(!B3D_ENSURE(mStaticBody == nullptr))
+	if(!B3D_ENSURE(mPxScene != nullptr))
 		return;
 
-	mStaticBody = GetPhysX().GetPhysX()->createRigidStatic(PxTransform(PxIdentity));
-	mStaticBody->setGlobalPose(ToPxTransform(mPosition, mRotation));
+	mPxScene->removeActor(*mPxRigidStatic);
+	mPxScene = nullptr;
 }
 
-void PhysXCollider::DestroyStaticBody()
+void PhysXStaticRigidbody::AttachShape(const SPtr<ColliderShape>& shape)
 {
-	if(mStaticBody != nullptr)
-	{
-		PhysXScene& physXScene = static_cast<PhysXScene&>(mPhysicsScene);
-		PxScene& pxScene = physXScene.GetPxScene();
+	if(!B3D_ENSURE(shape != nullptr))
+		return;
 
-		pxScene.removeActor(*mStaticBody);
+	const PhysXColliderShape& physxShape = static_cast<const PhysXColliderShape&>(*shape);
+	mPxRigidStatic->attachShape(*physxShape.GetPxShape());
+}
 
-		mStaticBody->release();
-		mStaticBody = nullptr;
-	}
+void PhysXStaticRigidbody::DetachShape(const SPtr<ColliderShape>& shape)
+{
+	if(!B3D_ENSURE(shape != nullptr))
+		return;
+
+	const PhysXColliderShape& physxShape = static_cast<const PhysXColliderShape&>(*shape);
+	mPxRigidStatic->detachShape(*physxShape.GetPxShape());
+}
+
+void PhysXStaticRigidbody::SetTransform(const Vector3& position, const Quaternion& rotation)
+{
+	mPxRigidStatic->setGlobalPose(ToPxTransform(position, rotation));
 }

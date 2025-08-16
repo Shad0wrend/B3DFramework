@@ -4,8 +4,8 @@
 
 #include "BsPhysXPrerequisites.h"
 #include "Physics/BsPhysicsCommon.h"
-#include "Physics/BsCollider.h"
 #include "PxRigidStatic.h"
+#include "Physics/BsCollider.h"
 
 namespace b3d
 {
@@ -14,30 +14,28 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** PhysX implementation of Collider. */
-	class PhysXCollider : public Collider
+	/** PhysX implementation of StaticRigidbody. */
+	class PhysXStaticRigidbody : public StaticRigidbody
 	{
 	public:
-		PhysXCollider(PhysXScene& physicsScene, const Vector3& position = Vector3::kZero, const Quaternion& rotation = Quaternion::kIdentity, const Vector3& scale = Vector3::kOne);
-		~PhysXCollider() override;
+		PhysXStaticRigidbody();
+		~PhysXStaticRigidbody() override;
 
-		void SetShapes(const TArrayView<SPtr<ColliderShape>>& shapes) override;
-		void SetRigidbody(Rigidbody* rigidbody) override;
-		void UpdateTransform() override;
+		void AddToScene(PhysicsScene& scene) override;
+		void RemoveFromScene() override;
+
+		void AttachShape(const SPtr<ColliderShape>& shape) override;
+		void DetachShape(const SPtr<ColliderShape>& shape) override;
+		void SetTransform(const Vector3& position, const Quaternion& rotation) override;
 
 		/**
 		 * Returns the underlying PhysX object that represents a static collider. Only available of the collider is not
 		 * attached to a rigidbody (in which case its managed by rigidbody's dynamic actor).
 		 */
-		physx::PxRigidStatic* GetPxRigidStatic() const { return mStaticBody; }
+		physx::PxRigidStatic* GetPxRigidStatic() const { return mPxRigidStatic; }
 	protected:
-		/** Creates a static body for the collider. This should be called for colliders not attached to rigidbodies. */
-		void CreateStaticBody();
-
-		/** Destroys a static body on the collider, if one exists. */
-		void DestroyStaticBody();
-
-		physx::PxRigidStatic* mStaticBody = nullptr;
+		physx::PxScene* mPxScene = nullptr;
+		physx::PxRigidStatic* mPxRigidStatic = nullptr;
 	};
 
 	/** @} */

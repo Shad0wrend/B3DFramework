@@ -15,10 +15,11 @@ namespace b3d
 	/** Flags used for notifying child scene object and components when a transform has been changed. */
 	enum TransformChangedFlags
 	{
-		TCF_None = 0x00, /**< Component will not be notified about any events relating to the transform. */
-		TCF_Transform = 0x01, /**< Component will be notified when the its position, rotation or scale has changed. */
-		TCF_Parent = 0x02, /**< Component will be notified when its parent changes. */
-		TCF_Mobility = 0x04 /**< Component will be notified when mobility state changes. */
+		TCF_None = 0, /**< Component will not be notified about any events relating to the transform. */
+		TCF_Transform = 1 << 0, /**< Component will be notified when the its position, rotation or scale has changed. */
+		TCF_Parent = 1 << 1, /**< Component will be notified when its parent changes. */
+		TCF_Mobility = 1 << 2, /**< Component will be notified when mobility state changes. */
+		TCF_NotifyStopped = 1 << 3, /**< If set, stopped components will also receive transform & parent changed notifies. */
 	};
 
 	/** Flags that specify the state and control behaviour of a GameObject. State of these flags is not serialized. */

@@ -15,6 +15,7 @@
 
 namespace b3d
 {
+	class StaticRigidbody;
 	/** @addtogroup Physics
 	 *  @{
 	 */
@@ -98,6 +99,9 @@ namespace b3d
 		/** Creates a new empty collider shape. Note you must set the shape information after creation. */
 		virtual SPtr<ColliderShape> CreateColliderShape() = 0;
 
+		/** Creates a static rigidbody with zero shapes. Make sure to assign at least one shape after construction, and register the rigidbody with a physics scene. */
+		virtual SPtr<StaticRigidbody> CreateStaticRigidbody() = 0;
+
 		/**
 		 * Checks does the ray hit the provided collider shape.
 		 *
@@ -115,12 +119,12 @@ namespace b3d
 		 *
 		 * @param	origin				Origin of the ray to check.
 		 * @param	unitDirection		Unit direction of the ray to check.
-		 * @param	collider			Collider to check for hit.
+		 * @param	collider				Collider to check for hit.
 		 * @param	hit					Information about the hit. Valid only if the method returns true.
 		 * @param	maximumDistance		Maximum distance from the ray origin to search for hits.
 		 * @return						True if the ray has hit the collider.
 		 */
-		virtual bool RayCast(const Vector3& origin, const Vector3& unitDirection, const Collider& collider, PhysicsQueryHit& hit, float maximumDistance = FLT_MAX) const = 0;
+		virtual bool RayCast(const Vector3& origin, const Vector3& unitDirection, const CCollider& collider, PhysicsQueryHit& hit, float maximumDistance = FLT_MAX) const = 0;
 
 		/** @} */
 
@@ -584,18 +588,6 @@ namespace b3d
 
 		/** @copydoc Rigidbody::Create */
 		virtual SPtr<Rigidbody> CreateRigidbody(const HSceneObject& linkedSO) = 0;
-
-		/**
-		 * Creates a collider with zero shapes. Make sure to assign at least one shape after construction.
-		 *
-		 * @param	position	Position of the collider. If collider is attached to a rigidbody, this represents position relative to the rigidbody.
-		 *						If collider is not attached to a rigidbody, this represents world space position.
-		 * @param	position	Rotation of the collider. If collider is attached to a rigidbody, this represents rotation relative to the rigidbody.
-		 *						If collider is not attached to a rigidbody, this represents world space rotation.
-		 * @param	scale		Scale of the collider. If collider is attached to a rigidbody, this represents scale relative to the rigidbody.
-		 *						If collider is not attached to a rigidbody, this represents world space scale.
-		 */
-		virtual SPtr<Collider> CreateCollider(const Vector3& position, const Quaternion& rotation, const Vector3& scale) = 0;
 
 		/** Creates a new fixed joint. */
 		virtual SPtr<FixedJoint> CreateFixedJoint(const FixedJointCreateInformation& createInformation) = 0;
