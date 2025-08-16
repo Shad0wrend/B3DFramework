@@ -222,7 +222,7 @@ namespace b3d
 			bool IsSubmitted() const { return mState == State::Submitted; }
 
 			/** Returns true if the command buffer is currently recording (but not within a render pass). */
-			bool IsRecording() const { return mState == State::Recording; }
+			bool IsRecording() const { return mState == State::Recording || mState == State::RecordingRenderPass; }
 
 			/** Returns true if the command buffer is ready to be submitted to a queue. */
 			bool IsReadyForSubmit() const { return mState == State::RecordingDone; }
