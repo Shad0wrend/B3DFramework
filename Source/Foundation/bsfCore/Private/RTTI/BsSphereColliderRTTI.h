@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
-#include "Components/BsCPlaneCollider.h"
+#include "Components/BsSphereCollider.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 
@@ -15,30 +15,28 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT PlaneColliderRTTI : public TRTTIType<PlaneCollider, Collider, PlaneColliderRTTI>
+	class B3D_CORE_EXPORT CSphereColliderRTTI : public TRTTIType<SphereCollider, Collider, CSphereColliderRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mNormal, 0)
-			B3D_RTTI_MEMBER(mDistance, 1)
-			B3D_RTTI_MEMBER(mShapeLocalPosition, 2)
-			B3D_RTTI_MEMBER(mShapeLocalRotation, 3)
+			B3D_RTTI_MEMBER(mRadius, 0)
+			B3D_RTTI_MEMBER(mShapeLocalPosition, 1)
 		B3D_RTTI_END_MEMBERS
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "PlaneCollider";
+			static String name = "CSphereCollider";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_PlaneCollider;
+			return TID_SphereCollider;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<PlaneCollider>();
+			return SceneObject::CreateEmptyComponent<SphereCollider>();
 		}
 	};
 

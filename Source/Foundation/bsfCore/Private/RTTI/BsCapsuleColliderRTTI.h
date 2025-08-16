@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
-#include "Components/BsCBoxCollider.h"
+#include "Components/BsCapsuleCollider.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 
@@ -15,28 +15,31 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT BoxColliderRTTI : public TRTTIType<BoxCollider, Collider, BoxColliderRTTI>
+	class B3D_CORE_EXPORT CapsuleColliderRTTI : public TRTTIType<CapsuleCollider, Collider, CapsuleColliderRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mExtents, 0)
-			B3D_RTTI_MEMBER(mShapeLocalPosition, 1)
+			B3D_RTTI_MEMBER(mNormal, 0)
+			B3D_RTTI_MEMBER(mRadius, 1)
+			B3D_RTTI_MEMBER(mHalfHeight, 2)
+			B3D_RTTI_MEMBER(mShapeLocalPosition, 3)
+			B3D_RTTI_MEMBER(mShapeLocalRotation, 4)
 		B3D_RTTI_END_MEMBERS
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "BoxCollider";
+			static String name = "CapsuleCollider";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_BoxCollider;
+			return TID_CapsuleCollider;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<BoxCollider>();
+			return SceneObject::CreateEmptyComponent<CapsuleCollider>();
 		}
 	};
 
