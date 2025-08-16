@@ -1793,7 +1793,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 	commandBuffer.SetRenderTarget(renderTarget, 0, RT_ALL);
 	commandBuffer.SetViewport(Area2(0.0f, 0.0f, 1.0f, 1.0f));
 
-	GetRendererUtility().Blit(commandBuffer, cameraRenderData.CachedRenderTexture->GetColorTexture(0));
+	GetRendererUtility().Blend(commandBuffer, cameraRenderData.CachedRenderTexture->GetColorTexture(0), Area2I::kEmpty, false, false, true);
 
 	// Restore original viewport
 	commandBuffer.SetViewport(camera.GetViewport()->GetArea());
