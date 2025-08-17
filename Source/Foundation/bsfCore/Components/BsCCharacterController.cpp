@@ -3,9 +3,8 @@
 #include "Components/BsCCharacterController.h"
 #include "Scene/BsSceneObject.h"
 #include "Scene/BsSceneInstance.h"
-#include "Physics/BsCollider.h"
 #include "Private/RTTI/BsCCharacterControllerRTTI.h"
-#include "BsCCollider.h"
+#include "BsCollider.h"
 
 using namespace std::placeholders;
 

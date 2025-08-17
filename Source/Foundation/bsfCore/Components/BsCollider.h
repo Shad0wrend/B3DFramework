@@ -3,12 +3,14 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "Physics/BsCollider.h"
 #include "Physics/BsColliderShape.h"
 #include "Scene/BsComponent.h"
 
 namespace b3d
 {
+	class PhysicsScene;
+	class IColliderImplementation;
+
 	/** @addtogroup Components-Core
 	 *  @{
 	 */
@@ -156,14 +158,14 @@ namespace b3d
 		virtual bool IsValidParent(const HRigidbody& parent) const { return true; }
 
 		/**
-		 * Changes the dynamic rigidbody parent of the collider. When set all shapes are parented
-		 * this this rigidbody instead of the internal static rigidbody. Returns true if the provided rigidbody
-		 * is different from existing one.
+		 * Changes the rigidbody parent of the collider. When set all shapes are parented to this rigidbody instead of the body backed
+		 * by internal collider implementation. Returns true if the provided rigidbody is different from existing one.
 		 */
-		bool SetDynamicRigidbody(const HRigidbody& rigidbody);
+		bool SetRigidbody(const HRigidbody& rigidbody);
 
 		/**
-		 * Updates the transform of the internal Collider representation from the transform of the component's scene object.
+		 * Updates the transform of the internal collider representation from the transform of the component's scene object. Optionally also updates
+		 * all shape transforms as they may have changed if they depend on the parent.
 		 */
 		void UpdateTransform(bool updateShapeTransforms = true);
 
@@ -171,13 +173,13 @@ namespace b3d
 		void UpdateCollisionReportMode();
 
 		/**
-		 * Searches the parent scene object hierarchy to find a parent dynamic Rigidbody component, and determines if shapes need to be
+		 * Searches the parent scene object hierarchy to find a parent Rigidbody component, and determines if shapes need to be
 		 * detached/attached if the parent rigidbody changed, was added or removed. Returns true if parent changed.
 		 */
 		bool RefreshParentRigidbody();
 
 		TInlineArray<SPtr<ColliderShape>, 1> mShapes;
-		SPtr<StaticRigidbody> mStaticRigidbody; // TODO - Can be unique ptr
+		SPtr<IColliderImplementation> mImplementation; // TODO - Can be unique ptr
 
 		u64 mLayer = 1;
 		CollisionReportMode mCollisionReportMode = CollisionReportMode::None;
@@ -204,6 +206,30 @@ namespace b3d
 	protected:
 		Collider(); // Serialization only
 	};
+
+	/** Low-level interface for a collider used by the Collider component. Should be implemented by the physics plugin to provide collider functionality. */
+	class B3D_CORE_EXPORT IColliderImplementation
+	{
+	public:
+		IColliderImplementation() = default;
+		virtual ~IColliderImplementation() = default;
+
+		/** Adds the collider to the physics scene. */
+		virtual void AddToScene(PhysicsScene& scene) = 0;
+
+		/** Removes the collider from the currently assigned physics scene. */
+		virtual void RemoveFromScene() = 0;
+
+		/** Assigns a new child shape to the collider. */
+		virtual void AttachShape(const SPtr<ColliderShape>& shape) = 0;
+
+		/** Removes a shape that was previously attached to the collider. */
+		virtual void DetachShape(const SPtr<ColliderShape>& shape) = 0;
+
+		/** Changes the position and rotation of the collider. All child shapes will maintain relative position and rotation to the collider. */
+		virtual void SetTransform(const Vector3& position, const Quaternion& rotation) = 0;
+	};
+
 
 	/** @} */
 } // namespace b3d

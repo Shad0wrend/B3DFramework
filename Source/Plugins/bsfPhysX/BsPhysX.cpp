@@ -14,7 +14,7 @@
 #include "BsPhysXSliderJoint.h"
 #include "BsPhysXD6Joint.h"
 #include "BsPhysXCharacterController.h"
-#include "Components/BsCCollider.h"
+#include "Components/BsCollider.h"
 #include "BsPhysXCollider.h"
 #include "BsPhysXColliderShape.h"
 #include "Components/BsCRigidbody.h"
@@ -538,9 +538,9 @@ SPtr<ColliderShape> PhysX::CreateColliderShape()
 	return B3DMakeShared<PhysXColliderShape>();
 }
 
-SPtr<StaticRigidbody> PhysX::CreateStaticRigidbody()
+SPtr<IColliderImplementation> PhysX::CreateStaticRigidbody()
 {
-	return B3DMakeShared<PhysXStaticRigidbody>();
+	return B3DMakeShared<PhysXCollider>();
 }
 
 void PhysX::NotifySceneDestroyedInternal(PhysXScene* scene)

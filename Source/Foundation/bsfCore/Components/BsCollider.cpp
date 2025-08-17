@@ -1,11 +1,11 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Components/BsCCollider.h"
+#include "Components/BsCollider.h"
 #include "Scene/BsSceneObject.h"
 #include "Components/BsCRigidbody.h"
 #include "Math/BsRay.h"
 #include "Physics/BsPhysics.h"
-#include "Private/RTTI/BsCColliderRTTI.h"
+#include "Private/RTTI/BsColliderRTTI.h"
 #include "Scene/BsSceneInstance.h"
 
 using namespace std::placeholders;
@@ -115,23 +115,23 @@ void Collider::OnCreated()
 		// entry->UpdateTransform(); called implicitly by SetScale
 	}
 
-	B3D_ASSERT(mStaticRigidbody == nullptr);
+	B3D_ASSERT(mImplementation == nullptr);
 
 	Rigidbody* const dynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
 	if(dynamicRigidbody == nullptr)
 	{
 		const Transform& transform = SO()->GetTransform();
 
-		mStaticRigidbody = GetPhysics().CreateStaticRigidbody();
-		mStaticRigidbody->SetTransform(transform.GetPosition(), transform.GetRotation());
+		mImplementation = GetPhysics().CreateStaticRigidbody();
+		mImplementation->SetTransform(transform.GetPosition(), transform.GetRotation());
 
 		for (const auto& shape : mShapes)
-			mStaticRigidbody->AttachShape(shape);
+			mImplementation->AttachShape(shape);
 	}
 	else
 	{
-		// For dynamic rigidbodies we add/remove shapes when the collider is enabled/disabled. This is because we can't just add/remove
-		// the rigidbody from the scene, as we can do with a static one, as we own that one.
+		// For rigidbodies we add/remove shapes when the collider is enabled/disabled. This is because we can't just add/remove
+		// the rigidbody from the scene, as we can do with the internal collider implementation, as we own that one.
 	}
 }
 
@@ -145,11 +145,11 @@ void Collider::OnDestroyed()
 			if (existingShape == nullptr)
 				continue;
 
-			mStaticRigidbody->DetachShape(existingShape);
+			mImplementation->DetachShape(existingShape);
 		}
 
-		mStaticRigidbody->RemoveFromScene();
-		mStaticRigidbody = nullptr;
+		mImplementation->RemoveFromScene();
+		mImplementation = nullptr;
 	}
 	else
 	{
@@ -157,7 +157,7 @@ void Collider::OnDestroyed()
 		mParentDynamicRigidbody = nullptr;
 	}
 
-	B3D_ASSERT(mStaticRigidbody == nullptr);
+	B3D_ASSERT(mImplementation == nullptr);
 }
 
 void Collider::OnEnabled()
@@ -171,7 +171,7 @@ void Collider::OnEnabled()
 	else
 	{
 		const SPtr<SceneInstance>& sceneInstance = SceneObject()->GetScene();
-		mStaticRigidbody->AddToScene(*sceneInstance->GetPhysicsScene());
+		mImplementation->AddToScene(*sceneInstance->GetPhysicsScene());
 	}
 }
 
@@ -189,7 +189,7 @@ void Collider::OnDisabled()
 		}
 	}
 	else
-		mStaticRigidbody->RemoveFromScene();
+		mImplementation->RemoveFromScene();
 }
 
 void Collider::OnTransformChanged(TransformChangedFlags flags)
@@ -212,12 +212,12 @@ void Collider::OnTransformChanged(TransformChangedFlags flags)
 		UpdateTransform();
 }
 
-bool Collider::SetDynamicRigidbody(const HRigidbody& rigidbody)
+bool Collider::SetRigidbody(const HRigidbody& rigidbody)
 {
 	if(rigidbody == mParentDynamicRigidbody)
 		return false;
 
-	// Detach shapes from original body, destroy static body if needed
+	// Detach shapes from original body, destroy internal implementation if needed
 	if(mParentDynamicRigidbody != nullptr)
 		mParentDynamicRigidbody->RemoveCollider(B3DStaticGameObjectCast<Collider>(mThisHandle));
 
@@ -233,15 +233,15 @@ bool Collider::SetDynamicRigidbody(const HRigidbody& rigidbody)
 	else
 	{
 		for(auto& entry : mShapes)
-			mStaticRigidbody->DetachShape(entry);
+			mImplementation->DetachShape(entry);
 
 		if(GetEnabled()) // If not enabled, body won't be part of the scene
-			mStaticRigidbody->RemoveFromScene();
+			mImplementation->RemoveFromScene();
 
-		mStaticRigidbody = nullptr;
+		mImplementation = nullptr;
 	}
 
-	// Attach shapes to the new body, create static body if needed
+	// Attach shapes to the new body, create internal implementation if needed
 	Rigidbody* const newDynamicRigidbody = rigidbody.IsValid() ? rigidbody->GetInternal() : nullptr;
 	if(newDynamicRigidbody)
 	{
@@ -253,19 +253,19 @@ bool Collider::SetDynamicRigidbody(const HRigidbody& rigidbody)
 	}
 	else
 	{
-		B3D_ASSERT(mStaticRigidbody == nullptr);
+		B3D_ASSERT(mImplementation == nullptr);
 
 		const Transform& transform = SceneObject()->GetTransform();
 		const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 
-		mStaticRigidbody = GetPhysics().CreateStaticRigidbody();
-		mStaticRigidbody->SetTransform(transform.GetPosition(), transform.GetRotation());
+		mImplementation = GetPhysics().CreateStaticRigidbody();
+		mImplementation->SetTransform(transform.GetPosition(), transform.GetRotation());
 
 		for(auto& entry : mShapes)
-			mStaticRigidbody->AttachShape(entry);
+			mImplementation->AttachShape(entry);
 
 		if(GetEnabled())
-			mStaticRigidbody->AddToScene(*scene->GetPhysicsScene());
+			mImplementation->AddToScene(*scene->GetPhysicsScene());
 	}
 
 	if(rigidbody != nullptr)
@@ -291,7 +291,7 @@ bool Collider::RayCast(const Vector3& origin, const Vector3& direction, PhysicsQ
 bool Collider::RefreshParentRigidbody()
 {
 	if(mIsTrigger)
-		return SetDynamicRigidbody(HRigidbody());
+		return SetRigidbody(HRigidbody());
 
 	HSceneObject currentSO = SO();
 	while(currentSO != nullptr)
@@ -300,16 +300,16 @@ bool Collider::RefreshParentRigidbody()
 		if(parent != nullptr)
 		{
 			if(parent->GetEnabled() && IsValidParent(parent))
-				return SetDynamicRigidbody(parent);
+				return SetRigidbody(parent);
 			else
-				return SetDynamicRigidbody(HRigidbody());
+				return SetRigidbody(HRigidbody());
 		}
 
 		currentSO = currentSO->GetParent();
 	}
 
 	// Not found
-	return SetDynamicRigidbody(HRigidbody());
+	return SetRigidbody(HRigidbody());
 }
 
 void Collider::UpdateTransform(bool updateShapeTransforms)
@@ -343,9 +343,9 @@ void Collider::UpdateTransform(bool updateShapeTransforms)
 		mAdjustedPosition = transform.GetPosition();
 		mAdjustedRotation = transform.GetRotation();
 
-		// This can be null only when updating transform during creation (at that point we don't know if the parent is a dynamic rigidbody and if we need a static body)
-		if(mStaticRigidbody != nullptr)
-			mStaticRigidbody->SetTransform(transform.GetPosition(), transform.GetRotation());
+		// This can be null only when updating transform during creation (at that point we don't know if the parent is a rigidbody and if we need the internal collider implementation)
+		if(mImplementation != nullptr)
+			mImplementation->SetTransform(transform.GetPosition(), transform.GetRotation());
 	}
 
 	if(updateShapeTransforms)

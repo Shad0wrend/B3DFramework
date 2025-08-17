@@ -3,7 +3,7 @@
 #include "Physics/BsPhysics.h"
 #include "Physics/BsRigidbody.h"
 #include "Math/BsRay.h"
-#include "Components/BsCCollider.h"
+#include "Components/BsCollider.h"
 
 using namespace b3d;
 

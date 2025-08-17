@@ -13,7 +13,7 @@
 #include "PxShape.h"
 #include "Physics/BsPhysicsMesh.h"
 #include "Scene/BsTransform.h"
-#include "Components/BsCCollider.h"
+#include "Components/BsCollider.h"
 #include "Components/BsCRigidbody.h"
 #include "Scene/BsSceneObject.h"
 

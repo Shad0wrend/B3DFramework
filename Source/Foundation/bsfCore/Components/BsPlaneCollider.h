@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "Components/BsCCollider.h"
+#include "Components/BsCollider.h"
 
 namespace b3d
 {

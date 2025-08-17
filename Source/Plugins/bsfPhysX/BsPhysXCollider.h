@@ -4,8 +4,8 @@
 
 #include "BsPhysXPrerequisites.h"
 #include "Physics/BsPhysicsCommon.h"
+#include "Components/BsCollider.h"
 #include "PxRigidStatic.h"
-#include "Physics/BsCollider.h"
 
 namespace b3d
 {
@@ -14,12 +14,12 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** PhysX implementation of StaticRigidbody. */
-	class PhysXStaticRigidbody : public StaticRigidbody
+	/** PhysX implementation of Collider. */
+	class PhysXCollider : public IColliderImplementation
 	{
 	public:
-		PhysXStaticRigidbody();
-		~PhysXStaticRigidbody() override;
+		PhysXCollider();
+		~PhysXCollider() override;
 
 		void AddToScene(PhysicsScene& scene) override;
 		void RemoveFromScene() override;

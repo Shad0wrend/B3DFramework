@@ -10,20 +10,20 @@
 using namespace physx;
 using namespace b3d;
 
-PhysXStaticRigidbody::PhysXStaticRigidbody()
+PhysXCollider::PhysXCollider()
 {
 	mPxRigidStatic = GetPhysX().GetPhysX()->createRigidStatic(PxTransform(PxIdentity));
 }
 
-PhysXStaticRigidbody::~PhysXStaticRigidbody()
+PhysXCollider::~PhysXCollider()
 {
 	if(mPxScene != nullptr)
-		PhysXStaticRigidbody::RemoveFromScene();
+		PhysXCollider::RemoveFromScene();
 
 	mPxRigidStatic->release();
 }
 
-void PhysXStaticRigidbody::AddToScene(PhysicsScene& scene)
+void PhysXCollider::AddToScene(PhysicsScene& scene)
 {
 	if(!B3D_ENSURE(mPxScene == nullptr))
 		return;
@@ -34,7 +34,7 @@ void PhysXStaticRigidbody::AddToScene(PhysicsScene& scene)
 	mPxScene->addActor(*mPxRigidStatic);
 }
 
-void PhysXStaticRigidbody::RemoveFromScene()
+void PhysXCollider::RemoveFromScene()
 {
 	if(!B3D_ENSURE(mPxScene != nullptr))
 		return;
@@ -43,7 +43,7 @@ void PhysXStaticRigidbody::RemoveFromScene()
 	mPxScene = nullptr;
 }
 
-void PhysXStaticRigidbody::AttachShape(const SPtr<ColliderShape>& shape)
+void PhysXCollider::AttachShape(const SPtr<ColliderShape>& shape)
 {
 	if(!B3D_ENSURE(shape != nullptr))
 		return;
@@ -52,7 +52,7 @@ void PhysXStaticRigidbody::AttachShape(const SPtr<ColliderShape>& shape)
 	mPxRigidStatic->attachShape(*physxShape.GetPxShape());
 }
 
-void PhysXStaticRigidbody::DetachShape(const SPtr<ColliderShape>& shape)
+void PhysXCollider::DetachShape(const SPtr<ColliderShape>& shape)
 {
 	if(!B3D_ENSURE(shape != nullptr))
 		return;
@@ -61,7 +61,7 @@ void PhysXStaticRigidbody::DetachShape(const SPtr<ColliderShape>& shape)
 	mPxRigidStatic->detachShape(*physxShape.GetPxShape());
 }
 
-void PhysXStaticRigidbody::SetTransform(const Vector3& position, const Quaternion& rotation)
+void PhysXCollider::SetTransform(const Vector3& position, const Quaternion& rotation)
 {
 	mPxRigidStatic->setGlobalPose(ToPxTransform(position, rotation));
 }

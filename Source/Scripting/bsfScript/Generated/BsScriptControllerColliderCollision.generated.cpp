@@ -4,8 +4,8 @@
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "../../../Foundation/bsfCore/Components/BsCCollider.h"
-#include "BsScriptCCollider.generated.h"
+#include "../../../Foundation/bsfCore/Components/BsCollider.h"
+#include "BsScriptCollider.generated.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "BsScriptTVector3.generated.h"
 

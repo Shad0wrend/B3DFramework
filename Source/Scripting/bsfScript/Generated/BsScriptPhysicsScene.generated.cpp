@@ -14,8 +14,8 @@
 #include "BsScriptTAABox.generated.h"
 #include "BsScriptTQuaternion.generated.h"
 #include "BsScriptTSphere.generated.h"
-#include "../../../Foundation/bsfCore/Components/BsCCollider.h"
-#include "BsScriptCCollider.generated.h"
+#include "../../../Foundation/bsfCore/Components/BsCollider.h"
+#include "BsScriptCollider.generated.h"
 
 namespace b3d
 {

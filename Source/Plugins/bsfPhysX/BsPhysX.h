@@ -14,7 +14,7 @@
 
 namespace b3d
 {
-	class StaticRigidbody;
+	class IColliderImplementation;
 	/** @addtogroup PhysX
 	 *  @{
 	 */
@@ -32,7 +32,7 @@ namespace b3d
 		SPtr<PhysicsMesh> CreateMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type) override;
 		SPtr<PhysicsScene> CreatePhysicsScene() override;
 		SPtr<ColliderShape> CreateColliderShape() override;
-		SPtr<StaticRigidbody> CreateStaticRigidbody() override;
+		SPtr<IColliderImplementation> CreateStaticRigidbody() override;
 
 		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const ColliderShape& colliderShape, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;
 		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const Collider& collider, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;

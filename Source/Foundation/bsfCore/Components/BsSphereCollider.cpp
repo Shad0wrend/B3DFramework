@@ -1,9 +1,9 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Components/BsCSphereCollider.h"
+#include "Components/BsSphereCollider.h"
 #include "Scene/BsSceneObject.h"
 #include "Components/BsCRigidbody.h"
-#include "Private/RTTI/BsCSphereColliderRTTI.h"
+#include "Private/RTTI/BsSphereColliderRTTI.h"
 #include "Scene/BsSceneInstance.h"
 
 using namespace b3d;

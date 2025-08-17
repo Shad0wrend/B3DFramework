@@ -15,7 +15,7 @@
 
 namespace b3d
 {
-	class StaticRigidbody;
+	class IColliderImplementation;
 	/** @addtogroup Physics
 	 *  @{
 	 */
@@ -100,7 +100,7 @@ namespace b3d
 		virtual SPtr<ColliderShape> CreateColliderShape() = 0;
 
 		/** Creates a static rigidbody with zero shapes. Make sure to assign at least one shape after construction, and register the rigidbody with a physics scene. */
-		virtual SPtr<StaticRigidbody> CreateStaticRigidbody() = 0;
+		virtual SPtr<IColliderImplementation> CreateStaticRigidbody() = 0;
 
 		/**
 		 * Checks does the ray hit the provided collider shape.

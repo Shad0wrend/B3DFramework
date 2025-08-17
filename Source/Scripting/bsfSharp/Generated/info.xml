@@ -70,13 +70,6 @@
 			<doc>32-bit indices.</doc>
 		</enumentry>
 	</enum>
-	<class native="CBoxCollider" script="BoxCollider">
-		<property name="Extents" type="Vector3" getter="GetExtents" setter="SetExtents" static="false">
-		</property>
-		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
-			<doc>Determines the position of the box shape, relative to the component&apos;s scene object.</doc>
-		</property>
-	</class>
 	<enum native="EulerAngleOrder" script="EulerAngleOrder">
 		<doc>Values that represent in which order are euler angles applied when used in transformations.</doc>
 		<enumentry native="XYZ" script="XYZ">
@@ -2195,6 +2188,40 @@ Also see SetContactOffset().</doc>
 		<field name="W" type="int">
 		</field>
 	</struct>
+	<class native="Collider" script="Collider">
+		<doc>Physics object that can be interacted with in the physics world. It can either block other physics objects, or act as a trigger. Trigger will report collision events, but won&apos;t actually prevent other physical objects from going through them.
+This object is intended to remain static in the world. You /can/ move it, but it will not interact with the physics world correctly when moved. For that case use Rigidbody instead.</doc>
+		<property name="Trigger" type="bool" getter="GetIsTrigger" setter="SetIsTrigger" static="false">
+			<doc>Determines if the collider is a trigger. Trigger collider will not prevent objects from going through its shapes but it will still report collision events.</doc>
+		</property>
+		<property name="Mass" type="float" getter="GetMass" setter="SetMass" static="false">
+		</property>
+		<property name="Material" type="RRef&lt;PhysicsMaterial&gt;" getter="GetMaterial" setter="SetMaterial" static="false">
+		</property>
+		<property name="ContactOffset" type="float" getter="GetContactOffset" setter="SetContactOffset" static="false">
+		</property>
+		<property name="RestOffset" type="float" getter="GetRestOffset" setter="SetRestOffset" static="false">
+		</property>
+		<property name="Layer" type="ulong" getter="GetLayer" setter="SetLayer" static="false">
+		</property>
+		<property name="CollisionReportMode" type="CollisionReportMode" getter="GetCollisionReportMode" setter="SetCollisionReportMode" static="false">
+		</property>
+		<event native="OnCollisionBegin" script="OnCollisionBegin" static="false">
+			<doc>Triggered when some object starts interacting with the collider. Only triggered if proper collision report mode is turned on.</doc>
+			<param name="p0" type="CollisionData">
+			</param>
+		</event>
+		<event native="OnCollisionStay" script="OnCollisionStay" static="false">
+			<doc>Triggered for every frame that an object remains interacting with a collider. Only triggered if proper collision report mode is turned on.</doc>
+			<param name="p0" type="CollisionData">
+			</param>
+		</event>
+		<event native="OnCollisionEnd" script="OnCollisionEnd" static="false">
+			<doc>Triggered when some object stops interacting with the collider. Only triggered if proper collision report mode is turned on.</doc>
+			<param name="p0" type="CollisionData">
+			</param>
+		</event>
+	</class>
 	<class native="AnimationCurves" script="AnimationCurves">
 		<doc>A set of animation curves representing translation/rotation/scale and generic animation.</doc>
 		<ctor>
@@ -2415,34 +2442,6 @@ Also see SetContactOffset().</doc>
 		<property name="Scale" type="float" getter="GetScale" setter="SetScale" static="false">
 			<doc>Allows you to speed time up or down, or completely pause it by providing zero. Must be zero or larger.</doc>
 		</property>
-	</class>
-	<class native="CCollider" script="Collider">
-		<property name="Trigger" type="bool" getter="GetIsTrigger" setter="SetIsTrigger" static="false">
-		</property>
-		<property name="Mass" type="float" getter="GetMass" setter="SetMass" static="false">
-		</property>
-		<property name="Material" type="RRef&lt;PhysicsMaterial&gt;" getter="GetMaterial" setter="SetMaterial" static="false">
-		</property>
-		<property name="ContactOffset" type="float" getter="GetContactOffset" setter="SetContactOffset" static="false">
-		</property>
-		<property name="RestOffset" type="float" getter="GetRestOffset" setter="SetRestOffset" static="false">
-		</property>
-		<property name="Layer" type="ulong" getter="GetLayer" setter="SetLayer" static="false">
-		</property>
-		<property name="CollisionReportMode" type="CollisionReportMode" getter="GetCollisionReportMode" setter="SetCollisionReportMode" static="false">
-		</property>
-		<event native="OnCollisionBegin" script="OnCollisionBegin" static="false">
-			<param name="p0" type="CollisionData">
-			</param>
-		</event>
-		<event native="OnCollisionStay" script="OnCollisionStay" static="false">
-			<param name="p0" type="CollisionData">
-			</param>
-		</event>
-		<event native="OnCollisionEnd" script="OnCollisionEnd" static="false">
-			<param name="p0" type="CollisionData">
-			</param>
-		</event>
 	</class>
 	<class native="HString" script="LocString">
 		<doc>String handle. Provides a wrapper around an Unicode string, primarily for localization purposes.
@@ -4071,13 +4070,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<enumentry native="Linear" script="Linear">
 		</enumentry>
 	</enum>
-	<class native="CSphereCollider" script="SphereCollider">
-		<property name="Radius" type="float" getter="GetRadius" setter="SetRadius" static="false">
-		</property>
-		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
-			<doc>Determines position of the sphere shape, relative to the component&apos;s scene object.</doc>
-		</property>
-	</class>
 	<class native="ParticleEvolver" script="ParticleEvolver">
 		<doc>Updates properties of all active particles in a particle system in some way.</doc>
 	</class>
@@ -4470,78 +4462,6 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	<class native="CoreApplication" script="CoreApplication">
 		<doc>Represents the primary entry point for the core systems. Handles start-up, shutdown, primary loop and allows you to load and unload plugins.</doc>
 	</class>
-	<class native="CAudioListener" script="AudioListener">
-	</class>
-	<class native="ManagedMemberInfo" script="ManagedMemberInfo">
-		<doc>Contains data about a single member (field or property) in a managed object (class or struct).</doc>
-		<method native="ParseStyle" script="ParseStyle" static="false">
-			<doc>Parses style attributes for this members and returns a structure holding all the relevant style information.</doc>
-			<returns type="ManagedMemberStyle">
-			</returns>
-		</method>
-		<method native="GetValue" script="GetValue" static="false">
-			<doc>Returns a boxed value contained in the member in the specified object instance.</doc>
-			<param name="instance" type="object">
-				<doc>Object instance to access the member on.</doc>
-			</param>
-			<returns type="object">
-				<doc>A boxed value of the member.</doc>
-			</returns>
-		</method>
-		<method native="SetValue" script="SetValue" static="false">
-			<doc>Sets a value of the member in the specified object instance.</doc>
-			<param name="instance" type="object">
-				<doc>Object instance to access the member on.</doc>
-			</param>
-			<param name="value" type="object">
-				<doc>Boxed value to set on the member.</doc>
-			</param>
-		</method>
-		<property name="IsSerializable" type="bool" getter="IsSerializable" setter="" static="false">
-			<doc>Determines should the member be serialized when serializing the parent object.</doc>
-		</property>
-		<property name="Name" type="string" getter="GetName" setter="SetName" static="false">
-		</property>
-		<property name="TypeInfo" type="ManagedTypeInfo" getter="GetTypeInfo" setter="SetTypeInfo" static="false">
-		</property>
-		<property name="MetaDataFlags" type="ManagedFieldMetaDataFlag" getter="GetMetaDataFlags" setter="SetMetaDataFlags" static="false">
-		</property>
-	</class>
-	<class native="CAudioSource" script="AudioSource">
-		<method native="Play" script="Play" static="false">
-		</method>
-		<method native="Pause" script="Pause" static="false">
-		</method>
-		<method native="Stop" script="Stop" static="false">
-		</method>
-		<property name="Clip" type="RRef&lt;AudioClip&gt;" getter="GetClip" setter="SetClip" static="false">
-		</property>
-		<property name="Volume" type="float" getter="GetVolume" setter="SetVolume" static="false">
-		</property>
-		<property name="Pitch" type="float" getter="GetPitch" setter="SetPitch" static="false">
-		</property>
-		<property name="Loop" type="bool" getter="GetIsLooping" setter="SetIsLooping" static="false">
-		</property>
-		<property name="Priority" type="int" getter="GetPriority" setter="SetPriority" static="false">
-		</property>
-		<property name="MinDistance" type="float" getter="GetMinDistance" setter="SetMinDistance" static="false">
-		</property>
-		<property name="Attenuation" type="float" getter="GetAttenuation" setter="SetAttenuation" static="false">
-		</property>
-		<property name="Time" type="float" getter="GetTime" setter="SetTime" static="false">
-		</property>
-		<property name="PlayOnStart" type="bool" getter="GetPlayOnStart" setter="SetPlayOnStart" static="false">
-			<doc>Sets whether playback should start as soon as the component is enabled.</doc>
-		</property>
-		<property name="State" type="AudioSourceState" getter="GetState" setter="" static="false">
-		</property>
-	</class>
-	<class native="CBone" script="Bone">
-		<doc>Component that maps animation for specific bone also be applied to the SceneObject this component is attached to. The component will attach to the first found parent Animation component.</doc>
-		<property name="Name" type="string" getter="GetBoneName" setter="SetBoneName" static="false">
-			<doc>Determines the name of the bone the component is referencing.</doc>
-		</property>
-	</class>
 	<struct native="ContactPoint" script="ContactPoint">
 		<doc>Information about a single contact point during physics collision.</doc>
 		<field name="Position" type="Vector3">
@@ -4770,6 +4690,87 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<field name="HalfHeight" type="float">
 		</field>
 	</struct>
+	<class native="BoxCollider" script="BoxCollider">
+		<doc>Collider with box geometry.</doc>
+		<property name="Extents" type="Vector3" getter="GetExtents" setter="SetExtents" static="false">
+			<doc>Determines the extents (half size) of the geometry of the box.</doc>
+		</property>
+		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
+			<doc>Determines the position of the box shape, relative to the component&apos;s scene object.</doc>
+		</property>
+	</class>
+	<class native="CAudioListener" script="AudioListener">
+	</class>
+	<class native="ManagedMemberInfo" script="ManagedMemberInfo">
+		<doc>Contains data about a single member (field or property) in a managed object (class or struct).</doc>
+		<method native="ParseStyle" script="ParseStyle" static="false">
+			<doc>Parses style attributes for this members and returns a structure holding all the relevant style information.</doc>
+			<returns type="ManagedMemberStyle">
+			</returns>
+		</method>
+		<method native="GetValue" script="GetValue" static="false">
+			<doc>Returns a boxed value contained in the member in the specified object instance.</doc>
+			<param name="instance" type="object">
+				<doc>Object instance to access the member on.</doc>
+			</param>
+			<returns type="object">
+				<doc>A boxed value of the member.</doc>
+			</returns>
+		</method>
+		<method native="SetValue" script="SetValue" static="false">
+			<doc>Sets a value of the member in the specified object instance.</doc>
+			<param name="instance" type="object">
+				<doc>Object instance to access the member on.</doc>
+			</param>
+			<param name="value" type="object">
+				<doc>Boxed value to set on the member.</doc>
+			</param>
+		</method>
+		<property name="IsSerializable" type="bool" getter="IsSerializable" setter="" static="false">
+			<doc>Determines should the member be serialized when serializing the parent object.</doc>
+		</property>
+		<property name="Name" type="string" getter="GetName" setter="SetName" static="false">
+		</property>
+		<property name="TypeInfo" type="ManagedTypeInfo" getter="GetTypeInfo" setter="SetTypeInfo" static="false">
+		</property>
+		<property name="MetaDataFlags" type="ManagedFieldMetaDataFlag" getter="GetMetaDataFlags" setter="SetMetaDataFlags" static="false">
+		</property>
+	</class>
+	<class native="CAudioSource" script="AudioSource">
+		<method native="Play" script="Play" static="false">
+		</method>
+		<method native="Pause" script="Pause" static="false">
+		</method>
+		<method native="Stop" script="Stop" static="false">
+		</method>
+		<property name="Clip" type="RRef&lt;AudioClip&gt;" getter="GetClip" setter="SetClip" static="false">
+		</property>
+		<property name="Volume" type="float" getter="GetVolume" setter="SetVolume" static="false">
+		</property>
+		<property name="Pitch" type="float" getter="GetPitch" setter="SetPitch" static="false">
+		</property>
+		<property name="Loop" type="bool" getter="GetIsLooping" setter="SetIsLooping" static="false">
+		</property>
+		<property name="Priority" type="int" getter="GetPriority" setter="SetPriority" static="false">
+		</property>
+		<property name="MinDistance" type="float" getter="GetMinDistance" setter="SetMinDistance" static="false">
+		</property>
+		<property name="Attenuation" type="float" getter="GetAttenuation" setter="SetAttenuation" static="false">
+		</property>
+		<property name="Time" type="float" getter="GetTime" setter="SetTime" static="false">
+		</property>
+		<property name="PlayOnStart" type="bool" getter="GetPlayOnStart" setter="SetPlayOnStart" static="false">
+			<doc>Sets whether playback should start as soon as the component is enabled.</doc>
+		</property>
+		<property name="State" type="AudioSourceState" getter="GetState" setter="" static="false">
+		</property>
+	</class>
+	<class native="CBone" script="Bone">
+		<doc>Component that maps animation for specific bone also be applied to the SceneObject this component is attached to. The component will attach to the first found parent Animation component.</doc>
+		<property name="Name" type="string" getter="GetBoneName" setter="SetBoneName" static="false">
+			<doc>Determines the name of the bone the component is referencing.</doc>
+		</property>
+	</class>
 	<struct native="SpriteSheetGridAnimation" script="SpriteSheetGridAnimation">
 		<doc>Descriptor that describes a simple sprite sheet animation. The parent area is split into a grid of <see cref="RowCount"/> x <see cref="ColumnCount"/>, each representing one frame of the animation. Every frame is of equal size. Frames are sequentially evaluated starting from the top-most row, iterating over all columns in a row and then moving to next row, up to <see cref="FrameCount"/> frames. <see cref="FramesPerSecond"/> frames are evaluated every second, allowing you to control animation speed.</doc>
 		<ctor>
@@ -5580,18 +5581,6 @@ If this is disabled, then color grading and white balancing will not be enabled 
 			<doc>If set the camera will only render when requested by the user through Camera::notifyNeedsRedraw(). Otherwise the camera will render every frame (unless disabled).</doc>
 		</enumentry>
 	</enum>
-	<class native="CCapsuleCollider" script="CapsuleCollider">
-		<property name="Normal" type="Vector3" getter="GetNormal" setter="SetNormal" static="false">
-			<doc>Normal vector that determines how is the capsule oriented.</doc>
-		</property>
-		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
-			<doc>Determines the position of the capsule shape, relative to the component&apos;s scene object.</doc>
-		</property>
-		<property name="HalfHeight" type="float" getter="GetHalfHeight" setter="SetHalfHeight" static="false">
-		</property>
-		<property name="Radius" type="float" getter="GetRadius" setter="SetRadius" static="false">
-		</property>
-	</class>
 	<enum native="CharacterClimbingMode" script="CharacterClimbingMode">
 		<doc>Controls climbing behaviour for a capsule character controller. Normally the character controller will not automatically climb when heights are greater than the assigned step offset. However due to the shape of the capsule it might automatically climb over slightly larger heights than assigned step offsets.</doc>
 		<enumentry native="Normal" script="Normal">
@@ -6425,6 +6414,21 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 	</class>
 	<class native="CFixedJoint" script="FixedJoint">
 	</class>
+	<class native="CapsuleCollider" script="CapsuleCollider">
+		<doc>Collider with a capsule geometry.</doc>
+		<property name="Normal" type="Vector3" getter="GetNormal" setter="SetNormal" static="false">
+			<doc>Normal vector that determines how is the capsule oriented.</doc>
+		</property>
+		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
+			<doc>Determines the position of the capsule shape, relative to the component&apos;s scene object.</doc>
+		</property>
+		<property name="HalfHeight" type="float" getter="GetHalfHeight" setter="SetHalfHeight" static="false">
+			<doc>Determines the half height of the capsule, from the origin to one of the hemispherical centers, along the normal vector.</doc>
+		</property>
+		<property name="Radius" type="float" getter="GetRadius" setter="SetRadius" static="false">
+			<doc>Determines the radius of the capsule.</doc>
+		</property>
+	</class>
 	<enum native="HingeJointFlag" script="HingeJointFlag">
 		<doc>Flags that control hinge joint options.</doc>
 		<enumentry native="Limit" script="Limit">
@@ -6542,10 +6546,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<property name="GridVolume" type="AABox" getter="GetGridVolume" setter="" static="false">
 		</property>
 		<property name="CellCount" type="Vector3I" getter="GetCellCount" setter="" static="false">
-		</property>
-	</class>
-	<class native="CMeshCollider" script="MeshCollider">
-		<property name="Mesh" type="RRef&lt;PhysicsMesh&gt;" getter="GetMesh" setter="SetMesh" static="false">
 		</property>
 	</class>
 	<class native="TColorDistribution&lt;ColorGradient&gt;" script="ColorDistribution">
@@ -7435,6 +7435,12 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Particles will be emitted only from box surface.</doc>
 		</enumentry>
 	</enum>
+	<class native="MeshCollider" script="MeshCollider">
+		<doc>A collider represented by an arbitrary mesh.</doc>
+		<property name="Mesh" type="RRef&lt;PhysicsMesh&gt;" getter="GetMesh" setter="SetMesh" static="false">
+			<doc>Determines a mesh that represents the collider geometry. This can be a generic triangle mesh, or and convex mesh. Triangle meshes are not supported as triggers, nor are they supported for colliders that are parts of a non-kinematic rigidbody.</doc>
+		</property>
+	</class>
 	<class native="Shader" script="Shader">
 		<doc>Contains definitions of GPU programs used for rendering, as well as a set of global parameters to control those programs.</doc>
 		<property name="VariationParams" type="ShaderVariationParameterInformation" getter="GetVariationParams" setter="" static="false">
@@ -7893,14 +7899,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<property name="Layer" type="ulong" getter="GetLayer" setter="SetLayer" static="false">
 		</property>
 	</class>
-	<class native="CPlaneCollider" script="PlaneCollider">
-		<property name="Normal" type="Vector3" getter="GetNormal" setter="SetNormal" static="false">
-			<doc>Normal vector that determines the local orientation of the plane.</doc>
-		</property>
-		<property name="Distance" type="float" getter="GetDistance" setter="SetDistance" static="false">
-			<doc>Determines the distance of the plane from the local origin, along its normal vector.</doc>
-		</property>
-	</class>
 	<enum native="ReflectionProbeType" script="ReflectionProbeType">
 		<doc>Probe type that determines the shape of the probe and how is it interpreted by the renderer.</doc>
 		<enumentry native="Box" script="Box">
@@ -8088,6 +8086,15 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Determines the layer that controls whether a system is considered visible in a specific camera. Layer must match camera layer bitfield in order for the camera to render the decal.</doc>
 		</property>
 	</class>
+	<class native="PlaneCollider" script="PlaneCollider">
+		<doc>A collider with plane geometry. Plane colliders cannot be a part of non-kinematic rigidbodies.</doc>
+		<property name="Normal" type="Vector3" getter="GetNormal" setter="SetNormal" static="false">
+			<doc>Normal vector that determines the local orientation of the plane.</doc>
+		</property>
+		<property name="Distance" type="float" getter="GetDistance" setter="SetDistance" static="false">
+			<doc>Determines the distance of the plane from the local origin, along its normal vector.</doc>
+		</property>
+	</class>
 	<class native="Renderable" script="Renderable">
 		<doc>Renderable represents any visible object in the scene. It has a mesh, bounds and a set of materials. Renderer will render any Renderable objects visible by a camera.</doc>
 		<method native="SetMaterial" script="SetMaterial" static="false">
@@ -8126,6 +8133,126 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		</property>
 		<property name="CullDistance" type="float" getter="GetCullDistanceFactor" setter="SetCullDistanceFactor" static="false">
 			<doc>Factor to be applied to the cull distance set in the camera&apos;s render settings.</doc>
+		</property>
+	</class>
+	<class native="GUICanvas" script="GUICanvas">
+		<doc>A GUI element that allows the user to draw custom graphics. All drawn elements relative to the canvas, to its origin in the top left corner.</doc>
+		<method native="DrawLine" script="DrawLine" static="false">
+			<doc>Draws a line going from <paramref name="a"/> to <paramref name="b"/>.</doc>
+			<param name="a" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Starting point of the line, relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="b" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Ending point of the line, relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the line.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawPolyLine" script="DrawPolyLine" static="false">
+			<doc>Draws multiple lines following the path by the provided vertices. First vertex connects to the second vertex, and every following vertex connects to the previous vertex.</doc>
+			<param name="vertices" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Points to use for drawing the line. Must have at least two elements. All points are relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the line.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawImage" script="DrawImage" static="false">
+			<doc>Draws a quad with a the provided image displayed.</doc>
+			<param name="image" type="RRef&lt;SpriteImage&gt;">
+				<doc>Image to draw.</doc>
+			</param>
+			<param name="area" type="TArea2&lt;TUnitValue&lt;int,LogicalPixel&gt;,TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Position and size of the texture to draw. Position is relative to the canvas origin (top-left). If size is zero, the default texture size will be used.</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color to tint the drawn texture with.</doc>
+			</param>
+			<param name="scaleMode" type="TextureScaleMode">
+				<doc>Scale mode to use when sizing the texture. Only relevant if the provided quad size doesn&apos;t match the texture size.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawTriangleStrip" script="DrawTriangleStrip" static="false">
+			<doc>Draws a triangle strip. First three vertices are used to form the initial triangle, and every next vertex will form a triangle with the previous two.</doc>
+			<param name="vertices" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>A set of points defining the triangles. Must have at least three elements. All points are relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the triangles.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawTriangleList" script="DrawTriangleList" static="false">
+			<doc>Draws a triangle list. Every three vertices in the list represent a unique triangle.</doc>
+			<param name="vertices" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>A set of points defining the triangles. Must have at least three elements, and its size must be a multiple of three.</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the triangles.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="DrawText" script="DrawText" static="false">
+			<doc>Draws a piece of text with the wanted font. The text will be aligned to the top-left corner of the provided position, and will not be word wrapped.</doc>
+			<param name="text" type="string">
+				<doc>Text to draw.</doc>
+			</param>
+			<param name="position" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
+				<doc>Position of the text to draw. This represents the top-left corner of the text. It is relative to the canvas origin (top-left).</doc>
+			</param>
+			<param name="font" type="RRef&lt;Font&gt;">
+				<doc>Font to draw the text with.</doc>
+			</param>
+			<param name="size" type="float">
+				<doc>Size of the font.</doc>
+			</param>
+			<param name="color" type="Color">
+				<doc>Color of the text.</doc>
+			</param>
+			<param name="depth" type="byte">
+				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
+			</param>
+		</method>
+		<method native="Clear" script="Clear" static="false">
+			<doc>Clears the canvas, removing any previously drawn elements.</doc>
+		</method>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="styleClass" type="string">
+				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
+			</param>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+		<ctor>
+			<doc>Creates a new GUI element.</doc>
+			<param name="options" type="GUIOption">
+				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
+			</param>
+		</ctor>
+	</class>
+	<class native="SphereCollider" script="SphereCollider">
+		<doc>A collider with sphere geometry.</doc>
+		<property name="Radius" type="float" getter="GetRadius" setter="SetRadius" static="false">
+			<doc>Determines the radius of the sphere geometry.</doc>
+		</property>
+		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
+			<doc>Determines position of the sphere shape, relative to the component&apos;s scene object.</doc>
 		</property>
 	</class>
 	<struct native="SpriteImageInformation" script="SpriteImageInformation">
@@ -9064,117 +9191,6 @@ Primary purpose of this class is to avoid expensive string compare (axis names),
 		<method native="RequestFrameCapture" script="RequestFrameCapture" static="false">
 			<doc>Queues GPU command capture of the next frame, if a frame capture is set up.</doc>
 		</method>
-	</class>
-	<class native="GUICanvas" script="GUICanvas">
-		<doc>A GUI element that allows the user to draw custom graphics. All drawn elements relative to the canvas, to its origin in the top left corner.</doc>
-		<method native="DrawLine" script="DrawLine" static="false">
-			<doc>Draws a line going from <paramref name="a"/> to <paramref name="b"/>.</doc>
-			<param name="a" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
-				<doc>Starting point of the line, relative to the canvas origin (top-left).</doc>
-			</param>
-			<param name="b" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
-				<doc>Ending point of the line, relative to the canvas origin (top-left).</doc>
-			</param>
-			<param name="color" type="Color">
-				<doc>Color of the line.</doc>
-			</param>
-			<param name="depth" type="byte">
-				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
-			</param>
-		</method>
-		<method native="DrawPolyLine" script="DrawPolyLine" static="false">
-			<doc>Draws multiple lines following the path by the provided vertices. First vertex connects to the second vertex, and every following vertex connects to the previous vertex.</doc>
-			<param name="vertices" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
-				<doc>Points to use for drawing the line. Must have at least two elements. All points are relative to the canvas origin (top-left).</doc>
-			</param>
-			<param name="color" type="Color">
-				<doc>Color of the line.</doc>
-			</param>
-			<param name="depth" type="byte">
-				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
-			</param>
-		</method>
-		<method native="DrawImage" script="DrawImage" static="false">
-			<doc>Draws a quad with a the provided image displayed.</doc>
-			<param name="image" type="RRef&lt;SpriteImage&gt;">
-				<doc>Image to draw.</doc>
-			</param>
-			<param name="area" type="TArea2&lt;TUnitValue&lt;int,LogicalPixel&gt;,TUnitValue&lt;int,LogicalPixel&gt;&gt;">
-				<doc>Position and size of the texture to draw. Position is relative to the canvas origin (top-left). If size is zero, the default texture size will be used.</doc>
-			</param>
-			<param name="color" type="Color">
-				<doc>Color to tint the drawn texture with.</doc>
-			</param>
-			<param name="scaleMode" type="TextureScaleMode">
-				<doc>Scale mode to use when sizing the texture. Only relevant if the provided quad size doesn&apos;t match the texture size.</doc>
-			</param>
-			<param name="depth" type="byte">
-				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
-			</param>
-		</method>
-		<method native="DrawTriangleStrip" script="DrawTriangleStrip" static="false">
-			<doc>Draws a triangle strip. First three vertices are used to form the initial triangle, and every next vertex will form a triangle with the previous two.</doc>
-			<param name="vertices" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
-				<doc>A set of points defining the triangles. Must have at least three elements. All points are relative to the canvas origin (top-left).</doc>
-			</param>
-			<param name="color" type="Color">
-				<doc>Color of the triangles.</doc>
-			</param>
-			<param name="depth" type="byte">
-				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
-			</param>
-		</method>
-		<method native="DrawTriangleList" script="DrawTriangleList" static="false">
-			<doc>Draws a triangle list. Every three vertices in the list represent a unique triangle.</doc>
-			<param name="vertices" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
-				<doc>A set of points defining the triangles. Must have at least three elements, and its size must be a multiple of three.</doc>
-			</param>
-			<param name="color" type="Color">
-				<doc>Color of the triangles.</doc>
-			</param>
-			<param name="depth" type="byte">
-				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
-			</param>
-		</method>
-		<method native="DrawText" script="DrawText" static="false">
-			<doc>Draws a piece of text with the wanted font. The text will be aligned to the top-left corner of the provided position, and will not be word wrapped.</doc>
-			<param name="text" type="string">
-				<doc>Text to draw.</doc>
-			</param>
-			<param name="position" type="TVector2&lt;TUnitValue&lt;int,LogicalPixel&gt;&gt;">
-				<doc>Position of the text to draw. This represents the top-left corner of the text. It is relative to the canvas origin (top-left).</doc>
-			</param>
-			<param name="font" type="RRef&lt;Font&gt;">
-				<doc>Font to draw the text with.</doc>
-			</param>
-			<param name="size" type="float">
-				<doc>Size of the font.</doc>
-			</param>
-			<param name="color" type="Color">
-				<doc>Color of the text.</doc>
-			</param>
-			<param name="depth" type="byte">
-				<doc>Depth at which to draw the element. Elements with higher depth will be drawn before others. Additionally elements of the same type (triangle or line) will be drawn in order they are submitted if they share the same depth.</doc>
-			</param>
-		</method>
-		<method native="Clear" script="Clear" static="false">
-			<doc>Clears the canvas, removing any previously drawn elements.</doc>
-		</method>
-		<ctor>
-			<doc>Creates a new GUI element.</doc>
-			<param name="styleClass" type="string">
-				<doc>Style class that will be used for determining GUI element visuals from the current style sheet. If no class is provided, default style is determined based on GUI element type.</doc>
-			</param>
-			<param name="options" type="GUIOption">
-				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
-			</param>
-		</ctor>
-		<ctor>
-			<doc>Creates a new GUI element.</doc>
-			<param name="options" type="GUIOption">
-				<doc>Additional options that control GUI element size and position. This will override options set in the style sheet.</doc>
-			</param>
-		</ctor>
 	</class>
 	<class native="TextureImportOptions" script="TextureImportOptions">
 		<doc>Contains import options you may use to control how is a texture imported.</doc>

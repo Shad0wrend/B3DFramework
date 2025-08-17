@@ -3,7 +3,7 @@
 #include "BsPhysXCharacterController.h"
 #include "Utility/BsTime.h"
 #include "BsPhysX.h"
-#include "Components/BsCCollider.h"
+#include "Components/BsCollider.h"
 #include "characterkinematic/PxControllerManager.h"
 
 using namespace physx;

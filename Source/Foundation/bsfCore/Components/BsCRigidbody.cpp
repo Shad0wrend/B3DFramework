@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCRigidbody.h"
 #include "Scene/BsSceneObject.h"
-#include "Components/BsCCollider.h"
+#include "Components/BsCollider.h"
 #include "Components/BsCJoint.h"
 #include "Private/RTTI/BsCRigidbodyRTTI.h"
 #include "Physics/BsPhysics.h"
@@ -299,7 +299,7 @@ void CRigidbody::UpdateColliders()
 				if(!entry->IsValidParent(B3DStaticGameObjectCast<CRigidbody>(mThisHandle)))
 					continue;
 
-				entry->SetDynamicRigidbody(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));
+				entry->SetRigidbody(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));
 				mChildren.push_back(entry);
 			}
 		}
@@ -323,7 +323,7 @@ void CRigidbody::ClearColliders()
 	mChildren.clear();
 
 	for(auto& collider : children)
-		collider->SetDynamicRigidbody(HRigidbody());
+		collider->SetRigidbody(HRigidbody());
 }
 
 void CRigidbody::AddCollider(const HCollider& collider)
