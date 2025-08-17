@@ -8,8 +8,6 @@
 #include "Physics/BsPhysics.h"
 #include "Scene/BsSceneInstance.h"
 
-using namespace std::placeholders;
-
 using namespace b3d;
 
 CRigidbody::CRigidbody(const HSceneObject& parent)
@@ -24,33 +22,24 @@ CRigidbody::CRigidbody()
 	: CRigidbody(nullptr)
 { }
 
-
 void CRigidbody::Move(const Vector3& position)
 {
-	if(mInternal != nullptr)
-		mInternal->Move(position);
-
-	mNotifyFlags = (TransformChangedFlags)0;
-	SO()->SetWorldPosition(position);
-	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
+	if(!GetIsKinematic())
+	{
+		mNotifyFlags = (TransformChangedFlags)0;
+		SO()->SetWorldPosition(position);
+		mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
+	}
 }
 
 void CRigidbody::Rotate(const Quaternion& rotation)
 {
-	if(mInternal != nullptr)
-		mInternal->Rotate(rotation);
-
-	mNotifyFlags = (TransformChangedFlags)0;
-	SO()->SetWorldRotation(rotation);
-	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
-}
-
-void CRigidbody::SetMass(float mass)
-{
-	mMass = mass;
-
-	if(mInternal != nullptr)
-		mInternal->SetMass(mass);
+	if(!GetIsKinematic())
+	{
+		mNotifyFlags = (TransformChangedFlags)0;
+		SO()->SetWorldRotation(rotation);
+		mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
+	}
 }
 
 void CRigidbody::SetIsKinematic(bool kinematic)
@@ -60,165 +49,22 @@ void CRigidbody::SetIsKinematic(bool kinematic)
 
 	mIsKinematic = kinematic;
 
-	if(mInternal != nullptr)
-	{
-		mInternal->SetIsKinematic(kinematic);
-
-		ClearColliders();
-		UpdateColliders();
-	}
-}
-
-bool CRigidbody::IsSleeping() const
-{
-	if(mInternal != nullptr)
-		return mInternal->IsSleeping();
-
-	return true;
-}
-
-void CRigidbody::Sleep()
-{
-	if(mInternal != nullptr)
-		return mInternal->Sleep();
-}
-
-void CRigidbody::WakeUp()
-{
-	if(mInternal != nullptr)
-		return mInternal->WakeUp();
-}
-
-void CRigidbody::SetSleepThreshold(float threshold)
-{
-	mSleepThreshold = threshold;
-
-	if(mInternal != nullptr)
-		mInternal->SetSleepThreshold(threshold);
-}
-
-void CRigidbody::SetUseGravity(bool gravity)
-{
-	mUseGravity = gravity;
-
-	if(mInternal != nullptr)
-		mInternal->SetUseGravity(gravity);
-}
-
-void CRigidbody::SetVelocity(const Vector3& velocity)
-{
-	if(mInternal != nullptr)
-		mInternal->SetVelocity(velocity);
-}
-
-Vector3 CRigidbody::GetVelocity() const
-{
-	if(mInternal != nullptr)
-		return mInternal->GetVelocity();
-
-	return Vector3::kZero;
-}
-
-void CRigidbody::SetAngularVelocity(const Vector3& velocity)
-{
-	if(mInternal != nullptr)
-		mInternal->SetAngularVelocity(velocity);
-}
-
-Vector3 CRigidbody::GetAngularVelocity() const
-{
-	if(mInternal != nullptr)
-		return mInternal->GetAngularVelocity();
-
-	return Vector3::kZero;
-}
-
-void CRigidbody::SetDrag(float drag)
-{
-	mLinearDrag = drag;
-
-	if(mInternal != nullptr)
-		mInternal->SetDrag(drag);
-}
-
-void CRigidbody::SetAngularDrag(float drag)
-{
-	mAngularDrag = drag;
-
-	if(mInternal != nullptr)
-		mInternal->SetAngularDrag(drag);
-}
-
-void CRigidbody::SetInertiaTensor(const Vector3& tensor)
-{
-	mInertiaTensor = tensor;
-
-	if(mInternal != nullptr)
-		mInternal->SetInertiaTensor(tensor);
-}
-
-Vector3 CRigidbody::GetInertiaTensor() const
-{
-	if(mInternal != nullptr)
-		return mInternal->GetInertiaTensor();
-
-	return Vector3::kZero;
-}
-
-void CRigidbody::SetMaxAngularVelocity(float maxVelocity)
-{
-	mMaxAngularVelocity = maxVelocity;
-
-	if(mInternal != nullptr)
-		mInternal->SetMaxAngularVelocity(maxVelocity);
+	ClearColliders();
+	UpdateColliders();
 }
 
 void CRigidbody::SetCenterOfMassPosition(const Vector3& position)
 {
-	mCMassPosition = position;
+	mCenterOfMassPosition = position;
 
-	if(mInternal != nullptr)
-		mInternal->SetCenterOfMass(position, mCMassRotation);
+	SetCenterOfMass(position, mCenterOfMassRotation);
 }
 
 void CRigidbody::SetCenterOfMassRotation(const Quaternion& rotation)
 {
-	mCMassRotation = rotation;
+	mCenterOfMassRotation = rotation;
 
-	if(mInternal != nullptr)
-		mInternal->SetCenterOfMass(mCMassPosition, rotation);
-}
-
-Vector3 CRigidbody::GetCenterOfMassPosition() const
-{
-	if(mInternal != nullptr)
-		return mInternal->GetCenterOfMassPosition();
-
-	return Vector3::kZero;
-}
-
-Quaternion CRigidbody::GetCenterOfMassRotation() const
-{
-	if(mInternal != nullptr)
-		return mInternal->GetCenterOfMassRotation();
-
-	return Quaternion::kIdentity;
-}
-
-void CRigidbody::SetPositionSolverCount(u32 count)
-{
-	mPositionSolverCount = count;
-
-	if(mInternal != nullptr)
-		mInternal->SetPositionSolverCount(count);
-}
-
-void CRigidbody::SetVelocitySolverCount(u32 count)
-{
-	mVelocitySolverCount = count;
-
-	if(mInternal != nullptr)
-		mInternal->SetVelocitySolverCount(count);
+	SetCenterOfMass(mCenterOfMassPosition, rotation);
 }
 
 void CRigidbody::SetCollisionReportMode(CollisionReportMode mode)
@@ -228,7 +74,7 @@ void CRigidbody::SetCollisionReportMode(CollisionReportMode mode)
 
 	mCollisionReportMode = mode;
 
-	for(auto& entry : mChildren)
+	for(auto& entry : mChildColliders)
 		entry->UpdateCollisionReportMode();
 }
 
@@ -236,43 +82,7 @@ void CRigidbody::SetFlags(RigidbodyFlag flags)
 {
 	mFlags = flags;
 
-	if(mInternal != nullptr)
-	{
-		mInternal->SetFlags(flags);
-		mInternal->UpdateMassDistribution();
-	}
-}
-
-void CRigidbody::AddForce(const Vector3& force, ForceMode mode)
-{
-	if(mInternal != nullptr)
-		mInternal->AddForce(force, mode);
-}
-
-void CRigidbody::AddTorque(const Vector3& torque, ForceMode mode)
-{
-	if(mInternal != nullptr)
-		mInternal->AddTorque(torque, mode);
-}
-
-void CRigidbody::AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode)
-{
-	if(mInternal != nullptr)
-		mInternal->AddForceAtPoint(force, position, mode);
-}
-
-Vector3 CRigidbody::GetVelocityAtPoint(const Vector3& point) const
-{
-	if(mInternal != nullptr)
-		return mInternal->GetVelocityAtPoint(point);
-
-	return Vector3::kZero;
-}
-
-void CRigidbody::UpdateMassDistribution()
-{
-	if(mInternal != nullptr)
-		return mInternal->UpdateMassDistribution();
+	UpdateMassDistribution();
 }
 
 void CRigidbody::UpdateColliders()
@@ -298,7 +108,7 @@ void CRigidbody::UpdateColliders()
 					continue;
 
 				entry->SetRigidbody(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));
-				mChildren.push_back(entry);
+				mChildColliders.push_back(entry);
 			}
 		}
 
@@ -317,8 +127,8 @@ void CRigidbody::UpdateColliders()
 
 void CRigidbody::ClearColliders()
 {
-	Vector<HCollider> children = std::move(mChildren);
-	mChildren.clear();
+	Vector<HCollider> children = std::move(mChildColliders);
+	mChildColliders.clear();
 
 	for(auto& collider : children)
 		collider->SetRigidbody(HRigidbody());
@@ -326,15 +136,15 @@ void CRigidbody::ClearColliders()
 
 void CRigidbody::AddCollider(const HCollider& collider)
 {
-	mChildren.push_back(collider);
+	mChildColliders.push_back(collider);
 }
 
 void CRigidbody::RemoveCollider(const HCollider& collider)
 {
-	auto iterFind = std::find(mChildren.begin(), mChildren.end(), collider);
+	auto iterFind = std::find(mChildColliders.begin(), mChildColliders.end(), collider);
 
-	if(iterFind != mChildren.end())
-		mChildren.erase(iterFind);
+	if(iterFind != mChildColliders.end())
+		mChildColliders.erase(iterFind);
 }
 
 void CRigidbody::CheckForNestedRigibody()
@@ -387,46 +197,47 @@ void CRigidbody::DestroyInternal()
 	}
 }
 
-void CRigidbody::TriggerOnCollisionBegin(const CollisionDataRaw& data)
-{
-	CollisionData hit;
-	ProcessCollisionData(data, hit);
-
-	OnCollisionBegin(hit);
-}
-
-void CRigidbody::TriggerOnCollisionStay(const CollisionDataRaw& data)
-{
-	CollisionData hit;
-	ProcessCollisionData(data, hit);
-
-	OnCollisionStay(hit);
-}
-
-void CRigidbody::TriggerOnCollisionEnd(const CollisionDataRaw& data)
-{
-	CollisionData hit;
-	ProcessCollisionData(data, hit);
-
-	OnCollisionEnd(hit);
-}
-
-void CRigidbody::OnBeginPlay()
-{
-}
-
 void CRigidbody::OnDestroyed()
 {
+	// TODO:
+	// - Clear colliders (this should also detach shapes)
+	// - Unregister low-level rigidbody from scene
+	// - Destroy low-level rigidbody
+
+	// TODO - Ideally, we should not clear colliders as long as rigidbody is relevant to the collider. This way we can avoid this potentially expensive step when
+	// starting/stopping scene (but will this even matter in a standalone build?)
+
 	DestroyInternal();
 }
 
 void CRigidbody::OnDisabled()
 {
+	// TODO:
+	// - Clear colliders (this should also detach shapes)
+	// - Unregister low-level rigidbody from scene
+
 	DestroyInternal();
+}
+
+void CRigidbody::OnCreated()
+{
+	// TODO:
+	// - Create low-level rigidbody
+	// - Apply all deserialized properties to low-level rigidbody (e.g. mLinearDrag, etc.)
+	// - Find child colliders (this should attach shapes)
+	// - Register low-level rigidbody in the scene
+	// - Set current transform from scene object
+	// - Update mass distribution
+	
 }
 
 void CRigidbody::OnEnabled()
 {
+	// TODO:
+	// - Find child colliders (this should attach shapes)
+	// - Register low-level rigidbody in the scene
+	// - Set current transform from scene object
+
 	mInternal = Rigidbody::Create(SO());
 	mInternal->SetOwnerInternal(PhysicsOwnerType::Component, this);
 
@@ -456,7 +267,7 @@ void CRigidbody::OnEnabled()
 
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) == 0)
 	{
-		mInternal->SetCenterOfMass(mCMassPosition, mCMassRotation);
+		mInternal->SetCenterOfMass(mCenterOfMassPosition, mCenterOfMassRotation);
 		mInternal->SetInertiaTensor(mInertiaTensor);
 		mInternal->SetMass(mMass);
 	}
@@ -471,16 +282,13 @@ void CRigidbody::OnEnabled()
 
 void CRigidbody::OnTransformChanged(TransformChangedFlags flags)
 {
-	if(!GetEnabled())
-		return;
-
 	if((flags & TCF_Parent) != 0)
 	{
 		ClearColliders();
 		UpdateColliders();
 
 		if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
-			mInternal->UpdateMassDistribution();
+			UpdateMassDistribution();
 
 #if B3D_DEBUG
 		CheckForNestedRigibody();
@@ -493,8 +301,8 @@ void CRigidbody::OnTransformChanged(TransformChangedFlags flags)
 	if(physicsScene->IsUpdateInProgress())
 		return;
 
-	const Transform& tfrm = SO()->GetTransform();
-	mInternal->SetTransform(tfrm.GetPosition(), tfrm.GetRotation());
+	const Transform& transform = SO()->GetTransform();
+	SetTransform(transform.GetPosition(), transform.GetRotation());
 
 	if(mParentJoint != nullptr)
 		mParentJoint->NotifyRigidbodyMoved(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));

@@ -64,25 +64,25 @@ namespace b3d
 		 * will collide with other objects along the way.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(Move))
-		void Move(const Vector3& position);
+		virtual void Move(const Vector3& position);
 
 		/**
 		 * Rotates the rigidbody. This method will ensure physically correct rotation, meaning the body will collide with
 		 * other objects along the way.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(Rotate))
-		void Rotate(const Quaternion& rotation);
+		virtual void Rotate(const Quaternion& rotation);
 
 		/**
 		 * Determines the mass of the object and all of its collider shapes. Only relevant if RigidbodyFlag::AutoMass or
 		 * RigidbodyFlag::AutoTensors is turned off. Value of zero means the object is immovable (but can be rotated).
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(Mass), Property(Setter))
-		void SetMass(float mass);
+		virtual void SetMass(float mass) { mMass = mass; }
 
 		/** @copydoc GetMass */
 		B3D_SCRIPT_EXPORT(ExportName(Mass), Property(Getter))
-		float GetMass() const { return mMass; };
+		float GetMass() const { return mMass; }
 
 		/**
 		 * Determines if the body is kinematic. Kinematic body will not move in response to external forces (for example
@@ -90,7 +90,7 @@ namespace b3d
 		 * still move the object and have other dynamic objects respond correctly (meaning it will push other objects).
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(IsKinematic), Property(Setter))
-		void SetIsKinematic(bool kinematic);
+		virtual void SetIsKinematic(bool kinematic);
 
 		/** @copydoc GetIsKinematic */
 		B3D_SCRIPT_EXPORT(ExportName(IsKinematic), Property(Getter))
@@ -101,11 +101,11 @@ namespace b3d
 		 * on the physics system.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(IsSleeping), Property(Getter))
-		bool IsSleeping() const;
+		virtual bool IsSleeping() const = 0;
 
 		/** Forces the object to sleep. Useful if you know the object will not move in any significant way for a while. */
 		B3D_SCRIPT_EXPORT()
-		void Sleep();
+		virtual void Sleep() = 0;
 
 		/**
 		 * Wakes an object up. Useful if you modified properties of this object, and potentially surrounding objects which
@@ -113,11 +113,11 @@ namespace b3d
 		 * object up for majority of such cases).
 		 */
 		B3D_SCRIPT_EXPORT()
-		void WakeUp();
+		virtual void WakeUp() = 0;
 
 		/** Determines a threshold of force and torque under which the object will be considered to be put to sleep. */
 		B3D_SCRIPT_EXPORT(ExportName(SleepThreshold), Property(Setter), UI(Hide))
-		void SetSleepThreshold(float threshold);
+		virtual void SetSleepThreshold(float threshold) { mSleepThreshold = threshold; }
 
 		/** @copydoc GetSleepThreshold */
 		B3D_SCRIPT_EXPORT(ExportName(SleepThreshold), Property(Getter))
@@ -125,7 +125,7 @@ namespace b3d
 
 		/** Determines whether or not the rigidbody will have the global gravity force applied to it. */
 		B3D_SCRIPT_EXPORT(ExportName(UseGravity), Property(Setter))
-		void SetUseGravity(bool gravity);
+		virtual void SetUseGravity(bool gravity) { mUseGravity = gravity; }
 
 		/** @copydoc GetUseGravity */
 		B3D_SCRIPT_EXPORT(ExportName(UseGravity), Property(Getter))
@@ -133,23 +133,23 @@ namespace b3d
 
 		/** Determines the linear velocity of the body. */
 		B3D_SCRIPT_EXPORT(ExportName(Velocity), Property(Setter), UI(Hide))
-		void SetVelocity(const Vector3& velocity);
+		virtual void SetVelocity(const Vector3& velocity) = 0;
 
 		/** @copydoc GetVelocity */
 		B3D_SCRIPT_EXPORT(ExportName(Velocity), Property(Getter))
-		Vector3 GetVelocity() const;
+		virtual Vector3 GetVelocity() const = 0;
 
 		/** Determines the angular velocity of the body. */
 		B3D_SCRIPT_EXPORT(ExportName(AngularVelocity), Property(Setter), UI(Hide))
-		void SetAngularVelocity(const Vector3& velocity);
+		virtual void SetAngularVelocity(const Vector3& velocity) = 0;
 
 		/** @copydoc GetAngularVelocity */
 		B3D_SCRIPT_EXPORT(ExportName(AngularVelocity), Property(Getter))
-		Vector3 GetAngularVelocity() const;
+		virtual Vector3 GetAngularVelocity() const = 0;
 
 		/** Determines the linear drag of the body. Higher drag values means the object resists linear movement more. */
 		B3D_SCRIPT_EXPORT(ExportName(Drag), Property(Setter))
-		void SetDrag(float drag);
+		virtual void SetDrag(float drag) { mLinearDrag = drag; }
 
 		/** @copydoc GetDrag */
 		B3D_SCRIPT_EXPORT(ExportName(Drag), Property(Getter))
@@ -157,7 +157,7 @@ namespace b3d
 
 		/** Determines the angular drag of the body. Higher drag values means the object resists angular movement more. */
 		B3D_SCRIPT_EXPORT(ExportName(AngularDrag), Property(Setter))
-		void SetAngularDrag(float drag);
+		virtual void SetAngularDrag(float drag) { mAngularDrag = drag; }
 
 		/** @copydoc GetAngularDrag */
 		B3D_SCRIPT_EXPORT(ExportName(AngularDrag), Property(Getter))
@@ -169,15 +169,15 @@ namespace b3d
 		 * Only relevant if RigidbodyFlag::AutoTensors is turned off.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(InertiaTensor), Property(Setter), UI(Hide))
-		void SetInertiaTensor(const Vector3& tensor);
+		virtual void SetInertiaTensor(const Vector3& tensor) { mInertiaTensor = tensor; }
 
 		/** @copydoc GetInertiaTensor */
 		B3D_SCRIPT_EXPORT(ExportName(InertiaTensor), Property(Getter))
-		Vector3 GetInertiaTensor() const;
+		virtual Vector3 GetInertiaTensor() const = 0;
 
 		/** Determines the maximum angular velocity of the rigidbody. Velocity will be clamped to this value. */
 		B3D_SCRIPT_EXPORT(ExportName(MaxAngularVelocity), Property(Setter), UI(Hide))
-		void SetMaxAngularVelocity(float maxVelocity);
+		virtual void SetMaxAngularVelocity(float maxVelocity) { mMaxAngularVelocity = maxVelocity; }
 
 		/** @copydoc GetMaxAngularVelocity */
 		B3D_SCRIPT_EXPORT(ExportName(MaxAngularVelocity), Property(Getter))
@@ -189,7 +189,7 @@ namespace b3d
 
 		/** @copydoc SetCenterOfMassPosition() */
 		B3D_SCRIPT_EXPORT(ExportName(CenterOfMassPosition), Property(Getter))
-		Vector3 GetCenterOfMassPosition() const;
+		virtual Vector3 GetCenterOfMassPosition() const = 0;
 
 		/** Determines the rigidbody's center of mass rotation. Only relevant if RigibodyFlag::AutoTensors is turned off. */
 		B3D_SCRIPT_EXPORT(ExportName(CenterOfMassRotation), Property(Setter), UI(Hide))
@@ -197,14 +197,14 @@ namespace b3d
 
 		/** @copydoc SetCenterOfMassRotation() */
 		B3D_SCRIPT_EXPORT(ExportName(CenterOfMassRotation), Property(Getter))
-		Quaternion GetCenterOfMassRotation() const;
+		virtual Quaternion GetCenterOfMassRotation() const = 0;
 
 		/**
 		 * Determines the number of iterations to use when solving for position. Higher values can improve precision and
 		 * numerical stability of the simulation.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(PositionSolverCount), Property(Setter), UI(Hide))
-		void SetPositionSolverCount(u32 count);
+		virtual void SetPositionSolverCount(u32 count) { mPositionSolverCount = count; }
 
 		/** @copydoc GetPositionSolverCount */
 		B3D_SCRIPT_EXPORT(ExportName(PositionSolverCount), Property(Getter))
@@ -215,7 +215,7 @@ namespace b3d
 		 * numerical stability of the simulation.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(VelocitySolverCount), Property(Setter), UI(Hide))
-		void SetVelocitySolverCount(u32 count);
+		virtual void SetVelocitySolverCount(u32 count) { mVelocitySolverCount = count; }
 
 		/** @copydoc GetVelocitySolverCount */
 		B3D_SCRIPT_EXPORT(ExportName(VelocitySolverCount), Property(Getter))
@@ -231,7 +231,7 @@ namespace b3d
 
 		/** Flags that control the behaviour of the rigidbody. */
 		B3D_SCRIPT_EXPORT(ExportName(Flags), Property(Setter), UI(Hide))
-		void SetFlags(RigidbodyFlag flags);
+		virtual void SetFlags(RigidbodyFlag flags);
 
 		/** @copydoc GetFlags */
 		B3D_SCRIPT_EXPORT(ExportName(Flags), Property(Getter))
@@ -244,7 +244,7 @@ namespace b3d
 		 * @param	mode			Determines what is the type of @p force.
 		 */
 		B3D_SCRIPT_EXPORT()
-		void AddForce(const Vector3& force, ForceMode mode = ForceMode::Force);
+		virtual void AddForce(const Vector3& force, ForceMode mode = ForceMode::Force) = 0;
 
 		/**
 		 * Applies a torque to the rigidbody. This will produce angular momentum.
@@ -253,7 +253,7 @@ namespace b3d
 		 * @param	mode			Determines what is the type of @p torque.
 		 */
 		B3D_SCRIPT_EXPORT()
-		void AddTorque(const Vector3& torque, ForceMode mode = ForceMode::Force);
+		virtual void AddTorque(const Vector3& torque, ForceMode mode = ForceMode::Force) = 0;
 
 		/**
 		 * Applies a force to a specific point on the rigidbody. This will in most cases produce both linear and angular
@@ -264,7 +264,7 @@ namespace b3d
 		 * @param	mode			Determines what is the type of @p force.
 		 */
 		B3D_SCRIPT_EXPORT()
-		void AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode = PointForceMode::Force);
+		virtual void AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode = PointForceMode::Force) = 0;
 
 		/**
 		 * Returns the total (linear + angular) velocity at a specific point.
@@ -273,7 +273,7 @@ namespace b3d
 		 * @return				Total velocity of the point.
 		 */
 		B3D_SCRIPT_EXPORT()
-		Vector3 GetVelocityAtPoint(const Vector3& point) const;
+		virtual Vector3 GetVelocityAtPoint(const Vector3& point) const = 0;
 
 		/** Triggered when one of the colliders owned by the rigidbody starts colliding with another object. */
 		B3D_SCRIPT_EXPORT()
@@ -301,7 +301,7 @@ namespace b3d
 		 * If automatic tensor calculation is turned off then this will do nothing. If automatic mass calculation is turned
 		 * off then this will use the mass set directly on the body using setMass().
 		 */
-		void UpdateMassDistribution();
+		virtual void UpdateMassDistribution() = 0;
 
 		/** @} */
 	protected:
@@ -334,21 +334,25 @@ namespace b3d
 		/** Destroys the internal rigidbody representation. */
 		void DestroyInternal();
 
-		/** Triggered when the internal rigidbody begins touching another object. */
-		void TriggerOnCollisionBegin(const CollisionDataRaw& data);
-
-		/** Triggered when the internal rigidbody continues touching another object. */
-		void TriggerOnCollisionStay(const CollisionDataRaw& data);
-
-		/** Triggered when the internal rigidbody ends touching another object. */
-		void TriggerOnCollisionEnd(const CollisionDataRaw& data);
-
 		/**
-		 * Moves and rotates the rigidbody to a specific position. Unlike Move() and Rotate() this will not transform the
-		 * body in a physically correct manner, but will instead "teleport" it immediately to the specified position and
-		 * rotation.
+		 * Sets the transform of the low-level physics rigidbody object. Unlike Move() and Rotate() this will not transform the
+		 * body in a physically correct manner, but will instead "teleport" it immediately to the specified position and rotation.
 		 */
 		virtual void SetTransform(const Vector3& position, const Quaternion& rotation) = 0;
+
+		/**
+		 * Returns the transform that is currently assigned to the low-level physics rigidbody object. This may be the transform
+		 * you explicitly set via SetTransform(), or a value that has been calculated by physics simulation for kinematic rigidbodies.
+		 */
+		virtual void GetTransform(Vector3& outPosition, Quaternion& outRotation) = 0;
+
+		/**
+		 * Sets the rigidbody's center of mass transform. Only relevant if RigibodyFlag::AutoTensors is turned off.
+		 *
+		 * @param	position		Position of the center of mass.
+		 * @param	rotation		Rotation that determines orientation of the inertia tensor (rotation of the center of mass frame).
+		 */
+		virtual void SetCenterOfMass(const Vector3& position, const Quaternion& rotation) = 0;
 
 		/** Assigns a new child shape to the collider. */
 		virtual void AttachShape(const SPtr<ColliderShape>& shape) = 0;
@@ -362,21 +366,21 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		void OnBeginPlay() override;
+		void OnCreated() override;
 		void OnDestroyed() override;
 		void OnDisabled() override;
 		void OnEnabled() override;
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
-		Vector<HCollider> mChildren;
+		Vector<HCollider> mChildColliders;
 		HJoint mParentJoint;
 
 		u32 mPositionSolverCount = 4;
 		u32 mVelocitySolverCount = 1;
 		RigidbodyFlag mFlags = (RigidbodyFlag)((u32)RigidbodyFlag::AutoTensors | (u32)RigidbodyFlag::AutoMass);
 		CollisionReportMode mCollisionReportMode = CollisionReportMode::None;
-		Vector3 mCMassPosition = Vector3::kZero;
-		Quaternion mCMassRotation = Quaternion::kIdentity;
+		Vector3 mCenterOfMassPosition = Vector3::kZero;
+		Quaternion mCenterOfMassRotation = Quaternion::kIdentity;
 		Vector3 mInertiaTensor = Vector3::kZero;
 		float mMass = 0.0f;
 		float mMaxAngularVelocity = std::numeric_limits<float>::max();

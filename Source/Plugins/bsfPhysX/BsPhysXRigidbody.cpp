@@ -43,22 +43,22 @@ PxForceMode::Enum ToPxForceMode(PointForceMode mode)
 	return PxForceMode::eFORCE;
 }
 
-PhysXRigidbody::PhysXRigidbody(PxPhysics* physx, PxScene* scene, const HSceneObject& linkedSO)
-	: Rigidbody(linkedSO)
+PhysXRigidbody::PhysXRigidbody(PxScene* scene)
 {
 	const Transform& tfrm = linkedSO->GetTransform();
 	PxTransform pxTfrm = ToPxTransform(tfrm.GetPosition(), tfrm.GetRotation());
 
-	mInternal = physx->createRigidDynamic(pxTfrm);
-	mInternal->userData = this;
+	//mPxRigidStatic = GetPhysX().GetPhysX()->createRigidStatic(PxTransform(PxIdentity));
+	mPxRigidDynamic = GetPhysX().GetPhysX()->createRigidDynamic(pxTfrm);
+	mPxRigidDynamic->userData = this;
 
-	scene->addActor(*mInternal);
+	scene->addActor(*mPxRigidDynamic);
 }
 
 PhysXRigidbody::~PhysXRigidbody()
 {
-	mInternal->userData = nullptr;
-	mInternal->release();
+	mPxRigidDynamic->userData = nullptr;
+	mPxRigidDynamic->release();
 }
 
 void PhysXRigidbody::Move(const Vector3& position)
@@ -66,17 +66,20 @@ void PhysXRigidbody::Move(const Vector3& position)
 	if(GetIsKinematic())
 	{
 		PxTransform target;
-		if(!mInternal->getKinematicTarget(target))
+		if(!mPxRigidDynamic->getKinematicTarget(target))
 			target = PxTransform(PxIdentity);
 
 		target.p = ToPxVector(position);
 
-		mInternal->setKinematicTarget(target);
+		mPxRigidDynamic->setKinematicTarget(target);
 	}
 	else
 	{
-		SetTransform(position, GetRotation());
+		const PxTransform& pxTransform = mPxRigidDynamic->getGlobalPose();
+		SetTransform(position, FromPxQuaternion(pxTransform.q));
 	}
+
+	CRigidbody::Move(position);
 }
 
 void PhysXRigidbody::Rotate(const Quaternion& rotation)
@@ -84,133 +87,120 @@ void PhysXRigidbody::Rotate(const Quaternion& rotation)
 	if(GetIsKinematic())
 	{
 		PxTransform target;
-		if(!mInternal->getKinematicTarget(target))
+		if(!mPxRigidDynamic->getKinematicTarget(target))
 			target = PxTransform(PxIdentity);
 
 		target.q = ToPxQuaternion(rotation);
 
-		mInternal->setKinematicTarget(target);
+		mPxRigidDynamic->setKinematicTarget(target);
 	}
 	else
 	{
-		SetTransform(GetPosition(), rotation);
+		const PxTransform& pxTransform = mPxRigidDynamic->getGlobalPose();
+		SetTransform(FromPxVector(pxTransform.p), rotation);
 	}
+
+	CRigidbody::Rotate(rotation);
 }
 
-Vector3 PhysXRigidbody::GetPosition() const
+void PhysXRigidbody::SetTransform(const Vector3& position, const Quaternion& rotation)
 {
-	return FromPxVector(mInternal->getGlobalPose().p);
+	mPxRigidDynamic->setGlobalPose(ToPxTransform(position, rotation));
 }
 
-Quaternion PhysXRigidbody::GetRotation() const
+void PhysXRigidbody::GetTransform(Vector3& outPosition, Quaternion& outRotation)
 {
-	return FromPxQuaternion(mInternal->getGlobalPose().q);
-}
+	const PxTransform& pxTransform = mPxRigidDynamic->getGlobalPose();
 
-void PhysXRigidbody::SetTransform(const Vector3& pos, const Quaternion& rot)
-{
-	mInternal->setGlobalPose(ToPxTransform(pos, rot));
+	outPosition = FromPxVector(pxTransform.p);
+	outRotation = FromPxQuaternion(pxTransform.q);
 }
 
 void PhysXRigidbody::SetMass(float mass)
 {
+	CRigidbody::SetMass(mass);
+
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoMass) != 0)
 	{
 		B3D_LOG(Warning, Physics, "Attempting to set Rigidbody mass, but it has automatic mass calculation turned on.");
 		return;
 	}
 
-	mInternal->setMass(mass);
-}
-
-float PhysXRigidbody::GetMass() const
-{
-	return mInternal->getMass();
+	mPxRigidDynamic->setMass(mass);
 }
 
 void PhysXRigidbody::SetIsKinematic(bool kinematic)
 {
-	mInternal->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, kinematic);
-}
+	CRigidbody::SetIsKinematic(kinematic);
 
-bool PhysXRigidbody::GetIsKinematic() const
-{
-	return ((u32)mInternal->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC) != 0;
+	const bool oldIsKinematic = mPxRigidDynamic->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC;
+	if(oldIsKinematic == kinematic)
+		return;
+
+	mPxRigidDynamic->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, kinematic);
 }
 
 bool PhysXRigidbody::IsSleeping() const
 {
-	return mInternal->isSleeping();
+	return mPxRigidDynamic->isSleeping();
 }
 
 void PhysXRigidbody::Sleep()
 {
-	mInternal->putToSleep();
+	mPxRigidDynamic->putToSleep();
 }
 
 void PhysXRigidbody::WakeUp()
 {
-	mInternal->wakeUp();
+	mPxRigidDynamic->wakeUp();
 }
 
 void PhysXRigidbody::SetSleepThreshold(float threshold)
 {
-	mInternal->setSleepThreshold(threshold);
-}
+	CRigidbody::SetSleepThreshold(threshold);
 
-float PhysXRigidbody::GetSleepThreshold() const
-{
-	return mInternal->getSleepThreshold();
+	mPxRigidDynamic->setSleepThreshold(threshold);
 }
 
 void PhysXRigidbody::SetUseGravity(bool gravity)
 {
-	mInternal->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !gravity);
-}
+	CRigidbody::SetUseGravity(gravity);
 
-bool PhysXRigidbody::GetUseGravity() const
-{
-	return ((u32)mInternal->getActorFlags() & PxActorFlag::eDISABLE_GRAVITY) == 0;
+	mPxRigidDynamic->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !gravity);
 }
 
 void PhysXRigidbody::SetVelocity(const Vector3& velocity)
 {
-	mInternal->setLinearVelocity(ToPxVector(velocity));
+	mPxRigidDynamic->setLinearVelocity(ToPxVector(velocity));
 }
 
 Vector3 PhysXRigidbody::GetVelocity() const
 {
-	return FromPxVector(mInternal->getLinearVelocity());
+	return FromPxVector(mPxRigidDynamic->getLinearVelocity());
 }
 
 void PhysXRigidbody::SetAngularVelocity(const Vector3& velocity)
 {
-	mInternal->setAngularVelocity(ToPxVector(velocity));
+	mPxRigidDynamic->setAngularVelocity(ToPxVector(velocity));
 }
 
 Vector3 PhysXRigidbody::GetAngularVelocity() const
 {
-	return FromPxVector(mInternal->getAngularVelocity());
+	return FromPxVector(mPxRigidDynamic->getAngularVelocity());
 }
 
 void PhysXRigidbody::SetDrag(float drag)
 {
-	mInternal->setLinearDamping(drag);
-}
+	CRigidbody::SetDrag(drag);
 
-float PhysXRigidbody::GetDrag() const
-{
-	return mInternal->getLinearDamping();
+	mPxRigidDynamic->setLinearDamping(drag);
 }
 
 void PhysXRigidbody::SetAngularDrag(float drag)
 {
-	mInternal->setAngularDamping(drag);
-}
+	CRigidbody::SetAngularDrag(drag);
 
-float PhysXRigidbody::GetAngularDrag() const
-{
-	return mInternal->getAngularDamping();
+	mPxRigidDynamic->setAngularDamping(drag);
 }
 
 void PhysXRigidbody::SetInertiaTensor(const Vector3& tensor)
@@ -221,22 +211,21 @@ void PhysXRigidbody::SetInertiaTensor(const Vector3& tensor)
 		return;
 	}
 
-	mInternal->setMassSpaceInertiaTensor(ToPxVector(tensor));
+	CRigidbody::SetInertiaTensor(tensor);
+
+	mPxRigidDynamic->setMassSpaceInertiaTensor(ToPxVector(tensor));
 }
 
 Vector3 PhysXRigidbody::GetInertiaTensor() const
 {
-	return FromPxVector(mInternal->getMassSpaceInertiaTensor());
+	return FromPxVector(mPxRigidDynamic->getMassSpaceInertiaTensor());
 }
 
 void PhysXRigidbody::SetMaxAngularVelocity(float maxVelocity)
 {
-	mInternal->setMaxAngularVelocity(maxVelocity);
-}
+	CRigidbody::SetMaxAngularVelocity(maxVelocity);
 
-float PhysXRigidbody::GetMaxAngularVelocity() const
-{
-	return mInternal->getMaxAngularVelocity();
+	mPxRigidDynamic->setMaxAngularVelocity(maxVelocity);
 }
 
 void PhysXRigidbody::SetCenterOfMass(const Vector3& position, const Quaternion& rotation)
@@ -247,63 +236,49 @@ void PhysXRigidbody::SetCenterOfMass(const Vector3& position, const Quaternion& 
 		return;
 	}
 
-	mInternal->setCMassLocalPose(ToPxTransform(position, rotation));
+	mPxRigidDynamic->setCMassLocalPose(ToPxTransform(position, rotation));
 }
 
 Vector3 PhysXRigidbody::GetCenterOfMassPosition() const
 {
-	PxTransform cMassTfrm = mInternal->getCMassLocalPose();
-	return FromPxVector(cMassTfrm.p);
+	const PxTransform& centerOfMassTransform = mPxRigidDynamic->getCMassLocalPose();
+	return FromPxVector(centerOfMassTransform.p);
 }
 
 Quaternion PhysXRigidbody::GetCenterOfMassRotation() const
 {
-	PxTransform cMassTfrm = mInternal->getCMassLocalPose();
-	return FromPxQuaternion(cMassTfrm.q);
+	const PxTransform& centerOfMassTransform = mPxRigidDynamic->getCMassLocalPose();
+	return FromPxQuaternion(centerOfMassTransform.q);
 }
 
 void PhysXRigidbody::SetPositionSolverCount(u32 count)
 {
-	mInternal->setSolverIterationCounts(std::max(1U, count), GetVelocitySolverCount());
-}
+	CRigidbody::SetPositionSolverCount(count);
 
-u32 PhysXRigidbody::GetPositionSolverCount() const
-{
-	u32 posCount = 1;
-	u32 velCount = 1;
-
-	mInternal->getSolverIterationCounts(posCount, velCount);
-	return posCount;
+	mPxRigidDynamic->setSolverIterationCounts(std::max(1U, count), GetVelocitySolverCount());
 }
 
 void PhysXRigidbody::SetVelocitySolverCount(u32 count)
 {
-	mInternal->setSolverIterationCounts(GetPositionSolverCount(), std::max(1U, count));
-}
+	CRigidbody::SetVelocitySolverCount(count);
 
-u32 PhysXRigidbody::GetVelocitySolverCount() const
-{
-	u32 posCount = 1;
-	u32 velCount = 1;
-
-	mInternal->getSolverIterationCounts(posCount, velCount);
-	return velCount;
+	mPxRigidDynamic->setSolverIterationCounts(GetPositionSolverCount(), std::max(1U, count));
 }
 
 void PhysXRigidbody::SetFlags(RigidbodyFlag flags)
 {
-	bool ccdEnabledOld = mInternal->getRigidBodyFlags() & PxRigidBodyFlag::eENABLE_CCD;
+	bool ccdEnabledOld = mPxRigidDynamic->getRigidBodyFlags() & PxRigidBodyFlag::eENABLE_CCD;
 	bool ccdEnabledNew = ((u32)flags & (u32)RigidbodyFlag::CCD) != 0;
 
 	if(ccdEnabledOld != ccdEnabledNew)
 	{
-		mInternal->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, ccdEnabledNew);
+		mPxRigidDynamic->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, ccdEnabledNew);
 
 		// Enable/disable CCD on shapes so the filter can handle them properly
-		u32 numShapes = mInternal->getNbShapes();
+		u32 numShapes = mPxRigidDynamic->getNbShapes();
 		StackMemory<PxShape*> shapes = B3DManagedStackAllocate<PxShape*>(numShapes);
 
-		mInternal->getShapes(shapes, sizeof(PxShape*) * numShapes);
+		mPxRigidDynamic->getShapes(shapes, sizeof(PxShape*) * numShapes);
 
 		for(u32 i = 0; i < numShapes; i++)
 		{
@@ -312,17 +287,17 @@ void PhysXRigidbody::SetFlags(RigidbodyFlag flags)
 		}
 	}
 
-	Rigidbody::SetFlags(flags);
+	CRigidbody::SetFlags(flags);
 }
 
 void PhysXRigidbody::AddForce(const Vector3& force, ForceMode mode)
 {
-	mInternal->addForce(ToPxVector(force), ToPxForceMode(mode));
+	mPxRigidDynamic->addForce(ToPxVector(force), ToPxForceMode(mode));
 }
 
 void PhysXRigidbody::AddTorque(const Vector3& force, ForceMode mode)
 {
-	mInternal->addTorque(ToPxVector(force), ToPxForceMode(mode));
+	mPxRigidDynamic->addTorque(ToPxVector(force), ToPxForceMode(mode));
 }
 
 void PhysXRigidbody::AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode)
@@ -330,26 +305,26 @@ void PhysXRigidbody::AddForceAtPoint(const Vector3& force, const Vector3& positi
 	const PxVec3& pxForce = ToPxVector(force);
 	const PxVec3& pxPos = ToPxVector(position);
 
-	const PxTransform globalPose = mInternal->getGlobalPose();
-	PxVec3 centerOfMass = globalPose.transform(mInternal->getCMassLocalPose().p);
+	const PxTransform globalPose = mPxRigidDynamic->getGlobalPose();
+	PxVec3 centerOfMass = globalPose.transform(mPxRigidDynamic->getCMassLocalPose().p);
 
 	PxForceMode::Enum pxMode = ToPxForceMode(mode);
 
 	PxVec3 torque = (pxPos - centerOfMass).cross(pxForce);
-	mInternal->addForce(pxForce, pxMode);
-	mInternal->addTorque(torque, pxMode);
+	mPxRigidDynamic->addForce(pxForce, pxMode);
+	mPxRigidDynamic->addTorque(torque, pxMode);
 }
 
 Vector3 PhysXRigidbody::GetVelocityAtPoint(const Vector3& point) const
 {
 	const PxVec3& pxPoint = ToPxVector(point);
 
-	const PxTransform globalPose = mInternal->getGlobalPose();
-	const PxVec3 centerOfMass = globalPose.transform(mInternal->getCMassLocalPose().p);
+	const PxTransform globalPose = mPxRigidDynamic->getGlobalPose();
+	const PxVec3 centerOfMass = globalPose.transform(mPxRigidDynamic->getCMassLocalPose().p);
 	const PxVec3 rpoint = pxPoint - centerOfMass;
 
-	PxVec3 velocity = mInternal->getLinearVelocity();
-	velocity += mInternal->getAngularVelocity().cross(rpoint);
+	PxVec3 velocity = mPxRigidDynamic->getLinearVelocity();
+	velocity += mPxRigidDynamic->getAngularVelocity().cross(rpoint);
 
 	return FromPxVector(velocity);
 }
@@ -361,25 +336,25 @@ void PhysXRigidbody::UpdateMassDistribution()
 
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoMass) == 0)
 	{
-		PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, mInternal->getMass());
+		PxRigidBodyExt::setMassAndUpdateInertia(*mPxRigidDynamic, mPxRigidDynamic->getMass());
 	}
 	else
 	{
-		const u32 shapeCount = mInternal->getNbShapes();
+		const u32 shapeCount = mPxRigidDynamic->getNbShapes();
 		if(shapeCount == 0)
 		{
-			PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, mInternal->getMass());
+			PxRigidBodyExt::setMassAndUpdateInertia(*mPxRigidDynamic, mPxRigidDynamic->getMass());
 			return;
 		}
 
 		StackMemory<PxShape*> shapes = B3DManagedStackAllocate<PxShape*>(shapeCount);
-		mInternal->getShapes(shapes, shapeCount);
+		mPxRigidDynamic->getShapes(shapes, shapeCount);
 
 		StackMemory<float> masses = B3DManagedStackAllocate<float>(shapeCount);
 		for(u32 shapeIndex = 0; shapeIndex < shapeCount; shapeIndex++)
 			masses[shapeIndex] = ((ColliderShape*)shapes[shapeIndex]->userData)->GetMass();
 
-		PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, masses, shapeCount);
+		PxRigidBodyExt::setMassAndUpdateInertia(*mPxRigidDynamic, masses, shapeCount);
 	}
 }
 
@@ -392,7 +367,7 @@ void PhysXRigidbody::AttachShape(const SPtr<ColliderShape>& shape)
 	shape->SetContinuousCollisionDetection((rigidbodyFlags & (u32)RigidbodyFlag::CCD) != 0);
 
 	const PhysXColliderShape& physxShape = static_cast<const PhysXColliderShape&>(*shape);
-	mInternal->attachShape(*physxShape.GetPxShape());
+	mPxRigidDynamic->attachShape(*physxShape.GetPxShape());
 }
 
 void PhysXRigidbody::DetachShape(const SPtr<ColliderShape>& shape)
@@ -403,5 +378,5 @@ void PhysXRigidbody::DetachShape(const SPtr<ColliderShape>& shape)
 	shape->SetContinuousCollisionDetection(false);
 
 	const PhysXColliderShape& physxShape = static_cast<const PhysXColliderShape&>(*shape);
-	mInternal->detachShape(*physxShape.GetPxShape());
+	mPxRigidDynamic->detachShape(*physxShape.GetPxShape());
 }
