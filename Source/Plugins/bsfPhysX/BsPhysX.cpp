@@ -538,12 +538,12 @@ SPtr<ColliderShape> PhysX::CreateColliderShape()
 	return B3DMakeShared<PhysXColliderShape>();
 }
 
-SPtr<IColliderImplementation> PhysX::CreateStaticRigidbody()
+SPtr<IColliderImplementation> PhysX::CreateColliderImplementation()
 {
 	return B3DMakeShared<PhysXCollider>();
 }
 
-void PhysX::NotifySceneDestroyedInternal(PhysXScene* scene)
+void PhysX::NotifySceneDestroyed(PhysXScene* scene)
 {
 	auto iterFind = std::find(mScenes.begin(), mScenes.end(), scene);
 	B3D_ASSERT(iterFind != mScenes.end());
@@ -635,7 +635,7 @@ PhysXScene::~PhysXScene()
 	mCharManager->release();
 	mScene->release();
 
-	GetPhysX().NotifySceneDestroyedInternal(this);
+	GetPhysX().NotifySceneDestroyed(this);
 }
 
 void PhysXScene::FixedUpdate(float step)

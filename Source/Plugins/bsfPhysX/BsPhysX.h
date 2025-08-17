@@ -32,13 +32,13 @@ namespace b3d
 		SPtr<PhysicsMesh> CreateMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type) override;
 		SPtr<PhysicsScene> CreatePhysicsScene() override;
 		SPtr<ColliderShape> CreateColliderShape() override;
-		SPtr<IColliderImplementation> CreateStaticRigidbody() override;
+		SPtr<IColliderImplementation> CreateColliderImplementation() override;
 
 		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const ColliderShape& colliderShape, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;
 		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const Collider& collider, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;
 
 		/** Notifies the system that at physics scene is about to be destroyed. */
-		void NotifySceneDestroyedInternal(PhysXScene* scene);
+		void NotifySceneDestroyed(PhysXScene* scene);
 
 		/** Returns the default PhysX material. */
 		physx::PxMaterial* GetDefaultMaterial() const { return mDefaultMaterial; }

@@ -12,13 +12,6 @@ using namespace std::placeholders;
 
 using namespace b3d;
 
-CRigidbody::CRigidbody()
-{
-	SetName("Rigidbody");
-
-	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
-}
-
 CRigidbody::CRigidbody(const HSceneObject& parent)
 	: Component(parent)
 {
@@ -26,6 +19,11 @@ CRigidbody::CRigidbody(const HSceneObject& parent)
 
 	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
 }
+
+CRigidbody::CRigidbody()
+	: CRigidbody(nullptr)
+{ }
+
 
 void CRigidbody::Move(const Vector3& position)
 {

@@ -122,7 +122,7 @@ void Collider::OnCreated()
 	{
 		const Transform& transform = SO()->GetTransform();
 
-		mImplementation = GetPhysics().CreateStaticRigidbody();
+		mImplementation = GetPhysics().CreateColliderImplementation();
 		mImplementation->SetTransform(transform.GetPosition(), transform.GetRotation());
 
 		for (const auto& shape : mShapes)
@@ -258,7 +258,7 @@ bool Collider::SetRigidbody(const HRigidbody& rigidbody)
 		const Transform& transform = SceneObject()->GetTransform();
 		const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 
-		mImplementation = GetPhysics().CreateStaticRigidbody();
+		mImplementation = GetPhysics().CreateColliderImplementation();
 		mImplementation->SetTransform(transform.GetPosition(), transform.GetRotation());
 
 		for(auto& entry : mShapes)

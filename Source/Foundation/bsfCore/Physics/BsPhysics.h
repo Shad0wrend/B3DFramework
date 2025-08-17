@@ -99,8 +99,8 @@ namespace b3d
 		/** Creates a new empty collider shape. Note you must set the shape information after creation. */
 		virtual SPtr<ColliderShape> CreateColliderShape() = 0;
 
-		/** Creates a static rigidbody with zero shapes. Make sure to assign at least one shape after construction, and register the rigidbody with a physics scene. */
-		virtual SPtr<IColliderImplementation> CreateStaticRigidbody() = 0;
+		/** Creates an object that provides low-level functionality required for a Collider. */
+		virtual SPtr<IColliderImplementation> CreateColliderImplementation() = 0;
 
 		/**
 		 * Checks does the ray hit the provided collider shape.

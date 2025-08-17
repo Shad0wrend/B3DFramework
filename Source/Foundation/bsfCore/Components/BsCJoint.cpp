@@ -46,12 +46,12 @@ void CJoint::SetBody(JointBody body, const HRigidbody& value)
 		return;
 
 	if(mBodies[(int)body] != nullptr)
-		mBodies[(int)body]->SetJointInternal(HJoint());
+		mBodies[(int)body]->SetParentJoint(HJoint());
 
 	mBodies[(int)body] = value;
 
 	if(value != nullptr)
-		mBodies[(int)body]->SetJointInternal(B3DStaticGameObjectCast<CJoint>(mThisHandle));
+		mBodies[(int)body]->SetParentJoint(B3DStaticGameObjectCast<CJoint>(mThisHandle));
 
 	// If joint already exists, destroy it if we removed all bodies, otherwise update its transform
 	if(mInternal != nullptr)
@@ -155,10 +155,10 @@ void CJoint::OnBeginPlay()
 void CJoint::OnDestroyed()
 {
 	if(mBodies[0] != nullptr)
-		mBodies[0]->SetJointInternal(HJoint());
+		mBodies[0]->SetParentJoint(HJoint());
 
 	if(mBodies[1] != nullptr)
-		mBodies[1]->SetJointInternal(HJoint());
+		mBodies[1]->SetParentJoint(HJoint());
 
 	if(mInternal != nullptr)
 		DestroyInternal();
