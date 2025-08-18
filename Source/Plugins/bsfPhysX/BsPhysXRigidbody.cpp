@@ -43,64 +43,43 @@ PxForceMode::Enum ToPxForceMode(PointForceMode mode)
 	return PxForceMode::eFORCE;
 }
 
-PhysXRigidbody::PhysXRigidbody(PxScene* scene)
+PhysXRigidbody::PhysXRigidbody()
 {
-	const Transform& tfrm = linkedSO->GetTransform();
-	PxTransform pxTfrm = ToPxTransform(tfrm.GetPosition(), tfrm.GetRotation());
+	User data should be Rigidbody component;
 
-	//mPxRigidStatic = GetPhysX().GetPhysX()->createRigidStatic(PxTransform(PxIdentity));
-	mPxRigidDynamic = GetPhysX().GetPhysX()->createRigidDynamic(pxTfrm);
+	mPxRigidDynamic = GetPhysX().GetPhysX()->createRigidDynamic(PxTransform(PxIdentity));
 	mPxRigidDynamic->userData = this;
-
-	scene->addActor(*mPxRigidDynamic);
 }
 
 PhysXRigidbody::~PhysXRigidbody()
 {
+	if(mPxScene != nullptr)
+		PhysXRigidbody::RemoveFromScene();
+
 	mPxRigidDynamic->userData = nullptr;
 	mPxRigidDynamic->release();
 }
 
 void PhysXRigidbody::Move(const Vector3& position)
 {
-	if(GetIsKinematic())
-	{
-		PxTransform target;
-		if(!mPxRigidDynamic->getKinematicTarget(target))
-			target = PxTransform(PxIdentity);
+	PxTransform target;
+	if(!mPxRigidDynamic->getKinematicTarget(target))
+		target = PxTransform(PxIdentity);
 
-		target.p = ToPxVector(position);
+	target.p = ToPxVector(position);
 
-		mPxRigidDynamic->setKinematicTarget(target);
-	}
-	else
-	{
-		const PxTransform& pxTransform = mPxRigidDynamic->getGlobalPose();
-		SetTransform(position, FromPxQuaternion(pxTransform.q));
-	}
-
-	CRigidbody::Move(position);
+	mPxRigidDynamic->setKinematicTarget(target);
 }
 
 void PhysXRigidbody::Rotate(const Quaternion& rotation)
 {
-	if(GetIsKinematic())
-	{
-		PxTransform target;
-		if(!mPxRigidDynamic->getKinematicTarget(target))
-			target = PxTransform(PxIdentity);
+	PxTransform target;
+	if(!mPxRigidDynamic->getKinematicTarget(target))
+		target = PxTransform(PxIdentity);
 
-		target.q = ToPxQuaternion(rotation);
+	target.q = ToPxQuaternion(rotation);
 
-		mPxRigidDynamic->setKinematicTarget(target);
-	}
-	else
-	{
-		const PxTransform& pxTransform = mPxRigidDynamic->getGlobalPose();
-		SetTransform(FromPxVector(pxTransform.p), rotation);
-	}
-
-	CRigidbody::Rotate(rotation);
+	mPxRigidDynamic->setKinematicTarget(target);
 }
 
 void PhysXRigidbody::SetTransform(const Vector3& position, const Quaternion& rotation)
@@ -118,25 +97,11 @@ void PhysXRigidbody::GetTransform(Vector3& outPosition, Quaternion& outRotation)
 
 void PhysXRigidbody::SetMass(float mass)
 {
-	CRigidbody::SetMass(mass);
-
-	if(((u32)mFlags & (u32)RigidbodyFlag::AutoMass) != 0)
-	{
-		B3D_LOG(Warning, Physics, "Attempting to set Rigidbody mass, but it has automatic mass calculation turned on.");
-		return;
-	}
-
 	mPxRigidDynamic->setMass(mass);
 }
 
 void PhysXRigidbody::SetIsKinematic(bool kinematic)
 {
-	CRigidbody::SetIsKinematic(kinematic);
-
-	const bool oldIsKinematic = mPxRigidDynamic->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC;
-	if(oldIsKinematic == kinematic)
-		return;
-
 	mPxRigidDynamic->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, kinematic);
 }
 
@@ -157,15 +122,11 @@ void PhysXRigidbody::WakeUp()
 
 void PhysXRigidbody::SetSleepThreshold(float threshold)
 {
-	CRigidbody::SetSleepThreshold(threshold);
-
 	mPxRigidDynamic->setSleepThreshold(threshold);
 }
 
 void PhysXRigidbody::SetUseGravity(bool gravity)
 {
-	CRigidbody::SetUseGravity(gravity);
-
 	mPxRigidDynamic->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !gravity);
 }
 
@@ -191,28 +152,16 @@ Vector3 PhysXRigidbody::GetAngularVelocity() const
 
 void PhysXRigidbody::SetDrag(float drag)
 {
-	CRigidbody::SetDrag(drag);
-
 	mPxRigidDynamic->setLinearDamping(drag);
 }
 
 void PhysXRigidbody::SetAngularDrag(float drag)
 {
-	CRigidbody::SetAngularDrag(drag);
-
 	mPxRigidDynamic->setAngularDamping(drag);
 }
 
 void PhysXRigidbody::SetInertiaTensor(const Vector3& tensor)
 {
-	if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
-	{
-		B3D_LOG(Warning, Physics, "Attempting to set Rigidbody inertia tensor, but it has automatic tensor calculation turned on.");
-		return;
-	}
-
-	CRigidbody::SetInertiaTensor(tensor);
-
 	mPxRigidDynamic->setMassSpaceInertiaTensor(ToPxVector(tensor));
 }
 
@@ -223,46 +172,24 @@ Vector3 PhysXRigidbody::GetInertiaTensor() const
 
 void PhysXRigidbody::SetMaxAngularVelocity(float maxVelocity)
 {
-	CRigidbody::SetMaxAngularVelocity(maxVelocity);
-
 	mPxRigidDynamic->setMaxAngularVelocity(maxVelocity);
 }
 
 void PhysXRigidbody::SetCenterOfMass(const Vector3& position, const Quaternion& rotation)
 {
-	if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
-	{
-		B3D_LOG(Warning, Physics, "Attempting to set Rigidbody center of mass, but it has automatic tensor calculation turned on.");
-		return;
-	}
-
 	mPxRigidDynamic->setCMassLocalPose(ToPxTransform(position, rotation));
 }
 
-Vector3 PhysXRigidbody::GetCenterOfMassPosition() const
+void PhysXRigidbody::GetCenterOfMass(Vector3& outPosition, Quaternion& outRotation) 
 {
 	const PxTransform& centerOfMassTransform = mPxRigidDynamic->getCMassLocalPose();
-	return FromPxVector(centerOfMassTransform.p);
+	outPosition = FromPxVector(centerOfMassTransform.p);
+	outRotation = FromPxQuaternion(centerOfMassTransform.q);
 }
 
-Quaternion PhysXRigidbody::GetCenterOfMassRotation() const
+void PhysXRigidbody::SetSolverIterationCounts(u32 positionCount, u32 velocityCount)
 {
-	const PxTransform& centerOfMassTransform = mPxRigidDynamic->getCMassLocalPose();
-	return FromPxQuaternion(centerOfMassTransform.q);
-}
-
-void PhysXRigidbody::SetPositionSolverCount(u32 count)
-{
-	CRigidbody::SetPositionSolverCount(count);
-
-	mPxRigidDynamic->setSolverIterationCounts(std::max(1U, count), GetVelocitySolverCount());
-}
-
-void PhysXRigidbody::SetVelocitySolverCount(u32 count)
-{
-	CRigidbody::SetVelocitySolverCount(count);
-
-	mPxRigidDynamic->setSolverIterationCounts(GetPositionSolverCount(), std::max(1U, count));
+	mPxRigidDynamic->setSolverIterationCounts(std::max(1U, positionCount), std::max(1U, velocityCount));
 }
 
 void PhysXRigidbody::SetFlags(RigidbodyFlag flags)
@@ -286,8 +213,6 @@ void PhysXRigidbody::SetFlags(RigidbodyFlag flags)
 			colliderShape->SetContinuousCollisionDetection(ccdEnabledNew);
 		}
 	}
-
-	CRigidbody::SetFlags(flags);
 }
 
 void PhysXRigidbody::AddForce(const Vector3& force, ForceMode mode)
@@ -379,4 +304,24 @@ void PhysXRigidbody::DetachShape(const SPtr<ColliderShape>& shape)
 
 	const PhysXColliderShape& physxShape = static_cast<const PhysXColliderShape&>(*shape);
 	mPxRigidDynamic->detachShape(*physxShape.GetPxShape());
+}
+
+void PhysXRigidbody::AddToScene(PhysicsScene& scene)
+{
+	if(!B3D_ENSURE(mPxScene == nullptr))
+		return;
+
+	const PhysXScene& physxScene = static_cast<PhysXScene&>(scene);
+	mPxScene = &physxScene.GetPxScene();
+
+	mPxScene->addActor(*mPxRigidDynamic);
+}
+
+void PhysXRigidbody::RemoveFromScene()
+{
+	if(!B3D_ENSURE(mPxScene != nullptr))
+		return;
+
+	mPxScene->removeActor(*mPxRigidDynamic);
+	mPxScene = nullptr;
 }

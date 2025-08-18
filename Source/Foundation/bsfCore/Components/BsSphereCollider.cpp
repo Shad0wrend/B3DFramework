@@ -39,8 +39,8 @@ void SphereCollider::SetRadius(float radius)
 	if(B3D_ENSURE(mShapes.Size() == 1))
 		mShapes[0]->SetShape(SphereColliderShapeInformation(clampedRadius));
 
-	if(mParentDynamicRigidbody != nullptr)
-		mParentDynamicRigidbody->UpdateMassDistribution();
+	if(mParentRigidbody != nullptr)
+		mParentRigidbody->UpdateMassDistribution();
 }
 
 void SphereCollider::SetCenter(const Vector3& center)

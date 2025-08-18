@@ -66,8 +66,8 @@ void CapsuleCollider::SetHalfHeight(float halfHeight)
 	if(B3D_ENSURE(mShapes.Size() == 1))
 		mShapes[0]->SetShape(CapsuleColliderShapeInformation(mRadius, clampedHalfHeight));
 
-	if(mParentDynamicRigidbody != nullptr)
-		mParentDynamicRigidbody->UpdateMassDistribution();
+	if(mParentRigidbody != nullptr)
+		mParentRigidbody->UpdateMassDistribution();
 }
 
 void CapsuleCollider::SetRadius(float radius)
@@ -81,8 +81,8 @@ void CapsuleCollider::SetRadius(float radius)
 	if(B3D_ENSURE(mShapes.Size() == 1))
 		mShapes[0]->SetShape(CapsuleColliderShapeInformation(clampedRadius, mHalfHeight));
 
-	if(mParentDynamicRigidbody != nullptr)
-		mParentDynamicRigidbody->UpdateMassDistribution();
+	if(mParentRigidbody != nullptr)
+		mParentRigidbody->UpdateMassDistribution();
 }
 
 RTTIType* CapsuleCollider::GetRttiStatic()

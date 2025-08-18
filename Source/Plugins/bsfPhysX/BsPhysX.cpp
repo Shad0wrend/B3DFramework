@@ -1143,19 +1143,19 @@ void PhysXScene::TriggerEvents()
 		}
 
 		Collider* const colliderA = colliderShapeA->GetParentCollider();
-		Rigidbody* rigidbody = colliderA->GetRigidbody().IsValid() ? colliderA->GetRigidbody()->GetInternal() : nullptr;
-		if(rigidbody != nullptr)
+		const HRigidbody& rigidbody = colliderA->GetRigidbody();
+		if(rigidbody.IsValid())
 		{
 			switch(type)
 			{
 			case ContactEventType::ContactBegin:
-				rigidbody->OnCollisionBegin(data);
+				rigidbody->OnCollisionBegin(rigidbody->PopulateCollisionData(data));
 				break;
 			case ContactEventType::ContactStay:
-				rigidbody->OnCollisionStay(data);
+				rigidbody->OnCollisionStay(rigidbody->PopulateCollisionData(data));
 				break;
 			case ContactEventType::ContactEnd:
-				rigidbody->OnCollisionEnd(data);
+				rigidbody->OnCollisionEnd(rigidbody->PopulateCollisionData(data));
 				break;
 			}
 		}

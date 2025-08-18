@@ -40,8 +40,8 @@ void BoxCollider::SetExtents(const Vector3& extents)
 	if(B3D_ENSURE(mShapes.Size() == 1))
 		mShapes[0]->SetShape(BoxColliderShapeInformation(clampedExtents));
 
-	if(mParentDynamicRigidbody != nullptr)
-		mParentDynamicRigidbody->UpdateMassDistribution();
+	if(mParentRigidbody != nullptr)
+		mParentRigidbody->UpdateMassDistribution();
 }
 
 void BoxCollider::SetCenter(const Vector3& center)

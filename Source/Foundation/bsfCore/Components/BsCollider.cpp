@@ -48,8 +48,8 @@ void Collider::SetMass(float mass)
 	for(auto& entry : mShapes)
 		entry->SetMass(mass);
 
-	if(mParentDynamicRigidbody != nullptr)
-		mParentDynamicRigidbody->UpdateMassDistribution();
+	if(mParentRigidbody != nullptr)
+		mParentRigidbody->GetImplementation().UpdateMassDistribution();
 }
 
 void Collider::SetMaterial(const HPhysicsMaterial& material)
@@ -111,14 +111,17 @@ void Collider::OnCreated()
 		entry->SetParentCollider(this);
 		entry->SetShapeIndexInParent(shapeIndex++);
 		entry->SetIsTrigger(mIsTrigger);
+		entry->SetContactOffset(mContactOffset);
+		entry->SetRestOffset(mRestOffset);
+		entry->SetLayer(mLayer);
+		entry->SetMass(mMass);
 		entry->SetScale(scale);
 		// entry->UpdateTransform(); called implicitly by SetScale
 	}
 
 	B3D_ASSERT(mImplementation == nullptr);
 
-	Rigidbody* const dynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
-	if(dynamicRigidbody == nullptr)
+	if(!mParentRigidbody.IsValid())
 	{
 		const Transform& transform = SO()->GetTransform();
 
@@ -137,8 +140,7 @@ void Collider::OnCreated()
 
 void Collider::OnDestroyed()
 {
-	Rigidbody* const dynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
-	if(dynamicRigidbody == nullptr)
+	if(!mParentRigidbody.IsValid())
 	{
 		for (const auto& existingShape : mShapes)
 		{
@@ -148,13 +150,12 @@ void Collider::OnDestroyed()
 			mImplementation->DetachShape(existingShape);
 		}
 
-		mImplementation->RemoveFromScene();
 		mImplementation = nullptr;
 	}
 	else
 	{
-		mParentDynamicRigidbody->RemoveCollider(B3DStaticGameObjectCast<Collider>(mThisHandle));
-		mParentDynamicRigidbody = nullptr;
+		mParentRigidbody->RemoveCollider(B3DStaticGameObjectCast<Collider>(mThisHandle));
+		mParentRigidbody = nullptr;
 	}
 
 	B3D_ASSERT(mImplementation == nullptr);
@@ -162,11 +163,10 @@ void Collider::OnDestroyed()
 
 void Collider::OnEnabled()
 {
-	Rigidbody* const dynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
-	if(dynamicRigidbody != nullptr)
+	if(mParentRigidbody.IsValid())
 	{
 		for (const auto& shape : mShapes)
-			dynamicRigidbody->AttachShape(shape);
+			mParentRigidbody->GetImplementation().AttachShape(shape);
 	}
 	else
 	{
@@ -177,15 +177,14 @@ void Collider::OnEnabled()
 
 void Collider::OnDisabled()
 {
-	Rigidbody* const dynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
-	if(dynamicRigidbody != nullptr)
+	if(mParentRigidbody.IsValid())
 	{
 		for (const auto& existingShape : mShapes)
 		{
 			if (existingShape == nullptr)
 				continue;
 
-			dynamicRigidbody->DetachShape(existingShape);
+			mParentRigidbody->GetImplementation().DetachShape(existingShape);
 		}
 	}
 	else
@@ -214,20 +213,19 @@ void Collider::OnTransformChanged(TransformChangedFlags flags)
 
 bool Collider::SetRigidbody(const HRigidbody& rigidbody)
 {
-	if(rigidbody == mParentDynamicRigidbody)
+	if(rigidbody == mParentRigidbody)
 		return false;
 
 	// Detach shapes from original body, destroy internal implementation if needed
-	if(mParentDynamicRigidbody != nullptr)
-		mParentDynamicRigidbody->RemoveCollider(B3DStaticGameObjectCast<Collider>(mThisHandle));
+	if(mParentRigidbody != nullptr)
+		mParentRigidbody->RemoveCollider(B3DStaticGameObjectCast<Collider>(mThisHandle));
 
-	Rigidbody* const originalDynamicRigidbody = mParentDynamicRigidbody.IsValid() ? mParentDynamicRigidbody->GetInternal() : nullptr;
-	if(originalDynamicRigidbody != nullptr)
+	if(mParentRigidbody.IsValid())
 	{
 		if(GetEnabled()) // If not enabled, shapes won't be part of the dynamic rigidbody
 		{
 			for(auto& entry : mShapes)
-				originalDynamicRigidbody->DetachShape(entry);
+				mParentRigidbody->GetImplementation().DetachShape(entry);
 		}
 	}
 	else
@@ -242,13 +240,12 @@ bool Collider::SetRigidbody(const HRigidbody& rigidbody)
 	}
 
 	// Attach shapes to the new body, create internal implementation if needed
-	Rigidbody* const newDynamicRigidbody = rigidbody.IsValid() ? rigidbody->GetInternal() : nullptr;
-	if(newDynamicRigidbody)
+	if(rigidbody.IsValid())
 	{
 		if(GetEnabled())
 		{
 			for(auto& entry : mShapes)
-				newDynamicRigidbody->AttachShape(entry);
+				rigidbody->GetImplementation().AttachShape(entry);
 		}
 	}
 	else
@@ -271,7 +268,7 @@ bool Collider::SetRigidbody(const HRigidbody& rigidbody)
 	if(rigidbody != nullptr)
 		rigidbody->AddCollider(B3DStaticGameObjectCast<Collider>(mThisHandle));
 
-	mParentDynamicRigidbody = rigidbody;
+	mParentRigidbody = rigidbody;
 	UpdateCollisionReportMode();
 	UpdateTransform();
 
@@ -316,9 +313,9 @@ void Collider::UpdateTransform(bool updateShapeTransforms)
 {
 	const Transform& transform = SO()->GetTransform();
 
-	if(mParentDynamicRigidbody != nullptr)
+	if(mParentRigidbody != nullptr)
 	{
-		const Transform& parentTransform = mParentDynamicRigidbody->SO()->GetTransform();
+		const Transform& parentTransform = mParentRigidbody->SO()->GetTransform();
 		const Vector3& parentPosition = parentTransform.GetPosition();
 		const Quaternion& parentRotation = parentTransform.GetRotation();
 
@@ -336,7 +333,7 @@ void Collider::UpdateTransform(bool updateShapeTransforms)
 		mAdjustedPosition = inverseRotation.Rotate(myPosition - parentPosition) * inverseScale;
 		mAdjustedRotation = inverseRotation * myRotation;
 
-		mParentDynamicRigidbody->UpdateMassDistribution();
+		mParentRigidbody->GetImplementation().UpdateMassDistribution();
 	}
 	else
 	{
@@ -359,8 +356,8 @@ void Collider::UpdateCollisionReportMode()
 {
 	CollisionReportMode mode = mCollisionReportMode;
 
-	if(mParentDynamicRigidbody != nullptr)
-		mode = mParentDynamicRigidbody->GetCollisionReportMode();
+	if(mParentRigidbody != nullptr)
+		mode = mParentRigidbody->GetCollisionReportMode();
 
 	for(auto& entry : mShapes)
 		entry->SetCollisionReportMode(mode);

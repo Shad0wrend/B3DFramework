@@ -15,11 +15,11 @@ namespace b3d
 	 */
 
 	/** PhysX implementation of a Rigidbody. */
-	class PhysXRigidbody : public CRigidbody
+	class PhysXRigidbody : public IRigidbodyImplementation
 	{
 	public:
-		PhysXRigidbody(physx::PxScene* scene);
-		~PhysXRigidbody();
+		PhysXRigidbody();
+		~PhysXRigidbody() override;
 
 		void Move(const Vector3& position) override;
 		void Rotate(const Quaternion& rotation) override;
@@ -42,10 +42,8 @@ namespace b3d
 		Vector3 GetInertiaTensor() const override;
 		void SetMaxAngularVelocity(float maxVelocity) override;
 		void SetCenterOfMass(const Vector3& position, const Quaternion& rotation) override;
-		Vector3 GetCenterOfMassPosition() const override;
-		Quaternion GetCenterOfMassRotation() const override;
-		void SetPositionSolverCount(u32 count) override;
-		void SetVelocitySolverCount(u32 count) override;
+		void GetCenterOfMass(Vector3& outPosition, Quaternion& outRotation) override;
+		void SetSolverIterationCounts(u32 positionCount, u32 velocityCount) override;
 		void SetFlags(RigidbodyFlag flags) override;
 		void AddForce(const Vector3& force, ForceMode mode = ForceMode::Force) override;
 		void AddTorque(const Vector3& torque, ForceMode mode = ForceMode::Force) override;
@@ -54,12 +52,15 @@ namespace b3d
 		void UpdateMassDistribution() override;
 		void AttachShape(const SPtr<ColliderShape>& shape) override;
 		void DetachShape(const SPtr<ColliderShape>& shape) override;
+		void AddToScene(PhysicsScene& scene) override;
+		void RemoveFromScene() override;
 
 		/** Returns the internal PhysX dynamic actor. */
 		physx::PxRigidDynamic* GetPxRigidDynamic() const { return mPxRigidDynamic; }
 
 	private:
-		physx::PxRigidDynamic* mPxRigidDynamic;
+		physx::PxScene* mPxScene = nullptr;
+		physx::PxRigidDynamic* mPxRigidDynamic = nullptr;
 	};
 
 	/** @} */

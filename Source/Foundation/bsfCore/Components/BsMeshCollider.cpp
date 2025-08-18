@@ -44,14 +44,14 @@ void MeshCollider::SetMesh(const HPhysicsMesh& mesh)
 	if(B3D_ENSURE(mShapes.Size() == 1))
 		mShapes[0]->SetShape(MeshColliderShapeInformation(mesh));
 
-	if(mParentDynamicRigidbody != nullptr)
+	if(mParentRigidbody != nullptr)
 	{
 		// If triangle mesh its possible the parent can no longer use this collider (they're not supported for
 		// non-kinematic rigidbodies)
 		if(mMesh.IsLoaded() && mMesh->GetType() == PhysicsMeshType::Triangle)
 			RefreshParentRigidbody();
 		else
-			mParentDynamicRigidbody->UpdateMassDistribution();
+			mParentRigidbody->UpdateMassDistribution();
 	}
 }
 

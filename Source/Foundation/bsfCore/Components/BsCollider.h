@@ -85,7 +85,7 @@ namespace b3d
 		CollisionReportMode GetCollisionReportMode() const { return mCollisionReportMode; }
 
 		/** Determines the Rigidbody that controls this collider (if any). */
-		HRigidbody GetRigidbody() const { return mParentDynamicRigidbody; }
+		HRigidbody GetRigidbody() const { return mParentRigidbody; }
 
 		/** Returns all the shapes associated with this collider. */
 		TInlineArray<SPtr<ColliderShape>, 1> GetShapes() const { return mShapes; }
@@ -189,7 +189,7 @@ namespace b3d
 		float mMass = 1.0f;
 		bool mIsTrigger = false;
 
-		HRigidbody mParentDynamicRigidbody;
+		HRigidbody mParentRigidbody;
 
 		// TODO - We should remove this, I'm not sure why it's needed
 		Vector3 mAdjustedPosition{BsZero};
@@ -211,7 +211,6 @@ namespace b3d
 	class B3D_CORE_EXPORT IColliderImplementation
 	{
 	public:
-		IColliderImplementation() = default;
 		virtual ~IColliderImplementation() = default;
 
 		/** Adds the collider to the physics scene. */
@@ -229,7 +228,6 @@ namespace b3d
 		/** Changes the position and rotation of the collider. All child shapes will maintain relative position and rotation to the collider. */
 		virtual void SetTransform(const Vector3& position, const Quaternion& rotation) = 0;
 	};
-
 
 	/** @} */
 } // namespace b3d
