@@ -93,7 +93,7 @@ namespace b3d
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
 	protected:
-		friend class CRigidbody;
+		friend class Rigidbody;
 
 		/** Creates the internal representation of the Joint for use by the component. */
 		virtual SPtr<Joint> CreateInternal() = 0;

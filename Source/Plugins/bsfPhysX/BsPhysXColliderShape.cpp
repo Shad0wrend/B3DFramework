@@ -14,7 +14,7 @@
 #include "Physics/BsPhysicsMesh.h"
 #include "Scene/BsTransform.h"
 #include "Components/BsCollider.h"
-#include "Components/BsCRigidbody.h"
+#include "Components/BsRigidbody.h"
 #include "Scene/BsSceneObject.h"
 
 using namespace physx;

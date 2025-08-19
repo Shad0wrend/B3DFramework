@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
-#include "Components/BsCRigidbody.h"
+#include "Components/BsRigidbody.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 
@@ -15,7 +15,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CRigidbodyRTTI : public TRTTIType<CRigidbody, Component, CRigidbodyRTTI>
+	class B3D_CORE_EXPORT CRigidbodyRTTI : public TRTTIType<Rigidbody, Component, CRigidbodyRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -48,7 +48,7 @@ namespace b3d
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return SceneObject::CreateEmptyComponent<CRigidbody>();
+			return SceneObject::CreateEmptyComponent<Rigidbody>();
 		}
 	};
 

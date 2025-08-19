@@ -3,7 +3,7 @@
 #include "BsFPhysXJoint.h"
 #include "BsPhysXRigidbody.h"
 #include "Physics/BsJoint.h"
-#include "Components/BsCRigidbody.h"
+#include "Components/BsRigidbody.h"
 #include "PxRigidDynamic.h"
 
 using namespace physx;
@@ -31,7 +31,7 @@ FPhysXJoint::~FPhysXJoint()
 	mJoint->release();
 }
 
-CRigidbody* FPhysXJoint::GetBody(JointBody body) const
+Rigidbody* FPhysXJoint::GetBody(JointBody body) const
 {
 	PxRigidActor* actorA = nullptr;
 	PxRigidActor* actorB = nullptr;
@@ -42,10 +42,10 @@ CRigidbody* FPhysXJoint::GetBody(JointBody body) const
 	if(wantedActor == nullptr)
 		return nullptr;
 
-	return (CRigidbody*)wantedActor->userData;
+	return (Rigidbody*)wantedActor->userData;
 }
 
-void FPhysXJoint::SetBody(JointBody body, CRigidbody* value)
+void FPhysXJoint::SetBody(JointBody body, Rigidbody* value)
 {
 	PxRigidActor* actorA = nullptr;
 	PxRigidActor* actorB = nullptr;

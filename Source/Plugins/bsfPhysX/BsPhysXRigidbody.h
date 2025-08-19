@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPhysXPrerequisites.h"
-#include "Components/BsCRigidbody.h"
+#include "Components/BsRigidbody.h"
 #include "Math/BsVector3.h"
 #include "Math/BsQuaternion.h"
 #include "PxPhysics.h"
@@ -18,7 +18,7 @@ namespace b3d
 	class PhysXRigidbody : public IRigidbodyImplementation
 	{
 	public:
-		PhysXRigidbody(CRigidbody& owner);
+		PhysXRigidbody(Rigidbody& owner);
 		~PhysXRigidbody() override;
 
 		void Move(const Vector3& position) override;

@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCollider.h"
 #include "Scene/BsSceneObject.h"
-#include "Components/BsCRigidbody.h"
+#include "Components/BsRigidbody.h"
 #include "Math/BsRay.h"
 #include "Physics/BsPhysics.h"
 #include "Private/RTTI/BsColliderRTTI.h"
@@ -306,7 +306,7 @@ bool Collider::RefreshParentRigidbody()
 	HSceneObject currentSO = SO();
 	while(currentSO != nullptr)
 	{
-		HRigidbody parent = currentSO->GetComponent<CRigidbody>();
+		HRigidbody parent = currentSO->GetComponent<Rigidbody>();
 		if(parent != nullptr)
 		{
 			if(parent->GetEnabled() && IsValidParent(parent))

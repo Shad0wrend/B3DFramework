@@ -12,16 +12,16 @@
 #include "../../../Foundation/bsfCore/Physics/BsRigidbody.h"
 #include "../../../Foundation/bsfCore/Physics/BsRigidbody.h"
 
-namespace b3d { class CRigidbody; }
+namespace b3d { class Rigidbody; }
 namespace b3d { struct __CollisionDataInterop; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptRigidbody : public TScriptGameObjectWrapper<CRigidbody, ScriptRigidbody>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRigidbody : public TScriptGameObjectWrapper<Rigidbody, ScriptRigidbody>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Rigidbody")
 
-		ScriptRigidbody(const GameObjectHandle<CRigidbody>& nativeObject);
+		ScriptRigidbody(const GameObjectHandle<Rigidbody>& nativeObject);
 		~ScriptRigidbody();
 
 		static void SetupScriptBindings();

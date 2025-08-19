@@ -361,7 +361,6 @@ namespace b3d
 		typedef C##TYPE Type;           \
 	};
 
-	B3D_COMPONENT_FORWARD_DECLARE(Rigidbody)
 	B3D_COMPONENT_FORWARD_DECLARE(Joint)
 	B3D_COMPONENT_FORWARD_DECLARE(HingeJoint)
 	B3D_COMPONENT_FORWARD_DECLARE(DistanceJoint)
@@ -820,7 +819,7 @@ namespace b3d
 	typedef GameObjectHandle<CLight> HLight;
 	typedef GameObjectHandle<CAnimation> HAnimation;
 	typedef GameObjectHandle<CBone> HBone;
-	typedef GameObjectHandle<CRigidbody> HRigidbody;
+	typedef GameObjectHandle<Rigidbody> HRigidbody;
 	typedef GameObjectHandle<Collider> HCollider;
 	typedef GameObjectHandle<BoxCollider> HBoxCollider;
 	typedef GameObjectHandle<SphereCollider> HSphereCollider;

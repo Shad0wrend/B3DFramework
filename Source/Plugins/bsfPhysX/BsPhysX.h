@@ -33,7 +33,7 @@ namespace b3d
 		SPtr<PhysicsScene> CreatePhysicsScene() override;
 		SPtr<ColliderShape> CreateColliderShape() override;
 		UPtr<IColliderImplementation> CreateColliderImplementation() override;
-		UPtr<IRigidbodyImplementation> CreateRigidbodyImplementation(CRigidbody& owner) override;
+		UPtr<IRigidbodyImplementation> CreateRigidbodyImplementation(Rigidbody& owner) override;
 
 		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const ColliderShape& colliderShape, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;
 		bool RayCast(const Vector3& origin, const Vector3& unitDirection, const Collider& collider, PhysicsQueryHit& hit, float maxDistance = FLT_MAX) const override;

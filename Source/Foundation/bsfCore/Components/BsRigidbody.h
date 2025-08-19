@@ -57,10 +57,10 @@ namespace b3d
 	 * The shape and mass of a rigidbody is governed by its colliders. At least one collider must be attached to the collider.
 	 * To attach a collider, place it on the same scene object as the rigidbody, or a child scene object.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Rigidbody)) CRigidbody : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Rigidbody)) Rigidbody : public Component
 	{
 	public:
-		CRigidbody(const HSceneObject& parent);
+		Rigidbody(const HSceneObject& parent);
 
 		/**
 		 * Moves the rigidbody to a specific position. This method will ensure physically correct movement, meaning the body
@@ -374,7 +374,7 @@ namespace b3d
 		RTTIType* GetRtti() const override;
 
 	protected:
-		CRigidbody(); // Serialization only
+		Rigidbody(); // Serialization only
 	};
 
 	/** Low-level interface for a collider used by the Rigidbody component. Should be implemented by the physics plugin to provide rigidbody functionality. */

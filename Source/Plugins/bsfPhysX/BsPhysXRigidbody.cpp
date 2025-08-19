@@ -43,7 +43,7 @@ PxForceMode::Enum ToPxForceMode(PointForceMode mode)
 	return PxForceMode::eFORCE;
 }
 
-PhysXRigidbody::PhysXRigidbody(CRigidbody& owner)
+PhysXRigidbody::PhysXRigidbody(Rigidbody& owner)
 {
 	mPxRigidDynamic = GetPhysX().GetPhysX()->createRigidDynamic(PxTransform(PxIdentity));
 	mPxRigidDynamic->userData = &owner;

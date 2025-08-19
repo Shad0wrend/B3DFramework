@@ -1,16 +1,16 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Components/BsCRigidbody.h"
+#include "Components/BsRigidbody.h"
 #include "Scene/BsSceneObject.h"
 #include "Components/BsCollider.h"
 #include "Components/BsCJoint.h"
-#include "Private/RTTI/BsCRigidbodyRTTI.h"
+#include "Private/RTTI/BsRigidbodyRTTI.h"
 #include "Physics/BsPhysics.h"
 #include "Scene/BsSceneInstance.h"
 
 using namespace b3d;
 
-CRigidbody::CRigidbody(const HSceneObject& parent)
+Rigidbody::Rigidbody(const HSceneObject& parent)
 	: Component(parent)
 {
 	SetName("Rigidbody");
@@ -18,11 +18,11 @@ CRigidbody::CRigidbody(const HSceneObject& parent)
 	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
 }
 
-CRigidbody::CRigidbody()
-	: CRigidbody(nullptr)
+Rigidbody::Rigidbody()
+	: Rigidbody(nullptr)
 { }
 
-void CRigidbody::Move(const Vector3& position)
+void Rigidbody::Move(const Vector3& position)
 {
 	if(GetIsKinematic())
 		mImplementation->Move(position);
@@ -30,7 +30,7 @@ void CRigidbody::Move(const Vector3& position)
 		SO()->SetWorldPosition(position);
 }
 
-void CRigidbody::Rotate(const Quaternion& rotation)
+void Rigidbody::Rotate(const Quaternion& rotation)
 {
 	if(GetIsKinematic())
 		mImplementation->Rotate(rotation);
@@ -38,7 +38,7 @@ void CRigidbody::Rotate(const Quaternion& rotation)
 		SO()->SetWorldRotation(rotation);
 }
 
-void CRigidbody::SetMass(float mass)
+void Rigidbody::SetMass(float mass)
 {
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoMass) != 0)
 	{
@@ -50,7 +50,7 @@ void CRigidbody::SetMass(float mass)
 	mImplementation->SetMass(mass);
 }
 
-void CRigidbody::SetIsKinematic(bool kinematic)
+void Rigidbody::SetIsKinematic(bool kinematic)
 {
 	if(mIsKinematic == kinematic)
 		return;
@@ -62,66 +62,66 @@ void CRigidbody::SetIsKinematic(bool kinematic)
 	UpdateColliders();
 }
 
-bool CRigidbody::IsSleeping() const
+bool Rigidbody::IsSleeping() const
 {
 	return mImplementation->IsSleeping();
 }
 
-void CRigidbody::Sleep()
+void Rigidbody::Sleep()
 {
 	mImplementation->Sleep();
 }
 
-void CRigidbody::WakeUp()
+void Rigidbody::WakeUp()
 {
 	mImplementation->WakeUp();
 }
 
-void CRigidbody::SetSleepThreshold(float threshold)
+void Rigidbody::SetSleepThreshold(float threshold)
 {
 	mSleepThreshold = threshold;
 	mImplementation->SetSleepThreshold(threshold);
 }
 
-void CRigidbody::SetUseGravity(bool gravity)
+void Rigidbody::SetUseGravity(bool gravity)
 {
 	mUseGravity = gravity;
 	mImplementation->SetUseGravity(gravity);
 }
 
-void CRigidbody::SetVelocity(const Vector3& velocity)
+void Rigidbody::SetVelocity(const Vector3& velocity)
 {
 	mImplementation->SetVelocity(velocity);
 }
 
-Vector3 CRigidbody::GetVelocity() const
+Vector3 Rigidbody::GetVelocity() const
 {
 	return mImplementation->GetVelocity();
 }
 
-void CRigidbody::SetAngularVelocity(const Vector3& velocity)
+void Rigidbody::SetAngularVelocity(const Vector3& velocity)
 {
 	mImplementation->SetAngularVelocity(velocity);
 }
 
-Vector3 CRigidbody::GetAngularVelocity() const
+Vector3 Rigidbody::GetAngularVelocity() const
 {
 	return mImplementation->GetAngularVelocity();
 }
 
-void CRigidbody::SetDrag(float drag)
+void Rigidbody::SetDrag(float drag)
 {
 	mLinearDrag = drag;
 	mImplementation->SetDrag(drag);
 }
 
-void CRigidbody::SetAngularDrag(float drag)
+void Rigidbody::SetAngularDrag(float drag)
 {
 	mAngularDrag = drag;
 	mImplementation->SetAngularDrag(drag);
 }
 
-void CRigidbody::SetInertiaTensor(const Vector3& tensor)
+void Rigidbody::SetInertiaTensor(const Vector3& tensor)
 {
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
 	{
@@ -133,18 +133,18 @@ void CRigidbody::SetInertiaTensor(const Vector3& tensor)
 	mImplementation->SetInertiaTensor(tensor);
 }
 
-Vector3 CRigidbody::GetInertiaTensor() const
+Vector3 Rigidbody::GetInertiaTensor() const
 {
 	return mImplementation->GetInertiaTensor();
 }
 
-void CRigidbody::SetMaxAngularVelocity(float velocity)
+void Rigidbody::SetMaxAngularVelocity(float velocity)
 {
 	mMaxAngularVelocity = velocity;
 	mImplementation->SetMaxAngularVelocity(velocity);
 }
 
-void CRigidbody::SetCenterOfMassPosition(const Vector3& position)
+void Rigidbody::SetCenterOfMassPosition(const Vector3& position)
 {
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
 	{
@@ -156,7 +156,7 @@ void CRigidbody::SetCenterOfMassPosition(const Vector3& position)
 	mImplementation->SetCenterOfMass(position, mCenterOfMassRotation);
 }
 
-Vector3 CRigidbody::GetCenterOfMassPosition() const
+Vector3 Rigidbody::GetCenterOfMassPosition() const
 {
 	Vector3 position;
 	Quaternion rotation;
@@ -165,7 +165,7 @@ Vector3 CRigidbody::GetCenterOfMassPosition() const
 	return position;
 }
 
-void CRigidbody::SetCenterOfMassRotation(const Quaternion& rotation)
+void Rigidbody::SetCenterOfMassRotation(const Quaternion& rotation)
 {
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
 	{
@@ -177,7 +177,7 @@ void CRigidbody::SetCenterOfMassRotation(const Quaternion& rotation)
 	mImplementation->SetCenterOfMass(mCenterOfMassPosition, rotation);
 }
 
-Quaternion CRigidbody::GetCenterOfMassRotation() const
+Quaternion Rigidbody::GetCenterOfMassRotation() const
 {
 	Vector3 position;
 	Quaternion rotation;
@@ -186,19 +186,19 @@ Quaternion CRigidbody::GetCenterOfMassRotation() const
 	return rotation;
 }
 
-void CRigidbody::SetPositionSolverCount(u32 count)
+void Rigidbody::SetPositionSolverCount(u32 count)
 {
 	mPositionSolverCount = count;
 	mImplementation->SetSolverIterationCounts(mPositionSolverCount, mVelocitySolverCount);
 }
 
-void CRigidbody::SetVelocitySolverCount(u32 count)
+void Rigidbody::SetVelocitySolverCount(u32 count)
 {
 	mVelocitySolverCount = count;
 	mImplementation->SetSolverIterationCounts(mPositionSolverCount, mVelocitySolverCount);
 }
 
-void CRigidbody::SetCollisionReportMode(CollisionReportMode mode)
+void Rigidbody::SetCollisionReportMode(CollisionReportMode mode)
 {
 	if(mCollisionReportMode == mode)
 		return;
@@ -209,7 +209,7 @@ void CRigidbody::SetCollisionReportMode(CollisionReportMode mode)
 		entry->UpdateCollisionReportMode();
 }
 
-void CRigidbody::SetFlags(RigidbodyFlag flags)
+void Rigidbody::SetFlags(RigidbodyFlag flags)
 {
 	mFlags = flags;
 
@@ -217,27 +217,27 @@ void CRigidbody::SetFlags(RigidbodyFlag flags)
 	UpdateMassDistribution();
 }
 
-void CRigidbody::AddForce(const Vector3& force, ForceMode mode)
+void Rigidbody::AddForce(const Vector3& force, ForceMode mode)
 {
 	mImplementation->AddForce(force, mode);
 }
 
-void CRigidbody::AddTorque(const Vector3& torque, ForceMode mode)
+void Rigidbody::AddTorque(const Vector3& torque, ForceMode mode)
 {
 	mImplementation->AddTorque(torque, mode);
 }
 
-void CRigidbody::AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode)
+void Rigidbody::AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode)
 {
 	mImplementation->AddForceAtPoint(force, position, mode);
 }
 
-Vector3 CRigidbody::GetVelocityAtPoint(const Vector3& point) const
+Vector3 Rigidbody::GetVelocityAtPoint(const Vector3& point) const
 {
 	return mImplementation->GetVelocityAtPoint(point);
 }
 
-void CRigidbody::UpdateColliders()
+void Rigidbody::UpdateColliders()
 {
 	// Note: Instead of clearing all, then re-registering below, detect changes between arrays and add/remove only changed
 	ClearColliders();
@@ -256,10 +256,10 @@ void CRigidbody::UpdateColliders()
 
 			for(auto& entry : colliders)
 			{
-				if(!entry->IsValidParent(B3DStaticGameObjectCast<CRigidbody>(mThisHandle)))
+				if(!entry->IsValidParent(B3DStaticGameObjectCast<Rigidbody>(mThisHandle)))
 					continue;
 
-				entry->SetRigidbody(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));
+				entry->SetRigidbody(B3DStaticGameObjectCast<Rigidbody>(mThisHandle));
 				mChildColliders.push_back(entry);
 			}
 		}
@@ -269,7 +269,7 @@ void CRigidbody::UpdateColliders()
 		{
 			HSceneObject child = currentSO->GetChild(i);
 
-			if(child->HasComponent<CRigidbody>())
+			if(child->HasComponent<Rigidbody>())
 				continue;
 
 			todo.push(child);
@@ -277,7 +277,7 @@ void CRigidbody::UpdateColliders()
 	}
 }
 
-void CRigidbody::ClearColliders()
+void Rigidbody::ClearColliders()
 {
 	Vector<HCollider> children = std::move(mChildColliders);
 	mChildColliders.clear();
@@ -286,12 +286,12 @@ void CRigidbody::ClearColliders()
 		collider->SetRigidbody(HRigidbody());
 }
 
-void CRigidbody::AddCollider(const HCollider& collider)
+void Rigidbody::AddCollider(const HCollider& collider)
 {
 	mChildColliders.push_back(collider);
 }
 
-void CRigidbody::RemoveCollider(const HCollider& collider)
+void Rigidbody::RemoveCollider(const HCollider& collider)
 {
 	auto iterFind = std::find(mChildColliders.begin(), mChildColliders.end(), collider);
 
@@ -299,13 +299,13 @@ void CRigidbody::RemoveCollider(const HCollider& collider)
 		mChildColliders.erase(iterFind);
 }
 
-void CRigidbody::CheckForNestedRigibody()
+void Rigidbody::CheckForNestedRigibody()
 {
 	HSceneObject currentSO = SO()->GetParent();
 
 	while(currentSO != nullptr)
 	{
-		if(currentSO->HasComponent<CRigidbody>())
+		if(currentSO->HasComponent<Rigidbody>())
 		{
 			B3D_LOG(Warning, Physics, "Nested Rigidbodies detected. This will result in inconsistent transformations. "
 									 "To parent one Rigidbody to another move its colliders to the new parent, but remove the Rigidbody "
@@ -317,7 +317,7 @@ void CRigidbody::CheckForNestedRigibody()
 	}
 }
 
-void CRigidbody::UpdateMassDistribution()
+void Rigidbody::UpdateMassDistribution()
 {
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) == 0)
 		return;
@@ -325,7 +325,7 @@ void CRigidbody::UpdateMassDistribution()
 	mImplementation->UpdateMassDistribution((((u32)mFlags & (u32)RigidbodyFlag::AutoMass)) != 0);
 }
 
-void CRigidbody::OnCreated()
+void Rigidbody::OnCreated()
 {
 	B3D_ASSERT(mImplementation == nullptr);
 
@@ -357,12 +357,12 @@ void CRigidbody::OnCreated()
 	}
 }
 
-void CRigidbody::OnDestroyed()
+void Rigidbody::OnDestroyed()
 {
 	mImplementation = nullptr;
 }
 
-void CRigidbody::OnEnabled()
+void Rigidbody::OnEnabled()
 {
 	UpdateColliders();
 
@@ -374,13 +374,13 @@ void CRigidbody::OnEnabled()
 	mImplementation->AddToScene(*sceneInstance->GetPhysicsScene());
 }
 
-void CRigidbody::OnDisabled()
+void Rigidbody::OnDisabled()
 {
 	ClearColliders();
 	mImplementation->RemoveFromScene();
 }
 
-void CRigidbody::OnTransformChanged(TransformChangedFlags flags)
+void Rigidbody::OnTransformChanged(TransformChangedFlags flags)
 {
 	if((flags & TCF_Parent) != 0)
 	{
@@ -405,15 +405,15 @@ void CRigidbody::OnTransformChanged(TransformChangedFlags flags)
 	mImplementation->SetTransform(transform.GetPosition(), transform.GetRotation());
 
 	if(mParentJoint != nullptr)
-		mParentJoint->NotifyRigidbodyMoved(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));
+		mParentJoint->NotifyRigidbodyMoved(B3DStaticGameObjectCast<Rigidbody>(mThisHandle));
 }
 
-RTTIType* CRigidbody::GetRttiStatic()
+RTTIType* Rigidbody::GetRttiStatic()
 {
 	return CRigidbodyRTTI::Instance();
 }
 
-RTTIType* CRigidbody::GetRtti() const
+RTTIType* Rigidbody::GetRtti() const
 {
-	return CRigidbody::GetRttiStatic();
+	return Rigidbody::GetRttiStatic();
 }

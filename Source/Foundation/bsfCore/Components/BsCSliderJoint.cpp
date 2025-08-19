@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCSliderJoint.h"
 #include "Scene/BsSceneObject.h"
-#include "Components/BsCRigidbody.h"
+#include "Components/BsRigidbody.h"
 #include "Private/RTTI/BsCSliderJointRTTI.h"
 #include "Scene/BsSceneInstance.h"
 

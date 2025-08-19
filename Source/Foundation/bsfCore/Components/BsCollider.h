@@ -139,7 +139,7 @@ namespace b3d
 		/************************************************************************/
 	protected:
 		friend class SceneObject;
-		friend class CRigidbody;
+		friend class Rigidbody;
 
 		void OnCreated() override;
 		void OnDestroyed() override;

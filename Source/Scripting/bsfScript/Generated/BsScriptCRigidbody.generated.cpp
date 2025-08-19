@@ -15,7 +15,7 @@ namespace b3d
 	ScriptRigidbody::OnCollisionStayThunkDefinition ScriptRigidbody::OnCollisionStayThunk; 
 	ScriptRigidbody::OnCollisionEndThunkDefinition ScriptRigidbody::OnCollisionEndThunk; 
 
-	ScriptRigidbody::ScriptRigidbody(const GameObjectHandle<CRigidbody>& nativeObject)
+	ScriptRigidbody::ScriptRigidbody(const GameObjectHandle<Rigidbody>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -114,9 +114,9 @@ namespace b3d
 
 	void ScriptRigidbody::RegisterEvents()
 	{
-		OnCollisionBeginConnection = static_cast<CRigidbody*>(GetNativeObject())->OnCollisionBegin.Connect(std::bind(&ScriptRigidbody::OnCollisionBegin, this, std::placeholders::_1));
-		OnCollisionStayConnection = static_cast<CRigidbody*>(GetNativeObject())->OnCollisionStay.Connect(std::bind(&ScriptRigidbody::OnCollisionStay, this, std::placeholders::_1));
-		OnCollisionEndConnection = static_cast<CRigidbody*>(GetNativeObject())->OnCollisionEnd.Connect(std::bind(&ScriptRigidbody::OnCollisionEnd, this, std::placeholders::_1));
+		OnCollisionBeginConnection = static_cast<Rigidbody*>(GetNativeObject())->OnCollisionBegin.Connect(std::bind(&ScriptRigidbody::OnCollisionBegin, this, std::placeholders::_1));
+		OnCollisionStayConnection = static_cast<Rigidbody*>(GetNativeObject())->OnCollisionStay.Connect(std::bind(&ScriptRigidbody::OnCollisionStay, this, std::placeholders::_1));
+		OnCollisionEndConnection = static_cast<Rigidbody*>(GetNativeObject())->OnCollisionEnd.Connect(std::bind(&ScriptRigidbody::OnCollisionEnd, this, std::placeholders::_1));
 	}
 	void ScriptRigidbody::UnregisterEvents()
 	{
@@ -129,7 +129,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->Move(*position);
+		static_cast<Rigidbody*>(self->GetNativeObject())->Move(*position);
 	}
 
 	void ScriptRigidbody::InternalRotate(ScriptRigidbody* self, TQuaternion<float>* rotation)
@@ -137,7 +137,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->Rotate(*rotation);
+		static_cast<Rigidbody*>(self->GetNativeObject())->Rotate(*rotation);
 	}
 
 	void ScriptRigidbody::InternalSetMass(ScriptRigidbody* self, float mass)
@@ -145,7 +145,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetMass(mass);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetMass(mass);
 	}
 
 	float ScriptRigidbody::InternalGetMass(ScriptRigidbody* self)
@@ -154,7 +154,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetMass();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetMass();
 
 		float __output;
 		__output = tmp__output;
@@ -167,7 +167,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetIsKinematic(kinematic);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetIsKinematic(kinematic);
 	}
 
 	bool ScriptRigidbody::InternalGetIsKinematic(ScriptRigidbody* self)
@@ -176,7 +176,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetIsKinematic();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetIsKinematic();
 
 		bool __output;
 		__output = tmp__output;
@@ -190,7 +190,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->IsSleeping();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->IsSleeping();
 
 		bool __output;
 		__output = tmp__output;
@@ -203,7 +203,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->Sleep();
+		static_cast<Rigidbody*>(self->GetNativeObject())->Sleep();
 	}
 
 	void ScriptRigidbody::InternalWakeUp(ScriptRigidbody* self)
@@ -211,7 +211,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->WakeUp();
+		static_cast<Rigidbody*>(self->GetNativeObject())->WakeUp();
 	}
 
 	void ScriptRigidbody::InternalSetSleepThreshold(ScriptRigidbody* self, float threshold)
@@ -219,7 +219,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetSleepThreshold(threshold);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetSleepThreshold(threshold);
 	}
 
 	float ScriptRigidbody::InternalGetSleepThreshold(ScriptRigidbody* self)
@@ -228,7 +228,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetSleepThreshold();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetSleepThreshold();
 
 		float __output;
 		__output = tmp__output;
@@ -241,7 +241,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetUseGravity(gravity);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetUseGravity(gravity);
 	}
 
 	bool ScriptRigidbody::InternalGetUseGravity(ScriptRigidbody* self)
@@ -250,7 +250,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetUseGravity();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetUseGravity();
 
 		bool __output;
 		__output = tmp__output;
@@ -263,7 +263,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetVelocity(*velocity);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetVelocity(*velocity);
 	}
 
 	void ScriptRigidbody::InternalGetVelocity(ScriptRigidbody* self, TVector3<float>* __output)
@@ -275,7 +275,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetVelocity();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetVelocity();
 
 		*__output = tmp__output;
 	}
@@ -285,7 +285,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetAngularVelocity(*velocity);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetAngularVelocity(*velocity);
 	}
 
 	void ScriptRigidbody::InternalGetAngularVelocity(ScriptRigidbody* self, TVector3<float>* __output)
@@ -297,7 +297,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetAngularVelocity();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetAngularVelocity();
 
 		*__output = tmp__output;
 	}
@@ -307,7 +307,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetDrag(drag);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetDrag(drag);
 	}
 
 	float ScriptRigidbody::InternalGetDrag(ScriptRigidbody* self)
@@ -316,7 +316,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetDrag();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetDrag();
 
 		float __output;
 		__output = tmp__output;
@@ -329,7 +329,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetAngularDrag(drag);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetAngularDrag(drag);
 	}
 
 	float ScriptRigidbody::InternalGetAngularDrag(ScriptRigidbody* self)
@@ -338,7 +338,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetAngularDrag();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetAngularDrag();
 
 		float __output;
 		__output = tmp__output;
@@ -351,7 +351,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetInertiaTensor(*tensor);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetInertiaTensor(*tensor);
 	}
 
 	void ScriptRigidbody::InternalGetInertiaTensor(ScriptRigidbody* self, TVector3<float>* __output)
@@ -363,7 +363,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetInertiaTensor();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetInertiaTensor();
 
 		*__output = tmp__output;
 	}
@@ -373,7 +373,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetMaxAngularVelocity(maxVelocity);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetMaxAngularVelocity(maxVelocity);
 	}
 
 	float ScriptRigidbody::InternalGetMaxAngularVelocity(ScriptRigidbody* self)
@@ -382,7 +382,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetMaxAngularVelocity();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetMaxAngularVelocity();
 
 		float __output;
 		__output = tmp__output;
@@ -395,7 +395,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetCenterOfMassPosition(*position);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetCenterOfMassPosition(*position);
 	}
 
 	void ScriptRigidbody::InternalGetCenterOfMassPosition(ScriptRigidbody* self, TVector3<float>* __output)
@@ -407,7 +407,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetCenterOfMassPosition();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetCenterOfMassPosition();
 
 		*__output = tmp__output;
 	}
@@ -417,7 +417,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetCenterOfMassRotation(*rotation);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetCenterOfMassRotation(*rotation);
 	}
 
 	void ScriptRigidbody::InternalGetCenterOfMassRotation(ScriptRigidbody* self, TQuaternion<float>* __output)
@@ -429,7 +429,7 @@ namespace b3d
 		}
 
 		TQuaternion<float> tmp__output;
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetCenterOfMassRotation();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetCenterOfMassRotation();
 
 		*__output = tmp__output;
 	}
@@ -439,7 +439,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetPositionSolverCount(count);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetPositionSolverCount(count);
 	}
 
 	uint32_t ScriptRigidbody::InternalGetPositionSolverCount(ScriptRigidbody* self)
@@ -448,7 +448,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetPositionSolverCount();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetPositionSolverCount();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -461,7 +461,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetVelocitySolverCount(count);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetVelocitySolverCount(count);
 	}
 
 	uint32_t ScriptRigidbody::InternalGetVelocitySolverCount(ScriptRigidbody* self)
@@ -470,7 +470,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetVelocitySolverCount();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetVelocitySolverCount();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -483,7 +483,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetCollisionReportMode(mode);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetCollisionReportMode(mode);
 	}
 
 	CollisionReportMode ScriptRigidbody::InternalGetCollisionReportMode(ScriptRigidbody* self)
@@ -492,7 +492,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetCollisionReportMode();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetCollisionReportMode();
 
 		CollisionReportMode __output;
 		__output = tmp__output;
@@ -505,7 +505,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->SetFlags(flags);
+		static_cast<Rigidbody*>(self->GetNativeObject())->SetFlags(flags);
 	}
 
 	RigidbodyFlag ScriptRigidbody::InternalGetFlags(ScriptRigidbody* self)
@@ -514,7 +514,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetFlags();
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetFlags();
 
 		RigidbodyFlag __output;
 		__output = tmp__output;
@@ -527,7 +527,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->AddForce(*force, mode);
+		static_cast<Rigidbody*>(self->GetNativeObject())->AddForce(*force, mode);
 	}
 
 	void ScriptRigidbody::InternalAddTorque(ScriptRigidbody* self, TVector3<float>* torque, ForceMode mode)
@@ -535,7 +535,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->AddTorque(*torque, mode);
+		static_cast<Rigidbody*>(self->GetNativeObject())->AddTorque(*torque, mode);
 	}
 
 	void ScriptRigidbody::InternalAddForceAtPoint(ScriptRigidbody* self, TVector3<float>* force, TVector3<float>* position, PointForceMode mode)
@@ -543,7 +543,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CRigidbody*>(self->GetNativeObject())->AddForceAtPoint(*force, *position, mode);
+		static_cast<Rigidbody*>(self->GetNativeObject())->AddForceAtPoint(*force, *position, mode);
 	}
 
 	void ScriptRigidbody::InternalGetVelocityAtPoint(ScriptRigidbody* self, TVector3<float>* point, TVector3<float>* __output)
@@ -555,7 +555,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CRigidbody*>(self->GetNativeObject())->GetVelocityAtPoint(*point);
+		tmp__output = static_cast<Rigidbody*>(self->GetNativeObject())->GetVelocityAtPoint(*point);
 
 		*__output = tmp__output;
 	}

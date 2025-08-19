@@ -17,7 +17,7 @@
 #include "Components/BsCollider.h"
 #include "BsPhysXCollider.h"
 #include "BsPhysXColliderShape.h"
-#include "Components/BsCRigidbody.h"
+#include "Components/BsRigidbody.h"
 #include "Utility/BsTime.h"
 #include "Math/BsVector3.h"
 #include "Math/BsAABox.h"
@@ -567,7 +567,7 @@ UPtr<IColliderImplementation> PhysX::CreateColliderImplementation()
 	return B3DMakeUnique<PhysXCollider>();
 }
 
-UPtr<IRigidbodyImplementation> PhysX::CreateRigidbodyImplementation(CRigidbody& owner)
+UPtr<IRigidbodyImplementation> PhysX::CreateRigidbodyImplementation(Rigidbody& owner)
 {
 	return B3DMakeUnique<PhysXRigidbody>(owner);
 }
@@ -697,7 +697,7 @@ void PhysXScene::FixedUpdate(float step)
 
 	for(PxU32 transformIndex = 0; transformIndex < activeTransformCount; transformIndex++)
 	{
-		CRigidbody* rigidbody = static_cast<CRigidbody*>(activeTransforms[transformIndex].userData);
+		Rigidbody* rigidbody = static_cast<Rigidbody*>(activeTransforms[transformIndex].userData);
 
 		// Note: This should never happen, as actors gets their userData set to null when they're destroyed. However
 		// in some cases PhysX seems to keep those actors alive for a frame or few, and reports their state here. Until

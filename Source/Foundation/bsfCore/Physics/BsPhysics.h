@@ -108,7 +108,7 @@ namespace b3d
 		virtual UPtr<IColliderImplementation> CreateColliderImplementation() = 0;
 
 		/** Creates an object that provides low-level functionality required for a Rigidbody. */
-		virtual UPtr<IRigidbodyImplementation> CreateRigidbodyImplementation(CRigidbody& owner) = 0;
+		virtual UPtr<IRigidbodyImplementation> CreateRigidbodyImplementation(Rigidbody& owner) = 0;
 
 		/**
 		 * Checks does the ray hit the provided collider shape.

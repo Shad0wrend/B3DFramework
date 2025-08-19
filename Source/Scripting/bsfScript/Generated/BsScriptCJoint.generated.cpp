@@ -69,7 +69,7 @@ namespace b3d
 	}
 	MonoObject* ScriptJoint::InternalGetBody(ScriptJointWrapperBase* self, JointBody body)
 	{
-		GameObjectHandle<CRigidbody> tmp__output;
+		GameObjectHandle<Rigidbody> tmp__output;
 		if(!self->IsNativeObjectValid())
 			return {};
 
@@ -89,11 +89,11 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		GameObjectHandle<CRigidbody> tmpvalue;
+		GameObjectHandle<Rigidbody> tmpvalue;
 		ScriptRigidbody* scriptObjectWrappervalue;
 		scriptObjectWrappervalue = ScriptRigidbody::GetScriptObjectWrapper(value);
 		if(scriptObjectWrappervalue != nullptr)
-			tmpvalue = B3DStaticGameObjectCast<CRigidbody>(scriptObjectWrappervalue->GetBaseNativeObjectAsHandle());
+			tmpvalue = B3DStaticGameObjectCast<Rigidbody>(scriptObjectWrappervalue->GetBaseNativeObjectAsHandle());
 		static_cast<CJoint*>(self->GetNativeObject())->SetBody(body, tmpvalue);
 	}
 

@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsMeshCollider.h"
 #include "Scene/BsSceneObject.h"
-#include "Components/BsCRigidbody.h"
+#include "Components/BsRigidbody.h"
 #include "Physics/BsPhysicsMesh.h"
 #include "Private/RTTI/BsMeshColliderRTTI.h"
 #include "Scene/BsSceneInstance.h"

@@ -27,10 +27,10 @@ namespace b3d
 		virtual ~Joint() = default;
 
 		/** @copydoc FJoint::GetBody */
-		CRigidbody* GetBody(JointBody body) const;
+		Rigidbody* GetBody(JointBody body) const;
 
 		/** @copydoc FJoint::SetBody */
-		void SetBody(JointBody body, CRigidbody* value);
+		void SetBody(JointBody body, Rigidbody* value);
 
 		/** @copydoc FJoint::GetPosition */
 		Vector3 GetPosition(JointBody body) const;
@@ -94,7 +94,7 @@ namespace b3d
 	{
 		struct BodyInfo
 		{
-			CRigidbody* Body = nullptr;
+			Rigidbody* Body = nullptr;
 			Vector3 Position = Vector3::kZero;
 			Quaternion Rotation = Quaternion::kIdentity;
 		};
