@@ -482,7 +482,7 @@ namespace b3d
 	struct RenderWindowCreateInformation;
 	struct FONT_DESC;
 	struct CharacterControllerCreateInformation;
-	struct JOINT_DESC;
+	struct JointCreateInformation;
 	struct FixedJointCreateInformation;
 	struct DistanceJointCreateInformation;
 	struct HingeJointCreateInformation;
@@ -579,7 +579,7 @@ namespace b3d
 		TID_SphereCollider = 1095,
 		TID_CapsuleCollider = 1096,
 		TID_PlaneCollider = 1097,
-		TID_CRigidbody = 1098,
+		TID_Rigidbody = 1098,
 		TID_PhysicsMesh = 1099,
 		TID_MeshCollider = 1100,
 		TID_CJoint = 1101,

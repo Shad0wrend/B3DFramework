@@ -27,9 +27,9 @@ namespace b3d
 			B3D_RTTI_MEMBER_NAMED(mRotationA, mRotations[0], 4)
 			B3D_RTTI_MEMBER_NAMED(mRotationB, mRotations[1], 5)
 
-			B3D_RTTI_MEMBER_NAMED(mBreakForce, mDesc.BreakForce, 6)
-			B3D_RTTI_MEMBER_NAMED(mBreakTorque, mDesc.BreakTorque, 7)
-			B3D_RTTI_MEMBER_NAMED(mEnableCollision, mDesc.EnableCollision, 8)
+			B3D_RTTI_MEMBER_NAMED(mBreakForce, mInformation.BreakForce, 6)
+			B3D_RTTI_MEMBER_NAMED(mBreakTorque, mInformation.BreakTorque, 7)
+			B3D_RTTI_MEMBER_NAMED(mEnableCollision, mInformation.EnableCollision, 8)
 		B3D_RTTI_END_MEMBERS
 
 	public:

@@ -9,13 +9,13 @@
 using namespace b3d;
 
 CSliderJoint::CSliderJoint()
-	: CJoint(mDesc)
+	: CJoint(mInformation)
 {
 	SetName("SliderJoint");
 }
 
 CSliderJoint::CSliderJoint(const HSceneObject& parent)
-	: CJoint(parent, mDesc)
+	: CJoint(parent, mInformation)
 {
 	SetName("SliderJoint");
 }
@@ -38,15 +38,15 @@ float CSliderJoint::GetSpeed() const
 
 LimitLinearRange CSliderJoint::GetLimit() const
 {
-	return mDesc.Limit;
+	return mInformation.Limit;
 }
 
 void CSliderJoint::SetLimit(const LimitLinearRange& limit)
 {
-	if(mDesc.Limit == limit)
+	if(mInformation.Limit == limit)
 		return;
 
-	mDesc.Limit = limit;
+	mInformation.Limit = limit;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetLimit(limit);
@@ -54,14 +54,14 @@ void CSliderJoint::SetLimit(const LimitLinearRange& limit)
 
 void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 {
-	bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
+	bool isEnabled = ((u32)mInformation.Flag & (u32)flag) != 0;
 	if(isEnabled == enabled)
 		return;
 
 	if(enabled)
-		mDesc.Flag = (SliderJointFlag)((u32)mDesc.Flag | (u32)flag);
+		mInformation.Flag = (SliderJointFlag)((u32)mInformation.Flag | (u32)flag);
 	else
-		mDesc.Flag = (SliderJointFlag)((u32)mDesc.Flag & ~(u32)flag);
+		mInformation.Flag = (SliderJointFlag)((u32)mInformation.Flag & ~(u32)flag);
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetFlag(flag, enabled);
@@ -69,13 +69,13 @@ void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 
 bool CSliderJoint::HasFlag(SliderJointFlag flag) const
 {
-	return ((u32)mDesc.Flag & (u32)flag) != 0;
+	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
 SPtr<Joint> CSliderJoint::CreateInternal()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = SliderJoint::Create(*scene->GetPhysicsScene(), mDesc);
+	SPtr<Joint> joint = SliderJoint::Create(*scene->GetPhysicsScene(), mInformation);
 
 	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 	return joint;

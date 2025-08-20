@@ -7,29 +7,27 @@
 
 using namespace b3d;
 
-CD6Joint::CD6Joint()
-	: CJoint(mDesc)
+CD6Joint::CD6Joint(const HSceneObject& parent)
+	: CJoint(parent, mInformation)
 {
 	SetName("D6Joint");
 }
 
-CD6Joint::CD6Joint(const HSceneObject& parent)
-	: CJoint(parent, mDesc)
-{
-	SetName("D6Joint");
-}
+CD6Joint::CD6Joint()
+	: CD6Joint(nullptr)
+{ }
 
 D6JointMotion CD6Joint::GetMotion(D6JointAxis axis) const
 {
-	return mDesc.Motion[(int)axis];
+	return mInformation.Motion[(int)axis];
 }
 
 void CD6Joint::SetMotion(D6JointAxis axis, D6JointMotion motion)
 {
-	if(mDesc.Motion[(int)axis] == motion)
+	if(mInformation.Motion[(int)axis] == motion)
 		return;
 
-	mDesc.Motion[(int)axis] = motion;
+	mInformation.Motion[(int)axis] = motion;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetMotion(axis, motion);
@@ -61,15 +59,15 @@ Radian CD6Joint::GetSwingZ() const
 
 LimitLinear CD6Joint::GetLimitLinear() const
 {
-	return mDesc.LimitLinear;
+	return mInformation.LimitLinear;
 }
 
 void CD6Joint::SetLimitLinear(const LimitLinear& limit)
 {
-	if(mDesc.LimitLinear == limit)
+	if(mInformation.LimitLinear == limit)
 		return;
 
-	mDesc.LimitLinear = limit;
+	mInformation.LimitLinear = limit;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetLimitLinear(limit);
@@ -77,15 +75,15 @@ void CD6Joint::SetLimitLinear(const LimitLinear& limit)
 
 LimitAngularRange CD6Joint::GetLimitTwist() const
 {
-	return mDesc.LimitTwist;
+	return mInformation.LimitTwist;
 }
 
 void CD6Joint::SetLimitTwist(const LimitAngularRange& limit)
 {
-	if(mDesc.LimitTwist == limit)
+	if(mInformation.LimitTwist == limit)
 		return;
 
-	mDesc.LimitTwist = limit;
+	mInformation.LimitTwist = limit;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetLimitTwist(limit);
@@ -93,15 +91,15 @@ void CD6Joint::SetLimitTwist(const LimitAngularRange& limit)
 
 LimitConeRange CD6Joint::GetLimitSwing() const
 {
-	return mDesc.LimitSwing;
+	return mInformation.LimitSwing;
 }
 
 void CD6Joint::SetLimitSwing(const LimitConeRange& limit)
 {
-	if(mDesc.LimitSwing == limit)
+	if(mInformation.LimitSwing == limit)
 		return;
 
-	mDesc.LimitSwing = limit;
+	mInformation.LimitSwing = limit;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetLimitSwing(limit);
@@ -109,15 +107,15 @@ void CD6Joint::SetLimitSwing(const LimitConeRange& limit)
 
 D6JointDrive CD6Joint::GetDrive(D6JointDriveType type) const
 {
-	return mDesc.Drive[(int)type];
+	return mInformation.Drive[(int)type];
 }
 
 void CD6Joint::SetDrive(D6JointDriveType type, const D6JointDrive& drive)
 {
-	if(mDesc.Drive[(int)type] == drive)
+	if(mInformation.Drive[(int)type] == drive)
 		return;
 
-	mDesc.Drive[(int)type] = drive;
+	mInformation.Drive[(int)type] = drive;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetDrive(type, drive);
@@ -125,21 +123,21 @@ void CD6Joint::SetDrive(D6JointDriveType type, const D6JointDrive& drive)
 
 Vector3 CD6Joint::GetDrivePosition() const
 {
-	return mDesc.DrivePosition;
+	return mInformation.DrivePosition;
 }
 
 Quaternion CD6Joint::GetDriveRotation() const
 {
-	return mDesc.DriveRotation;
+	return mInformation.DriveRotation;
 }
 
 void CD6Joint::SetDriveTransform(const Vector3& position, const Quaternion& rotation)
 {
-	if(mDesc.DrivePosition == position && mDesc.DriveRotation == rotation)
+	if(mInformation.DrivePosition == position && mInformation.DriveRotation == rotation)
 		return;
 
-	mDesc.DrivePosition = position;
-	mDesc.DriveRotation = rotation;
+	mInformation.DrivePosition = position;
+	mInformation.DriveRotation = rotation;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetDriveTransform(position, rotation);
@@ -147,21 +145,21 @@ void CD6Joint::SetDriveTransform(const Vector3& position, const Quaternion& rota
 
 Vector3 CD6Joint::GetDriveLinearVelocity() const
 {
-	return mDesc.DriveLinearVelocity;
+	return mInformation.DriveLinearVelocity;
 }
 
 Vector3 CD6Joint::GetDriveAngularVelocity() const
 {
-	return mDesc.DriveAngularVelocity;
+	return mInformation.DriveAngularVelocity;
 }
 
 void CD6Joint::SetDriveVelocity(const Vector3& linear, const Vector3& angular)
 {
-	if(mDesc.DriveLinearVelocity == linear && mDesc.DriveAngularVelocity == angular)
+	if(mInformation.DriveLinearVelocity == linear && mInformation.DriveAngularVelocity == angular)
 		return;
 
-	mDesc.DriveLinearVelocity = linear;
-	mDesc.DriveAngularVelocity = angular;
+	mInformation.DriveLinearVelocity = linear;
+	mInformation.DriveAngularVelocity = angular;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetDriveVelocity(linear, angular);
@@ -170,7 +168,7 @@ void CD6Joint::SetDriveVelocity(const Vector3& linear, const Vector3& angular)
 SPtr<Joint> CD6Joint::CreateInternal()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = D6Joint::Create(*scene->GetPhysicsScene(), mDesc);
+	SPtr<Joint> joint = D6Joint::Create(*scene->GetPhysicsScene(), mInformation);
 
 	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 	return joint;

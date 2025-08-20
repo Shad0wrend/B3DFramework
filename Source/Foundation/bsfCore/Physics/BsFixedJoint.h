@@ -32,7 +32,7 @@ namespace b3d
 	};
 
 	/** Structure used for initializing a new FixedJoint. */
-	struct FixedJointCreateInformation : JOINT_DESC
+	struct FixedJointCreateInformation : JointCreateInformation
 	{};
 
 	/** @} */

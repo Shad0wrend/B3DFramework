@@ -18,13 +18,13 @@ namespace b3d
 	class B3D_CORE_EXPORT CSphericalJointRTTI : public TRTTIType<CSphericalJoint, CJoint, CSphericalJointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_NAMED(mFlag, mDesc.Flag, 0)
-			B3D_RTTI_MEMBER_NAMED(mYLimitAngle, mDesc.Limit.YLimitAngle, 1)
-			B3D_RTTI_MEMBER_NAMED(mZLimitAngle, mDesc.Limit.ZLimitAngle, 2)
-			B3D_RTTI_MEMBER_NAMED(mLimitContactDist, mDesc.Limit.ContactDist, 3)
-			B3D_RTTI_MEMBER_NAMED(mLimitRestitution, mDesc.Limit.Restitution, 4)
-			B3D_RTTI_MEMBER_NAMED(mSpringDamping, mDesc.Limit.Spring.Damping, 5)
-			B3D_RTTI_MEMBER_NAMED(mSpringStiffness, mDesc.Limit.Spring.Stiffness, 6)
+			B3D_RTTI_MEMBER_NAMED(mFlag, mInformation.Flag, 0)
+			B3D_RTTI_MEMBER_NAMED(mYLimitAngle, mInformation.Limit.YLimitAngle, 1)
+			B3D_RTTI_MEMBER_NAMED(mZLimitAngle, mInformation.Limit.ZLimitAngle, 2)
+			B3D_RTTI_MEMBER_NAMED(mLimitContactDist, mInformation.Limit.ContactDist, 3)
+			B3D_RTTI_MEMBER_NAMED(mLimitRestitution, mInformation.Limit.Restitution, 4)
+			B3D_RTTI_MEMBER_NAMED(mSpringDamping, mInformation.Limit.Spring.Damping, 5)
+			B3D_RTTI_MEMBER_NAMED(mSpringStiffness, mInformation.Limit.Spring.Stiffness, 6)
 		B3D_RTTI_END_MEMBERS
 	public:
 		const String& GetRttiName() override

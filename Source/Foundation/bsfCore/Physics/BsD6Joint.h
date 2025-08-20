@@ -199,7 +199,7 @@ namespace b3d
 	};
 
 	/** Structure used for initializing a new D6Joint. */
-	struct D6JointCreateInformation : JOINT_DESC
+	struct D6JointCreateInformation : JointCreateInformation
 	{
 		D6JointCreateInformation()
 		{

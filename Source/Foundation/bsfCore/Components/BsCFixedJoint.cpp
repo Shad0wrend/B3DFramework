@@ -8,22 +8,20 @@
 
 using namespace b3d;
 
-CFixedJoint::CFixedJoint()
-	: CJoint(mDesc)
+CFixedJoint::CFixedJoint(const HSceneObject& parent)
+	: CJoint(parent, mInformation)
 {
 	SetName("FixedJoint");
 }
 
-CFixedJoint::CFixedJoint(const HSceneObject& parent)
-	: CJoint(parent, mDesc)
-{
-	SetName("FixedJoint");
-}
+CFixedJoint::CFixedJoint()
+	: CFixedJoint(nullptr)
+{ }
 
 SPtr<Joint> CFixedJoint::CreateInternal()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = FixedJoint::Create(*scene->GetPhysicsScene(), mDesc);
+	SPtr<Joint> joint = FixedJoint::Create(*scene->GetPhysicsScene(), mInformation);
 
 	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 	return joint;

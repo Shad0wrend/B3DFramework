@@ -28,15 +28,14 @@ namespace b3d
 	class B3D_CORE_EXPORT FJoint
 	{
 	public:
-		FJoint(const JOINT_DESC& desc) {}
-
+		FJoint(const JointCreateInformation& createInformation) {}
 		virtual ~FJoint() = default;
-
-		/** @copydoc SetBody() */
-		virtual Rigidbody* GetBody(JointBody body) const = 0;
 
 		/** Determines a body managed by the joint. One of the bodies must be movable (non-kinematic). */
 		virtual void SetBody(JointBody body, Rigidbody* value) = 0;
+
+		/** @copydoc SetBody() */
+		virtual Rigidbody* GetBody(JointBody body) const = 0;
 
 		/** Returns the position relative to the body, at which the body is anchored to the joint. */
 		virtual Vector3 GetPosition(JointBody body) const = 0;
@@ -47,17 +46,14 @@ namespace b3d
 		/** Sets the position and rotation relative to the body, at which the body is anchored to the joint.  */
 		virtual void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) = 0;
 
-		/** @copydoc SetBreakForce() */
-		virtual float GetBreakForce() const = 0;
-
 		/**
 		 * Determines the maximum force the joint can apply before breaking. Broken joints no longer participate in physics
 		 * simulation.
 		 */
 		virtual void SetBreakForce(float force) = 0;
 
-		/** @copydoc SetBreakTorque() */
-		virtual float GetBreakTorque() const = 0;
+		/** @copydoc SetBreakForce() */
+		virtual float GetBreakForce() const = 0;
 
 		/**
 		 * Determines the maximum torque the joint can apply before breaking. Broken joints no longer participate in physics
@@ -65,11 +61,14 @@ namespace b3d
 		 */
 		virtual void SetBreakTorque(float torque) = 0;
 
-		/** @copydoc SetEnableCollision() */
-		virtual bool GetEnableCollision() const = 0;
+		/** @copydoc SetBreakTorque() */
+		virtual float GetBreakTorque() const = 0;
 
 		/** Determines whether collision between the two bodies managed by the joint are enabled. */
 		virtual void SetEnableCollision(bool value) = 0;
+
+		/** @copydoc SetEnableCollision() */
+		virtual bool GetEnableCollision() const = 0;
 	};
 
 	/** @} */

@@ -63,7 +63,7 @@ namespace b3d
 	};
 
 	/** Structure used for initializing a new SliderJoint. */
-	struct SliderJointCreateInformation : JOINT_DESC
+	struct SliderJointCreateInformation : JointCreateInformation
 	{
 		LimitLinearRange Limit;
 		SliderJointFlag Flag = (SliderJointFlag)0;

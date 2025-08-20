@@ -7,17 +7,15 @@
 
 using namespace b3d;
 
-CHingeJoint::CHingeJoint()
-	: CJoint(mDesc)
+CHingeJoint::CHingeJoint(const HSceneObject& parent)
+	: CJoint(parent, mInformation)
 {
 	SetName("HingeJoint");
 }
 
-CHingeJoint::CHingeJoint(const HSceneObject& parent)
-	: CJoint(parent, mDesc)
-{
-	SetName("HingeJoint");
-}
+CHingeJoint::CHingeJoint()
+	: CHingeJoint(nullptr)
+{ }
 
 Radian CHingeJoint::GetAngle() const
 {
@@ -37,15 +35,15 @@ float CHingeJoint::GetSpeed() const
 
 LimitAngularRange CHingeJoint::GetLimit() const
 {
-	return mDesc.Limit;
+	return mInformation.Limit;
 }
 
 void CHingeJoint::SetLimit(const LimitAngularRange& limit)
 {
-	if(limit == mDesc.Limit)
+	if(limit == mInformation.Limit)
 		return;
 
-	mDesc.Limit = limit;
+	mInformation.Limit = limit;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetLimit(limit);
@@ -53,15 +51,15 @@ void CHingeJoint::SetLimit(const LimitAngularRange& limit)
 
 HingeJointDrive CHingeJoint::GetDrive() const
 {
-	return mDesc.Drive;
+	return mInformation.Drive;
 }
 
 void CHingeJoint::SetDrive(const HingeJointDrive& drive)
 {
-	if(drive == mDesc.Drive)
+	if(drive == mInformation.Drive)
 		return;
 
-	mDesc.Drive = drive;
+	mInformation.Drive = drive;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetDrive(drive);
@@ -69,14 +67,14 @@ void CHingeJoint::SetDrive(const HingeJointDrive& drive)
 
 void CHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 {
-	bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
+	bool isEnabled = ((u32)mInformation.Flag & (u32)flag) != 0;
 	if(isEnabled == enabled)
 		return;
 
 	if(enabled)
-		mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag | (u32)flag);
+		mInformation.Flag = (HingeJointFlag)((u32)mInformation.Flag | (u32)flag);
 	else
-		mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag & ~(u32)flag);
+		mInformation.Flag = (HingeJointFlag)((u32)mInformation.Flag & ~(u32)flag);
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetFlag(flag, enabled);
@@ -84,13 +82,13 @@ void CHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 
 bool CHingeJoint::HasFlag(HingeJointFlag flag) const
 {
-	return ((u32)mDesc.Flag & (u32)flag) != 0;
+	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
 SPtr<Joint> CHingeJoint::CreateInternal()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = HingeJoint::Create(*scene->GetPhysicsScene(), mDesc);
+	SPtr<Joint> joint = HingeJoint::Create(*scene->GetPhysicsScene(), mInformation);
 
 	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 	return joint;

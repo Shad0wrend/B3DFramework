@@ -18,7 +18,7 @@ PxJointActorIndex::Enum ToJointActor(JointBody body)
 	return PxJointActorIndex::eACTOR1;
 }
 
-FPhysXJoint::FPhysXJoint(physx::PxJoint* joint, const JOINT_DESC& desc)
+FPhysXJoint::FPhysXJoint(physx::PxJoint* joint, const JointCreateInformation& desc)
 	: FJoint(desc), mJoint(joint)
 {
 	mJoint->setBreakForce(desc.BreakForce, desc.BreakTorque);

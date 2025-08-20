@@ -7,17 +7,15 @@
 
 using namespace b3d;
 
-CDistanceJoint::CDistanceJoint()
-	: CJoint(mDesc)
+CDistanceJoint::CDistanceJoint(const HSceneObject& parent)
+	: CJoint(parent, mInformation)
 {
 	SetName("DistanceJoint");
 }
 
-CDistanceJoint::CDistanceJoint(const HSceneObject& parent)
-	: CJoint(parent, mDesc)
-{
-	SetName("DistanceJoint");
-}
+CDistanceJoint::CDistanceJoint()
+	: CDistanceJoint(nullptr)
+{ }
 
 float CDistanceJoint::GetDistance() const
 {
@@ -29,15 +27,15 @@ float CDistanceJoint::GetDistance() const
 
 float CDistanceJoint::GetMinDistance() const
 {
-	return mDesc.MinDistance;
+	return mInformation.MinDistance;
 }
 
 void CDistanceJoint::SetMinDistance(float value)
 {
-	if(mDesc.MinDistance == value)
+	if(mInformation.MinDistance == value)
 		return;
 
-	mDesc.MinDistance = value;
+	mInformation.MinDistance = value;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetMinDistance(value);
@@ -45,15 +43,15 @@ void CDistanceJoint::SetMinDistance(float value)
 
 float CDistanceJoint::GetMaxDistance() const
 {
-	return mDesc.MaxDistance;
+	return mInformation.MaxDistance;
 }
 
 void CDistanceJoint::SetMaxDistance(float value)
 {
-	if(mDesc.MaxDistance == value)
+	if(mInformation.MaxDistance == value)
 		return;
 
-	mDesc.MaxDistance = value;
+	mInformation.MaxDistance = value;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetMaxDistance(value);
@@ -61,15 +59,15 @@ void CDistanceJoint::SetMaxDistance(float value)
 
 float CDistanceJoint::GetTolerance() const
 {
-	return mDesc.Tolerance;
+	return mInformation.Tolerance;
 }
 
 void CDistanceJoint::SetTolerance(float value)
 {
-	if(mDesc.Tolerance == value)
+	if(mInformation.Tolerance == value)
 		return;
 
-	mDesc.Tolerance = value;
+	mInformation.Tolerance = value;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetTolerance(value);
@@ -77,15 +75,15 @@ void CDistanceJoint::SetTolerance(float value)
 
 Spring CDistanceJoint::GetSpring() const
 {
-	return mDesc.Spring;
+	return mInformation.Spring;
 }
 
 void CDistanceJoint::SetSpring(const Spring& value)
 {
-	if(mDesc.Spring == value)
+	if(mInformation.Spring == value)
 		return;
 
-	mDesc.Spring = value;
+	mInformation.Spring = value;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetSpring(value);
@@ -93,14 +91,14 @@ void CDistanceJoint::SetSpring(const Spring& value)
 
 void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 {
-	bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
+	bool isEnabled = ((u32)mInformation.Flag & (u32)flag) != 0;
 	if(isEnabled == enabled)
 		return;
 
 	if(enabled)
-		mDesc.Flag = (DistanceJointFlag)((u32)mDesc.Flag | (u32)flag);
+		mInformation.Flag = (DistanceJointFlag)((u32)mInformation.Flag | (u32)flag);
 	else
-		mDesc.Flag = (DistanceJointFlag)((u32)mDesc.Flag & ~(u32)flag);
+		mInformation.Flag = (DistanceJointFlag)((u32)mInformation.Flag & ~(u32)flag);
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetFlag(flag, enabled);
@@ -108,13 +106,13 @@ void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 
 bool CDistanceJoint::HasFlag(DistanceJointFlag flag) const
 {
-	return ((u32)mDesc.Flag & (u32)flag) != 0;
+	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
 SPtr<Joint> CDistanceJoint::CreateInternal()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = DistanceJoint::Create(*scene->GetPhysicsScene(), mDesc);
+	SPtr<Joint> joint = DistanceJoint::Create(*scene->GetPhysicsScene(), mInformation);
 
 	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 	return joint;

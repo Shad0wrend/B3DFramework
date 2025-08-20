@@ -57,7 +57,7 @@ namespace b3d
 	};
 
 	/** Structure used for initializing a new SphericalJoint. */
-	struct SphericalJointCreateInformation : JOINT_DESC
+	struct SphericalJointCreateInformation : JointCreateInformation
 	{
 		LimitConeRange Limit;
 		SphericalJointFlag Flag = (SphericalJointFlag)0;

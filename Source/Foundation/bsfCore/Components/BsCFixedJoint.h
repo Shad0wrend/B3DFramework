@@ -41,7 +41,7 @@ namespace b3d
 		SPtr<Joint> CreateInternal() override;
 		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
 
-		FixedJointCreateInformation mDesc;
+		FixedJointCreateInformation mInformation;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

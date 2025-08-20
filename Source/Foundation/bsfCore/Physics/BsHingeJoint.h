@@ -101,7 +101,7 @@ namespace b3d
 	};
 
 	/** Structure used for initializing a new HingeJoint. */
-	struct HingeJointCreateInformation : JOINT_DESC
+	struct HingeJointCreateInformation : JointCreateInformation
 	{
 		HingeJointDrive Drive;
 		LimitAngularRange Limit;

@@ -57,7 +57,7 @@ namespace b3d
 	 * The shape and mass of a rigidbody is governed by its colliders. At least one collider must be attached to the collider.
 	 * To attach a collider, place it on the same scene object as the rigidbody, or a child scene object.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Rigidbody)) Rigidbody : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) Rigidbody : public Component
 	{
 	public:
 		Rigidbody(const HSceneObject& parent);
@@ -369,7 +369,7 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CRigidbodyRTTI;
+		friend class RigidbodyRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const override;
 
@@ -377,82 +377,82 @@ namespace b3d
 		Rigidbody(); // Serialization only
 	};
 
-	/** Low-level interface for a collider used by the Rigidbody component. Should be implemented by the physics plugin to provide rigidbody functionality. */
+	/** Low-level interface for a rigidbody used by the Rigidbody component. Should be implemented by the physics plugin to provide rigidbody functionality. */
 	class B3D_CORE_EXPORT IRigidbodyImplementation
 	{
 	public:
 		virtual ~IRigidbodyImplementation() = default;
 
-		/** @copydoc CRigidbody::Move */
+		/** @copydoc Rigidbody::Move */
 		virtual void Move(const Vector3& position) = 0;
 
-		/** @copydoc CRigidbody::Rotate */
+		/** @copydoc Rigidbody::Rotate */
 		virtual void Rotate(const Quaternion& rotation) = 0;
 
-		/** @copydoc CRigidbody::SetMass */
+		/** @copydoc Rigidbody::SetMass */
 		virtual void SetMass(float mass) = 0;
 
-		/** @copydoc CRigidbody::SetIsKinematic */
+		/** @copydoc Rigidbody::SetIsKinematic */
 		virtual void SetIsKinematic(bool kinematic) = 0;
 
-		/** @copydoc CRigidbody::IsSleeping */
+		/** @copydoc Rigidbody::IsSleeping */
 		virtual bool IsSleeping() const = 0;
 
-		/** @copydoc CRigidbody::Sleep */
+		/** @copydoc Rigidbody::Sleep */
 		virtual void Sleep() = 0;
 
-		/** @copydoc CRigidbody::WakeUp */
+		/** @copydoc Rigidbody::WakeUp */
 		virtual void WakeUp() = 0;
 
-		/** @copydoc CRigidbody::SetSleepThreshold */
+		/** @copydoc Rigidbody::SetSleepThreshold */
 		virtual void SetSleepThreshold(float threshold) = 0;
 
-		/** @copydoc CRigidbody::SetUseGravity */
+		/** @copydoc Rigidbody::SetUseGravity */
 		virtual void SetUseGravity(bool gravity) = 0;
 
-		/** @copydoc CRigidbody::SetVelocity */
+		/** @copydoc Rigidbody::SetVelocity */
 		virtual void SetVelocity(const Vector3& velocity) = 0;
 
-		/** @copydoc CRigidbody::GetVelocity */
+		/** @copydoc Rigidbody::GetVelocity */
 		virtual Vector3 GetVelocity() const = 0;
 
-		/** @copydoc CRigidbody::SetAngularVelocity */
+		/** @copydoc Rigidbody::SetAngularVelocity */
 		virtual void SetAngularVelocity(const Vector3& velocity) = 0;
 
-		/** @copydoc CRigidbody::GetAngularVelocity */
+		/** @copydoc Rigidbody::GetAngularVelocity */
 		virtual Vector3 GetAngularVelocity() const = 0;
 
-		/** @copydoc CRigidbody::SetDrag */
+		/** @copydoc Rigidbody::SetDrag */
 		virtual void SetDrag(float drag) = 0;
 
-		/** @copydoc CRigidbody::SetAngularDrag */
+		/** @copydoc Rigidbody::SetAngularDrag */
 		virtual void SetAngularDrag(float drag) = 0;
 
-		/** @copydoc CRigidbody::SetInertiaTensor */
+		/** @copydoc Rigidbody::SetInertiaTensor */
 		virtual void SetInertiaTensor(const Vector3& tensor) = 0;
 
-		/** @copydoc CRigidbody::GetInertiaTensor */
+		/** @copydoc Rigidbody::GetInertiaTensor */
 		virtual Vector3 GetInertiaTensor() const = 0;
 
-		/** @copydoc CRigidbody::SetMaxAngularVelocity */
+		/** @copydoc Rigidbody::SetMaxAngularVelocity */
 		virtual void SetMaxAngularVelocity(float velocity) = 0;
 
-		/** @copydoc CRigidbody::SetFlags */
+		/** @copydoc Rigidbody::SetFlags */
 		virtual void SetFlags(RigidbodyFlag flags) = 0;
 
-		/** @copydoc CRigidbody::AddForce */
+		/** @copydoc Rigidbody::AddForce */
 		virtual void AddForce(const Vector3& force, ForceMode mode = ForceMode::Force) = 0;
 
-		/** @copydoc CRigidbody::AddTorque */
+		/** @copydoc Rigidbody::AddTorque */
 		virtual void AddTorque(const Vector3& torque, ForceMode mode = ForceMode::Force) = 0;
 
-		/** @copydoc CRigidbody::AddForceAtPoint */
+		/** @copydoc Rigidbody::AddForceAtPoint */
 		virtual void AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode = PointForceMode::Force) = 0;
 
-		/** @copydoc CRigidbody::GetVelocityAtPoint */
+		/** @copydoc Rigidbody::GetVelocityAtPoint */
 		virtual Vector3 GetVelocityAtPoint(const Vector3& point) const = 0;
 
-		/** @copydoc CRigidbody::UpdateMassDistribution */
+		/** @copydoc Rigidbody::UpdateMassDistribution */
 		virtual void UpdateMassDistribution(bool autoMassEnabled) = 0;
 
 		/**

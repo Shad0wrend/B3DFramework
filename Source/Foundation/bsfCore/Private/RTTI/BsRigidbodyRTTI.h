@@ -15,7 +15,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CRigidbodyRTTI : public TRTTIType<Rigidbody, Component, CRigidbodyRTTI>
+	class B3D_CORE_EXPORT RigidbodyRTTI : public TRTTIType<Rigidbody, Component, RigidbodyRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -37,13 +37,13 @@ namespace b3d
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CRigidbody";
+			static String name = "Rigidbody";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CRigidbody;
+			return TID_Rigidbody;
 		}
 
 		SPtr<IReflectable> NewRttiObject()

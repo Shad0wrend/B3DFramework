@@ -8,21 +8,10 @@
 #include "Scene/BsSceneInstance.h"
 
 using namespace std::placeholders;
-
 using namespace b3d;
 
-CJoint::CJoint(JOINT_DESC& desc)
-	: mDesc(desc)
-{
-	mPositions[0] = Vector3::kZero;
-	mPositions[1] = Vector3::kZero;
-
-	mRotations[0] = Quaternion::kIdentity;
-	mRotations[1] = Quaternion::kIdentity;
-}
-
-CJoint::CJoint(const HSceneObject& parent, JOINT_DESC& desc)
-	: Component(parent), mDesc(desc)
+CJoint::CJoint(const HSceneObject& parent, JointCreateInformation& createInformation)
+	: Component(parent), mInformation(createInformation)
 {
 	SetName("Joint");
 
@@ -34,6 +23,10 @@ CJoint::CJoint(const HSceneObject& parent, JOINT_DESC& desc)
 
 	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
 }
+
+CJoint::CJoint(JointCreateInformation& createInformation)
+	: CJoint(nullptr, createInformation)
+{ }
 
 HRigidbody CJoint::GetBody(JointBody body) const
 {
@@ -98,15 +91,15 @@ void CJoint::SetTransform(JointBody body, const Vector3& position, const Quatern
 
 float CJoint::GetBreakForce() const
 {
-	return mDesc.BreakForce;
+	return mInformation.BreakForce;
 }
 
 void CJoint::SetBreakForce(float force)
 {
-	if(mDesc.BreakForce == force)
+	if(mInformation.BreakForce == force)
 		return;
 
-	mDesc.BreakForce = force;
+	mInformation.BreakForce = force;
 
 	if(mInternal != nullptr)
 		mInternal->SetBreakForce(force);
@@ -114,15 +107,15 @@ void CJoint::SetBreakForce(float force)
 
 float CJoint::GetBreakTorque() const
 {
-	return mDesc.BreakTorque;
+	return mInformation.BreakTorque;
 }
 
 void CJoint::SetBreakTorque(float torque)
 {
-	if(mDesc.BreakTorque == torque)
+	if(mInformation.BreakTorque == torque)
 		return;
 
-	mDesc.BreakTorque = torque;
+	mInformation.BreakTorque = torque;
 
 	if(mInternal != nullptr)
 		mInternal->SetBreakTorque(torque);
@@ -130,15 +123,15 @@ void CJoint::SetBreakTorque(float torque)
 
 bool CJoint::GetEnableCollision() const
 {
-	return mDesc.EnableCollision;
+	return mInformation.EnableCollision;
 }
 
 void CJoint::SetEnableCollision(bool value)
 {
-	if(mDesc.EnableCollision == value)
+	if(mInformation.EnableCollision == value)
 		return;
 
-	mDesc.EnableCollision = value;
+	mInformation.EnableCollision = value;
 
 	if(mInternal != nullptr)
 		mInternal->SetEnableCollision(value);
@@ -196,17 +189,17 @@ void CJoint::OnTransformChanged(TransformChangedFlags flags)
 void CJoint::RestoreInternal()
 {
 	if(mBodies[0] != nullptr)
-		mDesc.Bodies[0].Body = mBodies[0].Get();
+		mInformation.Bodies[0].Body = mBodies[0].Get();
 	else
-		mDesc.Bodies[0].Body = nullptr;
+		mInformation.Bodies[0].Body = nullptr;
 
 	if(mBodies[1] != nullptr)
-		mDesc.Bodies[1].Body = mBodies[1].Get();
+		mInformation.Bodies[1].Body = mBodies[1].Get();
 	else
-		mDesc.Bodies[1].Body = nullptr;
+		mInformation.Bodies[1].Body = nullptr;
 
-	GetLocalTransform(JointBody::Target, mDesc.Bodies[0].Position, mDesc.Bodies[0].Rotation);
-	GetLocalTransform(JointBody::Anchor, mDesc.Bodies[1].Position, mDesc.Bodies[1].Rotation);
+	GetLocalTransform(JointBody::Target, mInformation.Bodies[0].Position, mInformation.Bodies[0].Rotation);
+	GetLocalTransform(JointBody::Anchor, mInformation.Bodies[1].Position, mInformation.Bodies[1].Rotation);
 
 	mInternal = CreateInternal();
 

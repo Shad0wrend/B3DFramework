@@ -14,7 +14,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	struct JOINT_DESC;
+	struct JointCreateInformation;
 
 	/**
 	 * Base class for all Joint types. Joints constrain how two rigidbodies move relative to one another (for example a door
@@ -90,7 +90,7 @@ namespace b3d
 	};
 
 	/** Structure used for initializing a new Joint. */
-	struct JOINT_DESC
+	struct JointCreateInformation
 	{
 		struct BodyInfo
 		{

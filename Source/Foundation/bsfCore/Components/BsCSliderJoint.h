@@ -12,37 +12,38 @@ namespace b3d
 	 *  @{
 	 */
 
-	/**
-	 * @copydoc	SliderJoint
-	 *
-	 * @note	Wraps SliderJoint as a Component.
-	 */
+	/** Joint that removes all but a single translational degree of freedom. Bodies are allowed to move along a single axis. */
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SliderJoint)) CSliderJoint : public CJoint
 	{
 	public:
 		CSliderJoint(const HSceneObject& parent);
 
-		/** @copydoc SliderJoint::GetPosition */
+		/** Returns the current position of the slider. */
 		B3D_SCRIPT_EXPORT(ExportName(Position), Property(Getter))
 		float GetPosition() const;
 
-		/** @copydoc SliderJoint::GetSpeed */
+		/** Returns the current speed of the slider. */
 		B3D_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
 		float GetSpeed() const;
 
-		/** @copydoc SliderJoint::GetLimit */
-		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
-		LimitLinearRange GetLimit() const;
-
-		/** @copydoc SliderJoint::SetLimit */
+		/**
+		 * Determines a limit that constrains the movement of the joint to a specific minimum and maximum distance. You must
+		 * enable the limit flag on the joint in order for this to be recognized.
+		 *
+		 * @see LimitLinearRange
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Setter))
 		void SetLimit(const LimitLinearRange& limit);
 
-		/** @copydoc SliderJoint::SetFlag */
+		/** @copydoc SetLimit */
+		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
+		LimitLinearRange GetLimit() const;
+
+		/** Enables or disables a flag that controls the joint's behaviour. */
 		B3D_SCRIPT_EXPORT(ExportName(SetFlag))
 		void SetFlag(SliderJointFlag flag, bool enabled);
 
-		/** @copydoc SliderJoint::HasFlag */
+		/** Checks is the specified flag enabled. */
 		B3D_SCRIPT_EXPORT(ExportName(HasFlag))
 		bool HasFlag(SliderJointFlag flag) const;
 
@@ -64,7 +65,7 @@ namespace b3d
 		SPtr<Joint> CreateInternal() override;
 		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
 
-		SliderJointCreateInformation mDesc;
+		SliderJointCreateInformation mInformation;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -78,5 +79,27 @@ namespace b3d
 		CSliderJoint(); // Serialization only
 	};
 
+	/** Low-level interface for a joint used by the SliderJoint component. Should be implemented by the physics plugin to provide joint functionality. */
+	class B3D_CORE_EXPORT ISliderJointImplementation : public IJointImplementation
+	{
+	public:
+		/** @copydoc SliderJoint::GetPosition */
+		virtual float GetPosition() const = 0;
+
+		/** @copydoc SliderJoint::GetSpeed */
+		virtual float GetSpeed() const = 0;
+
+		/** @copydoc SliderJoint::SetLimit */
+		virtual void SetLimit(const LimitLinearRange& limit) = 0;
+
+		/** @copydoc SliderJoint::GetLimit */
+		virtual LimitLinearRange GetLimit() const = 0;
+
+		/** @copydoc SliderJoint::SetFlag */
+		virtual void SetFlag(SliderJointFlag flag, bool enabled) = 0;
+
+		/** @copydoc SliderJoint::HasFlag */
+		virtual bool HasFlag(SliderJointFlag flag) const = 0;
+	};
 	/** @} */
 } // namespace b3d

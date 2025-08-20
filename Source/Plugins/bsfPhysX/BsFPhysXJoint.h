@@ -16,7 +16,7 @@ namespace b3d
 	class FPhysXJoint : public FJoint
 	{
 	public:
-		FPhysXJoint(physx::PxJoint* joint, const JOINT_DESC& desc);
+		FPhysXJoint(physx::PxJoint* joint, const JointCreateInformation& desc);
 		~FPhysXJoint();
 
 		Rigidbody* GetBody(JointBody body) const override;

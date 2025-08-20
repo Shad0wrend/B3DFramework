@@ -17,13 +17,13 @@ namespace b3d
 	class B3D_CORE_EXPORT CSliderJointRTTI : public TRTTIType<CSliderJoint, CJoint, CSliderJointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_NAMED(mFlag, mDesc.Flag, 0)
-			B3D_RTTI_MEMBER_NAMED(mLimitLower, mDesc.Limit.Lower, 1)
-			B3D_RTTI_MEMBER_NAMED(mLimitUpper, mDesc.Limit.Upper, 2)
-			B3D_RTTI_MEMBER_NAMED(mLimitContactDist, mDesc.Limit.ContactDist, 3)
-			B3D_RTTI_MEMBER_NAMED(mLimitRestitution, mDesc.Limit.Restitution, 4)
-			B3D_RTTI_MEMBER_NAMED(mSpringDamping, mDesc.Limit.Spring.Damping, 5)
-			B3D_RTTI_MEMBER_NAMED(mSpringStiffness, mDesc.Limit.Spring.Stiffness, 6)
+			B3D_RTTI_MEMBER_NAMED(mFlag, mInformation.Flag, 0)
+			B3D_RTTI_MEMBER_NAMED(mLimitLower, mInformation.Limit.Lower, 1)
+			B3D_RTTI_MEMBER_NAMED(mLimitUpper, mInformation.Limit.Upper, 2)
+			B3D_RTTI_MEMBER_NAMED(mLimitContactDist, mInformation.Limit.ContactDist, 3)
+			B3D_RTTI_MEMBER_NAMED(mLimitRestitution, mInformation.Limit.Restitution, 4)
+			B3D_RTTI_MEMBER_NAMED(mSpringDamping, mInformation.Limit.Spring.Damping, 5)
+			B3D_RTTI_MEMBER_NAMED(mSpringStiffness, mInformation.Limit.Spring.Stiffness, 6)
 		B3D_RTTI_END_MEMBERS
 	public:
 		const String& GetRttiName() override

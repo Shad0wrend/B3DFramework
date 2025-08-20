@@ -410,10 +410,10 @@ void Rigidbody::OnTransformChanged(TransformChangedFlags flags)
 
 RTTIType* Rigidbody::GetRttiStatic()
 {
-	return CRigidbodyRTTI::Instance();
+	return RigidbodyRTTI::Instance();
 }
 
 RTTIType* Rigidbody::GetRtti() const
 {
-	return Rigidbody::GetRttiStatic();
+	return GetRttiStatic();
 }

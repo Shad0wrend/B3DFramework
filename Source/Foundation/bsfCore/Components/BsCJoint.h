@@ -13,72 +13,62 @@ namespace b3d
 	 */
 
 	/**
-	 * @copydoc	Joint
-	 *
-	 * @note Wraps Joint as a Component.
+	 * Base class for all Joint types. Joints constrain how two rigidbodies move relative to one another (for example a door
+	 * hinge). One of the bodies in the joint must always be movable (non-kinematic).
 	 */
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Joint)) CJoint : public Component
 	{
 	public:
-		CJoint(const HSceneObject& parent, JOINT_DESC& desc);
+		CJoint(const HSceneObject& parent, JointCreateInformation& createInformation);
 		virtual ~CJoint() = default;
 
-		/** @copydoc Joint::GetBody */
-		B3D_SCRIPT_EXPORT(ExportName(GetBody))
-		HRigidbody GetBody(JointBody body) const;
-
-		/** @copydoc Joint::SetBody */
+		/** Determines a body managed by the joint. One of the bodies must be movable (non-kinematic). */
 		B3D_SCRIPT_EXPORT(ExportName(SetBody))
 		void SetBody(JointBody body, const HRigidbody& value);
 
-		/** @copydoc Joint::GetPosition */
+		/** @copydoc SetBody */
+		B3D_SCRIPT_EXPORT(ExportName(GetBody))
+		HRigidbody GetBody(JointBody body) const;
+
+		/** Returns the position relative to the body, at which the body is anchored to the joint. */
 		B3D_SCRIPT_EXPORT(ExportName(GetPosition))
 		Vector3 GetPosition(JointBody body) const;
 
-		/** @copydoc Joint::GetRotation */
+		/** Returns the rotation relative to the body, at which the body is anchored to the joint. */
 		B3D_SCRIPT_EXPORT(ExportName(GetRotation))
 		Quaternion GetRotation(JointBody body) const;
 
-		/** @copydoc Joint::SetTransform */
+		/** Sets the position and rotation relative to the body, at which the body is anchored to the joint.  */
 		B3D_SCRIPT_EXPORT(ExportName(SetTransform))
 		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation);
 
-		/** @copydoc Joint::GetBreakForce */
-		B3D_SCRIPT_EXPORT(ExportName(BreakForce), Property(Getter))
-		float GetBreakForce() const;
-
-		/** @copydoc Joint::SetBreakForce */
+		/** Determines the maximum force the joint can apply before breaking. Broken joints no longer participate in physics simulation. */
 		B3D_SCRIPT_EXPORT(ExportName(BreakForce), Property(Setter))
 		void SetBreakForce(float force);
 
-		/** @copydoc Joint::GetBreakTorque */
-		B3D_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Getter))
-		float GetBreakTorque() const;
+		/** @copydoc SetBreakForce */
+		B3D_SCRIPT_EXPORT(ExportName(BreakForce), Property(Getter))
+		float GetBreakForce() const;
 
-		/** @copydoc Joint::SetBreakTorque */
+		/** Determines the maximum torque the joint can apply before breaking. Broken joints no longer participate in physics simulation. */
 		B3D_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Setter))
 		void SetBreakTorque(float torque);
 
-		/** @copydoc Joint::GetEnableCollision */
-		B3D_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Getter))
-		bool GetEnableCollision() const;
+		/** @copydoc SetBreakTorque */
+		B3D_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Getter))
+		float GetBreakTorque() const;
 
-		/** @copydoc Joint::SetEnableCollision */
+		/** Determines whether collision between the two bodies managed by the joint are enabled. */
 		B3D_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Setter))
 		void SetEnableCollision(bool value);
 
-		/** @copydoc Joint::OnJointBreak */
+		/** @copydoc SetEnableCollision */
+		B3D_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Getter))
+		bool GetEnableCollision() const;
+
+		/** Triggered when the joint's break force or torque is exceeded. */
 		B3D_SCRIPT_EXPORT(ExportName(OnJointBreak))
 		Event<void()> OnJointBreak;
-
-		/** @name Internal
-		 *  @{
-		 */
-
-		/** Returns the Joint implementation wrapped by this component. */
-		Joint* GetInternalInternal() const { return mInternal.get(); }
-
-		/** @} */
 
 		/************************************************************************/
 		/* 						COMPONENT OVERRIDES                      		*/
@@ -123,7 +113,7 @@ namespace b3d
 		Quaternion mRotations[2];
 
 	private:
-		JOINT_DESC& mDesc;
+		JointCreateInformation& mInformation; // References the information in the derived class
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -133,7 +123,47 @@ namespace b3d
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
-		CJoint(JOINT_DESC& desc); // Serialization only
+		CJoint(JointCreateInformation& createInformation); // Serialization only
+	};
+
+	/** Low-level interface for a joint used by the Joint component. Should be implemented by the physics plugin to provide joint functionality. */
+	class B3D_CORE_EXPORT IJointImplementation
+	{
+	public:
+		virtual ~IJointImplementation() = default;
+
+		/** @copydoc Joint::SetBody */
+		virtual void SetBody(JointBody body, Rigidbody* value) = 0;
+
+		/** @copydoc SetBody() */
+		virtual Rigidbody* GetBody(JointBody body) const = 0;
+
+		/** @copydoc Joint::GetPosition */
+		virtual Vector3 GetPosition(JointBody body) const = 0; // TODO - Needed?
+
+		/** @copydoc Joint::GetRotation */
+		virtual Quaternion GetRotation(JointBody body) const = 0; // TODO - Needed?
+
+		/** @copydoc Joint::SetTransform */
+		virtual void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) = 0; // TODO - Needed?
+
+		/** @copydoc Joint::SetBreakForce */
+		virtual void SetBreakForce(float force) = 0;
+
+		/** @copydoc SetBreakForce() */
+		virtual float GetBreakForce() const = 0;
+
+		/** @copydoc Joint::SetBreakTorque */
+		virtual void SetBreakTorque(float torque) = 0;
+
+		/** @copydoc SetBreakTorque() */
+		virtual float GetBreakTorque() const = 0;
+
+		/** @copydoc Joint::SetEnableCollision() */
+		virtual void SetEnableCollision(bool value) = 0;
+
+		/** @copydoc SetEnableCollision() */
+		virtual bool GetEnableCollision() const = 0;
 	};
 
 	/** @} */

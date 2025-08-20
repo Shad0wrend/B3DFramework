@@ -8,28 +8,28 @@
 using namespace b3d;
 
 CSphericalJoint::CSphericalJoint()
-	: CJoint(mDesc)
+	: CJoint(mInformation)
 {
 	SetName("SphericalJoint");
 }
 
 CSphericalJoint::CSphericalJoint(const HSceneObject& parent)
-	: CJoint(parent, mDesc)
+	: CJoint(parent, mInformation)
 {
 	SetName("SphericalJoint");
 }
 
 LimitConeRange CSphericalJoint::GetLimit() const
 {
-	return mDesc.Limit;
+	return mInformation.Limit;
 }
 
 void CSphericalJoint::SetLimit(const LimitConeRange& limit)
 {
-	if(limit == mDesc.Limit)
+	if(limit == mInformation.Limit)
 		return;
 
-	mDesc.Limit = limit;
+	mInformation.Limit = limit;
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetLimit(limit);
@@ -37,14 +37,14 @@ void CSphericalJoint::SetLimit(const LimitConeRange& limit)
 
 void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 {
-	bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
+	bool isEnabled = ((u32)mInformation.Flag & (u32)flag) != 0;
 	if(isEnabled == enabled)
 		return;
 
 	if(enabled)
-		mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag | (u32)flag);
+		mInformation.Flag = (SphericalJointFlag)((u32)mInformation.Flag | (u32)flag);
 	else
-		mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag & ~(u32)flag);
+		mInformation.Flag = (SphericalJointFlag)((u32)mInformation.Flag & ~(u32)flag);
 
 	if(mInternal != nullptr)
 		GetInternalInternal()->SetFlag(flag, enabled);
@@ -52,13 +52,13 @@ void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 
 bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
 {
-	return ((u32)mDesc.Flag & (u32)flag) != 0;
+	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
 SPtr<Joint> CSphericalJoint::CreateInternal()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = SphericalJoint::Create(*scene->GetPhysicsScene(), mDesc);
+	SPtr<Joint> joint = SphericalJoint::Create(*scene->GetPhysicsScene(), mInformation);
 
 	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 	return joint;

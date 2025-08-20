@@ -87,7 +87,7 @@ namespace b3d
 	};
 
 	/** Structure used for initializing a new DistanceJoint. */
-	struct DistanceJointCreateInformation : JOINT_DESC
+	struct DistanceJointCreateInformation : JointCreateInformation
 	{
 		float MinDistance = 0.0f;
 		float MaxDistance = 0.0f;

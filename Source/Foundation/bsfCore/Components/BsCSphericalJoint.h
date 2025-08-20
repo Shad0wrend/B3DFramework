@@ -13,28 +13,31 @@ namespace b3d
 	 */
 
 	/**
-	 * @copydoc	SphericalJoint
-	 *
-	 * @note	Wraps SphericalJoint as a Component.
+	 * A spherical joint removes all translational degrees of freedom but allows all rotational degrees of freedom.
+	 * Essentially this ensures that the anchor points of the two bodies are always coincident. Bodies are allowed to
+	 * rotate around the anchor points, and their rotation can be limited by an elliptical cone.
 	 */
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SphericalJoint)) CSphericalJoint : public CJoint
 	{
 	public:
 		CSphericalJoint(const HSceneObject& parent);
 
-		/** @copydoc SphericalJoint::GetLimit */
-		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
-		LimitConeRange GetLimit() const;
-
-		/** @copydoc SphericalJoint::SetLimit */
+		/**
+		 * Determines the limit of the joint. This clamps the rotation inside an eliptical angular cone. You must enable
+		 * limit flag on the joint in order for this to be recognized.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Setter))
 		void SetLimit(const LimitConeRange& limit);
 
-		/** @copydoc SphericalJoint::SetFlag */
+		/** @copydoc SetLimit */
+		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
+		LimitConeRange GetLimit() const;
+
+		/** Enables or disables a flag that controls the joint's behaviour. */
 		B3D_SCRIPT_EXPORT(ExportName(SetFlag))
 		void SetFlag(SphericalJointFlag flag, bool enabled);
 
-		/** @copydoc SphericalJoint::HasFlag */
+		/** Checks is the specified flag enabled. */
 		B3D_SCRIPT_EXPORT(ExportName(HasFlag))
 		bool HasFlag(SphericalJointFlag flag) const;
 
@@ -55,7 +58,7 @@ namespace b3d
 
 		SPtr<Joint> CreateInternal() override;
 
-		SphericalJointCreateInformation mDesc;
+		SphericalJointCreateInformation mInformation;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -67,6 +70,23 @@ namespace b3d
 
 	protected:
 		CSphericalJoint(); // Serialization only
+	};
+
+	/** Low-level interface for a joint used by the SphericalJoint component. Should be implemented by the physics plugin to provide joint functionality. */
+	class B3D_CORE_EXPORT ISphericalJointImplementation : public IJointImplementation
+	{
+	public:
+		/** @copydoc SphericalJoint::SetLimit */
+		virtual void SetLimit(const LimitConeRange& limit) = 0;
+
+		/** @copydoc SphericalJoint::GetLimit */
+		virtual LimitConeRange GetLimit() const = 0;
+
+		/** @copydoc SphericalJoint::SetFlag */
+		virtual void SetFlag(SphericalJointFlag flag, bool enabled) = 0;
+
+		/** @copydoc SphericalJoint::HasFlag */
+		virtual bool HasFlag(SphericalJointFlag flag) const = 0;
 	};
 
 	/** @} */
