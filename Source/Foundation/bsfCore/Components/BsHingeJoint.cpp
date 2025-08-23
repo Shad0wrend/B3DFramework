@@ -59,25 +59,20 @@ void HingeJoint::SetDrive(const HingeJointDrive& drive)
 
 void HingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 {
-	bool isEnabled = ((u32)mInformation.Flag & (u32)flag) != 0;
+	bool isEnabled = mInformation.Flags.IsSet(flag);
 	if(isEnabled == enabled)
 		return;
 
 	if(enabled)
-		mInformation.Flag = (HingeJointFlag)((u32)mInformation.Flag | (u32)flag);
+		mInformation.Flags.Set(flag);
 	else
-		mInformation.Flag = (HingeJointFlag)((u32)mInformation.Flag & ~(u32)flag);
+		mInformation.Flags.Unset(flag);
 
 	if(mImplementation != nullptr)
 		GetImplementation().SetFlag(flag, enabled);
 }
 
-bool HingeJoint::HasFlag(HingeJointFlag flag) const
-{
-	return ((u32)mInformation.Flag & (u32)flag) != 0;
-}
-
-SPtr<IJointImplementation> HingeJoint::CreateImplementation()
+UPtr<IJointImplementation> HingeJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateHingeJoint(*this, mInformation);

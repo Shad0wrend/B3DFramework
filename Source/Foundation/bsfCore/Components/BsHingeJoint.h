@@ -20,6 +20,9 @@ namespace b3d
 		Drive = 0x2 /**< Joint drive is enabled. */
 	};
 
+	using HingeJointFlags = Flags<HingeJointFlag>;
+	B3D_FLAGS_OPERATORS(HingeJointFlag)
+
 	/** Properties of a drive that drives the joint's angular velocity towards a paricular value. */
 	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) HingeJointDrive
 	{
@@ -50,7 +53,7 @@ namespace b3d
 	{
 		HingeJointDrive Drive;
 		LimitAngularRange Limit;
-		HingeJointFlag Flag = (HingeJointFlag)0;
+		HingeJointFlags Flags;
 	};
 
 	/** Hinge joint removes all but a single rotation degree of freedom from its two attached bodies (for example a door hinge). */
@@ -99,7 +102,7 @@ namespace b3d
 
 		/** Checks is the specified option enabled. */
 		B3D_SCRIPT_EXPORT(ExportName(HasFlag))
-		bool HasFlag(HingeJointFlag flag) const;
+		bool HasFlag(HingeJointFlag flag) const { return mInformation.Flags.IsSet(flag); }
 
 		/** @name Internal
 		 *  @{
@@ -116,7 +119,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<IJointImplementation> CreateImplementation() override;
+		UPtr<IJointImplementation> CreateImplementation() override;
 
 		HingeJointCreateInformation mInformation;
 

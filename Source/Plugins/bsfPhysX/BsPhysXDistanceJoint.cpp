@@ -31,13 +31,13 @@ PhysXDistanceJoint::PhysXDistanceJoint(PxPhysics* physx, Joint& owner, const Dis
 
 	PxDistanceJointFlags flags;
 
-	if(((u32)createInformation.Flag & (u32)DistanceJointFlag::MaxDistance) != 0)
+	if(createInformation.Flags.IsSet(DistanceJointFlag::MaxDistance))
 		flags |= PxDistanceJointFlag::eMAX_DISTANCE_ENABLED;
 
-	if(((u32)createInformation.Flag & (u32)DistanceJointFlag::MinDistance) != 0)
+	if(createInformation.Flags.IsSet(DistanceJointFlag::MinDistance))
 		flags |= PxDistanceJointFlag::eMIN_DISTANCE_ENABLED;
 
-	if(((u32)createInformation.Flag & (u32)DistanceJointFlag::Spring) != 0)
+	if(createInformation.Flags.IsSet(DistanceJointFlag::Spring))
 		flags |= PxDistanceJointFlag::eSPRING_ENABLED;
 
 	joint->setDistanceJointFlags(flags);

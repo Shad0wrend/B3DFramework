@@ -19,11 +19,14 @@ namespace b3d
 		Limit = 0x1 /**< Enables the linear range limit. */
 	};
 
+	using SliderJointFlags = Flags<SliderJointFlag>;
+	B3D_FLAGS_OPERATORS(SliderJointFlag);
+
 	/** Structure used for initializing a new SliderJoint. */
 	struct SliderJointCreateInformation : JointCreateInformation
 	{
 		LimitLinearRange Limit;
-		SliderJointFlag Flag = (SliderJointFlag)0;
+		SliderJointFlags Flags;
 	};
 
 	/** Joint that removes all but a single translational degree of freedom. Bodies are allowed to move along a single axis. */
@@ -59,7 +62,7 @@ namespace b3d
 
 		/** Checks is the specified flag enabled. */
 		B3D_SCRIPT_EXPORT(ExportName(HasFlag))
-		bool HasFlag(SliderJointFlag flag) const;
+		bool HasFlag(SliderJointFlag flag) const { return mInformation.Flags.IsSet(flag); }
 
 		/** @name Internal
 		 *  @{
@@ -76,7 +79,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<IJointImplementation> CreateImplementation() override;
+		UPtr<IJointImplementation> CreateImplementation() override;
 		void CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
 
 		SliderJointCreateInformation mInformation;

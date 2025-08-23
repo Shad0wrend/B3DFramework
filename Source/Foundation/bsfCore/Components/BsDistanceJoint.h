@@ -21,6 +21,9 @@ namespace b3d
 		Spring = 0x4 /**< Enables spring when maintaining limits. */
 	};
 
+	using DistanceJointFlags = Flags<DistanceJointFlag>;
+	B3D_FLAGS_OPERATORS(DistanceJointFlag)
+
 	/** Structure used for initializing a new DistanceJoint. */
 	struct DistanceJointCreateInformation : JointCreateInformation
 	{
@@ -28,7 +31,7 @@ namespace b3d
 		float MaxDistance = 0.0f;
 		float Tolerance = 0.25f;
 		Spring Spring;
-		DistanceJointFlag Flag = (DistanceJointFlag)0;
+		DistanceJointFlags Flags;
 	};
 
 	/** A joint that maintains an upper or lower (or both) bound on the distance between two bodies. */
@@ -93,7 +96,7 @@ namespace b3d
 
 		/** Checks whether a certain joint flag is enabled. */
 		B3D_SCRIPT_EXPORT(ExportName(HasFlag))
-		bool HasFlag(DistanceJointFlag flag) const;
+		bool HasFlag(DistanceJointFlag flag) const { return mInformation.Flags.IsSet(flag); }
 
 		/** @name Internal
 		 *  @{
@@ -110,7 +113,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<IJointImplementation> CreateImplementation() override;
+		UPtr<IJointImplementation> CreateImplementation() override;
 
 		DistanceJointCreateInformation mInformation;
 

@@ -19,11 +19,14 @@ namespace b3d
 		Limit = 0x1 /**< Enables the cone range limit. */
 	};
 
+	using SphericalJointFlags = Flags<SphericalJointFlag>;
+	B3D_FLAGS_OPERATORS(SphericalJointFlag)
+
 	/** Structure used for initializing a new SphericalJoint. */
 	struct SphericalJointCreateInformation : JointCreateInformation
 	{
 		LimitConeRange Limit;
-		SphericalJointFlag Flag = (SphericalJointFlag)0;
+		SphericalJointFlags Flags;
 	};
 
 	/**
@@ -53,7 +56,7 @@ namespace b3d
 
 		/** Checks is the specified flag enabled. */
 		B3D_SCRIPT_EXPORT(ExportName(HasFlag))
-		bool HasFlag(SphericalJointFlag flag) const;
+		bool HasFlag(SphericalJointFlag flag) const { return mInformation.Flags.IsSet(flag); }
 
 		/** @name Internal
 		 *  @{
@@ -70,7 +73,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<IJointImplementation> CreateImplementation() override;
+		UPtr<IJointImplementation> CreateImplementation() override;
 
 		SphericalJointCreateInformation mInformation;
 

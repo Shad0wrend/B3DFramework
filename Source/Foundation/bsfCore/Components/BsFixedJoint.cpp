@@ -19,7 +19,7 @@ FixedJoint::FixedJoint()
 	: FixedJoint(nullptr)
 { }
 
-SPtr<IJointImplementation> FixedJoint::CreateImplementation()
+UPtr<IJointImplementation> FixedJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateFixedJoint(*this, mInformation);

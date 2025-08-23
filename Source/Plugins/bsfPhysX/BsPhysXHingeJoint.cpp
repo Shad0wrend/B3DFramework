@@ -26,10 +26,10 @@ PhysXHingeJoint::PhysXHingeJoint(PxPhysics* physx, Joint& owner, const HingeJoin
 
 	PxRevoluteJointFlags flags;
 
-	if(((u32)createInformation.Flag & (u32)HingeJointFlag::Limit) != 0)
+	if(createInformation.Flags.IsSet(HingeJointFlag::Limit))
 		flags |= PxRevoluteJointFlag::eLIMIT_ENABLED;
 
-	if(((u32)createInformation.Flag & (u32)HingeJointFlag::Drive) != 0)
+	if(createInformation.Flags.IsSet(HingeJointFlag::Drive))
 		flags |= PxRevoluteJointFlag::eDRIVE_ENABLED;
 
 	joint->setRevoluteJointFlags(flags);

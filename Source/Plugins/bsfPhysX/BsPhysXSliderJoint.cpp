@@ -27,7 +27,7 @@ PhysXSliderJoint::PhysXSliderJoint(PxPhysics* physx, Joint& owner, const SliderJ
 
 	PxPrismaticJointFlags flags;
 
-	if(((u32)createInformation.Flag & (u32)SliderJointFlag::Limit) != 0)
+	if(createInformation.Flags.IsSet(SliderJointFlag::Limit))
 		flags |= PxPrismaticJointFlag::eLIMIT_ENABLED;
 
 	joint->setPrismaticJointFlags(flags);

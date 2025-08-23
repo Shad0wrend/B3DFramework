@@ -26,7 +26,7 @@ PhysXSphericalJoint::PhysXSphericalJoint(PxPhysics* physx, Joint& owner, const S
 
 	PxSphericalJointFlags flags;
 
-	if(((u32)createInformation.Flag & (u32)SphericalJointFlag::Limit) != 0)
+	if(createInformation.Flags.IsSet(SphericalJointFlag::Limit))
 		flags |= PxSphericalJointFlag::eLIMIT_ENABLED;
 
 	joint->setSphericalJointFlags(flags);
