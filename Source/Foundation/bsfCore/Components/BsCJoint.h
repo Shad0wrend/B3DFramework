@@ -7,6 +7,8 @@
 
 namespace b3d
 {
+	class IJointImplementation;
+
 	/** @addtogroup Components-Core
 	 *  @{
 	 */
@@ -23,7 +25,7 @@ namespace b3d
 	{
 		struct BodyInfo
 		{
-			Rigidbody* Body = nullptr;
+			HRigidbody Body;
 			Vector3 Position = Vector3::kZero;
 			Quaternion Rotation = Quaternion::kIdentity;
 		};
@@ -288,7 +290,6 @@ namespace b3d
 	{
 	public:
 		CJoint(const HSceneObject& parent, JointCreateInformation& createInformation);
-		virtual ~CJoint() = default;
 
 		/** Determines a body managed by the joint. One of the bodies must be movable (non-kinematic). */
 		B3D_SCRIPT_EXPORT(ExportName(SetBody))
@@ -296,19 +297,19 @@ namespace b3d
 
 		/** @copydoc SetBody */
 		B3D_SCRIPT_EXPORT(ExportName(GetBody))
-		HRigidbody GetBody(JointBody body) const;
+		const HRigidbody& GetBody(JointBody body) const { return mInformation.Bodies[(int)body].Body; }
 
-		/** Returns the position relative to the body, at which the body is anchored to the joint. */
+		/** Returns the position at which the body is anchored to the joint, relative to the body. */
 		B3D_SCRIPT_EXPORT(ExportName(GetPosition))
-		Vector3 GetPosition(JointBody body) const;
+		const Vector3& GetRelativeBodyPosition(JointBody body) const { return mInformation.Bodies[(int)body].Position; }
 
-		/** Returns the rotation relative to the body, at which the body is anchored to the joint. */
+		/** Returns the rotation at which the body is anchored to the joint, relative to the body. */
 		B3D_SCRIPT_EXPORT(ExportName(GetRotation))
-		Quaternion GetRotation(JointBody body) const;
+		const Quaternion& GetRelativeBodyRotation(JointBody body) const { return mInformation.Bodies[(int)body].Rotation; }
 
-		/** Sets the position and rotation relative to the body, at which the body is anchored to the joint.  */
+		/** Sets the position and rotation at which the body is anchored to the joint, relative to the body.  */
 		B3D_SCRIPT_EXPORT(ExportName(SetTransform))
-		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation);
+		void SetRelativeBodyTransform(JointBody body, const Vector3& position, const Quaternion& rotation);
 
 		/** Determines the maximum force the joint can apply before breaking. Broken joints no longer participate in physics simulation. */
 		B3D_SCRIPT_EXPORT(ExportName(BreakForce), Property(Setter))
@@ -316,7 +317,7 @@ namespace b3d
 
 		/** @copydoc SetBreakForce */
 		B3D_SCRIPT_EXPORT(ExportName(BreakForce), Property(Getter))
-		float GetBreakForce() const;
+		float GetBreakForce() const { return mInformation.BreakForce; }
 
 		/** Determines the maximum torque the joint can apply before breaking. Broken joints no longer participate in physics simulation. */
 		B3D_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Setter))
@@ -324,7 +325,7 @@ namespace b3d
 
 		/** @copydoc SetBreakTorque */
 		B3D_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Getter))
-		float GetBreakTorque() const;
+		float GetBreakTorque() const { return mInformation.BreakTorque; }
 
 		/** Determines whether collision between the two bodies managed by the joint are enabled. */
 		B3D_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Setter))
@@ -332,7 +333,7 @@ namespace b3d
 
 		/** @copydoc SetEnableCollision */
 		B3D_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Getter))
-		bool GetEnableCollision() const;
+		bool GetEnableCollision() const { return mInformation.EnableCollision; }
 
 		/** Triggered when the joint's break force or torque is exceeded. */
 		B3D_SCRIPT_EXPORT(ExportName(OnJointBreak))
@@ -344,7 +345,6 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		void OnBeginPlay() override;
 		void OnDestroyed() override;
 		void OnDisabled() override;
 		void OnEnabled() override;
@@ -353,32 +353,22 @@ namespace b3d
 	protected:
 		friend class Rigidbody;
 
-		/** Creates the internal representation of the Joint for use by the component. */
-		virtual SPtr<Joint> CreateInternal() = 0;
+		/** Creates the implementation the joint for use by the component. */
+		virtual SPtr<IJointImplementation> CreateImplementation() = 0;
 
-		/** Creates the internal representation of the Joint and restores the values saved by the Component. */
-		virtual void RestoreInternal();
+		/** Destroys the current implementation of the joint, if any. Effectively removing it from the scene. */
+		void DestroyImplementation();
 
 		/** Calculates the local position/rotation that needs to be applied to the particular joint body. */
-		virtual void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation);
-
-		/** Destroys the internal joint representation. */
-		void DestroyInternal();
+		virtual void CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation);
 
 		/** Notifies the joint that one of the attached rigidbodies moved and that its transform needs updating. */
 		void NotifyRigidbodyMoved(const HRigidbody& body);
 
 		/** Updates the local transform for the specified body attached to the joint. */
-		void UpdateTransform(JointBody body);
+		void UpdateRelativeBodyTransforms(JointBody body);
 
-		/** Triggered when the joint constraint gets broken. */
-		void TriggerOnJointBroken();
-
-		SPtr<Joint> mInternal;
-
-		HRigidbody mBodies[2];
-		Vector3 mPositions[2];
-		Quaternion mRotations[2];
+		SPtr<IJointImplementation> mImplementation;
 
 	private:
 		JointCreateInformation& mInformation; // References the information in the derived class

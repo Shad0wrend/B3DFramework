@@ -78,7 +78,7 @@ namespace b3d
 
 		/** @copydoc SetLimit */
 		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
-		LimitAngularRange GetLimit() const;
+		LimitAngularRange GetLimit() const { return mInformation.Limit; }
 
 		/**
 		 * Determines the drive properties of the joint. It drives the joint's angular velocity towards a particular value.
@@ -91,7 +91,7 @@ namespace b3d
 
 		/** @copydoc SetDrive */
 		B3D_SCRIPT_EXPORT(ExportName(Drive), Property(Getter))
-		HingeJointDrive GetDrive() const;
+		HingeJointDrive GetDrive() const { return mInformation.Drive; }
 
 		/** Enables or disables a flag that controls joint behaviour. */
 		B3D_SCRIPT_EXPORT(ExportName(SetFlag))
@@ -106,7 +106,7 @@ namespace b3d
 		 */
 
 		/** Returns the low level joint implementation. */
-		IHingeJointImplementation& GetImplementation() const { return static_cast<IHingeJointImplementation&>(*mImplementation); }
+		IHingeJointImplementation& GetImplementation() const;
 
 		/** @} */
 
@@ -116,7 +116,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Joint> CreateInternal() override;
+		SPtr<IJointImplementation> CreateImplementation() override;
 
 		HingeJointCreateInformation mInformation;
 

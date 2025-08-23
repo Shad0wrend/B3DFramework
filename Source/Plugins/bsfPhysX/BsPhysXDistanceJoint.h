@@ -32,7 +32,7 @@ namespace b3d
 	class PhysXDistanceJoint : public IDistanceJointImplementation
 	{
 	public:
-		PhysXDistanceJoint(physx::PxPhysics* physx, const DistanceJointCreateInformation& createInformation);
+		PhysXDistanceJoint(physx::PxPhysics* physx, CJoint& owner, const DistanceJointCreateInformation& createInformation);
 
 		// Begin IJointImplementation
 		void SetBody(JointBody body, Rigidbody* value) override { mInternal.SetBody(body, value); }

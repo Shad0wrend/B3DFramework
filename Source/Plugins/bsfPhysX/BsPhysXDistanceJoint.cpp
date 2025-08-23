@@ -8,23 +8,21 @@
 using namespace physx;
 using namespace b3d;
 
-PhysXDistanceJoint::PhysXDistanceJoint(PxPhysics* physx, const DistanceJointCreateInformation& createInformation)
+PhysXDistanceJoint::PhysXDistanceJoint(PxPhysics* physx, CJoint& owner, const DistanceJointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
-	if(createInformation.Bodies[0].Body != nullptr)
+	if(createInformation.Bodies[0].Body.IsValid())
 		actor0 = static_cast<PhysXRigidbody&>(createInformation.Bodies[0].Body->GetImplementation()).GetPxRigidDynamic();
 
 	PxRigidActor* actor1 = nullptr;
-	if(createInformation.Bodies[1].Body != nullptr)
+	if(createInformation.Bodies[1].Body.IsValid())
 		actor1 = static_cast<PhysXRigidbody&>(createInformation.Bodies[1].Body->GetImplementation()).GetPxRigidDynamic();
 
 	PxTransform tfrm0 = ToPxTransform(createInformation.Bodies[0].Position, createInformation.Bodies[0].Rotation);
 	PxTransform tfrm1 = ToPxTransform(createInformation.Bodies[1].Position, createInformation.Bodies[1].Rotation);
 
 	PxDistanceJoint* joint = PxDistanceJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
-	joint->userData = this;
-
-	mInternal.Initialize(*joint, createInformation);
+	mInternal.Initialize(owner, *joint, createInformation);
 
 	PhysXDistanceJoint::SetMinDistance(createInformation.MinDistance);
 	PhysXDistanceJoint::SetMaxDistance(createInformation.MaxDistance);

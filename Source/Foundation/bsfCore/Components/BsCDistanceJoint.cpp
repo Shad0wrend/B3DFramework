@@ -1,6 +1,8 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCDistanceJoint.h"
+
+#include "Physics/BsPhysics.h"
 #include "Scene/BsSceneObject.h"
 #include "Private/RTTI/BsCDistanceJointRTTI.h"
 #include "Scene/BsSceneInstance.h"
@@ -19,15 +21,10 @@ CDistanceJoint::CDistanceJoint()
 
 float CDistanceJoint::GetDistance() const
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return 0.0f;
 
-	return GetInternalInternal()->GetDistance();
-}
-
-float CDistanceJoint::GetMinDistance() const
-{
-	return mInformation.MinDistance;
+	return GetImplementation().GetDistance();
 }
 
 void CDistanceJoint::SetMinDistance(float value)
@@ -37,13 +34,8 @@ void CDistanceJoint::SetMinDistance(float value)
 
 	mInformation.MinDistance = value;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetMinDistance(value);
-}
-
-float CDistanceJoint::GetMaxDistance() const
-{
-	return mInformation.MaxDistance;
+	if(mImplementation != nullptr)
+		GetImplementation().SetMinDistance(value);
 }
 
 void CDistanceJoint::SetMaxDistance(float value)
@@ -53,13 +45,8 @@ void CDistanceJoint::SetMaxDistance(float value)
 
 	mInformation.MaxDistance = value;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetMaxDistance(value);
-}
-
-float CDistanceJoint::GetTolerance() const
-{
-	return mInformation.Tolerance;
+	if(mImplementation != nullptr)
+		GetImplementation().SetMaxDistance(value);
 }
 
 void CDistanceJoint::SetTolerance(float value)
@@ -69,13 +56,8 @@ void CDistanceJoint::SetTolerance(float value)
 
 	mInformation.Tolerance = value;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetTolerance(value);
-}
-
-Spring CDistanceJoint::GetSpring() const
-{
-	return mInformation.Spring;
+	if(mImplementation != nullptr)
+		GetImplementation().SetTolerance(value);
 }
 
 void CDistanceJoint::SetSpring(const Spring& value)
@@ -85,8 +67,8 @@ void CDistanceJoint::SetSpring(const Spring& value)
 
 	mInformation.Spring = value;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetSpring(value);
+	if(mImplementation != nullptr)
+		GetImplementation().SetSpring(value);
 }
 
 void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
@@ -100,8 +82,8 @@ void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 	else
 		mInformation.Flag = (DistanceJointFlag)((u32)mInformation.Flag & ~(u32)flag);
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetFlag(flag, enabled);
+	if(mImplementation != nullptr)
+		GetImplementation().SetFlag(flag, enabled);
 }
 
 bool CDistanceJoint::HasFlag(DistanceJointFlag flag) const
@@ -109,13 +91,15 @@ bool CDistanceJoint::HasFlag(DistanceJointFlag flag) const
 	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
-SPtr<Joint> CDistanceJoint::CreateInternal()
+SPtr<IJointImplementation> CDistanceJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = DistanceJoint::Create(*scene->GetPhysicsScene(), mInformation);
+	return scene->GetPhysicsScene()->CreateDistanceJoint(*this, mInformation);
+}
 
-	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
-	return joint;
+IDistanceJointImplementation& CDistanceJoint::GetImplementation() const
+{
+	return static_cast<IDistanceJointImplementation&>(*mImplementation);
 }
 
 RTTIType* CDistanceJoint::GetRttiStatic()

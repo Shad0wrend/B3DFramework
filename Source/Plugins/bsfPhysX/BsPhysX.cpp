@@ -269,7 +269,7 @@ void PhysXEventCallback::onConstraintBreak(PxConstraintInfo* constraints, PxU32 
 		PxJoint* pxJoint = (PxJoint*)constraintInfo.externalReference;
 
 		PhysXScene::JointBreakEvent event;
-		event.Joint = (Joint*)pxJoint->userData;
+		event.Joint = (CJoint*)pxJoint->userData;
 
 		if(event.Joint != nullptr)
 			mScene.ReportJointBreakEvent(event);
@@ -730,39 +730,39 @@ void PhysXScene::SetPaused(bool paused)
 	mPaused = paused;
 }
 
-SPtr<FixedJoint> PhysXScene::CreateFixedJoint(const FixedJointCreateInformation& desc)
+UPtr<IFixedJointImplementation> PhysXScene::CreateFixedJoint(CJoint& owner, const FixedJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<PhysXFixedJoint>(mPhysics, desc);
+	return B3DMakeUnique<PhysXFixedJoint>(mPhysics, owner, createInformation);
 }
 
-SPtr<DistanceJoint> PhysXScene::CreateDistanceJoint(const DistanceJointCreateInformation& desc)
+UPtr<IDistanceJointImplementation> PhysXScene::CreateDistanceJoint(CJoint& owner, const DistanceJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<PhysXDistanceJoint>(mPhysics, desc);
+	return B3DMakeUnique<PhysXDistanceJoint>(mPhysics, owner, createInformation);
 }
 
-SPtr<HingeJoint> PhysXScene::CreateHingeJoint(const HingeJointCreateInformation& desc)
+UPtr<IHingeJointImplementation> PhysXScene::CreateHingeJoint(CJoint& owner, const HingeJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<PhysXHingeJoint>(mPhysics, desc);
+	return B3DMakeUnique<PhysXHingeJoint>(mPhysics, owner, createInformation);
 }
 
-SPtr<SphericalJoint> PhysXScene::CreateSphericalJoint(const SphericalJointCreateInformation& desc)
+UPtr<ISphericalJointImplementation> PhysXScene::CreateSphericalJoint(CJoint& owner, const SphericalJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<PhysXSphericalJoint>(mPhysics, desc);
+	return B3DMakeUnique<PhysXSphericalJoint>(mPhysics, owner, createInformation);
 }
 
-SPtr<SliderJoint> PhysXScene::CreateSliderJoint(const SliderJointCreateInformation& desc)
+UPtr<ISliderJointImplementation> PhysXScene::CreateSliderJoint(CJoint& owner, const SliderJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<PhysXSliderJoint>(mPhysics, desc);
+	return B3DMakeUnique<PhysXSliderJoint>(mPhysics, owner, createInformation);
 }
 
-SPtr<D6Joint> PhysXScene::CreateD6Joint(const D6JointCreateInformation& desc)
+UPtr<ID6JointImplementation> PhysXScene::CreateD6Joint(CJoint& owner, const D6JointCreateInformation& createInformation)
 {
-	return B3DMakeShared<PhysXD6Joint>(mPhysics, desc);
+	return B3DMakeUnique<PhysXD6Joint>(mPhysics, owner, createInformation);
 }
 
-SPtr<CharacterController> PhysXScene::CreateCharacterController(const CharacterControllerCreateInformation& desc)
+SPtr<CharacterController> PhysXScene::CreateCharacterController(const CharacterControllerCreateInformation& createInformation)
 {
-	return B3DMakeShared<PhysXCharacterController>(mCharManager, desc);
+	return B3DMakeShared<PhysXCharacterController>(mCharManager, createInformation);
 }
 
 Vector<PhysicsQueryHit> PhysXScene::SweepAll(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir, u64 layer, float maxDist) const

@@ -29,7 +29,7 @@ namespace b3d
 	class PhysXSphericalJoint : public ISphericalJointImplementation
 	{
 	public:
-		PhysXSphericalJoint(physx::PxPhysics* physx, const SphericalJointCreateInformation& createInformation);
+		PhysXSphericalJoint(physx::PxPhysics* physx, CJoint& owner, const SphericalJointCreateInformation& createInformation);
 
 		// Begin IJointImplementation
 		void SetBody(JointBody body, Rigidbody* value) override { mInternal.SetBody(body, value); }

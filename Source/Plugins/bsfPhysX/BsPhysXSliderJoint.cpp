@@ -9,23 +9,21 @@
 using namespace physx;
 using namespace b3d;
 
-PhysXSliderJoint::PhysXSliderJoint(PxPhysics* physx, const SliderJointCreateInformation& createInformation)
+PhysXSliderJoint::PhysXSliderJoint(PxPhysics* physx, CJoint& owner, const SliderJointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
-	if(createInformation.Bodies[0].Body != nullptr)
+	if(createInformation.Bodies[0].Body.IsValid())
 		actor0 = static_cast<PhysXRigidbody&>(createInformation.Bodies[0].Body->GetImplementation()).GetPxRigidDynamic();
 
 	PxRigidActor* actor1 = nullptr;
-	if(createInformation.Bodies[1].Body != nullptr)
+	if(createInformation.Bodies[1].Body.IsValid())
 		actor1 = static_cast<PhysXRigidbody&>(createInformation.Bodies[1].Body->GetImplementation()).GetPxRigidDynamic();
 
 	PxTransform tfrm0 = ToPxTransform(createInformation.Bodies[0].Position, createInformation.Bodies[0].Rotation);
 	PxTransform tfrm1 = ToPxTransform(createInformation.Bodies[1].Position, createInformation.Bodies[1].Rotation);
 
 	PxPrismaticJoint* joint = PxPrismaticJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
-	joint->userData = this;
-
-	mInternal.Initialize(*joint, createInformation);
+	mInternal.Initialize(owner, *joint, createInformation);
 
 	PxPrismaticJointFlags flags;
 

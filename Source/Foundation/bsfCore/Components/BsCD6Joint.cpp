@@ -1,8 +1,9 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCD6Joint.h"
+
+#include "Physics/BsPhysics.h"
 #include "Scene/BsSceneObject.h"
-#include "Private/RTTI/BsD6JointDriveRTTI.h" // TODO - Move to CD6JointRTTI
 #include "Private/RTTI/BsCD6JointRTTI.h"
 #include "Scene/BsSceneInstance.h"
 
@@ -28,11 +29,6 @@ CD6Joint::CD6Joint()
 	: CD6Joint(nullptr)
 { }
 
-D6JointMotion CD6Joint::GetMotion(D6JointAxis axis) const
-{
-	return mInformation.Motion[(int)axis];
-}
-
 void CD6Joint::SetMotion(D6JointAxis axis, D6JointMotion motion)
 {
 	if(mInformation.Motion[(int)axis] == motion)
@@ -40,37 +36,32 @@ void CD6Joint::SetMotion(D6JointAxis axis, D6JointMotion motion)
 
 	mInformation.Motion[(int)axis] = motion;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetMotion(axis, motion);
+	if(mImplementation != nullptr)
+		GetImplementation().SetMotion(axis, motion);
 }
 
 Radian CD6Joint::GetTwist() const
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return Radian(0.0f);
 
-	return GetInternalInternal()->GetTwist();
+	return GetImplementation().GetTwist();
 }
 
 Radian CD6Joint::GetSwingY() const
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return Radian(0.0f);
 
-	return GetInternalInternal()->GetSwingY();
+	return GetImplementation().GetSwingY();
 }
 
 Radian CD6Joint::GetSwingZ() const
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return Radian(0.0f);
 
-	return GetInternalInternal()->GetSwingZ();
-}
-
-LimitLinear CD6Joint::GetLimitLinear() const
-{
-	return mInformation.LimitLinear;
+	return GetImplementation().GetSwingZ();
 }
 
 void CD6Joint::SetLimitLinear(const LimitLinear& limit)
@@ -80,13 +71,8 @@ void CD6Joint::SetLimitLinear(const LimitLinear& limit)
 
 	mInformation.LimitLinear = limit;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetLimitLinear(limit);
-}
-
-LimitAngularRange CD6Joint::GetLimitTwist() const
-{
-	return mInformation.LimitTwist;
+	if(mImplementation != nullptr)
+		GetImplementation().SetLimitLinear(limit);
 }
 
 void CD6Joint::SetLimitTwist(const LimitAngularRange& limit)
@@ -96,13 +82,8 @@ void CD6Joint::SetLimitTwist(const LimitAngularRange& limit)
 
 	mInformation.LimitTwist = limit;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetLimitTwist(limit);
-}
-
-LimitConeRange CD6Joint::GetLimitSwing() const
-{
-	return mInformation.LimitSwing;
+	if(mImplementation != nullptr)
+		GetImplementation().SetLimitTwist(limit);
 }
 
 void CD6Joint::SetLimitSwing(const LimitConeRange& limit)
@@ -112,8 +93,8 @@ void CD6Joint::SetLimitSwing(const LimitConeRange& limit)
 
 	mInformation.LimitSwing = limit;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetLimitSwing(limit);
+	if(mImplementation != nullptr)
+		GetImplementation().SetLimitSwing(limit);
 }
 
 D6JointDrive CD6Joint::GetDrive(D6JointDriveType type) const
@@ -128,18 +109,8 @@ void CD6Joint::SetDrive(D6JointDriveType type, const D6JointDrive& drive)
 
 	mInformation.Drive[(int)type] = drive;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetDrive(type, drive);
-}
-
-Vector3 CD6Joint::GetDrivePosition() const
-{
-	return mInformation.DrivePosition;
-}
-
-Quaternion CD6Joint::GetDriveRotation() const
-{
-	return mInformation.DriveRotation;
+	if(mImplementation != nullptr)
+		GetImplementation().SetDrive(type, drive);
 }
 
 void CD6Joint::SetDriveTransform(const Vector3& position, const Quaternion& rotation)
@@ -150,18 +121,8 @@ void CD6Joint::SetDriveTransform(const Vector3& position, const Quaternion& rota
 	mInformation.DrivePosition = position;
 	mInformation.DriveRotation = rotation;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetDriveTransform(position, rotation);
-}
-
-Vector3 CD6Joint::GetDriveLinearVelocity() const
-{
-	return mInformation.DriveLinearVelocity;
-}
-
-Vector3 CD6Joint::GetDriveAngularVelocity() const
-{
-	return mInformation.DriveAngularVelocity;
+	if(mImplementation != nullptr)
+		GetImplementation().SetDriveTransform(position, rotation);
 }
 
 void CD6Joint::SetDriveVelocity(const Vector3& linear, const Vector3& angular)
@@ -172,17 +133,19 @@ void CD6Joint::SetDriveVelocity(const Vector3& linear, const Vector3& angular)
 	mInformation.DriveLinearVelocity = linear;
 	mInformation.DriveAngularVelocity = angular;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetDriveVelocity(linear, angular);
+	if(mImplementation != nullptr)
+		GetImplementation().SetDriveVelocity(linear, angular);
 }
 
-SPtr<Joint> CD6Joint::CreateInternal()
+SPtr<IJointImplementation> CD6Joint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = D6Joint::Create(*scene->GetPhysicsScene(), mInformation);
+	return scene->GetPhysicsScene()->CreateD6Joint(*this, mInformation);
+}
 
-	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
-	return joint;
+ID6JointImplementation& CD6Joint::GetImplementation() const
+{
+	return static_cast<ID6JointImplementation&>(*mImplementation);
 }
 
 RTTIType* CD6Joint::GetRttiStatic()

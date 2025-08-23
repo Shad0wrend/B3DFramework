@@ -6,7 +6,6 @@
 #include "Reflection/BsRTTIType.h"
 #include "Components/BsCD6Joint.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
-#include "Private/RTTI/BsD6JointDriveRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 
 namespace b3d
@@ -15,6 +14,32 @@ namespace b3d
 	/** @addtogroup RTTI-Impl-Core
 	 *  @{
 	 */
+
+	class B3D_CORE_EXPORT D6JointDriveRTTI : public TRTTIType<D6JointDrive, IReflectable, D6JointDriveRTTI>
+	{
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(Stiffness, 0)
+			B3D_RTTI_MEMBER(Damping, 1)
+			B3D_RTTI_MEMBER(ForceLimit, 2)
+			B3D_RTTI_MEMBER(Acceleration, 3)
+		B3D_RTTI_END_MEMBERS
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "D6JointDrive";
+			return name;
+		}
+
+		u32 GetRttiId() const override
+		{
+			return TID_D6JointDrive;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return B3DMakeShared<D6JointDrive>();
+		}
+	};
 
 	class B3D_CORE_EXPORT CD6JointRTTI : public TRTTIType<CD6Joint, CJoint, CD6JointRTTI>
 	{

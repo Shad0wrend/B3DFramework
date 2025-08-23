@@ -5,7 +5,6 @@
 #include "BsPhysXPrerequisites.h"
 #include "Components/BsCJoint.h"
 #include "BsPhysXRigidbody.h"
-#include "Physics/BsFJoint.h"
 #include "extensions/PxJoint.h"
 #include "PxRigidDynamic.h"
 
@@ -32,7 +31,7 @@ namespace b3d
 		~PhysXJoint();
 
 		/** Initializes the object. Must be called before performing any other operations on the object. */
-		void Initialize(physx::PxJoint& joint, const JointCreateInformation& createInformation);
+		void Initialize(CJoint& owner, physx::PxJoint& pxJoint, const JointCreateInformation& createInformation);
 
 		/** @copydoc IJointImplementation::SetBody */
 		void SetBody(JointBody body, Rigidbody* value);
@@ -74,14 +73,15 @@ namespace b3d
 		physx::PxJoint* mPxJoint = nullptr;
 	};
 
-	void PhysXJoint::Initialize(physx::PxJoint& joint, const JointCreateInformation& createInformation)
+	inline void PhysXJoint::Initialize(CJoint& owner, physx::PxJoint& pxJoint, const JointCreateInformation& createInformation)
 	{
-		mPxJoint = &joint;
+		mPxJoint = &pxJoint;
+		mPxJoint->userData = &owner;
 		mPxJoint->setBreakForce(createInformation.BreakForce, createInformation.BreakTorque);
 		mPxJoint->setConstraintFlag(physx::PxConstraintFlag::eCOLLISION_ENABLED, createInformation.EnableCollision);
 	}
 
-	PhysXJoint::~PhysXJoint()
+	inline PhysXJoint::~PhysXJoint()
 	{
 		mPxJoint->userData = nullptr;
 		mPxJoint->release();

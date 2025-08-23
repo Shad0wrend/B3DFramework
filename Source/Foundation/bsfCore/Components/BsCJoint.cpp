@@ -15,12 +15,6 @@ CJoint::CJoint(const HSceneObject& parent, JointCreateInformation& createInforma
 {
 	SetName("Joint");
 
-	mPositions[0] = Vector3::kZero;
-	mPositions[1] = Vector3::kZero;
-
-	mRotations[0] = Quaternion::kIdentity;
-	mRotations[1] = Quaternion::kIdentity;
-
 	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
 }
 
@@ -28,70 +22,48 @@ CJoint::CJoint(JointCreateInformation& createInformation)
 	: CJoint(nullptr, createInformation)
 { }
 
-HRigidbody CJoint::GetBody(JointBody body) const
-{
-	return mBodies[(int)body];
-}
-
 void CJoint::SetBody(JointBody body, const HRigidbody& value)
 {
-	if(mBodies[(int)body] == value)
+	if(mInformation.Bodies[(int)body].Body == value)
 		return;
 
-	if(mBodies[(int)body] != nullptr)
-		mBodies[(int)body]->SetParentJoint(HJoint());
+	if(mInformation.Bodies[(int)body].Body != nullptr)
+		mInformation.Bodies[(int)body].Body->SetParentJoint(nullptr);
 
-	mBodies[(int)body] = value;
+	mInformation.Bodies[(int)body].Body = value;
 
 	if(value != nullptr)
-		mBodies[(int)body]->SetParentJoint(B3DStaticGameObjectCast<CJoint>(mThisHandle));
+		mInformation.Bodies[(int)body].Body->SetParentJoint(B3DStaticGameObjectCast<CJoint>(mThisHandle));
 
 	// If joint already exists, destroy it if we removed all bodies, otherwise update its transform
-	if(mInternal != nullptr)
+	if(mImplementation != nullptr)
 	{
-		if(!mBodies[0].IsValid()&& !mBodies[1].IsValid())
-			DestroyInternal();
+		if(!mInformation.Bodies[0].Body.IsValid()&& !mInformation.Bodies[1].Body.IsValid())
+			DestroyImplementation();
 		else
 		{
-			mInternal->SetBody(body, value.IsValid() ? value.Get() : nullptr);
-			UpdateTransform(body);
+			mImplementation->SetBody(body, value.IsValid() ? value.Get() : nullptr);
+			UpdateRelativeBodyTransforms(body);
 		}
 	}
 	else // If joint doesn't exist, check if we can create it
 	{
 		// Must be an active component and at least one of the bodies must be non-null
-		if(GetEnabled() && (mBodies[0].IsValid() || mBodies[1].IsValid()))
-		{
-			RestoreInternal();
-		}
+		if(GetEnabled() && (mInformation.Bodies[0].Body.IsValid() || mInformation.Bodies[1].Body.IsValid()))
+			mImplementation = CreateImplementation();
 	}
 }
 
-Vector3 CJoint::GetPosition(JointBody body) const
+void CJoint::SetRelativeBodyTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
 {
-	return mPositions[(int)body];
-}
-
-Quaternion CJoint::GetRotation(JointBody body) const
-{
-	return mRotations[(int)body];
-}
-
-void CJoint::SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
-{
-	if(mPositions[(int)body] == position && mRotations[(int)body] == rotation)
+	if(mInformation.Bodies[(int)body].Position == position && mInformation.Bodies[(int)body].Rotation == rotation)
 		return;
 
-	mPositions[(int)body] = position;
-	mRotations[(int)body] = rotation;
+	mInformation.Bodies[(int)body].Position = position;
+	mInformation.Bodies[(int)body].Rotation = rotation;
 
-	if(mInternal != nullptr)
-		UpdateTransform(body);
-}
-
-float CJoint::GetBreakForce() const
-{
-	return mInformation.BreakForce;
+	if(mImplementation != nullptr)
+		UpdateRelativeBodyTransforms(body);
 }
 
 void CJoint::SetBreakForce(float force)
@@ -101,13 +73,8 @@ void CJoint::SetBreakForce(float force)
 
 	mInformation.BreakForce = force;
 
-	if(mInternal != nullptr)
-		mInternal->SetBreakForce(force);
-}
-
-float CJoint::GetBreakTorque() const
-{
-	return mInformation.BreakTorque;
+	if(mImplementation != nullptr)
+		mImplementation->SetBreakForce(force);
 }
 
 void CJoint::SetBreakTorque(float torque)
@@ -117,13 +84,8 @@ void CJoint::SetBreakTorque(float torque)
 
 	mInformation.BreakTorque = torque;
 
-	if(mInternal != nullptr)
-		mInternal->SetBreakTorque(torque);
-}
-
-bool CJoint::GetEnableCollision() const
-{
-	return mInformation.EnableCollision;
+	if(mImplementation != nullptr)
+		mImplementation->SetBreakTorque(torque);
 }
 
 void CJoint::SetEnableCollision(bool value)
@@ -133,41 +95,35 @@ void CJoint::SetEnableCollision(bool value)
 
 	mInformation.EnableCollision = value;
 
-	if(mInternal != nullptr)
-		mInternal->SetEnableCollision(value);
-}
-
-void CJoint::OnBeginPlay()
-{
+	if(mImplementation != nullptr)
+		mImplementation->SetEnableCollision(value);
 }
 
 void CJoint::OnDestroyed()
 {
-	if(mBodies[0] != nullptr)
-		mBodies[0]->SetParentJoint(HJoint());
+	if(mInformation.Bodies[0].Body.IsValid())
+		mInformation.Bodies[0].Body->SetParentJoint(HJoint());
 
-	if(mBodies[1] != nullptr)
-		mBodies[1]->SetParentJoint(HJoint());
+	if(mInformation.Bodies[1].Body.IsValid())
+		mInformation.Bodies[1].Body->SetParentJoint(HJoint());
 
-	if(mInternal != nullptr)
-		DestroyInternal();
+	DestroyImplementation();
 }
 
 void CJoint::OnDisabled()
 {
-	if(mInternal != nullptr)
-		DestroyInternal();
+	DestroyImplementation();
 }
 
 void CJoint::OnEnabled()
 {
-	if(mBodies[0].IsValid() || mBodies[1].IsValid())
-		RestoreInternal();
+	if(mInformation.Bodies[0].Body.IsValid() || mInformation.Bodies[1].Body.IsValid())
+		mImplementation = CreateImplementation();
 }
 
 void CJoint::OnTransformChanged(TransformChangedFlags flags)
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return;
 
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
@@ -182,43 +138,18 @@ void CJoint::OnTransformChanged(TransformChangedFlags flags)
 	if(physicsScene->IsUpdateInProgress())
 		return;
 
-	UpdateTransform(JointBody::Target);
-	UpdateTransform(JointBody::Anchor);
+	UpdateRelativeBodyTransforms(JointBody::Target);
+	UpdateRelativeBodyTransforms(JointBody::Anchor);
 }
 
-void CJoint::RestoreInternal()
+void CJoint::DestroyImplementation()
 {
-	if(mBodies[0] != nullptr)
-		mInformation.Bodies[0].Body = mBodies[0].Get();
-	else
-		mInformation.Bodies[0].Body = nullptr;
-
-	if(mBodies[1] != nullptr)
-		mInformation.Bodies[1].Body = mBodies[1].Get();
-	else
-		mInformation.Bodies[1].Body = nullptr;
-
-	GetLocalTransform(JointBody::Target, mInformation.Bodies[0].Position, mInformation.Bodies[0].Rotation);
-	GetLocalTransform(JointBody::Anchor, mInformation.Bodies[1].Position, mInformation.Bodies[1].Rotation);
-
-	mInternal = CreateInternal();
-
-	mInternal->OnJointBreak.Connect(std::bind(&CJoint::TriggerOnJointBroken, this));
-}
-
-void CJoint::DestroyInternal()
-{
-	// This should release the last reference and destroy the internal joint
-	if(mInternal)
-	{
-		mInternal->SetOwnerInternal(PhysicsOwnerType::None, nullptr);
-		mInternal = nullptr;
-	}
+	mImplementation = nullptr;
 }
 
 void CJoint::NotifyRigidbodyMoved(const HRigidbody& body)
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return;
 
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
@@ -228,29 +159,29 @@ void CJoint::NotifyRigidbodyMoved(const HRigidbody& body)
 	if(physicsScene->IsUpdateInProgress())
 		return;
 
-	if(mBodies[0] == body)
-		UpdateTransform(JointBody::Target);
-	else if(mBodies[1] == body)
-		UpdateTransform(JointBody::Anchor);
+	if(mInformation.Bodies[0].Body == body)
+		UpdateRelativeBodyTransforms(JointBody::Target);
+	else if(mInformation.Bodies[1].Body == body)
+		UpdateRelativeBodyTransforms(JointBody::Anchor);
 	else
 		B3D_ASSERT(false); // Not allowed to happen
 }
 
-void CJoint::UpdateTransform(JointBody body)
+void CJoint::UpdateRelativeBodyTransforms(JointBody body)
 {
 	Vector3 localPos;
 	Quaternion localRot;
-	GetLocalTransform(body, localPos, localRot);
+	CalculateLocalBodyTransform(body, localPos, localRot);
 
-	mInternal->SetTransform(body, localPos, localRot);
+	mImplementation->SetTransform(body, localPos, localRot);
 }
 
-void CJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
+void CJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation)
 {
-	position = mPositions[(u32)body];
-	rotation = mRotations[(u32)body];
+	position = mInformation.Bodies[(u32)body].Position;
+	rotation = mInformation.Bodies[(u32)body].Rotation;
 
-	HRigidbody rigidbody = mBodies[(u32)body];
+	HRigidbody rigidbody = mInformation.Bodies[(u32)body].Body;
 	if(rigidbody == nullptr) // Get world space transform if no relative to any body
 	{
 		const Transform& tfrm = SO()->GetTransform();
@@ -260,14 +191,7 @@ void CJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& ro
 		position = worldRot.Rotate(position) + tfrm.GetPosition();
 	}
 	else
-	{
 		position = rotation.Rotate(position);
-	}
-}
-
-void CJoint::TriggerOnJointBroken()
-{
-	OnJointBreak();
 }
 
 RTTIType* CJoint::GetRttiStatic()

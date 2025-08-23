@@ -106,7 +106,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetPosition(body);
+		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetRelativeBodyPosition(body);
 
 		*__output = tmp__output;
 	}
@@ -120,7 +120,7 @@ namespace b3d
 		}
 
 		TQuaternion<float> tmp__output;
-		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetRotation(body);
+		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetRelativeBodyRotation(body);
 
 		*__output = tmp__output;
 	}
@@ -130,7 +130,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CJoint*>(self->GetNativeObject())->SetTransform(body, *position, *rotation);
+		static_cast<CJoint*>(self->GetNativeObject())->SetRelativeBodyTransform(body, *position, *rotation);
 	}
 
 	float ScriptJoint::InternalGetBreakForce(ScriptJointWrapperBase* self)

@@ -10,14 +10,14 @@ using namespace physx;
 
 using namespace b3d;
 
-PhysXFixedJoint::PhysXFixedJoint(PxPhysics* physx, const FixedJointCreateInformation& createInformation)
+PhysXFixedJoint::PhysXFixedJoint(PxPhysics* physx, CJoint& owner, const FixedJointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
-	if(createInformation.Bodies[0].Body != nullptr)
+	if(createInformation.Bodies[0].Body.IsValid())
 		actor0 = static_cast<PhysXRigidbody&>(createInformation.Bodies[0].Body->GetImplementation()).GetPxRigidDynamic();
 
 	PxRigidActor* actor1 = nullptr;
-	if(createInformation.Bodies[1].Body != nullptr)
+	if(createInformation.Bodies[1].Body.IsValid())
 		actor1 = static_cast<PhysXRigidbody&>(createInformation.Bodies[1].Body->GetImplementation()).GetPxRigidDynamic();
 
 	PxTransform tfrm0 = ToPxTransform(createInformation.Bodies[0].Position, createInformation.Bodies[0].Rotation);
@@ -26,5 +26,5 @@ PhysXFixedJoint::PhysXFixedJoint(PxPhysics* physx, const FixedJointCreateInforma
 	PxFixedJoint* joint = PxFixedJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 	joint->userData = this;
 
-	mInternal.Initialize(*joint, createInformation);
+	mInternal.Initialize(owner, *joint, createInformation);
 }

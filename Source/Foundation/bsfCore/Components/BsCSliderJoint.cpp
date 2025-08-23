@@ -3,16 +3,11 @@
 #include "Components/BsCSliderJoint.h"
 #include "Scene/BsSceneObject.h"
 #include "Components/BsRigidbody.h"
+#include "Physics/BsPhysics.h"
 #include "Private/RTTI/BsCSliderJointRTTI.h"
 #include "Scene/BsSceneInstance.h"
 
 using namespace b3d;
-
-CSliderJoint::CSliderJoint()
-	: CJoint(mInformation)
-{
-	SetName("SliderJoint");
-}
 
 CSliderJoint::CSliderJoint(const HSceneObject& parent)
 	: CJoint(parent, mInformation)
@@ -20,25 +15,24 @@ CSliderJoint::CSliderJoint(const HSceneObject& parent)
 	SetName("SliderJoint");
 }
 
+CSliderJoint::CSliderJoint()
+	: CSliderJoint(nullptr)
+{ }
+
 float CSliderJoint::GetPosition() const
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return 0.0f;
 
-	return GetInternalInternal()->GetPosition();
+	return GetImplementation().GetPosition();
 }
 
 float CSliderJoint::GetSpeed() const
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return 0.0f;
 
-	return GetInternalInternal()->GetSpeed();
-}
-
-LimitLinearRange CSliderJoint::GetLimit() const
-{
-	return mInformation.Limit;
+	return GetImplementation().GetSpeed();
 }
 
 void CSliderJoint::SetLimit(const LimitLinearRange& limit)
@@ -48,8 +42,8 @@ void CSliderJoint::SetLimit(const LimitLinearRange& limit)
 
 	mInformation.Limit = limit;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetLimit(limit);
+	if(mImplementation != nullptr)
+		GetImplementation().SetLimit(limit);
 }
 
 void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
@@ -63,8 +57,8 @@ void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 	else
 		mInformation.Flag = (SliderJointFlag)((u32)mInformation.Flag & ~(u32)flag);
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetFlag(flag, enabled);
+	if(mImplementation != nullptr)
+		GetImplementation().SetFlag(flag, enabled);
 }
 
 bool CSliderJoint::HasFlag(SliderJointFlag flag) const
@@ -72,21 +66,18 @@ bool CSliderJoint::HasFlag(SliderJointFlag flag) const
 	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
-SPtr<Joint> CSliderJoint::CreateInternal()
+SPtr<IJointImplementation> CSliderJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = SliderJoint::Create(*scene->GetPhysicsScene(), mInformation);
-
-	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
-	return joint;
+	return scene->GetPhysicsScene()->CreateSliderJoint(*this, mInformation);
 }
 
-void CSliderJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
+void CSliderJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation)
 {
-	position = mPositions[(u32)body];
-	rotation = mRotations[(u32)body];
+	position = mInformation.Bodies[(u32)body].Position;
+	rotation = mInformation.Bodies[(u32)body].Rotation;
 
-	HRigidbody rigidbody = mBodies[(u32)body];
+	HRigidbody rigidbody = mInformation.Bodies[(u32)body].Body;
 	const Transform& tfrm = SO()->GetTransform();
 	if(rigidbody == nullptr) // Get world space transform if no relative to any body
 	{
@@ -105,6 +96,11 @@ void CSliderJoint::GetLocalTransform(JointBody body, Vector3& position, Quaterni
 		position = rotation.Rotate(position);
 		rotation = (rigidbodyTfrm.GetRotation() * rotation).Inverse() * tfrm.GetRotation();
 	}
+}
+
+ISliderJointImplementation& CSliderJoint::GetImplementation() const
+{
+	return static_cast<ISliderJointImplementation&>(*mImplementation);
 }
 
 RTTIType* CSliderJoint::GetRttiStatic()

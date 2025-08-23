@@ -29,23 +29,21 @@ static PxD6Drive::Enum ToPxDrive(D6JointDriveType drive)
 	}
 }
 
-PhysXD6Joint::PhysXD6Joint(PxPhysics* physx, const D6JointCreateInformation& createInformation)
+PhysXD6Joint::PhysXD6Joint(PxPhysics* physx, CJoint& owner, const D6JointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
-	if(createInformation.Bodies[0].Body != nullptr)
+	if(createInformation.Bodies[0].Body.IsValid())
 		actor0 = static_cast<PhysXRigidbody&>(createInformation.Bodies[0].Body->GetImplementation()).GetPxRigidDynamic();
 
 	PxRigidActor* actor1 = nullptr;
-	if(createInformation.Bodies[1].Body != nullptr)
+	if(createInformation.Bodies[1].Body.IsValid())
 		actor1 = static_cast<PhysXRigidbody&>(createInformation.Bodies[1].Body->GetImplementation()).GetPxRigidDynamic();
 
 	PxTransform tfrm0 = ToPxTransform(createInformation.Bodies[0].Position, createInformation.Bodies[0].Rotation);
 	PxTransform tfrm1 = ToPxTransform(createInformation.Bodies[1].Position, createInformation.Bodies[1].Rotation);
 
 	PxD6Joint* joint = PxD6JointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
-	joint->userData = this;
-
-	mInternal.Initialize(*joint, createInformation);
+	mInternal.Initialize(owner, *joint, createInformation);
 
 	for(u32 i = 0; i < (u32)D6JointAxis::Count; i++)
 		PhysXD6Joint::SetMotion((D6JointAxis)i, createInformation.Motion[i]);

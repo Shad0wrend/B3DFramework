@@ -69,7 +69,7 @@ namespace b3d
 	class PhysXD6Joint : public ID6JointImplementation
 	{
 	public:
-		PhysXD6Joint(physx::PxPhysics* physx, const D6JointCreateInformation& createInformation);
+		PhysXD6Joint(physx::PxPhysics* physx, CJoint& owner, const D6JointCreateInformation& createInformation);
 
 		// Begin IJointImplementation
 		void SetBody(JointBody body, Rigidbody* value) override { mInternal.SetBody(body, value); }

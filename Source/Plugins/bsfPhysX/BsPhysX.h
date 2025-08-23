@@ -119,7 +119,7 @@ namespace b3d
 		/** Event reported when a joint breaks. */
 		struct JointBreakEvent
 		{
-			Joint* Joint; /** Broken joint. */
+			CJoint* Joint; /** Broken joint. */
 		};
 
 		PhysXScene(physx::PxPhysics* physics, const PhysicsCreateInformation& input, const physx::PxTolerancesScale& scale);
@@ -132,13 +132,13 @@ namespace b3d
 		/** Returns the underlying PhysX scene. */
 		physx::PxScene& GetPxScene() const { return *mScene; }
 
-		SPtr<FixedJoint> CreateFixedJoint(const FixedJointCreateInformation& desc) override;
-		SPtr<DistanceJoint> CreateDistanceJoint(const DistanceJointCreateInformation& desc) override;
-		SPtr<HingeJoint> CreateHingeJoint(const HingeJointCreateInformation& desc) override;
-		SPtr<SphericalJoint> CreateSphericalJoint(const SphericalJointCreateInformation& desc) override;
-		SPtr<SliderJoint> CreateSliderJoint(const SliderJointCreateInformation& desc) override;
-		SPtr<D6Joint> CreateD6Joint(const D6JointCreateInformation& desc) override;
-		SPtr<CharacterController> CreateCharacterController(const CharacterControllerCreateInformation& desc) override;
+		UPtr<IFixedJointImplementation> CreateFixedJoint(CJoint& owner, const FixedJointCreateInformation& createInformation) override;
+		UPtr<IDistanceJointImplementation> CreateDistanceJoint(CJoint& owner, const DistanceJointCreateInformation& createInformation) override;
+		UPtr<IHingeJointImplementation> CreateHingeJoint(CJoint& owner, const HingeJointCreateInformation& createInformation) override;
+		UPtr<ISphericalJointImplementation> CreateSphericalJoint(CJoint& owner, const SphericalJointCreateInformation& createInformation) override;
+		UPtr<ISliderJointImplementation> CreateSliderJoint(CJoint& owner, const SliderJointCreateInformation& createInformation) override;
+		UPtr<ID6JointImplementation> CreateD6Joint(CJoint& owner, const D6JointCreateInformation& createInformation) override;
+		SPtr<CharacterController> CreateCharacterController(const CharacterControllerCreateInformation& createInformation) override;
 
 		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override;
 		bool BoxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override;

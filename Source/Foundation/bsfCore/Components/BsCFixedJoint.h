@@ -3,9 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "Physics/BsFixedJoint.h"
 #include "Components/BsCJoint.h"
-#include "Physics/BsJoint.h"
 
 namespace b3d
 {
@@ -19,11 +17,7 @@ namespace b3d
 	struct FixedJointCreateInformation : JointCreateInformation
 	{};
 
-	/**
-	 * @copydoc	FixedJoint
-	 *
-	 * @note	Wraps FixedJoint as a Component.
-	 */
+	/** Physics joint that will maintain a fixed distance and orientation between its two attached bodies. */
 	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(FixedJoint)) CFixedJoint : public CJoint
 	{
 	public:
@@ -34,7 +28,7 @@ namespace b3d
 		 */
 
 		/** Returns the low level joint implementation. */
-		IFixedJointImplementation& GetImplementation() const { return static_cast<IFixedJointImplementation&>(*mImplementation); }
+		IFixedJointImplementation& GetImplementation() const;
 
 		/** @} */
 
@@ -44,8 +38,8 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Joint> CreateInternal() override;
-		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
+		SPtr<IJointImplementation> CreateImplementation() override;
+		void CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
 
 		FixedJointCreateInformation mInformation;
 

@@ -18,14 +18,14 @@ namespace b3d
 	class B3D_CORE_EXPORT CJointRTTI : public TRTTIType<CJoint, Component, CJointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_NAMED(mBodyA, mBodies[0], 0)
-			B3D_RTTI_MEMBER_NAMED(mBodyB, mBodies[1], 1)
+			B3D_RTTI_MEMBER_NAMED(mBodyA, mInformation.Bodies[0].Body, 0)
+			B3D_RTTI_MEMBER_NAMED(mBodyB, mInformation.Bodies[1].Body, 1)
 
-			B3D_RTTI_MEMBER_NAMED(mPositionA, mPositions[0], 2)
-			B3D_RTTI_MEMBER_NAMED(mPositionB, mPositions[1], 3)
+			B3D_RTTI_MEMBER_NAMED(mPositionA, mInformation.Bodies[0].Position, 2)
+			B3D_RTTI_MEMBER_NAMED(mPositionB, mInformation.Bodies[1].Position, 3)
 
-			B3D_RTTI_MEMBER_NAMED(mRotationA, mRotations[0], 4)
-			B3D_RTTI_MEMBER_NAMED(mRotationB, mRotations[1], 5)
+			B3D_RTTI_MEMBER_NAMED(mRotationA, mInformation.Bodies[0].Rotation, 4)
+			B3D_RTTI_MEMBER_NAMED(mRotationB, mInformation.Bodies[1].Rotation, 5)
 
 			B3D_RTTI_MEMBER_NAMED(mBreakForce, mInformation.BreakForce, 6)
 			B3D_RTTI_MEMBER_NAMED(mBreakTorque, mInformation.BreakTorque, 7)

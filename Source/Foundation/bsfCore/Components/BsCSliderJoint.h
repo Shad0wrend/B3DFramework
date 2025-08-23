@@ -51,7 +51,7 @@ namespace b3d
 
 		/** @copydoc SetLimit */
 		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
-		LimitLinearRange GetLimit() const;
+		LimitLinearRange GetLimit() const { return mInformation.Limit; }
 
 		/** Enables or disables a flag that controls the joint's behaviour. */
 		B3D_SCRIPT_EXPORT(ExportName(SetFlag))
@@ -66,7 +66,7 @@ namespace b3d
 		 */
 
 		/** Returns the low level joint implementation. */
-		ISliderJointImplementation& GetImplementation() const { return static_cast<ISliderJointImplementation&>(*mImplementation); }
+		ISliderJointImplementation& GetImplementation() const;
 
 		/** @} */
 
@@ -76,8 +76,8 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Joint> CreateInternal() override;
-		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
+		SPtr<IJointImplementation> CreateImplementation() override;
+		void CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
 
 		SliderJointCreateInformation mInformation;
 

@@ -152,7 +152,7 @@ namespace b3d
 		 * @see	SetMotion
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(GetMotion))
-		D6JointMotion GetMotion(D6JointAxis axis) const;
+		D6JointMotion GetMotion(D6JointAxis axis) const { return mInformation.Motion[(int)axis]; }
 
 		/** Returns the current rotation of the joint around the X axis. */
 		B3D_SCRIPT_EXPORT(ExportName(Twist), Property(Getter))
@@ -172,7 +172,7 @@ namespace b3d
 
 		/** @copydoc SetLimitLinear */
 		B3D_SCRIPT_EXPORT(ExportName(LimitLinear), Property(Getter))
-		LimitLinear GetLimitLinear() const;
+		LimitLinear GetLimitLinear() const { return mInformation.LimitLinear; }
 
 		/** Determines the angular limit used for constraining the twist (rotation around X) degree of freedom. */
 		B3D_SCRIPT_EXPORT(ExportName(LimitTwist), Property(Setter))
@@ -180,7 +180,7 @@ namespace b3d
 
 		/** @copydoc SetLimitTwist */
 		B3D_SCRIPT_EXPORT(ExportName(LimitTwist), Property(Getter))
-		LimitAngularRange GetLimitTwist() const;
+		LimitAngularRange GetLimitTwist() const { return mInformation.LimitTwist; }
 
 		/** Determines the cone limit used for constraining the swing (rotation around Y and Z) degree of freedom. */
 		B3D_SCRIPT_EXPORT(ExportName(LimitSwing), Property(Setter))
@@ -188,7 +188,7 @@ namespace b3d
 
 		/** @copydoc SetLimitSwing */
 		B3D_SCRIPT_EXPORT(ExportName(LimitSwing), Property(Getter))
-		LimitConeRange GetLimitSwing() const;
+		LimitConeRange GetLimitSwing() const { return mInformation.LimitSwing; }
 
 		/**
 		 * Determines a drive that will attempt to move the specified degree(s) of freedom to the wanted position and
@@ -203,11 +203,11 @@ namespace b3d
 
 		/** Returns the drive's target position relative to the joint's first body. */
 		B3D_SCRIPT_EXPORT(ExportName(DrivePosition), Property(Getter))
-		Vector3 GetDrivePosition() const;
+		Vector3 GetDrivePosition() const { return mInformation.DrivePosition; }
 
 		/** Returns the drive's target rotation relative to the joint's first body. */
 		B3D_SCRIPT_EXPORT(ExportName(DriveRotation), Property(Getter))
-		Quaternion GetDriveRotation() const;
+		Quaternion GetDriveRotation() const { return mInformation.DriveRotation; }
 
 		/** Sets the drive's target position and rotation relative to the joint's first body. */
 		B3D_SCRIPT_EXPORT(ExportName(SetDriveTransform))
@@ -215,11 +215,11 @@ namespace b3d
 
 		/** Returns the drive's target linear velocity. */
 		B3D_SCRIPT_EXPORT(ExportName(DriveLinearVelocity), Property(Getter))
-		Vector3 GetDriveLinearVelocity() const;
+		Vector3 GetDriveLinearVelocity() const { return mInformation.DriveLinearVelocity; }
 
 		/** Returns the drive's target angular velocity. */
 		B3D_SCRIPT_EXPORT(ExportName(DriveAngularVelocity), Property(Getter))
-		Vector3 GetDriveAngularVelocity() const;
+		Vector3 GetDriveAngularVelocity() const { return mInformation.DriveAngularVelocity; }
 
 		/** Sets the drive's target linear and angular velocities. */
 		B3D_SCRIPT_EXPORT(ExportName(SetDriveVelocity))
@@ -230,7 +230,7 @@ namespace b3d
 		 */
 
 		/** Returns the low level joint implementation. */
-		ID6JointImplementation& GetImplementation() const { return static_cast<ID6JointImplementation&>(*mImplementation); }
+		ID6JointImplementation& GetImplementation() const;
 
 		/** @} */
 
@@ -240,7 +240,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Joint> CreateInternal() override;
+		SPtr<IJointImplementation> CreateImplementation() override;
 
 		D6JointCreateInformation mInformation;
 

@@ -1,6 +1,8 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCSphericalJoint.h"
+
+#include "Physics/BsPhysics.h"
 #include "Scene/BsSceneObject.h"
 #include "Private/RTTI/BsCSphericalJointRTTI.h"
 #include "Scene/BsSceneInstance.h"
@@ -17,11 +19,6 @@ CSphericalJoint::CSphericalJoint()
 	: CSphericalJoint(nullptr)
 { }
 
-LimitConeRange CSphericalJoint::GetLimit() const
-{
-	return mInformation.Limit;
-}
-
 void CSphericalJoint::SetLimit(const LimitConeRange& limit)
 {
 	if(limit == mInformation.Limit)
@@ -29,8 +26,8 @@ void CSphericalJoint::SetLimit(const LimitConeRange& limit)
 
 	mInformation.Limit = limit;
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetLimit(limit);
+	if(mImplementation != nullptr)
+		GetImplementation().SetLimit(limit);
 }
 
 void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
@@ -44,8 +41,8 @@ void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 	else
 		mInformation.Flag = (SphericalJointFlag)((u32)mInformation.Flag & ~(u32)flag);
 
-	if(mInternal != nullptr)
-		GetInternalInternal()->SetFlag(flag, enabled);
+	if(mImplementation != nullptr)
+		GetImplementation().SetFlag(flag, enabled);
 }
 
 bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
@@ -53,13 +50,15 @@ bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
 	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
-SPtr<Joint> CSphericalJoint::CreateInternal()
+SPtr<IJointImplementation> CSphericalJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = SphericalJoint::Create(*scene->GetPhysicsScene(), mInformation);
+	return scene->GetPhysicsScene()->CreateSphericalJoint(*this, mInformation);
+}
 
-	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
-	return joint;
+ISphericalJointImplementation& CSphericalJoint::GetImplementation() const
+{
+	return static_cast<ISphericalJointImplementation&>(*mImplementation);
 }
 
 RTTIType* CSphericalJoint::GetRttiStatic()

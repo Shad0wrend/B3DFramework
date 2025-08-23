@@ -45,7 +45,7 @@ namespace b3d
 
 		/** @copydoc SetLimit */
 		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
-		LimitConeRange GetLimit() const;
+		LimitConeRange GetLimit() const { return mInformation.Limit; }
 
 		/** Enables or disables a flag that controls the joint's behaviour. */
 		B3D_SCRIPT_EXPORT(ExportName(SetFlag))
@@ -60,7 +60,7 @@ namespace b3d
 		 */
 
 		/** Returns the low level joint implementation. */
-		ISphericalJointImplementation& GetImplementation() const { return static_cast<ISphericalJointImplementation&>(*mImplementation); }
+		ISphericalJointImplementation& GetImplementation() const;
 
 		/** @} */
 
@@ -70,7 +70,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Joint> CreateInternal() override;
+		SPtr<IJointImplementation> CreateImplementation() override;
 
 		SphericalJointCreateInformation mInformation;
 

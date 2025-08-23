@@ -3,6 +3,7 @@
 #include "Components/BsCFixedJoint.h"
 #include "Scene/BsSceneObject.h"
 #include "Components/BsRigidbody.h"
+#include "Physics/BsPhysics.h"
 #include "Private/RTTI/BsCFixedJointRTTI.h"
 #include "Scene/BsSceneInstance.h"
 
@@ -18,21 +19,18 @@ CFixedJoint::CFixedJoint()
 	: CFixedJoint(nullptr)
 { }
 
-SPtr<Joint> CFixedJoint::CreateInternal()
+SPtr<IJointImplementation> CFixedJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
-	SPtr<Joint> joint = FixedJoint::Create(*scene->GetPhysicsScene(), mInformation);
-
-	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
-	return joint;
+	return scene->GetPhysicsScene()->CreateFixedJoint(*this, mInformation);
 }
 
-void CFixedJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
+void CFixedJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation)
 {
-	position = mPositions[(u32)body];
-	rotation = mRotations[(u32)body];
+	position = mInformation.Bodies[(u32)body].Position;
+	rotation = mInformation.Bodies[(u32)body].Rotation;
 
-	HRigidbody rigidbody = mBodies[(u32)body];
+	HRigidbody rigidbody = mInformation.Bodies[(u32)body].Body;
 	const Transform& tfrm = SO()->GetTransform();
 	if(rigidbody == nullptr) // Get world space transform if no relative to any body
 	{
@@ -57,6 +55,11 @@ void CFixedJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternio
 		position = invRotation.Rotate(tfrm.GetPosition() - position);
 		rotation = invRotation * tfrm.GetRotation();
 	}
+}
+
+IFixedJointImplementation& CFixedJoint::GetImplementation() const
+{
+	return static_cast<IFixedJointImplementation&>(*mImplementation);
 }
 
 RTTIType* CFixedJoint::GetRttiStatic()

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "Physics/BsDistanceJoint.h"
 #include "Components/BsCJoint.h"
 
 namespace b3d
@@ -51,7 +50,7 @@ namespace b3d
 
 		/** @copydoc SetMinDistance */
 		B3D_SCRIPT_EXPORT(ExportName(MinDistance), Property(Getter))
-		float GetMinDistance() const;
+		float GetMinDistance() const { return mInformation.MinDistance; }
 
 		/**
 		 * Determines the maximum distance the bodies are allowed to be at, they will get no further. You must enable max
@@ -62,7 +61,7 @@ namespace b3d
 
 		/** @copydoc SetMaxDistance */
 		B3D_SCRIPT_EXPORT(ExportName(MaxDistance), Property(Getter))
-		float GetMaxDistance() const;
+		float GetMaxDistance() const { return mInformation.MaxDistance; }
 
 		/**
 		 * Determines the error tolerance of the joint at which the joint becomes active. This value slightly extends the
@@ -73,7 +72,7 @@ namespace b3d
 
 		/** @copydoc SetTolerance */
 		B3D_SCRIPT_EXPORT(ExportName(Tolerance), Property(Getter))
-		float GetTolerance() const;
+		float GetTolerance() const { return mInformation.Tolerance; }
 
 		/**
 		 * Determines a spring that controls how the joint responds when a limit is reached. You must enable the spring
@@ -86,7 +85,7 @@ namespace b3d
 
 		/** @copydoc SetSpring */
 		B3D_SCRIPT_EXPORT(ExportName(Spring), Property(Getter))
-		Spring GetSpring() const;
+		Spring GetSpring() const { return mInformation.Spring; }
 
 		/** Enables or disables a flag that controls joint behaviour. */
 		B3D_SCRIPT_EXPORT(ExportName(SetFlag))
@@ -101,7 +100,7 @@ namespace b3d
 		 */
 
 		/** Returns the low level joint implementation. */
-		IDistanceJointImplementation& GetImplementation() const { return static_cast<IDistanceJointImplementation&>(*mImplementation); }
+		IDistanceJointImplementation& GetImplementation() const;
 
 		/** @} */
 
@@ -111,7 +110,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		SPtr<Joint> CreateInternal() override;
+		SPtr<IJointImplementation> CreateImplementation() override;
 
 		DistanceJointCreateInformation mInformation;
 
