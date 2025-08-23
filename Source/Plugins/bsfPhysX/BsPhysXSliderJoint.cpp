@@ -9,7 +9,7 @@
 using namespace physx;
 using namespace b3d;
 
-PhysXSliderJoint::PhysXSliderJoint(PxPhysics* physx, CJoint& owner, const SliderJointCreateInformation& createInformation)
+PhysXSliderJoint::PhysXSliderJoint(PxPhysics* physx, Joint& owner, const SliderJointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
 	if(createInformation.Bodies[0].Body.IsValid())

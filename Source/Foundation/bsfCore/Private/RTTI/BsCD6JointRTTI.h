@@ -41,7 +41,7 @@ namespace b3d
 		}
 	};
 
-	class B3D_CORE_EXPORT CD6JointRTTI : public TRTTIType<CD6Joint, CJoint, CD6JointRTTI>
+	class B3D_CORE_EXPORT D6JointRTTI : public TRTTIType<D6Joint, Joint, D6JointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_CONTAINER_NAMED(mD6JointMotion, mInformation.Motion, 0)
@@ -76,18 +76,18 @@ namespace b3d
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CD6Joint";
+			static String name = "D6Joint";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CD6Joint;
+			return TID_D6Joint;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CD6Joint>();
+			return SceneObject::CreateEmptyComponent<D6Joint>();
 		}
 	};
 

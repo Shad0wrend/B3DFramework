@@ -10,16 +10,16 @@
 #include "../../../Foundation/bsfCore/Physics/BsHingeJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsHingeJoint.h"
 
-namespace b3d { class CHingeJoint; }
+namespace b3d { class HingeJoint; }
 namespace b3d { struct __LimitAngularRangeInterop; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptHingeJoint : public TScriptGameObjectWrapper<CHingeJoint, ScriptHingeJoint, ScriptJointWrapperBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptHingeJoint : public TScriptGameObjectWrapper<HingeJoint, ScriptHingeJoint, ScriptJointWrapperBase>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "HingeJoint")
 
-		ScriptHingeJoint(const GameObjectHandle<CHingeJoint>& nativeObject);
+		ScriptHingeJoint(const GameObjectHandle<HingeJoint>& nativeObject);
 		~ScriptHingeJoint();
 
 		static void SetupScriptBindings();

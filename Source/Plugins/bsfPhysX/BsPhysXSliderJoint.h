@@ -29,7 +29,7 @@ namespace b3d
 	class PhysXSliderJoint : public ISliderJointImplementation
 	{
 	public:
-		PhysXSliderJoint(physx::PxPhysics* physx, CJoint& owner, const SliderJointCreateInformation& createInformation);
+		PhysXSliderJoint(physx::PxPhysics* physx, Joint& owner, const SliderJointCreateInformation& createInformation);
 
 		// Begin IJointImplementation
 		void SetBody(JointBody body, Rigidbody* value) override { mInternal.SetBody(body, value); }

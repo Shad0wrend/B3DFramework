@@ -361,13 +361,6 @@ namespace b3d
 		typedef C##TYPE Type;           \
 	};
 
-	B3D_COMPONENT_FORWARD_DECLARE(Joint)
-	B3D_COMPONENT_FORWARD_DECLARE(HingeJoint)
-	B3D_COMPONENT_FORWARD_DECLARE(DistanceJoint)
-	B3D_COMPONENT_FORWARD_DECLARE(FixedJoint)
-	B3D_COMPONENT_FORWARD_DECLARE(SphericalJoint)
-	B3D_COMPONENT_FORWARD_DECLARE(SliderJoint)
-	B3D_COMPONENT_FORWARD_DECLARE(D6Joint)
 	B3D_COMPONENT_FORWARD_DECLARE(CharacterController)
 	B3D_COMPONENT_FORWARD_DECLARE(Camera)
 	B3D_COMPONENT_FORWARD_DECLARE(Light)
@@ -582,13 +575,13 @@ namespace b3d
 		TID_Rigidbody = 1098,
 		TID_PhysicsMesh = 1099,
 		TID_MeshCollider = 1100,
-		TID_CJoint = 1101,
-		TID_CFixedJoint = 1102,
-		TID_CDistanceJoint = 1103,
-		TID_CHingeJoint = 1104,
-		TID_CSphericalJoint = 1105,
-		TID_CSliderJoint = 1106,
-		TID_CD6Joint = 1107,
+		TID_Joint = 1101,
+		TID_FixedJoint = 1102,
+		TID_DistanceJoint = 1103,
+		TID_HingeJoint = 1104,
+		TID_SphericalJoint = 1105,
+		TID_SliderJoint = 1106,
+		TID_D6Joint = 1107,
 		TID_CCharacterController = 1108,
 		TID_FPhysicsMesh = 1109,
 		TID_ShaderImportOptions = 1110,
@@ -826,13 +819,13 @@ namespace b3d
 	typedef GameObjectHandle<CapsuleCollider> HCapsuleCollider;
 	typedef GameObjectHandle<PlaneCollider> HPlaneCollider;
 	typedef GameObjectHandle<MeshCollider> HMeshCollider;
-	typedef GameObjectHandle<CJoint> HJoint;
-	typedef GameObjectHandle<CHingeJoint> HHingeJoint;
-	typedef GameObjectHandle<CSliderJoint> HSliderJoint;
-	typedef GameObjectHandle<CDistanceJoint> HDistanceJoint;
-	typedef GameObjectHandle<CSphericalJoint> HSphericalJoint;
-	typedef GameObjectHandle<CFixedJoint> HFixedJoint;
-	typedef GameObjectHandle<CD6Joint> HD6Joint;
+	typedef GameObjectHandle<Joint> HJoint;
+	typedef GameObjectHandle<HingeJoint> HHingeJoint;
+	typedef GameObjectHandle<SliderJoint> HSliderJoint;
+	typedef GameObjectHandle<DistanceJoint> HDistanceJoint;
+	typedef GameObjectHandle<SphericalJoint> HSphericalJoint;
+	typedef GameObjectHandle<FixedJoint> HFixedJoint;
+	typedef GameObjectHandle<D6Joint> HD6Joint;
 	typedef GameObjectHandle<CCharacterController> HCharacterController;
 	typedef GameObjectHandle<CReflectionProbe> HReflectionProbe;
 	typedef GameObjectHandle<CSkybox> HSkybox;

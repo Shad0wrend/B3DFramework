@@ -119,7 +119,7 @@ namespace b3d
 		/** Event reported when a joint breaks. */
 		struct JointBreakEvent
 		{
-			CJoint* Joint; /** Broken joint. */
+			Joint* Joint; /** Broken joint. */
 		};
 
 		PhysXScene(physx::PxPhysics* physics, const PhysicsCreateInformation& input, const physx::PxTolerancesScale& scale);
@@ -132,12 +132,12 @@ namespace b3d
 		/** Returns the underlying PhysX scene. */
 		physx::PxScene& GetPxScene() const { return *mScene; }
 
-		UPtr<IFixedJointImplementation> CreateFixedJoint(CJoint& owner, const FixedJointCreateInformation& createInformation) override;
-		UPtr<IDistanceJointImplementation> CreateDistanceJoint(CJoint& owner, const DistanceJointCreateInformation& createInformation) override;
-		UPtr<IHingeJointImplementation> CreateHingeJoint(CJoint& owner, const HingeJointCreateInformation& createInformation) override;
-		UPtr<ISphericalJointImplementation> CreateSphericalJoint(CJoint& owner, const SphericalJointCreateInformation& createInformation) override;
-		UPtr<ISliderJointImplementation> CreateSliderJoint(CJoint& owner, const SliderJointCreateInformation& createInformation) override;
-		UPtr<ID6JointImplementation> CreateD6Joint(CJoint& owner, const D6JointCreateInformation& createInformation) override;
+		UPtr<IFixedJointImplementation> CreateFixedJoint(Joint& owner, const FixedJointCreateInformation& createInformation) override;
+		UPtr<IDistanceJointImplementation> CreateDistanceJoint(Joint& owner, const DistanceJointCreateInformation& createInformation) override;
+		UPtr<IHingeJointImplementation> CreateHingeJoint(Joint& owner, const HingeJointCreateInformation& createInformation) override;
+		UPtr<ISphericalJointImplementation> CreateSphericalJoint(Joint& owner, const SphericalJointCreateInformation& createInformation) override;
+		UPtr<ISliderJointImplementation> CreateSliderJoint(Joint& owner, const SliderJointCreateInformation& createInformation) override;
+		UPtr<ID6JointImplementation> CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation) override;
 		SPtr<CharacterController> CreateCharacterController(const CharacterControllerCreateInformation& createInformation) override;
 
 		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override;

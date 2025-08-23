@@ -14,7 +14,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CDistanceJointRTTI : public TRTTIType<CDistanceJoint, CJoint, CDistanceJointRTTI>
+	class B3D_CORE_EXPORT DistanceJointRTTI : public TRTTIType<DistanceJoint, Joint, DistanceJointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_NAMED(mFlag, mInformation.Flag, 0)
@@ -28,18 +28,18 @@ namespace b3d
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CDistanceJoint";
+			static String name = "DistanceJoint";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CDistanceJoint;
+			return TID_DistanceJoint;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CDistanceJoint>();
+			return SceneObject::CreateEmptyComponent<DistanceJoint>();
 		}
 	};
 

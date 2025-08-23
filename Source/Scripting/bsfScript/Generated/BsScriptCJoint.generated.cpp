@@ -21,7 +21,7 @@ namespace b3d
 
 	void ScriptJointWrapperBase::RegisterEvents()
 	{
-		OnJointBreakConnection = static_cast<CJoint*>(GetNativeObject())->OnJointBreak.Connect(std::bind(&ScriptJointWrapperBase::OnJointBreak, this));
+		OnJointBreakConnection = static_cast<Joint*>(GetNativeObject())->OnJointBreak.Connect(std::bind(&ScriptJointWrapperBase::OnJointBreak, this));
 		ScriptGameObjectWrapper::RegisterEvents();
 	}
 	void ScriptJointWrapperBase::UnregisterEvents()
@@ -29,7 +29,7 @@ namespace b3d
 		OnJointBreakConnection.Disconnect();
 		ScriptGameObjectWrapper::UnregisterEvents();
 	}
-	ScriptJoint::ScriptJoint(const GameObjectHandle<CJoint>& nativeObject)
+	ScriptJoint::ScriptJoint(const GameObjectHandle<Joint>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -73,7 +73,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetBody(body);
+		tmp__output = static_cast<Joint*>(self->GetNativeObject())->GetBody(body);
 
 		MonoObject* __output;
 		MonoObject* temp__output = nullptr;
@@ -94,7 +94,7 @@ namespace b3d
 		scriptObjectWrappervalue = ScriptRigidbody::GetScriptObjectWrapper(value);
 		if(scriptObjectWrappervalue != nullptr)
 			tmpvalue = B3DStaticGameObjectCast<Rigidbody>(scriptObjectWrappervalue->GetBaseNativeObjectAsHandle());
-		static_cast<CJoint*>(self->GetNativeObject())->SetBody(body, tmpvalue);
+		static_cast<Joint*>(self->GetNativeObject())->SetBody(body, tmpvalue);
 	}
 
 	void ScriptJoint::InternalGetPosition(ScriptJointWrapperBase* self, JointBody body, TVector3<float>* __output)
@@ -106,7 +106,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetRelativeBodyPosition(body);
+		tmp__output = static_cast<Joint*>(self->GetNativeObject())->GetRelativeBodyPosition(body);
 
 		*__output = tmp__output;
 	}
@@ -120,7 +120,7 @@ namespace b3d
 		}
 
 		TQuaternion<float> tmp__output;
-		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetRelativeBodyRotation(body);
+		tmp__output = static_cast<Joint*>(self->GetNativeObject())->GetRelativeBodyRotation(body);
 
 		*__output = tmp__output;
 	}
@@ -130,7 +130,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CJoint*>(self->GetNativeObject())->SetRelativeBodyTransform(body, *position, *rotation);
+		static_cast<Joint*>(self->GetNativeObject())->SetRelativeBodyTransform(body, *position, *rotation);
 	}
 
 	float ScriptJoint::InternalGetBreakForce(ScriptJointWrapperBase* self)
@@ -139,7 +139,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetBreakForce();
+		tmp__output = static_cast<Joint*>(self->GetNativeObject())->GetBreakForce();
 
 		float __output;
 		__output = tmp__output;
@@ -152,7 +152,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CJoint*>(self->GetNativeObject())->SetBreakForce(force);
+		static_cast<Joint*>(self->GetNativeObject())->SetBreakForce(force);
 	}
 
 	float ScriptJoint::InternalGetBreakTorque(ScriptJointWrapperBase* self)
@@ -161,7 +161,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetBreakTorque();
+		tmp__output = static_cast<Joint*>(self->GetNativeObject())->GetBreakTorque();
 
 		float __output;
 		__output = tmp__output;
@@ -174,7 +174,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CJoint*>(self->GetNativeObject())->SetBreakTorque(torque);
+		static_cast<Joint*>(self->GetNativeObject())->SetBreakTorque(torque);
 	}
 
 	bool ScriptJoint::InternalGetEnableCollision(ScriptJointWrapperBase* self)
@@ -183,7 +183,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CJoint*>(self->GetNativeObject())->GetEnableCollision();
+		tmp__output = static_cast<Joint*>(self->GetNativeObject())->GetEnableCollision();
 
 		bool __output;
 		__output = tmp__output;
@@ -196,6 +196,6 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CJoint*>(self->GetNativeObject())->SetEnableCollision(value);
+		static_cast<Joint*>(self->GetNativeObject())->SetEnableCollision(value);
 	}
 }

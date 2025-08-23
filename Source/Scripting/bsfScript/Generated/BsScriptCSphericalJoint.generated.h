@@ -8,16 +8,16 @@
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsSphericalJoint.h"
 
-namespace b3d { class CSphericalJoint; }
+namespace b3d { class SphericalJoint; }
 namespace b3d { struct __LimitConeRangeInterop; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSphericalJoint : public TScriptGameObjectWrapper<CSphericalJoint, ScriptSphericalJoint, ScriptJointWrapperBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSphericalJoint : public TScriptGameObjectWrapper<SphericalJoint, ScriptSphericalJoint, ScriptJointWrapperBase>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "SphericalJoint")
 
-		ScriptSphericalJoint(const GameObjectHandle<CSphericalJoint>& nativeObject);
+		ScriptSphericalJoint(const GameObjectHandle<SphericalJoint>& nativeObject);
 		~ScriptSphericalJoint();
 
 		static void SetupScriptBindings();

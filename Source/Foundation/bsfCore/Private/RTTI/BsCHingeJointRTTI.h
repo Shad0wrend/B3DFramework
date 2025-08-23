@@ -16,7 +16,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CHingeJointRTTI : public TRTTIType<CHingeJoint, CJoint, CHingeJointRTTI>
+	class B3D_CORE_EXPORT HingeJointRTTI : public TRTTIType<HingeJoint, Joint, HingeJointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_NAMED(mFlag, mInformation.Flag, 0)
@@ -35,18 +35,18 @@ namespace b3d
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CHingeJoint";
+			static String name = "HingeJoint";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CHingeJoint;
+			return TID_HingeJoint;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CHingeJoint>();
+			return SceneObject::CreateEmptyComponent<HingeJoint>();
 		}
 	};
 

@@ -16,7 +16,7 @@ namespace b3d
 	class PhysXFixedJoint : public IFixedJointImplementation
 	{
 	public:
-		PhysXFixedJoint(physx::PxPhysics* physx, CJoint& owner, const FixedJointCreateInformation& createInformation);
+		PhysXFixedJoint(physx::PxPhysics* physx, Joint& owner, const FixedJointCreateInformation& createInformation);
 
 		// Begin IJointImplementation
 		void SetBody(JointBody body, Rigidbody* value) override { mInternal.SetBody(body, value); }

@@ -9,17 +9,17 @@
 
 using namespace b3d;
 
-CHingeJoint::CHingeJoint(const HSceneObject& parent)
-	: CJoint(parent, mInformation)
+HingeJoint::HingeJoint(const HSceneObject& parent)
+	: Joint(parent, mInformation)
 {
 	SetName("HingeJoint");
 }
 
-CHingeJoint::CHingeJoint()
-	: CHingeJoint(nullptr)
+HingeJoint::HingeJoint()
+	: HingeJoint(nullptr)
 { }
 
-Radian CHingeJoint::GetAngle() const
+Radian HingeJoint::GetAngle() const
 {
 	if(mImplementation == nullptr)
 		return Radian(0.0f);
@@ -27,7 +27,7 @@ Radian CHingeJoint::GetAngle() const
 	return GetImplementation().GetAngle();
 }
 
-float CHingeJoint::GetSpeed() const
+float HingeJoint::GetSpeed() const
 {
 	if(mImplementation == nullptr)
 		return 0.0f;
@@ -35,7 +35,7 @@ float CHingeJoint::GetSpeed() const
 	return GetImplementation().GetSpeed();
 }
 
-void CHingeJoint::SetLimit(const LimitAngularRange& limit)
+void HingeJoint::SetLimit(const LimitAngularRange& limit)
 {
 	if(limit == mInformation.Limit)
 		return;
@@ -46,7 +46,7 @@ void CHingeJoint::SetLimit(const LimitAngularRange& limit)
 		GetImplementation().SetLimit(limit);
 }
 
-void CHingeJoint::SetDrive(const HingeJointDrive& drive)
+void HingeJoint::SetDrive(const HingeJointDrive& drive)
 {
 	if(drive == mInformation.Drive)
 		return;
@@ -57,7 +57,7 @@ void CHingeJoint::SetDrive(const HingeJointDrive& drive)
 		GetImplementation().SetDrive(drive);
 }
 
-void CHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
+void HingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 {
 	bool isEnabled = ((u32)mInformation.Flag & (u32)flag) != 0;
 	if(isEnabled == enabled)
@@ -72,28 +72,28 @@ void CHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 		GetImplementation().SetFlag(flag, enabled);
 }
 
-bool CHingeJoint::HasFlag(HingeJointFlag flag) const
+bool HingeJoint::HasFlag(HingeJointFlag flag) const
 {
 	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
-SPtr<IJointImplementation> CHingeJoint::CreateImplementation()
+SPtr<IJointImplementation> HingeJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateHingeJoint(*this, mInformation);
 }
 
-IHingeJointImplementation& CHingeJoint::GetImplementation() const
+IHingeJointImplementation& HingeJoint::GetImplementation() const
 {
 	return static_cast<IHingeJointImplementation&>(*mImplementation);
 }
 
-RTTIType* CHingeJoint::GetRttiStatic()
+RTTIType* HingeJoint::GetRttiStatic()
 {
-	return CHingeJointRTTI::Instance();
+	return HingeJointRTTI::Instance();
 }
 
-RTTIType* CHingeJoint::GetRtti() const
+RTTIType* HingeJoint::GetRtti() const
 {
-	return CHingeJoint::GetRttiStatic();
+	return HingeJoint::GetRttiStatic();
 }

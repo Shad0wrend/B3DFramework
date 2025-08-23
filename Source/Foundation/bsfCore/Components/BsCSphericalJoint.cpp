@@ -9,17 +9,17 @@
 
 using namespace b3d;
 
-CSphericalJoint::CSphericalJoint(const HSceneObject& parent)
-	: CJoint(parent, mInformation)
+SphericalJoint::SphericalJoint(const HSceneObject& parent)
+	: Joint(parent, mInformation)
 {
 	SetName("SphericalJoint");
 }
 
-CSphericalJoint::CSphericalJoint()
-	: CSphericalJoint(nullptr)
+SphericalJoint::SphericalJoint()
+	: SphericalJoint(nullptr)
 { }
 
-void CSphericalJoint::SetLimit(const LimitConeRange& limit)
+void SphericalJoint::SetLimit(const LimitConeRange& limit)
 {
 	if(limit == mInformation.Limit)
 		return;
@@ -30,7 +30,7 @@ void CSphericalJoint::SetLimit(const LimitConeRange& limit)
 		GetImplementation().SetLimit(limit);
 }
 
-void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
+void SphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 {
 	bool isEnabled = ((u32)mInformation.Flag & (u32)flag) != 0;
 	if(isEnabled == enabled)
@@ -45,28 +45,28 @@ void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 		GetImplementation().SetFlag(flag, enabled);
 }
 
-bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
+bool SphericalJoint::HasFlag(SphericalJointFlag flag) const
 {
 	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
-SPtr<IJointImplementation> CSphericalJoint::CreateImplementation()
+SPtr<IJointImplementation> SphericalJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateSphericalJoint(*this, mInformation);
 }
 
-ISphericalJointImplementation& CSphericalJoint::GetImplementation() const
+ISphericalJointImplementation& SphericalJoint::GetImplementation() const
 {
 	return static_cast<ISphericalJointImplementation&>(*mImplementation);
 }
 
-RTTIType* CSphericalJoint::GetRttiStatic()
+RTTIType* SphericalJoint::GetRttiStatic()
 {
-	return CSphericalJointRTTI::Instance();
+	return SphericalJointRTTI::Instance();
 }
 
-RTTIType* CSphericalJoint::GetRtti() const
+RTTIType* SphericalJoint::GetRtti() const
 {
-	return CSphericalJoint::GetRttiStatic();
+	return SphericalJoint::GetRttiStatic();
 }

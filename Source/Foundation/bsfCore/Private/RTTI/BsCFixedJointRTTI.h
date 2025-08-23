@@ -14,23 +14,23 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CFixedJointRTTI : public TRTTIType<CFixedJoint, CJoint, CFixedJointRTTI>
+	class B3D_CORE_EXPORT FixedJointRTTI : public TRTTIType<FixedJoint, Joint, FixedJointRTTI>
 	{
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CFixedJoint";
+			static String name = "FixedJoint";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CFixedJoint;
+			return TID_FixedJoint;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CFixedJoint>();
+			return SceneObject::CreateEmptyComponent<FixedJoint>();
 		}
 	};
 

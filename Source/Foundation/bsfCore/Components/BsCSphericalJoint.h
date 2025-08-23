@@ -31,10 +31,10 @@ namespace b3d
 	 * Essentially this ensures that the anchor points of the two bodies are always coincident. Bodies are allowed to
 	 * rotate around the anchor points, and their rotation can be limited by an elliptical cone.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SphericalJoint)) CSphericalJoint : public CJoint
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) SphericalJoint : public Joint
 	{
 	public:
-		CSphericalJoint(const HSceneObject& parent);
+		SphericalJoint(const HSceneObject& parent);
 
 		/**
 		 * Determines the limit of the joint. This clamps the rotation inside an eliptical angular cone. You must enable
@@ -78,12 +78,12 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CSphericalJointRTTI;
+		friend class SphericalJointRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
 	protected:
-		CSphericalJoint(); // Serialization only
+		SphericalJoint(); // Serialization only
 	};
 
 	/** Low-level interface for a joint used by the SphericalJoint component. Should be implemented by the physics plugin to provide joint functionality. */

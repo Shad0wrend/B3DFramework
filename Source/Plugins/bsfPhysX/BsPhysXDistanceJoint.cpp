@@ -8,7 +8,7 @@
 using namespace physx;
 using namespace b3d;
 
-PhysXDistanceJoint::PhysXDistanceJoint(PxPhysics* physx, CJoint& owner, const DistanceJointCreateInformation& createInformation)
+PhysXDistanceJoint::PhysXDistanceJoint(PxPhysics* physx, Joint& owner, const DistanceJointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
 	if(createInformation.Bodies[0].Body.IsValid())

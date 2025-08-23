@@ -27,10 +27,10 @@ namespace b3d
 	};
 
 	/** Joint that removes all but a single translational degree of freedom. Bodies are allowed to move along a single axis. */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SliderJoint)) CSliderJoint : public CJoint
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) SliderJoint : public Joint
 	{
 	public:
-		CSliderJoint(const HSceneObject& parent);
+		SliderJoint(const HSceneObject& parent);
 
 		/** Returns the current position of the slider. */
 		B3D_SCRIPT_EXPORT(ExportName(Position), Property(Getter))
@@ -85,12 +85,12 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CSliderJointRTTI;
+		friend class SliderJointRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
 	protected:
-		CSliderJoint(); // Serialization only
+		SliderJoint(); // Serialization only
 	};
 
 	/** Low-level interface for a joint used by the SliderJoint component. Should be implemented by the physics plugin to provide joint functionality. */

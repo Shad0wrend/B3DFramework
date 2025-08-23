@@ -9,23 +9,23 @@
 
 using namespace b3d;
 
-CFixedJoint::CFixedJoint(const HSceneObject& parent)
-	: CJoint(parent, mInformation)
+FixedJoint::FixedJoint(const HSceneObject& parent)
+	: Joint(parent, mInformation)
 {
 	SetName("FixedJoint");
 }
 
-CFixedJoint::CFixedJoint()
-	: CFixedJoint(nullptr)
+FixedJoint::FixedJoint()
+	: FixedJoint(nullptr)
 { }
 
-SPtr<IJointImplementation> CFixedJoint::CreateImplementation()
+SPtr<IJointImplementation> FixedJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateFixedJoint(*this, mInformation);
 }
 
-void CFixedJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation)
+void FixedJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation)
 {
 	position = mInformation.Bodies[(u32)body].Position;
 	rotation = mInformation.Bodies[(u32)body].Rotation;
@@ -57,17 +57,17 @@ void CFixedJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position,
 	}
 }
 
-IFixedJointImplementation& CFixedJoint::GetImplementation() const
+IFixedJointImplementation& FixedJoint::GetImplementation() const
 {
 	return static_cast<IFixedJointImplementation&>(*mImplementation);
 }
 
-RTTIType* CFixedJoint::GetRttiStatic()
+RTTIType* FixedJoint::GetRttiStatic()
 {
-	return CFixedJointRTTI::Instance();
+	return FixedJointRTTI::Instance();
 }
 
-RTTIType* CFixedJoint::GetRtti() const
+RTTIType* FixedJoint::GetRtti() const
 {
-	return CFixedJoint::GetRttiStatic();
+	return FixedJoint::GetRttiStatic();
 }

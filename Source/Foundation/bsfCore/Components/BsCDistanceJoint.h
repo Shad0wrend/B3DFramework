@@ -32,10 +32,10 @@ namespace b3d
 	};
 
 	/** A joint that maintains an upper or lower (or both) bound on the distance between two bodies. */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(DistanceJoint)) CDistanceJoint : public CJoint
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) DistanceJoint : public Joint
 	{
 	public:
-		CDistanceJoint(const HSceneObject& parent);
+		DistanceJoint(const HSceneObject& parent);
 
 		/** Returns the current distance between the two joint bodies. */
 		B3D_SCRIPT_EXPORT(ExportName(Distance), Property(Getter))
@@ -118,12 +118,12 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CDistanceJointRTTI;
+		friend class DistanceJointRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
 	protected:
-		CDistanceJoint(); // Serialization only
+		DistanceJoint(); // Serialization only
 	};
 
 	/** Low-level interface for a joint used by the DistanceJoint component. Should be implemented by the physics plugin to provide joint functionality. */

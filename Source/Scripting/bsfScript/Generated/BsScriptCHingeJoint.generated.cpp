@@ -10,7 +10,7 @@
 
 namespace b3d
 {
-	ScriptHingeJoint::ScriptHingeJoint(const GameObjectHandle<CHingeJoint>& nativeObject)
+	ScriptHingeJoint::ScriptHingeJoint(const GameObjectHandle<HingeJoint>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -53,7 +53,7 @@ namespace b3d
 		}
 
 		TRadian<float> tmp__output;
-		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetAngle();
+		tmp__output = static_cast<HingeJoint*>(self->GetNativeObject())->GetAngle();
 
 		*__output = tmp__output;
 	}
@@ -64,7 +64,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetSpeed();
+		tmp__output = static_cast<HingeJoint*>(self->GetNativeObject())->GetSpeed();
 
 		float __output;
 		__output = tmp__output;
@@ -81,7 +81,7 @@ namespace b3d
 		}
 
 		LimitAngularRange tmp__output;
-		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetLimit();
+		tmp__output = static_cast<HingeJoint*>(self->GetNativeObject())->GetLimit();
 
 		__LimitAngularRangeInterop interop__output;
 		interop__output = ScriptLimitAngularRange::ToInterop(tmp__output);
@@ -95,7 +95,7 @@ namespace b3d
 
 		LimitAngularRange tmplimit;
 		tmplimit = ScriptLimitAngularRange::FromInterop(*limit);
-		static_cast<CHingeJoint*>(self->GetNativeObject())->SetLimit(tmplimit);
+		static_cast<HingeJoint*>(self->GetNativeObject())->SetLimit(tmplimit);
 	}
 
 	void ScriptHingeJoint::InternalGetDrive(ScriptHingeJoint* self, HingeJointDrive* __output)
@@ -107,7 +107,7 @@ namespace b3d
 		}
 
 		HingeJointDrive tmp__output;
-		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->GetDrive();
+		tmp__output = static_cast<HingeJoint*>(self->GetNativeObject())->GetDrive();
 
 		*__output = tmp__output;
 	}
@@ -117,7 +117,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CHingeJoint*>(self->GetNativeObject())->SetDrive(*drive);
+		static_cast<HingeJoint*>(self->GetNativeObject())->SetDrive(*drive);
 	}
 
 	void ScriptHingeJoint::InternalSetFlag(ScriptHingeJoint* self, HingeJointFlag flag, bool enabled)
@@ -125,7 +125,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CHingeJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
+		static_cast<HingeJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
 	}
 
 	bool ScriptHingeJoint::InternalHasFlag(ScriptHingeJoint* self, HingeJointFlag flag)
@@ -134,7 +134,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CHingeJoint*>(self->GetNativeObject())->HasFlag(flag);
+		tmp__output = static_cast<HingeJoint*>(self->GetNativeObject())->HasFlag(flag);
 
 		bool __output;
 		__output = tmp__output;

@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	ScriptSphericalJoint::ScriptSphericalJoint(const GameObjectHandle<CSphericalJoint>& nativeObject)
+	ScriptSphericalJoint::ScriptSphericalJoint(const GameObjectHandle<SphericalJoint>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -48,7 +48,7 @@ namespace b3d
 		}
 
 		LimitConeRange tmp__output;
-		tmp__output = static_cast<CSphericalJoint*>(self->GetNativeObject())->GetLimit();
+		tmp__output = static_cast<SphericalJoint*>(self->GetNativeObject())->GetLimit();
 
 		__LimitConeRangeInterop interop__output;
 		interop__output = ScriptLimitConeRange::ToInterop(tmp__output);
@@ -62,7 +62,7 @@ namespace b3d
 
 		LimitConeRange tmplimit;
 		tmplimit = ScriptLimitConeRange::FromInterop(*limit);
-		static_cast<CSphericalJoint*>(self->GetNativeObject())->SetLimit(tmplimit);
+		static_cast<SphericalJoint*>(self->GetNativeObject())->SetLimit(tmplimit);
 	}
 
 	void ScriptSphericalJoint::InternalSetFlag(ScriptSphericalJoint* self, SphericalJointFlag flag, bool enabled)
@@ -70,7 +70,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CSphericalJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
+		static_cast<SphericalJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
 	}
 
 	bool ScriptSphericalJoint::InternalHasFlag(ScriptSphericalJoint* self, SphericalJointFlag flag)
@@ -79,7 +79,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CSphericalJoint*>(self->GetNativeObject())->HasFlag(flag);
+		tmp__output = static_cast<SphericalJoint*>(self->GetNativeObject())->HasFlag(flag);
 
 		bool __output;
 		__output = tmp__output;

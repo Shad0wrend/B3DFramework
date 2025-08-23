@@ -8,16 +8,16 @@
 #include "../../../Foundation/bsfCore/Physics/BsSliderJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 
-namespace b3d { class CSliderJoint; }
+namespace b3d { class SliderJoint; }
 namespace b3d { struct __LimitLinearRangeInterop; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSliderJoint : public TScriptGameObjectWrapper<CSliderJoint, ScriptSliderJoint, ScriptJointWrapperBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSliderJoint : public TScriptGameObjectWrapper<SliderJoint, ScriptSliderJoint, ScriptJointWrapperBase>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "SliderJoint")
 
-		ScriptSliderJoint(const GameObjectHandle<CSliderJoint>& nativeObject);
+		ScriptSliderJoint(const GameObjectHandle<SliderJoint>& nativeObject);
 		~ScriptSliderJoint();
 
 		static void SetupScriptBindings();

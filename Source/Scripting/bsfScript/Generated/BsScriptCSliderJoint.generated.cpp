@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	ScriptSliderJoint::ScriptSliderJoint(const GameObjectHandle<CSliderJoint>& nativeObject)
+	ScriptSliderJoint::ScriptSliderJoint(const GameObjectHandle<SliderJoint>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -47,7 +47,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CSliderJoint*>(self->GetNativeObject())->GetPosition();
+		tmp__output = static_cast<SliderJoint*>(self->GetNativeObject())->GetPosition();
 
 		float __output;
 		__output = tmp__output;
@@ -61,7 +61,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CSliderJoint*>(self->GetNativeObject())->GetSpeed();
+		tmp__output = static_cast<SliderJoint*>(self->GetNativeObject())->GetSpeed();
 
 		float __output;
 		__output = tmp__output;
@@ -78,7 +78,7 @@ namespace b3d
 		}
 
 		LimitLinearRange tmp__output;
-		tmp__output = static_cast<CSliderJoint*>(self->GetNativeObject())->GetLimit();
+		tmp__output = static_cast<SliderJoint*>(self->GetNativeObject())->GetLimit();
 
 		__LimitLinearRangeInterop interop__output;
 		interop__output = ScriptLimitLinearRange::ToInterop(tmp__output);
@@ -92,7 +92,7 @@ namespace b3d
 
 		LimitLinearRange tmplimit;
 		tmplimit = ScriptLimitLinearRange::FromInterop(*limit);
-		static_cast<CSliderJoint*>(self->GetNativeObject())->SetLimit(tmplimit);
+		static_cast<SliderJoint*>(self->GetNativeObject())->SetLimit(tmplimit);
 	}
 
 	void ScriptSliderJoint::InternalSetFlag(ScriptSliderJoint* self, SliderJointFlag flag, bool enabled)
@@ -100,7 +100,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CSliderJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
+		static_cast<SliderJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
 	}
 
 	bool ScriptSliderJoint::InternalHasFlag(ScriptSliderJoint* self, SliderJointFlag flag)
@@ -109,7 +109,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CSliderJoint*>(self->GetNativeObject())->HasFlag(flag);
+		tmp__output = static_cast<SliderJoint*>(self->GetNativeObject())->HasFlag(flag);
 
 		bool __output;
 		__output = tmp__output;

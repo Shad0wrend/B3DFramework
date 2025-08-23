@@ -9,17 +9,17 @@
 
 using namespace b3d;
 
-CDistanceJoint::CDistanceJoint(const HSceneObject& parent)
-	: CJoint(parent, mInformation)
+DistanceJoint::DistanceJoint(const HSceneObject& parent)
+	: Joint(parent, mInformation)
 {
 	SetName("DistanceJoint");
 }
 
-CDistanceJoint::CDistanceJoint()
-	: CDistanceJoint(nullptr)
+DistanceJoint::DistanceJoint()
+	: DistanceJoint(nullptr)
 { }
 
-float CDistanceJoint::GetDistance() const
+float DistanceJoint::GetDistance() const
 {
 	if(mImplementation == nullptr)
 		return 0.0f;
@@ -27,7 +27,7 @@ float CDistanceJoint::GetDistance() const
 	return GetImplementation().GetDistance();
 }
 
-void CDistanceJoint::SetMinDistance(float value)
+void DistanceJoint::SetMinDistance(float value)
 {
 	if(mInformation.MinDistance == value)
 		return;
@@ -38,7 +38,7 @@ void CDistanceJoint::SetMinDistance(float value)
 		GetImplementation().SetMinDistance(value);
 }
 
-void CDistanceJoint::SetMaxDistance(float value)
+void DistanceJoint::SetMaxDistance(float value)
 {
 	if(mInformation.MaxDistance == value)
 		return;
@@ -49,7 +49,7 @@ void CDistanceJoint::SetMaxDistance(float value)
 		GetImplementation().SetMaxDistance(value);
 }
 
-void CDistanceJoint::SetTolerance(float value)
+void DistanceJoint::SetTolerance(float value)
 {
 	if(mInformation.Tolerance == value)
 		return;
@@ -60,7 +60,7 @@ void CDistanceJoint::SetTolerance(float value)
 		GetImplementation().SetTolerance(value);
 }
 
-void CDistanceJoint::SetSpring(const Spring& value)
+void DistanceJoint::SetSpring(const Spring& value)
 {
 	if(mInformation.Spring == value)
 		return;
@@ -71,7 +71,7 @@ void CDistanceJoint::SetSpring(const Spring& value)
 		GetImplementation().SetSpring(value);
 }
 
-void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
+void DistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 {
 	bool isEnabled = ((u32)mInformation.Flag & (u32)flag) != 0;
 	if(isEnabled == enabled)
@@ -86,28 +86,28 @@ void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 		GetImplementation().SetFlag(flag, enabled);
 }
 
-bool CDistanceJoint::HasFlag(DistanceJointFlag flag) const
+bool DistanceJoint::HasFlag(DistanceJointFlag flag) const
 {
 	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
-SPtr<IJointImplementation> CDistanceJoint::CreateImplementation()
+SPtr<IJointImplementation> DistanceJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateDistanceJoint(*this, mInformation);
 }
 
-IDistanceJointImplementation& CDistanceJoint::GetImplementation() const
+IDistanceJointImplementation& DistanceJoint::GetImplementation() const
 {
 	return static_cast<IDistanceJointImplementation&>(*mImplementation);
 }
 
-RTTIType* CDistanceJoint::GetRttiStatic()
+RTTIType* DistanceJoint::GetRttiStatic()
 {
-	return CDistanceJointRTTI::Instance();
+	return DistanceJointRTTI::Instance();
 }
 
-RTTIType* CDistanceJoint::GetRtti() const
+RTTIType* DistanceJoint::GetRtti() const
 {
-	return CDistanceJoint::GetRttiStatic();
+	return DistanceJoint::GetRttiStatic();
 }

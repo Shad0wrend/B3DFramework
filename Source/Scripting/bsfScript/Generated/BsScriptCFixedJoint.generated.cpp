@@ -8,7 +8,7 @@
 
 namespace b3d
 {
-	ScriptFixedJoint::ScriptFixedJoint(const GameObjectHandle<CFixedJoint>& nativeObject)
+	ScriptFixedJoint::ScriptFixedJoint(const GameObjectHandle<FixedJoint>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();

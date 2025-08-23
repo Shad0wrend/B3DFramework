@@ -18,10 +18,10 @@ namespace b3d
 	{};
 
 	/** Physics joint that will maintain a fixed distance and orientation between its two attached bodies. */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(FixedJoint)) CFixedJoint : public CJoint
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) FixedJoint : public Joint
 	{
 	public:
-		CFixedJoint(const HSceneObject& parent);
+		FixedJoint(const HSceneObject& parent);
 
 		/** @name Internal
 		 *  @{
@@ -47,12 +47,12 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CFixedJointRTTI;
+		friend class FixedJointRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
 	protected:
-		CFixedJoint(); // Serialization only
+		FixedJoint(); // Serialization only
 	};
 
 	/** Low-level interface for a joint used by the FixedJoint component. Should be implemented by the physics plugin to provide joint functionality. */

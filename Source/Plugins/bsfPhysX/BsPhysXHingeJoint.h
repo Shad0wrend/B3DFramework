@@ -31,7 +31,7 @@ namespace b3d
 	class PhysXHingeJoint : public IHingeJointImplementation
 	{
 	public:
-		PhysXHingeJoint(physx::PxPhysics* physx, CJoint& owner, const HingeJointCreateInformation& createInformation);
+		PhysXHingeJoint(physx::PxPhysics* physx, Joint& owner, const HingeJointCreateInformation& createInformation);
 
 		// Begin IJointImplementation
 		void SetBody(JointBody body, Rigidbody* value) override { mInternal.SetBody(body, value); }

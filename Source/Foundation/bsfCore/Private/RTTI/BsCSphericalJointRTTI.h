@@ -15,7 +15,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CSphericalJointRTTI : public TRTTIType<CSphericalJoint, CJoint, CSphericalJointRTTI>
+	class B3D_CORE_EXPORT SphericalJointRTTI : public TRTTIType<SphericalJoint, Joint, SphericalJointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_NAMED(mFlag, mInformation.Flag, 0)
@@ -29,18 +29,18 @@ namespace b3d
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CSphericalJoint";
+			static String name = "SphericalJoint";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CSphericalJoint;
+			return TID_SphericalJoint;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CSphericalJoint>();
+			return SceneObject::CreateEmptyComponent<SphericalJoint>();
 		}
 	};
 

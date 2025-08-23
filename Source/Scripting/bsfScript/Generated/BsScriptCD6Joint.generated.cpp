@@ -14,7 +14,7 @@
 
 namespace b3d
 {
-	ScriptD6Joint::ScriptD6Joint(const GameObjectHandle<CD6Joint>& nativeObject)
+	ScriptD6Joint::ScriptD6Joint(const GameObjectHandle<D6Joint>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -65,7 +65,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetMotion(axis);
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetMotion(axis);
 
 		D6JointMotion __output;
 		__output = tmp__output;
@@ -78,7 +78,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CD6Joint*>(self->GetNativeObject())->SetMotion(axis, motion);
+		static_cast<D6Joint*>(self->GetNativeObject())->SetMotion(axis, motion);
 	}
 
 	void ScriptD6Joint::InternalGetTwist(ScriptD6Joint* self, TRadian<float>* __output)
@@ -90,7 +90,7 @@ namespace b3d
 		}
 
 		TRadian<float> tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetTwist();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetTwist();
 
 		*__output = tmp__output;
 	}
@@ -104,7 +104,7 @@ namespace b3d
 		}
 
 		TRadian<float> tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetSwingY();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetSwingY();
 
 		*__output = tmp__output;
 	}
@@ -118,7 +118,7 @@ namespace b3d
 		}
 
 		TRadian<float> tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetSwingZ();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetSwingZ();
 
 		*__output = tmp__output;
 	}
@@ -132,7 +132,7 @@ namespace b3d
 		}
 
 		LimitLinear tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetLimitLinear();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetLimitLinear();
 
 		__LimitLinearInterop interop__output;
 		interop__output = ScriptLimitLinear::ToInterop(tmp__output);
@@ -146,7 +146,7 @@ namespace b3d
 
 		LimitLinear tmplimit;
 		tmplimit = ScriptLimitLinear::FromInterop(*limit);
-		static_cast<CD6Joint*>(self->GetNativeObject())->SetLimitLinear(tmplimit);
+		static_cast<D6Joint*>(self->GetNativeObject())->SetLimitLinear(tmplimit);
 	}
 
 	void ScriptD6Joint::InternalGetLimitTwist(ScriptD6Joint* self, __LimitAngularRangeInterop* __output)
@@ -158,7 +158,7 @@ namespace b3d
 		}
 
 		LimitAngularRange tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetLimitTwist();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetLimitTwist();
 
 		__LimitAngularRangeInterop interop__output;
 		interop__output = ScriptLimitAngularRange::ToInterop(tmp__output);
@@ -172,7 +172,7 @@ namespace b3d
 
 		LimitAngularRange tmplimit;
 		tmplimit = ScriptLimitAngularRange::FromInterop(*limit);
-		static_cast<CD6Joint*>(self->GetNativeObject())->SetLimitTwist(tmplimit);
+		static_cast<D6Joint*>(self->GetNativeObject())->SetLimitTwist(tmplimit);
 	}
 
 	void ScriptD6Joint::InternalGetLimitSwing(ScriptD6Joint* self, __LimitConeRangeInterop* __output)
@@ -184,7 +184,7 @@ namespace b3d
 		}
 
 		LimitConeRange tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetLimitSwing();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetLimitSwing();
 
 		__LimitConeRangeInterop interop__output;
 		interop__output = ScriptLimitConeRange::ToInterop(tmp__output);
@@ -198,7 +198,7 @@ namespace b3d
 
 		LimitConeRange tmplimit;
 		tmplimit = ScriptLimitConeRange::FromInterop(*limit);
-		static_cast<CD6Joint*>(self->GetNativeObject())->SetLimitSwing(tmplimit);
+		static_cast<D6Joint*>(self->GetNativeObject())->SetLimitSwing(tmplimit);
 	}
 
 	void ScriptD6Joint::InternalGetDrive(ScriptD6Joint* self, D6JointDriveType type, __D6JointDriveInterop* __output)
@@ -210,7 +210,7 @@ namespace b3d
 		}
 
 		D6JointDrive tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDrive(type);
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetDrive(type);
 
 		__D6JointDriveInterop interop__output;
 		interop__output = ScriptD6JointDrive::ToInterop(tmp__output);
@@ -224,7 +224,7 @@ namespace b3d
 
 		D6JointDrive tmpdrive;
 		tmpdrive = ScriptD6JointDrive::FromInterop(*drive);
-		static_cast<CD6Joint*>(self->GetNativeObject())->SetDrive(type, tmpdrive);
+		static_cast<D6Joint*>(self->GetNativeObject())->SetDrive(type, tmpdrive);
 	}
 
 	void ScriptD6Joint::InternalGetDrivePosition(ScriptD6Joint* self, TVector3<float>* __output)
@@ -236,7 +236,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDrivePosition();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetDrivePosition();
 
 		*__output = tmp__output;
 	}
@@ -250,7 +250,7 @@ namespace b3d
 		}
 
 		TQuaternion<float> tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDriveRotation();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetDriveRotation();
 
 		*__output = tmp__output;
 	}
@@ -260,7 +260,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CD6Joint*>(self->GetNativeObject())->SetDriveTransform(*position, *rotation);
+		static_cast<D6Joint*>(self->GetNativeObject())->SetDriveTransform(*position, *rotation);
 	}
 
 	void ScriptD6Joint::InternalGetDriveLinearVelocity(ScriptD6Joint* self, TVector3<float>* __output)
@@ -272,7 +272,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDriveLinearVelocity();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetDriveLinearVelocity();
 
 		*__output = tmp__output;
 	}
@@ -286,7 +286,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CD6Joint*>(self->GetNativeObject())->GetDriveAngularVelocity();
+		tmp__output = static_cast<D6Joint*>(self->GetNativeObject())->GetDriveAngularVelocity();
 
 		*__output = tmp__output;
 	}
@@ -296,6 +296,6 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CD6Joint*>(self->GetNativeObject())->SetDriveVelocity(*linear, *angular);
+		static_cast<D6Joint*>(self->GetNativeObject())->SetDriveVelocity(*linear, *angular);
 	}
 }

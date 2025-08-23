@@ -8,7 +8,7 @@
 using namespace physx;
 using namespace b3d;
 
-PhysXSphericalJoint::PhysXSphericalJoint(PxPhysics* physx, CJoint& owner, const SphericalJointCreateInformation& createInformation)
+PhysXSphericalJoint::PhysXSphericalJoint(PxPhysics* physx, Joint& owner, const SphericalJointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
 	if(createInformation.Bodies[0].Body.IsValid())

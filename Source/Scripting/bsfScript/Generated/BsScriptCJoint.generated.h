@@ -8,7 +8,7 @@
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 #include "../../../Foundation/bsfCore/Physics/BsFJoint.h"
 
-namespace b3d { class CJoint; }
+namespace b3d { class Joint; }
 namespace b3d
 {
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptJointWrapperBase : public ScriptGameObjectWrapper
@@ -26,12 +26,12 @@ namespace b3d
 		HEvent OnJointBreakConnection;
 	};
 
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptJoint : public TScriptGameObjectWrapper<CJoint, ScriptJoint, ScriptJointWrapperBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptJoint : public TScriptGameObjectWrapper<Joint, ScriptJoint, ScriptJointWrapperBase>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Joint")
 
-		ScriptJoint(const GameObjectHandle<CJoint>& nativeObject);
+		ScriptJoint(const GameObjectHandle<Joint>& nativeObject);
 		~ScriptJoint();
 
 		static void SetupScriptBindings();

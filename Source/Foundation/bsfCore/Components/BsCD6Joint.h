@@ -121,10 +121,10 @@ namespace b3d
 	 * constraint (for example for slider), twist constraint (rotating around X) and swing constraint (rotating around Y and
 	 * Z). It also allows you to constrain limits to only specific axes or completely lock specific axes.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(D6Joint)) CD6Joint : public CJoint
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) D6Joint : public Joint
 	{
 	public:
-		CD6Joint(const HSceneObject& parent);
+		D6Joint(const HSceneObject& parent);
 
 		/**
 		 * Allows you to constrain motion of the specified axis. Be aware that when setting drives for a specific axis
@@ -248,12 +248,12 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CD6JointRTTI;
+		friend class D6JointRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
 	protected:
-		CD6Joint(); // Serialization only
+		D6Joint(); // Serialization only
 	};
 
 	/** Low-level interface for a joint used by the D6Joint component. Should be implemented by the physics plugin to provide joint functionality. */

@@ -10,7 +10,7 @@ using namespace physx;
 
 using namespace b3d;
 
-PhysXFixedJoint::PhysXFixedJoint(PxPhysics* physx, CJoint& owner, const FixedJointCreateInformation& createInformation)
+PhysXFixedJoint::PhysXFixedJoint(PxPhysics* physx, Joint& owner, const FixedJointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
 	if(createInformation.Bodies[0].Body.IsValid())

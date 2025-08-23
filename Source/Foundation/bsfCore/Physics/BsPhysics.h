@@ -598,22 +598,22 @@ namespace b3d
 		/******************************************************************************************************************/
 
 		/** Creates a new fixed joint. */
-		virtual UPtr<IFixedJointImplementation> CreateFixedJoint(CJoint& owner, const FixedJointCreateInformation& createInformation) = 0;
+		virtual UPtr<IFixedJointImplementation> CreateFixedJoint(Joint& owner, const FixedJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new distance joint. */
-		virtual UPtr<IDistanceJointImplementation> CreateDistanceJoint(CJoint& owner, const DistanceJointCreateInformation& createInformation) = 0;
+		virtual UPtr<IDistanceJointImplementation> CreateDistanceJoint(Joint& owner, const DistanceJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new hinge joint. */
-		virtual UPtr<IHingeJointImplementation> CreateHingeJoint(CJoint& owner, const HingeJointCreateInformation& createInformation) = 0;
+		virtual UPtr<IHingeJointImplementation> CreateHingeJoint(Joint& owner, const HingeJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new spherical joint. */
-		virtual UPtr<ISphericalJointImplementation> CreateSphericalJoint(CJoint& owner, const SphericalJointCreateInformation& createInformation) = 0;
+		virtual UPtr<ISphericalJointImplementation> CreateSphericalJoint(Joint& owner, const SphericalJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new spherical joint. */
-		virtual UPtr<ISliderJointImplementation> CreateSliderJoint(CJoint& owner, const SliderJointCreateInformation& createInformation) = 0;
+		virtual UPtr<ISliderJointImplementation> CreateSliderJoint(Joint& owner, const SliderJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new D6 joint. */
-		virtual UPtr<ID6JointImplementation> CreateD6Joint(CJoint& owner, const D6JointCreateInformation& createInformation) = 0;
+		virtual UPtr<ID6JointImplementation> CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation) = 0;
 
 		/** Creates a new character controller. */
 		virtual SPtr<CharacterController> CreateCharacterController(const CharacterControllerCreateInformation& createInformation) = 0;

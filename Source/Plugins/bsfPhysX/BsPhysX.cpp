@@ -269,7 +269,7 @@ void PhysXEventCallback::onConstraintBreak(PxConstraintInfo* constraints, PxU32 
 		PxJoint* pxJoint = (PxJoint*)constraintInfo.externalReference;
 
 		PhysXScene::JointBreakEvent event;
-		event.Joint = (CJoint*)pxJoint->userData;
+		event.Joint = (Joint*)pxJoint->userData;
 
 		if(event.Joint != nullptr)
 			mScene.ReportJointBreakEvent(event);
@@ -730,32 +730,32 @@ void PhysXScene::SetPaused(bool paused)
 	mPaused = paused;
 }
 
-UPtr<IFixedJointImplementation> PhysXScene::CreateFixedJoint(CJoint& owner, const FixedJointCreateInformation& createInformation)
+UPtr<IFixedJointImplementation> PhysXScene::CreateFixedJoint(Joint& owner, const FixedJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<PhysXFixedJoint>(mPhysics, owner, createInformation);
 }
 
-UPtr<IDistanceJointImplementation> PhysXScene::CreateDistanceJoint(CJoint& owner, const DistanceJointCreateInformation& createInformation)
+UPtr<IDistanceJointImplementation> PhysXScene::CreateDistanceJoint(Joint& owner, const DistanceJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<PhysXDistanceJoint>(mPhysics, owner, createInformation);
 }
 
-UPtr<IHingeJointImplementation> PhysXScene::CreateHingeJoint(CJoint& owner, const HingeJointCreateInformation& createInformation)
+UPtr<IHingeJointImplementation> PhysXScene::CreateHingeJoint(Joint& owner, const HingeJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<PhysXHingeJoint>(mPhysics, owner, createInformation);
 }
 
-UPtr<ISphericalJointImplementation> PhysXScene::CreateSphericalJoint(CJoint& owner, const SphericalJointCreateInformation& createInformation)
+UPtr<ISphericalJointImplementation> PhysXScene::CreateSphericalJoint(Joint& owner, const SphericalJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<PhysXSphericalJoint>(mPhysics, owner, createInformation);
 }
 
-UPtr<ISliderJointImplementation> PhysXScene::CreateSliderJoint(CJoint& owner, const SliderJointCreateInformation& createInformation)
+UPtr<ISliderJointImplementation> PhysXScene::CreateSliderJoint(Joint& owner, const SliderJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<PhysXSliderJoint>(mPhysics, owner, createInformation);
 }
 
-UPtr<ID6JointImplementation> PhysXScene::CreateD6Joint(CJoint& owner, const D6JointCreateInformation& createInformation)
+UPtr<ID6JointImplementation> PhysXScene::CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<PhysXD6Joint>(mPhysics, owner, createInformation);
 }

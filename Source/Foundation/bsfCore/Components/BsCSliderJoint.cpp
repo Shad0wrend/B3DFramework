@@ -9,17 +9,17 @@
 
 using namespace b3d;
 
-CSliderJoint::CSliderJoint(const HSceneObject& parent)
-	: CJoint(parent, mInformation)
+SliderJoint::SliderJoint(const HSceneObject& parent)
+	: Joint(parent, mInformation)
 {
 	SetName("SliderJoint");
 }
 
-CSliderJoint::CSliderJoint()
-	: CSliderJoint(nullptr)
+SliderJoint::SliderJoint()
+	: SliderJoint(nullptr)
 { }
 
-float CSliderJoint::GetPosition() const
+float SliderJoint::GetPosition() const
 {
 	if(mImplementation == nullptr)
 		return 0.0f;
@@ -27,7 +27,7 @@ float CSliderJoint::GetPosition() const
 	return GetImplementation().GetPosition();
 }
 
-float CSliderJoint::GetSpeed() const
+float SliderJoint::GetSpeed() const
 {
 	if(mImplementation == nullptr)
 		return 0.0f;
@@ -35,7 +35,7 @@ float CSliderJoint::GetSpeed() const
 	return GetImplementation().GetSpeed();
 }
 
-void CSliderJoint::SetLimit(const LimitLinearRange& limit)
+void SliderJoint::SetLimit(const LimitLinearRange& limit)
 {
 	if(mInformation.Limit == limit)
 		return;
@@ -46,7 +46,7 @@ void CSliderJoint::SetLimit(const LimitLinearRange& limit)
 		GetImplementation().SetLimit(limit);
 }
 
-void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
+void SliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 {
 	bool isEnabled = ((u32)mInformation.Flag & (u32)flag) != 0;
 	if(isEnabled == enabled)
@@ -61,18 +61,18 @@ void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 		GetImplementation().SetFlag(flag, enabled);
 }
 
-bool CSliderJoint::HasFlag(SliderJointFlag flag) const
+bool SliderJoint::HasFlag(SliderJointFlag flag) const
 {
 	return ((u32)mInformation.Flag & (u32)flag) != 0;
 }
 
-SPtr<IJointImplementation> CSliderJoint::CreateImplementation()
+SPtr<IJointImplementation> SliderJoint::CreateImplementation()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateSliderJoint(*this, mInformation);
 }
 
-void CSliderJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation)
+void SliderJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation)
 {
 	position = mInformation.Bodies[(u32)body].Position;
 	rotation = mInformation.Bodies[(u32)body].Rotation;
@@ -98,17 +98,17 @@ void CSliderJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position
 	}
 }
 
-ISliderJointImplementation& CSliderJoint::GetImplementation() const
+ISliderJointImplementation& SliderJoint::GetImplementation() const
 {
 	return static_cast<ISliderJointImplementation&>(*mImplementation);
 }
 
-RTTIType* CSliderJoint::GetRttiStatic()
+RTTIType* SliderJoint::GetRttiStatic()
 {
-	return CSliderJointRTTI::Instance();
+	return SliderJointRTTI::Instance();
 }
 
-RTTIType* CSliderJoint::GetRtti() const
+RTTIType* SliderJoint::GetRtti() const
 {
-	return CSliderJoint::GetRttiStatic();
+	return SliderJoint::GetRttiStatic();
 }

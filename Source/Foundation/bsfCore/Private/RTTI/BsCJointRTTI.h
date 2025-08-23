@@ -15,7 +15,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CJointRTTI : public TRTTIType<CJoint, Component, CJointRTTI>
+	class B3D_CORE_EXPORT JointRTTI : public TRTTIType<Joint, Component, JointRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_NAMED(mBodyA, mInformation.Bodies[0].Body, 0)
@@ -35,13 +35,13 @@ namespace b3d
 	public:
 		const String& GetRttiName()
 		{
-			static String name = "CJoint";
+			static String name = "Joint";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CJoint;
+			return TID_Joint;
 		}
 
 		SPtr<IReflectable> NewRttiObject()

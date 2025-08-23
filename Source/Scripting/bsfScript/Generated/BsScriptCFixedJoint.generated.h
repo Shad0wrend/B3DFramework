@@ -6,15 +6,15 @@
 #include "Wrappers/BsScriptComponent.h"
 #include "BsScriptCJoint.generated.h"
 
-namespace b3d { class CFixedJoint; }
+namespace b3d { class FixedJoint; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptFixedJoint : public TScriptGameObjectWrapper<CFixedJoint, ScriptFixedJoint, ScriptJointWrapperBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptFixedJoint : public TScriptGameObjectWrapper<FixedJoint, ScriptFixedJoint, ScriptJointWrapperBase>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "FixedJoint")
 
-		ScriptFixedJoint(const GameObjectHandle<CFixedJoint>& nativeObject);
+		ScriptFixedJoint(const GameObjectHandle<FixedJoint>& nativeObject);
 		~ScriptFixedJoint();
 
 		static void SetupScriptBindings();

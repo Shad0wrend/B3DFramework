@@ -29,7 +29,7 @@ static PxD6Drive::Enum ToPxDrive(D6JointDriveType drive)
 	}
 }
 
-PhysXD6Joint::PhysXD6Joint(PxPhysics* physx, CJoint& owner, const D6JointCreateInformation& createInformation)
+PhysXD6Joint::PhysXD6Joint(PxPhysics* physx, Joint& owner, const D6JointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
 	if(createInformation.Bodies[0].Body.IsValid())

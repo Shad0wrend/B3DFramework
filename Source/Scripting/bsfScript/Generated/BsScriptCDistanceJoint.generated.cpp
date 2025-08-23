@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	ScriptDistanceJoint::ScriptDistanceJoint(const GameObjectHandle<CDistanceJoint>& nativeObject)
+	ScriptDistanceJoint::ScriptDistanceJoint(const GameObjectHandle<DistanceJoint>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -52,7 +52,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetDistance();
+		tmp__output = static_cast<DistanceJoint*>(self->GetNativeObject())->GetDistance();
 
 		float __output;
 		__output = tmp__output;
@@ -66,7 +66,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetMinDistance();
+		tmp__output = static_cast<DistanceJoint*>(self->GetNativeObject())->GetMinDistance();
 
 		float __output;
 		__output = tmp__output;
@@ -79,7 +79,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetMinDistance(value);
+		static_cast<DistanceJoint*>(self->GetNativeObject())->SetMinDistance(value);
 	}
 
 	float ScriptDistanceJoint::InternalGetMaxDistance(ScriptDistanceJoint* self)
@@ -88,7 +88,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetMaxDistance();
+		tmp__output = static_cast<DistanceJoint*>(self->GetNativeObject())->GetMaxDistance();
 
 		float __output;
 		__output = tmp__output;
@@ -101,7 +101,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetMaxDistance(value);
+		static_cast<DistanceJoint*>(self->GetNativeObject())->SetMaxDistance(value);
 	}
 
 	float ScriptDistanceJoint::InternalGetTolerance(ScriptDistanceJoint* self)
@@ -110,7 +110,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetTolerance();
+		tmp__output = static_cast<DistanceJoint*>(self->GetNativeObject())->GetTolerance();
 
 		float __output;
 		__output = tmp__output;
@@ -123,7 +123,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetTolerance(value);
+		static_cast<DistanceJoint*>(self->GetNativeObject())->SetTolerance(value);
 	}
 
 	void ScriptDistanceJoint::InternalGetSpring(ScriptDistanceJoint* self, Spring* __output)
@@ -135,7 +135,7 @@ namespace b3d
 		}
 
 		Spring tmp__output;
-		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->GetSpring();
+		tmp__output = static_cast<DistanceJoint*>(self->GetNativeObject())->GetSpring();
 
 		*__output = tmp__output;
 	}
@@ -145,7 +145,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetSpring(*value);
+		static_cast<DistanceJoint*>(self->GetNativeObject())->SetSpring(*value);
 	}
 
 	void ScriptDistanceJoint::InternalSetFlag(ScriptDistanceJoint* self, DistanceJointFlag flag, bool enabled)
@@ -153,7 +153,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CDistanceJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
+		static_cast<DistanceJoint*>(self->GetNativeObject())->SetFlag(flag, enabled);
 	}
 
 	bool ScriptDistanceJoint::InternalHasFlag(ScriptDistanceJoint* self, DistanceJointFlag flag)
@@ -162,7 +162,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CDistanceJoint*>(self->GetNativeObject())->HasFlag(flag);
+		tmp__output = static_cast<DistanceJoint*>(self->GetNativeObject())->HasFlag(flag);
 
 		bool __output;
 		__output = tmp__output;

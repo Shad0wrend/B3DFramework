@@ -17,18 +17,18 @@
 #include "../../../Foundation/bsfUtility/Math/BsQuaternion.h"
 
 namespace b3d { struct __D6JointDriveInterop; }
-namespace b3d { class CD6Joint; }
+namespace b3d { class D6Joint; }
 namespace b3d { struct __LimitLinearInterop; }
 namespace b3d { struct __LimitAngularRangeInterop; }
 namespace b3d { struct __LimitConeRangeInterop; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptD6Joint : public TScriptGameObjectWrapper<CD6Joint, ScriptD6Joint, ScriptJointWrapperBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptD6Joint : public TScriptGameObjectWrapper<D6Joint, ScriptD6Joint, ScriptJointWrapperBase>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "D6Joint")
 
-		ScriptD6Joint(const GameObjectHandle<CD6Joint>& nativeObject);
+		ScriptD6Joint(const GameObjectHandle<D6Joint>& nativeObject);
 		~ScriptD6Joint();
 
 		static void SetupScriptBindings();

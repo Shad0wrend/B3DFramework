@@ -8,7 +8,7 @@
 using namespace physx;
 using namespace b3d;
 
-PhysXHingeJoint::PhysXHingeJoint(PxPhysics* physx, CJoint& owner, const HingeJointCreateInformation& createInformation)
+PhysXHingeJoint::PhysXHingeJoint(PxPhysics* physx, Joint& owner, const HingeJointCreateInformation& createInformation)
 {
 	PxRigidActor* actor0 = nullptr;
 	if(createInformation.Bodies[0].Body.IsValid())

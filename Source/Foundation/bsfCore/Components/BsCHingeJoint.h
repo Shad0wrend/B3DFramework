@@ -54,10 +54,10 @@ namespace b3d
 	};
 
 	/** Hinge joint removes all but a single rotation degree of freedom from its two attached bodies (for example a door hinge). */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(HingeJoint)) CHingeJoint : public CJoint
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) HingeJoint : public Joint
 	{
 	public:
-		CHingeJoint(const HSceneObject& parent);
+		HingeJoint(const HSceneObject& parent);
 
 		/** Returns the current angle between the two attached bodes. */
 		B3D_SCRIPT_EXPORT(ExportName(Angle), Property(Getter))
@@ -124,12 +124,12 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CHingeJointRTTI;
+		friend class HingeJointRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
 	protected:
-		CHingeJoint(); // Serialization only
+		HingeJoint(); // Serialization only
 	};
 
 	/** Low-level interface for a joint used by the HingeJoint component. Should be implemented by the physics plugin to provide joint functionality. */

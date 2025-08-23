@@ -8,15 +8,15 @@
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "../../../Foundation/bsfCore/Physics/BsDistanceJoint.h"
 
-namespace b3d { class CDistanceJoint; }
+namespace b3d { class DistanceJoint; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptDistanceJoint : public TScriptGameObjectWrapper<CDistanceJoint, ScriptDistanceJoint, ScriptJointWrapperBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptDistanceJoint : public TScriptGameObjectWrapper<DistanceJoint, ScriptDistanceJoint, ScriptJointWrapperBase>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "DistanceJoint")
 
-		ScriptDistanceJoint(const GameObjectHandle<CDistanceJoint>& nativeObject);
+		ScriptDistanceJoint(const GameObjectHandle<DistanceJoint>& nativeObject);
 		~ScriptDistanceJoint();
 
 		static void SetupScriptBindings();

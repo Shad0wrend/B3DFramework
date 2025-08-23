@@ -31,7 +31,7 @@ namespace b3d
 		~PhysXJoint();
 
 		/** Initializes the object. Must be called before performing any other operations on the object. */
-		void Initialize(CJoint& owner, physx::PxJoint& pxJoint, const JointCreateInformation& createInformation);
+		void Initialize(Joint& owner, physx::PxJoint& pxJoint, const JointCreateInformation& createInformation);
 
 		/** @copydoc IJointImplementation::SetBody */
 		void SetBody(JointBody body, Rigidbody* value);
@@ -73,7 +73,7 @@ namespace b3d
 		physx::PxJoint* mPxJoint = nullptr;
 	};
 
-	inline void PhysXJoint::Initialize(CJoint& owner, physx::PxJoint& pxJoint, const JointCreateInformation& createInformation)
+	inline void PhysXJoint::Initialize(Joint& owner, physx::PxJoint& pxJoint, const JointCreateInformation& createInformation)
 	{
 		mPxJoint = &pxJoint;
 		mPxJoint->userData = &owner;

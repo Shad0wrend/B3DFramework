@@ -286,10 +286,10 @@ namespace b3d
 	 * Base class for all Joint types. Joints constrain how two rigidbodies move relative to one another (for example a door
 	 * hinge). One of the bodies in the joint must always be movable (non-kinematic).
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Joint)) CJoint : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) Joint : public Component
 	{
 	public:
-		CJoint(const HSceneObject& parent, JointCreateInformation& createInformation);
+		Joint(const HSceneObject& parent, JointCreateInformation& createInformation);
 
 		/** Determines a body managed by the joint. One of the bodies must be movable (non-kinematic). */
 		B3D_SCRIPT_EXPORT(ExportName(SetBody))
@@ -377,11 +377,11 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CJointRTTI;
+		friend class JointRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
-		CJoint(JointCreateInformation& createInformation); // Serialization only
+		Joint(JointCreateInformation& createInformation); // Serialization only
 	};
 
 	/** Low-level interface for a joint used by the Joint component. Should be implemented by the physics plugin to provide joint functionality. */

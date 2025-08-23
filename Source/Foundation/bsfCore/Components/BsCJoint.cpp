@@ -10,7 +10,7 @@
 using namespace std::placeholders;
 using namespace b3d;
 
-CJoint::CJoint(const HSceneObject& parent, JointCreateInformation& createInformation)
+Joint::Joint(const HSceneObject& parent, JointCreateInformation& createInformation)
 	: Component(parent), mInformation(createInformation)
 {
 	SetName("Joint");
@@ -18,11 +18,11 @@ CJoint::CJoint(const HSceneObject& parent, JointCreateInformation& createInforma
 	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
 }
 
-CJoint::CJoint(JointCreateInformation& createInformation)
-	: CJoint(nullptr, createInformation)
+Joint::Joint(JointCreateInformation& createInformation)
+	: Joint(nullptr, createInformation)
 { }
 
-void CJoint::SetBody(JointBody body, const HRigidbody& value)
+void Joint::SetBody(JointBody body, const HRigidbody& value)
 {
 	if(mInformation.Bodies[(int)body].Body == value)
 		return;
@@ -33,7 +33,7 @@ void CJoint::SetBody(JointBody body, const HRigidbody& value)
 	mInformation.Bodies[(int)body].Body = value;
 
 	if(value != nullptr)
-		mInformation.Bodies[(int)body].Body->SetParentJoint(B3DStaticGameObjectCast<CJoint>(mThisHandle));
+		mInformation.Bodies[(int)body].Body->SetParentJoint(B3DStaticGameObjectCast<Joint>(mThisHandle));
 
 	// If joint already exists, destroy it if we removed all bodies, otherwise update its transform
 	if(mImplementation != nullptr)
@@ -54,7 +54,7 @@ void CJoint::SetBody(JointBody body, const HRigidbody& value)
 	}
 }
 
-void CJoint::SetRelativeBodyTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
+void Joint::SetRelativeBodyTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
 {
 	if(mInformation.Bodies[(int)body].Position == position && mInformation.Bodies[(int)body].Rotation == rotation)
 		return;
@@ -66,7 +66,7 @@ void CJoint::SetRelativeBodyTransform(JointBody body, const Vector3& position, c
 		UpdateRelativeBodyTransforms(body);
 }
 
-void CJoint::SetBreakForce(float force)
+void Joint::SetBreakForce(float force)
 {
 	if(mInformation.BreakForce == force)
 		return;
@@ -77,7 +77,7 @@ void CJoint::SetBreakForce(float force)
 		mImplementation->SetBreakForce(force);
 }
 
-void CJoint::SetBreakTorque(float torque)
+void Joint::SetBreakTorque(float torque)
 {
 	if(mInformation.BreakTorque == torque)
 		return;
@@ -88,7 +88,7 @@ void CJoint::SetBreakTorque(float torque)
 		mImplementation->SetBreakTorque(torque);
 }
 
-void CJoint::SetEnableCollision(bool value)
+void Joint::SetEnableCollision(bool value)
 {
 	if(mInformation.EnableCollision == value)
 		return;
@@ -99,7 +99,7 @@ void CJoint::SetEnableCollision(bool value)
 		mImplementation->SetEnableCollision(value);
 }
 
-void CJoint::OnDestroyed()
+void Joint::OnDestroyed()
 {
 	if(mInformation.Bodies[0].Body.IsValid())
 		mInformation.Bodies[0].Body->SetParentJoint(HJoint());
@@ -110,18 +110,18 @@ void CJoint::OnDestroyed()
 	DestroyImplementation();
 }
 
-void CJoint::OnDisabled()
+void Joint::OnDisabled()
 {
 	DestroyImplementation();
 }
 
-void CJoint::OnEnabled()
+void Joint::OnEnabled()
 {
 	if(mInformation.Bodies[0].Body.IsValid() || mInformation.Bodies[1].Body.IsValid())
 		mImplementation = CreateImplementation();
 }
 
-void CJoint::OnTransformChanged(TransformChangedFlags flags)
+void Joint::OnTransformChanged(TransformChangedFlags flags)
 {
 	if(mImplementation == nullptr)
 		return;
@@ -142,12 +142,12 @@ void CJoint::OnTransformChanged(TransformChangedFlags flags)
 	UpdateRelativeBodyTransforms(JointBody::Anchor);
 }
 
-void CJoint::DestroyImplementation()
+void Joint::DestroyImplementation()
 {
 	mImplementation = nullptr;
 }
 
-void CJoint::NotifyRigidbodyMoved(const HRigidbody& body)
+void Joint::NotifyRigidbodyMoved(const HRigidbody& body)
 {
 	if(mImplementation == nullptr)
 		return;
@@ -167,7 +167,7 @@ void CJoint::NotifyRigidbodyMoved(const HRigidbody& body)
 		B3D_ASSERT(false); // Not allowed to happen
 }
 
-void CJoint::UpdateRelativeBodyTransforms(JointBody body)
+void Joint::UpdateRelativeBodyTransforms(JointBody body)
 {
 	Vector3 localPos;
 	Quaternion localRot;
@@ -176,7 +176,7 @@ void CJoint::UpdateRelativeBodyTransforms(JointBody body)
 	mImplementation->SetTransform(body, localPos, localRot);
 }
 
-void CJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation)
+void Joint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation)
 {
 	position = mInformation.Bodies[(u32)body].Position;
 	rotation = mInformation.Bodies[(u32)body].Rotation;
@@ -194,12 +194,12 @@ void CJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position, Quat
 		position = rotation.Rotate(position);
 }
 
-RTTIType* CJoint::GetRttiStatic()
+RTTIType* Joint::GetRttiStatic()
 {
-	return CJointRTTI::Instance();
+	return JointRTTI::Instance();
 }
 
-RTTIType* CJoint::GetRtti() const
+RTTIType* Joint::GetRtti() const
 {
-	return CJoint::GetRttiStatic();
+	return Joint::GetRttiStatic();
 }
