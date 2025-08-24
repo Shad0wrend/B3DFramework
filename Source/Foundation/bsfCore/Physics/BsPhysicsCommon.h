@@ -24,7 +24,7 @@ namespace b3d
 	};
 
 	/** Information about a collision between two physics objects. */
-	struct CollisionDataRaw // TODO - Remove
+	struct CollisionDataRaw
 	{
 		ColliderShape* ColliderShapes[2]; /**< Collider shapes involved in the collision. */
 
@@ -43,21 +43,6 @@ namespace b3d
 
 		// Note: Not too happy this is heap allocated, use static allocator?
 		Vector<ContactPoint> ContactPoints; /**< Information about all the contact points for the hit. */
-	};
-
-	/** Determines what parent, if any, owns a physics object. */
-	enum class PhysicsOwnerType // TODO - Remove
-	{
-		None, /** No parent, object is used directly. */
-		Component, /** Object is used by a C++ Component. */
-		Script /** Object is used by the scripting system. */
-	};
-
-	/** Contains information about a parent for a physics object. */
-	struct PhysicsObjectOwner // TODO - Remove
-	{
-		PhysicsOwnerType Type = PhysicsOwnerType::None; /**< Type of owner. */
-		void* OwnerData = nullptr; /**< Data managed by the owner. */
 	};
 
 	/** Determines which collision events will be reported by physics objects. */

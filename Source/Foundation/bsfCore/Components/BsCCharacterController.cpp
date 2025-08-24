@@ -5,17 +5,11 @@
 #include "Scene/BsSceneInstance.h"
 #include "Private/RTTI/BsCCharacterControllerRTTI.h"
 #include "BsCollider.h"
+#include "Physics/BsPhysics.h"
 
 using namespace std::placeholders;
 
 using namespace b3d;
-
-CCharacterController::CCharacterController()
-{
-	SetName("CharacterController");
-
-	mNotifyFlags = TCF_Transform;
-}
 
 CCharacterController::CCharacterController(const HSceneObject& parent)
 	: Component(parent)
@@ -25,178 +19,155 @@ CCharacterController::CCharacterController(const HSceneObject& parent)
 	mNotifyFlags = TCF_Transform;
 }
 
+CCharacterController::CCharacterController()
+	: CCharacterController(nullptr)
+{ }
+
 CharacterCollisionFlags CCharacterController::Move(const Vector3& displacement)
 {
 	CharacterCollisionFlags output;
 
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return output;
 
-	output = mInternal->Move(displacement);
-	UpdatePositionFromController();
+	output = mImplementation->Move(displacement);
+	UpdateSceneObjectPositionFromController();
 
 	return output;
 }
 
 Vector3 CCharacterController::GetFootPosition() const
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return Vector3::kZero;
 
-	return mInternal->GetFootPosition();
+	return mImplementation->GetFootPosition();
 }
 
 void CCharacterController::SetFootPosition(const Vector3& position)
 {
-	if(mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return;
 
-	mInternal->SetFootPosition(position);
-	UpdatePositionFromController();
+	mImplementation->SetFootPosition(position);
+	UpdateSceneObjectPositionFromController();
 }
 
 void CCharacterController::SetRadius(float radius)
 {
-	mDesc.Radius = radius;
+	mInformation.Radius = radius;
 
-	if(mInternal != nullptr)
+	if(mImplementation != nullptr)
 		UpdateDimensions();
 }
 
 void CCharacterController::SetHeight(float height)
 {
-	mDesc.Height = height;
+	mInformation.Height = height;
 
-	if(mInternal != nullptr)
+	if(mImplementation != nullptr)
 		UpdateDimensions();
 }
 
 void CCharacterController::SetUp(const Vector3& up)
 {
-	mDesc.Up = up;
+	mInformation.Up = up;
 
-	if(mInternal != nullptr)
-		mInternal->SetUp(up);
+	if(mImplementation != nullptr)
+		mImplementation->SetUp(up);
 }
 
 void CCharacterController::SetClimbingMode(CharacterClimbingMode mode)
 {
-	mDesc.ClimbingMode = mode;
+	mInformation.ClimbingMode = mode;
 
-	if(mInternal != nullptr)
-		mInternal->SetClimbingMode(mode);
+	if(mImplementation != nullptr)
+		mImplementation->SetClimbingMode(mode);
 }
 
 void CCharacterController::SetNonWalkableMode(CharacterNonWalkableMode mode)
 {
-	mDesc.NonWalkableMode = mode;
+	mInformation.NonWalkableMode = mode;
 
-	if(mInternal != nullptr)
-		mInternal->SetNonWalkableMode(mode);
+	if(mImplementation != nullptr)
+		mImplementation->SetNonWalkableMode(mode);
 }
 
 void CCharacterController::SetMinMoveDistance(float value)
 {
-	mDesc.MinMoveDistance = value;
+	mInformation.MinMoveDistance = value;
 
-	if(mInternal != nullptr)
-		mInternal->SetMinMoveDistance(value);
+	if(mImplementation != nullptr)
+		mImplementation->SetMinMoveDistance(value);
 }
 
 void CCharacterController::SetContactOffset(float value)
 {
-	mDesc.ContactOffset = value;
+	mInformation.ContactOffset = value;
 
-	if(mInternal != nullptr)
-		mInternal->SetContactOffset(value);
+	if(mImplementation != nullptr)
+		mImplementation->SetContactOffset(value);
 }
 
 void CCharacterController::SetStepOffset(float value)
 {
-	mDesc.StepOffset = value;
+	mInformation.StepOffset = value;
 
-	if(mInternal != nullptr)
-		mInternal->SetStepOffset(value);
+	if(mImplementation != nullptr)
+		mImplementation->SetStepOffset(value);
 }
 
 void CCharacterController::SetSlopeLimit(Radian value)
 {
-	mDesc.SlopeLimit = value;
+	mInformation.SlopeLimit = value;
 
-	if(mInternal != nullptr)
-		mInternal->SetSlopeLimit(value);
-}
-
-void CCharacterController::SetLayer(u64 layer)
-{
-	mLayer = layer;
-
-	if(mInternal != nullptr)
-		mInternal->SetLayer(layer);
-}
-
-void CCharacterController::OnBeginPlay()
-{
+	if(mImplementation != nullptr)
+		mImplementation->SetSlopeLimit(value);
 }
 
 void CCharacterController::OnDestroyed()
 {
-	DestroyInternal();
+	mImplementation = nullptr;
 }
 
 void CCharacterController::OnDisabled()
 {
-	DestroyInternal();
+	mImplementation = nullptr;
 }
 
 void CCharacterController::OnEnabled()
 {
 	const SPtr<SceneInstance>& scene = SO()->GetScene();
 
-	mDesc.Position = SO()->GetTransform().GetPosition();
-	mInternal = CharacterController::Create(*scene->GetPhysicsScene(), mDesc);
-	mInternal->SetOwnerInternal(PhysicsOwnerType::Component, this);
+	mInformation.Position = SO()->GetTransform().GetPosition();
+	mImplementation = scene->GetPhysicsScene()->CreateCharacterController(*this, mInformation);
 
-	mInternal->OnColliderHit.Connect(std::bind(&CCharacterController::TriggerOnColliderHit, this, _1));
-	mInternal->OnControllerHit.Connect(std::bind(&CCharacterController::TriggerOnControllerHit, this, _1));
-
-	mInternal->SetLayer(mLayer);
 	UpdateDimensions();
 }
 
 void CCharacterController::OnTransformChanged(TransformChangedFlags flags)
 {
-	if(!GetEnabled() || mInternal == nullptr)
+	if(mImplementation == nullptr)
 		return;
 
-	mInternal->SetPosition(SO()->GetTransform().GetPosition());
+	mImplementation->SetPosition(SO()->GetTransform().GetPosition());
 }
 
-void CCharacterController::UpdatePositionFromController()
+void CCharacterController::UpdateSceneObjectPositionFromController()
 {
 	mNotifyFlags = (TransformChangedFlags)0;
-	SO()->SetWorldPosition(mInternal->GetPosition());
+	SO()->SetWorldPosition(mImplementation->GetPosition());
 	mNotifyFlags = TCF_Transform;
 }
 
 void CCharacterController::UpdateDimensions()
 {
-	Vector3 scale = SO()->GetTransform().GetScale();
-	float height = mDesc.Height * Math::Abs(scale.Y);
-	float radius = mDesc.Radius * Math::Abs(std::max(scale.X, scale.Z));
+	const Vector3 scale = SO()->GetTransform().GetScale();
+	const float height = mInformation.Height * Math::Abs(scale.Y);
+	const float radius = mInformation.Radius * Math::Abs(std::max(scale.X, scale.Z));
 
-	mInternal->SetHeight(height);
-	mInternal->SetRadius(radius);
-}
-
-void CCharacterController::DestroyInternal()
-{
-	// This should release the last reference and destroy the internal controller
-	if(mInternal)
-	{
-		mInternal->SetOwnerInternal(PhysicsOwnerType::None, nullptr);
-		mInternal = nullptr;
-	}
+	mImplementation->SetHeight(height);
+	mImplementation->SetRadius(radius);
 }
 
 void CCharacterController::TriggerOnColliderHit(const ControllerColliderCollision& value)
@@ -220,7 +191,7 @@ void CCharacterController::TriggerOnControllerHit(const ControllerControllerColl
 
 	if(hit.ControllerRaw)
 	{
-		const auto controller = (CCharacterController*)hit.ControllerRaw->GetOwnerInternal(PhysicsOwnerType::Component);
+		const CCharacterController* const controller = hit.ControllerRaw;
 		hit.Controller = B3DStaticGameObjectCast<CCharacterController>(controller->GetHandle());
 	}
 

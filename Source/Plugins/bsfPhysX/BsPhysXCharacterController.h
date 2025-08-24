@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPhysXPrerequisites.h"
-#include "Physics/BsCharacterController.h"
+#include "Components/BsCCharacterController.h"
 #include "PxPhysics.h"
 #include "characterkinematic/PxCapsuleController.h"
 
@@ -13,36 +13,80 @@ namespace b3d
 	 *  @{
 	 */
 
+	/** Converts from engine vector to PhysX extension vector. */
+	inline physx::PxExtendedVec3 ToPxExtVector(const Vector3& input)
+	{
+		return physx::PxExtendedVec3(input.X, input.Y, input.Z);
+	}
+
+	/** Converts from PhysX extension vector to engine vector. */
+	inline Vector3 FromPxExtVector(const physx::PxExtendedVec3& input)
+	{
+		return Vector3((float)input.x, (float)input.y, (float)input.z);
+	}
+
+	/** Converts an engine enum to a PhysX one. */
+	inline physx::PxCapsuleClimbingMode::Enum ToPxEnum(CharacterClimbingMode value)
+	{
+		return value == CharacterClimbingMode::Normal
+			? physx::PxCapsuleClimbingMode::eEASY
+			: physx::PxCapsuleClimbingMode::eCONSTRAINED;
+	}
+
+	/** Converts a PhysX enum to an engine one. */
+	inline CharacterClimbingMode FromPxEnum(physx::PxCapsuleClimbingMode::Enum value)
+	{
+		return value == physx::PxCapsuleClimbingMode::eEASY
+			? CharacterClimbingMode::Normal
+			: CharacterClimbingMode::Constrained;
+	}
+
+	/** Converts an engine enum to a PhysX one. */
+	inline physx::PxControllerNonWalkableMode::Enum ToPxEnum(CharacterNonWalkableMode value)
+	{
+		return value == CharacterNonWalkableMode::Prevent
+			? physx::PxControllerNonWalkableMode::ePREVENT_CLIMBING
+			: physx::PxControllerNonWalkableMode::ePREVENT_CLIMBING_AND_FORCE_SLIDING;
+	}
+
+	/** Converts a PhysX enum to an engine one. */
+	inline CharacterNonWalkableMode FromPxEnum(physx::PxControllerNonWalkableMode::Enum value)
+	{
+		return value == physx::PxControllerNonWalkableMode::ePREVENT_CLIMBING
+			? CharacterNonWalkableMode::Prevent
+			: CharacterNonWalkableMode::PreventAndSlide;
+	}
+
 	/** PhysX specific implementation if a CharacterController. */
-	class PhysXCharacterController : public CharacterController, physx::PxUserControllerHitReport, physx::PxQueryFilterCallback, physx::PxControllerFilterCallback
+	class PhysXCharacterController : public ICharacterControllerImplementation, physx::PxUserControllerHitReport, physx::PxQueryFilterCallback, physx::PxControllerFilterCallback
 	{
 	public:
-		PhysXCharacterController(physx::PxControllerManager* manager, const CharacterControllerCreateInformation& desc);
-		~PhysXCharacterController();
+		PhysXCharacterController(physx::PxControllerManager* manager, CCharacterController& owner, const CharacterControllerCreateInformation& createInformation);
+		~PhysXCharacterController() override;
 
 		CharacterCollisionFlags Move(const Vector3& displacement) override;
-		Vector3 GetPosition() const override;
-		void SetPosition(const Vector3& position) override;
-		Vector3 GetFootPosition() const override;
-		void SetFootPosition(const Vector3& position) override;
-		float GetRadius() const override;
-		void SetRadius(float radius) override;
-		float GetHeight() const override;
-		void SetHeight(float height) override;
-		Vector3 GetUp() const override;
-		void SetUp(const Vector3& up) override;
-		CharacterClimbingMode GetClimbingMode() const override;
-		void SetClimbingMode(CharacterClimbingMode mode) override;
-		CharacterNonWalkableMode GetNonWalkableMode() const override;
-		void SetNonWalkableMode(CharacterNonWalkableMode mode) override;
-		float GetMinMoveDistance() const override;
-		void SetMinMoveDistance(float value) override;
-		float GetContactOffset() const override;
-		void SetContactOffset(float value) override;
-		float GetStepOffset() const override;
-		void SetStepOffset(float value) override;
-		Radian GetSlopeLimit() const override;
-		void SetSlopeLimit(Radian value) override;
+		Vector3 GetPosition() const override { return FromPxExtVector(mController->getPosition()); } 
+		void SetPosition(const Vector3& position) override { mController->setPosition(ToPxExtVector(position)); }
+		Vector3 GetFootPosition() const override { return FromPxExtVector(mController->getFootPosition()); }
+		void SetFootPosition(const Vector3& position) override { mController->setFootPosition(ToPxExtVector(position)); }
+		float GetRadius() const override { return mController->getRadius(); }
+		void SetRadius(float radius) override { mController->setRadius(radius); }
+		float GetHeight() const override { return mController->getHeight(); }
+		void SetHeight(float height) override { mController->setHeight(height); }
+		Vector3 GetUp() const override { return FromPxVector(mController->getUpDirection()); }
+		void SetUp(const Vector3& up) override { mController->setUpDirection(ToPxVector(up)); }
+		CharacterClimbingMode GetClimbingMode() const override { return FromPxEnum(mController->getClimbingMode()); }
+		void SetClimbingMode(CharacterClimbingMode mode) override { mController->setClimbingMode(ToPxEnum(mode)); }
+		CharacterNonWalkableMode GetNonWalkableMode() const override { return FromPxEnum(mController->getNonWalkableMode()); }
+		void SetNonWalkableMode(CharacterNonWalkableMode mode) override { mController->setNonWalkableMode(ToPxEnum(mode)); }
+		float GetMinMoveDistance() const override { return mMinMoveDistance; }
+		void SetMinMoveDistance(float value) override { mMinMoveDistance = value; }
+		float GetContactOffset() const override { return mController->getContactOffset(); }
+		void SetContactOffset(float value) override { mController->setContactOffset(value); }
+		float GetStepOffset() const override { return mController->getStepOffset(); }
+		void SetStepOffset(float value) override { mController->setStepOffset(value); }
+		Radian GetSlopeLimit() const override { return Radian(mController->getSlopeLimit()); }
+		void SetSlopeLimit(Radian value) override { mController->setSlopeLimit(value.GetValueInRadians()); }
 
 	private:
 		void onShapeHit(const physx::PxControllerShapeHit& hit) override;
@@ -53,6 +97,7 @@ namespace b3d
 		physx::PxQueryHitType::Enum postFilter(const physx::PxFilterData& filterData, const physx::PxQueryHit& hit) override;
 		bool filter(const physx::PxController& a, const physx::PxController& b) override;
 
+		CCharacterController& mOwner;
 		physx::PxCapsuleController* mController = nullptr;
 		float mMinMoveDistance = 0.0f;
 		float mLastMoveCall = 0.0f;

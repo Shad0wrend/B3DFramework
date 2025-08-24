@@ -760,9 +760,9 @@ UPtr<ID6JointImplementation> PhysXScene::CreateD6Joint(Joint& owner, const D6Joi
 	return B3DMakeUnique<PhysXD6Joint>(mPhysics, owner, createInformation);
 }
 
-SPtr<CharacterController> PhysXScene::CreateCharacterController(const CharacterControllerCreateInformation& createInformation)
+UPtr<ICharacterControllerImplementation> PhysXScene::CreateCharacterController(CCharacterController& owner, const CharacterControllerCreateInformation& createInformation)
 {
-	return B3DMakeShared<PhysXCharacterController>(mCharManager, createInformation);
+	return B3DMakeUnique<PhysXCharacterController>(mCharManager, owner, createInformation);
 }
 
 Vector<PhysicsQueryHit> PhysXScene::SweepAll(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir, u64 layer, float maxDist) const

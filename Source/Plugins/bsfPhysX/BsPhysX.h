@@ -138,7 +138,7 @@ namespace b3d
 		UPtr<ISphericalJointImplementation> CreateSphericalJoint(Joint& owner, const SphericalJointCreateInformation& createInformation) override;
 		UPtr<ISliderJointImplementation> CreateSliderJoint(Joint& owner, const SliderJointCreateInformation& createInformation) override;
 		UPtr<ID6JointImplementation> CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation) override;
-		SPtr<CharacterController> CreateCharacterController(const CharacterControllerCreateInformation& createInformation) override;
+		UPtr<ICharacterControllerImplementation> CreateCharacterController(CCharacterController& owner, const CharacterControllerCreateInformation& createInformation) override;
 
 		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override;
 		bool BoxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override;

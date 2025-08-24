@@ -897,7 +897,7 @@ void CoreTestSuite::TestPrefabScenario3()
 	TestAssertPrefabScenario();
 }
 
-// Add new object as part of Prefab #2 Instance Root #1, when update Prefab1 with Prefab #1 Instance Root
+// Add new object as part of Prefab #2 Instance Root #1, then update Prefab1 with Prefab #1 Instance Root
 void CoreTestSuite::TestPrefabScenario4()
 {
 	// Initial state:
@@ -1331,6 +1331,8 @@ void CoreTestSuite::TestPrefabScenario10()
 // TODO - Perhaps even disallow direct changes to nested prefabs altogether, it makes tracing deltas tricky. If a nested prefab needs to be changed the user needs to
 //   enter editing mode for that nested prefab only, and editor limits the operations to that prefab only. When done, user applies the changes to that prefab.
 //  - But this doesn't really work. How to even perform instance changes at all then?
+// TODO - Allow instance modifications only for prefab instances in Scene, i.e. a Prefab with nested prefabs is not allowed instance modifications?
+//  - That might be limiting though. I might want to have a chunk of a scene as a Prefab
 
 using namespace b3d;
 

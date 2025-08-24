@@ -20,16 +20,16 @@ namespace b3d
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_NAMED(mPosition, mDesc.Position, 0)
-			B3D_RTTI_MEMBER_NAMED(mContactOffset, mDesc.ContactOffset, 1)
-			B3D_RTTI_MEMBER_NAMED(mStepOffset, mDesc.StepOffset, 2)
-			B3D_RTTI_MEMBER_NAMED(mSlopeLimit, mDesc.SlopeLimit, 3)
-			B3D_RTTI_MEMBER_NAMED(mMinMoveDistance, mDesc.MinMoveDistance, 4)
-			B3D_RTTI_MEMBER_NAMED(mHeight, mDesc.Height, 5)
-			B3D_RTTI_MEMBER_NAMED(mRadius, mDesc.Radius, 6)
-			B3D_RTTI_MEMBER_NAMED(mUp, mDesc.Up, 7)
-			B3D_RTTI_MEMBER_NAMED(mClimbingMode, mDesc.ClimbingMode, 8)
-			B3D_RTTI_MEMBER_NAMED(mNonWalkableMode, mDesc.NonWalkableMode, 9)
+			B3D_RTTI_MEMBER_NAMED(mPosition, mInformation.Position, 0)
+			B3D_RTTI_MEMBER_NAMED(mContactOffset, mInformation.ContactOffset, 1)
+			B3D_RTTI_MEMBER_NAMED(mStepOffset, mInformation.StepOffset, 2)
+			B3D_RTTI_MEMBER_NAMED(mSlopeLimit, mInformation.SlopeLimit, 3)
+			B3D_RTTI_MEMBER_NAMED(mMinMoveDistance, mInformation.MinMoveDistance, 4)
+			B3D_RTTI_MEMBER_NAMED(mHeight, mInformation.Height, 5)
+			B3D_RTTI_MEMBER_NAMED(mRadius, mInformation.Radius, 6)
+			B3D_RTTI_MEMBER_NAMED(mUp, mInformation.Up, 7)
+			B3D_RTTI_MEMBER_NAMED(mClimbingMode, mInformation.ClimbingMode, 8)
+			B3D_RTTI_MEMBER_NAMED(mNonWalkableMode, mInformation.NonWalkableMode, 9)
 			B3D_RTTI_MEMBER(mLayer, 10)
 		B3D_RTTI_END_MEMBERS
 

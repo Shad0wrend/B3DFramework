@@ -15,6 +15,7 @@
 
 namespace b3d
 {
+	class ICharacterControllerImplementation;
 	class IColliderImplementation;
 	class ID6JointImplementation;
 	class ISliderJointImplementation;
@@ -616,7 +617,7 @@ namespace b3d
 		virtual UPtr<ID6JointImplementation> CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation) = 0;
 
 		/** Creates a new character controller. */
-		virtual SPtr<CharacterController> CreateCharacterController(const CharacterControllerCreateInformation& createInformation) = 0;
+		virtual UPtr<ICharacterControllerImplementation> CreateCharacterController(CCharacterController& owner, const CharacterControllerCreateInformation& createInformation) = 0;
 
 		/** @copydoc PhysicsScene::BoxOverlap() */
 		virtual Vector<ColliderShape*> BoxOverlapInternal(const AABox& box, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;
