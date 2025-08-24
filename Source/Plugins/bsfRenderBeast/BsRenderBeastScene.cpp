@@ -4,7 +4,7 @@
 #include "Renderer/BsCamera.h"
 #include "Renderer/BsLight.h"
 #include "Renderer/BsSkybox.h"
-#include "Renderer/BsReflectionProbe.h"
+#include "Components/BsCReflectionProbe.h"
 #include "Renderer/BsRenderer.h"
 #include "Particles/BsParticleScene.h"
 #include "Mesh/BsMesh.h"

@@ -1,75 +1,348 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCReflectionProbe.h"
+
+#include "BsCoreApplication.h"
+#include "CoreObject/BsCoreObjectSync.h"
+#include "Image/BsTexture.h"
 #include "Private/RTTI/BsCReflectionProbeRTTI.h"
+#include "Profiling/BsProfilerGPU.h"
+#include "RenderAPI/BsGpuDevice.h"
+#include "Renderer/BsIBLUtility.h"
+#include "Renderer/BsRenderer.h"
+#include "Renderer/BsRendererScene.h"
 #include "Scene/BsSceneInstance.h"
 
 using namespace b3d;
 
-CReflectionProbe::CReflectionProbe()
+template<bool IsRenderProxy>
+TReflectionProbe<IsRenderProxy>::TReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents)
+	: mType(type), mRadius(radius), mExtents(extents)
+{}
+
+template<bool IsRenderProxy>
+void TReflectionProbe<IsRenderProxy>::UpdateBounds()
 {
-	SetFlag(ComponentFlag::AlwaysRun, true);
-	SetName("ReflectionProbe");
+	Vector3 position;
+	Vector3 scale;
+
+	if constexpr(IsRenderProxy)
+	{
+		const Transform& transform = static_cast<render::ReflectionProbe*>(this)->GetWorldTransform();
+		position = transform.GetPosition();
+		scale = transform.GetScale();
+	}
+	else
+	{
+		const Transform& transform = static_cast<ReflectionProbe*>(this)->SceneObject()->GetTransform();
+		position = transform.GetPosition();
+		scale = transform.GetScale();
+	}
+
+	switch(mType)
+	{
+	case ReflectionProbeType::Sphere:
+		mBounds = Sphere(position, mRadius * std::max(std::max(scale.X, scale.Y), scale.Z));
+		break;
+	case ReflectionProbeType::Box:
+		mBounds = Sphere(position, (mExtents * scale).Length());
+		break;
+	}
 }
 
-CReflectionProbe::CReflectionProbe(const HSceneObject& parent)
+template <bool IsRenderProxy>
+void TReflectionProbe<IsRenderProxy>::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
+{
+	if constexpr(!IsRenderProxy)
+		CoreObject::MarkRenderProxyDataDirty((u32)flag);
+}
+
+template class TReflectionProbe<true>;
+template class TReflectionProbe<false>;
+
+namespace b3d
+{
+	B3D_SYNC_BLOCK_BEGIN(ReflectionProbe, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mType)
+		B3D_SYNC_BLOCK_ENTRY(mRadius)
+		B3D_SYNC_BLOCK_ENTRY(mExtents)
+		B3D_SYNC_BLOCK_ENTRY(mTransitionDistance)
+		B3D_SYNC_BLOCK_ENTRY(mBounds)
+		B3D_SYNC_BLOCK_ENTRY(mFilteredTexture)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(bool, mActive)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(SPtr<SceneInstance>, mSceneInstance)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(Transform, mTransform)
+	B3D_SYNC_BLOCK_END
+}
+
+
+ReflectionProbe::ReflectionProbe(const HSceneObject& parent)
 	: Component(parent)
 {
 	SetFlag(ComponentFlag::AlwaysRun, true);
 	SetName("ReflectionProbe");
 }
 
-CReflectionProbe::~CReflectionProbe()
+ReflectionProbe::ReflectionProbe()
+	: ReflectionProbe(nullptr)
+{ }
+
+void ReflectionProbe::SetCustomTexture(const HTexture& texture)
 {
-	mInternal->Destroy();
+	mCustomTexture = texture;
+	Filter();
 }
 
-Sphere CReflectionProbe::GetBounds() const
+float ReflectionProbe::GetRadius() const
 {
-	mInternal->UpdateStateFromSceneObject(*SO());
-
-	return mInternal->GetBounds();
+	Vector3 scale = SceneObject()->GetTransform().GetScale();
+	return mRadius * std::max(std::max(scale.X, scale.Y), scale.Z);
 }
 
-void CReflectionProbe::OnBeginPlay()
+void ReflectionProbe::Capture()
 {
-	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	if(mCustomTexture != nullptr)
+		return;
 
-	// If mInternal already exists this means this object was deserialized,
-	// so all we need to do is initialize it.
-	if(mInternal != nullptr)
+	CaptureAndFilter();
+}
+
+void ReflectionProbe::Filter()
+{
+	if(mCustomTexture == nullptr)
+		return;
+
+	CaptureAndFilter();
+}
+
+void ReflectionProbe::CaptureAndFilter()
+{
+	// If previous rendering task exists, cancel it
+	if(mRendererTask != nullptr)
+		mRendererTask->Cancel();
+
+	TextureCreateInformation cubemapDesc;
+	cubemapDesc.Name = "ReflectionProbe Cubemap";
+	cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
+	cubemapDesc.Format = PF_RG11B10F;
+	cubemapDesc.Width = render::IBLUtility::kReflectionCubemapSize;
+	cubemapDesc.Height = render::IBLUtility::kReflectionCubemapSize;
+	cubemapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
+	cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+
+	mFilteredTexture = Texture::CreateShared(cubemapDesc);
+
+	auto renderComplete = [this]()
 	{
-		mInternal->SetScene(scene);
-		mInternal->Initialize();
+		mRendererTask = nullptr;
+	};
+
+	SPtr<render::ReflectionProbe> probeRenderProxy = B3DGetRenderProxy(this);
+	SPtr<render::Texture> textureRenderProxy = B3DGetRenderProxy(mFilteredTexture);
+
+	const SPtr<render::RendererScene> rendererScene = B3DGetRenderProxy(SceneObject()->GetScene()->GetRendererScene());
+	if(mCustomTexture == nullptr)
+	{
+		auto renderReflProbe = [textureRenderProxy, probeRenderProxy, rendererScene](render::GpuCommandBufferPool& commandBufferPool)
+		{
+			const SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("RenderAndFilterReflectionProbe"));
+			GetProfilerGPU().BeginSample(*commandBuffer, "RenderAndFilterReflectionProbe");
+			float radius = probeRenderProxy->mType == ReflectionProbeType::Sphere ? probeRenderProxy->mRadius : probeRenderProxy->mExtents.Length();
+
+			render::CaptureSettings settings;
+			settings.EncodeDepth = true;
+			settings.DepthEncodeNear = radius;
+			settings.DepthEncodeFar = radius + 1; // + 1 arbitrary, make it a customizable value?
+
+			render::GetRenderer()->CaptureSceneCubeMap(*rendererScene, *commandBuffer, textureRenderProxy, probeRenderProxy->GetWorldTransform().GetPosition(), settings);
+			render::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, textureRenderProxy, nullptr);
+
+			probeRenderProxy->mFilteredTexture = textureRenderProxy;
+			rendererScene->UpdateReflectionProbe(probeRenderProxy.get(), true);
+			GetProfilerGPU().EndSample(*commandBuffer, "RenderAndFilterReflectionProbe");
+
+			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+			gpuDevice->SubmitCommandBuffer(commandBuffer);
+
+			return true;
+		};
+
+		mRendererTask = render::RendererTask::Create("ReflProbeRender", renderReflProbe);
 	}
 	else
-		mInternal = ReflectionProbe::CreateBox(scene, Vector3::kOne);
+	{
+		SPtr<render::Texture> customTextureRenderProxy = B3DGetRenderProxy(mCustomTexture);
+		auto filterReflProbe = [customTextureRenderProxy, textureRenderProxy, probeRenderProxy, rendererScene](render::GpuCommandBufferPool& commandBufferPool)
+		{
+			const SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("FilterReflectionProbe"));
+			GetProfilerGPU().BeginSample(*commandBuffer, "FilterReflectionProbe");
 
-	scene->BindActor(mInternal, SceneObject());
+			render::GetIBLUtility().ScaleCubemap(*commandBuffer, customTextureRenderProxy, 0, textureRenderProxy, 0);
+			render::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, textureRenderProxy, nullptr);
 
+			probeRenderProxy->mFilteredTexture = textureRenderProxy;
+			rendererScene->UpdateReflectionProbe(probeRenderProxy.get(), true);
+			GetProfilerGPU().EndSample(*commandBuffer, "FilterReflectionProbe");
+
+			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+			gpuDevice->SubmitCommandBuffer(commandBuffer);
+
+			return true;
+		};
+
+		mRendererTask = render::RendererTask::Create("ReflProbeRender", filterReflProbe);
+	}
+
+	mRendererTask->OnComplete.Connect(renderComplete);
+	render::GetRenderer()->AddTask(mRendererTask);
+}
+
+void ReflectionProbe::Initialize()
+{
+	SetShared(B3DStaticGameObjectCast<ReflectionProbe>(mThisHandle).GetShared());
+
+	Component::Initialize();
+	CoreObject::Initialize();
+}
+
+void ReflectionProbe::OnCreated()
+{
+	UpdateBounds();
+}
+
+void ReflectionProbe::OnEnabled()
+{
 	// If filtered texture doesn't exist, ensure it is generated
-	SPtr<Texture> filteredTexture = mInternal->GetFilteredTexture();
+	SPtr<Texture> filteredTexture = GetFilteredTexture();
 	if(filteredTexture == nullptr)
 	{
-		if(mInternal->GetCustomTexture())
-			mInternal->Filter();
+		if(GetCustomTexture())
+			Filter();
 		else
-			mInternal->Capture();
+			Capture();
 	}
+
+	MarkRenderProxyDataDirty();
 }
 
-void CReflectionProbe::OnDestroyed()
+void ReflectionProbe::OnDisabled()
+{
+	MarkRenderProxyDataDirty();
+}
+
+void ReflectionProbe::OnDestroyed()
+{
+	if(mRendererTask)
+		mRendererTask->Cancel();
+
+	CoreObject::Destroy();
+}
+
+SPtr<render::RenderProxy> ReflectionProbe::CreateRenderProxy() const
 {
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
-	scene->UnbindActor(mInternal);
+
+	render::ReflectionProbe* renderProxy = new(B3DAllocate<render::ReflectionProbe>()) render::ReflectionProbe(B3DGetRenderProxy(scene), mType, mRadius, mExtents, B3DGetRenderProxy(mFilteredTexture));
+	SPtr<render::ReflectionProbe> renderProxyShared = B3DMakeSharedFromExisting<render::ReflectionProbe>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
+
+	return renderProxyShared;
 }
 
-RTTIType* CReflectionProbe::GetRttiStatic()
+RenderProxySyncPacket* ReflectionProbe::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
-	return CReflectionProbeRTTI::Instance();
+	const HSceneObject& sceneObject = SceneObject();
+
+	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	syncPacket->mActive = GetEnabled();
+	syncPacket->mSceneInstance = B3DGetRenderProxy(sceneObject->GetScene());
+	syncPacket->mTransform = sceneObject->GetTransform();
+
+	return syncPacket;
 }
 
-RTTIType* CReflectionProbe::GetRtti() const
+RTTIType* ReflectionProbe::GetRttiStatic()
 {
-	return CReflectionProbe::GetRttiStatic();
+	return ReflectionProbeRTTI::Instance();
 }
+
+RTTIType* ReflectionProbe::GetRtti() const
+{
+	return ReflectionProbe::GetRttiStatic();
+}
+
+namespace b3d { namespace render
+{
+ReflectionProbe::ReflectionProbe(const SPtr<SceneInstance>& scene, ReflectionProbeType type, float radius, const Vector3& extents, const SPtr<Texture>& filteredTexture)
+	: TReflectionProbe(type, radius, extents), mSceneInstance(scene)
+{
+	mFilteredTexture = filteredTexture;
+}
+
+ReflectionProbe::~ReflectionProbe()
+{
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UnregisterReflectionProbe(this);
+}
+
+void ReflectionProbe::Initialize()
+{
+	UpdateBounds();
+
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterReflectionProbe(this);
+
+	RenderProxy::Initialize();
+}
+
+float ReflectionProbe::GetRadius() const
+{
+	Vector3 scale = this->mTransform.GetScale();
+	return mRadius * std::max(std::max(scale.X, scale.Y), scale.Z);
+}
+
+void ReflectionProbe::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
+{
+	RenderProxySyncPacket* const syncPacket = data.GetSyncPacket<b3d::ReflectionProbe::SyncPacket>();
+	if(syncPacket == nullptr)
+		return;
+
+	bool oldIsActive = mActive;
+	ReflectionProbeType oldType = mType;
+
+	syncPacket->ApplySyncData(this);
+
+	UpdateBounds();
+
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	if(syncPacket->Flags == (u32)ComponentDirtyFlag::Transform)
+	{
+		if(mActive)
+			rendererScene->UpdateReflectionProbe(this, false);
+	}
+	else
+	{
+		if(oldIsActive != mActive)
+		{
+			if(mActive)
+				rendererScene->RegisterReflectionProbe(this);
+			else
+			{
+				ReflectionProbeType newType = mType;
+				mType = oldType;
+				rendererScene->UnregisterReflectionProbe(this);
+				mType = newType;
+			}
+		}
+		else
+		{
+			ReflectionProbeType newType = mType;
+			mType = oldType;
+			rendererScene->UnregisterReflectionProbe(this);
+			mType = newType;
+
+			rendererScene->RegisterReflectionProbe(this);
+		}
+	}
+}
+}}

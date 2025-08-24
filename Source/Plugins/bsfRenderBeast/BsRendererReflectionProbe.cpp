@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRendererReflectionProbe.h"
 #include "Material/BsMaterial.h"
-#include "Renderer/BsReflectionProbe.h"
+#include "Components/BsCReflectionProbe.h"
 #include "BsRenderBeast.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Renderer/BsSkybox.h"
@@ -86,7 +86,7 @@ void RendererReflectionProbe::GetParameters(ReflProbeData& output) const
 		: Probe->GetType() == ReflectionProbeType::Box			  ? 1
 																  : 2;
 
-	const Transform& tfrm = Probe->GetTransform();
+	const Transform& tfrm = Probe->GetWorldTransform();
 	output.Position = tfrm.GetPosition();
 	output.BoxExtents = Probe->GetExtents();
 

@@ -6,6 +6,8 @@
 #include "Reflection/BsRTTIType.h"
 #include "Components/BsCReflectionProbe.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
+#include "Renderer/BsRenderer.h"
+#include "RTTI/BsMathRTTI.h"
 
 namespace b3d
 {
@@ -14,28 +16,43 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CReflectionProbeRTTI : public TRTTIType<CReflectionProbe, Component, CReflectionProbeRTTI>
+	class B3D_CORE_EXPORT ReflectionProbeRTTI : public TRTTIType<ReflectionProbe, Component, ReflectionProbeRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mInternal, 0)
+			B3D_RTTI_MEMBER(mType, 0)
+			B3D_RTTI_MEMBER(mRadius, 1)
+			B3D_RTTI_MEMBER(mExtents, 2)
+			B3D_RTTI_MEMBER(mTransitionDistance, 3)
+			B3D_RTTI_MEMBER(mCustomTexture, 4)
+			B3D_RTTI_MEMBER(mFilteredTexture, 5)
 		B3D_RTTI_END_MEMBERS
 
 	public:
+		void OnOperationStarted(ReflectionProbe& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		{
+			if(operationType.IsSet(RTTIOperationType::ReadBit))
+			{
+				// Force the renderer task to complete, so the filtered texture is up to date
+				if(object.mRendererTask != nullptr)
+					object.mRendererTask->Wait();
+			}
+		}
+
 		const String& GetRttiName() override
 		{
-			static String name = "CReflectionProbe";
+			static String name = "ReflectionProbe";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CReflectionProbe;
+			return TID_ReflectionProbe;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CReflectionProbe>();
+			return SceneObject::CreateEmptyComponent<ReflectionProbe>();
 		}
 	};
 

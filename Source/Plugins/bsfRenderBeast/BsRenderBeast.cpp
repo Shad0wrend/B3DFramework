@@ -17,7 +17,6 @@
 #include "Animation/BsSkeleton.h"
 #include "Renderer/BsLight.h"
 #include "Renderer/BsRendererExtension.h"
-#include "Renderer/BsReflectionProbe.h"
 #include "Renderer/BsRenderSettings.h"
 #include "Renderer/BsIBLUtility.h"
 #include "Renderer/BsSkybox.h"

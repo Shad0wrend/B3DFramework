@@ -12,7 +12,7 @@
 
 namespace b3d
 {
-	ScriptReflectionProbe::ScriptReflectionProbe(const GameObjectHandle<CReflectionProbe>& nativeObject)
+	ScriptReflectionProbe::ScriptReflectionProbe(const GameObjectHandle<ReflectionProbe>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -53,7 +53,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CReflectionProbe*>(self->GetNativeObject())->GetType();
+		tmp__output = static_cast<ReflectionProbe*>(self->GetNativeObject())->GetType();
 
 		ReflectionProbeType __output;
 		__output = tmp__output;
@@ -66,7 +66,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CReflectionProbe*>(self->GetNativeObject())->SetType(type);
+		static_cast<ReflectionProbe*>(self->GetNativeObject())->SetType(type);
 	}
 
 	float ScriptReflectionProbe::InternalGetRadius(ScriptReflectionProbe* self)
@@ -75,7 +75,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CReflectionProbe*>(self->GetNativeObject())->GetRadius();
+		tmp__output = static_cast<ReflectionProbe*>(self->GetNativeObject())->GetRadius();
 
 		float __output;
 		__output = tmp__output;
@@ -88,7 +88,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CReflectionProbe*>(self->GetNativeObject())->SetRadius(radius);
+		static_cast<ReflectionProbe*>(self->GetNativeObject())->SetRadius(radius);
 	}
 
 	void ScriptReflectionProbe::InternalGetExtents(ScriptReflectionProbe* self, TVector3<float>* __output)
@@ -100,7 +100,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CReflectionProbe*>(self->GetNativeObject())->GetExtents();
+		tmp__output = static_cast<ReflectionProbe*>(self->GetNativeObject())->GetExtents();
 
 		*__output = tmp__output;
 	}
@@ -110,7 +110,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CReflectionProbe*>(self->GetNativeObject())->SetExtents(*extents);
+		static_cast<ReflectionProbe*>(self->GetNativeObject())->SetExtents(*extents);
 	}
 
 	MonoObject* ScriptReflectionProbe::InternalGetCustomTexture(ScriptReflectionProbe* self)
@@ -119,7 +119,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CReflectionProbe*>(self->GetNativeObject())->GetCustomTexture();
+		tmp__output = static_cast<ReflectionProbe*>(self->GetNativeObject())->GetCustomTexture();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
@@ -142,7 +142,7 @@ namespace b3d
 		scriptObjectWrappertexture = ScriptRRefBase::GetScriptObjectWrapper(texture);
 		if(scriptObjectWrappertexture != nullptr)
 			tmptexture = B3DStaticResourceCast<Texture>(scriptObjectWrappertexture->GetNativeObject());
-		static_cast<CReflectionProbe*>(self->GetNativeObject())->SetCustomTexture(tmptexture);
+		static_cast<ReflectionProbe*>(self->GetNativeObject())->SetCustomTexture(tmptexture);
 	}
 
 	void ScriptReflectionProbe::InternalCapture(ScriptReflectionProbe* self)
@@ -150,6 +150,6 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CReflectionProbe*>(self->GetNativeObject())->Capture();
+		static_cast<ReflectionProbe*>(self->GetNativeObject())->Capture();
 	}
 }

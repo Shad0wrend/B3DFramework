@@ -4,7 +4,6 @@
 #include "Material/BsGpuParamsSet.h"
 #include "Mesh/BsMesh.h"
 #include "Renderer/BsSkybox.h"
-#include "Renderer/BsReflectionProbe.h"
 #include "Renderer/BsRendererUtility.h"
 #include "BsRenderBeastScene.h"
 #include "BsRendererView.h"

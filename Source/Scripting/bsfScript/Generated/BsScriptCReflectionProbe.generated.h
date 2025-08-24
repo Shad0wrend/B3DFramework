@@ -7,15 +7,15 @@
 #include "../../../Foundation/bsfCore/Renderer/BsReflectionProbe.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
-namespace b3d { class CReflectionProbe; }
+namespace b3d { class ReflectionProbe; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptReflectionProbe : public TScriptGameObjectWrapper<CReflectionProbe, ScriptReflectionProbe>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptReflectionProbe : public TScriptGameObjectWrapper<ReflectionProbe, ScriptReflectionProbe>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ReflectionProbe")
 
-		ScriptReflectionProbe(const GameObjectHandle<CReflectionProbe>& nativeObject);
+		ScriptReflectionProbe(const GameObjectHandle<ReflectionProbe>& nativeObject);
 		~ScriptReflectionProbe();
 
 		static void SetupScriptBindings();

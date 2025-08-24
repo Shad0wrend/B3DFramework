@@ -367,7 +367,6 @@ namespace b3d
 	B3D_COMPONENT_FORWARD_DECLARE(Bone)
 	B3D_COMPONENT_FORWARD_DECLARE(AudioSource)
 	B3D_COMPONENT_FORWARD_DECLARE(AudioListener)
-	B3D_COMPONENT_FORWARD_DECLARE(ReflectionProbe)
 	B3D_COMPONENT_FORWARD_DECLARE(Skybox)
 	B3D_COMPONENT_FORWARD_DECLARE(LightProbeVolume)
 	B3D_COMPONENT_FORWARD_DECLARE(ParticleSystem)
@@ -604,8 +603,8 @@ namespace b3d
 		TID_MorphShape = 1128,
 		TID_MorphShapes = 1129,
 		TID_MorphChannel = 1130,
-		TID_ReflectionProbe = 1131,
-		TID_CReflectionProbe = 1132,
+		//TID_ReflectionProbe = 1131,
+		TID_ReflectionProbe = 1132,
 		TID_CachedTextureData = 1133,
 		TID_Skybox = 1134,
 		TID_CSkybox = 1135,
@@ -826,7 +825,7 @@ namespace b3d
 	typedef GameObjectHandle<FixedJoint> HFixedJoint;
 	typedef GameObjectHandle<D6Joint> HD6Joint;
 	typedef GameObjectHandle<CharacterController> HCharacterController;
-	typedef GameObjectHandle<CReflectionProbe> HReflectionProbe;
+	typedef GameObjectHandle<ReflectionProbe> HReflectionProbe;
 	typedef GameObjectHandle<CSkybox> HSkybox;
 	typedef GameObjectHandle<CLightProbeVolume> HLightProbeVolume;
 	typedef GameObjectHandle<CAudioSource> HAudioSource;
