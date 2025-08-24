@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsPhysXPrerequisites.h"
-#include "Components/BsCCharacterController.h"
+#include "Components/BsCharacterController.h"
 #include "PxPhysics.h"
 #include "characterkinematic/PxCapsuleController.h"
 

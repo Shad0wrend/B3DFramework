@@ -12,7 +12,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** PhysX implementation of the PhysicsMesh foundation, FPhysicsMesh. */
+	/** PhysX implementation of the physics mesh. */
 	class PhysXMesh : public IPhysicsMeshImplementation
 	{
 	public:

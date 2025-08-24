@@ -1,14 +1,13 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Components/BsCCharacterController.h"
+#include "Components/BsCharacterController.h"
 #include "Scene/BsSceneObject.h"
 #include "Scene/BsSceneInstance.h"
-#include "Private/RTTI/BsCCharacterControllerRTTI.h"
+#include "Private/RTTI/BsCharacterControllerRTTI.h"
 #include "BsCollider.h"
 #include "Physics/BsPhysics.h"
 
 using namespace std::placeholders;
-
 using namespace b3d;
 
 CharacterController::CharacterController(const HSceneObject& parent)

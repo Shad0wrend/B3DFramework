@@ -5,7 +5,7 @@
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
 #include "Reflection/BsRTTIPlain.h"
-#include "Components/BsCCharacterController.h"
+#include "Components/BsCharacterController.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 

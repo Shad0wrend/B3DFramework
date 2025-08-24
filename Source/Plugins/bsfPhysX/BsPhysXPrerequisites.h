@@ -28,9 +28,7 @@ namespace b3d
 	/** @} */
 	/** @} */
 
-	class PhysXRigidbody;
 	class PhsyXMaterial;
-	class FPhysXCollider;
 
 	/** @addtogroup PhysX
 	 *  @{
