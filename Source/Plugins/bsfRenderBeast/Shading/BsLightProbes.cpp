@@ -1,7 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsLightProbes.h"
-#include "Components/BsCLightProbeVolume.h"
+#include "Components/BsLightProbeVolume.h"
 #include "BsRendererView.h"
 #include "BsRenderBeastIBLUtility.h"
 #include "Mesh/BsMesh.h"

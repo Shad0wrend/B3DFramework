@@ -1,11 +1,11 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Components/BsCLightProbeVolume.h"
+#include "Components/BsLightProbeVolume.h"
 
 #include "BsCoreApplication.h"
 #include "CoreObject/BsCoreObjectSync.h"
 #include "Image/BsTexture.h"
-#include "Private/RTTI/BsCLightProbeVolumeRTTI.h"
+#include "Private/RTTI/BsLightProbeVolumeRTTI.h"
 #include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsGpuDevice.h"
