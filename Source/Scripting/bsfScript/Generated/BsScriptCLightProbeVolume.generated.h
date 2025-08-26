@@ -10,16 +10,16 @@
 #include "../../../Foundation/bsfUtility/Math/BsAABox.h"
 
 namespace b3d { struct __TAABox_float_Interop; }
-namespace b3d { class CLightProbeVolume; }
+namespace b3d { class LightProbeVolume; }
 namespace b3d { struct __LightProbeInfoInterop; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptLightProbeVolume : public TScriptGameObjectWrapper<CLightProbeVolume, ScriptLightProbeVolume>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLightProbeVolume : public TScriptGameObjectWrapper<LightProbeVolume, ScriptLightProbeVolume>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "LightProbeVolume")
 
-		ScriptLightProbeVolume(const GameObjectHandle<CLightProbeVolume>& nativeObject);
+		ScriptLightProbeVolume(const GameObjectHandle<LightProbeVolume>& nativeObject);
 		~ScriptLightProbeVolume();
 
 		static void SetupScriptBindings();

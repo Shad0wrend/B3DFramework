@@ -81,13 +81,6 @@ namespace b3d
 	B3D_SYNC_BLOCK_END
 }
 
-Decal::Decal()
-{
-	SetFlag(ComponentFlag::AlwaysRun, true);
-	SetName("Decal");
-	mNotifyFlags = TCF_Transform;
-}
-
 Decal::Decal(const HSceneObject& parent)
 	: Component(parent)
 {
@@ -95,6 +88,10 @@ Decal::Decal(const HSceneObject& parent)
 	SetName("Decal");
 	mNotifyFlags = TCF_Transform;
 }
+
+Decal::Decal()
+	: Decal(nullptr)
+{ }
 
 void Decal::Initialize()
 {

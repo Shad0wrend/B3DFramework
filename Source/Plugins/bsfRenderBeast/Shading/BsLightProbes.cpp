@@ -1,7 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsLightProbes.h"
-#include "Renderer/BsLightProbeVolume.h"
+#include "Components/BsCLightProbeVolume.h"
 #include "BsRendererView.h"
 #include "BsRenderBeastIBLUtility.h"
 #include "Mesh/BsMesh.h"
@@ -298,12 +298,12 @@ void LightProbes::UpdateProbes(GpuCommandBuffer& commandBuffer)
 		const Vector<LightProbeInfo>& infos = entry.Volume->GetLightProbeInfos();
 		const Vector<Vector3>& positions = entry.Volume->GetLightProbePositions();
 
-		u32 numProbes = entry.Volume->GetNumActiveProbes();
+		u32 numProbes = entry.Volume->GetActiveProbeCount();
 
 		if(numProbes == 0)
 			continue;
 
-		const Transform& tfrm = entry.Volume->GetTransform();
+		const Transform& tfrm = entry.Volume->GetWorldTransform();
 		Vector3 offset = tfrm.GetPosition();
 		Quaternion rotation = tfrm.GetRotation();
 
@@ -743,7 +743,7 @@ bool LightProbes::HasAnyProbes() const
 {
 	for(auto& entry : mVolumes)
 	{
-		u32 numProbes = entry.Volume->GetNumActiveProbes();
+		u32 numProbes = entry.Volume->GetActiveProbeCount();
 		if(numProbes > 0)
 			return true;
 	}

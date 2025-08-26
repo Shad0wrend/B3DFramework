@@ -12,7 +12,7 @@
 
 namespace b3d
 {
-	ScriptLightProbeVolume::ScriptLightProbeVolume(const GameObjectHandle<CLightProbeVolume>& nativeObject)
+	ScriptLightProbeVolume::ScriptLightProbeVolume(const GameObjectHandle<LightProbeVolume>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -56,7 +56,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CLightProbeVolume*>(self->GetNativeObject())->AddProbe(*position);
+		tmp__output = static_cast<LightProbeVolume*>(self->GetNativeObject())->AddProbe(*position);
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -69,7 +69,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLightProbeVolume*>(self->GetNativeObject())->SetProbePosition(handle, *position);
+		static_cast<LightProbeVolume*>(self->GetNativeObject())->SetProbePosition(handle, *position);
 	}
 
 	void ScriptLightProbeVolume::InternalGetProbePosition(ScriptLightProbeVolume* self, uint32_t handle, TVector3<float>* __output)
@@ -81,7 +81,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CLightProbeVolume*>(self->GetNativeObject())->GetProbePosition(handle);
+		tmp__output = static_cast<LightProbeVolume*>(self->GetNativeObject())->GetProbePosition(handle);
 
 		*__output = tmp__output;
 	}
@@ -91,7 +91,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLightProbeVolume*>(self->GetNativeObject())->RemoveProbe(handle);
+		static_cast<LightProbeVolume*>(self->GetNativeObject())->RemoveProbe(handle);
 	}
 
 	MonoArray* ScriptLightProbeVolume::InternalGetProbes(ScriptLightProbeVolume* self)
@@ -100,7 +100,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		nativeArray__output = static_cast<CLightProbeVolume*>(self->GetNativeObject())->GetProbes();
+		nativeArray__output = static_cast<LightProbeVolume*>(self->GetNativeObject())->GetProbes();
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -119,7 +119,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLightProbeVolume*>(self->GetNativeObject())->RenderProbe(handle);
+		static_cast<LightProbeVolume*>(self->GetNativeObject())->RenderProbe(handle);
 	}
 
 	void ScriptLightProbeVolume::InternalRenderProbes(ScriptLightProbeVolume* self)
@@ -127,7 +127,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLightProbeVolume*>(self->GetNativeObject())->RenderProbes();
+		static_cast<LightProbeVolume*>(self->GetNativeObject())->RenderProbes();
 	}
 
 	void ScriptLightProbeVolume::InternalResize(ScriptLightProbeVolume* self, __TAABox_float_Interop* volume, TVector3I<int32_t>* cellCount)
@@ -137,7 +137,7 @@ namespace b3d
 
 		TAABox<float> tmpvolume;
 		tmpvolume = ScriptAABox::FromInterop(*volume);
-		static_cast<CLightProbeVolume*>(self->GetNativeObject())->Resize(tmpvolume, *cellCount);
+		static_cast<LightProbeVolume*>(self->GetNativeObject())->Resize(tmpvolume, *cellCount);
 	}
 
 	void ScriptLightProbeVolume::InternalClip(ScriptLightProbeVolume* self)
@@ -145,7 +145,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLightProbeVolume*>(self->GetNativeObject())->Clip();
+		static_cast<LightProbeVolume*>(self->GetNativeObject())->Clip();
 	}
 
 	void ScriptLightProbeVolume::InternalReset(ScriptLightProbeVolume* self)
@@ -153,7 +153,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLightProbeVolume*>(self->GetNativeObject())->Reset();
+		static_cast<LightProbeVolume*>(self->GetNativeObject())->Reset();
 	}
 
 	void ScriptLightProbeVolume::InternalGetGridVolume(ScriptLightProbeVolume* self, __TAABox_float_Interop* __output)
@@ -165,7 +165,7 @@ namespace b3d
 		}
 
 		TAABox<float> tmp__output;
-		tmp__output = static_cast<CLightProbeVolume*>(self->GetNativeObject())->GetGridVolume();
+		tmp__output = static_cast<LightProbeVolume*>(self->GetNativeObject())->GetGridVolume();
 
 		__TAABox_float_Interop interop__output;
 		interop__output = ScriptAABox::ToInterop(tmp__output);
@@ -181,7 +181,7 @@ namespace b3d
 		}
 
 		TVector3I<int32_t> tmp__output;
-		tmp__output = static_cast<CLightProbeVolume*>(self->GetNativeObject())->GetCellCount();
+		tmp__output = static_cast<LightProbeVolume*>(self->GetNativeObject())->GetCellCount();
 
 		*__output = tmp__output;
 	}

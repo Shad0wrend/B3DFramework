@@ -13,7 +13,6 @@
 #include "RenderAPI/BsViewport.h"
 #include "Scene/BsGameObjectManager.h"
 #include "RenderAPI/BsRenderTarget.h"
-#include "Renderer/BsLightProbeVolume.h"
 #include "Scene/BsSceneActor.h"
 #include "Scene/BsPrefab.h"
 #include "Physics/BsPhysics.h"
