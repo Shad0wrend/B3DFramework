@@ -9,7 +9,6 @@
 #include "Scene/BsComponent.h"
 #include "Components/BsRenderable.h"
 #include "Renderer/BsCamera.h"
-#include "Renderer/BsLight.h"
 #include "RenderAPI/BsViewport.h"
 #include "Scene/BsGameObjectManager.h"
 #include "RenderAPI/BsRenderTarget.h"

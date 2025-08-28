@@ -362,7 +362,6 @@ namespace b3d
 	};
 
 	B3D_COMPONENT_FORWARD_DECLARE(Camera)
-	B3D_COMPONENT_FORWARD_DECLARE(Light)
 	B3D_COMPONENT_FORWARD_DECLARE(Animation)
 	B3D_COMPONENT_FORWARD_DECLARE(Bone)
 	B3D_COMPONENT_FORWARD_DECLARE(AudioSource)
@@ -751,8 +750,8 @@ namespace b3d
 		TID_Camera = 30003,
 		TID_Renderable = 30001,
 		TID_SpriteTexture = 30002,
-		TID_Light = 30011,
-		TID_CLight = 30012,
+		//TID_Light = 30011,
+		TID_Light = 30012,
 	};
 } // namespace b3d
 
@@ -806,7 +805,7 @@ namespace b3d
 	typedef GameObjectHandle<Component> HComponent;
 	typedef GameObjectHandle<CCamera> HCamera;
 	typedef GameObjectHandle<Renderable> HRenderable;
-	typedef GameObjectHandle<CLight> HLight;
+	typedef GameObjectHandle<Light> HLight;
 	typedef GameObjectHandle<CAnimation> HAnimation;
 	typedef GameObjectHandle<CBone> HBone;
 	typedef GameObjectHandle<Rigidbody> HRigidbody;

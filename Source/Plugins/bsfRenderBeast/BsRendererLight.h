@@ -5,7 +5,7 @@
 #include "BsRenderBeastPrerequisites.h"
 #include "Renderer/BsRendererMaterial.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
-#include "Renderer/BsLight.h"
+#include "Components/BsCLight.h"
 #include "RenderAPI/BsGpuPipelineParameterLayout.h"
 
 namespace b3d

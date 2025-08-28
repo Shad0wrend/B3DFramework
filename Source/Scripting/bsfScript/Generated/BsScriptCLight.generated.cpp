@@ -10,7 +10,7 @@
 
 namespace b3d
 {
-	ScriptLight::ScriptLight(const GameObjectHandle<CLight>& nativeObject)
+	ScriptLight::ScriptLight(const GameObjectHandle<Light>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -62,7 +62,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetType(type);
+		static_cast<Light*>(self->GetNativeObject())->SetType(type);
 	}
 
 	LightType ScriptLight::InternalGetType(ScriptLight* self)
@@ -71,7 +71,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetType();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetType();
 
 		LightType __output;
 		__output = tmp__output;
@@ -84,7 +84,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetColor(*color);
+		static_cast<Light*>(self->GetNativeObject())->SetColor(*color);
 	}
 
 	void ScriptLight::InternalGetColor(ScriptLight* self, Color* __output)
@@ -96,7 +96,7 @@ namespace b3d
 		}
 
 		Color tmp__output;
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetColor();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetColor();
 
 		*__output = tmp__output;
 	}
@@ -106,7 +106,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetIntensity(intensity);
+		static_cast<Light*>(self->GetNativeObject())->SetIntensity(intensity);
 	}
 
 	float ScriptLight::InternalGetIntensity(ScriptLight* self)
@@ -115,7 +115,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetIntensity();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetIntensity();
 
 		float __output;
 		__output = tmp__output;
@@ -128,7 +128,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetUseAutoAttenuation(enabled);
+		static_cast<Light*>(self->GetNativeObject())->SetUseAutoAttenuation(enabled);
 	}
 
 	bool ScriptLight::InternalGetUseAutoAttenuation(ScriptLight* self)
@@ -137,7 +137,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetUseAutoAttenuation();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetUseAutoAttenuation();
 
 		bool __output;
 		__output = tmp__output;
@@ -150,7 +150,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetAttenuationRadius(radius);
+		static_cast<Light*>(self->GetNativeObject())->SetAttenuationRadius(radius);
 	}
 
 	float ScriptLight::InternalGetAttenuationRadius(ScriptLight* self)
@@ -159,7 +159,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetAttenuationRadius();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetAttenuationRadius();
 
 		float __output;
 		__output = tmp__output;
@@ -172,7 +172,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetSourceRadius(radius);
+		static_cast<Light*>(self->GetNativeObject())->SetSourceRadius(radius);
 	}
 
 	float ScriptLight::InternalGetSourceRadius(ScriptLight* self)
@@ -181,7 +181,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetSourceRadius();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetSourceRadius();
 
 		float __output;
 		__output = tmp__output;
@@ -194,7 +194,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetSpotAngle(*spotAngle);
+		static_cast<Light*>(self->GetNativeObject())->SetSpotAngle(*spotAngle);
 	}
 
 	void ScriptLight::InternalGetSpotAngle(ScriptLight* self, TDegree<float>* __output)
@@ -206,7 +206,7 @@ namespace b3d
 		}
 
 		TDegree<float> tmp__output;
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetSpotAngle();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetSpotAngle();
 
 		*__output = tmp__output;
 	}
@@ -216,7 +216,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetSpotFalloffAngle(*spotAngle);
+		static_cast<Light*>(self->GetNativeObject())->SetSpotFalloffAngle(*spotAngle);
 	}
 
 	void ScriptLight::InternalGetSpotFalloffAngle(ScriptLight* self, TDegree<float>* __output)
@@ -228,7 +228,7 @@ namespace b3d
 		}
 
 		TDegree<float> tmp__output;
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetSpotFalloffAngle();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetSpotFalloffAngle();
 
 		*__output = tmp__output;
 	}
@@ -238,7 +238,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetCastsShadow(castsShadow);
+		static_cast<Light*>(self->GetNativeObject())->SetCastsShadow(castsShadow);
 	}
 
 	bool ScriptLight::InternalGetCastsShadow(ScriptLight* self)
@@ -247,7 +247,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetCastsShadow();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetCastsShadow();
 
 		bool __output;
 		__output = tmp__output;
@@ -260,7 +260,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CLight*>(self->GetNativeObject())->SetShadowBias(bias);
+		static_cast<Light*>(self->GetNativeObject())->SetShadowBias(bias);
 	}
 
 	float ScriptLight::InternalGetShadowBias(ScriptLight* self)
@@ -269,7 +269,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetShadowBias();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetShadowBias();
 
 		float __output;
 		__output = tmp__output;
@@ -286,7 +286,7 @@ namespace b3d
 		}
 
 		TSphere<float> tmp__output;
-		tmp__output = static_cast<CLight*>(self->GetNativeObject())->GetBounds();
+		tmp__output = static_cast<Light*>(self->GetNativeObject())->GetBounds();
 
 		__TSphere_float_Interop interop__output;
 		interop__output = ScriptSphere::ToInterop(tmp__output);

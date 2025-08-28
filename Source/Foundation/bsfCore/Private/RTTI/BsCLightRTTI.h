@@ -6,6 +6,8 @@
 #include "Reflection/BsRTTIType.h"
 #include "Components/BsCLight.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
+#include "RTTI/BsMathRTTI.h"
+#include "RTTI/BsColorRTTI.h"
 
 namespace b3d
 {
@@ -14,28 +16,37 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CLightRTTI : public TRTTIType<CLight, Component, CLightRTTI>
+	class B3D_CORE_EXPORT LightRTTI : public TRTTIType<Light, Component, LightRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mInternal, 0)
+			B3D_RTTI_MEMBER(mType, 0)
+			B3D_RTTI_MEMBER(mCastsShadows, 1)
+			B3D_RTTI_MEMBER(mColor, 2)
+			B3D_RTTI_MEMBER(mAttRadius, 3)
+			B3D_RTTI_MEMBER(mIntensity, 4)
+			B3D_RTTI_MEMBER(mSpotAngle, 5)
+			B3D_RTTI_MEMBER(mSpotFalloffAngle, 6)
+			B3D_RTTI_MEMBER(mAutoAttenuation, 7)
+			B3D_RTTI_MEMBER(mSourceRadius, 8)
+			B3D_RTTI_MEMBER(mShadowBias, 9)
 		B3D_RTTI_END_MEMBERS
 
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CLight";
+			static String name = "Light";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CLight;
+			return TID_Light;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CLight>();
+			return SceneObject::CreateEmptyComponent<Light>();
 		}
 	};
 

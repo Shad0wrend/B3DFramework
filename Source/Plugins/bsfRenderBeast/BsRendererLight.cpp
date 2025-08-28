@@ -4,7 +4,7 @@
 #include "Material/BsMaterial.h"
 #include "Material/BsGpuParamsSet.h"
 #include "RenderAPI/BsGpuParameters.h"
-#include "Renderer/BsLight.h"
+#include "Components/BsCLight.h"
 #include "Renderer/BsRendererUtility.h"
 #include "BsRenderBeast.h"
 #include "Shading/BsStandardDeferred.h"
@@ -24,7 +24,7 @@ void RendererLight::GetParameters(LightData& output) const
 	Radian spotFalloffAngle = Math::Clamp(Internal->GetSpotFalloffAngle() * 0.5f, Degree(0), (Degree)spotAngle);
 	Color color = Internal->GetColor();
 
-	const Transform& tfrm = Internal->GetTransform();
+	const Transform& tfrm = Internal->GetWorldTransform();
 	output.Position = tfrm.GetPosition();
 	output.BoundsRadius = Internal->GetBounds().Radius;
 	output.SrcRadius = Internal->GetSourceRadius();
@@ -81,7 +81,7 @@ void RendererLight::GetParameters(SPtr<GpuBuffer>& buffer) const
 
 	gPerLightParamDef.gLightGeometry.Set(buffer, lightGeometry);
 
-	const Transform& tfrm = Internal->GetTransform();
+	const Transform& tfrm = Internal->GetWorldTransform();
 
 	Quaternion lightRotation(BsIdentity);
 	lightRotation.LookRotation(-tfrm.GetRotation().ZAxis());
@@ -92,7 +92,7 @@ void RendererLight::GetParameters(SPtr<GpuBuffer>& buffer) const
 
 Vector3 RendererLight::GetShiftedLightPosition() const
 {
-	const Transform& tfrm = Internal->GetTransform();
+	const Transform& tfrm = Internal->GetWorldTransform();
 	Vector3 direction = -tfrm.GetRotation().ZAxis();
 
 	// Create position for fake attenuation for area spot lights (with disc center)

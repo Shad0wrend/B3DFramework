@@ -8,7 +8,6 @@
 #include "Math/BsConvexVolume.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
 #include "Renderer/BsRendererMaterial.h"
-#include "Renderer/BsLight.h"
 #include "Image/BsTextureAtlasLayout.h"
 #include "BsRendererLight.h"
 

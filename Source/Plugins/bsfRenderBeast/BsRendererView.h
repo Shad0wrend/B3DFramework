@@ -4,7 +4,6 @@
 
 #include "BsRenderBeastPrerequisites.h"
 #include "Renderer/BsRenderQueue.h"
-#include "Renderer/BsLight.h"
 #include "Renderer/BsRenderSettings.h"
 #include "Math/BsBounds.h"
 #include "Math/BsConvexVolume.h"

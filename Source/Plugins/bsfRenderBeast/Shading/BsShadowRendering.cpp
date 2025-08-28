@@ -3,7 +3,7 @@
 #include "BsShadowRendering.h"
 #include "BsRendererView.h"
 #include "BsRenderBeastScene.h"
-#include "Renderer/BsLight.h"
+#include "Components/BsCLight.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Material/BsGpuParamsSet.h"
 #include "Mesh/BsMesh.h"
@@ -285,7 +285,7 @@ void ShadowProjectOmniMat::Initialize()
 
 void ShadowProjectOmniMat::Bind(GpuCommandBuffer& commandBuffer, const ShadowProjectParams& params)
 {
-	Vector4 lightPosAndScale(params.Light.GetTransform().GetPosition(), params.Light.GetAttenuationRadius());
+	Vector4 lightPosAndScale(params.Light.GetWorldTransform().GetPosition(), params.Light.GetAttenuationRadius());
 	gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
 
 	mGBufferParams.Bind(params.Gbuffer);
@@ -1032,7 +1032,7 @@ void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, con
 			gShadowProjectOmniParamsDef.gFadePercent.Set(shadowOmniParamBuffer, shadowInfo.FadePerView[viewIdx]);
 			gShadowProjectOmniParamsDef.gInvResolution.Set(shadowOmniParamBuffer, 1.0f / shadowInfo.Area.Width);
 
-			const Transform& tfrm = light->GetTransform();
+			const Transform& tfrm = light->GetWorldTransform();
 			Vector4 lightPosAndRadius(tfrm.GetPosition(), light->GetAttenuationRadius());
 			gShadowProjectOmniParamsDef.gLightPosAndRadius.Set(shadowOmniParamBuffer, lightPosAndRadius);
 
@@ -1207,7 +1207,7 @@ void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, 
 	const RendererLight& rendererLight = sceneInfo.DirectionalLights[lightIdx];
 	Light* light = rendererLight.Internal;
 
-	const Transform& tfrm = light->GetTransform();
+	const Transform& tfrm = light->GetWorldTransform();
 	Vector3 lightDir = -tfrm.GetRotation().ZAxis();
 	SPtr<GpuBuffer> shadowParamsBuffer = gShadowParamsDef.CreateBuffer();
 
@@ -1378,7 +1378,7 @@ void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const
 	mapInfo.DepthBias = GetDepthBias(*light, light->GetBounds().Radius, mapInfo.DepthRange, options.MapSize);
 	mapInfo.SubjectBounds = light->GetBounds();
 
-	Quaternion lightRotation = light->GetTransform().GetRotation();
+	Quaternion lightRotation = light->GetWorldTransform().GetRotation();
 
 	Matrix4 view = Matrix4::View(rendererLight.GetShiftedLightPosition(), lightRotation);
 	Matrix4 proj = Matrix4::ProjectionPerspective(light->GetSpotAngle(), 1.0f, 0.05f, light->GetAttenuationRadius());
@@ -1544,7 +1544,7 @@ void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, con
 		Vector3 right = Vector3::Cross(up, forward);
 		Matrix3 viewRotationMat = Matrix3(right, up, forward);
 
-		Vector3 lightPos = light->GetTransform().GetPosition();
+		Vector3 lightPos = light->GetWorldTransform().GetPosition();
 		Matrix4 viewOffsetMat = Matrix4::Translation(-lightPos);
 
 		Matrix4 view = Matrix4(viewRotationMat.Transpose()) * viewOffsetMat;
@@ -1643,7 +1643,7 @@ void ShadowRendering::CalcShadowMapProperties(const RendererLight& light, const 
 			// largest one
 			//// First get sphere depth
 			const Matrix4& viewVP = viewProps.ViewProjTransform;
-			float depth = viewVP.Multiply(Vector4(light.Internal->GetTransform().GetPosition(), 1.0f)).W;
+			float depth = viewVP.Multiply(Vector4(light.Internal->GetWorldTransform().GetPosition(), 1.0f)).W;
 
 			// This is just 1/tan(fov), for both horz. and vert. FOV
 			float viewScaleX = viewProps.ProjTransform[0][0];

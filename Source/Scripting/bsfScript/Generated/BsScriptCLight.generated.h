@@ -9,16 +9,16 @@
 #include "Math/BsDegree.h"
 #include "../../../Foundation/bsfUtility/Math/BsSphere.h"
 
-namespace b3d { class CLight; }
+namespace b3d { class Light; }
 namespace b3d { struct __TSphere_float_Interop; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptLight : public TScriptGameObjectWrapper<CLight, ScriptLight>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLight : public TScriptGameObjectWrapper<Light, ScriptLight>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Light")
 
-		ScriptLight(const GameObjectHandle<CLight>& nativeObject);
+		ScriptLight(const GameObjectHandle<Light>& nativeObject);
 		~ScriptLight();
 
 		static void SetupScriptBindings();

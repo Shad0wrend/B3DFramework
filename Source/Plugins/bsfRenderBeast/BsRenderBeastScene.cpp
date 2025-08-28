@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRenderBeastScene.h"
 #include "Renderer/BsCamera.h"
-#include "Renderer/BsLight.h"
+#include "Components/BsCLight.h"
 #include "Renderer/BsSkybox.h"
 #include "Components/BsReflectionProbe.h"
 #include "Renderer/BsRenderer.h"

@@ -10,12 +10,12 @@
 #include "Material/BsPass.h"
 #include "RenderAPI/BsGpuParameters.h"
 #include "Utility/BsShapeMeshes3D.h"
-#include "Renderer/BsLight.h"
 #include "Material/BsShader.h"
 #include "Renderer/BsIBLUtility.h"
 #include "Math/BsAABox.h"
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
+#include "Components/BsCLight.h"
 
 using namespace b3d;
 

@@ -124,6 +124,7 @@ void Decal::OnTransformChanged(TransformChangedFlags flags)
 
 	MarkRenderProxyDataDirty(ComponentDirtyFlag::Transform);
 }
+
 SPtr<render::RenderProxy> Decal::CreateRenderProxy() const
 {
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
