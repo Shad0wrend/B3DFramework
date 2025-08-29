@@ -1,11 +1,11 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Components/BsCSkybox.h"
+#include "Components/BsSkybox.h"
 
 #include "BsCoreApplication.h"
 #include "CoreObject/BsCoreObjectSync.h"
 #include "Image/BsTexture.h"
-#include "Private/RTTI/BsCSkyboxRTTI.h"
+#include "Private/RTTI/BsSkyboxRTTI.h"
 #include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsGpuDevice.h"
