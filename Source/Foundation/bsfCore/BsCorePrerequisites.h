@@ -366,7 +366,6 @@ namespace b3d
 	B3D_COMPONENT_FORWARD_DECLARE(Bone)
 	B3D_COMPONENT_FORWARD_DECLARE(AudioSource)
 	B3D_COMPONENT_FORWARD_DECLARE(AudioListener)
-	B3D_COMPONENT_FORWARD_DECLARE(Skybox)
 	B3D_COMPONENT_FORWARD_DECLARE(ParticleSystem)
 
 	class Color;
@@ -604,8 +603,8 @@ namespace b3d
 		//TID_ReflectionProbe = 1131,
 		TID_ReflectionProbe = 1132,
 		TID_CachedTextureData = 1133,
-		TID_Skybox = 1134,
-		TID_CSkybox = 1135,
+		//TID_Skybox = 1134,
+		TID_Skybox = 1135,
 		//TID_LightProbeVolume = 1136,
 		TID_SavedLightProbeInfo = 1137,
 		TID_LightProbeVolume = 1138,
@@ -824,7 +823,7 @@ namespace b3d
 	typedef GameObjectHandle<D6Joint> HD6Joint;
 	typedef GameObjectHandle<CharacterController> HCharacterController;
 	typedef GameObjectHandle<ReflectionProbe> HReflectionProbe;
-	typedef GameObjectHandle<CSkybox> HSkybox;
+	typedef GameObjectHandle<Skybox> HSkybox;
 	typedef GameObjectHandle<LightProbeVolume> HLightProbeVolume;
 	typedef GameObjectHandle<CAudioSource> HAudioSource;
 	typedef GameObjectHandle<CAudioListener> HAudioListener;

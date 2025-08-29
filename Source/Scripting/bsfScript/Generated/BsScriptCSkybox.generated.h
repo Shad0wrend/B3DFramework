@@ -5,15 +5,15 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptComponent.h"
 
-namespace b3d { class CSkybox; }
+namespace b3d { class Skybox; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptSkybox : public TScriptGameObjectWrapper<CSkybox, ScriptSkybox>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSkybox : public TScriptGameObjectWrapper<Skybox, ScriptSkybox>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Skybox")
 
-		ScriptSkybox(const GameObjectHandle<CSkybox>& nativeObject);
+		ScriptSkybox(const GameObjectHandle<Skybox>& nativeObject);
 		~ScriptSkybox();
 
 		static void SetupScriptBindings();

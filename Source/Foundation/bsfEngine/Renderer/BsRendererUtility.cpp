@@ -15,7 +15,7 @@
 #include "Math/BsAABox.h"
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
-#include "Components/BsCLight.h"
+#include "Components/BsLight.h"
 
 using namespace b3d;
 

@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRenderCompositor.h"
 #include "Renderer/BsRendererExtension.h"
-#include "Renderer/BsSkybox.h"
+#include "Components/BsCSkybox.h"
 #include "Renderer/BsCamera.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Utility/BsBitwise.h"

@@ -1,61 +1,248 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCSkybox.h"
+
+#include "BsCoreApplication.h"
+#include "CoreObject/BsCoreObjectSync.h"
+#include "Image/BsTexture.h"
 #include "Private/RTTI/BsCSkyboxRTTI.h"
+#include "Profiling/BsProfilerGPU.h"
+#include "RenderAPI/BsGpuCommandBuffer.h"
+#include "RenderAPI/BsGpuDevice.h"
+#include "Renderer/BsIBLUtility.h"
+#include "Renderer/BsRenderer.h"
+#include "Renderer/BsRendererScene.h"
 #include "Scene/BsSceneInstance.h"
-#include "Renderer/BsSkybox.h"
 
 using namespace b3d;
 
-CSkybox::CSkybox()
+namespace b3d
 {
-	SetFlag(ComponentFlag::AlwaysRun, true);
-	SetName("Skybox");
+	B3D_SYNC_BLOCK_BEGIN(Skybox, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(mBrightness)
+		B3D_SYNC_BLOCK_ENTRY(mTexture)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(bool, mActive)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(SPtr<SceneInstance>, mSceneInstance)
+	B3D_SYNC_BLOCK_END
 }
 
-CSkybox::CSkybox(const HSceneObject& parent)
+template <bool IsRenderProxy>
+void TSkybox<IsRenderProxy>::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
+{
+	if constexpr(!IsRenderProxy)
+		CoreObject::MarkRenderProxyDataDirty((u32)flag);
+}
+
+template TSkybox<true>;
+template TSkybox<false>;
+
+Skybox::Skybox(const HSceneObject& parent)
 	: Component(parent)
 {
 	SetFlag(ComponentFlag::AlwaysRun, true);
 	SetName("Skybox");
 }
 
-CSkybox::~CSkybox()
+Skybox::Skybox()
+	: Skybox(nullptr)
+{ }
+
+void Skybox::Initialize()
 {
-	mInternal->Destroy();
+	SetShared(B3DStaticGameObjectCast<Skybox>(mThisHandle).GetShared());
+
+	Component::Initialize();
+	CoreObject::Initialize();
 }
 
-void CSkybox::OnBeginPlay()
+void Skybox::OnCreated()
+{
+	// This shouldn't normally happen, as filtered textures are generated when a radiance texture is assigned, but
+	// we check for it anyway (something could have gone wrong).
+	if(mTexture.IsLoaded())
+	{
+		if(mFilteredRadiance == nullptr || mIrradiance == nullptr)
+			FilterTexture();
+	}
+}
+
+void Skybox::OnEnabled()
+{
+	MarkRenderProxyDataDirty();
+}
+
+void Skybox::OnDisabled()
+{
+	MarkRenderProxyDataDirty();
+}
+
+void Skybox::OnDestroyed()
+{
+	if(mRendererTask)
+		mRendererTask->Cancel();
+
+	CoreObject::Destroy();
+}
+
+void Skybox::SetTexture(const HTexture& texture)
+{
+	mTexture = texture;
+
+	mFilteredRadiance = nullptr;
+	mIrradiance = nullptr;
+
+	if(mTexture.IsLoaded())
+		FilterTexture();
+
+	MarkRenderProxyDataDirty();
+}
+
+void Skybox::FilterTexture()
+{
+	// If previous rendering task exists, cancel it
+	if(mRendererTask != nullptr)
+		mRendererTask->Cancel();
+
+	{
+		TextureCreateInformation cubemapDesc;
+		cubemapDesc.Name = "Skybox filtered radiance cubemap";
+		cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
+		cubemapDesc.Format = PF_RG11B10F;
+		cubemapDesc.Width = render::IBLUtility::kReflectionCubemapSize;
+		cubemapDesc.Height = render::IBLUtility::kReflectionCubemapSize;
+		cubemapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
+		cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+
+		mFilteredRadiance = Texture::CreateShared(cubemapDesc);
+	}
+
+	{
+		TextureCreateInformation irradianceCubemapDesc;
+		irradianceCubemapDesc.Name = "Skybox irradiance cubemap";
+		irradianceCubemapDesc.Type = TEX_TYPE_CUBE_MAP;
+		irradianceCubemapDesc.Format = PF_RG11B10F;
+		irradianceCubemapDesc.Width = render::IBLUtility::kIrradianceCubemapSize;
+		irradianceCubemapDesc.Height = render::IBLUtility::kIrradianceCubemapSize;
+		irradianceCubemapDesc.MipMapCount = 0;
+		irradianceCubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+
+		mIrradiance = Texture::CreateShared(irradianceCubemapDesc);
+	}
+
+	auto renderComplete = [this]()
+	{
+		mRendererTask = nullptr;
+	};
+
+	SPtr<render::Skybox> skyboxRenderProxy = B3DGetRenderProxy(this);
+	SPtr<render::Texture> filteredRadianceRenderProxy = B3DGetRenderProxy(mFilteredRadiance);
+	SPtr<render::Texture> irradianceRenderProxy = B3DGetRenderProxy(mIrradiance);
+
+	auto filterSkybox = [filteredRadianceRenderProxy, irradianceRenderProxy, skyboxRenderProxy](render::GpuCommandBufferPool& commandBufferPool)
+	{
+		const SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("FilterSkybox"));
+
+		GetProfilerGPU().BeginSample(*commandBuffer, "FilterSkybox");
+
+		// Filter radiance
+		render::GetIBLUtility().ScaleCubemap(*commandBuffer, skyboxRenderProxy->GetTexture(), 0, filteredRadianceRenderProxy, 0);
+		render::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, filteredRadianceRenderProxy, nullptr);
+
+		skyboxRenderProxy->mFilteredRadiance = filteredRadianceRenderProxy;
+
+		// Generate irradiance
+		render::GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyboxRenderProxy->GetTexture(), irradianceRenderProxy);
+		skyboxRenderProxy->mIrradiance = irradianceRenderProxy;
+
+		GetProfilerGPU().EndSample(*commandBuffer, "FilterSkybox");
+		const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+		gpuDevice->SubmitCommandBuffer(commandBuffer);
+
+		return true;
+	};
+
+	mRendererTask = render::RendererTask::Create("SkyboxFilter", filterSkybox);
+
+	mRendererTask->OnComplete.Connect(renderComplete);
+	render::GetRenderer()->AddTask(mRendererTask);
+}
+
+SPtr<render::RenderProxy> Skybox::CreateRenderProxy() const
 {
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	SPtr<render::Texture> radiance = B3DGetRenderProxy(mTexture);
+	SPtr<render::Texture> filteredRadiance = B3DGetRenderProxy(mFilteredRadiance);
+	SPtr<render::Texture> irradiance = B3DGetRenderProxy(mIrradiance);
 
-	// If mInternal already exists this means this object was deserialized,
-	// so all we need to do is initialize it.
-	if(mInternal != nullptr)
+	render::Skybox* renderProxy = new(B3DAllocate<render::Skybox>()) render::Skybox(B3DGetRenderProxy(scene), radiance, filteredRadiance, irradiance);
+	SPtr<render::Skybox> renderProxyShared = B3DMakeSharedFromExisting<render::Skybox>(renderProxy);
+	renderProxyShared->SetShared(renderProxyShared);
+
+	return renderProxyShared;
+}
+
+RenderProxySyncPacket* Skybox::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
+{
+	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
+	syncPacket->mActive = GetEnabled();
+	syncPacket->mSceneInstance = B3DGetRenderProxy(SceneObject()->GetScene());
+
+	return syncPacket;
+}
+
+RTTIType* Skybox::GetRttiStatic()
+{
+	return SkyboxRTTI::Instance();
+}
+
+RTTIType* Skybox::GetRtti() const
+{
+	return Skybox::GetRttiStatic();
+}
+
+namespace b3d { namespace render
+{
+Skybox::Skybox(const SPtr<SceneInstance>& scene, const SPtr<Texture>& radiance, const SPtr<Texture>& filteredRadiance, const SPtr<Texture>& irradiance)
+	: mSceneInstance(scene), mFilteredRadiance(filteredRadiance), mIrradiance(irradiance)
+{
+	mTexture = radiance;
+}
+
+Skybox::~Skybox()
+{
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->UnregisterSkybox(this);
+}
+
+void Skybox::Initialize()
+{
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	rendererScene->RegisterSkybox(this);
+
+	RenderProxy::Initialize();
+}
+
+void Skybox::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
+{
+	auto* const syncPacket = data.GetSyncPacket<b3d::Skybox::SyncPacket>();
+	if(!syncPacket)
+		return;
+
+	bool oldIsActive = mActive;
+	syncPacket->ApplySyncData(this);
+
+	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
+	if(oldIsActive != mActive)
 	{
-		mInternal->SetScene(scene);
-		mInternal->Initialize();
+		if(mActive)
+			rendererScene->RegisterSkybox(this);
+		else
+			rendererScene->UnregisterSkybox(this);
 	}
 	else
 	{
-		mInternal = Skybox::Create(scene);
+		rendererScene->UnregisterSkybox(this);
+		rendererScene->RegisterSkybox(this);
 	}
-
-	scene->BindActor(mInternal, SceneObject());
 }
-
-void CSkybox::OnDestroyed()
-{
-	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
-	scene->UnbindActor(mInternal);
-}
-
-RTTIType* CSkybox::GetRttiStatic()
-{
-	return CSkyboxRTTI::Instance();
-}
-
-RTTIType* CSkybox::GetRtti() const
-{
-	return CSkybox::GetRttiStatic();
-}
+}}

@@ -5,7 +5,7 @@
 #include "Components/BsReflectionProbe.h"
 #include "BsRenderBeast.h"
 #include "Renderer/BsRendererUtility.h"
-#include "Renderer/BsSkybox.h"
+#include "Components/BsCSkybox.h"
 
 namespace b3d { namespace render {
 

@@ -10,7 +10,7 @@
 #include "RenderAPI/BsGpuCommandBuffer.h"
 #include "RenderAPI/BsRenderTexture.h"
 #include "Renderer/BsRendererUtility.h"
-#include "Renderer/BsSkybox.h"
+#include "COmponents/BsCSkybox.h"
 #include "Utility/BsRendererTextures.h"
 
 namespace b3d { namespace render {
