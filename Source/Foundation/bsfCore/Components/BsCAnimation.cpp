@@ -7,10 +7,637 @@
 #include "Mesh/BsMesh.h"
 #include "Animation/BsMorphShapes.h"
 #include "Animation/BsAnimationClip.h"
+#include "Animation/BsAnimationUtility.h"
+#include "Animation/BsSkeleton.h"
 #include "Private/RTTI/BsCAnimationRTTI.h"
 #include "Scene/BsSceneInstance.h"
 
 using namespace b3d;
+
+AnimationClipInfo::AnimationClipInfo(const HAnimationClip& clip)
+	: Clip(clip)
+{}
+
+AnimationProxy::AnimationProxy(u64 animationId)
+	: AnimationId(animationId)
+{}
+
+AnimationProxy::~AnimationProxy()
+{
+	Clear();
+}
+
+void AnimationProxy::Clear()
+{
+	if(Layers == nullptr)
+		return;
+
+	for(u32 layerIndex = 0; layerIndex < LayerCount; layerIndex++)
+	{
+		AnimationStateLayer& layer = Layers[layerIndex];
+		for(u32 stateIndex = 0; stateIndex < layer.StateCount; stateIndex++)
+		{
+			AnimationState& state = layer.States[stateIndex];
+
+			if(state.Curves != nullptr)
+			{
+				{
+					const u32 curveCount = (u32)state.Curves->Position.size();
+					for(u32 curveIndex = 0; curveIndex < curveCount; curveIndex++)
+						state.PositionCaches[curveIndex].~TCurveCache();
+				}
+
+				{
+					const u32 curveCount = (u32)state.Curves->Rotation.size();
+					for(u32 curveIndex = 0; curveIndex < curveCount; curveIndex++)
+						state.RotationCaches[curveIndex].~TCurveCache();
+				}
+
+				{
+					const u32 curveCount = (u32)state.Curves->Scale.size();
+					for(u32 curveIndex = 0; curveIndex < curveCount; curveIndex++)
+						state.ScaleCaches[curveIndex].~TCurveCache();
+				}
+
+				{
+					const u32 curveCount = (u32)state.Curves->Generic.size();
+					for(u32 curveIndex = 0; curveIndex < curveCount; curveIndex++)
+						state.GenericCaches[curveIndex].~TCurveCache();
+				}
+			}
+
+			if(Skeleton != nullptr)
+			{
+				const u32 boneCount = Skeleton->GetBoneCount();
+				for(u32 boneIndex = 0; boneIndex < boneCount; boneIndex++)
+					state.BoneToCurveMapping[boneIndex].~AnimationCurveMapping();
+			}
+
+			if(state.SceneObjectToCurveMapping != nullptr)
+			{
+				for(u32 sceneObjextIndex = 0; sceneObjextIndex < SceneObjectCount; sceneObjextIndex++)
+					state.SceneObjectToCurveMapping[sceneObjextIndex].~AnimationCurveMapping();
+			}
+
+			state.~AnimationState();
+		}
+
+		layer.~AnimationStateLayer();
+	}
+
+	for(u32 morphShapeIndex = 0; morphShapeIndex < MorphShapeCount; morphShapeIndex++)
+		MorphShapeInfos[morphShapeIndex].Shape.~SPtr<MorphShape>();
+
+	// All of the memory is part of the same buffer, so we only need to free the first element
+	B3DFree(Layers);
+	Layers = nullptr;
+	GenericCurveOutputs = nullptr;
+	SceneObjectInfos = nullptr;
+	SceneObjectTransforms = nullptr;
+
+	LayerCount = 0;
+	GenericCurveCount = 0;
+}
+
+void AnimationProxy::RebuildFull(const SPtr<b3d::Skeleton>& skeleton, const b3d::SkeletonMask& mask, Vector<AnimationClipInfo>& inOutClipInfos, const Vector<SceneObjectMappingCurveInfo>& sceneObjects, const SPtr<MorphShapes>& morphShapes)
+{
+	this->Skeleton = skeleton;
+	this->SkeletonMask = mask;
+
+	// Note: I could avoid having a separate allocation for LocalSkeletonPoses and use the same buffer as the rest
+	// of AnimationProxy
+	if(skeleton != nullptr)
+		SkeletonPose = LocalSkeletonPose(skeleton->GetBoneCount());
+
+	SceneObjectCount = (u32)sceneObjects.size();
+	if(SceneObjectCount > 0)
+		SceneObjectPose = LocalSkeletonPose(SceneObjectCount, true);
+	else
+		SceneObjectPose = LocalSkeletonPose();
+
+	RebuildClips(inOutClipInfos, sceneObjects, morphShapes);
+}
+
+void AnimationProxy::RebuildClips(Vector<AnimationClipInfo>& inOutClipInfos, const Vector<SceneObjectMappingCurveInfo>& sceneObjects, const SPtr<MorphShapes>& morphShapes)
+{
+	Clear();
+
+	B3DMarkAllocatorFrame();
+	{
+		FrameVector<bool> clipLoadState(inOutClipInfos.size());
+		FrameVector<AnimationStateLayer> tempLayers;
+		u32 clipIndex = 0;
+		for(auto& clipInfo : inOutClipInfos)
+		{
+			u32 layer = clipInfo.State.Layer;
+			if(layer == ~0u)
+				layer = 0;
+			else
+				layer += 1;
+
+			auto found = std::find_if(tempLayers.begin(), tempLayers.end(), [&](auto& x)
+										 { return x.Index == layer; });
+
+			bool isLoaded = clipInfo.Clip.IsLoaded();
+			clipLoadState[clipIndex] = isLoaded;
+
+			if(found == tempLayers.end())
+			{
+				tempLayers.push_back(AnimationStateLayer());
+				AnimationStateLayer& newLayer = tempLayers.back();
+
+				newLayer.Index = layer;
+				newLayer.Additive = isLoaded && clipInfo.Clip->IsAdditive();
+			}
+
+			clipIndex++;
+		}
+
+		std::sort(tempLayers.begin(), tempLayers.end(), [&](auto& x, auto& y)
+				  { return x.Index < y.Index; });
+
+		LayerCount = (u32)tempLayers.size();
+		const u32 clipCount = (u32)inOutClipInfos.size();
+		u32 boneCount;
+
+		if(Skeleton != nullptr)
+			boneCount = Skeleton->GetBoneCount();
+		else
+			boneCount = 0;
+
+		u32 positionCurveCount = 0;
+		u32 rotationCurveCount = 0;
+		u32 scaleCurveCount = 0;
+
+		clipIndex = 0;
+		for(auto& clipInfo : inOutClipInfos)
+		{
+			bool isLoaded = clipLoadState[clipIndex++];
+			if(!isLoaded)
+				continue;
+
+			SPtr<AnimationCurves> curves = clipInfo.Clip->GetCurves();
+			positionCurveCount += (u32)curves->Position.size();
+			rotationCurveCount += (u32)curves->Rotation.size();
+			scaleCurveCount += (u32)curves->Scale.size();
+		}
+
+		GenericCurveCount = 0;
+		if(!inOutClipInfos.empty() && clipLoadState[0])
+		{
+			SPtr<AnimationCurves> curves = inOutClipInfos[0].Clip->GetCurves();
+			GenericCurveCount = (u32)curves->Generic.size();
+		}
+
+		u32* mappedBoneIndices = (u32*)B3DFrameAllocate(sizeof(u32) * SceneObjectCount);
+		for(u32 i = 0; i < SceneObjectCount; i++)
+			mappedBoneIndices[i] = -1;
+
+		u32 boneMappedSceneObjectCount = 0;
+		if(Skeleton != nullptr)
+		{
+			for(u32 sceneObjectIndex = 0; sceneObjectIndex < SceneObjectCount; sceneObjectIndex++)
+			{
+				if(sceneObjects[sceneObjectIndex].Object.IsDestroyed(true))
+					continue;
+
+				// Empty string always means root bone
+				if(sceneObjects[sceneObjectIndex].CurveName.empty())
+				{
+					const u32 rootBoneIndex = Skeleton->GetRootBoneIndex();
+					if(rootBoneIndex != ~0u)
+					{
+						mappedBoneIndices[sceneObjectIndex] = rootBoneIndex;
+						boneMappedSceneObjectCount++;
+					}
+				}
+				else
+				{
+					for(u32 boneIndex = 0; boneIndex < boneCount; boneIndex++)
+					{
+						if(Skeleton->GetBoneInfo(boneIndex).Name == sceneObjects[sceneObjectIndex].CurveName)
+						{
+							mappedBoneIndices[sceneObjectIndex] = boneIndex;
+
+							boneMappedSceneObjectCount++;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if(morphShapes != nullptr)
+		{
+			MorphChannelCount = morphShapes->GetChannelCount();
+			MorphVertexCount = morphShapes->GetVertexCount();
+
+			MorphShapeCount = 0;
+			for(u32 i = 0; i < MorphChannelCount; i++)
+				MorphShapeCount += morphShapes->GetChannel(i)->GetShapeCount();
+		}
+		else
+		{
+			MorphChannelCount = 0;
+			MorphShapeCount = 0;
+			MorphVertexCount = 0;
+		}
+
+		u32 numBoneMappings = boneCount * clipCount;
+		u32 layersSize = sizeof(AnimationStateLayer) * LayerCount;
+		u32 clipsSize = sizeof(AnimationState) * clipCount;
+		u32 boneMappingSize = numBoneMappings * sizeof(AnimationCurveMapping);
+		u32 positionCacheSize = positionCurveCount * sizeof(TCurveCache<Vector3>);
+		u32 rotationCacheSize = rotationCurveCount * sizeof(TCurveCache<Quaternion>);
+		u32 scaleCacheSize = scaleCurveCount * sizeof(TCurveCache<Vector3>);
+		u32 genericCacheSize = GenericCurveCount * sizeof(TCurveCache<float>);
+		u32 genericCurveOutputSize = GenericCurveCount * sizeof(float);
+		u32 sceneObjectIdsSize = SceneObjectCount * sizeof(AnimatedSceneObjectInfo);
+		u32 sceneObjectTransformsSize = boneMappedSceneObjectCount * sizeof(Matrix4);
+		u32 morphChannelSize = MorphChannelCount * sizeof(MorphChannelInfo);
+		u32 morphShapeSize = MorphShapeCount * sizeof(MorphShapeInfo);
+
+		u8* data = (u8*)B3DAllocate(layersSize + clipsSize + boneMappingSize + positionCacheSize + rotationCacheSize + scaleCacheSize + genericCacheSize + genericCurveOutputSize + sceneObjectIdsSize + sceneObjectTransformsSize + morphChannelSize + morphShapeSize);
+
+		Layers = (AnimationStateLayer*)data;
+		memcpy(Layers, tempLayers.data(), layersSize);
+		data += layersSize;
+
+		AnimationState* states = (AnimationState*)data;
+		for(u32 i = 0; i < clipCount; i++)
+			new(&states[i]) AnimationState();
+
+		data += clipsSize;
+
+		AnimationCurveMapping* boneMappings = (AnimationCurveMapping*)data;
+		for(u32 i = 0; i < numBoneMappings; i++)
+			new(&boneMappings[i]) AnimationCurveMapping();
+
+		data += boneMappingSize;
+
+		TCurveCache<Vector3>* positionCache = (TCurveCache<Vector3>*)data;
+		for(u32 i = 0; i < positionCurveCount; i++)
+			new(&positionCache[i]) TCurveCache<Vector3>();
+
+		data += positionCacheSize;
+
+		TCurveCache<Quaternion>* rotationCache = (TCurveCache<Quaternion>*)data;
+		for(u32 i = 0; i < rotationCurveCount; i++)
+			new(&rotationCache[i]) TCurveCache<Quaternion>();
+
+		data += rotationCacheSize;
+
+		TCurveCache<Vector3>* scaleCache = (TCurveCache<Vector3>*)data;
+		for(u32 i = 0; i < scaleCurveCount; i++)
+			new(&scaleCache[i]) TCurveCache<Vector3>();
+
+		data += scaleCacheSize;
+
+		TCurveCache<float>* genericCurveCache = (TCurveCache<float>*)data;
+		for(u32 i = 0; i < GenericCurveCount; i++)
+			new(&genericCurveCache[i]) TCurveCache<float>();
+
+		data += genericCacheSize;
+
+		GenericCurveOutputs = (float*)data;
+		data += genericCurveOutputSize;
+
+		SceneObjectInfos = (AnimatedSceneObjectInfo*)data;
+		data += sceneObjectIdsSize;
+
+		SceneObjectTransforms = (Matrix4*)data;
+		for(u32 i = 0; i < boneMappedSceneObjectCount; i++)
+			SceneObjectTransforms[i] = Matrix4::kIdentity;
+
+		data += sceneObjectTransformsSize;
+
+		MorphChannelInfos = (MorphChannelInfo*)data;
+		data += morphChannelSize;
+
+		MorphShapeInfos = (MorphShapeInfo*)data;
+		data += morphShapeSize;
+
+		// Generate data required for morph shape animation
+		if(morphShapes != nullptr)
+		{
+			u32 currentShapeIndex = 0;
+			for(u32 morphChannelIndex = 0; morphChannelIndex < MorphChannelCount; morphChannelIndex++)
+			{
+				SPtr<MorphChannel> morphChannel = morphShapes->GetChannel(morphChannelIndex);
+				const u32 shapeCount = morphChannel->GetShapeCount();
+
+				MorphChannelInfo& channelInfo = MorphChannelInfos[morphChannelIndex];
+				channelInfo.Weight = 0.0f;
+				channelInfo.ShapeStart = currentShapeIndex;
+				channelInfo.ShapeCount = shapeCount;
+				channelInfo.FrameCurveIndex = ~0u;
+				channelInfo.WeightCurveIdx = ~0u;
+
+				for(u32 shapeIndex = 0; shapeIndex < shapeCount; shapeIndex++)
+				{
+					MorphShapeInfo& shapeInfo = MorphShapeInfos[currentShapeIndex];
+					new(&shapeInfo.Shape) SPtr<MorphShape>();
+
+					SPtr<MorphShape> shape = morphChannel->GetShape(shapeIndex);
+					shapeInfo.Shape = shape;
+					shapeInfo.FrameWeight = shape->GetWeight();
+					shapeInfo.FinalWeight = 0.0f;
+
+					currentShapeIndex++;
+				}
+			}
+
+			// Find any curves affecting morph shape animation
+			if(!inOutClipInfos.empty())
+			{
+				const bool isClipValid = clipLoadState[0];
+				if(isClipValid)
+				{
+					AnimationClipInfo& clipInfo = inOutClipInfos[0];
+
+					for(u32 morphChannelIndex = 0; morphChannelIndex < MorphChannelCount; morphChannelIndex++)
+					{
+						SPtr<MorphChannel> morphChannel = morphShapes->GetChannel(morphChannelIndex);
+						MorphChannelInfo& channelInfo = MorphChannelInfos[morphChannelIndex];
+
+						clipInfo.Clip->GetMorphMapping(morphChannel->GetName(), channelInfo.FrameCurveIndex, channelInfo.WeightCurveIdx);
+					}
+				}
+			}
+
+			MorphChannelWeightsDirty = true;
+		}
+
+		u32 currentLayerIndex = 0;
+		u32 currentStateIndex = 0;
+
+		// Note: Hidden dependency. First clip info must be in layers[0].states[0] (needed for generic curves which only
+		// use the primary clip).
+		for(u32 layerIndex = 0; layerIndex < LayerCount; layerIndex++)
+		{
+			AnimationStateLayer& layer = Layers[layerIndex];
+
+			layer.States = &states[currentStateIndex];
+			layer.StateCount = 0;
+
+			u32 localStateIdx = 0;
+			for(u32 j = 0; j < (u32)inOutClipInfos.size(); j++)
+			{
+				AnimationClipInfo& clipInfo = inOutClipInfos[j];
+
+				u32 clipLayer = clipInfo.State.Layer;
+				if(clipLayer == (u32)-1)
+					clipLayer = 0;
+				else
+					clipLayer += 1;
+
+				if(clipLayer != layer.Index)
+					continue;
+
+				AnimationState& state = states[currentStateIndex];
+				state.Loop = clipInfo.State.WrapMode == AnimationWrapMode::Loop;
+
+				// Calculate weight if fading is active
+				float weight = clipInfo.State.Weight;
+
+				//// Assumes time is clamped to [0, fadeLength] and fadeLength != 0
+				if(clipInfo.FadeDirection < 0.0f)
+				{
+					float t = clipInfo.FadeTime / clipInfo.FadeLength;
+					weight *= (1.0f - t);
+				}
+				else if(clipInfo.FadeDirection > 0.0f)
+				{
+					float t = clipInfo.FadeTime / clipInfo.FadeLength;
+					weight *= t;
+				}
+
+				state.Weight = weight;
+
+				// Set up individual curves and their caches
+				bool isClipValid = clipLoadState[j];
+				if(isClipValid)
+				{
+					state.Curves = clipInfo.Clip->GetCurves();
+					state.Length = clipInfo.Clip->GetLength();
+					state.Disabled = clipInfo.PlaybackType == AnimationPlaybackType::None;
+				}
+				else
+				{
+					static SPtr<AnimationCurves> zeroCurves = B3DMakeShared<AnimationCurves>();
+					state.Curves = zeroCurves;
+					state.Length = 0.0f;
+					state.Disabled = true;
+				}
+
+				// Wrap time if looping
+				if(state.Loop && state.Length > 0.0f)
+					state.Time = Math::Repeat(clipInfo.State.Time, state.Length);
+				else
+					state.Time = clipInfo.State.Time;
+
+				state.PositionCaches = positionCache;
+				positionCache += state.Curves->Position.size();
+
+				state.RotationCaches = rotationCache;
+				rotationCache += state.Curves->Rotation.size();
+
+				state.ScaleCaches = scaleCache;
+				scaleCache += state.Curves->Scale.size();
+
+				state.GenericCaches = genericCurveCache;
+				genericCurveCache += state.Curves->Generic.size();
+
+				clipInfo.LayerIndex = currentLayerIndex;
+				clipInfo.StateIndex = localStateIdx;
+
+				if(isClipValid)
+					clipInfo.CurveVersion = clipInfo.Clip->GetVersion();
+
+				// Set up bone mapping
+				if(Skeleton != nullptr)
+				{
+					state.BoneToCurveMapping = &boneMappings[currentStateIndex * boneCount];
+
+					if(isClipValid)
+					{
+						clipInfo.Clip->GetBoneMapping(*Skeleton, state.BoneToCurveMapping);
+					}
+					else
+					{
+						AnimationCurveMapping emptyMapping = { ~0u, ~0u, ~0u };
+
+						for(u32 boneIndex = 0; boneIndex < boneCount; boneIndex++)
+							state.BoneToCurveMapping[boneIndex] = emptyMapping;
+					}
+				}
+				else
+					state.BoneToCurveMapping = nullptr;
+
+				layer.StateCount++;
+				currentStateIndex++;
+				localStateIdx++;
+			}
+
+			currentLayerIndex++;
+
+			// Must be larger than zero otherwise the layer.states pointer will point to data held by some other layer
+			B3D_ASSERT(layer.StateCount > 0);
+		}
+
+		Matrix4 invRootTransform(BsIdentity);
+		for(u32 sceneObjectIndex = 0; sceneObjectIndex < SceneObjectCount; sceneObjectIndex++)
+		{
+			if(sceneObjects[sceneObjectIndex].CurveName.empty())
+			{
+				HSceneObject so = sceneObjects[sceneObjectIndex].Object;
+				if(!so.IsDestroyed(true))
+					invRootTransform = so->GetWorldMatrix().InverseAffine();
+
+				break;
+			}
+		}
+
+		u32 boneIndex = 0;
+		for(u32 sceneObjectIndex = 0; sceneObjectIndex < SceneObjectCount; sceneObjectIndex++)
+		{
+			HSceneObject sceneObject = sceneObjects[sceneObjectIndex].Object;
+			AnimatedSceneObjectInfo& animatedSceneObjectInfo = SceneObjectInfos[sceneObjectIndex];
+			animatedSceneObjectInfo.SceneObjectId = sceneObject.GetId();
+			animatedSceneObjectInfo.BoneIndex = (i32)mappedBoneIndices[sceneObjectIndex];
+
+			bool isSceneObjectValid = !sceneObject.IsDestroyed(true);
+			if(isSceneObjectValid)
+				animatedSceneObjectInfo.Hash = sceneObject->GetTransformHash();
+			else
+				animatedSceneObjectInfo.Hash = 0;
+
+			animatedSceneObjectInfo.LayerIndex = ~0u;
+			animatedSceneObjectInfo.StateIndex = ~0u;
+
+			// If no bone mapping, find curves directly
+			if(animatedSceneObjectInfo.BoneIndex == -1)
+			{
+				animatedSceneObjectInfo.CurveIndices = { ~0u, ~0u, ~0u };
+
+				if(isSceneObjectValid)
+				{
+					for(u32 clipInfoIndex = 0; clipInfoIndex < (u32)inOutClipInfos.size(); clipInfoIndex++)
+					{
+						AnimationClipInfo& clipInfo = inOutClipInfos[clipInfoIndex];
+
+						animatedSceneObjectInfo.LayerIndex = clipInfo.LayerIndex;
+						animatedSceneObjectInfo.StateIndex = clipInfo.StateIndex;
+
+						bool isClipValid = clipLoadState[clipInfoIndex];
+						if(isClipValid)
+						{
+							// Note: If there are multiple clips with the relevant curve name, we only use the first
+							clipInfo.Clip->GetCurveMapping(sceneObjects[sceneObjectIndex].CurveName, animatedSceneObjectInfo.CurveIndices);
+							break;
+						}
+					}
+				}
+			}
+			else
+			{
+				// No need to check if SO is valid, if it has a bone connection it must be
+				SceneObjectTransforms[boneIndex] = sceneObject->GetWorldMatrix() * invRootTransform;
+				boneIndex++;
+			}
+		}
+
+		B3DFrameFree(mappedBoneIndices);
+	}
+	B3DClearAllocatorFrame();
+}
+
+void AnimationProxy::UpdateClipInfos(const Vector<AnimationClipInfo>& clipInfos)
+{
+	for(auto& clipInfo : clipInfos)
+	{
+		AnimationState& state = Layers[clipInfo.LayerIndex].States[clipInfo.StateIndex];
+
+		state.Loop = clipInfo.State.WrapMode == AnimationWrapMode::Loop;
+		state.Weight = clipInfo.State.Weight;
+
+		// Wrap time if looping
+		if(state.Loop && state.Length > 0.0f)
+			state.Time = Math::Repeat(clipInfo.State.Time, state.Length);
+		else
+			state.Time = clipInfo.State.Time;
+
+		bool isLoaded = clipInfo.Clip.IsLoaded();
+		state.Disabled = !isLoaded || clipInfo.PlaybackType == AnimationPlaybackType::None;
+	}
+}
+
+void AnimationProxy::UpdateMorphChannelWeights(const Vector<float>& weights)
+{
+	const u32 weightCount = (u32)weights.size();
+	for(u32 morphChannelIndex = 0; morphChannelIndex < MorphChannelCount; morphChannelIndex++)
+	{
+		if(morphChannelIndex < weightCount)
+			MorphChannelInfos[morphChannelIndex].Weight = weights[morphChannelIndex];
+		else
+			MorphChannelInfos[morphChannelIndex].Weight = 0.0f;
+	}
+
+	MorphChannelWeightsDirty = true;
+}
+
+void AnimationProxy::UpdateTransforms(const Vector<SceneObjectMappingCurveInfo>& sceneObjects)
+{
+	Matrix4 invRootTransform(BsIdentity);
+	for(u32 sceneObjectIndex = 0; sceneObjectIndex < SceneObjectCount; sceneObjectIndex++)
+	{
+		if(sceneObjects[sceneObjectIndex].CurveName.empty())
+		{
+			HSceneObject so = sceneObjects[sceneObjectIndex].Object;
+			if(!so.IsDestroyed(true))
+				invRootTransform = so->GetWorldMatrix().InverseAffine();
+
+			break;
+		}
+	}
+
+	u32 boneIndex = 0;
+	for(u32 i = 0; i < SceneObjectCount; i++)
+	{
+		HSceneObject sceneObject = sceneObjects[i].Object;
+		if(sceneObject.IsDestroyed(true))
+		{
+			SceneObjectInfos[i].Hash = 0;
+			continue;
+		}
+
+		SceneObjectInfos[i].Hash = sceneObject->GetTransformHash();
+
+		if(SceneObjectInfos[i].BoneIndex == -1)
+			continue;
+
+		SceneObjectTransforms[boneIndex] = sceneObjects[i].Object->GetWorldMatrix() * invRootTransform;
+		boneIndex++;
+	}
+}
+
+void AnimationProxy::UpdateTime(const Vector<AnimationClipInfo>& clipInfos)
+{
+	for(auto& clipInfo : clipInfos)
+	{
+		AnimationState& state = Layers[clipInfo.LayerIndex].States[clipInfo.StateIndex];
+
+		// Wrap time if looping
+		if(state.Loop && state.Length > 0.0f)
+			state.Time = Math::Repeat(clipInfo.State.Time, state.Length);
+		else
+			state.Time = clipInfo.State.Time;
+
+		bool isLoaded = clipInfo.Clip.IsLoaded();
+		state.Disabled = !isLoaded || clipInfo.PlaybackType == AnimationPlaybackType::None;
+	}
+}
+
 
 CAnimation::CAnimation(const HSceneObject& parent)
 	: Component(parent)
@@ -29,99 +656,455 @@ void CAnimation::SetDefaultClip(const HAnimationClip& clip)
 {
 	mDefaultClip = clip;
 
-	if(clip.IsLoaded() && mInternal != nullptr && !mPreviewMode)
-		mInternal->Play(clip);
+	if(clip.IsLoaded() && mAnimationId != ~0u && !mPreviewMode)
+		Play(clip);
 }
 
 void CAnimation::SetWrapMode(AnimationWrapMode wrapMode)
 {
+	if(mWrapMode == wrapMode)
+		return;
+
 	mWrapMode = wrapMode;
 
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->SetWrapMode(wrapMode);
+	for(auto& clipInfo : mClipInfos)
+		clipInfo.State.WrapMode = wrapMode;
+
+	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
 void CAnimation::SetSpeed(float speed)
 {
 	mSpeed = speed;
 
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->SetSpeed(speed);
+	for(auto& clipInfo : mClipInfos)
+	{
+		// Special case: Ignore non-moving ones
+		if(!clipInfo.State.Stopped)
+			clipInfo.State.Speed = speed;
+	}
+
+	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
 void CAnimation::Play(const HAnimationClip& clip)
 {
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->Play(clip);
+	if(!IsAnimationProxyValid() || mPreviewMode)
+		return;
+
+	AnimationClipInfo* clipInfo = GetOrCreateClipInfo(clip, ~0u);
+	if(clipInfo != nullptr)
+	{
+		clipInfo->State.Time = 0.0f;
+		clipInfo->State.Speed = mSpeed;
+		clipInfo->State.Weight = 1.0f;
+		clipInfo->State.WrapMode = mWrapMode;
+		clipInfo->PlaybackType = AnimationPlaybackType::Normal;
+	}
+
+	mSampleStep = AnimationSampleStep::None;
+	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
 void CAnimation::BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength, u32 layer)
 {
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->BlendAdditive(clip, weight, fadeLength, layer);
+	if(!IsAnimationProxyValid() || mPreviewMode)
+		return;
+
+	if(clip != nullptr && !clip->IsAdditive())
+	{
+		B3D_LOG(Warning, Renderer, "BlendAdditive() called with a clip that doesn't contain additive animation. Ignoring.");
+
+		// Stop any clips on this layer, even if invalid
+		HAnimationClip nullClip;
+		GetOrCreateClipInfo(nullClip, layer);
+
+		mSampleStep = AnimationSampleStep::None;
+		return;
+	}
+
+	AnimationClipInfo* clipInfo = GetOrCreateClipInfo(clip, layer);
+	if(clipInfo != nullptr)
+	{
+		clipInfo->State.Time = 0.0f;
+		clipInfo->State.Speed = mSpeed;
+		clipInfo->State.Weight = weight;
+		clipInfo->State.WrapMode = mWrapMode;
+
+		if(fadeLength > 0.0f)
+		{
+			clipInfo->FadeDirection = 1.0f;
+			clipInfo->FadeTime = 0.0f;
+			clipInfo->FadeLength = fadeLength;
+		}
+
+		clipInfo->PlaybackType = AnimationPlaybackType::Normal;
+
+		mSampleStep = AnimationSampleStep::None;
+		mDirty |= AnimationDirtyStateFlag::Value;
+	}
 }
 
 void CAnimation::Blend1D(const Blend1DInfo& info, float alpha)
 {
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->Blend1D(info, alpha);
+	if(!IsAnimationProxyValid() || mPreviewMode)
+		return;
+
+	if(info.Clips.empty())
+		return;
+
+	// Find valid range
+	float startPos = 0.0f;
+	float endPos = 0.0f;
+
+	for(u32 clipIndex = 0; clipIndex < (u32)info.Clips.size(); clipIndex++)
+	{
+		startPos = std::min(startPos, info.Clips[clipIndex].Position);
+		endPos = std::min(endPos, info.Clips[clipIndex].Position);
+	}
+
+	float length = endPos - startPos;
+	if(Math::ApproxEquals(length, 0.0f) || info.Clips.size() < 2)
+	{
+		Play(info.Clips[0].Clip);
+		return;
+	}
+
+	// Clamp or loop time
+	bool loop = mWrapMode == AnimationWrapMode::Loop;
+	if(alpha < startPos)
+	{
+		if(loop)
+			alpha = alpha - std::floor(alpha / length) * length;
+		else // Clamping
+			alpha = startPos;
+	}
+
+	if(alpha > endPos)
+	{
+		if(loop)
+			alpha = alpha - std::floor(alpha / length) * length;
+		else // Clamping
+			alpha = endPos;
+	}
+
+	// Find keys to blend between
+	i32 start = 0;
+	i32 searchLength = (i32)info.Clips.size();
+
+	while(searchLength > 0)
+	{
+		i32 half = searchLength >> 1;
+		i32 mid = start + half;
+
+		if(alpha < info.Clips[mid].Position)
+		{
+			searchLength = half;
+		}
+		else
+		{
+			start = mid + 1;
+			searchLength -= (half + 1);
+		}
+	}
+
+	u32 leftKey = std::max(0, start - 1);
+	u32 rightKey = std::min(start, (i32)info.Clips.size() - 1);
+
+	float interpLength = info.Clips[rightKey].Position - info.Clips[leftKey].Position;
+	alpha = (alpha - info.Clips[leftKey].Position) / interpLength;
+
+	// Add clips and set weights
+	for(u32 i = 0; i < (u32)info.Clips.size(); i++)
+	{
+		AnimationClipInfo* clipInfo = GetOrCreateClipInfo(info.Clips[i].Clip, ~0u, i == 0);
+		if(clipInfo != nullptr)
+		{
+			clipInfo->State.Time = 0.0f;
+			clipInfo->State.Stopped = true;
+			clipInfo->State.Speed = 0.0f;
+			clipInfo->State.WrapMode = AnimationWrapMode::Clamp;
+
+			if(i == leftKey)
+				clipInfo->State.Weight = 1.0f - alpha;
+			else if(i == rightKey)
+				clipInfo->State.Weight = alpha;
+			else
+				clipInfo->State.Weight = 0.0f;
+
+			clipInfo->PlaybackType = AnimationPlaybackType::Normal;
+		}
+	}
+
+	mSampleStep = AnimationSampleStep::None;
+	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
 void CAnimation::Blend2D(const Blend2DInfo& info, const Vector2& alpha)
 {
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->Blend2D(info, alpha);
+	if(!IsAnimationProxyValid() || mPreviewMode)
+		return;
+
+	AnimationClipInfo* topLeftClipInfo = GetOrCreateClipInfo(info.TopLeftClip, ~0u, true);
+	if(topLeftClipInfo != nullptr)
+	{
+		topLeftClipInfo->State.Time = 0.0f;
+		topLeftClipInfo->State.Stopped = true;
+		topLeftClipInfo->State.Speed = 0.0f;
+		topLeftClipInfo->State.Weight = (1.0f - alpha.X) * (1.0f - alpha.Y);
+		topLeftClipInfo->State.WrapMode = AnimationWrapMode::Clamp;
+
+		topLeftClipInfo->PlaybackType = AnimationPlaybackType::Normal;
+	}
+
+	AnimationClipInfo* topRightClipInfo = GetOrCreateClipInfo(info.TopRightClip, ~0u, false);
+	if(topRightClipInfo != nullptr)
+	{
+		topRightClipInfo->State.Time = 0.0f;
+		topRightClipInfo->State.Stopped = true;
+		topRightClipInfo->State.Speed = 0.0f;
+		topRightClipInfo->State.Weight = alpha.X * (1.0f - alpha.Y);
+		topRightClipInfo->State.WrapMode = AnimationWrapMode::Clamp;
+
+		topRightClipInfo->PlaybackType = AnimationPlaybackType::Normal;
+	}
+
+	AnimationClipInfo* botLeftClipInfo = GetOrCreateClipInfo(info.BottomLeftClip, ~0u, false);
+	if(botLeftClipInfo != nullptr)
+	{
+		botLeftClipInfo->State.Time = 0.0f;
+		botLeftClipInfo->State.Stopped = true;
+		botLeftClipInfo->State.Speed = 0.0f;
+		botLeftClipInfo->State.Weight = (1.0f - alpha.X) * alpha.Y;
+		botLeftClipInfo->State.WrapMode = AnimationWrapMode::Clamp;
+
+		botLeftClipInfo->PlaybackType = AnimationPlaybackType::Normal;
+	}
+
+	AnimationClipInfo* botRightClipInfo = GetOrCreateClipInfo(info.BottomRightClip, ~0u, false);
+	if(botRightClipInfo != nullptr)
+	{
+		botRightClipInfo->State.Time = 0.0f;
+		botRightClipInfo->State.Stopped = true;
+		botRightClipInfo->State.Speed = 0.0f;
+		botRightClipInfo->State.Weight = alpha.X * alpha.Y;
+		botRightClipInfo->State.WrapMode = AnimationWrapMode::Clamp;
+
+		botRightClipInfo->PlaybackType = AnimationPlaybackType::Normal;
+	}
+
+	mSampleStep = AnimationSampleStep::None;
+	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
 void CAnimation::CrossFade(const HAnimationClip& clip, float fadeLength)
 {
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->CrossFade(clip, fadeLength);
+	if(!IsAnimationProxyValid() || mPreviewMode)
+		return;
+
+	const bool isFading = fadeLength > 0.0f;
+	if(!isFading)
+	{
+		Play(clip);
+		return;
+	}
+
+	AnimationClipInfo* clipInfo = GetOrCreateClipInfo(clip, ~0u, false);
+	if(clipInfo != nullptr)
+	{
+		clipInfo->State.Time = 0.0f;
+		clipInfo->State.Speed = mSpeed;
+		clipInfo->State.Weight = 1.0f;
+		clipInfo->State.WrapMode = mWrapMode;
+		clipInfo->PlaybackType = AnimationPlaybackType::Normal;
+
+		// Set up fade lengths
+		clipInfo->FadeDirection = 1.0f;
+		clipInfo->FadeTime = 0.0f;
+		clipInfo->FadeLength = fadeLength;
+
+		for(auto& entry : mClipInfos)
+		{
+			if(entry.State.Layer == ~0u && entry.Clip != clip)
+			{
+				// If other clips are already cross-fading, we need to persist their current weight before starting
+				// a new crossfade. We do that by adjusting the fade times.
+				if(clipInfo->FadeDirection != 0 && clipInfo->FadeTime < clipInfo->FadeLength)
+				{
+					float t = clipInfo->FadeTime / clipInfo->FadeLength;
+					if(clipInfo->FadeDirection < 0.0f)
+						t = (1.0f - t);
+
+					clipInfo->State.Weight *= t;
+				}
+
+				clipInfo->FadeDirection = -1.0f;
+				clipInfo->FadeTime = 0.0f;
+				clipInfo->FadeLength = fadeLength;
+			}
+		}
+	}
+
+	mSampleStep = AnimationSampleStep::None;
+	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
 void CAnimation::Sample(const HAnimationClip& clip, float time)
 {
-	if(mInternal != nullptr)
-		mInternal->Sample(clip, time);
+	if(!IsAnimationProxyValid())
+		return;
+
+	AnimationClipInfo* clipInfo = GetOrCreateClipInfo(clip, ~0u);
+	if(clipInfo != nullptr)
+	{
+		clipInfo->State.Time = time;
+		clipInfo->State.Speed = 0.0f;
+		clipInfo->State.Weight = 1.0f;
+		clipInfo->State.WrapMode = mWrapMode;
+		clipInfo->PlaybackType = AnimationPlaybackType::Sampled;
+	}
+
+	mSampleStep = AnimationSampleStep::Frame;
+	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
 void CAnimation::Stop(u32 layer)
 {
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->Stop(layer);
+	if(!IsAnimationProxyValid() || mPreviewMode)
+		return;
+
+	B3DMarkAllocatorFrame();
+	{
+		FrameVector<AnimationClipInfo> newClips;
+		for(auto& clipInfo : mClipInfos)
+		{
+			if(clipInfo.State.Layer != layer)
+				newClips.push_back(clipInfo);
+			else
+				mDirty |= AnimationDirtyStateFlag::Layout;
+		}
+
+		mClipInfos.resize(newClips.size());
+		for(u32 i = 0; i < (u32)newClips.size(); i++)
+			mClipInfos[i] = newClips[i];
+	}
+	B3DClearAllocatorFrame();
 }
 
 void CAnimation::StopAll()
 {
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->StopAll();
+	if(!IsAnimationProxyValid() || mPreviewMode)
+		return;
+
+	mClipInfos.clear();
+
+	mSampleStep = AnimationSampleStep::None;
+	mDirty |= AnimationDirtyStateFlag::Layout;
 }
 
 bool CAnimation::IsPlaying() const
 {
-	if(mInternal != nullptr)
-		return mInternal->IsPlaying();
+	if(IsAnimationProxyValid())
+	{
+		for(auto& clipInfo : mClipInfos)
+		{
+			if(clipInfo.Clip.IsLoaded())
+				return true;
+		}
+	}
 
 	return false;
 }
 
 bool CAnimation::GetState(const HAnimationClip& clip, AnimationClipState& state)
 {
-	if(mInternal != nullptr)
-		return mInternal->GetState(clip, state);
+	if(!IsAnimationProxyValid())
+		return false;
+
+	if(clip == nullptr)
+		return false;
+
+	for(auto& clipInfo : mClipInfos)
+	{
+		if(clipInfo.Clip == clip)
+		{
+			state = clipInfo.State;
+
+			if(state.Layer == ~0u)
+				state.Layer = 0;
+			else
+				state.Layer += 1;
+
+			// Internally we store unclamped time, so clamp/loop it
+			float clipLength = 0.0f;
+			if(clip.IsLoaded())
+				clipLength = clip->GetLength();
+
+			bool loop = clipInfo.State.WrapMode == AnimationWrapMode::Loop;
+			AnimationUtility::WrapTime(clipInfo.State.Time, 0.0f, clipLength, loop);
+
+			return true;
+		}
+	}
 
 	return false;
 }
 
 void CAnimation::SetState(const HAnimationClip& clip, AnimationClipState state)
 {
-	if(mInternal != nullptr)
-		return mInternal->SetState(clip, state);
+	if(!IsAnimationProxyValid())
+		return;
+
+	if(state.Layer == 0)
+		state.Layer = ~0u;
+	else
+		state.Layer -= 1;
+
+	AnimationClipInfo* clipInfo = GetOrCreateClipInfo(clip, state.Layer, false);
+
+	if(clipInfo == nullptr)
+		return;
+
+	clipInfo->State = state;
+	clipInfo->PlaybackType = AnimationPlaybackType::Normal;
+
+	mSampleStep = AnimationSampleStep::None;
+	mDirty |= AnimationDirtyStateFlag::Value;
+}
+
+void CAnimation::SetSkeleton(const SPtr<Skeleton>& skeleton)
+{
+	mSkeleton = skeleton;
+	mDirty |= AnimationDirtyStateFlag::All;
+}
+
+void CAnimation::SetMorphShapes(const SPtr<MorphShapes>& morphShapes)
+{
+	mMorphShapes = morphShapes;
+
+	u32 channelCount;
+	if(mMorphShapes != nullptr)
+		channelCount = mMorphShapes->GetChannelCount();
+	else
+		channelCount = 0;
+
+	mMorphChannelWeights.assign(channelCount, 0.0f);
+	if(channelCount > 0)
+		mMorphChannelWeights[0] = 1.0f;
+
+	mDirty |= AnimationDirtyStateFlag::Layout;
+	mDirty |= AnimationDirtyStateFlag::MorphWeights;
+}
+
+void CAnimation::SetMask(const SkeletonMask& mask)
+{
+	mSkeletonMask = mask;
+	mDirty |= AnimationDirtyStateFlag::All;
 }
 
 void CAnimation::SetMorphChannelWeight(const String& name, float weight)
 {
-	if(mInternal == nullptr)
+	if(!IsAnimationProxyValid())
 		return;
 
 	if(mAnimatedRenderable == nullptr)
@@ -140,7 +1123,13 @@ void CAnimation::SetMorphChannelWeight(const String& name, float weight)
 	{
 		if(channels[morphChannelIndex]->GetName() == name)
 		{
-			mInternal->SetMorphChannelWeight(morphChannelIndex, weight);
+			const u32 weightCount = (u32)mMorphChannelWeights.size();
+			if(morphChannelIndex < weightCount)
+			{
+				mMorphChannelWeights[morphChannelIndex] = weight;
+				mDirty |= AnimationDirtyStateFlag::MorphWeights;
+			}
+
 			break;
 		}
 	}
@@ -158,12 +1147,12 @@ void CAnimation::SetCustomBounds(const AABox& bounds)
 			if(renderable != nullptr)
 				renderable->SetOverrideBounds(bounds);
 
-			if(mInternal != nullptr && !mPreviewMode)
+			if(!mPreviewMode)
 			{
-				AABox bounds = mCustomBounds;
+				mCullingBounds = mCustomBounds;
+				mCullingBounds.TransformAffine(SO()->GetWorldMatrix());
 
-				bounds.TransformAffine(SO()->GetWorldMatrix());
-				mInternal->SetBounds(bounds);
+				mDirty |= AnimationDirtyStateFlag::Culling;
 			}
 		}
 	}
@@ -178,49 +1167,414 @@ void CAnimation::SetUseCustomBounds(bool enable)
 
 void CAnimation::SetEnableCull(bool enable)
 {
-	mEnableCull = enable;
+	if(mEnableCull == enable)
+		return;
 
-	if(mInternal != nullptr && !mPreviewMode)
-		mInternal->SetCulling(enable);
+	mEnableCull = enable;
+	mDirty |= AnimationDirtyStateFlag::Culling;
 }
 
 u32 CAnimation::GetClipCount() const
 {
-	if(mInternal != nullptr)
-		return mInternal->GetClipCount();
+	if(!IsAnimationProxyValid())
+		return 0;
+
+	return (u32)mClipInfos.size();
 
 	return 0;
 }
 
 HAnimationClip CAnimation::GetClip(u32 index) const
 {
-	if(mInternal != nullptr)
-		return mInternal->GetClip(index);
+	if(!IsAnimationProxyValid() || index >= (u32)mClipInfos.size())
+		return nullptr;
 
-	return HAnimationClip();
+	return mClipInfos[index].Clip;
+}
+
+void CAnimation::TriggerEvents(float delta)
+{
+	if(mPreviewMode)
+		return;
+
+	for(auto& clipInfo : mClipInfos)
+	{
+		if(!clipInfo.Clip.IsLoaded())
+			continue;
+
+		const Vector<AnimationEvent>& events = clipInfo.Clip->GetEvents();
+		bool loop = clipInfo.State.WrapMode == AnimationWrapMode::Loop;
+
+		float start = std::max(clipInfo.State.Time - delta, 0.0f);
+		float end = clipInfo.State.Time;
+		float clipLength = clipInfo.Clip->GetLength();
+
+		float wrappedStart = start;
+		float wrappedEnd = end;
+		AnimationUtility::WrapTime(wrappedStart, 0.0f, clipLength, loop);
+		AnimationUtility::WrapTime(wrappedEnd, 0.0f, clipLength, loop);
+
+		if(!loop)
+		{
+			for(auto& event : events)
+			{
+				if(event.Time >= wrappedStart && (event.Time < wrappedEnd || (event.Time == clipLength && start < clipLength && end >= clipLength)))
+					NotifyAnimationEventTriggered(clipInfo.Clip, event.Name);
+			}
+		}
+		else
+		{
+			if(wrappedStart < wrappedEnd)
+			{
+				for(auto& event : events)
+				{
+					if(event.Time >= wrappedStart && event.Time < wrappedEnd)
+						NotifyAnimationEventTriggered(clipInfo.Clip, event.Name);
+				}
+			}
+			else if(wrappedEnd < wrappedStart) // End is looped, but start is not
+			{
+				for(auto& event : events)
+				{
+					if((event.Time >= wrappedStart && event.Time <= clipLength) || (event.Time >= 0 && event.Time < wrappedEnd))
+						NotifyAnimationEventTriggered(clipInfo.Clip, event.Name);
+				}
+			}
+		}
+	}
+}
+
+void CAnimation::UpdateAnimationProxy(float timeDelta)
+{
+	// Check if any of the clip curves are dirty and advance time, perform fading
+	for(auto& clipInfo : mClipInfos)
+	{
+		float scaledTimeDelta = timeDelta * clipInfo.State.Speed;
+		clipInfo.State.Time += scaledTimeDelta;
+
+		HAnimationClip clip = clipInfo.Clip;
+		if(clip.IsLoaded())
+		{
+			if(clipInfo.CurveVersion != clip->GetVersion())
+				mDirty |= AnimationDirtyStateFlag::Layout;
+		}
+
+		float fadeTime = clipInfo.FadeTime + scaledTimeDelta;
+		clipInfo.FadeTime = Math::Clamp(fadeTime, 0.0f, clipInfo.FadeLength);
+	}
+
+	if(mSampleStep == AnimationSampleStep::None)
+		mAnimationProxy->SampleStep = AnimationSampleStep::None;
+	else if(mSampleStep == AnimationSampleStep::Frame)
+	{
+		if(mAnimationProxy->SampleStep == AnimationSampleStep::None)
+			mAnimationProxy->SampleStep = AnimationSampleStep::Frame;
+		else
+			mAnimationProxy->SampleStep = AnimationSampleStep::Done;
+	}
+
+	if(mDirty.IsSet(AnimationDirtyStateFlag::Culling))
+	{
+		mAnimationProxy->CullEnabled = mEnableCull;
+		mAnimationProxy->Bounds = mCullingBounds;
+
+		mDirty.Unset(AnimationDirtyStateFlag::Culling);
+	}
+
+	auto fnGetAnimatedSceneObjects = [&]()
+	{
+		Vector<SceneObjectMappingCurveInfo> animatedSceneObjects(mMappedSceneObjectsById.size());
+		u32 sceneObjectIndex = 0;
+		for(auto& entry : mMappedSceneObjectsById)
+			animatedSceneObjects[sceneObjectIndex++] = entry.second;
+
+		return animatedSceneObjects;
+	};
+
+	bool didFullRebuild = false;
+	if((u32)mDirty == 0) // Clean
+	{
+		mAnimationProxy->UpdateTime(mClipInfos);
+	}
+	else
+	{
+		if(mDirty.IsSet(AnimationDirtyStateFlag::All))
+		{
+			Vector<SceneObjectMappingCurveInfo> animatedSceneObjects = fnGetAnimatedSceneObjects();
+
+			mAnimationProxy->RebuildFull(mSkeleton, mSkeletonMask, mClipInfos, animatedSceneObjects, mMorphShapes);
+			didFullRebuild = true;
+		}
+		else if(mDirty.IsSet(AnimationDirtyStateFlag::Layout))
+		{
+			Vector<SceneObjectMappingCurveInfo> animatedSceneObjects = fnGetAnimatedSceneObjects();
+
+			mAnimationProxy->RebuildClips(mClipInfos, animatedSceneObjects, mMorphShapes);
+			didFullRebuild = true;
+		}
+		else if(mDirty.IsSet(AnimationDirtyStateFlag::Value))
+			mAnimationProxy->UpdateClipInfos(mClipInfos);
+
+		if(mDirty.IsSet(AnimationDirtyStateFlag::MorphWeights) || didFullRebuild)
+			mAnimationProxy->UpdateMorphChannelWeights(mMorphChannelWeights);
+	}
+
+	// Check if there are dirty transforms
+	if(!didFullRebuild)
+	{
+		for(u32 sceneObjectIndex = 0; sceneObjectIndex < mAnimationProxy->SceneObjectCount; sceneObjectIndex++)
+		{
+			AnimatedSceneObjectInfo& soInfo = mAnimationProxy->SceneObjectInfos[sceneObjectIndex];
+
+			auto found = mMappedSceneObjectsById.find(soInfo.SceneObjectId);
+			if(found == mMappedSceneObjectsById.end())
+			{
+				B3D_ASSERT(false); // Should never happen
+				continue;
+			}
+
+			u32 hash;
+
+			HSceneObject sceneObject = found->second.Object;
+			if(sceneObject.IsDestroyed(true))
+				hash = 0;
+			else
+				hash = sceneObject->GetTransformHash();
+
+			if(hash != mAnimationProxy->SceneObjectInfos[sceneObjectIndex].Hash)
+			{
+				Vector<SceneObjectMappingCurveInfo> animatedSOs = fnGetAnimatedSceneObjects();
+				mAnimationProxy->UpdateTransforms(animatedSOs);
+				break;
+			}
+		}
+	}
+
+	mDirty = AnimDirtyState();
+}
+
+void CAnimation::UpdateFromProxy()
+{
+	// When sampling a single frame we don't want to keep updating the scene objects so they can be moved through other
+	// means (e.g. for the purposes of recording new keyframes if running from the editor).
+	const bool disableSceneObjectUpdates = mAnimationProxy->SampleStep == AnimationSampleStep::Done;
+	if(disableSceneObjectUpdates)
+		return;
+
+	// If the object was culled, then we have no valid data to read back
+	if(mAnimationProxy->WasCulled)
+		return;
+
+	HSceneObject rootSceneObject;
+
+	// Write TRS animation results to relevant SceneObjects
+	for(u32 sceneObjectIndex = 0; sceneObjectIndex < mAnimationProxy->SceneObjectCount; sceneObjectIndex++)
+	{
+		AnimatedSceneObjectInfo& soInfo = mAnimationProxy->SceneObjectInfos[sceneObjectIndex];
+
+		auto iterFind = mMappedSceneObjectsById.find(soInfo.SceneObjectId);
+		if(iterFind == mMappedSceneObjectsById.end())
+			continue;
+
+		HSceneObject sceneObject = iterFind->second.Object;
+		if(iterFind->second.CurveName.empty())
+			rootSceneObject = sceneObject;
+
+		if(sceneObject.IsDestroyed(true))
+			continue;
+
+		if(soInfo.BoneIndex != -1)
+		{
+			if(mAnimationProxy->SkeletonPose.HasOverride[soInfo.BoneIndex])
+				continue;
+
+			Vector3 position = mAnimationProxy->SkeletonPose.Positions[soInfo.BoneIndex];
+			Quaternion rotation = mAnimationProxy->SkeletonPose.Rotations[soInfo.BoneIndex];
+			Vector3 scale = mAnimationProxy->SkeletonPose.Scales[soInfo.BoneIndex];
+
+			const SPtr<Skeleton>& skeleton = mAnimationProxy->Skeleton;
+
+			u32 parentBoneIndex = skeleton->GetBoneInfo(soInfo.BoneIndex).Parent;
+			if(parentBoneIndex == (u32)-1)
+			{
+				sceneObject->SetPosition(position);
+				sceneObject->SetRotation(rotation);
+				sceneObject->SetScale(scale);
+			}
+			else
+			{
+				while(parentBoneIndex != (u32)-1)
+				{
+					// Update rotation
+					const Quaternion& parentOrientation = mAnimationProxy->SkeletonPose.Rotations[parentBoneIndex];
+					rotation = parentOrientation * rotation;
+
+					// Update scale
+					const Vector3& parentScale = mAnimationProxy->SkeletonPose.Scales[parentBoneIndex];
+					scale = parentScale * scale;
+
+					// Update position
+					position = parentOrientation.Rotate(parentScale * position);
+					position += mAnimationProxy->SkeletonPose.Positions[parentBoneIndex];
+
+					parentBoneIndex = skeleton->GetBoneInfo(parentBoneIndex).Parent;
+				}
+
+				// Search for root if not already found
+				if(rootSceneObject == nullptr)
+				{
+					for(auto& entry : mMappedSceneObjectsById)
+					{
+						if(entry.second.CurveName.empty())
+							rootSceneObject = entry.second.Object;
+					}
+				}
+
+				while(rootSceneObject && rootSceneObject.IsDestroyed(true))
+					rootSceneObject = rootSceneObject->GetParent();
+
+				Vector3 parentPos = Vector3::kZero;
+				Quaternion parentRot = Quaternion::kIdentity;
+				Vector3 parentScale = Vector3::kOne;
+
+				if(!rootSceneObject.IsDestroyed(true))
+				{
+					const Transform& tfrm = rootSceneObject->GetTransform();
+					parentPos = tfrm.GetPosition();
+					parentRot = tfrm.GetRotation();
+					parentScale = tfrm.GetScale();
+				}
+
+				// Transform from space relative to root's parent to world space
+				rotation = parentRot * rotation;
+
+				scale = parentScale * scale;
+
+				position = parentRot.Rotate(parentScale * position);
+				position += parentPos;
+
+				sceneObject->SetWorldPosition(position);
+				sceneObject->SetWorldRotation(rotation);
+				sceneObject->SetWorldScale(scale);
+			}
+		}
+		else
+		{
+			if(!mAnimationProxy->SceneObjectPose.HasOverride[sceneObjectIndex * 3 + 0])
+				sceneObject->SetPosition(mAnimationProxy->SceneObjectPose.Positions[sceneObjectIndex]);
+
+			if(!mAnimationProxy->SceneObjectPose.HasOverride[sceneObjectIndex * 3 + 1])
+				sceneObject->SetRotation(mAnimationProxy->SceneObjectPose.Rotations[sceneObjectIndex]);
+
+			if(!mAnimationProxy->SceneObjectPose.HasOverride[sceneObjectIndex * 3 + 2])
+				sceneObject->SetScale(mAnimationProxy->SceneObjectPose.Scales[sceneObjectIndex]);
+		}
+	}
+
+	// Must ensure that clip in the proxy and current primary clip are the same
+	mGenericCurveValuesValid = false;
+	if(mAnimationProxy->LayerCount > 0 && mAnimationProxy->Layers[0].StateCount > 0)
+	{
+		const AnimationState& state = mAnimationProxy->Layers[0].States[0];
+
+		if(!state.Disabled && !mClipInfos.empty())
+		{
+			const AnimationClipInfo& clipInfo = mClipInfos[0];
+
+			if(clipInfo.StateIndex == 0 && clipInfo.LayerIndex == 0)
+			{
+				if(clipInfo.Clip.IsLoaded() && clipInfo.CurveVersion == clipInfo.Clip->GetVersion())
+				{
+					u32 numGenericCurves = (u32)clipInfo.Clip->GetCurves()->Generic.size();
+					mGenericCurveValuesValid = numGenericCurves == mAnimationProxy->GenericCurveCount;
+				}
+			}
+		}
+	}
+
+	if(mGenericCurveValuesValid)
+	{
+		mGenericCurveOutputs.resize(mAnimationProxy->GenericCurveCount);
+
+		memcpy(mGenericCurveOutputs.data(), mAnimationProxy->GenericCurveOutputs, mAnimationProxy->GenericCurveCount * sizeof(float));
+	}
+}
+
+AnimationClipInfo* CAnimation::GetOrCreateClipInfo(const HAnimationClip& clip, u32 layer, bool stopExisting)
+{
+	AnimationClipInfo* output = nullptr;
+	bool hasExisting = false;
+
+	// Search for existing
+	for(auto& clipInfo : mClipInfos)
+	{
+		if(clipInfo.State.Layer == layer)
+		{
+			if(clipInfo.Clip == clip)
+				output = &clipInfo;
+			else if(stopExisting)
+				hasExisting = true;
+		}
+	}
+
+	// Doesn't exist or found extra animations, rebuild
+	if(output == nullptr || hasExisting)
+	{
+		B3DMarkAllocatorFrame();
+		{
+			FrameVector<AnimationClipInfo> newClips;
+			for(auto& clipInfo : mClipInfos)
+			{
+				if(!stopExisting || clipInfo.State.Layer != layer || clipInfo.Clip == clip)
+					newClips.push_back(clipInfo);
+			}
+
+			if(output == nullptr && clip != nullptr)
+				newClips.push_back(AnimationClipInfo());
+
+			mClipInfos.resize(newClips.size());
+			for(u32 clipIndex = 0; clipIndex < (u32)newClips.size(); clipIndex++)
+				mClipInfos[clipIndex] = newClips[clipIndex];
+
+			mDirty |= AnimationDirtyStateFlag::Layout;
+		}
+		B3DClearAllocatorFrame();
+	}
+
+	// If new clip was added, get its address
+	if(output == nullptr && clip != nullptr)
+	{
+		AnimationClipInfo& newInfo = mClipInfos.back();
+		newInfo.Clip = clip;
+		newInfo.State.Layer = layer;
+
+		output = &newInfo;
+	}
+
+	return output;
 }
 
 void CAnimation::OnDestroyed()
 {
-	DestroyInternal();
+	DestroyAnimationProxy();
 }
 
 void CAnimation::OnDisabled()
 {
-	DestroyInternal();
+	DestroyAnimationProxy();
 }
 
 void CAnimation::OnEnabled()
 {
 	if(mPreviewMode)
 	{
-		DestroyInternal();
+		DestroyAnimationProxy();
 		mPreviewMode = false;
 	}
 
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 	if(scene->IsRunning())
-		RestoreInternal(false);
+		CreateAnimationProxy(false);
 }
 
 void CAnimation::Update()
@@ -273,10 +1627,10 @@ void CAnimation::Update()
 		}
 	}
 
-	if(mInternal == nullptr || !isRunning)
+	if(!IsAnimationProxyValid() || !isRunning)
 		return;
 
-	HAnimationClip newPrimaryClip = mInternal->GetClip(0);
+	HAnimationClip newPrimaryClip = !mClipInfos.empty() ? mClipInfos[0].Clip : nullptr;
 	if(newPrimaryClip != mPrimaryPlayingClip)
 		RefreshClipMappingsInternal();
 
@@ -293,33 +1647,28 @@ void CAnimation::OnTransformChanged(TransformChangedFlags flags)
 		UpdateBounds(false);
 }
 
-void CAnimation::RestoreInternal(bool previewMode)
+void CAnimation::CreateAnimationProxy(bool previewMode)
 {
-	if(mInternal != nullptr)
-		DestroyInternal();
+	if(IsAnimationProxyValid())
+		DestroyAnimationProxy();
 
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
-	mInternal = Animation::Create(scene);
+	const SPtr<AnimationScene>& animationScene = scene->GetAnimationScene();
+
+	mAnimationId = animationScene->RegisterAnimation(this);
+	mAnimationProxy = B3DMakeShared<AnimationProxy>(mAnimationId);
+	mDirty = AnimationDirtyStateFlag::All;
 
 	mAnimatedRenderable = SO()->GetComponent<Renderable>();
-
-	if(!previewMode)
-	{
-		mInternal->OnEventTriggered.Connect([this](const HAnimationClip& clip, const String& name) { EventTriggered(clip, name); });
-
-		mInternal->SetWrapMode(mWrapMode);
-		mInternal->SetSpeed(mSpeed);
-		mInternal->SetCulling(mEnableCull);
-	}
 
 	UpdateBounds();
 
 	if(!previewMode)
 	{
 		if(mDefaultClip.IsLoaded())
-			mInternal->Play(mDefaultClip);
+			Play(mDefaultClip);
 
-		mPrimaryPlayingClip = mInternal->GetClip(0);
+		mPrimaryPlayingClip = !mClipInfos.empty() ? mClipInfos[0].Clip : nullptr;
 		if(mPrimaryPlayingClip.IsLoaded())
 		{
 			if(ScriptRebuildFloatPropertiesInternal)
@@ -327,24 +1676,31 @@ void CAnimation::RestoreInternal(bool previewMode)
 		}
 	}
 
-	SetBoneMappings();
+	RebuildBoneMappings();
 
 	if(!previewMode)
-		UpdateSceneObjectMapping();
+		RebuildGenericMappings();
 
 	if(mAnimatedRenderable != nullptr)
 		mAnimatedRenderable->RegisterAnimation(B3DStaticGameObjectCast<CAnimation>(mThisHandle));
 }
 
-void CAnimation::DestroyInternal()
+void CAnimation::DestroyAnimationProxy()
 {
 	if(mAnimatedRenderable != nullptr)
 		mAnimatedRenderable->UnregisterAnimation();
 
 	mPrimaryPlayingClip = nullptr;
 
-	// This should release the last reference and destroy the internal listener
-	mInternal = nullptr;
+	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
+	const SPtr<AnimationScene>& animationScene = scene->GetAnimationScene();
+
+	animationScene->UnregisterAnimation(mAnimationId);
+
+	mAnimationId = ~0ull;
+	mAnimationProxy = nullptr;
+	mClipInfos.clear();
+	mMorphChannelWeights.clear();
 }
 
 bool CAnimation::TogglePreviewModeInternal(bool enabled)
@@ -365,7 +1721,7 @@ bool CAnimation::TogglePreviewModeInternal(bool enabled)
 			// attached for one frame. This can look weird when sampling the animation for preview purposes
 			// (e.g. scrubbing in editor), in which case animation will reset to T pose for a single frame before
 			// settling on the chosen frame.
-			RestoreInternal(true);
+			CreateAnimationProxy(true);
 			mPreviewMode = true;
 		}
 
@@ -374,50 +1730,37 @@ bool CAnimation::TogglePreviewModeInternal(bool enabled)
 	else
 	{
 		if(!isRunning)
-			DestroyInternal();
+			DestroyAnimationProxy();
 
 		mPreviewMode = false;
 		return false;
 	}
 }
 
-bool CAnimation::GetGenericCurveValueInternal(u32 index, float& outValue)
+bool CAnimation::GetGenericCurveValueInternal(u32 curveIndex, float& outValue)
 {
-	if(mInternal == nullptr)
+	if(!IsAnimationProxyValid() || !mGenericCurveValuesValid || curveIndex >= (u32)mGenericCurveOutputs.size())
 		return false;
 
-	return mInternal->GetGenericCurveValue(index, outValue);
-}
-
-void CAnimation::MapCurveToSceneObject(const String& curve, const HSceneObject& sceneObject)
-{
-	if(mInternal == nullptr)
-		return;
-
-	mInternal->MapCurveToSceneObject(curve, sceneObject);
-}
-
-void CAnimation::UnmapSceneObject(const HSceneObject& sceneObject)
-{
-	if(mInternal == nullptr)
-		return;
-
-	mInternal->UnmapSceneObject(sceneObject);
+	outValue = mGenericCurveOutputs[curveIndex];
+	return true;
 }
 
 void CAnimation::AddBone(const HBone& bone)
 {
-	const HSceneObject& currentSO = bone->SO();
+	const HSceneObject& sceneObject = bone->SO();
 
-	SceneObjectMappingInfo newMapping;
-	newMapping.SceneObject = currentSO;
-	newMapping.IsMappedToBone = true;
-	newMapping.Bone = bone;
+	SceneObjectMappingInfo mapping;
+	mapping.SceneObject = sceneObject;
+	mapping.IsMappedToBone = true;
+	mapping.Bone = bone;
 
-	mMappedSceneObjectInfos.push_back(newMapping);
+	mMappedSceneObjectInfos.push_back(mapping);
 
-	if(mInternal)
-		mInternal->MapCurveToSceneObject(newMapping.Bone->GetBoneName(), newMapping.SceneObject);
+	SceneObjectMappingCurveInfo curveMapping = { sceneObject, bone->GetBoneName() };
+	mMappedSceneObjectsById[sceneObject.GetId()] = curveMapping;
+
+	mDirty |= AnimationDirtyStateFlag::All;
 }
 
 void CAnimation::RemoveBone(const HBone& bone)
@@ -426,29 +1769,68 @@ void CAnimation::RemoveBone(const HBone& bone)
 	{
 		if(mMappedSceneObjectInfos[mappingIndex].Bone == bone)
 		{
-			if(mInternal)
-				mInternal->UnmapSceneObject(mMappedSceneObjectInfos[mappingIndex].SceneObject);
-
+			mMappedSceneObjectsById.erase(mMappedSceneObjectInfos[mappingIndex].SceneObject.GetId());
 			mMappedSceneObjectInfos.erase(mMappedSceneObjectInfos.begin() + mappingIndex);
+
+			mDirty |= AnimationDirtyStateFlag::All;
 			mappingIndex--;
 		}
 	}
 }
 
-void CAnimation::NotifyBoneChanged(const HBone& bone)
+void CAnimation::NotifyBoneNameChanged(const HBone& bone)
 {
-	if(mInternal == nullptr)
+	if(!IsAnimationProxyValid())
 		return;
 
-	for(u32 i = 0; i < (u32)mMappedSceneObjectInfos.size(); i++)
+	for(u32 mappedSceneObjectIndex = 0; mappedSceneObjectIndex < (u32)mMappedSceneObjectInfos.size(); mappedSceneObjectIndex++)
 	{
-		if(mMappedSceneObjectInfos[i].Bone == bone)
+		if(mMappedSceneObjectInfos[mappedSceneObjectIndex].Bone == bone)
 		{
-			mInternal->UnmapSceneObject(mMappedSceneObjectInfos[i].SceneObject);
-			mInternal->MapCurveToSceneObject(bone->GetBoneName(), mMappedSceneObjectInfos[i].SceneObject);
+			mMappedSceneObjectsById.erase(mMappedSceneObjectInfos[mappedSceneObjectIndex].SceneObject.GetId());
+
+			const UUID& sceneObjectId = mMappedSceneObjectInfos[mappedSceneObjectIndex].SceneObject.GetId();
+			mMappedSceneObjectsById[sceneObjectId].CurveName = bone->GetBoneName();
+
+			mDirty |= AnimationDirtyStateFlag::All;
 			break;
 		}
 	}
+}
+
+bool CAnimation::GetAnimatesRoot() const
+{
+	if(mSkeleton == nullptr)
+		return false;
+
+	const u32 rootBoneIndex = mSkeleton->GetRootBoneIndex();
+	if(rootBoneIndex == ~0u)
+		return false;
+
+	String rootBoneName = mSkeleton->GetBoneInfo(rootBoneIndex).Name;
+	for(auto& entry : mClipInfos)
+	{
+		if(entry.Clip.IsLoaded())
+		{
+			HAnimationClip clip = entry.Clip;
+			if(!clip->HasRootMotion())
+			{
+				AnimationCurveMapping mapping;
+				clip->GetCurveMapping(rootBoneName, mapping);
+
+				if(mapping.Position != ~0u)
+					return true;
+
+				if(mapping.Rotation != ~0u)
+					return true;
+
+				if(mapping.Scale != ~0u)
+					return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void CAnimation::RegisterRenderable(const HRenderable& renderable)
@@ -477,47 +1859,47 @@ void CAnimation::UpdateBounds(bool updateRenderable)
 			renderable->SetOverrideBounds(mCustomBounds);
 		}
 
-		if(mInternal != nullptr)
-		{
-			AABox bounds = mCustomBounds;
-			bounds.TransformAffine(SO()->GetWorldMatrix());
+		mCullingBounds = mCustomBounds;
+		mCullingBounds.TransformAffine(SO()->GetWorldMatrix());
 
-			mInternal->SetBounds(bounds);
-		}
 	}
 	else
 	{
 		if(renderable != nullptr)
 			renderable->SetUseOverrideBounds(false);
 
-		if(mInternal != nullptr)
-		{
-			AABox bounds;
-			if(mAnimatedRenderable != nullptr)
-				bounds = mAnimatedRenderable->GetBounds().GetBox();
+		AABox bounds;
+		if(mAnimatedRenderable != nullptr)
+			bounds = mAnimatedRenderable->GetBounds().GetBox();
 
-			mInternal->SetBounds(bounds);
-		}
+		mCullingBounds = bounds;
 	}
+
+	mDirty |= AnimationDirtyStateFlag::Culling;
 }
 
-void CAnimation::SetBoneMappings()
+void CAnimation::RebuildBoneMappings()
 {
 	mMappedSceneObjectInfos.clear();
+	mMappedSceneObjectsById.clear();
 
 	SceneObjectMappingInfo rootMapping;
 	rootMapping.SceneObject = SO();
 	rootMapping.IsMappedToBone = true;
 
 	mMappedSceneObjectInfos.push_back(rootMapping);
-	mInternal->MapCurveToSceneObject("", rootMapping.SceneObject);
+
+	SceneObjectMappingCurveInfo animatedSceneObject = { rootMapping.SceneObject, "" };
+	mMappedSceneObjectsById[rootMapping.SceneObject.GetId()] = animatedSceneObject;
 
 	Vector<HBone> childBones = FindChildBones();
 	for(auto& entry : childBones)
 		AddBone(entry);
+
+	mDirty |= AnimationDirtyStateFlag::All;
 }
 
-void CAnimation::UpdateSceneObjectMapping()
+void CAnimation::RebuildGenericMappings()
 {
 	Vector<SceneObjectMappingInfo> newMappingInfos;
 	for(auto& entry : mMappedSceneObjectInfos)
@@ -525,7 +1907,10 @@ void CAnimation::UpdateSceneObjectMapping()
 		if(entry.IsMappedToBone)
 			newMappingInfos.push_back(entry);
 		else
-			UnmapSceneObject(entry.SceneObject);
+		{
+			mMappedSceneObjectsById.erase(entry.SceneObject.GetId());
+			mDirty |= AnimationDirtyStateFlag::All;
+		}
 	}
 
 	if(mPrimaryPlayingClip.IsLoaded())
@@ -551,12 +1936,16 @@ void CAnimation::UpdateSceneObjectMapping()
 
 			if(!found)
 			{
-				SceneObjectMappingInfo newMappingInfo;
-				newMappingInfo.IsMappedToBone = false;
-				newMappingInfo.SceneObject = currentSceneObject;
+				SceneObjectMappingInfo mapping;
+				mapping.IsMappedToBone = false;
+				mapping.SceneObject = currentSceneObject;
 
-				newMappingInfos.push_back(newMappingInfo);
-				MapCurveToSceneObject(name, currentSceneObject);
+				newMappingInfos.push_back(mapping);
+
+				SceneObjectMappingCurveInfo curveMapping = { currentSceneObject, name };
+				mMappedSceneObjectsById[currentSceneObject.GetId()] = curveMapping;
+
+				mDirty |= AnimationDirtyStateFlag::All;
 			}
 		};
 
@@ -576,12 +1965,12 @@ void CAnimation::UpdateSceneObjectMapping()
 
 void CAnimation::RefreshClipMappingsInternal()
 {
-	mPrimaryPlayingClip = mInternal->GetClip(0);
+	mPrimaryPlayingClip = !mClipInfos.empty() ? mClipInfos[0].Clip : nullptr;
 
 	if(ScriptRebuildFloatPropertiesInternal)
 		ScriptRebuildFloatPropertiesInternal(mPrimaryPlayingClip);
 
-	UpdateSceneObjectMapping();
+	RebuildGenericMappings();
 }
 
 Vector<HBone> CAnimation::FindChildBones()
@@ -616,12 +2005,31 @@ Vector<HBone> CAnimation::FindChildBones()
 	return bones;
 }
 
-void CAnimation::EventTriggered(const HAnimationClip& clip, const String& name)
+void CAnimation::NotifyAnimationEventTriggered(const HAnimationClip& clip, const String& name)
 {
 	OnEventTriggered(clip, name);
 
 	if(ScriptOnEventTriggeredInternal)
 		ScriptOnEventTriggeredInternal(clip, name);
+}
+
+void CAnimation::GetListenerResources(Vector<HResource>& resources)
+{
+	for(auto& entry : mClipInfos)
+	{
+		if(entry.Clip != nullptr)
+			resources.push_back(entry.Clip);
+	}
+}
+
+void CAnimation::NotifyResourceLoaded(const HResource& resource)
+{
+	mDirty |= AnimationDirtyStateFlag::Layout;
+}
+
+void CAnimation::NotifyResourceChanged(const HResource& resource)
+{
+	mDirty |= AnimationDirtyStateFlag::Layout;
 }
 
 RTTIType* CAnimation::GetRttiStatic()

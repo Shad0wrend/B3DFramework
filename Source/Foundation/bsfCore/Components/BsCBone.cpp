@@ -33,7 +33,7 @@ void CBone::SetBoneName(const String& name)
 	mBoneName = name;
 
 	if(mParent != nullptr)
-		mParent->NotifyBoneChanged(B3DStaticGameObjectCast<CBone>(GetHandle()));
+		mParent->NotifyBoneNameChanged(B3DStaticGameObjectCast<CBone>(GetHandle()));
 }
 
 void CBone::OnDestroyed()

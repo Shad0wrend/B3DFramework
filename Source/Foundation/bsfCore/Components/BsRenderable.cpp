@@ -237,12 +237,10 @@ void Renderable::OnDestroyed()
 
 void Renderable::OnTransformChanged(TransformChangedFlags flags)
 {
-	const SPtr<Animation>& animation = mAnimation.IsValid() ? mAnimation->GetInternalInternal() : nullptr;
-
 	// If skinned animation, don't include own transform since that will be handled by root bone animation
 	bool ignoreOwnTransform;
 	if(mAnimType == RenderableAnimType::Skinned || mAnimType == RenderableAnimType::SkinnedMorph)
-		ignoreOwnTransform = animation != nullptr ? animation->GetAnimatesRoot() : false;
+		ignoreOwnTransform = mAnimation.IsValid() ? mAnimation->GetAnimatesRoot() : false;
 	else
 		ignoreOwnTransform = false;
 
@@ -269,13 +267,11 @@ SPtr<render::RenderProxy> Renderable::CreateRenderProxy() const
 
 RenderProxySyncPacket* Renderable::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
-	if(flags != (u32)ActorDirtyFlag::Transform)
+	if(flags != (u32)ComponentDirtyFlag::Transform)
 	{
-		const SPtr<Animation>& animation = mAnimation.IsValid() ? mAnimation->GetInternalInternal() : nullptr;
-
 		FullSyncPacket* const syncPacket = allocator.Construct<FullSyncPacket>(*this, allocator, flags);
 		syncPacket->mActive = GetEnabled();
-		syncPacket->mAnimationId = mAnimation != nullptr ? animation->GetAnimationId() : (u64)-1;
+		syncPacket->mAnimationId = mAnimation.IsValid() ? mAnimation->GetAnimationId() : (u64)-1;
 		syncPacket->mSceneInstance = B3DGetRenderProxy(SceneObject()->GetScene());
 		syncPacket->mTransform = SceneObject()->GetTransform();
 
@@ -384,14 +380,7 @@ void Renderable::NotifyResourceChanged(const HResource& resource)
 
 void Renderable::RefreshAnimation()
 {
-	if(mAnimation == nullptr)
-	{
-		mAnimType = RenderableAnimType::None;
-		return;
-	}
-
-	SPtr<Animation> animation = mAnimation->GetInternalInternal();
-	if(animation == nullptr)
+	if(!mAnimation.IsValid())
 	{
 		mAnimType = RenderableAnimType::None;
 		return;
@@ -411,15 +400,15 @@ void Renderable::RefreshAnimation()
 		else
 			mAnimType = RenderableAnimType::None;
 
-		animation->SetSkeleton(mMesh->GetSkeleton());
-		animation->SetMorphShapes(mMesh->GetMorphShapes());
+		mAnimation->SetSkeleton(mMesh->GetSkeleton());
+		mAnimation->SetMorphShapes(mMesh->GetMorphShapes());
 	}
 	else
 	{
 		mAnimType = RenderableAnimType::None;
 
-		animation->SetSkeleton(nullptr);
-		animation->SetMorphShapes(nullptr);
+		mAnimation->SetSkeleton(nullptr);
+		mAnimation->SetMorphShapes(nullptr);
 	}
 }
 

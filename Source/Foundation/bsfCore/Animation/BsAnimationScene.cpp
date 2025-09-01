@@ -3,12 +3,12 @@
 #include "Animation/BsAnimationScene.h"
 
 #include "BsCoreApplication.h"
-#include "Animation/BsAnimation.h"
 #include "Animation/BsAnimationClip.h"
 #include "Utility/BsTime.h"
 #include "Scene/BsSceneInstance.h"
 #include "Renderer/BsCamera.h"
 #include "Animation/BsMorphShapes.h"
+#include "Components/BsCAnimation.h"
 #include "Mesh/BsMeshData.h"
 #include "Mesh/BsMeshUtility.h"
 
@@ -509,7 +509,7 @@ void AnimationScene::EvaluateAnimation(AnimationProxy* anim, u32& curBoneIdx)
 	}
 }
 
-u64 AnimationScene::RegisterAnimation(Animation* anim)
+u64 AnimationScene::RegisterAnimation(CAnimation* anim)
 {
 	mAnimations[mNextId] = anim;
 	return mNextId++;

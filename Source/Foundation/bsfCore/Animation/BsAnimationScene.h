@@ -105,7 +105,7 @@ namespace b3d
 		/** @} */
 
 	private:
-		friend class Animation;
+		friend class CAnimation;
 
 		/** Possible states the worker thread can be in, used for synchronization. */
 		enum class WorkerState
@@ -118,7 +118,7 @@ namespace b3d
 		/**
 		 * Registers a new animation and returns a unique ID for it. Must be called whenever an Animation is constructed.
 		 */
-		u64 RegisterAnimation(Animation* anim);
+		u64 RegisterAnimation(CAnimation* animation);
 
 		/** Unregisters an animation with the specified ID. Must be called before an Animation is destroyed. */
 		void UnregisterAnimation(u64 id);
@@ -133,7 +133,7 @@ namespace b3d
 		void EvaluateAnimation(AnimationProxy* anim, u32& boneIdx);
 
 		u64 mNextId = 1;
-		UnorderedMap<u64, Animation*> mAnimations;
+		UnorderedMap<u64, CAnimation*> mAnimations;
 
 		float mUpdateRate = 1.0f / 60.0f;
 		float mAnimationTime = 0.0f;

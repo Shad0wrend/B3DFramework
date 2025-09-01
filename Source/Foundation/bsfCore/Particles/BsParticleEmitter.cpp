@@ -8,7 +8,6 @@
 #include "Components/BsRenderable.h"
 #include "Private/Particles/BsParticleSet.h"
 #include "Private/RTTI/BsParticleSystemRTTI.h"
-#include "Animation/BsAnimation.h"
 #include "Animation/BsAnimationScene.h"
 #include "Components/BsCAnimation.h"
 #include "Mesh/BsMesh.h"
@@ -1095,9 +1094,8 @@ u32 ParticleEmitterSkinnedMeshShape::SpawnInternal(const Random& random, Particl
 
 	if(mInfo.Renderable.IsValid())
 	{
-		const HAnimation& animationComponent = mInfo.Renderable->GetAnimation();
-		SPtr<Animation> animation = animationComponent.IsValid() ? animationComponent->GetInternalInternal() : nullptr;
-		if(animation != nullptr)
+		const HAnimation& animation = mInfo.Renderable->GetAnimation();
+		if(animation.IsValid())
 		{
 			const u64 animId = animation->GetAnimationId();
 
@@ -1186,15 +1184,14 @@ void ParticleEmitterSkinnedMeshShape::CalcBounds(AABox& shape, AABox& velocity) 
 	if(mInfo.Renderable.IsValid())
 	{
 		const HRenderable& renderable = mInfo.Renderable;
-		const HAnimation& animationComponent = renderable->GetAnimation();
-		const SPtr<Animation>& animation = animationComponent != nullptr ? animationComponent->GetInternalInternal() : nullptr;
-		if(animation)
+		const HAnimation& animation = renderable->GetAnimation();
+		if(animation.IsValid())
 		{
 			// No culling, make the box infinite
-			if(!animation->GetCulling())
+			if(!animation->GetEnableCull())
 				shape = AABox::kInfinite;
 			else
-				shape = animation->GetBounds();
+				shape = animation->GetCullingBounds();
 		}
 		else
 		{
