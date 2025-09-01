@@ -639,7 +639,7 @@ void AnimationProxy::UpdateTime(const Vector<AnimationClipInfo>& clipInfos)
 }
 
 
-CAnimation::CAnimation(const HSceneObject& parent)
+Animation::Animation(const HSceneObject& parent)
 	: Component(parent)
 {
 	mNotifyFlags = TCF_Transform;
@@ -648,11 +648,11 @@ CAnimation::CAnimation(const HSceneObject& parent)
 	SetName("Animation");
 }
 
-CAnimation::CAnimation()
-	: CAnimation(nullptr)
+Animation::Animation()
+	: Animation(nullptr)
 { }
 
-void CAnimation::SetDefaultClip(const HAnimationClip& clip)
+void Animation::SetDefaultClip(const HAnimationClip& clip)
 {
 	mDefaultClip = clip;
 
@@ -660,7 +660,7 @@ void CAnimation::SetDefaultClip(const HAnimationClip& clip)
 		Play(clip);
 }
 
-void CAnimation::SetWrapMode(AnimationWrapMode wrapMode)
+void Animation::SetWrapMode(AnimationWrapMode wrapMode)
 {
 	if(mWrapMode == wrapMode)
 		return;
@@ -673,7 +673,7 @@ void CAnimation::SetWrapMode(AnimationWrapMode wrapMode)
 	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
-void CAnimation::SetSpeed(float speed)
+void Animation::SetSpeed(float speed)
 {
 	mSpeed = speed;
 
@@ -687,7 +687,7 @@ void CAnimation::SetSpeed(float speed)
 	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
-void CAnimation::Play(const HAnimationClip& clip)
+void Animation::Play(const HAnimationClip& clip)
 {
 	if(!IsAnimationProxyValid() || mPreviewMode)
 		return;
@@ -706,7 +706,7 @@ void CAnimation::Play(const HAnimationClip& clip)
 	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
-void CAnimation::BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength, u32 layer)
+void Animation::BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength, u32 layer)
 {
 	if(!IsAnimationProxyValid() || mPreviewMode)
 		return;
@@ -745,7 +745,7 @@ void CAnimation::BlendAdditive(const HAnimationClip& clip, float weight, float f
 	}
 }
 
-void CAnimation::Blend1D(const Blend1DInfo& info, float alpha)
+void Animation::Blend1D(const Blend1DInfo& info, float alpha)
 {
 	if(!IsAnimationProxyValid() || mPreviewMode)
 		return;
@@ -840,7 +840,7 @@ void CAnimation::Blend1D(const Blend1DInfo& info, float alpha)
 	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
-void CAnimation::Blend2D(const Blend2DInfo& info, const Vector2& alpha)
+void Animation::Blend2D(const Blend2DInfo& info, const Vector2& alpha)
 {
 	if(!IsAnimationProxyValid() || mPreviewMode)
 		return;
@@ -897,7 +897,7 @@ void CAnimation::Blend2D(const Blend2DInfo& info, const Vector2& alpha)
 	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
-void CAnimation::CrossFade(const HAnimationClip& clip, float fadeLength)
+void Animation::CrossFade(const HAnimationClip& clip, float fadeLength)
 {
 	if(!IsAnimationProxyValid() || mPreviewMode)
 		return;
@@ -949,7 +949,7 @@ void CAnimation::CrossFade(const HAnimationClip& clip, float fadeLength)
 	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
-void CAnimation::Sample(const HAnimationClip& clip, float time)
+void Animation::Sample(const HAnimationClip& clip, float time)
 {
 	if(!IsAnimationProxyValid())
 		return;
@@ -968,7 +968,7 @@ void CAnimation::Sample(const HAnimationClip& clip, float time)
 	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
-void CAnimation::Stop(u32 layer)
+void Animation::Stop(u32 layer)
 {
 	if(!IsAnimationProxyValid() || mPreviewMode)
 		return;
@@ -991,7 +991,7 @@ void CAnimation::Stop(u32 layer)
 	B3DClearAllocatorFrame();
 }
 
-void CAnimation::StopAll()
+void Animation::StopAll()
 {
 	if(!IsAnimationProxyValid() || mPreviewMode)
 		return;
@@ -1002,7 +1002,7 @@ void CAnimation::StopAll()
 	mDirty |= AnimationDirtyStateFlag::Layout;
 }
 
-bool CAnimation::IsPlaying() const
+bool Animation::IsPlaying() const
 {
 	if(IsAnimationProxyValid())
 	{
@@ -1016,7 +1016,7 @@ bool CAnimation::IsPlaying() const
 	return false;
 }
 
-bool CAnimation::GetState(const HAnimationClip& clip, AnimationClipState& state)
+bool Animation::GetState(const HAnimationClip& clip, AnimationClipState& state)
 {
 	if(!IsAnimationProxyValid())
 		return false;
@@ -1050,7 +1050,7 @@ bool CAnimation::GetState(const HAnimationClip& clip, AnimationClipState& state)
 	return false;
 }
 
-void CAnimation::SetState(const HAnimationClip& clip, AnimationClipState state)
+void Animation::SetState(const HAnimationClip& clip, AnimationClipState state)
 {
 	if(!IsAnimationProxyValid())
 		return;
@@ -1072,13 +1072,13 @@ void CAnimation::SetState(const HAnimationClip& clip, AnimationClipState state)
 	mDirty |= AnimationDirtyStateFlag::Value;
 }
 
-void CAnimation::SetSkeleton(const SPtr<Skeleton>& skeleton)
+void Animation::SetSkeleton(const SPtr<Skeleton>& skeleton)
 {
 	mSkeleton = skeleton;
 	mDirty |= AnimationDirtyStateFlag::All;
 }
 
-void CAnimation::SetMorphShapes(const SPtr<MorphShapes>& morphShapes)
+void Animation::SetMorphShapes(const SPtr<MorphShapes>& morphShapes)
 {
 	mMorphShapes = morphShapes;
 
@@ -1096,13 +1096,13 @@ void CAnimation::SetMorphShapes(const SPtr<MorphShapes>& morphShapes)
 	mDirty |= AnimationDirtyStateFlag::MorphWeights;
 }
 
-void CAnimation::SetMask(const SkeletonMask& mask)
+void Animation::SetMask(const SkeletonMask& mask)
 {
 	mSkeletonMask = mask;
 	mDirty |= AnimationDirtyStateFlag::All;
 }
 
-void CAnimation::SetMorphChannelWeight(const String& name, float weight)
+void Animation::SetMorphChannelWeight(const String& name, float weight)
 {
 	if(!IsAnimationProxyValid())
 		return;
@@ -1135,7 +1135,7 @@ void CAnimation::SetMorphChannelWeight(const String& name, float weight)
 	}
 }
 
-void CAnimation::SetCustomBounds(const AABox& bounds)
+void Animation::SetCustomBounds(const AABox& bounds)
 {
 	mCustomBounds = bounds;
 
@@ -1158,14 +1158,14 @@ void CAnimation::SetCustomBounds(const AABox& bounds)
 	}
 }
 
-void CAnimation::SetUseCustomBounds(bool enable)
+void Animation::SetUseCustomBounds(bool enable)
 {
 	mUseCustomBounds = enable;
 
 	UpdateBounds();
 }
 
-void CAnimation::SetEnableCull(bool enable)
+void Animation::SetEnableCull(bool enable)
 {
 	if(mEnableCull == enable)
 		return;
@@ -1174,7 +1174,7 @@ void CAnimation::SetEnableCull(bool enable)
 	mDirty |= AnimationDirtyStateFlag::Culling;
 }
 
-u32 CAnimation::GetClipCount() const
+u32 Animation::GetClipCount() const
 {
 	if(!IsAnimationProxyValid())
 		return 0;
@@ -1184,7 +1184,7 @@ u32 CAnimation::GetClipCount() const
 	return 0;
 }
 
-HAnimationClip CAnimation::GetClip(u32 index) const
+HAnimationClip Animation::GetClip(u32 index) const
 {
 	if(!IsAnimationProxyValid() || index >= (u32)mClipInfos.size())
 		return nullptr;
@@ -1192,7 +1192,7 @@ HAnimationClip CAnimation::GetClip(u32 index) const
 	return mClipInfos[index].Clip;
 }
 
-void CAnimation::TriggerEvents(float delta)
+void Animation::TriggerEvents(float delta)
 {
 	if(mPreviewMode)
 		return;
@@ -1244,7 +1244,7 @@ void CAnimation::TriggerEvents(float delta)
 	}
 }
 
-void CAnimation::UpdateAnimationProxy(float timeDelta)
+void Animation::UpdateAnimationProxy(float timeDelta)
 {
 	// Check if any of the clip curves are dirty and advance time, perform fading
 	for(auto& clipInfo : mClipInfos)
@@ -1353,7 +1353,7 @@ void CAnimation::UpdateAnimationProxy(float timeDelta)
 	mDirty = AnimDirtyState();
 }
 
-void CAnimation::UpdateFromProxy()
+void Animation::UpdateFromProxy()
 {
 	// When sampling a single frame we don't want to keep updating the scene objects so they can be moved through other
 	// means (e.g. for the purposes of recording new keyframes if running from the editor).
@@ -1500,7 +1500,7 @@ void CAnimation::UpdateFromProxy()
 	}
 }
 
-AnimationClipInfo* CAnimation::GetOrCreateClipInfo(const HAnimationClip& clip, u32 layer, bool stopExisting)
+AnimationClipInfo* Animation::GetOrCreateClipInfo(const HAnimationClip& clip, u32 layer, bool stopExisting)
 {
 	AnimationClipInfo* output = nullptr;
 	bool hasExisting = false;
@@ -1554,17 +1554,17 @@ AnimationClipInfo* CAnimation::GetOrCreateClipInfo(const HAnimationClip& clip, u
 	return output;
 }
 
-void CAnimation::OnDestroyed()
+void Animation::OnDestroyed()
 {
 	DestroyAnimationProxy();
 }
 
-void CAnimation::OnDisabled()
+void Animation::OnDisabled()
 {
 	DestroyAnimationProxy();
 }
 
-void CAnimation::OnEnabled()
+void Animation::OnEnabled()
 {
 	if(mPreviewMode)
 	{
@@ -1577,7 +1577,7 @@ void CAnimation::OnEnabled()
 		CreateAnimationProxy(false);
 }
 
-void CAnimation::Update()
+void Animation::Update()
 {
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 	const bool isRunning = scene->IsRunning();
@@ -1638,7 +1638,7 @@ void CAnimation::Update()
 		ScriptUpdateFloatPropertiesInternal();
 }
 
-void CAnimation::OnTransformChanged(TransformChangedFlags flags)
+void Animation::OnTransformChanged(TransformChangedFlags flags)
 {
 	if(!GetEnabled())
 		return;
@@ -1647,7 +1647,7 @@ void CAnimation::OnTransformChanged(TransformChangedFlags flags)
 		UpdateBounds(false);
 }
 
-void CAnimation::CreateAnimationProxy(bool previewMode)
+void Animation::CreateAnimationProxy(bool previewMode)
 {
 	if(IsAnimationProxyValid())
 		DestroyAnimationProxy();
@@ -1682,10 +1682,10 @@ void CAnimation::CreateAnimationProxy(bool previewMode)
 		RebuildGenericMappings();
 
 	if(mAnimatedRenderable != nullptr)
-		mAnimatedRenderable->RegisterAnimation(B3DStaticGameObjectCast<CAnimation>(mThisHandle));
+		mAnimatedRenderable->RegisterAnimation(B3DStaticGameObjectCast<Animation>(mThisHandle));
 }
 
-void CAnimation::DestroyAnimationProxy()
+void Animation::DestroyAnimationProxy()
 {
 	if(mAnimatedRenderable != nullptr)
 		mAnimatedRenderable->UnregisterAnimation();
@@ -1703,7 +1703,7 @@ void CAnimation::DestroyAnimationProxy()
 	mMorphChannelWeights.clear();
 }
 
-bool CAnimation::TogglePreviewModeInternal(bool enabled)
+bool Animation::TogglePreviewModeInternal(bool enabled)
 {
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 	bool isRunning = scene->IsRunning();
@@ -1737,7 +1737,7 @@ bool CAnimation::TogglePreviewModeInternal(bool enabled)
 	}
 }
 
-bool CAnimation::GetGenericCurveValueInternal(u32 curveIndex, float& outValue)
+bool Animation::GetGenericCurveValueInternal(u32 curveIndex, float& outValue)
 {
 	if(!IsAnimationProxyValid() || !mGenericCurveValuesValid || curveIndex >= (u32)mGenericCurveOutputs.size())
 		return false;
@@ -1746,7 +1746,7 @@ bool CAnimation::GetGenericCurveValueInternal(u32 curveIndex, float& outValue)
 	return true;
 }
 
-void CAnimation::AddBone(const HBone& bone)
+void Animation::AddBone(const HBone& bone)
 {
 	const HSceneObject& sceneObject = bone->SO();
 
@@ -1763,7 +1763,7 @@ void CAnimation::AddBone(const HBone& bone)
 	mDirty |= AnimationDirtyStateFlag::All;
 }
 
-void CAnimation::RemoveBone(const HBone& bone)
+void Animation::RemoveBone(const HBone& bone)
 {
 	for(u32 mappingIndex = 0; mappingIndex < (u32)mMappedSceneObjectInfos.size(); mappingIndex++)
 	{
@@ -1778,7 +1778,7 @@ void CAnimation::RemoveBone(const HBone& bone)
 	}
 }
 
-void CAnimation::NotifyBoneNameChanged(const HBone& bone)
+void Animation::NotifyBoneNameChanged(const HBone& bone)
 {
 	if(!IsAnimationProxyValid())
 		return;
@@ -1798,7 +1798,7 @@ void CAnimation::NotifyBoneNameChanged(const HBone& bone)
 	}
 }
 
-bool CAnimation::GetAnimatesRoot() const
+bool Animation::GetAnimatesRoot() const
 {
 	if(mSkeleton == nullptr)
 		return false;
@@ -1833,19 +1833,19 @@ bool CAnimation::GetAnimatesRoot() const
 	return false;
 }
 
-void CAnimation::RegisterRenderable(const HRenderable& renderable)
+void Animation::RegisterRenderable(const HRenderable& renderable)
 {
 	mAnimatedRenderable = renderable;
 
 	UpdateBounds();
 }
 
-void CAnimation::UnregisterRenderable()
+void Animation::UnregisterRenderable()
 {
 	mAnimatedRenderable = nullptr;
 }
 
-void CAnimation::UpdateBounds(bool updateRenderable)
+void Animation::UpdateBounds(bool updateRenderable)
 {
 	SPtr<Renderable> renderable;
 	if(updateRenderable && mAnimatedRenderable != nullptr)
@@ -1878,7 +1878,7 @@ void CAnimation::UpdateBounds(bool updateRenderable)
 	mDirty |= AnimationDirtyStateFlag::Culling;
 }
 
-void CAnimation::RebuildBoneMappings()
+void Animation::RebuildBoneMappings()
 {
 	mMappedSceneObjectInfos.clear();
 	mMappedSceneObjectsById.clear();
@@ -1899,7 +1899,7 @@ void CAnimation::RebuildBoneMappings()
 	mDirty |= AnimationDirtyStateFlag::All;
 }
 
-void CAnimation::RebuildGenericMappings()
+void Animation::RebuildGenericMappings()
 {
 	Vector<SceneObjectMappingInfo> newMappingInfos;
 	for(auto& entry : mMappedSceneObjectInfos)
@@ -1963,7 +1963,7 @@ void CAnimation::RebuildGenericMappings()
 	mMappedSceneObjectInfos = newMappingInfos;
 }
 
-void CAnimation::RefreshClipMappingsInternal()
+void Animation::RefreshClipMappingsInternal()
 {
 	mPrimaryPlayingClip = !mClipInfos.empty() ? mClipInfos[0].Clip : nullptr;
 
@@ -1973,7 +1973,7 @@ void CAnimation::RefreshClipMappingsInternal()
 	RebuildGenericMappings();
 }
 
-Vector<HBone> CAnimation::FindChildBones()
+Vector<HBone> Animation::FindChildBones()
 {
 	Stack<HSceneObject> todo;
 	todo.push(SO());
@@ -1987,7 +1987,7 @@ Vector<HBone> CAnimation::FindChildBones()
 		HBone bone = currentSceneObject->GetComponent<CBone>();
 		if(bone != nullptr)
 		{
-			bone->SetParentInternal(B3DStaticGameObjectCast<CAnimation>(GetHandle()), true);
+			bone->SetParentInternal(B3DStaticGameObjectCast<Animation>(GetHandle()), true);
 			bones.push_back(bone);
 		}
 
@@ -1995,7 +1995,7 @@ Vector<HBone> CAnimation::FindChildBones()
 		for(int i = 0; i < childCount; i++)
 		{
 			HSceneObject child = currentSceneObject->GetChild(i);
-			if(child->GetComponent<CAnimation>() != nullptr)
+			if(child->GetComponent<Animation>() != nullptr)
 				continue;
 
 			todo.push(child);
@@ -2005,7 +2005,7 @@ Vector<HBone> CAnimation::FindChildBones()
 	return bones;
 }
 
-void CAnimation::NotifyAnimationEventTriggered(const HAnimationClip& clip, const String& name)
+void Animation::NotifyAnimationEventTriggered(const HAnimationClip& clip, const String& name)
 {
 	OnEventTriggered(clip, name);
 
@@ -2013,7 +2013,7 @@ void CAnimation::NotifyAnimationEventTriggered(const HAnimationClip& clip, const
 		ScriptOnEventTriggeredInternal(clip, name);
 }
 
-void CAnimation::GetListenerResources(Vector<HResource>& resources)
+void Animation::GetListenerResources(Vector<HResource>& resources)
 {
 	for(auto& entry : mClipInfos)
 	{
@@ -2022,22 +2022,22 @@ void CAnimation::GetListenerResources(Vector<HResource>& resources)
 	}
 }
 
-void CAnimation::NotifyResourceLoaded(const HResource& resource)
+void Animation::NotifyResourceLoaded(const HResource& resource)
 {
 	mDirty |= AnimationDirtyStateFlag::Layout;
 }
 
-void CAnimation::NotifyResourceChanged(const HResource& resource)
+void Animation::NotifyResourceChanged(const HResource& resource)
 {
 	mDirty |= AnimationDirtyStateFlag::Layout;
 }
 
-RTTIType* CAnimation::GetRttiStatic()
+RTTIType* Animation::GetRttiStatic()
 {
-	return CAnimationRTTI::Instance();
+	return AnimationRTTI::Instance();
 }
 
-RTTIType* CAnimation::GetRtti() const
+RTTIType* Animation::GetRtti() const
 {
-	return CAnimation::GetRttiStatic();
+	return Animation::GetRttiStatic();
 }

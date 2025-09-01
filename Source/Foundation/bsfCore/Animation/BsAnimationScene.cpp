@@ -509,7 +509,7 @@ void AnimationScene::EvaluateAnimation(AnimationProxy* anim, u32& curBoneIdx)
 	}
 }
 
-u64 AnimationScene::RegisterAnimation(CAnimation* anim)
+u64 AnimationScene::RegisterAnimation(Animation* anim)
 {
 	mAnimations[mNextId] = anim;
 	return mNextId++;

@@ -71,7 +71,7 @@ void CBone::UpdateParentAnimation()
 	HSceneObject currentSO = SO();
 	while(currentSO != nullptr)
 	{
-		HAnimation parent = currentSO->GetComponent<CAnimation>();
+		HAnimation parent = currentSO->GetComponent<Animation>();
 		if(parent != nullptr)
 		{
 			if(parent->GetEnabled())

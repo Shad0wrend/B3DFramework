@@ -20,7 +20,7 @@ namespace b3d
 	ScriptAnimation::ScriptUpdateFloatPropertiesInternalThunkDefinition ScriptAnimation::ScriptUpdateFloatPropertiesInternalThunk; 
 	ScriptAnimation::ScriptOnEventTriggeredInternalThunkDefinition ScriptAnimation::ScriptOnEventTriggeredInternalThunk; 
 
-	ScriptAnimation::ScriptAnimation(const GameObjectHandle<CAnimation>& nativeObject)
+	ScriptAnimation::ScriptAnimation(const GameObjectHandle<Animation>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -111,9 +111,9 @@ namespace b3d
 
 	void ScriptAnimation::RegisterEvents()
 	{
-		static_cast<CAnimation*>(GetNativeObject())->ScriptRebuildFloatPropertiesInternal = std::bind(&ScriptAnimation::ScriptRebuildFloatPropertiesInternal, this, std::placeholders::_1);
-		static_cast<CAnimation*>(GetNativeObject())->ScriptUpdateFloatPropertiesInternal = std::bind(&ScriptAnimation::ScriptUpdateFloatPropertiesInternal, this);
-		static_cast<CAnimation*>(GetNativeObject())->ScriptOnEventTriggeredInternal = std::bind(&ScriptAnimation::ScriptOnEventTriggeredInternal, this, std::placeholders::_1, std::placeholders::_2);
+		static_cast<Animation*>(GetNativeObject())->ScriptRebuildFloatPropertiesInternal = std::bind(&ScriptAnimation::ScriptRebuildFloatPropertiesInternal, this, std::placeholders::_1);
+		static_cast<Animation*>(GetNativeObject())->ScriptUpdateFloatPropertiesInternal = std::bind(&ScriptAnimation::ScriptUpdateFloatPropertiesInternal, this);
+		static_cast<Animation*>(GetNativeObject())->ScriptOnEventTriggeredInternal = std::bind(&ScriptAnimation::ScriptOnEventTriggeredInternal, this, std::placeholders::_1, std::placeholders::_2);
 	}
 	void ScriptAnimation::UnregisterEvents()
 	{
@@ -128,7 +128,7 @@ namespace b3d
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
 			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetNativeObject());
-		static_cast<CAnimation*>(self->GetNativeObject())->SetDefaultClip(tmpclip);
+		static_cast<Animation*>(self->GetNativeObject())->SetDefaultClip(tmpclip);
 	}
 
 	MonoObject* ScriptAnimation::InternalGetDefaultClip(ScriptAnimation* self)
@@ -137,7 +137,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetDefaultClip();
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetDefaultClip();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
@@ -155,7 +155,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAnimation*>(self->GetNativeObject())->SetWrapMode(wrapMode);
+		static_cast<Animation*>(self->GetNativeObject())->SetWrapMode(wrapMode);
 	}
 
 	AnimationWrapMode ScriptAnimation::InternalGetWrapMode(ScriptAnimation* self)
@@ -164,7 +164,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetWrapMode();
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetWrapMode();
 
 		AnimationWrapMode __output;
 		__output = tmp__output;
@@ -177,7 +177,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAnimation*>(self->GetNativeObject())->SetSpeed(speed);
+		static_cast<Animation*>(self->GetNativeObject())->SetSpeed(speed);
 	}
 
 	float ScriptAnimation::InternalGetSpeed(ScriptAnimation* self)
@@ -186,7 +186,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetSpeed();
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetSpeed();
 
 		float __output;
 		__output = tmp__output;
@@ -204,7 +204,7 @@ namespace b3d
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
 			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetNativeObject());
-		static_cast<CAnimation*>(self->GetNativeObject())->Play(tmpclip);
+		static_cast<Animation*>(self->GetNativeObject())->Play(tmpclip);
 	}
 
 	void ScriptAnimation::InternalBlendAdditive(ScriptAnimation* self, MonoObject* clip, float weight, float fadeLength, uint32_t layer)
@@ -217,7 +217,7 @@ namespace b3d
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
 			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetNativeObject());
-		static_cast<CAnimation*>(self->GetNativeObject())->BlendAdditive(tmpclip, weight, fadeLength, layer);
+		static_cast<Animation*>(self->GetNativeObject())->BlendAdditive(tmpclip, weight, fadeLength, layer);
 	}
 
 	void ScriptAnimation::InternalBlend1D(ScriptAnimation* self, __Blend1DInfoInterop* info, float alpha)
@@ -227,7 +227,7 @@ namespace b3d
 
 		Blend1DInfo tmpinfo;
 		tmpinfo = ScriptBlend1DInfo::FromInterop(*info);
-		static_cast<CAnimation*>(self->GetNativeObject())->Blend1D(tmpinfo, alpha);
+		static_cast<Animation*>(self->GetNativeObject())->Blend1D(tmpinfo, alpha);
 	}
 
 	void ScriptAnimation::InternalBlend2D(ScriptAnimation* self, __Blend2DInfoInterop* info, TVector2<float>* alpha)
@@ -237,7 +237,7 @@ namespace b3d
 
 		Blend2DInfo tmpinfo;
 		tmpinfo = ScriptBlend2DInfo::FromInterop(*info);
-		static_cast<CAnimation*>(self->GetNativeObject())->Blend2D(tmpinfo, *alpha);
+		static_cast<Animation*>(self->GetNativeObject())->Blend2D(tmpinfo, *alpha);
 	}
 
 	void ScriptAnimation::InternalCrossFade(ScriptAnimation* self, MonoObject* clip, float fadeLength)
@@ -250,7 +250,7 @@ namespace b3d
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
 			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetNativeObject());
-		static_cast<CAnimation*>(self->GetNativeObject())->CrossFade(tmpclip, fadeLength);
+		static_cast<Animation*>(self->GetNativeObject())->CrossFade(tmpclip, fadeLength);
 	}
 
 	void ScriptAnimation::InternalSample(ScriptAnimation* self, MonoObject* clip, float time)
@@ -263,7 +263,7 @@ namespace b3d
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
 			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetNativeObject());
-		static_cast<CAnimation*>(self->GetNativeObject())->Sample(tmpclip, time);
+		static_cast<Animation*>(self->GetNativeObject())->Sample(tmpclip, time);
 	}
 
 	void ScriptAnimation::InternalStop(ScriptAnimation* self, uint32_t layer)
@@ -271,7 +271,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAnimation*>(self->GetNativeObject())->Stop(layer);
+		static_cast<Animation*>(self->GetNativeObject())->Stop(layer);
 	}
 
 	void ScriptAnimation::InternalStopAll(ScriptAnimation* self)
@@ -279,7 +279,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAnimation*>(self->GetNativeObject())->StopAll();
+		static_cast<Animation*>(self->GetNativeObject())->StopAll();
 	}
 
 	bool ScriptAnimation::InternalIsPlaying(ScriptAnimation* self)
@@ -288,7 +288,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->IsPlaying();
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->IsPlaying();
 
 		bool __output;
 		__output = tmp__output;
@@ -307,7 +307,7 @@ namespace b3d
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
 			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetNativeObject());
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetState(tmpclip, *state);
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetState(tmpclip, *state);
 
 		bool __output;
 		__output = tmp__output;
@@ -325,7 +325,7 @@ namespace b3d
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
 			tmpclip = B3DStaticResourceCast<AnimationClip>(scriptObjectWrapperclip->GetNativeObject());
-		static_cast<CAnimation*>(self->GetNativeObject())->SetState(tmpclip, *state);
+		static_cast<Animation*>(self->GetNativeObject())->SetState(tmpclip, *state);
 	}
 
 	void ScriptAnimation::InternalSetMorphChannelWeight(ScriptAnimation* self, MonoString* name, float weight)
@@ -335,7 +335,7 @@ namespace b3d
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		static_cast<CAnimation*>(self->GetNativeObject())->SetMorphChannelWeight(tmpname, weight);
+		static_cast<Animation*>(self->GetNativeObject())->SetMorphChannelWeight(tmpname, weight);
 	}
 
 	void ScriptAnimation::InternalSetCustomBounds(ScriptAnimation* self, __TAABox_float_Interop* bounds)
@@ -345,7 +345,7 @@ namespace b3d
 
 		TAABox<float> tmpbounds;
 		tmpbounds = ScriptAABox::FromInterop(*bounds);
-		static_cast<CAnimation*>(self->GetNativeObject())->SetCustomBounds(tmpbounds);
+		static_cast<Animation*>(self->GetNativeObject())->SetCustomBounds(tmpbounds);
 	}
 
 	void ScriptAnimation::InternalGetCustomBounds(ScriptAnimation* self, __TAABox_float_Interop* __output)
@@ -357,7 +357,7 @@ namespace b3d
 		}
 
 		TAABox<float> tmp__output;
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetCustomBounds();
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetCustomBounds();
 
 		__TAABox_float_Interop interop__output;
 		interop__output = ScriptAABox::ToInterop(tmp__output);
@@ -369,7 +369,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAnimation*>(self->GetNativeObject())->SetUseCustomBounds(enable);
+		static_cast<Animation*>(self->GetNativeObject())->SetUseCustomBounds(enable);
 	}
 
 	bool ScriptAnimation::InternalGetUseCustomBounds(ScriptAnimation* self)
@@ -378,7 +378,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetUseCustomBounds();
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetUseCustomBounds();
 
 		bool __output;
 		__output = tmp__output;
@@ -391,7 +391,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAnimation*>(self->GetNativeObject())->SetEnableCull(enable);
+		static_cast<Animation*>(self->GetNativeObject())->SetEnableCull(enable);
 	}
 
 	bool ScriptAnimation::InternalGetEnableCull(ScriptAnimation* self)
@@ -400,7 +400,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetEnableCull();
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetEnableCull();
 
 		bool __output;
 		__output = tmp__output;
@@ -414,7 +414,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetClipCount();
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetClipCount();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -428,7 +428,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetClip(index);
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetClip(index);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
@@ -446,7 +446,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAnimation*>(self->GetNativeObject())->RefreshClipMappingsInternal();
+		static_cast<Animation*>(self->GetNativeObject())->RefreshClipMappingsInternal();
 	}
 
 	bool ScriptAnimation::InternalGetGenericCurveValueInternal(ScriptAnimation* self, uint32_t index, float* outValue)
@@ -455,7 +455,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->GetGenericCurveValueInternal(index, *outValue);
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->GetGenericCurveValueInternal(index, *outValue);
 
 		bool __output;
 		__output = tmp__output;
@@ -469,7 +469,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAnimation*>(self->GetNativeObject())->TogglePreviewModeInternal(enabled);
+		tmp__output = static_cast<Animation*>(self->GetNativeObject())->TogglePreviewModeInternal(enabled);
 
 		bool __output;
 		__output = tmp__output;

@@ -209,7 +209,7 @@ void Renderable::OnCreated()
 
 void Renderable::OnBeginPlay()
 {
-	mAnimation = SO()->GetComponent<CAnimation>();
+	mAnimation = SO()->GetComponent<Animation>();
 	if(mAnimation != nullptr)
 	{
 		RegisterAnimation(mAnimation);

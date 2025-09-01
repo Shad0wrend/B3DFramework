@@ -12,17 +12,17 @@
 #include "../../../Foundation/bsfCore/Animation/BsAnimation.h"
 
 namespace b3d { struct __TAABox_float_Interop; }
-namespace b3d { class CAnimation; }
+namespace b3d { class Animation; }
 namespace b3d { struct __Blend1DInfoInterop; }
 namespace b3d { struct __Blend2DInfoInterop; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimation : public TScriptGameObjectWrapper<CAnimation, ScriptAnimation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimation : public TScriptGameObjectWrapper<Animation, ScriptAnimation>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Animation")
 
-		ScriptAnimation(const GameObjectHandle<CAnimation>& nativeObject);
+		ScriptAnimation(const GameObjectHandle<Animation>& nativeObject);
 		~ScriptAnimation();
 
 		static void SetupScriptBindings();

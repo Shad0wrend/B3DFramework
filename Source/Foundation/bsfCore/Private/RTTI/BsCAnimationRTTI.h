@@ -15,7 +15,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CAnimationRTTI : public TRTTIType<CAnimation, Component, CAnimationRTTI>
+	class B3D_CORE_EXPORT AnimationRTTI : public TRTTIType<Animation, Component, AnimationRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mDefaultClip, 0)
@@ -28,18 +28,18 @@ namespace b3d
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CAnimation";
+			static String name = "Animation";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CAnimation;
+			return TID_Animation;
 		}
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return SceneObject::CreateEmptyComponent<CAnimation>();
+			return SceneObject::CreateEmptyComponent<Animation>();
 		}
 	};
 

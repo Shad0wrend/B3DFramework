@@ -304,7 +304,6 @@ namespace b3d
 	B3D_CORE_OBJECT_FORWARD_DECLARE(VectorField)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Skybox)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(AnimationClip)
-	B3D_CORE_OBJECT_FORWARD_DECLARE(Animation)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(StringTable)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(ShaderInclude)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(LightProbeVolume)
@@ -346,6 +345,7 @@ namespace b3d
 	class CharacterController;
 	class AudioListener;
 	class AudioSource;
+	class Animation;
 	class Bone;
 
 	// Components
@@ -362,7 +362,6 @@ namespace b3d
 	};
 
 	B3D_COMPONENT_FORWARD_DECLARE(Camera)
-	B3D_COMPONENT_FORWARD_DECLARE(Animation)
 	B3D_COMPONENT_FORWARD_DECLARE(Bone)
 	B3D_COMPONENT_FORWARD_DECLARE(AudioSource)
 	B3D_COMPONENT_FORWARD_DECLARE(AudioListener)
@@ -591,7 +590,7 @@ namespace b3d
 		TID_Skeleton = 1119,
 		TID_SkeletonBoneInfo = 1120,
 		TID_AnimationSplitInfo = 1121,
-		TID_CAnimation = 1122,
+		TID_Animation = 1122,
 		TID_AnimationEvent = 1123,
 		TID_ImportedAnimationEvents = 1124,
 		TID_CBone = 1125,
@@ -805,7 +804,7 @@ namespace b3d
 	typedef GameObjectHandle<CCamera> HCamera;
 	typedef GameObjectHandle<Renderable> HRenderable;
 	typedef GameObjectHandle<Light> HLight;
-	typedef GameObjectHandle<CAnimation> HAnimation;
+	typedef GameObjectHandle<Animation> HAnimation;
 	typedef GameObjectHandle<CBone> HBone;
 	typedef GameObjectHandle<Rigidbody> HRigidbody;
 	typedef GameObjectHandle<Collider> HCollider;

@@ -286,7 +286,7 @@ namespace b3d
 	 * thread for updating attached scene objects and bones (if skeleton is attached), or the data is made available for
 	 * manual queries in the case of generic animation.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Animation)) CAnimation : public Component, public IResourceListener
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Animation)) Animation : public Component, public IResourceListener
 	{
 		/** Information about scene objects bound to a specific animation curve. */
 		struct SceneObjectMappingInfo
@@ -297,7 +297,7 @@ namespace b3d
 		};
 
 	public:
-		CAnimation(const HSceneObject& parent);
+		Animation(const HSceneObject& parent);
 
 		/**
 		 * Determines the default clip to play as soon as the component is enabled. If more control over playing clips is needed
@@ -693,12 +693,12 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CAnimationRTTI;
+		friend class AnimationRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const override;
 
 	protected:
-		CAnimation(); // Serialization only
+		Animation(); // Serialization only
 	};
 
 	/** @} */
