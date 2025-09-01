@@ -1,9 +1,9 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Components/BsCBone.h"
+#include "Components/BsBone.h"
 #include "Scene/BsSceneObject.h"
 #include "Components/BsAnimation.h"
-#include "Private/RTTI/BsCBoneRTTI.h"
+#include "Private/RTTI/BsBoneRTTI.h"
 
 using namespace b3d;
 
