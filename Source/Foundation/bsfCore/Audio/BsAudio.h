@@ -79,7 +79,7 @@ namespace b3d
 	protected:
 		friend class AudioClip;
 		friend class AudioListener;
-		friend class CAudioSource;
+		friend class AudioSource;
 
 		/**
 		 * Creates a new audio clip.

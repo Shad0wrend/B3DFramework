@@ -346,7 +346,7 @@ namespace b3d
 	class AudioListener;
 	class Animation;
 	class Bone;
-	class CAudioSource;
+	class AudioSource;
 
 	// Components
 	template <class T>
@@ -580,7 +580,7 @@ namespace b3d
 		TID_AudioClip = 1111,
 		TID_AudioClipImportOptions = 1112,
 		TID_CAudioListener = 1113,
-		TID_CAudioSource = 1114,
+		TID_AudioSource = 1114,
 		TID_AnimationClip = 1115,
 		TID_AnimationCurve = 1116,
 		TID_KeyFrame = 1117,
@@ -608,7 +608,7 @@ namespace b3d
 		TID_Transform = 1139,
 		TID_SceneActor = 1140,
 		TID_AudioListener = 1141,
-		TID_AudioSource = 1142,
+		//TID_AudioSource = 1142,
 		TID_ShaderVariationParameter = 1143,
 		TID_ShaderVariation = 1144,
 		TID_GpuProgramBytecode = 1145,
@@ -822,7 +822,7 @@ namespace b3d
 	typedef GameObjectHandle<ReflectionProbe> HReflectionProbe;
 	typedef GameObjectHandle<Skybox> HSkybox;
 	typedef GameObjectHandle<LightProbeVolume> HLightProbeVolume;
-	typedef GameObjectHandle<CAudioSource> HAudioSource;
+	typedef GameObjectHandle<AudioSource> HAudioSource;
 	typedef GameObjectHandle<CAudioListener> HAudioListener;
 	typedef GameObjectHandle<CParticleSystem> HParticleSystem;
 	typedef GameObjectHandle<Decal> HDecal;

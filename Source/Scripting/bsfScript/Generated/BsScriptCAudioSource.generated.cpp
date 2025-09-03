@@ -11,7 +11,7 @@
 
 namespace b3d
 {
-	ScriptAudioSource::ScriptAudioSource(const GameObjectHandle<CAudioSource>& nativeObject)
+	ScriptAudioSource::ScriptAudioSource(const GameObjectHandle<AudioSource>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -69,7 +69,7 @@ namespace b3d
 		scriptObjectWrapperclip = ScriptRRefBase::GetScriptObjectWrapper(clip);
 		if(scriptObjectWrapperclip != nullptr)
 			tmpclip = B3DStaticResourceCast<AudioClip>(scriptObjectWrapperclip->GetNativeObject());
-		static_cast<CAudioSource*>(self->GetNativeObject())->SetClip(tmpclip);
+		static_cast<AudioSource*>(self->GetNativeObject())->SetClip(tmpclip);
 	}
 
 	MonoObject* ScriptAudioSource::InternalGetClip(ScriptAudioSource* self)
@@ -78,7 +78,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetClip();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetClip();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
@@ -96,7 +96,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->SetVolume(volume);
+		static_cast<AudioSource*>(self->GetNativeObject())->SetVolume(volume);
 	}
 
 	float ScriptAudioSource::InternalGetVolume(ScriptAudioSource* self)
@@ -105,7 +105,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetVolume();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetVolume();
 
 		float __output;
 		__output = tmp__output;
@@ -118,7 +118,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->SetPitch(pitch);
+		static_cast<AudioSource*>(self->GetNativeObject())->SetPitch(pitch);
 	}
 
 	float ScriptAudioSource::InternalGetPitch(ScriptAudioSource* self)
@@ -127,7 +127,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetPitch();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetPitch();
 
 		float __output;
 		__output = tmp__output;
@@ -140,7 +140,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->SetIsLooping(loop);
+		static_cast<AudioSource*>(self->GetNativeObject())->SetIsLooping(loop);
 	}
 
 	bool ScriptAudioSource::InternalGetIsLooping(ScriptAudioSource* self)
@@ -149,7 +149,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetIsLooping();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetIsLooping();
 
 		bool __output;
 		__output = tmp__output;
@@ -162,7 +162,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->SetPriority(priority);
+		static_cast<AudioSource*>(self->GetNativeObject())->SetPriority(priority);
 	}
 
 	uint32_t ScriptAudioSource::InternalGetPriority(ScriptAudioSource* self)
@@ -171,7 +171,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetPriority();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetPriority();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -184,7 +184,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->SetMinDistance(distance);
+		static_cast<AudioSource*>(self->GetNativeObject())->SetMinDistance(distance);
 	}
 
 	float ScriptAudioSource::InternalGetMinDistance(ScriptAudioSource* self)
@@ -193,7 +193,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetMinDistance();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetMinDistance();
 
 		float __output;
 		__output = tmp__output;
@@ -206,7 +206,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->SetAttenuation(attenuation);
+		static_cast<AudioSource*>(self->GetNativeObject())->SetAttenuation(attenuation);
 	}
 
 	float ScriptAudioSource::InternalGetAttenuation(ScriptAudioSource* self)
@@ -215,7 +215,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetAttenuation();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetAttenuation();
 
 		float __output;
 		__output = tmp__output;
@@ -228,7 +228,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->SetTime(time);
+		static_cast<AudioSource*>(self->GetNativeObject())->SetTime(time);
 	}
 
 	float ScriptAudioSource::InternalGetTime(ScriptAudioSource* self)
@@ -237,7 +237,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetTime();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetTime();
 
 		float __output;
 		__output = tmp__output;
@@ -250,7 +250,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->SetPlayOnStart(enable);
+		static_cast<AudioSource*>(self->GetNativeObject())->SetPlayOnStart(enable);
 	}
 
 	bool ScriptAudioSource::InternalGetPlayOnStart(ScriptAudioSource* self)
@@ -259,7 +259,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetPlayOnStart();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetPlayOnStart();
 
 		bool __output;
 		__output = tmp__output;
@@ -272,7 +272,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->Play();
+		static_cast<AudioSource*>(self->GetNativeObject())->Play();
 	}
 
 	void ScriptAudioSource::InternalPause(ScriptAudioSource* self)
@@ -280,7 +280,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->Pause();
+		static_cast<AudioSource*>(self->GetNativeObject())->Pause();
 	}
 
 	void ScriptAudioSource::InternalStop(ScriptAudioSource* self)
@@ -288,7 +288,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CAudioSource*>(self->GetNativeObject())->Stop();
+		static_cast<AudioSource*>(self->GetNativeObject())->Stop();
 	}
 
 	AudioSourceState ScriptAudioSource::InternalGetState(ScriptAudioSource* self)
@@ -297,7 +297,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CAudioSource*>(self->GetNativeObject())->GetState();
+		tmp__output = static_cast<AudioSource*>(self->GetNativeObject())->GetState();
 
 		AudioSourceState __output;
 		__output = tmp__output;

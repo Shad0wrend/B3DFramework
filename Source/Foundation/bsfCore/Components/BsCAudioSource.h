@@ -35,11 +35,11 @@ namespace b3d
 	 * Whether or not an audio source is spatial is controlled by the assigned AudioClip. The volume and the pitch of a
 	 * spatial audio source is controlled by its position and the AudioListener's position/direction/velocity.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportName(AudioSource)) CAudioSource : public Component, public IResourceListener
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioSource : public Component, public IResourceListener
 	{
 	public:
-		CAudioSource(const HSceneObject& parent);
-		virtual ~CAudioSource() = default;
+		AudioSource(const HSceneObject& parent);
+		virtual ~AudioSource() = default;
 
 		/** Audio clip to play. */
 		B3D_SCRIPT_EXPORT(ExportName(Clip), Property(Setter))
@@ -185,12 +185,12 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CAudioSourceRTTI;
+		friend class AudioSourceRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
 	protected:
-		CAudioSource(); // Serialization only
+		AudioSource(); // Serialization only
 	};
 
 	/** @} */

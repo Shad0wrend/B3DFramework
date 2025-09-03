@@ -14,7 +14,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CAudioSourceRTTI : public TRTTIType<CAudioSource, Component, CAudioSourceRTTI>
+	class B3D_CORE_EXPORT AudioSourceRTTI : public TRTTIType<AudioSource, Component, AudioSourceRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			// B3D_RTTI_MEMBER_REFLPTR(mInternal, 0)
@@ -30,18 +30,18 @@ namespace b3d
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CAudioSource";
+			static String name = "AudioSource";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CAudioSource;
+			return TID_AudioSource;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CAudioSource>();
+			return SceneObject::CreateEmptyComponent<AudioSource>();
 		}
 	};
 

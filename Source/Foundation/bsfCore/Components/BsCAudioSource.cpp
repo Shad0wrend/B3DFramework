@@ -9,19 +9,19 @@
 
 using namespace b3d;
 
-CAudioSource::CAudioSource(const HSceneObject& parent)
+AudioSource::AudioSource(const HSceneObject& parent)
 	: Component(parent)
 { }
 
-CAudioSource::CAudioSource()
-	: CAudioSource(nullptr)
+AudioSource::AudioSource()
+	: AudioSource(nullptr)
 {
 	SetName("AudioSource");
 
 	mNotifyFlags = TCF_Transform;
 }
 
-void CAudioSource::SetClip(const HAudioClip& clip)
+void AudioSource::SetClip(const HAudioClip& clip)
 {
 	if(mAudioClip == clip)
 		return;
@@ -33,7 +33,7 @@ void CAudioSource::SetClip(const HAudioClip& clip)
 		mImplementation->SetClip(clip);
 }
 
-void CAudioSource::SetVolume(float volume)
+void AudioSource::SetVolume(float volume)
 {
 	volume = Math::Clamp01(volume);
 
@@ -46,7 +46,7 @@ void CAudioSource::SetVolume(float volume)
 		mImplementation->SetVolume(volume);
 }
 
-void CAudioSource::SetPitch(float pitch)
+void AudioSource::SetPitch(float pitch)
 {
 	if(mPitch == pitch)
 		return;
@@ -57,7 +57,7 @@ void CAudioSource::SetPitch(float pitch)
 		mImplementation->SetPitch(pitch);
 }
 
-void CAudioSource::SetIsLooping(bool loop)
+void AudioSource::SetIsLooping(bool loop)
 {
 	if(mLoop == loop)
 		return;
@@ -68,7 +68,7 @@ void CAudioSource::SetIsLooping(bool loop)
 		mImplementation->SetIsLooping(loop);
 }
 
-void CAudioSource::SetPriority(u32 priority)
+void AudioSource::SetPriority(u32 priority)
 {
 	if(mPriority == priority)
 		return;
@@ -79,7 +79,7 @@ void CAudioSource::SetPriority(u32 priority)
 		mImplementation->SetPriority(priority);
 }
 
-void CAudioSource::SetMinDistance(float distance)
+void AudioSource::SetMinDistance(float distance)
 {
 	if(mMinDistance == distance)
 		return;
@@ -90,7 +90,7 @@ void CAudioSource::SetMinDistance(float distance)
 		mImplementation->SetMinDistance(distance);
 }
 
-void CAudioSource::SetAttenuation(float attenuation)
+void AudioSource::SetAttenuation(float attenuation)
 {
 	if(mAttenuation == attenuation)
 		return;
@@ -101,31 +101,31 @@ void CAudioSource::SetAttenuation(float attenuation)
 		mImplementation->SetAttenuation(attenuation);
 }
 
-void CAudioSource::Play()
+void AudioSource::Play()
 {
 	if(mImplementation != nullptr)
 		mImplementation->Play();
 }
 
-void CAudioSource::Pause()
+void AudioSource::Pause()
 {
 	if(mImplementation != nullptr)
 		mImplementation->Pause();
 }
 
-void CAudioSource::Stop()
+void AudioSource::Stop()
 {
 	if(mImplementation != nullptr)
 		mImplementation->Stop();
 }
 
-void CAudioSource::SetTime(float position)
+void AudioSource::SetTime(float position)
 {
 	if(mImplementation != nullptr)
 		mImplementation->SetTime(position);
 }
 
-float CAudioSource::GetTime() const
+float AudioSource::GetTime() const
 {
 	if(mImplementation != nullptr)
 		return mImplementation->GetTime();
@@ -133,7 +133,7 @@ float CAudioSource::GetTime() const
 	return 0.0f;
 }
 
-AudioSourceState CAudioSource::GetState() const
+AudioSourceState AudioSource::GetState() const
 {
 	if(mImplementation != nullptr)
 		return mImplementation->GetState();
@@ -141,17 +141,17 @@ AudioSourceState CAudioSource::GetState() const
 	return AudioSourceState::Stopped;
 }
 
-void CAudioSource::OnDestroyed()
+void AudioSource::OnDestroyed()
 {
 	DestroyInternal();
 }
 
-void CAudioSource::OnDisabled()
+void AudioSource::OnDisabled()
 {
 	DestroyInternal();
 }
 
-void CAudioSource::OnEnabled()
+void AudioSource::OnEnabled()
 {
 	RestoreInternal();
 
@@ -159,7 +159,7 @@ void CAudioSource::OnEnabled()
 		Play();
 }
 
-void CAudioSource::OnTransformChanged(TransformChangedFlags flags)
+void AudioSource::OnTransformChanged(TransformChangedFlags flags)
 {
 	if(!GetEnabled())
 		return;
@@ -168,7 +168,7 @@ void CAudioSource::OnTransformChanged(TransformChangedFlags flags)
 		UpdateTransform();
 }
 
-void CAudioSource::Update()
+void AudioSource::Update()
 {
 	const Vector3 worldPos = SO()->GetTransform().GetPosition();
 
@@ -181,7 +181,7 @@ void CAudioSource::Update()
 	mLastPosition = worldPos;
 }
 
-void CAudioSource::RestoreInternal()
+void AudioSource::RestoreInternal()
 {
 	if(mImplementation == nullptr)
 		mImplementation = Audio::Instance().CreateSource();
@@ -198,25 +198,25 @@ void CAudioSource::RestoreInternal()
 	UpdateTransform();
 }
 
-void CAudioSource::DestroyInternal()
+void AudioSource::DestroyInternal()
 {
 	// This should release the last reference and destroy the internal listener
 	mImplementation = nullptr;
 }
 
-void CAudioSource::UpdateTransform()
+void AudioSource::UpdateTransform()
 {
 	mImplementation->SetTransform(SO()->GetTransform());
 	mImplementation->SetVelocity(mVelocity);
 }
 
-void CAudioSource::GetListenerResources(Vector<HResource>& resources)
+void AudioSource::GetListenerResources(Vector<HResource>& resources)
 {
 	if(mAudioClip != nullptr)
 		resources.push_back(mAudioClip);
 }
 
-void CAudioSource::NotifyResourceChanged(const HResource& resource)
+void AudioSource::NotifyResourceChanged(const HResource& resource)
 {
 	AudioSourceState state = GetState();
 	float savedTime = GetTime();
@@ -232,12 +232,12 @@ void CAudioSource::NotifyResourceChanged(const HResource& resource)
 		Pause();
 }
 
-RTTIType* CAudioSource::GetRttiStatic()
+RTTIType* AudioSource::GetRttiStatic()
 {
-	return CAudioSourceRTTI::Instance();
+	return AudioSourceRTTI::Instance();
 }
 
-RTTIType* CAudioSource::GetRtti() const
+RTTIType* AudioSource::GetRtti() const
 {
-	return CAudioSource::GetRttiStatic();
+	return AudioSource::GetRttiStatic();
 }

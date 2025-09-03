@@ -6,15 +6,15 @@
 #include "Wrappers/BsScriptComponent.h"
 #include "../../../Foundation/bsfCore/Audio/BsAudioSource.h"
 
-namespace b3d { class CAudioSource; }
+namespace b3d { class AudioSource; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioSource : public TScriptGameObjectWrapper<CAudioSource, ScriptAudioSource>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioSource : public TScriptGameObjectWrapper<AudioSource, ScriptAudioSource>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "AudioSource")
 
-		ScriptAudioSource(const GameObjectHandle<CAudioSource>& nativeObject);
+		ScriptAudioSource(const GameObjectHandle<AudioSource>& nativeObject);
 		~ScriptAudioSource();
 
 		static void SetupScriptBindings();
