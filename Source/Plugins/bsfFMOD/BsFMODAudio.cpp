@@ -109,11 +109,11 @@ void FMODAudio::SetPaused(bool paused)
 		source->SetGlobalPause(paused);
 }
 
-void FMODAudio::UpdateInternal()
+void FMODAudio::Update()
 {
 	mFMOD->update();
 
-	Audio::UpdateInternal();
+	Audio::Update();
 }
 
 void FMODAudio::SetActiveDevice(const AudioDevice& device)
@@ -130,9 +130,9 @@ void FMODAudio::SetActiveDevice(const AudioDevice& device)
 	B3D_LOG(Warning, Audio, "Failed changing audio device to: {0}", device.Name);
 }
 
-SPtr<AudioClip> FMODAudio::CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
+SPtr<AudioClip> FMODAudio::CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 sampleCount, const AudioClipCreateInformation& createInformation)
 {
-	return B3DMakeCoreShared<FMODAudioClip>(samples, streamSize, numSamples, desc);
+	return B3DMakeShared<FMODAudioClip>(samples, streamSize, sampleCount, createInformation);
 }
 
 SPtr<AudioListener> FMODAudio::CreateListener()
@@ -140,19 +140,19 @@ SPtr<AudioListener> FMODAudio::CreateListener()
 	return B3DMakeShared<FMODAudioListener>();
 }
 
-SPtr<AudioSource> FMODAudio::CreateSource()
+SPtr<IAudioSourceImplementation> FMODAudio::CreateSource()
 {
 	return B3DMakeShared<FMODAudioSource>();
 }
 
-void FMODAudio::RegisterListenerInternal(FMODAudioListener* listener)
+void FMODAudio::RegisterListener(FMODAudioListener* listener)
 {
 	mListeners.push_back(listener);
 
 	RebuildListeners();
 }
 
-void FMODAudio::UnregisterListenerInternal(FMODAudioListener* listener)
+void FMODAudio::UnregisterListener(FMODAudioListener* listener)
 {
 	auto iterFind = std::find(mListeners.begin(), mListeners.end(), listener);
 	if(iterFind != mListeners.end())
@@ -163,11 +163,11 @@ void FMODAudio::UnregisterListenerInternal(FMODAudioListener* listener)
 
 void FMODAudio::RebuildListeners()
 {
-	i32 numListeners = (i32)mListeners.size();
-	if(numListeners > 0)
+	i32 listenerCount = (i32)mListeners.size();
+	if(listenerCount > 0)
 	{
-		mFMOD->set3DNumListeners(numListeners);
-		for(i32 i = 0; i < numListeners; i++)
+		mFMOD->set3DNumListeners(listenerCount);
+		for(i32 i = 0; i < listenerCount; i++)
 			mListeners[i]->Rebuild(i);
 	}
 	else // Always keep at least one listener
@@ -181,12 +181,12 @@ void FMODAudio::RebuildListeners()
 	}
 }
 
-void FMODAudio::RegisterSourceInternal(FMODAudioSource* source)
+void FMODAudio::RegisterSource(FMODAudioSource* source)
 {
 	mSources.insert(source);
 }
 
-void FMODAudio::UnregisterSourceInternal(FMODAudioSource* source)
+void FMODAudio::UnregisterSource(FMODAudioSource* source)
 {
 	mSources.erase(source);
 }

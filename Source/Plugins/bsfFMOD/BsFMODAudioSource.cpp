@@ -3,17 +3,18 @@
 #include "BsFMODAudioSource.h"
 #include "BsFMODAudio.h"
 #include "BsFMODAudioClip.h"
+#include "Scene/BsTransform.h"
 
 using namespace b3d;
 
 FMODAudioSource::FMODAudioSource()
 {
-	GetFMODAudio().RegisterSourceInternal(this);
+	GetFMODAudio().RegisterSource(this);
 }
 
 FMODAudioSource::~FMODAudioSource()
 {
-	GetFMODAudio().UnregisterSourceInternal(this);
+	GetFMODAudio().UnregisterSource(this);
 
 	if(mStreamingSound != nullptr)
 		FMODAudioClip::ReleaseStreamingSound(mStreamingSound);
@@ -26,25 +27,23 @@ void FMODAudioSource::SetClip(const HAudioClip& clip)
 {
 	Stop();
 
-	AudioSource::SetClip(clip);
+	mAudioClip = B3DStaticResourceCast<FMODAudioClip>(clip);
 }
 
 void FMODAudioSource::SetTransform(const Transform& transform)
 {
-	SceneActor::SetTransform(transform);
+	mPosition = transform.GetPosition();
 
 	if(mChannel != nullptr)
 	{
-		Vector3 position = transform.GetPosition();
-
-		FMOD_VECTOR fmodPosition = { position.X, position.Y, position.Z };
+		FMOD_VECTOR fmodPosition = { mPosition.X, mPosition.Y, mPosition.Z };
 		mChannel->set3DAttributes(&fmodPosition, nullptr);
 	}
 }
 
 void FMODAudioSource::SetVelocity(const Vector3& velocity)
 {
-	AudioSource::SetVelocity(velocity);
+	mVelocity = velocity;
 
 	if(mChannel != nullptr)
 	{
@@ -55,7 +54,7 @@ void FMODAudioSource::SetVelocity(const Vector3& velocity)
 
 void FMODAudioSource::SetVolume(float volume)
 {
-	AudioSource::SetVolume(volume);
+	mVolume = volume;
 
 	if(mChannel != nullptr)
 		mChannel->setVolume(mVolume);
@@ -63,7 +62,7 @@ void FMODAudioSource::SetVolume(float volume)
 
 void FMODAudioSource::SetPitch(float pitch)
 {
-	AudioSource::SetPitch(pitch);
+	mPitch = pitch;
 
 	if(mChannel != nullptr)
 		mChannel->setPitch(mPitch);
@@ -71,7 +70,7 @@ void FMODAudioSource::SetPitch(float pitch)
 
 void FMODAudioSource::SetIsLooping(bool loop)
 {
-	AudioSource::SetIsLooping(loop);
+	mLoop = loop;
 
 	if(mChannel != nullptr)
 		mChannel->setMode(loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
@@ -79,7 +78,7 @@ void FMODAudioSource::SetIsLooping(bool loop)
 
 void FMODAudioSource::SetPriority(i32 priority)
 {
-	AudioSource::SetPriority(priority);
+	mPriority = priority;
 
 	if(mChannel != nullptr)
 		mChannel->setPriority(priority);
@@ -99,18 +98,17 @@ void FMODAudioSource::Play()
 	{
 		B3D_ASSERT(mStreamingSound == nullptr);
 
-		FMOD::System* fmod = GetFMODAudio().GetFMODInternal();
+		FMOD::System* fmod = GetFMODAudio().GetFMOD();
 
-		FMODAudioClip* fmodClip = static_cast<FMODAudioClip*>(mAudioClip.Get());
 		FMOD::Sound* sound;
-		if(fmodClip->RequiresStreaming())
+		if(mAudioClip->RequiresStreaming())
 		{
-			mStreamingSound = fmodClip->CreateStreamingSound();
+			mStreamingSound = mAudioClip->CreateStreamingSound();
 			sound = mStreamingSound;
 		}
 		else
 		{
-			sound = fmodClip->GetSound();
+			sound = mAudioClip->GetSound();
 		}
 
 		if(fmod->playSound(sound, nullptr, true, &mChannel) != FMOD_OK)
@@ -128,14 +126,12 @@ void FMODAudioSource::Play()
 
 		mChannel->setUserData(this);
 		mChannel->setVolume(mVolume);
-		mChannel->setPitch(mVolume);
+		mChannel->setPitch(mPitch);
 		mChannel->setMode(mLoop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
 		mChannel->setPriority(mPriority);
 		mChannel->setPosition((u32)(mTime * 1000.0f), FMOD_TIMEUNIT_MS);
 
-		Vector3 position = GetTransform().GetPosition();
-
-		FMOD_VECTOR fmodPosition = { position.X, position.Y, position.Z };
+		FMOD_VECTOR fmodPosition = { mPosition.X, mPosition.Y, mPosition.Z };
 		FMOD_VECTOR fmodVelocity = { mVelocity.X, mVelocity.Y, mVelocity.Z };
 		mChannel->set3DAttributes(&fmodPosition, &fmodVelocity);
 	}
@@ -231,20 +227,4 @@ float FMODAudioSource::GetTime() const
 	}
 
 	return 0.0f;
-}
-
-void FMODAudioSource::OnClipChanged()
-{
-	AudioSourceState state = GetState();
-	float savedTime = GetTime();
-
-	Stop();
-
-	SetTime(savedTime);
-
-	if(state != AudioSourceState::Stopped)
-		Play();
-
-	if(state == AudioSourceState::Paused)
-		Pause();
 }

@@ -3,8 +3,8 @@
 #pragma once
 
 #include "BsFMODPrerequisites.h"
-#include "Audio/BsAudioSource.h"
 #include "BsFMODAudio.h"
+#include "Components/BsAudioSource.h"
 
 namespace b3d
 {
@@ -13,11 +13,11 @@ namespace b3d
 	 */
 
 	/** FMOD implementation of an AudioSource. */
-	class FMODAudioSource : public AudioSource
+	class FMODAudioSource : public IAudioSourceImplementation
 	{
 	public:
 		FMODAudioSource();
-		virtual ~FMODAudioSource();
+		~FMODAudioSource() override;
 
 		void SetTransform(const Transform& transform) override;
 		void SetClip(const HAudioClip& clip) override;
@@ -39,7 +39,13 @@ namespace b3d
 		/** Pauses or resumes audio playback due to the global pause setting. */
 		void SetGlobalPause(bool pause);
 
-		void OnClipChanged() override;
+		TResourceHandle<FMODAudioClip> mAudioClip;
+		Vector3 mPosition = BsZero;
+		Vector3 mVelocity = BsZero;
+		float mVolume = 1.0f;
+		float mPitch = 1.0f;
+		bool mLoop = false;
+		u32 mPriority = 0;
 
 		FMOD::Channel* mChannel = nullptr;
 		FMOD::Sound* mStreamingSound = nullptr;

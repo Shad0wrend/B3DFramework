@@ -23,7 +23,7 @@ namespace b3d
 		float GetVolume() const override;
 		void SetPaused(bool paused) override;
 		bool IsPaused() const override { return mIsPaused; }
-		void UpdateInternal() override;
+		void Update() override;
 		void SetActiveDevice(const AudioDevice& device) override;
 		AudioDevice GetActiveDevice() const override { return mActiveDevice; }
 		AudioDevice GetDefaultDevice() const override { return mDefaultDevice; }
@@ -34,25 +34,25 @@ namespace b3d
 		 */
 
 		/** Registers a new AudioListener. Should be called on listener creation. */
-		void RegisterListenerInternal(FMODAudioListener* listener);
+		void RegisterListener(FMODAudioListener* listener);
 
 		/** Unregisters an existing AudioListener. Should be called before listener destruction. */
-		void UnregisterListenerInternal(FMODAudioListener* listener);
+		void UnregisterListener(FMODAudioListener* listener);
 
 		/** Registers a new AudioSource. Should be called on source creation. */
-		void RegisterSourceInternal(FMODAudioSource* source);
+		void RegisterSource(FMODAudioSource* source);
 
 		/** Unregisters an existing AudioSource. Should be called before source destruction. */
-		void UnregisterSourceInternal(FMODAudioSource* source);
+		void UnregisterSource(FMODAudioSource* source);
 
 		/** Returns internal FMOD system instance. */
-		FMOD::System* GetFMODInternal() const { return mFMOD; }
+		FMOD::System* GetFMOD() const { return mFMOD; }
 
 		/** @} */
 	private:
-		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc) override;
+		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 sampleCount, const AudioClipCreateInformation& createInformation) override;
 		SPtr<AudioListener> CreateListener() override;
-		SPtr<AudioSource> CreateSource() override;
+		SPtr<IAudioSourceImplementation> CreateSource() override;
 
 		/** Rebuilds information about all listeners. Should be called when listener list changes. */
 		void RebuildListeners();
