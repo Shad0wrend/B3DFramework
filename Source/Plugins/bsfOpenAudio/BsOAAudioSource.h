@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsOAPrerequisites.h"
-#include "Components/BsCAudioSource.h"
+#include "Components/BsAudioSource.h"
 
 namespace b3d
 {

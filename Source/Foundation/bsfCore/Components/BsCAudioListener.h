@@ -3,34 +3,25 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "Audio/BsAudioListener.h"
 #include "Scene/BsComponent.h"
 
 namespace b3d
 {
+	class IAudioListenerImplementation;
+
 	/** @addtogroup Components-Core
 	 *  @{
 	 */
 
 	/**
-	 * @copydoc	AudioListener
-	 *
-	 * @note	Wraps AudioListener as a Component.
+	 * Represents a listener that hears audio sources. For spatial audio the volume and pitch of played audio is determined
+	 * by the distance, orientation and velocity differences between the source and the listener.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportName(AudioListener)) CAudioListener : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioListener : public Component
 	{
 	public:
-		CAudioListener(const HSceneObject& parent);
-		virtual ~CAudioListener() = default;
-
-		/** @name Internal
-		 *  @{
-		 */
-
-		/** Returns the AudioListener implementation wrapped by this component. */
-		AudioListener* GetInternalInternal() const { return mInternal.get(); }
-
-		/** @} */
+		AudioListener(const HSceneObject& parent);
+		virtual ~AudioListener() = default;
 
 		/************************************************************************/
 		/* 						COMPONENT OVERRIDES                      		*/
@@ -38,7 +29,6 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		void OnBeginPlay() override;
 		void OnDestroyed() override;
 		void OnDisabled() override;
 		void OnEnabled() override;
@@ -58,7 +48,7 @@ namespace b3d
 		 */
 		void UpdateTransform();
 
-		SPtr<AudioListener> mInternal;
+		SPtr<IAudioListenerImplementation> mImplementation;
 		Vector3 mLastPosition = Vector3::kZero;
 		Vector3 mVelocity = Vector3::kZero;
 
@@ -66,12 +56,31 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		friend class CAudioListenerRTTI;
+		friend class AudioListenerRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const;
 
 	protected:
-		CAudioListener(); // Serialization only
+		AudioListener(); // Serialization only
+	};
+
+	/** @} */
+
+	/** @addtogroup Audio
+	 *  @{
+	 */
+
+	/** Low-level interface for an audio source. Should be implemented by the audio plugin. */
+	class B3D_CORE_EXPORT IAudioListenerImplementation
+	{
+	public:
+		virtual ~IAudioListenerImplementation() = default;
+
+		/** Sets the position and orientation of the audio source. */
+		virtual void SetTransform(const Transform& transform) = 0;
+
+		/** Sets the velocity of the listener. */
+		virtual void SetVelocity(const Vector3& velocity) = 0;
 	};
 
 	/** @} */

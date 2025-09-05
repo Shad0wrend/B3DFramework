@@ -1,22 +1,15 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/BsCAudioListener.h"
+
+#include "Audio/BsAudio.h"
 #include "Scene/BsSceneObject.h"
 #include "Utility/BsTime.h"
 #include "Private/RTTI/BsCAudioListenerRTTI.h"
 
-using namespace std::placeholders;
-
 using namespace b3d;
 
-CAudioListener::CAudioListener()
-{
-	SetName("AudioListener");
-
-	mNotifyFlags = TCF_Transform;
-}
-
-CAudioListener::CAudioListener(const HSceneObject& parent)
+AudioListener::AudioListener(const HSceneObject& parent)
 	: Component(parent)
 {
 	SetName("AudioListener");
@@ -24,26 +17,26 @@ CAudioListener::CAudioListener(const HSceneObject& parent)
 	mNotifyFlags = TCF_Transform;
 }
 
-void CAudioListener::OnBeginPlay()
-{
-}
+AudioListener::AudioListener()
+	: AudioListener(nullptr)
+{ }
 
-void CAudioListener::OnDestroyed()
-{
-	DestroyInternal();
-}
-
-void CAudioListener::OnDisabled()
+void AudioListener::OnDestroyed()
 {
 	DestroyInternal();
 }
 
-void CAudioListener::OnEnabled()
+void AudioListener::OnDisabled()
+{
+	DestroyInternal();
+}
+
+void AudioListener::OnEnabled()
 {
 	RestoreInternal();
 }
 
-void CAudioListener::OnTransformChanged(TransformChangedFlags flags)
+void AudioListener::OnTransformChanged(TransformChangedFlags flags)
 {
 	if(!GetEnabled())
 		return;
@@ -52,7 +45,7 @@ void CAudioListener::OnTransformChanged(TransformChangedFlags flags)
 		UpdateTransform();
 }
 
-void CAudioListener::Update()
+void AudioListener::Update()
 {
 	const Vector3 worldPos = SO()->GetTransform().GetPosition();
 
@@ -65,34 +58,34 @@ void CAudioListener::Update()
 	mLastPosition = worldPos;
 }
 
-void CAudioListener::RestoreInternal()
+void AudioListener::RestoreInternal()
 {
-	if(mInternal == nullptr)
-		mInternal = AudioListener::Create();
+	if(mImplementation == nullptr)
+		mImplementation = GetAudio().CreateListener();
 
 	UpdateTransform();
 }
 
-void CAudioListener::DestroyInternal()
+void AudioListener::DestroyInternal()
 {
 	// This should release the last reference and destroy the internal listener
-	mInternal = nullptr;
+	mImplementation = nullptr;
 }
 
-void CAudioListener::UpdateTransform()
+void AudioListener::UpdateTransform()
 {
 	const Transform& tfrm = SO()->GetTransform();
 
-	mInternal->SetTransform(tfrm);
-	mInternal->SetVelocity(mVelocity);
+	mImplementation->SetTransform(tfrm);
+	mImplementation->SetVelocity(mVelocity);
 }
 
-RTTIType* CAudioListener::GetRttiStatic()
+RTTIType* AudioListener::GetRttiStatic()
 {
-	return CAudioListenerRTTI::Instance();
+	return AudioListenerRTTI::Instance();
 }
 
-RTTIType* CAudioListener::GetRtti() const
+RTTIType* AudioListener::GetRtti() const
 {
-	return CAudioListener::GetRttiStatic();
+	return AudioListener::GetRttiStatic();
 }

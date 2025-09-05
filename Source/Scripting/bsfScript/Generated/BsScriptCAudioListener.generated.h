@@ -5,15 +5,15 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptComponent.h"
 
-namespace b3d { class CAudioListener; }
+namespace b3d { class AudioListener; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioListener : public TScriptGameObjectWrapper<CAudioListener, ScriptAudioListener>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioListener : public TScriptGameObjectWrapper<AudioListener, ScriptAudioListener>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "AudioListener")
 
-		ScriptAudioListener(const GameObjectHandle<CAudioListener>& nativeObject);
+		ScriptAudioListener(const GameObjectHandle<AudioListener>& nativeObject);
 		~ScriptAudioListener();
 
 		static void SetupScriptBindings();

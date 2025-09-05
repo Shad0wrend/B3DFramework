@@ -214,7 +214,7 @@ SPtr<AudioClip> OAAudio::CreateClip(const SPtr<DataStream>& samples, u32 streamS
 	return B3DMakeShared<OAAudioClip>(samples, streamSize, numSamples, desc);
 }
 
-SPtr<AudioListener> OAAudio::CreateListener()
+SPtr<IAudioListenerImplementation> OAAudio::CreateListener()
 {
 	return B3DMakeShared<OAAudioListener>();
 }

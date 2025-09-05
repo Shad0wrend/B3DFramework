@@ -30,11 +30,11 @@ void Audio::StopManualSources()
 
 void Audio::Update()
 {
-	const u32 numSources = (u32)mManualSources.size();
-	for(u32 i = 0; i < numSources; i++)
+	const u32 sourceCount = (u32)mManualSources.size();
+	for(u32 sourceIndex = 0; sourceIndex < sourceCount; sourceIndex++)
 	{
-		if(mManualSources[i]->GetState() != AudioSourceState::Stopped)
-			mTempSources.push_back(mManualSources[i]);
+		if(mManualSources[sourceIndex]->GetState() != AudioSourceState::Stopped)
+			mTempSources.push_back(mManualSources[sourceIndex]);
 	}
 
 	std::swap(mTempSources, mManualSources);

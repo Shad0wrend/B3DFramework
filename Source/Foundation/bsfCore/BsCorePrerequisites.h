@@ -343,10 +343,10 @@ namespace b3d
 	class SliderJoint;
 	class D6Joint;
 	class CharacterController;
-	class AudioListener;
 	class Animation;
 	class Bone;
 	class AudioSource;
+	class AudioListener;
 
 	// Components
 	template <class T>
@@ -362,7 +362,6 @@ namespace b3d
 	};
 
 	B3D_COMPONENT_FORWARD_DECLARE(Camera)
-	B3D_COMPONENT_FORWARD_DECLARE(AudioListener)
 	B3D_COMPONENT_FORWARD_DECLARE(ParticleSystem)
 
 	class Color;
@@ -579,7 +578,7 @@ namespace b3d
 		TID_ShaderImportOptions = 1110,
 		TID_AudioClip = 1111,
 		TID_AudioClipImportOptions = 1112,
-		TID_CAudioListener = 1113,
+		TID_AudioListener = 1113,
 		TID_AudioSource = 1114,
 		TID_AnimationClip = 1115,
 		TID_AnimationCurve = 1116,
@@ -607,7 +606,7 @@ namespace b3d
 		TID_LightProbeVolume = 1138,
 		TID_Transform = 1139,
 		TID_SceneActor = 1140,
-		TID_AudioListener = 1141,
+		//TID_AudioListener = 1141,
 		//TID_AudioSource = 1142,
 		TID_ShaderVariationParameter = 1143,
 		TID_ShaderVariation = 1144,
@@ -823,7 +822,7 @@ namespace b3d
 	typedef GameObjectHandle<Skybox> HSkybox;
 	typedef GameObjectHandle<LightProbeVolume> HLightProbeVolume;
 	typedef GameObjectHandle<AudioSource> HAudioSource;
-	typedef GameObjectHandle<CAudioListener> HAudioListener;
+	typedef GameObjectHandle<AudioListener> HAudioListener;
 	typedef GameObjectHandle<CParticleSystem> HParticleSystem;
 	typedef GameObjectHandle<Decal> HDecal;
 

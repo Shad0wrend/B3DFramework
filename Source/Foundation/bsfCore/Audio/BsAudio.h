@@ -9,6 +9,7 @@
 namespace b3d
 {
 	class IAudioSourceImplementation;
+	class IAudioListenerImplementation;
 
 	/** @addtogroup Audio
 	 *  @{
@@ -84,16 +85,16 @@ namespace b3d
 		/**
 		 * Creates a new audio clip.
 		 *
-		 * @param[in]	samples		Stream containing audio samples in format specified in @p desc.
-		 * @param[in]	streamSize	Size of the audio data in the provided stream, in bytes.
-		 * @param[in]	numSamples	Number of samples in @p samples stream.
-		 * @param[in]	desc		Descriptor describing the type of the audio stream (format, sample rate, etc.).
-		 * @return					Newly created AudioClip. Must be manually initialized.
+		 * @param	samples					Stream containing audio samples in format specified in @p desc.
+		 * @param	streamSize				Size of the audio data in the provided stream, in bytes.
+		 * @param	sampleCount				Number of samples in @p samples stream.
+		 * @param	createInformation		Descriptor describing the type of the audio stream (format, sample rate, etc.).
+		 * @return							Newly created AudioClip. Must be manually initialized.
 		 */
-		virtual SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AudioClipCreateInformation& desc) = 0;
+		virtual SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 sampleCount, const AudioClipCreateInformation& createInformation) = 0;
 
 		/** Creates a new AudioListener. */
-		virtual SPtr<AudioListener> CreateListener() = 0;
+		virtual SPtr<IAudioListenerImplementation> CreateListener() = 0;
 
 		/** Creates a new AudioSource. */
 		virtual SPtr<IAudioSourceImplementation> CreateSource() = 0;

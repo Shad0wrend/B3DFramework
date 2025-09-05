@@ -8,7 +8,7 @@
 
 namespace b3d
 {
-	ScriptAudioListener::ScriptAudioListener(const GameObjectHandle<CAudioListener>& nativeObject)
+	ScriptAudioListener::ScriptAudioListener(const GameObjectHandle<AudioListener>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();

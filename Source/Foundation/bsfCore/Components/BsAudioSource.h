@@ -252,29 +252,6 @@ namespace b3d
 
 		/** @copydoc AudioSource::GetState */
 		virtual AudioSourceState GetState() const = 0;
-
-		//void GetListenerResources(Vector<HResource>& resources) override;
-		//void NotifyResourceChanged(const HResource& resource) override;
-
-		///** Triggered by the resources system whenever the attached audio clip changed (e.g. was reimported.) */
-		//virtual void OnClipChanged() {}
-
-	//	HAudioClip mAudioClip;
-	//	Vector3 mVelocity = BsZero;
-	//	float mVolume = 1.0f;
-	//	float mPitch = 1.0f;
-	//	bool mLoop = false;
-	//	i32 mPriority = 0;
-	//	float mMinDistance = 1.0f;
-	//	float mAttenuation = 1.0f;
-
-	//	/************************************************************************/
-	//	/* 								RTTI		                     		*/
-	//	/************************************************************************/
-	//public:
-	//	friend class AudioSourceRTTI;
-	//	static RTTIType* GetRttiStatic();
-	//	RTTIType* GetRtti() const override;
 	};
 
 	/** @} */

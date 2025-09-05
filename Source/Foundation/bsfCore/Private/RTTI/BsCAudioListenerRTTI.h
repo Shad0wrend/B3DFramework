@@ -6,6 +6,7 @@
 #include "Reflection/BsRTTIType.h"
 #include "Components/BsCAudioListener.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
+#include "RTTI/BsMathRTTI.h"
 
 namespace b3d
 {
@@ -14,26 +15,26 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CAudioListenerRTTI : public TRTTIType<CAudioListener, Component, CAudioListenerRTTI>
+	class B3D_CORE_EXPORT AudioListenerRTTI : public TRTTIType<AudioListener, Component, AudioListenerRTTI>
 	{
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mInternal, 0)
+			B3D_RTTI_MEMBER(mVelocity, 0)
 		B3D_RTTI_END_MEMBERS
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "CAudioListener";
+			static String name = "AudioListener";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CAudioListener;
+			return TID_AudioListener;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CAudioListener>();
+			return SceneObject::CreateEmptyComponent<AudioListener>();
 		}
 	};
 

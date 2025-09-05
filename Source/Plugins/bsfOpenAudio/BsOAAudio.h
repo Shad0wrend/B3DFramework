@@ -90,7 +90,7 @@ namespace b3d
 		};
 
 		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AudioClipCreateInformation& desc) override;
-		SPtr<AudioListener> CreateListener() override;
+		SPtr<IAudioListenerImplementation> CreateListener() override;
 		SPtr<IAudioSourceImplementation> CreateSource() override;
 
 		/**

@@ -3,7 +3,8 @@
 #pragma once
 
 #include "BsOAPrerequisites.h"
-#include "Audio/BsAudioListener.h"
+#include "Components/BsCAudioListener.h"
+#include "Scene/BsTransform.h"
 
 namespace b3d
 {
@@ -12,11 +13,11 @@ namespace b3d
 	 */
 
 	/** OpenAL implementation of an AudioListener. */
-	class OAAudioListener : public AudioListener
+	class OAAudioListener : public IAudioListenerImplementation
 	{
 	public:
 		OAAudioListener();
-		virtual ~OAAudioListener();
+		~OAAudioListener() override;
 
 		void SetTransform(const Transform& transform) override;
 		void SetVelocity(const Vector3& velocity) override;
@@ -41,6 +42,9 @@ namespace b3d
 
 		/** Updates internal volume of the listener. */
 		inline void UpdateVolume(float volume);
+
+		Transform mTransform;
+		Vector3 mVelocity = Vector3::kZero;
 	};
 
 	/** @} */

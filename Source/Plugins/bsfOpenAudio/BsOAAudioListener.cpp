@@ -19,7 +19,7 @@ OAAudioListener::~OAAudioListener()
 
 void OAAudioListener::SetTransform(const Transform& transform)
 {
-	SceneActor::SetTransform(transform);
+	mTransform = transform;
 
 	std::array<float, 6> orientation = GetOrientation();
 	auto& contexts = GetOAAudio().GetContexts();
@@ -36,7 +36,7 @@ void OAAudioListener::SetTransform(const Transform& transform)
 
 void OAAudioListener::SetVelocity(const Vector3& velocity)
 {
-	AudioListener::SetVelocity(velocity);
+	mVelocity = velocity;
 
 	auto& contexts = GetOAAudio().GetContexts();
 	if(contexts.size() > 1)
@@ -69,8 +69,8 @@ void OAAudioListener::Rebuild()
 
 std::array<float, 6> OAAudioListener::GetOrientation() const
 {
-	Vector3 direction = GetTransform().GetForward();
-	Vector3 up = GetTransform().GetUp();
+	const Vector3& direction = mTransform.GetForward();
+	const Vector3& up = mTransform.GetUp();
 
 	return { { direction.X,
 			   direction.Y,
@@ -82,7 +82,7 @@ std::array<float, 6> OAAudioListener::GetOrientation() const
 
 void OAAudioListener::UpdatePosition()
 {
-	Vector3 position = GetTransform().GetPosition();
+	const Vector3& position = mTransform.GetPosition();
 
 	alListener3f(AL_POSITION, position.X, position.Y, position.Z);
 }
