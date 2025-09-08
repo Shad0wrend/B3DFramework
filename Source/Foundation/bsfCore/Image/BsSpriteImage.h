@@ -125,7 +125,7 @@ namespace b3d
 		virtual ~SpriteImageAllocation();
 
 		/** Creates a new sprite image allocation. */
-		static SPtr<SpriteImageAllocation> Create(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange);
+		static SPtr<SpriteImageAllocation> Create(const WeakSPtr<SpriteImage>& owner, const HTexture& atlasTexture, const Area2& uvRange);
 
 	protected:
 		friend class render::SpriteImageAllocation;
@@ -205,8 +205,8 @@ namespace b3d
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 		using SpriteImageAllocationType = CoreVariantType<SpriteImageAllocation, IsRenderProxy>;
 
-		TSpriteImage(const SpriteImageCreateInformation& createInformation)
-			:SpriteImageBase(createInformation)
+		TSpriteImage(const SpriteImageCreateInformation& createInformation, const SPtr<SpriteImageAllocationType>& defaultAllocatedImage = nullptr)
+			:SpriteImageBase(createInformation), mDefaultAllocatedImage(defaultAllocatedImage)
 		{ }
 		~TSpriteImage() override = default;
 
@@ -325,7 +325,7 @@ namespace b3d
 		protected:
 			friend class b3d::SpriteImageAllocation;
 
-			SpriteImageAllocation() = default;
+			SpriteImageAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange);
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
@@ -339,8 +339,8 @@ namespace b3d
 		protected:
 			friend class b3d::SpriteImage;
 
-			SpriteImage(const SpriteImageCreateInformation& createInformation)
-				: TSpriteImage(createInformation)
+			SpriteImage(const SpriteImageCreateInformation& createInformation, const SPtr<SpriteImageAllocation>& defaultAllocatedImage)
+				: TSpriteImage(createInformation, defaultAllocatedImage)
 			{ }
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;

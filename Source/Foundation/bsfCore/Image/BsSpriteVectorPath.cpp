@@ -33,7 +33,10 @@ SPtr<SpriteVectorPathAllocation> SpriteVectorPathAllocation::Create(const WeakSP
 
 SPtr<render::RenderProxy> SpriteVectorPathAllocation::CreateRenderProxy() const
 {
-	render::SpriteVectorPathAllocation* const renderProxy = new(B3DAllocate<render::SpriteVectorPathAllocation>()) render::SpriteVectorPathAllocation();
+	const SPtr<render::SpriteImage> owner = B3DGetRenderProxy(mOwner.lock());
+	const SPtr<render::Texture> atlasTexture = B3DGetRenderProxy(mTexture);
+
+	render::SpriteVectorPathAllocation* const renderProxy = new(B3DAllocate<render::SpriteVectorPathAllocation>()) render::SpriteVectorPathAllocation(owner, atlasTexture, mUVRange, mVectorSpriteAtlasAllocationHandle);
 
 	SPtr<render::SpriteVectorPathAllocation> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteVectorPathAllocation>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
@@ -120,7 +123,7 @@ void SpriteVectorPath::Initialize()
 SPtr<render::RenderProxy> SpriteVectorPath::CreateRenderProxy() const
 {
 	render::SpriteVectorPathCreateInformation createInformation(mInformation);
-	render::SpriteVectorPath* const renderProxy = new(B3DAllocate<render::SpriteVectorPath>()) render::SpriteVectorPath(createInformation);
+	render::SpriteVectorPath* const renderProxy = new(B3DAllocate<render::SpriteVectorPath>()) render::SpriteVectorPath(createInformation, B3DGetRenderProxy(mDefaultAllocatedImage));
 
 	SPtr<render::SpriteVectorPath> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteVectorPath>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
@@ -190,6 +193,10 @@ RTTIType* SpriteVectorPath::GetRtti() const
 
 namespace b3d { namespace render
 {
+SpriteVectorPathAllocation::SpriteVectorPathAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange, const SPtr<GUIVectorSpriteAtlasAllocationHandle>& vectorSpriteAtlasAllocationHandle)
+	: SpriteImageAllocation(owner, atlasTexture, uvRange), mVectorSpriteAtlasAllocationHandle(vectorSpriteAtlasAllocationHandle)
+{ }
+
 void SpriteVectorPathAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteVectorPathAllocation::SyncPacket>();
@@ -199,8 +206,8 @@ void SpriteVectorPathAllocation::SyncFromCoreObject(const CoreSyncData& data, Fr
 	syncPacket->ApplySyncData(this);
 }
 
-SpriteVectorPath::SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation)
-	: SpriteImage(createInformation)
+SpriteVectorPath::SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation, const SPtr<SpriteImageAllocation>& defaultAllocatedImage)
+	: SpriteImage(createInformation, defaultAllocatedImage)
 {
 }
 

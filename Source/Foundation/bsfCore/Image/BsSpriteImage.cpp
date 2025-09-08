@@ -42,7 +42,7 @@ namespace b3d
 	B3D_SYNC_BLOCK_END
 }
 
-SPtr<SpriteImageAllocation> SpriteImageAllocation::Create(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange)
+SPtr<SpriteImageAllocation> SpriteImageAllocation::Create(const WeakSPtr<SpriteImage>& owner, const HTexture& atlasTexture, const Area2& uvRange)
 {
 	SpriteImageAllocation* allocation = new(B3DAllocate<SpriteImageAllocation>()) SpriteImageAllocation(owner, atlasTexture, uvRange);
 	SPtr<SpriteImageAllocation> allocationShared = B3DMakeSharedFromExisting<SpriteImageAllocation>(allocation);
@@ -54,7 +54,10 @@ SPtr<SpriteImageAllocation> SpriteImageAllocation::Create(const WeakSPtr<SpriteI
 
 SPtr<render::RenderProxy> SpriteImageAllocation::CreateRenderProxy() const
 {
-	render::SpriteImageAllocation* const renderProxy = new(B3DAllocate<render::SpriteImageAllocation>()) render::SpriteImageAllocation();
+	const SPtr<render::SpriteImage> owner = B3DGetRenderProxy(mOwner.lock());
+	const SPtr<render::Texture> atlasTexture = B3DGetRenderProxy(mTexture);
+
+	render::SpriteImageAllocation* const renderProxy = new(B3DAllocate<render::SpriteImageAllocation>()) render::SpriteImageAllocation(owner, atlasTexture, mUVRange);
 
 	SPtr<render::SpriteImageAllocation> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteImageAllocation>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
@@ -171,7 +174,7 @@ void SpriteImage::MarkRenderProxyDataDirtyInternal()
 
 SPtr<render::RenderProxy> SpriteImage::CreateRenderProxy() const
 {
-	render::SpriteImage* const renderProxy = new(B3DAllocate<render::SpriteImage>()) render::SpriteImage(mInformation);
+	render::SpriteImage* const renderProxy = new(B3DAllocate<render::SpriteImage>()) render::SpriteImage(mInformation, B3DGetRenderProxy(mDefaultAllocatedImage));
 
 	SPtr<render::SpriteImage> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteImage>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
@@ -196,6 +199,10 @@ RTTIType* SpriteImage::GetRtti() const
 
 namespace b3d { namespace render
 {
+SpriteImageAllocation::SpriteImageAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange)
+	:TSpriteImageAllocation(owner, atlasTexture, uvRange)
+{ }
+
 void SpriteImageAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteImageAllocation::SyncPacket>();

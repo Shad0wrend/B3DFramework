@@ -39,7 +39,7 @@ SPtr<render::RenderProxy> SpriteTexture::CreateRenderProxy() const
 	SPtr<render::Texture> atlasRenderProxy = B3DGetRenderProxy(mAtlasTexture);
 
 	render::SpriteTextureCreateInformation createInformation(mInformation, std::move(atlasRenderProxy));
-	render::SpriteTexture* const renderProxy = new(B3DAllocate<render::SpriteTexture>()) render::SpriteTexture(createInformation);
+	render::SpriteTexture* const renderProxy = new(B3DAllocate<render::SpriteTexture>()) render::SpriteTexture(createInformation, B3DGetRenderProxy(mDefaultAllocatedImage));
 
 	SPtr<render::SpriteTexture> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteTexture>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
@@ -114,8 +114,8 @@ RTTIType* SpriteTexture::GetRtti() const
 
 namespace b3d { namespace render
 {
-SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInformation)
-	: SpriteImage(createInformation)
+SpriteTexture::SpriteTexture(const SpriteTextureCreateInformation& createInformation, const SPtr<SpriteImageAllocation>& defaultAllocatedImage)
+	: SpriteImage(createInformation, defaultAllocatedImage)
 {
 	mAtlasTexture = createInformation.AtlasTexture;
 	mUVRange = createInformation.UVRange;

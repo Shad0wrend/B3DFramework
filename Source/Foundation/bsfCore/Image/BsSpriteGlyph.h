@@ -157,7 +157,7 @@ namespace b3d
 		protected:
 			friend class b3d::SpriteGlyphAllocation;
 
-			SpriteGlyphAllocation() = default;
+			SpriteGlyphAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange, float sizeInPoints);
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 
@@ -172,7 +172,7 @@ namespace b3d
 		private:
 			friend class b3d::SpriteGlyph;
 
-			SpriteGlyph(const SpriteGlyphCreateInformation& createInformation);
+			SpriteGlyph(const SpriteGlyphCreateInformation& createInformation, const SPtr<SpriteImageAllocation>& defaultAllocatedImage);
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};

@@ -29,7 +29,10 @@ SPtr<SpriteGlyphAllocation> SpriteGlyphAllocation::Create(const WeakSPtr<SpriteI
 
 SPtr<render::RenderProxy> SpriteGlyphAllocation::CreateRenderProxy() const
 {
-	render::SpriteGlyphAllocation* const renderProxy = new(B3DAllocate<render::SpriteGlyphAllocation>()) render::SpriteGlyphAllocation();
+	const SPtr<render::SpriteImage> owner = B3DGetRenderProxy(mOwner.lock());
+	const SPtr<render::Texture> atlasTexture = B3DGetRenderProxy(mTexture);
+
+	render::SpriteGlyphAllocation* const renderProxy = new(B3DAllocate<render::SpriteGlyphAllocation>()) render::SpriteGlyphAllocation(owner, atlasTexture, mUVRange, GetSizeInPoints());
 
 	SPtr<render::SpriteGlyphAllocation> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteGlyphAllocation>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
@@ -126,7 +129,7 @@ void SpriteGlyph::Initialize()
 SPtr<render::RenderProxy> SpriteGlyph::CreateRenderProxy() const
 {
 	render::SpriteGlyphCreateInformation createInformation(mInformation);
-	render::SpriteGlyph* const renderProxy = new(B3DAllocate<render::SpriteGlyph>()) render::SpriteGlyph(createInformation);
+	render::SpriteGlyph* const renderProxy = new(B3DAllocate<render::SpriteGlyph>()) render::SpriteGlyph(createInformation, B3DGetRenderProxy(mDefaultAllocatedImage));
 
 	SPtr<render::SpriteGlyph> renderProxyShared = B3DMakeSharedFromExisting<render::SpriteGlyph>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
@@ -197,6 +200,10 @@ RTTIType* SpriteGlyph::GetRtti() const
 
 namespace b3d { namespace render
 {
+SpriteGlyphAllocation::SpriteGlyphAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange, float sizeInPoints)
+	: TSpriteGlyphAllocation(owner, atlasTexture, uvRange, sizeInPoints)
+{ }
+
 void SpriteGlyphAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
 	auto* const syncPacket = data.GetSyncPacket<b3d::SpriteGlyphAllocation::SyncPacket>();
@@ -206,8 +213,8 @@ void SpriteGlyphAllocation::SyncFromCoreObject(const CoreSyncData& data, FrameAl
 	syncPacket->ApplySyncData(this);
 }
 
-SpriteGlyph::SpriteGlyph(const SpriteGlyphCreateInformation& createInformation)
-	: SpriteImage(createInformation)
+SpriteGlyph::SpriteGlyph(const SpriteGlyphCreateInformation& createInformation, const SPtr<SpriteImageAllocation>& defaultAllocatedImage)
+	: SpriteImage(createInformation, defaultAllocatedImage)
 { }
 
 void SpriteGlyph::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)

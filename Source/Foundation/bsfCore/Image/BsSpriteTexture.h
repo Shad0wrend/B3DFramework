@@ -138,7 +138,7 @@ namespace b3d
 		private:
 			friend class b3d::SpriteTexture;
 
-			SpriteTexture(const SpriteTextureCreateInformation& createInformation);
+			SpriteTexture(const SpriteTextureCreateInformation& createInformation, const SPtr<SpriteImageAllocation>& defaultAllocatedImage);
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 

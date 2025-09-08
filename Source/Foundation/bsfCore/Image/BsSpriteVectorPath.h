@@ -148,6 +148,7 @@ namespace b3d
 		private:
 			friend class b3d::SpriteVectorPathAllocation;
 
+			SpriteVectorPathAllocation(const WeakSPtr<SpriteImageType>& owner, const TextureType& atlasTexture, const Area2& uvRange, const SPtr<GUIVectorSpriteAtlasAllocationHandle>& vectorSpriteAtlasAllocationHandle);
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
 			/** Allocation handle in the vector path atlas. */
@@ -164,7 +165,7 @@ namespace b3d
 		private:
 			friend class b3d::SpriteVectorPath;
 
-			SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation);
+			SpriteVectorPath(const SpriteVectorPathCreateInformation& createInformation, const SPtr<SpriteImageAllocation>& defaultAllocatedImage);
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
