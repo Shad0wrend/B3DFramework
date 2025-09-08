@@ -22,16 +22,16 @@ namespace b3d
 		return *(__PARTICLE_BOX_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_BOX_SHAPE_DESC ScriptParticleBoxShapeOptions::FromInterop(const __PARTICLE_BOX_SHAPE_DESCInterop& value)
+	ParticleBoxShapeSettings ScriptParticleBoxShapeOptions::FromInterop(const __PARTICLE_BOX_SHAPE_DESCInterop& value)
 	{
-		PARTICLE_BOX_SHAPE_DESC output;
+		ParticleBoxShapeSettings output;
 		output.Type = value.Type;
 		output.Extents = value.Extents;
 
 		return output;
 	}
 
-	__PARTICLE_BOX_SHAPE_DESCInterop ScriptParticleBoxShapeOptions::ToInterop(const PARTICLE_BOX_SHAPE_DESC& value)
+	__PARTICLE_BOX_SHAPE_DESCInterop ScriptParticleBoxShapeOptions::ToInterop(const ParticleBoxShapeSettings& value)
 	{
 		__PARTICLE_BOX_SHAPE_DESCInterop output;
 		output.Type = value.Type;

@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_ORBIT_DESC tmpoptions;
+		ParticleOrbitSettings tmpoptions;
 		tmpoptions = ScriptParticleOrbitOptions::FromInterop(*options);
-		static_cast<ParticleOrbit*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleOrbit*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleOrbit::InternalGetOptions(ScriptParticleOrbit* self, __PARTICLE_ORBIT_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_ORBIT_DESC tmp__output;
-		tmp__output = static_cast<ParticleOrbit*>(self->GetNativeObject())->GetOptions();
+		ParticleOrbitSettings tmp__output;
+		tmp__output = static_cast<ParticleOrbit*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_ORBIT_DESCInterop interop__output;
 		interop__output = ScriptParticleOrbitOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleOrbit::InternalCreate(MonoObject* scriptObject, __PARTICLE_ORBIT_DESCInterop* desc)
 	{
-		PARTICLE_ORBIT_DESC tmpdesc;
+		ParticleOrbitSettings tmpdesc;
 		tmpdesc = ScriptParticleOrbitOptions::FromInterop(*desc);
 		SPtr<ParticleOrbit> nativeObject = ParticleOrbit::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleOrbit>(nativeObject, scriptObject);

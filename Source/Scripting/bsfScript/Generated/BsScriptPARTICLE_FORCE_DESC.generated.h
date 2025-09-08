@@ -22,8 +22,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_FORCE_DESCInterop& value);
 		static __PARTICLE_FORCE_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_FORCE_DESC FromInterop(const __PARTICLE_FORCE_DESCInterop& value);
-		static __PARTICLE_FORCE_DESCInterop ToInterop(const PARTICLE_FORCE_DESC& value);
+		static ParticleForceSettings FromInterop(const __PARTICLE_FORCE_DESCInterop& value);
+		static __PARTICLE_FORCE_DESCInterop ToInterop(const ParticleForceSettings& value);
 
 	private:
 		ScriptParticleForceOptions();

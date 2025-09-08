@@ -22,15 +22,15 @@ namespace b3d
 		return *(__PARTICLE_RECT_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_RECT_SHAPE_DESC ScriptParticleRectShapeOptions::FromInterop(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
+	ParticleRectangleShapeSettings ScriptParticleRectShapeOptions::FromInterop(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
 	{
-		PARTICLE_RECT_SHAPE_DESC output;
+		ParticleRectangleShapeSettings output;
 		output.Extents = value.Extents;
 
 		return output;
 	}
 
-	__PARTICLE_RECT_SHAPE_DESCInterop ScriptParticleRectShapeOptions::ToInterop(const PARTICLE_RECT_SHAPE_DESC& value)
+	__PARTICLE_RECT_SHAPE_DESCInterop ScriptParticleRectShapeOptions::ToInterop(const ParticleRectangleShapeSettings& value)
 	{
 		__PARTICLE_RECT_SHAPE_DESCInterop output;
 		output.Extents = value.Extents;

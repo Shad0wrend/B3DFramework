@@ -22,8 +22,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_LINE_SHAPE_DESCInterop& value);
 		static __PARTICLE_LINE_SHAPE_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_LINE_SHAPE_DESC FromInterop(const __PARTICLE_LINE_SHAPE_DESCInterop& value);
-		static __PARTICLE_LINE_SHAPE_DESCInterop ToInterop(const PARTICLE_LINE_SHAPE_DESC& value);
+		static ParticleLineShapeSettings FromInterop(const __PARTICLE_LINE_SHAPE_DESCInterop& value);
+		static __PARTICLE_LINE_SHAPE_DESCInterop ToInterop(const ParticleLineShapeSettings& value);
 
 	private:
 		ScriptParticleLineShapeOptions();

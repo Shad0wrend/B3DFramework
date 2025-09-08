@@ -13,8 +13,8 @@ namespace b3d
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ParticleTextureAnimationOptions")
 
-		static MonoObject* Box(const PARTICLE_TEXTURE_ANIMATION_DESC& value);
-		static PARTICLE_TEXTURE_ANIMATION_DESC Unbox(MonoObject* value);
+		static MonoObject* Box(const ParticleTextureAnimationSettings& value);
+		static ParticleTextureAnimationSettings Unbox(MonoObject* value);
 
 	private:
 		ScriptParticleTextureAnimationOptions();

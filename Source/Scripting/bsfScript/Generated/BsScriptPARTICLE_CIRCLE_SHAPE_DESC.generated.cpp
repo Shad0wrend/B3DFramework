@@ -22,9 +22,9 @@ namespace b3d
 		return *(__PARTICLE_CIRCLE_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_CIRCLE_SHAPE_DESC ScriptParticleCircleShapeOptions::FromInterop(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
+	ParticleCircleShapeSettings ScriptParticleCircleShapeOptions::FromInterop(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
 	{
-		PARTICLE_CIRCLE_SHAPE_DESC output;
+		ParticleCircleShapeSettings output;
 		output.Radius = value.Radius;
 		output.Thickness = value.Thickness;
 		output.Arc = value.Arc;
@@ -33,7 +33,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptParticleCircleShapeOptions::ToInterop(const PARTICLE_CIRCLE_SHAPE_DESC& value)
+	__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptParticleCircleShapeOptions::ToInterop(const ParticleCircleShapeSettings& value)
 	{
 		__PARTICLE_CIRCLE_SHAPE_DESCInterop output;
 		output.Radius = value.Radius;

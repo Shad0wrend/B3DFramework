@@ -13,8 +13,8 @@ namespace b3d
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ParticleCollisionsOptions")
 
-		static MonoObject* Box(const PARTICLE_COLLISIONS_DESC& value);
-		static PARTICLE_COLLISIONS_DESC Unbox(MonoObject* value);
+		static MonoObject* Box(const ParticleCollisionSettings& value);
+		static ParticleCollisionSettings Unbox(MonoObject* value);
 
 	private:
 		ScriptParticleCollisionsOptions();

@@ -24,9 +24,9 @@ namespace b3d
 		static MonoObject* CreateScriptObject(bool construct);
 
 	private:
-		static void InternalSetOptions(ScriptParticleEmitterHemisphereShape* self, PARTICLE_HEMISPHERE_SHAPE_DESC* options);
-		static void InternalGetOptions(ScriptParticleEmitterHemisphereShape* self, PARTICLE_HEMISPHERE_SHAPE_DESC* __output);
-		static void InternalCreate(MonoObject* scriptObject, PARTICLE_HEMISPHERE_SHAPE_DESC* desc);
+		static void InternalSetOptions(ScriptParticleEmitterHemisphereShape* self, ParticleHemisphereShapeSettings* options);
+		static void InternalGetOptions(ScriptParticleEmitterHemisphereShape* self, ParticleHemisphereShapeSettings* __output);
+		static void InternalCreate(MonoObject* scriptObject, ParticleHemisphereShapeSettings* desc);
 		static void InternalCreate0(MonoObject* scriptObject);
 	};
 }

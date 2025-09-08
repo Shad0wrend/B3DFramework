@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_STATIC_MESH_SHAPE_DESC tmpoptions;
+		ParticleStaticMeshShapeSettings tmpoptions;
 		tmpoptions = ScriptParticleStaticMeshShapeOptions::FromInterop(*options);
-		static_cast<ParticleEmitterStaticMeshShape*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleEmitterStaticMeshShape*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleEmitterStaticMeshShape::InternalGetOptions(ScriptParticleEmitterStaticMeshShape* self, __PARTICLE_STATIC_MESH_SHAPE_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_STATIC_MESH_SHAPE_DESC tmp__output;
-		tmp__output = static_cast<ParticleEmitterStaticMeshShape*>(self->GetNativeObject())->GetOptions();
+		ParticleStaticMeshShapeSettings tmp__output;
+		tmp__output = static_cast<ParticleEmitterStaticMeshShape*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_STATIC_MESH_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptParticleStaticMeshShapeOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleEmitterStaticMeshShape::InternalCreate(MonoObject* scriptObject, __PARTICLE_STATIC_MESH_SHAPE_DESCInterop* desc)
 	{
-		PARTICLE_STATIC_MESH_SHAPE_DESC tmpdesc;
+		ParticleStaticMeshShapeSettings tmpdesc;
 		tmpdesc = ScriptParticleStaticMeshShapeOptions::FromInterop(*desc);
 		SPtr<ParticleEmitterStaticMeshShape> nativeObject = ParticleEmitterStaticMeshShape::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleEmitterStaticMeshShape>(nativeObject, scriptObject);

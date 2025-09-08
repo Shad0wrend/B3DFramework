@@ -10,14 +10,14 @@ namespace b3d
 	ScriptParticleGravityOptions::ScriptParticleGravityOptions()
 	{ }
 
-	MonoObject* ScriptParticleGravityOptions::Box(const PARTICLE_GRAVITY_DESC& value)
+	MonoObject* ScriptParticleGravityOptions::Box(const ParticleGravitySettings& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	PARTICLE_GRAVITY_DESC ScriptParticleGravityOptions::Unbox(MonoObject* value)
+	ParticleGravitySettings ScriptParticleGravityOptions::Unbox(MonoObject* value)
 	{
-		return *(PARTICLE_GRAVITY_DESC*)MonoUtil::Unbox(value);
+		return *(ParticleGravitySettings*)MonoUtil::Unbox(value);
 	}
 
 }

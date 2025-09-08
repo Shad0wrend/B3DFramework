@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_SKINNED_MESH_SHAPE_DESC tmpoptions;
+		ParticleSkinnedMeshShapeSettings tmpoptions;
 		tmpoptions = ScriptParticleSkinnedMeshShapeOptions::FromInterop(*options);
-		static_cast<ParticleEmitterSkinnedMeshShape*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleEmitterSkinnedMeshShape*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleEmitterSkinnedMeshShape::InternalGetOptions(ScriptParticleEmitterSkinnedMeshShape* self, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_SKINNED_MESH_SHAPE_DESC tmp__output;
-		tmp__output = static_cast<ParticleEmitterSkinnedMeshShape*>(self->GetNativeObject())->GetOptions();
+		ParticleSkinnedMeshShapeSettings tmp__output;
+		tmp__output = static_cast<ParticleEmitterSkinnedMeshShape*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptParticleSkinnedMeshShapeOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleEmitterSkinnedMeshShape::InternalCreate(MonoObject* scriptObject, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* desc)
 	{
-		PARTICLE_SKINNED_MESH_SHAPE_DESC tmpdesc;
+		ParticleSkinnedMeshShapeSettings tmpdesc;
 		tmpdesc = ScriptParticleSkinnedMeshShapeOptions::FromInterop(*desc);
 		SPtr<ParticleEmitterSkinnedMeshShape> nativeObject = ParticleEmitterSkinnedMeshShape::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleEmitterSkinnedMeshShape>(nativeObject, scriptObject);

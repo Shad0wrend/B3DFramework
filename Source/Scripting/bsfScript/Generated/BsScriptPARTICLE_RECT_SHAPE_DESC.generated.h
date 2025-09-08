@@ -21,8 +21,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_RECT_SHAPE_DESCInterop& value);
 		static __PARTICLE_RECT_SHAPE_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_RECT_SHAPE_DESC FromInterop(const __PARTICLE_RECT_SHAPE_DESCInterop& value);
-		static __PARTICLE_RECT_SHAPE_DESCInterop ToInterop(const PARTICLE_RECT_SHAPE_DESC& value);
+		static ParticleRectangleShapeSettings FromInterop(const __PARTICLE_RECT_SHAPE_DESCInterop& value);
+		static __PARTICLE_RECT_SHAPE_DESCInterop ToInterop(const ParticleRectangleShapeSettings& value);
 
 	private:
 		ScriptParticleRectShapeOptions();

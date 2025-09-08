@@ -30,9 +30,9 @@ namespace b3d
 		static MonoArray* InternalGetPlanes(ScriptParticleCollisions* self);
 		static void InternalSetPlaneObjects(ScriptParticleCollisions* self, MonoArray* objects);
 		static MonoArray* InternalGetPlaneObjects(ScriptParticleCollisions* self);
-		static void InternalSetOptions(ScriptParticleCollisions* self, PARTICLE_COLLISIONS_DESC* options);
-		static void InternalGetOptions(ScriptParticleCollisions* self, PARTICLE_COLLISIONS_DESC* __output);
-		static void InternalCreate(MonoObject* scriptObject, PARTICLE_COLLISIONS_DESC* desc);
+		static void InternalSetOptions(ScriptParticleCollisions* self, ParticleCollisionSettings* options);
+		static void InternalGetOptions(ScriptParticleCollisions* self, ParticleCollisionSettings* __output);
+		static void InternalCreate(MonoObject* scriptObject, ParticleCollisionSettings* desc);
 		static void InternalCreate0(MonoObject* scriptObject);
 	};
 }

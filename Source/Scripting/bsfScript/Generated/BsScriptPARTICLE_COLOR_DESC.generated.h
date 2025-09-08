@@ -21,8 +21,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_COLOR_DESCInterop& value);
 		static __PARTICLE_COLOR_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_COLOR_DESC FromInterop(const __PARTICLE_COLOR_DESCInterop& value);
-		static __PARTICLE_COLOR_DESCInterop ToInterop(const PARTICLE_COLOR_DESC& value);
+		static ParticleColorSettings FromInterop(const __PARTICLE_COLOR_DESCInterop& value);
+		static __PARTICLE_COLOR_DESCInterop ToInterop(const ParticleColorSettings& value);
 
 	private:
 		ScriptParticleColorOptions();

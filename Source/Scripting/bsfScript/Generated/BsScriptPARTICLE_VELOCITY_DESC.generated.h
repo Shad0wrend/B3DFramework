@@ -22,8 +22,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_VELOCITY_DESCInterop& value);
 		static __PARTICLE_VELOCITY_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_VELOCITY_DESC FromInterop(const __PARTICLE_VELOCITY_DESCInterop& value);
-		static __PARTICLE_VELOCITY_DESCInterop ToInterop(const PARTICLE_VELOCITY_DESC& value);
+		static ParticleVelocitySettings FromInterop(const __PARTICLE_VELOCITY_DESCInterop& value);
+		static __PARTICLE_VELOCITY_DESCInterop ToInterop(const ParticleVelocitySettings& value);
 
 	private:
 		ScriptParticleVelocityOptions();

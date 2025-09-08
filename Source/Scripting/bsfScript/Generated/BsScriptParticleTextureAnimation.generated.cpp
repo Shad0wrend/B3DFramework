@@ -39,15 +39,15 @@ namespace b3d
 
 		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
-	void ScriptParticleTextureAnimation::InternalSetOptions(ScriptParticleTextureAnimation* self, PARTICLE_TEXTURE_ANIMATION_DESC* options)
+	void ScriptParticleTextureAnimation::InternalSetOptions(ScriptParticleTextureAnimation* self, ParticleTextureAnimationSettings* options)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<ParticleTextureAnimation*>(self->GetNativeObject())->SetOptions(*options);
+		static_cast<ParticleTextureAnimation*>(self->GetNativeObject())->SetSettings(*options);
 	}
 
-	void ScriptParticleTextureAnimation::InternalGetOptions(ScriptParticleTextureAnimation* self, PARTICLE_TEXTURE_ANIMATION_DESC* __output)
+	void ScriptParticleTextureAnimation::InternalGetOptions(ScriptParticleTextureAnimation* self, ParticleTextureAnimationSettings* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -55,13 +55,13 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_TEXTURE_ANIMATION_DESC tmp__output;
-		tmp__output = static_cast<ParticleTextureAnimation*>(self->GetNativeObject())->GetOptions();
+		ParticleTextureAnimationSettings tmp__output;
+		tmp__output = static_cast<ParticleTextureAnimation*>(self->GetNativeObject())->GetSettings();
 
 		*__output = tmp__output;
 	}
 
-	void ScriptParticleTextureAnimation::InternalCreate(MonoObject* scriptObject, PARTICLE_TEXTURE_ANIMATION_DESC* desc)
+	void ScriptParticleTextureAnimation::InternalCreate(MonoObject* scriptObject, ParticleTextureAnimationSettings* desc)
 	{
 		SPtr<ParticleTextureAnimation> nativeObject = ParticleTextureAnimation::Create(*desc);
 		ScriptObjectWrapper::Create<ScriptParticleTextureAnimation>(nativeObject, scriptObject);

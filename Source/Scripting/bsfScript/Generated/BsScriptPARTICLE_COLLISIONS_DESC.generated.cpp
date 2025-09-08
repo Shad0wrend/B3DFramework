@@ -10,14 +10,14 @@ namespace b3d
 	ScriptParticleCollisionsOptions::ScriptParticleCollisionsOptions()
 	{ }
 
-	MonoObject* ScriptParticleCollisionsOptions::Box(const PARTICLE_COLLISIONS_DESC& value)
+	MonoObject* ScriptParticleCollisionsOptions::Box(const ParticleCollisionSettings& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	PARTICLE_COLLISIONS_DESC ScriptParticleCollisionsOptions::Unbox(MonoObject* value)
+	ParticleCollisionSettings ScriptParticleCollisionsOptions::Unbox(MonoObject* value)
 	{
-		return *(PARTICLE_COLLISIONS_DESC*)MonoUtil::Unbox(value);
+		return *(ParticleCollisionSettings*)MonoUtil::Unbox(value);
 	}
 
 }

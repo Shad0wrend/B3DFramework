@@ -10,14 +10,14 @@ namespace b3d
 	ScriptParticleHemisphereShapeOptions::ScriptParticleHemisphereShapeOptions()
 	{ }
 
-	MonoObject* ScriptParticleHemisphereShapeOptions::Box(const PARTICLE_HEMISPHERE_SHAPE_DESC& value)
+	MonoObject* ScriptParticleHemisphereShapeOptions::Box(const ParticleHemisphereShapeSettings& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	PARTICLE_HEMISPHERE_SHAPE_DESC ScriptParticleHemisphereShapeOptions::Unbox(MonoObject* value)
+	ParticleHemisphereShapeSettings ScriptParticleHemisphereShapeOptions::Unbox(MonoObject* value)
 	{
-		return *(PARTICLE_HEMISPHERE_SHAPE_DESC*)MonoUtil::Unbox(value);
+		return *(ParticleHemisphereShapeSettings*)MonoUtil::Unbox(value);
 	}
 
 }

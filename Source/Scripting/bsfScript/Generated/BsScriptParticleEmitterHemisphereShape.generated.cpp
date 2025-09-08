@@ -39,15 +39,15 @@ namespace b3d
 
 		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
-	void ScriptParticleEmitterHemisphereShape::InternalSetOptions(ScriptParticleEmitterHemisphereShape* self, PARTICLE_HEMISPHERE_SHAPE_DESC* options)
+	void ScriptParticleEmitterHemisphereShape::InternalSetOptions(ScriptParticleEmitterHemisphereShape* self, ParticleHemisphereShapeSettings* options)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<ParticleEmitterHemisphereShape*>(self->GetNativeObject())->SetOptions(*options);
+		static_cast<ParticleEmitterHemisphereShape*>(self->GetNativeObject())->SetSettings(*options);
 	}
 
-	void ScriptParticleEmitterHemisphereShape::InternalGetOptions(ScriptParticleEmitterHemisphereShape* self, PARTICLE_HEMISPHERE_SHAPE_DESC* __output)
+	void ScriptParticleEmitterHemisphereShape::InternalGetOptions(ScriptParticleEmitterHemisphereShape* self, ParticleHemisphereShapeSettings* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -55,13 +55,13 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_HEMISPHERE_SHAPE_DESC tmp__output;
-		tmp__output = static_cast<ParticleEmitterHemisphereShape*>(self->GetNativeObject())->GetOptions();
+		ParticleHemisphereShapeSettings tmp__output;
+		tmp__output = static_cast<ParticleEmitterHemisphereShape*>(self->GetNativeObject())->GetSettings();
 
 		*__output = tmp__output;
 	}
 
-	void ScriptParticleEmitterHemisphereShape::InternalCreate(MonoObject* scriptObject, PARTICLE_HEMISPHERE_SHAPE_DESC* desc)
+	void ScriptParticleEmitterHemisphereShape::InternalCreate(MonoObject* scriptObject, ParticleHemisphereShapeSettings* desc)
 	{
 		SPtr<ParticleEmitterHemisphereShape> nativeObject = ParticleEmitterHemisphereShape::Create(*desc);
 		ScriptObjectWrapper::Create<ScriptParticleEmitterHemisphereShape>(nativeObject, scriptObject);

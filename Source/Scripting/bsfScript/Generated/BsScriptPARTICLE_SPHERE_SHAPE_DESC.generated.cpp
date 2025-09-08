@@ -10,14 +10,14 @@ namespace b3d
 	ScriptParticleSphereShapeOptions::ScriptParticleSphereShapeOptions()
 	{ }
 
-	MonoObject* ScriptParticleSphereShapeOptions::Box(const PARTICLE_SPHERE_SHAPE_DESC& value)
+	MonoObject* ScriptParticleSphereShapeOptions::Box(const ParticleSphereShapeSettings& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	PARTICLE_SPHERE_SHAPE_DESC ScriptParticleSphereShapeOptions::Unbox(MonoObject* value)
+	ParticleSphereShapeSettings ScriptParticleSphereShapeOptions::Unbox(MonoObject* value)
 	{
-		return *(PARTICLE_SPHERE_SHAPE_DESC*)MonoUtil::Unbox(value);
+		return *(ParticleSphereShapeSettings*)MonoUtil::Unbox(value);
 	}
 
 }

@@ -39,15 +39,15 @@ namespace b3d
 
 		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
-	void ScriptParticleGravity::InternalSetOptions(ScriptParticleGravity* self, PARTICLE_GRAVITY_DESC* options)
+	void ScriptParticleGravity::InternalSetOptions(ScriptParticleGravity* self, ParticleGravitySettings* options)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<ParticleGravity*>(self->GetNativeObject())->SetOptions(*options);
+		static_cast<ParticleGravity*>(self->GetNativeObject())->SetSettings(*options);
 	}
 
-	void ScriptParticleGravity::InternalGetOptions(ScriptParticleGravity* self, PARTICLE_GRAVITY_DESC* __output)
+	void ScriptParticleGravity::InternalGetOptions(ScriptParticleGravity* self, ParticleGravitySettings* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -55,13 +55,13 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_GRAVITY_DESC tmp__output;
-		tmp__output = static_cast<ParticleGravity*>(self->GetNativeObject())->GetOptions();
+		ParticleGravitySettings tmp__output;
+		tmp__output = static_cast<ParticleGravity*>(self->GetNativeObject())->GetSettings();
 
 		*__output = tmp__output;
 	}
 
-	void ScriptParticleGravity::InternalCreate(MonoObject* scriptObject, PARTICLE_GRAVITY_DESC* desc)
+	void ScriptParticleGravity::InternalCreate(MonoObject* scriptObject, ParticleGravitySettings* desc)
 	{
 		SPtr<ParticleGravity> nativeObject = ParticleGravity::Create(*desc);
 		ScriptObjectWrapper::Create<ScriptParticleGravity>(nativeObject, scriptObject);

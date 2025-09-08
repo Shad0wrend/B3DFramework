@@ -25,8 +25,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_ORBIT_DESCInterop& value);
 		static __PARTICLE_ORBIT_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_ORBIT_DESC FromInterop(const __PARTICLE_ORBIT_DESCInterop& value);
-		static __PARTICLE_ORBIT_DESCInterop ToInterop(const PARTICLE_ORBIT_DESC& value);
+		static ParticleOrbitSettings FromInterop(const __PARTICLE_ORBIT_DESCInterop& value);
+		static __PARTICLE_ORBIT_DESCInterop ToInterop(const ParticleOrbitSettings& value);
 
 	private:
 		ScriptParticleOrbitOptions();

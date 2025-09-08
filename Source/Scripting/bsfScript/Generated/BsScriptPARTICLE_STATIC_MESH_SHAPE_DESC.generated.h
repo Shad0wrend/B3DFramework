@@ -23,8 +23,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value);
 		static __PARTICLE_STATIC_MESH_SHAPE_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_STATIC_MESH_SHAPE_DESC FromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value);
-		static __PARTICLE_STATIC_MESH_SHAPE_DESCInterop ToInterop(const PARTICLE_STATIC_MESH_SHAPE_DESC& value);
+		static ParticleStaticMeshShapeSettings FromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value);
+		static __PARTICLE_STATIC_MESH_SHAPE_DESCInterop ToInterop(const ParticleStaticMeshShapeSettings& value);
 
 	private:
 		ScriptParticleStaticMeshShapeOptions();

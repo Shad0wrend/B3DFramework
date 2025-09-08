@@ -22,9 +22,9 @@ namespace b3d
 		return *(__PARTICLE_CONE_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_CONE_SHAPE_DESC ScriptParticleConeShapeOptions::FromInterop(const __PARTICLE_CONE_SHAPE_DESCInterop& value)
+	ParticleConeShapeSettings ScriptParticleConeShapeOptions::FromInterop(const __PARTICLE_CONE_SHAPE_DESCInterop& value)
 	{
-		PARTICLE_CONE_SHAPE_DESC output;
+		ParticleConeShapeSettings output;
 		output.Type = value.Type;
 		output.Radius = value.Radius;
 		output.Angle = value.Angle;
@@ -36,7 +36,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_CONE_SHAPE_DESCInterop ScriptParticleConeShapeOptions::ToInterop(const PARTICLE_CONE_SHAPE_DESC& value)
+	__PARTICLE_CONE_SHAPE_DESCInterop ScriptParticleConeShapeOptions::ToInterop(const ParticleConeShapeSettings& value)
 	{
 		__PARTICLE_CONE_SHAPE_DESCInterop output;
 		output.Type = value.Type;

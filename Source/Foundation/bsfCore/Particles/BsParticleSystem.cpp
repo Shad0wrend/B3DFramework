@@ -127,7 +127,7 @@ ParticleSystem::ParticleSystem(const SPtr<SceneInstance>& scene)
 
 	auto emitter = B3DMakeShared<ParticleEmitter>();
 
-	PARTICLE_SPHERE_SHAPE_DESC desc;
+	ParticleSphereShapeSettings desc;
 	desc.Radius = 0.05f;
 
 	emitter->SetShape(ParticleEmitterSphereShape::Create(desc));

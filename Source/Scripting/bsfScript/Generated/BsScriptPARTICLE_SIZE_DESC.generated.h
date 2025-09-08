@@ -24,8 +24,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_SIZE_DESCInterop& value);
 		static __PARTICLE_SIZE_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_SIZE_DESC FromInterop(const __PARTICLE_SIZE_DESCInterop& value);
-		static __PARTICLE_SIZE_DESCInterop ToInterop(const PARTICLE_SIZE_DESC& value);
+		static ParticleSizeSettings FromInterop(const __PARTICLE_SIZE_DESCInterop& value);
+		static __PARTICLE_SIZE_DESCInterop ToInterop(const ParticleSizeSettings& value);
 
 	private:
 		ScriptParticleSizeOptions();

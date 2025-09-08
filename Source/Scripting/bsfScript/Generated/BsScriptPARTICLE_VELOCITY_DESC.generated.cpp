@@ -22,9 +22,9 @@ namespace b3d
 		return *(__PARTICLE_VELOCITY_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_VELOCITY_DESC ScriptParticleVelocityOptions::FromInterop(const __PARTICLE_VELOCITY_DESCInterop& value)
+	ParticleVelocitySettings ScriptParticleVelocityOptions::FromInterop(const __PARTICLE_VELOCITY_DESCInterop& value)
 	{
-		PARTICLE_VELOCITY_DESC output;
+		ParticleVelocitySettings output;
 		SPtr<TDistribution<TVector3<float>>> tmpVelocity;
 		ScriptVector3Distribution* scriptObjectWrapperVelocity;
 		scriptObjectWrapperVelocity = ScriptVector3Distribution::GetScriptObjectWrapper(value.Velocity);
@@ -37,7 +37,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_VELOCITY_DESCInterop ScriptParticleVelocityOptions::ToInterop(const PARTICLE_VELOCITY_DESC& value)
+	__PARTICLE_VELOCITY_DESCInterop ScriptParticleVelocityOptions::ToInterop(const ParticleVelocitySettings& value)
 	{
 		__PARTICLE_VELOCITY_DESCInterop output;
 		MonoObject* tmpVelocity;

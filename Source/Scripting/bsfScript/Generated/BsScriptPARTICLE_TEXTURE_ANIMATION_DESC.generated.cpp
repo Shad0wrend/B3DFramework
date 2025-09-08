@@ -10,14 +10,14 @@ namespace b3d
 	ScriptParticleTextureAnimationOptions::ScriptParticleTextureAnimationOptions()
 	{ }
 
-	MonoObject* ScriptParticleTextureAnimationOptions::Box(const PARTICLE_TEXTURE_ANIMATION_DESC& value)
+	MonoObject* ScriptParticleTextureAnimationOptions::Box(const ParticleTextureAnimationSettings& value)
 	{
 		return MonoUtil::Box(sInteropMetaData.ScriptClass->GetInternalClass(), (void*)&value);
 	}
 
-	PARTICLE_TEXTURE_ANIMATION_DESC ScriptParticleTextureAnimationOptions::Unbox(MonoObject* value)
+	ParticleTextureAnimationSettings ScriptParticleTextureAnimationOptions::Unbox(MonoObject* value)
 	{
-		return *(PARTICLE_TEXTURE_ANIMATION_DESC*)MonoUtil::Unbox(value);
+		return *(ParticleTextureAnimationSettings*)MonoUtil::Unbox(value);
 	}
 
 }

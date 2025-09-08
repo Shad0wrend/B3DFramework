@@ -24,9 +24,9 @@ namespace b3d
 		return *(__PARTICLE_ROTATION_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_ROTATION_DESC ScriptParticleRotationOptions::FromInterop(const __PARTICLE_ROTATION_DESCInterop& value)
+	ParticleRotationSettings ScriptParticleRotationOptions::FromInterop(const __PARTICLE_ROTATION_DESCInterop& value)
 	{
-		PARTICLE_ROTATION_DESC output;
+		ParticleRotationSettings output;
 		SPtr<TDistribution<float>> tmpRotation;
 		ScriptFloatDistribution* scriptObjectWrapperRotation;
 		scriptObjectWrapperRotation = ScriptFloatDistribution::GetScriptObjectWrapper(value.Rotation);
@@ -46,7 +46,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_ROTATION_DESCInterop ScriptParticleRotationOptions::ToInterop(const PARTICLE_ROTATION_DESC& value)
+	__PARTICLE_ROTATION_DESCInterop ScriptParticleRotationOptions::ToInterop(const ParticleRotationSettings& value)
 	{
 		__PARTICLE_ROTATION_DESCInterop output;
 		MonoObject* tmpRotation;

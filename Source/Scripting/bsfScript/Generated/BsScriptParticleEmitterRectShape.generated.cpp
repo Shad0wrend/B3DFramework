@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_RECT_SHAPE_DESC tmpoptions;
+		ParticleRectangleShapeSettings tmpoptions;
 		tmpoptions = ScriptParticleRectShapeOptions::FromInterop(*options);
-		static_cast<ParticleEmitterRectShape*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleEmitterRectShape*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleEmitterRectShape::InternalGetOptions(ScriptParticleEmitterRectShape* self, __PARTICLE_RECT_SHAPE_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_RECT_SHAPE_DESC tmp__output;
-		tmp__output = static_cast<ParticleEmitterRectShape*>(self->GetNativeObject())->GetOptions();
+		ParticleRectangleShapeSettings tmp__output;
+		tmp__output = static_cast<ParticleEmitterRectShape*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_RECT_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptParticleRectShapeOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleEmitterRectShape::InternalCreate(MonoObject* scriptObject, __PARTICLE_RECT_SHAPE_DESCInterop* desc)
 	{
-		PARTICLE_RECT_SHAPE_DESC tmpdesc;
+		ParticleRectangleShapeSettings tmpdesc;
 		tmpdesc = ScriptParticleRectShapeOptions::FromInterop(*desc);
 		SPtr<ParticleEmitterRectShape> nativeObject = ParticleEmitterRectShape::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleEmitterRectShape>(nativeObject, scriptObject);

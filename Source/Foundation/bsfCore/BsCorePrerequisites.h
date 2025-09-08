@@ -464,7 +464,6 @@ namespace b3d
 	struct RenderTargetBlendStateInformation;
 	struct RenderTextureCreateInformation;
 	struct RenderWindowCreateInformation;
-	struct FONT_DESC;
 	struct CharacterControllerCreateInformation;
 	struct JointCreateInformation;
 	struct FixedJointCreateInformation;
@@ -521,7 +520,7 @@ namespace b3d
 		TID_ShaderParameterBlockInformation = 1047,
 		TID_ImportOptions = 1048,
 		TID_Font = 1051,
-		TID_FONT_DESC = 1052,
+		//TID_FONT_DESC = 1052,
 		TID_CharacterInformation = 1053,
 		TID_FontImportOptions = 1056,
 		TID_FontBitmapInformation = 1057,

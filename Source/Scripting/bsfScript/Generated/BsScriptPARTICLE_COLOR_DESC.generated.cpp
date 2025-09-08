@@ -22,9 +22,9 @@ namespace b3d
 		return *(__PARTICLE_COLOR_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_COLOR_DESC ScriptParticleColorOptions::FromInterop(const __PARTICLE_COLOR_DESCInterop& value)
+	ParticleColorSettings ScriptParticleColorOptions::FromInterop(const __PARTICLE_COLOR_DESCInterop& value)
 	{
-		PARTICLE_COLOR_DESC output;
+		ParticleColorSettings output;
 		SPtr<TColorDistribution<ColorGradient>> tmpColor;
 		ScriptColorDistribution* scriptObjectWrapperColor;
 		scriptObjectWrapperColor = ScriptColorDistribution::GetScriptObjectWrapper(value.Color);
@@ -36,7 +36,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_COLOR_DESCInterop ScriptParticleColorOptions::ToInterop(const PARTICLE_COLOR_DESC& value)
+	__PARTICLE_COLOR_DESCInterop ScriptParticleColorOptions::ToInterop(const ParticleColorSettings& value)
 	{
 		__PARTICLE_COLOR_DESCInterop output;
 		MonoObject* tmpColor;

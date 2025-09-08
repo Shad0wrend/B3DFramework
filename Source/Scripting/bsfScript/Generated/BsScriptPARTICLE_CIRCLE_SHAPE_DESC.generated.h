@@ -25,8 +25,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value);
 		static __PARTICLE_CIRCLE_SHAPE_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_CIRCLE_SHAPE_DESC FromInterop(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value);
-		static __PARTICLE_CIRCLE_SHAPE_DESCInterop ToInterop(const PARTICLE_CIRCLE_SHAPE_DESC& value);
+		static ParticleCircleShapeSettings FromInterop(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value);
+		static __PARTICLE_CIRCLE_SHAPE_DESCInterop ToInterop(const ParticleCircleShapeSettings& value);
 
 	private:
 		ScriptParticleCircleShapeOptions();

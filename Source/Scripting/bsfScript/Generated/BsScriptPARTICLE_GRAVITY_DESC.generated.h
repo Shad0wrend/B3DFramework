@@ -13,8 +13,8 @@ namespace b3d
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ParticleGravityOptions")
 
-		static MonoObject* Box(const PARTICLE_GRAVITY_DESC& value);
-		static PARTICLE_GRAVITY_DESC Unbox(MonoObject* value);
+		static MonoObject* Box(const ParticleGravitySettings& value);
+		static ParticleGravitySettings Unbox(MonoObject* value);
 
 	private:
 		ScriptParticleGravityOptions();

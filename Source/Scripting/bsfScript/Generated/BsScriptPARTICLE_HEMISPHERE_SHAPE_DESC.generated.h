@@ -13,8 +13,8 @@ namespace b3d
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ParticleHemisphereShapeOptions")
 
-		static MonoObject* Box(const PARTICLE_HEMISPHERE_SHAPE_DESC& value);
-		static PARTICLE_HEMISPHERE_SHAPE_DESC Unbox(MonoObject* value);
+		static MonoObject* Box(const ParticleHemisphereShapeSettings& value);
+		static ParticleHemisphereShapeSettings Unbox(MonoObject* value);
 
 	private:
 		ScriptParticleHemisphereShapeOptions();

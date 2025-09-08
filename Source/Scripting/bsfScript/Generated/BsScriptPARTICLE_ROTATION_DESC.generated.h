@@ -24,8 +24,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_ROTATION_DESCInterop& value);
 		static __PARTICLE_ROTATION_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_ROTATION_DESC FromInterop(const __PARTICLE_ROTATION_DESCInterop& value);
-		static __PARTICLE_ROTATION_DESCInterop ToInterop(const PARTICLE_ROTATION_DESC& value);
+		static ParticleRotationSettings FromInterop(const __PARTICLE_ROTATION_DESCInterop& value);
+		static __PARTICLE_ROTATION_DESCInterop ToInterop(const ParticleRotationSettings& value);
 
 	private:
 		ScriptParticleRotationOptions();

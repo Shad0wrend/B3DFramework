@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_VELOCITY_DESC tmpoptions;
+		ParticleVelocitySettings tmpoptions;
 		tmpoptions = ScriptParticleVelocityOptions::FromInterop(*options);
-		static_cast<ParticleVelocity*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleVelocity*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleVelocity::InternalGetOptions(ScriptParticleVelocity* self, __PARTICLE_VELOCITY_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_VELOCITY_DESC tmp__output;
-		tmp__output = static_cast<ParticleVelocity*>(self->GetNativeObject())->GetOptions();
+		ParticleVelocitySettings tmp__output;
+		tmp__output = static_cast<ParticleVelocity*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_VELOCITY_DESCInterop interop__output;
 		interop__output = ScriptParticleVelocityOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleVelocity::InternalCreate(MonoObject* scriptObject, __PARTICLE_VELOCITY_DESCInterop* desc)
 	{
-		PARTICLE_VELOCITY_DESC tmpdesc;
+		ParticleVelocitySettings tmpdesc;
 		tmpdesc = ScriptParticleVelocityOptions::FromInterop(*desc);
 		SPtr<ParticleVelocity> nativeObject = ParticleVelocity::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleVelocity>(nativeObject, scriptObject);

@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_ROTATION_DESC tmpoptions;
+		ParticleRotationSettings tmpoptions;
 		tmpoptions = ScriptParticleRotationOptions::FromInterop(*options);
-		static_cast<ParticleRotation*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleRotation*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleRotation::InternalGetOptions(ScriptParticleRotation* self, __PARTICLE_ROTATION_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_ROTATION_DESC tmp__output;
-		tmp__output = static_cast<ParticleRotation*>(self->GetNativeObject())->GetOptions();
+		ParticleRotationSettings tmp__output;
+		tmp__output = static_cast<ParticleRotation*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_ROTATION_DESCInterop interop__output;
 		interop__output = ScriptParticleRotationOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleRotation::InternalCreate(MonoObject* scriptObject, __PARTICLE_ROTATION_DESCInterop* desc)
 	{
-		PARTICLE_ROTATION_DESC tmpdesc;
+		ParticleRotationSettings tmpdesc;
 		tmpdesc = ScriptParticleRotationOptions::FromInterop(*desc);
 		SPtr<ParticleRotation> nativeObject = ParticleRotation::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleRotation>(nativeObject, scriptObject);

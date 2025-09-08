@@ -24,9 +24,9 @@ namespace b3d
 		return *(__PARTICLE_STATIC_MESH_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_STATIC_MESH_SHAPE_DESC ScriptParticleStaticMeshShapeOptions::FromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
+	ParticleStaticMeshShapeSettings ScriptParticleStaticMeshShapeOptions::FromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
 	{
-		PARTICLE_STATIC_MESH_SHAPE_DESC output;
+		ParticleStaticMeshShapeSettings output;
 		output.Type = value.Type;
 		output.Sequential = value.Sequential;
 		TResourceHandle<Mesh> tmpMesh;
@@ -39,7 +39,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptParticleStaticMeshShapeOptions::ToInterop(const PARTICLE_STATIC_MESH_SHAPE_DESC& value)
+	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptParticleStaticMeshShapeOptions::ToInterop(const ParticleStaticMeshShapeSettings& value)
 	{
 		__PARTICLE_STATIC_MESH_SHAPE_DESCInterop output;
 		output.Type = value.Type;

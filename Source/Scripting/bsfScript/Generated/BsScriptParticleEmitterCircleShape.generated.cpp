@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_CIRCLE_SHAPE_DESC tmpoptions;
+		ParticleCircleShapeSettings tmpoptions;
 		tmpoptions = ScriptParticleCircleShapeOptions::FromInterop(*options);
-		static_cast<ParticleEmitterCircleShape*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleEmitterCircleShape*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleEmitterCircleShape::InternalGetOptions(ScriptParticleEmitterCircleShape* self, __PARTICLE_CIRCLE_SHAPE_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_CIRCLE_SHAPE_DESC tmp__output;
-		tmp__output = static_cast<ParticleEmitterCircleShape*>(self->GetNativeObject())->GetOptions();
+		ParticleCircleShapeSettings tmp__output;
+		tmp__output = static_cast<ParticleEmitterCircleShape*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_CIRCLE_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptParticleCircleShapeOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleEmitterCircleShape::InternalCreate(MonoObject* scriptObject, __PARTICLE_CIRCLE_SHAPE_DESCInterop* desc)
 	{
-		PARTICLE_CIRCLE_SHAPE_DESC tmpdesc;
+		ParticleCircleShapeSettings tmpdesc;
 		tmpdesc = ScriptParticleCircleShapeOptions::FromInterop(*desc);
 		SPtr<ParticleEmitterCircleShape> nativeObject = ParticleEmitterCircleShape::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleEmitterCircleShape>(nativeObject, scriptObject);

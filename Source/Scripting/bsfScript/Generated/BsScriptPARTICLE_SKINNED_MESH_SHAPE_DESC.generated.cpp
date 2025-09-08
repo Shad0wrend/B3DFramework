@@ -22,9 +22,9 @@ namespace b3d
 		return *(__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_SKINNED_MESH_SHAPE_DESC ScriptParticleSkinnedMeshShapeOptions::FromInterop(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
+	ParticleSkinnedMeshShapeSettings ScriptParticleSkinnedMeshShapeOptions::FromInterop(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
 	{
-		PARTICLE_SKINNED_MESH_SHAPE_DESC output;
+		ParticleSkinnedMeshShapeSettings output;
 		output.Type = value.Type;
 		output.Sequential = value.Sequential;
 		GameObjectHandle<Renderable> tmpRenderable;
@@ -37,7 +37,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptParticleSkinnedMeshShapeOptions::ToInterop(const PARTICLE_SKINNED_MESH_SHAPE_DESC& value)
+	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptParticleSkinnedMeshShapeOptions::ToInterop(const ParticleSkinnedMeshShapeSettings& value)
 	{
 		__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop output;
 		output.Type = value.Type;

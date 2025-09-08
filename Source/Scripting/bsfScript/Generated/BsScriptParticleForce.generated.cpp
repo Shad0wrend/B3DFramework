@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_FORCE_DESC tmpoptions;
+		ParticleForceSettings tmpoptions;
 		tmpoptions = ScriptParticleForceOptions::FromInterop(*options);
-		static_cast<ParticleForce*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleForce*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleForce::InternalGetOptions(ScriptParticleForce* self, __PARTICLE_FORCE_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_FORCE_DESC tmp__output;
-		tmp__output = static_cast<ParticleForce*>(self->GetNativeObject())->GetOptions();
+		ParticleForceSettings tmp__output;
+		tmp__output = static_cast<ParticleForce*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_FORCE_DESCInterop interop__output;
 		interop__output = ScriptParticleForceOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleForce::InternalCreate(MonoObject* scriptObject, __PARTICLE_FORCE_DESCInterop* desc)
 	{
-		PARTICLE_FORCE_DESC tmpdesc;
+		ParticleForceSettings tmpdesc;
 		tmpdesc = ScriptParticleForceOptions::FromInterop(*desc);
 		SPtr<ParticleForce> nativeObject = ParticleForce::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleForce>(nativeObject, scriptObject);

@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_CONE_SHAPE_DESC tmpoptions;
+		ParticleConeShapeSettings tmpoptions;
 		tmpoptions = ScriptParticleConeShapeOptions::FromInterop(*options);
-		static_cast<ParticleEmitterConeShape*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleEmitterConeShape*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleEmitterConeShape::InternalGetOptions(ScriptParticleEmitterConeShape* self, __PARTICLE_CONE_SHAPE_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_CONE_SHAPE_DESC tmp__output;
-		tmp__output = static_cast<ParticleEmitterConeShape*>(self->GetNativeObject())->GetOptions();
+		ParticleConeShapeSettings tmp__output;
+		tmp__output = static_cast<ParticleEmitterConeShape*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_CONE_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptParticleConeShapeOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleEmitterConeShape::InternalCreate(MonoObject* scriptObject, __PARTICLE_CONE_SHAPE_DESCInterop* desc)
 	{
-		PARTICLE_CONE_SHAPE_DESC tmpdesc;
+		ParticleConeShapeSettings tmpdesc;
 		tmpdesc = ScriptParticleConeShapeOptions::FromInterop(*desc);
 		SPtr<ParticleEmitterConeShape> nativeObject = ParticleEmitterConeShape::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleEmitterConeShape>(nativeObject, scriptObject);

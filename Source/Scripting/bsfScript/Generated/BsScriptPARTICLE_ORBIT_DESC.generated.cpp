@@ -24,9 +24,9 @@ namespace b3d
 		return *(__PARTICLE_ORBIT_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_ORBIT_DESC ScriptParticleOrbitOptions::FromInterop(const __PARTICLE_ORBIT_DESCInterop& value)
+	ParticleOrbitSettings ScriptParticleOrbitOptions::FromInterop(const __PARTICLE_ORBIT_DESCInterop& value)
 	{
-		PARTICLE_ORBIT_DESC output;
+		ParticleOrbitSettings output;
 		SPtr<TDistribution<TVector3<float>>> tmpCenter;
 		ScriptVector3Distribution* scriptObjectWrapperCenter;
 		scriptObjectWrapperCenter = ScriptVector3Distribution::GetScriptObjectWrapper(value.Center);
@@ -53,7 +53,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_ORBIT_DESCInterop ScriptParticleOrbitOptions::ToInterop(const PARTICLE_ORBIT_DESC& value)
+	__PARTICLE_ORBIT_DESCInterop ScriptParticleOrbitOptions::ToInterop(const ParticleOrbitSettings& value)
 	{
 		__PARTICLE_ORBIT_DESCInterop output;
 		MonoObject* tmpCenter;

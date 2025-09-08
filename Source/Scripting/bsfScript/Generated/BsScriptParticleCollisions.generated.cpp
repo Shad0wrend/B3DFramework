@@ -131,15 +131,15 @@ namespace b3d
 		return __output;
 	}
 
-	void ScriptParticleCollisions::InternalSetOptions(ScriptParticleCollisions* self, PARTICLE_COLLISIONS_DESC* options)
+	void ScriptParticleCollisions::InternalSetOptions(ScriptParticleCollisions* self, ParticleCollisionSettings* options)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<ParticleCollisions*>(self->GetNativeObject())->SetOptions(*options);
+		static_cast<ParticleCollisions*>(self->GetNativeObject())->SetSettings(*options);
 	}
 
-	void ScriptParticleCollisions::InternalGetOptions(ScriptParticleCollisions* self, PARTICLE_COLLISIONS_DESC* __output)
+	void ScriptParticleCollisions::InternalGetOptions(ScriptParticleCollisions* self, ParticleCollisionSettings* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -147,13 +147,13 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_COLLISIONS_DESC tmp__output;
-		tmp__output = static_cast<ParticleCollisions*>(self->GetNativeObject())->GetOptions();
+		ParticleCollisionSettings tmp__output;
+		tmp__output = static_cast<ParticleCollisions*>(self->GetNativeObject())->GetSettings();
 
 		*__output = tmp__output;
 	}
 
-	void ScriptParticleCollisions::InternalCreate(MonoObject* scriptObject, PARTICLE_COLLISIONS_DESC* desc)
+	void ScriptParticleCollisions::InternalCreate(MonoObject* scriptObject, ParticleCollisionSettings* desc)
 	{
 		SPtr<ParticleCollisions> nativeObject = ParticleCollisions::Create(*desc);
 		ScriptObjectWrapper::Create<ScriptParticleCollisions>(nativeObject, scriptObject);

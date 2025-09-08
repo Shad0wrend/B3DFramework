@@ -23,8 +23,8 @@ namespace b3d
 
 		static MonoObject* Box(const __PARTICLE_BOX_SHAPE_DESCInterop& value);
 		static __PARTICLE_BOX_SHAPE_DESCInterop Unbox(MonoObject* value);
-		static PARTICLE_BOX_SHAPE_DESC FromInterop(const __PARTICLE_BOX_SHAPE_DESCInterop& value);
-		static __PARTICLE_BOX_SHAPE_DESCInterop ToInterop(const PARTICLE_BOX_SHAPE_DESC& value);
+		static ParticleBoxShapeSettings FromInterop(const __PARTICLE_BOX_SHAPE_DESCInterop& value);
+		static __PARTICLE_BOX_SHAPE_DESCInterop ToInterop(const ParticleBoxShapeSettings& value);
 
 	private:
 		ScriptParticleBoxShapeOptions();

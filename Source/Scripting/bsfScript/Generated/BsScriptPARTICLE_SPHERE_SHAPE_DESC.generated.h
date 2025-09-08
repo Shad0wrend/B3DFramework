@@ -13,8 +13,8 @@ namespace b3d
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ParticleSphereShapeOptions")
 
-		static MonoObject* Box(const PARTICLE_SPHERE_SHAPE_DESC& value);
-		static PARTICLE_SPHERE_SHAPE_DESC Unbox(MonoObject* value);
+		static MonoObject* Box(const ParticleSphereShapeSettings& value);
+		static ParticleSphereShapeSettings Unbox(MonoObject* value);
 
 	private:
 		ScriptParticleSphereShapeOptions();

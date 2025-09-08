@@ -24,9 +24,9 @@ namespace b3d
 		return *(__PARTICLE_SIZE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_SIZE_DESC ScriptParticleSizeOptions::FromInterop(const __PARTICLE_SIZE_DESCInterop& value)
+	ParticleSizeSettings ScriptParticleSizeOptions::FromInterop(const __PARTICLE_SIZE_DESCInterop& value)
 	{
-		PARTICLE_SIZE_DESC output;
+		ParticleSizeSettings output;
 		SPtr<TDistribution<float>> tmpSize;
 		ScriptFloatDistribution* scriptObjectWrapperSize;
 		scriptObjectWrapperSize = ScriptFloatDistribution::GetScriptObjectWrapper(value.Size);
@@ -46,7 +46,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_SIZE_DESCInterop ScriptParticleSizeOptions::ToInterop(const PARTICLE_SIZE_DESC& value)
+	__PARTICLE_SIZE_DESCInterop ScriptParticleSizeOptions::ToInterop(const ParticleSizeSettings& value)
 	{
 		__PARTICLE_SIZE_DESCInterop output;
 		MonoObject* tmpSize;

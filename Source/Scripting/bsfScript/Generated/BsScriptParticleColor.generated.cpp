@@ -44,9 +44,9 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		PARTICLE_COLOR_DESC tmpoptions;
+		ParticleColorSettings tmpoptions;
 		tmpoptions = ScriptParticleColorOptions::FromInterop(*options);
-		static_cast<ParticleColor*>(self->GetNativeObject())->SetOptions(tmpoptions);
+		static_cast<ParticleColor*>(self->GetNativeObject())->SetSettings(tmpoptions);
 	}
 
 	void ScriptParticleColor::InternalGetOptions(ScriptParticleColor* self, __PARTICLE_COLOR_DESCInterop* __output)
@@ -57,8 +57,8 @@ namespace b3d
 			return;
 		}
 
-		PARTICLE_COLOR_DESC tmp__output;
-		tmp__output = static_cast<ParticleColor*>(self->GetNativeObject())->GetOptions();
+		ParticleColorSettings tmp__output;
+		tmp__output = static_cast<ParticleColor*>(self->GetNativeObject())->GetSettings();
 
 		__PARTICLE_COLOR_DESCInterop interop__output;
 		interop__output = ScriptParticleColorOptions::ToInterop(tmp__output);
@@ -67,7 +67,7 @@ namespace b3d
 
 	void ScriptParticleColor::InternalCreate(MonoObject* scriptObject, __PARTICLE_COLOR_DESCInterop* desc)
 	{
-		PARTICLE_COLOR_DESC tmpdesc;
+		ParticleColorSettings tmpdesc;
 		tmpdesc = ScriptParticleColorOptions::FromInterop(*desc);
 		SPtr<ParticleColor> nativeObject = ParticleColor::Create(tmpdesc);
 		ScriptObjectWrapper::Create<ScriptParticleColor>(nativeObject, scriptObject);

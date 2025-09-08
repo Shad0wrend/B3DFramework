@@ -22,9 +22,9 @@ namespace b3d
 		return *(__PARTICLE_FORCE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_FORCE_DESC ScriptParticleForceOptions::FromInterop(const __PARTICLE_FORCE_DESCInterop& value)
+	ParticleForceSettings ScriptParticleForceOptions::FromInterop(const __PARTICLE_FORCE_DESCInterop& value)
 	{
-		PARTICLE_FORCE_DESC output;
+		ParticleForceSettings output;
 		SPtr<TDistribution<TVector3<float>>> tmpForce;
 		ScriptVector3Distribution* scriptObjectWrapperForce;
 		scriptObjectWrapperForce = ScriptVector3Distribution::GetScriptObjectWrapper(value.Force);
@@ -37,7 +37,7 @@ namespace b3d
 		return output;
 	}
 
-	__PARTICLE_FORCE_DESCInterop ScriptParticleForceOptions::ToInterop(const PARTICLE_FORCE_DESC& value)
+	__PARTICLE_FORCE_DESCInterop ScriptParticleForceOptions::ToInterop(const ParticleForceSettings& value)
 	{
 		__PARTICLE_FORCE_DESCInterop output;
 		MonoObject* tmpForce;
