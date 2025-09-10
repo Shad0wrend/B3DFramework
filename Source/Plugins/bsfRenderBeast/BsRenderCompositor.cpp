@@ -21,7 +21,7 @@
 #include "BsRenderBeastScene.h"
 #include "BsRenderBeast.h"
 #include "Particles/BsParticleScene.h"
-#include "Particles/BsParticleSystem.h"
+#include "Components/BsCParticleSystem.h"
 #include "Profiling/BsProfilerGPU.h"
 #include "Shading/BsGpuParticleSimulation.h"
 #include "Profiling/BsProfilerCPU.h"
@@ -704,7 +704,7 @@ void RCNodeParticleSort::Render(const RenderCompositorNodeInputs& inputs)
 			// Transform the view point into particle system's local space
 			const ParticleSystemSettings& settings = data.System->GetSettings();
 			if(settings.SimulationSpace == ParticleSimulationSpace::Local)
-				refPoint = data.System->GetTransform().GetInvMatrix().MultiplyAffine(refPoint);
+				refPoint = data.System->GetWorldTransform().GetInvMatrix().MultiplyAffine(refPoint);
 
 			if(settings.RenderMode == ParticleRenderMode::Billboard)
 			{

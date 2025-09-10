@@ -113,7 +113,7 @@ void RendererParticles::UpdatePerObjectBuffer()
 	Matrix4 localToWorldNoScale;
 	if(settings.SimulationSpace == ParticleSimulationSpace::Local)
 	{
-		const Transform& tfrm = ParticleSystem->GetTransform();
+		const Transform& tfrm = ParticleSystem->GetWorldTransform();
 		localToWorldNoScale = Matrix4::TRS(tfrm.GetPosition(), tfrm.GetRotation(), Vector3::kOne);
 	}
 	else

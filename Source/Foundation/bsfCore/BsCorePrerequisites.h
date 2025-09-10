@@ -362,7 +362,6 @@ namespace b3d
 	};
 
 	B3D_COMPONENT_FORWARD_DECLARE(Camera)
-	B3D_COMPONENT_FORWARD_DECLARE(ParticleSystem)
 
 	class Color;
 	class GpuProgramManager;
@@ -619,7 +618,7 @@ namespace b3d
 		TID_DepthStencilStateDesc = 1152,
 		// TID_SerializedGpuProgramData = 1153,
 		TID_SubShader = 1154,
-		TID_ParticleSystem = 1155,
+		//TID_ParticleSystem = 1155,
 		TID_ColorDistribution = 1156,
 		TID_TDistribution = 1157,
 		TID_ShaderParameterAttribute = 1158,
@@ -642,7 +641,7 @@ namespace b3d
 		TID_ParticleSystemSettings = 1175,
 		TID_ParticleSystemEmitters = 1176,
 		TID_ParticleSystemEvolvers = 1177,
-		TID_CParticleSystem = 1178,
+		TID_ParticleSystem = 1178,
 		TID_ParticleGravity = 1179,
 		TID_VectorField = 1180,
 		TID_ParticleVectorFieldSettings = 1181,
@@ -822,7 +821,7 @@ namespace b3d
 	typedef GameObjectHandle<LightProbeVolume> HLightProbeVolume;
 	typedef GameObjectHandle<AudioSource> HAudioSource;
 	typedef GameObjectHandle<AudioListener> HAudioListener;
-	typedef GameObjectHandle<CParticleSystem> HParticleSystem;
+	typedef GameObjectHandle<ParticleSystem> HParticleSystem;
 	typedef GameObjectHandle<Decal> HDecal;
 
 	/** @} */

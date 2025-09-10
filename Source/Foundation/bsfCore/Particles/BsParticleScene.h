@@ -7,7 +7,7 @@
 #include "Utility/BsModule.h"
 #include "Math/BsAABox.h"
 #include "CoreObject/BsRenderThread.h"
-#include "BsParticleSystem.h"
+#include "Components/BsCParticleSystem.h"
 
 namespace b3d
 {

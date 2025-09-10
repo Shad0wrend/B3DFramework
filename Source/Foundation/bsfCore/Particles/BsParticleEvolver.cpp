@@ -2,10 +2,9 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Particles/BsParticleEvolver.h"
 #include "Private/Particles/BsParticleSet.h"
-#include "Private/RTTI/BsParticleSystemRTTI.h"
+#include "Private/RTTI/BsCParticleSystemRTTI.h"
 #include "Particles/BsVectorField.h"
 #include "Image/BsSpriteTexture.h"
-#include "BsParticleSystem.h"
 #include "Components/BsCollider.h"
 #include "Material/BsMaterial.h"
 #include "Math/BsRay.h"

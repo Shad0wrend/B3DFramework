@@ -13,7 +13,7 @@
 
 namespace b3d
 {
-	ScriptParticleSystem::ScriptParticleSystem(const GameObjectHandle<CParticleSystem>& nativeObject)
+	ScriptParticleSystem::ScriptParticleSystem(const GameObjectHandle<ParticleSystem>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -60,7 +60,7 @@ namespace b3d
 		scriptObjectWrappersettings = ScriptParticleSystemSettings::GetScriptObjectWrapper(settings);
 		if(scriptObjectWrappersettings != nullptr)
 			tmpsettings = std::static_pointer_cast<ParticleSystemSettings>(scriptObjectWrappersettings->GetBaseNativeObjectAsShared());
-		static_cast<CParticleSystem*>(self->GetNativeObject())->SetSettings(*tmpsettings);
+		static_cast<ParticleSystem*>(self->GetNativeObject())->SetSettings(*tmpsettings);
 	}
 
 	MonoObject* ScriptParticleSystem::InternalGetSettings(ScriptParticleSystem* self)
@@ -69,7 +69,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		*tmp__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetSettings();
+		*tmp__output = static_cast<ParticleSystem*>(self->GetNativeObject())->GetSettings();
 
 		MonoObject* __output;
 		__output = ScriptParticleSystemSettings::GetOrCreateScriptObject(tmp__output);
@@ -87,7 +87,7 @@ namespace b3d
 		scriptObjectWrappersettings = ScriptParticleGpuSimulationSettings::GetScriptObjectWrapper(settings);
 		if(scriptObjectWrappersettings != nullptr)
 			tmpsettings = std::static_pointer_cast<ParticleGpuSimulationSettings>(scriptObjectWrappersettings->GetBaseNativeObjectAsShared());
-		static_cast<CParticleSystem*>(self->GetNativeObject())->SetGpuSimulationSettings(*tmpsettings);
+		static_cast<ParticleSystem*>(self->GetNativeObject())->SetGpuSimulationSettings(*tmpsettings);
 	}
 
 	MonoObject* ScriptParticleSystem::InternalGetGpuSimulationSettings(ScriptParticleSystem* self)
@@ -96,7 +96,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		*tmp__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetGpuSimulationSettings();
+		*tmp__output = static_cast<ParticleSystem*>(self->GetNativeObject())->GetGpuSimulationSettings();
 
 		MonoObject* __output;
 		__output = ScriptParticleGpuSimulationSettings::GetOrCreateScriptObject(tmp__output);
@@ -126,7 +126,7 @@ namespace b3d
 				}
 			}
 		}
-		static_cast<CParticleSystem*>(self->GetNativeObject())->SetEmitters(nativeArrayemitters);
+		static_cast<ParticleSystem*>(self->GetNativeObject())->SetEmitters(nativeArrayemitters);
 	}
 
 	MonoArray* ScriptParticleSystem::InternalGetEmitters(ScriptParticleSystem* self)
@@ -135,7 +135,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		nativeArray__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetEmitters();
+		nativeArray__output = static_cast<ParticleSystem*>(self->GetNativeObject())->GetEmitters();
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -174,7 +174,7 @@ namespace b3d
 				}
 			}
 		}
-		static_cast<CParticleSystem*>(self->GetNativeObject())->SetEvolvers(nativeArrayevolvers);
+		static_cast<ParticleSystem*>(self->GetNativeObject())->SetEvolvers(nativeArrayevolvers);
 	}
 
 	MonoArray* ScriptParticleSystem::InternalGetEvolvers(ScriptParticleSystem* self)
@@ -183,7 +183,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		nativeArray__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetEvolvers();
+		nativeArray__output = static_cast<ParticleSystem*>(self->GetNativeObject())->GetEvolvers();
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();
@@ -205,7 +205,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CParticleSystem*>(self->GetNativeObject())->SetLayer(layer);
+		static_cast<ParticleSystem*>(self->GetNativeObject())->SetLayer(layer);
 	}
 
 	uint64_t ScriptParticleSystem::InternalGetLayer(ScriptParticleSystem* self)
@@ -214,7 +214,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CParticleSystem*>(self->GetNativeObject())->GetLayer();
+		tmp__output = static_cast<ParticleSystem*>(self->GetNativeObject())->GetLayer();
 
 		uint64_t __output;
 		__output = tmp__output;
@@ -228,7 +228,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CParticleSystem*>(self->GetNativeObject())->TogglePreviewModeInternal(enabled);
+		tmp__output = static_cast<ParticleSystem*>(self->GetNativeObject())->TogglePreviewMode(enabled);
 
 		bool __output;
 		__output = tmp__output;

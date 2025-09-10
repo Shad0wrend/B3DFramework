@@ -7,15 +7,15 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
 
-namespace b3d { class CParticleSystem; }
+namespace b3d { class ParticleSystem; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleSystem : public TScriptGameObjectWrapper<CParticleSystem, ScriptParticleSystem>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleSystem : public TScriptGameObjectWrapper<ParticleSystem, ScriptParticleSystem>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "ParticleSystem")
 
-		ScriptParticleSystem(const GameObjectHandle<CParticleSystem>& nativeObject);
+		ScriptParticleSystem(const GameObjectHandle<ParticleSystem>& nativeObject);
 		~ScriptParticleSystem();
 
 		static void SetupScriptBindings();

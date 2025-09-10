@@ -704,7 +704,7 @@ void GpuParticleSystem::AdvanceTime(float dt)
 	const ParticleSystemSettings& settings = mParent->GetSettings();
 
 	float timeStep;
-	mTime = b3d::ParticleSystem::AdvanceTimeInternal(mTime, dt, settings.Duration, settings.IsLooping, timeStep);
+	mTime = b3d::ParticleSystem::AdvanceTime(mTime, dt, settings.Duration, settings.IsLooping, timeStep);
 }
 
 AABox GpuParticleSystem::GetBounds() const
@@ -957,7 +957,7 @@ void GpuParticleSimulation::PrepareBuffers(const GpuParticleSystem* system, cons
 	const ParticleDepthCollisionSettings& depthCollisionSettings = simSettings.DepthCollision;
 	if(depthCollisionSettings.Enabled)
 	{
-		Vector3 scale3D = rendererInfo.ParticleSystem->GetTransform().GetScale();
+		Vector3 scale3D = rendererInfo.ParticleSystem->GetWorldTransform().GetScale();
 		float uniformScale = std::max(std::max(scale3D.X, scale3D.Y), scale3D.Z);
 
 		gGpuParticleDepthCollisionParamsDef.gCollisionRange.Set(m->DepthCollisionParams, 2.0f);
@@ -1300,7 +1300,7 @@ u32 GpuParticleSortPrepareMat::Execute(GpuCommandBuffer& commandBuffer, const Gp
 	ParticleSystem* parentSystem = system.GetParent();
 	if(parentSystem->GetSettings().SimulationSpace == ParticleSimulationSpace::Local)
 	{
-		const Matrix4& worldToLocal = parentSystem->GetTransform().GetInvMatrix();
+		const Matrix4& worldToLocal = parentSystem->GetWorldTransform().GetInvMatrix();
 		localViewOrigin = worldToLocal.MultiplyAffine(viewOrigin);
 	}
 	else

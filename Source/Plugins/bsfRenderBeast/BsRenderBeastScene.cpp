@@ -758,7 +758,7 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	const ParticleSystemSettings& settings = particleSystem->GetSettings();
 	if(settings.SimulationSpace == ParticleSimulationSpace::Local)
 	{
-		const Transform& tfrm = particleSystem->GetTransform();
+		const Transform& tfrm = particleSystem->GetWorldTransform();
 		rendererParticles.LocalToWorld = tfrm.GetMatrix();
 	}
 	else

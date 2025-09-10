@@ -3,11 +3,11 @@
 #include "Particles/BsParticleScene.h"
 
 #include "BsCoreApplication.h"
-#include "Particles/BsParticleSystem.h"
 #include "Utility/BsTime.h"
 #include "Allocators/BsPoolAlloc.h"
 #include "Private/Particles/BsParticleSet.h"
 #include "Animation/BsAnimationScene.h"
+#include "Components/BsCParticleSystem.h"
 #include "Image/BsPixelUtility.h"
 
 using namespace b3d;
@@ -370,7 +370,7 @@ EvaluatedParticleData* ParticleScene::Update(const EvaluatedAnimationData& animD
 		const auto evaluateWorker = [this, &waitGroup, timeDelta, system, &animData, &simDataPool, &simulationData]()
 		{
 			// Advance the simulation
-			system->SimulateInternal(timeDelta, &animData);
+			system->Simulate(timeDelta, &animData);
 
 			ParticleRenderData* simulationDataCPU = nullptr;
 			ParticleGPUSimulationData* simulationDataGPU = nullptr;
@@ -392,7 +392,7 @@ EvaluatedParticleData* ParticleScene::Update(const EvaluatedAnimationData& animD
 					simulationDataCPU->NumParticles = numParticles;
 
 					if(settings.UseAutomaticBounds)
-						simulationDataCPU->Bounds = system->CalculateBoundsInternal();
+						simulationDataCPU->Bounds = system->CalculateBounds();
 					else
 						simulationDataCPU->Bounds = settings.CustomBounds;
 

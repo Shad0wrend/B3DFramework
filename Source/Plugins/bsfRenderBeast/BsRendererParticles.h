@@ -7,12 +7,12 @@
 #include "Renderer/BsGpuDataParameterBlock.h"
 #include "RenderAPI/BsGpuPipelineParameterLayout.h"
 #include "Material/BsShaderVariation.h"
-#include "Particles/BsParticleSystem.h"
 #include "Allocators/BsPoolAlloc.h"
 #include "Renderer/BsRendererMaterial.h"
 #include "Utility/BsTextureRowAllocator.h"
 #include "BsRendererLight.h"
 #include "BsRendererReflectionProbe.h"
+#include "Shading/BsGpuParticleSimulation.h"
 
 namespace b3d
 {
