@@ -55,7 +55,7 @@ void GUIViewport::UpdateRenderElements()
 	float currentAspect = (float)mAbsoluteSize.Width / (float)mAbsoluteSize.Height;
 	Radian currentFOV = 2.0f * Math::Atan(Math::Tan(mVerticalFOV * 0.5f) * currentAspect);
 
-	mCamera->SetHorzFov(currentFOV);
+	mCamera->SetHorizontalFOV(currentFOV);
 
 	SPtr<Viewport> viewport = mCamera->GetViewport();
 	SPtr<RenderTarget> renderTarget = viewport->GetTarget();

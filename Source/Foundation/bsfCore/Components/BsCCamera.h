@@ -13,174 +13,234 @@ namespace b3d
 	 */
 
 	/**
-	 * @copydoc	Camera
-	 *
-	 * Wraps a Camera as a Component.
+	 * Camera determines how is world geometry projected onto a 2D surface. You may position and orient it in space, set
+	 * options like aspect ratio and field or view and it outputs view and projection matrices required for rendering.
 	 */
-	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Camera)) CCamera : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) CCamera : public Component
 	{
 	public:
 		CCamera(const HSceneObject& parent);
 		virtual ~CCamera() = default;
 
-		/** @copydoc Camera::SetFlags */
+		/** Determines flags used for controlling the camera behaviour. */
 		B3D_SCRIPT_EXPORT(ExportName(Flags), Property(Setter))
-
 		void SetFlags(CameraFlags flags) { mInternal->SetFlags(flags); }
 
-		/** @copydoc Camera::GetFlags */
+		/** @copydoc SetFlags */
 		B3D_SCRIPT_EXPORT(ExportName(Flags), Property(Getter))
 		CameraFlags GetFlags() const { return mInternal->GetFlags(); }
 
-		/** @copydoc Camera::GetViewport */
+		/**	Returns the viewport used by the camera. */
 		B3D_SCRIPT_EXPORT(ExportName(Viewport), Property(Getter))
 		SPtr<Viewport> GetViewport() const { return mInternal->GetViewport(); }
 
-		/** @copydoc Camera::SetHorzFov */
+		/**
+		 * Determines the camera horizontal field of view. This determines how wide the camera viewing angle is along the
+		 * horizontal axis. Vertical FOV is calculated from the horizontal FOV and the aspect ratio.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(FieldOfView), Property(Setter), UIValueRange([ 1, 360 ]), UI(AsSlider), UIOrder(-1))
-		virtual void SetHorzFov(const Radian& fovy) { mInternal->SetHorzFov(fovy); }
+		void SetHorizontalFOV(const Radian& fovy) { mInternal->SetHorzFov(fovy); }
 
-		/** @copydoc Camera::GetHorzFov */
+		/** @copydoc SetHorizontalFOV */
 		B3D_SCRIPT_EXPORT(ExportName(FieldOfView), Property(Getter), UIValueRange([ 1, 360 ]), UI(AsSlider), UIOrder(-1))
-		virtual const Radian& GetHorzFov() const { return mInternal->GetHorzFov(); }
+		const Radian& GetHorizontalFOV() const { return mInternal->GetHorzFov(); }
 
-		/** @copydoc Camera::SetNearClipDistance */
+		/**
+		 * Determines the distance from the frustum to the near clipping plane. Anything closer than the near clipping plane will
+		 * not be rendered. Decreasing this value decreases depth buffer precision.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(NearClipPlane), Property(Setter))
-		virtual void SetNearClipDistance(float nearDist) { mInternal->SetNearClipDistance(nearDist); }
+		void SetNearClipDistance(float nearDist) { mInternal->SetNearClipDistance(nearDist); }
 
-		/** @copydoc Camera::GetNearClipDistance */
+		/** @copydoc SetNearClipDistance */
 		B3D_SCRIPT_EXPORT(ExportName(NearClipPlane), Property(Getter))
-		virtual float GetNearClipDistance() const { return mInternal->GetNearClipDistance(); }
+		float GetNearClipDistance() const { return mInternal->GetNearClipDistance(); }
 
-		/** @copydoc Camera::SetFarClipDistance */
+		/**
+		 * Determines the distance from the frustum to the far clipping plane. Anything farther than the far clipping plane will
+		 * not be rendered. Increasing this value decreases depth buffer precision.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(FarClipPlane), Property(Setter))
-		virtual void SetFarClipDistance(float farDist) { mInternal->SetFarClipDistance(farDist); }
+		void SetFarClipDistance(float farDist) { mInternal->SetFarClipDistance(farDist); }
 
-		/** @copydoc Camera::GetFarClipDistance */
+		/** @copydoc SetFarClipDistance */
 		B3D_SCRIPT_EXPORT(ExportName(FarClipPlane), Property(Getter))
-		virtual float GetFarClipDistance() const { return mInternal->GetFarClipDistance(); }
+		float GetFarClipDistance() const { return mInternal->GetFarClipDistance(); }
 
-		/** @copydoc Camera::SetAspectRatio */
+		/**	Determines the current viewport aspect ratio (width / height). */
 		B3D_SCRIPT_EXPORT(ExportName(AspectRatio), Property(Setter))
-		virtual void SetAspectRatio(float ratio) { mInternal->SetAspectRatio(ratio); }
+		void SetAspectRatio(float ratio) { mInternal->SetAspectRatio(ratio); }
 
-		/** @copydoc Camera::GetAspectRatio */
+		/** @copydoc SetAspectRatio */
 		B3D_SCRIPT_EXPORT(ExportName(AspectRatio), Property(Getter))
-		virtual float GetAspectRatio() const { return mInternal->GetAspectRatio(); }
+		float GetAspectRatio() const { return mInternal->GetAspectRatio(); }
 
-		/** @copydoc Camera::SetFrustumExtents */
-		virtual void SetFrustumExtents(float left, float right, float top, float bottom)
+		/**
+		 * Manually set the extents of the frustum that will be used when calculating the projection matrix. This will
+		 * prevents extents for being automatically calculated from aspect and near plane so it is up to the caller to keep
+		 * these values accurate.
+		 *
+		 * @param left		The position where the left clip plane intersect the near clip plane, in view space.
+		 * @param right		The position where the right clip plane intersect the near clip plane, in view space.
+		 * @param top		The position where the top clip plane intersect the near clip plane, in view space.
+		 * @param bottom	The position where the bottom clip plane intersect the near clip plane, in view space.
+		 */
+		void SetFrustumExtents(float left, float right, float top, float bottom)
 		{
 			mInternal->SetFrustumExtents(left, right, top, bottom);
 		}
 
-		/** @copydoc Camera::ResetFrustumExtents */
-		virtual void ResetFrustumExtents() { mInternal->ResetFrustumExtents(); }
+		/**
+		 * Resets frustum extents so they are automatically derived from other values. This is only relevant if you have
+		 * previously set custom extents.
+		 */
+		void ResetFrustumExtents() { mInternal->ResetFrustumExtents(); }
 
-		/** @copydoc Camera::GetFrustumExtents */
-		virtual void GetFrustumExtents(float& outleft, float& outright, float& outtop, float& outbottom) const
+		/** Returns the extents of the frustum in view space at the near plane. */
+		void GetFrustumExtents(float& outleft, float& outright, float& outtop, float& outbottom) const
 		{
 			mInternal->GetFrustumExtents(outleft, outright, outtop, outbottom);
 		}
 
-		/** @copydoc Camera::GetProjectionMatrixRS */
+		/**
+		 * Returns the standard projection matrix that determines how are 3D points projected to two dimensions. The layout
+		 * of this matrix depends on currently used GPU backend.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(ProjMatrix), Property(Getter))
-		virtual const Matrix4& GetProjectionMatrixRs() const { return mInternal->GetProjectionMatrixRs(); }
+		const Matrix4& GetProjectionMatrix() const { return mInternal->GetProjectionMatrixRs(); }
 
-		/** @copydoc Camera::GetProjectionMatrix */
-		virtual const Matrix4& GetProjectionMatrix() const { return mInternal->GetProjectionMatrix(); }
+		/**
+		 * Returns the standard projection matrix that determines how are 3D points projected to two dimensions. Returned
+		 * matrix is standard following right-hand rules and depth range of [-1, 1]. Note that currently used GPU backend
+		 * might expect different rules, in which case use GetProjectionMatrix() to retrieve an adjusted matrix.
+		 */
+		const Matrix4& GetUnadjustedProjectionMatrix() const { return mInternal->GetProjectionMatrix(); }
 
-		/** @copydoc Camera::GetViewMatrix */
+		/** Gets the camera view matrix. Used for positioning/orienting the camera. */
 		B3D_SCRIPT_EXPORT(ExportName(ViewMatrix), Property(Getter))
-		virtual const Matrix4& GetViewMatrix() const
+		const Matrix4& GetViewMatrix() const
 		{
 			UpdateView();
 			return mInternal->GetViewMatrix();
 		}
 
-		/** @copydoc Camera::SetCustomViewMatrix */
-		virtual void SetCustomViewMatrix(bool enable, const Matrix4& viewMatrix = Matrix4::kIdentity)
+		/**
+		 * Sets whether the camera should use the custom view matrix. When this is enabled camera will no longer calculate
+		 * its view matrix based on position/orientation and caller will be resonsible to keep the view matrix up to date.
+		 */
+		void SetCustomViewMatrix(bool enable, const Matrix4& viewMatrix = Matrix4::kIdentity)
 		{
 			mInternal->SetCustomViewMatrix(enable, viewMatrix);
 		}
 
-		/** @copydoc Camera::IsCustomViewMatrixEnabled */
-		virtual bool IsCustomViewMatrixEnabled() const { return mInternal->IsCustomViewMatrixEnabled(); }
+		/** Returns true if a custom view matrix is used. */
+		bool IsCustomViewMatrixEnabled() const { return mInternal->IsCustomViewMatrixEnabled(); }
 
-		/** @copydoc Camera::SetCustomProjectionMatrix */
-		virtual void SetCustomProjectionMatrix(bool enable, const Matrix4& projectionMatrix = Matrix4::kIdentity)
+		/**
+		 * Sets whether the camera should use the custom projection matrix. When this is enabled camera will no longer
+		 * calculate its projection matrix based on field of view, aspect and other parameters and caller will be resonsible
+		 * to keep the projection matrix up to date.
+		 */
+		void SetCustomProjectionMatrix(bool enable, const Matrix4& projectionMatrix = Matrix4::kIdentity)
 		{
 			mInternal->SetCustomProjectionMatrix(enable, projectionMatrix);
 		}
 
-		/** @copydoc Camera::IsCustomProjectionMatrixEnabled */
-		virtual bool IsCustomProjectionMatrixEnabled() const { return mInternal->IsCustomProjectionMatrixEnabled(); }
+		/** Returns the extents of the frustum in view space at the near plane. */
+		bool IsCustomProjectionMatrixEnabled() const { return mInternal->IsCustomProjectionMatrixEnabled(); }
 
-		/** @copydoc Camera::GetFrustum */
-		virtual const ConvexVolume& GetFrustum() const { return mInternal->GetFrustum(); }
+		/** Returns a convex volume representing the visible area of the camera, in local space. */
+		const ConvexVolume& GetFrustum() const { return mInternal->GetFrustum(); }
 
-		/** @copydoc Camera::GetWorldFrustum */
-		virtual ConvexVolume GetWorldFrustum() const;
+		/** Returns a convex volume representing the visible area of the camera, in world space. */
+		ConvexVolume GetWorldFrustum() const;
 
-		/** @copydoc Camera::GetBoundingBox */
+		/**	Returns the bounding of the frustum. */
 		const AABox& GetBoundingBox() const { return mInternal->GetBoundingBox(); }
 
-		/** @copydoc Camera::SetProjectionType */
+		/**
+		 * Determines the type of projection used by the camera. Projection type controls how is 3D geometry projected onto a
+		 * 2D plane.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(ProjectionType), Property(Setter), UIOrder(-2))
 		virtual void SetProjectionType(ProjectionType pt) { mInternal->SetProjectionType(pt); }
 
-		/** @copydoc Camera::GetProjectionType */
+		/** @copydoc SetProjectionType */
 		B3D_SCRIPT_EXPORT(ExportName(ProjectionType), Property(Getter), UIOrder(-2))
 		virtual ProjectionType GetProjectionType() const { return mInternal->GetProjectionType(); }
 
-		/** @copydoc Camera::SetOrthoWindow */
-		virtual void SetOrthoWindow(float w, float h) { mInternal->SetOrthoWindow(w, h); }
+		/**
+		 * Sets the orthographic window height, for use with orthographic rendering only.
+		 *
+		 * @param	w	Width of the window in world units.
+		 * @param	h	Height of the window in world units.
+		 *
+		 * @note
+		 * Calling this method will recalculate the aspect ratio, use SetOrthoWindowHeight() or SetOrthoWindowWidth() alone
+		 * if you wish to preserve the aspect ratio but just fit one or other dimension to a particular size.
+		 */
+		virtual void SetOrthographicSize(float w, float h) { mInternal->SetOrthoWindow(w, h); }
 
-		/** @copydoc Camera::SetOrthoWindowHeight */
+		/**
+		 * Determines the type of projection used by the camera. Projection type controls how is 3D geometry projected onto a
+		 * 2D plane.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(OrthoHeight), Property(Setter), UIOrder(-1))
-		virtual void SetOrthoWindowHeight(float h) { mInternal->SetOrthoWindowHeight(h); }
+		virtual void SetOrthographicHeight(float h) { mInternal->SetOrthoWindowHeight(h); }
 
-		/** @copydoc Camera::GetOrthoWindowHeight */
+		/** @copydoc SetOrthoWindowHeight */
 		B3D_SCRIPT_EXPORT(ExportName(OrthoHeight), Property(Getter), UIOrder(-1))
-		virtual float GetOrthoWindowHeight() const { return mInternal->GetOrthoWindowHeight(); }
+		virtual float GetOrthographicHeight() const { return mInternal->GetOrthoWindowHeight(); }
 
-		/** @copydoc Camera::SetOrthoWindowWidth */
+		/**
+		 * Determines the orthographic window width, for use with orthographic rendering only. The height of the window
+		 * will be calculated from the aspect ratio. Value is specified in world units.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(OrthoWidth), Property(Setter), UI(Hide))
-		virtual void SetOrthoWindowWidth(float w) { mInternal->SetOrthoWindowWidth(w); }
+		virtual void SetOrthographicWidth(float w) { mInternal->SetOrthoWindowWidth(w); }
 
-		/** @copydoc Camera::GetOrthoWindowWidth */
+		/** @copydoc GetOrthoWindowWidth */
 		B3D_SCRIPT_EXPORT(ExportName(OrthoWidth), Property(Getter), UI(Hide))
-		virtual float GetOrthoWindowWidth() const { return mInternal->GetOrthoWindowWidth(); }
+		virtual float GetOrthographicWidth() const { return mInternal->GetOrthoWindowWidth(); }
 
-		/** @copydoc Camera::SetPriority */
+		/**
+		 * Determines a priority that determines in which orders the cameras are rendered. This only applies to cameras rendering
+		 * to the same render target. Higher value means the camera will be rendered sooner.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(Priority), Property(Setter))
 		void SetPriority(i32 priority) { mInternal->SetPriority(priority); }
 
-		/** @copydoc Camera::GetPriority */
+		/** @copydoc SetPriority */
 		B3D_SCRIPT_EXPORT(ExportName(Priority), Property(Getter))
 		i32 GetPriority() const { return mInternal->GetPriority(); }
 
-		/** @copydoc Camera::SetLayers */
+		/**	Determines layer bitfield that is used when determining which object should the camera render. */
 		B3D_SCRIPT_EXPORT(ExportName(Layers), Property(Setter), UI(AsLayerMask))
 		void SetLayers(u64 layers) { mInternal->SetLayers(layers); }
 
-		/** @copydoc Camera::GetLayers */
+		/** @copydoc SetLayers */
 		B3D_SCRIPT_EXPORT(ExportName(Layers), Property(Getter), UI(AsLayerMask))
 		u64 GetLayers() const { return mInternal->GetLayers(); }
 
-		/** @copydoc Camera::SetMsaaCount */
+		/**
+		 * Determines number of samples to use when rendering to this camera. Values larger than 1 will enable MSAA
+		 * rendering.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(SampleCount), Property(Setter))
-		void SetMsaaCount(u32 count) { mInternal->SetMsaaCount(count); }
+		void SetMSAACount(u32 count) { mInternal->SetMsaaCount(count); }
 
-		/** @copydoc Camera::GetMsaaCount */
+		/** @copydoc SetMSAACount */
 		B3D_SCRIPT_EXPORT(ExportName(SampleCount), Property(Getter))
-		u32 GetMsaaCount() const { return mInternal->GetMsaaCount(); }
+		u32 GetMSAACount() const { return mInternal->GetMsaaCount(); }
 
-		/** @copydoc Camera::GetRenderSettings() */
+		/**
+		 * Settings that control rendering for this view. They determine how will the renderer process this view, which
+		 * effects will be enabled, and what properties will those effects use.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(RenderSettings), Property(Setter), ApplyOnDirty(true))
 		void SetRenderSettings(const SPtr<RenderSettings>& settings) { mInternal->SetRenderSettings(settings); }
 
-		/** @copydoc Camera::GetRenderSettings() */
+		/** @copydoc SetRenderSettings() */
 		B3D_SCRIPT_EXPORT(ExportName(RenderSettings), Property(Getter), ApplyOnDirty(true))
 		const SPtr<RenderSettings>& GetRenderSettings() const { return mInternal->GetRenderSettings(); }
 
@@ -188,7 +248,12 @@ namespace b3d
 		B3D_SCRIPT_EXPORT()
 		void NotifyNeedsRedraw() { mInternal->NotifyNeedsRedraw(); }
 
-		/** @copydoc Camera::WorldToScreenPoint */
+		/**
+		 * Converts a point in world space to screen coordinates.
+		 *
+		 * @param	worldPoint		3D point in world space.
+		 * @return					2D point on the render target attached to the camera's viewport, in pixels.
+		 */
 		B3D_SCRIPT_EXPORT()
 		Vector2I WorldToScreenPoint(const Vector3& worldPoint) const
 		{
@@ -196,15 +261,25 @@ namespace b3d
 			return mInternal->WorldToScreenPoint(worldPoint);
 		}
 
-		/** @copydoc Camera::WorldToNdcPoint */
+		/**
+		 * Converts a point in world space to normalized device coordinates.
+		 *
+		 * @param	worldPoint		3D point in world space.
+		 * @return					2D point in normalized device coordinates ([-1, 1] range), relative to the camera's viewport.
+		 */
 		B3D_SCRIPT_EXPORT()
-		Vector2 WorldToNdcPoint(const Vector3& worldPoint) const
+		Vector2 WorldToNDCPoint(const Vector3& worldPoint) const
 		{
 			UpdateView();
 			return mInternal->WorldToNdcPoint(worldPoint);
 		}
 
-		/** @copydoc Camera::WorldToViewPoint */
+		/**
+		 * Converts a point in world space to view space coordinates.
+		 *
+		 * @param	worldPoint		3D point in world space.
+		 * @return					3D point relative to the camera's coordinate system.
+		 */
 		B3D_SCRIPT_EXPORT()
 		Vector3 WorldToViewPoint(const Vector3& worldPoint) const
 		{
@@ -212,7 +287,14 @@ namespace b3d
 			return mInternal->WorldToViewPoint(worldPoint);
 		}
 
-		/** @copydoc Camera::ScreenToWorldPoint */
+		/**
+		 * Converts a point in screen space to a point in world space.
+		 *
+		 * @param	screenPoint		2D point on the render target attached to the camera's viewport, in pixels.
+		 * @param	depth			Depth to place the world point at, in world coordinates. The depth is applied to the
+		 *							vector going from camera origin to the point on the near plane.
+		 * @return					3D point in world space.
+		 */
 		B3D_SCRIPT_EXPORT()
 		Vector3 ScreenToWorldPoint(const Vector2I& screenPoint, float depth = 0.5f) const
 		{
@@ -220,15 +302,33 @@ namespace b3d
 			return mInternal->ScreenToWorldPoint(screenPoint, depth);
 		}
 
-		/** @copydoc Camera::ScreenToViewPoint */
+		/**
+		 * Converts a point in screen space to a point in view space.
+		 *
+		 * @param	screenPoint	2D point on the render target attached to the camera's viewport, in pixels.
+		 * @param	depth		Depth to place the world point at, in device depth. The depth is applied to the
+		 *						vector going from camera origin to the point on the near plane.
+		 * @return				3D point relative to the camera's coordinate system.
+		 */
 		B3D_SCRIPT_EXPORT()
 		Vector3 ScreenToViewPoint(const Vector2I& screenPoint, float depth = 0.5f) const { return mInternal->ScreenToViewPoint(screenPoint, depth); }
 
-		/** @copydoc Camera::ScreenToNdcPoint */
+		/**
+		 * Converts a point in screen space to normalized device coordinates.
+		 *
+		 * @param	screenPoint		2D point on the render target attached to the camera's viewport, in pixels.
+		 * @return					2D point in normalized device coordinates ([-1, 1] range), relative to
+		 *							the camera's viewport.
+		 */
 		B3D_SCRIPT_EXPORT()
-		Vector2 ScreenToNdcPoint(const Vector2I& screenPoint) const { return mInternal->ScreenToNdcPoint(screenPoint); }
+		Vector2 ScreenToNDCPoint(const Vector2I& screenPoint) const { return mInternal->ScreenToNdcPoint(screenPoint); }
 
-		/** @copydoc Camera::ViewToWorldPoint */
+		/**
+		 * Converts a point in view space to world space.
+		 *
+		 * @param	viewPoint		3D point relative to the camera's coordinate system.
+		 * @return					3D point in world space.
+		 */
 		B3D_SCRIPT_EXPORT()
 		Vector3 ViewToWorldPoint(const Vector3& viewPoint) const
 		{
@@ -236,31 +336,69 @@ namespace b3d
 			return mInternal->ViewToWorldPoint(viewPoint);
 		}
 
-		/** @copydoc Camera::ViewToScreenPoint */
+		/**
+		 * Converts a point in view space to screen space.
+		 *
+		 * @param	viewPoint		3D point relative to the camera's coordinate system.
+		 * @return					2D point on the render target attached to the camera's viewport, in pixels.
+		 */
 		B3D_SCRIPT_EXPORT()
 		Vector2I ViewToScreenPoint(const Vector3& viewPoint) const { return mInternal->ViewToScreenPoint(viewPoint); }
 
-		/** @copydoc Camera::ViewToNdcPoint */
+		/**
+		 * Converts a point in view space to normalized device coordinates.
+		 *
+		 * @param	viewPoint		3D point relative to the camera's coordinate system.
+		 * @return					2D point in normalized device coordinates ([-1, 1] range), relative to
+		 *							the camera's viewport.
+		 */
 		B3D_SCRIPT_EXPORT()
-		Vector2 ViewToNdcPoint(const Vector3& viewPoint) const { return mInternal->ViewToNdcPoint(viewPoint); }
+		Vector2 ViewToNDCPoint(const Vector3& viewPoint) const { return mInternal->ViewToNdcPoint(viewPoint); }
 
-		/** @copydoc Camera::NdcToWorldPoint */
+		/**
+		 * Converts a point in normalized device coordinates to world space.
+		 *
+		 * @param	ndcPoint	2D point in normalized device coordinates ([-1, 1] range), relative to
+		 *						the camera's viewport.
+		 * @param	depth		Depth to place the world point at. The depth is applied to the
+		 *						vector going from camera origin to the point on the near plane.
+		 * @return				3D point in world space.
+		 */
 		B3D_SCRIPT_EXPORT()
-		Vector3 NdcToWorldPoint(const Vector2& ndcPoint, float depth = 0.5f) const
+		Vector3 NDCToWorldPoint(const Vector2& ndcPoint, float depth = 0.5f) const
 		{
 			UpdateView();
 			return mInternal->NdcToWorldPoint(ndcPoint, depth);
 		}
 
-		/** @copydoc Camera::NdcToViewPoint */
+		/**
+		 * Converts a point in normalized device coordinates to view space.
+		 *
+		 * @param	ndcPoint	2D point in normalized device coordinates ([-1, 1] range), relative to
+		 *						the camera's viewport.
+		 * @param	depth		Depth to place the world point at. The depth is applied to the
+		 *						vector going from camera origin to the point on the near plane.
+		 * @return				3D point relative to the camera's coordinate system.
+		 */
 		B3D_SCRIPT_EXPORT()
-		Vector3 NdcToViewPoint(const Vector2& ndcPoint, float depth = 0.5f) const { return mInternal->NdcToViewPoint(ndcPoint, depth); }
+		Vector3 NDCToViewPoint(const Vector2& ndcPoint, float depth = 0.5f) const { return mInternal->NdcToViewPoint(ndcPoint, depth); }
 
-		/** @copydoc Camera::NdcToScreenPoint */
+		/**
+		 * Converts a point in normalized device coordinates to screen space.
+		 *
+		 * @param	ndcPoint	2D point in normalized device coordinates ([-1, 1] range), relative to
+		 *						the camera's viewport.
+		 * @return				2D point on the render target attached to the camera's viewport, in pixels.
+		 */
 		B3D_SCRIPT_EXPORT()
-		Vector2I NdcToScreenPoint(const Vector2& ndcPoint) const { return mInternal->NdcToScreenPoint(ndcPoint); }
+		Vector2I NDCToScreenPoint(const Vector2& ndcPoint) const { return mInternal->NdcToScreenPoint(ndcPoint); }
 
-		/** @copydoc Camera::ScreenPointToRay */
+		/**
+		 * Converts a point in screen space to a ray in world space.
+		 *
+		 * @param	screenPoint		2D point on the render target attached to the camera's viewport, in pixels.
+		 * @return					Ray in world space, originating at the selected point on the camera near plane.
+		 */
 		B3D_SCRIPT_EXPORT()
 		Ray ScreenPointToRay(const Vector2I& screenPoint) const
 		{
@@ -268,19 +406,35 @@ namespace b3d
 			return mInternal->ScreenPointToRay(screenPoint);
 		}
 
-		/** @copydoc Camera::ProjectPoint */
+		/**
+		 * Projects a point in view space to normalized device coordinates. Similar to viewToNdcPoint() but preserves
+		 * the depth component.
+		 *
+		 * @param	point			3D point relative to the camera's coordinate system.
+		 * @return					3D point in normalized device coordinates ([-1, 1] range), relative to the
+		 *							camera's viewport. Z value range depends on active render API.
+		 */
 		B3D_SCRIPT_EXPORT()
 		Vector3 ProjectPoint(const Vector3& point) const { return mInternal->ProjectPoint(point); }
 
-		/** @copydoc Camera::UnprojectPoint */
+		/**
+		 * Un-projects a point in normalized device space to view space.
+		 *
+		 * @param	point			3D point in normalized device coordinates ([-1, 1] range), relative to the
+		 *							camera's viewport. Z value range depends on active render API.
+		 * @return					3D point relative to the camera's coordinate system.
+		 */
 		B3D_SCRIPT_EXPORT()
 		Vector3 UnprojectPoint(const Vector3& point) const { return mInternal->UnprojectPoint(point); }
 
-		/** @copydoc Camera::SetMain */
+		/**
+		 * Determines whether this is the main application camera. Main camera controls the final render surface that is
+		 * displayed to the user.
+		 */
 		B3D_SCRIPT_EXPORT(ExportName(Main), Property(Setter))
 		void SetMain(bool main);
 
-		/** @copydoc Camera::IsMain */
+		/** @copydoc SetMain */
 		B3D_SCRIPT_EXPORT(ExportName(Main), Property(Getter))
 		bool IsMain() const { return mInternal->IsMain(); }
 
