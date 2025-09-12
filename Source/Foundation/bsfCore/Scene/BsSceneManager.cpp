@@ -4,7 +4,7 @@
 
 #include "BsGameObjectCollection.h"
 #include "Scene/BsSceneObject.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "RenderAPI/BsViewport.h"
 #include "RenderAPI/BsRenderTarget.h"
 #include "Scene/BsSceneInstance.h"

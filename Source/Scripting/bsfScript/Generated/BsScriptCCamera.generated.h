@@ -13,16 +13,16 @@
 #include "../../../Foundation/bsfUtility/Math/BsVector2.h"
 #include "../../../Foundation/bsfUtility/Math/BsRay.h"
 
-namespace b3d { class CCamera; }
+namespace b3d { class Camera; }
 namespace b3d { struct __TRay_float_Interop; }
 namespace b3d
 {
-	class B3D_SCRIPT_INTEROP_EXPORT ScriptCamera : public TScriptGameObjectWrapper<CCamera, ScriptCamera>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCamera : public TScriptGameObjectWrapper<Camera, ScriptCamera>
 	{
 	public:
 		B3D_SCRIPT_TYPE_DEFINITION(kEngineAssembly, kEngineNs, "Camera")
 
-		ScriptCamera(const GameObjectHandle<CCamera>& nativeObject);
+		ScriptCamera(const GameObjectHandle<Camera>& nativeObject);
 		~ScriptCamera();
 
 		static void SetupScriptBindings();

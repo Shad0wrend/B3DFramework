@@ -4,7 +4,7 @@
 
 #include "BsGUIUtility.h"
 #include "GUI/BsGUIPanel.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "RenderAPI/BsViewport.h"
 #include "GUI/BsGUILayoutY.h"
 #include "GUI/BsGUILayoutX.h"
@@ -27,7 +27,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	SetDepth(0); // Needs to be in front of everything
 	SetStyleSheetCascade(overlaidWidget.GetStyleSheetCascadeAsShared());
 
-	SPtr<Camera> camera = overlaidWidget.GetCamera();
+	HCamera camera = overlaidWidget.GetCamera();
 	SPtr<Viewport> viewport = camera->GetViewport();
 
 	const GUIPhysicalArea availableBounds = viewport->GetPixelArea().To<GUIPhysicalUnit>();

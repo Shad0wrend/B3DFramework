@@ -10,7 +10,8 @@
 #include "Math/BsVector2.h"
 #include "Math/BsQuaternion.h"
 #include "String/BsUnicode.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
+#include "Scene/BsSceneObject.h"
 
 using namespace b3d;
 
@@ -390,7 +391,7 @@ Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, cons
 	Vector3 reference = Vector3::kZero;
 
 	if(camera)
-		reference = camera->GetTransform().GetPosition();
+		reference = camera->SceneObject()->GetTransform().GetPosition();
 
 	u32 localIdx = 0;
 	for(auto& shapeData : mSolidCubeData)

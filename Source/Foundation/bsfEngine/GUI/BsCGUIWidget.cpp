@@ -13,7 +13,7 @@ CGUIWidget::CGUIWidget()
 	SetFlag(ComponentFlag::AlwaysRun, true);
 }
 
-CGUIWidget::CGUIWidget(const HSceneObject& parent, const SPtr<Camera>& camera)
+CGUIWidget::CGUIWidget(const HSceneObject& parent, const HCamera& camera)
 	: Component(parent), mCamera(camera), mParentHash((u32)-1)
 {
 	SetFlag(ComponentFlag::AlwaysRun, true);
@@ -24,10 +24,6 @@ CGUIWidget::CGUIWidget(const HSceneObject& parent, const SPtr<Camera>& camera)
 	mOwnerWindowFocusChangedConn = mInternal->OnOwnerWindowFocusChanged.Connect(
 		std::bind(&CGUIWidget::OwnerWindowFocusChanged, this));
 }
-
-CGUIWidget::CGUIWidget(const HSceneObject& parent, const HCamera& camera)
-	: CGUIWidget(parent, camera->GetCameraInternal())
-{}
 
 const GUIStyleSheetCascade& CGUIWidget::GetStyleSheetCascade() const
 {
@@ -79,7 +75,7 @@ Viewport* CGUIWidget::GetTarget() const
 	return mInternal->GetTarget();
 }
 
-SPtr<Camera> CGUIWidget::GetCamera() const
+HCamera CGUIWidget::GetCamera() const
 {
 	return mInternal->GetCamera();
 }

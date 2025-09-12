@@ -40,7 +40,7 @@ namespace b3d
 		 * @param[in]	type	Type of information to display on the overlay.
 		 * @param[in]	camera	Camera to show the overlay on. If none the overlay will be shown on the main camera.
 		 */
-		void ShowProfilerOverlay(ProfilerOverlayType type, const SPtr<Camera>& camera = nullptr);
+		void ShowProfilerOverlay(ProfilerOverlayType type, const HCamera& camera = nullptr);
 
 		/** Hides the profiler overlay. */
 		void HideProfilerOverlay();

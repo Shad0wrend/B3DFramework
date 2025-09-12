@@ -29,7 +29,7 @@
 #include "CoreObject/BsRenderThread.h"
 #include "Renderer/BsRendererManager.h"
 #include "Renderer/BsRenderer.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "GUI/BsGUITooltipManager.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Image/BsTexture.h"
@@ -349,7 +349,7 @@ void GUIManager::Update()
 		GUIWidget* widget = entry.Widget;
 		GUIDrawGroupRenderDataUpdate updateData = widget->RebuildDirtyRenderData();
 
-		SPtr<Camera> camera;
+		HCamera camera;
 		camera = widget->GetCamera();
 		if(camera == nullptr)
 			continue;

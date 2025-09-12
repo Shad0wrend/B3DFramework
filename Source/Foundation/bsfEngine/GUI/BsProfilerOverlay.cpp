@@ -17,7 +17,7 @@
 #include "Resources/BsBuiltinResources.h"
 #include "Profiling/BsProfilingManager.h"
 #include "RenderAPI/BsRenderTarget.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "Localization/BsHEString.h"
 
 #define BS_SHOW_PRECISE_PROFILING 0
@@ -298,7 +298,7 @@ public:
 	}
 };
 
-ProfilerOverlay::ProfilerOverlay(const SPtr<Camera>& camera)
+ProfilerOverlay::ProfilerOverlay(const HCamera& camera)
 	: mType(ProfilerOverlayType::CPUSamples), mIsShown(true)
 {
 	SetTarget(camera);
@@ -313,7 +313,7 @@ ProfilerOverlay::~ProfilerOverlay()
 		mWidgetSO->Destroy();
 }
 
-void ProfilerOverlay::SetTarget(const SPtr<Camera>& camera)
+void ProfilerOverlay::SetTarget(const HCamera& camera)
 {
 	if(mTarget != nullptr)
 		mTargetResizedConn.Disconnect();

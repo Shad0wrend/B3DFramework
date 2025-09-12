@@ -17,7 +17,7 @@
 #include "Scene/BsSceneObject.h"
 #include "GUI/BsGUIDropDownHitBox.h"
 #include "GUI/BsGUIDropDownContent.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "Debug/BsDebug.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 #include "Text/BsStockIcons.h"

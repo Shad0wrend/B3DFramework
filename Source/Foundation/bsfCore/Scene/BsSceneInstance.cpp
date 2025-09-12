@@ -8,7 +8,6 @@
 #include "Scene/BsSceneObject.h"
 #include "Scene/BsComponent.h"
 #include "Components/BsRenderable.h"
-#include "Renderer/BsCamera.h"
 #include "RenderAPI/BsViewport.h"
 #include "Scene/BsGameObjectManager.h"
 #include "RenderAPI/BsRenderTarget.h"
@@ -515,32 +514,32 @@ void SceneInstance::Clear(bool forceAll)
 	SetAssociatedResourceId(UUID::kEmpty);
 }
 
-void SceneInstance::RegisterCamera(const SPtr<Camera>& camera)
+void SceneInstance::RegisterCamera(const HCamera& camera)
 {
-	mCameras[camera.get()] = camera;
+	mCameras[camera.GetId()] = camera;
 }
 
-void SceneInstance::UnregisterCamera(const SPtr<Camera>& camera)
+void SceneInstance::UnregisterCamera(const HCamera& camera)
 {
-	mCameras.erase(camera.get());
+	mCameras.erase(camera.GetId());
 
-	auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const SPtr<Camera>& x)
+	auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const HCamera& x)
 								 { return x == camera; });
 
 	if(iterFind != mMainCameras.end())
 		mMainCameras.erase(iterFind);
 }
 
-void SceneInstance::NotifyMainCameraStateChanged(const SPtr<Camera>& camera)
+void SceneInstance::NotifyMainCameraStateChanged(const HCamera& camera)
 {
-	auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const SPtr<Camera>& entry)
+	auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const HCamera& entry)
 								 { return entry == camera; });
 
 	SPtr<Viewport> viewport = camera->GetViewport();
 	if(camera->IsMain())
 	{
 		if(iterFind == mMainCameras.end())
-			mMainCameras.push_back(mCameras[camera.get()]);
+			mMainCameras.push_back(mCameras[camera.GetId()]);
 
 		viewport->SetTarget(mPrimaryRenderTarget);
 	}
@@ -554,25 +553,12 @@ void SceneInstance::NotifyMainCameraStateChanged(const SPtr<Camera>& camera)
 	}
 }
 
-SPtr<Camera> SceneInstance::GetMainCamera() const
+HCamera SceneInstance::GetMainCamera() const
 {
 	if(mMainCameras.size() > 0)
 		return mMainCameras[0];
 
 	return nullptr;
-}
-
-HCamera SceneInstance::GetMainCameraComponent() const
-{
-	SPtr<Camera> camera = GetMainCamera();
-	if(camera == nullptr)
-		return HCamera();
-
-	const HSceneObject sceneObject = GetLinkedActorSceneObject(camera);
-	if(!sceneObject.IsValid())
-		return HCamera();
-
-	return sceneObject->GetComponent<CCamera>();
 }
 
 void SceneInstance::SetMainCameraRenderTarget(const SPtr<RenderTarget>& renderTarget)

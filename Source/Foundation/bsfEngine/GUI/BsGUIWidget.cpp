@@ -17,19 +17,8 @@
 
 using namespace b3d;
 
-GUIWidget::GUIWidget(const SPtr<Camera>& camera)
-	: mCamera(camera), mBatches(this)
-{
-	Construct(camera);
-}
-
 GUIWidget::GUIWidget(const HCamera& camera)
-	: mCamera(camera->GetCameraInternal()), mBatches(this)
-{
-	Construct(mCamera);
-}
-
-void GUIWidget::Construct(const SPtr<Camera>& camera)
+	: mCamera(camera), mBatches(this)
 {
 	mStyleSheetCascade = GetBuiltinResources().GetDefaultGUIStyleSheetCascade();
 
@@ -56,11 +45,6 @@ void GUIWidget::Construct(const SPtr<Camera>& camera)
 GUIWidget::~GUIWidget()
 {
 	DestroyInternal();
-}
-
-SPtr<GUIWidget> GUIWidget::Create(const SPtr<Camera>& camera)
-{
-	return B3DMakeSharedFromExisting(new(B3DAllocate<GUIWidget>()) GUIWidget(camera));
 }
 
 SPtr<GUIWidget> GUIWidget::Create(const HCamera& camera)
@@ -428,9 +412,9 @@ const GUIStyleSheetCascade& GUIWidget::GetStyleSheetCascade() const
 	return GUIStyleSheetCascade::kEmpty;
 }
 
-void GUIWidget::SetCamera(const SPtr<Camera>& camera)
+void GUIWidget::SetCamera(const HCamera& camera)
 {
-	SPtr<Camera> newCamera = camera;
+	HCamera newCamera = camera;
 	if(newCamera != nullptr)
 	{
 		if(newCamera->GetViewport()->GetTarget() == nullptr)

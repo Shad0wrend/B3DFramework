@@ -25,7 +25,7 @@ namespace b3d
 	/**	A set of parameters used for initializing a drop down box. */
 	struct DropDownBoxCreateInformation
 	{
-		SPtr<Camera> Camera; /**< Camera on which to open the drop down box. */
+		HCamera Camera; /**< Camera on which to open the drop down box. */
 		TDropDownAreaPlacement<GUIPhysicalUnit> Placement; /**< Determines how is the drop down box positioned in the visible area. */
 		GUIDropDownData DropDownData; /**< Data to use for initializing menu items of the drop down box. */
 		SPtr<const GUIStyleSheetCascade> StyleSheetCascade; /**< Style sheets to apply to drop down box GUI elements. */

@@ -6,6 +6,7 @@
 #include "Reflection/BsRTTIType.h"
 #include "Components/BsCCamera.h"
 #include "Private/RTTI/BsGameObjectRTTI.h"
+#include "RTTI/BsMathRTTI.h"
 
 namespace b3d
 {
@@ -14,29 +15,78 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT CCameraRTTI : public TRTTIType<CCamera, Component, CCameraRTTI>
+	class B3D_CORE_EXPORT CCameraRTTI : public TRTTIType<Camera, Component, CCameraRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mInternal, 0)
+			B3D_RTTI_MEMBER(mViewport, 0)
+			B3D_RTTI_MEMBER(mLayers, 1)
+			B3D_RTTI_MEMBER(mProjType, 2)
+			B3D_RTTI_MEMBER(mHorzFOV, 3)
+			B3D_RTTI_MEMBER(mFarDist, 4)
+			B3D_RTTI_MEMBER(mNearDist, 5)
+			B3D_RTTI_MEMBER(mAspect, 6)
+			B3D_RTTI_MEMBER(mOrthoHeight, 7)
+			B3D_RTTI_MEMBER(mPriority, 8)
+			B3D_RTTI_MEMBER(mCustomViewMatrix, 9)
+			B3D_RTTI_MEMBER(mCustomProjMatrix, 10)
+			B3D_RTTI_MEMBER(mFrustumExtentsManuallySet, 11)
+			B3D_RTTI_MEMBER(mProjMatrixRS, 12)
+			B3D_RTTI_MEMBER(mProjMatrix, 13)
+			B3D_RTTI_MEMBER(mViewMatrix, 14)
+			B3D_RTTI_MEMBER(mLeft, 15)
+			B3D_RTTI_MEMBER(mRight, 16)
+			B3D_RTTI_MEMBER(mTop, 17)
+			B3D_RTTI_MEMBER(mBottom, 18)
+			B3D_RTTI_MEMBER(mMSAA, 19)
+			B3D_RTTI_MEMBER(mRenderSettings, 20)
+			B3D_RTTI_MEMBER(mMain, 21)
 		B3D_RTTI_END_MEMBERS
 
+		UPtrRTTIIterator<CameraFlags, false> GetCameraFlagsIterator(Camera& object, FrameAllocator& frameAllocator)
+		{
+			return CreateRTTIIterator<CameraFlags, false>(frameAllocator, object.mCameraFlags);
+		}
+
+		const CameraFlags& GetCameraFlags(Camera& object, FrameAllocator& frameAllocator, TRTTIIterator<CameraFlags, false>& iterator)
+		{
+			mFlags = *iterator;
+
+			// OnDemand flag is transient and shouldn't be saved
+			// (Primarily because we set it in editor on user's cameras and we don't want that to persist)
+			mFlags.Unset(CameraFlag::OnDemand);
+			return mFlags;
+		}
+
+		void SetCameraFlags(Camera& object, FrameAllocator& frameAllocator, TRTTIIterator<CameraFlags, false>& iterator, const CameraFlags& value)
+		{
+			iterator = value;
+		}
+
 	public:
+		CCameraRTTI()
+		{
+			AddField("mCameraFlags", 25, &CCameraRTTI::GetCameraFlagsIterator, &CCameraRTTI::GetCameraFlags, &CCameraRTTI::SetCameraFlags);
+		}
+
 		const String& GetRttiName() override
 		{
-			static String name = "CCamera";
+			static String name = "Camera";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_CCamera;
+			return TID_Camera;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::CreateEmptyComponent<CCamera>();
+			return SceneObject::CreateEmptyComponent<Camera>();
 		}
+
+	private:
+		CameraFlags mFlags;
 	};
 
 	/** @} */

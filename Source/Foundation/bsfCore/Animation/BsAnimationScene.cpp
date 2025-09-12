@@ -6,11 +6,12 @@
 #include "Animation/BsAnimationClip.h"
 #include "Utility/BsTime.h"
 #include "Scene/BsSceneInstance.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "Animation/BsMorphShapes.h"
 #include "Components/BsAnimation.h"
 #include "Mesh/BsMeshData.h"
 #include "Mesh/BsMeshUtility.h"
+#include "Renderer/BsRenderSettings.h"
 
 using namespace b3d;
 

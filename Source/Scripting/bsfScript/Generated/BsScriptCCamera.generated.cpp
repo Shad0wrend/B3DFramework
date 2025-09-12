@@ -14,7 +14,7 @@
 
 namespace b3d
 {
-	ScriptCamera::ScriptCamera(const GameObjectHandle<CCamera>& nativeObject)
+	ScriptCamera::ScriptCamera(const GameObjectHandle<Camera>& nativeObject)
 		:TScriptGameObjectWrapper(nativeObject)
 	{
 		RegisterEvents();
@@ -90,7 +90,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetFlags(flags);
+		static_cast<Camera*>(self->GetNativeObject())->SetFlags(flags);
 	}
 
 	CameraFlag ScriptCamera::InternalGetFlags(ScriptCamera* self)
@@ -99,7 +99,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetFlags();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetFlags();
 
 		CameraFlag __output;
 		__output = (CameraFlag)(uint32_t)tmp__output;
@@ -113,7 +113,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetViewport();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetViewport();
 
 		MonoObject* __output;
 		__output = ScriptViewport::GetOrCreateScriptObject(tmp__output);
@@ -126,7 +126,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetHorizontalFOV(*fovy);
+		static_cast<Camera*>(self->GetNativeObject())->SetHorizontalFOV(*fovy);
 	}
 
 	void ScriptCamera::InternalGetHorzFov(ScriptCamera* self, TRadian<float>* __output)
@@ -138,7 +138,7 @@ namespace b3d
 		}
 
 		TRadian<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetHorizontalFOV();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetHorizontalFOV();
 
 		*__output = tmp__output;
 	}
@@ -148,7 +148,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetNearClipDistance(nearDist);
+		static_cast<Camera*>(self->GetNativeObject())->SetNearClipDistance(nearDist);
 	}
 
 	float ScriptCamera::InternalGetNearClipDistance(ScriptCamera* self)
@@ -157,7 +157,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetNearClipDistance();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetNearClipDistance();
 
 		float __output;
 		__output = tmp__output;
@@ -170,7 +170,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetFarClipDistance(farDist);
+		static_cast<Camera*>(self->GetNativeObject())->SetFarClipDistance(farDist);
 	}
 
 	float ScriptCamera::InternalGetFarClipDistance(ScriptCamera* self)
@@ -179,7 +179,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetFarClipDistance();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetFarClipDistance();
 
 		float __output;
 		__output = tmp__output;
@@ -192,7 +192,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetAspectRatio(ratio);
+		static_cast<Camera*>(self->GetNativeObject())->SetAspectRatio(ratio);
 	}
 
 	float ScriptCamera::InternalGetAspectRatio(ScriptCamera* self)
@@ -201,7 +201,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetAspectRatio();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetAspectRatio();
 
 		float __output;
 		__output = tmp__output;
@@ -218,7 +218,7 @@ namespace b3d
 		}
 
 		TMatrix4<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetProjectionMatrix();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetProjectionMatrix();
 
 		*__output = tmp__output;
 	}
@@ -232,7 +232,7 @@ namespace b3d
 		}
 
 		TMatrix4<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetViewMatrix();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetViewMatrix();
 
 		*__output = tmp__output;
 	}
@@ -242,7 +242,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetProjectionType(pt);
+		static_cast<Camera*>(self->GetNativeObject())->SetProjectionType(pt);
 	}
 
 	ProjectionType ScriptCamera::InternalGetProjectionType(ScriptCamera* self)
@@ -251,7 +251,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetProjectionType();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetProjectionType();
 
 		ProjectionType __output;
 		__output = tmp__output;
@@ -264,7 +264,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetOrthographicHeight(h);
+		static_cast<Camera*>(self->GetNativeObject())->SetOrthographicHeight(h);
 	}
 
 	float ScriptCamera::InternalGetOrthoWindowHeight(ScriptCamera* self)
@@ -273,7 +273,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetOrthographicHeight();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetOrthographicHeight();
 
 		float __output;
 		__output = tmp__output;
@@ -286,7 +286,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetOrthographicWidth(w);
+		static_cast<Camera*>(self->GetNativeObject())->SetOrthographicWidth(w);
 	}
 
 	float ScriptCamera::InternalGetOrthoWindowWidth(ScriptCamera* self)
@@ -295,7 +295,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetOrthographicWidth();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetOrthographicWidth();
 
 		float __output;
 		__output = tmp__output;
@@ -308,7 +308,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetPriority(priority);
+		static_cast<Camera*>(self->GetNativeObject())->SetPriority(priority);
 	}
 
 	int32_t ScriptCamera::InternalGetPriority(ScriptCamera* self)
@@ -317,7 +317,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetPriority();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetPriority();
 
 		int32_t __output;
 		__output = tmp__output;
@@ -330,7 +330,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetLayers(layers);
+		static_cast<Camera*>(self->GetNativeObject())->SetLayers(layers);
 	}
 
 	uint64_t ScriptCamera::InternalGetLayers(ScriptCamera* self)
@@ -339,7 +339,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetLayers();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetLayers();
 
 		uint64_t __output;
 		__output = tmp__output;
@@ -352,7 +352,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetMSAACount(count);
+		static_cast<Camera*>(self->GetNativeObject())->SetMSAACount(count);
 	}
 
 	uint32_t ScriptCamera::InternalGetMsaaCount(ScriptCamera* self)
@@ -361,7 +361,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetMSAACount();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetMSAACount();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -379,7 +379,7 @@ namespace b3d
 		scriptObjectWrappersettings = ScriptRenderSettings::GetScriptObjectWrapper(settings);
 		if(scriptObjectWrappersettings != nullptr)
 			tmpsettings = std::static_pointer_cast<RenderSettings>(scriptObjectWrappersettings->GetBaseNativeObjectAsShared());
-		static_cast<CCamera*>(self->GetNativeObject())->SetRenderSettings(tmpsettings);
+		static_cast<Camera*>(self->GetNativeObject())->SetRenderSettings(tmpsettings);
 	}
 
 	MonoObject* ScriptCamera::InternalGetRenderSettings(ScriptCamera* self)
@@ -388,7 +388,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->GetRenderSettings();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetRenderSettings();
 
 		MonoObject* __output;
 		__output = ScriptRenderSettings::GetOrCreateScriptObject(tmp__output);
@@ -401,7 +401,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->NotifyNeedsRedraw();
+		static_cast<Camera*>(self->GetNativeObject())->NotifyNeedsRedraw();
 	}
 
 	void ScriptCamera::InternalWorldToScreenPoint(ScriptCamera* self, TVector3<float>* worldPoint, TVector2<int32_t>* __output)
@@ -413,7 +413,7 @@ namespace b3d
 		}
 
 		TVector2<int32_t> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->WorldToScreenPoint(*worldPoint);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->WorldToScreenPoint(*worldPoint);
 
 		*__output = tmp__output;
 	}
@@ -427,7 +427,7 @@ namespace b3d
 		}
 
 		TVector2<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->WorldToNDCPoint(*worldPoint);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->WorldToNDCPoint(*worldPoint);
 
 		*__output = tmp__output;
 	}
@@ -441,7 +441,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->WorldToViewPoint(*worldPoint);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->WorldToViewPoint(*worldPoint);
 
 		*__output = tmp__output;
 	}
@@ -455,7 +455,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ScreenToWorldPoint(*screenPoint, depth);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->ScreenToWorldPoint(*screenPoint, depth);
 
 		*__output = tmp__output;
 	}
@@ -469,7 +469,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ScreenToViewPoint(*screenPoint, depth);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->ScreenToViewPoint(*screenPoint, depth);
 
 		*__output = tmp__output;
 	}
@@ -483,7 +483,7 @@ namespace b3d
 		}
 
 		TVector2<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ScreenToNDCPoint(*screenPoint);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->ScreenToNDCPoint(*screenPoint);
 
 		*__output = tmp__output;
 	}
@@ -497,7 +497,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ViewToWorldPoint(*viewPoint);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->ViewToWorldPoint(*viewPoint);
 
 		*__output = tmp__output;
 	}
@@ -511,7 +511,7 @@ namespace b3d
 		}
 
 		TVector2<int32_t> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ViewToScreenPoint(*viewPoint);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->ViewToScreenPoint(*viewPoint);
 
 		*__output = tmp__output;
 	}
@@ -525,7 +525,7 @@ namespace b3d
 		}
 
 		TVector2<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ViewToNDCPoint(*viewPoint);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->ViewToNDCPoint(*viewPoint);
 
 		*__output = tmp__output;
 	}
@@ -539,7 +539,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->NDCToWorldPoint(*ndcPoint, depth);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->NDCToWorldPoint(*ndcPoint, depth);
 
 		*__output = tmp__output;
 	}
@@ -553,7 +553,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->NDCToViewPoint(*ndcPoint, depth);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->NDCToViewPoint(*ndcPoint, depth);
 
 		*__output = tmp__output;
 	}
@@ -567,7 +567,7 @@ namespace b3d
 		}
 
 		TVector2<int32_t> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->NDCToScreenPoint(*ndcPoint);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->NDCToScreenPoint(*ndcPoint);
 
 		*__output = tmp__output;
 	}
@@ -581,7 +581,7 @@ namespace b3d
 		}
 
 		TRay<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ScreenPointToRay(*screenPoint);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->ScreenPointToRay(*screenPoint);
 
 		__TRay_float_Interop interop__output;
 		interop__output = ScriptRay::ToInterop(tmp__output);
@@ -597,7 +597,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->ProjectPoint(*point);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->ProjectPoint(*point);
 
 		*__output = tmp__output;
 	}
@@ -611,7 +611,7 @@ namespace b3d
 		}
 
 		TVector3<float> tmp__output;
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->UnprojectPoint(*point);
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->UnprojectPoint(*point);
 
 		*__output = tmp__output;
 	}
@@ -621,7 +621,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<CCamera*>(self->GetNativeObject())->SetMain(main);
+		static_cast<Camera*>(self->GetNativeObject())->SetMain(main);
 	}
 
 	bool ScriptCamera::InternalIsMain(ScriptCamera* self)
@@ -630,7 +630,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<CCamera*>(self->GetNativeObject())->IsMain();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->IsMain();
 
 		bool __output;
 		__output = tmp__output;

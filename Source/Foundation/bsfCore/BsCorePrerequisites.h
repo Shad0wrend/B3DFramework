@@ -347,22 +347,6 @@ namespace b3d
 	class Bone;
 	class AudioSource;
 	class AudioListener;
-
-	// Components
-	template <class T>
-	struct ComponentType
-	{};
-
-#define B3D_COMPONENT_FORWARD_DECLARE(TYPE) \
-	class C##TYPE;                      \
-	template <>                         \
-	struct ComponentType<TYPE>          \
-	{                                   \
-		typedef C##TYPE Type;           \
-	};
-
-	B3D_COMPONENT_FORWARD_DECLARE(Camera)
-
 	class Color;
 	class GpuProgramManager;
 	class GpuProgramManager;
@@ -739,8 +723,8 @@ namespace b3d
 #endif
 
 		// Moved from Engine layer
-		TID_CCamera = 30000,
-		TID_Camera = 30003,
+		TID_Camera = 30000,
+		//TID_Camera = 30003,
 		TID_Renderable = 30001,
 		TID_SpriteTexture = 30002,
 		//TID_Light = 30011,
@@ -796,7 +780,7 @@ namespace b3d
 	typedef GameObjectHandle<GameObject> HGameObject;
 	typedef GameObjectHandle<SceneObject> HSceneObject;
 	typedef GameObjectHandle<Component> HComponent;
-	typedef GameObjectHandle<CCamera> HCamera;
+	typedef GameObjectHandle<Camera> HCamera;
 	typedef GameObjectHandle<Renderable> HRenderable;
 	typedef GameObjectHandle<Light> HLight;
 	typedef GameObjectHandle<Animation> HAnimation;

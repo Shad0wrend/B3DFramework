@@ -24,7 +24,7 @@
 #include "Resources/BsResources.h"
 #include "BsEngineConfig.h"
 #include "GUI/BsProfilerOverlay.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "Scene/BsSceneInstance.h"
 #include "Text/BsStockIcons.h"
 
@@ -123,11 +123,11 @@ void Application::PostUpdate()
 	DebugDraw::Instance().UpdateInternal();
 }
 
-void Application::ShowProfilerOverlay(ProfilerOverlayType type, const SPtr<Camera>& camera)
+void Application::ShowProfilerOverlay(ProfilerOverlayType type, const HCamera& camera)
 {
-	const SPtr<SceneInstance>& scene = camera ? camera->GetSceneInstance() : GetSceneManager().GetMainScene();
-	const SPtr<Camera>& overlayCamera = camera ? camera : scene->GetMainCamera();
-	if(!overlayCamera)
+	const SPtr<SceneInstance>& scene = camera ? camera->SceneObject()->GetScene() : GetSceneManager().GetMainScene();
+	const HCamera& overlayCamera = camera ? camera : scene->GetMainCamera();
+	if(!overlayCamera.IsValid())
 		return;
 
 	if(!mProfilerOverlay)

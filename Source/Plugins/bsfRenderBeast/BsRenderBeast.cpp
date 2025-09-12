@@ -20,7 +20,7 @@
 #include "Renderer/BsRenderSettings.h"
 #include "Renderer/BsIBLUtility.h"
 #include "Components/BsSkybox.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Utility/BsRendererTextures.h"
 #include "Renderer/BsGpuResourcePool.h"

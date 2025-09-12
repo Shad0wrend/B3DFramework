@@ -84,10 +84,10 @@ namespace b3d
 		Viewport* GetTarget() const;
 
 		/**	Returns the camera this widget is being rendered to. */
-		SPtr<Camera> GetCamera() const { return mCamera; }
+		HCamera GetCamera() const { return mCamera; }
 
 		/** Changes to which camera does the widget output its contents. */
-		void SetCamera(const SPtr<Camera>& camera);
+		void SetCamera(const HCamera& camera);
 
 		/**	Returns a list of all elements parented to this widget. */
 		const Vector<GUIRenderable*>& GetElements() const { return mElements; }
@@ -100,9 +100,6 @@ namespace b3d
 
 		/**	Sets whether the widget should be rendered or not. */
 		void SetIsActive(bool active);
-
-		/**	Creates a new GUI widget that will be rendered on the provided camera. */
-		static SPtr<GUIWidget> Create(const SPtr<Camera>& camera);
 
 		/**	Creates a new GUI widget that will be rendered on the provided camera. */
 		static SPtr<GUIWidget> Create(const HCamera& camera);
@@ -197,13 +194,7 @@ namespace b3d
 		friend class CGUIWidget;
 
 		/**	Constructs a new GUI widget that will be rendered on the provided camera. */
-		GUIWidget(const SPtr<Camera>& camera);
-
-		/**	Constructs a new GUI widget that will be rendered on the provided camera. */
 		GUIWidget(const HCamera& camera);
-
-		/**	Common code for constructors. */
-		void Construct(const SPtr<Camera>& camera);
 
 		/**	Called when the parent window gained or lost focus. */
 		virtual void OwnerWindowFocusChanged();
@@ -215,7 +206,7 @@ namespace b3d
 		/**	Updates the size of the primary GUI panel based on the viewport. */
 		void UpdateRootPanel();
 
-		SPtr<Camera> mCamera;
+		HCamera mCamera;
 		Vector<GUIRenderable*> mElements;
 		GUIMeshBatches mBatches;
 		GUIPanel* mPanel = nullptr;

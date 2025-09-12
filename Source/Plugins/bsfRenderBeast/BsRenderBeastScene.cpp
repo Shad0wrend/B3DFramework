@@ -1,7 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRenderBeastScene.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "Components/BsLight.h"
 #include "Components/BsSkybox.h"
 #include "Components/BsReflectionProbe.h"
@@ -193,7 +193,7 @@ void RenderBeastScene::UpdateCamera(Camera* camera, u32 updateFlag)
 	if((updateFlag & (u32)CameraDirtyFlag::Redraw) != 0)
 		view->NotifyNeedsRedraw();
 
-	u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active | (u32)CameraDirtyFlag::Viewport;
+	u32 updateEverythingFlag = (u32)ComponentDirtyFlag::Everything | (u32)ComponentDirtyFlag::Active | (u32)CameraDirtyFlag::Viewport;
 
 	if((updateFlag & updateEverythingFlag) != 0)
 	{
@@ -210,12 +210,12 @@ void RenderBeastScene::UpdateCamera(Camera* camera, u32 updateFlag)
 	if((updateFlag & (u32)CameraDirtyFlag::RenderSettings) != 0)
 		view->SetRenderSettings(camera->GetRenderSettings());
 
-	const Transform& tfrm = camera->GetTransform();
+	const Transform& tfrm = camera->GetWorldTransform();
 	view->SetTransform(
 		tfrm.GetPosition(),
 		tfrm.GetForward(),
 		camera->GetViewMatrix(),
-		camera->GetProjectionMatrixRs(),
+		camera->GetProjectionMatrix(),
 		camera->GetWorldFrustum());
 
 	view->UpdatePerViewBuffer();
@@ -1227,7 +1227,7 @@ RendererViewCreateInformation RenderBeastScene::CreateViewDesc(Camera* camera) c
 		viewDesc.Target.TargetHeight = 0;
 	}
 
-	viewDesc.Target.NumSamples = camera->GetMsaaCount();
+	viewDesc.Target.NumSamples = camera->GetSampleCount();
 
 	viewDesc.MainView = camera->IsMain();
 	viewDesc.TriggerCallbacks = true;
@@ -1241,10 +1241,10 @@ RendererViewCreateInformation RenderBeastScene::CreateViewDesc(Camera* camera) c
 	viewDesc.FarPlane = camera->GetFarClipDistance();
 	viewDesc.FlipView = false;
 
-	const Transform& tfrm = camera->GetTransform();
+	const Transform& tfrm = camera->GetWorldTransform();
 	viewDesc.ViewOrigin = tfrm.GetPosition();
 	viewDesc.ViewDirection = tfrm.GetForward();
-	viewDesc.ProjTransform = camera->GetProjectionMatrixRs();
+	viewDesc.ProjTransform = camera->GetProjectionMatrix();
 	viewDesc.ViewTransform = camera->GetViewMatrix();
 	viewDesc.ProjType = camera->GetProjectionType();
 

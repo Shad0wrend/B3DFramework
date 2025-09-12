@@ -14,7 +14,7 @@
 #include "Utility/BsDrawHelper.h"
 #include "Renderer/BsRendererExtension.h"
 #include "Resources/BsBuiltinResources.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "Profiling/BsProfilerGPU.h"
 
 using namespace std::placeholders;
@@ -194,11 +194,11 @@ void DebugDrawRenderer::Render(const Camera& camera, const RendererViewContext& 
 		return;
 
 	Matrix4 viewMatrix = camera.GetViewMatrix();
-	Matrix4 projMatrix = camera.GetProjectionMatrixRs();
+	Matrix4 projMatrix = camera.GetProjectionMatrix();
 	Matrix4 viewProjMat = projMatrix * viewMatrix;
 
 	gDebugDrawParamsDef.gMatViewProj.Set(mParamBuffer, viewProjMat);
-	gDebugDrawParamsDef.gViewDir.Set(mParamBuffer, (Vector4)camera.GetTransform().GetForward());
+	gDebugDrawParamsDef.gViewDir.Set(mParamBuffer, (Vector4)camera.GetWorldTransform().GetForward());
 
 	for(auto& entry : mMeshes)
 	{

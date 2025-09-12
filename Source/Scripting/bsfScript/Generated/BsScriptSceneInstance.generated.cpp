@@ -129,7 +129,7 @@ namespace b3d
 
 	MonoObject* ScriptSceneInstance::InternalGetMainCameraComponent(ScriptSceneInstance* self)
 	{
-		GameObjectHandle<CCamera> tmp__output;
+		GameObjectHandle<Camera> tmp__output;
 		if(!self->IsNativeObjectValid())
 			return {};
 

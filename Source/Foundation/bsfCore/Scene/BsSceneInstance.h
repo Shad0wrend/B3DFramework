@@ -245,17 +245,14 @@ namespace b3d
 		const UUID& GetAssociatedResourceId() const { return mAssociatedResourceId; }
 
 		/** Returns all cameras in the scene. */
-		const UnorderedMap<Camera*, SPtr<Camera>>& GetAllCameras() const { return mCameras; }
+		const UnorderedMap<UUID, HCamera>& GetAllCameras() const { return mCameras; }
 
 		/**
 		 * Returns the camera in the scene marked as main. Main camera controls the final render surface that is displayed
 		 * to the user. If there are multiple main cameras, the first one found returned.
 		 */
-		SPtr<Camera> GetMainCamera() const;
-
-		/** Returns the main camera component. See GetMainCamera(). */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(MainCamera))
-		HCamera GetMainCameraComponent() const;
+		HCamera GetMainCamera() const;
 
 #if B3D_WITH_EDITOR 
 		/** Editor scene instance, if running from within the editor. */
@@ -320,13 +317,13 @@ namespace b3d
 		void UnbindActor(const SPtr<SceneActor>& actor);
 
 		/**	Notifies the scene instance that a new camera was created. */
-		void RegisterCamera(const SPtr<Camera>& camera);
+		void RegisterCamera(const HCamera& camera);
 
 		/**	Notifies the scene instance that a camera was removed. */
-		void UnregisterCamera(const SPtr<Camera>& camera);
+		void UnregisterCamera(const HCamera& camera);
 
 		/**	Notifies the scene instance that a camera either became the main camera, or has stopped being main camera. */
-		void NotifyMainCameraStateChanged(const SPtr<Camera>& camera);
+		void NotifyMainCameraStateChanged(const HCamera& camera);
 
 		/** Returns a scene object bound to the provided actor, if any. */
 		HSceneObject GetLinkedActorSceneObject(const SPtr<SceneActor>& actor) const;
@@ -369,8 +366,8 @@ namespace b3d
 
 		UnorderedMap<SceneActor*, BoundActorData> mBoundActors;
 
-		UnorderedMap<Camera*, SPtr<Camera>> mCameras;
-		Vector<SPtr<Camera>> mMainCameras;
+		UnorderedMap<UUID, HCamera> mCameras;
+		Vector<HCamera> mMainCameras;
 
 		SPtr<RenderTarget> mPrimaryRenderTarget;
 		HEvent mMainRenderTargetResizedHandle;

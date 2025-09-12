@@ -55,7 +55,7 @@ namespace b3d
 		Viewport* GetTarget() const;
 
 		/** @copydoc GUIWidget::GetCamera */
-		SPtr<Camera> GetCamera() const;
+		HCamera GetCamera() const;
 
 		/** @copydoc GUIWidget::GetElements */
 		const Vector<GUIRenderable*>& GetElements() const;
@@ -74,12 +74,6 @@ namespace b3d
 		friend class SceneObject;
 		friend class GUIElement;
 		friend class GUIManager;
-
-		/**
-		 * Constructs a new GUI widget attached to the specified parent scene object. Widget elements will be rendered on
-		 * the provided camera.
-		 */
-		CGUIWidget(const HSceneObject& parent, const SPtr<Camera>& camera);
 
 		/**
 		 * Constructs a new GUI widget attached to the specified parent scene object. Widget elements will be rendered on
@@ -104,7 +98,7 @@ namespace b3d
 		HEvent mOwnerTargetResizedConn;
 		HEvent mOwnerWindowFocusChangedConn;
 
-		SPtr<Camera> mCamera;
+		HCamera mCamera;
 		u32 mParentHash;
 
 		/************************************************************************/

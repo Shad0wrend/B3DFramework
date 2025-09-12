@@ -97,11 +97,11 @@ namespace b3d
 
 	public:
 		/**	Constructs a new overlay attached to the specified parent and displayed on the provided camera. */
-		ProfilerOverlay(const SPtr<Camera>& camera);
+		ProfilerOverlay(const HCamera& camera);
 		~ProfilerOverlay();
 
 		/**	Changes the camera to display the overlay on. */
-		void SetTarget(const SPtr<Camera>& camera);
+		void SetTarget(const HCamera& camera);
 
 		/**	Shows the overlay of the specified type. */
 		void Show(ProfilerOverlayType type);

@@ -7,7 +7,7 @@
 #include "Renderer/BsRendererUtility.h"
 #include "Material/BsGpuParamsSet.h"
 #include "Mesh/BsMesh.h"
-#include "Renderer/BsCamera.h"
+#include "Components/BsCCamera.h"
 #include "Utility/BsBitwise.h"
 #include "RenderAPI/BsVertexDescription.h"
 #include "Renderer/BsRenderer.h"

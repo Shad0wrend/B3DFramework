@@ -178,13 +178,6 @@ namespace b3d
 	B3D_SYNC_BLOCK_END
 }
 
-Renderable::Renderable()
-{
-	SetName("Renderable");
-	SetFlag(ComponentFlag::AlwaysRun, true);
-	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
-}
-
 Renderable::Renderable(const HSceneObject& parent)
 	: Component(parent)
 {
@@ -192,6 +185,10 @@ Renderable::Renderable(const HSceneObject& parent)
 	SetFlag(ComponentFlag::AlwaysRun, true);
 	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
 }
+
+Renderable::Renderable()
+	: Renderable(nullptr)
+{ }
 
 void Renderable::Initialize()
 {
