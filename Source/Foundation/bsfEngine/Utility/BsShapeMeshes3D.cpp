@@ -7,7 +7,7 @@
 #include "Math/BsQuaternion.h"
 #include "Math/BsSphere.h"
 #include "Material/BsPass.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "RenderAPI/BsVertexDescription.h"
 #include "Mesh/BsMeshUtility.h"
 

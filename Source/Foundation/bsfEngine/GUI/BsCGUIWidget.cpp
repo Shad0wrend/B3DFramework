@@ -4,7 +4,7 @@
 #include "Private/RTTI/BsCGUIWidgetRTTI.h"
 #include "GUI/BsGUIWidget.h"
 #include "Scene/BsSceneObject.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 
 using namespace b3d;
 

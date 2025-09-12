@@ -4,7 +4,7 @@
 
 #include "BsGameObjectCollection.h"
 #include "Scene/BsSceneObject.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "RenderAPI/BsViewport.h"
 #include "RenderAPI/BsRenderTarget.h"
 #include "Scene/BsSceneInstance.h"
@@ -37,15 +37,6 @@ void SceneManager::SetMainScene(const SPtr<SceneInstance>& scene)
 	}
 	else
 		mMainScene = scene;
-}
-
-void SceneManager::UpdateLinkedSceneActorTransforms()
-{
-	for(auto& entry : mSceneInstances)
-	{
-		const SPtr<SceneInstance>& scene = entry.second.lock();
-		scene->UpdateLinkedSceneActorTransforms();
-	}
 }
 
 void SceneManager::SetMainCameraRenderTarget(const SPtr<RenderTarget>& renderTarget)

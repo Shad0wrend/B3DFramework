@@ -24,7 +24,7 @@
 #include "Resources/BsResources.h"
 #include "BsEngineConfig.h"
 #include "GUI/BsProfilerOverlay.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "Scene/BsSceneInstance.h"
 #include "Text/BsStockIcons.h"
 

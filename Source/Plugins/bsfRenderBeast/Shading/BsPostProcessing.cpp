@@ -3,7 +3,7 @@
 #include "BsPostProcessing.h"
 #include "RenderAPI/BsRenderTexture.h"
 #include "Renderer/BsRendererUtility.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "Material/BsGpuParamsSet.h"
 #include "Image/BsPixelUtility.h"
 #include "Utility/BsBitwise.h"

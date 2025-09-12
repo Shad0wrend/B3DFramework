@@ -6,7 +6,6 @@
 #include "Image/BsColor.h"
 #include "Private/RTTI/BsLightRTTI.h"
 #include "Renderer/BsRendererScene.h"
-#include "Scene/BsSceneActor.h"
 #include "Scene/BsSceneInstance.h"
 
 using namespace b3d;

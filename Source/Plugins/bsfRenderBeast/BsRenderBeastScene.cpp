@@ -1,7 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRenderBeastScene.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "Components/BsLight.h"
 #include "Components/BsSkybox.h"
 #include "Components/BsReflectionProbe.h"

@@ -20,7 +20,7 @@ namespace b3d
 	public:
 		using MaterialType = CoreVariantHandleType<Material, IsRenderProxy>;
 		using SceneInstanceType = CoreVariantType<SceneInstance, IsRenderProxy>;
-		using Super = CoreVariantType<SceneActor, IsRenderProxy>;
+		using Super = CoreVariantType<CoreObject, IsRenderProxy>;
 
 		TDecal();
 		virtual ~TDecal() = default;

@@ -5,17 +5,16 @@
 #include "BsGameObjectCollection.h"
 #include "BsScene.h"
 #include "BsSceneManager.h"
+#include "Components/BsCamera.h"
 #include "Scene/BsSceneObject.h"
 #include "Scene/BsComponent.h"
 #include "Components/BsRenderable.h"
 #include "RenderAPI/BsViewport.h"
 #include "Scene/BsGameObjectManager.h"
 #include "RenderAPI/BsRenderTarget.h"
-#include "Scene/BsSceneActor.h"
 #include "Scene/BsPrefab.h"
 #include "Physics/BsPhysics.h"
 #include "Renderer/BsRendererScene.h"
-#include "Components/BsCCamera.h"
 #include "Particles/BsParticleScene.h"
 #include "Profiling/BsProfilerCPU.h"
 
@@ -425,32 +424,6 @@ void SceneInstance::Update()
 	mGameObjectCollection->DestroyQueuedObjects();
 
 	mPhysicsScene->Update();
-}
-
-void SceneInstance::BindActor(const SPtr<SceneActor>& actor, const HSceneObject& so)
-{
-	mBoundActors[actor.get()] = BoundActorData(actor, so);
-	actor->UpdateStateFromSceneObject(*so, true);
-}
-
-void SceneInstance::UnbindActor(const SPtr<SceneActor>& actor)
-{
-	mBoundActors.erase(actor.get());
-}
-
-HSceneObject SceneInstance::GetLinkedActorSceneObject(const SPtr<SceneActor>& actor) const
-{
-	auto iterFind = mBoundActors.find(actor.get());
-	if(iterFind != mBoundActors.end())
-		return iterFind->second.So;
-
-	return HSceneObject();
-}
-
-void SceneInstance::UpdateLinkedSceneActorTransforms()
-{
-	for(auto& entry : mBoundActors)
-		entry.second.Actor->UpdateStateFromSceneObject(*entry.second.So);
 }
 
 void SceneInstance::SetRoot(const HSceneObject& newRoot)

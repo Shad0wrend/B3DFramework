@@ -17,7 +17,7 @@
 #include "Resources/BsBuiltinResources.h"
 #include "Profiling/BsProfilingManager.h"
 #include "RenderAPI/BsRenderTarget.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "Localization/BsHEString.h"
 
 #define BS_SHOW_PRECISE_PROFILING 0

@@ -41,7 +41,7 @@ namespace b3d
 	public:
 		using TextureType = CoreVariantType<Texture, IsRenderProxy>;
 		using SceneInstanceType = CoreVariantType<SceneInstance, IsRenderProxy>;
-		using Super = CoreVariantType<SceneActor, IsRenderProxy>;
+		using Super = CoreVariantType<CoreObject, IsRenderProxy>;
 
 		TReflectionProbe() = default;
 		TReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents);

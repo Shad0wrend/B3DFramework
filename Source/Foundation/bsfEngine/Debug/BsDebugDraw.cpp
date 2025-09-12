@@ -14,7 +14,7 @@
 #include "Utility/BsDrawHelper.h"
 #include "Renderer/BsRendererExtension.h"
 #include "Resources/BsBuiltinResources.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "Profiling/BsProfilerGPU.h"
 
 using namespace std::placeholders;

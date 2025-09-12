@@ -195,7 +195,6 @@ void RendererTask::Wait()
 	// the render thread first.
 	// Note: wait() might only get called during serialization, in which case we might call these methods just once
 	// before a level save, instead for every individual component
-	GetSceneManager().UpdateLinkedSceneActorTransforms();
 	CoreObjectManager::Instance().SyncToRenderThread(false);
 
 	auto worker = [this]()

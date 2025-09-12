@@ -8,7 +8,7 @@
 #include "GUI/BsGUIPanel.h"
 #include "GUI/BsGUINavGroup.h"
 #include "Mesh/BsMesh.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "RenderAPI/BsViewport.h"
 #include "Scene/BsSceneObject.h"
 #include "Resources/BsBuiltinResources.h"

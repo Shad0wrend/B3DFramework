@@ -6,7 +6,7 @@
 #include "Animation/BsAnimationClip.h"
 #include "Utility/BsTime.h"
 #include "Scene/BsSceneInstance.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "Animation/BsMorphShapes.h"
 #include "Components/BsAnimation.h"
 #include "Mesh/BsMeshData.h"

@@ -29,7 +29,7 @@
 #include "CoreObject/BsRenderThread.h"
 #include "Renderer/BsRendererManager.h"
 #include "Renderer/BsRenderer.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "GUI/BsGUITooltipManager.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Image/BsTexture.h"

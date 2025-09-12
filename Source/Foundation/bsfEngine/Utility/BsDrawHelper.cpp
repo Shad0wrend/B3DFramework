@@ -10,7 +10,7 @@
 #include "Math/BsVector2.h"
 #include "Math/BsQuaternion.h"
 #include "String/BsUnicode.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "Scene/BsSceneObject.h"
 
 using namespace b3d;

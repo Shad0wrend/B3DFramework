@@ -20,19 +20,6 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** Information about a scene actor and the scene object it has been bound to. */
-	struct BoundActorData
-	{
-		BoundActorData() = default;
-
-		BoundActorData(const SPtr<SceneActor>& actor, const HSceneObject& so)
-			: Actor(actor), So(so)
-		{}
-
-		SPtr<SceneActor> Actor;
-		HSceneObject So;
-	};
-
 	/** Possible states components can be in. Controls which component callbacks are triggered. */
 	enum class ComponentState
 	{
@@ -307,15 +294,6 @@ namespace b3d
 		/** Called every frame. Calls Update() methods on all active components. */
 		void Update();
 
-		/**
-		 * Binds a scene actor with a scene object. Every frame the scene object's transform will be monitored for
-		 * changes and those changes will be automatically transfered to the actor.
-		 */
-		void BindActor(const SPtr<SceneActor>& actor, const HSceneObject& so);
-
-		/** Unbinds an actor that was previously bound using bindActor(). */
-		void UnbindActor(const SPtr<SceneActor>& actor);
-
 		/**	Notifies the scene instance that a new camera was created. */
 		void RegisterCamera(const HCamera& camera);
 
@@ -324,9 +302,6 @@ namespace b3d
 
 		/**	Notifies the scene instance that a camera either became the main camera, or has stopped being main camera. */
 		void NotifyMainCameraStateChanged(const HCamera& camera);
-
-		/** Returns a scene object bound to the provided actor, if any. */
-		HSceneObject GetLinkedActorSceneObject(const SPtr<SceneActor>& actor) const;
 
 		/** Updates dirty transforms on any scene actors that are linked with scene objects. */
 		void UpdateLinkedSceneActorTransforms();
@@ -363,8 +338,6 @@ namespace b3d
 		SPtr<ParticleScene> mParticleScene;
 		SPtr<GameObjectCollection> mGameObjectCollection;
 		SceneTime mTime;
-
-		UnorderedMap<SceneActor*, BoundActorData> mBoundActors;
 
 		UnorderedMap<UUID, HCamera> mCameras;
 		Vector<HCamera> mMainCameras;

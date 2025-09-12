@@ -50,9 +50,6 @@ namespace b3d
 		 */
 		void SetMainCameraRenderTarget(const SPtr<RenderTarget>& renderTarget);
 
-		/** Updates dirty transforms on any scene actors that are linked with scene objects. */
-		void UpdateLinkedSceneActorTransforms();
-
 		/** Notifies the manager that a new scene instance was created. */
 		void NotifySceneInstanceCreated(const SPtr<SceneInstance>& sceneInstance);
 

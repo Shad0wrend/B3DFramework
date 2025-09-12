@@ -4,7 +4,7 @@
 
 #include "BsGUIUtility.h"
 #include "GUI/BsGUIPanel.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "RenderAPI/BsViewport.h"
 #include "GUI/BsGUILayoutY.h"
 #include "GUI/BsGUILayoutX.h"

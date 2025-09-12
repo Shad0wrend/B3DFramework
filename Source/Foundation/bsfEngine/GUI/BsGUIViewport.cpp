@@ -3,7 +3,7 @@
 #include "GUI/BsGUIViewport.h"
 #include "GUI/BsGUIWidget.h"
 #include "GUI/BsGUISizeConstraints.h"
-#include "Components/BsCCamera.h"
+#include "Components/BsCamera.h"
 #include "RenderAPI/BsViewport.h"
 #include "RenderAPI/BsRenderTarget.h"
 #include "Error/BsException.h"
