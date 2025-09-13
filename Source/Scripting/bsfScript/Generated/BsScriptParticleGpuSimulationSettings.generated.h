@@ -4,9 +4,9 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptReflectableWrapper.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"

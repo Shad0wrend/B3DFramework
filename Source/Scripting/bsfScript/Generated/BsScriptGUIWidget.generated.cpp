@@ -1,10 +1,10 @@
 //********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "BsScriptCGUIWidget.generated.h"
+#include "BsScriptGUIWidget.generated.h"
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "../../../Foundation/bsfEngine/GUI/BsCGUIWidget.h"
+#include "../../../Foundation/bsfEngine/GUI/BsGUIWidget.h"
 #include "BsScriptGUIPanel.generated.h"
 #include "BsScriptTVector2.generated.h"
 #include "BsScriptTArea2.generated.h"
@@ -25,8 +25,8 @@ namespace b3d
 	void ScriptGUIWidget::SetupScriptBindings()
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPanel", (void*)&ScriptGUIWidget::InternalGetPanel);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetDepth", (void*)&ScriptGUIWidget::InternalGetDepth);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetDepth", (void*)&ScriptGUIWidget::InternalSetDepth);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetDepth", (void*)&ScriptGUIWidget::InternalGetDepth);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_InBounds", (void*)&ScriptGUIWidget::InternalInBounds);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptGUIWidget::InternalGetBounds);
 
@@ -56,6 +56,14 @@ namespace b3d
 		return __output;
 	}
 
+	void ScriptGUIWidget::InternalSetDepth(ScriptGUIWidget* self, uint8_t depth)
+	{
+		if(!self->IsNativeObjectValid())
+			return;
+
+		static_cast<GUIWidget*>(self->GetNativeObject())->SetDepth(depth);
+	}
+
 	uint8_t ScriptGUIWidget::InternalGetDepth(ScriptGUIWidget* self)
 	{
 		uint8_t tmp__output;
@@ -68,14 +76,6 @@ namespace b3d
 		__output = tmp__output;
 
 		return __output;
-	}
-
-	void ScriptGUIWidget::InternalSetDepth(ScriptGUIWidget* self, uint8_t depth)
-	{
-		if(!self->IsNativeObjectValid())
-			return;
-
-		static_cast<GUIWidget*>(self->GetNativeObject())->SetDepth(depth);
 	}
 
 	bool ScriptGUIWidget::InternalInBounds(ScriptGUIWidget* self, __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop* position)

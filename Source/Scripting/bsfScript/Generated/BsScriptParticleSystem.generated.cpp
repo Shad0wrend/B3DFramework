@@ -1,10 +1,10 @@
 //********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "BsScriptCParticleSystem.generated.h"
+#include "BsScriptParticleSystem.generated.h"
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "../../../Foundation/bsfCore/Components/BsCParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
 #include "Reflection/BsRTTIType.h"
 #include "BsScriptParticleSystemSettings.generated.h"
 #include "BsScriptParticleGpuSimulationSettings.generated.h"
@@ -36,7 +36,7 @@ namespace b3d
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetEvolvers", (void*)&ScriptParticleSystem::InternalGetEvolvers);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetLayer", (void*)&ScriptParticleSystem::InternalSetLayer);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetLayer", (void*)&ScriptParticleSystem::InternalGetLayer);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_TogglePreviewModeInternal", (void*)&ScriptParticleSystem::InternalTogglePreviewModeInternal);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_TogglePreviewMode", (void*)&ScriptParticleSystem::InternalTogglePreviewMode);
 
 	}
 
@@ -222,7 +222,7 @@ namespace b3d
 		return __output;
 	}
 
-	bool ScriptParticleSystem::InternalTogglePreviewModeInternal(ScriptParticleSystem* self, bool enabled)
+	bool ScriptParticleSystem::InternalTogglePreviewMode(ScriptParticleSystem* self, bool enabled)
 	{
 		bool tmp__output;
 		if(!self->IsNativeObjectValid())

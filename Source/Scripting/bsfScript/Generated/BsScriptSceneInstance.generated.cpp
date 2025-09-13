@@ -11,8 +11,8 @@
 #include "Wrappers/BsScriptSceneObject.h"
 #include "BsScriptResourceWrapper.h"
 #include "BsScriptPhysicsScene.generated.h"
-#include "../../../Foundation/bsfCore/Components/BsCCamera.h"
-#include "BsScriptCCamera.generated.h"
+#include "../../../Foundation/bsfCore/Components/BsCamera.h"
+#include "BsScriptCamera.generated.h"
 
 namespace b3d
 {
@@ -34,7 +34,7 @@ namespace b3d
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsActive", (void*)&ScriptSceneInstance::InternalIsActive);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPhysicsScene", (void*)&ScriptSceneInstance::InternalGetPhysicsScene);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAssociatedResourceId", (void*)&ScriptSceneInstance::InternalGetAssociatedResourceId);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMainCameraComponent", (void*)&ScriptSceneInstance::InternalGetMainCameraComponent);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMainCamera", (void*)&ScriptSceneInstance::InternalGetMainCamera);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetEditorSceneInstance", (void*)&ScriptSceneInstance::InternalGetEditorSceneInstance);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_Clear", (void*)&ScriptSceneInstance::InternalClear);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_CreateSceneObject", (void*)&ScriptSceneInstance::InternalCreateSceneObject);
@@ -127,13 +127,13 @@ namespace b3d
 		*__output = tmp__output;
 	}
 
-	MonoObject* ScriptSceneInstance::InternalGetMainCameraComponent(ScriptSceneInstance* self)
+	MonoObject* ScriptSceneInstance::InternalGetMainCamera(ScriptSceneInstance* self)
 	{
 		GameObjectHandle<Camera> tmp__output;
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->GetMainCameraComponent();
+		tmp__output = static_cast<SceneInstance*>(self->GetNativeObject())->GetMainCamera();
 
 		MonoObject* __output;
 		MonoObject* temp__output = nullptr;

@@ -10,12 +10,21 @@ namespace b3d
 	 *  @{
 	 */
 
+	/// <summary>
+	/// Controls spawning, evolution and rendering of particles. Particles can be 2D or 3D, with a variety of rendering 
+	/// options. Particle system should be used for rendering objects that cannot properly be represented using static or 
+	/// animated meshes, like liquids, smoke or flames.
+	///
+	/// The particle system requires you to specify at least one ParticleEmitter, which controls how are new particles 
+	/// generated. You will also want to specify one or more ParticleEvolver%s, which change particle properties over time.
+	/// </summary>
 	[ShowInInspector]
 	public partial class ParticleSystem : Component
 	{
 		private ParticleSystem(bool __dummy0) { }
 		protected ParticleSystem() { }
 
+		/// <summary>Determines general purpose settings that apply to the particle system.</summary>
 		[ShowInInspector]
 		[Inline]
 		[NotNull]
@@ -27,6 +36,7 @@ namespace b3d
 			set { Internal_SetSettings(mCachedPtr, value); }
 		}
 
+		/// <summary>Determines settings that control particle GPU simulation.</summary>
 		[ShowInInspector]
 		[NotNull]
 		[PassByCopy]
@@ -37,6 +47,10 @@ namespace b3d
 			set { Internal_SetGpuSimulationSettings(mCachedPtr, value); }
 		}
 
+		/// <summary>
+		/// Set of objects that determine initial position, normal and other properties of newly spawned particles. Each particle 
+		/// system must have at least one emitter.
+		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public ParticleEmitter[] Emitters
@@ -45,6 +59,10 @@ namespace b3d
 			set { Internal_SetEmitters(mCachedPtr, value); }
 		}
 
+		/// <summary>
+		/// Set of objects that determine how particle properties change during their lifetime. Evolvers only affect CPU 
+		/// simulated particles.
+		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public ParticleEvolver[] Evolvers
@@ -53,6 +71,10 @@ namespace b3d
 			set { Internal_SetEvolvers(mCachedPtr, value); }
 		}
 
+		/// <summary>
+		/// Determines the layer bitfield that controls whether a system is considered visible in a specific camera. Layer must 
+		/// match camera layer in order for the camera to render the component.
+		/// </summary>
 		[ShowInInspector]
 		[LayerMask]
 		[NativeWrapper]
@@ -69,7 +91,7 @@ namespace b3d
 		/// </summary>
 		internal bool TogglePreviewMode(bool enabled)
 		{
-			return Internal_TogglePreviewModeInternal(mCachedPtr, enabled);
+			return Internal_TogglePreviewMode(mCachedPtr, enabled);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -93,7 +115,7 @@ namespace b3d
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern ulong Internal_GetLayer(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_TogglePreviewModeInternal(IntPtr thisPtr, bool enabled);
+		private static extern bool Internal_TogglePreviewMode(IntPtr thisPtr, bool enabled);
 	}
 
 	/** @} */

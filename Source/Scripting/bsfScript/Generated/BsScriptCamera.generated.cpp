@@ -1,10 +1,10 @@
 //********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "BsScriptCCamera.generated.h"
+#include "BsScriptCamera.generated.h"
 #include "BsMonoMethod.h"
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
-#include "../../../Foundation/bsfCore/Components/BsCCamera.h"
+#include "../../../Foundation/bsfCore/Components/BsCamera.h"
 #include "BsScriptRenderSettings.generated.h"
 #include "BsScriptViewport.generated.h"
 #include "BsScriptTVector2.generated.h"
@@ -27,51 +27,51 @@ namespace b3d
 
 	void ScriptCamera::SetupScriptBindings()
 	{
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetMain", (void*)&ScriptCamera::InternalSetMain);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsMain", (void*)&ScriptCamera::InternalIsMain);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetFlags", (void*)&ScriptCamera::InternalSetFlags);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetFlags", (void*)&ScriptCamera::InternalGetFlags);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetViewport", (void*)&ScriptCamera::InternalGetViewport);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetHorzFov", (void*)&ScriptCamera::InternalSetHorzFov);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetHorzFov", (void*)&ScriptCamera::InternalGetHorzFov);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetHorizontalFOV", (void*)&ScriptCamera::InternalSetHorizontalFOV);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetHorizontalFOV", (void*)&ScriptCamera::InternalGetHorizontalFOV);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetNearClipDistance", (void*)&ScriptCamera::InternalSetNearClipDistance);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetNearClipDistance", (void*)&ScriptCamera::InternalGetNearClipDistance);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetFarClipDistance", (void*)&ScriptCamera::InternalSetFarClipDistance);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetFarClipDistance", (void*)&ScriptCamera::InternalGetFarClipDistance);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetAspectRatio", (void*)&ScriptCamera::InternalSetAspectRatio);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetAspectRatio", (void*)&ScriptCamera::InternalGetAspectRatio);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetProjectionMatrixRs", (void*)&ScriptCamera::InternalGetProjectionMatrixRs);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetProjectionMatrix", (void*)&ScriptCamera::InternalGetProjectionMatrix);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetViewMatrix", (void*)&ScriptCamera::InternalGetViewMatrix);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetProjectionType", (void*)&ScriptCamera::InternalSetProjectionType);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetProjectionType", (void*)&ScriptCamera::InternalGetProjectionType);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetOrthoWindowHeight", (void*)&ScriptCamera::InternalSetOrthoWindowHeight);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetOrthoWindowHeight", (void*)&ScriptCamera::InternalGetOrthoWindowHeight);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetOrthoWindowWidth", (void*)&ScriptCamera::InternalSetOrthoWindowWidth);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetOrthoWindowWidth", (void*)&ScriptCamera::InternalGetOrthoWindowWidth);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetOrthographicHeight", (void*)&ScriptCamera::InternalSetOrthographicHeight);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetOrthographicHeight", (void*)&ScriptCamera::InternalGetOrthographicHeight);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetOrthographicWidth", (void*)&ScriptCamera::InternalSetOrthographicWidth);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetOrthographicWidth", (void*)&ScriptCamera::InternalGetOrthographicWidth);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetPriority", (void*)&ScriptCamera::InternalSetPriority);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetPriority", (void*)&ScriptCamera::InternalGetPriority);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetLayers", (void*)&ScriptCamera::InternalSetLayers);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetLayers", (void*)&ScriptCamera::InternalGetLayers);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetMsaaCount", (void*)&ScriptCamera::InternalSetMsaaCount);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetMsaaCount", (void*)&ScriptCamera::InternalGetMsaaCount);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetSampleCount", (void*)&ScriptCamera::InternalSetSampleCount);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetSampleCount", (void*)&ScriptCamera::InternalGetSampleCount);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetViewport", (void*)&ScriptCamera::InternalGetViewport);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetRenderSettings", (void*)&ScriptCamera::InternalSetRenderSettings);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRenderSettings", (void*)&ScriptCamera::InternalGetRenderSettings);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_NotifyNeedsRedraw", (void*)&ScriptCamera::InternalNotifyNeedsRedraw);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_WorldToScreenPoint", (void*)&ScriptCamera::InternalWorldToScreenPoint);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_WorldToNdcPoint", (void*)&ScriptCamera::InternalWorldToNdcPoint);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_WorldToNDCPoint", (void*)&ScriptCamera::InternalWorldToNDCPoint);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_WorldToViewPoint", (void*)&ScriptCamera::InternalWorldToViewPoint);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ScreenToWorldPoint", (void*)&ScriptCamera::InternalScreenToWorldPoint);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ScreenToViewPoint", (void*)&ScriptCamera::InternalScreenToViewPoint);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ScreenToNdcPoint", (void*)&ScriptCamera::InternalScreenToNdcPoint);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ScreenToNDCPoint", (void*)&ScriptCamera::InternalScreenToNDCPoint);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ViewToWorldPoint", (void*)&ScriptCamera::InternalViewToWorldPoint);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ViewToScreenPoint", (void*)&ScriptCamera::InternalViewToScreenPoint);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ViewToNdcPoint", (void*)&ScriptCamera::InternalViewToNdcPoint);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_NdcToWorldPoint", (void*)&ScriptCamera::InternalNdcToWorldPoint);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_NdcToViewPoint", (void*)&ScriptCamera::InternalNdcToViewPoint);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_NdcToScreenPoint", (void*)&ScriptCamera::InternalNdcToScreenPoint);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ViewToNDCPoint", (void*)&ScriptCamera::InternalViewToNDCPoint);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_NDCToWorldPoint", (void*)&ScriptCamera::InternalNDCToWorldPoint);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_NDCToViewPoint", (void*)&ScriptCamera::InternalNDCToViewPoint);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_NDCToScreenPoint", (void*)&ScriptCamera::InternalNDCToScreenPoint);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ScreenPointToRay", (void*)&ScriptCamera::InternalScreenPointToRay);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_ProjectPoint", (void*)&ScriptCamera::InternalProjectPoint);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_UnprojectPoint", (void*)&ScriptCamera::InternalUnprojectPoint);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetMain", (void*)&ScriptCamera::InternalSetMain);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsMain", (void*)&ScriptCamera::InternalIsMain);
 
 	}
 
@@ -85,6 +85,28 @@ namespace b3d
 
 		return sInteropMetaData.ScriptClass->CreateInstance(false);
 	}
+	void ScriptCamera::InternalSetMain(ScriptCamera* self, bool main)
+	{
+		if(!self->IsNativeObjectValid())
+			return;
+
+		static_cast<Camera*>(self->GetNativeObject())->SetMain(main);
+	}
+
+	bool ScriptCamera::InternalIsMain(ScriptCamera* self)
+	{
+		bool tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->IsMain();
+
+		bool __output;
+		__output = tmp__output;
+
+		return __output;
+	}
+
 	void ScriptCamera::InternalSetFlags(ScriptCamera* self, CameraFlag flags)
 	{
 		if(!self->IsNativeObjectValid())
@@ -107,21 +129,7 @@ namespace b3d
 		return __output;
 	}
 
-	MonoObject* ScriptCamera::InternalGetViewport(ScriptCamera* self)
-	{
-		SPtr<Viewport> tmp__output;
-		if(!self->IsNativeObjectValid())
-			return {};
-
-		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetViewport();
-
-		MonoObject* __output;
-		__output = ScriptViewport::GetOrCreateScriptObject(tmp__output);
-
-		return __output;
-	}
-
-	void ScriptCamera::InternalSetHorzFov(ScriptCamera* self, TRadian<float>* fovy)
+	void ScriptCamera::InternalSetHorizontalFOV(ScriptCamera* self, TRadian<float>* fovy)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
@@ -129,7 +137,7 @@ namespace b3d
 		static_cast<Camera*>(self->GetNativeObject())->SetHorizontalFOV(*fovy);
 	}
 
-	void ScriptCamera::InternalGetHorzFov(ScriptCamera* self, TRadian<float>* __output)
+	void ScriptCamera::InternalGetHorizontalFOV(ScriptCamera* self, TRadian<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -209,7 +217,7 @@ namespace b3d
 		return __output;
 	}
 
-	void ScriptCamera::InternalGetProjectionMatrixRs(ScriptCamera* self, TMatrix4<float>* __output)
+	void ScriptCamera::InternalGetProjectionMatrix(ScriptCamera* self, TMatrix4<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -259,7 +267,7 @@ namespace b3d
 		return __output;
 	}
 
-	void ScriptCamera::InternalSetOrthoWindowHeight(ScriptCamera* self, float h)
+	void ScriptCamera::InternalSetOrthographicHeight(ScriptCamera* self, float h)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
@@ -267,7 +275,7 @@ namespace b3d
 		static_cast<Camera*>(self->GetNativeObject())->SetOrthographicHeight(h);
 	}
 
-	float ScriptCamera::InternalGetOrthoWindowHeight(ScriptCamera* self)
+	float ScriptCamera::InternalGetOrthographicHeight(ScriptCamera* self)
 	{
 		float tmp__output;
 		if(!self->IsNativeObjectValid())
@@ -281,7 +289,7 @@ namespace b3d
 		return __output;
 	}
 
-	void ScriptCamera::InternalSetOrthoWindowWidth(ScriptCamera* self, float w)
+	void ScriptCamera::InternalSetOrthographicWidth(ScriptCamera* self, float w)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
@@ -289,7 +297,7 @@ namespace b3d
 		static_cast<Camera*>(self->GetNativeObject())->SetOrthographicWidth(w);
 	}
 
-	float ScriptCamera::InternalGetOrthoWindowWidth(ScriptCamera* self)
+	float ScriptCamera::InternalGetOrthographicWidth(ScriptCamera* self)
 	{
 		float tmp__output;
 		if(!self->IsNativeObjectValid())
@@ -347,24 +355,38 @@ namespace b3d
 		return __output;
 	}
 
-	void ScriptCamera::InternalSetMsaaCount(ScriptCamera* self, uint32_t count)
+	void ScriptCamera::InternalSetSampleCount(ScriptCamera* self, uint32_t count)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<Camera*>(self->GetNativeObject())->SetMSAACount(count);
+		static_cast<Camera*>(self->GetNativeObject())->SetSampleCount(count);
 	}
 
-	uint32_t ScriptCamera::InternalGetMsaaCount(ScriptCamera* self)
+	uint32_t ScriptCamera::InternalGetSampleCount(ScriptCamera* self)
 	{
 		uint32_t tmp__output;
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetMSAACount();
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetSampleCount();
 
 		uint32_t __output;
 		__output = tmp__output;
+
+		return __output;
+	}
+
+	MonoObject* ScriptCamera::InternalGetViewport(ScriptCamera* self)
+	{
+		SPtr<Viewport> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->GetViewport();
+
+		MonoObject* __output;
+		__output = ScriptViewport::GetOrCreateScriptObject(tmp__output);
 
 		return __output;
 	}
@@ -418,7 +440,7 @@ namespace b3d
 		*__output = tmp__output;
 	}
 
-	void ScriptCamera::InternalWorldToNdcPoint(ScriptCamera* self, TVector3<float>* worldPoint, TVector2<float>* __output)
+	void ScriptCamera::InternalWorldToNDCPoint(ScriptCamera* self, TVector3<float>* worldPoint, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -474,7 +496,7 @@ namespace b3d
 		*__output = tmp__output;
 	}
 
-	void ScriptCamera::InternalScreenToNdcPoint(ScriptCamera* self, TVector2<int32_t>* screenPoint, TVector2<float>* __output)
+	void ScriptCamera::InternalScreenToNDCPoint(ScriptCamera* self, TVector2<int32_t>* screenPoint, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -516,7 +538,7 @@ namespace b3d
 		*__output = tmp__output;
 	}
 
-	void ScriptCamera::InternalViewToNdcPoint(ScriptCamera* self, TVector3<float>* viewPoint, TVector2<float>* __output)
+	void ScriptCamera::InternalViewToNDCPoint(ScriptCamera* self, TVector3<float>* viewPoint, TVector2<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -530,7 +552,7 @@ namespace b3d
 		*__output = tmp__output;
 	}
 
-	void ScriptCamera::InternalNdcToWorldPoint(ScriptCamera* self, TVector2<float>* ndcPoint, float depth, TVector3<float>* __output)
+	void ScriptCamera::InternalNDCToWorldPoint(ScriptCamera* self, TVector2<float>* ndcPoint, float depth, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -544,7 +566,7 @@ namespace b3d
 		*__output = tmp__output;
 	}
 
-	void ScriptCamera::InternalNdcToViewPoint(ScriptCamera* self, TVector2<float>* ndcPoint, float depth, TVector3<float>* __output)
+	void ScriptCamera::InternalNDCToViewPoint(ScriptCamera* self, TVector2<float>* ndcPoint, float depth, TVector3<float>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -558,7 +580,7 @@ namespace b3d
 		*__output = tmp__output;
 	}
 
-	void ScriptCamera::InternalNdcToScreenPoint(ScriptCamera* self, TVector2<float>* ndcPoint, TVector2<int32_t>* __output)
+	void ScriptCamera::InternalNDCToScreenPoint(ScriptCamera* self, TVector2<float>* ndcPoint, TVector2<int32_t>* __output)
 	{
 		if(!self->IsNativeObjectValid())
 		{
@@ -614,27 +636,5 @@ namespace b3d
 		tmp__output = static_cast<Camera*>(self->GetNativeObject())->UnprojectPoint(*point);
 
 		*__output = tmp__output;
-	}
-
-	void ScriptCamera::InternalSetMain(ScriptCamera* self, bool main)
-	{
-		if(!self->IsNativeObjectValid())
-			return;
-
-		static_cast<Camera*>(self->GetNativeObject())->SetMain(main);
-	}
-
-	bool ScriptCamera::InternalIsMain(ScriptCamera* self)
-	{
-		bool tmp__output;
-		if(!self->IsNativeObjectValid())
-			return {};
-
-		tmp__output = static_cast<Camera*>(self->GetNativeObject())->IsMain();
-
-		bool __output;
-		__output = tmp__output;
-
-		return __output;
 	}
 }

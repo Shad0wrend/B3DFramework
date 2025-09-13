@@ -4,8 +4,8 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptComponent.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
 
 namespace b3d { class ParticleSystem; }
 namespace b3d
@@ -33,6 +33,6 @@ namespace b3d
 		static MonoArray* InternalGetEvolvers(ScriptParticleSystem* self);
 		static void InternalSetLayer(ScriptParticleSystem* self, uint64_t layer);
 		static uint64_t InternalGetLayer(ScriptParticleSystem* self);
-		static bool InternalTogglePreviewModeInternal(ScriptParticleSystem* self, bool enabled);
+		static bool InternalTogglePreviewMode(ScriptParticleSystem* self, bool enabled);
 	};
 }

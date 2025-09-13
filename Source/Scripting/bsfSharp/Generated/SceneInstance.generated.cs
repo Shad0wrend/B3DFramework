@@ -76,11 +76,14 @@ namespace b3d
 			}
 		}
 
-		/// <summary>Returns the main camera component. See GetMainCamera().</summary>
+		/// <summary>
+		/// Returns the camera in the scene marked as main. Main camera controls the final render surface that is displayed to 
+		/// the user. If there are multiple main cameras, the first one found returned.
+		/// </summary>
 		[NativeWrapper]
 		public Camera MainCamera
 		{
-			get { return Internal_GetMainCameraComponent(mCachedPtr); }
+			get { return Internal_GetMainCamera(mCachedPtr); }
 		}
 
 		/// <summary>Editor scene instance, if running from within the editor.</summary>
@@ -125,7 +128,7 @@ namespace b3d
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetAssociatedResourceId(IntPtr thisPtr, out UUID __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Camera Internal_GetMainCameraComponent(IntPtr thisPtr);
+		private static extern Camera Internal_GetMainCamera(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern IEditorSceneInstance Internal_GetEditorSceneInstance(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]

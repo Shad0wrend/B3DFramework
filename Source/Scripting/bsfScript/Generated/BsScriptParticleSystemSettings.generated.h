@@ -4,12 +4,12 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptReflectableWrapper.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
 #include "../../../Foundation/bsfUtility/Math/BsAABox.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
+#include "../../../Foundation/bsfCore/Components/BsParticleSystem.h"
 #include "../../../Foundation/bsfUtility/Math/BsVector3.h"
 
 namespace b3d { struct ParticleSystemSettings; }

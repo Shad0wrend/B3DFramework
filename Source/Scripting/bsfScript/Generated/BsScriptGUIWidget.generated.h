@@ -27,8 +27,8 @@ namespace b3d
 
 	private:
 		static MonoObject* InternalGetPanel(ScriptGUIWidget* self);
-		static uint8_t InternalGetDepth(ScriptGUIWidget* self);
 		static void InternalSetDepth(ScriptGUIWidget* self, uint8_t depth);
+		static uint8_t InternalGetDepth(ScriptGUIWidget* self);
 		static bool InternalInBounds(ScriptGUIWidget* self, __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop* position);
 		static void InternalGetBounds(ScriptGUIWidget* self, __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop* __output);
 	};
