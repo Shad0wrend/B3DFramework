@@ -61,12 +61,6 @@ namespace b3d
 		static const TSphere<T> kEmpty;
 		static const TSphere<T> kUnit;
 		static const TSphere<T> kInfinite;
-
-		/**
-		 * Indices that can be used for rendering a box constructed from 8 corner vertices, using AABox::Corner for
-		 * mapping.
-		 */
-		static const u32 kCubeIndices[36];
 	};
 
 	template<> const TSphere<float> TSphere<float>::kEmpty = TSphere(TVector3<float>(0.0f, 0.0f, 0.0f), 0.0f);
