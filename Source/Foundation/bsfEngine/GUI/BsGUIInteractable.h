@@ -134,7 +134,7 @@ namespace b3d
 		 */
 		virtual bool DoOnVirtualButtonEvent(const GUIVirtualButtonEvent& event);
 
-		void ChangeParentWidget(GUIWidget* widget) override;
+		void ChangeParentWidget(CGUIWidget* widget) override;
 
 		/** Notifies the system the state flag was added or removed. */
 		virtual void NotifyStateFlagsChanged();

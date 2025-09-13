@@ -22,7 +22,7 @@ namespace b3d
 		~GUIContextMenu();
 
 		/** Opens a context menu at the specified position relative to the provided widget. */
-		void Open(const GUIPhysicalPoint& position, GUIWidget& widget);
+		void Open(const GUIPhysicalPoint& position, CGUIWidget& widget);
 
 	private:
 		/**	Closes the context menu if open. */

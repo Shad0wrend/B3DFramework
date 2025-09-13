@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "BsGUIMeshBatches.h"
 #include "BsPrerequisites.h"
 #include "Renderer/BsRendererExtension.h"
 #include "GUI/BsGUIMouseEvent.h"
@@ -15,7 +16,6 @@
 #include "Utility/BsEvent.h"
 #include "Material/BsMaterialParam.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
-#include "GUI/BsGUIWidget.h"
 #include "RenderAPI/BsGpuDevice.h"
 
 namespace b3d
@@ -57,33 +57,33 @@ namespace b3d
 		/**	Container for a GUI widget. */
 		struct WidgetInfo
 		{
-			WidgetInfo(GUIWidget* _widget)
+			WidgetInfo(CGUIWidget* _widget)
 				: Widget(_widget)
 			{}
 
-			GUIWidget* Widget;
+			CGUIWidget* Widget;
 		};
 
 		/**	Container for data about a single GUI element and its widget. */
 		struct ElementInfo
 		{
-			ElementInfo(GUIInteractable* element, GUIWidget* widget)
+			ElementInfo(GUIInteractable* element, CGUIWidget* widget)
 				: Element(element), Widget(widget)
 			{}
 
 			GUIInteractable* Element;
-			GUIWidget* Widget;
+			CGUIWidget* Widget;
 		};
 
 		/**	Container for data about a single GUI element and its widget currently under the pointer. */
 		struct ElementInfoUnderPointer
 		{
-			ElementInfoUnderPointer(GUIInteractable* element, GUIWidget* widget)
+			ElementInfoUnderPointer(GUIInteractable* element, CGUIWidget* widget)
 				: Element(element), Widget(widget), UsesMouseOver(false), ReceivedMouseOver(false), IsHovering(false)
 			{}
 
 			GUIInteractable* Element;
-			GUIWidget* Widget;
+			CGUIWidget* Widget;
 			bool UsesMouseOver;
 			bool ReceivedMouseOver;
 			bool IsHovering;
@@ -92,12 +92,12 @@ namespace b3d
 		/**	Container for GUI element in focus. */
 		struct ElementFocusInfo
 		{
-			ElementFocusInfo(GUIInteractable* element, GUIWidget* widget, bool usesFocus)
+			ElementFocusInfo(GUIInteractable* element, CGUIWidget* widget, bool usesFocus)
 				: Element(element), Widget(widget), UsesFocus(usesFocus)
 			{}
 
 			GUIInteractable* Element;
-			GUIWidget* Widget;
+			CGUIWidget* Widget;
 			bool UsesFocus;
 		};
 
@@ -113,12 +113,12 @@ namespace b3d
 		~GUIManager();
 
 		/** Registers a newly created widget with the GUI manager. This should be called by every GUI widget on creation. */
-		void RegisterWidget(GUIWidget* widget);
+		void RegisterWidget(CGUIWidget* widget);
 
 		/**
 		 * Unregisters a GUI widget from the GUI manager. This should be called by every GUI widget before getting deleted.
 		 */
-		void UnregisterWidget(GUIWidget* widget);
+		void UnregisterWidget(CGUIWidget* widget);
 
 		/**	Called once per frame. */
 		void Update();
@@ -216,10 +216,10 @@ namespace b3d
 		SPtr<RenderWindow> GetBridgeWindow(const SPtr<RenderTexture>& target) const;
 
 		/** Returns all GUI elements that have input bridging set up and belong to the provided GUI widget. */
-		void GetBridgedElements(const GUIWidget* widget, TInlineArray<std::pair<const GUIInteractable*, SPtr<const RenderTarget>>, 4>& elements);
+		void GetBridgedElements(const CGUIWidget* widget, TInlineArray<std::pair<const GUIInteractable*, SPtr<const RenderTarget>>, 4>& elements);
 
 		/**	Returns the parent render window of the specified widget. */
-		const RenderWindow* GetWidgetWindow(const GUIWidget& widget) const;
+		const RenderWindow* GetWidgetWindow(const CGUIWidget& widget) const;
 
 	private:
 		friend class render::GUIRenderer;
@@ -295,7 +295,7 @@ namespace b3d
 		GUIMouseButton ButtonToGuiButton(PointerEventButton pointerButton) const;
 
 		/**	Converts screen coordinates to coordinates relative to the specified widget. */
-		GUIPhysicalPoint GetWidgetRelativePos(const GUIWidget* widget, const GUIPhysicalPoint& screenPos) const;
+		GUIPhysicalPoint GetWidgetRelativePos(const CGUIWidget* widget, const GUIPhysicalPoint& screenPos) const;
 
 		/**	Hides the tooltip if any is shown. */
 		void HideTooltip();

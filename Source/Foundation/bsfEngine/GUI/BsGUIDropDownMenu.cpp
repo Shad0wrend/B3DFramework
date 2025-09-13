@@ -81,7 +81,7 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCr
 	hitboxLayoutData.SetWidgetDepth(0);
 	hitboxLayoutData.SetPanelDepth(std::numeric_limits<i16>::min());
 	mFrontHitBox->SetLayoutData(hitboxLayoutData);
-	mFrontHitBox->ChangeParentWidget(GetInternalInternal());
+	mFrontHitBox->ChangeParentWidget(this);
 	mFrontHitBox->MarkLayoutAsDirty();
 
 	mBackHitBox = GUIDropDownHitBox::Create(false, true);
@@ -90,7 +90,7 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCr
 	backHitboxLayoutData.SetWidgetDepth(0);
 	backHitboxLayoutData.SetPanelDepth(std::numeric_limits<i16>::max());
 	mBackHitBox->SetLayoutData(backHitboxLayoutData);
-	mBackHitBox->ChangeParentWidget(GetInternalInternal());
+	mBackHitBox->ChangeParentWidget(this);
 	mBackHitBox->MarkLayoutAsDirty();
 
 	SPtr<Viewport> viewport = createInformation.Camera->GetViewport();
@@ -106,7 +106,7 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCr
 	captureHitboxLayoutData.SetWidgetDepth(0);
 	captureHitboxLayoutData.SetPanelDepth(std::numeric_limits<i16>::max());
 	mCaptureHitBox->SetLayoutData(captureHitboxLayoutData);
-	mCaptureHitBox->ChangeParentWidget(GetInternalInternal());
+	mCaptureHitBox->ChangeParentWidget(this);
 	mCaptureHitBox->MarkLayoutAsDirty();
 
 	mAdditionalCaptureBounds = createInformation.AdditionalBounds;

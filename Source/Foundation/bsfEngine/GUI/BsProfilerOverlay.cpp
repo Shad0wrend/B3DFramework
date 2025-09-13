@@ -32,10 +32,10 @@ public:
 	u32 CurIdx;
 	GUILayout& LabelLayout;
 	GUILayout& ContentLayout;
-	GUIWidget& Widget;
+	CGUIWidget& Widget;
 	Vector<ProfilerOverlay::BasicRow>& Rows;
 
-	BasicRowFiller(Vector<ProfilerOverlay::BasicRow>& _rows, GUILayout& _labelLayout, GUILayout& _contentLayout, GUIWidget& _widget)
+	BasicRowFiller(Vector<ProfilerOverlay::BasicRow>& _rows, GUILayout& _labelLayout, GUILayout& _contentLayout, CGUIWidget& _widget)
 		: CurIdx(0), LabelLayout(_labelLayout), ContentLayout(_contentLayout), Widget(_widget), Rows(_rows)
 	{}
 
@@ -132,10 +132,10 @@ public:
 	u32 CurIdx;
 	GUILayout& LabelLayout;
 	GUILayout& ContentLayout;
-	GUIWidget& Widget;
+	CGUIWidget& Widget;
 	Vector<ProfilerOverlay::PreciseRow>& Rows;
 
-	PreciseRowFiller(Vector<ProfilerOverlay::PreciseRow>& _rows, GUILayout& _labelLayout, GUILayout& _contentLayout, GUIWidget& _widget)
+	PreciseRowFiller(Vector<ProfilerOverlay::PreciseRow>& _rows, GUILayout& _labelLayout, GUILayout& _contentLayout, CGUIWidget& _widget)
 		: CurIdx(0), LabelLayout(_labelLayout), ContentLayout(_contentLayout), Widget(_widget), Rows(_rows)
 	{}
 
@@ -232,10 +232,10 @@ public:
 	u32 CurIdx;
 	GUILayout& LabelLayout;
 	GUILayout& ContentLayout;
-	GUIWidget& Widget;
+	CGUIWidget& Widget;
 	Vector<ProfilerOverlay::GPUSampleRow>& Rows;
 
-	GPUSampleRowFiller(Vector<ProfilerOverlay::GPUSampleRow>& rows, GUILayout& labelLayout, GUILayout& contentLayout, GUIWidget& _widget)
+	GPUSampleRowFiller(Vector<ProfilerOverlay::GPUSampleRow>& rows, GUILayout& labelLayout, GUILayout& contentLayout, CGUIWidget& _widget)
 		: CurIdx(0), LabelLayout(labelLayout), ContentLayout(contentLayout), Widget(_widget), Rows(rows)
 	{}
 
@@ -654,7 +654,7 @@ void ProfilerOverlay::UpdateCpuSampleContents(const ProfilerReport& mainThreadRe
 		u32 Depth;
 	};
 
-	BasicRowFiller basicRowFiller(mBasicRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget->GetInternalInternal());
+	BasicRowFiller basicRowFiller(mBasicRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget);
 	Stack<TodoBasic> todoBasic;
 
 	const CPUProfilerBasicSamplingEntry* basicRootEntries[kNumRootEntries];
@@ -683,7 +683,7 @@ void ProfilerOverlay::UpdateCpuSampleContents(const ProfilerReport& mainThreadRe
 		}
 	}
 
-	PreciseRowFiller preciseRowFiller(mPreciseRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget->GetInternalInternal());
+	PreciseRowFiller preciseRowFiller(mPreciseRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget);
 	Stack<TodoPrecise> todoPrecise;
 
 	const CPUProfilerPreciseSamplingEntry* preciseRootEntries[kNumRootEntries];
@@ -754,9 +754,9 @@ void ProfilerOverlay::UpdateGpuSampleContents(const GPUProfileSample& frameSampl
 	mGPUIndexBufferBindsLbl->SetContent(mGPUIndexBufferBindsStr);
 
 	GPUSampleRowFiller sampleRowFillers[kGpuNumSampleColumns] = {
-		GPUSampleRowFiller(mGPUSampleRows[0], *mGPULayoutSampleLabels[0], *mGPULayoutSampleContents[0], *mWidget->GetInternalInternal()),
-		GPUSampleRowFiller(mGPUSampleRows[1], *mGPULayoutSampleLabels[1], *mGPULayoutSampleContents[1], *mWidget->GetInternalInternal()),
-		GPUSampleRowFiller(mGPUSampleRows[2], *mGPULayoutSampleLabels[2], *mGPULayoutSampleContents[2], *mWidget->GetInternalInternal())
+		GPUSampleRowFiller(mGPUSampleRows[0], *mGPULayoutSampleLabels[0], *mGPULayoutSampleContents[0], *mWidget),
+		GPUSampleRowFiller(mGPUSampleRows[1], *mGPULayoutSampleLabels[1], *mGPULayoutSampleContents[1], *mWidget),
+		GPUSampleRowFiller(mGPUSampleRows[2], *mGPULayoutSampleLabels[2], *mGPULayoutSampleContents[2], *mWidget)
 	};
 
 	struct Todo

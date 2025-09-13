@@ -6,11 +6,12 @@
 #include "GUI/BsGUISpace.h"
 #include "GUI/BsGUIInteractable.h"
 #include "Error/BsException.h"
-#include "GUI/BsGUIWidget.h"
+#include "GUI/BsCGUIWidget.h"
 #include "BsGUIManager.h"
 #include "BsGUIUtility.h"
 #include "StyleSheet/BsGUIStyleSheet.h"
 #include "Reflection/BsRTTIType.h"
+#include "Scene/BsSceneObject.h"
 
 using namespace b3d;
 
@@ -241,7 +242,7 @@ GUIPhysicalArea GUIElement::CalculateScreenBounds() const
 	GUIPhysicalArea area = CalculateAbsoluteBounds();
 	if(mParentWidget)
 	{
-		const Matrix4& widgetTfrm = mParentWidget->GetWorldTfrm();
+		const Matrix4& widgetTfrm = mParentWidget->SceneObject()->GetTransform().GetMatrix();
 		const GUIPhysicalPoint elementPosition = area.GetPosition();
 
 		const Vector4 elementPosition4D = widgetTfrm.MultiplyAffine(Vector4((float)elementPosition.X, (float)elementPosition.Y, 0.0f, 1.0f));
@@ -733,7 +734,7 @@ void GUIElement::DestroyChildElements()
 	B3D_ASSERT(mChildren.Empty());
 }
 
-void GUIElement::ChangeParentWidget(GUIWidget* widget)
+void GUIElement::ChangeParentWidget(CGUIWidget* widget)
 {
 	B3D_ASSERT(!IsPendingDestroy());
 

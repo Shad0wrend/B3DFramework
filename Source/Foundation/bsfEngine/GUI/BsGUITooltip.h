@@ -23,7 +23,7 @@ namespace b3d
 		 * @param[in]	position		Position of the tooltip, relative to the overlaid widget position.
 		 * @param[in]	text			Text to display in the tooltip.
 		 */
-		GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidget, const GUIPhysicalPoint& position, const String& text);
+		GUITooltip(const HSceneObject& parent, const CGUIWidget& overlaidWidget, const GUIPhysicalPoint& position, const String& text);
 		~GUITooltip() = default;
 
 	private:

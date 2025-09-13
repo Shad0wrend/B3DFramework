@@ -31,7 +31,7 @@ void GUIInputCaret::UpdateSprite()
 	createSpriteInformation.Size = Size2I(1, (i32)GetCaretHeight());
 	createSpriteInformation.Image = GUIManager::Instance().GetCaretTexture();
 
-	GUIWidget* widget = nullptr;
+	CGUIWidget* widget = nullptr;
 	if(mElement != nullptr)
 		widget = mElement->GetParentWidget();
 

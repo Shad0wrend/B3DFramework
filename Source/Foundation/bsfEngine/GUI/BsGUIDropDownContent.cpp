@@ -4,7 +4,7 @@
 #include "GUI/BsGUITexture.h"
 #include "GUI/BsGUIButton.h"
 #include "GUI/BsGUILabel.h"
-#include "GUI/BsGUIWidget.h"
+#include "GUI/BsCGUIWidget.h"
 #include "GUI/BsGUIToggle.h"
 #include "GUI/BsGUIMouseEvent.h"
 #include "GUI/BsGUICommandEvent.h"
@@ -160,7 +160,7 @@ GUILogicalUnit GUIDropDownContent::GetElementHeight(u32 idx) const
 {
 	static constexpr GUILogicalUnit kDefaultHeight = 16; // Height to use when no style available
 
-	GUIWidget* const widget = GetParentWidget();
+	CGUIWidget* const widget = GetParentWidget();
 	if(widget == nullptr)
 		return kDefaultHeight;
 
