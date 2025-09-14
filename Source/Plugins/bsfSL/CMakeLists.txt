@@ -24,7 +24,7 @@ endif()
 # Ensure pre-built binary dependencies are up to date
 if(B3D_USE_BUNDLED_LIBRARIES)
 	set(BS_XSC_PREBUILT_DEPENDENCY_VERSION 7) # Tick this when you change the binaries
-	check_and_update_binary_deps(bsfDep_XShaderCompiler XShaderCompiler ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/XShaderCompiler ${BS_XSC_PREBUILT_DEPENDENCY_VERSION})
+	B3DCheckAndUpdatePrebuiltDependencies(bsfDep_XShaderCompiler ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/XShaderCompiler XShaderCompiler ${BS_XSC_PREBUILT_DEPENDENCY_VERSION})
 endif()
 
 # Source files and their filters

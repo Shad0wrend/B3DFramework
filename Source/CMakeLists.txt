@@ -52,7 +52,7 @@ set(B3D_USE_BUNDLED_LIBRARIES ON CACHE BOOL "Use and install bundled libraries")
 
 # Ensure dependencies are up to date
 ## Check prebuilt dependencies that are downloaded in a .zip
-check_and_update_binary_deps(bsfDependencies Dependencies ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/ ${B3D_FRAMEWORK_PREBUILT_DEPENDENCIES_VERSION})
+B3DCheckAndUpdatePrebuiltDependencies(bsfDependencies ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/ Dependencies ${B3D_FRAMEWORK_PREBUILT_DEPENDENCIES_VERSION})
 
 ## Check dependencies built from source
 if(WIN32)
