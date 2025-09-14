@@ -46,14 +46,7 @@ set(B3D_UPLOAD_ASSETS OFF CACHE BOOL "Only relevant if BUILD_ASSETS is true. Whe
 
 set(B3D_USE_DOTNETCORE ON CACHE BOOL "If enabled, uses new .NET Core 9.0 with support for C# 12. Otherwise uses .NET Framework 4.5 with support for C# 5.")
 
-set(B3D_ENABLE_COTIRE false CACHE BOOL "Enable cotire's precompiled headers and unity build support (experimental).")
-
 set(B3D_EXPERIMENTAL_ENABLE_NETWORKING OFF CACHE BOOL "If true, enable experimental networking support.")
-
-# Add cotire if enabled
-if(B3D_ENABLE_COTIRE)
-	include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/cotire.cmake)
-endif()
 
 set(B3D_USE_BUNDLED_LIBRARIES ON CACHE BOOL "Use and install bundled libraries")
 
@@ -133,10 +126,6 @@ endif()
 ## Generate config files
 configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/BsEngineConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/bsfEngine/BsEngineConfig.h")
 configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/BsFrameworkConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/bsfUtility/BsFrameworkConfig.h")
-
-# Set files disallowed in precompiled headers
-set_directory_properties(PROPERTIES
-    COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Sub-directories
 ## Foundation

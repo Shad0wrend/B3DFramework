@@ -21,5 +21,3 @@ set_property(TARGET bsfNullPhysics PROPERTY FOLDER Plugins)
 if(B3D_PHYSICS_BACKEND MATCHES "Null")
 	B3DSetUpPostBuildAndInstallSteps(bsfNullPhysics)
 endif()
-
-conditional_cotire(bsfNullPhysics)

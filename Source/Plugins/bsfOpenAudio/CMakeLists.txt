@@ -42,5 +42,3 @@ set_property(TARGET bsfOpenAudio PROPERTY FOLDER Plugins)
 if(B3D_AUDIO_BACKEND MATCHES "OpenAudio")
 	B3DSetUpPostBuildAndInstallSteps(bsfOpenAudio)
 endif()
-
-conditional_cotire(bsfOpenAudio)

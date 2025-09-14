@@ -35,5 +35,3 @@ set_property(TARGET bsfFMOD PROPERTY FOLDER Plugins)
 if(B3D_AUDIO_BACKEND MATCHES "FMOD")
 	B3DSetUpPostBuildAndInstallSteps(bsfFMOD)
 endif()
-
-conditional_cotire(bsfFMOD)

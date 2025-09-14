@@ -33,5 +33,3 @@ set_property(TARGET bsfPhysX PROPERTY FOLDER Plugins)
 if(B3D_PHYSICS_BACKEND MATCHES "PhysX")
 	B3DSetUpPostBuildAndInstallSteps(bsfPhysX)
 endif()
-	
-conditional_cotire(bsfPhysX)

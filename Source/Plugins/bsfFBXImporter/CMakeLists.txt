@@ -30,5 +30,3 @@ set_property(TARGET bsfFBXImporter PROPERTY FOLDER Plugins)
 
 # Install
 B3DSetUpPostBuildAndInstallSteps(bsfFBXImporter)
-
-conditional_cotire(bsfFBXImporter)

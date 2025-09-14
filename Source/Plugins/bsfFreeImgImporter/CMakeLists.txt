@@ -28,5 +28,3 @@ set_property(TARGET bsfFreeImgImporter PROPERTY FOLDER Plugins)
 
 # Install
 B3DSetUpPostBuildAndInstallSteps(bsfFreeImgImporter)
-
-conditional_cotire(bsfFreeImgImporter)

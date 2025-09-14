@@ -56,5 +56,3 @@ endif()
 
 # IDE specific
 set_property(TARGET bsfMono PROPERTY FOLDER Script)
-
-conditional_cotire(bsfMono)

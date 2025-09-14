@@ -83,5 +83,3 @@ set_property(TARGET bsfVulkanRenderAPI PROPERTY FOLDER Plugins)
 if(B3D_RENDER_BACKEND MATCHES "Vulkan" OR B3D_BUILD_ALL_RENDER_BACKENDS)
 	B3DSetUpPostBuildAndInstallSteps(bsfVulkanRenderAPI)
 endif()
-
-conditional_cotire(bsfVulkanRenderAPI)

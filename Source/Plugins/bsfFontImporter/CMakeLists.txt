@@ -28,5 +28,3 @@ set_property(TARGET bsfFontImporter PROPERTY FOLDER Plugins)
 
 # Install
 B3DSetUpPostBuildAndInstallSteps(bsfFontImporter)
-
-conditional_cotire(bsfFontImporter)

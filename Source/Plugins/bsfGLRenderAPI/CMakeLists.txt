@@ -49,9 +49,3 @@ set_property(TARGET bsfGLRenderAPI PROPERTY FOLDER Plugins)
 if(B3D_RENDER_BACKEND MATCHES "OpenGL" OR B3D_BUILD_ALL_RENDER_BACKENDS)
 	B3DSetUpPostBuildAndInstallSteps(bsfGLRenderAPI)
 endif()
-
-# Precompiled headers (Cotire)
-set_directory_properties(PROPERTIES
-    COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../;${X11_INCLUDE_DIR}/X11;${OPENGL_INCLUDE_DIR}/GL")
-
-conditional_cotire(bsfGLRenderAPI)
