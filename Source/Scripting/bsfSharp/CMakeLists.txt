@@ -1,8 +1,8 @@
 # Generate the CS version information class for framework and engine
 if(B3D_IS_ENGINE)
-	configure_file("${BSF_SOURCE_DIR}/Scripting/bsfSharp/EngineVersion.cs.in" "${BSF_SOURCE_DIR}/Scripting/bsfSharp/EngineVersion.cs")
+	configure_file("${B3D_FRAMEWORK_SOURCE_DIRECTORY}/Scripting/bsfSharp/EngineVersion.cs.in" "${B3D_FRAMEWORK_SOURCE_DIRECTORY}/Scripting/bsfSharp/EngineVersion.cs")
 endif()
-configure_file("${BSF_SOURCE_DIR}/Scripting/bsfSharp/FrameworkVersion.cs.in" "${BSF_SOURCE_DIR}/Scripting/bsfSharp/FrameworkVersion.cs")
+configure_file("${B3D_FRAMEWORK_SOURCE_DIRECTORY}/Scripting/bsfSharp/FrameworkVersion.cs.in" "${B3D_FRAMEWORK_SOURCE_DIRECTORY}/Scripting/bsfSharp/FrameworkVersion.cs")
 
 # Generate the CS project file
 if(B3D_IS_ENGINE)

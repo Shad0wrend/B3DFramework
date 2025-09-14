@@ -8,7 +8,7 @@
 B3DStartFindPackage(ogg)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
-	set(ogg_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/libogg CACHE PATH "")
+	set(ogg_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Dependencies/libogg CACHE PATH "")
 endif()
 B3DPopulateDefaultPackageSearchPaths(ogg)
 

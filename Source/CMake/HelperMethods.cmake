@@ -94,16 +94,16 @@ endfunction()
 function(B3DRegisterOptionalFrameworkSubdirectories)
 	# Grab examples projects
 	if(B3D_BUILD_EXAMPLES)
-		find_path(EXAMPLE_SUBMODULE_SOURCES "CMakeLists.txt" PATHS "${BSF_DIRECTORY}/Examples" NO_DEFAULT_PATH NO_CACHE)
+		find_path(EXAMPLE_SUBMODULE_SOURCES "CMakeLists.txt" PATHS "${B3D_FRAMEWORK_ROOT_DIRECTORY}/Examples" NO_DEFAULT_PATH NO_CACHE)
 		if(NOT EXAMPLE_SUBMODULE_SOURCES)
 			execute_process(COMMAND git submodule update
 					--init
 					-- Examples
-					WORKING_DIRECTORY ${BSF_DIRECTORY})
+					WORKING_DIRECTORY ${B3D_FRAMEWORK_ROOT_DIRECTORY})
 		endif()
 		mark_as_advanced(EXAMPLE_SUBMODULE_SOURCES)
 
-		add_subdirectory(${BSF_DIRECTORY}/Examples)
+		add_subdirectory(${B3D_FRAMEWORK_ROOT_DIRECTORY}/Examples)
 	endif()
 
 	# Grab code-generator project
@@ -123,11 +123,11 @@ function(B3DRegisterOptionalFrameworkSubdirectories)
 
 	# Script binding generation script
 	if(((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE) AND B3D_BUILD_CODEGEN)
-		include(${BSF_SOURCE_DIR}/CMake/GenerateScriptBindings.cmake)
+		include(${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/GenerateScriptBindings.cmake)
 	endif()
 
 	# Stock icon generation script
-	include(${BSF_SOURCE_DIR}/CMake/StockIcons.cmake)
+	include(${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/StockIcons.cmake)
 endfunction()
 
 function(add_prefix var prefix)
@@ -756,38 +756,26 @@ ENDMACRO()
 ##################### Built-in asset import and versioning ############################
 #######################################################################################
 
-function(check_for_changes2 _FOLDER _FILTER _TIMESTAMP _IS_CHANGED)
-	file(GLOB_RECURSE ALL_FILES "${_FOLDER}/${_FILTER}")
-	foreach(CUR_FILE ${ALL_FILES})
-		file(TIMESTAMP ${CUR_FILE} FILE_TIMESTAMP %s)
-		if(${FILE_TIMESTAMP} GREATER ${_TIMESTAMP})
-			set(${_IS_CHANGED} ON PARENT_SCOPE)
-			return()
-		endif()
-	endforeach()
-	
-	set(${_IS_CHANGED} OFF PARENT_SCOPE)
-endfunction()
-
-function(check_for_changes _FOLDER _FILTER _TIMESTAMP_FILE IS_CHANGED)
-	file(TIMESTAMP ${_TIMESTAMP_FILE} _TIMESTAMP %s)
-	check_for_changes2(${_FOLDER} ${_FILTER} ${_TIMESTAMP} IS_CHANGED_FOLDER)
-	set(${IS_CHANGED} ${IS_CHANGED_FOLDER} PARENT_SCOPE)
-endfunction()
-
-function(update_builtin_assets ASSET_PREFIX ASSET_FOLDER FOLDER_NAME ASSET_VERSION CLEAR_MANIFEST)
+# Downloads assets with the provided version and unpacks them to the assets folder, overwriting existing assets
+#
+# @param 	assetPrefix		Prefix identifying the asset pack we're downloading (e.g. 'Framework', 'Editor', etc.)
+# @param 	assetFolder		Folder in which to unpack the assets, e.g. '${PROJECT_SOURCE_DIR}/Data'
+# @param 	folderName 		Name of the folder in the downloaded package in which assets are stored. Usually the same
+#							as the last folder in @p assetFolder (e.g. 'Data')
+# @param	assetVersion	Version of the assets to download.
+function(B3DUpdateBuiltinAssets assetPrefix assetFolder folderName assetVersion)
 	# Clean and create a temporary folder
 	execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${PROJECT_SOURCE_DIR}/Temp)	
 	execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/Temp)	
 	
-	set(ASSET_DEPENDENCIES_URL ${BS_BINARY_DEP_WEBSITE}/${ASSET_PREFIX}Data_Master_${ASSET_VERSION}.zip)
-	file(DOWNLOAD ${ASSET_DEPENDENCIES_URL} ${PROJECT_SOURCE_DIR}/Temp/Dependencies.zip
+	set(assetDependenciesURL ${BS_BINARY_DEP_WEBSITE}/${assetPrefix}Data_Master_${assetVersion}.zip)
+	file(DOWNLOAD ${assetDependenciesURL} ${PROJECT_SOURCE_DIR}/Temp/Dependencies.zip
 		SHOW_PROGRESS
 		STATUS DOWNLOAD_STATUS)
 		
 	list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
 	if(NOT STATUS_CODE EQUAL 0)
-		message(FATAL_ERROR "Builtin assets failed to download from URL: ${ASSET_DEPENDENCIES_URL}")
+		message(FATAL_ERROR "Builtin assets failed to download from URL: ${assetDependenciesURL}")
 	endif()
 	
 	message(STATUS "Extracting files. Please wait...")
@@ -797,30 +785,32 @@ function(update_builtin_assets ASSET_PREFIX ASSET_FOLDER FOLDER_NAME ASSET_VERSI
 	)
 	
 	# Copy files
-	execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/Temp/${FOLDER_NAME} ${ASSET_FOLDER})
+	execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/Temp/${folderName} ${assetFolder})
 	
 	# Make sure timestamp modify date/times are newer (avoids triggering reimport)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E touch ${ASSET_FOLDER}/Timestamp.asset )
-	
-	# Make sure resource manifests get rebuilt
-	if(CLEAR_MANIFEST)
-		execute_process(COMMAND ${CMAKE_COMMAND} -E remove ${ASSET_FOLDER}/ResourceManifest.asset)
-	endif()
-	
+	execute_process(COMMAND ${CMAKE_COMMAND} -E touch ${assetFolder}/Timestamp.asset )
+
 	# Clean up
 	execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${PROJECT_SOURCE_DIR}/Temp)	
 endfunction()
 
-function(check_and_update_builtin_assets ASSET_PREFIX ASSET_FOLDER FOLDER_NAME ASSET_VERSION CLEAR_MANIFEST)
-	set(BUILTIN_ASSETS_VERSION_FILE ${ASSET_FOLDER}/.version)
-	if(NOT EXISTS ${BUILTIN_ASSETS_VERSION_FILE})
-		message(STATUS "Builtin assets for '${ASSET_PREFIX}' are missing. Downloading package...")
-		update_builtin_assets(${ASSET_PREFIX} ${ASSET_FOLDER} ${FOLDER_NAME} ${ASSET_VERSION} ${CLEAR_MANIFEST})	
+# Checks the current version of the builtin assets, and performs update of the assets if out of date.
+#
+# @param 	assetPrefix		Prefix identifying the asset pack we're downloading (e.g. 'Framework', 'Editor', etc.)
+# @param 	assetFolder		Folder in which to unpack the assets, e.g. '${PROJECT_SOURCE_DIR}/Data'
+# @param 	folderName 		Name of the folder in the downloaded package in which assets are stored. Usually the same
+#							as the last folder in @p assetFolder (e.g. 'Data')
+# @param	assetVersion	Version of the assets to download.
+function(B3DUpdateBuiltinAssetsIfNeeded assetPrefix assetFolder folderName assetVersion)
+	set(builtinAssetVersionFile ${assetFolder}/.version)
+	if(NOT EXISTS ${builtinAssetVersionFile})
+		message(STATUS "Builtin assets for '${assetPrefix}' are missing. Downloading package...")
+		B3DUpdateBuiltinAssets(${assetPrefix} ${assetFolder} ${folderName} ${assetVersion})
 	else()
-		file (STRINGS ${BUILTIN_ASSETS_VERSION_FILE} CURRENT_BUILTIN_ASSET_VERSION)
-		if(${ASSET_VERSION} GREATER ${CURRENT_BUILTIN_ASSET_VERSION})
-			message(STATUS "Your builtin asset package for '${ASSET_PREFIX}' is out of date. Downloading latest package...")
-			update_builtin_assets(${ASSET_PREFIX} ${ASSET_FOLDER} ${FOLDER_NAME} ${ASSET_VERSION} ${CLEAR_MANIFEST})	
+		file (STRINGS ${builtinAssetVersionFile} currentBuiltinAssetVersion)
+		if(${assetVersion} GREATER ${currentBuiltinAssetVersion})
+			message(STATUS "Your builtin asset package for '${assetPrefix}' is out of date. Downloading latest package...")
+			B3DUpdateBuiltinAssets(${assetPrefix} ${assetFolder} ${folderName} ${assetVersion})
 		endif()
 	endif()
 endfunction()
@@ -838,7 +828,7 @@ function(add_run_asset_import_target _PREFIX _FOLDER _WORKING_DIR _ARGS)
 		set(RunAssetImport_WORKING_DIR ${_WORKING_DIR})
 		
 		configure_file(
-			${BSF_SOURCE_DIR}/CMake/Scripts/RunAssetImport.cmake.in
+			${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/Scripts/RunAssetImport.cmake.in
 			${CMAKE_CURRENT_BINARY_DIR}/RunAssetImport_${_PREFIX}.cmake
 			@ONLY)
 		
@@ -850,14 +840,14 @@ function(add_run_asset_import_target _PREFIX _FOLDER _WORKING_DIR _ARGS)
 endfunction()
 
 function(add_upload_assets_target _PREFIX _NAME _FOLDER _FILES)
-	set(UploadAssets_FTP_CREDENTIALS_FILE ${BS_FTP_CREDENTIALS_FILE})
+	set(UploadAssets_FTP_CREDENTIALS_FILE ${B3D_FTP_CREDENTIALS_FILE})
 	set(UploadAssets_INPUT_FOLDER ${_FOLDER})
 	set(UploadAssets_INPUT_FILES ${_FILES})
 	set(UploadAssets_ARCHIVE_NAME ${_NAME})
 	set(UploadAssets_TEMP_FOLDER ${PROJECT_SOURCE_DIR}/Temp)
 
 	configure_file(
-		${BSF_SOURCE_DIR}/CMake/Scripts/UploadAssets.cmake.in
+		${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/Scripts/UploadAssets.cmake.in
 		${CMAKE_CURRENT_BINARY_DIR}/UploadAssets_${_PREFIX}.cmake
 		@ONLY)
 	

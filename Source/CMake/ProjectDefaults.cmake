@@ -1,9 +1,9 @@
-set (BSF_SOURCE_DIR ${BSF_DIRECTORY}/Source)
-set (APP_ROOT_DIR ${BSF_DIRECTORY})
+set (B3D_FRAMEWORK_SOURCE_DIRECTORY ${B3D_FRAMEWORK_ROOT_DIRECTORY}/Source)
+set (APP_ROOT_DIR ${B3D_FRAMEWORK_ROOT_DIRECTORY})
 set (B3D_IS_ENGINE 0)
 
-include(${BSF_SOURCE_DIR}/CMake/Properties.cmake)
-include(${BSF_SOURCE_DIR}/CMake/FindPackageOrBuild.cmake)
-include(${BSF_SOURCE_DIR}/CMake/HelperMethods.cmake)
+include(${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/Properties.cmake)
+include(${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/FindPackageOrBuild.cmake)
+include(${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/HelperMethods.cmake)
 
-add_subdirectory(${BSF_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/bsf)
+add_subdirectory(${B3D_FRAMEWORK_SOURCE_DIRECTORY} ${CMAKE_CURRENT_BINARY_DIR}/bsf)

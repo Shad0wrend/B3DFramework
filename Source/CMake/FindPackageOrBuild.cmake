@@ -54,7 +54,7 @@ function(find_package_or_build DEPENDENCY_NAME DEPENDENCY_INCLUDE_PATH BUILD_OPT
 		build_dependency(${DEPENDENCY_NAME} Debug "${BUILD_OPTIONS}")
 		
 		# Update the dependencies version
-		file(WRITE ${DEPENDENCIES_BUILD_DIR}/.version ${BS_SRC_DEPENDENCIES_VERSION})
+		file(WRITE ${DEPENDENCIES_BUILD_DIR}/.version ${B3D_SOURCE_DEPENDENCIES_VERSION})
 		
 		# Now try finding the package again, this time it's required
 		find_package(${DEPENDENCY_NAME} REQUIRED)

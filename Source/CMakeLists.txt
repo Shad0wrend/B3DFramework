@@ -6,7 +6,7 @@ set (B3D_FRAMEWORK_CURRENT_RELEASE_YEAR 2019)
 
 set (BS_FRAMEWORK_PREBUILT_DEPENDENCIES_VERSION 12)
 set (BS_FRAMEWORK_SRC_DEPENDENCIES_VERSION 1)
-set (BS_FRAMEWORK_BUILTIN_ASSETS_VERSION 7)
+set (B3D_FRAMEWORK_BUILTIN_ASSETS_VERSION 7)
 
 # Options
 set(B3D_AUDIO_BACKEND "OpenAudio" CACHE STRING "Audio backend to use.")
@@ -52,18 +52,18 @@ set(B3D_EXPERIMENTAL_ENABLE_NETWORKING OFF CACHE BOOL "If true, enable experimen
 
 # Add cotire if enabled
 if(B3D_ENABLE_COTIRE)
-	include(${BSF_SOURCE_DIR}/CMake/cotire.cmake)
+	include(${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/cotire.cmake)
 endif()
 
 set(B3D_USE_BUNDLED_LIBRARIES ON CACHE BOOL "Use and install bundled libraries")
 
 # Ensure dependencies are up to date
 ## Check prebuilt dependencies that are downloaded in a .zip
-check_and_update_binary_deps(bsfDependencies Dependencies ${BSF_SOURCE_DIR}/../Dependencies/ ${BS_FRAMEWORK_PREBUILT_DEPENDENCIES_VERSION})
+check_and_update_binary_deps(bsfDependencies Dependencies ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Dependencies/ ${BS_FRAMEWORK_PREBUILT_DEPENDENCIES_VERSION})
 
 ## Check dependencies built from source
 if(WIN32)
-	set(SOURCE_DEP_BUILD_DIR ${BSF_SOURCE_DIR}/../Dependencies/Build)
+	set(SOURCE_DEP_BUILD_DIR ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Dependencies/Build)
 	set(SOURCE_DEP_BUILD_VERSION_FILE ${SOURCE_DEP_BUILD_DIR}/.version)
 	if(EXISTS ${SOURCE_DEP_BUILD_VERSION_FILE})
 		file (STRINGS ${SOURCE_DEP_BUILD_VERSION_FILE} CURRENT_SOURCE_DEP_VERSION)
@@ -80,7 +80,7 @@ if(WIN32)
 endif()
 
 ## Check data dependencies
-check_and_update_builtin_assets(bsf ${BSF_SOURCE_DIR}/../Data/Raw Raw ${BS_FRAMEWORK_BUILTIN_ASSETS_VERSION} NO)
+B3DUpdateBuiltinAssetsIfNeeded(bsf ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Data/Raw Raw ${B3D_FRAMEWORK_BUILTIN_ASSETS_VERSION})
 
 # Config file
 ## Note: Must happen before script binding generation
@@ -131,8 +131,8 @@ else()
 endif()
 
 ## Generate config files
-configure_file("${BSF_SOURCE_DIR}/CMake/BsEngineConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/bsfEngine/BsEngineConfig.h")
-configure_file("${BSF_SOURCE_DIR}/CMake/BsFrameworkConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/bsfUtility/BsFrameworkConfig.h")
+configure_file("${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/BsEngineConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/bsfEngine/BsEngineConfig.h")
+configure_file("${B3D_FRAMEWORK_SOURCE_DIRECTORY}/CMake/BsFrameworkConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/bsfUtility/BsFrameworkConfig.h")
 
 # Set files disallowed in precompiled headers
 set_directory_properties(PROPERTIES
@@ -284,33 +284,33 @@ if(NOT B3D_IS_ENGINE)
 	install(TARGETS bsfImportTool RUNTIME DESTINATION bin)	
 endif()
 	
-set(BS_FTP_CREDENTIALS_FILE "${PROJECT_SOURCE_DIR}/../ftp_credentials" CACHE STRING "The location containing the FTP server credentials to use for uploading packages. The file is expected to contain three lines: URL/Username/Password, in that order.")
-mark_as_advanced(BS_FTP_CREDENTIALS_FILE)
+set(B3D_FTP_CREDENTIALS_FILE "${PROJECT_SOURCE_DIR}/../ftp_credentials" CACHE STRING "The location containing the FTP server credentials to use for uploading packages. The file is expected to contain three lines: URL/Username/Password, in that order.")
+mark_as_advanced(B3D_FTP_CREDENTIALS_FILE)
 
 if(${B3D_INCLUDE_ASSET_PACKAGING_SCRIPTS})
-	add_run_asset_import_target(bsfBuiltinAssets ${BSF_SOURCE_DIR}/../Data/Raw ${BSF_SOURCE_DIR}/../Data "")
-	add_upload_assets_target(bsfBuiltinAssets "bsfCompiledData_Master" ${BSF_SOURCE_DIR}/../Data Raw/DataPackageContents.txt)
-	add_upload_assets_target(bsfDocImages "bsfDocImagesData_Master" ${BSF_SOURCE_DIR}/../Documentation DataPackageContents.txt)
+	add_run_asset_import_target(bsfBuiltinAssets ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Data/Raw ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Data "")
+	add_upload_assets_target(bsfBuiltinAssets "bsfCompiledData_Master" ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Data Raw/DataPackageContents.txt)
+	add_upload_assets_target(bsfDocImages "bsfDocImagesData_Master" ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Documentation DataPackageContents.txt)
 endif()
 
-set(COMPILED_ASSETS_VERSION_FILE ${BSF_SOURCE_DIR}/../Data/.reqversion)
-file (STRINGS ${COMPILED_ASSETS_VERSION_FILE} COMPILED_ASSETS_VERSION)
-check_and_update_builtin_assets(bsfCompiled ${BSF_SOURCE_DIR}/../Data Data ${COMPILED_ASSETS_VERSION} NO)
+set(B3D_FRAMEWORK_COMPILED_ASSETS_VERSION_FILE ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Data/.reqversion)
+file (STRINGS ${B3D_FRAMEWORK_COMPILED_ASSETS_VERSION_FILE} B3D_FRAMEWORK_COMPILED_ASSETS_VERSION)
+B3DUpdateBuiltinAssetsIfNeeded(bsfCompiled ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Data Data ${B3D_FRAMEWORK_COMPILED_ASSETS_VERSION})
 
-set(DOC_IMAGES_VERSION_FILE ${BSF_SOURCE_DIR}/../Documentation/.reqversion)
-file (STRINGS ${DOC_IMAGES_VERSION_FILE} DOC_IMAGES_VERSION)
-check_and_update_builtin_assets(bsfDocImages ${BSF_SOURCE_DIR}/../Documentation Documentation ${DOC_IMAGES_VERSION} NO)
+set(B3D_DOCUMENTATION_ASSETS_VERSION_FILE ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Documentation/.reqversion)
+file (STRINGS ${B3D_DOCUMENTATION_ASSETS_VERSION_FILE} B3D_DOCUMENTATION_ASSETS_VERSION)
+B3DUpdateBuiltinAssetsIfNeeded(bsfDocImages ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Documentation Documentation ${B3D_DOCUMENTATION_ASSETS_VERSION})
 
 if(NOT B3D_IS_ENGINE)
-	set(DATA_DST_DIR bin)
+	set(B3D_ASSETS_INSTALL_FOLDER bin)
 else()
-	set(DATA_DST_DIR .)
+	set(B3D_ASSETS_INSTALL_FOLDER .)
 endif()
 
-## Install data
+## Install assets
 install(
 	DIRECTORY ../Data
-	DESTINATION ${DATA_DST_DIR}
+	DESTINATION ${B3D_ASSETS_INSTALL_FOLDER}
 	PATTERN "../Data/Raw" EXCLUDE
 	PATTERN ".version" EXCLUDE
 	PATTERN ".reqversion" EXCLUDE
@@ -319,10 +319,10 @@ install(
 # TODO: These should be moved into their own folder for easier copy
 install(
 	DIRECTORY ../Data/Raw/Shaders
-	DESTINATION ${DATA_DST_DIR}/Data/Raw
+	DESTINATION ${B3D_ASSETS_INSTALL_FOLDER}/Data/Raw
 )
 
 install(
 	FILES ../Data/Raw/GUI.css
-	DESTINATION ${DATA_DST_DIR}/Data/Raw
+	DESTINATION ${B3D_ASSETS_INSTALL_FOLDER}/Data/Raw
 )

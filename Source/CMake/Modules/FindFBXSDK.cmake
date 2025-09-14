@@ -8,7 +8,7 @@
 B3DStartFindPackage(FBXSDK)
 
 # Always use bundled version as package is not easily available
-set(FBXSDK_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/FBXSDK CACHE PATH "")
+set(FBXSDK_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Dependencies/FBXSDK CACHE PATH "")
 B3DPopulateDefaultPackageSearchPaths(FBXSDK)
 
 if(WIN32)

@@ -8,7 +8,7 @@
 B3DStartFindPackage(LibICU)
 
 if(B3D_USE_BUNDLED_LIBRARIES)
-	set(LibICU_INSTALL_DIR ${BSF_SOURCE_DIR}/../Dependencies/libICU CACHE PATH "")
+	set(LibICU_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_DIRECTORY}/../Dependencies/libICU CACHE PATH "")
 endif()
 B3DPopulateDefaultPackageSearchPaths(LibICU)
 
