@@ -31,12 +31,12 @@ elseif(LINUX)
 	## External lib: OpenGL
 	target_link_libraries(bsfGLRenderAPI PRIVATE ${OPENGL_LIBRARIES})
 elseif(APPLE) # MacOS
-	target_link_framework(bsfGLRenderAPI Foundation)
-	target_link_framework(bsfGLRenderAPI CoreGraphics)
-	target_link_framework(bsfGLRenderAPI CoreVideo)
-	target_link_framework(bsfGLRenderAPI OpenGL)
-	target_link_framework(bsfGLRenderAPI IOKit)
-	target_link_framework(bsfGLRenderAPI AppKit)
+	B3DTargetLinkFramework(bsfGLRenderAPI Foundation)
+	B3DTargetLinkFramework(bsfGLRenderAPI CoreGraphics)
+	B3DTargetLinkFramework(bsfGLRenderAPI CoreVideo)
+	B3DTargetLinkFramework(bsfGLRenderAPI OpenGL)
+	B3DTargetLinkFramework(bsfGLRenderAPI IOKit)
+	B3DTargetLinkFramework(bsfGLRenderAPI AppKit)
 endif()
 
 ## Local libs

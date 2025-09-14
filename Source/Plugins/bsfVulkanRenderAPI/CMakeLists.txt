@@ -63,14 +63,14 @@ endif()
 
 ## OS libs
 if(APPLE) # MacOS
-	target_link_framework(bsfVulkanRenderAPI Foundation)
-	target_link_framework(bsfVulkanRenderAPI CoreGraphics)
-	target_link_framework(bsfVulkanRenderAPI CoreVideo)
-	target_link_framework(bsfVulkanRenderAPI IOKit)
-	target_link_framework(bsfVulkanRenderAPI AppKit)
-	target_link_framework(bsfVulkanRenderAPI QuartzCore)
-	target_link_framework(bsfVulkanRenderAPI Metal)
-	target_link_framework(bsfVulkanRenderAPI IOSurface)
+	B3DTargetLinkFramework(bsfVulkanRenderAPI Foundation)
+	B3DTargetLinkFramework(bsfVulkanRenderAPI CoreGraphics)
+	B3DTargetLinkFramework(bsfVulkanRenderAPI CoreVideo)
+	B3DTargetLinkFramework(bsfVulkanRenderAPI IOKit)
+	B3DTargetLinkFramework(bsfVulkanRenderAPI AppKit)
+	B3DTargetLinkFramework(bsfVulkanRenderAPI QuartzCore)
+	B3DTargetLinkFramework(bsfVulkanRenderAPI Metal)
+	B3DTargetLinkFramework(bsfVulkanRenderAPI IOSurface)
 endif()
 
 ## Local libs

@@ -264,8 +264,8 @@ target_compile_definitions(bsfImportTool PUBLIC -DBS_IS_ASSET_TOOL)
 
 target_link_libraries(bsfImportTool bsf)
 	
-add_engine_dependencies(bsfImportTool)
-add_importer_dependencies(bsfImportTool)
+B3DAddRuntimeDependencies(bsfImportTool)
+add_dependencies(bsfImportTool bsfFBXImporter bsfFontImporter bsfFreeImgImporter bsfSL)
 
 set_property(TARGET bsfImportTool PROPERTY FOLDER Tools)
 

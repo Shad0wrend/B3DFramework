@@ -130,82 +130,63 @@ function(B3DRegisterOptionalFrameworkSubdirectories)
 	include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/StockIcons.cmake)
 endfunction()
 
-function(add_prefix var prefix)
-   SET(listVar "")
-   FOREACH(f ${ARGN})
-      LIST(APPEND listVar "${prefix}/${f}")
-   ENDFOREACH(f)
-   SET(${var} "${listVar}" PARENT_SCOPE)
-endfunction()
-
-function(add_engine_dependencies target_name)
-	add_engine_dependencies2(${target_name} ${B3D_BUILD_ALL_RENDER_BACKENDS})
-endfunction()
-
-function(add_engine_dependencies2 target_name all_render_api)
-	if(${all_render_api})
+# Registers all relevant runtime dependencies for the specified target. This includes the minimal subset of
+# dependencies for a standalone framework application (i.e. not the editor or tool).
+#
+# @param	target		Name of the target to add engine dependencies to.
+function(B3DAddRuntimeDependencies target)
+	if(${B3D_BUILD_ALL_RENDER_BACKENDS})
 		if(WIN32)
-			add_dependencies(${target_name} bsfD3D11RenderAPI bsfVulkanRenderAPI bsfGLRenderAPI bsfNullRenderAPI)
+			add_dependencies(${target} bsfVulkanRenderAPI bsfNullRenderAPI)
 		elseif(APPLE)
-			add_dependencies(${target_name} bsfGLRenderAPI bsfNullRenderAPI)
+			add_dependencies(${target} bsfNullRenderAPI)
 		else()
-			add_dependencies(${target_name} bsfVulkanRenderAPI bsfGLRenderAPI bsfNullRenderAPI)
+			add_dependencies(${target} bsfVulkanRenderAPI bsfNullRenderAPI)
 		endif()
 	else()
-		if(B3D_RENDER_BACKEND MATCHES "DirectX 11")
-			add_dependencies(${target_name} bsfD3D11RenderAPI)
-		elseif(B3D_RENDER_BACKEND MATCHES "Vulkan")
-			add_dependencies(${target_name} bsfVulkanRenderAPI)
-		elseif(B3D_RENDER_BACKEND MATCHES "OpenGL")
-			add_dependencies(${target_name} bsfGLRenderAPI)
+		if(B3D_RENDER_BACKEND MATCHES "Vulkan")
+			add_dependencies(${target} bsfVulkanRenderAPI)
 		else()
-			add_dependencies(${target_name} bsfNullRenderAPI)
+			add_dependencies(${target} bsfNullRenderAPI)
 		endif()
 	endif()
 
 	if(B3D_AUDIO_BACKEND MATCHES "FMOD")
-		add_dependencies(${target_name} bsfFMOD)
+		add_dependencies(${target} bsfFMOD)
 	elseif(B3D_AUDIO_BACKEND MATCHES "OpenAudio")
-		add_dependencies(${target_name} bsfOpenAudio)
+		add_dependencies(${target} bsfOpenAudio)
 	else()
-		add_dependencies(${target_name} bsfNullAudio)
+		add_dependencies(${target} bsfNullAudio)
 	endif()
-	
+
 	if(B3D_PHYSICS_BACKEND MATCHES "PhysX")
-		add_dependencies(${target_name} bsfPhysX)
+		add_dependencies(${target} bsfPhysX)
 	else()
-		add_dependencies(${target_name} bsfNullPhysics)
+		add_dependencies(${target} bsfNullPhysics)
 	endif()
-	
+
 	if(B3D_RENDERER MATCHES "RenderBeast")
-		add_dependencies(${target_name} bsfRenderBeast)
+		add_dependencies(${target} bsfRenderBeast)
 	else()
-		add_dependencies(${target_name} bsfNullRenderer)
-	endif()
-	
-	add_dependencies(${target_name} bsfSL)
-endfunction()
-
-function(add_importer_dependencies target_name)
-	add_dependencies(${target_name} bsfFBXImporter bsfFontImporter bsfFreeImgImporter bsfSL)
-endfunction()
-
-function(add_subdirectory_optional subdir_name)
-	get_filename_component(fullPath ${subdir_name} ABSOLUTE)
-	if(EXISTS ${fullPath}/CMakeLists.txt)
-		add_subdirectory(${subdir_name})
-	endif()
-endfunction()
-
-function(target_link_framework TARGET FRAMEWORK)
-	find_library(FM_${FRAMEWORK} ${FRAMEWORK})
-
-	if(NOT FM_${FRAMEWORK})
-		message(FATAL_ERROR "Cannot find ${FRAMEWORK} framework.")
+		add_dependencies(${target} bsfNullRenderer)
 	endif()
 
-	target_link_libraries(${TARGET} PRIVATE ${FM_${FRAMEWORK}})
-	mark_as_advanced(FM_${FRAMEWORK})
+	add_dependencies(${target} bsfSL)
+endfunction()
+
+# Links the provided framework to the provided target (Apple only).
+#
+# @param	target		Target to link the framework to.
+# param		framework	Framework to link.
+function(B3DTargetLinkFramework target framework)
+	find_library(FM_${framework} ${framework})
+
+	if(NOT FM_${framework})
+		message(FATAL_ERROR "Cannot find ${framework} framework.")
+	endif()
+
+	target_link_libraries(${target} PRIVATE ${FM_${framework}})
+	mark_as_advanced(FM_${framework})
 endfunction()
 
 # Strips symbols that are embedded in the target executable, and saves them in a separate file.
@@ -351,22 +332,29 @@ function(B3DSetUpPostBuildAndInstallSteps target)
 	endforeach()
 endfunction()
 
-function(copy_folder_on_build target srcDir dstDir name filter)
-	set(SRC_DIR ${srcDir}/${name})
-	set(DST_DIR ${dstDir}/${name})
+# Copies the provided follow when @p target is built.
+#
+# @param	target					Target which needs to build to trigger the copy operation.
+# @param	sourceParentFolder		Location containing the folder to copy from.
+# @param	destinationParentFolder	Location to copy the folder to.
+# @param	folderName				Name of the folder to copy.
+# @param	filter					Filter to copy only certain files, *.* to copy all files.
+function(B3DCopyFolderOnBuild target sourceParentFolder destinationParentFolder folderName filter)
+	set(sourceFolder ${sourceParentFolder}/${folderName})
+	set(destinationFolder ${destinationParentFolder}/${folderName})
 	
-	file(GLOB_RECURSE ALL_FILES RELATIVE ${SRC_DIR} "${SRC_DIR}/${filter}")
+	file(GLOB_RECURSE allFiles RELATIVE ${sourceFolder} "${destinationFolder}/${filter}")
 
-	foreach(CUR_PATH ${ALL_FILES})
-		get_filename_component(FILENAME ${CUR_PATH} NAME)
+	foreach(currentFilePath ${allFiles})
+		get_filename_component(FILENAME ${currentFilePath} NAME)
 	
-		set(SRC ${SRC_DIR}/${CUR_PATH})
-		set(DST ${DST_DIR}/${CUR_PATH})
+		set(sourceFilePath ${sourceFolder}/${currentFilePath})
+		set(destinationFilePath ${destinationFolder}/${currentFilePath})
 		add_custom_command(
 		   TARGET ${target} POST_BUILD
 		   COMMAND ${CMAKE_COMMAND}
-		   ARGS    -E copy_if_different ${SRC} ${DST}
-		   COMMENT "Copying ${SRC} ${DST}"
+		   ARGS    -E copy_if_different ${sourceFilePath} ${destinationFilePath}
+		   COMMENT "Copying ${sourceFilePath} ${destinationFilePath}"
 		   )
 	endforeach()
 endfunction()

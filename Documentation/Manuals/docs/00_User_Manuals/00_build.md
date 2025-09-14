@@ -155,7 +155,7 @@ add_executable(myApp WIN32 "Main.cpp")
 target_link_libraries(myApp bsf)
 
 # Add required plugin bsf dependencies (as selected through CMake properties)
-add_engine_dependencies(myApp)
+B3DAddRuntimeDependencies(myApp)
 
 # Add optional dependencies (specify all, some, or none of these as required)
 add_dependencies(myApp bsfFBXImporter bsfFontImporter bsfFreeImgImporter)

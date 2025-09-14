@@ -22,7 +22,7 @@ target_link_libraries(bsfFBXImporter PRIVATE bsf)
 
 ## OS libs
 if(APPLE) # MacOS
-	target_link_framework(bsfFBXImporter CoreFoundation)
+	B3DTargetLinkFramework(bsfFBXImporter CoreFoundation)
 endif()
 
 # IDE specific

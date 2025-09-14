@@ -27,9 +27,9 @@ target_link_libraries(bsfOpenAudio PRIVATE ${ogg_LIBRARIES})
 
 ## OS libs
 if(APPLE) # MacOS
-	target_link_framework(bsfOpenAudio CoreAudio)
-	target_link_framework(bsfOpenAudio AudioUnit)
-	target_link_framework(bsfOpenAudio AudioToolbox)
+	B3DTargetLinkFramework(bsfOpenAudio CoreAudio)
+	B3DTargetLinkFramework(bsfOpenAudio AudioUnit)
+	B3DTargetLinkFramework(bsfOpenAudio AudioToolbox)
 endif()
 
 ## Local libs

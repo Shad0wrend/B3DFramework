@@ -145,10 +145,10 @@ if(WIN32)
 elseif(LINUX)
 	target_link_libraries(bsf PRIVATE dl pthread)
 elseif(APPLE) # MacOS
-	target_link_framework(bsf CoreServices)
-	target_link_framework(bsf IOKit)
-	target_link_framework(bsf AppKit)
-	target_link_framework(bsf Carbon)
+	B3DTargetLinkFramework(bsf CoreServices)
+	B3DTargetLinkFramework(bsf IOKit)
+	B3DTargetLinkFramework(bsf AppKit)
+	B3DTargetLinkFramework(bsf Carbon)
 endif()
 
 # IDE specific
