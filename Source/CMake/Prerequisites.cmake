@@ -105,3 +105,10 @@ if (UNIX)
 
 	endif()
 endif()
+
+# Common includes
+include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/Utility.cmake)
+include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/SourceDependencyUtility.cmake)
+include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/BuiltinAssetUtility.cmake)
+include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/PrebuiltDependenciesUtility.cmake)
+include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/FindPackageUtility.cmake)

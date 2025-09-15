@@ -24,9 +24,7 @@ set(BSF_ENABLE_EXCEPTIONS OFF CACHE BOOL "If true C++ exceptions will be enabled
 set(BSF_ENABLE_RTTI OFF CACHE BOOL "If true C++ RTTI will be enabled when compiling.")
 
 # Common includes
-include(Source/CMake/Properties.cmake)
-include(Source/CMake/FindPackageOrBuild.cmake)
-include(Source/CMake/HelperMethods.cmake)
+include(Source/CMake/Prerequisites.cmake)
 
 # Subdirectories
 add_subdirectory(Source)
