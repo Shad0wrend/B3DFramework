@@ -40,7 +40,7 @@ namespace b3d
 		Vector<SubMesh> SubMeshes;
 
 		/** Optimizes performance depending on planned usage of the mesh. */
-		i32 Usage = MU_STATIC;
+		MeshFlags Flags = MeshFlag::Static;
 
 		/**
 		 * Size of indices, use smaller size for better performance, however be careful not to go over the number of
@@ -147,7 +147,7 @@ namespace b3d
 		mutable SPtr<MeshData> mCPUData;
 
 		SPtr<VertexDescription> mVertexDescription;
-		int mUsage = MU_STATIC;
+		MeshFlags mFlags = MeshFlag::Static;
 		IndexType mIndexType = IT_32BIT;
 		SPtr<Skeleton> mSkeleton; // Immutable
 		SPtr<MorphShapes> mMorphShapes; // Immutable
@@ -177,13 +177,13 @@ namespace b3d
 		 *								vertex buffer. When binding a mesh to the pipeline you must ensure vertex
 		 *								description at least partially matches the input description of the currently bound
 		 *								vertex GPU program.
-		 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
+		 * @param[in]	flags			Flags to control various mesh options.
 		 * @param[in]	primitiveType	Determines how should the provided indices be interpreted by the pipeline. Default
 		 *								option is a triangle list, where three indices represent a single triangle.
 		 * @param[in]	indexType		Size of indices, use smaller size for better performance, however be careful not to
 		 *								go over the number of vertices limited by the size.
 		 */
-		static HMesh Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, int usage = MU_STATIC, DrawOperationType primitiveType = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT);
+		static HMesh Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, MeshFlags flags = MeshFlag::Static, DrawOperationType primitiveType = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT);
 
 		/**
 		 * Creates a new empty mesh.
@@ -208,11 +208,11 @@ namespace b3d
 		 * by the mesh data exactly. Mesh will have no sub-meshes.
 		 *
 		 * @param[in]	initialData		Vertex and index data to initialize the mesh with.
-		 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
+		 * @param[in]	flags			Flags to control various mesh options.
 		 * @param[in]	primitiveType	Determines how should the provided indices be interpreted by the pipeline. Default
 		 *								option is a triangle strip, where three indices represent a single triangle.
 		 */
-		static HMesh Create(const SPtr<MeshData>& initialData, int usage = MU_STATIC, DrawOperationType primitiveType = DOT_TRIANGLE_LIST);
+		static HMesh Create(const SPtr<MeshData>& initialData, MeshFlags flags = MeshFlag::Static, DrawOperationType primitiveType = DOT_TRIANGLE_LIST);
 
 		/** @name Internal
 		 *  @{
@@ -237,7 +237,7 @@ namespace b3d
 		 *
 		 * @note	Internal method. Use create() for normal use.
 		 */
-		static SPtr<Mesh> CreateShared(const SPtr<MeshData>& initialData, int usage = MU_STATIC, DrawOperationType primitiveType = DOT_TRIANGLE_LIST);
+		static SPtr<Mesh> CreateShared(const SPtr<MeshData>& initialData, MeshFlags flags = MeshFlag::Static, DrawOperationType primitiveType = DOT_TRIANGLE_LIST);
 
 		/**
 		 * Creates a new empty and uninitialized mesh. You will need to manually initialize the mesh before using it.
@@ -313,13 +313,13 @@ namespace b3d
 			 *									vertex buffer. When binding a mesh to the pipeline you must ensure vertex
 			 *									description at least partially matches the input description of the currently
 			 *									bound vertex GPU program.
-			 * @param[in]	usage				Optimizes performance depending on planned usage of the mesh.
+			 * @param[in]	flags				Flags to control various mesh options.
 			 * @param[in]	primitiveType		Determines how should the provided indices be interpreted by the pipeline. Default
 			 *									option is a triangle list, where three indices represent a single triangle.
 			 * @param[in]	indexType			Size of indices, use smaller size for better performance, however be careful not to
 			 *									go over the number of vertices limited by the size.
 			 */
-			static SPtr<Mesh> Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, int usage = MU_STATIC, DrawOperationType primitiveType = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT);
+			static SPtr<Mesh> Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, MeshFlags flags = MeshFlag::Static, DrawOperationType primitiveType = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT);
 
 			/**
 			 * Creates a new empty mesh.
@@ -345,11 +345,11 @@ namespace b3d
 			 * by the mesh data exactly. Mesh will have no sub-meshes.
 			 *
 			 * @param[in]	initialData		Vertex and index data to initialize the mesh with.
-			 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
+			 * @param[in]	flags			Flags to control various mesh options.
 			 * @param[in]	drawOp			Determines how should the provided indices be interpreted by the pipeline. Default
 			 *								option is a triangle strip, where three indices represent a single triangle.
 			 */
-			static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, int usage = MU_STATIC, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
+			static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, MeshFlags flags = MeshFlag::Static, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
 
 		protected:
 			friend class b3d::Mesh;
@@ -361,7 +361,7 @@ namespace b3d
 			SPtr<GpuBuffer> mIndexBuffer;
 
 			SPtr<VertexDescription> mVertexDescription;
-			int mUsage;
+			MeshFlags mFlags;
 			IndexType mIndexType;
 			SPtr<MeshData> mTempInitialMeshData;
 			SPtr<Skeleton> mSkeleton; // Immutable

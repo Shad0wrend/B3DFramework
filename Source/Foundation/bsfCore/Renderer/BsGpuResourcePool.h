@@ -210,7 +210,7 @@ namespace b3d
 			 * @param	numElements	Number of elements in the buffer.
 			 * @param	flags		Flags that control the behaviour of the buffer.
 			 */
-			static POOLED_STORAGE_BUFFER_DESC CreateStandard(GpuBufferFormat format, u32 numElements, GpuBufferFlags flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU);
+			static POOLED_STORAGE_BUFFER_DESC CreateStandard(GpuBufferFormat format, u32 numElements, GpuBufferFlags flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU);
 
 			/**
 			 * Creates a descriptor for a storage buffer containing structures.
@@ -219,7 +219,7 @@ namespace b3d
 			 * @param	numElements		Number of elements in the buffer.
 			 * @param	flags		Flags that control the behaviour of the buffer.
 			 */
-			static POOLED_STORAGE_BUFFER_DESC CreateStructured(u32 elementSize, u32 numElements, GpuBufferFlags flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU);
+			static POOLED_STORAGE_BUFFER_DESC CreateStructured(u32 elementSize, u32 numElements, GpuBufferFlags flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU);
 
 		private:
 			friend class GpuResourcePool;

@@ -729,7 +729,7 @@ void GUIMeshBatches::RebuildMesh(Batch& batch)
 		vertexOffset += guiRenderElement.VertexCount;
 	}
 
-	batch.Mesh = Mesh::CreateShared(meshData, MU_STATIC, batch.Material.MeshType == GUIMeshType::Triangle ? DOT_TRIANGLE_LIST : DOT_LINE_LIST);
+	batch.Mesh = Mesh::CreateShared(meshData, MeshFlag::Static | MeshFlag::UnorderedAccess, batch.Material.MeshType == GUIMeshType::Triangle ? DOT_TRIANGLE_LIST : DOT_LINE_LIST);
 	batch.IsMeshDirty = false;
 }
 

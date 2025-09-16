@@ -17,12 +17,12 @@ using namespace b3d;
 const MeshCreateInformation MeshCreateInformation::kDefault = MeshCreateInformation();
 
 Mesh::Mesh(const MeshCreateInformation& meshCreateInformation)
-	: MeshBase(meshCreateInformation.VertexCount, meshCreateInformation.IndexCount, meshCreateInformation.SubMeshes), mVertexDescription(meshCreateInformation.VertexDescription), mUsage(meshCreateInformation.Usage), mIndexType(meshCreateInformation.IndexType), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)
+	: MeshBase(meshCreateInformation.VertexCount, meshCreateInformation.IndexCount, meshCreateInformation.SubMeshes), mVertexDescription(meshCreateInformation.VertexDescription), mFlags(meshCreateInformation.Flags), mIndexType(meshCreateInformation.IndexType), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)
 {
 }
 
 Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation)
-	: MeshBase(initialMeshData->GetVertexCount(), initialMeshData->GetIndexCount(), meshCreateInformation.SubMeshes), mCPUData(initialMeshData), mVertexDescription(initialMeshData->GetVertexDescription()), mUsage(meshCreateInformation.Usage), mIndexType(initialMeshData->GetIndexType()), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)
+	: MeshBase(initialMeshData->GetVertexCount(), initialMeshData->GetIndexCount(), meshCreateInformation.SubMeshes), mCPUData(initialMeshData), mVertexDescription(initialMeshData->GetVertexDescription()), mFlags(meshCreateInformation.Flags), mIndexType(initialMeshData->GetIndexType()), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)
 {}
 
 Mesh::Mesh()
@@ -87,7 +87,7 @@ void Mesh::Initialize()
 
 	MeshBase::Initialize();
 
-	if((mUsage & MU_CPUCACHED) != 0 && mCPUData == nullptr)
+	if(mFlags.IsSet(MeshFlag::KeepCPUCopy) && mCPUData == nullptr)
 		CreateCpuBuffer();
 }
 
@@ -104,7 +104,7 @@ SPtr<render::RenderProxy> Mesh::CreateRenderProxy() const
 	meshCreateInformation.IndexCount = mProperties.IndexCount;
 	meshCreateInformation.VertexDescription = mVertexDescription;
 	meshCreateInformation.SubMeshes = mProperties.SubMeshes;
-	meshCreateInformation.Usage = mUsage;
+	meshCreateInformation.Flags = mFlags;
 	meshCreateInformation.IndexType = mIndexType;
 	meshCreateInformation.Skeleton = mSkeleton;
 	meshCreateInformation.MorphShapes = mMorphShapes;
@@ -114,7 +114,7 @@ SPtr<render::RenderProxy> Mesh::CreateRenderProxy() const
 	SPtr<render::RenderProxy> renderProxyShared = B3DMakeSharedFromExisting<render::Mesh>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
-	if((mUsage & MU_CPUCACHED) == 0)
+	if(!mFlags.IsSet(MeshFlag::KeepCPUCopy))
 		mCPUData = nullptr;
 
 	return renderProxyShared;
@@ -122,7 +122,7 @@ SPtr<render::RenderProxy> Mesh::CreateRenderProxy() const
 
 void Mesh::UpdateCpuBuffer(u32 subresourceIndex, const MeshData& pixelData)
 {
-	if((mUsage & MU_CPUCACHED) == 0)
+	if(!mFlags.IsSet(MeshFlag::KeepCPUCopy))
 		return;
 
 	if(subresourceIndex > 0)
@@ -177,13 +177,13 @@ RTTIType* Mesh::GetRtti() const
 /* 								STATICS		                     		*/
 /************************************************************************/
 
-HMesh Mesh::Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, int usage, DrawOperationType primitiveType, IndexType indexType)
+HMesh Mesh::Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, MeshFlags flags, DrawOperationType primitiveType, IndexType indexType)
 {
 	MeshCreateInformation meshCreateInformation;
 	meshCreateInformation.VertexCount = vertexCount;
 	meshCreateInformation.IndexCount = indexCount;
 	meshCreateInformation.VertexDescription = vertexDescription;
-	meshCreateInformation.Usage = usage;
+	meshCreateInformation.Flags = flags;
 	meshCreateInformation.SubMeshes.push_back(SubMesh(0, indexCount, primitiveType));
 	meshCreateInformation.IndexType = indexType;
 
@@ -203,9 +203,9 @@ HMesh Mesh::Create(const SPtr<MeshData>& initialMeshData, const MeshCreateInform
 	return B3DStaticResourceCast<Mesh>(GetResources().CreateResourceHandle(meshPtr));
 }
 
-HMesh Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOperationType primitiveType)
+HMesh Mesh::Create(const SPtr<MeshData>& initialMeshData, MeshFlags flags, DrawOperationType primitiveType)
 {
-	SPtr<Mesh> meshPtr = CreateShared(initialMeshData, usage, primitiveType);
+	SPtr<Mesh> meshPtr = CreateShared(initialMeshData, flags, primitiveType);
 	return B3DStaticResourceCast<Mesh>(GetResources().CreateResourceHandle(meshPtr));
 }
 
@@ -227,10 +227,10 @@ SPtr<Mesh> Mesh::CreateShared(const SPtr<MeshData>& initialMeshData, const MeshC
 	return mesh;
 }
 
-SPtr<Mesh> Mesh::CreateShared(const SPtr<MeshData>& initialMeshData, int usage, DrawOperationType primitiveType)
+SPtr<Mesh> Mesh::CreateShared(const SPtr<MeshData>& initialMeshData, MeshFlags flags, DrawOperationType primitiveType)
 {
 	MeshCreateInformation meshCreateInformation;
-	meshCreateInformation.Usage = usage;
+	meshCreateInformation.Flags = flags;
 	meshCreateInformation.SubMeshes.push_back(SubMesh(0, initialMeshData->GetIndexCount(), primitiveType));
 
 	SPtr<Mesh> mesh = B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformation));
@@ -251,7 +251,7 @@ SPtr<Mesh> Mesh::CreateEmptyShared()
 namespace b3d { namespace render
 {
 Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation)
-	: MeshBase(meshCreateInformation.VertexCount, meshCreateInformation.IndexCount, meshCreateInformation.SubMeshes), mVertexData(nullptr), mIndexBuffer(nullptr), mVertexDescription(meshCreateInformation.VertexDescription), mUsage(meshCreateInformation.Usage), mIndexType(meshCreateInformation.IndexType), mTempInitialMeshData(initialMeshData), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)
+	: MeshBase(meshCreateInformation.VertexCount, meshCreateInformation.IndexCount, meshCreateInformation.SubMeshes), mVertexData(nullptr), mIndexBuffer(nullptr), mVertexDescription(meshCreateInformation.VertexDescription), mFlags(meshCreateInformation.Flags), mIndexType(meshCreateInformation.IndexType), mTempInitialMeshData(initialMeshData), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)
 
 {}
 
@@ -269,8 +269,10 @@ void Mesh::Initialize()
 {
 	ASSERT_IF_NOT_RENDER_THREAD;
 
-	const bool isDynamic = (mUsage & MU_DYNAMIC) != 0;
-	const GpuBufferFlags flags = isDynamic ? GpuBufferFlag::StoreOnCPUWithGPUAccess : GpuBufferFlag::StoreOnGPU;
+	const bool isDynamic = mFlags.IsSet(MeshFlag::Dynamic);
+	GpuBufferFlags flags = isDynamic ? GpuBufferFlag::StoreOnCPUWithGPUAccess : GpuBufferFlag::StoreOnGPU;
+	if(mFlags.IsSet(MeshFlag::UnorderedAccess))
+		flags |= GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 
@@ -339,7 +341,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 
 	if(discardEntireBuffer)
 	{
-		if((mUsage & MU_STATIC) != 0)
+		if(mFlags.IsSet(MeshFlag::Static))
 		{
 			B3D_LOG(Warning, Mesh, "Buffer discard is enabled but buffer was not created as dynamic. Disabling discard.");
 			discardEntireBuffer = false;
@@ -347,7 +349,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 	}
 	else
 	{
-		if((mUsage & MU_DYNAMIC) != 0)
+		if(mFlags.IsSet(MeshFlag::Dynamic))
 		{
 			B3D_LOG(Warning, Mesh, "Buffer discard is not enabled but buffer was created as dynamic. Enabling discard.");
 			discardEntireBuffer = true;
@@ -509,14 +511,14 @@ void Mesh::UpdateBounds(const MeshData& meshData)
 	// TODO - Sync this to main-thread possibly?
 }
 
-SPtr<Mesh> Mesh::Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, int usage, DrawOperationType primitiveType, IndexType indexType)
+SPtr<Mesh> Mesh::Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, MeshFlags flags, DrawOperationType primitiveType, IndexType indexType)
 {
 	MeshCreateInformation meshCreateInformation;
 	meshCreateInformation.VertexCount = vertexCount;
 	meshCreateInformation.IndexCount = indexCount;
 	meshCreateInformation.VertexDescription = vertexDescription;
 	meshCreateInformation.SubMeshes.push_back(SubMesh(0, indexCount, primitiveType));
-	meshCreateInformation.Usage = usage;
+	meshCreateInformation.Flags = flags;
 	meshCreateInformation.IndexType = indexType;
 
 	SPtr<Mesh> mesh = B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(nullptr, meshCreateInformation));
@@ -553,7 +555,7 @@ SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, const MeshCreateI
 	return mesh;
 }
 
-SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOperationType drawOp)
+SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, MeshFlags flags, DrawOperationType drawOp)
 {
 	MeshCreateInformation meshCreateInformation;
 	meshCreateInformation.VertexCount = initialMeshData->GetVertexCount();
@@ -561,7 +563,7 @@ SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOp
 	meshCreateInformation.VertexDescription = initialMeshData->GetVertexDescription();
 	meshCreateInformation.IndexType = initialMeshData->GetIndexType();
 	meshCreateInformation.SubMeshes.push_back(SubMesh(0, initialMeshData->GetIndexCount(), drawOp));
-	meshCreateInformation.Usage = usage;
+	meshCreateInformation.Flags = flags;
 
 	SPtr<Mesh> mesh =
 		B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformation));

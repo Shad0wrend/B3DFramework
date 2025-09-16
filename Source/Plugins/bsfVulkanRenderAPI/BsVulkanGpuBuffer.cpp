@@ -125,14 +125,14 @@ VkAccessFlags VulkanBuffer::GetAccessFlags() const
 		break;
 	}
 
-	if(mFlags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
+	if(mFlags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
 		accessFlags |= VK_ACCESS_SHADER_WRITE_BIT;
 
 	return accessFlags;
 }
 
 VulkanGpuBuffer::VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation)
-	: GpuBuffer(createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mDevice(device), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU)), mIsMapped(false)
+	: GpuBuffer(createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mDevice(device), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU)), mIsMapped(false)
 	{ }
 
 VulkanGpuBuffer::~VulkanGpuBuffer()
@@ -169,7 +169,7 @@ void VulkanGpuBuffer::Initialize()
 		break;
 	}
 
-	if(mInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
+	if(mInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
 	{
 		if(mInformation.Type == GpuBufferType::SimpleStorage)
 			usageFlags |= VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;

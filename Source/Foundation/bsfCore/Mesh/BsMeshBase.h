@@ -18,23 +18,30 @@ namespace b3d
 	 *  @{
 	 */
 
-	/**
-	 * Planned usage for the mesh. These options usually affect performance and you should specify static if you don't plan
-	 * on modifying the mesh often, otherwise specify dynamic.
-	 */
-	enum B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MeshUsage
+	/** Flags that control Mesh behaviour. */
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MeshFlag
 	{
-		/** Specify for a mesh that is not often updated from the CPU. */
-		MU_STATIC B3D_SCRIPT_EXPORT(ExportName(Static)) = 1 << 0,
+		/** Mesh is not going to change ever, or is going to change rarely. Mesh vertex & index buffers will be allocated in GPU memory. */
+		Static = 1 << 0,
 
-		/** Specify for a mesh that is often updated from the CPU. */
-		MU_DYNAMIC B3D_SCRIPT_EXPORT(ExportName(Dynamic)) = 1 << 1,
+		/** Mesh is going to change often (e.g. every frame). Mesh vertex & index buffers will be allocated in CPU memory which is GPU accessible. */
+		Dynamic = 1 << 1,
+
 		/**
-		 * All mesh data will also be cached in CPU memory, making it available for fast read access from the CPU. Can be
-		 * combined with other usage flags.
+		 * Mesh vertex and input buffers can be bound for unordered access (i.e. structured storage buffers) in the shaders. Provide this your shader is
+		 * manually pulling vertex/index data in the shader.
 		 */
-		MU_CPUCACHED B3D_SCRIPT_EXPORT(ExportName(CPUCached)) = 0x1000,
+		UnorderedAccess = 1 << 2,
+
+		/**
+		 * Normally when a mesh is uploaded to the GPU, the CPU memory is no longer needed so it will be released. If this flag is provided the CPU mesh data
+		 * will be kept. This allows you to access mesh data on the CPU.
+		 */
+		KeepCPUCopy = 1 << 3,
 	};
+
+	using MeshFlags = Flags<MeshFlag>;
+	B3D_FLAGS_OPERATORS(MeshFlag);
 
 	/** Properties of a Mesh. Shared between main and render thread counterparts of a Mesh. */
 	class B3D_CORE_EXPORT MeshProperties

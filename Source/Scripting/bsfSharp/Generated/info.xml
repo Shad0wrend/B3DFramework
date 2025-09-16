@@ -2848,6 +2848,21 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<doc>Position of the key along the animation spline.</doc>
 		</field>
 	</struct>
+	<enum native="MeshFlag" script="MeshFlag">
+		<doc>Flags that control Mesh behaviour.</doc>
+		<enumentry native="Static" script="Static">
+			<doc>Mesh is not going to change ever, or is going to change rarely. Mesh vertex &amp; index buffers will be allocated in GPU memory.</doc>
+		</enumentry>
+		<enumentry native="Dynamic" script="Dynamic">
+			<doc>Mesh is going to change often (e.g. every frame). Mesh vertex &amp; index buffers will be allocated in CPU memory which is GPU accessible.</doc>
+		</enumentry>
+		<enumentry native="UnorderedAccess" script="UnorderedAccess">
+			<doc>Mesh vertex and input buffers can be bound for unordered access (i.e. structured storage buffers) in the shaders. Provide this your shader is manually pulling vertex/index data in the shader.</doc>
+		</enumentry>
+		<enumentry native="KeepCPUCopy" script="KeepCPUCopy">
+			<doc>Normally when a mesh is uploaded to the GPU, the CPU memory is no longer needed so it will be released. If this flag is provided the CPU mesh data will be kept. This allows you to access mesh data on the CPU.</doc>
+		</enumentry>
+	</enum>
 	<class native="VectorField" script="VectorField">
 		<doc>Represents a three dimensional field of vectors. It is represented by spatial bounds which are split into a grid of values with user-defined density, where each grid cell is assigned a vector.</doc>
 		<ctor>
@@ -3905,8 +3920,8 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<param name="topology" type="MeshTopology">
 				<doc>Determines how should the provided indices be interpreted by the pipeline. Default option is a triangle list, where three indices represent a single triangle.</doc>
 			</param>
-			<param name="usage" type="MeshUsage">
-				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
+			<param name="flags" type="MeshFlag">
+				<doc>Flags to control various mesh options.</doc>
 			</param>
 			<param name="vertex" type="VertexLayout">
 				<doc>Controls how are vertices organized in the vertex buffer and what data they contain.</doc>
@@ -3926,8 +3941,8 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<param name="subMeshes" type="SubMesh">
 				<doc>Defines how are indices separated into sub-meshes, and how are those sub-meshes rendered. Sub-meshes may be rendered independently, each with a different material.</doc>
 			</param>
-			<param name="usage" type="MeshUsage">
-				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
+			<param name="flags" type="MeshFlag">
+				<doc>Flags to control various mesh options.</doc>
 			</param>
 			<param name="vertex" type="VertexLayout">
 				<doc>Controls how are vertices organized in the vertex buffer and what data they contain.</doc>
@@ -3944,8 +3959,8 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<param name="topology" type="MeshTopology">
 				<doc>Determines how should the provided indices be interpreted by the pipeline. Default option is a triangle list, where three indices represent a single triangle.</doc>
 			</param>
-			<param name="usage" type="MeshUsage">
-				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
+			<param name="flags" type="MeshFlag">
+				<doc>Flags to control various mesh options.</doc>
 			</param>
 		</ctor>
 		<ctor>
@@ -3956,8 +3971,8 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<param name="subMeshes" type="SubMesh">
 				<doc>Defines how are indices separated into sub-meshes, and how are those sub-meshes rendered. Sub-meshes may be rendered independently, each with a different material.</doc>
 			</param>
-			<param name="usage" type="MeshUsage">
-				<doc>Optimizes performance depending on planned usage of the mesh.</doc>
+			<param name="flags" type="MeshFlag">
+				<doc>Flags to control various mesh options.</doc>
 			</param>
 		</ctor>
 		<property name="Skeleton" type="Skeleton" getter="GetSkeleton" setter="" static="false">
@@ -9146,18 +9161,6 @@ Primary purpose of this class is to avoid expensive string compare (axis names),
 			<doc>Determines the currently active language. Any newly created strings will use this value.</doc>
 		</property>
 	</class>
-	<enum native="MeshUsage" script="MeshUsage">
-		<doc>Planned usage for the mesh. These options usually affect performance and you should specify static if you don&apos;t plan on modifying the mesh often, otherwise specify dynamic.</doc>
-		<enumentry native="MU_STATIC" script="Static">
-			<doc>Specify for a mesh that is not often updated from the CPU.</doc>
-		</enumentry>
-		<enumentry native="MU_DYNAMIC" script="Dynamic">
-			<doc>Specify for a mesh that is often updated from the CPU.</doc>
-		</enumentry>
-		<enumentry native="MU_CPUCACHED" script="CPUCached">
-			<doc>All mesh data will also be cached in CPU memory, making it available for fast read access from the CPU. Can be combined with other usage flags.</doc>
-		</enumentry>
-	</enum>
 	<class native="Material" script="Material">
 		<method native="Clone" script="Clone" static="false">
 			<doc>Creates a deep copy of the material and returns the new object.</doc>

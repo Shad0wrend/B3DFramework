@@ -32,15 +32,15 @@ namespace b3d
 		/// Determines how should the provided indices be interpreted by the pipeline. Default option is a triangle list, where 
 		/// three indices represent a single triangle.
 		/// </param>
-		/// <param name="usage">Optimizes performance depending on planned usage of the mesh.</param>
+		/// <param name="flags">Flags to control various mesh options.</param>
 		/// <param name="vertex">Controls how are vertices organized in the vertex buffer and what data they contain.</param>
 		/// <param name="index">
 		/// Size of indices, use smaller size for better performance, however be careful not to go over the number of vertices 
 		/// limited by the data type size.
 		/// </param>
-		public Mesh(int numVertices, int numIndices, MeshTopology topology = MeshTopology.TriangleList, MeshUsage usage = MeshUsage.Static, VertexLayout vertex = VertexLayout.Position, IndexType index = IndexType.Index32)
+		public Mesh(int numVertices, int numIndices, MeshTopology topology = MeshTopology.TriangleList, MeshFlag flags = MeshFlag.Static, VertexLayout vertex = VertexLayout.Position, IndexType index = IndexType.Index32)
 		{
-			Internal_Create(this, numVertices, numIndices, topology, usage, vertex, index);
+			Internal_Create(this, numVertices, numIndices, topology, flags, vertex, index);
 		}
 
 		/// <summary>
@@ -55,15 +55,15 @@ namespace b3d
 		/// Defines how are indices separated into sub-meshes, and how are those sub-meshes rendered. Sub-meshes may be rendered 
 		/// independently, each with a different material.
 		/// </param>
-		/// <param name="usage">Optimizes performance depending on planned usage of the mesh.</param>
+		/// <param name="flags">Flags to control various mesh options.</param>
 		/// <param name="vertex">Controls how are vertices organized in the vertex buffer and what data they contain.</param>
 		/// <param name="index">
 		/// Size of indices, use smaller size for better performance, however be careful not to go over the number of vertices 
 		/// limited by the data type size.
 		/// </param>
-		public Mesh(int numVertices, int numIndices, SubMesh[] subMeshes, MeshUsage usage = MeshUsage.Static, VertexLayout vertex = VertexLayout.Position, IndexType index = IndexType.Index32)
+		public Mesh(int numVertices, int numIndices, SubMesh[] subMeshes, MeshFlag flags = MeshFlag.Static, VertexLayout vertex = VertexLayout.Position, IndexType index = IndexType.Index32)
 		{
-			Internal_Create0(this, numVertices, numIndices, subMeshes, usage, vertex, index);
+			Internal_Create0(this, numVertices, numIndices, subMeshes, flags, vertex, index);
 		}
 
 		/// <summary>
@@ -75,10 +75,10 @@ namespace b3d
 		/// Determines how should the provided indices be interpreted by the pipeline. Default option is a triangle list, where 
 		/// three indices represent a single triangle.
 		/// </param>
-		/// <param name="usage">Optimizes performance depending on planned usage of the mesh.</param>
-		public Mesh(RendererMeshData data, MeshTopology topology = MeshTopology.TriangleList, MeshUsage usage = MeshUsage.Static)
+		/// <param name="flags">Flags to control various mesh options.</param>
+		public Mesh(RendererMeshData data, MeshTopology topology = MeshTopology.TriangleList, MeshFlag flags = MeshFlag.Static)
 		{
-			Internal_Create1(this, data, topology, usage);
+			Internal_Create1(this, data, topology, flags);
 		}
 
 		/// <summary>
@@ -90,10 +90,10 @@ namespace b3d
 		/// Defines how are indices separated into sub-meshes, and how are those sub-meshes rendered. Sub-meshes may be rendered 
 		/// independently, each with a different material.
 		/// </param>
-		/// <param name="usage">Optimizes performance depending on planned usage of the mesh.</param>
-		public Mesh(RendererMeshData data, SubMesh[] subMeshes, MeshUsage usage = MeshUsage.Static)
+		/// <param name="flags">Flags to control various mesh options.</param>
+		public Mesh(RendererMeshData data, SubMesh[] subMeshes, MeshFlag flags = MeshFlag.Static)
 		{
-			Internal_Create2(this, data, subMeshes, usage);
+			Internal_Create2(this, data, subMeshes, flags);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -159,13 +159,13 @@ namespace b3d
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern MorphShapes Internal_GetMorphShapes(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Create(Mesh managedInstance, int numVertices, int numIndices, MeshTopology topology, MeshUsage usage, VertexLayout vertex, IndexType index);
+		private static extern void Internal_Create(Mesh managedInstance, int numVertices, int numIndices, MeshTopology topology, MeshFlag flags, VertexLayout vertex, IndexType index);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Create0(Mesh managedInstance, int numVertices, int numIndices, SubMesh[] subMeshes, MeshUsage usage, VertexLayout vertex, IndexType index);
+		private static extern void Internal_Create0(Mesh managedInstance, int numVertices, int numIndices, SubMesh[] subMeshes, MeshFlag flags, VertexLayout vertex, IndexType index);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Create1(Mesh managedInstance, RendererMeshData data, MeshTopology topology, MeshUsage usage);
+		private static extern void Internal_Create1(Mesh managedInstance, RendererMeshData data, MeshTopology topology, MeshFlag flags);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Create2(Mesh managedInstance, RendererMeshData data, SubMesh[] subMeshes, MeshUsage usage);
+		private static extern void Internal_Create2(Mesh managedInstance, RendererMeshData data, SubMesh[] subMeshes, MeshFlag flags);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern SubMesh[] Internal_GetSubMeshes(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]

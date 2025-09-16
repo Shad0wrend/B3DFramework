@@ -26,13 +26,13 @@ namespace b3d
 		 *								by provided topology.
 		 * @param[in]	topology		Determines how should the provided indices be interpreted by the pipeline. Default
 		 *								option is a triangle list, where three indices represent a single triangle.
-		 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
+		 * @param[in]	flags			Flags to control various mesh options.
 		 * @param[in]	vertex			Controls how are vertices organized in the vertex buffer and what data they contain.
 		 * @param[in]	index			Size of indices, use smaller size for better performance, however be careful not to
 		 *								go over the number of vertices limited by the data type size.
 		 */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Mesh))
-		static HMesh Create(int numVertices, int numIndices, DrawOperationType topology = DOT_TRIANGLE_LIST, MeshUsage usage = MU_STATIC, VertexLayout vertex = VertexLayout::Position, IndexType index = IT_32BIT);
+		static HMesh Create(int numVertices, int numIndices, DrawOperationType topology = DOT_TRIANGLE_LIST, MeshFlags flags = MeshFlag::Static, VertexLayout vertex = VertexLayout::Position, IndexType index = IT_32BIT);
 
 		/**
 		 * Creates a new mesh with enough space to hold the a number of primitives using the specified layout. Indices can
@@ -43,13 +43,13 @@ namespace b3d
 		 *								by provided topology.
 		 * @param[in]	subMeshes		Defines how are indices separated into sub-meshes, and how are those sub-meshes
 		 *								rendered. Sub-meshes may be rendered independently, each with a different material.
-		 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
+		 * @param[in]	flags			Flags to control various mesh options.
 		 * @param[in]	vertex			Controls how are vertices organized in the vertex buffer and what data they contain.
 		 * @param[in]	index			Size of indices, use smaller size for better performance, however be careful not to
 		 *								go over the number of vertices limited by the data type size.
 		 */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Mesh))
-		static HMesh Create(int numVertices, int numIndices, const Vector<SubMesh>& subMeshes, MeshUsage usage = MU_STATIC, VertexLayout vertex = VertexLayout::Position, IndexType index = IT_32BIT);
+		static HMesh Create(int numVertices, int numIndices, const Vector<SubMesh>& subMeshes, MeshFlags flags = MeshFlag::Static, VertexLayout vertex = VertexLayout::Position, IndexType index = IT_32BIT);
 
 		/**
 		 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
@@ -58,10 +58,10 @@ namespace b3d
 		 * @param[in]	data			Vertex and index data to initialize the mesh with.
 		 * @param[in]	topology		Determines how should the provided indices be interpreted by the pipeline. Default
 		 *								option is a triangle list, where three indices represent a single triangle.
-		 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
+		 * @param[in]	flags			Flags to control various mesh options.
 		 */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Mesh))
-		static HMesh Create(const SPtr<RendererMeshData>& data, DrawOperationType topology = DOT_TRIANGLE_LIST, MeshUsage usage = MU_STATIC);
+		static HMesh Create(const SPtr<RendererMeshData>& data, DrawOperationType topology = DOT_TRIANGLE_LIST, MeshFlags flags = MeshFlag::Static);
 
 		/**
 		 * Creates a new mesh with enough space to hold the a number of primitives using the specified layout. Indices can
@@ -70,10 +70,10 @@ namespace b3d
 		 * @param[in]	data			Vertex and index data to initialize the mesh with.
 		 * @param[in]	subMeshes		Defines how are indices separated into sub-meshes, and how are those sub-meshes
 		 *								rendered. Sub-meshes may be rendered independently, each with a different material.
-		 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
+		 * @param[in]	flags			Flags to control various mesh options.
 		 */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Mesh))
-		static HMesh Create(const SPtr<RendererMeshData>& data, const Vector<SubMesh>& subMeshes, MeshUsage usage = MU_STATIC);
+		static HMesh Create(const SPtr<RendererMeshData>& data, const Vector<SubMesh>& subMeshes, MeshFlags flags = MeshFlag::Static);
 
 		/** Returns all sub-meshes contained in the mesh. */
 		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Mesh), Property(Getter), ExportName(SubMeshes))

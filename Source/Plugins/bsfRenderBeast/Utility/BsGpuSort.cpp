@@ -79,7 +79,7 @@ const char* CheckSortBuffer(GpuBuffer& buffer)
 		"All buffers provided to GpuSort must use a 32-bit unsigned integer format, or a format that may be viewed as such.";
 
 	const GpuBufferInformation& bufferInformation = buffer.GetInformation();
-	if(!bufferInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
+	if(!bufferInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
 		return kInvalidGpuWriteMsg;
 
 	if(bufferInformation.Type != GpuBufferType::SimpleStorage)
@@ -95,7 +95,7 @@ const char* CheckSortBuffer(GpuBuffer& buffer)
 SPtr<GpuBuffer> CreateHelperBuffer()
 {
 	GpuBufferCreateInformation bufferCreateInformation;
-	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
+	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 	bufferCreateInformation.Type = GpuBufferType::SimpleStorage;
 	bufferCreateInformation.SimpleStorage.Count = kMaxNumGroups * kNumDigits;
 	bufferCreateInformation.SimpleStorage.Format = BF_32X1U;
@@ -282,7 +282,7 @@ GpuSortBuffers GpuSort::CreateSortBuffers(u32 numElements, bool values)
 
 	GpuBufferCreateInformation createBufferInformation;
 	createBufferInformation.Type = GpuBufferType::SimpleStorage;
-	createBufferInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
+	createBufferInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 	createBufferInformation.SimpleStorage.Count = numElements;
 	createBufferInformation.SimpleStorage.Format = BF_32X1U;
 

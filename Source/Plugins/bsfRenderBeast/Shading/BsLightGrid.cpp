@@ -33,7 +33,7 @@ void LightGridLLCreationMat::Initialize()
 
 	GpuBufferCreateInformation bufferCreateInformation;
 	bufferCreateInformation.Type = GpuBufferType::StructuredStorage;
-	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
+	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 	bufferCreateInformation.StructuredStorage.ElementSize = 4;
 	bufferCreateInformation.StructuredStorage.Count = 1;
 
@@ -58,7 +58,7 @@ void LightGridLLCreationMat::SetParams(GpuCommandBuffer& commandBuffer, const Ve
 	{
 		GpuBufferCreateInformation bufferCreateInformation;
 		bufferCreateInformation.Type = GpuBufferType::StructuredStorage;
-		bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
+		bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 		bufferCreateInformation.StructuredStorage.ElementSize = 4;
 		bufferCreateInformation.StructuredStorage.Count = numCells;
 
@@ -145,7 +145,7 @@ void LightGridLLReductionMat::Initialize()
 
 	GpuBufferCreateInformation bufferCreateInformation;
 	bufferCreateInformation.Type = GpuBufferType::StructuredStorage;
-	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
+	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 	bufferCreateInformation.StructuredStorage.Count = 2;
 	bufferCreateInformation.StructuredStorage.ElementSize = 4;
 
@@ -167,7 +167,7 @@ void LightGridLLReductionMat::SetParams(GpuCommandBuffer& commandBuffer, const V
 	{
 		GpuBufferCreateInformation bufferCreateInformation;
 		bufferCreateInformation.Type = GpuBufferType::SimpleStorage;
-		bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
+		bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 		bufferCreateInformation.SimpleStorage.Count = numCells;
 		bufferCreateInformation.SimpleStorage.Format = BF_32X4U;
 

@@ -4,33 +4,33 @@
 #include "CoreObject/BsRenderThread.h"
 
 using namespace b3d;
-HMesh MeshEx::Create(int numVertices, int numIndices, DrawOperationType topology, MeshUsage usage, VertexLayout vertex, IndexType index)
+HMesh MeshEx::Create(int numVertices, int numIndices, DrawOperationType topology, MeshFlags flags, VertexLayout vertex, IndexType index)
 {
 	MeshCreateInformation desc;
 	desc.VertexCount = numVertices;
 	desc.IndexCount = numIndices;
 	desc.VertexDescription = RendererMeshData::VertexLayoutVertexDesc(vertex);
 	desc.SubMeshes = { SubMesh(0, numIndices, topology) };
-	desc.Usage = usage;
+	desc.Flags = flags;
 	desc.IndexType = index;
 
 	return Mesh::Create(desc);
 }
 
-HMesh MeshEx::Create(int numVertices, int numIndices, const Vector<SubMesh>& subMeshes, MeshUsage usage, VertexLayout vertex, IndexType index)
+HMesh MeshEx::Create(int numVertices, int numIndices, const Vector<SubMesh>& subMeshes, MeshFlags flags, VertexLayout vertex, IndexType index)
 {
 	MeshCreateInformation desc;
 	desc.VertexCount = numVertices;
 	desc.IndexCount = numIndices;
 	desc.VertexDescription = RendererMeshData::VertexLayoutVertexDesc(vertex);
 	desc.SubMeshes = subMeshes;
-	desc.Usage = usage;
+	desc.Flags = flags;
 	desc.IndexType = index;
 
 	return Mesh::Create(desc);
 }
 
-HMesh MeshEx::Create(const SPtr<RendererMeshData>& data, DrawOperationType topology, MeshUsage usage)
+HMesh MeshEx::Create(const SPtr<RendererMeshData>& data, DrawOperationType topology, MeshFlags flags)
 {
 	SPtr<MeshData> meshData;
 	if(data != nullptr)
@@ -42,12 +42,12 @@ HMesh MeshEx::Create(const SPtr<RendererMeshData>& data, DrawOperationType topol
 
 	MeshCreateInformation desc;
 	desc.SubMeshes = { SubMesh(0, numIndices, topology) };
-	desc.Usage = usage;
+	desc.Flags = flags;
 
 	return Mesh::Create(meshData, desc);
 }
 
-HMesh MeshEx::Create(const SPtr<RendererMeshData>& data, const Vector<SubMesh>& subMeshes, MeshUsage usage)
+HMesh MeshEx::Create(const SPtr<RendererMeshData>& data, const Vector<SubMesh>& subMeshes, MeshFlags flags)
 {
 	SPtr<MeshData> meshData;
 	if(data != nullptr)
@@ -55,7 +55,7 @@ HMesh MeshEx::Create(const SPtr<RendererMeshData>& data, const Vector<SubMesh>& 
 
 	MeshCreateInformation desc;
 	desc.SubMeshes = subMeshes;
-	desc.Usage = usage;
+	desc.Flags = flags;
 
 	return Mesh::Create(meshData, desc);
 }

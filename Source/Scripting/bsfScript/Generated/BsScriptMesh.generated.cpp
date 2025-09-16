@@ -89,13 +89,13 @@ namespace b3d
 		return __output;
 	}
 
-	void ScriptMesh::InternalCreate(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, DrawOperationType topology, MeshUsage usage, VertexLayout vertex, IndexType index)
+	void ScriptMesh::InternalCreate(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, DrawOperationType topology, MeshFlag flags, VertexLayout vertex, IndexType index)
 	{
-		TResourceHandle<Mesh> nativeObject = MeshEx::Create(numVertices, numIndices, topology, usage, vertex, index);
+		TResourceHandle<Mesh> nativeObject = MeshEx::Create(numVertices, numIndices, topology, flags, vertex, index);
 		ScriptObjectWrapper::Create<ScriptMesh>(nativeObject, scriptObject);
 	}
 
-	void ScriptMesh::InternalCreate0(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, MonoArray* subMeshes, MeshUsage usage, VertexLayout vertex, IndexType index)
+	void ScriptMesh::InternalCreate0(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, MonoArray* subMeshes, MeshFlag flags, VertexLayout vertex, IndexType index)
 	{
 		Vector<SubMesh> nativeArraysubMeshes;
 		if(subMeshes != nullptr)
@@ -108,22 +108,22 @@ namespace b3d
 			}
 
 		}
-		TResourceHandle<Mesh> nativeObject = MeshEx::Create(numVertices, numIndices, nativeArraysubMeshes, usage, vertex, index);
+		TResourceHandle<Mesh> nativeObject = MeshEx::Create(numVertices, numIndices, nativeArraysubMeshes, flags, vertex, index);
 		ScriptObjectWrapper::Create<ScriptMesh>(nativeObject, scriptObject);
 	}
 
-	void ScriptMesh::InternalCreate1(MonoObject* scriptObject, MonoObject* data, DrawOperationType topology, MeshUsage usage)
+	void ScriptMesh::InternalCreate1(MonoObject* scriptObject, MonoObject* data, DrawOperationType topology, MeshFlag flags)
 	{
 		SPtr<RendererMeshData> tmpdata;
 		ScriptRendererMeshData* scriptObjectWrapperdata;
 		scriptObjectWrapperdata = ScriptRendererMeshData::GetScriptObjectWrapper(data);
 		if(scriptObjectWrapperdata != nullptr)
 			tmpdata = std::static_pointer_cast<RendererMeshData>(scriptObjectWrapperdata->GetBaseNativeObjectAsShared());
-		TResourceHandle<Mesh> nativeObject = MeshEx::Create(tmpdata, topology, usage);
+		TResourceHandle<Mesh> nativeObject = MeshEx::Create(tmpdata, topology, flags);
 		ScriptObjectWrapper::Create<ScriptMesh>(nativeObject, scriptObject);
 	}
 
-	void ScriptMesh::InternalCreate2(MonoObject* scriptObject, MonoObject* data, MonoArray* subMeshes, MeshUsage usage)
+	void ScriptMesh::InternalCreate2(MonoObject* scriptObject, MonoObject* data, MonoArray* subMeshes, MeshFlag flags)
 	{
 		SPtr<RendererMeshData> tmpdata;
 		ScriptRendererMeshData* scriptObjectWrapperdata;
@@ -141,7 +141,7 @@ namespace b3d
 			}
 
 		}
-		TResourceHandle<Mesh> nativeObject = MeshEx::Create(tmpdata, nativeArraysubMeshes, usage);
+		TResourceHandle<Mesh> nativeObject = MeshEx::Create(tmpdata, nativeArraysubMeshes, flags);
 		ScriptObjectWrapper::Create<ScriptMesh>(nativeObject, scriptObject);
 	}
 

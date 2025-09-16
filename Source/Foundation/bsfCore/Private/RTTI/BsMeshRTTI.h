@@ -10,6 +10,7 @@
 #include "Animation/BsSkeleton.h"
 #include "Animation/BsMorphShapes.h"
 #include "CoreObject/BsRenderThread.h"
+#include "RTTI/BsFlagsRTTI.h"
 
 namespace b3d
 {
@@ -25,7 +26,7 @@ namespace b3d
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mVertexDescription, 0)
 			B3D_RTTI_MEMBER(mIndexType, 1)
-			B3D_RTTI_MEMBER(mUsage, 2)
+			B3D_RTTI_MEMBER(mFlags, 2)
 			B3D_RTTI_GENERATED_MEMBER(mMeshData, 3)
 			B3D_RTTI_MEMBER(mSkeleton, 4)
 			B3D_RTTI_MEMBER(mMorphShapes, 5)

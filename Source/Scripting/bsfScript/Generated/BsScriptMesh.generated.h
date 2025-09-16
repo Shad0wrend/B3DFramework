@@ -4,10 +4,10 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptResourceWrapper.h"
-#include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 #include "../../../Foundation/bsfCore/Mesh/BsMeshBase.h"
 #include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 #include "../../../Foundation/bsfCore/Renderer/BsRendererMeshData.h"
+#include "../../../Foundation/bsfCore/Utility/BsCommonTypes.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsSubMesh.h"
 #include "../../../Foundation/bsfUtility/Math/BsAABox.h"
 #include "../../../Foundation/bsfUtility/Math/BsSphere.h"
@@ -35,10 +35,10 @@ namespace b3d
 
 		static MonoObject* InternalGetSkeleton(ScriptMesh* self);
 		static MonoObject* InternalGetMorphShapes(ScriptMesh* self);
-		static void InternalCreate(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, DrawOperationType topology, MeshUsage usage, VertexLayout vertex, IndexType index);
-		static void InternalCreate0(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, MonoArray* subMeshes, MeshUsage usage, VertexLayout vertex, IndexType index);
-		static void InternalCreate1(MonoObject* scriptObject, MonoObject* data, DrawOperationType topology, MeshUsage usage);
-		static void InternalCreate2(MonoObject* scriptObject, MonoObject* data, MonoArray* subMeshes, MeshUsage usage);
+		static void InternalCreate(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, DrawOperationType topology, MeshFlag flags, VertexLayout vertex, IndexType index);
+		static void InternalCreate0(MonoObject* scriptObject, int32_t numVertices, int32_t numIndices, MonoArray* subMeshes, MeshFlag flags, VertexLayout vertex, IndexType index);
+		static void InternalCreate1(MonoObject* scriptObject, MonoObject* data, DrawOperationType topology, MeshFlag flags);
+		static void InternalCreate2(MonoObject* scriptObject, MonoObject* data, MonoArray* subMeshes, MeshFlag flags);
 		static MonoArray* InternalGetSubMeshes(ScriptMesh* self);
 		static uint32_t InternalGetSubMeshCount(ScriptMesh* self);
 		static void InternalGetBounds(ScriptMesh* self, __TAABox_float_Interop* box, __TSphere_float_Interop* sphere);

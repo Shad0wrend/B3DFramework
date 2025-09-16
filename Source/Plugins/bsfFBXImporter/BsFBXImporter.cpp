@@ -99,18 +99,18 @@ SPtr<ImportOptions> FBXImporter::CreateImportOptions() const
 
 SPtr<Resource> FBXImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
 {
-	MeshCreateInformation desc;
+	MeshCreateInformation meshCreateInformation;
 
 	Vector<FBXAnimationClipData> dummy;
-	SPtr<RendererMeshData> rendererMeshData = ImportMeshData(filePath, importOptions, desc.SubMeshes, dummy, desc.Skeleton, desc.MorphShapes);
+	SPtr<RendererMeshData> rendererMeshData = ImportMeshData(filePath, importOptions, meshCreateInformation.SubMeshes, dummy, meshCreateInformation.Skeleton, meshCreateInformation.MorphShapes);
 
 	const MeshImportOptions* meshImportOptions = static_cast<const MeshImportOptions*>(importOptions.get());
 
-	desc.Usage = MU_STATIC;
+	meshCreateInformation.Flags = MeshFlag::Static;
 	if(meshImportOptions->CpuCached)
-		desc.Usage |= MU_CPUCACHED;
+		meshCreateInformation.Flags |= MeshFlag::KeepCPUCopy;
 
-	SPtr<Mesh> mesh = Mesh::CreateShared(rendererMeshData->GetData(), desc);
+	SPtr<Mesh> mesh = Mesh::CreateShared(rendererMeshData->GetData(), meshCreateInformation);
 
 	const String fileName = filePath.GetFilename(false);
 	mesh->SetName(fileName);
@@ -127,9 +127,9 @@ Vector<SubResourceRaw> FBXImporter::ImportAll(const Path& filePath, SPtr<const I
 
 	const MeshImportOptions* meshImportOptions = static_cast<const MeshImportOptions*>(importOptions.get());
 
-	desc.Usage = MU_STATIC;
+	desc.Flags = MeshFlag::Static;
 	if(meshImportOptions->CpuCached)
-		desc.Usage |= MU_CPUCACHED;
+		desc.Flags |= MeshFlag::KeepCPUCopy;
 
 	SPtr<Mesh> mesh = Mesh::CreateShared(rendererMeshData->GetData(), desc);
 

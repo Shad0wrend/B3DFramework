@@ -319,7 +319,7 @@ GpuParticleResources::GpuParticleResources()
 	// Allocate the buffer containing keys used for sorting
 	GpuBufferCreateInformation sortKeysBufferCreateInformation;
 	sortKeysBufferCreateInformation.Type = GpuBufferType::SimpleStorage;
-	sortKeysBufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
+	sortKeysBufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 	sortKeysBufferCreateInformation.SimpleStorage.Format = BF_32X1U;
 	sortKeysBufferCreateInformation.SimpleStorage.Count = kTexSize * kTexSize;
 
@@ -329,7 +329,7 @@ GpuParticleResources::GpuParticleResources()
 	// Allocate the buffer containing sorted particle indices
 	GpuBufferCreateInformation sortedIndicesBufferCreateInformation;
 	sortedIndicesBufferCreateInformation.Type = GpuBufferType::SimpleStorage;
-	sortedIndicesBufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
+	sortedIndicesBufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 	sortedIndicesBufferCreateInformation.SimpleStorage.Format = BF_16X2U;
 	sortedIndicesBufferCreateInformation.SimpleStorage.Count = kTexSize * kTexSize;
 

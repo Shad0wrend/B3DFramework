@@ -772,7 +772,7 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& buffer, VkDescr
 				auto* element = static_cast<VulkanGpuBuffer*>(mStorageBufferData[sequentialResourceIndex].Buffer.get());
 				resource = element->GetVulkanResource();
 
-				if(element->GetInformation().Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
+				if(element->GetInformation().Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
 					useFlags |= VulkanAccessFlag::Write;
 
 				bufferSize = element->GetSuballocationSize();

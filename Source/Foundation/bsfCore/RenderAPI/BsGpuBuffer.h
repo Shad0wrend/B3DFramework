@@ -49,7 +49,7 @@ namespace b3d
 		 * Ensures that the GPU can perform write operations in the buffer. Generally this is used for buffers used in compute operations. StoreOnGPU memory
 		 * flag must be used.
 		 */
-		AllowWritesOnTheGPU = 1 << 2,
+		AllowUnorderedAccessOnTheGPU = 1 << 2,
 
 		/** If set, a buffer will maintain a separate CPU-only buffer into which you may write via WriteCached(). Writes can then be sent to the GPU all at once via a FlushToGPU() call. */
 		AllowWriteCachingOnCPU = 1 << 3,

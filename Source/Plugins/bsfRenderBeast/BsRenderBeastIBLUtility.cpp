@@ -145,7 +145,7 @@ SPtr<GpuBuffer> IrradianceComputeSHMat::CreateOutputBuffer(const SPtr<Texture>& 
 
 	GpuBufferCreateInformation bufferCreateInformation;
 	bufferCreateInformation.Type = GpuBufferType::StructuredStorage;
-	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
+	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 	bufferCreateInformation.StructuredStorage.Count = numCoeffSets;
 
 	if(mVariationParameters.GetInt("SH_ORDER") == 3)
