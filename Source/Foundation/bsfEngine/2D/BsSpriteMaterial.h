@@ -6,6 +6,7 @@
 #include "Material/BsMaterialParam.h"
 #include "Image/BsColor.h"
 #include "Material/BsShaderVariation.h"
+#include "Renderer/BsGpuDataParameterBlock.h"
 
 namespace b3d
 {
@@ -121,39 +122,66 @@ namespace b3d
 		/**
 		 * Renders the provided mesh using the current material.
 		 *
-		 * @param	commandBuffer	Command buffer to encode the render commands  on.
-		 * @param	mesh			Mesh to render, containing vertices in screen space.
-		 * @param	subMesh			Portion of @p mesh to render.
-		 * @param	texture			Optional texture to render the mesh with.
-		 * @param	sampler			Optional sampler to render the texture with.
-		 * @param	paramBuffer		Buffer containing data GPU parameters.
-		 * @param	additionalData	Optional additional data that might be required by the renderer.
+		 * @param	commandBuffer		Command buffer to encode the render commands  on.
+		 * @param	mesh				Mesh to render, containing vertices in screen space.
+		 * @param	subMesh				Portion of @p mesh to render.
+		 * @param	texture				Optional texture to render the mesh with.
+		 * @param	sampler				Optional sampler to render the texture with.
+		 * @param	uniformBuffer		Buffer containing data GPU parameters, created from GUISpriteUniformBufferDefinition.
+		 * @param	clipRegionBuffer	Buffer containing regions against all rendered sprite quads will be culled/clipped against.
+		 * @param	clipRegionCount		Number of regions in @p clipRegionBuffer.
+		 * @param	additionalData		Optional additional data that might be required by the renderer.
 		 */
-		virtual void Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::Texture>& texture, const SPtr<SamplerState>& sampler, const SPtr<render::GpuBuffer>& paramBuffer, const SPtr<SpriteMaterialExtraInfo>& additionalData) const;
+		virtual void Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::Texture>& texture, const SPtr<SamplerState>& sampler, const SPtr<render::GpuBuffer>& uniformBuffer, const SPtr<render::GpuBuffer>& clipRegionBuffer, u32 clipRegionCount, const SPtr<SpriteMaterialExtraInfo>& additionalData) const;
 
+		/** Writes the provided parameters into a uniform buffer created from GUISpriteUniformBufferDefinition. */
+		static void PopulateUniformBuffer(const SPtr<render::GpuBuffer>& buffer, const Vector2I& viewportOffset, float inverseViewportWidth, float inverseViewportHeight, bool flipY, float animationTime, u32 clipRegionCount, const Matrix4& transform, const render::SpriteMaterialInfo& materialInformation);
 	protected:
 		/** Perform initialization of render-thread specific objects. */
 		virtual void Initialize();
 
 		/** Destroys the render thread material. */
-		static void Destroy(const SPtr<render::Material>& material, const SPtr<render::GpuParamsSet>& params);
+		static void Destroy(const SPtr<render::Material>& material, const SPtr<render::GpuParamsSet>& withClippingParams, const SPtr<render::GpuParamsSet>& withoutClippingParams);
+
+		struct MaterialVariationInformation
+		{
+			u32 VariationIndex = ~0u;
+			u32 UniformBufferIndex = ~0u;
+			SPtr<render::GpuParamsSet> ParameterSet;
+
+			TGpuParameterBuffer<true> VerticesBufferParameter;
+			TGpuParameterBuffer<true> ClipRegionsBufferParameter;
+		};
 
 		u32 mId;
 		bool mAllowBatching;
 
 		// Render thread only (everything below)
 		SPtr<render::Material> mMaterial;
-		u32 mTechnique;
+		MaterialVariationInformation mWithoutClippingVariation;
+		MaterialVariationInformation mWithClippingVariation;
+
 		std::atomic<bool> mMaterialStored;
 
-		SPtr<render::GpuParamsSet> mParams;
-		u32 mParamBufferIdx;
-		mutable render::MaterialParameterSampledTexture mTextureParam;
-		mutable render::MaterialParameterSampler mSamplerParam;
+		mutable render::MaterialParameterSampledTexture mTextureParameter;
+		mutable render::MaterialParameterSampler mSamplerParameter;
 	};
 
 	namespace render
 	{
+		B3D_PARAM_BLOCK_BEGIN(GUISpriteUniformBufferDefinition)
+			B3D_PARAM_BLOCK_ENTRY(Matrix4, gWorldTransform)
+			B3D_PARAM_BLOCK_ENTRY(float, gInvViewportWidth)
+			B3D_PARAM_BLOCK_ENTRY(float, gInvViewportHeight)
+			B3D_PARAM_BLOCK_ENTRY(Vector2I, gViewportOffset)
+			B3D_PARAM_BLOCK_ENTRY(Color, gTint)
+			B3D_PARAM_BLOCK_ENTRY(Vector4, gUVSizeOffset)
+			B3D_PARAM_BLOCK_ENTRY(float, gViewportYFlip)
+			B3D_PARAM_BLOCK_ENTRY(u32, gClipRegionCount)
+		B3D_PARAM_BLOCK_END
+
+		extern GUISpriteUniformBufferDefinition gGUISpriteUniformBufferDefinition;
+
 		/** @copydoc b3d::SpriteMaterialInfo */
 		struct SpriteMaterialInfo : TSpriteMaterialInfo<true>
 		{

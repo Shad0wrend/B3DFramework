@@ -39,7 +39,7 @@ namespace b3d
 				size += B3DRTTIWrite(kVersion, stream);
 				size += B3DRTTIWrite(data.Name, stream);
 				size += B3DRTTIWrite(data.Type, stream);
-				size += B3DRTTIWrite(data.I, stream);
+				size += B3DRTTIWrite(data.SignedInteger, stream);
 
 				return size; });
 		}
@@ -55,7 +55,7 @@ namespace b3d
 
 			B3DRTTIRead(data.Name, stream);
 			B3DRTTIRead(data.Type, stream);
-			B3DRTTIRead(data.I, stream);
+			B3DRTTIRead(data.SignedInteger, stream);
 
 			return size;
 		}
@@ -65,7 +65,7 @@ namespace b3d
 			BitLength dataSize = sizeof(uint8_t);
 			dataSize += B3DRTTISize(data.Name);
 			dataSize += B3DRTTISize(data.Type);
-			dataSize += B3DRTTISize(data.I);
+			dataSize += B3DRTTISize(data.SignedInteger);
 
 			B3DRTTIAddHeaderSize(dataSize, compress);
 			return dataSize;

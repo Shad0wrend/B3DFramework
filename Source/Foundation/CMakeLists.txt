@@ -207,7 +207,7 @@ if(NOT B3D_IS_ENGINE)
 
 	install(
 		EXPORT bsf
-		namespace b3df::
+		NAMESPACE b3d::
 		FILE bsf-config.cmake
 		DESTINATION lib/bsf
 	)

@@ -16,7 +16,7 @@ const u32 TiledDeferredLightingMat::kTileSize = 16;
 void TiledDeferredLightingMat::Initialize()
 {
 	mGBufferParams.Initialize(*mGpuDevice, GPT_COMPUTE_PROGRAM, mGPUParameters);
-	mSampleCount = mVariationParameters.GetUInt("MSAA_COUNT");
+	mSampleCount = mVariationParameters.GetUI32("MSAA_COUNT");
 
 	mGPUParameters->GetStorageBufferParameter("gLights", mLightBufferParam);
 	mGPUParameters->GetSampledTextureParameter("gInColor", mInColorTextureParam);
@@ -159,7 +159,7 @@ ClearLoadStoreParamDef gClearLoadStoreParamDef;
 
 void ClearLoadStoreMat::Initialize()
 {
-	i32 objType = mVariationParameters.GetInt("OBJ_TYPE");
+	i32 objType = mVariationParameters.GetI32("OBJ_TYPE");
 
 	if(objType == 0 || objType == 1)
 		mGPUParameters->GetStorageTextureParameter("gOutput", mOutputTextureParam);
@@ -300,7 +300,7 @@ const u32 TiledDeferredImageBasedLightingMat::kTileSize = 16;
 
 void TiledDeferredImageBasedLightingMat::Initialize()
 {
-	mSampleCount = mVariationParameters.GetUInt("MSAA_COUNT");
+	mSampleCount = mVariationParameters.GetUI32("MSAA_COUNT");
 
 	mGPUParameters->GetSampledTextureParameter("gGBufferATex", mGBufferA);
 	mGPUParameters->GetSampledTextureParameter("gGBufferBTex", mGBufferB);

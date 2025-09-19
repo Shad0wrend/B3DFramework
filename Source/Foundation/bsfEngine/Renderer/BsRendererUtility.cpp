@@ -405,7 +405,7 @@ RendererUtility& GetRendererUtility()
 void BlitMat::Initialize()
 {
 	mGPUParameters->GetSampledTextureParameter("gSource", mSource);
-	mIsFiltered = mVariationParameters.GetInt("MODE") == 1;
+	mIsFiltered = mVariationParameters.GetI32("MODE") == 1;
 }
 
 void BlitMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const Area2& area, bool flipUV)

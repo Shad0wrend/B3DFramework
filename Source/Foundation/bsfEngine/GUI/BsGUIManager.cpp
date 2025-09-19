@@ -1583,8 +1583,6 @@ namespace b3d
 
 namespace b3d { namespace render
 {
-	GUISpriteParamBlockDef gGUISpriteParamBlockDef;
-
 	/** If enabled, regions of the GUI that are being redrawn will be drawn in a special debug material so they are easily noticeable. */
 	static constexpr bool kEnableGUIRegionDebugDrawing = false;
 
@@ -1698,15 +1696,56 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 		}
 	}
 
-	auto fnDrawRegions = [this, &widgetRenderData, &commandBuffer, renderTargetWidth, renderTargetHeight, viewflipYFlip, rebuildCachedRenderTexture](const Vector<Area2I>& regions, bool useDebugMaterial)
+	auto fnCreateClipRegionBuffer = [this, &gpuDevice](GUIWidgetRenderData& widgetRenderData, u32 bufferIndex, const FrameVector<Area2I>& clipRegions) -> SPtr<GpuBuffer>
+	{
+		struct ClipRegionArea
+		{
+			Vector2I TopLeft;
+			Vector2I BottomRight;
+		};
+
+		const u32 clipRegionCount = (u32)clipRegions.size();
+		const u32 requiredBufferSize = sizeof(ClipRegionArea) * clipRegionCount;
+		SPtr<GpuBuffer> dirtyRegionBuffer = widgetRenderData.DirtyRegionBuffers[bufferIndex];
+		if (dirtyRegionBuffer == nullptr || dirtyRegionBuffer->GetTotalSize()< requiredBufferSize)
+		{
+			GpuBufferInformation gpuBufferInformation;
+			gpuBufferInformation.Type = GpuBufferType::StructuredStorage;
+			gpuBufferInformation.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+			gpuBufferInformation.StructuredStorage.Count = clipRegionCount;
+			gpuBufferInformation.StructuredStorage.ElementSize = sizeof(ClipRegionArea);
+
+			dirtyRegionBuffer = gpuDevice->CreateGpuBuffer(gpuBufferInformation);
+			widgetRenderData.DirtyRegionBuffers[bufferIndex] = dirtyRegionBuffer;
+		}
+
+		ClipRegionArea* destination = reinterpret_cast<ClipRegionArea*>(dirtyRegionBuffer->Lock(GBL_WRITE_ONLY_DISCARD));
+
+		for (u32 dirtyRegionIndex = 0; dirtyRegionIndex < clipRegionCount; ++dirtyRegionIndex)
+		{
+			const Area2I& dirtyRegion = clipRegions[dirtyRegionIndex];
+
+			destination[dirtyRegionIndex].TopLeft = dirtyRegion.GetPosition();
+			destination[dirtyRegionIndex].BottomRight = dirtyRegion.GetPosition() + Vector2I(dirtyRegion.GetSize().Width, dirtyRegion.GetSize().Height);
+		}
+
+		dirtyRegionBuffer->Unlock();
+
+		return dirtyRegionBuffer;
+	};
+
+	auto fnDrawRegions = [this, &fnCreateClipRegionBuffer, &widgetRenderData, &commandBuffer, renderTargetWidth, renderTargetHeight, viewflipYFlip, rebuildCachedRenderTexture](const Vector<Area2I>& regions, bool useDebugMaterial)
 	{
 		const Area2I clipRectangle(0, 0, renderTargetWidth, renderTargetHeight);
 
-		// Find and draw all GUI meshes overlapping dirty regions
-		// Note: Could use quad-tree here for faster search
+		FrameVector<Area2I> clippedRegions;
+		clippedRegions.reserve(regions.size());
+
+		// Clear all regions
 		for(Area2I region : regions)
 		{
 			region.Clip(clipRectangle);
+			clippedRegions.push_back(region);
 
 			const Area2 normalizedRegionArea =
 				Area2(
@@ -1715,61 +1754,87 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 					region.Width / (float)renderTargetWidth,
 					region.Height / (float)renderTargetHeight);
 
+			// TODO - This could probably be more efficient by drawing N regions in a single draw call
 			commandBuffer.SetViewport(normalizedRegionArea);
 
 			if(!rebuildCachedRenderTexture)
 				commandBuffer.ClearViewport(FBT_COLOR, Color::kZero);
+		}
 
-			commandBuffer.EnableScissorTest(region);
+		commandBuffer.SetViewport(Area2(0.0f, 0.0f, 1.0f, 1.0f));
 
-			const Vector2I viewportOffset(-region.X, -region.Y);
-			const float inverseRegionWidth = 1.0f / (region.Width * 0.5f);
-			const float inverseRegionHeight = 1.0f / (region.Height * 0.5f);
+		const Vector2I viewportOffset(0, 0);
+		const float inverseRegionWidth = 1.0f / (renderTargetWidth* 0.5f);
+		const float inverseRegionHeight = 1.0f / (renderTargetHeight * 0.5f);
 
-			FrameVector<const GUIMeshRenderData*> meshesToRedraw;
-			for(const GUIWidgetRenderData& widget : widgetRenderData)
+		struct MeshToDraw
+		{
+			const GUIMeshRenderData* RenderData = nullptr;
+			FrameVector<Area2I> OverlappingRegions;
+		};
+
+		FrameVector<MeshToDraw> meshesToRedraw;
+		for(GUIWidgetRenderData& widget : widgetRenderData)
+		{
+			meshesToRedraw.clear();
+
+			for(auto drawGroupIterator = widget.DrawGroups.rbegin(); drawGroupIterator != widget.DrawGroups.rend(); ++drawGroupIterator)
 			{
-				meshesToRedraw.clear();
+				const GUIBatchRenderData& drawGroup = *drawGroupIterator;
 
-				for(auto drawGroupIterator = widget.DrawGroups.rbegin(); drawGroupIterator != widget.DrawGroups.rend(); ++drawGroupIterator)
+				// Check if the draw group overlaps any dirty regions, if not we can skip it
+				bool isDrawGroupOverlappingAny = false;
+				for (const Area2I& region : regions)
 				{
-					const GUIBatchRenderData& drawGroup = *drawGroupIterator;
-
-					if(!drawGroup.Bounds.Overlaps(region))
-						continue;
-
-					for(const GUIMeshRenderData& meshRenderData : drawGroup.Elements)
+					if (drawGroup.Bounds.Overlaps(region))
 					{
-						if(!meshRenderData.Bounds.Overlaps(region))
-							continue;
-
-						// Note: We will unnecessarily do this update multiple times if the same mesh overlaps multiple dirty regions
-						const SPtr<GpuBuffer>& buffer = widget.GUIMeshUniformBuffers[meshRenderData.UniformBufferIndex];
-						UpdateParamBlockBuffer(buffer, viewportOffset, inverseRegionWidth, inverseRegionHeight, viewflipYFlip, widget.WorldTransform, meshRenderData);
-
-						meshesToRedraw.push_back(&meshRenderData);
+						isDrawGroupOverlappingAny = true;
+						break;
 					}
 				}
 
-				for(const GUIMeshRenderData* meshRenderData : meshesToRedraw)
+				if (!isDrawGroupOverlappingAny)
+					continue;
+
+				// Find exact elements of the draw group which overlap dirty regions and record those elements and their overlapping regions
+				for(const GUIMeshRenderData& meshRenderData : drawGroup.Elements)
 				{
-					SpriteMaterial* const material = meshRenderData->Material;
-
-					// Note: Sprite material is being re-bound for each draw. We should ensure the material is bound only when it actually changes.
-					const SPtr<GpuBuffer>& uniformBuffer = widget.GUIMeshUniformBuffers[meshRenderData->UniformBufferIndex];
-
-					if(!kEnableGUIRegionDebugDrawing || !useDebugMaterial)
+					FrameVector<Area2I> overlappingDirtyRegions;
+					for (const Area2I& region : clippedRegions)
 					{
-						material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, meshRenderData->MaterialInformation.Texture, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
+						if (meshRenderData.Bounds.Overlaps(region))
+							overlappingDirtyRegions.push_back(region);
 					}
-					else
-					{
-						material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, Texture::kPink, mSamplerState, uniformBuffer, meshRenderData->MaterialInformation.AdditionalData);
-					}
+
+					if(overlappingDirtyRegions.empty())
+						continue;
+
+					// Note: We will unnecessarily do this update multiple times if the same mesh overlaps multiple dirty regions
+					const SPtr<GpuBuffer>& buffer = widget.GUIMeshUniformBuffers[meshRenderData.UniformBufferIndex];
+					SpriteMaterial::PopulateUniformBuffer(buffer, viewportOffset, inverseRegionWidth, inverseRegionHeight, viewflipYFlip, mTime, (u32)overlappingDirtyRegions.size(), widget.WorldTransform, meshRenderData.MaterialInformation);
+
+					meshesToRedraw.push_back({ &meshRenderData, std::move(overlappingDirtyRegions) });
 				}
 			}
 
-			commandBuffer.DisableScissorTest();
+			for(const MeshToDraw& meshToDraw : meshesToRedraw)
+			{
+				const GUIMeshRenderData* const meshRenderData = meshToDraw.RenderData;
+				SpriteMaterial* const material = meshRenderData->Material;
+
+				// Note: Sprite material is being re-bound for each draw. We should ensure the material is bound only when it actually changes.
+				const SPtr<GpuBuffer>& uniformBuffer = widget.GUIMeshUniformBuffers[meshRenderData->UniformBufferIndex];
+				const SPtr<GpuBuffer>& clipRegionBuffer = fnCreateClipRegionBuffer(widget, meshRenderData->UniformBufferIndex, meshToDraw.OverlappingRegions);
+
+				if(!kEnableGUIRegionDebugDrawing || !useDebugMaterial)
+				{
+					material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, meshRenderData->MaterialInformation.Texture, mSamplerState, uniformBuffer, clipRegionBuffer, (u32)meshToDraw.OverlappingRegions.size(), meshRenderData->MaterialInformation.AdditionalData);
+				}
+				else
+				{
+					material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, Texture::kPink, mSamplerState, uniformBuffer, clipRegionBuffer, (u32)meshToDraw.OverlappingRegions.size(), meshRenderData->MaterialInformation.AdditionalData);
+				}
+			}
 		}
 	};
 
@@ -1814,9 +1879,8 @@ void GUIRenderer::UpdateDrawGroups(const Camera* camera, u64 widgetId, u32 widge
 	Vector<GUIWidgetRenderData>& widgets = cameraRenderData.WidgetRenderData;
 	GUIWidgetRenderData* widget;
 
-	auto iterFind2 = std::find_if(widgets.begin(), widgets.end(), [widgetId](auto& x)
-								  { return x.WidgetId == widgetId; });
-	if(iterFind2 == widgets.end())
+	auto found = std::find_if(widgets.begin(), widgets.end(), [widgetId](auto& x) { return x.WidgetId == widgetId; });
+	if(found == widgets.end())
 	{
 		widgets.push_back(GUIWidgetRenderData());
 		widget = &widgets.back();
@@ -1824,31 +1888,32 @@ void GUIRenderer::UpdateDrawGroups(const Camera* camera, u64 widgetId, u32 widge
 		widget->WidgetId = widgetId;
 	}
 	else
-		widget = &(*iterFind2);
+		widget = &(*found);
 
 	if(!data.NewBatches.empty())
 	{
 		widget->DrawGroups = data.NewBatches;
 
 		// Allocate GPU buffers containing the material parameters
-		u32 numBuffers = 0;
+		u32 bufferCount = 0;
 		for(auto& drawGroup : widget->DrawGroups)
-			numBuffers += (u32)drawGroup.Elements.size();
+			bufferCount += (u32)drawGroup.Elements.size();
 
-		auto numAllocatedBuffers = (u32)widget->GUIMeshUniformBuffers.size();
-		if(numBuffers > numAllocatedBuffers)
+		const u32 allocatedBufferCount = (u32)widget->GUIMeshUniformBuffers.size();
+		if(bufferCount > allocatedBufferCount)
 		{
-			widget->GUIMeshUniformBuffers.resize(numBuffers);
+			widget->GUIMeshUniformBuffers.resize(bufferCount);
+			widget->DirtyRegionBuffers.resize(bufferCount);
 
-			for(u32 i = numAllocatedBuffers; i < numBuffers; i++)
-				widget->GUIMeshUniformBuffers[i] = gGUISpriteParamBlockDef.CreateBuffer();
+			for(u32 i = allocatedBufferCount; i < bufferCount; i++)
+				widget->GUIMeshUniformBuffers[i] = gGUISpriteUniformBufferDefinition.CreateBuffer();
 		}
 
-		u32 curBufferIdx = 0;
+		u32 currentBufferIndex = 0;
 		for(auto& drawGroup : widget->DrawGroups)
 		{
 			for(auto& entry : drawGroup.Elements)
-				entry.UniformBufferIndex = curBufferIdx++;
+				entry.UniformBufferIndex = currentBufferIndex++;
 		}
 	}
 
@@ -1893,33 +1958,4 @@ void GUIRenderer::ClearDrawGroups(u64 widgetId)
 	mWidgetToCameraMap.erase(widgetId);
 }
 
-void GUIRenderer::UpdateParamBlockBuffer(const SPtr<GpuBuffer>& buffer, const Vector2I& viewportOffset, float invViewportWidth, float invViewportHeight, bool flipY, const Matrix4& transform, const GUIMeshRenderData& renderData) const
-{
-	const SpriteMaterialInfo& materialInformation = renderData.MaterialInformation;
-
-	gGUISpriteParamBlockDef.gTint.Set(buffer, materialInformation.Tint);
-	gGUISpriteParamBlockDef.gWorldTransform.Set(buffer, transform);
-	gGUISpriteParamBlockDef.gInvViewportWidth.Set(buffer, invViewportWidth);
-	gGUISpriteParamBlockDef.gInvViewportHeight.Set(buffer, invViewportHeight);
-	gGUISpriteParamBlockDef.gViewportOffset.Set(buffer, viewportOffset);
-	gGUISpriteParamBlockDef.gViewportYFlip.Set(buffer, flipY ? -1.0f : 1.0f);
-
-	float t = std::max(0.0f, mTime - materialInformation.AnimationStartTime);
-	if(materialInformation.SpriteImage)
-	{
-		u32 row;
-		u32 column;
-		materialInformation.SpriteImage->GetAnimationFrame(t, row, column);
-
-		float invWidth = 1.0f / materialInformation.SpriteImage->GetAnimation().ColumnCount;
-		float invHeight = 1.0f / materialInformation.SpriteImage->GetAnimation().RowCount;
-
-		Vector4 sizeOffset(invWidth, invHeight, column * invWidth, row * invHeight);
-		gGUISpriteParamBlockDef.gUVSizeOffset.Set(buffer, sizeOffset);
-	}
-	else
-		gGUISpriteParamBlockDef.gUVSizeOffset.Set(buffer, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
-
-	buffer->FlushCache();
-}
 }}

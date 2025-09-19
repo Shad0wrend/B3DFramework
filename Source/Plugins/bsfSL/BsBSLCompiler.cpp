@@ -395,7 +395,7 @@ Vector<ShaderVariationParameters> BSLCompiler::CreateShaderVariations(const BSLP
 				ShaderVariationParameters a;
 				ShaderVariationParameters b;
 
-				b.AddParam(ShaderVariationParameter(currentVariation->Identifier, 1));
+				b.AddParameter(ShaderVariationParameter(currentVariation->Identifier, 1));
 
 				variations.push_back(a);
 				variations.push_back(b);
@@ -409,7 +409,7 @@ Vector<ShaderVariationParameters> BSLCompiler::CreateShaderVariations(const BSLP
 					variations.push_back(variations[variationIndex]);
 
 					// Add the parameter to existing variation
-					variations[variationIndex].AddParam(ShaderVariationParameter(currentVariation->Identifier, 1));
+					variations[variationIndex].AddParameter(ShaderVariationParameter(currentVariation->Identifier, 1));
 				}
 			}
 		}
@@ -421,7 +421,7 @@ Vector<ShaderVariationParameters> BSLCompiler::CreateShaderVariations(const BSLP
 				for(u32 variationValueIndex = 0; variationValueIndex < (u32)currentVariation->Values.size(); variationValueIndex++)
 				{
 					ShaderVariationParameters variation;
-					variation.AddParam(ShaderVariationParameter(currentVariation->Identifier, currentVariation->Values[variationValueIndex].Value));
+					variation.AddParameter(ShaderVariationParameter(currentVariation->Identifier, currentVariation->Values[variationValueIndex].Value));
 
 					variations.push_back(variation);
 				}
@@ -434,12 +434,12 @@ Vector<ShaderVariationParameters> BSLCompiler::CreateShaderVariations(const BSLP
 					for(u32 variationValueIndex = 1; variationValueIndex < (u32)currentVariation->Values.size(); variationValueIndex++)
 					{
 						ShaderVariationParameters copy = variations[variationIndex];
-						copy.AddParam(ShaderVariationParameter(currentVariation->Identifier, currentVariation->Values[variationValueIndex].Value));
+						copy.AddParameter(ShaderVariationParameter(currentVariation->Identifier, currentVariation->Values[variationValueIndex].Value));
 
 						variations.push_back(copy);
 					}
 
-					variations[variationIndex].AddParam(ShaderVariationParameter(currentVariation->Identifier, currentVariation->Values[0].Value));
+					variations[variationIndex].AddParameter(ShaderVariationParameter(currentVariation->Identifier, currentVariation->Values[0].Value));
 				}
 			}
 		}

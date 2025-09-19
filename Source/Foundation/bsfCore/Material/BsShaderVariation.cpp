@@ -31,22 +31,22 @@ ShaderVariationParameters::ShaderVariationParameters(const TInlineArray<ShaderVa
 	: mParams(params)
 { }
 
-i32 ShaderVariationParameters::GetInt(const StringID& name)
+i32 ShaderVariationParameters::GetI32(const StringID& name)
 {
 	const ShaderVariationParameter* const parameter = FindParameter(name);
 	if(parameter == nullptr)
 		return 0;
 
-	return parameter->I;
+	return parameter->SignedInteger;
 }
 
-u32 ShaderVariationParameters::GetUInt(const StringID& name)
+u32 ShaderVariationParameters::GetUI32(const StringID& name)
 {
 	const ShaderVariationParameter* const parameter = FindParameter(name);
 	if(parameter == nullptr)
 		return 0;
 
-	return parameter->Ui;
+	return parameter->UnsignedInteger;
 }
 
 float ShaderVariationParameters::GetFloat(const StringID& name)
@@ -55,7 +55,7 @@ float ShaderVariationParameters::GetFloat(const StringID& name)
 	if(parameter == nullptr)
 		return 0.0f;
 
-	return parameter->F;
+	return parameter->Float;
 }
 
 bool ShaderVariationParameters::GetBool(const StringID& name)
@@ -64,30 +64,54 @@ bool ShaderVariationParameters::GetBool(const StringID& name)
 	if(parameter == nullptr)
 		return false;
 
-	return parameter->I > 0 ? true : false;
+	return parameter->SignedInteger > 0 ? true : false;
 }
 
-void ShaderVariationParameters::SetInt(const StringID& name, i32 value)
+void ShaderVariationParameters::SetI32(const StringID& name, i32 value)
 {
-	AddParam(ShaderVariationParameter(name, value));
+	if(ShaderVariationParameter* parameter = FindParameter(name))
+	{
+		parameter->SignedInteger = value;
+		return;
+	}
+
+	AddParameter(ShaderVariationParameter(name, value));
 }
 
-void ShaderVariationParameters::SetUInt(const StringID& name, u32 value)
+void ShaderVariationParameters::SetU32(const StringID& name, u32 value)
 {
-	AddParam(ShaderVariationParameter(name, value));
+	if(ShaderVariationParameter* parameter = FindParameter(name))
+	{
+		parameter->UnsignedInteger = value;
+		return;
+	}
+
+	AddParameter(ShaderVariationParameter(name, value));
 }
 
 void ShaderVariationParameters::SetFloat(const StringID& name, float value)
 {
-	AddParam(ShaderVariationParameter(name, value));
+	if(ShaderVariationParameter* parameter = FindParameter(name))
+	{
+		parameter->Float = value;
+		return;
+	}
+
+	AddParameter(ShaderVariationParameter(name, value));
 }
 
 void ShaderVariationParameters::SetBool(const StringID& name, bool value)
 {
-	AddParam(ShaderVariationParameter(name, value));
+	if(ShaderVariationParameter* parameter = FindParameter(name))
+	{
+		parameter->UnsignedInteger = (u32)value;
+		return;
+	}
+
+	AddParameter(ShaderVariationParameter(name, value));
 }
 
-Vector<String> ShaderVariationParameters::GetParamNames() const
+Vector<String> ShaderVariationParameters::GetParameters() const
 {
 	Vector<String> params;
 	params.reserve(mParams.size());
@@ -119,13 +143,13 @@ String ShaderVariationParameters::CreateVariationName() const
 		{
 		case ShaderVariationParameterType::Int:
 		case ShaderVariationParameterType::Bool:
-			output << ToString(entry.I);
+			output << ToString(entry.SignedInteger);
 			break;
 		case ShaderVariationParameterType::UInt:
-			output << ToString(entry.Ui);
+			output << ToString(entry.UnsignedInteger);
 			break;
 		case ShaderVariationParameterType::Float:
-			output << ToString(entry.F);
+			output << ToString(entry.Float);
 			break;
 		}
 	}
@@ -142,13 +166,13 @@ ShaderDefines ShaderVariationParameters::GetDefines() const
 		{
 		case ShaderVariationParameterType::Int:
 		case ShaderVariationParameterType::Bool:
-			defines.Set(entry.Name.CStr(), entry.I);
+			defines.Set(entry.Name.CStr(), entry.SignedInteger);
 			break;
 		case ShaderVariationParameterType::UInt:
-			defines.Set(entry.Name.CStr(), entry.Ui);
+			defines.Set(entry.Name.CStr(), entry.UnsignedInteger);
 			break;
 		case ShaderVariationParameterType::Float:
-			defines.Set(entry.Name.CStr(), entry.F);
+			defines.Set(entry.Name.CStr(), entry.Float);
 			break;
 		}
 	}
@@ -164,7 +188,7 @@ bool ShaderVariationParameters::Matches(const ShaderVariationParameters& other, 
 		if(foundParameter == nullptr)
 			return false;
 
-		if(entry.I != foundParameter->I)
+		if(entry.SignedInteger != foundParameter->SignedInteger)
 			return false;
 	}
 
@@ -176,7 +200,7 @@ bool ShaderVariationParameters::Matches(const ShaderVariationParameters& other, 
 			if(foundParameter == nullptr)
 				return false;
 
-			if(entry.I != foundParameter->I)
+			if(entry.SignedInteger != foundParameter->SignedInteger)
 				return false;
 		}
 	}
@@ -184,7 +208,7 @@ bool ShaderVariationParameters::Matches(const ShaderVariationParameters& other, 
 	return true;
 }
 
-void ShaderVariationParameters::AddParam(const ShaderVariationParameter& param)
+void ShaderVariationParameters::AddParameter(const ShaderVariationParameter& param)
 {
 	if(!B3D_ENSURE(FindParameter(param.Name) == nullptr))
 		return;
@@ -192,7 +216,7 @@ void ShaderVariationParameters::AddParam(const ShaderVariationParameter& param)
 	mParams.Add(param);
 }
 
-void ShaderVariationParameters::RemoveParam(const StringID& paramName)
+void ShaderVariationParameters::RemoveParameter(const StringID& paramName)
 {
 	for(auto it = mParams.begin(); it != mParams.end(); ++it)
 	{
@@ -215,6 +239,17 @@ const ShaderVariationParameter* ShaderVariationParameters::FindParameter(const S
 	return nullptr;
 }
 
+ShaderVariationParameter* ShaderVariationParameters::FindParameter(const StringID& name)
+{
+	for(auto& entry : mParams)
+	{
+		if(entry.Name == name)
+			return &entry;
+	}
+
+	return nullptr;
+}
+
 bool ShaderVariationParameters::operator==(const ShaderVariationParameters& rhs) const
 {
 	return Matches(rhs, true);
@@ -222,7 +257,7 @@ bool ShaderVariationParameters::operator==(const ShaderVariationParameters& rhs)
 
 void ShaderVariations::Add(const ShaderVariationParameters& variation)
 {
-	variation.mIdx = mNextIdx++;
+	variation.mIndex = mNextIdx++;
 
 	mVariations.Add(variation);
 }

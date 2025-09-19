@@ -53,7 +53,7 @@ void DownsampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>
 
 	const TextureProperties& rtProps = input->GetProperties();
 
-	bool MSAA = mVariationParameters.GetInt("MSAA") > 0;
+	bool MSAA = mVariationParameters.GetI32("MSAA") > 0;
 	if(MSAA)
 	{
 		gDownsampleParamDef.gOffsets.Set(mParamBuffer, Vector2(-1.0f, -1.0f));
@@ -1194,7 +1194,7 @@ void BokehDOFPrepareMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Tex
 
 	Bind(commandBuffer);
 
-	bool MSAA = mVariationParameters.GetInt("MSAA_COUNT") > 1;
+	bool MSAA = mVariationParameters.GetI32("MSAA_COUNT") > 1;
 	if(MSAA)
 		GetRendererUtility().DrawScreenQuad(commandBuffer, Area2(0.0f, 0.0f, (float)srcProps.Width, (float)srcProps.Height));
 	else

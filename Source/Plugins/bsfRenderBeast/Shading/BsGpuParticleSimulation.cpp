@@ -1122,7 +1122,7 @@ void GpuParticleSimulateMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter("gVelocityTex", mVelocityTexParam);
 	mGPUParameters->GetSampledTextureParameter("gVectorFieldTex", mVectorFieldTexParam);
 
-	mSupportsDepthCollisions = mVariationParameters.GetUInt("DEPTH_COLLISIONS") > 0;
+	mSupportsDepthCollisions = mVariationParameters.GetUI32("DEPTH_COLLISIONS") > 0;
 	if(mSupportsDepthCollisions)
 	{
 		mGPUParameters->GetPipelineParameterInformation()->GetBinding("PerCamera", mPerCameraBinding);

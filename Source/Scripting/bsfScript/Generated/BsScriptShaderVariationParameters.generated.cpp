@@ -60,7 +60,7 @@ namespace b3d
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetInt(tmpname);
+		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetI32(tmpname);
 
 		int32_t __output;
 		__output = tmp__output;
@@ -76,7 +76,7 @@ namespace b3d
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetUInt(tmpname);
+		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetUI32(tmpname);
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -123,7 +123,7 @@ namespace b3d
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->SetInt(tmpname, value);
+		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->SetI32(tmpname, value);
 	}
 
 	void ScriptShaderVariationParameters::InternalSetUInt(ScriptShaderVariationParameters* self, MonoString* name, uint32_t value)
@@ -133,7 +133,7 @@ namespace b3d
 
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->SetUInt(tmpname, value);
+		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->SetU32(tmpname, value);
 	}
 
 	void ScriptShaderVariationParameters::InternalSetFloat(ScriptShaderVariationParameters* self, MonoString* name, float value)
@@ -163,7 +163,7 @@ namespace b3d
 
 		String tmpparamName;
 		tmpparamName = MonoUtil::MonoToString(paramName);
-		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->RemoveParam(tmpparamName);
+		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->RemoveParameter(tmpparamName);
 	}
 
 	bool ScriptShaderVariationParameters::InternalHasParam(ScriptShaderVariationParameters* self, MonoString* paramName)
@@ -174,7 +174,7 @@ namespace b3d
 
 		String tmpparamName;
 		tmpparamName = MonoUtil::MonoToString(paramName);
-		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->HasParam(tmpparamName);
+		tmp__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->HasParameter(tmpparamName);
 
 		bool __output;
 		__output = tmp__output;
@@ -187,7 +187,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->ClearParams();
+		static_cast<ShaderVariationParameters*>(self->GetNativeObject())->ClearParameters();
 	}
 
 	MonoArray* ScriptShaderVariationParameters::InternalGetParamNames(ScriptShaderVariationParameters* self)
@@ -196,7 +196,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		nativeArray__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetParamNames();
+		nativeArray__output = static_cast<ShaderVariationParameters*>(self->GetNativeObject())->GetParameters();
 
 		MonoArray* __output;
 		int elementCount__output = (int)nativeArray__output.size();

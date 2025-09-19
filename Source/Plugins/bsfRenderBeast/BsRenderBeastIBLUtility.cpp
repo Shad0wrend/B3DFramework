@@ -148,7 +148,7 @@ SPtr<GpuBuffer> IrradianceComputeSHMat::CreateOutputBuffer(const SPtr<Texture>& 
 	bufferCreateInformation.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU;
 	bufferCreateInformation.StructuredStorage.Count = numCoeffSets;
 
-	if(mVariationParameters.GetInt("SH_ORDER") == 3)
+	if(mVariationParameters.GetI32("SH_ORDER") == 3)
 		bufferCreateInformation.StructuredStorage.ElementSize = sizeof(SHCoeffsAndWeight3);
 	else
 		bufferCreateInformation.StructuredStorage.ElementSize = sizeof(SHCoeffsAndWeight5);
@@ -307,7 +307,7 @@ void IrradianceReduceSHMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<
 {
 	BS_RENMAT_PROFILE_BLOCK
 
-	u32 shOrder = (u32)mVariationParameters.GetInt("SH_ORDER");
+	u32 shOrder = (u32)mVariationParameters.GetI32("SH_ORDER");
 
 	Vector2I outputCoords = IBLUtility::GetShCoeffXyFromIdx(outputIdx, shOrder);
 	gIrradianceReduceSHParamDef.gOutputIdx.Set(mParamBuffer, outputCoords);
@@ -322,7 +322,7 @@ void IrradianceReduceSHMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<
 
 SPtr<Texture> IrradianceReduceSHMat::CreateOutputTexture(u32 numCoeffSets)
 {
-	u32 shOrder = (u32)mVariationParameters.GetInt("SH_ORDER");
+	u32 shOrder = (u32)mVariationParameters.GetI32("SH_ORDER");
 	Vector2I size = IBLUtility::GetShCoeffTextureSize(numCoeffSets, shOrder);
 
 	TextureCreateInformation textureDesc;

@@ -415,18 +415,6 @@ namespace b3d
 
 	namespace render
 	{
-		B3D_PARAM_BLOCK_BEGIN(GUISpriteParamBlockDef)
-			B3D_PARAM_BLOCK_ENTRY(Matrix4, gWorldTransform)
-			B3D_PARAM_BLOCK_ENTRY(float, gInvViewportWidth)
-			B3D_PARAM_BLOCK_ENTRY(float, gInvViewportHeight)
-			B3D_PARAM_BLOCK_ENTRY(Vector2I, gViewportOffset)
-			B3D_PARAM_BLOCK_ENTRY(Color, gTint)
-			B3D_PARAM_BLOCK_ENTRY(Vector4, gUVSizeOffset)
-			B3D_PARAM_BLOCK_ENTRY(float, gViewportYFlip)
-		B3D_PARAM_BLOCK_END
-
-		extern GUISpriteParamBlockDef gGUISpriteParamBlockDef;
-
 		/**	Handles GUI rendering on the render thread. */
 		class B3D_EXPORT GUIRenderer : public RendererExtension
 		{
@@ -449,15 +437,13 @@ namespace b3d
 			/** Clears all draw groups from the specified widget. */
 			void ClearDrawGroups(u64 widgetId);
 
-			/** Updates the parameter block buffer for the specified mesh. */
-			void UpdateParamBlockBuffer(const SPtr<GpuBuffer>& buffer, const Vector2I& viewportOffset, float invViewportWidth, float invViewportHeight, bool flipY, const Matrix4& transform, const GUIMeshRenderData& renderData) const;
-
 			struct GUIWidgetRenderData
 			{
 				u64 WidgetId;
 				u32 WidgetDepth = 0;
 				Vector<GUIBatchRenderData> DrawGroups;
 				Vector<SPtr<GpuBuffer>> GUIMeshUniformBuffers;
+				Vector<SPtr<GpuBuffer>> DirtyRegionBuffers;
 
 				Matrix4 WorldTransform = Matrix4::kIdentity;
 			};

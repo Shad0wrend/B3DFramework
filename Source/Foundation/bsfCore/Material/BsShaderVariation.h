@@ -50,30 +50,30 @@ namespace b3d
 	struct ShaderVariationParameter
 	{
 		ShaderVariationParameter()
-			: I(0), Type(ShaderVariationParameterType::Int)
+			: SignedInteger(0), Type(ShaderVariationParameterType::Int)
 		{}
 
 		ShaderVariationParameter(const String& name, i32 val)
-			: I(val), Name(name), Type(ShaderVariationParameterType::Int)
+			: SignedInteger(val), Name(name), Type(ShaderVariationParameterType::Int)
 		{}
 
 		ShaderVariationParameter(const String& name, u32 val)
-			: Ui(val), Name(name), Type(ShaderVariationParameterType::Int)
+			: UnsignedInteger(val), Name(name), Type(ShaderVariationParameterType::Int)
 		{}
 
 		ShaderVariationParameter(const String& name, float val)
-			: F(val), Name(name), Type(ShaderVariationParameterType::Float)
+			: Float(val), Name(name), Type(ShaderVariationParameterType::Float)
 		{}
 
 		ShaderVariationParameter(const String& name, bool val)
-			: I(val ? 1 : 0), Name(name), Type(ShaderVariationParameterType::Bool)
+			: SignedInteger(val ? 1 : 0), Name(name), Type(ShaderVariationParameterType::Bool)
 		{}
 
 		union
 		{
-			i32 I;
-			u32 Ui;
-			float F;
+			i32 SignedInteger;
+			u32 UnsignedInteger;
+			float Float;
 		};
 
 		StringID Name;
@@ -98,14 +98,14 @@ namespace b3d
 		 * found.
 		 */
 		B3D_SCRIPT_EXPORT()
-		i32 GetInt(const StringID& name);
+		i32 GetI32(const StringID& name);
 
 		/**
 		 * Returns the value of a unsigned integer parameter with the specified name. Returns 0 if the parameter cannot be
 		 * found.
 		 */
 		B3D_SCRIPT_EXPORT()
-		u32 GetUInt(const StringID& name);
+		u32 GetUI32(const StringID& name);
 
 		/** Returns the value of a float parameter with the specified name. Returns 0 if the parameter cannot be found.  */
 		B3D_SCRIPT_EXPORT()
@@ -123,14 +123,14 @@ namespace b3d
 		 * will be overwritten.
 		 */
 		B3D_SCRIPT_EXPORT()
-		void SetInt(const StringID& name, i32 value);
+		void SetI32(const StringID& name, i32 value);
 
 		/**
 		 * Sets the value of the parameter for the provided name. Any previous value for a parameter with the same name
 		 * will be overwritten.
 		 */
 		B3D_SCRIPT_EXPORT()
-		void SetUInt(const StringID& name, u32 value);
+		void SetU32(const StringID& name, u32 value);
 
 		/**
 		 * Sets the value of the parameter for the provided name. Any previous value for a parameter with the same name
@@ -147,26 +147,26 @@ namespace b3d
 		void SetBool(const StringID& name, bool value);
 
 		/** Registers a new parameter that controls the variation. */
-		void AddParam(const ShaderVariationParameter& param);
+		void AddParameter(const ShaderVariationParameter& parameter);
 
 		/** Removes a parameter with the specified name. */
 		B3D_SCRIPT_EXPORT()
-		void RemoveParam(const StringID& paramName);
+		void RemoveParameter(const StringID& parameter);
 
 		/** Checks if the variation has a parameter with the specified name. */
 		B3D_SCRIPT_EXPORT()
-		bool HasParam(const StringID& paramName) { return FindParameter(paramName) != nullptr; }
+		bool HasParameter(const StringID& paramName) { return FindParameter(paramName) != nullptr; }
 
 		/** Removes all parameters. */
 		B3D_SCRIPT_EXPORT()
-		void ClearParams() { mParams.clear(); }
+		void ClearParameters() { mParams.clear(); }
 
 		/** Attempts to find a parameter with the provided name, or returns null if not found. */
 		const ShaderVariationParameter* FindParameter(const StringID& name) const;
 
 		/** Returns a list of names of all registered parameters. */
 		B3D_SCRIPT_EXPORT(ExportName(ParamNames), Property(Getter))
-		Vector<String> GetParamNames() const;
+		Vector<String> GetParameters() const;
 
 		/** Creates a unique name created from all parameters and their values. */
 		String CreateVariationName() const;
@@ -203,17 +203,20 @@ namespace b3d
 		/**
 		 * Returns a unique index of this variation, relative to all other variations registered in ShaderVariations object.
 		 */
-		u32 GetIdx() const { return mIdx; }
+		u32 GetIndex() const { return mIndex; }
 
 		/** Assigns a unique index to the variation that can later be used for quick lookup. */
-		void SetIdx(u32 idx) const { mIdx = idx; }
+		void SetIndex(u32 idx) const { mIndex = idx; }
 
 		/** @} */
 	private:
 		friend class ShaderVariations;
 
+		/** Non-const overload of FindParameter() const. */
+		ShaderVariationParameter* FindParameter(const StringID& name);
+
 		TInlineArray<ShaderVariationParameter, 4> mParams;
-		mutable u32 mIdx = -1;
+		mutable u32 mIndex = -1;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

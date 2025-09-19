@@ -99,13 +99,13 @@ u32 TMaterial<IsRenderProxy>::FindTechnique(const FindVariationInformation& desc
 			{
 				const auto findSearch = desc.VariationParameters->FindParameter(param.Name);
 				if(findSearch != nullptr)
-					matchesSearch = findSearch->I == param.I ? Matching : NotMatching;
+					matchesSearch = findSearch->SignedInteger == param.SignedInteger ? Matching : NotMatching;
 			}
 
 			SearchResult matchesInternal = NoParam;
 			const auto findInternal = mVariation.FindParameter(param.Name);
 			if(findInternal != nullptr)
-				matchesInternal = findInternal->I == param.I ? Matching : NotMatching;
+				matchesInternal = findInternal->SignedInteger == param.SignedInteger ? Matching : NotMatching;
 
 			switch(matchesSearch)
 			{
@@ -116,7 +116,7 @@ u32 TMaterial<IsRenderProxy>::FindTechnique(const FindVariationInformation& desc
 				default:
 				case NoParam:
 					// When it comes to parameters not part of the search, prefer those with 0 default value
-					currentScore += param.Ui;
+					currentScore += param.UnsignedInteger;
 					break;
 				case NotMatching:
 					foundMatch = false;
@@ -226,14 +226,14 @@ u32 TMaterial<IsRenderProxy>::GetDefaultTechnique() const
 			SearchResult matches = NoParam;
 			const auto findInternal = mVariation.FindParameter(param.Name);
 			if(findInternal != nullptr)
-				matches = findInternal->I == param.I ? Matching : NotMatching;
+				matches = findInternal->SignedInteger == param.SignedInteger ? Matching : NotMatching;
 
 			switch(matches)
 			{
 			default:
 			case NoParam:
 				// When it comes to parameters not part of the search, prefer those with 0 default value
-				currentScore += param.Ui;
+				currentScore += param.UnsignedInteger;
 				break;
 			case NotMatching:
 				foundMatch = false;
@@ -1042,7 +1042,7 @@ void Material::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allo
 	if(syncPacket->IsSyncingAllParameters)
 		mParams = nullptr;
 
-	const u32 originalVariationIndex = mVariation.GetIdx();
+	const u32 originalVariationIndex = mVariation.GetIndex();
 	syncPacket->ApplySyncData(this);
 
 	if(mParams == nullptr && mShader != nullptr)
@@ -1051,7 +1051,7 @@ void Material::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allo
 	if(mParams != nullptr && syncPacket->DirtyMaterialParametersPacket)
 		mParams->ApplyAndDestroySyncPacket(allocator, *syncPacket->DirtyMaterialParametersPacket);
 
-	mVariation.SetIdx(originalVariationIndex);
+	mVariation.SetIndex(originalVariationIndex);
 }
 
 SPtr<Material> Material::Create(const SPtr<Shader>& shader)

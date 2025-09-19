@@ -251,12 +251,12 @@ namespace b3d
 				operation.BlockUntilComplete();
 			}
 
-			if(variationParameters.GetIdx() == ~0u)
+			if(variationParameters.GetIndex() == ~0u)
 			{
-				variationParameters.SetIdx(mMetaData.VariationParameterSet.Find(variationParameters));
+				variationParameters.SetIndex(mMetaData.VariationParameterSet.Find(variationParameters));
 			}
 
-			const u32 variationIndex = variationParameters.GetIdx();
+			const u32 variationIndex = variationParameters.GetIndex();
 
 			if(!IsRendereMaterialVariationCompiled(variationIndex))
 			{
@@ -387,10 +387,10 @@ namespace b3d
 				}
 			}
 
-			if(variationParameters.GetIdx() == ~0u)
-				variationParameters.SetIdx(mMetaData.VariationParameterSet.Find(variationParameters));
+			if(variationParameters.GetIndex() == ~0u)
+				variationParameters.SetIndex(mMetaData.VariationParameterSet.Find(variationParameters));
 
-			const u32 variationIndex = variationParameters.GetIdx();
+			const u32 variationIndex = variationParameters.GetIndex();
 			if(!B3D_ENSURE(variationIndex != ~0u))
 			{
 				B3D_LOG(Error, RendererMaterial, "Cannot compile renderer material variation for {0}. Variation parameters cannot be found.", mMetaData.ShaderPath);
