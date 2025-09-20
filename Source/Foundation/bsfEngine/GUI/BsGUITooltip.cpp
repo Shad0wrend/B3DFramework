@@ -22,13 +22,18 @@ const GUILogicalUnit GUITooltip::kTooltipWidth = 200;
 const GUILogicalUnit GUITooltip::kCursorSize = 16;
 
 GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidget, const GUIPhysicalPoint& position, const String& text)
-	: GUIWidget(parent, overlaidWidget.GetCamera())
+	: GUIWidget(parent, overlaidWidget.GetCamera()), mPosition(position), mText(text)
 {
-	SetDepth(0); // Needs to be in front of everything
 	SetStyleSheetCascade(overlaidWidget.GetStyleSheetCascadeAsShared());
+}
 
-	HCamera camera = overlaidWidget.GetCamera();
-	SPtr<Viewport> viewport = camera->GetViewport();
+void GUITooltip::OnCreated()
+{
+	GUIWidget::OnCreated();
+
+	SetDepth(0); // Needs to be in front of everything
+
+	SPtr<Viewport> viewport = GetCamera()->GetViewport();
 
 	const GUIPhysicalArea availableBounds = viewport->GetPixelArea().To<GUIPhysicalUnit>();
 
@@ -38,7 +43,7 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	const GUIStyleSheetRules backgroundStyleSheetRules = styleSheetCascade.BuildRules(GUITexture::kStyleSheetElementType, kBackgroundStyleClass);
 
 	GUISizeConstraints dimensions = GUISizeConstraints::Create(GUIOptions(GUIOption::FixedWidth(kTooltipWidth)));
-	GUILogicalSize size = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(text, multiLineLabelStyleSheetRules, dimensions.MaximumWidth);
+	GUILogicalSize size = GUIUtility::CalculateOptimalContentSizeWithPaddingAndBorder(mText, multiLineLabelStyleSheetRules, dimensions.MaximumWidth);
 
 	GUILogicalUnit contentOffsetX = backgroundStyleSheetRules.Padding.Left;
 	GUILogicalUnit contentOffsetY = backgroundStyleSheetRules.Padding.Top;
@@ -64,9 +69,9 @@ GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidg
 	backgroundLayout->AddElement(backgroundFrame);
 
 	GUILayout* contentLayout = contentPanel->AddNewElement<GUILayoutY>();
-	contentLayout->AddNewElement<GUILabel>(HString(text), BuiltinResources::kMultiLineLabelStyle, GUIOptions(GUIOption::FixedWidth(kTooltipWidth), GUIOption::FlexibleHeight()));
+	contentLayout->AddNewElement<GUILabel>(HString(mText), BuiltinResources::kMultiLineLabelStyle, GUIOptions(GUIOption::FixedWidth(kTooltipWidth), GUIOption::FlexibleHeight()));
 
-	const GUILogicalPoint logicalPosition = GUIUtility::PhysicalToLogical(position, GetDPIScale());
+	const GUILogicalPoint logicalPosition = GUIUtility::PhysicalToLogical(mPosition, GetDPIScale());
 	const GUILogicalArea logicalAvailableBounds = GUIUtility::PhysicalToLogical(availableBounds, GetDPIScale());
 
 	GUILogicalArea positionBounds;

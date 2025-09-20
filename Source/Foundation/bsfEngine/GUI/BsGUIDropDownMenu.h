@@ -97,12 +97,11 @@ namespace b3d
 		/**
 		 * Creates a new drop down box widget.
 		 *
-		 * @param[in]	parent	Parent scene object to attach the drop down box to.
-		 * @param[in]	createInformation	Various parameters that control the drop down menu features and content.
-		 * @param[in]	type	Specific type of drop down box to display.
+		 * @param	parent				Parent scene object to attach the drop down box to.
+		 * @param	createInformation	Various parameters that control the drop down menu features and content.
+		 * @param	type				Specific type of drop down box to display.
 		 */
 		GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCreateInformation& createInformation, GUIDropDownType type);
-		~GUIDropDownMenu();
 
 	private:
 		/**	Contains data about a single drop down box sub-menu. */
@@ -222,6 +221,7 @@ namespace b3d
 		/**	Called when the drop down box loses focus (and should be closed). */
 		void DropDownFocusLost();
 
+		void OnCreated() override;
 		void OnDestroyed() override;
 
 	private:
@@ -231,17 +231,19 @@ namespace b3d
 		static constexpr const char* kScrollbarButtonStyleClass = "GUIDropDownScrollbarButton";
 		static constexpr const char* kScrollbarHandleStyleClass = "GUIDropDownScrollbarHandle";
 
+		DropDownBoxCreateInformation mMenuCreateInformation;
+		GUIDropDownType mType;
 		RectOffset mBackgroundFramePadding;
 		GUILogicalUnit mScrollbarWidth = 0;
 		GUILogicalUnit mScrollButtonHeight = 0;
-		DropDownSubMenu* mRootMenu;
-		GUIDropDownHitBox* mFrontHitBox;
-		GUIDropDownHitBox* mBackHitBox;
+		DropDownSubMenu* mRootMenu = nullptr;
+		GUIDropDownHitBox* mFrontHitBox = nullptr;
+		GUIDropDownHitBox* mBackHitBox = nullptr;
 
 		// Captures mouse clicks so that we don't trigger elements outside the drop down box when we just want to close it.
 		// (Particular example is clicking on the button that opened the drop down box in the first place. Clicking will cause
 		// the drop down to lose focus and close, but if the button still processes the mouse click it will be immediately opened again)
-		GUIDropDownHitBox* mCaptureHitBox;
+		GUIDropDownHitBox* mCaptureHitBox = nullptr;
 
 		Vector<GUIPhysicalArea> mAdditionalCaptureBounds;
 	};

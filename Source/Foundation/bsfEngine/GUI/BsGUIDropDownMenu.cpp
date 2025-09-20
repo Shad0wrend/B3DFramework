@@ -59,10 +59,15 @@ GUIDropDownDataEntry GUIDropDownDataEntry::SubMenu(const String& label, const GU
 }
 
 GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCreateInformation& createInformation, GUIDropDownType type)
-	: GUIWidget(parent, createInformation.Camera), mRootMenu(nullptr), mFrontHitBox(nullptr), mBackHitBox(nullptr), mCaptureHitBox(nullptr)
+	: GUIWidget(parent, createInformation.Camera), mMenuCreateInformation(createInformation), mType(type)
+{ }
+
+void GUIDropDownMenu::OnCreated()
 {
+	GUIWidget::OnCreated();
+
 	SetDepth(0); // Needs to be in front of everything
-	SetStyleSheetCascade(createInformation.StyleSheetCascade);
+	SetStyleSheetCascade(mMenuCreateInformation.StyleSheetCascade);
 
 	const GUIStyleSheetRules frameStyleSheetRules = GetStyleSheetCascade().BuildRules(GUITexture::kStyleSheetElementType, kBackgroundFrameStyleClass);
 	mBackgroundFramePadding = frameStyleSheetRules.Padding;
@@ -93,11 +98,11 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCr
 	mBackHitBox->ChangeParentWidget(this);
 	mBackHitBox->MarkLayoutAsDirty();
 
-	SPtr<Viewport> viewport = createInformation.Camera->GetViewport();
+	SPtr<Viewport> viewport = mMenuCreateInformation.Camera->GetViewport();
 
 	GUIPhysicalArea targetBounds(0, 0, (i32)viewport->GetPixelArea().Width, (i32)viewport->GetPixelArea().Height);
 	Vector<GUIPhysicalArea> captureBounds;
-	targetBounds.Cut(createInformation.AdditionalBounds, captureBounds);
+	targetBounds.Cut(mMenuCreateInformation.AdditionalBounds, captureBounds);
 
 	mCaptureHitBox = GUIDropDownHitBox::Create(true, false);
 	mCaptureHitBox->SetBounds(captureBounds);
@@ -109,14 +114,10 @@ GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DropDownBoxCr
 	mCaptureHitBox->ChangeParentWidget(this);
 	mCaptureHitBox->MarkLayoutAsDirty();
 
-	mAdditionalCaptureBounds = createInformation.AdditionalBounds;
+	mAdditionalCaptureBounds = mMenuCreateInformation.AdditionalBounds;
 
 	const GUIPhysicalArea availableBounds = viewport->GetPixelArea().To<GUIPhysicalUnit>();
-	mRootMenu = B3DNew<DropDownSubMenu>(this, nullptr, createInformation.Placement, availableBounds, createInformation.DropDownData, type, 0);
-}
-
-GUIDropDownMenu::~GUIDropDownMenu()
-{
+	mRootMenu = B3DNew<DropDownSubMenu>(this, nullptr, mMenuCreateInformation.Placement, availableBounds, mMenuCreateInformation.DropDownData, mType, 0);
 }
 
 void GUIDropDownMenu::OnDestroyed()

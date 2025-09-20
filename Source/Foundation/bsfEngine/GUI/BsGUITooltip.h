@@ -18,18 +18,24 @@ namespace b3d
 		/**
 		 * Creates a new tooltip widget.
 		 *
-		 * @param[in]	parent			Parent scene object to attach the tooltip to.
-		 * @param[in]	overlaidWidget	Widget over which to overlay the tooltip.
-		 * @param[in]	position		Position of the tooltip, relative to the overlaid widget position.
-		 * @param[in]	text			Text to display in the tooltip.
+		 * @param	parent			Parent scene object to attach the tooltip to.
+		 * @param	overlaidWidget	Widget over which to overlay the tooltip.
+		 * @param	position		Position of the tooltip, relative to the overlaid widget position.
+		 * @param	text			Text to display in the tooltip.
 		 */
 		GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidget, const GUIPhysicalPoint& position, const String& text);
 		~GUITooltip() = default;
+
+	protected:
+		void OnCreated() override;
 
 	private:
 		static constexpr const char* kBackgroundStyleClass = "TooltipFrame";
 		static const GUILogicalUnit kTooltipWidth;
 		static const GUILogicalUnit kCursorSize;
+
+		GUIPhysicalPoint mPosition;
+		String mText;
 	};
 
 	/** @} */
