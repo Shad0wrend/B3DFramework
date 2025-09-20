@@ -396,16 +396,16 @@ namespace b3d::ecs
 		/** Returns raw pointer to the internal packed entity array. */
 		const Entity* Data() const { return mPackedEntities.Data(); }
 
-		/** Swaps the location of the provided entities, as well as the relevant payload (data associated with the entities), if any. */
+		/** Swaps the location of the provided entities in the packed array, as well as the relevant payload (data associated with the entities), if any. */
 		virtual void Swap(Entity lhs, Entity rhs) = 0;
 
 		/** Returns the current delete policy. See SparseSetDeletePolicy. */
 		virtual SparseSetDeletePolicy GetDeletePolicy() const { return SparseSetDeletePolicy::SwapAndErase; }
 
 		/**
-		 * Returns the packed index of the first free (invalid) element. Only relevant if swap-only or in-place delete policy is used by the set.
-		 * For swap-only delete policy it is guaranteed that all valid entries are before this index, and all invalid entries are at index equal or
-		 * higher than this index. If returned index is equal to maximum entity identifier, then no free elements exist.
+		 * When using in-place deletion policy returns the packed index to the first invalid element.
+		 * When using swap-only deletion policy returns the number of valid entities in the set.
+		 * Not relevant if using swap-and-erase deletion policy.
 		 */
 		virtual u64 GetFirstFreeElementPackedIndex() const { return kMaximumEntryCount; }
 
@@ -446,7 +446,14 @@ namespace b3d::ecs
 		Event<void(Entity)> OnWasAdded; /**< Triggers any time a new entity is added to the set. */
 		Event<void(Entity)> OnWillRemove; /**< Triggers right before an entity is removed from the set. */
 	protected:
-		/** Adds a new entity to the sparse set and returns an iterator to the added entity. */
+		/**
+		 * Adds a new entity to the set.
+		 * 
+		 * @param	entity			Entity to add.
+		 * @param	forceAddAtEnd	Only relevant when using in-place deletion policy. When true it will add an entity at the end of the packaged data array,
+		 *							rather than re-using the first available invalid entity entry.
+		 * @return					Iterator to the added entity.
+		 */
 		virtual Iterator AddInternal(Entity entity, bool forceAddAtEnd) { return End(); }
 
 		/** Removed an entity from the sparse set. Entity must be a part of the sparse set. */
@@ -572,6 +579,7 @@ namespace b3d::ecs
 		TypeHash mElementTypeHash = 0;
 	};
 
+	/** Implements features of SparseSet that depend on a particular deletion policy. */
 	template<SparseSetDeletePolicy DeletePolicy>
 	class TSparseSet : public SparseSet
 	{
@@ -625,18 +633,37 @@ namespace b3d::ecs
 			SwapInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload>(lhs, rhs);
 		}
 
+		/**
+		 * Sorts the entity packed data to match the order of the provided entities.
+		 * Note sorting operation will fail if using in-place deletion policy and invalid (deleted) entries are present.
+		 * 
+		 * @param first		Iterator pointing to the first entity.
+		 * @param last		Iterator pointing to the last entity.
+		 * @return			Iterator one past the last entity that was sorted (begin() if nothing was sorted).
+		 */
 		template<typename It>
 		Iterator SortAs(It first, It last)
 		{
 			return SortAsInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload>(first, last);
 		}
 
+		/**
+		 * Sorts the first @p count entities using the provided comparison function.
+		 * Note sorting operation will fail if using in-place deletion policy and invalid (deleted) entries are present.
+		 * 
+		 * @param count			Number of entities to sort.
+		 * @param predicate		Function used to sort the entities.
+		 */
 		template<typename ComparisonFunction = std::less<>>
 		void SortN(u64 count, ComparisonFunction predicate = ComparisonFunction{})
 		{
 			return SortNInternal<TSparseSet, &TSparseSet::MoveOrSwapPayload, ComparisonFunction>(count, std::move(predicate));
 		}
 
+		/**
+		 * Sorts all entities using the provided comparison function.
+		 * Note sorting operation will fail if using in-place deletion policy and invalid (deleted) entries are present.
+		 */
 		template<typename ComparisonFunction = std::less<>>
 		void Sort(ComparisonFunction predicate = ComparisonFunction{})
 		{
@@ -652,22 +679,26 @@ namespace b3d::ecs
 			Entity& sparseSetEntry = GetOrCreateSparseEntryReference(entity);
 			u64 packedEntryIndex = mPackedEntities.Size();
 
+			// Add entity at first available spot, or at the end if requested
 			if constexpr(DeletePolicy == SparseSetDeletePolicy::InPlace)
 			{
 				B3D_ENSURE(sparseSetEntry == kNullEntity);
 
+				// If there is a free spot (i.e. invalid (deleted) entity), and not forcing add to end, add there
 				if(mFreeListHead != kMaximumEntryCount && !forceAddAtEnd)
 				{
 					packedEntryIndex = mFreeListHead;
 					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(mFreeListHead), entity.GetVersion());
 					mFreeListHead = (u64)(std::exchange(mPackedEntities[packedEntryIndex], entity).GetIdentifier());
 				}
+				// Otherwise add at the end of the packed entities array
 				else
 				{
 					mPackedEntities.Add(entity);
 					sparseSetEntry = Entity(GetPackedIndexAsEntryIdentifier(packedEntryIndex), entity.GetVersion());
 				}
 			}
+			// Always add at the end of the packed entities array, as all existing entries are valid
 			else if constexpr(DeletePolicy == SparseSetDeletePolicy::SwapAndErase)
 			{
 				mPackedEntities.Add(entity);
@@ -725,12 +756,18 @@ namespace b3d::ecs
 			}
 		}
 
+		/** Same as SparseSet::ClearInternal but also resets the free list head. */
 		void ClearInternal()
 		{
 			Super::ClearInternal();
 			mFreeListHead = DeletePolicy != SparseSetDeletePolicy::SwapOnly ? Super::kMaximumEntryCount : 0;
 		}
 
+		/**
+		 * Helper for ClearInvalid(). Clears all invalid entities, and allows the caller to provide a function
+		 * that also clear the associated payload data, if any. @p MoveOrSwapPayload accepts two parameters,
+		 * packed index from which to move the payload, and packed index where to move the payload, respectively.
+		 */
 		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64)>
 		void ClearInvalidInternal()
 		{
@@ -775,6 +812,11 @@ namespace b3d::ecs
 			mPackedEntities.Erase(mPackedEntities.begin() + validPackedEntryIndex, mPackedEntities.end());
 		}
 
+		/**
+		 * Helper for SortAs(). Allows the caller to provide a function that also moves the associated payload data.
+		 * @p MoveOrSwapPayload accepts two parameters, packed index from which to move the payload, and packed
+		 * index where to move the payload, respectively.
+		 */ 
 		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64), typename It>
 		Iterator SortAsInternal(It first, It last)
 		{
@@ -804,6 +846,11 @@ namespace b3d::ecs
 			return localIterator;
 		}
 
+		/**
+		 * Helper for SortN(). Allows the caller to provide a function that also moves the associated payload data.
+		 * @p MoveOrSwapPayload accepts two parameters, packed index from which to move the payload, and packed
+		 * index where to move the payload, respectively.
+		 */ 
 		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64), typename ComparisonFunction = std::less<>>
 		void SortNInternal(u64 count, ComparisonFunction predicate = ComparisonFunction{})
 		{
@@ -814,18 +861,6 @@ namespace b3d::ecs
 				return;
 
 			std::sort(mPackedEntities.Begin(), mPackedEntities.Begin() + count, std::move(predicate));
-
-			//for(u64 packedIndex = 0; packedIndex < count; ++packedIndex)
-			//{
-			//	u64 originalPackedIndex = GetPackedIndex(mPackedEntities[packedIndex]);
-			//	if(packedIndex == originalPackedIndex)
-			//		continue;
-
-			//	const Entity entity = mPackedEntities[packedIndex];
-
-			//	GetSparseEntryReference(entity) = Entity(GetPackedIndexAsEntryIdentifier(packedIndex), entity.GetVersion());
-			//	(((T*)this)->*MoveOrSwapPayload)(originalPackedIndex, packedIndex);
-			//}
 
 			for(u64 rootPackedIndexToCheck = 0; rootPackedIndexToCheck < count; ++rootPackedIndexToCheck)
 			{
@@ -846,6 +881,11 @@ namespace b3d::ecs
 			}
 		}
 
+		/**
+		 * Helper for Sort(). Allows the caller to provide a function that also moves the associated payload data.
+		 * @p MoveOrSwapPayload accepts two parameters, packed index from which to move the payload, and packed
+		 * index where to move the payload, respectively.
+		 */ 
 		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64), typename ComparisonFunction = std::less<>>
 		void SortInternal(ComparisonFunction predicate = ComparisonFunction{})
 		{
@@ -853,6 +893,11 @@ namespace b3d::ecs
 			SortNInternal<T, MoveOrSwapPayload>(validPackedEntryCount, std::move(predicate));
 		}
 
+		/**
+		 * Helper for Swap(). Allows the caller to provide a function that also moves the associated payload data.
+		 * @p MoveOrSwapPayload accepts two parameters, packed index from which to move the payload, and packed
+		 * index where to move the payload, respectively.
+		 */ 
 		template<typename T, void(T::*MoveOrSwapPayload)(u64, u64)>
 		void SwapInternal(Entity lhs, Entity rhs)
 		{
@@ -864,6 +909,7 @@ namespace b3d::ecs
 		}
 
 	private:
+		/** Default implementation that doesn't do anything as there is no payload to move. */
 		void MoveOrSwapPayload(u64, u64)
 		{
 			// Do nothing
@@ -877,12 +923,19 @@ namespace b3d::ecs
 		u64 mFreeListHead = DeletePolicy != SparseSetDeletePolicy::SwapOnly ? Super::kMaximumEntryCount : 0;
 	};
 
+	/** Checks that all provided ECS storage types use InPlace deletion policy. */
 	template<typename... StorageType>
 	static constexpr bool TAllTypesUseInPlaceDelete = ((sizeof...(StorageType) == 1u) && ... && (StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace));
 
 	template<typename Type, typename = void>
 	struct StorageForType;
 
+	/**
+	 * Returns the appropriate storage type for use for the specified type. Some of the things taken into account:
+	 * - If provided type is empty, storage with no payload array is used (e.g. for tags)
+	 * - If provided type is Entity, storage that can be used for generating new entities is used
+	 * - Otherwise a storage is used that can contain payload of Type. Constness of Type is taken account
+	 */
 	template<typename Type>
 	using TStorageType = typename StorageForType<Type>::StorageType;
 

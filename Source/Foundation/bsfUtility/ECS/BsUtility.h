@@ -118,6 +118,7 @@ namespace b3d::ecs
 	}
 
 
+	/** Returns T as either 'T' or 'const T' depending if @p From is const or not. */
 	template<typename T, typename From>
 	struct TInheritConstFromHelper
 	{
@@ -133,6 +134,10 @@ namespace b3d::ecs
 	template<typename T, typename From>
 	using TInheritConstFrom = typename TInheritConstFromHelper<T, From>::Type;
 
+	/**
+	 * Returns an entry from ECS storage as a tuple containing a single element. If the entity has no associated
+	 * data (e.g. if storage contains tags), returns an empty tuple.
+	 */
 	template<typename StorageType>
 	constexpr auto GetAsTuple(StorageType* storage, Entity entity)
 	{
@@ -142,6 +147,7 @@ namespace b3d::ecs
 			return std::forward_as_tuple(storage->Get(entity));
 	}
 
+	/** Identifies a list of types as a unique type, primarily for meta-programming purposes. */
 	template<typename... Types>
 	struct TTypeList
 	{
@@ -171,6 +177,7 @@ namespace b3d::ecs
 		static constexpr u32 Value = 0u;
 	};
 
+	/** Returns an index of a type within a list of types. The list of types must not contain duplicate types. */
 	template<typename Type, typename TypeList>
 	constexpr u32 TTypeListIndexOf = TTypeListIndexOfHelper<Type, TypeList>::Value;
 
@@ -187,21 +194,25 @@ namespace b3d::ecs
 		using Type = First;
 	};
 
+	/** Returns a type at the specified index within a list of types. The list of types must not contain duplicate types. */
 	template<u32 Index, typename List>
 	using TTypeListElementAt = typename TTypeListElementAtHelper<Index, List>::Type;
 
+	/** Helper type that can be used for providing a list of types to be included in view or group. */
 	template<typename... Types>
 	struct TIncludedTypes : TTypeList<Types...>
 	{
 		explicit constexpr TIncludedTypes() = default;
 	};
 
+	/** Helper type that can be used for providing a list of types to be excluded from view or group. */
 	template<typename... Types>
 	struct TExcludedTypes : TTypeList<Types...>
 	{
 		explicit constexpr TExcludedTypes() = default;
 	};
 
+	/** Helper type that can be used for providing a list of types owned by a group. */
 	template<typename... Types>
 	struct TOwnedTypes : TTypeList<Types...>
 	{

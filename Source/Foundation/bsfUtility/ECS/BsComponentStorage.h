@@ -18,6 +18,7 @@ namespace b3d::ecs
 
 	// Note: Based on EnTT (https://github.com/skypjack/entt)
 
+	/** Allows iteration over an array that is split over multiple pages of equal size. All allocations within a page are sequential. */
  	template<typename ContainerType, u32 PageSize>
 	struct TPagedContainerIterator final
 	{
@@ -135,6 +136,14 @@ namespace b3d::ecs
 		return !(lhs < rhs);
 	}
 
+	/** Storage used for storing components associated with entities.
+	 *
+	 * @tparam ComponentType	Type of the component to store. Type must not be empty.
+	 * @tparam InPlaceDelete	If true, deletion of entities will not erase the entity, but rather just mark it as invalid. Space of invalid entities
+	 *							can be re-used, but iterating such storages is slower. Additionally sorting operations are limited when invalid
+	 *							entities are present in the storage.
+	 * @tparam PackedPageSize	Size of a single payload page. In order to reduce the impact of array resize, payload array is split into pages of this size.
+	 */
 	template<typename ComponentType, bool InPlaceDelete = false, u64 PackedPageSize = 1024>
 	class TComponentSparseSet : public TSparseSet<InPlaceDelete ? SparseSetDeletePolicy::InPlace : SparseSetDeletePolicy::SwapAndErase>
 	{
@@ -153,7 +162,7 @@ namespace b3d::ecs
 		using ConstReverseIteratorRange = TIteratorRange<TMultiIteratorAdapter<typename Super::ConstReverseIterator, ConstReverseIterator>>;
 
 		TComponentSparseSet()
-			:TSparseSet(B3DGetTypeHash<ComponentType>())
+			:TSparseSet<InPlaceDelete ? SparseSetDeletePolicy::InPlace : SparseSetDeletePolicy::SwapAndErase>(B3DGetTypeHash<ComponentType>())
 		{ }
 
 		~TComponentSparseSet() override
@@ -161,6 +170,7 @@ namespace b3d::ecs
 			ShrinkComponentArray(0);
 		}
 
+		/** Adds an entity and associates a newly constructed component of type @p Type using the provided arguments. */
 		template<typename... Arguments>
 		ComponentType& Add(Entity entity, Arguments&&... arguments)
 		{
@@ -168,6 +178,7 @@ namespace b3d::ecs
 			return GetComponentReference(iterator.Index());
 		}
 
+		/** Adds multiple entities and associates the same component value to them. */
 		template<typename It>
 		void Add(It first, It last, const ComponentType& value)
 		{
@@ -175,12 +186,14 @@ namespace b3d::ecs
 				AddInternal(*it, true, value);
 		}
 
+		/** Returns the component value for the specified entity. Caller must ensure storage contains the entity. */
 		ComponentType& Get(Entity entity)
 		{
 			const u64 packedEntryIndex = Super::GetPackedIndex(entity);
 			return GetComponentReference(packedEntryIndex);
 		}
 
+		/** Returns the component value for the specified entity. Caller must ensure storage contains the entity. */
 		const ComponentType& Get(Entity entity) const
 		{
 			const u64 packedEntryIndex = Super::GetPackedIndex(entity);
@@ -226,18 +239,21 @@ namespace b3d::ecs
 			Super::template SwapInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload>(lhs, rhs);
 		}
 
+		/** @copydoc TSparseSet::SortAs */
 		template<typename It>
 		Iterator SortAs(It first, It last)
 		{
 			return Super::template SortAsInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload>(first, last);
 		}
 
+		/** @copydoc TSparseSet::SortN */
 		template<typename ComparisonFunction = std::less<>>
 		void SortN(u64 count, ComparisonFunction predicate = ComparisonFunction{})
 		{
 			return Super::template SortNInternal<TComponentSparseSet, &TComponentSparseSet::MoveOrSwapPayload, ComparisonFunction>(count, std::move(predicate));
 		}
 
+		/** @copydoc TSparseSet::Sort */
 		template<typename ComparisonFunction = std::less<>>
 		void Sort(ComparisonFunction predicate = ComparisonFunction{})
 		{
@@ -264,24 +280,30 @@ namespace b3d::ecs
 			ShrinkComponentArray(Super::Size());
 		}
 
+		/** Allows easy iteration over all components using a range for loop. */
 		IteratorRange Each() { return IteratorRange({ Super::Begin(), Begin() }, { Super::End(), End() }); }
 		ConstIteratorRange Each() const { return ConstIteratorRange({ Super::Cbegin(), Cbegin() }, { Super::Cend(), Cend() }); }
 
+		/** Allows easy iteration over all components using a range for loop, in reverse order. */
 		ReverseIteratorRange ReverseEach() { return ReverseIteratorRange({ Super::Rbegin(), Rbegin() }, { Super::Rend(), Rend() }); }
 		ConstReverseIteratorRange ReverseEach() const { return ConstReverseIteratorRange({ Super::Crbegin(), Crbegin() }, { Super::Crend(), Crend() }); }
 
+		/** Iterator to the first component in the storage. */
 		ConstIterator Cbegin() const { return ConstIterator(mComponents, 0); }
 		ConstIterator Begin() const { return Cbegin(); }
 		Iterator Begin() { return Iterator(mComponents, 0); }
 
+		/** Iterator past the last component in the storage. */
 		ConstIterator Cend() const { return ConstIterator(mComponents, Super::Size()); }
 		ConstIterator End() const { return Cend(); }
 		Iterator End() { return Iterator(mComponents, Super::Size()); }
 
+		/** Iterator to the last component in the storage, for reverse iteration. */
 		ConstReverseIterator Crbegin() const { return std::make_reverse_iterator(Cend()); }
 		ConstReverseIterator Rbegin() const { return Crbegin(); }
 		ReverseIterator Rbegin() { return std::make_reverse_iterator(End()); }
 
+		/** Iterator to before the first component in the storage, for reverse iteration. */
 		ConstReverseIterator Crend() const { return std::make_reverse_iterator(Cbegin()); }
 		ConstReverseIterator Rend() const { return Crend(); }
 		ReverseIterator Rend() { return std::make_reverse_iterator(Begin()); }
@@ -311,6 +333,11 @@ namespace b3d::ecs
 	private:
 		using UnderlyingIterator = typename Super::Iterator;
 
+		/**
+		 * Adds an entity and associates a newly constructed component of type @p Type using the provided arguments. If @p forceAddAtEnd is true
+		 * ensures that all added entries are added to the end of the component array, rather than re-using invalid (deleted) entries (only
+		 * relevant if in-place deletion is true.).
+		 */
 		template<typename... Arguments>
 		UnderlyingIterator AddInternal(Entity entity, bool forceAddAtEnd, Arguments&&... arguments)
 		{
@@ -342,6 +369,7 @@ namespace b3d::ecs
 			}
 		}
 
+		/** Moves the component from @p fromPackedIndex to @p toPackedIndex. */
 		void MoveOrSwapPayload(u64 fromPackedIndex, u64 toPackedIndex)
 		{
 			constexpr bool isMovable = std::is_move_constructible_v<ComponentType> && std::is_move_assignable_v<ComponentType>;
@@ -368,6 +396,7 @@ namespace b3d::ecs
 			}
 		}
 
+		/** Destroys any excess pages, as long as the internal contain can fit @p newComponentCount. */
 		void ShrinkComponentArray(u64 newComponentCount)
 		{
 			const u64 oldComponentCount = Super::Size();
@@ -391,6 +420,10 @@ namespace b3d::ecs
 			mComponents.Shrink();
 		}
 
+		/**
+		 * Returns a page in which to store the component with the specified index at. Internally allocates a page for
+		 * the provided index if one doesn't exist.
+		 */
 		ComponentType* GetOrCreateComponentPageFor(u64 packedComponentIndex)
 		{
 			const u64 page = GetComponentPage(packedComponentIndex);
@@ -404,26 +437,40 @@ namespace b3d::ecs
 			return mComponents[page].Data();
 		}
 
+		/**
+		 * Returns a pointer to store the component with the specified index at. Internally allocates a page for
+		 * the provided index if one doesn't exist.
+		 */
 		ComponentType* GetOrCreateComponentPointer(u64 packedComponentIndex)
 		{
 			return GetOrCreateComponentPageFor(packedComponentIndex) + GetComponentIndexWithinPage(packedComponentIndex);
 		}
 
+		/**
+		 * Returns a reference to store the component with the specified index at. Internally allocates a page for
+		 * the provided index if one doesn't exist.
+		 */
 		ComponentType& GetComponentReference(u64 packedComponentIndex)
 		{
 			return mComponents[GetComponentPage(packedComponentIndex)][GetComponentIndexWithinPage(packedComponentIndex)];
 		}
 
+		/**
+		 * Returns a reference to store the component with the specified index at. Internally allocates a page for
+		 * the provided index if one doesn't exist.
+		 */
 		const ComponentType& GetComponentReference(u64 packedComponentIndex) const
 		{
 			return mComponents[GetComponentPage(packedComponentIndex)][GetComponentIndexWithinPage(packedComponentIndex)];
 		}
 
+		/** Converts a global packed component index, into an index that's local to the page. */
 		static constexpr u64 GetComponentIndexWithinPage(u64 packedComponentIndex)
 		{
 			return packedComponentIndex & (PackedPageSize - 1);
 		}
 
+		/** Converts a global packed component index, into a page index. */
 		static constexpr u64 GetComponentPage(u64 packedComponentIndex)
 		{
 			return packedComponentIndex / PackedPageSize;
