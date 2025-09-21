@@ -136,7 +136,8 @@ namespace b3d::ecs
 		return !(lhs < rhs);
 	}
 
-	/** Storage used for storing components associated with entities.
+	/**
+	 * Storage used for storing components associated with entities.
 	 *
 	 * @tparam ComponentType	Type of the component to store. Type must not be empty.
 	 * @tparam InPlaceDelete	If true, deletion of entities will not erase the entity, but rather just mark it as invalid. Space of invalid entities

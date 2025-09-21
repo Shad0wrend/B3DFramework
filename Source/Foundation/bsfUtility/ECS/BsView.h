@@ -18,6 +18,7 @@ namespace b3d::ecs
 
 	// Note: Based on EnTT (https://github.com/skypjack/entt)
 
+	/** Checks if the entity is part of all storages in the provided range. */
 	template<typename It>
 	static bool IsEntityPartOfAll(It first, It last, Entity entity)
 	{
@@ -27,6 +28,7 @@ namespace b3d::ecs
 		return first == last;
 	}
 
+	/** Checks if the entity is part of any storages in the provided range. */
 	template<typename It>
 	static bool IsEntityPartOfAny(It first, It last, Entity entity)
 	{
@@ -36,6 +38,19 @@ namespace b3d::ecs
 		return first != last;
 	}
 
+	/**
+	 * Checks if entity matches the included & excluded type filters.
+	 * 
+	 * @tparam IncludedTypeCount						Number of types in the included type filter.
+	 * @tparam ExcludedTypeCount						Number of types in the excluded type filter.
+	 * @tparam StorageMayContainInvalidEntities			True if the storage may contain invalid entities (i.e. storage is using in-place delete).
+	 *
+	 * @param entity									Entity to check.
+	 * @param includedTypeStorage						Storages that must contain the entity to pass the filter.
+	 * @param excludedTypeStorage						Storages that must not contain the entity to pass the filter.
+	 * @param leadingTypeIndex							Index of the included type storage which leading, and therefore guaranteed to contain the entity.
+	 * @return 
+	 */
 	template<u32 IncludedTypeCount, u32 ExcludedTypeCount, bool StorageMayContainInvalidEntities>
 	static bool DoesEntityMatchFilter(Entity entity, const std::array<const SparseSet*, IncludedTypeCount>& includedTypeStorage, const std::array<const SparseSet*, ExcludedTypeCount>& excludedTypeStorage, u32 leadingTypeIndex)
 	{
@@ -45,6 +60,13 @@ namespace b3d::ecs
 			&& ((ExcludedTypeCount == 0u) || (!IsEntityPartOfAny(excludedTypeStorage.begin(), excludedTypeStorage.end(), entity)));
 	}
 
+	/**
+	 * Iterator that iterates over all entities that match the view included & excluded type filter.
+	 * 
+	 * @tparam IncludedTypeCount		Number of types in the included type filter.
+	 * @tparam ExcludedTypeCount		Number of types in the excluded type filter.
+	 * @tparam InPlaceDelete			True if the storages support in-place delete policy.
+	 */
 	template<u32 IncludedTypeCount, u32 ExcludedTypeCount, bool InPlaceDelete>
 	struct TViewIterator final
 	{
@@ -93,6 +115,10 @@ namespace b3d::ecs
 		friend constexpr bool operator!=(const TViewIterator<IncludedTypeCount2, ExcludedTypeCount2, InPlaceDelete2>& lhs, const TViewIterator<IncludedTypeCount2, ExcludedTypeCount2, InPlaceDelete2>& rhs) noexcept;
 
 	private:
+		/**
+		 * Increments the leading type storage to the next entry and check if it matches the type filter. If it doesn't match the type
+		 * filter the next entry is searched, and so on until the first matching entry or the end of leading type storage.
+		 */
 		void SeekToNextValidEntry()
 		{
 			// Iterate until the find next matching entity
@@ -118,6 +144,7 @@ namespace b3d::ecs
 		return !(lhs.mUnderlyingIterator == rhs.mUnderlyingIterator);
 	}
 
+	/** Adapter around TViewIterator that allows range for iteration. */
 	template<typename IteratorType, typename... IncludedStorageType>
 	struct TViewIteratorAdapter
 	{
@@ -180,12 +207,23 @@ namespace b3d::ecs
 		return !(lhs == rhs);
 	}
 
+	/**
+	 * Provides helper functionality for a view containing multiple (more than one) included or excluded types.
+	 *
+	 * @tparam IncludedTypeCount		Number of types in the included type filter.
+	 * @tparam ExcludedTypeCount		Number of types in the excluded type filter.
+	 * @tparam InPlaceDelete			True if the storages support in-place delete policy.
+	 */
 	template<u32 IncludedTypeCount, u32 ExcludedTypeCount, bool InPlaceDelete>
-	class TViewCommon
+	class TMultiStorageViewCommon
 	{
 	public:
 		using Iterator = TViewIterator<IncludedTypeCount, ExcludedTypeCount, InPlaceDelete>;
 
+		/**
+		 * Returns pointer to the storage that is considered the leading storage. Leading storage is the storage that's primarily
+		 * iterated over when looking for elements matching the view filter.
+		 */
 		const SparseSet* GetLeadingTypeStorage() const
 		{
 			if(mLeadingTypeIndex == IncludedTypeCount)
@@ -194,6 +232,7 @@ namespace b3d::ecs
 			return mIncludedTypeStorage[mLeadingTypeIndex];
 		}
 
+		/** Returns a rough number of elements in the view, based on the number of elements in the leading storage. */
 		u64 GetSizeEstimate() const
 		{
 			if(mLeadingTypeIndex == IncludedTypeCount)
@@ -202,22 +241,26 @@ namespace b3d::ecs
 			return GetLeadingTypeStorageSize();
 		}
 
+		/** Iterator to the first entity matching the view filter. */
 		Iterator Begin() const
 		{
 			return mLeadingTypeIndex != IncludedTypeCount ? Iterator(mIncludedTypeStorage[mLeadingTypeIndex]->Begin(), mIncludedTypeStorage, mExcludedTypeStorage, mLeadingTypeIndex) : Iterator();
 		}
 
+		/** Iterator past the last entity matching the view filter. */
 		Iterator End() const
 		{
 			return mLeadingTypeIndex != IncludedTypeCount ? Iterator(mIncludedTypeStorage[mLeadingTypeIndex]->Begin() + GetLeadingTypeStorageSize(), mIncludedTypeStorage, mExcludedTypeStorage, mLeadingTypeIndex) : Iterator();
 		}
 
+		/** Reference to the first entity matching the view filter, or null if none matches. */
 		Entity Front() const
 		{
 			auto it = Begin();
 			return  it != End() ? *it : kNullEntity;
 		}
 
+		/** Reference to the last entity matching the view filter, or null if none matches. */
 		Entity Back() const
 		{
 			if(mLeadingTypeIndex == IncludedTypeCount)
@@ -232,6 +275,7 @@ namespace b3d::ecs
 			return it != last ? *it : kNullEntity;
 		}
 
+		/** Returns an iterator to the entity in the view, or End() iterator if no entity is found. */
 		Iterator Find(Entity entity)
 		{
 			if(Contains(entity))
@@ -240,6 +284,7 @@ namespace b3d::ecs
 			return End();
 		}
 
+		/** Returns true if the provided entity matches the view filter. */
 		bool Contains(Entity entity)
 		{
 			if(mLeadingTypeIndex == IncludedTypeCount)
@@ -250,6 +295,7 @@ namespace b3d::ecs
 				&& (mIncludedTypeStorage[mLeadingTypeIndex]->GetPackedIndex(entity) < GetLeadingTypeStorageSize());
 		}
 
+		/** Returns true if all included and excluded storage pointer are initializes. View is not usable unless this returns true. */
 		bool IsValid()
 		{
 			if(mLeadingTypeIndex == IncludedTypeCount)
@@ -271,18 +317,19 @@ namespace b3d::ecs
 		iterator end() { return End(); }
 
 	protected:
-		TViewCommon()
+		TMultiStorageViewCommon()
 		{
 			for(auto& entry : mExcludedTypeStorage)
 				entry = GetPlaceholderStorage();
 		}
 
-		TViewCommon(std::array<const SparseSet*, IncludedTypeCount>& includedTypeStorage, std::array<const SparseSet*, ExcludedTypeCount> excludedTypeStorage)
+		TMultiStorageViewCommon(std::array<const SparseSet*, IncludedTypeCount>& includedTypeStorage, std::array<const SparseSet*, ExcludedTypeCount> excludedTypeStorage)
 			:mIncludedTypeStorage(includedTypeStorage), mExcludedTypeStorage(excludedTypeStorage), mLeadingTypeIndex(IncludedTypeCount)
 		{
 			RefreshLeadingTypeIndex();
 		}
 
+		/** Scans the included type storage list for smallest storage, and marks it as the leading storage. */
 		void RefreshLeadingTypeIndex()
 		{
 			mLeadingTypeIndex = 0;
@@ -297,6 +344,7 @@ namespace b3d::ecs
 			}
 		}
 
+		/** Refreshes the leading type index, but only if all included type storage pointers were assigned. */
 		void RefreshLeadingTypeIndexIfNeeded()
 		{
 			if(mLeadingTypeIndex == IncludedTypeCount)
@@ -316,11 +364,13 @@ namespace b3d::ecs
 				RefreshLeadingTypeIndex();
 		}
 
+		/** Returns the included type storage pointer at the provided index. */
 		const SparseSet* GetIncludedTypeStorage(u32 index) const
 		{
 			return mIncludedTypeStorage[index];
 		}
 
+		/** Assigns the included type storage pointer at the provided index. You must assign all storages before using the view. */
 		void SetIncludedTypeStorage(u32 index, const SparseSet* storage)
 		{
 			B3D_ASSERT(storage != nullptr);
@@ -329,11 +379,13 @@ namespace b3d::ecs
 			RefreshLeadingTypeIndexIfNeeded();
 		}
 
+		/** Returns the excluded type storage pointer at the provided index. */
 		const SparseSet* GetExcludedTypeStorage(u32 index) const
 		{
 			return mExcludedTypeStorage[index] == GetPlaceholderStorage() ? nullptr : mExcludedTypeStorage[index];
 		}
 
+		/** Assigns the excluded type storage pointer at the provided index. If excluded type storage is unassigned, it will be ignored by the view filter. */
 		void SetExcludedTypeStorage(u32 index, const SparseSet* storage)
 		{
 			B3D_ASSERT(storage != nullptr);
@@ -341,6 +393,7 @@ namespace b3d::ecs
 			mExcludedTypeStorage[index] = storage;
 		}
 
+		/** Sets leading type index explicitly to the specific included type index. By default the smallest storage is used. */
 		void SetExplicitLeadingTypeIndex(u32 index)
 		{
 			// Must assign all storage types before doing this, as refreshing type index during storage
@@ -350,12 +403,14 @@ namespace b3d::ecs
 			mLeadingTypeIndex = index;
 		}
 
+		/** Returns the number of elements in the leading storage. If leading storage uses in-place deletion policy, this number will also contain invalid elements. */
 		u64 GetLeadingTypeStorageSize() const
 		{
 			B3D_ASSERT(mLeadingTypeIndex != IncludedTypeCount);
 			return mIncludedTypeStorage[mLeadingTypeIndex]->GetDeletePolicy() == SparseSetDeletePolicy::SwapOnly ? mIncludedTypeStorage[mLeadingTypeIndex]->GetFirstFreeElementPackedIndex() : mIncludedTypeStorage[mLeadingTypeIndex]->Size();
 		}
 
+		/** Returns empty storage that can be used for excluded type filter when no storage is assigned yet. */
 		static const SparseSet* GetPlaceholderStorage()
 		{
 			static const EntitySparseSet kPlaceholder;
@@ -370,14 +425,22 @@ namespace b3d::ecs
 	template<typename, typename, typename = void>
 	class TView;
 
+	/**
+	 * Creates a view that allows you to iterate over all entities that match included & excluded type filter. 
+	 * 
+	 * @tparam IncludedStorageType		List of storage types that the entity must be a part of to be included in the view.
+	 * @tparam ExcludedStorageType		List of storage types that the entity must not be a part of to be included in the view.
+	 */
 	template<typename... IncludedStorageType, typename... ExcludedStorageType>
-	class TView<TIncludedTypes<IncludedStorageType...>, TExcludedTypes<ExcludedStorageType...>, std::enable_if_t<(sizeof...(IncludedStorageType) != 0u)>> : public TViewCommon<sizeof...(IncludedStorageType), sizeof...(ExcludedStorageType), TAllTypesUseInPlaceDelete<IncludedStorageType...>>
+	class TView<TIncludedTypes<IncludedStorageType...>, TExcludedTypes<ExcludedStorageType...>, std::enable_if_t<(sizeof...(IncludedStorageType) != 0u)>> : public TMultiStorageViewCommon<sizeof...(IncludedStorageType), sizeof...(ExcludedStorageType), TAllTypesUseInPlaceDelete<IncludedStorageType...>>
 	{
-		using Super = TViewCommon<sizeof...(IncludedStorageType), sizeof...(ExcludedStorageType), TAllTypesUseInPlaceDelete<IncludedStorageType...>>;
+		using Super = TMultiStorageViewCommon<sizeof...(IncludedStorageType), sizeof...(ExcludedStorageType), TAllTypesUseInPlaceDelete<IncludedStorageType...>>;
 
+		/** Returns storage type at the specified index. Included type storages are listed before excluded type storages. */
 		template<u32 Index>
 		using TStorageTypeAt = TTypeListElementAt<Index, TTypeList<IncludedStorageType..., ExcludedStorageType...>>;
 
+		/** Returns the index of storage that contains the specified element type. Included type storages are listed before excluded type storages. */
 		template<typename ElementType>
 		static constexpr u32 TIndexOfElementType = TTypeListIndexOf<std::remove_const_t<ElementType>, TTypeList<typename IncludedStorageType::ElementType..., typename ExcludedStorageType::ElementType...>>;
 		
@@ -393,24 +456,38 @@ namespace b3d::ecs
 			:TView(std::make_from_tuple<TView>(std::tuple_cat(includedTypes, excludedTypes)))
 		{ }
 
+		/**
+		 * Sets an explicit leading type to iterate over. Leading storage type is the primary storage that will be iterated over by the view.
+		 * By default this will be set automatically to the smallest storage (one with least elements).
+		 *
+		 * @tparam ElementType		Element type of the storage to set as the leading type. Must be an element type of one of the included storage types.
+		 */
 		template<typename ElementType>
 		void SetLeadingType()
 		{
 			SetLeadingType<TIndexOfElementType<ElementType>>();
 		}
 
+		/**
+		 * Sets an explicit leading type to iterate over. Leading storage type is the primary storage that will be iterated over by the view.
+		 * By default this will be set automatically to the smallest storage (one with least elements).
+		 *
+		 * @tparam Index		Index of the storage to set as the leading type, in the included storage type list.
+		 */
 		template<u32 Index>
 		void SetLeadingType()
 		{
 			Super::SetExplicitLeadingTypeIndex(Index);
 		}
 
+		/** Returns a storage with the specified element type. Element type must be an element type of one of the included or excluded storage types. */
 		template<typename ElementType>
 		auto* GetStorage() const
 		{
 			return GetStorage<TIndexOfElementType<ElementType>>();
 		}
 
+		/** Returns a storage at the specified index. Included type storages are listed first, followed by excluded type storages. */
 		template<u32 Index>
 		auto* GetStorage() const
 		{
@@ -422,22 +499,11 @@ namespace b3d::ecs
 				return static_cast<TStorageTypeAt<Index>*>(const_cast<TInheritConstFrom<SparseSet, TStorageTypeAt<Index>>*>(Super::GetExcludedTypeStorage(Index - sizeof...(IncludedStorageType))));
 		}
 
+		/** Assigns a storage to the view. All included & excluded storage types should be assigned before using the view. */
 		template<typename StorageType>
 		void SetStorage(StorageType& storage)
 		{
 			SetStorage<TIndexOfElementType<typename StorageType::ElementType>>(storage);
-		}
-
-		template<u32 Index, typename StorageType>
-		void SetStorage(StorageType& storage)
-		{
-			static_assert(Index < (sizeof...(IncludedStorageType) + sizeof...(ExcludedStorageType)), "Index out of range.");
-			static_assert(std::is_convertible_v<StorageType, TStorageTypeAt<Index>>, "Unsupported type.");
-
-			if constexpr(Index < sizeof...(IncludedStorageType))
-				Super::SetIncludedTypeStorage(Index, &storage);
-			else
-				Super::SetExcludedTypeStorage(Index - sizeof...(IncludedStorageType), &storage);
 		}
 
 		decltype(auto) operator[](Entity entity) const
@@ -445,12 +511,33 @@ namespace b3d::ecs
 			return Get(entity);
 		}
 
+		/**
+		 * Returns a tuple containing a subset of components for the specified entity. If no types are provided, all
+		 * element types in the included view type filter are returned.
+		 *
+		 * @tparam	ElementType			Type of the first component to retrieve.
+		 * @tparam	OtherElementType	Type of other components to retrieve, if any.
+		 *
+		 * @param	entity				Entity to retrieve the components for.
+		 * @return						Tuple containing all the requested components, if multiple components are requested.
+		 *								A single component if only one component is requested.
+		 */
 		template<typename ElementType, typename... OtherElementType>
 		decltype(auto) Get(Entity entity) const
 		{
 			return Get<TIndexOfElementType<ElementType>, TIndexOfElementType<OtherElementType>...>(entity);
 		}
 
+		/**
+		 * Returns a tuple containing a subset of components for the specified entity. If no indices are provided, all
+		 * element types in the included view type filter are returned.
+		 *
+		 * @tparam	Index				Indices referencing the included type filter whose components to retrieve.
+		 *
+		 * @param	entity				Entity to retrieve the components for.
+		 * @return						Tuple containing all the requested components, if multiple components are requested.
+		 *								A single component if only one component is requested.
+		 */
 		template<u32... Index>
 		decltype(auto) Get(Entity entity) const
 		{
@@ -462,6 +549,7 @@ namespace b3d::ecs
 				return std::tuple_cat(GetAsTuple(GetStorage<Index>(), entity)...);
 		}
 
+		/** Allows easy iteration over all components in the view using a range for loop. */
 		IteratorRange Each() const
 		{
 			return IteratorRange(Super::Begin(), Super::End());
@@ -479,6 +567,19 @@ namespace b3d::ecs
 		}
 
 	private:
+		/** Helper that assigns the storage at the specified index. */
+		template<u32 Index, typename StorageType>
+		void SetStorage(StorageType& storage)
+		{
+			static_assert(Index < (sizeof...(IncludedStorageType) + sizeof...(ExcludedStorageType)), "Index out of range.");
+			static_assert(std::is_convertible_v<StorageType, TStorageTypeAt<Index>>, "Unsupported type.");
+
+			if constexpr(Index < sizeof...(IncludedStorageType))
+				Super::SetIncludedTypeStorage(Index, &storage);
+			else
+				Super::SetExcludedTypeStorage(Index - sizeof...(IncludedStorageType), &storage);
+		}
+
 		/**
 		 * Returns @p leadingEntry argument if LeadingTypeindex == OtherTypeIndex, otherwise uses the Entity
 		 * from @p leadingEntry to look up the entry in the relevant storage for @p OtherTypeIndex.
@@ -527,6 +628,7 @@ namespace b3d::ecs
 		}
 	};
 
+	/** Provides helper functionality for a view containing single include types, and no excluded types. */
 	template<typename StorageType>
 	class TSingleStorageViewCommon
 	{
@@ -534,11 +636,13 @@ namespace b3d::ecs
 		using Iterator = std::conditional_t<StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace, TViewIterator<1u, 0u, true>, typename StorageType::Iterator>;
 		using ReverseIterator = std::conditional_t<StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace, void, typename StorageType::ReverseIterator>;
 
+		/** Returns the included type storage pointer. */
 		const StorageType* GetLeadingTypeStorage() const
 		{
 			return mStorage;
 		}
 
+		/** Returns a number of elements in the view based on the number of elements in the leading storage. */
 		u64 GetSizeEstimate() const
 		{
 			if(mStorage == nullptr)
@@ -547,6 +651,7 @@ namespace b3d::ecs
 			return StorageType::kDeletePolicy == SparseSetDeletePolicy::SwapOnly ? mStorage->GetFirstFreeElementPackedIndex() : mStorage->Size();
 		}
 
+		/** Iterator to the first entity matching the view filter. */
 		Iterator Begin() const
 		{
 			if(mStorage == nullptr)
@@ -558,6 +663,7 @@ namespace b3d::ecs
 				return mStorage->Begin();
 		}
 
+		/** Iterator past the last entity matching the view filter. */
 		Iterator End() const
 		{
 			if(mStorage == nullptr)
@@ -571,12 +677,14 @@ namespace b3d::ecs
 				return mStorage->Begin() + mStorage->GetFirstFreeElementPackedIndex();
 		}
 
+		/** Iterator to the last entity matching the view filter. */
 		template<SparseSetDeletePolicy DeletePolicy = StorageType::kDeletePolicy>
 		std::enable_if_t<DeletePolicy != SparseSetDeletePolicy::InPlace, ReverseIterator> Rbegin() const
 		{
 			return mStorage != nullptr ? mStorage->Rbegin() : ReverseIterator();
 		}
 
+		/** Iterator before the first entity matching the view filter. */
 		template<SparseSetDeletePolicy DeletePolicy = StorageType::kDeletePolicy>
 		std::enable_if_t<DeletePolicy != SparseSetDeletePolicy::InPlace, ReverseIterator> Rend() const
 		{
@@ -589,12 +697,14 @@ namespace b3d::ecs
 				return mStorage != nullptr ? mStorage->Rbegin() + mStorage->GetFirstFreeElementPackedIndex() : ReverseIterator();
 		}
 
+		/** Reference to the first entity matching the view filter, or null if none matches. */
 		Entity Front() const
 		{
 			auto it = Begin();
 			return  it != End() ? *it : kNullEntity;
 		}
 
+		/** Reference to the last entity matching the view filter, or null if none matches. */
 		Entity Back() const
 		{
 			if(mStorage == nullptr)
@@ -609,6 +719,7 @@ namespace b3d::ecs
 			return it != last ? *it : kNullEntity;
 		}
 
+		/** Returns an iterator to the entity in the view, or End() iterator if no entity is found. */
 		Iterator Find(Entity entity)
 		{
 			if(mStorage == nullptr)
@@ -625,6 +736,7 @@ namespace b3d::ecs
 				return Iterator(mStorage->Find(entity), { mStorage }, {}, 0);
 		}
 
+		/** Returns true if the provided entity matches the view filter. */
 		bool Contains(Entity entity)
 		{
 			if(mStorage == nullptr)
@@ -636,6 +748,7 @@ namespace b3d::ecs
 				return mStorage->Contains(entity) && mStorage->GetPackedIndex(entity) < mStorage->GetFirstFreeElementPackedIndex();
 		}
 
+		/** Returns true if included storage pointer is initialized. View is not usable unless this returns true. */
 		bool IsValid()
 		{
 			return mStorage != nullptr;
@@ -660,6 +773,7 @@ namespace b3d::ecs
 		const StorageType* mStorage = nullptr;
 	};
 
+	/** Specialization of TView that is used when only a single type is provided for the included type filter. */
 	template<typename StorageType>
 	class TView<TIncludedTypes<StorageType>, TExcludedTypes<>> : public TSingleStorageViewCommon<StorageType>
 	{
@@ -677,12 +791,14 @@ namespace b3d::ecs
 			:TView(std::get<0>(includedTypes))
 		{ }
 
+		/** Returns the storage associated with the view. */
 		template<typename ElementType = typename StorageType::ElementType>
 		auto* GetStorage() const
 		{
 			return GetStorage<0>();
 		}
 
+		/** Returns the storage associated with the view. */
 		template<u32 Index>
 		auto* GetStorage() const
 		{
@@ -691,11 +807,13 @@ namespace b3d::ecs
 			return const_cast<StorageType*>(Super::GetLeadingTypeStorage());
 		}
 
+		/** Assigns the storage associated with the view. */
 		void SetStorage(StorageType& storage)
 		{
 			SetStorage<0>(storage);
 		}
 
+		/** Helper that assigns the storage at the specified index. */
 		template<u32 Index>
 		void SetStorage(StorageType& storage)
 		{
@@ -709,6 +827,7 @@ namespace b3d::ecs
 			return GetStorage()->Get(entity);
 		}
 
+		/** Returns a component for the specified entity. */
 		template<typename ElementType>
 		decltype(auto) Get(Entity entity) const
 		{
@@ -716,6 +835,12 @@ namespace b3d::ecs
 			return Get<0>(entity);
 		}
 
+		/**
+		 * Returns a component for the specified entity. 
+		 *
+		 * @param	entity				Entity to retrieve the component for.
+		 * @return						Tuple containing the requested component, if no indices are provided, or a single component of index is provided. Only index of zero is valid.
+		 */
 		template<u32... Index>
 		decltype(auto) Get(Entity entity) const
 		{
@@ -725,6 +850,7 @@ namespace b3d::ecs
 				return GetStorage<Index...>()->Get(entity);
 		}
 
+		/** Allows easy iteration over the components in the view using a range for loop. */
 		IteratorRange Each() const
 		{
 			if constexpr(StorageType::kDeletePolicy == SparseSetDeletePolicy::InPlace)

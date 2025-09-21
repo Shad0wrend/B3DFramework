@@ -18,6 +18,11 @@ namespace b3d::ecs
 
 	// Note: Based on EnTT (https://github.com/skypjack/entt)
 
+	/**
+	 * Storage used for storing tags associated with entities. Tags are components that are empty (have no size), and therefore don't require
+	 * a separate payload array. Rather just existance of an entity in this storage is enough to let us know that there's a tag associated
+	 * with the entity.
+	 */
 	template<typename TagType>
 	class TTagSparseSet : public TSparseSet<SparseSetDeletePolicy::SwapAndErase>
 	{
@@ -35,14 +40,16 @@ namespace b3d::ecs
 
 		~TTagSparseSet() override = default;
 
+		/** Registers an entity with a tag. */
 		void Add(Entity entity)
 		{
 			Iterator iterator = Super::AddInternal(entity, false);
 			OnWasAdded(*iterator);
 		}
 
+		/** Registers a range of entities with a tag. */
 		template<typename It>
-		void Add(It first, It last, const TagType&)
+		void Add(It first, It last, const TagType&) // Last parameter is ignored, but we're keeping for the sake of having a common interface across all storages
 		{
 			for(It it = first; it != last; ++it)
 			{
@@ -56,9 +63,11 @@ namespace b3d::ecs
 			B3D_ASSERT(false && "This method is only available for type deduction purposes and should not be called.");
 		}
 
+		/** Allows easy iteration over all tags using a range for loop. */
 		IteratorRange Each() { return IteratorRange({ Begin() }, { End() }); }
 		ConstIteratorRange Each() const { return ConstIteratorRange({ Cbegin() }, { Cend() }); }
 
+		/** Allows easy iteration over all tags using a range for loop, in reverse order. */
 		ReverseIteratorRange ReverseEach() { return ReverseIteratorRange({ Rbegin() }, { Rend() }); }
 		ConstReverseIteratorRange ReverseEach() const { return ConstReverseIteratorRange({ Crbegin() }, { Crend() }); }
 	};

@@ -19,6 +19,7 @@
 #include "BsUnitTestPrefabUpdateHelper.h"
 #include "Resources/BsResources.h"
 #include "Scene/BsPrefabUtility.h"
+#include "Scene/BsSceneInstance.h"
 
 using namespace b3d;
 

@@ -5,6 +5,7 @@
 #include "Scene/BsPrefab.h"
 #include "Testing/BsTestSuite.h"
 #include "BsUnitTestPrefabUpdateHelper.h"
+#include "Scene/BsSceneInstance.h"
 
 using namespace b3d;
 
