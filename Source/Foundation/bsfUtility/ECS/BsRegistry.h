@@ -55,6 +55,29 @@ namespace b3d::ecs
 			return const_cast<TStorageType<Type>*>(std::as_const(*this).TryGetStorage<Type>());
 		}
 
+		template<typename Type>
+		TStorageType<Type>& GetOrCreateStorage()
+		{
+			if constexpr(std::is_same_v<Type, Entity>)
+				return static_cast<TStorageType<Type>&>(mEntityStorage);
+
+			const TypeId typeId = B3DGetRuntimeTypeId<Type>();
+			if(auto found = mComponentStorage.find(typeId); found != mComponentStorage.end())
+				return static_cast<TStorageType<Type>&>(*found->second);
+
+			SPtr<SparseSet> componentStorage;
+			if constexpr(std::is_empty_v<Type>)
+				componentStorage = B3DMakeShared<TTagSparseSet<Type>>();
+			else
+			{
+				static constexpr bool isTypeMovable = std::is_move_constructible_v<Type> && std::is_move_assignable_v<Type>;
+				componentStorage = B3DMakeShared<TComponentSparseSet<Type, !isTypeMovable>>();
+			}
+
+			mComponentStorage[typeId] = componentStorage;
+			return static_cast<TStorageType<Type>&>(*componentStorage);
+		}
+
 		bool RemoveStorage(TypeId typeId)
 		{
 			return mComponentStorage.erase(typeId) > 0;
@@ -230,9 +253,12 @@ namespace b3d::ecs
 		decltype(auto) TryGetComponents(Entity entity)
 		{
 			if constexpr(sizeof...(ComponentType) == 1u)
-				return (TryGetStorage<std::remove_const_t<ComponentType>>()->Get(entity), ...);
+			{
+				auto& storage = TryGetStorage<std::remove_const_t<ComponentType>...>();
+				return (storage != nullptr && storage.Contains(entity) ? &storage.Get(entity) : nullptr);
+			}
 			else
-				return std::forward_as_tuple(GetComponents<ComponentType>(entity)...);
+				return std::forward_as_tuple(TryGetComponents<ComponentType>(entity)...);
 		}
 
 		template<typename Type, typename... Arguments>
@@ -354,29 +380,6 @@ namespace b3d::ecs
 		}
 
 	private:
-		template<typename Type>
-		TStorageType<Type>& GetOrCreateStorage()
-		{
-			if constexpr(std::is_same_v<Type, Entity>)
-				return static_cast<TStorageType<Type>&>(mEntityStorage);
-
-			const TypeId typeId = B3DGetRuntimeTypeId<Type>();
-			if(auto found = mComponentStorage.find(typeId); found != mComponentStorage.end())
-				return static_cast<TStorageType<Type>&>(*found->second);
-
-			SPtr<SparseSet> componentStorage;
-			if constexpr(std::is_empty_v<Type>)
-				componentStorage = B3DMakeShared<TTagSparseSet<Type>>();
-			else
-			{
-				static constexpr bool isTypeMovable = std::is_move_constructible_v<Type> && std::is_move_assignable_v<Type>;
-				componentStorage = B3DMakeShared<TComponentSparseSet<Type, !isTypeMovable>>();
-			}
-
-			mComponentStorage[typeId] = componentStorage;
-			return static_cast<TStorageType<Type>&>(*componentStorage);
-		}
-
 		EntitySparseSet mEntityStorage;
 		UnorderedMap<TypeId, SPtr<SparseSet>> mComponentStorage;
 		UnorderedMap<TypeId, SPtr<GroupInternals>> mGroupStorage;

@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsECSTestSuite.h"
 #include "ECS/BsRegistry.h"
+#include "ECS/BsRuntimeView.h"
 #include "Scene/BsComponent.h"
 #include "Utility/BsShared.h"
 
@@ -98,7 +99,8 @@ ECSTestSuite::ECSTestSuite()
 	B3D_ADD_TEST(ECSTestSuite::TestSparseSet)
 	B3D_ADD_TEST(ECSTestSuite::TestRegistry)
 	B3D_ADD_TEST(ECSTestSuite::TestComponentSparseSet)
-	B3D_ADD_TEST(ECSTestSuite::TestViews)
+	B3D_ADD_TEST(ECSTestSuite::TestView)
+	B3D_ADD_TEST(ECSTestSuite::TestRuntimeView)
 	B3D_ADD_TEST(ECSTestSuite::TestOwningGroup)
 	B3D_ADD_TEST(ECSTestSuite::TestOwningGroupWithIncluded)
 	B3D_ADD_TEST(ECSTestSuite::TestOwningGroupWithExcluded)
@@ -487,7 +489,7 @@ void ECSTestSuite::TestRegistry()
 	B3D_TEST_ASSERT(entityStorage->Size() == 0)
 }
 
-void ECSTestSuite::TestViews()
+void ECSTestSuite::TestView()
 {
 	using TestTypeList = TTypeList<test::Position, test::Velocity>;
 	static_assert(TTypeListIndexOf<test::Position, TestTypeList> == 0);
@@ -668,6 +670,89 @@ void ECSTestSuite::TestViews()
 	// TODO - Test view with exclude
 
 
+}
+
+void ECSTestSuite::TestRuntimeView()
+{
+	Registry registry;
+
+	static constexpr u32 kEntityCount = 30;
+	static constexpr u32 kEntityWithPositionCount = 20;
+	static constexpr u32 kEntityWithVelocityCount = 10;
+	static constexpr u32 kEntityWithEnemyTagCount = 5;
+	std::array<Entity, kEntityCount> entities;
+
+	for(u32 i = 0; i < kEntityCount; ++i)
+	{
+		entities[i] = registry.CreateEntity();
+	}
+
+	for(u32 i = 0; i < kEntityWithPositionCount; ++i)
+	{
+		registry.AddComponent<test::Position>(entities[i], (float)i + 1.0f, (float)i + 2.0f, (float)i + 3.0f);
+	}
+
+	registry.AddComponents(entities.begin(), entities.begin() + kEntityWithVelocityCount, test::Velocity(5.0f, 5.0f, 5.0f));
+	registry.AddComponents(entities.begin(), entities.begin() + kEntityWithEnemyTagCount, test::IsEnemyTag());
+
+	RuntimeView positionVelocityView;
+	positionVelocityView.Include(*registry.TryGetStorage<test::Position>());
+	positionVelocityView.Include(*registry.TryGetStorage<test::Velocity>());
+
+	u32 index = 0;
+	for(const auto& entity : positionVelocityView)
+	{
+		auto tuple = registry.GetComponents<test::Position, test::Velocity>(entity);
+
+		const test::Position& position = std::get<0>(tuple);
+		const test::Velocity& velocity = std::get<1>(tuple);
+
+		B3D_TEST_ASSERT(position == test::Position((float)index + 1.0f, (float)index + 2.0f, (float)index + 3.0f))
+		B3D_TEST_ASSERT(velocity == test::Velocity(5.0f, 5.0f, 5.0f))
+
+		index++;
+	}
+
+	B3D_TEST_ASSERT(index == Math::Min(kEntityWithVelocityCount, kEntityWithPositionCount))
+
+	index = 0;
+	positionVelocityView.DoForEach([&index, &entities, &registry, this](Entity entity)
+	{
+		B3D_TEST_ASSERT(entity == entities[index])
+
+		auto tuple = registry.GetComponents<test::Position, test::Velocity>(entity);
+
+		const test::Position& position = std::get<0>(tuple);
+		const test::Velocity& velocity = std::get<1>(tuple);
+
+		B3D_TEST_ASSERT(position == test::Position((float)index + 1.0f, (float)index + 2.0f, (float)index + 3.0f))
+		B3D_TEST_ASSERT(velocity == test::Velocity(5.0f, 5.0f, 5.0f))
+
+		index++;
+	});
+
+	B3D_TEST_ASSERT(index == Math::Min(kEntityWithVelocityCount, kEntityWithPositionCount))
+
+	RuntimeView positionVelocityWithoutTagView = positionVelocityView;
+	positionVelocityWithoutTagView.Exclude(*registry.TryGetStorage<test::IsEnemyTag>());
+
+	index = 0;
+	for(const auto& entity : positionVelocityWithoutTagView)
+	{
+		auto tuple = registry.GetComponents<test::Position, test::Velocity>(entity);
+
+		const test::Position& position = std::get<0>(tuple);
+		const test::Velocity& velocity = std::get<1>(tuple);
+
+		const u32 adjustedIndex = index + kEntityWithEnemyTagCount;
+
+		B3D_TEST_ASSERT(position == test::Position((float)adjustedIndex + 1.0f, (float)adjustedIndex + 2.0f, (float)adjustedIndex + 3.0f))
+		B3D_TEST_ASSERT(velocity == test::Velocity(5.0f, 5.0f, 5.0f))
+
+		index++;
+	}
+
+	B3D_TEST_ASSERT(index == (Math::Min(kEntityWithVelocityCount, kEntityWithPositionCount) - kEntityWithEnemyTagCount))
 }
 
 static constexpr u32 kEntityCount = 30;

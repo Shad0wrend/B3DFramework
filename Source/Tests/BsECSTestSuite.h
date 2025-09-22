@@ -17,7 +17,8 @@ namespace b3d
 		void TestSparseSet();
 		void TestComponentSparseSet();
 		void TestRegistry();
-		void TestViews();
+		void TestView();
+		void TestRuntimeView();
 		void TestOwningGroup();
 		void TestOwningGroupWithIncluded();
 		void TestOwningGroupWithExcluded();
