@@ -186,6 +186,7 @@ namespace b3d::ecs
 		friend constexpr bool operator==(const TViewIteratorAdapter<LeftIteratorTypes...>&, const TViewIteratorAdapter<RightIteratorTypes...>&);
 
 	private:
+		/** Returns a tuple containing components from included storage at the provided indices. First entry in the tuple is the entity the components are associated with. */
 		template<size_t... Index>
 		reference GetTuple(std::index_sequence<Index...>) const
 		{

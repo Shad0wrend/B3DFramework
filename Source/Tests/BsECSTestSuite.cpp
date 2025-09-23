@@ -415,7 +415,7 @@ void ECSTestSuite::TestRegistry()
 		}
 	}
 
-	registry.DestroyEntities(&entities[8], &entities[12]);
+	registry.EraseEntities(&entities[8], &entities[12]);
 
 	for(u32 i = 0; i < kEntityCount; ++i)
 	{

@@ -18,6 +18,7 @@ namespace b3d::ecs
 
 	// Note: Based on EnTT (https://github.com/skypjack/entt)
 
+	/** Storage used for storing only entities. Provides helper functionality to create new unique entities. */
 	class EntitySparseSet : public TSparseSet<SparseSetDeletePolicy::SwapOnly>
 	{
 	public:
@@ -33,6 +34,7 @@ namespace b3d::ecs
 		{ }
 		~EntitySparseSet() override = default;
 
+		/** Creates a brand new entity with a unique identifier. */
 		Entity Create()
 		{
 			Entity entity = Size() == GetFirstFreeElementPackedIndex() ? CreateEntity() : mPackedEntities[GetFirstFreeElementPackedIndex()];
@@ -42,6 +44,7 @@ namespace b3d::ecs
 			return *iterator;
 		}
 
+		/** Creates a new entity while attempting to re-use an invalid entity identifier as provided by @p hint. */
 		Entity Create(Entity hint)
 		{
 			if(hint != kInvalidEntity && hint != kNullEntity)
@@ -69,9 +72,11 @@ namespace b3d::ecs
 			mNextEntityId = 0u;
 		}
 
+		/** Allows easy iteration over all components using a range for loop. */
 		IteratorRange Each() { return IteratorRange({ Begin() }, { Begin() + GetFirstFreeElementPackedIndex() }); }
 		ConstIteratorRange Each() const { return ConstIteratorRange({ Cbegin() }, { Cbegin() + GetFirstFreeElementPackedIndex() }); }
 
+		/** Allows easy iteration over all components using a range for loop, in reverse order. */
 		ReverseIteratorRange ReverseEach() { return ReverseIteratorRange({ Rbegin() }, { Rbegin() + (ReverseIterator::difference_type)GetFirstFreeElementPackedIndex() }); }
 		ConstReverseIteratorRange ReverseEach() const { return ConstReverseIteratorRange({ Crbegin() }, { Crbegin() + (ReverseIterator::difference_type)GetFirstFreeElementPackedIndex() }); }
 
@@ -83,6 +88,7 @@ namespace b3d::ecs
 			return Super::Find(Create(hint));
 		}
 
+		/** Creates a new entity with a unique index, and increments the next index to assign. */
 		Entity CreateEntity()
 		{
 			auto fnGetEntityChecked = [this]()

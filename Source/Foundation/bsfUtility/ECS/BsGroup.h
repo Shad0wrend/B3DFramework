@@ -22,6 +22,7 @@ namespace b3d::ecs
 	template<typename IteratorType, typename OwnedStorageType, typename IncludedStorageType>
 	struct TGroupIteratorAdapter {};
 
+	/** Adapter around the provided iterator type that allows range for iteration. */
 	template<typename IteratorType, typename... OwnedStorageTypes, typename... IncludedStorageTypes>
 	struct TGroupIteratorAdapter<IteratorType, TOwnedTypes<OwnedStorageTypes...>, TIncludedTypes<IncludedStorageTypes...>>
 	{
@@ -43,11 +44,13 @@ namespace b3d::ecs
 			return *this;
 		}
 
+		/** Returns a tuple containing the entity and all components contained in owned and included storage types, respectively. */
 		constexpr pointer operator->() const
 		{
 			return operator*();
 		}
 
+		/** Returns a tuple containing the entity and all components contained in owned and included storage types, respectively. */
 		constexpr reference operator*() const
 		{
 			return std::tuple_cat(
@@ -56,6 +59,7 @@ namespace b3d::ecs
 				GetAsTuple(std::get<IncludedStorageTypes*>(mOwnedAndIncludedTypeStorage), *mIterator)...);
 		}
 
+		/** Returns the underlying iterator that iterates over all entities in the group. */
 		constexpr iterator_type GetUnderlyingIterator() const
 		{
 			return mIterator;
@@ -65,6 +69,7 @@ namespace b3d::ecs
 		friend constexpr bool operator==(const TGroupIteratorAdapter<LeftIteratorTypes...>&, const TGroupIteratorAdapter<RightIteratorTypes...>&);
 
 	private:
+		/** Returns a tuple containing the component from the provided storage, at the current iterator location. */
 		template<typename OwnedStorageType>
 		auto GetOwnedStorageElementTuple(OwnedStorageType& storage) const
 		{
@@ -90,18 +95,27 @@ namespace b3d::ecs
 		return !(lhs == rhs);
 	}
 
-	struct GroupInternals
+	/** Common interface for all TGroup specializations. */
+	struct GroupCommon
 	{
-		virtual ~GroupInternals() = default;
+		virtual ~GroupCommon() = default;
 
 		virtual bool OwnsType(TypeHash elementTypeHash) const { return false; }
 	};
 
+	/**
+	 * Provides helper functionality for owning groups.
+	 *
+	 * @tparam OwnedTypeCount		Number of types owned by the group. All owned types will be sorted and tightly packed in their respective storage so they
+	 *								may be quickly iterated over.
+	 * @tparam IncludedTypeCount	Number of types in the included type filter.
+	 * @tparam ExcludedTypeCount	Number of types in the excluded type filter.
+	 */
 	template<u32 OwnedTypeCount, u32 IncludedTypeCount, u32 ExcludedTypeCount>
-	struct TGroupInternals : GroupInternals
+	struct TGroupCommon : GroupCommon
 	{
 		template<typename... OwnedAndIncludedTypes, typename... ExcludedTypes>
-		TGroupInternals(const std::tuple<OwnedAndIncludedTypes...>& ownedAndIncludedTypes, const std::tuple<ExcludedTypes...>& excludedTypes)
+		TGroupCommon(const std::tuple<OwnedAndIncludedTypes...>& ownedAndIncludedTypes, const std::tuple<ExcludedTypes...>& excludedTypes)
 			: mIncludedTypeStorage(std::apply([](auto&&... storage) { return std::array<SparseSet*, OwnedTypeCount + IncludedTypeCount>({&storage...}); }, ownedAndIncludedTypes))
 			, mExcludedTypeStorage(std::apply([](auto&&... storage) { return std::array<SparseSet*, ExcludedTypeCount>({&storage...}); }, excludedTypes))
 		{
@@ -122,14 +136,16 @@ namespace b3d::ecs
 				TryAddEntryToGroupAfterAdd(entry);
 		}
 
-		~TGroupInternals()
+		~TGroupCommon()
 		{
 			for(auto& entry : mEventHandles)
 				entry.Disconnect();
 		}
 
+		/** Returns the number of entities in the group. */
 		u64 Size() const { return mNextIndex; }
 
+		/** Returns the storage at the specified index. Storages are ordered starting with owned, then included and finally excluded storages. */
 		template<u32 Index>
 		SparseSet* GetStorage()
 		{
@@ -139,6 +155,7 @@ namespace b3d::ecs
 				return mExcludedTypeStorage[Index - (OwnedTypeCount + IncludedTypeCount)];
 		}
 
+		/** Checks if the provided type hash is an element type of one of the owned storage types. */
 		bool OwnsType(TypeHash elementTypeHash) const override
 		{
 			for(u32 typeIndex = 0; typeIndex < OwnedTypeCount; ++typeIndex)
@@ -151,12 +168,22 @@ namespace b3d::ecs
 		}
 		
 	private:
+		/**
+		 * Swaps locations of two entities and their associated components in all owned storages.
+		 *
+		 * @param	packedIndex		Packed index of the entity to swap from.
+		 * @param	entity			Entity to swap to.
+		 */
 		void SwapEntry(u64 packedIndex, Entity entity)
 		{
 			for(u32 storageIndex = 0; storageIndex < OwnedTypeCount; ++storageIndex)
 				mIncludedTypeStorage[storageIndex]->Swap((*mIncludedTypeStorage[storageIndex])[packedIndex], entity);
 		}
 
+		/**
+		 * Checks if the entity passes the group filter, and if so adds the entity to the packed entity list. This should be called whenever an entity is
+		 * added to any referenced storage types, so we can check if the entity was added to the included type storage.
+		 */
 		void TryAddEntryToGroupAfterAdd(Entity entity)
 		{
 			const bool inclusiveFilterPassed = std::apply([entity, index = mNextIndex](auto* firstStorage, auto*... otherStorage)
@@ -170,6 +197,10 @@ namespace b3d::ecs
 				SwapEntry(mNextIndex++, entity);
 		}
 
+		/**
+		 * Checks if the entity passes the group filter, and if so adds the entity to the packed entity list. This should be called whenever an entity is
+		 * removed from any referenced storage types, so we can check if the entity has been removed from the last excluded storage.
+		 */
 		void TryAddEntryToGroupBeforeRemove(Entity entity)
 		{
 			const bool inclusiveFilterPassed = std::apply([entity, index = mNextIndex](auto* firstStorage, auto*... otherStorage)
@@ -186,6 +217,7 @@ namespace b3d::ecs
 				SwapEntry(mNextIndex++, entity);
 		}
 
+		/** Removes an entity from the list of packed group entities. */
 		void TryRemoveFromGroup(Entity entity)
 		{
 			if(mIncludedTypeStorage[0]->Contains(entity) && mIncludedTypeStorage[0]->GetPackedIndex(entity) < mNextIndex)
@@ -198,11 +230,17 @@ namespace b3d::ecs
 		u64 mNextIndex = 0;
 	};
 
+	/**
+	 * Provides helper functionality for non-owning groups.
+	 * 
+	 * @tparam IncludedTypeCount		Number of types in the included type filter.
+	 * @tparam ExcludedTypeCount		Number of types in the excluded type filter.
+	 */
 	template<u32 IncludedTypeCount, u32 ExcludedTypeCount>
-	struct TGroupInternals<0, IncludedTypeCount, ExcludedTypeCount> : GroupInternals
+	struct TGroupCommon<0, IncludedTypeCount, ExcludedTypeCount> : GroupCommon
 	{
 		template<typename... IncludedTypes, typename... ExcludedTypes>
-		TGroupInternals(const std::tuple<IncludedTypes...>& includedTypes, const std::tuple<ExcludedTypes...>& excludedTypes)
+		TGroupCommon(const std::tuple<IncludedTypes...>& includedTypes, const std::tuple<ExcludedTypes...>& excludedTypes)
 			: mIncludedTypeStorage(std::apply([](auto&&... storage) { return std::array<SparseSet*, IncludedTypeCount>({ &storage... }); }, includedTypes))
 			, mExcludedTypeStorage(std::apply([](auto&&... storage) { return std::array<SparseSet*, ExcludedTypeCount>({ &storage... }); }, excludedTypes))
 		{
@@ -223,15 +261,17 @@ namespace b3d::ecs
 				TryAddEntryToGroupAfterAdd(entry);
 		}
 
-		~TGroupInternals()
+		~TGroupCommon()
 		{
 			for(auto& entry : mEventHandles)
 				entry.Disconnect();
 		}
 
+		/** Returns a set of entities that match the group filters. */
 		TSparseSet<SparseSetDeletePolicy::SwapAndErase>& GetGroupStorage() { return mGroupEntities; }
 		const TSparseSet<SparseSetDeletePolicy::SwapAndErase>& GetGroupStorage() const { return mGroupEntities; }
 
+		/** Returns an included or excluded storage at a provided index. Included storage types are listed before excluded storage types. */
 		template<u32 Index>
 		SparseSet* GetStorage()
 		{
@@ -242,6 +282,10 @@ namespace b3d::ecs
 		}
 		
 	private:
+		/**
+		 * Checks if the entity passes the group filter, and if so adds the entity to the packed entity list. This should be called whenever an entity is
+		 * added to any referenced storage types, so we can check if the entity was added to the included type storage.
+		 */
 		void TryAddEntryToGroupAfterAdd(Entity entity)
 		{
 			const bool inclusiveFilterPassed = std::apply([entity](auto*... storage) { return (storage->Contains(entity) && ...); }, mIncludedTypeStorage);
@@ -251,6 +295,10 @@ namespace b3d::ecs
 				mGroupEntities.Add(entity);
 		}
 
+		/**
+		 * Checks if the entity passes the group filter, and if so adds the entity to the packed entity list. This should be called whenever an entity is
+		 * removed from any referenced storage types, so we can check if the entity has been removed from the last excluded storage.
+		 */
 		void TryAddEntryToGroupBeforeRemove(Entity entity)
 		{
 			const bool inclusiveFilterPassed = std::apply([entity](auto*... storage) { return (storage->Contains(entity) && ...); }, mIncludedTypeStorage);
@@ -260,6 +308,7 @@ namespace b3d::ecs
 				mGroupEntities.Add(entity);
 		}
 
+		/** Removes an entity from the list of packed group entities. */
 		void TryRemoveFromGroup(Entity entity)
 		{
 			mGroupEntities.EraseIfValid(entity);
@@ -274,12 +323,21 @@ namespace b3d::ecs
 	template<typename, typename, typename>
 	class TGroup;
 
+	/**
+	 * Non-owning group specialization. Acts similarly to a TView but ensures that entities are tightly packed for fast iteration,
+	 * and allows sorting of entities.
+	 * 
+	 * @tparam IncludedStorageTypes		List of storage types that the entity must be a part of to be included in the group.
+	 * @tparam ExcludedStorageTypes		List of storage types that the entity must not be a part of to be included in the group.
+	 */
 	template<typename... IncludedStorageTypes, typename... ExcludedStorageTypes>
 	class TGroup<TOwnedTypes<>, TIncludedTypes<IncludedStorageTypes...>, TExcludedTypes<ExcludedStorageTypes...>>
 	{
+		/** Returns storage type at the specified index. Included type storages are listed before excluded type storages. */
 		template<u32 Index>
 		using TStorageTypeAt = TTypeListElementAt<Index, TTypeList<IncludedStorageTypes..., ExcludedStorageTypes...>>;
 
+		/** Returns the index of storage that contains the specified element type. Included type storages are listed before excluded type storages. */
 		template<typename ElementType>
 		static constexpr u32 TIndexOfElementType = TTypeListIndexOf<std::remove_const_t<ElementType>, TTypeList<typename IncludedStorageTypes::ElementType..., typename ExcludedStorageTypes::ElementType...>>;
 		
@@ -287,24 +345,30 @@ namespace b3d::ecs
 		using Iterator = SparseSet::Iterator;
 		using ReverseIterator = SparseSet::Iterator;
 		using IteratorRange = TIteratorRange<TGroupIteratorAdapter<Iterator, TOwnedTypes<>, TIncludedTypes<IncludedStorageTypes...>>>;
-		using GroupInternalsType = TGroupInternals<0, sizeof...(IncludedStorageTypes), sizeof...(ExcludedStorageTypes)>; 
+		using GroupInternalsType = TGroupCommon<0, sizeof...(IncludedStorageTypes), sizeof...(ExcludedStorageTypes)>; 
 
 		TGroup() = default;
 		TGroup(GroupInternalsType& internals)
 			:mInternals(&internals)
 		{ }
 
+		/**
+		 * Returns a reference to the storage that is considered the leading storage. Leading storage is the storage that's primarily
+		 * iterated over when looking for elements matching the group filter.
+		 */
 		const SparseSet& GetLeadingStorage() const
 		{
 			return mInternals->GetGroupStorage();
 		}
 
+		/** Returns a storage with the specified element type. Element type must be an element type of one of the included or excluded storage types. */
 		template<typename ElementType>
 		auto* GetStorage() const
 		{
 			return GetStorage<TIndexOfElementType<ElementType>>();
 		}
 
+		/** Returns a storage at the specified index. Included type storages are listed first, followed by excluded type storages. */
 		template<u32 Index>
 		auto* GetStorage() const
 		{
@@ -314,59 +378,95 @@ namespace b3d::ecs
 			return static_cast<StorageType*>(mInternals != nullptr ? mInternals->template GetStorage<Index>() : nullptr);
 		}
 
+		/** Returns the number of entities that the group will iterate over. */
 		u64 GetSize() const
 		{
 			return mInternals != nullptr ? GetLeadingStorage().Size() : 0;
 		}
 
+		/** Returns the reserved capacity of the group's leading storage. */
 		u64 GetCapacity() const
 		{
 			return mInternals != nullptr ? GetLeadingStorage().Capacity() : 0;
 		}
 
+		/** Returns true if no entities pass the group filter. */
 		bool IsEmpty() const
 		{
 			return mInternals != nullptr ? mInternals->IsEmpty() : true;
 		}
 
+		/** Reduces the leading storage capacity to match the current number of entities. */
 		void Shrink()
 		{
 			if(mInternals != nullptr) GetLeadingStorage().Shrink();
 		}
 
+		/** Iterator to the first entity matching the group filter. */
 		Iterator Begin() const { return mInternals != nullptr ? GetLeadingStorage().Begin() : Iterator{}; }
+
+		/** Iterator past the last entity matching the group filter. */
 		Iterator End() const { return mInternals != nullptr ? GetLeadingStorage().End() : Iterator{}; }
+
+		/** Iterator to the last entity matching the group filter. */
 		ReverseIterator Rbegin() const { return mInternals != nullptr ? GetLeadingStorage().Rbegin() : ReverseIterator{}; }
+
+		/** Iterator before the first entity matching the group filter. */
 		ReverseIterator Rend() const { return mInternals != nullptr ? GetLeadingStorage().Rend() : ReverseIterator{}; }
 
+		/** Reference to the first entity matching the group filter, or null if none matches. */
 		Entity Front() const
 		{
 			auto it = Begin();
 			return it != End() ? *it : kNullEntity;
 		}
 
+		/** Reference to the last entity matching the group filter, or null if none matches. */
 		Entity Back() const
 		{
 			auto it = Rbegin();
 			return it != Rend() ? *it : kNullEntity;
 		}
 
+		/** Returns an iterator to the entity in the group, or End() iterator if no entity is found. */
 		Iterator Find(Entity entity)
 		{
 			return mInternals != nullptr ? GetLeadingStorage().Find(entity) : Iterator{};
 		}
 
+		/** Returns true if the provided entity matches the group filter. */
 		bool Contains(Entity entity)
 		{
 			return mInternals != nullptr ? GetLeadingStorage().Contains(entity) : false;
 		}
 
+		/**
+		 * Returns a tuple containing a subset of components for the specified entity. If no types are provided, all
+		 * element types in the included group type filter are returned.
+		 *
+		 * @tparam	ElementType			Type of the first component to retrieve.
+		 * @tparam	OtherElementType	Type of other components to retrieve, if any.
+		 *
+		 * @param	entity				Entity to retrieve the components for.
+		 * @return						Tuple containing all the requested components, if multiple components are requested.
+		 *								A single component if only one component is requested.
+		 */
 		template<typename ElementType, typename... OtherElementType>
 		decltype(auto) Get(Entity entity) const
 		{
 			return Get<TIndexOfElementType<ElementType>, TIndexOfElementType<OtherElementType>...>(entity);
 		}
 
+		/**
+		 * Returns a tuple containing a subset of components for the specified entity. If no indices are provided, all
+		 * element types in the included group type filter are returned.
+		 *
+		 * @tparam	Indices				Indices referencing the included type filter whose components to retrieve.
+		 *
+		 * @param	entity				Entity to retrieve the components for.
+		 * @return						Tuple containing all the requested components, if multiple components are requested.
+		 *								A single component if only one component is requested.
+		 */
 		template<u32... Indices>
 		decltype(auto) Get(Entity entity) const
 		{
@@ -380,12 +480,18 @@ namespace b3d::ecs
 				return std::tuple_cat(GetAsTuple(std::get<Indices>(includedTypeStorage), entity)...);
 		}
 
+		/** Allows easy iteration over all components in the group using a range for loop. This is the fastest way to iterate all entries in a group. */
 		IteratorRange Each() const
 		{
 			const auto includedTypeStorage = GetIncludedStoragesAsTuple(std::index_sequence_for<IncludedStorageTypes...>{});
 			return IteratorRange({ Begin(), includedTypeStorage}, { End(), includedTypeStorage });
 		}
 
+		/**
+		 * Calls @p function for each entry in the group. Valid signatures for @p function are:
+		 *  (Entity, ComponentType&, ...) - Passes both entity and the component(s) to the function.
+		 *  (ComponentType&, ...) - Passes only component(s) to the function.
+		 */
 		template<typename Function>
 		void DoForEach(const Function& function)
 		{
@@ -399,6 +505,16 @@ namespace b3d::ecs
 			}
 		}
 
+		/**
+		 * Sorts the packed entity storage using the provided comparison function.
+		 * 
+		 * @tparam	Indices				Indices of types in the included type filter, whose components to provide to the comparison function. If no indices are provided then
+		 *								only entity will be provided o the comparison function.
+		 * @tparam	ComparisonFunction	Function to use for comparison. Signature of the comparison function depends on the number of @p Indices template arguments:
+		 *								 - 0 arguments: Comparison function accepts two Entity types
+		 *								 - 1 argument:  Comparison function accepts two component types matching the element type of the storage at the provided index
+		 *								 - >1 arguments:  Comparison function accepts two tuples that contain types matching the element type of the storage at the provided indices
+		 */
 		template <u32... Indices, typename ComparisonFunction = std::less<>>
 		void Sort(ComparisonFunction predicate = {})
 		{
@@ -424,12 +540,23 @@ namespace b3d::ecs
 			}
 		}
 
+		/**
+		 * Sorts the packed entity storage using the provided comparison function.
+		 * 
+		 * @tparam	ElementType			Type of the first component to provide to the comparison function.
+		 * @tparam	OtherElementTypes	Type of other components to provide to the comparison function.
+		 * @tparam	ComparisonFunction	Function to use for comparison. Signature of the comparison function depends on the number of provided type template arguments:
+		 *								 - 0 arguments: Comparison function accepts two Entity types
+		 *								 - 1 argument:  Comparison function accepts two component types matching the provided element type
+		 *								 - >1 arguments:  Comparison function accepts two tuples that contain types matching the provided element types
+		 */
 		template <typename ElementType, typename... OtherElementTypes, typename ComparisonFunction = std::less<>>
 		void Sort(ComparisonFunction predicate = {})
 		{
 			Sort<TIndexOfElementType<ElementType>, TIndexOfElementType<OtherElementTypes...>>(std::move(predicate));
 		}
 
+		/* Sorts the entity packed data to match the order of the provided entities. */
 		template<typename It>
 		void SortAs(It first, It last)
 		{
@@ -444,6 +571,7 @@ namespace b3d::ecs
 			return Begin()[index];
 		}
 
+		/** Returns type ID that uniquely identifies the type of this group. */
 		static u64 TypeId()
 		{
 			return B3DGetTypeHash<TGroup<TOwnedTypes<>, TIncludedTypes<IncludedStorageTypes...>, TExcludedTypes<ExcludedStorageTypes...>>, u64>();
@@ -459,6 +587,7 @@ namespace b3d::ecs
 		reverse_iterator rend() const { return Rend(); }
 
 	private:
+		/** Returns a tuple containing all included storages with the provided indices. */
 		template<u32... Indices>
 		auto GetIncludedStoragesAsTuple(std::index_sequence<Indices...>) const
 		{
@@ -473,14 +602,25 @@ namespace b3d::ecs
 		GroupInternalsType* mInternals = nullptr;
 	};
 
+	/**
+	 * Non-owning group specialization. Acts similarly to a TView but ensures that entities are tightly packed for fast iteration,
+	 * and allows sorting of entities.
+	 * 
+	 * @tparam OwnedStorageTypes		List of storage types that the group will own. Owned storage types are guaranteed to pack their contents
+	 *									in a way so that they can be quickly iterated over. Owned storage types can also be sorted.
+	 * @tparam IncludedStorageTypes		List of storage types that the entity must be a part of to be included in the group.
+	 * @tparam ExcludedStorageTypes		List of storage types that the entity must not be a part of to be included in the group.
+	 */
 	template<typename... OwnedStorageTypes, typename... IncludedStorageTypes, typename... ExcludedStorageTypes>
 	class TGroup<TOwnedTypes<OwnedStorageTypes...>, TIncludedTypes<IncludedStorageTypes...>, TExcludedTypes<ExcludedStorageTypes...>>
 	{
 		static_assert(((OwnedStorageTypes::kDeletePolicy != SparseSetDeletePolicy::InPlace) && ...), "In-place delete not supported for owned storage.");
 
+		/** Returns storage type at the specified index. Storages are listed in order: owned, included and then excluded. */
 		template<u32 Index>
 		using TStorageTypeAt = TTypeListElementAt<Index, TTypeList<OwnedStorageTypes..., IncludedStorageTypes..., ExcludedStorageTypes...>>;
 
+		/** Returns the index of storage that contains the specified element type. Storages are listed in order: owned, included and then excluded. */
 		template<typename ElementType>
 		static constexpr u32 TIndexOfElementType = TTypeListIndexOf<std::remove_const_t<ElementType>, TTypeList<typename OwnedStorageTypes::ElementType..., typename IncludedStorageTypes::ElementType..., typename ExcludedStorageTypes::ElementType...>>;
 		
@@ -488,24 +628,30 @@ namespace b3d::ecs
 		using Iterator = SparseSet::Iterator;
 		using ReverseIterator = SparseSet::Iterator;
 		using IteratorRange = TIteratorRange<TGroupIteratorAdapter<Iterator, TOwnedTypes<OwnedStorageTypes...>, TIncludedTypes<IncludedStorageTypes...>>>;
-		using GroupInternalsType = TGroupInternals<sizeof...(OwnedStorageTypes), sizeof...(IncludedStorageTypes), sizeof...(ExcludedStorageTypes)>; 
+		using GroupInternalsType = TGroupCommon<sizeof...(OwnedStorageTypes), sizeof...(IncludedStorageTypes), sizeof...(ExcludedStorageTypes)>; 
 
 		TGroup() = default;
 		TGroup(GroupInternalsType& internals)
 			:mInternals(&internals)
 		{ }
 
+		/**
+		 * Returns a reference to the storage that is considered the leading storage. Leading storage is the owned storage that's primarily
+		 * iterated over when looking for elements matching the group filter.
+		 */
 		const SparseSet& GetLeadingStorage() const
 		{
 			return *GetStorage<0>();
 		}
 
+		/** Returns a storage with the specified element type. Element type must be an element type of one of the owned, included or excluded storage types. */
 		template<typename ElementType>
 		auto* GetStorage() const
 		{
 			return GetStorage<TIndexOfElementType<ElementType>>();
 		}
 
+		/** Returns a storage at the specified index. Included type storages are listed first, followed by excluded type storages. */
 		template<u32 Index>
 		auto* GetStorage() const
 		{
@@ -515,50 +661,84 @@ namespace b3d::ecs
 			return static_cast<StorageType*>(mInternals != nullptr ? mInternals->template GetStorage<Index>() : nullptr);
 		}
 
+		/** Returns the number of entities in the group. */
 		u64 GetSize() const
 		{
 			return mInternals != nullptr ? mInternals->Size() : 0;
 		}
 
+		/** Returns true if there are no entities in the group or the group was not initialized. */
 		bool IsEmpty() const
 		{
 			return mInternals != nullptr ? mInternals->Size() == 0 : true;
 		}
 
+		/** Iterator to the first entity matching the group filter. */
 		Iterator Begin() const { return mInternals != nullptr ? GetLeadingStorage().Begin() : Iterator{}; }
+
+		/** Iterator past the last entity matching the group filter. */
 		Iterator End() const { return mInternals != nullptr ? GetLeadingStorage().Begin() + mInternals->Size() : Iterator{}; }
+
+		/** Iterator to the last entity matching the group filter. */
 		ReverseIterator Rbegin() const { return mInternals != nullptr ? GetLeadingStorage().Rbegin() + (GetLeadingStorage().Size() - mInternals->Size()) : ReverseIterator{}; }
+
+		/** Iterator before the first entity matching the group filter. */
 		ReverseIterator Rend() const { return mInternals != nullptr ? GetLeadingStorage().Rend() : ReverseIterator{}; }
 
+		/** Reference to the first entity matching the group filter, or null if none matches. */
 		Entity Front() const
 		{
 			auto it = Begin();
 			return it != End() ? *it : kNullEntity;
 		}
 
+		/** Reference to the last entity matching the group filter, or null if none matches. */
 		Entity Back() const
 		{
 			auto it = Rbegin();
 			return it != Rend() ? *it : kNullEntity;
 		}
 
+		/** Returns an iterator to the entity in the group, or End() iterator if no entity is found. */
 		Iterator Find(Entity entity)
 		{
 			auto found = mInternals != nullptr ? GetLeadingStorage().Find(entity) : Iterator{};
 			return found <= End() ? found : Iterator();
 		}
 
+		/** Returns true if the provided entity matches the group filter. */
 		bool Contains(Entity entity)
 		{
 			return mInternals != nullptr ? (GetLeadingStorage().Contains(entity) && GetLeadingStorage().GetPackedIndex(entity) < mInternals->Size()) : false;
 		}
 
+		/**
+		 * Returns a tuple containing a subset of components for the specified entity. If no types are provided, all
+		 * element types in the included group type filter are returned.
+		 *
+		 * @tparam	ElementType			Type of the first component to retrieve.
+		 * @tparam	OtherElementType	Type of other components to retrieve, if any.
+		 *
+		 * @param	entity				Entity to retrieve the components for.
+		 * @return						Tuple containing all the requested components, if multiple components are requested.
+		 *								A single component if only one component is requested.
+		 */
 		template<typename ElementType, typename... OtherElementType>
 		decltype(auto) Get(Entity entity) const
 		{
 			return Get<TIndexOfElementType<ElementType>, TIndexOfElementType<OtherElementType>...>(entity);
 		}
 
+		/**
+		 * Returns a tuple containing a subset of components for the specified entity. If no indices are provided, all
+		 * element types in the included group type filter are returned.
+		 *
+		 * @tparam	Indices				Indices referencing the included type filter whose components to retrieve.
+		 *
+		 * @param	entity				Entity to retrieve the components for.
+		 * @return						Tuple containing all the requested components, if multiple components are requested.
+		 *								A single component if only one component is requested.
+		 */
 		template<u32... Indices>
 		decltype(auto) Get(Entity entity) const
 		{
@@ -572,12 +752,18 @@ namespace b3d::ecs
 				return std::tuple_cat(GetAsTuple(std::get<Indices>(ownedAndIncludedTypeStorage), entity)...);
 		}
 
+		/** Allows easy iteration over all components in the group using a range for loop. This is the fastest way to iterate all entries in a group. */
 		IteratorRange Each() const
 		{
 			const auto ownedAndIncludedTypeStorage = GetOwnedAndIncludedStoragesAsTuple(std::index_sequence_for<OwnedStorageTypes...>{}, std::index_sequence_for<IncludedStorageTypes...>{});
 			return IteratorRange({ Begin(), ownedAndIncludedTypeStorage}, { End(), ownedAndIncludedTypeStorage });
 		}
 
+		/**
+		 * Calls @p function for each entry in the group. Valid signatures for @p function are:
+		 *  (Entity, ComponentType&, ...) - Passes both entity and the component(s) to the function.
+		 *  (ComponentType&, ...) - Passes only component(s) to the function.
+		 */
 		template<typename Function>
 		void DoForEach(const Function& function)
 		{
@@ -591,6 +777,16 @@ namespace b3d::ecs
 			}
 		}
 
+		/**
+		 * Sorts the packed entity storage using the provided comparison function.
+		 * 
+		 * @tparam	Indices				Indices of types in the included type filter, whose components to provide to the comparison function. If no indices are provided then
+		 *								only entity will be provided o the comparison function.
+		 * @tparam	ComparisonFunction	Function to use for comparison. Signature of the comparison function depends on the number of @p Indices template arguments:
+		 *								 - 0 arguments: Comparison function accepts two Entity types
+		 *								 - 1 argument:  Comparison function accepts two component types matching the element type of the storage at the provided index
+		 *								 - >1 arguments:  Comparison function accepts two tuples that contain types matching the element type of the storage at the provided indices
+		 */
 		template <u32... Indices, typename ComparisonFunction = std::less<>>
 		void Sort(ComparisonFunction predicate = {})
 		{
@@ -630,6 +826,16 @@ namespace b3d::ecs
 			std::apply(fnSortOtherStorages, ownedAndIncludedTypeStorage);
 		}
 
+		/**
+		 * Sorts the packed entity storage using the provided comparison function.
+		 * 
+		 * @tparam	ElementType			Type of the first component to provide to the comparison function.
+		 * @tparam	OtherElementTypes	Type of other components to provide to the comparison function.
+		 * @tparam	ComparisonFunction	Function to use for comparison. Signature of the comparison function depends on the number of provided type template arguments:
+		 *								 - 0 arguments: Comparison function accepts two Entity types
+		 *								 - 1 argument:  Comparison function accepts two component types matching the provided element type
+		 *								 - >1 arguments:  Comparison function accepts two tuples that contain types matching the provided element types
+		 */
 		template <typename ElementType, typename... OtherElementTypes, typename ComparisonFunction = std::less<>>
 		void Sort(ComparisonFunction predicate = {})
 		{
@@ -641,6 +847,7 @@ namespace b3d::ecs
 			return Begin()[index];
 		}
 
+		/** Returns type ID that uniquely identifies the type of this group. */
 		static u64 TypeId()
 		{
 			return B3DGetTypeHash<TGroup<TOwnedTypes<OwnedStorageTypes...>, TIncludedTypes<IncludedStorageTypes...>, TExcludedTypes<ExcludedStorageTypes...>>, u64>();
@@ -656,6 +863,7 @@ namespace b3d::ecs
 		iterator rend() const { return Rend(); }
 
 	private:
+		/** Returns a tuple containing all owned and included storages with the provided indices. */
 		template<u32... OwnedIndices, u32... IncludedIndices>
 		auto GetOwnedAndIncludedStoragesAsTuple(std::index_sequence<OwnedIndices...>, std::index_sequence<IncludedIndices...>) const
 		{
