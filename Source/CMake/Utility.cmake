@@ -122,7 +122,7 @@ function(B3DRegisterOptionalFrameworkSubdirectories)
 	endif()
 
 	# Script binding generation script
-	if(((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE) AND B3D_BUILD_CODEGEN)
+	if(((B3D_SCRIPT_API AND (NOT B3D_SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE) AND B3D_BUILD_CODEGEN)
 		include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/GenerateScriptBindings.cmake)
 	endif()
 
@@ -194,7 +194,7 @@ endfunction()
 # @param	targetName		Name of the target from whose executable or library to strip the symbols.
 # @param	outputFilename	Filename of the file containing the stripped symbols.
 function(B3DStripSymbols targetName outputFilename)
-	if(UNIX AND BSF_STRIP_DEBUG_INFO)
+	if(UNIX AND B3D_STRIP_DEBUG_INFO)
 		if(CMAKE_BUILD_TYPE STREQUAL Release)
 			set(fileToStrip $<TARGET_FILE:${targetName}>)
 

@@ -9,16 +9,16 @@ if(B3D_BUILD_BSL_PARSER)
 	set(BS_BISON_OPTIONS -l)
 
 	execute_process(
-			COMMAND ${flex_EXECUTABLE} ${BS_FLEX_OPTIONS} ${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsLexerFX.l
-			COMMAND ${bison_EXECUTABLE} ${BS_BISON_OPTIONS} ${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsParserFX.y
+			COMMAND ${flex_EXECUTABLE} ${BS_FLEX_OPTIONS} ${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DLexerFX.l
+			COMMAND ${bison_EXECUTABLE} ${BS_BISON_OPTIONS} ${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DParserFX.y
 			WORKING_DIRECTORY ${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL
 			RESULT_VARIABLE rv
 	)
 	
-	file(RENAME "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsLexerFX.h" "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsLexerFX.h")
-	file(RENAME "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsLexerFX.c" "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsLexerFX.c")
-	file(RENAME "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsParserFX.h" "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsParserFX.h")
-	file(RENAME "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsParserFX.c" "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsParserFX.c")
+	file(RENAME "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DLexerFX.h" "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DLexerFX.h")
+	file(RENAME "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DLexerFX.c" "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DLexerFX.c")
+	file(RENAME "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DParserFX.h" "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DParserFX.h")
+	file(RENAME "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DParserFX.c" "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DParserFX.c")
 endif()
 
 # Ensure pre-built binary dependencies are up to date
@@ -45,13 +45,13 @@ target_include_directories(bsfSL PRIVATE "./")
 # Pre-build step
 if(B3D_BUILD_BSL_PARSER AND WIN32)
 	add_custom_command(TARGET bsfSL PRE_BUILD
-		COMMAND ${flex_EXECUTABLE} ${BS_FLEX_OPTIONS} ${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsLexerFX.l
-		COMMAND ${bison_EXECUTABLE} ${BS_BISON_OPTIONS} ${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/BsParserFX.y
-		COMMAND xcopy /Y /I BsLexerFX.h \"${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL\"
-		COMMAND xcopy /Y /I BsLexerFX.c \"${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL\"
-		COMMAND xcopy /Y /I BsParserFX.h \"${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL\"
-		COMMAND xcopy /Y /I BsParserFX.c \"${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL\"
-		COMMAND del BsLexerFX.h BsLexerFX.c BsParserFX.h BsParserFX.c
+		COMMAND ${flex_EXECUTABLE} ${BS_FLEX_OPTIONS} ${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DLexerFX.l
+		COMMAND ${bison_EXECUTABLE} ${BS_BISON_OPTIONS} ${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DParserFX.y
+		COMMAND xcopy /Y /I B3DLexerFX.h \"${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL\"
+		COMMAND xcopy /Y /I B3DLexerFX.c \"${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL\"
+		COMMAND xcopy /Y /I B3DParserFX.h \"${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL\"
+		COMMAND xcopy /Y /I B3DParserFX.c \"${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL\"
+		COMMAND del B3DLexerFX.h B3DLexerFX.c B3DParserFX.h B3DParserFX.c
 		COMMENT "Building BSL lexer/parser...")
 endif()
 

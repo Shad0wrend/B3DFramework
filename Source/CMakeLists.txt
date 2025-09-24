@@ -108,7 +108,7 @@ else()
 	set(RENDERER_MODULE_LIB bsfNullRenderer)
 endif()
 
-if((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE)
+if((B3D_SCRIPT_API AND (NOT B3D_SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE)
 	set(B3D_IS_SCRIPTING_ENABLED 1)
 else()
 	set(B3D_IS_SCRIPTING_ENABLED 0)
@@ -124,8 +124,8 @@ else()
 endif()
 
 ## Generate config files
-configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/BsEngineConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/bsfEngine/BsEngineConfig.h")
-configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/BsFrameworkConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/bsfUtility/BsFrameworkConfig.h")
+configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/B3DEngineConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/Engine/B3DEngineConfig.h")
+configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/B3DFrameworkConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/Utility/B3DFrameworkConfig.h")
 
 # Sub-directories
 ## Foundation
@@ -180,12 +180,12 @@ else() # Otherwise include only chosen ones
 		add_subdirectory(Plugins/bsfNullRenderer)
 	endif()
 	
-	if((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE)
+	if((B3D_SCRIPT_API AND (NOT B3D_SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE)
 		add_subdirectory(Scripting/bsfScript)
 		add_subdirectory(Scripting/bsfSharpExec)
 	endif()
 	
-	if((SCRIPT_API AND SCRIPT_API MATCHES "C#") OR B3D_IS_ENGINE)
+	if((B3D_SCRIPT_API AND B3D_SCRIPT_API MATCHES "C#") OR B3D_IS_ENGINE)
 		add_subdirectory(Scripting/bsfMono)
 		add_subdirectory(Scripting/bsfSharp)
 	endif()
@@ -201,39 +201,39 @@ if(B3D_BUILD_TESTS)
 	enable_testing()
 
 	add_executable(UtilityTest
-		Tests/BsUtilityTest.cpp
-		Tests/BsUtilityTestSuite.cpp
-		Tests/BsFileSystemTestSuite.cpp
-		Tests/BsECSTestSuite.cpp)
+		Tests/B3DUtilityTest.cpp
+		Tests/B3DUtilityTestSuite.cpp
+		Tests/B3DFileSystemTestSuite.cpp
+		Tests/B3DECSTestSuite.cpp)
 		
 	target_link_libraries(UtilityTest bsf)
 	target_include_directories(UtilityTest PRIVATE
-		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/ThirdParty"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/Tests"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/Tests/RTTI")
+		"${CMAKE_CURRENT_SOURCE_DIR}/Utility"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/ThirdParty"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/Tests"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/Tests/RTTI")
 
 	add_executable(CoreTest
-		Tests/BsCoreTest.cpp
-		Tests/BsUnitTestComponents.h
-		Tests/BsUnitTestComponents.cpp
-		Tests/BsUnitTestSerializableObjects.h
-		Tests/BsUnitTestSerializableObjects.cpp
-		Tests/BsUnitTestSerializationHelper.h
-		Tests/BsUnitTestSerializationHelper.cpp
-		Tests/BsUnitTestPrefabUpdateHelper.h
-		Tests/BsUnitTestPrefabUpdateHelper.cpp
-		Tests/BsUnitTestScenes.h
-		Tests/BsUnitTestScenes.cpp
-		Tests/RTTI/BsUnitTestComponentsRTTI.h
-		Tests/RTTI/BsUnitTestSerializableObjectsRTTI.h)
+		Tests/B3DCoreTest.cpp
+		Tests/B3DUnitTestComponents.h
+		Tests/B3DUnitTestComponents.cpp
+		Tests/B3DUnitTestSerializableObjects.h
+		Tests/B3DUnitTestSerializableObjects.cpp
+		Tests/B3DUnitTestSerializationHelper.h
+		Tests/B3DUnitTestSerializationHelper.cpp
+		Tests/B3DUnitTestPrefabUpdateHelper.h
+		Tests/B3DUnitTestPrefabUpdateHelper.cpp
+		Tests/B3DUnitTestScenes.h
+		Tests/B3DUnitTestScenes.cpp
+		Tests/RTTI/B3DUnitTestComponentsRTTI.h
+		Tests/RTTI/B3DUnitTestSerializableObjectsRTTI.h)
 		
 	target_link_libraries(CoreTest bsf)
 	target_include_directories(CoreTest PRIVATE
-		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/ThirdParty"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/Tests"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/Tests/RTTI")
+		"${CMAKE_CURRENT_SOURCE_DIR}/Utility"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/ThirdParty"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/Tests"
+		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/Tests/RTTI")
 
 	set_property(TARGET UtilityTest PROPERTY FOLDER Tests)
 	set_property(TARGET CoreTest PROPERTY FOLDER Tests)	
@@ -244,7 +244,7 @@ endif()
 
 ## Builtin resource preprocessing
 add_executable(bsfImportTool
-	Foundation/bsfEngine/Resources/BsBuiltinResourcesImporter.cpp)
+	Foundation/Engine/Resources/B3DBuiltinResourcesImporter.cpp)
 B3DSetDefaultLinkAndCompileFlags(bsfImportTool)
 target_compile_definitions(bsfImportTool PUBLIC -DBS_IS_ASSET_TOOL)
 

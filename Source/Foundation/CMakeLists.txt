@@ -4,19 +4,19 @@ if(NOT B3D_EXPERIMENTAL_ENABLE_NETWORKING)
 	list(APPEND coreSourceFoldersToIgnore "Network")
 endif()
 
-B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "bsfUtility/" "" BS_UTILITY_SRC)
-B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "bsfCore/" ${coreSourceFoldersToIgnore} BS_CORE_SRC)
-B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "bsfEngine/" "" BS_ENGINE_SRC)
+B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Utility/" "" B3D_UTILITY_SOURCE_FILES)
+B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Core/" ${coreSourceFoldersToIgnore} B3D_CORE_SOURCE_FILES)
+B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Engine/" "" B3D_ENGINE_SOURCE_FILES)
 
 if(MSVC)
-	list(APPEND BS_CORE_SRC "bsfCore/VSVisualizations.natvis")
+	list(APPEND B3D_CORE_SRC "Core/VSVisualizations.natvis")
 endif()
 
 # Ensure pre-built binary dependencies are up to date
 if(B3D_USE_BUNDLED_LIBRARIES)
 	if(B3D_EXPERIMENTAL_ENABLE_NETWORKING)
-		set(BS_RAKNET_PREBUILT_DEPENDENCY_VERSION 1) # Tick this when you change the binaries
-		B3DCheckAndUpdatePrebuiltDependencies(bsfDep_RakNet ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/RakNet RakNet ${BS_RAKNET_PREBUILT_DEPENDENCY_VERSION})
+		set(B3D_RAKNET_PREBUILT_DEPENDENCY_VERSION 1) # Tick this when you change the binaries
+		B3DCheckAndUpdatePrebuiltDependencies(bsfDep_RakNet ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/RakNet RakNet ${B3D_RAKNET_PREBUILT_DEPENDENCY_VERSION})
 	endif()
 endif()
 
@@ -52,24 +52,24 @@ endif()
 # Third party (non-package) libraries
 add_library(ThirdParty INTERFACE)
 target_include_directories(ThirdParty INTERFACE
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility/ThirdParty>
-	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/bsfUtility/ThirdParty>)
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Utility/ThirdParty>
+	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Utility/ThirdParty>)
 
 # Target
-add_library(bsf SHARED ${BS_UTILITY_SRC} ${BS_CORE_SRC} ${BS_ENGINE_SRC})
+add_library(bsf SHARED ${B3D_UTILITY_SOURCE_FILES} ${B3D_CORE_SOURCE_FILES} ${B3D_ENGINE_SOURCE_FILES})
 
 B3DSetDefaultLinkAndCompileFlags(bsf)
 
 # Includes
 target_include_directories(bsf PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bsfUtility>
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bsfCore>
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bsfEngine>
-	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/bsfUtility>
-	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/bsfEngine>
-	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/bsfUtility>
-	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/bsfCore>
-	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/bsfEngine>)
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Utility>
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Core>
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Engine>
+	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/Utility>
+	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/Engine>
+	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Utility>
+	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Core>
+	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Engine>)
 
 # Defines
 target_compile_definitions(bsf PRIVATE
@@ -82,25 +82,25 @@ target_compile_definitions(bsf PRIVATE
 	$<$<CONFIG:Release>:B3D_CONFIG=B3D_CONFIG_ID_RELEASE>)
 
 if(MSVC)
-	if(NOT BSF_ENABLE_RTTI)
+	if(NOT B3D_ENABLE_RTTI)
 		target_compile_options(bsf PUBLIC
 			$<$<COMPILE_LANGUAGE:CXX>:/GR->)
 	endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
-	if(NOT BSF_ENABLE_EXCEPTIONS)
+	if(NOT B3D_ENABLE_EXCEPTIONS)
 		target_compile_options(bsf PUBLIC
 			-fno-exceptions)
 	endif()
-	if(NOT BSF_ENABLE_RTTI)
+	if(NOT B3D_ENABLE_RTTI)
 		target_compile_options(bsf PUBLIC
 			$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
 	endif()
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	if(NOT BSF_ENABLE_EXCEPTIONS)
+	if(NOT B3D_ENABLE_EXCEPTIONS)
 		target_compile_options(bsf PUBLIC
 			-fno-exceptions)
 	endif()
-	if(NOT BSF_ENABLE_RTTI)
+	if(NOT B3D_ENABLE_RTTI)
 		target_compile_options(bsf PUBLIC
 			$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
 	endif()
@@ -157,7 +157,7 @@ set_property(TARGET bsf PROPERTY FOLDER Foundation)
 # Install
 if(NOT B3D_IS_ENGINE)
 	install(
-		DIRECTORY bsfUtility
+		DIRECTORY Utility
 		DESTINATION include
 		FILES_MATCHING
 		PATTERN "*.h"
@@ -166,7 +166,7 @@ if(NOT B3D_IS_ENGINE)
 	)
 
 	install(
-		DIRECTORY bsfCore
+		DIRECTORY Core
 		DESTINATION include
 		FILES_MATCHING
 		PATTERN "*.h"
@@ -175,7 +175,7 @@ if(NOT B3D_IS_ENGINE)
 	)
 
 	install(
-		DIRECTORY bsfEngine
+		DIRECTORY Engine
 		DESTINATION include
 		FILES_MATCHING
 		PATTERN "*.h"
@@ -184,14 +184,14 @@ if(NOT B3D_IS_ENGINE)
 	)
 
 	install(
-		DIRECTORY ${PROJECT_BINARY_DIR}/Generated/bsfEngine
+		DIRECTORY ${PROJECT_BINARY_DIR}/Generated/Engine
 		DESTINATION include
 		FILES_MATCHING
 		PATTERN "*.h"
 	)
 
 	install(
-		DIRECTORY ${PROJECT_BINARY_DIR}/Generated/bsfUtility
+		DIRECTORY ${PROJECT_BINARY_DIR}/Generated/Utility
 		DESTINATION include
 		FILES_MATCHING
 		PATTERN "*.h"

@@ -14,14 +14,14 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 # Options
-set(SCRIPT_API "None" CACHE STRING "Which scripting API/language to use, if any. If no scripting API is chosen only native C++ bsf core will be built. If a scripting API is chosen, then a separate scripting layer on top of the core will be included in the build as well.")
-set_property(CACHE SCRIPT_API PROPERTY STRINGS "None" "C#")
+set(B3D_SCRIPT_API "None" CACHE STRING "Which scripting API/language to use, if any. If no scripting API is chosen only native C++ bsf core will be built. If a scripting API is chosen, then a separate scripting layer on top of the core will be included in the build as well.")
+set_property(CACHE B3D_SCRIPT_API PROPERTY STRINGS "None" "C#")
 
-set(BSF_STRIP_DEBUG_INFO ON CACHE BOOL "If true debug info will be stripped into a separate file in release builds.")
+set(B3D_STRIP_DEBUG_INFO ON CACHE BOOL "If true debug info will be stripped into a separate file in release builds.")
 
-set(BSF_ENABLE_EXCEPTIONS OFF CACHE BOOL "If true C++ exceptions will be enabled when compiling.")
+set(B3D_ENABLE_EXCEPTIONS OFF CACHE BOOL "If true C++ exceptions will be enabled when compiling.")
 
-set(BSF_ENABLE_RTTI OFF CACHE BOOL "If true C++ RTTI will be enabled when compiling.")
+set(B3D_ENABLE_RTTI OFF CACHE BOOL "If true C++ RTTI will be enabled when compiling.")
 
 # Common includes
 include(Source/CMake/Prerequisites.cmake)

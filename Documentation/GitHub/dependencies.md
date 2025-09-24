@@ -141,7 +141,7 @@ Additionally, if the dependency structure still isn't clear, download one of the
 
 **mono**
 - Mono 5.4
-- Only required if SCRIPT_API=C# option is specified during the build (i.e. C# scripting is enabled)
+- Only required if B3D_SCRIPT_API=C# option is specified during the build (i.e. C# scripting is enabled)
 - http://www.mono-project.com/
 - Required by bsfMono
 - Compile as a dynamic library
