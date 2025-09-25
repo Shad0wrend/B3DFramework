@@ -124,7 +124,7 @@ else()
 endif()
 
 ## Generate config files
-configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/B3DEngineConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/Engine/B3DEngineConfig.h")
+configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/B3DEngineConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/Core/B3DEngineConfig.h")
 configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/B3DFrameworkConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/Utility/B3DFrameworkConfig.h")
 
 # Sub-directories
@@ -244,7 +244,7 @@ endif()
 
 ## Builtin resource preprocessing
 add_executable(bsfImportTool
-	Foundation/Engine/Resources/B3DBuiltinResourcesImporter.cpp)
+	Foundation/Core/Resources/B3DBuiltinResourcesImporter.cpp)
 B3DSetDefaultLinkAndCompileFlags(bsfImportTool)
 target_compile_definitions(bsfImportTool PUBLIC -DBS_IS_ASSET_TOOL)
 

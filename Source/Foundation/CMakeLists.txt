@@ -6,7 +6,6 @@ endif()
 
 B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Utility/" "" B3D_UTILITY_SOURCE_FILES)
 B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Core/" ${coreSourceFoldersToIgnore} B3D_CORE_SOURCE_FILES)
-B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Engine/" "" B3D_ENGINE_SOURCE_FILES)
 
 if(MSVC)
 	list(APPEND B3D_CORE_SRC "Core/VSVisualizations.natvis")
@@ -56,7 +55,7 @@ target_include_directories(ThirdParty INTERFACE
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Utility/ThirdParty>)
 
 # Target
-add_library(bsf SHARED ${B3D_UTILITY_SOURCE_FILES} ${B3D_CORE_SOURCE_FILES} ${B3D_ENGINE_SOURCE_FILES})
+add_library(bsf SHARED ${B3D_UTILITY_SOURCE_FILES} ${B3D_CORE_SOURCE_FILES})
 
 B3DSetDefaultLinkAndCompileFlags(bsf)
 
@@ -64,12 +63,10 @@ B3DSetDefaultLinkAndCompileFlags(bsf)
 target_include_directories(bsf PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Utility>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Core>
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Engine>
 	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/Utility>
-	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/Engine>
+	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/Core>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Utility>
-	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Core>
-	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Engine>)
+	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Core>)
 
 # Defines
 target_compile_definitions(bsf PRIVATE
@@ -175,16 +172,7 @@ if(NOT B3D_IS_ENGINE)
 	)
 
 	install(
-		DIRECTORY Engine
-		DESTINATION include
-		FILES_MATCHING
-		PATTERN "*.h"
-		PATTERN "*.hpp"
-		PATTERN "Private" EXCLUDE
-	)
-
-	install(
-		DIRECTORY ${PROJECT_BINARY_DIR}/Generated/Engine
+		DIRECTORY ${PROJECT_BINARY_DIR}/Generated/Core
 		DESTINATION include
 		FILES_MATCHING
 		PATTERN "*.h"

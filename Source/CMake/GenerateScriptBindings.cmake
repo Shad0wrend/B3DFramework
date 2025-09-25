@@ -27,7 +27,6 @@ function(B3DRegisterCodeGenTarget)
 
 	B3DRegisterIncludeFolderForCodeGen(${B3D_FRAMEWORK_SOURCE_FOLDER}/Foundation/Utility)
 	B3DRegisterIncludeFolderForCodeGen(${B3D_FRAMEWORK_SOURCE_FOLDER}/Foundation/Core)
-	B3DRegisterIncludeFolderForCodeGen(${B3D_FRAMEWORK_SOURCE_FOLDER}/Foundation/Engine)
 	B3DRegisterIncludeFolderForCodeGen(${B3D_FRAMEWORK_SOURCE_FOLDER}/Scripting/bsfScript)
 
 	if(B3D_IS_ENGINE)
