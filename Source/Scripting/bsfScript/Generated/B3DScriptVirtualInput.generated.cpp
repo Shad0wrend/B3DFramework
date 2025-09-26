@@ -1,10 +1,10 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DScriptVirtualInput.generated.h"
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Engine/Input/B3DVirtualInput.h"
+#include "../../../Foundation/Core/Input/B3DVirtualInput.h"
 #include "B3DScriptInputConfiguration.generated.h"
 #include "B3DScriptVirtualButton.generated.h"
 #include "B3DScriptVirtualAxis.generated.h"

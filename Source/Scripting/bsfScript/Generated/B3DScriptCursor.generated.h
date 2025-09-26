@@ -1,14 +1,14 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Engine/Platform/B3DCursor.h"
+#include "../../../Foundation/Core/Platform/B3DCursor.h"
 #include "B3DScriptTypeDefinition.h"
 #include "../../../Foundation/Utility/Math/B3DArea2.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIUnits.h"
+#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
 #include "../../../Foundation/Core/Image/B3DPixelData.h"
-#include "../../../Foundation/Engine/Utility/B3DEnums.h"
+#include "../../../Foundation/Core/Utility/B3DEnums.h"
 #include "../../../Foundation/Utility/Math/B3DVector2.h"
 
 namespace b3d { struct __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop; }

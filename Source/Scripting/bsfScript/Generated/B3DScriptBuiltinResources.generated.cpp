@@ -1,10 +1,10 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DScriptBuiltinResources.generated.h"
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Engine/Resources/B3DBuiltinResources.h"
+#include "../../../Foundation/Core/Resources/B3DBuiltinResources.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
 #include "B3DScriptSpriteTexture.generated.h"

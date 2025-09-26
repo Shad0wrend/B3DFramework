@@ -1,10 +1,10 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DScriptCursor.generated.h"
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Engine/Platform/B3DCursor.h"
+#include "../../../Foundation/Core/Platform/B3DCursor.h"
 #include "B3DScriptTArea2.generated.h"
 #include "B3DScriptTVector2.generated.h"
 #include "B3DScriptPixelData.generated.h"

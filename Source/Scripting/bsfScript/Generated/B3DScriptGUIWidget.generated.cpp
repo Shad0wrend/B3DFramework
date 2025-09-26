@@ -1,10 +1,10 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DScriptGUIWidget.generated.h"
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIWidget.h"
+#include "../../../Foundation/Core/GUI/B3DGUIWidget.h"
 #include "B3DScriptGUIPanel.generated.h"
 #include "B3DScriptTVector2.generated.h"
 #include "B3DScriptTArea2.generated.h"

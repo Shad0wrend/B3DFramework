@@ -1,12 +1,12 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIPanel.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIUnits.h"
+#include "../../../Foundation/Core/GUI/B3DGUIPanel.h"
+#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
+#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
 
 namespace b3d { class GUIWidget; }
 namespace b3d { struct __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop; }

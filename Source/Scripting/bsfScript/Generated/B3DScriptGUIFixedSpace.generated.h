@@ -1,11 +1,11 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Engine/GUI/B3DGUISpace.h"
+#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
+#include "../../../Foundation/Core/GUI/B3DGUISpace.h"
 
 namespace b3d { class GUIFixedSpace; }
 namespace b3d

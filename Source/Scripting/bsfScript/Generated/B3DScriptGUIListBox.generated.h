@@ -1,4 +1,4 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
@@ -6,9 +6,9 @@
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUIClickable.generated.h"
 #include "../../../Foundation/Core/Localization/B3DHString.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIOptions.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIListBox.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIListBox.h"
+#include "../../../Foundation/Core/GUI/B3DGUIOptions.h"
+#include "../../../Foundation/Core/GUI/B3DGUIListBox.h"
+#include "../../../Foundation/Core/GUI/B3DGUIListBox.h"
 
 namespace b3d { struct __GUIOptionInterop; }
 namespace b3d { class GUIListBox; }

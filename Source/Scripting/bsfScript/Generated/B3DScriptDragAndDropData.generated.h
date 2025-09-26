@@ -1,10 +1,10 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Engine/GUI/B3DDragAndDrop.h"
+#include "../../../Foundation/Core/GUI/B3DDragAndDrop.h"
 
 namespace b3d { class DragAndDropData; }
 namespace b3d

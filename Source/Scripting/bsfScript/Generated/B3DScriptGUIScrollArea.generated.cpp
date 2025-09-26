@@ -1,10 +1,10 @@
-//********************************* B3D Framework - Copyright 2018-2022 Marko Pintera ************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DScriptGUIScrollArea.generated.h"
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Engine/GUI/B3DGUIScrollArea.h"
+#include "../../../Foundation/Core/GUI/B3DGUIScrollArea.h"
 #include "B3DScriptTUnitValue.generated.h"
 #include "B3DScriptGUILayout.generated.h"
 #include "B3DScriptTArea2.generated.h"
