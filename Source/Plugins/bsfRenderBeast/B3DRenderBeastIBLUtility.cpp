@@ -195,10 +195,10 @@ void IrradianceComputeSHFragMat::Execute(GpuCommandBuffer& commandBuffer, const 
 	commandBuffer.SetRenderTarget(nullptr);
 }
 
-POOLED_RenderTextureCreateInformation IrradianceComputeSHFragMat::GetOutputDesc(const SPtr<Texture>& input)
+PooledRenderTextureCreateInformation IrradianceComputeSHFragMat::GetOutputDesc(const SPtr<Texture>& input)
 {
 	auto& props = input->GetProperties();
-	return POOLED_RenderTextureCreateInformation::CreateCube(PF_RGBA16F, props.Width, props.Height, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::CreateCube(PF_RGBA16F, props.Width, props.Height, TU_RENDERTARGET);
 }
 
 IrradianceAccumulateSHParamDef gIrradianceAccumulateSHParamDef;
@@ -234,14 +234,14 @@ void IrradianceAccumulateSHMat::Execute(GpuCommandBuffer& commandBuffer, const S
 	commandBuffer.SetRenderTarget(nullptr);
 }
 
-POOLED_RenderTextureCreateInformation IrradianceAccumulateSHMat::GetOutputDesc(const SPtr<Texture>& input)
+PooledRenderTextureCreateInformation IrradianceAccumulateSHMat::GetOutputDesc(const SPtr<Texture>& input)
 {
 	auto& props = input->GetProperties();
 
 	// Assuming it's a cubemap
 	u32 size = std::max(1U, (u32)(props.Width * 0.5f));
 
-	return POOLED_RenderTextureCreateInformation::CreateCube(PF_RGBA32F, size, size, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::CreateCube(PF_RGBA32F, size, size, TU_RENDERTARGET);
 }
 
 void IrradianceAccumulateCubeSHMat::Initialize()
@@ -287,9 +287,9 @@ void IrradianceAccumulateCubeSHMat::Execute(GpuCommandBuffer& commandBuffer, con
 	commandBuffer.SetViewport(Area2(0, 0, 1, 1));
 }
 
-POOLED_RenderTextureCreateInformation IrradianceAccumulateCubeSHMat::GetOutputDesc()
+PooledRenderTextureCreateInformation IrradianceAccumulateCubeSHMat::GetOutputDesc()
 {
-	return POOLED_RenderTextureCreateInformation::Create2D(PF_RGBA32F, 9, 1, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA32F, 9, 1, TU_RENDERTARGET);
 }
 
 IrradianceReduceSHParamDef gIrradianceReduceSHParamDef;

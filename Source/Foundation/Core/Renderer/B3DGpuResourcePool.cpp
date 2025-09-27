@@ -16,7 +16,7 @@ GpuResourcePool::GpuResourcePool()
 	mDevice = GetApplication().GetPrimaryGpuDevice();
 }
 
-SPtr<PooledRenderTexture> GpuResourcePool::Get(const POOLED_RenderTextureCreateInformation& desc)
+SPtr<PooledRenderTexture> GpuResourcePool::Get(const PooledRenderTextureCreateInformation& desc)
 {
 	for(auto& entry : mTextures)
 	{
@@ -79,7 +79,7 @@ SPtr<PooledRenderTexture> GpuResourcePool::Get(const POOLED_RenderTextureCreateI
 	return newTexture;
 }
 
-void GpuResourcePool::Get(SPtr<PooledRenderTexture>& texture, const POOLED_RenderTextureCreateInformation& desc)
+void GpuResourcePool::Get(SPtr<PooledRenderTexture>& texture, const PooledRenderTextureCreateInformation& desc)
 {
 	if(texture && Matches(texture->Texture, desc))
 		return;
@@ -185,7 +185,7 @@ void GpuResourcePool::Prune(u32 age)
 	}
 }
 
-bool GpuResourcePool::Matches(const SPtr<Texture>& texture, const POOLED_RenderTextureCreateInformation& desc)
+bool GpuResourcePool::Matches(const SPtr<Texture>& texture, const PooledRenderTextureCreateInformation& desc)
 {
 	const TextureProperties& texProps = texture->GetProperties();
 
@@ -213,9 +213,9 @@ bool GpuResourcePool::Matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAG
 	return match;
 }
 
-POOLED_RenderTextureCreateInformation POOLED_RenderTextureCreateInformation::Create2D(PixelFormat format, u32 width, u32 height, i32 usage, u32 samples, bool hwGamma, u32 arraySize, u32 mipCount)
+PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Create2D(PixelFormat format, u32 width, u32 height, i32 usage, u32 samples, bool hwGamma, u32 arraySize, u32 mipCount)
 {
-	POOLED_RenderTextureCreateInformation desc;
+	PooledRenderTextureCreateInformation desc;
 	desc.width = width;
 	desc.height = height;
 	desc.depth = 1;
@@ -230,9 +230,9 @@ POOLED_RenderTextureCreateInformation POOLED_RenderTextureCreateInformation::Cre
 	return desc;
 }
 
-POOLED_RenderTextureCreateInformation POOLED_RenderTextureCreateInformation::Create3D(PixelFormat format, u32 width, u32 height, u32 depth, i32 usage)
+PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Create3D(PixelFormat format, u32 width, u32 height, u32 depth, i32 usage)
 {
-	POOLED_RenderTextureCreateInformation desc;
+	PooledRenderTextureCreateInformation desc;
 	desc.width = width;
 	desc.height = height;
 	desc.depth = depth;
@@ -247,9 +247,9 @@ POOLED_RenderTextureCreateInformation POOLED_RenderTextureCreateInformation::Cre
 	return desc;
 }
 
-POOLED_RenderTextureCreateInformation POOLED_RenderTextureCreateInformation::CreateCube(PixelFormat format, u32 width, u32 height, i32 usage, u32 arraySize)
+PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::CreateCube(PixelFormat format, u32 width, u32 height, i32 usage, u32 arraySize)
 {
-	POOLED_RenderTextureCreateInformation desc;
+	PooledRenderTextureCreateInformation desc;
 	desc.width = width;
 	desc.height = height;
 	desc.depth = 1;

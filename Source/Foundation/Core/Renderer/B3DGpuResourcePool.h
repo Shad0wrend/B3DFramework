@@ -16,7 +16,7 @@ namespace b3d
 		 */
 
 		class GpuResourcePool;
-		struct POOLED_RenderTextureCreateInformation;
+		struct PooledRenderTextureCreateInformation;
 		struct POOLED_STORAGE_BUFFER_DESC;
 
 		/**	Contains data about a single render texture in the GPU resource pool. */
@@ -65,7 +65,7 @@ namespace b3d
 			 *
 			 * @param[in]	desc		Descriptor structure that describes what kind of texture to retrieve.
 			 */
-			SPtr<PooledRenderTexture> Get(const POOLED_RenderTextureCreateInformation& desc);
+			SPtr<PooledRenderTexture> Get(const PooledRenderTextureCreateInformation& desc);
 
 			/**
 			 * Attempts to find the unused render texture with the specified parameters in the pool, or creates a new texture
@@ -78,7 +78,7 @@ namespace b3d
 			 *								value will be output through this parameter.
 			 * @param[in]		desc		Descriptor structure that describes what kind of texture to retrieve.
 			 */
-			void Get(SPtr<PooledRenderTexture>& texture, const POOLED_RenderTextureCreateInformation& desc);
+			void Get(SPtr<PooledRenderTexture>& texture, const PooledRenderTextureCreateInformation& desc);
 
 			/**
 			 * Attempts to find the unused storage buffer with the specified parameters in the pool, or creates a new buffer
@@ -118,7 +118,7 @@ namespace b3d
 			 * @param[in]	desc		Descriptor structure that describes what kind of texture to match.
 			 * @return					True if the texture matches the descriptor, false otherwise.
 			 */
-			static bool Matches(const SPtr<Texture>& texture, const POOLED_RenderTextureCreateInformation& desc);
+			static bool Matches(const SPtr<Texture>& texture, const PooledRenderTextureCreateInformation& desc);
 
 			/**
 			 * Checks does the provided buffer match the parameters.
@@ -137,11 +137,11 @@ namespace b3d
 		};
 
 		/** Structure used for creating a new pooled render texture. */
-		struct B3D_EXPORT POOLED_RenderTextureCreateInformation
+		struct B3D_EXPORT PooledRenderTextureCreateInformation
 		{
 			// TODO - Add a required Name parameter to each Create method, and propagate it to created textures
 		public:
-			POOLED_RenderTextureCreateInformation() {}
+			PooledRenderTextureCreateInformation() {}
 
 			/**
 			 * Creates a descriptor for a two dimensional render texture.
@@ -156,7 +156,7 @@ namespace b3d
 			 * @param[in]	mipCount	Number of mip levels, excluding the root mip level.
 			 * @return					Descriptor that is accepted by RenderTexturePool.
 			 */
-			static POOLED_RenderTextureCreateInformation Create2D(PixelFormat format, u32 width, u32 height, i32 usage = TU_STATIC, u32 samples = 0, bool hwGamma = false, u32 arraySize = 1, u32 mipCount = 0);
+			static PooledRenderTextureCreateInformation Create2D(PixelFormat format, u32 width, u32 height, i32 usage = TU_STATIC, u32 samples = 0, bool hwGamma = false, u32 arraySize = 1, u32 mipCount = 0);
 
 			/**
 			 * Creates a descriptor for a three dimensional render texture.
@@ -168,7 +168,7 @@ namespace b3d
 			 * @param[in]	usage		Usage flags that control in which way is the texture going to be used.
 			 * @return					Descriptor that is accepted by RenderTexturePool.
 			 */
-			static POOLED_RenderTextureCreateInformation Create3D(PixelFormat format, u32 width, u32 height, u32 depth, i32 usage = TU_STATIC);
+			static PooledRenderTextureCreateInformation Create3D(PixelFormat format, u32 width, u32 height, u32 depth, i32 usage = TU_STATIC);
 
 			/**
 			 * Creates a descriptor for a cube render texture.
@@ -180,7 +180,7 @@ namespace b3d
 			 * @param[in]	arraySize	Number of textures in a texture array. Specify 1 for no array.
 			 * @return					Descriptor that is accepted by RenderTexturePool.
 			 */
-			static POOLED_RenderTextureCreateInformation CreateCube(PixelFormat format, u32 width, u32 height, i32 usage = TU_STATIC, u32 arraySize = 1);
+			static PooledRenderTextureCreateInformation CreateCube(PixelFormat format, u32 width, u32 height, i32 usage = TU_STATIC, u32 arraySize = 1);
 
 		private:
 			friend class GpuResourcePool;

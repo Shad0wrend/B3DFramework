@@ -47,7 +47,6 @@ shader TiledDeferredLighting
 		RWTexture2D<float4>	gOutput;
 		#endif
 
-					
 		groupshared uint sTileMinZ;
 		groupshared uint sTileMaxZ;
 

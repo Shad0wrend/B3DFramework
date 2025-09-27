@@ -8,6 +8,8 @@ shader GpuParticleSortPrepare
 		Buffer<uint2> gInputIndices;
 		
 		RWBuffer<uint> gOutputKeys;
+
+		[layout(rg16ui)]
 		RWBuffer<uint2> gOutputIndices;
 		
 		cbuffer Input

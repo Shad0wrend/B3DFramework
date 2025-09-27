@@ -88,7 +88,7 @@ void ProfilerGPU::BeginView(render::GpuCommandBuffer& commandBuffer, u64 id, Pro
 
 	mActiveFrame.ViewSamples.push_back(sample);
 
-	BeginSampleInternal(*sample, commandBuffer, true);
+	BeginSampleInternal(*sample, commandBuffer, false);
 	mIsViewActive = true;
 }
 

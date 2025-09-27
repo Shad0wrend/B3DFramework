@@ -30,7 +30,7 @@ shader PPSSRStencil
 			float2 gRoughnessScaleBias;
 		}
 		
-		float fsmain(VStoFS input			
+		float fsmain(VStoFS input
 		#if MSAA_COUNT > 1 && !MSAA_RESOLVE_0TH
 			, uint sampleIdx : SV_SampleIndex
 		#endif

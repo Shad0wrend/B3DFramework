@@ -9,7 +9,7 @@ using namespace b3d::render;
 VulkanDescriptorPool::VulkanDescriptorPool(VulkanGpuDevice& device)
 	: mDevice(device)
 {
-	VkDescriptorPoolSize poolSizes[8];
+	VkDescriptorPoolSize poolSizes[10];
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 	poolSizes[0].descriptorCount = sMaxSampledImages;
 
@@ -22,17 +22,23 @@ VulkanDescriptorPool::VulkanDescriptorPool(VulkanGpuDevice& device)
 	poolSizes[3].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[3].descriptorCount = sMaxUniformBuffers;
 
-	poolSizes[4].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-	poolSizes[4].descriptorCount = sMaxImages;
+	poolSizes[4].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+	poolSizes[4].descriptorCount = sMaxUniformBuffers;
 
-	poolSizes[5].type = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
-	poolSizes[5].descriptorCount = sMaxSampledBuffers;
+	poolSizes[5].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+	poolSizes[5].descriptorCount = sMaxImages;
 
-	poolSizes[6].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
-	poolSizes[6].descriptorCount = sMaxBuffers;
+	poolSizes[6].type = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+	poolSizes[6].descriptorCount = sMaxSampledBuffers;
 
-	poolSizes[7].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	poolSizes[7].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
 	poolSizes[7].descriptorCount = sMaxBuffers;
+
+	poolSizes[8].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	poolSizes[8].descriptorCount = sMaxBuffers;
+
+	poolSizes[9].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+	poolSizes[9].descriptorCount = sMaxBuffers;
 
 	VkDescriptorPoolCreateInfo poolCI;
 	poolCI.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

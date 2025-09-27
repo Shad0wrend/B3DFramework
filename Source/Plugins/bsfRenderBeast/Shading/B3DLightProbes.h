@@ -68,7 +68,7 @@ namespace b3d
 			 * Returns the descriptors that can be used for creating the output render texture for this material. The render
 			 * texture is expected to have a single color attachment, and a depth attachment.
 			 */
-			static void GetOutputDesc(const RendererView& view, POOLED_RenderTextureCreateInformation& colorDesc, POOLED_RenderTextureCreateInformation& depthDesc);
+			static void GetOutputDesc(const RendererView& view, PooledRenderTextureCreateInformation& colorDesc, PooledRenderTextureCreateInformation& depthDesc);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
