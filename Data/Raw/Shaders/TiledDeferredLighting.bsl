@@ -38,12 +38,15 @@ shader TiledDeferredLighting
 	
 		#if MSAA_COUNT > 1
 		Texture2DMS<float4> gInColor;
+		[layout(rgba16f)]
 		RWTexture2DArray<float4> gOutput;
 		Texture2D gMSAACoverage;
 		#else
 		Texture2D<float4> gInColor;
+		[layout(rgba16f)]
 		RWTexture2D<float4>	gOutput;
 		#endif
+
 					
 		groupshared uint sTileMinZ;
 		groupshared uint sTileMaxZ;

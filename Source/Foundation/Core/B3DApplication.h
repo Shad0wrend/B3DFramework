@@ -60,17 +60,8 @@ namespace b3d
 	{
 	public:
 		Application(const ApplicationCreateInformation& createInformation);
+		Application(VideoMode videoMode, const String& title, bool fullscreen);
 		~Application() override;
-
-		using Module::StartUp;
-
-		/** Starts the framework. If using a custom Application system, provide it as a template parameter. */
-		template <class T = Application>
-		static void StartUp(VideoMode videoMode, const String& title, bool fullscreen)
-		{
-			ApplicationCreateInformation createInformation = BuildCreateInformation(videoMode, title, fullscreen);
-			Module::StartUp<T>(createInformation);
-		}
 
 		/**
 		 * Executes the main loop. This will update your components and modules, queue objects for rendering and run

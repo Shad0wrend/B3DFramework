@@ -8,6 +8,7 @@ shader PPCreateTonemap3DLUT
 		
 	code
 	{
+		[layout(rgba8)]
 		RWTexture3D<unorm float4> gOutputTex;
 		
 		[numthreads(8, 8, 1)]

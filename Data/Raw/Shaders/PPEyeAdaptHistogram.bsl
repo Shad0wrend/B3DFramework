@@ -18,6 +18,8 @@ shader PPEyeAdaptHistogram
 		}
 	
 		Texture2D gSceneColorTex;
+
+		[layout(rgba16f)]
 		RWTexture2D<float4> gOutputTex;
 		
 		// Keep elements in this order as it ensures coalesced memory operations for non-random ops

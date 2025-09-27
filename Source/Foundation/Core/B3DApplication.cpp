@@ -96,6 +96,10 @@ Application::Application(const ApplicationCreateInformation& createInformation)
 		GetDebug().SetLogCallback(createInformation.LogCallback);
 }
 
+Application::Application(VideoMode videoMode, const String& title, bool fullscreen)
+	: Application(BuildCreateInformation(videoMode, title, fullscreen))
+{ }
+
 Application::~Application()
 {
 	// Cleanup any new objects queued for destruction by unloaded scripts
