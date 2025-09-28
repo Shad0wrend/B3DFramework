@@ -1485,8 +1485,6 @@ void VulkanGpuCommandBuffer::Reset()
 	mImages.clear();
 	mBuffers.clear();
 	mSwapChains.clear();
-	mOcclusionQueries.clear();
-	mTimerQueries.clear();
 	mImageInfos.clear();
 	mSubresourceInfoStorage.clear();
 	mShaderBoundSubresourceInfos.clear();
@@ -2977,21 +2975,6 @@ VulkanGpuCommandBuffer::ImageSubresourceInfo& VulkanGpuCommandBuffer::FindSubres
 
 	B3D_ASSERT(false); // Caller should ensure the subresource actually exists, so this shouldn't happen
 	return subresourceInfos[0];
-}
-
-void VulkanGpuCommandBuffer::GetInProgressQueries(Vector<VulkanTimerQuery*>& timer, Vector<VulkanOcclusionQuery*>& occlusion) const
-{
-	for(auto& query : mTimerQueries)
-	{
-		if(query->IsInProgress())
-			timer.push_back(query);
-	}
-
-	for(auto& query : mOcclusionQueries)
-	{
-		if(query->IsInProgress())
-			occlusion.push_back(query);
-	}
 }
 
 void VulkanGpuCommandBuffer::NotifyRenderTargetModified()

@@ -28,17 +28,11 @@ namespace b3d
 			/** Returns true if the query begin() was called, but not end(). */
 			bool IsInProgress() const;
 
-			/**
-			 * Interrupts an in-progress query allowing the command buffer to submitted. Gets called on queries that are still
-			 * open during command buffer submission.
-			 */
-			void Interrupt(VulkanGpuCommandBuffer& commandBuffer);
-
 		private:
 			VulkanGpuDevice& mDevice;
-			Vector<VulkanQuery*> mQueries;
+			VulkanQuery* mInternalQuery = nullptr;
 
-			u64 mNumSamples = 0;
+			u64 mSampleCount = 0;
 			bool mQueryEndCalled : 1;
 			bool mQueryFinalized : 1;
 		};

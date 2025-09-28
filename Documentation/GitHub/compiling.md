@@ -3,7 +3,7 @@
 ## Quick start
 Use the guide below to get B3D Framework up and running as quickly as possible. Scroll further below for advanced build options that allow for more customization.
 
-- Install git (https://git-scm.com) and CMake 3.12.4 or higher (https://cmake.org)
+- Install git (https://git-scm.com) and CMake 3.31.0 or higher (https://cmake.org)
   - Ensure they are added to your *PATH* environment variable
 - Install other dependencies
   - See [here](#otherDeps)
@@ -14,7 +14,7 @@ Use the guide below to get B3D Framework up and running as quickly as possible. 
   - `cd Build`
   - `cmake -G "$generator$" ..`
     - Where *$generator$* should be replaced with any of the supported generators. Some common ones:
-	  - `Visual Studio 15 2017 Win64` - Visual Studio 2017 (64-bit build)
+	  - `Visual Studio 17 2022` - Visual Studio 2022
 	  - `Unix Makefiles`
 	  - `Ninja`
 	  - `Xcode`
@@ -28,11 +28,11 @@ Use the guide below to get B3D Framework up and running as quickly as possible. 
 	  - Makefiles are present at `bsf/Build`
   - `cmake --build . --config Release --target install`
 	- Alternatively you can run the install target in your chosen build tool
-    - Note that files install to the default install folder, unless you have overriden it as specified above
+    - Note that files install to the default install folder, unless you have overridden it as specified above
 	 
 ## Customizing the build
 
-Additional variables allow you to pick between the render API (Vulkan, DirectX, OpenGL), audio module (FMOD, OpenAudio) among other options. Run *CMake* to see all options. Note that non-default *CMake* options might require additional dependencies to be installed, see [here](#otherDeps).
+Additional variables allow you to pick between the render API (Vulkan, Null), audio module (FMOD, OpenAudio) among other options. Run *CMake* to see all options. Note that non-default *CMake* options might require additional dependencies to be installed, see [here](#otherDeps).
 
 Modify *CMAKE_INSTALL_PREFIX* to choose where the library gets installed after the *install* target is ran (e.g. `make install`, or running the *INSTALL* target in Visual Studio/XCode).
 
@@ -44,14 +44,14 @@ Modify *CMAKE_BUILD_TYPE* to pick what kind of a build you want. Note that this 
  
 You can choose to use a different *CMake* generator than those specified above, as long as the platform/compiler is supported:  
   - Supported platforms:
-    - Windows 7, 8, 10
-    - Linux
-    - macOS 10.11 or newer
+    - Windows 10/11
+    - Linux (currently non functional while major refactor is in progress)
+    - macOS 10.11 or newer (currently non functional while major refactor is in progress)
   - Supported compilers:
-    - MSVC++ 15.0 (Visual Studio 2017)
-    - GCC 7.0 (or newer)
-    - Clang 5.0 (or newer)
-	- Apple LLVM 9.0.0 (XCode 9)
+    - MSVC++ 17.0 (Visual Studio 2022)
+    - GCC 7.0 (or newer) (currently non functional while major refactor is in progress)
+    - Clang 5.0 (or newer) (currently non functional while major refactor is in progress)
+	- Apple LLVM 9.0.0 (XCode 9) (currently non functional while major refactor is in progress)
 	
 ### <a name="dependencies"></a>Third party dependencies
 B3D Framework relies on a variety of third party dependencies. A set of pre-compiled dependencies are provided for every supported platform/compiler and these will be fetched automatically by the build process. If required, the dependencies can also be compiled manually by following [this guide](dependencies.md). This can be required if the pre-compiled dependencies don't work with your platform (e.g. unsupported Linux distro) or if you wish to update to a newer dependency version.
@@ -72,9 +72,6 @@ The following dependencies will need to be installed manually. Which ones are re
     - Go to Settings panel (type "Settings" in Start)->System->Apps & features->Manage optional Features->Add a feature->Select "Graphics Tools"
  
 **Linux**
-  - **OpenGL**
-    - Required by default, but optional if you have chosen a different RenderAPI in *CMake* options
-    - Debian/Ubuntu: `apt-get install libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev`
   - **X11**
     - Debian/Ubuntu: `apt-get install libx11-dev libxcursor-dev libxrandr-dev libxi-dev`
   - **LibUUID**
@@ -105,7 +102,7 @@ The following dependencies will need to be installed manually. Which ones are re
       - `mv /usr/bin/bison /usr/bin/bison-2.3`
 
 **All OS**
-  - **Vulkan SDK 1.1.85.0** (Optional) 
+  - **Vulkan SDK 1.4.321.1*
     - Only needed if you selected the Vulkan render API during build configuration
     - https://lunarg.com/vulkan-sdk/
     - Set up `VULKAN_SDK` environment variable pointing to your installation

@@ -25,21 +25,16 @@ namespace b3d
 			bool IsReady() const override;
 			float GetTimeMs() override;
 
-			/** Returns true if the query begin() was called, but not end(). */
+			/** Returns true if the query Begin() was called, but not End(). */
 			bool IsInProgress() const;
-
-			/**
-			 * Interrupts an in-progress query allowing the command buffer to submitted. Gets called on queries that are still
-			 * open during command buffer submission.
-			 */
-			void Interrupt(VulkanGpuCommandBuffer& commandBuffer);
 
 		private:
 			VulkanGpuDevice& mDevice;
-			Vector<std::pair<VulkanQuery*, VulkanQuery*>> mQueries;
+
+			VulkanQuery* mBeginInternalQuery = nullptr;
+			VulkanQuery* mEndInternalQuery = nullptr;
 
 			float mTimeDelta = 0.0f;
-			bool mQueryEndCalled : 1;
 			bool mQueryFinalized : 1;
 		};
 

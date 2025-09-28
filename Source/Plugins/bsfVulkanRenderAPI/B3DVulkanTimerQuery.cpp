@@ -10,23 +10,21 @@ using namespace b3d;
 using namespace b3d::render;
 
 VulkanTimerQuery::VulkanTimerQuery(VulkanGpuDevice& device)
-	: mDevice(device), mQueryEndCalled(false), mQueryFinalized(false)
+	: mDevice(device), mQueryFinalized(false)
 {
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResCreated, RenderStatObject_Query);
 }
 
 VulkanTimerQuery::~VulkanTimerQuery()
 {
-	for(auto& query : mQueries)
-	{
-		if(query.first != nullptr)
-			mDevice.GetQueryPool().ReleaseQuery(*query.first);
+	if(mBeginInternalQuery != nullptr)
+		mDevice.GetQueryPool().ReleaseQuery(*mBeginInternalQuery);
 
-		if(query.second != nullptr)
-			mDevice.GetQueryPool().ReleaseQuery(*query.second);
-	}
+	if(mEndInternalQuery != nullptr)
+		mDevice.GetQueryPool().ReleaseQuery(*mEndInternalQuery);
 
-	mQueries.clear();
+	mBeginInternalQuery = nullptr;
+	mEndInternalQuery = nullptr;
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResDestroyed, RenderStatObject_Query);
 }
@@ -36,70 +34,43 @@ void VulkanTimerQuery::Begin(GpuCommandBuffer& commandBuffer)
 	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
 
 	// Clear any existing queries
-	for(auto& query : mQueries)
-	{
-		if(query.first != nullptr)
-			queryPool.ReleaseQuery(*query.first);
+	if(mBeginInternalQuery != nullptr)
+		queryPool.ReleaseQuery(*mBeginInternalQuery);
 
-		if(query.second != nullptr)
-			queryPool.ReleaseQuery(*query.second);
-	}
+	if(mEndInternalQuery != nullptr)
+		queryPool.ReleaseQuery(*mEndInternalQuery);
 
-	mQueries.clear();
+	mBeginInternalQuery = nullptr;
+	mEndInternalQuery = nullptr;
 
-	mQueryEndCalled = false;
 	mTimeDelta = 0.0f;
 
 	// Retrieve and queue new query
 	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(commandBuffer);
-	VulkanQuery* beginQuery = queryPool.BeginTimerQuery(vulkanCommandBuffer);
-	vulkanCommandBuffer.RegisterQuery(this);
-
-	mQueries.push_back(std::make_pair(beginQuery, nullptr));
+	mBeginInternalQuery = queryPool.BeginTimerQuery(vulkanCommandBuffer);
 }
 
 void VulkanTimerQuery::End(GpuCommandBuffer& commandBuffer)
 {
-	if(mQueries.empty())
-	{
-		B3D_LOG(Error, RenderBackend, "end() called but query was never started.");
+	if(!B3D_ENSURE(mBeginInternalQuery != nullptr))
 		return;
-	}
 
-	mQueryEndCalled = true;
 	mQueryFinalized = false;
 
 	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(commandBuffer);
 
 	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
-	VulkanQuery* endQuery = queryPool.BeginTimerQuery(vulkanCommandBuffer);
-	vulkanCommandBuffer.RegisterQuery(this);
-
-	mQueries.back().second = endQuery;
+	mEndInternalQuery = queryPool.BeginTimerQuery(vulkanCommandBuffer);
 }
 
 bool VulkanTimerQuery::IsInProgress() const
 {
-	return !mQueries.empty() && !mQueryEndCalled;
-}
-
-void VulkanTimerQuery::Interrupt(VulkanGpuCommandBuffer& commandBuffer)
-{
-	B3D_ASSERT(!mQueries.empty() && !mQueryEndCalled);
-
-	mQueryEndCalled = true;
-	mQueryFinalized = false;
-
-	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
-	VulkanQuery* endQuery = queryPool.BeginTimerQuery(commandBuffer);
-	commandBuffer.RegisterQuery(this);
-
-	mQueries.back().second = endQuery;
+	return mBeginInternalQuery != nullptr && mEndInternalQuery != nullptr;
 }
 
 bool VulkanTimerQuery::IsReady() const
 {
-	if(!mQueryEndCalled)
+	if(mBeginInternalQuery == nullptr || mEndInternalQuery == nullptr)
 		return false;
 
 	if(mQueryFinalized)
@@ -107,11 +78,8 @@ bool VulkanTimerQuery::IsReady() const
 
 	u64 timeBegin, timeEnd;
 	bool ready = true;
-	for(auto& entry : mQueries)
-	{
-		ready &= !entry.first->IsBound() && entry.first->GetResult(timeBegin);
-		ready &= !entry.second->IsBound() && entry.second->GetResult(timeEnd);
-	}
+	ready &= !mBeginInternalQuery->IsBound() && mBeginInternalQuery->GetResult(timeBegin);
+	ready &= !mEndInternalQuery->IsBound() && mEndInternalQuery->GetResult(timeEnd);
 
 	return ready;
 }
@@ -122,12 +90,13 @@ float VulkanTimerQuery::GetTimeMs()
 	{
 		u64 totalTimeDiff = 0;
 		bool ready = true;
-		for(auto& entry : mQueries)
+
+		if(mBeginInternalQuery != nullptr && mEndInternalQuery != nullptr)
 		{
 			u64 timeBegin = 0;
 			u64 timeEnd = 0;
-			ready &= !entry.first->IsBound() && entry.first->GetResult(timeBegin);
-			ready &= !entry.second->IsBound() && entry.second->GetResult(timeEnd);
+			ready &= !mBeginInternalQuery->IsBound() && mBeginInternalQuery->GetResult(timeBegin);
+			ready &= !mEndInternalQuery->IsBound() && mEndInternalQuery->GetResult(timeEnd);
 
 			totalTimeDiff += (timeEnd - timeBegin);
 		}
@@ -140,16 +109,14 @@ float VulkanTimerQuery::GetTimeMs()
 			mTimeDelta = (float)((double)totalTimeDiff * timestampToMs);
 
 			VulkanQueryPool& queryPool = mDevice.GetQueryPool();
-			for(auto& query : mQueries)
-			{
-				if(query.first != nullptr)
-					queryPool.ReleaseQuery(*query.first);
+			if(mBeginInternalQuery != nullptr)
+				queryPool.ReleaseQuery(*mBeginInternalQuery);
 
-				if(query.second != nullptr)
-					queryPool.ReleaseQuery(*query.second);
-			}
+			if(mEndInternalQuery != nullptr)
+				queryPool.ReleaseQuery(*mEndInternalQuery);
 
-			mQueries.clear();
+			mBeginInternalQuery = nullptr;
+			mEndInternalQuery = nullptr;
 		}
 	}
 

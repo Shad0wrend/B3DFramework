@@ -17,10 +17,10 @@ VulkanOcclusionQuery::VulkanOcclusionQuery(VulkanGpuDevice& device, bool binary)
 
 VulkanOcclusionQuery::~VulkanOcclusionQuery()
 {
-	for(auto& query : mQueries)
-		mDevice.GetQueryPool().ReleaseQuery(*query);
+	if(mInternalQuery != nullptr)
+		mDevice.GetQueryPool().ReleaseQuery(*mInternalQuery);
 
-	mQueries.clear();
+	mInternalQuery = nullptr;
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResDestroyed, RenderStatObject_Query);
 }
@@ -30,25 +30,23 @@ void VulkanOcclusionQuery::Begin(GpuCommandBuffer& commandBuffer)
 	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
 
 	// Clear any existing queries
-	for(auto& query : mQueries)
-		mDevice.GetQueryPool().ReleaseQuery(*query);
+	if(mInternalQuery != nullptr)
+		mDevice.GetQueryPool().ReleaseQuery(*mInternalQuery);
 
-	mQueries.clear();
-
+	mInternalQuery = nullptr;
 	mQueryEndCalled = false;
-	mNumSamples = 0;
+	mSampleCount = 0;
 
 	// Retrieve and queue new query
 	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(commandBuffer);
-	mQueries.push_back(queryPool.BeginOcclusionQuery(vulkanCommandBuffer, !mBinary));
-	vulkanCommandBuffer.RegisterQuery(this);
+	mInternalQuery = queryPool.BeginOcclusionQuery(vulkanCommandBuffer, !mBinary);
 }
 
 void VulkanOcclusionQuery::End(GpuCommandBuffer& commandBuffer)
 {
-	if(mQueries.empty())
+	if(mInternalQuery == nullptr)
 	{
-		B3D_LOG(Error, RenderBackend, "end() called but query was never started.");
+		B3D_LOG(Error, RenderBackend, "End() called but query was never started.");
 		return;
 	}
 
@@ -62,23 +60,12 @@ void VulkanOcclusionQuery::End(GpuCommandBuffer& commandBuffer)
 	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(commandBuffer);
 
 	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
-	queryPool.EndOcclusionQuery(vulkanCommandBuffer, *mQueries.back());
+	queryPool.EndOcclusionQuery(vulkanCommandBuffer, *mInternalQuery);
 }
 
 bool VulkanOcclusionQuery::IsInProgress() const
 {
-	return !mQueries.empty() && !mQueryEndCalled;
-}
-
-void VulkanOcclusionQuery::Interrupt(VulkanGpuCommandBuffer& commandBuffer)
-{
-	B3D_ASSERT(!mQueries.empty() && !mQueryEndCalled);
-
-	mQueryEndCalled = true;
-	mQueryFinalized = false;
-
-	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
-	queryPool.EndOcclusionQuery(commandBuffer, *mQueries.back());
+	return mInternalQuery != nullptr && !mQueryEndCalled;
 }
 
 bool VulkanOcclusionQuery::IsReady() const
@@ -89,10 +76,11 @@ bool VulkanOcclusionQuery::IsReady() const
 	if(mQueryFinalized)
 		return true;
 
-	u64 numSamples;
+	u64 sampleCount;
 	bool ready = true;
-	for(auto& query : mQueries)
-		ready &= !query->IsBound() && query->GetResult(numSamples);
+
+	if(mInternalQuery != nullptr)
+		ready &= !mInternalQuery->IsBound() && mInternalQuery->GetResult(sampleCount);
 
 	return ready;
 }
@@ -101,31 +89,32 @@ u32 VulkanOcclusionQuery::GetSampleCount()
 {
 	if(!mQueryFinalized)
 	{
-		u64 totalNumSamples = 0;
+		u64 totalSampleCount = 0;
 		bool ready = true;
-		for(auto& query : mQueries)
-		{
-			u64 numSamples = 0;
-			ready &= !query->IsBound() && query->GetResult(numSamples);
 
-			totalNumSamples += numSamples;
+		if(mInternalQuery != nullptr)
+		{
+			u64 sampleCount = 0;
+			ready &= !mInternalQuery->IsBound() && mInternalQuery->GetResult(sampleCount);
+
+			totalSampleCount += sampleCount;
 		}
 
 		if(ready)
 		{
 			mQueryFinalized = true;
-			mNumSamples = totalNumSamples;
+			mSampleCount = totalSampleCount;
 
 			VulkanQueryPool& queryPool = mDevice.GetQueryPool();
-			for(auto& query : mQueries)
-				queryPool.ReleaseQuery(*query);
+			if(mInternalQuery != nullptr)
+				queryPool.ReleaseQuery(*mInternalQuery);
 
-			mQueries.clear();
+			mInternalQuery = nullptr;
 		}
 	}
 
 	if(mBinary)
-		return mNumSamples == 0 ? 0 : 1;
+		return mSampleCount == 0 ? 0 : 1;
 
-	return (u32)mNumSamples;
+	return (u32)mSampleCount;
 }
