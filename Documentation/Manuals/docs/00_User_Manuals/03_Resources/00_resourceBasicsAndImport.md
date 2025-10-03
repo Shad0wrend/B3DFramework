@@ -26,7 +26,7 @@ You may treat the handles as pointers, using "->" to access their members, compa
 if (texture != nullptr)
 {
 	// Use the texture
-	u32 width = texture->GetWidth();
+	u32 width = texture->GetProperties().Width;
 }
 
 // Compare two handles
