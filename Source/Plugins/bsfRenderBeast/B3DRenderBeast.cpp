@@ -537,11 +537,11 @@ bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RenderBeastScen
 
 	if(clearBuffers != 0)
 	{
-		commandBuffer.SetRenderTarget(target);
+		commandBuffer.BeginRenderPass(target);
 		commandBuffer.ClearViewport(clearBuffers, viewport->GetClearColorValue(), viewport->GetClearDepthValue(), viewport->GetClearStencilValue());
 	}
 	else
-		commandBuffer.SetRenderTarget(target, 0, RT_COLOR0);
+		commandBuffer.BeginRenderPass(target, 0, RT_COLOR0);
 
 	commandBuffer.SetViewport(viewport->GetArea());
 
@@ -582,6 +582,8 @@ bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RenderBeastScen
 			entry->Render(*camera, context);
 		}
 	}
+
+	// TODO - RenderPass - Need to end render pass. Or not even start it.
 
 	view.EndFrame();
 
@@ -725,7 +727,8 @@ void RenderBeast::CaptureSceneCubeMap(RendererScene& scene, GpuCommandBuffer& co
 	RenderViews(commandBuffer, renderBeastScene, viewGroup, frameInfo, false);
 
 	// Make sure the render texture is available for reads
-	commandBuffer.SetRenderTarget(nullptr);
+	commandBuffer.EndRenderPass();
+	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 SPtr<RendererScene> RenderBeast::CreateScene()

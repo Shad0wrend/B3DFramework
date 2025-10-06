@@ -1307,7 +1307,7 @@ void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, 
 		gShadowParamsDef.gMatViewProj.Set(shadowParamsBuffer, shadowInfo.ShadowVpTransform);
 		gShadowParamsDef.gNDCZToDeviceZ.Set(shadowParamsBuffer, RendererView::GetNdczToDeviceZ());
 
-		commandBuffer.SetRenderTarget(shadowMap.GetTarget(i));
+		commandBuffer.BeginRenderPass(shadowMap.GetTarget(i));
 		commandBuffer.ClearRenderTarget(FBT_DEPTH);
 
 		ShadowDepthDirectionalMat* depthDirMat = ShadowDepthDirectionalMat::Get();
@@ -1320,6 +1320,7 @@ void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, 
 
 		ShadowRenderQueue::Execute(commandBuffer, scene, frameInfo, dirOptions);
 
+		commandBuffer.EndRenderPass();
 		shadowMap.SetShadowInfo(i, shadowInfo);
 	}
 
@@ -1366,7 +1367,7 @@ void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const
 
 	ProfileGPUBlock profileSample(commandBuffer, "Project spot light shadows");
 
-	commandBuffer.SetRenderTarget(atlas.GetTarget());
+	commandBuffer.BeginRenderPass(atlas.GetTarget());
 	commandBuffer.SetViewport(mapInfo.NormArea);
 	commandBuffer.ClearViewport(FBT_DEPTH);
 
@@ -1416,6 +1417,7 @@ void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const
 	ShadowRenderQueue::Execute(commandBuffer, scene, frameInfo, spotOptions);
 
 	// Restore viewport
+	commandBuffer.EndRenderPass();
 	commandBuffer.SetViewport(Area2(0.0f, 0.0f, 1.0f, 1.0f));
 
 	LightShadows& lightShadows = mSpotLightShadows[options.LightIdx];
@@ -1586,7 +1588,7 @@ void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, con
 
 			SPtr<RenderTarget> faceRt = RenderTexture::Create(rtDesc);
 
-			commandBuffer.SetRenderTarget(faceRt);
+			commandBuffer.BeginRenderPass(faceRt);
 			commandBuffer.ClearRenderTarget(FBT_DEPTH);
 
 			// Render all renderables into the shadow map
@@ -1596,12 +1598,14 @@ void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, con
 				shadowParamsBuffer);
 
 			ShadowRenderQueue::Execute(commandBuffer, scene, frameInfo, cubeOptions);
+
+			commandBuffer.EndRenderPass();
 		}
 	}
 
 	if(renderAllFacesAtOnce)
 	{
-		commandBuffer.SetRenderTarget(cubemap.GetTarget());
+		commandBuffer.BeginRenderPass(cubemap.GetTarget());
 		commandBuffer.ClearRenderTarget(FBT_DEPTH);
 
 		// Render all renderables into the shadow map
@@ -1614,6 +1618,8 @@ void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, con
 			shadowCubeMasksBuffer);
 
 		ShadowRenderQueue::Execute(commandBuffer, scene, frameInfo, cubeOptions);
+
+		commandBuffer.EndRenderPass();
 	}
 
 	LightShadows& lightShadows = mRadialLightShadows[options.LightIdx];

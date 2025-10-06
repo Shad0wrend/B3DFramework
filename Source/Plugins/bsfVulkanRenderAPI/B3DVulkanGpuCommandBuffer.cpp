@@ -298,7 +298,7 @@ void VulkanGpuCommandBuffer::End()
 	mState = State::RecordingDone;
 }
 
-void VulkanGpuCommandBuffer::SetRenderTarget(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask)
+void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask)
 {
 	EnsureValidThread();
 	B3D_ASSERT(mState != State::Submitted);
@@ -877,7 +877,7 @@ void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u
 
 	// Note: Should I restore the render target after? Note that this is only being done is framebuffer subresources
 	// have their "isFBAttachment" flag reset, potentially I can just clear/restore those
-	SetRenderTarget(nullptr, 0, RT_ALL);
+	BeginRenderPass(nullptr, 0, RT_ALL); // TODO - RenderPass
 
 	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
 	BindGpuParams();
@@ -1121,7 +1121,9 @@ void VulkanGpuCommandBuffer::BeginRenderPass()
 
 void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 {
-	B3D_ASSERT(mState == State::RecordingRenderPass);
+	//B3D_ASSERT(mState == State::RecordingRenderPass);
+	if(mState != State::RecordingRenderPass)
+		return;
 
 	vkCmdEndRenderPass(mCommandBufferHandle);
 

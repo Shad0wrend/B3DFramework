@@ -1675,7 +1675,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 		cameraRenderData.CachedRenderTexture = RenderTexture::Create(cachedRenderTextureCreateInformation);
 	}
 
-	commandBuffer.SetRenderTarget(cameraRenderData.CachedRenderTexture, 0, RT_ALL);
+	commandBuffer.BeginRenderPass(cameraRenderData.CachedRenderTexture, 0, RT_ALL);
 
 	if(rebuildCachedRenderTexture)
 		commandBuffer.ClearRenderTarget(FBT_COLOR, Color::kZero);
@@ -1855,7 +1855,9 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 
 	// Blit cached texture into main output
 	// Note: This could be optimized by blitting only the modified regions
-	commandBuffer.SetRenderTarget(renderTarget, 0, RT_ALL);
+	commandBuffer.EndRenderPass();
+
+	commandBuffer.BeginRenderPass(renderTarget, 0, RT_ALL);
 	commandBuffer.SetViewport(Area2(0.0f, 0.0f, 1.0f, 1.0f));
 
 	GetRendererUtility().Blend(commandBuffer, cameraRenderData.CachedRenderTexture->GetColorTexture(0), Area2I::kEmpty, false, false, true);
@@ -1863,6 +1865,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 	// Restore original viewport
 	commandBuffer.SetViewport(camera.GetViewport()->GetArea());
 	commandBuffer.EndLabel();
+	commandBuffer.EndRenderPass();
 }
 
 void GUIRenderer::Update(float time)

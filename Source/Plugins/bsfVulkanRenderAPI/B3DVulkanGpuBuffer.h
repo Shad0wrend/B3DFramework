@@ -4,6 +4,7 @@
 
 #include "B3DVulkanPrerequisites.h"
 #include "B3DVulkanResource.h"
+#include "B3DVulkanGpuDevice.h"
 #include "RenderAPI/B3DGpuBuffer.h"
 #include "Allocators/B3DPoolAlloc.h"
 
@@ -150,7 +151,9 @@ namespace b3d
 			/** Creates a new buffer for the specified device, matching the current buffer properties. */
 			VulkanBuffer* CreateBuffer(VulkanGpuDevice& device, u32 size, bool staging, bool readable);
 
-			VulkanGpuDevice& mDevice;
+			/** Gets the GPU device the buffer is created on. */
+			VulkanGpuDevice& GetVulkanDevice() const { return static_cast<VulkanGpuDevice&>(mDevice); }
+
 			VulkanBuffer* mBuffer = nullptr;
 
 			VkBufferCreateInfo mBufferCI;

@@ -134,7 +134,7 @@ VkAccessFlags VulkanBuffer::GetAccessFlags() const
 }
 
 VulkanGpuBuffer::VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation)
-	: GpuBuffer(createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mDevice(device), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU)), mIsMapped(false)
+	: GpuBuffer(device, createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU)), mIsMapped(false)
 	{ }
 
 VulkanGpuBuffer::~VulkanGpuBuffer()
@@ -188,7 +188,7 @@ void VulkanGpuBuffer::Initialize()
 	mBufferCI.pQueueFamilyIndices = nullptr;
 
 	// TODO - Should all buffer really be readable by default?
-	mBuffer = CreateBuffer(mDevice, mTotalSize, false, true);
+	mBuffer = CreateBuffer(GetVulkanDevice(), mTotalSize, false, true);
 }
 
 VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, bool staging, bool readable)
@@ -330,7 +330,7 @@ void* VulkanGpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options)
 	{
 		buffer->Destroy();
 
-		buffer = CreateBuffer(mDevice, mTotalSize, false, true);
+		buffer = CreateBuffer(GetVulkanDevice(), mTotalSize, false, true);
 		mBuffer = buffer;
 
 		return buffer->Map(offset, length);
@@ -447,7 +447,7 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination, const 
 	}
 
 	// Not directly mappable, will need a staging buffer to copy into
-	VulkanBuffer* const stagingBuffer = CreateBuffer(mDevice, length, true, true); // TODO - Allocate this from some memory pool
+	VulkanBuffer* const stagingBuffer = CreateBuffer(GetVulkanDevice(), length, true, true); // TODO - Allocate this from some memory pool
 
 	// If buffer supports GPU writes or is currently being written to, we need to wait on any potential writes to complete
 	GpuQueueMask syncMask;
@@ -533,7 +533,7 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 	const bool useStagingMemory = offset % 4 == 0 && length % 4 == 0 && length <= 65536;
 
 	// Create a staging buffer if needed
-	VulkanBuffer* const stagingBuffer = !useStagingMemory ? CreateBuffer(mDevice, length, true, false) : nullptr;
+	VulkanBuffer* const stagingBuffer = !useStagingMemory ? CreateBuffer(GetVulkanDevice(), length, true, false) : nullptr;
 
 	SPtr<VulkanGpuCommandBuffer> vulkanCommandBuffer = std::static_pointer_cast<VulkanGpuCommandBuffer>(commandBuffer != nullptr
 		? commandBuffer
@@ -571,7 +571,7 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 		}
 		else
 		{
-			VulkanBuffer* newBuffer = CreateBuffer(mDevice, mTotalSize, false, true);
+			VulkanBuffer* newBuffer = CreateBuffer(GetVulkanDevice(), mTotalSize, false, true);
 			mBuffer->Destroy();
 			mBuffer = newBuffer;
 		}
@@ -608,7 +608,7 @@ VkBufferView VulkanGpuBuffer::GetOrCreateView(GpuBufferFormat format) const
 
 void VulkanGpuBuffer::RecreateInternalBuffer()
 {
-	VulkanBuffer* newBuffer = CreateBuffer(mDevice, mTotalSize, false, true);
+	VulkanBuffer* newBuffer = CreateBuffer(GetVulkanDevice(), mTotalSize, false, true);
 	mBuffer->Destroy();
 	mBuffer = newBuffer;
 }

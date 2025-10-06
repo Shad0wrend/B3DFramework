@@ -52,10 +52,12 @@ void TetrahedraRenderMat::Execute(GpuCommandBuffer& commandBuffer, const Rendere
 	mDepthBufferTex.Set(sceneDepth);
 	mGPUParameters->SetUniformBuffer("PerCamera", view.GetPerViewBuffer());
 
-	commandBuffer.SetRenderTarget(output);
+	commandBuffer.BeginRenderPass(output);
 
 	Bind(commandBuffer);
 	GetRendererUtility().Draw(commandBuffer, mesh);
+
+	commandBuffer.EndRenderPass();
 }
 
 void TetrahedraRenderMat::GetOutputDesc(const RendererView& view, PooledRenderTextureCreateInformation& colorDesc, PooledRenderTextureCreateInformation& depthDesc)
@@ -148,12 +150,13 @@ void IrradianceEvaluateMat::Execute(GpuCommandBuffer& commandBuffer, const Rende
 	mGPUParameters->SetUniformBuffer("PerCamera", view.GetPerViewBuffer());
 
 	// Render
-	commandBuffer.SetRenderTarget(output, FBT_DEPTH | FBT_STENCIL, loadMask);
+	commandBuffer.BeginRenderPass(output, FBT_DEPTH | FBT_STENCIL, loadMask);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer, Area2(0.0f, 0.0f, (float)viewProps.Target.ViewRect.Width, (float)viewProps.Target.ViewRect.Height));
 
-	commandBuffer.SetRenderTarget(nullptr);
+	commandBuffer.EndRenderPass();
+	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 IrradianceEvaluateMat* IrradianceEvaluateMat::GetVariation(bool msaa, bool singleSampleMSAA, bool skyOnly)

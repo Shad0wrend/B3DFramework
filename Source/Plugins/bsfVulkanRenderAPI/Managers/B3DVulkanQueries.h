@@ -35,6 +35,14 @@ namespace b3d
 
 			/** Called by the command buffer when the pool has been queued for a reset operation. */
 			void NotifyPoolReset() { mNextFreeQueryId = 0; }
+
+			/** Called when the last reference in the shared pointer owning this object goes out of scope. */
+			template <class T, class AllocatorTag>
+			static void SharedDeleter(VulkanResource* object)
+			{
+				if(!object->IsDestroyed())
+					object->Destroy();
+			}
 		private:
 			VkQueryPool mPool;
 			TArray<u64> mResultBuffer;

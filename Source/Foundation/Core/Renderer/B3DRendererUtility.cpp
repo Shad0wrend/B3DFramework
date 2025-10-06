@@ -517,10 +517,12 @@ void CompositeMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>&
 	gCompositeParamDef.gTint.Set(mParamBuffer, tint);
 
 	// Render
-	commandBuffer.SetRenderTarget(target);
+	commandBuffer.BeginRenderPass(target);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
+
+	commandBuffer.EndRenderPass();
 }
 
 BicubicUpsampleParamDef gBicubicUpsampleParamDef;
@@ -552,10 +554,12 @@ void BicubicUpsampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Tex
 	gBicubicUpsampleParamDef.gInvTwoPixels.Set(mParamBuffer, invTwoPixelSize);
 
 	// Render
-	commandBuffer.SetRenderTarget(target);
+	commandBuffer.BeginRenderPass(target);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
+
+	commandBuffer.EndRenderPass();
 }
 
 BicubicUpsampleMat* BicubicUpsampleMat::GetVariation(bool hermite)

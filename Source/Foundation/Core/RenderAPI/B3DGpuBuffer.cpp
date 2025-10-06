@@ -241,8 +241,8 @@ u32 GpuBuffer::CalculateTotalBufferSize(const GpuBufferInformation& information,
 
 namespace b3d::render
 {
-	GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& createInformation, u32 suballocationSize)
-		: mInformation(createInformation), mSuballocationSize(suballocationSize), mTotalSize(createInformation.SuballocationCount * mSuballocationSize)
+	GpuBuffer::GpuBuffer(GpuDevice& device, const GpuBufferCreateInformation& createInformation, u32 suballocationSize)
+		: mInformation(createInformation), mDevice(device), mSuballocationSize(suballocationSize), mTotalSize(createInformation.SuballocationCount * mSuballocationSize)
 	{
 		if(mInformation.Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
 		{
@@ -348,13 +348,12 @@ namespace b3d::render
 		createInformation.Type = readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite;
 		createInformation.Staging.Size = buffer->GetTotalSize();
 
-		const SPtr<GpuDevice>& device = GetApplication().GetPrimaryGpuDevice(); // TODO - This should use the same device as buffer
-		return device != nullptr ? device->CreateGpuBuffer(createInformation) : nullptr;
+		GpuDevice& device = buffer->GetDevice();
+		return device.CreateGpuBuffer(createInformation);
 	}
 
 	bool GpuBufferUtility::Write(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags flags, SPtr<GpuCommandBuffer> commandBuffer)
 	{
-#if 0
 		if(!B3D_ENSURE(buffer != nullptr))
 			return false;
 
@@ -400,7 +399,7 @@ namespace b3d::render
 		SPtr<GpuBuffer> stagingBuffer = CreateStaging(buffer, false);
 
 		if(commandBuffer == nullptr)
-			commandBuffer = device.GetQueue(GQT_GRAPHICS, 0)->GetOrCreateTransferCommandBuffer();
+			commandBuffer = buffer->GetDevice().GetQueue(GQT_GRAPHICS, 0)->GetOrCreateTransferCommandBuffer();
 
 		// Copy the source into the staging buffer
 		if(stagingBuffer != nullptr)
@@ -427,7 +426,7 @@ namespace b3d::render
 		{
 			if(!canDiscardBuffer)
 			{
-				B3D_LOG(Warning, RenderBackend, "Writing to a buffer '{0}' that is currently bound on a command buffer, without providing an explicit command buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means multiple writes will overwrite it each other if not careful.", mName);
+				B3D_LOG(Warning, RenderBackend, "Writing to a buffer '{0}' that is currently bound on a command buffer, without providing an explicit command buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means multiple writes will overwrite it each other if not careful.", buffer->GetName());
 			}
 			else
 				buffer->RecreateInternalBuffer();
@@ -447,7 +446,6 @@ namespace b3d::render
 		// We don't actually flush the transfer buffer here since it's an expensive operation, but it's instead
 		// done automatically before next "normal" command buffer submission.
 
-#endif
 		return true;
 	}
 }

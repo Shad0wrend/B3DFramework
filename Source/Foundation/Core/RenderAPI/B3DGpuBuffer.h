@@ -335,6 +335,9 @@ namespace b3d::render
 		/** Assigns an name to the buffer, primarily used for easier debugging. */
 		virtual void SetName(const StringView& name) { mName = name; }
 
+		/** Returns the name of the buffer. Primarily used for debugging purposes. */
+		const String& GetName() const { return mName; }
+
 		/**
 		 * Locks a portion of the buffer and returns pointer to the locked area. You must call Unlock() when done. This method
 		 * is only available on buffers that are accessible by the CPU (StoreOnCPU or StoreOnCPUWithGPUAcess flags).
@@ -475,6 +478,9 @@ namespace b3d::render
 		/**	Returns whether or not this buffer is currently locked. */
 		bool IsLocked() const { return mIsLocked; }
 
+		/** Gets the GPU device the buffer is created on. */
+		GpuDevice& GetDevice() const { return static_cast<GpuDevice&>(mDevice); }
+
 		/**
 		 * Returns if the buffer is currently being used on the GPU, and if so on which queues is it scheduled. Allows the caller so synchronize command buffer
 		 * execution after buffer is done being used.
@@ -493,7 +499,7 @@ namespace b3d::render
 		friend struct GpuBufferUtility;
 
 		/** Constructs a new GPU buffer. */
-		GpuBuffer(const GpuBufferCreateInformation& createInformation, u32 suballocationSize);
+		GpuBuffer(GpuDevice& device, const GpuBufferCreateInformation& createInformation, u32 suballocationSize);
 
 		void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
@@ -508,6 +514,7 @@ namespace b3d::render
 
 	protected:
 		GpuBufferInformation mInformation;
+		GpuDevice& mDevice;
 		String mName;
 		u32 mSuballocationSize = 0;
 		u32 mTotalSize = 0;

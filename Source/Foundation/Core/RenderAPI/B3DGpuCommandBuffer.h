@@ -241,7 +241,7 @@ namespace b3d
 			virtual void DispatchCompute(u32 groupCountX, u32 groupCountY = 1, u32 groupCountZ = 1) = 0;
 
 			/**
-			 * Change the render target into which to draw into.
+			 * Change the render target into which to draw into and begins a render pass.
 			 *
 			 * @param	target			Render target to draw to.
 			 * @param	readOnlyFlags	Combination of one or more elements of FrameBufferType denoting which buffers
@@ -256,7 +256,13 @@ namespace b3d
 			 *							Use the mask to select exactly which surfaces of the render target need
 			 *							their contents preserved.
 			 */
-			virtual void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0, RenderSurfaceMask loadMask = RT_NONE) = 0;
+			virtual void BeginRenderPass(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0, RenderSurfaceMask loadMask = RT_NONE) = 0;
+
+			/** Ends the current render pass. */
+			virtual void EndRenderPass() = 0;
+
+			/** Returns true if the command buffer is currently recording a render pass. */
+			virtual bool IsInRenderPass() const = 0;
 
 			/**
 			 * Sets the active viewport that will be used for all following render operations.

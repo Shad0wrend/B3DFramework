@@ -38,10 +38,12 @@ void ReflectionCubeDownsampleMat::Execute(GpuCommandBuffer& commandBuffer, const
 		gReflectionCubeDownsampleParamDef.gMipLevel.Set(mParamBuffer, mip);
 	}
 
-	commandBuffer.SetRenderTarget(target);
+	commandBuffer.BeginRenderPass(target);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
+
+	commandBuffer.EndRenderPass();
 }
 
 const u32 ReflectionCubeImportanceSampleMat::kNumSamples = 1024;
@@ -77,10 +79,12 @@ void ReflectionCubeImportanceSampleMat::Execute(GpuCommandBuffer& commandBuffer,
 	float mipFactor = 0.5f * std::log2(width * height / kNumSamples);
 	gReflectionCubeImportanceSampleParamDef.gPrecomputedMipFactor.Set(mParamBuffer, mipFactor);
 
-	commandBuffer.SetRenderTarget(target);
+	commandBuffer.BeginRenderPass(target);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
+
+	commandBuffer.EndRenderPass();
 }
 
 IrradianceComputeSHParamDef gIrradianceComputeSHParamDef;
@@ -187,12 +191,13 @@ void IrradianceComputeSHFragMat::Execute(GpuCommandBuffer& commandBuffer, const 
 	gIrradianceComputeSHFragParamDef.gCoeffComponentIdx.Set(mParamBuffer, coefficientIdx % 4);
 
 	// Render
-	commandBuffer.SetRenderTarget(output);
+	commandBuffer.BeginRenderPass(output);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
-	commandBuffer.SetRenderTarget(nullptr);
+	commandBuffer.EndRenderPass();
+	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 PooledRenderTextureCreateInformation IrradianceComputeSHFragMat::GetOutputDesc(const SPtr<Texture>& input)
@@ -226,12 +231,13 @@ void IrradianceAccumulateSHMat::Execute(GpuCommandBuffer& commandBuffer, const S
 	gIrradianceAccumulateSHParamDef.gHalfPixel.Set(mParamBuffer, halfPixel);
 
 	// Render
-	commandBuffer.SetRenderTarget(output);
+	commandBuffer.BeginRenderPass(output);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
-	commandBuffer.SetRenderTarget(nullptr);
+	commandBuffer.EndRenderPass();
+	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 PooledRenderTextureCreateInformation IrradianceAccumulateSHMat::GetOutputDesc(const SPtr<Texture>& input)
@@ -277,13 +283,15 @@ void IrradianceAccumulateCubeSHMat::Execute(GpuCommandBuffer& commandBuffer, con
 	viewRect.Height = 1.0f / rtProps.Height;
 
 	// Render
-	commandBuffer.SetRenderTarget(output);
+	commandBuffer.BeginRenderPass(output);
 	commandBuffer.SetViewport(viewRect);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
-	commandBuffer.SetRenderTarget(nullptr);
+	commandBuffer.EndRenderPass();
+
+	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 	commandBuffer.SetViewport(Area2(0, 0, 1, 1));
 }
 
@@ -361,10 +369,12 @@ void IrradianceProjectSHMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr
 
 	mInputTexture.Set(shCoeffs);
 
-	commandBuffer.SetRenderTarget(target);
+	commandBuffer.BeginRenderPass(target);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
+
+	commandBuffer.EndRenderPass();
 }
 
 void RenderBeastIBLUtility::FilterCubemapForSpecular(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const
@@ -433,7 +443,7 @@ void RenderBeastIBLUtility::FilterCubemapForSpecular(GpuCommandBuffer& commandBu
 		}
 	}
 
-	commandBuffer.SetRenderTarget(nullptr);
+	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 bool SupportsComputeSh()

@@ -778,7 +778,7 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 			entry->UpdateGpuBuffers();
 	}
 
-	commandBuffer.SetRenderTarget(m->Resources.GetInjectTarget(), 0, RT_ALL);
+	commandBuffer.BeginRenderPass(m->Resources.GetInjectTarget(), 0, RT_ALL);
 
 	ClearTiles(commandBuffer, newTiles);
 	InjectParticles(commandBuffer, allNewParticles);
@@ -788,7 +788,9 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 	gGpuParticleSimulateParamsDef.gDT.Set(m->SimulationParams, dt);
 	gGpuParticleSimulateParamsDef.gNumIterations.Set(m->SimulationParams, 1);
 
-	commandBuffer.SetRenderTarget(m->Resources.GetSimulationTarget());
+	commandBuffer.EndRenderPass();
+
+	commandBuffer.BeginRenderPass(m->Resources.GetSimulationTarget());
 	commandBuffer.SetVertexDescription(m->HelperBuffers.TileVertexDescription);
 
 	SPtr<GpuBuffer> buffers[] = { m->HelperBuffers.TileUVs };
@@ -848,6 +850,8 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 			commandBuffer.DrawIndexed(0, kTilesPerInstance * 6, 0, kTilesPerInstance * 4, numInstances);
 		}
 	}
+
+	commandBuffer.EndRenderPass();
 }
 
 void GpuParticleSimulation::Sort(GpuCommandBuffer& commandBuffer, const RendererView& view)
@@ -857,7 +861,7 @@ void GpuParticleSimulation::Sort(GpuCommandBuffer& commandBuffer, const Renderer
 		return;
 
 	// Make sure that the position texture isn't bound for rendering
-	commandBuffer.SetRenderTarget(nullptr);
+	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 
 	const Vector3& viewOrigin = view.GetProperties().ViewOrigin;
 
@@ -1455,7 +1459,7 @@ void GpuParticleCurves::ApplyChanges(GpuCommandBuffer& commandBuffer)
 	GpuParticleCurveInjectMat* injectMat = GpuParticleCurveInjectMat::Get();
 	injectMat->Bind(commandBuffer);
 
-	commandBuffer.SetRenderTarget(mRT, 0, RT_ALL);
+	commandBuffer.BeginRenderPass(mRT, 0, RT_ALL);
 	commandBuffer.SetVertexDescription(mInjectVertexDescription);
 
 	SPtr<GpuBuffer> buffers[] = { mInjectScratch, mInjectUV };
@@ -1494,6 +1498,8 @@ void GpuParticleCurves::ApplyChanges(GpuCommandBuffer& commandBuffer)
 		B3DStackFree(data);
 		commandBuffer.DrawIndexed(0, 6, 0, 4, count);
 	}
+
+	commandBuffer.EndRenderPass();
 
 	for(auto& entry : mPendingAllocations)
 		mPendingAllocator.Free(entry.Pixels);
