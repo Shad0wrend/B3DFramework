@@ -2,274 +2,293 @@
 title: GUI elements
 ---
 
-A GUI element is a basic primitive that GUI is constructed out of. They can be text, buttons, input boxes, images, scroll areas and more. We'll explain what the individual GUI element types are later, but initially we'll focus on functionality common to all GUI elements.
+A GUI element is a basic primitive that GUI is constructed from. Elements can be text, buttons, input boxes, images, scroll areas, and more. Before exploring specific element types, we'll first cover functionality common to all GUI elements.
 
-# Displaying a GUI element
-In order to display a GUI element we must first create it. All GUI elements are created using a static *create* method.
+# Logical vs. physical units
 
-~~~~~~~~~~~~~{.cpp}
-// GUILabel is a type of GUI element that displays the provided text on screen
-GUILabel* label = GUILabel::create(HString("Hello!"));
-~~~~~~~~~~~~~
+The GUI system uses two types of pixel units:
 
-But just creating the element is not enough. We must also register it with our **GUIWidget**. To do that we must first retrieve the primary @b3d::GUIPanel from the widget. **GUIPanel** serves as an element container, and by default every widget has one. Use @b3d::GUIWidget::getPanel() to retrieve the panel.
+**Logical pixels** are device-independent units defined at 1/96th of one logical inch. At 96 DPI (the most common desktop display setting), one logical pixel equals one physical pixel. On higher DPI displays (such as mobile devices or high-resolution monitors), logical pixels are scaled appropriately:
 
 ~~~~~~~~~~~~~{.cpp}
-GUIPanel* mainPanel = gui->getPanel();
+// Logical unit types
+GUILogicalUnit width = 100;  // 100 logical pixels
+GUILogicalPoint position(10, 20);  // Position in logical pixels
+GUILogicalSize size(100, 50);  // Size in logical pixels
+GUILogicalArea bounds(0, 0, 100, 50);  // Area in logical pixels
 ~~~~~~~~~~~~~
 
-**GUIPanel** is a special type of a GUI element called a "layout". We'll discuss layouts in more detail in the next chapter, but for now all you need to know is that they are element containers you can add and remove other GUI elements to/from.
-
-To add an element to the panel use @b3d::GUIPanel::addElement.
+**Physical pixels** represent actual pixels on the output monitor:
 
 ~~~~~~~~~~~~~{.cpp}
-mainPanel->addElement(label);
+// Physical unit types
+GUIPhysicalUnit actualWidth = 100;  // 100 physical pixels
+GUIPhysicalPoint screenPosition(10, 20);  // Position in physical pixels
+GUIPhysicalSize actualSize(100, 50);  // Size in physical pixels
+GUIPhysicalArea screenBounds(0, 0, 100, 50);  // Area in physical pixels
 ~~~~~~~~~~~~~
 
-At this point our GUI element will be displayed.
+The relationship between logical and physical pixels is:
 
-![Simple GUI](../../Images/guiBasic.png) 
+```
+physical pixel = logical pixel * DPI scale
+logical pixel = physical pixel / DPI scale
+```
+
+Most GUI element APIs use logical pixels for positioning and sizing, while rendering and hit testing use physical pixels internally. This ensures consistent visual appearance across different display densities.
+
+# Displaying GUI elements
+
+To display a GUI element, first create it using the static `Create()` method:
+
+~~~~~~~~~~~~~{.cpp}
+// GUILabel displays text on screen
+GUILabel* label = GUILabel::Create(HString("Hello!"));
+~~~~~~~~~~~~~
+
+Creating an element alone is not enough. Register it with a **GUIWidget** by retrieving the primary @b3d::GUIPanel and adding the element to it:
+
+~~~~~~~~~~~~~{.cpp}
+GUIPanel* mainPanel = guiWidget->GetPanel();
+mainPanel->AddElement(label);
+~~~~~~~~~~~~~
+
+**GUIPanel** is a special type of GUI element called a "layout" that serves as a container for other elements. At this point, the GUI element will be displayed.
+
+![Simple GUI](../../Images/guiBasic.png)
 
 # Destroying GUI elements
-You do not need to manually destroy a GUI element that is registered with a layout (e.g. a **GUIPanel**). Such elements will be destroyed automatically when their parent layout is destroyed. If their parent layout is connected to **GUIWidget** root panel, then all layouts and elements will be destroyed with the widget.
 
-In case you need to manually destroy a GUI element you can call @b3d::GUIElement::destroy. 
+GUI elements registered with a layout (such as **GUIPanel**) are destroyed automatically when their parent layout is destroyed. If the parent layout is connected to the **GUIWidget** root panel, all layouts and elements are destroyed with the widget.
+
+To manually destroy a GUI element, call @b3d::GUIElement::Destroy:
 
 ~~~~~~~~~~~~~{.cpp}
-GUIElement::destroy(label);
+GUIElement::Destroy(label);
 ~~~~~~~~~~~~~
 
-Such element will also automatically be removed from the parent layout (if any).
+The element will automatically be removed from its parent layout if it has one.
 
 # Customizing GUI elements
-All GUI elements share a common set of methods you can use to customize their position, size, color and other properties.
+
+All GUI elements share methods for customizing position, size, color, and other properties.
 
 ## Changing position
-You can change the position of a GUI element by calling @b3d::GUIElement::setPosition. The position is in pixels, relative to the top left corner of the render target.
+
+Change element position by calling @b3d::GUIElement::SetPosition. Position is in logical pixels, relative to the top-left corner of the parent:
 
 ~~~~~~~~~~~~~{.cpp}
-// Moves the displayed text to coordinates (50, 50)
-label->setPosition(50, 50);
+// Move text to coordinates (50, 50)
+label->SetPosition(50, 50);
 ~~~~~~~~~~~~~
 
 ## Changing size
-Element size can be changed by calling @b3d::GUIElement::setSize.
+
+Change element size by calling @b3d::GUIElement::SetWidth, @b3d::GUIElement::SetHeight, or @b3d::GUIElement::SetSize:
 
 ~~~~~~~~~~~~~{.cpp}
-// Make the label 30 pixels high, and 100 pixels wide
-label->setSize(100, 30);
+// Make label 30 pixels high and 100 pixels wide
+label->SetSize(GUILogicalSize(100, 30));
+
+// Or set dimensions individually
+label->SetWidth(100);
+label->SetHeight(30);
 ~~~~~~~~~~~~~
 
-You can also set both position and size at the same time by calling @b3d::GUIElement::setBounds.
+For flexible sizing based on content and layout constraints, use @b3d::GUIElement::SetFlexibleWidth and @b3d::GUIElement::SetFlexibleHeight:
 
 ~~~~~~~~~~~~~{.cpp}
-// Make the label 30 pixels high, and 100 pixels wide, and position it at (50, 50)
-label->setBounds(Rect2I(50, 50, 100, 30));
+// Allow label to resize between 50 and 200 pixels wide
+label->SetFlexibleWidth(50, 200);
+
+// Allow label to resize based on content (no maximum)
+label->SetFlexibleHeight(10, 0);
 ~~~~~~~~~~~~~
 
-## Changing color
-You can change the tint of the GUI element with @b3d::GUIElement::setTint. By default an all-white tint is used for all elements. 
+## Hiding and disabling
+
+Temporarily hide an element with @b3d::GUIElement::SetHidden. Hidden elements remain in the layout but are not visible:
 
 ~~~~~~~~~~~~~{.cpp}
-// Make the label text green
-label->setTint(Color::Green);
+label->SetHidden(true);  // Hide
+label->SetHidden(false);  // Show
 ~~~~~~~~~~~~~
 
-## Hiding
-You can temporarily hide an element with @b3d::GUIElement::setVisible. As the name implies hidden element will not be displayed, and cannot be interacted with.
+Use @b3d::GUIElement::SetActive to remove an element from the layout entirely:
 
 ~~~~~~~~~~~~~{.cpp}
-// Hide the label
-label->setVisible(false);
+label->SetActive(false);  // Remove from layout
+label->SetActive(true);   // Add back to layout
+~~~~~~~~~~~~~
 
-// Show the label
-label->setVisible(true);
+Disable user interaction with @b3d::GUIElement::SetDisabled. Disabled elements appear faded and cannot be interacted with:
+
+~~~~~~~~~~~~~{.cpp}
+label->SetDisabled(true);  // Disable
+label->SetDisabled(false);  // Enable
 ~~~~~~~~~~~~~
 
 # GUI element types
-b3d::f provides a large library of existing GUI element types. We'll focus on explaining the most important ones, but you can find an exhaustive list in the API reference.
+
+The framework provides a comprehensive library of GUI element types. We'll cover the most important ones here.
 
 ## Label
-A label is the most basic of GUI elements, that allows no user interaction and just displays a textual string. It is created with @b3d::GUILabel::create, which accepts a string as input.
+
+Labels display textual strings with no user interaction. Create labels with @b3d::GUILabel::Create:
 
 ~~~~~~~~~~~~~{.cpp}
-GUILabel* label = GUILabel::create(HString("Hello!"));
-mainPanel->addElement(label);
+GUILabel* label = GUILabel::Create(HString("Hello!"));
+mainPanel->AddElement(label);
 ~~~~~~~~~~~~~
 
-Once created you can optionally change the displayed text with @b3d::GUILabel::setContent.
+Change the displayed text with @b3d::GUILabel::SetContent:
 
 ~~~~~~~~~~~~~{.cpp}
-label->setContent(HString("New text!"));
+label->SetContent(HString("New text!"));
 ~~~~~~~~~~~~~
 
-> You can use *setContent* function on most GUI elements, so we won't mention it further for each individual element.
-
-![Label](../../Images/guiLabel.png) 
+![Label](../../Images/guiLabel.png)
 
 ## Texture
-A texture is another basic GUI element that allows no interaction. All it does is display a **SpriteTexture** on the screen.
 
-To create a GUI texture element, call @b3d::GUITexture::create which accepts three parameters: 
- - **SpriteTexture** - Determines which texture to draw.
- - @b3d::TextureScaleMode - Determines how to scale the texture in the available area.
- - Transparency flag - Should transparency be enabled, allowing elements behind the texture to render.
+Texture elements display **SpriteImage** objects on screen. Create texture elements with @b3d::GUITexture::Create:
 
 ~~~~~~~~~~~~~{.cpp}
-// Create a sprite texture for use
-HTexture tex = GetImporter().import<Texture>("BansheLogoRoundSmall.png");
-HSpriteTexture spriteTexture = SpriteTexture::create(tex);
+// Create a sprite texture
+HTexture texture = GetImporter().Import<Texture>("logo.png");
+HSpriteTexture spriteTexture = SpriteTexture::Create(texture);
 
-// Create the texture GUI element with our sprite texture and default scaling/transparency
-GUITexture* guiTexture = GUITexture::create(spriteTexture);
+// Create texture GUI element
+GUITexture* guiTexture = GUITexture::Create(spriteTexture);
 
-// Position the texture
-guiTexture->setPosition(250, 90);
-guiTexture->setSize(150, 150);
+// Position and size the texture
+guiTexture->SetPosition(GUILogicalPoint(250, 90));
+guiTexture->SetSize(GUILogicalSize(150, 150));
 
-mainPanel->addElement(guiTexture);
-~~~~~~~~~~~~~ 
- 
-![Texture](../../Images/guiTexture.png) 
- 
+mainPanel->AddElement(guiTexture);
+~~~~~~~~~~~~~
+
+![Texture](../../Images/guiTexture.png)
+
 ## Button
-A button GUI element displays a textual string or an image and reports events about user interaction with the button.
 
-GUI elements that can have either text or image contents (or both) accept a @b3d::GUIContent structure in their *create* and *setContent* functions. It is just a container and constructed simply:
+Buttons display text or images and report user interaction events. Create buttons with @b3d::GUIButton::Create:
 
 ~~~~~~~~~~~~~{.cpp}
-// Contents containing only text
-GUIContent textContents(HString("Click me!"));
-
-// Contents containing only an image
-HTexture tex = GetImporter().import<Texture>("BansheLogoRoundSmall.png");
-HSpriteTexture spriteTexture = SpriteTexture::create(tex);
-		
-GUIContent imageContents(spriteTexture);
+GUIButton* button = GUIButton::Create(HString("Click me!"));
+mainPanel->AddElement(button);
 ~~~~~~~~~~~~~
 
-To create a button, call @b3d::GUIButton::create.
-~~~~~~~~~~~~~{.cpp}
-GUIButton* textButton = GUIButton::create(textContents);
-GUIButton* imageButton = GUIButton::create(imageContents);
+Subscribe to button events:
 
-mainPanel->addElement(textButton);
-mainPanel->addElement(imageButton);
-~~~~~~~~~~~~~
-
-Once created, user can interact with the button by mousing over it or clicking on it. **GUIButton** provides a set of callbacks that notify the developer when user interacts with the button:
- - @b3d::GUIButton::onClick - Triggers when the user clicks the button.
- - @b3d::GUIButton::onHover - Triggers when the mouse cursor hovers over a button.
- - @b3d::GUIButton::onOut - Triggers when the mouse cursor leaves the button area.
- - @b3d::GUIButton::onDoubleClick - Triggers when the user clicks the button twice in a quick succession.
- 
 ~~~~~~~~~~~~~{.cpp}
 auto buttonClicked = []()
 {
-	GetDebug().logDebug("Button clicked!");
-}
+	B3D_LOG(Info, GUI, "Button clicked!");
+};
 
-// Print a message "Button clicked!" whenever user clicks the button
-imageButton->onClick.connect(buttonClicked);
+button->OnClick.Connect(buttonClicked);
 ~~~~~~~~~~~~~
 
-![GUI buttons](../../Images/guiButton.png) 
+Available button events include:
+- @b3d::GUIButton::OnClick - Triggered when button is clicked
+- @b3d::GUIButton::OnHover - Triggered when mouse hovers over button
+- @b3d::GUIButton::OnOut - Triggered when mouse leaves button area
+- @b3d::GUIButton::OnDoubleClick - Triggered on double-click
+
+![GUI buttons](../../Images/guiButton.png)
 
 ## Toggle
-Toggle buttons are very similar to normal buttons, with the main difference being that they remain in a toggled state after they have been pressed. Multiple toggle buttons can also be grouped so that only one of them can be toggled at a time. Other than that they share the same interface as **GUIButton**, so we'll focus only on the additional functionality.
 
-To create an individual toggle button call @b3d::GUIToggle::create.
-~~~~~~~~~~~~~{.cpp}
-GUIToggle* toggle = GUIButton::create(HString());
-
-mainPanel->addElement(toggle);
-~~~~~~~~~~~~~
-
-To create a set of toggle buttons call **GUIToggle::create** overload with the @b3d::GUIToggleGroup parameter. All toggles sharing the same toggle group will allow only one of the buttons to be active at a time. This allows you to create a "pick one out of many" element.
-
-To create a toggle group call @b3d::GUIToggle::createToggleGroup. After that just create the toggle elements as normal, and provide the group as a parameter.
+Toggle buttons remain in a toggled state after being pressed. Create toggle buttons with @b3d::GUIToggle::Create:
 
 ~~~~~~~~~~~~~{.cpp}
-SPtr<GUIToggleGroup> group = GUIToggle::createToggleGroup();
-
-GUIToggle* radio0 = GUIButton::create(HString(), group);
-GUIToggle* radio1 = GUIButton::create(HString(), group);
-GUIToggle* radio2 = GUIButton::create(HString(), group);
-
-mainPanel->addElement(radio0);
-mainPanel->addElement(radio1);
-mainPanel->addElement(radio2);
+GUIToggle* toggle = GUIToggle::Create(HString(""));
+mainPanel->AddElement(toggle);
 ~~~~~~~~~~~~~
 
-> Note that we aren't giving any textual labels to the toggle buttons. This is because their default style is a small box, in which we cannot fit any text. If you wish to add labels you need to either use a different style (discussed later), or use a separate **GUILabel** element next to the **GUIToggle** element.
+For radio button groups where only one button can be active, create a toggle group:
 
-Once created you can subscribe to the @b3d::GUIToggle::onToggled event, as well as all previously mentioned **GUIButton** events. **GUIToggle::onToggled** triggers whenever the toggle state of the element changes.
+~~~~~~~~~~~~~{.cpp}
+SPtr<GUIToggleGroup> group = GUIToggle::CreateToggleGroup();
+
+GUIToggle* radio0 = GUIToggle::Create(HString("Option 1"), group);
+GUIToggle* radio1 = GUIToggle::Create(HString("Option 2"), group);
+GUIToggle* radio2 = GUIToggle::Create(HString("Option 3"), group);
+
+mainPanel->AddElement(radio0);
+mainPanel->AddElement(radio1);
+mainPanel->AddElement(radio2);
+~~~~~~~~~~~~~
+
+Subscribe to toggle state changes with @b3d::GUIToggle::OnToggled:
 
 ~~~~~~~~~~~~~{.cpp}
 auto elementToggled = [](bool toggled)
 {
-	if(toggled)
-		GetDebug().logDebug("Toggled!");
+	if (toggled)
+		B3D_LOG(Info, GUI, "Toggled on!");
 	else
-		GetDebug().logDebug("Untoggled!");
-}
+		B3D_LOG(Info, GUI, "Toggled off!");
+};
 
-toggle->onClick.connect(elementToggled);
+toggle->OnToggled.Connect(elementToggled);
 ~~~~~~~~~~~~~
 
-![GUI toggle](../../Images/guiToggle.png) 
+![GUI toggle](../../Images/guiToggle.png)
 
 ## Input box
-Input boxes allow user to type into them using the keyboard. They can be single-line (default) or multi-line. To create them call @b3d::GUIInputBox::create where the first parameter specifies whether the input box is single- or multi-line.
+
+Input boxes allow keyboard text input. They can be single-line (default) or multi-line. Create input boxes with @b3d::GUIInputBox::Create:
 
 ~~~~~~~~~~~~~{.cpp}
-GUIInputBox* singleLineInput = GUIInputBox::create();
-GUIInputBox* multiLineInput = GUIInputBox::create(true);
+GUIInputBox* singleLineInput = GUIInputBox::Create();
+GUIInputBox* multiLineInput = GUIInputBox::Create(true);
 
-mainPanel->addElement(singleLineInput);
-mainPanel->addElement(multiLineInput);
+mainPanel->AddElement(singleLineInput);
+mainPanel->AddElement(multiLineInput);
 ~~~~~~~~~~~~~
 
-Once created you can retrieve the text currently in the input box by calling @b3d::GUIInputBox::getText.
+Retrieve the current text with @b3d::GUIInputBox::GetText:
 
 ~~~~~~~~~~~~~{.cpp}
-String userInput = singleLineInput->getText();
+String userInput = singleLineInput->GetText();
 ~~~~~~~~~~~~~
 
-You can also programatically set text in the box with @b3d::GUIInputBox::setText.
+Set text programmatically with @b3d::GUIInputBox::SetText:
 
 ~~~~~~~~~~~~~{.cpp}
-multiLineInput->setText("Type in me!");
+multiLineInput->SetText("Type here!");
 ~~~~~~~~~~~~~
 
-If you wish to get notified as the user is inputting text you can use the @b3d::GUIInputBox::onValueChanged event. It will be called whenever the user types a new character (or deletes an existing one).
+Subscribe to text changes with @b3d::GUIInputBox::OnValueChanged:
 
 ~~~~~~~~~~~~~{.cpp}
 auto respondToInput = [](const String& text)
 {
-	GetDebug().logDebug("New input box value: " + text);
+	B3D_LOG(Info, GUI, "New input: {0}", text);
 };
 
-multiLineInput->onValueChanged.connect(respondToInput);
+multiLineInput->OnValueChanged.Connect(respondToInput);
 ~~~~~~~~~~~~~
 
-Sometimes you might want to limit what is user allowed to input (for example, just numbers). In that case you can use @b3d::GUIInputBox::setFilter to set a custom filter callback. The callback accepts a potential input, and returns true if it will be accepted.
+Restrict input using a filter callback with @b3d::GUIInputBox::SetFilter:
 
 ~~~~~~~~~~~~~{.cpp}
-auto intFilter = [](const String& str)
+auto integerFilter = [](const String& text)
 {
 	// Use regex to match only integers
-	return std::regex_match(str, std::regex("-?(\\d+)?"));
+	return std::regex_match(text, std::regex("-?(\\d+)?"));
 };
 
-// This input box now accepts only integers
-singleLineInput->setFilter(intFilter);
+singleLineInput->SetFilter(integerFilter);
 ~~~~~~~~~~~~~
 
-![Input boxes](../../Images/guiInputBox.png) 
+![Input boxes](../../Images/guiInputBox.png)
 
 ## List box
-List boxes allow you to provide multiple elements the user can pick between. They can allow selection of just a single element (default), or allow multi-selection. List boxes are created by calling @b3d::GUIListBox::create where the first argument represents a list of entries to display on the list, while the second argument specifies whether the list should allow multi-selection or not.
+
+List boxes display multiple selectable items. They support single or multi-selection. Create list boxes with @b3d::GUIListBox::Create:
 
 ~~~~~~~~~~~~~{.cpp}
 Vector<HString> listElements =
@@ -280,139 +299,133 @@ Vector<HString> listElements =
 	HString("Strawberry")
 };
 
-// Create a single-select list with four elements
-GUIListBox* listBox = GUIListBox::create(listElements);
+// Single-select list
+GUIListBox* listBox = GUIListBox::Create(listElements);
 
-// Create a multi-select list with four elements
-GUIListBox* multiSelectListBox = GUIListBox::create(listElements, true);
+// Multi-select list
+GUIListBox* multiSelectListBox = GUIListBox::Create(listElements, true);
 
-mainPanel->addElement(listBox);
-mainPanel->addElement(multiSelectListBox);
+mainPanel->AddElement(listBox);
+mainPanel->AddElement(multiSelectListBox);
 ~~~~~~~~~~~~~
 
-Once created, you can retrieve the current selection by calling @b3d::GUIListBox::getElementStates(). This will return a list of booleans that specify if an element at the specified index (corresponding to the initial index of the element when passed to **GUIListBox::create()**) is selected.
+Retrieve selection state with @b3d::GUIListBox::GetElementStates:
 
 ~~~~~~~~~~~~~{.cpp}
-auto selection = multiSelectListBox->getElementStates();
-UINT32 idx = 0;
-for(auto& isSelected : selection)
+auto selection = multiSelectListBox->GetElementStates();
+u32 index = 0;
+for (bool isSelected : selection)
 {
 	if (isSelected)
 	{
-		String selectedValue = listElements[idx].getValue();
-		GetDebug().logDebug("Element " + selectedValue + " is selected");
+		String selectedValue = listElements[index].GetValue();
+		B3D_LOG(Info, GUI, "Selected: {0}", selectedValue);
 	}
-
-	idx++;
+	index++;
 }
 ~~~~~~~~~~~~~
 
-You can also get notified immediately as the selection is changing by subscribing to the @b3d::GUIListBox::onSelectionToggled event. It will report an index of the element that was interacted with, as well a boolean whether the element was just selected or deselected.
+Subscribe to selection changes with @b3d::GUIListBox::OnSelectionToggled:
 
 ~~~~~~~~~~~~~{.cpp}
-auto selectionToggled = [=](UINT32 idx, bool enabled)
+auto selectionToggled = [=](u32 index, bool enabled)
 {
-	String selectedValue = listElements[idx].getValue();
+	String value = listElements[index].GetValue();
 
 	if (enabled)
-		GetDebug().logDebug("User selected " + selectedValue);
+		B3D_LOG(Info, GUI, "Selected: {0}", value);
 	else
-		GetDebug().logDebug("User deselected " + selectedValue);
+		B3D_LOG(Info, GUI, "Deselected: {0}", value);
 };
 
-listBox->onSelectionToggled.connect(selectionToggled);
+listBox->OnSelectionToggled.Connect(selectionToggled);
 ~~~~~~~~~~~~~
 
-![List boxes](../../Images/guiListBox.png) 
+![List boxes](../../Images/guiListBox.png)
 
 ## Slider
-Sliders allow the user to select a numeric value by dragging a slider. Sliders can be vertical or horizontal, represented by @b3d::GUISliderVert and @b3d::GUISliderHorz classes, respectively. They both share the same interface.
 
-To create a slider call either @b3d::GUISliderVert::create or @b3d::GUISliderHorz::create().
+Sliders allow numeric value selection by dragging. They can be vertical or horizontal, represented by @b3d::GUISliderVert and @b3d::GUISliderHorz:
 
 ~~~~~~~~~~~~~{.cpp}
 // Vertical slider
-GUISliderVert* sliderVert = GUISliderVert::create();
+GUISliderVert* sliderVertical = GUISliderVert::Create();
 
 // Horizontal slider
-GUISliderHorz* sliderHorz = GUISliderHorz::create();
+GUISliderHorz* sliderHorizontal = GUISliderHorz::Create();
 
-mainPanel->addElement(sliderVert);
-mainPanel->addElement(sliderHorz);
+mainPanel->AddElement(sliderVertical);
+mainPanel->AddElement(sliderHorizontal);
 ~~~~~~~~~~~~~
 
-Once created you can retrieve the current position of the slider by calling @b3d::GUISlider::getPercent. This will always return a value in range [0, 1] where 0 represents top/left, and 1 represent bottom/right positions.
+Retrieve slider position with @b3d::GUISlider::GetPercent (returns value in range [0, 1]):
 
 ~~~~~~~~~~~~~{.cpp}
-float curSliderPosition = sliderHorz->getPercent();
+float currentPosition = sliderHorizontal->GetPercent();
 ~~~~~~~~~~~~~
 
-You can also get notified immediately when the slider handle moves by subscribing to the @b3d::GUISlider::onChanged event.
+Subscribe to position changes with @b3d::GUISlider::OnChanged:
 
 ~~~~~~~~~~~~~{.cpp}
-auto sliderPositionChanged = [](float percent)
+auto sliderChanged = [](float percent)
 {
-	GetDebug().logDebug("Current slider position: " + toString(percent));
+	B3D_LOG(Info, GUI, "Slider at: {0}", percent);
 };
 
-sliderHorz->onChanged.connect(sliderPositionChanged);
+sliderHorizontal->OnChanged.Connect(sliderChanged);
 ~~~~~~~~~~~~~
 
-By default the slider maps to the range [0, 1], but you can also specify a custom range by calling @b3d::GUISlider::setRange. 
+Set custom range with @b3d::GUISlider::SetRange:
 
 ~~~~~~~~~~~~~{.cpp}
-// Set range from 0 to 360 (e.g. degrees)
-sliderHorz->setRange(0.0f, 360.0f);
+// Range from 0 to 360 (e.g., degrees)
+sliderHorizontal->SetRange(0.0f, 360.0f);
+
+// Get value in custom range
+float value = sliderHorizontal->GetValue();
 ~~~~~~~~~~~~~
 
-Note that even after setting the range **GUISlider::getPercent()** will still return the value in range [0, 1]. Use @b3d::GUISlider::getValue to get the value in the actual range specified.
+Set step increment with @b3d::GUISlider::SetStep:
 
 ~~~~~~~~~~~~~{.cpp}
-float curSliderValue = sliderHorz->getValue();
+// 36 increments (10 degree steps)
+sliderHorizontal->SetStep(10.0f / 360.0f);
 ~~~~~~~~~~~~~
-
-Finally, you can specify a minimum step between two increments of the slider by calling @b3d::GUISlider::setStep. Without a minimum increment the slider can be moved as well as user's input & screen precision allows.
-
-~~~~~~~~~~~~~{.cpp}
-// Allow a maximum of 36 increments (increment by 10 degrees)
-sliderHorz->setStep(10.0f / 360.0f);
-~~~~~~~~~~~~~
-
-Note the step is specified in [0, 1] range.
 
 ![Vertical and a horizontal slider](../../Images/guiSlider.png)
 
 ## Scroll area
-Scroll areas serve as containers for other GUI elements. They can contain more elements that would normally be able to fit in the visible area by providing scrollbars when necessary. Create a scroll area by calling @b3d::GUIScrollArea::create. 
+
+Scroll areas contain other GUI elements and provide scrollbars when content exceeds visible area. Create scroll areas with @b3d::GUIScrollArea::Create:
 
 ~~~~~~~~~~~~~{.cpp}
-GUIScrollArea* scrollArea = GUIScrollArea::create();
+GUIScrollArea* scrollArea = GUIScrollArea::Create();
 
-// Scroll area's don't have default size, we must specify one. This is where the contents will be displayed.
-scrollArea->setSize(100, 150);
+// Scroll areas require explicit size
+scrollArea->SetSize(GUILogicalSize(100, 150));
 
-mainPanel->addElement(scrollArea);
+mainPanel->AddElement(scrollArea);
 ~~~~~~~~~~~~~
 
-When creating them you can individually control when should vertical or horizontal scroll-bars show up using the @b3d::ScrollBarType.
+Control scrollbar visibility using @b3d::ScrollBarType:
 
 ~~~~~~~~~~~~~{.cpp}
-// Show vertical scrollbar only when contents don't fit in the scroll-bar area, and never show the horizontal scrollbar
-GUIScrollArea* anotherScrollArea = GUIScrollArea::create(ScrollBarType::ShowIfDoesntFit, ScrollBarType::NeverShow);
+// Vertical scrollbar when needed, never show horizontal
+GUIScrollArea* customScrollArea = GUIScrollArea::Create(
+	ScrollBarType::ShowIfDoesntFit,
+	ScrollBarType::NeverShow
+);
 ~~~~~~~~~~~~~
 
-Once scroll area is created it will provide you with a layout, similar to how **GUIWidget::getPanel()** works. Call @b3d::GUIScrollArea::getLayout() to retrieve the layout, and then attach GUI elements to it normally.
+Add elements to the scroll area's layout:
 
 ~~~~~~~~~~~~~{.cpp}
-// Add a bunch of elements to the scroll area
-GUILayout& layout = scrollArea->getLayout();
-for(UINT32 i = 0; i < 20; i++)
+GUILayout& layout = scrollArea->GetLayout();
+for (u32 i = 0; i < 20; i++)
 {
-	GUIButton* button = GUIButton::create(HString("Entry #" + toString(i)));
-	layout.addElement(button);
+	GUIButton* button = GUIButton::Create(HString("Entry #" + ToString(i)));
+	layout.AddElement(button);
 }
 ~~~~~~~~~~~~~
-
-We'll go more in depth about layouts in the next chapter.
 
 ![Scroll area](../../Images/guiScrollArea.png)
