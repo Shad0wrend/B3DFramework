@@ -1575,7 +1575,7 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 	}
 
 	if(vulkanCommandBuffer->IsInRenderPass())
-		vulkanCommandBuffer->EndRenderPass();
+		vulkanCommandBuffer->EndRenderPass(true);
 
 	VkImageSubresourceRange range;
 	range.aspectMask = mImage->GetAspectFlags();

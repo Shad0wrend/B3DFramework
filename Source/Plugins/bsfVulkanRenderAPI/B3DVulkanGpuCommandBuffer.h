@@ -148,7 +148,7 @@ namespace b3d
 			void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance) override;
 			void DispatchCompute(u32 groupCountX, u32 groupCountY, u32 groupCountZ) override;
 			void BeginRenderPass(const SPtr<RenderTarget>& target, u32 readOnlyFlags, RenderSurfaceMask loadMask) override;
-			void EndRenderPass() override { EndRenderPass(false); }
+			void EndRenderPass() override;
 			bool IsInRenderPass() const override { return mState == State::RecordingRenderPass; }
 			void SetViewport(const Area2& area) override;
 			void ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask) override;

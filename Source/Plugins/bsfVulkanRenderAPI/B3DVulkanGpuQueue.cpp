@@ -35,7 +35,7 @@ void VulkanGpuQueue::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBu
 		return;
 	}
 
-	if (vulkanCommandBuffer.IsInRenderPass())
+	if (!B3D_ENSURE(!vulkanCommandBuffer.IsInRenderPass()))
 		vulkanCommandBuffer.EndRenderPass();
 
 	// Execute any queued layout transitions that weren't already handled by the render pass

@@ -426,13 +426,14 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 
 	// Render base pass
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
-	commandBuffer.BeginRenderPass(RenderTarget);
+	commandBuffer.BeginRenderPass(RenderTarget, 0, RT_ALL);
 
 	Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 	commandBuffer.SetViewport(area);
 
 	// Clear all targets
 	commandBuffer.ClearViewport(FBT_COLOR | FBT_DEPTH | FBT_STENCIL, Color::kZero, 1.0f, 0);
+	commandBuffer.EndRenderPass();
 
 	// Trigger pre-base-pass callbacks
 	if(sceneCamera != nullptr)
@@ -448,6 +449,8 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 			extension->Render(*sceneCamera, context);
 		}
 	}
+
+	commandBuffer.BeginRenderPass(RenderTarget);
 
 	// Render all visible opaque elements that use the deferred pipeline
 	const Vector<RenderQueueElement>& opaqueElements = inputs.View.GetOpaqueQueue(false)->GetSortedElements();
@@ -483,6 +486,8 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	const Vector<RenderQueueElement>& decalElements = inputs.View.GetDecalQueue()->GetSortedElements();
 	RenderQueueElements(commandBuffer, decalElements);
 
+	commandBuffer.EndRenderPass();
+
 	// Trigger post-base-pass callbacks
 	if(sceneCamera != nullptr)
 	{
@@ -497,10 +502,6 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 			extension->Render(*sceneCamera, context);
 		}
 	}
-
-	// Make sure that any compute shaders are able to read g-buffer by unbinding it
-	commandBuffer.EndRenderPass();
-	commandBuffer.BeginRenderPass(nullptr);  // TODO - RenderPass
 }
 
 void RCNodeBasePass::Clear()
@@ -1000,9 +1001,6 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 			}
 		}
 	}
-
-	// Makes sure light accumulation can be read by following passes
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 void RCNodeDeferredDirectLighting::Clear()
@@ -1264,9 +1262,6 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 
 			commandBuffer.EndRenderPass();
 		}
-
-		// Makes sure light accumulation can be read by following passes
-		commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 	}
 }
 
@@ -1557,7 +1552,6 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 			context.CurrentTarget = inputs.View.GetCompositorRenderTarget();
 			context.CommandBuffer = inputs.ActiveCommandBuffer;
 
-			// TODO - RenderPass
 			extension->Render(*sceneCamera, context);
 		}
 	}
@@ -1677,7 +1671,6 @@ void RCNodeFinalResolve::Render(const RenderCompositorNodeInputs& inputs)
 			context.CurrentTarget = inputs.View.GetCompositorRenderTarget();
 			context.CommandBuffer = inputs.ActiveCommandBuffer;
 
-			// TODO - RenderPass
 			extension->Render(*sceneCamera, context);
 		}
 	}
@@ -2119,7 +2112,6 @@ void RCNodeTemporalAA::Render(const RenderCompositorNodeInputs& inputs)
 	else
 		mPooledOutput = sceneColor;
 
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 	Output = mPooledOutput->Texture;
 }
 
@@ -2696,7 +2688,6 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 		blurVert->Execute(commandBuffer, inputs.View, blurIntermediateTex->Texture, sceneDepth, mPooledOutput->RenderTexture, kDepthRange);
 	}
 
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 	Output = mPooledOutput->Texture;
 }
 
@@ -2807,7 +2798,6 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 	else
 		mPooledOutput = traceOutput;
 
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 	Output = mPooledOutput->Texture;
 }
 

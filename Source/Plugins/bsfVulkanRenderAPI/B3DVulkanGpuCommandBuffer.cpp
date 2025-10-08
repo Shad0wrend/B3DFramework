@@ -301,72 +301,69 @@ void VulkanGpuCommandBuffer::End()
 void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask)
 {
 	EnsureValidThread();
-	B3D_ASSERT(mState != State::Submitted);
+
+	if(!B3D_ENSURE(mState == State::Recording))
+		return;
+
+	if(!B3D_ENSURE(renderTarget != nullptr))
+		return;
 
 	VulkanFramebuffer* newFramebuffer;
 	VulkanSwapChain* swapChain = nullptr;
-	if(renderTarget != nullptr)
+	if(renderTarget->GetProperties().IsWindow)
 	{
-		if(renderTarget->GetProperties().IsWindow)
+		RenderWindow* const renderWindow = static_cast<RenderWindow*>(renderTarget.get());
+
+		VulkanRenderWindowSurface* renderWindowSurface = static_cast<VulkanRenderWindowSurface*>(renderWindow->GetRenderWindowSurface().get());
+		if(!B3D_ENSURE(renderWindowSurface != nullptr))
+			return;
+
+		swapChain = renderWindowSurface->GetSwapChain();
+
+		if(!swapChain->IsValid())
 		{
-			RenderWindow* const renderWindow = static_cast<RenderWindow*>(renderTarget.get());
-
-			VulkanRenderWindowSurface* renderWindowSurface = static_cast<VulkanRenderWindowSurface*>(renderWindow->GetRenderWindowSurface().get());
-			if(!B3D_ENSURE(renderWindowSurface != nullptr))
-				return;
-
+			renderWindow->RebuildSwapChain();
 			swapChain = renderWindowSurface->GetSwapChain();
+		}
 
-			if(!swapChain->IsValid())
-			{
-				renderWindow->RebuildSwapChain();
-				swapChain = renderWindowSurface->GetSwapChain();
-			}
+		u32 acquiredImageIndex;
+		bool isImageAcquired = swapChain->TryGetFirstAcquiredImageIndex(acquiredImageIndex);
 
-			u32 acquiredImageIndex;
-			bool isImageAcquired = swapChain->TryGetFirstAcquiredImageIndex(acquiredImageIndex);
+		// It's possible this is a fresh swap chain we haven't acquired any images for yet
+		if(!isImageAcquired)
+		{
+			const u32 maximumColorImageCount = swapChain->GetColorImageCount();
+			const u32 acquireableColorImageCount = maximumColorImageCount > 0 ? maximumColorImageCount - 1 : 0; // One is reserved for OS compositor
+			for(u32 imageIndex = 0; imageIndex < acquireableColorImageCount; imageIndex++)
+				GetVulkanSubmitThread().QueueImageAcquire(*swapChain);
 
-			// It's possible this is a fresh swap chain we haven't acquired any images for yet
-			if(!isImageAcquired)
-			{
-				const u32 maximumColorImageCount = swapChain->GetColorImageCount();
-				const u32 acquireableColorImageCount = maximumColorImageCount > 0 ? maximumColorImageCount - 1 : 0; // One is reserved for OS compositor
-				for(u32 imageIndex = 0; imageIndex < acquireableColorImageCount; imageIndex++)
-					GetVulkanSubmitThread().QueueImageAcquire(*swapChain);
+			swapChain->WaitUntilFirstImageAcquired();
+			isImageAcquired = swapChain->TryGetFirstAcquiredImageIndex(acquiredImageIndex);
+		}
 
-				swapChain->WaitUntilFirstImageAcquired();
-				isImageAcquired = swapChain->TryGetFirstAcquiredImageIndex(acquiredImageIndex);
-			}
+		if(B3D_ENSURE(isImageAcquired))
+		{
+			SwapChainImageInformation swapChainImageInformation;
+			swapChainImageInformation.SwapChain = swapChain;
+			swapChainImageInformation.ImageIndex = acquiredImageIndex;
 
-			if(isImageAcquired)
-			{
-				SwapChainImageInformation swapChainImageInformation;
-				swapChainImageInformation.SwapChain = swapChain;
-				swapChainImageInformation.ImageIndex = acquiredImageIndex;
+			const auto found = std::find_if(mAcquiredSwapChainImages.begin(), mAcquiredSwapChainImages.end(), [swapChain](const SwapChainImageInformation& info) { return info.SwapChain == swapChain; });
+			if(found == mAcquiredSwapChainImages.end())
+				mAcquiredSwapChainImages.push_back(swapChainImageInformation);
 
-				const auto found = std::find_if(mAcquiredSwapChainImages.begin(), mAcquiredSwapChainImages.end(), [swapChain](const SwapChainImageInformation& info) { return info.SwapChain == swapChain; });
-				if(found == mAcquiredSwapChainImages.end())
-					mAcquiredSwapChainImages.push_back(swapChainImageInformation);
-
-				newFramebuffer = swapChain->GetFramebufferForImage(swapChainImageInformation.ImageIndex);
-			}
-			else
-			{
-				B3D_LOG(Error, RenderBackend, "Binding render target failed. Unable to acquire swap chain image.");
-
-				swapChain = nullptr;
-				newFramebuffer = nullptr;
-			}
+			newFramebuffer = swapChain->GetFramebufferForImage(swapChainImageInformation.ImageIndex);
 		}
 		else
 		{
-			const VulkanRenderTexture* const renderTexture = static_cast<VulkanRenderTexture*>(renderTarget.get());
-			newFramebuffer = renderTexture->GetFramebuffer();
+			B3D_LOG(Error, RenderBackend, "Binding render target failed. Unable to acquire swap chain image.");
+
+			return;
 		}
 	}
 	else
 	{
-		newFramebuffer = nullptr;
+		const VulkanRenderTexture* const renderTexture = static_cast<VulkanRenderTexture*>(renderTarget.get());
+		newFramebuffer = renderTexture->GetFramebuffer();
 	}
 
 	mRenderTarget = renderTarget;
@@ -390,17 +387,67 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTar
 		loadMask.Set(RT_DEPTH);
 	}
 
-	if(mFramebuffer == newFramebuffer && mRenderTargetReadOnlyFlags == readOnlyFlags && mRenderTargetLoadMask == loadMask)
-		return;
+	// If a clear is queued for previous FB, execute the render pass with no additional instructions
+	if(mClearMask)
+		ExecuteClearPass();
 
-	if(IsInRenderPass())
-		EndRenderPass();
+	B3D_ASSERT(mFramebuffer == nullptr); // Must have been cleared by last render pass
+
+	if(B3D_ENSURE(newFramebuffer != nullptr))
+	{
+		mFramebuffer = newFramebuffer;
+		mRenderTargetReadOnlyFlags = readOnlyFlags;
+		mRenderTargetLoadMask = loadMask;
+	}
 	else
 	{
-		// If a clear is queued for previous FB, execute the render pass with no additional instructions
-		if(mClearMask)
-			ExecuteClearPass();
+		mFramebuffer = nullptr;
+		mRenderTargetReadOnlyFlags = 0;
+		mRenderTargetLoadMask = RT_NONE;
+
+		return;
 	}
+
+	// Re-set the params as they will need to be re-bound
+	SetGpuParameters(mBoundParams);
+
+	if(mFramebuffer)
+	{
+		RegisterResource(mFramebuffer, loadMask, readOnlyFlags);
+
+		if(swapChain)
+			RegisterResource(swapChain);
+	}
+
+	mGfxPipelineRequiresBind = true;
+
+	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
+	mVertexInputsDirty = true;
+
+	// TODO - Don't begin render pass for now, we'll begin it during Draw/DrawIndexed, as the current code flow will only be aware of the
+	// necessary layout transitions and memory barriers after GPU parameters are bound.
+	//BeginRenderPass();
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumRenderTargetChanges);
+}
+
+void VulkanGpuCommandBuffer::EndRenderPass()
+{
+	if(mIsRenderPassInterrupted)
+		return;
+
+	//if(!B3D_ENSURE(mState == State::RecordingRenderPass))// TODO - See note in BeginRenderPass(renderTarget, ...), skipping for now
+	// return;
+
+	EnsureValidThread();
+	B3D_ASSERT(mState != State::Submitted);
+
+	mRenderTarget = nullptr;
+	mRenderTargetModified = false;
+	mIsRenderPassInterrupted = false;
+
+	if(!IsInRenderPass()) // TODO - This is only needed due to the fact we skip the check above
+		EndRenderPass(false);
 
 	// Reset isFBAttachment flags for subresources from the old framebuffer
 	if(mFramebuffer != nullptr)
@@ -440,36 +487,17 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTar
 		}
 	}
 
-	if(newFramebuffer == nullptr)
-	{
-		mFramebuffer = nullptr;
-		mRenderTargetReadOnlyFlags = 0;
-		mRenderTargetLoadMask = RT_NONE;
-	}
-	else
-	{
-		mFramebuffer = newFramebuffer;
-		mRenderTargetReadOnlyFlags = readOnlyFlags;
-		mRenderTargetLoadMask = loadMask;
-	}
+	mFramebuffer = nullptr;
+	mRenderTargetReadOnlyFlags = 0;
+	mRenderTargetLoadMask = RT_NONE;
 
 	// Re-set the params as they will need to be re-bound
 	SetGpuParameters(mBoundParams);
-
-	if(mFramebuffer)
-	{
-		RegisterResource(mFramebuffer, loadMask, readOnlyFlags);
-
-		if(swapChain)
-			RegisterResource(swapChain);
-	}
 
 	mGfxPipelineRequiresBind = true;
 
 	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
 	mVertexInputsDirty = true;
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumRenderTargetChanges);
 }
 
 void VulkanGpuCommandBuffer::ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
@@ -762,11 +790,14 @@ void VulkanGpuCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanc
 	if(!IsReadyForRender())
 		return;
 
+	//if(!B3D_ENSURE(mState == State::RecordingRenderPass || mIsRenderPassInterrupted)) // TODO - See note in BeginRenderPass(renderTarget, ...), skipping for now
+		//return;
+
 	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
 	BindGpuParams();
 
 	if(!IsInRenderPass())
-		BeginRenderPass();
+		BeginRenderPass(); // Resume interrupted render pass
 
 	if(mGfxPipelineRequiresBind)
 	{
@@ -816,11 +847,14 @@ void VulkanGpuCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 ver
 	if(!IsReadyForRender())
 		return;
 
+	//if(!B3D_ENSURE(mState == State::RecordingRenderPass || mIsRenderPassInterrupted)) // TODO - See note in BeginRenderPass(renderTarget, ...), skipping for now
+		//return;
+
 	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
 	BindGpuParams();
 
 	if(!IsInRenderPass())
-		BeginRenderPass();
+		BeginRenderPass(); // Resume interrupted render pass
 
 	if(mGfxPipelineRequiresBind)
 	{
@@ -867,17 +901,13 @@ void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u
 	if(mComputePipeline == nullptr)
 		return;
 
+	if(!B3D_ENSURE(mState == State::Recording)) // Recording, but not in render pass
+		return;
+
 	if (groupCountX == 0 || groupCountY == 0 || groupCountZ == 0)
 	{
 		B3D_LOG(Warning, RenderBackend, "Ignoring call to DispatchCompute(). Thread count is zero.");
 	}
-
-	if(IsInRenderPass())
-		EndRenderPass();
-
-	// Note: Should I restore the render target after? Note that this is only being done is framebuffer subresources
-	// have their "isFBAttachment" flag reset, potentially I can just clear/restore those
-	BeginRenderPass(nullptr, 0, RT_ALL); // TODO - RenderPass
 
 	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
 	BindGpuParams();
@@ -930,6 +960,9 @@ void VulkanGpuCommandBuffer::CopyBufferToBuffer(const SPtr<GpuBuffer>& source, c
 {
 	EnsureValidThread();
 
+	if(!B3D_ENSURE(mState != State::Recording)) // Recording, but not in render pass
+		return;
+
 	auto* vulkanSource = static_cast<VulkanGpuBuffer*>(source.get());
 	auto* vulkanDestination = static_cast<VulkanGpuBuffer*>(destination.get());
 
@@ -939,15 +972,11 @@ void VulkanGpuCommandBuffer::CopyBufferToBuffer(const SPtr<GpuBuffer>& source, c
 	if(sourceBuffer == nullptr || destinationBuffer == nullptr)
 		return;
 
-	if(IsInRenderPass())
-		EndRenderPass(true);
-
 	CopyBufferToBuffer(sourceBuffer, destinationBuffer, sourceOffset, destinationOffset, length);
 
 	RegisterBuffer(sourceBuffer, BufferUseFlagBits::Transfer, GpuAccessFlag::Read);
 	RegisterBuffer(destinationBuffer, BufferUseFlagBits::Transfer, GpuAccessFlag::Write);
 }
-
 
 void VulkanGpuCommandBuffer::BeginLabel(const StringView& name)
 {
@@ -1121,10 +1150,6 @@ void VulkanGpuCommandBuffer::BeginRenderPass()
 
 void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 {
-	//B3D_ASSERT(mState == State::RecordingRenderPass);
-	if(mState != State::RecordingRenderPass)
-		return;
-
 	vkCmdEndRenderPass(mCommandBufferHandle);
 
 	// Execute any queued events
@@ -1572,11 +1597,9 @@ void VulkanGpuCommandBuffer::ClearViewport(const Area2I& area, u32 buffers, cons
 
 	// If a clear operation is queued we need to execute it first
 	const bool isClearAlreadyQueued = !IsInRenderPass() && (mClearMask != RT_NONE) && (area != mClearArea);
-	if(isClearAlreadyQueued)
+	if(!B3D_ENSURE(!isClearAlreadyQueued))
 	{
-		// Render pass start will trigger a an implicit clear
-		BeginRenderPass();
-		B3D_ASSERT(mClearMask == RT_NONE);
+		B3D_LOG(Warning, RenderBackend, "ClearViewport called multiple times outside of render pass. All except the last call will be ignored.");
 	}
 
 	mClearArea = area;

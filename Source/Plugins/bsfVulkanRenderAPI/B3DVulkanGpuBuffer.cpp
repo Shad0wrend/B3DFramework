@@ -578,7 +578,7 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 	}
 
 	if(vulkanCommandBuffer->IsInRenderPass())
-		vulkanCommandBuffer->EndRenderPass();
+		vulkanCommandBuffer->EndRenderPass(true);
 
 	// Queue copy/update command for the actual write
 	if(stagingBuffer != nullptr)

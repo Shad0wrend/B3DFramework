@@ -81,7 +81,6 @@ void DownsampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>
 		GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	commandBuffer.EndRenderPass();
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 PooledRenderTextureCreateInformation DownsampleMat::GetOutputDesc(const SPtr<Texture>& target)
@@ -225,7 +224,6 @@ void EyeAdaptHistogramReduceMat::Execute(GpuCommandBuffer& commandBuffer, const 
 	GetRendererUtility().DrawScreenQuad(commandBuffer, drawUV);
 
 	commandBuffer.EndRenderPass();
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 PooledRenderTextureCreateInformation EyeAdaptHistogramReduceMat::GetOutputDesc()
@@ -265,7 +263,6 @@ void EyeAdaptationMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Textu
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	commandBuffer.EndRenderPass();
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 PooledRenderTextureCreateInformation EyeAdaptationMat::GetOutputDesc()
@@ -335,7 +332,6 @@ void EyeAdaptationBasicSetupMat::Execute(GpuCommandBuffer& commandBuffer, const 
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	commandBuffer.EndRenderPass();
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 PooledRenderTextureCreateInformation EyeAdaptationBasicSetupMat::GetOutputDesc(const SPtr<Texture>& input)
@@ -383,7 +379,6 @@ void EyeAdaptationBasicMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	commandBuffer.EndRenderPass();
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 PooledRenderTextureCreateInformation EyeAdaptationBasicMat::GetOutputDesc()
@@ -422,7 +417,6 @@ void CreateTonemap2DLUTMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	commandBuffer.EndRenderPass();
-	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
 }
 
 void CreateTonemap2DLUTMat::PopulateTonemappingParameterBuffer(const RenderSettings& settings, const SPtr<GpuBuffer>& parameterBuffer)
@@ -2086,16 +2080,12 @@ void SSRTraceMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& v
 	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
-	commandBuffer.BeginRenderPass(destination, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
-
 	Bind(commandBuffer);
 
 	if(viewProps.Target.NumSamples > 1)
 		GetRendererUtility().DrawScreenQuad(commandBuffer, Area2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
 	else
 		GetRendererUtility().DrawScreenQuad(commandBuffer);
-
-	commandBuffer.EndRenderPass();
 }
 
 Vector2 SSRTraceMat::CalcRoughnessFadeScaleBias(float maxRoughness)
@@ -2310,8 +2300,6 @@ void TemporalFilteringMat::Execute(GpuCommandBuffer& commandBuffer, const Render
 	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
-	commandBuffer.BeginRenderPass(destination);
-
 	const RendererViewProperties& viewProps = view.GetProperties();
 	const Area2I& viewRect = viewProps.Target.ViewRect;
 
@@ -2321,8 +2309,6 @@ void TemporalFilteringMat::Execute(GpuCommandBuffer& commandBuffer, const Render
 		GetRendererUtility().DrawScreenQuad(commandBuffer, Area2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
 	else
 		GetRendererUtility().DrawScreenQuad(commandBuffer);
-
-	commandBuffer.EndRenderPass();
 }
 
 TemporalFilteringMat* TemporalFilteringMat::GetVariation(TemporalFilteringType type, bool velocity, bool msaa)
