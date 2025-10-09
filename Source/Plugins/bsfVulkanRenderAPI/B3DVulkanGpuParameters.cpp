@@ -722,7 +722,7 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& buffer, VkDescr
 			VkPipelineStageFlags stages = VulkanUtility::ShaderToPipelineStage(perSetBindings[usedBindingSequentialIndex].stageFlags);
 
 			// Register with command buffer
-			buffer.RegisterBuffer(resource, BufferUseFlagBits::Parameter, GpuAccessFlag::Read, stages);
+			buffer.RegisterBuffer(resource, GpuResourceUseFlag::Uniform, GpuAccessFlag::Read, stages);
 
 			// Check if internal resource changed from what was previously bound in the descriptor set
 			B3D_ASSERT(perDeviceData.UniformBuffers[sequentialResourceIndex] != VK_NULL_HANDLE);
@@ -807,7 +807,7 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& buffer, VkDescr
 			// Register with command buffer
 			VkDescriptorSetLayoutBinding* perSetBindings = vkParamInfo.GetLayoutBindings(set);
 			VkPipelineStageFlags stages = VulkanUtility::ShaderToPipelineStage(perSetBindings[usedBindingSequentialIndex].stageFlags);
-			buffer.RegisterBuffer(resource, BufferUseFlagBits::Generic, useFlags, stages);
+			buffer.RegisterBuffer(resource, GpuResourceUseFlag::Shader, useFlags, stages);
 
 			// Check if internal resource changed from what was previously bound in the descriptor set
 			B3D_ASSERT(perDeviceData.Buffers[sequentialResourceIndex] != VK_NULL_HANDLE);

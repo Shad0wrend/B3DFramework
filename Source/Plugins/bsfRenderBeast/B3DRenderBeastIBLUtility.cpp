@@ -462,7 +462,12 @@ void RenderBeastIBLUtility::FilterCubemapForIrradiance(GpuCommandBuffer& command
 		u32 numCoeffSets;
 		SPtr<GpuBuffer> coeffSetBuffer = shCompute->CreateOutputBuffer(cubemap, numCoeffSets);
 		for(u32 face = 0; face < 6; face++)
+		{
+			commandBuffer.IssueBarrier(GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write);
 			shCompute->Execute(commandBuffer, cubemap, face, coeffSetBuffer);
+		}
+
+		commandBuffer.IssueBarrier(GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Read);
 
 		coeffTexture = shReduce->CreateOutputTexture(1);
 		shReduce->Execute(commandBuffer, coeffSetBuffer, numCoeffSets, coeffTexture, 0);

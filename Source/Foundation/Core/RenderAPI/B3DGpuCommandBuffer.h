@@ -64,6 +64,19 @@ namespace b3d
 		using GpuStageBits = Flags<GpuStageBit>;
 		B3D_FLAGS_OPERATORS(GpuStageBit);
 
+		/** Bits that represent different ways a GPU resource can be used. */
+		enum class GpuResourceUseFlag
+		{
+			Shader = 1 << 0,
+			Index = 1 << 1,
+			Vertex = 1 << 2,
+			Uniform = 1 << 3,
+			Transfer = 1 << 4
+		};
+
+		typedef Flags<GpuResourceUseFlag> GpuBufferUseFlags;
+		B3D_FLAGS_OPERATORS(GpuResourceUseFlag)
+
 		/** Object describing a GpuCommandBufferPool. */
 		struct GpuCommandBufferPoolInformation
 		{
@@ -299,6 +312,16 @@ namespace b3d
 			 * @param	subresourceRange	Subresources (mips, array levels) of the texture to transition. Different subresources can be in different layouts.
 			 */
 			virtual void TransitionTextureLayout(const SPtr<Texture>& texture, GpuTextureLayout layout, const GpuTextureSubresourceRange& subresourceRange = GpuTextureSubresourceRange::AllSubresources()) = 0;
+
+			/**
+			 * Issues a memory and/or execution barrier that guarantees that the contents of GPU buffers will be correctly visible for the provided destination stages. It is important to issue this barrier in
+			 * two cases:
+			 *  - Just before GPU writes to the buffer. This ensures that any other GPU operation reading from the buffer completes before the GPU writes to it.
+			 *  - Just before GPU read to a buffer that was just written. This ensures that writes complete before GPU attempts to read from the buffer.
+			 *
+			 * Transfer operations such as copy, blit, resolve and clear also require barriers, but those are issued automatically under the hood.
+			 */
+			virtual void IssueBarrier(GpuBufferUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuBufferUseFlags destinationUsage, GpuAccessFlags destinationAccess) = 0;
 
 			/**
 			 * Sets the active viewport that will be used for all following render operations.

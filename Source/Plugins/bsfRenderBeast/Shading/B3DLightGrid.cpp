@@ -97,6 +97,7 @@ void LightGridLLCreationMat::SetParams(GpuCommandBuffer& commandBuffer, const Ve
 
 	clearMat->Execute(commandBuffer, mLightsLLHeads, clearColor);
 	clearMat->Execute(commandBuffer, mProbesLLHeads, clearColor);
+	commandBuffer.IssueBarrier(GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write);
 
 	mGPUParameters->SetUniformBuffer("GridParams", gridParams);
 	mLightBufferParam.Set(lightsBuffer);
@@ -193,6 +194,7 @@ void LightGridLLReductionMat::SetParams(GpuCommandBuffer& commandBuffer, const V
 	ClearLoadStoreMat* clearMat = ClearLoadStoreMat::GetVariation(
 		ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Int, 1);
 	clearMat->Execute(commandBuffer, mGridDataCounter);
+	commandBuffer.IssueBarrier(GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write);
 
 	mGPUParameters->SetUniformBuffer("GridParams", gridParams);
 

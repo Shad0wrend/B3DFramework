@@ -944,8 +944,8 @@ void VulkanGpuCommandBuffer::CopyBufferToBuffer(const SPtr<GpuBuffer>& source, c
 
 	CopyBufferToBuffer(sourceBuffer, destinationBuffer, sourceOffset, destinationOffset, length);
 
-	RegisterBuffer(sourceBuffer, BufferUseFlagBits::Transfer, GpuAccessFlag::Read);
-	RegisterBuffer(destinationBuffer, BufferUseFlagBits::Transfer, GpuAccessFlag::Write);
+	RegisterBuffer(sourceBuffer, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read);
+	RegisterBuffer(destinationBuffer, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
 }
 
 
@@ -1847,7 +1847,7 @@ void VulkanGpuCommandBuffer::BindVertexInputs()
 				resource = dummyVertexBuffer;
 
 			mVertexBuffersTemp[bindingIndex] = resource->GetVulkanHandle();
-			RegisterBuffer(resource, BufferUseFlagBits::Vertex, GpuAccessFlag::Read);
+			RegisterBuffer(resource, GpuResourceUseFlag::Vertex, GpuAccessFlag::Read);
 		}
 
 		vkCmdBindVertexBuffers(mCommandBufferHandle, 0, mRequiredVertexBufferBindingCount, mVertexBuffersTemp, mVertexBufferOffsetsTemp);
@@ -1864,7 +1864,7 @@ void VulkanGpuCommandBuffer::BindVertexInputs()
 			if(B3D_ENSURE(mIndexBuffer->GetInformation().Type == GpuBufferType::Index))
 				indexType = VulkanUtility::GetIndexType(mIndexBuffer->GetInformation().Index.Type);
 
-			RegisterBuffer(resource, BufferUseFlagBits::Index, GpuAccessFlag::Read);
+			RegisterBuffer(resource, GpuResourceUseFlag::Index, GpuAccessFlag::Read);
 
 			vkCmdBindIndexBuffer(mCommandBufferHandle, vkBuffer, 0, indexType);
 		}
@@ -2091,7 +2091,7 @@ void VulkanGpuCommandBuffer::UpdateBuffer(VulkanBuffer* destination, u8* data, V
 	vkCmdUpdateBuffer(GetVulkanHandle(), destination->GetVulkanHandle(), offset, length, (uint32_t*)data);
 	MemoryBarrier(destination->GetVulkanHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, destination->GetAccessFlags());
 
-	RegisterBuffer(destination, BufferUseFlagBits::Transfer, GpuAccessFlag::Write);
+	RegisterBuffer(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
 }
 
 void VulkanGpuCommandBuffer::CopyBufferToBuffer(VulkanBuffer* source, VulkanBuffer* destination, VkDeviceSize sourceOffset, VkDeviceSize destinationOffset, VkDeviceSize length)
@@ -2109,13 +2109,13 @@ void VulkanGpuCommandBuffer::CopyBufferToBuffer(VulkanBuffer* source, VulkanBuff
 	MemoryBarrier(source->GetVulkanHandle(), VK_ACCESS_TRANSFER_READ_BIT, source->GetAccessFlags());
 	MemoryBarrier(destination->GetVulkanHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, destination->GetAccessFlags());
 
-	RegisterBuffer(source, BufferUseFlagBits::Transfer, GpuAccessFlag::Read);
-	RegisterBuffer(destination, BufferUseFlagBits::Transfer, GpuAccessFlag::Write);
+	RegisterBuffer(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read);
+	RegisterBuffer(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
 }
 
 void VulkanGpuCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage* destination, const VkExtent3D& region, const VkImageSubresourceRange& subresourceRange, VkImageLayout layout)
 {
-	RegisterBuffer(source, BufferUseFlagBits::Transfer, GpuAccessFlag::Read);
+	RegisterBuffer(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read);
 	RegisterImageTransfer(destination, subresourceRange, layout, GpuAccessFlag::Write);
 
 	VkImageSubresourceLayers rangeLayers;
@@ -2146,7 +2146,7 @@ void VulkanGpuCommandBuffer::CopyImageToBuffer(VulkanImage* source, VulkanBuffer
 	subresourceRangeForBarrier.aspectMask = source->GetAspectFlags(); // If the source image contains both depth & stencil, then both aspect flags need to provided for pipeline barrier. But for the copy operation there must only be one aspect.
 
 	RegisterImageTransfer(source, subresourceRangeForBarrier, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, GpuAccessFlag::Read);
-	RegisterBuffer(destination, BufferUseFlagBits::Transfer, GpuAccessFlag::Write);
+	RegisterBuffer(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
 
 	VkImageSubresourceLayers rangeLayers;
 	rangeLayers.aspectMask = subresourceRange.aspectMask;
@@ -2374,6 +2374,114 @@ void VulkanGpuCommandBuffer::TransitionTextureLayout(const SPtr<Texture>& textur
 	// TODO - Transitions to read-only depth stencil and general layout (due to use of color attachment as read-only shader input) should be handled in a way so they are transitioned by the render pass.
 	// - It might be okay to disallow
 #endif
+}
+
+void VulkanGpuCommandBuffer::IssueBarrier(GpuBufferUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuBufferUseFlags destinationUsage, GpuAccessFlags destinationAccess)
+{
+	if(!B3D_ENSURE(!IsInRenderPass()))
+		return;
+
+	auto fnGetAccessMaskFromUsage = [](GpuBufferUseFlags usage, GpuAccessFlags access)
+	{
+		VkAccessFlags accessMask = 0;
+		if(usage.IsSet(GpuResourceUseFlag::Shader))
+		{
+			if(access.IsSet(GpuAccessFlag::Read))
+				accessMask |= VK_ACCESS_SHADER_READ_BIT;
+
+			if(access.IsSet(GpuAccessFlag::Write))
+				accessMask |= VK_ACCESS_SHADER_WRITE_BIT;
+		}
+
+		if(usage.IsSet(GpuResourceUseFlag::Index))
+			accessMask |= VK_ACCESS_INDEX_READ_BIT;
+
+		if(usage.IsSet(GpuResourceUseFlag::Vertex))
+			accessMask |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+
+		if(usage.IsSet(GpuResourceUseFlag::Uniform))
+			accessMask |= VK_ACCESS_UNIFORM_READ_BIT;
+
+		if(usage.IsSet(GpuResourceUseFlag::Transfer))
+		{
+			if(access.IsSet(GpuAccessFlag::Read))
+				accessMask |= VK_ACCESS_TRANSFER_READ_BIT;
+
+			if(access.IsSet(GpuAccessFlag::Write))
+				accessMask |= VK_ACCESS_TRANSFER_WRITE_BIT;
+		}
+
+		return accessMask;
+	};
+
+	const VkAccessFlags sourceAccessMask = fnGetAccessMaskFromUsage(sourceUsage, sourceAccess);
+	const VkAccessFlags destinationAccessMask = fnGetAccessMaskFromUsage(destinationUsage, destinationAccess);
+
+	const VkPipelineStageFlags sourceStages = GetPipelineStageFlags(sourceAccessMask);
+	const VkPipelineStageFlags destinationStages = GetPipelineStageFlags(destinationAccessMask);
+
+	// Read-after-write or write-after-write
+	if(sourceAccess.IsSet(GpuAccessFlag::Write))
+	{
+		VkMemoryBarrier barrier;
+		barrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		barrier.pNext = nullptr;
+
+		barrier.srcAccessMask = sourceAccessMask;
+		barrier.dstAccessMask = destinationAccessMask;
+
+		// All stages that were writing to a buffer must be present in source stages (technically only one stage will be writing, but we don't track that precisely)
+		for(auto& entry : mBuffers)
+		{
+			BufferInfo& bufferInfo = entry.second;
+
+			B3D_ENSURE((bufferInfo.WriteHazardTracking.UnsafeWriteStages & sourceStages) == bufferInfo.WriteHazardTracking.UnsafeWriteStages);
+		}
+
+		vkCmdPipelineBarrier(GetVulkanHandle(), sourceStages, destinationStages, 0, 1, &barrier, 0, nullptr, 0, nullptr);
+		
+		// TODO: I should keep track of any buffers modified and only clear those, to prevent excess iteration. Same in other instances.
+
+		// The buffers are now safe to be read or written in 'destinationStages'
+		for(auto& entry : mBuffers)
+		{
+			BufferInfo& bufferInfo = entry.second;
+
+			bufferInfo.WriteHazardTracking.SafeAfterWriteStages |= destinationStages;
+			bufferInfo.WriteHazardTracking.SafeAfterReadStages |= destinationStages;
+			bufferInfo.WriteHazardTracking.UnsafeWriteStages = 0;
+			bufferInfo.WriteHazardTracking.UnsafeReadStages = 0;
+		}
+	}
+	// Write-after-read, just need an execution barrier
+	else if(sourceAccess.IsSet(GpuAccessFlag::Read) && destinationAccess.IsSet(GpuAccessFlag::Write))
+	{
+		// All stages that were reading from a buffer must be present in source stages
+		for(auto& entry : mBuffers)
+		{
+			BufferInfo& bufferInfo = entry.second;
+
+			B3D_ENSURE((bufferInfo.WriteHazardTracking.UnsafeReadStages & sourceStages) == bufferInfo.WriteHazardTracking.UnsafeReadStages);
+		}
+
+		vkCmdPipelineBarrier(GetVulkanHandle(), sourceStages, destinationStages, 0, 0, nullptr, 0, nullptr, 0, nullptr);
+
+		// The buffers are now safe to be written in 'destinationStages'
+		for(auto& entry : mBuffers)
+		{
+			BufferInfo& bufferInfo = entry.second;
+
+			bufferInfo.WriteHazardTracking.SafeAfterReadStages |= destinationStages;
+			bufferInfo.WriteHazardTracking.UnsafeReadStages = 0;
+		}
+	}
+
+
+	// TODO - Reset hazards on image subresources as well
+
+	// TODO - Make validation only active in development builds
+
+	// TODO - Remove ExecuteWriteHazardBarrier down the line
 }
 
 void VulkanGpuCommandBuffer::RegisterResource(VulkanResource* res, GpuAccessFlags flags)
@@ -2648,7 +2756,7 @@ void VulkanGpuCommandBuffer::RegisterResource(VulkanImage* image, const VkImageS
 	}
 }
 
-void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits useFlags, GpuAccessFlags access, VkPipelineStageFlags stages)
+void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, GpuResourceUseFlag useFlags, GpuAccessFlags access, VkPipelineStageFlags stages)
 {
 	auto insertResult = mBuffers.insert(std::make_pair(res, BufferInfo()));
 	if(insertResult.second) // New element
@@ -2660,11 +2768,25 @@ void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits
 		bufferInfo.UseHandle.Flags = access;
 
 		// Transfer write hazards are handled externally
-		if(useFlags != BufferUseFlagBits::Transfer)
+		if(useFlags != GpuResourceUseFlag::Transfer)
 		{
 			bufferInfo.WriteHazardUse.Access = access;
 			bufferInfo.WriteHazardUse.Stages = stages;
 			bufferInfo.NewWriteHazardUse = bufferInfo.WriteHazardUse;
+
+			bufferInfo.WriteHazardTracking.Access = access;
+
+			if(access.IsSet(GpuAccessFlag::Read))
+			{
+				bufferInfo.WriteHazardTracking.UnsafeReadStages = stages;
+				bufferInfo.WriteHazardTracking.SafeAfterReadStages = 0; // No stage is safe, require a new barrier
+			}
+
+			if(access.IsSet(GpuAccessFlag::Write))
+			{
+				bufferInfo.WriteHazardTracking.UnsafeWriteStages = stages;
+				bufferInfo.WriteHazardTracking.SafeAfterWriteStages = 0; // No stage is safe, require a new barrier
+			}
 		}
 
 		res->NotifyBound();
@@ -2677,14 +2799,17 @@ void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits
 
 		// Transfer write hazards are handled externally
 		bool resetRenderPass = false;
-		if(useFlags != BufferUseFlagBits::Transfer)
+		if(useFlags != GpuResourceUseFlag::Transfer)
 		{
 			// If this buffer has been previously written to prevent read-after-write and write-after-read hazards
 			if(access.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write))
 			{
-				// Read-after-write (and write-after-write, as little sense does that make)
+				// Read-after-write (or write-after-write)
 				if(bufferInfo.WriteHazardUse.Access.IsSet(GpuAccessFlag::Write))
 				{
+					// Triggers if user did not issue a RAW memory barrier between a previous write and this usage (or did not specify all the relevant stages in the barrier)
+					B3D_ENSURE((bufferInfo.WriteHazardTracking.SafeAfterWriteStages & stages) == stages);
+
 					mNeedsRAWMemoryBarrier = true;
 					mMemoryBarrierSrcStages |= bufferInfo.WriteHazardUse.Stages;
 					mMemoryBarrierDstStages |= stages;
@@ -2692,23 +2817,23 @@ void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits
 
 					switch(useFlags)
 					{
-					case BufferUseFlagBits::Generic:
+					case GpuResourceUseFlag::Shader:
 						if(access.IsSet(GpuAccessFlag::Read))
 							mMemoryBarrierDstAccess |= VK_ACCESS_SHADER_READ_BIT;
 
 						if(access.IsSet(GpuAccessFlag::Write))
 							mMemoryBarrierDstAccess |= VK_ACCESS_SHADER_WRITE_BIT;
 						break;
-					case BufferUseFlagBits::Index:
+					case GpuResourceUseFlag::Index:
 						mMemoryBarrierDstAccess |= VK_ACCESS_INDEX_READ_BIT;
 						break;
-					case BufferUseFlagBits::Vertex:
+					case GpuResourceUseFlag::Vertex:
 						mMemoryBarrierDstAccess |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
 						break;
-					case BufferUseFlagBits::Parameter:
+					case GpuResourceUseFlag::Uniform:
 						mMemoryBarrierDstAccess |= VK_ACCESS_UNIFORM_READ_BIT;
 						break;
-					case BufferUseFlagBits::Transfer:
+					case GpuResourceUseFlag::Transfer:
 						if(access.IsSet(GpuAccessFlag::Read))
 							mMemoryBarrierDstAccess |= VK_ACCESS_TRANSFER_READ_BIT;
 
@@ -2728,6 +2853,9 @@ void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits
 				// Write-after-read
 				if(bufferInfo.WriteHazardUse.Access.IsSet(GpuAccessFlag::Read))
 				{
+					// Triggers if user did not issue a WAR memory barrier between a previous write and this usage (or did not specify all the relevant stages in the barrier)
+					B3D_ENSURE((bufferInfo.WriteHazardTracking.SafeAfterReadStages & stages) == stages);
+
 					mNeedsWARMemoryBarrier = true;
 					mMemoryBarrierSrcStages |= bufferInfo.WriteHazardUse.Stages;
 					mMemoryBarrierDstStages |= stages;
@@ -2743,6 +2871,20 @@ void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits
 
 			bufferInfo.NewWriteHazardUse.Access |= access;
 			bufferInfo.NewWriteHazardUse.Stages |= stages;
+
+			bufferInfo.WriteHazardTracking.Access |= access;
+
+			if(access.IsSet(GpuAccessFlag::Read))
+			{
+				bufferInfo.WriteHazardTracking.UnsafeReadStages |= stages;
+				bufferInfo.WriteHazardTracking.SafeAfterReadStages = 0; // No stage is safe, require a new barrier
+			}
+
+			if(access.IsSet(GpuAccessFlag::Write))
+			{
+				bufferInfo.WriteHazardTracking.UnsafeWriteStages |= stages;
+				bufferInfo.WriteHazardTracking.SafeAfterWriteStages = 0; // No stage is safe, require a new barrier
+			}
 		}
 
 		bufferInfo.UseHandle.Flags |= access;

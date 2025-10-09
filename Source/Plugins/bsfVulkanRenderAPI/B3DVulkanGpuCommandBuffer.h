@@ -86,19 +86,6 @@ namespace b3d
 		typedef Flags<ImageUseFlagBits> ImageUseFlags;
 		B3D_FLAGS_OPERATORS(ImageUseFlagBits)
 
-		/** Bits that represent different ways a buffer can be used. */
-		enum class BufferUseFlagBits
-		{
-			Generic = 1 << 0,
-			Index = 1 << 1,
-			Vertex = 1 << 2,
-			Parameter = 1 << 3,
-			Transfer = 1 << 4
-		};
-
-		typedef Flags<BufferUseFlagBits> BufferUseFlags;
-		B3D_FLAGS_OPERATORS(BufferUseFlagBits)
-
 		/** All the information required for submitting a VulkanGpuCommandBuffer */
 		struct GpuCommandBufferSubmitInformation
 		{
@@ -166,6 +153,7 @@ namespace b3d
 			void InsertLabel(const StringView& name) override;
 			void End() override;
 			void TransitionTextureLayout(const SPtr<Texture>& texture, GpuTextureLayout layout, const GpuTextureSubresourceRange& subresourceRange) override;
+			void IssueBarrier(GpuBufferUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuBufferUseFlags destinationUsage, GpuAccessFlags destinationAccess) override;
 
 			/** Returns an unique identifier of this command buffer. */
 			u32 GetId() const { return mId; }
@@ -274,7 +262,7 @@ namespace b3d
 			 * device when the command buffer is submitted. @p stages can be left empty for all uses except for generic and
 			 * parameter buffer types.
 			 */
-			void RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits useFlags, GpuAccessFlags access, VkPipelineStageFlags stages = 0);
+			void RegisterBuffer(VulkanBuffer* res, GpuResourceUseFlag useFlags, GpuAccessFlags access, VkPipelineStageFlags stages = 0);
 
 			/**
 			 * Lets the command buffer know that the provided framebuffer resource has been queued on it, and will be used by
@@ -433,6 +421,27 @@ namespace b3d
 				GpuAccessFlags Flags;
 			};
 
+			/** Tracking that is used for validation when memory barriers need to be issued. */
+			struct WriteHazardTracking
+			{
+				GpuAccessFlags Access; /**< Has the buffer been read or written so far. */
+				
+				/**
+				 * All the stages that the buffer was being read in. These get removed when we issue a RAW barrier for particular stages. It's an error to perform a write to a buffer
+				 * in a stage that is contained here. This is because the stage may be reading a buffer that we're about to write into.
+				 */
+				VkPipelineStageFlags UnsafeReadStages = 0;
+
+				/**
+				 * All the stages that the buffer was being written in. These get removed when we issue a WAR barrier for particular stages. It's an error to perform a read or write to a buffer
+				 * in a stage that is contained here. This is because the stage may be writing a buffer that we're about to read or write.
+				 */
+				VkPipelineStageFlags UnsafeWriteStages = 0;
+
+				VkPipelineStageFlags SafeAfterReadStages = 0;
+				VkPipelineStageFlags SafeAfterWriteStages = 0;
+			};
+
 			/** Describes where and how is a resource being accessed and by which stages. */
 			struct ResourcePipelineUse
 			{
@@ -448,7 +457,7 @@ namespace b3d
 			{
 				ResourceUseHandle UseHandle;
 
-				BufferUseFlags UseFlags;
+				GpuBufferUseFlags UseFlags;
 
 				/**
 				 * Use flags when buffer is bound for any kind of operation that will require an execution or memory
@@ -463,6 +472,9 @@ namespace b3d
 				 * trigger barriers on their next use.
 				 */
 				ResourcePipelineUse NewWriteHazardUse;
+
+				/** Used for validating that write hazard memory and execution barriers are being properly issued. */
+				WriteHazardTracking WriteHazardTracking;
 			};
 
 			/** Contains information about a single Vulkan image resource bound/used on this command buffer. */
