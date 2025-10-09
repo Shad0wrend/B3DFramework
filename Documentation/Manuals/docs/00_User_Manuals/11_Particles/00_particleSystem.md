@@ -6,7 +6,7 @@ Particles allow for rendering of objects that cannot be easily represented using
 
 ![An example of a particle system](../../Images/ParticleSystem.gif)  
 
-Particle system is represented through the @b3d::CParticleSystem component and consists of the following parts:
+Particle system is represented through the @b3d::ParticleSystem component and consists of the following parts:
  - One or multiple **emitters** - Each emitter has a shape that specifies where should new particles appear, as well as a variety of rules that control the initial properties of the particles.
  - Zero or more **evolvers** - Evolvers allow you to control/modify particle behaviour during their lifetime.
  - Global **settings** - These include the material to render the particles with, particle orientation, render mode (2D or 3D) and more.
@@ -15,30 +15,30 @@ Thoughout these set of manuals we will go over all the available emitters, evolv
 
 ~~~~~~~~~~~~~{.cpp}
 // Create a scene object and add a particle system component
-HSceneObject particleSystemSO = SceneObject::create("ParticleSystem");
-HParticleSystem particleSystem = particleSystemSO->addComponent<ParticleSystem>();
+HSceneObject particleSystemSceneObject = SceneObject::Create("ParticleSystem");
+HParticleSystem particleSystem = particleSystemSceneObject->AddComponent<ParticleSystem>();
 
 // Create a material to use for rendering the particles
-HShader shader = GetBuiltinResources().getBuiltinShader(BuiltinShader::ParticlesUnlit);
-HTexture texture = GetBuiltinResources().getTexture(BuiltinTexture::White);
+HShader shader = GetBuiltinResources().GetBuiltinShader(BuiltinShader::ParticlesUnlit);
+HTexture texture = GetBuiltinResources().GetTexture(BuiltinTexture::White);
 
-HMaterial material = Material::create(shader);
-material->setTexture("gTexture", texture);
+HMaterial material = Material::Create(shader);
+material->SetTexture("gTexture", texture);
 
 // Set the material to be used by the particle system
-ParticleSystemSettings psSettings;
-psSettings.material = particleMaterial;
+ParticleSystemSettings particleSystemSettings;
+particleSystemSettings.Material = material;
 
-particleSystem->setSettings(psSettings);
+particleSystem->SetSettings(particleSystemSettings);
 
 // Add an emitter that emits particles on the surface of a sphere
 SPtr<ParticleEmitter> emitter = B3DMakeShared<ParticleEmitter>();
 
-PARTICLE_SPHERE_SHAPE_DESC sphereShape;
-sphereShape.radius = 0.3f;
-emitter->setShape(ParticleEmitterSphereShape::create(sphereShape));
+ParticleSphereShapeSettings sphereShape;
+sphereShape.Radius = 0.3f;
+emitter->SetShape(ParticleEmitterSphereShape::Create(sphereShape));
 
-particleSystem->setEmitters({emitter});
+particleSystem->SetEmitters({emitter});
 ~~~~~~~~~~~~~
 
 As we see in the example above the basic system needs two things at minimum:
@@ -46,7 +46,7 @@ As we see in the example above the basic system needs two things at minimum:
  - A single particle emitter
  
 # Material
-You can set the material used to render the particles through the @b3d::ParticleSystemSettings object. The settings can be applied to the particle system by calling @b3d::CParticleSystem. We'll cover all the settings available eventually, but for now you can focus only on setting the material.
+You can set the material used to render the particles through the @b3d::ParticleSystemSettings object. The settings can be applied to the particle system by calling @b3d::ParticleSystem. We'll cover all the settings available eventually, but for now you can focus only on setting the material.
 
 Multiple built-in shaders exist for the purpose of rendering particle systems:
  - @b3d::BuiltinShader::ParticlesUnlit - Renders particles without any lighting, and supports transparent particles. This is the most commonly used shader for rendering particles. Use the **gTexture** property to assign a texture to the material.
@@ -57,21 +57,27 @@ Multiple built-in shaders exist for the purpose of rendering particle systems:
  
 ~~~~~~~~~~~~~{.cpp}
 // Create a material to use for rendering the particles
-HShader shader = GetBuiltinResources().getBuiltinShader(BuiltinShader::ParticlesUnlit);
-HTexture texture = GetBuiltinResources().getTexture(BuiltinTexture::White);
+HShader shader = GetBuiltinResources().GetBuiltinShader(BuiltinShader::ParticlesUnlit);
+HTexture texture = GetBuiltinResources().GetTexture(BuiltinTexture::White);
 
-HMaterial material = Material::create(particleShader);
-material->setTexture("gTexture", texture);
+HMaterial material = Material::Create(shader);
+material->SetTexture("gTexture", texture);
 
 // Use the soft variation
-particleMaterial->setVariation(
+material->SetVariation(
 	ShaderVariation({ ShaderVariation::Param("SOFT", true) }));
 
 // Set the material to be used by the particle system
-ParticleSystemSettings psSettings;
-psSettings.material = particleMaterial;
+ParticleSystemSettings particleSystemSettings;
+particleSystemSettings.Material = material;
 
-particleSystem->setSettings(psSettings);
+particleSystem->SetSettings(particleSystemSettings);
+~~~~~~~~~~~~~
+
+Query the current settings:
+
+~~~~~~~~~~~~~{.cpp}
+ParticleSystemSettings particleSystemSettings = particleSystem->GetSettings();
 ~~~~~~~~~~~~~
 
 You may also create your own particle shaders, as we will show later.
@@ -82,37 +88,49 @@ You may also create your own particle shaders, as we will show later.
 
 Emitters determine where are new particles spawned, along with other properties that are assigned to newly spawned particles. They are represented using the @b3d::ParticleEmitter class.
 
-Once created they can be registered with the particle system by setting a list of emitters through @b3d::CParticleSystem::setEmitters.
+Once created they can be registered with the particle system by setting a list of emitters through @b3d::ParticleSystem::SetEmitters.
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<ParticleEmitter> emitter = B3DMakeShared<ParticleEmitter>();
-particleSystem->setEmitters({emitter});
+particleSystem->SetEmitters({emitter});
+~~~~~~~~~~~~~
+
+Query the current emitters:
+
+~~~~~~~~~~~~~{.cpp}
+Vector<SPtr<ParticleEmitter>> emitters = particleSystem->GetEmitters();
 ~~~~~~~~~~~~~
 
 ## Shape
 An emitter has many properties, but the one essential property you must assign is the emitter shape. The shape controls where will the new particles spawn, as well as the particle initial travel direction (usually inheriting the shape normal). Various shapes are supported, from primitives like cubes and spheres to static and skinned meshes. We'll cover all the shape types in detail in a later manual.
 
-The shape is assigned by calling @b3d::ParticleEmitter::setShape.
+The shape is assigned by calling @b3d::ParticleEmitter::SetShape.
 
 ~~~~~~~~~~~~~{.cpp}
-PARTICLE_SPHERE_SHAPE_DESC sphereShape;
-sphereShape.radius = 0.3f;
-emitter->setShape(ParticleEmitterSphereShape::create(sphereShape));
+ParticleSphereShapeSettings sphereShape;
+sphereShape.Radius = 0.3f;
+emitter->SetShape(ParticleEmitterSphereShape::Create(sphereShape));
+~~~~~~~~~~~~~
+
+Query the shape:
+
+~~~~~~~~~~~~~{.cpp}
+SPtr<ParticleEmitterShape> shape = emitter->GetShape();
 ~~~~~~~~~~~~~
 
 ## Other emitter properties
 
 ### Spawn rate
 Controls how many particles to spawn and when. There are two ways to set this property:
- - @b3d::ParticleEmitter::setEmissionRate - Sets up a continous emission by setting the number of particles emitted per second.
- - @b3d::ParticleEmitter::setEmissionBursts - Sets up bursts of particles that trigger at a specific point in time, and optionally repeat at an interval. Each burst is defined through the @b3d::ParticleBurst structure.
- 
+ - @b3d::ParticleEmitter::SetEmissionRate - Sets up a continuous emission by setting the number of particles emitted per second.
+ - @b3d::ParticleEmitter::SetEmissionBursts - Sets up bursts of particles that trigger at a specific point in time, and optionally repeat at an interval. Each burst is defined through the @b3d::ParticleBurst structure.
+
 ~~~~~~~~~~~~~{.cpp}
 // Continually emit 50 particles per second
-emitter->setEmissionRate(50.0f);
+emitter->SetEmissionRate(50.0f);
 
 // Spawn 200 particles in bulk every five seconds
-emitter->setEmissionBursts(
+emitter->SetEmissionBursts(
 {
     ParticleBurst(
      5.0f, // Time at which to trigger
@@ -122,89 +140,143 @@ emitter->setEmissionBursts(
 });
 ~~~~~~~~~~~~~
 
+Query the emission rate and bursts:
+
+~~~~~~~~~~~~~{.cpp}
+float emissionRate = emitter->GetEmissionRate();
+Vector<ParticleBurst> emissionBursts = emitter->GetEmissionBursts();
+~~~~~~~~~~~~~
+
 ![Emission bursts](../../Images/emissionBurst.gif)  
 
 ### Lifetime
-Controls how long should each individual particle live, in seconds. After the lifetime expires the particle disappears. Set it through @b3d::ParticleEmitter::setInitialLifetime.
+Controls how long should each individual particle live, in seconds. After the lifetime expires the particle disappears. Set it through @b3d::ParticleEmitter::SetInitialLifetime.
 
 ~~~~~~~~~~~~~{.cpp}
 // Each particle will stay alive for exactly 10 seconds
-emitter->setInitialLifetime(10.0f);
+emitter->SetInitialLifetime(10.0f);
+~~~~~~~~~~~~~
+
+Query the initial lifetime:
+
+~~~~~~~~~~~~~{.cpp}
+FloatDistribution lifetime = emitter->GetInitialLifetime();
 ~~~~~~~~~~~~~
 
 ### Size
 Controls the size of each individual particle. Size can be set uniformly for all axes, or separately for each axis:
- - @b3d::ParticleEmitter::setInitialSize - Sets the uniform size of the particles. Only used if @b3d::ParticleEmitter::setUse3DSize is set to false (false being the default).
- - @b3d::ParticleEmitter::setInitialSize3D - Sets the size of the particles with the ability to specify a different size for each axis. If using standard particles only X & Y components are used. If using 3D particles (which we'll discuss later) all three components are used. Only used if **ParticleEmitter::setUse3DSize()** is set to true.
- 
+ - @b3d::ParticleEmitter::SetInitialSize - Sets the uniform size of the particles. Only used if @b3d::ParticleEmitter::SetUse3DSize is set to false (false being the default).
+ - @b3d::ParticleEmitter::SetInitialSize3D - Sets the size of the particles with the ability to specify a different size for each axis. If using standard particles only X & Y components are used. If using 3D particles (which we'll discuss later) all three components are used. Only used if **ParticleEmitter::SetUse3DSize()** is set to true.
+
 ~~~~~~~~~~~~~{.cpp}
 // Set uniform size of individual particle to 0.1 meters
-emitter->setInitialSize(0.1f);
+emitter->SetInitialSize(0.1f);
 
 // Or, enable 3D size and set the dimensions separately
-emitter->setUse3DSize(true);
-emitter->setInitialSize3D(Vector3(0.1f, 0.05f, 0.25f));
+emitter->SetUse3DSize(true);
+emitter->SetInitialSize3D(Vector3(0.1f, 0.05f, 0.25f));
+~~~~~~~~~~~~~
+
+Query the initial size and 3D size settings:
+
+~~~~~~~~~~~~~{.cpp}
+FloatDistribution size = emitter->GetInitialSize();
+Vector3Distribution size3D = emitter->GetInitialSize3D();
+bool use3DSize = emitter->GetUse3DSize();
 ~~~~~~~~~~~~~
 
 ### Color
-Controls the color (RGB channels) and transparency (A channel) of particles. Set it through @b3d::ParticleEmitter::setInitialColor.
+Controls the color (RGB channels) and transparency (A channel) of particles. Set it through @b3d::ParticleEmitter::SetInitialColor.
 
 ~~~~~~~~~~~~~{.cpp}
 // Set color to bright red
-emitter->setInitialColor(Color(1.0f, 0.0f, 0.0f, 1.0f));
+emitter->SetInitialColor(Color(1.0f, 0.0f, 0.0f, 1.0f));
+~~~~~~~~~~~~~
+
+Query the initial color:
+
+~~~~~~~~~~~~~{.cpp}
+ColorDistribution color = emitter->GetInitialColor();
 ~~~~~~~~~~~~~
 
 ### Speed
-Controls the speed of particles, along their initial travel directions (determined by shape). Set to zero to keep the particles static. Set it through @b3d::ParticleEmitter::setInitialSpeed.
+Controls the speed of particles, along their initial travel directions (determined by shape). Set to zero to keep the particles static. Set it through @b3d::ParticleEmitter::SetInitialSpeed.
 
 ~~~~~~~~~~~~~{.cpp}
 // Move particles at a rate of 5 m/s
-emitter->setInitialSpeed(5.0f);
+emitter->SetInitialSpeed(5.0f);
+~~~~~~~~~~~~~
+
+Query the initial speed:
+
+~~~~~~~~~~~~~{.cpp}
+FloatDistribution speed = emitter->GetInitialSpeed();
 ~~~~~~~~~~~~~
 
 ### Rotation
 Controls the initial orientation of the particles. It can be set as a single value, which rotates the particle around its Z axis, or as separate values for each axis separately. The values specified are in degrees.
- - @b3d::ParticleEmitter::setInitialRotation - Sets the rotation around the Z axis in degrees. This should be used for 2D view-facing particles as orientation around other axes doesn't make sense. Used if @b3d::ParticleEmitter::setUse3DRotation is disabled (disabled being the default).
- - @b3d::ParticleEmitter::setInitialRotation3D - Sets rotation around each axis separately, in degrees (Euler angles). This can be used for 3D particles. Only used if **ParticleEmitter::setUse3DRotation()** is set to true.
+ - @b3d::ParticleEmitter::SetInitialRotation - Sets the rotation around the Z axis in degrees. This should be used for 2D view-facing particles as orientation around other axes doesn't make sense. Used if @b3d::ParticleEmitter::SetUse3DRotation is disabled (disabled being the default).
+ - @b3d::ParticleEmitter::SetInitialRotation3D - Sets rotation around each axis separately, in degrees (Euler angles). This can be used for 3D particles. Only used if **ParticleEmitter::SetUse3DRotation()** is set to true.
 
 ~~~~~~~~~~~~~{.cpp}
 // Spawn particles at a 45 degree angle
-emitter->setInitialRotation(45.0f);
+emitter->SetInitialRotation(45.0f);
 
 // Or, enable 3D rotation and set the rotation per axis
-emitter->setUse3DRotation(true);
-emitter->setInitialRotation3D(Vector3(0.0f, 45.0f, 90.0f));
+emitter->SetUse3DRotation(true);
+emitter->SetInitialRotation3D(Vector3(0.0f, 45.0f, 90.0f));
+~~~~~~~~~~~~~
+
+Query the initial rotation and 3D rotation settings:
+
+~~~~~~~~~~~~~{.cpp}
+FloatDistribution rotation = emitter->GetInitialRotation();
+Vector3Distribution rotation3D = emitter->GetInitialRotation3D();
+bool use3DRotation = emitter->GetUse3DRotation();
 ~~~~~~~~~~~~~
  
 ### Random offset
-Use this value to apply a completely random position offset to each spawned particle in the specified radius. This offset is applied on top of the particle's position as determined by the emitter shape. Set it through @b3d::ParticleEmitter::setRandomOffset.
+Use this value to apply a completely random position offset to each spawned particle in the specified radius. This offset is applied on top of the particle's position as determined by the emitter shape. Set it through @b3d::ParticleEmitter::SetRandomOffset.
 
 ~~~~~~~~~~~~~{.cpp}
 // Spawn particles on the emitter shape as normal, but then apply a random offset in a 0.2m radius sphere
-emitter->setRandomOffset(0.2f);
+emitter->SetRandomOffset(0.2f);
+~~~~~~~~~~~~~
+
+Query the random offset:
+
+~~~~~~~~~~~~~{.cpp}
+float randomOffset = emitter->GetRandomOffset();
 ~~~~~~~~~~~~~
 
 ### UV flip
-Particle texture coordinates (UV) can be randomlly flipped vertically or horizontally (or both), which can result in better visual variation of particles. Use @b3d::ParticleEmitter::setFlipU to set a flip chance for the horizontal axis and/or @b3d::ParticleEmitter::setFlipV to set a flip change for the vertical axis. Both methods accept a value in range [0, 1], where 0 specifies no flip chance, and 1 specifies 100% flip chance.
+Particle texture coordinates (UV) can be randomly flipped vertically or horizontally (or both), which can result in better visual variation of particles. Use @b3d::ParticleEmitter::SetFlipU to set a flip chance for the horizontal axis and/or @b3d::ParticleEmitter::SetFlipV to set a flip chance for the vertical axis. Both methods accept a value in range [0, 1], where 0 specifies no flip chance, and 1 specifies 100% flip chance.
 
 ~~~~~~~~~~~~~{.cpp}
 // Flip the horizontal or vertical UV coordinate 50% of the time
-emitter->setFlipU(0.5f);
-emitter->setFlipV(0.5f);
+emitter->SetFlipU(0.5f);
+emitter->SetFlipV(0.5f);
+~~~~~~~~~~~~~
+
+Query the UV flip settings:
+
+~~~~~~~~~~~~~{.cpp}
+float flipU = emitter->GetFlipU();
+float flipV = emitter->GetFlipV();
 ~~~~~~~~~~~~~
 
 ## Distributions
 Majority of the emitter properties described so far are defined as *distributions*. Distributions allow you to specify a value in the form a constant, a random range or a time varying curve. In the examples above we have only used constants for simplicity, but a lot more complex behaviour can be achieved by using random ranges or curves.
 
 ~~~~~~~~~~~~~{.cpp}
-// Randomly vary the color of a particle between red and blue 
-emitter->setInitialColor(ColorDistribution(
+// Randomly vary the color of a particle between red and blue
+emitter->SetInitialColor(ColorDistribution(
 	Color(1.0f, 0.0f, 0.0f, 1.0f),
 	Color(0.0f, 1.0f, 0.0f, 1.0f)
 ));
 
 // Specify a time-varying curve that makes new particles bigger with time
-emitter->setInitialSize(FloatDistribution(TAnimationCurve<float>(
+emitter->SetInitialSize(FloatDistribution(TAnimationCurve<float>(
 {
 	TKeyframe<float>{0.1f, 0.0f, 1.0f, 0.0f}, // Start at 0.1 size
 	TKeyframe<float>{0.4f, 1.0f, 0.0f, 1.0f}, // And grow up to 0.4 size
@@ -213,11 +285,11 @@ emitter->setInitialSize(FloatDistribution(TAnimationCurve<float>(
 
 See the [animation curves](../Utilities/animCurves), [color gradient](../Utilities/colorGradient) and [distributions](../Utilities/distributions) manuals for more information.
 
-All the time-varying distributions are evaluated using the lifetime of the particle system. You can change the duration of a particle system by setting @b3d::ParticleSystemSettings::duration. The particle system time will be normalized to [0, 1] range using the specified duration, and that normalized value will be used for sampling the curves in the time-varying distributions (therefore make sure those curves have times in the [0, 1] range). 
- 
-~~~~~~~~~~~~~{.cpp}
-ParticleSystemSettings psSettings = particleSystem->getSettings();
-psSettings.duration = 10.0f; // Evaluates time-varying distributions over the course of 10 seconds
+All the time-varying distributions are evaluated using the lifetime of the particle system. You can change the duration of a particle system by setting @b3d::ParticleSystemSettings::Duration. The particle system time will be normalized to [0, 1] range using the specified duration, and that normalized value will be used for sampling the curves in the time-varying distributions (therefore make sure those curves have times in the [0, 1] range).
 
-particleSystem->setSettings(psSettings);
+~~~~~~~~~~~~~{.cpp}
+ParticleSystemSettings particleSystemSettings = particleSystem->GetSettings();
+particleSystemSettings.Duration = 10.0f; // Evaluates time-varying distributions over the course of 10 seconds
+
+particleSystem->SetSettings(particleSystemSettings);
 ~~~~~~~~~~~~~
