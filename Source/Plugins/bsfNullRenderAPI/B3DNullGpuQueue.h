@@ -1,0 +1,31 @@
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+
+#include "B3DNullPrerequisites.h"
+#include "RenderAPI/B3DGpuDevice.h"
+
+namespace b3d
+{
+	namespace render
+	{
+		class NullGpuDevice;
+
+		/** @addtogroup Null
+		 *  @{
+		 */
+
+		/** Null implementation of a GPU queue. */
+		class NullGpuQueue : public GpuQueue
+		{
+		public:
+			NullGpuQueue(NullGpuDevice& device, GpuQueueUsage usage, u32 index);
+
+			void SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, GpuQueueMask syncMask, bool flushTransferCommandBuffer) override {}
+			void WaitUntilIdle() override {}
+			void PresentRenderWindow(const SPtr<RenderWindow>& renderWindow, GpuQueueMask syncMask = GpuQueueMask::kAll) override {}
+		};
+
+		/** @} */
+	} // namespace render
+} // namespace b3d

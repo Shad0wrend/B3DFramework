@@ -1,0 +1,34 @@
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+
+#include "B3DNullPrerequisites.h"
+#include "RenderAPI/B3DEventQuery.h"
+
+namespace b3d
+{
+	namespace render
+	{
+		class NullGpuDevice;
+
+		/** @addtogroup Null
+		 *  @{
+		 */
+
+		/** @copydoc EventQuery */
+		class NullEventQuery final : public EventQuery
+		{
+		public:
+			NullEventQuery(NullGpuDevice& gpuDevice);
+			~NullEventQuery() = default;
+
+			void Begin(GpuCommandBuffer& commandBuffer) override {}
+			bool IsReady() const override { return true; }
+
+		private:
+			NullGpuDevice& mGpuDevice;
+		};
+
+		/** @} */
+	} // namespace render
+} // namespace b3d

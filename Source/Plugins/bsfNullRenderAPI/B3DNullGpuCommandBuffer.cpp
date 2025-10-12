@@ -1,0 +1,16 @@
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#include "B3DNullGpuCommandBuffer.h"
+#include "B3DNullGpuDevice.h"
+#include "B3DNullGpuCommandBufferPool.h"
+
+namespace b3d
+{
+	namespace render
+	{
+		NullGpuCommandBuffer::NullGpuCommandBuffer(NullGpuDevice& device, NullGpuCommandBufferPool& pool, u32 id, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation)
+			: GpuCommandBuffer(device, ownerThread, queueType, createInformation)
+			, mId(id)
+		{ }
+	} // namespace render
+} // namespace b3d

@@ -4,52 +4,44 @@
 
 #include "B3DNullPrerequisites.h"
 #include "Image/B3DTexture.h"
-#include "Managers/B3DTextureManager.h"
 
 namespace b3d
 {
-	/** @addtogroup NullRenderAPI
-	 *  @{
-	 */
-
-	/**	Handles creation of null textures. */
-	class NullTextureManager final : public TextureManager
-	{
-	public:
-		PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) override;
-
-	protected:
-		SPtr<RenderTexture> CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
-	};
-
 	namespace render
 	{
-		/**	Handles creation of null textures. */
-		class NullTextureManager : public TextureManager
-		{
-		protected:
-			SPtr<Texture> CreateTextureInternal(const TextureCreateInformation& desc, const SPtr<PixelData>& initialData = nullptr, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
-			SPtr<RenderTexture> CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx = 0) override;
-		};
+		class NullGpuDevice;
+
+		/** @addtogroup Null
+		 *  @{
+		 */
 
 		/**	Null implementation of a texture. */
-		class NullTexture final : public Texture
+		class NullTexture : public Texture
 		{
 		public:
-			NullTexture(const TextureCreateInformation& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask);
+			NullTexture(NullGpuDevice& gpuDevice, const TextureCreateInformation& createInformation);
 			~NullTexture();
 
-		protected:
-			PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) override;
-			void UnlockInternal() override;
-			void CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& desc, const SPtr<CommandBuffer>& commandBuffer) override {}
-			void ReadDataInternal(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) override {}
-			void WriteDataInternal(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, u32 queueIdx = 0) override {}
+			void SetName(const StringView& name) override { mName = name; }
 
 		protected:
+			friend class NullGpuDevice;
+
+			void Initialize() override {}
+			PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0) override;
+			void UnlockInternal() override {}
+			void CopyInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation) override {}
+			void BlitInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureBlitInformation& blitInformation) override {}
+			TAsyncOp<SPtr<PixelData>> ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel = 0, u32 face = 0) override;
+			void ReadDataInternal(PixelData& destination, u32 mipLevel = 0, u32 face = 0, const SPtr<GpuQueue>& gpuQueue = nullptr) override {}
+			void WriteDataInternal(const PixelData& source, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) override {}
+
+		private:
+			NullGpuDevice& mGpuDevice;
 			PixelData* mMappedBuffer = nullptr;
+			String mName;
 		};
-	} // namespace render
 
-	/** @} */
+		/** @} */
+	} // namespace render
 } // namespace b3d

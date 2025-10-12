@@ -1,0 +1,83 @@
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+
+#include "B3DNullPrerequisites.h"
+#include "RenderAPI/B3DGpuDevice.h"
+#include "RenderAPI/B3DGpuDeviceCapabilities.h"
+
+namespace b3d
+{
+	namespace render
+	{
+		/** @addtogroup Null
+		 *  @{
+		 */
+
+		/** Represents a single null GPU device. */
+		class NullGpuDevice : public GpuDevice
+		{
+		public:
+			static constexpr const char* kGpuProgramLanguageName = "nullsl";
+
+			NullGpuDevice();
+			~NullGpuDevice();
+
+			/**
+			 * @name GpuDevice Interface
+			 *  @{
+			 */
+
+			bool IsInitialized() const override { return mIsInitialized; }
+			bool Initialize() override;
+
+			const GpuDeviceCapabilities& GetCapabilities() const override { return mCapabilities; }
+			const VideoModeInfo& GetVideoModeInfo() const override { return *mVideoModeInfo; }
+
+			bool IsGpuProgramLanguageSupported(const StringView& language) const override { return language == kGpuProgramLanguageName; }
+			SPtr<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const override;
+
+			u32 GetQueueCount(GpuQueueUsage usage) const override;
+			SPtr<GpuQueue> GetQueue(GpuQueueUsage usage, u32 index) const override;
+			void SubmitTransferCommandBuffers(bool wait = false) override {}
+			void PresentRenderWindow(const SPtr<RenderWindow>& renderWindow, GpuQueueMask syncMask = GpuQueueMask::kAll) override {}
+			void WaitUntilIdle() override {}
+			void BeginFrame() override {}
+			void EndFrame() override {}
+
+			SPtr<render::GpuCommandBufferPool> CreateGpuCommandBufferPool(const render::GpuCommandBufferPoolCreateInformation& createInformation) override;
+			SPtr<Texture> CreateTexture(const TextureCreateInformation& createInformation, bool deferredInitialize) override;
+			SPtr<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize = false) override;
+			SPtr<GpuQueryPool> CreateQueryPool(const GpuQueryPoolCreateInformation& createInformation) override;
+			SPtr<EventQuery> CreateEventQuery() override;
+			SPtr<GpuProgram> CreateGpuProgram(const GpuProgramCreateInformation& createInformation, bool deferredInitialize = false) override;
+			SPtr<GpuParameters> CreateGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, bool deferredInitialize) override;
+			SPtr<GpuGraphicsPipelineState> CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, bool deferredInitialize) override;
+			SPtr<GpuComputePipelineState> CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, bool deferredInitialize) override;
+			SPtr<GpuPipelineParameterLayout> CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, bool deferredInitialize) override;
+
+			void ConvertProjectionMatrix(const Matrix4& input, Matrix4& output) override;
+			GpuDataParameterBlockInformation GenerateUniformBlockInformation(const String& name, Vector<GpuDataParameterInformation>& inOutUniforms) override;
+			float ConvertTimestampToMilliseconds(u64 timestamp) override { return 0.0f; }
+
+			/** @} */
+
+		private:
+			/** Contains data about a set of queues of a specific type. */
+			struct QueueInfo
+			{
+				u32 FamilyIndex = ~0u;
+				TArray<SPtr<GpuQueue>> Queues;
+			};
+
+			SPtr<SamplerState> CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize = false) override;
+
+			bool mIsInitialized = false;
+			QueueInfo mQueueInfos[GQT_COUNT];
+			GpuDeviceCapabilities mCapabilities;
+			SPtr<VideoModeInfo> mVideoModeInfo;
+		};
+
+		/** @} */
+	} // namespace render
+} // namespace b3d

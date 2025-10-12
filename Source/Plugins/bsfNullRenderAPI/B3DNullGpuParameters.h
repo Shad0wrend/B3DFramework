@@ -1,0 +1,39 @@
+//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+
+#include "B3DNullPrerequisites.h"
+#include "RenderAPI/B3DGpuParameters.h"
+
+namespace b3d
+{
+	namespace render
+	{
+		class NullGpuDevice;
+
+		/** @addtogroup Null
+		 *  @{
+		 */
+
+		/** Null implementation of GpuParameters, containing resource descriptors for all shader stages. */
+		class NullGpuParameters : public GpuParameters
+		{
+		public:
+			NullGpuParameters(NullGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterLayout>& parameterLayout);
+			~NullGpuParameters() override = default;
+
+			bool SetUniformBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& paramBlockBuffer, u32 arrayIndex = 0, u32 offset = 0) override { return true; }
+			bool SetSampledTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0) override { return true; }
+			bool SetStorageTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface, u32 arrayIndex = 0) override { return true; }
+			bool SetStorageBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer, u32 arrayIndex = 0, GpuBufferViewInformation view = GpuBufferViewInformation()) override { return true; }
+			bool SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex = 0) override { return true; }
+
+			void Initialize() override {}
+
+		private:
+			NullGpuDevice& mGpuDevice;
+		};
+
+		/** @} */
+	} // namespace render
+} // namespace b3d

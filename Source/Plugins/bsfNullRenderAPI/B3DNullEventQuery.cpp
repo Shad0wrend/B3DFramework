@@ -1,11 +1,14 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "B3DNullPrerequisites.h"
-#include "B3DNullGpuBackendFactory.h"
+#include "B3DNullEventQuery.h"
+#include "B3DNullGpuDevice.h"
 
-using namespace b3d;
-
-extern "C" B3D_PLUGIN_EXPORT const char* GetPluginName()
+namespace b3d
 {
-	return NullGpuBackendFactory::SystemName;
-}
+	namespace render
+	{
+		NullEventQuery::NullEventQuery(NullGpuDevice& gpuDevice)
+			: mGpuDevice(gpuDevice)
+		{ }
+	} // namespace render
+} // namespace b3d
