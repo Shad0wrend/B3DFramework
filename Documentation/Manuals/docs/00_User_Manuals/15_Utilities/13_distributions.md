@@ -62,16 +62,17 @@ ColorGradient(
 }));
 ~~~~~~~~~~~~~
 
-All distribution types can be evaluated by calling their **evaluate** method, which accepts two parameters:
+All distribution types can be evaluated by calling their **Evaluate** method, which accepts two parameters:
  - 't' - Time to evaluate the curve at. Irrelevant for non-curve distributions.
  - 'factor' - A random factor that is used to pick a value in specified random range. Can be a float in [0, 1] range, or a **Random** object that automatically generates a random factor. Irrelevant for distributions not representing a range.
- 
+
 ~~~~~~~~~~~~~{.cpp}
-Random rng;
+Random randomNumberGenerator;
 
 // Evaluate half-way along the curve, and use a random number to evaluate the range
-float valueFloat = curveRangeFloat.evaluate(0.5f, rng);
-RGBA valueColor = curveRangeColor(0.5f, rng);
+float valueFloat = curveRangeFloat.Evaluate(0.5f, randomNumberGenerator);
+RGBA valueColor = curveRangeColor.Evaluate(0.5f, randomNumberGenerator);
+B3D_LOG(LogVerbosity::Info, LogGeneral, "Distribution value: {0}", valueFloat);
 ~~~~~~~~~~~~~
 
 Normally you will not need to evaluate distributions manually, but rather pass them along to other systems such as the particle system.

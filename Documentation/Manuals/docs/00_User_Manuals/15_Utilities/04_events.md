@@ -12,8 +12,8 @@ When creating an event, all you need to do is specify a format of the callback i
 class MyPlayerController
 {
 public:
-	Event<void()> onPlayerJumped; // Event that triggers a callback with no parameters
-	Event<void(UINT32)> onPlayerCollectedCoins; // Event that triggers a callback with an UINT32 parameter
+	Event<void()> OnPlayerJumped; // Event that triggers a callback with no parameters
+	Event<void(u32)> OnPlayerCollectedCoins; // Event that triggers a callback with a u32 parameter
 };
 ~~~~~~~~~~~~~
 
@@ -27,55 +27,55 @@ class MyPlayerController
 {
 public:
 	// Assume this is a function called every frame
-	void update()
+	void Update()
 	{
 		bool spacePressed = /*... check input system for button press ...*/;
-		UINT32 grabbedCoins = /*... use physics system to see if player is colliding with any coin objects ...*/;
-		
+		u32 grabbedCoins = /*... use physics system to see if player is colliding with any coin objects ...*/;
+
 		if(spacePressed)
-			onPlayerJumped(); // Trigger event
-			
+			OnPlayerJumped(); // Trigger event
+
 		if(grabbedCoins > 0)
-			onPlayerCollectedCoins(grabbedCoins); // Trigger event
+			OnPlayerCollectedCoins(grabbedCoins); // Trigger event
 	}
 
-	Event<void()> onPlayerJumped;
-	Event<void(UINT32)> onPlayerCollectedCoins;
+	Event<void()> OnPlayerJumped;
+	Event<void(u32)> OnPlayerCollectedCoins;
 };
 ~~~~~~~~~~~~~
 
 # Subscribing to events
 
-An external object can register itself with an event by calling @b3d::Event<RetType(Args...)>::connect(). 
+An external object can register itself with an event by calling @b3d::Event<RetType(Args...)>::Connect().
 ~~~~~~~~~~~~~{.cpp}
 // Define a couple of methods that trigger when events are triggered
 auto playerJumpedCallback = [&]()
 {
-	GetDebug().logDebug("Player jumped!");
+	B3D_LOG(Info, General, "Player jumped!");
 };
 
-auto playerCollectedCoinsCallback = [&](UINT32 numCoins)
+auto playerCollectedCoinsCallback = [&](u32 numberOfCoins)
 {
-	GetDebug().logDebug("Player collected: " + toString(numCoins) + " coins!");
+	B3D_LOG(Info, General, "Player collected: {0} coins!", numberOfCoins);
 };
 
 MyPlayerController playerController;
 
 // Subscribe to events
-playerController.onPlayerJumped.connect(&playerJumpedCallback);
-playerController.onPlayerCollectedCoins.connect(&playerCollectedCoinsCallback);
+playerController.OnPlayerJumped.Connect(&playerJumpedCallback);
+playerController.OnPlayerCollectedCoins.Connect(&playerCollectedCoinsCallback);
 
 // ... run player logic every frame ...
 ~~~~~~~~~~~~~
 
-Subscribing to an event will return an @b3d::HEvent handle. You can use this handle to manually disconnect from the event by calling @b3d::HEvent::disconnect. For example:
+Subscribing to an event will return an @b3d::HEvent handle. You can use this handle to manually disconnect from the event by calling @b3d::HEvent::Disconnect. For example:
 
 ~~~~~~~~~~~~~{.cpp}
-HEvent eventHandle = playerController.onPlayerJumped.connect(&playerJumpedCallback);
+HEvent eventHandle = playerController.OnPlayerJumped.Connect(&playerJumpedCallback);
 
 // ... do something and decide event is no longer required ...
 
-eventHandle.disconnect();
+eventHandle.Disconnect();
 ~~~~~~~~~~~~~
 
 ## Class methods as event callbacks
@@ -87,8 +87,8 @@ For example:
 ~~~~~~~~~~~~~{.cpp}
 class MyEventSubscriber
 {
-	void eventCallback(); // What you see
-	// void eventCallback(MyEventSubscriber* thisPtr); // What the compiler sees for the above method
+	void EventCallback(); // What you see
+	// void EventCallback(MyEventSubscriber* thisPointer); // What the compiler sees for the above method
 };
 ~~~~~~~~~~~~~
 
@@ -96,33 +96,33 @@ When setting up event callbacks we must therefore provide the *this* pointer man
 
 If you are unfamiliar with *std::bind*, it basically transforms a function signature by permanently *binding* one of its parameters. Here's a simple example:
 ~~~~~~~~~~~~~{.cpp}
-auto myFunc = [&](UINT32 param)
+auto myFunction = [&](u32 parameter)
 { };
 
 // Permanently binds 5 as the function parameter
-auto myFuncNoParams = std::bind(myFunc, 5);
+auto myFunctionWithoutParameters = std::bind(myFunction, 5);
 
 // Call the function with parameter 5
-myFuncNoParams();
+myFunctionWithoutParameters();
 ~~~~~~~~~~~~~
 
 Using this same logic, we can permanently bind the *this* pointer when subscribing to an event:
 ~~~~~~~~~~~~~{.cpp}
 class MyEventSubscriber
 {
-	void playerJumpedCallback() // Has a hidden "this" pointer parameter
+	void PlayerJumpedCallback() // Has a hidden "this" pointer parameter
 	{
-		GetDebug().logDebug("Player jumped!");
+		B3D_LOG(Info, General, "Player jumped!");
 	}
-	
+
 	// Assuming the same player controller class we defined earlier
-	void subscribeToEvents(MyPlayerController& playerController)
+	void SubscribeToEvents(MyPlayerController& playerController)
 	{
 		// Bind the "this" pointer
-		auto callback = std::bind(&MyEventSubscriber::playerJumpedCallback, this);
-	
+		auto callback = std::bind(&MyEventSubscriber::PlayerJumpedCallback, this);
+
 		// Register the callback without the event needing to know about "this" pointer parameter
-		playerController.onPlayerJumped.connect(callback);
+		playerController.OnPlayerJumped.Connect(callback);
 	}
 };
 ~~~~~~~~~~~~~
@@ -132,21 +132,21 @@ Alternatively, you can wrap the class function call in a lambda function while c
 // Alternative version of the above example, using lambda instead of std::bind
 class MyEventSubscriber
 {
-	void playerJumpedCallback() // Has a hidden "this" pointer parameter
+	void PlayerJumpedCallback() // Has a hidden "this" pointer parameter
 	{
-		GetDebug().logDebug("Player jumped!");
+		B3D_LOG(Info, General, "Player jumped!");
 	}
-	
-	void subscribeToEvents(MyPlayerController& playerController)
+
+	void SubscribeToEvents(MyPlayerController& playerController)
 	{
 		// Wrap our class method call in a lambda function
 		auto callback = [this]()
 		{
-			playerJumpedCallback();
+			PlayerJumpedCallback();
 		};
-		
+
 		// Register the callback without the event needing to know about "this" pointer parameter
-		playerController.onPlayerJumped.connect(callback);
+		playerController.OnPlayerJumped.Connect(callback);
 	}
 };
 ~~~~~~~~~~~~~

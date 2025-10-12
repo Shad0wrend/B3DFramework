@@ -12,14 +12,15 @@ ColorGradient gradient({
 });
 ~~~~~~~~~~~~~
 
-Once created you can manually evaluate the gradient by calling @b3d::ColorGradient::evaluate with a value of `t` specifying a point at which to sample the gradient. The returned value is a color encoded in a 32-bit format.
+Once created you can manually evaluate the gradient by calling @b3d::ColorGradient::Evaluate with a value of `t` specifying a point at which to sample the gradient. The returned value is a color encoded in a 32-bit format.
 
 ~~~~~~~~~~~~~{.cpp}
 // Evaluates a gradient yielding a color half way between red and green
-RGBA color32 = gradient.evaluate(0.75f);
+RGBA color32 = gradient.Evaluate(0.75f);
 
 // Optionally, convert to Color
-Color color = Color::fromRGBA(color32);
+Color color = Color::FromRgba(color32);
+B3D_LOG(LogVerbosity::Info, LogGeneral, "Gradient color at t=0.75: {0}", color);
 ~~~~~~~~~~~~~
 
 In most cases you will not be evaluating the gradient yourself, but rather passing it to various systems, such as the **Material** or **ParticleEmitter**.

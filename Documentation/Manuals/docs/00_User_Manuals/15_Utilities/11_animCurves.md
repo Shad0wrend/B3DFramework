@@ -21,26 +21,27 @@ TAnimationCurve<float> curve(
 });
 ~~~~~~~~~~~~~
 
-If you are unsure how to set them, or don't care about tangents you can use @b3d::AnimationUtility::calculateTangents method to generate them automatically.
+If you are unsure how to set them, or don't care about tangents you can use @b3d::AnimationUtility::CalculateTangents method to generate them automatically.
 
 ~~~~~~~~~~~~~{.cpp}
 // All tangents set to 0, then auto-calculating them
-Vector<TKeyframe<float>> keyframes = { 
+Vector<TKeyframe<float>> keyframes = {
 	TKeyframe<float>{ 0.0f, 0.0f, 0.0f, 0.0f },
 	TKeyframe<float>{ 1.0f, 0.0f, 0.0f, 0.5f },
 	TKeyframe<float>{ 0.0f, 0.0f, 0.0f, 1.0f }
 };
 
-AnimationUtility::calculateTangents(keyframes);
+AnimationUtility::CalculateTangents(keyframes);
 TAnimationCurve<float> curve(keyframes);
 ~~~~~~~~~~~~~
 
 Note that keyframes provided to the curve must be in ascending order with regards to time. Once the curve is created it is immutable and keyframes can no longer be changed.
 
-To evaluate a curve call @b3d::TAnimationCurve<T>::evaluate.
+To evaluate a curve call @b3d::TAnimationCurve<T>::Evaluate.
 
 ~~~~~~~~~~~~~{.cpp}
-float val = curve.evaluate(0.25f);
+float value = curve.Evaluate(0.25f);
+B3D_LOG(LogVerbosity::Info, LogGeneral, "Curve value at t=0.25: {0}", value);
 ~~~~~~~~~~~~~
 
 # More about tangents

@@ -32,40 +32,40 @@ String validNarrow = u8"�����";
 ~~~~~~~~~~~~~
 
 # Converting between encodings
-b3d::f provides a variety of methods to convert between most common string encodings. This functionality is provided in the @b3d::UTF8 class. For example use @b3d::UTF8::fromANSI to convert from locale-specific encoding to UTF8, and @b3d::UTF8::toANSI for other way around. Conversions for UTF-16 and UTF-32 are also provided.
+The framework provides a variety of methods to convert between most common string encodings. This functionality is provided in the @b3d::UTF8 class. For example use @b3d::UTF8::FromANSI to convert from locale-specific encoding to UTF8, and @b3d::UTF8::ToANSI for other way around. Conversions for UTF-16 and UTF-32 are also provided.
 
 ~~~~~~~~~~~~~{.cpp}
 // Assuming Windows platform
 
 // Locale specific ANSI encoding
-String strANSI = "NarrowString";
+String ansiString = "NarrowString";
 
 // Convert to UTF-8
-String strUTF8 = UTF8::fromANSI(strANSI);
+String utf8String = UTF8::FromANSI(ansiString);
 
 // And back to ANSI
-strANSI = UTF8::toANSI(strUTF8);
+ansiString = UTF8::ToANSI(utf8String);
 ~~~~~~~~~~~~~
 
 # Converting data types
-You can convert most primitive data types to strings by using the @b3d::toString or @b3d::toWString functions.
+You can convert most primitive data types to strings by using the @b3d::ToString or @b3d::ToWString functions.
 
 ~~~~~~~~~~~~~{.cpp}
-bool v1 = false;
-int v2 = 244;
+bool booleanValue = false;
+i32 integerValue = 244;
 
-String str1 = toString(v1);
-String str2 = toString(v2);
+String stringFromBoolean = ToString(booleanValue);
+String stringFromInteger = ToString(integerValue);
 ~~~~~~~~~~~~~
 
-You can also do an opposite conversion, converting from a string to a primitive data type by calling one of the *parse* functions.
+You can also do an opposite conversion, converting from a string to a primitive data type by calling one of the *Parse* functions.
 
 ~~~~~~~~~~~~~{.cpp}
-String str1 = "false";
-String str2 = "244";
+String booleanString = "false";
+String integerString = "244";
 
-bool v1 = parseBool(str1, false);
-int v2 = parseINT32(str2, 0);
+bool parsedBoolean = ParseBool(booleanString, false);
+i32 parsedInteger = Parsei32(integerString, 0);
 ~~~~~~~~~~~~~
 
 If the system cannot properly parse the string, it will instead assign the default value provided.
@@ -74,21 +74,21 @@ If the system cannot properly parse the string, it will instead assign the defau
 Various forms of string manipulations can be performed via @b3d::StringUtil, including but not limited to: making a string upper or lower case, replacing string elements, matching string elements, splitting strings based on delimiters and more.
 
 ~~~~~~~~~~~~~{.cpp}
-String string = "124,355,banana,954";
+String commaDelimitedString = "124,355,banana,954";
 
 // Split string into entries separated by ,
-Vector<String> entries = StringUtil::split(string, ",");
+Vector<String> stringEntries = StringUtil::Split(commaDelimitedString, ",");
 
 // Replace all occurrences of "banana" within the string, with "643"
-string = StringUtil::replaceAll(string, "banana", "643");
+commaDelimitedString = StringUtil::ReplaceAll(commaDelimitedString, "banana", "643");
 ~~~~~~~~~~~~~
 
 # Formatting strings
-Often you need to construct larger strings from other strings. Use @b3d::StringUtil::format to construct such strings by providing a template string, which contains special identifiers for inserting other strings. The identifiers are represented like "{0}, {1}" in the source string, where the number represents the position of the parameter that will be used for replacing the identifier.
+Often you need to construct larger strings from other strings. Use @b3d::StringUtil::Format to construct such strings by providing a template string, which contains special identifiers for inserting other strings. The identifiers are represented like "{0}, {1}" in the source string, where the number represents the position of the parameter that will be used for replacing the identifier.
 
 ~~~~~~~~~~~~~{.cpp}
-String templateStr = "Hello, my name is {0}.";
-String str = StringUtil::format(templateStr, "b3d::f");
+String templateString = "Hello, my name is {0}.";
+String formattedString = StringUtil::Format(templateString, "B3D Framework");
 
-// str now contains the string "Hello, my name is b3d::f."
+// formattedString now contains the string "Hello, my name is B3D Framework."
 ~~~~~~~~~~~~~
