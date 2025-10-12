@@ -55,6 +55,13 @@ namespace b3d
 			TInlineArray<RenderCompositorNode*, 4> InputNodes;
 		};
 
+		/** Types of render compositor nodes. */
+		enum class RenderCompositorNodeCategory
+		{
+			Primary, /**< Primary rendering pipeline node. */
+			Utility /**< Utility node pulled in on-demand. */
+		};
+
 		/**
 		 * Node in the render compositor hierarchy. Nodes can be implemented to perform specific rendering tasks. Each node
 		 * can depend on other nodes in the hierarchy.
@@ -88,15 +95,15 @@ namespace b3d
 		class RenderCompositor
 		{
 		public:
-			struct NodeType;
+			struct NodeDescriptor;
 
 		private:
 			/** Contains internal information about a single render node. */
 			struct NodeInfo
 			{
 				RenderCompositorNode* Node;
-				NodeType* NodeType;
-				u32 LastUseIdx;
+				const NodeDescriptor* NodeDescriptor;
+				u32 LastUsedByNodeIndex;
 				TInlineArray<RenderCompositorNode*, 4> Inputs;
 			};
 
@@ -107,12 +114,11 @@ namespace b3d
 			 * Rebuilds the render node hierarchy. Call this whenever some setting that may influence the render node
 			 * dependencies changes.
 			 *
-			 * @param[in]	view		Parent view to which this compositor belongs to.
-			 * @param[in]	finalNode	Identifier of the final node in the node hierarchy. This node is expected to write
-			 *							to the views render target. All other nodes will be deduced from this node's
-			 *							dependencies.
+			 * @param	view			Parent view to which this compositor belongs to.
+			 * @param	primaryNodes	List of nodes to execute, in the order listed. Primary nodes might pull in other helper
+			 *							nodes as needed by their dependencies.
 			 */
-			void Build(const RendererView& view, const StringID& finalNode);
+			void Build(const RendererView& view, const TArray<StringID>& primaryNodes);
 
 			/** Performs rendering using the current render node hierarchy. This is expected to be called once per frame. */
 			void Execute(RenderCompositorNodeInputs& inputs) const;
@@ -121,7 +127,7 @@ namespace b3d
 			/** Clears the render node hierarchy. */
 			void Clear();
 
-			Vector<NodeInfo> mNodeInfos;
+			Vector<NodeInfo> mRegisteredNodes;
 			bool mIsValid = false;
 
 			/************************************************************************/
@@ -129,9 +135,9 @@ namespace b3d
 			/************************************************************************/
 		public:
 			/** Contains information about a specific node type. */
-			struct NodeType
+			struct NodeDescriptor
 			{
-				virtual ~NodeType() = default;
+				virtual ~NodeDescriptor() = default;
 
 				/** Creates a new node of this type. */
 				virtual RenderCompositorNode* Create() const = 0;
@@ -139,14 +145,21 @@ namespace b3d
 				/** Returns identifier for all the dependencies of a node of this type. */
 				virtual TInlineArray<StringID, 4> GetDependencies(const RendererView& view) const = 0;
 
+				/**
+				 * Returns the category of this node. Primary nodes represent the main path through the pipeline, and must be explicitly
+				 * provided when calling the RenderCompositor::Build() method. Utility nodes are pulled in on demand based on dependencies
+				 * of the primary nodes (or other utility nodes).
+				 */
+				virtual RenderCompositorNodeCategory GetCategory() const = 0;
+
 				StringID Id;
 			};
 
 			/** Templated implementation of NodeType. */
 			template <class T>
-			struct TNodeType : NodeType
+			struct TNodeDescriptor : NodeDescriptor
 			{
-				TNodeType()
+				TNodeDescriptor()
 				{
 					Id = T::GetNodeId();
 				}
@@ -155,6 +168,11 @@ namespace b3d
 				TInlineArray<StringID, 4> GetDependencies(const RendererView& view) const override
 				{
 					return T::GetDependencies(view);
+				}
+
+				RenderCompositorNodeCategory GetCategory() const override
+				{
+					return T::GetCategory();
 				}
 			};
 
@@ -165,24 +183,24 @@ namespace b3d
 			template <class T>
 			static void RegisterNodeType()
 			{
-				auto findIter = mNodeTypes.find(T::GetNodeId());
-				if(findIter != mNodeTypes.end())
+				auto findIter = mNodeDescriptors.find(T::GetNodeId());
+				if(findIter != mNodeDescriptors.end())
 					B3D_LOG(Error, Renderer, "Found two render compositor nodes with the same name \"{0}\".", String(T::GetNodeId().CStr()));
 
-				mNodeTypes[T::GetNodeId()] = B3DNew<TNodeType<T>>();
+				mNodeDescriptors[T::GetNodeId()] = B3DNew<TNodeDescriptor<T>>();
 			}
 
 			/** Releases any information about render node types. */
 			static void CleanUp()
 			{
-				for(auto& entry : mNodeTypes)
+				for(auto& entry : mNodeDescriptors)
 					B3DDelete(entry.second);
 
-				mNodeTypes.clear();
+				mNodeDescriptors.clear();
 			}
 
 		private:
-			static UnorderedMap<StringID, NodeType*> mNodeTypes;
+			static UnorderedMap<StringID, NodeDescriptor*> mNodeDescriptors;
 		};
 
 		/************************************************************************/
@@ -197,8 +215,8 @@ namespace b3d
 			SPtr<PooledRenderTexture> DepthTex;
 
 			static StringID GetNodeId() { return "SceneDepth"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -223,8 +241,8 @@ namespace b3d
 			SPtr<RenderTexture> RenderTargetNoMask;
 
 			static StringID GetNodeId() { return "BasePass"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -263,14 +281,11 @@ namespace b3d
 			void Swap(RCNodeLightAccumulation* lightAccumNode);
 
 			static StringID GetNodeId() { return "SceneColor"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
-			/** @copydoc RenderCompositorNode::render */
 			void Render(const RenderCompositorNodeInputs& inputs) override;
-
-			/** @copydoc RenderCompositorNode::clear */
 			void Clear() override;
 		};
 
@@ -286,8 +301,8 @@ namespace b3d
 			SPtr<PooledRenderTexture> Output;
 
 			static StringID GetNodeId() { return "MSAACoverage"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -295,7 +310,7 @@ namespace b3d
 		};
 
 		/************************************************************************/
-		/* 							UTILITY NODES                     			*/
+		/* 							PARTICLE NODES                     			*/
 		/************************************************************************/
 
 		/** Simulates GPU particle systems. */
@@ -303,8 +318,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "ParticleSimulate"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -316,8 +331,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "ParticleSort"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -351,8 +366,8 @@ namespace b3d
 			void MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer);
 
 			static StringID GetNodeId() { return "LightAccumulation"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -370,8 +385,8 @@ namespace b3d
 			RCNodeLightAccumulation* Output;
 
 			static StringID GetNodeId() { return "DeferredDirectLighting"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -392,8 +407,8 @@ namespace b3d
 			RCNodeLightAccumulation* Output;
 
 			static StringID GetNodeId() { return "DeferredIndirectSpecularLighting"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -410,8 +425,8 @@ namespace b3d
 			// Outputs to the unflattened RCNodeLightAccumulation
 
 			static StringID GetNodeId() { return "IndirectDiffuseLighting"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -426,8 +441,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "ClusteredForward"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -444,8 +459,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "Skybox"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -457,8 +472,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "FinalResolve"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -486,8 +501,8 @@ namespace b3d
 			SPtr<Texture> GetLastOutput() const;
 
 			static StringID GetNodeId() { return "PostProcess"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -504,8 +519,8 @@ namespace b3d
 			SPtr<PooledRenderTexture> Output;
 
 			static StringID GetNodeId() { return "EyeAdaptation"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -528,8 +543,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "Tonemapping"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -544,8 +559,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "BokehDOF"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -561,8 +576,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "MotionBlur"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -574,8 +589,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "GaussianDOF"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -587,8 +602,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "FXAA"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -606,8 +621,8 @@ namespace b3d
 			SPtr<PooledRenderTexture> Output;
 
 			static StringID GetNodeId() { return "HalfSceneColor"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -627,8 +642,8 @@ namespace b3d
 			u32 AvailableDownsamples = 0;
 
 			static StringID GetNodeId() { return "SceneColorDownsamples"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -642,8 +657,8 @@ namespace b3d
 			SPtr<PooledRenderTexture> Output;
 
 			static StringID GetNodeId() { return "ResolvedSceneDepth"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -657,8 +672,8 @@ namespace b3d
 			SPtr<PooledRenderTexture> Output;
 
 			static StringID GetNodeId() { return "HiZ"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Utility; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -672,8 +687,8 @@ namespace b3d
 			SPtr<Texture> Output;
 
 			static StringID GetNodeId() { return "SSAO"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -691,8 +706,8 @@ namespace b3d
 			~RCNodeSSR();
 
 			static StringID GetNodeId() { return "SSR"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -718,8 +733,8 @@ namespace b3d
 			~RCNodeTemporalAA();
 
 			static StringID GetNodeId() { return "TemporalAA"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -739,8 +754,8 @@ namespace b3d
 			SPtr<Texture> Output;
 
 			static StringID GetNodeId() { return "Bloom"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -754,8 +769,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "ScreenSpaceLensFlare"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -767,8 +782,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "ChromaticAberration"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
@@ -780,8 +795,8 @@ namespace b3d
 		{
 		public:
 			static StringID GetNodeId() { return "FilmGrain"; }
-
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
+			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;

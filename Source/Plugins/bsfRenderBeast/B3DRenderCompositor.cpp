@@ -30,7 +30,7 @@
 
 namespace b3d { namespace render {
 
-UnorderedMap<StringID, RenderCompositor::NodeType*> RenderCompositor::mNodeTypes;
+UnorderedMap<StringID, RenderCompositor::NodeDescriptor*> RenderCompositor::mNodeDescriptors;
 
 /** Renders all elements in a render queue. */
 void RenderQueueElements(GpuCommandBuffer& commandBuffer, const Vector<RenderQueueElement>& elements)
@@ -51,105 +51,110 @@ RenderCompositor::~RenderCompositor()
 	Clear();
 }
 
-void RenderCompositor::Build(const RendererView& view, const StringID& finalNode)
+void RenderCompositor::Build(const RendererView& view, const TArray<StringID>& primaryNodes)
 {
 	Clear();
 
-	B3DMarkAllocatorFrame();
-	{
-		FrameUnorderedMap<StringID, u32> processedNodes;
-		mIsValid = true;
+	FrameScope frameScope;
+	FrameUnorderedMap<StringID, u32> processedNodes;
+	mIsValid = true;
 
-		std::function<bool(const StringID&)> registerNode = [&](const StringID& nodeId)
+	std::function<bool(const StringID&, RenderCompositorNodeCategory)> fnRegisterNode = [&](const StringID& nodeId, RenderCompositorNodeCategory requiredNodeCategory)
+	{
+		// Find node type
+		auto foundNodeDescriptor = mNodeDescriptors.find(nodeId);
+		if(!B3D_ENSURE(foundNodeDescriptor != mNodeDescriptors.end()))
+			return false;
+
+		const NodeDescriptor* const nodeDescriptor = foundNodeDescriptor->second;
+
+		// Register current node
+		auto foundNodeInstance = processedNodes.find(nodeId);
+
+		// New node
+		if(foundNodeInstance == processedNodes.end())
 		{
-			// Find node type
-			auto iterFind = mNodeTypes.find(nodeId);
-			if(iterFind == mNodeTypes.end())
+			if(!B3D_ENSURE(nodeDescriptor->GetCategory() == requiredNodeCategory))
+				return false;
+
+			// Mark it as invalid for now
+			processedNodes[nodeId] = -1;
+		}
+
+		// Register node dependencies
+		TInlineArray<StringID, 4> nodeDependencyIds = nodeDescriptor->GetDependencies(view);
+		for(const auto& entry : nodeDependencyIds)
+		{
+			if(!fnRegisterNode(entry, RenderCompositorNodeCategory::Utility))
+				return false;
+		}
+
+		// Register current node
+		u32 currentNodeIndex;
+
+		// New node, properly populate its index
+		if(foundNodeInstance == processedNodes.end())
+		{
+			foundNodeInstance = processedNodes.find(nodeId);
+
+			currentNodeIndex = (u32)mRegisteredNodes.size();
+			mRegisteredNodes.push_back(NodeInfo());
+			processedNodes[nodeId] = currentNodeIndex;
+
+			NodeInfo& nodeInfo = mRegisteredNodes.back();
+			nodeInfo.Node = nodeDescriptor->Create();
+			nodeInfo.NodeDescriptor = nodeDescriptor;
+			nodeInfo.LastUsedByNodeIndex = -1;
+
+			for(const auto& entry : nodeDependencyIds)
 			{
-				B3D_LOG(Error, Renderer, "Cannot find render compositor node of type \"{0}\".", String(nodeId.CStr()));
+				foundNodeInstance = processedNodes.find(entry);
+
+				NodeInfo& nodeDependencyNode = mRegisteredNodes[foundNodeInstance->second];
+				nodeInfo.Inputs.Add(nodeDependencyNode.Node);
+			}
+		}
+		else // Existing node
+		{
+			currentNodeIndex = foundNodeInstance->second;
+
+			// Check if invalid
+			if(currentNodeIndex == ~0u)
+			{
+				B3D_LOG(Error, Renderer, "Render compositor nodes recursion detected. Node \"{0}\" "
+										"depends on node \"{1}\" which is not available at this stage.",
+					   String(nodeId.CStr()), String(foundNodeDescriptor->first.CStr()));
 				return false;
 			}
+		}
 
-			NodeType* nodeType = iterFind->second;
+		// Update dependency last use counters
+		for(const auto& entry : nodeDependencyIds)
+		{
+			foundNodeInstance = processedNodes.find(entry);
 
-			// Register current node
-			auto iterFind2 = processedNodes.find(nodeId);
+			NodeInfo& depNodeInfo = mRegisteredNodes[foundNodeInstance->second];
+			if(depNodeInfo.LastUsedByNodeIndex == ~0u)
+				depNodeInfo.LastUsedByNodeIndex = currentNodeIndex;
+			else
+				depNodeInfo.LastUsedByNodeIndex = std::max(depNodeInfo.LastUsedByNodeIndex, currentNodeIndex);
+		}
 
-			// New node
-			if(iterFind2 == processedNodes.end())
-			{
-				// Mark it as invalid for now
-				processedNodes[nodeId] = -1;
-			}
+		return true;
+	};
 
-			// Register node dependencies
-			TInlineArray<StringID, 4> depIds = nodeType->GetDependencies(view);
-			for(auto& dep : depIds)
-			{
-				if(!registerNode(dep))
-					return false;
-			}
-
-			// Register current node
-			u32 curIdx;
-
-			// New node, properly populate its index
-			if(iterFind2 == processedNodes.end())
-			{
-				iterFind2 = processedNodes.find(nodeId);
-
-				curIdx = (u32)mNodeInfos.size();
-				mNodeInfos.push_back(NodeInfo());
-				processedNodes[nodeId] = curIdx;
-
-				NodeInfo& nodeInfo = mNodeInfos.back();
-				nodeInfo.Node = nodeType->Create();
-				nodeInfo.NodeType = nodeType;
-				nodeInfo.LastUseIdx = -1;
-
-				for(auto& depId : depIds)
-				{
-					iterFind2 = processedNodes.find(depId);
-
-					NodeInfo& depNodeInfo = mNodeInfos[iterFind2->second];
-					nodeInfo.Inputs.Add(depNodeInfo.Node);
-				}
-			}
-			else // Existing node
-			{
-				curIdx = iterFind2->second;
-
-				// Check if invalid
-				if(curIdx == (u32)-1)
-				{
-					B3D_LOG(Error, Renderer, "Render compositor nodes recursion detected. Node \"{0}\" "
-											"depends on node \"{1}\" which is not available at this stage.",
-						   String(nodeId.CStr()), String(iterFind->first.CStr()));
-					return false;
-				}
-			}
-
-			// Update dependency last use counters
-			for(auto& dep : depIds)
-			{
-				iterFind2 = processedNodes.find(dep);
-
-				NodeInfo& depNodeInfo = mNodeInfos[iterFind2->second];
-				if(depNodeInfo.LastUseIdx == (u32)-1)
-					depNodeInfo.LastUseIdx = curIdx;
-				else
-					depNodeInfo.LastUseIdx = std::max(depNodeInfo.LastUseIdx, curIdx);
-			}
-
-			return true;
-		};
-
-		mIsValid = registerNode(finalNode);
-
-		if(!mIsValid)
-			Clear();
+	mIsValid = true;
+	for(const auto& entry : primaryNodes)
+	{
+		if(!fnRegisterNode(entry, RenderCompositorNodeCategory::Primary))
+		{
+			mIsValid = false;
+			break;
+		}
 	}
-	B3DClearAllocatorFrame();
+
+	if(!mIsValid)
+		Clear();
 }
 
 void RenderCompositor::Execute(RenderCompositorNodeInputs& inputs) const
@@ -162,19 +167,19 @@ void RenderCompositor::Execute(RenderCompositorNodeInputs& inputs) const
 		FrameVector<const NodeInfo*> activeNodes;
 
 		u32 idx = 0;
-		for(auto& entry : mNodeInfos)
+		for(auto& entry : mRegisteredNodes)
 		{
 			inputs.InputNodes = entry.Inputs;
 
 #if B3D_PROFILING_ENABLED
-			const ProfilerString sampleName = ProfilerString("RC: ") + entry.NodeType->Id.CStr();
+			const ProfilerString sampleName = ProfilerString("RC: ") + entry.NodeDescriptor->Id.CStr();
 			if(inputs.CommandBufferProfiler != nullptr)
 				inputs.CommandBufferProfiler->BeginSample(*inputs.ActiveCommandBuffer, sampleName);
 
 			GetProfilerCPU().BeginSample(sampleName.c_str());
 #endif
 
-			inputs.ActiveCommandBuffer->BeginLabel(entry.NodeType->Id.CStr());
+			inputs.ActiveCommandBuffer->BeginLabel(entry.NodeDescriptor->Id.CStr());
 			entry.Node->Render(inputs);
 			inputs.ActiveCommandBuffer->EndLabel();
 
@@ -192,7 +197,7 @@ void RenderCompositor::Execute(RenderCompositorNodeInputs& inputs) const
 				if(activeNodes[i] == nullptr)
 					continue;
 
-				if(activeNodes[i]->LastUseIdx <= idx)
+				if(activeNodes[i]->LastUsedByNodeIndex <= idx)
 				{
 					activeNodes[i]->Node->Clear();
 					activeNodes[i] = nullptr;
@@ -204,16 +209,16 @@ void RenderCompositor::Execute(RenderCompositorNodeInputs& inputs) const
 	}
 	B3DClearAllocatorFrame();
 
-	if(!mNodeInfos.empty())
-		mNodeInfos.back().Node->Clear();
+	if(!mRegisteredNodes.empty())
+		mRegisteredNodes.back().Node->Clear();
 }
 
 void RenderCompositor::Clear()
 {
-	for(auto& entry : mNodeInfos)
+	for(auto& entry : mRegisteredNodes)
 		B3DDelete(entry.Node);
 
-	mNodeInfos.clear();
+	mRegisteredNodes.clear();
 	mIsValid = false;
 }
 
@@ -2083,7 +2088,7 @@ RCNodeTemporalAA::~RCNodeTemporalAA()
 
 void RCNodeTemporalAA::Render(const RenderCompositorNodeInputs& inputs)
 {
-	auto* sceneColorNode = static_cast<RCNodeSceneColor*>(inputs.InputNodes[1]);
+	auto* sceneColorNode = static_cast<RCNodeSceneColor*>(inputs.InputNodes[0]);
 	SPtr<PooledRenderTexture> sceneColor = sceneColorNode->SceneColorTex;
 
 	const TemporalAASettings& settings = inputs.View.GetRenderSettings().TemporalAa;
@@ -2100,8 +2105,8 @@ void RCNodeTemporalAA::Render(const RenderCompositorNodeInputs& inputs)
 
 	// TODO - Resolve scene color MSAA (in a way that can be shared by multiple effects)
 
-	auto* sceneDepthNode = static_cast<RCNodeSceneDepth*>(inputs.InputNodes[2]);
-	auto* basePassNode = static_cast<RCNodeBasePass*>(inputs.InputNodes[3]);
+	auto* sceneDepthNode = static_cast<RCNodeSceneDepth*>(inputs.InputNodes[1]);
+	auto* basePassNode = static_cast<RCNodeBasePass*>(inputs.InputNodes[2]);
 
 	GpuResourcePool& resPool = GetGpuResourcePool();
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
@@ -2161,7 +2166,6 @@ void RCNodeTemporalAA::DeallocOutputs()
 TInlineArray<StringID, 4> RCNodeTemporalAA::GetDependencies(const RendererView& view)
 {
 	return {
-		RCNodeBokehDOF::GetNodeId(),
 		RCNodeSceneColor::GetNodeId(),
 		RCNodeSceneDepth::GetNodeId(),
 		RCNodeBasePass::GetNodeId()

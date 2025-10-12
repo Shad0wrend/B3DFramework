@@ -103,7 +103,44 @@ void RendererView::SetRenderSettings(const SPtr<RenderSettings>& settings)
 
 	// Update compositor hierarchy (Note: Needs to be called even when viewport size (or other information) changes,
 	// but we're currently calling it here as all such calls are followed by setRenderSettings.
-	mCompositor.Build(*this, RCNodeFinalResolve::GetNodeId());
+	TArray<StringID> primaryNodes;
+	primaryNodes.Reserve(32);
+
+	// Primary rendering (base pass, lighting)
+	primaryNodes.Add(RCNodeParticleSort::GetNodeId());
+	primaryNodes.Add(RCNodeBasePass::GetNodeId());
+	primaryNodes.Add(RCNodeSSAO::GetNodeId());
+	primaryNodes.Add(RCNodeDeferredDirectLighting::GetNodeId());
+	primaryNodes.Add(RCNodeIndirectDiffuseLighting::GetNodeId());
+	primaryNodes.Add(RCNodeSSR::GetNodeId());
+	primaryNodes.Add(RCNodeDeferredIndirectSpecularLighting::GetNodeId());
+	primaryNodes.Add(RCNodeSkybox::GetNodeId());
+	primaryNodes.Add(RCNodeParticleSimulate::GetNodeId());	
+	primaryNodes.Add(RCNodeClusteredForward::GetNodeId());
+
+	// Screen space
+	if (mProperties.RunPostProcessing)
+	{
+		primaryNodes.Add(RCNodeTemporalAA::GetNodeId());
+		primaryNodes.Add(RCNodeBokehDOF::GetNodeId());
+		primaryNodes.Add(RCNodeMotionBlur::GetNodeId());
+
+		if (mRenderSettings->Bloom.Enabled || mRenderSettings->ScreenSpaceLensFlare.Enabled)
+			primaryNodes.Add(RCNodeBloom::GetNodeId());
+
+		if (mRenderSettings->ScreenSpaceLensFlare.Enabled)
+			primaryNodes.Add(RCNodeScreenSpaceLensFlare::GetNodeId());
+
+		primaryNodes.Add(RCNodeTonemapping::GetNodeId());
+		primaryNodes.Add(RCNodeGaussianDOF::GetNodeId());
+		primaryNodes.Add(RCNodeFXAA::GetNodeId());
+		primaryNodes.Add(RCNodeChromaticAberration::GetNodeId());
+		primaryNodes.Add(RCNodeFilmGrain::GetNodeId());
+	}
+
+	primaryNodes.Add(RCNodeFinalResolve::GetNodeId());
+
+	mCompositor.Build(*this, primaryNodes);
 }
 
 void RendererView::SetTransform(const Vector3& origin, const Vector3& direction, const Matrix4& view, const Matrix4& proj, const ConvexVolume& worldFrustum)
