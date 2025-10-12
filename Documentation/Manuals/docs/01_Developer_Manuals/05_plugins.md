@@ -2,9 +2,9 @@
 title: Plugins
 ---
 
-Many systems in b3d::f are implemented through plugins, libraries that are separate from the core of the engine and can be dynamically loaded or unloaded. If possible, it is the prefered way of extending the engine.
+Many systems in framwork are implemented through plugins, libraries that are separate from the core of the engine and can be dynamically loaded or unloaded. If possible, it is the prefered way of extending the engine.
 
-b3d::f supports plugins for the following systems:
+Framework supports plugins for the following systems:
  - Audio - Systems for providing audio playback.
  - Importers - Importers that handle conversion of some third party resource format into an engine-ready format.
  - Physics - Runs the physics simulation.
@@ -39,7 +39,7 @@ Application::startUp(startUpDesc);
 In this manual we'll focus on general functionality common to all plugins, while we'll talk about how to implement plugins for specific systems in later manuals. 
 
 # Generating a CMake project
-Plugins are always created as their own projects/libraries. b3d::f uses the CMake build system for managing its projects. Therefore the first step you need to take is to create your own CMake project. This involves creating a new folder in the /Source/Plugins directory (e.g. Source/Plugins/MyPlugin), with a CMakeLists.txt file inside it. CMakeLists.txt will contain references to needed header & source files, as well as dependencies to any other libraries. 
+Plugins are always created as their own projects/libraries. Framework uses the CMake build system for managing its projects. Therefore the first step you need to take is to create your own CMake project. This involves creating a new folder in the /Source/Plugins directory (e.g. Source/Plugins/MyPlugin), with a CMakeLists.txt file inside it. CMakeLists.txt will contain references to needed header & source files, as well as dependencies to any other libraries. 
  
 An example CMakeLists.txt might look like so:
 ~~~~~~~~~~~~~

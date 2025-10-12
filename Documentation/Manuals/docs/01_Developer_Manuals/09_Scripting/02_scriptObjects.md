@@ -2,7 +2,7 @@
 title: Script objects
 ---
 
-What we have shown in the previous manual is enough to expose an object to C# and communicate with it. However b3d::f provides another API built on top of that functionality in the form of script objects. This API handles some of the boilerplate code required for exposing an object to C#, provides a common interface all script objects need to implement, handles assembly refresh (due to script hot-swap) and gracefully handles managed object lifetime and destruction.
+What we have shown in the previous manual is enough to expose an object to C# and communicate with it. However framework provides another API built on top of that functionality in the form of script objects. This API handles some of the boilerplate code required for exposing an object to C#, provides a common interface all script objects need to implement, handles assembly refresh (due to script hot-swap) and gracefully handles managed object lifetime and destruction.
 
 To implement the script object interface for a particular type you need two classes:
  - A native interop class (C++)

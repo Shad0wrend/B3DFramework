@@ -19,7 +19,7 @@ There are three non-programmable state objects in total:
  - @b3d::render::DepthStencilState
  - @b3d::render::BlendState
  
-> If using b3d::f Shading Language you can specify these states directly in a BSL file and should have no need to create them manually. 
+> If using Banshee Shading Language you can specify these states directly in a BSL file and should have no need to create them manually. 
  
 # Rasterizer state
 Rasterizer state allows you to control how are 3D polygons, lines or points converted to 2D pixels. You can create it by filling out the @b3d::RASTERIZER_STATE_DESC structure and passing it to @b3d::render::RasterizerState::create.

@@ -2,7 +2,7 @@
 title: GPU Buffers
 ---
 
-GPU buffers (also known as generic buffers) allow you to provide data to a **GpuProgram** similar as a texture. In particular they are very similar to a one-dimensional texture. They aren't constrained by size limitations like a texture, and allow each entry in the buffer to be more complex than just a primitive data type. This allows you to provide your GPU programs with complex data easily. In b3d::f they are represented using the @b3d::render::GpuBuffer type. 
+GPU buffers (also known as generic buffers) allow you to provide data to a **GpuProgram** similar as a texture. In particular they are very similar to a one-dimensional texture. They aren't constrained by size limitations like a texture, and allow each entry in the buffer to be more complex than just a primitive data type. This allows you to provide your GPU programs with complex data easily. In the framework they are represented using the @b3d::render::GpuBuffer type. 
 
 # Creation
 To create a **render::GpuBuffer** you must fill out a @b3d::GPU_BUFFER_DESC structure and call the @b3d::render::GpuBuffer::create method. At minimum you need to provide:

@@ -399,4 +399,4 @@ External methods must follow these rules:
  - External methods must accept the type they're external to as the first parameter 
  
 # Running the code generator
-Once you have decorated the C++ classes with necessary export parameters you can run the code generator simply by enabling *GENERATE_SCRIPT_BINDINGS* and regenerating the CMake build. The generator will run automatically over all b3d::f code and generate relevant script code.
+Once you have decorated the C++ classes with necessary export parameters you can run the code generator simply by enabling *GENERATE_SCRIPT_BINDINGS* and regenerating the CMake build. The generator will run automatically over all the framework code and generate relevant script code.
