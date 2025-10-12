@@ -2087,6 +2087,7 @@ void SSRTraceMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& v
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	commandBuffer.BeginRenderPass(destination, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
+	commandBuffer.ClearRenderTarget(FBT_COLOR, Color::kZero);
 
 	Bind(commandBuffer);
 
@@ -2311,6 +2312,7 @@ void TemporalFilteringMat::Execute(GpuCommandBuffer& commandBuffer, const Render
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	commandBuffer.BeginRenderPass(destination);
+	commandBuffer.ClearRenderTarget(FBT_COLOR);
 
 	const RendererViewProperties& viewProps = view.GetProperties();
 	const Area2I& viewRect = viewProps.Target.ViewRect;

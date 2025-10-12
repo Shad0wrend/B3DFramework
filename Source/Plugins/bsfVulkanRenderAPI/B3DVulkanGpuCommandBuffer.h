@@ -14,7 +14,7 @@
 #include "RenderAPI/B3DGpuDeviceCapabilities.h"
 #include "Utility/B3DDenseMap.h"
 
-#define B3D_HAZARD_TRACKING  B3D_BUILD_TYPE == B3D_BUILD_TYPE_DEVELOPMENT
+#define B3D_HAZARD_TRACKING B3D_BUILD_TYPE == B3D_BUILD_TYPE_DEVELOPMENT
 #define B3D_AUTOMATIC_BARRIERS 0
 
 namespace b3d

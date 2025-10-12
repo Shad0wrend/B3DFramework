@@ -2126,10 +2126,6 @@ void RCNodeTemporalAA::Render(const RenderCompositorNodeInputs& inputs)
 	{
 		mPooledOutput = resPool.Get(PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET));
 
-		commandBuffer.BeginRenderPass(mPooledOutput->RenderTexture);
-		commandBuffer.ClearRenderTarget(FBT_COLOR);
-		commandBuffer.EndRenderPass();
-
 		SPtr<Texture> velocityTex;
 		if(basePassNode->VelocityTex)
 			velocityTex = basePassNode->VelocityTex->Texture;
@@ -2812,13 +2808,9 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 
 	SPtr<RenderTexture> traceRt = RenderTexture::Create(traceRtDesc);
 
-	commandBuffer.BeginRenderPass(traceRt, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
-	commandBuffer.ClearRenderTarget(FBT_COLOR, Color::kZero);
-
 	SSRTraceMat* traceMat = SSRTraceMat::GetVariation(settings.Quality, viewProps.Target.NumSamples > 1, true);
 	traceMat->Execute(commandBuffer, inputs.View, gbuffer, sceneColor, hiZ, settings, traceRt);
 
-	commandBuffer.EndRenderPass();
 	resolvedSceneColor = nullptr;
 
 	mUsingTemporalAA = inputs.View.GetRenderSettings().TemporalAa.Enabled;
@@ -2826,14 +2818,10 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 	{
 		mPooledOutput = resPool.Get(PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET));
 
-		commandBuffer.BeginRenderPass(mPooledOutput->RenderTexture);
-		commandBuffer.ClearRenderTarget(FBT_COLOR);
-
 		TemporalFilteringMat* temporalFilteringMat =
 			TemporalFilteringMat::GetVariation(TemporalFilteringType::SSR, false, viewProps.Target.NumSamples > 1);
 		temporalFilteringMat->Execute(commandBuffer, inputs.View, mPrevFrame->Texture, traceOutput->Texture, nullptr, sceneDepthNode->DepthTex->Texture, Vector2::kZero, 1.0f, mPooledOutput->RenderTexture);
 
-		commandBuffer.EndRenderPass();
 		traceOutput = nullptr;
 	}
 	else

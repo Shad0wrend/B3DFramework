@@ -168,6 +168,7 @@ void GetPipelineStageFlags(const Vector<T>& barriers, VkPipelineStageFlags& src,
 const Color kDebugLabelColor = Color::kBansheeOrange;
 constexpr u32 kMaximumBoundDescriptorSets = 64;
 
+#if B3D_HAZARD_TRACKING
 WriteHazardPipelineTracking::WriteHazardPipelineTracking()
 {
 	// Everything is safe to access by default
@@ -230,6 +231,7 @@ void WriteHazardPipelineTracking::LogUnsafeAccess(VkPipelineStageFlags stages, G
 
 	B3D_LOG(Warning, RenderBackend, "{0}", stream.str());
 }
+#endif
 
 VulkanGpuCommandBuffer::VulkanGpuCommandBuffer(VulkanGpuDevice& device, VulkanGpuCommandBufferPool& pool, u32 id, VkCommandBuffer commandBufferHandle, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation)
 	: GpuCommandBuffer(device, ownerThread, queueType, createInformation), mId(id), mCommandBufferHandle(commandBufferHandle), mPool(pool), mOwnerThread(ownerThread), mGfxPipelineRequiresBind(true), mCmpPipelineRequiresBind(true), mViewportRequiresBind(true), mStencilRefRequiresBind(true), mScissorRequiresBind(true), mBoundParamsDirty(false), mVertexInputsDirty(false)
@@ -1197,9 +1199,7 @@ void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 {
 	//B3D_ASSERT(mState == State::RecordingRenderPass);
 	if(mState != State::RecordingRenderPass)
-	{
 		BeginRenderPass();
-	}
 
 	vkCmdEndRenderPass(mCommandBufferHandle);
 
