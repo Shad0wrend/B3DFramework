@@ -67,6 +67,7 @@ namespace b3d
 		/** Bits that represent different ways a GPU resource can be used. */
 		enum class GpuResourceUseFlag
 		{
+			Undefined = 0,
 			Shader = 1 << 0, /**< Sampled or unordered access in shader. */
 			Index = 1 << 1, /**< Index buffer (read only). */
 			Vertex = 1 << 2, /**< Vertex buffer (read only). */
@@ -167,6 +168,86 @@ namespace b3d
 			const GpuCommandBufferPoolInformation mInformation;
 			SingleConsumerQueue mMessageQueue;
 			bool mIsDestroyed = false;
+		};
+
+		/** Describes common fields for both buffer and texture barriers. See GpuCommandBuffer::IssueBarrier. */
+		struct GpuBarrier
+		{
+			GpuBarrier(GpuResourceUseFlags sourceUsage = GpuResourceUseFlag::Undefined, GpuAccessFlags sourceAccess = GpuAccessFlag::None, GpuResourceUseFlags destinationUsage = GpuResourceUseFlag::Undefined, GpuAccessFlags destinationAccess = GpuAccessFlag::None)
+				: SourceUsage(sourceUsage), SourceAccess(sourceAccess), DestinationUsage(destinationUsage), DestinationAccess(destinationAccess)
+			{ }
+
+			GpuResourceUseFlags SourceUsage; /**< Determines how was resource used before the barrier. Barrier will only work for provided accesses. */
+			GpuAccessFlags SourceAccess; /**< Determines if the resource was read or written before the barrier. */
+			GpuResourceUseFlags DestinationUsage; /**< Determines how was resource will be used after the barrier. Barrier will only work for provided accesses. */
+			GpuAccessFlags DestinationAccess; /**< Determines if the resource will be read or written after the barrier. */
+		};
+
+		/** Describes a barrier for a GpuBuffer. */
+		struct GpuBufferBarrier : GpuBarrier
+		{
+			GpuBufferBarrier(const SPtr<GpuBuffer>& object)
+				: Object(object)
+			{ }
+
+			GpuBufferBarrier(const SPtr<GpuBuffer>& object, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess)
+				: GpuBarrier(sourceUsage, sourceAccess, destinationUsage, destinationAccess), Object(object)
+			{ }
+
+			SPtr<GpuBuffer> Object;
+		};
+
+		/** Describes a barrier for a Texture. */
+		struct GpuTextureBarrier : GpuBarrier
+		{
+			GpuTextureBarrier(const SPtr<Texture>& object, const GpuTextureSubresourceRange& subResourceRange = GpuTextureSubresourceRange::AllSubresources())
+				: Object(object), SubresourceRange(subResourceRange)
+			{ }
+
+			GpuTextureBarrier(const SPtr<Texture>& object, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, const GpuTextureSubresourceRange& subResourceRange = GpuTextureSubresourceRange::AllSubresources())
+				: GpuBarrier(sourceUsage, sourceAccess, destinationUsage, destinationAccess), Object(object), SubresourceRange(subResourceRange)
+			{ }
+
+			SPtr<Texture> Object;
+			GpuTextureSubresourceRange SubresourceRange;
+		};
+
+		/** A list of buffer and texture barriers. */
+		struct GpuBarriers
+		{
+			GpuBarriers(TArrayView<GpuBufferBarrier> bufferBarriers, TArrayView<GpuTextureBarrier> textureBarriers = TArrayView<GpuTextureBarrier>())
+			{
+				BufferBarriers.Reserve(bufferBarriers.Size());
+
+				for(const auto& entry : bufferBarriers)
+					BufferBarriers.Add(entry);
+
+				TextureBarriers.Reserve(textureBarriers.Size());
+
+				for(const auto& entry : textureBarriers)
+					TextureBarriers.Add(entry);
+			}
+
+			GpuBarriers(TArrayView<GpuTextureBarrier> textureBarriers)
+			{
+				TextureBarriers.Reserve(textureBarriers.Size());
+
+				for(const auto& entry : textureBarriers)
+					TextureBarriers.Add(entry);
+			}
+
+			GpuBarriers(const GpuTextureBarrier& textureBarrier)
+			{
+				TextureBarriers.Add(textureBarrier);
+			}
+
+			GpuBarriers(const GpuBufferBarrier& bufferBarrier)
+			{
+				BufferBarriers.Add(bufferBarrier);
+			}
+
+			TInlineArray<GpuBufferBarrier, 2> BufferBarriers;
+			TInlineArray<GpuTextureBarrier, 2> TextureBarriers;
 		};
 
 		/**
@@ -335,7 +416,7 @@ namespace b3d
 			 *  - A render target writes to an attachment, and then another render pass writes to the same attachment. You must issue a barrier between render passes.
 			 *  - A render target writes to depth-stencil attachment, and then another render pass uses the depth-stencil attachment as a read-only attachment. You must issue a barrier between render passes.
 			 */
-			virtual void IssueBarrier(GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess) = 0;
+			virtual void IssueBarriers(const GpuBarriers& barriers) = 0;
 
 			/**
 			 * Sets the active viewport that will be used for all following render operations.

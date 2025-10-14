@@ -223,13 +223,13 @@ namespace b3d
 		{ }
 
 		/** Creates a subresource range covering only the highest (first) mip level. */
-		static GpuTextureSubresourceRange TopMip(u32 baseArrayLayer = 0, u32 arrayLayerCount = 1, GpuTextureAspectFlags aspectMask = GpuTextureAspectFlag::Color)
+		static GpuTextureSubresourceRange TopMip(u32 baseArrayLayer = 0, u32 arrayLayerCount = 1, GpuTextureAspectFlags aspectMask = GpuTextureAspectFlag::Color | GpuTextureAspectFlag::Depth | GpuTextureAspectFlag::Stencil)
 		{
 			return GpuTextureSubresourceRange(0, 1, baseArrayLayer, arrayLayerCount, aspectMask);
 		}
 
 		/** Creates a subresource range covering all subresources. */
-		static GpuTextureSubresourceRange AllSubresources(GpuTextureAspectFlags aspectMask = GpuTextureAspectFlag::Color)
+		static GpuTextureSubresourceRange AllSubresources(GpuTextureAspectFlags aspectMask = GpuTextureAspectFlag::Color | GpuTextureAspectFlag::Depth | GpuTextureAspectFlag::Stencil)
 		{
 			return GpuTextureSubresourceRange(0, ~0u, 0, ~0u, aspectMask);
 		}

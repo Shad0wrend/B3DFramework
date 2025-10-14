@@ -204,7 +204,7 @@ namespace b3d
 			void InsertLabel(const StringView& name) override;
 			void End() override;
 			void TransitionTextureLayout(const SPtr<Texture>& texture, GpuTextureLayout layout, const GpuTextureSubresourceRange& subresourceRange) override;
-			void IssueBarrier(GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess) override;
+			void IssueBarriers(const GpuBarriers& barriers) override;
 
 			/** Returns an unique identifier of this command buffer. */
 			u32 GetId() const { return mId; }
@@ -454,9 +454,6 @@ namespace b3d
 			 *								may perform an automated layout transition when it begins.
 			 */
 			VkImageLayout GetCurrentLayout(VulkanImage* image, const VkImageSubresourceRange& range, bool inRenderPass);
-
-			/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
-			static VkPipelineStageFlags GetPipelineStageFlags(VkAccessFlags accessFlags);
 
 		private:
 			friend class VulkanGpuCommandBufferPool;
@@ -718,6 +715,24 @@ namespace b3d
 			 */
 			void UpdateTransferSubresource(VulkanImage* image, ImageSubresourceInfo& subresourceInfo, VkImageLayout layout, GpuAccessFlags access, VkPipelineStageFlags stages);
 
+			/** Registers a new resource range using the provided parameters to initialize it. */
+			void AddSubresourceRange(const VkImageSubresourceRange& range, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages);
+
+			/**
+			 * Attempts to find an existing subrange that matches the provided subrange, for the provided image. If one
+			 * cannot be found the subranges will be subdivided so that a match can be made.
+			 *
+			 * @param	imageInfo							Image info structure containing the existing subresource ranges.
+			 * @param	range								New subresource range to process against existing ranges.
+			 * @param	fnAddSubresourceRange				If subdivision is needed, called for every new subresource entry to add, even if it might not overlap the provided range.
+			 *												If @p copyFrom is provided, subresource is copied from that global subresource index, otherwise a new subresource range is initialized.
+			 *												Signature: void(const VkImageSubresourceRange& range, Optional<u32> copyFrom)
+			 * @param	fnNotifySubresourceRangeOverlap		Callable invoked for each overlapping subresource.
+			 *												Signature: void(u32 globalSubresourceIndex, bool isNewSubresource)
+			 */
+			template<typename TNotifySubresourceRangeCreated, typename TNotifySubresourceRangeOverlap>
+			void FindOrSubdivideSubresourceRange(ImageInfo& imageInfo, const VkImageSubresourceRange& range, TNotifySubresourceRangeCreated&& fnAddSubresourceRange, TNotifySubresourceRangeOverlap&& fnNotifySubresourceRangeOverlap);
+
 			/** Finds a subresource info structure containing the specified face and mip level of the provided image. */
 			ImageSubresourceInfo& FindSubresourceInfo(VulkanImage* image, u32 face, u32 mip);
 
@@ -731,8 +746,14 @@ namespace b3d
 			Area2I GetRenderPassArea() const;
 
 #if B3D_HAZARD_TRACKING
-			/** Updates write hazard tracking after a barrier has been issued. */
-			void UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages);
+			/** Updates write hazard tracking for multiple barriers after the barriers were issued. */
+			void UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages, const GpuBarriers& barriers);
+
+			/** Updates write hazard tracking for a single buffer after a barrier has been issued. */
+			void UpdateWriteHazardTrackingAfterBarrier(VulkanBuffer* buffer, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages);
+
+			/** Updates write hazard tracking for a single image after a barrier has been issued. */
+			void UpdateWriteHazardTrackingAfterBarrier(VulkanImage* image, const VkImageSubresourceRange& range, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages);
 #endif
 
 			/** Notifies the active render target that a rendering command was queued that will potentially change its contents. */
@@ -757,7 +778,7 @@ namespace b3d
 			RenderSurfaceMask mRenderTargetLoadMask = RT_NONE;
 
 			DenseMap<VulkanResource*, ResourceUseHandle> mResources;
-			DenseMap<VulkanResource*, u32> mImages;
+			UnorderedMap<VulkanResource*, u32> mImages;
 			DenseMap<VulkanResource*, BufferInfo> mBuffers;
 			UnorderedMap<VulkanSwapChain*, ResourceUseHandle> mSwapChains;
 			Vector<ImageInfo> mImageInfos;
@@ -766,9 +787,6 @@ namespace b3d
 			GpuQueueId mSubmittedQueueId;
 
 #if B3D_HAZARD_TRACKING
-			/** List of buffers and images that were read or written since the last call to IssueBarrier. */
-			TArray<WriteHazardTracking*> mWriteHazards;
-
 			PoolAlloc<sizeof(WriteHazardTracking)> mWriteHazardPool;
 #endif
 

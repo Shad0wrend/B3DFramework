@@ -690,7 +690,11 @@ static Optional<GpuObjectParameterInformation> ParseSPIRVCrossStorageBuffer(spir
 		return {};
 
 	const spirv_cross::SPIRType::ImageType imageTypeInformation = type.image;
+#if 0 // SPIRVCross reports read-only qualifier even when its not there
+	objectInformation->Type = imageTypeInformation.access == spv::AccessQualifierReadOnly ? GPOT_STRUCTURED_BUFFER : GPOT_RWSTRUCTURED_BUFFER;
+#else
 	objectInformation->Type = GPOT_RWSTRUCTURED_BUFFER;
+#endif
 
 	if(type.image.type != 0)
 	{

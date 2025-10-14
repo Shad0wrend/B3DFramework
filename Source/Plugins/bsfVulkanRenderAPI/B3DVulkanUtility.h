@@ -134,6 +134,12 @@ namespace b3d
 
 			/** Converts all bits set in VkPipelineStageFlagFlags into a list readable pipeline names that will be appended to @p output, using "|" as separator. */
 			static void GetPipelineStageNames(VkPipelineStageFlags stages, StringStream& output);
+
+			/** Converts resource use flag and access flag combination into VkAccessFlags. */
+			static VkAccessFlags GetAccessMaskFromUsage(GpuResourceUseFlags usage, GpuAccessFlags access);
+
+			/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
+			static VkPipelineStageFlags GetPipelineStageFlags(VkAccessFlags accessFlags);
 		};
 
 		/** @} */

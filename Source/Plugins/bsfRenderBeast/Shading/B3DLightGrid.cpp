@@ -63,9 +63,13 @@ void LightGridLLCreationMat::SetParams(GpuCommandBuffer& commandBuffer, const Ve
 		bufferCreateInformation.StructuredStorage.Count = numCells;
 
 		mLightsLLHeads = mGpuDevice->CreateGpuBuffer(bufferCreateInformation);
+		mLightsLLHeads->SetName("LightsLLHeads");
+
 		mLightsLLHeadsParam.Set(mLightsLLHeads);
 
 		mProbesLLHeads = mGpuDevice->CreateGpuBuffer(bufferCreateInformation);
+		mProbesLLHeads->SetName("ProbesLLHeads");
+
 		mProbesLLHeadsParam.Set(mProbesLLHeads);
 
 		bufferCreateInformation.Type = GpuBufferType::SimpleStorage;
@@ -73,10 +77,14 @@ void LightGridLLCreationMat::SetParams(GpuCommandBuffer& commandBuffer, const Ve
 		bufferCreateInformation.SimpleStorage.Count = numCells * kMaxLightsPerCell;
 
 		mLightsLL = mGpuDevice->CreateGpuBuffer(bufferCreateInformation);
+		mLightsLL->SetName("LightsLL");
+
 		mLightsLLParam.Set(mLightsLL);
 
 		bufferCreateInformation.SimpleStorage.Format = BF_32X2U;
 		mProbesLL = mGpuDevice->CreateGpuBuffer(bufferCreateInformation);
+		mProbesLL->SetName("ProbesLL");
+
 		mProbesLLParam.Set(mProbesLL);
 
 		mBufferNumCells = numCells;
@@ -98,8 +106,13 @@ void LightGridLLCreationMat::SetParams(GpuCommandBuffer& commandBuffer, const Ve
 	clearMat->Execute(commandBuffer, mLightsLLHeads, clearColor);
 	clearMat->Execute(commandBuffer, mProbesLLHeads, clearColor);
 
-	// Ensure we can safely write to the light & probe LL head buffers
-	commandBuffer.IssueBarrier(GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write);
+	// Ensure we can safely write to the light & probe LL head & counter buffers
+	commandBuffer.IssueBarriers({{
+		GpuBufferBarrier(mLightsCounter, GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write),
+		GpuBufferBarrier(mProbesCounter, GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write),
+		GpuBufferBarrier(mLightsLLHeads, GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write),
+		GpuBufferBarrier(mProbesLLHeads, GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write),
+	}});
 
 	mGPUParameters->SetUniformBuffer("GridParams", gridParams);
 	mLightBufferParam.Set(lightsBuffer);
@@ -153,6 +166,8 @@ void LightGridLLReductionMat::Initialize()
 	bufferCreateInformation.StructuredStorage.ElementSize = 4;
 
 	mGridDataCounter = mGpuDevice->CreateGpuBuffer(bufferCreateInformation);
+	mGridDataCounter->SetName("GridDataCounter");
+
 	mGridDataCounterParam.Set(mGridDataCounter);
 }
 
@@ -175,19 +190,27 @@ void LightGridLLReductionMat::SetParams(GpuCommandBuffer& commandBuffer, const V
 		bufferCreateInformation.SimpleStorage.Format = BF_32X4U;
 
 		mGridLightOffsetAndSize = mGpuDevice->CreateGpuBuffer(bufferCreateInformation);
+		mGridLightOffsetAndSize->SetName("GridLightOffsetAndSize");
+
 		mGridLightOffsetAndSizeParam.Set(mGridLightOffsetAndSize);
 
 		bufferCreateInformation.SimpleStorage.Format = BF_32X2U;
 
 		mGridProbeOffsetAndSize = mGpuDevice->CreateGpuBuffer(bufferCreateInformation);
+		mGridProbeOffsetAndSize->SetName("GridProbeOffsetAndSize");
+
 		mGridProbeOffsetAndSizeParam.Set(mGridProbeOffsetAndSize);
 
 		bufferCreateInformation.SimpleStorage.Format = BF_32X1U;
 		bufferCreateInformation.SimpleStorage.Count = numCells * kMaxLightsPerCell;
 		mGridLightIndices = mGpuDevice->CreateGpuBuffer(bufferCreateInformation);
+		mGridLightIndices->SetName("GridLightIndices");
+
 		mGridLightIndicesParam.Set(mGridLightIndices);
 
 		mGridProbeIndices = mGpuDevice->CreateGpuBuffer(bufferCreateInformation);
+		mGridProbeIndices->SetName("GridProbeIndices");
+
 		mGridProbeIndicesParam.Set(mGridProbeIndices);
 
 		mBufferNumCells = numCells;
@@ -197,7 +220,7 @@ void LightGridLLReductionMat::SetParams(GpuCommandBuffer& commandBuffer, const V
 	clearMat->Execute(commandBuffer, mGridDataCounter);
 
 	// Ensure we can safely write to the grid data counter buffer
-	commandBuffer.IssueBarrier(GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write);
+	commandBuffer.IssueBarriers(GpuBufferBarrier(mGridDataCounter, GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Write));
 
 	mGPUParameters->SetUniformBuffer("GridParams", gridParams);
 
@@ -289,6 +312,14 @@ void LightGrid::UpdateGrid(GpuCommandBuffer& commandBuffer, const RendererView& 
 	SPtr<GpuBuffer> probeLLHeads;
 	SPtr<GpuBuffer> probeLL;
 	creationMat->GetOutputs(lightLLHeads, lightLL, probeLLHeads, probeLL);
+
+	// Make the buffer readable
+	commandBuffer.IssueBarriers({{
+		GpuBufferBarrier(lightLLHeads, GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Read),
+		GpuBufferBarrier(lightLL, GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Read),
+		GpuBufferBarrier(probeLLHeads, GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Read),
+		GpuBufferBarrier(probeLL, GpuResourceUseFlag::Shader, GpuAccessFlag::Write, GpuResourceUseFlag::Shader, GpuAccessFlag::Read),
+	}});
 
 	LightGridLLReductionMat* reductionMat = LightGridLLReductionMat::Get();
 	reductionMat->SetParams(commandBuffer, gridSize, mGridParamBuffer, lightLLHeads, lightLL, probeLLHeads, probeLL);

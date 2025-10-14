@@ -772,9 +772,6 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& buffer, VkDescr
 				auto* element = static_cast<VulkanGpuBuffer*>(mStorageBufferData[sequentialResourceIndex].Buffer.get());
 				resource = element->GetVulkanResource();
 
-				if(element->GetInformation().Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
-					useFlags |= GpuAccessFlag::Write;
-
 				bufferSize = element->GetSuballocationSize();
 			}
 
@@ -789,12 +786,10 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& buffer, VkDescr
 					break;
 				case GPOT_RWBYTE_BUFFER:
 					resource = builtinResources.DummyStorageBuffer->GetVulkanResource();
-					useFlags |= GpuAccessFlag::Write;
 					break;
 				case GPOT_STRUCTURED_BUFFER:
 				case GPOT_RWSTRUCTURED_BUFFER:
 					resource = builtinResources.DummyStructuredBuffer->GetVulkanResource();
-					useFlags |= GpuAccessFlag::Write;
 					break;
 				default:
 					break;
@@ -803,6 +798,9 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& buffer, VkDescr
 				if(resource == nullptr)
 					continue;
 			}
+
+			if(type == GPOT_RWBYTE_BUFFER || type == GPOT_RWSTRUCTURED_BUFFER)
+				useFlags |= GpuAccessFlag::Write;
 
 			// Register with command buffer
 			VkDescriptorSetLayoutBinding* perSetBindings = vkParamInfo.GetLayoutBindings(set);

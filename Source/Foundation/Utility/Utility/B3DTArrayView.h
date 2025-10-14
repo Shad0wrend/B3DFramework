@@ -2,6 +2,8 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include <initializer_list>
+
 namespace b3d
 {
 	/** @addtogroup General
@@ -44,6 +46,10 @@ namespace b3d
 
 		TArrayView(std::nullptr_t, u64)
 			: TArrayView(nullptr, 0)
+		{ }
+
+		TArrayView(std::initializer_list<Type> initializerList)
+			: mData(const_cast<Type*>(initializerList.begin())), mSize(initializerList.size())
 		{ }
 
 		template<typename U>

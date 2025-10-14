@@ -154,8 +154,8 @@ void GetPipelineStageFlags(const Vector<T>& barriers, VkPipelineStageFlags& src,
 {
 	for(auto& entry : barriers)
 	{
-		src |= VulkanGpuCommandBuffer::GetPipelineStageFlags(entry.srcAccessMask);
-		dst |= VulkanGpuCommandBuffer::GetPipelineStageFlags(entry.dstAccessMask);
+		src |= VulkanUtility::GetPipelineStageFlags(entry.srcAccessMask);
+		dst |= VulkanUtility::GetPipelineStageFlags(entry.dstAccessMask);
 	}
 
 	if(src == 0)
@@ -521,8 +521,32 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTar
 #if B3D_HAZARD_TRACKING
 	// These are guaranteed by the render pass external dependency. It's always safe to use read images from shaders as attachments.
 	// Note: Must be called before registering the framebuffer, as that will register new write hazards that need to be resolved
-	UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlag::Read, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-		GpuAccessFlag::Read | GpuAccessFlag::Write, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT);
+
+	if(mFramebuffer != nullptr)
+	{
+		const VkPipelineStageFlags kSourceStages = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+		const VkPipelineStageFlags kDestinationStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+
+		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
+		const u32 colorAttachmentCount = renderPass->GetColorAttachmentCount();
+		for(u32 colorAttachmentIndex = 0; colorAttachmentIndex < colorAttachmentCount; colorAttachmentIndex++)
+		{
+			const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(colorAttachmentIndex);
+			VulkanImage* const image = attachment.Image;
+			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
+
+			UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Read, kSourceStages, GpuAccessFlag::Read | GpuAccessFlag::Write, kDestinationStages);
+		}
+
+		if(renderPass->HasDepthAttachment())
+		{
+			const VulkanFramebufferAttachment& attachment = mFramebuffer->GetDepthStencilAttachment();
+			VulkanImage* const image = attachment.Image;
+			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
+
+			UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Read, kSourceStages, GpuAccessFlag::Read | GpuAccessFlag::Write, kDestinationStages);
+		}
+	}
 #endif
 
 	// Re-set the params as they will need to be re-bound
@@ -1225,9 +1249,32 @@ void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 	UpdateFinalLayouts();
 
 #if B3D_HAZARD_TRACKING
-	// These are guaranteed by the render pass external dependency. It's always safe to read an attachment after render pass.
-	UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlag::Read | GpuAccessFlag::Write, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
-		GpuAccessFlag::Read, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
+	if(mFramebuffer != nullptr)
+	{
+		// These are guaranteed by the render pass external dependency. It's always safe to read an attachment in a shader after render pass.
+		const VkPipelineStageFlags kSourceStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+		const VkPipelineStageFlags kDestinationStages = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+
+		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
+		const u32 colorAttachmentCount = renderPass->GetColorAttachmentCount();
+		for(u32 colorAttachmentIndex = 0; colorAttachmentIndex < colorAttachmentCount; colorAttachmentIndex++)
+		{
+			const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(colorAttachmentIndex);
+			VulkanImage* const image = attachment.Image;
+			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
+
+			UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Read | GpuAccessFlag::Write, kSourceStages, GpuAccessFlag::Read, kDestinationStages);
+		}
+
+		if(renderPass->HasDepthAttachment())
+		{
+			const VulkanFramebufferAttachment& attachment = mFramebuffer->GetDepthStencilAttachment();
+			VulkanImage* const image = attachment.Image;
+			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
+
+			UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Read | GpuAccessFlag::Write, kSourceStages, GpuAccessFlag::Read, kDestinationStages);
+		}
+	}
 #endif
 
 	mState = State::Recording;
@@ -1638,8 +1685,6 @@ void VulkanGpuCommandBuffer::Reset()
 		if(entry.WriteHazardTracking != nullptr)
 			mWriteHazardPool.Destruct(entry.WriteHazardTracking);
 	}
-
-	mWriteHazards.clear();
 #endif
 
 #if B3D_BUILD_TYPE == B3D_BUILD_TYPE_DEVELOPMENT
@@ -2316,7 +2361,7 @@ void VulkanGpuCommandBuffer::MemoryBarrier(VkBuffer buffer, VkAccessFlags source
 
 void VulkanGpuCommandBuffer::MemoryBarrier(VkBuffer buffer, VkAccessFlags sourceAccessFlags, VkAccessFlags destinationAccessFlags)
 {
-	MemoryBarrier(buffer, sourceAccessFlags, destinationAccessFlags, GetPipelineStageFlags(sourceAccessFlags), GetPipelineStageFlags(destinationAccessFlags));
+	MemoryBarrier(buffer, sourceAccessFlags, destinationAccessFlags, VulkanUtility::GetPipelineStageFlags(sourceAccessFlags), VulkanUtility::GetPipelineStageFlags(destinationAccessFlags));
 }
 
 VkImageLayout VulkanGpuCommandBuffer::GetCurrentLayout(VulkanImage* image, const VkImageSubresourceRange& range, bool inRenderPass)
@@ -2398,53 +2443,6 @@ VkImageLayout VulkanGpuCommandBuffer::GetCurrentLayout(VulkanImage* image, const
 	return VK_IMAGE_LAYOUT_UNDEFINED;
 }
 
-/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
-VkPipelineStageFlags VulkanGpuCommandBuffer::GetPipelineStageFlags(VkAccessFlags accessFlags)
-{
-	VkPipelineStageFlags flags = 0;
-
-	if((accessFlags & VK_ACCESS_INDIRECT_COMMAND_READ_BIT) != 0)
-		flags |= VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
-
-	if((accessFlags & (VK_ACCESS_INDEX_READ_BIT | VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
-
-	if((accessFlags & (VK_ACCESS_UNIFORM_READ_BIT | VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT)) != 0)
-	{
-		flags |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
-		flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		flags |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-
-		// MoltenVK doesn't support geometry and tessellation shaders
-		// Note: Once we upgrade to a newer version they should be supported and we can remove this
-#if B3D_PLATFORM != B3D_PLATFORM_ID_MACOS
-		flags |= VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT;
-		flags |= VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT;
-		flags |= VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT;
-#endif
-	}
-
-	if((accessFlags & VK_ACCESS_INPUT_ATTACHMENT_READ_BIT) != 0)
-		flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-
-	if((accessFlags & (VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-
-	if((accessFlags & (VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-
-	if((accessFlags & (VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_TRANSFER_BIT;
-
-	if((accessFlags & (VK_ACCESS_HOST_READ_BIT | VK_ACCESS_HOST_WRITE_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_HOST_BIT;
-
-	if(flags == 0)
-		flags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-
-	return flags;
-}
-
 void VulkanGpuCommandBuffer::TransitionTextureLayout(const SPtr<Texture>& texture, GpuTextureLayout layout, const GpuTextureSubresourceRange& subresourceRange)
 {
 #if 0
@@ -2480,115 +2478,196 @@ void VulkanGpuCommandBuffer::TransitionTextureLayout(const SPtr<Texture>& textur
 #endif
 }
 
-void VulkanGpuCommandBuffer::IssueBarrier(GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess)
+void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 {
 	if(!B3D_ENSURE(!IsInRenderPass()))
 		return;
 
-	auto fnGetAccessMaskFromUsage = [](GpuResourceUseFlags usage, GpuAccessFlags access)
+	FrameScope frameScope;
+	FrameVector<VkBufferMemoryBarrier> vkBufferBarriers;
+	FrameVector<VkImageMemoryBarrier> vkImageBarriers;
+
+	GpuAccessFlags combinedSourceAccess = GpuAccessFlag::None;
+	GpuAccessFlags combinedDestinationAccess = GpuAccessFlag::None;
+
+	VkPipelineStageFlags combinedSourceStages = 0;
+	VkPipelineStageFlags combinedDestinationStages = 0;
+	for(const auto& barrier : barriers.BufferBarriers)
 	{
-		VkAccessFlags accessMask = 0;
-		if(usage.IsSet(GpuResourceUseFlag::Shader))
-		{
-			if(access.IsSet(GpuAccessFlag::Read))
-				accessMask |= VK_ACCESS_SHADER_READ_BIT;
+		VulkanGpuBuffer* const vulkanGpuBuffer = static_cast<VulkanGpuBuffer*>(barrier.Object.get());
+		if(vulkanGpuBuffer == nullptr)
+			continue;
 
-			if(access.IsSet(GpuAccessFlag::Write))
-				accessMask |= VK_ACCESS_SHADER_WRITE_BIT;
-		}
+		const VkAccessFlags sourceAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.SourceUsage, barrier.SourceAccess);
+		const VkAccessFlags destinationAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.DestinationUsage, barrier.DestinationAccess);
 
-		if(usage.IsSet(GpuResourceUseFlag::Index))
-			accessMask |= VK_ACCESS_INDEX_READ_BIT;
+		combinedSourceStages |= VulkanUtility::GetPipelineStageFlags(sourceAccessMask);
+		combinedDestinationStages |= VulkanUtility::GetPipelineStageFlags(destinationAccessMask);
 
-		if(usage.IsSet(GpuResourceUseFlag::Vertex))
-			accessMask |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+		combinedSourceAccess |= barrier.SourceAccess;
+		combinedDestinationAccess |= barrier.DestinationAccess;
 
-		if(usage.IsSet(GpuResourceUseFlag::Uniform))
-			accessMask |= VK_ACCESS_UNIFORM_READ_BIT;
+		VkBufferMemoryBarrier vkBufferBarrier;
+		vkBufferBarrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		vkBufferBarrier.pNext = nullptr;
+		vkBufferBarrier.srcAccessMask = sourceAccessMask;
+		vkBufferBarrier.dstAccessMask = destinationAccessMask;
+		vkBufferBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		vkBufferBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		vkBufferBarrier.buffer = vulkanGpuBuffer->GetVulkanResource()->GetVulkanHandle();
+		vkBufferBarrier.offset = 0;
+		vkBufferBarrier.size = VK_WHOLE_SIZE;
 
-		if(usage.IsSet(GpuResourceUseFlag::Transfer))
-		{
-			if(access.IsSet(GpuAccessFlag::Read))
-				accessMask |= VK_ACCESS_TRANSFER_READ_BIT;
+		vkBufferBarriers.push_back(vkBufferBarrier);
+	}
 
-			if(access.IsSet(GpuAccessFlag::Write))
-				accessMask |= VK_ACCESS_TRANSFER_WRITE_BIT;
-		}
+	for(const auto& barrier : barriers.TextureBarriers)
+	{
+		VulkanTexture* const vulkanTexture = static_cast<VulkanTexture*>(barrier.Object.get());
+		if(vulkanTexture == nullptr)
+			continue;
 
-		if(usage.IsSet(GpuResourceUseFlag::ColorAttachment))
-		{
-			if(access.IsSet(GpuAccessFlag::Read))
-				accessMask |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
+		const VkAccessFlags sourceAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.SourceUsage, barrier.SourceAccess);
+		const VkAccessFlags destinationAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.DestinationUsage, barrier.DestinationAccess);
 
-			if(access.IsSet(GpuAccessFlag::Write))
-				accessMask |= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		}
+		combinedSourceStages |= VulkanUtility::GetPipelineStageFlags(sourceAccessMask);
+		combinedDestinationStages |= VulkanUtility::GetPipelineStageFlags(destinationAccessMask);
+		combinedSourceAccess |= barrier.SourceAccess;
+		combinedDestinationAccess |= barrier.DestinationAccess;
 
-		if(usage.IsSet(GpuResourceUseFlag::DepthStencilAttachment))
-		{
-			if(access.IsSet(GpuAccessFlag::Read))
-				accessMask |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+		VulkanImage* const vulkanImage = vulkanTexture->GetVulkanResource();
 
-			if(access.IsSet(GpuAccessFlag::Write))
-				accessMask |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-		}
+		VkImageSubresourceRange subresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(barrier.SubresourceRange);
 
-		return accessMask;
-	};
+		// Filter out invalid aspect mask to avoid validation warnings
+		subresourceRange.aspectMask &= vulkanImage->GetAspectFlags();
 
-	const VkAccessFlags sourceAccessMask = fnGetAccessMaskFromUsage(sourceUsage, sourceAccess);
-	const VkAccessFlags destinationAccessMask = fnGetAccessMaskFromUsage(destinationUsage, destinationAccess);
+		VkImageMemoryBarrier vkImageBarrier;
+		vkImageBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		vkImageBarrier.pNext = nullptr;
+		vkImageBarrier.srcAccessMask = sourceAccessMask;
+		vkImageBarrier.dstAccessMask = destinationAccessMask;
+		vkImageBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		vkImageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		vkImageBarrier.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		vkImageBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		vkImageBarrier.image = vulkanImage->GetVulkanHandle();
+		vkImageBarrier.subresourceRange = subresourceRange;
 
-	const VkPipelineStageFlags sourceStages = GetPipelineStageFlags(sourceAccessMask);
-	const VkPipelineStageFlags destinationStages = GetPipelineStageFlags(destinationAccessMask);
+		vkImageBarriers.push_back(vkImageBarrier);
+	}
 
 	// Read-after-write or write-after-write
-	if(sourceAccess.IsSet(GpuAccessFlag::Write))
+	if(combinedSourceAccess.IsSet(GpuAccessFlag::Write))
 	{
-		VkMemoryBarrier barrier;
-		barrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-		barrier.pNext = nullptr;
-
-		barrier.srcAccessMask = sourceAccessMask;
-		barrier.dstAccessMask = destinationAccessMask;
-
-		vkCmdPipelineBarrier(GetVulkanHandle(), sourceStages, destinationStages, 0, 1, &barrier, 0, nullptr, 0, nullptr);
+		vkCmdPipelineBarrier(GetVulkanHandle(), combinedSourceStages, combinedDestinationStages, 0, 0, nullptr,
+			(u32)vkBufferBarriers.size(), vkBufferBarriers.data(),
+			(u32)vkImageBarriers.size(), vkImageBarriers.data());
 	}
 	// Write-after-read, just need an execution barrier
-	else if(sourceAccess.IsSet(GpuAccessFlag::Read) && destinationAccess.IsSet(GpuAccessFlag::Write))
+	else if(combinedSourceAccess.IsSet(GpuAccessFlag::Read) && combinedDestinationAccess.IsSet(GpuAccessFlag::Write))
 	{
-		vkCmdPipelineBarrier(GetVulkanHandle(), sourceStages, destinationStages, 0, 0, nullptr, 0, nullptr, 0, nullptr);
+		vkCmdPipelineBarrier(GetVulkanHandle(), combinedSourceStages, combinedDestinationStages, 0, 0, nullptr, 0, nullptr, 0, nullptr);
 	}
 
 #if B3D_HAZARD_TRACKING
-	UpdateWriteHazardTrackingAfterBarrier(sourceAccess, sourceStages, destinationAccess, destinationStages);
+	UpdateWriteHazardTrackingAfterBarrier(combinedSourceAccess, combinedSourceStages, combinedDestinationAccess, combinedDestinationStages, barriers);
 #endif
 }
 
 #if B3D_HAZARD_TRACKING
-void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages)
+void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages, const GpuBarriers& barriers)
 {
-	// Read-after-write or write-after-write
-	if(sourceAccess.IsSet(GpuAccessFlag::Write))
+	for(const auto& entry : barriers.BufferBarriers)
 	{
-		// All stages that were writing to a buffer must be present in source stages (technically only one stage will be writing, but we don't track that precisely)
-		for(auto it = mWriteHazards.begin(); it != mWriteHazards.end(); ++it)
+		VulkanGpuBuffer* const vulkanGpuBuffer = static_cast<VulkanGpuBuffer*>(entry.Object.get());
+		if(vulkanGpuBuffer == nullptr)
+			continue;
+
+		UpdateWriteHazardTrackingAfterBarrier(vulkanGpuBuffer->GetVulkanResource(), sourceAccess, sourceStages, destinationAccess, destinationStages);
+	}
+
+	for(const auto& entry : barriers.TextureBarriers)
+	{
+		VulkanTexture* const vulkanTexture = static_cast<VulkanTexture*>(entry.Object.get());
+		if(vulkanTexture == nullptr)
+			continue;
+
+		VulkanImage* const vulkanImage = vulkanTexture->GetVulkanResource();
+		VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(entry.SubresourceRange);
+
+		// Provide exact size as FindOrSubdivideResourceRange doesn't handle VK_REMAINING_* macros
+		if(vkSubresourceRange.layerCount == VK_REMAINING_ARRAY_LAYERS)
+			vkSubresourceRange.layerCount = vulkanImage->GetRange().layerCount;
+
+		if(vkSubresourceRange.levelCount == VK_REMAINING_MIP_LEVELS)
+			vkSubresourceRange.levelCount = vulkanImage->GetRange().levelCount;
+
+		UpdateWriteHazardTrackingAfterBarrier(vulkanTexture->GetVulkanResource(), vkSubresourceRange, sourceAccess, sourceStages, destinationAccess, destinationStages);
+	}
+}
+
+void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(VulkanBuffer* buffer, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages)
+{
+	const bool isReadOrWriteAfterWrite = sourceAccess.IsSet(GpuAccessFlag::Write);
+	const bool isWriteAfterRead = sourceAccess.IsSet(GpuAccessFlag::Read) && destinationAccess.IsSet(GpuAccessFlag::Write);
+
+	auto found = mBuffers.find(buffer);
+	if(found == mBuffers.end()) // Not yet registered with the command buffer, no need to track anything as all accesses will be safe the first time
+		return;
+
+	WriteHazardTracking* const writeHazardTracking = found->second.WriteHazardTracking;
+
+	if(isReadOrWriteAfterWrite || isWriteAfterRead)
+		writeHazardTracking->ReadAccessStages.AddStageSafeAccess(sourceStages, destinationStages);
+
+	if(isReadOrWriteAfterWrite)
+		writeHazardTracking->WriteAccessStages.AddStageSafeAccess(sourceStages, destinationStages);
+}
+
+void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(VulkanImage* image, const VkImageSubresourceRange& range, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages)
+{
+	const bool isReadOrWriteAfterWrite = sourceAccess.IsSet(GpuAccessFlag::Write);
+	const bool isWriteAfterRead = sourceAccess.IsSet(GpuAccessFlag::Read) && destinationAccess.IsSet(GpuAccessFlag::Write);
+
+	auto found = mImages.find(image);
+	if(found == mImages.end()) // Not yet registered with the command buffer, no need to track anything as all accesses will be safe the first time
+		return;
+
+	const u32 imageInfoIndex = found->second;
+	ImageInfo& imageInfo = mImageInfos[imageInfoIndex];
+
+	FindOrSubdivideSubresourceRange(imageInfo, range, [this](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
+	{
+		if(copyFrom.has_value())
 		{
-			WriteHazardTracking* writeHazardTracking = *it;
+			const u32 copyFromSubresourceIndex = copyFrom.value();
+			ImageSubresourceInfo* const copyFromSubresource = &mSubresourceInfoStorage[copyFromSubresourceIndex];
+
+			ImageSubresourceInfo subresourceCopy = *copyFromSubresource;
+			subresourceCopy.Range = range;
+			subresourceCopy.WriteHazardTracking = mWriteHazardPool.Construct<WriteHazardTracking>();
+
+			if(B3D_ENSURE(copyFromSubresource->WriteHazardTracking != nullptr))
+				*subresourceCopy.WriteHazardTracking = *copyFromSubresource->WriteHazardTracking;
+
+			mSubresourceInfoStorage.push_back(subresourceCopy);
+			return;
+		}
+
+		AddSubresourceRange(range, ImageUseFlagBits::Shader, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_UNDEFINED, GpuAccessFlag::None, 0);
+	},
+	[this, sourceStages, destinationStages, isReadOrWriteAfterWrite, isWriteAfterRead](u32 subresourceIndex, bool isNewSubresource)
+	{
+		ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIndex];
+		WriteHazardTracking* const writeHazardTracking = subresource.WriteHazardTracking;
+
+		if(isReadOrWriteAfterWrite || isWriteAfterRead)
+			writeHazardTracking->ReadAccessStages.AddStageSafeAccess(sourceStages, destinationStages);
+
+		if(isReadOrWriteAfterWrite)
 			writeHazardTracking->WriteAccessStages.AddStageSafeAccess(sourceStages, destinationStages);
-			writeHazardTracking->ReadAccessStages.AddStageSafeAccess(sourceStages, destinationStages);
-		}
-	}
-	// Write-after-read, just need an execution barrier
-	else if(sourceAccess.IsSet(GpuAccessFlag::Read) && destinationAccess.IsSet(GpuAccessFlag::Write))
-	{
-		// All stages that were reading from a buffer must be present in source stages
-		for(auto it = mWriteHazards.begin(); it != mWriteHazards.end(); ++it)
-		{
-			WriteHazardTracking* writeHazardTracking = *it;
-			writeHazardTracking->ReadAccessStages.AddStageSafeAccess(sourceStages, destinationStages);
-		}
-	}
+	});
 }
 #endif
 
@@ -2629,6 +2708,173 @@ void VulkanGpuCommandBuffer::RegisterImageTransfer(VulkanImage* image, const VkI
 	RegisterResource(image, range, ImageUseFlagBits::Transfer, layout, layout, access, VK_PIPELINE_STAGE_TRANSFER_BIT);
 }
 
+template<typename TNotifySubresourceRangeCreated, typename TNotifySubresourceRangeOverlap>
+void VulkanGpuCommandBuffer::FindOrSubdivideSubresourceRange(ImageInfo& imageInfo, const VkImageSubresourceRange& range, TNotifySubresourceRangeCreated&& fnAddSubresourceRange, TNotifySubresourceRangeOverlap&& fnNotifySubresourceRangeOverlap)
+{
+	ImageSubresourceInfo* subresources = &mSubresourceInfoStorage[imageInfo.FirstSubresourceInfoIndex];
+
+	bool foundRange = false;
+	for(u32 i = 0; i < imageInfo.SubresourceInfoCount; i++)
+	{
+		if(VulkanUtility::RangeOverlaps(subresources[i].Range, range))
+		{
+			if(subresources[i].Range.layerCount == range.layerCount &&
+			   subresources[i].Range.levelCount == range.levelCount &&
+			   subresources[i].Range.baseArrayLayer == range.baseArrayLayer &&
+			   subresources[i].Range.baseMipLevel == range.baseMipLevel)
+			{
+				fnNotifySubresourceRangeOverlap(imageInfo.FirstSubresourceInfoIndex + i, false);
+				foundRange = true;
+				break;
+			}
+
+			break;
+		}
+	}
+
+	//// We'll need to update subresource ranges or add new ones. The hope is that this code is trigger VERY rarely
+	//// (for just a few specific textures per frame).
+	if(!foundRange)
+	{
+		std::array<VkImageSubresourceRange, 5> tempCutRanges;
+
+		B3DMarkAllocatorFrame();
+		{
+			// We orphan previously allocated memory (we reset after command buffer is done executing anyway)
+			u32 newSubresourceIndex = (u32)mSubresourceInfoStorage.size();
+
+			FrameVector<u32> cutOverlappingRanges;
+			for(u32 i = 0; i < imageInfo.SubresourceInfoCount; i++)
+			{
+				u32 subresourceIdx = imageInfo.FirstSubresourceInfoIndex + i;
+				ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIdx];
+
+				if(!VulkanUtility::RangeOverlaps(subresource.Range, range))
+					fnAddSubresourceRange(subresource.Range, subresourceIdx);
+				else // Need to cut
+				{
+					u32 numCutRanges;
+					VulkanUtility::CutRange(subresource.Range, range, tempCutRanges, numCutRanges);
+
+					for(u32 j = 0; j < numCutRanges; j++)
+					{
+						// Create a copy of the original subresource with the new range
+						fnAddSubresourceRange(tempCutRanges[j], subresourceIdx);
+
+						if(VulkanUtility::RangeOverlaps(tempCutRanges[j], range))
+						{
+							fnNotifySubresourceRangeOverlap((u32)mSubresourceInfoStorage.size() - 1, true);
+
+							// Keep track of the overlapping ranges for later
+							cutOverlappingRanges.push_back((u32)mSubresourceInfoStorage.size() - 1);
+						}
+					}
+				}
+			}
+
+			// Our range doesn't overlap with any existing ranges, so just add it
+			if(cutOverlappingRanges.empty())
+			{
+				fnAddSubresourceRange(range, std::nullopt);
+			}
+			else // Search if overlapping ranges fully cover the requested range, and insert non-covered regions
+			{
+				FrameQueue<VkImageSubresourceRange> sourceRanges;
+				sourceRanges.push(range);
+
+				for(auto& entry : cutOverlappingRanges)
+				{
+					VkImageSubresourceRange& overlappingRange = mSubresourceInfoStorage[entry].Range;
+
+					u32 numSourceRanges = (u32)sourceRanges.size();
+					for(u32 i = 0; i < numSourceRanges; i++)
+					{
+						VkImageSubresourceRange sourceRange = sourceRanges.front();
+						sourceRanges.pop();
+
+						u32 numCutRanges;
+						VulkanUtility::CutRange(sourceRange, overlappingRange, tempCutRanges, numCutRanges);
+
+						for(u32 j = 0; j < numCutRanges; j++)
+						{
+							// We only care about ranges outside of the ones we already covered
+							if(!VulkanUtility::RangeOverlaps(tempCutRanges[j], overlappingRange))
+								sourceRanges.push(tempCutRanges[j]);
+						}
+					}
+				}
+
+				// Any remaining range hasn't been covered yet
+				while(!sourceRanges.empty())
+				{
+					fnAddSubresourceRange(sourceRanges.front(), std::nullopt);
+					sourceRanges.pop();
+				}
+			}
+
+			imageInfo.FirstSubresourceInfoIndex = newSubresourceIndex;
+			imageInfo.SubresourceInfoCount = (u32)mSubresourceInfoStorage.size() - newSubresourceIndex;
+		}
+		B3DClearAllocatorFrame();
+	}
+}
+
+void VulkanGpuCommandBuffer::AddSubresourceRange(const VkImageSubresourceRange& range, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages)
+{
+	mSubresourceInfoStorage.push_back(ImageSubresourceInfo());
+	ImageSubresourceInfo& subresourceInfo = mSubresourceInfoStorage.back();
+	subresourceInfo.CurrentLayout = layout;
+	subresourceInfo.InitialLayout = layout;
+	subresourceInfo.InitialReadOnly = !access.IsSet(GpuAccessFlag::Write);
+	subresourceInfo.RequiredLayout = layout;
+	subresourceInfo.RenderPassLayout = finalLayout;
+	subresourceInfo.Range = range;
+
+	switch(use)
+	{
+	default:
+	case ImageUseFlagBits::Shader:
+		subresourceInfo.ShaderUse.Access = access;
+		subresourceInfo.ShaderUse.Stages = stages;
+#if B3D_AUTOMATIC_BARRIERS
+		subresourceInfo.WriteHazardUse.Access = access;
+		subresourceInfo.WriteHazardUse.Stages = stages;
+		subresourceInfo.NewWriteHazardUse = subresourceInfo.WriteHazardUse;
+#endif
+		break;
+	case ImageUseFlagBits::Framebuffer:
+		subresourceInfo.FramebufferUse.Access = access;
+		subresourceInfo.FramebufferUse.Stages = stages;
+		break;
+	case ImageUseFlagBits::Transfer:
+		subresourceInfo.TransferUse.Access = access;
+		subresourceInfo.TransferUse.Stages = stages;
+		break;
+	}
+
+#if B3D_HAZARD_TRACKING
+	WriteHazardTracking* const writeHazardTracking = mWriteHazardPool.Construct<WriteHazardTracking>();
+	subresourceInfo.WriteHazardTracking = writeHazardTracking;
+
+	// Render pass handles framebuffer barriers, and we handle transfer barriers explicitly
+	if(use == ImageUseFlagBits::Shader || use == ImageUseFlagBits::Framebuffer)
+	{
+		writeHazardTracking->Access = access;
+
+		if(access.IsSet(GpuAccessFlag::Read))
+			writeHazardTracking->ReadAccessStages.ClearStageSafeAccess(stages);
+
+		if(access.IsSet(GpuAccessFlag::Write))
+			writeHazardTracking->WriteAccessStages.ClearStageSafeAccess(stages);
+	}
+#endif
+
+	subresourceInfo.UseFlags = use;
+
+	if(use == ImageUseFlagBits::Shader)
+		mShaderBoundSubresourceInfos.insert((u32)mSubresourceInfoStorage.size() - 1);
+}
+
 void VulkanGpuCommandBuffer::RegisterResource(VulkanImage* image, const VkImageSubresourceRange& range, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages)
 {
 	// This function either registers a brand new image resource that was never been used on this command buffer, or
@@ -2636,63 +2882,6 @@ void VulkanGpuCommandBuffer::RegisterResource(VulkanImage* image, const VkImageS
 	// function and further determines if any layout transitions and/or memory/execution barriers are necessary.
 
 	u32 nextImageInfoIdx = (u32)mImageInfos.size();
-	auto fnRegisterSubresourceRange = [&](const VkImageSubresourceRange& subresourceRange)
-	{
-		mSubresourceInfoStorage.push_back(ImageSubresourceInfo());
-		ImageSubresourceInfo& subresourceInfo = mSubresourceInfoStorage.back();
-		subresourceInfo.CurrentLayout = layout;
-		subresourceInfo.InitialLayout = layout;
-		subresourceInfo.InitialReadOnly = !access.IsSet(GpuAccessFlag::Write);
-		subresourceInfo.RequiredLayout = layout;
-		subresourceInfo.RenderPassLayout = finalLayout;
-		subresourceInfo.Range = subresourceRange;
-
-		switch(use)
-		{
-		default:
-		case ImageUseFlagBits::Shader:
-			subresourceInfo.ShaderUse.Access = access;
-			subresourceInfo.ShaderUse.Stages = stages;
-#if B3D_AUTOMATIC_BARRIERS
-			subresourceInfo.WriteHazardUse.Access = access;
-			subresourceInfo.WriteHazardUse.Stages = stages;
-			subresourceInfo.NewWriteHazardUse = subresourceInfo.WriteHazardUse;
-#endif
-			break;
-		case ImageUseFlagBits::Framebuffer:
-			subresourceInfo.FramebufferUse.Access = access;
-			subresourceInfo.FramebufferUse.Stages = stages;
-			break;
-		case ImageUseFlagBits::Transfer:
-			subresourceInfo.TransferUse.Access = access;
-			subresourceInfo.TransferUse.Stages = stages;
-			break;
-		}
-
-#if B3D_HAZARD_TRACKING
-		WriteHazardTracking* const writeHazardTracking = mWriteHazardPool.Construct<WriteHazardTracking>();
-		mWriteHazards.Add(writeHazardTracking);
-
-		subresourceInfo.WriteHazardTracking = writeHazardTracking;
-
-		// Render pass handles framebuffer barriers, and we handle transfer barriers explicitly
-		if(use == ImageUseFlagBits::Shader || use == ImageUseFlagBits::Framebuffer)
-		{
-			writeHazardTracking->Access = access;
-
-			if(access.IsSet(GpuAccessFlag::Read))
-				writeHazardTracking->ReadAccessStages.ClearStageSafeAccess(stages);
-
-			if(access.IsSet(GpuAccessFlag::Write))
-				writeHazardTracking->WriteAccessStages.ClearStageSafeAccess(stages);
-		}
-#endif
-
-		subresourceInfo.UseFlags = use;
-
-		if(use == ImageUseFlagBits::Shader)
-			mShaderBoundSubresourceInfos.insert((u32)mSubresourceInfoStorage.size() - 1);
-	};
 
 	auto insertResult = mImages.insert(std::make_pair(image, nextImageInfoIdx));
 	if(insertResult.second) // New element
@@ -2707,7 +2896,7 @@ void VulkanGpuCommandBuffer::RegisterResource(VulkanImage* image, const VkImageS
 		imageInfo.UseHandle.Used = false;
 		imageInfo.UseHandle.Flags = access;
 
-		fnRegisterSubresourceRange(range);
+		AddSubresourceRange(range, use, layout, finalLayout, access, stages);
 
 		image->NotifyBound();
 	}
@@ -2722,170 +2911,58 @@ void VulkanGpuCommandBuffer::RegisterResource(VulkanImage* image, const VkImageS
 		// See if there is an overlap between existing ranges and the new range. And if so break them up accordingly.
 		//// First test for the simplest and most common case (same range or no overlap) to avoid more complex
 		//// computations.
-		ImageSubresourceInfo* subresources = &mSubresourceInfoStorage[imageInfo.FirstSubresourceInfoIndex];
-
-		bool foundRange = false;
-		for(u32 i = 0; i < imageInfo.SubresourceInfoCount; i++)
+		FindOrSubdivideSubresourceRange(imageInfo, range, [this, use, layout, finalLayout, access, stages](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
 		{
-			if(VulkanUtility::RangeOverlaps(subresources[i].Range, range))
+			if(copyFrom.has_value())
 			{
-				if(subresources[i].Range.layerCount == range.layerCount &&
-				   subresources[i].Range.levelCount == range.levelCount &&
-				   subresources[i].Range.baseArrayLayer == range.baseArrayLayer &&
-				   subresources[i].Range.baseMipLevel == range.baseMipLevel)
+				const u32 copyFromSubresourceIndex = copyFrom.value();
+				ImageSubresourceInfo* const copyFromSubresource = &mSubresourceInfoStorage[copyFromSubresourceIndex];
+
+				ImageSubresourceInfo subresourceCopy = *copyFromSubresource;
+				subresourceCopy.Range = range;
+
+#if B3D_HAZARD_TRACKING
+				if(use == ImageUseFlagBits::Shader || use == ImageUseFlagBits::Framebuffer)
 				{
-					// Just update existing range
-					switch(use)
-					{
-					default:
-					case ImageUseFlagBits::Shader:
-						UpdateShaderSubresource(image, imageInfoIdx, subresources[i], layout, access, stages);
-						break;
-					case ImageUseFlagBits::Framebuffer:
-						UpdateFramebufferSubresource(image, imageInfoIdx, subresources[i], layout, finalLayout, access, stages);
-						break;
-					case ImageUseFlagBits::Transfer:
-						UpdateTransferSubresource(image, subresources[i], layout, access, stages);
-						break;
-					}
+					subresourceCopy.WriteHazardTracking = mWriteHazardPool.Construct<WriteHazardTracking>();
 
-					if(use == ImageUseFlagBits::Shader)
-						mShaderBoundSubresourceInfos.insert(imageInfo.FirstSubresourceInfoIndex + i);
-
-					foundRange = true;
-					break;
+					if(B3D_ENSURE(copyFromSubresource->WriteHazardTracking != nullptr))
+						*subresourceCopy.WriteHazardTracking = *copyFromSubresource->WriteHazardTracking;
 				}
+#endif
 
+				mSubresourceInfoStorage.push_back(subresourceCopy);
+
+				if(use == ImageUseFlagBits::Shader)
+					mShaderBoundSubresourceInfos.insert((u32)mSubresourceInfoStorage.size() - 1);
+
+				return;
+			}
+
+			// If not copying from, we're registering a new subresource range
+			AddSubresourceRange(range, use, layout, finalLayout, access, stages);
+		},
+		[this, use, image, imageInfoIdx, layout, finalLayout, access, stages](u32 subresourceIndex, bool isNewSubresource)
+		{
+			ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIndex];
+
+			switch(use)
+			{
+			default:
+			case ImageUseFlagBits::Shader:
+				UpdateShaderSubresource(image, imageInfoIdx, subresource, layout, access, stages);
+				break;
+			case ImageUseFlagBits::Framebuffer:
+				UpdateFramebufferSubresource(image, imageInfoIdx, subresource, layout, finalLayout, access, stages);
+				break;
+			case ImageUseFlagBits::Transfer:
+				UpdateTransferSubresource(image, subresource, layout, access, stages);
 				break;
 			}
-		}
 
-		//// We'll need to update subresource ranges or add new ones. The hope is that this code is trigger VERY rarely
-		//// (for just a few specific textures per frame).
-		if(!foundRange)
-		{
-			std::array<VkImageSubresourceRange, 5> tempCutRanges;
-
-			B3DMarkAllocatorFrame();
-			{
-				// We orphan previously allocated memory (we reset it after submit() anyway)
-				u32 newSubresourceIdx = (u32)mSubresourceInfoStorage.size();
-
-				FrameVector<u32> cutOverlappingRanges;
-				for(u32 i = 0; i < imageInfo.SubresourceInfoCount; i++)
-				{
-					u32 subresourceIdx = imageInfo.FirstSubresourceInfoIndex + i;
-					ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIdx];
-
-					if(!VulkanUtility::RangeOverlaps(subresource.Range, range))
-					{
-						// Just copy as is
-						mSubresourceInfoStorage.push_back(subresource);
-
-#if B3D_HAZARD_TRACKING
-						// This is now owned by the new subresource
-						subresource.WriteHazardTracking = nullptr;
-#endif
-
-						if(use == ImageUseFlagBits::Shader)
-							mShaderBoundSubresourceInfos.insert((u32)mSubresourceInfoStorage.size() - 1);
-					}
-					else // Need to cut
-					{
-						u32 numCutRanges;
-						VulkanUtility::CutRange(subresource.Range, range, tempCutRanges, numCutRanges);
-
-						for(u32 j = 0; j < numCutRanges; j++)
-						{
-							// Create a copy of the original subresource with the new range
-							ImageSubresourceInfo newInfo = mSubresourceInfoStorage[subresourceIdx];
-							newInfo.Range = tempCutRanges[j];
-
-#if B3D_HAZARD_TRACKING
-							if(use == ImageUseFlagBits::Shader || use == ImageUseFlagBits::Framebuffer)
-							{
-								WriteHazardTracking* const newWriteHazardTracking = mWriteHazardPool.Construct<WriteHazardTracking>();
-								newInfo.WriteHazardTracking = newWriteHazardTracking;
-								*newInfo.WriteHazardTracking = *subresource.WriteHazardTracking;
-
-								mWriteHazards.Add(newWriteHazardTracking);
-							}
-#endif
-
-							if(VulkanUtility::RangeOverlaps(tempCutRanges[j], range))
-							{
-								// Update overlapping sub-resource range with new data from this range
-								switch(use)
-								{
-								default:
-								case ImageUseFlagBits::Shader:
-									UpdateShaderSubresource(image, imageInfoIdx, newInfo, layout, access, stages);
-									break;
-								case ImageUseFlagBits::Framebuffer:
-									UpdateFramebufferSubresource(image, imageInfoIdx, newInfo, layout, finalLayout, access, stages);
-									break;
-								case ImageUseFlagBits::Transfer:
-									UpdateTransferSubresource(image, newInfo, layout, access, stages);
-									break;
-								}
-
-								// Keep track of the overlapping ranges for later
-								cutOverlappingRanges.push_back((u32)mSubresourceInfoStorage.size());
-							}
-
-							mSubresourceInfoStorage.push_back(newInfo);
-
-							if(use == ImageUseFlagBits::Shader)
-								mShaderBoundSubresourceInfos.insert((u32)mSubresourceInfoStorage.size() - 1);
-						}
-					}
-				}
-
-				// Our range doesn't overlap with any existing ranges, so just add it
-				if(cutOverlappingRanges.empty())
-				{
-					fnRegisterSubresourceRange(range);
-				}
-				else // Search if overlapping ranges fully cover the requested range, and insert non-covered regions
-				{
-					FrameQueue<VkImageSubresourceRange> sourceRanges;
-					sourceRanges.push(range);
-
-					for(auto& entry : cutOverlappingRanges)
-					{
-						VkImageSubresourceRange& overlappingRange = mSubresourceInfoStorage[entry].Range;
-
-						u32 numSourceRanges = (u32)sourceRanges.size();
-						for(u32 i = 0; i < numSourceRanges; i++)
-						{
-							VkImageSubresourceRange sourceRange = sourceRanges.front();
-							sourceRanges.pop();
-
-							u32 numCutRanges;
-							VulkanUtility::CutRange(sourceRange, overlappingRange, tempCutRanges, numCutRanges);
-
-							for(u32 j = 0; j < numCutRanges; j++)
-							{
-								// We only care about ranges outside of the ones we already covered
-								if(!VulkanUtility::RangeOverlaps(tempCutRanges[j], overlappingRange))
-									sourceRanges.push(tempCutRanges[j]);
-							}
-						}
-					}
-
-					// Any remaining range hasn't been covered yet
-					while(!sourceRanges.empty())
-					{
-						fnRegisterSubresourceRange(sourceRanges.front());
-						sourceRanges.pop();
-					}
-				}
-
-				imageInfo.FirstSubresourceInfoIndex = newSubresourceIdx;
-				imageInfo.SubresourceInfoCount = (u32)mSubresourceInfoStorage.size() - newSubresourceIdx;
-			}
-			B3DClearAllocatorFrame();
-		}
+			if(!isNewSubresource && use == ImageUseFlagBits::Shader) // New subresources will already by registered here
+				mShaderBoundSubresourceInfos.insert(subresourceIndex);
+		});
 	}
 
 	// Register any sub-resources
@@ -2924,8 +3001,6 @@ void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, GpuResourceUseFla
 
 #if B3D_HAZARD_TRACKING
 		WriteHazardTracking* const writeHazardTracking = mWriteHazardPool.Construct<WriteHazardTracking>();
-		mWriteHazards.Add(writeHazardTracking);
-
 		bufferInfo.WriteHazardTracking = writeHazardTracking;
 
 		writeHazardTracking->Access = access;
@@ -2987,8 +3062,6 @@ void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, GpuResourceUseFla
 
 			if(access.IsSet(GpuAccessFlag::Write))
 				writeHazardTracking->WriteAccessStages.ClearStageSafeAccess(stages);
-
-			mWriteHazards.Add(writeHazardTracking);
 		}
 #endif
 
@@ -3257,8 +3330,6 @@ void VulkanGpuCommandBuffer::UpdateShaderSubresource(VulkanImage* image, u32 ima
 
 	if(access.IsSet(GpuAccessFlag::Write))
 		writeHazardTracking->WriteAccessStages.ClearStageSafeAccess(stages);
-
-	mWriteHazards.Add(writeHazardTracking);
 #endif
 
 #if B3D_AUTOMATIC_BARRIERS
@@ -3451,8 +3522,8 @@ void VulkanGpuCommandBuffer::UpdateTransferSubresource(VulkanImage* image, Image
 		barrier.image = image->GetVulkanHandle();
 		barrier.subresourceRange = subresourceInfo.Range;
 
-		const VkPipelineStageFlags sourceStage = GetPipelineStageFlags(sourceAccessFlags);
-		const VkPipelineStageFlags destinationStage = GetPipelineStageFlags(destinationAccessFlags);
+		const VkPipelineStageFlags sourceStage = VulkanUtility::GetPipelineStageFlags(sourceAccessFlags);
+		const VkPipelineStageFlags destinationStage = VulkanUtility::GetPipelineStageFlags(destinationAccessFlags);
 
 		vkCmdPipelineBarrier(GetVulkanHandle(), sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 	}
