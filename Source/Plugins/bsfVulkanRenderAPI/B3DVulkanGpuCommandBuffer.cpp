@@ -18,6 +18,7 @@
 #include "Managers/B3DVulkanQueries.h"
 #include "Profiling/B3DRenderStats.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"
+#include "Utility/B3DVulkanBarrierHelper.h"
 
 using namespace b3d;
 using namespace b3d::render;
@@ -2236,8 +2237,14 @@ void VulkanGpuCommandBuffer::SetEvent(VulkanEvent* event)
 		vkCmdSetEvent(mCommandBufferHandle, event->GetVulkanHandle(), VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 }
 
-void VulkanGpuCommandBuffer::UpdateBuffer(VulkanBuffer* destination, u8* data, VkDeviceSize offset, VkDeviceSize length)
+void VulkanGpuCommandBuffer::UpdateBuffer(VulkanBuffer* destination, u8* data, VkDeviceSize offset, VkDeviceSize length, bool isNewBuffer)
 {
+	if(!isNewBuffer)
+	{
+
+	}
+
+
 	MemoryBarrier(destination->GetVulkanHandle(), destination->GetAccessFlags(), VK_ACCESS_TRANSFER_READ_BIT);
 	vkCmdUpdateBuffer(GetVulkanHandle(), destination->GetVulkanHandle(), offset, length, (uint32_t*)data);
 	MemoryBarrier(destination->GetVulkanHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, destination->GetAccessFlags());
@@ -2251,6 +2258,8 @@ void VulkanGpuCommandBuffer::CopyBufferToBuffer(VulkanBuffer* source, VulkanBuff
 	region.size = length;
 	region.srcOffset = sourceOffset;
 	region.dstOffset = destinationOffset;
+
+	// TODO - Don't issue barrier if source is a newly created buffer, those don't need cache invalidation
 
 	MemoryBarrier(source->GetVulkanHandle(), source->GetAccessFlags(), VK_ACCESS_TRANSFER_READ_BIT);
 	MemoryBarrier(destination->GetVulkanHandle(), destination->GetAccessFlags(), VK_ACCESS_TRANSFER_WRITE_BIT);
@@ -2315,10 +2324,10 @@ void VulkanGpuCommandBuffer::CopyImageToBuffer(VulkanImage* source, VulkanBuffer
 	copyRegion.imageExtent = region;
 	copyRegion.imageSubresource = rangeLayers;
 
-	MemoryBarrier(destination->GetVulkanHandle(), destination->GetAccessFlags(), VK_ACCESS_TRANSFER_READ_BIT);
+	MemoryBarrier(destination->GetVulkanHandle(), destination->GetAccessFlags(), VK_ACCESS_TRANSFER_WRITE_BIT);
 	// TODO - Barriers for the image
 	vkCmdCopyImageToBuffer(GetVulkanHandle(), source->GetVulkanHandle(), layout, destination->GetVulkanHandle(), 1, &copyRegion);
-	MemoryBarrier(destination->GetVulkanHandle(), VK_ACCESS_TRANSFER_READ_BIT, destination->GetAccessFlags());
+	MemoryBarrier(destination->GetVulkanHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, destination->GetAccessFlags());
 }
 
 void VulkanGpuCommandBuffer::CopyImageToImage(VulkanImage* source, VulkanImage* destination, VkImageLayout sourceLayout, VkImageLayout destinationLayout, const VkImageSubresourceRange& sourceSubresourceRange, const VkImageSubresourceRange& destinationSubresourceRange, uint32_t regionCount, VkImageCopy* regions)
@@ -2486,23 +2495,17 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		return;
 
 	FrameScope frameScope;
-	FrameVector<VkBufferMemoryBarrier> vkBufferBarriers;
-	FrameVector<VkImageMemoryBarrier> vkImageBarriers;
-
-	GpuAccessFlags combinedSourceAccess = GpuAccessFlag::None;
-	GpuAccessFlags combinedDestinationAccess = GpuAccessFlag::None;
-
-	VkPipelineStageFlags combinedSourceStages = 0;
-	VkPipelineStageFlags combinedDestinationStages = 0;
+	VulkanBarrierHelper barrierHelper(this);
 
 	// Helper lambda to process a single image with the barrier
-	auto fnAddImageBarrier = [this, &vkImageBarriers](VulkanImage* vulkanImage, const GpuTextureSubresourceRange& subresourceRange, VkAccessFlags sourceAccessMask, VkAccessFlags destinationAccessMask)
+	auto fnAddImageBarrier = [this, &barrierHelper](VulkanImage* vulkanImage, const GpuTextureSubresourceRange& subresourceRange, const GpuBarrier& barrier)
 	{
 		if(vulkanImage == nullptr)
 			return;
 
+		// TODO - If image is not yet part of command buffer, we should register it and proceed with the barrier, otherwise we can't issue barriers in-between two command buffers
 		auto found = mImages.find(vulkanImage);
-		if(found == mImages.end()) // Not yet registered with the command buffer
+		if(found == mImages.end())
 			return;
 
 		const u32 imageInfoIndex = found->second;
@@ -2523,23 +2526,10 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 
 			AddSubresourceRange(range, ImageUseFlagBits::None, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_UNDEFINED, GpuAccessFlag::None, 0);
 		},
-		[this, &vkImageBarriers, vulkanImage, vkSubresourceRange, sourceAccessMask, destinationAccessMask](u32 subresourceIndex, bool isNewSubresource)
+		[this, &barrierHelper, vulkanImage, vkSubresourceRange, &barrier](u32 subresourceIndex, bool isNewSubresource)
 		{
 			ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIndex];
-
-			VkImageMemoryBarrier vkImageBarrier;
-			vkImageBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			vkImageBarrier.pNext = nullptr;
-			vkImageBarrier.srcAccessMask = sourceAccessMask;
-			vkImageBarrier.dstAccessMask = destinationAccessMask;
-			vkImageBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			vkImageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			vkImageBarrier.oldLayout = subresource.CurrentLayout;
-			vkImageBarrier.newLayout = subresource.CurrentLayout;
-			vkImageBarrier.image = vulkanImage->GetVulkanHandle();
-			vkImageBarrier.subresourceRange = vkSubresourceRange;
-
-			vkImageBarriers.push_back(vkImageBarrier);
+			barrierHelper.AddImageBarrier(vulkanImage, subresource.Range, barrier.SourceUsage, barrier.SourceAccess, barrier.DestinationUsage, barrier.DestinationAccess);
 		});
 	};
 
@@ -2549,27 +2539,8 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		if(vulkanGpuBuffer == nullptr)
 			continue;
 
-		const VkAccessFlags sourceAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.SourceUsage, barrier.SourceAccess);
-		const VkAccessFlags destinationAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.DestinationUsage, barrier.DestinationAccess);
-
-		combinedSourceStages |= VulkanUtility::GetPipelineStageFlags(sourceAccessMask);
-		combinedDestinationStages |= VulkanUtility::GetPipelineStageFlags(destinationAccessMask);
-
-		combinedSourceAccess |= barrier.SourceAccess;
-		combinedDestinationAccess |= barrier.DestinationAccess;
-
-		VkBufferMemoryBarrier vkBufferBarrier;
-		vkBufferBarrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		vkBufferBarrier.pNext = nullptr;
-		vkBufferBarrier.srcAccessMask = sourceAccessMask;
-		vkBufferBarrier.dstAccessMask = destinationAccessMask;
-		vkBufferBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		vkBufferBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		vkBufferBarrier.buffer = vulkanGpuBuffer->GetVulkanResource()->GetVulkanHandle();
-		vkBufferBarrier.offset = 0;
-		vkBufferBarrier.size = VK_WHOLE_SIZE;
-
-		vkBufferBarriers.push_back(vkBufferBarrier);
+		VulkanBuffer* const vulkanBuffer = vulkanGpuBuffer->GetVulkanResource();
+		barrierHelper.AddBufferBarrier(vulkanBuffer, barrier.SourceUsage, barrier.SourceAccess, barrier.DestinationUsage, barrier.DestinationAccess);
 	}
 
 	for(const auto& barrier : barriers.TextureBarriers)
@@ -2578,30 +2549,14 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		if(vulkanTexture == nullptr)
 			continue;
 
-		const VkAccessFlags sourceAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.SourceUsage, barrier.SourceAccess);
-		const VkAccessFlags destinationAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.DestinationUsage, barrier.DestinationAccess);
-
-		combinedSourceStages |= VulkanUtility::GetPipelineStageFlags(sourceAccessMask);
-		combinedDestinationStages |= VulkanUtility::GetPipelineStageFlags(destinationAccessMask);
-		combinedSourceAccess |= barrier.SourceAccess;
-		combinedDestinationAccess |= barrier.DestinationAccess;
-
 		VulkanImage* const vulkanImage = vulkanTexture->GetVulkanResource();
-		fnAddImageBarrier(vulkanImage, barrier.SubresourceRange, sourceAccessMask, destinationAccessMask);
+		fnAddImageBarrier(vulkanImage, barrier.SubresourceRange, barrier);
 	}
 
 	for(const auto& barrier : barriers.RenderTargetBarriers)
 	{
 		if(barrier.Object == nullptr)
 			continue;
-
-		const VkAccessFlags sourceAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.SourceUsage, barrier.SourceAccess);
-		const VkAccessFlags destinationAccessMask = VulkanUtility::GetAccessMaskFromUsage(barrier.DestinationUsage, barrier.DestinationAccess);
-
-		combinedSourceStages |= VulkanUtility::GetPipelineStageFlags(sourceAccessMask);
-		combinedDestinationStages |= VulkanUtility::GetPipelineStageFlags(destinationAccessMask);
-		combinedSourceAccess |= barrier.SourceAccess;
-		combinedDestinationAccess |= barrier.DestinationAccess;
 
 		// Get framebuffer based on render target type
 		VulkanFramebuffer* framebuffer = nullptr;
@@ -2641,7 +2596,7 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 			{
 				const VulkanFramebufferAttachment& attachment = framebuffer->GetColorAttachment(colorIndex);
 				if(attachment.Image != nullptr)
-					fnAddImageBarrier(attachment.Image, barrier.SubresourceRange, sourceAccessMask, destinationAccessMask);
+					fnAddImageBarrier(attachment.Image, barrier.SubresourceRange, barrier);
 
 				break;
 			}
@@ -2652,118 +2607,21 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		{
 			const VulkanFramebufferAttachment& attachment = framebuffer->GetDepthStencilAttachment();
 			if(attachment.Image != nullptr)
-				fnAddImageBarrier(attachment.Image, barrier.SubresourceRange, sourceAccessMask, destinationAccessMask);
+				fnAddImageBarrier(attachment.Image, barrier.SubresourceRange, barrier);
 		}
 	}
-	// Read-after-write or write-after-write
-	if(combinedSourceAccess.IsSet(GpuAccessFlag::Write))
-	{
-		vkCmdPipelineBarrier(GetVulkanHandle(), combinedSourceStages, combinedDestinationStages, 0, 0, nullptr,
-			(u32)vkBufferBarriers.size(), vkBufferBarriers.data(),
-			(u32)vkImageBarriers.size(), vkImageBarriers.data());
-	}
-	// Write-after-read, just need an execution barrier
-	else if(combinedSourceAccess.IsSet(GpuAccessFlag::Read) && combinedDestinationAccess.IsSet(GpuAccessFlag::Write))
-	{
-		vkCmdPipelineBarrier(GetVulkanHandle(), combinedSourceStages, combinedDestinationStages, 0, 0, nullptr, 0, nullptr, 0, nullptr);
-	}
 
-#if B3D_HAZARD_TRACKING
-	UpdateWriteHazardTrackingAfterBarrier(combinedSourceAccess, combinedSourceStages, combinedDestinationAccess, combinedDestinationStages, barriers);
-#endif
+	barrierHelper.Execute();
 }
 
 #if B3D_HAZARD_TRACKING
-void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages, const GpuBarriers& barriers)
-{
-	for(const auto& entry : barriers.BufferBarriers)
-	{
-		VulkanGpuBuffer* const vulkanGpuBuffer = static_cast<VulkanGpuBuffer*>(entry.Object.get());
-		if(vulkanGpuBuffer == nullptr)
-			continue;
-
-		UpdateWriteHazardTrackingAfterBarrier(vulkanGpuBuffer->GetVulkanResource(), sourceAccess, sourceStages, destinationAccess, destinationStages);
-	}
-
-	for(const auto& entry : barriers.TextureBarriers)
-	{
-		VulkanTexture* const vulkanTexture = static_cast<VulkanTexture*>(entry.Object.get());
-		if(vulkanTexture == nullptr)
-			continue;
-
-		VulkanImage* const vulkanImage = vulkanTexture->GetVulkanResource();
-		VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(entry.SubresourceRange);
-
-		UpdateWriteHazardTrackingAfterBarrier(vulkanImage, vkSubresourceRange, sourceAccess, sourceStages, destinationAccess, destinationStages);
-	}
-
-	for(const auto& barrier : barriers.RenderTargetBarriers)
-	{
-		if(barrier.Object == nullptr)
-			continue;
-
-		// Get framebuffer based on render target type
-		VulkanFramebuffer* framebuffer = nullptr;
-		if(barrier.Object->GetProperties().IsWindow)
-		{
-			// Handle RenderWindow
-			RenderWindow* const renderWindow = static_cast<RenderWindow*>(barrier.Object.get());
-			VulkanRenderWindowSurface* renderWindowSurface = static_cast<VulkanRenderWindowSurface*>(renderWindow->GetRenderWindowSurface().get());
-
-			if(renderWindowSurface != nullptr)
-			{
-				VulkanSwapChain* swapChain = renderWindowSurface->GetSwapChain();
-
-				// Find the acquired image index for this swap chain
-				const auto found = std::find_if(mAcquiredSwapChainImages.begin(), mAcquiredSwapChainImages.end(),
-					[swapChain](const SwapChainImageInformation& info) { return info.SwapChain == swapChain; });
-
-				if(found != mAcquiredSwapChainImages.end())
-					framebuffer = swapChain->GetFramebufferForImage(found->ImageIndex);
-			}
-		}
-		else
-		{
-			// Handle RenderTexture
-			VulkanRenderTexture* const renderTexture = static_cast<VulkanRenderTexture*>(barrier.Object.get());
-			framebuffer = renderTexture->GetFramebuffer();
-		}
-
-		if(framebuffer == nullptr)
-			continue;
-
-		// Process color attachments if specified in the surface mask
-		for(u32 colorIndex = 0; colorIndex < B3D_MAXIMUM_RENDER_TARGET_COUNT; colorIndex++)
-		{
-			const RenderSurfaceMaskBits colorMask = static_cast<RenderSurfaceMaskBits>(RT_COLOR0 << colorIndex);
-			if(barrier.SurfaceMask == colorMask)
-			{
-				const VulkanFramebufferAttachment& attachment = framebuffer->GetColorAttachment(colorIndex);
-				VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(barrier.SubresourceRange);
-
-				UpdateWriteHazardTrackingAfterBarrier(attachment.Image, vkSubresourceRange, sourceAccess, sourceStages, destinationAccess, destinationStages);
-				break;
-			}
-		}
-
-		// Process depth/stencil attachment if specified in the surface mask
-		if(barrier.SurfaceMask == RT_DEPTH || barrier.SurfaceMask == RT_STENCIL)
-		{
-			const VulkanFramebufferAttachment& attachment = framebuffer->GetDepthStencilAttachment();
-			VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(barrier.SubresourceRange);
-
-			UpdateWriteHazardTrackingAfterBarrier(attachment.Image, vkSubresourceRange, sourceAccess, sourceStages, destinationAccess, destinationStages);
-		}
-	}
-}
-
 void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(VulkanBuffer* buffer, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages)
 {
 	const bool isReadOrWriteAfterWrite = sourceAccess.IsSet(GpuAccessFlag::Write);
 	const bool isWriteAfterRead = sourceAccess.IsSet(GpuAccessFlag::Read) && destinationAccess.IsSet(GpuAccessFlag::Write);
 
 	auto found = mBuffers.find(buffer);
-	if(found == mBuffers.end()) // Not yet registered with the command buffer, no need to track anything as all accesses will be safe the first time
+	if(found == mBuffers.end()) // TODO - Need to write hazard information for first time use, otherwise accesses between different command buffers won't be safe
 		return;
 
 	WriteHazardTracking* const writeHazardTracking = found->second.WriteHazardTracking;
@@ -2781,7 +2639,7 @@ void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(VulkanImage* 
 	const bool isWriteAfterRead = sourceAccess.IsSet(GpuAccessFlag::Read) && destinationAccess.IsSet(GpuAccessFlag::Write);
 
 	auto found = mImages.find(image);
-	if(found == mImages.end()) // Not yet registered with the command buffer, no need to track anything as all accesses will be safe the first time
+	if(found == mImages.end()) // TODO - Need to write hazard information for first time use, otherwise accesses between different command buffers won't be safe
 		return;
 
 	const u32 imageInfoIndex = found->second;

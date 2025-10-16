@@ -584,7 +584,7 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 	if(stagingBuffer != nullptr)
 		vulkanCommandBuffer->CopyBufferToBuffer(stagingBuffer, mBuffer, 0, offset, length);
 	else // Staging memory
-		vulkanCommandBuffer->UpdateBuffer(mBuffer, (u8*)source, offset, length);
+		vulkanCommandBuffer->UpdateBuffer(mBuffer, (u8*)source, offset, length, false);
 
 	if(stagingBuffer != nullptr)
 		stagingBuffer->Destroy();

@@ -24,6 +24,7 @@ namespace b3d
 		class VulkanOcclusionQuery;
 		class VulkanTimerQuery;
 		class VulkanImage;
+		class VulkanBarrierHelper;
 
 		/** @addtogroup Vulkan
 		 *  @{
@@ -354,8 +355,9 @@ namespace b3d
 			 * @param	data			Data to copy into.
 			 * @param	offset			Offset in the destination buffer to copy to, in bytes. Must be a multiple of 4.
 			 * @param	length			Size of the data to copy, in bytes. Must be a multiple of 4 and less or equal than 65536.
+			 * @param	isNewBuffer		If buffer is new, issuing memory barrier before the transfer can be skipped.
 			 */
-			void UpdateBuffer(VulkanBuffer* destination, u8* data, VkDeviceSize offset, VkDeviceSize length);
+			void UpdateBuffer(VulkanBuffer* destination, u8* data, VkDeviceSize offset, VkDeviceSize length, bool isNewBuffer);
 
 			/**
 			 * Copies the contents of the source buffer to the destination buffer. Caller must ensure the provided
@@ -462,6 +464,7 @@ namespace b3d
 			friend class VulkanGpuQueue;
 			friend class VulkanGpuBuffer;
 			friend class VulkanTexture;
+			friend class VulkanBarrierHelper;
 
 			/** Contains information about a single Vulkan resource bound/used on this command buffer. */
 			struct ResourceUseHandle
@@ -759,9 +762,6 @@ namespace b3d
 			Area2I GetRenderPassArea() const;
 
 #if B3D_HAZARD_TRACKING
-			/** Updates write hazard tracking for multiple barriers after the barriers were issued. */
-			void UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages, const GpuBarriers& barriers);
-
 			/** Updates write hazard tracking for a single buffer after a barrier has been issued. */
 			void UpdateWriteHazardTrackingAfterBarrier(VulkanBuffer* buffer, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages);
 
