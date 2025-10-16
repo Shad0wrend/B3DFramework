@@ -211,25 +211,27 @@ namespace b3d
 			SPtr<Texture> Object;
 			GpuTextureSubresourceRange SubresourceRange;
 		};
-		/**
+/**
 		 * Describes a barrier for a RenderTarget.
 		 *
 		 * This is functionally equivalent to specifying GpuTextureBarrier on the color or depth/stencil textures of the
 		 * render target. However, it is necessary for issuing barriers on swap chain images, which cannot be accessed
 		 * as standalone textures.
+		 *
+		 * @note SurfaceMask must specify only a single surface bit (e.g., RT_COLOR0, RT_DEPTH). Combinations of multiple bits are invalid.
 		 */
 		struct GpuRenderTargetBarrier : GpuBarrier
 		{
-			GpuRenderTargetBarrier(const SPtr<RenderTarget>& object, RenderSurfaceMask surfaceMask = RT_ALL, const GpuTextureSubresourceRange& subresourceRange = GpuTextureSubresourceRange::AllSubresources())
+			GpuRenderTargetBarrier(const SPtr<RenderTarget>& object, RenderSurfaceMaskBits surfaceMask, const GpuTextureSubresourceRange& subresourceRange = GpuTextureSubresourceRange::AllSubresources())
 				: Object(object), SurfaceMask(surfaceMask), SubresourceRange(subresourceRange)
 			{ }
 
-			GpuRenderTargetBarrier(const SPtr<RenderTarget>& object, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, RenderSurfaceMask surfaceMask = RT_ALL, const GpuTextureSubresourceRange& subresourceRange = GpuTextureSubresourceRange::AllSubresources())
+			GpuRenderTargetBarrier(const SPtr<RenderTarget>& object, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, RenderSurfaceMaskBits surfaceMask, const GpuTextureSubresourceRange& subresourceRange = GpuTextureSubresourceRange::AllSubresources())
 				: GpuBarrier(sourceUsage, sourceAccess, destinationUsage, destinationAccess), Object(object), SurfaceMask(surfaceMask), SubresourceRange(subresourceRange)
 			{ }
 
 			SPtr<RenderTarget> Object;
-			RenderSurfaceMask SurfaceMask; /**< Specifies which surfaces of the render target the barrier applies to. */
+			RenderSurfaceMaskBits SurfaceMask; /**< Specifies which surface of the render target the barrier applies to. Must be a single bit. */
 			GpuTextureSubresourceRange SubresourceRange; /**< Subresources (mips, array levels) of the textures to apply the barrier to. */
 		};
 

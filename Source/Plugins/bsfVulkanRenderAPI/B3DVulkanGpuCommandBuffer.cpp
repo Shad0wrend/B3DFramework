@@ -2492,6 +2492,65 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 
 	VkPipelineStageFlags combinedSourceStages = 0;
 	VkPipelineStageFlags combinedDestinationStages = 0;
+
+	// Helper lambda to process a single image with the barrier
+	auto fnAddImageBarrier = [this, &vkImageBarriers](VulkanImage* vulkanImage, const GpuTextureSubresourceRange& subresourceRange, VkAccessFlags sourceAccessMask, VkAccessFlags destinationAccessMask)
+	{
+		if(vulkanImage == nullptr)
+			return;
+
+		auto found = mImages.find(vulkanImage);
+		if(found == mImages.end()) // Not yet registered with the command buffer
+			return;
+
+		const u32 imageInfoIndex = found->second;
+		ImageInfo& imageInfo = mImageInfos[imageInfoIndex];
+
+		VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(subresourceRange);
+
+		// Filter out invalid aspect mask to avoid validation warnings
+		vkSubresourceRange.aspectMask &= vulkanImage->GetAspectFlags();
+
+		FindOrSubdivideSubresourceRange(vulkanImage, imageInfo, vkSubresourceRange, [this](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
+		{
+			if(copyFrom.has_value())
+			{
+				const u32 copyFromSubresourceIndex = copyFrom.value();
+				ImageSubresourceInfo* const copyFromSubresource = &mSubresourceInfoStorage[copyFromSubresourceIndex];
+
+				ImageSubresourceInfo subresourceCopy = *copyFromSubresource;
+				subresourceCopy.Range = range;
+				subresourceCopy.WriteHazardTracking = mWriteHazardPool.Construct<WriteHazardTracking>();
+
+				if(B3D_ENSURE(copyFromSubresource->WriteHazardTracking != nullptr))
+					*subresourceCopy.WriteHazardTracking = *copyFromSubresource->WriteHazardTracking;
+
+				mSubresourceInfoStorage.push_back(subresourceCopy);
+				return;
+			}
+
+			AddSubresourceRange(range, ImageUseFlagBits::None, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_UNDEFINED, GpuAccessFlag::None, 0);
+		},
+		[this, &vkImageBarriers, vulkanImage, vkSubresourceRange, sourceAccessMask, destinationAccessMask](u32 subresourceIndex, bool isNewSubresource)
+		{
+			ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIndex];
+
+			VkImageMemoryBarrier vkImageBarrier;
+			vkImageBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+			vkImageBarrier.pNext = nullptr;
+			vkImageBarrier.srcAccessMask = sourceAccessMask;
+			vkImageBarrier.dstAccessMask = destinationAccessMask;
+			vkImageBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			vkImageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			vkImageBarrier.oldLayout = subresource.CurrentLayout;
+			vkImageBarrier.newLayout = subresource.CurrentLayout;
+			vkImageBarrier.image = vulkanImage->GetVulkanHandle();
+			vkImageBarrier.subresourceRange = vkSubresourceRange;
+
+			vkImageBarriers.push_back(vkImageBarrier);
+		});
+	};
+
 	for(const auto& barrier : barriers.BufferBarriers)
 	{
 		VulkanGpuBuffer* const vulkanGpuBuffer = static_cast<VulkanGpuBuffer*>(barrier.Object.get());
@@ -2536,64 +2595,7 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		combinedDestinationAccess |= barrier.DestinationAccess;
 
 		VulkanImage* const vulkanImage = vulkanTexture->GetVulkanResource();
-
-		auto found = mImages.find(vulkanImage);
-		if(found == mImages.end()) // Not yet registered with the command buffer, no need to track anything as all accesses will be safe the first time
-			return;
-
-		const u32 imageInfoIndex = found->second;
-		ImageInfo& imageInfo = mImageInfos[imageInfoIndex];
-
-		VkImageSubresourceRange subresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(barrier.SubresourceRange);
-
-		// Filter out invalid aspect mask to avoid validation warnings
-		subresourceRange.aspectMask &= vulkanImage->GetAspectFlags();
-
-		// Provide exact size as FindOrSubdivideResourceRange doesn't handle VK_REMAINING_* macros
-		if(subresourceRange.layerCount == VK_REMAINING_ARRAY_LAYERS)
-			subresourceRange.layerCount = vulkanImage->GetRange().layerCount;
-
-		if(subresourceRange.levelCount == VK_REMAINING_MIP_LEVELS)
-			subresourceRange.levelCount = vulkanImage->GetRange().levelCount;
-
-		FindOrSubdivideSubresourceRange(imageInfo, subresourceRange, [this](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
-		{
-			if(copyFrom.has_value())
-			{
-				const u32 copyFromSubresourceIndex = copyFrom.value();
-				ImageSubresourceInfo* const copyFromSubresource = &mSubresourceInfoStorage[copyFromSubresourceIndex];
-
-				ImageSubresourceInfo subresourceCopy = *copyFromSubresource;
-				subresourceCopy.Range = range;
-				subresourceCopy.WriteHazardTracking = mWriteHazardPool.Construct<WriteHazardTracking>();
-
-				if(B3D_ENSURE(copyFromSubresource->WriteHazardTracking != nullptr))
-					*subresourceCopy.WriteHazardTracking = *copyFromSubresource->WriteHazardTracking;
-
-				mSubresourceInfoStorage.push_back(subresourceCopy);
-				return;
-			}
-
-			AddSubresourceRange(range, ImageUseFlagBits::None, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_UNDEFINED, GpuAccessFlag::None, 0);
-		},
-		[this, &vkImageBarriers, vulkanImage, subresourceRange, sourceAccessMask, destinationAccessMask](u32 subresourceIndex, bool isNewSubresource)
-		{
-			ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIndex];
-
-			VkImageMemoryBarrier vkImageBarrier;
-			vkImageBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			vkImageBarrier.pNext = nullptr;
-			vkImageBarrier.srcAccessMask = sourceAccessMask;
-			vkImageBarrier.dstAccessMask = destinationAccessMask;
-			vkImageBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			vkImageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			vkImageBarrier.oldLayout = subresource.CurrentLayout;
-			vkImageBarrier.newLayout = subresource.CurrentLayout;
-			vkImageBarrier.image = vulkanImage->GetVulkanHandle();
-			vkImageBarrier.subresourceRange = subresourceRange;
-
-			vkImageBarriers.push_back(vkImageBarrier);
-		});
+		fnAddImageBarrier(vulkanImage, barrier.SubresourceRange, sourceAccessMask, destinationAccessMask);
 	}
 
 	for(const auto& barrier : barriers.RenderTargetBarriers)
@@ -2609,77 +2611,12 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		combinedSourceAccess |= barrier.SourceAccess;
 		combinedDestinationAccess |= barrier.DestinationAccess;
 
-		// Helper lambda to process a single image with the barrier
-		auto processImage = [&](VulkanImage* vulkanImage, const GpuTextureSubresourceRange& subresourceRange)
-		{
-			if(vulkanImage == nullptr)
-				return;
-
-			auto found = mImages.find(vulkanImage);
-			if(found == mImages.end()) // Not yet registered with the command buffer
-				return;
-
-			const u32 imageInfoIndex = found->second;
-			ImageInfo& imageInfo = mImageInfos[imageInfoIndex];
-
-			VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(subresourceRange);
-
-			// Filter out invalid aspect mask to avoid validation warnings
-			vkSubresourceRange.aspectMask &= vulkanImage->GetAspectFlags();
-
-			// Provide exact size as FindOrSubdivideResourceRange doesn't handle VK_REMAINING_* macros
-			if(vkSubresourceRange.layerCount == VK_REMAINING_ARRAY_LAYERS)
-				vkSubresourceRange.layerCount = vulkanImage->GetRange().layerCount;
-
-			if(vkSubresourceRange.levelCount == VK_REMAINING_MIP_LEVELS)
-				vkSubresourceRange.levelCount = vulkanImage->GetRange().levelCount;
-
-			FindOrSubdivideSubresourceRange(imageInfo, vkSubresourceRange, [this](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
-			{
-				if(copyFrom.has_value())
-				{
-					const u32 copyFromSubresourceIndex = copyFrom.value();
-					ImageSubresourceInfo* const copyFromSubresource = &mSubresourceInfoStorage[copyFromSubresourceIndex];
-
-					ImageSubresourceInfo subresourceCopy = *copyFromSubresource;
-					subresourceCopy.Range = range;
-					subresourceCopy.WriteHazardTracking = mWriteHazardPool.Construct<WriteHazardTracking>();
-
-					if(B3D_ENSURE(copyFromSubresource->WriteHazardTracking != nullptr))
-						*subresourceCopy.WriteHazardTracking = *copyFromSubresource->WriteHazardTracking;
-
-					mSubresourceInfoStorage.push_back(subresourceCopy);
-					return;
-				}
-
-				AddSubresourceRange(range, ImageUseFlagBits::None, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_UNDEFINED, GpuAccessFlag::None, 0);
-			},
-			[this, &vkImageBarriers, vulkanImage, vkSubresourceRange, sourceAccessMask, destinationAccessMask](u32 subresourceIndex, bool isNewSubresource)
-			{
-				ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIndex];
-
-				VkImageMemoryBarrier vkImageBarrier;
-				vkImageBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-				vkImageBarrier.pNext = nullptr;
-				vkImageBarrier.srcAccessMask = sourceAccessMask;
-				vkImageBarrier.dstAccessMask = destinationAccessMask;
-				vkImageBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-				vkImageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-				vkImageBarrier.oldLayout = subresource.CurrentLayout;
-				vkImageBarrier.newLayout = subresource.CurrentLayout;
-				vkImageBarrier.image = vulkanImage->GetVulkanHandle();
-				vkImageBarrier.subresourceRange = vkSubresourceRange;
-
-				vkImageBarriers.push_back(vkImageBarrier);
-			});
-		};
-
 		// Get framebuffer based on render target type
 		VulkanFramebuffer* framebuffer = nullptr;
 		if(barrier.Object->GetProperties().IsWindow)
 		{
 			// Handle RenderWindow - need to get the acquired swap chain image
-			render::RenderWindow* const renderWindow = static_cast<render::RenderWindow*>(barrier.Object.get());
+			RenderWindow* const renderWindow = static_cast<RenderWindow*>(barrier.Object.get());
 			VulkanRenderWindowSurface* renderWindowSurface = static_cast<VulkanRenderWindowSurface*>(renderWindow->GetRenderWindowSurface().get());
 
 			if(renderWindowSurface != nullptr)
@@ -2691,15 +2628,13 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 					[swapChain](const SwapChainImageInformation& info) { return info.SwapChain == swapChain; });
 
 				if(found != mAcquiredSwapChainImages.end())
-				{
 					framebuffer = swapChain->GetFramebufferForImage(found->ImageIndex);
-				}
 			}
 		}
 		else
 		{
 			// Handle RenderTexture
-			render::VulkanRenderTexture* const renderTexture = static_cast<render::VulkanRenderTexture*>(barrier.Object.get());
+			VulkanRenderTexture* const renderTexture = static_cast<VulkanRenderTexture*>(barrier.Object.get());
 			framebuffer = renderTexture->GetFramebuffer();
 		}
 
@@ -2710,24 +2645,22 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		for(u32 colorIndex = 0; colorIndex < B3D_MAXIMUM_RENDER_TARGET_COUNT; colorIndex++)
 		{
 			const RenderSurfaceMaskBits colorMask = static_cast<RenderSurfaceMaskBits>(RT_COLOR0 << colorIndex);
-			if(barrier.SurfaceMask.IsSet(colorMask))
+			if(barrier.SurfaceMask == colorMask)
 			{
 				const VulkanFramebufferAttachment& attachment = framebuffer->GetColorAttachment(colorIndex);
 				if(attachment.Image != nullptr)
-				{
-					processImage(attachment.Image, barrier.SubresourceRange);
-				}
+					fnAddImageBarrier(attachment.Image, barrier.SubresourceRange, sourceAccessMask, destinationAccessMask);
+
+				break;
 			}
 		}
 
 		// Process depth/stencil attachment if specified in the surface mask
-		if(barrier.SurfaceMask.IsSetAny(RT_DEPTH | RT_STENCIL))
+		if(barrier.SurfaceMask == RT_DEPTH || barrier.SurfaceMask == RT_STENCIL)
 		{
 			const VulkanFramebufferAttachment& attachment = framebuffer->GetDepthStencilAttachment();
 			if(attachment.Image != nullptr)
-			{
-				processImage(attachment.Image, barrier.SubresourceRange);
-			}
+				fnAddImageBarrier(attachment.Image, barrier.SubresourceRange, sourceAccessMask, destinationAccessMask);
 		}
 	}
 	// Read-after-write or write-after-write
@@ -2769,14 +2702,7 @@ void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlag
 		VulkanImage* const vulkanImage = vulkanTexture->GetVulkanResource();
 		VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(entry.SubresourceRange);
 
-		// Provide exact size as FindOrSubdivideResourceRange doesn't handle VK_REMAINING_* macros
-		if(vkSubresourceRange.layerCount == VK_REMAINING_ARRAY_LAYERS)
-			vkSubresourceRange.layerCount = vulkanImage->GetRange().layerCount;
-
-		if(vkSubresourceRange.levelCount == VK_REMAINING_MIP_LEVELS)
-			vkSubresourceRange.levelCount = vulkanImage->GetRange().levelCount;
-
-		UpdateWriteHazardTrackingAfterBarrier(vulkanTexture->GetVulkanResource(), vkSubresourceRange, sourceAccess, sourceStages, destinationAccess, destinationStages);
+		UpdateWriteHazardTrackingAfterBarrier(vulkanImage, vkSubresourceRange, sourceAccess, sourceStages, destinationAccess, destinationStages);
 	}
 
 	for(const auto& barrier : barriers.RenderTargetBarriers)
@@ -2784,30 +2710,12 @@ void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlag
 		if(barrier.Object == nullptr)
 			continue;
 
-		// Helper lambda to process a single image
-		auto processImage = [&](VulkanImage* vulkanImage)
-		{
-			if(vulkanImage == nullptr)
-				return;
-
-			VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(barrier.SubresourceRange);
-
-			// Provide exact size as FindOrSubdivideResourceRange doesn't handle VK_REMAINING_* macros
-			if(vkSubresourceRange.layerCount == VK_REMAINING_ARRAY_LAYERS)
-				vkSubresourceRange.layerCount = vulkanImage->GetRange().layerCount;
-
-			if(vkSubresourceRange.levelCount == VK_REMAINING_MIP_LEVELS)
-				vkSubresourceRange.levelCount = vulkanImage->GetRange().levelCount;
-
-			UpdateWriteHazardTrackingAfterBarrier(vulkanImage, vkSubresourceRange, sourceAccess, sourceStages, destinationAccess, destinationStages);
-		};
-
 		// Get framebuffer based on render target type
 		VulkanFramebuffer* framebuffer = nullptr;
 		if(barrier.Object->GetProperties().IsWindow)
 		{
 			// Handle RenderWindow
-			render::RenderWindow* const renderWindow = static_cast<render::RenderWindow*>(barrier.Object.get());
+			RenderWindow* const renderWindow = static_cast<RenderWindow*>(barrier.Object.get());
 			VulkanRenderWindowSurface* renderWindowSurface = static_cast<VulkanRenderWindowSurface*>(renderWindow->GetRenderWindowSurface().get());
 
 			if(renderWindowSurface != nullptr)
@@ -2819,15 +2727,13 @@ void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlag
 					[swapChain](const SwapChainImageInformation& info) { return info.SwapChain == swapChain; });
 
 				if(found != mAcquiredSwapChainImages.end())
-				{
 					framebuffer = swapChain->GetFramebufferForImage(found->ImageIndex);
-				}
 			}
 		}
 		else
 		{
 			// Handle RenderTexture
-			render::VulkanRenderTexture* const renderTexture = static_cast<render::VulkanRenderTexture*>(barrier.Object.get());
+			VulkanRenderTexture* const renderTexture = static_cast<VulkanRenderTexture*>(barrier.Object.get());
 			framebuffer = renderTexture->GetFramebuffer();
 		}
 
@@ -2838,18 +2744,23 @@ void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(GpuAccessFlag
 		for(u32 colorIndex = 0; colorIndex < B3D_MAXIMUM_RENDER_TARGET_COUNT; colorIndex++)
 		{
 			const RenderSurfaceMaskBits colorMask = static_cast<RenderSurfaceMaskBits>(RT_COLOR0 << colorIndex);
-			if(barrier.SurfaceMask.IsSet(colorMask))
+			if(barrier.SurfaceMask == colorMask)
 			{
 				const VulkanFramebufferAttachment& attachment = framebuffer->GetColorAttachment(colorIndex);
-				processImage(attachment.Image);
+				VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(barrier.SubresourceRange);
+
+				UpdateWriteHazardTrackingAfterBarrier(attachment.Image, vkSubresourceRange, sourceAccess, sourceStages, destinationAccess, destinationStages);
+				break;
 			}
 		}
 
 		// Process depth/stencil attachment if specified in the surface mask
-		if(barrier.SurfaceMask.IsSetAny(RT_DEPTH | RT_STENCIL))
+		if(barrier.SurfaceMask == RT_DEPTH || barrier.SurfaceMask == RT_STENCIL)
 		{
 			const VulkanFramebufferAttachment& attachment = framebuffer->GetDepthStencilAttachment();
-			processImage(attachment.Image);
+			VkImageSubresourceRange vkSubresourceRange = VulkanUtility::ToVulkanImageSubresourceRange(barrier.SubresourceRange);
+
+			UpdateWriteHazardTrackingAfterBarrier(attachment.Image, vkSubresourceRange, sourceAccess, sourceStages, destinationAccess, destinationStages);
 		}
 	}
 }
@@ -2884,7 +2795,7 @@ void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(VulkanImage* 
 	const u32 imageInfoIndex = found->second;
 	ImageInfo& imageInfo = mImageInfos[imageInfoIndex];
 
-	FindOrSubdivideSubresourceRange(imageInfo, range, [this](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
+	FindOrSubdivideSubresourceRange(image, imageInfo, range, [this](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
 	{
 		if(copyFrom.has_value())
 		{
@@ -2956,8 +2867,15 @@ void VulkanGpuCommandBuffer::RegisterImageTransfer(VulkanImage* image, const VkI
 }
 
 template<typename TNotifySubresourceRangeCreated, typename TNotifySubresourceRangeOverlap>
-void VulkanGpuCommandBuffer::FindOrSubdivideSubresourceRange(ImageInfo& imageInfo, const VkImageSubresourceRange& range, TNotifySubresourceRangeCreated&& fnAddSubresourceRange, TNotifySubresourceRangeOverlap&& fnNotifySubresourceRangeOverlap)
+void VulkanGpuCommandBuffer::FindOrSubdivideSubresourceRange(const VulkanImage* image, ImageInfo& imageInfo, VkImageSubresourceRange range, TNotifySubresourceRangeCreated&& fnAddSubresourceRange, TNotifySubresourceRangeOverlap&& fnNotifySubresourceRangeOverlap)
 {
+	// Provide exact size as code below doesn't handle VK_REMAINING_* macros
+	if(range.layerCount == VK_REMAINING_ARRAY_LAYERS)
+		range.layerCount = image->GetRange().layerCount;
+
+	if(range.levelCount == VK_REMAINING_MIP_LEVELS)
+		range.levelCount = image->GetRange().levelCount;
+
 	ImageSubresourceInfo* subresources = &mSubresourceInfoStorage[imageInfo.FirstSubresourceInfoIndex];
 
 	bool foundRange = false;
@@ -3158,7 +3076,7 @@ void VulkanGpuCommandBuffer::RegisterResource(VulkanImage* image, const VkImageS
 		// See if there is an overlap between existing ranges and the new range. And if so break them up accordingly.
 		//// First test for the simplest and most common case (same range or no overlap) to avoid more complex
 		//// computations.
-		FindOrSubdivideSubresourceRange(imageInfo, range, [this, use, layout, finalLayout, access, stages](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
+		FindOrSubdivideSubresourceRange(image, imageInfo, range, [this, use, layout, finalLayout, access, stages](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
 		{
 			if(copyFrom.has_value())
 			{

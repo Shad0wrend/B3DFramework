@@ -723,6 +723,7 @@ namespace b3d
 			 * Attempts to find an existing subrange that matches the provided subrange, for the provided image. If one
 			 * cannot be found the subranges will be subdivided so that a match can be made.
 			 *
+			 * @param	image								Image whose subresource range to find.
 			 * @param	imageInfo							Image info structure containing the existing subresource ranges.
 			 * @param	range								New subresource range to process against existing ranges.
 			 * @param	fnAddSubresourceRange				If subdivision is needed, called for every new subresource entry to add, even if it might not overlap the provided range.
@@ -732,7 +733,7 @@ namespace b3d
 			 *												Signature: void(u32 globalSubresourceIndex, bool isNewSubresource)
 			 */
 			template<typename TNotifySubresourceRangeCreated, typename TNotifySubresourceRangeOverlap>
-			void FindOrSubdivideSubresourceRange(ImageInfo& imageInfo, const VkImageSubresourceRange& range, TNotifySubresourceRangeCreated&& fnAddSubresourceRange, TNotifySubresourceRangeOverlap&& fnNotifySubresourceRangeOverlap);
+			void FindOrSubdivideSubresourceRange(const VulkanImage* image, ImageInfo& imageInfo, VkImageSubresourceRange range, TNotifySubresourceRangeCreated&& fnAddSubresourceRange, TNotifySubresourceRangeOverlap&& fnNotifySubresourceRangeOverlap);
 
 			/** Finds a subresource info structure containing the specified face and mip level of the provided image. */
 			ImageSubresourceInfo& FindSubresourceInfo(VulkanImage* image, u32 face, u32 mip);
