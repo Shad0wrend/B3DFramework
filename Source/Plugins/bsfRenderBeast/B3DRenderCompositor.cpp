@@ -83,6 +83,8 @@ void RenderCompositor::Build(const RendererView& view, const TArray<StringID>& p
 
 		// Register node dependencies
 		TInlineArray<StringID, 4> nodeDependencyIds = nodeDescriptor->GetDependencies(view);
+		TInlineArray<StringID, 4> allDependencyIds = nodeDescriptor->GetAllDependencyIds(view);
+
 		for(const auto& entry : nodeDependencyIds)
 		{
 			if(!fnRegisterNode(entry, RenderCompositorNodeCategory::Utility))
@@ -106,12 +108,30 @@ void RenderCompositor::Build(const RendererView& view, const TArray<StringID>& p
 			nodeInfo.NodeDescriptor = nodeDescriptor;
 			nodeInfo.LastUsedByNodeIndex = -1;
 
-			for(const auto& entry : nodeDependencyIds)
+			// Pad Inputs array with nulls for disabled dependencies
+			for(const auto& entry : allDependencyIds)
 			{
-				foundNodeInstance = processedNodes.find(entry);
+				// Check if this dependency is enabled
+				bool isEnabled = false;
+				for(const auto& enabledId : nodeDependencyIds)
+				{
+					if(enabledId == entry)
+					{
+						isEnabled = true;
+						break;
+					}
+				}
 
-				NodeInfo& nodeDependencyNode = mRegisteredNodes[foundNodeInstance->second];
-				nodeInfo.Inputs.Add(nodeDependencyNode.Node);
+				if(isEnabled)
+				{
+					foundNodeInstance = processedNodes.find(entry);
+					NodeInfo& nodeDependencyNode = mRegisteredNodes[foundNodeInstance->second];
+					nodeInfo.Inputs.Add(nodeDependencyNode.Node);
+				}
+				else
+				{
+					nodeInfo.Inputs.Add(nullptr);
+				}
 			}
 		}
 		else // Existing node
@@ -878,11 +898,13 @@ TInlineArray<StringID, 4> RCNodeLightAccumulation::GetDependencies(const Rendere
 
 void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inputs)
 {
-	Output = static_cast<RCNodeLightAccumulation*>(inputs.InputNodes[0]);
+	auto dependencies = GetDependencyDefinition().ResolveDependencies(inputs);
 
-	auto gbufferNode = static_cast<RCNodeBasePass*>(inputs.InputNodes[1]);
-	auto sceneDepthNode = static_cast<RCNodeSceneDepth*>(inputs.InputNodes[2]);
-	auto sceneColorNode = static_cast<RCNodeSceneColor*>(inputs.InputNodes[3]);
+	Output = dependencies.Get<RCNodeLightAccumulation>();
+
+	auto gbufferNode = dependencies.Get<RCNodeBasePass>();
+	auto sceneDepthNode = dependencies.Get<RCNodeSceneDepth>();
+	auto sceneColorNode = dependencies.Get<RCNodeSceneColor>();
 
 	GBufferTextures gbuffer;
 	gbuffer.Albedo = gbufferNode->AlbedoTex->Texture;
@@ -902,7 +924,7 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 		SPtr<Texture> msaaCoverage;
 		if(viewProps.Target.NumSamples > 1)
 		{
-			RCNodeMSAACoverage* coverageNode = static_cast<RCNodeMSAACoverage*>(inputs.InputNodes[4]);
+			RCNodeMSAACoverage* coverageNode = dependencies.Get<RCNodeMSAACoverage>();
 			msaaCoverage = coverageNode->Output->Texture;
 		}
 
@@ -1033,16 +1055,19 @@ void RCNodeDeferredDirectLighting::Clear()
 	Output = nullptr;
 }
 
+RCNodeDeferredDirectLighting::DependencyDefinition RCNodeDeferredDirectLighting::GetDependencyDefinition()
+{
+	static const DependencyDefinition kDependencyDefinition = []
+	{
+		return DependencyDefinition().ConditionalEnable<RCNodeMSAACoverage>([](const RendererView& view) { return view.GetProperties().Target.NumSamples > 1; });
+	}();
+
+	return kDependencyDefinition;
+}
+
 TInlineArray<StringID, 4> RCNodeDeferredDirectLighting::GetDependencies(const RendererView& view)
 {
-	TInlineArray<StringID, 4> deps;
-	deps.Add(RCNodeLightAccumulation::GetNodeId());
-	deps.Add(RCNodeBasePass::GetNodeId());
-	deps.Add(RCNodeSceneDepth::GetNodeId());
-	deps.Add(RCNodeSceneColor::GetNodeId());
-	deps.Add(RCNodeMSAACoverage::GetNodeId());
-
-	return deps;
+	return GetDependencyDefinition().GetEnabledDependencyIds(view);
 }
 
 void RCNodeIndirectDiffuseLighting::Render(const RenderCompositorNodeInputs& inputs)
@@ -1931,12 +1956,14 @@ TInlineArray<StringID, 4> RCNodeEyeAdaptation::GetDependencies(const RendererVie
 
 void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 {
+	auto dependencies = GetDependencyDefinition().ResolveDependencies(inputs);
+
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	const RenderSettings& settings = inputs.View.GetRenderSettings();
 
-	auto* eyeAdaptationNode = static_cast<RCNodeEyeAdaptation*>(inputs.InputNodes[0]);
-	auto* sceneColorNode = static_cast<RCNodeSceneColor*>(inputs.InputNodes[1]);
-	auto* postProcessNode = static_cast<RCNodePostProcess*>(inputs.InputNodes[3]);
+	auto* eyeAdaptationNode = dependencies.Get<RCNodeEyeAdaptation>();
+	auto* sceneColorNode = dependencies.Get<RCNodeSceneColor>();
+	auto* postProcessNode = dependencies.Get<RCNodePostProcess>();
 	const SPtr<Texture>& sceneColor = sceneColorNode->SceneColorTex->Texture;
 
 	const bool hdr = settings.EnableHdr;
@@ -2010,7 +2037,7 @@ void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 	SPtr<Texture> bloomTex;
 	if(settings.Bloom.Enabled)
 	{
-		auto* bloomNode = static_cast<RCNodeBloom*>(inputs.InputNodes[5]);
+		auto* bloomNode = dependencies.Get<RCNodeBloom>();
 		bloomTex = bloomNode->Output;
 	}
 
@@ -2022,23 +2049,21 @@ void RCNodeTonemapping::Clear()
 	// Do nothing
 }
 
+RCNodeTonemapping::DependencyDefinition RCNodeTonemapping::GetDependencyDefinition()
+{
+	static const DependencyDefinition kDependencyDefinition = []
+	{
+		return DependencyDefinition()
+			.ConditionalEnable<RCNodeBloom>([](const RendererView& view) { return view.GetRenderSettings().Bloom.Enabled; }) 
+			.ConditionalEnable<RCNodeScreenSpaceLensFlare>([](const RendererView& view) { return view.GetRenderSettings().ScreenSpaceLensFlare.Enabled; });
+	}();
+
+	return kDependencyDefinition;
+}
+
 TInlineArray<StringID, 4> RCNodeTonemapping::GetDependencies(const RendererView& view)
 {
-	TInlineArray<StringID, 4> deps = {
-		RCNodeEyeAdaptation::GetNodeId(),
-		RCNodeSceneColor::GetNodeId(),
-		RCNodeMotionBlur::GetNodeId(),
-		RCNodePostProcess::GetNodeId(),
-		RCNodeHalfSceneColor::GetNodeId()
-	};
-
-	if(view.GetRenderSettings().Bloom.Enabled)
-		deps.Add(RCNodeBloom::GetNodeId());
-
-	if(view.GetRenderSettings().ScreenSpaceLensFlare.Enabled)
-		deps.Add(RCNodeScreenSpaceLensFlare::GetNodeId());
-
-	return deps;
+	return GetDependencyDefinition().GetEnabledDependencyIds(view);
 }
 
 void RCNodeBokehDOF::Render(const RenderCompositorNodeInputs& inputs)

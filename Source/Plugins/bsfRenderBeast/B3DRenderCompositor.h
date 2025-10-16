@@ -3,6 +3,7 @@
 #pragma once
 
 #include "B3DRenderBeastPrerequisites.h"
+#include "Utility/B3DTypeList.h"
 
 namespace b3d
 {
@@ -20,7 +21,6 @@ namespace b3d
 		class RenderCompositorNode;
 		struct PooledStorageBuffer;
 		struct FrameInfo;
-		class RCNodeLightAccumulation;
 
 		/** @addtogroup RenderBeast
 		 *  @{
@@ -54,6 +54,87 @@ namespace b3d
 
 			TInlineArray<RenderCompositorNode*, 4> InputNodes;
 		};
+
+		/** Forward declaration */
+		template<typename... NodeTypes>
+		struct RCNodeDependencies;
+
+		/** Defines render compositor node dependencies. Each node can be conditionally enabled or disabled via a predicate. */
+		template<typename... NodeTypes>
+		struct RCNodeDependencyDefinition
+		{
+			using TypeList = TTypeList<NodeTypes...>;
+			using ConditionalEnablePredicate = std::function<bool(const RendererView&)>;
+
+			RCNodeDependencyDefinition()
+			{
+				mConditionalEnablePredicates.fill(nullptr);
+			}
+
+			/** Sets a predicate that allows nodes to be conditionally enabled or disabled. Returns *this for chaining. */
+			template<typename T>
+			RCNodeDependencyDefinition& ConditionalEnable(ConditionalEnablePredicate predicate)
+			{
+				mConditionalEnablePredicates[TTypeListIndexOf<T, TypeList>] = predicate;
+				return *this;
+			}
+
+			/** Returns StringIDs for enabled dependencies only. */
+			TInlineArray<StringID, 4> GetEnabledDependencyIds(const RendererView& view) const
+			{
+				TInlineArray<StringID, 4> ids;
+				u32 index = 0;
+
+				([this, &ids, &index, &view]()
+				{
+					const auto& predicate = mConditionalEnablePredicates[index++];
+					if(!predicate || predicate(view))
+						ids.Add(NodeTypes::GetNodeId());
+				}(), ...);
+
+				return ids;
+			}
+
+			/** Returns StringIDs for all dependencies (regardless of enable state). */
+			static TInlineArray<StringID, 4> GetAllDependencyIds()
+			{
+				TInlineArray<StringID, 4> ids;
+				(ids.Add(NodeTypes::GetNodeId()), ...);
+				return ids;
+			}
+
+			/** Returns a structure that may be used for retrieving node dependencies in a type-safe way. */
+			RCNodeDependencies<NodeTypes...> ResolveDependencies(const RenderCompositorNodeInputs& inputs) const;
+
+		private:
+			std::array<ConditionalEnablePredicate, sizeof...(NodeTypes)> mConditionalEnablePredicates;
+		};
+
+		/** Helper that allows you to retrieve render compositor node dependencies based on their type. */
+		template<typename... NodeTypes>
+		struct RCNodeDependencies
+		{
+			using TypeList = TTypeList<NodeTypes...>;
+			const RenderCompositorNodeInputs& Inputs;
+
+			RCNodeDependencies(const RenderCompositorNodeInputs& inputs)
+				: Inputs(inputs)
+			{ }
+
+			/** Retrieves a dependency node via direct array lookup. Returns nullptr if not enabled. */
+			template<typename T>
+			T* Get() const
+			{
+				constexpr u32 index = TTypeListIndexOf<T, TypeList>;
+				return static_cast<T*>(Inputs.InputNodes[index]);
+			}
+		};
+
+		template<typename... NodeTypes>
+		RCNodeDependencies<NodeTypes...> RCNodeDependencyDefinition<NodeTypes...>::ResolveDependencies(const RenderCompositorNodeInputs& inputs) const
+		{
+			return RCNodeDependencies<NodeTypes...>(inputs);
+		}
 
 		/** Types of render compositor nodes. */
 		enum class RenderCompositorNodeCategory
@@ -146,6 +227,12 @@ namespace b3d
 				virtual TInlineArray<StringID, 4> GetDependencies(const RendererView& view) const = 0;
 
 				/**
+				 * Returns identifier for all possible dependencies, regardless of enable state.
+				 * For nodes without conditional dependencies, this returns the same as GetDependencies().
+				 */
+				virtual TInlineArray<StringID, 4> GetAllDependencyIds(const RendererView& view) const = 0;
+
+				/**
 				 * Returns the category of this node. Primary nodes represent the main path through the pipeline, and must be explicitly
 				 * provided when calling the RenderCompositor::Build() method. Utility nodes are pulled in on demand based on dependencies
 				 * of the primary nodes (or other utility nodes).
@@ -167,6 +254,13 @@ namespace b3d
 				RenderCompositorNode* Create() const override { return B3DNew<T>(); }
 				TInlineArray<StringID, 4> GetDependencies(const RendererView& view) const override
 				{
+					return T::GetDependencies(view);
+				}
+
+				TInlineArray<StringID, 4> GetAllDependencyIds(const RendererView& view) const override
+				{
+					// For non-migrated nodes, return same as GetDependencies
+					// TODO: Update to call T::GetDependencyDefinition().GetAllNodeIds() once nodes are migrated
 					return T::GetDependencies(view);
 				}
 
@@ -202,6 +296,12 @@ namespace b3d
 		private:
 			static UnorderedMap<StringID, NodeDescriptor*> mNodeDescriptors;
 		};
+
+		class RCNodeLightAccumulation;
+		class RCNodeMotionBlur;
+		class RCNodeHalfSceneColor;
+		class RCNodeBloom;
+		class RCNodeScreenSpaceLensFlare;
 
 		/************************************************************************/
 		/* 							BASE PASS NODES	                     		*/
@@ -384,7 +484,10 @@ namespace b3d
 			// Outputs
 			RCNodeLightAccumulation* Output;
 
+			using DependencyDefinition = RCNodeDependencyDefinition<RCNodeLightAccumulation, RCNodeBasePass, RCNodeSceneDepth, RCNodeSceneColor, RCNodeMSAACoverage>;
+
 			static StringID GetNodeId() { return "DeferredDirectLighting"; }
+			static DependencyDefinition GetDependencyDefinition();
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
 			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
@@ -542,7 +645,10 @@ namespace b3d
 		class RCNodeTonemapping : public RenderCompositorNode
 		{
 		public:
+			using DependencyDefinition = RCNodeDependencyDefinition<RCNodeEyeAdaptation, RCNodeSceneColor, RCNodeMotionBlur, RCNodePostProcess, RCNodeHalfSceneColor, RCNodeBloom, RCNodeScreenSpaceLensFlare>;
+
 			static StringID GetNodeId() { return "Tonemapping"; }
+			static DependencyDefinition GetDependencyDefinition();
 			static TInlineArray<StringID, 4> GetDependencies(const RendererView& view);
 			static RenderCompositorNodeCategory GetCategory() { return RenderCompositorNodeCategory::Primary; }
 
