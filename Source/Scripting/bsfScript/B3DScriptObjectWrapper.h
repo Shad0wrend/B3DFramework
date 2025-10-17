@@ -142,7 +142,7 @@ namespace b3d
 		 * Called on all script object wrappers when script reload is about to happen. Allows the script object to back up its current state
 		 * so it may be restored after reload completes. Only relevant for script objects that persist script reload (i.e. ShouldPersistScriptReload() returns true).
 		 */
-		virtual Optional<ScriptObjectReloadPersistentData> BackupDataBeforeScriptReload();
+		virtual TOptional<ScriptObjectReloadPersistentData> BackupDataBeforeScriptReload();
 
 		/**
 		 * Called on all script object wrappers after script assemblies have been reloaded. This needs to recreate the internal script object using the new assemblies,

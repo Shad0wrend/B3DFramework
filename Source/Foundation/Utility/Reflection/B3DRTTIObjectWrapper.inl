@@ -322,7 +322,7 @@ namespace b3d::RTTIObjectWrapper
 		return 1;
 	}
 
-	inline Optional<Value<false>> ValueIterator<false>::FindMatchingValue(const ValueIterator<false>& otherIterator) const
+	inline TOptional<Value<false>> ValueIterator<false>::FindMatchingValue(const ValueIterator<false>& otherIterator) const
 	{
 		if(!B3D_ENSURE(otherIterator.mIsIteratorSet))
 			return {};
@@ -350,7 +350,7 @@ namespace b3d::RTTIObjectWrapper
 		return {};
 	}
 
-	inline Optional<Value<false>> ValueIterator<false>::FindMatchingValue(const ValueIterator<true>& otherIterator) const
+	inline TOptional<Value<false>> ValueIterator<false>::FindMatchingValue(const ValueIterator<true>& otherIterator) const
 	{
 		B3D_ASSERT(false); // Not supported at the moment. To support, we'd need to convert the otherIterator value to ISerialized object that we can lookup.
 		return {};
@@ -423,7 +423,7 @@ namespace b3d::RTTIObjectWrapper
 		return 1;
 	}
 
-	inline Optional<Value<true>> ValueIterator<true>::FindMatchingValue(const ValueIterator<true>& otherIterator) const
+	inline TOptional<Value<true>> ValueIterator<true>::FindMatchingValue(const ValueIterator<true>& otherIterator) const
 	{
 		B3D_ASSERT(mField == otherIterator.mField);
 
@@ -472,7 +472,7 @@ namespace b3d::RTTIObjectWrapper
 		return {};
 	}
 
-	inline Optional<Value<true>> ValueIterator<true>::FindMatchingValue(const ValueIterator<false>& otherIterator) const
+	inline TOptional<Value<true>> ValueIterator<true>::FindMatchingValue(const ValueIterator<false>& otherIterator) const
 	{
 		B3D_ASSERT(false); // Not supported at the moment. To support, we'd need to convert the otherIterator from a ISerialized object into fieldValue pointer we can lookup
 		return {};

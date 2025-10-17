@@ -104,7 +104,7 @@ SPtr<GUIStyleSheet> GUIStyleSheetParser::Parse(const SPtr<SourceCode>& sourceCod
 
 bool GUIStyleSheetParser::TryParseRuleset()
 {
-	Optional<GUIStyleSheetSelectorList> selectorList = TryParseSelectorList();
+	TOptional<GUIStyleSheetSelectorList> selectorList = TryParseSelectorList();
 
 	if(!selectorList)
 	{
@@ -148,9 +148,9 @@ bool GUIStyleSheetParser::TryParseRuleset()
 	return true;
 }
 
-Optional<GUIStyleSheetSelectorList> GUIStyleSheetParser::TryParseSelectorList()
+TOptional<GUIStyleSheetSelectorList> GUIStyleSheetParser::TryParseSelectorList()
 {
-	Optional<GUIStyleSheetSelectorList> optionalSelectorList;
+	TOptional<GUIStyleSheetSelectorList> optionalSelectorList;
 
 	// Parse selector name, which can be element, #id, .class, :pseudo-class or ::pseudo-element
 	bool foundWhitespaceAfterLastElement = false;
@@ -179,7 +179,7 @@ Optional<GUIStyleSheetSelectorList> GUIStyleSheetParser::TryParseSelectorList()
 			{
 				GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Colon);
 				
-				Optional<Token> pseudoElementToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::ElementSelector);
+				TOptional<Token> pseudoElementToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::ElementSelector);
 				if(!pseudoElementToken)
 					return {};
 
@@ -188,7 +188,7 @@ Optional<GUIStyleSheetSelectorList> GUIStyleSheetParser::TryParseSelectorList()
 			}
 			else
 			{
-				Optional<Token> pseudoClassToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PseudoClassSelector);
+				TOptional<Token> pseudoClassToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PseudoClassSelector);
 				if(!pseudoClassToken)
 					return {};
 
@@ -221,7 +221,7 @@ Optional<GUIStyleSheetSelectorList> GUIStyleSheetParser::TryParseSelectorList()
 
 bool GUIStyleSheetParser::TryParseProperty(GUIStyleSheetRules& inOutValue)
 {
-	Optional<Token> propertyToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Property);
+	TOptional<Token> propertyToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Property);
 	if(!propertyToken)
 		return false;
 
@@ -470,7 +470,7 @@ bool GUIStyleSheetParser::TryParseProperty(GUIStyleSheetRules& inOutValue)
 
 bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext)
 {
-	Optional<Token> variableIdentifierToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VariableIdentifier);
+	TOptional<Token> variableIdentifierToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VariableIdentifier);
 	if(!variableIdentifierToken)
 		return false;
 
@@ -655,7 +655,7 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 	if(!GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::LeftParenthesis))
 		return false;
 
-	Optional<Token> variableIdentifierToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VariableIdentifier);
+	TOptional<Token> variableIdentifierToken = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VariableIdentifier);
 	if(!variableIdentifierToken)
 		return false;
 
@@ -699,7 +699,7 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 
 bool GUIStyleSheetParser::TryParseIntegerLiteral(i32& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::IntegerLiteral);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::IntegerLiteral);
 	if(!token)
 		return false;
 
@@ -718,7 +718,7 @@ bool GUIStyleSheetParser::TryParseIntegerLiteral(u32& outValue)
 
 bool GUIStyleSheetParser::TryParsePixelLiteral(i32& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PixelsLiteral);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PixelsLiteral);
 	if(!token)
 		return false;
 
@@ -737,7 +737,7 @@ bool GUIStyleSheetParser::TryParsePixelLiteral(u32& outValue)
 
 bool GUIStyleSheetParser::TryParseDecimalLiteral(float& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::DecimalLiteral);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::DecimalLiteral);
 	if(!token)
 		return false;
 
@@ -746,7 +746,7 @@ bool GUIStyleSheetParser::TryParseDecimalLiteral(float& outValue)
 
 bool GUIStyleSheetParser::TryParsePercentLiteral(float& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PercentLiteral);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::PercentLiteral);
 	if(!token)
 		return false;
 
@@ -755,7 +755,7 @@ bool GUIStyleSheetParser::TryParsePercentLiteral(float& outValue)
 
 bool GUIStyleSheetParser::TryParseStringLiteral(String& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::StringLiteral);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::StringLiteral);
 	if(!token)
 		return false;
 
@@ -765,7 +765,7 @@ bool GUIStyleSheetParser::TryParseStringLiteral(String& outValue)
 
 bool GUIStyleSheetParser::TryParseElementSelector(String& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::ElementSelector);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::ElementSelector);
 	if(!token)
 		return false;
 
@@ -775,7 +775,7 @@ bool GUIStyleSheetParser::TryParseElementSelector(String& outValue)
 
 bool GUIStyleSheetParser::TryParseNone()
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::None);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::None);
 	return token.has_value();
 }
 
@@ -783,7 +783,7 @@ bool GUIStyleSheetParser::TryParseColor(Color& outValue)
 {
 	TokenType currentTokenType = GetCurrentTokenType();
 
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance();
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance();
 	if(!token)
 		return false;
 			
@@ -1016,7 +1016,7 @@ bool GUIStyleSheetParser::TryParseBorderStyle(GUIBorderElementStyle& outValue)
 {
 	if(IsCurrentToken(GUIStyleSheetTokenTypes::BorderStyle))
 	{
-		Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::BorderStyle);
+		TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::BorderStyle);
 		if(!token)
 			return false;
 
@@ -1028,7 +1028,7 @@ bool GUIStyleSheetParser::TryParseBorderStyle(GUIBorderElementStyle& outValue)
 	}
 	else if(IsCurrentToken(GUIStyleSheetTokenTypes::None))
 	{
-		Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::None);
+		TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::None);
 		if(!token)
 			return false;
 
@@ -1044,7 +1044,7 @@ bool GUIStyleSheetParser::TryParseBorderStyle(GUIBorderElementStyle& outValue)
 
 bool GUIStyleSheetParser::TryParseTextAlign(GUIHorizontalTextAlignment& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::TextAlign);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::TextAlign);
 	if(!token)
 		return false;
 
@@ -1069,7 +1069,7 @@ bool GUIStyleSheetParser::TryParseTextAlign(GUIHorizontalTextAlignment& outValue
 
 bool GUIStyleSheetParser::TryParseVerticalAlign(GUIVerticalTextAlignment& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VerticalAlign);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::VerticalAlign);
 	if(!token)
 		return false;
 
@@ -1096,7 +1096,7 @@ bool GUIStyleSheetParser::TryParseWordWrapMode(GUIWordWrapMode& outValue)
 {
 	if(IsCurrentToken(GUIStyleSheetTokenTypes::WordWrap))
 	{
-		Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::WordWrap);
+		TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::WordWrap);
 		if(!token)
 			return false;
 
@@ -1108,7 +1108,7 @@ bool GUIStyleSheetParser::TryParseWordWrapMode(GUIWordWrapMode& outValue)
 	}
 	else if(IsCurrentToken(GUIStyleSheetTokenTypes::None))
 	{
-		Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::None);
+		TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::None);
 		if(!token)
 			return false;
 
@@ -1124,7 +1124,7 @@ bool GUIStyleSheetParser::TryParseWordWrapMode(GUIWordWrapMode& outValue)
 
 bool GUIStyleSheetParser::TryParseVisibility(GUIElementVisibility& outValue)
 {
-	Optional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Visibility);
+	TOptional<GUIStyleSheetToken> token = GetCurrentTokenAndAdvance(GUIStyleSheetTokenTypes::Visibility);
 	if(!token)
 		return false;
 
@@ -1472,12 +1472,12 @@ bool GUIStyleSheetParser::IsCurrentToken(TokenType type, const String& spelling)
 	return mCurrentToken && mCurrentToken->GetType() == type && mCurrentToken->GetSpelling() == spelling;
 }
 
-Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdvance(bool skipWhitespace)
+TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdvance(bool skipWhitespace)
 {
 	if(mCurrentToken && mCurrentToken->GetType() == TokenType::EndOfStream)
 		return Error("Unexpected end of stream.");
 
-	Optional<Token> previousToken = mCurrentToken;
+	TOptional<Token> previousToken = mCurrentToken;
 	mCurrentToken = mLexer.ScanNextToken(skipWhitespace);
 
 	if(!mCurrentToken)
@@ -1489,7 +1489,7 @@ Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdva
 	return previousToken;
 }
 
-Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdvance(TokenType expectedType)
+TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdvance(TokenType expectedType)
 {
 	if(!mCurrentToken.has_value() || mCurrentToken->GetType() != expectedType)
 		return ErrorUnexpected(expectedType);
@@ -1497,7 +1497,7 @@ Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdva
 	return GetCurrentTokenAndAdvance();
 }
 
-Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdvance(TokenType expectedType, const String& spelling)
+TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::GetCurrentTokenAndAdvance(TokenType expectedType, const String& spelling)
 {
 	if(!mCurrentToken.has_value() || mCurrentToken->GetType() != expectedType)
 		return ErrorUnexpected(expectedType);
@@ -1521,25 +1521,25 @@ void GUIStyleSheetParser::Warning(const String& message)
 	mWarnings << StringUtil::Format("Parser warning ({0}): {1}", mCurrentToken->GetSourceCodePosition().ToString(), message) << '\n';
 }
 
-Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::Error(const String& message)
+TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::Error(const String& message)
 {
 	mErrors = StringUtil::Format("Parser error ({0}): {1}", mCurrentToken->GetSourceCodePosition().ToString(), message);
 	return {};
 }
 
-Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected()
+TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected()
 {
 	mErrors = StringUtil::Format("Parser error ({0}): Unexpected token '{1}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()));
 	return {};
 }
 
-Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected(TokenType expectedTokenType)
+TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected(TokenType expectedTokenType)
 {
 	mErrors = StringUtil::Format("Parser error ({0}): Unexpected token '{1}', expected '{2}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()), Token::TypeToString(expectedTokenType));
 	return {};
 }
 
-Optional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected(const String& expectedTokenSpelling)
+TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected(const String& expectedTokenSpelling)
 {
 	mErrors = StringUtil::Format("Parser error ({0}): Unexpected spelling for token '{1}' ({2}), expected '{3}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()), mCurrentToken->GetSpelling(), expectedTokenSpelling);
 	return {};

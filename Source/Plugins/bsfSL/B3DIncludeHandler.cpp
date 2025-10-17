@@ -18,7 +18,7 @@ char* IncludePush(ParseState* state, const char* filename, int line, int column,
 	memcpy(filenameNoQuote, filename + 1, filenameQuotesLen - 2);
 	filenameNoQuote[filenameQuotesLen - 2] = '\0';
 
-	Optional<String> include = ShaderManager::Instance().FindIncludeSource(filenameNoQuote);
+	TOptional<String> include = ShaderManager::Instance().FindIncludeSource(filenameNoQuote);
 
 	int filenameLen = (int)strlen(filenameNoQuote);
 	if(include.has_value())

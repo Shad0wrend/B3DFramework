@@ -334,13 +334,13 @@ namespace b3d::RTTIObjectWrapper
 		 * Attempts to find a value in the iterator that matches current value of the provided iterator. The iterators must have been created
 		 * from the same field type, otherwise behaviour is undefined.
 		 */
-		Optional<Value<false>> FindMatchingValue(const ValueIterator<false>& otherIterator) const;
+		TOptional<Value<false>> FindMatchingValue(const ValueIterator<false>& otherIterator) const;
 
 		/**
 		 * Attempts to find a value in the iterator that matches current value of the provided iterator. The iterators must have been created
 		 * from the same field type, otherwise behaviour is undefined.
 		 */
-		Optional<Value<false>> FindMatchingValue(const ValueIterator<true>& otherIterator) const;
+		TOptional<Value<false>> FindMatchingValue(const ValueIterator<true>& otherIterator) const;
 
 	private:
 		friend struct ValueIterator<true>;
@@ -378,13 +378,13 @@ namespace b3d::RTTIObjectWrapper
 		 * Attempts to find a value in the iterator that matches current value of the provided iterator. The iterators must have been created
 		 * from the same field type, otherwise behaviour is undefined.
 		 */
-		Optional<Value<true>> FindMatchingValue(const ValueIterator<true>& otherIterator) const;
+		TOptional<Value<true>> FindMatchingValue(const ValueIterator<true>& otherIterator) const;
 
 		/**
 		 * Attempts to find a value in the iterator that matches current value of the provided iterator. The iterators must have been created
 		 * from the same field type, otherwise behaviour is undefined.
 		 */
-		Optional<Value<true>> FindMatchingValue(const ValueIterator<false>& otherIterator) const;
+		TOptional<Value<true>> FindMatchingValue(const ValueIterator<false>& otherIterator) const;
 
 	private:
 		friend struct ValueIterator<false>;

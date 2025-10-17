@@ -129,38 +129,38 @@ namespace b3d
 	 *
 	 */
 	template <class Key, class Value, class KeyInfo = DenseMapInfo<Key>, u32 Size = 64>
-	class DenseMap
+	class TDenseMap
 	{
 	public:
 		typedef std::pair<Key, Value> DensePair;
 		typedef DenseMapIterator<Key, Value, KeyInfo> Iterator;
 		typedef DenseMapConstIterator<Key, Value, KeyInfo> ConstIterator;
 
-		DenseMap()
+		TDenseMap()
 		{
 			init();
 		}
 
-		DenseMap(const DenseMap<Key, Value>& other)
+		TDenseMap(const TDenseMap<Key, Value>& other)
 		{
 			mCount = 0;
 			if(!other.empty())
 				copy(other);
 		}
 
-		DenseMap(DenseMap<Key, Value>&& other)
+		TDenseMap(TDenseMap<Key, Value>&& other)
 		{
 			mCount = 0;
 			if(!other.empty())
 				copy(std::move(other));
 		}
 
-		DenseMap(u32 n)
+		TDenseMap(u32 n)
 		{
 			append(n);
 		}
 
-		~DenseMap()
+		~TDenseMap()
 		{
 			for(DensePair *pair = getBuckets(), *e = getBuckets() + getCount(); pair != e; ++pair)
 			{
@@ -178,7 +178,7 @@ namespace b3d
 			return construct(key).second;
 		}
 
-		DenseMap& operator=(const DenseMap<Key, Value>& other)
+		TDenseMap& operator=(const TDenseMap<Key, Value>& other)
 		{
 			if(this == other)
 				return *this;
@@ -187,13 +187,13 @@ namespace b3d
 			return *this;
 		}
 
-		bool operator==(const DenseMap<Key, Value>& other) const
+		bool operator==(const TDenseMap<Key, Value>& other) const
 		{
 			if(this->size() != other.size()) return false;
 			return std::equal(this->begin(), this->end(), other.begin());
 		}
 
-		bool operator!=(const DenseMap<Key, Value>& other) const
+		bool operator!=(const TDenseMap<Key, Value>& other) const
 		{
 			return !(*this == other);
 		}
@@ -346,7 +346,7 @@ namespace b3d
 			++mTombstones;
 		}
 
-		void copy(const DenseMap<Key, Value>& other)
+		void copy(const TDenseMap<Key, Value>& other)
 		{
 			if(getCount() != 0 && (!std::is_pod<Key>() || !std::is_pod<Value>()))
 			{

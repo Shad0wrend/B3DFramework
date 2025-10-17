@@ -343,7 +343,7 @@ namespace b3d
 		bool TryParseRuleset();
 
 		/** Parses all selectors and generates a selector list, if any are provided.  */
-		Optional<GUIStyleSheetSelectorList> TryParseSelectorList();
+		TOptional<GUIStyleSheetSelectorList> TryParseSelectorList();
 
 		/** @} */
 
@@ -412,16 +412,16 @@ namespace b3d
 		TokenType GetCurrentTokenType() const { return mCurrentToken.has_value() ? mCurrentToken->GetType() : GUIStyleSheetTokenTypes::Undefined; }
 
 		/** Returns the current token. */
-		Optional<Token> GetCurrentToken() const { return mCurrentToken; }
+		TOptional<Token> GetCurrentToken() const { return mCurrentToken; }
 
 		/** Returns the current token and advances to the next token. */
-		Optional<Token> GetCurrentTokenAndAdvance(bool skipWhitespace = true);
+		TOptional<Token> GetCurrentTokenAndAdvance(bool skipWhitespace = true);
 
 		/** Returns the current token if it matches the provided type, and advances to the next token. If the type is not matching and error is logged and null is returned. */
-		Optional<Token> GetCurrentTokenAndAdvance(TokenType expectedType);
+		TOptional<Token> GetCurrentTokenAndAdvance(TokenType expectedType);
 
 		/** Returns the current token if it matches the provided type and spelling, and advances to the next token. If the type or spelling is not matching and error is logged and null is returned. */
-		Optional<Token> GetCurrentTokenAndAdvance(TokenType expectedType, const String& spelling);
+		TOptional<Token> GetCurrentTokenAndAdvance(TokenType expectedType, const String& spelling);
 
 		/** Skips the current token if it matches the provided type. */
 		void SkipToken(TokenType type);
@@ -435,16 +435,16 @@ namespace b3d
 		void Warning(const String& message);
 
 		/** Records an error message and returns null. */
-		Optional<Token> Error(const String& message);
+		TOptional<Token> Error(const String& message);
 
 		/** Records an error message that the current token is unexpected and returns null. */
-		Optional<Token> ErrorUnexpected();
+		TOptional<Token> ErrorUnexpected();
 
 		/** Records an error message that the current token doesn't match @p expectedTokenType and returns null. */
-		Optional<Token> ErrorUnexpected(TokenType expectedTokenType);
+		TOptional<Token> ErrorUnexpected(TokenType expectedTokenType);
 
 		/** Records an error message that the current token doesn't match @p expectedTokenSpelling and returns null. */
-		Optional<Token> ErrorUnexpected(const String& expectedTokenSpelling);
+		TOptional<Token> ErrorUnexpected(const String& expectedTokenSpelling);
 
 		/** Converts property value type into a human readable string. */
 		static const char* ValueTypeToString(ValueType type);
@@ -456,7 +456,7 @@ namespace b3d
 
 		SPtr<SourceCode> mSourceCode;
 		GUIStyleSheetLexer mLexer;
-		Optional<Token> mCurrentToken;
+		TOptional<Token> mCurrentToken;
 		TArray<GUIStyleSheetRuleset> mParsedRulesets;
 
 		VariableContext mGlobalVariableContext;

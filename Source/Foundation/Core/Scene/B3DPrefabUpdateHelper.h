@@ -144,13 +144,13 @@ namespace b3d
 		};
 
 		/** Looks up a counterpart of the provided game object in the specified prefab. Under the hood loads the prefab as required. */
-		static Optional<ObjectInPrefab> FindInstanceInPrefab(const GameObjectHandleBase& gameObject, const UUID& prefabResourceId);
+		static TOptional<ObjectInPrefab> FindInstanceInPrefab(const GameObjectHandleBase& gameObject, const UUID& prefabResourceId);
 
 		/** Looks up a counterpart of the provided scene object in the prefab it is an instance of. Under the hood loads the prefab as required. */
-		static Optional<ObjectInPrefab> FindInstanceInPrefab(const HSceneObject& sceneObject);
+		static TOptional<ObjectInPrefab> FindInstanceInPrefab(const HSceneObject& sceneObject);
 
 		/** Looks up a counterpart of the provided component in the prefab it is an instance of. Under the hood loads the prefab as required. */
-		static Optional<ObjectInPrefab> FindInstanceInPrefab(const HComponent& component);
+		static TOptional<ObjectInPrefab> FindInstanceInPrefab(const HComponent& component);
 
 		/**
 		 * Iterates the provided hierarchy and for each object visits the prefab resource as referenced by the object. If the visited object

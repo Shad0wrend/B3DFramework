@@ -210,7 +210,7 @@ namespace b3d
 		 * @param	path		Path to the entry, relative to the root cache folder.
 		 * @return				Operation if successful, or null otherwise.
 		 */
-		Optional<CacheOperation> AcquireReadOperation(const Path& path);
+		TOptional<CacheOperation> AcquireReadOperation(const Path& path);
 
 		/**
 		 * Attempts to acquire a write operation on the provided cache entry. You should only write to a cache entry if there is an active write operation for the entry.
@@ -221,7 +221,7 @@ namespace b3d
 		 * @param	blocking			If true, the calling thread will block until all other operations on the resource complete. If false, the method with fail to acquire an operation if there are any other operation in progress.
 		 * @return						Operation if successful, or null otherwise.
 		 */
-		Optional<CacheOperation> AcquireWriteOperation(const Path& path, bool createNewIfMissing, PersistentCachePriority priority, bool blocking = true);
+		TOptional<CacheOperation> AcquireWriteOperation(const Path& path, bool createNewIfMissing, PersistentCachePriority priority, bool blocking = true);
 
 		/** Retrieves a package in which the cache entry is stored. Caller must acquire a read operation for the entry beforehand. */
 		SPtr<Package> GetPackageForEntry(const CacheOperation& operation) const;

@@ -454,7 +454,7 @@ static GpuBufferFormat SPIRVCrossTypeToBufferFormat(const spirv_cross::SPIRType&
 }
 
 /** Parses a single struct member from a SPIRVCross type. Returns null if parsing failed and logs an error into the provided log stream, otherwise returns the parsed data. */
-static Optional<GpuDataParameterInformation> ParseSPIRVCrossStructMember(spirv_cross::Compiler& compiler, const spirv_cross::SPIRType& structType, u32 memberIndex, StringStream& outLog)
+static TOptional<GpuDataParameterInformation> ParseSPIRVCrossStructMember(spirv_cross::Compiler& compiler, const spirv_cross::SPIRType& structType, u32 memberIndex, StringStream& outLog)
 {
 	const spirv_cross::SPIRType& memberType = compiler.get_type(structType.member_types[memberIndex]);
 	u32 memberSize = (u32)compiler.get_declared_struct_member_size(structType, memberIndex);
@@ -503,7 +503,7 @@ static Optional<GpuDataParameterInformation> ParseSPIRVCrossStructMember(spirv_c
 }
 
 /** Parses a uniform buffer uniform from a SPIRVCross type. Returns null if parsing failed and logs an error into the provided log stream, otherwise returns the parsed data. */
-static Optional<GpuDataParameterBlockInformation> ParseSPIRVCrossUniformBuffer(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
+static TOptional<GpuDataParameterBlockInformation> ParseSPIRVCrossUniformBuffer(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
 {
 	if(!compiler.get_decoration_bitset(resource.id).get(spv::DecorationBinding))
 	{
@@ -534,7 +534,7 @@ static Optional<GpuDataParameterBlockInformation> ParseSPIRVCrossUniformBuffer(s
  * Parses common object information (name, binding, array size) from a SPIRVCross resource and its type. Helper to be used by other parsing methods.
  * Returns null if parsing failed and logs an error into the provided log stream, otherwise returns the parsed data.
  */
-static Optional<GpuObjectParameterInformation> ParseSPIRVCrossObjectCommon(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, const spirv_cross::SPIRType& type, StringStream& outLog)
+static TOptional<GpuObjectParameterInformation> ParseSPIRVCrossObjectCommon(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, const spirv_cross::SPIRType& type, StringStream& outLog)
 {
 	if(!compiler.get_decoration_bitset(resource.id).get(spv::DecorationBinding))
 	{
@@ -565,10 +565,10 @@ static Optional<GpuObjectParameterInformation> ParseSPIRVCrossObjectCommon(spirv
 }
 
 /** Parses a sampled texture uniform from a SPIRVCross type. Returns null if parsing failed and logs an error into the provided log stream, otherwise returns the parsed data. */
-static Optional<GpuObjectParameterInformation> ParseSPIRVCrossSampledTexture(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
+static TOptional<GpuObjectParameterInformation> ParseSPIRVCrossSampledTexture(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
 {
 	const spirv_cross::SPIRType& type = compiler.get_type(resource.base_type_id);
-	Optional<GpuObjectParameterInformation> objectInformation = ParseSPIRVCrossObjectCommon(compiler, resource, type, outLog);
+	TOptional<GpuObjectParameterInformation> objectInformation = ParseSPIRVCrossObjectCommon(compiler, resource, type, outLog);
 	if(!objectInformation)
 		return {};
 
@@ -618,10 +618,10 @@ static Optional<GpuObjectParameterInformation> ParseSPIRVCrossSampledTexture(spi
 }
 
 /** Parses a sampler uniform from a SPIRVCross type. Returns null if parsing failed and logs an error into the provided log stream, otherwise returns the parsed data. */
-static Optional<GpuObjectParameterInformation> ParseSPIRVCrossSampler(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
+static TOptional<GpuObjectParameterInformation> ParseSPIRVCrossSampler(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
 {
 	const spirv_cross::SPIRType& type = compiler.get_type(resource.base_type_id);
-	Optional<GpuObjectParameterInformation> objectInformation = ParseSPIRVCrossObjectCommon(compiler, resource, type, outLog);
+	TOptional<GpuObjectParameterInformation> objectInformation = ParseSPIRVCrossObjectCommon(compiler, resource, type, outLog);
 	if(!objectInformation)
 		return {};
 
@@ -632,10 +632,10 @@ static Optional<GpuObjectParameterInformation> ParseSPIRVCrossSampler(spirv_cros
 }
 
 /** Parses a storage texture uniform from a SPIRVCross type. Returns null if parsing failed and logs an error into the provided log stream, otherwise returns the parsed data. */
-static Optional<GpuObjectParameterInformation> ParseSPIRVCrossStorageTexture(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
+static TOptional<GpuObjectParameterInformation> ParseSPIRVCrossStorageTexture(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
 {
 	const spirv_cross::SPIRType& type = compiler.get_type(resource.base_type_id);
-	Optional<GpuObjectParameterInformation> objectInformation = ParseSPIRVCrossObjectCommon(compiler, resource, type, outLog);
+	TOptional<GpuObjectParameterInformation> objectInformation = ParseSPIRVCrossObjectCommon(compiler, resource, type, outLog);
 	if(!objectInformation)
 		return {};
 
@@ -682,10 +682,10 @@ static Optional<GpuObjectParameterInformation> ParseSPIRVCrossStorageTexture(spi
 }
 
 /** Parses a storage buffer uniform from a SPIRVCross type. Returns null if parsing failed and logs an error into the provided log stream, otherwise returns the parsed data. */
-static Optional<GpuObjectParameterInformation> ParseSPIRVCrossStorageBuffer(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
+static TOptional<GpuObjectParameterInformation> ParseSPIRVCrossStorageBuffer(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
 {
 	const spirv_cross::SPIRType& type = compiler.get_type(resource.base_type_id);
-	Optional<GpuObjectParameterInformation> objectInformation = ParseSPIRVCrossObjectCommon(compiler, resource, type, outLog);
+	TOptional<GpuObjectParameterInformation> objectInformation = ParseSPIRVCrossObjectCommon(compiler, resource, type, outLog);
 	if(!objectInformation)
 		return {};
 
@@ -715,7 +715,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 	const spirv_cross::ShaderResources& sprivResources = compiler.get_shader_resources();
 	for(const auto& resource : sprivResources.uniform_buffers)
 	{
-		Optional<GpuDataParameterBlockInformation> uniformBufferInformation = ParseSPIRVCrossUniformBuffer(compiler, resource, outLog);
+		TOptional<GpuDataParameterBlockInformation> uniformBufferInformation = ParseSPIRVCrossUniformBuffer(compiler, resource, outLog);
 		if(!uniformBufferInformation)
 			continue;
 
@@ -723,7 +723,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 		const u32 memberCount = (u32)type.member_types.size();
 		for(u32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
 		{
-			Optional<GpuDataParameterInformation> memberInformation = ParseSPIRVCrossStructMember(compiler, type, memberIndex, outLog);
+			TOptional<GpuDataParameterInformation> memberInformation = ParseSPIRVCrossStructMember(compiler, type, memberIndex, outLog);
 			if(!memberInformation)
 				continue;
 
@@ -739,7 +739,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 	// Combined texture/sampler (e.g. sampler2D)
 	for(const auto& resource : sprivResources.sampled_images)
 	{
-		Optional<GpuObjectParameterInformation> sampledImageInformation = ParseSPIRVCrossSampledTexture(compiler, resource, outLog);
+		TOptional<GpuObjectParameterInformation> sampledImageInformation = ParseSPIRVCrossSampledTexture(compiler, resource, outLog);
 		if(sampledImageInformation)
 		{
 			if(sampledImageInformation->Type == GPOT_BYTE_BUFFER)
@@ -748,7 +748,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 				outParameterDescription.SampledTextures[sampledImageInformation->Name] = std::move(sampledImageInformation.value());
 		}
 
-		Optional<GpuObjectParameterInformation> samplerInformation = ParseSPIRVCrossSampler(compiler, resource, outLog);
+		TOptional<GpuObjectParameterInformation> samplerInformation = ParseSPIRVCrossSampler(compiler, resource, outLog);
 		if(samplerInformation)
 			outParameterDescription.Samplers[samplerInformation->Name] = std::move(samplerInformation.value());
 	}
@@ -756,7 +756,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 	// Sampled texture or buffer (e.g. texture2D/Texture2D, samplerBuffer/Buffer)
 	for(const auto& resource : sprivResources.separate_images)
 	{
-		Optional<GpuObjectParameterInformation> sampledImageInformation = ParseSPIRVCrossSampledTexture(compiler, resource, outLog);
+		TOptional<GpuObjectParameterInformation> sampledImageInformation = ParseSPIRVCrossSampledTexture(compiler, resource, outLog);
 		if(sampledImageInformation)
 		{
 			if(sampledImageInformation->Type == GPOT_BYTE_BUFFER)
@@ -769,7 +769,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 	// Storage texture or buffer (e.g. image2D/RWTexture2D, imageBuffer/RWBuffer)
 	for(const auto& resource : sprivResources.storage_images)
 	{
-		Optional<GpuObjectParameterInformation> sampledImageInformation = ParseSPIRVCrossStorageTexture(compiler, resource, outLog);
+		TOptional<GpuObjectParameterInformation> sampledImageInformation = ParseSPIRVCrossStorageTexture(compiler, resource, outLog);
 		if(sampledImageInformation)
 		{
 			if(sampledImageInformation->Type == GPOT_RWBYTE_BUFFER)
@@ -782,7 +782,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 	// Samplers (sampler/SamplerState)
 	for(const auto& resource : sprivResources.separate_samplers)
 	{
-		Optional<GpuObjectParameterInformation> samplerInformation = ParseSPIRVCrossSampler(compiler, resource, outLog);
+		TOptional<GpuObjectParameterInformation> samplerInformation = ParseSPIRVCrossSampler(compiler, resource, outLog);
 		if(samplerInformation)
 			outParameterDescription.Samplers[samplerInformation->Name] = std::move(samplerInformation.value());
 	}
@@ -790,7 +790,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 	// Structured buffers (e.g. buffer/StructuredBuffer/RWStructuredBuffer)
 	for(const auto& resource : sprivResources.storage_buffers)
 	{
-		Optional<GpuObjectParameterInformation> storageBufferInformation = ParseSPIRVCrossStorageBuffer(compiler, resource, outLog);
+		TOptional<GpuObjectParameterInformation> storageBufferInformation = ParseSPIRVCrossStorageBuffer(compiler, resource, outLog);
 		if(storageBufferInformation)
 			outParameterDescription.Buffers[storageBufferInformation->Name] = std::move(storageBufferInformation.value());
 	}

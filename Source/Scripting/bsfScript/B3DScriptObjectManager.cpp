@@ -42,7 +42,7 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 
 	for(auto& scriptObjectWrapper : mScriptObjectWrappers)
 	{
-		Optional<ScriptObjectReloadPersistentData> reloadPersistentData = scriptObjectWrapper->BackupDataBeforeScriptReload();
+		TOptional<ScriptObjectReloadPersistentData> reloadPersistentData = scriptObjectWrapper->BackupDataBeforeScriptReload();
 		if(reloadPersistentData.has_value())
 			reloadPeristentDataMap[scriptObjectWrapper] = *reloadPersistentData;
 	}

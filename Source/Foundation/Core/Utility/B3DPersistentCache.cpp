@@ -254,7 +254,7 @@ void PersistentCache::RunEviction(u64 targetSizeInMb)
 				return;
 		}
 
-		Optional<CacheOperation> writeOperation = AcquireWriteOperation(entry.Path, false, PersistentCachePriority::Normal, false);
+		TOptional<CacheOperation> writeOperation = AcquireWriteOperation(entry.Path, false, PersistentCachePriority::Normal, false);
 
 		// We skip entries that are currently open for operations, otherwise eviction would need to block
 		if(!writeOperation.has_value())
@@ -285,7 +285,7 @@ void PersistentCache::WriteDirtyMetaData()
 	// Write package meta-data for dirty entries
 	for(const auto& entryPath : entriesToUpdate)
 	{
-		Optional<CacheOperation> writeOperation = AcquireWriteOperation(entryPath, false, PersistentCachePriority::Normal, false);
+		TOptional<CacheOperation> writeOperation = AcquireWriteOperation(entryPath, false, PersistentCachePriority::Normal, false);
 
 		// We skip entries that are currently open for operations, otherwise eviction would need to block
 		if(!writeOperation.has_value())
@@ -364,7 +364,7 @@ void PersistentCache::Update()
 
 SPtr<IReflectable> PersistentCache::TryGetEntry(const Path& path)
 {
-	Optional<CacheOperation> operation = AcquireReadOperation(path);
+	TOptional<CacheOperation> operation = AcquireReadOperation(path);
 	if (!operation.has_value())
 		return nullptr;
 
@@ -410,7 +410,7 @@ bool PersistentCache::SetEntry(const Path& path, const SPtr<IReflectable>& data,
 	if (data == nullptr)
 	{
 		// Clear the entry
-		Optional<CacheOperation> operation = AcquireWriteOperation(path, false, priority, blocking);
+		TOptional<CacheOperation> operation = AcquireWriteOperation(path, false, priority, blocking);
 		if (operation.has_value())
 			DeleteEntry(*operation);
 
@@ -432,7 +432,7 @@ bool PersistentCache::SetEntry(const Path& path, const SPtr<IReflectable>& data,
 
 	package->SetResourceMetaData(path, cacheMetaData);
 
-	Optional<CacheOperation> operation = AcquireWriteOperation(path, true, priority);
+	TOptional<CacheOperation> operation = AcquireWriteOperation(path, true, priority);
 	if (!operation.has_value())
 		return false;
 
@@ -521,7 +521,7 @@ void PersistentCache::NotifyOperationWillEnd(const Path& path, CacheOperationTyp
 	mOperationCompletedSignal.NotifyAll();
 }
 
-Optional<PersistentCache::CacheOperation> PersistentCache::AcquireReadOperation(const Path& path)
+TOptional<PersistentCache::CacheOperation> PersistentCache::AcquireReadOperation(const Path& path)
 {
 	Lock lock(mMutex);
 
@@ -549,14 +549,14 @@ Optional<PersistentCache::CacheOperation> PersistentCache::AcquireReadOperation(
 	return CacheOperation(shared_from_this(), path, CacheOperationType::Read);
 }
 
-Optional<PersistentCache::CacheOperation> PersistentCache::AcquireWriteOperation(const Path& path, bool createNewIfMissing, PersistentCachePriority priority, bool blocking)
+TOptional<PersistentCache::CacheOperation> PersistentCache::AcquireWriteOperation(const Path& path, bool createNewIfMissing, PersistentCachePriority priority, bool blocking)
 {
 	Lock lock(mMutex);
 
 	if (mCacheFolder.IsEmpty())
 		return {};
 
-	auto fnCreateNewEntry = [this](const Path& path, PersistentCachePriority priority) -> Optional<CacheOperation> {
+	auto fnCreateNewEntry = [this](const Path& path, PersistentCachePriority priority) -> TOptional<CacheOperation> {
 		CacheEntry cacheEntry;
 		cacheEntry.Priority = priority;
 		cacheEntry.LastUsedTimestamp = (u64)std::time(nullptr);

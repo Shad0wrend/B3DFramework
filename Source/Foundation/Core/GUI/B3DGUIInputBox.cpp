@@ -92,7 +92,7 @@ void GUIInputBox::UpdateRenderElements()
 	GUIInputCaret* const caret = GetGUIManager().GetInputCaretTool();
 	GUIInputSelection* const selection = GetGUIManager().GetInputSelectionTool();
 
-	Optional<TextSpriteInformation> textSpriteInformation;
+	TOptional<TextSpriteInformation> textSpriteInformation;
 
 	ImageSprite* caretSprite = nullptr;
 	GUIPhysicalArea caretBounds;

@@ -265,7 +265,7 @@ using namespace RTTIObjectWrapper;
 typedef UnorderedMap<IReflectable*, SPtr<SerializedObject>> ObjectMap;
 
 template <bool IsLHSIReflectable, bool IsRHSIReflectable>
-SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> maybeLhs, Object<IsRHSIReflectable> rhs, ObjectMap& inOutObjectMap, RTTIOperationContext& context, bool replicableOnly);
+SPtr<SerializedObject> GenerateObjectDelta(TOptional<Object<IsLHSIReflectable>> maybeLhs, Object<IsRHSIReflectable> rhs, ObjectMap& inOutObjectMap, RTTIOperationContext& context, bool replicableOnly);
 
 /**
  * Compares two values and creates an object that contains differences between them (if any).
@@ -282,12 +282,12 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
  * @return						Object containing changes present in RHS compared to LHS. Will be empty if RHS and LHS are identical.
  */
 template <bool IsLHSIReflectable, bool IsRHSIReflectable>
-Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchema, const Optional<Value<IsLHSIReflectable>>& maybeLhs, const Value<IsRHSIReflectable> rhs, ObjectMap& objectMap, RTTIOperationContext& context, bool replicableOnly)
+TOptional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchema, const TOptional<Value<IsLHSIReflectable>>& maybeLhs, const Value<IsRHSIReflectable> rhs, ObjectMap& objectMap, RTTIOperationContext& context, bool replicableOnly)
 {
 	SerializedObjectEncodeFlags flags = replicableOnly ? SerializedObjectEncodeFlag::ReplicableOnly : SerializedObjectEncodeFlags();
 
 	SPtr<SerializedTupleDelta> serializedTupleDelta;
-	Optional<SPtr<ISerialized>> modification;
+	TOptional<SPtr<ISerialized>> modification;
 
 	const bool isTuple = fieldSchema.FieldDataTypes.Size() > 1;
 	const bool isLhsMissing = !maybeLhs.has_value(); // Will be true if e.g. comparing an array or map entry that doesn't exist in LHS object
@@ -296,18 +296,18 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 		const RTTIFieldDataTypeSchema& fieldTypeSchema = fieldSchema.FieldDataTypes[tupleElementIndex];
 
 		const Value<IsRHSIReflectable>& rhsTupleElement = rhs.GetTupleElement(tupleElementIndex);
-		Optional<Value<IsLHSIReflectable>> maybeLhsTupleElement;
+		TOptional<Value<IsLHSIReflectable>> maybeLhsTupleElement;
 		if(!isLhsMissing)
 			maybeLhsTupleElement = maybeLhs->GetTupleElement(tupleElementIndex);
 
-		Optional<SPtr<ISerialized>> tupleElementModification;
+		TOptional<SPtr<ISerialized>> tupleElementModification;
 
 		switch(fieldTypeSchema.Type)
 		{
 		case RTTIFieldDataType::ReflectablePointer:
 		case RTTIFieldDataType::Reflectable:
 			{
-				Optional<Object<IsLHSIReflectable>> maybeLhsObject = isLhsMissing ? std::nullopt : std::make_optional(maybeLhsTupleElement->GetObject());
+				TOptional<Object<IsLHSIReflectable>> maybeLhsObject = isLhsMissing ? std::nullopt : std::make_optional(maybeLhsTupleElement->GetObject());
 				Object<IsRHSIReflectable> rhsObject = rhsTupleElement.GetObject();
 
 				bool isLHSEntryNull = isLhsMissing;
@@ -351,7 +351,7 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 				else
 				{
 					if(!isRHSEntryNull)
-						tupleElementModification = GenerateObjectDelta(Optional<Object<IsLHSIReflectable>>(), rhsObject, objectMap, context, replicableOnly);
+						tupleElementModification = GenerateObjectDelta(TOptional<Object<IsLHSIReflectable>>(), rhsObject, objectMap, context, replicableOnly);
 				}
 			}
 			break;
@@ -448,7 +448,7 @@ Optional<SPtr<ISerialized>> GenerateValueDelta(const RTTIFieldSchema& fieldSchem
 }
 
 template <bool IsLHSIReflectable, bool IsRHSIReflectable>
-SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> maybeLhs, Object<IsRHSIReflectable> rhs, ObjectMap& inOutObjectMap, RTTIOperationContext& context, bool replicableOnly)
+SPtr<SerializedObject> GenerateObjectDelta(TOptional<Object<IsLHSIReflectable>> maybeLhs, Object<IsRHSIReflectable> rhs, ObjectMap& inOutObjectMap, RTTIOperationContext& context, bool replicableOnly)
 {
 	SubObjectIterator<IsRHSIReflectable> rhsSubObjectIterator = rhs.GetSubObjectIterator();
 
@@ -461,7 +461,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 		if(rtti == nullptr)
 			continue;
 
-		Optional<SubObject<IsLHSIReflectable>> maybeLhsSubObject;
+		TOptional<SubObject<IsLHSIReflectable>> maybeLhsSubObject;
 
 		if(maybeLhs.has_value())
 		{
@@ -499,7 +499,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 			if(field->Schema.Info.Flags.IsSet(RTTIFieldFlag::SkipInDeltaCompare))
 				continue;
 
-			Optional<Field<IsLHSIReflectable>> maybeLhsField;
+			TOptional<Field<IsLHSIReflectable>> maybeLhsField;
 			if(maybeLhsSubObject.has_value())
 			{
 				FieldIterator<IsLHSIReflectable> lhsFieldIterator = maybeLhsSubObject->GetFieldIterator();
@@ -526,7 +526,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 			for(u32 elementIndex = 0; rhsValueIterator.MoveNext(); ++elementIndex)
 			{
 				Value<IsRHSIReflectable> rhsValue = rhsValueIterator.GetValue();
-				Optional<Value<IsLHSIReflectable>> maybeLHSValue;
+				TOptional<Value<IsLHSIReflectable>> maybeLHSValue;
 
 				if(maybeLhsField.has_value())
 				{
@@ -534,7 +534,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 					maybeLHSValue = lhsValueIterator.FindMatchingValue(rhsValueIterator);
 				}
 
-				Optional<SPtr<ISerialized>> valueModification = GenerateValueDelta(field->Schema, maybeLHSValue, rhsValue, inOutObjectMap, context, replicableOnly);
+				TOptional<SPtr<ISerialized>> valueModification = GenerateValueDelta(field->Schema, maybeLHSValue, rhsValue, inOutObjectMap, context, replicableOnly);
 
 				// If container, the modification above is just a single entry
 				if(valueModification.has_value())
@@ -596,7 +596,7 @@ SPtr<SerializedObject> GenerateObjectDelta(Optional<Object<IsLHSIReflectable>> m
 							serializedMapDelta = B3DMakeShared<SerializedMapDelta>();
 
 						// We use the delta generation function to generate the serialized key as a convenience
-						Optional<SPtr<ISerialized>> serializedLhsValue = GenerateValueDelta(field->Schema, Optional<Value<IsLHSIReflectable>>(), lhsValue, inOutObjectMap, context, false);
+						TOptional<SPtr<ISerialized>> serializedLhsValue = GenerateValueDelta(field->Schema, TOptional<Value<IsLHSIReflectable>>(), lhsValue, inOutObjectMap, context, false);
 						SPtr<ISerialized> entryKey;
 						if(const auto& tuple = B3DRTTICast<SerializedTupleDelta>(*serializedLhsValue))
 							entryKey = tuple->Key;

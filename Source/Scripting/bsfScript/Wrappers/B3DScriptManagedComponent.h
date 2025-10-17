@@ -37,7 +37,7 @@ namespace b3d
 		friend class ManagedComponent;
 
 		void RecreateScriptObjectAfterScriptReload() override;
-		Optional<ScriptObjectReloadPersistentData> BackupDataBeforeScriptReload() override;
+		TOptional<ScriptObjectReloadPersistentData> BackupDataBeforeScriptReload() override;
 		void RestoreDataAfterScriptReload(const ScriptObjectReloadPersistentData& data) override;
 		void NotifyScriptReloadFinished() override;
 

@@ -62,7 +62,7 @@ GUIVectorSpriteAtlasAllocation GUIVectorSpriteAtlas::Allocate(const VectorPath& 
 	Area2 uvRange;
 
 	u32 textureId = ~0u;
-	Optional<TreeTextureAtlasLayout::Allocation> layoutAllocation;
+	TOptional<TreeTextureAtlasLayout::Allocation> layoutAllocation;
 	if(useUniqueTexture)
 	{
 		atlasTexture = CreateOrFindTexture(requestedSize);

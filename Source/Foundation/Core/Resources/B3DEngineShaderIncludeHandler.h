@@ -19,7 +19,7 @@ namespace b3d
 	{
 	public:
 		HShaderInclude FindInclude(const String& name) const override;
-		Optional<String> FindIncludeSource(const String& name) const override;
+		TOptional<String> FindIncludeSource(const String& name) const override;
 		void AddSearchPath(const Path& path) override { mSearchPaths.push_back(path); }
 
 		/** Converts a shader include name to a full path to the include file. */

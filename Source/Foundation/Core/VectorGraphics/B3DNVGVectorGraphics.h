@@ -59,7 +59,7 @@ namespace b3d
 		NVGRenderCommandType Type; /**< Determines how to render the element. */
 		VectorGraphicsBlendMode BlendMode; /**< Blend mode to use when rendering. */
 		NVGRenderUniforms PrimaryPassUniforms; /**< Uniform buffer parameters to use when rendering. */
-		Optional<NVGRenderUniforms> SecondaryPassUniforms; /**< In case the element is drawn using multiple passes, uniform parameters for the second pass. */
+		TOptional<NVGRenderUniforms> SecondaryPassUniforms; /**< In case the element is drawn using multiple passes, uniform parameters for the second pass. */
 	};
 
 	/** Determines the shader variation to use for rendering a single pass of a path element. */

@@ -27,7 +27,7 @@ static bool TryAcquirePackageLockForResourceLoad(const Path& resourcePath, const
 {
 	PackageManager& packageManager = GetPackageManager();
 
-	Optional<ResourcePackagePath> maybeResourcePackagePath = packageManager.TryResolvePhysicalResourcePath(resourcePath);
+	TOptional<ResourcePackagePath> maybeResourcePackagePath = packageManager.TryResolvePhysicalResourcePath(resourcePath);
 	if(!maybeResourcePackagePath.has_value()) // Maybe it's a virtual path
 		maybeResourcePackagePath = packageManager.TryResolveVirtualResourcePath(resourcePath);
 
@@ -61,7 +61,7 @@ static bool TryAcquirePackageLockForResourceLoad(const UUID& resourceId, const c
 {
 	PackageManager& packageManager = GetPackageManager();
 
-	const Optional<Path> maybePackagePath = packageManager.TryGetPackagePathForResource(resourceId);
+	const TOptional<Path> maybePackagePath = packageManager.TryGetPackagePathForResource(resourceId);
 	if(!maybePackagePath.has_value())
 		return false;
 
@@ -619,7 +619,7 @@ void Resources::GetLoadProgressRecursive(const HResource& resource, UnorderedMap
 	{
 		PackageManager& packageManager = GetPackageManager();
 
-		Optional<Path> maybePackagePath = packageManager.TryGetPackagePathForResource(resourceId);
+		TOptional<Path> maybePackagePath = packageManager.TryGetPackagePathForResource(resourceId);
 		if(!maybePackagePath.has_value())
 			return LoadProgress();
 

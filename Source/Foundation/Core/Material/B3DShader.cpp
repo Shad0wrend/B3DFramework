@@ -673,7 +673,7 @@ Array<u64, 2> Shader::ComputeHash(const String& string)
 
 Array<u64, 2> Shader::ComputeIncludeHash(const String& path)
 {
-	const Optional<String> shaderIncludeSource = ShaderManager::Instance().FindIncludeSource(path);
+	const TOptional<String> shaderIncludeSource = ShaderManager::Instance().FindIncludeSource(path);
 	if(!shaderIncludeSource.has_value())
 		return { 0, 0 };
 

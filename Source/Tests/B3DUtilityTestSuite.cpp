@@ -985,7 +985,7 @@ void UtilityTestSuite::TestMPSCQueue()
 	{
 		while(true)
 		{
-			Optional<u32> maybeValue = queue.Dequeue();
+			TOptional<u32> maybeValue = queue.Dequeue();
 			if(maybeValue.has_value())
 				readValues.Add(maybeValue.value());
 			else
@@ -1036,7 +1036,7 @@ void UtilityTestSuite::TestSPSCQueue()
 	{
 		while(true)
 		{
-			Optional<u32> maybeValue = queue.Dequeue();
+			TOptional<u32> maybeValue = queue.Dequeue();
 			if(maybeValue.has_value())
 				readValues.Add(maybeValue.value());
 			else

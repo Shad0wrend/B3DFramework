@@ -349,7 +349,7 @@ bool Font::RenderGlyphs(float sizeInPoints, const TArrayView<u32>& characterIds,
 		texture->WriteData(destinationPixelData);
 
 		u32 targetPageIndex = ~0u;
-		Optional<TreeTextureAtlasLayout::Allocation> layoutAllocation;
+		TOptional<TreeTextureAtlasLayout::Allocation> layoutAllocation;
 		for(u32 pageIndex = 0; pageIndex < (u32)mFontPages.size(); ++pageIndex)
 		{
 			FontBitmapPage& page = mFontPages[pageIndex];

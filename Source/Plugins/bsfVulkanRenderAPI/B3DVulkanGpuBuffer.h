@@ -78,13 +78,13 @@ namespace b3d
 			VkBufferView GetOrCreateView(VkFormat format);
 
 			/** Returns the required access flags for this buffer. */
-			VkAccessFlags GetAccessFlags() const;
+			VkAccessFlags GetVkAccessFlags() const;
 
 			/** Returns the resource use flags appropriate for this buffer type. */
-			GpuResourceUseFlags GetResourceUseFlags() const;
+			GpuResourceUseFlags GetUseFlags() const;
 
 			/** Returns the access flags appropriate for this buffer type and flags. */
-			GpuAccessFlags GetBufferAccessFlags() const;
+			GpuAccessFlags GetAccessFlags() const;
 
 		private:
 			/** Information about a view of this buffer. */

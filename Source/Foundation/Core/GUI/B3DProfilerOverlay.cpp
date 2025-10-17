@@ -531,7 +531,7 @@ void ProfilerOverlay::Update()
 
 	UpdateCpuSampleContents(latestSimReport, latestCoreReport);
 
-	Optional<GpuProfilerResults> lastProfilerResults = GetGpuProfiler().GetResults("RenderScene"); // Note: Must match name in the renderer
+	TOptional<GpuProfilerResults> lastProfilerResults = GetGpuProfiler().GetResults("RenderScene"); // Note: Must match name in the renderer
 	if(lastProfilerResults.has_value())
 	{
 		mLastProfilerResults = std::move(*lastProfilerResults);

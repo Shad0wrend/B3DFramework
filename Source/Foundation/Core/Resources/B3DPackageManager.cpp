@@ -304,7 +304,7 @@ bool PackageManager::SavePackageMetaData(const PackageWriteLock& packageWriteLoc
 	return result;
 }
 
-Optional<ResourcePackagePath> PackageManager::TryResolvePhysicalResourcePath(const Path& physicalResourcePath) const
+TOptional<ResourcePackagePath> PackageManager::TryResolvePhysicalResourcePath(const Path& physicalResourcePath) const
 {
 	if(!physicalResourcePath.IsAbsolute())
 		return {};
@@ -316,7 +316,7 @@ Optional<ResourcePackagePath> PackageManager::TryResolvePhysicalResourcePath(con
 	return {};
 }
 
-Optional<ResourcePackagePath> PackageManager::TryResolveVirtualResourcePath(const Path& virtualResourcePath) const
+TOptional<ResourcePackagePath> PackageManager::TryResolveVirtualResourcePath(const Path& virtualResourcePath) const
 {
 	Lock lock(mMutex);
 	if(auto found = mVirtualPathToResourcePackagePath.find(virtualResourcePath); found != mVirtualPathToResourcePackagePath.end())
@@ -325,7 +325,7 @@ Optional<ResourcePackagePath> PackageManager::TryResolveVirtualResourcePath(cons
 	return {};
 }
 
-Optional<Path> PackageManager::TryGetPackagePathForResource(const UUID& resourceId)
+TOptional<Path> PackageManager::TryGetPackagePathForResource(const UUID& resourceId)
 {
 	Lock lock(mMutex);
 	if(auto foundResource = mResourceIdToPackageId.find(resourceId); foundResource != mResourceIdToPackageId.end())

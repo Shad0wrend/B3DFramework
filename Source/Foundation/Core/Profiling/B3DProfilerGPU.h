@@ -152,7 +152,7 @@ namespace b3d
 		 * @param	name		Name given to the samples in call to ResolveProfileWhenReady.
 		 * @return				Set of resolved root samples, or null if no results are available.
 		 */
-		Optional<GpuProfilerResults> GetResults(const ProfilerString& name);
+		TOptional<GpuProfilerResults> GetResults(const ProfilerString& name);
 
 	public:
 		// ***** INTERNAL ******

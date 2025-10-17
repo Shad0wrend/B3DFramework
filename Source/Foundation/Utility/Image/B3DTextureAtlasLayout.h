@@ -194,7 +194,7 @@ namespace b3d
 		 * @param size	Size of the element to add, in pixels.
 		 * @return		Location at which the element was stored, or null if no free space was located.
 		 */
-		Optional<Allocation> AddElement(const Size2UI& size);
+		TOptional<Allocation> AddElement(const Size2UI& size);
 
 		/** Removes an element from the provided node. */
 		void RemoveElement(u32 pageId, u32 nodeId);

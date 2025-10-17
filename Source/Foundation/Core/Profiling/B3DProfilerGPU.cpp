@@ -238,7 +238,7 @@ void GpuProfiler::ResolveProfileWhenReady(const ProfilerString& name, const SPtr
 	profilerData.Queued.Add(profiler);
 }
 
-Optional<GpuProfilerResults> GpuProfiler::GetResults(const ProfilerString& name)
+TOptional<GpuProfilerResults> GpuProfiler::GetResults(const ProfilerString& name)
 {
 	if(auto found = mResolvedProfilerData.find(name); found != mResolvedProfilerData.end())
 	{

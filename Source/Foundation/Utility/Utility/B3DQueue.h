@@ -74,7 +74,7 @@ namespace b3d
 		}
 
 		/** Removes an entry from the front of the queue. */
-		Optional<T> Dequeue()
+		TOptional<T> Dequeue()
 		{
 			Node* next;
 
@@ -87,7 +87,7 @@ namespace b3d
 				return {};
 
 			T* valuePointer = (T*)&next->Value;
-			Optional<T> result{ std::move(*valuePointer) };
+			TOptional<T> result{ std::move(*valuePointer) };
 
 			valuePointer->~T();
 			MemoryAllocator<AllocatorTag>::FreeAligned(mTail);
@@ -99,7 +99,7 @@ namespace b3d
 		/** Removes an entry from the front of the queue. */
 		bool Dequeue(T& outElement)
 		{
-			Optional<T> localElement = Dequeue();
+			TOptional<T> localElement = Dequeue();
 			if (localElement.IsSet())
 			{
 				outElement = std::move(localElement.GetValue());

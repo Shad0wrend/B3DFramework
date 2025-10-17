@@ -80,7 +80,7 @@ void ScriptManagedComponent::RecreateScriptObjectAfterScriptReload()
 	CreateAndBindScriptObject();
 }
 
-Optional<ScriptObjectReloadPersistentData> ScriptManagedComponent::BackupDataBeforeScriptReload()
+TOptional<ScriptObjectReloadPersistentData> ScriptManagedComponent::BackupDataBeforeScriptReload()
 {
 	if(!IsNativeObjectValid())
 		return { };

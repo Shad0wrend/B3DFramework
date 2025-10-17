@@ -240,7 +240,7 @@ namespace b3d
 		 * @return							If the provided path is valid, returns a structure with a physical path to the package, and path to the resource
 		 *									within that package. Returns null otherwise.
 		 */
-		Optional<ResourcePackagePath> TryResolvePhysicalResourcePath(const Path& physicalResourcePath) const;
+		TOptional<ResourcePackagePath> TryResolvePhysicalResourcePath(const Path& physicalResourcePath) const;
 
 		/**
 		 * Resolves a virtual path to a resource into a physical path to the package, and a path to the resource within the package.
@@ -249,7 +249,7 @@ namespace b3d
 		 * @return							If provided path can be resolved, returns a structure with a physical path to the package, and path to the resource
 		 *									within that package. Returns null otherwise.
 		 */
-		Optional<ResourcePackagePath> TryResolveVirtualResourcePath(const Path& virtualResourcePath) const;
+		TOptional<ResourcePackagePath> TryResolveVirtualResourcePath(const Path& virtualResourcePath) const;
 
 		/**
 		 * Attempts to retrieve a path to the package the resource is located in.
@@ -257,7 +257,7 @@ namespace b3d
 		 * @param resourceId		ID of the resource.
 		 * @return					Path to the package if the resource was located, or null otherwise.
 		 */
-		Optional<Path> TryGetPackagePathForResource(const UUID& resourceId);
+		TOptional<Path> TryGetPackagePathForResource(const UUID& resourceId);
 
 		/** Retrieves resource meta-data from the associated (previously loaded) package. Returns null if resource cannot be found. */
 		SPtr<const PackageResourceMetaData> GetResourceMetaData(const UUID& resourceId);

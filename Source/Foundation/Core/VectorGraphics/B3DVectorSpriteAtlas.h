@@ -25,7 +25,7 @@ namespace b3d
 	/** Manages lifetime of an allocation in a sprite atlas. When this object goes out of scope the atlas will be notified so it may free the allocation. */
 	struct B3D_EXPORT GUIVectorSpriteAtlasAllocationHandle : public std::enable_shared_from_this<GUIVectorSpriteAtlasAllocationHandle>
 	{
-		GUIVectorSpriteAtlasAllocationHandle(GUIVectorSpriteAtlas* owner, u64 vectorPathId, const Optional<TreeTextureAtlasLayout::Allocation>& layoutAllocation, u32 textureId, const SPtr<render::VectorPathRenderable>& renderable)
+		GUIVectorSpriteAtlasAllocationHandle(GUIVectorSpriteAtlas* owner, u64 vectorPathId, const TOptional<TreeTextureAtlasLayout::Allocation>& layoutAllocation, u32 textureId, const SPtr<render::VectorPathRenderable>& renderable)
 			: mVectorPathId(vectorPathId), mOwner(owner), mLayoutAllocation(layoutAllocation), mTextureId(textureId), mRenderable(renderable)
 		{ }
 
@@ -58,7 +58,7 @@ namespace b3d
 
 		GUIVectorSpriteAtlas* const mOwner = nullptr;
 		u64 mVectorPathId = 0;
-		const Optional<TreeTextureAtlasLayout::Allocation> mLayoutAllocation; /**< Allocation in the texture atlas layout, if allocated in the atlas. If null, sprite is allocated as a unique texture. */
+		const TOptional<TreeTextureAtlasLayout::Allocation> mLayoutAllocation; /**< Allocation in the texture atlas layout, if allocated in the atlas. If null, sprite is allocated as a unique texture. */
 		const u32 mTextureId = ~0u;
 		const SPtr<render::VectorPathRenderable> mRenderable;
 	};

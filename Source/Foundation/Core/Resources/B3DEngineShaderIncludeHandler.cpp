@@ -20,7 +20,7 @@ HShaderInclude EngineShaderIncludeHandler::FindInclude(const String& name) const
 	return GetImporter().Import<ShaderInclude>(path);
 }
 
-Optional<String> EngineShaderIncludeHandler::FindIncludeSource(const String& name) const
+TOptional<String> EngineShaderIncludeHandler::FindIncludeSource(const String& name) const
 {
 	const Path path = DetermineFullPath(name);
 

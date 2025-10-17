@@ -14,7 +14,7 @@ HShaderInclude DefaultShaderIncludeHandler::FindInclude(const String& name) cons
 	return Importer::Instance().Import<ShaderInclude>(name);
 }
 
-Optional<String> DefaultShaderIncludeHandler::FindIncludeSource(const String& name) const
+TOptional<String> DefaultShaderIncludeHandler::FindIncludeSource(const String& name) const
 {
 	const Path filePath = FileSystem::GetWorkingDirectoryPath() + name;
 	if(FileSystem::IsFile(filePath))
@@ -34,7 +34,7 @@ HShaderInclude ShaderManager::FindInclude(const String& name) const
 	return mIncludeHandler->FindInclude(name);
 }
 
-Optional<String> ShaderManager::FindIncludeSource(const String& name) const
+TOptional<String> ShaderManager::FindIncludeSource(const String& name) const
 {
 	if(!mIncludeHandler)
 		return nullptr;

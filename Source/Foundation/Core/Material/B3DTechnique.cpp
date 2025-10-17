@@ -31,7 +31,7 @@ bool TechniqueBase::IsSupported() const
 }
 
 template <bool IsRenderProxy>
-TTechnique<IsRenderProxy>::TTechnique(const WeakSPtr<ShaderType>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<TPrecompiledVariationData<IsRenderProxy>>& precompiledData)
+TTechnique<IsRenderProxy>::TTechnique(const WeakSPtr<ShaderType>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<TPrecompiledVariationData<IsRenderProxy>>& precompiledData)
 	: TechniqueBase(language, variationParameters), mOwner(owner), mPasses(precompiledData.value_or(TPrecompiledVariationData<IsRenderProxy>()).PrecompiledPasses), mHasPassData(precompiledData.has_value())
 { }
 
@@ -176,7 +176,7 @@ TAsyncOp<bool> TTechnique<IsRenderProxy>::Compile()
 template class TTechnique<false>;
 template class TTechnique<true>;
 
-Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData)
+Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
 	: TTechnique(owner, language, variationParameters, precompiledData)
 {}
 
@@ -193,7 +193,7 @@ SPtr<render::RenderProxy> Technique::CreateRenderProxy() const
 	for(auto& pass : mPasses)
 		passRenderProxies.Add(B3DGetRenderProxy(pass));
 
-	Optional<render::PrecompiledVariationData> precompiledDataRenderProxy = mHasPassData ? render::PrecompiledVariationData(passRenderProxies) : Optional<render::PrecompiledVariationData>{};
+	TOptional<render::PrecompiledVariationData> precompiledDataRenderProxy = mHasPassData ? render::PrecompiledVariationData(passRenderProxies) : TOptional<render::PrecompiledVariationData>{};
 
 	render::Technique* const renderProxy = new(B3DAllocate<render::Technique>()) render::Technique(ownerRenderProxy, mLanguage, mVariationParameters, precompiledDataRenderProxy);
 	const SPtr<render::Technique> renderProxyShared = B3DMakeSharedFromExisting<render::Technique>(renderProxy);
@@ -239,7 +239,7 @@ RenderProxySyncPacket* Technique::CreateRenderProxySyncPacket(FrameAllocator& al
 	return syncPacket;
 }
 
-SPtr<Technique> Technique::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData)
+SPtr<Technique> Technique::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
 {
 	Technique* technique = new(B3DAllocate<Technique>()) Technique(owner, language, variationParameters, precompiledData);
 	SPtr<Technique> techniquePtr = B3DMakeSharedFromExisting<Technique>(technique);
@@ -274,11 +274,11 @@ Technique::Technique()
 	: TTechnique(WeakSPtr<Shader>(), StringUtil::kBlank, ShaderVariationParameters(), {})
 { }
 
-Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData)
+Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
 	: TTechnique(owner, language, variationParameters, precompiledData)
 {}
 
-SPtr<Technique> Technique::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData)
+SPtr<Technique> Technique::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
 {
 	Technique *const technique = new(B3DAllocate<Technique>()) Technique(owner, language, variationParameters, precompiledData);
 	SPtr<Technique> techniqueShared = B3DMakeSharedFromExisting<Technique>(technique);

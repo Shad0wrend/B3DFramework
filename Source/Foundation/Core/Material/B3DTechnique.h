@@ -74,7 +74,7 @@ namespace b3d
 		using TechniqueType = CoreVariantType<Technique, IsRenderProxy>;
 
 		TTechnique();
-		TTechnique(const WeakSPtr<ShaderType>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<TPrecompiledVariationData<IsRenderProxy>>& precompiledData);
+		TTechnique(const WeakSPtr<ShaderType>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<TPrecompiledVariationData<IsRenderProxy>>& precompiledData);
 		virtual ~TTechnique() = default;
 
 		/**	Returns a pass with the specified index. */
@@ -131,7 +131,7 @@ namespace b3d
 	class B3D_EXPORT Technique : public IReflectable, public CoreObject, public TTechnique<false>
 	{
 	public:
-		Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData);
+		Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData);
 
 		/**
 		 * Creates a new variation.
@@ -142,7 +142,7 @@ namespace b3d
 		 * @param		precompiledData		Optional set of precompiled variation data. If not provided, you must manually call Compile() on the variation before use.
 		 * @return							Newly creted variation.
 		 */
-		static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData = {});
+		static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData = {});
 
 	protected:
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
@@ -187,10 +187,10 @@ namespace b3d
 		class B3D_EXPORT Technique : public IReflectable, public RenderProxy, public TTechnique<true>
 		{
 		public:
-			Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData);
+			Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData);
 
 			/** @copydoc b3d::Technique::Create(const WeakSPtr<Shader>&, const String&, const ShaderVariationParameters&, const Optional<PrecompiledVariationData>&) */
-			static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData = {});
+			static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData = {});
 
 			/**	Creates a new empty technique. */
 			static SPtr<Technique> CreateEmpty();

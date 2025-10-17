@@ -129,7 +129,7 @@ namespace b3d
 
 	/** Contains an object of the specified type, or null. */
 	template <typename T>
-	using Optional = std::optional<T>;
+	using TOptional = std::optional<T>;
 
 	/**
 	 * Smart pointer that retains shared ownership of an project through a pointer. Reference to the object must be unique.

@@ -26,7 +26,7 @@ namespace b3d
 		 * Returns the current token and advances to the next token. EndOfStream token will be returned once end of stream has been reached. 
 		 * Returns null if token scanning failed. Error that caused the failure can be read from GetErrors().
 		 */
-		Optional<GUIStyleSheetToken> ScanNextToken(bool skipWhitespace = true);
+		TOptional<GUIStyleSheetToken> ScanNextToken(bool skipWhitespace = true);
 
 		/** Returns errors that occurred during scanning, if any. */
 		const String& GetErrors() const { return mErrors; }
@@ -96,31 +96,31 @@ namespace b3d
 		void SaveCurrentSourcePosition();
 
 		/** Tries to scan the next token and returns the token if scanning is successful. Token type will be automatically determined based on the current character. */
-		Optional<Token> ScanToken();
+		TOptional<Token> ScanToken();
 
 		/** Tries to scan the next token as an element selector identifier or a hex color (both starting with #). Returns null if the scanning failed. */
-		Optional<Token> ScanElementSelectorOrHexColor();
+		TOptional<Token> ScanElementSelectorOrHexColor();
 
 		/** Tries to scan the next token as an identifier. Returns null if the scanning failed. */
-		Optional<Token> ScanIdentifier(bool isStartingWithDot);
+		TOptional<Token> ScanIdentifier(bool isStartingWithDot);
 
 		/** Tries to scan the next token as a string literal (text surrounded by ""). Returns null if the scanning failed. */
-		Optional<Token> ScanStringLiteral();
+		TOptional<Token> ScanStringLiteral();
 
 		/** Tries to scan the next token as a number or a class selector. Assumes the current token is a '.'. Returns null if the scanning failed. */
-		Optional<Token> ScanNumberOrClassSelector();
+		TOptional<Token> ScanNumberOrClassSelector();
 
 		/** Tries to scan the next token as a number. Returns null if the scanning failed. */
-		Optional<Token> ScanNumber(bool isStartingWithDot);
+		TOptional<Token> ScanNumber(bool isStartingWithDot);
 
 		/** Records an error message and returns null. */
-		Optional<Token> Error(const String& message);
+		TOptional<Token> Error(const String& message);
 
 		/** Records an error message that the current character is unexpected and returns null. */
-		Optional<Token> ErrorUnexpected();
+		TOptional<Token> ErrorUnexpected();
 
 		/** Records an error message that the current character doesn't match @p expectedCharacter and returns null. */
-		Optional<Token> ErrorUnexpected(char expectedCharacter);
+		TOptional<Token> ErrorUnexpected(char expectedCharacter);
 
 		SPtr<SourceCode> mSourceCode;
 		char mCurrentCharacter = 0;

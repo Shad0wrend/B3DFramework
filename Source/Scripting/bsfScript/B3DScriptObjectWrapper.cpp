@@ -62,7 +62,7 @@ void ScriptObjectWrapper::NotifyScriptWillReload()
 		mNativeObject->NotifyScriptWillReload();
 }
 
-Optional<ScriptObjectReloadPersistentData> ScriptObjectWrapper::BackupDataBeforeScriptReload()
+TOptional<ScriptObjectReloadPersistentData> ScriptObjectWrapper::BackupDataBeforeScriptReload()
 {
 	if(mNativeObject != nullptr)
 		return mNativeObject->BackupDataBeforeScriptReload();

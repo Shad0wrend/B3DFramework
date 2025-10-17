@@ -52,7 +52,7 @@ All **GpuCommandBufferProfiler::BeginSample()** and **GpuCommandBufferProfiler::
 After you call **GpuCommandBuffer::EndProfiling()**, the profiler automatically submits the results for resolution. The profiling results will be generated once the command buffer has finished executing on the GPU. Since GPU execution is asynchronous, the results might not be available immediately. You can retrieve the results by calling @b3d::GpuProfiler::GetResults with the profiling scope name you provided to **BeginProfiling()**. If results are available, this method returns a @b3d::GpuProfilerResults structure. If no results are available yet, it returns an empty optional.
 
 ~~~~~~~~~~~~~{.cpp}
-Optional<GpuProfilerResults> results = GetGpuProfiler().GetResults("MyProfilingScope");
+TOptional<GpuProfilerResults> results = GetGpuProfiler().GetResults("MyProfilingScope");
 
 if(results.HasValue())
 {

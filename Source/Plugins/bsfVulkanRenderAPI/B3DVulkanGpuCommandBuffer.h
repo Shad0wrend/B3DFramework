@@ -790,9 +790,9 @@ namespace b3d
 			u32 mRenderTargetReadOnlyFlags = 0;
 			RenderSurfaceMask mRenderTargetLoadMask = RT_NONE;
 
-			DenseMap<VulkanResource*, ResourceUseHandle> mResources;
+			TDenseMap<VulkanResource*, ResourceUseHandle> mResources;
 			UnorderedMap<VulkanResource*, u32> mImages;
-			DenseMap<VulkanResource*, BufferInfo> mBuffers;
+			TDenseMap<VulkanResource*, BufferInfo> mBuffers;
 			UnorderedMap<VulkanSwapChain*, ResourceUseHandle> mSwapChains;
 			Vector<ImageInfo> mImageInfos;
 			Vector<ImageSubresourceInfo> mSubresourceInfoStorage;

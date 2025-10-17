@@ -2245,7 +2245,7 @@ void VulkanGpuCommandBuffer::UpdateBuffer(VulkanBuffer* destination, u8* data, V
 	{
 		FrameScope frameScope;
 		VulkanBarrierHelper barrierHelper(this);
-		barrierHelper.AddBufferBarrier(destination, destination->GetResourceUseFlags(), destination->GetBufferAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
+		barrierHelper.AddBufferBarrier(destination, destination->GetUseFlags(), destination->GetAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
 		barrierHelper.Execute();
 	}
 
@@ -2254,7 +2254,7 @@ void VulkanGpuCommandBuffer::UpdateBuffer(VulkanBuffer* destination, u8* data, V
 	// Issue post-update barrier
 	FrameScope frameScope;
 	VulkanBarrierHelper barrierHelper(this);
-	barrierHelper.AddBufferBarrier(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, destination->GetResourceUseFlags(), destination->GetBufferAccessFlags());
+	barrierHelper.AddBufferBarrier(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, destination->GetUseFlags(), destination->GetAccessFlags());
 	barrierHelper.Execute();
 
 	RegisterBuffer(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
@@ -2272,18 +2272,18 @@ void VulkanGpuCommandBuffer::CopyBufferToBuffer(VulkanBuffer* source, VulkanBuff
 	VulkanBarrierHelper barrierHelper(this);
 
 	if(source->IsBound())
-		barrierHelper.AddBufferBarrier(source, source->GetResourceUseFlags(), source->GetBufferAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Read);
+		barrierHelper.AddBufferBarrier(source, source->GetUseFlags(), source->GetAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Read);
 
 	if(destination->IsBound())
-		barrierHelper.AddBufferBarrier(destination, destination->GetResourceUseFlags(), destination->GetBufferAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
+		barrierHelper.AddBufferBarrier(destination, destination->GetUseFlags(), destination->GetAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
 
 	barrierHelper.Execute();
 
 	vkCmdCopyBuffer(GetVulkanHandle(), source->GetVulkanHandle(), destination->GetVulkanHandle(), 1, &region);
 
 	// Issue post-copy barriers
-	barrierHelper.AddBufferBarrier(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, source->GetResourceUseFlags(), source->GetBufferAccessFlags());
-	barrierHelper.AddBufferBarrier(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, destination->GetResourceUseFlags(), destination->GetBufferAccessFlags());
+	barrierHelper.AddBufferBarrier(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, source->GetUseFlags(), source->GetAccessFlags());
+	barrierHelper.AddBufferBarrier(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, destination->GetUseFlags(), destination->GetAccessFlags());
 	barrierHelper.Execute();
 
 	RegisterBuffer(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read);
@@ -2314,7 +2314,7 @@ void VulkanGpuCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage
 	FrameScope frameScope;
 	VulkanBarrierHelper barrierHelper(this);
 	if(source->IsBound())
-		barrierHelper.AddBufferBarrier(source, source->GetResourceUseFlags(), source->GetBufferAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Read);
+		barrierHelper.AddBufferBarrier(source, source->GetUseFlags(), source->GetAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Read);
 
 	// Note: Image barriers are handled by RegisterImageTransfer
 	barrierHelper.Execute();
@@ -2322,7 +2322,7 @@ void VulkanGpuCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage
 	vkCmdCopyBufferToImage(GetVulkanHandle(), source->GetVulkanHandle(), destination->GetVulkanHandle(), layout, 1, &copyRegion);
 
 	// Issue post-copy barrier for source buffer
-	barrierHelper.AddBufferBarrier(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, source->GetResourceUseFlags(), source->GetBufferAccessFlags());
+	barrierHelper.AddBufferBarrier(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, source->GetUseFlags(), source->GetAccessFlags());
 	barrierHelper.Execute();
 
 	RegisterBuffer(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read);
@@ -2355,7 +2355,7 @@ void VulkanGpuCommandBuffer::CopyImageToBuffer(VulkanImage* source, VulkanBuffer
 	FrameScope frameScope;
 	VulkanBarrierHelper barrierHelper(this);
 	if(destination->IsBound())
-		barrierHelper.AddBufferBarrier(destination, destination->GetResourceUseFlags(), destination->GetBufferAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
+		barrierHelper.AddBufferBarrier(destination, destination->GetUseFlags(), destination->GetAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
 
 	// Note: Image barriers are handled by RegisterImageTransfer
 	barrierHelper.Execute();
@@ -2363,7 +2363,7 @@ void VulkanGpuCommandBuffer::CopyImageToBuffer(VulkanImage* source, VulkanBuffer
 	vkCmdCopyImageToBuffer(GetVulkanHandle(), source->GetVulkanHandle(), layout, destination->GetVulkanHandle(), 1, &copyRegion);
 
 	// Issue post-copy barrier for destination buffer
-	barrierHelper.AddBufferBarrier(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, destination->GetResourceUseFlags(), destination->GetBufferAccessFlags());
+	barrierHelper.AddBufferBarrier(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, destination->GetUseFlags(), destination->GetAccessFlags());
 	barrierHelper.Execute();
 
 	RegisterBuffer(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
@@ -2555,7 +2555,7 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		// Filter out invalid aspect mask to avoid validation warnings
 		vkSubresourceRange.aspectMask &= vulkanImage->GetAspectFlags();
 
-		FindOrSubdivideSubresourceRange(vulkanImage, imageInfo, vkSubresourceRange, [this](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
+		FindOrSubdivideSubresourceRange(vulkanImage, imageInfo, vkSubresourceRange, [this](const VkImageSubresourceRange& range, TOptional<u32> copyFrom)
 		{
 			if(copyFrom.has_value())
 			{
@@ -2684,7 +2684,7 @@ void VulkanGpuCommandBuffer::UpdateWriteHazardTrackingAfterBarrier(VulkanImage* 
 	const u32 imageInfoIndex = found->second;
 	ImageInfo& imageInfo = mImageInfos[imageInfoIndex];
 
-	FindOrSubdivideSubresourceRange(image, imageInfo, range, [this](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
+	FindOrSubdivideSubresourceRange(image, imageInfo, range, [this](const VkImageSubresourceRange& range, TOptional<u32> copyFrom)
 	{
 		if(copyFrom.has_value())
 		{
@@ -2981,7 +2981,7 @@ void VulkanGpuCommandBuffer::RegisterResource(VulkanImage* image, const VkImageS
 		imageInfo.UseHandle.Flags |= access;
 
 		// See if there is an overlap between existing ranges and the new range. And if so break them up accordingly.
-		FindOrSubdivideSubresourceRange(image, imageInfo, range, [this, use, layout, finalLayout, access, stages](const VkImageSubresourceRange& range, Optional<u32> copyFrom)
+		FindOrSubdivideSubresourceRange(image, imageInfo, range, [this, use, layout, finalLayout, access, stages](const VkImageSubresourceRange& range, TOptional<u32> copyFrom)
 		{
 			if(copyFrom.has_value())
 			{

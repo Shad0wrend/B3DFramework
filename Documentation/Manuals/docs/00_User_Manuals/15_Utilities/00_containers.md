@@ -42,7 +42,7 @@ The following containers are custom implementations provided by the framework:
  - @b3d::TArray - Dynamically sized array, similar to **Vector** but without relying on the standard library.
  - @b3d::TInlineArray - A dynamically sized container that statically allocates enough room for N elements. If the element count exceeds the statically allocated buffer size the array falls back to general purpose dynamic allocator.
  - @b3d::TQueue - Lock-free queue implemented as a linked list. Supports multiple producer/single consumer, single producer/single consumer, and thread-unsafe modes.
- - @b3d::DenseMap - Hash-map with densely stored values, using quadratic probing for lookup.
+ - @b3d::TDenseMap - Hash-map with densely stored values, using quadratic probing for lookup.
  - @b3d::TBitfield - Dynamically sized field that contains a sequential list of bits. The bits are compactly stored and allow for quick sequential searches.
 
 # TArray
@@ -132,12 +132,12 @@ vertices.Add(Vector3(1.0f, 0.0f, 0.0f));
 vertices.Add(Vector3(1.0f, 1.0f, 0.0f));
 ~~~~~~~~~~~~~
 
-# DenseMap
-@b3d::DenseMap is a hash-map implementation that stores values densely using quadratic probing for collision resolution. Unlike **UnorderedMap** (which uses separate chaining with linked lists), **DenseMap** stores all key-value pairs in a contiguous array. This provides better cache locality and faster iteration, making it advantageous when you need to frequently iterate over all elements or when memory layout is important for performance. The trade-off is that keys must have special empty and tombstone values defined via DenseMapInfo specialization.
+# TDenseMap
+@b3d::TDenseMap is a hash-map implementation that stores values densely using quadratic probing for collision resolution. Unlike **UnorderedMap** (which uses separate chaining with linked lists), **TDenseMap** stores all key-value pairs in a contiguous array. This provides better cache locality and faster iteration, making it advantageous when you need to frequently iterate over all elements or when memory layout is important for performance. The trade-off is that keys must have special empty and tombstone values defined via DenseMapInfo specialization.
 
 ~~~~~~~~~~~~~{.cpp}
 // Create a dense map (default size is 64 buckets)
-DenseMap<u32, String> userIdToName;
+TDenseMap<u32, String> userIdToName;
 
 // Add key-value pairs using operator[]
 userIdToName[1] = "Alice";
@@ -178,13 +178,13 @@ userIdToName.erase(1);
 userIdToName.clear();
 
 // Create with custom initial capacity
-DenseMap<u32, float, DenseMapInfo<u32>, 128> largeMap;
+TDenseMap<u32, float, DenseMapInfo<u32>, 128> largeMap;
 ~~~~~~~~~~~~~
 
 For pointer types and unsigned integers, DenseMapInfo is automatically specialized. For custom key types, you need to provide a DenseMapInfo specialization:
 
 ~~~~~~~~~~~~~{.cpp}
-// Example: Using DenseMap with custom key type
+// Example: Using TDenseMap with custom key type
 struct MyKey
 {
 	u32 value;
@@ -210,8 +210,8 @@ struct B3DHash<MyKey>
 	}
 };
 
-// Now you can use DenseMap with MyKey
-DenseMap<MyKey, String> myMap;
+// Now you can use TDenseMap with MyKey
+TDenseMap<MyKey, String> myMap;
 myMap[MyKey{10}] = "Ten";
 ~~~~~~~~~~~~~
 
@@ -233,7 +233,7 @@ queue.Enqueue(100);
 queue.Enqueue(7);
 
 // Remove and retrieve an element from the front
-Optional<int> element = queue.Dequeue();
+TOptional<int> element = queue.Dequeue();
 if(element.IsSet())
 {
 	int value = element.GetValue(); // value = 42

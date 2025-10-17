@@ -24,7 +24,7 @@ struct PrefabInstanceRoot
 	HPrefab PrefabToUpdateFrom;
 };
 
-Optional<PrefabUpdateHelper::ObjectInPrefab> PrefabUpdateHelper::FindInstanceInPrefab(const GameObjectHandleBase& gameObject, const UUID& prefabResourceId)
+TOptional<PrefabUpdateHelper::ObjectInPrefab> PrefabUpdateHelper::FindInstanceInPrefab(const GameObjectHandleBase& gameObject, const UUID& prefabResourceId)
 {
 	const HPrefab prefab = GetResources().Load<Prefab>(prefabResourceId, ResourceLoadOptions(false, false, false));
 
@@ -45,7 +45,7 @@ Optional<PrefabUpdateHelper::ObjectInPrefab> PrefabUpdateHelper::FindInstanceInP
 	return ObjectInPrefab(prefab, instanceInPrefab);
 }
 
-Optional<PrefabUpdateHelper::ObjectInPrefab> PrefabUpdateHelper::FindInstanceInPrefab(const HSceneObject& sceneObject)
+TOptional<PrefabUpdateHelper::ObjectInPrefab> PrefabUpdateHelper::FindInstanceInPrefab(const HSceneObject& sceneObject)
 {
 	if(!sceneObject->IsPrefabInstance())
 		return {};
@@ -53,7 +53,7 @@ Optional<PrefabUpdateHelper::ObjectInPrefab> PrefabUpdateHelper::FindInstanceInP
 	return FindInstanceInPrefab(sceneObject, sceneObject->GetPrefabResourceId());
 }
 
-Optional<PrefabUpdateHelper::ObjectInPrefab> PrefabUpdateHelper::FindInstanceInPrefab(const HComponent& component)
+TOptional<PrefabUpdateHelper::ObjectInPrefab> PrefabUpdateHelper::FindInstanceInPrefab(const HComponent& component)
 {
 	HSceneObject sceneObject = component->SceneObject();
 	if(!sceneObject->IsPrefabInstance())
@@ -89,7 +89,7 @@ UnorderedMap<UUID, UUID> PrefabUpdateHelper::FindInstanceIdsThatNeedRemapping(co
 
 			if(!rootInstancePrefabId.Empty() && sceneObject->GetPrefabResourceId() == rootInstancePrefabId) // If an object is not part of the root instance, we don't need special handling
 			{
-				while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(sceneObjectInBottomMostPrefab))
+				while(TOptional<ObjectInPrefab> found = FindInstanceInPrefab(sceneObjectInBottomMostPrefab))
 				{
 					if(!found.has_value())
 						break;
@@ -119,7 +119,7 @@ UnorderedMap<UUID, UUID> PrefabUpdateHelper::FindInstanceIdsThatNeedRemapping(co
 
 			if(!rootInstancePrefabId.Empty() && sceneObject->GetPrefabResourceId() == rootInstancePrefabId) // If an object is not part of the root instance, we don't need special handling
 			{
-				while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(componentInBottomMostPrefab))
+				while(TOptional<ObjectInPrefab> found = FindInstanceInPrefab(componentInBottomMostPrefab))
 				{
 					if(!found.has_value())
 						break;
@@ -164,7 +164,7 @@ void PrefabUpdateHelper::UpdatePrefab(const HPrefab& prefabToUpdate, const HScen
 	{
 		HSceneObject currentSceneObject = sceneObjectToUpdateWith;
 		HPrefab parentPrefab = nullptr;
-		while(Optional<ObjectInPrefab> found = FindInstanceInPrefab(currentSceneObject))
+		while(TOptional<ObjectInPrefab> found = FindInstanceInPrefab(currentSceneObject))
 		{
 			if(!found.has_value())
 				break;

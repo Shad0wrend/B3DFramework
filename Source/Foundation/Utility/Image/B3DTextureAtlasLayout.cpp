@@ -184,7 +184,7 @@ TreeTextureAtlasLayout::TreeTextureAtlasLayout(const TreeTextureAtlasLayoutSetti
 	B3D_ENSURE(settings.Alignment.Height <= settings.Size.Height);
 }
 
-Optional<TreeTextureAtlasLayout::Allocation> TreeTextureAtlasLayout::AddElement(const Size2UI& size)
+TOptional<TreeTextureAtlasLayout::Allocation> TreeTextureAtlasLayout::AddElement(const Size2UI& size)
 {
 	if(size.Width == 0 || size.Height == 0)
 		return {};

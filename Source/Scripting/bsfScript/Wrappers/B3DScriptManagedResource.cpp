@@ -49,7 +49,7 @@ void ScriptManagedResource::RecreateScriptObjectAfterScriptReload()
 	CreateAndBindScriptObject();
 }
 
-Optional<ScriptObjectReloadPersistentData> ScriptManagedResource::BackupDataBeforeScriptReload()
+TOptional<ScriptObjectReloadPersistentData> ScriptManagedResource::BackupDataBeforeScriptReload()
 {
 	if(!IsNativeObjectValid())
 		return { };

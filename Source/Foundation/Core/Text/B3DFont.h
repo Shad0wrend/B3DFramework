@@ -43,7 +43,7 @@ namespace b3d
 		Vector<KerningPair> KerningPairs;
 
 		B3D_SCRIPT_EXPORT(Exclude(true))
-		Optional<TreeTextureAtlasLayout::Allocation> DynamicLayoutAllocation; /**< Handle to the character allocation in the texture atlas. Can be used for freeing the allocation. */
+		TOptional<TreeTextureAtlasLayout::Allocation> DynamicLayoutAllocation; /**< Handle to the character allocation in the texture atlas. Can be used for freeing the allocation. */
 	};
 
 	/** Available types of FontBitmapPage. */

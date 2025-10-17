@@ -227,7 +227,7 @@ The PackageManager provides utilities for resolving between physical and virtual
 
 ~~~~~~~~~~~~~{.cpp}
 // Resolve virtual path to physical package path
-Optional<ResourcePackagePath> packagePath =
+TOptional<ResourcePackagePath> packagePath =
 	GetPackageManager().TryResolveVirtualResourcePath("/Game/Textures/BrickAlbedo");
 
 if (packagePath)
@@ -242,7 +242,7 @@ packagePath = GetPackageManager().TryResolvePhysicalResourcePath(
 );
 
 // Find package containing a specific resource
-Optional<Path> packagePath2 = GetPackageManager().TryGetPackagePathForResource(resourceId);
+TOptional<Path> packagePath2 = GetPackageManager().TryGetPackagePathForResource(resourceId);
 ~~~~~~~~~~~~~
 
 # Resource metadata

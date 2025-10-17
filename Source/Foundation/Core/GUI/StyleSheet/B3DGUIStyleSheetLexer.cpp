@@ -179,7 +179,7 @@ GUIStyleSheetToken GUIStyleSheetLexer::CreateToken(const TokenType& type, String
 	return Token(sourceCodePosition, type, std::move(spelling));
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNextToken(bool skipWhitespace)
+TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNextToken(bool skipWhitespace)
 {
 	if(skipWhitespace)
 		SkipWhiteSpaces();
@@ -208,7 +208,7 @@ void GUIStyleSheetLexer::SkipWhiteSpaces(bool includeNewLines)
 		GetCurrentCharacterAndAdvance();
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanToken()
+TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanToken()
 {
 	if(std::isspace(GetCurrentCharacter()))
 		return CreateToken(TokenType::Space, true);
@@ -246,7 +246,7 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanToken()
 	return ErrorUnexpected();
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier(bool isStartingWithDot)
+TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier(bool isStartingWithDot)
 {
 	// Special handling if first characters are  "--"
 	const bool isFirstCharacterHyphen = IsCurrentCharacter('-');
@@ -296,7 +296,7 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier(bool isSt
 	return CreateToken(TokenType::ElementSelector, spelling);
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanElementSelectorOrHexColor()
+TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanElementSelectorOrHexColor()
 {
 	String spelling;
 
@@ -341,7 +341,7 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanElementSelectorOrHex
 	return Error("# must be followed by selector name or hex color.");
 }
 
-Optional<GUIStyleSheetToken> GUIStyleSheetLexer::ScanStringLiteral()
+TOptional<GUIStyleSheetToken> GUIStyleSheetLexer::ScanStringLiteral()
 {
 	String spelling;
 
@@ -363,7 +363,7 @@ Optional<GUIStyleSheetToken> GUIStyleSheetLexer::ScanStringLiteral()
 	return CreateToken(TokenType::StringLiteral, spelling);
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumberOrClassSelector()
+TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumberOrClassSelector()
 {
 	char character;
 	if(!GetCurrentCharacterAndAdvance('.', character))
@@ -376,7 +376,7 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumberOrClassSelecto
 	return ScanIdentifier(true);
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumber(bool isStartingWithDot)
+TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumber(bool isStartingWithDot)
 {
 	String spelling;
 
@@ -434,20 +434,20 @@ Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumber(bool isStarti
 	return CreateToken(type, spelling);
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::Error(const String& message)
+TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::Error(const String& message)
 {
 	GetCurrentCharacterAndAdvance();
 	mErrors = StringUtil::Format("Lexer error ({0}): {1}", mCurrentPosition.ToString(), message);
 	return {};
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ErrorUnexpected()
+TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ErrorUnexpected()
 {
 	mErrors = StringUtil::Format("Lexer error ({0}): Unexpected character '{1}'", mCurrentPosition.ToString(), GetCurrentCharacterAndAdvance());
 	return {};
 }
 
-Optional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ErrorUnexpected(char expectedCharacter)
+TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ErrorUnexpected(char expectedCharacter)
 {
 	mErrors = StringUtil::Format("Lexer error ({0}): Unexpected character '{1}', expected '{2}", mCurrentPosition.ToString(), GetCurrentCharacterAndAdvance(), expectedCharacter);
 	return {};
